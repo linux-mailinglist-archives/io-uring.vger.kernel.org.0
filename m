@@ -2,47 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F38543A5C
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jun 2022 19:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ACC9543A8B
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jun 2022 19:36:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbiFHR1d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jun 2022 13:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
+        id S231358AbiFHRf7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jun 2022 13:35:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232597AbiFHR1E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jun 2022 13:27:04 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14EA6DC
-        for <io-uring@vger.kernel.org>; Wed,  8 Jun 2022 10:25:02 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 258H6InN008854
-        for <io-uring@vger.kernel.org>; Wed, 8 Jun 2022 10:25:02 -0700
+        with ESMTP id S229796AbiFHRf6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jun 2022 13:35:58 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B83F637D
+        for <io-uring@vger.kernel.org>; Wed,  8 Jun 2022 10:35:55 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 258FPTKE014654
+        for <io-uring@vger.kernel.org>; Wed, 8 Jun 2022 10:35:55 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=dBECpqCYbzZu09VC/8f600yJ9kRuprLL6hMW7ZpMyPY=;
- b=QTjODgNQvpWUdwYFAppkxKyFGqYJEuYpcHKJV/81iJxSjvbhu2ZCmO7seGA8MMhBVnTP
- DWj7hpsz92yXOG90PIHNiDRIFStsb2f41X5/g4jVB01FyCGAZATNHup6lbx1RwZ8Vh0r
- KPc9E49Yxv26EPorT8DoUCmYDAigx17gzrs= 
+ bh=2ubX2t1H4jw4S3E5cOEtl91kfZ1W/8/gWyZU2hf/FHo=;
+ b=KDRJpHmCSyX2fYlkpQHszfnQ4XDHOO6a/FpJri+hUJBwryafbAqzj+e0frlsQ1RB5fmX
+ NMjmQjFJAXsl8f6TMvUiKTJGCcrOFIYYb7pPTAvoG0vg3Uul1J4/EH+BHfqOHGkjobDq
+ yvGwwnGvYdzRZ3N/DbsBbPP6aOslmbt0s8c= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3gjyva04hu-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gj9djrcr6-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 08 Jun 2022 10:25:02 -0700
-Received: from twshared18317.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 08 Jun 2022 10:35:54 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 8 Jun 2022 10:25:01 -0700
+ 15.1.2375.28; Wed, 8 Jun 2022 10:35:51 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id A23D8103BFB62; Wed,  8 Jun 2022 10:17:43 -0700 (PDT)
+        id A3580103BFB63; Wed,  8 Jun 2022 10:17:43 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
-        <hch@infradead.org>, <axboe@kernel.dk>
-Subject: [PATCH v8 12/14] io_uring: Add tracepoint for short writes
-Date:   Wed, 8 Jun 2022 10:17:39 -0700
-Message-ID: <20220608171741.3875418-13-shr@fb.com>
+        <hch@infradead.org>, <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>
+Subject: [PATCH v8 13/14] xfs: Specify lockmode when calling xfs_ilock_for_iomap()
+Date:   Wed, 8 Jun 2022 10:17:40 -0700
+Message-ID: <20220608171741.3875418-14-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220608171741.3875418-1-shr@fb.com>
 References: <20220608171741.3875418-1-shr@fb.com>
@@ -50,8 +52,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: rWjqZ9JWs6FRDlIzNXwzoQQIK4Jr0tgU
-X-Proofpoint-ORIG-GUID: rWjqZ9JWs6FRDlIzNXwzoQQIK4Jr0tgU
+X-Proofpoint-GUID: rDH_p8xePjgMvXO_Cxz7JNT9cxXOIQG0
+X-Proofpoint-ORIG-GUID: rDH_p8xePjgMvXO_Cxz7JNT9cxXOIQG0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
  definitions=2022-06-08_05,2022-06-07_02,2022-02-23_01
@@ -65,68 +67,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the io_uring_short_write tracepoint to io_uring. A short write
-is issued if not all pages that are required for a write are in the page
-cache and the async buffered writes have to return EAGAIN.
+This patch changes the helper function xfs_ilock_for_iomap such that the
+lock mode must be passed in.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/io_uring.c                   |  3 +++
- include/trace/events/io_uring.h | 25 +++++++++++++++++++++++++
- 2 files changed, 28 insertions(+)
+ fs/xfs/xfs_iomap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cb5bf672b85e..176a157e4523 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4597,6 +4597,9 @@ static int io_write(struct io_kiocb *req, unsigned =
-int issue_flags)
- 		if (ret2 !=3D req->cqe.res && ret2 >=3D 0 && need_complete_io(req)) {
- 			struct io_async_rw *rw;
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 5a393259a3a3..bcf7c3694290 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -664,7 +664,7 @@ xfs_ilock_for_iomap(
+ 	unsigned		flags,
+ 	unsigned		*lockmode)
+ {
+-	unsigned		mode =3D XFS_ILOCK_SHARED;
++	unsigned int		mode =3D *lockmode;
+ 	bool			is_write =3D flags & (IOMAP_WRITE | IOMAP_ZERO);
 =20
-+			trace_io_uring_short_write(req->ctx, kiocb->ki_pos - ret2,
-+						req->cqe.res, ret2);
-+
- 			/* This is a partial write. The file pos has already been
- 			 * updated, setup the async struct to complete the request
- 			 * in the worker. Also update bytes_done to account for
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_ur=
-ing.h
-index 66fcc5a1a5b1..25df513660cc 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -600,6 +600,31 @@ TRACE_EVENT(io_uring_cqe_overflow,
- 		  __entry->cflags, __entry->ocqe)
- );
+ 	/*
+@@ -742,7 +742,7 @@ xfs_direct_write_iomap_begin(
+ 	int			nimaps =3D 1, error =3D 0;
+ 	bool			shared =3D false;
+ 	u16			iomap_flags =3D 0;
+-	unsigned		lockmode;
++	unsigned int		lockmode =3D XFS_ILOCK_SHARED;
 =20
-+TRACE_EVENT(io_uring_short_write,
-+
-+	TP_PROTO(void *ctx, u64 fpos, u64 wanted, u64 got),
-+
-+	TP_ARGS(ctx, fpos, wanted, got),
-+
-+	TP_STRUCT__entry(
-+		__field(void *,	ctx)
-+		__field(u64,	fpos)
-+		__field(u64,	wanted)
-+		__field(u64,	got)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->ctx	=3D ctx;
-+		__entry->fpos	=3D fpos;
-+		__entry->wanted	=3D wanted;
-+		__entry->got	=3D got;
-+	),
-+
-+	TP_printk("ring %p, fpos %lld, wanted %lld, got %lld",
-+			  __entry->ctx, __entry->fpos,
-+			  __entry->wanted, __entry->got)
-+);
-+
- #endif /* _TRACE_IO_URING_H */
+ 	ASSERT(flags & (IOMAP_WRITE | IOMAP_ZERO));
 =20
- /* This part must be outside protection */
+@@ -1172,7 +1172,7 @@ xfs_read_iomap_begin(
+ 	xfs_fileoff_t		end_fsb =3D xfs_iomap_end_fsb(mp, offset, length);
+ 	int			nimaps =3D 1, error =3D 0;
+ 	bool			shared =3D false;
+-	unsigned		lockmode;
++	unsigned int		lockmode =3D XFS_ILOCK_SHARED;
+=20
+ 	ASSERT(!(flags & (IOMAP_WRITE | IOMAP_ZERO)));
+=20
 --=20
 2.30.2
 

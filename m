@@ -2,104 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8A254266A
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jun 2022 08:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C61B5429BA
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jun 2022 10:45:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbiFHGnx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Jun 2022 02:43:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54942 "EHLO
+        id S232089AbiFHIp1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Jun 2022 04:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348968AbiFHF6m (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jun 2022 01:58:42 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3307D45CB5F
-        for <io-uring@vger.kernel.org>; Tue,  7 Jun 2022 21:31:15 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id w27so25411304edl.7
-        for <io-uring@vger.kernel.org>; Tue, 07 Jun 2022 21:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=lQzGWzSzNym33MQ84Y+l0IYApxkDWXsfpOoAO4fDHlI=;
-        b=pLcIgzoF06q+6p7bNMxbfyeIE4USudtWpeFahTUvEnR7xMfelU2/kdyscp0xEzX39O
-         7F0y8uzCOtb+mZZMSlT27TPASU2K/shDy0TCDGhjgqPupzzLX4mh0tUrI9xkRgoL2L3C
-         XuEGpxyF5MqhnqdknPMsjAPoWxsyQ5KPyOvH4NHOPGZkW3ds/2o61RSNL0Ynqt1Y1VdG
-         Bfd76BmUlSqRAXXVDA2CV/UTWJVjcfAkMB9lNC0Ud/ky7YG1dM1S8jv6FqlwgjECA/IT
-         qdjfu9Wvf2AxBL9OQ+F2eH+lrRAcunRWSRcpGZCba31FBX1TobN8MBKOdQaqyorboDyH
-         unMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=lQzGWzSzNym33MQ84Y+l0IYApxkDWXsfpOoAO4fDHlI=;
-        b=tSzUtQ8IsPDvvGgFlASWBnqelidpBpa5Nox6eNKLTY3StqHDLwvf8FIIogoNmGOBRN
-         nA7O0NeH0ezI/AfC0udvYyq5Q+CSWMPtZOopa6XmjCoYmOeGMi2MQW7Y03nVels3aPHN
-         uJk3M0Du0qejPArpKDl6O44vW/Hm7a8aoDQM7mp0eAYQoz7DH6NlMF5VBaDHIPqlB9Tv
-         BpSjt6F7RiwgDwbiWU8DMn1js2lE6eafnaCOBAv8qyOvhOCuvJKkDUN4sSmho2qO9Hhr
-         dTf8LrdvtqarzvTO04H/p2J9bdLgGLcQ5vgGGFjCBQhTvXPlo91pd229PtCryT6roJgY
-         +3KA==
-X-Gm-Message-State: AOAM530x2SNjbhRA8eMv498b52iNpo2S1m+Jjb8Sva1WmQNogTkqNVCD
-        PhmQ6azCR7rcXpOcWR4cFgGqPg==
-X-Google-Smtp-Source: ABdhPJz8pE9/Vjr7/i5C+fk0/UyWIJaVLXaAMlSya4uBXn9u4OSqYRLr3nLBaRZ5u6D83V8/t2c8dA==
-X-Received: by 2002:a50:fc10:0:b0:42d:cbd2:4477 with SMTP id i16-20020a50fc10000000b0042dcbd24477mr36791934edr.363.1654662673432;
-        Tue, 07 Jun 2022 21:31:13 -0700 (PDT)
-Received: from [192.168.1.99] ([80.208.69.52])
-        by smtp.gmail.com with ESMTPSA id u15-20020a05640207cf00b0042dd60352d1sm11550692edy.35.2022.06.07.21.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jun 2022 21:31:12 -0700 (PDT)
-Message-ID: <539fb998-bbc2-b630-6549-ed8fe23fa167@kernel.dk>
-Date:   Tue, 7 Jun 2022 22:31:11 -0600
+        with ESMTP id S231871AbiFHIog (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Jun 2022 04:44:36 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B987115A776;
+        Wed,  8 Jun 2022 01:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654675462; x=1686211462;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CWj70Ndahv6ITFdse9tZAg4WvoJpQZirpty4fhrEmng=;
+  b=DNw6etCnx2dNycxcp4G8Ca78Cyg20EED+/xsl2mc0yWba8oZI2CEl39s
+   FVYgSJvLSJdSQERZn9Az9+ItNvmQ3lxJr1dV8V8d4m5N7YzQKzok24PnB
+   b4xP8OJsaBA+hsnAcoU9zi2V7sqfDtQ3ipJ2NTcpo43DSKMRXTvoHIEK1
+   nuSP8HOwhKYctc6id29aA/F/wOTMHMnnffBFYOLPp50e7dBYtzjUJtkLP
+   6DuaoVU43T1UOwS+9G/eYZXYH+vNDzY5RXpvLiDPupxYZE6nVBY6m3bb9
+   pqwy1xmVjVk80oxYtpqfuUahSj+rqplK+IqFRYkSjhPIAGZguXJE4kwHL
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="277986485"
+X-IronPort-AV: E=Sophos;i="5.91,285,1647327600"; 
+   d="scan'208";a="277986485"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2022 01:01:06 -0700
+X-IronPort-AV: E=Sophos;i="5.91,285,1647327600"; 
+   d="scan'208";a="584724477"
+Received: from xsang-optiplex-9020.sh.intel.com (HELO xsang-OptiPlex-9020) ([10.239.159.143])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2022 01:00:57 -0700
+Date:   Wed, 8 Jun 2022 16:00:54 +0800
+From:   Oliver Sang <oliver.sang@intel.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        lkp@lists.01.org, lkp@intel.com, ying.huang@intel.com,
+        feng.tang@intel.com, zhengjun.xing@linux.intel.com,
+        fengwei.yin@intel.com, guobing.chen@intel.com,
+        ming.a.chen@intel.com, frank.du@intel.com, Shuhua.Fan@intel.com,
+        wangyang.guo@intel.com, Wenhuan.Huang@intel.com,
+        jessica.ji@intel.com, shan.kang@intel.com, guangli.li@intel.com,
+        tiejun.li@intel.com, yu.ma@intel.com, dapeng1.mi@intel.com,
+        jiebin.sun@intel.com, gengxin.xie@intel.com, fan.zhao@intel.com
+Subject: Re: [io_uring] 584b0180f0:
+ phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s
+ -10.2% regression
+Message-ID: <20220608080054.GB22428@xsang-OptiPlex-9020>
+References: <20220527092432.GE11731@xsang-OptiPlex-9020>
+ <2085bfef-a91c-8adb-402b-242e8c5d5c55@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC 0/5] support nonblock submission for splice pipe to pipe
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>
-References: <20220607080619.513187-1-hao.xu@linux.dev>
- <d350c35e-1d73-b2c8-5ae4-e6ead92aebba@gmail.com>
- <68b1a721-217a-f52b-ae41-0faec77edf3f@linux.dev>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <68b1a721-217a-f52b-ae41-0faec77edf3f@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2085bfef-a91c-8adb-402b-242e8c5d5c55@kernel.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/7/22 10:19 PM, Hao Xu wrote:
-> On 6/7/22 17:27, Pavel Begunkov wrote:
->> On 6/7/22 09:06, Hao Xu wrote:
->>> From: Hao Xu <howeyxu@tencent.com>
->>>
->>> splice from pipe to pipe is a trivial case, and we can support nonblock
->>> try for it easily. splice depends on iowq at all which is slow. Let's
->>> build a fast submission path for it by supporting nonblock.
->>
->> fwiw,
->>
->> https://www.spinics.net/lists/kernel/msg3652757.html
->>
+Hi Jens Axboe,
+
+On Fri, May 27, 2022 at 07:50:27AM -0600, Jens Axboe wrote:
+> On 5/27/22 3:24 AM, kernel test robot wrote:
+> > 
+> > 
+> > Greeting,
+> > 
+> > FYI, we noticed a -10.2% regression of phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s due to commit:
+> > 
+> > 
+> > commit: 584b0180f0f4d67d7145950fe68c625f06c88b10 ("io_uring: move read/write file prep state into actual opcode handler")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > 
+> > in testcase: phoronix-test-suite
+> > on test machine: 96 threads 2 sockets Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz with 512G memory
+> > with following parameters:
+> > 
+> > 	test: fio-1.14.1
+> > 	option_a: Sequential Write
+> > 	option_b: IO_uring
+> > 	option_c: Yes
+> > 	option_d: Yes
+> > 	option_e: 1MB
+> > 	option_f: Default Test Directory
+> > 	cpufreq_governor: performance
+> > 	ucode: 0x500320a
+> > 
+> > test-description: The Phoronix Test Suite is the most comprehensive testing and benchmarking platform available that provides an extensible framework for which new tests can be easily added.
+> > test-url: http://www.phoronix-test-suite.com/
 > 
-> Thanks, Pavel. Seems it has been discussed for a long time but the
-> result remains unclear...For me, I think this patch is necessary for
-> getting a good SPLICE_F_NONBLOCK user experience.
+> I'm a bit skeptical on this, but I'd like to try and run the test case.
+> Since it's just a fio test case, why can't I find it somewhere? Seems
+> very convoluted to have to setup lkp-tests just for this. Besides, I
+> tried, but it doesn't work on aarch64...
 
-I'd just take it up again, this is something we do need to get done to
-avoid io-wq offload. Which is important...
+we just follow doc on http://www.phoronix-test-suite.com/ to run tests in PTS
+framework, so you don't need to care about lkp-tests.
 
--- 
-Jens Axboe
+and for this fio test, the parameters we used just as:
+	test: fio-1.14.1
+	option_a: Sequential Write
+	option_b: IO_uring
+	option_c: Yes
+	option_d: Yes
+	option_e: 1MB
+	option_f: Default Test Directory
 
+
+and yeah, we most focus on x86_64 and don't support lkp-tests to run on
+aarch64...
+
+
+if you have some idea that we could run other tests, could you let us know?
+it will be great pleasure to run more tests to check for us if we can support.
+
+Thanks a lot!
+
+> 
+> -- 
+> Jens Axboe
+> 

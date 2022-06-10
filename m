@@ -2,232 +2,186 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD6A546706
-	for <lists+io-uring@lfdr.de>; Fri, 10 Jun 2022 15:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1469C54677B
+	for <lists+io-uring@lfdr.de>; Fri, 10 Jun 2022 15:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245029AbiFJNE3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Jun 2022 09:04:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42964 "EHLO
+        id S245717AbiFJNlo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Jun 2022 09:41:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244252AbiFJNE2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jun 2022 09:04:28 -0400
-Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5302CDC6
-        for <io-uring@vger.kernel.org>; Fri, 10 Jun 2022 06:04:26 -0700 (PDT)
-Message-ID: <cd9f17eb-263f-0b42-418b-83df97795966@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1654866264;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VmLpr6ZL2vt1PEvYNHkI0HhvMBZXYVA2BeXaFYx2MwU=;
-        b=DDnkHMDlxmFciSmo8lskI3KZH1Oa/dGS8T2rJitlL0LtwjSSuruSMvPo5vOlmZjgpi0PuL
-        IWcrmbUCTAfe0C8/WwPXvuhwX53aouZhPenI9L4n3WZsAgszGdz9TXhPoD8AEJWxd1PHnw
-        w0y5a8xxxlJK1Dnht+7CdCiWxxJWGoo=
-Date:   Fri, 10 Jun 2022 21:04:16 +0800
+        with ESMTP id S236777AbiFJNlo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Jun 2022 09:41:44 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89ADEA1BF
+        for <io-uring@vger.kernel.org>; Fri, 10 Jun 2022 06:41:41 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id d39so25245871vsv.7
+        for <io-uring@vger.kernel.org>; Fri, 10 Jun 2022 06:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nametag.social; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lQNG+RWemvauKv5Tj1j/mYDZmyUAmMkEgeWxy4dTvu4=;
+        b=D0vnGVnSjh+bDFvV6cblLmAqoXC70YKsCQTncGEkA9dT+/gQx3T4VU7R+GjONzn7zw
+         ZG96EFgqb+1EN6cxOpTo3tggIDCsk0GKDMsEAWk1tGnfv8GQ/X0SG5nt7tE7At55HRdN
+         QRGmJYo4ncFr3NdvqqZkOI2e5Ggyb3aHqbQgQ5L6Q1upElJKs6BfODkXdZb4fjztLKqQ
+         VUT+y7g5xwsUhYbn4/z14SDn6iLAnKYZU7/IRlKINOorE9ztWFAAHeMDU1fmj+YMfQHS
+         SOEH43AtWYwl6a3k2+AJbisVz+SR56GvkPRGcTBslYcGfl05uHeOvrajBJLkQUVZBo0h
+         OfeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lQNG+RWemvauKv5Tj1j/mYDZmyUAmMkEgeWxy4dTvu4=;
+        b=b77PlnbXkoLWVbWWoIBY51Zlv9/TliwwtB103Ff8Rf/S0woLXr4lYPlTWPBZXZfsGr
+         PVvCQeAkdp+MM809FdYQmf3rTD0X82s1MkfXyMV2sCDPdDR3V0neUyq+vcs5C0d/3bdU
+         E8uq3p9vBr2IY1Yvg9evFiD6YWug8M+2ndqY2t68yZ0Z3l0ysz+iSFD0190HEm5O3vvG
+         lMy5nj5X4n+WdMXQ6+D9W3WzfHJCxlF6ESnXYIA/obro5xrjFVdVvKrN44XNZlDSd0qi
+         ZuGhIpY2GmUJ3VMozRbXA8+2ASovGwIYstMjk5udN/ADw8RexJey4kpzSAOQrGMcruKg
+         uRGA==
+X-Gm-Message-State: AOAM531cRykpP3XcNVyOxWmVLBqM6mBKd0zmW6hwHQ9BDGXn/YUZcvhD
+        GDZljPfbLRLTC2yVtFTIxNHPcMpexQcJYJHMdIBhng==
+X-Google-Smtp-Source: ABdhPJyZVFlLRtAtK+koGkRaBUu/KNqlje0OEXFQEHrYfmZwVYxeWfczrilUERCejd8UMtCOVP7C5wyvC3mzkjltv/c=
+X-Received: by 2002:a05:6102:30a8:b0:34b:95a7:6feb with SMTP id
+ y8-20020a05610230a800b0034b95a76febmr16759646vsd.32.1654868500577; Fri, 10
+ Jun 2022 06:41:40 -0700 (PDT)
 MIME-Version: 1.0
-Subject: Re: [PATCHSET v2 0/6] Allow allocated direct descriptors
-Content-Language: en-US
-To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, haoxu.linux@gmail.com,
-        =?UTF-8?Q?Ralph_B=c3=b6hme?= <slow@samba.org>, vl <vl@samba.org>
-References: <20220509155055.72735-1-axboe@kernel.dk>
- <c57c4231-f481-8fdf-5b97-625ada83f83a@samba.org>
- <bdd8d2b8-6ac0-5a38-6905-0b2a874c035d@linux.dev>
- <68c7a7cb-63b3-3207-4ba3-e870cc5b6fd9@samba.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <68c7a7cb-63b3-3207-4ba3-e870cc5b6fd9@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220508234909.224108-1-axboe@kernel.dk> <a5ec8825-8dc3-c030-ac46-7ad08f296206@gmail.com>
+ <ba139690-e223-8b99-4aa3-5d3336f25386@kernel.dk> <50a1fa53-08cd-e7e7-a2da-e628c582e857@gmail.com>
+ <4f68ef54-ecc9-402d-9c1f-379451e8fc32@kernel.dk>
+In-Reply-To: <4f68ef54-ecc9-402d-9c1f-379451e8fc32@kernel.dk>
+From:   Victor Stewart <v@nametag.social>
+Date:   Fri, 10 Jun 2022 14:41:29 +0100
+Message-ID: <CAM1kxwjh0eNNmCsJ=q211g-Vr-hQGD4MeCiiYnk1sFAxOJAtqQ@mail.gmail.com>
+Subject: Re: [PATCHSET 0/4] Allow allocated direct descriptors
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Hao Xu <haoxu.linux@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/10/22 19:28, Stefan Metzmacher wrote:
-> 
-> Am 10.06.22 um 13:06 schrieb Hao Xu:
->> Hi Stefan,
->> On 6/9/22 16:57, Stefan Metzmacher wrote:
->>>
->>> Hi Jens,
->>>
->>> this looks very useful, thanks!
->>>
->>> I have an additional feature request to make this even more useful...
->>>
->>> IO_OP_ACCEPT allows a fixed descriptor for the listen socket
->>> and then can generate a fixed descriptor for the accepted connection,
->>> correct?
->>
->> Yes.
->>
->>>
->>> It would be extremely useful to also allow that pattern
->>> for IO_OP_OPENAT[2], which currently is not able to get
->>> a fixed descriptor for the dirfd argument (this also applies to
->>> IO_OP_STATX, IO_OP_UNLINK and all others taking a dirfd).
->>>
->>> Being able use such a sequence:
->>>
->>> OPENTAT2(AT_FDCWD, "directory") => 1 (fixed)
->>> STATX(1 (fixed))
->>> FGETXATTR(1 (fixed)
->>> OPENAT2(1 (fixed), "file") => 2 (fixed)
->>> STATX(2 (fixed))
->>> FGETXATTR(2 (fixed))
->>> CLOSE(1 (fixed)
->>> DUP( 2 (fixed)) => per-process fd for ("file")
->>>
->>> I looked briefly how to implement that.
->>> But set_nameidata() takes 'int dfd' to store the value
->>> and it's used later somewhere deep down the stack.
->>> And makes it too complex for me to create patches :-(
->>>
->>
->> Indeed.. dirfd is used in path_init() etc. For me, no idea how to tackle
->> it for now.We surely can register a fixed descriptor to the process
->> fdtable but that is against the purpose of fixed file..
-> 
-> I looked at it a bit more and the good thing is that
-> 'struct nameidata' is private to namei.c, which simplifies
-> getting an overview.
-> 
-> path_init() is the actual only user of nd.dfd
+On Tue, May 10, 2022 at 1:28 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 5/9/22 11:35 PM, Hao Xu wrote:
+> > ? 2022/5/9 ??10:49, Jens Axboe ??:
+> >> On 5/9/22 7:20 AM, Hao Xu wrote:
+> >>> ? 2022/5/9 ??7:49, Jens Axboe ??:
+> >>>> Hi,
+> >>>>
+> >>>> Currently using direct descriptors with open or accept requires the
+> >>>> application to manage the descriptor space, picking which slot to use
+> >>>> for any given file. However, there are cases where it's useful to just
+> >>>> get a direct descriptor and not care about which value it is, instead
+> >>>> just return it like a normal open or accept would.
+> >>>>
+> >>>> This will also be useful for multishot accept support, where allocated
+> >>>> direct descriptors are a requirement to make that feature work with
+> >>>> these kinds of files.
+> >>>>
+> >>>> This adds support for allocating a new fixed descriptor. This is chosen
+> >>>> by passing in UINT_MAX as the fixed slot, which otherwise has a limit
+> >>>> of INT_MAX like any file descriptor does.
+> >>>>
+> >>>>    fs/io_uring.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++---
+> >>>>     1 file changed, 94 insertions(+), 6 deletions(-)
+> >>>>
+> >>> Hi Jens,
+> >>> I've read this idea of leveraging bitmap, it looks great. a small flaw
+> >>> of it is that when the file_table is very long, the bitmap searching
+> >>> seems to be O({length of table}/BITS_PER_LONG), to make the time
+> >>> complexity stable, I did a linked list version, could you have a look
+> >>> when you're avalible. totally untested, just to show my idea. Basically
+> >>> I use a list to link all the free slots, when we need a slot, just get
+> >>> the head of it.
+> >>> https://github.com/HowHsu/linux/commits/for-5.19/io_uring_multishot_accept_v5
+> >>>
+> >>> (borrowed some commit message from your patches)
+> >>
+> >> While that's certainly true, I'm skeptical that the list management will
+> >> be faster for most cases. It's worth nothing that the regular file
+> >> allocator is very much the same thing. A full scan is unlikely unless
+> >> you already got -ENFILE. Any clear in between will reset the hint and
+> >> it'll be O(1) again. So yes, the pathological case of having no
+> >
+> > it's not O(1) actually, and a full bitmap is not the only worst case.
+> > For instance, the bitmap is like:
+> >                              hint
+> >                               |
+> >    1111111111111111111111111110000
+> >
+> > then a bit is cleared and hint is updated:
+> >      hint
+> >       |
+> >    1110111111111111111111111110000
+> >
+> > then next time the complexity is high
+>
+> Next time it's fine, since the hint is that bit. If you do do, then yes
+> the second would be a slower.
+>
+> > So in this kind of scenario(first allocate many in order, then clear
+> > low bit and allocation goes on in turn), it would be slow. And I think
+> > these cases are not rare since people usually allocate many fds then
+> > free the early used fds from time to time.
+>
+> It's by no means perfect, but if it's good enough for the normal file
+> allocator, then I don't think it'd be wise to over-engineer this one
+> until there's a proven need to do so.
+>
+> The single list items tracking free items is most certainly a LOT slower
+> for the common cases, so I don't think that's a good approach at all.
+>
+> My suggestion would be to stick with the proposed approach until there's
+> evidence that the allocator needs improving. I did write a benchmark
+> that uses a 500K map and does opens and closes, and I don't see anything
+> to worry about in terms of overhead. The bitmap handling doesn't even
+> really register, dwarfed by the rest of the open path.
 
-                               ^[1]
+another angle of perspective on this is that we're sacrificing performance to
+accommodate ambiguity on behalf of the application.
 
-> and it's used to fill nd.path, either from get_fs_pwd()
-> for AT_FDCWD and f.file->f_path otherwise.
-> 
-> So might be able to have a function that translated
-> the fd to struct path early and let the callers pass 'struct path'
-> instead of 'int dfd'...
+so another option is to make the bookkeeping an array with index == fd and
+require the application to specify a static amount of open files it
+supports. that
+way exclusion is de facto provided by the choice of fd and we aren't duplicating
+it.
 
-Yea, if [1] is true. I wrote something for your reference:
-(totally unpolished and untested, just to show an idea)
+this is the pattern i use in my application.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f28d3f463c3..18e11717005c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2423,21 +2423,30 @@ static const char *path_init(struct nameidata 
-*nd, unsigned flags)
-                         nd->inode = nd->path.dentry->d_inode;
-                 }
-         } else {
--               /* Caller must check execute permissions on the starting 
-path component */
--               struct fd f = fdget_raw(nd->dfd);
-                 struct dentry *dentry;
-
--               if (!f.file)
--                       return ERR_PTR(-EBADF);
-+               if (nd->dfd != -1) {
-+                       /* Caller must check execute permissions on the 
-starting path component */
-+                       struct fd f = fdget_raw(nd->dfd);
-
--               dentry = f.file->f_path.dentry;
-+                       if (!f.file)
-+                               return ERR_PTR(-EBADF);
-
--               if (*s && unlikely(!d_can_lookup(dentry))) {
--                       fdput(f);
--                       return ERR_PTR(-ENOTDIR);
-+                       dentry = f.file->f_path.dentry;
-+
-+                       if (*s && unlikely(!d_can_lookup(dentry))) {
-+                               fdput(f);
-+                               return ERR_PTR(-ENOTDIR);
-+                       }
-+
-+                       nd->path = f.file->f_path;
-+               } else {
-+                       dentry = nd->path.dentry;
-+
-+                       if (*s && unlikely(!d_can_lookup(dentry)))
-+                               return ERR_PTR(-ENOTDIR);
-                 }
-
--               nd->path = f.file->f_path;
-                 if (flags & LOOKUP_RCU) {
-                         nd->inode = nd->path.dentry->d_inode;
-                         nd->seq = 
-read_seqcount_begin(&nd->path.dentry->d_seq);
-@@ -2445,7 +2454,9 @@ static const char *path_init(struct nameidata *nd, 
-unsigned flags)
-                         path_get(&nd->path);
-                         nd->inode = nd->path.dentry->d_inode;
-                 }
--               fdput(f);
-+               if (dfd != -1)
-+                       fdput(f);
-+
-         }
-
-         /* For scoped-lookups we need to set the root to the dirfd as 
-well. */
-@@ -3686,6 +3697,48 @@ struct file *do_filp_open(int dfd, struct 
-filename *pathname,
-         return filp;
-  }
-
-+static void __set_nameidata2(struct nameidata *p, struct path *path,
-+                            struct filename *name)
-+{
-+       struct nameidata *old = current->nameidata;
-+       p->stack = p->internal;
-+       p->depth = 0;
-+       p->dfd = -1;
-+       p->name = name;
-+       p->path = *path;
-+       p->total_link_count = old ? old->total_link_count : 0;
-+       p->saved = old;
-+       current->nameidata = p;
-+}
-+
-+static inline void set_nameidata2(struct nameidata *p, struct path *path,
-+                                 struct filename *name, const struct 
-path *root)
-+{
-+       __set_nameidata2(p, path, name);
-+       p->state = 0;
-+       if (unlikely(root)) {
-+               p->state = ND_ROOT_PRESET;
-+               p->root = *root;
-+       }
-+}
-+
-+struct file *do_filp_open_path(struct *path, struct filename *pathname,
-+               const struct open_flags *op)
-+{
-+       struct nameidata nd;
-+       int flags = op->lookup_flags;
-+       struct file *filp;
-+
-+       set_nameidata2(&nd, path, pathname, NULL);
-+       filp = path_openat(&nd, op, flags | LOOKUP_RCU);
-+       if (unlikely(filp == ERR_PTR(-ECHILD)))
-+               filp = path_openat(&nd, op, flags);
-+       if (unlikely(filp == ERR_PTR(-ESTALE)))
-+               filp = path_openat(&nd, op, flags | LOOKUP_REVAL);
-+       restore_nameidata();
-+       return filp;
-+}
-+
-  struct file *do_file_open_root(const struct path *root,
-                 const char *name, const struct open_flags *op)
-  {
-
-
+>
+> >> If the case of finding a new descriptor is slow for a mostly full space,
+> >> in the past I've done something like axmap [1] in fio, where you each
+> >> 64-bit entry is representing by a single bit a layer up. That still has
+> >> very good space utilization and good cache layout, which the list very
+> >> much does not. But given the above, I don't think we need to worry about
+> >> that really.
+> >>
+> >> As a side note, I do think we need to just bump the size of the max
+> >> direct descriptors we can have. With the file table potentially being
+> >> vmalloc backed, there's no reason to limit it to the current 32K.
+> >
+> > Agree.
+> >
+> >>
+> >> [1] https://git.kernel.dk/cgit/fio/tree/lib/axmap.c
+> >>
+> > Cool, I'll have a look.
+>
+> It can get boiled down to something a bit simpler as the fio
+> implementation supports a variety of different use cases. For example, I
+> think it should be implemented as a single indexed array that holds all
+> the levels, rather than separate is it's done there. In short, it just
+> condenses everything down to one qword eventually, and finding a free
+> bit is always O(log64(N)).
+>
+> --
+> Jens Axboe
+>

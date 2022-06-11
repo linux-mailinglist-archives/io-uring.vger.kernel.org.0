@@ -2,68 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 536075474C4
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jun 2022 15:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74D005474CC
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jun 2022 15:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233328AbiFKNOE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Jun 2022 09:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
+        id S233627AbiFKNSy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Jun 2022 09:18:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231649AbiFKNOD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Jun 2022 09:14:03 -0400
+        with ESMTP id S233560AbiFKNSx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Jun 2022 09:18:53 -0400
 Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83993EBA
-        for <io-uring@vger.kernel.org>; Sat, 11 Jun 2022 06:14:01 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso876547wmc.4
-        for <io-uring@vger.kernel.org>; Sat, 11 Jun 2022 06:14:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F3646D963
+        for <io-uring@vger.kernel.org>; Sat, 11 Jun 2022 06:18:52 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id a10so742986wmj.5
+        for <io-uring@vger.kernel.org>; Sat, 11 Jun 2022 06:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=NAOk8d2kggkkkvSUO0Q1bD4RqQYAAIhQ+jRNGOdC0Zg=;
-        b=U7BjQ317BfJNKENl3jFRZEenp8F0WyRIHYQk4e5eJMLsqnJyRQ2exDoa+RyPeXwjjG
-         GwPbS5419swkes3S+gwPpH8Er/yXAhuATa1CXyqq7KNBtrsoVMF6A7h0xWZyoEr4pUvt
-         NUwq5den5xSyAHy2K9cJAmJOxWxRp6913IRab0tGatESQd8PqNTKyRE61MfP8f1bSLGx
-         nMKP35kSM1rdr5SzY1/q77R1laQCt1Jdb8cLmWqsottyZT/hH54ZQK+fLWLxDtba0IFI
-         59Iri5qBD43wrOG3IzUTMy9PH7E805V0V02zdx4Jf2eEnxMSxdxeDQpfS4uTHQLXJnvg
-         sB/w==
+        bh=9tmgAWIHJo7Vor14/uNVzdz8kiJ2EFpRTjfMGU1rPIM=;
+        b=HNzXqcGKOyVYAliKkUaMkBPzwPLBXCDd/lq7pF0BQL0ke/z//+BrWnJiPL/79SaAu9
+         QirhU6uHKjHib6EDCNoY7wKZ2e1P6Y6rGr4shXrLKUdZWhmZeJ4uJnL0nKt+og8OHVhL
+         2n4bhJlOcn2iFcI1MqfzDrKj/aVFXsX7sicKBY6A7Deoo6eqeqaW2rjvd7r7lPeAptHm
+         uJxtIEx2/CVTbGoQ+BRSzqxxHWf3UNt1Fo05ooARX1F52ivhjp9LMaXmyui0tnCYuhwx
+         4nBQ835O+xzZH4cvOkyJux+ubrMkGYteZFv4UzxoAQXBvG2spyiE3SoySldvL/OVsSXv
+         9Q6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=NAOk8d2kggkkkvSUO0Q1bD4RqQYAAIhQ+jRNGOdC0Zg=;
-        b=XU53jIpqks3Ute6oiwX0p53iUEtQ24b9Jj6Dmk8Flmn98BGwI861NGbPVMci0tuics
-         p9HGPDg0H0RqxkAee9Mh8/NC5TH7lLAPoJ/p4TzFX8myrhUdioe7tKZv0fVisMm+hWQ0
-         lM1B9Ppo/iieYB+UEIx5jChJQPv1uPMsfIr+/81eEdEkBWpJAMnZUOnrzhcrJGnn6EhM
-         sVGbIR8RizZ7H/iOfYwBtCv62njX7e3mTDNrBRlbPumP+5bh2s9g0zZ1KxccYcwZetiE
-         vWNrWQtyvi/Gf1dTaAcd2wc6YN5pdjIi4BsnNmzjEHeZQLZi5zY3fzOUCE6jd5tRKD4N
-         YO3w==
-X-Gm-Message-State: AOAM532uXcMvLlTRkLUcb5D2sdOdYP88wGr9pcIS42HAKxLTSgrdEGAo
-        ArntgJhJTt1hklrc+RjBIGjTGnPXHmxPig==
-X-Google-Smtp-Source: ABdhPJz9HTjmnZGT+cmmcYoqwdbhgR1aL+Z31lsH3nLcjfT9jDaS5I3ldk+aPw9ptB3L7fw6WZoXww==
-X-Received: by 2002:a05:600c:4f87:b0:39c:8091:31e0 with SMTP id n7-20020a05600c4f8700b0039c809131e0mr4887618wmq.84.1654953239980;
-        Sat, 11 Jun 2022 06:13:59 -0700 (PDT)
+        bh=9tmgAWIHJo7Vor14/uNVzdz8kiJ2EFpRTjfMGU1rPIM=;
+        b=mwDWwJ4U5sbVnqs8rIImk238xCOV7zrWIy63Ca6Hab6MXc52PLsNdiUIis9IE2dyug
+         vu93r+ET5K8hDZBrAW8MY+1fNSOeNC3lxp+UIhnQSxi7uKD2hqN4gGlSBBK+d3z27kg2
+         vDIrhZMJbERUsZNJxDlhTp4awwSY+FTUf+xyjSQmSkWHKSESmolB115cRLbKYTnfGQSt
+         H1taIkxwny4HQsr5HYpmTY2O/h66CchhQ2U/JIU7rH0VtyZdxDmP5Dblao2FIUbKOKf2
+         Ns2rDv2/GMur5visdwbUS7yctfjrlCpno6CVpbrQSZjSyZ4l7u6XJVG1qYNXeYmIMfF4
+         cKYg==
+X-Gm-Message-State: AOAM533W89S4Iwja96HEE0fr8rDyvVrwBvz4BjDzN+UZ5YBVqj/6ZvIe
+        BcsjzCjWZiuWp2vspgiXbl03aJ7j/N4K2A==
+X-Google-Smtp-Source: ABdhPJwLrj8YNJWV2CV9uRbyxJUuposiQE43GxEuzjPGomdQN+goruftU9xyNXtP93CFtzeciqcepg==
+X-Received: by 2002:a05:600c:3847:b0:39c:6a85:d20c with SMTP id s7-20020a05600c384700b0039c6a85d20cmr4755882wmr.129.1654953531030;
+        Sat, 11 Jun 2022 06:18:51 -0700 (PDT)
 Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id m7-20020a5d4a07000000b00213abce60e4sm2420875wrq.111.2022.06.11.06.13.59
+        by smtp.gmail.com with ESMTPSA id p21-20020a1c5455000000b0039c2e2d0502sm6577357wmi.4.2022.06.11.06.18.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jun 2022 06:13:59 -0700 (PDT)
-Message-ID: <3343890c-3aac-089a-4a8c-5ce3d9730238@gmail.com>
-Date:   Sat, 11 Jun 2022 14:13:32 +0100
+        Sat, 11 Jun 2022 06:18:50 -0700 (PDT)
+Message-ID: <5c3e1323-46ab-27d5-5f9d-d6683a19f9c8@gmail.com>
+Date:   Sat, 11 Jun 2022 14:18:23 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH 5.19 2/6] io_uring: openclose: fix bug of closing wrong
- fixed file
+Subject: Re: [PATCH v3] io_uring: switch cancel_hash to use per entry spinlock
 Content-Language: en-US
 To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-References: <20220611122224.941800-1-hao.xu@linux.dev>
- <20220611122224.941800-2-hao.xu@linux.dev>
+References: <20220608111259.659536-1-hao.xu@linux.dev>
+ <37d73555-197b-29e1-d2cc-b7313501a394@gmail.com>
+ <8d60fad9-6445-8a6b-d051-947f8ea04582@linux.dev>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20220611122224.941800-2-hao.xu@linux.dev>
+In-Reply-To: <8d60fad9-6445-8a6b-d051-947f8ea04582@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -74,37 +74,73 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/11/22 13:22, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
+On 6/11/22 05:34, Hao Xu wrote:
+> On 6/10/22 18:21, Pavel Begunkov wrote:
+>> On 6/8/22 12:12, Hao Xu wrote:
+>>> From: Hao Xu <howeyxu@tencent.com>
+>>>
+>>> Add a new io_hash_bucket structure so that each bucket in cancel_hash
+>>> has separate spinlock. Use per entry lock for cancel_hash, this removes
+>>> some completion lock invocation and remove contension between different
+>>> cancel_hash entries.
+>>>
+>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>> ---
+>>>
+>>> v1->v2:
+>>>   - Add per entry lock for poll/apoll task work code which was missed
+>>>     in v1
+>>>   - add an member in io_kiocb to track req's indice in cancel_hash
+>>>
+>>> v2->v3:
+>>>   - make struct io_hash_bucket align with cacheline to avoid cacheline
+>>>     false sharing.
+>>>   - re-calculate hash value when deleting an entry from cancel_hash.
+>>>     (cannot leverage struct io_poll to store the indice since it's
+>>>      already 64 Bytes)
+>>>
+>>>   io_uring/cancel.c         | 14 +++++++--
+>>>   io_uring/cancel.h         |  6 ++++
+>>>   io_uring/fdinfo.c         |  9 ++++--
+>>>   io_uring/io_uring.c       |  8 +++--
+>>>   io_uring/io_uring_types.h |  2 +-
+>>>   io_uring/poll.c           | 64 +++++++++++++++++++++------------------
+>>>   6 files changed, 65 insertions(+), 38 deletions(-)
+>>>
+>>> diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+>>> index 83cceb52d82d..bced5d6b9294 100644
+>>> --- a/io_uring/cancel.c
+>>> +++ b/io_uring/cancel.c
+>>> @@ -93,14 +93,14 @@ int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd)
+>>>       if (!ret)
+>>>           return 0;
+>>> -    spin_lock(&ctx->completion_lock);
+>>>       ret = io_poll_cancel(ctx, cd);
+>>>       if (ret != -ENOENT)
+>>>           goto out;
+>>> +    spin_lock(&ctx->completion_lock);
+>>>       if (!(cd->flags & IORING_ASYNC_CANCEL_FD))
+>>>           ret = io_timeout_cancel(ctx, cd);
+>>> -out:
+>>>       spin_unlock(&ctx->completion_lock);
+>>> +out:
+>>>       return ret;
+>>>   }
+>>> @@ -192,3 +192,13 @@ int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
+>>>       io_req_set_res(req, ret, 0);
+>>>       return IOU_OK;
+>>>   }
+>>> +
+>>> +inline void init_hash_table(struct io_hash_bucket *hash_table, unsigned size)
+>>
+>> Not inline, it can break builds
+>>
 > 
-> Don't update ret until fixed file is closed, otherwise the file slot
-> becomes the error code.
-> 
-> Fixes: a7c41b4687f5 ("io_uring: let IORING_OP_FILES_UPDATE support choosing fixed file slots")
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
->   io_uring/rsrc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> What do you mean? It's compiled well.
 
-Something strange is going on here, io_uring/rsrc.c was only queued for
-5.20, but it's marked 5.19, weird.
-
-
-> index d78e7f2ea91f..cf8c85d1fb59 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -705,8 +705,8 @@ static int io_files_update_with_index_alloc(struct io_kiocb *req,
->   		if (ret < 0)
->   			break;
->   		if (copy_to_user(&fds[done], &ret, sizeof(ret))) {
-> -			ret = -EFAULT;
->   			__io_close_fixed(req, issue_flags, ret);
-> +			ret = -EFAULT;
->   			break;
->   		}
->   	}
+I might be wrong, but IIRC there could be linking issues. Anyway,
+it's used only from another obj and the function is cold, so no reason
+to have it inline.
 
 -- 
 Pavel Begunkov

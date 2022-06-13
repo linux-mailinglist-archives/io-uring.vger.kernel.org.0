@@ -2,73 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78628548EBD
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jun 2022 18:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47FD8548FA9
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jun 2022 18:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347541AbiFMMko (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Jun 2022 08:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54560 "EHLO
+        id S1359469AbiFMNUx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Jun 2022 09:20:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355235AbiFMMjG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jun 2022 08:39:06 -0400
-Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00C25DD01
-        for <io-uring@vger.kernel.org>; Mon, 13 Jun 2022 04:08:44 -0700 (PDT)
-Message-ID: <f2fddce1-bc25-183e-6095-bb5a70a57319@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655118523;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mf6RwUQeNgkeArC+1b+8sq01ixRB3ZvnZtxt9kdLb5E=;
-        b=UMxh6mTptV859adP32Y2n174qKqWpQDWZHODYDCI9x1yaDwstiPgJ+Sfs8rEkeSQsV0GW5
-        pU9W8HSjKlEf4aBT5oL4usVp2C3M4ztAiHCaB7+O4zF7XsvuqXYAGHy2KCp0s0WVPpIjw/
-        F3JFVeQTpsu1Xt6hgXPmtqMMEaVc4jg=
-Date:   Mon, 13 Jun 2022 19:08:34 +0800
-MIME-Version: 1.0
-Subject: Re: [PATCH 0/3] io_uring: fixes for provided buffer ring
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>, axboe@kernel.dk,
-        asml.silence@gmail.com, io-uring@vger.kernel.org
-Cc:     Kernel-team@fb.com
-References: <20220613101157.3687-1-dylany@fb.com>
+        with ESMTP id S1377402AbiFMNUV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Jun 2022 09:20:21 -0400
+Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE896AA74
+        for <io-uring@vger.kernel.org>; Mon, 13 Jun 2022 04:23:34 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1655119371;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=hoVV5CsPX9QFfOzGFZaQhE3Q39rRY8P4kWYP0uUhRtM=;
+        b=qTRh9PheBlcKodSV8okQmTDEVISS+xGod81C15FFSY2tcx1LxjrF4kVXtkIAzyu7yAXbcE
+        JGGfdgtTYGlOMh44N2fRj+Ky32oByCS4grl1mMA8/b07l4gkinD2wjl85I8Qw4v32Fuy75
+        WXN/hsWMxnjKpCIQ/ZYT6c7aaTGofWA=
 From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <20220613101157.3687-1-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] io_uring: remove duplicate cqe skip check
+Date:   Mon, 13 Jun 2022 19:22:31 +0800
+Message-Id: <20220613112231.998738-1-hao.xu@linux.dev>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/13/22 18:11, Dylan Yudaken wrote:
-> This fixes two problems in the new provided buffer ring feature. One
-> is a simple arithmetic bug (I think this came out from a refactor).
-> The other is due to type differences between head & tail, which causes
-> it to sometimes reuse an old buffer incorrectly.
-> 
-> Patch 1&2 fix bugs
-> Patch 3 limits the size of the ring as it's not
-> possible to address more entries with 16 bit head/tail
+From: Hao Xu <howeyxu@tencent.com>
 
-Reviewed-by: Hao Xu <howeyxu@tencent.com>
+Remove duplicate cqe skip check in __io_fill_cqe32_req()
 
-> 
-> I will send test cases for liburing shortly.
-> 
-> One question might be if we should change the type of ring_entries
-> to uint16_t in struct io_uring_buf_reg?
+Signed-off-by: Hao Xu <howeyxu@tencent.com>
+---
+ io_uring/io_uring.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Why not? 5.19 is just rc2 now. So we can assume there is no users using
-it right now I think?
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 1572ebe3cff1..6a94d1682aaf 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1194,8 +1194,6 @@ static inline void __io_fill_cqe32_req(struct io_kiocb *req, u64 extra1,
+ 
+ 	if (WARN_ON_ONCE(!(ctx->flags & IORING_SETUP_CQE32)))
+ 		return;
+-	if (req->flags & REQ_F_CQE_SKIP)
+-		return;
+ 
+ 	trace_io_uring_complete(ctx, req, req->cqe.user_data, req->cqe.res,
+ 				req->cqe.flags, extra1, extra2);
 
+base-commit: d8271bf021438f468dab3cd84fe5279b5bbcead8
+-- 
+2.25.1
 

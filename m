@@ -2,158 +2,172 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 019AB54AD64
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 11:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CA054ADC0
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 11:53:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbiFNJ36 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 05:29:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43942 "EHLO
+        id S239637AbiFNJxB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 05:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230333AbiFNJ36 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 05:29:58 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269E440A35;
-        Tue, 14 Jun 2022 02:29:54 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id fu3so15971166ejc.7;
-        Tue, 14 Jun 2022 02:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z9AkUJLjKxpCtPozfky0qDOVE/YUSyibmUCJ911O1ME=;
-        b=ZMT+RmlvqNsh5jo2KFs33OQi/LITKKRcaki81YPfuUOcRZ0qhbI+QLlZNU1zMZNdSn
-         iHEm2nmHA35CFObgLmW7swjICxFUZqHd+rMTKhEBnDuwCo5OB44g7ouql5/0xT4wJbxf
-         AD1Fj0jPiuvutxnLFGwRe3LXAo2OJY3dtt85sVJr28GVSIxFb+pBYeXWoiIQFmDblZTf
-         z7ox5702zzd/OpBQXT1TR94ALd5pFYoFlnGOzecOdxoi/8FpHyIwsm2GcIWjLtV2qjSc
-         G09zZ3nuinLOAYFJyF7B3vHDqyjKD1I0esdK2f0+NOx3b+yBF22usMv3ycn36F3Cw6gw
-         1C1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z9AkUJLjKxpCtPozfky0qDOVE/YUSyibmUCJ911O1ME=;
-        b=h9+liGcd0L2MB8LrtbK3HDS5PYlphvpLCxPd8deK8K+PLHcIOK18E+IgC7o/PVxkKG
-         t7pqWWT5b/rWPI4R8yHpn0r087k/fYhX6u/NpB8vvaD5vsK6+SE1SpdyqtuiuuCUSr8H
-         vRdckNMakPJvC+uhvzmI5jOKGVs/N5T7eZpcgq6upnwkW3Oi122pd9Bv2fo+EF5frT1e
-         hSp9ORPfENrAqLUl+SSvyaXHWfyA8gm0/QVkPHl4Yyv7qO08KqQyBZk5YXhLXz5X5IUI
-         SV4X0sVZZehkeMoilY5LE7wPTy2RbIui7NXsng82nsBgBdBzV8FqZN2ZXmPp1fc8Gqu2
-         ClLg==
-X-Gm-Message-State: AJIora8VRazfOcxK13uZr7aT3PiPlu4Y2FF12PAh6aPUy0C3En+UU2tO
-        Mq67fKrJlTNhDC6Y/Bp2nE+NpWotlkjwfDNuINg=
-X-Google-Smtp-Source: ABdhPJzGqoIZfdM7ZWlho9Lg9B9tKFsDGmbPE4Hti4p7EBQcgkEIuSmezedLqrFLwwCUgKELKdbjVV03Z77mJfapERA=
-X-Received: by 2002:a17:906:3f02:b0:718:bdf7:790d with SMTP id
- c2-20020a1709063f0200b00718bdf7790dmr3378536ejj.479.1655198992551; Tue, 14
- Jun 2022 02:29:52 -0700 (PDT)
+        with ESMTP id S240965AbiFNJw7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 05:52:59 -0400
+Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAA71F61D
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 02:52:53 -0700 (PDT)
+Message-ID: <659462b3-4fc7-12ed-f760-da0f222539a0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1655200371;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ctXmhXgvFDTZSyhrdBIuHSU7/aPKdHgKMEwt0ilpmek=;
+        b=NZuYvd+KOCizZkIph0hs3v43Qz4EDXIghh2NCq7xIRCrAQoOA4Il43ovD6Fr0wqqBXWx7j
+        9hQub1CuIOzLbECypvxkm85xsNbpWaGRsy8H/y4onxc0cAEtIPRLv3gwwu9JRWfM/wzQf9
+        BbZ32XMD58vDq3/VhZ57vRKbaFOM/ps=
+Date:   Tue, 14 Jun 2022 17:52:41 +0800
 MIME-Version: 1.0
-References: <20220614091359.124571-1-dzm91@hust.edu.cn> <CAMZfGtWswvFRp8UmnETRENsq1WBx9QvG7A_v8Eq62aaNA96wMw@mail.gmail.com>
-In-Reply-To: <CAMZfGtWswvFRp8UmnETRENsq1WBx9QvG7A_v8Eq62aaNA96wMw@mail.gmail.com>
-From:   Dongliang Mu <mudongliangabcd@gmail.com>
-Date:   Tue, 14 Jun 2022 17:29:18 +0800
-Message-ID: <CAD-N9QViX0sS+w_g4cL1kaZaRduWwY8ZkOhmLzRL83MP0CVqAw@mail.gmail.com>
-Subject: Re: [PATCH] fs: io_uring: remove NULL check before kfree
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Dongliang Mu <dzm91@hust.edu.cn>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [RFC] support memory recycle for ring-mapped provided buffer
+Content-Language: en-US
+To:     Dylan Yudaken <dylany@fb.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>
+References: <6641baea-ba35-fb31-b2e7-901d72e9d9a0@linux.dev>
+ <4980fd4d-b1f3-7b1c-8bfc-6be4d31f9da0@linux.dev>
+ <d4aada77-1dce-55e7-3a7c-bf4b3add3ac3@linux.dev>
+ <a62d21cc5a3f9741673f9bf912d2ec4c97c4e193.camel@fb.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <a62d21cc5a3f9741673f9bf912d2ec4c97c4e193.camel@fb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jun 14, 2022 at 5:26 PM Muchun Song <songmuchun@bytedance.com> wrote:
->
-> On Tue, Jun 14, 2022 at 5:14 PM Dongliang Mu <dzm91@hust.edu.cn> wrote:
-> >
-> > From: mudongliang <mudongliangabcd@gmail.com>
-> >
-> > kfree can handle NULL pointer as its argument.
-> > According to coccinelle isnullfree check, remove NULL check
-> > before kfree operation.
-> >
-> > Signed-off-by: mudongliang <mudongliangabcd@gmail.com>
-> > ---
-> >  fs/io_uring.c | 15 +++++----------
-> >  1 file changed, 5 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > index 3aab4182fd89..bec47eae2a9b 100644
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -3159,8 +3159,7 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
-> >                         if ((req->flags & REQ_F_POLLED) && req->apoll) {
-> >                                 struct async_poll *apoll = req->apoll;
-> >
-> > -                               if (apoll->double_poll)
-> > -                                       kfree(apoll->double_poll);
-> > +                               kfree(apoll->double_poll);
-> >                                 list_add(&apoll->poll.wait.entry,
-> >                                                 &ctx->apoll_cache);
-> >                                 req->flags &= ~REQ_F_POLLED;
-> > @@ -4499,8 +4498,7 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
-> >         kiocb_done(req, ret, issue_flags);
-> >  out_free:
-> >         /* it's faster to check here then delegate to kfree */
->
-> I am feeling you are not on the right way. See the comment
-> here.
+Hi Dylan,
 
-Thanks for your reply. I ignore them previously. Any method to make
-coccicheck ignore such cases?
+On 6/14/22 16:38, Dylan Yudaken wrote:
+> On Tue, 2022-06-14 at 14:26 +0800, Hao Xu wrote:
+>> On 6/12/22 15:30, Hao Xu wrote:
+>>> On 6/10/22 13:55, Hao Xu wrote:
+>>>> Hi all,
+>>>>
+>>>> I've actually done most code of this, but I think it's necessary
+>>>> to
+>>>> first ask community for comments on the design. what I do is when
+>>>> consuming a buffer, don't increment the head, but check the
+>>>> length
+>>>> in real use. Then update the buffer info like
+>>>> buff->addr += len, buff->len -= len;
+>>>> (off course if a req consumes the whole buffer, just increment
+>>>> head)
+>>>> and since we now changed the addr of buffer, a simple buffer id
+>>>> is
+>>>> useless for userspace to get the data. We have to deliver the
+>>>> original
+>>>> addr back to userspace through cqe->extra1, which means this
+>>>> feature
+>>>> needs CQE32 to be on.
+>>>> This way a provided buffer may be splited to many pieces, and
+>>>> userspace
+>>>> should track each piece, when all the pieces are spare again,
+>>>> they can
+>>>> re-provide the buffer.(they can surely re-provide each piece
+>>>> separately
+>>>> but that causes more and more memory fragments, anyway, it's
+>>>> users'
+>>>> choice.)
+>>>>
+>>>> How do you think of this? Actually I'm not a fun of big cqe, it's
+>>>> not
+>>>> perfect to have the limitation of having CQE32 on, but seems no
+>>>> other
+>>>> option?
+>>
+>> Another way is two rings, just like sqring and cqring. Users provide
+>> buffers to sqring, kernel fetches it and when data is there put it to
+>> cqring for users to read. The downside is we need to copy the buffer
+>> metadata. and there is a limitation of how many times we can split
+>> the
+>> buffer since the cqring has a length.
+>>
+>>>>
+>>>> Thanks,
+>>>> Hao
+>>>
+>>> To implement this, CQE32 have to be introduced to almost
+>>> everywhere.
+>>> For example for io_issue_sqe:
+>>>
+>>> def->issue();
+>>> if (unlikely(CQE32))
+>>>       __io_req_complete32();
+>>> else
+>>>       __io_req_complete();
+>>>
+>>> which will cerntainly have some overhead for main path. Any
+>>> comments?
 
->
-> Thanks.
->
-> > -       if (iovec)
-> > -               kfree(iovec);
-> > +       kfree(iovec);
-> >         return 0;
-> >  }
-> >
-> > @@ -4602,8 +4600,7 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
-> >         }
-> >  out_free:
-> >         /* it's reportedly faster than delegating the null check to kfree() */
->
-> See here.
->
-> > -       if (iovec)
-> > -               kfree(iovec);
-> > +       kfree(iovec);
-> >         return ret;
-> >  }
-> >
-> > @@ -6227,8 +6224,7 @@ static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
-> >                 req_set_fail(req);
-> >         }
-> >         /* fast path, check for non-NULL to avoid function call */
->
-> here.
->
-> > -       if (kmsg->free_iov)
-> > -               kfree(kmsg->free_iov);
-> > +       kfree(kmsg->free_iov);
-> >         req->flags &= ~REQ_F_NEED_CLEANUP;
-> >         if (ret >= 0)
-> >                 ret += sr->done_io;
-> > @@ -6481,8 +6477,7 @@ static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
-> >         }
-> >
-> >         /* fast path, check for non-NULL to avoid function call */
->
-> And here.
->
-> > -       if (kmsg->free_iov)
-> > -               kfree(kmsg->free_iov);
-> > +       kfree(kmsg->free_iov);
-> >         req->flags &= ~REQ_F_NEED_CLEANUP;
-> >         if (ret >= 0)
-> >                 ret += sr->done_io;
-> > --
-> > 2.35.1
-> >
+For this downside, I think there is way to limit it to only read/recv
+path.
+
+>>>
+>>> Regards,
+>>> Hao
+>>>
+>>
+> 
+> I find the idea interesting, but is it definitely worth doing?
+> 
+> Other downsides I see with this approach:
+> * userspace would have to keep track of when a buffer is finished. This
+> might get complicated.
+This one is fine I think, since users can choose not to enable this
+feature and if they use it, they can choose not to track the buffer
+but to re-provide each piece immediately.
+(When a user register the pbuf ring, they can deliver a flag to enable
+this feature.)
+
+> * there is a problem of tiny writes - would we want to support a
+> minimum buffer size?
+
+Sorry I'm not following here, why do we need to have a min buffer size?
+
+> 
+> I think in general it can be acheived using the existing buffer ring
+> and leave the management to userspace. For example if a user prepares a
+> ring with N large buffers, on each completion the user is free to
+> requeue that buffer without the recently completed chunk.
+
+[1]
+I see, was not aware of this...
+
+> 
+> The downsides here I see are:
+>   * there is a delay to requeuing the buffer. This might cause more
+> ENOBUFS. Practically I 'feel' this will not be a big problem in
+> practice
+>   * there is an additional atomic incrememnt on the ring
+> 
+> Do you feel the wins are worth the extra complexity?
+
+Personally speaking, the only downside of my first approach is overhead
+of cqe32 on iopoll completion path and read/recv/recvmsg path. But looks
+[1] is fine...TBH I'm not sure which one is better.
+
+Thanks,
+Hao
+
+> 
+> 
+

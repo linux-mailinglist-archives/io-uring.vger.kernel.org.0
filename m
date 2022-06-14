@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B833D54B38F
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 16:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA4554B371
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 16:42:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235644AbiFNOhr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S234697AbiFNOhr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 14 Jun 2022 10:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237898AbiFNOhp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 10:37:45 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B68101147A
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:43 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id x17so11577589wrg.6
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:43 -0700 (PDT)
+        with ESMTP id S238080AbiFNOhq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 10:37:46 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F7EA17593
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:45 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id i81-20020a1c3b54000000b0039c76434147so117423wma.1
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=43ATD8fKnmjyJdZ2R6qxl1QYnz/Icg31elC1cRBKr+w=;
-        b=dWSJcQy861faEAMob54R9WAvsnQs2gN2exzOxO9MfDV5fZ/Q4hoyzssXere454eLQi
-         It3xv6q0Vl0aNw9vhLM38zpvZdoS8zNKawymC44is2WpJnLoNe8r8u92erbikD7EQWaM
-         uldltSzhgrgwkdRonSejQ0L3CMnlWLYj/KxLrCBI6QyDFZg6nL6YQGXh8ydcLTz3xQin
-         P5SSNF5kpr6kCHFvAzLj8T8cSLkE90c1KwEI/OMDupPVMtARaHg1smfIvsitwHOW0G5h
-         fh5tu0F53ewQynV8MIXMTZY6r6Um/PvMo0MMm0Mlb3kWdt/W2a7bSzo2sIl11ATUiD1d
-         dYgQ==
+        bh=D8sFDmp4NCj8bAwGZ38Oxd60P7D2GVHJ5ZCu/JRHls8=;
+        b=JQ2rUzbbr6ynGLDV1KXga1yA3VViPP0IkuWyTwsxl1m9u2O6ZXLFBm+sdNI5E/Eyng
+         2SMcLPBd5kS8UHwOm4sLwQ/QxN8F2vZx5M67y8g+LmDBmuE+T6fF85rVzKgT+Rgm10J5
+         lKv3wuKvO2UjuOhFiRTax9MlU+loKoJmNFzK3qS9ahmcGlT7l4MsJxM1jcddRkziHx3c
+         DuaoJwgJLSuuDKU3zYHJfAGwMJJIL2RH8KFaXB1UnMu+TEbs8KWBOxiYbVV3vGRhIdZj
+         mMg+NAy1xFjVvJTRKaTMEMBO+mmt/+HD7FuWeGTXcB1ukJ484uMmWo9L03AOPXUHWAQM
+         5MhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=43ATD8fKnmjyJdZ2R6qxl1QYnz/Icg31elC1cRBKr+w=;
-        b=lASKtwL4vV9csIhhAYARouOZmqE+Cvv8XCE1qevjuuvlO0S/LnEWLFxPBzjujjdoHz
-         7s5FuSjYejTabw/SEMqPlLruOqPgow9Me9YPTBVzVD5GljayWuHcfUs0lYTDSIYGirR0
-         o4ZF9BFt4jCyTlfSPhAc+j6SOjpqHAJmyNiwDkqTbt7ql2cSwp0BRkYlYy+lZWlHx8Hl
-         yL7hqkP+reLWga32PnHy9ZTt2A0Xlzi5LLhssZAU//+3Z0T7NQne2lHEgAfDSbwX4p3D
-         WK9C7htYOQvM/7p6bAgnOP2/fxAIFb1pcKgfMUItE0HiO0di1960U3II978VGkVxtY9d
-         fcmw==
-X-Gm-Message-State: AJIora9JgLr2k3m5P76iNXZDssb1u/JnavZvu9hjC1tH6i0+Sp3OR2Hn
-        b1sptIL+47eteCu62lkN5c1Dc6QeZw95SA==
-X-Google-Smtp-Source: AGRyM1vNQNKrvWhUjOitvg2CNSvKDDpY7+NbodWCJh3jGKqGG0zYlC9L+5kG0fEu4kMhS+f6OJat0g==
-X-Received: by 2002:a5d:55ca:0:b0:211:4092:1c27 with SMTP id i10-20020a5d55ca000000b0021140921c27mr5404546wrw.108.1655217462025;
-        Tue, 14 Jun 2022 07:37:42 -0700 (PDT)
+        bh=D8sFDmp4NCj8bAwGZ38Oxd60P7D2GVHJ5ZCu/JRHls8=;
+        b=gQb+N3WRNyB9dG+qKbuhKIoWxKrbYDxeJ8shw97z7M9V57U069APqmcN9KQmp6QE/K
+         Y2V1oJW9lexDujHbth4ChQlUnMEOSrnvcLuAZZjvOLcAlxgYO9qR3EB4JFkZ3C+o6ICh
+         MX3Yr18D2kvRqcV2FgDqtQfYRoPGDGhVNK419CasYA0YAYcpCfUSkKPYZOPESg4Wpqrq
+         fcgT4lNLxmzVCdVsCQdnChikhOk1LcRLcH+gyWuAWifpl9fmSwsDUYtiTTAxAshObvwF
+         HAyFbdIk8uzHJpgSwWT9TTx4ocquuQ3tTHZSAnLjUrU9IwaQQSOugsDaCaA3TsRN2XkW
+         aRFw==
+X-Gm-Message-State: AOAM5328vlOFMULu2GtZ/bn+0KUUQ7CXLTLpXDe+gIaAXfZrRLNK+FdC
+        IjIektou4s2ES+ZAo95ru0azi/GG+SEYTw==
+X-Google-Smtp-Source: ABdhPJxBzELWc5rfW1QCUhZqBMPfwwwSPUPSZGvdm656ldCCjLnZj+4UJ9sySXUJITYHq5SBYmqMPw==
+X-Received: by 2002:a05:600c:35d2:b0:397:84c9:6fe8 with SMTP id r18-20020a05600c35d200b0039784c96fe8mr4499873wmq.206.1655217463376;
+        Tue, 14 Jun 2022 07:37:43 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id a4-20020adff7c4000000b0021033caa332sm12353064wrq.42.2022.06.14.07.37.40
+        by smtp.gmail.com with ESMTPSA id a4-20020adff7c4000000b0021033caa332sm12353064wrq.42.2022.06.14.07.37.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 07:37:41 -0700 (PDT)
+        Tue, 14 Jun 2022 07:37:42 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 03/25] io_uring: better caching for ctx timeout fields
-Date:   Tue, 14 Jun 2022 15:36:53 +0100
-Message-Id: <51f0bc096197ab07fbc54b975dafbd22a31a634c.1655213915.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 04/25] io_uring: refactor ctx slow data placement
+Date:   Tue, 14 Jun 2022 15:36:54 +0100
+Message-Id: <c600cc3615eeea7c876a7c0edd058b880519e175.1655213915.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655213915.git.asml.silence@gmail.com>
 References: <cover.1655213915.git.asml.silence@gmail.com>
@@ -68,63 +68,120 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Following timeout fields access patterns, move all of them into a
-separate cache line inside ctx, so they don't intervene with normal
-completion caching, especially since timeout removals and completion
-are separated and the later is done via tw.
-
-It also sheds some bytes from io_ring_ctx, 1216B -> 1152B
+Shove all slow path data at the end of ctx and get rid of extra
+indention.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring_types.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ io_uring/io_uring_types.h | 81 +++++++++++++++++++--------------------
+ 1 file changed, 39 insertions(+), 42 deletions(-)
 
 diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
-index 52e91c3df8d5..4f52dcbbda56 100644
+index 4f52dcbbda56..ca8e25992ece 100644
 --- a/io_uring/io_uring_types.h
 +++ b/io_uring/io_uring_types.h
-@@ -179,8 +179,6 @@ struct io_ring_ctx {
- 		struct xarray		io_bl_xa;
- 		struct list_head	io_buffers_cache;
- 
--		struct list_head	timeout_list;
--		struct list_head	ltimeout_list;
- 		struct list_head	cq_overflow_list;
+@@ -183,7 +183,6 @@ struct io_ring_ctx {
  		struct list_head	apoll_cache;
  		struct xarray		personalities;
-@@ -213,15 +211,11 @@ struct io_ring_ctx {
- 		struct io_ev_fd	__rcu	*io_ev_fd;
- 		struct wait_queue_head	cq_wait;
- 		unsigned		cq_extra;
--		atomic_t		cq_timeouts;
--		unsigned		cq_last_tm_flush;
+ 		u32			pers_next;
+-		unsigned		sq_thread_idle;
  	} ____cacheline_aligned_in_smp;
  
- 	struct {
- 		spinlock_t		completion_lock;
+ 	/* IRQ completion list, under ->completion_lock */
+@@ -230,23 +229,6 @@ struct io_ring_ctx {
+ 		struct list_head	io_buffers_comp;
+ 	} ____cacheline_aligned_in_smp;
  
--		spinlock_t		timeout_lock;
+-	struct io_restriction		restrictions;
 -
- 		/*
- 		 * ->iopoll_list is protected by the ctx->uring_lock for
- 		 * io_uring instances that don't use IORING_SETUP_SQPOLL.
-@@ -253,6 +247,15 @@ struct io_ring_ctx {
- 		struct list_head	io_buffers_pages;
- 	};
- 
-+	/* timeouts */
-+	struct {
-+		spinlock_t		timeout_lock;
-+		atomic_t		cq_timeouts;
-+		struct list_head	timeout_list;
-+		struct list_head	ltimeout_list;
-+		unsigned		cq_last_tm_flush;
-+	} ____cacheline_aligned_in_smp;
-+
- 	/* Keep this last, we don't need it for the fast path */
+-	/* slow path rsrc auxilary data, used by update/register */
+-	struct {
+-		struct io_rsrc_node		*rsrc_backup_node;
+-		struct io_mapped_ubuf		*dummy_ubuf;
+-		struct io_rsrc_data		*file_data;
+-		struct io_rsrc_data		*buf_data;
+-
+-		struct delayed_work		rsrc_put_work;
+-		struct llist_head		rsrc_put_llist;
+-		struct list_head		rsrc_ref_list;
+-		spinlock_t			rsrc_ref_lock;
+-
+-		struct list_head	io_buffers_pages;
+-	};
+-
+ 	/* timeouts */
  	struct {
- 		#if defined(CONFIG_UNIX)
+ 		spinlock_t		timeout_lock;
+@@ -257,30 +239,45 @@ struct io_ring_ctx {
+ 	} ____cacheline_aligned_in_smp;
+ 
+ 	/* Keep this last, we don't need it for the fast path */
+-	struct {
+-		#if defined(CONFIG_UNIX)
+-			struct socket		*ring_sock;
+-		#endif
+-		/* hashed buffered write serialization */
+-		struct io_wq_hash		*hash_map;
+-
+-		/* Only used for accounting purposes */
+-		struct user_struct		*user;
+-		struct mm_struct		*mm_account;
+-
+-		/* ctx exit and cancelation */
+-		struct llist_head		fallback_llist;
+-		struct delayed_work		fallback_work;
+-		struct work_struct		exit_work;
+-		struct list_head		tctx_list;
+-		struct completion		ref_comp;
+-
+-		/* io-wq management, e.g. thread count */
+-		u32				iowq_limits[2];
+-		bool				iowq_limits_set;
+-
+-		struct list_head		defer_list;
+-	};
++
++	struct io_restriction		restrictions;
++
++	/* slow path rsrc auxilary data, used by update/register */
++	struct io_rsrc_node		*rsrc_backup_node;
++	struct io_mapped_ubuf		*dummy_ubuf;
++	struct io_rsrc_data		*file_data;
++	struct io_rsrc_data		*buf_data;
++
++	struct delayed_work		rsrc_put_work;
++	struct llist_head		rsrc_put_llist;
++	struct list_head		rsrc_ref_list;
++	spinlock_t			rsrc_ref_lock;
++
++	struct list_head		io_buffers_pages;
++
++	#if defined(CONFIG_UNIX)
++		struct socket		*ring_sock;
++	#endif
++	/* hashed buffered write serialization */
++	struct io_wq_hash		*hash_map;
++
++	/* Only used for accounting purposes */
++	struct user_struct		*user;
++	struct mm_struct		*mm_account;
++
++	/* ctx exit and cancelation */
++	struct llist_head		fallback_llist;
++	struct delayed_work		fallback_work;
++	struct work_struct		exit_work;
++	struct list_head		tctx_list;
++	struct completion		ref_comp;
++
++	/* io-wq management, e.g. thread count */
++	u32				iowq_limits[2];
++	bool				iowq_limits_set;
++
++	struct list_head		defer_list;
++	unsigned			sq_thread_idle;
+ };
+ 
+ enum {
 -- 
 2.36.1
 

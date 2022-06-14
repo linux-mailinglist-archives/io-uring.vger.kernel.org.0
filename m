@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D05F854B382
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 16:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 196F654B3A8
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 16:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236475AbiFNOho (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 10:37:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59892 "EHLO
+        id S231584AbiFNOhp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 10:37:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238080AbiFNOhm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 10:37:42 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B75CE22
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:41 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id o8so11589460wro.3
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:41 -0700 (PDT)
+        with ESMTP id S235644AbiFNOho (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 10:37:44 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972A811443
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:42 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id o16so11586834wra.4
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 07:37:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ORixVfQAPkrUEdbPULkgFBU4hdADQl3LSugR9FT2k0U=;
-        b=qzWm0g5k1+Lp3SK0gLG+mGrPvOZWCa4HtZgLT9oN2eVm1W7ir3q9AwVT29ypOow4vn
-         Mwsk45+VnZ/2Ow9I0fimSye+9FM8HumrJp3DaHEuz3EyMlXeBWzSnSoDdIbvVBjjl0I5
-         hUHpNcbWdg0HunoNBsMeKNyhlQmOTd+ch3ZWj14IciCYELc8Z+D0hI1U/YmvkYPpLEVK
-         DTgn+xdR39DK08E2Y3h7mE11jmmhxI904iGlamn6VAlR0zD75km+5HJfOPzbao3K0vDq
-         vSYIsvZptmQjFPpPKaKdEhPIhNJOFTpVXgpEVsf/bYKv7a6kSZLu0EsPr7ritD0O416h
-         9AEQ==
+        bh=ToujjDMrgxjXImVoVU6hciJcYYHsx0thIW3gWEU5SEA=;
+        b=HE3wDBPv0/eb+nDpl+5ucOakSdPeonehkWrbXi0ZxX0nK2AYMnOtB8El2y+P3Mnimp
+         Rbbx1cXwqsyAtFN+hCBqka5TsoRi/B3OV9RmZRwRJsib46r5gb5zMO0dUhicnqMQoMZ7
+         99N1+wwT1IW4lQG1JR6LSHN6xE/zLrT+oheZiDNsQQm9FJVlWSmqj5yxlVY5wJQyvdn7
+         6mRk9DEcPLeTfhKFB3eDtJRZQNlOFmWDpOH4ibpUF+o+QRbM4wNHJypUTlF+2jjpKiVM
+         dCWqqIP1qoSHfyCd/7KxYCecztCXwofIXlGIXeBhBnbFM9cW8UJi+GS48NqicbpLX4IT
+         1isw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ORixVfQAPkrUEdbPULkgFBU4hdADQl3LSugR9FT2k0U=;
-        b=Ya7bmeds5P9gf4uLekWTs+2nyaLD8Y8Ra5MKJzx50r+8RcolpTTpXlRk0TP1glgpHL
-         u4ZuVEsuVjVUg1H+iWjTwZdvWMsGvNYSm1TugfSGo0jVXHnT2vj3DSOXxX5GivXUZMVo
-         xQe6l6CPfsvFtTWPvDLx29pOP8emifnaEzaJX4yAqv/kPttntsuJW2P7oyimSyh7+YJ0
-         UUMmWo9gyZ5zTQZ3O5N8Y23KJO7LbCaVSC/rsC4S4kdko7UIFTE8DxN43UAW7GvIHBmi
-         enp+Ih21KzrIPtEp/4u3gviQCG15X5cuGMznfbmz28xHvO4PRGzbJMKo/qh5w+G9dr3S
-         LkbA==
-X-Gm-Message-State: AJIora8KhG23MSpz5amuaOOlEpCZ19CbLUNCzfKLS6upQXlwSpbVZzD2
-        4UvcZsn2EUxh99EaoCc5EwnEAPECj5t0OQ==
-X-Google-Smtp-Source: AGRyM1vXyzScAKkIhSa37u2dY357/CDwB46xMHCFkAKy5GxIqyd2LZgJmGzeLB3R4HTIYGTis3NpVQ==
-X-Received: by 2002:a05:6000:988:b0:219:cb95:79c4 with SMTP id by8-20020a056000098800b00219cb9579c4mr5299454wrb.587.1655217459589;
-        Tue, 14 Jun 2022 07:37:39 -0700 (PDT)
+        bh=ToujjDMrgxjXImVoVU6hciJcYYHsx0thIW3gWEU5SEA=;
+        b=5xaBCf4g3fehVVcmWaA28IBeA3krAZK82ekTyr4X8pPbm7/ftpF0DwKgtsKxzfJy7c
+         viR+UwaRfoE6bn01re4Jw3ysWy6LhizUz1GvgVrD6WuoxJzorzX59CuyJzNlaVteXnkb
+         3eJUlAJSDzX1+mePKA9aiv/UVbL3kMauEym8aEEv/DDD/EDOFC008z1BfetEvevGxrGA
+         6UHoVEKA7xT7xdYEWoCCr9Y+29RUvfM8JZQ7N8NsAz8+9BLThoOhmMxHHtAqKgU0c8cg
+         OKPFJ9SaYGtD1oSJ4a1YnEIw7CrH6RCsp8hUAFNPmJzE4RuoDdtuND7XoX7Gnjxic3+/
+         arIQ==
+X-Gm-Message-State: AJIora8UNUg8JPqYP3KreMZzzxXH/9tB8PppuH5jlh4g2epaLgKvwqCZ
+        r+TDv9QQLRySf0Eg1bvsKTzOQ/apsuGPjw==
+X-Google-Smtp-Source: AGRyM1vwI+6ddkJNb98+NqsWs0EuB06M3u4vhEeSxMtMjBo2qHIvUib5s1i5iqH9w2rqvh2g3P5mFQ==
+X-Received: by 2002:a05:6000:1812:b0:210:2eb1:4606 with SMTP id m18-20020a056000181200b002102eb14606mr5409646wrh.593.1655217460710;
+        Tue, 14 Jun 2022 07:37:40 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id a4-20020adff7c4000000b0021033caa332sm12353064wrq.42.2022.06.14.07.37.38
+        by smtp.gmail.com with ESMTPSA id a4-20020adff7c4000000b0021033caa332sm12353064wrq.42.2022.06.14.07.37.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 07:37:39 -0700 (PDT)
+        Tue, 14 Jun 2022 07:37:40 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 01/25] io_uring: make reg buf init consistent
-Date:   Tue, 14 Jun 2022 15:36:51 +0100
-Message-Id: <1835f8612fd77ed79712f566778cad6691d41c06.1655213915.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 02/25] io_uring: move defer_list to slow data
+Date:   Tue, 14 Jun 2022 15:36:52 +0100
+Message-Id: <097c9f3eb3f8ab052e10160567928ec8df0f1303.1655213915.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655213915.git.asml.silence@gmail.com>
 References: <cover.1655213915.git.asml.silence@gmail.com>
@@ -68,44 +68,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The default (i.e. empty) state of register buffer is dummy_ubuf, so set
-it to dummy on init instead of NULL.
+draining is slow path, move defer_list to the end where slow data lives
+inside the context.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rsrc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ io_uring/io_uring_types.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index fef46972c327..fd1323482030 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -567,7 +567,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 				io_buffer_unmap(ctx, &imu);
- 				break;
- 			}
--			ctx->user_bufs[i] = NULL;
-+			ctx->user_bufs[i] = ctx->dummy_ubuf;
- 			needs_switch = true;
- 		}
+diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
+index 7c22cf35a7e2..52e91c3df8d5 100644
+--- a/io_uring/io_uring_types.h
++++ b/io_uring/io_uring_types.h
+@@ -160,7 +160,6 @@ struct io_ring_ctx {
+ 		struct io_uring_sqe	*sq_sqes;
+ 		unsigned		cached_sq_head;
+ 		unsigned		sq_entries;
+-		struct list_head	defer_list;
  
-@@ -1200,14 +1200,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	size_t size;
- 	int ret, nr_pages, i;
+ 		/*
+ 		 * Fixed resources fast path, should be accessed only under
+@@ -272,8 +271,12 @@ struct io_ring_ctx {
+ 		struct work_struct		exit_work;
+ 		struct list_head		tctx_list;
+ 		struct completion		ref_comp;
++
++		/* io-wq management, e.g. thread count */
+ 		u32				iowq_limits[2];
+ 		bool				iowq_limits_set;
++
++		struct list_head		defer_list;
+ 	};
+ };
  
--	if (!iov->iov_base) {
--		*pimu = ctx->dummy_ubuf;
-+	*pimu = ctx->dummy_ubuf;
-+	if (!iov->iov_base)
- 		return 0;
--	}
- 
--	*pimu = NULL;
- 	ret = -ENOMEM;
--
- 	pages = io_pin_pages((unsigned long) iov->iov_base, iov->iov_len,
- 				&nr_pages);
- 	if (IS_ERR(pages)) {
 -- 
 2.36.1
 

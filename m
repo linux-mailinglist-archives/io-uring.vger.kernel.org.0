@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 363FE54B0ED
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 402DF54B10F
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238220AbiFNMef (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 08:34:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60710 "EHLO
+        id S242808AbiFNMeg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 08:34:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239463AbiFNMeW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:34:22 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143644BBA1
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:31:00 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id m32-20020a05600c3b2000b0039756bb41f2so4707088wms.3
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:31:00 -0700 (PDT)
+        with ESMTP id S1355284AbiFNMeX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:34:23 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BF94BBB1
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:31:02 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id m32-20020a05600c3b2000b0039756bb41f2so4707111wms.3
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VdgQMW5jxhkuYvwndjirbk6yyzG8N1G9hnlDD6URUMA=;
-        b=fVCBvm47gXMMrJzj71SNlSolJvuiLlBHc3cSeoYssM+tq1s5T9ynml3PmMt+8H3Y9T
-         V4+5Cj0Wy5YYUtKACEI0Ss+HNBejPKamoE2YEoSmhMf+9AJQCuNQJFW5Zp7M1WS+go7+
-         /aVnu6lk0A9oPxH+z/pg9sPcnrHWhq1q7owPvUbHbbLR0BLRw8K/5PyltjnKKWkelULo
-         BuFTxuws1pxGKVAJuUW17SztRmlqIt/6Im5oDdRlvgPrKg1zGaG/YP7VSMgTy3KGxW34
-         ceJsCIiWeOjfc90AecLAzWCPxeqUbEAzSXkgF82ejR1pLLk5bdevfe+QiqYuMyhxQOHl
-         qcIQ==
+        bh=zrn7uBYKLng0XHi7RMiiU3T4m2AfPpnQM1wA3OWR3wg=;
+        b=RQ9uiRkk3D2d/Y/TWEyhipyB3ehxQ2F7AQAlyRPIs8S+p1XK9FGVsQW+GyVeBbDNoE
+         0XThRMrJNj6SvYNBR7YlbujC7oaCGo0q30X0Db+3eR1sTS8qkMLMYneGW+j/dAVbUI9S
+         Sgoyo2RPVMHCStYXmxM4r8wDLfX0jrC9C6MGsOYTyoC11klP3LzrPOjlvWnBSrJG4+Aw
+         4f6e8dBgMogvMeFp+hveCdiaAKZI+Q2BQBjDFWW3J41P4pAzESQiCEKhioNddHAsz5Xe
+         HgxcI1/2/dZqAVLQBCXZu2euhrmKU3eE3wRr3+wgAawZJRYYVs5E46GPSWmBBjJ0+g/R
+         6SIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VdgQMW5jxhkuYvwndjirbk6yyzG8N1G9hnlDD6URUMA=;
-        b=DDqyEjskTI4JNMuBb6obJZoMVj8MI0bHyTLYKpviLrdMcn9j3y0oNDbBioAgfRLKm5
-         /9olw5Jh0uxEex/7xYgj6QcjsrPO78z4+gr+rnQkNruXN8iyRjYBJK+oGHsT4tjOErVP
-         HOHBQ1KoQk6YKbSAV/d2M6WaBkW/2kpJBIR8LEFjTeKFzq7vYPfzNUEuRbCuj7qBc082
-         is2zKwG51iEQuO5bTyaUBjLV3YID4KpkflKIA6s8fVpa0l0vBk9pCTikuHC+7Nj7gE59
-         D8QQEo4xriooGzCI1SS2MLkvHX3Vse83JjLGut7WB+gvnIMjX8lD6LDgiZsYn5Uu+UG3
-         6Idg==
-X-Gm-Message-State: AOAM530nXe0vAVg65WS6bPxz8Fl7uJAxCkRAqu+oOWkSNLij4eEIxODV
-        0db2j/nooOPjyHWHs9vdXa7lDdwN7/JyYw==
-X-Google-Smtp-Source: ABdhPJyFT+s6sXcTlxPk/OwbTJ/f65jkAL9P1mU3kcqSLcSXHPwgeBvF7fRBfZb5WR6/56xjjRRiPw==
-X-Received: by 2002:a7b:c4d8:0:b0:39c:97ed:baa3 with SMTP id g24-20020a7bc4d8000000b0039c97edbaa3mr3912809wmk.58.1655209859274;
-        Tue, 14 Jun 2022 05:30:59 -0700 (PDT)
+        bh=zrn7uBYKLng0XHi7RMiiU3T4m2AfPpnQM1wA3OWR3wg=;
+        b=gyGzWrSfH978ZN3ewaxVkZ0j56XeILoU/TaeUXeFkcKt4GlWF/bgp8L1eQEKLasXyF
+         mkfHtomVoJLQ14qsii+O+uQ0E/T4q2Yw8r7yUxa7sxhWZSNBiJ5+1oMPqW7GaACof06Z
+         dptlSNLCggxDa8EM6yK/Sw8v0+jUgozazLg227BTLLk9jRXR5uCqo0BPMtJ+zhdzRTSZ
+         owCHinRSXXfqY1KruWO6pLYCpH7HGYYv5LEmDs4b5+abbOFLBGynf+G7UoOqboQAt6I7
+         p0lxJ2R3AdSmeeoQ91C7Vi6hxCkDCdt9VMsUqLOOkB5gMUkbzOjmGriGuihgig/02Hnm
+         hL0g==
+X-Gm-Message-State: AOAM533hXXHmLb86+P9USGbPKdslbMze2aIuf4EdVn03Yo63N0QKiM3P
+        vYCuI2bybc9Sd5WpNCB902koUrJvPB+t0A==
+X-Google-Smtp-Source: ABdhPJxF0R7zhHAezwx4KhdekrUB1Wo/7YUbjq7q12zEC42mFrR2mQvNAIGGAxCjALf/TiQBXzOPNw==
+X-Received: by 2002:a05:600c:3d18:b0:39c:474c:eb with SMTP id bh24-20020a05600c3d1800b0039c474c00ebmr3891085wmb.87.1655209860406;
+        Tue, 14 Jun 2022 05:31:00 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.58
+        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 05:30:58 -0700 (PDT)
+        Tue, 14 Jun 2022 05:30:59 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 19/25] io_uring: clean up io_ring_ctx_alloc
-Date:   Tue, 14 Jun 2022 13:29:57 +0100
-Message-Id: <1dfcb8d34f9e51d6da65cb6aac8e943dfcef86e3.1655209709.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 20/25] io_uring: use state completion infra for poll reqs
+Date:   Tue, 14 Jun 2022 13:29:58 +0100
+Message-Id: <8ef49e3c8619395fe2d5d7e00e69f0af8d5cc9e2.1655209709.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655209709.git.asml.silence@gmail.com>
 References: <cover.1655209709.git.asml.silence@gmail.com>
@@ -68,47 +68,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a variable for the number of hash buckets in io_ring_ctx_alloc(),
-makes it more readable.
+Use io_req_task_complete() for poll request completions, so it can
+utilise state completions and save lots of unnecessary locking.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ io_uring/poll.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index a203943f3d71..89696efcead4 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -700,6 +700,8 @@ static __cold void io_fallback_req_func(struct work_struct *work)
- static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- {
- 	struct io_ring_ctx *ctx;
-+	unsigned hash_buckets;
-+	size_t hash_size;
- 	int hash_bits;
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index ad25a964d4ed..2688201e872a 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -234,12 +234,8 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
  
- 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-@@ -715,15 +717,15 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	 */
- 	hash_bits = ilog2(p->cq_entries) - 5;
- 	hash_bits = clamp(hash_bits, 1, 8);
-+	hash_buckets = 1U << hash_bits;
-+	hash_size = hash_buckets * sizeof(struct io_hash_bucket);
+ 	io_poll_remove_entries(req);
+ 	io_poll_req_delete(req, ctx);
+-	spin_lock(&ctx->completion_lock);
+-	req->cqe.flags = 0;
+-	__io_req_complete_post(req);
+-	io_commit_cqring(ctx);
+-	spin_unlock(&ctx->completion_lock);
+-	io_cqring_ev_posted(ctx);
++	io_req_set_res(req, req->cqe.res, 0);
++	io_req_task_complete(req, locked);
+ }
  
- 	ctx->cancel_hash_bits = hash_bits;
--	ctx->cancel_hash =
--		kmalloc((1U << hash_bits) * sizeof(struct io_hash_bucket),
--			GFP_KERNEL);
-+	ctx->cancel_hash = kmalloc(hash_size, GFP_KERNEL);
- 	if (!ctx->cancel_hash)
- 		goto err;
- 
--	init_hash_table(ctx->cancel_hash, 1U << hash_bits);
-+	init_hash_table(ctx->cancel_hash, hash_buckets);
- 
- 	ctx->dummy_ubuf = kzalloc(sizeof(*ctx->dummy_ubuf), GFP_KERNEL);
- 	if (!ctx->dummy_ubuf)
+ static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
 -- 
 2.36.1
 

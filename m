@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA71554B0FC
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A1154B0F6
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241187AbiFNMd7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S235345AbiFNMd7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 14 Jun 2022 08:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33368 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235189AbiFNMdk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:33:40 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4729C4B1EB
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:44 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id k19so11059150wrd.8
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:44 -0700 (PDT)
+        with ESMTP id S243863AbiFNMdm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:33:42 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E47A4B1FE
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:45 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id e5so4586644wma.0
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tcnT183OYNPa4vdT2GoOS6WMF6bmKM6MUsSlmmhun7A=;
-        b=hlX0CdHLf6LcGW5CKOCY2RKXzHPOOz8THFZNt0wiqq/l5jhfNAKXCCtzaCfVoQP+lb
-         kr9kG4rzaLnT9q/85r2NPTsmuj3YfGnlZ62Yhe42lxZ8tzU+0RN8ow2hc430V/MB5GAS
-         vxPiDtNOn8y6Iu6FQKYvnL91b6VUjBPRucSh8I0O4LXA9JHlzTlkKIKw+B65KGyHM9ea
-         yJflp1jWpG+81q0NCLpxio7ibtlWBP+V88UW6CZUQIeEQ0zavu03X0iQy2EAmevk/oIO
-         wrs5d00PSZ1PVRjXQLZZFCghKUGKKbNtEFRv4rTCTdWfut1rYInHUf0T8VJC27r6ccpg
-         88QQ==
+        bh=79kYGB1MuhBVdSp/oRQj0eo+ojhHpblZthnUV8e/Yck=;
+        b=Ug/njMd0L0l6sDO0E3omxepK8SKj0RH0+yxjCQd4mL9Z0uTBTMdcKy8hjOw8+ttZ5R
+         7sIdO0xMS4LeqZLd2SwuC+BKBmKsWVKnD9yubN0U+ViBMjwOI6pEfQHTv/FsGAUDjlkA
+         bgAKuFBENiTAV53CbpR7VTGv26a1J3ePfG6zRomRo40J3LEkp1yTyTi1Zgl/UhofMp/I
+         9sX/AC1Xc3L0jCqx6C7e8jqDUhOBTOWBaH31mHFTQchHYXSDvhESjYm55wYUjw8VVlxO
+         SVHfb+ty4X5JvtjJAsFx/aOZCh1owLH2eG49+2DhXMR0qQQrHyflDNl6AFPpwtPHgwzN
+         C1CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tcnT183OYNPa4vdT2GoOS6WMF6bmKM6MUsSlmmhun7A=;
-        b=0QjM6NpZMQQ7czAuizQ2Pskado1uiM4/quM2OJeqs+wwk5uIAf6QjY0Ptjew9hg6ff
-         1nM5ijVvaZhxod2FXmiIi7dUJB5spq2sksjpPFWVe0aIVLzzfV3b2enS7Q+7gxc8O3CF
-         ld0I4L2HFpoOjANqTXtS5B2YKuGWHhdX2ulTEAxcUuYoIgZ5I2Yu0s2HNKOoM8p9MJLJ
-         nd945iMwbzFAR/K013zYR8LJz3/Qe8AyHRSHk8gn7T8gRZgoutRVKMSfHFF3Oxa/FVyI
-         dtBM6gD3DHAZm9Kv0j3SRqs3OzmtD/VhScsPRycAa7OF+GB1m7WW1pWWVZ9vbjsPa8Ij
-         /IKQ==
-X-Gm-Message-State: AJIora/55sQrVcbPp7pF9Q9CNNyGJpl/MXOPnbhx/0jC2pTIGaRpEoeK
-        G7R/NDqSnG9tXkLOl+C2vhpRAGOXddkzKQ==
-X-Google-Smtp-Source: AGRyM1veVvLJqJenIPmY7d6F8waNbakyiOsDBFctjMPiBmPuSRQnFYlN7yfl/U/uhV435yGyiDT8Nw==
-X-Received: by 2002:a05:6000:156d:b0:210:3125:6012 with SMTP id 13-20020a056000156d00b0021031256012mr4525595wrz.357.1655209842417;
-        Tue, 14 Jun 2022 05:30:42 -0700 (PDT)
+        bh=79kYGB1MuhBVdSp/oRQj0eo+ojhHpblZthnUV8e/Yck=;
+        b=b+HZpyLU8j7QlUhd9fWof15nggKi7MoLZ/Nba/LiQ3s7w/N790ycy3bkyObj/AqZDN
+         QoV8sHqsBzeVPN3+6Bk/UXv5c0bujJT+hihdTeiLKaPxiu6Wnl4v5YnHJkgcYJhLqXyL
+         gZkPggJil36/5f1ETfAiif81eGtq+KoXWy2YEBV22VNQGw6wYpfPgfO7Jh+SQD4tzaes
+         TFCu7YUsFFk8ZXvcmagO2Ion0lQ1FvfYR6I5sBea3tjK3Ogcxl7deDozFHqIVqUdoU6j
+         HRil5C+Age/Iui8tWao3azKfLKm3I52UdDR85ZDpog6MQwp0lc8S2Cx3PwRt83pqs8Js
+         C/0g==
+X-Gm-Message-State: AOAM533g24SfcGniGNZpPbYTtf6+/qTblcA8HjugZ2CXcej8iJod9jkX
+        NpxUnsuPeSwGXfQsLnFypapVhNFhVh3QWQ==
+X-Google-Smtp-Source: ABdhPJx/Tkrj6dvGiLtf3j2O9F4wwbbQsS8hHFnQBJPENhf+KZjTiFFle02+bKR8K4p/5m2xdhewtw==
+X-Received: by 2002:a05:600c:8a6:b0:39c:5682:32d with SMTP id l38-20020a05600c08a600b0039c5682032dmr3884388wmp.126.1655209843581;
+        Tue, 14 Jun 2022 05:30:43 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.41
+        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 05:30:41 -0700 (PDT)
+        Tue, 14 Jun 2022 05:30:43 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 06/25] io_uring: move small helpers to headers
-Date:   Tue, 14 Jun 2022 13:29:44 +0100
-Message-Id: <263af7a3f2f40130c26969877381567ce66870d9.1655209709.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 07/25] io_uring: inline ->registered_rings
+Date:   Tue, 14 Jun 2022 13:29:45 +0100
+Message-Id: <3b98818d59d19262712dea1893c87dc186a584e8.1655209709.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655209709.git.asml.silence@gmail.com>
 References: <cover.1655209709.git.asml.silence@gmail.com>
@@ -68,95 +68,72 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There is a bunch of inline helpers that will be useful not only to the
-core of io_uring, move them to headers.
+There can be only 16 registered rings, no need to allocate an array for
+them separately but store it in tctx.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 22 ----------------------
- io_uring/io_uring.h | 22 ++++++++++++++++++++++
- 2 files changed, 22 insertions(+), 22 deletions(-)
+ io_uring/io_uring.c | 1 -
+ io_uring/tctx.c     | 9 ---------
+ io_uring/tctx.h     | 3 ++-
+ 3 files changed, 2 insertions(+), 11 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index af9188c8e2eb..2f5fd1749c4a 100644
+index 2f5fd1749c4a..2efe6bd16e07 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -616,14 +616,6 @@ struct sock *io_uring_get_socket(struct file *file)
- }
- EXPORT_SYMBOL(io_uring_get_socket);
+@@ -2840,7 +2840,6 @@ void __io_uring_free(struct task_struct *tsk)
+ 	WARN_ON_ONCE(tctx->io_wq);
+ 	WARN_ON_ONCE(tctx->cached_refs);
  
--static inline void io_tw_lock(struct io_ring_ctx *ctx, bool *locked)
--{
--	if (!*locked) {
--		mutex_lock(&ctx->uring_lock);
--		*locked = true;
+-	kfree(tctx->registered_rings);
+ 	percpu_counter_destroy(&tctx->inflight);
+ 	kfree(tctx);
+ 	tsk->io_uring = NULL;
+diff --git a/io_uring/tctx.c b/io_uring/tctx.c
+index f3262eef55d4..6adf659687f8 100644
+--- a/io_uring/tctx.c
++++ b/io_uring/tctx.c
+@@ -55,16 +55,8 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
+ 	if (unlikely(!tctx))
+ 		return -ENOMEM;
+ 
+-	tctx->registered_rings = kcalloc(IO_RINGFD_REG_MAX,
+-					 sizeof(struct file *), GFP_KERNEL);
+-	if (unlikely(!tctx->registered_rings)) {
+-		kfree(tctx);
+-		return -ENOMEM;
 -	}
--}
 -
- static inline void io_submit_flush_completions(struct io_ring_ctx *ctx)
- {
- 	if (!wq_list_empty(&ctx->submit_state.compl_reqs))
-@@ -879,15 +871,6 @@ static void io_prep_async_link(struct io_kiocb *req)
+ 	ret = percpu_counter_init(&tctx->inflight, 0, GFP_KERNEL);
+ 	if (unlikely(ret)) {
+-		kfree(tctx->registered_rings);
+ 		kfree(tctx);
+ 		return ret;
  	}
- }
+@@ -73,7 +65,6 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
+ 	if (IS_ERR(tctx->io_wq)) {
+ 		ret = PTR_ERR(tctx->io_wq);
+ 		percpu_counter_destroy(&tctx->inflight);
+-		kfree(tctx->registered_rings);
+ 		kfree(tctx);
+ 		return ret;
+ 	}
+diff --git a/io_uring/tctx.h b/io_uring/tctx.h
+index f4964e40d07e..7684713e950f 100644
+--- a/io_uring/tctx.h
++++ b/io_uring/tctx.h
+@@ -20,8 +20,9 @@ struct io_uring_task {
+ 	struct io_wq_work_list	task_list;
+ 	struct io_wq_work_list	prio_task_list;
+ 	struct callback_head	task_work;
+-	struct file		**registered_rings;
+ 	bool			task_running;
++
++	struct file		*registered_rings[IO_RINGFD_REG_MAX];
+ };
  
--static inline void io_req_add_compl_list(struct io_kiocb *req)
--{
--	struct io_submit_state *state = &req->ctx->submit_state;
--
--	if (!(req->flags & REQ_F_CQE_SKIP))
--		state->flush_cqes = true;
--	wq_list_add_tail(&req->comp_list, &state->compl_reqs);
--}
--
- void io_queue_iowq(struct io_kiocb *req, bool *dont_use)
- {
- 	struct io_kiocb *link = io_prep_linked_timeout(req);
-@@ -1293,11 +1276,6 @@ static void io_req_complete_post32(struct io_kiocb *req, u64 extra1, u64 extra2)
- 	io_cqring_ev_posted(ctx);
- }
- 
--static inline void io_req_complete_state(struct io_kiocb *req)
--{
--	req->flags |= REQ_F_COMPLETE_INLINE;
--}
--
- inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags)
- {
- 	if (issue_flags & IO_URING_F_COMPLETE_DEFER)
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 3660df80e589..26b669746d61 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -193,6 +193,28 @@ static inline bool io_run_task_work(void)
- 	return false;
- }
- 
-+static inline void io_req_complete_state(struct io_kiocb *req)
-+{
-+	req->flags |= REQ_F_COMPLETE_INLINE;
-+}
-+
-+static inline void io_tw_lock(struct io_ring_ctx *ctx, bool *locked)
-+{
-+	if (!*locked) {
-+		mutex_lock(&ctx->uring_lock);
-+		*locked = true;
-+	}
-+}
-+
-+static inline void io_req_add_compl_list(struct io_kiocb *req)
-+{
-+	struct io_submit_state *state = &req->ctx->submit_state;
-+
-+	if (!(req->flags & REQ_F_CQE_SKIP))
-+		state->flush_cqes = true;
-+	wq_list_add_tail(&req->comp_list, &state->compl_reqs);
-+}
-+
- int io_run_task_work_sig(void);
- void io_req_complete_failed(struct io_kiocb *req, s32 res);
- void __io_req_complete32(struct io_kiocb *req, unsigned int issue_flags,
+ struct io_tctx_node {
 -- 
 2.36.1
 

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD70554B114
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BAC454B135
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356483AbiFNMej (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 08:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33504 "EHLO
+        id S244453AbiFNMei (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 08:34:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244909AbiFNMe0 (ORCPT
+        with ESMTP id S244877AbiFNMe0 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:34:26 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A8FB46645
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A795446673
         for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:31:05 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso4713513wmc.4
+Received: by mail-wr1-x435.google.com with SMTP id w17so3574055wrg.7
         for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:31:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pI53pa4TxVJKzdBQkeVibcLg0pL+OIEI3I8Cb450LDs=;
-        b=JNBPnEY8mXDmcIndU0yNPbhJvi6izUri8GVARuBXzuWy2St4wbFuvGasEXg7vKTrdv
-         9nbI0Jql/6MS6E0hDkAiT7pm7V1fj0ngt3YeZptXHve7eHQppoUK1wB1mmLaWNeRvwmt
-         13jrQrCdgO0RVUlRU5aGDDYYl+PZVLyBEWRTGNBS6igDAV+CCgBy2LdYg6u60GjiOgW5
-         zlqwk/DsG8UIPs3DTAOwPvm3iNRcr/AF9Y64uDjhddrGrRHtzL4JGuqMUeconYJbj0L1
-         SnhX5bmoSLfEQxld6z/CwRm1yY32YoYoXHizxbvy7Y1okH4Hgwh9JF8QLoOAhNs9v2bO
-         zPRg==
+        bh=62dWMekHuhr5uFwrGJkmLtFH6YzJbWWvh8PXlOiIzdE=;
+        b=HIB/T825Z1g8+8Shi0uhyXRzr+e8hseyNEl7uoYbz1k9nwBj9Xjy6Qz3td3w+JAcVz
+         jf9Qj5/6pRb+s5EemMSYO3Ro+tE7qbQ2SV6owvfIM3ERAEFCu3P7MNQcp0+aRBEgLbRj
+         LO4uSJrHeFTsoxrerz7Kgt0CsqZVAyjajUyx2UzFuiFS0fDkGRInzbydbzsQyBssyu9i
+         1holW9bjkt8RvhfqhJCMjvYxthsBzWFcpMkytYfiaFM7xlqSMgBuNoO3AVEqV9tw2gqV
+         YMNldpMsGPyfv3BQNfN9HLAcRDy1YkyfLMsxVWcvQ+r1P4c6k4ReT33olsesO0tpAwfQ
+         6ROA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pI53pa4TxVJKzdBQkeVibcLg0pL+OIEI3I8Cb450LDs=;
-        b=T7NxlNiDoOQkEaHtc7g9v7uy27SYDOI1HqsvIhsYdnqDCXUHdWanoMFxjBMFYSFFJm
-         884x32KNO3xdnUFKalgFekXlhn8pDyXl+If2CVaj8SjVXj8R2JqXO1IqMHkX3yPdB8Kd
-         lrrJfDyKL3UrOgx1QDHiR4qfo7sMT3G/7C3FI+NpdOgIih2sa4j3FJJyIcfj7R4vWfLv
-         HX5MZRgr2N19lDv9XMZ+KvSLBXPz9p+58KHZVYCpS+Cj3svrA4WMowMe/Prr1jldtRdp
-         iaCobDybYU38rKebKkMdE/WWzz5VSsOyNDUGl7iwHPpE78eGifR/nuytAKjPgeXKro0K
-         l3OA==
-X-Gm-Message-State: AOAM532u38Aa4yqxmvbFdszDPRByBAyxfkLHdkwXl/DlXwhSLhyjJcI1
-        e4Q7U4H+qgLF/cjQ+AeC4HA0dHipiqfIjw==
-X-Google-Smtp-Source: ABdhPJyxpOJ1s8T4eBaCWN8KE2UmGVOCATtvQNluB5S5hj+PS0av2peLRNOfnbSh0j2DkfHSq2J76w==
-X-Received: by 2002:a05:600c:601f:b0:39c:416c:4069 with SMTP id az31-20020a05600c601f00b0039c416c4069mr3869310wmb.85.1655209863780;
-        Tue, 14 Jun 2022 05:31:03 -0700 (PDT)
+        bh=62dWMekHuhr5uFwrGJkmLtFH6YzJbWWvh8PXlOiIzdE=;
+        b=HJdAY2vNeAOPLEkdRf6mhJHUARh7yQdM20IGOSDUuLgDfU2Oe4A4W14OVQFBMCykaD
+         RpUg0G+C2O/0ghiBLt3tfq7aw3KYor0/FkgAlWwnNk8NLP9dYOuJIpswx5eDRw8ry0x4
+         jXk1E6i8BhZnlSM+m7TheItxi2yq43q5O7KkWVFW8+3/HbqZ3rom5wYj/qyjNfB6lIdH
+         wLYOEeLHmivXU/DjXvpgiilK9F3wPns4uBA1+vPOCPQVdRgZ9XKGN2w3pfvq95JlMEYL
+         f3ZYsPPaiqew336xOeZI0LDurp8LAqIU/kfLzKUVdUFHJcnMIeR2Hti1L6XGZmB7iTRk
+         FBfQ==
+X-Gm-Message-State: AJIora+GzeV0nn70yPdEwLvNqPfSkwNaVf2sP0PDCEXfXWxZXilIJyMP
+        jUqeGmOHZ3hyD6syBNQeu4jPpbXeQsnsTA==
+X-Google-Smtp-Source: AGRyM1s3j7H2Cl96Pgeg0UEv7DN0FdKnRlcEErbrQ3n6q+FhuHiW6vA+qfd874ZdXehB6q3ZdHKbGQ==
+X-Received: by 2002:adf:e10d:0:b0:20c:dc8f:e5a5 with SMTP id t13-20020adfe10d000000b0020cdc8fe5a5mr4736778wrz.265.1655209864981;
+        Tue, 14 Jun 2022 05:31:04 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.31.02
+        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.31.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 05:31:03 -0700 (PDT)
+        Tue, 14 Jun 2022 05:31:04 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 23/25] io_uring: introduce a struct for hash table
-Date:   Tue, 14 Jun 2022 13:30:01 +0100
-Message-Id: <b83804b545aa4dc3743c7412ddb54a247fbf81de.1655209709.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 24/25] io_uring: propagate locking state to poll cancel
+Date:   Tue, 14 Jun 2022 13:30:02 +0100
+Message-Id: <19652167659a9e397fecd155ea152713791bd826.1655209709.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655209709.git.asml.silence@gmail.com>
 References: <cover.1655209709.git.asml.silence@gmail.com>
@@ -68,287 +68,111 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Instead of passing around a pointer to hash buckets, add a bit of type
-safety and wrap it into a structure.
+Poll cancellation will be soon need to grab ->uring_lock inside, pass
+the locking state, i.e. issue_flags, inside the cancellation functions.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/cancel.c         |  6 +++---
- io_uring/cancel.h         |  7 +------
- io_uring/fdinfo.c         |  4 ++--
- io_uring/io_uring.c       | 29 ++++++++++++++++------------
- io_uring/io_uring_types.h | 13 +++++++++++--
- io_uring/poll.c           | 40 +++++++++++++++++++++------------------
- 6 files changed, 56 insertions(+), 43 deletions(-)
+ io_uring/cancel.c  | 7 ++++---
+ io_uring/cancel.h  | 3 ++-
+ io_uring/poll.c    | 3 ++-
+ io_uring/poll.h    | 3 ++-
+ io_uring/timeout.c | 3 ++-
+ 5 files changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index 2f157aebd3a0..1ee7bacd447f 100644
+index 1ee7bacd447f..14fcd4fd10d9 100644
 --- a/io_uring/cancel.c
 +++ b/io_uring/cancel.c
-@@ -193,12 +193,12 @@ int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_OK;
+@@ -78,7 +78,8 @@ static int io_async_cancel_one(struct io_uring_task *tctx,
+ 	return ret;
  }
  
--void init_hash_table(struct io_hash_bucket *hash_table, unsigned size)
-+void init_hash_table(struct io_hash_table *table, unsigned size)
+-int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd)
++int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd,
++		  unsigned issue_flags)
  {
- 	unsigned int i;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+@@ -93,7 +94,7 @@ int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd)
+ 	if (!ret)
+ 		return 0;
  
- 	for (i = 0; i < size; i++) {
--		spin_lock_init(&hash_table[i].lock);
--		INIT_HLIST_HEAD(&hash_table[i].list);
-+		spin_lock_init(&table->hbs[i].lock);
-+		INIT_HLIST_HEAD(&table->hbs[i].list);
- 	}
- }
+-	ret = io_poll_cancel(ctx, cd);
++	ret = io_poll_cancel(ctx, cd, issue_flags);
+ 	if (ret != -ENOENT)
+ 		return ret;
+ 
+@@ -136,7 +137,7 @@ static int __io_async_cancel(struct io_cancel_data *cd, struct io_kiocb *req,
+ 	int ret, nr = 0;
+ 
+ 	do {
+-		ret = io_try_cancel(req, cd);
++		ret = io_try_cancel(req, cd, issue_flags);
+ 		if (ret == -ENOENT)
+ 			break;
+ 		if (!all)
 diff --git a/io_uring/cancel.h b/io_uring/cancel.h
-index 556a7dcf160e..fd4cb1a2595d 100644
+index fd4cb1a2595d..8dd259dc383e 100644
 --- a/io_uring/cancel.h
 +++ b/io_uring/cancel.h
-@@ -4,9 +4,4 @@ int io_async_cancel_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+@@ -3,5 +3,6 @@
+ int io_async_cancel_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
  int io_async_cancel(struct io_kiocb *req, unsigned int issue_flags);
  
- int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd);
--void init_hash_table(struct io_hash_bucket *hash_table, unsigned size);
--
--struct io_hash_bucket {
--	spinlock_t		lock;
--	struct hlist_head	list;
--} ____cacheline_aligned_in_smp;
-+void init_hash_table(struct io_hash_table *table, unsigned size);
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index f941c73f5502..344e7d90d557 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -158,8 +158,8 @@ static __cold void __io_uring_show_fdinfo(struct io_ring_ctx *ctx,
- 		mutex_unlock(&ctx->uring_lock);
- 
- 	seq_puts(m, "PollList:\n");
--	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
--		struct io_hash_bucket *hb = &ctx->cancel_hash[i];
-+	for (i = 0; i < (1U << ctx->cancel_table.hash_bits); i++) {
-+		struct io_hash_bucket *hb = &ctx->cancel_table.hbs[i];
- 		struct io_kiocb *req;
- 
- 		spin_lock(&hb->lock);
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index af0bd74e78fa..64a945fe47f5 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -697,11 +697,23 @@ static __cold void io_fallback_req_func(struct work_struct *work)
- 	percpu_ref_put(&ctx->refs);
- }
- 
-+static int io_alloc_hash_table(struct io_hash_table *table, unsigned bits)
-+{
-+	unsigned hash_buckets = 1U << bits;
-+	size_t hash_size = hash_buckets * sizeof(table->hbs[0]);
-+
-+	table->hbs = kmalloc(hash_size, GFP_KERNEL);
-+	if (!table->hbs)
-+		return -ENOMEM;
-+
-+	table->hash_bits = bits;
-+	init_hash_table(table, hash_buckets);
-+	return 0;
-+}
-+
- static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- {
- 	struct io_ring_ctx *ctx;
--	unsigned hash_buckets;
--	size_t hash_size;
- 	int hash_bits;
- 
- 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-@@ -717,16 +729,9 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	 */
- 	hash_bits = ilog2(p->cq_entries) - 5;
- 	hash_bits = clamp(hash_bits, 1, 8);
--	hash_buckets = 1U << hash_bits;
--	hash_size = hash_buckets * sizeof(struct io_hash_bucket);
--
--	ctx->cancel_hash_bits = hash_bits;
--	ctx->cancel_hash = kmalloc(hash_size, GFP_KERNEL);
--	if (!ctx->cancel_hash)
-+	if (io_alloc_hash_table(&ctx->cancel_table, hash_bits))
- 		goto err;
- 
--	init_hash_table(ctx->cancel_hash, hash_buckets);
--
- 	ctx->dummy_ubuf = kzalloc(sizeof(*ctx->dummy_ubuf), GFP_KERNEL);
- 	if (!ctx->dummy_ubuf)
- 		goto err;
-@@ -767,7 +772,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	return ctx;
- err:
- 	kfree(ctx->dummy_ubuf);
--	kfree(ctx->cancel_hash);
-+	kfree(ctx->cancel_table.hbs);
- 	kfree(ctx->io_bl);
- 	xa_destroy(&ctx->io_bl_xa);
- 	kfree(ctx);
-@@ -3050,7 +3055,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	io_req_caches_free(ctx);
- 	if (ctx->hash_map)
- 		io_wq_put_hash(ctx->hash_map);
--	kfree(ctx->cancel_hash);
-+	kfree(ctx->cancel_table.hbs);
- 	kfree(ctx->dummy_ubuf);
- 	kfree(ctx->io_bl);
- 	xa_destroy(&ctx->io_bl_xa);
-diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
-index faa1477bd754..d1ce3735aca1 100644
---- a/io_uring/io_uring_types.h
-+++ b/io_uring/io_uring_types.h
-@@ -7,6 +7,16 @@
- #include "io-wq.h"
- #include "filetable.h"
- 
-+struct io_hash_bucket {
-+	spinlock_t		lock;
-+	struct hlist_head	list;
-+} ____cacheline_aligned_in_smp;
-+
-+struct io_hash_table {
-+	struct io_hash_bucket	*hbs;
-+	unsigned		hash_bits;
-+};
-+
- struct io_uring {
- 	u32 head ____cacheline_aligned_in_smp;
- 	u32 tail ____cacheline_aligned_in_smp;
-@@ -222,8 +232,7 @@ struct io_ring_ctx {
- 		 * manipulate the list, hence no extra locking is needed there.
- 		 */
- 		struct io_wq_work_list	iopoll_list;
--		struct io_hash_bucket	*cancel_hash;
--		unsigned		cancel_hash_bits;
-+		struct io_hash_table	cancel_table;
- 		bool			poll_multi_queue;
- 
- 		struct list_head	io_buffers_comp;
+-int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd);
++int io_try_cancel(struct io_kiocb *req, struct io_cancel_data *cd,
++		  unsigned int issue_flags);
+ void init_hash_table(struct io_hash_table *table, unsigned size);
 diff --git a/io_uring/poll.c b/io_uring/poll.c
-index b57e39082bac..2f49d15cfcce 100644
+index 2f49d15cfcce..db7357de7f8c 100644
 --- a/io_uring/poll.c
 +++ b/io_uring/poll.c
-@@ -73,9 +73,9 @@ static struct io_poll *io_poll_get_single(struct io_kiocb *req)
- 
- static void io_poll_req_insert(struct io_kiocb *req)
- {
--	struct io_ring_ctx *ctx = req->ctx;
--	u32 index = hash_long(req->cqe.user_data, ctx->cancel_hash_bits);
--	struct io_hash_bucket *hb = &ctx->cancel_hash[index];
-+	struct io_hash_table *table = &req->ctx->cancel_table;
-+	u32 index = hash_long(req->cqe.user_data, table->hash_bits);
-+	struct io_hash_bucket *hb = &table->hbs[index];
- 
- 	spin_lock(&hb->lock);
- 	hlist_add_head(&req->hash_node, &hb->list);
-@@ -84,8 +84,9 @@ static void io_poll_req_insert(struct io_kiocb *req)
- 
- static void io_poll_req_delete(struct io_kiocb *req, struct io_ring_ctx *ctx)
- {
--	u32 index = hash_long(req->cqe.user_data, ctx->cancel_hash_bits);
--	spinlock_t *lock = &ctx->cancel_hash[index].lock;
-+	struct io_hash_table *table = &req->ctx->cancel_table;
-+	u32 index = hash_long(req->cqe.user_data, table->hash_bits);
-+	spinlock_t *lock = &table->hbs[index].lock;
- 
- 	spin_lock(lock);
- 	hash_del(&req->hash_node);
-@@ -533,13 +534,15 @@ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
- __cold bool io_poll_remove_all(struct io_ring_ctx *ctx, struct task_struct *tsk,
- 			       bool cancel_all)
- {
-+	struct io_hash_table *table = &ctx->cancel_table;
-+	unsigned nr_buckets = 1U << table->hash_bits;
- 	struct hlist_node *tmp;
- 	struct io_kiocb *req;
- 	bool found = false;
- 	int i;
- 
--	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
--		struct io_hash_bucket *hb = &ctx->cancel_hash[i];
-+	for (i = 0; i < nr_buckets; i++) {
-+		struct io_hash_bucket *hb = &table->hbs[i];
- 
- 		spin_lock(&hb->lock);
- 		hlist_for_each_entry_safe(req, tmp, &hb->list, hash_node) {
-@@ -556,12 +559,12 @@ __cold bool io_poll_remove_all(struct io_ring_ctx *ctx, struct task_struct *tsk,
- 
- static struct io_kiocb *io_poll_find(struct io_ring_ctx *ctx, bool poll_only,
- 				     struct io_cancel_data *cd,
--				     struct io_hash_bucket hash_table[],
-+				     struct io_hash_table *table,
- 				     struct io_hash_bucket **out_bucket)
- {
- 	struct io_kiocb *req;
--	u32 index = hash_long(cd->data, ctx->cancel_hash_bits);
--	struct io_hash_bucket *hb = &hash_table[index];
-+	u32 index = hash_long(cd->data, table->hash_bits);
-+	struct io_hash_bucket *hb = &table->hbs[index];
- 
- 	*out_bucket = NULL;
- 
-@@ -585,16 +588,17 @@ static struct io_kiocb *io_poll_find(struct io_ring_ctx *ctx, bool poll_only,
- 
- static struct io_kiocb *io_poll_file_find(struct io_ring_ctx *ctx,
- 					  struct io_cancel_data *cd,
--					  struct io_hash_bucket hash_table[],
-+					  struct io_hash_table *table,
- 					  struct io_hash_bucket **out_bucket)
- {
-+	unsigned nr_buckets = 1U << table->hash_bits;
- 	struct io_kiocb *req;
- 	int i;
- 
- 	*out_bucket = NULL;
- 
--	for (i = 0; i < (1U << ctx->cancel_hash_bits); i++) {
--		struct io_hash_bucket *hb = &hash_table[i];
-+	for (i = 0; i < nr_buckets; i++) {
-+		struct io_hash_bucket *hb = &table->hbs[i];
- 
- 		spin_lock(&hb->lock);
- 		hlist_for_each_entry(req, &hb->list, hash_node) {
-@@ -622,15 +626,15 @@ static bool io_poll_disarm(struct io_kiocb *req)
+@@ -643,7 +643,8 @@ static int __io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
+ 	return req ? 0 : -ENOENT;
  }
  
- static int __io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
--			    struct io_hash_bucket hash_table[])
-+			    struct io_hash_table *table)
+-int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd)
++int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
++		   unsigned issue_flags)
  {
- 	struct io_hash_bucket *bucket;
- 	struct io_kiocb *req;
- 
- 	if (cd->flags & (IORING_ASYNC_CANCEL_FD|IORING_ASYNC_CANCEL_ANY))
--		req = io_poll_file_find(ctx, cd, ctx->cancel_hash, &bucket);
-+		req = io_poll_file_find(ctx, cd, table, &bucket);
- 	else
--		req = io_poll_find(ctx, false, cd, ctx->cancel_hash, &bucket);
-+		req = io_poll_find(ctx, false, cd, table, &bucket);
- 
- 	if (req)
- 		io_poll_cancel_req(req);
-@@ -641,7 +645,7 @@ static int __io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
- 
- int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd)
- {
--	return __io_poll_cancel(ctx, cd, ctx->cancel_hash);
-+	return __io_poll_cancel(ctx, cd, &ctx->cancel_table);
+ 	return __io_poll_cancel(ctx, cd, &ctx->cancel_table);
  }
+diff --git a/io_uring/poll.h b/io_uring/poll.h
+index cc75c1567a84..fa3e19790281 100644
+--- a/io_uring/poll.h
++++ b/io_uring/poll.h
+@@ -24,7 +24,8 @@ int io_poll_add(struct io_kiocb *req, unsigned int issue_flags);
+ int io_poll_remove_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags);
  
- static __poll_t io_poll_parse_events(const struct io_uring_sqe *sqe,
-@@ -739,7 +743,7 @@ int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags)
- 	int ret2, ret = 0;
- 	bool locked;
+-int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd);
++int io_poll_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
++		   unsigned issue_flags);
+ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags);
+ bool io_poll_remove_all(struct io_ring_ctx *ctx, struct task_struct *tsk,
+ 			bool cancel_all);
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 89000aae65d9..0b3751959e88 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -262,6 +262,7 @@ int io_timeout_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd)
  
--	preq = io_poll_find(ctx, true, &cd, ctx->cancel_hash, &bucket);
-+	preq = io_poll_find(ctx, true, &cd, &ctx->cancel_table, &bucket);
- 	if (preq)
- 		ret2 = io_poll_disarm(preq);
- 	if (bucket)
+ static void io_req_task_link_timeout(struct io_kiocb *req, bool *locked)
+ {
++	unsigned issue_flags = *locked ? 0 : IO_URING_F_UNLOCKED;
+ 	struct io_timeout *timeout = io_kiocb_to_cmd(req);
+ 	struct io_kiocb *prev = timeout->prev;
+ 	int ret = -ENOENT;
+@@ -273,7 +274,7 @@ static void io_req_task_link_timeout(struct io_kiocb *req, bool *locked)
+ 				.data		= prev->cqe.user_data,
+ 			};
+ 
+-			ret = io_try_cancel(req, &cd);
++			ret = io_try_cancel(req, &cd, issue_flags);
+ 		}
+ 		io_req_set_res(req, ret ?: -ETIME, 0);
+ 		io_req_complete_post(req);
 -- 
 2.36.1
 

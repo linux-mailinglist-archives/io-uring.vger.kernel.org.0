@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E8554B4A2
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 17:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E9F54B4AD
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 17:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356689AbiFNP2J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 11:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58998 "EHLO
+        id S1356817AbiFNP2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 11:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356878AbiFNP2I (ORCPT
+        with ESMTP id S1356877AbiFNP2I (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 11:28:08 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE61613D50
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:05 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id p6-20020a05600c1d8600b0039c630b8d96so930307wms.1
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:05 -0700 (PDT)
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE58BE0B0
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:06 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id x17so11776608wrg.6
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FtwqEhPzT3nHMQBDGkRoV01F2A3n7O/yvr9Y5995Vdg=;
-        b=SHTdE/B1anm+KTXgFUlR9XtmyEn8Z7y1lh0952BAvsNurbLIU/sod4Cf9Wdyusvs5K
-         Lf1fhv3XfFwEzHGXYB9pQBCE3AKV2A6AC7jLGMzFqnefhVSd+QpyADNCUqroIw/onYRh
-         XSuJoYmjowrTlElIuBlLek9Oz9G8BJGBL+4y4NqGjBJnBn1YvTHv2QCytYfyKbY8kUa+
-         jYEZtzF0SpLPLuxizwdMFReim/d/iA/VUgdsP2G7wZ153ObPtVuJ1w/dSxk13B3aLOLo
-         iqdpnoJtL5wb+i5pQQiTWbcI3hN+KfM/Ap4L+Tog6vskKlT3AKx65SFNw1Ma5utFDZ4Z
-         HiUA==
+        bh=akrZeuaOrBnQ/mu5huCLm/5pstUHaMxePvISJ2J0CQI=;
+        b=BTM0uhYUP4jRytg9mCnVSqGVrNOP4nvWLA/FErE5tcVm/99gVY+Df4zr8ngzllazAG
+         BlZnUsmN1awlIp0j0bpWGrnchDUPXEPn16pRklFDOWBCFRbN+RlpYHvtsO41m1S654wy
+         xNXBw1AMnLxTMYA1o0QWeFvIC9ieSFcQtDfUZSA7n17Rm/oyuoL5ZWBfcG3H3CcIqyHw
+         KKCqOLzyAJESTp1VprzLcN3nvYxikCgjenSU5925J3rfMDD/soF22H/7EfrAeLGWWEfr
+         Z2p8xekM0mU9hJ61UQn1N5KZGlySgIC9COOlTKOQun7eqmL6NNSeDXf47N44ALT2NbkY
+         gK+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FtwqEhPzT3nHMQBDGkRoV01F2A3n7O/yvr9Y5995Vdg=;
-        b=gjjcgSZWP85qyt85uWqupzlaQ1bPGyrFfWF3sa79yKfT3z9AKhfK7l5UN5gD2LAuYc
-         MrRS1diRSfp/ROJgn0rJ4yGImXggDr0nIyWQMwmkINSyYiDB4LKoITePzz/hpxhl59Wu
-         Ldn7DpOCAq7pC4418avs+Txattp5Fy0G3ZUlNA5RcTZ7VaYeXw+8VN96saxR5vo+9DVa
-         i1t3rXOyJh27fTEUN+mUe+8SEG71g8f4kg+AJltEfUGhNJqP/BDoiHDha0tFbqTg1MXG
-         DRRk54K7O8q8PYUnm26ttVpiqLS+Y1IgoYm9lRI6z74lXlpxInpKDEaeNXZWooYc9eL1
-         T8fA==
-X-Gm-Message-State: AOAM533ieqhZesx+gGmBtHdzGYyhfpdACzLOe8zV9GMNp+O/MWdk3erX
-        2kv/0U/KSloSd3Y0VeN98qEh0x7JfH4rYw==
-X-Google-Smtp-Source: ABdhPJzdXh3HIqbgLATKviHT276OYBtneNVKe8P9rRbvzoIglVazn8Fz8b0Ud5O53SnGllOpeigf0g==
-X-Received: by 2002:a7b:c758:0:b0:39c:44ce:f00f with SMTP id w24-20020a7bc758000000b0039c44cef00fmr4756849wmk.167.1655220483638;
-        Tue, 14 Jun 2022 08:28:03 -0700 (PDT)
+        bh=akrZeuaOrBnQ/mu5huCLm/5pstUHaMxePvISJ2J0CQI=;
+        b=IB/GLj4pY8AiHeH4wYucb5JwUrwn7mtog6yx7xwcrRBz+vM4QlIy5otkm/KCzNM7Al
+         mxHNfUPSu9xNnhOjQbXfflDXKqxPs4Kc1XE4QOrDdtzUeY7NJ6Uz74qSLVCUWC2NSf9S
+         pgnRs6IHBHBqLM8saDlez5BzyYBT8Vl4HjYATrncAvxAfk3NzbExQU5BH6KrZjlg+JuP
+         RL67HA4KoxMTghpQqVcSwZzCvJtaIT3u2AkIn9xFuBZR/VeIbJ6edRMqv9OfRjIOeg7+
+         1T797TgrP5SzWx/QsaHnePT++eV8KfUIE1l90MY55MFTSHzZU7r6ifIDNWKOH2Ynryx9
+         KFIg==
+X-Gm-Message-State: AJIora+G81N5VWgStXqRUyzGaa4Yx0vphbIUL11KbPa1z1gkAKnBodd/
+        jaPZU14sJjBzqbjIKiBhAERV9geI9ers5w==
+X-Google-Smtp-Source: AGRyM1ugoQPGqbGGVBBMHLr4xnaHuc6LMU1EYpAzlWjwpBPQcR6uIDYX/0wxUYdIuJc1qqXPhYotXA==
+X-Received: by 2002:a05:6000:1b03:b0:216:43b4:82f1 with SMTP id f3-20020a0560001b0300b0021643b482f1mr5424732wrz.232.1655220484776;
+        Tue, 14 Jun 2022 08:28:04 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id v22-20020a7bcb56000000b0039482d95ab7sm13313529wmj.24.2022.06.14.08.28.02
+        by smtp.gmail.com with ESMTPSA id v22-20020a7bcb56000000b0039482d95ab7sm13313529wmj.24.2022.06.14.08.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 08:28:03 -0700 (PDT)
+        Tue, 14 Jun 2022 08:28:04 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing v2 1/3] io_uring: update headers with IORING_SETUP_SINGLE_ISSUER
-Date:   Tue, 14 Jun 2022 16:27:34 +0100
-Message-Id: <b5e78497efd3a50bcc75f5d9aab1992375952c93.1655219150.git.asml.silence@gmail.com>
+Subject: [PATCH liburing v2 2/3] examples: add a simple single-shot poll benchmark
+Date:   Tue, 14 Jun 2022 16:27:35 +0100
+Message-Id: <4125f93afbaa8125190ebf5d0afad6aba008f542.1655219150.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655219150.git.asml.silence@gmail.com>
 References: <cover.1655219150.git.asml.silence@gmail.com>
@@ -70,27 +70,132 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- src/include/liburing/io_uring.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ examples/Makefile     |   3 +-
+ examples/poll-bench.c | 101 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 103 insertions(+), 1 deletion(-)
+ create mode 100644 examples/poll-bench.c
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 15d9fbd..ee6ccc9 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -137,9 +137,12 @@ enum {
-  * IORING_SQ_TASKRUN in the sq ring flags. Not valid with COOP_TASKRUN.
-  */
- #define IORING_SETUP_TASKRUN_FLAG	(1U << 9)
--
- #define IORING_SETUP_SQE128		(1U << 10) /* SQEs are 128 byte */
- #define IORING_SETUP_CQE32		(1U << 11) /* CQEs are 32 byte */
-+/*
-+ * Only one task is allowed to submit requests
-+ */
-+#define IORING_SETUP_SINGLE_ISSUER	(1U << 12)
+diff --git a/examples/Makefile b/examples/Makefile
+index 95a45f9..8e7067f 100644
+--- a/examples/Makefile
++++ b/examples/Makefile
+@@ -13,7 +13,8 @@ endif
+ example_srcs := \
+ 	io_uring-cp.c \
+ 	io_uring-test.c \
+-	link-cp.c
++	link-cp.c \
++	poll-bench.c
  
- enum io_uring_op {
- 	IORING_OP_NOP,
+ all_targets :=
+ 
+diff --git a/examples/poll-bench.c b/examples/poll-bench.c
+new file mode 100644
+index 0000000..66fd9e3
+--- /dev/null
++++ b/examples/poll-bench.c
+@@ -0,0 +1,101 @@
++/* SPDX-License-Identifier: MIT */
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <signal.h>
++#include <poll.h>
++#include <sys/time.h>
++#include <sys/wait.h>
++
++#include "liburing.h"
++
++static char buf[4096];
++static unsigned long runtime_ms = 30000;
++
++static unsigned long gettimeofday_ms(void)
++{
++	struct timeval tv;
++
++	gettimeofday(&tv, NULL);
++	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
++}
++
++int main(void)
++{
++	unsigned long tstop;
++	unsigned long nr_reqs = 0;
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	struct io_uring ring;
++	int pipe1[2];
++	int ret, i, qd = 32;
++
++	if (pipe(pipe1) != 0) {
++		perror("pipe");
++		return 1;
++	}
++
++	ret = io_uring_queue_init(1024, &ring, IORING_SETUP_SINGLE_ISSUER);
++	if (ret == -EINVAL) {
++		fprintf(stderr, "can't single\n");
++		ret = io_uring_queue_init(1024, &ring, 0);
++	}
++	if (ret) {
++		fprintf(stderr, "child: ring setup failed: %d\n", ret);
++		return 1;
++	}
++
++	ret = io_uring_register_files(&ring, pipe1, 2);
++	if (ret < 0) {
++		fprintf(stderr, "io_uring_register_files failed\n");
++		return 1;
++	}
++
++	ret = io_uring_register_ring_fd(&ring);
++	if (ret < 0) {
++		fprintf(stderr, "io_uring_register_ring_fd failed\n");
++		return 1;
++	}
++
++	tstop = gettimeofday_ms() + runtime_ms;
++	do {
++		for (i = 0; i < qd; i++) {
++			sqe = io_uring_get_sqe(&ring);
++			io_uring_prep_poll_add(sqe, 0, POLLIN);
++			sqe->flags |= IOSQE_FIXED_FILE;
++			sqe->user_data = 1;
++		}
++
++		ret = io_uring_submit(&ring);
++		if (ret != qd) {
++			fprintf(stderr, "child: sqe submit failed: %d\n", ret);
++			return 1;
++		}
++
++		ret = write(pipe1[1], buf, 1);
++		if (ret != 1) {
++			fprintf(stderr, "write failed %i\n", errno);
++			return 1;
++		}
++		ret = read(pipe1[0], buf, 1);
++		if (ret != 1) {
++			fprintf(stderr, "read failed %i\n", errno);
++			return 1;
++		}
++
++		for (i = 0; i < qd; i++) {
++			ret = io_uring_wait_cqe(&ring, &cqe);
++			if (ret < 0) {
++				fprintf(stderr, "child: wait completion %d\n", ret);
++				break;
++			}
++			io_uring_cqe_seen(&ring, cqe);
++			nr_reqs++;
++		}
++	} while (gettimeofday_ms() < tstop);
++
++	fprintf(stderr, "requests/s: %lu\n", nr_reqs * 1000UL / runtime_ms);
++	return 0;
++}
 -- 
 2.36.1
 

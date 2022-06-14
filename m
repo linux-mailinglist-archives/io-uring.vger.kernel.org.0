@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC1054B0EF
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B99EC54B146
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244404AbiFNMe0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S245146AbiFNMe0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 14 Jun 2022 08:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244942AbiFNMdv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:33:51 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF1D14B850
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:51 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id l2-20020a05600c4f0200b0039c55c50482so6160899wmq.0
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:51 -0700 (PDT)
+        with ESMTP id S229720AbiFNMd4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:33:56 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3004B864
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:53 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id m39-20020a05600c3b2700b0039c511ebbacso6133314wms.3
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fBuzqx+gzC5/J7sqLEp0sAY1HfeFLOvDJjV1YuH4kBU=;
-        b=bMqwj6XSkvQX4CWwa0hFVQ4ImMNMs96CmxzdwYKER52tRrGxzveUlZieIHF23UBFxy
-         MlzIKBu5mGMEA0IwsLy2sW0lJN0hSZHR6R6pkTXq8TSmv3qsgSJoaBZh0/fHhFGkzO/q
-         Qo4hkP1ZX7BJtjU6+F9DnHP6KXXed5CgkANiEeys5fMSlOkbcxdJpuGsjSFjyWdHYHV7
-         ePvLWDxrDhGc8X3+4YJ8L5yNuyZE6eZm7DKom2tquTb5CmuD07WUcX63kDSthhmejr11
-         0H2ibYuxvXXHSbrqM4OlDhTAZjGVGe8aNN1E9rsTjH+Afaegq9GaTj4MEX04U/DvBNFb
-         j76w==
+        bh=R4fEAW3IwnjCgPgFIiQUdI5m2WItkDGjr8AmxNsgZaI=;
+        b=PHPZ8jjekPVuUliMXV5pGuBP/yF1BZuT0iorpX/003+XR5JkQ45gMD64UsgGzXA24h
+         nwNTybqwZT5I6T2vNHRGDoeAP9FFOzq2Gh24lfv+FZJG/JMsw8yxYqGlOqgjB8VsN3+x
+         G7EcacKwJG467tuiW4GUB/gkXvYVz5AdKiB9Lr4HKNIgDRLN7OblQ/NIBivWdEFh3yk8
+         MtlX1BS/pqhdcrOlLK5J3H4Oqt+9Y+F9KfY+cDXEu1oeYAa6KpCtzwGtJx+teiSQHKSL
+         UTbPuBn7Lt3wRRIm7O7P/H6UmJiMd1oyrYjEm8BTFpj3qYe10VtAuBonvIWOso3+YWF4
+         l6aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fBuzqx+gzC5/J7sqLEp0sAY1HfeFLOvDJjV1YuH4kBU=;
-        b=NJpaWtHtHsCAw3l29VhEn+JgvPZOBnugq1FQPvDMWBWGXKak+6d9n439vl/i0E4qYK
-         R+wHpO1ohSvhc52WO0si3RStDqk90y5vXniHamvr1V8Ppiay/IzfeoyfDDAzcLmBSwEe
-         0K2v8rOHn8jLNGkXv+sK9ate2V4+3lQc6RwopXRon0J6T07UVLMM/SXseon4eIYADAh5
-         cxgp/lNuGysKktadYkIbBT5JgX2RKPfDGwSI3xSzyv2tAgWtzWViZXovKTsGTnoJJcsx
-         +mOK6OmLiVk0W6Tbqp0/UqbTrnNqzhCRoGn35n+MhV8GN+fQulo6NigJkcAeycS0Anqm
-         RcjA==
-X-Gm-Message-State: AOAM531/GjRl8GUSsxVp+ady3IOMayctP98wpKMhz+vZhjx2TGzHVb2f
-        rN2BWQQaFG4M+uTO719Au0m1e7WaJMisPQ==
-X-Google-Smtp-Source: ABdhPJydbLtvL9CooGEWOM1X7dIkkJNnqUOnr1v3in/bOboA2sOEEkdIiXokmvf/r43l/A9dvux9iA==
-X-Received: by 2002:a7b:c205:0:b0:39c:506d:e294 with SMTP id x5-20020a7bc205000000b0039c506de294mr3869257wmi.159.1655209849894;
-        Tue, 14 Jun 2022 05:30:49 -0700 (PDT)
+        bh=R4fEAW3IwnjCgPgFIiQUdI5m2WItkDGjr8AmxNsgZaI=;
+        b=FdYznlxelBQVM0+wqiRIErmUhKyeuHrv/f0yn4NM0iRo9sNpE9paqe71hlpSI6xCGs
+         Vf3uJ2pJkg2meNqnpcSgJHtS97GvQSC1SqPUcKCrHoZZ972cVUOHF0gj+R+5KErDhj3V
+         IkSW8NFnn503wA3Vq8UD/ivKtNIY4dQhn49jE/bnKEyZIgN4COhqf6lrfvE7y9lLG2WU
+         +XnGCdW0H3pktYDHakUhym5ZNT1GRpYuJwGmBlP+Gm5tvXkPpNNb9EIUTKgVSBWyzH8J
+         qM9Pdvb4FPZnH98uJ4SKrJQjGlykKM0mUeK86w78dbZFTeDA3Ogpsk50Tt+bY/PjWdHI
+         TWDw==
+X-Gm-Message-State: AOAM530QjvGeLTubTBZdyKxkWmdfsT5WXg3iOKrt6XfuvT14GVUwpwus
+        Yb9oVeSVL7rQtCWI0CM8/w548d8N24YRBw==
+X-Google-Smtp-Source: ABdhPJwKKhI0KlomPet6ynDBihho4ZpZapSjOOFXa0QbXzboL48tDBHolKtJQp0y+o/1A1B3tK3ZZg==
+X-Received: by 2002:a05:600c:2194:b0:39c:419c:1a24 with SMTP id e20-20020a05600c219400b0039c419c1a24mr3900533wme.186.1655209851382;
+        Tue, 14 Jun 2022 05:30:51 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.48
+        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 05:30:49 -0700 (PDT)
+        Tue, 14 Jun 2022 05:30:50 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 12/25] io_uring: don't inline io_put_kbuf
-Date:   Tue, 14 Jun 2022 13:29:50 +0100
-Message-Id: <84e7d777da1c5cff7d34ec7fa65ad93789a09baf.1655209709.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 13/25] io_uring: remove check_cq checking from hot paths
+Date:   Tue, 14 Jun 2022 13:29:51 +0100
+Message-Id: <35d95aeb2c0bb749398f8eeb05f3006391469d0b.1655209709.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655209709.git.asml.silence@gmail.com>
 References: <cover.1655209709.git.asml.silence@gmail.com>
@@ -68,128 +68,75 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_put_kbuf() is huge, don't bloat the kernel with inlining.
+All ctx->check_cq events are slow path, don't test every single flag one
+by one in the hot path, but add a common guarding if.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/kbuf.c | 33 +++++++++++++++++++++++++++++++++
- io_uring/kbuf.h | 38 ++++++--------------------------------
- 2 files changed, 39 insertions(+), 32 deletions(-)
+ io_uring/io_uring.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 9cdbc018fd64..6f2adb481a0d 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -81,6 +81,39 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
- 	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
- }
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f3cae98471b8..bd2aab895e29 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1807,24 +1807,25 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
+ 	int ret = 0;
+ 	unsigned long check_cq;
  
-+unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags)
-+{
-+	unsigned int cflags;
-+
-+	/*
-+	 * We can add this buffer back to two lists:
-+	 *
-+	 * 1) The io_buffers_cache list. This one is protected by the
-+	 *    ctx->uring_lock. If we already hold this lock, add back to this
-+	 *    list as we can grab it from issue as well.
-+	 * 2) The io_buffers_comp list. This one is protected by the
-+	 *    ctx->completion_lock.
-+	 *
-+	 * We migrate buffers from the comp_list to the issue cache list
-+	 * when we need one.
-+	 */
-+	if (req->flags & REQ_F_BUFFER_RING) {
-+		/* no buffers to recycle for this case */
-+		cflags = __io_put_kbuf_list(req, NULL);
-+	} else if (issue_flags & IO_URING_F_UNLOCKED) {
-+		struct io_ring_ctx *ctx = req->ctx;
-+
-+		spin_lock(&ctx->completion_lock);
-+		cflags = __io_put_kbuf_list(req, &ctx->io_buffers_comp);
-+		spin_unlock(&ctx->completion_lock);
-+	} else {
-+		lockdep_assert_held(&req->ctx->uring_lock);
-+
-+		cflags = __io_put_kbuf_list(req, &req->ctx->io_buffers_cache);
++	check_cq = READ_ONCE(ctx->check_cq);
++	if (unlikely(check_cq)) {
++		if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT))
++			__io_cqring_overflow_flush(ctx, false);
++		/*
++		 * Similarly do not spin if we have not informed the user of any
++		 * dropped CQE.
++		 */
++		if (check_cq & BIT(IO_CHECK_CQ_DROPPED_BIT))
++			return -EBADR;
 +	}
-+	return cflags;
-+}
-+
- static void __user *io_provided_buffer_select(struct io_kiocb *req, size_t *len,
- 					      struct io_buffer_list *bl)
- {
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 80b6df2c7535..5da3d4039aed 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -47,6 +47,8 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags);
- int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
- int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
- 
-+unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
-+
- static inline bool io_do_buffer_select(struct io_kiocb *req)
- {
- 	if (!(req->flags & REQ_F_BUFFER_SELECT))
-@@ -70,7 +72,8 @@ static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
- 	__io_kbuf_recycle(req, issue_flags);
- }
- 
--static unsigned int __io_put_kbuf(struct io_kiocb *req, struct list_head *list)
-+static inline unsigned int __io_put_kbuf_list(struct io_kiocb *req,
-+					      struct list_head *list)
- {
- 	if (req->flags & REQ_F_BUFFER_RING) {
- 		if (req->buf_list)
-@@ -90,44 +93,15 @@ static inline unsigned int io_put_kbuf_comp(struct io_kiocb *req)
- 
- 	if (!(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)))
+ 	/*
+ 	 * Don't enter poll loop if we already have events pending.
+ 	 * If we do, we can potentially be spinning for commands that
+ 	 * already triggered a CQE (eg in error).
+ 	 */
+-	check_cq = READ_ONCE(ctx->check_cq);
+-	if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT))
+-		__io_cqring_overflow_flush(ctx, false);
+ 	if (io_cqring_events(ctx))
  		return 0;
--	return __io_put_kbuf(req, &req->ctx->io_buffers_comp);
-+	return __io_put_kbuf_list(req, &req->ctx->io_buffers_comp);
- }
  
- static inline unsigned int io_put_kbuf(struct io_kiocb *req,
- 				       unsigned issue_flags)
- {
--	unsigned int cflags;
- 
- 	if (!(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)))
- 		return 0;
--
 -	/*
--	 * We can add this buffer back to two lists:
--	 *
--	 * 1) The io_buffers_cache list. This one is protected by the
--	 *    ctx->uring_lock. If we already hold this lock, add back to this
--	 *    list as we can grab it from issue as well.
--	 * 2) The io_buffers_comp list. This one is protected by the
--	 *    ctx->completion_lock.
--	 *
--	 * We migrate buffers from the comp_list to the issue cache list
--	 * when we need one.
+-	 * Similarly do not spin if we have not informed the user of any
+-	 * dropped CQE.
 -	 */
--	if (req->flags & REQ_F_BUFFER_RING) {
--		/* no buffers to recycle for this case */
--		cflags = __io_put_kbuf(req, NULL);
--	} else if (issue_flags & IO_URING_F_UNLOCKED) {
--		struct io_ring_ctx *ctx = req->ctx;
+-	if (unlikely(check_cq & BIT(IO_CHECK_CQ_DROPPED_BIT)))
+-		return -EBADR;
 -
--		spin_lock(&ctx->completion_lock);
--		cflags = __io_put_kbuf(req, &ctx->io_buffers_comp);
--		spin_unlock(&ctx->completion_lock);
--	} else {
--		lockdep_assert_held(&req->ctx->uring_lock);
--
--		cflags = __io_put_kbuf(req, &req->ctx->io_buffers_cache);
--	}
--
--	return cflags;
-+	return __io_put_kbuf(req, issue_flags);
- }
- #endif
+ 	do {
+ 		/*
+ 		 * If a submit got punted to a workqueue, we can have the
+@@ -2752,12 +2753,15 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	ret = io_run_task_work_sig();
+ 	if (ret || io_should_wake(iowq))
+ 		return ret;
++
+ 	check_cq = READ_ONCE(ctx->check_cq);
+-	/* let the caller flush overflows, retry */
+-	if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT))
+-		return 1;
+-	if (unlikely(check_cq & BIT(IO_CHECK_CQ_DROPPED_BIT)))
+-		return -EBADR;
++	if (unlikely(check_cq)) {
++		/* let the caller flush overflows, retry */
++		if (check_cq & BIT(IO_CHECK_CQ_OVERFLOW_BIT))
++			return 1;
++		if (check_cq & BIT(IO_CHECK_CQ_DROPPED_BIT))
++			return -EBADR;
++	}
+ 	if (!schedule_hrtimeout(&timeout, HRTIMER_MODE_ABS))
+ 		return -ETIME;
+ 	return 1;
 -- 
 2.36.1
 

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB24554B11C
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A965F54B0C3
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 14:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242647AbiFNMdu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 08:33:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33444 "EHLO
+        id S245346AbiFNMdv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 08:33:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245251AbiFNMdY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:33:24 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4EE044A01
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:39 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso4712771wmc.4
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:39 -0700 (PDT)
+        with ESMTP id S245727AbiFNMd1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 08:33:27 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92FD145063
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:40 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id q15so11035551wrc.11
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 05:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ToujjDMrgxjXImVoVU6hciJcYYHsx0thIW3gWEU5SEA=;
-        b=nTcDlCuG/00HkgwY92Q3tY5WQhp7nXfww4UCWNXZJ/2WFTibK0VHf9F6pvqlXcTqWj
-         aHMsLQUrakD9XYjCeiAl486PJ3yLuPXUs2NG9SIBR0v3nftF12Tp7Xp5BRsp/AnrObpf
-         fo6nl8YMQKPx27JUxEqwE4ZY4/Nz5IZcYa1peHGGAZs4o9MBzI8tTwF8uCg25fQj7vLC
-         psXmkl77FGQg6KvzO7y1AC5OUDY8i9UDscceWOtoYj8W1YtLgUPMqqs9WVRvOnISIYdc
-         /8BD+LCLpkPr5tesvgYSyaIBpAf8kC+IC02RCyCEdNe4khdRcWsYWOalm+6D2ZXHG0+p
-         e5/A==
+        bh=43ATD8fKnmjyJdZ2R6qxl1QYnz/Icg31elC1cRBKr+w=;
+        b=Gna1ys5pfe3cJOu1n9NdsRTUGvJhdA5kqAw2G4tlYv4x1/52D5HMpeKTuiSIndkpTT
+         IWfr94ieH2OEB5R7UW0UJfTNqXdP8V2+bctQ1i29qSvsWe9Xp7AtG368QLez1PHOHG4x
+         sEI5v1e7WznGsNyuoyp42j24U56QAglG6XXCJWgKW0szn02YVrIH/LIc+GC9pEETPwWc
+         BVsayvpDp2S2spAT0Ol5E/ZdIY/uEky2rOS5judGmm2mAsgfO1ekv4NYpECKVPrfeO5p
+         VhOioUJ80It2DSr75DfQAq0OU3NlYZoH39pLGo8I4CARPFTZXQBWGCMwyu4lc/Qi+eIj
+         T21A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ToujjDMrgxjXImVoVU6hciJcYYHsx0thIW3gWEU5SEA=;
-        b=mCSpMDN59Y1scAxpxgVkb3+UtS6ynaqaVpXUOMqSET+hqAVLWQNOwLERDV1oze3VZI
-         QoVO/QthbpjvO+9ivF9+vDt6Gbm4XEUY4AKQ9aiLm7NfmiCIAmorzD4mwCKzgxP0gaQX
-         KJbYwbfQ9qck9fjoUbCTAPbX18cAmRlpgq69v03Z7nUeKzFl9oihMw4xq9YXm7uQ0rFj
-         dKc3qSgz25zWzO/rybDWT3PHNETLIzNVMEJbc7QcKBOfHCCzP9K1MQsTMwGhh1OckUoN
-         WXj0YXzSEdjxr5o0yhjpkbf2/TNUNDSuJbLG++//jPhJvy9N3us9OF+pZr90v6V8B9tS
-         Cn9g==
-X-Gm-Message-State: AOAM531olpJt7lextwWdCVlhh8fHbURvJgSjxsXwGByuIxFQbm1i/Nrb
-        Y/uEJkEujvARB349Ofqx6g0n8y4hcwh/SA==
-X-Google-Smtp-Source: ABdhPJz26FqgShcnU56x4IISwHonAR5Nhy3xktetYZINkroEmFjTmf/iGKMt0nBP+9chJhI+eY+hHA==
-X-Received: by 2002:a05:600c:601f:b0:39c:416c:4069 with SMTP id az31-20020a05600c601f00b0039c416c4069mr3867322wmb.85.1655209837312;
-        Tue, 14 Jun 2022 05:30:37 -0700 (PDT)
+        bh=43ATD8fKnmjyJdZ2R6qxl1QYnz/Icg31elC1cRBKr+w=;
+        b=F6nRlhBQ8U4UOul/oqIGuLwZNKPQahvLyYrn/SZ8FzRCK+GsfIbWZtxAVpZ9IoisyI
+         ietFwPYlKDtLGuVWwkwzfUzTS7HnU4Z6x00SNPyps3PhD4pS1QGl18z4ELzAlbZ7Cs5Q
+         pBoU/NO2O1W+QeDHDMdcajeOp5k5A9WvhYxu0IVFDmpQGeihNP2RGcIJbY7y2pZua5ll
+         MiClp2FoB8H33TPFD0N4ocL4tgAKmn6Z7qSiFJiKOtAZKL5eWgrab7S2i77KWV0uUN+f
+         eXzGWLkEKdln+olx8NI0xI/LmK9sMgKIWDV514DILcetq7Z+nwHly/wdM8uVXkTuEy0r
+         KjoA==
+X-Gm-Message-State: AJIora/FI66TJ5ja2v8O3AHThKxWUx5biGB91/qubBP5E8gfH6JwVwzc
+        DSKFcnwMxnx8k1BspcNCcIGcwiAMgyK6sQ==
+X-Google-Smtp-Source: AGRyM1vS/ytzSJDnimxpkRfjdk9iGlyUfaSj95AHRK9YVtLAUh9+/nSWph2DvHycCRjcFDdRFrju1Q==
+X-Received: by 2002:adf:f584:0:b0:218:5a97:8f05 with SMTP id f4-20020adff584000000b002185a978f05mr4658518wro.333.1655209838539;
+        Tue, 14 Jun 2022 05:30:38 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.36
+        by smtp.gmail.com with ESMTPSA id t7-20020a05600c198700b0039c5fb1f592sm12410651wmq.14.2022.06.14.05.30.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 05:30:36 -0700 (PDT)
+        Tue, 14 Jun 2022 05:30:38 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 02/25] io_uring: move defer_list to slow data
-Date:   Tue, 14 Jun 2022 13:29:40 +0100
-Message-Id: <097c9f3eb3f8ab052e10160567928ec8df0f1303.1655209709.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 03/25] io_uring: better caching for ctx timeout fields
+Date:   Tue, 14 Jun 2022 13:29:41 +0100
+Message-Id: <51f0bc096197ab07fbc54b975dafbd22a31a634c.1655209709.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655209709.git.asml.silence@gmail.com>
 References: <cover.1655209709.git.asml.silence@gmail.com>
@@ -68,39 +68,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-draining is slow path, move defer_list to the end where slow data lives
-inside the context.
+Following timeout fields access patterns, move all of them into a
+separate cache line inside ctx, so they don't intervene with normal
+completion caching, especially since timeout removals and completion
+are separated and the later is done via tw.
+
+It also sheds some bytes from io_ring_ctx, 1216B -> 1152B
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring_types.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ io_uring/io_uring_types.h | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
-index 7c22cf35a7e2..52e91c3df8d5 100644
+index 52e91c3df8d5..4f52dcbbda56 100644
 --- a/io_uring/io_uring_types.h
 +++ b/io_uring/io_uring_types.h
-@@ -160,7 +160,6 @@ struct io_ring_ctx {
- 		struct io_uring_sqe	*sq_sqes;
- 		unsigned		cached_sq_head;
- 		unsigned		sq_entries;
--		struct list_head	defer_list;
+@@ -179,8 +179,6 @@ struct io_ring_ctx {
+ 		struct xarray		io_bl_xa;
+ 		struct list_head	io_buffers_cache;
  
+-		struct list_head	timeout_list;
+-		struct list_head	ltimeout_list;
+ 		struct list_head	cq_overflow_list;
+ 		struct list_head	apoll_cache;
+ 		struct xarray		personalities;
+@@ -213,15 +211,11 @@ struct io_ring_ctx {
+ 		struct io_ev_fd	__rcu	*io_ev_fd;
+ 		struct wait_queue_head	cq_wait;
+ 		unsigned		cq_extra;
+-		atomic_t		cq_timeouts;
+-		unsigned		cq_last_tm_flush;
+ 	} ____cacheline_aligned_in_smp;
+ 
+ 	struct {
+ 		spinlock_t		completion_lock;
+ 
+-		spinlock_t		timeout_lock;
+-
  		/*
- 		 * Fixed resources fast path, should be accessed only under
-@@ -272,8 +271,12 @@ struct io_ring_ctx {
- 		struct work_struct		exit_work;
- 		struct list_head		tctx_list;
- 		struct completion		ref_comp;
-+
-+		/* io-wq management, e.g. thread count */
- 		u32				iowq_limits[2];
- 		bool				iowq_limits_set;
-+
-+		struct list_head		defer_list;
+ 		 * ->iopoll_list is protected by the ctx->uring_lock for
+ 		 * io_uring instances that don't use IORING_SETUP_SQPOLL.
+@@ -253,6 +247,15 @@ struct io_ring_ctx {
+ 		struct list_head	io_buffers_pages;
  	};
- };
  
++	/* timeouts */
++	struct {
++		spinlock_t		timeout_lock;
++		atomic_t		cq_timeouts;
++		struct list_head	timeout_list;
++		struct list_head	ltimeout_list;
++		unsigned		cq_last_tm_flush;
++	} ____cacheline_aligned_in_smp;
++
+ 	/* Keep this last, we don't need it for the fast path */
+ 	struct {
+ 		#if defined(CONFIG_UNIX)
 -- 
 2.36.1
 

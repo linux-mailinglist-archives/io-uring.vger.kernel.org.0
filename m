@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A79E854B6D3
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 18:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C7754B6D8
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 18:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350547AbiFNQwd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 12:52:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40830 "EHLO
+        id S1349778AbiFNQwb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 12:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347101AbiFNQv4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 12:51:56 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92A744A39
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 09:51:54 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id a15so12086094wrh.2
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 09:51:54 -0700 (PDT)
+        with ESMTP id S1348588AbiFNQwR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 12:52:17 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE25145509
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 09:51:55 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id c130-20020a1c3588000000b0039c6fd897b4so3524614wma.4
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 09:51:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Bpz2H2uL6fwUuLZIR0Rv8LzJ0bYssJU2SnKsu8OMW0E=;
-        b=U5niuB8SCrmkEV+lIWf3w/7IGjTwJmBkxz54KLIc/9ihYDFIwBkUbg/Bagij+ySLBA
-         9Io2j9tTAHvlzDgRaVk4hfmb7K4Z9TRQJVx2At8Dlwk0DleNCP0VYqi4ZeZ8wjlkqgID
-         dzUDf1QmsmnAMMbz6Fty+yD1nnVXdrJidMSpusqI04cj3wjPChhkc7kG+vTvOeIuqtYx
-         46hJju56pas/pjLvffIUukwSp9f2tYF+50OmZI4Puk9+jCZiKSVCn4jYifx9dNl7hPp4
-         1JLFVcun3t6nUM8PEPjejQo+G9qjYz31/CmCdn3d+zEqf01zKQHaKrOhcs/Kq7zF8m4N
-         okCg==
+        bh=6Sdy9W1dqpA8hBtiizeFNtMvJps3otHcP3u3saZQJiQ=;
+        b=caYp88TJqH6K3y6uqREhVbzqymFvwQriURoXXk4/+Ne16HqA+gdVfD0AaIOPYNLKRf
+         foVfuEfoGaXnmx69YsXl432DZnt1xVS7UmJc/FWx6CQRnbT8xUeKTvM1T5oPBwuNGiPw
+         5mTlm2zn36Q/BQhKl8PRhpoW2nTIvS6swW5f2/pahDUFpxe8ExKQdMhnX57PZJbU95xw
+         P8MDu+cQjYgY3wt4I+Px/Q9LUkVk4iT8pWWVCJznuQ6uwdYIeanbcdm/cH9s9b6mfYne
+         Hu5Xll4ExTDrkq68vAIe4kqBou5ltWBdjc4t3HC1KLlbxct1NNK+Cm7isMHf+xhbNMer
+         kNbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Bpz2H2uL6fwUuLZIR0Rv8LzJ0bYssJU2SnKsu8OMW0E=;
-        b=x57mRTTwO4hPm7T6dCBp9g/Ztbnrdu5nqTSx7JZArpEaLiEwgMykZZyC9M+OmutIC7
-         bUaYPQbRmsf1ZZEmpGgVpZ1KDM9ZyYSsyQ43Ec04FkV99ReA7UdzSs7NcLD91T3RkXrO
-         rlS89KhIa6dUrn0Lvyqd0qZwAKkHTwtBvDTqcyNB1+gnHV/wsqi8UDwPQJdmELaTGIMO
-         e9Kd/UF93qKZyGxRDy6XgGn2egMias0LIJrvcsaxBvbxGq14+XAWrI6O3r+7LIwV77vd
-         VtkloTQHOdNEiF8lqsrxn5Mj0BSt15Lo2FbQGTBlchkc/yOaLLF2rSTpNB6uNXQf6v4e
-         tuIw==
-X-Gm-Message-State: AJIora8MirEJBSHSArbpspILrL9zkLsE2yBM0gg6VYAEabCvZCfjumjC
-        jJxUEYqh5ICwLV4m5U31t/LsOBztFA7jhg==
-X-Google-Smtp-Source: AGRyM1uUAgpXLf3DS9HKH/Xbh6NvvaiwLl85m4XXMDZ2v9bTG57sgmQaM+s7Gi88hs2DX4XvGZKv0w==
-X-Received: by 2002:a05:6000:1686:b0:219:b932:ffba with SMTP id y6-20020a056000168600b00219b932ffbamr5933704wrd.227.1655225513058;
-        Tue, 14 Jun 2022 09:51:53 -0700 (PDT)
+        bh=6Sdy9W1dqpA8hBtiizeFNtMvJps3otHcP3u3saZQJiQ=;
+        b=6dDhXN70SvgDTf0yGqfVMNWfSkF/4aKBlWyRJwMdltney2w3fIftgVJHvQmat1JVzs
+         Zd7M5cedBerne0sTprZfqXfe8/5IAbmpCU2mH4UUDmihHOp6KG107RQrun5gJdT6BxOD
+         VYgn2GsyUnMf2uFJoqka4v3sytBXA/k/AAiJYnM5arDLT2dML85XYFIs9MRwwb8OGc39
+         QsILQabpYTLterAQO6h48GuDuC1Y8j8/vBapI315MhwjZMoJUXcuCTotThcYu6ptGTFJ
+         hoHdrAduyD0P/ANY75IMsU6MOfYJOMPz7xyQt2b+zWKwwShgtiWljs6uf83NGBXAKXJm
+         bxPg==
+X-Gm-Message-State: AOAM533bnisORn0HVdbJPoomZJpK9YhOgwPC/tbsQgnVGy61/RPcmyvc
+        JrraMOyymx4K4DIc8BMmKVD5XYDKQ80qCA==
+X-Google-Smtp-Source: ABdhPJyMfTgPp4EadIGsSU3zeR/ljcSe5xjL/ixHceF8NClfhN4FJirt3Me1umrU/rRT6S1uGeLFlw==
+X-Received: by 2002:a05:600c:3d8e:b0:39c:573b:3079 with SMTP id bi14-20020a05600c3d8e00b0039c573b3079mr5276062wmb.131.1655225514239;
+        Tue, 14 Jun 2022 09:51:54 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id z16-20020adfec90000000b0020cff559b1dsm12648966wrn.47.2022.06.14.09.51.52
+        by smtp.gmail.com with ESMTPSA id z16-20020adfec90000000b0020cff559b1dsm12648966wrn.47.2022.06.14.09.51.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 09:51:52 -0700 (PDT)
+        Tue, 14 Jun 2022 09:51:53 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 5.19 1/3] Revert "io_uring: support CQE32 for nop operation"
-Date:   Tue, 14 Jun 2022 17:51:16 +0100
-Message-Id: <5ff623d84ccb4b3f3b92a3ea41cdcfa612f3d96f.1655224415.git.asml.silence@gmail.com>
+Subject: [PATCH 5.19 2/3] Revert "io_uring: add buffer selection support to IORING_OP_NOP"
+Date:   Tue, 14 Jun 2022 17:51:17 +0100
+Message-Id: <c5012098ca6b51dfbdcb190f8c4e3c0bf1c965dc.1655224415.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655224415.git.asml.silence@gmail.com>
 References: <cover.1655224415.git.asml.silence@gmail.com>
@@ -68,67 +68,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This reverts commit 2bb04df7c2af9dad5d28771c723bc39b01cf7df4.
+This reverts commit 3d200242a6c968af321913b635fc4014b238cba4.
 
-CQE32 nops were used for debugging and benchmarking but it doesn't
-target any real use case. Revert it, we can return it back if someone
-finds a good way to use it.
+Buffer selection with nops was used for debugging and benchmarking but
+is useless in real life. Let's revert it before it's released.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- fs/io_uring.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+ fs/io_uring.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ca6170a66e62..bf556f77d4ab 100644
+index bf556f77d4ab..1b95c6750a81 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -784,12 +784,6 @@ struct io_msg {
- 	u32 len;
- };
- 
--struct io_nop {
--	struct file			*file;
--	u64				extra1;
--	u64				extra2;
--};
--
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -994,7 +988,6 @@ struct io_kiocb {
- 		struct io_msg		msg;
- 		struct io_xattr		xattr;
- 		struct io_socket	sock;
--		struct io_nop		nop;
- 		struct io_uring_cmd	uring_cmd;
- 	};
- 
-@@ -5268,14 +5261,6 @@ static int io_splice(struct io_kiocb *req, unsigned int issue_flags)
- 
- static int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+@@ -1114,7 +1114,6 @@ static const struct io_op_def io_op_defs[] = {
+ 	[IORING_OP_NOP] = {
+ 		.audit_skip		= 1,
+ 		.iopoll			= 1,
+-		.buffer_select		= 1,
+ 	},
+ 	[IORING_OP_READV] = {
+ 		.needs_file		= 1,
+@@ -5269,19 +5268,7 @@ static int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+  */
+ static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
  {
--	/*
--	 * If the ring is setup with CQE32, relay back addr/addr
--	 */
--	if (req->ctx->flags & IORING_SETUP_CQE32) {
--		req->nop.extra1 = READ_ONCE(sqe->addr);
--		req->nop.extra2 = READ_ONCE(sqe->addr2);
+-	unsigned int cflags;
+-	void __user *buf;
+-
+-	if (req->flags & REQ_F_BUFFER_SELECT) {
+-		size_t len = 1;
+-
+-		buf = io_buffer_select(req, &len, issue_flags);
+-		if (!buf)
+-			return -ENOBUFS;
 -	}
 -
- 	return 0;
- }
- 
-@@ -5296,11 +5281,7 @@ static int io_nop(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 
- 	cflags = io_put_kbuf(req, issue_flags);
--	if (!(req->ctx->flags & IORING_SETUP_CQE32))
--		__io_req_complete(req, issue_flags, 0, cflags);
--	else
--		__io_req_complete32(req, issue_flags, 0, cflags,
--				    req->nop.extra1, req->nop.extra2);
-+	__io_req_complete(req, issue_flags, 0, cflags);
+-	cflags = io_put_kbuf(req, issue_flags);
+-	__io_req_complete(req, issue_flags, 0, cflags);
++	__io_req_complete(req, issue_flags, 0, 0);
  	return 0;
  }
  

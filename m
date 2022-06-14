@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93E9F54B4AD
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 17:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9BC54B4A7
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 17:30:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356817AbiFNP2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 11:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        id S238119AbiFNP2L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 11:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356877AbiFNP2I (ORCPT
+        with ESMTP id S1343886AbiFNP2I (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 11:28:08 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE58BE0B0
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:06 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id x17so11776608wrg.6
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:06 -0700 (PDT)
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DE065F7D
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:07 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id w17so4272084wrg.7
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=akrZeuaOrBnQ/mu5huCLm/5pstUHaMxePvISJ2J0CQI=;
-        b=BTM0uhYUP4jRytg9mCnVSqGVrNOP4nvWLA/FErE5tcVm/99gVY+Df4zr8ngzllazAG
-         BlZnUsmN1awlIp0j0bpWGrnchDUPXEPn16pRklFDOWBCFRbN+RlpYHvtsO41m1S654wy
-         xNXBw1AMnLxTMYA1o0QWeFvIC9ieSFcQtDfUZSA7n17Rm/oyuoL5ZWBfcG3H3CcIqyHw
-         KKCqOLzyAJESTp1VprzLcN3nvYxikCgjenSU5925J3rfMDD/soF22H/7EfrAeLGWWEfr
-         Z2p8xekM0mU9hJ61UQn1N5KZGlySgIC9COOlTKOQun7eqmL6NNSeDXf47N44ALT2NbkY
-         gK+g==
+        bh=d7ne3EAgdkQwIczj3Nj+DYkC6JJy/tsTnIBTH4t39sI=;
+        b=UkV39mamzx319GRPMEjAh65kdMk2k14wGtmQNlrSBNx2gblEx6M/gbFxrVb093FM+7
+         CwZfKNr6/I/Qm3HYyxwl1vfCUbYRQlDD8PEaoz1uUY2ydsLtlhMuzEsRll1WxDwwDWlH
+         u5y5II1xTtEFooO52aJVrXh0+E9kTOv5Oq0Xg+KgLEx0fmq7wzthAHxn060Z/5P0fC/Z
+         q9gj5ASgW8B+ISkSLb8DyVl5wQQ4bcoPSIMVWEjS4FTUrsWufy5hb5kVqSQBwUADqSRr
+         q8RIcUR6btfJmRTQblpSb5l+maQBzTVW6ZAWlcjakmf/dKskUFxshSN/3MP4zB1oL+8D
+         /OJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=akrZeuaOrBnQ/mu5huCLm/5pstUHaMxePvISJ2J0CQI=;
-        b=IB/GLj4pY8AiHeH4wYucb5JwUrwn7mtog6yx7xwcrRBz+vM4QlIy5otkm/KCzNM7Al
-         mxHNfUPSu9xNnhOjQbXfflDXKqxPs4Kc1XE4QOrDdtzUeY7NJ6Uz74qSLVCUWC2NSf9S
-         pgnRs6IHBHBqLM8saDlez5BzyYBT8Vl4HjYATrncAvxAfk3NzbExQU5BH6KrZjlg+JuP
-         RL67HA4KoxMTghpQqVcSwZzCvJtaIT3u2AkIn9xFuBZR/VeIbJ6edRMqv9OfRjIOeg7+
-         1T797TgrP5SzWx/QsaHnePT++eV8KfUIE1l90MY55MFTSHzZU7r6ifIDNWKOH2Ynryx9
-         KFIg==
-X-Gm-Message-State: AJIora+G81N5VWgStXqRUyzGaa4Yx0vphbIUL11KbPa1z1gkAKnBodd/
-        jaPZU14sJjBzqbjIKiBhAERV9geI9ers5w==
-X-Google-Smtp-Source: AGRyM1ugoQPGqbGGVBBMHLr4xnaHuc6LMU1EYpAzlWjwpBPQcR6uIDYX/0wxUYdIuJc1qqXPhYotXA==
-X-Received: by 2002:a05:6000:1b03:b0:216:43b4:82f1 with SMTP id f3-20020a0560001b0300b0021643b482f1mr5424732wrz.232.1655220484776;
-        Tue, 14 Jun 2022 08:28:04 -0700 (PDT)
+        bh=d7ne3EAgdkQwIczj3Nj+DYkC6JJy/tsTnIBTH4t39sI=;
+        b=D/f3EbPWkP/Pcg+5X5AU1OrfJdu6np1fJpVsTWnDOXQCYEMMyhejlFYUBWgN/pCcNr
+         fTHSCD+Zc6+N0kIjvnfWF+BUSPAZ/pGmWCaLNieohK2dNwn5PtQX3GGjCETPGttsOmCj
+         x1u9fQf5UHFdjAg8g0AWKXq0V3NemUmrVV+MH5zc8yqicHAUwPz8zRFupoiRghCBebBq
+         BEuCz8rWb0kPN4ivmAegbUzoCAxvOEY8XQ+7vLJtWftdinxjqf1kYlb7/EoWNeMOIzpS
+         Y4hv4t7b4yPilxdm5VPgGxUv0N/35bdgX+QS+Xdl9kRTRpyGtHS8F403QvVs/TC47w+L
+         /SkQ==
+X-Gm-Message-State: AJIora/7u5MOtVnGHfE7oSQK1S+sG30qKf8muakyXRKp00rruhML8Mhk
+        zSnOIPRIzs5GyS3YwTpld0HrQEsZI9fo+w==
+X-Google-Smtp-Source: AGRyM1uoeiK6ceqvrynqYGBWB7SMJf3EJgZRis3La/Bo/3DUZaggBLV7aiA2CWBqJsxoCQ9LWXx9dQ==
+X-Received: by 2002:a5d:504d:0:b0:210:24fd:add1 with SMTP id h13-20020a5d504d000000b0021024fdadd1mr5410113wrt.630.1655220485929;
+        Tue, 14 Jun 2022 08:28:05 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id v22-20020a7bcb56000000b0039482d95ab7sm13313529wmj.24.2022.06.14.08.28.03
+        by smtp.gmail.com with ESMTPSA id v22-20020a7bcb56000000b0039482d95ab7sm13313529wmj.24.2022.06.14.08.28.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 08:28:04 -0700 (PDT)
+        Tue, 14 Jun 2022 08:28:05 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing v2 2/3] examples: add a simple single-shot poll benchmark
-Date:   Tue, 14 Jun 2022 16:27:35 +0100
-Message-Id: <4125f93afbaa8125190ebf5d0afad6aba008f542.1655219150.git.asml.silence@gmail.com>
+Subject: [PATCH liburing v2 3/3] tests: test IORING_SETUP_SINGLE_ISSUER
+Date:   Tue, 14 Jun 2022 16:27:36 +0100
+Message-Id: <dee062f4d2f7c811b9e22f599ae30cf72adb02a8.1655219150.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655219150.git.asml.silence@gmail.com>
 References: <cover.1655219150.git.asml.silence@gmail.com>
@@ -70,130 +70,196 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- examples/Makefile     |   3 +-
- examples/poll-bench.c | 101 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+), 1 deletion(-)
- create mode 100644 examples/poll-bench.c
+ test/Makefile        |   1 +
+ test/single-issuer.c | 169 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 170 insertions(+)
+ create mode 100644 test/single-issuer.c
 
-diff --git a/examples/Makefile b/examples/Makefile
-index 95a45f9..8e7067f 100644
---- a/examples/Makefile
-+++ b/examples/Makefile
-@@ -13,7 +13,8 @@ endif
- example_srcs := \
- 	io_uring-cp.c \
- 	io_uring-test.c \
--	link-cp.c
-+	link-cp.c \
-+	poll-bench.c
+diff --git a/test/Makefile b/test/Makefile
+index ab031e0..0750996 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -169,6 +169,7 @@ test_srcs := \
+ 	wakeup-hang.c \
+ 	xattr.c \
+ 	skip-cqe.c \
++	single-issuer.c \
+ 	# EOL
  
- all_targets :=
  
-diff --git a/examples/poll-bench.c b/examples/poll-bench.c
+diff --git a/test/single-issuer.c b/test/single-issuer.c
 new file mode 100644
-index 0000000..66fd9e3
+index 0000000..a688626
 --- /dev/null
-+++ b/examples/poll-bench.c
-@@ -0,0 +1,101 @@
++++ b/test/single-issuer.c
+@@ -0,0 +1,169 @@
 +/* SPDX-License-Identifier: MIT */
 +#include <errno.h>
 +#include <stdio.h>
 +#include <unistd.h>
 +#include <stdlib.h>
 +#include <string.h>
-+#include <signal.h>
-+#include <poll.h>
-+#include <sys/time.h>
++#include <fcntl.h>
++#include <error.h>
++#include <sys/types.h>
 +#include <sys/wait.h>
 +
 +#include "liburing.h"
++#include "test.h"
 +
-+static char buf[4096];
-+static unsigned long runtime_ms = 30000;
++static pid_t pid;
 +
-+static unsigned long gettimeofday_ms(void)
++static pid_t fork_t(void)
 +{
-+	struct timeval tv;
-+
-+	gettimeofday(&tv, NULL);
-+	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
++	pid = fork();
++	if (pid == -1) {
++		fprintf(stderr, "fork failed\n");
++		exit(1);
++	}
++	return pid;
 +}
 +
-+int main(void)
++static int wait_child_t(void)
 +{
-+	unsigned long tstop;
-+	unsigned long nr_reqs = 0;
++	int wstatus;
++
++	if (waitpid(pid, &wstatus, 0) == (pid_t)-1) {
++		perror("waitpid()");
++		exit(1);
++	}
++	if (!WIFEXITED(wstatus)) {
++		fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
++		exit(1);
++	}
++
++	return WEXITSTATUS(wstatus);
++}
++
++static int try_submit(struct io_uring *ring)
++{
 +	struct io_uring_cqe *cqe;
 +	struct io_uring_sqe *sqe;
++	int ret;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_nop(sqe);
++	sqe->user_data = 42;
++
++	ret = io_uring_submit(ring);
++	if (ret < 0)
++		return ret;
++
++	if (ret != 1)
++		error(1, ret, "submit %i", ret);
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret)
++		error(1, ret, "wait fail %i", ret);
++
++	if (cqe->res || cqe->user_data != 42)
++		error(1, ret, "invalid cqe");
++
++	io_uring_cqe_seen(ring, cqe);
++	return 0;
++}
++
++int main(int argc, char *argv[])
++{
 +	struct io_uring ring;
-+	int pipe1[2];
-+	int ret, i, qd = 32;
++	int ret;
 +
-+	if (pipe(pipe1) != 0) {
-+		perror("pipe");
-+		return 1;
-+	}
++	if (argc > 1)
++		return 0;
 +
-+	ret = io_uring_queue_init(1024, &ring, IORING_SETUP_SINGLE_ISSUER);
++	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER);
 +	if (ret == -EINVAL) {
-+		fprintf(stderr, "can't single\n");
-+		ret = io_uring_queue_init(1024, &ring, 0);
++		fprintf(stderr, "SETUP_SINGLE_ISSUER is not supported, skip\n");
++		return 0;
++	} else if (ret) {
++		error(1, ret, "ring init (1) %i", ret);
 +	}
++
++	/* test that the creator iw allowed to submit */
++	ret = try_submit(&ring);
 +	if (ret) {
-+		fprintf(stderr, "child: ring setup failed: %d\n", ret);
++		fprintf(stderr, "the creater can't submit %i\n", ret);
 +		return 1;
 +	}
 +
-+	ret = io_uring_register_files(&ring, pipe1, 2);
-+	if (ret < 0) {
-+		fprintf(stderr, "io_uring_register_files failed\n");
-+		return 1;
++	/* test that a second submitter doesn't succeed */
++	if (!fork_t()) {
++		ret = try_submit(&ring);
++		if (ret != -EEXIST) {
++			fprintf(stderr, "not owner child could submit %i\n", ret);
++			exit(1);
++		}
++		exit(0);
++	} else {
++		if (wait_child_t())
++			return 1;
++	}
++	io_uring_queue_exit(&ring);
++
++
++	/* test that the first submitter but not creator can submit */
++	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER);
++	if (ret)
++		error(1, ret, "ring init (2) %i", ret);
++
++	if (!fork_t()) {
++		ret = try_submit(&ring);
++		if (ret) {
++			fprintf(stderr, "not owner child could submit %i\n", ret);
++			exit(1);
++		}
++		exit(0);
++	} else {
++		if (wait_child_t())
++			return 1;
++	}
++	io_uring_queue_exit(&ring);
++
++	/* test that anyone can submit to a SQPOLL|SINGLE_ISSUER ring */
++	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER|IORING_SETUP_SQPOLL);
++	if (ret)
++		error(1, ret, "ring init (3) %i", ret);
++
++	ret = try_submit(&ring);
++	if (ret) {
++		fprintf(stderr, "SQPOLL submit failed (creator) %i\n", ret);
++		exit(1);
 +	}
 +
-+	ret = io_uring_register_ring_fd(&ring);
-+	if (ret < 0) {
-+		fprintf(stderr, "io_uring_register_ring_fd failed\n");
-+		return 1;
++	if (!fork_t()) {
++		ret = try_submit(&ring);
++		if (ret) {
++			fprintf(stderr, "SQPOLL submit failed (child) %i\n", ret);
++			exit(1);
++		}
++		exit(0);
++	} else {
++		if (wait_child_t())
++			return 1;
 +	}
++	io_uring_queue_exit(&ring);
 +
-+	tstop = gettimeofday_ms() + runtime_ms;
-+	do {
-+		for (i = 0; i < qd; i++) {
-+			sqe = io_uring_get_sqe(&ring);
-+			io_uring_prep_poll_add(sqe, 0, POLLIN);
-+			sqe->flags |= IOSQE_FIXED_FILE;
-+			sqe->user_data = 1;
++	/* test that IORING_ENTER_REGISTERED_RING doesn't break anything */
++	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER);
++	if (ret)
++		error(1, ret, "ring init (4) %i", ret);
++
++	if (!fork_t()) {
++		ret = try_submit(&ring);
++		if (ret) {
++			fprintf(stderr, "not owner child could submit %i\n", ret);
++			exit(1);
 +		}
-+
-+		ret = io_uring_submit(&ring);
-+		if (ret != qd) {
-+			fprintf(stderr, "child: sqe submit failed: %d\n", ret);
++		exit(0);
++	} else {
++		if (wait_child_t())
 +			return 1;
-+		}
++	}
++	io_uring_queue_exit(&ring);
 +
-+		ret = write(pipe1[1], buf, 1);
-+		if (ret != 1) {
-+			fprintf(stderr, "write failed %i\n", errno);
-+			return 1;
-+		}
-+		ret = read(pipe1[0], buf, 1);
-+		if (ret != 1) {
-+			fprintf(stderr, "read failed %i\n", errno);
-+			return 1;
-+		}
-+
-+		for (i = 0; i < qd; i++) {
-+			ret = io_uring_wait_cqe(&ring, &cqe);
-+			if (ret < 0) {
-+				fprintf(stderr, "child: wait completion %d\n", ret);
-+				break;
-+			}
-+			io_uring_cqe_seen(&ring, cqe);
-+			nr_reqs++;
-+		}
-+	} while (gettimeofday_ms() < tstop);
-+
-+	fprintf(stderr, "requests/s: %lu\n", nr_reqs * 1000UL / runtime_ms);
 +	return 0;
 +}
 -- 

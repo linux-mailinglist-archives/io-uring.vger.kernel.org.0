@@ -2,72 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0224C54B426
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 17:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5D854B4A1
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jun 2022 17:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237783AbiFNPFk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Jun 2022 11:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        id S236270AbiFNP2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Jun 2022 11:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353854AbiFNPFi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 11:05:38 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51FD541638
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:05:37 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id k19so11671753wrd.8
-        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:05:37 -0700 (PDT)
+        with ESMTP id S1343589AbiFNP2F (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Jun 2022 11:28:05 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 588AF2BF6
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:04 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id h19so8546380wrc.12
+        for <io-uring@vger.kernel.org>; Tue, 14 Jun 2022 08:28:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=O2Rwuog5zrzICLL6iIlQRQk13JMsB10bdTVaYiW91Iw=;
-        b=m13eAc0StFM/L3g8+qgaAjiL5fWnbR/rJEO0XyBCwEJPHIHW/+IR36o8cfpnZQfvK4
-         5Ow8dyNFjHKGrre777X7iA2T36Ft28zykuka7HSvrDN6gRuMOjdoWZ7rVqkYxe8N00t7
-         VioWV3VD/69wT0kj0S/qxPyeL5eEtpxLNVq1ycZ155t0sm6AgRfz980hjyewZ02cntAc
-         utA0VRV1OEz/msaw1kSzKudhoqCt5m/snFod4OlP9nqrYd7k4vLBCXlXkevDuZXgGkLG
-         00zOFSHP3IVycFaV9ocIDBtyM2KCu5n1LpLUk/xYzfP4/HoTUto/lBa3sQw2U9hO52mc
-         T2Hg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QxpWZiiH5RdjOdj680wieWG4TLUeONyb0CXmr8N2gnQ=;
+        b=qOpv18m0A5PfPnqB6vuyHCDMbvESXW6hUvD3COYkOl0Go8kmU3q6qv+tJ1shejhQvv
+         j8HR6vlA+QfhsN6mRBG1yiOcyq/MsqAWVRCE/LslFEEcIVez8evs4MN328V6n/9SYOoe
+         sUyQ7JLQoVB7/gniFHyODZ34wOlo14ZG6j9yxN6Xs+vHthgB9fFBamTKHua8PRUD+yCA
+         XNWvJwERJLwQFtMvN2hMaZ/YwSSadIsRm+mqyNWMo7T8guKGEVMmbFRU+Ep+2eNyZuFH
+         WYk6ezCJnVWLTCMjfYhHpTendmi3pm5OdkEC2hIMrzSX9hhK5gg4HS4wr7RuzKqp9/z3
+         IuYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=O2Rwuog5zrzICLL6iIlQRQk13JMsB10bdTVaYiW91Iw=;
-        b=DTKvnaG/pMXl0JLel/DGN6Xtg6gVnpUTxH+04Fta20bt/7W7QodRnbx1KZSkUzCN3p
-         y/KjAIlxN56/WkPPxl7HnWL7zAS1FyhEgGyZ9c6wg1lG3KP7rO3KpMMezQR+V8NDGvlY
-         cY58Ye1o3M+EZjJFOLglHpz+dq+p4HyIwpVp36/9NORjZOMRTZuAVcSywcvuo4reDpY2
-         kZrcbXI/GUa/wRTOHPZWF7w6eGkk7wbD6L9XILr674w9OFomGDVx7DEPKTxiKaOfOs54
-         lggUCizDMgC/uX6ILod+n+so4T17xsDQJku762k3itmN+W5ut4oHTDNbD+dbatPm2PqJ
-         qJAA==
-X-Gm-Message-State: AJIora8HZVG82L4xaBtxVGPb+uZ7LD3Iz+kt5Oi0sLuS54LWTM0ZDsxH
-        sdUvURDv0GWP96bU8j3dcCE=
-X-Google-Smtp-Source: AGRyM1usSszpjJI8zNTWwIIFFb5u0mxywpb+/g5/QBExKWjLtqkWDDwDXnfbKBBuf6kj4TS4WSRJXw==
-X-Received: by 2002:adf:dc81:0:b0:212:3a72:2f07 with SMTP id r1-20020adfdc81000000b002123a722f07mr5428151wrj.714.1655219135955;
-        Tue, 14 Jun 2022 08:05:35 -0700 (PDT)
-Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id m16-20020a05600c3b1000b0039c673952bfsm17764478wms.6.2022.06.14.08.05.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jun 2022 08:05:35 -0700 (PDT)
-Message-ID: <57c4acfc-af8a-9f0b-753c-47cca3014d14@gmail.com>
-Date:   Tue, 14 Jun 2022 16:05:16 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH liburing 2/3] examples: add a simple single-shot poll
- benchmark
-Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-References: <cover.1655213733.git.asml.silence@gmail.com>
- <c73aebd699e851a36a8a85e263bedc56aa57e505.1655213733.git.asml.silence@gmail.com>
- <1e971a15-3476-1259-ab3b-7c6953d68760@gnuweeb.org>
+        bh=QxpWZiiH5RdjOdj680wieWG4TLUeONyb0CXmr8N2gnQ=;
+        b=z7VsZZkYywZEas9eP74W705LtXf+cu540qykU2SH0q+z5nMaiNMFpl/xdAm+su/yPi
+         ANvIbT8XTx+q2isgTYySmyr5zH9B3tqv6QL3uaW57GuDg3hazBRghluPE6bkza5r46EN
+         h8UQFYswodc+QcpDoSELaD5mWX42t+pk61J2Adnd5jHSx8qgBN45LYxScEtoRekzdEj7
+         qqku0snL5iF7L7fu3grs32mKQQgxDHnxsSiDf3o56NKWY4VXZxZGvc92HScW9+uewTUJ
+         6yvgQz51aRnuSlqhTU+TRYwC+YUlFFQekUSvV6Glm8ld1uJmuiO9Lo5h5uio5MdNS0jP
+         yorg==
+X-Gm-Message-State: AJIora+293Tycss73End+C8YUaHTFhA7BsY77cLVHyxcxva93RSA5sI5
+        jMQ0mds/dKR764QntTVstLmNae8ZV1iM3w==
+X-Google-Smtp-Source: AGRyM1sFjOI4IFTnBwhz7eMn0/7PVbg5KBZ3rKnhyy6DLFbGDI+b6be+MXwAZ42BhK6TznOFZro4Bw==
+X-Received: by 2002:a5d:6790:0:b0:217:1567:d319 with SMTP id v16-20020a5d6790000000b002171567d319mr5672161wru.16.1655220482560;
+        Tue, 14 Jun 2022 08:28:02 -0700 (PDT)
+Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
+        by smtp.gmail.com with ESMTPSA id v22-20020a7bcb56000000b0039482d95ab7sm13313529wmj.24.2022.06.14.08.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jun 2022 08:28:02 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <1e971a15-3476-1259-ab3b-7c6953d68760@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH liburing v2 0/3] single-issuer and poll benchmark
+Date:   Tue, 14 Jun 2022 16:27:33 +0100
+Message-Id: <cover.1655219150.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -76,41 +66,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/14/22 15:57, Ammar Faizi wrote:
-> On 6/14/22 9:36 PM, Pavel Begunkov wrote:
->> +int main(void)
->> +{
->> +    unsigned long tstop;
->> +    unsigned long nr_reqs = 0;
->> +    struct io_uring_cqe *cqe;
->> +    struct io_uring_sqe *sqe;
->> +    struct io_uring ring;
->> +    int pipe1[2];
->> +    int ret, i, qd = 128;
->> +
->> +    if (argc > 1)
->> +        return 0;
->> +
-> 
-> Hi Pavel,
-> 
-> I am testing this and it doesn't compile, the main(void) needs fixing.
+Add some tests to check the kernel enforcing single-issuer right, and
+add a simple poll benchmark, might be useful if we do poll changes.
 
-Indeed, some of final changes escaped git add. Thanks Ammar
+v2:
+    remove copy-pasted test comments
+    fix poll-bench 'argc' build problem
 
-> 
-> ```
->    poll-bench.c: In function ‘main’:
->    poll-bench.c:39:13: error: ‘argc’ undeclared (first use in this function)
->       39 |         if (argc > 1)
->          |             ^~~~
->    poll-bench.c:39:13: note: each undeclared identifier is reported only once for each function it appears in
->    make[1]: *** [Makefile:34: poll-bench] Error 1
->    make[1]: *** Waiting for unfinished jobs....
->    make[1]: Leaving directory '/home/ammarfaizi2/app/liburing/examples'
->    make: *** [Makefile:12: all] Error 2
-> ```
-> 
+Pavel Begunkov (3):
+  io_uring: update headers with IORING_SETUP_SINGLE_ISSUER
+  examples: add a simple single-shot poll benchmark
+  tests: test IORING_SETUP_SINGLE_ISSUER
+
+ examples/Makefile               |   3 +-
+ examples/poll-bench.c           | 101 +++++++++++++++++++
+ src/include/liburing/io_uring.h |   5 +-
+ test/Makefile                   |   1 +
+ test/single-issuer.c            | 169 ++++++++++++++++++++++++++++++++
+ 5 files changed, 277 insertions(+), 2 deletions(-)
+ create mode 100644 examples/poll-bench.c
+ create mode 100644 test/single-issuer.c
 
 -- 
-Pavel Begunkov
+2.36.1
+

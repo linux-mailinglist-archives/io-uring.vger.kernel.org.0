@@ -2,212 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F09EC54C79A
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 13:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B2154C79B
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 13:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344921AbiFOLh4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 07:37:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38420 "EHLO
+        id S1344964AbiFOLjD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 07:39:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244420AbiFOLhx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 07:37:53 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA785DF52
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:37:52 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25EMcxu9026826
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:37:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=AVjWiS5bok6GdHwvrHtDtEcPuI9GJl0o6PPco/WhOfM=;
- b=cMq2Y8/RV17S1LbaX3uzvTcUV8gbNsTS4Y7ZJpGYqYis7bfSa179pTxjAtDrEPAgaCZf
- 7k1UUyQIczdP5iUOP21PAio3tWi9ox7FfpggqgrwZyGtjhONFoJawdaBM7bG/68VEDWK
- zi5laWHFjcL2minSxCS+MSHYwK6/SjeRMbw= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gpgc2sht6-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:37:52 -0700
-Received: from twshared25478.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 15 Jun 2022 04:37:50 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 0B7C71B0FD23; Wed, 15 Jun 2022 04:37:41 -0700 (PDT)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     <io-uring@vger.kernel.org>
-CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>, <kernel-team@fb.com>,
-        Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH liburing] convert buf-ring nop test to use read
-Date:   Wed, 15 Jun 2022 04:37:33 -0700
-Message-ID: <20220615113733.1424472-1-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S242972AbiFOLjC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 07:39:02 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897163C4B0
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:39:00 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id n185so6141469wmn.4
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=W0FQAeWG5KPj8Hgt/Kbmm74CLdA9P5vL1zPEmc5kIF4=;
+        b=f/lOnoUwUlaZaDpqdu71B1jJg8VS0FK0GOgrZzIV6kJJaGW7ZUrrKp3i8tos1basSZ
+         OHOChKjQm5mytvi31ZM9qoj7ZDD53GkzYvxWe84mz2vGCcBRaHe8VmBuCG2JRxj2/5Ta
+         GIOnnoVVGGt+7vtUWx640ktZTWl4FogWqCw1/urmnvbyofPYwwI6bGy1qHYxJ2lM3be3
+         xvSTf/lYYPyhrLU0HAipkhv1YU6WL79NX8jK26wL2PuT+pdKthWqD+e3wFU+XtKzW4jn
+         7/kPXTC0e6pl0qwT9vgP0bGqrAAVzt5x1cbcJgqebAi/B9OsT8bhRZ4PIM6PU2MreRSq
+         jtmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=W0FQAeWG5KPj8Hgt/Kbmm74CLdA9P5vL1zPEmc5kIF4=;
+        b=jUgEXgNvqSMDMhEy6nC2LGd4MSmoMuJIkD6WIhYG0kXLymfNVy03XNSC1R+I8j8S7N
+         8tnrHJV6U2C97IDJ1OdHLa0eCcovBWHdqcHqhflI8nP8vAOoM00xlN7ifdC3bhnHIIFU
+         7ez342g+lAb2joZOOCLUcOZ9Eav5ptNNjG/2/aWXVoOobS2KkAm15cOul6gdBcyKUhz6
+         N5kMkLIynoRgo2HlntwJ8s+YTeVuiC6HflIB0lhww0/RioRM6QaYIMXCff3GJJ9FPlaZ
+         UB7wioov75aaOfI84iLZJxcnwO1om/rl86+aJ+nlfA0zat9qgity+em78rldNUxsiwRr
+         FlrQ==
+X-Gm-Message-State: AOAM533kPNwRdz++K5I0zBSdiDT0KJ9UL0uwHMo7HoQcpHjsZKHz1B3V
+        EbOqGGLfF90e23ESXIBlaLE=
+X-Google-Smtp-Source: ABdhPJyTVQ0mVt4lWSLM9fCHRmmjzA//0p94I44ZSMLjTQSvSxV6uJbCy5YgCweYRzNCblQkQXRpOw==
+X-Received: by 2002:a05:600c:3505:b0:39c:93d4:5eec with SMTP id h5-20020a05600c350500b0039c93d45eecmr9277634wmq.179.1655293139035;
+        Wed, 15 Jun 2022 04:38:59 -0700 (PDT)
+Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
+        by smtp.gmail.com with ESMTPSA id m17-20020adfc591000000b0020fff0ea0a3sm14895975wrg.116.2022.06.15.04.38.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 04:38:58 -0700 (PDT)
+Message-ID: <35a1fca7-a355-afbf-f115-8f154d8bdec6@gmail.com>
+Date:   Wed, 15 Jun 2022 12:38:39 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: cLUtBfIJdDiiCnqxtl3gmv3dRvZSN0Cy
-X-Proofpoint-ORIG-GUID: cLUtBfIJdDiiCnqxtl3gmv3dRvZSN0Cy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-15_03,2022-06-13_01,2022-02-23_01
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
+Content-Language: en-US
+To:     Avi Kivity <avi@scylladb.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
+ <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
+ <e7ffdf1e-b6a8-0e46-5879-30c25446223d@scylladb.com>
+ <b585d3b4-42b3-b0db-1cef-5d6c8b815bb7@kernel.dk>
+ <e90bfb07-c24f-0e4d-0ac6-bd67176641fb@scylladb.com>
+ <8e816c1b-213b-5812-b48a-a815c0fe2b34@kernel.dk>
+ <16030f8f-67b1-dbc9-0117-47c16bf78c34@kernel.dk>
+ <4008a1db-ee26-92ba-320e-140932e801c1@kernel.dk>
+ <1d79b0e6-ee65-6eab-df64-3987a7f7f4e7@scylladb.com>
+ <95bfb0d1-224b-7498-952a-ea2464b353d9@gmail.com>
+ <991a999b-0f85-c0a3-c364-4b3ecfef9106@scylladb.com>
+ <85b5d99e-69b4-15cf-dfd8-a3ea8c120e02@scylladb.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <85b5d99e-69b4-15cf-dfd8-a3ea8c120e02@scylladb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The NOP support for IOSQE_BUFFER_SELECT has been reverted, so use a
-supported function with read. This also allows verifying that the
-correct data has actually been read.
+On 6/15/22 12:07, Avi Kivity wrote:
+> Sorry, hit send too quiclky.
+>>>> If this is correct (it's not unreasonable, but should be documented), then there should also be a simple way to force a kernel entry. But how to do this using liburing? IIUC if I the following apply:
+>>>>
+>>>>
+>>>>   1. I have no pending sqes
+>>>>
+>>>>   2. There are pending completions
+>>>>
+>>>>   3. There is a completed event for which a completion has not been appended to the completion queue ring
+>>>>
+>>>>
+>>>> Then io_uring_wait_cqe() will elide io_uring_enter() and the completed-but-not-reported event will be delayed.
+>>>
+>>> One way is to process all CQEs and then it'll try to enter the
+>>> kernel and do the job.
+> 
+> 
+> But I don't want it to wait. I want it to generate pending completions, and return immediately even if no completions were generated. I have some background computations I'm happy to perform if no events are pending, but I would like those events to be generated promptly.
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- test/buf-ring.c | 42 ++++++++++++++++++++++++++++--------------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+Ok, then you may want IORING_SETUP_TASKRUN_FLAG described below.
+btw IORING_SETUP_TASKRUN_FLAG has some additional overhead.
 
-diff --git a/test/buf-ring.c b/test/buf-ring.c
-index af1cac8..3d12ef6 100644
---- a/test/buf-ring.c
-+++ b/test/buf-ring.c
-@@ -206,7 +206,7 @@ static int test_reg_unreg(int bgid)
- 	return 0;
- }
-=20
--static int test_one_nop(int bgid, struct io_uring *ring)
-+static int test_one_read(int fd, int bgid, struct io_uring *ring)
- {
- 	int ret;
- 	struct io_uring_cqe *cqe;
-@@ -218,21 +218,19 @@ static int test_one_nop(int bgid, struct io_uring *=
-ring)
- 		return -1;
- 	}
-=20
--	io_uring_prep_nop(sqe);
-+	io_uring_prep_read(sqe, fd, NULL, 1, 0);
- 	sqe->flags |=3D IOSQE_BUFFER_SELECT;
- 	sqe->buf_group =3D bgid;
- 	ret =3D io_uring_submit(ring);
- 	if (ret <=3D 0) {
- 		fprintf(stderr, "sqe submit failed: %d\n", ret);
--		ret =3D -1;
--		goto out;
-+		return -1;
- 	}
-=20
- 	ret =3D io_uring_wait_cqe(ring, &cqe);
- 	if (ret < 0) {
- 		fprintf(stderr, "wait completion %d\n", ret);
--		ret =3D -1;
--		goto out;
-+		return -1;
- 	}
- 	ret =3D cqe->res;
- 	io_uring_cqe_seen(ring, cqe);
-@@ -240,14 +238,12 @@ static int test_one_nop(int bgid, struct io_uring *=
-ring)
- 	if (ret =3D=3D -ENOBUFS)
- 		return ret;
-=20
--	if (ret !=3D 0) {
--		fprintf(stderr, "nop result %d\n", ret);
-+	if (ret !=3D 1) {
-+		fprintf(stderr, "read result %d\n", ret);
- 		return -1;
- 	}
-=20
--	ret =3D cqe->flags >> 16;
--out:
--	return ret;
-+	return cqe->flags >> 16;
- }
-=20
- static int test_running(int bgid, int entries, int loops)
-@@ -255,6 +251,7 @@ static int test_running(int bgid, int entries, int lo=
-ops)
- 	struct io_uring_buf_reg reg =3D { };
- 	struct io_uring ring;
- 	void *ptr;
-+	char buffer[8];
- 	int ret;
- 	int ring_size =3D (entries * sizeof(struct io_uring_buf) + 4095) & (~40=
-95);
- 	int ring_mask =3D io_uring_buf_ring_mask(entries);
-@@ -262,6 +259,7 @@ static int test_running(int bgid, int entries, int lo=
-ops)
- 	int loop, idx;
- 	bool *buffers;
- 	struct io_uring_buf_ring *br;
-+	int read_fd;
-=20
- 	ret =3D t_create_ring(1, &ring, 0);
- 	if (ret =3D=3D T_SETUP_SKIP)
-@@ -279,6 +277,10 @@ static int test_running(int bgid, int entries, int l=
-oops)
- 	if (!buffers)
- 		return 1;
-=20
-+	read_fd =3D open("/dev/zero", O_RDONLY);
-+	if (read_fd < 0)
-+		return 1;
-+
- 	reg.ring_addr =3D (unsigned long) ptr;
- 	reg.ring_entries =3D entries;
- 	reg.bgid =3D bgid;
-@@ -293,11 +295,12 @@ static int test_running(int bgid, int entries, int =
-loops)
- 	for (loop =3D 0; loop < loops; loop++) {
- 		memset(buffers, 0, sizeof(bool) * entries);
- 		for (idx =3D 0; idx < entries; idx++)
--			io_uring_buf_ring_add(br, ptr, 1, idx, ring_mask, idx);
-+			io_uring_buf_ring_add(br, buffer, sizeof(buffer), idx, ring_mask, idx=
-);
- 		io_uring_buf_ring_advance(br, entries);
-=20
- 		for (idx =3D 0; idx < entries; idx++) {
--			ret =3D test_one_nop(bgid, &ring);
-+			memset(buffer, 1, sizeof(buffer));
-+			ret =3D test_one_read(read_fd, bgid, &ring);
- 			if (ret < 0) {
- 				fprintf(stderr, "bad run %d/%d =3D %d\n", loop, idx, ret);
- 				return ret;
-@@ -306,9 +309,19 @@ static int test_running(int bgid, int entries, int l=
-oops)
- 				fprintf(stderr, "reused buffer %d/%d =3D %d!\n", loop, idx, ret);
- 				return 1;
- 			}
-+			if (buffer[0] !=3D 0) {
-+				fprintf(stderr, "unexpected read %d %d/%d =3D %d!\n",
-+						(int)buffer[0], loop, idx, ret);
-+				return 1;
-+			}
-+			if (buffer[1] !=3D 1) {
-+				fprintf(stderr, "unexpected spilled read %d %d/%d =3D %d!\n",
-+						(int)buffer[1], loop, idx, ret);
-+				return 1;
-+			}
- 			buffers[ret] =3D true;
- 		}
--		ret =3D test_one_nop(bgid, &ring);
-+		ret =3D test_one_read(read_fd, bgid, &ring);
- 		if (ret !=3D -ENOBUFS) {
- 			fprintf(stderr, "expected enobufs run %d =3D %d\n", loop, ret);
- 			return 1;
-@@ -322,6 +335,7 @@ static int test_running(int bgid, int entries, int lo=
-ops)
- 		return 1;
- 	}
-=20
-+	close(read_fd);
- 	io_uring_queue_exit(&ring);
- 	free(buffers);
- 	return 0;
 
-base-commit: d6f9e02f9c6a777010824341f14c994b11dfc8b1
---=20
-2.30.2
+>>> Another way is to also set IORING_SETUP_TASKRUN_FLAG, then when
+>>> there is work that requires to enter the kernel io_uring will
+>>> set IORING_SQ_TASKRUN in sq_flags.
+>>> Actually, I'm not mistaken io_uring has some automagic handling
+>>> of it internally
+>>>
+>>> https://github.com/axboe/liburing/blob/master/src/queue.c#L36
+>>>
+> 
+> Is there documentation about this flag?
 
+Unfortunately, I don't see any.
+Here is a link to the kernel commit if it helps:
+
+https://git.kernel.dk/cgit/linux-block/commit/?h=ef060ea9e4fd3b763e7060a3af0a258d2d5d7c0d
+
+I think it's more interesting what support liburing has,
+but would need to look up in the code. Maybe Jens
+remembers and can tell.
+
+-- 
+Pavel Begunkov

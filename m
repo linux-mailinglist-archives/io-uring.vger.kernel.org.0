@@ -2,69 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BFA54C606
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 12:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C710554C615
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 12:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239220AbiFOK02 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 06:26:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45818 "EHLO
+        id S237457AbiFOK3D (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 06:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235119AbiFOK01 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 06:26:27 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4776D38DA1
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:26:26 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id h5so14789779wrb.0
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:26:26 -0700 (PDT)
+        with ESMTP id S1348426AbiFOK2j (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 06:28:39 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727FC1835C
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:28:34 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id a10so6054640wmj.5
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=r4FocqlJ+JxAIBoCO0d5F9wB7uv4n/84nJEZ+zqr0tE=;
-        b=q6qJz6JWDKJneH7S7FgMj8XsqSt593FYgQchEXtqcacFiOsB4mvfq2CGTz0Q4FNqJQ
-         bgX7aeF7nQIdmT688rIppe26hT63ygA8Lt1zz2NoLOX6LFbL3K5YOYpS9uhkZJBZ5tYA
-         valElBoWlHuoC9Yrb/5vapHiAigSSpzmHJDaSwG/Q1mM5IP0ao9hVhzlKiF5jI2xBBys
-         nNWgQMH27YKkSwiLT/ciAG+M0+zkvH+GizvNU7sWLI7r1EjtgzjoDsjZ0w1cPRT1AetT
-         9QPR1MmRSkhWsoMqQ8lkQunYakF5v5TgdYsVB5fWSfnEGRK5w1v/XxcuxkjyieMiLv5X
-         INIg==
+        bh=0+l1D+JoEorjY09g4z4FPIC6C4TNzkomigqLUkVqKzA=;
+        b=O7ktvNw/Lcqut+a/FmEoYWQcKUfgkbVIY+GQqqkKsLF0JvT9w0iEIkf8wy7+7ihPNP
+         cPs24uQgh8GvTmyZ9jr8ilXdb14bQ+ZQ17DkjpDNwDft8LXZoh0WhI0Se/WZtAue7eOF
+         jk0fnaH/YL+XXTaWZbUXEiP6VSrx5eUcyNbO+nbSIat/OPQgX0iSPkexwAqVEjdCN9Cu
+         t3sr8U7adbWwQR3CFs6izcRk20cBBRm89MLmf46ZGJ1Ea5bqmaEqJrRfuox6Pvad5QBE
+         8vOTHVFXw35tdJunrrBAoeAXuXT/jLop2mhKff+9QwJg/VVp69TeoW6NwU+gqE0tVnH1
+         huhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=r4FocqlJ+JxAIBoCO0d5F9wB7uv4n/84nJEZ+zqr0tE=;
-        b=nJ9prSuQx63QsWSx/7/zWxqetDiAMk5JXZhSHXQRHKH3KudwY6pM9CtunDxsnBad5M
-         spsKdnU4qYDH7P3oAEj/LAgTunZLMxsonpRH8/DEJE99kLZkmsOYhVgPVGMG8X/u27hm
-         qDx80/CgBNrkoHI5nmAw3YD6SfA0xhIAXRGtIhrHpkYMfkhgj5twLk/shVE4pgHzEq37
-         4J9EHYAxVNXxe0geNbrFpegDI8KYbFwPQgM/XRpXoTF98kpODEutgWZ4QBfVy9MXQhlV
-         Yl2SRiiSK34CKVa+7mOghT6Ru5IykwqX1UdpIeHpW2+NC0/sy2oC51G5Cej7lh6665i8
-         qpJg==
-X-Gm-Message-State: AJIora+3BuKdaI9u5D8FZkQcouO7PTmg+zh80GhK7KMWwFV7XT4eK6tH
-        7XNcqzwmWyPktUeDqcLMd3Y=
-X-Google-Smtp-Source: AGRyM1vqH90qgypXtaceK/Cy63OdVa2KxQmSZI5DeyHQRXtaUdzYbwIZyuN34WEXBNybqR2QGULh3A==
-X-Received: by 2002:a5d:5581:0:b0:20f:fc51:7754 with SMTP id i1-20020a5d5581000000b0020ffc517754mr9173998wrv.413.1655288784757;
-        Wed, 15 Jun 2022 03:26:24 -0700 (PDT)
+        bh=0+l1D+JoEorjY09g4z4FPIC6C4TNzkomigqLUkVqKzA=;
+        b=Yo+slVvTyJQDUaW/CU2nTF5QFi/tcNbZv14iwPZAekRVwpdVllLShtpH7SlRZKMuQ2
+         bbR2PArfE+mlectTa2q95Nz6N5QwVrL3DnR92X2iNqgwrqXAkjMQMue+wcY0yxigoAQx
+         WSEX7sU8cSgCgkO1qSCUTVymZaHfZbkk4f8k3dnH/ECy4P0mx1CxYRHuItme2Q6Aj/zx
+         Fugy4XuW0GtiDy7KzYyejP5G86ZA3AbYct7hFMNtZrl4MsxFHIjxf+RiVfB8seBrmqzZ
+         A67DBmKXio+yJbAg52rjsuGjY0OZ/4plGG7viba7vQe27SYt+5ZTPsDpCjQbKVtfoNRG
+         2b3A==
+X-Gm-Message-State: AOAM533w9alyq4jrlNvYNWeTnw2X1LacH05lZfnX1MfNAR8H/a7ScZ+m
+        ghEkVzUrB0tjd+WUuYUAqsEvO1f4/mfjcw==
+X-Google-Smtp-Source: ABdhPJzO0ZSHBhVz/ZX2BYI8PB27zO3djcUBmOuGeZKaqN4tN74syqL07l9nxNPvTFpcvT3STI5Syg==
+X-Received: by 2002:a05:600c:58a:b0:39c:80ed:68be with SMTP id o10-20020a05600c058a00b0039c80ed68bemr9115385wmd.150.1655288912600;
+        Wed, 15 Jun 2022 03:28:32 -0700 (PDT)
 Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id m12-20020a5d6a0c000000b0020cdcb0efa2sm14170151wru.34.2022.06.15.03.26.23
+        by smtp.gmail.com with ESMTPSA id i9-20020adfb649000000b0020fe35aec4bsm13921978wre.70.2022.06.15.03.28.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jun 2022 03:26:24 -0700 (PDT)
-Message-ID: <e156bf54-3bdf-b03b-2737-7e02b2762111@gmail.com>
-Date:   Wed, 15 Jun 2022 11:26:04 +0100
+        Wed, 15 Jun 2022 03:28:32 -0700 (PDT)
+Message-ID: <6bf7ce15-f317-3d39-30f1-eb189b7ed1f4@gmail.com>
+Date:   Wed, 15 Jun 2022 11:28:12 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH for-next v2 21/25] io_uring: add
+Subject: Re: [PATCH liburing 1/3] io_uring: update headers with
  IORING_SETUP_SINGLE_ISSUER
 Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
+To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-References: <cover.1655213915.git.asml.silence@gmail.com>
- <d6235e12830a225584b90cf3b29f09a0681acc95.1655213915.git.asml.silence@gmail.com>
- <40197f84-35e3-4e37-fe73-3c7f4c21d513@linux.dev>
+References: <cover.1655213733.git.asml.silence@gmail.com>
+ <b5e78497efd3a50bcc75f5d9aab1992375952c93.1655213733.git.asml.silence@gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <40197f84-35e3-4e37-fe73-3c7f4c21d513@linux.dev>
+In-Reply-To: <b5e78497efd3a50bcc75f5d9aab1992375952c93.1655213733.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -75,97 +74,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/15/22 10:41, Hao Xu wrote:
-> On 6/14/22 22:37, Pavel Begunkov wrote:
->> Add a new IORING_SETUP_SINGLE_ISSUER flag and the userspace visible part
->> of it, i.e. put limitations of submitters. Also, don't allow it together
->> with IOPOLL as we're not going to put it to good use.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>   include/uapi/linux/io_uring.h |  5 ++++-
->>   io_uring/io_uring.c           |  7 +++++--
->>   io_uring/io_uring_types.h     |  1 +
->>   io_uring/tctx.c               | 27 ++++++++++++++++++++++++---
->>   io_uring/tctx.h               |  4 ++--
->>   5 files changed, 36 insertions(+), 8 deletions(-)
->>
-[...]
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 15d209f334eb..4b90439808e3 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -3020,6 +3020,8 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
->>       io_destroy_buffers(ctx);
->>       if (ctx->sq_creds)
->>           put_cred(ctx->sq_creds);
->> +    if (ctx->submitter_task)
->> +        put_task_struct(ctx->submitter_task);
->>       /* there are no registered resources left, nobody uses it */
->>       if (ctx->rsrc_node)
->> @@ -3752,7 +3754,7 @@ static int io_uring_install_fd(struct io_ring_ctx *ctx, struct file *file)
->>       if (fd < 0)
->>           return fd;
->> -    ret = io_uring_add_tctx_node(ctx);
->> +    ret = __io_uring_add_tctx_node(ctx, false);
+On 6/15/22 11:05, Pavel Begunkov wrote:
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-                                             ^^^^^^
+Something did go wrong here... just ignore it,
+the v2 sent yesterday is up to date.
 
-Note this one
-
-
->>       if (ret) {
->>           put_unused_fd(fd);
->>           return ret;
->> @@ -3972,7 +3974,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
->>               IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
->>               IORING_SETUP_R_DISABLED | IORING_SETUP_SUBMIT_ALL |
->>               IORING_SETUP_COOP_TASKRUN | IORING_SETUP_TASKRUN_FLAG |
->> -            IORING_SETUP_SQE128 | IORING_SETUP_CQE32))
->> +            IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
->> +            IORING_SETUP_SINGLE_ISSUER))
->>           return -EINVAL;
->>       return io_uring_create(entries, &p, params);
->> diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
->> index aba0f8cd6f49..f6d0ad25f377 100644
->> --- a/io_uring/io_uring_types.h
->> +++ b/io_uring/io_uring_types.h
->> @@ -241,6 +241,7 @@ struct io_ring_ctx {
->>       /* Keep this last, we don't need it for the fast path */
->>       struct io_restriction        restrictions;
->> +    struct task_struct        *submitter_task;
->>       /* slow path rsrc auxilary data, used by update/register */
->>       struct io_rsrc_node        *rsrc_backup_node;
->> diff --git a/io_uring/tctx.c b/io_uring/tctx.c
->> index 6adf659687f8..012be261dc50 100644
->> --- a/io_uring/tctx.c
->> +++ b/io_uring/tctx.c
->> @@ -81,12 +81,32 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
->>       return 0;
->>   }
->> -int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
->> +static int io_register_submitter(struct io_ring_ctx *ctx)
->> +{
->> +    int ret = 0;
->> +
->> +    mutex_lock(&ctx->uring_lock);
->> +    if (!ctx->submitter_task)
->> +        ctx->submitter_task = get_task_struct(current);
->> +    else if (ctx->submitter_task != current)
->> +        ret = -EEXIST;
->> +    mutex_unlock(&ctx->uring_lock);
->> +
->> +    return ret;
->> +}
+> ---
+>   src/include/liburing/io_uring.h | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> Seems we don't need this uring_lock:
-> When we create a ring, we setup ctx->submitter_task before uring fd is
-> installed so at that time nobody else can enter this code.
-> when we enter this code later in io_uring_enter, we just read it.
-
-Not really, we specifically don't set it just to the ring's
-creator but to the first submitter. That's needed to be able to
-create a ring in one task and pass it over to another.
+> diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+> index 15d9fbd..ee6ccc9 100644
+> --- a/src/include/liburing/io_uring.h
+> +++ b/src/include/liburing/io_uring.h
+> @@ -137,9 +137,12 @@ enum {
+>    * IORING_SQ_TASKRUN in the sq ring flags. Not valid with COOP_TASKRUN.
+>    */
+>   #define IORING_SETUP_TASKRUN_FLAG	(1U << 9)
+> -
+>   #define IORING_SETUP_SQE128		(1U << 10) /* SQEs are 128 byte */
+>   #define IORING_SETUP_CQE32		(1U << 11) /* CQEs are 32 byte */
+> +/*
+> + * Only one task is allowed to submit requests
+> + */
+> +#define IORING_SETUP_SINGLE_ISSUER	(1U << 12)
+>   
+>   enum io_uring_op {
+>   	IORING_OP_NOP,
 
 -- 
 Pavel Begunkov

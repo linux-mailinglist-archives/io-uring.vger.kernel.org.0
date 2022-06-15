@@ -2,80 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC76254C795
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 13:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09EC54C79A
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 13:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233502AbiFOLgz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 07:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
+        id S1344921AbiFOLh4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 07:37:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbiFOLgz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 07:36:55 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B344553E10
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:36:53 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id s12so22654795ejx.3
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:organization:in-reply-to:content-transfer-encoding;
-        bh=7xrYysmZbqZAQsJ/K50VFYqcLhYm2OqNlgkyG0E4kzw=;
-        b=foVUbJ/BXUM3ECpgAfNZtaDgoIPvtXZTGsooBwi2wnf2DYEDgiD6xSyO849ZxC1rB8
-         bvJnKLHFMVAvG6E0Tsw2FvjeK88AWHXYVNP94mXJiAlZXHmKNmitmmm397jnVvmeET1f
-         ftrDyUueXPdlU1ajNLqoiobexEtr+xUPXEr9DcrUHUZwOEIMSJFtxXjtMsw8Nu2Fk6n2
-         b2MomFWD7OeGdxyDD30ae/BeLV5+mAUbZG7TTd2bdI7Tb+USMemmwAbbKRTGhtfvN3RR
-         J1xgPXeiKS5ydXybAvLk7Cb5hX5N2JCnMESxZDqRqVp3N3om2HALzhp+9sOxHREp/++m
-         Itpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=7xrYysmZbqZAQsJ/K50VFYqcLhYm2OqNlgkyG0E4kzw=;
-        b=54sdJaNzk7izUx6tv2GXaNVppCE2OlDN7H1QXHE/RfJZoZt0Hr0T49i/Ra0MMj6L7v
-         zJCGkzebXwkgqhQ/ZUR8LtZK2pQOhW+ZZ2xby/w/wJMFPfaHtOCPDq6zR+PWNm+7Smdk
-         uLV/mvg8U+q1E/MS3y+NjruaLwZV9THQjpGuotaeWDLR75l46liHhUeaE+XFpEnICZ7B
-         TB3hNMkR5/9wCTW2YSkLAl0eQtVFH/+woAQoQyJ+5XuZbQsytZGpAaickoEevRCEX426
-         qJJwpmnyyp/0kW2g/+u048xQ1kVCW9kvBMkgZ8ThEVdjXXb93/nzBxrdWrEZhItkucXT
-         xaGQ==
-X-Gm-Message-State: AJIora9l38B2yPA+hTkc+5qzEshfB/IXwEFEfbZt6DYIX6dpLEF7MFCR
-        NCua41PKYU45+MADErO2H3WOUw==
-X-Google-Smtp-Source: ABdhPJwDvWHwAXW42BZavO9RDtomqsMukLxcKKqLuSTHyWJUXEBDfnk1IbMq1eTvBYELlGVs02eQ3A==
-X-Received: by 2002:a17:907:6ea4:b0:711:d106:b93a with SMTP id sh36-20020a1709076ea400b00711d106b93amr8702508ejc.189.1655293012228;
-        Wed, 15 Jun 2022 04:36:52 -0700 (PDT)
-Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
-        by smtp.gmail.com with ESMTPSA id v13-20020a17090606cd00b0070d742804a5sm6185597ejb.150.2022.06.15.04.36.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jun 2022 04:36:50 -0700 (PDT)
-Message-ID: <a85a3ad7-a010-bdd5-0479-b5b415654cc1@scylladb.com>
-Date:   Wed, 15 Jun 2022 14:36:48 +0300
+        with ESMTP id S244420AbiFOLhx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 07:37:53 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA785DF52
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:37:52 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25EMcxu9026826
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:37:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=AVjWiS5bok6GdHwvrHtDtEcPuI9GJl0o6PPco/WhOfM=;
+ b=cMq2Y8/RV17S1LbaX3uzvTcUV8gbNsTS4Y7ZJpGYqYis7bfSa179pTxjAtDrEPAgaCZf
+ 7k1UUyQIczdP5iUOP21PAio3tWi9ox7FfpggqgrwZyGtjhONFoJawdaBM7bG/68VEDWK
+ zi5laWHFjcL2minSxCS+MSHYwK6/SjeRMbw= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gpgc2sht6-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:37:52 -0700
+Received: from twshared25478.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Wed, 15 Jun 2022 04:37:50 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 0B7C71B0FD23; Wed, 15 Jun 2022 04:37:41 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     <io-uring@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>, <kernel-team@fb.com>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH liburing] convert buf-ring nop test to use read
+Date:   Wed, 15 Jun 2022 04:37:33 -0700
+Message-ID: <20220615113733.1424472-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
- <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
- <e7ffdf1e-b6a8-0e46-5879-30c25446223d@scylladb.com>
- <b585d3b4-42b3-b0db-1cef-5d6c8b815bb7@kernel.dk>
- <e90bfb07-c24f-0e4d-0ac6-bd67176641fb@scylladb.com>
- <8e816c1b-213b-5812-b48a-a815c0fe2b34@kernel.dk>
- <16030f8f-67b1-dbc9-0117-47c16bf78c34@kernel.dk>
- <4008a1db-ee26-92ba-320e-140932e801c1@kernel.dk>
- <1d79b0e6-ee65-6eab-df64-3987a7f7f4e7@scylladb.com>
- <95bfb0d1-224b-7498-952a-ea2464b353d9@gmail.com>
- <991a999b-0f85-c0a3-c364-4b3ecfef9106@scylladb.com>
- <7b275cab-07a3-2399-cbcd-2de8864af97b@gmail.com>
-From:   Avi Kivity <avi@scylladb.com>
-Organization: ScyllaDB
-In-Reply-To: <7b275cab-07a3-2399-cbcd-2de8864af97b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: cLUtBfIJdDiiCnqxtl3gmv3dRvZSN0Cy
+X-Proofpoint-ORIG-GUID: cLUtBfIJdDiiCnqxtl3gmv3dRvZSN0Cy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-15_03,2022-06-13_01,2022-02-23_01
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,107 +60,154 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+The NOP support for IOSQE_BUFFER_SELECT has been reverted, so use a
+supported function with read. This also allows verifying that the
+correct data has actually been read.
 
-On 15/06/2022 14.30, Pavel Begunkov wrote:
-> On 6/15/22 12:04, Avi Kivity wrote:
->>
->> On 15/06/2022 13.48, Pavel Begunkov wrote:
->>> On 6/15/22 11:12, Avi Kivity wrote:
->>>>
->>>> On 19/04/2022 20.14, Jens Axboe wrote:
->>>>> On 4/19/22 9:21 AM, Jens Axboe wrote:
->>>>>> On 4/19/22 6:31 AM, Jens Axboe wrote:
->>>>>>> On 4/19/22 6:21 AM, Avi Kivity wrote:
->>>>>>>> On 19/04/2022 15.04, Jens Axboe wrote:
->>>>>>>>> On 4/19/22 5:57 AM, Avi Kivity wrote:
->>>>>>>>>> On 19/04/2022 14.38, Jens Axboe wrote:
->>>>>>>>>>> On 4/19/22 5:07 AM, Avi Kivity wrote:
->>>>>>>>>>>> A simple webserver shows about 5% loss compared to linux-aio.
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> I expect the loss is due to an optimization that io_uring 
->>>>>>>>>>>> lacks -
->>>>>>>>>>>> inline completion vs workqueue completion:
->>>>>>>>>>> I don't think that's it, io_uring never punts to a workqueue 
->>>>>>>>>>> for
->>>>>>>>>>> completions.
->>>>>>>>>> I measured this:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>    Performance counter stats for 'system wide':
->>>>>>>>>>
->>>>>>>>>>            1,273,756 io_uring:io_uring_task_add
->>>>>>>>>>
->>>>>>>>>>         12.288597765 seconds time elapsed
->>>>>>>>>>
->>>>>>>>>> Which exactly matches with the number of requests sent. If 
->>>>>>>>>> that's the
->>>>>>>>>> wrong counter to measure, I'm happy to try again with the 
->>>>>>>>>> correct
->>>>>>>>>> counter.
->>>>>>>>> io_uring_task_add() isn't a workqueue, it's task_work. So that is
->>>>>>>>> expected.
->>>>>> Might actually be implicated. Not because it's a async worker, but
->>>>>> because I think we might be losing some affinity in this case. 
->>>>>> Looking
->>>>>> at traces, we're definitely bouncing between the poll completion 
->>>>>> side
->>>>>> and then execution the completion.
->>>>>>
->>>>>> Can you try this hack? It's against -git + for-5.19/io_uring. If 
->>>>>> you let
->>>>>> me know what base you prefer, I can do a version against that. I see
->>>>>> about a 3% win with io_uring with this, and was slower before 
->>>>>> against
->>>>>> linux-aio as you saw as well.
->>>>> Another thing to try - get rid of the IPI for TWA_SIGNAL, which I
->>>>> believe may be the underlying cause of it.
->>>>>
->>>>
->>>> Resurrecting an old thread. I have a question about timeliness of 
->>>> completions. Let's assume a request has completed. From the patch, 
->>>> it appears that io_uring will only guarantee that a completion 
->>>> appears on the completion ring if the thread has entered kernel 
->>>> mode since the completion happened. So user-space polling of the 
->>>> completion ring can cause unbounded delays.
->>>
->>> Right, but polling the CQ is a bad pattern, 
->>> io_uring_{wait,peek}_cqe/etc.
->>> will do the polling vs syscalling dance for you.
->>
->>
->> Can you be more explicit?
->>
->>
->> I don't think peek is enough. If there is a cqe pending, it will 
->> return it, but will not cause compeleted-but-unqueued events to 
->> generate completions.
->>
->>
->> And wait won't enter the kernel if a cqe is pending, IIUC.
->
-> Right, usually it won't, but works if you eventually end up
-> waiting, e.g. by waiting for all expected cqes.
->
->
->>> For larger audience, I'll remind that it's an opt-in feature
->>>
->>
->> I don't understand - what is an opt-in feature?
->
-> The behaviour that you worry about when CQEs are not posted until
-> you do syscall, it's only so if you set IORING_SETUP_COOP_TASKRUN.
->
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
+---
+ test/buf-ring.c | 42 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 28 insertions(+), 14 deletions(-)
 
-Ah! I wasn't aware of this new flag. This is exactly what I want - 
-either ask for timely completions, or optimize for throughput.
+diff --git a/test/buf-ring.c b/test/buf-ring.c
+index af1cac8..3d12ef6 100644
+--- a/test/buf-ring.c
++++ b/test/buf-ring.c
+@@ -206,7 +206,7 @@ static int test_reg_unreg(int bgid)
+ 	return 0;
+ }
+=20
+-static int test_one_nop(int bgid, struct io_uring *ring)
++static int test_one_read(int fd, int bgid, struct io_uring *ring)
+ {
+ 	int ret;
+ 	struct io_uring_cqe *cqe;
+@@ -218,21 +218,19 @@ static int test_one_nop(int bgid, struct io_uring *=
+ring)
+ 		return -1;
+ 	}
+=20
+-	io_uring_prep_nop(sqe);
++	io_uring_prep_read(sqe, fd, NULL, 1, 0);
+ 	sqe->flags |=3D IOSQE_BUFFER_SELECT;
+ 	sqe->buf_group =3D bgid;
+ 	ret =3D io_uring_submit(ring);
+ 	if (ret <=3D 0) {
+ 		fprintf(stderr, "sqe submit failed: %d\n", ret);
+-		ret =3D -1;
+-		goto out;
++		return -1;
+ 	}
+=20
+ 	ret =3D io_uring_wait_cqe(ring, &cqe);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "wait completion %d\n", ret);
+-		ret =3D -1;
+-		goto out;
++		return -1;
+ 	}
+ 	ret =3D cqe->res;
+ 	io_uring_cqe_seen(ring, cqe);
+@@ -240,14 +238,12 @@ static int test_one_nop(int bgid, struct io_uring *=
+ring)
+ 	if (ret =3D=3D -ENOBUFS)
+ 		return ret;
+=20
+-	if (ret !=3D 0) {
+-		fprintf(stderr, "nop result %d\n", ret);
++	if (ret !=3D 1) {
++		fprintf(stderr, "read result %d\n", ret);
+ 		return -1;
+ 	}
+=20
+-	ret =3D cqe->flags >> 16;
+-out:
+-	return ret;
++	return cqe->flags >> 16;
+ }
+=20
+ static int test_running(int bgid, int entries, int loops)
+@@ -255,6 +251,7 @@ static int test_running(int bgid, int entries, int lo=
+ops)
+ 	struct io_uring_buf_reg reg =3D { };
+ 	struct io_uring ring;
+ 	void *ptr;
++	char buffer[8];
+ 	int ret;
+ 	int ring_size =3D (entries * sizeof(struct io_uring_buf) + 4095) & (~40=
+95);
+ 	int ring_mask =3D io_uring_buf_ring_mask(entries);
+@@ -262,6 +259,7 @@ static int test_running(int bgid, int entries, int lo=
+ops)
+ 	int loop, idx;
+ 	bool *buffers;
+ 	struct io_uring_buf_ring *br;
++	int read_fd;
+=20
+ 	ret =3D t_create_ring(1, &ring, 0);
+ 	if (ret =3D=3D T_SETUP_SKIP)
+@@ -279,6 +277,10 @@ static int test_running(int bgid, int entries, int l=
+oops)
+ 	if (!buffers)
+ 		return 1;
+=20
++	read_fd =3D open("/dev/zero", O_RDONLY);
++	if (read_fd < 0)
++		return 1;
++
+ 	reg.ring_addr =3D (unsigned long) ptr;
+ 	reg.ring_entries =3D entries;
+ 	reg.bgid =3D bgid;
+@@ -293,11 +295,12 @@ static int test_running(int bgid, int entries, int =
+loops)
+ 	for (loop =3D 0; loop < loops; loop++) {
+ 		memset(buffers, 0, sizeof(bool) * entries);
+ 		for (idx =3D 0; idx < entries; idx++)
+-			io_uring_buf_ring_add(br, ptr, 1, idx, ring_mask, idx);
++			io_uring_buf_ring_add(br, buffer, sizeof(buffer), idx, ring_mask, idx=
+);
+ 		io_uring_buf_ring_advance(br, entries);
+=20
+ 		for (idx =3D 0; idx < entries; idx++) {
+-			ret =3D test_one_nop(bgid, &ring);
++			memset(buffer, 1, sizeof(buffer));
++			ret =3D test_one_read(read_fd, bgid, &ring);
+ 			if (ret < 0) {
+ 				fprintf(stderr, "bad run %d/%d =3D %d\n", loop, idx, ret);
+ 				return ret;
+@@ -306,9 +309,19 @@ static int test_running(int bgid, int entries, int l=
+oops)
+ 				fprintf(stderr, "reused buffer %d/%d =3D %d!\n", loop, idx, ret);
+ 				return 1;
+ 			}
++			if (buffer[0] !=3D 0) {
++				fprintf(stderr, "unexpected read %d %d/%d =3D %d!\n",
++						(int)buffer[0], loop, idx, ret);
++				return 1;
++			}
++			if (buffer[1] !=3D 1) {
++				fprintf(stderr, "unexpected spilled read %d %d/%d =3D %d!\n",
++						(int)buffer[1], loop, idx, ret);
++				return 1;
++			}
+ 			buffers[ret] =3D true;
+ 		}
+-		ret =3D test_one_nop(bgid, &ring);
++		ret =3D test_one_read(read_fd, bgid, &ring);
+ 		if (ret !=3D -ENOBUFS) {
+ 			fprintf(stderr, "expected enobufs run %d =3D %d\n", loop, ret);
+ 			return 1;
+@@ -322,6 +335,7 @@ static int test_running(int bgid, int entries, int lo=
+ops)
+ 		return 1;
+ 	}
+=20
++	close(read_fd);
+ 	io_uring_queue_exit(&ring);
+ 	free(buffers);
+ 	return 0;
 
-
-Of course, it puts me in a dilemma because I want both, but that's my 
-problem.
-
-
-Thanks!
-
+base-commit: d6f9e02f9c6a777010824341f14c994b11dfc8b1
+--=20
+2.30.2
 

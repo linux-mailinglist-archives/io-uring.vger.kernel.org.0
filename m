@@ -2,156 +2,186 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FEF54C73A
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 13:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1D654C788
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 13:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242181AbiFOLQV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 07:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42052 "EHLO
+        id S1347683AbiFOLbW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 07:31:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343570AbiFOLQT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 07:16:19 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E36CC49C9A
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:16:18 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25F9irvC027967
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:16:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=3il8DKGpxZwB7ytjL5D4Ph3D12yPCbSbgcTn9pxJMVM=;
- b=Bu8J/lp/vEVigB9fZ/BMyzIr1zItTxRv3Gx6SMVymoCQ+o5VvqyPzD9lHp8Y+MYtns4o
- 8SYgNEZSt836qMMARnH2mmVZiCCw6zEWLAmBiwQvXa+KcqqncwtQCKDXYG3tyQ+7LOA3
- uVq6/rOogZQ9ECQch4ej0dpq7zqeSC7bjlE= 
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gqd2d8ced-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:16:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lpH860SGN63WCoZqBdqCajZ5sRoTEUFqSnnJe+1W0tGviiWM158UDZvRgcr8Wwfb+mOcuxGQmgkn9nwSW4wDnhpVTMOgPAvnXGcI+s05TQBAMjzxEkyJXgNNLsDFgITW8r7/tIDq+TDOr23IK5Qq/TO8IP34oxfQImwf0C+XOj+TM8FUoZLOQAB6RuvsqjoZaFnCW9DMkdfvxzFj+U/NgEO6TpqLvYt7WIlXAngeRYpx6NmZkAlPd6TgRp0xoBdurTeFvQwh6wJ/WzIOakgBTIxwX5iy1H4igoG4Rq570dyFyMuUkhO2y3r61xZ68KV+tjFLX6Z5EgRC/ioHq9ztEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3il8DKGpxZwB7ytjL5D4Ph3D12yPCbSbgcTn9pxJMVM=;
- b=PSxw6dp7nTSOuYJi1AkZcCvc7J8MSvb53atTVqcQqrq0RC75sufY+XEIRQtzUauoRtwEcSc1xwj02S/dDeeFyNyULBLTEaRtXMZY/3Gp8bU5S4c/hSW6RM7R7LVltijpJbJ5KcGV9eHD95ZgiBLz+nsXwNwN1KcoWayb4egwVwbQXpHN2A2BEDUgkMbcXD9A2DY/m75G8Pyzm57h7Pb9be066hm6zFrWncgoVPJ1TuoP93utAooKgs8+9K9EiJbTbx+bEd/qpdzZP4VuDpH9Ah3Nh2BTLNSVAaxN8KiJMxnd74dAeRhW6JrF3ZrXYR50qxHAX42NKU9kE5Xd0SA0Fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SA1PR15MB4854.namprd15.prod.outlook.com (2603:10b6:806:1e1::19)
- by SA1PR15MB4353.namprd15.prod.outlook.com (2603:10b6:806:1ac::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14; Wed, 15 Jun
- 2022 11:16:14 +0000
-Received: from SA1PR15MB4854.namprd15.prod.outlook.com
- ([fe80::8198:e29e:552e:5b11]) by SA1PR15MB4854.namprd15.prod.outlook.com
- ([fe80::8198:e29e:552e:5b11%2]) with mapi id 15.20.5353.014; Wed, 15 Jun 2022
- 11:16:14 +0000
-From:   Dylan Yudaken <dylany@fb.com>
-To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 0/2] revert buf-ring test
-Thread-Topic: [PATCH liburing 0/2] revert buf-ring test
-Thread-Index: AQHYgIs0YXCNYFqU5EO576y9WGLqlK1QUY8A
-Date:   Wed, 15 Jun 2022 11:16:14 +0000
-Message-ID: <46cdcceed6e006e45defb42e5f809c7de5efefa8.camel@fb.com>
-References: <20220615074025.124322-1-dylany@fb.com>
-In-Reply-To: <20220615074025.124322-1-dylany@fb.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c01c42b4-1ae2-4295-656e-08da4ec07614
-x-ms-traffictypediagnostic: SA1PR15MB4353:EE_
-x-microsoft-antispam-prvs: <SA1PR15MB435356963A25ECE665E2C2A4B6AD9@SA1PR15MB4353.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: horQ388faEcNqIc6zsOtE++JvmCC1O3fAEbuXvf2hFW4ZQ3C9RAzw4pkE3XvK47bL2L1MHdIul3GVVsA6IB+swElC2kAtv4H0XwYb8q1+TqcqBeZu5T4sKipCzgH+JYBjDAcomnMtPqlYwtdFt6TUTifHgs6XwCnLK1qieP1ztkjazm0UqGoafG2G/AVkpWfV5SzHKvivjoLb2VGYHjGDs0th1gAz0ify8yzA5DwWjcxL0HqpDt9FpusdLza/kW7gSknO7VyT0ThoGN7XkPtAVK2gqlAPMxeffPP4YjSTxUu1InEwY+bg26Glfnjp+mcy+2E/J8/SwvtQwcxCw+jNxIag1mN5Up/K4P65xkEcqskFAAwTXBOdBeDZK782aKtHzpMAf9+u1cy7LQLPpRZ7NiGEvFhu5sZdxch9uiiPxjx663M1OcFo8Op/rDkV6FtWKlqxO1MNzRDY0ruv9yZ0WQkPHyRFV1PAAPsqbl700xlnDtyKNfvkAr/0xdYjYsj8nI22ZZHgzRyzqxlulWCWou8JPMkJAdugqNgHVBbM8eB604sh7l2fJYeJm33s+JxGE8mTUkAvjN/riUe32C6bHmroazRjw8fjbnoNBErrKUj/EntjUIGC6rEjQY8/OCtOcDmaGzhqR4y7c3h0wUUbA3CMj26qMkY54Eo9p58n+QPAE4PAMgKDieerVjGIIl3IdObgJWfSO6p9DON1rHjJw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB4854.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(66556008)(66476007)(66446008)(64756008)(8676002)(66946007)(4326008)(91956017)(76116006)(2906002)(122000001)(38070700005)(86362001)(5660300002)(8936002)(38100700002)(4744005)(6512007)(186003)(6486002)(508600001)(71200400001)(2616005)(6506007)(316002)(83380400001)(54906003)(6916009)(36756003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZnpaRUJGMTVPV3FxY01QWXFsbWhPdm42dXJrcHlUT25ySE5mMmpnaGhFSnBi?=
- =?utf-8?B?UUNsQ2oyWUVBNHVVNW1rVUpFMU9VcUpIbGY2WkxwSmlyNTBFcHc5WGkzRUFI?=
- =?utf-8?B?L290dzRYYldMVzcrNzBHTWlnWkdqeDE5L3k2OGxmZVBVOTVROG1OQWd1OHJo?=
- =?utf-8?B?NVgxZlMxaHN3SVg0OEpITUg1cVdwek9STlVRcHpQOWp3Y0JGT29YZEJ5dTNk?=
- =?utf-8?B?UXgybWViVXhCalB1WTRPd1NrWUtNRXY2ZXpqVzVkWEJFeWtZcFJtdUEvWnFL?=
- =?utf-8?B?MVRWZXl0bUdnLzZLa3JLZUhGM3J1QzhUVDJhRWFpUkZaTFBLaXVpYXNGUWtQ?=
- =?utf-8?B?SUk0YWkvRS9GY1hOaGY1ZENyTDAyekRGODB3VUFDajRIZjhKckZITXF0aWU3?=
- =?utf-8?B?dWJ5aE5CMFd4RStvQzZJYi9hUWdqVHZ5Z0RhbFlkWnhEUEw0NU5HUVIwNjF2?=
- =?utf-8?B?WDNFN01kV0wzRW1BU0orQ0UyaEJJZ29QSWZWY1FEN3JXUFBVeWU2Y3pyZFcy?=
- =?utf-8?B?REp6Tm1PS2E0RjBkYkpxbkFLeGZBT2VLcFE4TmY3a1hCWGlXVWZNbjZScFJn?=
- =?utf-8?B?TWdRNlJqVWgvdklSd24va2ovajhKOHR5TW5EU3J1a3BsZjN3UUNHaVF5aEd1?=
- =?utf-8?B?U2ljTDUzbllQQ1RXbWlUTUwzcFV2dUd2WDFMeExSR2pwdmhOR05semxJMFRr?=
- =?utf-8?B?ME5kTDdNaTI2c1BuNEJBUGdnVWxXNUZZSGNNWkIydzF1RWhITmRTR3ZQZTRa?=
- =?utf-8?B?SDliSnJZMmdOWUwyallDMGVTM3IweEM4N09mc05QeHBoQ1pqYnpaMDdjeUlH?=
- =?utf-8?B?T0o3SjNPV2NsTmpjZzU2T3doUmxjYmlraEJqYWRmTEpKYlkxbTNZZndqZks1?=
- =?utf-8?B?NDBFVTlqUzg0ZzBLMTJHZ2pKQkJjRnZTVFlWK2tWU1pPaEsvdlpDUnVlbHZm?=
- =?utf-8?B?VVQwUjVDWEdIZWw3dHdnQlFaRjhmTk5Ld3dKb0o2U1l0V1JWeDlNYnhXeUc1?=
- =?utf-8?B?bEVBVGZwSk4rWmltNm1rWUJVbkp1ZjBqUG8yUHhzNU9CQmRCbHdKVDdEUExM?=
- =?utf-8?B?aFo0d1crQlZhMGhSWFE1amcyRk92YWs4YllaMVlRQTRZNzVqSzcwcWcraFV6?=
- =?utf-8?B?MFA0RjFHSHk3TGJVQXhBUWFzVUd0d1BVWGJoUEpNVjlJSDQ4NUZRYXkyN3dN?=
- =?utf-8?B?TGM2Y2E2WEYyUFViR1RRODY4KzZiQXQ1R09EWVdvdDh6eElQdjNNNnk0dTlP?=
- =?utf-8?B?dGRZQWc4S0xjQzZCak45Q3lkOHhQWEtEVU80elMweVF2d3dYTERaK0VDcnA3?=
- =?utf-8?B?Y08ySWdzR1hqRzlzeDlFZEViRzVoOVFkQ3djZXlEL296cjc5Mmhab0hiY0Zv?=
- =?utf-8?B?ZUJFZFloQmU1cWlWNlM0cG9uaVkxTkljTGp0NW5lRHUrUVhpRURwbmVOVHcy?=
- =?utf-8?B?bnU5Y1ZWd0RGbUZhNXB2R0FIZ1hDbExsWkVTRGRLZUdraXhOWFNHK3lSZUhS?=
- =?utf-8?B?RFRPTUxCdEhWcytVcVpIYWcwd3VtZG5GOEpwR2ZjVU05TnNCdFUyakRFa3li?=
- =?utf-8?B?eHFQTXdVNjhYVGRtR0FEaFh5WkNvcWJyMjNQR2xhdGtjZnpWb3hHYXFuNWFk?=
- =?utf-8?B?OGFBMS9kcUZPVGlRVStxNVI4d3RKQmd2dWJTaXN1Tk5PNk9rdDAxU2lPS2Nm?=
- =?utf-8?B?WHlGZDlLOTRDN0JFVTBwenQxSy8yMFdCbDExSGNLS1R6ckxCcnFNd082MTQy?=
- =?utf-8?B?K0EzUlZ4ck9hTFljcW9HQXdwQjBCcldwbkxiN245ZWs2NmQyTmZZZnpFa1cx?=
- =?utf-8?B?MkJpbW5zZjJ5UmpuU29SeGxSbUMrWmg0RVkrUjFDLzJNT3J1TStsVnYzYWFu?=
- =?utf-8?B?dHYxbjdMUUllWGNPdVl5bTNmMmRjWFdEeEVqWUw2aEN0TXBFQ0FLa0VxYU9E?=
- =?utf-8?B?MFpSU29DMEdTdmsrdWJibGNKNC90NHV0elVmU09EUVJyMkdubFdILzBRaWJr?=
- =?utf-8?B?OHI3eTROa3hQelJkMnlXN0RGTHp1VDdIU2g0K1hZUUVnZnh3cC9RZzZNVWZE?=
- =?utf-8?B?VENNVm42U0VRendEa3VtVUNIT3EvUm1MSS9oVVVnTlRxc242VW12V295RHVy?=
- =?utf-8?B?VlNXeHNMcEY5NWtOekMrbTVTYUwvOEZzM3lxekYzWU1vNXZVRGYzeVhBOE5W?=
- =?utf-8?B?cEFTdlRoNHBKcXJxbmdTK3JaU3hVdUxEcklmWlhjZ0tXUHprVk1VOUk1RTZW?=
- =?utf-8?B?NjFsa1Z3b1YxWUxTSWRNYWxDeVB4TlpoL096eWxneW1qSlAzQkJoblRIWFZh?=
- =?utf-8?B?cnJ5VVIrZzlNSDQ2c2txSFpEWE1KVUhJMC8vVFlOcXErdUZud1I2OFVrWUVy?=
- =?utf-8?Q?WBKQQb8R3rWi7v5M=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7FA0531578F02844B09E389C4A648BB0@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        with ESMTP id S1347940AbiFOLbS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 07:31:18 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6B1953A52
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:31:17 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id q15so14919947wrc.11
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 04:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=uzVTwI+Uk7ULZCZUZQ4OjcJoO0gov1XnfSdbyac9PCU=;
+        b=eLUm5H7ok+NIHm+z4fqLPdkHQ6mGf7mmsl7EhNpBILdYu8AlKVccu0renTDItAYkgy
+         1oFAUl6aFtz6lleyB5E718hc/WI/S1SNT3g6pUuZBlp8rr1/ZaUo4DCG5f0O7pdbtdC4
+         dxdSXKfQ3Y5x4U01MjNF3omhsuANm7wWfTuK3wwcH2w+0n+mCKJgL+IWAiJp8U3tuFw8
+         anx2ye/GBUK38Lw78pqPwIZENcGSyxqJsoX2JPLJiTLkmnKbV5G8QZsmQH4VfCvrdT4K
+         qDiX2a4MSW8EheHpz1urFIPjmzwaXx9M8oNBvyZyyS4ac9cEjTTkTRr7zXjp7UF9fKrU
+         ufZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=uzVTwI+Uk7ULZCZUZQ4OjcJoO0gov1XnfSdbyac9PCU=;
+        b=bGl7vuptWQgEyZBDJeAKnxtTxBusVqjaowFBJwY8qw0BnAKumVk1atk9Kw2tLYbjkA
+         jO2bpt4qw71s0ZmSQpDocKLj4pemY5pmngnekQda1QCFMJuPqEe/Nb6iUfm5x9SxBOZK
+         10VMzkqiQc84l9X6wfAKSA5I9xkohgal3wUK8vMreI7yG/wmC4wJZnTmtTlDvPPe8gGN
+         yZjWKc24vMejNvmQ22hZHzguVUbhRjtY7wpiVuvyMP5N8H7QcQ2/2dmZsHR063yCajqD
+         1xUQDzyQsYJ1qbVamXyFuNkeNuIuRrALpA9RLbqscwy43zNJYaCm8M0KgB8xr6ZmxOaq
+         kYuA==
+X-Gm-Message-State: AJIora/VIlcBHPa1FJmbKJr4aFUENuE59ZQvbTZY9+jzBhrN5NpLK3vi
+        dp0S0f7LdzQv+VtpYFogOvBh7V7JLP4t+A==
+X-Google-Smtp-Source: AGRyM1uY37zHsU/9S4Hje6+AH0FCHNMp0Eg9C0ZdXw9pp5PJStolad3zcMTvtL1KpW5nMdWBrV1+Dw==
+X-Received: by 2002:a05:6000:ce:b0:211:7f0b:a679 with SMTP id q14-20020a05600000ce00b002117f0ba679mr9507393wrx.261.1655292676183;
+        Wed, 15 Jun 2022 04:31:16 -0700 (PDT)
+Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
+        by smtp.gmail.com with ESMTPSA id f7-20020a5d50c7000000b0021031c894d3sm14684844wrt.94.2022.06.15.04.31.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 04:31:15 -0700 (PDT)
+Message-ID: <7b275cab-07a3-2399-cbcd-2de8864af97b@gmail.com>
+Date:   Wed, 15 Jun 2022 12:30:55 +0100
 MIME-Version: 1.0
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB4854.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c01c42b4-1ae2-4295-656e-08da4ec07614
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2022 11:16:14.7457
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IppZMHHijupxC6i5InD6HMAFv1PVL6qLtZSZ0XZQRrzZqGL/L8hnkrTHlTT+GrXd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB4353
-X-Proofpoint-GUID: qOGNDtGdTXEUPrLR3yizUIRYND3lM_uP
-X-Proofpoint-ORIG-GUID: qOGNDtGdTXEUPrLR3yizUIRYND3lM_uP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-15_03,2022-06-13_01,2022-02-23_01
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
+Content-Language: en-US
+To:     Avi Kivity <avi@scylladb.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
+ <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
+ <e7ffdf1e-b6a8-0e46-5879-30c25446223d@scylladb.com>
+ <b585d3b4-42b3-b0db-1cef-5d6c8b815bb7@kernel.dk>
+ <e90bfb07-c24f-0e4d-0ac6-bd67176641fb@scylladb.com>
+ <8e816c1b-213b-5812-b48a-a815c0fe2b34@kernel.dk>
+ <16030f8f-67b1-dbc9-0117-47c16bf78c34@kernel.dk>
+ <4008a1db-ee26-92ba-320e-140932e801c1@kernel.dk>
+ <1d79b0e6-ee65-6eab-df64-3987a7f7f4e7@scylladb.com>
+ <95bfb0d1-224b-7498-952a-ea2464b353d9@gmail.com>
+ <991a999b-0f85-c0a3-c364-4b3ecfef9106@scylladb.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <991a999b-0f85-c0a3-c364-4b3ecfef9106@scylladb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-T24gV2VkLCAyMDIyLTA2LTE1IGF0IDAwOjQwIC0wNzAwLCBEeWxhbiBZdWRha2VuIHdyb3RlOg0K
-PiBSZXZlcnQgdGhlIHR3byBwYXRjaGVzIGZvciB0aGUgYnVmLXJpbmcgdGVzdCBhcyB0aGUgTk9Q
-IHN1cHBvcnQgaXMNCj4gYmVpbmcNCj4gcmVtb3ZlZCBmcm9tIDUuMTkNCj4gDQo+IER5bGFuIFl1
-ZGFrZW4gKDIpOg0KPiDCoCBSZXZlcnQgInRlc3QvYnVmLXJpbmc6IGVuc3VyZSBjcWUgaXNuJ3Qg
-dXNlZCB1bmluaXRpYWxpemVkIg0KPiDCoCBSZXZlcnQgImJ1Zi1yaW5nOiBhZGQgdGVzdHMgdGhh
-dCBjeWNsZSB0aHJvdWdoIHRoZSBwcm92aWRlZCBidWZmZXINCj4gwqDCoMKgIHJpbmciDQo+IA0K
-PiDCoHRlc3QvYnVmLXJpbmcuYyB8IDEzMCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tDQo+IC0tDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDEzMCBkZWxldGlvbnMo
-LSkNCj4gDQo+IA0KPiBiYXNlLWNvbW1pdDogZDZmOWUwMmY5YzZhNzc3MDEwODI0MzQxZjE0Yzk5
-NGIxMWRmYzhiMQ0KDQpJdCdzIGFjdHVhbGx5IHRyaXZpYWwgdG8gY29udmVydCB0aGlzIHRvIHJl
-YWRzIG9mIC9kZXYvemVybywgc28gSSdsbCBkbw0KdGhhdCBpbnN0ZWFkIHJhdGhlciB0aGFuIHJl
-dmVydCB0aGUgdGVzdA0K
+On 6/15/22 12:04, Avi Kivity wrote:
+> 
+> On 15/06/2022 13.48, Pavel Begunkov wrote:
+>> On 6/15/22 11:12, Avi Kivity wrote:
+>>>
+>>> On 19/04/2022 20.14, Jens Axboe wrote:
+>>>> On 4/19/22 9:21 AM, Jens Axboe wrote:
+>>>>> On 4/19/22 6:31 AM, Jens Axboe wrote:
+>>>>>> On 4/19/22 6:21 AM, Avi Kivity wrote:
+>>>>>>> On 19/04/2022 15.04, Jens Axboe wrote:
+>>>>>>>> On 4/19/22 5:57 AM, Avi Kivity wrote:
+>>>>>>>>> On 19/04/2022 14.38, Jens Axboe wrote:
+>>>>>>>>>> On 4/19/22 5:07 AM, Avi Kivity wrote:
+>>>>>>>>>>> A simple webserver shows about 5% loss compared to linux-aio.
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> I expect the loss is due to an optimization that io_uring lacks -
+>>>>>>>>>>> inline completion vs workqueue completion:
+>>>>>>>>>> I don't think that's it, io_uring never punts to a workqueue for
+>>>>>>>>>> completions.
+>>>>>>>>> I measured this:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>    Performance counter stats for 'system wide':
+>>>>>>>>>
+>>>>>>>>>            1,273,756 io_uring:io_uring_task_add
+>>>>>>>>>
+>>>>>>>>>         12.288597765 seconds time elapsed
+>>>>>>>>>
+>>>>>>>>> Which exactly matches with the number of requests sent. If that's the
+>>>>>>>>> wrong counter to measure, I'm happy to try again with the correct
+>>>>>>>>> counter.
+>>>>>>>> io_uring_task_add() isn't a workqueue, it's task_work. So that is
+>>>>>>>> expected.
+>>>>> Might actually be implicated. Not because it's a async worker, but
+>>>>> because I think we might be losing some affinity in this case. Looking
+>>>>> at traces, we're definitely bouncing between the poll completion side
+>>>>> and then execution the completion.
+>>>>>
+>>>>> Can you try this hack? It's against -git + for-5.19/io_uring. If you let
+>>>>> me know what base you prefer, I can do a version against that. I see
+>>>>> about a 3% win with io_uring with this, and was slower before against
+>>>>> linux-aio as you saw as well.
+>>>> Another thing to try - get rid of the IPI for TWA_SIGNAL, which I
+>>>> believe may be the underlying cause of it.
+>>>>
+>>>
+>>> Resurrecting an old thread. I have a question about timeliness of completions. Let's assume a request has completed. From the patch, it appears that io_uring will only guarantee that a completion appears on the completion ring if the thread has entered kernel mode since the completion happened. So user-space polling of the completion ring can cause unbounded delays.
+>>
+>> Right, but polling the CQ is a bad pattern, io_uring_{wait,peek}_cqe/etc.
+>> will do the polling vs syscalling dance for you.
+> 
+> 
+> Can you be more explicit?
+> 
+> 
+> I don't think peek is enough. If there is a cqe pending, it will return it, but will not cause compeleted-but-unqueued events to generate completions.
+> 
+> 
+> And wait won't enter the kernel if a cqe is pending, IIUC.
+
+Right, usually it won't, but works if you eventually end up
+waiting, e.g. by waiting for all expected cqes.
+
+
+>> For larger audience, I'll remind that it's an opt-in feature
+>>
+> 
+> I don't understand - what is an opt-in feature?
+
+The behaviour that you worry about when CQEs are not posted until
+you do syscall, it's only so if you set IORING_SETUP_COOP_TASKRUN.
+
+
+>>> If this is correct (it's not unreasonable, but should be documented), then there should also be a simple way to force a kernel entry. But how to do this using liburing? IIUC if I the following apply:
+>>>
+>>>
+>>>   1. I have no pending sqes
+>>>
+>>>   2. There are pending completions
+>>>
+>>>   3. There is a completed event for which a completion has not been appended to the completion queue ring
+>>>
+>>>
+>>> Then io_uring_wait_cqe() will elide io_uring_enter() and the completed-but-not-reported event will be delayed.
+>>
+>> One way is to process all CQEs and then it'll try to enter the
+>> kernel and do the job.
+>>
+>> Another way is to also set IORING_SETUP_TASKRUN_FLAG, then when
+>> there is work that requires to enter the kernel io_uring will
+>> set IORING_SQ_TASKRUN in sq_flags.
+>> Actually, I'm not mistaken io_uring has some automagic handling
+>> of it internally
+>>
+>> https://github.com/axboe/liburing/blob/master/src/queue.c#L36
+>>
+>>
+>>
+
+-- 
+Pavel Begunkov

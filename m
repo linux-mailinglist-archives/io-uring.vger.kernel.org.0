@@ -2,200 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C92654C92E
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 14:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5DDB54CA0B
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 15:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347760AbiFOMxi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 08:53:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33654 "EHLO
+        id S1344977AbiFONny (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 09:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349111AbiFOMxd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 08:53:33 -0400
-Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 295FF27B39
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 05:53:31 -0700 (PDT)
-Message-ID: <419df2b2-8b62-15f8-fc26-251b1337a59a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655297609;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RDzH4qeYYt5GPHsHasrvOFVe8+LMVyixYFSLBKdI0Gs=;
-        b=eR3dPHtrT0KJ18aok2dfUY016qGKwaSbLy45mYzwAlX/EcutBq5nDl/xm/JYEJLGUKbEfV
-        4UWhD7A3R9VLDD3pPGAFe+zcMYyDS93h3cM25oFUD7vJmGjzknas6s6euHNleDogcl5fXq
-        yHn/tTj4mvPsOwxwL4+MPVkR/r2jXH0=
-Date:   Wed, 15 Jun 2022 20:53:21 +0800
+        with ESMTP id S234848AbiFONnx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 09:43:53 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E7F286E8
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 06:43:51 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id y19so23332933ejq.6
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 06:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:organization:in-reply-to:content-transfer-encoding;
+        bh=CFQ8RN+Hg1IGsxkaaffio3fa6mKwpFL+qwSmBIORXqk=;
+        b=L3gmWCbQjyBQZVnOVbeii17W0o0CzZCDleSO/DhsYy/+5aJlOmIthi8nbLmK/YtNcD
+         w57Mm+GxMewQdgIfZtuL4p0GzdUGwhiTrijmPRavjm0ZYln1w+2WuhBruDGIEl5H5FH+
+         uZYKl6cornf0hBgdPW9QAWqMZytpfXhNXDe1ERitA8MF8bust1N39nGWvABy507VBDqh
+         hU5NDxmBuZndkc6C0KE/oIvMgjRgfoIp2DGb6MVAnumTBCGbNlndAy+1f4WABRl/FzFn
+         UCEyhXAOnVmW4vt3mig/g9kCg0bAfab9TqOt/j3YYU7/NcqNmPH+jpVbG0k8EnXuHb40
+         aj+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=CFQ8RN+Hg1IGsxkaaffio3fa6mKwpFL+qwSmBIORXqk=;
+        b=FguLVYnXz+8VPkWx6RcuHQwCUjn/0MSJ8QD/KzYquZLJ7FTx+Eb2l8nST+JyzOuUAQ
+         PUHosSPpXbIZ820XqXa39PvZBk1eB7qyprbTqg38BU6Ydq/bIPXK6blC0i7LM52Pmjcl
+         4jl01fTIOGqRmNsUlzyzEh+Vdh8PsiqF7+xx5MrPr6W9089DJpNjxeVFmoptFV3lzXhU
+         VNoBCYLXSFo7pv2h57b+YH/XKFTbZZyj+IXlDV9q5d6JBUWlNKvHX13SS5giZr8iiWLe
+         0/VwjJl4FFVrZCYQHRKVUdwuz0FPMloAcgK+xoBXlq/b3e6N6SoEQnA0PJOee9HFw93f
+         xKmg==
+X-Gm-Message-State: AOAM531XiVx1EGXL85Ia5ZAuvAs8zEq2lNvR4Z+p402bNB/4GoMKGZ6Q
+        umOwoX2yjxvdUJq5j08ssfOZ1VRX+vlqd+0Q
+X-Google-Smtp-Source: ABdhPJy0L3Yzx4U6LOok0jdu9XxGaR4vzPXKQbe1mRKTqStOnloaFHy2Doty+awA7VhSaaIZ5naSRA==
+X-Received: by 2002:a17:906:38d0:b0:715:8483:e01e with SMTP id r16-20020a17090638d000b007158483e01emr9054583ejd.265.1655300629639;
+        Wed, 15 Jun 2022 06:43:49 -0700 (PDT)
+Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
+        by smtp.gmail.com with ESMTPSA id gx7-20020a170906f1c700b006fe8ec44461sm6332402ejb.101.2022.06.15.06.43.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 06:43:48 -0700 (PDT)
+Message-ID: <abd9d8d3-9fc6-75d1-33fa-19571293b426@scylladb.com>
+Date:   Wed, 15 Jun 2022 16:43:46 +0300
 MIME-Version: 1.0
-Subject: Re: [PATCH for-next v2 25/25] io_uring: mutex locked poll hashing
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: IORING_OP_POLL_ADD slower than linux-aio IOCB_CMD_POLL
 Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <cover.1655213915.git.asml.silence@gmail.com>
- <b3250f21371e91e43ff488bc695240630cb21667.1655213915.git.asml.silence@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <b3250f21371e91e43ff488bc695240630cb21667.1655213915.git.asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+References: <9b749c99-0126-f9b2-99f5-5c33433c3a08@scylladb.com>
+ <9e277a23-84d7-9a90-0d3e-ba09c9437dc4@kernel.dk>
+ <e7ffdf1e-b6a8-0e46-5879-30c25446223d@scylladb.com>
+ <b585d3b4-42b3-b0db-1cef-5d6c8b815bb7@kernel.dk>
+ <e90bfb07-c24f-0e4d-0ac6-bd67176641fb@scylladb.com>
+ <8e816c1b-213b-5812-b48a-a815c0fe2b34@kernel.dk>
+ <16030f8f-67b1-dbc9-0117-47c16bf78c34@kernel.dk>
+ <4008a1db-ee26-92ba-320e-140932e801c1@kernel.dk>
+ <1d79b0e6-ee65-6eab-df64-3987a7f7f4e7@scylladb.com>
+ <95bfb0d1-224b-7498-952a-ea2464b353d9@gmail.com>
+ <991a999b-0f85-c0a3-c364-4b3ecfef9106@scylladb.com>
+ <85b5d99e-69b4-15cf-dfd8-a3ea8c120e02@scylladb.com>
+ <35a1fca7-a355-afbf-f115-8f154d8bdec6@gmail.com>
+ <4612ee3b-a63c-2374-9fc1-db099b2f6d78@kernel.dk>
+From:   Avi Kivity <avi@scylladb.com>
+Organization: ScyllaDB
+In-Reply-To: <4612ee3b-a63c-2374-9fc1-db099b2f6d78@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/14/22 22:37, Pavel Begunkov wrote:
-> Currently we do two extra spin lock/unlock pairs to add a poll/apoll
-> request to the cancellation hash table and remove it from there.
-> 
-> On the submission side we often already hold ->uring_lock and tw
-> completion is likely to hold it as well. Add a second cancellation hash
-> table protected by ->uring_lock. In concerns for latency because of a
-> need to have the mutex locked on the completion side, use the new table
-> only in following cases:
-> 
-> 1) IORING_SETUP_SINGLE_ISSUER: only one task grabs uring_lock, so there
->     is no contention and so the main tw hander will always end up
->     grabbing it before calling into callbacks.
 
-This statement seems not true, the io-worker may grab the uring lock,
-and that's why the [1] place I marked below is needed, right? Or do I
-miss something?
+On 15/06/2022 15.21, Jens Axboe wrote:
+> On 6/15/22 5:38 AM, Pavel Begunkov wrote:
+>>>>> Another way is to also set IORING_SETUP_TASKRUN_FLAG, then when
+>>>>> there is work that requires to enter the kernel io_uring will
+>>>>> set IORING_SQ_TASKRUN in sq_flags.
+>>>>> Actually, I'm not mistaken io_uring has some automagic handling
+>>>>> of it internally
+>>>>>
+>>>>> https://github.com/axboe/liburing/blob/master/src/queue.c#L36
+>>>>>
+>>> Is there documentation about this flag?
+>> Unfortunately, I don't see any.
+>> Here is a link to the kernel commit if it helps:
+>>
+>> https://git.kernel.dk/cgit/linux-block/commit/?h=ef060ea9e4fd3b763e7060a3af0a258d2d5d7c0d
+>>
+>> I think it's more interesting what support liburing has,
+>> but would need to look up in the code. Maybe Jens
+>> remembers and can tell.
+> It is documented, in the io_uring.2 man page in liburing:
+>
+> https://git.kernel.dk/cgit/liburing/tree/man/io_uring_setup.2#n200
+>
 
-> 
-> 2) IORING_SETUP_SQPOLL: same as with single issuer, only one task is
->     using ->uring_lock.
+Perfect. Thanks!
 
-same as above.
 
-> 
-> 3) apoll: we normally grab the lock on the completion side anyway to
->     execute the request, so it's free.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   io_uring/io_uring.c       |   9 +++-
->   io_uring/io_uring_types.h |   4 ++
->   io_uring/poll.c           | 111 ++++++++++++++++++++++++++++++--------
->   3 files changed, 102 insertions(+), 22 deletions(-)
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 4bead16e57f7..1395176bc2ea 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -731,6 +731,8 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   	hash_bits = clamp(hash_bits, 1, 8);
->   	if (io_alloc_hash_table(&ctx->cancel_table, hash_bits))
->   		goto err;
-> +	if (io_alloc_hash_table(&ctx->cancel_table_locked, hash_bits))
-> +		goto err;
->   
->   	ctx->dummy_ubuf = kzalloc(sizeof(*ctx->dummy_ubuf), GFP_KERNEL);
->   	if (!ctx->dummy_ubuf)
-> @@ -773,6 +775,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   err:
->   	kfree(ctx->dummy_ubuf);
->   	kfree(ctx->cancel_table.hbs);
-> +	kfree(ctx->cancel_table_locked.hbs);
->   	kfree(ctx->io_bl);
->   	xa_destroy(&ctx->io_bl_xa);
->   	kfree(ctx);
-> @@ -3056,6 +3059,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
->   	if (ctx->hash_map)
->   		io_wq_put_hash(ctx->hash_map);
->   	kfree(ctx->cancel_table.hbs);
-> +	kfree(ctx->cancel_table_locked.hbs);
->   	kfree(ctx->dummy_ubuf);
->   	kfree(ctx->io_bl);
->   	xa_destroy(&ctx->io_bl_xa);
-> @@ -3217,12 +3221,13 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
->   		__io_cqring_overflow_flush(ctx, true);
->   	xa_for_each(&ctx->personalities, index, creds)
->   		io_unregister_personality(ctx, index);
-> +	if (ctx->rings)
-> +		io_poll_remove_all(ctx, NULL, true);
->   	mutex_unlock(&ctx->uring_lock);
->   
->   	/* failed during ring init, it couldn't have issued any requests */
->   	if (ctx->rings) {
->   		io_kill_timeouts(ctx, NULL, true);
-> -		io_poll_remove_all(ctx, NULL, true);
->   		/* if we failed setting up the ctx, we might not have any rings */
->   		io_iopoll_try_reap_events(ctx);
->   	}
-> @@ -3347,7 +3352,9 @@ static __cold void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
->   		}
->   
->   		ret |= io_cancel_defer_files(ctx, task, cancel_all);
-> +		mutex_lock(&ctx->uring_lock);
->   		ret |= io_poll_remove_all(ctx, task, cancel_all);
-> +		mutex_unlock(&ctx->uring_lock);
->   		ret |= io_kill_timeouts(ctx, task, cancel_all);
->   		if (task)
->   			ret |= io_run_task_work();
-> diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
-> index ce2fbe6749bb..557b8e7719c9 100644
-> --- a/io_uring/io_uring_types.h
-> +++ b/io_uring/io_uring_types.h
-> @@ -189,6 +189,7 @@ struct io_ring_ctx {
->   		struct xarray		io_bl_xa;
->   		struct list_head	io_buffers_cache;
->   
-> +		struct io_hash_table	cancel_table_locked;
->   		struct list_head	cq_overflow_list;
->   		struct list_head	apoll_cache;
->   		struct xarray		personalities;
-> @@ -323,6 +324,7 @@ enum {
->   	/* keep async read/write and isreg together and in order */
->   	REQ_F_SUPPORT_NOWAIT_BIT,
->   	REQ_F_ISREG_BIT,
-> +	REQ_F_HASH_LOCKED_BIT,
->   
->   	/* not a real bit, just to check we're not overflowing the space */
->   	__REQ_F_LAST_BIT,
-> @@ -388,6 +390,8 @@ enum {
->   	REQ_F_APOLL_MULTISHOT	= BIT(REQ_F_APOLL_MULTISHOT_BIT),
->   	/* recvmsg special flag, clear EPOLLIN */
->   	REQ_F_CLEAR_POLLIN	= BIT(REQ_F_CLEAR_POLLIN_BIT),
-> +	/* hashed into ->cancel_hash_locked */
-> +	REQ_F_HASH_LOCKED	= BIT(REQ_F_HASH_LOCKED_BIT),
->   };
->   
->   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, bool *locked);
-> diff --git a/io_uring/poll.c b/io_uring/poll.c
-> index 07157da1c2cb..d20484c1cbb7 100644
-> --- a/io_uring/poll.c
-> +++ b/io_uring/poll.c
-> @@ -93,6 +93,26 @@ static void io_poll_req_delete(struct io_kiocb *req, struct io_ring_ctx *ctx)
->   	spin_unlock(lock);
->   }
->   
-> +static void io_poll_req_insert_locked(struct io_kiocb *req)
-> +{
-> +	struct io_hash_table *table = &req->ctx->cancel_table_locked;
-> +	u32 index = hash_long(req->cqe.user_data, table->hash_bits);
-> +
-> +	hlist_add_head(&req->hash_node, &table->hbs[index].list);
-> +}
-> +
-> +static void io_poll_tw_hash_eject(struct io_kiocb *req, bool *locked)
-> +{
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +
-> +	if (req->flags & REQ_F_HASH_LOCKED) {
-> +		io_tw_lock(ctx, locked);
-
-                           [1]
-
-> +		hash_del(&req->hash_node);
-> +	} else {
-> +		io_poll_req_delete(req, ctx);
-> +	}
-> +}
-> +

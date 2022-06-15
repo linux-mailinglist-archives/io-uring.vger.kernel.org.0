@@ -2,67 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA6754C5D2
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 12:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6154C54C5F3
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 12:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346695AbiFOKTl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 06:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37260 "EHLO
+        id S1347458AbiFOKWM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 06:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346820AbiFOKTk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 06:19:40 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77A642A1E
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:19:34 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id c130-20020a1c3588000000b0039c6fd897b4so850914wma.4
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:19:34 -0700 (PDT)
+        with ESMTP id S1348301AbiFOKVw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 06:21:52 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B3D14CD62
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:20:48 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id a10so6044296wmj.5
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 03:20:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=YO8vfWa4qVR21LcbNRJn7f6Or5IsrVOvfHxeYZjUbSU=;
-        b=CqTulZPb7wO9aj2gfLojac4YO2mq8LJKsilEocp1fOUMVwNVpjkmG/mNsWaZHMpEnS
-         PHuIKQ1lgpPJ3d9k5a8PHm8j59nvYQsHUwjG1VQW2Mtbs556cM5pjpvFi0I/egvNSG2T
-         SfAwppLV+NTFNO/xlpLBKz69rZZEssaPZKHmaeSKnKNWfQI3mO3cFfy/HeOBd5Z3TLrs
-         WkmXtBnlWkHNXegTQxA72EcC6MEC8orfBjlei8nuYUPW5qwGkui8fh6piBtFesgXaXlo
-         i1qIVEv2zhQ/NOY/alJ9rvqL0rPF18tOMGBLiN8XpQyrs/L1DFn249YDY1s/7vz4+cJe
-         9e3A==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=9UM8IQYrAZfWJT9VJPt22C4nX7BfIu6qh03YcerYMl0=;
+        b=C2iBOlsY7ACLC51jgC4leQ9qAu8SXqO6+kdOe0bX0w7t+DXUVZr0RWHs60R2zMWZAO
+         om+xRhRkLX3LNKHS1j/SukGvdZdXh/xzDFxpI+ob29UPKUztj7jlCPxvUtRt3B8tMscP
+         bxb9Wb+NDIlohvBcfrZLvQQ6sNccwLDwzRX712xoQYdXSw0ahgJN8SmCJGZ6Bl0iFCIC
+         PJR+NFCfGZHn5PtW1Legba6+QMoqiyuBZm+f4aPA3AFWYedzfE1wlXznmmsuycvlneF/
+         fC+o1FwXCBsttQIufh3oP/YoUbI2ju48GqQEMszgg6Ghutfm4PR2CPCMR5C42ZC2GviJ
+         PWFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=YO8vfWa4qVR21LcbNRJn7f6Or5IsrVOvfHxeYZjUbSU=;
-        b=woAMJC2G7nNLoTViixoKQbY6rHd8vS5TpvFUALY6yxVpiMh9EMksxoboRCe8DNwc5J
-         woc/J757IXLujXcSk0M5zW6HO4Ed9mV4gbpywW3bQvQ76kVLDy9AayZLwe5u3L0uxam9
-         /AFDnlGr5ghfR+lO3AtJl9VG7gPEbIUxUVLqyL7BdnfiUtZsDE+nS/qYjuNLjgNTmfgC
-         Dp1ktZP+Qsfqjr/XzAFZ8iJxq2hMoJu9FZ+8fGCY/eVWgzsU1+ukbakiIgo+zEf7LfvL
-         Q+PBNe+UTZnH2e22G3D0KdWkN4zILmpvmLxswFVx8uIlAU5fYn5aMA2vaCIovMdK3VfQ
-         QKHg==
-X-Gm-Message-State: AOAM531xje/lEvwrLeeLCg1Q0FReq6I2D7U4ljHnGLfUXhHViyCkm96o
-        h7ZEwHBcFYSpmV9VH8DuIRk=
-X-Google-Smtp-Source: ABdhPJzzPvR4C+DWNfxFhCcZc2jWxaq9AVbUs3EjCaBFjpuLMwl8SBHlNoINgs3B7Pf/m1tto+D0IQ==
-X-Received: by 2002:a05:600c:4fd0:b0:39c:6565:31a0 with SMTP id o16-20020a05600c4fd000b0039c656531a0mr9009600wmq.142.1655288373231;
-        Wed, 15 Jun 2022 03:19:33 -0700 (PDT)
+        bh=9UM8IQYrAZfWJT9VJPt22C4nX7BfIu6qh03YcerYMl0=;
+        b=2z+ZlGq2YD3IIa4QLx+gjgRVZDMk3lCVNBSu77WORifHYKiLsZ56KGoX5/LLnTATRv
+         BIwOIdEYS8NOx2x3gFxAoi3M1Hc7WxuuzuyaRA197tmeO5x41GNLquxKHj7li2wV1agq
+         lsV0zdnzUxHxrou6QcBadGBOZB0WJKgsIqmGxwvQc2cU8CQkhrDnP6rVoq9iUdCjZSeH
+         rlHSQ2Y9h8VZG7hO9+A0wpX8d5LoKAsp+RizhCSjPWUw5bqN6V8H7dGKw8cNCN8IuK+y
+         CNgXhjkc9RRNXdUinoSMwbI/ZyMdXIXFbzpxnQj/oSXyFVNSLxGQC7c9oQATLy5B7T6S
+         9QXw==
+X-Gm-Message-State: AOAM530GUOqupOf9vWBSKULAiKBkAOzTLjSpoRjhLi/Z5DZaMf+k7niU
+        C2e9nMeP+Up97F20bks4Y+59vwCzytDTaw==
+X-Google-Smtp-Source: ABdhPJy8GJS5Ixp7/0pzk92FHkv36XYRzz3b7x11yViDPKMJ5cO18qGP38GKJXNXsYrPu/02hlozvQ==
+X-Received: by 2002:a1c:f701:0:b0:39c:5539:cc4f with SMTP id v1-20020a1cf701000000b0039c5539cc4fmr9166311wmh.163.1655288446871;
+        Wed, 15 Jun 2022 03:20:46 -0700 (PDT)
 Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id az42-20020a05600c602a00b0039db500714fsm1951573wmb.6.2022.06.15.03.19.32
+        by smtp.gmail.com with ESMTPSA id l125-20020a1c2583000000b0039c4d9737f3sm1916326wml.34.2022.06.15.03.20.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jun 2022 03:19:32 -0700 (PDT)
-Message-ID: <cd37cace-247a-ce97-7af8-b0337b3684cb@gmail.com>
-Date:   Wed, 15 Jun 2022 11:19:12 +0100
+        Wed, 15 Jun 2022 03:20:46 -0700 (PDT)
+Message-ID: <d8683dc2-aad1-dde7-298d-e44772bf0aa6@gmail.com>
+Date:   Wed, 15 Jun 2022 11:20:26 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH for-next v2 10/25] io_uring: kill REQ_F_COMPLETE_INLINE
+Subject: Re: [PATCH for-next v2 21/25] io_uring: add
+ IORING_SETUP_SINGLE_ISSUER
 Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
 References: <cover.1655213915.git.asml.silence@gmail.com>
- <378d3aba69ea2b6a8b14624810a551c2ae011791.1655213915.git.asml.silence@gmail.com>
- <172baf20-e6d1-9098-187d-a2970885338b@linux.dev>
- <91f3d0d4-9d37-8ec8-dcde-97b3351eb765@gmail.com>
-In-Reply-To: <91f3d0d4-9d37-8ec8-dcde-97b3351eb765@gmail.com>
+ <d6235e12830a225584b90cf3b29f09a0681acc95.1655213915.git.asml.silence@gmail.com>
+ <f08c10da-5dac-a704-6c61-395f290b2ef8@linux.dev>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <f08c10da-5dac-a704-6c61-395f290b2ef8@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,51 +75,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/15/22 11:18, Pavel Begunkov wrote:
-> On 6/15/22 09:20, Hao Xu wrote:
->> On 6/14/22 22:37, Pavel Begunkov wrote:
->>> REQ_F_COMPLETE_INLINE is only needed to delay queueing into the
->>> completion list to io_queue_sqe() as __io_req_complete() is inlined and
->>> we don't want to bloat the kernel.
->>>
->>> As now we complete in a more centralised fashion in io_issue_sqe() we
->>> can get rid of the flag and queue to the list directly.
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>   io_uring/io_uring.c       | 20 ++++++++------------
->>>   io_uring/io_uring.h       |  5 -----
->>>   io_uring/io_uring_types.h |  3 ---
->>>   3 files changed, 8 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>> index 1fb93fdcfbab..fcee58c6c35e 100644
->>> --- a/io_uring/io_uring.c
->>> +++ b/io_uring/io_uring.c
->>> @@ -1278,17 +1278,14 @@ static void io_req_complete_post32(struct io_kiocb *req, u64 extra1, u64 extra2)
->>>   inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags)
->>>   {
->>> -    if (issue_flags & IO_URING_F_COMPLETE_DEFER)
->>> -        io_req_complete_state(req);
->>> -    else
->>> -        io_req_complete_post(req);
->>> +    io_req_complete_post(req);
->>>   }
->>
->> io_read/write and provide_buffers/remove_buffers are still using
->> io_req_complete() in their own function. By removing the
->> IO_URING_F_COMPLETE_DEFER branch they will end in complete_post path
->> 100% which we shouldn't.
+On 6/15/22 10:34, Hao Xu wrote:
+> On 6/14/22 22:37, Pavel Begunkov wrote:
+>> @@ -228,7 +249,7 @@ int io_ringfd_register(struct io_ring_ctx *ctx, void __user *__arg,
+>>           return -EINVAL;
+>>       mutex_unlock(&ctx->uring_lock);
+>> -    ret = io_uring_add_tctx_node(ctx);
+>> +    ret = __io_uring_add_tctx_node(ctx, false);
 > 
-> Old provided buffers are such a useful feature that Jens adds
-> a new ring-based version of it, so I couldn't care less about
-> those two.
-> 
-> I any case, let's leave it to follow ups. Those locking is a
-> weird construct and shouldn't be done this ad-hook way, it's
-> a potential bug nest
+> An question unrelated with this patch: why do we need this, since anyway
+> we will do it in later io_uring_enter() this task really submits reqs.
 
-Ok, missed io_read/write part, that's a problem, agree
+At least we need to allocate a tctx as the files are stored in there
+
+
+>>       mutex_lock(&ctx->uring_lock);
+>>       if (ret)
+>>           return ret;
 
 -- 
 Pavel Begunkov

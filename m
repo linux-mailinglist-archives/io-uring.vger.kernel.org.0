@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7428A54DE13
+	by mail.lfdr.de (Postfix) with ESMTP id BC60554DE14
 	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 11:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231648AbiFPJWt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jun 2022 05:22:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47326 "EHLO
+        id S231664AbiFPJWu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jun 2022 05:22:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231664AbiFPJWs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 05:22:48 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50C611167
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:46 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id s1so1035718wra.9
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:46 -0700 (PDT)
+        with ESMTP id S1359481AbiFPJWt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 05:22:49 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C3411A10
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:47 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id m24so1030919wrb.10
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0ZsaHpJ+wHbQ542pIhquFY7dETyZEEfQcuRQQLy5A28=;
-        b=Ne2qDU/PEqXHQeBk7GF3dMp6i/rEBKurv9RqgtWdBWqfRoiC/OSAq4/DPVbYHtoOsA
-         svLLQy66KYqVoDd4l9oEBkuBmKnETzAZkM8V+VhZPRCC3lrNpRm68TQIMmLqw/xIJIuZ
-         j6cXC12H6mI/j4/p3wlRiHYIHPHlQnvI5ZkB62tiHZROmU7wnt6vdGaNwFgDiQSGGTIP
-         lfAR3yfGnv9bUVMLIAQ24AE4FLvgqlb1r4f8SmyqRbFv3H3RMaWwrGvSq63G1a/3q+5Q
-         vOOmfsIZYZH6rbwHtwmUQYxZ2MSYuth/CYmiwzlwKlStom4mqHPI9XM78pa6njQk9Oz2
-         +N0w==
+        bh=BCuEENWz7BFINBG8zBMSUF8mtkwrlLjt3CzidM5Dw40=;
+        b=VdouYoSc1tjxSY04emPi7DQXhRnPkD3YPEQ+Gwl4I7KKBW+W46G8cVzN9wpu4QP6Oa
+         TRritE6UvqYEAidxLw2xIkQTwtyYpyyBkIGwAiExIK/SFTJ4Cy/ikJflLk/zhTUhAL2D
+         yJchwGFwFe3LzRN+hYKo2fygzd0g13pt2ypeQq99ieTwvpyGThTh/Bm1BhahAXdgNeBs
+         LeT68Lx9W+9ojnZCecruqA66lHK1fHITSf1atXwLzRjHeC0N9eC5IXj30nUJJAEHLbkZ
+         nlN3o3+NpqgQleg3QkKb9NFwyEHejEUo5+4wVgv1RzixW5LB9YBrRRA0xYVIVtq1PvVD
+         b8UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0ZsaHpJ+wHbQ542pIhquFY7dETyZEEfQcuRQQLy5A28=;
-        b=U0EJENDcJjKuSBBBraiVg+OYodBCgNgGrLPLlJeBsf7ht0ZBtabJrFVFLXaVKCRBZ3
-         Upwtni1APjchpeldzJ5FaVMrI5I/o8dmN2Qu7hHLj533s/WUjA9vMzZ8h9raPTNO0SOj
-         2V4Po7Vnj0DZxxPwgqlGUFzh7mjuaASiDDhDx642XV68+4OUZuEYv5ScJBMSOmxHjhTI
-         /11XQ463BQR4e8QN6OaN5mePkrZaAbxOds2X/6x0xyZEgSuT7ozXElYjU490hASXR2hQ
-         qPtQXezGuCxqLsDazfZJs4UtRieYUJkwxo7ksLdNFoJAAzFBgeecNVEJ0P96yplrAY1D
-         yL5A==
-X-Gm-Message-State: AJIora/E+IRZ994uy7J+ZuKPnKUXZxa+ZNzvzT666CfqGJk9TIOfV954
-        amIQdbe2cXCEJ1O3FO3x/XDIhVcQnuSVMg==
-X-Google-Smtp-Source: AGRyM1tXNEK//2jWAerbkkagqbLN2PkzYsLgGHE2n+NOw1sjZhpnW12wEYHkxQ9AkdzOzrlBS9xFaw==
-X-Received: by 2002:a05:6000:186e:b0:218:5f5d:9c55 with SMTP id d14-20020a056000186e00b002185f5d9c55mr3562733wri.128.1655371365004;
-        Thu, 16 Jun 2022 02:22:45 -0700 (PDT)
+        bh=BCuEENWz7BFINBG8zBMSUF8mtkwrlLjt3CzidM5Dw40=;
+        b=cQ6BxIK1bWnOHPeWPP10pHxIG2/ATzlFaOcPVSVQq3gQ01PyimlQN/Hd1abmoWpoo0
+         UYmbio7guamAu0Y+9DOxw0CrScF8fDCTyjk8eALc9Yn5DLwYOzRjigamJ1KWjhMYVauS
+         ue6imAep0UwgMyDpgBYyC/BX4zmpHhWYRMrqs024YIfyJAKDHJkehd1xtDwOxhGozoVH
+         yGQ91qAPGF+XZu7UYDxFD2C2LklohDYziTfxSdy/+tnv0eUMRo3QQG1OPXlVXhKsGPcv
+         bsfTxjFrA6r/+6HX8XL6ng2Kcb8sUJE4pkbFSJ8aoAIjGVmsjaJlPkokoWPgZGGGrj3o
+         jQzg==
+X-Gm-Message-State: AJIora8NWADNu424zzoLXOwbNazQqkO0Rv9ppQm4Bne5JExj0jlS4OJ4
+        lt+eSDEnptizWCZYN7k6XyeEA6aGhRIqvw==
+X-Google-Smtp-Source: AGRyM1sD4pti1RXsrKBBSK2MOt7M1yGWkRMSfOU9b+okooa4hbDtlEiCUMj0kuPllqfK5v2GmcpWpA==
+X-Received: by 2002:adf:ed45:0:b0:210:2f9c:f269 with SMTP id u5-20020adfed45000000b002102f9cf269mr3822602wro.470.1655371366073;
+        Thu, 16 Jun 2022 02:22:46 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id s6-20020a1cf206000000b0039c975aa553sm1695221wmc.25.2022.06.16.02.22.43
+        by smtp.gmail.com with ESMTPSA id s6-20020a1cf206000000b0039c975aa553sm1695221wmc.25.2022.06.16.02.22.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 02:22:44 -0700 (PDT)
+        Thu, 16 Jun 2022 02:22:45 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v3 02/16] io_uring: kill REQ_F_COMPLETE_INLINE
-Date:   Thu, 16 Jun 2022 10:21:58 +0100
-Message-Id: <600ba20a9338b8a39b249b23d3d177803613dde4.1655371007.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v3 03/16] io_uring: refactor io_req_task_complete()
+Date:   Thu, 16 Jun 2022 10:21:59 +0100
+Message-Id: <ae3148ac7eb5cce3e06895cde306e9e959d6f6ae.1655371007.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655371007.git.asml.silence@gmail.com>
 References: <cover.1655371007.git.asml.silence@gmail.com>
@@ -68,100 +68,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-REQ_F_COMPLETE_INLINE is only needed to delay queueing into the
-completion list to io_queue_sqe() as __io_req_complete() is inlined and
-we don't want to bloat the kernel.
-
-As now we complete in a more centralised fashion in io_issue_sqe() we
-can get rid of the flag and queue to the list directly.
+Clean up io_req_task_complete() and deduplicate io_put_kbuf() calls.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c       | 18 +++++++-----------
- io_uring/io_uring.h       |  5 -----
- io_uring/io_uring_types.h |  3 ---
- 3 files changed, 7 insertions(+), 19 deletions(-)
+ io_uring/io_uring.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index f1ecfdd0166e..02a70e7eb774 100644
+index 02a70e7eb774..1bcd2a8ebd4c 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -742,10 +742,7 @@ void io_req_complete_post(struct io_kiocb *req)
+@@ -1306,15 +1306,19 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
  
- inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags)
- {
--	if (issue_flags & IO_URING_F_COMPLETE_DEFER)
--		req->flags |= REQ_F_COMPLETE_INLINE;
--	else
--		io_req_complete_post(req);
-+	io_req_complete_post(req);
+ 	return ret;
  }
- 
- void io_req_complete_failed(struct io_kiocb *req, s32 res)
-@@ -1581,9 +1578,12 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	if (creds)
- 		revert_creds(creds);
- 
--	if (ret == IOU_OK)
--		__io_req_complete(req, issue_flags);
--	else if (ret != IOU_ISSUE_SKIP_COMPLETE)
-+	if (ret == IOU_OK) {
-+		if (issue_flags & IO_URING_F_COMPLETE_DEFER)
-+			io_req_add_compl_list(req);
-+		else
-+			io_req_complete_post(req);
-+	} else if (ret != IOU_ISSUE_SKIP_COMPLETE)
- 		return ret;
- 
- 	/* If the op doesn't have a file, we're not polling for it */
-@@ -1748,10 +1748,6 @@ static inline void io_queue_sqe(struct io_kiocb *req)
- 
- 	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
- 
--	if (req->flags & REQ_F_COMPLETE_INLINE) {
--		io_req_add_compl_list(req);
--		return;
+-inline void io_req_task_complete(struct io_kiocb *req, bool *locked)
++
++void io_req_task_complete(struct io_kiocb *req, bool *locked)
+ {
+-	if (*locked) {
+-		req->cqe.flags |= io_put_kbuf(req, 0);
++	if (req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)) {
++		unsigned issue_flags = *locked ? 0 : IO_URING_F_UNLOCKED;
++
++		req->cqe.flags |= io_put_kbuf(req, issue_flags);
++	}
++
++	if (*locked)
+ 		io_req_add_compl_list(req);
+-	} else {
+-		req->cqe.flags |= io_put_kbuf(req, IO_URING_F_UNLOCKED);
++	else
+ 		io_req_complete_post(req);
 -	}
- 	/*
- 	 * We async punt it if the file wasn't marked NOWAIT, or if the file
- 	 * doesn't support non-blocking read/write attempts
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index e30e639c2822..3f6cad3d356c 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -217,11 +217,6 @@ static inline bool io_run_task_work(void)
- 	return false;
  }
  
--static inline void io_req_complete_state(struct io_kiocb *req)
--{
--	req->flags |= REQ_F_COMPLETE_INLINE;
--}
--
- static inline void io_tw_lock(struct io_ring_ctx *ctx, bool *locked)
- {
- 	if (!*locked) {
-diff --git a/io_uring/io_uring_types.h b/io_uring/io_uring_types.h
-index ef1cf86e8932..4576ea8cad2e 100644
---- a/io_uring/io_uring_types.h
-+++ b/io_uring/io_uring_types.h
-@@ -301,7 +301,6 @@ enum {
- 	REQ_F_POLLED_BIT,
- 	REQ_F_BUFFER_SELECTED_BIT,
- 	REQ_F_BUFFER_RING_BIT,
--	REQ_F_COMPLETE_INLINE_BIT,
- 	REQ_F_REISSUE_BIT,
- 	REQ_F_CREDS_BIT,
- 	REQ_F_REFCOUNT_BIT,
-@@ -356,8 +355,6 @@ enum {
- 	REQ_F_BUFFER_SELECTED	= BIT(REQ_F_BUFFER_SELECTED_BIT),
- 	/* buffer selected from ring, needs commit */
- 	REQ_F_BUFFER_RING	= BIT(REQ_F_BUFFER_RING_BIT),
--	/* completion is deferred through io_comp_state */
--	REQ_F_COMPLETE_INLINE	= BIT(REQ_F_COMPLETE_INLINE_BIT),
- 	/* caller should reissue async */
- 	REQ_F_REISSUE		= BIT(REQ_F_REISSUE_BIT),
- 	/* supports async reads/writes */
+ /*
 -- 
 2.36.1
 

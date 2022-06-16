@@ -2,61 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D745154D3B8
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jun 2022 23:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E02154D78B
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 03:55:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345012AbiFOVad (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Jun 2022 17:30:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54006 "EHLO
+        id S1349884AbiFPBzN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Jun 2022 21:55:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245104AbiFOVac (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 17:30:32 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF8F562CD
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 14:30:31 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id f65so12527227pgc.7
-        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 14:30:31 -0700 (PDT)
+        with ESMTP id S1348001AbiFPBzM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Jun 2022 21:55:12 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CC618364
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 18:55:11 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id v17-20020a17090a899100b001ead067eaf9so502847pjn.0
+        for <io-uring@vger.kernel.org>; Wed, 15 Jun 2022 18:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=Q3ctwpOVXgOge5Z4dYI4HCHXl52SZI7LhI6V7iwVL88=;
-        b=AQshWtAJsKctEsOAg8pqEpRFnHz+hB4JqzD1CMtHeCQXfPB1LtOMV4qaMHgZFa5SCO
-         n5K72KnLmpvkDHPU3GOlf/LlaELMJIql3jZ4o7Gor0ZF5y6aoQz454P2AXjEvgLe+yg3
-         Z1Mj9aEmjuvokH3j4V3zXOMu25pwQ3KnJ1alnU1mVWbIkZ/3UuetkD93Y+9IYMQaM9gk
-         W8+liasbVHZclo0Rs/9CXM1jUz845kCoXUBB8OlIiM/gpCKq7WkAvu+biv57KV1JleeV
-         iOGmXlADRgI8qHzBWc+sNDTO9rFkcg7+Zq3a5XBPSU5gBqEIhZiNSHKxDK0SsGjpIVfc
-         AIBg==
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:cc:content-transfer-encoding;
+        bh=nW/e+jBO8wEgsZiiBJtv7dQGFLCIRmJbop3gsocaY1A=;
+        b=PLth28EKcSxIRm4XpfxvvwpJAwheOEgcQvMSWCvD4uQFAliPrmKtRLP4x9qxwZiKqF
+         MH+fbslitd5rgj4WypEZtdB/7SSaP3uKi6A+p+nvOABAMS3nxN9DhanghF+ZEqnhoBRo
+         KN2zBDjr+CVUuxUq+C3wJX6SQQY892t9itCF717TjbKZ6LSAuPNBChKspgJA5by5Se40
+         KRB52a3ijw5anobIKQbIRs4lVGLpbns8pftCH1J5UnS1Cep4wPdev3qjsGI3eY+tIGPi
+         erFe5sVBe0xWFfVIBh1JkZ+3iQKN6hVM7gSthjy2T/r5/Rqg3XDMwgLfskkHHCyH4Qy8
+         9XqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=Q3ctwpOVXgOge5Z4dYI4HCHXl52SZI7LhI6V7iwVL88=;
-        b=hMcfA9z6KOQPSwoJwK9qqb6VTh93vi1ZfPUOk4bsNTeehr2GBO6ptkmoL5R7d2G0ZY
-         SbYaSudlTRXy4/U/1NhDDdxmyw+7svPu4FrsP87lNh0MOJZUZvfUNr3VN9nyDB+nwpui
-         4CgTbbvqBhgtXPx404afRyfUSOj/qLjAKub6uXQpUMVwpV5tajFxZeQtwbIdlMKvLvoI
-         qyAuQM4glKs35ySi1WuuabrYPmBas+doa+36Pxto+8/wn4lHn75Hl5kSjld+hfOOSVJ5
-         Y/s+kLBMv1qwmvvXpch7W9H52ixBqUq0qD/HVrQgx4CasP4Zao1QIgDJn8fsJypBM+Iv
-         XfIw==
-X-Gm-Message-State: AJIora8g1Xk6Znd3XbZd/2T4TbYstvn9GyW8WDdr29FUWhv13C1StaVl
-        hzBzCW6P+VJt1nt6d+ge++28Slsyh5NdIQ==
-X-Google-Smtp-Source: AGRyM1usKpw/CdYzcOLzECj/Gdt+i5Q55EqoQR4dJ18x0Hnzb7n7//rMuL5ThmozKTJwo9jLd/BR9g==
-X-Received: by 2002:a63:b516:0:b0:408:c56d:ecc0 with SMTP id y22-20020a63b516000000b00408c56decc0mr1511543pge.261.1655328631363;
-        Wed, 15 Jun 2022 14:30:31 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b11-20020a17090a5a0b00b001e858081882sm2232870pjd.27.2022.06.15.14.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 14:30:30 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <cover.1655310733.git.asml.silence@gmail.com>
-References: <cover.1655310733.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 00/10] 5.20 cleanups
-Message-Id: <165532863069.858238.3952793587863469883.b4-ty@kernel.dk>
-Date:   Wed, 15 Jun 2022 15:30:30 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:cc:content-transfer-encoding;
+        bh=nW/e+jBO8wEgsZiiBJtv7dQGFLCIRmJbop3gsocaY1A=;
+        b=iM/EwqUs51iUI0h0TwbOCm8Z5Lq+2W1hHFn1ZGNuryDiw77Bgl/dCQHHbfXwvNh7l3
+         5RjptfzbJSeIn3AdAvkEBnrnTjoghD7ym+LncRtja/M9+phIu2FKJ4sVZdhbB+Zl7ooM
+         iFyf94KKCQhj4v/GFD5oHnr2uf5FOAEXpxvn3yobmXc8eGm9ryFJ95Pf48OdvV6jFQLL
+         eKQa3LGjLgLXNdM1FBw/dFhU+4VpOlapQVielpx++nLvlG4SeHZZthHm3hpPOie95H6t
+         eAnUXu0NwacurL0XEL/WahEzc/Uc3/wDJSK0/GqXeepx3W+QU4EjhbV8qryRy7c1fUxB
+         ZrXA==
+X-Gm-Message-State: AJIora/2HjH+zw9t9aB9+VrCIlGHzEQ7sNlXQPOMbsLOL7HDExBojI2y
+        cOGGw7U+1qE0Z6jKVhlVK1gZ3JbwtQGwUQ==
+X-Google-Smtp-Source: AGRyM1t0bNoM06FgEFtAHX/mJ/IBg323PjBMdCOLmoY6GPzSCP/ZCjlc6aZhacI7AH++ZqiWch7hdg==
+X-Received: by 2002:a17:90a:b894:b0:1e2:d8f8:41e9 with SMTP id o20-20020a17090ab89400b001e2d8f841e9mr13378092pjr.20.1655344510545;
+        Wed, 15 Jun 2022 18:55:10 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y11-20020a170902d64b00b00161955fe0d5sm273748plh.274.2022.06.15.18.55.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 18:55:09 -0700 (PDT)
+Message-ID: <b0c9112b-15d3-052b-3880-a81bed7a5842@kernel.dk>
+Date:   Wed, 15 Jun 2022 19:55:08 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: read/readv must commit ring mapped buffers upfront
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -66,48 +68,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 15 Jun 2022 17:33:46 +0100, Pavel Begunkov wrote:
-> Simple cleanups split off from a larger series.
-> 
-> Pavel Begunkov (10):
->   io_uring: make reg buf init consistent
->   io_uring: move defer_list to slow data
->   io_uring: better caching for ctx timeout fields
->   io_uring: refactor ctx slow data placement
->   io_uring: move small helpers to headers
->   io_uring: explain io_wq_work::cancel_seq placement
->   io_uring: inline ->registered_rings
->   io_uring: never defer-complete multi-apoll
->   io_uring: remove check_cq checking from hot paths
->   io_uring: don't set REQ_F_COMPLETE_INLINE in tw
-> 
-> [...]
+For recv/recvmsg, IO either completes immediately or gets queued for a
+retry. This isn't the case for read/readv, if eg a normal file or a block
+device is used. Here, an operation can get queued with the block layer.
+If this happens, ring mapped buffers must get committed immediately to
+avoid that the next read can consume the same buffer.
 
-Applied, thanks!
+Add an io_op_def flag for this, buffer_ring_commit. If set, when a mapped
+buffer is selected, it is immediately committed.
 
-[01/10] io_uring: make reg buf init consistent
-        commit: 8c81b9a8afeb9bf9a77ed7b8ae18fdcdd5e8738c
-[02/10] io_uring: move defer_list to slow data
-        commit: 2946124bd54c6bde7d8223764f9e29ee5e9c2872
-[03/10] io_uring: better caching for ctx timeout fields
-        commit: fee5d8c21d58b32c0e7f4dbddfa79ea2badfe080
-[04/10] io_uring: refactor ctx slow data placement
-        commit: 5545259f66477791ead5305d080e7315ab93e1d2
-[05/10] io_uring: move small helpers to headers
-        commit: 8f056215cea9a0b8a86d980c71da5587291f11c8
-[06/10] io_uring: explain io_wq_work::cancel_seq placement
-        commit: 588383e3417729d24c804d43d9f08f3b1756c5cf
-[07/10] io_uring: inline ->registered_rings
-        commit: 9d0222c4d9d1de014fea4ef151e6743b8eb30e8a
-[08/10] io_uring: never defer-complete multi-apoll
-        commit: 5bbc2038f4d8f3de273c74779882ecb9a959a46d
-[09/10] io_uring: remove check_cq checking from hot paths
-        commit: bc132bba5459cb501737c5793d1a273354dbf8db
-[10/10] io_uring: don't set REQ_F_COMPLETE_INLINE in tw
-        commit: 01955c135f1753e60587fc28679fc1fab8ebc4d4
+Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Best regards,
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5d479428d8e5..05703bcf73fd 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1098,6 +1098,8 @@ struct io_op_def {
+ 	unsigned		poll_exclusive : 1;
+ 	/* op supports buffer selection */
+ 	unsigned		buffer_select : 1;
++	/* op needs immediate commit of ring mapped buffers */
++	unsigned		buffer_ring_commit : 1;
+ 	/* do prep async if is going to be punted */
+ 	unsigned		needs_async_setup : 1;
+ 	/* opcode is not supported by this kernel */
+@@ -1122,6 +1124,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
+ 		.buffer_select		= 1,
++		.buffer_ring_commit	= 1,
+ 		.needs_async_setup	= 1,
+ 		.plug			= 1,
+ 		.audit_skip		= 1,
+@@ -1239,6 +1242,7 @@ static const struct io_op_def io_op_defs[] = {
+ 		.unbound_nonreg_file	= 1,
+ 		.pollin			= 1,
+ 		.buffer_select		= 1,
++		.buffer_ring_commit	= 1,
+ 		.plug			= 1,
+ 		.audit_skip		= 1,
+ 		.ioprio			= 1,
+@@ -3836,7 +3840,8 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 	req->buf_list = bl;
+ 	req->buf_index = buf->bid;
+ 
+-	if (issue_flags & IO_URING_F_UNLOCKED) {
++	if (issue_flags & IO_URING_F_UNLOCKED ||
++	    io_op_defs[req->opcode].buffer_ring_commit) {
+ 		/*
+ 		 * If we came in unlocked, we have no choice but to consume the
+ 		 * buffer here. This does mean it'll be pinned until the IO
+
 -- 
 Jens Axboe
-
 

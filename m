@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E18154E141
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 14:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DFA154E142
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 14:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233379AbiFPM6q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jun 2022 08:58:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35254 "EHLO
+        id S233360AbiFPM6r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jun 2022 08:58:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233280AbiFPM6p (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 08:58:45 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD55934655
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:58:43 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id o7so2652590eja.1
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:58:43 -0700 (PDT)
+        with ESMTP id S233400AbiFPM6q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 08:58:46 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA03B3C4B4
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:58:44 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id g7so2090757eda.3
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6AYfqcfmJ4itm1Y6HT6AlVE9aUis5Xusf4ZdczQWYN4=;
-        b=S3d9NrV8e3QYu/Z1G9RiijHKXaWwmTluY3CRqPuW402vXsKRfZTZaHmt93mBlspAaB
-         FkZ5MC9NewJyaHd5WnknRfMI1uZwWi1Z3QILiFXDWVKUX7p9LpnTXFbqJKBDHQuPlVMB
-         avTiV2DGUql6xk/DHNpJ4fGiL9sVnQbokGKYlpdFsEx4eMsGdHc1XLk0uxl0kuOvbzdU
-         h9oGuOYY5cavsZD2sYSIG3D0yIPvOvmwnBTOWn66ZgaBIuco7F6gEG11VBckqKOFiNeX
-         WhpKzf/gjEuyUyLPn5U6DTIuIh8BThdd+1d2khOpVmih2cK81ayuFhk9KlLeJidFM4q0
-         hL2w==
+        bh=TypfCrGXvCH86H9k4RtvB6h6H3NN9UXiatL6xH054BU=;
+        b=pOMuCNyCzkVmcUxdGSXzNKV3w/mIranrX1s3n9y/jM3tK+me+SsxUHGSFVZPT4quVu
+         Z53ShERk4z7yr7PquOZQqHgZLhlS2pYVAVh/QUswJkoKd2HdNFzarC8nZXWG9j787P4y
+         cXtd3kGTnXVpS6LZYs5IsE/OA2OlP/QoVPqkscGi+74wdkfBlwM6TZF/+MPV8iqWTP6u
+         2brjvQ3DCDZ/OWXq4ztqOTp/1GVtZYA55rpTJvxWIAWAYCdK8s6Etq/FyIiPsthoHQ2M
+         PWCTth9PfYKI/HN0nVeNLcDeUxHJ7Y0vpJdO+RwinhwmLDX2QuhrJk1yWMumKVtpy2I+
+         LotQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6AYfqcfmJ4itm1Y6HT6AlVE9aUis5Xusf4ZdczQWYN4=;
-        b=rrWmdW8CMpPrR3bdApZb6p2Hq2w5RxLxkvVtYjz8S1dtFE4p5NoD/gUUHp+jI7Bhgs
-         Rhv3QZ1MWk5JjFukYnnilOMKuP30tCrB6QRjl9cKDoeHjDQwtbci7ROgxPYnd+83orQO
-         Z6kcsNuGzZTKzdUgbu4x4uwwOmiXrLv4smTdxlokGQ3vANPaEUN1q4zh5TqkCqZdsJLQ
-         rDFOYNtJPWVoBSvBJWoWbGFTqyxpTECa2mYLKGovZ70zUoqBUrAkeyNInxFLO9ScBcdi
-         PQrulD/mCcsytJUozK1ty0gvj9LOnWLLrbOLr03LhLCPqZcvXsdzwD4aO79H/WNYZyk7
-         b6yg==
-X-Gm-Message-State: AJIora9EAeELZ4+efa7tZWpOK1I6/KXd4l89or3Rq6x83A47vpds46p/
-        VsIOeyUzokugKDXNVd26QRfGXbEdmCHgVg==
-X-Google-Smtp-Source: AGRyM1tcC3wyicOGToxIbaIdj2JTa7rn85x4oyBsXvx4AOHwkPVBRs9mOdPfcmqVa59Pv3Jk1UzAfg==
-X-Received: by 2002:a17:907:9958:b0:6e7:f67a:a1e7 with SMTP id kl24-20020a170907995800b006e7f67aa1e7mr4287962ejc.400.1655384321965;
-        Thu, 16 Jun 2022 05:58:41 -0700 (PDT)
+        bh=TypfCrGXvCH86H9k4RtvB6h6H3NN9UXiatL6xH054BU=;
+        b=Ab7rE4NySxy7dWP8SswSNgQR4jd6Wq1Pi2xp/RhJ3WnBvtRdqcGZvKYPtNws5O9ai3
+         iBVAMJte9UyQ1JAli9ghAUrHPtPqSX78glrq2DysAdi2A3OSn4pvwJqwNSn/qLXdEfDM
+         RtfJxNEMqBGn56d9xsfnia2pgV1ZOdgGC5ny3JC6rkh+uofKUDIrc6pUMIUm+FOCnlAo
+         vSXLOvntDsoiLsLaZTUK+c2eke0yN7MTFyLLclNmem8lXVqqieK9wBof54HpPMcX1stX
+         HFwuOL94LWYfYJ/UZLS39n27D9Nudar/C5UtHygaWpqJZLftdUvftR42+5TlNVUyIron
+         nfhA==
+X-Gm-Message-State: AJIora/aKYV3eZaeMirkJ+R6JN3x0OlZjyQsi+F5mfKTFnLlGBiDjNlr
+        Lb2EP9ES/lwHozAF4D4qYBzw7rWELLxY6Q==
+X-Google-Smtp-Source: AGRyM1tSHpO0zOnnNknLi9AHuXjdfhx1irIOYcrsyJ6n+0PF6K//sn1gSF0SnNoaShXTRZX0bgtEjw==
+X-Received: by 2002:a05:6402:f97:b0:431:8d1d:397d with SMTP id eh23-20020a0564020f9700b004318d1d397dmr6342344edb.423.1655384322927;
+        Thu, 16 Jun 2022 05:58:42 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:139d])
-        by smtp.gmail.com with ESMTPSA id j17-20020a17090623f100b00711d5baae0esm746896ejg.145.2022.06.16.05.58.41
+        by smtp.gmail.com with ESMTPSA id j17-20020a17090623f100b00711d5baae0esm746896ejg.145.2022.06.16.05.58.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 05:58:41 -0700 (PDT)
+        Thu, 16 Jun 2022 05:58:42 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 1/3] io_uring: kill extra io_uring_types.h includes
-Date:   Thu, 16 Jun 2022 13:57:18 +0100
-Message-Id: <94d8c943fbe0ef949981c508ddcee7fc1c18850f.1655384063.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 2/3] io_uring: make io_uring_types.h public
+Date:   Thu, 16 Jun 2022 13:57:19 +0100
+Message-Id: <a15f12e8cb7289b2de0deaddcc7518d98a132d17.1655384063.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655384063.git.asml.silence@gmail.com>
 References: <cover.1655384063.git.asml.silence@gmail.com>
@@ -68,326 +68,153 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring/io_uring.h already includes io_uring_types.h, no need to
-include it every time. Kill it in a bunch of places, it prepares us for
-following patches.
+Move io_uring types to linux/include, need them public so tracing can
+see the definitions and we can clean trace/events/io_uring.h
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/advise.c    | 1 -
- io_uring/cancel.c    | 1 -
- io_uring/epoll.c     | 1 -
- io_uring/fdinfo.c    | 1 -
- io_uring/filetable.c | 1 -
- io_uring/fs.c        | 1 -
- io_uring/io_uring.c  | 1 -
- io_uring/kbuf.c      | 1 -
- io_uring/msg_ring.c  | 1 -
- io_uring/net.c       | 1 -
- io_uring/nop.c       | 1 -
- io_uring/opdef.c     | 1 -
- io_uring/openclose.c | 1 -
- io_uring/poll.c      | 1 -
- io_uring/rsrc.c      | 1 -
- io_uring/rw.c        | 1 -
- io_uring/splice.c    | 1 -
- io_uring/sqpoll.c    | 1 -
- io_uring/statx.c     | 1 -
- io_uring/sync.c      | 1 -
- io_uring/tctx.c      | 1 -
- io_uring/timeout.c   | 1 -
- io_uring/uring_cmd.c | 1 -
- io_uring/xattr.c     | 1 -
- 24 files changed, 24 deletions(-)
+ {io_uring => include/linux}/io_uring_types.h | 28 ++++++++++++++++++--
+ io_uring/filetable.h                         | 11 --------
+ io_uring/io-wq.h                             | 17 +-----------
+ io_uring/io_uring.h                          |  4 ++-
+ io_uring/refs.h                              |  2 +-
+ 5 files changed, 31 insertions(+), 31 deletions(-)
+ rename {io_uring => include/linux}/io_uring_types.h (96%)
 
-diff --git a/io_uring/advise.c b/io_uring/advise.c
-index 8870fdf66ffb..581956934c0b 100644
---- a/io_uring/advise.c
-+++ b/io_uring/advise.c
-@@ -11,7 +11,6 @@
- #include <uapi/linux/fadvise.h>
+diff --git a/io_uring/io_uring_types.h b/include/linux/io_uring_types.h
+similarity index 96%
+rename from io_uring/io_uring_types.h
+rename to include/linux/io_uring_types.h
+index 65ac7cdaaa73..779c72da5b8f 100644
+--- a/io_uring/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -6,8 +6,32 @@
+ #include <linux/bitmap.h>
  #include <uapi/linux/io_uring.h>
  
+-#include "io-wq.h"
+-#include "filetable.h"
++struct io_wq_work_node {
++	struct io_wq_work_node *next;
++};
++
++struct io_wq_work_list {
++	struct io_wq_work_node *first;
++	struct io_wq_work_node *last;
++};
++
++struct io_wq_work {
++	struct io_wq_work_node list;
++	unsigned flags;
++	/* place it here instead of io_kiocb as it fills padding and saves 4B */
++	int cancel_seq;
++};
++
++struct io_fixed_file {
++	/* file * with additional FFS_* flags */
++	unsigned long file_ptr;
++};
++
++struct io_file_table {
++	struct io_fixed_file *files;
++	unsigned long *bitmap;
++	unsigned int alloc_hint;
++};
+ 
+ struct io_hash_bucket {
+ 	spinlock_t		lock;
+diff --git a/io_uring/filetable.h b/io_uring/filetable.h
+index c404360f7090..6b58aa48bc45 100644
+--- a/io_uring/filetable.h
++++ b/io_uring/filetable.h
+@@ -22,17 +22,6 @@ struct io_kiocb;
+ #endif
+ #define FFS_MASK		~(FFS_NOWAIT|FFS_ISREG|FFS_SCM)
+ 
+-struct io_fixed_file {
+-	/* file * with additional FFS_* flags */
+-	unsigned long file_ptr;
+-};
+-
+-struct io_file_table {
+-	struct io_fixed_file *files;
+-	unsigned long *bitmap;
+-	unsigned int alloc_hint;
+-};
+-
+ bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files);
+ void io_free_file_tables(struct io_file_table *table);
+ 
+diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+index 3f54ee2a8eeb..10b80ef78bb8 100644
+--- a/io_uring/io-wq.h
++++ b/io_uring/io-wq.h
+@@ -2,6 +2,7 @@
+ #define INTERNAL_IO_WQ_H
+ 
+ #include <linux/refcount.h>
++#include <linux/io_uring_types.h>
+ 
+ struct io_wq;
+ 
+@@ -20,15 +21,6 @@ enum io_wq_cancel {
+ 	IO_WQ_CANCEL_NOTFOUND,	/* work not found */
+ };
+ 
+-struct io_wq_work_node {
+-	struct io_wq_work_node *next;
+-};
+-
+-struct io_wq_work_list {
+-	struct io_wq_work_node *first;
+-	struct io_wq_work_node *last;
+-};
+-
+ #define wq_list_for_each(pos, prv, head)			\
+ 	for (pos = (head)->first, prv = NULL; pos; prv = pos, pos = (pos)->next)
+ 
+@@ -152,13 +144,6 @@ struct io_wq_work_node *wq_stack_extract(struct io_wq_work_node *stack)
+ 	return node;
+ }
+ 
+-struct io_wq_work {
+-	struct io_wq_work_node list;
+-	unsigned flags;
+-	/* place it here instead of io_kiocb as it fills padding and saves 4B */
+-	int cancel_seq;
+-};
+-
+ static inline struct io_wq_work *wq_next_work(struct io_wq_work *work)
+ {
+ 	if (!work->list.next)
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 3f6cad3d356c..16e46b09253a 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -3,7 +3,9 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/lockdep.h>
 -#include "io_uring_types.h"
- #include "io_uring.h"
- #include "advise.h"
++#include <linux/io_uring_types.h>
++#include "io-wq.h"
++#include "filetable.h"
  
-diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index f07bfd27c98a..d1e7f5a955ab 100644
---- a/io_uring/cancel.c
-+++ b/io_uring/cancel.c
-@@ -10,7 +10,6 @@
+ #ifndef CREATE_TRACE_POINTS
+ #include <trace/events/io_uring.h>
+diff --git a/io_uring/refs.h b/io_uring/refs.h
+index 334c5ead4c43..1336de3f2a30 100644
+--- a/io_uring/refs.h
++++ b/io_uring/refs.h
+@@ -2,7 +2,7 @@
+ #define IOU_REQ_REF_H
  
- #include <uapi/linux/io_uring.h>
- 
+ #include <linux/atomic.h>
 -#include "io_uring_types.h"
- #include "io_uring.h"
- #include "tctx.h"
- #include "poll.h"
-diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-index 10853e8ed078..a8b794471d6b 100644
---- a/io_uring/epoll.c
-+++ b/io_uring/epoll.c
-@@ -9,7 +9,6 @@
++#include <linux/io_uring_types.h>
  
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "epoll.h"
- 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 344e7d90d557..61c35707a6cf 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -9,7 +9,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "sqpoll.h"
- #include "fdinfo.h"
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index e449ceb9a848..534e1a3c625d 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -9,7 +9,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "rsrc.h"
- #include "filetable.h"
-diff --git a/io_uring/fs.c b/io_uring/fs.c
-index aac1bc5255b0..0de4f549bb7d 100644
---- a/io_uring/fs.c
-+++ b/io_uring/fs.c
-@@ -12,7 +12,6 @@
- 
- #include "../fs/internal.h"
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "fs.h"
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index d256a611be4e..6ade0ec91979 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -80,7 +80,6 @@
- 
- #include "io-wq.h"
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "refs.h"
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 223d9db2ba94..e8931e0b3e4a 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -10,7 +10,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "kbuf.h"
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 3b89f9a0a0b4..1f2de3534932 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -7,7 +7,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "msg_ring.h"
- 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 207803758222..cd931dae1313 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -10,7 +10,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "kbuf.h"
- #include "net.h"
-diff --git a/io_uring/nop.c b/io_uring/nop.c
-index d363d8ce70a3..d956599a3c1b 100644
---- a/io_uring/nop.c
-+++ b/io_uring/nop.c
-@@ -7,7 +7,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "nop.h"
- 
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 2b6d133d845a..a5478cbf742d 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -8,7 +8,6 @@
- #include <linux/file.h>
- #include <linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "refs.h"
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index 1cbf39030970..099a5ec84dfd 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -12,7 +12,6 @@
- 
- #include "../fs/internal.h"
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "rsrc.h"
- #include "openclose.h"
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 2e068e05732a..76828bce8653 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -13,7 +13,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "refs.h"
- #include "opdef.h"
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index fd1323482030..2f893e3f5c15 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -12,7 +12,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "openclose.h"
- #include "rsrc.h"
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 818692a83d75..f5567d52d2af 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -14,7 +14,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "kbuf.h"
-diff --git a/io_uring/splice.c b/io_uring/splice.c
-index 0e19d6330345..b013ba34bffa 100644
---- a/io_uring/splice.c
-+++ b/io_uring/splice.c
-@@ -11,7 +11,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "splice.h"
- 
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 149d5c976f14..76d4d70c733a 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -14,7 +14,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "sqpoll.h"
- 
-diff --git a/io_uring/statx.c b/io_uring/statx.c
-index 83b15687e9c5..6056cd7f4876 100644
---- a/io_uring/statx.c
-+++ b/io_uring/statx.c
-@@ -8,7 +8,6 @@
- 
- #include "../fs/internal.h"
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "statx.h"
- 
-diff --git a/io_uring/sync.c b/io_uring/sync.c
-index 9ee8ff865521..f2102afa79ca 100644
---- a/io_uring/sync.c
-+++ b/io_uring/sync.c
-@@ -11,7 +11,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "sync.h"
- 
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index 012be261dc50..a3bfbe5b6b72 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -9,7 +9,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "tctx.h"
- 
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 526fc8b2e3b6..f9df359813c9 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -8,7 +8,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "refs.h"
- #include "cancel.h"
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 5fb95767ceaf..233e137f8c6d 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -6,7 +6,6 @@
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "uring_cmd.h"
- 
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 79adf4efba01..b179f9acd5ac 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -13,7 +13,6 @@
- 
- #include "../fs/internal.h"
- 
--#include "io_uring_types.h"
- #include "io_uring.h"
- #include "xattr.h"
- 
+ /*
+  * Shamelessly stolen from the mm implementation of page reference checking,
 -- 
 2.36.1
 

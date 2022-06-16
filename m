@@ -2,104 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 415AC54E0E4
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 14:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7848D54E140
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 14:58:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232968AbiFPMem (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jun 2022 08:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45010 "EHLO
+        id S232589AbiFPM6o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jun 2022 08:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233076AbiFPMel (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 08:34:41 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F605131D
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:34:39 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id s135so1105985pgs.10
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:34:39 -0700 (PDT)
+        with ESMTP id S233280AbiFPM6n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 08:58:43 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51763C4B4
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:58:42 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id eo8so2125263edb.0
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 05:58:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
-         :subject:content-transfer-encoding;
-        bh=bLPa2732HLjw9iUHGa0MbrDMzyJNkR+0zL4Woz7f1ww=;
-        b=ftj5TsN0Je1Jg3OSDcwq56S+Uf/j0TrVZrfiXTk4dgSXpUVqVpmd1AREMvZdYuL1nv
-         0IuekswiYMOSXiShiVX25md9w9eR5XOfRy2Hdn7I+GBBweOmkWUrTmttLrBnIwMd8E5z
-         h0R5tgcDEwtVEWaHT/waILoucSUTnCWmsSa+hUyQoThvq1hv/aFE4YmkQXloZKnI3xNc
-         aQmci+mYpw62FTsrswNVQ0hkVChHml1SFyKDth8WWPUZW2lxGH0Jw3Tuhoc/jPhOMJOj
-         SsxrOzkiyDw/wCPdYoQkeZGv874Mghvqw34ES4DrK61LDSOlLzPYa4/trOE1NELqa2e3
-         VWAA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pLA7qDlmhwRat3Kh0Mcxz/vOJj63IE/VIdFB+XufJE0=;
+        b=Yb/OzCheRnVPi8hjCPybly7OcZysRPCpJTdaZC92jmQDGrbNZfsnbwjIpQ7Tfe+52V
+         5CcZW5SsqP5lF6i/eM4Pc+dWy+c7L+Ig0OIoj2rp4U/G4pGgK2X3ql+Tp0TaeBS2Ujys
+         ztIZdT1Xc6h41YTzWAPSnlqQakH3bMta1FtxDtqP1m1f4LnCnFu+P7LWjLFWVPFsaFIx
+         D+yeSSaLScw7pvbKG6qQdRM55YTQCEIhQ/1O43Oga45/Zp6l4tXHbZEgCkJyq4C7087w
+         8u5CpWNEyD7sl2zr7Ltg8HWLr6cON5OBF9dATsMz5YYnus9UmG7PGE0RdRhCBknFhlgP
+         X52w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:from:subject:content-transfer-encoding;
-        bh=bLPa2732HLjw9iUHGa0MbrDMzyJNkR+0zL4Woz7f1ww=;
-        b=HTlHbTxKCRGNW5WlCLaQHbZucXfXi3lcPW/6PKaBYknSHOBVf3fvsRGSLtwuefz5uZ
-         wcUJcxy6mdmeaqcFamjfzAjJLm7ninnebU7Rvrt5+Q2e1ZhYnBWMyiOBwoaiE8mYfw0s
-         KBlsb4K/yUKAq/J075+uVCZLZo4SaMjYdFrHQehcJEQW9dnJAS0N+suvVQp1brVL/Hs3
-         2hbUmrFWhZw/DDi3XtaHV4W77KpAmnRhI5p/xShc6IYyrpyk/ywTpjoVUBq+FzL6RK7E
-         lUR2cVUKquUin07gXJyf6X4OhMW3IuvyxjXxyS+PwOQ08KLg45AhGEyxohUeh1Zxe5MW
-         pUyA==
-X-Gm-Message-State: AJIora/yeQuHdptGMKo4Cd2O1QJnMyfswhGs2QhgwX+HeQXnmzbNpL3V
-        goPoAgqJjo4U/knaTYTb8LSkVLs6KY/87Q==
-X-Google-Smtp-Source: AGRyM1txtnXB8YD4DbRaDaF5JN5n7oXT8aeB79pUAmX6ABoFzcxYgEZ7DuQleOhDzkLll3Buy3wbeQ==
-X-Received: by 2002:a05:6a00:22d1:b0:51c:15ac:396e with SMTP id f17-20020a056a0022d100b0051c15ac396emr4512476pfj.58.1655382879080;
-        Thu, 16 Jun 2022 05:34:39 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a24-20020aa79718000000b00519cfca8e30sm1622095pfg.209.2022.06.16.05.34.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jun 2022 05:34:38 -0700 (PDT)
-Message-ID: <43b88754-a171-e871-5418-1ce53055c715@kernel.dk>
-Date:   Thu, 16 Jun 2022 06:34:37 -0600
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pLA7qDlmhwRat3Kh0Mcxz/vOJj63IE/VIdFB+XufJE0=;
+        b=Qx6b6WnoIqxhoYvFQYaV0AfKhFjyoc+nuV5w2iXcUjo0kpff4ScAqcen+8VO08VlcH
+         S+0O0hTKaij0DkC/P7JSvapfDAISos/v9WNV+ksHtxkdFXSJrSwSnmUWCoDIwZVGQyF3
+         tITIkGfSBoOTAiyzT3ML6MbjLUTPZN1OVK3jDE03/AgIaTr7TXuBIKzCv4p4sLDl7LHX
+         U+0AzlT4hDEajDyykQ43gdSKZTk8mIQXOH3WeZmN9Dppg0UWEgYJ0bv/XMu/yO0W0ErI
+         D7rUM9xa8N569M0Qkr2/72SaV5c7ZWhrT6ED+Psz85VukqE33WdzAVmxsNF0wDrrS0e9
+         YLTw==
+X-Gm-Message-State: AJIora/sZYr+0OVBnijuScymr3ZPLBRdJoujfJaDHg3mwy4IT+vk05RP
+        2gStoR3WxLbNnk0j0cvscZZNScDBxOfyeg==
+X-Google-Smtp-Source: AGRyM1u6+iFZTfGp3sWeE2uDMw+c7sDg8oWPih3u7QVhuSz0H0AKFcyqYs49TYAasgt5jEACMYXoVA==
+X-Received: by 2002:a05:6402:2804:b0:431:7dde:6fb5 with SMTP id h4-20020a056402280400b004317dde6fb5mr6390925ede.379.1655384320847;
+        Thu, 16 Jun 2022 05:58:40 -0700 (PDT)
+Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:139d])
+        by smtp.gmail.com with ESMTPSA id j17-20020a17090623f100b00711d5baae0esm746896ejg.145.2022.06.16.05.58.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jun 2022 05:58:40 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-next 0/3] io_uring trace events clean up
+Date:   Thu, 16 Jun 2022 13:57:17 +0100
+Message-Id: <cover.1655384063.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] io_uring: commit non-pollable provided mapped buffers
- upfront
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-For recv/recvmsg, IO either completes immediately or gets queued for a
-retry. This isn't the case for read/readv, if eg a normal file or a block
-device is used. Here, an operation can get queued with the block layer.
-If this happens, ring mapped buffers must get committed immediately to
-avoid that the next read can consume the same buffer.
+Make io_uring_types.h public and teach tracing how to derive
+opcode, user_data, etc. from io_kiocb.
 
-Check if we're dealing with pollable file, when getting a new ring mapped
-provided buffer. If it's not, commit it immediately rather than wait post
-issue. If we don't wait, we can race with completions coming in, or just
-plain buffer reuse by committing after a retry where others could have
-grabbed the same buffer.
+note: rebased on top of the hashing patches
 
-Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Pavel Begunkov (3):
+  io_uring: kill extra io_uring_types.h includes
+  io_uring: make io_uring_types.h public
+  io_uring: clean up tracing events
 
----
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5d479428d8e5..b6e75f69c6b1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3836,7 +3836,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
- 	req->buf_list = bl;
- 	req->buf_index = buf->bid;
- 
--	if (issue_flags & IO_URING_F_UNLOCKED) {
-+	if (issue_flags & IO_URING_F_UNLOCKED || !file_can_poll(req->file)) {
- 		/*
- 		 * If we came in unlocked, we have no choice but to consume the
- 		 * buffer here. This does mean it'll be pinned until the IO
+ {io_uring => include/linux}/io_uring_types.h |  28 ++++-
+ include/trace/events/io_uring.h              | 118 +++++++------------
+ io_uring/advise.c                            |   1 -
+ io_uring/cancel.c                            |   1 -
+ io_uring/epoll.c                             |   1 -
+ io_uring/fdinfo.c                            |   1 -
+ io_uring/filetable.c                         |   1 -
+ io_uring/filetable.h                         |  11 --
+ io_uring/fs.c                                |   1 -
+ io_uring/io-wq.h                             |  17 +--
+ io_uring/io_uring.c                          |  17 +--
+ io_uring/io_uring.h                          |   4 +-
+ io_uring/kbuf.c                              |   1 -
+ io_uring/msg_ring.c                          |   1 -
+ io_uring/net.c                               |   1 -
+ io_uring/nop.c                               |   1 -
+ io_uring/opdef.c                             |   1 -
+ io_uring/openclose.c                         |   1 -
+ io_uring/poll.c                              |   6 +-
+ io_uring/refs.h                              |   2 +-
+ io_uring/rsrc.c                              |   1 -
+ io_uring/rw.c                                |   1 -
+ io_uring/splice.c                            |   1 -
+ io_uring/sqpoll.c                            |   1 -
+ io_uring/statx.c                             |   1 -
+ io_uring/sync.c                              |   1 -
+ io_uring/tctx.c                              |   1 -
+ io_uring/timeout.c                           |   4 +-
+ io_uring/uring_cmd.c                         |   1 -
+ io_uring/xattr.c                             |   1 -
+ 30 files changed, 85 insertions(+), 143 deletions(-)
+ rename {io_uring => include/linux}/io_uring_types.h (96%)
 
 -- 
-Jens Axboe
+2.36.1
 

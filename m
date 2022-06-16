@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1711B54DE15
+	by mail.lfdr.de (Postfix) with ESMTP id 60F7154DE16
 	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 11:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359481AbiFPJWv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jun 2022 05:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47400 "EHLO
+        id S1359793AbiFPJWw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jun 2022 05:22:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376598AbiFPJWu (ORCPT
+        with ESMTP id S1376655AbiFPJWu (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 05:22:50 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7E211174
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:48 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id a10so422660wmj.5
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:48 -0700 (PDT)
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D143813F8F
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:49 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id i81-20020a1c3b54000000b0039c76434147so2500284wma.1
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 02:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+oR3rNXZgU1ixzRI7JxN2AwlqFap+l1SjK5ceoxKnGA=;
-        b=BwAdIGhAhpc7c501cFHLJotqPAyCzl6wkmPjxgsOnqKqo6F6kEje8zJHT5kcObE8FD
-         Buu+qfSy9D9VEvXN3F9x3p1ixGCZU2+M7cs4S3rqcfxhToxXYiSYGwIfizNZy03hbQS8
-         o+Ek7uX/l854KRgrhxAhzDd+U+VJFvTC6lXu6bIMor7jsoZvgAAud7IFJ6npAnGzB4yB
-         DEDEpB3pStbqJ9y+1P4WpOj0o/O2vc/PcRfOtN6mrTxbBImxUCC9B+OwsxtQfJkevz6W
-         e0H3XYZG/j+R8Kwg8oQc+fUQLjFvSCF/20wXPAPNvAjVRsHNMaplGzrXN2pFJ7gS02+G
-         bPUA==
+        bh=xtoDyDvNXPTaclwDuSrBJ25RRT45S7N/gTULdXm19LA=;
+        b=PZHLxxb96ZZSjv9zS9xYoL2jHEbnmGHauRivawSzqNRAZFKvp6BUol0xZz+lQc4HLg
+         0aiy2bYHX7wHBQ9nBLIjeULxGqryfTFA3hu5voUe4DGhN1wNvKBQsXW8qRfci5yVLTE/
+         7whO7Y4p2zBmo8+JgM/kNqw2cSMLTJ1yZufeVIjD62wz2pQUEN3A49pRbswd/6YQhHK2
+         q63BvejoRjeLEDUxrmq1Ex/OISR0W8bR2TtA5auv0OnTqum1eTMcQ4JxkaogFQEB+Iug
+         rT3vYxf2it4k3RWuJ+0nPx4SDBgOKL496AlYtna963vnDrvoisLsBOvJGt+Cs8OXfJ+l
+         rzZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+oR3rNXZgU1ixzRI7JxN2AwlqFap+l1SjK5ceoxKnGA=;
-        b=lDRN+PTvfPA1fAbTj6j1H0oEaR4XdXqlwWdKO5PxZXNRuFCnZSIPU16YipEJbYnHgq
-         h9fn8G5THZA0MHphTZdK/bRSXmU0bWNnCPGpzivsyZqd0MY3J97TpQw2dDq+0h2dFiHb
-         W+S/4ZamV+0xtCIOsjn/8/EWcetpqqprwQaglZODfm3rbWz6H8hTQ9wtK+XZ9XZyL6PG
-         LJoghzZaYWgjqkBYK8Dk+FBzAP7uav1Leq2uXAHZa2cXV+VBZsyYxBkpxnpUSloUEm/M
-         65vsGM1QYegUeSI3RvqTENKAxwRxdZh4YBzgQVX1JDudwiTLXIak2WIGXyMtC2Jk71v/
-         DhfA==
-X-Gm-Message-State: AOAM530OGcPAWeZmc96mvKK7/YGPHQxmBEtxzHa50w7PpGFyqi94dit+
-        VVDyTSt168PMfhc2CL8/sFwYW0mWMFhrYA==
-X-Google-Smtp-Source: ABdhPJwR2kkyCWmw0lVe9Oxc+RMP0YzPJG7P2+tVLDkV33mFEb41aT+tnP6UpHd2iUqVKX9HFvbPYg==
-X-Received: by 2002:a05:600c:348d:b0:39c:652b:5153 with SMTP id a13-20020a05600c348d00b0039c652b5153mr14575342wmq.24.1655371367081;
-        Thu, 16 Jun 2022 02:22:47 -0700 (PDT)
+        bh=xtoDyDvNXPTaclwDuSrBJ25RRT45S7N/gTULdXm19LA=;
+        b=VOFDAgCUtWt1l70t5vqYh5+2+y2h8/PElY1gBh80+LRZkLmBdeMkHCTRQ/e8Qj8aYW
+         TMg1KJNGo/ogovchuW3hpHDRfDJHYkOGE5Acdakh8lgltw6bIl06Lw45SPjSaEsvkh3U
+         O3YjHLYvN/TctS1/1gAjhLHZw5VMH0ZJv2VYZdx2Zm3csLaDEs4PUtGL3McVuEV03Yms
+         Pvgzh+CiDKfwHxmqRGpuWr3QGZtlMefI80KzXse2zVohX/2YCAKoyoiRgJy5+NRYQIcB
+         nTgvZzQ23KX1KJ3Xl/7SzWi6dDCac1JX4TK684Sdy4FZ0cn/eaSycGSQbTmpMQglA/i8
+         X0iw==
+X-Gm-Message-State: AJIora9Lys6fziA6M91hbC2QP7eIZsyVGYS1mPO3TQJZ0pvS14ZMIQid
+        KSs9YGZv9LQPeMFY/fTDXOoKEpEMtGgYhg==
+X-Google-Smtp-Source: AGRyM1sUE0TRlFkQNVACxK/gvFWwFzyx1ANrJhilWlWHKEJ/I8T8hH1OqoeHUT58iFRmTEsdTsPDSg==
+X-Received: by 2002:a7b:c4d4:0:b0:39c:5bb7:2210 with SMTP id g20-20020a7bc4d4000000b0039c5bb72210mr3867363wmk.99.1655371368197;
+        Thu, 16 Jun 2022 02:22:48 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id s6-20020a1cf206000000b0039c975aa553sm1695221wmc.25.2022.06.16.02.22.46
+        by smtp.gmail.com with ESMTPSA id s6-20020a1cf206000000b0039c975aa553sm1695221wmc.25.2022.06.16.02.22.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 02:22:46 -0700 (PDT)
+        Thu, 16 Jun 2022 02:22:47 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v3 04/16] io_uring: don't inline io_put_kbuf
-Date:   Thu, 16 Jun 2022 10:22:00 +0100
-Message-Id: <2e21ccf0be471ffa654032914b9430813cae53f8.1655371007.git.asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        Hao Xu <howeyxu@tencent.com>
+Subject: [PATCH for-next v3 05/16] io_uring: poll: remove unnecessary req->ref set
+Date:   Thu, 16 Jun 2022 10:22:01 +0100
+Message-Id: <ec6fee45705890bdb968b0c175519242753c0215.1655371007.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655371007.git.asml.silence@gmail.com>
 References: <cover.1655371007.git.asml.silence@gmail.com>
@@ -68,128 +69,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_put_kbuf() is huge, don't bloat the kernel with inlining.
+From: Hao Xu <howeyxu@tencent.com>
 
+We now don't need to set req->refcount for poll requests since the
+reworked poll code ensures no request release race.
+
+Signed-off-by: Hao Xu <howeyxu@tencent.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/kbuf.c | 33 +++++++++++++++++++++++++++++++++
- io_uring/kbuf.h | 38 ++++++--------------------------------
- 2 files changed, 39 insertions(+), 32 deletions(-)
+ io_uring/poll.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 5885343705bd..223d9db2ba94 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -82,6 +82,39 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
- 	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 0df5eca93b16..73584c4e3e9b 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -683,7 +683,6 @@ int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if ((flags & IORING_POLL_ADD_MULTI) && (req->flags & REQ_F_CQE_SKIP))
+ 		return -EINVAL;
+ 
+-	io_req_set_refcount(req);
+ 	req->apoll_events = poll->events = io_poll_parse_events(sqe, flags);
+ 	return 0;
  }
- 
-+unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags)
-+{
-+	unsigned int cflags;
-+
-+	/*
-+	 * We can add this buffer back to two lists:
-+	 *
-+	 * 1) The io_buffers_cache list. This one is protected by the
-+	 *    ctx->uring_lock. If we already hold this lock, add back to this
-+	 *    list as we can grab it from issue as well.
-+	 * 2) The io_buffers_comp list. This one is protected by the
-+	 *    ctx->completion_lock.
-+	 *
-+	 * We migrate buffers from the comp_list to the issue cache list
-+	 * when we need one.
-+	 */
-+	if (req->flags & REQ_F_BUFFER_RING) {
-+		/* no buffers to recycle for this case */
-+		cflags = __io_put_kbuf_list(req, NULL);
-+	} else if (issue_flags & IO_URING_F_UNLOCKED) {
-+		struct io_ring_ctx *ctx = req->ctx;
-+
-+		spin_lock(&ctx->completion_lock);
-+		cflags = __io_put_kbuf_list(req, &ctx->io_buffers_comp);
-+		spin_unlock(&ctx->completion_lock);
-+	} else {
-+		lockdep_assert_held(&req->ctx->uring_lock);
-+
-+		cflags = __io_put_kbuf_list(req, &req->ctx->io_buffers_cache);
-+	}
-+	return cflags;
-+}
-+
- static void __user *io_provided_buffer_select(struct io_kiocb *req, size_t *len,
- 					      struct io_buffer_list *bl)
- {
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 80b6df2c7535..5da3d4039aed 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -47,6 +47,8 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags);
- int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
- int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
- 
-+unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
-+
- static inline bool io_do_buffer_select(struct io_kiocb *req)
- {
- 	if (!(req->flags & REQ_F_BUFFER_SELECT))
-@@ -70,7 +72,8 @@ static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
- 	__io_kbuf_recycle(req, issue_flags);
- }
- 
--static unsigned int __io_put_kbuf(struct io_kiocb *req, struct list_head *list)
-+static inline unsigned int __io_put_kbuf_list(struct io_kiocb *req,
-+					      struct list_head *list)
- {
- 	if (req->flags & REQ_F_BUFFER_RING) {
- 		if (req->buf_list)
-@@ -90,44 +93,15 @@ static inline unsigned int io_put_kbuf_comp(struct io_kiocb *req)
- 
- 	if (!(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)))
- 		return 0;
--	return __io_put_kbuf(req, &req->ctx->io_buffers_comp);
-+	return __io_put_kbuf_list(req, &req->ctx->io_buffers_comp);
- }
- 
- static inline unsigned int io_put_kbuf(struct io_kiocb *req,
- 				       unsigned issue_flags)
- {
--	unsigned int cflags;
- 
- 	if (!(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)))
- 		return 0;
--
--	/*
--	 * We can add this buffer back to two lists:
--	 *
--	 * 1) The io_buffers_cache list. This one is protected by the
--	 *    ctx->uring_lock. If we already hold this lock, add back to this
--	 *    list as we can grab it from issue as well.
--	 * 2) The io_buffers_comp list. This one is protected by the
--	 *    ctx->completion_lock.
--	 *
--	 * We migrate buffers from the comp_list to the issue cache list
--	 * when we need one.
--	 */
--	if (req->flags & REQ_F_BUFFER_RING) {
--		/* no buffers to recycle for this case */
--		cflags = __io_put_kbuf(req, NULL);
--	} else if (issue_flags & IO_URING_F_UNLOCKED) {
--		struct io_ring_ctx *ctx = req->ctx;
--
--		spin_lock(&ctx->completion_lock);
--		cflags = __io_put_kbuf(req, &ctx->io_buffers_comp);
--		spin_unlock(&ctx->completion_lock);
--	} else {
--		lockdep_assert_held(&req->ctx->uring_lock);
--
--		cflags = __io_put_kbuf(req, &req->ctx->io_buffers_cache);
--	}
--
--	return cflags;
-+	return __io_put_kbuf(req, issue_flags);
- }
- #endif
 -- 
 2.36.1
 

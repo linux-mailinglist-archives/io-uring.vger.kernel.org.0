@@ -2,123 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39A2154E6E9
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 18:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7872C54EB4D
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jun 2022 22:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232527AbiFPQX2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Jun 2022 12:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58130 "EHLO
+        id S1378274AbiFPUhQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Jun 2022 16:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377351AbiFPQXE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 12:23:04 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B5914009
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 09:23:03 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id n1so2284130wrg.12
-        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 09:23:03 -0700 (PDT)
+        with ESMTP id S1377916AbiFPUhO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Jun 2022 16:37:14 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B345DA11
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 13:37:11 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id f7so1707402ilr.5
+        for <io-uring@vger.kernel.org>; Thu, 16 Jun 2022 13:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=U9wkOM1plbUinAoA0/0bJvix8PjIfxAr3gMq6kk0yD8=;
-        b=OozC7m3VvlKXSamw0Kry8xY2v2PYlmSMKRhKOc2V/ZKT8HkJS9PIf9NAweeKmXQDci
-         znLL02tTcFYEzZOrKfxZoNq36FF85LtHjYmyl16fZTmTu3fylZ2suStFl6Awy3qf7w+q
-         Ubf4JxvQnfnG+vCducXNnLVJYrYgE69GCSlkxQj7dJaa6vM4naBylS5x0gF+fPvhHZQz
-         NhMvEN1d6eAp2nms7BY5EV0WfNECKRdkyE+EvB5H3/0pxI2p7gJci/e9SE6PV/f5opt1
-         OJLMcqTssLb+YwRnXWox7V4xsAcciGZKdNQbJGX4B0VDhsP5Hbor6FOxW4fV45CXTQ97
-         Exag==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=u5dKEO6fWLwy94MPcv5oscW/z8Gx/tm0njHp3iApi1w=;
+        b=2fZWvMnEvahk9m30GkmsvO/3zYXopKME2jL8YsMlI7Smp4zLBMVPv+hQPhozavBM8A
+         Gl0wz6b9I8JA9XOk8sLDOeMxXMWhGRR7Fb9yB752PLFGv34W/3e5/eYZgxz19BkeeY+E
+         95JRB112KfTJEj69NwaZ2HdwYBOiuMca3ddeKg87KedmYehA2+x/+nKK0hwAP07Vvm3B
+         lJoTyCiQnYosn/PYz5jTkKHZuR6fVjEqwDeBCF6cFwdh2eQYn4dFneohalFH8v+FmCiI
+         ct6mjDUlSXHs/XDI40ZO1hxqkx2PmsPI1emykfshlF+Zr4XN/zTEHM9ScVLpaJZeEBL9
+         zyUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=U9wkOM1plbUinAoA0/0bJvix8PjIfxAr3gMq6kk0yD8=;
-        b=s8v9BiSHq/NduRbcfCLhBcxQDRQY6S5auCJrMESma5yp515UHSoK3e/3XsdIkfwaK1
-         /K+P5zQi3aUNUfErUXXyGot3YKAzCAQZRTh9UITT1xYoQ86sdGjxBqfV4Dz7uCknUOnS
-         veubQ2zjsPfmK8LxmmdTWMUcjmLzmQ31aECqeUFanUixge31XNTQRScRjji/70idX3B4
-         +t5pdc7jEAXEkZ+xznBmuNrw/7tbKHzBCXxxPjw3GClp701Siz4I3H3df/3npI4zTKR+
-         S1h51xdhCLcvojW9CGmrGW3CnNimiDTMm313apn9/j0LnmFvVseJWJ6p75dFcztTY3Go
-         Zm2w==
-X-Gm-Message-State: AJIora8H87cvC6SimhQQ2jlVjSxJcMrDhNbUH2X2Xqbca2sOMKBOlDiO
-        yhWN+QIzvys/DiLU83uza/E=
-X-Google-Smtp-Source: AGRyM1spKys9c5kp7pHAghKWGcvGmHqiwJxbIESi7A+KIbajVheRgxvUo5TLLxAm1GgXRV+ZIq/+5g==
-X-Received: by 2002:a5d:5686:0:b0:217:7da8:8c5a with SMTP id f6-20020a5d5686000000b002177da88c5amr5174375wrv.3.1655396582400;
-        Thu, 16 Jun 2022 09:23:02 -0700 (PDT)
-Received: from fedora.fritz.box ([2a02:8010:60a0:0:a00:27ff:feb2:6412])
-        by smtp.gmail.com with ESMTPSA id i3-20020a05600011c300b002102b16b9a4sm2187897wrx.110.2022.06.16.09.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 09:23:02 -0700 (PDT)
-From:   Donald Hunter <donald.hunter@gmail.com>
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org, Donald Hunter <donald.hunter@gmail.com>
-Subject: [PATCH liburing] Fix incorrect close in test for multishot accept
-Date:   Thu, 16 Jun 2022 17:22:45 +0100
-Message-Id: <20220616162245.6225-1-donald.hunter@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        bh=u5dKEO6fWLwy94MPcv5oscW/z8Gx/tm0njHp3iApi1w=;
+        b=T3q+gVB4iBKVvY5RqTSZ0s9dKV7tFXOwyTHXeQduLK9N3Ke7FGgea6sF8maMULveob
+         Lji8rMHTI9OipzYmohrpyp+mrCoR3ioHYvAJJrGXvD5Sx2dN70B7KdY0vnIzNCv3tHzq
+         Z0Mb0LWLEjvxYby0W5/IPDbNPlzB9lvqQiuDFntcaY6KtJ8sj/Bz2tLFFm5loCss7V+y
+         gyEFOua5c0sqFWWK3W2kvUttXurS4nf4+8zGs/zI7L+T0HG8AY44+yiR6t4Kt7l1QbW6
+         JbtB6rIFlzgmaiY4M0rne9DDLv1AAYLn2vGQ9kH2CFjIEOm7v1jyMJ09P7A+sfns9Ww8
+         LJRw==
+X-Gm-Message-State: AJIora+t82hGDDiHCfX3XxkB67MVHht/ZZ3wvs5zMUVU1GnIyxVsctXW
+        vhP83qN+1+0lW5Ad+Sx7YD7WMQ==
+X-Google-Smtp-Source: AGRyM1syT2ctM65Koqig9IIbe+be7cM2t2pBFa5Q9NqlfV4ao4UTDpYp3ycfvaQVEzPV6PhumKxxDQ==
+X-Received: by 2002:a05:6e02:180e:b0:2d3:c497:710 with SMTP id a14-20020a056e02180e00b002d3c4970710mr3747661ilv.166.1655411831039;
+        Thu, 16 Jun 2022 13:37:11 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id i26-20020a023b5a000000b0032b3a781781sm1301267jaf.69.2022.06.16.13.37.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jun 2022 13:37:10 -0700 (PDT)
+Message-ID: <a3251a5e-d3cd-0fe2-db49-c81f177d534a@kernel.dk>
+Date:   Thu, 16 Jun 2022 14:37:09 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/2] io_uring: kbuf: add comments for some tricky code
+Content-Language: en-US
+To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+References: <20220614120108.1134773-1-hao.xu@linux.dev>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220614120108.1134773-1-hao.xu@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This fixes a bug in accept_conn handling in the accept tests that caused it
-to incorrectly skip the multishot tests and also lose the warning message
-to a closed stdout. This can be seen in the strace output below.
+On 6/14/22 6:01 AM, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> Add comments to explain why it is always under uring lock when
+> incrementing head in __io_kbuf_recycle. And rectify one comemnt about
+> kbuf consuming in iowq case.
 
-close(1)                                = 0
-io_uring_setup(32, { ...
-...
-write(1, "Fixed Multishot Accept not suppo"..., 47) = -1 EINVAL
+Was there a 1/2 patch in this series? This one has a subject of 2/2...
 
-Unfortunately this exposes a a bug with gcc -O2 where multishot_mask logic
-gets optimized incorrectly and "Fixed Multishot Accept misses events" is
-wrongly reported. I am investigating this separately.
+> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> ---
+>  io_uring/kbuf.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index 9cdbc018fd64..37f06456bf30 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -50,6 +50,13 @@ void __io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+>  	if (req->flags & REQ_F_BUFFER_RING) {
+>  		if (req->buf_list) {
+>  			if (req->flags & REQ_F_PARTIAL_IO) {
+> +				/*
+> +				 * if we reach here, uring_lock has been
+> +				?* holden. Because in iowq, we already
+> +				?* cleared req->buf_list to NULL when got
+> +				?* the buffer from the ring, which means
+> +				?* we cannot be here in that case.
+> +				 */
 
-Signed-off-by: Donald Hunter <donald.hunter@gmail.com>
----
- test/accept.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+There's a weird character before the '*' in most lines? I'd rephrase the
+above as:
 
-diff --git a/test/accept.c b/test/accept.c
-index 7bc6226..fb87a1d 100644
---- a/test/accept.c
-+++ b/test/accept.c
-@@ -103,7 +103,7 @@ static void queue_accept_conn(struct io_uring *ring, int fd,
- 	}
- }
- 
--static int accept_conn(struct io_uring *ring, int fixed_idx)
-+static int accept_conn(struct io_uring *ring, int fixed_idx, bool multishot)
- {
- 	struct io_uring_cqe *cqe;
- 	int ret;
-@@ -115,8 +115,10 @@ static int accept_conn(struct io_uring *ring, int fixed_idx)
- 
- 	if (fixed_idx >= 0) {
- 		if (ret > 0) {
--			close(ret);
--			return -EINVAL;
-+			if (!multishot) {
-+				close(ret);
-+				return -EINVAL;
-+			}
- 		} else if (!ret) {
- 			ret = fixed_idx;
- 		}
-@@ -208,7 +210,7 @@ static int test_loop(struct io_uring *ring,
- 		queue_accept_conn(ring, recv_s0, args);
- 
- 	for (i = 0; i < MAX_FDS; i++) {
--		s_fd[i] = accept_conn(ring, args.fixed ? 0 : -1);
-+		s_fd[i] = accept_conn(ring, args.fixed ? 0 : -1, multishot);
- 		if (s_fd[i] == -EINVAL) {
- 			if (args.accept_should_error)
- 				goto out;
+If we end up here, then the io_uring_lock has been kept held since we
+retrieved the buffer. For the io-wq case, we already cleared
+req->buf_list when the buffer was retrieved, hence it cannot be set
+here for that case.
+
+And make sure it lines up around 80 chars, your lines look very short.
+
+> @@ -128,12 +135,13 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+>  	if (issue_flags & IO_URING_F_UNLOCKED) {
+>  		/*
+>  		 * If we came in unlocked, we have no choice but to consume the
+> -		 * buffer here. This does mean it'll be pinned until the IO
+> -		 * completes. But coming in unlocked means we're in io-wq
+> -		 * context, hence there should be no further retry. For the
+> -		 * locked case, the caller must ensure to call the commit when
+> -		 * the transfer completes (or if we get -EAGAIN and must poll
+> -		 * or retry).
+> +		 * buffer here otherwise nothing ensures the buffer not being
+> +		 * used by others. This does mean it'll be pinned until the IO
+> +		 * completes though coming in unlocked means we're in io-wq
+> +		 * context and there may be further retries in async hybrid mode.
+> +		 * For the locked case, the caller must ensure to call the commit
+> +		 * when the transfer completes (or if we get -EAGAIN and must
+> +		 * poll or retry).
+
+and similarly:
+
+buffer here, otherwise nothing ensures that the buffer won't get used by
+others. This does mean it'll be pinned until the IO completes, coming in
+unlocked means we're being called from io-wq context and there may be
+further retries in async hybrid mode. For the locked case, the caller
+must call commit when the transfer completes (or if we get -EAGAIN and
+must poll of retry).
+
 -- 
-2.36.1
+Jens Axboe
 

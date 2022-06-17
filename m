@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4954854F85B
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 15:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3978054F85D
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 15:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236431AbiFQNfD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jun 2022 09:35:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46098 "EHLO
+        id S234827AbiFQNfF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jun 2022 09:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236198AbiFQNfC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 09:35:02 -0400
+        with ESMTP id S236198AbiFQNfF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 09:35:05 -0400
 Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5192DD40
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 06:35:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D0230F59
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 06:35:04 -0700 (PDT)
 Received: by mail-pg1-x534.google.com with SMTP id q140so4079540pgq.6
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 06:35:02 -0700 (PDT)
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 06:35:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=hVLgw9IiRZK2cvfiYP4/SaV8vIt3Q7+Z5/U5NrozRVw=;
-        b=f5KAyzo/icgwFnhfcQt+9w8aQEmk3a2bcX26uFIZUHsnTAAVbzzvNT6RAlYnET6DoW
-         3Ke+lO3KBxxbv1J4SVVUkpeP5VT2diIUSJHLLLiXYoU+ahgZmtHNI8UnVa/RCfvXivs6
-         D0cELJDe42QSilDbIPAwfjR3dazv2MdpWmgGu080e5tvrb6bc0kaRH6Ml5P5JZNA/ioN
-         Py/XAOVDo4uLDNvKfZRH1FmMUcOCuD9uoCRWfl6WCF6ABcjak1yM+Bj2hx4TviM+qLRU
-         Qp3uDiahr3X9cth8YxD8Qs5uHbG0B7L5z1qieinp6ZAYOeLWJ6eiNqvjxSw86IJSH2dC
-         /ctQ==
+        bh=AbTiaGhvCVWwlAMzrQGnRcsNokrRvYHudIOmu+DM4NU=;
+        b=Jh2Q9Yc06n6YIcFpEkFrPqUBF1zmjIsFdDgF+S8WOMjc9fXb/i21ixkPOL3LJtgVA/
+         /jn62Xn8xrbkf34D8V0r+/KQGRhMmjaZKUS4BfmNfVDEyH+tKk0NIVH3URoZdOa2m7Pk
+         j2iztGXO6AAmyREtVV1NFkqfV0Oh+s7TqgYsf1jav/q3pZDK3xgGILMbfUqsk7zGIaJ9
+         Qt8Fm1d7N4lKqurkvDxRthGhrmD5KA/8UcBMZ3eVKDPMR/2OqMXhHOuxOE1P8s24XNUB
+         y/RXUhve+BshPz4vDEEdlB9A66tODhkFkGuKmvuE3nZ6p4dbhKOcGI2lL71EHFQxG6j8
+         pXlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=hVLgw9IiRZK2cvfiYP4/SaV8vIt3Q7+Z5/U5NrozRVw=;
-        b=IGdMIpLiQvCI0IjsE17iyrYojIVR6XXQaWmrB16IY33rRCgxRaQEWkuTercV1ULr2v
-         /A2FzOHnUqOlW8BQAMmUx8WizJX0qKhH2/pWlV0sFQOCXEn06RDIlv7HudKX1Pu6AsH9
-         G5XWWG9bsDnX7nF1XQTMo0T59sYv9Bdlv+nnlY07LE5L04t7fvAh8pMY9U99QrqD2iym
-         eVWLKr+HZjdsgiAyuU9A71eqHWdXcDryzJm0ISmVnYnDa6hdMZIEPcyvBdAydimPhA7X
-         gDgBIVRXmvKUD2De/xWjwVROWs/QeGHvO7MIp/zECoc/QXAPeK8dWRzsBwmK4678vWmZ
-         NUpg==
-X-Gm-Message-State: AJIora9TUpBpS13rv2xcb2E2H0VYT+hhDgg0rugv0siEux8T5pF0cED3
-        3UaSYfgvfTmflKM3c1dY5jT169eo1+Lzew==
-X-Google-Smtp-Source: AGRyM1vs+Y9ZoT/5VKQHUOS8h80UNtYQ5sUCExs/IZrN0nLmNZeR2mtZIGeGXzXABSfj4eXE+tyu6g==
-X-Received: by 2002:a05:6a00:139f:b0:51b:e21f:b72 with SMTP id t31-20020a056a00139f00b0051be21f0b72mr10165266pfg.75.1655472901284;
-        Fri, 17 Jun 2022 06:35:01 -0700 (PDT)
+        bh=AbTiaGhvCVWwlAMzrQGnRcsNokrRvYHudIOmu+DM4NU=;
+        b=N8EzeDzwT9lDr7LlYXarUk86FiV1lMXn+356h5WZPgrHA6wZ1/79eaHwWOTXL+mZpQ
+         FDocEjRDMII7irbgNNLYh2eFd1KEFOpfFd33qC3rNhxIDQSIlU6FxZ5P+mSZd7Yin/qp
+         uGVoiQ4L1hpJ2sXedFyViJD+ncljYzREHNAqxh6K5Nuhr1ToDJKVOXvcjyJ1oxLgIfC8
+         6kVUR6SI3dGn7xdSGmCQ7l/cXCqoP+RfwQvaT9SEbgcXRsmLp4f/5OrHD4XGGHVbOMkk
+         lKiyWxMIEmw1YuAnTtdpeWWz268qpNnEnCa4HB26NTU8TWMRst1MyK+2k6Uy7TBAuTGm
+         T8TA==
+X-Gm-Message-State: AJIora8WVhGuweeFiNrkYjR3g46tKkhWeCwVImqgOtoo2R2TI20jw0p2
+        FlRQjJoVgh2Zy2QwEKmXnffMt4viKIoGzA==
+X-Google-Smtp-Source: AGRyM1vGbOGT7wBo4h/qXGP9CZDdgnRL+3chq6Jdu34QhmMCrFNThcM21XAC9xWbNb/fM0G0INSIwQ==
+X-Received: by 2002:a63:140d:0:b0:406:2777:70f9 with SMTP id u13-20020a63140d000000b00406277770f9mr9225854pgl.170.1655472903704;
+        Fri, 17 Jun 2022 06:35:03 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g15-20020a63b14f000000b003fd3737f167sm3770098pgp.19.2022.06.17.06.35.00
+        by smtp.gmail.com with ESMTPSA id v21-20020aa78095000000b0050dc7628171sm3704424pff.75.2022.06.17.06.35.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 06:35:00 -0700 (PDT)
+        Fri, 17 Jun 2022 06:35:03 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, asml.silence@gmail.com
-In-Reply-To: <cover.1655455613.git.asml.silence@gmail.com>
-References: <cover.1655455613.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 0/6] clean up __io_fill_cqe_req()
-Message-Id: <165547290061.360864.5731526604877823833.b4-ty@kernel.dk>
-Date:   Fri, 17 Jun 2022 07:35:00 -0600
+In-Reply-To: <cover.1655384063.git.asml.silence@gmail.com>
+References: <cover.1655384063.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-next 0/3] io_uring trace events clean up
+Message-Id: <165547290280.360912.6391813246027488784.b4-ty@kernel.dk>
+Date:   Fri, 17 Jun 2022 07:35:02 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,32 +66,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 17 Jun 2022 09:47:59 +0100, Pavel Begunkov wrote:
-> Clean up __io_fill_cqe_req() after recent changes
+On Thu, 16 Jun 2022 13:57:17 +0100, Pavel Begunkov wrote:
+> Make io_uring_types.h public and teach tracing how to derive
+> opcode, user_data, etc. from io_kiocb.
 > 
-> Pavel Begunkov (6):
->   io_uring: don't expose io_fill_cqe_aux()
->   io_uring: don't inline __io_get_cqe()
->   io_uring: introduce io_req_cqe_overflow()
->   io_uring: deduplicate __io_fill_cqe_req tracing
->   io_uring: deduplicate io_get_cqe() calls
->   io_uring: change ->cqe_cached invariant for CQE32
+> note: rebased on top of the hashing patches
+> 
+> Pavel Begunkov (3):
+>   io_uring: kill extra io_uring_types.h includes
+>   io_uring: make io_uring_types.h public
+>   io_uring: clean up tracing events
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] io_uring: don't expose io_fill_cqe_aux()
+[1/3] io_uring: kill extra io_uring_types.h includes
       (no commit info)
-[2/6] io_uring: don't inline __io_get_cqe()
+[2/3] io_uring: make io_uring_types.h public
       (no commit info)
-[3/6] io_uring: introduce io_req_cqe_overflow()
-      (no commit info)
-[4/6] io_uring: deduplicate __io_fill_cqe_req tracing
-      (no commit info)
-[5/6] io_uring: deduplicate io_get_cqe() calls
-      (no commit info)
-[6/6] io_uring: change ->cqe_cached invariant for CQE32
+[3/3] io_uring: clean up tracing events
       (no commit info)
 
 Best regards,

@@ -2,58 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA55354F6D2
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 13:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A914254F6D4
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 13:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380518AbiFQLhc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jun 2022 07:37:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
+        id S1380908AbiFQLig (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jun 2022 07:38:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381599AbiFQLhZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 07:37:25 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13AB6A43B
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:37:24 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id e11so3953548pfj.5
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:37:24 -0700 (PDT)
+        with ESMTP id S1380924AbiFQLiR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 07:38:17 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8811A527C7
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:38:16 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id y6so3680740plg.0
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:38:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=ZoMX4Hu5T8K9iAkYCGOsLuT9WiRMz3Ye5Wamw7NeV6s=;
-        b=IHh+dvTESpOF9LewkOFKQakLX5uAR5cEu548mqSlyc2vOCfycOhzQ1yCdyR6HqXPbl
-         slPhtRXt6ZvrxwbCcMqPIrvysdB82lXjVjyqZOO3dhgPyLKMXSvXNPr31j40+uef+5YO
-         okevICVcCNEmJDEzShAaee/SbyrCTCM9RkHRuqnE7wkLbh96mO24SHOtNiNOK58RclFe
-         T53HyMEH8O3KPcL3O8SETjtgYE7UDSBtum7iHJX93bRj6F+rpTTO7zvC5iOHFwYuFq0X
-         QYPMFj/cP8RkyvYIkkQHdcEPbuwW7xPou9HAYeo6Jc9MYWIhZS3foqBceazCgg3PmCQU
-         Sc7Q==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=oUWvibdpMvYqxXaJaWyUnneRPpDc/Ohn2+IKV4BXars=;
+        b=k59oEEam7a3WXrZF6eVKgccORUH1W2o0QjQNEnpYIIeqrAh3ZQFBF2WB3MKfKqWJnF
+         VwKq4Eq0ELgZZDAa6qg7kTEhhfIWiUQDs15ivdSPyq+ieOPw4gsZgdv9XftD+wT6MQsE
+         ELSegeVM4K8jnFr2ZLGNEI7/k8UoJEtOTQ1M1Zq1aifpIIzkvIieNmZPHb7rTlca6Ei/
+         EePtpG+ONQCweuvrrk6eg7J9ebd5a15xPQaUigBQByTQyxTZdqhwKGLJyHS4e8cfrw44
+         eGBv2e8EmYszEbyInsSi0vlO/HtV4vhtSv73rjJ2ZApk/+CBx3gXU+3bmTRC+FZmKbIr
+         r3HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=ZoMX4Hu5T8K9iAkYCGOsLuT9WiRMz3Ye5Wamw7NeV6s=;
-        b=TMMbioecOZd4lED04dKfQLoDr3g/1CbogAQw32kpEu5YCMYkDFU3brpA1cixEJOTRx
-         RoR2T6yTyBUedmRIwE2bYjDbSDoMpOzM9RiOzugQ0VEjckgfmN8J8XntTnQE35M0GLhW
-         Gfwl5ng8Mhg/eig2WF2BdSfsuvuI3hqADpempIbc2DKhxWfqZMj5FIQGN/fA4mr22wai
-         DbOlPaSY7gYJHZcSY1nzyu19Ga98dJYSAwk2vH8f46Fyhi5P1+zUNVZOMX8SCG9tX79/
-         KxSsqJaizuC4i6XImdKyL1sZlyBgARR93yoDY7asafiR3U5BklGBbiCi44zs1hM784IS
-         0MkA==
-X-Gm-Message-State: AJIora/cha3EsbRq3aNGgvTRTaNP8wxu10/fVn3LARIhaL5vQR4dEPvc
-        wR2sXeJWalimyDsVExYojvPYSODGNJq+9g==
-X-Google-Smtp-Source: AGRyM1vQwMAWYuCdBg7rTrieh6OeIUmYiPAqrXiFDTPDy0e7Wt2MURNcGUP1K8NvUVugxX0zAiXNiw==
-X-Received: by 2002:a63:9c4:0:b0:401:a7b6:ad18 with SMTP id 187-20020a6309c4000000b00401a7b6ad18mr8740206pgj.523.1655465844090;
-        Fri, 17 Jun 2022 04:37:24 -0700 (PDT)
+        bh=oUWvibdpMvYqxXaJaWyUnneRPpDc/Ohn2+IKV4BXars=;
+        b=j6JGi6ueU6bC5zZqLhbKXzoVudoQXlmBCy1e56ZpzK3ZS1Pfc97d0p4Lgb749VJLJp
+         WjfXNU6naNeuGG14/UocbEWInNWag7mCQhmGdYycvSmwbNPRUQIBgAsPOjWUBEBP0F3X
+         fVw+Br+sLy/NrE2mQRNlOULd+mClJQj6HVA/lq5cVA0jce8YG+aoU1vs04HT5O2WSn1+
+         IYj6nme9GKzCQmdlQLQStolHP+ABwfhR9yTDiHWg+faCiFV3lOi1sbpp0GlA7zmEyxgk
+         DuK03+cThKO4AKmBuQF+s7XSvnTdih2ZQt66JsSMvZgma4fMIWSt8rvfgsfnRp2IaqFC
+         domA==
+X-Gm-Message-State: AJIora+E/ED41Uvsyn7H48RuGvCdBMb9RFd5oVszneHsQcOPQ7H5aOsq
+        OXZjJMw8QALHDzSoNtOccJBkabaSKlOSXA==
+X-Google-Smtp-Source: AGRyM1umdkGAd8JRwRzmps/gbYpgBDGWv9IwYIRKAIJ3Gm9ByoM5HWZBhIZiw+wzdvw83Lqyq6CVTA==
+X-Received: by 2002:a17:902:f792:b0:168:e97b:3c05 with SMTP id q18-20020a170902f79200b00168e97b3c05mr9223661pln.94.1655465895756;
+        Fri, 17 Jun 2022 04:38:15 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q2-20020a170902f78200b001676dac529asm3363127pln.146.2022.06.17.04.37.23
+        by smtp.gmail.com with ESMTPSA id jj10-20020a170903048a00b00163247b64bfsm3340344plb.115.2022.06.17.04.38.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 04:37:23 -0700 (PDT)
+        Fri, 17 Jun 2022 04:38:15 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <cover.1655455225.git.asml.silence@gmail.com>
-References: <cover.1655455225.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 0/2] use nop CQE32 tests to test some assumptions
-Message-Id: <165546584306.253486.15819193032366223664.b4-ty@kernel.dk>
-Date:   Fri, 17 Jun 2022 05:37:23 -0600
+To:     io-uring@vger.kernel.org, hao.xu@linux.dev
+Cc:     asml.silence@gmail.com
+In-Reply-To: <20220617050429.94293-1-hao.xu@linux.dev>
+References: <20220617050429.94293-1-hao.xu@linux.dev>
+Subject: Re: [PATCH v2] io_uring: kbuf: add comments for some tricky code
+Message-Id: <165546589464.253852.4276960984454502097.b4-ty@kernel.dk>
+Date:   Fri, 17 Jun 2022 05:38:14 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,22 +67,20 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 17 Jun 2022 09:42:40 +0100, Pavel Begunkov wrote:
-> Pavel Begunkov (2):
->   Revert "test/nop: kill cqe32 test code"
->   tests: fix and improve nop tests
+On Fri, 17 Jun 2022 13:04:29 +0800, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
 > 
-> test/nop.c | 54 +++++++++++++++++++++++++++++++++++++++++-------------
->  1 file changed, 41 insertions(+), 13 deletions(-)
+> Add comments to explain why it is always under uring lock when
+> incrementing head in __io_kbuf_recycle. And rectify one comemnt about
+> kbuf consuming in iowq case.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] Revert "test/nop: kill cqe32 test code"
-      commit: 203abdf5f0bf78a58d59f3f4a4e8561cb76b10f4
-[2/2] tests: fix and improve nop tests
-      commit: 540ca1c11016ed50940e3f6f555a986356578646
+[1/1] io_uring: kbuf: add comments for some tricky code
+      commit: 0efaf0d19e9e1271f2275393e62f709907cd40e2
 
 Best regards,
 -- 

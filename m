@@ -2,68 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1917654F6CC
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 13:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA55354F6D2
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 13:37:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381630AbiFQLgx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jun 2022 07:36:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34608 "EHLO
+        id S1380518AbiFQLhc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jun 2022 07:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380246AbiFQLgx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 07:36:53 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F24A26A06B
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:36:51 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id o6so3658583plg.2
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:36:51 -0700 (PDT)
+        with ESMTP id S1381599AbiFQLhZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 07:37:25 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13AB6A43B
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:37:24 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id e11so3953548pfj.5
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 04:37:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=0TlSppUangN+koeQ9qRptnVYYcxY+JAcx6jBYALw1kk=;
-        b=TujYdMJYOudZkpUQ1m8Yu5OIH0yn2iAj3WmjxMqIlGrI2FRKV3iwgWQz8Z5dsvVB05
-         fWeaow9klrPhvWkBR8c20dA+rFk62fCiGW3YPQh4VCIv8qOmbjWm/8sycuL7miSDTQEF
-         gnAKoBObs4u0EItCSKz1zkT43C69hJyqQYq5iFzDFngM/zhKdoDG+dUkbqo7ZGNKTXd2
-         W7YmXMmqSRFhdrqWjZmqdHdreUQsDVscJzlTtmPcHDb9JXmWXtoVx9vBqJI7Xjxxl/2h
-         F98vbfBIHBXgaOvsoJGzjrGeaXO2/lrz0/UAVWwfZ/DPVRsfMSfnIHoJzjGe05Ts6S7g
-         XbBw==
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=ZoMX4Hu5T8K9iAkYCGOsLuT9WiRMz3Ye5Wamw7NeV6s=;
+        b=IHh+dvTESpOF9LewkOFKQakLX5uAR5cEu548mqSlyc2vOCfycOhzQ1yCdyR6HqXPbl
+         slPhtRXt6ZvrxwbCcMqPIrvysdB82lXjVjyqZOO3dhgPyLKMXSvXNPr31j40+uef+5YO
+         okevICVcCNEmJDEzShAaee/SbyrCTCM9RkHRuqnE7wkLbh96mO24SHOtNiNOK58RclFe
+         T53HyMEH8O3KPcL3O8SETjtgYE7UDSBtum7iHJX93bRj6F+rpTTO7zvC5iOHFwYuFq0X
+         QYPMFj/cP8RkyvYIkkQHdcEPbuwW7xPou9HAYeo6Jc9MYWIhZS3foqBceazCgg3PmCQU
+         Sc7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=0TlSppUangN+koeQ9qRptnVYYcxY+JAcx6jBYALw1kk=;
-        b=L0Mlc6qs2XF2+R56H+WC2TjJpjgqFoczkFm6MBCgX6Xe0nEVxmA4WOl0pSG9C6d92n
-         cgu+QXC7gGCxowkmOILlSjNV56Uj1R75Lzt/jqCZufl5rjCg9YrGZix8qaeeDtZwaQ+U
-         hE7YdI9qIAND/5UNwXOy2koyQ/PzleoWjCeiZD52wpPAs4BDRRO4WoYR3N6oaCndMlxi
-         DWKEqq0Iu5v0cGX2MQ+15HiGE/j0WE+HlPOtHiybvT0xSal5S4s16IAQaXn7VtumN7HY
-         L7ruD4HoytXB5wJDuuw3ABvxKBGEaj4dLiuI/QBJuGWiZIBd27QpOI9nYkvO4V6M7acj
-         hu+Q==
-X-Gm-Message-State: AJIora/UPfBc1M2Xs6AhPamL0x14QLBKkkkw68ftQAiK2mCqUi8L3WoT
-        awk4ZqZRXMFy+/VGYBuDp6pxdg==
-X-Google-Smtp-Source: AGRyM1tgF3BM6ToBZKzMb3FNrucyVHS8/BbrHbqiLywObJtLNTME8Ed9xamycWX+bwhyedlrMWbklQ==
-X-Received: by 2002:a17:90b:1bcd:b0:1e2:c8da:7c29 with SMTP id oa13-20020a17090b1bcd00b001e2c8da7c29mr21062783pjb.4.1655465811265;
-        Fri, 17 Jun 2022 04:36:51 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b14-20020a17090a6ace00b001e280f58d02sm3085593pjm.24.2022.06.17.04.36.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jun 2022 04:36:50 -0700 (PDT)
-Message-ID: <f143f6a6-5378-d1c4-e4c9-c6569ede78ba@kernel.dk>
-Date:   Fri, 17 Jun 2022 05:36:49 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH liburing 2/2] tests: fix and improve nop tests
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1655455225.git.asml.silence@gmail.com>
- <92f01041e5ef933a6018bd89dd54cc1fae57c6f6.1655455225.git.asml.silence@gmail.com>
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=ZoMX4Hu5T8K9iAkYCGOsLuT9WiRMz3Ye5Wamw7NeV6s=;
+        b=TMMbioecOZd4lED04dKfQLoDr3g/1CbogAQw32kpEu5YCMYkDFU3brpA1cixEJOTRx
+         RoR2T6yTyBUedmRIwE2bYjDbSDoMpOzM9RiOzugQ0VEjckgfmN8J8XntTnQE35M0GLhW
+         Gfwl5ng8Mhg/eig2WF2BdSfsuvuI3hqADpempIbc2DKhxWfqZMj5FIQGN/fA4mr22wai
+         DbOlPaSY7gYJHZcSY1nzyu19Ga98dJYSAwk2vH8f46Fyhi5P1+zUNVZOMX8SCG9tX79/
+         KxSsqJaizuC4i6XImdKyL1sZlyBgARR93yoDY7asafiR3U5BklGBbiCi44zs1hM784IS
+         0MkA==
+X-Gm-Message-State: AJIora/cha3EsbRq3aNGgvTRTaNP8wxu10/fVn3LARIhaL5vQR4dEPvc
+        wR2sXeJWalimyDsVExYojvPYSODGNJq+9g==
+X-Google-Smtp-Source: AGRyM1vQwMAWYuCdBg7rTrieh6OeIUmYiPAqrXiFDTPDy0e7Wt2MURNcGUP1K8NvUVugxX0zAiXNiw==
+X-Received: by 2002:a63:9c4:0:b0:401:a7b6:ad18 with SMTP id 187-20020a6309c4000000b00401a7b6ad18mr8740206pgj.523.1655465844090;
+        Fri, 17 Jun 2022 04:37:24 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id q2-20020a170902f78200b001676dac529asm3363127pln.146.2022.06.17.04.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jun 2022 04:37:23 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <92f01041e5ef933a6018bd89dd54cc1fae57c6f6.1655455225.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+To:     asml.silence@gmail.com, io-uring@vger.kernel.org
+In-Reply-To: <cover.1655455225.git.asml.silence@gmail.com>
+References: <cover.1655455225.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing 0/2] use nop CQE32 tests to test some assumptions
+Message-Id: <165546584306.253486.15819193032366223664.b4-ty@kernel.dk>
+Date:   Fri, 17 Jun 2022 05:37:23 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,15 +66,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/17/22 2:42 AM, Pavel Begunkov wrote:
-> We removed CQE32 for nops from the kernel, fix the tests and instead
-> test that we return zeroes in the extra fields instead of garbage.
-> Loop over the tests multiple times so it exhausts CQ and we also test
-> CQ entries recycling and internal caching mechanism. Also excersie
-> IOSQE_ASYNC.
+On Fri, 17 Jun 2022 09:42:40 +0100, Pavel Begunkov wrote:
+> Pavel Begunkov (2):
+>   Revert "test/nop: kill cqe32 test code"
+>   tests: fix and improve nop tests
+> 
+> test/nop.c | 54 +++++++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 41 insertions(+), 13 deletions(-)
+> 
+> [...]
 
-Yes that's not a bad idea, thanks!
+Applied, thanks!
 
+[1/2] Revert "test/nop: kill cqe32 test code"
+      commit: 203abdf5f0bf78a58d59f3f4a4e8561cb76b10f4
+[2/2] tests: fix and improve nop tests
+      commit: 540ca1c11016ed50940e3f6f555a986356578646
+
+Best regards,
 -- 
 Jens Axboe
+
 

@@ -2,64 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B721254F876
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 15:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B57154F8E8
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 16:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbiFQNpP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jun 2022 09:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54158 "EHLO
+        id S1381543AbiFQOHp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jun 2022 10:07:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382256AbiFQNpO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 09:45:14 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236132A424
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 06:45:14 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id d14so882309pjs.3
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 06:45:14 -0700 (PDT)
+        with ESMTP id S1382620AbiFQOHo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 10:07:44 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 762FA13F22
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 07:07:42 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id u2so4284028pfc.2
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 07:07:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=foN1vSqyO+jcdalea1XeRJvRQO2tNOlHRMFuTFVF5Lc=;
-        b=ajGUKHs/h4C06TmJDWovsu3tkIl7781dMgygEW4fkBmJVClwS0rp86jJYuCxufD24l
-         ZKI+hfhQKPq1vbuuY6VT3T6yu103A+N3BrEVuCaKwpO9pYyik9ohrZCVZkfRYopPbAFF
-         O4gon6OOG4f/KUryzz/+YEnq5fwCXZpCazRwF+xWBqbw62AhKL6U0JwsZ8gDebh52K3w
-         +wCxjvJGhtKh44KlhFx8RClJdxX7L+nksOyeclECfqhwGy664mKAZlrHc7ttbZQXRUb2
-         boaRWiTkfl95H2jhPohp9nAUZxC60rJ7agmqHPAm4C8MSIaBpPtVH/XkeXJkYNahEBfH
-         yQSQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to;
+        bh=4yprwm9eTbm++5Uh+rLLpjQ2X1oEAZjMbfBnQD/KuX8=;
+        b=OZ3HXlAeXB3pSPyLW0aSE0QA4OF+Meg5HRzyCDRW0eAS/ItqGpk4q/N+I+ABhlszhQ
+         fQxb6aDKH+YLBNxtx2npWo9rH0/PaQGTZkFSmcbeEa9yGYvunU32QsJdwTLHRlZZazJw
+         dESwlTgOdI4Can2yyNO4p5f570udnlfbzg3A9mdfJFPfh6CQbMDwYIQxe/CelV8wXXIz
+         KGxRntib3ne+LL5oVX7FMORwvba/Ba47QoGqhc+tK14NvTkUxJpG1I9+hlzyJVPVNXqX
+         wA6tDAiRQee/ngRRPVaqTJ4Q9aFr2SjLjgShz7LMcj3oUj6L4Xby5QyZ7EQQFXnqU1mL
+         weBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=foN1vSqyO+jcdalea1XeRJvRQO2tNOlHRMFuTFVF5Lc=;
-        b=UQmhI7Fr2lTdDolzA5SKtASuKGCSkC3i7Gm6owt8y9OndU31HwojvMloAc9YwCeZay
-         FOz/IGs6NyrL+317tFUAIwApw11xHkcFZrpRVME4Jky4yB05J3yIHxKyjm+5mcnQtQoj
-         q5UP4CPqYgM9MV+lPDNhtkHgdb5Uwy7rQMvjwNlUFqamy1HGTFw4o2DJ50YwiMIIfR7a
-         C2G2fbEwQf6aZnTgKx0ZRSaOfPPqD/7X4bQ5HQGi01WMh47QfxdHSK3j2ya/9aAjFkeI
-         4h+U/xfgAHiA3VfQulOkbNm5En1m3MV6CuiiokwK4LOTrrc3dRIgqJ91waLkGPjPixy1
-         Bx2Q==
-X-Gm-Message-State: AJIora+OfUpOjQDIxD4EGCqCaDjVJfQluqb8uCto17IspHYh+eon5Smf
-        RFr8cyg6g2hflyl2F7yrutM3UG+1gsR75w==
-X-Google-Smtp-Source: AGRyM1v6DzC+o4SL134rYoHj2tb3Bnk5cz85klw31z7GZZYmC86P3D1ZthMlzrPFgR2laPCutd5+bw==
-X-Received: by 2002:a17:902:c951:b0:163:ed13:7acd with SMTP id i17-20020a170902c95100b00163ed137acdmr9679426pla.51.1655473513200;
-        Fri, 17 Jun 2022 06:45:13 -0700 (PDT)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t13-20020a1709027fcd00b0016392bd5060sm2214075plb.142.2022.06.17.06.45.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 06:45:12 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to;
+        bh=4yprwm9eTbm++5Uh+rLLpjQ2X1oEAZjMbfBnQD/KuX8=;
+        b=fo73ysZltjpzt3Z+d7Ptk779wmmUD30E5i7c15fN2CvKa9c/ZPiI1SjX7TbWZfllek
+         m5G+Dsp3qM8OlLyuDxmd+oI21xlBrTzrJ6sHO/tRoRXNxieggZT7M1Uoau4OHF2ADBIf
+         IFcMwbC+JRKf/fY/5WrMGJIcyz+lLOHCLSrBp1AQliDvaL7GP4o5fAD/5T9KqxmZ5O9T
+         +M5d60EngDQY4vnlBNnpJPfXhqmTyTdUk+tjsjpUjxScRsO5tXG6X6FJDLLHyE3ZYeg3
+         GpKeLnokiHv3MZF81yJ1rAWlY8SLiZXZ9YLRycmlHxk2tDF2KY7pdYu3cfb+ZuleryG8
+         PsWg==
+X-Gm-Message-State: AJIora/emlZyNxQphYwrkJwSfbWZoqWYpOlbyItqbQUuLgyeuWmfRygb
+        NrsV2Z/IkqxOsyshf8bEF2K9FZxfbP6fZQ==
+X-Google-Smtp-Source: AGRyM1vw6do4pio+dHdVnD2kN8mr73NRvRPsamvGaLHwNHARCJ4awFJ0J7huniw+WNKrK/bpy5X+yQ==
+X-Received: by 2002:a63:5706:0:b0:3fc:a31b:9083 with SMTP id l6-20020a635706000000b003fca31b9083mr9196975pgb.333.1655474861381;
+        Fri, 17 Jun 2022 07:07:41 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id z14-20020a170902ccce00b001635b86a790sm3623427ple.44.2022.06.17.07.07.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jun 2022 07:07:38 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------K2hQYmX7hs0AWCqS6B90mC22"
+Message-ID: <6a48a16e-db4a-2a0d-4d85-35c48b715d6f@kernel.dk>
+Date:   Fri, 17 Jun 2022 08:07:37 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCHSET RFC for-next 0/2] Add direct descriptor ring passing
+Content-Language: en-US
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring: add support for passing fixed file descriptors
-Date:   Fri, 17 Jun 2022 07:45:04 -0600
-Message-Id: <20220617134504.368706-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220617134504.368706-1-axboe@kernel.dk>
+Cc:     asml.silence@gmail.com
 References: <20220617134504.368706-1-axboe@kernel.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+In-Reply-To: <20220617134504.368706-1-axboe@kernel.dk>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,224 +69,100 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With IORING_OP_MSG_RING, one ring can send a message to another ring.
-Extend that support to also allow sending a fixed file descriptor to
-that ring, enabling one ring to pass a registered descriptor to another
-one.
+This is a multi-part message in MIME format.
+--------------K2hQYmX7hs0AWCqS6B90mC22
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Arguments are extended to pass in:
+On 6/17/22 7:45 AM, Jens Axboe wrote:
+> Hi,
+> 
+> One of the things we currently cannot do with direct descriptors is pass
+> it to another application or ring. This adds support for doing so, through
+> the IORING_OP_MSG_RING ring-to-ring messaging opcode.
+> 
+> Some unresolved questions in patch 2 that need debating.
 
-sqe->addr3	fixed file slot in source ring
-sqe->file_index	fixed file slot in destination ring
+Here's the basic test case I wrote for it.
 
-IORING_OP_MSG_RING is extended to take a command argument in sqe->addr.
-If set to zero (or IORING_MSG_DATA), it sends just a message like before.
-If set to IORING_MSG_SEND_FD, a fixed file descriptor is sent according
-to the above arguments.
-
-Undecided:
-	- Should we post a cqe with the send, or require that the sender
-	  just link a separate IORING_OP_MSG_RING? This makes error
-	  handling easier, as we cannot easily retract the installed
-	  file descriptor if the target CQ ring is full. Right now we do
-	  fill a CQE. If the request completes with -EOVERFLOW, then the
-	  sender must re-send a CQE if the target must get notified.
-
-	- Add an IORING_MSG_MOVE_FD which moves the descriptor, removing
-	  it from the source ring when installed in the target? Again
-	  error handling is difficult.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/uapi/linux/io_uring.h |   8 +++
- io_uring/msg_ring.c           | 122 ++++++++++++++++++++++++++++++++--
- 2 files changed, 123 insertions(+), 7 deletions(-)
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 8715f0942ec2..dbdaeef3ea89 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -264,6 +264,14 @@ enum io_uring_op {
-  */
- #define IORING_ACCEPT_MULTISHOT	(1U << 0)
- 
-+/*
-+ * IORING_OP_MSG_RING command types, stored in sqe->addr
-+ */
-+enum {
-+	IORING_MSG_DATA,	/* pass sqe->len as 'res' and off as user_data */
-+	IORING_MSG_SEND_FD,	/* send a registered fd to another ring */
-+};
-+
- /*
-  * IO completion data structure (Completion Queue Entry)
-  */
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index b02be2349652..e9d6fb25d141 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -3,46 +3,154 @@
- #include <linux/errno.h>
- #include <linux/file.h>
- #include <linux/slab.h>
-+#include <linux/nospec.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
- 
- #include "io_uring.h"
-+#include "rsrc.h"
-+#include "filetable.h"
- #include "msg_ring.h"
- 
- struct io_msg {
- 	struct file			*file;
- 	u64 user_data;
- 	u32 len;
-+	u32 cmd;
-+	u32 src_fd;
-+	u32 dst_fd;
- };
- 
-+static int io_msg_ring_data(struct io_kiocb *req)
-+{
-+	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	struct io_msg *msg = io_kiocb_to_cmd(req);
-+
-+	if (msg->src_fd || msg->dst_fd)
-+		return -EINVAL;
-+
-+	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
-+		return 0;
-+
-+	return -EOVERFLOW;
-+}
-+
-+static void io_double_unlock_ctx(struct io_ring_ctx *ctx,
-+				 struct io_ring_ctx *octx,
-+				 unsigned int issue_flags)
-+{
-+	if (issue_flags & IO_URING_F_UNLOCKED)
-+		mutex_unlock(&ctx->uring_lock);
-+	mutex_unlock(&octx->uring_lock);
-+}
-+
-+static int io_double_lock_ctx(struct io_ring_ctx *ctx,
-+			      struct io_ring_ctx *octx,
-+			      unsigned int issue_flags)
-+{
-+	/*
-+	 * To ensure proper ordering between the two ctxs, we can only
-+	 * attempt a trylock on the target. If that fails and we already have
-+	 * the source ctx lock, punt to io-wq.
-+	 */
-+	if (!(issue_flags & IO_URING_F_UNLOCKED)) {
-+		if (!mutex_trylock(&octx->uring_lock))
-+			return -EAGAIN;
-+		return 0;
-+	}
-+
-+	/* Always grab smallest value ctx first. */
-+	if (ctx < octx) {
-+		mutex_lock(&ctx->uring_lock);
-+		mutex_lock(&octx->uring_lock);
-+	} else if (ctx > octx) {
-+		mutex_lock(&octx->uring_lock);
-+		mutex_lock(&ctx->uring_lock);
-+	}
-+
-+	return 0;
-+}
-+
-+static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	struct io_msg *msg = io_kiocb_to_cmd(req);
-+	struct io_ring_ctx *ctx = req->ctx;
-+	unsigned long file_ptr;
-+	struct file *src_file;
-+	int ret;
-+
-+	if (target_ctx == ctx)
-+		return -EINVAL;
-+
-+	ret = io_double_lock_ctx(ctx, target_ctx, issue_flags);
-+	if (unlikely(ret))
-+		return ret;
-+
-+	ret = -EBADF;
-+	if (unlikely(msg->src_fd >= ctx->nr_user_files))
-+		goto err_unlock;
-+
-+	msg->src_fd = array_index_nospec(msg->src_fd, ctx->nr_user_files);
-+	file_ptr = io_fixed_file_slot(&ctx->file_table, msg->src_fd)->file_ptr;
-+	src_file = (struct file *) (file_ptr & FFS_MASK);
-+	get_file(src_file);
-+
-+	ret = __io_fixed_fd_install(target_ctx, src_file, msg->dst_fd);
-+	if (ret < 0) {
-+		fput(src_file);
-+		goto err_unlock;
-+	}
-+
-+	/*
-+	 * If this fails, the target still received the file descriptor but
-+	 * wasn't notified of the fact. This means that if this request
-+	 * completes with -EOVERFLOW, then the sender must ensure that a
-+	 * later IORING_OP_MSG_RING delivers the message.
-+	 */
-+	if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
-+		ret = -EOVERFLOW;
-+err_unlock:
-+	io_double_unlock_ctx(ctx, target_ctx, issue_flags);
-+	return ret;
-+}
-+
- int io_msg_ring_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_msg *msg = io_kiocb_to_cmd(req);
- 
--	if (unlikely(sqe->addr || sqe->rw_flags || sqe->splice_fd_in ||
--		     sqe->buf_index || sqe->personality))
-+	if (unlikely(sqe->rw_flags || sqe->buf_index || sqe->personality))
- 		return -EINVAL;
- 
- 	msg->user_data = READ_ONCE(sqe->off);
- 	msg->len = READ_ONCE(sqe->len);
-+	msg->cmd = READ_ONCE(sqe->addr);
-+	msg->src_fd = READ_ONCE(sqe->addr3);
-+	msg->dst_fd = READ_ONCE(sqe->file_index);
- 	return 0;
- }
- 
- int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_msg *msg = io_kiocb_to_cmd(req);
--	struct io_ring_ctx *target_ctx;
- 	int ret;
- 
- 	ret = -EBADFD;
- 	if (!io_is_uring_fops(req->file))
- 		goto done;
- 
--	ret = -EOVERFLOW;
--	target_ctx = req->file->private_data;
--	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
--		ret = 0;
-+	switch (msg->cmd) {
-+	case IORING_MSG_DATA:
-+		ret = io_msg_ring_data(req);
-+		break;
-+	case IORING_MSG_SEND_FD:
-+		ret = io_msg_send_fd(req, issue_flags);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
- 
- done:
- 	if (ret < 0)
 -- 
-2.35.1
+Jens Axboe
 
+--------------K2hQYmX7hs0AWCqS6B90mC22
+Content-Type: text/x-csrc; charset=UTF-8; name="fd-pass.c"
+Content-Disposition: attachment; filename="fd-pass.c"
+Content-Transfer-Encoding: base64
+
+LyogU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IE1JVCAqLwovKgogKiBEZXNjcmlwdGlvbjog
+cnVuIHZhcmlvdXMgZml4ZWQgZmlsZSBmZCBwYXNzaW5nIHRlc3RzCiAqCiAqLwojaW5jbHVk
+ZSA8ZXJybm8uaD4KI2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KI2lu
+Y2x1ZGUgPHN0ZGxpYi5oPgojaW5jbHVkZSA8c3RyaW5nLmg+CiNpbmNsdWRlIDxmY250bC5o
+PgoKI2luY2x1ZGUgImxpYnVyaW5nLmgiCiNpbmNsdWRlICJoZWxwZXJzLmgiCgojZGVmaW5l
+IEZTSVpFCTEyOAojZGVmaW5lIFBBVAkweDlhCgpzdGF0aWMgaW50IHZlcmlmeV9maXhlZF9y
+ZWFkKHN0cnVjdCBpb191cmluZyAqcmluZywgaW50IGZpeGVkX2ZkLCBpbnQgZmFpbCkKewoJ
+c3RydWN0IGlvX3VyaW5nX3NxZSAqc3FlOwoJc3RydWN0IGlvX3VyaW5nX2NxZSAqY3FlOwoJ
+Y2hhciBidWZbRlNJWkVdOwoJaW50IGk7CgkKCXNxZSA9IGlvX3VyaW5nX2dldF9zcWUocmlu
+Zyk7Cglpb191cmluZ19wcmVwX3JlYWQoc3FlLCBmaXhlZF9mZCwgYnVmLCBGU0laRSwgMCk7
+CglzcWUtPmZsYWdzIHw9IElPU1FFX0ZJWEVEX0ZJTEU7Cglpb191cmluZ19zdWJtaXQocmlu
+Zyk7CgoJaW9fdXJpbmdfd2FpdF9jcWUocmluZywgJmNxZSk7CglpZiAoY3FlLT5yZXMgIT0g
+RlNJWkUpIHsKCQlpZiAoZmFpbCAmJiBjcWUtPnJlcyA9PSAtRUJBREYpCgkJCXJldHVybiAw
+OwoJCWZwcmludGYoc3RkZXJyLCAiUmVhZDogJWRcbiIsIGNxZS0+cmVzKTsKCQlyZXR1cm4g
+MTsKCX0KCWlvX3VyaW5nX2NxZV9zZWVuKHJpbmcsIGNxZSk7CgoJZm9yIChpID0gMDsgaSA8
+IEZTSVpFOyBpKyspIHsKCQlpZiAoYnVmW2ldICE9IFBBVCkgewoJCQlmcHJpbnRmKHN0ZGVy
+ciwgImdvdCAleCwgd2FudGVkICV4XG4iLCBidWZbaV0sIFBBVCk7CgkJCXJldHVybiAxOwoJ
+CX0KCX0KCglyZXR1cm4gMDsKfQoKc3RhdGljIGludCB0ZXN0KGNvbnN0IGNoYXIgKmZpbGVu
+YW1lKQp7CglzdHJ1Y3QgaW9fdXJpbmcgc3JpbmcsIGRyaW5nOwoJc3RydWN0IGlvX3VyaW5n
+X3NxZSAqc3FlOwoJc3RydWN0IGlvX3VyaW5nX2NxZSAqY3FlOwoJaW50IHJldDsKCglyZXQg
+PSBpb191cmluZ19xdWV1ZV9pbml0KDgsICZzcmluZywgMCk7CglpZiAocmV0KSB7CgkJZnBy
+aW50ZihzdGRlcnIsICJyaW5nIHNldHVwIGZhaWxlZDogJWRcbiIsIHJldCk7CgkJcmV0dXJu
+IDE7Cgl9CglyZXQgPSBpb191cmluZ19xdWV1ZV9pbml0KDgsICZkcmluZywgMCk7CglpZiAo
+cmV0KSB7CgkJZnByaW50ZihzdGRlcnIsICJyaW5nIHNldHVwIGZhaWxlZDogJWRcbiIsIHJl
+dCk7CgkJcmV0dXJuIDE7Cgl9CgoJcmV0ID0gaW9fdXJpbmdfcmVnaXN0ZXJfZmlsZXNfc3Bh
+cnNlKCZzcmluZywgOCk7CglpZiAocmV0KSB7CgkJZnByaW50ZihzdGRlcnIsICJyZWdpc3Rl
+ciBmaWxlcyBmYWlsZWQgJWRcbiIsIHJldCk7CgkJcmV0dXJuIDE7Cgl9CglyZXQgPSBpb191
+cmluZ19yZWdpc3Rlcl9maWxlc19zcGFyc2UoJmRyaW5nLCA4KTsKCWlmIChyZXQpIHsKCQlm
+cHJpbnRmKHN0ZGVyciwgInJlZ2lzdGVyIGZpbGVzIGZhaWxlZCAlZFxuIiwgcmV0KTsKCQly
+ZXR1cm4gMTsKCX0KCgkvKiBvcGVuIGRpcmVjdCBkZXNjcmlwdG9yICovCglzcWUgPSBpb191
+cmluZ19nZXRfc3FlKCZzcmluZyk7Cglpb191cmluZ19wcmVwX29wZW5hdF9kaXJlY3Qoc3Fl
+LCBBVF9GRENXRCwgZmlsZW5hbWUsIDAsIDA2NDQsIDApOwoJaW9fdXJpbmdfc3VibWl0KCZz
+cmluZyk7CglyZXQgPSBpb191cmluZ193YWl0X2NxZSgmc3JpbmcsICZjcWUpOwoJaWYgKHJl
+dCkgewoJCWZwcmludGYoc3RkZXJyLCAid2FpdCBjcWUgZmFpbGVkICVkXG4iLCByZXQpOwoJ
+CXJldHVybiAxOwoJfQoJaWYgKGNxZS0+cmVzKSB7CgkJZnByaW50ZihzdGRlcnIsICJjcWUg
+cmVzICVkXG4iLCBjcWUtPnJlcyk7CgkJcmV0dXJuIDE7Cgl9Cglpb191cmluZ19jcWVfc2Vl
+bigmc3JpbmcsIGNxZSk7CgoJLyogdmVyaWZ5IGRhdGEgaXMgc2FuZSBmb3Igc291cmNlIHJp
+bmcgKi8KCWlmICh2ZXJpZnlfZml4ZWRfcmVhZCgmc3JpbmcsIDAsIDApKQoJCXJldHVybiAx
+OwoKCS8qIHNlbmQgZGlyZWN0IGRlc2NyaXB0b3IgdG8gZGVzdGluYXRpb24gcmluZyAqLwoJ
+c3FlID0gaW9fdXJpbmdfZ2V0X3NxZSgmc3JpbmcpOwoJaW9fdXJpbmdfcHJlcF9tc2dfcmlu
+ZyhzcWUsIGRyaW5nLnJpbmdfZmQsIDAsIDB4ODksIDApOwoJc3FlLT5hZGRyID0gMTsKCXNx
+ZS0+YWRkcjMgPSAwOwoJc3FlLT5maWxlX2luZGV4ID0gMTsKCWlvX3VyaW5nX3N1Ym1pdCgm
+c3JpbmcpOwoKCXJldCA9IGlvX3VyaW5nX3dhaXRfY3FlKCZzcmluZywgJmNxZSk7CglpZiAo
+cmV0KSB7CgkJZnByaW50ZihzdGRlcnIsICJ3YWl0IGNxZSBmYWlsZWQgJWRcbiIsIHJldCk7
+CgkJcmV0dXJuIDE7Cgl9CglpZiAoY3FlLT5yZXMpIHsKCQlmcHJpbnRmKHN0ZGVyciwgIm1z
+Z19yaW5nIGZhaWxlZCAlZFxuIiwgY3FlLT5yZXMpOwoJCXJldHVybiAxOwoJfQoJaW9fdXJp
+bmdfY3FlX3NlZW4oJnNyaW5nLCBjcWUpOwoKCS8qIGdldCBwb3N0ZWQgY29tcGxldGlvbiBm
+b3IgdGhlIHBhc3NpbmcgKi8KCXJldCA9IGlvX3VyaW5nX3dhaXRfY3FlKCZkcmluZywgJmNx
+ZSk7CglpZiAocmV0KSB7CgkJZnByaW50ZihzdGRlcnIsICJ3YWl0IGNxZSBmYWlsZWQgJWRc
+biIsIHJldCk7CgkJcmV0dXJuIDE7Cgl9CglpZiAoY3FlLT51c2VyX2RhdGEgIT0gMHg4OSkg
+ewoJCWZwcmludGYoc3RkZXJyLCAiYmFkIHVzZXJfZGF0YSAlbGRcbiIsIChsb25nKSBjcWUt
+PnJlcyk7CgkJcmV0dXJuIDE7Cgl9Cglpb191cmluZ19jcWVfc2VlbigmZHJpbmcsIGNxZSk7
+CgoJLyogbm93IHZlcmlmeSB3ZSBjYW4gcmVhZCB0aGUgc2FuZSBkYXRhIGZyb20gdGhlIGRl
+c3RpbmF0aW9uIHJpbmcgKi8KCWlmICh2ZXJpZnlfZml4ZWRfcmVhZCgmZHJpbmcsIDAsIDAp
+KQoJCXJldHVybiAxOwoKCS8qIGNsb3NlIGRlc2NyaXB0b3IgaW4gc291cmNlIHJpbmcgKi8K
+CXNxZSA9IGlvX3VyaW5nX2dldF9zcWUoJnNyaW5nKTsKCWlvX3VyaW5nX3ByZXBfY2xvc2Vf
+ZGlyZWN0KHNxZSwgMCk7Cglpb191cmluZ19zdWJtaXQoJnNyaW5nKTsKCglyZXQgPSBpb191
+cmluZ193YWl0X2NxZSgmc3JpbmcsICZjcWUpOwoJaWYgKHJldCkgewoJCWZwcmludGYoc3Rk
+ZXJyLCAid2FpdCBjcWUgZmFpbGVkICVkXG4iLCByZXQpOwoJCXJldHVybiAxOwoJfQoJaWYg
+KGNxZS0+cmVzKSB7CgkJZnByaW50ZihzdGRlcnIsICJkaXJlY3QgY2xvc2UgZmFpbGVkICVk
+XG4iLCBjcWUtPnJlcyk7CgkJcmV0dXJuIDE7Cgl9Cglpb191cmluZ19jcWVfc2Vlbigmc3Jp
+bmcsIGNxZSk7CgoJLyogY2hlY2sgdGhhdCBzb3VyY2UgcmluZyBmYWlscyBhZnRlciBjbG9z
+ZSAqLwoJaWYgKHZlcmlmeV9maXhlZF9yZWFkKCZzcmluZywgMCwgMSkpCgkJcmV0dXJuIDE7
+CgoJLyogY2hlY2sgd2UgY2FuIHN0aWxsIHJlYWQgZnJvbSBkZXN0aW5hdGlvbiByaW5nICov
+CglpZiAodmVyaWZ5X2ZpeGVkX3JlYWQoJmRyaW5nLCAwLCAwKSkKCQlyZXR1cm4gMTsKCgly
+ZXR1cm4gMDsKfQoKaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkKewoJY2hhciBm
+bmFtZVs4MF07CglpbnQgcmV0OwoKCWlmIChhcmdjID4gMSkKCQlyZXR1cm4gMDsKCglzcHJp
+bnRmKGZuYW1lLCAiLmZkLXBhc3MuJWQiLCBnZXRwaWQoKSk7Cgl0X2NyZWF0ZV9maWxlX3Bh
+dHRlcm4oZm5hbWUsIEZTSVpFLCBQQVQpOwoKCXJldCA9IHRlc3QoZm5hbWUpOwoJaWYgKHJl
+dCkgewoJCWZwcmludGYoc3RkZXJyLCAidGVzdCBmYWlsZWRcbiIpOwoJCXJldHVybiByZXQ7
+Cgl9CgoJcmV0dXJuIDA7Cn0K
+
+--------------K2hQYmX7hs0AWCqS6B90mC22--

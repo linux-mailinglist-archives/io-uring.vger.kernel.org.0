@@ -2,114 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4199654F2E9
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 10:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EA5254F35F
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jun 2022 10:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381016AbiFQI2Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Jun 2022 04:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
+        id S1381391AbiFQIpy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Jun 2022 04:45:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381015AbiFQI2Q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 04:28:16 -0400
-Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 160DE3207B
-        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 01:28:10 -0700 (PDT)
-Message-ID: <1b7434f0-f06b-e659-33b8-f1cc4ab60dcc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655454488;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+rrzVerWeDaVHj/Gynik+tgvokY7+Ghde/q2De0hfZs=;
-        b=Ymve5Y8DW/j0EY1WqTJBTlJII1cMIxSFe+lFjQ6OHFxSNaVVm0QDhzSnyVM5EK/kzZlMyg
-        2hI9h9+aqISYLegYyFJLuytEhT//1CMyVEjv456tSNSzofl1spgElsU79eEdpt+IGpfYDa
-        rmesgL4U9wmKkt3164YCJJrFxuxlipw=
-Date:   Fri, 17 Jun 2022 16:28:00 +0800
+        with ESMTP id S1381401AbiFQIph (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Jun 2022 04:45:37 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC696A03D
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 01:45:26 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id z7so5242989edm.13
+        for <io-uring@vger.kernel.org>; Fri, 17 Jun 2022 01:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2qWiOJOwfzhwIJbohxiRe+8J/U490q1scGHF6XNAx7A=;
+        b=ebmFeG6DOs6Xcc6UJ88YJQG+eI49B03AwRKRwOhoMbKl6zNWds77fRXdGdHm5mNUfC
+         8cm1JaBExskF/gpIxXPJKdIqp1ryc2hH4rO/AVm4qRpwmnfg85uAieehdlk7+uA5pWKy
+         ppQ5Bc/gnENlL9fDQhM5LkqNWA4VkP4iecmnmC4ZBJu2SiYOk87eIaQtvMlCnwrP3Llg
+         e8hZxiZNr9yS8BXiAJOv0LdSTyHwfxGxCGX45bflckEPUHPjDucroCQlGgVXeaUq4kIJ
+         pAylOoWMQ9pgQLOthWDsH1WMFHvUmgGGl/BGEP0B1dku/OZruPa41m2e/ZAcloZdS+i9
+         jiqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2qWiOJOwfzhwIJbohxiRe+8J/U490q1scGHF6XNAx7A=;
+        b=kZsoSzXqVO7NRacAinry9asVuLz7NO4oGmkv18CC2mH5ZjQ1hDEX5uJux9ZAnOkbqf
+         oFcM9GkKCTibqPMyubSle6HfVKxdjvB8aiamuwwExJz/V1yA+8jValMFuLyVUQJniviq
+         FvK0ZonpNou6rG7qUucT8bSVb5mdqY3CQkuU866qHrbynqTYguoHNQm9TMuUUrg/QvcB
+         sxWtu28nc/rkksb8FrAiRfJfATZc6KjPucsbHV+/I0NrNDagWjbb7mzvC/pUCyVufjhG
+         B9R7fVf540Jk/hLAnCd5ib229a2lZnoyVJlTt7sMOuAJ5qiIZqjCXlQ804VUt/1O4wNd
+         z0MA==
+X-Gm-Message-State: AJIora+Z+JQLYpkFZaRgxdE2iBTB9+AYWGbxBtoZUUKyj9v/8khBRU7q
+        kmZwSAGSQB9kHId7wWmH2Q2+kqvR2oXhWA==
+X-Google-Smtp-Source: AGRyM1tiVLbpf7EXQjxd8ppdN8kL5RCfff+BKaw7MgYtFFEeyeYnl/PoKljbyZZwGWYlE6ckgVUIDw==
+X-Received: by 2002:a05:6402:368a:b0:42d:ef42:f727 with SMTP id ej10-20020a056402368a00b0042def42f727mr11173115edb.204.1655455524763;
+        Fri, 17 Jun 2022 01:45:24 -0700 (PDT)
+Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:b65a])
+        by smtp.gmail.com with ESMTPSA id ot21-20020a170906ccd500b006f3ef214e0esm1844106ejb.116.2022.06.17.01.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jun 2022 01:45:24 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH liburing 0/2] use nop CQE32 tests to test some assumptions
+Date:   Fri, 17 Jun 2022 09:42:40 +0100
+Message-Id: <cover.1655455225.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Subject: Re: [PATCH liburing] Fix incorrect close in test for multishot accept
-Content-Language: en-US
-To:     Donald Hunter <donald.hunter@gmail.com>, axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org
-References: <20220616162245.6225-1-donald.hunter@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <20220616162245.6225-1-donald.hunter@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/17/22 00:22, Donald Hunter wrote:
-> This fixes a bug in accept_conn handling in the accept tests that caused it
-> to incorrectly skip the multishot tests and also lose the warning message
-> to a closed stdout. This can be seen in the strace output below.
-> 
-> close(1)                                = 0
-> io_uring_setup(32, { ...
-> ...
-> write(1, "Fixed Multishot Accept not suppo"..., 47) = -1 EINVAL
-> 
-> Unfortunately this exposes a a bug with gcc -O2 where multishot_mask logic
-> gets optimized incorrectly and "Fixed Multishot Accept misses events" is
-> wrongly reported. I am investigating this separately.
-> 
+Pavel Begunkov (2):
+  Revert "test/nop: kill cqe32 test code"
+  tests: fix and improve nop tests
 
-Super thanks, Donald. you are right, we skipped the fixed multishot test
-by mistake, the exposed issue after your fix is caused by
-multishot_mask |= (1 << (s_fd[i] - 1))
-which should be
-multishot_mask |= (1U << s_fd[i])
+ test/nop.c | 54 +++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 13 deletions(-)
 
-Would you mind me to take this one to my patch series which is to fix
-this and do some cleaning?
-
-> Signed-off-by: Donald Hunter <donald.hunter@gmail.com>
-> ---
->   test/accept.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/test/accept.c b/test/accept.c
-> index 7bc6226..fb87a1d 100644
-> --- a/test/accept.c
-> +++ b/test/accept.c
-> @@ -103,7 +103,7 @@ static void queue_accept_conn(struct io_uring *ring, int fd,
->   	}
->   }
->   
-> -static int accept_conn(struct io_uring *ring, int fixed_idx)
-> +static int accept_conn(struct io_uring *ring, int fixed_idx, bool multishot)
->   {
->   	struct io_uring_cqe *cqe;
->   	int ret;
-> @@ -115,8 +115,10 @@ static int accept_conn(struct io_uring *ring, int fixed_idx)
->   
->   	if (fixed_idx >= 0) {
->   		if (ret > 0) {
-> -			close(ret);
-> -			return -EINVAL;
-> +			if (!multishot) {
-> +				close(ret);
-> +				return -EINVAL;
-> +			}
->   		} else if (!ret) {
->   			ret = fixed_idx;
->   		}
-> @@ -208,7 +210,7 @@ static int test_loop(struct io_uring *ring,
->   		queue_accept_conn(ring, recv_s0, args);
->   
->   	for (i = 0; i < MAX_FDS; i++) {
-> -		s_fd[i] = accept_conn(ring, args.fixed ? 0 : -1);
-> +		s_fd[i] = accept_conn(ring, args.fixed ? 0 : -1, multishot);
->   		if (s_fd[i] == -EINVAL) {
->   			if (args.accept_should_error)
->   				goto out;
+-- 
+2.36.1
 

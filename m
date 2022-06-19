@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB03550A2E
-	for <lists+io-uring@lfdr.de>; Sun, 19 Jun 2022 13:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55DA550A2F
+	for <lists+io-uring@lfdr.de>; Sun, 19 Jun 2022 13:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbiFSL0o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 19 Jun 2022 07:26:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52192 "EHLO
+        id S233268AbiFSL0p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 19 Jun 2022 07:26:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbiFSL0n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 07:26:43 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46CD5F67
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:42 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id k22so4641751wrd.6
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:42 -0700 (PDT)
+        with ESMTP id S229853AbiFSL0p (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 07:26:45 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF446153
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:43 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id o37-20020a05600c512500b0039c4ba4c64dso6446453wms.2
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sKajsPu5iWDLP3Cw2nyhYSArnQD0d/Bi7b38M+S7j6M=;
-        b=bv2XphlfyghOtC9CPIz9tLjWP8WsQkH6tucTJ15dlBha69LmK0vbFcwQalRfizcknI
-         Wp1m8VD2+8j7NcK3VBy9UiSGcx05V/t0oRMlBrxLY99wC6oIqT9kjadtuGoRDYTguuvj
-         Ied1bigK1RccoDFViJWrzaFcJ/V2yQWFMAwyG2fdINY3OtAu64YuSL1Ypo2HBwr1tnDE
-         LKvlYK2rV6NO041RY+ETzC+J1WOSAHNTRxXd28cANHx4vR/2LHf9LzuFsKF5qJWNuwqg
-         IaMNhmomZLkZxNasLLiIMqu5TWMPJVfzlNe1qKqQA6MG3Ppuc1WfJzSScoUuPfMdgXms
-         FYjQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rMRvtbDCNHQBxhNWxo2d+tDiG3EmaLK8r3Cs02zPJ2o=;
+        b=DmkY7i7OHUmYtcFyFDD9M9a2S964GRO1KAWAtU79Zhvnfty4eNo9Q1kL+SfyMhPyNH
+         2+a25tAG6sG+lIRtDKUTfT2rJ/flo0dqMC0DpW+4HdfJwGQv9eMxek+R4Iew7vBbhhr0
+         XczsbO2hQYCxynTZoX4iRQrJu4wF5Ma35BQCnYyZpdP2+pm5v8FIeya91JgiCaVaHj3c
+         LKzP4oVR2cren+hY6+A4OxZhb3nS24FOILE1h2pvVOBwkbZAuHEiXtidca8REZ0bN9oy
+         upbsHvWrgBYNbJUbuP7GCNtYA00Y5F/zvco00n51CLUj6kZXsHY0fAXTFkuP2rJtdmkg
+         3/rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sKajsPu5iWDLP3Cw2nyhYSArnQD0d/Bi7b38M+S7j6M=;
-        b=AR1pCaYnvXXd2zimW06Di67FMkLU7rWz0KAk/iHL9f0T4ftcZA2Uh+AkEAfI/2U/jl
-         r+P+CViAl9REfDCY8FWL/ahchAnCOPvrUICi4CW0OQJqOeXeFlcxAVev3mf0OcaEJoKc
-         JYuANXTB5Ksenep8AkniGORE9f7v1k3Jq99rHB+QuhBbqbBT12M1oYg3ORjDegnzInlD
-         Ud3MHtxcVnjQev4vRDZckg9dCmyh+AkcHDsKvQh8OFe6Tt+vxj4AGuZWs6oxjDfRjicw
-         JBNehUZteL5iKnrco4SZGmjEmGC6mNTJ+2AovfalMtarwKux8/XHvJjfKQxeBPIvRzu/
-         wufg==
-X-Gm-Message-State: AJIora/gdWCcRTUHoB9PLJYEqdqQR3guVIvY+qS/LqoMi8PHn8YPb210
-        RMoHajHta+dTKdUUItElRsqUHfrR7E0uVw==
-X-Google-Smtp-Source: AGRyM1srdIw4QLPubrJg8buq9H1AOAT+08eRFyhO7qWcZ0g+6gDCSmvP3Iqmg8FIJAK7Sc32cAuidg==
-X-Received: by 2002:a5d:4891:0:b0:21b:88c9:69ae with SMTP id g17-20020a5d4891000000b0021b88c969aemr5204631wrq.84.1655638001032;
-        Sun, 19 Jun 2022 04:26:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rMRvtbDCNHQBxhNWxo2d+tDiG3EmaLK8r3Cs02zPJ2o=;
+        b=AVlWkuwv0iejTbUgQWkrGywxkZKQ+x6OngtB6X0zAzjit4PBQxb0N0k6XXTJkhdzvo
+         PDJMvsKWUO1Tj46OWLqiYbBDjSNg+qem0RMnakyJGpMsX/KXH9yH+S4rXkrYN5tlH1yH
+         wWvau7VUYmxCgrP5NhQ1Pk9Fi/D2G3gL8YdhUr0bTkHrGvb6pmXm7uQrN6WaxY01LVBt
+         jVqdN1dkYt3acFw6ajjNGLOq+o+KGQXdFJW+QQfX7/dTNlumsMejkROINfOYAP2kGyBv
+         mGJaTU2X8uBJmYIDbI9vHElphX0k6o/ycFDR9j+jX4pVGta6uQIJ8Vzp6k3YGxApVmxM
+         rFXQ==
+X-Gm-Message-State: AOAM533zQHcHw1lzFImZHO68sW71hYC9+CJqpN5FCeYW0iQf2ZQRAE7q
+        qNkMUrDG/XJyrQ2o9F6rU/t+tHZhkBB/eA==
+X-Google-Smtp-Source: ABdhPJxK5Zy30n3VZoiwCyWecgMTWIAW635maQ/GcRWq0Bc5+mmBcb4L70Mvov4+hqTYINGgXEEryQ==
+X-Received: by 2002:a05:600c:4f81:b0:39c:809c:8a9e with SMTP id n1-20020a05600c4f8100b0039c809c8a9emr30391906wmq.39.1655638002126;
+        Sun, 19 Jun 2022 04:26:42 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id y14-20020adfee0e000000b002119c1a03e4sm9921653wrn.31.2022.06.19.04.26.39
+        by smtp.gmail.com with ESMTPSA id y14-20020adfee0e000000b002119c1a03e4sm9921653wrn.31.2022.06.19.04.26.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 04:26:40 -0700 (PDT)
+        Sun, 19 Jun 2022 04:26:41 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 0/7] cqe posting cleanups
-Date:   Sun, 19 Jun 2022 12:26:03 +0100
-Message-Id: <cover.1655637157.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 1/7] io_uring: remove extra io_commit_cqring()
+Date:   Sun, 19 Jun 2022 12:26:04 +0100
+Message-Id: <f2481e32375e749be89c42e4804268b608722cef.1655637157.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1655637157.git.asml.silence@gmail.com>
+References: <cover.1655637157.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -66,37 +68,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Apart from this patches removing some implicit assumptions, which we
-had problems with before, and making code cleaner, they and especially
-6-7 are also needed to push for synchronisation optimisations later, lile
-[1] or removing spinlocking with SINGLE_ISSUER.
+We don't post events in __io_commit_cqring_flush() anymore but send all
+requests to tw, so no need to do io_commit_cqring() there.
 
-The downside is that we add additional lock/unlock into eventfd path,
-but I don't think we care about it.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/io_uring.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-The series also exposes a minor issue with cancellations, which for some
-reason calls io_kill_timeouts() and io_poll_remove_all() too many times on
-task exit. That makes poll-cancel to timeout on sigalarm, though usually
-is fine if given 3-5 sec instead of 1. We'll investigate it later.
-
-[1] https://github.com/isilence/linux/commit/6224f58bf7b542e6aed1eed44ee6bd5b5f706437
-
-Pavel Begunkov (7):
-  io_uring: remove extra io_commit_cqring()
-  io_uring: reshuffle io_uring/io_uring.h
-  io_uring: move io_eventfd_signal()
-  io_uring: hide eventfd assumptions in evenfd paths
-  io_uring: remove ->flush_cqes optimisation
-  io_uring: introduce locking helpers for CQE posting
-  io_uring: add io_commit_cqring_flush()
-
- include/linux/io_uring_types.h |   2 +
- io_uring/io_uring.c            | 144 ++++++++++++++++-----------------
- io_uring/io_uring.h            | 108 ++++++++++++++-----------
- io_uring/rw.c                  |   5 +-
- io_uring/timeout.c             |   7 +-
- 5 files changed, 133 insertions(+), 133 deletions(-)
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 37084fe3cc07..9e02c4a950ef 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -480,7 +480,6 @@ void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
+ 			io_flush_timeouts(ctx);
+ 		if (ctx->drain_active)
+ 			io_queue_deferred(ctx);
+-		io_commit_cqring(ctx);
+ 		spin_unlock(&ctx->completion_lock);
+ 	}
+ 	if (ctx->has_evfd)
 -- 
 2.36.1
 

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ABCA550A31
-	for <lists+io-uring@lfdr.de>; Sun, 19 Jun 2022 13:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E915550A33
+	for <lists+io-uring@lfdr.de>; Sun, 19 Jun 2022 13:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbiFSL0r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 19 Jun 2022 07:26:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52222 "EHLO
+        id S235295AbiFSL0t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 19 Jun 2022 07:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235295AbiFSL0q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 07:26:46 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEDB66153
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:45 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id v14so11090061wra.5
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:45 -0700 (PDT)
+        with ESMTP id S236239AbiFSL0s (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 07:26:48 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F1FA5F67
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:47 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id g4so11068646wrh.11
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 04:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/LavPulCuHLlYsXb/c3AGIbqLtOcsN8l0Dc366IHheI=;
-        b=byhn4/9T3b7OKrK5M5uu8rr1ce7LHDRqo1+2kyIh/bRBPvX+rxgCD0rTE2OuP8Q6d4
-         hSpVRMGT+Jgk/g0cXk3SazLaGvIsT6iQm/KWudl8KX2Apdvi3OzPRVWqQAe/8Qs+TAvv
-         rvvLFC8Pwur8Tl6fn9KOO9KLuPsz9LzAsvvxU9Ihj+EW/nYTQp6mo74H8Ka+ZZ0e/ZI0
-         BIPbY+Hq7+XLFqpzMxNTFD3yNubg8v4LkfziS0VCezE91zqtSctsmkNw3cwt1aLjKQvQ
-         qZWibiauvIcZXLd6ekGm/U7oqDelNtk2+4BWNyVIuMx1YdSb+Kpi0nnJ9c9d9r5Rd6Ci
-         /U+Q==
+        bh=v/E8L6vENwLzJ5FVowXVq6f4QglMkinNZA6/HXU+7zA=;
+        b=CrO2wqOEZTbHizixoXPc5EKy+FECoTs2GnNB+L/zBIFpvEMR8M9WgW8iONqODfYEzq
+         66LaCSXrcYNZxzK+E0OibdT+i53JnowqLaunzlsGXNELzsLdy5M6Kr5wIHmLr7hZfPo6
+         da+7bgsWZmRwm+/EDpUGITbqFOB78Ej6l7B1Q/jsKhnHXodB7A6qbOX9XhRD1UIbTfY6
+         ywIBca4Qmn35UHhortNMGscftxlXBJEn2GKGdHOqaVPOdg/waqp2gCOBqzaY9DT1QQG4
+         +5ID5FwiqEf71G9z5OvvOzGxqlEGiVMZ26w423ooPuheqKtdUglznGsCJ7M80thcAzXr
+         rPDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/LavPulCuHLlYsXb/c3AGIbqLtOcsN8l0Dc366IHheI=;
-        b=hcrS3y/NhvVI9ApYhyptHb1Y2cXk+unxfaCJfDQWJl5RuRM9KxnZbHpaXVlZCN5m0w
-         AxrZ8GQGsK3zS8yiTz/NYzEJdnGsaNMxNfgYo00sVg7IUK+mVug5qUP/K1lK+69suPcn
-         MD9GnaPuTxW+5CYF4pzaZL4rXnY1hS7gf2/jwIwWa04Bk60nIxokH88tje9Jbsk8plCh
-         d7N7fGnwoPeZpVyFM0EltmliMkKRI5TOumgRUKn6BlcQIoukZvwxskXRWlC69BJZg2hK
-         DLinE4ZBzFgEwIpkkxEHqVpk3ubNkRKqfrjgUblF4MmlY5hdyV9swnV9eThFUEwloKj0
-         jRTA==
-X-Gm-Message-State: AJIora84e/zpg6BhkAYdT/sQi2X0NS3S35tJmc508oYzsek17niJCwEd
-        rV/jkfaChBUnBJTV7RSquFJdKRfvO8UcLg==
-X-Google-Smtp-Source: AGRyM1vcgqkdadFTL9ZtPssy6sEq3o8SG7Ue1MXxf5qquABhqxYvKpVzIr6wi15S+S+GxtS0J31Z2Q==
-X-Received: by 2002:a05:6000:1788:b0:219:e28f:dc98 with SMTP id e8-20020a056000178800b00219e28fdc98mr17747166wrg.144.1655638004291;
-        Sun, 19 Jun 2022 04:26:44 -0700 (PDT)
+        bh=v/E8L6vENwLzJ5FVowXVq6f4QglMkinNZA6/HXU+7zA=;
+        b=jLHv4ZDG8LIW6UIv5i6ixxbIXTv5+DOwMHvJU/J8nXC/9wrPcuvILlvfcBlcIn7gpK
+         T7STPCEv5MXZHgVeGC9oegvpHJtLCtYXt4cOmx26saD+5jDTfwrzneGsD532I2FFY6is
+         fzBvONhQy3i9aILejHzdgnK/MiRZrDRu+qZ4+PQgHbS54yTw+kESvlgmsnI+RSrPotp+
+         KNQtV6DJtn82LX0jG6JzuA9jlbFdoUwLuX5im9zMF3cv+2AFSsNzsAHDH2Y+Ld0Azxv8
+         /lubKYlZ8TSq41iSSpgiNwDGp6A6OykyPtn4y1F1ttzTazfvguT9CMLviZrfDt0bo8YI
+         DP3A==
+X-Gm-Message-State: AJIora9McR24sF0J70WtDywVYoCobHGDe/7GmDyQ/E6pViYcKGRDl457
+        THKCs/fpPpdpzsLUeAXZPlDf81hQZqqz5w==
+X-Google-Smtp-Source: AGRyM1toC+K/nBM2s5frw+cFGDMHWBsV/mzwy5iRMhcU86uEw7yTUzUS/XSAQbOrpchQv+ZgfU/NHQ==
+X-Received: by 2002:adf:ea87:0:b0:21b:83f8:d911 with SMTP id s7-20020adfea87000000b0021b83f8d911mr8162231wrm.556.1655638005335;
+        Sun, 19 Jun 2022 04:26:45 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id y14-20020adfee0e000000b002119c1a03e4sm9921653wrn.31.2022.06.19.04.26.43
+        by smtp.gmail.com with ESMTPSA id y14-20020adfee0e000000b002119c1a03e4sm9921653wrn.31.2022.06.19.04.26.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 04:26:43 -0700 (PDT)
+        Sun, 19 Jun 2022 04:26:44 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 3/7] io_uring: move io_eventfd_signal()
-Date:   Sun, 19 Jun 2022 12:26:06 +0100
-Message-Id: <9ebebb3f6f56f5a5448a621e0b6a537720c43334.1655637157.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 4/7] io_uring: hide eventfd assumptions in evenfd paths
+Date:   Sun, 19 Jun 2022 12:26:07 +0100
+Message-Id: <8ac7fbe5ad880990ef498fa09f8de70390836f97.1655637157.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655637157.git.asml.silence@gmail.com>
 References: <cover.1655637157.git.asml.silence@gmail.com>
@@ -68,69 +68,164 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move io_eventfd_signal() in the sources without any changes and kill its
-forward declaration.
+Some io_uring-eventfd users assume that there won't be spurious wakeups.
+That assumption has to be honoured by all io_cqring_ev_posted() callers,
+which is inconvenient and from time to time leads to problems but should
+be maintained to not break the userspace.
+
+Instead of making the callers to track whether a CQE was posted or not,
+hide it inside io_eventfd_signal(). It saves ->cached_cq_tail it saw
+last time and triggers the eventfd only when ->cached_cq_tail changed
+since then.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ include/linux/io_uring_types.h |  2 ++
+ io_uring/io_uring.c            | 44 ++++++++++++++++++++--------------
+ io_uring/timeout.c             |  3 +--
+ 3 files changed, 29 insertions(+), 20 deletions(-)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 779c72da5b8f..327bc7f0808d 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -315,6 +315,8 @@ struct io_ring_ctx {
+ 
+ 	struct list_head		defer_list;
+ 	unsigned			sq_thread_idle;
++	/* protected by ->completion_lock */
++	unsigned			evfd_last_cq_tail;
+ };
+ 
+ enum {
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9e02c4a950ef..31beb9ccbf12 100644
+index 31beb9ccbf12..0875cc649e23 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -142,8 +142,6 @@ static void io_queue_sqe(struct io_kiocb *req);
- 
- static void __io_submit_flush_completions(struct io_ring_ctx *ctx);
- 
--static void io_eventfd_signal(struct io_ring_ctx *ctx);
--
- static struct kmem_cache *req_cachep;
- 
- struct sock *io_uring_get_socket(struct file *file)
-@@ -472,20 +470,6 @@ static __cold void io_queue_deferred(struct io_ring_ctx *ctx)
- 	}
- }
- 
--void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
--{
--	if (ctx->off_timeout_used || ctx->drain_active) {
--		spin_lock(&ctx->completion_lock);
--		if (ctx->off_timeout_used)
--			io_flush_timeouts(ctx);
--		if (ctx->drain_active)
--			io_queue_deferred(ctx);
--		spin_unlock(&ctx->completion_lock);
--	}
--	if (ctx->has_evfd)
--		io_eventfd_signal(ctx);
--}
--
+@@ -473,6 +473,22 @@ static __cold void io_queue_deferred(struct io_ring_ctx *ctx)
  static void io_eventfd_signal(struct io_ring_ctx *ctx)
  {
  	struct io_ev_fd *ev_fd;
-@@ -513,6 +497,20 @@ static void io_eventfd_signal(struct io_ring_ctx *ctx)
- 	rcu_read_unlock();
++	bool skip;
++
++	spin_lock(&ctx->completion_lock);
++	/*
++	 * Eventfd should only get triggered when at least one event has been
++	 * posted. Some applications rely on the eventfd notification count only
++	 * changing IFF a new CQE has been added to the CQ ring. There's no
++	 * depedency on 1:1 relationship between how many times this function is
++	 * called (and hence the eventfd count) and number of CQEs posted to the
++	 * CQ ring.
++	 */
++	skip = ctx->cached_cq_tail == ctx->evfd_last_cq_tail;
++	ctx->evfd_last_cq_tail = ctx->cached_cq_tail;
++	spin_unlock(&ctx->completion_lock);
++	if (skip)
++		return;
+ 
+ 	rcu_read_lock();
+ 	/*
+@@ -511,13 +527,6 @@ void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
+ 		io_eventfd_signal(ctx);
  }
  
-+void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
-+{
-+	if (ctx->off_timeout_used || ctx->drain_active) {
-+		spin_lock(&ctx->completion_lock);
-+		if (ctx->off_timeout_used)
-+			io_flush_timeouts(ctx);
-+		if (ctx->drain_active)
-+			io_queue_deferred(ctx);
-+		spin_unlock(&ctx->completion_lock);
-+	}
-+	if (ctx->has_evfd)
-+		io_eventfd_signal(ctx);
-+}
+-/*
+- * This should only get called when at least one event has been posted.
+- * Some applications rely on the eventfd notification count only changing
+- * IFF a new CQE has been added to the CQ ring. There's no depedency on
+- * 1:1 relationship between how many times this function is called (and
+- * hence the eventfd count) and number of CQEs posted to the CQ ring.
+- */
+ void io_cqring_ev_posted(struct io_ring_ctx *ctx)
+ {
+ 	if (unlikely(ctx->off_timeout_used || ctx->drain_active ||
+@@ -530,7 +539,7 @@ void io_cqring_ev_posted(struct io_ring_ctx *ctx)
+ /* Returns true if there are no backlogged entries after the flush */
+ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ {
+-	bool all_flushed, posted;
++	bool all_flushed;
+ 	size_t cqe_size = sizeof(struct io_uring_cqe);
+ 
+ 	if (!force && __io_cqring_events(ctx) == ctx->cq_entries)
+@@ -539,7 +548,6 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 	if (ctx->flags & IORING_SETUP_CQE32)
+ 		cqe_size <<= 1;
+ 
+-	posted = false;
+ 	spin_lock(&ctx->completion_lock);
+ 	while (!list_empty(&ctx->cq_overflow_list)) {
+ 		struct io_uring_cqe *cqe = io_get_cqe(ctx);
+@@ -554,7 +562,6 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 		else
+ 			io_account_cq_overflow(ctx);
+ 
+-		posted = true;
+ 		list_del(&ocqe->list);
+ 		kfree(ocqe);
+ 	}
+@@ -567,8 +574,7 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 
+ 	io_commit_cqring(ctx);
+ 	spin_unlock(&ctx->completion_lock);
+-	if (posted)
+-		io_cqring_ev_posted(ctx);
++	io_cqring_ev_posted(ctx);
+ 	return all_flushed;
+ }
+ 
+@@ -758,8 +764,7 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx,
+ 	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
+ 	io_commit_cqring(ctx);
+ 	spin_unlock(&ctx->completion_lock);
+-	if (filled)
+-		io_cqring_ev_posted(ctx);
++	io_cqring_ev_posted(ctx);
+ 	return filled;
+ }
+ 
+@@ -940,14 +945,12 @@ __cold void io_free_req(struct io_kiocb *req)
+ static void __io_req_find_next_prep(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	bool posted;
+ 
+ 	spin_lock(&ctx->completion_lock);
+-	posted = io_disarm_next(req);
++	io_disarm_next(req);
+ 	io_commit_cqring(ctx);
+ 	spin_unlock(&ctx->completion_lock);
+-	if (posted)
+-		io_cqring_ev_posted(ctx);
++	io_cqring_ev_posted(ctx);
+ }
+ 
+ static inline struct io_kiocb *io_req_find_next(struct io_kiocb *req)
+@@ -2431,6 +2434,11 @@ static int io_eventfd_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		kfree(ev_fd);
+ 		return ret;
+ 	}
 +
- /*
-  * This should only get called when at least one event has been posted.
-  * Some applications rely on the eventfd notification count only changing
++	spin_lock(&ctx->completion_lock);
++	ctx->evfd_last_cq_tail = ctx->cached_cq_tail;
++	spin_unlock(&ctx->completion_lock);
++
+ 	ev_fd->eventfd_async = eventfd_async;
+ 	ctx->has_evfd = true;
+ 	rcu_assign_pointer(ctx->io_ev_fd, ev_fd);
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 557c637af158..4938c1cdcbcd 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -628,7 +628,6 @@ __cold bool io_kill_timeouts(struct io_ring_ctx *ctx, struct task_struct *tsk,
+ 	spin_unlock_irq(&ctx->timeout_lock);
+ 	io_commit_cqring(ctx);
+ 	spin_unlock(&ctx->completion_lock);
+-	if (canceled != 0)
+-		io_cqring_ev_posted(ctx);
++	io_cqring_ev_posted(ctx);
+ 	return canceled != 0;
+ }
 -- 
 2.36.1
 

@@ -2,66 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE24A550B27
-	for <lists+io-uring@lfdr.de>; Sun, 19 Jun 2022 16:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEDD7550B3C
+	for <lists+io-uring@lfdr.de>; Sun, 19 Jun 2022 16:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbiFSOVZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 19 Jun 2022 10:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55944 "EHLO
+        id S234364AbiFSOwj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 19 Jun 2022 10:52:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiFSOVY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 10:21:24 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C29DEDD
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 07:21:22 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id es26so10146602edb.4
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 07:21:22 -0700 (PDT)
+        with ESMTP id S231738AbiFSOwj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 10:52:39 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4153CBE34
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 07:52:38 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id n20so9920628ejz.10
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 07:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=Lp7u3TRNim2T4zhs2sDrbOuiOQISPeP+ge2N7EoOV20=;
-        b=klAqz8+bhe+AQNDBsYDnHIBf4AAAx7BGgdjs4hjw+7of39NQi0E966qrTrFmYf4r6Z
-         DBQ4s2M/DX7bOTVRQ2ZJNS+tyFm5jYZtXsxDGpLAyoRtVg1vslSUDbB7BqW4GYyaqjmk
-         iMjOkhv1VfKl1YXzqRsLa3A9sJdwET6chEg+QADiBTqlK2ypLh+L/ovA9o2w3W3T3Z9Y
-         rfUUi/purEadrU7s9LyG+NNP4TKrGgw95gDJuN/6+EtqU0wZvVpEH/6qDdkdelwgF1r9
-         H1riHNrPqHzhIo//V2vjosnLnxulvMCgI7wDwWzUA1Y01Z/jlItC+qtOPTzUjjlyA/oG
-         uVFQ==
+        bh=g65YO1DxQXTCdhwazI+h8JdKROtcP8dj1gcTNPBcudE=;
+        b=qfJ8ZIIjaYwmTP2QGgeFLTb2Pk0T6FY7srZG65GweY4UtO9n+4/PVYQL1flE8SZ3eQ
+         8EZAJT/FUdTXhKfNJdohURnnSTdZeUUW/9iP/DpPFf06Z2HkcVSO3s2YzI6akN92PjyD
+         XLnoXM717VsWDqrpwiD2B2fUhi2MGxzjU9VaKpNAtnstVCp6hZqbolRtgKYf2NSw+aAB
+         +vJUtPKlnb/GTpCXM2o4ro0iph3bHasKIZ0i4KyIWGOfhcVe5wxWfS6K1aLgQ4XuKPwf
+         Wqf1dMqgA31GHPMSP/ahs6G+c9Vap/BQGUTwWrDviiFjgxl3bMs+3DHr0yy2iEkV5emz
+         5cfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=Lp7u3TRNim2T4zhs2sDrbOuiOQISPeP+ge2N7EoOV20=;
-        b=31q63NaYOzEUKkPs+vMt9KGMlJVkLDujB0xp6mFcBOJf8MI76Flwv5I8YbnqSjc+IB
-         qFL/Pm5s1+42WEd+leTgev//aGTDmFp0UlwqUPH8rgPoh4tgMPbedEDwxjKpa1aOmn9F
-         oC0/UDY+jMvFClwsbcgx4dVlUwEY+FjT2Dg+Hd2DtNudN3DKZ6FkGqJzlO3Bg4MQuemN
-         YEQe3ZaelzcMrctCw6I8nXhlXsE2tP5B/konf2N90ylI3sx5N14QFd9WyKTqQ54zZoY8
-         tSkRLUJqZEwzf63CpqY77MNbYRBUHj1ZL5jpGtDrB15q9azbR6ezrrthNfLw2tN1cChQ
-         BsuA==
-X-Gm-Message-State: AJIora/XMXzd/znQHAvK4PkKeTK5FtFuah/COmzxv+CuAOeCl8MbNHcU
-        QMRGAZFfgDWt0tMXvckx3nk=
-X-Google-Smtp-Source: AGRyM1sl7gGBZlFWOz9PpB6G0QCK51lhUEzvZt3Pd1Z4EUkd/gwp1pVfMxx6DQCv0dej7THtx4VR5g==
-X-Received: by 2002:a05:6402:27c8:b0:42e:2e43:86ae with SMTP id c8-20020a05640227c800b0042e2e4386aemr24172310ede.427.1655648481391;
-        Sun, 19 Jun 2022 07:21:21 -0700 (PDT)
+        bh=g65YO1DxQXTCdhwazI+h8JdKROtcP8dj1gcTNPBcudE=;
+        b=N0FvnunxOg8NjCj60Et+ZLp1BjS63X6A41W+8jXcvFOx1ZGjPiEikJJDAB+CIBMlzF
+         EgNUxHt1yhTJ/DFXZhJM6NW+rKLQcg+4JW++aHO5iqkln+a69eR/z4bbzwwkgJpuO2Ut
+         52g4eL8HvYb+njFYD0gblZ5f2JpT8s0hX3Vn8Swhmf96SLc2raoGrqknJ7ZVHNdrmglc
+         tgLusPIUxGioSYgPK/9zVJsBTr0fXaM+1u5co3YdMfSRm9HL2ntqmW2alkirLl4opROd
+         jANlNjAj14a6UjyyXxUI1gHaSJOtlwMBOCajuPJyg8qvVTthoNN5orEDqEI9yqcnNYEJ
+         P+UQ==
+X-Gm-Message-State: AJIora9XqVVrsDOBLLUE1unsr0FkEtEXicaGhsCF97sNP/WO0j5c7hqH
+        F5ZOQzDyjrGrFN1t+MU5M23YtTyAciG+rg==
+X-Google-Smtp-Source: AGRyM1tss0YPFZZRot4j+Zhcctivw+kiuDkTSoUT+EzHqBiwusUDyXsN2XGYrKbmbjR7G4HICJDP8A==
+X-Received: by 2002:a17:906:7a19:b0:711:f5c8:2287 with SMTP id d25-20020a1709067a1900b00711f5c82287mr17693339ejo.286.1655650356705;
+        Sun, 19 Jun 2022 07:52:36 -0700 (PDT)
 Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id k27-20020a17090632db00b00721d8e5bf0bsm1795651ejk.6.2022.06.19.07.21.20
+        by smtp.gmail.com with ESMTPSA id y3-20020a056402358300b0042dc25fdf5bsm8137858edc.29.2022.06.19.07.52.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Jun 2022 07:21:20 -0700 (PDT)
-Message-ID: <f967dcd4-9078-e5a4-4d0c-7a757e47aee4@gmail.com>
-Date:   Sun, 19 Jun 2022 15:20:55 +0100
+        Sun, 19 Jun 2022 07:52:36 -0700 (PDT)
+Message-ID: <f42c7b8d-b144-434e-64a0-842209bdf31a@gmail.com>
+Date:   Sun, 19 Jun 2022 15:52:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH for-next 6/7] io_uring: introduce locking helpers for CQE
- posting
+Subject: Re: [PATCH for-next 5/7] io_uring: remove ->flush_cqes optimisation
 Content-Language: en-US
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <cover.1655637157.git.asml.silence@gmail.com>
- <693e461561af1ce9ccacfee9c28ff0c54e31e84f.1655637157.git.asml.silence@gmail.com>
- <91584f2b-f7bb-ec20-8b27-62451e2b19e0@kernel.dk>
+ <692e81eeddccc096f449a7960365fa7b4a18f8e6.1655637157.git.asml.silence@gmail.com>
+ <1f573b6b-916a-124c-efa1-55f7274d0044@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <91584f2b-f7bb-ec20-8b27-62451e2b19e0@kernel.dk>
+In-Reply-To: <1f573b6b-916a-124c-efa1-55f7274d0044@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,56 +73,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/19/22 14:30, Jens Axboe wrote:
+On 6/19/22 14:31, Jens Axboe wrote:
 > On 6/19/22 5:26 AM, Pavel Begunkov wrote:
->> spin_lock(&ctx->completion_lock);
->> /* post CQEs */
->> io_commit_cqring(ctx);
->> spin_unlock(&ctx->completion_lock);
->> io_cqring_ev_posted(ctx);
+>> It's not clear how widely used IOSQE_CQE_SKIP_SUCCESS is, and how often
+>> ->flush_cqes flag prevents from completion being flushed. Sometimes it's
+>> high level of concurrency that enables it at least for one CQE, but
+>> sometimes it doesn't save much because nobody waiting on the CQ.
 >>
->> We have many places repeating this sequence, and the three function
->> unlock section is not perfect from the maintainance perspective and also
->> makes harder to add new locking/sync trick.
->>
->> Introduce to helpers. io_cq_lock(), which is simple and only grabs
->> ->completion_lock, and io_cq_unlock_post() encapsulating the three call
->> section.
+>> Remove ->flush_cqes flag and the optimisation, it should benefit the
+>> normal use case. Note, that there is no spurious eventfd problem with
+>> that as checks for spuriousness were incorporated into
+>> io_eventfd_signal().
 > 
-> I'm a bit split on this one, since I generally hate helpers that are
-> just wrapping something trivial:
+> Would be note to quantify, which should be pretty easy. Eg run a nop
+> workload, then run the same but with CQE_SKIP_SUCCESS set. That'd take
+> it to the extreme, and I do think it'd be nice to have an understanding
+> of how big the gap could potentially be.
 > 
-> static inline void io_cq_lock(struct io_ring_ctx *ctx)
-> 	__acquires(ctx->completion_lock)
-> {
-> 	spin_lock(&ctx->completion_lock);
-> }
-> 
-> The problem imho is that when I see spin_lock(ctx->lock) in the code I
-> know exactly what it does, if I see io_cq_lock(ctx) I have a good guess,
-> but I don't know for a fact until I become familiar with that new
-> helper.
-> 
-> I can see why you're doing it as it gives us symmetry with the unlock
-> helper, which does indeed make more sense. But I do wonder if we
-> shouldn't just keep the spin_lock() part the same, and just have the
-> unlock helper?
+> With luck, it doesn't really matter. Always nice to kill stuff like
+> this, if it isn't that impactful.
 
-That what I was doing first, but it's too ugly, that's the main
-reason. And if we find that removing locking with SINGLE_ISSUER
-is worth it, it'd need modification on the locking side:
+Trying without this patch nops32 (submit 32 nops, complete all, repeat).
 
-cq_lock() {
-	if (!(ctx->flags & SINGLE_ISSUER))
-		lock(compl_lock);
-}
+1) all CQE_SKIP:
+	~51 Mreqs/s
+2) all CQE_SKIP but last, so it triggers locking + *ev_posted()
+	~49 Mreq/s
+3) same as 2) but another task waits on CQ (so we call wake_up_all)
+	~36 Mreq/s
 
-cq_unlock() {
-	...
-	if (!(ctx->flags & SINGLE_ISSUER))
-		unlock(compl_lock);
-}
-
+And that's more or less expected. What is more interesting for me
+is how often for those using CQE_SKIP it helps to avoid this
+ev_posted()/etc. They obviously can't just mark all requests
+with it, and most probably helping only some quite niche cases.
 
 -- 
 Pavel Begunkov

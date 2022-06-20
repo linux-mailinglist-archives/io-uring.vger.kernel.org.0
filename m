@@ -2,124 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F4EF551F98
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 17:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F24552064
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 17:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242175AbiFTPCE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jun 2022 11:02:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58970 "EHLO
+        id S243038AbiFTPPk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jun 2022 11:15:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240811AbiFTPBk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 11:01:40 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CDD1FCFF
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 07:29:33 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id ej4so11423335edb.7
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 07:29:33 -0700 (PDT)
+        with ESMTP id S244794AbiFTPOj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 11:14:39 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 451F926117
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 08:03:39 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id f16so9089317pjj.1
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 08:03:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ceJ7TUEVJHUX9e4W14m2+0zdyOFckSwmhaEPPTxhWwI=;
-        b=ogDa3tCHL/EKUyZUWMrBuOuWtSIXv32s2qQ4mFgI/Kv9Xvvyg8iuncHlVFfD2wPaz9
-         YDgnQYmq9qHtKam341J8ZZfT34P0+QnlrmeZy3Tdmos1WZnbnSo+01pQ05d3vOXMvcbm
-         n0T2yw73CYbeOnsqmHScu/u4Qh/wYz5QU6xrA2XDnpMFEJ+NJz4ojPYufQm/E0gUI555
-         TvuXP3nQ+jsGZZktDWTOX75FlvTSpXlIF924WSL33ypvi3FdrnFR+Vdsm2QvV+3n0pQ/
-         0T+MJNTE9gfx3XnHGs+U5ugTW+nr9k4X6jhHyq4EicUMCnzOhlZGWtzVoErOp1QOrkVU
-         2JzA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=j1xJJmIcXhdN6E7NJSdJUfD6fFJFgdZPPBIJ2vNsan0=;
+        b=ZxAxJj+CTqNDdssCmBLdZ+SROFpNJcoasz2gUQ9m0usxc2MxmvFOLLXz4md8S1S2nM
+         7hIVZmttgVn+VjEib5C1qHhZc+oTQzu8YQJr71/ZN1o+KZilfTNLNtG2nfNZnlzDsU2m
+         NiV3lvj7aprKpSBZSVO3LJTuqdxdWEpCAe6rF1s/XH+8MgQN0XZ8D4mrP8hmJgpU6zx9
+         OUIGP3ty3SKV64CxO7MWmeUYGQPEYKd8IVrTmNW40Kn29PRt42SBxDn2NUgZ9mUpViZE
+         nxvEDSOfxRkOPN1hStNIbYx4U2dv6u58XtfDyAzBwg/Fn/skK7Si4MrCKD9ZKH6sm2iw
+         cBLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ceJ7TUEVJHUX9e4W14m2+0zdyOFckSwmhaEPPTxhWwI=;
-        b=CFoKAKZYqIbIpHdnRhWsFDKtQoKcPCi5p1tR5I8FyGPJR5lvTWwDrvHHON/lQYY1V3
-         nezuH01y0pJxsNdYIfFCoulFNf62Yu9Iapg44GHcRWxb90AELI25xlvmHz5A9d6nmpmc
-         jfGzuQzWcFY39ycO7OEVYMU+FCeXLtBXi2t5nv1McVcyPVsslM1SwNPpWLdyp2gJKFr+
-         cIn9X8E+U1n/ui9eW8ezHa09tvGTZaiQiW550XenXdBS355PSyNXNAMPMBBNo7Eu8WfQ
-         KiZg6TmxRF3Z+ffRa7VhxvTA4LPJ1aiN/8Jpd8MW0fVWqdbY/907HNc4JoM0CeMYK5n2
-         MXKw==
-X-Gm-Message-State: AJIora8ZyQDtoPvuCXsNur6yl4ma8KcMKVFgpFBRbjTptfyRORbx/7D7
-        fn7INQMIgAMOtzI9P+8Q/vDA0ftl9xuNWw==
-X-Google-Smtp-Source: AGRyM1u+2xPX4CoErCb1GnIcvyoQW7HV84AGKXVhe1GhRB0x9uIe1PhYjr3g2Jex6bMj/sFk3I5tBg==
-X-Received: by 2002:a05:6402:3227:b0:435:8e00:62b4 with SMTP id g39-20020a056402322700b004358e0062b4mr2385941eda.325.1655735371487;
-        Mon, 20 Jun 2022 07:29:31 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:bcc9])
-        by smtp.gmail.com with ESMTPSA id 18-20020a170906201200b00705fa7087bbsm6201376ejo.142.2022.06.20.07.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 07:29:31 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 1/1] io_uring: optinise io_uring_task layout
-Date:   Mon, 20 Jun 2022 15:27:35 +0100
-Message-Id: <282e7d40f93dc928e67c3447a92719b38de8a361.1655735235.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        bh=j1xJJmIcXhdN6E7NJSdJUfD6fFJFgdZPPBIJ2vNsan0=;
+        b=ZPz7/spO8vqC0urZ8B6++WUtdmPH15HPuVEyeeGfNQd6nYDXANdcswN/2TDL3eO+8R
+         DLlWjdyFkz+zPSxkTMOe8vSY+KHRdfiRWkUE8unMrxdSGnzkzF6Ix4yHL/ZbsyQMFOdI
+         qTC4KhwyCS7TRzTMd/66m4uXq/tSEmTEy/XWtzlOaIkjQHv+F9MLCvawE/D62wokXSWt
+         52ctvwSK/FDzFMj0hzS3rJBXXloPPWhrv0aZs5cc+WdpiBL4qNqfwIg836huCF4rPp7l
+         o+p5s9F3zpss0pL2e+iSLSkSZnW/L/V9tq/kPEYpPFUfuv/PsEOI8VrbVe6ypMvANYND
+         7ZHA==
+X-Gm-Message-State: AJIora/oZZHd2zawWJ6OEr5U+7ovUprrRm48dOt8f3GpXBrYJBVGj42X
+        Dt3d2AvaaFmOKOEZUjZU1Hq7lP9YLF7ZXg==
+X-Google-Smtp-Source: AGRyM1upENlFemUxkzCO2ONXkxO4wYyQSs7FFAkU94Yru/s1UPNt45sDHS93Tz12tM0KVRNMf9Ytqw==
+X-Received: by 2002:a17:90b:1d09:b0:1ec:bb51:9396 with SMTP id on9-20020a17090b1d0900b001ecbb519396mr1928498pjb.192.1655737418664;
+        Mon, 20 Jun 2022 08:03:38 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id x16-20020a17090a165000b001e667f932cdsm10555026pje.53.2022.06.20.08.03.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 08:03:38 -0700 (PDT)
+Message-ID: <50304d0b-9167-7911-2960-1facd473991a@kernel.dk>
+Date:   Mon, 20 Jun 2022 09:03:37 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH for-next 1/1] io_uring: optinise io_uring_task layout
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <282e7d40f93dc928e67c3447a92719b38de8a361.1655735235.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <282e7d40f93dc928e67c3447a92719b38de8a361.1655735235.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-task_work bits of io_uring_task are split into two cache lines causing
-extra cache bouncing, place them into a separate cache line. Also move
-the most used submission path fields closer together, so there are hot.
+On 6/20/22 8:27 AM, Pavel Begunkov wrote:
+> task_work bits of io_uring_task are split into two cache lines causing
+> extra cache bouncing, place them into a separate cache line. Also move
+> the most used submission path fields closer together, so there are hot.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/tctx.h | 34 ++++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
+Thanks, applied. The current layout is really stupid...
 
-diff --git a/io_uring/tctx.h b/io_uring/tctx.h
-index dde82ce4d8e2..dead0ed00429 100644
---- a/io_uring/tctx.h
-+++ b/io_uring/tctx.h
-@@ -7,22 +7,24 @@
- 
- struct io_uring_task {
- 	/* submission side */
--	int			cached_refs;
--	struct xarray		xa;
--	struct wait_queue_head	wait;
--	const struct io_ring_ctx *last;
--	struct io_wq		*io_wq;
--	struct percpu_counter	inflight;
--	atomic_t		inflight_tracked;
--	atomic_t		in_idle;
--
--	spinlock_t		task_lock;
--	struct io_wq_work_list	task_list;
--	struct io_wq_work_list	prio_task_list;
--	struct callback_head	task_work;
--	bool			task_running;
--
--	struct file		*registered_rings[IO_RINGFD_REG_MAX];
-+	int				cached_refs;
-+	const struct io_ring_ctx 	*last;
-+	struct io_wq			*io_wq;
-+	struct file			*registered_rings[IO_RINGFD_REG_MAX];
-+
-+	struct xarray			xa;
-+	struct wait_queue_head		wait;
-+	atomic_t			in_idle;
-+	atomic_t			inflight_tracked;
-+	struct percpu_counter		inflight;
-+
-+	struct { /* task_work */
-+		spinlock_t		task_lock;
-+		bool			task_running;
-+		struct io_wq_work_list	task_list;
-+		struct io_wq_work_list	prio_task_list;
-+		struct callback_head	task_work;
-+	} ____cacheline_aligned_in_smp;
- };
- 
- struct io_tctx_node {
 -- 
-2.36.1
+Jens Axboe
 

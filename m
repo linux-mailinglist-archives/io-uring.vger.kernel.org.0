@@ -2,109 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 947CA551827
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 14:04:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFF6551925
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 14:42:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242315AbiFTMEs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jun 2022 08:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48422 "EHLO
+        id S242791AbiFTMl5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jun 2022 08:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242361AbiFTMEb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 08:04:31 -0400
-Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C81B18B1F
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 05:03:47 -0700 (PDT)
-Message-ID: <281a673e-8077-2711-61c4-dd3533361df7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655726624;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fXbF//9xsHx9L23Z04rbJGAy5KGUCC5gpHT93Bm73Eo=;
-        b=RFVZZqBvDr/B7C5YbCNZsgZ0TVdCM5nDD0ddD9D8u1PUS7Q6/xnWHS+ynMeDbIfDswF72+
-        uV5p2fwK/gaTAKrBR3Y6UMpxPOoHwJjNq+4ZAkW6yRwaeiB/VF+w0Q9DNPdBwKkN/AU2Ye
-        kmRo1aAPOIUAz1rurT0Ev6mJUTJ0oEk=
-Date:   Mon, 20 Jun 2022 20:03:32 +0800
+        with ESMTP id S242766AbiFTMl4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 08:41:56 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C5B13F55
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 05:41:54 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id l4so10174086pgh.13
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 05:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
+         :subject:content-transfer-encoding;
+        bh=MACFbkT580tUAKqrYyKYCYEd5Jk0tYNuL/XjHto2UFk=;
+        b=59vMPSC7G3SRodp5Z0aC3G841yhG/KXj7UyvAFxde910JOIH/wpEUgUOc4w4dfHAm2
+         TrYvZErzUpwz099QgyRfyXlm4+qyrHuRWAnpcCg5Yar/Ux+6R3cziSrbtxU8BmIunQgI
+         ZsRwn2hZHoz8Vy8iGjndK7mVopvf85VzEHYbidbk/tWvSEkI+msR/1YiXDpknjoMxXpa
+         piAyE7sV1Dls6MxbqXdUMz5olkZFhjsVUbRBuqLc3HnuQjHpizb7C0pyQT7QKauaDo5H
+         3BhkIUlQ//idOAWXnX96PedJECXL56xt/8w9RlYjEJccn5hVU3ZMV6DmgFBYRQxZzGM1
+         wj9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:from:subject:content-transfer-encoding;
+        bh=MACFbkT580tUAKqrYyKYCYEd5Jk0tYNuL/XjHto2UFk=;
+        b=zLtkkOngq+BB6cAKea14yNmX0nSaDHwt/JO9eMAW31AtqI2Vv+j3NnBZ2+QPHLfj+v
+         5pKf6KAuxyAkJ+aDackZ/N/Kwcmwsvs8NL3YhdvvMO6mLQgC1uQ7zh9jAcfDGG2RuzK5
+         towA1luob5D4rnVCoSjqJdZfwb69UUn0T5ldybEJ5MLsDDaJPBzvn5IAzmUQ9GM8jmZc
+         rGip0dmIZ0649ecwsX/YXFk5n/aSm1coKUlBGypMSBwKp97PYMUFBWb5MYmyOlepytuY
+         jbzuyvuBNebZj+eLVzEH/sf9VaT74xOThF2W4efZh0/yIMxSYpUW+X1qmMsi029gDUeU
+         xEoA==
+X-Gm-Message-State: AJIora85e7/GQIgRms2hWo1t5g6zcrP5/YZEja/AO/JL3i+0cvOM+gL2
+        34b35SimdxXFyZ0nWaFXhBfQac6zAv/L2g==
+X-Google-Smtp-Source: AGRyM1vPBD9MJfYe/Q844A1Qf/S5sr/2RROW+tF9kvwB/aMqVnV0sdyTrYaXXfBZf2aip467KaVkIg==
+X-Received: by 2002:a05:6a00:1805:b0:51c:3a7:54dc with SMTP id y5-20020a056a00180500b0051c03a754dcmr24406769pfa.15.1655728913847;
+        Mon, 20 Jun 2022 05:41:53 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id o2-20020a637e42000000b003fe4836abdasm8981837pgn.1.2022.06.20.05.41.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 05:41:53 -0700 (PDT)
+Message-ID: <82c8a718-cf1d-d40f-f501-34e3f384d77b@kernel.dk>
+Date:   Mon, 20 Jun 2022 06:41:52 -0600
 MIME-Version: 1.0
-Subject: Re: [RFC] a new way to achieve asynchronous IO
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <3d1452da-ecec-fdc7-626c-bcd79df23c92@linux.dev>
-In-Reply-To: <3d1452da-ecec-fdc7-626c-bcd79df23c92@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: mark reissue requests with REQ_F_PARTIAL_IO
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/20/22 20:01, Hao Xu wrote:
-> Hi,
-> I've some thought on the way of doing async IO. The current model is:
-> (given we are using SQPOLL mode)
-> 
-> the sqthread does:
-> (a) Issue a request with nowait/nonblock flag.
-> (b) If it would block, reutrn -EAGAIN
-> (c) The io_uring layer captures this -EAGAIN and wake up/create
-> a io-worker to execute the request synchronously.
-> (d) Try to issue other requests in the above steps again.
-> 
-> This implementation has two downsides:
-> (1) we have to find all the block point in the IO stack manually and
-> change them into "nowait/nonblock friendly".
-> (2) when we raise another io-worker to do the request, we submit the
-> request from the very beginning. This isn't a little bit inefficient.
+If we mark for reissue, we assume that the buffer will remain stable.
+Hence if are using a provided buffer, we need to ensure that we stick
+with it for the duration of that request.
 
-                                           ^is
+This only affects block devices that use provided buffers, as those are
+the only ones that get marked with REQ_F_REISSUE.
 
-> 
-> 
-> While I think we can actually do it in a reverse way:
-> (given we are using SQPOLL mode)
-> 
-> the sqthread1 does:
-> (a) Issue a request in the synchronous way
-> (b) If it is blocked/scheduled soon, raise another sqthread2
-> (c) sqthread2 tries to issue other requests in the same way.
-> 
-> This solves problem (1), and may solve (2).
-> For (1), we just do the sqthread waken-up at the beginning of schedule()
-> just like what the io-worker and system-worker do. No need to find all
-> the block point.
-> For (2), we continue the blocked request from where it is blocked when
-> resource is satisfied.
-> 
-> What we need to take care is making sure there is only one task
-> submitting the requests.
-> 
-> To achieve this, we can maintain a pool of sqthread just like the iowq.
-> 
-> I've done a very simple/ugly POC to demonstrate this:
-> 
-> https://github.com/HowHsu/linux/commit/183be142493b5a816b58bd95ae4f0926227b587b 
-> 
-> 
-> I also wrote a simple test to test it, which submits two sqes, one
-> read(pipe), one nop request. The first one will be block since no data
-> in the pipe. Then a new sqthread was created/waken up to submit the
-> second one and then some data is written to the pipe(by a unrelated
-> user thread), soon the first sqthread is waken up and continues the
-> request.
-> 
-> If the idea sounds no fatal issue I'll change the POC to real patches.
-> Any comments are welcome!
-> 
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d3ee4fc532fa..87c65a358678 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3437,7 +3437,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
+ 	if (unlikely(res != req->cqe.res)) {
+ 		if ((res == -EAGAIN || res == -EOPNOTSUPP) &&
+ 		    io_rw_should_reissue(req)) {
+-			req->flags |= REQ_F_REISSUE;
++			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
+ 			return true;
+ 		}
+ 		req_set_fail(req);
+@@ -3487,7 +3487,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
+ 		kiocb_end_write(req);
+ 	if (unlikely(res != req->cqe.res)) {
+ 		if (res == -EAGAIN && io_rw_should_reissue(req)) {
+-			req->flags |= REQ_F_REISSUE;
++			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
+ 			return;
+ 		}
+ 		req->cqe.res = res;
+
+-- 
+Jens Axboe
 

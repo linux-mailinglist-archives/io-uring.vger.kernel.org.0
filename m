@@ -2,67 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58F24552064
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 17:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7175F552213
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 18:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243038AbiFTPPk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jun 2022 11:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44538 "EHLO
+        id S240115AbiFTQTO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jun 2022 12:19:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244794AbiFTPOj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 11:14:39 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 451F926117
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 08:03:39 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id f16so9089317pjj.1
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 08:03:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=j1xJJmIcXhdN6E7NJSdJUfD6fFJFgdZPPBIJ2vNsan0=;
-        b=ZxAxJj+CTqNDdssCmBLdZ+SROFpNJcoasz2gUQ9m0usxc2MxmvFOLLXz4md8S1S2nM
-         7hIVZmttgVn+VjEib5C1qHhZc+oTQzu8YQJr71/ZN1o+KZilfTNLNtG2nfNZnlzDsU2m
-         NiV3lvj7aprKpSBZSVO3LJTuqdxdWEpCAe6rF1s/XH+8MgQN0XZ8D4mrP8hmJgpU6zx9
-         OUIGP3ty3SKV64CxO7MWmeUYGQPEYKd8IVrTmNW40Kn29PRt42SBxDn2NUgZ9mUpViZE
-         nxvEDSOfxRkOPN1hStNIbYx4U2dv6u58XtfDyAzBwg/Fn/skK7Si4MrCKD9ZKH6sm2iw
-         cBLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=j1xJJmIcXhdN6E7NJSdJUfD6fFJFgdZPPBIJ2vNsan0=;
-        b=ZPz7/spO8vqC0urZ8B6++WUtdmPH15HPuVEyeeGfNQd6nYDXANdcswN/2TDL3eO+8R
-         DLlWjdyFkz+zPSxkTMOe8vSY+KHRdfiRWkUE8unMrxdSGnzkzF6Ix4yHL/ZbsyQMFOdI
-         qTC4KhwyCS7TRzTMd/66m4uXq/tSEmTEy/XWtzlOaIkjQHv+F9MLCvawE/D62wokXSWt
-         52ctvwSK/FDzFMj0hzS3rJBXXloPPWhrv0aZs5cc+WdpiBL4qNqfwIg836huCF4rPp7l
-         o+p5s9F3zpss0pL2e+iSLSkSZnW/L/V9tq/kPEYpPFUfuv/PsEOI8VrbVe6ypMvANYND
-         7ZHA==
-X-Gm-Message-State: AJIora/oZZHd2zawWJ6OEr5U+7ovUprrRm48dOt8f3GpXBrYJBVGj42X
-        Dt3d2AvaaFmOKOEZUjZU1Hq7lP9YLF7ZXg==
-X-Google-Smtp-Source: AGRyM1upENlFemUxkzCO2ONXkxO4wYyQSs7FFAkU94Yru/s1UPNt45sDHS93Tz12tM0KVRNMf9Ytqw==
-X-Received: by 2002:a17:90b:1d09:b0:1ec:bb51:9396 with SMTP id on9-20020a17090b1d0900b001ecbb519396mr1928498pjb.192.1655737418664;
-        Mon, 20 Jun 2022 08:03:38 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x16-20020a17090a165000b001e667f932cdsm10555026pje.53.2022.06.20.08.03.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jun 2022 08:03:38 -0700 (PDT)
-Message-ID: <50304d0b-9167-7911-2960-1facd473991a@kernel.dk>
-Date:   Mon, 20 Jun 2022 09:03:37 -0600
+        with ESMTP id S232831AbiFTQTN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 12:19:13 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFB46559
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 09:19:12 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25KFYSYq027274
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 09:19:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=nQ6xGvXvbATA46URCi6FcKXueWmJ4ZmHHir0bqpOuj0=;
+ b=AuWsXrI78vvpUXVJCfIL7HOnAJo4frP1aHVurvP6/9rF2ty2IQpnr95hr4n78rDWJvXS
+ GT9rdMnA4Ys3Eu6mZttKqGPyXhml+FhfBgkKlt7XDTErc/0agngd/5ydnIAep/bnhDdF
+ wcJazPiwiFNGyyoNgVvvqBQ7EZA9lsZygVU= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gtunfr9qk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 09:19:12 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Mon, 20 Jun 2022 09:19:11 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 780221EB9438; Mon, 20 Jun 2022 09:19:05 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH RFC for-next 0/8] io_uring: tw contention improvments
+Date:   Mon, 20 Jun 2022 09:18:53 -0700
+Message-ID: <20220620161901.1181971-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH for-next 1/1] io_uring: optinise io_uring_task layout
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <282e7d40f93dc928e67c3447a92719b38de8a361.1655735235.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <282e7d40f93dc928e67c3447a92719b38de8a361.1655735235.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: dvPE2H9yhcCPMjctTRz847pJfvvV_lcc
+X-Proofpoint-ORIG-GUID: dvPE2H9yhcCPMjctTRz847pJfvvV_lcc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-20_05,2022-06-17_01,2022-02-23_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,13 +60,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/20/22 8:27 AM, Pavel Begunkov wrote:
-> task_work bits of io_uring_task are split into two cache lines causing
-> extra cache bouncing, place them into a separate cache line. Also move
-> the most used submission path fields closer together, so there are hot.
+Task work currently uses a spin lock to guard task_list and
+task_running. Some use cases such as networking can trigger task_work_add
+from multiple threads all at once, which suffers from contention here.
 
-Thanks, applied. The current layout is really stupid...
+This can be changed to use a lockless list which seems to have better
+performance. Running the micro benchmark in [1] I see 20% improvment in
+multithreaded task work add. It required removing the priority tw list
+optimisation, however it isn't clear how important that optimisation is.
+Additionally it has fairly easy to break semantics.
 
--- 
-Jens Axboe
+Patch 1-2 remove the priority tw list optimisation
+Patch 3-5 add lockless lists for task work
+Patch 6 fixes a bug I noticed in io_uring event tracing
+Patch 7-8 adds tracing for task_work_run
+
+Dylan Yudaken (8):
+  io_uring: remove priority tw list optimisation
+  io_uring: remove __io_req_task_work_add
+  io_uring: lockless task list
+  io_uring: introduce llist helpers
+  io_uring: batch task_work
+  io_uring: move io_uring_get_opcode out of TP_printk
+  io_uring: add trace event for running task work
+  io_uring: trace task_work_run
+
+ include/linux/io_uring_types.h  |   2 +-
+ include/trace/events/io_uring.h |  72 +++++++++++++--
+ io_uring/io_uring.c             | 150 ++++++++++++--------------------
+ io_uring/io_uring.h             |   1 -
+ io_uring/rw.c                   |   2 +-
+ io_uring/tctx.c                 |   4 +-
+ io_uring/tctx.h                 |   7 +-
+ 7 files changed, 127 insertions(+), 111 deletions(-)
+
+
+base-commit: 094abe8fbccb0d79bef982c67eb7372e92452c0e
+--=20
+2.30.2
 

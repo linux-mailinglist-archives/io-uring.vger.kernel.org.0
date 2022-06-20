@@ -2,65 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFF6551925
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 14:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EE5D551ED1
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 16:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242791AbiFTMl5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Jun 2022 08:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55172 "EHLO
+        id S243291AbiFTO0i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Jun 2022 10:26:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242766AbiFTMl4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 08:41:56 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C5B13F55
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 05:41:54 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id l4so10174086pgh.13
-        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 05:41:54 -0700 (PDT)
+        with ESMTP id S1351265AbiFTO0W (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Jun 2022 10:26:22 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD91549C88
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 06:41:20 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id f65so10331517pgc.7
+        for <io-uring@vger.kernel.org>; Mon, 20 Jun 2022 06:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
-         :subject:content-transfer-encoding;
-        bh=MACFbkT580tUAKqrYyKYCYEd5Jk0tYNuL/XjHto2UFk=;
-        b=59vMPSC7G3SRodp5Z0aC3G841yhG/KXj7UyvAFxde910JOIH/wpEUgUOc4w4dfHAm2
-         TrYvZErzUpwz099QgyRfyXlm4+qyrHuRWAnpcCg5Yar/Ux+6R3cziSrbtxU8BmIunQgI
-         ZsRwn2hZHoz8Vy8iGjndK7mVopvf85VzEHYbidbk/tWvSEkI+msR/1YiXDpknjoMxXpa
-         piAyE7sV1Dls6MxbqXdUMz5olkZFhjsVUbRBuqLc3HnuQjHpizb7C0pyQT7QKauaDo5H
-         3BhkIUlQ//idOAWXnX96PedJECXL56xt/8w9RlYjEJccn5hVU3ZMV6DmgFBYRQxZzGM1
-         wj9w==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=xIVUAENkLPt1jauXXDh/SEeMsraYcAnOrnR1+oo8L6Y=;
+        b=eSZzS918oJX5CO5SraMOPDByKRhmrQGNfniwmsuBbpRq1SG9JsijAcRrCj7Pa9j0xT
+         RnMRm3QJb8I553pSrb6AbMngtCPlWkJUKhFZ37YInCvuW++PTXBXCcRc/QMEHQZzAaxP
+         cDLPs1NTK0iVhgXRR/8BgE5T+DMs6WSu6E+7ILZWONMSKWkte/R6ZBdzyRnqYNtO2p+l
+         wko0wCLhanjHdDSR6qLk7ANFzGyekBXtpBGWZMgZgscyP8+cVbjoVHHATprOnTxVByeO
+         C6SSKiERXyapcfy/S8CRLFHIokKlsIUzjBFhIsuk/YrpidBL7phYUzSQyo8iDQ/u3BLg
+         wthg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:from:subject:content-transfer-encoding;
-        bh=MACFbkT580tUAKqrYyKYCYEd5Jk0tYNuL/XjHto2UFk=;
-        b=zLtkkOngq+BB6cAKea14yNmX0nSaDHwt/JO9eMAW31AtqI2Vv+j3NnBZ2+QPHLfj+v
-         5pKf6KAuxyAkJ+aDackZ/N/Kwcmwsvs8NL3YhdvvMO6mLQgC1uQ7zh9jAcfDGG2RuzK5
-         towA1luob5D4rnVCoSjqJdZfwb69UUn0T5ldybEJ5MLsDDaJPBzvn5IAzmUQ9GM8jmZc
-         rGip0dmIZ0649ecwsX/YXFk5n/aSm1coKUlBGypMSBwKp97PYMUFBWb5MYmyOlepytuY
-         jbzuyvuBNebZj+eLVzEH/sf9VaT74xOThF2W4efZh0/yIMxSYpUW+X1qmMsi029gDUeU
-         xEoA==
-X-Gm-Message-State: AJIora85e7/GQIgRms2hWo1t5g6zcrP5/YZEja/AO/JL3i+0cvOM+gL2
-        34b35SimdxXFyZ0nWaFXhBfQac6zAv/L2g==
-X-Google-Smtp-Source: AGRyM1vPBD9MJfYe/Q844A1Qf/S5sr/2RROW+tF9kvwB/aMqVnV0sdyTrYaXXfBZf2aip467KaVkIg==
-X-Received: by 2002:a05:6a00:1805:b0:51c:3a7:54dc with SMTP id y5-20020a056a00180500b0051c03a754dcmr24406769pfa.15.1655728913847;
-        Mon, 20 Jun 2022 05:41:53 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=xIVUAENkLPt1jauXXDh/SEeMsraYcAnOrnR1+oo8L6Y=;
+        b=0aJuo+YPvFX9TnnaHoYsCEwtwQXh2CtfIm/iU+EgtYopvj/0yvnc5T95gewVRM0xJZ
+         JRZr92BQ5jM8XNgNpWwlqmWGf3Z/P03ROzZyt7jKFi8Y3PgSRNsOhjOygg03EtMxY8SZ
+         InV2vXa0Pr3Cr0gTK4i82246Pmoh4//mRtDY1ooZygbs7H3BDR6sMjrqdAAJXRlf/5Ca
+         QU282Bv7LrENhKgV0BOu2VOmR2QvZ/NBEsRnDE6X6VbRLM79B4ORg7/FckUg1+EB9xfN
+         GWUgcmgbijADH0qWSrOE5+UBZXkBu6PwV9zHsn+HkhIgsIAWL+5zmx+58oxI6NA8CBNR
+         M8Ww==
+X-Gm-Message-State: AJIora+oph8Wd0JS7IQIN9cHyyv/X9yTFQFq8rwSyiPtwCatQ7MZYP5k
+        mQQET/45hjx29wNCkiEe0bVoog==
+X-Google-Smtp-Source: AGRyM1vYL2kZb+7X2N5mW7JddkJY1tX4541gH48+OqgPzntiJlaAst5PWH7PpeVl131weYmX4szWEQ==
+X-Received: by 2002:a63:ae03:0:b0:408:b78c:e284 with SMTP id q3-20020a63ae03000000b00408b78ce284mr21217323pgf.401.1655732479523;
+        Mon, 20 Jun 2022 06:41:19 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id o2-20020a637e42000000b003fe4836abdasm8981837pgn.1.2022.06.20.05.41.53
+        by smtp.gmail.com with ESMTPSA id q2-20020a170902f78200b001624cd63bbbsm8772223pln.133.2022.06.20.06.41.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jun 2022 05:41:53 -0700 (PDT)
-Message-ID: <82c8a718-cf1d-d40f-f501-34e3f384d77b@kernel.dk>
-Date:   Mon, 20 Jun 2022 06:41:52 -0600
+        Mon, 20 Jun 2022 06:41:19 -0700 (PDT)
+Message-ID: <b297ac50-c336-dabe-b6ee-c067b7f418c7@kernel.dk>
+Date:   Mon, 20 Jun 2022 07:41:18 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
+Subject: Re: [RFC] a new way to achieve asynchronous IO
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
+To:     Hao Xu <hao.xu@linux.dev>, io-uring <io-uring@vger.kernel.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, dvernet@fb.com
+References: <3d1452da-ecec-fdc7-626c-bcd79df23c92@linux.dev>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: mark reissue requests with REQ_F_PARTIAL_IO
+In-Reply-To: <3d1452da-ecec-fdc7-626c-bcd79df23c92@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,39 +71,81 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we mark for reissue, we assume that the buffer will remain stable.
-Hence if are using a provided buffer, we need to ensure that we stick
-with it for the duration of that request.
+On 6/20/22 6:01 AM, Hao Xu wrote:
+> Hi,
+> I've some thought on the way of doing async IO. The current model is:
+> (given we are using SQPOLL mode)
+> 
+> the sqthread does:
+> (a) Issue a request with nowait/nonblock flag.
+> (b) If it would block, reutrn -EAGAIN
+> (c) The io_uring layer captures this -EAGAIN and wake up/create
+> a io-worker to execute the request synchronously.
+> (d) Try to issue other requests in the above steps again.
+> 
+> This implementation has two downsides:
+> (1) we have to find all the block point in the IO stack manually and
+> change them into "nowait/nonblock friendly".
+> (2) when we raise another io-worker to do the request, we submit the
+> request from the very beginning. This isn't a little bit inefficient.
+> 
+> 
+> While I think we can actually do it in a reverse way:
+> (given we are using SQPOLL mode)
+> 
+> the sqthread1 does:
+> (a) Issue a request in the synchronous way
+> (b) If it is blocked/scheduled soon, raise another sqthread2
+> (c) sqthread2 tries to issue other requests in the same way.
+> 
+> This solves problem (1), and may solve (2).
+> For (1), we just do the sqthread waken-up at the beginning of schedule()
+> just like what the io-worker and system-worker do. No need to find all
+> the block point.
+> For (2), we continue the blocked request from where it is blocked when
+> resource is satisfied.
+> 
+> What we need to take care is making sure there is only one task
+> submitting the requests.
+> 
+> To achieve this, we can maintain a pool of sqthread just like the iowq.
+> 
+> I've done a very simple/ugly POC to demonstrate this:
+> 
+> https://github.com/HowHsu/linux/commit/183be142493b5a816b58bd95ae4f0926227b587b
+> 
+> I also wrote a simple test to test it, which submits two sqes, one
+> read(pipe), one nop request. The first one will be block since no data
+> in the pipe. Then a new sqthread was created/waken up to submit the
+> second one and then some data is written to the pipe(by a unrelated
+> user thread), soon the first sqthread is waken up and continues the
+> request.
+> 
+> If the idea sounds no fatal issue I'll change the POC to real patches.
+> Any comments are welcome!
 
-This only affects block devices that use provided buffers, as those are
-the only ones that get marked with REQ_F_REISSUE.
+One thing I've always wanted to try out is kind of similar to this, but
+a superset of it. Basically io-wq isn't an explicit offload mechanism,
+it just happens automatically if the issue blocks. This applies to both
+SQPOLL and non-SQPOLL.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This takes a page out of the old syslet/threadlet that Ingo Molnar did
+way back in the day [1], but it never really went anywhere. But the
+pass-on-block primitive would apply very nice to io_uring.
 
----
+That way it'd work is that any issue, SQPOLL or not, would just assume
+that it won't block. If it doesn't block, great, we can complete it
+inline. If it does block, an io-wq thread is grabbed and the context
+moved there. The io-wq takes over the blocking, and the original issue
+returns in some fashion that allows us to know it went implicitly async.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d3ee4fc532fa..87c65a358678 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3437,7 +3437,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
- 	if (unlikely(res != req->cqe.res)) {
- 		if ((res == -EAGAIN || res == -EOPNOTSUPP) &&
- 		    io_rw_should_reissue(req)) {
--			req->flags |= REQ_F_REISSUE;
-+			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
- 			return true;
- 		}
- 		req_set_fail(req);
-@@ -3487,7 +3487,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
- 		kiocb_end_write(req);
- 	if (unlikely(res != req->cqe.res)) {
- 		if (res == -EAGAIN && io_rw_should_reissue(req)) {
--			req->flags |= REQ_F_REISSUE;
-+			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
- 			return;
- 		}
- 		req->cqe.res = res;
+This may be a bit more involved than what you suggest here, which in
+nature is similar in how we just hope for the best, and deal with the
+outcome if we did end up blocking.
+
+Do you have any numbers from your approach?
+
+[1] https://lore.kernel.org/all/20070301145742.GC12684@2ka.mipt.ru/T/
 
 -- 
 Jens Axboe

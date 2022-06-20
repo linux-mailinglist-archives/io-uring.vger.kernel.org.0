@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B041550DD4
+	by mail.lfdr.de (Postfix) with ESMTP id 978AA550DD5
 	for <lists+io-uring@lfdr.de>; Mon, 20 Jun 2022 02:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237175AbiFTA0e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 19 Jun 2022 20:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34914 "EHLO
+        id S237207AbiFTA0f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 19 Jun 2022 20:26:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237207AbiFTA0e (ORCPT
+        with ESMTP id S237222AbiFTA0e (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 19 Jun 2022 20:26:34 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CBFFAE41
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 17:26:33 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id z9so4950554wmf.3
-        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 17:26:33 -0700 (PDT)
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6E0A1B0
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 17:26:34 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id k22so6021890wrd.6
+        for <io-uring@vger.kernel.org>; Sun, 19 Jun 2022 17:26:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jY2nSkB+1l8Zp48/Y+s7yDtln5iA6jefEHAekgrMJ2c=;
-        b=GfswRFATgb3RGO+wXEvC30nBsw8nmR79sGjAqG7UxuDkt2NJG9pGAAbvv6iK2DtDCW
-         Num8IHwi7AO1cyBF8FXsa7Xv6lxRWnVapLL/7cZuS0xAyUjqkd8NoW7lMlM5ka2NNSsG
-         oVSQuSIOWK0ManD8hYeiHRGeU5FXgWQujwlv4qznYmguJrh14Y29x2NYShGuf1bHarwL
-         eVOLfGEbdJ311Hbvzi5UkEzp9REyoB1L2aE11WnfYOFaJ6MYE37FitA+F+iPryCx8k3v
-         ZOfcDtKTk/INB0xXD39B19NnyeS4yt+euSSH90fh2PSlDow6w7N40Jb0L+mrXKBDwTSj
-         2myA==
+        bh=hfKvmNhTq8ja3OOJ0fm7B/LY4GXBKz4A3F1pqiaY4Yo=;
+        b=gzoZjgL5nujUiF6Jk87E0f1f4iV7iJmtsSXWBBb8aB7JESXdFi/iLVgcJx3UlSCFZT
+         6xkoTzRmTTuUeXgslZZSPcQBXFxskEOsMSQ2SYNRIYik7R4zzJYDn6mclZn6TmRNifY+
+         KcoBydQCk4CFtHNoHeCcoF32iQxVO6PaWgvMo90Qwtk0i8p4w3IUaK/Q6/8Js+liRyIj
+         idOQdfQfE1HnYfmZtQW/IxldNvH1L4TnhbOOJ4h4F07/vzPKwY/LtSh6BenMAzI9xvsy
+         ZKo/80nG0uUvIkbI0utqpHz7sVPQqBnEfSm2WIr1Ou9l9pdhIUXupnSt7LyWcHBSvBoM
+         JwGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jY2nSkB+1l8Zp48/Y+s7yDtln5iA6jefEHAekgrMJ2c=;
-        b=mOKcE4bE8cuYCzMpZKYytJ172/lQfAFTnnIwbr7qwWHyvfVOVqfrroNH5u1r4LINdU
-         a5ur+3wrgpgjnBFzHXE/y2WpCc/1rBDBWklD95KMN8qldwtjNPAkteOA2y0HxBj1dZft
-         bNDFM1REp4MAEsAuF3ojVSWlWDPALJDDuMGW2LmVwrZyEW+zAGImH/SIf1fkljnkJDB8
-         M8TfZ/rZRu7xCGxScJRJpGhraIguk65UdbUAAZ4+BNj+j852LvyyclLpCkWj249Tn3H3
-         c6qgfLUB1UANudv7AmFtMa1HqxEGSfduCt0190lE4PZ6wbf7maaPl5WEBuiW4fcIDP3V
-         s22Q==
-X-Gm-Message-State: AOAM530/K8L9AQTPxLx1ycTDy9nhnv+U15fnIVgPWNZbzQ9TltIYk6Cm
-        ChkilkcGF8BpZ2berLcGOzhL6/UGhNsRAQ==
-X-Google-Smtp-Source: ABdhPJxq2xEOCaivjjgulBn/nEQrsZkRVM+kemWjr02NmmUB0LbE0a1NdM3/iku1k1vMUYAY58Ojzg==
-X-Received: by 2002:a05:600c:358f:b0:39c:7fe7:cbe2 with SMTP id p15-20020a05600c358f00b0039c7fe7cbe2mr32109057wmq.46.1655684791127;
-        Sun, 19 Jun 2022 17:26:31 -0700 (PDT)
+        bh=hfKvmNhTq8ja3OOJ0fm7B/LY4GXBKz4A3F1pqiaY4Yo=;
+        b=QY+03iv77v0ST9lviumJ1aEFnGOvCCkfYCGkVdDfmwt/l1G/0VWYA4zLwrVJ7tHAyb
+         jXFezeAkKzUGWsFV63BoUWA54SGLCgTa8HBK+Faml3pS+/+lJsFIFCQj4fFm0c+ov79H
+         rT/CTYjFJad6xv/h/Fdv7ik6pWjPMZWchLgRcnRMjGcJrTUv7HZW9AwEFYU61RQFJSC1
+         CtyreIwzpdnKqrPAfUklcHN8qT1Fm3yidZe2snW63xRhx2+P1Cd8lUvW3eUpwX3JEVZX
+         P6f80gS5c6xt7HVRPVS++7IEOq8sMjbj2UUNJsAsljBWHgDf/x+pbh4ByaHPXSh2aHY0
+         45xg==
+X-Gm-Message-State: AJIora+3q+vMPAXMoZaPgclWy8js7cNg46M4NzoU9Hmc1CZQ4+u3YZDH
+        C+ztRsEdhfrltTzQKevm9MLZSMdNMVCZfg==
+X-Google-Smtp-Source: AGRyM1sHC8oLKpLfU9Xp6CZ0211j/P+Sfy9PziprLoVxp6G1s0Oj1BQKo47kI4DHInd1J8BlBJlBRw==
+X-Received: by 2002:a5d:5342:0:b0:210:c508:956d with SMTP id t2-20020a5d5342000000b00210c508956dmr20801948wrv.205.1655684792423;
+        Sun, 19 Jun 2022 17:26:32 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id h18-20020a5d4312000000b002167efdd549sm11543807wrq.38.2022.06.19.17.26.30
+        by smtp.gmail.com with ESMTPSA id h18-20020a5d4312000000b002167efdd549sm11543807wrq.38.2022.06.19.17.26.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 17:26:30 -0700 (PDT)
+        Sun, 19 Jun 2022 17:26:31 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 01/10] io_uring: fix multi ctx cancellation
-Date:   Mon, 20 Jun 2022 01:25:52 +0100
-Message-Id: <8d491fe02d8ac4c77ff38061cf86b9a827e8845c.1655684496.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 02/10] io_uring: improve task exit timeout cancellations
+Date:   Mon, 20 Jun 2022 01:25:53 +0100
+Message-Id: <ab8a7440a60bbdf69ae514f672ad050e43dd1b03.1655684496.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1655684496.git.asml.silence@gmail.com>
 References: <cover.1655684496.git.asml.silence@gmail.com>
@@ -68,159 +68,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring_try_cancel_requests() loops until there is nothing left to do
-with the ring, however there might be several rings and they might have
-dependencies between them, e.g. via poll requests.
-
-Instead of cancelling rings one by one, try to cancel them all and only
-then loop over if we still potenially some work to do.
+Don't spin trying to cancel timeouts that are reachable but not
+cancellable, e.g. already executing.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 87 ++++++++++++++++++++++++---------------------
- 1 file changed, 46 insertions(+), 41 deletions(-)
+ io_uring/timeout.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 0f18a86f3f8c..2d1d4752b955 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -132,7 +132,7 @@ struct io_defer_entry {
- #define IO_DISARM_MASK (REQ_F_ARM_LTIMEOUT | REQ_F_LINK_TIMEOUT | REQ_F_FAIL)
- #define IO_REQ_LINK_FLAGS (REQ_F_LINK | REQ_F_HARDLINK)
- 
--static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
-+static bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 					 struct task_struct *task,
- 					 bool cancel_all);
- 
-@@ -2648,7 +2648,9 @@ static __cold void io_ring_exit_work(struct work_struct *work)
- 	 * as nobody else will be looking for them.
- 	 */
- 	do {
--		io_uring_try_cancel_requests(ctx, NULL, true);
-+		while (io_uring_try_cancel_requests(ctx, NULL, true))
-+			cond_resched();
-+
- 		if (ctx->sq_data) {
- 			struct io_sq_data *sqd = ctx->sq_data;
- 			struct task_struct *tsk;
-@@ -2806,53 +2808,48 @@ static __cold bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
- 	return ret;
- }
- 
--static __cold void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
-+static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 						struct task_struct *task,
- 						bool cancel_all)
- {
- 	struct io_task_cancel cancel = { .task = task, .all = cancel_all, };
- 	struct io_uring_task *tctx = task ? task->io_uring : NULL;
-+	enum io_wq_cancel cret;
-+	bool ret = false;
- 
- 	/* failed during ring init, it couldn't have issued any requests */
- 	if (!ctx->rings)
--		return;
--
--	while (1) {
--		enum io_wq_cancel cret;
--		bool ret = false;
-+		return false;
- 
--		if (!task) {
--			ret |= io_uring_try_cancel_iowq(ctx);
--		} else if (tctx && tctx->io_wq) {
--			/*
--			 * Cancels requests of all rings, not only @ctx, but
--			 * it's fine as the task is in exit/exec.
--			 */
--			cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
--					       &cancel, true);
--			ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
--		}
-+	if (!task) {
-+		ret |= io_uring_try_cancel_iowq(ctx);
-+	} else if (tctx && tctx->io_wq) {
-+		/*
-+		 * Cancels requests of all rings, not only @ctx, but
-+		 * it's fine as the task is in exit/exec.
-+		 */
-+		cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
-+				       &cancel, true);
-+		ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
-+	}
- 
--		/* SQPOLL thread does its own polling */
--		if ((!(ctx->flags & IORING_SETUP_SQPOLL) && cancel_all) ||
--		    (ctx->sq_data && ctx->sq_data->thread == current)) {
--			while (!wq_list_empty(&ctx->iopoll_list)) {
--				io_iopoll_try_reap_events(ctx);
--				ret = true;
--			}
-+	/* SQPOLL thread does its own polling */
-+	if ((!(ctx->flags & IORING_SETUP_SQPOLL) && cancel_all) ||
-+	    (ctx->sq_data && ctx->sq_data->thread == current)) {
-+		while (!wq_list_empty(&ctx->iopoll_list)) {
-+			io_iopoll_try_reap_events(ctx);
-+			ret = true;
- 		}
--
--		ret |= io_cancel_defer_files(ctx, task, cancel_all);
--		mutex_lock(&ctx->uring_lock);
--		ret |= io_poll_remove_all(ctx, task, cancel_all);
--		mutex_unlock(&ctx->uring_lock);
--		ret |= io_kill_timeouts(ctx, task, cancel_all);
--		if (task)
--			ret |= io_run_task_work();
--		if (!ret)
--			break;
--		cond_resched();
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 557c637af158..a79a7d6ef1b3 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -49,7 +49,7 @@ static inline void io_put_req(struct io_kiocb *req)
  	}
-+
-+	ret |= io_cancel_defer_files(ctx, task, cancel_all);
-+	mutex_lock(&ctx->uring_lock);
-+	ret |= io_poll_remove_all(ctx, task, cancel_all);
-+	mutex_unlock(&ctx->uring_lock);
-+	ret |= io_kill_timeouts(ctx, task, cancel_all);
-+	if (task)
-+		ret |= io_run_task_work();
-+	return ret;
  }
  
- static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
-@@ -2882,6 +2879,8 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+-static void io_kill_timeout(struct io_kiocb *req, int status)
++static bool io_kill_timeout(struct io_kiocb *req, int status)
+ 	__must_hold(&req->ctx->completion_lock)
+ 	__must_hold(&req->ctx->timeout_lock)
+ {
+@@ -64,7 +64,9 @@ static void io_kill_timeout(struct io_kiocb *req, int status)
+ 			atomic_read(&req->ctx->cq_timeouts) + 1);
+ 		list_del_init(&timeout->list);
+ 		io_req_tw_post_queue(req, status, 0);
++		return true;
+ 	}
++	return false;
+ }
  
- 	atomic_inc(&tctx->in_idle);
- 	do {
-+		bool loop = false;
-+
- 		io_uring_drop_tctx_refs(current);
- 		/* read completions before cancelations */
- 		inflight = tctx_inflight(tctx, !cancel_all);
-@@ -2896,13 +2895,19 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- 				/* sqpoll task will cancel all its requests */
- 				if (node->ctx->sq_data)
- 					continue;
--				io_uring_try_cancel_requests(node->ctx, current,
--							     cancel_all);
-+				loop |= io_uring_try_cancel_requests(node->ctx,
-+							current, cancel_all);
- 			}
- 		} else {
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
--				io_uring_try_cancel_requests(ctx, current,
--							     cancel_all);
-+				loop |= io_uring_try_cancel_requests(ctx,
-+								     current,
-+								     cancel_all);
-+		}
-+
-+		if (loop) {
-+			cond_resched();
-+			continue;
- 		}
+ __cold void io_flush_timeouts(struct io_ring_ctx *ctx)
+@@ -620,10 +622,9 @@ __cold bool io_kill_timeouts(struct io_ring_ctx *ctx, struct task_struct *tsk,
+ 	list_for_each_entry_safe(timeout, tmp, &ctx->timeout_list, list) {
+ 		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
  
- 		prepare_to_wait(&tctx->wait, &wait, TASK_INTERRUPTIBLE);
+-		if (io_match_task(req, tsk, cancel_all)) {
+-			io_kill_timeout(req, -ECANCELED);
++		if (io_match_task(req, tsk, cancel_all) &&
++		    io_kill_timeout(req, -ECANCELED))
+ 			canceled++;
+-		}
+ 	}
+ 	spin_unlock_irq(&ctx->timeout_lock);
+ 	io_commit_cqring(ctx);
 -- 
 2.36.1
 

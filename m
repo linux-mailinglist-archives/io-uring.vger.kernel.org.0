@@ -2,94 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBB4553669
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 17:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B2D4553ED0
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 01:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353059AbiFUPkl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jun 2022 11:40:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
+        id S1354327AbiFUXBO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jun 2022 19:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353052AbiFUPk3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 11:40:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34852BB28
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 08:40:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F0DC61771
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 15:40:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EA4C3411C;
-        Tue, 21 Jun 2022 15:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655826026;
-        bh=0cWo2c/zm4WO9qVU6zetr7PwvaMjZ7v86/LilLir9l4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UhhR/jvf1BmEPDZt6K4zfAUu+RkhmRSSLKWrINgb3prFzDDq8qrS/f1DQuNQd3fLu
-         V7bgl7KXH3MzObapmP/cgxbCW9iXWM7lgWrwkr5YY7pIoVaNUyRcg8N32SzhmJm2RY
-         I2tMyQE2vN8SnsZkW0dx3j9A3OGVsLroFwVFRptVem2SHDiIYc/jTNOY08+znjwvZ5
-         G6QGgWhuA605hecgIEPrmYqSKF+Ap5Pum/69MctTYyYIjnhUqPGt+ViZEFlytSmoyg
-         1LseJLbH9WHszksClrtsTuAn17wvD1VxZaqLI/qIoLs12EA+VvgQADzXnVZau3qaPi
-         QzoYW0rRX+hjg==
-Date:   Tue, 21 Jun 2022 08:40:24 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH for-next 03/10] io_uring: fix io_poll_remove_all clang
- warnings
-Message-ID: <YrHmaOd1md4qqlHx@dev-arch.thelio-3990X>
-References: <cover.1655684496.git.asml.silence@gmail.com>
- <f11d21dcdf9233e0eeb15fa13b858a05a78eb310.1655684496.git.asml.silence@gmail.com>
+        with ESMTP id S229575AbiFUXBO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 19:01:14 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4513B1C10C
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 16:01:10 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id s1so20901377wra.9
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 16:01:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cP2bArEMhMxhWs/yR/CvejDiI37/nmvoOs4PcpUr7s0=;
+        b=bA6NzJHonezEZ4/BBbTCDbHlDkGBoDPygfAyIqngxPqWZs8ayKaW4EN1I0OnkA1LNB
+         H8Jy40grrpey4SlvYIjlZqO8qV6bX+ct1rhOlNhPGYX0iPxF1iW81tlNLRO4ir0KAgrK
+         P9m+9hJm589Qo4Z1rFbfID7tL1GdDR0jOOxcnWpNW+FWBmMOUFQZsx2RnqSuycXtUiUD
+         BxAQmljorCqBCf3+c8TEpc1fk9atIMsEUCx6phNdD2tOfIElFEl/kVYDKokkN8w/V4Lr
+         UL1konqRjr4wnZXd7i1TIjb8CnvhBCJ5HUoKkj9fvHZ5TQdBKRyxQp2fqCPPhySh/yt5
+         2s1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cP2bArEMhMxhWs/yR/CvejDiI37/nmvoOs4PcpUr7s0=;
+        b=LZ86Zh4F0DXC+UFAc51E2r7+vYXMGMlkVH3f54eKk75zsZPKe+WNCi4Etgr+NNbvdF
+         CPELF/1v9bQyL49tbqtd4Gi7j3/uH3SMotNOUZQ9JFZ9qs1oT26X01RqJBWYKrBskZCA
+         tIpnIWTTESxZGWYDJDROyRo/eDLJcdtC2PPr0rMr3pIW33iapDPdokbtXUnua1JQfi/A
+         kyJ64GLeje6UWoj3H3O4F0QG4b1z4UB4Mr29HLWQETHhhEhYoYtkM9qK3UKBi1SNHpqD
+         6fGEb+B1L+ATZ3HCEWL7Fxq79oWpJAeNla3ePt3fa6IMErLxixfgMBRCubpZocyrW0KO
+         PvFQ==
+X-Gm-Message-State: AJIora++76gXkbWEqSrKboUVOdljxU5sROeu2tmlCmno8eEpsvLfbkPb
+        735AfkZ1oO8Y5/CKAludX4WDhNT2PqFgCO0c
+X-Google-Smtp-Source: AGRyM1vmuiB9APeQvkbpWLsjdzAGrUo6Zr8sRFXNt0JqGArvLJgM2ydt4FU8g0mDZJjCke84gw7Jzg==
+X-Received: by 2002:a05:6000:156d:b0:210:3125:6012 with SMTP id 13-20020a056000156d00b0021031256012mr264420wrz.357.1655852468479;
+        Tue, 21 Jun 2022 16:01:08 -0700 (PDT)
+Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
+        by smtp.gmail.com with ESMTPSA id q2-20020a05600000c200b0021b8ea5c7bdsm7630462wrx.42.2022.06.21.16.01.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jun 2022 16:01:08 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH 5.19 0/3] poll fixes
+Date:   Wed, 22 Jun 2022 00:00:34 +0100
+Message-Id: <cover.1655852245.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f11d21dcdf9233e0eeb15fa13b858a05a78eb310.1655684496.git.asml.silence@gmail.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jun 20, 2022 at 01:25:54AM +0100, Pavel Begunkov wrote:
-> clang complains on bitwise operations with bools, add a bit more
-> verbosity to better show that we want to call io_poll_remove_all_table()
-> twice but with different arguments.
-> 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Several poll and apoll fixes for 5.19. I don't know if problems in 2-3
+were occuring prior to "io_uring: poll rework", but let's at least
+back port it to that point.
 
-Thank you for sending the patch! Apologies that I didn't do it but I
-decided to actually take a full weekend off for once :) Looks like Jens
-already applied it but just for the record:
+I'll also be sending another clean up series for 5.20.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Pavel Begunkov (3):
+  io_uring: fail links when poll fails
+  io_uring: fix wrong arm_poll error handling
+  io_uring: fix double poll leak on repolling
 
-> ---
->  io_uring/poll.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/io_uring/poll.c b/io_uring/poll.c
-> index d4bfc6d945cf..9af6a34222a9 100644
-> --- a/io_uring/poll.c
-> +++ b/io_uring/poll.c
-> @@ -589,8 +589,11 @@ __cold bool io_poll_remove_all(struct io_ring_ctx *ctx, struct task_struct *tsk,
->  			       bool cancel_all)
->  	__must_hold(&ctx->uring_lock)
->  {
-> -	return io_poll_remove_all_table(tsk, &ctx->cancel_table, cancel_all) |
-> -	       io_poll_remove_all_table(tsk, &ctx->cancel_table_locked, cancel_all);
-> +	bool ret;
-> +
-> +	ret = io_poll_remove_all_table(tsk, &ctx->cancel_table, cancel_all);
-> +	ret |= io_poll_remove_all_table(tsk, &ctx->cancel_table_locked, cancel_all);
-> +	return ret;
->  }
->  
->  static struct io_kiocb *io_poll_find(struct io_ring_ctx *ctx, bool poll_only,
-> -- 
-> 2.36.1
-> 
+ fs/io_uring.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+-- 
+2.36.1
+

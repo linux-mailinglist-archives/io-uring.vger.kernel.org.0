@@ -2,45 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DEDC55339C
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 15:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C375533F9
+	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 15:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350742AbiFUNeY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jun 2022 09:34:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
+        id S1349847AbiFUNsz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jun 2022 09:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351744AbiFUNbI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 09:31:08 -0400
-Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFA818E17
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:28:35 -0700 (PDT)
-Message-ID: <c9cd85d7-fcfb-0962-4517-9f1a07958627@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655818113;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QFn9V9hTT5zyZMWnEuGX+8SQPV48MvnqcS6i2MqayTA=;
-        b=O1XFHLgPuLHbhlGGMl75+bsRmjlAvmgxpARQlXFQQLWao6+GKIQH1zzMwqLgJnDEzCutpU
-        EwVvMh94m7CkQHTQRXeK6yCR330iR9831d9AxYwS0d9LlZdmA93TZ42UVRS40ehZsBVxDd
-        GhP8hpc8rj1OcuzuNI4Ka4r6EB1S6sc=
-Date:   Tue, 21 Jun 2022 21:28:25 +0800
+        with ESMTP id S1350167AbiFUNsz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 09:48:55 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5275F64F5
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:48:54 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id p128so14287154iof.1
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:content-transfer-encoding;
+        bh=00VvFG+iMbIce2dPJPN2x+StmKlCvFr6JgwZ1Swej8w=;
+        b=lDDIxnQuAwTnQfhrIA+7F/gGrrMrA0avS2nSPZqzTl4dP6KgowQ32BCw+wd0fmUA1Y
+         vWAkR4pWwhzW+LW/st+RubwcXIgYQgkvfW/AU7FY2OnX9ISbvFXKW10Ot8yaa9J6hyXU
+         FjVG6WW7W3l5IW3BU21HYd3ORk3D6PgudGGQc5KmHUpDo07hebDaPVIIU0hN3QSCIRH2
+         o+6ncIkOUb2nbE5IHqViaY1k2hPyJLA06kD8iSZj0iF95bVgxYIcgNcx676sYt67KDD/
+         QYO6eFNUbHxgn781jxe7gahFc4eJOYD25OUF+SoF9CxDViXdgIgf9WAfD1etXxzJHhJE
+         4YcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:content-transfer-encoding;
+        bh=00VvFG+iMbIce2dPJPN2x+StmKlCvFr6JgwZ1Swej8w=;
+        b=RffBAaYLxwuj1ybtPcLsVbgEoYeqbERCgSKwRa0zO0NeW8k11lmOmL74TTkn5mZ4H9
+         lR1lk8gzw4WQ+XTymSQPoFAH/JWMJtqDDvU2yMmeq/Gm2rRzPJaXUx5elclyRAgUTTpq
+         oJbEp7k2MJxJM93VX07Z193sGGMxFzcRQVBq/3cj8Ud53k9084yYA0hhTEtYIvSwluLA
+         CTiPa8x+jGV7TWRRHpA4qVp7y17U0ghx7MEOItP2VMRp4d9sAt0sGu3dkQaU8uieNwok
+         amygHjY2Eq2k56XJeVXPbaEVuMrCNhp3CPd6rAhq+SThuMhk9ZYwhdRfJO4sZknruPfb
+         fR2A==
+X-Gm-Message-State: AJIora8eIHpGjC2oh5QP1I5Mo/xJ9dbba4O70MNK/Op6uXZ6qtZ8hh+k
+        OIAywTkjeed2961BL6GtNOVA/N1NP4T1Fw==
+X-Google-Smtp-Source: AGRyM1urmBaqg20lammmsre3B+Gnhl8DQdsm/vRWhstSeJgtJFTZyLAVh3kKXBdvLIRp3fN/z48BBg==
+X-Received: by 2002:a05:6638:150e:b0:339:ce13:80d with SMTP id b14-20020a056638150e00b00339ce13080dmr1125960jat.205.1655819333439;
+        Tue, 21 Jun 2022 06:48:53 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id w20-20020a029694000000b003317549aa4bsm7184450jai.71.2022.06.21.06.48.52
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jun 2022 06:48:52 -0700 (PDT)
+Message-ID: <422b9cd3-f831-a019-2b87-a46d0ceb1ec0@kernel.dk>
+Date:   Tue, 21 Jun 2022 07:48:51 -0600
 MIME-Version: 1.0
-Subject: Re: [PATCH 5.19] io_uring: fix req->apoll_events
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
 Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <0aef40399ba75b1a4d2c2e85e6e8fd93c02fc6e4.1655814213.git.asml.silence@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <0aef40399ba75b1a4d2c2e85e6e8fd93c02fc6e4.1655814213.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: fix merge error in checking send/recv addr2 flags
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,72 +68,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/21/22 20:25, Pavel Begunkov wrote:
-> apoll_events should be set once in the beginning of poll arming just as
-> poll->events and not change after. However, currently io_uring resets it
-> on each __io_poll_execute() for no clear reason. There is also a place
-> in __io_arm_poll_handler() where we add EPOLLONESHOT to downgrade a
-> multishot, but forget to do the same thing with ->apoll_events, which is
-> buggy.
-> 
-> Fixes: 81459350d581e ("io_uring: cache req->apoll->events in req->cflags")
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   fs/io_uring.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 87c65a358678..ebda9a565fc0 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6954,7 +6954,8 @@ static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
->   		io_req_complete_failed(req, ret);
->   }
->   
-> -static void __io_poll_execute(struct io_kiocb *req, int mask, __poll_t events)
-> +static void __io_poll_execute(struct io_kiocb *req, int mask,
-> +			      __poll_t __maybe_unused events)
->   {
->   	req->cqe.res = mask;
->   	/*
-> @@ -6963,7 +6964,6 @@ static void __io_poll_execute(struct io_kiocb *req, int mask, __poll_t events)
->   	 * CPU. We want to avoid pulling in req->apoll->events for that
->   	 * case.
->   	 */
-> -	req->apoll_events = events;
->   	if (req->opcode == IORING_OP_POLL_ADD)
->   		req->io_task_work.func = io_poll_task_func;
->   	else
-> @@ -7114,6 +7114,8 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
->   	io_init_poll_iocb(poll, mask, io_poll_wake);
->   	poll->file = req->file;
->   
-> +	req->apoll_events = poll->events;
-> +
->   	ipt->pt._key = mask;
->   	ipt->req = req;
->   	ipt->error = 0;
-> @@ -7144,8 +7146,10 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
->   
->   	if (mask) {
->   		/* can't multishot if failed, just queue the event we've got */
-> -		if (unlikely(ipt->error || !ipt->nr_entries))
-> +		if (unlikely(ipt->error || !ipt->nr_entries)) {
->   			poll->events |= EPOLLONESHOT;
-> +			req->apoll_events |= EPOLLONESHOT;
-> +		}
->   		__io_poll_execute(req, mask, poll->events);
->   		return 0;
->   	}
-> @@ -7392,7 +7396,7 @@ static int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
->   		return -EINVAL;
->   
->   	io_req_set_refcount(req);
-> -	req->apoll_events = poll->events = io_poll_parse_events(sqe, flags);
-> +	poll->events = io_poll_parse_events(sqe, flags);
->   	return 0;
->   }
->   
+With the dropping of the IOPOLL checking in the per-opcode handlers,
+we inadvertently left two checks in the recv/recvmsg and send/sendmsg
+prep handlers for the same thing, and one of them includes addr2 which
+holds the flags for these opcodes.
 
-Make sense,
-Reviewed-by: Hao Xu <howeyxu@tencent.com>
+Fix it up and kill the redundant checks.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 87c65a358678..05508fe92b9c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6077,8 +6077,6 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	if (unlikely(sqe->file_index))
+ 		return -EINVAL;
+-	if (unlikely(sqe->addr2 || sqe->file_index))
+-		return -EINVAL;
+ 
+ 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
+@@ -6315,8 +6313,6 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	if (unlikely(sqe->file_index))
+ 		return -EINVAL;
+-	if (unlikely(sqe->addr2 || sqe->file_index))
+-		return -EINVAL;
+ 
+ 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
+
+-- 
+Jens Axboe
+

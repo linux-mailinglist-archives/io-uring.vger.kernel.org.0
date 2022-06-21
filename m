@@ -2,63 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C375533F9
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 15:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC365533FB
+	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 15:49:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349847AbiFUNsz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jun 2022 09:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43354 "EHLO
+        id S229708AbiFUNta (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jun 2022 09:49:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350167AbiFUNsz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 09:48:55 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5275F64F5
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:48:54 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id p128so14287154iof.1
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:48:54 -0700 (PDT)
+        with ESMTP id S229717AbiFUNt3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 09:49:29 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC82465AD
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:49:28 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id s17so7987781iob.7
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:content-transfer-encoding;
-        bh=00VvFG+iMbIce2dPJPN2x+StmKlCvFr6JgwZ1Swej8w=;
-        b=lDDIxnQuAwTnQfhrIA+7F/gGrrMrA0avS2nSPZqzTl4dP6KgowQ32BCw+wd0fmUA1Y
-         vWAkR4pWwhzW+LW/st+RubwcXIgYQgkvfW/AU7FY2OnX9ISbvFXKW10Ot8yaa9J6hyXU
-         FjVG6WW7W3l5IW3BU21HYd3ORk3D6PgudGGQc5KmHUpDo07hebDaPVIIU0hN3QSCIRH2
-         o+6ncIkOUb2nbE5IHqViaY1k2hPyJLA06kD8iSZj0iF95bVgxYIcgNcx676sYt67KDD/
-         QYO6eFNUbHxgn781jxe7gahFc4eJOYD25OUF+SoF9CxDViXdgIgf9WAfD1etXxzJHhJE
-         4YcA==
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=zSIFb1aELkCdIA0Q6DhrKSKO0lbvvMoNtIMAEsSi0zg=;
+        b=FgCJCuFSifYkY3E23Ryrjc1DmYDtru/h+C/0MjOB+3WFhznoxhy2xrrDD2OqOq2dQo
+         iB1GjVncVYvcM0cXpwY9+NzPp3JkR5k/d5ZOIZs5lXudovvXUIsZaH8ex4l5Aqru+Ins
+         rSPifrrDRcvTN7MpG6GjWDy3OLnuV7eb11uEAUq8HSzZehSbXQ9OF+kRCW0y9HTQk4u5
+         fGd03lrHj3JbkJtO1LCKnS7Vhaicoox7pcIZNjGE7r40gzJ74MvZt6ml4LgvhCiOssIw
+         k+HWGs2Eor4KarfKpmbXjdlBwvpZGInwUitkqUsnpyzZoktpX51VIze+BcXrh3BHdq7y
+         7Z+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:content-transfer-encoding;
-        bh=00VvFG+iMbIce2dPJPN2x+StmKlCvFr6JgwZ1Swej8w=;
-        b=RffBAaYLxwuj1ybtPcLsVbgEoYeqbERCgSKwRa0zO0NeW8k11lmOmL74TTkn5mZ4H9
-         lR1lk8gzw4WQ+XTymSQPoFAH/JWMJtqDDvU2yMmeq/Gm2rRzPJaXUx5elclyRAgUTTpq
-         oJbEp7k2MJxJM93VX07Z193sGGMxFzcRQVBq/3cj8Ud53k9084yYA0hhTEtYIvSwluLA
-         CTiPa8x+jGV7TWRRHpA4qVp7y17U0ghx7MEOItP2VMRp4d9sAt0sGu3dkQaU8uieNwok
-         amygHjY2Eq2k56XJeVXPbaEVuMrCNhp3CPd6rAhq+SThuMhk9ZYwhdRfJO4sZknruPfb
-         fR2A==
-X-Gm-Message-State: AJIora8eIHpGjC2oh5QP1I5Mo/xJ9dbba4O70MNK/Op6uXZ6qtZ8hh+k
-        OIAywTkjeed2961BL6GtNOVA/N1NP4T1Fw==
-X-Google-Smtp-Source: AGRyM1urmBaqg20lammmsre3B+Gnhl8DQdsm/vRWhstSeJgtJFTZyLAVh3kKXBdvLIRp3fN/z48BBg==
-X-Received: by 2002:a05:6638:150e:b0:339:ce13:80d with SMTP id b14-20020a056638150e00b00339ce13080dmr1125960jat.205.1655819333439;
-        Tue, 21 Jun 2022 06:48:53 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id w20-20020a029694000000b003317549aa4bsm7184450jai.71.2022.06.21.06.48.52
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jun 2022 06:48:52 -0700 (PDT)
-Message-ID: <422b9cd3-f831-a019-2b87-a46d0ceb1ec0@kernel.dk>
-Date:   Tue, 21 Jun 2022 07:48:51 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=zSIFb1aELkCdIA0Q6DhrKSKO0lbvvMoNtIMAEsSi0zg=;
+        b=jTPe0r8xQHKIdpTzNI2ZwstPCZwBjxoRRO+VgDMbzXa3qaGXxUtVqirY+6OMDNoqjU
+         mbQerPELXJSLMAj15DSu03ZWIdQsokK0LrpH91Dgu0h6SvSqGR58WhUC16ZsaDCJXFZY
+         l0kvT1MvhhUFZ6kElwgE04M86wandsUsII9EKAYSEjB6EzxnAyFu7DbGjsf+9NJLPMwi
+         nBpV+eU9CASK7DfD7r23G0OGp6AFTAP8IyqAgoiC1k4ifqCV4FTeSSgBu9XbASSe4SgN
+         9OcnD4aYPYysGCqH9qgu4SzERZp2VbGjIY06GrwTA0oNz25vTJb/KCHGJLyIZpltSWUg
+         BLog==
+X-Gm-Message-State: AJIora9L//TC5LyJL8Un9G1TaRf2rWPeyYF0qfcO7PsOABNtwF/7Str7
+        CJZ4+lH5Ps12DbXSmILwJkwn4uVkHwRdDw==
+X-Google-Smtp-Source: AGRyM1vABkkj10SXLpCdp1EzkqrnJlFNgQhiVgdheisvwixqTFCVBr3WEuk4Ti1DuuPM3wgYrBMy4g==
+X-Received: by 2002:a05:6602:3417:b0:65e:2fae:b371 with SMTP id n23-20020a056602341700b0065e2faeb371mr14838741ioz.98.1655819367679;
+        Tue, 21 Jun 2022 06:49:27 -0700 (PDT)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id e27-20020a02cabb000000b00339d2cd8da1sm124129jap.152.2022.06.21.06.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jun 2022 06:49:26 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: fix merge error in checking send/recv addr2 flags
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org, asml.silence@gmail.com
+In-Reply-To: <0aef40399ba75b1a4d2c2e85e6e8fd93c02fc6e4.1655814213.git.asml.silence@gmail.com>
+References: <0aef40399ba75b1a4d2c2e85e6e8fd93c02fc6e4.1655814213.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 5.19] io_uring: fix req->apoll_events
+Message-Id: <165581936663.2557468.6879052235467138335.b4-ty@kernel.dk>
+Date:   Tue, 21 Jun 2022 07:49:26 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -68,40 +66,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With the dropping of the IOPOLL checking in the per-opcode handlers,
-we inadvertently left two checks in the recv/recvmsg and send/sendmsg
-prep handlers for the same thing, and one of them includes addr2 which
-holds the flags for these opcodes.
+On Tue, 21 Jun 2022 13:25:06 +0100, Pavel Begunkov wrote:
+> apoll_events should be set once in the beginning of poll arming just as
+> poll->events and not change after. However, currently io_uring resets it
+> on each __io_poll_execute() for no clear reason. There is also a place
+> in __io_arm_poll_handler() where we add EPOLLONESHOT to downgrade a
+> multishot, but forget to do the same thing with ->apoll_events, which is
+> buggy.
+> 
+> [...]
 
-Fix it up and kill the redundant checks.
+Applied, thanks!
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[1/1] io_uring: fix req->apoll_events
+      commit: aacf2f9f382c91df73f33317e28a4c34c8038986
 
----
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 87c65a358678..05508fe92b9c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6077,8 +6077,6 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(sqe->file_index))
- 		return -EINVAL;
--	if (unlikely(sqe->addr2 || sqe->file_index))
--		return -EINVAL;
- 
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	sr->len = READ_ONCE(sqe->len);
-@@ -6315,8 +6313,6 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (unlikely(sqe->file_index))
- 		return -EINVAL;
--	if (unlikely(sqe->addr2 || sqe->file_index))
--		return -EINVAL;
- 
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	sr->len = READ_ONCE(sqe->len);
-
+Best regards,
 -- 
 Jens Axboe
+
 

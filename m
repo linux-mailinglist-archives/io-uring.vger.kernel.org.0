@@ -2,77 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFD6553209
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 14:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DEDC55339C
+	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 15:34:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232390AbiFUM3M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jun 2022 08:29:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        id S1350742AbiFUNeY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jun 2022 09:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230309AbiFUM3J (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 08:29:09 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C2F6275
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 05:29:08 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id e25so14845864wrc.13
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 05:29:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=8Wj+XQMw0Th2g5k2/0z3Ja7QSCwmpg1z35xuHUgBzBU=;
-        b=YszW5JHNve6t0HzDdbHR2sdCzA+Y9SfhAohYJYhWNxhDcaYnDksa3jW0om1hycctn3
-         Prp4k2jHaB8Pl3P0yNHIO9nF5eZRB28Yf0UsO47Q2SzRRR3GTRLLIDjfIP5dzePDukkU
-         6IEyuXgjd1lhcB3Qm8Bal395RHSZInCTrKEHTTYxFTgVadjXj7XGQ65akS+FOzLxwo0V
-         /lURFhT0SbMrEkyWgwFA8MBfY4RUc07feEwOVlza9Qxll9J5MGEvt4UiTe7WarJiPgAp
-         PCjZa+NPELA2TT5xyXj7okYOc5u1XWb+GuPywKGP9/+x8oRC0Lhg/x6GxG9qr9dIE8uh
-         CCEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=8Wj+XQMw0Th2g5k2/0z3Ja7QSCwmpg1z35xuHUgBzBU=;
-        b=nTzA87o/ragnmv86OSblPVS4e2dBRgBsW7CYbGxTq1uDF16ZucjdIBA/yI0YLAiviN
-         Xn/7V7AeSL+ONs8MlrR4rm2ZTtoBoopdtRL1vlhl8Q7eiuZJrhSJBZev09wxQy1vV3y+
-         8aOpK6cQfDfIp/xB1P1TafVO9M6+j2yAXlg8TYDD26/nZmbbXckSeRw0n4QjkFZkO9Zb
-         p8KSoI53U9YPCPQem1fPS61KzoBxaKKIXvAIPcgZNOCK+2sXOxWZykBfXjGbqzceaOOn
-         vfGA1UmGNbCPKIcmm1q4uHzBDgfH23GJqmYh58SQtZE+Qe/afyN15VgSEMN9nrvunx5b
-         4dzQ==
-X-Gm-Message-State: AJIora8WWRD/l3rt8ZDy0o9tp7XWkwvw7b+wVv5cgPbNH9wMkc88q+84
-        Pcc5hBMZO40WHI5EdG8+ZQ6U19eeWriGMg==
-X-Google-Smtp-Source: AGRyM1vbuxGVOM6U4BdRApoUdMSs0E36fntG5ZxN+0F7OH1LVhseSCrq5b66c5R6P+dcCzw6YXzEEA==
-X-Received: by 2002:adf:e196:0:b0:219:f3c7:fd88 with SMTP id az22-20020adfe196000000b00219f3c7fd88mr28486848wrb.402.1655814546651;
-        Tue, 21 Jun 2022 05:29:06 -0700 (PDT)
-Received: from [192.168.43.77] (82-132-235-103.dab.02.net. [82.132.235.103])
-        by smtp.gmail.com with ESMTPSA id h81-20020a1c2154000000b0039c41686421sm20729636wmh.17.2022.06.21.05.29.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jun 2022 05:29:06 -0700 (PDT)
-Message-ID: <ef08ee61-20de-fb1f-d1d0-5877a1f62d4c@gmail.com>
-Date:   Tue, 21 Jun 2022 13:28:45 +0100
+        with ESMTP id S1351744AbiFUNbI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 09:31:08 -0400
+Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFA818E17
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 06:28:35 -0700 (PDT)
+Message-ID: <c9cd85d7-fcfb-0962-4517-9f1a07958627@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1655818113;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QFn9V9hTT5zyZMWnEuGX+8SQPV48MvnqcS6i2MqayTA=;
+        b=O1XFHLgPuLHbhlGGMl75+bsRmjlAvmgxpARQlXFQQLWao6+GKIQH1zzMwqLgJnDEzCutpU
+        EwVvMh94m7CkQHTQRXeK6yCR330iR9831d9AxYwS0d9LlZdmA93TZ42UVRS40ehZsBVxDd
+        GhP8hpc8rj1OcuzuNI4Ka4r6EB1S6sc=
+Date:   Tue, 21 Jun 2022 21:28:25 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
 Subject: Re: [PATCH 5.19] io_uring: fix req->apoll_events
 Content-Language: en-US
-To:     io-uring@vger.kernel.org
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
 References: <0aef40399ba75b1a4d2c2e85e6e8fd93c02fc6e4.1655814213.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
 In-Reply-To: <0aef40399ba75b1a4d2c2e85e6e8fd93c02fc6e4.1655814213.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/21/22 13:25, Pavel Begunkov wrote:
+On 6/21/22 20:25, Pavel Begunkov wrote:
 > apoll_events should be set once in the beginning of poll arming just as
 > poll->events and not change after. However, currently io_uring resets it
 > on each __io_poll_execute() for no clear reason. There is also a place
@@ -97,10 +73,6 @@ On 6/21/22 13:25, Pavel Begunkov wrote:
 > -static void __io_poll_execute(struct io_kiocb *req, int mask, __poll_t events)
 > +static void __io_poll_execute(struct io_kiocb *req, int mask,
 > +			      __poll_t __maybe_unused events)
-
-Killing @events would add extra rebase conflicts, so left it here and will
-send a clean up for 5.20.
-
 >   {
 >   	req->cqe.res = mask;
 >   	/*
@@ -143,5 +115,5 @@ send a clean up for 5.20.
 >   }
 >   
 
--- 
-Pavel Begunkov
+Make sense,
+Reviewed-by: Hao Xu <howeyxu@tencent.com>

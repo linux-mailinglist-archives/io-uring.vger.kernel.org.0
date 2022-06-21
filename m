@@ -2,30 +2,30 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEB1552C26
-	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 09:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933F4552C30
+	for <lists+io-uring@lfdr.de>; Tue, 21 Jun 2022 09:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344834AbiFUHem (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jun 2022 03:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36664 "EHLO
+        id S1347303AbiFUHjQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Jun 2022 03:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346725AbiFUHej (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 03:34:39 -0400
-Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8729B12E
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 00:34:38 -0700 (PDT)
-Message-ID: <1c29ad13-cc42-8bc5-0f12-3413054a4faf@linux.dev>
+        with ESMTP id S1347316AbiFUHih (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 03:38:37 -0400
+Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E929A1275C
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 00:38:30 -0700 (PDT)
+Message-ID: <e67c96c1-86f2-6fa4-481f-37727dc5c6d1@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655796876;
+        t=1655797109;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BBvljbnrxAb1thDQiN6UX3AlI07Jus82oBjTBXDYweU=;
-        b=k25zbP+WG2I6bCZaPqwDWpk/fyVo7NF63lPFsB5hlNq6fPZTvUT7zbZV0KTNQaN3Lz5+pg
-        W5DJcQ49PT3kIyfKwHxu11TvTOlVrKcie7Ugy6C0KTa5htnWvwtrCkCPUWlQ52MiOlI3B1
-        lY1Y/Pv+8D7ReJWsqDMSjrvrZB70puQ=
-Date:   Tue, 21 Jun 2022 15:34:21 +0800
+        bh=grKFZTcqL4xyI3udnTAFBBAN5H41afnE3yGRLcjuj64=;
+        b=Kirbtugj5ZTO56hgtoVXdhDzg1eDd5DF59vqvf739EPK+FNCcGFn4Ki+HtS6JfZjQHrMis
+        R5ap5TYhjPTYaKfIozPQjs0YHeWVFGGDhfh3hHSxunZdsgHafccyIEQ9f+grTSHUp3R8Vv
+        5cOwgBZx6onKg5SVEz4KpRyzIVkFCrc=
+Date:   Tue, 21 Jun 2022 15:38:20 +0800
 MIME-Version: 1.0
 Subject: Re: [PATCH RFC for-next 0/8] io_uring: tw contention improvments
 Content-Language: en-US
@@ -92,6 +92,10 @@ On 6/21/22 15:03, Dylan Yudaken wrote:
 > Do you have an idea for how to test that? I used a microbenchmark as
 > well as a network benchmark [1] to verify that overall throughput is
 > higher. TW latency sounds a lot more complicated to measure as it's
+
+I think measuring the end to end latency is a way good enough, no need
+to get the accurate number of TW queueing time.
+
 > difficult to trigger accurately.
 > 
 > My feeling is that with reasonable batching (say 8-16 items) the
@@ -100,10 +104,3 @@ On 6/21/22 15:03, Dylan Yudaken wrote:
 > 
 > [1]: https://github.com/DylanZA/netbench
 
-It can be normal IO requests I think. We can test the latency by fio
-with small size IO to a fast block device(like nvme) in SQPOLL
-mode(since for non-SQPOLL, it doesn't make difference). This way we can
-see the influence of reverse order handling.
-
-Regards,
-Hao

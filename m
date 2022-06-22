@@ -2,86 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DA655552D0
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 19:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 532B855549C
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 21:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377325AbiFVRsy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jun 2022 13:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53392 "EHLO
+        id S240412AbiFVTfr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jun 2022 15:35:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377457AbiFVRsv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 13:48:51 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FB433A23
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 10:48:50 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id 19so18368089iou.12
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 10:48:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=K33HT2mPY+fGTrIPZFvTbbrKHvQd+MDPdPT18kII9zE=;
-        b=Ao7+gzlvHWxGjPdlUKlFNuOf60PUjSnZBFyOEOMkLAVA5CoIPb/X8SGUosUCR9WlYq
-         INAarl+juxAtsT+HHoSFksJDHJbu+c/KtOQCi5z37mdjzZ28X1dvq2zRa70JSrLSq2RT
-         kKp0oDEe2kVM0Q9Xd4fzG2KWGLTVP+dEyv7JF5kJxVTBbqcQHMLHODm7lI3b7KLeQNQ6
-         Z42imq7r1b5gg2aaeNL/usxzpYd3H1cpCBLha07VY6k29mYp8qU2K6J/lxzCgGkJb3fJ
-         OIBHzR7fPXJwHqULlPRAlspSUDzZu2n1w+cPVVX/KC03P77w2iUpdfTdBfolcjmZUVsx
-         FqqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=K33HT2mPY+fGTrIPZFvTbbrKHvQd+MDPdPT18kII9zE=;
-        b=sOPJcoiAzoXen9NAJqJ5Udi7Ri1O7EsA8JJENVW+BtRdEVkI5MGY1Gy294yGCUcsfo
-         UHFfouyK/9HAZxkItXm5eg9tSaW/9xhQKsjwovlrC/olKmGWdAvANhFEKLU40fXLy+lA
-         skIkyrecOVItODA5TygObyYKwYgvawBvkpiWNeUymHgyADljpcHIf/ZTjWLQaszTNqTO
-         Gonh87Hgk9CexRIrr2rG4mF6jybuw3c5KaWeZrS9hJnacLwr2HpOlmGmflBmotT7hYOm
-         yaojqq9AvkqGayE+xf9EocQKYhbaS02TrsYHK6NcX47bJnCu9xGxLWvM4RvS5M2msjEC
-         MGRw==
-X-Gm-Message-State: AJIora9dTxU+ZTuBXCoNXvaPug9zFW9HKYePjHD70URnyhm38NOuNvEH
-        o+zK1InHCsRJkT0wLMbdcXpJig==
-X-Google-Smtp-Source: AGRyM1sC06YOI0pAbSLw8GZ1EDu2DiPuOR/0WHjkpZYlg+mBcVKXdWTaEGajo0LeU6wcx88JArRttg==
-X-Received: by 2002:a05:6638:264e:b0:333:e9ca:a674 with SMTP id n14-20020a056638264e00b00333e9caa674mr2943481jat.85.1655920130068;
-        Wed, 22 Jun 2022 10:48:50 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id o3-20020a92dac3000000b002d92692f387sm2740361ilq.43.2022.06.22.10.48.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jun 2022 10:48:49 -0700 (PDT)
-Message-ID: <40f6127c-3211-5152-f767-3c63174349a5@kernel.dk>
-Date:   Wed, 22 Jun 2022 11:48:48 -0600
+        with ESMTP id S230224AbiFVTfr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 15:35:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F78FF32;
+        Wed, 22 Jun 2022 12:35:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=11ZK0h9dNKq+tn7saPYTFwpIx/UcfWFs81TAdiQjTFg=; b=nWj4948F9YU/anh3+BcfKcXNcA
+        BQY+KIzRASbQxyi7n1yn+hvd96ilXmbYal//kHeHYObd35mjQGgocxFOpeI+6MFbS7CqwRbT1nNjS
+        gFzLTiV3noAgcsw+znTMsqEsXMEzolz99g3PuEvxcFYm1p0JpNj8HOKaaU6nSywjiV+/GlEH/lTrI
+        XUb/odC7SVEu+3YU4tFm4eIptfWCC5hsjMr5nP0I8Ex2tTMUPacG6rcC9qz0zDqSP+Km2cWo0IbJ/
+        9WPmwczKEjXeSi4EDpMaQgFDyTUKy3Wvi4LOjXJkqoF3mVMexkgNqeCsIj7LyTbXjBwKAybDSNwnO
+        abkV4gSw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o468W-007GLI-Po; Wed, 22 Jun 2022 19:35:36 +0000
+Date:   Wed, 22 Jun 2022 20:35:36 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz,
+        hch@infradead.org
+Subject: Re: [PATCH v9 00/14] io-uring/xfs: support async buffered writes
+Message-ID: <YrNvCGmBcqS80kNG@casper.infradead.org>
+References: <20220616212221.2024518-1-shr@fb.com>
+ <d18ffe14-7dd2-92a7-abd0-673b7da62adb@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] io_uring: kbuf: kill __io_kbuf_recycle()
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-References: <20220622055551.642370-1-hao.xu@linux.dev>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220622055551.642370-1-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d18ffe14-7dd2-92a7-abd0-673b7da62adb@kernel.dk>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/21/22 11:55 PM, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> __io_kbuf_recycle() is only called in io_kbuf_recycle(). Kill it and
-> tweak the code so that the legacy pbuf and ring pbuf code become clear
+On Wed, Jun 22, 2022 at 11:41:14AM -0600, Jens Axboe wrote:
+> Top posting - are people fine with queueing this up at this point? Will
+> need a bit of massaging for io_uring as certain things moved to another
+> file, but it's really minor. I'd do a separate topic branch for this.
 
-I have applied this one as I think it makes sense separately, but I'd
-really like to see the ring provided buffer recycling done inline as
-that is fast path for provided buffers (and it's very few instructions).
-Care to do a patch on top for that?
-
--- 
-Jens Axboe
-
+I haven't had time to review this version, and I'm not likely to have
+time before July 4th.

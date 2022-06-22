@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5FD5556EE9
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 01:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1073F556EEA
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 01:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357288AbiFVXQR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jun 2022 19:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34316 "EHLO
+        id S234047AbiFVXQT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jun 2022 19:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234047AbiFVXQR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 19:16:17 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A67741FB5
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 16:16:16 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id k14so5162872plh.4
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 16:16:16 -0700 (PDT)
+        with ESMTP id S1358418AbiFVXQS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 19:16:18 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 654E941F9A
+        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 16:16:17 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d17so8460947pfq.9
+        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 16:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=X43Qh2zGElNDiEpfHb6zUBIKhovFHHW8Tjc/KQjCIN0=;
-        b=Qz9tnyTgrNw0NmG3Oc848oAG59YSWJvplb4NzP4xL7/QHLd2y+3cPhSKz2FsHEF92O
-         ZXGSkzfZP1n20ByFhuxVfeHanaXaXJ3mvqavUoH6nOjTFQRVHyW9mDAMuYdFcNxH7/wL
-         7U6T2LbI3iAtKRloe0meFgLFbZYodAW7dBnk4mp6XYm5tMxBMY1lCxrAoyrn3uQyNKh4
-         LeVf+Sslr2wIZPEHh5PjfVN0dZd7ud9vhhia2pGdzRgQymP/4WqxLr0SW/yw3wHkBw98
-         ecXGp2yUv+HU8eCDd3G1LzJYOy6R7pS2qZz5lkq8jFVWknBTJWcUusEj+fn+zeeKK16Q
-         WgVA==
+        bh=IVhYLA++CI2NZr1wuP4YODcUVvCchVXJmhT/DHeM2tU=;
+        b=bE3LNM8mjfIuESuZSokusucqj84plNRxXuIe8mog3AA5/gou+zMc2O9slQaz3OiflR
+         /HTkNKQ39aschVGWo8imqCtws4CzYpEQE0+xXhmhV0n/utsS90YnTTEcE2ntuBFZdKhV
+         cCrWsxO6TB19XN7UntA8As20E4ERmKD2PvUWaDGhsCADFnu1NylYfRZSqmDaaH00GFae
+         +66+eyB4eFYKXV1M4DNfiEz+mzXNv6yH0j+s3HB0sdmiSVTXL8bVPa+MFuu9vEeksPvQ
+         lZPsvY9JsVxII3bE020Y629niyQO91McOSd5B1K6WUVNlPSchNoLENlKkno5gmy+0jfX
+         S76w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=X43Qh2zGElNDiEpfHb6zUBIKhovFHHW8Tjc/KQjCIN0=;
-        b=EV+LjLNW4+T7O6jF2fZ09ezR/x4ioGUPocqrchKYcvWXACePAnOtdoJQbf8ZFByEZW
-         0FBvsxtotDAVdS6Icb0pc5TFfFZk9OEpq1VQBwD8Vp5o9OSeSTYd+KOoQ7RjULwQuFcU
-         iiIZ9wp5EDKMsZL29rYAKO5o/cpcFjqg379J2cjvhe/cp6LphROoOEn5xFhE9eopbvO1
-         tQYLfFKunNA/U4mqLXZvKxB3Soa7FQ8BzgNBINGns6knLJprMWMR98e/mGJ3rYT2dPRc
-         DlRe3u8Ty33UDKH+yMkKIH/rIJWtuXhfxsK5DQbSx3YqQQfUniDHzeOnWZc0Zsb3G2v4
-         Ieog==
-X-Gm-Message-State: AJIora90Vrv9moT559QoMXk3f3fXGPApH857CCpNhY6Ep8HeukLhsvlK
-        ZsKzmIKOjRCZxd75bqK+vT9sW/OKo+RtKA==
-X-Google-Smtp-Source: AGRyM1tvtZOYfiAa0xIw7PNXzexoJ5M7+nZXNP/oxWgcorxKWGoKGFOTQU5pXVt/Aj3cs82jXKlUqw==
-X-Received: by 2002:a17:902:a50a:b0:162:3488:27c4 with SMTP id s10-20020a170902a50a00b00162348827c4mr35532339plq.109.1655939775763;
-        Wed, 22 Jun 2022 16:16:15 -0700 (PDT)
+        bh=IVhYLA++CI2NZr1wuP4YODcUVvCchVXJmhT/DHeM2tU=;
+        b=z0gP5v4/RB6gN++noHeiWD24hp9rZb9ca/SU8uOJYHhmfs24hea+Zcp7o2IZyDrhPA
+         1XBsVERYlaa4xyztlEGQkRBZAn1m+X4EjFOBG/UiaPujUD0lQdryJTmhJBmjt+lIt9x4
+         Yv+dxlnsO2mjqk9aIE6OUmpFV7XkdkpHS++vHKKyr+YsFkWEVVYbd97wra+tSVfF5DEe
+         Cl1RFnd8N3Iir3dahHFeYf6eQnb2+7i2Rn/5Fodq6gHorEP9jd0PwzkeZaFOuI0fms6E
+         pOzy6G6hEputCHTBnkHmQOu898ZCaT4B35vV/6085XoMb+UMUS+eF+OM21nolmqTCTZ7
+         CSSQ==
+X-Gm-Message-State: AJIora8rrFHWHk3zphjGTZulHlTSP3fC2QxTgEzYVwME+4Nu61YXROzQ
+        Yn18XgnXeXoIQn7j5JfAJSqB3zQ6L5I60g==
+X-Google-Smtp-Source: AGRyM1uroM3odinvz5FlInp4PxKOOLL5g0lYVaQywhAA9rf6ZzDjIOG96HkwQ7d2+mdhXaPCWhG2Sg==
+X-Received: by 2002:a63:3c58:0:b0:40c:83b6:1a4e with SMTP id i24-20020a633c58000000b0040c83b61a4emr5088224pgn.194.1655939776649;
+        Wed, 22 Jun 2022 16:16:16 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2-20020a056a00198200b0051b9ecb53e6sm13947437pfl.105.2022.06.22.16.16.14
+        by smtp.gmail.com with ESMTPSA id d2-20020a056a00198200b0051b9ecb53e6sm13947437pfl.105.2022.06.22.16.16.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 16:16:15 -0700 (PDT)
+        Wed, 22 Jun 2022 16:16:16 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com, carter.li@eoitek.com, hao.xu@linux.dev,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/2] io_uring: split out fixed file installation and removal
-Date:   Wed, 22 Jun 2022 17:16:10 -0600
-Message-Id: <20220622231611.178300-2-axboe@kernel.dk>
+Subject: [PATCH 2/2] io_uring: add support for passing fixed file descriptors
+Date:   Wed, 22 Jun 2022 17:16:11 -0600
+Message-Id: <20220622231611.178300-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220622231611.178300-1-axboe@kernel.dk>
 References: <20220622231611.178300-1-axboe@kernel.dk>
@@ -68,223 +68,252 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Put it with the filetable code, which is where it belongs. While doing
-so, have the helpers take a ctx rather than an io_kiocb. It doesn't make
-sense to use a request, as it's not an operation on the request itself.
-It applies to the ring itself.
+With IORING_OP_MSG_RING, one ring can send a message to another ring.
+Extend that support to also allow sending a fixed file descriptor to
+that ring, enabling one ring to pass a registered descriptor to another
+one.
+
+Arguments are extended to pass in:
+
+sqe->addr3	fixed file slot in source ring
+sqe->file_index	fixed file slot in destination ring
+
+IORING_OP_MSG_RING is extended to take a command argument in sqe->addr.
+If set to zero (or IORING_MSG_DATA), it sends just a message like before.
+If set to IORING_MSG_SEND_FD, a fixed file descriptor is sent according
+to the above arguments.
+
+Two common use cases for this are:
+
+1) Server needs to be shutdown or restarted, pass file descriptors to
+   another onei
+
+2) Backend is split, and one accepts connections, while others then get
+  the fd passed and handle the actual connection.
+
+Both of those are classic SCM_RIGHTS use cases, and it's not possible to
+support them with direct descriptors today.
+
+By default, this will post a CQE to the target ring, similarly to how
+IORING_MSG_DATA does it. If IORING_MSG_RING_CQE_SKIP is set, no message
+is posted to the target ring. The issuer is expected to notify the
+receiver side separately.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/filetable.c | 72 +++++++++++++++++++++++++++++++++-----------
- io_uring/filetable.h |  3 ++
- io_uring/openclose.c | 35 +++------------------
- io_uring/openclose.h |  2 +-
- io_uring/rsrc.c      |  2 +-
- 5 files changed, 63 insertions(+), 51 deletions(-)
+ include/uapi/linux/io_uring.h |  17 +++++
+ io_uring/msg_ring.c           | 130 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 140 insertions(+), 7 deletions(-)
 
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index 534e1a3c625d..abaa5ba7f655 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -58,11 +58,10 @@ void io_free_file_tables(struct io_file_table *table)
- 	table->bitmap = NULL;
- }
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 8715f0942ec2..15e54e633ee2 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -47,6 +47,7 @@ struct io_uring_sqe {
+ 		__u32		unlink_flags;
+ 		__u32		hardlink_flags;
+ 		__u32		xattr_flags;
++		__u32		msg_ring_flags;
+ 	};
+ 	__u64	user_data;	/* data to be passed back at completion time */
+ 	/* pack this to avoid bogus arm OABI complaints */
+@@ -264,6 +265,22 @@ enum io_uring_op {
+  */
+ #define IORING_ACCEPT_MULTISHOT	(1U << 0)
  
--static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
--				 unsigned int issue_flags, u32 slot_index)
-+static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
-+				 u32 slot_index)
- 	__must_hold(&req->ctx->uring_lock)
- {
--	struct io_ring_ctx *ctx = req->ctx;
- 	bool needs_switch = false;
- 	struct io_fixed_file *file_slot;
- 	int ret;
-@@ -108,6 +107,26 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
- 	return ret;
- }
- 
-+int __io_fixed_fd_install(struct io_ring_ctx *ctx, struct file *file,
-+			  unsigned int file_slot)
-+{
-+	bool alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
-+	int ret;
++/*
++ * IORING_OP_MSG_RING command types, stored in sqe->addr
++ */
++enum {
++	IORING_MSG_DATA,	/* pass sqe->len as 'res' and off as user_data */
++	IORING_MSG_SEND_FD,	/* send a registered fd to another ring */
++};
 +
-+	if (alloc_slot) {
-+		ret = io_file_bitmap_get(ctx);
-+		if (unlikely(ret < 0))
-+			return ret;
-+		file_slot = ret;
-+	} else {
-+		file_slot--;
++/*
++ * IORING_OP_MSG_RING flags (sqe->msg_ring_flags)
++ *
++ * IORING_MSG_RING_CQE_SKIP	Don't post a CQE to the target ring. Not
++ *				applicable for IORING_MSG_DATA, obviously.
++ */
++#define IORING_MSG_RING_CQE_SKIP	(1U << 0)
++
+ /*
+  * IO completion data structure (Completion Queue Entry)
+  */
+diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+index b02be2349652..939205b30c8b 100644
+--- a/io_uring/msg_ring.c
++++ b/io_uring/msg_ring.c
+@@ -3,46 +3,162 @@
+ #include <linux/errno.h>
+ #include <linux/file.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ #include <linux/io_uring.h>
+ 
+ #include <uapi/linux/io_uring.h>
+ 
+ #include "io_uring.h"
++#include "rsrc.h"
++#include "filetable.h"
+ #include "msg_ring.h"
+ 
+ struct io_msg {
+ 	struct file			*file;
+ 	u64 user_data;
+ 	u32 len;
++	u32 cmd;
++	u32 src_fd;
++	u32 dst_fd;
++	u32 flags;
+ };
+ 
++static int io_msg_ring_data(struct io_kiocb *req)
++{
++	struct io_ring_ctx *target_ctx = req->file->private_data;
++	struct io_msg *msg = io_kiocb_to_cmd(req);
++
++	if (msg->src_fd || msg->dst_fd || msg->flags)
++		return -EINVAL;
++
++	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
++		return 0;
++
++	return -EOVERFLOW;
++}
++
++static void io_double_unlock_ctx(struct io_ring_ctx *ctx,
++				 struct io_ring_ctx *octx,
++				 unsigned int issue_flags)
++{
++	if (issue_flags & IO_URING_F_UNLOCKED)
++		mutex_unlock(&ctx->uring_lock);
++	mutex_unlock(&octx->uring_lock);
++}
++
++static int io_double_lock_ctx(struct io_ring_ctx *ctx,
++			      struct io_ring_ctx *octx,
++			      unsigned int issue_flags)
++{
++	/*
++	 * To ensure proper ordering between the two ctxs, we can only
++	 * attempt a trylock on the target. If that fails and we already have
++	 * the source ctx lock, punt to io-wq.
++	 */
++	if (!(issue_flags & IO_URING_F_UNLOCKED)) {
++		if (!mutex_trylock(&octx->uring_lock))
++			return -EAGAIN;
++		return 0;
 +	}
 +
-+	ret = io_install_fixed_file(ctx, file, file_slot);
-+	if (!ret && alloc_slot)
-+		ret = file_slot;
-+	return ret;
-+}
- /*
-  * Note when io_fixed_fd_install() returns error value, it will ensure
-  * fput() is called correspondingly.
-@@ -115,27 +134,44 @@ static int io_install_fixed_file(struct io_kiocb *req, struct file *file,
- int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
- 			struct file *file, unsigned int file_slot)
- {
--	bool alloc_slot = file_slot == IORING_FILE_INDEX_ALLOC;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int ret;
- 
- 	io_ring_submit_lock(ctx, issue_flags);
--
--	if (alloc_slot) {
--		ret = io_file_bitmap_get(ctx);
--		if (unlikely(ret < 0))
--			goto err;
--		file_slot = ret;
--	} else {
--		file_slot--;
--	}
--
--	ret = io_install_fixed_file(req, file, issue_flags, file_slot);
--	if (!ret && alloc_slot)
--		ret = file_slot;
--err:
-+	ret = __io_fixed_fd_install(ctx, file, file_slot);
- 	io_ring_submit_unlock(ctx, issue_flags);
++	/* Always grab smallest value ctx first. We know ctx != octx. */
++	if (ctx < octx) {
++		mutex_lock(&ctx->uring_lock);
++		mutex_lock(&octx->uring_lock);
++	} else {
++		mutex_lock(&octx->uring_lock);
++		mutex_lock(&ctx->uring_lock);
++	}
 +
- 	if (unlikely(ret < 0))
- 		fput(file);
- 	return ret;
- }
-+
-+int io_fixed_fd_remove(struct io_ring_ctx *ctx, unsigned int offset)
-+{
-+	struct io_fixed_file *file_slot;
-+	struct file *file;
-+	int ret;
-+
-+	if (unlikely(!ctx->file_data))
-+		return -ENXIO;
-+	if (offset >= ctx->nr_user_files)
-+		return -EINVAL;
-+	ret = io_rsrc_node_switch_start(ctx);
-+	if (ret)
-+		return ret;
-+
-+	offset = array_index_nospec(offset, ctx->nr_user_files);
-+	file_slot = io_fixed_file_slot(&ctx->file_table, offset);
-+	if (!file_slot->file_ptr)
-+		return -EBADF;
-+
-+	file = (struct file *)(file_slot->file_ptr & FFS_MASK);
-+	ret = io_queue_rsrc_removal(ctx->file_data, offset, ctx->rsrc_node, file);
-+	if (ret)
-+		return ret;
-+
-+	file_slot->file_ptr = 0;
-+	io_file_bitmap_clear(&ctx->file_table, offset);
-+	io_rsrc_node_switch(ctx, ctx->file_data);
 +	return 0;
 +}
-diff --git a/io_uring/filetable.h b/io_uring/filetable.h
-index fb5a274c08ff..79eb50c1980e 100644
---- a/io_uring/filetable.h
-+++ b/io_uring/filetable.h
-@@ -29,6 +29,9 @@ void io_free_file_tables(struct io_file_table *table);
++
++static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
++{
++	struct io_ring_ctx *target_ctx = req->file->private_data;
++	struct io_msg *msg = io_kiocb_to_cmd(req);
++	struct io_ring_ctx *ctx = req->ctx;
++	unsigned long file_ptr;
++	struct file *src_file;
++	int ret;
++
++	if (target_ctx == ctx)
++		return -EINVAL;
++
++	ret = io_double_lock_ctx(ctx, target_ctx, issue_flags);
++	if (unlikely(ret))
++		return ret;
++
++	ret = -EBADF;
++	if (unlikely(msg->src_fd >= ctx->nr_user_files))
++		goto out_unlock;
++
++	msg->src_fd = array_index_nospec(msg->src_fd, ctx->nr_user_files);
++	file_ptr = io_fixed_file_slot(&ctx->file_table, msg->src_fd)->file_ptr;
++	src_file = (struct file *) (file_ptr & FFS_MASK);
++	get_file(src_file);
++
++	ret = __io_fixed_fd_install(target_ctx, src_file, msg->dst_fd);
++	if (ret < 0) {
++		fput(src_file);
++		goto out_unlock;
++	}
++
++	if (msg->flags & IORING_MSG_RING_CQE_SKIP)
++		goto out_unlock;
++
++	/*
++	 * If this fails, the target still received the file descriptor but
++	 * wasn't notified of the fact. This means that if this request
++	 * completes with -EOVERFLOW, then the sender must ensure that a
++	 * later IORING_OP_MSG_RING delivers the message.
++	 */
++	if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
++		ret = -EOVERFLOW;
++out_unlock:
++	io_double_unlock_ctx(ctx, target_ctx, issue_flags);
++	return ret;
++}
++
+ int io_msg_ring_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_msg *msg = io_kiocb_to_cmd(req);
  
- int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
- 			struct file *file, unsigned int file_slot);
-+int __io_fixed_fd_install(struct io_ring_ctx *ctx, struct file *file,
-+				unsigned int file_slot);
-+int io_fixed_fd_remove(struct io_ring_ctx *ctx, unsigned int offset);
+-	if (unlikely(sqe->addr || sqe->rw_flags || sqe->splice_fd_in ||
+-		     sqe->buf_index || sqe->personality))
++	if (unlikely(sqe->buf_index || sqe->personality))
+ 		return -EINVAL;
  
- unsigned int io_file_get_flags(struct file *file);
- 
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index 099a5ec84dfd..d1818ec9169b 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -173,42 +173,15 @@ void io_open_cleanup(struct io_kiocb *req)
- 		putname(open->filename);
+ 	msg->user_data = READ_ONCE(sqe->off);
+ 	msg->len = READ_ONCE(sqe->len);
++	msg->cmd = READ_ONCE(sqe->addr);
++	msg->src_fd = READ_ONCE(sqe->addr3);
++	msg->dst_fd = READ_ONCE(sqe->file_index);
++	msg->flags = READ_ONCE(sqe->msg_ring_flags);
++	if (msg->flags & ~IORING_MSG_RING_CQE_SKIP)
++		return -EINVAL;
++
+ 	return 0;
  }
  
--int __io_close_fixed(struct io_kiocb *req, unsigned int issue_flags,
-+int __io_close_fixed(struct io_ring_ctx *ctx, unsigned int issue_flags,
- 		     unsigned int offset)
+ int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
  {
--	struct io_ring_ctx *ctx = req->ctx;
--	struct io_fixed_file *file_slot;
--	struct file *file;
+ 	struct io_msg *msg = io_kiocb_to_cmd(req);
+-	struct io_ring_ctx *target_ctx;
  	int ret;
  
- 	io_ring_submit_lock(ctx, issue_flags);
--	ret = -ENXIO;
--	if (unlikely(!ctx->file_data))
--		goto out;
--	ret = -EINVAL;
--	if (offset >= ctx->nr_user_files)
--		goto out;
--	ret = io_rsrc_node_switch_start(ctx);
--	if (ret)
--		goto out;
--
--	offset = array_index_nospec(offset, ctx->nr_user_files);
--	file_slot = io_fixed_file_slot(&ctx->file_table, offset);
--	ret = -EBADF;
--	if (!file_slot->file_ptr)
--		goto out;
--
--	file = (struct file *)(file_slot->file_ptr & FFS_MASK);
--	ret = io_queue_rsrc_removal(ctx->file_data, offset, ctx->rsrc_node, file);
--	if (ret)
--		goto out;
--
--	file_slot->file_ptr = 0;
--	io_file_bitmap_clear(&ctx->file_table, offset);
--	io_rsrc_node_switch(ctx, ctx->file_data);
--	ret = 0;
--out:
-+	ret = io_fixed_fd_remove(ctx, offset);
- 	io_ring_submit_unlock(ctx, issue_flags);
-+
- 	return ret;
- }
+ 	ret = -EBADFD;
+ 	if (!io_is_uring_fops(req->file))
+ 		goto done;
  
-@@ -216,7 +189,7 @@ static inline int io_close_fixed(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_close *close = io_kiocb_to_cmd(req);
+-	ret = -EOVERFLOW;
+-	target_ctx = req->file->private_data;
+-	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
+-		ret = 0;
++	switch (msg->cmd) {
++	case IORING_MSG_DATA:
++		ret = io_msg_ring_data(req);
++		break;
++	case IORING_MSG_SEND_FD:
++		ret = io_msg_send_fd(req, issue_flags);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
  
--	return __io_close_fixed(req, issue_flags, close->file_slot - 1);
-+	return __io_close_fixed(req->ctx, issue_flags, close->file_slot - 1);
- }
- 
- int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-diff --git a/io_uring/openclose.h b/io_uring/openclose.h
-index 9f578f3fad87..4b1c28d3a66c 100644
---- a/io_uring/openclose.h
-+++ b/io_uring/openclose.h
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
--int __io_close_fixed(struct io_kiocb *req, unsigned int issue_flags,
-+int __io_close_fixed(struct io_ring_ctx *ctx, unsigned int issue_flags,
- 		     unsigned int offset);
- 
- int io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 3a2a5ef263f0..c49217f9cfc6 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -700,7 +700,7 @@ static int io_files_update_with_index_alloc(struct io_kiocb *req,
- 		if (ret < 0)
- 			break;
- 		if (copy_to_user(&fds[done], &ret, sizeof(ret))) {
--			__io_close_fixed(req, issue_flags, ret);
-+			__io_close_fixed(req->ctx, issue_flags, ret);
- 			ret = -EFAULT;
- 			break;
- 		}
+ done:
+ 	if (ret < 0)
 -- 
 2.35.1
 

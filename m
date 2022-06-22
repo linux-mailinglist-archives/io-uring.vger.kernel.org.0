@@ -2,88 +2,206 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A4485540F4
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 05:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 900B9554289
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 08:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243534AbiFVDg2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Jun 2022 23:36:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52196 "EHLO
+        id S234254AbiFVF4M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jun 2022 01:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbiFVDg1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Jun 2022 23:36:27 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A5028985
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 20:36:26 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id l6so6076781plg.11
-        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 20:36:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=Gw/pWs/pSXokXmtxlmDuvywxLcNtKYgYEvrvonVrDi8=;
-        b=aEBEAcF7xvraUxywRbe8B+UCxhVNt0TzIpzz8D//sjdOrrcA16z4dwmBuMRwPboO0b
-         sLWUkaILFApP33XQ9J4DnXbnlp2wO15fznF7X4O5asV4zzsMWqUxKa4ZD1kFq9ilbPle
-         ntBH1urrBjNe2fwVFnJX1DVieR1MoqmEa8w6INEtgzQomzVcUWP6ruO2sJCFOF1gCLX9
-         DvqGRQC8/4NgpWxmzEKTfkGBPU5WWFgAoyU35J/iLDrMUbt97CDX6AQYaCa1e9vBf9C0
-         ghwzctuczNk3uq4pczt9qH2484CumqYx3o7DznZnlUQxnWwEZjjIHfck0DDUJ65mWA95
-         8nSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Gw/pWs/pSXokXmtxlmDuvywxLcNtKYgYEvrvonVrDi8=;
-        b=V+/bX0JVx48Zi+c/hfj3fwiSnRSJVua3jd0YR0WzEPJ/9TQvOfGKl5qRRR4dhnxlrw
-         hvBJ2jixHubpxUHAfW+o69XHTLlH1+bewv4NqX91nEVbYCKH1QzwLIY/y7rMaczphfaX
-         nxKwPjCeRoG0eY/5Jc1/L4QkTmCjtgZjB/ZDSTlsdXgXBhu5YBoDg1d1FD7fZEGJqXC8
-         nfS7+BLAcoWrd6mVsn/ned32MpBOTYSUOm2GjK4nZqYrQOMEsOGpsNSUM7I3/EYqipOZ
-         hHhkY+1g3Anc7ucWLUynlqXCVr3yXLE5eiyD9SDn2/elbaMnoYs4b+S/g2lzaySpTAEH
-         Yf1w==
-X-Gm-Message-State: AJIora/SzRKGn/lYQv4N55++2s7A1VUQzn0GoclaAADSTZrUOStCApBs
-        X87CeS+ioyTWCpjWK+wGBH3hD838NT+cdw==
-X-Google-Smtp-Source: AGRyM1ufHuKPRHfn8sar+1AI/msgK0kpOQ+yOaRTX1XNzTbFkIRhF9Twk2tTtVQGzTpCCX6j4Mo5ig==
-X-Received: by 2002:a17:90a:a882:b0:1ec:918a:150d with SMTP id h2-20020a17090aa88200b001ec918a150dmr21105168pjq.137.1655868985714;
-        Tue, 21 Jun 2022 20:36:25 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ix5-20020a170902f80500b00168eab11f67sm11507059plb.94.2022.06.21.20.36.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jun 2022 20:36:25 -0700 (PDT)
-Message-ID: <191dde06-2c92-da8c-9e92-b31edebb3ea5@kernel.dk>
-Date:   Tue, 21 Jun 2022 21:36:24 -0600
+        with ESMTP id S230438AbiFVF4L (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 01:56:11 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E30340F0
+        for <io-uring@vger.kernel.org>; Tue, 21 Jun 2022 22:56:08 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1655877366;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=TCYJR7DIdxbPgke571XlZQN3/92yaoDkEpr8RGVyuac=;
+        b=TpvksRRNug0T5vjCYE0T69j6pURSC+Zo68r2baKD0Ehdbvz7y4fp56Mp5LCa1M4cZMBwno
+        6ssc4XJv/5KIZAumjoAhbidjSWUmfC9EKH13B0STiyjkHQnB0E3kMP3AvTVVfyZGbNUY4y
+        Rk0AHmkxPWIAoNPzrbX7jDqfBX+Bojw=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] io_uring: kbuf: kill __io_kbuf_recycle()
+Date:   Wed, 22 Jun 2022 13:55:51 +0800
+Message-Id: <20220622055551.642370-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 5.19 0/3] poll fixes
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1655852245.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <cover.1655852245.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/21/22 5:00 PM, Pavel Begunkov wrote:
-> Several poll and apoll fixes for 5.19. I don't know if problems in 2-3
-> were occuring prior to "io_uring: poll rework", but let's at least
-> back port it to that point.
-> 
-> I'll also be sending another clean up series for 5.20.
+From: Hao Xu <howeyxu@tencent.com>
 
-Looks good to me, a few comments in the patches. As mentioned privately,
-I think we should write a dummy char driver that allows us to exercise
-all types of poll (single, poll, pollfree, etc) and be able to trigger
-the error paths with it too. I'll give that a shot. We can probably
-just make it a debugfs file or something like that, and have it be
-configurable too as a debug option for test purposes.
+__io_kbuf_recycle() is only called in io_kbuf_recycle(). Kill it and
+tweak the code so that the legacy pbuf and ring pbuf code become clear
 
+Signed-off-by: Hao Xu <howeyxu@tencent.com>
+---
+ io_uring/kbuf.c | 71 +++++++++++++++++++++++++++++--------------------
+ io_uring/kbuf.h | 21 ++++++---------
+ 2 files changed, 50 insertions(+), 42 deletions(-)
+
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index e4ee11cd337c..4b7f2aa99e38 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -37,36 +37,30 @@ static inline struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
+ 	return xa_load(&ctx->io_bl_xa, bgid);
+ }
+ 
+-void __io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
++static int io_buffer_add_list(struct io_ring_ctx *ctx,
++			      struct io_buffer_list *bl, unsigned int bgid)
++{
++	bl->bgid = bgid;
++	if (bgid < BGID_ARRAY)
++		return 0;
++
++	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
++}
++
++void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_buffer_list *bl;
+ 	struct io_buffer *buf;
+ 
+ 	/*
+-	 * We don't need to recycle for REQ_F_BUFFER_RING, we can just clear
+-	 * the flag and hence ensure that bl->head doesn't get incremented.
+-	 * If the tail has already been incremented, hang on to it.
++	 * For legacy provided buffer mode, don't recycle if we already did
++	 * IO to this buffer. For ring-mapped provided buffer mode, we should
++	 * increment ring->head to explicitly monopolize the buffer to avoid
++	 * multiple use.
+ 	 */
+-	if (req->flags & REQ_F_BUFFER_RING) {
+-		if (req->buf_list) {
+-			if (req->flags & REQ_F_PARTIAL_IO) {
+-				/*
+-				 * If we end up here, then the io_uring_lock has
+-				 * been kept held since we retrieved the buffer.
+-				 * For the io-wq case, we already cleared
+-				 * req->buf_list when the buffer was retrieved,
+-				 * hence it cannot be set here for that case.
+-				 */
+-				req->buf_list->head++;
+-				req->buf_list = NULL;
+-			} else {
+-				req->buf_index = req->buf_list->bgid;
+-				req->flags &= ~REQ_F_BUFFER_RING;
+-			}
+-		}
++	if (req->flags & REQ_F_PARTIAL_IO)
+ 		return;
+-	}
+ 
+ 	io_ring_submit_lock(ctx, issue_flags);
+ 
+@@ -77,16 +71,35 @@ void __io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+ 	req->buf_index = buf->bgid;
+ 
+ 	io_ring_submit_unlock(ctx, issue_flags);
++	return;
+ }
+ 
+-static int io_buffer_add_list(struct io_ring_ctx *ctx,
+-			      struct io_buffer_list *bl, unsigned int bgid)
++void io_kbuf_recycle_ring(struct io_kiocb *req)
+ {
+-	bl->bgid = bgid;
+-	if (bgid < BGID_ARRAY)
+-		return 0;
+-
+-	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
++	/*
++	 * We don't need to recycle for REQ_F_BUFFER_RING, we can just clear
++	 * the flag and hence ensure that bl->head doesn't get incremented.
++	 * If the tail has already been incremented, hang on to it.
++	 * The exception is partial io, that case we should increment bl->head
++	 * to monopolize the buffer.
++	 */
++	if (req->buf_list) {
++		if (req->flags & REQ_F_PARTIAL_IO) {
++			/*
++			 * If we end up here, then the io_uring_lock has
++			 * been kept held since we retrieved the buffer.
++			 * For the io-wq case, we already cleared
++			 * req->buf_list when the buffer was retrieved,
++			 * hence it cannot be set here for that case.
++			 */
++			req->buf_list->head++;
++			req->buf_list = NULL;
++		} else {
++			req->buf_index = req->buf_list->bgid;
++			req->flags &= ~REQ_F_BUFFER_RING;
++		}
++	}
++	return;
+ }
+ 
+ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags)
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index 5da3d4039aed..b5a89ffadf31 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -35,7 +35,6 @@ struct io_buffer {
+ 
+ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+ 			      unsigned int issue_flags);
+-void __io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags);
+ void io_destroy_buffers(struct io_ring_ctx *ctx);
+ 
+ int io_remove_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+@@ -49,6 +48,9 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
+ 
+ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
+ 
++void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
++void io_kbuf_recycle_ring(struct io_kiocb *req);
++
+ static inline bool io_do_buffer_select(struct io_kiocb *req)
+ {
+ 	if (!(req->flags & REQ_F_BUFFER_SELECT))
+@@ -58,18 +60,11 @@ static inline bool io_do_buffer_select(struct io_kiocb *req)
+ 
+ static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+ {
+-	if (!(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)))
+-		return;
+-	/*
+-	 * For legacy provided buffer mode, don't recycle if we already did
+-	 * IO to this buffer. For ring-mapped provided buffer mode, we should
+-	 * increment ring->head to explicitly monopolize the buffer to avoid
+-	 * multiple use.
+-	 */
+-	if ((req->flags & REQ_F_BUFFER_SELECTED) &&
+-	    (req->flags & REQ_F_PARTIAL_IO))
+-		return;
+-	__io_kbuf_recycle(req, issue_flags);
++	if (req->flags & REQ_F_BUFFER_SELECTED)
++		io_kbuf_recycle_legacy(req, issue_flags);
++
++	if (req->flags & REQ_F_BUFFER_RING)
++		io_kbuf_recycle_ring(req);
+ }
+ 
+ static inline unsigned int __io_put_kbuf_list(struct io_kiocb *req,
 -- 
-Jens Axboe
+2.25.1
 

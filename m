@@ -2,54 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF66554B85
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 15:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F80554B86
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jun 2022 15:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355344AbiFVNk6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jun 2022 09:40:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60104 "EHLO
+        id S240412AbiFVNk7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jun 2022 09:40:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348395AbiFVNk4 (ORCPT
+        with ESMTP id S232608AbiFVNk4 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 09:40:56 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7550237001
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829273702A
         for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 06:40:55 -0700 (PDT)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25LN961u010960
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25MBv6hS021981
         for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 06:40:55 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=bmPHvTjl4RotnIUNL794zwd+hTGmYmt9ko27Je6TCsI=;
- b=KSkAv9aw719P/b0V8P7J5wdTKS2JkbYX+MAvM3n97z0n6lgnW5jRhRlXCmwuIs8uMl1I
- Yafpvy1699ZXeJjIo+FGPrx/WDk/b7B65Q3nE7UDmhCSt6vuIbjng306RvFRKpDuB9Gq
- +k0xWjMbxaJs8sTz5sDHF+cAVV1rtRfSN18= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gtveudhaf-4
+ : date : message-id : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=Ol4mipg/P/3QIsNogv5iBPOSWgq9AwtSKFHifgKXD7k=;
+ b=f+NtA84MpMKneTKYuhbBjsMU6vHAMlO8Z/8CcUdKXktHb7jdHade60p0RtiSThoWvISZ
+ E/1EGrEQLiKnCoAG86D0jSjC1WWpYzmt/tg3XwWdR9ok7V8tMqWP2p0tnLZ4an/YRIeL
+ ddufGyO9h0eb34IcAkCF+AlcfDebZz7EjPE= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gv2nagjks-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 06:40:54 -0700
-Received: from twshared17349.03.ash7.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 06:40:55 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 22 Jun 2022 06:40:48 -0700
+ 15.1.2375.28; Wed, 22 Jun 2022 06:40:54 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id C30742013A9E; Wed, 22 Jun 2022 06:40:30 -0700 (PDT)
+        id D80712013A9F; Wed, 22 Jun 2022 06:40:30 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
         <io-uring@vger.kernel.org>
 CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH v2 for-next 5/8] io_uring: batch task_work
-Date:   Wed, 22 Jun 2022 06:40:25 -0700
-Message-ID: <20220622134028.2013417-6-dylany@fb.com>
+Subject: [PATCH v2 for-next 6/8] io_uring: move io_uring_get_opcode out of TP_printk
+Date:   Wed, 22 Jun 2022 06:40:26 -0700
+Message-ID: <20220622134028.2013417-7-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220622134028.2013417-1-dylany@fb.com>
 References: <20220622134028.2013417-1-dylany@fb.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: gvdUplRREJTri-_YL-z2pNxHxZzHA8bZ
-X-Proofpoint-GUID: gvdUplRREJTri-_YL-z2pNxHxZzHA8bZ
+X-Proofpoint-ORIG-GUID: iJqCeCGMrPsGoyd0qzxcSI1kxaBuRE44
+X-Proofpoint-GUID: iJqCeCGMrPsGoyd0qzxcSI1kxaBuRE44
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-06-22_04,2022-06-22_03,2022-06-22_01
@@ -63,68 +64,199 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Batching task work up is an important performance optimisation, as
-task_work_add is expensive.
+The TP_printk macro's are not supposed to use custom code ([1]) or else
+tools such as perf cannot use these events.
 
-In order to keep the semantics replace the task_list with a fake node
-while processing the old list, and then do a cmpxchg at the end to see if
-there is more work.
+Convert the opcode string representation to use the __string wiring that
+the event framework provides ([2]).
 
+[1]: https://lwn.net/Articles/379903/
+[2]: https://lwn.net/Articles/381064/
+
+Fixes: 033b87d2 ("io_uring: use the text representation of ops in trace")
 Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- io_uring/io_uring.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ include/trace/events/io_uring.h | 42 +++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index eb29e3f7da5c..19bd7d5ec90c 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -986,11 +986,11 @@ static void ctx_flush_and_put(struct io_ring_ctx *c=
-tx, bool *locked)
- 	percpu_ref_put(&ctx->refs);
- }
+diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_urin=
+g.h
+index 5635912e1013..3bc8dec9acaa 100644
+--- a/include/trace/events/io_uring.h
++++ b/include/trace/events/io_uring.h
+@@ -151,6 +151,8 @@ TRACE_EVENT(io_uring_queue_async_work,
+ 		__field(  unsigned int,			flags		)
+ 		__field(  struct io_wq_work *,		work		)
+ 		__field(  int,				rw		)
++
++		__string( op_str, io_uring_get_opcode(req->opcode)	)
+ 	),
 =20
--
- static void handle_tw_list(struct llist_node *node,
--			   struct io_ring_ctx **ctx, bool *locked)
-+			   struct io_ring_ctx **ctx, bool *locked,
-+			   struct llist_node *last)
- {
--	do {
-+	while (node !=3D last) {
- 		struct llist_node *next =3D node->next;
- 		struct io_kiocb *req =3D container_of(node, struct io_kiocb,
- 						    io_task_work.node);
-@@ -1006,7 +1006,7 @@ static void handle_tw_list(struct llist_node *node,
- 		}
- 		req->io_task_work.func(req, locked);
- 		node =3D next;
--	} while (node);
-+	}
- }
+ 	TP_fast_assign(
+@@ -161,11 +163,13 @@ TRACE_EVENT(io_uring_queue_async_work,
+ 		__entry->opcode		=3D req->opcode;
+ 		__entry->work		=3D &req->work;
+ 		__entry->rw		=3D rw;
++
++		__assign_str(op_str, io_uring_get_opcode(req->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s, flags 0x%x, =
+%s queue, work %p",
+ 		__entry->ctx, __entry->req, __entry->user_data,
+-		io_uring_get_opcode(__entry->opcode),
++		__get_str(op_str),
+ 		__entry->flags, __entry->rw ? "hashed" : "normal", __entry->work)
+ );
+=20
+@@ -188,6 +192,8 @@ TRACE_EVENT(io_uring_defer,
+ 		__field(  void *,		req	)
+ 		__field(  unsigned long long,	data	)
+ 		__field(  u8,			opcode	)
++
++		__string( op_str, io_uring_get_opcode(req->opcode) )
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -195,11 +201,13 @@ TRACE_EVENT(io_uring_defer,
+ 		__entry->req	=3D req;
+ 		__entry->data	=3D req->cqe.user_data;
+ 		__entry->opcode	=3D req->opcode;
++
++		__assign_str(op_str, io_uring_get_opcode(req->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s",
+ 		__entry->ctx, __entry->req, __entry->data,
+-		io_uring_get_opcode(__entry->opcode))
++		__get_str(op_str))
+ );
 =20
  /**
-@@ -1045,11 +1045,15 @@ void tctx_task_work(struct callback_head *cb)
- 	struct io_ring_ctx *ctx =3D NULL;
- 	struct io_uring_task *tctx =3D container_of(cb, struct io_uring_task,
- 						  task_work);
--	struct llist_node *node =3D llist_del_all(&tctx->task_list);
--
--	if (node) {
--		handle_tw_list(node, &ctx, &uring_locked);
--		cond_resched();
-+	struct llist_node fake =3D {};
-+	struct llist_node *node =3D io_llist_xchg(&tctx->task_list, &fake);
+@@ -284,6 +292,8 @@ TRACE_EVENT(io_uring_fail_link,
+ 		__field(  unsigned long long,	user_data	)
+ 		__field(  u8,			opcode		)
+ 		__field(  void *,		link		)
 +
-+	handle_tw_list(node, &ctx, &uring_locked, NULL);
-+	node =3D io_llist_cmpxchg(&tctx->task_list, &fake, NULL);
-+	while (node !=3D &fake) {
-+		node =3D io_llist_xchg(&tctx->task_list, &fake);
-+		handle_tw_list(node, &ctx, &uring_locked, &fake);
-+		node =3D io_llist_cmpxchg(&tctx->task_list, &fake, NULL);
- 	}
++		__string( op_str, io_uring_get_opcode(req->opcode) )
+ 	),
 =20
- 	ctx_flush_and_put(ctx, &uring_locked);
+ 	TP_fast_assign(
+@@ -292,11 +302,13 @@ TRACE_EVENT(io_uring_fail_link,
+ 		__entry->user_data	=3D req->cqe.user_data;
+ 		__entry->opcode		=3D req->opcode;
+ 		__entry->link		=3D link;
++
++		__assign_str(op_str, io_uring_get_opcode(req->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, request %p, user_data 0x%llx, opcode %s, link %p",
+ 		__entry->ctx, __entry->req, __entry->user_data,
+-		io_uring_get_opcode(__entry->opcode), __entry->link)
++		__get_str(op_str), __entry->link)
+ );
+=20
+ /**
+@@ -370,6 +382,8 @@ TRACE_EVENT(io_uring_submit_sqe,
+ 		__field(  u32,			flags		)
+ 		__field(  bool,			force_nonblock	)
+ 		__field(  bool,			sq_thread	)
++
++		__string( op_str, io_uring_get_opcode(req->opcode) )
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -380,11 +394,13 @@ TRACE_EVENT(io_uring_submit_sqe,
+ 		__entry->flags		=3D req->flags;
+ 		__entry->force_nonblock	=3D force_nonblock;
+ 		__entry->sq_thread	=3D req->ctx->flags & IORING_SETUP_SQPOLL;
++
++		__assign_str(op_str, io_uring_get_opcode(req->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, flags 0x%x, "
+ 		  "non block %d, sq_thread %d", __entry->ctx, __entry->req,
+-		  __entry->user_data, io_uring_get_opcode(__entry->opcode),
++		  __entry->user_data, __get_str(op_str),
+ 		  __entry->flags, __entry->force_nonblock, __entry->sq_thread)
+ );
+=20
+@@ -411,6 +427,8 @@ TRACE_EVENT(io_uring_poll_arm,
+ 		__field(  u8,			opcode		)
+ 		__field(  int,			mask		)
+ 		__field(  int,			events		)
++
++		__string( op_str, io_uring_get_opcode(req->opcode) )
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -420,11 +438,13 @@ TRACE_EVENT(io_uring_poll_arm,
+ 		__entry->opcode		=3D req->opcode;
+ 		__entry->mask		=3D mask;
+ 		__entry->events		=3D events;
++
++		__assign_str(op_str, io_uring_get_opcode(req->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, mask 0x%x, event=
+s 0x%x",
+ 		  __entry->ctx, __entry->req, __entry->user_data,
+-		  io_uring_get_opcode(__entry->opcode),
++		  __get_str(op_str),
+ 		  __entry->mask, __entry->events)
+ );
+=20
+@@ -447,6 +467,8 @@ TRACE_EVENT(io_uring_task_add,
+ 		__field(  unsigned long long,	user_data	)
+ 		__field(  u8,			opcode		)
+ 		__field(  int,			mask		)
++
++		__string( op_str, io_uring_get_opcode(req->opcode) )
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -455,11 +477,13 @@ TRACE_EVENT(io_uring_task_add,
+ 		__entry->user_data	=3D req->cqe.user_data;
+ 		__entry->opcode		=3D req->opcode;
+ 		__entry->mask		=3D mask;
++
++		__assign_str(op_str, io_uring_get_opcode(req->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, mask %x",
+ 		__entry->ctx, __entry->req, __entry->user_data,
+-		io_uring_get_opcode(__entry->opcode),
++		__get_str(op_str),
+ 		__entry->mask)
+ );
+=20
+@@ -495,6 +519,8 @@ TRACE_EVENT(io_uring_req_failed,
+ 		__field( u64,			pad1		)
+ 		__field( u64,			addr3		)
+ 		__field( int,			error		)
++
++		__string( op_str, io_uring_get_opcode(sqe->opcode) )
+ 	),
+=20
+ 	TP_fast_assign(
+@@ -514,6 +540,8 @@ TRACE_EVENT(io_uring_req_failed,
+ 		__entry->pad1		=3D sqe->__pad2[0];
+ 		__entry->addr3		=3D sqe->addr3;
+ 		__entry->error		=3D error;
++
++		__assign_str(op_str, io_uring_get_opcode(sqe->opcode));
+ 	),
+=20
+ 	TP_printk("ring %p, req %p, user_data 0x%llx, "
+@@ -522,7 +550,7 @@ TRACE_EVENT(io_uring_req_failed,
+ 		  "personality=3D%d, file_index=3D%d, pad=3D0x%llx, addr3=3D%llx, "
+ 		  "error=3D%d",
+ 		  __entry->ctx, __entry->req, __entry->user_data,
+-		  io_uring_get_opcode(__entry->opcode),
++		  __get_str(op_str),
+ 		  __entry->flags, __entry->ioprio,
+ 		  (unsigned long long)__entry->off,
+ 		  (unsigned long long) __entry->addr, __entry->len,
 --=20
 2.30.2
 

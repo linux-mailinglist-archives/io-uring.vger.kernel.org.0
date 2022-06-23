@@ -2,318 +2,124 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1073F556EEA
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 01:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00FE1556F72
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 02:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234047AbiFVXQT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Jun 2022 19:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34330 "EHLO
+        id S1359105AbiFWA3y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Jun 2022 20:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358418AbiFVXQS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 19:16:18 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 654E941F9A
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 16:16:17 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d17so8460947pfq.9
-        for <io-uring@vger.kernel.org>; Wed, 22 Jun 2022 16:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IVhYLA++CI2NZr1wuP4YODcUVvCchVXJmhT/DHeM2tU=;
-        b=bE3LNM8mjfIuESuZSokusucqj84plNRxXuIe8mog3AA5/gou+zMc2O9slQaz3OiflR
-         /HTkNKQ39aschVGWo8imqCtws4CzYpEQE0+xXhmhV0n/utsS90YnTTEcE2ntuBFZdKhV
-         cCrWsxO6TB19XN7UntA8As20E4ERmKD2PvUWaDGhsCADFnu1NylYfRZSqmDaaH00GFae
-         +66+eyB4eFYKXV1M4DNfiEz+mzXNv6yH0j+s3HB0sdmiSVTXL8bVPa+MFuu9vEeksPvQ
-         lZPsvY9JsVxII3bE020Y629niyQO91McOSd5B1K6WUVNlPSchNoLENlKkno5gmy+0jfX
-         S76w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IVhYLA++CI2NZr1wuP4YODcUVvCchVXJmhT/DHeM2tU=;
-        b=z0gP5v4/RB6gN++noHeiWD24hp9rZb9ca/SU8uOJYHhmfs24hea+Zcp7o2IZyDrhPA
-         1XBsVERYlaa4xyztlEGQkRBZAn1m+X4EjFOBG/UiaPujUD0lQdryJTmhJBmjt+lIt9x4
-         Yv+dxlnsO2mjqk9aIE6OUmpFV7XkdkpHS++vHKKyr+YsFkWEVVYbd97wra+tSVfF5DEe
-         Cl1RFnd8N3Iir3dahHFeYf6eQnb2+7i2Rn/5Fodq6gHorEP9jd0PwzkeZaFOuI0fms6E
-         pOzy6G6hEputCHTBnkHmQOu898ZCaT4B35vV/6085XoMb+UMUS+eF+OM21nolmqTCTZ7
-         CSSQ==
-X-Gm-Message-State: AJIora8rrFHWHk3zphjGTZulHlTSP3fC2QxTgEzYVwME+4Nu61YXROzQ
-        Yn18XgnXeXoIQn7j5JfAJSqB3zQ6L5I60g==
-X-Google-Smtp-Source: AGRyM1uroM3odinvz5FlInp4PxKOOLL5g0lYVaQywhAA9rf6ZzDjIOG96HkwQ7d2+mdhXaPCWhG2Sg==
-X-Received: by 2002:a63:3c58:0:b0:40c:83b6:1a4e with SMTP id i24-20020a633c58000000b0040c83b61a4emr5088224pgn.194.1655939776649;
-        Wed, 22 Jun 2022 16:16:16 -0700 (PDT)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2-20020a056a00198200b0051b9ecb53e6sm13947437pfl.105.2022.06.22.16.16.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 16:16:16 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, carter.li@eoitek.com, hao.xu@linux.dev,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/2] io_uring: add support for passing fixed file descriptors
-Date:   Wed, 22 Jun 2022 17:16:11 -0600
-Message-Id: <20220622231611.178300-3-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220622231611.178300-1-axboe@kernel.dk>
-References: <20220622231611.178300-1-axboe@kernel.dk>
+        with ESMTP id S233608AbiFWA3y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Jun 2022 20:29:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7F04162C;
+        Wed, 22 Jun 2022 17:29:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 27B7161BBB;
+        Thu, 23 Jun 2022 00:29:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDC5C34114;
+        Thu, 23 Jun 2022 00:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655944192;
+        bh=aAoFgHtWas++I53ocsvZ6Q17Zzsw1Rs+N4ahYVrgBOU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a8sEpVbYfYOXuyt0gsYxvuJoq7iiX7/sksHGJ38xs+6WfBhE86MzVoKM7PFB/Ip0q
+         OvvD66ubSx5e+JUYg9sUzWZUhnifs/KufGdnHmRnxPQqCFRS+DQea5ngdHULEsc7yP
+         WsV2p1GZipw5yMsgOE9Xm9oDpIFySdw+yDWMVr83W6kHvhP8IDdlb+yNNOeTms5/wy
+         Fcae6Ej2WgdZq8I3VA3YMREVMcpLlSHXN6u0pETkTl6Pur2vQOADfqER8M7uowT0dj
+         sJgnEQFTc+D5AexJ8nnHvxhDYPIZI+e7tlfWgJ+F5prD9DvpYoEvHg/Ng41tZ/0grP
+         U0iigj3pFrygg==
+Date:   Wed, 22 Jun 2022 17:29:52 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, kernel-team@fb.com, linux-xfs@vger.kernel.org,
+        io-uring@vger.kernel.org, shr@fb.com,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
+        hch@infradead.org, jack@suse.cz, willy@infradead.org
+Subject: Re: [PATCH v9 00/14] io-uring/xfs: support async buffered writes
+Message-ID: <YrO0AP4y3OGUjnXE@magnolia>
+References: <20220616212221.2024518-1-shr@fb.com>
+ <165593682792.161026.12974983413174964699.b4-ty@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <165593682792.161026.12974983413174964699.b4-ty@kernel.dk>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With IORING_OP_MSG_RING, one ring can send a message to another ring.
-Extend that support to also allow sending a fixed file descriptor to
-that ring, enabling one ring to pass a registered descriptor to another
-one.
+On Wed, Jun 22, 2022 at 04:27:07PM -0600, Jens Axboe wrote:
+> On Thu, 16 Jun 2022 14:22:07 -0700, Stefan Roesch wrote:
+> > This patch series adds support for async buffered writes when using both
+> > xfs and io-uring. Currently io-uring only supports buffered writes in the
+> > slow path, by processing them in the io workers. With this patch series it is
+> > now possible to support buffered writes in the fast path. To be able to use
+> > the fast path the required pages must be in the page cache, the required locks
+> > in xfs can be granted immediately and no additional blocks need to be read
+> > form disk.
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [01/14] mm: Move starting of background writeback into the main balancing loop
+>         commit: 29c36351d61fd08a2ed50a8028a7f752401dc88a
+> [02/14] mm: Move updates of dirty_exceeded into one place
+>         commit: a3fa4409eec3c094ad632ac1029094e061daf152
+> [03/14] mm: Add balance_dirty_pages_ratelimited_flags() function
+>         commit: 407619d2cef3b4d74565999a255a17cf5d559fa4
+> [04/14] iomap: Add flags parameter to iomap_page_create()
+>         commit: 49b5cd0830c1e9aa0f9a3717ac11a74ef23b9d4e
+> [05/14] iomap: Add async buffered write support
+>         commit: ccb885b4392143cea1bdbd8a0f35f0e6d909b114
+> [06/14] iomap: Return -EAGAIN from iomap_write_iter()
+>         commit: f0f9828d64393ea2ce87bd97f033051c8d7a337f
 
-Arguments are extended to pass in:
+I'm not sure /what/ happened here, but I never received the full V9
+series, and neither did lore:
 
-sqe->addr3	fixed file slot in source ring
-sqe->file_index	fixed file slot in destination ring
+https://lore.kernel.org/linux-fsdevel/165593682792.161026.12974983413174964699.b4-ty@kernel.dk/T/#t
 
-IORING_OP_MSG_RING is extended to take a command argument in sqe->addr.
-If set to zero (or IORING_MSG_DATA), it sends just a message like before.
-If set to IORING_MSG_SEND_FD, a fixed file descriptor is sent according
-to the above arguments.
+As it is, I already have my hands full trying to figure out why
+generic/522 reports file corruption after 20 minutes of running on
+vanilla 5.19-rc3, so I don't think I'm going to get to this for a while
+either.
 
-Two common use cases for this are:
+The v8 series looked all right to me, but ********* I hate how our
+development process relies on such unreliable **** tooling.  I don't
+think it's a /great/ idea to be pushing new code into -next when both
+the xfs and pagecache maintainers are too busy to read the whole thing
+through... but did hch actually RVB the whole thing prior to v9?
 
-1) Server needs to be shutdown or restarted, pass file descriptors to
-   another onei
+--D
 
-2) Backend is split, and one accepts connections, while others then get
-  the fd passed and handle the actual connection.
-
-Both of those are classic SCM_RIGHTS use cases, and it's not possible to
-support them with direct descriptors today.
-
-By default, this will post a CQE to the target ring, similarly to how
-IORING_MSG_DATA does it. If IORING_MSG_RING_CQE_SKIP is set, no message
-is posted to the target ring. The issuer is expected to notify the
-receiver side separately.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/uapi/linux/io_uring.h |  17 +++++
- io_uring/msg_ring.c           | 130 ++++++++++++++++++++++++++++++++--
- 2 files changed, 140 insertions(+), 7 deletions(-)
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 8715f0942ec2..15e54e633ee2 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -47,6 +47,7 @@ struct io_uring_sqe {
- 		__u32		unlink_flags;
- 		__u32		hardlink_flags;
- 		__u32		xattr_flags;
-+		__u32		msg_ring_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -264,6 +265,22 @@ enum io_uring_op {
-  */
- #define IORING_ACCEPT_MULTISHOT	(1U << 0)
- 
-+/*
-+ * IORING_OP_MSG_RING command types, stored in sqe->addr
-+ */
-+enum {
-+	IORING_MSG_DATA,	/* pass sqe->len as 'res' and off as user_data */
-+	IORING_MSG_SEND_FD,	/* send a registered fd to another ring */
-+};
-+
-+/*
-+ * IORING_OP_MSG_RING flags (sqe->msg_ring_flags)
-+ *
-+ * IORING_MSG_RING_CQE_SKIP	Don't post a CQE to the target ring. Not
-+ *				applicable for IORING_MSG_DATA, obviously.
-+ */
-+#define IORING_MSG_RING_CQE_SKIP	(1U << 0)
-+
- /*
-  * IO completion data structure (Completion Queue Entry)
-  */
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index b02be2349652..939205b30c8b 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -3,46 +3,162 @@
- #include <linux/errno.h>
- #include <linux/file.h>
- #include <linux/slab.h>
-+#include <linux/nospec.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
- 
- #include "io_uring.h"
-+#include "rsrc.h"
-+#include "filetable.h"
- #include "msg_ring.h"
- 
- struct io_msg {
- 	struct file			*file;
- 	u64 user_data;
- 	u32 len;
-+	u32 cmd;
-+	u32 src_fd;
-+	u32 dst_fd;
-+	u32 flags;
- };
- 
-+static int io_msg_ring_data(struct io_kiocb *req)
-+{
-+	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	struct io_msg *msg = io_kiocb_to_cmd(req);
-+
-+	if (msg->src_fd || msg->dst_fd || msg->flags)
-+		return -EINVAL;
-+
-+	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
-+		return 0;
-+
-+	return -EOVERFLOW;
-+}
-+
-+static void io_double_unlock_ctx(struct io_ring_ctx *ctx,
-+				 struct io_ring_ctx *octx,
-+				 unsigned int issue_flags)
-+{
-+	if (issue_flags & IO_URING_F_UNLOCKED)
-+		mutex_unlock(&ctx->uring_lock);
-+	mutex_unlock(&octx->uring_lock);
-+}
-+
-+static int io_double_lock_ctx(struct io_ring_ctx *ctx,
-+			      struct io_ring_ctx *octx,
-+			      unsigned int issue_flags)
-+{
-+	/*
-+	 * To ensure proper ordering between the two ctxs, we can only
-+	 * attempt a trylock on the target. If that fails and we already have
-+	 * the source ctx lock, punt to io-wq.
-+	 */
-+	if (!(issue_flags & IO_URING_F_UNLOCKED)) {
-+		if (!mutex_trylock(&octx->uring_lock))
-+			return -EAGAIN;
-+		return 0;
-+	}
-+
-+	/* Always grab smallest value ctx first. We know ctx != octx. */
-+	if (ctx < octx) {
-+		mutex_lock(&ctx->uring_lock);
-+		mutex_lock(&octx->uring_lock);
-+	} else {
-+		mutex_lock(&octx->uring_lock);
-+		mutex_lock(&ctx->uring_lock);
-+	}
-+
-+	return 0;
-+}
-+
-+static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	struct io_msg *msg = io_kiocb_to_cmd(req);
-+	struct io_ring_ctx *ctx = req->ctx;
-+	unsigned long file_ptr;
-+	struct file *src_file;
-+	int ret;
-+
-+	if (target_ctx == ctx)
-+		return -EINVAL;
-+
-+	ret = io_double_lock_ctx(ctx, target_ctx, issue_flags);
-+	if (unlikely(ret))
-+		return ret;
-+
-+	ret = -EBADF;
-+	if (unlikely(msg->src_fd >= ctx->nr_user_files))
-+		goto out_unlock;
-+
-+	msg->src_fd = array_index_nospec(msg->src_fd, ctx->nr_user_files);
-+	file_ptr = io_fixed_file_slot(&ctx->file_table, msg->src_fd)->file_ptr;
-+	src_file = (struct file *) (file_ptr & FFS_MASK);
-+	get_file(src_file);
-+
-+	ret = __io_fixed_fd_install(target_ctx, src_file, msg->dst_fd);
-+	if (ret < 0) {
-+		fput(src_file);
-+		goto out_unlock;
-+	}
-+
-+	if (msg->flags & IORING_MSG_RING_CQE_SKIP)
-+		goto out_unlock;
-+
-+	/*
-+	 * If this fails, the target still received the file descriptor but
-+	 * wasn't notified of the fact. This means that if this request
-+	 * completes with -EOVERFLOW, then the sender must ensure that a
-+	 * later IORING_OP_MSG_RING delivers the message.
-+	 */
-+	if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
-+		ret = -EOVERFLOW;
-+out_unlock:
-+	io_double_unlock_ctx(ctx, target_ctx, issue_flags);
-+	return ret;
-+}
-+
- int io_msg_ring_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_msg *msg = io_kiocb_to_cmd(req);
- 
--	if (unlikely(sqe->addr || sqe->rw_flags || sqe->splice_fd_in ||
--		     sqe->buf_index || sqe->personality))
-+	if (unlikely(sqe->buf_index || sqe->personality))
- 		return -EINVAL;
- 
- 	msg->user_data = READ_ONCE(sqe->off);
- 	msg->len = READ_ONCE(sqe->len);
-+	msg->cmd = READ_ONCE(sqe->addr);
-+	msg->src_fd = READ_ONCE(sqe->addr3);
-+	msg->dst_fd = READ_ONCE(sqe->file_index);
-+	msg->flags = READ_ONCE(sqe->msg_ring_flags);
-+	if (msg->flags & ~IORING_MSG_RING_CQE_SKIP)
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
- int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_msg *msg = io_kiocb_to_cmd(req);
--	struct io_ring_ctx *target_ctx;
- 	int ret;
- 
- 	ret = -EBADFD;
- 	if (!io_is_uring_fops(req->file))
- 		goto done;
- 
--	ret = -EOVERFLOW;
--	target_ctx = req->file->private_data;
--	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
--		ret = 0;
-+	switch (msg->cmd) {
-+	case IORING_MSG_DATA:
-+		ret = io_msg_ring_data(req);
-+		break;
-+	case IORING_MSG_SEND_FD:
-+		ret = io_msg_send_fd(req, issue_flags);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
- 
- done:
- 	if (ret < 0)
--- 
-2.35.1
-
+> [07/14] fs: Add check for async buffered writes to generic_write_checks
+>         commit: cba06e23bc664ef419d389f1ed4cee523f468f8f
+> [08/14] fs: add __remove_file_privs() with flags parameter
+>         commit: 79d8ac83d6305fd8e996f720f955191e0d8c63b9
+> [09/14] fs: Split off inode_needs_update_time and __file_update_time
+>         commit: 1899b196859bac61ad71c3b3916e06de4b65246c
+> [10/14] fs: Add async write file modification handling.
+>         commit: 4705f225a56f216a59e09f7c2df16daabb7b4f76
+> [11/14] io_uring: Add support for async buffered writes
+>         commit: 6c8bbd82a43a0c7937e3e8e38cf46fcd90e15e68
+> [12/14] io_uring: Add tracepoint for short writes
+>         commit: 6c33dae4526ad079af6432aaf76827d0a27a9690
+> [13/14] xfs: Specify lockmode when calling xfs_ilock_for_iomap()
+>         commit: ddda2d473df70607bb456c515d984d05bf689790
+> [14/14] xfs: Add async buffered write support
+>         commit: e9cfc64a27f7a581b8c5d14da4efccfeae9c63bd
+> 
+> Best regards,
+> -- 
+> Jens Axboe
+> 
+> 

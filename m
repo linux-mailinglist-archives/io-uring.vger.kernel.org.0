@@ -2,47 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB2C558845
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 21:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D685587FB
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 20:58:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231514AbiFWTCz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Jun 2022 15:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48532 "EHLO
+        id S229525AbiFWS56 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Jun 2022 14:57:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232763AbiFWTCj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jun 2022 15:02:39 -0400
+        with ESMTP id S229560AbiFWS5k (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jun 2022 14:57:40 -0400
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF107A1A1
-        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 11:08:17 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NHuxk2028971
-        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 11:08:16 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4563010744C
+        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 11:02:11 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25NHuqal025904
+        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 11:02:10 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=Y55cVOBKiXeRDoBnXl4t1cftHngh7dGKga/NccAHsxM=;
- b=rFK+Q4oEOhnP7rVN1yFE4X7sFKedjbEUzTy7w10spVzTiy1dvL/8F1EF9BSUMMV+CupK
- 36UO23QtezPSt57WzyqHfzeUTOBOw86Obgca1i6N2j+QYpA3Gmi5kn0+SVUx9iCueffu
- Ec95wGrKT/HwNCR9+V7LYSOXv5pddSL1wIw= 
+ bh=hg9mOHqe8lbN/Pa620EqWCYSM90BEn33RivumAhrzAE=;
+ b=CmDDAQlqynY28763l7sI+aI7i9V+sA/UOfFzsgeNL63J7hp14qkYTlNRnnTKKoLXAkk+
+ i4nPRrNllQ0bkzTCih7Tr4h0j8AnkVmoc0tLLWvmQ9Jr18zpk2NTIEYywtoYVVqiFAzB
+ 3qQKfHiP8U2XyJqZdWXf1Zjojy6W89hvnMg= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gvp68au1d-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gvn9433cw-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 11:08:16 -0700
-Received: from twshared17349.03.ash7.facebook.com (2620:10d:c085:108::8) by
+        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 11:02:10 -0700
+Received: from twshared14818.18.frc3.facebook.com (2620:10d:c085:208::11) by
  mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Thu, 23 Jun 2022 11:08:14 -0700
+ 15.1.2375.28; Thu, 23 Jun 2022 11:02:08 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 7A45910C5DC57; Thu, 23 Jun 2022 10:52:00 -0700 (PDT)
+        id 8C5B410C5DC61; Thu, 23 Jun 2022 10:52:00 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
-        <hch@infradead.org>, <axboe@kernel.dk>, <willy@infradead.org>
-Subject: [RESEND PATCH v9 06/14] iomap: Return -EAGAIN from iomap_write_iter()
-Date:   Thu, 23 Jun 2022 10:51:49 -0700
-Message-ID: <20220623175157.1715274-7-shr@fb.com>
+        <hch@infradead.org>, <axboe@kernel.dk>, <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>
+Subject: [RESEND PATCH v9 09/14] fs: Split off inode_needs_update_time and __file_update_time
+Date:   Thu, 23 Jun 2022 10:51:52 -0700
+Message-ID: <20220623175157.1715274-10-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220623175157.1715274-1-shr@fb.com>
 References: <20220623175157.1715274-1-shr@fb.com>
@@ -50,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: wlJJ6WEbXgTAN-LAJKIC3yjsRNv2jpaU
-X-Proofpoint-ORIG-GUID: wlJJ6WEbXgTAN-LAJKIC3yjsRNv2jpaU
+X-Proofpoint-ORIG-GUID: O6PgKTSK6VFiOS5TcPMThy1bq2S7L_4L
+X-Proofpoint-GUID: O6PgKTSK6VFiOS5TcPMThy1bq2S7L_4L
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-06-23_07,2022-06-23_01,2022-06-22_01
@@ -65,33 +66,141 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If iomap_write_iter() encounters -EAGAIN, return -EAGAIN to the caller.
+This splits off the functions inode_needs_update_time() and
+__file_update_time() from the function file_update_time().
+
+This is required to support async buffered writes.
+No intended functional changes in this patch.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
- fs/iomap/buffered-io.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/inode.c | 76 +++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 50 insertions(+), 26 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 83cf093fcb92..f2e36240079f 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -830,7 +830,13 @@ static loff_t iomap_write_iter(struct iomap_iter *it=
-er, struct iov_iter *i)
- 		length -=3D status;
- 	} while (iov_iter_count(i) && length);
-=20
--	return written ? written : status;
-+	if (status =3D=3D -EAGAIN) {
-+		iov_iter_revert(i, written);
-+		return -EAGAIN;
-+	}
-+	if (written)
-+		return written;
-+	return status;
+diff --git a/fs/inode.c b/fs/inode.c
+index a2e18379c8a6..ff726d99ecc7 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2049,35 +2049,18 @@ int file_remove_privs(struct file *file)
  }
+ EXPORT_SYMBOL(file_remove_privs);
 =20
- ssize_t
+-/**
+- *	file_update_time	-	update mtime and ctime time
+- *	@file: file accessed
+- *
+- *	Update the mtime and ctime members of an inode and mark the inode
+- *	for writeback.  Note that this function is meant exclusively for
+- *	usage in the file write path of filesystems, and filesystems may
+- *	choose to explicitly ignore update via this function with the
+- *	S_NOCMTIME inode flag, e.g. for network filesystem where these
+- *	timestamps are handled by the server.  This can return an error for
+- *	file systems who need to allocate space in order to update an inode.
+- */
+-
+-int file_update_time(struct file *file)
++static int inode_needs_update_time(struct inode *inode, struct timespec6=
+4 *now)
+ {
+-	struct inode *inode =3D file_inode(file);
+-	struct timespec64 now;
+ 	int sync_it =3D 0;
+-	int ret;
+=20
+ 	/* First try to exhaust all avenues to not sync */
+ 	if (IS_NOCMTIME(inode))
+ 		return 0;
+=20
+-	now =3D current_time(inode);
+-	if (!timespec64_equal(&inode->i_mtime, &now))
++	if (!timespec64_equal(&inode->i_mtime, now))
+ 		sync_it =3D S_MTIME;
+=20
+-	if (!timespec64_equal(&inode->i_ctime, &now))
++	if (!timespec64_equal(&inode->i_ctime, now))
+ 		sync_it |=3D S_CTIME;
+=20
+ 	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+@@ -2086,15 +2069,50 @@ int file_update_time(struct file *file)
+ 	if (!sync_it)
+ 		return 0;
+=20
+-	/* Finally allowed to write? Takes lock. */
+-	if (__mnt_want_write_file(file))
+-		return 0;
++	return sync_it;
++}
++
++static int __file_update_time(struct file *file, struct timespec64 *now,
++			int sync_mode)
++{
++	int ret =3D 0;
++	struct inode *inode =3D file_inode(file);
+=20
+-	ret =3D inode_update_time(inode, &now, sync_it);
+-	__mnt_drop_write_file(file);
++	/* try to update time settings */
++	if (!__mnt_want_write_file(file)) {
++		ret =3D inode_update_time(inode, now, sync_mode);
++		__mnt_drop_write_file(file);
++	}
+=20
+ 	return ret;
+ }
++
++/**
++ * file_update_time - update mtime and ctime time
++ * @file: file accessed
++ *
++ * Update the mtime and ctime members of an inode and mark the inode for
++ * writeback. Note that this function is meant exclusively for usage in
++ * the file write path of filesystems, and filesystems may choose to
++ * explicitly ignore updates via this function with the _NOCMTIME inode
++ * flag, e.g. for network filesystem where these imestamps are handled
++ * by the server. This can return an error for file systems who need to
++ * allocate space in order to update an inode.
++ *
++ * Return: 0 on success, negative errno on failure.
++ */
++int file_update_time(struct file *file)
++{
++	int ret;
++	struct inode *inode =3D file_inode(file);
++	struct timespec64 now =3D current_time(inode);
++
++	ret =3D inode_needs_update_time(inode, &now);
++	if (ret <=3D 0)
++		return ret;
++
++	return __file_update_time(file, &now, ret);
++}
+ EXPORT_SYMBOL(file_update_time);
+=20
+ /**
+@@ -2111,6 +2129,8 @@ EXPORT_SYMBOL(file_update_time);
+ int file_modified(struct file *file)
+ {
+ 	int ret;
++	struct inode *inode =3D file_inode(file);
++	struct timespec64 now =3D current_time(inode);
+=20
+ 	/*
+ 	 * Clear the security bits if the process is not being run by root.
+@@ -2123,7 +2143,11 @@ int file_modified(struct file *file)
+ 	if (unlikely(file->f_mode & FMODE_NOCMTIME))
+ 		return 0;
+=20
+-	return file_update_time(file);
++	ret =3D inode_needs_update_time(inode, &now);
++	if (ret <=3D 0)
++		return ret;
++
++	return __file_update_time(file, &now, ret);
+ }
+ EXPORT_SYMBOL(file_modified);
+=20
 --=20
 2.30.2
 

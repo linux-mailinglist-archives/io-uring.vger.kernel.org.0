@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6188557CD7
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 15:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC769557CD8
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 15:25:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbiFWNZ1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Jun 2022 09:25:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36776 "EHLO
+        id S230306AbiFWNZ2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Jun 2022 09:25:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231147AbiFWNZ0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jun 2022 09:25:26 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6583449C94
-        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 06:25:25 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id c130-20020a1c3588000000b0039c6fd897b4so1522733wma.4
-        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 06:25:25 -0700 (PDT)
+        with ESMTP id S231147AbiFWNZ1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jun 2022 09:25:27 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E25649C9C
+        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 06:25:26 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id q9so27954707wrd.8
+        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 06:25:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GFVKuLkgQrpfQUY3Kp2/8Huzegm57YAmtcraHP2vi/Y=;
-        b=mNK6qJ989mBNyo38SuaNqu88+9ks99jxdQHz/xV+zGSvelESvdBy+pHBB1MaxBUFny
-         AjcBVFWCaHyPdj3uiHEtmC/sGmz6CO8jHwQGhAbHhJitJ1LdwHaS5DVlkWzQ+1Kmntd6
-         Y24+zgv7kV2bhN8xom4D6a6DPDqXx7sghU7AUHclncZ6WAAGHUof2sCr9g2WBzqsxGCn
-         97C788CPc2KS4bXI1PezWMaMX35suDfgLxZWGx+JmuZpFxL0RYwMz8UxgvERJIAy0NzT
-         0gRTTvQc7wlRbeLU9Ax9YLEnEl2W/zib44gtVipqsm3npW8smeGZ/XQ4GTss8vd/3vza
-         jbjA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OpnL0/Edc6qwJvOc9mzgGZ0HMTdXfCTcomSoBlCvR7Q=;
+        b=m/YlUxZc6sv21dQYx+9gNcGEBbQs5n5oiXyViRGxylSJfyJWOTpm+wtzBzIiRrgzXC
+         9rDMLFepxP17UUV0x499fYS4OMPaOVz++npIy6d0Hj/X+QhvxZDJqLQGhoRjduGurIuw
+         CDSmO2UgTSajFmA2c9OaCEhUt/F9g0LC/GwwTgplSXPVz/2Vqdp+XBWJP+mkF3BXgmiu
+         5vQO8ucx3woy1Web6n8LSQfl9j7mm9skwg67aol586YmGRMs6+f0Iz8OcCzNfQV7RZ3I
+         essoKyhlr1s0cAGBPP6DgM29pxK9pxioBzEZOwNqWlojVBh/EHaYvuhLSr3c6bylsKhR
+         0m/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GFVKuLkgQrpfQUY3Kp2/8Huzegm57YAmtcraHP2vi/Y=;
-        b=xTL+Z0Ienr8NgR5dlKFnNaozZJvUqKrRG5IfrG+x61Iuw2qjI0q3TknuWjV6hsR56Q
-         Oz+p4a44Rki/67kMbdPnHIIh6ATgJhFVwtGyXV1mgN16xBvzsDyqC9NW6TVzVAfLzxPY
-         jsKBOTeig1u1Q+79TxUEDny+6hmO34LmqnNJdfuGukqFDfTO/CqImJuo1EI78keonPoT
-         RedlxPupmyapCpn0hXUO9rfCIgWHw52lKSwL0QivL6yvAV3Bm+iO7OK2ZYG9iibup7fu
-         Oh0V0MjcmVnQC7oYOz+TWwNcqT59ux3f0xnVUPE/vsv5ORj77mdt7orrJ0YLrbeogmKN
-         DztQ==
-X-Gm-Message-State: AJIora8c4BhQGzXDXybGDizYdz1a7gA7kpdw/yu/KCWk5GlBRl68p5Bt
-        rRKGfuOjwPInmVZnENI3X93ulASyWsNADq1K
-X-Google-Smtp-Source: AGRyM1tvWS/JJVLYv1onpbf6sZBPwb2QdY0AaZg/g+VrZHuLFCiUejbxjm4TgwcNyNjFdIHeTBto/A==
-X-Received: by 2002:a05:600c:3d16:b0:39e:f07b:77a5 with SMTP id bh22-20020a05600c3d1600b0039ef07b77a5mr4165150wmb.140.1655990723611;
-        Thu, 23 Jun 2022 06:25:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OpnL0/Edc6qwJvOc9mzgGZ0HMTdXfCTcomSoBlCvR7Q=;
+        b=asTxSVobGLmDeEc2hiBwGfJFtCMfNhecKyVrywizfKWhEW/2ZmiMfKlkAz3p+9vQjv
+         97k7ba0iPi8H1sCJjn4/H7LR/hVx/8PSC9YTohBK5oFqwzrYOrEek4LLOd+cfmCo+/7k
+         feb7fS/FrntpppWukdBSlMtfbvP0m75eUdF4vd5v3WpaLn1KhoGLx0PfDfWtGZxpsAJ2
+         QI5uhUwApNEuCtdO4gFuc43zlXykEbVIb+GNRg07eNRZfYMsw/3yr6KcXoUby/x7myiQ
+         0+Ms2lRtOmbHRw5xh+PdzCu7evmrqzGcZjV9Vt8B9UyREeAl9ZwRO0iPi+owOYL3VsCQ
+         KYJw==
+X-Gm-Message-State: AJIora9Rsg5uhC4diN9xz0f8xQr87CBeMrw68oci9kVXK4Dxfhx8lvTu
+        5XuDaHmCKnPYNzAn3ay/zP24PvIlNLyUp3rz
+X-Google-Smtp-Source: AGRyM1ulVIx6pCqksBSkkOYjc7iOKMrD3HkqLryo+wDpTGv3ilcleIfZDZPEq1eN/VuJ2L5xKuTs4Q==
+X-Received: by 2002:adf:ea43:0:b0:21b:9243:be8c with SMTP id j3-20020adfea43000000b0021b9243be8cmr8075054wrn.650.1655990724769;
+        Thu, 23 Jun 2022 06:25:24 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id z14-20020a7bc7ce000000b0039c5a765388sm3160620wmk.28.2022.06.23.06.25.22
+        by smtp.gmail.com with ESMTPSA id z14-20020a7bc7ce000000b0039c5a765388sm3160620wmk.28.2022.06.23.06.25.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 06:25:23 -0700 (PDT)
+        Thu, 23 Jun 2022 06:25:24 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 0/6] poll cleanups and optimisations
-Date:   Thu, 23 Jun 2022 14:24:43 +0100
-Message-Id: <cover.1655990418.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 1/6] io_uring: clean poll ->private flagging
+Date:   Thu, 23 Jun 2022 14:24:44 +0100
+Message-Id: <9a61240555c64ac0b7a9b0eb59a9efeb638a35a4.1655990418.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1655990418.git.asml.silence@gmail.com>
+References: <cover.1655990418.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -66,25 +68,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-1-5 are clean ups, can be considered separately.
+We store a req pointer in wqe->private but also take one bit to mark
+double poll entries. Replace macro helpers with inline functions for
+better type checking and also name the double flag.
 
-6 optimises the final atomic_dec() in __io_arm_poll_handler(). Jens
-measured almost the same patch imrpoving some of the tests (netbench?)
-by ~1-1.5%.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/poll.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-v2: fix inverted EPOLLET check
-
-Pavel Begunkov (6):
-  io_uring: clean poll ->private flagging
-  io_uring: remove events caching atavisms
-  io_uring: add a helper for apoll alloc
-  io_uring: change arm poll return values
-  io_uring: refactor poll arm error handling
-  io_uring: optimise submission side poll_refs
-
- io_uring/poll.c | 213 ++++++++++++++++++++++++++++++++----------------
- 1 file changed, 142 insertions(+), 71 deletions(-)
-
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index bd3110750cfa..210b174b155b 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -39,6 +39,22 @@ struct io_poll_table {
+ #define IO_POLL_CANCEL_FLAG	BIT(31)
+ #define IO_POLL_REF_MASK	GENMASK(30, 0)
+ 
++#define IO_WQE_F_DOUBLE		1
++
++static inline struct io_kiocb *wqe_to_req(struct wait_queue_entry *wqe)
++{
++	unsigned long priv = (unsigned long)wqe->private;
++
++	return (struct io_kiocb *)(priv & ~IO_WQE_F_DOUBLE);
++}
++
++static inline bool wqe_is_double(struct wait_queue_entry *wqe)
++{
++	unsigned long priv = (unsigned long)wqe->private;
++
++	return priv & IO_WQE_F_DOUBLE;
++}
++
+ /*
+  * If refs part of ->poll_refs (see IO_POLL_REF_MASK) is 0, it's free. We can
+  * bump it and acquire ownership. It's disallowed to modify requests while not
+@@ -306,8 +322,6 @@ static void io_poll_cancel_req(struct io_kiocb *req)
+ 	io_poll_execute(req, 0, 0);
+ }
+ 
+-#define wqe_to_req(wait)	((void *)((unsigned long) (wait)->private & ~1))
+-#define wqe_is_double(wait)	((unsigned long) (wait)->private & 1)
+ #define IO_ASYNC_POLL_COMMON	(EPOLLONESHOT | EPOLLPRI)
+ 
+ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+@@ -392,7 +406,7 @@ static void __io_queue_proc(struct io_poll *poll, struct io_poll_table *pt,
+ 			return;
+ 		}
+ 		/* mark as double wq entry */
+-		wqe_private |= 1;
++		wqe_private |= IO_WQE_F_DOUBLE;
+ 		req->flags |= REQ_F_DOUBLE_POLL;
+ 		io_init_poll_iocb(poll, first->events, first->wait.func);
+ 		*poll_ptr = poll;
 -- 
 2.36.1
 

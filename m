@@ -2,137 +2,245 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63FB255731B
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 08:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D74CA5573BA
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jun 2022 09:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbiFWG33 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 23 Jun 2022 02:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
+        id S229696AbiFWHRi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Jun 2022 03:17:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbiFWG32 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jun 2022 02:29:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 004333981C;
-        Wed, 22 Jun 2022 23:29:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 93BB7613F7;
-        Thu, 23 Jun 2022 06:29:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25C7C3411B;
-        Thu, 23 Jun 2022 06:29:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655965767;
-        bh=wUTnbr3HED4pym62QuGzaVUisvnMcXKLi/pNUb52Gv8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W19bTbAcd2JoJg59z4uvCaexzpHQkxpK0jUUmL45pXVGCH8XYBN9mOu/B6eSNjdJk
-         dSSpgkBYYZBIBxVCntKorhLWuGy9SL6MWAsr/sTSuLNkLW0vN2FUzmIO7OGFEdelmF
-         HvjvW9T2Fh8zNwm+GToMrOqwK5hRxBfqUK04ZqCleALbQ2jvOVjC4JUbsHCtCNiQvP
-         5Kjv3yvDmADqr2/JQqUEBdEPhVb3BZTUrIisVl8ln6dzGUwaN2nIjGLmHkK+B09eHV
-         ZJZ5jygiFgF2twUVdSSG77jMxEBXD7XwfoFtIdh6Ms84LF+RLnUaaIlVuoxRQh+T2Q
-         InPAwOozukU3Q==
-Date:   Wed, 22 Jun 2022 23:29:26 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, kernel-team@fb.com, linux-xfs@vger.kernel.org,
-        io-uring@vger.kernel.org, shr@fb.com,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
-        hch@infradead.org, jack@suse.cz, willy@infradead.org
-Subject: Re: [PATCH v9 00/14] io-uring/xfs: support async buffered writes
-Message-ID: <YrQIRpO6kSFdfXZO@magnolia>
-References: <20220616212221.2024518-1-shr@fb.com>
- <165593682792.161026.12974983413174964699.b4-ty@kernel.dk>
- <YrO0AP4y3OGUjnXE@magnolia>
- <30b0adb6-a5f2-b295-50d2-e182f9dc9ef0@kernel.dk>
+        with ESMTP id S229853AbiFWHRi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Jun 2022 03:17:38 -0400
+Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 516BA45AED
+        for <io-uring@vger.kernel.org>; Thu, 23 Jun 2022 00:17:36 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1655968654;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yzZV3KZ6biIf64EwUEid2qfQf2tuAGXoQWqj5DNuEd8=;
+        b=GtTeCnw3R6CrcV9LwfSaozsfEizy9/ArU972sHVIRat8lFIyJHOuy7IwEWdSar/YKryVoK
+        nxtNoCtZdRl8NOcDy/7T052U/Fc7UqvevhqxY7WzZQYy6isr68g18Ixp+Au3838B4Ry7of
+        NSGEwPUJpHjE5EKt8NV3wklqA4K1zLI=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] io_uring: kbuf: inline io_kbuf_recycle_ring()
+Date:   Thu, 23 Jun 2022 15:17:23 +0800
+Message-Id: <20220623071723.154971-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30b0adb6-a5f2-b295-50d2-e182f9dc9ef0@kernel.dk>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jun 22, 2022 at 06:50:29PM -0600, Jens Axboe wrote:
-> On 6/22/22 6:29 PM, Darrick J. Wong wrote:
-> > On Wed, Jun 22, 2022 at 04:27:07PM -0600, Jens Axboe wrote:
-> >> On Thu, 16 Jun 2022 14:22:07 -0700, Stefan Roesch wrote:
-> >>> This patch series adds support for async buffered writes when using both
-> >>> xfs and io-uring. Currently io-uring only supports buffered writes in the
-> >>> slow path, by processing them in the io workers. With this patch series it is
-> >>> now possible to support buffered writes in the fast path. To be able to use
-> >>> the fast path the required pages must be in the page cache, the required locks
-> >>> in xfs can be granted immediately and no additional blocks need to be read
-> >>> form disk.
-> >>>
-> >>> [...]
-> >>
-> >> Applied, thanks!
-> >>
-> >> [01/14] mm: Move starting of background writeback into the main balancing loop
-> >>         commit: 29c36351d61fd08a2ed50a8028a7f752401dc88a
-> >> [02/14] mm: Move updates of dirty_exceeded into one place
-> >>         commit: a3fa4409eec3c094ad632ac1029094e061daf152
-> >> [03/14] mm: Add balance_dirty_pages_ratelimited_flags() function
-> >>         commit: 407619d2cef3b4d74565999a255a17cf5d559fa4
-> >> [04/14] iomap: Add flags parameter to iomap_page_create()
-> >>         commit: 49b5cd0830c1e9aa0f9a3717ac11a74ef23b9d4e
-> >> [05/14] iomap: Add async buffered write support
-> >>         commit: ccb885b4392143cea1bdbd8a0f35f0e6d909b114
-> >> [06/14] iomap: Return -EAGAIN from iomap_write_iter()
-> >>         commit: f0f9828d64393ea2ce87bd97f033051c8d7a337f
-> > 
-> > I'm not sure /what/ happened here, but I never received the full V9
-> > series, and neither did lore:
-> > 
-> > https://lore.kernel.org/linux-fsdevel/165593682792.161026.12974983413174964699.b4-ty@kernel.dk/T/#t
-> 
-> Huh yes, didn't even notice that it's missing a few.
-> 
-> > As it is, I already have my hands full trying to figure out why
-> > generic/522 reports file corruption after 20 minutes of running on
-> > vanilla 5.19-rc3, so I don't think I'm going to get to this for a while
-> > either.
-> > 
-> > The v8 series looked all right to me, but ********* I hate how our
-> > development process relies on such unreliable **** tooling.  I don't
-> 
-> Me too, and the fact that email is getting worse and worse is not making
-> things any better...
-> 
-> > think it's a /great/ idea to be pushing new code into -next when both
-> > the xfs and pagecache maintainers are too busy to read the whole thing
-> > through... but did hch actually RVB the whole thing prior to v9?
-> 
-> Yes, hch did review the whole thing prior to v9. v9 has been pretty
-> quiet, but even v8 didn't have a whole lot. Which is to be expected for
-> a v9, this thing has been going for months.
+From: Hao Xu <howeyxu@tencent.com>
 
-<nod>
+Make io_kbuf_recycle_ring() inline since it is the fast path of
+provided buffer.
 
-> We're only at -rc3 right now, so I think it's fine getting it some -next
-> exposure. It's not like it's getting pushed tomorrow, and if actual
-> concerns arise, let's just deal with them if that's the case. I'll check
-> in with folks before anything gets pushed certainly, I just don't think
-> it's fair to keep stalling when there are no real objections. Nothing
-> gets pushed unless the vested parties agree, obviously.
+Signed-off-by: Hao Xu <howeyxu@tencent.com>
+---
+ io_uring/kbuf.c | 66 ------------------------------------------------
+ io_uring/kbuf.h | 67 ++++++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 64 insertions(+), 69 deletions(-)
 
-Ok.  Would you or Stefan mind sending the whole v9 series again, so I
-can have one more look?  Hopefully vger won't just eat the series a
-third time... :(
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 4b7f2aa99e38..306db7929a50 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -17,8 +17,6 @@
+ 
+ #define IO_BUFFER_LIST_BUF_PER_PAGE (PAGE_SIZE / sizeof(struct io_uring_buf))
+ 
+-#define BGID_ARRAY	64
+-
+ struct io_provide_buf {
+ 	struct file			*file;
+ 	__u64				addr;
+@@ -28,15 +26,6 @@ struct io_provide_buf {
+ 	__u16				bid;
+ };
+ 
+-static inline struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
+-							unsigned int bgid)
+-{
+-	if (ctx->io_bl && bgid < BGID_ARRAY)
+-		return &ctx->io_bl[bgid];
+-
+-	return xa_load(&ctx->io_bl_xa, bgid);
+-}
+-
+ static int io_buffer_add_list(struct io_ring_ctx *ctx,
+ 			      struct io_buffer_list *bl, unsigned int bgid)
+ {
+@@ -47,61 +36,6 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
+ 	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
+ }
+ 
+-void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+-{
+-	struct io_ring_ctx *ctx = req->ctx;
+-	struct io_buffer_list *bl;
+-	struct io_buffer *buf;
+-
+-	/*
+-	 * For legacy provided buffer mode, don't recycle if we already did
+-	 * IO to this buffer. For ring-mapped provided buffer mode, we should
+-	 * increment ring->head to explicitly monopolize the buffer to avoid
+-	 * multiple use.
+-	 */
+-	if (req->flags & REQ_F_PARTIAL_IO)
+-		return;
+-
+-	io_ring_submit_lock(ctx, issue_flags);
+-
+-	buf = req->kbuf;
+-	bl = io_buffer_get_list(ctx, buf->bgid);
+-	list_add(&buf->list, &bl->buf_list);
+-	req->flags &= ~REQ_F_BUFFER_SELECTED;
+-	req->buf_index = buf->bgid;
+-
+-	io_ring_submit_unlock(ctx, issue_flags);
+-	return;
+-}
+-
+-void io_kbuf_recycle_ring(struct io_kiocb *req)
+-{
+-	/*
+-	 * We don't need to recycle for REQ_F_BUFFER_RING, we can just clear
+-	 * the flag and hence ensure that bl->head doesn't get incremented.
+-	 * If the tail has already been incremented, hang on to it.
+-	 * The exception is partial io, that case we should increment bl->head
+-	 * to monopolize the buffer.
+-	 */
+-	if (req->buf_list) {
+-		if (req->flags & REQ_F_PARTIAL_IO) {
+-			/*
+-			 * If we end up here, then the io_uring_lock has
+-			 * been kept held since we retrieved the buffer.
+-			 * For the io-wq case, we already cleared
+-			 * req->buf_list when the buffer was retrieved,
+-			 * hence it cannot be set here for that case.
+-			 */
+-			req->buf_list->head++;
+-			req->buf_list = NULL;
+-		} else {
+-			req->buf_index = req->buf_list->bgid;
+-			req->flags &= ~REQ_F_BUFFER_RING;
+-		}
+-	}
+-	return;
+-}
+-
+ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	unsigned int cflags;
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index b5a89ffadf31..5b0b129e3e9c 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -4,6 +4,8 @@
+ 
+ #include <uapi/linux/io_uring.h>
+ 
++#define BGID_ARRAY	64
++
+ struct io_buffer_list {
+ 	/*
+ 	 * If ->buf_nr_pages is set, then buf_pages/buf_ring are used. If not,
+@@ -48,9 +50,6 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
+ 
+ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
+ 
+-void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
+-void io_kbuf_recycle_ring(struct io_kiocb *req);
+-
+ static inline bool io_do_buffer_select(struct io_kiocb *req)
+ {
+ 	if (!(req->flags & REQ_F_BUFFER_SELECT))
+@@ -58,6 +57,68 @@ static inline bool io_do_buffer_select(struct io_kiocb *req)
+ 	return !(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING));
+ }
+ 
++static inline struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
++							unsigned int bgid)
++{
++	if (ctx->io_bl && bgid < BGID_ARRAY)
++		return &ctx->io_bl[bgid];
++
++	return xa_load(&ctx->io_bl_xa, bgid);
++}
++
++static void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_buffer_list *bl;
++	struct io_buffer *buf;
++
++	/*
++	 * For legacy provided buffer mode, don't recycle if we already did
++	 * IO to this buffer. For ring-mapped provided buffer mode, we should
++	 * increment ring->head to explicitly monopolize the buffer to avoid
++	 * multiple use.
++	 */
++	if (req->flags & REQ_F_PARTIAL_IO)
++		return;
++
++	io_ring_submit_lock(ctx, issue_flags);
++
++	buf = req->kbuf;
++	bl = io_buffer_get_list(ctx, buf->bgid);
++	list_add(&buf->list, &bl->buf_list);
++	req->flags &= ~REQ_F_BUFFER_SELECTED;
++	req->buf_index = buf->bgid;
++
++	io_ring_submit_unlock(ctx, issue_flags);
++}
++
++static inline void io_kbuf_recycle_ring(struct io_kiocb *req)
++{
++	/*
++	 * We don't need to recycle for REQ_F_BUFFER_RING, we can just clear
++	 * the flag and hence ensure that bl->head doesn't get incremented.
++	 * If the tail has already been incremented, hang on to it.
++	 * The exception is partial io, that case we should increment bl->head
++	 * to monopolize the buffer.
++	 */
++	if (req->buf_list) {
++		if (req->flags & REQ_F_PARTIAL_IO) {
++			/*
++			 * If we end up here, then the io_uring_lock has
++			 * been kept held since we retrieved the buffer.
++			 * For the io-wq case, we already cleared
++			 * req->buf_list when the buffer was retrieved,
++			 * hence it cannot be set here for that case.
++			 */
++			req->buf_list->head++;
++			req->buf_list = NULL;
++		} else {
++			req->buf_index = req->buf_list->bgid;
++			req->flags &= ~REQ_F_BUFFER_RING;
++		}
++	}
++}
++
+ static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	if (req->flags & REQ_F_BUFFER_SELECTED)
 
-Huh.  Ok.  LWN seems to have gotten the whole thing:
-https://lwn.net/ml/linux-mm/20220616212221.2024518-1-shr@fb.com/
+base-commit: 5ec69c3a15ae6e904d76545d9a9c686eb758def0
+-- 
+2.25.1
 
-I'll go read that in the meantime.  $DEITY I hate email.
-
---D
-
-> -- 
-> Jens Axboe
-> 

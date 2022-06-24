@@ -2,70 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9683559CDA
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jun 2022 17:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DB2559CC0
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jun 2022 17:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233383AbiFXOxY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jun 2022 10:53:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59262 "EHLO
+        id S233318AbiFXOxX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jun 2022 10:53:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233351AbiFXOwy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jun 2022 10:52:54 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDEE7FD24
-        for <io-uring@vger.kernel.org>; Fri, 24 Jun 2022 07:48:54 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id a16so1634715ilr.6
-        for <io-uring@vger.kernel.org>; Fri, 24 Jun 2022 07:48:54 -0700 (PDT)
+        with ESMTP id S233378AbiFXOw5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jun 2022 10:52:57 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDF680516
+        for <io-uring@vger.kernel.org>; Fri, 24 Jun 2022 07:49:19 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id z7so2894342ioe.11
+        for <io-uring@vger.kernel.org>; Fri, 24 Jun 2022 07:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=DWcyz906WJfvMFL2VVjgjsdhhZt0R2JBG5BvPCvlnPE=;
-        b=kAZfa4Gvw0mMhZjLyDIabymc1EmZA6j/Ij9km3tKCr2BFPbswn26/J6hUzgzxK1udT
-         LXghN15N0v7AXCHZjA2DZSNUqDb8GKoz3EPZn168zMo/kyOYC8fhdWqF/to68Cm5uxLi
-         KUmvke0fE3Nb+xs/xxNlvH/wfLHfkCsapDQ8szgjNP6dRJ5TGPFoxdXQ3s+3EWsusHWR
-         9J/fh9bzOC3ORimLqxSc/OtThU3lq68I5z0UVi8MeqqhfTtGrGxDnG19KA2TV9dSV3bW
-         BgGazgp0V8riFQG6oC8SqJWq18ANKzv8SntphwIcsljLarq5zbbOYF/a54oGxURUkgY4
-         Aq7Q==
+        bh=sn0WBCUd+SNKZr7yNtqbgNYTO7fokpMiyDUJDfaGrhM=;
+        b=PXTsa5jpWy4du5CcAECwnpwGZu/1A+vPGawPGHkt+4UknNJfYSWs1WIvn/AKvlYB93
+         DwlgqS7zeaw7r1fmFNAtQLdOCtkftRsY6tYsbYprcGr9rq4u6f8rVLIgDLCj1Y+PQhv/
+         XYSKTBho8omfXdbRCsaktnpilOG1OEGKidIgfvf/x7WHy/b5B/15scpqPrRb+NuU9uX3
+         DrlI37XOee/s2tDpJXb/ebdKl58Y25yu3+Xwdtw5+O/SaZce+myqwgNdjXDcc4ooLprr
+         7y15yE8Q9Y35dlxRqA6DZZuSp/CXEzCNO1zi33OFj6nAnt+pfxpaWMgStdRb73ueFfEn
+         eFFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=DWcyz906WJfvMFL2VVjgjsdhhZt0R2JBG5BvPCvlnPE=;
-        b=4YXYRetWNbvRZb9e0+7P8BeOJXVJ2mL5cAjNX5Shp8OBvc56mNFSZCEdBGufQeiSGu
-         lBZr4oMTo4gemM8ele3GqRoAui3SUKdUqjOax1xP50eN08gWYQ/Yhw2HcETxSRAUvN9F
-         YW1mMqFLSQT94MtdsuOBd8kDXYSsWJ5aWstcW+L0KtMcFPEkDC7srvN+eib0zYYzwYJC
-         WI7aUIg9alTFDP54wlV/F4chYiP4TO/Mu6OtAEBT3dAB1E/GyMNNYqdbqPP9hzSkinqS
-         wPdFgM7n5u/yV6PyBhSuWnuohYwC3vn41UlKrwEtsRQ81NJaxf2lJXSl/WjA73tkUG0f
-         7HNg==
-X-Gm-Message-State: AJIora9AoXOwbH+9ORpZhRIrht6QjLrYH5F4kuGcj6iwNmhtGyhrdXIa
-        HjekDFcMuw0Hg8+UyY68RKiPGw==
-X-Google-Smtp-Source: AGRyM1vtQ5lI0ui69eAPGDOvVUnSBy1LS9YB7l1nUJUBdVR6AuykMTvdZaQ+wwkP8ETAWatGVBndKg==
-X-Received: by 2002:a05:6e02:1ba3:b0:2d8:d74b:8ff6 with SMTP id n3-20020a056e021ba300b002d8d74b8ff6mr8714104ili.264.1656082134104;
-        Fri, 24 Jun 2022 07:48:54 -0700 (PDT)
+        bh=sn0WBCUd+SNKZr7yNtqbgNYTO7fokpMiyDUJDfaGrhM=;
+        b=zYnYEFnJY8pYkz+hOoBmixcfCKufCQfz/LlDo0BNcGosLDV08WyIW81ZQiqz0obb4d
+         yZc/5DfrtCT8hdha8W3BMzLqGC2LmoGP7RmagrVmfBfgunp5ZXUjHxPnVA7xKbgTMUkr
+         pNJ3fmQzZCSfJxp11FhwBwTU2driemSEYFNfWbmL3ti6Z4psl6O7XpgbR8JH5JKa0W4/
+         VfWaqMKPCBy4Cg3mD82DpRYr0Sza9JuiB7f+m0U6kKYLoleY6/TXKnwlgyUe2Gup9ZRH
+         BhiWsCSH5Pz5zHPXiRfaqNCXqhvfXJlVNl32oKF1B1BOxZlR2dhuurw0Tk078hVygSMt
+         b/3w==
+X-Gm-Message-State: AJIora9b5YtX0k1OBt4cfxd/ykxa60kbktcOE56msYlVWw/PCXSf9fSN
+        wuRrXzuAHtgBk5JPHlA12hF6Kg==
+X-Google-Smtp-Source: AGRyM1sBp9hf+MBf3qeVE3KmJQS5OBECT+OiSpKpBG0bUmd/EC5icONGUY+WVJyRJQKZK/GhVpwppw==
+X-Received: by 2002:a05:6638:2645:b0:332:55e1:10 with SMTP id n5-20020a056638264500b0033255e10010mr8954400jat.121.1656082158686;
+        Fri, 24 Jun 2022 07:49:18 -0700 (PDT)
 Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id e25-20020a0566380cd900b00339ee768069sm1137354jak.74.2022.06.24.07.48.53
+        by smtp.gmail.com with ESMTPSA id k12-20020a6b7a4c000000b0067411d7f769sm1342090iop.5.2022.06.24.07.49.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jun 2022 07:48:53 -0700 (PDT)
-Message-ID: <293e593d-2f2a-623e-bf2f-786fce623327@kernel.dk>
-Date:   Fri, 24 Jun 2022 08:48:51 -0600
+        Fri, 24 Jun 2022 07:49:18 -0700 (PDT)
+Message-ID: <2189b2ff-e894-a85c-2d1b-5834c22363d5@kernel.dk>
+Date:   Fri, 24 Jun 2022 08:49:17 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [RESEND PATCH v9 07/14] fs: Add check for async buffered writes
- to generic_write_checks
+Subject: Re: [RESEND PATCH v9 00/14] io-uring/xfs: support async buffered
+ writes
 Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>, Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, willy@infradead.org,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>
-References: <20220623175157.1715274-1-shr@fb.com>
- <20220623175157.1715274-8-shr@fb.com> <YrVJvA+kOvjYJHqw@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz,
+        willy@infradead.org
+References: <20220623175157.1715274-1-shr@fb.com> <YrTNku0AC80eheSP@magnolia>
+ <YrVINrRNy9cI+dg7@infradead.org>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YrVJvA+kOvjYJHqw@infradead.org>
+In-Reply-To: <YrVINrRNy9cI+dg7@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -77,15 +77,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/23/22 11:21 PM, Christoph Hellwig wrote:
-> FYI, I think a subject like
+On 6/23/22 11:14 PM, Christoph Hellwig wrote:
+> On Thu, Jun 23, 2022 at 01:31:14PM -0700, Darrick J. Wong wrote:
+>> Hmm, well, vger and lore are still having stomach problems, so even the
+>> resend didn't result in #5 ending up in my mailbox. :(
 > 
-> "fs: add a FMODE_BUF_WASYNC flags for f_mode"
-> 
-> might be a more descriptive.  As the new flag here really is the
-> interesting part, not that we check it.
+> I can see a all here.  Sometimes it helps to just wait a bit.
 
-Agree on that - if others do too, I can just make that edit.
+on lore? I'm still seeing some missing. Which is a bit odd, since eg b4
+can pull the series down just fine.
 
 -- 
 Jens Axboe

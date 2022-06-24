@@ -2,46 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B05BD559210
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jun 2022 07:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A531559227
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jun 2022 07:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiFXFUA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Jun 2022 01:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45482 "EHLO
+        id S230220AbiFXFVD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Jun 2022 01:21:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiFXFUA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jun 2022 01:20:00 -0400
+        with ESMTP id S229478AbiFXFVD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Jun 2022 01:21:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D5F62C16;
-        Thu, 23 Jun 2022 22:19:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982A968004;
+        Thu, 23 Jun 2022 22:21:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CmZzTyGW86kGCLkluUVgPh+OfAMYe+DuVFM8OGCdpCU=; b=fA6geQpWNnz816AjU0KE7HCJMS
-        iEK3mYQ1E1tZfmJ7Lpzb4e5cD9EEafs31PkdzJyZaBUR3cQTU6JyzFLYgZYlrlb6dm5jb3s9Xe/pY
-        8QXUWwzdNlTgshaiYxclesvtpCci0unpNLP8ZzyvlMpILHVC4rpq1vBIfAHf8cE4AsPbALZ+KZD4Q
-        fdYMd1W252YHFaaBLb0E/y5qKnh85QjKG+uDZ0TaKbM6qWzhXLBYP/jSf/Hkj08pc2JEHGXZclcna
-        B6I+bBnGzZ55M1zRGRY21gllsIP0+R/jWWDigRww5M61EuOcgZn+8JCGbeljlc/hDsat9ziNc0UkY
-        mAk17aQw==;
+        bh=kOVNnlzTgA+Z+gBxY/9/lvwQCMpKmmF91Zjw5AXklLw=; b=QEzbdjW3WU084VDeSmzi22h9cz
+        7NC83oBNvkYUraBLAkV/eBBPhl6m/Xw4AIEbomTTvLl7QfMAgWt4zEPxF/bzP43mz9s8a0UiZyZCa
+        JYphmUiPuM08T232y0D1p6D/8hDa/TAdT1GiiWTwB1G/Tv6J5xm2FeOQiV/c+RadsQU/Ve7NiZ8pe
+        M6qKeHv4D0LRru5iDPKTotzkTgtoQPRubNwaMz0aglhS9txRCkmkrLGYjzofdaIo9Dz+0EKyGBrMz
+        g1X0r8hGE/GJYk6YnylvU8KgwWbtvfR5Af3ihjePPUsLGxt0lxJBAL5mAHqqPxPBy1Mj4HHn2EzwJ
+        AKMK/i7w==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o4bjZ-000ZoG-0c; Fri, 24 Jun 2022 05:19:57 +0000
-Date:   Thu, 23 Jun 2022 22:19:56 -0700
+        id 1o4bka-000aAk-91; Fri, 24 Jun 2022 05:21:00 +0000
+Date:   Thu, 23 Jun 2022 22:21:00 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Stefan Roesch <shr@fb.com>
 Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        axboe@kernel.dk, willy@infradead.org
-Subject: Re: [RESEND PATCH v9 06/14] iomap: Return -EAGAIN from
- iomap_write_iter()
-Message-ID: <YrVJfPWQ29hYJ03M@infradead.org>
+        axboe@kernel.dk, willy@infradead.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [RESEND PATCH v9 07/14] fs: Add check for async buffered writes
+ to generic_write_checks
+Message-ID: <YrVJvA+kOvjYJHqw@infradead.org>
 References: <20220623175157.1715274-1-shr@fb.com>
- <20220623175157.1715274-7-shr@fb.com>
+ <20220623175157.1715274-8-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220623175157.1715274-7-shr@fb.com>
+In-Reply-To: <20220623175157.1715274-8-shr@fb.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
@@ -53,11 +55,9 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 10:51:49AM -0700, Stefan Roesch wrote:
-> If iomap_write_iter() encounters -EAGAIN, return -EAGAIN to the caller.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
+FYI, I think a subject like
 
-Looks good:
+"fs: add a FMODE_BUF_WASYNC flags for f_mode"
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+might be a more descriptive.  As the new flag here really is the
+interesting part, not that we check it.

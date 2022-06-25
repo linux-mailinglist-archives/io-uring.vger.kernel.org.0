@@ -2,92 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AECDC55AA1D
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jun 2022 14:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5F555AA1F
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jun 2022 14:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232939AbiFYMtB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Jun 2022 08:49:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41954 "EHLO
+        id S232929AbiFYMtE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Jun 2022 08:49:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232620AbiFYMs7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jun 2022 08:48:59 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4871317A96
-        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 05:48:59 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 184so4814215pga.12
-        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 05:48:59 -0700 (PDT)
+        with ESMTP id S232620AbiFYMtD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jun 2022 08:49:03 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E84317A96
+        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 05:49:03 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id n16-20020a17090ade9000b001ed15b37424so5224904pjv.3
+        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 05:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=4xBYgBhSuEsq9ZZe/IswQWwloxjZZr9dDqsNSPWfFj8=;
-        b=Z9greU1+mePPI1ki1Bg4bcqglJBPo7v/+F5xNbg3SuzLFcbzNGbDhGANzi6KfDNSDc
-         hxmP/TqxlHtj7Q+rEWSWwiCH8+eQ24bEaL2nQBQVWE3nCp5FiUWVJJue7q7XHDPbBS2H
-         aiLOUXg4z7NaO9hQbXTP60FgG5p0oU0r1awJUzzR1KJJF9QovHKRbDv6576c35guxdyn
-         M2VcjfF9+6U/XqPPS9rvs7QPH7ow2pSPp4LXQLPSlffmdAT375zx+W+p0e7vPk4B+gFL
-         Kb7YxTHzEyj1aOS3Q7VBHbi1W2ANcEw3RSWWwInKkfUOozvEB6TtkF8z68JiWrntydB0
-         dc1Q==
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=HKleyuyrQhrb9JptKZ5qXsdqeoqftjUetNXNKwm786A=;
+        b=ez/XgHvB6JuEESwkwz+X22aO8kx0w7jy5jmx9Dj9+QHigOa75rE8+rqm1OfhuYpgAo
+         jX2qlI8av8w+BBnnIkomah3B28AQp6C7+gFdtg3RqoQzqYZ0ycHDEPyqEuVe5Ek3Bme/
+         yKAHTB2mj2UVm45CXebVLUQHfL6awzn/h0HRRjY829vHf9IJHB1UbGq7/RH+/Oeckp4k
+         YeF2MaA9X49JNqZrGvFtLHPH5DXj+3Oz5UGfIxOEtTWEWPhhOv7ukO0uiawN5Y08WmK8
+         zsBtG7KLIf1tEiOQlriu1XrmiLrT+akcpi+SUbG5BYAc3NmHnMXWOpIdm4O/3tLilo3K
+         0JRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=4xBYgBhSuEsq9ZZe/IswQWwloxjZZr9dDqsNSPWfFj8=;
-        b=QsQtIvH786ycsPVP2eBqUV98r+B05FVxxVDQv60wF5s4QBqzLhPLJ2KGSUDSrmyNcm
-         wfSAv6r4RFt41YvPFnfZBSN/OUgptXR+hpMUZ8gRs/HL4iAM6hAqgEM5grVQ5i5HfE6j
-         D0wqPriF8HT5R0S4AzBN5oMxjxCvJe7P1BXkYofAmfUrEsDROyBhzLXFzbyduP2eCWV2
-         5vSDacHN7//RyHf1hncl+wXP/S/rp5emxZ8zQihkBLtPGYcDjka7xjIYPaVy+z140Jy6
-         MjXIQpnqKpgTOVOSaghuPpiSwT7XHJ2XniOQaQRgM5Z53WLhxanvsBMvKk8TnZjohhIJ
-         VMeA==
-X-Gm-Message-State: AJIora/1Da6y4++MktJ23OoJ5fuQGguwb6H5jQa7qnqGfvD8Pt90Tk31
-        c2KhjEvWJjRZYk0t6ApYhCZGiw==
-X-Google-Smtp-Source: AGRyM1t6yZgvSz7PHkkloiTL8IY85na6KGvKbM4AMqMN7D97HK1lmys+JJAmfWkix+o+R4Tkr2tdlw==
-X-Received: by 2002:a62:1687:0:b0:50d:3364:46d4 with SMTP id 129-20020a621687000000b0050d336446d4mr4418880pfw.74.1656161338645;
-        Sat, 25 Jun 2022 05:48:58 -0700 (PDT)
+        bh=HKleyuyrQhrb9JptKZ5qXsdqeoqftjUetNXNKwm786A=;
+        b=G26q/wRtTcD1qj8XYf6UEy0L4Sz+fZTRZYiwFU12LbIw5KhGXhbiFwjeRePwlIrVA4
+         2eBcyVwdYNXOCjVOl51c4lq1Vzk13X/MGc4Zgf8SVe6QWQyM9cCQ4DpjyV5KLwzeOIon
+         RYoVXQJ26o9jfalMct0OAkhB9cC9u0eeVdeGw5n4uhukAMGBcGKVwJFEyqGetlePFt/a
+         OpKwKIGpIwj8FinLRLs1U9mMMfOZyuBjb7AefVIDETmo9mjn0fmptXYcZRzC1zU/lEyg
+         vooqPkZYmnoXtmlz0A6T2YQsrbs4cCQ+2xEawIL/pf/BYFJZn9ffSuLoauLRBuAiZezV
+         xiWw==
+X-Gm-Message-State: AJIora9POnv7IE5tyGyRauqelZdLa/07zhvA4Q7pv1f4f8m8OG3bsk90
+        Lmgw39MMWNpWfu/kD2mvMOHkeDLOItZWmQ==
+X-Google-Smtp-Source: AGRyM1vGzTOIlhZiN2E1qgFSetjZPQUetLiI1B1Ra84O6JdZbcWhzoabNGa+wRhL/gnDySg2Fvng3A==
+X-Received: by 2002:a17:90b:3804:b0:1ec:fe8d:8705 with SMTP id mq4-20020a17090b380400b001ecfe8d8705mr9667745pjb.103.1656161342766;
+        Sat, 25 Jun 2022 05:49:02 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id c8-20020aa79528000000b00525135bd555sm3580418pfp.162.2022.06.25.05.48.57
+        by smtp.gmail.com with ESMTPSA id q16-20020a17090311d000b001636c0b98a7sm3622057plh.226.2022.06.25.05.49.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jun 2022 05:48:58 -0700 (PDT)
+        Sat, 25 Jun 2022 05:49:02 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com,
-        shr@fb.com
-Cc:     david@fromorbit.com, jack@suse.cz, willy@infradead.org,
-        hch@infradead.org
-In-Reply-To: <20220623175157.1715274-1-shr@fb.com>
-References: <20220623175157.1715274-1-shr@fb.com>
-Subject: Re: (subset) [RESEND PATCH v9 00/14] io-uring/xfs: support async buffered writes
-Message-Id: <165616133761.54036.18358524155859182075.b4-ty@kernel.dk>
-Date:   Sat, 25 Jun 2022 06:48:57 -0600
+To:     asml.silence@gmail.com, io-uring@vger.kernel.org
+In-Reply-To: <cover.1656153285.git.asml.silence@gmail.com>
+References: <cover.1656153285.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-next 0/5] random 5.20 patches
+Message-Id: <165616134213.54362.15436139962140796967.b4-ty@kernel.dk>
+Date:   Sat, 25 Jun 2022 06:49:02 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 23 Jun 2022 10:51:43 -0700, Stefan Roesch wrote:
-> This patch series adds support for async buffered writes when using both
-> xfs and io-uring. Currently io-uring only supports buffered writes in the
-> slow path, by processing them in the io workers. With this patch series it is
-> now possible to support buffered writes in the fast path. To be able to use
-> the fast path the required pages must be in the page cache, the required locks
-> in xfs can be granted immediately and no additional blocks need to be read
-> form disk.
+On Sat, 25 Jun 2022 11:52:57 +0100, Pavel Begunkov wrote:
+> Just random patches here and there. The nicest one is 5/5, which removes
+> ctx->refs pinning from io_uring_enter.
+> 
+> Pavel Begunkov (5):
+>   io_uring: improve io_fail_links()
+>   io_uring: fuse fallback_node and normal tw node
+>   io_uring: remove extra TIF_NOTIFY_SIGNAL check
+>   io_uring: don't check file ops of registered rings
+>   io_uring: remove ctx->refs pinning on enter
 > 
 > [...]
 
 Applied, thanks!
 
-[13/14] xfs: Specify lockmode when calling xfs_ilock_for_iomap()
-        (no commit info)
-[14/14] xfs: Add async buffered write support
-        (no commit info)
+[1/5] io_uring: improve io_fail_links()
+      commit: 149e51e72cc0d87b7eb452e928b29a906501981d
+[2/5] io_uring: fuse fallback_node and normal tw node
+      commit: aacc96447edf1ea1f057fb5dd3c53ee495e21487
+[3/5] io_uring: remove extra TIF_NOTIFY_SIGNAL check
+      commit: 8b5e7937ac521ff33c2bac66e3c1a0385ad7087e
+[4/5] io_uring: don't check file ops of registered rings
+      commit: 9c59698445f94fbdf208b3f50286e4fbfd295571
+[5/5] io_uring: remove ctx->refs pinning on enter
+      commit: e8584adba8863d531cb25233a650fdb9b50c2e2b
 
 Best regards,
 -- 

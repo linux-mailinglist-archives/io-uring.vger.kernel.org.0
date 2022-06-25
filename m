@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C3755A918
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jun 2022 12:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF06D55A916
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jun 2022 12:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232649AbiFYKxc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Jun 2022 06:53:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57806 "EHLO
+        id S232676AbiFYKxe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Jun 2022 06:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232674AbiFYKxb (ORCPT
+        with ESMTP id S232688AbiFYKxb (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sat, 25 Jun 2022 06:53:31 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA59F1CB20
-        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 03:53:29 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id r81-20020a1c4454000000b003a0297a61ddso3151072wma.2
-        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 03:53:29 -0700 (PDT)
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F35193C1
+        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 03:53:31 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id n185so2583094wmn.4
+        for <io-uring@vger.kernel.org>; Sat, 25 Jun 2022 03:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qJrhBFpF10IM4q4cMndXnFTorXE6d6zjBVBWHT87ASc=;
-        b=SugC85Z7XfKmBdezmux2bq55mfuFIS51zeuvd1UcTpw7HwIJG3xH3tjw6lanySrcOW
-         TWfsGCqlWpktI1iw0SSa2GNHCUKCm+fK5Z9LqbP316qtIsID/9mg5s320NtlBlou8O5y
-         wS+H2ke2ezKO5qF5KRpQwdTo9BmwVwJZUQ4BtdC0XQCoowVn1AWBTHJqKBzadQ6G4Ft6
-         Kh5C93cQ0V1DDrB3vXSON6+bKcoLmVJAiPs7XaYOp4xJbtLGoQWn2VFzETIkxD1jgiVP
-         fzLsLJpHjp9YYzXmmazNKSiVbqe/MaxybxS/qZgj7kGwgWaA2bBaYWIDdqru4Jf/NLfY
-         91Ew==
+        bh=ILOlYtBJHR0amL/QmGXZ22FVloEJvHsPQZNwxmR3VJs=;
+        b=OFlFSKHjJHZEn8+fwcUIyb5CqpmVFMKoC1Z1OXrqvHVJONnD4w+Lfd6+sseQy6gczJ
+         zvM8JvVC3LYD9y7opVl4W9LjJYBDulILSlWLM6vZLrdIg/+KLpBJAzmDbyXu3oMVTDHP
+         k09Tt07qhW3wfJiVkii7qhmMUeV3++i8+fWEUkvfRopf8fZ+49T/CF1vxdJmIbW2LLmd
+         NWBQ48hxBcf6fTAaRcXb3GDXQDgfnMNx6eP6UeewR6UnGzNe4Fjukw5MUpCfiLSQZP9c
+         11zc5yOONRP3gmhKNvHuuZP/xcCcE6caDvYNr1VHbAUiI7igrdUP2sQDaNXikNs4xANp
+         FaLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qJrhBFpF10IM4q4cMndXnFTorXE6d6zjBVBWHT87ASc=;
-        b=MR2bYQS7yZohgjVnpeaRK1JkRfaNY9cLZRablLo6yIoXgAmVhsKjXgw7TXJbLTquVf
-         KIRA0+ZHziFgn12YSYthTaSznp9VLm6TOAY7e2vpL+SZBiqz3utu17Ug/o2QmW71hIVH
-         9711Zo9sjbpW11lRZi3fkn36Jxj4iQcTwPyLxCTqyOy/L47bNoIj3xb4DesTq2ReYRsD
-         B9fkXAzV3WbGj3w4mwRm8pQqwgLcQzSxXkO1h3ty9CzcOkuI4YdfL68s2liva9qaxNkL
-         pRO6T2KQ4DVx6swgdIDnzQ9HUS2y3oY91Xt9JeD4NyZu7u3LljT6qlEeRR3VmIGy6G54
-         Irww==
-X-Gm-Message-State: AJIora9nryGAZIQwAfTNTIKdo+ZBty5442Mjz3vO1YoKms4zND1BWU1D
-        qaCnwrm6ZDF9VMcos/QeJQlUS0W/LIRwfA==
-X-Google-Smtp-Source: AGRyM1tpHk3Z5C01kbwwBdcuzkfOEtVic7+DBDJjeCBi+/qQiVApKILc+SdeC0Sre8P1nIas0ql6dA==
-X-Received: by 2002:a1c:7903:0:b0:3a0:3936:b71f with SMTP id l3-20020a1c7903000000b003a03936b71fmr9007735wme.168.1656154408115;
-        Sat, 25 Jun 2022 03:53:28 -0700 (PDT)
+        bh=ILOlYtBJHR0amL/QmGXZ22FVloEJvHsPQZNwxmR3VJs=;
+        b=EMjbQ2G3gKN8UUePWs5xvqUJJEQTpAnrNNVKhkujv00Kv2LX3druYS3m4VvuxEnTKg
+         pUEi4e2zpWzm2yKZhIJ0YyAv01aLzPGKRLAJQB5Rv/EP93dznI3VBOH6hfdPnNSBltCn
+         GEFytsoGoCaoGD249JSprgbExcxC96VOa1DyTVNfPsRJWNQgQ8/kC8ppBkedkjvcYMOZ
+         7L1paMrohJUEXdL6AMqwq7xoMqYEMEQKxJgVAvU7bFKtvHblMyKcjWyyadjsheGxT0mv
+         5RUcUAI0NqNSH2nT62UJm4KEB08Q4keQnV9eR7oDYoLj9bxUS85snQByUXJmqwwcndyd
+         edmA==
+X-Gm-Message-State: AJIora+0f1cXkLY8XHizpKz1D+qn7qRUivZ0krldDleMCGZ1w8WFILqd
+        vzPtEQ1UtaVDADpd0TeynxhdI3T09Dn0Pw==
+X-Google-Smtp-Source: AGRyM1vXEihr/fGXxjMMjaYw7rIVS0HK8UgN/xIxxlt7K3/Ce1RSiz7M8Wp2+iiD1HAZtwhRCzvVUw==
+X-Received: by 2002:a05:600c:34d0:b0:3a0:2c07:73ac with SMTP id d16-20020a05600c34d000b003a02c0773acmr8862765wmq.85.1656154409233;
+        Sat, 25 Jun 2022 03:53:29 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id m17-20020a05600c3b1100b0039c5497deccsm15810144wms.1.2022.06.25.03.53.27
+        by smtp.gmail.com with ESMTPSA id m17-20020a05600c3b1100b0039c5497deccsm15810144wms.1.2022.06.25.03.53.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jun 2022 03:53:27 -0700 (PDT)
+        Sat, 25 Jun 2022 03:53:28 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 4/5] io_uring: don't check file ops of registered rings
-Date:   Sat, 25 Jun 2022 11:53:01 +0100
-Message-Id: <425cd64fd885b8e329a46c205ee811987691baaf.1656153286.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 5/5] io_uring: remove ctx->refs pinning on enter
+Date:   Sat, 25 Jun 2022 11:53:02 +0100
+Message-Id: <a11c57ad33a1be53541fce90669c1b79cf4d8940.1656153286.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1656153285.git.asml.silence@gmail.com>
 References: <cover.1656153285.git.asml.silence@gmail.com>
@@ -68,49 +68,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Registered rings are per definitions io_uring files, so we don't need to
-additionally verify them.
+io_uring_enter() takes ctx->refs, which was previously preventing racing
+with register quiesce. However, as register now doesn't touch the refs,
+we can freely kill extra ctx pinning and rely on the fact that we're
+holding a file reference preventing the ring from being destroyed.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ io_uring/io_uring.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index f40526426db8..e1e8dcd17df3 100644
+index e1e8dcd17df3..070ee9ec9ee7 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -3036,22 +3036,22 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	if (flags & IORING_ENTER_REGISTERED_RING) {
- 		struct io_uring_task *tctx = current->io_uring;
- 
--		if (!tctx || fd >= IO_RINGFD_REG_MAX)
-+		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
- 			return -EINVAL;
- 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
- 		f.file = tctx->registered_rings[fd];
- 		f.flags = 0;
-+		if (unlikely(!f.file))
-+			return -EBADF;
- 	} else {
- 		f = fdget(fd);
-+		if (unlikely(!f.file))
-+			return -EBADF;
-+		ret = -EOPNOTSUPP;
-+		if (unlikely(!io_is_uring_fops(f.file)))
-+			goto out_fput;
+@@ -3049,14 +3049,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			return -EBADF;
+ 		ret = -EOPNOTSUPP;
+ 		if (unlikely(!io_is_uring_fops(f.file)))
+-			goto out_fput;
++			goto out;
  	}
  
--	if (unlikely(!f.file))
--		return -EBADF;
--
--	ret = -EOPNOTSUPP;
--	if (unlikely(!io_is_uring_fops(f.file)))
+-	ret = -ENXIO;
+ 	ctx = f.file->private_data;
+-	if (unlikely(!percpu_ref_tryget(&ctx->refs)))
 -		goto out_fput;
 -
- 	ret = -ENXIO;
- 	ctx = f.file->private_data;
- 	if (unlikely(!percpu_ref_tryget(&ctx->refs)))
+ 	ret = -EBADFD;
+ 	if (unlikely(ctx->flags & IORING_SETUP_R_DISABLED))
+ 		goto out;
+@@ -3141,10 +3137,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 					  &ctx->check_cq);
+ 		}
+ 	}
+-
+ out:
+-	percpu_ref_put(&ctx->refs);
+-out_fput:
+ 	fdput(f);
+ 	return ret;
+ }
+@@ -3730,11 +3723,10 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 	int ret;
+ 
+ 	/*
+-	 * We're inside the ring mutex, if the ref is already dying, then
+-	 * someone else killed the ctx or is already going through
+-	 * io_uring_register().
++	 * We don't quiesce the refs for register anymore and so it can't be
++	 * dying as we're holding a file ref here.
+ 	 */
+-	if (percpu_ref_is_dying(&ctx->refs))
++	if (WARN_ON_ONCE(percpu_ref_is_dying(&ctx->refs)))
+ 		return -ENXIO;
+ 
+ 	if (ctx->restricted) {
 -- 
 2.36.1
 

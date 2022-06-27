@@ -2,36 +2,36 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8759055DB3E
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 15:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F49055CD0B
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 15:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234561AbiF0Nf4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jun 2022 09:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
+        id S235951AbiF0Nf7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jun 2022 09:35:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235951AbiF0Nfz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jun 2022 09:35:55 -0400
-Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DFEA63A5
-        for <io-uring@vger.kernel.org>; Mon, 27 Jun 2022 06:35:55 -0700 (PDT)
+        with ESMTP id S235629AbiF0Nf7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jun 2022 09:35:59 -0400
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A73006362
+        for <io-uring@vger.kernel.org>; Mon, 27 Jun 2022 06:35:58 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1656336953;
+        t=1656336956;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=weyq1RViEPpLZyQ6CiIHnd3SKxHsPNn7JBltw99c5cY=;
-        b=bWSWdTFeskdmjOWI4QzkCEYKnOdDk/C/50LdmsSMAvKVTKtrGS3m3Bz2FfACNjceLd4Qnc
-        UnVR2+rIuxXidAqCw+tSDkvfr+dJykyqDq5o6Vjsh+RbBwAvN8Hcv3wAB/V/ODGowKUvUv
-        MTJlCD1opGJUmiWFfaN9iV6+1Y7n3/M=
+        bh=eFAqcjlFMxWhM2a8jmHB1NuKlvvBP5MivvkGdb6YA/0=;
+        b=lIwHRVRc+Ey3e/ExskNuvvSrisVKSq+4aLWfDch6gc7HzTx7h9rvspcocLWXR6CGodctVl
+        7bwCPMPVZXIwRWy8hoGoLj9oT8O/NZY5omfwcJf9JwZueGs2xZ5p9rKiU1XP8VLRG0aTrA
+        nlphyrTfgxw4bceLEvKWfEnNnkzrrNY=
 From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH 01/11] io-wq: add a worker flag for individual exit
-Date:   Mon, 27 Jun 2022 21:35:31 +0800
-Message-Id: <20220627133541.15223-2-hao.xu@linux.dev>
+Subject: [PATCH 02/11] io-wq: change argument of create_io_worker() for convienence
+Date:   Mon, 27 Jun 2022 21:35:32 +0800
+Message-Id: <20220627133541.15223-3-hao.xu@linux.dev>
 In-Reply-To: <20220627133541.15223-1-hao.xu@linux.dev>
 References: <20220627133541.15223-1-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -50,52 +50,59 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Add a worker flag to control exit of an individual worker, this is
-needed for fixed worker in the next patches but also as a generic
-functionality.
+Change index to acct itself for create_io_worker() for convienence in
+the next patches.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- io_uring/io-wq.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ io_uring/io-wq.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 824623bcf1a5..0c26805ca6de 100644
+index 0c26805ca6de..35ce622f77ba 100644
 --- a/io_uring/io-wq.c
 +++ b/io_uring/io-wq.c
-@@ -26,6 +26,7 @@ enum {
- 	IO_WORKER_F_RUNNING	= 2,	/* account as running */
- 	IO_WORKER_F_FREE	= 4,	/* worker on free list */
- 	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
-+	IO_WORKER_F_EXIT	= 32,	/* worker is exiting */
+@@ -139,7 +139,8 @@ struct io_cb_cancel_data {
+ 	bool cancel_all;
  };
  
- enum {
-@@ -639,8 +640,12 @@ static int io_wqe_worker(void *data)
- 	while (!test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
- 		long ret;
+-static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index);
++static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe,
++			     struct io_wqe_acct *acct);
+ static void io_wqe_dec_running(struct io_worker *worker);
+ static bool io_acct_cancel_pending_work(struct io_wqe *wqe,
+ 					struct io_wqe_acct *acct,
+@@ -306,7 +307,7 @@ static bool io_wqe_create_worker(struct io_wqe *wqe, struct io_wqe_acct *acct)
+ 	raw_spin_unlock(&wqe->lock);
+ 	atomic_inc(&acct->nr_running);
+ 	atomic_inc(&wqe->wq->worker_refs);
+-	return create_io_worker(wqe->wq, wqe, acct->index);
++	return create_io_worker(wqe->wq, wqe, acct);
+ }
  
-+		if (worker->flags & IO_WORKER_F_EXIT)
-+			break;
-+
- 		set_current_state(TASK_INTERRUPTIBLE);
--		while (io_acct_run_queue(acct))
-+		while (!(worker->flags & IO_WORKER_F_EXIT) &&
-+		       io_acct_run_queue(acct))
- 			io_worker_handle_work(worker);
+ static void io_wqe_inc_running(struct io_worker *worker)
+@@ -335,7 +336,7 @@ static void create_worker_cb(struct callback_head *cb)
+ 	}
+ 	raw_spin_unlock(&wqe->lock);
+ 	if (do_create) {
+-		create_io_worker(wq, wqe, worker->create_index);
++		create_io_worker(wq, wqe, acct);
+ 	} else {
+ 		atomic_dec(&acct->nr_running);
+ 		io_worker_ref_put(wq);
+@@ -812,9 +813,10 @@ static void io_workqueue_create(struct work_struct *work)
+ 		kfree(worker);
+ }
  
- 		raw_spin_lock(&wqe->lock);
-@@ -656,6 +661,10 @@ static int io_wqe_worker(void *data)
- 		raw_spin_unlock(&wqe->lock);
- 		if (io_flush_signals())
- 			continue;
-+		if (worker->flags & IO_WORKER_F_EXIT) {
-+			__set_current_state(TASK_RUNNING);
-+			break;
-+		}
- 		ret = schedule_timeout(WORKER_IDLE_TIMEOUT);
- 		if (signal_pending(current)) {
- 			struct ksignal ksig;
+-static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
++static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe,
++			     struct io_wqe_acct *acct)
+ {
+-	struct io_wqe_acct *acct = &wqe->acct[index];
++	int index = acct->index;
+ 	struct io_worker *worker;
+ 	struct task_struct *tsk;
+ 
 -- 
 2.25.1
 

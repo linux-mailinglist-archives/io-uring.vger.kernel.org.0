@@ -2,42 +2,40 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F6155C233
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 14:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA13855C2D2
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 14:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232301AbiF0HLw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jun 2022 03:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57122 "EHLO
+        id S232975AbiF0Hrz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jun 2022 03:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbiF0HLv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jun 2022 03:11:51 -0400
+        with ESMTP id S231721AbiF0Hry (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jun 2022 03:47:54 -0400
 Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94AC1267E
-        for <io-uring@vger.kernel.org>; Mon, 27 Jun 2022 00:11:49 -0700 (PDT)
-Message-ID: <9e4dbeaa-609b-8850-2f20-3e48ba6cb386@linux.dev>
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80BD6153
+        for <io-uring@vger.kernel.org>; Mon, 27 Jun 2022 00:47:52 -0700 (PDT)
+Message-ID: <70e38e6d-35f3-f140-9551-63e4e434bf18@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1656313907;
+        t=1656316071;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qTifJHwZmzA/amvhW8b3V+pTLo4O/0aR1g2gkG138oQ=;
-        b=jVn9K2XgZGOZOUGajHhMuEA8Wy7mYwgM7/H0F7AWhxPQT/eBNeMokA1GdXdJhXsr/XCPlC
-        MRX2dszLqgubzLwqIZF8HpI87T06HDukANY7unzikjqFGk4SZ2yYwV2L11Yvs74SkZVd1+
-        4MvTioSaf69Eh6MgjYxv+B6W6lqwEvE=
-Date:   Mon, 27 Jun 2022 15:11:28 +0800
+        bh=L1TJ0Ud6OW8kiKEtScuYVizmv1X9erbHTqgCEKKFtqA=;
+        b=iqqgOmApcW87qLo4x05dW2YoW0PboC8gl2suodRmWhM3YNj6UETDIelEctiHdWm51LJ+kn
+        CJEEmQSgq/JAG5QnUs5Q8ORtTPsJBo8yAu+hEZoSgMFPMU4W6mMg/xy13ElNqwwwl+YSXw
+        GaMApY4RedvIbVIE3NIoCOvHgoVflLw=
+Date:   Mon, 27 Jun 2022 15:47:47 +0800
 MIME-Version: 1.0
-Subject: Re: [RFC] a new way to achieve asynchronous IO
+Subject: Re: [PATCH for-next] io_uring: let to set a range for file slot
+ allocation
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, dvernet@fb.com
-References: <3d1452da-ecec-fdc7-626c-bcd79df23c92@linux.dev>
- <b297ac50-c336-dabe-b6ee-c067b7f418c7@kernel.dk>
- <1237fa26-3190-7c92-c516-9cf2a750fab4@linux.dev>
- <698e189e-834c-60b0-6cb8-fdad78cd0a49@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+References: <66ab0394e436f38437cf7c44676e1920d09687ad.1656154403.git.asml.silence@gmail.com>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <698e189e-834c-60b0-6cb8-fdad78cd0a49@kernel.dk>
+In-Reply-To: <66ab0394e436f38437cf7c44676e1920d09687ad.1656154403.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
@@ -51,113 +49,206 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/23/22 22:08, Jens Axboe wrote:
-> On 6/23/22 7:31 AM, Hao Xu wrote:
->> On 6/20/22 21:41, Jens Axboe wrote:
->>> On 6/20/22 6:01 AM, Hao Xu wrote:
->>>> Hi,
->>>> I've some thought on the way of doing async IO. The current model is:
->>>> (given we are using SQPOLL mode)
->>>>
->>>> the sqthread does:
->>>> (a) Issue a request with nowait/nonblock flag.
->>>> (b) If it would block, reutrn -EAGAIN
->>>> (c) The io_uring layer captures this -EAGAIN and wake up/create
->>>> a io-worker to execute the request synchronously.
->>>> (d) Try to issue other requests in the above steps again.
->>>>
->>>> This implementation has two downsides:
->>>> (1) we have to find all the block point in the IO stack manually and
->>>> change them into "nowait/nonblock friendly".
->>>> (2) when we raise another io-worker to do the request, we submit the
->>>> request from the very beginning. This isn't a little bit inefficient.
->>>>
->>>>
->>>> While I think we can actually do it in a reverse way:
->>>> (given we are using SQPOLL mode)
->>>>
->>>> the sqthread1 does:
->>>> (a) Issue a request in the synchronous way
->>>> (b) If it is blocked/scheduled soon, raise another sqthread2
->>>> (c) sqthread2 tries to issue other requests in the same way.
->>>>
->>>> This solves problem (1), and may solve (2).
->>>> For (1), we just do the sqthread waken-up at the beginning of schedule()
->>>> just like what the io-worker and system-worker do. No need to find all
->>>> the block point.
->>>> For (2), we continue the blocked request from where it is blocked when
->>>> resource is satisfied.
->>>>
->>>> What we need to take care is making sure there is only one task
->>>> submitting the requests.
->>>>
->>>> To achieve this, we can maintain a pool of sqthread just like the iowq.
->>>>
->>>> I've done a very simple/ugly POC to demonstrate this:
->>>>
->>>> https://github.com/HowHsu/linux/commit/183be142493b5a816b58bd95ae4f0926227b587b
->>>>
->>>> I also wrote a simple test to test it, which submits two sqes, one
->>>> read(pipe), one nop request. The first one will be block since no data
->>>> in the pipe. Then a new sqthread was created/waken up to submit the
->>>> second one and then some data is written to the pipe(by a unrelated
->>>> user thread), soon the first sqthread is waken up and continues the
->>>> request.
->>>>
->>>> If the idea sounds no fatal issue I'll change the POC to real patches.
->>>> Any comments are welcome!
->>>
->>> One thing I've always wanted to try out is kind of similar to this, but
->>> a superset of it. Basically io-wq isn't an explicit offload mechanism,
->>> it just happens automatically if the issue blocks. This applies to both
->>> SQPOLL and non-SQPOLL.
->>>
->>> This takes a page out of the old syslet/threadlet that Ingo Molnar did
->>> way back in the day [1], but it never really went anywhere. But the
->>> pass-on-block primitive would apply very nice to io_uring.
->>
->> I've read a part of the syslet/threadlet patchset, seems it has
->> something that I need, my first idea about the new iowq offload is
->> just like syslet----if blocked, trigger a new worker, deliver the
->> context to it, and then update the current context so that we return
->> to the place of sqe submission. But I just didn't know how to do it.
-> 
-> Exactly, what you mentioned was very close to what I had considered in
-> the past, and what the syslet/threadlet attempted to do. Except it flips
-> it upside down a bit, which I do think is probably the saner way to do
-> it rather than have the original block and fork a new one.
-> 
->> By the way, may I ask why the syslet/threadlet is not merged to the
->> mainline. The mail thread is very long, haven't gotten a chance to
->> read all of it.
-> 
-> Not quite sure, it's been a long time. IMHO it's a good idea looking for
-> the right interface, which we now have. So the time may be ripe to do
-> something like this, finally.
+On 6/25/22 18:55, Pavel Begunkov wrote:
+>  From recently io_uring provides an option to allocate a file index for
+> operation registering fixed files. However, it's utterly unusable with
+> mixed approaches when for a part of files the userspace knows better
+> where to place it, as it may race and users don't have any sane way to
+> pick a slot and hoping it will not be taken.
 
-I've been blocked by an issue:
-if we deliver context from task a to b, we may have no ways to wake it
-up... because when the resource which blocks a is released by another
-task like c, c wakes up a, not b.
-If we want to make it work, we have to deliver the struct task_struct
-as well. That means the original task uses a new task_struct and the
-new task uses the old one. And in the meanwhile we have to maintain
-the pid, parent task .etc stuff.(since we swap the task_struct, the
-pid and other stuff also changed).
-Any thoughts?
+Exactly, with high frequency of index allocation from like multishot
+accept, it's easy that user-pick requests fails.
+By the way, just curious, I can't recall a reason that users pick a slot
+rather than letting kernel do the decision, is there any? So I guess
+users may use all the indexes as 'file slot allocation' range. Correct
+me if I miss something.
 
->>
->> For the approach I posted, I found it is actually SQPOLL-nonrelated.
->> The original conext just wake up a worker in the pool to do the
->> submission, and if one blocks, another one wakes up to do the
->> submission. It is definitely easier to implement than something like
->> syslet(context delivery) since the new worker naturally goes to the
->> place of submission thus no context delivery needed. but a downside is
->> every time we call io_uring_enter to submit a batch of sqes, there is a
->> wakeup at the beginning.
->>
->> I'll try if I can implement a context delivery version.
+
 > 
-> Sounds good, thanks.
+> Let the userspace to register a range of fixed file slots in which the
+> auto-allocation happens. The use case is splittting the fixed table in
+> two parts, where on of them is used for auto-allocation and another for
+> slot-specified operations.
 > 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+> 
+> Some quick tests:
+> https://github.com/isilence/liburing/tree/range-file-alloc
+> 
+>   include/linux/io_uring_types.h |  3 +++
+>   include/uapi/linux/io_uring.h  | 13 +++++++++++++
+>   io_uring/filetable.c           | 24 ++++++++++++++++++++----
+>   io_uring/filetable.h           | 20 +++++++++++++++++---
+>   io_uring/io_uring.c            |  6 ++++++
+>   io_uring/rsrc.c                |  2 ++
+>   6 files changed, 61 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index 918165a20053..1054b8b1ad69 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -233,6 +233,9 @@ struct io_ring_ctx {
+>   
+>   	unsigned long		check_cq;
+>   
+> +	unsigned int		file_alloc_start;
+> +	unsigned int		file_alloc_end;
+> +
+>   	struct {
+>   		/*
+>   		 * We cache a range of free CQEs we can use, once exhausted it
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 09e7c3b13d2d..84dd240e7147 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -429,6 +429,9 @@ enum {
+>   	/* sync cancelation API */
+>   	IORING_REGISTER_SYNC_CANCEL		= 24,
+>   
+> +	/* register a range of fixed file slots for automatic slot allocation */
+> +	IORING_REGISTER_FILE_ALLOC_RANGE	= 25,
+> +
+>   	/* this goes last */
+>   	IORING_REGISTER_LAST
+>   };
+> @@ -575,4 +578,14 @@ struct io_uring_sync_cancel_reg {
+>   	__u64				pad[4];
+>   };
+>   
+> +/*
+> + * Argument for IORING_REGISTER_FILE_ALLOC_RANGE
+> + * The range is specified as [off, off + len)
+> + */
+> +struct io_uring_file_index_range {
+> +	__u32	off;
+> +	__u32	len;
+> +	__u64	resv;
+> +};
+> +
+>   #endif
+> diff --git a/io_uring/filetable.c b/io_uring/filetable.c
+> index 534e1a3c625d..5d2207654e0e 100644
+> --- a/io_uring/filetable.c
+> +++ b/io_uring/filetable.c
+> @@ -16,7 +16,7 @@
+>   static int io_file_bitmap_get(struct io_ring_ctx *ctx)
+>   {
+>   	struct io_file_table *table = &ctx->file_table;
+> -	unsigned long nr = ctx->nr_user_files;
+> +	unsigned long nr = ctx->file_alloc_end;
+>   	int ret;
+>   
+>   	do {
+> @@ -24,11 +24,10 @@ static int io_file_bitmap_get(struct io_ring_ctx *ctx)
+>   		if (ret != nr)
+>   			return ret;
+>   
+> -		if (!table->alloc_hint)
+> +		if (table->alloc_hint == ctx->file_alloc_start)
+>   			break;
+> -
+>   		nr = table->alloc_hint;
+> -		table->alloc_hint = 0;
+> +		table->alloc_hint = ctx->file_alloc_start;
+
+should we use io_reset_alloc_hint() ?
+
+>   	} while (1);
+>   
+>   	return -ENFILE;
+> @@ -139,3 +138,20 @@ int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
+>   		fput(file);
+>   	return ret;
+>   }
+> +
+> +int io_register_file_alloc_range(struct io_ring_ctx *ctx,
+> +				 struct io_uring_file_index_range __user *arg)
+> +{
+> +	struct io_uring_file_index_range range;
+> +	u32 end;
+> +
+> +	if (copy_from_user(&range, arg, sizeof(range)))
+> +		return -EFAULT;
+> +	if (check_add_overflow(range.off, range.len, &end))
+> +		return -EOVERFLOW;
+> +	if (range.resv || end > ctx->nr_user_files)
+> +		return -EINVAL;
+> +
+> +	io_file_table_set_alloc_range(ctx, range.off, range.len);
+> +	return 0;
+> +}
+> diff --git a/io_uring/filetable.h b/io_uring/filetable.h
+> index fb5a274c08ff..acd5e6463733 100644
+> --- a/io_uring/filetable.h
+> +++ b/io_uring/filetable.h
+> @@ -3,9 +3,7 @@
+>   #define IOU_FILE_TABLE_H
+>   
+>   #include <linux/file.h>
+> -
+> -struct io_ring_ctx;
+> -struct io_kiocb;
+> +#include <linux/io_uring_types.h>
+>   
+>   /*
+>    * FFS_SCM is only available on 64-bit archs, for 32-bit we just define it as 0
+> @@ -30,6 +28,9 @@ void io_free_file_tables(struct io_file_table *table);
+>   int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
+>   			struct file *file, unsigned int file_slot);
+>   
+> +int io_register_file_alloc_range(struct io_ring_ctx *ctx,
+> +				 struct io_uring_file_index_range __user *arg);
+> +
+>   unsigned int io_file_get_flags(struct file *file);
+>   
+>   static inline void io_file_bitmap_clear(struct io_file_table *table, int bit)
+> @@ -68,4 +69,17 @@ static inline void io_fixed_file_set(struct io_fixed_file *file_slot,
+>   	file_slot->file_ptr = file_ptr;
+>   }
+>   
+> +static inline void io_reset_alloc_hint(struct io_ring_ctx *ctx)
+> +{
+> +	ctx->file_table.alloc_hint = ctx->file_alloc_start;
+> +}
+> +
+> +static inline void io_file_table_set_alloc_range(struct io_ring_ctx *ctx,
+> +						 unsigned off, unsigned len)
+> +{
+> +	ctx->file_alloc_start = off;
+> +	ctx->file_alloc_end = off + len;
+> +	io_reset_alloc_hint(ctx);
+> +}
+> +
+>   #endif
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 45538b3c3a76..8ab17e2325bc 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3877,6 +3877,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+>   			break;
+>   		ret = io_sync_cancel(ctx, arg);
+>   		break;
+> +	case IORING_REGISTER_FILE_ALLOC_RANGE:
+> +		ret = -EINVAL;
+> +		if (!arg || nr_args)
+> +			break;
+> +		ret = io_register_file_alloc_range(ctx, arg);
+> +		break;
+>   	default:
+>   		ret = -EINVAL;
+>   		break;
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 3a2a5ef263f0..edca7c750f99 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -1009,6 +1009,8 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+>   		io_file_bitmap_set(&ctx->file_table, i);
+>   	}
+>   
+> +	/* default it to the whole table */
+> +	io_file_table_set_alloc_range(ctx, 0, ctx->nr_user_files);
+>   	io_rsrc_node_switch(ctx, NULL);
+>   	return 0;
+>   fail:
 

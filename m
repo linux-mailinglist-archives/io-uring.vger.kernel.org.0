@@ -2,61 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84EAB55F069
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 23:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB0755F19F
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 00:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbiF1VgS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 17:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44942 "EHLO
+        id S231569AbiF1WwL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 18:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiF1VgR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 17:36:17 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA3D12ED69;
-        Tue, 28 Jun 2022 14:36:15 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id n8so5448738eda.0;
-        Tue, 28 Jun 2022 14:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=HUL3dhmazHACLWg3Jqji+i1NZvZ2c9MkkehxgzHYnVo=;
-        b=LnQ9zYXKPe1cHsHner0sFmNa+CG2mooABLHzHPnG37uphSLEvIijDwftPXJ/8zhoUL
-         4UBB93mISsMj1X4pSTIDhAqwW+03KqzSdqgyUBNgX3ooqDGbh9RxUh/q5GS19pcBt33s
-         Te7lWmiBrsbBXZWNLuKamC6ZKm99bAXkSu3MF9XdB4ED0aVjPT6hv/jEts794NVkmQtG
-         E8wyWTEDACK7jRIVI2Gn0FlaUd7e1Ls+WoXeY0DIDz82GuNQc0J9ETNCOefAy/ndaQsr
-         2ZX2mKd0L39oiJlg6/ryprq2+TUQx24Kdx0FuTOgRuFFRLgfKJmWOQdpDTC7zdbygdFW
-         qEGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=HUL3dhmazHACLWg3Jqji+i1NZvZ2c9MkkehxgzHYnVo=;
-        b=DCuJWRs4lalSho49UBGXhswU30w6DK32JsUjOb9Igw5+JhiEptzpWGJZJzgko/TfvM
-         ZeJPbUO1Slx5OHZ5SkLqRqo73O55IUZweOTONBNKyEy/iiFyV6GivxqYxqyqkW1CRPbK
-         E1IaUU6nLqU0W2b90aSf7RDVlwjvA3X4zflu6rfKwvQc12oCRFJI8Rv+GcxVaV0aOBx6
-         u0WlYBHaI/i5YjSnJPyqNNJjzYGj6d3SvWL1iTnoSDgL2sUUTMCaoMv+PuEyu8pI2CE+
-         SWIHpZo6/qwn9XXilunKLTFIT6o1sMY+iG4JSEPGI252z9QAsbSp9FmyYTsHTcA4HeNi
-         OyHQ==
-X-Gm-Message-State: AJIora8lbqpvgSVnAVX0qTq5kTQ5kfn8VnAiSWeri4/NsqaPE0KnAcSM
-        q+ok3FnIO2bO4Yw1mFh5ucg=
-X-Google-Smtp-Source: AGRyM1vpHdR+++4F6Rzrttu7QmIXX746plknU+annn8p6oKDODgOjJeco4YhMOrhhevHCXQCd1MXQg==
-X-Received: by 2002:a05:6402:d05:b0:425:b5c8:faeb with SMTP id eb5-20020a0564020d0500b00425b5c8faebmr74752edb.273.1656452174287;
-        Tue, 28 Jun 2022 14:36:14 -0700 (PDT)
-Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id lu4-20020a170906fac400b006fec69696a0sm6817919ejb.220.2022.06.28.14.36.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 14:36:13 -0700 (PDT)
-Message-ID: <c84bdaec-3691-de84-95a5-d600e4b7ac2f@gmail.com>
-Date:   Tue, 28 Jun 2022 22:33:10 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC net-next v3 05/29] net: bvec specific path in
- zerocopy_sg_from_iter
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        with ESMTP id S229483AbiF1WwL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 18:52:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F783A735;
+        Tue, 28 Jun 2022 15:52:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C579EB82064;
+        Tue, 28 Jun 2022 22:52:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E75C341C8;
+        Tue, 28 Jun 2022 22:52:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656456727;
+        bh=8kNQyGytWQf7/KlaaDxJECJopOaWhuY2g1zLQhnc40Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jg55iHB5Biy9na3j/tjH6LM4ip/stsaU2mE5INPVlXhz6qG3bf+ZKuGORw1cxQ6Ao
+         u49RNEY8N02ObYXcFt8nA9J5st4Se9J8upPMsfqaQDFIvHoE+Ds8C1sS2fTzZiijFD
+         Y0qpNnH8UF+6A+JUupGfLAfLLfEBFvmNoiyERfCeUDinLG4n826GA9aKdCyPIX3nqB
+         1HWlpOdQ8sLPjVHrth4YwurgWivWL28zxzUIiBD2aOEdS9QyXEvsfkaasW1j9VPMSj
+         8CEOOMlIEid6NkO1eUoiBEU0wlIptxgffZTgxCct6lJzreDbqW1BbwuSCSUEIbQdrv
+         2Kh1BCTnW23hw==
+Date:   Tue, 28 Jun 2022 16:52:04 -0600
+From:   David Ahern <dsahern@kernel.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
 Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "David S . Miller" <davem@davemloft.net>,
@@ -64,81 +41,241 @@ Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Willem de Bruijn <willemb@google.com>,
         Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
+Subject: Re: [RFC net-next v3 05/29] net: bvec specific path in
+ zerocopy_sg_from_iter
+Message-ID: <20220628225204.GA27554@u2004-local>
 References: <cover.1653992701.git.asml.silence@gmail.com>
  <5143111391e771dc97237e2a5e6a74223ef8f15f.1653992701.git.asml.silence@gmail.com>
- <YrtfMr+waxp37ru9@ZenIV>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <YrtfMr+waxp37ru9@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
+Content-Disposition: inline
+In-Reply-To: <5143111391e771dc97237e2a5e6a74223ef8f15f.1653992701.git.asml.silence@gmail.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/28/22 21:06, Al Viro wrote:
-> On Tue, Jun 28, 2022 at 07:56:27PM +0100, Pavel Begunkov wrote:
->> Add an bvec specialised and optimised path in zerocopy_sg_from_iter.
->> It'll be used later for {get,put}_page() optimisations.
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jun 28, 2022 at 07:56:27PM +0100, Pavel Begunkov wrote:
+> Add an bvec specialised and optimised path in zerocopy_sg_from_iter.
+> It'll be used later for {get,put}_page() optimisations.
 > 
-> If you need a variant that would not grab page references for ITER_BVEC
-> (and presumably other non-userland ones), the natural thing to do would
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  net/core/datagram.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
 
-I don't see other iter types interesting in this context
+Rather than propagating iter functions, I have been using the attached
+patch for a few months now. It leverages your ubuf_info in msghdr to
+allow in kernel users to pass in their own iter handler.
 
-> be to provide just such a primitive, wouldn't it?
+--1yeeQ81UyVL57Vl7
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-net-Allow-custom-iter-handler-in-uarg.patch"
 
-A helper returning a page array sounds like overshot and waste of cycles
-considering that it copies one bvec into another, and especially since
-iov_iter_get_pages() parses only the first struct bio_vec and so returns
-only 1 page at a time.
+From 1101177acb64832df2bb2b44d9305a8ebc4ca648 Mon Sep 17 00:00:00 2001
+From: David Ahern <dsahern@kernel.org>
+Date: Tue, 19 Apr 2022 10:39:59 -0600
+Subject: [PATCH] net: Allow custom iter handler in uarg
 
-I can actually use for_each_bvec(), but still leaves updating the iter
-from bvec_iter.
+Add support for custom iov_iter handling to ubuf. The idea is that
+in-kernel subsystems want control over how an SG is split.
 
-> The fun question here is by which paths ITER_BVEC can be passed to that
-> function and which all of them are currently guaranteed to hold the
-> underlying pages pinned...
+The custom iterator is a union with mmpin to keep the size of
+ubuf_info <= sizeof(skb->cb) which is 48B.
 
-It's the other way around, not all ITER_BVEC are managed but all users
-asking to use managed frags (i.e. io_uring) should keep pages pinned and
-provide ITER_BVEC. It's opt-in, both for users and protocols.
+Signed-off-by: David Ahern <dsahern@kernel.org>
+---
+ include/linux/skbuff.h | 21 ++++++++++++++++-----
+ net/core/datagram.c    | 11 ++++++++---
+ net/core/datagram.h    |  3 ++-
+ net/core/skbuff.c      | 19 +++++++++++++++----
+ net/ipv4/ip_output.c   |  2 +-
+ net/ipv6/ip6_output.c  |  2 +-
+ 6 files changed, 43 insertions(+), 15 deletions(-)
 
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -66,9 +66,16 @@ struct msghdr {
-  	};
-  	bool		msg_control_is_user : 1;
-  	bool		msg_get_inq : 1;/* return INQ after receive */
-+	/*
-+	 * The data pages are pinned and won't be released before ->msg_ubuf
-+	 * is released. ->msg_iter should point to a bvec and ->msg_ubuf has
-+	 * to be non-NULL.
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index dbf820a50a39..71161f65dedd 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -482,11 +482,21 @@ struct ubuf_info {
+ 	};
+ 	refcount_t refcnt;
+ 	u8 flags;
++	u8 has_sg_from_iter;
+ 
+-	struct mmpin {
+-		struct user_struct *user;
+-		unsigned int num_pg;
+-	} mmp;
++	/* sg_from_iter is expected to be used with ubuf in
++	 * msghdr and is only referenced at the transport
++	 * layer segmenting an iov into packets. mmpin is used
++	 * by in-tree ubuf_info {re,}alloc at L3 layer.
 +	 */
-+	bool		msg_managed_data : 1;
-  	unsigned int	msg_flags;	/* flags on received message */
-  	__kernel_size_t	msg_controllen;	/* ancillary data buffer length */
-  	struct kiocb	*msg_iocb;	/* ptr to iocb for async requests */
-+	struct ubuf_info *msg_ubuf;
-  };
-
-The user sets ->msg_managed_data, then protocols find it and set
-SKBFL_MANAGED_FRAG_REFS. If either of the steps didn't happen the
-feature is not used.
-The ->msg_managed_data part makes io_uring the only user, and io_uring
-ensures pages are pinned.
-
-
-> And AFAICS you quietly assume that only ITER_BVEC ones will ever have that
-> "managed" flag of your set.  Or am I misreading the next patch in the
-> series?
-
-I hope a comment just above ->msg_managed_data should count as not quiet.
-
++	union {
++		int (*sg_from_iter)(struct sock *sk, struct sk_buff *skb,
++				    struct iov_iter *from, size_t length);
++		struct mmpin {
++			struct user_struct *user;
++			unsigned int num_pg;
++		} mmp;
++	};
+ };
+ 
+ #define skb_uarg(SKB)	((struct ubuf_info *)(skb_shinfo(SKB)->destructor_arg))
+@@ -503,7 +513,8 @@ void msg_zerocopy_put_abort(struct ubuf_info *uarg, bool have_uref);
+ void msg_zerocopy_callback(struct sk_buff *skb, struct ubuf_info *uarg,
+ 			   bool success);
+ 
+-int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len);
++int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len,
++			    struct ubuf_info *uarg);
+ int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
+ 			     struct msghdr *msg, int len,
+ 			     struct ubuf_info *uarg);
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index 15ab9ffb27fe..9ca61a0a400d 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -617,10 +617,15 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
+ EXPORT_SYMBOL(skb_copy_datagram_from_iter);
+ 
+ int __zerocopy_sg_from_iter(struct sock *sk, struct sk_buff *skb,
+-			    struct iov_iter *from, size_t length)
++			    struct iov_iter *from, size_t length,
++			    struct ubuf_info *uarg)
+ {
+-	int frag = skb_shinfo(skb)->nr_frags;
++	int frag;
+ 
++	if (unlikely(uarg && uarg->has_sg_from_iter))
++		return uarg->sg_from_iter(sk, skb, from, length);
++
++	frag = skb_shinfo(skb)->nr_frags;
+ 	while (length && iov_iter_count(from)) {
+ 		struct page *pages[MAX_SKB_FRAGS];
+ 		struct page *last_head = NULL;
+@@ -704,7 +709,7 @@ int zerocopy_sg_from_iter(struct sk_buff *skb, struct iov_iter *from)
+ 	if (skb_copy_datagram_from_iter(skb, 0, from, copy))
+ 		return -EFAULT;
+ 
+-	return __zerocopy_sg_from_iter(NULL, skb, from, ~0U);
++	return __zerocopy_sg_from_iter(NULL, skb, from, ~0U, NULL);
+ }
+ EXPORT_SYMBOL(zerocopy_sg_from_iter);
+ 
+diff --git a/net/core/datagram.h b/net/core/datagram.h
+index bcfb75bfa3b2..65027fcf3322 100644
+--- a/net/core/datagram.h
++++ b/net/core/datagram.h
+@@ -10,6 +10,7 @@ struct sk_buff;
+ struct iov_iter;
+ 
+ int __zerocopy_sg_from_iter(struct sock *sk, struct sk_buff *skb,
+-			    struct iov_iter *from, size_t length);
++			    struct iov_iter *from, size_t length,
++			    struct ubuf_info *uarg);
+ 
+ #endif /* _NET_CORE_DATAGRAM_H_ */
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 17b93177a68f..9acb43e5a779 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1158,6 +1158,7 @@ struct ubuf_info *msg_zerocopy_alloc(struct sock *sk, size_t size)
+ 
+ 	BUILD_BUG_ON(sizeof(*uarg) > sizeof(skb->cb));
+ 	uarg = (void *)skb->cb;
++	uarg->has_sg_from_iter = 0;
+ 	uarg->mmp.user = NULL;
+ 
+ 	if (mm_account_pinned_pages(&uarg->mmp, size)) {
+@@ -1206,6 +1207,12 @@ struct ubuf_info *msg_zerocopy_realloc(struct sock *sk, size_t size,
+ 			return NULL;
+ 		}
+ 
++		if (WARN_ON(uarg->has_sg_from_iter)) {
++			uarg->has_sg_from_iter = 0;
++			uarg->mmp.user = NULL;
++			uarg->mmp.num_pg = 0;
++		}
++
+ 		next = (u32)atomic_read(&sk->sk_zckey);
+ 		if ((u32)(uarg->id + uarg->len) == next) {
+ 			if (mm_account_pinned_pages(&uarg->mmp, size))
+@@ -1258,7 +1265,10 @@ static void __msg_zerocopy_callback(struct ubuf_info *uarg)
+ 	u32 lo, hi;
+ 	u16 len;
+ 
+-	mm_unaccount_pinned_pages(&uarg->mmp);
++
++	WARN_ON(uarg->has_sg_from_iter);
++	if (!uarg->has_sg_from_iter)
++		mm_unaccount_pinned_pages(&uarg->mmp);
+ 
+ 	/* if !len, there was only 1 call, and it was aborted
+ 	 * so do not queue a completion notification
+@@ -1319,9 +1329,10 @@ void msg_zerocopy_put_abort(struct ubuf_info *uarg, bool have_uref)
+ }
+ EXPORT_SYMBOL_GPL(msg_zerocopy_put_abort);
+ 
+-int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len)
++int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len,
++			    struct ubuf_info *uarg)
+ {
+-	return __zerocopy_sg_from_iter(skb->sk, skb, &msg->msg_iter, len);
++	return __zerocopy_sg_from_iter(skb->sk, skb, &msg->msg_iter, len, uarg);
+ }
+ EXPORT_SYMBOL_GPL(skb_zerocopy_iter_dgram);
+ 
+@@ -1339,7 +1350,7 @@ int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
+ 	if (orig_uarg && uarg != orig_uarg)
+ 		return -EEXIST;
+ 
+-	err = __zerocopy_sg_from_iter(sk, skb, &msg->msg_iter, len);
++	err = __zerocopy_sg_from_iter(sk, skb, &msg->msg_iter, len, uarg);
+ 	if (err == -EFAULT || (err == -EMSGSIZE && skb->len == orig_len)) {
+ 		struct sock *save_sk = skb->sk;
+ 
+diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+index 1b6a64b19c76..1ff403c2dcb0 100644
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -1238,7 +1238,7 @@ static int __ip_append_data(struct sock *sk,
+ 			skb->truesize += copy;
+ 			wmem_alloc_delta += copy;
+ 		} else {
+-			err = skb_zerocopy_iter_dgram(skb, from, copy);
++			err = skb_zerocopy_iter_dgram(skb, from, copy, uarg);
+ 			if (err < 0)
+ 				goto error;
+ 		}
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index 63a217128f8b..6795144653ac 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1791,7 +1791,7 @@ static int __ip6_append_data(struct sock *sk,
+ 			skb->truesize += copy;
+ 			wmem_alloc_delta += copy;
+ 		} else {
+-			err = skb_zerocopy_iter_dgram(skb, from, copy);
++			err = skb_zerocopy_iter_dgram(skb, from, copy, uarg);
+ 			if (err < 0)
+ 				goto error;
+ 		}
 -- 
-Pavel Begunkov
+2.25.1
+
+
+--1yeeQ81UyVL57Vl7--

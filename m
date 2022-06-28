@@ -2,42 +2,42 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2CC355DE83
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 15:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B88CA55DDD7
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 15:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243665AbiF1CVI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Jun 2022 22:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32858 "EHLO
+        id S243698AbiF1CVU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Jun 2022 22:21:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243565AbiF1CUb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jun 2022 22:20:31 -0400
+        with ESMTP id S243602AbiF1CUx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Jun 2022 22:20:53 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598A124BD5;
-        Mon, 27 Jun 2022 19:20:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1646F24BE9;
+        Mon, 27 Jun 2022 19:20:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EBF95B81C10;
-        Tue, 28 Jun 2022 02:20:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED05C341CB;
-        Tue, 28 Jun 2022 02:20:08 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C1345B818E4;
+        Tue, 28 Jun 2022 02:20:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D36C341CB;
+        Tue, 28 Jun 2022 02:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656382809;
-        bh=bJ+kyBGY+pp+g7vxp3IKmOoxPx19as83TpTlQBNOuvc=;
+        s=k20201202; t=1656382819;
+        bh=XM3i6EZiXJSmAOc14cgHOFg6vFsrcGc3wuo9ksDVE+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E0jSC+ZFElcwz7pohQnjsbsEJ4gffe7fAWrgi+8QeCDYcYyJ2YuN1/rcGT+tZ5IU8
-         HmDSikSD2TMf7kPeDXRle0e9V6jw3agTa7e8eZmfviK6ZiSsDGiMPzr2kONsGJ/Fkm
-         pPhSQrB9GhNTSONZqN0qECVfcmuQpGqtCooxcPb1NysmQ+5eqq0f+woPvnVlKzZpCK
-         eV5iIzL3K5EzdDkk8YIiGBPhQ2iDqDaiH6ChlB4vnHf9bGiACRTU4cQzn3u5gczIZB
-         W+HK64M92t18LUr4ZapaUQZPDEYALlnZnJ7HyDuIpAl3dA5mevbBefAC6axE8135S8
-         hsLo9TskAOmpQ==
+        b=IPJjZXMOoc7jUQwbKbElazJWFR+WPoqK4qzqFUUyJh1vQ/YygUfO1RuQYyECwZ1wu
+         GWepZj6MKGE/WLD7vOzgbiEItucTJGWFUAqf3EWMzXGDuoWW0duCqa/kgcnb1asb1a
+         TUsUQN/x+wZrHVsgJKIS2vfcP4n6ZCr9y1+DDcL+gkNjL+1fW9UF3hwuh+74vN/wt9
+         jWU3vRTAI3Wu+KyQKYAJnSF4ToZlkgL2Nu2AUj++bYXxiCQVlcZrRCOttrbK68M6WP
+         D6cbNTZhdkAglr1zbYhLDNbsq4Xr1IQCzyDJzZqfibAxJ5WlHtTLuK3mxAoIhOjq6T
+         OpiB9QSbkRHdQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.18 32/53] io_uring: mark reissue requests with REQ_F_PARTIAL_IO
-Date:   Mon, 27 Jun 2022 22:18:18 -0400
-Message-Id: <20220628021839.594423-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.18 37/53] io_uring: fix merge error in checking send/recv addr2 flags
+Date:   Mon, 27 Jun 2022 22:18:23 -0400
+Message-Id: <20220628021839.594423-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220628021839.594423-1-sashal@kernel.org>
 References: <20220628021839.594423-1-sashal@kernel.org>
@@ -57,43 +57,43 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 1bacd264d3c3a05de4afdd1712c9dd6ccebb9490 ]
+[ Upstream commit b60cac14bb3c88cff2a7088d9095b01a80938c41 ]
 
-If we mark for reissue, we assume that the buffer will remain stable.
-Hence if are using a provided buffer, we need to ensure that we stick
-with it for the duration of that request.
+With the dropping of the IOPOLL checking in the per-opcode handlers,
+we inadvertently left two checks in the recv/recvmsg and send/sendmsg
+prep handlers for the same thing, and one of them includes addr2 which
+holds the flags for these opcodes.
 
-This only affects block devices that use provided buffers, as those are
-the only ones that get marked with REQ_F_REISSUE.
+Fix it up and kill the redundant checks.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 68aab48838e4..725c59c734f1 100644
+index 725c59c734f1..9eb20f8865ac 100644
 --- a/fs/io_uring.c
 +++ b/fs/io_uring.c
-@@ -3009,7 +3009,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
- 	if (unlikely(res != req->result)) {
- 		if ((res == -EAGAIN || res == -EOPNOTSUPP) &&
- 		    io_rw_should_reissue(req)) {
--			req->flags |= REQ_F_REISSUE;
-+			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
- 			return true;
- 		}
- 		req_set_fail(req);
-@@ -3059,7 +3059,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
- 		kiocb_end_write(req);
- 	if (unlikely(res != req->result)) {
- 		if (res == -EAGAIN && io_rw_should_reissue(req)) {
--			req->flags |= REQ_F_REISSUE;
-+			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
- 			return;
- 		}
- 		req->result = res;
+@@ -5252,8 +5252,6 @@ static int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+-	if (unlikely(sqe->addr2 || sqe->file_index))
+-		return -EINVAL;
+ 
+ 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
+@@ -5465,8 +5463,6 @@ static int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+-	if (unlikely(sqe->addr2 || sqe->file_index))
+-		return -EINVAL;
+ 
+ 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
 -- 
 2.35.1
 

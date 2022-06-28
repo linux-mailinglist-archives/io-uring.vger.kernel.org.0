@@ -2,109 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD5A55EDD4
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 21:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB40B55EDED
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 21:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232541AbiF1T3j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 15:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40502 "EHLO
+        id S229918AbiF1TmD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 15:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233017AbiF1T2u (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 15:28:50 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4703819E
-        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 12:26:17 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id x4so12909622pfq.2
-        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 12:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=RZfDjKtOuj09lgIaPNLgdLuWW2OqPIBAAaOMl71QkGc=;
-        b=afUjvtBZuciqKQ343qcfWC3FaNvjRcGVVYpwtN91XA99Dm9z1YTtIMpEWidMVzTDTA
-         yiR2LpmOBVa5jry/NRJ4OPPy1WnZ4dytPKcVs7wBregvv+vn4xF3FUJ7IEZ907SWCB8t
-         Lf/uuq5keCdgDOz2ZpiZ7mpBkzSZn/V2EMBRo36CEY56QJbp+c+Ft0Z/328MF7qAdv1W
-         engj7/ZSAFecZm4SsfrzX3nSLO4F5be2Qo1y26WkS+LnAi12x7+HFh3PX46OaDwYHRvT
-         q2zhywQrU8e75ZoHnyvmO4tdNxR+hgrbBcYIuOGU62JSeddTqbU5Np3DPmJe6KhYcCTY
-         u9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=RZfDjKtOuj09lgIaPNLgdLuWW2OqPIBAAaOMl71QkGc=;
-        b=c5tl/BNfcNm7248f955IHgZ7+i1udco+X7WxZKOmBv8mu6y7ozqJ3nxARizDRrX81Y
-         lMW9BNDkg1kATBV/SX0xdfGliZqpeL3MW1LDoDkSccMM5dJXtwziBzsAC9mJMAijPvjI
-         wrSHVfftnfBWJo9hDX6A9IWmK1hT0hAUX3eJCf9bUT/lhpdayrWejpPAi+ZJ+TwhUJn8
-         b0aW/sH/awf4DbrCmZpyeLQWSyzWNsJwGVb7Jhtji5UtylECCVguyUtbKytNdcj08s9M
-         kj5oe74ZftVgt7SyL2rFKk1UakzZ7a5s5V/IGe/rnQ4ijA+loRogjCEPnYawsYRdgjxZ
-         XxvA==
-X-Gm-Message-State: AJIora/GfGRBlNSNteoQ/kkaCLbQMYlRkCk5bpE4ImG1ZloS9tGIWYQI
-        umNfqAoGwumhz9IZ3MV2vpBT78ObzfCNAQ==
-X-Google-Smtp-Source: AGRyM1vOqpBEFnmUUlVqbxSpYXW4QC7ILtAEqTdini3pp0DMQk7OqmKFghFLBsqoEdNiyHJe2LWztQ==
-X-Received: by 2002:a62:29c2:0:b0:527:ab6a:c310 with SMTP id p185-20020a6229c2000000b00527ab6ac310mr6203732pfp.12.1656444376719;
-        Tue, 28 Jun 2022 12:26:16 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c085:21e1::165b? ([2620:10d:c090:400::5:f46f])
-        by smtp.gmail.com with ESMTPSA id jf20-20020a170903269400b0015e8d4eb25fsm9617300plb.169.2022.06.28.12.26.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 12:26:16 -0700 (PDT)
-Message-ID: <31f47d42-ce33-b732-b7ba-098f6174efad@kernel.dk>
-Date:   Tue, 28 Jun 2022 13:26:14 -0600
+        with ESMTP id S229798AbiF1Tlh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 15:41:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F5D3B009;
+        Tue, 28 Jun 2022 12:33:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 614D561C4A;
+        Tue, 28 Jun 2022 19:33:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CC0C3411D;
+        Tue, 28 Jun 2022 19:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656444802;
+        bh=K3kHQhJPaCS9ujF3pAf7ru9GxwKLPELhJP03Sl6nXKs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZCvhyL/EIvGNIBTLpC0Wg8QISTM8BnjQnTDtEBU2nuijTigalafky7j4ZIRY0fvBn
+         Db9Pt0jUQX/DLTbJ37q1svuji4IUDFQPDvw2erR0bMpKaEjl1VMEnClNqj1yIPYoAm
+         rpPftR7woTH/NctMi0sXAP8C6H6p0EfDh9C+13gALyyrjJFaCrLTNYqwnShSrOa2a+
+         ZysAFNiMzAVRCq/5ewllBmdsjz+0DikK93Du4cehlOWk4Sub4iHoNEmaLmSZx3093f
+         PS6fArqhC1jrc3iaw0Yzi7DPj4kkayNI+z6K40pds1UuVNKnMEWqq2Y5Yi7qYLr/Ye
+         ufJ4QIakS5ajg==
+Date:   Tue, 28 Jun 2022 21:33:20 +0200
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH][next] io_uring: replace zero-length array with
+ flexible-array member
+Message-ID: <20220628193320.GA52629@embeddedor>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: For 5.20 or 5.19? net: wire up support for
- file_operations->uring_cmd()
-Content-Language: en-US
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <bd2ad505-4d1c-ff13-de87-b4b3d397e159@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <bd2ad505-4d1c-ff13-de87-b4b3d397e159@samba.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/28/22 1:09 PM, Stefan Metzmacher wrote:
-> Hi Jens,
-> 
-> I'm wondering what happened to you patch passing file_ops->uring_cmd()
-> down to socket layers.
-> 
-> It was part of you work in progress branches...
-> 
-> The latest one I found was this:
-> https://git.kernel.dk/cgit/linux-block/commit/?h=nvme-passthru-wip.2&id=28b71b85831f5dd303acae12cfdc89e5aaae442b
-> 
-> And this one just having the generic parts were in a separate commit
-> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-fops.v7&id=c2ba3bd8940ef0b7d1c09adf4bed01acc8171407
-> vs.
-> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-fops.v7&id=542c38da58841097f97f710d1f05055c2f1039f0
-> 
-> I took this:
-> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-fops.v7&id=c2ba3bd8940ef0b7d1c09adf4bed01acc8171407
-> adapted it on top of v5.19-rc4 and removed stuff that was not really needed.
-> 
-> Even if it's not used in tree, it would be good to have uring_cmd hooks in
-> struct proto_ops and struct proto, so that out of tree socket implementations
-> like my smbdirect driver are able to hook into it.
-> 
-> What do you think?
+There is a regular need in the kernel to provide a way to declare
+having a dynamically sized set of trailing elements in a structure.
+Kernel code should always use “flexible array members”[1] for these
+cases. The older style of one-element or zero-length arrays should
+no longer be used[2].
 
-We need to just finalize a format for this, don't think it'll be too
-complicated. But for in-kernel users first and foremost, not for some
-out of tree code! I've got various things I'd like to use it for
-internally too. For example, returning number of bytes left in a socket
-post receive rather than just a flag telling you there's more data.
+[1] https://en.wikipedia.org/wiki/Flexible_array_member
+[2] https://www.kernel.org/doc/html/v5.16/process/deprecated.html#zero-length-and-one-element-arrays
 
+Link: https://github.com/KSPP/linux/issues/78
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ include/uapi/linux/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 09e7c3b13d2d..65345848be2f 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -492,7 +492,7 @@ struct io_uring_probe {
+ 	__u8 ops_len;	/* length of ops[] array below */
+ 	__u16 resv;
+ 	__u32 resv2[3];
+-	struct io_uring_probe_op ops[0];
++	struct io_uring_probe_op ops[];
+ };
+ 
+ struct io_uring_restriction {
 -- 
-Jens Axboe
+2.27.0
 

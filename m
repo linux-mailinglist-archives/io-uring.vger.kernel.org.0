@@ -2,88 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB6555E88F
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 18:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 439C455E784
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jun 2022 18:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345986AbiF1OSf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 10:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58350 "EHLO
+        id S1347679AbiF1PCv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 11:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346441AbiF1OSc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 10:18:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81CCDEA;
-        Tue, 28 Jun 2022 07:18:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5AFB9B81E0B;
-        Tue, 28 Jun 2022 14:18:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5F2C341C6;
-        Tue, 28 Jun 2022 14:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656425908;
-        bh=gNqsfpabtVurh3KrN/HDHkVIuq5HYEGkFj0dq9pxBp0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LKmDxdeiZbNhcfCtRCGKrWsyjlCMGrWNe6JPI6+0Ud4+CdurjXwUmrO+N85g9uStN
-         ZMyX+h6jcWDShk2bKHv4I1CwjG76KgIokSJRaPNHE+tAExMRqCJhyYb+qk23PpSnt8
-         UZagMIRlLLl0N2746CMcacDFBvR451lE95WpeBq0GW4QDuaouxlRRNIVOVHDclrQ6f
-         3R9oBNaPqtGDm4Fzozu0TEhclsuvbNSWpoAarBMEoFPJEcd4AO2pVjb65zJgdF1PVp
-         ef3Ggil+1czhmYD/i4aHezmCjBjk3ri61YXhTXJoT9Ami17Y24U2vq1uockAAm5n3K
-         LL1PsE5NQ0Syg==
-Date:   Tue, 28 Jun 2022 16:18:23 +0200
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Stephen Hemminger <stephen@networkplumber.org>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, dm-devel@redhat.com,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, io-uring@vger.kernel.org,
-        lvs-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        kasan-dev@googlegroups.com, linux-mmc@vger.kernel.org,
-        nvdimm@lists.linux.dev, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-perf-users@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        v9fs-developer@lists.sourceforge.net, linux-rdma@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] treewide: uapi: Replace zero-length arrays with
- flexible-array members
-Message-ID: <20220628141823.GB25163@embeddedor>
-References: <20220627180432.GA136081@embeddedor>
- <20220627125343.44e24c41@hermes.local>
+        with ESMTP id S1347674AbiF1PCt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 11:02:49 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA21433E89
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 08:02:47 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25SABx70014952
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 08:02:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=facebook; bh=pyAltF8DYKNcGBUwgWnhf6MefK8rwWmpC3KIBrdgbWM=;
+ b=gIsKjSgVCHFLr+AU4YJ/Sfi1sw97O2hx1MsCJkcvTAQewoP7DzFpIS+vDKamWQOfSBVK
+ NfSPs1iEeWLT5klSTzLAX5ViE20bNK3U9jz2isB08FG9SFH4ZojiBok/iqdM20ffaLPA
+ 91nHSxjWeOmPbUrjZ/BdNwOy3ewHEYyyVaE= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gyp234bp8-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 08:02:47 -0700
+Received: from twshared25478.08.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Tue, 28 Jun 2022 08:02:45 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 7377F244BBC2; Tue, 28 Jun 2022 08:02:37 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH for-next 0/8] io_uring: multishot recv
+Date:   Tue, 28 Jun 2022 08:02:20 -0700
+Message-ID: <20220628150228.1379645-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: gI-4HPkrNOD4AkIK542pbUh5FdzPKWDo
+X-Proofpoint-GUID: gI-4HPkrNOD4AkIK542pbUh5FdzPKWDo
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220627125343.44e24c41@hermes.local>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-28_08,2022-06-28_01,2022-06-22_01
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 12:53:43PM -0700, Stephen Hemminger wrote:
-> Thanks this fixes warning with gcc-12 in iproute2.
-> In function ‘xfrm_algo_parse’,
->     inlined from ‘xfrm_state_modify.constprop’ at xfrm_state.c:573:5:
-> xfrm_state.c:162:32: warning: writing 1 byte into a region of size 0 [-Wstringop-overflow=]
->   162 |                         buf[j] = val;
->       |                         ~~~~~~~^~~~~
+This series adds support for multishot recv/recvmsg to io_uring.
 
-Great! This gives me hope. :)
+The idea is that generally socket applications will be continually
+enqueuing a new recv() when the previous one completes. This can be
+improved on by allowing the application to queue a multishot receive,
+which will post completions as and when data is available. It uses the
+provided buffers feature to receive new data into a pool provided by
+the application.
 
-Thanks
---
-Gustavo
+This is more performant in a few ways:
+* Subsequent receives are queued up straight away without requiring the
+  application to finish a processing loop.
+* If there are more data in the socket (sat the provided buffer
+  size is smaller than the socket buffer) then the data is immediately
+  returned, improving batching.
+*  Poll is only armed once and reused, saving CPU cycles
+
+Running a small network benchmark [1] shows improved QPS of ~6-8% over a ra=
+nge of loads.
+
+[1]: https://github.com/DylanZA/netbench/tree/multishot_recv
+
+Dylan Yudaken (8):
+  io_uring: allow 0 length for buffer select
+  io_uring: restore bgid in io_put_kbuf
+  io_uring: allow iov_len =3D 0 for recvmsg and buffer select
+  io_uring: recycle buffers on error
+  io_uring: clean up io_poll_check_events return values
+  io_uring: add IOU_STOP_MULTISHOT return code
+  io_uring: add IORING_RECV_MULTISHOT flag
+  io_uring: multishot recv
+
+ include/uapi/linux/io_uring.h |   5 ++
+ io_uring/io_uring.h           |   7 ++
+ io_uring/kbuf.c               |   4 +-
+ io_uring/kbuf.h               |   8 ++-
+ io_uring/net.c                | 119 ++++++++++++++++++++++++++++------
+ io_uring/poll.c               |  30 ++++++---
+ 6 files changed, 140 insertions(+), 33 deletions(-)
+
+
+base-commit: 755441b9029317d981269da0256e0a7e5a7fe2cc
+--=20
+2.30.2
+

@@ -2,54 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F00A955F26B
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 167DD55F275
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbiF2Ab1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 20:31:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55776 "EHLO
+        id S229579AbiF2AgA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 20:36:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbiF2Ab0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:31:26 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D9502B190
-        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:31:26 -0700 (PDT)
-Received: from [192.168.88.254] (unknown [180.245.197.13])
-        by gnuweeb.org (Postfix) with ESMTPSA id CBDEF7FC32;
-        Wed, 29 Jun 2022 00:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656462685;
-        bh=AXQRAB2/qrXWRt1ICQDbGF/Ehk6V3S/1KIBewuAayzo=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZWw3+cC69dCu4O4yflOL7A3RpfR8qZNvDq/J9no3aA4iqyCGjK15u5Isnqj1tydsX
-         J7jddHDmkch7j8+Me4mOSvyMmoK2AQKTDy7Cg8lHo+oQgIpTw7dyQFmTWBw4AgAz1z
-         WYMKSKx2vPVEdVfw3ogYyGAIux6DG7DRUi50sU/WNHEnbf43w5usW+1taWWDlSK080
-         mG3dUQoPbG2NCpPJMhc88GVzAR1QbeUzzexO7LWlI9PGgJqHA42N0zMPWS/kzH1fN+
-         P4dI4oPIIBAW9jwtkIPfW9Q65t43UBs5fta0Xw7eybPJwZ7UgbAI23X2crbZx3kGpK
-         hOL4GUZT7YycQ==
-Message-ID: <ca43fd3a-0a8a-871b-14d5-6f71dbbd7634@gnuweeb.org>
-Date:   Wed, 29 Jun 2022 07:31:18 +0700
+        with ESMTP id S229489AbiF2Af7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:35:59 -0400
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E1AA2FFDD
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:35:58 -0700 (PDT)
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+        by gw2.atmark-techno.com (Postfix) with ESMTPS id C61A920D6D
+        for <io-uring@vger.kernel.org>; Wed, 29 Jun 2022 09:35:57 +0900 (JST)
+Received: by mail-pj1-f70.google.com with SMTP id ie11-20020a17090b400b00b001eccac2af53so8810881pjb.9
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:35:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:in-reply-to;
+        bh=sg/FIMb0Y22XOeDUVyJPVEEncgDb3cHZBiniEEmzce0=;
+        b=hyYfw+LSmrzAkuiAZa17558cm4uzw+xX04aJQSnnj2SZjhI0rVmghLQYNdgQvppr0P
+         MPlYj59Ns24rxVRvgzJ/KcAZtqi1fkBNQr5R2GvAfvTltLR/8IvL6h0RC6ZDwIb36EoS
+         R4TmHsB0pMsVekZ8x/Os75vY8ve9N8KpdV1EsJL7Oyksxd+JEMpbu3Fw1o1SW/JtJKdP
+         MKLVoMvbNAThaKCyQrubISx4zHewjI+Vql/sMi7cosw1XQO0v+5dtounX/atNDQYUn2U
+         Qclf3kctrRopMi8yYE2z561uQmd5kiuIWrwYg0Od5HrIV9mWEUMfdxR0vxSCDnMzhqUP
+         vyjg==
+X-Gm-Message-State: AJIora87Eedy0shl7tpRAw6Se7Py4MTEDtws8nYyegBehFbsyyhfH7V1
+        hOmxDxEmcjjtl2GxCP87kFUby9xKLMFpZV6VLv2WZgXJTnGmD3kKCKM1sUBm3D243z364eADiY9
+        FTWhjs4xLnX5YRqZQzfix
+X-Received: by 2002:a17:903:41cd:b0:16b:880a:8757 with SMTP id u13-20020a17090341cd00b0016b880a8757mr6398832ple.93.1656462956879;
+        Tue, 28 Jun 2022 17:35:56 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1vCGtD4SY7W6GWH0/Kvp3LVt2NcY4okLANBHyVAh9pXB99m07Os1CgwttUHJ0gmPk+RIDarEA==
+X-Received: by 2002:a17:903:41cd:b0:16b:880a:8757 with SMTP id u13-20020a17090341cd00b0016b880a8757mr6398820ple.93.1656462956611;
+        Tue, 28 Jun 2022 17:35:56 -0700 (PDT)
+Received: from pc-zest.atmarktech (76.125.194.35.bc.googleusercontent.com. [35.194.125.76])
+        by smtp.gmail.com with ESMTPSA id a4-20020a62bd04000000b00525714c3e07sm10006096pff.48.2022.06.28.17.35.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Jun 2022 17:35:56 -0700 (PDT)
+Received: from martinet by pc-zest.atmarktech with local (Exim 4.95)
+        (envelope-from <martinet@pc-zest>)
+        id 1o6LgQ-007pyp-TN;
+        Wed, 29 Jun 2022 09:35:54 +0900
+Date:   Wed, 29 Jun 2022 09:35:44 +0900
+From:   Dominique MARTINET <dominique.martinet@atmark-techno.com>
+To:     Nikolay Borisov <nborisov@suse.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: read corruption with qemu master io_uring engine / linux master
+ / btrfs(?)
+Message-ID: <YrueYDXqppHZzOsy@atmark-techno.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH liburing v1 7/9] arch/arm64: Add `get_page_size()`
- function
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Fernanda Ma'rouf <fernandafmr12@gnuweeb.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Hao Xu <howeyxu@tencent.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@gnuweeb.org>
-References: <20220629002028.1232579-1-ammar.faizi@intel.com>
- <20220629002028.1232579-8-ammar.faizi@intel.com>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <20220629002028.1232579-8-ammar.faizi@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <33cd0f9a-cdb1-1018-ebb0-89222cb1c759@kernel.dk>
+ <bd342da1-8c98-eb78-59f1-e3cf537181e3@suse.com>
+ <dd55e282-1147-08ae-6b9f-cf3ef672fce8@suse.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -58,21 +68,67 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/29/22 7:27 AM, Ammar Faizi wrote:
-> +	while (1) {
-> +		ssize_t ret;
-> +
-> +		ret = __sys_read(fd, buf, sizeof(buf));
-> +		if (ret < 0) {
-> +			page_size = -errno;
-> +			break;
-> +		}
 
-Oops, this is wrong, I shouldn't use errno here, it should be:
-    
-    page_size = ret;
+Thanks for the replies.
 
-Should I resend? Or you can fix it?
+Nikolay Borisov wrote on Tue, Jun 28, 2022 at 10:03:20PM +0300:
+> >    qemu-system-x86_64 -drive file=qemu/atde-test,if=none,id=hd0,format=raw,cache=none,aio=io_uring \
+> >        -device virtio-blk-pci,drive=hd0 -m 8G -smp 4 -serial mon:stdio -enable-kvm
+> 
+> So cache=none means O_DIRECT and using io_uring. This really sounds similar
+> to:
+> 
+> ca93e44bfb5fd7996b76f0f544999171f647f93b
+
+That looks close, yes...
+
+> This commit got merged into v5.17 so you shouldn't be seeing it on 5.17 and
+> onwards.
+> 
+> <snip>
+> 
+> > 
+> > Perhaps at this point it might be simpler to just try to take qemu out
+> > of the equation and issue many parallel reads to different offsets
+> > (overlapping?) of a large file in a similar way qemu io_uring engine
+> > does and check their contents?
+> 
+> Care to run the sample program in the aforementioned commit and verify it's
+> not failing
+
+But unfortunately it seems like it is properly fixed on my machines:
+---
+io_uring read result for file foo:
+
+  cqe->res == 8192 (expected 8192)
+  memcmp(read_buf, write_buf) == 0 (expected 0)
+---
+
+Nikolay Borisov wrote on Tue, Jun 28, 2022 at 10:05:39PM +0300:
+> Alternatively change cache=none (O_DIRECT) to cache=writeback (ordinary
+> buffered writeback path) that way we'll know if it's related to the
+> iomap-based O_DIRECT code in btrfs.
+
+Good idea; I can confirm this doesn't reproduce without cache=none, so
+O_DIRECT probably is another requirement here (probably because I
+haven't been able to reproduce on a freshly created fs either, so not
+being able to reproducing in a few tries is no guarantee...)
+
+
+Jens Axboe wrote on Tue, Jun 28, 2022 at 01:12:54PM -0600:
+> Not sure what's going on here, but I use qemu with io_uring many times
+> each day and haven't seen anything odd. This is on ext4 and xfs however,
+> I haven't used btrfs as the backing file system. I wonder if we can boil
+> this down into a test case and try and figure out what is doing on here.
+
+Yes I'd say it's fs specific, I've not been able to reproduce on ext4 or
+xfs -- but then again I couldn't reproduce with btrfs on a new
+filesystem so there probably are some other conditions :/
+
+I also agree writing a simple program like the io_uring test in the
+above commit that'd sort of do it like qemu and compare contents would
+be ideal.
+I'll have a stab at this today.
 
 -- 
-Ammar Faizi
+Dominique

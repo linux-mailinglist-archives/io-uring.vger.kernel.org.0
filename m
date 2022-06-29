@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FEA5603A3
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 16:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF515603A5
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 16:52:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbiF2Ovp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Jun 2022 10:51:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
+        id S233853AbiF2Owc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Jun 2022 10:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbiF2Ovp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jun 2022 10:51:45 -0400
+        with ESMTP id S233209AbiF2OwV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jun 2022 10:52:21 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9371EAC8
-        for <io-uring@vger.kernel.org>; Wed, 29 Jun 2022 07:51:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B468E1EAC8
+        for <io-uring@vger.kernel.org>; Wed, 29 Jun 2022 07:52:20 -0700 (PDT)
 Received: from [192.168.88.254] (unknown [180.245.197.13])
-        by gnuweeb.org (Postfix) with ESMTPSA id 3F9857ED9F;
-        Wed, 29 Jun 2022 14:51:42 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 8B6AD7ED9F;
+        Wed, 29 Jun 2022 14:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656514303;
-        bh=q1ru1wPcdak7il0C8fJ2Nvxqk3ws5D6OyZASEuuxUhs=;
+        s=default; t=1656514340;
+        bh=ycbCDHzHTJZboHNamtzLNDtZynuHfqoL/nxgg2x35SU=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=S4tpXErdBemT++onSA/wnBgCVVz2uSyD6XFjfcpgPWpXVZmQ0CYR8tFdEy9IJ5fMS
-         nqqw9WHr0t/w2TTR7g6VGTH+YFDPKhgTlDono6So+AwnVJeGGWR2rtF0E6ya3vDcft
-         2/pmjMtkXVJbqqMqTr9hQz699s4uUzboLbUgfRjhnOKhyEOdvhKHgISxyUSZxgAGGp
-         jUYPFnNpwVuEnZk93+dB3NA0LWMbRwedknleOimsPIWB/w34ZNtKd0Z3BeIKcUUrqx
-         qePfqm9Rq4vCPmNAVYs9Jx7hTis5VVBjYPZEgzapebV33Uyi57Klg5bE9Ti0fYRWYI
-         nZu7pk10A9pIg==
-Message-ID: <4487fb84-9144-4d48-7b0f-28dfe2ad4ccc@gnuweeb.org>
-Date:   Wed, 29 Jun 2022 21:51:36 +0700
+        b=jmaOIzaY9i3XNven3F72iCR9eK/4xpQDTI5eIkKbmtIC5irHAq1aPbvO/k2vPK7fx
+         JNEiO/RMnJhOvZ7/zXM4VzNQ2jOEDm8RQCJ8r/z1e6ocNH4DhNPQhF7FNSj+mFpWS1
+         fqJXXDsmnlEg/eXiEPt1G+cP3yThr25ZFJiJW67L3MdFMhjrxiNQuohRaJAeB9H++8
+         V+xRDVviF7Ei4PjnpupYrFKwChUIq6/YRqnXpcxJE2strpTpNaweRyHCvE/qS5UQ0i
+         02rSUi/RWX5O8yAwpsaxv3gMk3jukii7YdVUXN+MQMu3oeZnRbmdANyEma16zrs+fs
+         7eUhxHnb9uxlA==
+Message-ID: <34daa7de-c6ae-f23a-293f-a22bda67bd6f@gnuweeb.org>
+Date:   Wed, 29 Jun 2022 21:52:12 +0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH liburing v1 5/9] arch/arm64: Rename aarch64 directory to
- arm64
+Subject: Re: [PATCH liburing v1 7/9] arch/arm64: Add `get_page_size()`
+ function
 Content-Language: en-US
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
@@ -43,10 +43,10 @@ Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@gnuweeb.org>
 References: <20220629002028.1232579-1-ammar.faizi@intel.com>
- <20220629002028.1232579-6-ammar.faizi@intel.com>
- <a2a07e28-4955-4b60-d2c4-2bfde114d6e9@kernel.dk>
+ <20220629002028.1232579-8-ammar.faizi@intel.com>
+ <8bfba71c-55d7-fb49-6593-4d0f9d9c3611@kernel.dk>
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <a2a07e28-4955-4b60-d2c4-2bfde114d6e9@kernel.dk>
+In-Reply-To: <8bfba71c-55d7-fb49-6593-4d0f9d9c3611@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -59,18 +59,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/29/22 9:48 PM, Jens Axboe wrote:
+On 6/29/22 9:49 PM, Jens Axboe wrote:
 > On 6/28/22 6:27 PM, Ammar Faizi wrote:
 >> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 >>
->> In the Linux kernel tree, we use `arm64` instead of `aarch64` to name
->> the directory that saves this arch specific code. Follow this naming
->> in liburing too.
+>> This is a preparation patch to add aarch64 nolibc support.
+>>
+>> aarch64 supports three values of page size: 4K, 16K, and 64K which are
+>> selected at kernel compilation time. Therefore, we can't hard code the
+>> page size for this arch. Utilize open(), read() and close() syscall to
+>> find the page size from /proc/self/auxv. For more details about the
+>> auxv data structure, check the link below.
 > 
-> I don't feel too strongly about this, though I do think the linux
-> kernel is wrong in this regard and liburing is doing it right :-)
+> We should probably cache this value if already read? At least I don't
+> think we have systems where the page size would differ between
+> applications.
 
-OK, will drop this in v2.
+Good idea, will use a static variable to cache it in v2 then...
 
 -- 
 Ammar Faizi

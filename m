@@ -2,280 +2,134 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB0755F19F
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 00:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1584155F25D
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231569AbiF1WwL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 18:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51152 "EHLO
+        id S229653AbiF2A2P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 20:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbiF1WwL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 18:52:11 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F783A735;
-        Tue, 28 Jun 2022 15:52:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C579EB82064;
-        Tue, 28 Jun 2022 22:52:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E75C341C8;
-        Tue, 28 Jun 2022 22:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656456727;
-        bh=8kNQyGytWQf7/KlaaDxJECJopOaWhuY2g1zLQhnc40Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jg55iHB5Biy9na3j/tjH6LM4ip/stsaU2mE5INPVlXhz6qG3bf+ZKuGORw1cxQ6Ao
-         u49RNEY8N02ObYXcFt8nA9J5st4Se9J8upPMsfqaQDFIvHoE+Ds8C1sS2fTzZiijFD
-         Y0qpNnH8UF+6A+JUupGfLAfLLfEBFvmNoiyERfCeUDinLG4n826GA9aKdCyPIX3nqB
-         1HWlpOdQ8sLPjVHrth4YwurgWivWL28zxzUIiBD2aOEdS9QyXEvsfkaasW1j9VPMSj
-         8CEOOMlIEid6NkO1eUoiBEU0wlIptxgffZTgxCct6lJzreDbqW1BbwuSCSUEIbQdrv
-         2Kh1BCTnW23hw==
-Date:   Tue, 28 Jun 2022 16:52:04 -0600
-From:   David Ahern <dsahern@kernel.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
-Subject: Re: [RFC net-next v3 05/29] net: bvec specific path in
- zerocopy_sg_from_iter
-Message-ID: <20220628225204.GA27554@u2004-local>
-References: <cover.1653992701.git.asml.silence@gmail.com>
- <5143111391e771dc97237e2a5e6a74223ef8f15f.1653992701.git.asml.silence@gmail.com>
+        with ESMTP id S229450AbiF2A2O (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:28:14 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35FF421272
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:28:12 -0700 (PDT)
+Received: from integral2.. (unknown [180.245.197.13])
+        by gnuweeb.org (Postfix) with ESMTPSA id 6B6557F9DB;
+        Wed, 29 Jun 2022 00:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1656462492;
+        bh=kiw2EKLazaesecgUZc+A3um9rmZMTvE7pJpmr8/yeEQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oaAc4KIs7Pec6DHcTbV9zXrWAntTytoMjXZ8lfjPc/Cic9xThCjM3wHExhAWRjahZ
+         om1bHgoAu1Era1ltV1wkD6G9AG2UeCvRbRegbYyf0uPXiTQtOo9zN3/cxtYbMEmKKX
+         8LKH3YjOLmUzUeVyw5w/Z95Cu0viDcp80Lkz/HXj1eN1shgUXGtW+UpujZV1C9is+s
+         cH5K6W/3bCViszMPuGjFrqXt3Ch4b5E5yGVupwqpZmSURvtxH9nXjvICxWlSPmPIEg
+         piptLsa2/kCfTiBTMa8qOVdr26DAOIWumrg3iwgyzVA7qCkm4d6GwZZFNWIxU8O4MW
+         iVKDzugjED3rA==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Fernanda Ma'rouf <fernandafmr12@gnuweeb.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Hao Xu <howeyxu@tencent.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@gnuweeb.org>
+Subject: [PATCH liburing v1 0/9] aarch64 nolibc support
+Date:   Wed, 29 Jun 2022 07:27:44 +0700
+Message-Id: <20220629002028.1232579-1-ammar.faizi@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
-Content-Disposition: inline
-In-Reply-To: <5143111391e771dc97237e2a5e6a74223ef8f15f.1653992701.git.asml.silence@gmail.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Jens,
 
-On Tue, Jun 28, 2022 at 07:56:27PM +0100, Pavel Begunkov wrote:
-> Add an bvec specialised and optimised path in zerocopy_sg_from_iter.
-> It'll be used later for {get,put}_page() optimisations.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  net/core/datagram.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
+This series contains nolibc support for aarch64 and one extra irrelevant
+cleanup (patch #1). The missing bit from aarch64 is get_page_size()
+which is a bit complicated to implement without libc.
 
-Rather than propagating iter functions, I have been using the attached
-patch for a few months now. It leverages your ubuf_info in msghdr to
-allow in kernel users to pass in their own iter handler.
+aarch64 supports three values of page size: 4K, 16K, and 64K which are
+selected at kernel compilation time. Therefore, we can't hard code the
+page size for this arch. In this series we utilize open(), read() and
+close() syscall to find the page size from /proc/self/auxv.
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-net-Allow-custom-iter-handler-in-uarg.patch"
+The auxiliary vector contains information about the page size, it is
+located at `AT_PAGESZ` keyval pair.
 
-From 1101177acb64832df2bb2b44d9305a8ebc4ca648 Mon Sep 17 00:00:00 2001
-From: David Ahern <dsahern@kernel.org>
-Date: Tue, 19 Apr 2022 10:39:59 -0600
-Subject: [PATCH] net: Allow custom iter handler in uarg
+For more details about the auxv data structure, check the link below.
 
-Add support for custom iov_iter handling to ubuf. The idea is that
-in-kernel subsystems want control over how an SG is split.
+Link: https://github.com/torvalds/linux/blob/v5.19-rc4/fs/binfmt_elf.c#L260
+Link: https://lwn.net/Articles/631631/
 
-The custom iterator is a union with mmpin to keep the size of
-ubuf_info <= sizeof(skb->cb) which is 48B.
+There are 9 patches in this series.
 
-Signed-off-by: David Ahern <dsahern@kernel.org>
+- Patch 1 is just a trivial changelog fix.
+- Patch 2 is to handle get_page_size() error that may happen in the
+  later patches.
+- Patch 3 and 4 are to add open() and read() syscall. We will need them
+  to get the page size on aarch64.
+- Patch 5 is to rename aarch64 directory to arm64.
+- Patch 6 is to remove __INTERNAL__LIBURING_SYSCALL_H checks.
+- Patch 7 is to add get_page_size() function.
+- Patch 8 is to enable the nolibc support for aarch64.
+- Patch 9 is for GitHub bot build.
+
+I have built it with GitHub bot and it compiles just fine. But I don't
+have an aarch64 machine to run the tests. Since you are using aarch64,
+I can rely on you to test it.
+
+How to test this?
+
+  make clean;
+  ./configure --nolibc;
+  make -j8;
+  make runtests;
+
+Please give it a test...
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- include/linux/skbuff.h | 21 ++++++++++++++++-----
- net/core/datagram.c    | 11 ++++++++---
- net/core/datagram.h    |  3 ++-
- net/core/skbuff.c      | 19 +++++++++++++++----
- net/ipv4/ip_output.c   |  2 +-
- net/ipv6/ip6_output.c  |  2 +-
- 6 files changed, 43 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index dbf820a50a39..71161f65dedd 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -482,11 +482,21 @@ struct ubuf_info {
- 	};
- 	refcount_t refcnt;
- 	u8 flags;
-+	u8 has_sg_from_iter;
- 
--	struct mmpin {
--		struct user_struct *user;
--		unsigned int num_pg;
--	} mmp;
-+	/* sg_from_iter is expected to be used with ubuf in
-+	 * msghdr and is only referenced at the transport
-+	 * layer segmenting an iov into packets. mmpin is used
-+	 * by in-tree ubuf_info {re,}alloc at L3 layer.
-+	 */
-+	union {
-+		int (*sg_from_iter)(struct sock *sk, struct sk_buff *skb,
-+				    struct iov_iter *from, size_t length);
-+		struct mmpin {
-+			struct user_struct *user;
-+			unsigned int num_pg;
-+		} mmp;
-+	};
- };
- 
- #define skb_uarg(SKB)	((struct ubuf_info *)(skb_shinfo(SKB)->destructor_arg))
-@@ -503,7 +513,8 @@ void msg_zerocopy_put_abort(struct ubuf_info *uarg, bool have_uref);
- void msg_zerocopy_callback(struct sk_buff *skb, struct ubuf_info *uarg,
- 			   bool success);
- 
--int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len);
-+int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len,
-+			    struct ubuf_info *uarg);
- int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
- 			     struct msghdr *msg, int len,
- 			     struct ubuf_info *uarg);
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 15ab9ffb27fe..9ca61a0a400d 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -617,10 +617,15 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
- EXPORT_SYMBOL(skb_copy_datagram_from_iter);
- 
- int __zerocopy_sg_from_iter(struct sock *sk, struct sk_buff *skb,
--			    struct iov_iter *from, size_t length)
-+			    struct iov_iter *from, size_t length,
-+			    struct ubuf_info *uarg)
- {
--	int frag = skb_shinfo(skb)->nr_frags;
-+	int frag;
- 
-+	if (unlikely(uarg && uarg->has_sg_from_iter))
-+		return uarg->sg_from_iter(sk, skb, from, length);
-+
-+	frag = skb_shinfo(skb)->nr_frags;
- 	while (length && iov_iter_count(from)) {
- 		struct page *pages[MAX_SKB_FRAGS];
- 		struct page *last_head = NULL;
-@@ -704,7 +709,7 @@ int zerocopy_sg_from_iter(struct sk_buff *skb, struct iov_iter *from)
- 	if (skb_copy_datagram_from_iter(skb, 0, from, copy))
- 		return -EFAULT;
- 
--	return __zerocopy_sg_from_iter(NULL, skb, from, ~0U);
-+	return __zerocopy_sg_from_iter(NULL, skb, from, ~0U, NULL);
- }
- EXPORT_SYMBOL(zerocopy_sg_from_iter);
- 
-diff --git a/net/core/datagram.h b/net/core/datagram.h
-index bcfb75bfa3b2..65027fcf3322 100644
---- a/net/core/datagram.h
-+++ b/net/core/datagram.h
-@@ -10,6 +10,7 @@ struct sk_buff;
- struct iov_iter;
- 
- int __zerocopy_sg_from_iter(struct sock *sk, struct sk_buff *skb,
--			    struct iov_iter *from, size_t length);
-+			    struct iov_iter *from, size_t length,
-+			    struct ubuf_info *uarg);
- 
- #endif /* _NET_CORE_DATAGRAM_H_ */
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 17b93177a68f..9acb43e5a779 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1158,6 +1158,7 @@ struct ubuf_info *msg_zerocopy_alloc(struct sock *sk, size_t size)
- 
- 	BUILD_BUG_ON(sizeof(*uarg) > sizeof(skb->cb));
- 	uarg = (void *)skb->cb;
-+	uarg->has_sg_from_iter = 0;
- 	uarg->mmp.user = NULL;
- 
- 	if (mm_account_pinned_pages(&uarg->mmp, size)) {
-@@ -1206,6 +1207,12 @@ struct ubuf_info *msg_zerocopy_realloc(struct sock *sk, size_t size,
- 			return NULL;
- 		}
- 
-+		if (WARN_ON(uarg->has_sg_from_iter)) {
-+			uarg->has_sg_from_iter = 0;
-+			uarg->mmp.user = NULL;
-+			uarg->mmp.num_pg = 0;
-+		}
-+
- 		next = (u32)atomic_read(&sk->sk_zckey);
- 		if ((u32)(uarg->id + uarg->len) == next) {
- 			if (mm_account_pinned_pages(&uarg->mmp, size))
-@@ -1258,7 +1265,10 @@ static void __msg_zerocopy_callback(struct ubuf_info *uarg)
- 	u32 lo, hi;
- 	u16 len;
- 
--	mm_unaccount_pinned_pages(&uarg->mmp);
-+
-+	WARN_ON(uarg->has_sg_from_iter);
-+	if (!uarg->has_sg_from_iter)
-+		mm_unaccount_pinned_pages(&uarg->mmp);
- 
- 	/* if !len, there was only 1 call, and it was aborted
- 	 * so do not queue a completion notification
-@@ -1319,9 +1329,10 @@ void msg_zerocopy_put_abort(struct ubuf_info *uarg, bool have_uref)
- }
- EXPORT_SYMBOL_GPL(msg_zerocopy_put_abort);
- 
--int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len)
-+int skb_zerocopy_iter_dgram(struct sk_buff *skb, struct msghdr *msg, int len,
-+			    struct ubuf_info *uarg)
- {
--	return __zerocopy_sg_from_iter(skb->sk, skb, &msg->msg_iter, len);
-+	return __zerocopy_sg_from_iter(skb->sk, skb, &msg->msg_iter, len, uarg);
- }
- EXPORT_SYMBOL_GPL(skb_zerocopy_iter_dgram);
- 
-@@ -1339,7 +1350,7 @@ int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
- 	if (orig_uarg && uarg != orig_uarg)
- 		return -EEXIST;
- 
--	err = __zerocopy_sg_from_iter(sk, skb, &msg->msg_iter, len);
-+	err = __zerocopy_sg_from_iter(sk, skb, &msg->msg_iter, len, uarg);
- 	if (err == -EFAULT || (err == -EMSGSIZE && skb->len == orig_len)) {
- 		struct sock *save_sk = skb->sk;
- 
-diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-index 1b6a64b19c76..1ff403c2dcb0 100644
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1238,7 +1238,7 @@ static int __ip_append_data(struct sock *sk,
- 			skb->truesize += copy;
- 			wmem_alloc_delta += copy;
- 		} else {
--			err = skb_zerocopy_iter_dgram(skb, from, copy);
-+			err = skb_zerocopy_iter_dgram(skb, from, copy, uarg);
- 			if (err < 0)
- 				goto error;
- 		}
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 63a217128f8b..6795144653ac 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1791,7 +1791,7 @@ static int __ip6_append_data(struct sock *sk,
- 			skb->truesize += copy;
- 			wmem_alloc_delta += copy;
- 		} else {
--			err = skb_zerocopy_iter_dgram(skb, from, copy);
-+			err = skb_zerocopy_iter_dgram(skb, from, copy, uarg);
- 			if (err < 0)
- 				goto error;
- 		}
+Ammar Faizi (9):
+  CHANGELOG: Fixup missing space
+  setup: Handle `get_page_size()` failure (for aarch64 nolibc support)
+  arch: syscall: Add `__sys_open()` syscall
+  arch: syscall: Add `__sys_read()` syscall
+  arch/arm64: Rename aarch64 directory to arm64
+  arch: syscall: Remove `__INTERNAL__LIBURING_SYSCALL_H` checks
+  arch/arm64: Add `get_page_size()` function
+  arch: Enable nolibc support for arm64
+  .github: Enable aarch64 nolibc build for GitHub bot
+
+ .github/workflows/build.yml           |  2 +-
+ CHANGELOG                             |  2 +-
+ src/arch/arm64/lib.h                  | 44 +++++++++++++++++++++++++++
+ src/arch/{aarch64 => arm64}/syscall.h | 14 ++++-----
+ src/arch/generic/lib.h                |  4 ---
+ src/arch/generic/syscall.h            | 20 +++++++++---
+ src/arch/syscall-defs.h               | 12 ++++++++
+ src/arch/x86/lib.h                    |  4 ---
+ src/arch/x86/syscall.h                |  4 ---
+ src/lib.h                             | 21 +++++++------
+ src/setup.c                           |  3 ++
+ src/syscall.h                         |  4 +--
+ 12 files changed, 97 insertions(+), 37 deletions(-)
+ create mode 100644 src/arch/arm64/lib.h
+ rename src/arch/{aarch64 => arm64}/syscall.h (91%)
+
+
+base-commit: 68103b731c34a9f83c181cb33eb424f46f3dcb94
 -- 
-2.25.1
+Ammar Faizi
 
-
---1yeeQ81UyVL57Vl7--

@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8707B55F265
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0466755F266
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229931AbiF2A2h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 20:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54316 "EHLO
+        id S229935AbiF2A2l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 20:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbiF2A2g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:28:36 -0400
+        with ESMTP id S229900AbiF2A2k (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:28:40 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5156275EC
-        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:28:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821B32DD65
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:28:39 -0700 (PDT)
 Received: from integral2.. (unknown [180.245.197.13])
-        by gnuweeb.org (Postfix) with ESMTPSA id 532BC7FBEF;
-        Wed, 29 Jun 2022 00:28:32 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 0E54D7FC83;
+        Wed, 29 Jun 2022 00:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656462515;
-        bh=lFX0gtBvdl/QClxwZ1H0rjuc8UGox5YBfq11uac/YEs=;
+        s=default; t=1656462519;
+        bh=3t9IpOHWlckPWbRMiMlxoC7Reb/Esot+xgFrYIRtRsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HOF3E9eJ5Pgl5F4RBuKE5jCtP0cq3UCwknVZ9EJtpB96y8kYMQXlDHQ5TQu9b41u4
-         pGKHxSAmEcrzcLOl+5RfoWXoJT4JuESWh/XA8/u5roG9I65vrwehF31rzh64ayBqRM
-         yHghI2/t1Y/C0NZllxDpxwtdfdlyJp8CQpCnLdE2To7PlCm4wP2rxmQMXrij9nFr3/
-         2QUHDFSi5Jnoonz6815tGQ4zTDySnlPCEA03+tqaE7WTfPQ7mcFWQ8GLgSCS8w0mJR
-         +uu6+QjBPlih16OxKnd2SvcyztSgpG2LawoTG1uOwiLwQyI8qPPK6B9nmIxZ4oTC5t
-         y3fVOqLbHLSIA==
+        b=Cpj6b30urcMoQ39J8nmVlWFqthHZHi7u6Z3+gzJjDBiLs14HVW1uZNrr4NCp6asL1
+         JYf0eKp0AZtGdzEJHgfS03ccfH7f2vQabwomTxxLOGF/eyxTyiHDZ2d6VtMzT1nygG
+         knPcWh1iWEL6S3XD4/u26lx2XnoywkADwrXCmvuS52rtfsc40cEqf7G/EarpUj1OAa
+         IRpI26FSL85EqGgL5BJiu0SkJobb/JJa+G98l6Nf+5w9vCAC0EuX213ejXbZifGrY5
+         hmC5qT2DMR3chS5pvplgGX+WV9JSRAo2MOb67s6KOMXYZ0JOPxcbBwIY6M5jR5bITr
+         nz4H+6LkhPdyQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Hao Xu <howeyxu@tencent.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@gnuweeb.org>
-Subject: [PATCH liburing v1 6/9] arch: syscall: Remove `__INTERNAL__LIBURING_SYSCALL_H` checks
-Date:   Wed, 29 Jun 2022 07:27:50 +0700
-Message-Id: <20220629002028.1232579-7-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 7/9] arch/arm64: Add `get_page_size()` function
+Date:   Wed, 29 Jun 2022 07:27:51 +0700
+Message-Id: <20220629002028.1232579-8-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220629002028.1232579-1-ammar.faizi@intel.com>
 References: <20220629002028.1232579-1-ammar.faizi@intel.com>
@@ -55,113 +55,71 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-We will include the syscall.h from another place as well. This check
-was added by me when refactoring the x86 syscall. For aarch64 we will
-include this header from lib.h but we are restricted by this check.
+This is a preparation patch to add aarch64 nolibc support.
 
-Just remove it for all archs. User shouldn't touch this code directly
-anyway.
+aarch64 supports three values of page size: 4K, 16K, and 64K which are
+selected at kernel compilation time. Therefore, we can't hard code the
+page size for this arch. Utilize open(), read() and close() syscall to
+find the page size from /proc/self/auxv. For more details about the
+auxv data structure, check the link below.
 
+Link: https://github.com/torvalds/linux/blob/v5.19-rc4/fs/binfmt_elf.c#L260
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- src/arch/arm64/syscall.h   | 4 ----
- src/arch/generic/lib.h     | 4 ----
- src/arch/generic/syscall.h | 4 ----
- src/arch/x86/lib.h         | 4 ----
- src/arch/x86/syscall.h     | 4 ----
- src/syscall.h              | 2 --
- 6 files changed, 22 deletions(-)
+ src/arch/arm64/lib.h | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 src/arch/arm64/lib.h
 
-diff --git a/src/arch/arm64/syscall.h b/src/arch/arm64/syscall.h
-index 732ada0..69a36a3 100644
---- a/src/arch/arm64/syscall.h
-+++ b/src/arch/arm64/syscall.h
-@@ -1,9 +1,5 @@
- /* SPDX-License-Identifier: MIT */
- 
--#ifndef __INTERNAL__LIBURING_SYSCALL_H
--	#error "This file should be included from src/syscall.h (liburing)"
--#endif
--
- #ifndef LIBURING_ARCH_ARM64_SYSCALL_H
- #define LIBURING_ARCH_ARM64_SYSCALL_H
- 
-diff --git a/src/arch/generic/lib.h b/src/arch/generic/lib.h
-index 737e795..6b006c6 100644
---- a/src/arch/generic/lib.h
-+++ b/src/arch/generic/lib.h
-@@ -1,9 +1,5 @@
- /* SPDX-License-Identifier: MIT */
- 
--#ifndef __INTERNAL__LIBURING_LIB_H
--	#error "This file should be included from src/lib.h (liburing)"
--#endif
--
- #ifndef LIBURING_ARCH_GENERIC_LIB_H
- #define LIBURING_ARCH_GENERIC_LIB_H
- 
-diff --git a/src/arch/generic/syscall.h b/src/arch/generic/syscall.h
-index 22252a1..e637890 100644
---- a/src/arch/generic/syscall.h
-+++ b/src/arch/generic/syscall.h
-@@ -1,9 +1,5 @@
- /* SPDX-License-Identifier: MIT */
- 
--#ifndef __INTERNAL__LIBURING_SYSCALL_H
--	#error "This file should be included from src/syscall.h (liburing)"
--#endif
--
- #ifndef LIBURING_ARCH_GENERIC_SYSCALL_H
- #define LIBURING_ARCH_GENERIC_SYSCALL_H
- 
-diff --git a/src/arch/x86/lib.h b/src/arch/x86/lib.h
-index e6a74f3..6ece2d4 100644
---- a/src/arch/x86/lib.h
-+++ b/src/arch/x86/lib.h
-@@ -1,9 +1,5 @@
- /* SPDX-License-Identifier: MIT */
- 
--#ifndef __INTERNAL__LIBURING_LIB_H
--	#error "This file should be included from src/lib.h (liburing)"
--#endif
--
- #ifndef LIBURING_ARCH_X86_LIB_H
- #define LIBURING_ARCH_X86_LIB_H
- 
-diff --git a/src/arch/x86/syscall.h b/src/arch/x86/syscall.h
-index 43c576b..cb8fb91 100644
---- a/src/arch/x86/syscall.h
-+++ b/src/arch/x86/syscall.h
-@@ -1,9 +1,5 @@
- /* SPDX-License-Identifier: MIT */
- 
--#ifndef __INTERNAL__LIBURING_SYSCALL_H
--	#error "This file should be included from src/syscall.h (liburing)"
--#endif
--
- #ifndef LIBURING_ARCH_X86_SYSCALL_H
- #define LIBURING_ARCH_X86_SYSCALL_H
- 
-diff --git a/src/syscall.h b/src/syscall.h
-index 9e72e6f..39a18df 100644
---- a/src/syscall.h
-+++ b/src/syscall.h
-@@ -70,7 +70,6 @@ static inline bool IS_ERR(const void *ptr)
- 	return uring_unlikely((uintptr_t) ptr >= (uintptr_t) -4095UL);
- }
- 
--#define __INTERNAL__LIBURING_SYSCALL_H
- #if defined(__x86_64__) || defined(__i386__)
- #include "arch/x86/syscall.h"
- #elif defined(__aarch64__)
-@@ -86,7 +85,6 @@ static inline bool IS_ERR(const void *ptr)
- /* libc syscall wrappers. */
- #include "arch/generic/syscall.h"
- #endif
--#undef __INTERNAL__LIBURING_SYSCALL_H
- 
- /*
-  * For backward compatibility.
+diff --git a/src/arch/arm64/lib.h b/src/arch/arm64/lib.h
+new file mode 100644
+index 0000000..4dc39a8
+--- /dev/null
++++ b/src/arch/arm64/lib.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: MIT */
++
++#ifndef LIBURING_ARCH_ARM64_LIB_H
++#define LIBURING_ARCH_ARM64_LIB_H
++
++#include <elf.h>
++#include <sys/auxv.h>
++#include "../../syscall.h"
++
++static inline long get_page_size(void)
++{
++	Elf64_Off buf[2];
++	long page_size;
++	int fd;
++
++	fd = __sys_open("/proc/self/auxv", O_RDONLY, 0);
++	if (fd < 0)
++		return fd;
++
++	while (1) {
++		ssize_t ret;
++
++		ret = __sys_read(fd, buf, sizeof(buf));
++		if (ret < 0) {
++			page_size = -errno;
++			break;
++		}
++
++		if (ret < sizeof(buf)) {
++			page_size = -ENOENT;
++			break;
++		}
++
++		if (buf[0] == AT_PAGESZ) {
++			page_size = buf[1];
++			break;
++		}
++	}
++
++	__sys_close(fd);
++	return page_size;
++}
++
++#endif /* #ifndef LIBURING_ARCH_ARM64_LIB_H */
 -- 
 Ammar Faizi
 

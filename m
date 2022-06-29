@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D0F55F25E
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAAAF55F260
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 02:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229450AbiF2A2S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Jun 2022 20:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
+        id S229896AbiF2A2V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Jun 2022 20:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbiF2A2R (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:28:17 -0400
+        with ESMTP id S229917AbiF2A2V (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Jun 2022 20:28:21 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0773D21837
-        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:28:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8747921E1E
+        for <io-uring@vger.kernel.org>; Tue, 28 Jun 2022 17:28:20 -0700 (PDT)
 Received: from integral2.. (unknown [180.245.197.13])
-        by gnuweeb.org (Postfix) with ESMTPSA id 9331B7FCFD;
-        Wed, 29 Jun 2022 00:28:12 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 383367FC83;
+        Wed, 29 Jun 2022 00:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656462496;
-        bh=2+vkFY/cAwJcxO/eliCRmSw5WdJfTavO74HpsygISOY=;
+        s=default; t=1656462500;
+        bh=9EOHqqHpHFrcRI3qCFB5ehouMVS1GD7Rg5Ue47izIqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sws9gNH+vemL5kijEiq7Or0vzGghSf1jpu/SdzVP7V8YvO+LbqJPIaPDTcobR3tV2
-         l20Yx6ndOwe/dmpxUAp6H4wwIa/diGbUV746BSMHkL4JcSivWn76NUvWbOrAx3BzvB
-         HwYWI5FX1bvWFjBDHxqaeSsBn5FPvlilFjGFmareQavToXu7eGxVMeaJ8ivuWsfCdv
-         Rda9rgKTor8Pg3cE1pPte+SJSbEFsrr65eyAVbUrRa9DpdMKt5zWEJRbdurv32jxpZ
-         zNY+C0Ojh0N5VVmyAMI2S4yVhtabz/dwnId8QUzo1/QrNnyTZxD1pCOcCFb1XFAbcn
-         Ujv6fa8NW4tug==
+        b=cNUES0/9C3ryep2qXQRP1ZZRfjfm6gdBKZDVy+KqY9KmuabqwQ8ACQq38+XCVGE8h
+         tuKgKA/EoZ87LXKdhpuhG85rRUcy1lAJRMmeE3iTZiyHru2BGYTtCGNIwgLEkJie9U
+         dCUdawaQEhWC8Zd/cn2PJQ1YgWexyjZPYXDloqxZISyLQaUz6Kz1vkvQSsdTXTN4Kr
+         1iLeC3CIxv3GhghvQdGkaiDQeKq8zdU/wECCcRFhLObrKBsiNKK3mrG7bho6wXsEUg
+         Z5b1ChEr2CRkOpLGpgwGuhA5vflln13ALsaJ/neLm/GFzTCNgn+SFz02QITS0+gg4M
+         v76/uvSvv2R7A==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Hao Xu <howeyxu@tencent.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@gnuweeb.org>
-Subject: [PATCH liburing v1 1/9] CHANGELOG: Fixup missing space
-Date:   Wed, 29 Jun 2022 07:27:45 +0700
-Message-Id: <20220629002028.1232579-2-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 2/9] setup: Handle `get_page_size()` failure (for aarch64 nolibc support)
+Date:   Wed, 29 Jun 2022 07:27:46 +0700
+Message-Id: <20220629002028.1232579-3-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220629002028.1232579-1-ammar.faizi@intel.com>
 References: <20220629002028.1232579-1-ammar.faizi@intel.com>
@@ -55,26 +55,33 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-  s/reducingthe/reducing the/
+This is a preparation patch to add aarch64 nolibc support.
+
+aarch64 supports three values of page size: 4K, 16K, and 64K which are
+selected at kernel compilation time. Therefore, we can't hard code the
+page size for this arch. We will utilize open(), read() and close()
+syscall to find the page size from /proc/self/auxv. Since syscall may
+fail, we may also fail to get the page size here. Handle the failure.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- CHANGELOG | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ src/setup.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/CHANGELOG b/CHANGELOG
-index 01cb677..efb3ff3 100644
---- a/CHANGELOG
-+++ b/CHANGELOG
-@@ -6,7 +6,7 @@ liburing-2.2 release
- - Add support for multishot accept.
- - io_uring_register_files() will set RLIMIT_NOFILE if necessary.
- - Add support for registered ring fds, io_uring_register_ring_fd(),
--  reducingthe overhead of an io_uring_enter() system call.
-+  reducing the overhead of an io_uring_enter() system call.
- - Add support for the message ring opcode.
- - Add support for newer request cancelation features.
- - Add support for IORING_SETUP_COOP_TASKRUN, which can help reduce the
+diff --git a/src/setup.c b/src/setup.c
+index d2adc7f..ca9d30d 100644
+--- a/src/setup.c
++++ b/src/setup.c
+@@ -336,6 +336,9 @@ ssize_t io_uring_mlock_size_params(unsigned entries, struct io_uring_params *p)
+ 	}
+ 
+ 	page_size = get_page_size();
++	if (page_size < 0)
++		return page_size;
++
+ 	return rings_size(p, entries, cq_entries, page_size);
+ }
+ 
 -- 
 Ammar Faizi
 

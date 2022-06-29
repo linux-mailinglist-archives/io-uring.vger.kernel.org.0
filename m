@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C768560831
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 20:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED9F856082F
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jun 2022 20:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232198AbiF2R75 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Jun 2022 13:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40030 "EHLO
+        id S232203AbiF2SAA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 29 Jun 2022 14:00:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232191AbiF2R7z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jun 2022 13:59:55 -0400
+        with ESMTP id S232227AbiF2R77 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Jun 2022 13:59:59 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1491DB1
-        for <io-uring@vger.kernel.org>; Wed, 29 Jun 2022 10:59:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 462BEC7F
+        for <io-uring@vger.kernel.org>; Wed, 29 Jun 2022 10:59:59 -0700 (PDT)
 Received: from integral2.. (unknown [180.245.197.13])
-        by gnuweeb.org (Postfix) with ESMTPSA id EEC10800D8;
-        Wed, 29 Jun 2022 17:59:50 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 086A2800E7;
+        Wed, 29 Jun 2022 17:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656525594;
-        bh=xth/MUDvJ+GnBq5UPBliavkj3h6/xeBFoQ2W83La9IM=;
+        s=default; t=1656525598;
+        bh=zQ5DQmoxSwZ6Mva+LUDQuM5nON1RwWAYQmZoxevo84c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BrEnnUBkliDqpBCa575pGGqjSMlmqLqSquZCHz/G6MHfOkLBJGtPTPCSBhcMNPiaW
-         Ca9WLX0axiR6JxpsHKo7PFGTE2hWIdVJSXW9LqspqsJsq1mmsScCSzb/6Rwtp2wMeU
-         8UrBu9UH/yO6hgmGCS+2SLXmv9Rq1E0sd2ALtI6tAyIM+6M51jFOOOzVl99qZiVhzf
-         tXSxSVejWq0EKVaaCCOjh1OSQCooPSfvfNyshrvPx2y/RZ3OpAjkmI6NaLj8CRRk4D
-         6W3rCgpp9Tb0SG7asDVt0UwsmuUej+YJsjZ5SpnAEj+dtc9fl+voND0jpZSjEZXBOG
-         WMo86gINYTvkQ==
+        b=WlXuj/jJ27sGGLPY0zTkNnVRCIBSjyG4A6wWz+El8cCt4mKG8Sz/L8IS/LeI+xea3
+         OPU7JgoTExP3T/IWA/2QJhDtLFIHGxwBnW7yCaL4lsVZglXq6a/GLqNDW94xtK1HRC
+         FATv8UIw4+G37iX+MeuZLncJgNnwwF1xGo+t55taWn21KdPiyhTdCvDK3k6xFYZDP+
+         3sRRjiVnzhHWhVv/LDZbh9g9xcTcVXhPHjI06kzADFzCC48tjwYweDv1G65seGnEJu
+         F2QZvBNhkR+xUgoOyNefbMDUoYj0ofEbQJZMP+ghgqhI1uzY9kkCczbnFnDYrIiDri
+         RW/bVsJvYs8MQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Hao Xu <howeyxu@tencent.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@gnuweeb.org>
-Subject: [PATCH liburing v2 7/8] .github: Enable aarch64 nolibc build for GitHub bot
-Date:   Thu, 30 Jun 2022 00:58:29 +0700
-Message-Id: <20220629175255.1377052-8-ammar.faizi@intel.com>
+Subject: [PATCH liburing v2 8/8] CHANGELOG: Note about aarch64 support
+Date:   Thu, 30 Jun 2022 00:58:30 +0700
+Message-Id: <20220629175255.1377052-9-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220629175255.1377052-1-ammar.faizi@intel.com>
 References: <20220629175255.1377052-1-ammar.faizi@intel.com>
@@ -57,22 +57,22 @@ From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- .github/workflows/build.yml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ CHANGELOG | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-index 88192ff..fc119cb 100644
---- a/.github/workflows/build.yml
-+++ b/.github/workflows/build.yml
-@@ -114,7 +114,7 @@ jobs:
+diff --git a/CHANGELOG b/CHANGELOG
+index efb3ff3..9c054b0 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,3 +1,8 @@
++liburing-2.3 release
++
++- Support non-libc build for aarch64.
++
++
+ liburing-2.2 release
  
-     - name: Build nolibc
-       run: |
--        if [[ "${{matrix.arch}}" == "x86_64" || "${{matrix.arch}}" == "i686" ]]; then \
-+        if [[ "${{matrix.arch}}" == "x86_64" || "${{matrix.arch}}" == "i686" || "${{matrix.arch}}" == "aarch64" ]]; then \
-             make clean; \
-             ./configure --cc=${{matrix.cc}} --cxx=${{matrix.cxx}} --nolibc; \
-             make -j$(nproc) V=1 CPPFLAGS="-Werror" CFLAGS="$FLAGS" CXXFLAGS="$FLAGS"; \
+ - Support non-libc builds.
 -- 
 Ammar Faizi
 

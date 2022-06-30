@@ -2,95 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A4E561AFF
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 15:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 309A8561B0B
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 15:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232808AbiF3NIR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 09:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45982 "EHLO
+        id S233930AbiF3NKr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 09:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233202AbiF3NIQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 09:08:16 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CBFD133
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:08:15 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d17so18079057pfq.9
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=XSNoskc8PZTK/w9VBT7F/TRiIswB3Rc2Qe59z7Bpl0s=;
-        b=ZLERd8U1mFnuUZSrjD/wqKCAMRUo+HMIXZ1FTzLZepBFhE5jdMdfQmptXOkbRNiw50
-         Y3t8gcUtsMsJol7V1sSG1wgDktEM9Gj7mhRhGKWKid9Ee5Ea0/+ipWPLOythdob0eoKF
-         eNTO5qpOfA1+gB1O3woF2en3Y3zRaXnY2T1mdsEfyD9k5msLszEHKWWcWRJCa2W5Il6K
-         Og0TR2UlRSr5s4Z6c/BXVdnn7vEP+sdOOkNJ54wrWgCuNRXRJvZSITKFHfhmpJaJhyud
-         gKl4U74wPj32A29aMSS8CVsS2u0z1JRWdlfHBSk8VFd6AYLVmI3lIqNde8dVaCVr2Phg
-         2ULA==
+        with ESMTP id S230305AbiF3NKq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 09:10:46 -0400
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3960D27CC3
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:10:43 -0700 (PDT)
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+        by gw2.atmark-techno.com (Postfix) with ESMTPS id 9781220D60
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 22:10:42 +0900 (JST)
+Received: by mail-pg1-f199.google.com with SMTP id 196-20020a6300cd000000b0040c9c64e7e4so9691749pga.9
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:10:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=XSNoskc8PZTK/w9VBT7F/TRiIswB3Rc2Qe59z7Bpl0s=;
-        b=SU0XdvxxI3Ot1LaIsMIASPQncMbr6BLYrOSAyxcZj7l/4H98bS+qc6XvvaaouTw7FB
-         CdkKbXt7MrsHYSUenBbb3Kd1DWJfjValP0L5fcwMpjloOsM6YKx7AH+QwkidxZcLjycL
-         sQ1o+F88DaXTniV4bYjey1TXIDeZq1bUAj3Btr9c7OC+a4Nj48QJ1XsdBAwmIPtMahJ8
-         zrr+ecmqeJBcIetlhseb6gi2DDTjz13O9knGiUo5SzOzhzkJ4kBnzM0vqWCUNiYtW35g
-         RaX8HWhzqz7wp82j5iN0dgvNJLji7IgAewi3KG3Uo4pBSayaddZYI9yIsie7Uz4Xu9US
-         ukHQ==
-X-Gm-Message-State: AJIora8bU+HW+XHCX2I+920TO7UB1iJksIplUo9ZLGF5lHi/va45Gr7Q
-        GMwr98wY+4LZNGehO5CfVV/XVg==
-X-Google-Smtp-Source: AGRyM1spyGJPeRsSmQw5uwlzClJSo/CKQMG2Wvx2yHELSN5Jb4YQAEcVQQyhTn4UGCwbsvVat5Z7Ag==
-X-Received: by 2002:a63:d853:0:b0:40d:6ea0:74d6 with SMTP id k19-20020a63d853000000b0040d6ea074d6mr7480154pgj.26.1656594495000;
-        Thu, 30 Jun 2022 06:08:15 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id c15-20020a170902c2cf00b0016a268563ecsm13484975pla.23.2022.06.30.06.08.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jun 2022 06:08:14 -0700 (PDT)
-Message-ID: <0f9b3a48-2f1b-6562-54a7-7e72fc700f1f@kernel.dk>
-Date:   Thu, 30 Jun 2022 07:08:13 -0600
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KXHvFJE+Ra1Ta2VHsFr1xKZy6p8ZRnSJx8lAp3hz1zo=;
+        b=ftDVV0pH8jADYrX3LiY4w4Dndk1vnNvV7iwhYFBFqrvaauI7Nv8UCj9uyqFc/CzfMe
+         R2SK7YBhUvq5Gbt3SycZnGYBRH7XirNKalDmiMb+jzGp7M004wNP70UWEXKnstVrl9r9
+         VLW1RTN6Ox24UZLVkahsJMzWw54Yr9qLW1QocpLcLwV8etm5ocfSU74ybqYZOpCQeT4e
+         ylkO5ePZ0+R9UlW0Rwj4rE4NGxBrsrTlv/UG7CIgYr7cm2N/RzJr1oCyompZ+Ksuk7wv
+         f0WxU7tGzdJc3Og1Gra27rQuVIF3ANc/vErn7NLYje3yLsFP9gdVEZzcCD7k7brVgbm3
+         8S0g==
+X-Gm-Message-State: AJIora/z4zWqpZivNtcYjqCpwN/VwmQIg/r/f3u4JcNILPbffOg1b6VU
+        KkD1hajY7Qt2F2SZ6grXiHsFat5xd/52Xu7iz5lBUyeR6YVjUS9qyuGvAamFZzMJM8YjovDJK52
+        bCKbSAPcbIoJc2Ya+FfK8
+X-Received: by 2002:a65:5a42:0:b0:411:bf36:eeec with SMTP id z2-20020a655a42000000b00411bf36eeecmr617420pgs.522.1656594641704;
+        Thu, 30 Jun 2022 06:10:41 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tMjKrlMY81Wg5EQjBFVsz+y9WcW1EPe860eX3wq9j49Vm6Pnuflkj6Pk8bucdksCmDfNFfmw==
+X-Received: by 2002:a65:5a42:0:b0:411:bf36:eeec with SMTP id z2-20020a655a42000000b00411bf36eeecmr617405pgs.522.1656594641501;
+        Thu, 30 Jun 2022 06:10:41 -0700 (PDT)
+Received: from pc-zest.atmarktech (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
+        by smtp.gmail.com with ESMTPSA id i12-20020a17090a64cc00b001eccb13dfb0sm1913575pjm.4.2022.06.30.06.10.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Jun 2022 06:10:41 -0700 (PDT)
+Received: from martinet by pc-zest.atmarktech with local (Exim 4.95)
+        (envelope-from <martinet@pc-zest>)
+        id 1o6tuG-0007Ng-Ib;
+        Thu, 30 Jun 2022 22:08:28 +0900
+Date:   Thu, 30 Jun 2022 22:08:18 +0900
+From:   Dominique MARTINET <dominique.martinet@atmark-techno.com>
+To:     Filipe Manana <fdmanana@kernel.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: read corruption with qemu master io_uring engine / linux master
+ / btrfs(?)
+Message-ID: <Yr2gQh5GaVmTEDW2@atmark-techno.com>
+References: <bd342da1-8c98-eb78-59f1-e3cf537181e3@suse.com>
+ <dd55e282-1147-08ae-6b9f-cf3ef672fce8@suse.com>
+ <YrueYDXqppHZzOsy@atmark-techno.com>
+ <Yrvfqh0eqN0J5T6V@atmark-techno.com>
+ <20220629153710.GA379981@falcondesktop>
+ <YrzxHbWCR6zhIAcx@atmark-techno.com>
+ <Yr1XNe9V3UY/MkDz@atmark-techno.com>
+ <20220630104536.GA434846@falcondesktop>
+ <Yr2ItqlxeII0sReD@atmark-techno.com>
+ <20220630125124.GA446657@falcondesktop>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH for-next 2/3] alloc range helpers
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1656580293.git.asml.silence@gmail.com>
- <218118e4343c04010e9142e14627a7f580f7bca5.1656580293.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <218118e4343c04010e9142e14627a7f580f7bca5.1656580293.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220630125124.GA446657@falcondesktop>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/30/22 3:13 AM, Pavel Begunkov wrote:
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  src/include/liburing.h |  3 +++
->  src/register.c         | 14 ++++++++++++++
->  2 files changed, 17 insertions(+)
+Filipe Manana wrote on Thu, Jun 30, 2022 at 01:51:24PM +0100:
+> > Please ask if there's any infos I could get you.
 > 
-> diff --git a/src/include/liburing.h b/src/include/liburing.h
-> index bb2fb87..45b4da0 100644
-> --- a/src/include/liburing.h
-> +++ b/src/include/liburing.h
-> @@ -186,6 +186,9 @@ int io_uring_unregister_buf_ring(struct io_uring *ring, int bgid);
->  int io_uring_register_sync_cancel(struct io_uring *ring,
->  				 struct io_uring_sync_cancel_reg *reg);
->  
-> +int io_uring_register_file_alloc_range(struct io_uring *ring,
-> +					unsigned off, unsigned len);
+> Ok, maybe it's page fault related or there's something else besides page faults
+> involved.
+> 
+> Can you dump the subvolume tree like this:
+> 
+> btrfs inspect-internal dump-tree -t 5 /dev/sda 2>&1 | xz -9 > dump.xz
+> 
+> Here the 5 is the ID of the default subvolume. If the test file is on
+> a different subvolume, you'll need to replace 5 with the subvolume's ID.
 
-This should go into liburing.map as well.
+Sure thing.
 
+It's 2MB compressed:
+https://gaia.codewreck.org/local/tmp/dump-tree.xz
+
+
+> This is just to look at the file extent layout.
+> Also, then tell me what's the inode number of the file (or just its name,
+> and I'll find out its inode number), and an example file offset and read
+> length that triggers a short read, so that I know where to look at.
+
+There's just a single file in that subvolume, inode 257
+
+> And btw, that dump-tree command will dump all file names, directory names
+> and xattr names and values (if they are human readable) - so if privacy is
+> a concern here, just pass --hide-names to the dump-tree command.
+
+(thanks for the warning)
 -- 
-Jens Axboe
-
+Dominique

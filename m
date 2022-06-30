@@ -2,68 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A6CA561B05
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 15:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA61561B2B
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 15:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233975AbiF3NJR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 09:09:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47226 "EHLO
+        id S234006AbiF3NUu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 09:20:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233383AbiF3NJP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 09:09:15 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B37C82018E
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:09:14 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so2963798pjl.5
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=S6HHFRjkNbq1aBwXsluIrZKAK98lt7S+7ZHvnU55ZaA=;
-        b=Xx9MwqQCFTq8YIwT83nRV5uDCVH+mTnDE6QJj4U4UBzg4qiVSrd+p4fGyjFkM52m1V
-         CwENOOWo/7ihIKUHS6N/27FbBDRaFoVrmIyICWoumJRuZ3gE5s97Gntig13ZmQnkpGAJ
-         8yJEEhwx2YQMdPWxAk0qefijMVjYSGKJuTUhYtTuVqg78ST1VExh1kzkvxGb2nPuVO9N
-         q65AOnESQtt4BBcCAv6h49uTCKiJ4uFxQBXpnYM3p/LB5nrmC0D83nlTlRA02B3fxfsM
-         eLcP0H3nfrZOeh/q3wbXbf0P86ZzzsWgYrPgvgIT7wQ9E26B4ahIP4IMqmmCkv60ORKD
-         q+pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=S6HHFRjkNbq1aBwXsluIrZKAK98lt7S+7ZHvnU55ZaA=;
-        b=nI57dybJthkCfi93sZh/uECSTnj5Z0/xgSm16jAEnNGjpM4EXMVbEdyTZLAkjKrxS0
-         wpHZT60KfXaL0nS4WQiRGSTSAjETSpfckicJ1jKW7WgtZ7PhzGDoUAkXnd36VmasrqkB
-         EWp8pq6Ti6MhKs7/7OkdI2WwbSIrHdj5z7Wpg9hkXrRKk6QvS3gOYTy+Q7vd2zA54DVl
-         9rmxT0vczTBihv/4tYsgeiKoar2iPSv6FGkxyBA3ab4YbE53RNRAN76N+VWRhRGMZu/s
-         y2M1uYJfZ2g9deW98y3MpNL8OKg1oNRBcjROiZ5TIHRzx1bp2zBJaGAzQ/bHRorutcld
-         l88Q==
-X-Gm-Message-State: AJIora9fSwMOSu6j1jz1uiAw0fGchWpHgQ9MSO2Nj2ghAMwXXo4woKhH
-        D/v9BF5LV0Ma/GKuRrYweI07QA==
-X-Google-Smtp-Source: AGRyM1urQZMA2XLWVEWP1pMwDfxPI5a3gFRBHRiWdPtzEpyxR7D4Z0R1LicZn2JtZNx0lm+B7KPTcw==
-X-Received: by 2002:a17:902:eb86:b0:16a:7401:7ac1 with SMTP id q6-20020a170902eb8600b0016a74017ac1mr16047544plg.101.1656594554161;
-        Thu, 30 Jun 2022 06:09:14 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n4-20020a6546c4000000b0040c9df2b060sm13451239pgr.30.2022.06.30.06.09.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jun 2022 06:09:13 -0700 (PDT)
-Message-ID: <30f95627-eb6c-c743-8fb2-11b0b874e00b@kernel.dk>
-Date:   Thu, 30 Jun 2022 07:09:12 -0600
+        with ESMTP id S233592AbiF3NUt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 09:20:49 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE312D1D0
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:20:48 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 25U0LY6D009535
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:20:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=ZfX4dx+zHt+aWKlD2KZYhsibCaLAXeLuK8UfcMVi5VA=;
+ b=UrR0gtorEBKBaIo/GYkV5z1yCKX9H9KizbmtWxktyKsnl4TurcOdUdThksAtnKWoK4M5
+ AdOJVTHkjyunQ7FgdkaUjn4isFURSXr5pRTuieHdVN/0GD5Qflv31wqQWl9Wsf5MadaK
+ L5vnl90yussuvU7GojV6N+yWcIXiUY7LYrg= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3h10tfknbj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 06:20:48 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Thu, 30 Jun 2022 06:20:47 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id A33BE25B9454; Thu, 30 Jun 2022 06:20:16 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH 5.19] io_uring: fix provided buffer import
+Date:   Thu, 30 Jun 2022 06:20:06 -0700
+Message-ID: <20220630132006.2825668-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH for-next 3/3] test range file alloc
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1656580293.git.asml.silence@gmail.com>
- <decaf87bd125ad0e77261985e521926aff66ff34.1656580293.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <decaf87bd125ad0e77261985e521926aff66ff34.1656580293.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: CZsFFWgg_0yqUtc9GlDHnS_sm8C4brgx
+X-Proofpoint-ORIG-GUID: CZsFFWgg_0yqUtc9GlDHnS_sm8C4brgx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-30_09,2022-06-28_01,2022-06-22_01
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,20 +62,44 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/30/22 3:13 AM, Pavel Begunkov wrote:
-> @@ -949,5 +1114,11 @@ int main(int argc, char *argv[])
->  		return ret;
->  	}
->  
-> +	ret = test_file_alloc_ranges();
-> +	if (ret) {
-> +		printf("test_partial_register_fail failed\n");
-> +		return ret;
-> +	}
+io_import_iovec uses the s pointer, but this was changed immediately
+after the iovec was re-imported and so it was imported into the wrong
+place.
 
-If you're returning this directly, test_file_alloc_ranges() should use
-the proper T_EXIT_foo return codes.
+Change the ordering.
 
--- 
-Jens Axboe
+Fixes: 2be2eb02e2f5 ("io_uring: ensure reads re-import for selected buffe=
+rs")
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
+---
+ fs/io_uring.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5ff2cdb425bc..73ae92a62c2c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4314,6 +4314,9 @@ static int io_read(struct io_kiocb *req, unsigned i=
+nt issue_flags)
+ 		if (unlikely(ret < 0))
+ 			return ret;
+ 	} else {
++		rw =3D req->async_data;
++		s =3D &rw->s;
++
+ 		/*
+ 		 * Safe and required to re-import if we're using provided
+ 		 * buffers, as we dropped the selected one before retry.
+@@ -4324,8 +4327,6 @@ static int io_read(struct io_kiocb *req, unsigned i=
+nt issue_flags)
+ 				return ret;
+ 		}
+=20
+-		rw =3D req->async_data;
+-		s =3D &rw->s;
+ 		/*
+ 		 * We come here from an earlier attempt, restore our state to
+ 		 * match in case it doesn't. It's cheap enough that we don't
+--=20
+2.30.2
 

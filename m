@@ -2,63 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3AB561A63
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 14:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FAEC561AC5
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 14:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234915AbiF3Mdi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 08:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42468 "EHLO
+        id S235101AbiF3Mvb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 08:51:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234721AbiF3Mdi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 08:33:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6ACFE34659
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 05:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656592416;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cgnrW5cxLH48CnZyxRoYJ8gOY4LsyuFZedpGVmm6qFI=;
-        b=b4NwW4MbHSljygQawo0uDvJ1u+9cxbeL7HB6eQAROPTGyVwhuDT/yizJeLkhX5tFWHAy69
-        ZkFT1rGey5NhbGiHo2BrLZWcP2VCEK6UINHstFyjY+sWRJeAfDcvPgVGcfUnUOKKzYXO2s
-        oS/d8cRRrk8dUMUqgNgql66EGEZFRjA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-410-OqXdsN7APpq7dDidBfWA8Q-1; Thu, 30 Jun 2022 08:33:33 -0400
-X-MC-Unique: OqXdsN7APpq7dDidBfWA8Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S235104AbiF3Mva (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 08:51:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AE43FBF9;
+        Thu, 30 Jun 2022 05:51:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9C3AE801233;
-        Thu, 30 Jun 2022 12:33:32 +0000 (UTC)
-Received: from T590 (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4EC292026D64;
-        Thu, 30 Jun 2022 12:33:25 +0000 (UTC)
-Date:   Thu, 30 Jun 2022 20:33:20 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-Cc:     linux-block@vger.kernel.org,
-        Harris James R <james.r.harris@intel.com>,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, ming.lei@redhat.com
-Subject: Re: [PATCH V3 1/1] ublk: add io_uring based userspace block driver
-Message-ID: <Yr2YEIoBPOLxq6NB@T590>
-References: <20220628160807.148853-1-ming.lei@redhat.com>
- <20220628160807.148853-2-ming.lei@redhat.com>
- <fdd06581-a8aa-5948-6043-fc7e3381eb2d@linux.alibaba.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7E94761EBF;
+        Thu, 30 Jun 2022 12:51:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EBC9C34115;
+        Thu, 30 Jun 2022 12:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656593487;
+        bh=DM/TYsqYiOvdjG/uty8sr6pwhJoi5aAEyXmb+tzRM8U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VQQft16yMwDbBxJ2ZWc9I5BH1o4esxCTpMmKjkaLcTGF+gnhwvDYh9LmoiHo9GwDu
+         8zIeNXjZ48x7J27UdDrUxTcbIPfonfZvTJhDascAPcbGLy5yPyye39B8KqzC2WejiN
+         CE/M5kdZpcByccpSrMpu4LNXe+XLk7gdVUmaeLePuMrp8QObqI1hARCb6KDolZgqRp
+         g9tHKU5NMsWKNbX5wfuFIkbDewYU2kkpoXlPK1bc6hFKAZWYkJvSRZROEf4XLcT5mQ
+         2iwnjGyop0PNEfPogIG+Ql7dKeFKwUVp3c6mAT5xiq3XA2SaVY0xYKlh5Wm//JrGob
+         /XQh2Gas/QOmg==
+Date:   Thu, 30 Jun 2022 13:51:24 +0100
+From:   Filipe Manana <fdmanana@kernel.org>
+To:     Dominique MARTINET <dominique.martinet@atmark-techno.com>
+Cc:     Nikolay Borisov <nborisov@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: read corruption with qemu master io_uring engine / linux master
+ / btrfs(?)
+Message-ID: <20220630125124.GA446657@falcondesktop>
+References: <33cd0f9a-cdb1-1018-ebb0-89222cb1c759@kernel.dk>
+ <bd342da1-8c98-eb78-59f1-e3cf537181e3@suse.com>
+ <dd55e282-1147-08ae-6b9f-cf3ef672fce8@suse.com>
+ <YrueYDXqppHZzOsy@atmark-techno.com>
+ <Yrvfqh0eqN0J5T6V@atmark-techno.com>
+ <20220629153710.GA379981@falcondesktop>
+ <YrzxHbWCR6zhIAcx@atmark-techno.com>
+ <Yr1XNe9V3UY/MkDz@atmark-techno.com>
+ <20220630104536.GA434846@falcondesktop>
+ <Yr2ItqlxeII0sReD@atmark-techno.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fdd06581-a8aa-5948-6043-fc7e3381eb2d@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <Yr2ItqlxeII0sReD@atmark-techno.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,180 +63,142 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 07:35:11PM +0800, Ziyang Zhang wrote:
-> On 2022/6/29 00:08, Ming Lei wrote:
+On Thu, Jun 30, 2022 at 08:27:50PM +0900, Dominique MARTINET wrote:
+> Filipe Manana wrote on Thu, Jun 30, 2022 at 11:45:36AM +0100:
+> > So here's a patch for you to try:
+> > 
+> > https://gist.githubusercontent.com/fdmanana/4b24d6b30983e956bb1784a44873c5dd/raw/572490b127071bf827c3bc05dd58dcb7bcff373a/dio.patch
 > 
-> [...]
+> Thanks.
+> Unfortunately I still hit short reads with this; I can't really tell if
+> there are more or less than before (unfortunately the parallelism of my
+> reproducer means that even dropping caches and restarting with the same
+> seed I get a different offset for short read), but it looks fairly
+> similar -- usually happens within the first 1000 operations with
+> sometimes a bit slower with or without the patch.
 > 
-> > +#define UBLK_MAX_PIN_PAGES	32
-> > +
-> > +static inline void ublk_release_pages(struct ublk_queue *ubq, struct page **pages,
-> > +		int nr_pages)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i = 0; i < nr_pages; i++)
-> > +		put_page(pages[i]);
-> > +}
-> > +
-> > +static inline int ublk_pin_user_pages(struct ublk_queue *ubq, u64 start_vm,
-> > +		unsigned int nr_pages, unsigned int gup_flags,
-> > +		struct page **pages)
-> > +{
-> > +	return get_user_pages_fast(start_vm, nr_pages, gup_flags, pages);
-> > +}
+> I went ahead and added a printk in dio_fault_in_size to see if it was
+> used and it looks like it is, but that doesn't really tell if it is the
+> reason for short reads (hm, thinking back I could just have printed the
+> offsets...):
+> ----
+> / # /mnt/repro /mnt/t/t/atde-test 
+> random seed 4061910570
+> Starting io_uring reads...
+> [   17.872992] dio_fault_in_size: left 3710976 prev_left 0 size 131072
+> [   17.873958] dio_fault_in_size: left 3579904 prev_left 3710976 size 131072
+> [   17.874246] dio_fault_in_size: left 1933312 prev_left 0 size 131072
+> [   17.875111] dio_fault_in_size: left 3448832 prev_left 3579904 size 131072
+> [   17.876446] dio_fault_in_size: left 3317760 prev_left 3448832 size 131072
+> [   17.877493] dio_fault_in_size: left 3186688 prev_left 3317760 size 131072
+> [   17.878667] dio_fault_in_size: left 3055616 prev_left 3186688 size 131072
+> [   17.880001] dio_fault_in_size: left 2924544 prev_left 3055616 size 131072
+> [   17.881524] dio_fault_in_size: left 2793472 prev_left 2924544 size 131072
+> [   17.882462] dio_fault_in_size: left 2662400 prev_left 2793472 size 131072
+> [   17.883433] dio_fault_in_size: left 2531328 prev_left 2662400 size 131072
+> [   17.884573] dio_fault_in_size: left 2400256 prev_left 2531328 size 131072
+> [   17.886008] dio_fault_in_size: left 2269184 prev_left 2400256 size 131072
+> [   17.887058] dio_fault_in_size: left 2138112 prev_left 2269184 size 131072
+> [   17.888313] dio_fault_in_size: left 2007040 prev_left 2138112 size 131072
+> [   17.889873] dio_fault_in_size: left 1875968 prev_left 2007040 size 131072
+> [   17.891041] dio_fault_in_size: left 1744896 prev_left 1875968 size 131072
+> [   17.893174] dio_fault_in_size: left 802816 prev_left 1744896 size 131072
+> [   17.930249] dio_fault_in_size: left 3325952 prev_left 0 size 131072
+> [   17.931472] dio_fault_in_size: left 1699840 prev_left 0 size 131072
+> [   17.956509] dio_fault_in_size: left 1699840 prev_left 0 size 131072
+> [   17.957522] dio_fault_in_size: left 1888256 prev_left 0 size 131072
+> bad read result for io 3, offset 4022030336: 176128 should be 1531904
+> ----
 > 
-> > +
-> > +static inline unsigned ublk_copy_bv(struct bio_vec *bv, void **bv_addr,
-> > +		void *pg_addr, unsigned int *pg_off,
-> > +		unsigned int *pg_len, bool to_bv)
-> > +{
-> > +	unsigned len = min_t(unsigned, bv->bv_len, *pg_len);
-> > +
-> > +	if (*bv_addr == NULL)
-> > +		*bv_addr = kmap_local_page(bv->bv_page);
-> > +
-> > +	if (to_bv)
-> > +		memcpy(*bv_addr + bv->bv_offset, pg_addr + *pg_off, len);
-> > +	else
-> > +		memcpy(pg_addr + *pg_off, *bv_addr + bv->bv_offset, len);
-> > +
-> > +	bv->bv_offset += len;
-> > +	bv->bv_len -= len;
-> > +	*pg_off += len;
-> > +	*pg_len -= len;
-> > +
-> > +	if (!bv->bv_len) {
-> > +		kunmap_local(*bv_addr);
-> > +		*bv_addr = NULL;
-> > +	}
-> > +
-> > +	return len;
-> > +}
-> > +
-> > +/* copy rq pages to ublksrv vm address pointed by io->addr */
-> > +static int ublk_copy_pages(struct ublk_queue *ubq, struct request *rq, bool to_rq,
-> > +		unsigned int max_bytes)
-> > +{
-> > +	unsigned int gup_flags = to_rq ? 0 : FOLL_WRITE;
-> > +	struct ublk_io *io = &ubq->ios[rq->tag];
-> > +	struct page *pgs[UBLK_MAX_PIN_PAGES];
-> > +	struct req_iterator req_iter;
-> > +	struct bio_vec bv;
-> > +	const unsigned int rq_bytes = min(blk_rq_bytes(rq), max_bytes);
-> > +	unsigned long start = io->addr, left = rq_bytes;
-> > +	unsigned int idx = 0, pg_len = 0, pg_off = 0;
-> > +	int nr_pin = 0;
-> > +	void *pg_addr = NULL;
-> > +	struct page *curr = NULL;
-> > +
-> > +	rq_for_each_segment(bv, rq, req_iter) {
-> > +		unsigned len, bv_off = bv.bv_offset, bv_len = bv.bv_len;
-> > +		void *bv_addr = NULL;
-> > +
-> > +refill:
-> > +		if (pg_len == 0) {
-> > +			unsigned int off = 0;
-> > +
-> > +			if (pg_addr) {
-> > +				kunmap_local(pg_addr);
-> > +				if (!to_rq)
-> > +					set_page_dirty_lock(curr);
-> > +				pg_addr = NULL;
-> > +			}
-> > +
-> > +			/* refill pages */
-> > +			if (idx >= nr_pin) {
-> > +				unsigned int max_pages;
-> > +
-> > +				ublk_release_pages(ubq, pgs, nr_pin);
-> > +
-> > +				off = start & (PAGE_SIZE - 1);
-> > +				max_pages = min_t(unsigned, (off + left +
-> > +						PAGE_SIZE - 1) >> PAGE_SHIFT,
-> > +						UBLK_MAX_PIN_PAGES);
-> > +				nr_pin = ublk_pin_user_pages(ubq, start,
-> > +						max_pages, gup_flags, pgs);
-> > +				if (nr_pin < 0)
-> > +					goto exit;
-> > +				idx = 0;
-> > +			}
-> > +			pg_off = off;
-> > +			pg_len = min(PAGE_SIZE - off, left);
-> > +			off = 0;
-> > +			curr = pgs[idx++];
-> > +			pg_addr = kmap_local_page(curr);
-> > +		}
-> > +
-> > +		len = ublk_copy_bv(&bv, &bv_addr, pg_addr, &pg_off, &pg_len,
-> > +				to_rq);
-> > +		/* either one of the two has been consumed */
-> > +		WARN_ON_ONCE(bv.bv_len && pg_len);
-> > +		start += len;
-> > +		left -= len;
-> > +
-> > +		/* overflow */
-> > +		WARN_ON_ONCE(left > rq_bytes);
-> > +		WARN_ON_ONCE(bv.bv_len > bv_len);
-> > +		if (bv.bv_len)
-> > +			goto refill;
-> > +
-> > +		bv.bv_len = bv_len;
-> > +		bv.bv_offset = bv_off;
-> > +	}
-> > +	if (pg_addr) {
-> > +		kunmap_local(pg_addr);
-> > +		if (!to_rq)
-> > +			set_page_dirty_lock(curr);
-> > +	}
-> > +	ublk_release_pages(ubq, pgs, nr_pin);
-> > +
-> > +exit:
-> > +	return rq_bytes - left;
-> > +}
-> > +
+> (ugh, saw the second patch after writing all this.. but it's the same:
+
+Yep, it only prevents an infinite loop on rare scenarios (not triggered
+by your reproducer).
+
+> ----
+> / # /mnt/repro /mnt/t/t/atde-test 
+> random seed 634214270
+> Starting io_uring reads...
+> [   17.858718] dio_fault_in_size: left 1949696 prev_left 0 size 131072
+> [   18.193604] dio_fault_in_size: left 1142784 prev_left 0 size 131072
+> [   18.218500] dio_fault_in_size: left 528384 prev_left 0 size 131072
+> [   18.248184] dio_fault_in_size: left 643072 prev_left 0 size 131072
+> [   18.291639] dio_fault_in_size: left 131072 prev_left 0 size 131072
+> bad read result for io 4, offset 5079498752: 241664 should be 2142208
+> ----
+> rest of the mail is on first patch as I used offset of first message,
+> but shouldn't matter)
 > 
-> Hi Ming, 
+> Given my file has many many extents, my guess would be that short reads
+> happen when we're crossing an extent boundary.
 > 
-> I note that you pin the user buffer's pages, memcpy() and release them immediately.
 > 
-> 1) I think maybe copy_page_from_iter() is another choice for copying user buffer to biovecs
->    since copy_page_from_iter() do not pin pages(But it may raise page fault).
-
-copy_page_from_iter/copy_page_to_iter needs the userspage page,
-then copy between the userspace page and bvec_iter pages, what it does
-is just kmap/copy/kunmap.
-
-Not see it is useful here.
-
+> Using the fiemap[1] command I can confirm that it is the case:
+> [1] https://github.com/ColinIanKing/fiemap
 > 
-> 2) Or will you design some mechanism such as LRU to manage these pinned pages? 
->    For example pin those pages frequently required for a long time and release
->    those pages not used for a long time.
->    I remember you have talked about this LRU on pinned pages?
-
-I'd explain it a bit.
-
-When I worked on v1/v2, 'perf report' shows that get_user_pages_fast()
-as one of top samples. Turns out it is a bug, which is fixed in
-
-https://github.com/ming1/linux/commit/3c9fd476951759858cc548dee4cedc074194d0b0
-
-After the issue is fixed, not see get_user_pages_fast() being hot spot
-any more. I actually implemented one patch which pins all pages in
-the ubd device whole lifetime, but not see obvious improvement, so I gave
-up the idea.
-
-In the test VM on my laptop, single job ubd/null randwrite can reach 700K iops.
-
+> $ printf "%x\n" $((4022030336 + 176128))
+> efbe0000
+> $ fiemap /mnt/t/t/atde-test
+> File atde-test has 199533 extents:
+> #       Logical          Physical         Length           Flags
+> ...
+> 23205:  00000000efba0000 0000001324f00000 0000000000020000 0008
+> 23206:  00000000efbc0000 00000013222af000 0000000000020000 0008
+> 23207:  00000000efbe0000 00000013222bb000 0000000000020000 0008
 > 
-> Which one do you think is better? copy_page_from_iter() or pin pages with LRU?
-> Maybe it depends on the user's workload?
+> but given how many extents there are that doesn't explain why it stopped
+> at this offset within the file and not another before it: transition
+> from compressed to non-compressed or something? I didn't find any tool
+> able to show extent attributes; here's what `btrfs insp dump-tree` has
+> to say about this physical offset:
+> 
+> $ printf "%d\n" 0x00000013222af000
+> 82177617920
+> $ printf "%d\n" 0x00000013222bb000
+> 82177667072
+> $ btrfs insp dump-tree /dev/vg/test
+> ...
+> leaf 171360256 items 195 free space 29 generation 527 owner EXTENT_TREE
+> leaf 171360256 flags 0x1(WRITTEN) backref revision 1
+> checksum stored d9b6566b00000000000000000000000000000000000000000000000000000000
+> checksum calced d9b6566b00000000000000000000000000000000000000000000000000000000
+> fs uuid 3f85a731-21b4-4f3d-85b5-f9c45e8493f5
+> chunk uuid 77575a06-4d6f-4748-a62c-59e6d9221be8
+>         item 0 key (82177576960 EXTENT_ITEM 40960) itemoff 16230 itemsize 53
+>                 refs 1 gen 527 flags DATA
+>                 extent data backref root 256 objectid 257 offset 4021682176 count 1
+>         item 1 key (82177617920 EXTENT_ITEM 49152) itemoff 16177 itemsize 53
+>                 refs 1 gen 527 flags DATA
+>                 extent data backref root 256 objectid 257 offset 4022075392 count 1
+>         item 2 key (82177667072 EXTENT_ITEM 36864) itemoff 16124 itemsize 53
+>                 refs 1 gen 527 flags DATA
+>                 extent data backref root 256 objectid 257 offset 4022206464 count 1
+> 
+> ... but that doesn't really help me understand here.
+> 
+> Oh, well, passing you the ball again! :)
+> Please ask if there's any infos I could get you.
 
-So far in the enablement stage, I think the current approach is just fine,
-but we still can improve it in future.
+Ok, maybe it's page fault related or there's something else besides page faults
+involved.
 
+Can you dump the subvolume tree like this:
 
-Thanks,
-Ming
+btrfs inspect-internal dump-tree -t 5 /dev/sda 2>&1 | xz -9 > dump.xz
 
+Here the 5 is the ID of the default subvolume. If the test file is on
+a different subvolume, you'll need to replace 5 with the subvolume's ID.
+
+This is just to look at the file extent layout.
+Also, then tell me what's the inode number of the file (or just its name,
+and I'll find out its inode number), and an example file offset and read
+length that triggers a short read, so that I know where to look at.
+
+And btw, that dump-tree command will dump all file names, directory names
+and xattr names and values (if they are human readable) - so if privacy is
+a concern here, just pass --hide-names to the dump-tree command.
+
+Thanks.
+
+> -- 
+> Dominique

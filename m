@@ -2,129 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE155618BC
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 13:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C323056190E
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 13:25:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234400AbiF3LJH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 07:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52210 "EHLO
+        id S234771AbiF3LZQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 07:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234411AbiF3LJF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 07:09:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D764D433BC;
-        Thu, 30 Jun 2022 04:09:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 614C762285;
-        Thu, 30 Jun 2022 11:09:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D604C34115;
-        Thu, 30 Jun 2022 11:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656587342;
-        bh=RPRN+JN7GXMRgtjuNhD7qT6toxuYv9she5ZM/dG4Dik=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nCJAbPeVSr0JCrPJu68GHOaqq9Bh9Z/0G3bwtgEoIACLPjzIrvvaUUGntnuaOMGSU
-         UJ3OvP2Fzf0zAsPeQHiD9ZcLVSy9ZI7Sy1IqvWl1FPEmLbn5Jl6fWrxka5L7dhb49i
-         5rWrpA/EwD3VuX+lC4ehqM+9b+qRsojj1b4qbIoN+nj4AtiIWXqa2AERtAItPf5FjS
-         kZHJJYwjJYnK7vUlzrb6pj/7KIugLLxEIiCqXOQW4zMNr21OGcYqc8BO6GpiPkQO7V
-         XCMLmoV5lLRQZIU9HY4pT1f83tnvXfobLjAkcly3AzmCaKMFV6nVfkn1eOrLhPQF9R
-         ousnmbrXwHNJQ==
-Date:   Thu, 30 Jun 2022 12:09:00 +0100
-From:   Filipe Manana <fdmanana@kernel.org>
-To:     Dominique MARTINET <dominique.martinet@atmark-techno.com>
-Cc:     Nikolay Borisov <nborisov@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: read corruption with qemu master io_uring engine / linux master
- / btrfs(?)
-Message-ID: <20220630110900.GA438014@falcondesktop>
-References: <33cd0f9a-cdb1-1018-ebb0-89222cb1c759@kernel.dk>
- <bd342da1-8c98-eb78-59f1-e3cf537181e3@suse.com>
- <dd55e282-1147-08ae-6b9f-cf3ef672fce8@suse.com>
- <YrueYDXqppHZzOsy@atmark-techno.com>
- <Yrvfqh0eqN0J5T6V@atmark-techno.com>
- <20220629153710.GA379981@falcondesktop>
- <YrzxHbWCR6zhIAcx@atmark-techno.com>
- <Yr1XNe9V3UY/MkDz@atmark-techno.com>
- <20220630104536.GA434846@falcondesktop>
+        with ESMTP id S232953AbiF3LZP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 07:25:15 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FFC74F64E
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 04:25:15 -0700 (PDT)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+        by gnuweeb.org (Postfix) with ESMTPSA id 101CD80110
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 11:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1656588315;
+        bh=CXi9KOrrdX6L2FzQIwPuELoE9m2FoSnMGLqKvm+tOmY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GWa9IZKtYVv6n9UyK+Mu/eX5mItYqAIe07wPGHYk8pvVJqkr4yVAHq65tfpk5aOAQ
+         p9t1MS4E0NjdHaPoVVmAdSCokOv9E+WWLsmShih0TasTgSf7xUCZo1oXQEVMtmAiE1
+         SAV5rwEGjySyt016Fu9YXmFUlXNUXDhKHXpYDd6M5h4+4UYvpNnztcZCLFdFi1DNrU
+         waGB2wugNjqKj+H/NGLNvdLViYBm2mqD7k39hFFaq6EwB7eVfqIiA59+kcMmXif+HL
+         zg2kWi4vXr6j4at5DfT4FZBjIlJ6tjMliiE2md5ZV7zRW1o0NuDYbtgFiKk7Tc1hbl
+         KBDY6WkDG23Hw==
+Received: by mail-pl1-f177.google.com with SMTP id m14so16778084plg.5
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 04:25:15 -0700 (PDT)
+X-Gm-Message-State: AJIora/s/5KxXYX4MB2IZK+JDLIOza+09T8LWza0DCBT4+C7s2XT99XV
+        eRhLnPPYu1IHe4QjHj7fKNSpGVsloNBaOFmdOeQ=
+X-Google-Smtp-Source: AGRyM1seMtDUg3Z50P0vPFHbPt792uaU9P5yNUSIcIZK4IwzApBKEgpYsJmDQ1je1VBm+wR+gz9Pwkd8wNbj66qzznY=
+X-Received: by 2002:a17:90b:3141:b0:1ed:4ffb:f911 with SMTP id
+ ip1-20020a17090b314100b001ed4ffbf911mr11754294pjb.80.1656588314724; Thu, 30
+ Jun 2022 04:25:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220630104536.GA434846@falcondesktop>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220630091422.1463570-1-dylany@fb.com> <20220630091422.1463570-6-dylany@fb.com>
+In-Reply-To: <20220630091422.1463570-6-dylany@fb.com>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Date:   Thu, 30 Jun 2022 18:24:58 +0700
+X-Gmail-Original-Message-ID: <CAFBCWQJqVZNQw8rxU1LihhVj5jkfTPqhHbHiPjh=Z6WiF+vODg@mail.gmail.com>
+Message-ID: <CAFBCWQJqVZNQw8rxU1LihhVj5jkfTPqhHbHiPjh=Z6WiF+vODg@mail.gmail.com>
+Subject: Re: [PATCH v2 liburing 5/7] add recv-multishot test
+To:     Dylan Yudaken <dylany@fb.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io_uring Mailing List <io-uring@vger.kernel.org>,
+        Kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 11:45:36AM +0100, Filipe Manana wrote:
-> On Thu, Jun 30, 2022 at 04:56:37PM +0900, Dominique MARTINET wrote:
-> > Dominique MARTINET wrote on Thu, Jun 30, 2022 at 09:41:01AM +0900:
-> > > > I just tried your program, against the qemu/vmdk image you mentioned in the
-> > > > first message, and after over an hour running I couldn't trigger any short
-> > > > reads - this was on the integration misc-next branch.
-> > > >
-> > > > It's possible that to trigger the issue, one needs a particular file extent
-> > > > layout, which will not be the same as yours after downloading and converting
-> > > > the file.
-> > > 
-> > > Ugh. I've also been unable to reproduce on a test fs, despite filling it
-> > > with small files and removing some to artificially fragment the image,
-> > > so I guess I really do have something on these "normal" filesystems...
-> > > 
-> > > Is there a way to artificially try to recreate weird layouts?
-> > > I've also tried btrfs send|receive, but while it did preserve reflinked
-> > > extents it didn't seem to do the trick.
-> > 
-> > I take that one back, I was able to reproduce with my filesystem riddled
-> > with holes.
-> > I was just looking at another distantly related problem that happened
-> > with cp, but trying with busybox cat didn't reproduce it and got
-> > confused:
-> > https://lore.kernel.org/linux-btrfs/Yr1QwVW+sHWlAqKj@atmark-techno.com/T/#u
-> > 
-> > 
-> > Anyway, here's a pretty ugly reproducer to create a file that made short
-> > reads on a brand new FS:
-> > 
-> > # 50GB FS -> fill with 50GB of small files and remove 1/10
-> > $ mkdir /mnt/d.{00..50}
-> > $ for i in {00000..49999}; do
-> > 	dd if=/dev/urandom of=/mnt/d.${i:0:2}/test.$i bs=1M count=1 status=none;
-> >   done
-> > $ rm -f /mnt/d.*/*2
-> > $ btrfs subvolume create ~/sendme
-> > $ cp --reflink=always bigfile ~/sendme/bigfile
-> > $ btrfs property set ~/sendme ro true
-> > $ btrfs send ~/sendme | btrfs receive /mnt/receive
-> > 
-> > and /mnt/receive/bigfile did the trick for me.
-> > This probably didn't need the send/receive at all, I just didn't try
-> > plain copy again.
-> > 
-> > Anyway, happy to test any patch as said earlier, it's probably not worth
-> > spending too much time on trying to reproduce on your end at this
-> > point...
-> 
-> That's perfect.
-> 
-> So here's a patch for you to try:
-> 
-> https://gist.githubusercontent.com/fdmanana/4b24d6b30983e956bb1784a44873c5dd/raw/572490b127071bf827c3bc05dd58dcb7bcff373a/dio.patch
+Dylan,
 
-Actually it's this URL:
+On Thu, Jun 30, 2022 at 4:19 PM Dylan Yudaken wrote:
+> add a test for multishot receive functionality
+>
+> Signed-off-by: Dylan Yudaken <dylany@fb.com>
 
-https://gist.githubusercontent.com/fdmanana/4b24d6b30983e956bb1784a44873c5dd/raw/0dad2dd3fd14df735f166c2c416dc9265d660493/dio.patch
+Since commit 68103b731c34a9f83c181cb33eb424f46f3dcb94 ("Merge branch
+'exitcode-protocol' of ...."), we have a new rule for exit code.
 
-Thanks.
+The exit code protocol we have here is:
+- Use T_EXIT_SKIP when you skip the test.
+- Use T_EXIT_PASS when the test passes.
+- Use T_EXIT_FAIL when the test fails.
 
-> 
-> Thanks!
-> > 
-> > -- 
-> > Dominique
+-- 
+Ammar Faizi

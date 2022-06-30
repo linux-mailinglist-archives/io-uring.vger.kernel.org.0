@@ -2,110 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD45562427
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 22:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E48562426
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 22:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236777AbiF3UdB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 16:33:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56642 "EHLO
+        id S236652AbiF3UdA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 16:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236456AbiF3Uc7 (ORCPT
+        with ESMTP id S236559AbiF3Uc7 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 16:32:59 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EA81313AD
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 13:32:56 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id c6-20020a17090abf0600b001eee794a478so4317583pjs.1
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 13:32:56 -0700 (PDT)
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E56A377D4
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 13:32:58 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id 128so470604pfv.12
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 13:32:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:in-reply-to:references:subject:message-id:date
          :mime-version:content-transfer-encoding;
-        bh=FSOXo30Uq9BCNVmuAsi5w5C8gOosb3t9WRfMVCrT6IQ=;
-        b=71OaPdRgzLBTFUshicbPVMG4LFaecqp39w7V47CfMj+0gY4RebWxjQKLK0o1lonnjr
-         IoAMSLIWtQD5z7lRwT5WsJnZkVxgqw8urqB2CkcXtj5r7PxFc4TRxG1ra6n1A44W5SZt
-         u++p3JA2pefoNjsXomGzNSTArkokqVSIIWO2FjZkv6yzOiJr4DRTnrlrwBcexAPYyBx8
-         X4w38cbLY5T7ozhjVVvtz0HjacsTUDNch7stI7DOeuoGvcUiSZyChBTe5kAc1VXRnXZC
-         g6vUZae+vpwFvl4X1eemIiAuQhGwbuci0/1I2yA+X0LB+1yC5jZyNjnvEQU73CRNIxQI
-         0NiQ==
+        bh=LulNcga0J/kwd5A4TwuWcomyjOM1kf/vizR4Sa7IHTc=;
+        b=YBTWEboonx2M1rFjKnka+q8N9w6L0MWqjV95Pvoged1enHQtm962yL3TC2lQ6eWxsy
+         LMP00EmKfkaHlD1R8Xz3vnch39AgjV3XZPIdQJcq+Z0badbIqSZCMs2obZGX+Cgu/G9y
+         X+GeUYlMegBBDAdket3yhvZbh0dI1dem9joSMWslPXK9maGpWP5ZszKXhdNSmXdG1yt8
+         g+niekEr4Lvqv++ZOoIiI0pGjOgdqDQNNjZPrdlp/TyxqZeEBpf7ZX7XRIXfWQF4I6RY
+         62OqyEeiG0eU/0coUSEwcp5+iqLNEB3C2BR5dwfP8ANHSOSijb93GfBg/LRfgMoITbSc
+         0cLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=FSOXo30Uq9BCNVmuAsi5w5C8gOosb3t9WRfMVCrT6IQ=;
-        b=Iik645+DKSREcidKl3wrhnOmj6cl3pkixIq9aq00cLFdpHxnuWQVZtnKdXL+5w2hE8
-         uYzhAqdMUaC0xED0rJHDGtVVNCrjyKub8DLOZIQ+FAG1u5bFT3w8d7SW9lPKqkIQD8xR
-         vUQHjDEKxwbivRy3KKcZI/hgFbOt+bljyq2YsfMlgU5wg6DsuRX6QIvukCOyQUvXzSxb
-         7yCt07ESJURaz8oHuNxt93AYVOSaSXcMS0JmIqVXgSEPutgz5irAvF4ZQh5C/Ir9H+l3
-         f6+KAxlGl6ErsWUFDIWfmIrchz1w9FW/PuXrkbRK3YOIJqtLKMjE1COiy5bZvDwdI9u/
-         Hlww==
-X-Gm-Message-State: AJIora/q5Mvj0WJiBHEqn5vpTI7nSSoYr6Hpdc+pXIQpiJi4tUeV0M6E
-        lbcUz+ndFeDXVr69ZsSje8s7Pw==
-X-Google-Smtp-Source: AGRyM1u3r0jLkJPWYEWyhol/kypao7RlzkqpzAuN75e/SjlpAHz+TJeGBAXqSJqhLeP3Be+jqUbY/A==
-X-Received: by 2002:a17:90b:390e:b0:1ed:1133:8711 with SMTP id ob14-20020a17090b390e00b001ed11338711mr11904632pjb.90.1656621175704;
-        Thu, 30 Jun 2022 13:32:55 -0700 (PDT)
+        bh=LulNcga0J/kwd5A4TwuWcomyjOM1kf/vizR4Sa7IHTc=;
+        b=aECvLlmSUPo0nSVa6YIDZ9zkV5OUjlzXLY9iMxuM9Qome4xKnzRkIsY5q/5/fnwm8o
+         K8rm+FCio17uDR0jHzmBHB5nl0YdeKCyltqxZ7nYnQ8ukM+xVUKBL2aQBiO6cKBFJmlw
+         BuW3bQ0sRLvzbNYWIlSnxcvpzTiY5EIeGf85BLB7+IGpZT+U0OweRnSJvL0SVwtrAE24
+         dy8rsp8tT1jYKOEYw2ZFOyYzo+U79OBqQjDJS1n55G82Jsoz3HxKXc3X9AtEkNHnaY6U
+         B6i+Wfu1rGqFvKQeniDDiQRIwVdLMzxhRuvbuNUY+nrUK02+FlV3Zs8UQjXQvTjiA3kg
+         G6KA==
+X-Gm-Message-State: AJIora/Vwub5K6ijZEiq0Yo34txuCsbuFdgSxCNkRXVcXY15KGOb+qj9
+        e8pGag8gGhAZgz6hqGIABCui7g==
+X-Google-Smtp-Source: AGRyM1tNCVFllq0X174CF3Xo4LSUS8NwEzFm38o5tucF0PhydAvUObGJI7+Li+sRxUv4hXu7cA6eYw==
+X-Received: by 2002:a63:3fce:0:b0:40c:23a5:2827 with SMTP id m197-20020a633fce000000b0040c23a52827mr9255451pga.314.1656621178072;
+        Thu, 30 Jun 2022 13:32:58 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id kx10-20020a17090b228a00b001ec9ae91e30sm2475038pjb.12.2022.06.30.13.32.54
+        by smtp.gmail.com with ESMTPSA id a3-20020aa780c3000000b0050dc76281f8sm13979093pfn.210.2022.06.30.13.32.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 13:32:55 -0700 (PDT)
+        Thu, 30 Jun 2022 13:32:57 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, dylany@fb.com, io-uring@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Kernel-team@fb.com
-In-Reply-To: <20220630091231.1456789-1-dylany@fb.com>
-References: <20220630091231.1456789-1-dylany@fb.com>
-Subject: Re: [PATCH v2 for-next 00/12] io_uring: multishot recv
-Message-Id: <165662117486.56180.16557557417345255423.b4-ty@kernel.dk>
-Date:   Thu, 30 Jun 2022 14:32:54 -0600
+To:     dylany@fb.com, io-uring@vger.kernel.org
+Cc:     kernel-team@fb.com, asml.silence@gmail.com
+In-Reply-To: <20220630164918.3958710-1-dylany@fb.com>
+References: <20220630164918.3958710-1-dylany@fb.com>
+Subject: Re: [PATCH v3 liburing 0/7] liburing: multishot receive
+Message-Id: <165662117728.56263.14485865037387492984.b4-ty@kernel.dk>
+Date:   Thu, 30 Jun 2022 14:32:57 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 30 Jun 2022 02:12:19 -0700, Dylan Yudaken wrote:
-> This series adds support for multishot recv/recvmsg to io_uring.
+On Thu, 30 Jun 2022 09:49:11 -0700, Dylan Yudaken wrote:
+> This adds an API, tests and documentation for the multi shot receive functionality.
 > 
-> The idea is that generally socket applications will be continually
-> enqueuing a new recv() when the previous one completes. This can be
-> improved on by allowing the application to queue a multishot receive,
-> which will post completions as and when data is available. It uses the
-> provided buffers feature to receive new data into a pool provided by
-> the application.
+> It also adds some testing for overflow paths in accept & poll which previously was
+> not tested.
+> 
+> Patch 1 adds a helper t_create_socket_pair which provides two connected sockets
+> without needing a hard coded port
 > 
 > [...]
 
 Applied, thanks!
 
-[01/12] io_uring: allow 0 length for buffer select
-        (no commit info)
-[02/12] io_uring: restore bgid in io_put_kbuf
-        (no commit info)
-[03/12] io_uring: allow iov_len = 0 for recvmsg and buffer select
-        (no commit info)
-[04/12] io_uring: recycle buffers on error
-        (no commit info)
-[05/12] io_uring: clean up io_poll_check_events return values
-        (no commit info)
-[06/12] io_uring: add IOU_STOP_MULTISHOT return code
-        (no commit info)
-[07/12] io_uring: add allow_overflow to io_post_aux_cqe
-        (no commit info)
-[08/12] io_uring: fix multishot poll on overflow
-        (no commit info)
-[09/12] io_uring: fix multishot accept ordering
-        (no commit info)
-[10/12] io_uring: multishot recv
-        (no commit info)
-[11/12] io_uring: fix io_uring_cqe_overflow trace format
-        (no commit info)
-[12/12] io_uring: only trace one of complete or overflow
-        (no commit info)
+[1/7] add t_create_socket_pair
+      commit: 9167905ca187064ba1d9ac4c8bb8484157bef86b
+[2/7] add IORING_RECV_MULTISHOT to io_uring.h
+      commit: 791fc0998b0bdb913f71320caf3128aae23d8f39
+[3/7] add io_uring_prep_(recv|recvmsg)_multishot
+      commit: 5279d6abefcdb3eedfbcae87559cfdda0ec6e94b
+[4/7] add IORING_RECV_MULTISHOT docs
+      commit: 8e182bbdff0f5d6e1640190f713ed11060470b5f
+[5/7] add recv-multishot test
+      commit: b367a5273328d05b8e118bdaf1e87c0c8d9f8606
+[6/7] add poll overflow test
+      commit: 4218ad94b03db5f9109f02db3ba45bebd55eb744
+[7/7] add accept with overflow test
+      commit: afc6be1619b4d9eeda5a432353fd7285a543640f
 
 Best regards,
 -- 

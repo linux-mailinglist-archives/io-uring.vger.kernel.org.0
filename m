@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB14561DDB
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 16:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16A86561DDC
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 16:28:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235504AbiF3O1t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 10:27:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36136 "EHLO
+        id S235520AbiF3O1u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 10:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237207AbiF3O1b (ORCPT
+        with ESMTP id S237219AbiF3O1b (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 10:27:31 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC547B37C
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 07:10:57 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id n185so11416336wmn.4
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D8C7B35E
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 07:10:58 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id e28so22350191wra.0
         for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 07:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XxjPxsaxC4InhhQuR77UkgiYJHDnnofimUEVznPbP7s=;
-        b=l/NfeYe0tdguL+g1X/X75itf1/gPxFViiIij3BEjcOMfZ08zinsB3mixauKbw4MK4D
-         /wCkkmmhOtuYBWtvwGNxRa4iQADhKRRigxVeuj9fH14uP3E1eT1F7P+XuOH/CpFwyR5o
-         6+Vj2CEKKnB7gwEGsyG+nffEQ6I93hV5vbvNYrgUui6HEpgLue3vSB72C/qn2pZB3NHJ
-         sz7UcTNbO8pETK7OOEVdtnyrzNSvw9UEq2mdHSKYVYUfN2EGoAHLBtOrsdUf5DHrPmDc
-         odvsTSFDDqrhZmQ0SYwLNqn4Nbts7GgVIR/pdvfG6fLyEUV16pY0hQXXhjnIGvdSox2p
-         JXlA==
+        bh=iv9sCq1Dh8AT+NVbMp9Aj2CUQWJDfbOKsX2SJqvDIl4=;
+        b=dE9k0pS6IjzW/AVEDtl7LNSTBZuH+yN+gnl3bITkD1RVNHoSUeCgF5FDjwa5RulgQE
+         /ZQoiE+9M05QacQSxF/W7zvMbcXP10EkUROqQ7keafWFTJyCdOOMA85xx0k0TYvn9oF8
+         sccMflHhfMSoxb2IWzqFyAVI0rHYxkMrtIWs4hy3NBxoeEAf2fT8RK06rOus4Qxc/v2U
+         VmqeNNMQViiZA1gYsE4ozyIguAroSW4fSVxqN+RIy9YS22MJ7+EjDEtOxLDCmv74T8vZ
+         OgrVeWylsdzTJ4eN4hdB/TuuHpi7uBwdFrmihsoLatKVm2lqV/zkXGnEhUC6VH9goZA3
+         y/YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XxjPxsaxC4InhhQuR77UkgiYJHDnnofimUEVznPbP7s=;
-        b=0HT6cTGbt/mL5UJ/hmf24b53WJZvt2AA4N/UeMqxL1OstU8b0s40+XvOWbsNrMcIti
-         royw7Ms34LRtSepHcyllba3mnYB6i50+9Vxops/Gqbv6PrZAXDxh5DIC2ntsbEz/bVNu
-         M6HOkMQkOm/FKm6SX8ZHMN882USwqZcnYoDBZIzAgFJn7G9emwYb+Wj5jG5ehGf93gls
-         ieIhxGLon9prI0Q1zwxEeHMsRi+LfoD9qfkzjWXnqOOSugdCy30X+Y2yaD0BB4Y+plsb
-         Yx75o43AkKJ0YkuZwy1Tb0dxpBjM5SiDa5cyYixZanpZfZRPQNzwx7yU+h5byDW/JztB
-         z5+Q==
-X-Gm-Message-State: AJIora/4dwCqyhmxQYNYm1Qip0EIph+faBN94CS5+eh97yHx25lo3pHI
-        66nge/lDXLNc9R/sLo4LrAkrzFJeoU43rg==
-X-Google-Smtp-Source: AGRyM1v+H9P1nr2UZOl187bGlHhfRFFT4sYYHBfjoUZG2u4vHAz3/TuA4DpNEE+7zH6Tk+jSsb9NIA==
-X-Received: by 2002:a1c:6a06:0:b0:3a0:5099:f849 with SMTP id f6-20020a1c6a06000000b003a05099f849mr11634173wmc.14.1656598237426;
-        Thu, 30 Jun 2022 07:10:37 -0700 (PDT)
+        bh=iv9sCq1Dh8AT+NVbMp9Aj2CUQWJDfbOKsX2SJqvDIl4=;
+        b=SpbYG87oE0ozbIWuwft3iFQmEMfhQ1osTKRHEbe4WxgDL/pAL2gKSNRCNwnHFpSYRe
+         L9kK2qXjGiIN06bb/xp99EgQ1lIA/ve39iWMVfnTC5IuEMEIjpoFIcSmtaYE/a4ODWFH
+         vcWdioCQ6f4kTLMDA+nW/2wm+l0IPCXFa7Tpfl68aTQeNAwY7hoQfoCruPvbqx/5E/J6
+         Lv+0RX1azy5+uy8ROhkKre50cL0twFAX2BUr5AVA/dcTFk+4vXhO9ABHA+lsoo85mB79
+         CZj82e3dmHtCwt+YqLosg5DiIiWXdaadsfJSKaIJIhdrrrZdw3dcsASS5O15FvX/G5DC
+         Lxnw==
+X-Gm-Message-State: AJIora8h/uujNcIbA+hH4y631ahwJRcwObp8dHGXZ1/W0xLN7NVhQkak
+        7mwCdOLdy+Jwm/O+44VugJ0zm9Uk7RIdiQ==
+X-Google-Smtp-Source: AGRyM1u2Ww9dxK7CycMWG+T8SuS+t/QgBZoZyYnuEMZS2Mu6KAmWQh+kBcTJTJeqgjiW7N+oR6QF3g==
+X-Received: by 2002:a05:6000:10c4:b0:21b:8ea4:a27a with SMTP id b4-20020a05600010c400b0021b8ea4a27amr8642291wrx.575.1656598238918;
+        Thu, 30 Jun 2022 07:10:38 -0700 (PDT)
 Received: from 127.0.0.1localhost (82-132-232-9.dab.02.net. [82.132.232.9])
-        by smtp.gmail.com with ESMTPSA id ay29-20020a05600c1e1d00b003a03be171b1sm3741392wmb.43.2022.06.30.07.10.36
+        by smtp.gmail.com with ESMTPSA id ay29-20020a05600c1e1d00b003a03be171b1sm3741392wmb.43.2022.06.30.07.10.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 07:10:37 -0700 (PDT)
+        Thu, 30 Jun 2022 07:10:38 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing v2 1/5] update io_uring.h with file slot alloc ranges
-Date:   Thu, 30 Jun 2022 15:10:13 +0100
-Message-Id: <8f98bd6d014b9e8b1d86d04aa165b6d36cfb0ed5.1656597976.git.asml.silence@gmail.com>
+Subject: [PATCH liburing v2 2/5] alloc range helpers
+Date:   Thu, 30 Jun 2022 15:10:14 +0100
+Message-Id: <fc7d5dec683c2f989f2bf33906b22d820b4d175e.1656597976.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1656597976.git.asml.silence@gmail.com>
 References: <cover.1656597976.git.asml.silence@gmail.com>
@@ -70,37 +70,57 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- src/include/liburing/io_uring.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ src/include/liburing.h |  3 +++
+ src/liburing.map       |  1 +
+ src/register.c         | 14 ++++++++++++++
+ 3 files changed, 18 insertions(+)
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 0fd1f98..c01c5a3 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -414,6 +414,9 @@ enum {
- 	/* sync cancelation API */
- 	IORING_REGISTER_SYNC_CANCEL		= 24,
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index bb2fb87..45b4da0 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -186,6 +186,9 @@ int io_uring_unregister_buf_ring(struct io_uring *ring, int bgid);
+ int io_uring_register_sync_cancel(struct io_uring *ring,
+ 				 struct io_uring_sync_cancel_reg *reg);
  
-+	/* register a range of fixed file slots for automatic slot allocation */
-+	IORING_REGISTER_FILE_ALLOC_RANGE	= 25,
-+
- 	/* this goes last */
- 	IORING_REGISTER_LAST
- };
-@@ -558,6 +561,13 @@ struct io_uring_getevents_arg {
- 	__u64	ts;
- };
- 
-+struct io_uring_file_index_range {
-+	/* [off, off + len) */
-+	__u32	off;
-+	__u32	len;
-+	__u64	resv;
-+};
++int io_uring_register_file_alloc_range(struct io_uring *ring,
++					unsigned off, unsigned len);
 +
  /*
-  * accept flags stored in sqe->ioprio
-  */
+  * Helper for the peek/wait single cqe functions. Exported because of that,
+  * but probably shouldn't be used directly in an application.
+diff --git a/src/liburing.map b/src/liburing.map
+index a487865..318d3d7 100644
+--- a/src/liburing.map
++++ b/src/liburing.map
+@@ -59,4 +59,5 @@ LIBURING_2.2 {
+ LIBURING_2.3 {
+ 	global:
+ 		io_uring_register_sync_cancel;
++		io_uring_register_file_alloc_range;
+ } LIBURING_2.2;
+diff --git a/src/register.c b/src/register.c
+index f2b1026..ee370d6 100644
+--- a/src/register.c
++++ b/src/register.c
+@@ -352,3 +352,17 @@ int io_uring_register_sync_cancel(struct io_uring *ring,
+ 	return ____sys_io_uring_register(ring->ring_fd,
+ 					 IORING_REGISTER_SYNC_CANCEL, reg, 1);
+ }
++
++int io_uring_register_file_alloc_range(struct io_uring *ring,
++					unsigned off, unsigned len)
++{
++	struct io_uring_file_index_range range;
++
++	memset(&range, 0, sizeof(range));
++	range.off = off;
++	range.len = len;
++
++	return ____sys_io_uring_register(ring->ring_fd,
++					 IORING_REGISTER_FILE_ALLOC_RANGE,
++					 &range, 0);
++}
 -- 
 2.36.1
 

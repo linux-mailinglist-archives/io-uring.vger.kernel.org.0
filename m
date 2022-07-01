@@ -2,101 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E48562426
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jun 2022 22:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 712F456281F
+	for <lists+io-uring@lfdr.de>; Fri,  1 Jul 2022 03:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236652AbiF3UdA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Jun 2022 16:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56644 "EHLO
+        id S230118AbiGAB0M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Jun 2022 21:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236559AbiF3Uc7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 16:32:59 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E56A377D4
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 13:32:58 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id 128so470604pfv.12
-        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 13:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=LulNcga0J/kwd5A4TwuWcomyjOM1kf/vizR4Sa7IHTc=;
-        b=YBTWEboonx2M1rFjKnka+q8N9w6L0MWqjV95Pvoged1enHQtm962yL3TC2lQ6eWxsy
-         LMP00EmKfkaHlD1R8Xz3vnch39AgjV3XZPIdQJcq+Z0badbIqSZCMs2obZGX+Cgu/G9y
-         X+GeUYlMegBBDAdket3yhvZbh0dI1dem9joSMWslPXK9maGpWP5ZszKXhdNSmXdG1yt8
-         g+niekEr4Lvqv++ZOoIiI0pGjOgdqDQNNjZPrdlp/TyxqZeEBpf7ZX7XRIXfWQF4I6RY
-         62OqyEeiG0eU/0coUSEwcp5+iqLNEB3C2BR5dwfP8ANHSOSijb93GfBg/LRfgMoITbSc
-         0cLQ==
+        with ESMTP id S229651AbiGAB0M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Jun 2022 21:26:12 -0400
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 47B5D5A44C
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 18:26:11 -0700 (PDT)
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+        by gw2.atmark-techno.com (Postfix) with ESMTPS id CD93B20CAC
+        for <io-uring@vger.kernel.org>; Fri,  1 Jul 2022 10:26:10 +0900 (JST)
+Received: by mail-pj1-f69.google.com with SMTP id gi2-20020a17090b110200b001ecad6feb7cso2222382pjb.5
+        for <io-uring@vger.kernel.org>; Thu, 30 Jun 2022 18:26:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=LulNcga0J/kwd5A4TwuWcomyjOM1kf/vizR4Sa7IHTc=;
-        b=aECvLlmSUPo0nSVa6YIDZ9zkV5OUjlzXLY9iMxuM9Qome4xKnzRkIsY5q/5/fnwm8o
-         K8rm+FCio17uDR0jHzmBHB5nl0YdeKCyltqxZ7nYnQ8ukM+xVUKBL2aQBiO6cKBFJmlw
-         BuW3bQ0sRLvzbNYWIlSnxcvpzTiY5EIeGf85BLB7+IGpZT+U0OweRnSJvL0SVwtrAE24
-         dy8rsp8tT1jYKOEYw2ZFOyYzo+U79OBqQjDJS1n55G82Jsoz3HxKXc3X9AtEkNHnaY6U
-         B6i+Wfu1rGqFvKQeniDDiQRIwVdLMzxhRuvbuNUY+nrUK02+FlV3Zs8UQjXQvTjiA3kg
-         G6KA==
-X-Gm-Message-State: AJIora/Vwub5K6ijZEiq0Yo34txuCsbuFdgSxCNkRXVcXY15KGOb+qj9
-        e8pGag8gGhAZgz6hqGIABCui7g==
-X-Google-Smtp-Source: AGRyM1tNCVFllq0X174CF3Xo4LSUS8NwEzFm38o5tucF0PhydAvUObGJI7+Li+sRxUv4hXu7cA6eYw==
-X-Received: by 2002:a63:3fce:0:b0:40c:23a5:2827 with SMTP id m197-20020a633fce000000b0040c23a52827mr9255451pga.314.1656621178072;
-        Thu, 30 Jun 2022 13:32:58 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a3-20020aa780c3000000b0050dc76281f8sm13979093pfn.210.2022.06.30.13.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 13:32:57 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     dylany@fb.com, io-uring@vger.kernel.org
-Cc:     kernel-team@fb.com, asml.silence@gmail.com
-In-Reply-To: <20220630164918.3958710-1-dylany@fb.com>
-References: <20220630164918.3958710-1-dylany@fb.com>
-Subject: Re: [PATCH v3 liburing 0/7] liburing: multishot receive
-Message-Id: <165662117728.56263.14485865037387492984.b4-ty@kernel.dk>
-Date:   Thu, 30 Jun 2022 14:32:57 -0600
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2Oxb9aGmH2iV0cVSLgHDgspflZNiJSJIZXSB9f563UQ=;
+        b=7GNuVlpphtFjOJrR4mUT7W2dkb15fI6LaM65QPOQikqk7xGA3pGfyhn6M481FJ1jWy
+         KzI0bpLi0QrztMKWrogPMCbOP7oTKjKPNA92ItSO4DelckVuUuo+2QvE6DHMPnCdYc3O
+         Tg3kbJLW6WDy8WzQM3GRBJ7/diU2Tt6Z4YxHqmp4vPaLtq1Iq+TUYmVahJCcoHUq+pU7
+         FZLUZ08ekPMFNbDuQfdoP535WOQ9ws0oC2SBgNGiInIAan5imMgxcOrd+xUb5qT54ERz
+         rgyBhQeElIu0sFjMVU2BL4EVIuLfwHS8uoTeOFk8Uf+9/Vr9NTmDJbl8QEVTxGS7hX/H
+         TB6Q==
+X-Gm-Message-State: AJIora9iGz+9iFdQTiLol8h5FVB54E9B3Z1+T/UybbrlMpIl83+nCjEB
+        NQZ8K0It0ctKwjgv8B9ftiRDnGVvXbyRZe4QWq3knCD1sPZ5xb1O4VWBJryUtPDxdakU4vFVeTH
+        hRLwl1VVes+CHUpH0s3Tl
+X-Received: by 2002:a17:90b:4b81:b0:1ec:adbe:3b0b with SMTP id lr1-20020a17090b4b8100b001ecadbe3b0bmr13705620pjb.147.1656638769926;
+        Thu, 30 Jun 2022 18:26:09 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1ts0xSkra/pF6l/Qh5n5RPpmkJj4eOvZStQqR/cvlLlU2gD/1nwWMrUczmQi4I1j+snNGVOvQ==
+X-Received: by 2002:a17:90b:4b81:b0:1ec:adbe:3b0b with SMTP id lr1-20020a17090b4b8100b001ecadbe3b0bmr13705604pjb.147.1656638769707;
+        Thu, 30 Jun 2022 18:26:09 -0700 (PDT)
+Received: from pc-zest.atmarktech (145.82.198.104.bc.googleusercontent.com. [104.198.82.145])
+        by smtp.gmail.com with ESMTPSA id jh2-20020a170903328200b00161478027f5sm14158667plb.150.2022.06.30.18.26.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Jun 2022 18:26:09 -0700 (PDT)
+Received: from martinet by pc-zest.atmarktech with local (Exim 4.95)
+        (envelope-from <martinet@pc-zest>)
+        id 1o75Q8-0000zm-5R;
+        Fri, 01 Jul 2022 10:26:08 +0900
+Date:   Fri, 1 Jul 2022 10:25:58 +0900
+From:   Dominique MARTINET <dominique.martinet@atmark-techno.com>
+To:     Filipe Manana <fdmanana@kernel.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: read corruption with qemu master io_uring engine / linux master
+ / btrfs(?)
+Message-ID: <Yr5NJnyKoWqAHsad@atmark-techno.com>
+References: <YrueYDXqppHZzOsy@atmark-techno.com>
+ <Yrvfqh0eqN0J5T6V@atmark-techno.com>
+ <20220629153710.GA379981@falcondesktop>
+ <YrzxHbWCR6zhIAcx@atmark-techno.com>
+ <Yr1XNe9V3UY/MkDz@atmark-techno.com>
+ <20220630104536.GA434846@falcondesktop>
+ <Yr2ItqlxeII0sReD@atmark-techno.com>
+ <20220630125124.GA446657@falcondesktop>
+ <Yr2gQh5GaVmTEDW2@atmark-techno.com>
+ <20220630151038.GA459423@falcondesktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220630151038.GA459423@falcondesktop>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 30 Jun 2022 09:49:11 -0700, Dylan Yudaken wrote:
-> This adds an API, tests and documentation for the multi shot receive functionality.
+Filipe Manana wrote on Thu, Jun 30, 2022 at 04:10:38PM +0100:
+> This may prevent the short reads (not tested yet):
 > 
-> It also adds some testing for overflow paths in accept & poll which previously was
-> not tested.
-> 
-> Patch 1 adds a helper t_create_socket_pair which provides two connected sockets
-> without needing a hard coded port
-> 
-> [...]
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 7a54f964ff37..42fb56ed0021 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -7684,7 +7684,7 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
+>         if (test_bit(EXTENT_FLAG_COMPRESSED, &em->flags) ||
+>             em->block_start == EXTENT_MAP_INLINE) {
+>                 free_extent_map(em);
+> -               ret = -ENOTBLK;
+> +               ret = (flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOTBLK;
+>                 goto unlock_err;
+>         }
+>  
+> Can you give it a try?
 
-Applied, thanks!
+This appears to do the trick!
+I've also removed the first patch and still cannot see any short reads,
+so this would be enough on its own for my case.
 
-[1/7] add t_create_socket_pair
-      commit: 9167905ca187064ba1d9ac4c8bb8484157bef86b
-[2/7] add IORING_RECV_MULTISHOT to io_uring.h
-      commit: 791fc0998b0bdb913f71320caf3128aae23d8f39
-[3/7] add io_uring_prep_(recv|recvmsg)_multishot
-      commit: 5279d6abefcdb3eedfbcae87559cfdda0ec6e94b
-[4/7] add IORING_RECV_MULTISHOT docs
-      commit: 8e182bbdff0f5d6e1640190f713ed11060470b5f
-[5/7] add recv-multishot test
-      commit: b367a5273328d05b8e118bdaf1e87c0c8d9f8606
-[6/7] add poll overflow test
-      commit: 4218ad94b03db5f9109f02db3ba45bebd55eb744
-[7/7] add accept with overflow test
-      commit: afc6be1619b4d9eeda5a432353fd7285a543640f
-
-Best regards,
 -- 
-Jens Axboe
-
-
+Dominique

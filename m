@@ -2,60 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D4E9564751
-	for <lists+io-uring@lfdr.de>; Sun,  3 Jul 2022 15:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D7B7564754
+	for <lists+io-uring@lfdr.de>; Sun,  3 Jul 2022 15:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231419AbiGCNAX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 3 Jul 2022 09:00:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53398 "EHLO
+        id S229503AbiGCNBB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Jul 2022 09:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbiGCNAW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Jul 2022 09:00:22 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE0C732B
-        for <io-uring@vger.kernel.org>; Sun,  3 Jul 2022 06:00:21 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id k14so6346500plh.4
-        for <io-uring@vger.kernel.org>; Sun, 03 Jul 2022 06:00:21 -0700 (PDT)
+        with ESMTP id S231890AbiGCNA7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Jul 2022 09:00:59 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0804162C1
+        for <io-uring@vger.kernel.org>; Sun,  3 Jul 2022 06:00:59 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id g20-20020a17090a579400b001ed52939d72so7032025pji.4
+        for <io-uring@vger.kernel.org>; Sun, 03 Jul 2022 06:00:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:in-reply-to:references:subject:message-id:date
          :mime-version:content-transfer-encoding;
-        bh=w30BfF1i/+5huQNwQxVcjTGXkb36F3GQzrctPfmsQZw=;
-        b=M/RsmaYLDHnO3mfXtnw8JVNWRiaSCT7KzY5Te90lWaJ2LK40E3DrjgykYOPr3hFkHk
-         sib1Yu54nc4H5vSTLa5Vxx/vTTK1vyxY6f5n5THu4f57PBdkcUyRcm3IkEqHA9mOdNEq
-         vl6iaRRfwd5lfLgHyjK30E0bsVsRWLD8ELfLjf75SPGy1W5qCcGLNofCravOp864I/er
-         E+ee4gtP36Ue2+kWuvzlO/01ArjRg3dDLDIdZfHI0AnJkNfaYW48i5GRcshPRmEi0nB2
-         kZSkcGg55SHnHplglgVVDr3l3AlsJTJ0MLkQLSD2NoI9Gr/bHgxSvvr50qIPQZo6oncK
-         Zjdw==
+        bh=O994vOf9UI6tKZvF2wEGp5HxYx2phH8UMlwqKM11CuM=;
+        b=vuLxj4MNL/ahYcUx2CO5OTo+AcTtqF7pHfX8iRhxnZH9B6Q3D62LgI6dAGN2SVz2e+
+         3IriDPE1x6Jm1HVDxgFe3vZuAtodh23dZ1wtYfolNr2+P1E+6zGEDYb+r/YfO4rEeeUR
+         p05noO+QfCMd1r3qTk4TPV80auYxAt0d/N3JY9mlefyGCpyaL5qAwOrmg05L7dAbbx83
+         FyaEByux7dwBnZi7qFiIEiT/E9qbpEs0vHmBV9i4yEt2Gt0DRkoks/DvLADQq/oG3o0N
+         MY8MN08LbYf0tSL/GdVRRO0humHluh21M8X4FsBONIpEqCqIaJC4FUjClHZL9TL38kj1
+         CILw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=w30BfF1i/+5huQNwQxVcjTGXkb36F3GQzrctPfmsQZw=;
-        b=ySwub8Yb8RpmZcCcRw7duziOC5PCzxWKKXE2fSOeSS/6YzJSdN9uLJvkoXzTE7E2hn
-         2JMc3CjGvVKBz8POkkPurMFzye4GFM+tJtIhehc410e9zSWnGsTFYmeJ7U8Wu01pGY+S
-         PCiY0z2kbx1WptKZEH6M38JIMNm/x/idN5ryw1kfShvynZEDY8r0Tww8qUEg5qzhdcPi
-         hg+wN+5xFpbXg2+3RKAZlIzqR7GPMfY/X0LyRlW2eYHmoascunLXGz0GWkYMQCNHlbfG
-         BN+ZPSXKe0V+m1LqCxBQxDBEELtwXmbFW4JgBB2SfOjRbT6zmg+TtN45ZS33Xx6NSWJh
-         6a8Q==
-X-Gm-Message-State: AJIora9SkyF7dOM7HfBZFVCmVunyrCRxZPyCeaSDp6xjM4Ph4HEnWar8
-        iVas4CG/PJvzp+cBMwY/MA85CMPFYtdq0g==
-X-Google-Smtp-Source: AGRyM1uyQxUCeczkw0ZBSA0rMLCewB01vsbGZrsEAtvatUkwjFVHm5235huT4dcFibd2iorGVhh9Ug==
-X-Received: by 2002:a17:902:e5c3:b0:16a:67e7:d999 with SMTP id u3-20020a170902e5c300b0016a67e7d999mr28954861plf.32.1656853221259;
-        Sun, 03 Jul 2022 06:00:21 -0700 (PDT)
+        bh=O994vOf9UI6tKZvF2wEGp5HxYx2phH8UMlwqKM11CuM=;
+        b=qBeKNowjX6pklCAY8CRderjCor2wXHihX84pY9eCcjSBsVw/K/nNjUVQ+hgWufRIrB
+         bOigHOUr46gDQUjJ7gj0bGiNsKaR6sKqzA1QU/+QucckCUqmdzyhw/46XUspYM5y+2IS
+         ANZ4q+bg/lut/AyEJVJnEhZr3dv51z2mQDaAwdZ1849kb9TEoJGVe0pVd3/gMbWUBqNF
+         kuAgtnZCI3UJLppQe9VpM5tN37KwOTShfncjDWbufK9TnPbqCjua4UHxx885gdmpKSZO
+         jToVTYa6Qj1/HWTOtqOwIKiuExRIG+kGA/0qyiF4/wvr/pJe//gccS0BKLPpA4/Juljx
+         E2gw==
+X-Gm-Message-State: AJIora+MwvKyIbntp58vPfA6Q3YHVyEIXsNrN9p36GJ9DkmrciP+S6aZ
+        a4iHA1Yy61CE7tz6Rx4mCNxMtg==
+X-Google-Smtp-Source: AGRyM1sF65o6SCQvLxJZCuVoUzFudcj1bpd0aqxlcMYoJF9nnm4uVidcPkrEVdV5/Ht4mvzw8Idaig==
+X-Received: by 2002:a17:902:aa47:b0:16b:8e4c:93d2 with SMTP id c7-20020a170902aa4700b0016b8e4c93d2mr29807973plr.27.1656853258465;
+        Sun, 03 Jul 2022 06:00:58 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s26-20020a65645a000000b0040c755b7651sm18720654pgv.41.2022.07.03.06.00.20
+        by smtp.gmail.com with ESMTPSA id w8-20020a170902e88800b0016403cae7desm1819752plg.276.2022.07.03.06.00.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Jul 2022 06:00:20 -0700 (PDT)
+        Sun, 03 Jul 2022 06:00:57 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     ammarfaizi2@gnuweeb.org
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com,
-        gwml@vger.gnuweeb.org, dylany@fb.com
-In-Reply-To: <20220703063755.189175-1-ammar.faizi@intel.com>
-References: <20220703063755.189175-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing] test/helpers: Use a proper cast for `(struct sockaddr *)` argument
-Message-Id: <165685322035.1103909.10554403221181770675.b4-ty@kernel.dk>
-Date:   Sun, 03 Jul 2022 07:00:20 -0600
+Cc:     alviro.iskandar@gnuweeb.org, asml.silence@gmail.com,
+        io-uring@vger.kernel.org, howeyxu@tencent.com,
+        fernandafmr12@gnuweeb.org, gwml@vger.gnuweeb.org
+In-Reply-To: <20220703115240.215695-1-ammar.faizi@intel.com>
+References: <20220703115240.215695-1-ammar.faizi@intel.com>
+Subject: Re: [PATCH liburing v1 0/2] __hot and __cold
+Message-Id: <165685325716.1105109.7309063844690717749.b4-ty@kernel.dk>
+Date:   Sun, 03 Jul 2022 07:00:57 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -68,22 +69,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, 3 Jul 2022 13:44:05 +0700, Ammar Faizi wrote:
+On Sun, 3 Jul 2022 18:59:10 +0700, Ammar Faizi wrote:
 > From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 > 
-> Sometimes the compiler accepts (struct sockaddr_in *) to be passed in
-> to (struct sockaddr *) without a cast. But not all compilers agree with
-> that. Building with clang 13.0.1 yields the following error:
+> Hi Jens,
 > 
->   error: incompatible pointer types passing 'struct sockaddr_in *' to \
->   parameter of type 'struct sockaddr *' [-Werror,-Wincompatible-pointer-types]
+> This series adds __hot and __cold macros. Currently, the __hot macro
+> is not used. The __cold annotation hints the compiler to optimize for
+> code size. This is good for the slow-path in the setup.c file.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] test/helpers: Use a proper cast for `(struct sockaddr *)` argument
-      commit: 752c325dcde43be8d87f83b16d346beac5e1de2a
+[1/2] lib: Add __hot and __cold macros
+      commit: ee459df3c83ab86b84e1acaaa23c340efb5bab35
+[2/2] setup: Mark the exported functions as __cold
+      commit: 907c171fa4aac773fee9421bc38fcf9581e54f61
 
 Best regards,
 -- 

@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 142B256456E
-	for <lists+io-uring@lfdr.de>; Sun,  3 Jul 2022 08:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A41564738
+	for <lists+io-uring@lfdr.de>; Sun,  3 Jul 2022 14:00:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbiGCGon (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 3 Jul 2022 02:44:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53874 "EHLO
+        id S232381AbiGCMAa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 3 Jul 2022 08:00:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbiGCGon (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Jul 2022 02:44:43 -0400
+        with ESMTP id S229739AbiGCMA3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 3 Jul 2022 08:00:29 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0B164D0
-        for <io-uring@vger.kernel.org>; Sat,  2 Jul 2022 23:44:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F6DAE44
+        for <io-uring@vger.kernel.org>; Sun,  3 Jul 2022 05:00:28 -0700 (PDT)
 Received: from integral2.. (unknown [36.81.65.188])
-        by gnuweeb.org (Postfix) with ESMTPSA id A32C2801D5;
-        Sun,  3 Jul 2022 06:44:39 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id C73508018E;
+        Sun,  3 Jul 2022 12:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656830681;
-        bh=n0MhH4UJwahD5/LSJRmoCIUvNRpxnmSnrXpfUHPvIiw=;
+        s=default; t=1656849628;
+        bh=6ixysMJEI/NXhltM7GfMgHUkYnnZyyw11I6A9dx6ux8=;
         h=From:To:Cc:Subject:Date:From;
-        b=npp8mskjLvriH4eh1RXljkzT8cPWEsWHDfm0KPVzr70mLqtBf5x3wgzJBcHhMtpOF
-         dgHddTgCuBhXIEhHFBs5dEg6pV8S4rm9coQPZ68712dKloG+7cSNIx5n1hRT9HapmP
-         kefqPLB1uDntmTnU8EyXMbJPwqnDom98+Sdtg0fOahNNwrgpNLyZmhXey3J9Q1gSKQ
-         gBWtU2qAhRWGCaSxxE4i9aX9Qs4KnEc83HGDBWc2bQ4NtyppoIktdS068+7qF/rWQ8
-         k1NCqzNj3goTjn15Qmghf1J/B/DASUjx9CWlKJehdzQwTcEDXculzqsbIbxalj0J73
-         e0V3nzkdwRZ7A==
+        b=U4EkeMeVq1K8MyvhVIk4LkXDq5Rh6hN/hbtej/07SqJK+g6oZc2fF51U1+44Zuweb
+         IO1UTSXhkSgZwQ+BhcFsLycxgU2mtjnMmvl43Fa4aFrmVTRxaP5CGmJCom2EjAjS//
+         w2u3HmWIuvFKGPY93Uljj8t8n1jvAT9kyn+wlCmAu4eQaB/LDFWgvmaw8HkF1Jmnu5
+         qNHi3Fcz4Xa1pcENJ3pdhnJd5qP2BfPwg8esA98vgT84pNkh4XEp2gTcL1xgxNBotN
+         kBx+HeZmksBjKv/QEI+6oDaR8TjFhbqAmF3MYejZfV8z4zCuIJ8BtZiFTKWrn2BzKa
+         qQc2AAV86l/Eg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Dylan Yudaken <dylany@fb.com>,
-        Facebook Kernel Team <kernel-team@fb.com>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-Subject: [PATCH liburing] test/helpers: Use a proper cast for `(struct sockaddr *)` argument
-Date:   Sun,  3 Jul 2022 13:44:05 +0700
-Message-Id: <20220703063755.189175-1-ammar.faizi@intel.com>
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Fernanda Ma'rouf <fernandafmr12@gnuweeb.org>,
+        Hao Xu <howeyxu@tencent.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Subject: [PATCH liburing v1 0/2] __hot and __cold
+Date:   Sun,  3 Jul 2022 18:59:10 +0700
+Message-Id: <20220703115240.215695-1-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2031; i=ammarfaizi2@gnuweeb.org; h=from:subject; bh=KemLh7csRivuskefKnyeOdJ1j70scQpC1JqFAAJzVSo=; b=owEBbQGS/pANAwAKATZPujT/FwpLAcsmYgBiwTog8vL8JMtBUfR9HJpLp8fRqhdskg4/BZlFd56G CGIluw+JATMEAAEKAB0WIQTok3JtyOTA3juiAQc2T7o0/xcKSwUCYsE6IAAKCRA2T7o0/xcKS3FjCA C+LfLaEhkUp/iAFS3NhMVwEs3uvv2s1oDxJWnEG4O7fTdeKuqtKjb3fOuFBnXA7/neZ+VD1Vnk7P+d Xfk7ANSLMqlGKui95QBcnyecuc64hpBRnT8ikeoUdkF/yyhjFdW/oBEb+yZ800HKc/xD7x07zcDpgw v7yz2OksmCbSchnSGCwegvqwi5ykVY4K+J2hxWc3qblzLJDYml+4UqvpF5+k4xfMyuPZwtTvSh5iUq ut61XMPWStpmo2zfVJFrmJEaWiSG3eOZS265AttTZvM7yOGpgn2o6Gd3PmXarSushErGK+YOdOyqaA t+SvUS7GU32tBp9I+1iz2/brixRHDx
-X-Developer-Key: i=ammarfaizi2@gnuweeb.org; a=openpgp; fpr=E893726DC8E4C0DE3BA20107364FBA34FF170A4B
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
@@ -53,60 +53,103 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Sometimes the compiler accepts (struct sockaddr_in *) to be passed in
-to (struct sockaddr *) without a cast. But not all compilers agree with
-that. Building with clang 13.0.1 yields the following error:
+Hi Jens,
 
-  error: incompatible pointer types passing 'struct sockaddr_in *' to \
-  parameter of type 'struct sockaddr *' [-Werror,-Wincompatible-pointer-types]
+This series adds __hot and __cold macros. Currently, the __hot macro
+is not used. The __cold annotation hints the compiler to optimize for
+code size. This is good for the slow-path in the setup.c file.
 
-Explicitly cast the pointer to (struct sockaddr *) to avoid this error.
+Here is the result compiling with Ubuntu clang
+15.0.0-++20220601012204+ec2711b35411-1~exp1~20220601012300.510
 
-Cc: kernel-team@fb.com
-Cc: Dylan Yudaken <dylany@fb.com>
-Fixes: 9167905ca187064ba1d9ac4c8bb8484157bef86b ("add t_create_socket_pair")
+Without this patchset:
+
+  $ wc -c src/liburing.so.2.3
+  71288 src/liburing.so.2.3
+
+With this patchset:
+
+  $ wc -c src/liburing.so.2.3
+  69448 src/liburing.so.2.3
+
+Take one slow-path function example, using __cold avoids aggresive
+inlining.
+
+Without this patchset:
+
+  00000000000024f0 <io_uring_queue_init>:
+    24f0: pushq  %r14
+    24f2: pushq  %rbx
+    24f3: subq   $0x78,%rsp
+    24f7: movq   %rsi,%r14
+    24fa: xorps  %xmm0,%xmm0
+    24fd: movaps %xmm0,(%rsp)
+    2501: movaps %xmm0,0x60(%rsp)
+    2506: movaps %xmm0,0x50(%rsp)
+    250b: movaps %xmm0,0x40(%rsp)
+    2510: movaps %xmm0,0x30(%rsp)
+    2515: movaps %xmm0,0x20(%rsp)
+    251a: movaps %xmm0,0x10(%rsp)
+    251f: movq   $0x0,0x70(%rsp)
+    2528: movl   %edx,0x8(%rsp)
+    252c: movq   %rsp,%rsi
+    252f: movl   $0x1a9,%eax
+    2534: syscall
+    2536: movq   %rax,%rbx
+    2539: testl  %ebx,%ebx
+    253b: js     256a <io_uring_queue_init+0x7a>
+    253d: movq   %rsp,%rsi
+    2540: movl   %ebx,%edi
+    2542: movq   %r14,%rdx
+    2545: callq  2080 <io_uring_queue_mmap@plt>
+    254a: testl  %eax,%eax
+    254c: je     255d <io_uring_queue_init+0x6d>
+    254e: movl   %eax,%edx
+    2550: movl   $0x3,%eax
+    2555: movl   %ebx,%edi
+    2557: syscall
+    2559: movl   %edx,%ebx
+    255b: jmp    256a <io_uring_queue_init+0x7a>
+    255d: movl   0x14(%rsp),%eax
+    2561: movl   %eax,0xc8(%r14)
+    2568: xorl   %ebx,%ebx
+    256a: movl   %ebx,%eax
+    256c: addq   $0x78,%rsp
+    2570: popq   %rbx
+    2571: popq   %r14
+    2573: retq
+
+With this patchset:
+
+  000000000000240c <io_uring_queue_init>:
+    240c: subq   $0x78,%rsp
+    2410: xorps  %xmm0,%xmm0
+    2413: movq   %rsp,%rax
+    2416: movaps %xmm0,(%rax)
+    2419: movaps %xmm0,0x60(%rax)
+    241d: movaps %xmm0,0x50(%rax)
+    2421: movaps %xmm0,0x40(%rax)
+    2425: movaps %xmm0,0x30(%rax)
+    2429: movaps %xmm0,0x20(%rax)
+    242d: movaps %xmm0,0x10(%rax)
+    2431: movq   $0x0,0x70(%rax)
+    2439: movl   %edx,0x8(%rax)
+    243c: movq   %rax,%rdx
+    243f: callq  2090 <io_uring_queue_init_params@plt>
+    2444: addq   $0x78,%rsp
+    2448: retq
+
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/helpers.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/test/helpers.c b/test/helpers.c
-index 3660cc0..0146533 100644
---- a/test/helpers.c
-+++ b/test/helpers.c
-@@ -190,26 +190,28 @@ int t_create_socket_pair(int fd[2], bool stream)
- 		goto errno_cleanup;
- 	}
- 
--	if (getsockname(fd[0], &serv_addr, (socklen_t *)&paddrlen)) {
-+	if (getsockname(fd[0], (struct sockaddr *)&serv_addr,
-+			(socklen_t *)&paddrlen)) {
- 		fprintf(stderr, "getsockname failed\n");
- 		goto errno_cleanup;
- 	}
- 	inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
- 
--	if (connect(fd[1], &serv_addr, paddrlen)) {
-+	if (connect(fd[1], (struct sockaddr *)&serv_addr, paddrlen)) {
- 		fprintf(stderr, "connect failed\n");
- 		goto errno_cleanup;
- 	}
- 
- 	if (!stream) {
- 		/* connect the other udp side */
--		if (getsockname(fd[1], &serv_addr, (socklen_t *)&paddrlen)) {
-+		if (getsockname(fd[1], (struct sockaddr *)&serv_addr,
-+				(socklen_t *)&paddrlen)) {
- 			fprintf(stderr, "getsockname failed\n");
- 			goto errno_cleanup;
- 		}
- 		inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
- 
--		if (connect(fd[0], &serv_addr, paddrlen)) {
-+		if (connect(fd[0], (struct sockaddr *)&serv_addr, paddrlen)) {
- 			fprintf(stderr, "connect failed\n");
- 			goto errno_cleanup;
- 		}
+Ammar Faizi (2):
+  lib: Add __hot and __cold macros
+  setup: Mark the exported functions as __cold
+
+ src/lib.h   |  2 ++
+ src/setup.c | 25 ++++++++++++++-----------
+ 2 files changed, 16 insertions(+), 11 deletions(-)
+
 
 base-commit: 98c14a04e2c0dcdfbb71372a1a209ed889fb3e4d
 -- 

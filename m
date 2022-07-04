@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC7756582D
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jul 2022 16:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F175A56582F
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jul 2022 16:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232934AbiGDOBo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jul 2022 10:01:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
+        id S233641AbiGDOCR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jul 2022 10:02:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231549AbiGDOBi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 10:01:38 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4FB9FDA
-        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 07:01:34 -0700 (PDT)
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 263NO93w003717
-        for <io-uring@vger.kernel.org>; Mon, 4 Jul 2022 07:01:34 -0700
+        with ESMTP id S233621AbiGDOCQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 10:02:16 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53588DE95
+        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 07:02:15 -0700 (PDT)
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2643QaHu024051
+        for <io-uring@vger.kernel.org>; Mon, 4 Jul 2022 07:02:14 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=HRZfP45TTLNeAY0T+VGcHao3/bX8pqW9AashhZVgTk0=;
- b=XFJ6tox86JFk1rN3RDTZW7Pfnhkcd9SQomycX7AUTXL90ScQkYrvcu59T3ojlhd9buH0
- 699c815b9eah97OKQO4OuVmMZY3/q9yTALW/6YpcLGp87+bdoPhDg4ls+YnTub/fuXZv
- J3K06bQKKln+6DfkMQ/tbNxBtR4xiuG8WeU= 
+ content-type; s=facebook; bh=jA7GnciVdaduYkRaFN7KPcPCLVqH0+itQqg7iLssVlA=;
+ b=jQ52JbKXTE3QxMoqAIX0xj+pMF4Ka50XKQJeLNiE5qtg2ZPeSAFfGMYgX6WlAlvU1yM6
+ rT8eeHt7kiRZGjoT7XBeRRLDfpcgDG1CXzl2fq4l0n4pgM8Fn07odOcxWMF6npMLqITF
+ 9vI8GsxFxvLoAljBnpiktK6i2tEAzSfeg18= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h2nb5hard-15
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h2kuvsbh2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 04 Jul 2022 07:01:33 -0700
-Received: from twshared25478.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 04 Jul 2022 07:02:14 -0700
+Received: from twshared5640.09.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Mon, 4 Jul 2022 07:01:30 -0700
+ 15.1.2375.28; Mon, 4 Jul 2022 07:02:13 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id A217B288A63D; Mon,  4 Jul 2022 07:01:27 -0700 (PDT)
+        id 258D4288A725; Mon,  4 Jul 2022 07:02:09 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         <io-uring@vger.kernel.org>
 CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH] io_uring: disable multishot recvmsg
-Date:   Mon, 4 Jul 2022 07:01:06 -0700
-Message-ID: <20220704140106.200167-1-dylany@fb.com>
+Subject: [PATCH liburing] remove recvmsg_multishot
+Date:   Mon, 4 Jul 2022 07:02:04 -0700
+Message-ID: <20220704140204.204505-1-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: vqbQTgNvXVAW0qCHLHLOaJzxSX7Giwxj
-X-Proofpoint-ORIG-GUID: vqbQTgNvXVAW0qCHLHLOaJzxSX7Giwxj
+X-Proofpoint-GUID: 4iraA9AV8-5CkBqi6KbUw8n8L6RrMuuX
+X-Proofpoint-ORIG-GUID: 4iraA9AV8-5CkBqi6KbUw8n8L6RrMuuX
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-07-04_13,2022-06-28_01,2022-06-22_01
@@ -61,110 +61,158 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-recvmsg has semantics that do not make it trivial to extend to
-multishot. Specifically it has user pointers and returns data in the
-original parameter. In order to make this API useful these will need to b=
-e
-somehow included with the provided buffers.
+This was not well thought out enough, and has some API concerns. Such as
+how do names and control messages come back in a multishot way.
 
-For now remove multishot for recvmsg as it is not useful.
+For now delete the recvmsg API until the kernel API is solid.
 
 Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- io_uring/net.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+ man/io_uring_prep_recvmsg.3           | 20 --------------------
+ man/io_uring_prep_recvmsg_multishot.3 |  1 -
+ src/include/liburing.h                |  8 --------
+ test/recv-multishot.c                 | 19 +++++--------------
+ 4 files changed, 5 insertions(+), 43 deletions(-)
+ delete mode 120000 man/io_uring_prep_recvmsg_multishot.3
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index cb08a4b62840..6679069eeef1 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -409,6 +409,8 @@ int io_recvmsg_prep(struct io_kiocb *req, const struc=
-t io_uring_sqe *sqe)
- 	if (sr->msg_flags & MSG_ERRQUEUE)
- 		req->flags |=3D REQ_F_CLEAR_POLLIN;
- 	if (sr->flags & IORING_RECV_MULTISHOT) {
-+		if (req->opcode =3D=3D IORING_OP_RECVMSG)
-+			return -EINVAL;
- 		if (!(req->flags & REQ_F_BUFFER_SELECT))
- 			return -EINVAL;
- 		if (sr->msg_flags & MSG_WAITALL)
-@@ -435,7 +437,7 @@ static inline void io_recv_prep_retry(struct io_kiocb=
- *req)
+diff --git a/man/io_uring_prep_recvmsg.3 b/man/io_uring_prep_recvmsg.3
+index 24c68ce..8c49411 100644
+--- a/man/io_uring_prep_recvmsg.3
++++ b/man/io_uring_prep_recvmsg.3
+@@ -15,11 +15,6 @@ io_uring_prep_recvmsg \- prepare a recvmsg request
+ .BI "                           int " fd ","
+ .BI "                           struct msghdr *" msg ","
+ .BI "                           unsigned " flags ");"
+-.PP
+-.BI "void io_uring_prep_recvmsg_multishot(struct io_uring_sqe *" sqe ","
+-.BI "                                     int " fd ","
+-.BI "                                     struct msghdr *" msg ","
+-.BI "                                     unsigned " flags ");"
+ .fi
+ .SH DESCRIPTION
+ .PP
+@@ -42,21 +37,6 @@ This function prepares an async
+ request. See that man page for details on the arguments specified to thi=
+s
+ prep helper.
+=20
+-The multishot version allows the application to issue a single receive r=
+equest,
+-which repeatedly posts a CQE when data is available. It requires length =
+to be 0
+-, the
+-.B IOSQE_BUFFER_SELECT
+-flag to be set and no
+-.B MSG_WAITALL
+-flag to be set.
+-Therefore each CQE will take a buffer out of a provided buffer pool for =
+receiving.
+-The application should check the flags of each CQE, regardless of it's r=
+esult.
+-If a posted CQE does not have the
+-.B IORING_CQE_F_MORE
+-flag set then the multishot receive will be done and the application sho=
+uld issue a
+-new request.
+-Multishot variants are available since kernel 5.20.
+-
+ After calling this function, additional io_uring internal modifier flags
+ may be set in the SQE
+ .I off
+diff --git a/man/io_uring_prep_recvmsg_multishot.3 b/man/io_uring_prep_re=
+cvmsg_multishot.3
+deleted file mode 120000
+index cd9566f..0000000
+--- a/man/io_uring_prep_recvmsg_multishot.3
++++ /dev/null
+@@ -1 +0,0 @@
+-io_uring_prep_recvmsg.3
+\ No newline at end of file
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 4df3139..d35bfa9 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -419,14 +419,6 @@ static inline void io_uring_prep_recvmsg(struct io_u=
+ring_sqe *sqe, int fd,
+ 	sqe->msg_flags =3D flags;
  }
 =20
- /*
-- * Finishes io_recv and io_recvmsg.
-+ * Finishes io_recv
-  *
-  * Returns true if it is actually finished, or false if it should run
-  * again (for multishot).
-@@ -477,7 +479,6 @@ int io_recvmsg(struct io_kiocb *req, unsigned int iss=
-ue_flags)
- 	unsigned flags;
- 	int ret, min_ret =3D 0;
- 	bool force_nonblock =3D issue_flags & IO_URING_F_NONBLOCK;
--	size_t len =3D sr->len;
+-static inline void io_uring_prep_recvmsg_multishot(struct io_uring_sqe *=
+sqe,
+-						   int fd, struct msghdr *msg,
+-						   unsigned flags)
+-{
+-	io_uring_prep_recvmsg(sqe, fd, msg, flags);
+-	sqe->ioprio |=3D IORING_RECV_MULTISHOT;
+-}
+-
+ static inline void io_uring_prep_sendmsg(struct io_uring_sqe *sqe, int f=
+d,
+ 					 const struct msghdr *msg,
+ 					 unsigned flags)
+diff --git a/test/recv-multishot.c b/test/recv-multishot.c
+index f6d41c8..9df8184 100644
+--- a/test/recv-multishot.c
++++ b/test/recv-multishot.c
+@@ -25,7 +25,6 @@ enum early_error_t {
+ };
 =20
- 	sock =3D sock_from_file(req->file);
- 	if (unlikely(!sock))
-@@ -496,17 +497,16 @@ int io_recvmsg(struct io_kiocb *req, unsigned int i=
-ssue_flags)
- 	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
- 		return io_setup_async_msg(req, kmsg);
-=20
--retry_multishot:
- 	if (io_do_buffer_select(req)) {
- 		void __user *buf;
-=20
--		buf =3D io_buffer_select(req, &len, issue_flags);
-+		buf =3D io_buffer_select(req, &sr->len, issue_flags);
- 		if (!buf)
- 			return -ENOBUFS;
- 		kmsg->fast_iov[0].iov_base =3D buf;
--		kmsg->fast_iov[0].iov_len =3D len;
-+		kmsg->fast_iov[0].iov_len =3D sr->len;
- 		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->fast_iov, 1,
--				len);
-+				sr->len);
+ struct args {
+-	bool recvmsg;
+ 	bool stream;
+ 	bool wait_each;
+ 	enum early_error_t early_error;
+@@ -48,7 +47,6 @@ static int test(struct args *args)
+ 	int recv_cqes =3D 0;
+ 	bool early_error =3D false;
+ 	bool early_error_started =3D false;
+-	struct msghdr msg =3D { };
+ 	struct __kernel_timespec timeout =3D {
+ 		.tv_sec =3D 1,
+ 	};
+@@ -101,13 +99,7 @@ static int test(struct args *args)
  	}
 =20
- 	flags =3D sr->msg_flags;
-@@ -518,15 +518,8 @@ int io_recvmsg(struct io_kiocb *req, unsigned int is=
-sue_flags)
- 	kmsg->msg.msg_get_inq =3D 1;
- 	ret =3D __sys_recvmsg_sock(sock, &kmsg->msg, sr->umsg, kmsg->uaddr, fla=
-gs);
- 	if (ret < min_ret) {
--		if (ret =3D=3D -EAGAIN && force_nonblock) {
--			ret =3D io_setup_async_msg(req, kmsg);
--			if (ret =3D=3D -EAGAIN && (req->flags & IO_APOLL_MULTI_POLLED) =3D=3D
--					       IO_APOLL_MULTI_POLLED) {
--				io_kbuf_recycle(req, issue_flags);
--				return IOU_ISSUE_SKIP_COMPLETE;
--			}
--			return ret;
--		}
-+		if (ret =3D=3D -EAGAIN && force_nonblock)
-+			return io_setup_async_msg(req, kmsg);
- 		if (ret =3D=3D -ERESTARTSYS)
- 			ret =3D -EINTR;
- 		if (ret > 0 && io_net_retry(sock, flags)) {
-@@ -554,10 +547,8 @@ int io_recvmsg(struct io_kiocb *req, unsigned int is=
-sue_flags)
- 	if (kmsg->msg.msg_inq)
- 		cflags |=3D IORING_CQE_F_SOCK_NONEMPTY;
+ 	sqe =3D io_uring_get_sqe(&ring);
+-	if (args->recvmsg) {
+-		memset(&msg, 0, sizeof(msg));
+-		msg.msg_namelen =3D sizeof(struct sockaddr_in);
+-		io_uring_prep_recvmsg_multishot(sqe, fds[0], &msg, 0);
+-	} else {
+-		io_uring_prep_recv_multishot(sqe, fds[0], NULL, 0, 0);
+-	}
++	io_uring_prep_recv_multishot(sqe, fds[0], NULL, 0, 0);
+ 	sqe->flags |=3D IOSQE_BUFFER_SELECT;
+ 	sqe->buf_group =3D 7;
+ 	io_uring_sqe_set_data64(sqe, 1234);
+@@ -328,19 +320,18 @@ int main(int argc, char *argv[])
+ 	if (argc > 1)
+ 		return T_EXIT_SKIP;
 =20
--	if (!io_recv_finish(req, &ret, cflags))
--		goto retry_multishot;
--
--	return ret;
-+	io_req_set_res(req, ret, cflags);
-+	return IOU_OK;
- }
-=20
- int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+-	for (loop =3D 0; loop < 7; loop++) {
++	for (loop =3D 0; loop < 4; loop++) {
+ 		struct args a =3D {
+ 			.stream =3D loop & 0x01,
+-			.recvmsg =3D loop & 0x02,
+-			.wait_each =3D loop & 0x4,
++			.wait_each =3D loop & 0x2,
+ 		};
+ 		for (early_error =3D 0; early_error < ERROR_EARLY_LAST; early_error++)=
+ {
+ 			a.early_error =3D (enum early_error_t)early_error;
+ 			ret =3D test(&a);
+ 			if (ret) {
+ 				fprintf(stderr,
+-					"test stream=3D%d recvmsg=3D%d wait_each=3D%d early_error=3D%d fail=
+ed\n",
+-					a.stream, a.recvmsg, a.wait_each, a.early_error);
++					"test stream=3D%d wait_each=3D%d early_error=3D%d failed\n",
++					a.stream, a.wait_each, a.early_error);
+ 				return T_EXIT_FAIL;
+ 			}
+ 			if (no_recv_mshot)
 
-base-commit: d641b3a4a25e8c471d0240dcb6c78efebd12f366
+base-commit: f8eb5f804288e10ae7ef442ef482e4dd8b18fee7
 --=20
 2.30.2
 

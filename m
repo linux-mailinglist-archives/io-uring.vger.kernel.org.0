@@ -2,56 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73EB2565D7B
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jul 2022 20:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE05565DFD
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jul 2022 21:32:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbiGDSXr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jul 2022 14:23:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37484 "EHLO
+        id S231186AbiGDTcQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jul 2022 15:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiGDSXr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 14:23:47 -0400
+        with ESMTP id S230215AbiGDTcQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 15:32:16 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C38B1B36
-        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 11:23:46 -0700 (PDT)
-Received: from [192.168.88.254] (unknown [36.81.65.188])
-        by gnuweeb.org (Postfix) with ESMTPSA id C5FA2801D5;
-        Mon,  4 Jul 2022 18:23:43 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C491214
+        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 12:32:15 -0700 (PDT)
+Received: from integral2.. (unknown [36.81.65.188])
+        by gnuweeb.org (Postfix) with ESMTPSA id 52159800EF;
+        Mon,  4 Jul 2022 19:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656959026;
-        bh=LkVyQH9eAvRi0CHInjMIg746Huz2+OY1ZBApgtfs8T8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kAWfWk4Kh66GN9UvRWQFeLoOQgV/R+SY60v2857nhsOsgy+cWVRKj4VB25vnvNEbq
-         2kG0X7mK5+RMNplZk7f9pIRCVLDzN6mRkvyWZPTTsID3YzSbLw/MdERjLUy8FKWAVv
-         YU/CgjApgwtBYQUicJqpTseiro509m5GD8nTSP+oY6X2m3BoUCM54r+OrV1RrV7XD0
-         LRJfLYP3vanKIgmH/kUCtwV1QUT9tnigCTIl19M+lNbN6jsgTYcr3N55Eygywpiv69
-         g7M+Cd7xNXsD6WRMK95jr00g074/zKK9olTN6zaxyH8j2/YQQnwX+LC3OFujzs5OTi
-         6kEQ9x2r7GCTw==
-Message-ID: <3b8da014-41f9-6640-589e-63795ac0ed67@gnuweeb.org>
-Date:   Tue, 5 Jul 2022 01:23:30 +0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH liburing v3 05/10] arch/aarch64: lib: Add
- `get_page_size()` function
-Content-Language: en-US
-To:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        s=default; t=1656963134;
+        bh=1KhcSFLX9L3TrgvOtzZHJ8rFeL1OjQGo7tOoiLvRrWA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=S1TQL7A84X396zoNE0PXUheRyOewIQBB+19O/Ap6xE+KnMvUm/zKwI2emN49iHP0R
+         wm2A/LYmKyOMOUhVHZgI+eG+NJWdgKALHDDdoEf0bNmMm7sbGXQ+6z4nU2aCk4Lc16
+         gOXS508L6uO3PS0Go3IvZ2VwTHUj33LjNzWnzq7PbkOADTMfeMIi2VBrVdtF5l9UM8
+         +UJxZ9Gq6G5EUvH5+kDQpI8F0TyEyzwI303+QaIQSd7AGfzagLoOdmjBKkZiVDJv5u
+         chADslF88OILcRIpqZ+ry9I8LO7hSh/IsZRWyKMbdByqNTUg9gTKzS9+rZEeWw+HC/
+         elm8Mdb3mSaGA==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         Fernanda Ma'rouf <fernandafmr12@gnuweeb.org>,
         Hao Xu <howeyxu@tencent.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-References: <20220704174858.329326-1-ammar.faizi@intel.com>
- <20220704174858.329326-6-ammar.faizi@intel.com>
- <CAOG64qPdVWFE0ZCie3NiDJb42u78ZNtmOmEW=-=oLE6VAn80TQ@mail.gmail.com>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <CAOG64qPdVWFE0ZCie3NiDJb42u78ZNtmOmEW=-=oLE6VAn80TQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Subject: [PATCH liburing v4 00/10] aarch64 support
+Date:   Tue,  5 Jul 2022 02:31:45 +0700
+Message-Id: <20220704192827.338771-1-ammar.faizi@intel.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLACK autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,43 +52,116 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/5/22 1:18 AM, Alviro Iskandar Setiawan wrote:
-> fallback_ret var is not needed, just do this, simpler:
-> 
-> static inline long __get_page_size(void)
-> {
->          Elf64_Off buf[2];
->          long ret = 4096;
->          int fd;
-> 
->          fd = __sys_open("/proc/self/auxv", O_RDONLY, 0);
->          if (fd < 0)
->                  return ret;
-> 
->          while (1) {
->                  ssize_t x;
-> 
->                  x = __sys_read(fd, buf, sizeof(buf));
->                  if (x < sizeof(buf))
->                          break;
-> 
->                  if (buf[0] == AT_PAGESZ) {
->                          ret = buf[1];
->                          break;
->                  }
->          }
-> 
->          __sys_close(fd);
->          return ret;
-> }
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Agree with that, will fold this in for v4.
+Hi Jens,
 
-> with that simplification:
-> 
-> Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+This is v4 revision of aarch64 support.
 
-Thanks!
+This series contains nolibc support for aarch64 and one extra irrelevant
+cleanup (patch #1). The missing bit from aarch64 is get_page_size()
+which is a bit complicated to implement without libc.
 
+aarch64 supports three values of page size: 4K, 16K, and 64K which are
+selected at kernel compilation time. Therefore, we can't hard code the
+page size for this arch. In this series we utilize open(), read() and
+close() syscall to find the page size from /proc/self/auxv.
+
+The auxiliary vector contains information about the page size, it is
+located at `AT_PAGESZ` keyval pair.
+
+For more details about the auxv data structure, check the link below.
+
+Link: https://github.com/torvalds/linux/blob/v5.19-rc4/fs/binfmt_elf.c#L260
+Link: https://lwn.net/Articles/631631/
+
+There are 10 patches in this series. Summary:
+
+- Patch 1 is just a trivial changelog fix.
+- Patch 2 and 3 are to add open() and read() syscall.
+- Patch 4 is to remove __INTERNAL__LIBURING_SYSCALL_H checks.
+- Patch 5 is to add get_page_size() function.
+- Patch 6 is just a trivial style fixup for #ifdef and friends.
+- Patch 7 is to enable the nolibc support for aarch64.
+- Patch 8 is to add nolibc test.
+- Patch 9 is for GitHub bot build.
+- Patch 10 is to update the CHANGELOG to note aarch64 nolibc support.
+
+I have built it with GitHub bot and it compiles just fine. But I don't
+have an aarch64 machine to run the tests. Since you are using aarch64,
+I can rely on you to test it.
+
+How to test this?
+
+  make clean;
+  ./configure --nolibc;
+  make -j8;
+
+  ldd src/liburing.so.2.3;
+  # Make sure you don't see libc.so from the `ldd` command.
+
+  make runtests;
+
+Please give it a test, thanks!
+
+## Changelog
+
+v3 -> v4:
+  - Simplify __get_page_size() function.
+  - Change __sys_read() return type from int to ssize_t.
+  - Append Reviewed-by tags from Alviro Iskandar Setiawan.
+  - Fix git am complain: space before tab in indent.
+
+v2 -> v3:
+  - No need to init the static var to zero.
+  - Split style fixup into a separate patch.
+  - Add nolibc test to test get_page_size() function.
+  - Use __NR_openat when __NR_open is not defined on the arch.
+  - Split open/read/close in get_page_size() into a new function.
+  - Cache the get_page_size() fallback value when we fail on the
+    syscalls.
+
+v1 -> v2:
+  - Drop aarch64 renaming directory patch.
+  - Fallback the page size to 4K if we fail to get it.
+  - Cache the page size after we read it from /proc/self/auxv.
+  - Massage commit messages.
+  - Note aarch64 nolibc support in CHANGELOG.
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+
+Ammar Faizi (10):
+  CHANGELOG: Fixup missing space
+  arch: syscall: Add `__sys_open()` syscall
+  arch: syscall: Add `__sys_read()` syscall
+  arch: Remove `__INTERNAL__LIBURING_LIB_H` checks
+  arch/aarch64: lib: Add `get_page_size()` function
+  lib: Style fixup for #if / #elif / #else / #endif
+  lib: Enable nolibc support for aarch64
+  test: Add nolibc test
+  .github: Enable aarch64 nolibc build for GitHub bot
+  CHANGELOG: Note about aarch64 support
+
+ .github/workflows/build.yml |  2 +-
+ CHANGELOG                   |  7 ++++-
+ src/arch/aarch64/lib.h      | 48 +++++++++++++++++++++++++++++
+ src/arch/aarch64/syscall.h  |  4 ---
+ src/arch/generic/lib.h      |  4 ---
+ src/arch/generic/syscall.h  | 20 ++++++++++---
+ src/arch/syscall-defs.h     | 19 ++++++++++++
+ src/arch/x86/lib.h          |  4 ---
+ src/arch/x86/syscall.h      |  4 ---
+ src/lib.h                   | 32 ++++++++++----------
+ src/syscall.h               |  2 --
+ test/Makefile               |  1 +
+ test/nolibc.c               | 60 +++++++++++++++++++++++++++++++++++++
+ 13 files changed, 167 insertions(+), 40 deletions(-)
+ create mode 100644 src/arch/aarch64/lib.h
+ create mode 100644 test/nolibc.c
+
+
+base-commit: f8eb5f804288e10ae7ef442ef482e4dd8b18fee7
 -- 
 Ammar Faizi
+

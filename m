@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8DD565D3E
-	for <lists+io-uring@lfdr.de>; Mon,  4 Jul 2022 19:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1381E565D3F
+	for <lists+io-uring@lfdr.de>; Mon,  4 Jul 2022 19:55:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbiGDRzX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jul 2022 13:55:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        id S230215AbiGDRz3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jul 2022 13:55:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230215AbiGDRzV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 13:55:21 -0400
+        with ESMTP id S231221AbiGDRz1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 13:55:27 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9AABE38
-        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 10:55:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87239DFF2
+        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 10:55:25 -0700 (PDT)
 Received: from integral2.. (unknown [36.81.65.188])
-        by gnuweeb.org (Postfix) with ESMTPSA id 55C6C8022E;
-        Mon,  4 Jul 2022 17:55:18 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id A8C7A7FC8C;
+        Mon,  4 Jul 2022 17:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1656957321;
-        bh=FveaZGALRuvhoMHrWSZliK1bwLSB96JV/GOf2wakANQ=;
+        s=default; t=1656957325;
+        bh=qeJm1bXOu6klaDCaHOGajmdgN7Yjd2MtzUuZCCYVGsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mj4Vfn6ZRhiDRr+SSQd9DXIifDAxH5QPnPURWBGL7WVEO+lj3kmdVI+xoampd1URD
-         xLCcGdg4MAHu8f3OYwShSkz2mr7x9UuFH9qQ6mlZ5HQAzATxyVsapCsUwzbvrvB4du
-         Pv3qDYfljw4rW0ipSH33W9XnXqEwU6atJTA/bkn/Hm8uEDf5vwenkaH5YKbYdIPmbR
-         uxzhYkJMVTGcxGFudByzItpUePruJgodAPb6KW107LoG5IqTlzU3+Nr2Qg5YI49YRE
-         nL6jkK06IvajYA5PHDuPhJUuZ4VqhpEF2NJF5IE1fF4/PhFtmtVcZodGx9F70TBLAi
-         RQmNq3MDrmpAg==
+        b=kTTns6l7N+DsVj4xmuZC1HqIoLaQYRx0iHsClCYdqSNHT9fY6sUaELE8pY9PNt/SZ
+         yG408b1vlEbNqAM7SemsYVOspAkTjL9hC1YLd6Sdm7v1aT7pK7eIxSx1Oip+8WnhWQ
+         iL7OyDxc7z/42HAdxbLqq1Hrslp4RINb9SXiCeAv4fqKUmEHmq2rsoFl1cg4Vm2x1c
+         bkBirWSxWaOxOIwMifvvupyQfCdr74qZL48nzAsgTgC24p5Cwsil043yKkoWQBdUUl
+         hYAq90j0jLJrzsKJo7nfwbT3/YfPfp8xBbO3PPw72olPk6qgkw9oymDzOvOzhDbRmz
+         TziI/OXVn+G/Q==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v3 07/10] lib: Enable nolibc support for aarch64
-Date:   Tue,  5 Jul 2022 00:54:33 +0700
-Message-Id: <20220704174858.329326-8-ammar.faizi@intel.com>
+Subject: [PATCH liburing v3 08/10] test: Add nolibc test
+Date:   Tue,  5 Jul 2022 00:54:34 +0700
+Message-Id: <20220704174858.329326-9-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220704174858.329326-1-ammar.faizi@intel.com>
 References: <20220704174858.329326-1-ammar.faizi@intel.com>
@@ -55,28 +55,98 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-A previous patch adds get_page_size() function which is the missing bit
-for aarch64 nolibc support. Now we have a full set of functions to
-enable nolibc build support for aarch64.
+This test is used to test liburing nolibc functionality. The first use
+case is test get_page_size() function, especially for aarch64 which
+relies on reading /proc/self/auxv. We don't seem to have a test that
+tests that function, so let's do it here.
+
+We may add more nolibc tests in this file in the future.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- src/lib.h | 2 ++
- 1 file changed, 2 insertions(+)
+ test/Makefile |  1 +
+ test/nolibc.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+ create mode 100644 test/nolibc.c
 
-diff --git a/src/lib.h b/src/lib.h
-index a966c77..f347191 100644
---- a/src/lib.h
-+++ b/src/lib.h
-@@ -8,6 +8,8 @@
- 
- #if defined(__x86_64__) || defined(__i386__)
- #include "arch/x86/lib.h"
-+#elif defined(__aarch64__)
-+#include "arch/aarch64/lib.h"
- #else
- /*
-  * We don't have nolibc support for this arch. Must use libc!
+diff --git a/test/Makefile b/test/Makefile
+index 9590e1e..45674c3 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -101,6 +101,7 @@ test_srcs := \
+ 	mkdir.c \
+ 	msg-ring.c \
+ 	multicqes_drain.c \
++	nolibc.c \
+ 	nop-all-sizes.c \
+ 	nop.c \
+ 	openat2.c \
+diff --git a/test/nolibc.c b/test/nolibc.c
+new file mode 100644
+index 0000000..e996f40
+--- /dev/null
++++ b/test/nolibc.c
+@@ -0,0 +1,60 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Test liburing nolibc functionality.
++ *
++ * Currently, supported architectures are:
++ *   1) x86
++ *   2) x86-64
++ *   3) aarch64
++ *
++ */
++#include "helpers.h"
++
++#if !defined(__x86_64__) && !defined(__i386__) && !defined(__aarch64__)
++
++/*
++ * This arch doesn't support nolibc.
++ */
++int main(void)
++{
++	return T_EXIT_SKIP;
++}
++
++#else /* #if !defined(__x86_64__) && !defined(__i386__) && !defined(__aarch64__) */
++
++#ifndef CONFIG_NOLIBC
++#define CONFIG_NOLIBC
++#endif
++
++#include <stdio.h>
++#include <unistd.h>
++#include "../src/lib.h"
++
++static int test_get_page_size(void)
++{
++	long a, b;
++
++	a = sysconf(_SC_PAGESIZE);
++	b = get_page_size();
++	if (a != b) {
++		fprintf(stderr, "get_page_size() fails, %ld != %ld", a, b);
++		return -1;
++	}
++	return 0;
++}
++
++int main(int argc, char *argv[])
++{
++	int ret;
++
++	if (argc > 1)
++		return T_EXIT_SKIP;
++
++	ret = test_get_page_size();
++	if (ret)
++		return T_EXIT_FAIL;
++
++	return T_EXIT_PASS;
++}
++
++#endif /* #if !defined(__x86_64__) && !defined(__i386__) && !defined(__aarch64__) */
 -- 
 Ammar Faizi
 

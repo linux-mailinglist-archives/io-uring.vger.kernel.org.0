@@ -2,59 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E540A56714C
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 16:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCFA567153
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 16:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiGEOi4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Jul 2022 10:38:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35768 "EHLO
+        id S232635AbiGEOjj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Jul 2022 10:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbiGEOiz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 10:38:55 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D6B638B
-        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 07:38:53 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id v4-20020a17090abb8400b001ef966652a3so2606863pjr.4
-        for <io-uring@vger.kernel.org>; Tue, 05 Jul 2022 07:38:53 -0700 (PDT)
+        with ESMTP id S232372AbiGEOja (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 10:39:30 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 017E2638B
+        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 07:39:28 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id z12-20020a17090a7b8c00b001ef84000b8bso6708004pjc.1
+        for <io-uring@vger.kernel.org>; Tue, 05 Jul 2022 07:39:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=Q05lE2V688eTokD1uLJf20CauPXRoaPakBlNtDQoQC0=;
-        b=ji98tWvYYdLZ4HrmiCIhYhqLhoQ8mbphm3yNt/PKPz7E7DuedtKuCinMhUAtA1nSuD
-         sSA8Hf2gOc6E0CXnnUGmQZj9WGpRNkELAioeAib0C11LAjcNUoF40TAJB8If9AAz2qGg
-         PVzLLr2bUS+0OleE3NMigJH+NMHgvR0sZukVg+m0SnNkhiOJQfYjTVrpgzHsAl15cyNG
-         /T2xD/RmnbiED5t/Q8/tpEowJVe4ELwZ6YMB4P4W40pGcSnbLPGyNSxjjcC1+iXKGSpl
-         rdFADB2nKEdA/QsUbJ+iHK8CSHVJh8jVOgCpZ3UgwB2fNzJkb9WbUV39fHtWg9ciUdt4
-         Nncw==
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=6k8uqKlUIuUIeNqOJu1FdYyV4HyvJqSgzw2oaiGqpnU=;
+        b=b8ZoimV+wrQre/MrVIgVYmp9cN9PSx6nsWecMGY0EWj5V1QHQTkweN/D/BG9m+/z0V
+         V4ifBRwVPzECNkIGRSxlpoBT8tQs8UtwbTI4I5XixCh1borMq3o2zYCOWPQTJWo1mF0F
+         9wQZIgLyvr1r4V/vdy0l81l/YZy4DpM6yLzyq2ejK8PHO5wPWrhDceK3rB6LiTQPC5Vz
+         FiH/H2Rk1B1n5goU9QlfYwiFCqLm6uWl/fZC/DNgCMLVUeR7qKBre8DzzjhOp0eAmuhQ
+         cmFW+7rE7/YMbHbv6k1eSMf0J0T1a1CLiCsNyCXxYkE4mU5Lq9o8KM7ucY+csHkb7o7u
+         XHbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=Q05lE2V688eTokD1uLJf20CauPXRoaPakBlNtDQoQC0=;
-        b=LmnkaqTJT0iuuRFDkJe5msYBPbCzzo5uHpxhQyrFacNEhGUd3+4A+63SZRgRh5dRBU
-         X7J7l/VdQg3x5SOj2871Gt6CO5MePzT2Ej4H/tZrufQFf4dcdW9/MME9FzpXqYzuIN+T
-         Dt7OvILX9DePNCQueMSXMAarKvGcr7Ac7JXriA+h/R34v9TdF3uqkLvqBNa1VE7JFyf4
-         v2fWR0YwiZ3HbsxUaYW5VA/RIb8sKa7PAmDwc4wm7YJiTcAbS8s1r+cQG9xJ7Jd3xnch
-         adCZ38k+Ue8/813PmAnVHdgDiH/2ZK0IKEgeHYTLQNAP5Z07XNUWC7sEQXV0vtTa3rUV
-         Kl/A==
-X-Gm-Message-State: AJIora/lls0FFOLfHg+Gg9HYCZJjHelzSKN8Tq9W8c/DeLELrzI5tOoE
-        WQDelsOxqPOyel71ECmESszPP91aj0Ljlg==
-X-Google-Smtp-Source: AGRyM1ttxkNqrrd4ScrgyKH+ArXZix10XkBoxcRPF3aqo5ZEEBRVsZHEuwT9hF4cQarLtDcAUzEbmA==
-X-Received: by 2002:a17:90b:4b09:b0:1ef:7977:9cc7 with SMTP id lx9-20020a17090b4b0900b001ef79779cc7mr20197821pjb.195.1657031932922;
-        Tue, 05 Jul 2022 07:38:52 -0700 (PDT)
+        bh=6k8uqKlUIuUIeNqOJu1FdYyV4HyvJqSgzw2oaiGqpnU=;
+        b=kjH5AdtWtcTFzBTUHrByGYU/maOMEVyq119u5V2SuM25iPnyS4RHYLgdT+LQCXMFFo
+         81XL4TQT3U/JRDz7yBmdtikMTXTzXuj8EUSEY1nItWEcRzzVZxmWOszmQHQwBuzfRKXR
+         +P+EL9zAZaqgaDWE9YiFS4f55zikeM5mW8ectM+6/yrbq8qgfiU44jMmUTARWZ2efYta
+         RwO54BBI9rWaUV2YPoxXnIItR4kmAwNQNShBKiq9FQcZpRMXrkhYlZ/eSHiU+mLJ+FmX
+         8AW2QlY83wHHDUwM64i1WK6jO/t+zAzMSAVc86FRrAB807AmGQQMjRTy2vonvwdGoRAy
+         a/Aw==
+X-Gm-Message-State: AJIora+92ixkbRd5KBEE16Cfi/K+3oi9yquNv5GIHoBasfG6tlIwl2HN
+        mYrFAwUuyPCAz9MRz8vgv/1sb1/L0Qo8iQ==
+X-Google-Smtp-Source: AGRyM1v+muQ8mgSRFrnaWoIzFQ/kk7nh7J/WwumrxFcpAtBwLBkoLMtuk9Q2h3wavL9G9m0VB8LixA==
+X-Received: by 2002:a17:90b:3a90:b0:1ed:27b7:5458 with SMTP id om16-20020a17090b3a9000b001ed27b75458mr42115302pjb.208.1657031968019;
+        Tue, 05 Jul 2022 07:39:28 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 200-20020a6214d1000000b00524f29903e0sm22923536pfu.56.2022.07.05.07.38.52
+        by smtp.gmail.com with ESMTPSA id s6-20020a17090a948600b001ef8264bc1fsm5804138pjo.14.2022.07.05.07.39.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 07:38:52 -0700 (PDT)
+        Tue, 05 Jul 2022 07:39:27 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, dylany@fb.com
-Cc:     asml.silence@gmail.com
-In-Reply-To: <20220704160614.1033371-1-dylany@fb.com>
-References: <20220704160614.1033371-1-dylany@fb.com>
-Subject: Re: [PATCH liburing] fix test_buf_select_pipe on older kernels
-Message-Id: <165703193212.1923002.16912315651116000163.b4-ty@kernel.dk>
-Date:   Tue, 05 Jul 2022 08:38:52 -0600
+To:     dirk@dmllr.de, io-uring@vger.kernel.org
+In-Reply-To: <20220705132939.7744-1-dirk@dmllr.de>
+References: <20220705132939.7744-1-dirk@dmllr.de>
+Subject: Re: [PATCH] Handle EINTR in tests
+Message-Id: <165703196727.1923464.15505442909574224327.b4-ty@kernel.dk>
+Date:   Tue, 05 Jul 2022 08:39:27 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,18 +66,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 4 Jul 2022 09:06:14 -0700, Dylan Yudaken wrote:
-> timing issues might cause out of order completes on older kernels,
-> especially regarding selecting a buffer before queueing up IO (as it can
-> complete with ENOBUFS being queued).
-> Theres no reason to test ENOBUFS for this problem, so remove those checks.
+On Tue, 5 Jul 2022 15:29:39 +0200, Dirk Müller wrote:
+> On an otherwise busy machine the test suite is quite flaky. Restart
+> the syscalls that are aborted with EINTR.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] fix test_buf_select_pipe on older kernels
-      commit: 7e9db7fa5fc06c3f396e244e4863938e648bcb2d
+[1/1] Handle EINTR in tests
+      commit: fa67f6aedcfdaffc14cbf0b631253477b2565ef0
 
 Best regards,
 -- 

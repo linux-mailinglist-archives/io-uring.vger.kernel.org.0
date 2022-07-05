@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7469B5664A8
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 10:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C222A566474
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 10:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229463AbiGEHpJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Jul 2022 03:45:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40284 "EHLO
+        id S229782AbiGEHpM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Jul 2022 03:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiGEHpH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 03:45:07 -0400
+        with ESMTP id S229779AbiGEHpL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 03:45:11 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D763412D06
-        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 00:45:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDA812D06
+        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 00:45:10 -0700 (PDT)
 Received: from integral2.. (unknown [36.81.65.188])
-        by gnuweeb.org (Postfix) with ESMTPSA id BFD0F804C1;
-        Tue,  5 Jul 2022 07:45:03 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 162B7804C5;
+        Tue,  5 Jul 2022 07:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1657007106;
-        bh=2+vkFY/cAwJcxO/eliCRmSw5WdJfTavO74HpsygISOY=;
+        s=default; t=1657007110;
+        bh=pW9IwT0NhgzgYupZV0di74lCCTqvlb2sS0263D7hWlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j5ptV+1acAKBtBMt+Y75TN7v1EPRznI2kl7SRNjgJX9BOe+5FIpqD8n3DT7DdDHwV
-         UGctxQQcLa1nq8c+XkIFJPrptDDqGqcvIrIwhNmKU2nekRDjWlYMEdzlmbIpT1IaAs
-         8WhtRqQTewwA8ZlVKbgtxLRVwhtweSa8X5S6ZyCyVRScFp9w1uzYwMN7klLjz11sve
-         SXclyJe22gJO7NGs/X+wF6Rmq/aU6eQa4g/ViE6ceXIG0zOgTbP4YA75A/5clYTKuh
-         DSn6ynDfdfq1iLQ7P/YUasX9pltxvUGLO76x+VSOPnT0sXly6OsBzH3X/KOInc7HKJ
-         9cdhCOHzBQ16A==
+        b=piB8NMlgs+aLn4YeY62QujJXM9U685XS9ofEu41BnCI0dJl5xEPadMK096xU0gnw8
+         8BiCCkhM6OB6AnVjjrAkSbUmPR/yKQiE/c/0FC2rf7ztViZBgKOt0EL+8OuEvZqvlZ
+         wdcdCwJXl4WYNPuo4lMb5EHIbyUG3aXmbxy4mlEzj1/bqhGxne/+Q6+I5CLxnXr6gg
+         s/m9DvDrkBPTIio74P9eLL4FUiWmTatfKHhmcEevvlHEcCRIGkTl4jXw92btt1pjCA
+         ef7RoK2VQcriE/Qu043/b8nmUNT2Tc84rqXzLnZLgsZb7Opmyyz4G/3aNsvLQqCfiN
+         eJmYtI3duhz5g==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v5 01/10] CHANGELOG: Fixup missing space
-Date:   Tue,  5 Jul 2022 14:43:51 +0700
-Message-Id: <20220705073920.367794-2-ammar.faizi@intel.com>
+Subject: [PATCH liburing v5 02/10] arch: syscall: Add `__sys_open()` syscall
+Date:   Tue,  5 Jul 2022 14:43:52 +0700
+Message-Id: <20220705073920.367794-3-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220705073920.367794-1-ammar.faizi@intel.com>
 References: <20220705073920.367794-1-ammar.faizi@intel.com>
@@ -55,26 +55,68 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-  s/reducingthe/reducing the/
+A prep patch to support aarch64 nolibc. We will use this to get the
+page size by reading /proc/self/auxv.
 
+Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- CHANGELOG | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ src/arch/generic/syscall.h |  9 +++++++++
+ src/arch/syscall-defs.h    | 14 ++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/CHANGELOG b/CHANGELOG
-index 01cb677..efb3ff3 100644
---- a/CHANGELOG
-+++ b/CHANGELOG
-@@ -6,7 +6,7 @@ liburing-2.2 release
- - Add support for multishot accept.
- - io_uring_register_files() will set RLIMIT_NOFILE if necessary.
- - Add support for registered ring fds, io_uring_register_ring_fd(),
--  reducingthe overhead of an io_uring_enter() system call.
-+  reducing the overhead of an io_uring_enter() system call.
- - Add support for the message ring opcode.
- - Add support for newer request cancelation features.
- - Add support for IORING_SETUP_COOP_TASKRUN, which can help reduce the
+diff --git a/src/arch/generic/syscall.h b/src/arch/generic/syscall.h
+index fa93064..71b2234 100644
+--- a/src/arch/generic/syscall.h
++++ b/src/arch/generic/syscall.h
+@@ -7,6 +7,8 @@
+ #ifndef LIBURING_ARCH_GENERIC_SYSCALL_H
+ #define LIBURING_ARCH_GENERIC_SYSCALL_H
+ 
++#include <fcntl.h>
++
+ static inline int ____sys_io_uring_register(int fd, unsigned opcode,
+ 					    const void *arg, unsigned nr_args)
+ {
+@@ -41,6 +43,13 @@ static inline int ____sys_io_uring_enter(int fd, unsigned to_submit,
+ 				       _NSIG / 8);
+ }
+ 
++static inline int __sys_open(const char *pathname, int flags, mode_t mode)
++{
++	int ret;
++	ret = open(pathname, flags, mode);
++	return (ret < 0) ? -errno : ret;
++}
++
+ static inline void *__sys_mmap(void *addr, size_t length, int prot, int flags,
+ 			       int fd, off_t offset)
+ {
+diff --git a/src/arch/syscall-defs.h b/src/arch/syscall-defs.h
+index 1e8ae1b..d38b5f3 100644
+--- a/src/arch/syscall-defs.h
++++ b/src/arch/syscall-defs.h
+@@ -3,6 +3,20 @@
+ #ifndef LIBURING_ARCH_SYSCALL_DEFS_H
+ #define LIBURING_ARCH_SYSCALL_DEFS_H
+ 
++#include <fcntl.h>
++
++static inline int __sys_open(const char *pathname, int flags, mode_t mode)
++{
++	/*
++	 * Some architectures don't have __NR_open, but __NR_openat.
++	 */
++#ifdef __NR_open
++	return __do_syscall3(__NR_open, pathname, flags, mode);
++#else
++	return __do_syscall4(__NR_openat, AT_FDCWD, pathname, flags, mode);
++#endif
++}
++
+ static inline void *__sys_mmap(void *addr, size_t length, int prot, int flags,
+ 			       int fd, off_t offset)
+ {
 -- 
 Ammar Faizi
 

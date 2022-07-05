@@ -2,106 +2,164 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 950DB56709D
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 16:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38EF05670EA
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 16:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233281AbiGEOLf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Jul 2022 10:11:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
+        id S232396AbiGEOXv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Jul 2022 10:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233235AbiGEOLN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 10:11:13 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 782A520BD5;
-        Tue,  5 Jul 2022 07:03:33 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id q9so17714973wrd.8;
-        Tue, 05 Jul 2022 07:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=K1faJAUPe99XaFEI9k8YOqkAPgSogag6E3JBddhKDAI=;
-        b=mz8kUR7M1V13srg5ePE5YPQW3nbTDq+Gjs/owKp/hbML+wtTRQxJS7l0o7H+zXqKMN
-         kwi6RERYlwBZdbxbzug8CXKDmdP1WnkiHNE093d4QGj2843v+xCdwmY6PGiEStY+NfIt
-         C/MU5DsAsuzybxBhkqsEHplDZO2/Ht6pX8Fl6kVWIvbdugspTD/BzGqEK2JnA6TX1UfA
-         P+C1SqB1wC2q8MVnwvHY0pt7fb19F0d9VC+Y4DLR/7WgmgTnzeGTe76Xm/arg4G8NVwn
-         QB3Zu8FLd7sqMSEj5zslUyY2eU1byyla+fO6zzPfWu5K/BLsJAec4K16lCU5QJ1atTMK
-         2biw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=K1faJAUPe99XaFEI9k8YOqkAPgSogag6E3JBddhKDAI=;
-        b=m///CSJMPmgx96+L+/+5ULAuMN6uOO9WfJPm5eDrWUQd/yotHxYa/Cx5pIua/sUTKV
-         jF7Y0sbw7ZB3kW1F8JAW6bEX6km6SfaNHaN4mh7Vc+CK+5MV9rXk6zUQY321XtwZ4Pom
-         c+wTAQVwOsJsOmighGdhgA8al4AHSIBNQ/NlpoeaGCz6RSq/ggBO+q6kYyllQd4gwTTf
-         LsPFN+yfl68gV41A3rOXpspXwlKXrU4jFA3X5bb3qnFCuIntrMcyhlncxqOpHVhhi+ki
-         WCqciVSQErLijD+LcpYUtPGa734a5fwWwGM0L4r20yViXTdZ6R2iMkeMclkmRSpWmT94
-         mzBg==
-X-Gm-Message-State: AJIora+NT0tP7K45ryJpS735TeXR260cPrViLjeSfzUq2T9eRaqMufPx
-        oC4dp5ekz+fXrnhTGKFzpZM=
-X-Google-Smtp-Source: AGRyM1shAJGVMP5T46zZDRAWMQAWXsuKt60QS8xAgreB2J8VTimxf0yWirp0cVSmWbhIrkfsP4Pb2w==
-X-Received: by 2002:adf:ee89:0:b0:21d:681b:47cf with SMTP id b9-20020adfee89000000b0021d681b47cfmr12319366wro.394.1657029811903;
-        Tue, 05 Jul 2022 07:03:31 -0700 (PDT)
-Received: from [192.168.8.198] (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id m2-20020a05600c3b0200b0039c63f4bce0sm19059849wms.12.2022.07.05.07.03.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Jul 2022 07:03:31 -0700 (PDT)
-Message-ID: <e453322f-bf33-d7c5-26c2-06896fb1a691@gmail.com>
-Date:   Tue, 5 Jul 2022 15:03:26 +0100
+        with ESMTP id S233067AbiGEOXm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 10:23:42 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 718D7C58;
+        Tue,  5 Jul 2022 07:23:41 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1A887229AA;
+        Tue,  5 Jul 2022 14:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1657031020; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jcuDAT42MRN08+ai7zVZVZ2mWppuivEezCE/Bu5mhtU=;
+        b=owi3RO93Ow5n5L73HHdTiQn2hfqPSvdUleh8KgUxZseP/ZBphU+H2KIcgWp0yOuyd/tPNX
+        tA91jLVfbnO4kHORFIEqLMH2ak5lnHc1iKigU1DIvSOghhPNyDORiB3mSrrCg0C5fUSqJp
+        ynPIt+3GTWOOn7TKZHxuFbmAfJ6ma0w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1657031020;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jcuDAT42MRN08+ai7zVZVZ2mWppuivEezCE/Bu5mhtU=;
+        b=T6AyjA5QRILuUAb7gk4isa/t+rjA2Qg9uB5wx/oL5bTShCnXOn0HwI9w9azt/RA5Dsn0N5
+        jvH/ojhAEBRt/8Aw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 095FC1339A;
+        Tue,  5 Jul 2022 14:23:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id MHsBCWlJxGI7fQAAMHmgww
+        (envelope-from <rgoldwyn@suse.de>); Tue, 05 Jul 2022 14:23:37 +0000
+Date:   Tue, 5 Jul 2022 09:23:34 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Stefan Roesch <shr@fb.com>,
+        io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v7 15/15] xfs: Add async buffered write support
+Message-ID: <20220705142243.hlevsj4pfpahjcdv@fiona>
+References: <20220601210141.3773402-1-shr@fb.com>
+ <20220601210141.3773402-16-shr@fb.com>
+ <Yr56ci/IZmN0S9J6@ZenIV>
+ <0a75a0c4-e2e5-b403-27bc-e43872fecdc1@kernel.dk>
+ <ef7c1154-b5ba-4017-f9fd-dea936a837fc@kernel.dk>
+ <ca60a7dc-b16d-d8ce-f56c-547b449da8c9@kernel.dk>
+ <Yr83aD0yuEwvJ7tL@magnolia>
+ <47dd9e6a-4e08-e562-12ff-5450fc42da77@kernel.dk>
+ <YsRA7TGWA7ovZjrF@localhost.localdomain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC net-next v3 05/29] net: bvec specific path in
- zerocopy_sg_from_iter
-Content-Language: en-US
-To:     David Ahern <dsahern@kernel.org>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
-References: <cover.1653992701.git.asml.silence@gmail.com>
- <5143111391e771dc97237e2a5e6a74223ef8f15f.1653992701.git.asml.silence@gmail.com>
- <20220628225204.GA27554@u2004-local>
- <2840ec03-1d2b-f9c8-f215-61430f758925@gmail.com>
- <ee35a179-e9a1-39c7-d054-40b10ca9a1f3@kernel.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ee35a179-e9a1-39c7-d054-40b10ca9a1f3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YsRA7TGWA7ovZjrF@localhost.localdomain>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/5/22 03:28, David Ahern wrote:
-> On 7/4/22 7:31 AM, Pavel Begunkov wrote:
->> If the series is going to be picked up for 5.20, how about we delay
->> this one for 5.21? I'll have time to think about it (maybe moving
->> the skb managed flag setup inside?), and will anyway need to send
->> some omitted patches then.
->>
+On  9:47 05/07, Josef Bacik wrote:
+> On Fri, Jul 01, 2022 at 12:14:41PM -0600, Jens Axboe wrote:
+> > On 7/1/22 12:05 PM, Darrick J. Wong wrote:
+> > > On Fri, Jul 01, 2022 at 08:38:07AM -0600, Jens Axboe wrote:
+> > >> On 7/1/22 8:30 AM, Jens Axboe wrote:
+> > >>> On 7/1/22 8:19 AM, Jens Axboe wrote:
+> > >>>> On 6/30/22 10:39 PM, Al Viro wrote:
+> > >>>>> On Wed, Jun 01, 2022 at 02:01:41PM -0700, Stefan Roesch wrote:
+> > >>>>>> This adds the async buffered write support to XFS. For async buffered
+> > >>>>>> write requests, the request will return -EAGAIN if the ilock cannot be
+> > >>>>>> obtained immediately.
+> > >>>>>
+> > >>>>> breaks generic/471...
+> > >>>>
+> > >>>> That test case is odd, because it makes some weird assumptions about
+> > >>>> what RWF_NOWAIT means. Most notably that it makes it mean if we should
+> > >>>> instantiate blocks or not. Where did those assumed semantics come from?
+> > >>>> On the read side, we have clearly documented that it should "not wait
+> > >>>> for data which is not immediately available".
+> > >>>>
+> > >>>> Now it is possible that we're returning a spurious -EAGAIN here when we
+> > >>>> should not be. And that would be a bug imho. I'll dig in and see what's
+> > >>>> going on.
+> > >>>
+> > >>> This is the timestamp update that needs doing which will now return
+> > >>> -EAGAIN if IOCB_NOWAIT is set as it may block.
+> > >>>
+> > >>> I do wonder if we should just allow inode time updates with IOCB_NOWAIT,
+> > >>> even on the io_uring side. Either that, or passed in RWF_NOWAIT
+> > >>> semantics don't map completely to internal IOCB_NOWAIT semantics. At
+> > >>> least in terms of what generic/471 is doing, but I'm not sure who came
+> > >>> up with that and if it's established semantics or just some made up ones
+> > >>> from whomever wrote that test. I don't think they make any sense, to be
+> > >>> honest.
+> > >>
+> > >> Further support that generic/471 is just randomly made up semantics,
+> > >> it needs to special case btrfs with nocow or you'd get -EAGAIN anyway
+> > >> for that test.
+> > >>
+> > >> And it's relying on some random timing to see if this works. I really
+> > >> think that test case is just hot garbage, and doesn't test anything
+> > >> meaningful.
+> > > 
+> > > <shrug> I had thought that NOWAIT means "don't wait for *any*thing",
+> > > which would include timestamp updates... but then I've never been all
+> > > that clear on what specifically NOWAIT will and won't wait for. :/
+> > 
+> > Agree, at least the read semantics (kind of) make sense, but the ones
+> > seemingly made up by generic/471 don't seem to make any sense at all.
+> >
 > 
-> I think it reads better for io_uring and future extensions for io_uring
-> to contain the optimized bvec iter handler and setting the managed flag.
-> Too many disjointed assumptions the way the code is now. By pulling that
-> into io_uring, core code does not make assumptions that "managed" means
-> bvec and no page references - rather that is embedded in the code that
-> cares.
+> Added Goldwyn to the CC list for this.
+> 
+> This appears to be just a confusion about what we think NOWAIT should mean.
+> Looking at the btrfs code it seems like Goldwyn took it as literally as possible
+> so we wouldn't do any NOWAIT IO's unless it was into a NOCOW area, meaning we
+> literally wouldn't do anything other than wrap the bio up and fire it off.
 
-Core code would still need to know when to remove the skb's managed
-flag, e.g. in case of mixing. Can be worked out but with assumptions,
-which doesn't look better that it currently is. I'll post a 5.20
-rebased version and will iron it out on the way then.
+When I introduced NOWAIT, it was only meant for writes and for those
+which would block on block allocations or locking. Over time it was
+included for buffered reads as well.
+
+> 
+> The general consensus seems to be that NOWAIT isn't that strict, and that
+> BTRFS's definition was too strict.  I wrote initial patches to give to Stefan to
+> clean up the Btrfs side to allow us to use NOWAIT under a lot more
+> circumstances.
+
+BTRFS COW path would allocate blocks and the reason it returns -EAGAIN.
+
+> 
+> Goldwyn, this test seems to be a little specific to our case, and can be flakey
+> if the timing isn't just right.  I think we should just remove it?  Especially
+> since how we define NOWAIT isn't quite right.  Does that sound reasonable to
+> you?
+
+Yes, I agree. It was based on the initial definition and now can be
+removed.
+
 
 -- 
-Pavel Begunkov
+Goldwyn

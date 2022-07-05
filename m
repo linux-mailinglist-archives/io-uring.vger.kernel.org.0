@@ -2,115 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F50056603F
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 02:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0646566137
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 04:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbiGEAoA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Jul 2022 20:44:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59970 "EHLO
+        id S234567AbiGEC2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Jul 2022 22:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbiGEAn7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 20:43:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A054E2BEA
-        for <io-uring@vger.kernel.org>; Mon,  4 Jul 2022 17:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656981837;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oF0QO8DwOtMi/m6eY8VVXn1mNF5UvzD8IXdAmBCXuIM=;
-        b=AA9NHCILDNMLCzEZVctwN1qpWXeYpBqX3a1hwvDFiKv4XTsQlh4g2SYaOMco5JAaUu0k4D
-        jMhBJe3BUaON37rAATob85c8vVDw64VmKg0LgoGz5CdoyVum3KcDmbObQNsZFFrFICueHc
-        kypSqylebDZLyHJJJrYIJAlXo9R7g2E=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-81-cL5MEu1POz6lL-W-D0aWWA-1; Mon, 04 Jul 2022 20:43:56 -0400
-X-MC-Unique: cL5MEu1POz6lL-W-D0aWWA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S231579AbiGEC2J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Jul 2022 22:28:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F27CAA470;
+        Mon,  4 Jul 2022 19:28:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C08742999B52;
-        Tue,  5 Jul 2022 00:43:55 +0000 (UTC)
-Received: from T590 (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0641C2166B26;
-        Tue,  5 Jul 2022 00:43:48 +0000 (UTC)
-Date:   Tue, 5 Jul 2022 08:43:43 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Harris James R <james.r.harris@intel.com>,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V3 1/1] ublk: add io_uring based userspace block driver
-Message-ID: <YsOJP9BaD0LUpsgg@T590>
-References: <20220628160807.148853-1-ming.lei@redhat.com>
- <20220628160807.148853-2-ming.lei@redhat.com>
- <da861bbb-1506-7598-fa06-32201456967d@grimberg.me>
- <YsLeR1QWPmqfNAQY@T590>
- <8cf1aef0-ea5b-a3df-266d-ae67674c96ae@grimberg.me>
- <87a69oamap.fsf@collabora.com>
- <c2053491-abb6-dc75-923d-bfea81431afa@grimberg.me>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8678761888;
+        Tue,  5 Jul 2022 02:28:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 722F4C3411E;
+        Tue,  5 Jul 2022 02:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656988087;
+        bh=6B51220r8b8eGLOfgzeZnrLl5t0Rp/BupIOHW7nrbCU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=uT/gJ9KK7rAc/OO4qqPEbs2IxXJr3Au6JDIavp4zn3jC2ecb4SK2OIMp2elF7h32l
+         IKY8AfCG+ArUwWbSBs/w3PYDNLPT3XogQB0QeP5b3Dq0vFyS7D8N3Uc69JNut6Llyd
+         XDgYENrZtSJQlWoaA9rrLiz23eCKLpQuGk7Gkneyj5PRD7aPuJ8zeSyvMpKsqzT3si
+         DusdpTs2QVS1KSnR7iYrOuAhu5hUJzFgHugFLxNYUj5uJZ2W1oDH4yc9QtewM0NXaj
+         vhuEPahS3lmUGGazdUTWpeyflHWwdtWyoAzmoSLVuJps3Dctbk/z37qJ/rQvDDwqXJ
+         HI8eFBt1WVKBg==
+Message-ID: <ee35a179-e9a1-39c7-d054-40b10ca9a1f3@kernel.org>
+Date:   Mon, 4 Jul 2022 20:28:06 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2053491-abb6-dc75-923d-bfea81431afa@grimberg.me>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [RFC net-next v3 05/29] net: bvec specific path in
+ zerocopy_sg_from_iter
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
+References: <cover.1653992701.git.asml.silence@gmail.com>
+ <5143111391e771dc97237e2a5e6a74223ef8f15f.1653992701.git.asml.silence@gmail.com>
+ <20220628225204.GA27554@u2004-local>
+ <2840ec03-1d2b-f9c8-f215-61430f758925@gmail.com>
+From:   David Ahern <dsahern@kernel.org>
+In-Reply-To: <2840ec03-1d2b-f9c8-f215-61430f758925@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jul 04, 2022 at 07:19:09PM +0300, Sagi Grimberg wrote:
+On 7/4/22 7:31 AM, Pavel Begunkov wrote:
+> If the series is going to be picked up for 5.20, how about we delay
+> this one for 5.21? I'll have time to think about it (maybe moving
+> the skb managed flag setup inside?), and will anyway need to send
+> some omitted patches then.
 > 
-> > > > > > diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-> > > > > > index fdb81f2794cd..d218089cdbec 100644
-> > > > > > --- a/drivers/block/Kconfig
-> > > > > > +++ b/drivers/block/Kconfig
-> > > > > > @@ -408,6 +408,12 @@ config BLK_DEV_RBD
-> > > > > >     	  If unsure, say N.
-> > > > > > +config BLK_DEV_UBLK
-> > > > > > +	bool "Userspace block driver"
-> > > > > 
-> > > > > Really? why compile this to the kernel and not tristate as loadable
-> > > > > module?
-> > > > So far, this is only one reason: task_work_add() is required, which
-> > > > isn't exported for modules.
-> > > 
-> > > So why not exporting it?
-> > > Doesn't seem like a good justification to build it into the kernel.
-> > 
-> > Sagi,
-> > 
-> > If I understand correctly, the task_work_add function is quite a core
-> > API that we probably want to avoid exposing directly to (out-of-tree)
-> > modules?  I agree, though, it would be great to have this buildable as a
-> > module for general use cases.  Would it make sense to have it exposed
-> > through a thin built-in wrapper, specific to UBD, which is exported, and
-> > therefore able to invoke that function?  Is it a reasonable approach?
-> 
-> All I'm saying is that either we should expose it (or an interface to
-> it) if it has merit, or use something else (use a workqueue).
 
-There isn't replacement for task_work_add().
-
-If module has to be supported, we can add one command for running the
-work function in the ubq context, that will add some cost.
-
-> Having a block driver driver builtin is probably not the answer.
-
-Not sure, there are at least two drivers which use the API.
-
-
-Thanks,
-Ming
-
+I think it reads better for io_uring and future extensions for io_uring
+to contain the optimized bvec iter handler and setting the managed flag.
+Too many disjointed assumptions the way the code is now. By pulling that
+into io_uring, core code does not make assumptions that "managed" means
+bvec and no page references - rather that is embedded in the code that
+cares.

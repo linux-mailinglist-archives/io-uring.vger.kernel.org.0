@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C222A566474
-	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 10:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCFB566498
+	for <lists+io-uring@lfdr.de>; Tue,  5 Jul 2022 10:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbiGEHpM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Jul 2022 03:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40320 "EHLO
+        id S229795AbiGEHpP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Jul 2022 03:45:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiGEHpL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 03:45:11 -0400
+        with ESMTP id S229779AbiGEHpO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 03:45:14 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDA812D06
-        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 00:45:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FE812D06
+        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 00:45:13 -0700 (PDT)
 Received: from integral2.. (unknown [36.81.65.188])
-        by gnuweeb.org (Postfix) with ESMTPSA id 162B7804C5;
-        Tue,  5 Jul 2022 07:45:06 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id C56F3801E6;
+        Tue,  5 Jul 2022 07:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1657007110;
-        bh=pW9IwT0NhgzgYupZV0di74lCCTqvlb2sS0263D7hWlw=;
+        s=default; t=1657007113;
+        bh=aWHzBpvLN2HYJbYqDk3KmU1XjFfnCdTXUT14Tux6Ons=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=piB8NMlgs+aLn4YeY62QujJXM9U685XS9ofEu41BnCI0dJl5xEPadMK096xU0gnw8
-         8BiCCkhM6OB6AnVjjrAkSbUmPR/yKQiE/c/0FC2rf7ztViZBgKOt0EL+8OuEvZqvlZ
-         wdcdCwJXl4WYNPuo4lMb5EHIbyUG3aXmbxy4mlEzj1/bqhGxne/+Q6+I5CLxnXr6gg
-         s/m9DvDrkBPTIio74P9eLL4FUiWmTatfKHhmcEevvlHEcCRIGkTl4jXw92btt1pjCA
-         ef7RoK2VQcriE/Qu043/b8nmUNT2Tc84rqXzLnZLgsZb7Opmyyz4G/3aNsvLQqCfiN
-         eJmYtI3duhz5g==
+        b=dvx9V5V9Co8LeOhmfWsnCf2Texkivu9iF29OAKPPcIDY6IJThJtZcPe/xtjDNMIkR
+         1EIb335QIwaLEbVhgUI4e9d+Pj/NQ1o2UpIy3RGWZfISy/0WbgzIOi1dbnE298hQ4D
+         csd6aKvTYXnKSWVBFvrxvToXXIy5yZ+KPGfrKcgYHrawJrDaSnDpAdO26PD49vOdTL
+         E+bUHuOV6tKsSyxFWMHvzK8FB5Ciwo5HH5tS5Zum9BQW8th2VPBF1pPFK18sm7vcyh
+         A720YCulFza6y29XemXP1B4tQZ1Cb/rJTtj+Y2cb/ZCkssJgXyFR7iBaqMkVrL2HDe
+         +RVXSrbJSiD1Q==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v5 02/10] arch: syscall: Add `__sys_open()` syscall
-Date:   Tue,  5 Jul 2022 14:43:52 +0700
-Message-Id: <20220705073920.367794-3-ammar.faizi@intel.com>
+Subject: [PATCH liburing v5 03/10] arch: syscall: Add `__sys_read()` syscall
+Date:   Tue,  5 Jul 2022 14:43:53 +0700
+Message-Id: <20220705073920.367794-4-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220705073920.367794-1-ammar.faizi@intel.com>
 References: <20220705073920.367794-1-ammar.faizi@intel.com>
@@ -61,31 +61,22 @@ page size by reading /proc/self/auxv.
 Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- src/arch/generic/syscall.h |  9 +++++++++
- src/arch/syscall-defs.h    | 14 ++++++++++++++
- 2 files changed, 23 insertions(+)
+ src/arch/generic/syscall.h | 7 +++++++
+ src/arch/syscall-defs.h    | 5 +++++
+ 2 files changed, 12 insertions(+)
 
 diff --git a/src/arch/generic/syscall.h b/src/arch/generic/syscall.h
-index fa93064..71b2234 100644
+index 71b2234..22252a1 100644
 --- a/src/arch/generic/syscall.h
 +++ b/src/arch/generic/syscall.h
-@@ -7,6 +7,8 @@
- #ifndef LIBURING_ARCH_GENERIC_SYSCALL_H
- #define LIBURING_ARCH_GENERIC_SYSCALL_H
- 
-+#include <fcntl.h>
-+
- static inline int ____sys_io_uring_register(int fd, unsigned opcode,
- 					    const void *arg, unsigned nr_args)
- {
-@@ -41,6 +43,13 @@ static inline int ____sys_io_uring_enter(int fd, unsigned to_submit,
- 				       _NSIG / 8);
+@@ -50,6 +50,13 @@ static inline int __sys_open(const char *pathname, int flags, mode_t mode)
+ 	return (ret < 0) ? -errno : ret;
  }
  
-+static inline int __sys_open(const char *pathname, int flags, mode_t mode)
++static inline ssize_t __sys_read(int fd, void *buffer, size_t size)
 +{
-+	int ret;
-+	ret = open(pathname, flags, mode);
++	ssize_t ret;
++	ret = read(fd, buffer, size);
 +	return (ret < 0) ? -errno : ret;
 +}
 +
@@ -93,25 +84,16 @@ index fa93064..71b2234 100644
  			       int fd, off_t offset)
  {
 diff --git a/src/arch/syscall-defs.h b/src/arch/syscall-defs.h
-index 1e8ae1b..d38b5f3 100644
+index d38b5f3..df90e0d 100644
 --- a/src/arch/syscall-defs.h
 +++ b/src/arch/syscall-defs.h
-@@ -3,6 +3,20 @@
- #ifndef LIBURING_ARCH_SYSCALL_DEFS_H
- #define LIBURING_ARCH_SYSCALL_DEFS_H
+@@ -17,6 +17,11 @@ static inline int __sys_open(const char *pathname, int flags, mode_t mode)
+ #endif
+ }
  
-+#include <fcntl.h>
-+
-+static inline int __sys_open(const char *pathname, int flags, mode_t mode)
++static inline ssize_t __sys_read(int fd, void *buffer, size_t size)
 +{
-+	/*
-+	 * Some architectures don't have __NR_open, but __NR_openat.
-+	 */
-+#ifdef __NR_open
-+	return __do_syscall3(__NR_open, pathname, flags, mode);
-+#else
-+	return __do_syscall4(__NR_openat, AT_FDCWD, pathname, flags, mode);
-+#endif
++	return (ssize_t) __do_syscall3(__NR_read, fd, buffer, size);
 +}
 +
  static inline void *__sys_mmap(void *addr, size_t length, int prot, int flags,

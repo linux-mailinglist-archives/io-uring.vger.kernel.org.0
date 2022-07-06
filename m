@@ -2,112 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A71568077
-	for <lists+io-uring@lfdr.de>; Wed,  6 Jul 2022 09:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 836A556889A
+	for <lists+io-uring@lfdr.de>; Wed,  6 Jul 2022 14:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229479AbiGFHvu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 6 Jul 2022 03:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38238 "EHLO
+        id S233399AbiGFMpf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jul 2022 08:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbiGFHvt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jul 2022 03:51:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B631E22BCA
-        for <io-uring@vger.kernel.org>; Wed,  6 Jul 2022 00:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657093907;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=94stvIwO+MYjvQTo4x9lvsmOFPV+/t99NLrADFi/T5M=;
-        b=fM//aA608R8XMAm+6F+I1t5NnlEQdPfu4Hxca3E8+VzqfjpHLQ/ssijo64sL6xZ9pIQfr9
-        7/Nvx8p4NSPuG2jSnYc/HvnagRFHSXq9zp/F2CI31t2ZUyQYgTCLyoyv7z3xEswVQqKejX
-        2Qu3+cEAGFcjZqZ9NRKFjQsYwyamqX4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-522-L0i-dOytNyayPpTMVy5gng-1; Wed, 06 Jul 2022 03:51:38 -0400
-X-MC-Unique: L0i-dOytNyayPpTMVy5gng-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D5C1F8339C2;
-        Wed,  6 Jul 2022 07:51:37 +0000 (UTC)
-Received: from localhost (unknown [10.39.194.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 80A2F4010D2A;
-        Wed,  6 Jul 2022 07:51:37 +0000 (UTC)
-Date:   Wed, 6 Jul 2022 08:51:36 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Dominique Martinet <dominique.martinet@atmark-techno.com>
-Cc:     Stefan Hajnoczi <stefanha@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Aarushi Mehta <mehta.aaru20@gmail.com>,
-        Julia Suvorova <jusual@redhat.com>,
-        Kevin Wolf <kwolf@redhat.com>, Hanna Reitz <hreitz@redhat.com>,
-        qemu block <qemu-block@nongnu.org>,
-        qemu-devel <qemu-devel@nongnu.org>,
-        Filipe Manana <fdmanana@kernel.org>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2] io_uring: fix short read slow path
-Message-ID: <YsU/CGkl9ZXUI+Tj@stefanha-x1.localdomain>
-References: <20220629044957.1998430-1-dominique.martinet@atmark-techno.com>
- <20220630010137.2518851-1-dominique.martinet@atmark-techno.com>
- <20220630154921.ekl45dzer6x4mkvi@sgarzare-redhat>
- <Yr4pLwz5vQJhmvki@atmark-techno.com>
- <YsQ8aM3/ZT+Bs7nC@stefanha-x1.localdomain>
- <YsTAxtvpvIIi8q7M@atmark-techno.com>
- <CAJSP0QUg5g6SDCy52carWRbVUFBhrAoiezinPdfhEOAKNwrN3g@mail.gmail.com>
- <YsU5Q6p17yGsxxk+@atmark-techno.com>
+        with ESMTP id S233465AbiGFMp2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jul 2022 08:45:28 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B30426118
+        for <io-uring@vger.kernel.org>; Wed,  6 Jul 2022 05:45:17 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id p9so3415151plr.11
+        for <io-uring@vger.kernel.org>; Wed, 06 Jul 2022 05:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
+         :content-transfer-encoding;
+        bh=FeiCsYPIN96XdYKMvXDXDT0ln02u3VBSNGoRgLS0aXg=;
+        b=wO8KdIxj8BhygH26JWcwBDCOiy4+uNJIyuvv6Xs9uWNYCJsvUfEvxi97hrtXBjuSBn
+         WewSY18fvlbXFMY04HUT+ewiDaIKdIqw0mFg2n+D+mKLuRBLrd/gmuQvZVbd7k9xwxR9
+         C+do7G767/nJZsirLg1ZIur0Yd3e/p6vaaA3UFtW4LWqRe92P3iSCOcawDKTwvlSllCm
+         ZQl1uZ3f7RcExvzXOabWeBkcw+L+Kr3oNemxCXfO9q9wDp2MFS48haZ/+CdJxXPhuaRT
+         VYPXoYG4A1BMfLPGaad4aGka834vv5+0WY/u2EwfjJDrw4W4kkNaVAZGWYG/zrUdAJw9
+         yJ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=FeiCsYPIN96XdYKMvXDXDT0ln02u3VBSNGoRgLS0aXg=;
+        b=ECfE2ifUyzQ3YloFWuisXJRosodrMoODiO8FQoVMuVWJ80F4E4eii0QTjbo79MLOeb
+         30gnSYqO78ueg/kUTyCAoIebxSfiK8V4ulw2ewY63HEC+Gp0Y35PsusuhRkCDzaunPmN
+         YIIznF6NK524tbSzqK+gEETnUYuRDTyOmaCJxS36T5VoQ5SyO1iAm9bGMjCO3/e8yaMI
+         du2I/hxXtBdUIdyfPo+Wt2HjbMhVq2TwjJqvgFZKgmIO9QNY8urO4BVGxQXlBda3QX4Q
+         Y5+xGUKgKflYDJyFxMZqL8RA5Gg7IdVdjoTn82/ht2fcnqh2iCmtGJ4RVrFFVINj9Bls
+         +H1w==
+X-Gm-Message-State: AJIora9PDWFfMwefSICVbqWoAlSwNrDquCns4FR6JfcVDKRP+DtBjl9C
+        3xEydRRG1DHNLJ/2Gmppd4uh66gUwhv2Rw==
+X-Google-Smtp-Source: AGRyM1tt3x6k/9iiiv0ZQz9wgGpCSFfaQZ7b5YnL7/7+iC5j/PmzQHcGKEQQ9zb3uaSy14913sGUiQ==
+X-Received: by 2002:a17:90b:1e45:b0:1ed:2fae:bc5a with SMTP id pi5-20020a17090b1e4500b001ed2faebc5amr50231670pjb.208.1657111516978;
+        Wed, 06 Jul 2022 05:45:16 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id n16-20020a170903111000b0016bdd124d46sm7758725plh.288.2022.07.06.05.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 05:45:16 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     eschwartz93@gmail.com, io-uring@vger.kernel.org
+In-Reply-To: <20220706034059.2817423-1-eschwartz93@gmail.com>
+References: <20220706034059.2817423-1-eschwartz93@gmail.com>
+Subject: Re: [PATCH liburing 0/6] More wor on updating exit codes to use
+Message-Id: <165711151626.294829.6761581197529682758.b4-ty@kernel.dk>
+Date:   Wed, 06 Jul 2022 06:45:16 -0600
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lVNuZ7hVSoe7+tTM"
-Content-Disposition: inline
-In-Reply-To: <YsU5Q6p17yGsxxk+@atmark-techno.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Tue, 5 Jul 2022 23:40:52 -0400, Eli Schwartz wrote:
+> Eli Schwartz (6):
+>   tests: do not report an error message when return ret that might be a
+>     skip
+>   tests: handle some skips that used a goto to enter cleanup
+>   tests: more work on updating exit codes to use enum-based status
+>     reporting
+>   tests: mention in a status message that this is a skip
+>   tests: migrate a skip that used a goto to enter cleanup
+>   tests: correctly exit with failure in a looped test
+> 
+> [...]
 
---lVNuZ7hVSoe7+tTM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-On Wed, Jul 06, 2022 at 04:26:59PM +0900, Dominique Martinet wrote:
-> Stefan Hajnoczi wrote on Wed, Jul 06, 2022 at 08:17:42AM +0100:
-> > Great! I've already queued your fix.
->=20
-> Thanks!
->=20
-> > Do you want to send a follow-up that updates the comment?
->=20
-> I don't think I'd add much value at this point, leaving it to you unless
-> you really would prefer me to send it.
+[1/6] tests: do not report an error message when return ret that might be a skip
+      commit: 6165251b85b6d431a7e2aea2c74e8a96f2ee6fbc
+[2/6] tests: handle some skips that used a goto to enter cleanup
+      commit: 32dee00eac664d4e59431fdbdb86301ed742feda
+[3/6] tests: more work on updating exit codes to use enum-based status reporting
+      commit: f955f102a9e62ee1b4c1b0eb9163f35433b85063
+[4/6] tests: mention in a status message that this is a skip
+      commit: 8780732115ece2d0a687df9d825bd0e8dd9e8643
+[5/6] tests: migrate a skip that used a goto to enter cleanup
+      commit: 80677160b2e634714412ba79d0faed326d29ae4d
+[6/6] tests: correctly exit with failure in a looped test
+      commit: 5d0e33f50a06db768b1891972daab40732400778
 
-That's fine. I'll send a patch. Thanks!
+Best regards,
+-- 
+Jens Axboe
 
-Stefan
-
---lVNuZ7hVSoe7+tTM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmLFPwgACgkQnKSrs4Gr
-c8ikiAgAk9fBuxL7+mmmWCbMmxxG81taEowzxPn7NMVhigpgpnuuJzw9TF0bpcAy
-pdOviF+4pVYlkpM3hQPhBJvzMs89mKekWx+81rE1cnZOR2hf4QO4Lx1ADO7MCv8S
-oSxPDHWEKXCI8lLxE8tPZKHCaveWshvSvDbrIDzDvyuyj/ThXEnHuBbO6JaRwXfg
-hZMgpjmqNFBRVUjHvH65E4wegvWEhWqCjDND/LBsfkHjfwpX8DT4elM2CWEBJ5aq
-fa/IDQf6PTJABLgqSXZPd5sJz2rpNWjrHe++YzHbmRuZtGziM1BleETCmdTtQr56
-QO1rgZZE+5hC9hdJteIo36pr2xXaKA==
-=FbMk
------END PGP SIGNATURE-----
-
---lVNuZ7hVSoe7+tTM--
 

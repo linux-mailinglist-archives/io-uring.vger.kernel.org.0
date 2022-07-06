@@ -2,113 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B01C567C99
-	for <lists+io-uring@lfdr.de>; Wed,  6 Jul 2022 05:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05769567F9E
+	for <lists+io-uring@lfdr.de>; Wed,  6 Jul 2022 09:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbiGFDli (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Jul 2022 23:41:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
+        id S230005AbiGFHQR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 6 Jul 2022 03:16:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbiGFDlh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 23:41:37 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 828801D337
-        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 20:41:36 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id z191so12939516iof.6
-        for <io-uring@vger.kernel.org>; Tue, 05 Jul 2022 20:41:36 -0700 (PDT)
+        with ESMTP id S229566AbiGFHQR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 6 Jul 2022 03:16:17 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EF402229E
+        for <io-uring@vger.kernel.org>; Wed,  6 Jul 2022 00:16:16 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id l11so25830480ybu.13
+        for <io-uring@vger.kernel.org>; Wed, 06 Jul 2022 00:16:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=yDg6wC7nuZZX8KWmjdjU7VBm9TO44Q1YklajAUbfBmw=;
-        b=MhoLdYR4BKTgVaD7bIkgz9rTuDL0ChkCD5K/Yrq86zloAXi6TEWeeqvZJDv7MHm/vq
-         uQMjtR+AlEOaXXnyesl7sFVEaZbRZnjOL890kHUWsF989s8BDlupOsvUtRGUJDuKrV95
-         S8XfQYay5pufOg7F4iNtmaK+s4X1RXH0jLA9x6Wr+/I4amrHugcXnp4kQj71pUrWjE9v
-         FxgjFMYpIL9ATrP9ow5jioSvFjjWISYClwHzXtZziP5nTPQ+S8xXi/dCo0DSDX+MuG1O
-         k6VnN0jiEa0tF8jXi6nFhrhybwPjEX+92MVwe8a5tE08K0XUqHO+Hma7YAqljDoRFg55
-         KKRQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XKqBn4LHqHQz+7eiTYx6Guo+XYS+/p+1Z90N9l9lsqc=;
+        b=Xa8Xs+3KIfbAIuZ5qKrFg7h2ojPkVj4b0IbDW9UrgjzSQsGtCG/5Cq4UaOBwma6Ha4
+         rwg6TtdtYujxjq9RCK2o4vC9Oz2pmRSAMqhqLJNSGodlYWKIQM1nQl6kT4LkdEkTsPQt
+         ZYhFcyh0TX4fH6LearuPYG/u+u//9+cZLgo8WOA0S0f9ri7Pk1syR4gxXMghVGYwsPxk
+         DjRf65Pc5rpUJKIG4/qznihl8VBCn77obuPS7S0hWUAhSEchgSUEAcf3AQccNR9lsFHT
+         06P2LU4DI7zJDmBiEmC23fFwfgBEzy9VTwxTRwOZ2T1Co+mxrhWhzupm7xLxvNuUJ87D
+         oQ7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yDg6wC7nuZZX8KWmjdjU7VBm9TO44Q1YklajAUbfBmw=;
-        b=IFYACKdxBSf+Wbv4U2mh+TbVDcxw4GaDIV7UI7oRkkwwlreERzpQm7ESSKE1QxC3o/
-         l5jBo12HgbAbclNIMu+aH5sclcxRKgaly8AT+dnrvYFOhkeyjZrCSBPaE/iePW6Qhe21
-         U0/9yyWm/tsweUihzwZdKEfAtqaxChamFKi556+5ZZzt2w1YWQXidcK2ldryEgiomQaT
-         GYDWv3A+abJ9L/Xyx+ym3hQucOJy18YfDKzR2gm97774imUj3XtOMWFdBZtDF+71slQN
-         OOaNkQUPQmpfbmLdxSsGbhXJll0UQma8K471zfRC0L7dU9tkVYbSNlE7kh3k+c60GyGh
-         RgAw==
-X-Gm-Message-State: AJIora/PQnGOFYtghRbTrJ75/AkMEht+MFW2yUvSEvhROngtlbfplBCs
-        pXDTedBjERc5hPr9gi4ojcEsx0bKLMKtc2lY
-X-Google-Smtp-Source: AGRyM1u+5HKkYBTrEyc4tSw/zklLIPrGvbHfrSBcMNbViWvMtKghTwNIx6vf8QoUj7wm+3XcpVgSAw==
-X-Received: by 2002:a05:6638:328c:b0:33c:b753:69f6 with SMTP id f12-20020a056638328c00b0033cb75369f6mr23713694jav.73.1657078895598;
-        Tue, 05 Jul 2022 20:41:35 -0700 (PDT)
-Received: from didactylos.localdomain ([2600:1700:57f0:ca20:763a:c795:fcf6:91ea])
-        by smtp.gmail.com with ESMTPSA id z6-20020a05660217c600b006692192baf7sm16427854iox.25.2022.07.05.20.41.34
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 20:41:35 -0700 (PDT)
-From:   Eli Schwartz <eschwartz93@gmail.com>
-To:     io-uring@vger.kernel.org
-Subject: [PATCH liburing 6/6] tests: correctly exit with failure in a looped test
-Date:   Tue,  5 Jul 2022 23:40:58 -0400
-Message-Id: <20220706034059.2817423-7-eschwartz93@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220706034059.2817423-1-eschwartz93@gmail.com>
-References: <20220706034059.2817423-1-eschwartz93@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XKqBn4LHqHQz+7eiTYx6Guo+XYS+/p+1Z90N9l9lsqc=;
+        b=3LryOODNH1mgwTZLCkf+pjch3nn2cE1MZRCnstj0XSMFDT9jHBwWEiW0424WiB9cxi
+         r1M/vP2xm2K2C+r4nuwcu7KnX3sEZvltKj7QDaNrUs260+Bf1SolQwW8anVzShhFhPmI
+         y9GEqxvJ9iYKSDLy1xkq2StM48+bOIwdMgrNy+LL7yW3F1IhvYqHTec+ayLWGwxPbzGA
+         MyEP+ILew2msFnCcG9+wmyAcofAUUhbl9GAecac0fl+N5cVc3zIaFS1oZbWLg8/8t1Bk
+         FCHEp0qakvM3CYYTnZFPcrtkzzMmlmxaZ9adom/gPXgBzLxYomY9mb7W3OoXK221m9r5
+         qkjA==
+X-Gm-Message-State: AJIora+ua58VfezvhY57NnFsyMzPGFfJonrV0jp9fZIo1t55lCeqKiYs
+        RQ3/c5KYmyQTPmDebhV163/eLkC8i0AvrSHoNdg=
+X-Google-Smtp-Source: AGRyM1uwinWDvG9yfzq/egIWqu32fFebRZsYA+tc+QZIO1OuEQtJlGxGvKZyYrLwZJQB4NWIyi3FVnfjB5Gcy1L09ss=
+X-Received: by 2002:a25:f81e:0:b0:66e:30d4:a31 with SMTP id
+ u30-20020a25f81e000000b0066e30d40a31mr21467901ybd.209.1657091775336; Wed, 06
+ Jul 2022 00:16:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220629044957.1998430-1-dominique.martinet@atmark-techno.com>
+ <20220630010137.2518851-1-dominique.martinet@atmark-techno.com>
+ <20220630154921.ekl45dzer6x4mkvi@sgarzare-redhat> <Yr4pLwz5vQJhmvki@atmark-techno.com>
+ <YsQ8aM3/ZT+Bs7nC@stefanha-x1.localdomain> <e9bbbeb5-c6b9-8d19-9593-b2c9187a5d98@kernel.dk>
+In-Reply-To: <e9bbbeb5-c6b9-8d19-9593-b2c9187a5d98@kernel.dk>
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+Date:   Wed, 6 Jul 2022 08:16:02 +0100
+Message-ID: <CAJSP0QWnw7q_TScW+3g+jwYpjRX922cL4KafUit5oFNWtqRvfA@mail.gmail.com>
+Subject: Re: [PATCH v2] io_uring: fix short read slow path
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Dominique Martinet <dominique.martinet@atmark-techno.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Aarushi Mehta <mehta.aaru20@gmail.com>,
+        Julia Suvorova <jusual@redhat.com>,
+        Kevin Wolf <kwolf@redhat.com>, Hanna Reitz <hreitz@redhat.com>,
+        qemu block <qemu-block@nongnu.org>,
+        qemu-devel <qemu-devel@nongnu.org>,
+        Filipe Manana <fdmanana@kernel.org>, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A common test pattern in this project is to test a couple related things
-in a single test binary, and return failure on the first one that fails,
-if any. Tracking subtest failures cannot be done well with simple exit()
-statuses, though it can using something like TAP and parsing a generated
-report.
+On Tue, 5 Jul 2022 at 20:26, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 7/5/22 7:28 AM, Stefan Hajnoczi wrote:
+> > On Fri, Jul 01, 2022 at 07:52:31AM +0900, Dominique Martinet wrote:
+> >> Stefano Garzarella wrote on Thu, Jun 30, 2022 at 05:49:21PM +0200:
+> >>>> so when we ask for more we issue an extra short reads, making sure we go
+> >>>> through the two short reads path.
+> >>>> (Unfortunately I wasn't quite sure what to fiddle with to issue short
+> >>>> reads in the first place, I tried cutting one of the iovs short in
+> >>>> luring_do_submit() but I must not have been doing it properly as I ended
+> >>>> up with 0 return values which are handled by filling in with 0 (reads
+> >>>> after eof) and that didn't work well)
+> >>>
+> >>> Do you remember the kernel version where you first saw these problems?
+> >>
+> >> Since you're quoting my paragraph about testing two short reads, I've
+> >> never seen any that I know of; but there's also no reason these couldn't
+> >> happen.
+> >>
+> >> Single short reads have been happening for me with O_DIRECT (cache=none)
+> >> on btrfs for a while, but unfortunately I cannot remember which was the
+> >> first kernel I've seen this on -- I think rather than a kernel update it
+> >> was due to file manipulations that made the file eligible for short
+> >> reads in the first place (I started running deduplication on the backing
+> >> file)
+> >>
+> >> The older kernel I have installed right now is 5.16 and that can
+> >> reproduce it --  I'll give my laptop some work over the weekend to test
+> >> still maintained stable branches if that's useful.
+> >
+> > Hi Dominique,
+> > Linux 5.16 contains commit 9d93a3f5a0c ("io_uring: punt short reads to
+> > async context"). The comment above QEMU's luring_resubmit_short_read()
+> > claims that short reads are a bug that was fixed by Linux commit
+> > 9d93a3f5a0c.
+> >
+> > If the comment is inaccurate it needs to be fixed. Maybe short writes
+> > need to be handled too.
+> >
+> > I have CCed Jens and the io_uring mailing list to clarify:
+> > 1. Are short IORING_OP_READV reads possible on files/block devices?
+> > 2. Are short IORING_OP_WRITEV writes possible on files/block devices?
+>
+> In general we try very hard to avoid them, but if eg we get a short read
+> or write from blocking context (eg io-wq), then io_uring does return
+> that. There's really not much we can do here, it seems futile to retry
+> IO which was issued just like it would've been from a normal blocking
+> syscall yet it is still short.
 
-However, this test simply set the value of `ret`, then proceeded to
-another test. If the first failed and the second succeeded, we would log
-a failure but then return a success.
+Thanks! QEMU's short I/O handling is spotty - some code paths handle
+it while others don't. For the io_uring QEMU block driver we'll try to
+handle short all I/Os.
 
-Just return immediately on failure as is done elsewhere.
-
-Signed-off-by: Eli Schwartz <eschwartz93@gmail.com>
----
- test/multicqes_drain.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/test/multicqes_drain.c b/test/multicqes_drain.c
-index b7448ac..1423f92 100644
---- a/test/multicqes_drain.c
-+++ b/test/multicqes_drain.c
-@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
- 		ret = test_simple_drain(&ring);
- 		if (ret) {
- 			fprintf(stderr, "test_simple_drain failed\n");
--			break;
-+			return T_EXIT_FAIL;
- 		}
- 	}
- 
-@@ -381,8 +381,8 @@ int main(int argc, char *argv[])
- 		ret = test_generic_drain(&ring);
- 		if (ret) {
- 			fprintf(stderr, "test_generic_drain failed\n");
--			break;
-+			return T_EXIT_FAIL;
- 		}
- 	}
--	return ret;
-+	return T_EXIT_PASS;
- }
--- 
-2.35.1
-
+Stefan

@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C02B0567C96
-	for <lists+io-uring@lfdr.de>; Wed,  6 Jul 2022 05:41:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A12F567C97
+	for <lists+io-uring@lfdr.de>; Wed,  6 Jul 2022 05:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbiGFDlf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Jul 2022 23:41:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45932 "EHLO
+        id S230214AbiGFDlg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Jul 2022 23:41:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbiGFDld (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 23:41:33 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859FF1D0EF
-        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 20:41:32 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id u20so12922473iob.8
-        for <io-uring@vger.kernel.org>; Tue, 05 Jul 2022 20:41:32 -0700 (PDT)
+        with ESMTP id S229480AbiGFDle (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Jul 2022 23:41:34 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D3881D0E6
+        for <io-uring@vger.kernel.org>; Tue,  5 Jul 2022 20:41:33 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id d3so12907605ioi.9
+        for <io-uring@vger.kernel.org>; Tue, 05 Jul 2022 20:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=PuqrKgkF0BrpsdGgHmBbhhU4JgPZ23Ju60Td0HEhJIQ=;
-        b=qUnJKGO1YW97Vu0zoFVtPEfKdXG4i2afrTY2Zq+34+Mp68oZUxq8T3EU0J5fglGDxX
-         WCm8mT/Os19mRHDLcPZyBMbD6EaVhPa4+oBF53tH5V7SsxjSz8Z+F3+U5ry4fVRZRNyt
-         Y7hd/pg81tt5BQRJvxLbJhCV0vSNJ7frHdJcxpfH16VKWZnY9rR6nhK9WW5j15lEXdOj
-         M8nqxK3BartLRunQJlWBqq3UC29RrfsZ5SI6cscCd00D2yTEHHzSkZo1zOWKlOWyhTDR
-         r+bSzLUIUy6r6HKLbUczUor1COG771NqkUgOsLa+6NzCGcKj1ZgjEuIvBp/zS8oINo1D
-         QFKg==
+        bh=xfD3SbcGC6vDn5t/EKU5Z6UJ22begM4XJyyDYZSUc2U=;
+        b=VpmL2ptLoaKkm7kvQQ6PjzcTCKUz8+XBguPBg56VYfEG69aK8YTIa0OkgQ47Qe5E1m
+         rbwXh0XZiV0rZ6/E5YRezr5ZRS6WaJmOODdrS8PpeSwwp/8VsDsM4i8hJUh+ord+v+oR
+         b7RTgsGLVrgdVeVZTZu/AwSAUBTwN25hH/4vpw3PQNGZNO+Yay2P9zW7Tr3I4jKYDWyx
+         OhDHzepDiv3BHC/Ezi4wMo04XeYLz/ZUExe9wdNGjIvnEjs6Vds28JZmQ55+KDHVN+h3
+         Gfde+JaYP/pBmPGt9KXo/BBZLAuev1qH538Dh8swApQOeaToWFnnpq74MZqrcCGqa76+
+         pttg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PuqrKgkF0BrpsdGgHmBbhhU4JgPZ23Ju60Td0HEhJIQ=;
-        b=EfIgef5ZRvMAXF1mj/+7MXXv2oGi61dmOy1Z0jQ7nx6HTXD3Yksr+ooWnm+EirV6WJ
-         3Gz3kxP+kOo8PMqAOJx9ufNo9lYuSEJdaaAUryiFgL64xdZEoMI8MTU/gutginyosAZK
-         2P7mmDcpvolJ/fMsg0nNwlIdvZr/HuAgpZmi/+RSp42xzHhbCcO8gA12Wvqr96pb5wti
-         I5/0NIjzAnmaTUrhClyZmDZTm+FU+bc45EgOCgJ9f90tMhv41Ra1xjXlaWNz7T1m/eWq
-         dM/RXsBTq0r1vlH48gocR4d7QXISLP4Jnai10GKDX7+dztSca6c8qYRMunIQ5N3egHXn
-         zarw==
-X-Gm-Message-State: AJIora+YN1gwjotj2ylWDILZm2thT2vKDaqnUdzkXdPMZIRAS4DbU/Vt
-        o2w9N/z0SGYGhL/y3RJ5glrfHeGUqLAgVdys
-X-Google-Smtp-Source: AGRyM1tczPE4sGwzSudLMzD9sQNEe3Y+CLgNMMNKxSI6LfSVovHwRqTawUfZTiY9pLdlMHlHxY17LA==
-X-Received: by 2002:a05:6638:3a07:b0:33d:1340:8ac4 with SMTP id cn7-20020a0566383a0700b0033d13408ac4mr20350954jab.113.1657078891536;
-        Tue, 05 Jul 2022 20:41:31 -0700 (PDT)
+        bh=xfD3SbcGC6vDn5t/EKU5Z6UJ22begM4XJyyDYZSUc2U=;
+        b=7D3wq7mmFuwMWdMjUvWrF/b2xkUvyoSWmcNFy1YA1QIq2Jl2SiEuZDSLYkcGzTryuc
+         Xu/NhmR67u337bIm3aGCg91NosZtG5zjBx9C8wVJ8OZ4LQdV8nVJ53X+ylYCxPNek72+
+         fpZDPBGJ4neGtuPUL8A27ql6bll7ejMpTctP3Nn2+kBEvcafO/7CdX499NCdChO5SQCU
+         vW6Mtau58Ote/Yl+5gofFo0VLFaD/XVkDR62a4TOGvmX72EzLVTovieSOW9OOzePuoxS
+         XOU4Ob1Kp/1WzQQk1IXVviCvE0RbRtwpTGWAwZupBGdIk8TPRy4xmxIdITCxOtoWFWqa
+         unCg==
+X-Gm-Message-State: AJIora+QCXxYZRNgcvRDFTp+5yDrb/bZZTk7UKl4O8VEDs/9FB8DRHj8
+        UXCJb7c2NuleH5ueyC04+A0EvFDPA2d1rfYC
+X-Google-Smtp-Source: AGRyM1uOHUHxiqoZ5M1FxY9UL5o0mlByKFdIZ2vzVGFcJbBrX1oxeK0yHg6H36LRE8Xk1t3f9Z9b9w==
+X-Received: by 2002:a05:6602:15d1:b0:678:60ee:88bc with SMTP id f17-20020a05660215d100b0067860ee88bcmr11524997iow.73.1657078892351;
+        Tue, 05 Jul 2022 20:41:32 -0700 (PDT)
 Received: from didactylos.localdomain ([2600:1700:57f0:ca20:763a:c795:fcf6:91ea])
-        by smtp.gmail.com with ESMTPSA id z6-20020a05660217c600b006692192baf7sm16427854iox.25.2022.07.05.20.41.30
+        by smtp.gmail.com with ESMTPSA id z6-20020a05660217c600b006692192baf7sm16427854iox.25.2022.07.05.20.41.31
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 05 Jul 2022 20:41:31 -0700 (PDT)
 From:   Eli Schwartz <eschwartz93@gmail.com>
 To:     io-uring@vger.kernel.org
-Subject: [PATCH liburing 1/6] tests: do not report an error message when return ret that might be a skip
-Date:   Tue,  5 Jul 2022 23:40:53 -0400
-Message-Id: <20220706034059.2817423-2-eschwartz93@gmail.com>
+Subject: [PATCH liburing 2/6] tests: handle some skips that used a goto to enter cleanup
+Date:   Tue,  5 Jul 2022 23:40:54 -0400
+Message-Id: <20220706034059.2817423-3-eschwartz93@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220706034059.2817423-1-eschwartz93@gmail.com>
 References: <20220706034059.2817423-1-eschwartz93@gmail.com>
@@ -68,56 +68,166 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We are going to update these functions to distinguish between pass/skip,
-so ret might be nonzero but have handled its own non-error message.
+We cannot use the general cleanup-and-succeed here. These were
+improperly ported to the exitcode reporting.
 
 Signed-off-by: Eli Schwartz <eschwartz93@gmail.com>
 ---
- test/fallocate.c   | 8 ++++++--
- test/file-update.c | 4 +++-
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ test/accept-test.c             |  7 +++++--
+ test/fallocate.c               | 10 ++++++----
+ test/files-exit-hang-poll.c    |  6 ++++--
+ test/files-exit-hang-timeout.c |  6 ++++--
+ test/hardlink.c                |  9 ++++++---
+ 5 files changed, 25 insertions(+), 13 deletions(-)
 
+diff --git a/test/accept-test.c b/test/accept-test.c
+index a898360..99f6080 100644
+--- a/test/accept-test.c
++++ b/test/accept-test.c
+@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
+ 	if (!ret) {
+ 		if (cqe->res == -EBADF || cqe->res == -EINVAL) {
+ 			fprintf(stdout, "Accept not supported, skipping\n");
+-			goto out;
++			goto skip;
+ 		} else if (cqe->res < 0) {
+ 			fprintf(stderr, "cqe error %d\n", cqe->res);
+ 			goto err;
+@@ -71,9 +71,12 @@ int main(int argc, char *argv[])
+ 		return T_EXIT_FAIL;
+ 	}
+ 
+-out:
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_PASS;
++
++skip:
++	io_uring_queue_exit(&ring);
++	return T_EXIT_SKIP;
+ err:
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_FAIL;
 diff --git a/test/fallocate.c b/test/fallocate.c
-index 6cb57e0..a9bf6fd 100644
+index a9bf6fd..e804ca5 100644
 --- a/test/fallocate.c
 +++ b/test/fallocate.c
-@@ -230,7 +230,9 @@ int main(int argc, char *argv[])
- 
- 	ret = test_fallocate(&ring);
- 	if (ret) {
--		fprintf(stderr, "test_fallocate failed\n");
-+		if (ret != T_EXIT_SKIP) {
-+			fprintf(stderr, "test_fallocate failed\n");
-+		}
- 		return ret;
+@@ -67,14 +67,15 @@ static int test_fallocate_rlimit(struct io_uring *ring)
+ 	if (cqe->res == -EINVAL) {
+ 		fprintf(stdout, "Fallocate not supported, skipping\n");
+ 		no_fallocate = 1;
+-		goto out;
++		goto skip;
+ 	} else if (cqe->res != -EFBIG) {
+ 		fprintf(stderr, "Expected -EFBIG: %d\n", cqe->res);
+ 		goto err;
+ 	}
+ 	io_uring_cqe_seen(ring, cqe);
+-out:
+ 	return 0;
++skip:
++	return T_EXIT_SKIP;
+ err:
+ 	return 1;
+ }
+@@ -117,7 +118,7 @@ static int test_fallocate(struct io_uring *ring)
+ 	if (cqe->res == -EINVAL) {
+ 		fprintf(stdout, "Fallocate not supported, skipping\n");
+ 		no_fallocate = 1;
+-		goto out;
++		goto skip;
+ 	}
+ 	if (cqe->res) {
+ 		fprintf(stderr, "cqe->res=%d\n", cqe->res);
+@@ -136,8 +137,9 @@ static int test_fallocate(struct io_uring *ring)
+ 		goto err;
  	}
  
-@@ -242,7 +244,9 @@ int main(int argc, char *argv[])
- 
- 	ret = test_fallocate_rlimit(&ring);
- 	if (ret) {
--		fprintf(stderr, "test_fallocate_rlimit failed\n");
-+		if (ret != T_EXIT_SKIP) {
-+			fprintf(stderr, "test_fallocate_rlimit failed\n");
-+		}
- 		return ret;
+-out:
+ 	return 0;
++skip:
++	return T_EXIT_SKIP;
+ err:
+ 	return 1;
+ }
+diff --git a/test/files-exit-hang-poll.c b/test/files-exit-hang-poll.c
+index 432d89f..0c609f1 100644
+--- a/test/files-exit-hang-poll.c
++++ b/test/files-exit-hang-poll.c
+@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
+ 		}
+ 		if (i == 99) {
+ 			printf("Gave up on finding a port, skipping\n");
+-			goto out;
++			goto skip;
+ 		}
  	}
  
-diff --git a/test/file-update.c b/test/file-update.c
-index 97db95a..b8039c9 100644
---- a/test/file-update.c
-+++ b/test/file-update.c
-@@ -165,7 +165,9 @@ int main(int argc, char *argv[])
- 
- 	ret = test_sqe_update(&r1);
- 	if (ret) {
--		fprintf(stderr, "test_sqe_update failed\n");
-+		if (ret != T_EXIT_SKIP) {
-+			fprintf(stderr, "test_sqe_update failed\n");
-+		}
- 		return ret;
+@@ -123,7 +123,9 @@ int main(int argc, char *argv[])
+ 		return T_EXIT_FAIL;
  	}
  
+-out:
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_PASS;
++skip:
++	io_uring_queue_exit(&ring);
++	return T_EXIT_SKIP;
+ }
+diff --git a/test/files-exit-hang-timeout.c b/test/files-exit-hang-timeout.c
+index a19afc6..318f0e1 100644
+--- a/test/files-exit-hang-timeout.c
++++ b/test/files-exit-hang-timeout.c
+@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
+ 		}
+ 		if (i == 99) {
+ 			printf("Gave up on finding a port, skipping\n");
+-			goto out;
++			goto skip;
+ 		}
+ 	}
+ 
+@@ -129,7 +129,9 @@ int main(int argc, char *argv[])
+ 		return T_EXIT_FAIL;
+ 	}
+ 
+-out:
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_PASS;
++skip:
++	io_uring_queue_exit(&ring);
++	return T_EXIT_SKIP;
+ }
+diff --git a/test/hardlink.c b/test/hardlink.c
+index f2b8182..29395c3 100644
+--- a/test/hardlink.c
++++ b/test/hardlink.c
+@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
+ 	if (ret < 0) {
+ 		if (ret == -EBADF || ret == -EINVAL) {
+ 			fprintf(stdout, "linkat not supported, skipping\n");
+-			goto out;
++			goto skip;
+ 		}
+ 		fprintf(stderr, "linkat: %s\n", strerror(-ret));
+ 		goto err1;
+@@ -121,7 +121,11 @@ int main(int argc, char *argv[])
+ 		goto err2;
+ 	}
+ 
+-out:
++	unlinkat(AT_FDCWD, linkname, 0);
++	unlinkat(AT_FDCWD, target, 0);
++	io_uring_queue_exit(&ring);
++	return T_EXIT_SKIP;
++skip:
+ 	unlinkat(AT_FDCWD, linkname, 0);
+ 	unlinkat(AT_FDCWD, target, 0);
+ 	io_uring_queue_exit(&ring);
+@@ -134,4 +138,3 @@ err:
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_FAIL;
+ }
+-
 -- 
 2.35.1
 

@@ -2,63 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D920E56AF00
-	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 01:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9159356AF05
+	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 01:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236672AbiGGX2C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 Jul 2022 19:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37144 "EHLO
+        id S236807AbiGGXdB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 Jul 2022 19:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236491AbiGGX2B (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Jul 2022 19:28:01 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD80324BE7
-        for <io-uring@vger.kernel.org>; Thu,  7 Jul 2022 16:27:59 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id l124so11705242pfl.8
-        for <io-uring@vger.kernel.org>; Thu, 07 Jul 2022 16:27:59 -0700 (PDT)
+        with ESMTP id S236446AbiGGXdA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Jul 2022 19:33:00 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26DA21D339
+        for <io-uring@vger.kernel.org>; Thu,  7 Jul 2022 16:33:00 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id 5so9094008plk.9
+        for <io-uring@vger.kernel.org>; Thu, 07 Jul 2022 16:33:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:in-reply-to:references:subject:message-id:date:mime-version
-         :content-transfer-encoding;
-        bh=t6IIOoDo6e8kvKjSOyPfZiSo9RMp/RKIC6F/MTngEso=;
-        b=jbUnDUaATkPoiTUMR1OWOkyssdTAdD4a1pD1LU5iAAZD+RvZupS6+eWHyQFKjMpHPL
-         n4fSmEnfD8YOjY3Q9gwSM42eb6+zixSHH7kLPE6dqFyQCVaZWADGYbmxLMm5FmxG2DBn
-         9D1mh0t+ooHztaJzp6Vt2INWRjdAGHwG6pgy8BtzF2JWxdz61E0zBeYvm3HmeDPufanW
-         XcieTO6f3ZV65dQSXcHo7zZh5b6FlmFltlv1jOfeBXCmQFViOBgAZkqugJYfLF54wHOo
-         x9tmjiYE6mQPRg3sPAcRV3CW2gzJLt0yX4r/Rna7E5BjOpal32mVREXjZhtgsu6Pr9oo
-         OtZA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=OxCwpw5YZqk+e6xDy+BNGmmQ5BJ0BksV6JcWtUmlTQw=;
+        b=ga+jnuUsPZrvWbKcE035xuM4lnAWLDGVVcZJJo/cl+l7MPsjsCqrckA3d9kLJIDZ+Q
+         NV/a6B3c7DfW6KHLrB2k6+v0VnFaW9sRC5obTSQ9LqQBqKgtMliffeux0JWY4snLpPhQ
+         PPJF+GbKE0oZTb/knl4lwTsA+NqzpB+krrgku8HB2xt8W2LjBmF5KXAPpxwqA8+AuTXC
+         v8awGfBbA4FkLIPrJ+gAl0jwHdlLvcwvvm/dvh5Y5xCMN/U2HSscRitNL9N6m5H70IWE
+         OAPwHDm7r2gVH/mbhpzo0f9VKgtuRD2LT6ceVaJjvhfCDbyOMBSNOSk3TsS4OO0s9+pX
+         NLww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=t6IIOoDo6e8kvKjSOyPfZiSo9RMp/RKIC6F/MTngEso=;
-        b=00SkXvyuI5skbKSuOn0+Q4VrTgD2iH4D28nKCJXStrKI5mJ33p4hgPXsXU81Ja4ypA
-         C3pVG3l8HnDLDaQDlzIbiYAUo09od3EOuaOfadQOa67NB741J+RQpQ0D9Xxr0nGobHYD
-         fKxptr4SeFUa8AbHNrEgsvoOwkVoRcGK8LmAxN+7fVXXoTGlbQKa8rHUujkLhzD+AHoV
-         kmYbVvHTIJjYn3TmD254uS7cYfRapKsALzDKTR2Vn2+DRieZQ1xRqS26Lfec4IAW4nny
-         2R4B4EoGmj/3VrKLWuKywdovjcxt3N6NMuyCBSG88BL7IOcV/wh5KPzWBFugg41ooNV7
-         tpcQ==
-X-Gm-Message-State: AJIora9+PysMJsxMc7O0sY9ilwCL6QE5ylhY61aPP3WudGR5o5hEfJBh
-        6DX4krVzloa76n5D/vGSSagBpgjuP4PGig==
-X-Google-Smtp-Source: AGRyM1vP27j+c8P8qE7ud4L34p8BV2LgiB05HkGlZHyI3PzGueHXFsknLdaYVSlESg04HZIAKX5x4Q==
-X-Received: by 2002:a63:1a5c:0:b0:412:96be:cfb with SMTP id a28-20020a631a5c000000b0041296be0cfbmr495135pgm.203.1657236479105;
-        Thu, 07 Jul 2022 16:27:59 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id p4-20020a625b04000000b005289ffefe82sm4720483pfb.130.2022.07.07.16.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 16:27:58 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, asml.silence@gmail.com
-In-Reply-To: <cover.1657203020.git.asml.silence@gmail.com>
-References: <cover.1657203020.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 0/4] poll locking fixes
-Message-Id: <165723647842.60895.640587935345175855.b4-ty@kernel.dk>
-Date:   Thu, 07 Jul 2022 17:27:58 -0600
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=OxCwpw5YZqk+e6xDy+BNGmmQ5BJ0BksV6JcWtUmlTQw=;
+        b=17Xu4Fza0FTEfB5Nmu16QGlJR29VXfoZyPmGIWJzVKTAy5RptA/JXEeGT5T1txkbpv
+         HsbM5iYJh6Zpl2ho6BhCFBAJaJWLWT5jEOqc3RjV1vULUB0vmfeNg0kec7uW0JtorhAq
+         itPPwf8SK9E7tADPMjSbE65fF8BppB7Gc/O6dhiAp/s5JtPOqxT3uzixAB1mtdMudRZi
+         GcNExYb6eLs5a/o5zTU74IgZdmYGjWeCbd+Az9mehOA0qAS1t3lMohCNJ/SoicbmBuuk
+         viyyNRsqxmvWJyGSWKNRuIKZSzg7XEMYRIn6PDjjWR6sOOqBtQr2xNnn4R6M/LkCDaUl
+         XD/Q==
+X-Gm-Message-State: AJIora9N3lXQ+iUb4YiTPzMhjsLZioz0OcubrSzlHHn8+E35BnNDLDUs
+        xX+9kyhyApE88aZQTNar+9ivmQ==
+X-Google-Smtp-Source: AGRyM1s4csEPIjEHsi/WlBCkMZR5RKxbadf+imfXEv4I5JYcxTv2ZnmmAI8eF8zeoWiI+x6T0DNVIA==
+X-Received: by 2002:a17:90b:292:b0:1ef:a490:3480 with SMTP id az18-20020a17090b029200b001efa4903480mr374416pjb.219.1657236779499;
+        Thu, 07 Jul 2022 16:32:59 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id bj28-20020a056a00319c00b0051bc36b7995sm27097218pfb.62.2022.07.07.16.32.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Jul 2022 16:32:59 -0700 (PDT)
+Message-ID: <7b6bb01e-761e-4b72-e06a-566628bfdab3@kernel.dk>
+Date:   Thu, 7 Jul 2022 17:32:58 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 5.19 1/1] io_uring: explicit sqe padding for ioctl
+ commands
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <e6b95a05e970af79000435166185e85b196b2ba2.1657202417.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <e6b95a05e970af79000435166185e85b196b2ba2.1657202417.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,31 +71,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 7 Jul 2022 15:13:13 +0100, Pavel Begunkov wrote:
-> Fix a stupid bug with recent poll locking optimisations and also add two
-> clean ups on top.
+On 7/7/22 8:00 AM, Pavel Begunkov wrote:
+> 32 bit sqe->cmd_op is an union with 64 bit values. It's always a good
+> idea to do padding explicitly. Also zero check it in prep, so it can be
+> used in the future if needed without compatibility concerns.
 > 
-> Pavel Begunkov (4):
->   io_uring: don't miss setting REQ_F_DOUBLE_POLL
->   io_uring: don't race double poll setting REQ_F_ASYNC_DATA
->   io_uring: clear REQ_F_HASH_LOCKED on hash removal
->   io_uring: consolidate hash_locked io-wq handling
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c                 | 2 +-
+>  include/uapi/linux/io_uring.h | 5 ++++-
+>  2 files changed, 5 insertions(+), 2 deletions(-)
 > 
-> [...]
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0d491ad15b66..3b5e798524e5 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5066,7 +5066,7 @@ static int io_uring_cmd_prep(struct io_kiocb *req,
+>  {
+>  	struct io_uring_cmd *ioucmd = &req->uring_cmd;
+>  
+> -	if (sqe->rw_flags)
+> +	if (sqe->rw_flags | sqe->__pad1)
 
-Applied, thanks!
+Applied, but this changed to a logical OR instead.
 
-[1/4] io_uring: don't miss setting REQ_F_DOUBLE_POLL
-      commit: cac3abc09e660efdf7e5cfc08a1dd036dd469f3c
-[2/4] io_uring: don't race double poll setting REQ_F_ASYNC_DATA
-      commit: 5667130cabe02a13e1937ccbb4a327ca2b635c47
-[3/4] io_uring: clear REQ_F_HASH_LOCKED on hash removal
-      commit: 29384959ff90016682457eb2d16c897c02515c51
-[4/4] io_uring: consolidate hash_locked io-wq handling
-      commit: 7cb765f3b72f4478852dca6cb0e8e04118c89cc2
-
-Best regards,
 -- 
 Jens Axboe
-
 

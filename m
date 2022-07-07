@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 313B456A150
-	for <lists+io-uring@lfdr.de>; Thu,  7 Jul 2022 13:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08B956A189
+	for <lists+io-uring@lfdr.de>; Thu,  7 Jul 2022 13:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235654AbiGGLxF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 Jul 2022 07:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55576 "EHLO
+        id S235223AbiGGLxE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 Jul 2022 07:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235300AbiGGLwV (ORCPT
+        with ESMTP id S235333AbiGGLwV (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 7 Jul 2022 07:52:21 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C5053D33;
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5829C564DE;
         Thu,  7 Jul 2022 04:52:11 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id n10so652456wrc.4;
+Received: by mail-wr1-x436.google.com with SMTP id f2so20574414wrr.6;
         Thu, 07 Jul 2022 04:52:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FNoKlp/SzKlWKmK/1oNh3mGrQFyB3mtnwPpvEKvsiGw=;
-        b=Y3VVECV5nyDkb5h+3N82nH/dQ3E7F2OgTMBmUTzHgZ43JyTmExa6k6CfS0GBMvTJ+1
-         CoNLdWWMdKRx235F8de9jx4CQUq3qpPkE7Ef9IneyEdtqvA5qb02scGF4EpNCcpuNApe
-         f8TuIsJgSbreYofNhnywB1TO02RUTZpf30s6ga6jibfQxh4riCxIl+4InY5om8UUD5C+
-         OfJdmCFuRubUyNNPtmwQwFpZIZGepY1c78xf+N9TwsJKB7VwAwqFc7OIn0+aPNAUI3XY
-         y/wkWqjS/sURH3yRFxfvuYYaYVHg1oTQvt+Qrgg0cnFBtjJJD2xKsZdSbegPH6CQmm47
-         qGeA==
+        bh=omoo5cVZNNBFIFnOaNM6NLvMePhB2gb+Cvuo04exYeA=;
+        b=brBXziFLd5ln5hHryX/tpn9+fqyCgr70FpALY5PXPaA0YkczPFGCEGvjbIrRNa2M4Z
+         3MyodXjWkkihZLP6UkNyATo+01YM8ysucU11pBAq8duJKPxQJ1b0PYf58XhlXSN2Iuk1
+         zwSSAZSvTUrxPz6IUzr2oOxJ0DpZnrdwhMv6LpwvRyMHh6dmpUwQeggfDNp3Vszgh/xC
+         6S/I/Ox1qJ9zD/Zk3V7n+jcX5SC0dcFaMuUisQ5DL0w5m+4EJVO3TCffZRxhimhLSar8
+         KHzh4KTQNgeO7+3yQ89rNEFshGBBzkDJaWqtNC6qrKvA6u3EgW+Ye+qGWBgTLK/QMHFg
+         85dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FNoKlp/SzKlWKmK/1oNh3mGrQFyB3mtnwPpvEKvsiGw=;
-        b=1c05pXrsgkOcaSE9LQ7wWLuenOO6orgS5YS4+H1SAi5VHPJt9VnZPxvOxqgqm0VKP6
-         GPfR49x4wnFDFPOnOqx615Kqkm+iLWBYB/4fByDsY2SLT8DBjXCrmPhtEP8Q4eGGJl7g
-         NhGurngX+vp/YOT44oeyoI7yqFS2+zyb9YuhI/jvw63+4UcM0q2ItKiZ1peczsJeUjZf
-         FGA+Dl4OpowMV4iH2XynxnjdL+74NMIbVA3gThswh+HBSr6JV89yBmEQGfbFZnIsdYWF
-         UFWJEzx3BtarlvWDMwU5hzHqKm7KG9XSw9cQPOThctk6Eyr33PtC5/8A4effDXTGFje8
-         Z4gA==
-X-Gm-Message-State: AJIora8YGfG5sePMZcRjD0UTCqBaZElcYuYaV2JppvHnauDupI0RMPqR
-        16TWBaJ91hCNYNAg2RnXaBBc/5j7oY7VQ/P4Q/M=
-X-Google-Smtp-Source: AGRyM1vpEFSGS6wbdfQ3p+XZzzOJ8na4RMVJfyFlyF75WuRNegLPfoQfnEHtqVnTL1ZTL58ugNlX6w==
-X-Received: by 2002:a5d:5846:0:b0:21b:c444:9913 with SMTP id i6-20020a5d5846000000b0021bc4449913mr39721499wrf.128.1657194729572;
-        Thu, 07 Jul 2022 04:52:09 -0700 (PDT)
+        bh=omoo5cVZNNBFIFnOaNM6NLvMePhB2gb+Cvuo04exYeA=;
+        b=wtvKbDntugkPJLywuIIiNEormwV/xInjZdzyfm9hpbgxp7A6kYbMU5JWrczvq/d1lT
+         qNfsZGCNBmoWcxTriHKUnZfkbhdwWfcc24APds/JTEPVD9B5+WscWkjbvKyQA6EVIFJ3
+         s140/GxmYKwDHUUywMDFYX09wa0N5peWPqwt1zNo+iZrn7T55wr9cTUDea5FakKQ1W9Q
+         7bvr8QBue1LavYE4i4PUja0dhzIOYxVkrEkY5RhwYxhqFpM/K+1zGIaIhotwAodmLe1b
+         LPLx9S8sPUTDpr3CwYWfy1J69TYg9+Rt+J+qWiQgEZRkA7sComiT0z8S4Yc1qUdBSdGE
+         mZ4A==
+X-Gm-Message-State: AJIora+INZv0DGWIIjIPEJZ1qPVHOkntsloVtv0ClX0z52S9pEyYbTdZ
+        QuCQfG6jGaSKMJNlK/AqTMQamZf+ygrJAPRi4dc=
+X-Google-Smtp-Source: AGRyM1tEgLds10QNWmthl9h5KvVoRezaUvMvpPYja4GtVqUh01IvggKuGXGg392vUO45mB2Z9eEGGA==
+X-Received: by 2002:a05:6000:695:b0:21a:3a1a:7b60 with SMTP id bo21-20020a056000069500b0021a3a1a7b60mr41107170wrb.441.1657194730645;
+        Thu, 07 Jul 2022 04:52:10 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id u2-20020a5d5142000000b0021b966abc19sm37982131wrt.19.2022.07.07.04.52.08
+        by smtp.gmail.com with ESMTPSA id u2-20020a5d5142000000b0021b966abc19sm37982131wrt.19.2022.07.07.04.52.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 04:52:09 -0700 (PDT)
+        Thu, 07 Jul 2022 04:52:10 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -56,9 +56,9 @@ Cc:     "David S . Miller" <davem@davemloft.net>,
         Willem de Bruijn <willemb@google.com>,
         Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
         kernel-team@fb.com, Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH net-next v4 20/27] io_uring: account locked pages for non-fixed zc
-Date:   Thu,  7 Jul 2022 12:49:51 +0100
-Message-Id: <b54ec5eef1eeb7c0f947248392241fcfd9dae522.1657194434.git.asml.silence@gmail.com>
+Subject: [PATCH net-next v4 21/27] io_uring: allow to pass addr into sendzc
+Date:   Thu,  7 Jul 2022 12:49:52 +0100
+Message-Id: <75fbbc1dff3835ddd996346b86eab3b8e83435ff.1657194434.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1657194434.git.asml.silence@gmail.com>
 References: <cover.1657194434.git.asml.silence@gmail.com>
@@ -74,45 +74,85 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Fixed buffers are RLIMIT_MEMLOCK accounted, however it doesn't cover iovec
-based zerocopy sends. Do the accounting on the io_uring side.
+Allow to specify an address to zerocopy sends making it more like
+sendto(2).
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/net.c   | 1 +
- io_uring/notif.c | 6 ++++++
- 2 files changed, 7 insertions(+)
+ include/uapi/linux/io_uring.h |  2 +-
+ io_uring/net.c                | 18 ++++++++++++++++--
+ 2 files changed, 17 insertions(+), 3 deletions(-)
 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index a6844908772a..25278c9ac6d2 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -65,7 +65,7 @@ struct io_uring_sqe {
+ 		__u32	file_index;
+ 		struct {
+ 			__u16	notification_idx;
+-			__u16	__pad;
++			__u16	addr_len;
+ 		};
+ 	};
+ 	union {
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 399267e8f1ef..69273d4f4ef0 100644
+index 69273d4f4ef0..2172cf3facd8 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -724,6 +724,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 	ret = import_single_range(WRITE, zc->buf, zc->len, &iov, &msg.msg_iter);
- 	if (unlikely(ret))
- 		return ret;
-+	mm_account_pinned_pages(&notif->uarg.mmp, zc->len);
+@@ -66,6 +66,8 @@ struct io_sendzc {
+ 	u16				slot_idx;
+ 	unsigned			msg_flags;
+ 	unsigned			flags;
++	unsigned			addr_len;
++	void __user			*addr;
+ };
  
+ #define IO_APOLL_MULTI_POLLED (REQ_F_APOLL_MULTISHOT | REQ_F_POLLED)
+@@ -666,8 +668,7 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_sendzc *zc = io_kiocb_to_cmd(req);
+ 
+-	if (READ_ONCE(sqe->addr2) || READ_ONCE(sqe->__pad2[0]) ||
+-	    READ_ONCE(sqe->addr3))
++	if (READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3))
+ 		return -EINVAL;
+ 
+ 	zc->flags = READ_ONCE(sqe->ioprio);
+@@ -680,6 +681,10 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	zc->slot_idx = READ_ONCE(sqe->notification_idx);
+ 	if (zc->msg_flags & MSG_DONTWAIT)
+ 		req->flags |= REQ_F_NOWAIT;
++
++	zc->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
++	zc->addr_len = READ_ONCE(sqe->addr_len);
++
+ #ifdef CONFIG_COMPAT
+ 	if (req->ctx->compat)
+ 		zc->msg_flags |= MSG_CMSG_COMPAT;
+@@ -689,6 +694,7 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ {
++	struct sockaddr_storage address;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_sendzc *zc = io_kiocb_to_cmd(req);
+ 	struct io_notif_slot *notif_slot;
+@@ -726,6 +732,14 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 		return ret;
+ 	mm_account_pinned_pages(&notif->uarg.mmp, zc->len);
+ 
++	if (zc->addr) {
++		ret = move_addr_to_kernel(zc->addr, zc->addr_len, &address);
++		if (unlikely(ret < 0))
++			return ret;
++		msg.msg_name = (struct sockaddr *)&address;
++		msg.msg_namelen = zc->addr_len;
++	}
++
  	msg_flags = zc->msg_flags | MSG_ZEROCOPY;
  	if (issue_flags & IO_URING_F_NONBLOCK)
-diff --git a/io_uring/notif.c b/io_uring/notif.c
-index e6d98dc208c7..c5179e5c1cd6 100644
---- a/io_uring/notif.c
-+++ b/io_uring/notif.c
-@@ -14,7 +14,13 @@ static void __io_notif_complete_tw(struct callback_head *cb)
- 	struct io_notif *notif = container_of(cb, struct io_notif, task_work);
- 	struct io_rsrc_node *rsrc_node = notif->rsrc_node;
- 	struct io_ring_ctx *ctx = notif->ctx;
-+	struct mmpin *mmp = &notif->uarg.mmp;
- 
-+	if (mmp->user) {
-+		atomic_long_sub(mmp->num_pg, &mmp->user->locked_vm);
-+		free_uid(mmp->user);
-+		mmp->user = NULL;
-+	}
- 	if (likely(notif->task)) {
- 		io_put_task(notif->task, 1);
- 		notif->task = NULL;
+ 		msg_flags |= MSG_DONTWAIT;
 -- 
 2.36.1
 

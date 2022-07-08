@@ -2,73 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE7756C100
-	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 20:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 808E256C2A6
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jul 2022 01:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239118AbiGHSfo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Jul 2022 14:35:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58584 "EHLO
+        id S239626AbiGHSoY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Jul 2022 14:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238967AbiGHSfo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 14:35:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 453B51CFDD
-        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 11:35:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ECDD0B825BD
-        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 18:35:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9CEDFC341C0;
-        Fri,  8 Jul 2022 18:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657305340;
-        bh=oC2a8TQPjq6MkJQpj+jqG33OlxEAIF0KHapFeXlnbNs=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=ocsQBvZl6hswdIspPem1IZ9nIoSF1BLTZQV8YXjxg3b8yApF8WTh2V6RuF9hA4gYW
-         69K9N79xZwsu66reYzqUl/LObl6L60NYCUcQ+EnXIOz9lIjlTBLoL38YusBCHwRFxz
-         Vs45d0TdXjTKJJG/LFb21AsjQ+FJZWHi+vUwgpl7CApc2CyXjf+4LWvsCDSVKx0saC
-         wpqD5krdJsPK83gxWci8R9HWxRhVK3HmdfhpomCrhjaXSYobME+gNlsE7dl108MZP4
-         PhVTIY/xLySf4iVrKcrH4TlHGe7yh+tXaOQjVDl4yc/R5mPrQvRbkoPEz404VgSRbr
-         6ZNC+vitQt2KQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8BA77E45BDB;
-        Fri,  8 Jul 2022 18:35:40 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring tweak for 5.19-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <bcefaf51-69bc-ac57-972e-9419ef3d6f8a@kernel.dk>
-References: <bcefaf51-69bc-ac57-972e-9419ef3d6f8a@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <bcefaf51-69bc-ac57-972e-9419ef3d6f8a@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-5.19-2022-07-08
-X-PR-Tracked-Commit-Id: bdb2c48e4b38e6dbe82533b437468999ba3ae498
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 29837019d5ebb80a5f180af3107a0645c731a770
-Message-Id: <165730534056.9073.9155727923233750436.pr-tracker-bot@kernel.org>
-Date:   Fri, 08 Jul 2022 18:35:40 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S239374AbiGHSoX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 14:44:23 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E3D2DABE
+        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 11:44:22 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 268HAVpj001971
+        for <io-uring@vger.kernel.org>; Fri, 8 Jul 2022 11:44:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=facebook; bh=IbaA6/aCRorxzxQ9WRGQtMw3AgVmYn9S1CvsZRpKYpY=;
+ b=pxvQAlcLVmU3FEN/V4+Srj01u4ogG+uafcKXMCzQmIy2UZF7fhdfXdSIFTYTRpl7t4L2
+ wRF0Nj/Ub1wK5Wm7FgqXIq+w/DC67exQnvl4vNUICSClJLTGqqSJGT/xj9qMOVemb661
+ Z1wBnPSsdQIojD+KrBOx/AX1o1hzd/g8BB4= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h67d26cvv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Fri, 08 Jul 2022 11:44:21 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Fri, 8 Jul 2022 11:44:20 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 3D1F52BA1E74; Fri,  8 Jul 2022 11:44:10 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <io-uring@vger.kernel.org>
+CC:     <netdev@vger.kernel.org>, <Kernel-team@fb.com>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH for-next 0/3] io_uring: multishot recvmsg
+Date:   Fri, 8 Jul 2022 11:43:54 -0700
+Message-ID: <20220708184358.1624275-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: LDIczZVas5p2ec4mXhEQNev2d5Mhj7ug
+X-Proofpoint-ORIG-GUID: LDIczZVas5p2ec4mXhEQNev2d5Mhj7ug
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-08_15,2022-07-08_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 8 Jul 2022 06:47:35 -0600:
+This series adds multishot support to recvmsg in io_uring.
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.19-2022-07-08
+The idea is that you submit a single multishot recvmsg and then receive
+completions as and when data arrives. For recvmsg each completion also has
+control data, and this is necessarily included in the same buffer as the
+payload.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/29837019d5ebb80a5f180af3107a0645c731a770
+In order to do this a new structure is used: io_uring_recvmsg_out. This
+specifies the length written of the name, control and payload. As well as
+including the flags.
+The layout of the buffer is <header><name><control><payload> where the
+lengths are those specified in the original msghdr used to issue the recvms=
+g.
 
-Thank you!
+I suspect this API will be the most contentious part of this series and wou=
+ld
+appreciate any comments on it.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+For completeness I considered having the original struct msghdr as the head=
+er,
+but size wise it is much bigger (72 bytes including an iovec vs 16 bytes he=
+re).
+Testing also showed a 1% slowdown in terms of QPS.
+
+Using a mini network tester [1] shows 14% QPS improvment using this API, ho=
+wever
+this is likely to go down to ~8% with the latest allocation cache added by =
+Jens.
+
+I have based this on this other patch series [2].
+
+[1]: https://github.com/DylanZA/netbench/tree/main
+[2]: https://lore.kernel.org/io-uring/20220708181838.1495428-1-dylany@fb.co=
+m/
+
+Dylan Yudaken (3):
+  net: copy from user before calling __copy_msghdr
+  net: copy from user before calling __get_compat_msghdr
+  io_uring: support multishot in recvmsg
+
+ include/linux/socket.h        |   7 +-
+ include/net/compat.h          |   5 +-
+ include/uapi/linux/io_uring.h |   7 ++
+ io_uring/net.c                | 195 ++++++++++++++++++++++++++++------
+ io_uring/net.h                |   5 +
+ net/compat.c                  |  39 +++----
+ net/socket.c                  |  37 +++----
+ 7 files changed, 215 insertions(+), 80 deletions(-)
+
+
+base-commit: 9802dee74e7f30ab52dc5f346373185cd860afab
+--=20
+2.30.2
+

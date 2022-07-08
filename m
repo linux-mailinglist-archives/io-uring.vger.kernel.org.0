@@ -2,63 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0E1756BA02
-	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 14:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A7F56BADB
+	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 15:34:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233592AbiGHMrj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Jul 2022 08:47:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
+        id S237847AbiGHNad (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Jul 2022 09:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232561AbiGHMri (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 08:47:38 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6B7606AB
-        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 05:47:37 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id b2so16263131plx.7
-        for <io-uring@vger.kernel.org>; Fri, 08 Jul 2022 05:47:37 -0700 (PDT)
+        with ESMTP id S237608AbiGHNab (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 09:30:31 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D7852CCA6
+        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 06:30:28 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id 145so22348335pga.12
+        for <io-uring@vger.kernel.org>; Fri, 08 Jul 2022 06:30:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:cc
-         :content-language:content-transfer-encoding;
-        bh=gD0MdOAi5N1Bvv7u45BiubneW3L/S0YMoPCL+vX2Tl0=;
-        b=IvLZvKXEI+4Ztrh2H9f8dW1KPWT0F0TaozXmXUuKbbU84urZJDWR1rbqpOXbzrfNe1
-         oYTzkK9JhuUc7EwPqSHgulqjHRK+RZmzJOoJoM/jpHDR7LfvLvZb30prEDFpqVxzdfdL
-         N5dUsJWwJAUDLW2JSWwFiLQG3Ar9hiGLsWbqQDc+6vZSIlCGO24DPmAF2TcbiGcOOzlp
-         Uf8GCmHoNsvUsxb32w6/Uitv8C0xT2d+MiinkvrQ7YOTsn6TWaaYwGlQEDfL2JMZqeAX
-         hy2lqZrQP+uAahpPYZEVM3qwtmWldIAR3xG8tnFVxGYWy4uhwvIBPX1aYDoh9/K19NIQ
-         LNlg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U+Pm72BoNs7qFyEK8/XGIh+wHNtiWeSc9CQOPEH6Ivo=;
+        b=F/o7DHxvGWro+p4f10ZCE7f1Drppq2/HAvsuvJ02747maHdvpv8gfNLTT8fd+f3bF6
+         QvVH0AXJbECwOv9vSmErXICEJnAD84ENksdKXogfOMUGvYlpAFQC7bvQYf6eJdmczX7l
+         RCBs/1EMaMpsLrdfMgtiSQN3JjFaPP7Q8M5Yjjo3Nlu1r+/sZdk0LGrNTbI/Bx+h6eKs
+         GOGKW9sPAZS+e7O0BZKTgmG+nW04g/o9CgHPfHa/7gFyzkUFGhG+PXPvu1cPUm1LIqIJ
+         5fI9izNgPx9uCAlAMTUR59nXzByMeeZ4NqNxXi1CUekyISeb+Jfy2r6+f0SWNwcLcYCo
+         KtrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:cc:content-language:content-transfer-encoding;
-        bh=gD0MdOAi5N1Bvv7u45BiubneW3L/S0YMoPCL+vX2Tl0=;
-        b=aAXBSVU7xC66jluSqTObbK4B6N/LZXU8vmXTTOn/27T8Pd543xRCFo/t8sGfKttFox
-         nORWljMbsTuIsXnFuEZJOp+ZtuRvraWqvkRRVkcPpZ6mmMJuxjHyBTqhMw6Fu1hSLPe5
-         GkI6sMevxwupOLyVIwm9aCjjqxzlf4dRXp0S+Rz8SS1AlUCXXlLODI3kkbSPSuPRTdSZ
-         1nyipofVtLzp1ncE+zsO8mzKHP0rAJIqG88I6iab36REi1Eq67+QCb7bqo73H0C0QuJe
-         uZICXgjX8ZOOUPBKk7YVk59JvGw9A5n8U1DxdxY70DtXpOJGlYKPJ+KjOOvPYb4KUO0D
-         Q/8w==
-X-Gm-Message-State: AJIora/8UvGRdH8879U0UUyW6j3w8AqjU9+O563T8n483ySOg6ZTUEW9
-        DkoX5I3xaZnOt/amCnySrubmixeZ3I2b8w==
-X-Google-Smtp-Source: AGRyM1vIzp2xhnsdt/PLp0JlyEqj59DV7iUjXrvyg6g0a/pIauXDODpjXDugIIyD1nagvu9jW7Pt4Q==
-X-Received: by 2002:a17:903:22c7:b0:16b:fa15:63d4 with SMTP id y7-20020a17090322c700b0016bfa1563d4mr3560890plg.2.1657284457197;
-        Fri, 08 Jul 2022 05:47:37 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a18-20020aa79712000000b0052aaff953aesm1485681pfg.115.2022.07.08.05.47.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 05:47:36 -0700 (PDT)
-Message-ID: <bcefaf51-69bc-ac57-972e-9419ef3d6f8a@kernel.dk>
-Date:   Fri, 8 Jul 2022 06:47:35 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U+Pm72BoNs7qFyEK8/XGIh+wHNtiWeSc9CQOPEH6Ivo=;
+        b=SkCB5G4t7OTCtHPaEMAvthb74JIirFrVv/4N6DgXexIn7Fsa7gl8uNUy0l76Lotfrd
+         3d1Gz7hF/UtWfZvc/0SN0jrL69AGpl0autMFCL1vjhoDfaz5ojvkIF/Z/zm0LUy+BL+K
+         hiBH4wmhygAvQLoVIkrV6XWjCDlM2mna69I2Vo5uB64sQMF/iPK4rvPjDlWKpxj8FrzP
+         lP5mjBEdP5jH+WWY6wpqdI3B0CYb4YfzMDnz/FpnBGpbUYgDAadg8VsUJ3jMAyh7YKqo
+         fgqna0Q+tTPsyLO3F1EXLOrByLC6R4Eq9XI/kfgGwhSImrZf8clMOwQBHe17FwdvNC/a
+         28gQ==
+X-Gm-Message-State: AJIora8dg5ZFDNrv7sh/bUpezSJHjr8yiE9yeTyq0tLR3D+ksV0/MGOn
+        dHaGNHC5q445xQOG3TIs8+k9f0W1BdgtyQ==
+X-Google-Smtp-Source: AGRyM1snM3uhVM4ZpjDrZ7bB6Z5A2dZ7IC/JxxyjGrb/K5T6HhYo/3WmPHdBILo5vncYWfefRSgoCQ==
+X-Received: by 2002:a63:730b:0:b0:40c:3a65:537f with SMTP id o11-20020a63730b000000b0040c3a65537fmr3261024pgc.267.1657287027492;
+        Fri, 08 Jul 2022 06:30:27 -0700 (PDT)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id a16-20020aa794b0000000b0052844157f09sm3800502pfl.51.2022.07.08.06.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jul 2022 06:30:26 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring tweak for 5.19-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, dylany@fb.com
+Subject: [PATCHSET v2 for-next] Add alloc cache for sendmsg/recvmsg
+Date:   Fri,  8 Jul 2022 07:30:18 -0600
+Message-Id: <20220708133022.383961-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -68,38 +65,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Just a minor tweak to an addition made in the 5.19 kernel cycle, padding
-a 32-bit value that's in a 64-bit union to avoid any potential funkiness
-from that.
+This abstracts out the alloc cache we have for apoll entries, and extends
+it to be usable for recv/sendmsg as well. During that abstraction, impose
+an upper limit for cached entries as well.
 
-Please pull!
+This yields a 4-5% performance increase running netbench using
+sendmsg/recvmsg rather than plan send and recv.
 
+Post 5.20, I suspect we can get rid of using io_async_msghdr for single
+vector sendmsg/recvmsg, which will make this less relevant. But as this
+work isn't done yet, and the support for eg ITER_UBUF isn't upstream yet
+either, this can help fill the gap.
 
-The following changes since commit 09007af2b627f0f195c6c53c4829b285cc3990ec:
-
-  io_uring: fix provided buffer import (2022-06-30 11:34:41 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-5.19-2022-07-08
-
-for you to fetch changes up to bdb2c48e4b38e6dbe82533b437468999ba3ae498:
-
-  io_uring: explicit sqe padding for ioctl commands (2022-07-07 17:33:01 -0600)
-
-----------------------------------------------------------------
-io_uring-5.19-2022-07-08
-
-----------------------------------------------------------------
-Pavel Begunkov (1):
-      io_uring: explicit sqe padding for ioctl commands
-
- fs/io_uring.c                 | 2 +-
- include/uapi/linux/io_uring.h | 5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+V2:
+- Abstract cache node out as well, so we can have common helpers for
+  everything.
 
 -- 
 Jens Axboe
+
 

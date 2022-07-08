@@ -2,335 +2,248 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E0D56C275
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jul 2022 01:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F26C56C20B
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jul 2022 01:12:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239539AbiGHSpz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Jul 2022 14:45:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37864 "EHLO
+        id S238380AbiGHUSx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Jul 2022 16:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239627AbiGHSpw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 14:45:52 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A367B344
-        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 11:45:51 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 268HAUTP001956
-        for <io-uring@vger.kernel.org>; Fri, 8 Jul 2022 11:45:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=mBL3z+NSeKcOFtGhF5bcinO8VhjtUpk/DQPQTzSev24=;
- b=SJWiuCS0Ev7X9yjvfC/ifciIRnU1XunDQ0k1RjORTd5nyaSdDjq3LFcfgJSvRKcA3c13
- JZw+HVo67QB430M0Hk2rAAfE9aFlEm5SzLX8/DUXs46nRDySrYMt0e62hltD7abmmkgx
- L2xnGh0dnswcvQPhdpTPwEKY8qw3lB2eVCM= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h67d26d4f-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 08 Jul 2022 11:45:51 -0700
-Received: from twshared25478.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+        with ESMTP id S239177AbiGHUSv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 16:18:51 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BC4A2DA8D;
+        Fri,  8 Jul 2022 13:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657311530; x=1688847530;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=VVk3DH0J2s/uapV8NWCtaDc5GhklK5rVSPC7QvYirRw=;
+  b=I4HWS6DW7TPURtJjOnNQ6FJ8zcQK4/+AoZQ+SxXW0YrpJjx6kIRAiRP+
+   n0B2inkLJolYzsb8b/ZaeZPl2hn8l7xS7dcM3v8CBjVeiIZqL1XKvH0qB
+   /pS7cKrMOKJhaJh0iU6lCuTJF4G9+XqXeZjwSVCpHwGzVYVSj7sVDK8+P
+   gjucFaHCmQBOMThQ/59wdzTwY4hBet0KtvHNe1Z6soSMusHZx/xuw/9ky
+   IBqzdbOq7DoXhmvgPmwbXJDvW7WEddrpQlj/AHhBlKbdiEJpJTLBUDi+c
+   HLXm/G+W6dtj6TubPJugXzCLj3DG+qLdOJT/veETJ79nr47UHsun056SZ
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10402"; a="284380544"
+X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
+   d="scan'208";a="284380544"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 13:18:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
+   d="scan'208";a="770891287"
+Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
+  by orsmga005.jf.intel.com with ESMTP; 08 Jul 2022 13:18:48 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Fri, 8 Jul 2022 11:45:49 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 9CC022BA20C9; Fri,  8 Jul 2022 11:45:41 -0700 (PDT)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, <Kernel-team@fb.com>,
-        Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH RFC liburing 2/2] add tests for multishot recvmsg
-Date:   Fri, 8 Jul 2022 11:45:38 -0700
-Message-ID: <20220708184538.1632315-3-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220708184538.1632315-1-dylany@fb.com>
-References: <20220708184538.1632315-1-dylany@fb.com>
+ 15.1.2308.27; Fri, 8 Jul 2022 13:18:47 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27 via Frontend Transport; Fri, 8 Jul 2022 13:18:47 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.27; Fri, 8 Jul 2022 13:18:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UlBVGPo8ZOdxlkMKPoWw0QOF56YXG2y36tAURuXdUcHD/PwkriuF26XUwC303gnupt9O2WyUKd0/dN2BhBiIhI5CCNAD7BVzXC5KrAOaU5VELoBAb41FiR1iH66MeUSKYzwl6D6irmihmHung985geHzv1tchy3UkoAJzEGrhWvS8OfxukFqd+J6zteLzV80LBIa9qev4+OJ4ajxOfm7fsDyUgciMRXnQntDkTOLWVKm8RPMQm5PT7+77H4V+FplQ0HEc/+KhCiOEY8Zt67jeC6pBOc5mVhddxzAdHKw1sXEBPP2h9mY5Tb7ucT97v6gz0RRLGY5WgS2W2tq/wH47A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1dY29o8B4Mhyqv6tEXPMBWAevROIgmOmlR/cMTPpMT4=;
+ b=N/pBaYNacXdRDAb7L46BJba6HBWDcET68gyNZH+U1BOn94tLhxMS1TAn7s5p7qpEL5161rHAx5PVUoWYgOwdcwC35oQ1Jj/mDdZi4SFecJWUliWsoJRIwpGxPpsbdKwkKGSouoeBlfmWqD2VKoQaE69ScA08JszFR26E6JsNnavwCmkxWvpEmMhluAnLrV5V9q157LAYpAU8IUUGHAx+q2qbNSj0VmcPswZuTxeKIgvOOp25qMIQXDUUPaEPmQkiS+6sJLBtENryUM1QAqnpO3ZV6k6JojbJP/X8Gh7uQIMMDXYRPMfR/fLSpuofZyKSvhICkKQHf+ASGTRWcdxTdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6311.namprd11.prod.outlook.com (2603:10b6:8:a6::21) by
+ MWHPR11MB1296.namprd11.prod.outlook.com (2603:10b6:300:1d::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5395.18; Fri, 8 Jul 2022 20:18:45 +0000
+Received: from DM4PR11MB6311.namprd11.prod.outlook.com
+ ([fe80::f188:57e2:349e:51da]) by DM4PR11MB6311.namprd11.prod.outlook.com
+ ([fe80::f188:57e2:349e:51da%9]) with mapi id 15.20.5417.020; Fri, 8 Jul 2022
+ 20:18:45 +0000
+Date:   Fri, 8 Jul 2022 13:18:35 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+CC:     Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Matthew Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Nathan Chancellor" <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, <linux-aio@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <nvdimm@lists.linux.dev>,
+        <io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <llvm@lists.linux.dev>
+Subject: Re: [PATCH] fs: Replace kmap{,_atomic}() with kmap_local_page()
+Message-ID: <YsiQptk19txHrG4c@iweiny-desk3>
+References: <20220630163527.9776-1-fmdefrancesco@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220630163527.9776-1-fmdefrancesco@gmail.com>
+X-ClientProxiedBy: BYAPR05CA0036.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::49) To DM4PR11MB6311.namprd11.prod.outlook.com
+ (2603:10b6:8:a6::21)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: bJP8Nu4FCSlBmEXu6JfVqR0PprebcWgL
-X-Proofpoint-ORIG-GUID: bJP8Nu4FCSlBmEXu6JfVqR0PprebcWgL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-08_15,2022-07-08_01,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f27b0ca9-3d98-41ff-4538-08da611f0f05
+X-MS-TrafficTypeDiagnostic: MWHPR11MB1296:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: h4AKFrD5SWs8KrDKuR0224t5bcnBpaCVkXRD/Tu0RPfmlp90uOpVT7UPwuhiKloGlM1kK1piwZHYjij1mFkFbSAXkawR2n0FhWShgxeTjse7MCGlxA62QR/SNGUIxhRh+bkQYMtYu2hKzsO0BVzX/LQDGwEypqf+9KG+R/hAz2g+LCdERO4zyfivriWmczWFataBJlGvSj/4wo1at2JvudlUqJHRHuxWsF3KxlpQku78C5t9ZVqBT7MbUWT5fAJLe452BH0hDsSS6f3vraNmHoupJci5gBkF7SR0a6ZMuqEH1PFjB7tuwI3iYbUnV9jDviiE7HOjtZLqVTUSC1dUKxRQkY0setOqCfLCTBT8nGaI/Bf5h4OepEyOYuxR2z5U+k6Xi0f1ZO+4SFnzOH9zPLkPEKI741ON8V+zhGyXtpPWFgWSqMNaJnXgRjPSNoNKJH/ipg1aG4ey6zicbRwRJiKZVRLipU9o0juy+zVR/1cYb8f89AY4TvWROQsefCE4aTTlvr8MZJnYeJCPanZrft/fYbRAdkamFJvHTUWdfLiwaY+qowHfuUggmhBGW9JZNuI8gdIRH4SsBoRnCmDAqI53G9aEOpKHjNqlvuvDvnoqK1i8VqciW08dVmNq9hOutX4UoQQUa+ZZ9uXo5hDqXzGbRSsG71z7morYIMvpVYeO2dp6sfL52wajjuhY8ipBBBUPFkrHpRUg/WBis98KFb7L+FJOwp0cT3FShrYVmpeOIa45QfW3OCQLjOu2tT/8
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6311.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(366004)(396003)(136003)(376002)(39860400002)(346002)(8676002)(66946007)(2906002)(66476007)(38100700002)(33716001)(83380400001)(4326008)(66556008)(8936002)(41300700001)(86362001)(5660300002)(7416002)(82960400001)(6506007)(9686003)(6666004)(54906003)(186003)(6486002)(44832011)(316002)(6916009)(6512007)(478600001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TRSjz3bBhhXqkrGhdMGqvCE8WJuRTFDICGtL22yi1BRfJu1G57KI4+oM3BsZ?=
+ =?us-ascii?Q?cIsV86JGFPND923/5wcFVejez2ucZl/IHLTofg0b4w1nrXllV2GEXtuMtNZe?=
+ =?us-ascii?Q?CAQag4n31avWzmKmd3dLZmJ4QyIEP2RWIywUDyA5fN3S5PvaT6d0bj20Ctpw?=
+ =?us-ascii?Q?rowt9Gfazh5DRCE55hazf55xPQQMVSF3aEtkLMdzp2CovLqERCWPX3Fr1DzG?=
+ =?us-ascii?Q?OZy1MM4Mq6MNg40qtMWExNYVdCj3qenwhTtSPFOg0Mmq8gS/VFB8CH4S69aW?=
+ =?us-ascii?Q?cutxQ44ECvALRXhT/bFkea+rPLf6ggNmyBlA7qlc4lg81+F32lWWPMq2bdLl?=
+ =?us-ascii?Q?/dGWS7aBdpbjI5zQa+bZjsOgufforGBN8Sh8Ogvg5Zo2SdOJOVz0CFzqPYij?=
+ =?us-ascii?Q?x5J6B1Ok/flZN3E4JTiFziOb8ea5MfZpciQHqseWn8SIfeh/jPoxN2Zj4cUa?=
+ =?us-ascii?Q?N5fNEHLHHMftLqqJPYxF8z/qtLhCTQqyoCVugubP374jekCr0v0q8i3lgDGd?=
+ =?us-ascii?Q?kZuYZrFyBxrF7Kfb6fgpf7hmbsfNg1iUKAKWhiLu0H8Ds9OS9AgKbRb0SUAI?=
+ =?us-ascii?Q?uvSjjeh/Ej/UHvhksxLmCGJRjQFbPdU3mJtsUKXaYTrpuZk5Ij33HpM0hbVY?=
+ =?us-ascii?Q?VTWdweEVcIMPO+Q/sC2KnPqzkrdlbdUTXsFQ5Ra/c0k7lFkwpd+dHrjcoyDS?=
+ =?us-ascii?Q?6aJFy5Ophe1L9gaBNNZhP6yDscodfam7RuRfbAb2NRccIdbBcBlldwWxee3W?=
+ =?us-ascii?Q?UUo/Uv3vtNUPMDEhTJMRFyxZSSMDyLPEqoUYr5ZZz3M2wHRkM2Rjrcyi0G7G?=
+ =?us-ascii?Q?AmgRoFEmO+h1XYfgIuIuKlPdLrJlneBcN9HhUxV3CVXOkEhA+WK1clqVKsCo?=
+ =?us-ascii?Q?ccMnxf2AnwHRQTFi8heTOGMwZ5hyd3dThisR1vWJLEdwpiZgU6L6F0kdCf9p?=
+ =?us-ascii?Q?vddFPlM4s+aJ2I6+k80oxO8+LWrQ9s2akw9NLXM9KZGm2KetFm0pA+iBfh4j?=
+ =?us-ascii?Q?XtRQiuMXMQ30M3vZA2AxuwSODL9sEluQ4/9j6yhiHuHng16dJC4pOcmq8grK?=
+ =?us-ascii?Q?QW958p/tc0kn19RDVuWtxqe/pT1DdRlivF9S/jsQezZ7obGorXakHVp7V0Fc?=
+ =?us-ascii?Q?384tkoaU0ILblfdc7eyCyOkj03IZvoo9BBMO3TTFAW11vl8NjNc0dalsCYbM?=
+ =?us-ascii?Q?PuubtWMP0KrgaOscF396sbedG8GBAQUaYJqkWaTRlDaQsfYqMDsyzurRLprI?=
+ =?us-ascii?Q?PrPRXxEIm+HQ91snYkEkEeH4z8OERqyBL4nyvE38ARnvt6O9op7LIKPobDWd?=
+ =?us-ascii?Q?XnBBYayIxpwvlgJ94bpgiAFoNgEKoBWj2gE5JPLukYYU/zRvLDyw6GOrlIUS?=
+ =?us-ascii?Q?vADVQqehfu0WQXxos5FU0CacSlFoS+PDc0CTYfJgbdmoTfWay7+dHkdMlXLf?=
+ =?us-ascii?Q?9lonRaBwrJje9zOo+548YmnUZunjykk7pc0MrmxawYVktXlgSn3mKMYfsC5l?=
+ =?us-ascii?Q?oaCKLW1ZQ0l5PxHd1+WuxRhbx5uVUmKEYCUX/0Z3bx5jrDMuTHN7QupR9ZcA?=
+ =?us-ascii?Q?15AdWzWj7HqEjKzZ6MS23pfyfw6yUsQ1DUQjQy9OBDJNxIlCQCn6WhUBygyj?=
+ =?us-ascii?Q?Jao5t7ws7bcUOyrQiD265PxtuE3O0eQd6ruWhC7xP53u?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f27b0ca9-3d98-41ff-4538-08da611f0f05
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6311.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 20:18:45.1949
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kKweMs2Qyq8SjHVNH9lAGi4PWUc2cI+aObiL4wPSXvutv0f/KPGsyLHXGCm4XVAoWLn2UIw38A3IJ3c/sG7oCQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1296
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Expand the multishot recv test to include recvmsg.
-This also checks that sockaddr comes back, and that control messages work
-properly.
+On Thu, Jun 30, 2022 at 06:35:27PM +0200, Fabio M. De Francesco wrote:
+> The use of kmap() and kmap_atomic() are being deprecated in favor of
+> kmap_local_page().
+> 
+> With kmap_local_page(), the mappings are per thread, CPU local and not
+> globally visible. Furthermore, the mappings can be acquired from any
+> context (including interrupts).
+> 
+> Therefore, use kmap_local_page() in exec.c because these mappings are per
+> thread, CPU local, and not globally visible.
+> 
+> Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
+> HIGHMEM64GB enabled.
+> 
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- test/recv-multishot.c | 137 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 123 insertions(+), 14 deletions(-)
+This looks good but there is a kmap_atomic() in this file which I _think_ can
+be converted as well.  But that is good as a separate patch.
 
-diff --git a/test/recv-multishot.c b/test/recv-multishot.c
-index 9df8184..b1cc335 100644
---- a/test/recv-multishot.c
-+++ b/test/recv-multishot.c
-@@ -27,20 +27,42 @@ enum early_error_t {
- struct args {
- 	bool stream;
- 	bool wait_each;
-+	bool recvmsg;
- 	enum early_error_t early_error;
- };
-=20
-+static int check_sockaddr(struct sockaddr_in *in)
-+{
-+	struct in_addr expected;
-+	inet_pton(AF_INET, "127.0.0.1", &expected);
-+	if (in->sin_family !=3D AF_INET) {
-+		fprintf(stderr, "bad family %d\n", (int)htons(in->sin_family));
-+		return -1;
-+	}
-+	if (memcmp(&expected, &in->sin_addr, sizeof(in->sin_addr))) {
-+		char buff[256];
-+		const char *addr =3D inet_ntop(AF_INET, &in->sin_addr, buff, sizeof(bu=
-ff));
-+		fprintf(stderr, "unexpected address %s\n", addr ? addr : "INVALID");
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- static int test(struct args *args)
- {
- 	int const N =3D 8;
- 	int const N_BUFFS =3D N * 64;
- 	int const N_CQE_OVERFLOW =3D 4;
- 	int const min_cqes =3D 2;
-+	int const NAME_LEN =3D sizeof(struct sockaddr_storage);
-+	int const CONTROL_LEN =3D CMSG_ALIGN(sizeof(struct sockaddr_storage))
-+					+ sizeof(struct cmsghdr);
- 	struct io_uring ring;
- 	struct io_uring_cqe *cqe;
- 	struct io_uring_sqe *sqe;
- 	int fds[2], ret, i, j, total_sent_bytes =3D 0, total_recv_bytes =3D 0;
- 	int send_buff[256];
-+	int *sent_buffs[N_BUFFS];
- 	int *recv_buffs[N_BUFFS];
- 	int *at;
- 	struct io_uring_cqe recv_cqe[N_BUFFS];
-@@ -50,7 +72,7 @@ static int test(struct args *args)
- 	struct __kernel_timespec timeout =3D {
- 		.tv_sec =3D 1,
- 	};
--
-+	struct msghdr msg;
-=20
- 	memset(recv_buffs, 0, sizeof(recv_buffs));
-=20
-@@ -75,21 +97,39 @@ static int test(struct args *args)
- 		return ret;
- 	}
-=20
-+	if (!args->stream) {
-+		bool val =3D true;
-+		/* force some cmsgs to come back to us */
-+		if (setsockopt(fds[0], IPPROTO_IP,
-+				IP_RECVORIGDSTADDR, &val, sizeof(val))) {
-+				fprintf(stderr, "setsockopt failed %d\n", errno);
-+				goto cleanup;
-+			}
-+	}
-+
- 	for (i =3D 0; i < ARRAY_SIZE(send_buff); i++)
- 		send_buff[i] =3D i;
-=20
- 	for (i =3D 0; i < ARRAY_SIZE(recv_buffs); i++) {
- 		/* prepare some different sized buffers */
--		int buffer_size =3D (i % 2 =3D=3D 0 && args->stream) ? 1 : N * sizeof(=
-int);
-+		int buffer_size =3D (i % 2 =3D=3D 0 && args->stream) ? 1 : N;
-+		buffer_size *=3D sizeof(int);
-+		if (args->recvmsg) {
-+			buffer_size +=3D
-+				sizeof(struct io_uring_recvmsg_out) +
-+				NAME_LEN +
-+				CONTROL_LEN;
-+		}
-=20
--		recv_buffs[i] =3D malloc(sizeof(*at) * buffer_size);
-+		recv_buffs[i] =3D malloc(buffer_size);
-=20
- 		if (i > 2 && args->early_error =3D=3D ERROR_NOT_ENOUGH_BUFFERS)
- 			continue;
-=20
- 		sqe =3D io_uring_get_sqe(&ring);
- 		io_uring_prep_provide_buffers(sqe, recv_buffs[i],
--					buffer_size * sizeof(*recv_buffs[i]), 1, 7, i);
-+					buffer_size, 1, 7, i);
-+		memset(recv_buffs[i], 0xcc, buffer_size);
- 		if (io_uring_submit_and_wait_timeout(&ring, &cqe, 1, &timeout, NULL) !=
-=3D 0) {
- 			fprintf(stderr, "provide buffers failed: %d\n", ret);
- 			ret =3D -1;
-@@ -99,7 +139,15 @@ static int test(struct args *args)
- 	}
-=20
- 	sqe =3D io_uring_get_sqe(&ring);
--	io_uring_prep_recv_multishot(sqe, fds[0], NULL, 0, 0);
-+	if (args->recvmsg) {
-+		memset(&msg, 0, sizeof(msg));
-+		msg.msg_namelen =3D NAME_LEN;
-+		msg.msg_controllen =3D CONTROL_LEN;
-+
-+		io_uring_prep_recvmsg_multishot(sqe, fds[0], &msg, 0);
-+	} else {
-+		io_uring_prep_recv_multishot(sqe, fds[0], NULL, 0, 0);
-+	}
- 	sqe->flags |=3D IOSQE_BUFFER_SELECT;
- 	sqe->buf_group =3D 7;
- 	io_uring_sqe_set_data64(sqe, 1234);
-@@ -111,6 +159,7 @@ static int test(struct args *args)
- 		int to_send =3D sizeof(*at) * (i+1);
-=20
- 		total_sent_bytes +=3D to_send;
-+		sent_buffs[i] =3D at;
- 		if (send(fds[1], at, to_send, 0) !=3D to_send) {
- 			if (early_error_started)
- 				break;
-@@ -205,6 +254,8 @@ static int test(struct args *args)
-=20
-=20
- 		if (should_be_last) {
-+			int used_res =3D cqe->res;
-+
- 			if (!is_last) {
- 				fprintf(stderr, "not last cqe had error %d\n", i);
- 				goto cleanup;
-@@ -234,7 +285,16 @@ static int test(struct args *args)
- 				break;
- 			case ERROR_NONE:
- 			case ERROR_EARLY_CLOSE_SENDER:
--				if (cqe->res !=3D 0) {
-+				if (args->recvmsg && (cqe->flags & IORING_CQE_F_BUFFER)) {
-+					struct io_uring_recvmsg_out *o =3D
-+						(struct io_uring_recvmsg_out *)recv_buffs[cqe->flags >> 16];
-+					if (o->payloadlen !=3D 0) {
-+						fprintf(stderr, "early error expected 0 payloadlen, got %u\n",
-+							o->payloadlen);
-+						goto cleanup;
-+					}
-+					used_res =3D 0;
-+				} else if (cqe->res !=3D 0) {
- 					fprintf(stderr, "early error: res %d\n", cqe->res);
- 					goto cleanup;
- 				}
-@@ -254,7 +314,7 @@ static int test(struct args *args)
- 				goto cleanup;
- 			}
-=20
--			if (cqe->res <=3D 0)
-+			if (used_res <=3D 0)
- 				continue;
- 		} else {
- 			if (!(cqe->flags & IORING_CQE_F_MORE)) {
-@@ -268,7 +328,48 @@ static int test(struct args *args)
- 			goto cleanup;
- 		}
-=20
-+		this_recv =3D recv_buffs[cqe->flags >> 16];
-+
-+		if (args->recvmsg) {
-+			struct io_uring_recvmsg_out *o =3D io_uring_recvmsg_validate(
-+				this_recv, cqe->res, &msg);
-+			if (!o) {
-+				fprintf(stderr, "bad recvmsg\n");
-+				goto cleanup;
-+			}
-+			cqe->res =3D o->payloadlen;
-+
-+			if (!args->stream) {
-+				struct cmsghdr *cmsg;
-+				if (o->namelen < sizeof(struct sockaddr_in)) {
-+					fprintf(stderr, "bad addr len %d",
-+						o->namelen);
-+					goto cleanup;
-+				}
-+				if (check_sockaddr((struct sockaddr_in*)io_uring_recvmsg_name(o)))
-+					goto cleanup;
-+
-+				cmsg =3D io_uring_recvmsg_cmsg_firsthdr(o, &msg);
-+				if (!cmsg ||
-+				    cmsg->cmsg_level !=3D IPPROTO_IP ||
-+				    cmsg->cmsg_type !=3D IP_RECVORIGDSTADDR) {
-+					fprintf(stderr, "bad cmsg");
-+					goto cleanup;
-+				}
-+				if (check_sockaddr((struct sockaddr_in *)CMSG_DATA(cmsg)))
-+					goto cleanup;
-+				cmsg =3D io_uring_recvmsg_cmsg_nexthdr(o, &msg, cmsg);
-+				if (cmsg) {
-+					fprintf(stderr, "unexpected extra cmsg\n");
-+					goto cleanup;
-+				}
-+			}
-+
-+			this_recv =3D (int*)io_uring_recvmsg_payload(o, &msg);
-+		}
-+
- 		total_recv_bytes +=3D cqe->res;
-+
- 		if (cqe->res % 4 !=3D 0) {
- 			/*
- 			 * doesn't seem to happen in practice, would need some
-@@ -278,9 +379,19 @@ static int test(struct args *args)
- 			goto cleanup;
- 		}
-=20
--		/* check buffer arrived in order (for tcp) */
--		this_recv =3D recv_buffs[cqe->flags >> 16];
--		for (j =3D 0; args->stream && j < cqe->res / 4; j++) {
-+		/*
-+		 * for tcp: check buffer arrived in order
-+		 * for udp: based on size validate data based on size
-+		 */
-+		if (!args->stream) {
-+			int sent_idx =3D cqe->res / sizeof(*at) - 1;
-+			if (sent_idx < 0 || sent_idx > N) {
-+				fprintf(stderr, "Bad sent idx: %d\n", sent_idx);
-+				goto cleanup;
-+			}
-+			at =3D sent_buffs[sent_idx];
-+		}
-+		for (j =3D 0; j < cqe->res / 4; j++) {
- 			int sent =3D *at++;
- 			int recv =3D *this_recv++;
-=20
-@@ -297,9 +408,6 @@ static int test(struct args *args)
- 		goto cleanup;
- 	}
-=20
--	/* check the final one */
--	cqe =3D &recv_cqe[recv_cqes-1];
--
- 	ret =3D 0;
- cleanup:
- 	for (i =3D 0; i < ARRAY_SIZE(recv_buffs); i++)
-@@ -320,10 +428,11 @@ int main(int argc, char *argv[])
- 	if (argc > 1)
- 		return T_EXIT_SKIP;
-=20
--	for (loop =3D 0; loop < 4; loop++) {
-+	for (loop =3D 0; loop < 8; loop++) {
- 		struct args a =3D {
- 			.stream =3D loop & 0x01,
- 			.wait_each =3D loop & 0x2,
-+			.recvmsg =3D loop & 0x04,
- 		};
- 		for (early_error =3D 0; early_error < ERROR_EARLY_LAST; early_error++)=
- {
- 			a.early_error =3D (enum early_error_t)early_error;
---=20
-2.30.2
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
+> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> ---
+>  fs/exec.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 0989fb8472a1..4a2129c0d422 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -583,11 +583,11 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+>  
+>  				if (kmapped_page) {
+>  					flush_dcache_page(kmapped_page);
+> -					kunmap(kmapped_page);
+> +					kunmap_local(kaddr);
+>  					put_arg_page(kmapped_page);
+>  				}
+>  				kmapped_page = page;
+> -				kaddr = kmap(kmapped_page);
+> +				kaddr = kmap_local_page(kmapped_page);
+>  				kpos = pos & PAGE_MASK;
+>  				flush_arg_page(bprm, kpos, kmapped_page);
+>  			}
+> @@ -601,7 +601,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+>  out:
+>  	if (kmapped_page) {
+>  		flush_dcache_page(kmapped_page);
+> -		kunmap(kmapped_page);
+> +		kunmap_local(kaddr);
+>  		put_arg_page(kmapped_page);
+>  	}
+>  	return ret;
+> @@ -883,11 +883,11 @@ int transfer_args_to_stack(struct linux_binprm *bprm,
+>  
+>  	for (index = MAX_ARG_PAGES - 1; index >= stop; index--) {
+>  		unsigned int offset = index == stop ? bprm->p & ~PAGE_MASK : 0;
+> -		char *src = kmap(bprm->page[index]) + offset;
+> +		char *src = kmap_local_page(bprm->page[index]) + offset;
+>  		sp -= PAGE_SIZE - offset;
+>  		if (copy_to_user((void *) sp, src, PAGE_SIZE - offset) != 0)
+>  			ret = -EFAULT;
+> -		kunmap(bprm->page[index]);
+> +		kunmap_local(src);
+>  		if (ret)
+>  			goto out;
+>  	}
+> @@ -1680,13 +1680,13 @@ int remove_arg_zero(struct linux_binprm *bprm)
+>  			ret = -EFAULT;
+>  			goto out;
+>  		}
+> -		kaddr = kmap_atomic(page);
+> +		kaddr = kmap_local_page(page);
+>  
+>  		for (; offset < PAGE_SIZE && kaddr[offset];
+>  				offset++, bprm->p++)
+>  			;
+>  
+> -		kunmap_atomic(kaddr);
+> +		kunmap_local(kaddr);
+>  		put_arg_page(page);
+>  	} while (offset == PAGE_SIZE);
+>  
+> -- 
+> 2.36.1
+> 

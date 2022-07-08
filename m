@@ -2,69 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA19456BED6
-	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 20:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D8D956C0C6
+	for <lists+io-uring@lfdr.de>; Fri,  8 Jul 2022 20:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231145AbiGHSMF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Jul 2022 14:12:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33964 "EHLO
+        id S239136AbiGHSSu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Jul 2022 14:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238724AbiGHSME (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 14:12:04 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F2773580
-        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 11:12:03 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id a20so8560822ilk.9
-        for <io-uring@vger.kernel.org>; Fri, 08 Jul 2022 11:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=e/FL4eXFkwF3gw3LXCB4JMWYrLC5Fn9LK9+Ap4KI5oY=;
-        b=od8QOqaFAjnFiSR9Y0ftycE429lf4LVWzaPHMoG94EfmmvJg0QBKc3MvqkDyhPVEQO
-         790ZsAeywjp6qVQC59Gp/Fpel0R8wYgsdQ8LeTNFRNN1f0OuErIxv+1iGwDxrE9gdBXA
-         tc/cNlbN6ExBb/1+4tgZXDHGzVXfwTty255ygM4lgYDVuvw630TPkFbqOMvdSd/DE9qB
-         qw/hMZsUWM7tVBQaVmNVCv+cKBoOp2463/cw3tjI1jQDBK+GwnLByDGUUegzCQb77+1v
-         xCNkSwTRrjVBGs1RrXQoimbklepq3W9skr1pigkAPmWpFa2OygpkA2Y6C9bzi9F1M/PA
-         o7ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=e/FL4eXFkwF3gw3LXCB4JMWYrLC5Fn9LK9+Ap4KI5oY=;
-        b=lkY3Rvmc75nwCWdCbj+ncoEFxfXffZ6xABQ4mj+GVVpv/EL+HCxQVptIHj7CUh+FdK
-         g9f6VSrpGbB3NahmV/acyD+Y3m615BHjMkedJ+BZlDk+bsCO2PywaYRO4oI6UIhTQyyH
-         VYHp25VwYP4oI21RdToLLdjLD4yKqFTauPi7G3N1kK1DSA07Ggtb0v/tug3dJFMRY7pB
-         FDpky48ATGqqOWnhcnkgnkjxyIzoHDjl691/K1bG+sJreX8xuE0ZnPbLaMhxW7M4yYe7
-         sEI5cacg5a3vbTwRTflv8EY5+KJS7PC87uE/TIkBILrnfHuhrjUufPUyXZIplXDTu/lp
-         Ssjw==
-X-Gm-Message-State: AJIora8ykXTMOygxFCmFUEqezalKlcDAGtYWBw1NDuSjNAvd4NdmSv2C
-        eFdTIS61YczCiCAcXiWLoutQJ0+DyO7Dqg==
-X-Google-Smtp-Source: AGRyM1s3TyyEDesLCRazYVIxFZjmX7Ce8O5RnrVUGJ2/JjktfVuqH+QfGWopK1tzsRgq/BGFM6q7aA==
-X-Received: by 2002:a05:6e02:1708:b0:2da:9eef:5bc8 with SMTP id u8-20020a056e02170800b002da9eef5bc8mr2922163ill.153.1657303923167;
-        Fri, 08 Jul 2022 11:12:03 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id a23-20020a056638059700b003320e4b5bb7sm18601627jar.57.2022.07.08.11.12.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 11:12:02 -0700 (PDT)
-Message-ID: <3addf90e-d9f6-4771-7f10-1ad598dd735e@kernel.dk>
-Date:   Fri, 8 Jul 2022 12:12:01 -0600
+        with ESMTP id S238880AbiGHSSs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Jul 2022 14:18:48 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E070E5721E
+        for <io-uring@vger.kernel.org>; Fri,  8 Jul 2022 11:18:44 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 268HBmi1031195
+        for <io-uring@vger.kernel.org>; Fri, 8 Jul 2022 11:18:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=MJjN8AZ4OPF/OazUp4pG1HYkqvUZCJm+Jjk+22de8/0=;
+ b=Wcx5JPz8yh6qCJ3cIMqWJem7hP8usvCKvmkesu694Z5+43vePbkQTZ654QtTNsf2MeMO
+ xZYwRr57M3cOIfFm+5ZQHpUrhgPhYPM7Pr8HK8uyxboq5tRZqVhhEgci2OV2zWzVbOIq
+ ji3tdhaPpYhwOvRWr5GnOcePHmIhD2TG+bU= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h6f69kset-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Fri, 08 Jul 2022 11:18:44 -0700
+Received: from twshared5640.09.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Fri, 8 Jul 2022 11:18:42 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 791972B9EC1A; Fri,  8 Jul 2022 11:18:40 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH for-next 0/4] io_uring: multishot recv cleanups
+Date:   Fri, 8 Jul 2022 11:18:34 -0700
+Message-ID: <20220708181838.1495428-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: Problematic interaction of io_uring and CIFS
-Content-Language: en-US
-To:     Fabian Ebner <f.ebner@proxmox.com>, io-uring@vger.kernel.org,
-        linux-cifs@vger.kernel.org
-Cc:     Thomas Lamprecht <t.lamprecht@proxmox.com>
-References: <af573afc-8f6a-d69e-24ab-970b33df45d9@proxmox.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <af573afc-8f6a-d69e-24ab-970b33df45d9@proxmox.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: rD4Nar10nh2SsCc7zvxXBHHq9rgHFLYV
+X-Proofpoint-ORIG-GUID: rD4Nar10nh2SsCc7zvxXBHHq9rgHFLYV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-08_14,2022-07-08_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,14 +61,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/8/22 6:05 AM, Fabian Ebner wrote:
-> Without CIFS debugging, the error messages in syslog are, for 5.18.6:
->> Jun 29 12:41:45 pve702 kernel: [  112.664911] CIFS: VFS: \\192.168.20.241 Error -512 sending data on socket to server
+These are some preparatory cleanups that are separate but required for a
+later series doing multishot recvmsg (will post this shortly).
 
-I think that one is most likely fine, it just tells you that (most
-likely) io_uring had task_work pending and that should get processed and
-then the IO retried.
+Patches:
+1: fixes a bug where a socket may receive data before polling
+2: makes a similar change to compat logic for providing no iovs
+for buffer_select
+3/4: move the recycling logic into the io_uring main framework which make=
+s
+it a bit easier for recvmsg multishot
 
--- 
-Jens Axboe
+Dylan Yudaken (4):
+  io_uring: fix multishot ending when not polled
+  io_uring: support 0 length iov in buffer select in compat
+  io-uring: add recycle_async to ops
+  io_uring: move netmsg recycling into io_uring cleanup
+
+ io_uring/io_uring.c |  8 ++++++--
+ io_uring/net.c      | 35 ++++++++++++++++++++---------------
+ io_uring/net.h      |  1 +
+ io_uring/opdef.c    |  2 ++
+ io_uring/opdef.h    |  1 +
+ 5 files changed, 30 insertions(+), 17 deletions(-)
+
+
+base-commit: 8007202a9a4854eb963f1282953b1c83e91b8253
+--=20
+2.30.2
 

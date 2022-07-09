@@ -2,59 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE6B56CAB6
-	for <lists+io-uring@lfdr.de>; Sat,  9 Jul 2022 18:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C266E56CB12
+	for <lists+io-uring@lfdr.de>; Sat,  9 Jul 2022 20:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbiGIQqR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 9 Jul 2022 12:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36606 "EHLO
+        id S229528AbiGISag (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Jul 2022 14:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiGIQqR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jul 2022 12:46:17 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66FC512098
-        for <io-uring@vger.kernel.org>; Sat,  9 Jul 2022 09:46:16 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id n12so1539536pfq.0
-        for <io-uring@vger.kernel.org>; Sat, 09 Jul 2022 09:46:16 -0700 (PDT)
+        with ESMTP id S229450AbiGISaf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Jul 2022 14:30:35 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D60F22BF1;
+        Sat,  9 Jul 2022 11:30:34 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id z12so2198512wrq.7;
+        Sat, 09 Jul 2022 11:30:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5ST0dwgswkyiznS7MSshlJOqrnF32dp+oFhX00WjctI=;
-        b=Xpd9pupHo7osCGmA7fGoNW6rfE7AiHVGgs9uvxdYXFP72hJFib9eCQ3fZOA7uNBe70
-         Mpb5PZXvlq+0aJM8RIMlgRgXnY7LTLEyHOjhjNjNOnoninNa2wNtoAbq8RayIfhn6+wH
-         H2mp+DV/K82XLLRRz5NGwF8NeVgtDFZXjk7lhv65uXxkOhhA3vqZgfQGLZmp0zHpqGp/
-         HCPAZImpzjW04rVL9KxhZpJawpmjR4h8oJ0g7RpRgaahiNT0/1P8iMXhfP8jSUHcUjRb
-         w/BpcKhmlW1ee9zB8JhiJTemkENyG2Qf+1IpjLyB/zn6xgWuvB/9ebaGZ5pabcR+n6M/
-         1J6Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=UzXTEzvirVIfQgpRsZ+S3IQH5KHrdqAU7esxyuqlcI4=;
+        b=azFPTNNmWWMPgUFKlPXqmgq48Ky1+NFueWA8CeF4u6bOZNNqI/ZouXYtrZzIQI8369
+         tHNRrJbP3Sk+Qceww9e7NnrcuDgJ6oXsFN+7UXhcMdUokeJ6YJlHAlJxMvos2ldKLn3j
+         7qnyIMJNcvc4n+99h6ZoUqIl96IBxZcSLUP2Row3p9htPHtQDjaOVGMxEPZIg0ThAzku
+         JP/YMWoEj/7gz/zYLt8XR5fUmxUTGzc7A4L/NsKoD1clU44nb9/glj7xUMteE9ztqdCY
+         xScs/VQryAk4+7BFaPGN8I56D8qyIDvJpCmOtxLQds1DYNF1pzvoTJw1JwfwK48t37Iw
+         OhgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5ST0dwgswkyiznS7MSshlJOqrnF32dp+oFhX00WjctI=;
-        b=vaVPPFGZ+QM0O4SS1Rx7J9wpK3heePF3F+43t6a3pz4Xp+IbBzt0HLivahitpbgwaP
-         U2rE87yze9SlXaYgWKhQdEKFiFEfLWiaTxx79iCEvVG872vFyjO2b1C/32D7UV0y6s+o
-         XJOa9jjaR+Hq8V5qcyL9PSzYg8JVfiQStITboU92Ly0ZLiWViB5lOemcfFDMZhxbMYpC
-         fh/DKCguE9BY65lVSmlZRjhCSyE/fk0+fKUj4bdOErdWHeYYQTbB3Y1mhMytOlkg8pAs
-         1Vfed3vbZI+P4RrT+wqqdUD4xF0JKbZmOHghKsL9MQCVTWP3SnM8gAXXCOsdHVttvx4U
-         ezCw==
-X-Gm-Message-State: AJIora/hDyftfbPhswdcgjrTjS2ZbKGlTNt8zE6ap9TR0XL4bwB3CbOb
-        UqIGQaLp/A1OwZTEirdf6SbAWSrGSr/zOTFG/FH+pxuF
-X-Google-Smtp-Source: AGRyM1sQqNuHnOjOphKE6l0RZy/mvbCGv2ipsL8XqqPHY9GkHX4avwDcTR0v/7bY+NMtTYCMg0fC5wvBkhx7WmeGr6I=
-X-Received: by 2002:a05:6a00:148d:b0:528:3d32:f111 with SMTP id
- v13-20020a056a00148d00b005283d32f111mr9403160pfu.31.1657385175837; Sat, 09
- Jul 2022 09:46:15 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=UzXTEzvirVIfQgpRsZ+S3IQH5KHrdqAU7esxyuqlcI4=;
+        b=1WErL9gRAaSUpnV0O/zACf4Otbi+i9fUONTvA1FYoTZAuIbhVSkeUPGZjUQ9YyBTmH
+         s73OnP6+Oug3htKeQDoK+MOhoQhiB9xFNUQuY8oBrN/yBEMa3cdGA6cXoAJ6sUZ9HTsK
+         yHGXkUcZDxjfmf3XV03kem1hgF9T5ARn3kgGHjLCjwOcr5Pht+NRpLe/W+c5BAcbDZNI
+         l42wgKlTbWBBQM01NTFuj33NUKD7y5/Vq6bfSpXBVmrMvp0cugi8Gp/6blFABvnjIysU
+         NJ1nrL4RBcbwmAIklKSndGKM9ENUo7ACqT9gr+Vr+JlWSXVpAPfAb11/A4eJZYtig5vI
+         sgYg==
+X-Gm-Message-State: AJIora9C/tSKcYWnLs92tN6Gylh1OvJFoP3SKmiI/ZQb9pgeOKR+QzKe
+        +aHHJOBSOFWVU6I0rcBk1Bk=
+X-Google-Smtp-Source: AGRyM1tAtrtLBOTNfS7tOy8h/BBFOAIT9pR7nVNc89ZMI3mrlIbdzOc1A9K2XpDn13ZLjn4N3vi0ng==
+X-Received: by 2002:adf:e0c9:0:b0:21b:8271:2348 with SMTP id m9-20020adfe0c9000000b0021b82712348mr8620979wri.222.1657391432677;
+        Sat, 09 Jul 2022 11:30:32 -0700 (PDT)
+Received: from opensuse.localnet (host-95-235-102-55.retail.telecomitalia.it. [95.235.102.55])
+        by smtp.gmail.com with ESMTPSA id j9-20020a05600c190900b0039db31f6372sm6358721wmq.2.2022.07.09.11.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Jul 2022 11:30:31 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, nvdimm@lists.linux.dev,
+        io-uring@vger.kernel.org, linux-riscv@lists.infradead.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH] fs: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Sat, 09 Jul 2022 20:30:28 +0200
+Message-ID: <5600017.DvuYhMxLoT@opensuse>
+In-Reply-To: <YsiQptk19txHrG4c@iweiny-desk3>
+References: <20220630163527.9776-1-fmdefrancesco@gmail.com> <YsiQptk19txHrG4c@iweiny-desk3>
 MIME-Version: 1.0
-References: <CAEsUgYg5zx5Zk_wp9=YXf5Y+qPh9vx7adDN=B_rpa3zoh2YSew@mail.gmail.com>
- <924ece92-caa8-390e-7040-1dd3eb8ad3cd@kernel.dk>
-In-Reply-To: <924ece92-caa8-390e-7040-1dd3eb8ad3cd@kernel.dk>
-From:   Hrvoje Zeba <zeba.hrvoje@gmail.com>
-Date:   Sat, 9 Jul 2022 12:46:04 -0400
-Message-ID: <CAEsUgYgVFgq+G8wYAb4aQXXrw+GvLmzm7d2jd7RpRfKAB8BDLg@mail.gmail.com>
-Subject: Re: recvmsg not honoring O_NONBLOCK
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -65,26 +88,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Jul 9, 2022 at 11:26 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/9/22 8:21 AM, Hrvoje Zeba wrote:
-> > Hi folks,
-> >
-> > I was adapting msquic library to work with iouring and found an issue
-> > with recvmsg() where it ignores O_NONBLOCK flag set on the file
-> > descriptor. If MSG_DONTWAIT is set in flags, it behaves as expected.
-> > I've attached a simple test which currently just hangs on iouring's
-> > recvmsg(). I'm guessing sendmsg() behaves the same way but I have no
-> > idea how to fill the buffer to reliably test it.
->
-> I am guessing that you're waiting off waiting for the event. It's not
-> stalled on the issue, it'll arm poll and wait for an event. I won't go
-> into too much of a ran on O_NONBLOCK, but it's a giant mess, and where
-> possible, io_uring relies on per-request non-block flags as that is much
-> saner behavior.
->
+On venerd=C3=AC 8 luglio 2022 22:18:35 CEST Ira Weiny wrote:
+> On Thu, Jun 30, 2022 at 06:35:27PM +0200, Fabio M. De Francesco wrote:
+> > The use of kmap() and kmap_atomic() are being deprecated in favor of
+> > kmap_local_page().
+> >=20
+> > With kmap_local_page(), the mappings are per thread, CPU local and not
+> > globally visible. Furthermore, the mappings can be acquired from any
+> > context (including interrupts).
+> >=20
+> > Therefore, use kmap_local_page() in exec.c because these mappings are=20
+per
+> > thread, CPU local, and not globally visible.
+> >=20
+> > Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
+> > HIGHMEM64GB enabled.
+> >=20
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+>=20
+> This looks good but there is a kmap_atomic() in this file which I _think_=
+=20
+can
+> be converted as well.  But that is good as a separate patch.
+>=20
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+>=20
 
-Oh, this is intentional behaviour. Got it! Thanks for the explanation.
+Thanks for your review!
 
--- 
-I doubt, therefore I might be.
+I didn't notice that kmap_atomic(). I'll send a conversion with a separate=
+=20
+patch.
+
+=46abio
+
+
+

@@ -2,139 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB36C56CE77
-	for <lists+io-uring@lfdr.de>; Sun, 10 Jul 2022 12:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B3056CF2D
+	for <lists+io-uring@lfdr.de>; Sun, 10 Jul 2022 14:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbiGJKBr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 10 Jul 2022 06:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57234 "EHLO
+        id S229510AbiGJMiG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 10 Jul 2022 08:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiGJKBr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 10 Jul 2022 06:01:47 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23227644C;
-        Sun, 10 Jul 2022 03:01:45 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id o4so3603862wrh.3;
-        Sun, 10 Jul 2022 03:01:45 -0700 (PDT)
+        with ESMTP id S229469AbiGJMiF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 10 Jul 2022 08:38:05 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B5911149
+        for <io-uring@vger.kernel.org>; Sun, 10 Jul 2022 05:38:04 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id x184so2733352pfx.2
+        for <io-uring@vger.kernel.org>; Sun, 10 Jul 2022 05:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=81hvwpBlfxQBH7APOHFnmGU6Oy26r79hMsY7b8ngUnA=;
-        b=LaBR8No6eDA8e9Rql/Q8hpGkLLfuSD5/EMXQepcthh8cGp7UjbSFP1k9BsyzXUHnNy
-         /Tpq4atRiIOMgSMJhXBMpDbldJ1g4b5k0jQCcLGn8jfGRoB7x/q/8CTNYecJfV/bu4Bo
-         MERWiqyGTdkZFrXjwSPTS3Z7Yn+KmnzXcWrJiE8YusI2QP2MhVEHWCSDIj8F43mtTiYZ
-         TEX0Th1RPImvZ0IVeKx1UMGztnYZGsQwur0HjBXDJzClOHfTYfzZhOg8rixDdLobrGug
-         oZU4dhUGGW50vkkWM5cZ8x/txINWUWLWL80giRRZdFN9hqvwmfL00pFxL7khmpX45EwE
-         onMw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
+         :subject:content-transfer-encoding;
+        bh=lJQaXu88xTKAnojVexYE+gE99onAq9BeD7mFyKMQJQc=;
+        b=biIcBsftsWvBlN2tOGiL/SgA3CwkrCbUY9MYmpNkLx2BfLQUrTYoJpecq6N0w9yWXo
+         NxykTnU/cQMoYE4mbsDiN5wIgdjtKzx8ekmob7FQbF82Ia0mdye+qOrwk9ixPndmP6Rj
+         BX5a4ibeVVKsCFMaJVynbvkhgDKgtuRqsBbu2m89Q3Tkd8Yp1ZKaebqB1502LSuyAhm6
+         V9dh1FylMVIKFLTxkeZ8v9KakEjk58jhlhuQSS4KwiC86i/9VIt8DrZknGwxLuWK331s
+         6tkMYq/LNEqOuq7LZVEsFLHxLX1mJ25J1iM9KAyV8v9SmdHE2l65oP2r0zr9qshGjRJM
+         Nlhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=81hvwpBlfxQBH7APOHFnmGU6Oy26r79hMsY7b8ngUnA=;
-        b=OZysnYXCVTEnCohH+iP4Pss5Txluegcmvu/9wkbPPrOzVlPI8DkC89dvYTjsiuB/ao
-         q/2ls0nkVG4E+M/H0+BUzBWbW+dUWhSyjb4LIklt/tJFbgckmoXnjv9+NbWVSlKDTGe2
-         f2W9/n9lq5svj9ic6lK9uTLiIm3Kjqb9bYEktdekjxGodFsjX7og7dokMrFUrEp4yTSQ
-         uW1mDl7qhXkLUg0+nYwyuS5u49xdzcCMk4kgRbjEwuVw1i3ZBCh69K3mRBjVMYQdgbKf
-         x8zjW2mPHeTAst99opb621OJ8zKKabbwCop0x4kpeDI6hGi1amxFA+O0WOiMoMjiXoCq
-         45wg==
-X-Gm-Message-State: AJIora92itfoN1M5MgKaa2RnbEOup2O2BHy5ZTZu+HaXvBfKjAEm93c/
-        vFWl3DNa9nOzHg3++tKS7Rk=
-X-Google-Smtp-Source: AGRyM1t1D8hDiyos2lkhzHSCdCKBxQy3yBejjsdGsbA5T1lQgpocurWl0ACdlPHS4JNTO6vo74nRPw==
-X-Received: by 2002:a05:6000:54f:b0:21b:944c:c70b with SMTP id b15-20020a056000054f00b0021b944cc70bmr12117283wrf.572.1657447303959;
-        Sun, 10 Jul 2022 03:01:43 -0700 (PDT)
-Received: from localhost.localdomain (host-95-235-102-55.retail.telecomitalia.it. [95.235.102.55])
-        by smtp.gmail.com with ESMTPSA id r7-20020a05600c434700b003a2da6b2cbesm3502026wme.33.2022.07.10.03.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Jul 2022 03:01:42 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, nvdimm@lists.linux.dev,
-        io-uring@vger.kernel.org, linux-riscv@lists.infradead.org,
-        llvm@lists.linux.dev
-Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH] fs: Call kmap_local_page() in copy_string_kernel()
-Date:   Sun, 10 Jul 2022 12:01:36 +0200
-Message-Id: <20220710100136.25496-1-fmdefrancesco@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:from:subject:content-transfer-encoding;
+        bh=lJQaXu88xTKAnojVexYE+gE99onAq9BeD7mFyKMQJQc=;
+        b=IhOxv18Nz51pgx6lCkeydTLd6Xppw4Vx6YgE15W2HV+GEr6ip2rHVWDnBeW9t/QBTV
+         hPXtqELJsJAqM5PIxB911RPctPP2umDqFLWAZsSbZcPBfh6OCe+CMiEUpv1q8CRMGdhS
+         tTXKjPoqeqT2tqRb4tK+DLNmSrjJzc56kSWBqdwEGX/+cwLbau/6HDkuw6a5l+wjNksR
+         dhpLh+Ba4Qd3JpT2vINqFqrH67sJUAPv1+3P9roLqAiVynT6IVQLmZSEeW8fjVkSBe7a
+         IlsPhu6HdAn/M7pzHkeyYJis8WGXIMxPmIIbXd9IJbbHahkFt34I070MMsC7nMdpeHDv
+         AsDg==
+X-Gm-Message-State: AJIora+DYb4qsI1LDnAh2xA+7wuiuVte05AKGF2N5CVKAmskC9zfWi+s
+        53/cbIwb/4Xr/e6gkd/oB1Hg2yB5MSW8HQ==
+X-Google-Smtp-Source: AGRyM1v1aS8vh5LzGvaQOHbnzBmTRSizDNeWVNyCGzfbKBEkpSiW2XOAza5IDyLdpZCKF1SkABVg3g==
+X-Received: by 2002:a63:eb0c:0:b0:415:c521:4bf with SMTP id t12-20020a63eb0c000000b00415c52104bfmr8269330pgh.25.1657456683818;
+        Sun, 10 Jul 2022 05:38:03 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id l11-20020a170902f68b00b0016372486febsm2632590plg.297.2022.07.10.05.38.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Jul 2022 05:38:03 -0700 (PDT)
+Message-ID: <ee0e6d42-3726-22c0-bfc9-7e7384f5e4ff@kernel.dk>
+Date:   Sun, 10 Jul 2022 06:38:01 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Follow up pull for 5.19-rc6 io_uring
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The use of kmap_atomic() is being deprecated in favor of kmap_local_page().
+Hi Linus,
 
-With kmap_local_page(), the mappings are per thread, CPU local, not
-globally visible and can take page faults. Furthermore, the mappings can be
-acquired from any context (including interrupts).
+Followup pull request for 5.19-rc6, with a single fix for an issue that
+came up yesterday that we should plug for -rc6. This is a regression
+introduced in this cycle.
 
-Therefore, use kmap_local_page() in copy_string_kernel() instead of
-kmap_atomic().
+Please pull!
 
-Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
-HIGHMEM64GB enabled.
 
-Suggested-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
----
+The following changes since commit bdb2c48e4b38e6dbe82533b437468999ba3ae498:
 
-I sent a first patch to fs/exec.c for converting kmap() and kmap_atomic()
-to kmap_local_page():
-https://lore.kernel.org/lkml/20220630163527.9776-1-fmdefrancesco@gmail.com/
+  io_uring: explicit sqe padding for ioctl commands (2022-07-07 17:33:01 -0600)
 
-Some days ago, Ira Weiny, while he was reviewing that patch, made me notice
-that I had overlooked a second kmap_atomic() in the same file (thanks):
-https://lore.kernel.org/lkml/YsiQptk19txHrG4c@iweiny-desk3/
+are available in the Git repository at:
 
-I've been asked to send this as an additional change. This is why there will
-not be any second version of that previous patch.
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.19-2022-07-09
 
- fs/exec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+for you to fetch changes up to d785a773bed966a75ca1f11d108ae1897189975b:
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 4a2129c0d422..5fa652ca5823 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -639,11 +639,11 @@ int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
- 		page = get_arg_page(bprm, pos, 1);
- 		if (!page)
- 			return -E2BIG;
--		kaddr = kmap_atomic(page);
-+		kaddr = kmap_local_page(page);
- 		flush_arg_page(bprm, pos & PAGE_MASK, page);
- 		memcpy(kaddr + offset_in_page(pos), arg, bytes_to_copy);
- 		flush_dcache_page(page);
--		kunmap_atomic(kaddr);
-+		kunmap_local(kaddr);
- 		put_arg_page(page);
- 	}
- 
+  io_uring: check that we have a file table when allocating update slots (2022-07-09 07:02:10 -0600)
+
+----------------------------------------------------------------
+o_uring-5.19-2022-07-09
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring: check that we have a file table when allocating update slots
+
+ fs/io_uring.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
 -- 
-2.36.1
+Jens Axboe
 

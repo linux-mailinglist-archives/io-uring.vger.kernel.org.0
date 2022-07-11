@@ -2,74 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 039BC5701E6
-	for <lists+io-uring@lfdr.de>; Mon, 11 Jul 2022 14:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B91E57036F
+	for <lists+io-uring@lfdr.de>; Mon, 11 Jul 2022 14:56:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbiGKMVD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Jul 2022 08:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46782 "EHLO
+        id S231292AbiGKM4b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 11 Jul 2022 08:56:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbiGKMVC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Jul 2022 08:21:02 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B071758A;
-        Mon, 11 Jul 2022 05:21:01 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id oy13so3635427ejb.1;
-        Mon, 11 Jul 2022 05:21:01 -0700 (PDT)
+        with ESMTP id S231407AbiGKM4b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Jul 2022 08:56:31 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4629D2BB03;
+        Mon, 11 Jul 2022 05:56:30 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id v12so6096243edc.10;
+        Mon, 11 Jul 2022 05:56:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uKA5XThrP7I2nX8lNpiC7vhH5hhUaMwToTzr5MGFKtw=;
-        b=YmT+PXQW+sZv0zPCwNeH7XLRn7rZwge975c83z5htppn4ZyBHGC+G0mX9Mtj00u+5G
-         7oko7pUNjNOzsVJj6xQC4FaLYix6anKwMe+EQ9U6MHfuW9woVS82JpFZzH4MMhcpVa7j
-         MMvjGe3HZe6/xcqclV8re6KjYC/5yNDct2rdcmyWeMagH1OXozAOzXVsTBdC6DeprtYD
-         zUif+UBSXeJe6asi6TxQ47Xkr9zPC8umUt04MYIFL4HeMitbbLIGzB7vdeB7GLh0CKmY
-         70K5hgSZSyNOh+GUSJ+GrJSZFPc+SZJkCGOiWXi1AClmssOhhiI6U+VNFjEG+HEFbip1
-         58MQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=xqiYcac4kjvK9KyWMTADB4nPOj16J3aqFw3fSaQHU2s=;
+        b=D60vK179GfL0CW7TTo/zvY1tKnXlZu2QJzzeiLfRqaUgh25JFtFQofkIuXHheYhAxr
+         KMLa+MlvNT4HvMTldeqvMW5DgXtgoib54d4NmpdHqYn2XkSrhE57ZKl10sbEGe5f+GYa
+         NxvpY1rbnD/fL2VxCIRBXOxEsaWnGiHvRmx3XRgzeVJ/NYC+ETphc2FL69PEzd3cV9pb
+         7OTi/hEXw9HO6RjXUGXevRcUH8N7uTkt/zv+RiQ08tpJ4zZi7s/FP/6DOtuyq5I7nBkk
+         7KbpDNBVuMz/kZ3Klyz8FixO0fmCnQLSzftsqJtMKfgfHKf6cF9cAJULxA+Z4nW6A2VN
+         1HVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=uKA5XThrP7I2nX8lNpiC7vhH5hhUaMwToTzr5MGFKtw=;
-        b=hFJncy/Kd+CZjwc9bwGTIymfV3p4TrNtfm9q1wGL3AMa91moYe/iQLaJgDi7V828Wj
-         5qq6zd35XNs78oRPWC0UvhZ1xqAekze9fgR4dVEIZFRFoVpCtNGtTBn1LoDdJtOSkg9d
-         c0KraNA4tFPXNxT1wT6BzL3Ol8cNeqtFHLIyH3pja+dlH+n0VG/4S0OM2XJdAx9jnnXm
-         mmobWYKCgVXmGWf/Z3q1O8erlkO/278jDJx4SdrRObwYPSNphRF50e+QJFjOH3aPUGmC
-         m+S0SIjolF3f6TKvKor90GK0jWJvrI5ths/0AVVu+ecljSgs7ghbgLtXn/a53ai3X8ks
-         0KSQ==
-X-Gm-Message-State: AJIora8clVlgeLj2+jW1eVR6e3Ok4jjN/bbyHl6PigvxLi8foX94Mp5+
-        BLxjEu4mvSsCcJs26RJVidhENa2TE7khJRDg
-X-Google-Smtp-Source: AGRyM1tjdHvVvXfFLsXeSKQaVK3FIywDXatGxV4lcbkw/9BJ3pfvV5b9yVe5ScENPQhYaiO18bm08w==
-X-Received: by 2002:a17:906:8448:b0:72b:5659:9873 with SMTP id e8-20020a170906844800b0072b56599873mr4519375ejy.117.1657542059639;
-        Mon, 11 Jul 2022 05:20:59 -0700 (PDT)
+        bh=xqiYcac4kjvK9KyWMTADB4nPOj16J3aqFw3fSaQHU2s=;
+        b=p0ivP0sFk+HGIs3+I1oNVNCikh/87ao2DOdcLZZwC/82QHWG3MTM5z6PD/6Oz/GzCi
+         YB4if66I9ib2p52s3dl6jsrBXKd1aQUl9QG6Eru4xZfIEuoZkHcu9JZAyMBSzeiwKXj/
+         7L5VHNXWwreYEs/intToyGncFS/Fn3tnN/srA3Sju0X04O6oX1THHBConj0npBXXNB3b
+         sxsSLhQ/AHdn0KpImCD62WcRSa0Y5jJI5QfeKVmMoCe1p9N9v8LZDs8c4r/9dP5NwOpo
+         e7tJjgRy9IZ6XGKax2MTmRs/o1ZSHyRwEsk0RSLV3fWQ9T0BOiUuu1GjNkUAMMocdp2Z
+         pdbQ==
+X-Gm-Message-State: AJIora9WJfn2VwpDuzqLQBvAP2ihqxXl7DNqMcSpr4vg0TllgoGAyp1b
+        r+Gu/gDoUpGXLbR/bdFRsDY=
+X-Google-Smtp-Source: AGRyM1steBmZK6pUZ6poaeHbH2Prq62ZvS22AqIXf7JWoPHh3Nn0MSJ+kSf6usvWedT/aZc27UKgaw==
+X-Received: by 2002:a05:6402:11d3:b0:43a:c43b:7ff9 with SMTP id j19-20020a05640211d300b0043ac43b7ff9mr15254891edw.130.1657544188835;
+        Mon, 11 Jul 2022 05:56:28 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c093:600::1:ac34])
-        by smtp.gmail.com with ESMTPSA id cb1-20020a0564020b6100b0043a6dc3c4b0sm4253373edb.41.2022.07.11.05.20.48
+        by smtp.gmail.com with ESMTPSA id j11-20020a50ed0b000000b0043a6b86f024sm4250111eds.67.2022.07.11.05.56.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Jul 2022 05:20:59 -0700 (PDT)
-Message-ID: <a2527c63-1b74-fe10-a959-097ec7f68135@gmail.com>
-Date:   Mon, 11 Jul 2022 13:20:02 +0100
+        Mon, 11 Jul 2022 05:56:28 -0700 (PDT)
+Message-ID: <0f54508f-e819-e367-84c2-7aa0d7767097@gmail.com>
+Date:   Mon, 11 Jul 2022 13:56:03 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH net-next v4 06/27] net: Allow custom iter handler in
- msghdr
+Subject: Re: [PATCH net-next v4 00/27] io_uring zerocopy send
 Content-Language: en-US
-To:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     David Ahern <dsahern@kernel.org>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
-        kernel-team@fb.com
+        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
 References: <cover.1657194434.git.asml.silence@gmail.com>
- <968c344a59315ec5d0095584a95bb7dd5a3ac617.1657194434.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <968c344a59315ec5d0095584a95bb7dd5a3ac617.1657194434.git.asml.silence@gmail.com>
+ <2c49d634-bd8a-5a7f-0f66-65dba22bae0d@kernel.org>
+ <bd9960ab-c9d8-8e5d-c347-8049cdf5708a@gmail.com>
+In-Reply-To: <bd9960ab-c9d8-8e5d-c347-8049cdf5708a@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -80,120 +79,102 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/7/22 12:49, Pavel Begunkov wrote:
-> From: David Ahern <dsahern@kernel.org>
+On 7/8/22 15:26, Pavel Begunkov wrote:
+> On 7/8/22 05:10, David Ahern wrote:
+>> On 7/7/22 5:49 AM, Pavel Begunkov wrote:
+>>> NOTE: Not be picked directly. After getting necessary acks, I'll be working
+>>>        out merging with Jakub and Jens.
+>>>
+>>> The patchset implements io_uring zerocopy send. It works with both registered
+>>> and normal buffers, mixing is allowed but not recommended. Apart from usual
+>>> request completions, just as with MSG_ZEROCOPY, io_uring separately notifies
+>>> the userspace when buffers are freed and can be reused (see API design below),
+>>> which is delivered into io_uring's Completion Queue. Those "buffer-free"
+>>> notifications are not necessarily per request, but the userspace has control
+>>> over it and should explicitly attaching a number of requests to a single
+>>> notification. The series also adds some internal optimisations when used with
+>>> registered buffers like removing page referencing.
+>>>
+>>>  From the kernel networking perspective there are two main changes. The first
+>>> one is passing ubuf_info into the network layer from io_uring (inside of an
+>>> in kernel struct msghdr). This allows extra optimisations, e.g. ubuf_info
+>>> caching on the io_uring side, but also helps to avoid cross-referencing
+>>> and synchronisation problems. The second part is an optional optimisation
+>>> removing page referencing for requests with registered buffers.
+>>>
+>>> Benchmarking with an optimised version of the selftest (see [1]), which sends
+>>> a bunch of requests, waits for completions and repeats. "+ flush" column posts
+>>> one additional "buffer-free" notification per request, and just "zc" doesn't
+>>> post buffer notifications at all.
+>>>
+>>> NIC (requests / second):
+>>> IO size | non-zc    | zc             | zc + flush
+>>> 4000    | 495134    | 606420 (+22%)  | 558971 (+12%)
+>>> 1500    | 551808    | 577116 (+4.5%) | 565803 (+2.5%)
+>>> 1000    | 584677    | 592088 (+1.2%) | 560885 (-4%)
+>>> 600     | 596292    | 598550 (+0.4%) | 555366 (-6.7%)
+>>>
+>>> dummy (requests / second):
+>>> IO size | non-zc    | zc             | zc + flush
+>>> 8000    | 1299916   | 2396600 (+84%) | 2224219 (+71%)
+>>> 4000    | 1869230   | 2344146 (+25%) | 2170069 (+16%)
+>>> 1200    | 2071617   | 2361960 (+14%) | 2203052 (+6%)
+>>> 600     | 2106794   | 2381527 (+13%) | 2195295 (+4%)
+>>>
+>>> Previously it also brought a massive performance speedup compared to the
+>>> msg_zerocopy tool (see [3]), which is probably not super interesting.
+>>>
+>>
+>> can you add a comment that the above results are for UDP.
 > 
-> Add support for custom iov_iter handling to msghdr. The idea is that
-> in-kernel subsystems want control over how an SG is split.
+> Oh, right, forgot to add it
 > 
-> Signed-off-by: David Ahern <dsahern@kernel.org>
-> [pavel: move callback into msghdr]
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   include/linux/skbuff.h |  7 ++++---
->   include/linux/socket.h |  4 ++++
->   net/core/datagram.c    | 14 ++++++++++----
->   net/core/skbuff.c      |  2 +-
->   4 files changed, 19 insertions(+), 8 deletions(-)
 > 
-> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> index 8e12b3b9ad6c..a8a2dd4cfdfd 100644
-> --- a/include/linux/skbuff.h
-> +++ b/include/linux/skbuff.h
-> @@ -1776,13 +1776,14 @@ void msg_zerocopy_put_abort(struct ubuf_info *uarg, bool have_uref);
->   void msg_zerocopy_callback(struct sk_buff *skb, struct ubuf_info *uarg,
->   			   bool success);
->   
-> -int __zerocopy_sg_from_iter(struct sock *sk, struct sk_buff *skb,
-> -			    struct iov_iter *from, size_t length);
-> +int __zerocopy_sg_from_iter(struct msghdr *msg, struct sock *sk,
-> +			    struct sk_buff *skb, struct iov_iter *from,
-> +			    size_t length);
->   
->   static inline int skb_zerocopy_iter_dgram(struct sk_buff *skb,
->   					  struct msghdr *msg, int len)
->   {
-> -	return __zerocopy_sg_from_iter(skb->sk, skb, &msg->msg_iter, len);
-> +	return __zerocopy_sg_from_iter(msg, skb->sk, skb, &msg->msg_iter, len);
->   }
->   
->   int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
-> diff --git a/include/linux/socket.h b/include/linux/socket.h
-> index 7bac9fc1cee0..3c11ef18a9cf 100644
-> --- a/include/linux/socket.h
-> +++ b/include/linux/socket.h
-> @@ -14,6 +14,8 @@ struct file;
->   struct pid;
->   struct cred;
->   struct socket;
-> +struct sock;
-> +struct sk_buff;
->   
->   #define __sockaddr_check_size(size)	\
->   	BUILD_BUG_ON(((size) > sizeof(struct __kernel_sockaddr_storage)))
-> @@ -70,6 +72,8 @@ struct msghdr {
->   	__kernel_size_t	msg_controllen;	/* ancillary data buffer length */
->   	struct kiocb	*msg_iocb;	/* ptr to iocb for async requests */
->   	struct ubuf_info *msg_ubuf;
-> +	int (*sg_from_iter)(struct sock *sk, struct sk_buff *skb,
-> +			    struct iov_iter *from, size_t length);
->   };
->   
->   struct user_msghdr {
-> diff --git a/net/core/datagram.c b/net/core/datagram.c
-> index 50f4faeea76c..b3c05efd659f 100644
-> --- a/net/core/datagram.c
-> +++ b/net/core/datagram.c
-> @@ -613,10 +613,16 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
->   }
->   EXPORT_SYMBOL(skb_copy_datagram_from_iter);
->   
-> -int __zerocopy_sg_from_iter(struct sock *sk, struct sk_buff *skb,
-> -			    struct iov_iter *from, size_t length)
-> +int __zerocopy_sg_from_iter(struct msghdr *msg, struct sock *sk,
-> +			    struct sk_buff *skb, struct iov_iter *from,
-> +			    size_t length)
->   {
-> -	int frag = skb_shinfo(skb)->nr_frags;
-> +	int frag;
-> +
-> +	if (msg && msg->sg_from_iter && msg->msg_ubuf == skb_zcopy(skb))
+>> You dropped comments about TCP testing; any progress there? If not, can
+>> you relay any issues you are hitting?
+> 
+> Not really a problem, but for me it's bottle necked at NIC bandwidth
+> (~3GB/s) for both zc and non-zc and doesn't even nearly saturate a CPU.
+> Was actually benchmarked by my colleague quite a while ago, but can't
+> find numbers. Probably need to at least add localhost numbers or grab
+> a better server.
 
-I'm killing "msg->msg_ubuf == skb_zcopy(skb)", which I added with an
-intention to make it less fragile, but it disables the optimisation for
-TCP because skb_zerocopy_iter_stream() assigns ubuf to the skb only after
-calling __zerocopy_sg_from_iter().
+Testing localhost TCP with a hack (see below), it doesn't include
+refcounting optimisations I was testing UDP with and that will be
+sent afterwards. Numbers are in MB/s
+
+IO size | non-zc    | zc
+1200    | 4174      | 4148
+4096    | 7597      | 11228
+
+Because it's localhost, we also spend cycles here for the recv side.
+Using a real NIC 1200 bytes, zc is worse than non-zc ~5-10%, maybe the
+omitted optimisations will somewhat help. I don't consider it to be a
+blocker. but would be interesting to poke into later. One thing helping
+non-zc is that it squeezes a number of requests into a single page
+whenever zerocopy adds a new frag for every request.
+
+Can't say anything new for larger payloads, I'm still NIC-bound but
+looking at CPU utilisation zc doesn't drain as much cycles as non-zc.
+Also, I don't remember if mentioned before, but another catch is that
+with TCP it expects users to not be flushing notifications too much,
+because it forces it to allocate a new skb and lose a good chunk of
+benefits from using TCP.
 
 
-
-> +		return msg->sg_from_iter(sk, skb, from, length);
-> +
-> +	frag = skb_shinfo(skb)->nr_frags;
->   
->   	while (length && iov_iter_count(from)) {
->   		struct page *pages[MAX_SKB_FRAGS];
-> @@ -702,7 +708,7 @@ int zerocopy_sg_from_iter(struct sk_buff *skb, struct iov_iter *from)
->   	if (skb_copy_datagram_from_iter(skb, 0, from, copy))
->   		return -EFAULT;
->   
-> -	return __zerocopy_sg_from_iter(NULL, skb, from, ~0U);
-> +	return __zerocopy_sg_from_iter(NULL, NULL, skb, from, ~0U);
->   }
->   EXPORT_SYMBOL(zerocopy_sg_from_iter);
->   
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index fc22b3d32052..f5a3ebbc1f7e 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -1358,7 +1358,7 @@ int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
->   	if (orig_uarg && uarg != orig_uarg)
->   		return -EEXIST;
->   
-> -	err = __zerocopy_sg_from_iter(sk, skb, &msg->msg_iter, len);
-> +	err = __zerocopy_sg_from_iter(msg, sk, skb, &msg->msg_iter, len);
->   	if (err == -EFAULT || (err == -EMSGSIZE && skb->len == orig_len)) {
->   		struct sock *save_sk = skb->sk;
->   
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 1111adefd906..c4b781b2c3b1 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3218,9 +3218,7 @@ static inline int skb_orphan_frags(struct sk_buff *skb, gfp_t gfp_mask)
+  /* Frags must be orphaned, even if refcounted, if skb might loop to rx path */
+  static inline int skb_orphan_frags_rx(struct sk_buff *skb, gfp_t gfp_mask)
+  {
+-	if (likely(!skb_zcopy(skb)))
+-		return 0;
+-	return skb_copy_ubufs(skb, gfp_mask);
++	return skb_orphan_frags(skb, gfp_mask);
+  }
 
 -- 
 Pavel Begunkov

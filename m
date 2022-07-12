@@ -2,63 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B944571888
-	for <lists+io-uring@lfdr.de>; Tue, 12 Jul 2022 13:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E02865718B0
+	for <lists+io-uring@lfdr.de>; Tue, 12 Jul 2022 13:38:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbiGLLan (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Jul 2022 07:30:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44402 "EHLO
+        id S229920AbiGLLio (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Jul 2022 07:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiGLLam (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jul 2022 07:30:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E2211DA43
-        for <io-uring@vger.kernel.org>; Tue, 12 Jul 2022 04:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657625439;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yTb43hbxavY31b5rWO2RqROeeTIGc8C9HU+MpiDBwnc=;
-        b=A7brWyLKx+/0MltfzlIW8w0HCizZWGxigkI5zMGdq/JgCI1j6gj7d6wxbCy8T5nG7AEJ6E
-        aoeGAOErCgy/PoQmHMP5cZwAlfNV3IdKHrJLYHL0Nv7JJo3OOcuYv74eNvugFOlVoDhxE9
-        zHFZFjJdvSAk0YLZTrAn6rxRbKzfqsE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-186-YzaXNybjOqeD6TlFvR6NHw-1; Tue, 12 Jul 2022 07:30:36 -0400
-X-MC-Unique: YzaXNybjOqeD6TlFvR6NHw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 189B485A586;
-        Tue, 12 Jul 2022 11:30:36 +0000 (UTC)
-Received: from T590 (ovpn-8-24.pek2.redhat.com [10.72.8.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01B81492C3B;
-        Tue, 12 Jul 2022 11:30:28 +0000 (UTC)
-Date:   Tue, 12 Jul 2022 19:30:22 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V4 0/2] ublk: add io_uring based userspace block driver
-Message-ID: <Ys1bTrVd+L5zYODg@T590>
-References: <20220711022024.217163-1-ming.lei@redhat.com>
- <c8e593e6-105f-7a69-857f-5b91ecd3b801@linux.alibaba.com>
- <YswtwnJuWG+55NM1@T590>
- <0697cae5-f366-6f69-be39-96f060d8c586@linux.alibaba.com>
+        with ESMTP id S229568AbiGLLin (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jul 2022 07:38:43 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA9FEE39
+        for <io-uring@vger.kernel.org>; Tue, 12 Jul 2022 04:38:39 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220712113834epoutp02cfe876a8b65d0df9fa15e350ae67dcde~BEfy5GsLl1595915959epoutp02H
+        for <io-uring@vger.kernel.org>; Tue, 12 Jul 2022 11:38:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220712113834epoutp02cfe876a8b65d0df9fa15e350ae67dcde~BEfy5GsLl1595915959epoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1657625915;
+        bh=cyTZ0JqqZSgf5ijTit5hlDsdeh3mZXsbfkOgDoJM25c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QlQIy8xqYUHYEAo38+VY7bZjY+IaIh5qVRLyG1n6SU2DHJSs3Cfbx0h9wLW/5dXHv
+         2m8tgUgDAvY6/a/Qhcjf8ZFhS20maEKZJyUoK0A/Zhk110ebBYAd/DpCT8azVxwkNs
+         1KESspkZiJT5s1bnfPCMEmcUQKXf97uLtOynBdl0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220712113834epcas5p4656a40f25db4218ee2362731b1c3881a~BEfyMe5TT2337223372epcas5p4E;
+        Tue, 12 Jul 2022 11:38:34 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4LhzKL1dGwz4x9Pt; Tue, 12 Jul
+        2022 11:38:30 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        71.86.09566.63D5DC26; Tue, 12 Jul 2022 20:38:30 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220712113829epcas5p450d873c7e596124b079f17595fc42e9f~BEftvBJyZ2337223372epcas5p44;
+        Tue, 12 Jul 2022 11:38:29 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220712113829epsmtrp1b6a97dd9a13941a3024487eca20a16a3~BEftuNYIr0581305813epsmtrp1D;
+        Tue, 12 Jul 2022 11:38:29 +0000 (GMT)
+X-AuditID: b6c32a4a-b8dff7000000255e-75-62cd5d360378
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        63.31.08905.53D5DC26; Tue, 12 Jul 2022 20:38:29 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220712113827epsmtip16c82cf0b4509137dd52e2cd1092c0b23~BEfsJMP7o1734017340epsmtip11;
+        Tue, 12 Jul 2022 11:38:27 +0000 (GMT)
+Date:   Tue, 12 Jul 2022 17:03:04 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     sagi@grimberg.me, kbusch@kernel.org, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, asml.silence@gmail.com,
+        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com
+Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
+ uring-passthrough commands
+Message-ID: <20220712113304.GA4465@test-zns>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0697cae5-f366-6f69-be39-96f060d8c586@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+In-Reply-To: <20220712065250.GA6574@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmlq5Z7Nkkg09TuSyaJvxltpizahuj
+        xeq7/WwWNw/sZLJYufook8W71nMsFuffHmaymHToGqPF3lvaFvOXPWW3WPf6PYsDt8fOWXfZ
+        Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5tG3ZRWjx+dNcgEcUdk2GamJKalFCql5yfkpmXnp
+        tkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBnKimUJeaUAoUCEouLlfTtbIryS0tS
+        FTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyM96cPsxW8IajomvCOaYGxtPs
+        XYycHBICJhLrmk+zdjFycQgJ7GaU+PrgMQuE84lR4suEDmYI5xujxLLH69hgWuZtuMQOkdjL
+        KPH+2gqo/meMEk+3nWMEqWIRUJVo6ugDSnBwsAloSlyYXAoSFhFQknj66ixYCbPAO0aJKe9y
+        QGxhgWSJTU8mMYHYvAI6Es/7FrBD2IISJ2c+YQGxOQW0JT4veAp2hKiAssSBbceZQPZKCKzk
+        kNg4ZRszxHUuEv9fzmOCsIUlXh3fAvWolMTL/jYoO1ni0sxzUDUlEo/3HISy7SVaT/UzQxyX
+        ITG3r5MVwuaT6P39hAnkFwkBXomONiGIckWJe5OeskLY4hIPZyyBsj0kPs5vhgbQHUaJ4/9n
+        ME9glJuF5J9ZSFZA2FYSnR+agGwOIFtaYvk/DghTU2L9Lv0FjKyrGCVTC4pz01OLTQuM8lLL
+        4ZGcnJ+7iRGccrW8djA+fPBB7xAjEwfjIUYJDmYlEd4/Z08lCfGmJFZWpRblxxeV5qQWH2I0
+        BUbPRGYp0eR8YNLPK4k3NLE0MDEzMzOxNDYzVBLn9bq6KUlIID2xJDU7NbUgtQimj4mDU6qB
+        yXrqtb+/HVc65wksD/i+Jz9Cft0h8U1VzZdV89fIFtjLXUoU74zL/RDncMJutuXFT47ZsVrd
+        93/cyrwzXypwpUebiqLWz6sWLLMfdwe3JRb9NMmfIv9Wv9wuT+1xeCJ7x6ez1he/J8g+6Nr+
+        pfmCnzNTnNu8hmven1bWbtBxW5wzl3H2/G9T9k2R1oqYso3dK2K1OEfTC8FlfIU9jQ9M2VW4
+        wz2DOnvfPVl7LCbbX/2/nuZM0eS0tyelpgqkyRjzRoQbJBiqrdptUOdr77bLi8vtuGS329MI
+        QzeVlxWL2Zhsd557cMf8+oW9Llwps7u/tM3S+lFrXunTF7CO84l/wYYvk+OMZ89jN5zhN0+J
+        pTgj0VCLuag4EQCxsYW2QgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsWy7bCSnK5p7Nkkg9e7hSyaJvxltpizahuj
+        xeq7/WwWNw/sZLJYufook8W71nMsFuffHmaymHToGqPF3lvaFvOXPWW3WPf6PYsDt8fOWXfZ
+        Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5tG3ZRWjx+dNcgEcUVw2Kak5mWWpRfp2CVwZBz6e
+        YyqYx1Zx6dxt9gbG6axdjJwcEgImEvM2XGLvYuTiEBLYzSjRtfoZO0RCXKL52g8oW1hi5b/n
+        UEVPGCU6Vk8BS7AIqEo0dfQBTeLgYBPQlLgwuRQkLCKgJPH01VlGkHpmgXeMEk3zullAEsIC
+        yRKbnkxiArF5BXQknvctgBp6j1Gi7dEzFoiEoMTJmU/AbGYBM4l5mx8ygyxgFpCWWP6PAyTM
+        KaAt8XnBUzYQW1RAWeLAtuNMExgFZyHpnoWkexZC9wJG5lWMkqkFxbnpucWGBYZ5qeV6xYm5
+        xaV56XrJ+bmbGMFRpKW5g3H7qg96hxiZOBgPMUpwMCuJ8P45eypJiDclsbIqtSg/vqg0J7X4
+        EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqboN1tfvsybvsLvf8SC/Y7znV2S8l1e
+        iFt+YzUWXWRdvuHR3mRXp7qt9v/X7P/xSo8js5DBp29K2LFQhu7CDgFx/1sPtGSdDWO0dkj/
+        rlvZyiuXOI8nKPW3ytnz09dnvjc5NzeRxy8jZOuC7xOmO+rpmRu/nKMZza5g1eKiJnIrRO0R
+        0zmZScsvvJJbdWP3kqwC47D5Ul8mzrLncmH6U7lWZJrUm6pnjbVhB1jPK4QeOrDHintP+C2h
+        9Jxt3T8k2Is956lyPjned05FMHLuu8f9Ufr9kh0/V2/aIrznhANLnLPtWhmHBJGmNxN/u7BE
+        FYnN93zVczomaG0VU5KXUKRTaQHPsftKK76XfhPvVWIpzkg01GIuKk4EAKwPXvURAwAA
+X-CMS-MailID: 20220712113829epcas5p450d873c7e596124b079f17595fc42e9f
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_81827_"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089
+References: <20220711110155.649153-1-joshi.k@samsung.com>
+        <CGME20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089@epcas5p3.samsung.com>
+        <20220711110155.649153-5-joshi.k@samsung.com> <20220712065250.GA6574@lst.de>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,268 +118,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 12, 2022 at 04:44:03PM +0800, Xiaoguang Wang wrote:
-> Hello Ming,
-> 
-> > Hi Xiaoguang,
-> >
-> > On Mon, Jul 11, 2022 at 07:32:19PM +0800, Xiaoguang Wang wrote:
-> > Please take a look at v4 patches or cover letter at least before asking
-> > this question.
-> Yeah, I should be, really sorry.
-> >
-> > V4 adds one new command of REFETCH for supporting to build ublk driver
-> > as module, you can allocate buffer when receiving REFETCH command
-> > in userspace target code by adding one pair of callbacks.
-> >
-> > Also the latest ublkserver adds callback for target code to pre-allocate
-> > buffer, then if you have pre-allocated io buffer, the buffer can be passed
-> > to driver via FETCH command during setting up queue.
-> Now my concern about io buffer management has gone, thanks.
-> 
-> >
-> > Actually I have implemented pinning page during the whole io lifetime,
-> > then the pre-allocated io buffers can be reclaimed without needing
-> > swapout by kernel when io is completed:
-> >
-> > https://github.com/ming1/linux/commits/ubd-master
-> >
-> > So the preallocation is just allocation on virtual memory space, and
-> > the pages are pinned actually when io is handled. After io handling is
-> > done, kernel can reclaim pages at will without needing swapout on
-> > these io pages.
-> OK, I'll learn codes later.
-> 
-> >
-> >> 2) complicated ublk user-space
-> >> First forgive me :) I think current ublk user-space codes looks somewhat
-> >> complicated:
-> > Please just look at libublksrv code, and example of demo_null.c &
-> > demo_event.c.
-> OK.
-> 
-> >
-> >
-> > Of course we have to wait until all IO commands are issued to driver,
-> > since block IO can come to /dev/ublkbN after UBLK_CMD_START_DEV returns,
-> > and /dev/ublkbN is exposed to userspace in running UBLK_CMD_START_DEV.
-> >
-> > What is the matter of this kind of handling?
-> >
-> > Also with libublksrv, you can do everything just in single task context,
-> > see:
-> >
-> > https://github.com/ming1/ubdsrv/blob/master/demo_null.c
-> No, indeed I don't mean that there are something wrong with your
-> implementation. I just try to see whether I can simplify it a bit.
-> 
-> If we adopt to pass one io_uring fd per queue when starting device,
-> blk-mq's queue_rq() will get corresponding io_uring file for this queue and
-> use it to generate cqes directly to notify new io commands inserted,
-> then UBLK_CMD_START_DEV doesn't need to wait, and can be in the
-> same thread with ublksrv_queue_init or ublksrv_process_io.
-> Seems that for demo_null.c, they are still in different threads.
-> 
-> For current io_uring implementation, one sqe may generate one or more
-> cqes, but indeed, we can generate cqes without submitting sqes, just
-> fill one event to io_uring ctx.
-> Just suggestions :)
+------OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_81827_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-I don't have any interest in so unusual usage of io_uring, especially it
-needs fundamental change in io_uring.
+On Tue, Jul 12, 2022 at 08:52:50AM +0200, Christoph Hellwig wrote:
+>Hmm, I'm a little confused on what this is trying to archive.
+>
+>The io_uring passthrough already does support multipathing, it picks
+>an available path in nvme_ns_head_chr_uring_cmd and uses that.
+>
+>What this does is adding support for requeing on failure or the
+>lack of an available path.  Which very strongly is against our
+>passthrough philosophy both in SCSI and NVMe where error handling
+>is left entirely to the userspace program issuing the I/O.
+>
+>So this does radically change behavior in a very unexpected way.
+>Why?
 
-Compared with kernel side change, removing waiting until queue setup in
-userspace side simplifies nothing.
+I think ask has been to add requeue/failover support for
+async-passthrough. This came up here - 
+https://lore.kernel.org/linux-nvme/88827a86-1304-e699-ec11-2718e280f9ad@grimberg.me/
 
-> >
-> >>   2. mixed getting ublk command and target io handle in one io_uring instance
-> >> I'm not sure it's a good design, see ublksrv_handle_cqe(), which contains
-> > io_uring is supposed to be bound with context, and serves all IOs
-> > issued from this context. That is exactly typical AIO use pattern,
-> > please look at example of t/io_uring.c in fio project, which can accept
-> > lots of files in command line, then handle IOs to all these files in one
-> > single io_uring context. Here /dev/ublkcN is just one file, we handle
-> > IOs to other files and /dev/ublkcN in single io_uring/context, then
-> > all of them can be handled at batching, then each single syscall can
-> > handle more IOs, that is one important reason why io_uring performs so well.
-> Yeah, I understand that you're doing your best to improve ublk performance,
-> and I'm a early developer of io_uring and know how it works :)
-> 
-> It maybe just because of my poor design poor taste, I think put
-> io command descriptors acquire and io command handling together
-> seem not decouple well.
-> >
-> >> many flag handle work and is_target_io() check, I think the data flow is not
-> >> that clear for me at least :)
-> > /* 
-> >  * this flag is set if we need to tell ublk driver to fetch io req only,
-> >  * just needed in setup stage.  
-> >  */
-> > #define UBLKSRV_NEED_FETCH_RQ		(1UL << 0)
-> >
-> > /* when one io is handled, we set this flag for committing io result */
-> > #define UBLKSRV_NEED_COMMIT_RQ_COMP	(1UL << 1)
-> >
-> > /*
-> >  * this flag is set in case the command slot is free to issue new command;
-> >  * cleared when io command is issued to driver.
-> >  */
-> > #define UBLKSRV_IO_FREE			(1UL << 2)
-> >
-> > /*
-> >  * added in v4, set in case UBLK_IO_RES_REFETCH is returned from driver,
-> >  * so REFETCH command is issued to driver
-> >  */
-> > #define UBLKSRV_NEED_REFETCH_RQ		(1UL << 3)
-> >
-> > Note, the flags are just for handling io commands.
-> >
-> >>   3. helper like tcmulib_get_next_command()
-> >> I wonder whether current ublk user-space can offer similar helper which
-> >> will return a set of io commands to backstore easily.
-> > No, io command is supposed to use by libublksrv internal use, and target
-> > code should _not_ deal with any io command.
-> Seems different from design ideas of tcmu.
-> 
-> >
-> > The target code should just focus on implementing ->handle_io_async() in
-> > which one new io command is received from driver, same with
-> > ->target_io_done() which is called when one target io is completed by
-> > io_uring.
-> >
-> > If target code doesn't use io_uring to handle io, please refer to
-> > example of demo_event.c, in which ->handle_event() is required for
-> > supporting to handle io in another contexts by either io_uring or libaio
-> > or whatever. ->handle_event() is called when io_uring(for issuing io
-> > command) is waken up by eventfd, which is triggered by target code
-> > itself(two eventfd APIs).
-> OK.
-> 
-> >
-> >> I'd like to suggest:
-> >> 1. When starting ublk dev, pass io_uring fd for every queue, then in
-> >> blk-mq->queue_rq(), it'll generate one cqe for every coming request,
-> >> not need to issue fetch sqes command in advance, kernel codes would
-> > Why do you think it isn't good to issue fetch sqes in advance? It costs
-> > nothing, meantime userspace can get io request pretty fast.
-> >
-> > Actually you are suggesting one fundamental change to io_uring given
-> > the current io_uring use model is that userspace issues io via sqe, and
-> > kernel(io_uring) completes io via cqe, and sqe and cqe are in two rings
-> > actually.
-> >
-> > That current io_uring doesn't support to complete cqe to userspace without
-> > issuing any sqe, also not see any benefit we can get in this way. If you
-> > have, please explain it in details.
-> Hard to say it's one fundamental change, io_uring can easily add such
-> a helper which generates cqes but needs not to submit sqes, which contains
->   allocate one cqe, with user_data, res
->   io_commit_cqring(ctx);
-
-You still need io_kiocb/io_uring_cmd and both are allocated in
-submission code path, since 'io_ring_ctx' is private for
-io_uring.
-
-And ublk server still needs one command to send io result to ublk driver,
-that said this way saves nothing for us cause ublk driver uses single
-command for both fetching io request and committing io result.
-
-Easy to say than done, you may try to write a patch to verify your
-ideas, especially no one uses io_ring in this way.
-
-> 
-> As I said before, there maybe such benefits:
-> 1. may decouple io command descriptor acquire and io command handling well.
-> At least helper like tcmulib_get_next_command maybe added easily. I'm not sure, some
-> applications based on tcmu previously may need this helper.
-
-Why do we need similar helper of tcmulib_get_next_command()? for what
-purpose? In current design of ublk server, it should be enough for target
-code to focus on ->handle_io_async(), ->target_io_done() in case of handling
-target io via ubq io_uring, ->handle_event() in case of handling target io in
-other contexts.
-
-ublk server is one io_uring application, and interfaces provided
-are based on io_uring design/interfaces. I guess TCMU isn't based on
-io_uring, so it may have original style interface. You may ask
-TCMU guys if it is possible to reuse current interface for supporting
-io_uring with expected performance.
-
-> 
-> 2. UBLK_CMD_START_DEV won't need to wait another thread context to submit
-> number of queue depth of sqes firstly, but I admit that it's not a big issue.
-
-Yeah, it simplifies nothing, compared with fundamental io_uring change
-and ublk driver side change.
-
-> 
-> >
-> >
-> >> simplify a bit,  UBLK_IO_FLAG_ACTIVE may be discarded. And helper
-> >> like returning a set of io command would be added easily. Note these
-> >> io_uring fd would be just used for notifying io command generated.
-> >>
-> >> 2. We use another io_uring fd per queue to handle GET_DATA or
-> >> COMMIT_REQ command. Indeed, if we can support synchronous ioctl
-> >> interface to do GET_DATA and COMMIT_REQ, we may make libublk
-> >> really simple.
-> > IMO that won't be good idea. One important reason why io_uring is so
-> > efficient is that batching issue/completion in single syscall. And using
-> > ioctl to handle io can be too slow.
-> >
-> >>
-> >> Here I'd like to describe how we use tcmu. A main thread call
-> >> tcmulib_get_next_command() to get a set of io commands, then
-> >> it dispatches them to user-space io wokers. Take write requests as
-> >> example, io worker use ioctl(2) to get data from bios, and send
-> >> data to distributed fs, finally call ioctl(2) to commit req. Multiple
-> > Hammm, not mentioning pthread communication, it takes at least 3 syscalls
-> > for handling one io, how can you expect this way to work efficiently?
-> I admit batch will be good, and syscalls userspace and kernel context switch
-> introduce overhead. But for big io requests, batch in one context is not good. In
-> the example of read requests, if io request is big, say 1MB, io_uring will do
-> commit req sequentially, which indeed mainly do memcpy work. But if users
-> can choose to issue multiple ioctls which do commit req concurrently, I think
-> user may get higher io throughput.
-
-If BS is big, single job could saturate devices bw easily, multiple jobs won't
-make a difference, will it? Not mention sync cost among multiple jobs.
-
-Not mention current ublk server does support multiple io jobs.
-
-> 
-> And in this case, user may not care userspace and kernel context switch overhead at all.
-> 
-> Or to put it another way, should libublk offer synchronous programming interface ?
-
-It depends what the sync interface is.
-
-You can call sync read()/write() for target io directly in ->handdle_io_async(),
-or call them in other pthread(s) just by telling ubq after these sync ios are done
-with the eventfd API.
-
-demo_null.c is actually one such example.
-
-> 
-> >
-> > With ublk, usually we handle dozens or even more than hundred of IOs in
-> > single io_uring_enter() syscall.
-> >
-> >> io workers can run concurrently. Since GET_DATA(write request)
-> >> or COMMIT_REQ(read request) mainly do memcpy work, one
-> >> io_uring instance will just do these jobs sequentially, which may
-> >> not take advantage of multi-cpu.
-> > IMO you can implement target code to handle io in other pthreads against
-> > current libublksrv design, see demo_event.c. Or if you think it is still
-> > enough, please just share with us what the problem is. Without
-> > understanding the problem, I won't try to figure out any solution or
-> > change.
-> I need to read your ublk userspace codes carefully, if I made
-
-One small suggestion, you may start with the two builtin examples, both
-are simple & clean, and the big one is only 300+ LOC, really complicated?
+------OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_81827_
+Content-Type: text/plain; charset="utf-8"
 
 
-Thanks.
-Ming
-
+------OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_81827_--

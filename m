@@ -2,851 +2,393 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFB1572807
-	for <lists+io-uring@lfdr.de>; Tue, 12 Jul 2022 22:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21C2F572890
+	for <lists+io-uring@lfdr.de>; Tue, 12 Jul 2022 23:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234402AbiGLU4K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Jul 2022 16:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
+        id S230515AbiGLV0Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Jul 2022 17:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233838AbiGLUzA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jul 2022 16:55:00 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A489C39B84;
-        Tue, 12 Jul 2022 13:53:44 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id bk26so12796608wrb.11;
-        Tue, 12 Jul 2022 13:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EpZbzDMfnj4/WxgjQevjPP/4PRPQ5t7+5MEbvKcF/LQ=;
-        b=bX0T13JkqUjQSfcUs3uEfYCCzdbRt85O31pfbJjAZ5ubTR6KlRiGVtCxiXtX//I6Cb
-         ql7ZRpyLM+JSKR6Oo6ZvRPOmY0XWycuRcyvSG5jj/vX9R/SoxUH+0II6gBFxMS7+4JAJ
-         tCjo89efrKuKJ6wxr+6j3YjPtnPqm9enBde2qmRAu3kADUonXuvUuj7GXBxkiPKkao97
-         WQqjJ5ggXZbn6FGiS40BE2Fco/YcNfjvh6tDoCECt240JtAGSkJUhGe3DK2UY7JaHCpL
-         q5bY8Tw0hyLuHuztl29VoGkoBsKu1ntAYKfLU+N2KBLRaVB9ryUtWXAhcS3mifKpZ2P0
-         5ewQ==
+        with ESMTP id S230393AbiGLV0P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Jul 2022 17:26:15 -0400
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C59C48F7;
+        Tue, 12 Jul 2022 14:26:13 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id l68so5439369wml.3;
+        Tue, 12 Jul 2022 14:26:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EpZbzDMfnj4/WxgjQevjPP/4PRPQ5t7+5MEbvKcF/LQ=;
-        b=L2GONhy/3uJ3G3/p+SaGyxWW7HctZukUyQugZdfRAeQQtATeEh8pXHQPm4lq1rsSYD
-         qfMmOiQ0uUq9TjWmlCRj2IxtkpIwRYkVA80NQRG4wcjoULOjhnaJJqU66+t/TIK47VQ2
-         0we+gLcnvsCRZh47Mx4gf7dtNpPAOshs7whwnmZkxWxwPeWciJSzhmRM9ci6vtuzTRST
-         8+KtxQLZdmxe+dvvNujtyVSm09rLdsgRTcthC2XZDRjHssP235ACp/HsaPEL8jETWQLh
-         wOgEPY3+if8aQt/NZoWeYa2OwlXJpf1IgqyxEOA+0HD2MbskWgiXkFR2KzaLyjhkHy/b
-         SIfw==
-X-Gm-Message-State: AJIora97jam6gExEVTB1htzhEYg5zaxnSQ1a1q5162uga+K3fJdn3f3W
-        qS2q6ff0vNnRRX0RCY0aw6006F6ys4I=
-X-Google-Smtp-Source: AGRyM1vS9ttYPSEp203gx+lvxsFO3cqL7g3Cr/WOl+KcGA9iw/LtsP528H4rVtNGiajAIPwx3lK6Pw==
-X-Received: by 2002:a5d:595d:0:b0:21b:84af:552a with SMTP id e29-20020a5d595d000000b0021b84af552amr23845802wri.656.1657659220527;
-        Tue, 12 Jul 2022 13:53:40 -0700 (PDT)
-Received: from 127.0.0.1localhost (188.28.125.106.threembb.co.uk. [188.28.125.106])
-        by smtp.gmail.com with ESMTPSA id c14-20020a7bc00e000000b003a044fe7fe7sm89833wmb.9.2022.07.12.13.53.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 13:53:40 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
-        kernel-team@fb.com, Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH net-next v5 27/27] selftests/io_uring: test zerocopy send
-Date:   Tue, 12 Jul 2022 21:52:51 +0100
-Message-Id: <03d5ec78061cf52db420f88ed0b48eb8f47ce9f7.1657643355.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <cover.1657643355.git.asml.silence@gmail.com>
-References: <cover.1657643355.git.asml.silence@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=w0gxeavJWp1Gr+c8ruZqW2AN//vO/3QZqWjVPfEbis8=;
+        b=MJ7FKDRE9dAffS/Kmkhyr//8GzlGpbxLf4pucgpXHcCgcNi7OrsR2Hr7FUdICJg3lY
+         7H5HkEKtbS3hL9WmoT/YTbJAe6ps3iqCJiJyAQXBUY3SFYaXSopp7jPwnPVaXKy5X6bD
+         bAza4C7SfToW3FPSMCiY+u4CVhZd5ayOIZZwGqq/hwJzGmIggRKJwga+Iw+0TNJcODZI
+         V3nZcYjZRx7v+2O+pNIUk7IyOIn9V1fwdIQcCsqPRZXw746Pd/ITyk+pVdxj4EByAF02
+         WsjetjjYfq6x+E2PkVntjgMsUuBhY3cbRAXFMSzpC8CGdrwikAyxPWNELE6rGBh2RxXp
+         auoA==
+X-Gm-Message-State: AJIora/7n0jJdt/NFxbC+VVmNRzc10PVg6UpNAUVOCyLEwAaoqzBQ2pw
+        OkOuphM5NHximpGJRUrmt1Q=
+X-Google-Smtp-Source: AGRyM1uT1EiNYgwsqdciVUkFdeO1v8rIpvuKxq69PFBrCanIJYhGFKk4tDAv+gSgtFvJauJbJK9XRA==
+X-Received: by 2002:a1c:2645:0:b0:3a2:e388:d883 with SMTP id m66-20020a1c2645000000b003a2e388d883mr49052wmm.36.1657661172026;
+        Tue, 12 Jul 2022 14:26:12 -0700 (PDT)
+Received: from [10.100.102.14] (46-117-125-14.bb.netvision.net.il. [46.117.125.14])
+        by smtp.gmail.com with ESMTPSA id 3-20020a05600c024300b003a1a02c6d7bsm74473wmj.35.2022.07.12.14.26.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Jul 2022 14:26:11 -0700 (PDT)
+Message-ID: <3a2b281b-793b-b8ad-6a27-138c89a46fac@grimberg.me>
+Date:   Wed, 13 Jul 2022 00:26:09 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
+ uring-passthrough commands
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     hch@lst.de, kbusch@kernel.org, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, asml.silence@gmail.com,
+        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com
+References: <20220711110155.649153-1-joshi.k@samsung.com>
+ <CGME20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089@epcas5p3.samsung.com>
+ <20220711110155.649153-5-joshi.k@samsung.com>
+ <3fc68482-fb24-1f39-5428-faa3a8db9ecb@grimberg.me>
+ <20220711183746.GA20562@test-zns>
+ <5f30c7de-03b1-768a-d44f-594ed2d1dc75@grimberg.me>
+ <20220712042332.GA14780@test-zns>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20220712042332.GA14780@test-zns>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add selftests for io_uring zerocopy sends and io_uring's notification
-infrastructure. It's largely influenced by msg_zerocopy and uses it on
-the receive side.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- tools/testing/selftests/net/Makefile          |   1 +
- .../selftests/net/io_uring_zerocopy_tx.c      | 605 ++++++++++++++++++
- .../selftests/net/io_uring_zerocopy_tx.sh     | 131 ++++
- 3 files changed, 737 insertions(+)
- create mode 100644 tools/testing/selftests/net/io_uring_zerocopy_tx.c
- create mode 100755 tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+>>>>> @@ -448,6 +442,14 @@ static int nvme_uring_cmd_io(struct nvme_ctrl 
+>>>>> *ctrl, struct nvme_ns *ns,
+>>>>>      pdu->meta_buffer = nvme_to_user_ptr(d.metadata);
+>>>>>      pdu->meta_len = d.metadata_len;
+>>>>> +    if (issue_flags & IO_URING_F_MPATH) {
+>>>>> +        req->cmd_flags |= REQ_NVME_MPATH;
+>>>>> +        /*
+>>>>> +         * we would need the buffer address (d.addr field) if we have
+>>>>> +         * to retry the command. Store it by repurposing ioucmd->cmd
+>>>>> +         */
+>>>>> +        ioucmd->cmd = (void *)d.addr;
+>>>>
+>>>> What does repurposing mean here?
+>>>
+>>> This field (ioucmd->cmd) was pointing to passthrough command (which
+>>> is embedded in SQE of io_uring). At this point we have consumed
+>>> passthrough command, so this field can be reused if we have to. And we
+>>> have to beceause failover needs recreating passthrough command.
+>>> Please see nvme_uring_cmd_io_retry to see how this helps in recreating
+>>> the fields of passthrough command. And more on this below.
+>>
+>> so ioucmd->cmd starts as an nvme_uring_cmd pointer and continues as
+>> an address of buffer for a later processing that may or may not
+>> happen in its lifetime?
+> 
+> Yes. See this as a no-cost way to handle fast/common path. We manage by
+> doing just this assignment.
+> Otherwise this would have involved doing high-cost (allocate/copy/deferral)
+> stuff for later processing that may or may not happen.
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 7ea54af55490..51261483744e 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -59,6 +59,7 @@ TEST_GEN_FILES += toeplitz
- TEST_GEN_FILES += cmsg_sender
- TEST_GEN_FILES += stress_reuseport_listen
- TEST_PROGS += test_vxlan_vnifiltering.sh
-+TEST_GEN_FILES += io_uring_zerocopy_tx
- 
- TEST_FILES := settings
- 
-diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.c b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-new file mode 100644
-index 000000000000..9d64c560a2d6
---- /dev/null
-+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-@@ -0,0 +1,605 @@
-+/* SPDX-License-Identifier: MIT */
-+/* based on linux-kernel/tools/testing/selftests/net/msg_zerocopy.c */
-+#include <assert.h>
-+#include <errno.h>
-+#include <error.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <arpa/inet.h>
-+#include <linux/errqueue.h>
-+#include <linux/if_packet.h>
-+#include <linux/io_uring.h>
-+#include <linux/ipv6.h>
-+#include <linux/socket.h>
-+#include <linux/sockios.h>
-+#include <net/ethernet.h>
-+#include <net/if.h>
-+#include <netinet/in.h>
-+#include <netinet/ip.h>
-+#include <netinet/ip6.h>
-+#include <netinet/tcp.h>
-+#include <netinet/udp.h>
-+#include <sys/ioctl.h>
-+#include <sys/mman.h>
-+#include <sys/resource.h>
-+#include <sys/socket.h>
-+#include <sys/stat.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
-+#include <sys/un.h>
-+#include <sys/wait.h>
-+
-+#define NOTIF_TAG 0xfffffffULL
-+#define NONZC_TAG 0
-+#define ZC_TAG 1
-+
-+enum {
-+	MODE_NONZC	= 0,
-+	MODE_ZC		= 1,
-+	MODE_ZC_FIXED	= 2,
-+	MODE_MIXED	= 3,
-+};
-+
-+static bool cfg_flush		= false;
-+static bool cfg_cork		= false;
-+static int  cfg_mode		= MODE_ZC_FIXED;
-+static int  cfg_nr_reqs		= 8;
-+static int  cfg_family		= PF_UNSPEC;
-+static int  cfg_payload_len;
-+static int  cfg_port		= 8000;
-+static int  cfg_runtime_ms	= 4200;
-+
-+static socklen_t cfg_alen;
-+static struct sockaddr_storage cfg_dst_addr;
-+
-+static char payload[IP_MAXPACKET] __attribute__((aligned(4096)));
-+
-+struct io_sq_ring {
-+	unsigned *head;
-+	unsigned *tail;
-+	unsigned *ring_mask;
-+	unsigned *ring_entries;
-+	unsigned *flags;
-+	unsigned *array;
-+};
-+
-+struct io_cq_ring {
-+	unsigned *head;
-+	unsigned *tail;
-+	unsigned *ring_mask;
-+	unsigned *ring_entries;
-+	struct io_uring_cqe *cqes;
-+};
-+
-+struct io_uring_sq {
-+	unsigned *khead;
-+	unsigned *ktail;
-+	unsigned *kring_mask;
-+	unsigned *kring_entries;
-+	unsigned *kflags;
-+	unsigned *kdropped;
-+	unsigned *array;
-+	struct io_uring_sqe *sqes;
-+
-+	unsigned sqe_head;
-+	unsigned sqe_tail;
-+
-+	size_t ring_sz;
-+};
-+
-+struct io_uring_cq {
-+	unsigned *khead;
-+	unsigned *ktail;
-+	unsigned *kring_mask;
-+	unsigned *kring_entries;
-+	unsigned *koverflow;
-+	struct io_uring_cqe *cqes;
-+
-+	size_t ring_sz;
-+};
-+
-+struct io_uring {
-+	struct io_uring_sq sq;
-+	struct io_uring_cq cq;
-+	int ring_fd;
-+};
-+
-+#ifdef __alpha__
-+# ifndef __NR_io_uring_setup
-+#  define __NR_io_uring_setup		535
-+# endif
-+# ifndef __NR_io_uring_enter
-+#  define __NR_io_uring_enter		536
-+# endif
-+# ifndef __NR_io_uring_register
-+#  define __NR_io_uring_register	537
-+# endif
-+#else /* !__alpha__ */
-+# ifndef __NR_io_uring_setup
-+#  define __NR_io_uring_setup		425
-+# endif
-+# ifndef __NR_io_uring_enter
-+#  define __NR_io_uring_enter		426
-+# endif
-+# ifndef __NR_io_uring_register
-+#  define __NR_io_uring_register	427
-+# endif
-+#endif
-+
-+#if defined(__x86_64) || defined(__i386__)
-+#define read_barrier()	__asm__ __volatile__("":::"memory")
-+#define write_barrier()	__asm__ __volatile__("":::"memory")
-+#else
-+
-+#define read_barrier()	__sync_synchronize()
-+#define write_barrier()	__sync_synchronize()
-+#endif
-+
-+static int io_uring_setup(unsigned int entries, struct io_uring_params *p)
-+{
-+	return syscall(__NR_io_uring_setup, entries, p);
-+}
-+
-+static int io_uring_enter(int fd, unsigned int to_submit,
-+			  unsigned int min_complete,
-+			  unsigned int flags, sigset_t *sig)
-+{
-+	return syscall(__NR_io_uring_enter, fd, to_submit, min_complete,
-+			flags, sig, _NSIG / 8);
-+}
-+
-+static int io_uring_register_buffers(struct io_uring *ring,
-+				     const struct iovec *iovecs,
-+				     unsigned nr_iovecs)
-+{
-+	int ret;
-+
-+	ret = syscall(__NR_io_uring_register, ring->ring_fd,
-+		      IORING_REGISTER_BUFFERS, iovecs, nr_iovecs);
-+	return (ret < 0) ? -errno : ret;
-+}
-+
-+static int io_uring_register_notifications(struct io_uring *ring,
-+					   unsigned nr,
-+					   struct io_uring_notification_slot *slots)
-+{
-+	int ret;
-+	struct io_uring_notification_register r = {
-+		.nr_slots = nr,
-+		.data = (unsigned long)slots,
-+	};
-+
-+	ret = syscall(__NR_io_uring_register, ring->ring_fd,
-+		      IORING_REGISTER_NOTIFIERS, &r, sizeof(r));
-+	return (ret < 0) ? -errno : ret;
-+}
-+
-+static int io_uring_mmap(int fd, struct io_uring_params *p,
-+			 struct io_uring_sq *sq, struct io_uring_cq *cq)
-+{
-+	size_t size;
-+	void *ptr;
-+	int ret;
-+
-+	sq->ring_sz = p->sq_off.array + p->sq_entries * sizeof(unsigned);
-+	ptr = mmap(0, sq->ring_sz, PROT_READ | PROT_WRITE,
-+		   MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_SQ_RING);
-+	if (ptr == MAP_FAILED)
-+		return -errno;
-+	sq->khead = ptr + p->sq_off.head;
-+	sq->ktail = ptr + p->sq_off.tail;
-+	sq->kring_mask = ptr + p->sq_off.ring_mask;
-+	sq->kring_entries = ptr + p->sq_off.ring_entries;
-+	sq->kflags = ptr + p->sq_off.flags;
-+	sq->kdropped = ptr + p->sq_off.dropped;
-+	sq->array = ptr + p->sq_off.array;
-+
-+	size = p->sq_entries * sizeof(struct io_uring_sqe);
-+	sq->sqes = mmap(0, size, PROT_READ | PROT_WRITE,
-+			MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_SQES);
-+	if (sq->sqes == MAP_FAILED) {
-+		ret = -errno;
-+err:
-+		munmap(sq->khead, sq->ring_sz);
-+		return ret;
-+	}
-+
-+	cq->ring_sz = p->cq_off.cqes + p->cq_entries * sizeof(struct io_uring_cqe);
-+	ptr = mmap(0, cq->ring_sz, PROT_READ | PROT_WRITE,
-+			MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_CQ_RING);
-+	if (ptr == MAP_FAILED) {
-+		ret = -errno;
-+		munmap(sq->sqes, p->sq_entries * sizeof(struct io_uring_sqe));
-+		goto err;
-+	}
-+	cq->khead = ptr + p->cq_off.head;
-+	cq->ktail = ptr + p->cq_off.tail;
-+	cq->kring_mask = ptr + p->cq_off.ring_mask;
-+	cq->kring_entries = ptr + p->cq_off.ring_entries;
-+	cq->koverflow = ptr + p->cq_off.overflow;
-+	cq->cqes = ptr + p->cq_off.cqes;
-+	return 0;
-+}
-+
-+static int io_uring_queue_init(unsigned entries, struct io_uring *ring,
-+			       unsigned flags)
-+{
-+	struct io_uring_params p;
-+	int fd, ret;
-+
-+	memset(ring, 0, sizeof(*ring));
-+	memset(&p, 0, sizeof(p));
-+	p.flags = flags;
-+
-+	fd = io_uring_setup(entries, &p);
-+	if (fd < 0)
-+		return fd;
-+	ret = io_uring_mmap(fd, &p, &ring->sq, &ring->cq);
-+	if (!ret)
-+		ring->ring_fd = fd;
-+	else
-+		close(fd);
-+	return ret;
-+}
-+
-+static int io_uring_submit(struct io_uring *ring)
-+{
-+	struct io_uring_sq *sq = &ring->sq;
-+	const unsigned mask = *sq->kring_mask;
-+	unsigned ktail, submitted, to_submit;
-+	int ret;
-+
-+	read_barrier();
-+	if (*sq->khead != *sq->ktail) {
-+		submitted = *sq->kring_entries;
-+		goto submit;
-+	}
-+	if (sq->sqe_head == sq->sqe_tail)
-+		return 0;
-+
-+	ktail = *sq->ktail;
-+	to_submit = sq->sqe_tail - sq->sqe_head;
-+	for (submitted = 0; submitted < to_submit; submitted++) {
-+		read_barrier();
-+		sq->array[ktail++ & mask] = sq->sqe_head++ & mask;
-+	}
-+	if (!submitted)
-+		return 0;
-+
-+	if (*sq->ktail != ktail) {
-+		write_barrier();
-+		*sq->ktail = ktail;
-+		write_barrier();
-+	}
-+submit:
-+	ret = io_uring_enter(ring->ring_fd, submitted, 0,
-+				IORING_ENTER_GETEVENTS, NULL);
-+	return ret < 0 ? -errno : ret;
-+}
-+
-+static inline void io_uring_prep_send(struct io_uring_sqe *sqe, int sockfd,
-+				      const void *buf, size_t len, int flags)
-+{
-+	memset(sqe, 0, sizeof(*sqe));
-+	sqe->opcode = (__u8) IORING_OP_SEND;
-+	sqe->fd = sockfd;
-+	sqe->addr = (unsigned long) buf;
-+	sqe->len = len;
-+	sqe->msg_flags = (__u32) flags;
-+}
-+
-+static inline void io_uring_prep_sendzc(struct io_uring_sqe *sqe, int sockfd,
-+				        const void *buf, size_t len, int flags,
-+				        unsigned slot_idx, unsigned zc_flags)
-+{
-+	io_uring_prep_send(sqe, sockfd, buf, len, flags);
-+	sqe->opcode = (__u8) IORING_OP_SENDZC_NOTIF;
-+	sqe->notification_idx = slot_idx;
-+	sqe->ioprio = zc_flags;
-+}
-+
-+static struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
-+{
-+	struct io_uring_sq *sq = &ring->sq;
-+
-+	if (sq->sqe_tail + 1 - sq->sqe_head > *sq->kring_entries)
-+		return NULL;
-+	return &sq->sqes[sq->sqe_tail++ & *sq->kring_mask];
-+}
-+
-+static int io_uring_wait_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr)
-+{
-+	struct io_uring_cq *cq = &ring->cq;
-+	const unsigned mask = *cq->kring_mask;
-+	unsigned head = *cq->khead;
-+	int ret;
-+
-+	*cqe_ptr = NULL;
-+	do {
-+		read_barrier();
-+		if (head != *cq->ktail) {
-+			*cqe_ptr = &cq->cqes[head & mask];
-+			break;
-+		}
-+		ret = io_uring_enter(ring->ring_fd, 0, 1,
-+					IORING_ENTER_GETEVENTS, NULL);
-+		if (ret < 0)
-+			return -errno;
-+	} while (1);
-+
-+	return 0;
-+}
-+
-+static inline void io_uring_cqe_seen(struct io_uring *ring)
-+{
-+	*(&ring->cq)->khead += 1;
-+	write_barrier();
-+}
-+
-+static unsigned long gettimeofday_ms(void)
-+{
-+	struct timeval tv;
-+
-+	gettimeofday(&tv, NULL);
-+	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-+}
-+
-+static void do_setsockopt(int fd, int level, int optname, int val)
-+{
-+	if (setsockopt(fd, level, optname, &val, sizeof(val)))
-+		error(1, errno, "setsockopt %d.%d: %d", level, optname, val);
-+}
-+
-+static int do_setup_tx(int domain, int type, int protocol)
-+{
-+	int fd;
-+
-+	fd = socket(domain, type, protocol);
-+	if (fd == -1)
-+		error(1, errno, "socket t");
-+
-+	do_setsockopt(fd, SOL_SOCKET, SO_SNDBUF, 1 << 21);
-+
-+	if (connect(fd, (void *) &cfg_dst_addr, cfg_alen))
-+		error(1, errno, "connect");
-+	return fd;
-+}
-+
-+static void do_tx(int domain, int type, int protocol)
-+{
-+	struct io_uring_notification_slot b[1] = {{.tag = NOTIF_TAG}};
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	unsigned long packets = 0, bytes = 0;
-+	struct io_uring ring;
-+	struct iovec iov;
-+	uint64_t tstop;
-+	int i, fd, ret;
-+	int compl_cqes = 0;
-+
-+	fd = do_setup_tx(domain, type, protocol);
-+
-+	ret = io_uring_queue_init(512, &ring, 0);
-+	if (ret)
-+		error(1, ret, "io_uring: queue init");
-+
-+	ret = io_uring_register_notifications(&ring, 1, b);
-+	if (ret)
-+		error(1, ret, "io_uring: tx ctx registration");
-+
-+	iov.iov_base = payload;
-+	iov.iov_len = cfg_payload_len;
-+
-+	ret = io_uring_register_buffers(&ring, &iov, 1);
-+	if (ret)
-+		error(1, ret, "io_uring: buffer registration");
-+
-+	tstop = gettimeofday_ms() + cfg_runtime_ms;
-+	do {
-+		if (cfg_cork)
-+			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 1);
-+
-+		for (i = 0; i < cfg_nr_reqs; i++) {
-+			unsigned zc_flags = 0;
-+			unsigned buf_idx = 0;
-+			unsigned slot_idx = 0;
-+			unsigned mode = cfg_mode;
-+			unsigned msg_flags = 0;
-+
-+			if (cfg_mode == MODE_MIXED)
-+				mode = rand() % 3;
-+
-+			sqe = io_uring_get_sqe(&ring);
-+
-+			if (mode == MODE_NONZC) {
-+				io_uring_prep_send(sqe, fd, payload,
-+						   cfg_payload_len, msg_flags);
-+				sqe->user_data = NONZC_TAG;
-+			} else {
-+				if (cfg_flush) {
-+					zc_flags |= IORING_RECVSEND_NOTIF_FLUSH;
-+					compl_cqes++;
-+				}
-+				io_uring_prep_sendzc(sqe, fd, payload,
-+						     cfg_payload_len,
-+						     msg_flags, slot_idx, zc_flags);
-+				if (mode == MODE_ZC_FIXED) {
-+					sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
-+					sqe->buf_index = buf_idx;
-+				}
-+				sqe->user_data = ZC_TAG;
-+			}
-+		}
-+
-+		ret = io_uring_submit(&ring);
-+		if (ret != cfg_nr_reqs)
-+			error(1, ret, "submit");
-+
-+		for (i = 0; i < cfg_nr_reqs; i++) {
-+			ret = io_uring_wait_cqe(&ring, &cqe);
-+			if (ret)
-+				error(1, ret, "wait cqe");
-+
-+			if (cqe->user_data == NOTIF_TAG) {
-+				compl_cqes--;
-+				i--;
-+			} else if (cqe->user_data != NONZC_TAG &&
-+				   cqe->user_data != ZC_TAG) {
-+				error(1, cqe->res, "invalid user_data");
-+			} else if (cqe->res <= 0 && cqe->res != -EAGAIN) {
-+				error(1, cqe->res, "send failed");
-+			} else {
-+				if (cqe->res > 0) {
-+					packets++;
-+					bytes += cqe->res;
-+				}
-+				/* failed requests don't flush */
-+				if (cfg_flush &&
-+				    cqe->res <= 0 &&
-+				    cqe->user_data == ZC_TAG)
-+					compl_cqes--;
-+			}
-+			io_uring_cqe_seen(&ring);
-+		}
-+		if (cfg_cork)
-+			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 0);
-+	} while (gettimeofday_ms() < tstop);
-+
-+	if (close(fd))
-+		error(1, errno, "close");
-+
-+	fprintf(stderr, "tx=%lu (MB=%lu), tx/s=%lu (MB/s=%lu)\n",
-+			packets, bytes >> 20,
-+			packets / (cfg_runtime_ms / 1000),
-+			(bytes >> 20) / (cfg_runtime_ms / 1000));
-+
-+	while (compl_cqes) {
-+		ret = io_uring_wait_cqe(&ring, &cqe);
-+		if (ret)
-+			error(1, ret, "wait cqe");
-+		io_uring_cqe_seen(&ring);
-+		compl_cqes--;
-+	}
-+}
-+
-+static void do_test(int domain, int type, int protocol)
-+{
-+	int i;
-+
-+	for (i = 0; i < IP_MAXPACKET; i++)
-+		payload[i] = 'a' + (i % 26);
-+	do_tx(domain, type, protocol);
-+}
-+
-+static void usage(const char *filepath)
-+{
-+	error(1, 0, "Usage: %s [-f] [-n<N>] [-z0] [-s<payload size>] "
-+		    "(-4|-6) [-t<time s>] -D<dst_ip> udp", filepath);
-+}
-+
-+static void parse_opts(int argc, char **argv)
-+{
-+	const int max_payload_len = sizeof(payload) -
-+				    sizeof(struct ipv6hdr) -
-+				    sizeof(struct tcphdr) -
-+				    40 /* max tcp options */;
-+	struct sockaddr_in6 *addr6 = (void *) &cfg_dst_addr;
-+	struct sockaddr_in *addr4 = (void *) &cfg_dst_addr;
-+	char *daddr = NULL;
-+	int c;
-+
-+	if (argc <= 1)
-+		usage(argv[0]);
-+	cfg_payload_len = max_payload_len;
-+
-+	while ((c = getopt(argc, argv, "46D:p:s:t:n:fc:m:")) != -1) {
-+		switch (c) {
-+		case '4':
-+			if (cfg_family != PF_UNSPEC)
-+				error(1, 0, "Pass one of -4 or -6");
-+			cfg_family = PF_INET;
-+			cfg_alen = sizeof(struct sockaddr_in);
-+			break;
-+		case '6':
-+			if (cfg_family != PF_UNSPEC)
-+				error(1, 0, "Pass one of -4 or -6");
-+			cfg_family = PF_INET6;
-+			cfg_alen = sizeof(struct sockaddr_in6);
-+			break;
-+		case 'D':
-+			daddr = optarg;
-+			break;
-+		case 'p':
-+			cfg_port = strtoul(optarg, NULL, 0);
-+			break;
-+		case 's':
-+			cfg_payload_len = strtoul(optarg, NULL, 0);
-+			break;
-+		case 't':
-+			cfg_runtime_ms = 200 + strtoul(optarg, NULL, 10) * 1000;
-+			break;
-+		case 'n':
-+			cfg_nr_reqs = strtoul(optarg, NULL, 0);
-+			break;
-+		case 'f':
-+			cfg_flush = 1;
-+			break;
-+		case 'c':
-+			cfg_cork = strtol(optarg, NULL, 0);
-+			break;
-+		case 'm':
-+			cfg_mode = strtol(optarg, NULL, 0);
-+			break;
-+		}
-+	}
-+
-+	switch (cfg_family) {
-+	case PF_INET:
-+		memset(addr4, 0, sizeof(*addr4));
-+		addr4->sin_family = AF_INET;
-+		addr4->sin_port = htons(cfg_port);
-+		if (daddr &&
-+		    inet_pton(AF_INET, daddr, &(addr4->sin_addr)) != 1)
-+			error(1, 0, "ipv4 parse error: %s", daddr);
-+		break;
-+	case PF_INET6:
-+		memset(addr6, 0, sizeof(*addr6));
-+		addr6->sin6_family = AF_INET6;
-+		addr6->sin6_port = htons(cfg_port);
-+		if (daddr &&
-+		    inet_pton(AF_INET6, daddr, &(addr6->sin6_addr)) != 1)
-+			error(1, 0, "ipv6 parse error: %s", daddr);
-+		break;
-+	default:
-+		error(1, 0, "illegal domain");
-+	}
-+
-+	if (cfg_payload_len > max_payload_len)
-+		error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
-+	if (cfg_mode == MODE_NONZC && cfg_flush)
-+		error(1, 0, "-f: only zerocopy modes support notifications");
-+	if (optind != argc - 1)
-+		usage(argv[0]);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	const char *cfg_test = argv[argc - 1];
-+
-+	parse_opts(argc, argv);
-+
-+	if (!strcmp(cfg_test, "tcp"))
-+		do_test(cfg_family, SOCK_STREAM, 0);
-+	else if (!strcmp(cfg_test, "udp"))
-+		do_test(cfg_family, SOCK_DGRAM, 0);
-+	else
-+		error(1, 0, "unknown cfg_test %s", cfg_test);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
-new file mode 100755
-index 000000000000..6a65e4437640
---- /dev/null
-+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
-@@ -0,0 +1,131 @@
-+#!/bin/bash
-+#
-+# Send data between two processes across namespaces
-+# Run twice: once without and once with zerocopy
-+
-+set -e
-+
-+readonly DEV="veth0"
-+readonly DEV_MTU=65535
-+readonly BIN_TX="./io_uring_zerocopy_tx"
-+readonly BIN_RX="./msg_zerocopy"
-+
-+readonly RAND="$(mktemp -u XXXXXX)"
-+readonly NSPREFIX="ns-${RAND}"
-+readonly NS1="${NSPREFIX}1"
-+readonly NS2="${NSPREFIX}2"
-+
-+readonly SADDR4='192.168.1.1'
-+readonly DADDR4='192.168.1.2'
-+readonly SADDR6='fd::1'
-+readonly DADDR6='fd::2'
-+
-+readonly path_sysctl_mem="net.core.optmem_max"
-+
-+# No arguments: automated test
-+if [[ "$#" -eq "0" ]]; then
-+	IPs=( "4" "6" )
-+	protocols=( "tcp" "udp" )
-+
-+	for IP in "${IPs[@]}"; do
-+		for proto in "${protocols[@]}"; do
-+			for mode in $(seq 1 3); do
-+				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32
-+				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -f
-+				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -c -f
-+			done
-+		done
-+	done
-+
-+	echo "OK. All tests passed"
-+	exit 0
-+fi
-+
-+# Argument parsing
-+if [[ "$#" -lt "2" ]]; then
-+	echo "Usage: $0 [4|6] [tcp|udp|raw|raw_hdrincl|packet|packet_dgram] <args>"
-+	exit 1
-+fi
-+
-+readonly IP="$1"
-+shift
-+readonly TXMODE="$1"
-+shift
-+readonly EXTRA_ARGS="$@"
-+
-+# Argument parsing: configure addresses
-+if [[ "${IP}" == "4" ]]; then
-+	readonly SADDR="${SADDR4}"
-+	readonly DADDR="${DADDR4}"
-+elif [[ "${IP}" == "6" ]]; then
-+	readonly SADDR="${SADDR6}"
-+	readonly DADDR="${DADDR6}"
-+else
-+	echo "Invalid IP version ${IP}"
-+	exit 1
-+fi
-+
-+# Argument parsing: select receive mode
-+#
-+# This differs from send mode for
-+# - packet:	use raw recv, because packet receives skb clones
-+# - raw_hdrinc: use raw recv, because hdrincl is a tx-only option
-+case "${TXMODE}" in
-+'packet' | 'packet_dgram' | 'raw_hdrincl')
-+	RXMODE='raw'
-+	;;
-+*)
-+	RXMODE="${TXMODE}"
-+	;;
-+esac
-+
-+# Start of state changes: install cleanup handler
-+save_sysctl_mem="$(sysctl -n ${path_sysctl_mem})"
-+
-+cleanup() {
-+	ip netns del "${NS2}"
-+	ip netns del "${NS1}"
-+	sysctl -w -q "${path_sysctl_mem}=${save_sysctl_mem}"
-+}
-+
-+trap cleanup EXIT
-+
-+# Configure system settings
-+sysctl -w -q "${path_sysctl_mem}=1000000"
-+
-+# Create virtual ethernet pair between network namespaces
-+ip netns add "${NS1}"
-+ip netns add "${NS2}"
-+
-+ip link add "${DEV}" mtu "${DEV_MTU}" netns "${NS1}" type veth \
-+  peer name "${DEV}" mtu "${DEV_MTU}" netns "${NS2}"
-+
-+# Bring the devices up
-+ip -netns "${NS1}" link set "${DEV}" up
-+ip -netns "${NS2}" link set "${DEV}" up
-+
-+# Set fixed MAC addresses on the devices
-+ip -netns "${NS1}" link set dev "${DEV}" address 02:02:02:02:02:02
-+ip -netns "${NS2}" link set dev "${DEV}" address 06:06:06:06:06:06
-+
-+# Add fixed IP addresses to the devices
-+ip -netns "${NS1}" addr add 192.168.1.1/24 dev "${DEV}"
-+ip -netns "${NS2}" addr add 192.168.1.2/24 dev "${DEV}"
-+ip -netns "${NS1}" addr add       fd::1/64 dev "${DEV}" nodad
-+ip -netns "${NS2}" addr add       fd::2/64 dev "${DEV}" nodad
-+
-+# Optionally disable sg or csum offload to test edge cases
-+# ip netns exec "${NS1}" ethtool -K "${DEV}" sg off
-+
-+do_test() {
-+	local readonly ARGS="$1"
-+
-+	echo "ipv${IP} ${TXMODE} ${ARGS}"
-+	ip netns exec "${NS2}" "${BIN_RX}" "-${IP}" -t 2 -C 2 -S "${SADDR}" -D "${DADDR}" -r "${RXMODE}" &
-+	sleep 0.2
-+	ip netns exec "${NS1}" "${BIN_TX}" "-${IP}" -t 1 -D "${DADDR}" ${ARGS} "${TXMODE}"
-+	wait
-+}
-+
-+do_test "${EXTRA_ARGS}"
-+echo ok
--- 
-2.37.0
+I see it as a hacky no-cost way...
 
+> 
+>> Sounds a bit of a backwards design to me.
+>>
+>>>>> +    }
+>>>>>      blk_execute_rq_nowait(req, false);
+>>>>>      return -EIOCBQUEUED;
+>>>>>  }
+>>>>> @@ -665,12 +667,135 @@ int nvme_ns_head_chr_uring_cmd(struct 
+>>>>> io_uring_cmd *ioucmd,
+>>>>>      int srcu_idx = srcu_read_lock(&head->srcu);
+>>>>>      struct nvme_ns *ns = nvme_find_path(head);
+>>>>>      int ret = -EINVAL;
+>>>>> +    struct device *dev = &head->cdev_device;
+>>>>> +
+>>>>> +    if (likely(ns)) {
+>>>>> +        ret = nvme_ns_uring_cmd(ns, ioucmd,
+>>>>> +                issue_flags | IO_URING_F_MPATH);
+>>>>> +    } else if (nvme_available_path(head)) {
+>>>>> +        struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+>>>>> +        struct nvme_uring_cmd *payload = NULL;
+>>>>> +
+>>>>> +        dev_warn_ratelimited(dev, "no usable path - requeuing 
+>>>>> I/O\n");
+>>>>> +        /*
+>>>>> +         * We may requeue two kinds of uring commands:
+>>>>> +         * 1. command failed post submission. pdu->req will be 
+>>>>> non-null
+>>>>> +         * for this
+>>>>> +         * 2. command that could not be submitted because path was 
+>>>>> not
+>>>>> +         * available. For this pdu->req is set to NULL.
+>>>>> +         */
+>>>>> +        pdu->req = NULL;
+>>>>
+>>>> Relying on a pointer does not sound like a good idea to me.
+>>>> But why do you care at all where did this command came from?
+>>>> This code should not concern itself what happened prior to this
+>>>> execution.
+>>> Required, please see nvme_uring_cmd_io_retry. And this should be more
+>>> clear as part of responses to your other questions.
+>>
+>> I think I understand. But it looks fragile to me.
+>>
+>>>
+>>>>> +        /*
+>>>>> +         * passthrough command will not be available during retry 
+>>>>> as it
+>>>>> +         * is embedded in io_uring's SQE. Hence we allocate/copy here
+>>>>> +         */
+>>>>
+>>>> OK, that is a nice solution.
+>>> Please note that prefered way is to recreate the passthrough command,
+>>> and not to allocate it. We allocate it here because this happens very 
+>>> early
+>>> (i.e. before processing passthrough command and setting that up inside
+>>> struct request). Recreating requires a populated 'struct request' .
+>>
+>> I think that once a driver consumes a command as queued, it needs a
+>> stable copy of the command (could be in a percpu pool).
+>>
+>> The current design of nvme multipathing is that the request is stripped
+>> from its bios and placed on a requeue_list, and if a request was not
+>> formed yet (i.e. nvme available path exist but no usable) the bio is
+>> placed on the requeue_list.
+>>
+>> So ideally we have something sufficient like a bio, that can be linked
+>> on a requeue list, and is sufficient to build a request, at any point in
+>> time...
+> 
+> we could be dealing with any passthrough command here. bio is not
+> guranteed to exist in first place. It can very well be NULL.
+> As I mentioned in cover letter, this was tested for such passthrough
+> commands too.
+> And bio is not a good fit for this interface. For block-path, entry
+> function is nvme_ns_head_submit_bio() which speaks bio. Request is
+> allocated afterwards. But since request formation can happen only after
+> discovering a valid path, it may have to queue the bio if path does not
+> exist.
+> For passthrough, interface speaks/understands struct io_uring_cmd.
+> Request is allocated after. And bio may (or may not) be attached with
+> this request. It may have to queue the command even before request/bio
+> gets formed. So cardinal structure (which is
+> really available all the time) in this case is struct io_uring_cmd.
+> Hence we use that as the object around which requeuing/failover is
+> built.
+> Conceptually io_uring_cmd is the bio of this interface.
+
+I didn't say bio, I said something like a bio that holds stable
+information that could be used for requeue purposes...
+
+> 
+>>>>> +        payload = kmalloc(sizeof(struct nvme_uring_cmd), GFP_KERNEL);
+>>>>> +        if (!payload) {
+>>>>> +            ret = -ENOMEM;
+>>>>> +            goto out_unlock;
+>>>>> +        }
+>>>>> +        memcpy(payload, ioucmd->cmd, sizeof(struct nvme_uring_cmd));
+>>>>> +        ioucmd->cmd = payload;
+>>>>> -    if (ns)
+>>>>> -        ret = nvme_ns_uring_cmd(ns, ioucmd, issue_flags);
+>>>>> +        spin_lock_irq(&head->requeue_ioucmd_lock);
+>>>>> +        ioucmd_list_add(&head->requeue_ioucmd_list, ioucmd);
+>>>>> +        spin_unlock_irq(&head->requeue_ioucmd_lock);
+>>>>> +        ret = -EIOCBQUEUED;
+>>>>> +    } else {
+>>>>> +        dev_warn_ratelimited(dev, "no available path - failing 
+>>>>> I/O\n");
+>>>>
+>>>> ret=-EIO ?
+>>> Did not do as it was initialized to -EINVAL. Do you prefer -EIO instead.
+>>
+>> It is not an invalid argument error here, it is essentially an IO error.
+>> So yes, that would be my preference.
+> 
+> sure, will change.
+> 
+>>>>> +    }
+>>>>> +out_unlock:
+>>>>>      srcu_read_unlock(&head->srcu, srcu_idx);
+>>>>>      return ret;
+>>>>>  }
+>>>>> +
+>>>>> +int nvme_uring_cmd_io_retry(struct nvme_ns *ns, struct request *oreq,
+>>>>> +        struct io_uring_cmd *ioucmd, struct nvme_uring_cmd_pdu *pdu)
+>>>>> +{
+>>>>> +    struct nvme_ctrl *ctrl = ns->ctrl;
+>>>>> +    struct request_queue *q = ns ? ns->queue : ctrl->admin_q;
+>>>>> +    struct nvme_uring_data d;
+>>>>> +    struct nvme_command c;
+>>>>> +    struct request *req;
+>>>>> +    struct bio *obio = oreq->bio;
+>>>>> +    void *meta = NULL;
+>>>>> +
+>>>>> +    memcpy(&c, nvme_req(oreq)->cmd, sizeof(struct nvme_command));
+>>>>> +    d.metadata = (__u64)pdu->meta_buffer;
+>>>>> +    d.metadata_len = pdu->meta_len;
+>>>>> +    d.timeout_ms = oreq->timeout;
+>>>>> +    d.addr = (__u64)ioucmd->cmd;
+>>>>> +    if (obio) {
+>>>>> +        d.data_len = obio->bi_iter.bi_size;
+>>>>> +        blk_rq_unmap_user(obio);
+>>>>> +    } else {
+>>>>> +        d.data_len = 0;
+>>>>> +    }
+>>>>> +    blk_mq_free_request(oreq);
+>>>>
+>>>> The way I would do this that in nvme_ioucmd_failover_req (or in the
+>>>> retry driven from command retriable failure) I would do the above,
+>>>> requeue it and kick the requeue work, to go over the requeue_list and
+>>>> just execute them again. Not sure why you even need an explicit retry
+>>>> code.
+>>> During retry we need passthrough command. But passthrough command is not
+>>> stable (i.e. valid only during first submission). We can make it stable
+>>> either by:
+>>> (a) allocating in nvme (b) return -EAGAIN to io_uring, and it will do 
+>>> allocate + deferral
+>>> Both add a cost. And since any command can potentially fail, that
+>>> means taking that cost for every IO that we issue on mpath node. Even if
+>>> no failure (initial or subsquent after IO) occcured.
+>>
+>> As mentioned, I think that if a driver consumes a command as queued,
+>> it needs a stable copy for a later reformation of the request for
+>> failover purposes.
+> 
+> So what do you propose to make that stable?
+> As I mentioned earlier, stable copy requires allocating/copying in fast
+> path. And for a condition (failover) that may not even occur.
+> I really think currrent solution is much better as it does not try to make
+> it stable. Rather it assembles pieces of passthrough command if retry
+> (which is rare) happens.
+
+Well, I can understand that io_uring_cmd is space constrained, otherwise
+we wouldn't be having this discussion. However io_kiocb is less
+constrained, and could be used as a context to hold such a space.
+
+Even if it is undesired to have io_kiocb be passed to uring_cmd(), it
+can still hold a driver specific space paired with a helper to obtain it
+(i.e. something like io_uring_cmd_to_driver_ctx(ioucmd) ). Then if the
+space is pre-allocated it is only a small memory copy for a stable copy
+that would allow a saner failover design.
+
+>>> So to avoid commmon-path cost, we go about doing nothing (no allocation,
+>>> no deferral) in the outset and choose to recreate the passthrough
+>>> command if failure occured. Hope this explains the purpose of
+>>> nvme_uring_cmd_io_retry?
+>>
+>> I think it does, but I'm still having a hard time with it...
+>>
+> Maybe I am reiterating but few main differences that should help -
+> 
+> - io_uring_cmd is at the forefront, and bio/request as secondary
+> objects. Former is persistent object across requeue attempts and the
+> only thing available when we discover the path, while other two are
+> created every time we retry.
+> 
+> - Receiving bio from upper layer is a luxury that we do not have for
+>   passthrough. When we receive bio, pages are already mapped and we
+>   do not have to deal with user-specific fields, so there is more
+>   freedom in using arbitrary context (workers etc.). But passthrough
+>   command continues to point to user-space fields/buffers, so we need
+>   that task context.
+> 
+>>>
+>>>>> +    req = nvme_alloc_user_request(q, &c, nvme_to_user_ptr(d.addr),
+>>>>> +            d.data_len, nvme_to_user_ptr(d.metadata),
+>>>>> +            d.metadata_len, 0, &meta, d.timeout_ms ?
+>>>>> +            msecs_to_jiffies(d.timeout_ms) : 0,
+>>>>> +            ioucmd->cmd_op == NVME_URING_CMD_IO_VEC, 0, 0);
+>>>>> +    if (IS_ERR(req))
+>>>>> +        return PTR_ERR(req);
+>>>>> +
+>>>>> +    req->end_io = nvme_uring_cmd_end_io;
+>>>>> +    req->end_io_data = ioucmd;
+>>>>> +    pdu->bio = req->bio;
+>>>>> +    pdu->meta = meta;
+>>>>> +    req->cmd_flags |= REQ_NVME_MPATH;
+>>>>> +    blk_execute_rq_nowait(req, false);
+>>>>> +    return -EIOCBQUEUED;
+>>>>> +}
+>>>>> +
+>>>>> +void nvme_ioucmd_mpath_retry(struct io_uring_cmd *ioucmd)
+>>>>> +{
+>>>>> +    struct cdev *cdev = file_inode(ioucmd->file)->i_cdev;
+>>>>> +    struct nvme_ns_head *head = container_of(cdev, struct 
+>>>>> nvme_ns_head,
+>>>>> +            cdev);
+>>>>> +    int srcu_idx = srcu_read_lock(&head->srcu);
+>>>>> +    struct nvme_ns *ns = nvme_find_path(head);
+>>>>> +    unsigned int issue_flags = IO_URING_F_SQE128 | IO_URING_F_CQE32 |
+>>>>> +        IO_URING_F_MPATH;
+>>>>> +    struct device *dev = &head->cdev_device;
+>>>>> +
+>>>>> +    if (likely(ns)) {
+>>>>> +        struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+>>>>> +        struct request *oreq = pdu->req;
+>>>>> +        int ret;
+>>>>> +
+>>>>> +        if (oreq == NULL) {
+>>>>> +            /*
+>>>>> +             * this was not submitted (to device) earlier. For this
+>>>>> +             * ioucmd->cmd points to persistent memory. Free that
+>>>>> +             * up post submission
+>>>>> +             */
+>>>>> +            const void *cmd = ioucmd->cmd;
+>>>>> +
+>>>>> +            ret = nvme_ns_uring_cmd(ns, ioucmd, issue_flags);
+>>>>> +            kfree(cmd);
+>>>>> +        } else {
+>>>>> +            /*
+>>>>> +             * this was submitted (to device) earlier. Use old
+>>>>> +             * request, bio (if it exists) and nvme-pdu to recreate
+>>>>> +             * the command for the discovered path
+>>>>> +             */
+>>>>> +            ret = nvme_uring_cmd_io_retry(ns, oreq, ioucmd, pdu);
+>>>>
+>>>> Why is this needed? Why is reuse important here? Why not always call
+>>>> nvme_ns_uring_cmd?
+>>>
+>>> Please see the previous explanation.
+>>> If condition is for the case when we made the passthrough command stable
+>>> by allocating beforehand.
+>>> Else is for the case when we avoided taking that cost.
+>>
+>> The current design of the multipath failover code is clean:
+>> 1. extract bio(s) from request
+>> 2. link in requeue_list
+>> 3. schedule requeue_work that,
+>> 3.1 takes bios 1-by-1, and submits them again (exactly the same way)
+> 
+> It is really clean, and fits really well with bio based entry interface.
+> But as I said earlier, it does not go well with uring-cmd based entry
+> interface, and bunch of of other things which needs to be done
+> differently for generic passthrough command.
+> 
+>> I'd like us to try to follow the same design where retry is
+>> literally "do the exact same thing, again". That would eliminate
+>> two submission paths that do the same thing, but slightly different.
+> 
+> Exact same thing is possible if we make the common path slow i.e.
+> allocate/copy passthrough command and keep it alive until completion.
+> But that is really not the way to go I suppose.
+
+I'm not sure. With Christoph's response, I'm not sure it is
+universally desired to support failover (in my opinion it should). But
+if we do in fact choose to support it, I think we need a better
+solution. If fast-path allocation is your prime concern, then let's try
+to address that with space pre-allocation.

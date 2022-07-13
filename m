@@ -2,59 +2,50 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13027573857
-	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 16:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC330573AB6
+	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 17:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbiGMOH3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 10:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
+        id S235051AbiGMP7U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 11:59:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236297AbiGMOH0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 10:07:26 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5CB3245D;
-        Wed, 13 Jul 2022 07:07:24 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9EA9E20191;
-        Wed, 13 Jul 2022 14:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1657721243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pnfH5Bkw5sQHVn/yM5oao0mW1esxplkQAuhzbZiKYqE=;
-        b=A6XHUOyyHlyOjWK8LU1J/6Y3xtEnLfnWHTuZ2ryLiwr5fZEt6TdqxVIJvWIAH6wbBIprCY
-        1YToZquVTYvBCHATjDN8NgJQmt/KOUe9n9U6HKXhsGlWNtgMbMQTSsUsYYmFfaKYwH1rDl
-        iNGGiBzQ7pETFKCDvbcJ7ZEq8DrklWg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1657721243;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pnfH5Bkw5sQHVn/yM5oao0mW1esxplkQAuhzbZiKYqE=;
-        b=ZWBzEKXU6QQGbJotrjpfGHTK5uJXakqmuiSbGwhK8a/Nir9JZLtnwlmMDtmJu9v1zn8Lsw
-        VhbwrbinaOhpJzCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4053B13AAD;
-        Wed, 13 Jul 2022 14:07:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Z71iD5vRzmLZVgAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 13 Jul 2022 14:07:23 +0000
-Message-ID: <1d1d94ea-b67b-405c-c825-faf67f258558@suse.de>
-Date:   Wed, 13 Jul 2022 16:07:22 +0200
+        with ESMTP id S237089AbiGMP7T (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 11:59:19 -0400
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E953E0EA;
+        Wed, 13 Jul 2022 08:59:18 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id i204-20020a1c3bd5000000b003a2fa488efdso1136290wma.4;
+        Wed, 13 Jul 2022 08:59:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=y2AcRM2dbenguVq8Sn45LnuUE26anJQ/q/pVY/6n1mI=;
+        b=NGmFsK31K81LNnEuzLEkyqa079LU33gvDJxusPFpemorWRPip2CCK+nQy3kYMY3LWt
+         slVCbGuOycWQI/HyDgVCtTJZcxtH9Z/TqEDgHB6Km9ikqYJ5j9Cwn+6xru3Uyhn2+/qg
+         uVyRw2QcKOnRXj7P+Ltn/ydyYxNkL0yjScCOQRH2UavyG9+j/yD8rHhIuJ+1vgyjxOXx
+         vqM326AfI5IGdaFZ1cndX1SDDTi9qHBU3N8UJUAijEH8MSfDAPEqm4SDOhC6h1mfd1Vv
+         jFMp/mU8tcA3kCg/VBkNdtU3fqzhqM6rl63mEGahXlQU/fEqO2VR+kfyS6yyXNtJq0QD
+         SdIA==
+X-Gm-Message-State: AJIora+ZCgGQKFOcL2F7dCkcF8kTs/QWH3dQypLSX4t2Tl56k+IAqpJO
+        40TJnKTNUsH+8MfjPtbGZIs=
+X-Google-Smtp-Source: AGRyM1v89jFtIWf5Owe/3xq9jPWOLvLV7mOEFexlE0Il+i3C8RydeEbGQ74p0+J4bujEJipuYpHfag==
+X-Received: by 2002:a05:600c:4fc8:b0:3a1:987c:82d4 with SMTP id o8-20020a05600c4fc800b003a1987c82d4mr4449032wmq.26.1657727956465;
+        Wed, 13 Jul 2022 08:59:16 -0700 (PDT)
+Received: from [192.168.64.180] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
+        by smtp.gmail.com with ESMTPSA id p13-20020a5d458d000000b0021d728d687asm14103484wrq.36.2022.07.13.08.59.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Jul 2022 08:59:16 -0700 (PDT)
+Message-ID: <c000ecc9-e570-0788-88fa-8225a4b9fa04@grimberg.me>
+Date:   Wed, 13 Jul 2022 18:59:13 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
+ Thunderbird/91.9.1
+Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
+ uring-passthrough commands
 Content-Language: en-US
-To:     Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>
+To:     Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>
 Cc:     Kanchan Joshi <joshi.k@samsung.com>, kbusch@kernel.org,
         axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
@@ -72,117 +63,91 @@ References: <20220711110155.649153-1-joshi.k@samsung.com>
  <7c7a093c-4103-b67d-c145-9d84aaae835e@grimberg.me>
  <04b475f6-506f-188b-d104-b27e9dffc1b8@suse.de>
  <66322f2d-fbde-7b9f-14f1-0651511d95b8@grimberg.me>
-From:   Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
- uring-passthrough commands
-In-Reply-To: <66322f2d-fbde-7b9f-14f1-0651511d95b8@grimberg.me>
+ <1d1d94ea-b67b-405c-c825-faf67f258558@suse.de>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <1d1d94ea-b67b-405c-c825-faf67f258558@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/13/22 15:41, Sagi Grimberg wrote:
-> 
->>>>>>> Maybe the solution is to just not expose a /dev/ng for the mpath 
->>>>>>> device
->>>>>>> node, but only for bottom namespaces. Then it would be completely
->>>>>>> equivalent to scsi-generic devices.
->>>>>>>
->>>>>>> It just creates an unexpected mix of semantics of best-effort
->>>>>>> multipathing with just path selection, but no requeue/failover...
->>>>>>
->>>>>> Which is exactly the same semanics as SG_IO on the dm-mpath nodes.
+
+>>>>> Amongst all the other issue we've found the prime problem with 
+>>>>> SG_IO is that it needs to be directed to the 'active' path.
+>>>>> For the device-mapper has a distinct callout (dm_prepare_ioctl), 
+>>>>> which essentially returns the current active path device. And then 
+>>>>> the device-mapper core issues the command on that active path.
 >>>>>
->>>>> I view uring passthru somewhat as a different thing than sending SG_IO
->>>>> ioctls to dm-mpath. But it can be argued otherwise.
+>>>>> All nice and good, _unless_ that command triggers an error.
+>>>>> Normally it'd be intercepted by the dm-multipath end_io handler, 
+>>>>> and would set the path to offline.
+>>>>> But as ioctls do not use the normal I/O path the end_io handler is 
+>>>>> never called, and further SG_IO calls are happily routed down the 
+>>>>> failed path.
 >>>>>
->>>>> BTW, the only consumer of it that I'm aware of commented that he
->>>>> expects dm-mpath to retry SG_IO when dm-mpath retry for SG_IO 
->>>>> submission
->>>>> was attempted (https://www.spinics.net/lists/dm-devel/msg46924.html).
->>>>>
->>>>>  From Paolo:
->>>>> "The problem is that userspace does not have a way to direct the 
->>>>> command to a different path in the resubmission. It may not even 
->>>>> have permission to issue DM_TABLE_STATUS, or to access the /dev 
->>>>> nodes for the underlying paths, so without Martin's patches SG_IO 
->>>>> on dm-mpath is basically unreliable by design."
->>>>>
->>>>> I didn't manage to track down any followup after that email though...
->>>>>
->>>> I did; 'twas me who was involved in the initial customer issue 
->>>> leading up to that.
+>>>>> And the customer had to use SG_IO (or, in qemu-speak, LUN 
+>>>>> passthrough) as his application/filesystem makes heavy use of 
+>>>>> persistent reservations.
 >>>>
->>>> Amongst all the other issue we've found the prime problem with SG_IO 
->>>> is that it needs to be directed to the 'active' path.
->>>> For the device-mapper has a distinct callout (dm_prepare_ioctl), 
->>>> which essentially returns the current active path device. And then 
->>>> the device-mapper core issues the command on that active path.
->>>>
->>>> All nice and good, _unless_ that command triggers an error.
->>>> Normally it'd be intercepted by the dm-multipath end_io handler, and 
->>>> would set the path to offline.
->>>> But as ioctls do not use the normal I/O path the end_io handler is 
->>>> never called, and further SG_IO calls are happily routed down the 
->>>> failed path.
->>>>
->>>> And the customer had to use SG_IO (or, in qemu-speak, LUN 
->>>> passthrough) as his application/filesystem makes heavy use of 
->>>> persistent reservations.
+>>>> How did this conclude Hannes?
 >>>
->>> How did this conclude Hannes?
+>>> It didn't. The proposed interface got rejected, and now we need to 
+>>> come up with an alternative solution.
+>>> Which we haven't found yet.
 >>
->> It didn't. The proposed interface got rejected, and now we need to 
->> come up with an alternative solution.
->> Which we haven't found yet.
+>> Lets assume for the sake of discussion, had dm-mpath set a path to be
+>> offline on ioctl errors, what would qemu do upon this error? blindly
+>> retry? Until When? Or would qemu need to learn about the path tables in
+>> order to know when there is at least one online path in order to retry?
+>>
+> IIRC that was one of the points why it got rejected.
+> Ideally we would return an errno indicating that the path had failed, 
+> but further paths are available, so a retry is in order.
+> Once no paths are available qemu would be getting a different error 
+> indicating that all paths are failed.
+
+There is no such no-paths-available error.
+
 > 
-> Lets assume for the sake of discussion, had dm-mpath set a path to be
-> offline on ioctl errors, what would qemu do upon this error? blindly
-> retry? Until When? Or would qemu need to learn about the path tables in
-> order to know when there is at least one online path in order to retry?
+> But we would be overloading a new meaning to existing error numbers, or 
+> even inventing our own error numbers. Which makes it rather awkward to use.
+
+I agree that this sounds awkward.
+
+> Ideally we would be able to return this as the SG_IO status, as that is 
+> well capable of expressing these situations. But then we would need to 
+> parse and/or return the error ourselves, essentially moving sg_io 
+> funtionality into dm-mpath. Also not what one wants.
+
+uring actually should send back the cqe for passthru, but there is no
+concept like "Path error, but no paths are available".
+
 > 
-IIRC that was one of the points why it got rejected.
-Ideally we would return an errno indicating that the path had failed, 
-but further paths are available, so a retry is in order.
-Once no paths are available qemu would be getting a different error 
-indicating that all paths are failed.
+>> What is the model that a passthru consumer needs to follow when
+>> operating against a mpath device?
+> 
+> The model really is that passthru consumer needs to deal with these errors:
+> - No error (obviously)
+> - I/O error (error status will not change with a retry)
+> - Temporary/path related error (error status might change with a retry)
+> 
+> Then the consumer can decide whether to invoke a retry (for the last 
+> class), or whether it should pass up that error, as maybe there are 
+> applications with need a quick response time and can handle temporary 
+> failures (or, in fact, want to be informed about temporary failures).
+> 
+> IE the 'DNR' bit should serve nicely here, keeping in mind that we might 
+> need to 'fake' an NVMe error status if the connection is severed.
 
-But we would be overloading a new meaning to existing error numbers, or 
-even inventing our own error numbers. Which makes it rather awkward to use.
-
-Ideally we would be able to return this as the SG_IO status, as that is 
-well capable of expressing these situations. But then we would need to 
-parse and/or return the error ourselves, essentially moving sg_io 
-funtionality into dm-mpath. Also not what one wants.
-
-> What is the model that a passthru consumer needs to follow when
-> operating against a mpath device?
-
-The model really is that passthru consumer needs to deal with these errors:
-- No error (obviously)
-- I/O error (error status will not change with a retry)
-- Temporary/path related error (error status might change with a retry)
-
-Then the consumer can decide whether to invoke a retry (for the last 
-class), or whether it should pass up that error, as maybe there are 
-applications with need a quick response time and can handle temporary 
-failures (or, in fact, want to be informed about temporary failures).
-
-IE the 'DNR' bit should serve nicely here, keeping in mind that we might 
-need to 'fake' an NVMe error status if the connection is severed.
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke		           Kernel Storage Architect
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+uring passthru sends the cqe status to userspace IIRC. But nothing in
+there indicates about path availability. That would be something that
+userspace would need to reconcile on its own from traversing sysfs or
+alike...

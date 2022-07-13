@@ -2,76 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC330573AB6
-	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 17:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D15E573DC5
+	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 22:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235051AbiGMP7U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 11:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36436 "EHLO
+        id S236837AbiGMUZb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 16:25:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237089AbiGMP7T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 11:59:19 -0400
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E953E0EA;
-        Wed, 13 Jul 2022 08:59:18 -0700 (PDT)
-Received: by mail-wm1-f43.google.com with SMTP id i204-20020a1c3bd5000000b003a2fa488efdso1136290wma.4;
-        Wed, 13 Jul 2022 08:59:17 -0700 (PDT)
+        with ESMTP id S236836AbiGMUZa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 16:25:30 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 950EB27B16
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 13:25:27 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id y14-20020a17090a644e00b001ef775f7118so5634378pjm.2
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 13:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=KNxdzYJ31Vhyt7oycuRbMlgHEjW6wotI0WNAdQq4UMw=;
+        b=t8kPJVCKtimxDlTtyzRgs6JNvOaLECNuXxarQU5OqBNA+ziab/DxNvRTorr+G98Cl5
+         2n5ZybUVwcbsU+P2E2FnhFqF/mDjUjQRVf+6EFKX70Vbyzk6vKllj0cfGMjRaaH7wV46
+         OJqqnL5CnvYZ/tMqCZLuH5USn/gtG52kAARi3QGK/WoJbpmkwcRGlqfg+bv7QswLkwWF
+         sqTDGUA8vN6GDwxQrdyDse3TUfWV6rQR1erg83hXbDszgJFa74wrL8rWeUtIlOlOn2rW
+         idSQYSMMEmA6NKhXQnU+1DLRu0Ph3fLJmWMrp5S4wqtLYYQgpiVlQDtmbrMJhScjh0kg
+         U6CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=y2AcRM2dbenguVq8Sn45LnuUE26anJQ/q/pVY/6n1mI=;
-        b=NGmFsK31K81LNnEuzLEkyqa079LU33gvDJxusPFpemorWRPip2CCK+nQy3kYMY3LWt
-         slVCbGuOycWQI/HyDgVCtTJZcxtH9Z/TqEDgHB6Km9ikqYJ5j9Cwn+6xru3Uyhn2+/qg
-         uVyRw2QcKOnRXj7P+Ltn/ydyYxNkL0yjScCOQRH2UavyG9+j/yD8rHhIuJ+1vgyjxOXx
-         vqM326AfI5IGdaFZ1cndX1SDDTi9qHBU3N8UJUAijEH8MSfDAPEqm4SDOhC6h1mfd1Vv
-         jFMp/mU8tcA3kCg/VBkNdtU3fqzhqM6rl63mEGahXlQU/fEqO2VR+kfyS6yyXNtJq0QD
-         SdIA==
-X-Gm-Message-State: AJIora+ZCgGQKFOcL2F7dCkcF8kTs/QWH3dQypLSX4t2Tl56k+IAqpJO
-        40TJnKTNUsH+8MfjPtbGZIs=
-X-Google-Smtp-Source: AGRyM1v89jFtIWf5Owe/3xq9jPWOLvLV7mOEFexlE0Il+i3C8RydeEbGQ74p0+J4bujEJipuYpHfag==
-X-Received: by 2002:a05:600c:4fc8:b0:3a1:987c:82d4 with SMTP id o8-20020a05600c4fc800b003a1987c82d4mr4449032wmq.26.1657727956465;
-        Wed, 13 Jul 2022 08:59:16 -0700 (PDT)
-Received: from [192.168.64.180] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id p13-20020a5d458d000000b0021d728d687asm14103484wrq.36.2022.07.13.08.59.15
+        bh=KNxdzYJ31Vhyt7oycuRbMlgHEjW6wotI0WNAdQq4UMw=;
+        b=oHM59jH+3+Ejan/2WqtkgRREvqTrmIzAAqND6/SzU/LE+rP9fHoJ2b/z23w4FbjEd1
+         Pt9WIPkLqOjrLEcIcyTPdysWfjeKzlZOc0uWXk3C8PHXFFi3NF7W5J6ccGCh6/mwFgFz
+         NKWzUd3j+FkBjw5YofSkhTDRWIgF99mzFSfMmxSJaXhxUxCws1zfMOsg8lpXvS9rD6sB
+         o9xfl5+jk/9fZczn1T3plREgrQhjtUsbV0oXJnHNgjWY1jckuCcCx7LCroAS6wm6OOXz
+         06JunKIK+Ye/PJqpRkEAXClJ2l/A89F5nJ3mNgcsZUFoRvDfjZcQecLOiiJ1+r5RqDW0
+         IqYA==
+X-Gm-Message-State: AJIora+l8D9UxxaX6JXd0qjWdIjPn+d3ct7silZBO4hOy8EdiQQdbe0f
+        0aS9ENcueMMb6QAbY6ah9mcLmfZJtdDjwA==
+X-Google-Smtp-Source: AGRyM1uMWJM21AdMA4hg31Ti1BfbhNdmhNhNqXCJYSv6TufmkF9YayM6wEk9gfkZAYCsy7kM3FFnog==
+X-Received: by 2002:a17:90b:240b:b0:1ef:8a68:1596 with SMTP id nr11-20020a17090b240b00b001ef8a681596mr5542909pjb.234.1657743927006;
+        Wed, 13 Jul 2022 13:25:27 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id a15-20020a170902710f00b0016bedcced2fsm9332014pll.35.2022.07.13.13.25.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 08:59:16 -0700 (PDT)
-Message-ID: <c000ecc9-e570-0788-88fa-8225a4b9fa04@grimberg.me>
-Date:   Wed, 13 Jul 2022 18:59:13 +0300
+        Wed, 13 Jul 2022 13:25:26 -0700 (PDT)
+Message-ID: <6e5d590b-448d-ea75-f29d-877a2cd6413b@kernel.dk>
+Date:   Wed, 13 Jul 2022 14:25:25 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
- uring-passthrough commands
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH V5 0/2] ublk: add io_uring based userspace block driver
 Content-Language: en-US
-To:     Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, kbusch@kernel.org,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        asml.silence@gmail.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
-        gost.dev@samsung.com
-References: <20220711110155.649153-1-joshi.k@samsung.com>
- <CGME20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089@epcas5p3.samsung.com>
- <20220711110155.649153-5-joshi.k@samsung.com> <20220712065250.GA6574@lst.de>
- <436c8875-5a99-4328-80ac-6a5aef7f16f4@grimberg.me>
- <20220713053633.GA13135@lst.de>
- <24f0a3e6-aa53-8c69-71b7-d66289a63eae@grimberg.me>
- <20220713101235.GA27815@lst.de>
- <772b461a-bc43-c229-906d-0e280091e17f@grimberg.me>
- <96f47d9b-fbfc-80da-4c38-f46986f14a43@suse.de>
- <7c7a093c-4103-b67d-c145-9d84aaae835e@grimberg.me>
- <04b475f6-506f-188b-d104-b27e9dffc1b8@suse.de>
- <66322f2d-fbde-7b9f-14f1-0651511d95b8@grimberg.me>
- <1d1d94ea-b67b-405c-c825-faf67f258558@suse.de>
-From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <1d1d94ea-b67b-405c-c825-faf67f258558@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+References: <20220713140711.97356-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220713140711.97356-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,75 +76,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
->>>>> Amongst all the other issue we've found the prime problem with 
->>>>> SG_IO is that it needs to be directed to the 'active' path.
->>>>> For the device-mapper has a distinct callout (dm_prepare_ioctl), 
->>>>> which essentially returns the current active path device. And then 
->>>>> the device-mapper core issues the command on that active path.
->>>>>
->>>>> All nice and good, _unless_ that command triggers an error.
->>>>> Normally it'd be intercepted by the dm-multipath end_io handler, 
->>>>> and would set the path to offline.
->>>>> But as ioctls do not use the normal I/O path the end_io handler is 
->>>>> never called, and further SG_IO calls are happily routed down the 
->>>>> failed path.
->>>>>
->>>>> And the customer had to use SG_IO (or, in qemu-speak, LUN 
->>>>> passthrough) as his application/filesystem makes heavy use of 
->>>>> persistent reservations.
->>>>
->>>> How did this conclude Hannes?
->>>
->>> It didn't. The proposed interface got rejected, and now we need to 
->>> come up with an alternative solution.
->>> Which we haven't found yet.
->>
->> Lets assume for the sake of discussion, had dm-mpath set a path to be
->> offline on ioctl errors, what would qemu do upon this error? blindly
->> retry? Until When? Or would qemu need to learn about the path tables in
->> order to know when there is at least one online path in order to retry?
->>
-> IIRC that was one of the points why it got rejected.
-> Ideally we would return an errno indicating that the path had failed, 
-> but further paths are available, so a retry is in order.
-> Once no paths are available qemu would be getting a different error 
-> indicating that all paths are failed.
-
-There is no such no-paths-available error.
-
+On 7/13/22 8:07 AM, Ming Lei wrote:
+> Hello Guys,
 > 
-> But we would be overloading a new meaning to existing error numbers, or 
-> even inventing our own error numbers. Which makes it rather awkward to use.
+> ublk driver is one kernel driver for implementing generic userspace block
+> device/driver, which delivers io request from ublk block device(/dev/ublkbN) into
+> ublk server[1] which is the userspace part of ublk for communicating
+> with ublk driver and handling specific io logic by its target module.
 
-I agree that this sounds awkward.
+Ming, is this ready to get merged in an experimental state?
 
-> Ideally we would be able to return this as the SG_IO status, as that is 
-> well capable of expressing these situations. But then we would need to 
-> parse and/or return the error ourselves, essentially moving sg_io 
-> funtionality into dm-mpath. Also not what one wants.
+-- 
+Jens Axboe
 
-uring actually should send back the cqe for passthru, but there is no
-concept like "Path error, but no paths are available".
-
-> 
->> What is the model that a passthru consumer needs to follow when
->> operating against a mpath device?
-> 
-> The model really is that passthru consumer needs to deal with these errors:
-> - No error (obviously)
-> - I/O error (error status will not change with a retry)
-> - Temporary/path related error (error status might change with a retry)
-> 
-> Then the consumer can decide whether to invoke a retry (for the last 
-> class), or whether it should pass up that error, as maybe there are 
-> applications with need a quick response time and can handle temporary 
-> failures (or, in fact, want to be informed about temporary failures).
-> 
-> IE the 'DNR' bit should serve nicely here, keeping in mind that we might 
-> need to 'fake' an NVMe error status if the connection is severed.
-
-uring passthru sends the cqe status to userspace IIRC. But nothing in
-there indicates about path availability. That would be something that
-userspace would need to reconcile on its own from traversing sysfs or
-alike...

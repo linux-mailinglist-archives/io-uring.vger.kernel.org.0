@@ -2,69 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 303DB57362F
-	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 14:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31704573687
+	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 14:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231764AbiGMMRh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 08:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35744 "EHLO
+        id S229887AbiGMMnr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 08:43:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbiGMMRg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 08:17:36 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444E9A238F;
-        Wed, 13 Jul 2022 05:17:35 -0700 (PDT)
-Received: by mail-wr1-f50.google.com with SMTP id a5so15232005wrx.12;
-        Wed, 13 Jul 2022 05:17:35 -0700 (PDT)
+        with ESMTP id S230039AbiGMMnp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 08:43:45 -0400
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A8625D9;
+        Wed, 13 Jul 2022 05:43:44 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id z12so15342417wrq.7;
+        Wed, 13 Jul 2022 05:43:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=F/hDU5t/SYe5V0/3VS5pxCEmSkWFDNtQGXEw7qwTLNo=;
-        b=CFEhMlZFODBTfW/nuPD+pSQIeWu/DMB01MpWxUZjt6R2ysgDL6msEh5/5ntKHCMSB9
-         aQnU/H4BPLV1XdaKfnuGE4vOdBthSOSM24dYn4hOmxy6C67HU7zuoeFeA8Jf4MSq/lTE
-         jiCtZ0E7+7XYGl1GWFRAc6IO377a3KedIH55Le0aiHr257UXtdTkQvR+X5tatNnLOUeb
-         3UVT85LnwbLvbD/ICGLweg16TLx8mzKOD7ald6vPrf6X4KhEBYh/3vrhw0JIQDkbAZAM
-         IaVi3NN0B2W/Vrx6V39imgQMZGdHKjxryFOZCvMCXFHabKd5ClVadO7IYcLfoKtSfigr
-         +mTg==
-X-Gm-Message-State: AJIora+Kcgt9l8XNb+FJyJsq8d6g+h2JwyTHn+FjVx3F58RWGt2ZRsbZ
-        NiZW6BhnNk4FbujEvA6BacQ=
-X-Google-Smtp-Source: AGRyM1tAELyc3EL80IJoRz+3GsaLhUTzyAc4LlhFA9oAzjwelcEYV2FL/crE4onZIaPYOe0ifaiCCQ==
-X-Received: by 2002:a5d:5983:0:b0:21d:a811:3b41 with SMTP id n3-20020a5d5983000000b0021da8113b41mr2821809wri.441.1657714653787;
-        Wed, 13 Jul 2022 05:17:33 -0700 (PDT)
+        bh=YNfmnBevLQmSX9o76Mh2mjvcTRQ7EQJDjtg54zLGl04=;
+        b=YJ+Qm2hZgXq3ZrKv2hL8itINxKr5z3So9yv+ddxWpWeHGtphgtUcpLKTHrCwlMlb4Y
+         bI1udR6f8JZeFzt3U5T0fgZy/0AIMfXFnfxLbgig03iVOw6Edu+InFBCTasg8wsvg4Ec
+         LOR+36VRCqPqCeBFdUzmJmOOTy2Rs13jp7/8KbuAspAfJDpfL7+eVsCdkb6cL0rTscee
+         Dbu3e1ddODCKCF0YjAiLLYtfRK73TLVPOV51Yki9+oygvrLeaZO3V1I85COJY1sTrdGB
+         5gyL35UwyfRs23c86jMtI2xhqoAVgVCziZMjUBygZddVu0+I5FgH2druTHFZvgqQDz6D
+         3EAg==
+X-Gm-Message-State: AJIora8eHk1b0ic7pg6EM7xyU5+AcfYrSQTZbf8s7QsQefJCceKVQGud
+        0KLjgO6V8x0t7rgHA+lYuvY=
+X-Google-Smtp-Source: AGRyM1twAonTFmo1o0pkRBxXTqOM0VE5qj+d65TCkBzKOADontj9hlEjq4fJBLXpaLfXhOwP1f3IFA==
+X-Received: by 2002:adf:ee8a:0:b0:21d:76f0:971e with SMTP id b10-20020adfee8a000000b0021d76f0971emr3238256wro.130.1657716222828;
+        Wed, 13 Jul 2022 05:43:42 -0700 (PDT)
 Received: from [192.168.64.180] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id c11-20020adffb4b000000b0021a34023ca3sm10852773wrs.62.2022.07.13.05.17.32
+        by smtp.gmail.com with ESMTPSA id q6-20020a1cf306000000b003a2e92edeccsm2058462wmq.46.2022.07.13.05.43.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 05:17:33 -0700 (PDT)
-Message-ID: <474e9b28-033d-f951-b79b-45db31c2129b@grimberg.me>
-Date:   Wed, 13 Jul 2022 15:17:31 +0300
+        Wed, 13 Jul 2022 05:43:42 -0700 (PDT)
+Message-ID: <7c7a093c-4103-b67d-c145-9d84aaae835e@grimberg.me>
+Date:   Wed, 13 Jul 2022 15:43:39 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
 Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
  uring-passthrough commands
 Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     hch@lst.de, kbusch@kernel.org, axboe@kernel.dk,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, asml.silence@gmail.com,
-        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com
+To:     Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, kbusch@kernel.org,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        asml.silence@gmail.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
+        gost.dev@samsung.com
 References: <20220711110155.649153-1-joshi.k@samsung.com>
  <CGME20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089@epcas5p3.samsung.com>
- <20220711110155.649153-5-joshi.k@samsung.com>
- <3fc68482-fb24-1f39-5428-faa3a8db9ecb@grimberg.me>
- <20220711183746.GA20562@test-zns>
- <5f30c7de-03b1-768a-d44f-594ed2d1dc75@grimberg.me>
- <20220712042332.GA14780@test-zns>
- <3a2b281b-793b-b8ad-6a27-138c89a46fac@grimberg.me>
- <20220713053757.GA15022@test-zns>
- <f15bc945-8192-c10e-70d8-9946ae2969ce@grimberg.me>
- <20220713112850.GD30733@test-zns>
+ <20220711110155.649153-5-joshi.k@samsung.com> <20220712065250.GA6574@lst.de>
+ <436c8875-5a99-4328-80ac-6a5aef7f16f4@grimberg.me>
+ <20220713053633.GA13135@lst.de>
+ <24f0a3e6-aa53-8c69-71b7-d66289a63eae@grimberg.me>
+ <20220713101235.GA27815@lst.de>
+ <772b461a-bc43-c229-906d-0e280091e17f@grimberg.me>
+ <96f47d9b-fbfc-80da-4c38-f46986f14a43@suse.de>
 From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20220713112850.GD30733@test-zns>
+In-Reply-To: <96f47d9b-fbfc-80da-4c38-f46986f14a43@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
         NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
@@ -77,34 +76,51 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 
->>>> However io_kiocb is less
->>>> constrained, and could be used as a context to hold such a space.
->>>>
->>>> Even if it is undesired to have io_kiocb be passed to uring_cmd(), it
->>>> can still hold a driver specific space paired with a helper to 
->>>> obtain it
->>>> (i.e. something like io_uring_cmd_to_driver_ctx(ioucmd) ). Then if the
->>>> space is pre-allocated it is only a small memory copy for a stable copy
->>>> that would allow a saner failover design.
->>>
->>> I am thinking along the same lines, but it's not about few bytes of
->>> space rather we need 80 (72 to be precise). Will think more, but
->>> these 72 bytes really stand tall in front of my optimism.
->>
->> You don't have to populate this space on every I/O, you can just
->> populate it when there is no usable path and when you failover a
->> request...
-> 
-> Getting the space and when/how to populate it - related but diferent
-> topics in this context.
-> 
-> It is about the lifetime of SQE which is valid only for the first
-> submission. If we don't make the command stable at that point, we don't
-> have another chance. And that is exactly what happens for failover.
-> Since we know IO is failed only when it fails, but by that time
-> original passthrough-command is gone out of hand. I think if we somehow
-> get the space (preallocated), it is ok to copy to command for every IO
-> in mpath case.
 
-Yea you're right. you need to populate it as soon as you queue the
-uring command.
+On 7/13/22 14:49, Hannes Reinecke wrote:
+> On 7/13/22 13:00, Sagi Grimberg wrote:
+>>
+>>>> Maybe the solution is to just not expose a /dev/ng for the mpath device
+>>>> node, but only for bottom namespaces. Then it would be completely
+>>>> equivalent to scsi-generic devices.
+>>>>
+>>>> It just creates an unexpected mix of semantics of best-effort
+>>>> multipathing with just path selection, but no requeue/failover...
+>>>
+>>> Which is exactly the same semanics as SG_IO on the dm-mpath nodes.
+>>
+>> I view uring passthru somewhat as a different thing than sending SG_IO
+>> ioctls to dm-mpath. But it can be argued otherwise.
+>>
+>> BTW, the only consumer of it that I'm aware of commented that he
+>> expects dm-mpath to retry SG_IO when dm-mpath retry for SG_IO submission
+>> was attempted (https://www.spinics.net/lists/dm-devel/msg46924.html).
+>>
+>>  From Paolo:
+>> "The problem is that userspace does not have a way to direct the 
+>> command to a different path in the resubmission. It may not even have 
+>> permission to issue DM_TABLE_STATUS, or to access the /dev nodes for 
+>> the underlying paths, so without Martin's patches SG_IO on dm-mpath is 
+>> basically unreliable by design."
+>>
+>> I didn't manage to track down any followup after that email though...
+>>
+> I did; 'twas me who was involved in the initial customer issue leading 
+> up to that.
+> 
+> Amongst all the other issue we've found the prime problem with SG_IO is 
+> that it needs to be directed to the 'active' path.
+> For the device-mapper has a distinct callout (dm_prepare_ioctl), which 
+> essentially returns the current active path device. And then the 
+> device-mapper core issues the command on that active path.
+> 
+> All nice and good, _unless_ that command triggers an error.
+> Normally it'd be intercepted by the dm-multipath end_io handler, and 
+> would set the path to offline.
+> But as ioctls do not use the normal I/O path the end_io handler is never 
+> called, and further SG_IO calls are happily routed down the failed path.
+> 
+> And the customer had to use SG_IO (or, in qemu-speak, LUN passthrough) 
+> as his application/filesystem makes heavy use of persistent reservations.
+
+How did this conclude Hannes?

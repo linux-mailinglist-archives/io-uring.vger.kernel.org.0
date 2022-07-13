@@ -2,90 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D15E573DC5
-	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 22:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6247B573FED
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 01:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236837AbiGMUZb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 16:25:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54522 "EHLO
+        id S229927AbiGMXJB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 19:09:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236836AbiGMUZa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 16:25:30 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 950EB27B16
-        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 13:25:27 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id y14-20020a17090a644e00b001ef775f7118so5634378pjm.2
-        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 13:25:27 -0700 (PDT)
+        with ESMTP id S229597AbiGMXI7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 19:08:59 -0400
+Received: from mail-oa1-x41.google.com (mail-oa1-x41.google.com [IPv6:2001:4860:4864:20::41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB1D1901D
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 16:08:58 -0700 (PDT)
+Received: by mail-oa1-x41.google.com with SMTP id 586e51a60fabf-10c0430e27dso461585fac.4
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 16:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=KNxdzYJ31Vhyt7oycuRbMlgHEjW6wotI0WNAdQq4UMw=;
-        b=t8kPJVCKtimxDlTtyzRgs6JNvOaLECNuXxarQU5OqBNA+ziab/DxNvRTorr+G98Cl5
-         2n5ZybUVwcbsU+P2E2FnhFqF/mDjUjQRVf+6EFKX70Vbyzk6vKllj0cfGMjRaaH7wV46
-         OJqqnL5CnvYZ/tMqCZLuH5USn/gtG52kAARi3QGK/WoJbpmkwcRGlqfg+bv7QswLkwWF
-         sqTDGUA8vN6GDwxQrdyDse3TUfWV6rQR1erg83hXbDszgJFa74wrL8rWeUtIlOlOn2rW
-         idSQYSMMEmA6NKhXQnU+1DLRu0Ph3fLJmWMrp5S4wqtLYYQgpiVlQDtmbrMJhScjh0kg
-         U6CQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=eWssZ8ZNk3gocz18m8mxnb0jwQqX8IeZqZTs5Fk7aHM=;
+        b=QTTcUNuuxhlzjNaiKOLDwkjaE3mG/iqa/T9Uw+kGx/85+TyzJmP1XqQEy4tH6zxYS4
+         Mp+lSIMdl/ITfh3xPeZ1ESfv9H/6DSIoa+6aznnOmiclS3Y4qR+CoMrinFtqDlsnTHTO
+         3mHIV9H8t2ihrZfozS8KMylErMy9O8vXVcdJaqGMgFrFGzl0EAySmt0YdwW1mLazfJeC
+         8hwiK/hoPgIh0inasZMZcF1C5R6sWRrKhUGYSo8yDoQvOGVvlGHn6NJe1zWwS4Ur0gHQ
+         lhkJmK82JjolA1kzwMNfy+giBnNANqXqJGG5RaPfwkBvNciAc7x0WJKOx57mMy3S0bM1
+         kTrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=KNxdzYJ31Vhyt7oycuRbMlgHEjW6wotI0WNAdQq4UMw=;
-        b=oHM59jH+3+Ejan/2WqtkgRREvqTrmIzAAqND6/SzU/LE+rP9fHoJ2b/z23w4FbjEd1
-         Pt9WIPkLqOjrLEcIcyTPdysWfjeKzlZOc0uWXk3C8PHXFFi3NF7W5J6ccGCh6/mwFgFz
-         NKWzUd3j+FkBjw5YofSkhTDRWIgF99mzFSfMmxSJaXhxUxCws1zfMOsg8lpXvS9rD6sB
-         o9xfl5+jk/9fZczn1T3plREgrQhjtUsbV0oXJnHNgjWY1jckuCcCx7LCroAS6wm6OOXz
-         06JunKIK+Ye/PJqpRkEAXClJ2l/A89F5nJ3mNgcsZUFoRvDfjZcQecLOiiJ1+r5RqDW0
-         IqYA==
-X-Gm-Message-State: AJIora+l8D9UxxaX6JXd0qjWdIjPn+d3ct7silZBO4hOy8EdiQQdbe0f
-        0aS9ENcueMMb6QAbY6ah9mcLmfZJtdDjwA==
-X-Google-Smtp-Source: AGRyM1uMWJM21AdMA4hg31Ti1BfbhNdmhNhNqXCJYSv6TufmkF9YayM6wEk9gfkZAYCsy7kM3FFnog==
-X-Received: by 2002:a17:90b:240b:b0:1ef:8a68:1596 with SMTP id nr11-20020a17090b240b00b001ef8a681596mr5542909pjb.234.1657743927006;
-        Wed, 13 Jul 2022 13:25:27 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a15-20020a170902710f00b0016bedcced2fsm9332014pll.35.2022.07.13.13.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 13:25:26 -0700 (PDT)
-Message-ID: <6e5d590b-448d-ea75-f29d-877a2cd6413b@kernel.dk>
-Date:   Wed, 13 Jul 2022 14:25:25 -0600
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=eWssZ8ZNk3gocz18m8mxnb0jwQqX8IeZqZTs5Fk7aHM=;
+        b=Fb3SZfV2kkiq8hBS03+bkYt+hOxPyYeFyEqILUM1l4oIO6qB7XLkf24nXCGyJXxyDD
+         N9NaWldoXv/mRTS6PBAbeLQomJggSN5epnytNOT0r548WaGDKJh+zgzV3PhmvKujN/Z6
+         nQQRctNBOK0ApbRobggdUgmGALQ34KSXQI12Lz4YsYzX4rgpIG9QVaRybrYp1hDvL30b
+         lBymbBug5QWts4/S5JY0nP1coUw40MA8o6ZHVU3rPiVRTOCUKL6yC4qExMcuYhbxYwxF
+         lcm9iimhue2qSl+2f+/reU0vha0EDiaTXkHeJNZrJ4nJ06Qb/y33PTu1lOJnO5Lf+lT/
+         mZYg==
+X-Gm-Message-State: AJIora/yHRp1QdQGc5gMVF/mUfdX5YYyHcy1NGq2a53ubTByF3Z3O4mL
+        nsJPgjtv1EnBFTwSL/j25glqFtNdpg1dxQj3udU=
+X-Google-Smtp-Source: AGRyM1vVWbp6yC3nUEvRz5neq45m5LqvoUeL4V3cb4aevoJEOkyjp0R1XvA9G9ME95y9/JudLJ70ZU2wOTGli+CS7go=
+X-Received: by 2002:a05:6870:b005:b0:10c:1c42:4f7e with SMTP id
+ y5-20020a056870b00500b0010c1c424f7emr5814886oae.252.1657753737329; Wed, 13
+ Jul 2022 16:08:57 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH V5 0/2] ublk: add io_uring based userspace block driver
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-References: <20220713140711.97356-1-ming.lei@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220713140711.97356-1-ming.lei@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Sender: samco.chambers1988@gmail.com
+Received: by 2002:a05:6358:a087:b0:a3:1662:bcab with HTTP; Wed, 13 Jul 2022
+ 16:08:56 -0700 (PDT)
+From:   Doris David <mrs.doris.david02@gmail.com>
+Date:   Wed, 13 Jul 2022 16:08:56 -0700
+X-Google-Sender-Auth: dzdwpg30E-FZtMTo8mBDBwjpW5M
+Message-ID: <CACePhLnwh_=Wjg-xe_2QBxdAhuQ-25siX_522YV24orGDgd_FQ@mail.gmail.com>
+Subject: Re: Greetings My Dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.5 required=5.0 tests=ADVANCE_FEE_5_NEW_MONEY,
+        BAYES_50,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,LOTS_OF_MONEY,MONEY_FRAUD_8,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2001:4860:4864:20:0:0:0:41 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [samco.chambers1988[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [samco.chambers1988[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  0.0 MONEY_FRAUD_8 Lots of money and very many fraud phrases
+        *  3.0 ADVANCE_FEE_5_NEW_MONEY Advance Fee fraud and lots of money
+        *  2.7 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/13/22 8:07 AM, Ming Lei wrote:
-> Hello Guys,
-> 
-> ublk driver is one kernel driver for implementing generic userspace block
-> device/driver, which delivers io request from ublk block device(/dev/ublkbN) into
-> ublk server[1] which is the userspace part of ublk for communicating
-> with ublk driver and handling specific io logic by its target module.
+Greetings,
 
-Ming, is this ready to get merged in an experimental state?
+I sent this mail praying it will find you in a good condition, since I
+myself am in a very critical health condition in which I sleep every
+night  without knowing if I may be alive to see the next day. I am
+Mrs.Doris David, a widow suffering from a long time illness. I have
+some funds I  inherited from my late husband, the sum of
+($11,000,000.00) my Doctor told me recently that I have serious
+sickness which is a cancer problem. What disturbs me most is my stroke
+sickness. Having known my condition, I decided to donate this fund to
+a good person that will utilize it the way I am going to instruct
+herein. I need a very honest God.
 
--- 
-Jens Axboe
+fearing a person who can claim this money and use it for charity
+works, for orphanages, widows and also build schools for less
+privileges that will be named after my late husband if possible and to
+promote the word of God and the effort that the house of God is
+maintained. I do not want a situation where this money will be used in
+an ungodly manner. That's why I' making this decision. I'm not afraid
+of death so I know where I'm going. I accept this decision because I
+do not have any child who will inherit this money after I die. Please
+I want your sincere and urgent answer to know if you will be able to
+execute this project, and I will give you more information on how
+thunder will be transferred to your bank account. I am waiting for
+your reply.
 
+May God Bless you,
+Mrs.Doris David,

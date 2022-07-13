@@ -2,68 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04569573006
-	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 10:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F045730FD
+	for <lists+io-uring@lfdr.de>; Wed, 13 Jul 2022 10:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235046AbiGMIEl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 04:04:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
+        id S235648AbiGMIZ5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 04:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235026AbiGMIEj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 04:04:39 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547F8E5DC2;
-        Wed, 13 Jul 2022 01:04:35 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id p27-20020a05600c1d9b00b003a2f36054d0so707161wms.4;
-        Wed, 13 Jul 2022 01:04:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=IMbD90s21HdnddiL42xIyv27c0/QtqF4u8JsID8zNs0=;
-        b=kCtcMtyKggjmPg2K17SKzaHN7Qw2OpNRYLnsafZdMWzloxrKm2i2o3ZoM7NHnarNx6
-         cgQk4uqcZP85SOvHO9th9QVImxLKs37NMmpJflFUIfO1t53+efmMFmj1k0wnBrVr7NB4
-         ZnkzO9iLaj7R6iTX7lZHfkKXZ213K5ZnSVF80wR1SlhHhdbi8qNRsNdbv+6pLEnkfMX4
-         /YGnn8dhygDpguDVC0rrj9BOi+1YzfI5pU+gJBuWSz7jm3F6Q45/4PPxbfgnzLaS7tYT
-         1vwn+30W9zBdjiAgFZ9hJRbtOBr5mpOAR04QP8hJJP8ucZw8fAEPOalqcwl6dBjODIVa
-         jt0g==
-X-Gm-Message-State: AJIora94gVnGINfKCR1ZlaPI58FKZrnOXV+bO3oW72b7speyLHJA+Nrx
-        b3CZBIovbjv06sKKxsTCWc4=
-X-Google-Smtp-Source: AGRyM1vwsh7bKCpn2lTmbIQEoG/5T6EX7m8IACBWbztC+wbdRF/oK3yyKEfzXUu/Co8455P2m9GISw==
-X-Received: by 2002:a05:600c:3545:b0:3a2:f3e3:c382 with SMTP id i5-20020a05600c354500b003a2f3e3c382mr2774942wmq.142.1657699473799;
-        Wed, 13 Jul 2022 01:04:33 -0700 (PDT)
-Received: from [192.168.64.180] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id n187-20020a1c27c4000000b003a199ed4f44sm1566011wmn.27.2022.07.13.01.04.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 01:04:33 -0700 (PDT)
-Message-ID: <24f0a3e6-aa53-8c69-71b7-d66289a63eae@grimberg.me>
-Date:   Wed, 13 Jul 2022 11:04:31 +0300
+        with ESMTP id S235569AbiGMIZl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 04:25:41 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D80B7F1
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 01:23:46 -0700 (PDT)
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 26CLjfsK024585
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 01:23:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=facebook; bh=Km0IeZTUL0HdVB6PFs9WNFiXX3rWttJeOF99Ub81JvU=;
+ b=I1yV+zuFIYmC+PvzFbC6Ex5NrZ0KphieOf7IQf2mXLNqI1wOKmdowH5r3ArbZM5WNQS1
+ Tw/tXBlEwSzy6KkoVZBsVc1gBxO5efdpDXnieaI/ex3s8ji1cG1jKixcQtUXtvN5X9Rw
+ 6rhGuEAqjVjrt9tdft7qaea5ZAVmVYFfVe8= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net (PPS) with ESMTPS id 3h9h5etdda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 01:23:45 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Wed, 13 Jul 2022 01:23:45 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 9A5752ED8C1B; Wed, 13 Jul 2022 01:23:41 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <io-uring@vger.kernel.org>
+CC:     <netdev@vger.kernel.org>, <Kernel-team@fb.com>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH v2 for-next 0/3] io_uring: multishot recvmsg
+Date:   Wed, 13 Jul 2022 01:23:18 -0700
+Message-ID: <20220713082321.1445020-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: zCdx25nuewnDMmU5qZ3dYfr0SjMsrpPT
+X-Proofpoint-GUID: zCdx25nuewnDMmU5qZ3dYfr0SjMsrpPT
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
- uring-passthrough commands
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, kbusch@kernel.org,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        asml.silence@gmail.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
-        gost.dev@samsung.com
-References: <20220711110155.649153-1-joshi.k@samsung.com>
- <CGME20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089@epcas5p3.samsung.com>
- <20220711110155.649153-5-joshi.k@samsung.com> <20220712065250.GA6574@lst.de>
- <436c8875-5a99-4328-80ac-6a5aef7f16f4@grimberg.me>
- <20220713053633.GA13135@lst.de>
-From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20220713053633.GA13135@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-12_14,2022-07-13_01,2022-06-22_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,36 +65,60 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+This series adds multishot support to recvmsg in io_uring.
 
->> I think the difference from scsi-generic and controller nvme passthru is
->> that this is a mpath device node (or mpath chardev). This is why I think
->> that users would expect that it would have equivalent multipath
->> capabilities (i.e. failover).
-> 
-> How is that different from /dev/sg?
+The idea is that you submit a single multishot recvmsg and then receive
+completions as and when data arrives. For recvmsg each completion also has
+control data, and this is necessarily included in the same buffer as the
+payload.
 
-/dev/sg it is not a multipath device.
+In order to do this a new structure is used: io_uring_recvmsg_out. This
+specifies the length written of the name, control and payload. As well as
+including the flags.
+The layout of the buffer is <header><name><control><payload> where the
+lengths are those specified in the original msghdr used to issue the recvms=
+g.
 
-Maybe the solution is to just not expose a /dev/ng for the mpath device
-node, but only for bottom namespaces. Then it would be completely
-equivalent to scsi-generic devices.
+I suspect this API will be the most contentious part of this series and wou=
+ld
+appreciate any comments on it.
 
-It just creates an unexpected mix of semantics of best-effort
-multipathing with just path selection, but no requeue/failover...
+For completeness I considered having the original struct msghdr as the head=
+er,
+but size wise it is much bigger (72 bytes including an iovec vs 16 bytes he=
+re).
+Testing also showed a 1% slowdown in terms of QPS.
 
->> In general, I think that uring passthru as an alternative I/O interface
->> and as such needs to be able to failover. If this is not expected from
->> the interface, then why are we exposing a chardev for the mpath device
->> node? why not only the bottom namespaces?
-> 
-> The failover will happen when you retry, but we leave that retry to
-> userspace.  There even is the uevent to tell userspace when a new
-> path is up.
+Using a mini network tester [1] shows 14% QPS improvment using this API, ho=
+wever
+this is likely to go down to ~8% with the latest allocation cache added by =
+Jens.
 
-If the user needs to do the retry, discover and understand namespace
-paths, ANA states, controller states, etc. Why does the user need a
-mpath chardev at all?
+[1]: https://github.com/DylanZA/netbench/tree/main
 
-The user basically needs to understand everything including indirectly
-path selection for the I/O. IMO it is cleaner for the user to just have 
-the bottom devices and do the path selection directly.
+Patches 1,2 change the copy_msghdr code to take a user_msghdr as input
+Patch 3 is the multishot feature
+
+v2:
+ * Rebase without netbuf recycling provided by io_uring
+ * Fix payload field output with MSG_TRUNC set to match recvmsg(2)
+
+Dylan Yudaken (3):
+  net: copy from user before calling __copy_msghdr
+  net: copy from user before calling __get_compat_msghdr
+  io_uring: support multishot in recvmsg
+
+ include/linux/socket.h        |   7 +-
+ include/net/compat.h          |   5 +-
+ include/uapi/linux/io_uring.h |   7 ++
+ io_uring/net.c                | 212 ++++++++++++++++++++++++++++------
+ io_uring/net.h                |   6 +
+ net/compat.c                  |  39 +++----
+ net/socket.c                  |  37 +++---
+ 7 files changed, 228 insertions(+), 85 deletions(-)
+
+
+base-commit: 20898aeac6b82d8eb6247754494584b2f6cafd53
+--=20
+2.30.2
+

@@ -2,144 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A19574F46
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 15:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E18AF575027
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 15:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238858AbiGNNgr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jul 2022 09:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
+        id S240367AbiGNN6K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jul 2022 09:58:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235303AbiGNNgq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 09:36:46 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D431252882
-        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 06:36:45 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id s21so2884655pjq.4
-        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 06:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=1KGi8hzs3JVmExGzAp1FgQ5HiiFDKdEHJQrmRugg7RE=;
-        b=3bqlXQFzCFcdU2b8K18Dcx0EPGbu3DgTVENXm1gzt7OIN13aq+tu3i9MRcx0eKn0W/
-         oWGvBAHf6MpPiv7a4pmCE3O1t8MON70gP8cngyQRLpqRWtvyb2BZWPULfFAhECF22DgV
-         3wIaq3s0wO6gOR5u/urO2cArJjA28wiC9AB2MPzW8JNRnYg1M5zJBK6KUaQTkgV2Ojpb
-         5jGUaf0dsh5lxI5hxvp9Xx94/vq3P6SiWvJqD9lAGHJTGAMpmRkUTtO6ULn/RVpsKHuu
-         OgCxGMFe7cRn2GGqVDu/X71FnozJoCW+5z2Ri9lVnJKCSL1oWMrQSaqe4NirZJ3ySkGh
-         QtJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=1KGi8hzs3JVmExGzAp1FgQ5HiiFDKdEHJQrmRugg7RE=;
-        b=HjFnE3xXernx75gCs8UTP8/8GaQ9JeoLiCEINwcae9BvnHyoLn8dtKQR2iBmpP2OgA
-         AvRJB+JEbInHssSCzGf2xeIQObNRBftOnv8MRNgmLW+ao2PxjmJ49EM0nOKvHnydUG7X
-         bgM5uGIfifg3ipTlCN0Fa4eTsVb5m3BCwP9rE2zdwUownwE+v6dAwi44aWJ8HykX4VVj
-         /y80txvEtxBsk2dXFbS+NjMSD2J5z2Sdosw4dsxS4YSE2FqiPGKUuOqZK+nX7EEszL8E
-         B3C9nVVhQR3g3U37/C4PxJ6RxU8h6lvwIUVjCzRRDt65uVPHlMO6TIyi9x65GndD38cZ
-         +FVA==
-X-Gm-Message-State: AJIora/ONgoxXjw0W+UX8lFh63Wm0f0CWlxfrZvzHKMBxaRAWi9V5cCt
-        ZOqvjNK0mvzfVvhULFkqZ2UcO83/OuJEbQ==
-X-Google-Smtp-Source: AGRyM1saZKUnOqdeeEX1IPXP+0vNME2o9wBVS+WydEif2fxcuIxP8aOjMhPwW6ZhX21u6S/o5TpnfA==
-X-Received: by 2002:a17:90a:e547:b0:1ef:95c2:cefb with SMTP id ei7-20020a17090ae54700b001ef95c2cefbmr15775241pjb.225.1657805805274;
-        Thu, 14 Jul 2022 06:36:45 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b3-20020a170902bd4300b0016c1efb9195sm1450242plx.298.2022.07.14.06.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jul 2022 06:36:44 -0700 (PDT)
-Message-ID: <c04892ba-61ca-2cb7-d390-3c3f5b4ff04a@kernel.dk>
-Date:   Thu, 14 Jul 2022 07:36:43 -0600
+        with ESMTP id S240396AbiGNN5y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 09:57:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 588B066BAB
+        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 06:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657806933;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KhtmeoLhSVw8TxG3EM8WGDxXWprw20ODCHZnU0rs1oc=;
+        b=GxLX5E7PV31+0ZbyLD8LO/zId7RETKoBxK67usXF/eYe3cC13GJLJ+FmG/qIdiyFXxbNFz
+        jTepadlQ4neozSNrrMIe/d1tpkB4GiJXdnq7pW1UuqaWSBqBjOgJ6Wyy5ioNs9Si0vvo8h
+        cURdxiub35WrtuiHqLJLDlT9ZMQ1iK4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-267-JLYhTxIqP1mO5l_seL57XQ-1; Thu, 14 Jul 2022 09:55:32 -0400
+X-MC-Unique: JLYhTxIqP1mO5l_seL57XQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 96B5A80418F;
+        Thu, 14 Jul 2022 13:55:30 +0000 (UTC)
+Received: from T590 (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1618A2026D64;
+        Thu, 14 Jul 2022 13:55:22 +0000 (UTC)
+Date:   Thu, 14 Jul 2022 21:55:17 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, asml.silence@gmail.com,
+        joshiiitr@gmail.com, anuj20.g@samsung.com, gost.dev@samsung.com,
+        ming.lei@redhat.com
+Subject: Re: [PATCH for-next 1/4] io_uring, nvme: rename a function
+Message-ID: <YtAgReh6PnevFwzX@T590>
+References: <20220711110155.649153-1-joshi.k@samsung.com>
+ <CGME20220711110800epcas5p3d338dd486fd778c5ba5bfe93a91ec8bd@epcas5p3.samsung.com>
+ <20220711110155.649153-2-joshi.k@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 for-next 3/3] io_uring: support multishot in recvmsg
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        io-uring@vger.kernel.org
-Cc:     netdev@vger.kernel.org, Kernel-team@fb.com
-References: <20220714110258.1336200-1-dylany@fb.com>
- <20220714110258.1336200-4-dylany@fb.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220714110258.1336200-4-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220711110155.649153-2-joshi.k@samsung.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/14/22 5:02 AM, Dylan Yudaken wrote:
-> Similar to multishot recv, this will require provided buffers to be
-> used. However recvmsg is much more complex than recv as it has multiple
-> outputs. Specifically flags, name, and control messages.
+On Mon, Jul 11, 2022 at 04:31:52PM +0530, Kanchan Joshi wrote:
+> io_uring_cmd_complete_in_task() is bit of a misnomer. It schedules a
+> callback function for execution in task context. What callback does is
+> private to provider, and does not have to be completion. So rename it to
+> io_uring_cmd_execute_in_task() to allow more generic use.
 > 
-> Support this by introducing a new struct io_uring_recvmsg_out with 4
-> fields. namelen, controllen and flags match the similar out fields in
-> msghdr from standard recvmsg(2), payloadlen is the length of the payload
-> following the header.
-> This struct is placed at the start of the returned buffer. Based on what
-> the user specifies in struct msghdr, the next bytes of the buffer will be
-> name (the next msg_namelen bytes), and then control (the next
-> msg_controllen bytes). The payload will come at the end. The return value
-> in the CQE is the total used size of the provided buffer.
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 
-Just a few minor nits (some repeat ones too), otherwise looks fine to
-me. I can either fold these in while applying, or you can spin a v4. Let
-me know!
+ublk driver has same usage, and this change makes sense:
 
-> +static int io_recvmsg_multishot_overflow(struct io_async_msghdr *iomsg)
-> +{
-> +	unsigned long hdr;
-> +
-> +	if (check_add_overflow(sizeof(struct io_uring_recvmsg_out),
-> +			       (unsigned long)iomsg->namelen, &hdr))
-> +		return -EOVERFLOW;
-> +	if (check_add_overflow(hdr, iomsg->controllen, &hdr))
-> +		return -EOVERFLOW;
-> +	if (hdr > INT_MAX)
-> +		return -EOVERFLOW;
-> +
-> +	return 0;
-> +}
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Nobody checks the specific value of this helper, so we should either
-actually do that, or just make this one return a true/false instead. The
-latter makes the most sense to me.
-
-> +static int io_recvmsg_prep_multishot(struct io_async_msghdr *kmsg, struct io_sr_msg *sr,
-> +				     void __user **buf, size_t *len)
-> +{
-
-The line breaks here are odd, should be at 80 unless there's a good
-reason for it to exceed it.
-
-Function reads better now though with the cast.
-
-> +static int io_recvmsg_multishot(
-> +	struct socket *sock,
-> +	struct io_sr_msg *io,
-> +	struct io_async_msghdr *kmsg,
-> +	unsigned int flags,
-> +	bool *finished)
-> +{
-
-This is still formatted badly.
-
-> +		if (req->flags & REQ_F_APOLL_MULTISHOT) {
-> +			ret = io_recvmsg_prep_multishot(kmsg, sr,
-> +							&buf, &len);
-
-			ret = io_recvmsg_prep_multishot(kmsg, sr, &buf, &len);
-
-this still would fit nicely on an unbroken line.
-
--- 
-Jens Axboe
+thanks,
+Ming
 

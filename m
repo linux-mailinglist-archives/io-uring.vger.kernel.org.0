@@ -2,62 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C4CDB5741FC
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 05:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E732F574483
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 07:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232198AbiGNDlK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 23:41:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
+        id S234194AbiGNFan (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jul 2022 01:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232130AbiGNDlJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 23:41:09 -0400
+        with ESMTP id S231150AbiGNFam (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 01:30:42 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37FD725EB3
-        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 20:41:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 01BEA20BF8
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 22:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657770067;
+        s=mimecast20190719; t=1657776639;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=3PqAwSujQrcFKBakWmxqsGxJDNIOKr6UoNvVqvwCEF4=;
-        b=MmiaS8OhO/Vw1XlnNVqWgs3gEhj97Q7Sx6uOnFsK9mxfvdD89wnWszme+dI0amE20DB+MP
-        jZ+5erJ/1KUERAHAEcA3jnYsSNZud1grxLfSQiu+Cg3lWIW8EUgRr4omOsn85YwyUVT0cB
-        tgEggFpgb4/bD4Bgv3KydFir7DTO+/4=
+        bh=Yo60Yucr2FRbmnfU3FuLxXFG6GjMa37IcYtYc/Agp+4=;
+        b=F5g+JCTUJL5IFIACnD0d3veEDXZ4ulxU7IF7WUnqtVAuNjayGf/BVucEn2GHChL2r9o1i/
+        okypgtFR+2mleCIfwk3nTqhi2Ag6hYPw+eb4uj+f3yDPJutMtPXyaX+Jnt8SS+2iUwf/+f
+        DMiRiKfpq9nmGFrRrN1zyroHyycWAjc=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-498-lj0l3Q0eN2CkbUOOcky_hw-1; Wed, 13 Jul 2022 23:41:00 -0400
-X-MC-Unique: lj0l3Q0eN2CkbUOOcky_hw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-142-YUaiakrXM1i8OKU56w9wwQ-1; Thu, 14 Jul 2022 01:30:35 -0400
+X-MC-Unique: YUaiakrXM1i8OKU56w9wwQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E77CB1C14487;
-        Thu, 14 Jul 2022 03:40:59 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3F87A2806AB3;
+        Thu, 14 Jul 2022 05:30:35 +0000 (UTC)
 Received: from T590 (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D52C40CF8EE;
-        Thu, 14 Jul 2022 03:40:51 +0000 (UTC)
-Date:   Thu, 14 Jul 2022 11:40:46 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3ACD2166B26;
+        Thu, 14 Jul 2022 05:30:29 +0000 (UTC)
+Date:   Thu, 14 Jul 2022 13:30:23 +0800
 From:   Ming Lei <ming.lei@redhat.com>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
-        hch@lst.de, kbusch@kernel.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        asml.silence@gmail.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
-        gost.dev@samsung.com, ming.lei@redhat.com
-Subject: Re: [PATCH for-next 3/4] io_uring: grow a field in struct
- io_uring_cmd
-Message-ID: <Ys+QPjYBDoByrfw1@T590>
-References: <20220711110155.649153-1-joshi.k@samsung.com>
- <CGME20220711110824epcas5p22c8e945cb8c3c3ac46c8c2b5ab55db9b@epcas5p2.samsung.com>
- <20220711110155.649153-4-joshi.k@samsung.com>
- <2b644543-9a54-c6c4-fd94-f2a64d0701fa@kernel.dk>
- <43955a42-7185-2afc-9a55-80cc2de53bf9@grimberg.me>
- <96fcba9a-76ad-8e04-e94e-b6ec5934f84e@grimberg.me>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        ming.lei@redhat.com
+Subject: Re: [PATCH V5 0/2] ublk: add io_uring based userspace block driver
+Message-ID: <Ys+p79SG+9QBjo7x@T590>
+References: <20220713140711.97356-1-ming.lei@redhat.com>
+ <6e5d590b-448d-ea75-f29d-877a2cd6413b@kernel.dk>
+ <Ys9g9RhZX5uwa9Ib@T590>
+ <94289486-a7fa-1801-3c67-717e0392f374@kernel.dk>
+ <38b6e5f5-247a-bd44-061d-f492e7d47b99@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <96fcba9a-76ad-8e04-e94e-b6ec5934f84e@grimberg.me>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+In-Reply-To: <38b6e5f5-247a-bd44-061d-f492e7d47b99@kernel.dk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -68,30 +67,86 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 09:22:54PM +0300, Sagi Grimberg wrote:
-> 
-> > > > Use the leftover space to carve 'next' field that enables linking of
-> > > > io_uring_cmd structs. Also introduce a list head and few helpers.
-> > > > 
-> > > > This is in preparation to support nvme-mulitpath, allowing multiple
-> > > > uring passthrough commands to be queued.
-> > > 
-> > > It's not clear to me why we need linking at that level?
+On Wed, Jul 13, 2022 at 08:59:16PM -0600, Jens Axboe wrote:
+> On 7/13/22 8:54 PM, Jens Axboe wrote:
+> > On 7/13/22 6:19 PM, Ming Lei wrote:
+> >> On Wed, Jul 13, 2022 at 02:25:25PM -0600, Jens Axboe wrote:
+> >>> On 7/13/22 8:07 AM, Ming Lei wrote:
+> >>>> Hello Guys,
+> >>>>
+> >>>> ublk driver is one kernel driver for implementing generic userspace block
+> >>>> device/driver, which delivers io request from ublk block device(/dev/ublkbN) into
+> >>>> ublk server[1] which is the userspace part of ublk for communicating
+> >>>> with ublk driver and handling specific io logic by its target module.
+> >>>
+> >>> Ming, is this ready to get merged in an experimental state?
+> >>
+> >> Hi Jens,
+> >>
+> >> Yeah, I think so.
+> >>
+> >> IO path can survive in xfstests(-g auto), and control path works
+> >> well in ublksrv builtin hotplug & 'kill -9' daemon test.
+> >>
+> >> The UAPI data size should be good, but definition may change per
+> >> future requirement change, so I think it is ready to go as
+> >> experimental.
 > > 
-> > I think the attempt is to allow something like blk_steal_bios that
-> > nvme leverages for io_uring_cmd(s).
+> > OK let's give it a go then. I tried it out and it seems to work for me,
+> > even if the shutdown-while-busy is something I'd to look into a bit
+> > more.
+> > 
+> > BTW, did notice a typo on the github page:
+> > 
+> > 2) dependency
+> > - liburing with IORING_SETUP_SQE128 support
+> > 
+> > - linux kernel 5.9(IORING_SETUP_SQE128 support)
+> > 
+> > that should be 5.19, typo.
 > 
-> I'll rephrase because now that I read it, I think my phrasing is
-> confusing.
+> I tried this:
 > 
-> I think the attempt is to allow something like blk_steal_bios that
-> nvme leverages, but for io_uring_cmd(s). Essentially allow io_uring_cmd
-> to be linked in a requeue_list.
+> axboe@m1pro-kvm ~/g/ubdsrv (master)> sudo ./ublk add -t loop /dev/nvme0n1
+> axboe@m1pro-kvm ~/g/ubdsrv (master) [255]> 
 
-io_uring_cmd is 1:1 with pt request, so I am wondering why not retry on
-io_uring_cmd instance directly via io_uring_cmd_execute_in_task().
+That looks one issue in ubdsrv, and '-f /dev/nvme0n1' is needed.
 
-I feels it isn't necessary to link io_uring_cmd into list.
+> 
+> and got this dump:
+> 
+> [   34.041647] WARNING: CPU: 3 PID: 60 at block/blk-mq.c:3880 blk_mq_release+0xa4/0xf0
+> [   34.043858] Modules linked in:
+> [   34.044911] CPU: 3 PID: 60 Comm: kworker/3:1 Not tainted 5.19.0-rc6-00320-g5c37a506da31 #1608
+> [   34.047689] Hardware name: linux,dummy-virt (DT)
+> [   34.049207] Workqueue: events blkg_free_workfn
+> [   34.050731] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   34.053026] pc : blk_mq_release+0xa4/0xf0
+> [   34.054360] lr : blk_mq_release+0x44/0xf0
+> [   34.055694] sp : ffff80000b16bcb0
+> [   34.056804] x29: ffff80000b16bcb0 x28: 0000000000000000 x27: 0000000000000000
+> [   34.059135] x26: 0000000000000000 x25: ffff00001fe9bb05 x24: 0000000000000000
+> [   34.061454] x23: ffff000005062eb8 x22: ffff000004608998 x21: 0000000000000000
+> [   34.063775] x20: ffff000004608a50 x19: ffff000004608950 x18: ffff80000b7b3c88
+> [   34.066085] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> [   34.068410] x14: 0000000000000002 x13: 0000000000013638 x12: 0000000000000000
+> [   34.070715] x11: ffff80000945b7e8 x10: 0000000000006f2e x9 : 00000000ffffffff
+> [   34.073037] x8 : ffff800008fb5000 x7 : ffff80000860cf28 x6 : 0000000000000000
+> [   34.075334] x5 : 0000000000000000 x4 : 0000000000000028 x3 : ffff80000b16bc14
+> [   34.077650] x2 : ffff0000086d66a8 x1 : ffff0000086d66a8 x0 : ffff0000086d6400
+> [   34.079966] Call trace:
+> [   34.080789]  blk_mq_release+0xa4/0xf0
+> [   34.081811]  blk_release_queue+0x58/0xa0
+> [   34.082758]  kobject_put+0x84/0xe0
+> [   34.083590]  blk_put_queue+0x10/0x18
+> [   34.084468]  blkg_free_workfn+0x58/0x84
+> [   34.085511]  process_one_work+0x2ac/0x438
+> [   34.086449]  worker_thread+0x1cc/0x264
+> [   34.087322]  kthread+0xd0/0xe0
+> [   34.088053]  ret_from_fork+0x10/0x20
+
+I guess there should be some validation missed in driver side too, will
+look into it.
 
 
 Thanks,

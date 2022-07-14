@@ -2,260 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19919574F17
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 15:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72A19574F46
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 15:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbiGNNYp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jul 2022 09:24:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
+        id S238858AbiGNNgr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jul 2022 09:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239452AbiGNNYa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 09:24:30 -0400
-Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84DCC2652;
-        Thu, 14 Jul 2022 06:23:44 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=ziyangzhang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJJmwxW_1657805021;
-Received: from 30.97.56.179(mailfrom:ZiyangZhang@linux.alibaba.com fp:SMTPD_---0VJJmwxW_1657805021)
-          by smtp.aliyun-inc.com;
-          Thu, 14 Jul 2022 21:23:41 +0800
-Message-ID: <fe9508ae-f12a-2216-1160-145308d746f5@linux.alibaba.com>
-Date:   Thu, 14 Jul 2022 21:23:40 +0800
+        with ESMTP id S235303AbiGNNgq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 09:36:46 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D431252882
+        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 06:36:45 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id s21so2884655pjq.4
+        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 06:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=1KGi8hzs3JVmExGzAp1FgQ5HiiFDKdEHJQrmRugg7RE=;
+        b=3bqlXQFzCFcdU2b8K18Dcx0EPGbu3DgTVENXm1gzt7OIN13aq+tu3i9MRcx0eKn0W/
+         oWGvBAHf6MpPiv7a4pmCE3O1t8MON70gP8cngyQRLpqRWtvyb2BZWPULfFAhECF22DgV
+         3wIaq3s0wO6gOR5u/urO2cArJjA28wiC9AB2MPzW8JNRnYg1M5zJBK6KUaQTkgV2Ojpb
+         5jGUaf0dsh5lxI5hxvp9Xx94/vq3P6SiWvJqD9lAGHJTGAMpmRkUTtO6ULn/RVpsKHuu
+         OgCxGMFe7cRn2GGqVDu/X71FnozJoCW+5z2Ri9lVnJKCSL1oWMrQSaqe4NirZJ3ySkGh
+         QtJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=1KGi8hzs3JVmExGzAp1FgQ5HiiFDKdEHJQrmRugg7RE=;
+        b=HjFnE3xXernx75gCs8UTP8/8GaQ9JeoLiCEINwcae9BvnHyoLn8dtKQR2iBmpP2OgA
+         AvRJB+JEbInHssSCzGf2xeIQObNRBftOnv8MRNgmLW+ao2PxjmJ49EM0nOKvHnydUG7X
+         bgM5uGIfifg3ipTlCN0Fa4eTsVb5m3BCwP9rE2zdwUownwE+v6dAwi44aWJ8HykX4VVj
+         /y80txvEtxBsk2dXFbS+NjMSD2J5z2Sdosw4dsxS4YSE2FqiPGKUuOqZK+nX7EEszL8E
+         B3C9nVVhQR3g3U37/C4PxJ6RxU8h6lvwIUVjCzRRDt65uVPHlMO6TIyi9x65GndD38cZ
+         +FVA==
+X-Gm-Message-State: AJIora/ONgoxXjw0W+UX8lFh63Wm0f0CWlxfrZvzHKMBxaRAWi9V5cCt
+        ZOqvjNK0mvzfVvhULFkqZ2UcO83/OuJEbQ==
+X-Google-Smtp-Source: AGRyM1saZKUnOqdeeEX1IPXP+0vNME2o9wBVS+WydEif2fxcuIxP8aOjMhPwW6ZhX21u6S/o5TpnfA==
+X-Received: by 2002:a17:90a:e547:b0:1ef:95c2:cefb with SMTP id ei7-20020a17090ae54700b001ef95c2cefbmr15775241pjb.225.1657805805274;
+        Thu, 14 Jul 2022 06:36:45 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id b3-20020a170902bd4300b0016c1efb9195sm1450242plx.298.2022.07.14.06.36.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jul 2022 06:36:44 -0700 (PDT)
+Message-ID: <c04892ba-61ca-2cb7-d390-3c3f5b4ff04a@kernel.dk>
+Date:   Thu, 14 Jul 2022 07:36:43 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH V5 1/2] ublk_drv: add io_uring based userspace block
- driver
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 for-next 3/3] io_uring: support multishot in recvmsg
 Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-References: <20220713140711.97356-1-ming.lei@redhat.com>
- <20220713140711.97356-2-ming.lei@redhat.com>
- <a4249561-84a0-a314-c377-b96d28b7b20b@linux.alibaba.com>
- <Ys/0jTxQCEHdI560@T590>
-From:   Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-In-Reply-To: <Ys/0jTxQCEHdI560@T590>
+To:     Dylan Yudaken <dylany@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        io-uring@vger.kernel.org
+Cc:     netdev@vger.kernel.org, Kernel-team@fb.com
+References: <20220714110258.1336200-1-dylany@fb.com>
+ <20220714110258.1336200-4-dylany@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220714110258.1336200-4-dylany@fb.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2022/7/14 18:48, Ming Lei wrote:
-> On Thu, Jul 14, 2022 at 06:20:38PM +0800, Ziyang Zhang wrote:
->> On 2022/7/13 22:07, Ming Lei wrote:
->>> This is the driver part of userspace block driver(ublk driver), the other
->>> part is userspace daemon part(ublksrv)[1].
->>>
->>> The two parts communicate by io_uring's IORING_OP_URING_CMD with one
->>> shared cmd buffer for storing io command, and the buffer is read only for
->>> ublksrv, each io command is indexed by io request tag directly, and
->>> is written by ublk driver.
->>>
->>> For example, when one READ io request is submitted to ublk block driver, ublk
->>> driver stores the io command into cmd buffer first, then completes one
->>> IORING_OP_URING_CMD for notifying ublksrv, and the URING_CMD is issued to
->>> ublk driver beforehand by ublksrv for getting notification of any new io request,
->>> and each URING_CMD is associated with one io request by tag.
->>>
->>> After ublksrv gets the io command, it translates and handles the ublk io
->>> request, such as, for the ublk-loop target, ublksrv translates the request
->>> into same request on another file or disk, like the kernel loop block
->>> driver. In ublksrv's implementation, the io is still handled by io_uring,
->>> and share same ring with IORING_OP_URING_CMD command. When the target io
->>> request is done, the same IORING_OP_URING_CMD is issued to ublk driver for
->>> both committing io request result and getting future notification of new
->>> io request.
->>>
->>> Another thing done by ublk driver is to copy data between kernel io
->>> request and ublksrv's io buffer:
->>>
->>> 1) before ubsrv handles WRITE request, copy the request's data into
->>> ublksrv's userspace io buffer, so that ublksrv can handle the write
->>> request
->>>
->>> 2) after ubsrv handles READ request, copy ublksrv's userspace io buffer
->>> into this READ request, then ublk driver can complete the READ request
->>>
->>> Zero copy may be switched if mm is ready to support it.
->>>
->>> ublk driver doesn't handle any logic of the specific user space driver,
->>> so it is small/simple enough.
->>>
->>> [1] ublksrv
->>>
->>> https://github.com/ming1/ubdsrv
->>>
->>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
->>> ---
->>
->>
->> Hi, Ming
->>
->> I find that a big change from v4 to v5 is the simplification of locks.
->>
->> In v5 you remove ubq->abort_lock, and I want to ask why it is OK to remove it?
+On 7/14/22 5:02 AM, Dylan Yudaken wrote:
+> Similar to multishot recv, this will require provided buffers to be
+> used. However recvmsg is much more complex than recv as it has multiple
+> outputs. Specifically flags, name, and control messages.
 > 
-> Actually V4 and previous version dealt with the issue too complicated.
-> 
->>
->> If you have time, could you explain how ublk deals with potential race on:
->> 1)queue_rq 2)ublk_abort_queue 3) ublk_ctrl_stop_dev 4) ublk_rq_task_work.
->> (Lock in ublk really confuses me...)
-> 
-> One big change is the following code:
-> 
-> __ublk_rq_task_work():
-> 	bool task_exiting = current != ubq->ubq_daemon ||
->                 (current->flags & PF_EXITING);
-> 	...
-> 	if (unlikely(task_exiting)) {
->                 blk_mq_end_request(req, BLK_STS_IOERR);
->                 mod_delayed_work(system_wq, &ub->monitor_work, 0);
->                 return;
->     }
-> 
-> Abort is always started after PF_EXITING is set, but if PF_EXITING is
-> set, __ublk_rq_task_work fails the request immediately, then io->flags
-> won't be touched, then no race with abort. Also PF_EXITING is
-> per-task flag, can only be set before calling __ublk_rq_task_work(),
-> and setting it actually serialized with calling task work func.
-> 
-> In ublk_queue_rq(), we don't touch io->flags, so there isn't race
-> with abort.
-> 
-> Wrt. ublk_ctrl_stop_dev(), it isn't related with abort directly, and
-> if del_gendisk() waits for inflight IO, abort work will be started
-> for making forward progress. After del_gendisk() returns, there can't
-> be any inflight io, so it is safe to cancel other pending io command.
-> 
+> Support this by introducing a new struct io_uring_recvmsg_out with 4
+> fields. namelen, controllen and flags match the similar out fields in
+> msghdr from standard recvmsg(2), payloadlen is the length of the payload
+> following the header.
+> This struct is placed at the start of the returned buffer. Based on what
+> the user specifies in struct msghdr, the next bytes of the buffer will be
+> name (the next msg_namelen bytes), and then control (the next
+> msg_controllen bytes). The payload will come at the end. The return value
+> in the CQE is the total used size of the provided buffer.
 
-Thanks, Ming. I understand the aborting code now. And it looks good to me.
+Just a few minor nits (some repeat ones too), otherwise looks fine to
+me. I can either fold these in while applying, or you can spin a v4. Let
+me know!
 
-Previously I think maybe monitor_work and task_work
-may be scheduled at the same time while task is exiting
-and blk_mq_end_request() on the same tag could be called twice.
+> +static int io_recvmsg_multishot_overflow(struct io_async_msghdr *iomsg)
+> +{
+> +	unsigned long hdr;
+> +
+> +	if (check_add_overflow(sizeof(struct io_uring_recvmsg_out),
+> +			       (unsigned long)iomsg->namelen, &hdr))
+> +		return -EOVERFLOW;
+> +	if (check_add_overflow(hdr, iomsg->controllen, &hdr))
+> +		return -EOVERFLOW;
+> +	if (hdr > INT_MAX)
+> +		return -EOVERFLOW;
+> +
+> +	return 0;
+> +}
 
-But I find there is a check on ublk_io's flag(UBLK_IO_FLAG_ACTIVE)
-in ublk_daemon_monitor_work() and ublk_io is aborted in task_work
-immediately(with UBLK_IO_FLAG_ACTIVE set, not cleared yet)
+Nobody checks the specific value of this helper, so we should either
+actually do that, or just make this one return a true/false instead. The
+latter makes the most sense to me.
 
-So there is no chance to call a send blk_mq_end_request() on the same tag.
+> +static int io_recvmsg_prep_multishot(struct io_async_msghdr *kmsg, struct io_sr_msg *sr,
+> +				     void __user **buf, size_t *len)
+> +{
 
-Besides, for ublk_ios with UBLK_IO_FLAG_ACTIVE unset, 
-stop_work scheduled in monitor work will call ublk_cancel_queue() by sending
-cqes with UBLK_IO_RES_ABORT.
+The line breaks here are odd, should be at 80 unless there's a good
+reason for it to exceed it.
 
-Put it together:
+Function reads better now though with the cast.
 
-When daemon is PF_EXITING:
+> +static int io_recvmsg_multishot(
+> +	struct socket *sock,
+> +	struct io_sr_msg *io,
+> +	struct io_async_msghdr *kmsg,
+> +	unsigned int flags,
+> +	bool *finished)
+> +{
 
-1) current ublk_io: aborted immediately in task_work
+This is still formatted badly.
 
-2) UBLK_IO_FLAG_ACTIVE set: aborted in ublk_daemon_monitor_work
+> +		if (req->flags & REQ_F_APOLL_MULTISHOT) {
+> +			ret = io_recvmsg_prep_multishot(kmsg, sr,
+> +							&buf, &len);
 
-3) UBLK_IO_FLAG_ACTIVE unset: send cqe with UBLK_IO_RES_ABORT
+			ret = io_recvmsg_prep_multishot(kmsg, sr, &buf, &len);
 
+this still would fit nicely on an unbroken line.
 
-Hope I'm correct this time. :)
+-- 
+Jens Axboe
 
->>
->>
->> [...]
->>
->>> +
->>> +/*
->>> + * __ublk_fail_req() may be called from abort context or ->ubq_daemon
->>> + * context during exiting, so lock is required.
->>> + *
->>> + * Also aborting may not be started yet, keep in mind that one failed
->>> + * request may be issued by block layer again.
->>> + */
->>> +static void __ublk_fail_req(struct ublk_io *io, struct request *req)
->>> +{
->>> +	WARN_ON_ONCE(io->flags & UBLK_IO_FLAG_ACTIVE);
->>> +
->>> +	if (!(io->flags & UBLK_IO_FLAG_ABORTED)) {
->>> +		io->flags |= UBLK_IO_FLAG_ABORTED;
->>> +		blk_mq_end_request(req, BLK_STS_IOERR);
->>> +	}
->>> +}
->>> +
->>
->> [...]
->>
->>> +
->>> +/*
->>> + * When ->ubq_daemon is exiting, either new request is ended immediately,
->>> + * or any queued io command is drained, so it is safe to abort queue
->>> + * lockless
->>> + */
->>> +static void ublk_abort_queue(struct ublk_device *ub, struct ublk_queue *ubq)
->>> +{
->>> +	int i;
->>> +
->>> +	if (!ublk_get_device(ub))
->>> +		return;
->>> +
->>> +	for (i = 0; i < ubq->q_depth; i++) {
->>> +		struct ublk_io *io = &ubq->ios[i];
->>> +
->>> +		if (!(io->flags & UBLK_IO_FLAG_ACTIVE)) {
->>> +			struct request *rq;
->>> +
->>> +			/*
->>> +			 * Either we fail the request or ublk_rq_task_work_fn
->>> +			 * will do it
->>> +			 */
->>> +			rq = blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], i);
->>> +			if (rq)
->>> +				__ublk_fail_req(io, rq);
->>> +		}
->>> +	}
->>> +	ublk_put_device(ub);
->>> +}
->>> +
->>
->>
->> Another problem: 
->>
->> 1) comment of __ublk_fail_req():  "so lock is required"
-> 
-> Yeah, now __ublk_fail_req is only called in abort context, and no race
-> with task work any more, so lock isn't needed.
-
-Ok, I see.
-
-> 
->>
->> 2) comment of ublk_abort_queue(): "so it is safe to abort queue lockless"
-> 
-> This comment is updated in v5, and it is correct.
-> 
->>
->> 3) ublk_abort_queue() calls _ublk_fail_req() on all ubqs.
-> 
-> No, ublk_abort_queue() only aborts the passed ubq, so if one ubq daemon
-> is aborted, other ubqs can still handle IO during deleting disk.
-
-Ok, I see.
-
-I think if one ubq daemon is killed(and blk-mq requests related to it are aborted), 
-stop work should call del_gendisk() and other ubq daemons can still complete blk-mq requests
-but no new blk-mq requests will be issued. 
-After that, these unkilled ubq daemons will get UBLK_IO_RES_ABORT cqes
-and exit by themselves.
-
-
-> 
-> 
-> Thanks,
-> Ming

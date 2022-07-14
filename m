@@ -2,116 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CEAC574194
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 04:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9852574198
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 04:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbiGNCyR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 22:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53626 "EHLO
+        id S231260AbiGNCy3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 22:54:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbiGNCyQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 22:54:16 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23FA3201B4
-        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 19:54:15 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id s27so308205pga.13
-        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 19:54:15 -0700 (PDT)
+        with ESMTP id S231621AbiGNCy2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 22:54:28 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F6424BCD
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 19:54:27 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id cp18-20020a17090afb9200b001ef79e8484aso5048883pjb.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Jul 2022 19:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=UMayq6NnSa82+UEkfGFktrBm4nbNiRMSgFSEFqPlza8=;
-        b=5asTxkUbxGoxHZ6SVN7afAB0c3QHNviUdFllLH4zGQMwO83Q7WvO0Tj21HIlCSeZDD
-         gQc2EBqQPA3NT0v8xYChrvEGnR+Ukoo5uJSg7usT0T7OK7ZJo+fGEO28tAu0e0ClcdUu
-         8LfUC4na0wb1Gq+Tciqe/nz+wahpCgBr+XUooxlhuPPxq2WtUMrFO45gHjFcAbl8FSrG
-         GS62d4VVk5afufE9SofvVNuXRCScLipAwXtvQA2/LE4ykUDppNax/1BHmZ9QtVxOUAG2
-         wy26VbM9OecJMp8u1WmonQVLj9WrnI7jfZsdLuTAczlh5BVBhYjhnOYZnoYDdHIFULqX
-         ETtg==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=OlqAKJ2OOvEdEHn6Z9YZOvfjiijpNyf4M3TtfyEfPX8=;
+        b=BTfUUfzEQLPWuMrNiXQCTKZI1uPD/SlU0g5/+PHUve9TLtrNjbLyBl9AcCM4T3y7cj
+         wAyX/UAjYxCF8ucD2wRn2Y+hGmrFRQJfZfI7JynanW6fEgoU6EVmZDQccj1wyn4jH/TK
+         I36hqOgO2oPNXAfbnnJS8xt9vqFinzA2lX1Xl8Ce55NA06DOt/1lelBl2TB1ivqkzQpO
+         Y8QhPwkSWf5ItMh3dcioxl7tHczGj2qS8b153yXekA02M9NVED3nio+YXeY8wq19jzfn
+         uxpSPTsDuXgAuZjlzua8quxhLoYLpaumvh/VM7/wDPHBrzyj+1idTRBdKMmodmodxHUR
+         JpyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=UMayq6NnSa82+UEkfGFktrBm4nbNiRMSgFSEFqPlza8=;
-        b=HwDkIUaok1/39Y7YmFMfpCr685YPwB2XXSjAYTOOf2Hi7dsCsGFnUVarmbLgyg43mH
-         ZrQ6Da7z++Lcqc4rvCVetySk71fNwVZ/3RD5uUbS91wnbmE+cS6VoHC3wQ7J+pgWWaW9
-         a81/uEk9MluRognCGAQLTvGKNXOC+F5CnaR6Le+ztTcY9uU+aUmgPC46/X5JCCa7gHBp
-         dkxjMQaHW4N2IeU3u7mDNL7kE/8N15R/+MperfoaPh+/vYEwRZ7TTucFORnt26LTgrnC
-         YCPH2kw8mwUmpfu02bLalSVw7cpx7uiZpqYsvNPeuyMya/9gTryAyaCsvnUPnpq0CmaM
-         bbvQ==
-X-Gm-Message-State: AJIora81VLUT+HOjzoybxWMi4HZ1EOwQscIL8WAF9N7Uxu085J98iygK
-        aTkd8MaCErl9nFrxEV4mm04JhA==
-X-Google-Smtp-Source: AGRyM1uX8kH9/LuMvvYpQMygjFfjC/uuLEIWGU0otE8d+VyqY+fhe3uvt0+eT1hRUxjCDZgBQc2xhQ==
-X-Received: by 2002:a05:6a00:2445:b0:528:5a5b:67d3 with SMTP id d5-20020a056a00244500b005285a5b67d3mr6108536pfj.32.1657767254520;
-        Wed, 13 Jul 2022 19:54:14 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id w5-20020a17090aaf8500b001ef8c81959dsm213985pjq.16.2022.07.13.19.54.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 19:54:13 -0700 (PDT)
-Message-ID: <94289486-a7fa-1801-3c67-717e0392f374@kernel.dk>
-Date:   Wed, 13 Jul 2022 20:54:12 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH V5 0/2] ublk: add io_uring based userspace block driver
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-References: <20220713140711.97356-1-ming.lei@redhat.com>
- <6e5d590b-448d-ea75-f29d-877a2cd6413b@kernel.dk> <Ys9g9RhZX5uwa9Ib@T590>
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=OlqAKJ2OOvEdEHn6Z9YZOvfjiijpNyf4M3TtfyEfPX8=;
+        b=7/vX9JMlLlWVDsrIbS91SANM21Z6/uX2roq+MndbTEDaMYREmJa6jkNZwCt6U0eml5
+         aYMADDZ+Nv443poJI7rOz7eOQnJBjmkWBzON5tNnmWxsrYwchVcXzuOvrI2+zS6d5Dx7
+         Znbz/CTd1KLzOdiXYq7Kk/Mt2f+BxNVL4i2nw/wQi2BCC3MMU05ViVSKD/px9V4jJO2w
+         TaW1pqjz6aINVSPhTCBDuOVMWhBH/7QRd5X8rnC5PQdWxKUd4Pc8wEZdC1ak3GAEg9pg
+         d9OgQfvYdW5pfQLQ5UKe9dmmlEImfBcrzerc45dOuJJ5qOFi3c6LO3KpGgC3Sj7eWgdM
+         vpNg==
+X-Gm-Message-State: AJIora8zgcPJQSazz5SgdO4U2gFYBv9LJIhe6cvpwUKNZ1I7C7j8G4NM
+        n2FeFO2FzFExme0SBJOv1E8F/w==
+X-Google-Smtp-Source: AGRyM1vmFdFTlbK79UwrQC3H5ZQyg40BxmKYVkhWVhz45Cz235tde/woxi1OZqmzXH7sIDtA6gaxFA==
+X-Received: by 2002:a17:90b:3890:b0:1f0:2abb:e7d1 with SMTP id mu16-20020a17090b389000b001f02abbe7d1mr13802714pjb.158.1657767266525;
+        Wed, 13 Jul 2022 19:54:26 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y21-20020a170902d65500b0016c19417495sm142813plh.239.2022.07.13.19.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jul 2022 19:54:26 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Ys9g9RhZX5uwa9Ib@T590>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     ming.lei@redhat.com
+Cc:     xiaoguang.wang@linux.alibaba.com, krisman@collabora.com,
+        linux-kernel@vger.kernel.org, ZiyangZhang@linux.alibaba.com,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+In-Reply-To: <20220713140711.97356-1-ming.lei@redhat.com>
+References: <20220713140711.97356-1-ming.lei@redhat.com>
+Subject: Re: [PATCH V5 0/2] ublk: add io_uring based userspace block driver
+Message-Id: <165776726553.191960.9080753662485430796.b4-ty@kernel.dk>
+Date:   Wed, 13 Jul 2022 20:54:25 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/13/22 6:19 PM, Ming Lei wrote:
-> On Wed, Jul 13, 2022 at 02:25:25PM -0600, Jens Axboe wrote:
->> On 7/13/22 8:07 AM, Ming Lei wrote:
->>> Hello Guys,
->>>
->>> ublk driver is one kernel driver for implementing generic userspace block
->>> device/driver, which delivers io request from ublk block device(/dev/ublkbN) into
->>> ublk server[1] which is the userspace part of ublk for communicating
->>> with ublk driver and handling specific io logic by its target module.
->>
->> Ming, is this ready to get merged in an experimental state?
+On Wed, 13 Jul 2022 22:07:09 +0800, Ming Lei wrote:
+> ublk driver is one kernel driver for implementing generic userspace block
+> device/driver, which delivers io request from ublk block device(/dev/ublkbN) into
+> ublk server[1] which is the userspace part of ublk for communicating
+> with ublk driver and handling specific io logic by its target module.
 > 
-> Hi Jens,
+> Another thing ublk driver handles is to copy data between user space buffer
+> and request/bio's pages, or take zero copy if mm is ready for support it in
+> future. ublk driver doesn't handle any IO logic of the specific driver, so
+> it is small/simple, and all io logics are done by the target code in ublkserver.
 > 
-> Yeah, I think so.
-> 
-> IO path can survive in xfstests(-g auto), and control path works
-> well in ublksrv builtin hotplug & 'kill -9' daemon test.
-> 
-> The UAPI data size should be good, but definition may change per
-> future requirement change, so I think it is ready to go as
-> experimental.
+> [...]
 
-OK let's give it a go then. I tried it out and it seems to work for me,
-even if the shutdown-while-busy is something I'd to look into a bit
-more.
+Applied, thanks!
 
-BTW, did notice a typo on the github page:
+[1/2] ublk_drv: add io_uring based userspace block driver
+      commit: 3fee8d7599e17fe17ef6c1b96e2237babe8b68ea
+[2/2] ublk_drv: support to complete io command via task_work_add
+      commit: 664ff52d6f338a9afcabee535e8dedf04659f0d6
 
-2) dependency
-- liburing with IORING_SETUP_SQE128 support
-
-- linux kernel 5.9(IORING_SETUP_SQE128 support)
-
-that should be 5.19, typo.
-
+Best regards,
 -- 
 Jens Axboe
+
 

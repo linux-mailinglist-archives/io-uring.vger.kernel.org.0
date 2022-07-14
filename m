@@ -2,60 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D89574026
-	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 01:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D5B574056
+	for <lists+io-uring@lfdr.de>; Thu, 14 Jul 2022 02:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbiGMXps (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Jul 2022 19:45:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54868 "EHLO
+        id S229973AbiGNAHI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Jul 2022 20:07:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbiGMXpr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 19:45:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FEA419BF;
-        Wed, 13 Jul 2022 16:45:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 370B561B47;
-        Wed, 13 Jul 2022 23:45:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF22C3411E;
-        Wed, 13 Jul 2022 23:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657755945;
-        bh=EVrjEqKWBDsWAGl8SZNcPub4UIoDCewTBWArMH4yHkY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=qb0uqohBiKJ9u/DCEyPWejLejudk2uHDj1f9OuLNZVRX4NOJPUD1ucmXJ7+iF9mqs
-         839/AnN1aqIW9E2jaGTbYdVkHGF6LI/2mKCSppcDIptnF4OJ1yyNhUVt97jjOpX7WL
-         9NIvteh8P8v4OK702QDaLDXELrzhVOBVrKg9rGqMjffv3Usct43SC9bM97au1NFwub
-         iFba/wTSQkyqWogm0qChvc/DMbp5PG/Ul5lcUBDy3tkudJe8XmTcodGRkjlyUrk3nV
-         CHg4pqK+aiS5Mhq3gMn/4P5xhJcpVthjRdWh+P4qd6iRlb+XXX4j61Y45xpkv1k9ze
-         lAHxYvKasR28Q==
-Message-ID: <d10f20a9-851a-33be-2615-a57ab92aca90@kernel.org>
-Date:   Wed, 13 Jul 2022 16:45:43 -0700
+        with ESMTP id S230271AbiGNAGy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Jul 2022 20:06:54 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFBBDFA5;
+        Wed, 13 Jul 2022 17:05:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=dQtjYYA8h5wgwDxBEFOLKVei5N9YdmKdkt6ehHz9dmQ=; b=lCFOLYhEwl+IuvPJnQCWoLo1tw
+        VKktzQFiMT29Ivnfdq/iuQYJ5May9TshQpb9xGfi+U1yH3dwuZ8SKbMeX9QO0KvObbDZ/WMELhRlf
+        ftnqX/UjihPnp68tdVk+HorUEuvtPuX2OCsvftdaJsPTnq5Rzl34P4kDMwaVJN/N/lzdFukY+3IyU
+        MvFy2wbn3eeZdck6xOhKPNZEvL7RoX6pbkTTh+gW6Qc+uXfCTQMku7uPSvma9tuBC4hYvf1DjBdW9
+        Q+4Hutd2byc3a+yjgh1dyYifROR1TVOXz680l46mxAwcIFzvwG/OCPjP06wM9/7cYbP52Mu8aKRWT
+        JrW3WvlA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oBmML-009RTh-Nb; Thu, 14 Jul 2022 00:05:37 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     axboe@kernel.dk, casey@schaufler-ca.com, paul@paul-moore.com,
+        joshi.k@samsung.com, linux-security-module@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        a.manzanares@samsung.com, javier@javigon.com, mcgrof@kernel.org
+Subject: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file op
+Date:   Wed, 13 Jul 2022 17:05:36 -0700
+Message-Id: <20220714000536.2250531-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH net-next v4 00/27] io_uring zerocopy send
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
-References: <cover.1657194434.git.asml.silence@gmail.com>
- <2c49d634-bd8a-5a7f-0f66-65dba22bae0d@kernel.org>
- <bd9960ab-c9d8-8e5d-c347-8049cdf5708a@gmail.com>
- <0f54508f-e819-e367-84c2-7aa0d7767097@gmail.com>
-From:   David Ahern <dsahern@kernel.org>
-In-Reply-To: <0f54508f-e819-e367-84c2-7aa0d7767097@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,112 +49,110 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/11/22 5:56 AM, Pavel Begunkov wrote:
-> On 7/8/22 15:26, Pavel Begunkov wrote:
->> On 7/8/22 05:10, David Ahern wrote:
->>> On 7/7/22 5:49 AM, Pavel Begunkov wrote:
->>>> NOTE: Not be picked directly. After getting necessary acks, I'll be
->>>> working
->>>>        out merging with Jakub and Jens.
->>>>
->>>> The patchset implements io_uring zerocopy send. It works with both
->>>> registered
->>>> and normal buffers, mixing is allowed but not recommended. Apart
->>>> from usual
->>>> request completions, just as with MSG_ZEROCOPY, io_uring separately
->>>> notifies
->>>> the userspace when buffers are freed and can be reused (see API
->>>> design below),
->>>> which is delivered into io_uring's Completion Queue. Those
->>>> "buffer-free"
->>>> notifications are not necessarily per request, but the userspace has
->>>> control
->>>> over it and should explicitly attaching a number of requests to a
->>>> single
->>>> notification. The series also adds some internal optimisations when
->>>> used with
->>>> registered buffers like removing page referencing.
->>>>
->>>>  From the kernel networking perspective there are two main changes.
->>>> The first
->>>> one is passing ubuf_info into the network layer from io_uring
->>>> (inside of an
->>>> in kernel struct msghdr). This allows extra optimisations, e.g.
->>>> ubuf_info
->>>> caching on the io_uring side, but also helps to avoid cross-referencing
->>>> and synchronisation problems. The second part is an optional
->>>> optimisation
->>>> removing page referencing for requests with registered buffers.
->>>>
->>>> Benchmarking with an optimised version of the selftest (see [1]),
->>>> which sends
->>>> a bunch of requests, waits for completions and repeats. "+ flush"
->>>> column posts
->>>> one additional "buffer-free" notification per request, and just "zc"
->>>> doesn't
->>>> post buffer notifications at all.
->>>>
->>>> NIC (requests / second):
->>>> IO size | non-zc    | zc             | zc + flush
->>>> 4000    | 495134    | 606420 (+22%)  | 558971 (+12%)
->>>> 1500    | 551808    | 577116 (+4.5%) | 565803 (+2.5%)
->>>> 1000    | 584677    | 592088 (+1.2%) | 560885 (-4%)
->>>> 600     | 596292    | 598550 (+0.4%) | 555366 (-6.7%)
->>>>
->>>> dummy (requests / second):
->>>> IO size | non-zc    | zc             | zc + flush
->>>> 8000    | 1299916   | 2396600 (+84%) | 2224219 (+71%)
->>>> 4000    | 1869230   | 2344146 (+25%) | 2170069 (+16%)
->>>> 1200    | 2071617   | 2361960 (+14%) | 2203052 (+6%)
->>>> 600     | 2106794   | 2381527 (+13%) | 2195295 (+4%)
->>>>
->>>> Previously it also brought a massive performance speedup compared to
->>>> the
->>>> msg_zerocopy tool (see [3]), which is probably not super interesting.
->>>>
->>>
->>> can you add a comment that the above results are for UDP.
->>
->> Oh, right, forgot to add it
->>
->>
->>> You dropped comments about TCP testing; any progress there? If not, can
->>> you relay any issues you are hitting?
->>
->> Not really a problem, but for me it's bottle necked at NIC bandwidth
->> (~3GB/s) for both zc and non-zc and doesn't even nearly saturate a CPU.
->> Was actually benchmarked by my colleague quite a while ago, but can't
->> find numbers. Probably need to at least add localhost numbers or grab
->> a better server.
-> 
-> Testing localhost TCP with a hack (see below), it doesn't include
-> refcounting optimisations I was testing UDP with and that will be
-> sent afterwards. Numbers are in MB/s
-> 
-> IO size | non-zc    | zc
-> 1200    | 4174      | 4148
-> 4096    | 7597      | 11228
+io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+add infrastructure for uring-cmd"), this extended the struct
+file_operations to allow a new command which each subsystem can use
+to enable command passthrough. Add an LSM specific for the command
+passthrough which enables LSMs to inspect the command details.
 
-I am surprised by the low numbers; you should be able to saturate a 100G
-link with TCP and ZC TX API.
+This was discussed long ago without no clear pointer for something
+conclusive, so this enables LSMs to at least reject this new file
+operation.
 
-> 
-> Because it's localhost, we also spend cycles here for the recv side.
-> Using a real NIC 1200 bytes, zc is worse than non-zc ~5-10%, maybe the
-> omitted optimisations will somewhat help. I don't consider it to be a
-> blocker. but would be interesting to poke into later. One thing helping
-> non-zc is that it squeezes a number of requests into a single page
-> whenever zerocopy adds a new frag for every request.
-> 
-> Can't say anything new for larger payloads, I'm still NIC-bound but
-> looking at CPU utilisation zc doesn't drain as much cycles as non-zc.
-> Also, I don't remember if mentioned before, but another catch is that
-> with TCP it expects users to not be flushing notifications too much,
-> because it forces it to allocate a new skb and lose a good chunk of
-> benefits from using TCP.
+[0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
 
-I had issues with TCP sockets and io_uring at the end of 2020:
-https://www.spinics.net/lists/io-uring/msg05125.html
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ include/linux/lsm_hook_defs.h | 1 +
+ include/linux/lsm_hooks.h     | 3 +++
+ include/linux/security.h      | 5 +++++
+ io_uring/uring_cmd.c          | 5 +++++
+ security/security.c           | 4 ++++
+ 5 files changed, 18 insertions(+)
 
-have not tried anything recent (from 2022).
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index eafa1d2489fd..4e94755098f1 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -406,4 +406,5 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+ #ifdef CONFIG_IO_URING
+ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
+ LSM_HOOK(int, 0, uring_sqpoll, void)
++LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
+ #endif /* CONFIG_IO_URING */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 91c8146649f5..b681cfce6190 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1575,6 +1575,9 @@
+  *      Check whether the current task is allowed to spawn a io_uring polling
+  *      thread (IORING_SETUP_SQPOLL).
+  *
++ * @uring_cmd:
++ *      Check whether the file_operations uring_cmd is allowed to run.
++ *
+  */
+ union security_list_options {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 4d0baf30266e..421856919b1e 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2053,6 +2053,7 @@ static inline int security_perf_event_write(struct perf_event *event)
+ #ifdef CONFIG_SECURITY
+ extern int security_uring_override_creds(const struct cred *new);
+ extern int security_uring_sqpoll(void);
++extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
+ #else
+ static inline int security_uring_override_creds(const struct cred *new)
+ {
+@@ -2062,6 +2063,10 @@ static inline int security_uring_sqpoll(void)
+ {
+ 	return 0;
+ }
++static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
++{
++	return 0;
++}
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_IO_URING */
+ 
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 0a421ed51e7e..5e666aa7edb8 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -3,6 +3,7 @@
+ #include <linux/errno.h>
+ #include <linux/file.h>
+ #include <linux/io_uring.h>
++#include <linux/security.h>
+ 
+ #include <uapi/linux/io_uring.h>
+ 
+@@ -82,6 +83,10 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct file *file = req->file;
+ 	int ret;
+ 
++	ret = security_uring_cmd(ioucmd);
++	if (ret)
++		return ret;
++
+ 	if (!req->file->f_op->uring_cmd)
+ 		return -EOPNOTSUPP;
+ 
+diff --git a/security/security.c b/security/security.c
+index f85afb02ea1c..ad7d7229bd72 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2655,4 +2655,8 @@ int security_uring_sqpoll(void)
+ {
+ 	return call_int_hook(uring_sqpoll, 0);
+ }
++int security_uring_cmd(struct io_uring_cmd *ioucmd)
++{
++	return call_int_hook(uring_cmd, 0, ioucmd);
++}
+ #endif /* CONFIG_IO_URING */
+-- 
+2.35.1
 

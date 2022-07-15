@@ -2,259 +2,338 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA8B05767F1
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 22:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4ECB576818
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 22:29:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbiGOUAm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jul 2022 16:00:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
+        id S229833AbiGOU3G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jul 2022 16:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbiGOUAk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 16:00:40 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E4A2753A7
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 13:00:39 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id v7so5557494pfb.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 13:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=AEPMIGh3BXG6IPHlmHJI7wzXHHUX9kb3Gl8F9WofL2k=;
-        b=lA9WdHDOKishfRiQ7QxTaLf6SGram+U55RxREiHoCUSSqVWvISJsDaof/4OtPGdDUd
-         CKkY0KNzRTI7QhEJTkfJorTnvEMP6xN4vRlHLibQBnpF9g1yaLlP9K8fU4WSmZ4/i3hR
-         Bm+pzPT3bwTjHopGZm8nDe2bC+L8B3ZnzmKipyelyQLgE5tsXfFDDAMhheyRyJvk4xrB
-         0vlSpJW+Wf8u/dQ1UAh6ac5eGKmqwXNgG4K37U0Q9IQWBy4WoXDWFznCyV5ozb/oI+Jb
-         t0nfrO4jBmelbsncUAFps6Y8kj4MCZhGPOXsa30PMHNjCxwJfq4sW+ib/dgXoeLSk/Ua
-         SvbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=AEPMIGh3BXG6IPHlmHJI7wzXHHUX9kb3Gl8F9WofL2k=;
-        b=VxbYimGV6nbaQBKi12whzo+o3FQcICYnG6zthK8D5qcskwfE9otFyuykTCGvBL8GL9
-         gOsFYLyM39eUt1dL8lmp86EmvPvS/XduQSQpk1n0WocorNoEutyahNNJ0GfxGsrucKrk
-         sQNoDFzIW9146xIwvQybxJ5Q72Euefgn9XSFASUleI3Wz5HGjiCjv7VQY4jIvhjXSVpe
-         9gfTxcRiZHTGLG2AHPul8qEBVGP/abL4nXQv5+Vbx7MmQFTdC5ITNW43s+Icish7KFqI
-         Jzq9lE6/Uf8ag1sfME3yD81Hzwe/zd6D/49E8HUb6qTfn174IKTz4guSK/7VUPmjODVl
-         A+ww==
-X-Gm-Message-State: AJIora/8Rn2HkEST7bs/TJbKDAfruArVxxYnardY+EgDKD11BTdtrqZl
-        J81nvhTCFL+ZXFeyU3LgQ0uiYw==
-X-Google-Smtp-Source: AGRyM1u5/yXr8Fia3NDCYO5dtBSDcvlpDm10wqbLhxSprO+zl3qBI6oBHl1Iszbp5TXsD213nfZlSA==
-X-Received: by 2002:a63:e758:0:b0:412:28d8:6c85 with SMTP id j24-20020a63e758000000b0041228d86c85mr13226817pgk.283.1657915238708;
-        Fri, 15 Jul 2022 13:00:38 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id c12-20020a17090a4d0c00b001ef863193f4sm6037269pjg.33.2022.07.15.13.00.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jul 2022 13:00:38 -0700 (PDT)
-Message-ID: <711b10ab-4ac7-e82f-e125-658460acda89@kernel.dk>
-Date:   Fri, 15 Jul 2022 14:00:36 -0600
+        with ESMTP id S229532AbiGOU3G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 16:29:06 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D1B913F3D
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 13:29:04 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220715202901euoutp014d5e336e2867c33e072eed5dcd39907b~CGqyWkouz1068810688euoutp01b
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 20:29:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220715202901euoutp014d5e336e2867c33e072eed5dcd39907b~CGqyWkouz1068810688euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1657916941;
+        bh=lVOp6I6bfKl0luyaOjOSYlf8wYGlnw7cQl6Oy5MK7HE=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=nkD/G7m1aHj0SKbtn600ifS4fBviWZSt1lT9KMNg2IOJsIqERPFPYzv3JU1JcKjl5
+         slc85h0mDMM24hEYJ2wbDXxH50jpcZ9UUMCuIVHn5TNHiGKuIBbhWesdhxolSTC15V
+         n7MksvntTROeNs3dDzQ+Hosj8XRqqHLKbNdGBwR8=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220715202900eucas1p2667f85772dc79a2012e8e3e9d84014e8~CGqxRewyq1480614806eucas1p2L;
+        Fri, 15 Jul 2022 20:29:00 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 9C.E0.09580.C0EC1D26; Fri, 15
+        Jul 2022 21:29:00 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12~CGqwI_1to1703017030eucas1p10;
+        Fri, 15 Jul 2022 20:28:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220715202859eusmtrp24d942479abf37774c31c31273e0a1d40~CGqwIO0wN2146221462eusmtrp24;
+        Fri, 15 Jul 2022 20:28:59 +0000 (GMT)
+X-AuditID: cbfec7f5-9c3ff7000000256c-6b-62d1ce0c6ade
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4E.6E.09038.A0EC1D26; Fri, 15
+        Jul 2022 21:28:58 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220715202858eusmtip21e9deec70b29bd77e135858064e1b283~CGqvf7NxP1129311293eusmtip2N;
+        Fri, 15 Jul 2022 20:28:58 +0000 (GMT)
+Message-ID: <46439555-644d-08a1-7d66-16f8f9a320f0@samsung.com>
+Date:   Fri, 15 Jul 2022 22:28:58 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
- op
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH v3 for-next 2/3] net: copy from user before calling
+ __get_compat_msghdr
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, casey@schaufler-ca.com,
-        joshi.k@samsung.com, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, a.manzanares@samsung.com,
-        javier@javigon.com
-References: <20220714000536.2250531-1-mcgrof@kernel.org>
- <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
- <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
- <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
- <a91fdbe3-fe01-c534-29ee-f05056ffd74f@kernel.dk>
- <CAHC9VhRCW4PFwmwyAYxYmLUDuY-agHm1CejBZJUpHTVbZE8L1Q@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHC9VhRCW4PFwmwyAYxYmLUDuY-agHm1CejBZJUpHTVbZE8L1Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+To:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        io-uring@vger.kernel.org
+Cc:     netdev@vger.kernel.org, Kernel-team@fb.com
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220714110258.1336200-3-dylany@fb.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7djPc7o85y4mGaz9wGExZ9U2RovVd/vZ
+        LOacb2GxmPrHw+LpsUfsFu9az7FYHOt7z2pxYVsfq8WxBWIW306/YXTg8tiy8iaTx8Tmd+we
+        O2fdZfdYsKnU4/LZUo9NqzrZPN7vu8rm8XmTXABHFJdNSmpOZllqkb5dAlfG6wvXmQpabCqu
+        vW5jbmDcqN/FyMkhIWAicefxF/YuRi4OIYEVjBKftkyHcr4wSmx/uJAFwvnMKDH5/hF2mJaN
+        s1pYIRLLGSV+vXvMApIQEvjIKHFmgyuIzStgJ9E16xMbiM0ioCpx6u9RVoi4oMTJmU/A6kUF
+        kiXOnb0KViMsECvROe8/2AJmAXGJW0/mM4HYIgJXGCUOvdeBiOtJrOh4DVbPJmAo0fW2C8zm
+        FDCVuHt5DiNEjbxE89bZzBCHNnNKPFvACmG7SDz73AJlC0u8Or4F6hkZif87QXZxANn5En9n
+        GEOEKySuvV4DNcZa4s65X2wgJcwCmhLrd0FDzlFi9c7zbBCdfBI33gpCHMAnMWnbdGaIMK9E
+        R5sQRLWaxKzj6+B2HrxwiXkCo9IspCCZheT1WUhemYWwdwEjyypG8dTS4tz01GLjvNRyveLE
+        3OLSvHS95PzcTYzAhHX63/GvOxhXvPqod4iRiYPxEKMEB7OSCG/3oXNJQrwpiZVVqUX58UWl
+        OanFhxilOViUxHmTMzckCgmkJ5akZqemFqQWwWSZODilGph0ryiuPTVni8QlYf3OI0d6Inc2
+        Cn5mNFE5LfXx22wr59W3rENM4jiM1943jTt378qdOT23L77aubj069mYGVki/1/O6pBctjTE
+        5B9/3nrxJw57DBODY3YIejYeON3c98ndh1fiReSaCi/l0/JX1UVT8pLZNtwzNxSTTMvmW/vE
+        70aj0ZSb/2IPvVxSxVtRcsUyfvd2eTXuD5YndBf2WlV8KuBf6yLxte6AdSNH8qzNJ1YsWFna
+        Pn3Kzne33QzWcyQ6HLmiX9ltsLDz4dav54SjSpn3i03knX9pVXbRWzNR1fWL2kXOTtqp9vGj
+        dRWzdFlpybr7iyf/6XWw4prtsnPpTNu32rY37Lz7REzlf71RYinOSDTUYi4qTgQA4hWnuscD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xe7pc5y4mGby+bWwxZ9U2RovVd/vZ
+        LOacb2GxmPrHw+LpsUfsFu9az7FYHOt7z2pxYVsfq8WxBWIW306/YXTg8tiy8iaTx8Tmd+we
+        O2fdZfdYsKnU4/LZUo9NqzrZPN7vu8rm8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWe
+        kYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7G6wvXmQpabCquvW5jbmDcqN/FyMkhIWAisXFW
+        C2sXIxeHkMBSRomfb5YyQSRkJE5Oa2CFsIUl/lzrYoMoes8o8axpDRtIglfATqJr1icwm0VA
+        VeLU36OsEHFBiZMzn7CA2KICyRLNWw6BDRUWiJXonPefHcRmFhCXuPVkPhPIUBGBa4wSN368
+        YYFI6Ems6HgNNlRIIF7iWNN3RhCbTcBQouttF1icU8BU4u7lOYwQ9WYSXVu7oGx5ieats5kn
+        MArNQnLHLCT7ZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAWN127OeWHYwr
+        X33UO8TIxMF4iFGCg1lJhLf70LkkId6UxMqq1KL8+KLSnNTiQ4ymwMCYyCwlmpwPTBZ5JfGG
+        ZgamhiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1MxvH1q1cYcjkeFah/eqgh
+        75pfS2vIMm33//nussFL771kU7+g73Av+ZzIlzl/7gSYnY966jeh0ZZb4IrcgnepF7fvbUm0
+        ijj9b/nvnzc0kq/7NdvZS3nLeF+ZN2nx5NJVn94+fOLH7XBnm+W5jBMZNo1l2+/mrMtZ8P1g
+        bU6L10ZDYUP+B6cuG327ufDsUbMbSTE/zsRHlU3/HfZnq4NFzQmHdM5tt/SPH5L2mL+2VuRA
+        yeQVb7+LWC+V8b+XcnPajf2qnS9X7tZYUX5e1cAr0Wbn9V0hvVarFZbKyMSdkI32kGX6/HWJ
+        7Zzc+znck17WrvcsfjJzxyn/mPzbkRPNVTc1Np2+85PlQ83CN2vbzZVYijMSDbWYi4oTAbbc
+        BN9eAwAA
+X-CMS-MailID: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
+References: <20220714110258.1336200-1-dylany@fb.com>
+        <20220714110258.1336200-3-dylany@fb.com>
+        <CGME20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12@eucas1p1.samsung.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/15/22 1:50 PM, Paul Moore wrote:
-> On Fri, Jul 15, 2022 at 3:07 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 7/15/22 12:46 PM, Paul Moore wrote:
->>> On Thu, Jul 14, 2022 at 9:00 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->>>> On Wed, Jul 13, 2022 at 11:00:42PM -0400, Paul Moore wrote:
->>>>> On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->>>>>>
->>>>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
->>>>>> add infrastructure for uring-cmd"), this extended the struct
->>>>>> file_operations to allow a new command which each subsystem can use
->>>>>> to enable command passthrough. Add an LSM specific for the command
->>>>>> passthrough which enables LSMs to inspect the command details.
->>>>>>
->>>>>> This was discussed long ago without no clear pointer for something
->>>>>> conclusive, so this enables LSMs to at least reject this new file
->>>>>> operation.
->>>>>>
->>>>>> [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
->>>>>
->>>>> [NOTE: I now see that the IORING_OP_URING_CMD has made it into the
->>>>> v5.19-rcX releases, I'm going to be honest and say that I'm
->>>>> disappointed you didn't post the related LSM additions
->>>>
->>>> It does not mean I didn't ask for them too.
->>>>
->>>>> until
->>>>> v5.19-rc6, especially given our earlier discussions.]
->>>>
->>>> And hence since I don't see it either, it's on us now.
->>>
->>> It looks like I owe you an apology, Luis.  While my frustration over
->>> io_uring remains, along with my disappointment that the io_uring
->>> developers continue to avoid discussing access controls with the LSM
->>> community, you are not the author of the IORING_OP_URING_CMD.   You
->>> are simply trying to do the right thing by adding the necessary LSM
->>> controls and in my confusion I likely caused you a bit of frustration;
->>> I'm sorry for that.
->>
->> Maybe, just maybe, outbursts like this are why there's not a lot of
->> incentive to collaborate on this? I get why it can seem frustrating and
->> that you are being ignored, but I think it's more likely that people
->> just don't think of adding these hooks. I don't use any of the access
->> controls, nor do I really have a good idea which one exists and what
->> they do. None of the external developers or internal use cases we have
->> use any of this, and nobody outside of the developers of these kernel
->> features have ever brought it up...
-> 
-> While my response may have been misdirected (once again, sorry Luis),
-> I feel that expressing frustration about the LSMs being routinely left
-> out of the discussion when new functionality is added to the kernel is
-> a reasonable response; especially when one considers the history of
-> this particular situation.  I was willing to attribute the initial
-> LSM/audit omission in io_uring to an honest oversight, and the fact
-> that we were able to work together to get something in place was a
-> good thing which gave me some hope.  However, the issue around
-> IORING_OP_URING_CMD was brought up earlier this year and many of us on
-> the LSM side expressed concern, only to see the code present in
-> v5.19-rcX with little heads-up given outside of Luis' patch a few days
-> ago.  You can call my comments an outburst if you like, but it seems
-> like an appropriate reaction in this case.
+Hi,
 
-I agree that it should've been part of the initial series. As mentioned
-above, I wasn't much apart of that earlier discussion in the series, and
-hence missed that it was missing. And as also mentioned, LSM isn't much
-on my radar as nobody I know uses it. This will cause oversights, even
-if they are unfortunate. My point is just that no ill intent should be
-assumed here.
+On 14.07.2022 13:02, Dylan Yudaken wrote:
+> this is in preparation for multishot receive from io_uring, where it needs
+> to have access to the original struct user_msghdr.
+>
+> functionally this should be a no-op.
+>
+> Acked-by: Paolo Abeni <pabeni@redhat.com>
+> Signed-off-by: Dylan Yudaken <dylany@fb.com>
 
->> I don't mind getting these added, but since I wasn't really part of
->> driving this particular feature, it wasn't on my radar.
-> 
-> I generally don't care who authors a commit, it's that code itself
-> that matters, not who wrote it.  However, since you mentioned it I
-> went back to check, and it looks like you authored the basic
-> IORING_OP_URING_CMD infrastructure according to ee692a21e9bf
-> ("fs,io_uring: add infrastructure for uring-cmd"); that seems like a
-> decent level of awareness to me.
+This patch landed in linux next-20220715 as commit 1a3e4e94a1b9 ("net: 
+copy from user before calling __get_compat_msghdr"). Unfortunately it 
+causes a serious regression on the ARM64 based Khadas VIM3l board:
 
-I did author the basic framework of it, but Kanchan took over driving it
-to completion and was the one doing the posting of it at that point.
-It's not like I merge code I'm not aware of, we even discussed it at
-LSFMM this year and nobody brought up the LSM oversight. Luis was there
-too I believe.
+Unable to handle kernel access to user memory outside uaccess routines 
+at virtual address 00000000ffc4a5c8
+Mem abort info:
+   ESR = 0x000000009600000f
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x0f: level 3 permission fault
+Data abort info:
+   ISV = 0, ISS = 0x0000000f
+   CM = 0, WnR = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=0000000001909000
+[00000000ffc4a5c8] pgd=0800000001a7b003, p4d=0800000001a7b003, 
+pud=0800000001a0e003, pmd=0800000001913003, pte=00e800000b9baf43
+Internal error: Oops: 9600000f [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 247 Comm: systemd-udevd Not tainted 5.19.0-rc6+ #12437
+Hardware name: Khadas VIM3L (DT)
+pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : get_compat_msghdr+0xd0/0x1b0
+lr : get_compat_msghdr+0xcc/0x1b0
+...
+Call trace:
+  get_compat_msghdr+0xd0/0x1b0
+  ___sys_sendmsg+0xd0/0xe0
+  __sys_sendmsg+0x68/0xc4
+  __arm64_compat_sys_sendmsg+0x28/0x3c
+  invoke_syscall+0x48/0x114
+  el0_svc_common.constprop.0+0x60/0x11c
+  do_el0_svc_compat+0x1c/0x50
+  el0_svc_compat+0x58/0x100
+  el0t_32_sync_handler+0x90/0x140
+  el0t_32_sync+0x190/0x194
+Code: d2800382 9100f3e0 97d9be02 b5fffd60 (b9401a60)
+---[ end trace 0000000000000000 ]---
 
-The lack of awareness refers to the LSM side, not io_uring obviously.
-I'm very much aware of what code I merge and have co-authored, goes
-without saying.
+This happens only on the mentioned board, other my ARM64 test boards 
+boot fine with next-20220715. Reverting this commit, together with 
+2b0b67d55f13 ("fix up for "io_uring: support multishot in recvmsg"") and 
+a8b38c4ce724 ("io_uring: support multishot in recvmsg") due to compile 
+dependencies on top of next-20220715 fixes the issue.
 
->>>> Given a clear solution is not easily tangible at this point
->>>> I was hoping perhaps at least the abilility to enable LSMs to
->>>> reject uring-cmd would be better than nothing at this point.
->>>
->>> Without any cooperation from the io_uring developers, that is likely
->>> what we will have to do.  I know there was a lot of talk about this
->>> functionality not being like another ioctl(), but from a LSM
->>> perspective I think that is how we will need to treat it.
->>
->> Again this perceived ill intent. What are you looking for here?
-> 
-> We expressed concern earlier this year and were largely ignored, and
-> when the functionality was merged into mainline the LSM community was
-> not notified despite our previous comments.  Perhaps there is no ill
-> intent on the side of io_uring, but from my perspective it sure seems
-> like there was an effort to avoid the LSM community.
-> 
-> As far as what I'm looking for, I think basic consideration for
-> comments coming from the LSM community would be a good start.  We
-> obviously have had some success in the past with this, which is why
-> I'm a bit shocked that our IORING_OP_URING_CMD comments from earlier
-> this year appeared to fall on deaf ears.
+Let me know how I can help fixing this issue.
 
-I guess it's just somewhat lack of interest, since most of us don't have
-to deal with anything that uses LSM. And then it mostly just gets in the
-way and adds overhead, both from a runtime and maintainability point of
-view, which further reduces the motivation.
+> ---
+>   include/net/compat.h |  5 ++---
+>   io_uring/net.c       | 17 +++++++++--------
+>   net/compat.c         | 39 +++++++++++++++++----------------------
+>   3 files changed, 28 insertions(+), 33 deletions(-)
+>
+> diff --git a/include/net/compat.h b/include/net/compat.h
+> index 595fee069b82..84c163f40f38 100644
+> --- a/include/net/compat.h
+> +++ b/include/net/compat.h
+> @@ -46,9 +46,8 @@ struct compat_rtentry {
+>   	unsigned short  rt_irtt;        /* Initial RTT                  */
+>   };
+>   
+> -int __get_compat_msghdr(struct msghdr *kmsg, struct compat_msghdr __user *umsg,
+> -			struct sockaddr __user **save_addr, compat_uptr_t *ptr,
+> -			compat_size_t *len);
+> +int __get_compat_msghdr(struct msghdr *kmsg, struct compat_msghdr *msg,
+> +			struct sockaddr __user **save_addr);
+>   int get_compat_msghdr(struct msghdr *, struct compat_msghdr __user *,
+>   		      struct sockaddr __user **, struct iovec **);
+>   int put_cmsg_compat(struct msghdr*, int, int, int, void *);
+> diff --git a/io_uring/net.c b/io_uring/net.c
+> index da7667ed3610..5bc3440a8290 100644
+> --- a/io_uring/net.c
+> +++ b/io_uring/net.c
+> @@ -369,24 +369,25 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+>   					struct io_async_msghdr *iomsg)
+>   {
+>   	struct io_sr_msg *sr = io_kiocb_to_cmd(req);
+> +	struct compat_msghdr msg;
+>   	struct compat_iovec __user *uiov;
+> -	compat_uptr_t ptr;
+> -	compat_size_t len;
+>   	int ret;
+>   
+> -	ret = __get_compat_msghdr(&iomsg->msg, sr->umsg_compat, &iomsg->uaddr,
+> -				  &ptr, &len);
+> +	if (copy_from_user(&msg, sr->umsg_compat, sizeof(msg)))
+> +		return -EFAULT;
+> +
+> +	ret = __get_compat_msghdr(&iomsg->msg, sr->umsg_compat, &iomsg->uaddr);
+>   	if (ret)
+>   		return ret;
+>   
+> -	uiov = compat_ptr(ptr);
+> +	uiov = compat_ptr(msg.msg_iov);
+>   	if (req->flags & REQ_F_BUFFER_SELECT) {
+>   		compat_ssize_t clen;
+>   
+> -		if (len == 0) {
+> +		if (msg.msg_iovlen == 0) {
+>   			sr->len = 0;
+>   			iomsg->free_iov = NULL;
+> -		} else if (len > 1) {
+> +		} else if (msg.msg_iovlen > 1) {
+>   			return -EINVAL;
+>   		} else {
+>   			if (!access_ok(uiov, sizeof(*uiov)))
+> @@ -400,7 +401,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+>   		}
+>   	} else {
+>   		iomsg->free_iov = iomsg->fast_iov;
+> -		ret = __import_iovec(READ, (struct iovec __user *)uiov, len,
+> +		ret = __import_iovec(READ, (struct iovec __user *)uiov, msg.msg_iovlen,
+>   				   UIO_FASTIOV, &iomsg->free_iov,
+>   				   &iomsg->msg.msg_iter, true);
+>   		if (ret < 0)
+> diff --git a/net/compat.c b/net/compat.c
+> index 210fc3b4d0d8..513aa9a3fc64 100644
+> --- a/net/compat.c
+> +++ b/net/compat.c
+> @@ -34,20 +34,15 @@
+>   #include <net/compat.h>
+>   
+>   int __get_compat_msghdr(struct msghdr *kmsg,
+> -			struct compat_msghdr __user *umsg,
+> -			struct sockaddr __user **save_addr,
+> -			compat_uptr_t *ptr, compat_size_t *len)
+> +			struct compat_msghdr *msg,
+> +			struct sockaddr __user **save_addr)
+>   {
+> -	struct compat_msghdr msg;
+>   	ssize_t err;
+>   
+> -	if (copy_from_user(&msg, umsg, sizeof(*umsg)))
+> -		return -EFAULT;
+> -
+> -	kmsg->msg_flags = msg.msg_flags;
+> -	kmsg->msg_namelen = msg.msg_namelen;
+> +	kmsg->msg_flags = msg->msg_flags;
+> +	kmsg->msg_namelen = msg->msg_namelen;
+>   
+> -	if (!msg.msg_name)
+> +	if (!msg->msg_name)
+>   		kmsg->msg_namelen = 0;
+>   
+>   	if (kmsg->msg_namelen < 0)
+> @@ -57,15 +52,15 @@ int __get_compat_msghdr(struct msghdr *kmsg,
+>   		kmsg->msg_namelen = sizeof(struct sockaddr_storage);
+>   
+>   	kmsg->msg_control_is_user = true;
+> -	kmsg->msg_control_user = compat_ptr(msg.msg_control);
+> -	kmsg->msg_controllen = msg.msg_controllen;
+> +	kmsg->msg_control_user = compat_ptr(msg->msg_control);
+> +	kmsg->msg_controllen = msg->msg_controllen;
+>   
+>   	if (save_addr)
+> -		*save_addr = compat_ptr(msg.msg_name);
+> +		*save_addr = compat_ptr(msg->msg_name);
+>   
+> -	if (msg.msg_name && kmsg->msg_namelen) {
+> +	if (msg->msg_name && kmsg->msg_namelen) {
+>   		if (!save_addr) {
+> -			err = move_addr_to_kernel(compat_ptr(msg.msg_name),
+> +			err = move_addr_to_kernel(compat_ptr(msg->msg_name),
+>   						  kmsg->msg_namelen,
+>   						  kmsg->msg_name);
+>   			if (err < 0)
+> @@ -76,12 +71,10 @@ int __get_compat_msghdr(struct msghdr *kmsg,
+>   		kmsg->msg_namelen = 0;
+>   	}
+>   
+> -	if (msg.msg_iovlen > UIO_MAXIOV)
+> +	if (msg->msg_iovlen > UIO_MAXIOV)
+>   		return -EMSGSIZE;
+>   
+>   	kmsg->msg_iocb = NULL;
+> -	*ptr = msg.msg_iov;
+> -	*len = msg.msg_iovlen;
+>   	return 0;
+>   }
+>   
+> @@ -90,15 +83,17 @@ int get_compat_msghdr(struct msghdr *kmsg,
+>   		      struct sockaddr __user **save_addr,
+>   		      struct iovec **iov)
+>   {
+> -	compat_uptr_t ptr;
+> -	compat_size_t len;
+> +	struct compat_msghdr msg;
+>   	ssize_t err;
+>   
+> -	err = __get_compat_msghdr(kmsg, umsg, save_addr, &ptr, &len);
+> +	if (copy_from_user(&msg, umsg, sizeof(*umsg)))
+> +		return -EFAULT;
+> +
+> +	err = __get_compat_msghdr(kmsg, umsg, save_addr);
+>   	if (err)
+>   		return err;
+>   
+> -	err = import_iovec(save_addr ? READ : WRITE, compat_ptr(ptr), len,
+> +	err = import_iovec(save_addr ? READ : WRITE, compat_ptr(msg.msg_iov), msg.msg_iovlen,
+>   			   UIO_FASTIOV, iov, &kmsg->msg_iter);
+>   	return err < 0 ? err : 0;
+>   }
 
-I don't think it's an effort to avoid the LSM community.
-
-For this particular case, I do agree that it should've been picked up
-and been apart of the initial merge. I'll keep a closer eye on that in
-the future.
-
->>>>>> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
->>
->>> Well, we're at -rc6 right now which means IORING_OP_URING_CMD is
->>> happening and it's unlikely the LSM folks are going to be able to
->>> influence the design/implementation much at this point so we have to
->>> do the best we can.  Given the existing constraints, I think your
->>> patch is reasonable (although please do shift the hook call site down
->>> a bit as discussed above), we just need to develop the LSM
->>> implementations to go along with it.
->>>
->>> Luis, can you respin and resend the patch with the requested changes?
->>>
->>> Casey, it looks like Smack and SELinux are the only LSMs to implement
->>> io_uring access controls.  Given the hook that Luis developed in this
->>> patch, could you draft a patch for Smack to add the necessary checks?
->>> I'll do the same for SELinux.  My initial thinking is that all we can
->>> really do is check the access between the creds on the current task
->>> (any overrides will have already taken place by the time the LSM hook
->>> is called) with the io_uring_cmd:file label/creds; we won't be able to
->>> provide much permission granularity for all the reasons previously
->>> discussed, but I suspect that will be more of a SELinux problem than a
->>> Smack problem (although I suspect Smack will need to treat this as
->>> both a read and a write, which is likely less than ideal).
->>>
->>> I think it's doubtful we will have all of this ready and tested in
->>> time for v5.19, but I think we can have it ready shortly after that
->>> and I'll mark all of the patches for -stable when I send them to
->>> Linus.
->>>
->>> I also think we should mark the patches with a 'Fixes:' line that
->>> points at the IORING_OP_URING_CMD commit, ee692a21e9bf ("fs,io_uring:
->>> add infrastructure for uring-cmd").
->>>
->>> How does that sound to everyone?
->>
->> Let's do it the right way for 5.20, and then get it marked for a
->> backport. That will be trivial enough and will hit 5.19-stable shortly
->> as well. Rushing it now with 1 week before release will most likely
->> yield a worse long term result.
-> 
-> That is what I suggested above; it looks like we are on the same page
-> at least with the resolution.  I'll plan on bundling Luis' hook patch,
-> Casey's Smack patch, the SELinux patch and send them up to Linus once
-> they are ready.  If you, and/or other io_uring developers, could
-> review Luis' LSM hook patch from an io_uring perspective and add your
-> Ack/Review-by tag I would appreciate it.
-
-Right, we agree on that, and I already did send an ack on the v2 of the
-patch. Just be aware that it, as of now. depends on the io_uring tree
-and won't apply cleanly to 5.19-rc, as mentioned in that reply too.
-
+Best regards
 -- 
-Jens Axboe
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 

@@ -2,244 +2,191 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A18C5576881
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 22:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E7D57689C
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 22:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231536AbiGOUuo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jul 2022 16:50:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41652 "EHLO
+        id S229918AbiGOU6u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jul 2022 16:58:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbiGOUun (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 16:50:43 -0400
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B06590
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 13:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657918241; bh=3IntVoZ1ZP4kljQWhbi8gsdzdYXhXVpc0k6RFJ+q9Jw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HPTyhntHFjIe7izG75BTFzxDSTT1Q/Qgbmw4Jom/VnLP9rNZE0WljjhokRPlLNJzF11LLTSLP485ffxhATtVGdzSlPOFuCyFC8uWtS4xckmXXPVFJwtgLBkSKSaf6+rh9NNkwB7XvkKvdCqOX9z022jy4e458P5ya5VFgoPa4ufkYNuh2t782ZUpyjSnTcTWx1ZStLmo+rNcXS7wS7DCxyhFjR9wdS81OI6P9dOpBFYNlpZeX7WunQp3lYrQ3+zA0tW81hMl7mp/BMQ89z6QmrHQsdJY/DPgP9h6jmtui4/2SOfUYFMRQRg6FRBi/i0hXueap10o2J0uPg9Sy52wpg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657918241; bh=v2a3olcnfYse/8EOMCl2bFaAtvDt8LWocJqpWCWShyR=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=o+part5a2OFA4kuXcRMc5e2xfl0ioC5GAfZLM14N53fAStwX/V/rPZjRhESzxyNOIEgL0wi5Gmm7MaRvZXPub4ugVjsJxr1pc2/25liWFa77CKI8WPp7U0pUKG0AfroqfHaPQ/hlKkgnodNgQKOGer+nKMkqgO95f9BCfMC7fmeFp4EW+FHb6aIeznP/k0NO/zyQk5r7d6IcV6EdxrwJfLVAv2Y94A9DCfnAGpFApilYJiBIPbHczYxGAKtalyHQK+h3KLhpHgYeYi0i1Mo825On/nYa2iCVrmdk0c4JnYulOevjg4Atog5QA3ebvV0JvaTOmo4b7RXjJdzEgcDqbQ==
-X-YMail-OSG: KH8kFYsVM1nMDEWQUIYk6urQaYAcMHGlVaFfrSVYwiljycemj9IgQzNykjydMD1
- BR9R1.J7f_MWwrfLgVuxBCsfywlT.ntuWrkifRe8KKzV.YiFELLtOHQ0tvNmtM1ludUUyhTWL1S9
- qZuU9eLLrJWVRfY7U45lMBHi6w8a5R7D7sUhEr29.gj9NH2F1VbP_KxrieKAZBLfxXuCM8u9Vx1v
- iDG_R98YYa5n8woIEiIQGj2yg0icTLiAEW26iAyW0W611FguZJbkBfCgPz6thn4SnFcRchL4ser6
- nZLG5vvUA__3GdOg9joA81657Vst2z.B67SBa8lnOSQ5sL8eC9QAXxpP_O4axeCs_bnQ.DgG7RcE
- iT4cz1Hp1JUGpZ1FS8FVEN5dCKuf0fhxhzhCasVS_pomMuEj8w05SFGSCfctn9RXrO1OfLNABwmD
- neo7f7qUSXwHPhIMo9K_hDO9VFZOUHQM3T.y4R.69vm0kN2JgbNiYsr_Ps9RMqUxqes7QltjQZFS
- GXrFYnMK5HPMv11T_TG1OayEHWmbSf0YqkdOrapeG2KibjlH_zUSh96SxSJ7yyeEaqvXJF2avD7s
- i7ef69P_n5jYe5gtbsEbU06b3r9huP7hl_0Susa6pSev2Fsalcm9ycDrqmsn0B.S7x3L.vOGxK.j
- U3hFXI93YwCudxlK_OCBECqvEWYeeyjOknQK.zRb224JDmRVkEplrGWdGUqe7feLt3iyIVaijGi0
- pgRdMpqpLiUoBLIp0smxobw6ga1ZXudZqWL3PKvuYxKDytSm2D4htWt.a0x9ezXFlUNQVON1quw_
- NWJZxvkAHl5LlxDy6EnvXTAPX3OZTDco6NnTE0AmkeiIMHWoZg.zXr38vxmd1xmfx419ovi2ZRqM
- G10irusOcZkUegqW_bwrf.p4nsvrbtyScO4t7eaY9jfuKGrMlADB0odFhZmw5dcFf8k7SFpTrxE2
- t0Uk3PNR.axCiUs6OF3aYT5F1cBpVn1TkdGhUO.KtkYzkSDe3yUT8jagBMMFsptgB4TENn6egEjB
- DtKAvHzEXYRH2yMNPyJgADh.LlZ.OZijUK2UC.Qe1V2jnB90Xgc73QoAfUBV69B8.nXf7uCbFSnE
- 2KQWW9NuBHb8OpW1Yg7pV_KyEPfyhVl2vi8Cy4tZoh56wv5sQN5Om1lPBenBegXKawTXHxU4xmIH
- Cnbnt2dOGejzVPDhysQMVW36uFRf51Cv7njP0yVfjxAmPTgJigDZEf_HH.R7qKqPnvWJeUd2H8DA
- Jy83saiTC6pHPMEuR4ycoqFMeUr6cuOt5HLd_.SU6zKtNt7GWJoPUELJLO4BNRWaAxGwoIyTOzhN
- QjJXFxuRZ4QT0HiEy_T0ohAcxhurky9ZGgcX3a_wlpQhf4VZhPnmdBJiuKsBkT7VNUecqrwYrpsX
- T.2NY48sR7qp77HifOxS3oQoxOnYkqN1dOIIe2icsMsf4tUgXm09B_exxv8wSIEZ3ZtyrzUntuVo
- zpUgK8nE1Invnof1m8BtONwo39cSX6uAHt1wDbkxTIsF6H6D_8ZQetnvCACrk.G9tpzqHPyqNcQl
- GKc_FSBjGkXNXRzbxcQduZrg6_gXAoMDzp7TRys.s.uuCcJWwKCr0S.9Wd7bAg.HpZqy9QfCpM_P
- FiRiXFDk1hxk.jPiwgeiPKED4pVX6WsO9g0EdCl.rVelgnzDjajVqCI1jkh02m09Qd4ZUbW2vYUj
- _asZyzjJRsKD6Fd77ugcKJmN70dM64s6mpFGJGP3mmGERL4yMUcCm4cBIb_cN_nFK8nQGExL7K8f
- LN4YWjgTbyx8nueqvO8zsNYq9bBF28YHVfMEOfr.7lZf5lvhMUdiL84KssNpsckQkz09RWs7itQx
- YeJyCfeITjdFegReSa.6CkQgyLk5KiTy5ler.ScNw3wej6Z1DLAIgBB3IbMKQ..PHZC0EUubdlap
- shJSsm3m0Sp3oAhknOKrZ2rZ.OEXX_mAybCG90LCepVzIah88f1odX4xgr9JUVoUtXkGM9YvjgC3
- Ubg5mUF2mMD6dGk11anOD03N_2vA6mID7fgg18ZOpEv9hOysSsoqSSciKX6ol42ja_JD1XQ5yR9F
- qtJ5eA3JDmwrfWibC5bp0mhOahCFt5oKOsW8H.elF4ng3SHDuqQ2W4YZGZbHoA6yXzQsCMGxmWux
- nMu02DQFZV9T2.aJ52fLET3aE_5uj_pkbmeCu6DunCq9oniR84DFnMx7712s64FjlT01EKK6B9YT
- EpOmnkom1NLlk2_v2KAWet4hna4DfXD71hbM2U90sUCLEnKT_QNwBceeBEM_S9oq2ZUy9ztSbHZC
- 2mvz8kZPzO0aTkmCp3PrjiG7BG19kSaia6531m8s314bjATRLug--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Jul 2022 20:50:41 +0000
-Received: by hermes--production-gq1-56bb98dbc7-8vq2m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8f8e719523f4d478154192ec87a78ca5;
-          Fri, 15 Jul 2022 20:50:37 +0000 (UTC)
-Message-ID: <566af35b-cebb-20a4-99b8-93184f185491@schaufler-ca.com>
-Date:   Fri, 15 Jul 2022 13:50:34 -0700
+        with ESMTP id S229745AbiGOU6q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 16:58:46 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CC6BE14
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 13:58:44 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220715205842euoutp027faa022b9bb680772bc7366a978e4a63~CHEtSruGl3129531295euoutp02X
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 20:58:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220715205842euoutp027faa022b9bb680772bc7366a978e4a63~CHEtSruGl3129531295euoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1657918722;
+        bh=YdgssgFBnCZJ4RfHC/0Rqp9j5dq+QVaDjQrDJ32E+Aw=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=iHiijxlNMCAkzWFPlsOeGtTrmZoeir+ISQTmZgS+OHKLHQ1ByxxkmY1uX6Vqn/QzV
+         3rTSmN6lftUUCaHmD+by+ZcssCIeaWRSS0+vArqVcm+FD0GePXYFSClByI8pte9n/8
+         7KcMiRdGJd4EjPvTSkTopXO5lCy5smdEaNkwQgMQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220715205841eucas1p2cf1272ffed50003dd40a950cc0eb0d96~CHEsRhxp20633006330eucas1p2V;
+        Fri, 15 Jul 2022 20:58:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 73.BD.09664.105D1D26; Fri, 15
+        Jul 2022 21:58:41 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220715205841eucas1p20140585c17ed9d06d3af208434f41e00~CHEr7cy4c2872928729eucas1p2p;
+        Fri, 15 Jul 2022 20:58:41 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220715205841eusmtrp25937899640b4f31f8dffd5913c4b2a81~CHEr6uxBw1051010510eusmtrp2h;
+        Fri, 15 Jul 2022 20:58:41 +0000 (GMT)
+X-AuditID: cbfec7f2-d81ff700000025c0-ca-62d1d501779d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6F.00.09095.105D1D26; Fri, 15
+        Jul 2022 21:58:41 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220715205840eusmtip2e419d064ad4cbcc025cace366001d76d~CHErKgYeL0959709597eusmtip2F;
+        Fri, 15 Jul 2022 20:58:40 +0000 (GMT)
+Message-ID: <b9e1e22a-47ba-fdd8-ca12-e9bdd57afd41@samsung.com>
+Date:   Fri, 15 Jul 2022 22:58:40 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
- op
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH v3 for-next 2/3] net: copy from user before calling
+ __get_compat_msghdr
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, joshi.k@samsung.com,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com,
-        casey@schaufler-ca.com
-References: <20220714000536.2250531-1-mcgrof@kernel.org>
- <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
- <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
- <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        io-uring@vger.kernel.org
+Cc:     netdev@vger.kernel.org, Kernel-team@fb.com
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <b2e36f7b-2f99-d686-3726-c18b32289ed8@kernel.dk>
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djPc7qMVy8mGVyYIGUxZ9U2RovVd/vZ
+        LOacb2GxmPrHw+LpsUfsFu9az7FYHOt7z2pxYVsfq8WxBWIW306/YXTg8tiy8iaTx8Tmd+we
+        O2fdZfdYsKnU4/LZUo9NqzrZPN7vu8rm8XmTXABHFJdNSmpOZllqkb5dAlfGnpO72Qu2ilZ0
+        z97A3sC4WbCLkZNDQsBE4v+7s6xdjFwcQgIrGCVeLb7KBuF8YZT4sXMHI4TzmVGi+9tddpiW
+        1V+/s0MkljNK3Lp0AKrlI6PEsuPLGUGqeAXsJJa/mQpkc3CwCKhKTLhgBREWlDg58wkLiC0q
+        kCxx7izIOk4OYYFYic55/8EWMAuIS9x6Mp8JZKaIwBVGiRsnfzFCJPQkVnS8BmtgEzCU6Hrb
+        BWZzCthKzFr2DKpZXmL72znMIM0SAs2cEk1rZjFDnO0i8W73BzYIW1ji1fEtUO/ISPzfCbKN
+        A8jOl/g7wxgiXCFx7fUaqFZriTvnfrGBlDALaEqs36UPEXaUWL3zPBtEJ5/EjbeCEBfwSUza
+        Np0ZIswr0dEmBFGtJjHr+Dq4nQcvXGKewKg0CylQZiF5fhaSX2Yh7F3AyLKKUTy1tDg3PbXY
+        MC+1XK84Mbe4NC9dLzk/dxMjMGmd/nf80w7Gua8+6h1iZOJgPMQowcGsJMLbfehckhBvSmJl
+        VWpRfnxRaU5q8SFGaQ4WJXHe5MwNiUIC6YklqdmpqQWpRTBZJg5OqQamKr2TF5sfdpe+/s90
+        80tZ6/4ZOj9vWn53WRq98c/pyxrBcvkMyxLvFJS+Wv7Rjdl8dVpZ4hF2HxvmD7mmjm73xMtm
+        b1nYJ3424/XGr0JSyboxDL/09lpyn8mY+qox4I2izdpNR7lmeu5i+/BPyWF/rNz+pIvbGafo
+        i3kKqngxaItPUpnMsMCzxEXwjEOO1i/h9Rr387w79vlw6v4UuPhpu0XFk+XWSxgfS77euf7e
+        4uRCZYYLQYyOT3fel1YISTkTzKZQY2O7daZ/jVTC5FK7xPKCeb/04sNCdjtfylC83fDk7LOF
+        y2RLdoixrLTOmirQO63wP8OFI4tTK2Y+1Vnz8LFUxIovgSsmXjG+mZKkxFKckWioxVxUnAgA
+        zzg+wMkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xe7qMVy8mGbxYzGIxZ9U2RovVd/vZ
+        LOacb2GxmPrHw+LpsUfsFu9az7FYHOt7z2pxYVsfq8WxBWIW306/YXTg8tiy8iaTx8Tmd+we
+        O2fdZfdYsKnU4/LZUo9NqzrZPN7vu8rm8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWe
+        kYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GnpO72Qu2ilZ0z97A3sC4WbCLkZNDQsBEYvXX
+        7+xdjFwcQgJLGSVuPD7HCJGQkTg5rYEVwhaW+HOtiw2i6D2jxIVpTewgCV4BO4nlb6YCNXBw
+        sAioSky4YAURFpQ4OfMJC4gtKpAs0bzlEBOILSwQK9E57z9YK7OAuMStJ/PB4iIC1xglfm/z
+        gYjrSazoeA21azaTxMNF+8EGsQkYSnS9BTmCk4NTwFZi1rJnUIPMJLq2djFC2PIS29/OYZ7A
+        KDQLyR2zkOybhaRlFpKWBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQIjdduxn5t3MM57
+        9VHvECMTB+MhRgkOZiUR3u5D55KEeFMSK6tSi/Lji0pzUosPMZoCw2Iis5Rocj4wVeSVxBua
+        GZgamphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTBNWbMk6MRFtxjryzzyksGG
+        BcFXvHeu16idrqSxyE79QbZb8DM1Dp7weXxeW52eXjIo59q44W7PF+M7IfOjXQw+2960q1W6
+        pLXsdN2/jpy5JheqNI18jkz55hrfca3qy+qXk/oanX4xlYQcteP3/qHVtyw3eLYQm5fZHlt+
+        zgOpLvtSDv5i+Lb6sGKXxAeFyYcvZDc8LJxcxbXozXl3tmWff6ieFwhI+MVjuO7GTJvNr5iv
+        9khs5vSrMPpxRHvK0mXHj4opZFo41J0/G8sjuT12okOsgO/pHt3l5qkP+fmn9nIt4d274OSt
+        mSuO5fvvn+WplLM9vOni/ZC+xT3le2zXrYk8suGRtJnnlMnxoj5KLMUZiYZazEXFiQBQ36SU
+        XQMAAA==
+X-CMS-MailID: 20220715205841eucas1p20140585c17ed9d06d3af208434f41e00
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
+References: <20220714110258.1336200-1-dylany@fb.com>
+        <20220714110258.1336200-3-dylany@fb.com>
+        <CGME20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12@eucas1p1.samsung.com>
+        <46439555-644d-08a1-7d66-16f8f9a320f0@samsung.com>
+        <b2e36f7b-2f99-d686-3726-c18b32289ed8@kernel.dk>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/15/2022 11:46 AM, Paul Moore wrote:
-> On Thu, Jul 14, 2022 at 9:00 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->> On Wed, Jul 13, 2022 at 11:00:42PM -0400, Paul Moore wrote:
->>> On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
->>>> add infrastructure for uring-cmd"), this extended the struct
->>>> file_operations to allow a new command which each subsystem can use
->>>> to enable command passthrough. Add an LSM specific for the command
->>>> passthrough which enables LSMs to inspect the command details.
->>>>
->>>> This was discussed long ago without no clear pointer for something
->>>> conclusive, so this enables LSMs to at least reject this new file
->>>> operation.
->>>>
->>>> [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
->>> [NOTE: I now see that the IORING_OP_URING_CMD has made it into the
->>> v5.19-rcX releases, I'm going to be honest and say that I'm
->>> disappointed you didn't post the related LSM additions
->> It does not mean I didn't ask for them too.
->>
->>> until
->>> v5.19-rc6, especially given our earlier discussions.]
->> And hence since I don't see it either, it's on us now.
-> It looks like I owe you an apology, Luis.  While my frustration over
-> io_uring remains, along with my disappointment that the io_uring
-> developers continue to avoid discussing access controls with the LSM
-> community, you are not the author of the IORING_OP_URING_CMD.   You
-> are simply trying to do the right thing by adding the necessary LSM
-> controls and in my confusion I likely caused you a bit of frustration;
-> I'm sorry for that.
->
->> As important as I think LSMs are, I cannot convince everyone
->> to take them as serious as I do.
-> Yes, I think a lot of us are familiar with that feeling unfortunately :/
->
->>> While the earlier discussion may not have offered a detailed approach
->>> on how to solve this, I think it was rather conclusive in that the
->>> approach used then (and reproduced here) did not provide enough
->>> context to the LSMs to be able to make a decision.
->> Right...
->>
->>> There were similar
->>> concerns when it came to auditing the command passthrough.  It appears
->>> that most of my concerns in the original thread still apply to this
->>> patch.
+Hi,
+
+On 15.07.2022 22:37, Jens Axboe wrote:
+> On 7/15/22 2:28 PM, Marek Szyprowski wrote:
+>> On 14.07.2022 13:02, Dylan Yudaken wrote:
+>>> this is in preparation for multishot receive from io_uring, where it needs
+>>> to have access to the original struct user_msghdr.
 >>>
->>> Given the LSM hook in this patch, it is very difficult (impossible?)
->>> to determine the requested operation as these command opcodes are
->>> device/subsystem specific.  The unfortunate result is that the LSMs
->>> are likely going to either allow all, or none, of the commands for a
->>> given device/subsystem, and I think we can all agree that is not a
->>> good idea.
+>>> functionally this should be a no-op.
 >>>
->>> That is the critical bit of feedback on this patch, but there is more
->>> feedback inline below.
->> Given a clear solution is not easily tangible at this point
->> I was hoping perhaps at least the abilility to enable LSMs to
->> reject uring-cmd would be better than nothing at this point.
-> Without any cooperation from the io_uring developers, that is likely
-> what we will have to do.  I know there was a lot of talk about this
-> functionality not being like another ioctl(), but from a LSM
-> perspective I think that is how we will need to treat it.
->
->>>> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
->>>> ---
->>>>  include/linux/lsm_hook_defs.h | 1 +
->>>>  include/linux/lsm_hooks.h     | 3 +++
->>>>  include/linux/security.h      | 5 +++++
->>>>  io_uring/uring_cmd.c          | 5 +++++
->>>>  security/security.c           | 4 ++++
->>>>  5 files changed, 18 insertions(+)
->>> ...
->>>
->>>> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
->>>> index 0a421ed51e7e..5e666aa7edb8 100644
->>>> --- a/io_uring/uring_cmd.c
->>>> +++ b/io_uring/uring_cmd.c
->>>> @@ -3,6 +3,7 @@
->>>>  #include <linux/errno.h>
->>>>  #include <linux/file.h>
->>>>  #include <linux/io_uring.h>
->>>> +#include <linux/security.h>
->>>>
->>>>  #include <uapi/linux/io_uring.h>
->>>>
->>>> @@ -82,6 +83,10 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->>>>         struct file *file = req->file;
->>>>         int ret;
->>>>
->>>> +       ret = security_uring_cmd(ioucmd);
->>>> +       if (ret)
->>>> +               return ret;
->>>> +
->>>>         if (!req->file->f_op->uring_cmd)
->>>>                 return -EOPNOTSUPP;
->>>>
->>> In order to be consistent with most of the other LSM hooks, the
->>> 'req->file->f_op->uring_cmd' check should come before the LSM hook
->>> call.
->> Sure.
+>>> Acked-by: Paolo Abeni <pabeni@redhat.com>
+>>> Signed-off-by: Dylan Yudaken <dylany@fb.com>
+>> This patch landed in linux next-20220715 as commit 1a3e4e94a1b9 ("net:
+>> copy from user before calling __get_compat_msghdr"). Unfortunately it
+>> causes a serious regression on the ARM64 based Khadas VIM3l board:
 >>
->>> The general approach used in most places is to first validate
->>> the request and do any DAC based access checks before calling into the
->>> LSM.
->> OK.
+>> Unable to handle kernel access to user memory outside uaccess routines
+>> at virtual address 00000000ffc4a5c8
+>> Mem abort info:
+>>     ESR = 0x000000009600000f
+>>     EC = 0x25: DABT (current EL), IL = 32 bits
+>>     SET = 0, FnV = 0
+>>     EA = 0, S1PTW = 0
+>>     FSC = 0x0f: level 3 permission fault
+>> Data abort info:
+>>     ISV = 0, ISS = 0x0000000f
+>>     CM = 0, WnR = 0
+>> user pgtable: 4k pages, 48-bit VAs, pgdp=0000000001909000
+>> [00000000ffc4a5c8] pgd=0800000001a7b003, p4d=0800000001a7b003,
+>> pud=0800000001a0e003, pmd=0800000001913003, pte=00e800000b9baf43
+>> Internal error: Oops: 9600000f [#1] PREEMPT SMP
+>> Modules linked in:
+>> CPU: 0 PID: 247 Comm: systemd-udevd Not tainted 5.19.0-rc6+ #12437
+>> Hardware name: Khadas VIM3L (DT)
+>> pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> pc : get_compat_msghdr+0xd0/0x1b0
+>> lr : get_compat_msghdr+0xcc/0x1b0
+>> ...
+>> Call trace:
+>>    get_compat_msghdr+0xd0/0x1b0
+>>    ___sys_sendmsg+0xd0/0xe0
+>>    __sys_sendmsg+0x68/0xc4
+>>    __arm64_compat_sys_sendmsg+0x28/0x3c
+>>    invoke_syscall+0x48/0x114
+>>    el0_svc_common.constprop.0+0x60/0x11c
+>>    do_el0_svc_compat+0x1c/0x50
+>>    el0_svc_compat+0x58/0x100
+>>    el0t_32_sync_handler+0x90/0x140
+>>    el0t_32_sync+0x190/0x194
+>> Code: d2800382 9100f3e0 97d9be02 b5fffd60 (b9401a60)
+>> ---[ end trace 0000000000000000 ]---
 >>
->> Let me know how you'd like to proceed given our current status.
-> Well, we're at -rc6 right now which means IORING_OP_URING_CMD is
-> happening and it's unlikely the LSM folks are going to be able to
-> influence the design/implementation much at this point so we have to
-> do the best we can.  Given the existing constraints, I think your
-> patch is reasonable (although please do shift the hook call site down
-> a bit as discussed above), we just need to develop the LSM
-> implementations to go along with it.
->
-> Luis, can you respin and resend the patch with the requested changes?
->
-> Casey, it looks like Smack and SELinux are the only LSMs to implement
-> io_uring access controls.  Given the hook that Luis developed in this
-> patch, could you draft a patch for Smack to add the necessary checks?
+>> This happens only on the mentioned board, other my ARM64 test boards
+>> boot fine with next-20220715. Reverting this commit, together with
+>> 2b0b67d55f13 ("fix up for "io_uring: support multishot in recvmsg"") and
+>> a8b38c4ce724 ("io_uring: support multishot in recvmsg") due to compile
+>> dependencies on top of next-20220715 fixes the issue.
+>>
+>> Let me know how I can help fixing this issue.
+> How are you reproducing this?
 
-Yes. I don't think it will be anything more sophisticated than the
-existing "Brutalist" Smack support. It will also be tested to the
-limited extent my resources and understanding of io_uring allow.
+This happens always during system boot on the mentioned board, when udev 
+starts discovering devices. The complete boot log is here:
 
-I am seriously concerned that without better integration between
-LSM and io_uring development I'm going to end up in the same place
-that led to Al Viro's comment regarding the Smack fcntl hooks:
+https://pastebin.com/i8WzFzcx
 
-	"I think I have an adequate flame, but it won't fit
-	the maillist size limit..."
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-That came about because my understanding of fnctl() was incomplete.
-I know a lot more about fnctl than I do about io_uring. I would
-really like io_uring to work well in a Smack environment. It saddens
-me that there isn't any reciporicol interest. But enough whinging.
-On to the patch.
-
-> I'll do the same for SELinux.  My initial thinking is that all we can
-> really do is check the access between the creds on the current task
-> (any overrides will have already taken place by the time the LSM hook
-> is called) with the io_uring_cmd:file label/creds; we won't be able to
-> provide much permission granularity for all the reasons previously
-> discussed, but I suspect that will be more of a SELinux problem than a
-> Smack problem (although I suspect Smack will need to treat this as
-> both a read and a write, which is likely less than ideal).
->
-> I think it's doubtful we will have all of this ready and tested in
-> time for v5.19, but I think we can have it ready shortly after that
-> and I'll mark all of the patches for -stable when I send them to
-> Linus.
->
-> I also think we should mark the patches with a 'Fixes:' line that
-> points at the IORING_OP_URING_CMD commit, ee692a21e9bf ("fs,io_uring:
-> add infrastructure for uring-cmd").
->
-> How does that sound to everyone?
->

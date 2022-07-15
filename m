@@ -2,191 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E7D57689C
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 22:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A885768C3
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 23:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbiGOU6u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jul 2022 16:58:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
+        id S230093AbiGOVQo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jul 2022 17:16:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229745AbiGOU6q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 16:58:46 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CC6BE14
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 13:58:44 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220715205842euoutp027faa022b9bb680772bc7366a978e4a63~CHEtSruGl3129531295euoutp02X
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 20:58:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220715205842euoutp027faa022b9bb680772bc7366a978e4a63~CHEtSruGl3129531295euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1657918722;
-        bh=YdgssgFBnCZJ4RfHC/0Rqp9j5dq+QVaDjQrDJ32E+Aw=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=iHiijxlNMCAkzWFPlsOeGtTrmZoeir+ISQTmZgS+OHKLHQ1ByxxkmY1uX6Vqn/QzV
-         3rTSmN6lftUUCaHmD+by+ZcssCIeaWRSS0+vArqVcm+FD0GePXYFSClByI8pte9n/8
-         7KcMiRdGJd4EjPvTSkTopXO5lCy5smdEaNkwQgMQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220715205841eucas1p2cf1272ffed50003dd40a950cc0eb0d96~CHEsRhxp20633006330eucas1p2V;
-        Fri, 15 Jul 2022 20:58:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 73.BD.09664.105D1D26; Fri, 15
-        Jul 2022 21:58:41 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220715205841eucas1p20140585c17ed9d06d3af208434f41e00~CHEr7cy4c2872928729eucas1p2p;
-        Fri, 15 Jul 2022 20:58:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220715205841eusmtrp25937899640b4f31f8dffd5913c4b2a81~CHEr6uxBw1051010510eusmtrp2h;
-        Fri, 15 Jul 2022 20:58:41 +0000 (GMT)
-X-AuditID: cbfec7f2-d81ff700000025c0-ca-62d1d501779d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6F.00.09095.105D1D26; Fri, 15
-        Jul 2022 21:58:41 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220715205840eusmtip2e419d064ad4cbcc025cace366001d76d~CHErKgYeL0959709597eusmtip2F;
-        Fri, 15 Jul 2022 20:58:40 +0000 (GMT)
-Message-ID: <b9e1e22a-47ba-fdd8-ca12-e9bdd57afd41@samsung.com>
-Date:   Fri, 15 Jul 2022 22:58:40 +0200
+        with ESMTP id S229975AbiGOVQn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 17:16:43 -0400
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2907B2B620
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 14:16:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657919801; bh=wFmCNr6mVUQ1FQYknGOvyDMLqvMWptFfqJCcv+Tg63U=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=A4Izv9Fe//NUAg1lRZx/JgX3SPdgaHQsglPDXOmVRKeJvECDG9uNw/KT29SSMz/aUxHJ9ozv/LnqTzGeN+K+GnionrNzSMAAdxglyloYIP85VD9EFlsRpzJcXMBl2VEFJ/zSFsqG37CutFBCAZpO009g2ELSAXF4PYnckDDhYc2sYbe0u+NnAXS/aARGVke2WdtKMjSAFvz8oSr+l+StXYZj6z5ytjVpHUry5GHkMg7TBKV9EF0jMTmzVD/WciDw6K9D9Q5JxXarK2HvC1OsFz58lRFtKIRS/TD3vrXJt1Bru21BF5RQFvdUPPXPDgYrnNjtvlyJDVFaFIVAmuk+0A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657919801; bh=lWZiPze4TQq48Q8QJmL7h57jOV3m8gGGIfMylY9J1Ls=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=GHyhH4Nv3hLwkTOfIOADebulRud4gHQh9wZjufPCj+w24xHrG5gstkhzN7jmbS2hqT2NJBf5QvExem7Tp3CeQDMQZ+pCgVM4qEy9cGmVReX00EPGQ5l6tA03ToFJCUZZUUWcC5ekX1rfc7Hl/fZwtiJUnZoVybQSAMvqtlWZgHxnxjH4O+2YIKNRC2W+qXGTQy4s84OSzYAf9eI04koV0kNEhAzs+kAr/d111VmeBBmJFq5cmZpgczbE0WFY4FOtMOvXvgAMB4GYK0+lByftrEmyHQAnnVGqDBDoYLy5B2Jo5q7eGyPiWNXkrbynfD+gxsLbnQVNd/HN1Do/zrwOXw==
+X-YMail-OSG: MBgKIqgVM1nQouXEJyBRqcqSvuf4CQat9W4ypP14Z4fJaygnJ_0vLavwAUOo6FV
+ xVDfuG.C6c4mg14k0M3HIAnHUMAXlMCpuCzEa3lnFrr6M7ZXFRQiat1_LZ6eDQEJZOmhC9Er4a5G
+ KgQkIcFELaembA54P_VRr_zwfqk.uvR7qdLUY4s2GmHWLsdUYRD_fqQ0m_lJa2c_yexIlcqsNkAV
+ wti6rcr8GMHpcUhTlAbwMHbjaPLgUaRf3o8wZqQzj_Rkzsx8BOrhBoABxi3R_PAC_KJMwnAJ9sms
+ QXKWoIvFm1xxrcmZu0Ksvdny1.v6G6Oj.jQen2Jn6Sc3Pz98afioGrra4V2gAiSuN8xrdFXQlnMQ
+ XB.3tQzLiujYhfC9tzyz0uYoDS5K3fAdG88awM017XjgvE9bBdA7756G1atmsUAzxJRV.dv.vRsd
+ s4iSAFiPjQeEBwBeeXcNLMAlZR_imNWNm_mDyZMk2ltxKkhi_MO5YMWj9otFHkFDlqJx8BlP0ozk
+ 5UVeXCpP_Lp7wGBFlkbLfKS9T7BLmZKDEG2lqdkl.bt7PkXrjPQxyRvdkuZAQk1z5t56M72ukdag
+ IptKxX2uI89pZKVZZbjClMihhEqenewdCIYkIanqZvDQu7KxA31LSYVy6dooTj4VM2EwjIk_vUBb
+ f.mzEzrE38r4ydkwqXAgRPpBiwHiNorhLyia23rgtDFOVfeRcOnp_ZtKy0vZIKWAAjVoLRC6r77Q
+ PS2vtvGqyFAX_MDDikIQseOEpxnbZXioZ1AhHfHNAaQy2ADhBsPDmOCZHjqR.s2MOw.Fy8.R6CdC
+ kXbS07A9ZSqWDEpNeXYxU2Ez6Yyhp_D7L9PhtO78vvTQUC5OVTD.YCWeLoXVabspxxYre6upuo5z
+ 2_ZhoQ647TOcB2y6ar8v9tgkpA_9T.tsuJ6buaYatrRqZfYAOwGw30PKX9Qa2zvIyQaCVJs5Gdjg
+ wc__VHW0SKkG5myDirmA5lDbumv76e_NVz0cA.hob8zoc6_2D4WC2LGCZLODB7tRxCKh_BYiPCpb
+ CC7g5pOHWYQ2rEQh012GJ8DsNniWAmeU.9dSSaYQziIFFGt0sdhlwZZaV0w4XYvcf0SP5.k1mrva
+ XebODTp4_mL9KxwHJ3yvG8zIVnjf1jNV8B53J.G._LcAPl14rqOFJWXSvlc0E7heLjMMJ_ANP9rE
+ 0PmZFY.8HYNwcW.GCF65ee7xuaS.HyDeUOHwX5ixm2FnwVjgrwAQKtmZQVZrTyG4uBvDXzBmHPSW
+ BxhMKNqzqGx6JkNMzsd7y7Hjhnoi5Vct1CAbdv8jVJmDaOM6bOEIhEllL7TSycdSmxKuhZuwdMxY
+ caPWlq5kRMuzAQJbWZNv.U7kELGPnfvLoCUM5ejRMBtRMHwcnNW3o5.Ft6eqJlmQZu2G4kuK1LLy
+ bvkjKaEwB8UjgPxSJUtU5PnUWJR3qxJDE7sdhnRQT2QWXGcWMIHFUDsIiAetQSsOVJQOMrjGrFWu
+ iPSQ4wnZT.iOaJrzpBPqgFMUuPxBhw8oOMih.dSauzvRNPCroSN1x2jqFSPyqCd0kejV5aur3uHu
+ uYEZb.x.sG36k4bT4TlReAAhuPz.DQqqix5bWtaJY8h_mx3.kVlKbbRdlB79mV7ySJ6BjscYuFNT
+ 4IV7nZlSGZdxe8X0tRyFanoIC3LUGioNUDxShKmYAqPH9qlu1FdRl6jPEWyYqbw3iTPYkDS424Da
+ 0aeuO.ZEwB6TElJ17NvLTSM9mUj4.1k8ggv2SiKDlwTAmgGkDYUSbsOMmdyP75iXBWCBSKRaHHSf
+ Yq0sfhvENfLeQ6haqs4hRZeJheNuZ_iAYnFVrxh.2QuNtOt_vlA3.EVb7KUW68Tu4h93YY.jKZfz
+ ibxwZ7snDt6ld159u9D3I_RBVFaKJh3GmZhUsLJ5VcXobPTk8jHANjJZbMOv.6nXvzMLn1UL4mdc
+ yR_nXL71DrT7MQzT8YMLCrqREgwfDwWISMjE5KNEpKjVGbb7LwpZzvAaB9dpQeYHmXazA3AN3xzt
+ 1Zzjn5GxDRbyT1GpVgrcw.nLe4K2K5hRA9O4Z._adQObEuX4S4rUVhF.HqPkaeoOYyJf0kxaOVh_
+ KAGwDtRreedQY46.1MkDLfQYkXB.WHbqSBrnpHx3xdrLCTmrkfGyFC3DKogMku9dnLF2zkixV_lC
+ zMte7n0XPFRLDWeJSmnugS1hH2AYnPiQ_oSbjWy1fRtmhE2yLztuX99ZXNwdXlrPjxvvOXCxCNeG
+ Yqcf3Vae9j2yr.Ce6qREY4CCD1iBZaqkfXRqKnAT5Ui.K
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Jul 2022 21:16:41 +0000
+Received: by hermes--production-gq1-56bb98dbc7-r7f9c (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a5804bb51dabd48fee000183e3b2fa7;
+          Fri, 15 Jul 2022 21:16:36 +0000 (UTC)
+Message-ID: <1b220ed8-c010-15f2-3bc2-6ec4b2e7532f@schaufler-ca.com>
+Date:   Fri, 15 Jul 2022 14:16:35 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.10.0
-Subject: Re: [PATCH v3 for-next 2/3] net: copy from user before calling
- __get_compat_msghdr
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
+ op
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        io-uring@vger.kernel.org
-Cc:     netdev@vger.kernel.org, Kernel-team@fb.com
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <b2e36f7b-2f99-d686-3726-c18b32289ed8@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>, Paul Moore <paul@paul-moore.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, joshi.k@samsung.com,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        a.manzanares@samsung.com, javier@javigon.com,
+        casey@schaufler-ca.com
+References: <20220714000536.2250531-1-mcgrof@kernel.org>
+ <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
+ <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
+ <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
+ <a91fdbe3-fe01-c534-29ee-f05056ffd74f@kernel.dk>
+ <CAHC9VhRCW4PFwmwyAYxYmLUDuY-agHm1CejBZJUpHTVbZE8L1Q@mail.gmail.com>
+ <711b10ab-4ac7-e82f-e125-658460acda89@kernel.dk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <711b10ab-4ac7-e82f-e125-658460acda89@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djPc7qMVy8mGVyYIGUxZ9U2RovVd/vZ
-        LOacb2GxmPrHw+LpsUfsFu9az7FYHOt7z2pxYVsfq8WxBWIW306/YXTg8tiy8iaTx8Tmd+we
-        O2fdZfdYsKnU4/LZUo9NqzrZPN7vu8rm8XmTXABHFJdNSmpOZllqkb5dAlfGnpO72Qu2ilZ0
-        z97A3sC4WbCLkZNDQsBE4v+7s6xdjFwcQgIrGCVeLb7KBuF8YZT4sXMHI4TzmVGi+9tddpiW
-        1V+/s0MkljNK3Lp0AKrlI6PEsuPLGUGqeAXsJJa/mQpkc3CwCKhKTLhgBREWlDg58wkLiC0q
-        kCxx7izIOk4OYYFYic55/8EWMAuIS9x6Mp8JZKaIwBVGiRsnfzFCJPQkVnS8BmtgEzCU6Hrb
-        BWZzCthKzFr2DKpZXmL72znMIM0SAs2cEk1rZjFDnO0i8W73BzYIW1ji1fEtUO/ISPzfCbKN
-        A8jOl/g7wxgiXCFx7fUaqFZriTvnfrGBlDALaEqs36UPEXaUWL3zPBtEJ5/EjbeCEBfwSUza
-        Np0ZIswr0dEmBFGtJjHr+Dq4nQcvXGKewKg0CylQZiF5fhaSX2Yh7F3AyLKKUTy1tDg3PbXY
-        MC+1XK84Mbe4NC9dLzk/dxMjMGmd/nf80w7Gua8+6h1iZOJgPMQowcGsJMLbfehckhBvSmJl
-        VWpRfnxRaU5q8SFGaQ4WJXHe5MwNiUIC6YklqdmpqQWpRTBZJg5OqQamKr2TF5sfdpe+/s90
-        80tZ6/4ZOj9vWn53WRq98c/pyxrBcvkMyxLvFJS+Wv7Rjdl8dVpZ4hF2HxvmD7mmjm73xMtm
-        b1nYJ3424/XGr0JSyboxDL/09lpyn8mY+qox4I2izdpNR7lmeu5i+/BPyWF/rNz+pIvbGafo
-        i3kKqngxaItPUpnMsMCzxEXwjEOO1i/h9Rr387w79vlw6v4UuPhpu0XFk+XWSxgfS77euf7e
-        4uRCZYYLQYyOT3fel1YISTkTzKZQY2O7daZ/jVTC5FK7xPKCeb/04sNCdjtfylC83fDk7LOF
-        y2RLdoixrLTOmirQO63wP8OFI4tTK2Y+1Vnz8LFUxIovgSsmXjG+mZKkxFKckWioxVxUnAgA
-        zzg+wMkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xe7qMVy8mGbxYzGIxZ9U2RovVd/vZ
-        LOacb2GxmPrHw+LpsUfsFu9az7FYHOt7z2pxYVsfq8WxBWIW306/YXTg8tiy8iaTx8Tmd+we
-        O2fdZfdYsKnU4/LZUo9NqzrZPN7vu8rm8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWe
-        kYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GnpO72Qu2ilZ0z97A3sC4WbCLkZNDQsBEYvXX
-        7+xdjFwcQgJLGSVuPD7HCJGQkTg5rYEVwhaW+HOtiw2i6D2jxIVpTewgCV4BO4nlb6YCNXBw
-        sAioSky4YAURFpQ4OfMJC4gtKpAs0bzlEBOILSwQK9E57z9YK7OAuMStJ/PB4iIC1xglfm/z
-        gYjrSazoeA21azaTxMNF+8EGsQkYSnS9BTmCk4NTwFZi1rJnUIPMJLq2djFC2PIS29/OYZ7A
-        KDQLyR2zkOybhaRlFpKWBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQIjdduxn5t3MM57
-        9VHvECMTB+MhRgkOZiUR3u5D55KEeFMSK6tSi/Lji0pzUosPMZoCw2Iis5Rocj4wVeSVxBua
-        GZgamphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTBNWbMk6MRFtxjryzzyksGG
-        BcFXvHeu16idrqSxyE79QbZb8DM1Dp7weXxeW52eXjIo59q44W7PF+M7IfOjXQw+2960q1W6
-        pLXsdN2/jpy5JheqNI18jkz55hrfca3qy+qXk/oanX4xlYQcteP3/qHVtyw3eLYQm5fZHlt+
-        zgOpLvtSDv5i+Lb6sGKXxAeFyYcvZDc8LJxcxbXozXl3tmWff6ieFwhI+MVjuO7GTJvNr5iv
-        9khs5vSrMPpxRHvK0mXHj4opZFo41J0/G8sjuT12okOsgO/pHt3l5qkP+fmn9nIt4d274OSt
-        mSuO5fvvn+WplLM9vOni/ZC+xT3le2zXrYk8suGRtJnnlMnxoj5KLMUZiYZazEXFiQBQ36SU
-        XQMAAA==
-X-CMS-MailID: 20220715205841eucas1p20140585c17ed9d06d3af208434f41e00
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12
-References: <20220714110258.1336200-1-dylany@fb.com>
-        <20220714110258.1336200-3-dylany@fb.com>
-        <CGME20220715202859eucas1p1a336fd34a883adb96bde608ba2ca3a12@eucas1p1.samsung.com>
-        <46439555-644d-08a1-7d66-16f8f9a320f0@samsung.com>
-        <b2e36f7b-2f99-d686-3726-c18b32289ed8@kernel.dk>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: WebService/1.1.20407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On 7/15/2022 1:00 PM, Jens Axboe wrote:
+> I agree that it should've been part of the initial series. As mentioned
+> above, I wasn't much apart of that earlier discussion in the series, and
+> hence missed that it was missing. And as also mentioned, LSM isn't much
+> on my radar as nobody I know uses it.
 
-On 15.07.2022 22:37, Jens Axboe wrote:
-> On 7/15/22 2:28 PM, Marek Szyprowski wrote:
->> On 14.07.2022 13:02, Dylan Yudaken wrote:
->>> this is in preparation for multishot receive from io_uring, where it needs
->>> to have access to the original struct user_msghdr.
->>>
->>> functionally this should be a no-op.
->>>
->>> Acked-by: Paolo Abeni <pabeni@redhat.com>
->>> Signed-off-by: Dylan Yudaken <dylany@fb.com>
->> This patch landed in linux next-20220715 as commit 1a3e4e94a1b9 ("net:
->> copy from user before calling __get_compat_msghdr"). Unfortunately it
->> causes a serious regression on the ARM64 based Khadas VIM3l board:
->>
->> Unable to handle kernel access to user memory outside uaccess routines
->> at virtual address 00000000ffc4a5c8
->> Mem abort info:
->>     ESR = 0x000000009600000f
->>     EC = 0x25: DABT (current EL), IL = 32 bits
->>     SET = 0, FnV = 0
->>     EA = 0, S1PTW = 0
->>     FSC = 0x0f: level 3 permission fault
->> Data abort info:
->>     ISV = 0, ISS = 0x0000000f
->>     CM = 0, WnR = 0
->> user pgtable: 4k pages, 48-bit VAs, pgdp=0000000001909000
->> [00000000ffc4a5c8] pgd=0800000001a7b003, p4d=0800000001a7b003,
->> pud=0800000001a0e003, pmd=0800000001913003, pte=00e800000b9baf43
->> Internal error: Oops: 9600000f [#1] PREEMPT SMP
->> Modules linked in:
->> CPU: 0 PID: 247 Comm: systemd-udevd Not tainted 5.19.0-rc6+ #12437
->> Hardware name: Khadas VIM3L (DT)
->> pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> pc : get_compat_msghdr+0xd0/0x1b0
->> lr : get_compat_msghdr+0xcc/0x1b0
->> ...
->> Call trace:
->>    get_compat_msghdr+0xd0/0x1b0
->>    ___sys_sendmsg+0xd0/0xe0
->>    __sys_sendmsg+0x68/0xc4
->>    __arm64_compat_sys_sendmsg+0x28/0x3c
->>    invoke_syscall+0x48/0x114
->>    el0_svc_common.constprop.0+0x60/0x11c
->>    do_el0_svc_compat+0x1c/0x50
->>    el0_svc_compat+0x58/0x100
->>    el0t_32_sync_handler+0x90/0x140
->>    el0t_32_sync+0x190/0x194
->> Code: d2800382 9100f3e0 97d9be02 b5fffd60 (b9401a60)
->> ---[ end trace 0000000000000000 ]---
->>
->> This happens only on the mentioned board, other my ARM64 test boards
->> boot fine with next-20220715. Reverting this commit, together with
->> 2b0b67d55f13 ("fix up for "io_uring: support multishot in recvmsg"") and
->> a8b38c4ce724 ("io_uring: support multishot in recvmsg") due to compile
->> dependencies on top of next-20220715 fixes the issue.
->>
->> Let me know how I can help fixing this issue.
-> How are you reproducing this?
+There are well over 6 Billion systems deployed in the wild that use LSM.
+Every Android device. Every Samsung TV, camera and watch. Chromebooks.
+Data centers. AWS. HPC. Statistically, a system that does not use LSM is
+extremely rare. The only systems that *don't* use LSM are the ones hand
+configured by Linux developers for their own use.
 
-This happens always during system boot on the mentioned board, when udev 
-starts discovering devices. The complete boot log is here:
+>  This will cause oversights, even
+> if they are unfortunate. My point is just that no ill intent should be
+> assumed here.
 
-https://pastebin.com/i8WzFzcx
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+I see no ill intent. And io_uring addresses an important issue.
+It just needs to work for the majority of Linux systems, not just
+the few that don't use LSM.
 

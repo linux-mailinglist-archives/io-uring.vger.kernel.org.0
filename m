@@ -2,81 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08F3957692A
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 23:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EDD05769B1
+	for <lists+io-uring@lfdr.de>; Sat, 16 Jul 2022 00:10:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbiGOVrr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jul 2022 17:47:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50592 "EHLO
+        id S232237AbiGOWKU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jul 2022 18:10:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbiGOVrq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 17:47:46 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E112B1B5
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 14:47:45 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id l12so4243889plk.13
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 14:47:45 -0700 (PDT)
+        with ESMTP id S232713AbiGOWIv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 18:08:51 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B812679
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 15:03:44 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id 5so4267012plk.9
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 15:03:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=s18Fllh+gB6Jtpr+Ov6lqWWsOKas/ShUMI9wmr9imiE=;
-        b=kt2ywWzJguHIlFYeD1kzJ1YCEy1ZlJBGDyPxy8TwI9f5RYY+BhK30WiL6U/IcMv2zQ
-         /1vRBVzoebzeb1euKSejpD5lA7OPINT6SkZ2Bk8ciZhnQzQkw96ZDM9XScicROT4ALHl
-         YV/fq7jBURIpwtr4P9Ev7wcru9f0wZ+hrkAuvwD4nQgVem2UlurEvEGoNQMRm2EY4ABq
-         YOQCFtSUqto2q9t/tMKUFNi+QfEZxa9FqeY+k9n5FF6rAmWTBx5I2hJIlW71DOxjTBqy
-         88Xp6iwg/4GC4q7qnuCiNO5NptgCkNF6CYXMNZ7hDUkQCYToVaNSXpilqPsZDa3T/pet
-         J3CA==
+        h=message-id:date:mime-version:user-agent:content-language:to:from
+         :subject:cc:content-transfer-encoding;
+        bh=o2ORP8XdWKFtqKvkH9cdGQnLjDL+KkLGE24Ewvy+76o=;
+        b=OI3nGflbvfgR2FKmyOGjl1oIHCNat+VWFDMFesgIcmGapfRPLURvyoIJ+s7V3gls0o
+         pxhpaXAoNZXVz3NtQiqU02tk+YbDkI7nsepVocfoqLuriIjJH8fa1EP1LpUjMrT8GSSb
+         Rk4yxWnR4u4A6LdhLMBRigLzfCJ9NWJ9W4KTAVjv6bu5g5yflevPszLQuiTry/wugIVd
+         Kqulhn2GAu2DfgN76bxto+BLrjXIBEAeZRCgAWlGiUnVTsi2YT5LzBo7nWhOXwtjlJZL
+         j3Wan60GxAoDZvbLLxgFc2xUXA1zCyhrFy+rkMgzMssnumnPJE8MAPjlZzhUH/vMs6a8
+         cHfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=s18Fllh+gB6Jtpr+Ov6lqWWsOKas/ShUMI9wmr9imiE=;
-        b=DoKsasXhtIbYjiy/+cbuQ1zI+QCpn2Dj7ZzCuRXtLqFglIri4Qf14DCHPSmwhV+R2T
-         a9wXwLIv9U1FILbwPVfE34mHkdaTbsFWWyp8ErTDrvKvkQbDNYGRZnWkAcX51g6xtyLS
-         KySd8mLUBC8TkLJ8Gecf0v5hvAQ/qevoBnhTAunxPMtqn8cpN37myKr8bpSrs9Kpd8Wm
-         uy/vnm+BwVLJx57VUiLVmuWYlNMP5dOvxJn5Z12kbk16rwH8AK5D9w9Dn8jDl1nuHOiN
-         v+UqRTMLyQFtgJL+x/myPi6GsoF5Xb6uHEOBURqjuljcAiRHfiPpNIkJoEnz26+ZVFQi
-         hUPg==
-X-Gm-Message-State: AJIora9pkkQ49Ocqwq+dNI8pej9EqmXORQEEWLtLzou6jTInzLGZYyQ0
-        8MPmKOG6VA0hq8/MUUgPhGGfVNfzGF0CyA==
-X-Google-Smtp-Source: AGRyM1u7dqwQl7BVwsbXGj4ln4y2G4XR8MrNgmo1CpOIpFByG8MREhIt5lLf2iwdZKWL2dK/3ZdUGQ==
-X-Received: by 2002:a17:903:2285:b0:16c:33dc:8754 with SMTP id b5-20020a170903228500b0016c33dc8754mr15832799plh.126.1657921664549;
-        Fri, 15 Jul 2022 14:47:44 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:from:subject:cc:content-transfer-encoding;
+        bh=o2ORP8XdWKFtqKvkH9cdGQnLjDL+KkLGE24Ewvy+76o=;
+        b=HehhkrQq0FkP4SJg6U3MlbdipNOIpHLllpblnhNJS26XnPYmghhTRcWhU0FHSod70K
+         2y98PQkwo9u5J8nfzTVMgqQOoTdPlSzqwi2f6XWcvS6cBs8ucMgUztl03kmnYz/6NGK+
+         j5TnV1fDiWcP2fGNFYNRu4VxabnMJOlFB9z/z3Mxop5iRIIfThxPpolHyqIytvUKes3Z
+         Ukwk2GIYSiCxhPQNd9ilekwAzWVfIPOTekrpMVyXcGPrfY4vDXvLCZfoInhV+85yRhw2
+         ZiC8/dc2cPKvDrc02H+K7961eIX+OXzKxdhokGpb3MMy1QTntzKtUcR4P27KuXff+cIa
+         qdcA==
+X-Gm-Message-State: AJIora/V2erpucN3DxUVVbGhXdr2StPmHpgcr0AW3lugT6RIWAHEn0Py
+        kTRaZhMmq5jnbyp3kQwzODgaBENG5Iht1A==
+X-Google-Smtp-Source: AGRyM1uj65/gCvQFQi+2vy8ZEA5TILQFeWRRROedjpWnX97K2iyQRG9TGBkTb7sj9J5rA8X/gDxYTA==
+X-Received: by 2002:a17:902:d542:b0:16c:8ac:f471 with SMTP id z2-20020a170902d54200b0016c08acf471mr15986807plf.39.1657922614808;
+        Fri, 15 Jul 2022 15:03:34 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t126-20020a628184000000b0050dc7628148sm4376258pfd.34.2022.07.15.14.47.42
+        by smtp.gmail.com with ESMTPSA id z12-20020a17090a7b8c00b001eee8998f2esm6018298pjc.17.2022.07.15.15.03.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jul 2022 14:47:43 -0700 (PDT)
-Message-ID: <2c6541c2-d55b-4fbc-ec03-3b84722b7264@kernel.dk>
-Date:   Fri, 15 Jul 2022 15:47:42 -0600
+        Fri, 15 Jul 2022 15:03:34 -0700 (PDT)
+Message-ID: <bc98a0f1-199d-a84d-21bc-274a47fae5a6@kernel.dk>
+Date:   Fri, 15 Jul 2022 16:03:33 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
- op
 Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>, casey@schaufler-ca.com,
-        joshi.k@samsung.com, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, a.manzanares@samsung.com,
-        javier@javigon.com
-References: <20220714000536.2250531-1-mcgrof@kernel.org>
- <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
- <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
- <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
- <a91fdbe3-fe01-c534-29ee-f05056ffd74f@kernel.dk>
- <CAHC9VhRCW4PFwmwyAYxYmLUDuY-agHm1CejBZJUpHTVbZE8L1Q@mail.gmail.com>
- <711b10ab-4ac7-e82f-e125-658460acda89@kernel.dk>
- <YtHeDa+rqXCFsd97@bombadil.infradead.org>
+To:     io-uring <io-uring@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YtHeDa+rqXCFsd97@bombadil.infradead.org>
+Subject: [PATCH] net: fix compat pointer in get_compat_msghdr()
+Cc:     Dylan Yudaken <dylany@fb.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,47 +70,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/15/22 3:37 PM, Luis Chamberlain wrote:
-> On Fri, Jul 15, 2022 at 02:00:36PM -0600, Jens Axboe wrote:
->> I did author the basic framework of it, but Kanchan took over driving it
->> to completion and was the one doing the posting of it at that point.
-> 
-> And credit where due, that was a significant undertaking, and great
-> collaboration.
+A previous change enabled external users to copy the data before
+calling __get_compat_msghdr(), but didn't modify get_compat_msghdr() or
+__io_compat_recvmsg_copy_hdr() to take that into account. They are both
+stil passing in the __user pointer rather than the copied version.
 
-Definitely, the completion bit is usually the longest pole in the
-endevaour.
+Ensure we pass in the kernel struct, not the pointer to the user data.
 
->> It's not like I merge code I'm not aware of, we even discussed it at
->> LSFMM this year and nobody brought up the LSM oversight. Luis was there
->> too I believe.
-> 
-> I brought it up as a priority to Kanchan then. I cringed at not seeing it
-> addressed, but as with a lot of development, some things get punted for
-> 'eventually'. What I think we need is more awareness of the importance of
-> addressing LSMs and making this a real top priority, not just, 'sure',
-> or 'eventually'. Without that wide awareness even those aware of its
-> importance cannot help make LSM considerations a tangible priority.
+Link: https://lore.kernel.org/all/46439555-644d-08a1-7d66-16f8f9a320f0@samsung.com/
+Fixes: 1a3e4e94a1b9 ("net: copy from user before calling __get_compat_msghdr")
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Not sure if this is a generic problem, or mostly on our side. uring_cmd
-is a bit of an exception, since we don't really add a lot of non-syscall
-accessible bits to begin with. But in general there's for sure more
-action there than in other spots. I'm hopeful that this will be more on
-top of our minds when the next time comes around.
+---
 
-For uring_cmd, extensions will most likely happen. At least I have some
-in mind. We might want to make the control more finegrained at that
-point, but let's deal with that when we get there.
+As this was staged in the io_uring tree, I plan on applying this fix
+there as well. Holler if anyone disagrees.
 
-> We can do this with ksummit, or whatever that's called these days,
-> because just doing this at security conferences is just getting people
-> preaching to the choir.
-
-Don't think anyone disagrees that it needs to get done, and there's not
-much process to hash out here other than one subsystem being aware of
-another ones needs. Hence don't think the kernel summit or maintainers
-summit is doing to be useful in that regard. Just my 2 cents.
-
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 6b7d5f33e642..e61efa31c729 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -398,7 +398,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 	if (copy_from_user(&msg, sr->umsg_compat, sizeof(msg)))
+ 		return -EFAULT;
+ 
+-	ret = __get_compat_msghdr(&iomsg->msg, sr->umsg_compat, &iomsg->uaddr);
++	ret = __get_compat_msghdr(&iomsg->msg, &msg, &iomsg->uaddr);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/net/compat.c b/net/compat.c
+index 513aa9a3fc64..ed880729d159 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -89,7 +89,7 @@ int get_compat_msghdr(struct msghdr *kmsg,
+ 	if (copy_from_user(&msg, umsg, sizeof(*umsg)))
+ 		return -EFAULT;
+ 
+-	err = __get_compat_msghdr(kmsg, umsg, save_addr);
++	err = __get_compat_msghdr(kmsg, &msg, save_addr);
+ 	if (err)
+ 		return err;
+ 
 -- 
 Jens Axboe
 

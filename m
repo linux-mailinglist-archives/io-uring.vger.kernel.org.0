@@ -2,129 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B11575914
-	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 03:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF97575921
+	for <lists+io-uring@lfdr.de>; Fri, 15 Jul 2022 03:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240759AbiGOBZN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Jul 2022 21:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57828 "EHLO
+        id S231683AbiGOBf6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Jul 2022 21:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232394AbiGOBZL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 21:25:11 -0400
-Received: from sonic308-16.consmr.mail.ne1.yahoo.com (sonic308-16.consmr.mail.ne1.yahoo.com [66.163.187.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D7FF60518
-        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 18:25:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657848306; bh=9G7en9OvLW2IyJsMzHYkRz5BlSpr0HNz5y6GycQ6mho=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=B0yMJtbJ0cQiIatHXowWrqpMR/yWDTiaEPlZsIwnw1ZKLUtC7W2tePBUU8mh9BqS+CU70t4P9nC/V71YHtTy35n2avYHkfR+SjTACroEAwZmwoaIEP73Kj3r0jl9TQRvnPDX/DNeoW9O/L697q+almbeJFryQrymF76G0gpdauCQ1/PJsTnK2XgSzBXqcdXD84sV4i+7jOCPWixWN3dpvvBM/3v4iTk80PSj4A1fLAboLwKzxrnhirnfg4cz07Nrqbc+igNwquYcnqKbD/968jdDbtHEE/Sw+r2iREdVkIBDX95iXOGKMr//JxHen3dE4R6tkLrqOm0rCAV8do2dRA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1657848306; bh=U5jsK1GpG8o64IwvxbLuPUnZxuX3FhSb6EWFCFdc/Yv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=FKJUPfQqV2aRM0CHd2lvhVxxVHR7Aa0dEm+ESk4Ivxf6IPXlDuVZ8vmuETUhLwl+MFrnVok/rB8xx2P3O5zq/0Sro8Qh4EtKqfUylO7K5wvPlHRtaXh8nsxp7Rvc9nghGBIW/PamVH2kqmt9eWZYdrqYI6sNVVgR8W8hCHYYOCcOoqr2NBokXsMEbgYCx3UXrnQBpLFdjFqDH4yVVU3kwByZMKAq1pBO+eyGTy584mDECuOY9u6AZD3R9QXmJ8CbWafT7V8spq+lJrBLuRX1rixRN3oMBDGy8IqReEYJfB7PBepn0csCllhj3BKObsvCK4A5rj1Fj1HW0XmFDkuyjw==
-X-YMail-OSG: feU18OgVM1nZwHpYWMAAAgqxaTR6U32xLaAec_q9TzoXcwN30bMO9xArgaLS8bz
- z1npN8_s._LkzREpNUw0ZMNMv4QKrgukZOXkvSFqYF3PS5tWFnL4byTGMcj9MbfMhJwhmX.JzrNc
- UTq6.wNZBUhySOn8wBDHvxHlerUk.fSghGrdKUb.CzPl54zzajP4mjlKOYsXtXjPerduh.yqkQ9w
- NFbe5S26TaAuWJe5P1.kyMuZ6RgkxY1cG8MXbqCnd9YzrZ4MEpAV94otLGku8mcPidXDyumpS1oi
- CDu93JXSjtPr98iJBbdBK5NvYcoj.ILzRALFFyA9gMq3hT4ker2mqBVAbWJTFdQBso.cc6vuPgJu
- .2cqkM6pdR6hSLSj97Vv6iGtCIQh93HjJvJobxgZ_orhTKcLv37ujwATF7kEfNd6X1NJurUABIz9
- HZaSBzfwNMSzQ_JqmQmk7jJO8W5aAcNkFM.eR8yYXgISAg0JlOE7OauHjGwHWMvEWKRgqIv.I5Io
- G96L5q17itvRdHvIrnAmydexBJWOVgEgtyKIxGX8ppBndf3solw09hRQeM_NAYFmVw3e5qTKYJzd
- IJpcl0mEoW13.MHa6.8J8Fhog4VT.on8A09Xv4gH2ctTJNfBdtak2WVRN5ry6VE2PavCABjEy3kv
- aWkq.KfdycTMXf3ONEVlykLVAP2HmLrqwdCvfJv3sMxnOWVW9fgTVHO.wZvN5k.dVgKk8O1ThlTj
- HWWLJynPDx6TeJlHu5C1bq8NpxaWg54i6Cz38_UjgdH.sVvoBXEWFy2qvUcDuKECCAms.qsOuMG1
- 5sQEDfS0XtZvGjVnpq6BtyZlfg3EyL0KWyVaycTpr5bn08acN08_1dLHJXXUNgCRqlil9GC32.PU
- oH3.ORn.e7T8ykJ3hMA_OlpV79H9y3KNAIcuwigHRNQRFbX6_bpUmQhW652Q8U3Ecqe1QV30Qf5N
- vl8vwSGvUs0XC34QPA8zd2025W.ZGGElsvUS0gmsJ8JJHcyB1GT_FhEagcaRWjNQtxx8rHWQTt.j
- AYVzCqTilpAziCQagkK9_2JipNQ0IOnQs1Ih.I2rhIPqnJf9vfKyiEOU3C_xxiuYtCZCmEcFQiWy
- Us6Due61bkm2BUfo5kViZOKhG6LbevPRjFDufPi0WVqxfHiFcegKnD2PSUwXM4RwmsZtOEb_Ierf
- WCtCQhOGHkfoXi3rnoQr3w.r36n0fdzy2amDyz5aYDjjXuxgA3DQYo4L2pht9kaMSdfPpExOFxgr
- 9JbRpvvEn34W9xVY23Y5.ovFxhXvp9Tq5ukgBNA6QHF.aYEIu15cs0NFawSO15eb575f_SjWZES4
- CqS4iiv_9ckJOGVVixlTJ7Ao5DyS0A3a5.NzsKF2ppdqmKc1Eb0Twz2k8KfC6qmdJKZ_Vew432Zs
- _rpfpmvINu05QD92vZze2D6pIh35IhnfjhLOqbt1ULhAdIlUrsR0J0fy1lUJb7DleIRxEczY6gQX
- LFy1FFC4e81imJEd2bAVurnrJdPlqs6pJ8vfmzJs.don77I9mTzoBzx_Padb16DU28S0CeGlqNPp
- .Kj0iFqfgZOR_uvi0ElekBIcK2aAgfWkE8NLWaC41jd4diUy8LbHqrBbEc5xf.1jwG8w8rHUTwjF
- gy9uXXfGfTzfdxCKtAys..ssbDF2B6q1XZZRPT12aM7vB3TSIe3l1SYOtPxXkV7ez8MAcjEwdR1f
- pdDBlAthmgk1VbRGjIUPqsCSSlQxgPAwnaFlWq7MQzRQprvvEhGTRgPWcp75EiHKJRt4_vxH_o0.
- JF0SVor6Or7iFP0NSyb3BHe4CUuzjOCNBza2c85JPwA29SUBXsy1nP8JmnvwmURwVptii2g9i1vH
- vDh5AG4dX5baUaxqbMxA8RBNiE0nqTHHvLkqaL1DyCHT7r8Z8SpSX4qd4qOQpEgBjN0pOG9Blnpc
- u6kgAwHgGMHrrunV3PCQbCRTzhSND3Sk_GvcD3B6nZXiE3527NP__95mVXik3RLMYnYKwiPb_Vx7
- tKLZIxn6fqBxGBXxis.uFdK5LgePyqfll7BoNPF8.r6QxHMVnJjZKxYm4cryKsbORHzeQW2UVUFK
- MU0Z6jpkXPRGV7lycBk7hWK2Kumv6.O.vIOSuPv_e99s1XdkLPAJqoEwxWyNBsgyYnIG3iQU1y4f
- axuSnSeVaF1M3JtHjA8umolZZQrJLtKjVJlNbHastwTkF8yamp7hty6zj3WqOjmyB7DfHmY3jc9e
- qv_xKAB39df7b.0sntBl46N_hOxQg5JjLgr4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Jul 2022 01:25:06 +0000
-Received: by hermes--production-gq1-56bb98dbc7-28prh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7c14d55f1cf0ce6fc421db272bcd815c;
-          Fri, 15 Jul 2022 01:25:04 +0000 (UTC)
-Message-ID: <be4ec1e4-89c8-9a1c-bb2e-6f158312270e@schaufler-ca.com>
-Date:   Thu, 14 Jul 2022 18:25:03 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
- op
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, paul@paul-moore.com, joshi.k@samsung.com,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        with ESMTP id S231929AbiGOBf5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Jul 2022 21:35:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9A4C057E12
+        for <io-uring@vger.kernel.org>; Thu, 14 Jul 2022 18:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657848955;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qvkt98Ka8Thn9tAtnhPUdbwYri0a2GmY+68zGhEuEXA=;
+        b=TR965vF/5oNg1IeY/iAKgpckoEKTdVCzoy46Vd7o0I/+K/IpjvunPkATVrB3B2m4aaTLGp
+        eY/geGsD5zFk1feVsr7inNrBsoOnBTEQdN3EQ9LVPhyVHuvxVBJztFWAsRklEYNYF/BhbX
+        SNMV/tUEIcXp78NTAZszqQ8DnAXsSqc=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-435-J9EXQ6waM9qjXvVC81SZYg-1; Thu, 14 Jul 2022 21:35:51 -0400
+X-MC-Unique: J9EXQ6waM9qjXvVC81SZYg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BAC1E3C0F377;
+        Fri, 15 Jul 2022 01:35:50 +0000 (UTC)
+Received: from T590 (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 76F262026D64;
+        Fri, 15 Jul 2022 01:35:43 +0000 (UTC)
+Date:   Fri, 15 Jul 2022 09:35:38 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, kbusch@kernel.org,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        a.manzanares@samsung.com, javier@javigon.com,
-        casey@schaufler-ca.com
-References: <20220714000536.2250531-1-mcgrof@kernel.org>
- <30dee52c-80e7-f1d9-a2e2-018e7761b8ea@schaufler-ca.com>
- <YtC6wT4CYq0an/vX@bombadil.infradead.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <YtC6wT4CYq0an/vX@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        asml.silence@gmail.com, joshiiitr@gmail.com, anuj20.g@samsung.com,
+        gost.dev@samsung.com, ming.lei@redhat.com
+Subject: Re: [PATCH for-next 4/4] nvme-multipath: add multipathing for
+ uring-passthrough commands
+Message-ID: <YtDEatX54KA2Q5XU@T590>
+References: <CGME20220711110827epcas5p3fd81f142f55ca3048abc38a9ef0d0089@epcas5p3.samsung.com>
+ <20220711110155.649153-5-joshi.k@samsung.com>
+ <3fc68482-fb24-1f39-5428-faa3a8db9ecb@grimberg.me>
+ <20220711183746.GA20562@test-zns>
+ <5f30c7de-03b1-768a-d44f-594ed2d1dc75@grimberg.me>
+ <20220712042332.GA14780@test-zns>
+ <3a2b281b-793b-b8ad-6a27-138c89a46fac@grimberg.me>
+ <20220713053757.GA15022@test-zns>
+ <YtAy2PUDoWUUE9Bl@T590>
+ <20220714230523.GA14373@test-zns>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220714230523.GA14373@test-zns>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/14/2022 5:54 PM, Luis Chamberlain wrote:
-> On Wed, Jul 13, 2022 at 05:38:42PM -0700, Casey Schaufler wrote:
->> On 7/13/2022 5:05 PM, Luis Chamberlain wrote:
->>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
->>> add infrastructure for uring-cmd"), this extended the struct
->>> file_operations to allow a new command which each subsystem can use
->>> to enable command passthrough. Add an LSM specific for the command
->>> passthrough which enables LSMs to inspect the command details.
->>>
->>> This was discussed long ago without no clear pointer for something
->>> conclusive, so this enables LSMs to at least reject this new file
->>> operation.
->> tl;dr - Yuck. Again.
->>
->> You're passing the complexity of uring-cmd directly into each
->> and every security module. SELinux, AppArmor, Smack, BPF and
->> every other LSM now needs to know the gory details of everything
->> that might be in any arbitrary subsystem so that it can make a
->> wild guess about what to do. And I thought ioctl was hard to deal
->> with.
-> Yes... I cannot agree anymore.
->
->> Look at what Paul Moore did for the existing io_uring code.
->> Carry that forward into your passthrough implementation.
-> Which one in particular? I didn't see any glaring obvious answers.
+On Fri, Jul 15, 2022 at 04:35:23AM +0530, Kanchan Joshi wrote:
+> On Thu, Jul 14, 2022 at 11:14:32PM +0800, Ming Lei wrote:
+> > On Wed, Jul 13, 2022 at 11:07:57AM +0530, Kanchan Joshi wrote:
+> > > > > > > > The way I would do this that in nvme_ioucmd_failover_req (or in the
+> > > > > > > > retry driven from command retriable failure) I would do the above,
+> > > > > > > > requeue it and kick the requeue work, to go over the requeue_list and
+> > > > > > > > just execute them again. Not sure why you even need an explicit retry
+> > > > > > > > code.
+> > > > > > > During retry we need passthrough command. But passthrough command is not
+> > > > > > > stable (i.e. valid only during first submission). We can make it stable
+> > > > > > > either by:
+> > > > > > > (a) allocating in nvme (b) return -EAGAIN to io_uring, and
+> > > > > > > it will do allocate + deferral
+> > > > > > > Both add a cost. And since any command can potentially fail, that
+> > > > > > > means taking that cost for every IO that we issue on mpath node. Even if
+> > > > > > > no failure (initial or subsquent after IO) occcured.
+> > > > > >
+> > > > > > As mentioned, I think that if a driver consumes a command as queued,
+> > > > > > it needs a stable copy for a later reformation of the request for
+> > > > > > failover purposes.
+> > > > >
+> > > > > So what do you propose to make that stable?
+> > > > > As I mentioned earlier, stable copy requires allocating/copying in fast
+> > > > > path. And for a condition (failover) that may not even occur.
+> > > > > I really think currrent solution is much better as it does not try to make
+> > > > > it stable. Rather it assembles pieces of passthrough command if retry
+> > > > > (which is rare) happens.
+> > > >
+> > > > Well, I can understand that io_uring_cmd is space constrained, otherwise
+> > > > we wouldn't be having this discussion.
+> > > 
+> > > Indeed. If we had space for keeping passthrough command stable for
+> > > retry, that would really have simplified the plumbing. Retry logic would
+> > > be same as first submission.
+> > > 
+> > > > However io_kiocb is less
+> > > > constrained, and could be used as a context to hold such a space.
+> > > >
+> > > > Even if it is undesired to have io_kiocb be passed to uring_cmd(), it
+> > > > can still hold a driver specific space paired with a helper to obtain it
+> > > > (i.e. something like io_uring_cmd_to_driver_ctx(ioucmd) ). Then if the
+> > > > space is pre-allocated it is only a small memory copy for a stable copy
+> > > > that would allow a saner failover design.
+> > > 
+> > > I am thinking along the same lines, but it's not about few bytes of
+> > > space rather we need 80 (72 to be precise). Will think more, but
+> > > these 72 bytes really stand tall in front of my optimism.
+> > > 
+> > > Do you see anything is possible in nvme-side?
+> > > Now also passthrough command (although in a modified form) gets copied
+> > > into this preallocated space i.e. nvme_req(req)->cmd. This part -
+> > 
+> > I understand it can't be allocated in nvme request which is freed
+> > during retry,
+> 
+> Why not. Yes it gets freed, but we have control over when it gets freed
+> and we can do if anything needs to be done before freeing it. Please see
+> below as well.
 
-Neither did I! I'm still playing catch-up on the initial io_uring
-implementation. Smack's "Brutalist" support for io_uring isn't
-especially satisfactory, and adding arbitrary sub-system defined
-command behavior on top of what's already pretty mysterious
-isn't going to make it any easier.
+This way requires you to hold the old request until one new path is
+found, and it is fragile.
 
->
->> No, I don't think that waving security away because we haven't
->> proposed a fix for your flawed design is acceptable. Sure, we
->> can help.
-> Hey if the answer was obvious it would have been implemented.
+What if there isn't any path available then controller tries to
+reset the path? If the requeue or io_uring_cmd holds the old request,
+it might cause error recovery hang or make error handler code more
+complicated.
 
-And it still needs to be implemented, even if it isn't obvious.
-In the security world we don't get to say "Sure, the performance
-sucks, but the optimization folks will take care of that later."
-Throwing in a nebulous security hook and counting on the LSMs to
-make rainbows out of it isn't going to fly either.
+> 
+> > and looks the extra space has to be bound with
+> > io_uring_cmd.
+> 
+> if extra space is bound with io_uring_cmd, it helps to reduce the code
+> (and just that. I don't see that efficiency will improve - rather it
 
->
->   Luis
+Does retry have to be efficient?
+
+> will be tad bit less because of one more 72 byte copy opeation in fast-path).
+
+Allocating one buffer and bind it with io_uring_cmd in case of retry is actually
+similar with current model, retry is triggered by FS bio, and the allocated
+buffer can play similar role with FS bio.
+
+
+
+Thanks, 
+Ming
+

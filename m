@@ -2,120 +2,171 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B61D1576AC2
-	for <lists+io-uring@lfdr.de>; Sat, 16 Jul 2022 01:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54AE6576B6E
+	for <lists+io-uring@lfdr.de>; Sat, 16 Jul 2022 05:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232706AbiGOXeT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Jul 2022 19:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60630 "EHLO
+        id S230078AbiGPD0R (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Jul 2022 23:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232869AbiGOXeR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 19:34:17 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D84513E0D
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 16:34:16 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id o15so6925686pjh.1
-        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 16:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=pzoy1lB0v/6rv9DQZd9VxpupwhasQh/2PyI0IHfFrE8=;
-        b=RUs4RJG10t3npoapeFLstot6OT3s2CAwPPMDxx6WbB3XyCwITIKcdE3hATQeTbgqfx
-         siSLu2Cow1Al91+Yj8cXP5+AWJYjhrWfOMekD+G6U75zr6J3b+m0Har1b5wy0oea/Fuo
-         K6mRsgzH2NiuaPebhGSgxUiRrXnFBypAVT+ZYqxzkksZeIz7aKtkb//RMMl1plawY3ht
-         W0ALarB+KnUC9LxxFHiauxK3EFv6BIRLpzhGmpOlmeP0fgWQ39bO+hhJdQ1KBHBMXDOj
-         2AOdqFWz4vnpQ3laCcsLaYV5N+tcLXX1MC/zSr07XvHakv3Ez87bNlANsMXCky9ks+M6
-         TPOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=pzoy1lB0v/6rv9DQZd9VxpupwhasQh/2PyI0IHfFrE8=;
-        b=vH4Y2EV7zaDYtK/nSsjQUMuE7fnT1U0/d8nCX1ZzCZx4tG2wJUNQaEFQhtPyib/5XI
-         880gjsyPqh3C6cYYHxg+6UcIL/jjeczSs2A7ImR9Vib5yn0DKzUTDQT7VBY+hbmD5HTv
-         GVX6K5bWUf5ZKQXC/ZksEr1HwBMHponpninoCP3TPEIOv1iFGxva4TGQl3BJH7t5zpQx
-         21oZqa17cCG70BJutW9JmDyYpWzXwf796pSjh+NEOUQOioPMObSXDocXrhYCpdCddoPE
-         s8PUIn6+IsEyYcLcwi82FZdQZaCrDfHQ6z64iH4zi0YfbVjV+c36iC6PNZkJPg97bSMd
-         c9rg==
-X-Gm-Message-State: AJIora8BAn6SRG5Agks2Uwn5zn7XSPIHeTaXEUU0RTy1ML/swqDMXt9N
-        as2hxeRjPuB4Uwso7VK4gqR9PQ==
-X-Google-Smtp-Source: AGRyM1vuPuU3qfouowNfCFYUqlvzGi9NLhytJ13Q1VlElKwXTIZX+SBEfFQdjaOUe7RlMwvURt059A==
-X-Received: by 2002:a17:90a:d714:b0:1ef:b93d:fc4d with SMTP id y20-20020a17090ad71400b001efb93dfc4dmr18709466pju.49.1657928055988;
-        Fri, 15 Jul 2022 16:34:15 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u9-20020a1709026e0900b0016be702a535sm4086321plk.187.2022.07.15.16.34.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jul 2022 16:34:15 -0700 (PDT)
-Message-ID: <7d928dc4-ed59-3858-803a-41b3947ea12b@kernel.dk>
-Date:   Fri, 15 Jul 2022 17:34:14 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd file
- op
-Content-Language: en-US
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Cc:     joshi.k@samsung.com, linux-security-module@vger.kernel.org,
+        with ESMTP id S230047AbiGPD0P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Jul 2022 23:26:15 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19867436A
+        for <io-uring@vger.kernel.org>; Fri, 15 Jul 2022 20:26:13 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220716032610epoutp0297e554ed91e2ed5373d5ce06a311fd43~CMXAIXkTs1911819118epoutp02E
+        for <io-uring@vger.kernel.org>; Sat, 16 Jul 2022 03:26:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220716032610epoutp0297e554ed91e2ed5373d5ce06a311fd43~CMXAIXkTs1911819118epoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1657941970;
+        bh=9t8nL8rQn5cHV5JiqdShNz/B50DJYuVSJR8J3CiVZZc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WCBO5JT5qETUyxmyxVFxLAtLvcZo5cKNgIgBbLSJFSC0qS3tLzfi+oP1A3oyFbEa8
+         jU+5SDgRo+GHrVqHkVRsV1pRXXg6aErKtNPZIm7vN8HtORyLeh2wsZWmJElONOyNnT
+         O6wkkpFc/jXPmj8/Q6h/TDscX6jJ80k/ZilxD6Ng=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220716032609epcas5p153f19be3ee9654107a98e21c6aef2375~CMW-tgUkF2278222782epcas5p1y;
+        Sat, 16 Jul 2022 03:26:09 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4LlDCM4kLBz4x9Pv; Sat, 16 Jul
+        2022 03:26:07 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B4.F2.09566.FCF22D26; Sat, 16 Jul 2022 12:26:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220716032606epcas5p4bb3a44863ba540f7dc98e6ecf7eadd1e~CMW8tn6YA2888628886epcas5p4m;
+        Sat, 16 Jul 2022 03:26:06 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220716032606epsmtrp28c24ab586b969d020313482da4b477c3~CMW8s1xc51780117801epsmtrp2a;
+        Sat, 16 Jul 2022 03:26:06 +0000 (GMT)
+X-AuditID: b6c32a4a-b8dff7000000255e-e6-62d22fcfd4b8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.F9.08905.ECF22D26; Sat, 16 Jul 2022 12:26:06 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220716032604epsmtip147d4d0bea5ee5d1c304b72a9f93302cd~CMW7MH6ab1922419224epsmtip1d;
+        Sat, 16 Jul 2022 03:26:04 +0000 (GMT)
+Date:   Sat, 16 Jul 2022 08:50:41 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, casey@schaufler-ca.com,
+        axboe@kernel.dk, linux-security-module@vger.kernel.org,
         io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, a.manzanares@samsung.com,
         javier@javigon.com
+Subject: Re: [PATCH] lsm,io_uring: add LSM hooks to for the new uring_cmd
+ file op
+Message-ID: <20220716032041.GB25618@test-zns>
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmlu55/UtJBu+WK1lMP6xosfpuP5vF
+        vW2/2CzetZ5jseg8fYHJYu8tbYv5y56yW3zoecRmcWPCU0aL25OmszhweTQvuMPicflsqcem
+        VZ1sHpuX1Hus3fuC0aNvyypGj6P7F7F5fN4kF8ARlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8c
+        b2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SgkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRW
+        KbUgJafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE748yK9cwFzUIVq/ZZNjA+5eti5OSQEDCR
+        +PPkH3MXIxeHkMBuRonJB++xQzifGCVeNDSxgVQJCXxjlLi5JQqmY97P+1AdexklGhZ8YIJw
+        njFKfJt7lgWkikVAVWJlx0egbg4ONgFNiQuTS0HCIgIqEoufrmcEqWcWaGaSmPxvOjNIQlgg
+        WKJn7SEmEJtXQFdi/t6fLBC2oMTJmU/AbE6BQInpJzrYQWxRAWWJA9uOM0FctJRDYt0TTwjb
+        ReLQ1i9QcWGJV8e3sEPYUhKf3+1lg7CTJS7NPAdVUyLxeM9BKNteovVUP9g9zAKZEocOzmCH
+        sPkken8/YQL5RUKAV6KjTQiiXFHi3qSnrBC2uMTDGUugbA+Jcyu+QkPxGJPEhfNrmSYwys1C
+        8s4sJCsgbCuJzg9NrLOAVjALSEss/8cBYWpKrN+lv4CRdRWjZGpBcW56arFpgVFeajk8ipPz
+        czcxglOsltcOxocPPugdYmTiYDzEKMHBrCTC233oXJIQb0piZVVqUX58UWlOavEhRlNg9Exk
+        lhJNzgcm+bySeEMTSwMTMzMzE0tjM0MlcV6vq5uShATSE0tSs1NTC1KLYPqYODilGpiW/7zb
+        v+0pz0kV/Tm5SUqn93U9XHFdiXlKq3yW2VpBnnsZB8+9NPGYuVN54rN49lNzbgsyyc7dw6Su
+        p7V6r/ztuOvSO2qFHpsLpM3W6Em5ntWpaTXPKd/WYhanw31F15qS9ZxTV7IUH089NdfcvG7T
+        orVhmzbv+9VY9j7I8FyrWuXDLz+Wnfy2Ivzp3EN8KW4ZH/PqbOVvXS5+6q7ncDt1+2+91G8p
+        cUopLRpivFejTk65UZX57GOj3fFfmqU1UzR9FJZsPGi6OfQv4/OA4r2izOvL+T9+iugNiU7g
+        crmdYCNc39+0oTkqekGQql7MhI656pvb9voL6pfcnWJ85Bnr0anxd6W059VWO9zuqlViKc5I
+        NNRiLipOBAA8rTusOgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSnO45/UtJBisu8FtMP6xosfpuP5vF
+        vW2/2CzetZ5jseg8fYHJYu8tbYv5y56yW3zoecRmcWPCU0aL25OmszhweTQvuMPicflsqcem
+        VZ1sHpuX1Hus3fuC0aNvyypGj6P7F7F5fN4kF8ARxWWTkpqTWZZapG+XwJXx+WsbS8Em/oo1
+        q+cwNTCu4+li5OSQEDCRmPfzPnMXIxeHkMBuRomWxTvYIRLiEs3XfkDZwhIr/z1nhyh6wijx
+        dsM1NpAEi4CqxMqOj0A2BwebgKbEhcmlIGERARWJxU/XM4LYzAKtTBItO9NBbGGBYImetYeY
+        QGxeAV2J+Xt/skDMPMYkseLZA3aIhKDEyZlPWCCazSTmbX7IDDKfWUBaYvk/DpAwp0CgxPQT
+        HWDlogLKEge2HWeawCg4C0n3LCTdsxC6FzAyr2KUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vO
+        z93ECI4bLc0djNtXfdA7xMjEwXiIUYKDWUmEt/vQuSQh3pTEyqrUovz4otKc1OJDjNIcLEri
+        vBe6TsYLCaQnlqRmp6YWpBbBZJk4OKUamNx3rmU2bXzj9Kmldlv0VlW9Vc8reLOW+t9aJPjv
+        oKczz8bff+MUti53D0iuTy+eNOHIb6uHc/ICBR4v/C1t9mLzl7lVD90nZlmrfT5nOfXjMqnO
+        OT33F1/T+GQkU/6q8VXfVu950zzeMk1Q07jp/e9o7OopGVlKB7dkztK5GWW8UEpZYNYXhfdv
+        hJbmSdd9z25Nc1T1+euydNv7Q+W9ZtV9L8Ke+GgmKwWfTv/usm6u/Pqj13LNyo76l0+YvEz8
+        wYnXpdNZa+u8Nbl+cr/8FbuvL1v/7gLe+olGbFaFu6RN1jzln6chwvvq6ZqTfk/q+T2WRU7s
+        +cb1SafI6InKvla1oMoJjUsjGzR9Ux9vOa/EUpyRaKjFXFScCACFMUcpCgMAAA==
+X-CMS-MailID: 20220716032606epcas5p4bb3a44863ba540f7dc98e6ecf7eadd1e
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----jllqsR28.5W1KdEnZlWKzx60EIuo6gwqBUS1IW9J_3KKio4g=_136310_"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220715184632epcas5p36bd157d36a2aed044de40264911bec05
 References: <20220714000536.2250531-1-mcgrof@kernel.org>
- <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
- <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
- <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
- <566af35b-cebb-20a4-99b8-93184f185491@schaufler-ca.com>
- <e9cd6c3a-0658-c770-e403-9329b8e9d841@schaufler-ca.com>
- <4588f798-54d6-311a-fcd2-0d0644829fc2@kernel.dk>
- <d8912809-ffeb-8d88-3b6b-fd30681ad898@schaufler-ca.com>
- <27b03030-3ee7-f795-169a-5c49de2f6dd2@kernel.dk>
- <5615235a-ccc4-efc7-c395-f50909860ab0@schaufler-ca.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <5615235a-ccc4-efc7-c395-f50909860ab0@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+        <CAHC9VhSjfrMtqy_6+=_=VaCsJKbKU1oj6TKghkue9LrLzO_++w@mail.gmail.com>
+        <YtC8Hg1mjL+0mjfl@bombadil.infradead.org>
+        <CGME20220715184632epcas5p36bd157d36a2aed044de40264911bec05@epcas5p3.samsung.com>
+        <CAHC9VhQMABYKRqZmJQtXai0gtiueU42ENvSUH929=pF6tP9xOg@mail.gmail.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/15/22 5:31 PM, Casey Schaufler wrote:
-> On 7/15/2022 4:18 PM, Jens Axboe wrote:
->> On 7/15/22 5:14 PM, Casey Schaufler wrote:
->>> On 7/15/2022 4:05 PM, Jens Axboe wrote:
->>>> On 7/15/22 5:03 PM, Casey Schaufler wrote:
->>>>
->>>>> There isn't (as of this writing) a file io_uring/uring_cmd.c in
->>>>> Linus' tree. What tree does this patch apply to?
->>>> It's the for-5.20 tree. See my reply to the v2 of the patch, including
->>>> suggestions on how to stage it.
->>> A URL for the io_uring tree would be REAL helpful.
->> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.20/io_uring
-> 
-> I'm sorry, I must be being extremely obtuse. I want to create the Smack
-> patch to go along with the patch under discussion. I would like to clone
-> the tree (with git clone <URL> ; git checkout <branch>) so I can build
-> the tree and then develop the code.  The URL you provided is a web front
-> end to the git tree, and does not provide the clone URL (that I can find).
+------jllqsR28.5W1KdEnZlWKzx60EIuo6gwqBUS1IW9J_3KKio4g=_136310_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Just go one level back, out of the branch, and it'll tell you:
+On Fri, Jul 15, 2022 at 02:46:16PM -0400, Paul Moore wrote:
+>On Thu, Jul 14, 2022 at 9:00 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>> On Wed, Jul 13, 2022 at 11:00:42PM -0400, Paul Moore wrote:
+>> > On Wed, Jul 13, 2022 at 8:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>> > >
+>> > > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+>> > > add infrastructure for uring-cmd"), this extended the struct
+>> > > file_operations to allow a new command which each subsystem can use
+>> > > to enable command passthrough. Add an LSM specific for the command
+>> > > passthrough which enables LSMs to inspect the command details.
+>> > >
+>> > > This was discussed long ago without no clear pointer for something
+>> > > conclusive, so this enables LSMs to at least reject this new file
+>> > > operation.
+>> > >
+>> > > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+>> >
+>> > [NOTE: I now see that the IORING_OP_URING_CMD has made it into the
+>> > v5.19-rcX releases, I'm going to be honest and say that I'm
+>> > disappointed you didn't post the related LSM additions
+>>
+>> It does not mean I didn't ask for them too.
+>>
+>> > until
+>> > v5.19-rc6, especially given our earlier discussions.]
+>>
+>> And hence since I don't see it either, it's on us now.
+>
+>It looks like I owe you an apology, Luis.  While my frustration over
+>io_uring remains, along with my disappointment that the io_uring
+>developers continue to avoid discussing access controls with the LSM
+>community, you are not the author of the IORING_OP_URING_CMD.   You
 
-git://git.kernel.dk/linux-block
+I am to be shot down here. Solely.
+My LSM understanding has been awful. At a level that I am not clear
+how to fix if someone says - your code lacks LSM consideration.
+But nothing to justify, I fully understand this is not someone else's
+problem but mine. I intend to get better at it.
+And I owe apology (to you/LSM-folks, Luis, Jens) for the mess.
 
-or
+------jllqsR28.5W1KdEnZlWKzx60EIuo6gwqBUS1IW9J_3KKio4g=_136310_
+Content-Type: text/plain; charset="utf-8"
 
-https://git.kernel.dk/linux-block
 
-and the branch is for-5.20/io_uring as in the link.
-
--- 
-Jens Axboe
-
+------jllqsR28.5W1KdEnZlWKzx60EIuo6gwqBUS1IW9J_3KKio4g=_136310_--

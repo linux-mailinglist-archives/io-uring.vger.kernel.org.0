@@ -2,41 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A83C578128
-	for <lists+io-uring@lfdr.de>; Mon, 18 Jul 2022 13:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2CDC5783C3
+	for <lists+io-uring@lfdr.de>; Mon, 18 Jul 2022 15:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbiGRLo5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Jul 2022 07:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
+        id S230182AbiGRNet (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Jul 2022 09:34:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233614AbiGRLo4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Jul 2022 07:44:56 -0400
-Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440AEB72;
-        Mon, 18 Jul 2022 04:44:55 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=ziyangzhang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VJk0F0G_1658144691;
-Received: from 30.97.56.227(mailfrom:ZiyangZhang@linux.alibaba.com fp:SMTPD_---0VJk0F0G_1658144691)
-          by smtp.aliyun-inc.com;
-          Mon, 18 Jul 2022 19:44:52 +0800
-Message-ID: <9993fb25-ecd1-4682-99b9-e83472583897@linux.alibaba.com>
-Date:   Mon, 18 Jul 2022 19:44:51 +0800
+        with ESMTP id S229640AbiGRNet (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Jul 2022 09:34:49 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C9319C17
+        for <io-uring@vger.kernel.org>; Mon, 18 Jul 2022 06:34:48 -0700 (PDT)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26HNs71Q017139
+        for <io-uring@vger.kernel.org>; Mon, 18 Jul 2022 06:34:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=skKW5lecG5UJMyYQlcRl3AZpJeI32OEzD6WreotObqg=;
+ b=EU5gUlhTGOd6Ox1vkrkz7kOhucAX17gehdWRVC2T9Nulj7EeB20ZsxYHdhpnrBOwvIcd
+ HvkkE/BWQaRAQrs5sLYbiXV57HWjg4RELxAeQKmKpVReToBs9xb6ybzzF+je8VgZzJ3J
+ asuHOsU5AOfA8E3fz27C4C+Q65qUpj967MA= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hbtetgw91-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 18 Jul 2022 06:34:48 -0700
+Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
+ snc-exhub203.TheFacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Mon, 18 Jul 2022 06:34:47 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Mon, 18 Jul 2022 06:34:47 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 259B13319DD8; Mon, 18 Jul 2022 06:34:36 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, <Kernel-team@fb.com>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH liburing] fix io_uring_recvmsg_cmsg_nexthdr logic
+Date:   Mon, 18 Jul 2022 06:34:29 -0700
+Message-ID: <20220718133429.726628-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        joseph.qi@linux.alibaba.com,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-From:   Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-Subject: [PATCH] ublk_drv: add one new ublk command: UBLK_IO_NEED_GET_DATA
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: imGtum2gjjvwJYNjuCfguqJOoodAnVeM
+X-Proofpoint-ORIG-GUID: imGtum2gjjvwJYNjuCfguqJOoodAnVeM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-18_12,2022-07-18_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -44,271 +64,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add one new ublk command: UBLK_IO_NEED_GET_DATA.
+io_uring_recvmsg_cmsg_nexthdr was using the payload to delineate the end
+of the cmsg list, but really it needs to use whatever was returned by the
+kernel.
 
-It is designed for a user application who wants to allocate IO buffer
-and set IO buffer address only after it receives an IO request.
-
-1. Background:
-For now, ublk requires the user to set IO buffer address in advance(with
-last UBLK_IO_COMMIT_AND_FETCH_REQ command)so the user has to
-pre-allocate IO buffer.
-
-For READ requests, this work flow looks good because the data copy
-happens after user application gets a cqe and the kernel copies data.
-So user application can allocate IO buffer, copy data to be read into
-it, and issues a sqe with the newly allocated IO buffer.
-
-However, for WRITE requests, this work flow looks weird because
-the data copy happens in a task_work before the user application gets one
-cqe. So it is inconvenient for users who allocates(or fetch from a
-memory pool)buffer after it gets one request(and know the actual data
-size).
-
-2. Design:
-Consider add a new feature flag: UBLK_F_NEED_GET_DATA.
-
-If user sets this new flag(through libublksrv) and pass it to kernel
-driver, ublk kernel driver should returns a cqe with
-UBLK_IO_RES_NEED_GET_DATA after a new blk-mq WRITE request comes.
-
-A user application now can allocate data buffer for writing and pass its
-address in UBLK_IO_NEED_GET_DATA command after ublk kernel driver returns
-cqe with UBLK_IO_RES_NEED_GET_DATA.
-
-After the kernel side gets the sqe (UBLK_IO_NEED_GET_DATA command), it
-now copies(address pinned, indeed) data to be written from bio vectors
-to newly returned IO data buffer.
-
-Finally, the kernel side returns UBLK_IO_RES_OK and ublksrv handles the
-IO request as usual.The new feature: UBLK_F_NEED_GET_DATA is enabled on
-demand ublksrv still can pre-allocate data buffers with task_work.
-
-3. Evaluation:
-We modify ublksrv to support UBLK_F_NEED_GET_DATA and the modification
-will be PR-ed to Ming Lei's github repository soon if this patch is
-okay.
-
-We have tested write latency with:
-  (1)  No UBLK_F_NEED_GET_DATA(the old commit) as baseline
-  (2)  UBLK_F_NEED_GET_DATA enabled/disabled
-on demo_null and demo_event of newest ublksrv project.
-
-Config of fio:bs=4k, iodepth=1, numjobs=1, rw=write/randwrite, direct=1,
-ioengine=libaio.
-
-Here is the comparison of lat(usec) in fio:
-
-demo_null:
-write:        28.74(baseline) -- 28.77(disable) -- 57.20(enable)
-randwrite:    27.81(baseline) -- 28.51(disable) -- 54.81(enable)
-
-demo_event:
-write:        46.45(baseline) -- 43.31(disable) -- 75.50(enable)
-randwrite:    45.39(baseline) -- 43.66(disable) -- 76.02(enable)
-
-Looks like:
-  (1) UBLK_F_NEED_GET_DATA does not introduce additional overhead when
-      comparing baseline and disable.
-  (2) enabling UBLK_F_NEED_GET_DATA adds about two times more latency
-      than disabling it. And it is reasonable since the IO goes through
-      the total ublk IO stack(ubd_drv <--> ublksrv) once again.
-  (3) demo_null and demo_event are both null targets. And I think this
-      overhead is not too heavy if real data handling backend is used.
-
-Signed-off-by: ZiyangZhang <ZiyangZhang@linux.alibaba.com>
+Reported-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 874406f ("add multishot recvmsg API")
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- drivers/block/ublk_drv.c      | 77 +++++++++++++++++++++++++++++++----
- include/uapi/linux/ublk_cmd.h | 19 +++++++++
- 2 files changed, 88 insertions(+), 8 deletions(-)
+ src/include/liburing.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 2c1b01d7f27d..0d56ae680cfe 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -83,6 +83,8 @@ struct ublk_uring_cmd_pdu {
-  */
- #define UBLK_IO_FLAG_ABORTED 0x04
- 
-+#define UBLK_IO_FLAG_NEED_GET_DATA 0x08
-+
- struct ublk_io {
- 	/* userspace buffer address from io cmd */
- 	__u64	addr;
-@@ -160,11 +162,19 @@ static struct lock_class_key ublk_bio_compl_lkclass;
- static inline bool ublk_can_use_task_work(const struct ublk_queue *ubq)
- {
- 	if (IS_BUILTIN(CONFIG_BLK_DEV_UBLK) &&
-+			!(ubq->flags & UBLK_F_NEED_GET_DATA) &&
- 			!(ubq->flags & UBLK_F_URING_CMD_COMP_IN_TASK))
- 		return true;
- 	return false;
- }
- 
-+static inline bool ublk_need_get_data(const struct ublk_queue *ubq)
-+{
-+	if (ubq->flags & UBLK_F_NEED_GET_DATA)
-+		return true;
-+	return false;
-+}
-+
- static struct ublk_device *ublk_get_device(struct ublk_device *ub)
- {
- 	if (kobject_get_unless_zero(&ub->cdev_dev.kobj))
-@@ -514,6 +524,21 @@ static void __ublk_fail_req(struct ublk_io *io, struct request *req)
- 	}
- }
- 
-+static void ubq_complete_io_cmd(struct ublk_io *io, int res)
-+{
-+	/* mark this cmd owned by ublksrv */
-+	io->flags |= UBLK_IO_FLAG_OWNED_BY_SRV;
-+
-+	/*
-+	 * clear ACTIVE since we are done with this sqe/cmd slot
-+	 * We can only accept io cmd in case of being not active.
-+	 */
-+	io->flags &= ~UBLK_IO_FLAG_ACTIVE;
-+
-+	/* tell ublksrv one io request is coming */
-+	io_uring_cmd_done(io->cmd, res, 0);
-+}
-+
- #define UBLK_REQUEUE_DELAY_MS	3
- 
- static inline void __ublk_rq_task_work(struct request *req)
-@@ -536,6 +561,20 @@ static inline void __ublk_rq_task_work(struct request *req)
- 		return;
- 	}
- 
-+	if (ublk_need_get_data(ubq) &&
-+			(req_op(req) == REQ_OP_WRITE ||
-+			req_op(req) == REQ_OP_FLUSH) &&
-+			!(io->flags & UBLK_IO_FLAG_NEED_GET_DATA)) {
-+
-+		pr_devel("%s: ublk_need_get_data. op %d, qid %d tag %d io_flags %x\n",
-+				__func__, io->cmd->cmd_op, ubq->q_id, req->tag, io->flags);
-+
-+		io->flags |= UBLK_IO_FLAG_NEED_GET_DATA;
-+
-+		ubq_complete_io_cmd(io, UBLK_IO_RES_NEED_GET_DATA);
-+		return;
-+	}
-+
- 	mapped_bytes = ublk_map_io(ubq, req, io);
- 
- 	/* partially mapped, update io descriptor */
-@@ -558,17 +597,13 @@ static inline void __ublk_rq_task_work(struct request *req)
- 			mapped_bytes >> 9;
- 	}
- 
--	/* mark this cmd owned by ublksrv */
--	io->flags |= UBLK_IO_FLAG_OWNED_BY_SRV;
--
- 	/*
--	 * clear ACTIVE since we are done with this sqe/cmd slot
--	 * We can only accept io cmd in case of being not active.
-+	 * Anyway, we have handled UBLK_IO_NEED_GET_DATA for WRITE/FLUSH requests,
-+	 * or we did nothing for other types requests.
- 	 */
--	io->flags &= ~UBLK_IO_FLAG_ACTIVE;
-+	io->flags &= ~UBLK_IO_FLAG_NEED_GET_DATA;
- 
--	/* tell ublksrv one io request is coming */
--	io_uring_cmd_done(io->cmd, UBLK_IO_RES_OK, 0);
-+	ubq_complete_io_cmd(io, UBLK_IO_RES_OK);
- }
- 
- static void ublk_rq_task_work_cb(struct io_uring_cmd *cmd)
-@@ -860,6 +895,16 @@ static void ublk_mark_io_ready(struct ublk_device *ub, struct ublk_queue *ubq)
- 	mutex_unlock(&ub->mutex);
- }
- 
-+static void ublk_handle_need_get_data(struct ublk_device *ub, int q_id,
-+		int tag, struct io_uring_cmd *cmd)
-+{
-+	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
-+	struct request *req = blk_mq_tag_to_rq(ub->tag_set.tags[q_id], tag);
-+
-+	pdu->req = req;
-+	io_uring_cmd_complete_in_task(cmd, ublk_rq_task_work_cb);
-+}
-+
- static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- {
- 	struct ublksrv_io_cmd *ub_cmd = (struct ublksrv_io_cmd *)cmd->cmd;
-@@ -898,6 +943,14 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 		goto out;
- 	}
- 
-+	/*
-+	 * ensure that the user issues UBLK_IO_NEED_GET_DATA
-+	 * if the driver have set the UBLK_IO_FLAG_NEED_GET_DATA.
-+	 */
-+	if ((io->flags & UBLK_IO_FLAG_NEED_GET_DATA)
-+			&& (cmd_op != UBLK_IO_NEED_GET_DATA))
-+		goto out;
-+
- 	switch (cmd_op) {
- 	case UBLK_IO_FETCH_REQ:
- 		/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
-@@ -931,6 +984,14 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 		io->cmd = cmd;
- 		ublk_commit_completion(ub, ub_cmd);
- 		break;
-+	case UBLK_IO_NEED_GET_DATA:
-+		if (!(io->flags & UBLK_IO_FLAG_OWNED_BY_SRV))
-+			goto out;
-+		io->addr = ub_cmd->addr;
-+		io->cmd = cmd;
-+		io->flags |= UBLK_IO_FLAG_ACTIVE;
-+		ublk_handle_need_get_data(ub, ub_cmd->q_id, ub_cmd->tag, cmd);
-+		break;
- 	default:
- 		goto out;
- 	}
-diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
-index a3f5e7c21807..711170f961ac 100644
---- a/include/uapi/linux/ublk_cmd.h
-+++ b/include/uapi/linux/ublk_cmd.h
-@@ -28,12 +28,22 @@
-  *      this IO request, request's handling result is committed to ublk
-  *      driver, meantime FETCH_REQ is piggyback, and FETCH_REQ has to be
-  *      handled before completing io request.
-+ *
-+ * NEED_GET_DATA: only used for write requests to set io addr and copy data
-+ *      When NEED_GET_DATA is set, ublksrv has to issue UBLK_IO_NEED_GET_DATA
-+ *      command after ublk driver returns UBLK_IO_RES_NEED_GET_DATA.
-+ *
-+ *      It is only used if ublksrv set UBLK_F_NEED_GET_DATA flag
-+ *      while starting a ublk device.
-  */
- #define	UBLK_IO_FETCH_REQ		0x20
- #define	UBLK_IO_COMMIT_AND_FETCH_REQ	0x21
- 
-+#define UBLK_IO_NEED_GET_DATA	0x22
-+
- /* only ABORT means that no re-fetch */
- #define UBLK_IO_RES_OK			0
-+#define UBLK_IO_RES_NEED_GET_DATA	1
- #define UBLK_IO_RES_ABORT		(-ENODEV)
- 
- #define UBLKSRV_CMD_BUF_OFFSET	0
-@@ -54,6 +64,15 @@
-  */
- #define UBLK_F_URING_CMD_COMP_IN_TASK	(1UL << 1)
- 
-+/*
-+ * User should issue io cmd again for write requests to
-+ * set io buffer address and copy data from bio vectors
-+ * to the userspace io buffer.
-+ *
-+ * In this mode, task_work is not used.
-+ */
-+#define UBLK_F_NEED_GET_DATA (1UL << 3)
-+
- /* device state */
- #define UBLK_S_DEV_DEAD	0
- #define UBLK_S_DEV_LIVE	1
--- 
-2.34.1
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 583b917..fc7613d 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -745,7 +745,8 @@ io_uring_recvmsg_cmsg_nexthdr(struct io_uring_recvmsg=
+_out *o, struct msghdr *m,
+=20
+ 	if (cmsg->cmsg_len < sizeof(struct cmsghdr))
+ 		return NULL;
+-	end =3D (unsigned char *) io_uring_recvmsg_payload(o, m);
++	end =3D (unsigned char *) io_uring_recvmsg_cmsg_firsthdr(o, m) +
++		o->controllen;
+ 	cmsg =3D (struct cmsghdr *)((unsigned char *) cmsg +
+ 			CMSG_ALIGN(cmsg->cmsg_len));
+=20
+--=20
+2.30.2
+

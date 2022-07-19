@@ -2,186 +2,190 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1B15790DB
-	for <lists+io-uring@lfdr.de>; Tue, 19 Jul 2022 04:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDF757923A
+	for <lists+io-uring@lfdr.de>; Tue, 19 Jul 2022 06:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234196AbiGSC31 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Jul 2022 22:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59618 "EHLO
+        id S234804AbiGSEwx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 19 Jul 2022 00:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233360AbiGSC30 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Jul 2022 22:29:26 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 167E03C14B
-        for <io-uring@vger.kernel.org>; Mon, 18 Jul 2022 19:29:25 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id q41-20020a17090a1b2c00b001f2043c727aso122504pjq.1
-        for <io-uring@vger.kernel.org>; Mon, 18 Jul 2022 19:29:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cyKjSUAbf6aP85qdLzMpG+9cGQ3XPhloIG7GN5HqbOk=;
-        b=PtvjjDevADa6eY5pKioXcYnfJJSND/ijd1BdeH1tmUdp/23IMf/kiY4KS+ZhOStwud
-         iybB4kMCiwSVMkA8YuXqfa3amnH2O4pcZIBoeVD0/FAcvtreTNAh78plnjqzNJG7B3PP
-         EZDUOglKwDCYfYPnJoEAKUbd8QDFV2q4diM5h0oiE76qUXj5kNOqfk/G/43HcCbG9rL/
-         yhUwI+6blwiAeFb0iWtG155fY92T2rsU/HptjH4uUTnwecaoaokLy7Kjmm0mJGQs5PKM
-         kdZScs/OmYfVex1lyjeV9QptalsbxXetYuO0fdqJRhNuLusSRtYPefx1+mEcC8tmNLbz
-         eJbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=cyKjSUAbf6aP85qdLzMpG+9cGQ3XPhloIG7GN5HqbOk=;
-        b=ZaNrvLN6pHBxq/CXbCBY1dDJIKrmZ155IPgnHdVtmrlEnnDijC3lzxjlEuYGL6doFe
-         qyPVcP1ySnXOKh+vDghW0wiVg8ZDd6+5xUm6MZHmL1DHeoVoIV6js3IVFRF4emYB2MMa
-         VR+67oYFVPmdMbSWv24nfCP6wWclMhgdu+FfqSL4Cwa+ocA0T5T34QASxvGbPtjujspi
-         c4DyUHJP8IapYYBIgFi2ZReQqlN7lpx3K9HVu5boiizVqlyr3eeYg8NoVPmBhozJnFva
-         Z/hQSFbLFSIn0bj8RxaHQpQ/kWM0Z2MOqKh0HgM5/+xYqX9kCApyodiFpao0nx/ejLDC
-         JKCw==
-X-Gm-Message-State: AJIora99703o9DMr1WSnRlPZiKC59uPpgcIXT6Q6RVvN+DUuvRG0CSWv
-        JLlOfS42qN/LgGEFkft756pHUQ==
-X-Google-Smtp-Source: AGRyM1uE7kGFOhcKAIUbIMwDuprs5wFhNaDkkeHbkK3wFdgYy5LG6jRHw7UlP4t59RnLwjBy7vbGcA==
-X-Received: by 2002:a17:90b:1bc7:b0:1f0:34e2:5c86 with SMTP id oa7-20020a17090b1bc700b001f034e25c86mr34944374pjb.136.1658197764422;
-        Mon, 18 Jul 2022 19:29:24 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id m22-20020a170902bb9600b0016c5b2a16ffsm10189043pls.142.2022.07.18.19.29.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Jul 2022 19:29:23 -0700 (PDT)
-Message-ID: <74d1f308-de03-fd5e-b7f0-0e17980f988e@kernel.dk>
-Date:   Mon, 18 Jul 2022 20:29:22 -0600
+        with ESMTP id S232969AbiGSEww (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 19 Jul 2022 00:52:52 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9BBA3AB1A
+        for <io-uring@vger.kernel.org>; Mon, 18 Jul 2022 21:52:50 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220719045248epoutp046811e4882a6997591fa72c4d2c89bf36~DIegn2C5e3078530785epoutp044
+        for <io-uring@vger.kernel.org>; Tue, 19 Jul 2022 04:52:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220719045248epoutp046811e4882a6997591fa72c4d2c89bf36~DIegn2C5e3078530785epoutp044
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1658206368;
+        bh=VqeeiIw8zv5QdFlqpTPrDDcYjaoPONkCSpNhbPg+OfE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MHFFgoQpiEp8CBhJ7F1DzrH+mavwonJ1ME7wYm7HTRua2ri9XChIDARz4qL5kkcEe
+         7wr2vnP5M3fa70qGHDg5j2iY7P4hUdrFeP6gZfOzr4nI8T7xgxj4LZ6l67MoSUjyFW
+         WO8Zj2yvKT2vMkpd0s7KXZwO/3E8yuZKXd7H+F4w=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220719045248epcas5p302d8e1f8bccbfef23611d9797c3c44a1~DIegJBJNl2325523255epcas5p3K;
+        Tue, 19 Jul 2022 04:52:48 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Ln5zv66zWz4x9QF; Tue, 19 Jul
+        2022 04:52:43 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        73.96.09662.B9836D26; Tue, 19 Jul 2022 13:52:43 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220719045243epcas5p3a41ed724b270ac45c58e1cba8bc2ba14~DIebgK1uI2118121181epcas5p3D;
+        Tue, 19 Jul 2022 04:52:43 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220719045243epsmtrp1ccfb42b24616dd8f333f46dc1320aa3c~DIebfAakK1146611466epsmtrp1C;
+        Tue, 19 Jul 2022 04:52:43 +0000 (GMT)
+X-AuditID: b6c32a49-86fff700000025be-ab-62d6389b7778
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        05.1A.08802.B9836D26; Tue, 19 Jul 2022 13:52:43 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220719045241epsmtip29d9db9bab2732e54825a90094ab26b07~DIeZzI_S30923609236epsmtip2y;
+        Tue, 19 Jul 2022 04:52:41 +0000 (GMT)
+Date:   Tue, 19 Jul 2022 10:17:17 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        a.manzanares@samsung.com, javier@javigon.com,
+        ankit.kumar@samsung.com
+Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd
+ file op
+Message-ID: <20220719044717.GA22571@test-zns>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [LKP] Re: [io_uring] 584b0180f0:
- phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s
- -10.2% regression
-Content-Language: en-US
-To:     Yin Fengwei <fengwei.yin@intel.com>,
-        kernel test robot <oliver.sang@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
-        lkp@lists.01.org, lkp@intel.com
-References: <20220527092432.GE11731@xsang-OptiPlex-9020>
- <2085bfef-a91c-8adb-402b-242e8c5d5c55@kernel.dk>
- <0d60aa42-a519-12ad-3c69-72ed12398865@intel.com>
- <26d913ea-7aa0-467d-4caf-a93f8ca5b3ff@kernel.dk>
- <9df150bb-f4fd-7857-aea8-b2c7a06a8791@intel.com>
- <7146c853-0ff8-3c92-c872-ce6615baab40@kernel.dk>
- <81af5cdf-1a13-db2c-7b7b-cfd86f1271e6@intel.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <81af5cdf-1a13-db2c-7b7b-cfd86f1271e6@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+In-Reply-To: <CAHC9VhRzjLFg9B4wL7GvW3WY-qM4BoqqcpyS0gW8MUbQ9BD2mg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmhu5si2tJBpM+GVhMP6xosebKb3aL
+        1Xf72SzubfvFZvGu9RyLRefpC0wWe29pW8xf9pTd4kPPIzaLGxOeMlrcnjSdxYHbo3nBHRaP
+        y2dLPTat6mTz2Lyk3mPt3heMHn1bVjF6HN2/iM3j8ya5AI6obJuM1MSU1CKF1Lzk/JTMvHRb
+        Je/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoCuVFMoSc0qBQgGJxcVK+nY2RfmlJakK
+        GfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZUyd/Zi+4JlXRsfsZawPjZLEu
+        Rk4OCQETiYaJtxlBbCGB3YwS3XcDIexPjBKfvyl3MXIB2Z8ZJZZcX84G0/Cr9xQjRGIXo8TK
+        d7PYIZxnjBLvnvYxg1SxCKhKnDo+GaiKg4NNQFPiwuRSkLCIgIrE4qfrwZqZBfYySWz61MME
+        khAWCJZ40bYTbAOvgK5Ew5VdrBC2oMTJmU9YQGxOgUCJ6d97wU4VFVCWOLDtOBPERUs5JB4t
+        cwHZJSHgItHQHQMRFpZ4dXwLO4QtJfGyvw3KTpa4NPMcVGuJxOM9B6Fse4nWU/1g5zMLZEis
+        7L3KBmHzSfT+fsIEMZ5XoqNNCKJcUeLepKesELa4xMMZS6BsD4nOiRuYIYF4jlli+wqeCYxy
+        s5A8MwvJBgjbSqLzQxPrLKANzALSEsv/cUCYmhLrd+kvYGRdxSiZWlCcm55abFpgmJdaDo/g
+        5PzcTYzgRKvluYPx7oMPeocYmTgYDzFKcDArifCK1F5OEuJNSaysSi3Kjy8qzUktPsRoCoyc
+        icxSosn5wFSfVxJvaGJpYGJmZmZiaWxmqCTO63V1U5KQQHpiSWp2ampBahFMHxMHp1QDE6dt
+        TOjum0070q2kXtdwBYnN9292drK0EXn4zWONyNfqVUnfxbqi335LN/C9EM6UP1HZ/MXZTqmH
+        e7j4d35SdJpb7//3Wvqd7HtTZkx43KLbfjX142Tm5fc8FgtLbvqYF21cqH3po6j/LvVpZdNP
+        TefccfPz7E0+qfV7K88mrN7dfO7QxrtudSrlnfGbymWjSpnFjqvZMbhl7Vmq1Zm7+NTTR9uj
+        9h/JcND/rXB1Z+mE5Vk5ySq3D+9u6pxxLkFSSfXqotdP455NtxENUYo8sH6F3VbRoEc9OanH
+        q143d+otnvf6tI8rs+23O8I2aj+P7/GwZc2LbHu/56PCPpvK9QIpP/gm/1m+kWP/jjuLYpVY
+        ijMSDbWYi4oTAfJlMXc9BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsWy7bCSvO5si2tJBv/3cVhMP6xosebKb3aL
+        1Xf72SzubfvFZvGu9RyLRefpC0wWe29pW8xf9pTd4kPPIzaLGxOeMlrcnjSdxYHbo3nBHRaP
+        y2dLPTat6mTz2Lyk3mPt3heMHn1bVjF6HN2/iM3j8ya5AI4oLpuU1JzMstQifbsEroybx6cx
+        F3RIVOzZNoW1gfG+cBcjJ4eEgInEr95TjCC2kMAORom2q6wQcXGJ5ms/2CFsYYmV/54D2VxA
+        NU8YJRa+uglWxCKgKnHq+GSgZg4ONgFNiQuTS0HCIgIqEoufrgebySywn0li10N/EFtYIFji
+        RdtONhCbV0BXouHKLlaImeeYJbbufM8MkRCUODnzCQtEs5nEvM0PmUHmMwtISyz/xwES5hQI
+        lJj+vRdsvqiAssSBbceZJjAKzkLSPQtJ9yyE7gWMzKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz
+        0vWS83M3MYLjR0trB+OeVR/0DjEycTAeYpTgYFYS4RWpvZwkxJuSWFmVWpQfX1Sak1p8iFGa
+        g0VJnPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA1MJ59Ginrrb18p/eu89khQk7bCP/cqcybN7
+        zP9WX1W6EsAhW/MxKkNDtfu85Y/ds7xXGHKqnZN1m7Ftfoz+8fb3KRnnqp3YT4tfyTw5j6eg
+        09goICF+Z7p16EI5pVSROTbx0f+3LJ4tX3tQOz9Vl/n4o6drJ5VwythZy09MOnOqOtrx7wbe
+        7nUnb4i6p4rNWMjXwFN+o6uv8eQpx71ZDP3CblmPveOn5hwSeZUh2Ptxq8y1Znc2wYYT1d36
+        M+5YT2RaVD9/+zJJDQsfPsHgt0XLisRibWv9mzoabfguyQaE7b1Y92Bmls2JVcyHZn/jUT53
+        7Uzy7efbzcQqOzynbUpbLhRXPzVt0ZxT00PElFiKMxINtZiLihMBbEqq5Q4DAAA=
+X-CMS-MailID: 20220719045243epcas5p3a41ed724b270ac45c58e1cba8bc2ba14
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_a32a6_"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220718215605epcas5p4332ce1e7321243d7052834b0804c91c6
+References: <20220715191622.2310436-1-mcgrof@kernel.org>
+        <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
+        <CAHC9VhRzm=1mh9bZKEdLSG0vet=amQDVpuZk+1shMuXYLV_qoQ@mail.gmail.com>
+        <CAHC9VhQm3CBUkVz2OHBmuRi1VDNxvfWs-tFT2UO9LKMbO7YJMg@mail.gmail.com>
+        <e139a585-ece7-7813-7c90-9ffc3a924a87@schaufler-ca.com>
+        <CGME20220718215605epcas5p4332ce1e7321243d7052834b0804c91c6@epcas5p4.samsung.com>
+        <CAHC9VhRzjLFg9B4wL7GvW3WY-qM4BoqqcpyS0gW8MUbQ9BD2mg@mail.gmail.com>
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/18/22 8:16 PM, Yin Fengwei wrote:
-> Hi Jens,
-> 
-> On 7/19/2022 12:27 AM, Jens Axboe wrote:
->> On 7/17/22 9:30 PM, Yin Fengwei wrote:
->>> Hi Jens,
->>>
->>> On 7/15/2022 11:58 PM, Jens Axboe wrote:
->>>> In terms of making this more obvious, does the below also fix it for
->>>> you?
->>>
->>> The regression is still there after applied the change you posted.
+------OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_a32a6_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On Mon, Jul 18, 2022 at 05:52:01PM -0400, Paul Moore wrote:
+>On Mon, Jul 18, 2022 at 1:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 7/15/2022 8:33 PM, Paul Moore wrote:
+>> > On Fri, Jul 15, 2022 at 3:52 PM Paul Moore <paul@paul-moore.com> wrote:
+>> >> On Fri, Jul 15, 2022 at 3:28 PM Jens Axboe <axboe@kernel.dk> wrote:
+>> >>> On 7/15/22 1:16 PM, Luis Chamberlain wrote:
+>> >>>> io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+>> >>>> add infrastructure for uring-cmd"), this extended the struct
+>> >>>> file_operations to allow a new command which each subsystem can use
+>> >>>> to enable command passthrough. Add an LSM specific for the command
+>> >>>> passthrough which enables LSMs to inspect the command details.
+>> >>>>
+>> >>>> This was discussed long ago without no clear pointer for something
+>> >>>> conclusive, so this enables LSMs to at least reject this new file
+>> >>>> operation.
+>> >>> From an io_uring perspective, this looks fine to me. It may be easier if
+>> >>> I take this through my tree due to the moving of the files, or the
+>> >>> security side can do it but it'd have to then wait for merge window (and
+>> >>> post io_uring branch merge) to do so. Just let me know. If done outside
+>> >>> of my tree, feel free to add:
+>> > I forgot to add this earlier ... let's see how the timing goes, I
+>> > don't expect the LSM/Smack/SELinux bits to be ready and tested before
+>> > the merge window opens so I'm guessing this will not be an issue in
+>> > practice, but thanks for the heads-up.
 >>
->> Still don't see the regression here, using ext4. I get about 1020-1045
->> IOPS with or without the patch you sent.
->>
->> This is running it in a vm, and the storage device is nvme. What is
->> hosting your ext4 fs?
-> Just did more test with vm. The regression can't be reproduced with latest
-> code (I tried the tag v5.19-rc7) whatever the underneath storage is SATA
-> or NVME.
-> 
-> But the regression and the debugging patch from me could be reproduced
-> on both SATA and NVME if use commit 584b0180f0f4d6 as base commit
-> (584b0180f0f4d6 vs 584b0180f0f4d6 with my debugging patch).
-> 
-> 
-> Here is the test result I got:
-> NVME as host storage:
->   5.19.0-rc7:
->     write: IOPS=933, BW=937MiB/s (982MB/s)(18.3GiB/20020msec); 0 zone resets
->     write: IOPS=993, BW=996MiB/s (1045MB/s)(19.5GiB/20020msec); 0 zone resets
->     write: IOPS=1005, BW=1009MiB/s (1058MB/s)(19.7GiB/20020msec); 0 zone resets
->     write: IOPS=985, BW=989MiB/s (1037MB/s)(19.3GiB/20020msec); 0 zone resets
->     write: IOPS=1020, BW=1024MiB/s (1073MB/s)(20.0GiB/20020msec); 0 zone resets
-> 
->   5.19.0-rc7 with my debugging patch:
->     write: IOPS=988, BW=992MiB/s (1040MB/s)(19.7GiB/20384msec); 0 zone resets
->     write: IOPS=995, BW=998MiB/s (1047MB/s)(20.1GiB/20574msec); 0 zone resets
->     write: IOPS=996, BW=1000MiB/s (1048MB/s)(19.5GiB/20020msec); 0 zone resets
->     write: IOPS=995, BW=998MiB/s (1047MB/s)(19.5GiB/20020msec); 0 zone resets
->     write: IOPS=1006, BW=1009MiB/s (1058MB/s)(19.7GiB/20019msec); 0 zone resets
+>> I have a patch that may or may not be appropriate. I ran the
+>> liburing tests without (additional) failures, but it looks like
+>> there isn't anything there testing uring_cmd. Do you have a
+>> test tucked away somewhere I can use?
 
-These two basically look identical, which may be why I get the same with
-and without your patch. I don't think it makes a difference for this.
-Curious how it came about?
+Earlier testing was done using fio. liburing tests need a formal review
+in list. Tree is here -
+https://github.com/ankit-sam/liburing/tree/uring-pt
+It adds new "test/io_uring_passthrough.t", which can be run this way:
 
->   584b0180f0:
->     write: IOPS=1004, BW=1008MiB/s (1057MB/s)(19.7GiB/20020msec); 0 zone resets
->     write: IOPS=968, BW=971MiB/s (1018MB/s)(19.4GiB/20468msec); 0 zone resets
->     write: IOPS=982, BW=986MiB/s (1033MB/s)(19.3GiB/20020msec); 0 zone resets
->     write: IOPS=1000, BW=1004MiB/s (1053MB/s)(20.1GiB/20461msec); 0 zone resets
->     write: IOPS=903, BW=906MiB/s (950MB/s)(18.1GiB/20419msec); 0 zone resets
-> 
->   584b0180f0 with my debugging the patch:
->     write: IOPS=1073, BW=1076MiB/s (1129MB/s)(21.1GiB/20036msec); 0 zone resets
->     write: IOPS=1131, BW=1135MiB/s (1190MB/s)(22.2GiB/20022msec); 0 zone resets
->     write: IOPS=1122, BW=1126MiB/s (1180MB/s)(22.1GiB/20071msec); 0 zone resets
->     write: IOPS=1071, BW=1075MiB/s (1127MB/s)(21.1GiB/20071msec); 0 zone resets
->     write: IOPS=1049, BW=1053MiB/s (1104MB/s)(21.1GiB/20482msec); 0 zone resets
+./test/io_uring_passthrough.t /dev/ng0n1
 
-Last one looks like it may be faster indeed. I do wonder if this is
-something else, though. There's no reason why -rc7 with that same patch
-applied should be any different than 584b0180f0 with it.
+Requires nvme device (/dev/ng0n1). And admin-access as well, as this
+is raw open. FWIW, each passthrough command (at nvme driver level) is
+also guarded by admin-access.
+
+Ankit (CCed) has the plans to post it (will keep you guys in loop) after
+bit more testing with 5.20 branch.
+
+>All I have at the moment is the audit-testsuite io_uring test (link
+>below) which is lacking a test for the io_uring CMD command.  I plan
+>on adding that, but I haven't finished the SELinux patch yet.
+>
+>* https://protect2.fireeye.com/v1/url?k=9cb2caea-fd39dfd9-9cb341a5-000babff9bb7-e1f9086bae09b852&q=1&e=b1985274-4644-447d-be8c-16f520cadbd9&u=https%3A%2F%2Fgithub.com%2Flinux-audit%2Faudit-testsuite%2Ftree%2Fmain%2Ftests%2Fio_uring
+>
+>(Side note: there will be a SELinux io_uring test similar to the
+>audit-testsuite test, but that effort was delayed due to lack of
+>io_uring support in the Fedora policy for a while; it's working now,
+>but the SELinux/SCTP issues have been stealing my time lately.)
+
+------OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_a32a6_
+Content-Type: text/plain; charset="utf-8"
 
 
-these resu
-> 
-> 
-> SATA disk as host storage:
->   5.19.0-rc7:
->     write: IOPS=624, BW=627MiB/s (658MB/s)(12.3GiB/20023msec); 0 zone resets
->     write: IOPS=655, BW=658MiB/s (690MB/s)(12.9GiB/20021msec); 0 zone resets
->     write: IOPS=596, BW=600MiB/s (629MB/s)(12.1GiB/20586msec); 0 zone resets
->     write: IOPS=647, BW=650MiB/s (682MB/s)(12.7GiB/20020msec); 0 zone resets
->     write: IOPS=591, BW=594MiB/s (623MB/s)(12.1GiB/20787msec); 0 zone resets
-> 
->   5.19.0-rc7 with my debugging patch:
->     write: IOPS=633, BW=637MiB/s (668MB/s)(12.6GiB/20201msec); 0 zone resets
->     write: IOPS=614, BW=617MiB/s (647MB/s)(13.1GiB/21667msec); 0 zone resets
->     write: IOPS=653, BW=657MiB/s (689MB/s)(12.8GiB/20020msec); 0 zone resets
->     write: IOPS=618, BW=622MiB/s (652MB/s)(12.2GiB/20033msec); 0 zone resets
->     write: IOPS=604, BW=608MiB/s (638MB/s)(12.1GiB/20314msec); 0 zone resets
-
-These again are probably the same, within variance.
-
->   584b0180f0:
->     write: IOPS=635, BW=638MiB/s (669MB/s)(12.5GiB/20020msec); 0 zone resets
->     write: IOPS=649, BW=652MiB/s (684MB/s)(12.8GiB/20066msec); 0 zone resets
->     write: IOPS=639, BW=642MiB/s (674MB/s)(13.1GiB/20818msec); 0 zone resets
-> 
->   584b0180f0 with my debugging patch:
->     write: IOPS=850, BW=853MiB/s (895MB/s)(17.1GiB/20474msec); 0 zone resets
->     write: IOPS=738, BW=742MiB/s (778MB/s)(15.1GiB/20787msec); 0 zone resets
->     write: IOPS=751, BW=755MiB/s (792MB/s)(15.1GiB/20432msec); 0 zone resets
-
-But this one looks like a clear difference.
-
-I'll poke at this tomorrow.
-
--- 
-Jens Axboe
-
+------OEEzMZle2oafIX2psGkTvPl59BrXC3apHO-sLjJPJT1qP5Pe=_a32a6_--

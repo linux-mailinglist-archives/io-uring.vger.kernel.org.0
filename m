@@ -2,59 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C549557C21F
-	for <lists+io-uring@lfdr.de>; Thu, 21 Jul 2022 04:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2622C57C27E
+	for <lists+io-uring@lfdr.de>; Thu, 21 Jul 2022 05:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbiGUCKk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Jul 2022 22:10:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60552 "EHLO
+        id S230304AbiGUC76 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 20 Jul 2022 22:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbiGUCKi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Jul 2022 22:10:38 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B76824BC5;
-        Wed, 20 Jul 2022 19:10:36 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id os14so720541ejb.4;
-        Wed, 20 Jul 2022 19:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=uEOHu+xKykAxWq5tYkrOEq+maV+Jh/3IC5GxwTANRrY=;
-        b=HShmJ87V4PLj0iz7+qOJynPobLfslfT1bcMYD1eZaypvvg/IuVQBkc4bqWru2hk0cU
-         DKU9jYXddxnEW1W2wfCZ9luuQnkiYTvZSFvJlKpPCbwUalmNH9Qa8K4gePghprveFEse
-         FB+n6+c8wdSWuVTukZxFBDjz9NyzBy+nKckW7yD/UvnSttg2WrcfmOGUkpFQcU7CmrEn
-         PUv4Xwob2yEdnpjQ6fwoiKXd7NMqOH691kLmBBjwtWjmMSoDM1+JMwKfPuklNe/U1oym
-         toamVen3QuHwp+FNlpIOnpKKVYhiDJMVIYlrmlJtLWgonRh4jquhmXCzTIn9+a8g+tul
-         UUZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=uEOHu+xKykAxWq5tYkrOEq+maV+Jh/3IC5GxwTANRrY=;
-        b=S8ZXYTYJ0X8tyTkI+zvZh0bUlym/AEQx6anHocgLrSm6fFDN5euFrocVIJoApSetiO
-         h01862gaHJxS8mKN5WodBjdQ5oTEnI1YBRdiqX37i8hAEIGdvCaLy3JXZ0+JJvreZRQC
-         tMXJHfYgg6cdrdi7NloQE9rvCipfntv9Z9nvdq22AebLrmGe6wDZcM90/QZEuHCs4kNx
-         BKp6IPnreqMjcJnZmJPSsQE+TGVa6K4HPfGwLUgEBS6nQeRwCGwsmi4lNAnnjV0RBLxn
-         GxFyVdvBr3/Lv9SczwKksDuVgwIbzUITGXKxYx/dW/BjsPj/wgD/0TND4SzVRfZK7eRs
-         B84w==
-X-Gm-Message-State: AJIora8SXMvugWkZL+EUulJmSWLNR1KYncwOrqCjRAcl93QTWUP2c3zQ
-        CD0BOiZ4k+0EnjOmcJ8tELNgm7F1vsZ/erYKUx4=
-X-Google-Smtp-Source: AGRyM1trvP0aFypq7ADOK60yqn5uERjZcj8ii4jHy0TY8128YU10J5jiLzZlqeElddXTuryQovv1/EBAOSghoodGQwM=
-X-Received: by 2002:a17:907:271b:b0:72b:64f0:e508 with SMTP id
- w27-20020a170907271b00b0072b64f0e508mr39283523ejk.275.1658369434807; Wed, 20
- Jul 2022 19:10:34 -0700 (PDT)
+        with ESMTP id S229548AbiGUC75 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Jul 2022 22:59:57 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F02037696A;
+        Wed, 20 Jul 2022 19:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658372396; x=1689908396;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=GhX4rH1we6auoH2Cp4z6k5FEnnI9JqDspoH+ETa9tyE=;
+  b=J3s4fYBkjEYp2MlswGkJ+xqNy+9NovZNFDmLFOD0kTq24aleXQ9WFH+S
+   JxN5354r26fMxtDbIZcmrRIzDBE3nstgvgAnxl8DkiY19sES8oW6MGwzC
+   ZSxkJZ7QiB2vteZhwxXywWNYjJUlqC4Lyv/ntX5ZiFr1dQxD1Yq1vziuc
+   XdDi7Ryz+4iG/AdJo6a+3nejyrueppUGa/PhZwfeFJFWFuFs25NIZCVm2
+   HbZ16KmmZCbOfhJ1l+2Rkn50AMcQDZ4K9J439UTYZi0Zf4ITB7viLy+eL
+   5GJhQoeKunAuWfM+LR2AwEZqtMBwKXA+o6rcDLYbebuqIFL8FrJUL94S6
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="373237515"
+X-IronPort-AV: E=Sophos;i="5.92,288,1650956400"; 
+   d="scan'208";a="373237515"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2022 19:59:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,288,1650956400"; 
+   d="scan'208";a="844261510"
+Received: from fmsmsx605.amr.corp.intel.com ([10.18.126.85])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Jul 2022 19:59:56 -0700
+Received: from fmsmsx607.amr.corp.intel.com (10.18.126.87) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Wed, 20 Jul 2022 19:59:56 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx607.amr.corp.intel.com (10.18.126.87) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Wed, 20 Jul 2022 19:59:55 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28 via Frontend Transport; Wed, 20 Jul 2022 19:59:55 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.27; Wed, 20 Jul 2022 19:59:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PgJyIcohxszntiElJe37eR6o0ENl4IryojVEmEXuq2ewQw5FG/Qg2nINJNQwPe6LhphN3eHyr/iyZisEA6VYsilu6aKh8OfADkCoHzd7VggmSrO59oWRThGgIS15hXKA2HV/lGDx/quHbB6WotU8mDEPE0wONfpKI3/W4b6JP5WL4soO/R9mCLJamlRa9SGZRTy/MfLnouZI0iX/QxwxS7U6jHTMmGZUp/P00BHjrP5KDuLLArBOnZcHZV3Q6nZEhkbHyLsYuPmE14CFSSZLX7h9rnf4Dxat4dKGMAlQyXW6BhkiPVp2n6o74A7gtWf0z8HpPbw0UcQqROFEof+PFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g0nSp/BlgCZdNpybYgpWFPzzpTxdpGDWurd0wFHWBSQ=;
+ b=j5HBYBVYzy4h/vy+BecfVu1WvLPegCMLWNnWg5aXgs1kVX5Puy1KDZDEUTxJMdMAqCp2RoggaM4jsjC/mWKdXEqLqbnXX8X8Sr+HTkgwqmE4vGgvnF1CMr3GxIn5CELgqUyIsbyyA6bnD9v3qPrpDHffS7iPwTzTiH7L1LJ0KRCKJ1bTvOvOaE7QyE6bV214nxtGHwxJrvYcjzRr8t9dpq7nQPckLiSfwn0PLta9sjBdpgtrCfc9Lw5zr+neDWR8+Y1WiRwlnp3vQm2OdUYEZpED/dntVbHnleK5dyWD1QMD3M2tHyUZUwS6F4C3eWpcvQwZDmcrpwKu5OetQNnneg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB4820.namprd11.prod.outlook.com (2603:10b6:303:6f::8)
+ by SJ0PR11MB4975.namprd11.prod.outlook.com (2603:10b6:a03:2d0::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.18; Thu, 21 Jul
+ 2022 02:59:47 +0000
+Received: from CO1PR11MB4820.namprd11.prod.outlook.com
+ ([fe80::552f:2392:56f8:ca32]) by CO1PR11MB4820.namprd11.prod.outlook.com
+ ([fe80::552f:2392:56f8:ca32%4]) with mapi id 15.20.5438.024; Thu, 21 Jul 2022
+ 02:59:47 +0000
+Message-ID: <0863d7c1-1063-2a2a-d70d-764a7580c874@intel.com>
+Date:   Thu, 21 Jul 2022 10:59:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.11.0
+Subject: Re: [LKP] Re: [io_uring] 584b0180f0:
+ phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s
+ -10.2% regression
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>,
+        kernel test robot <oliver.sang@intel.com>
+CC:     LKML <linux-kernel@vger.kernel.org>, <io-uring@vger.kernel.org>,
+        <lkp@lists.01.org>, <lkp@intel.com>
+References: <20220527092432.GE11731@xsang-OptiPlex-9020>
+ <2085bfef-a91c-8adb-402b-242e8c5d5c55@kernel.dk>
+ <0d60aa42-a519-12ad-3c69-72ed12398865@intel.com>
+ <26d913ea-7aa0-467d-4caf-a93f8ca5b3ff@kernel.dk>
+ <9df150bb-f4fd-7857-aea8-b2c7a06a8791@intel.com>
+ <7146c853-0ff8-3c92-c872-ce6615baab40@kernel.dk>
+ <81af5cdf-1a13-db2c-7b7b-cfd86f1271e6@intel.com>
+ <74d1f308-de03-fd5e-b7f0-0e17980f988e@kernel.dk>
+ <2ec953da-78fd-df01-44cf-6f33a5e40864@intel.com>
+ <f5d20f6c-5363-231b-b208-b577a59b4ae9@kernel.dk>
+ <299889df-db40-e0e2-6bc6-d9eb784ebe89@kernel.dk>
+From:   Yin Fengwei <fengwei.yin@intel.com>
+In-Reply-To: <299889df-db40-e0e2-6bc6-d9eb784ebe89@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR04CA0208.apcprd04.prod.outlook.com
+ (2603:1096:4:187::10) To CO1PR11MB4820.namprd11.prod.outlook.com
+ (2603:10b6:303:6f::8)
 MIME-Version: 1.0
-From:   Dipanjan Das <mail.dipanjan.das@gmail.com>
-Date:   Wed, 20 Jul 2022 19:10:23 -0700
-Message-ID: <CANX2M5bXKw1NaHdHNVqssUUaBCs8aBpmzRNVEYEvV0n44P7ioA@mail.gmail.com>
-Subject: KASAN: invalid-free in __io_uring_register
-To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     syzkaller@googlegroups.com, fleischermarius@googlemail.com,
-        its.priyanka.bose@gmail.com
-Content-Type: multipart/mixed; boundary="00000000000011b8bd05e447396c"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fa0f3185-dcb7-4152-968c-08da6ac5120a
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB4975:EE_
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kCymW7rHOhpr+wqzospE5g05qkNifBDQlgLX0/jBnqGzeh3CT9Ryx9oKN9R76lQnghNM15YQxMIblmKnm8Be3900hpZP1W+vPW/GQG+/PloH39gBsyH5KbxbHwj7r4+Fh5ClkxxnW7ZqhDRHl9moFZ130FLusc2qIJsrxhxDmLzgHdJr/vCrTz8tI36s2cqus+OGDhIV4W3qm+S/DbXW6FJZ6dRe9ODP4RFGbOV7OwLi0zLf24PsxJEU3IsQzHzUeeWyxczbCURA7GmGsawzVbCO7DA3G/k6WIWwO/vmH5aas8osVYAQLTkPfeuru6nEPGu2s5IIMZUTKBhYmVApD265FUHTNEi/Ue/4q+3y/XXQBSfuwhlE0hlc7W7OMwghoHAvvuyE1wAvg/vt1hC1DYbXQW/DFKfF9nkUqZgyrMWkvW+A5wcsrK1L5Y6N4dyl/N26QDSOA1jTPZr3AP6uyShKjGHQLRWlGsFJeKbYUYoiwzH7UxdanVZI1U0QAp+wtFbMudTkwwA+9oGp1EsqRCJBz1eQgB0/5qMK96RIV/HwEhy9Lh5CiSYYqAfggNoXl6Ml8GTzVhlpVxO/ixzMVRTj5VZwLbQt95XHRY1xxsYhIvKo7g/DBnqaIGmD1I4o6VZUD7EdWkYj7rG83zX+xTQ/BG37JUDVxggtgg6T70LqEtrPCCTdQ63svsBVKjcB5pwRAYz+GdwzEaecJVCmVSeJXDreMUdbw9h4dyI1bJF86EBidfOjRpXeQ4mRH8Ulz+Ra/PV6G7xBdfMNJ3gH+hFwLenavQb5LI1eCa78i0AqfaNXFWGC8L2E8ndha4+6huJIbhYmD0dwoSEw3KkflQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4820.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(376002)(396003)(366004)(346002)(136003)(39860400002)(26005)(36756003)(31696002)(6486002)(2616005)(6666004)(31686004)(86362001)(41300700001)(6506007)(38100700002)(53546011)(478600001)(82960400001)(6636002)(110136005)(8936002)(2906002)(5660300002)(66556008)(6512007)(8676002)(186003)(316002)(4326008)(83380400001)(107886003)(66946007)(66476007)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ODMyUlZpRndkNEc4MFp1KytCd3FHS2FpR3RxaUk3dkRkYmNSMjZpQUIxNUNY?=
+ =?utf-8?B?QTA2Qm43WlRFOC8rcm13OGpwdVc2REpDdzJlRHBvVnpMcUZlV3RlUzNVRHEw?=
+ =?utf-8?B?ZkNRUHdIZi9hc1A3b0srYVJHSUZmL0ZSVy95RTVjTWIrdmJYaExEbTlPSFVX?=
+ =?utf-8?B?UHNTemlxYUdoK1Nvd1pQY3JYdkJwZU83MUJKQjBJK3MwY2UxVFBrQ2FWalVy?=
+ =?utf-8?B?Q01BdkVhZHVrZzNpZ0JqV3FVeUl6aW13bFA4cWJ5c3hNZEpVQzVQa1A3cG5R?=
+ =?utf-8?B?N0NvNjVJbysvdHhIQmhiUjRERjhsSW5EdHROdVFHcWlFQ3BOZWNVOERXQy9i?=
+ =?utf-8?B?WGY5cVBlSWFkSWFGWnlnMUlLeG85TUN0Y0pvYWhpaW0wTEVtLzUzZ0JTOFJ2?=
+ =?utf-8?B?ZWRFOUllWlRSWEJoZUV2Nit0QndUaUYvWlY2RURBYk8rUitZd0EydWxEb280?=
+ =?utf-8?B?MkNqRlZ3blRFNmNKeGs0dTNqZEE0blJwcE04NHo2Wi9LZDNVTWNtWGRVOGI1?=
+ =?utf-8?B?UlprZ0FZK3lDbEZOSGFORzJQWTYvSndZVmlweWpkbHpJN282ZVVKVStidjF2?=
+ =?utf-8?B?M3loMUtOeURZRmNaYzl5eE8xTW9kZ3lhOGtpM1lkZ1hyYThBUVkyVEFTL09j?=
+ =?utf-8?B?a1NMSFFoM0lTNndXUVcyWmtaUERFcEs4YUo5dk1DRWt3TEhiOUJUMUI4alFi?=
+ =?utf-8?B?UUpVYzk4RnZaYndsaU1NRzJHdThMNy9SUmk5TWVJeUtSN2F6bVo4WVFsUVYz?=
+ =?utf-8?B?WnowbXRSdlpUYXN4Z1BGTWJoZ3IyUjIyU2R6U2oxazFiRmdXUnZySFZ3SkNi?=
+ =?utf-8?B?YmNBblFVMHFuNDZzWi84bW9WK1lNYjhmc0g1bmt0OEg5UFRuYjVsTWIyNnpR?=
+ =?utf-8?B?SEVMejZWSllKSE1KOFFYdGs2cG82VU5Iamk2cVpzOXgzUUx0SUpzeFJJaHJW?=
+ =?utf-8?B?alpON3k1dHRqWTZ4dU5EdG1WQ3d4eXBNcy9KK2RydGRxZUdQejAwSGs1UGNh?=
+ =?utf-8?B?K2ZwUDdyeFdmR1IwMmNDTFBuQVF0cnZ4OTl5dGFMWHQyVDFUUHU3UTRyUnZy?=
+ =?utf-8?B?OFk1SEgzSWRQQXpFMVZhanI0bjR4NzhrOEpEUVMwZzFQYkJhYUJEZlFvQ3pO?=
+ =?utf-8?B?czg0OG5OZTE2UHl4T0hrakpFMnJISWRqK1d2VDFqMThPdENLWXZQanNJUEpp?=
+ =?utf-8?B?cjdFTW9iQzdVdklJeU5VbmdUQVV4dkh0K1MyREtmczdyS085c0hYd2REdUk2?=
+ =?utf-8?B?TTREdmJlY1dWN1hMR1o4YUt2SmZPOXk5bEtUVUpIeW0xRys0d0ZUQ3JXbFVU?=
+ =?utf-8?B?bDB4RzRwQ1JvSVhOZG5qaldjaTZoRjY4ZFgwV1FMeTlDL0JHY3RpaU8wYzVo?=
+ =?utf-8?B?MUtOTHNCQmZxbk0zRVVKWHhrQ1dvR1JqOHhWZVo2U2hTQ1VGZ0VXNFplRGVK?=
+ =?utf-8?B?eEtqQ2hFOGoyK3pGT3JNTlliR3F0WWYyUUlvbUNtd2lBa1VqS0tscmtVbk5Z?=
+ =?utf-8?B?ak9mWnQ4Z3VuMDIySjl6UWowUzUyU3NHR0J6Kys5OTBwaFdGdG1FeVpDK0kv?=
+ =?utf-8?B?L2RhNTEyY1RMcHJ2MjI5b05kVlRPZlVCM3NDWDFoUGdhMTY1RjJEcjJmckZ1?=
+ =?utf-8?B?dmYzWXRDc2RwWE5ITnBXUGVPbnBHYXZZeWRCSURsRFF4Z1pwMmFibzR4UmlH?=
+ =?utf-8?B?RXo5ZUZOYndydU9pVG9sczhwMzAvaWhXTW9HOXZvcmI3Ylg3d3h3ZlhKeWs5?=
+ =?utf-8?B?Rmp5SVZIQ05WS3VCZndDVThvcUNVS3dxTG9MQWN6YWdDMFJwdmc2bHY0NnNH?=
+ =?utf-8?B?RDV2bW5Vem5rME5jc2dGcmJMU3Brd2FyZFB5SFhiR2R6VERaNUt0cEpxcURM?=
+ =?utf-8?B?N1JDcmN6aHNpazJsVzlCLzI4cjJZc2VkZm9FMm9ldWtXWUtmTlVkV0ZiQzJ3?=
+ =?utf-8?B?eUZXSWdkVlhEbVBCaC9xbFJDNTg3V1gzSDkveXNPb2YzL0NCVldoNkZmbHFW?=
+ =?utf-8?B?SUdrZWh4N3cvV05ta0kwZy9JN2pqK3RPVzRPSDFHZmlaclR4K0I5YXBsRE1L?=
+ =?utf-8?B?b2xNdHVQNElOUU80VFlOK0N5d0EwMzBxZEZweW9RQUV4UDFGSTQxTnJyZCt3?=
+ =?utf-8?Q?Mq8zitoDdVdg/sm83Un4Ev6f2?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa0f3185-dcb7-4152-968c-08da6ac5120a
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4820.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2022 02:59:47.3568
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V5joaJIGsoUwTtnmtDuaAGG1kLSUlTnFnmvTlMrnr0/GLU0m5J0Cx2ukJ5Utljh+4PnHmtw2Zy/wSjK8OBzyPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4975
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,256 +172,179 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
---00000000000011b8bd05e447396c
-Content-Type: text/plain; charset="UTF-8"
+Hi Jens,
 
-Hi,
+On 7/21/2022 2:13 AM, Jens Axboe wrote:
+> Can you try this? It's against 5.19-rc7.
+> 
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index a01ea49f3017..34758e95990a 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2015,6 +2015,64 @@ static inline void io_arm_ltimeout(struct io_kiocb *req)
+>  		__io_arm_ltimeout(req);
+>  }
+>  
+> +static bool io_bdev_nowait(struct block_device *bdev)
+> +{
+> +	return !bdev || blk_queue_nowait(bdev_get_queue(bdev));
+> +}
+> +
+> +/*
+> + * If we tracked the file through the SCM inflight mechanism, we could support
+> + * any file. For now, just ensure that anything potentially problematic is done
+> + * inline.
+> + */
+> +static bool __io_file_supports_nowait(struct file *file, umode_t mode)
+> +{
+> +	if (S_ISBLK(mode)) {
+> +		if (IS_ENABLED(CONFIG_BLOCK) &&
+> +		    io_bdev_nowait(I_BDEV(file->f_mapping->host)))
+> +			return true;
+> +		return false;
+> +	}
+> +	if (S_ISSOCK(mode))
+> +		return true;
+> +	if (S_ISREG(mode)) {
+> +		if (IS_ENABLED(CONFIG_BLOCK) &&
+> +		    io_bdev_nowait(file->f_inode->i_sb->s_bdev) &&
+> +		    file->f_op != &io_uring_fops)
+> +			return true;
+> +		return false;
+> +	}
+> +
+> +	/* any ->read/write should understand O_NONBLOCK */
+> +	if (file->f_flags & O_NONBLOCK)
+> +		return true;
+> +	return file->f_mode & FMODE_NOWAIT;
+> +}
+> +
+> +static inline bool io_file_supports_nowait(struct io_kiocb *req)
+> +{
+> +	return req->flags & REQ_F_SUPPORT_NOWAIT;
+> +}
+> +
+> +/*
+> + * If we tracked the file through the SCM inflight mechanism, we could support
+> + * any file. For now, just ensure that anything potentially problematic is done
+> + * inline.
+> + */
+> +static unsigned int io_file_get_flags(struct file *file)
+> +{
+> +	umode_t mode = file_inode(file)->i_mode;
+> +	unsigned int res = 0;
+> +
+> +	if (S_ISREG(mode))
+> +		res |= FFS_ISREG;
+> +	if (__io_file_supports_nowait(file, mode))
+> +		res |= FFS_NOWAIT;
+> +	if (io_file_need_scm(file))
+> +		res |= FFS_SCM;
+> +	return res;
+> +}
+> +
+>  static void io_prep_async_work(struct io_kiocb *req)
+>  {
+>  	const struct io_op_def *def = &io_op_defs[req->opcode];
+> @@ -2031,6 +2089,9 @@ static void io_prep_async_work(struct io_kiocb *req)
+>  	if (req->flags & REQ_F_FORCE_ASYNC)
+>  		req->work.flags |= IO_WQ_WORK_CONCURRENT;
+>  
+> +	if (req->file && !io_req_ffs_set(req))
+> +		req->flags |= io_file_get_flags(req->file) << REQ_F_SUPPORT_NOWAIT_BIT;
+> +
+>  	if (req->flags & REQ_F_ISREG) {
+>  		if (def->hash_reg_file || (ctx->flags & IORING_SETUP_IOPOLL))
+>  			io_wq_hash_work(&req->work, file_inode(req->file));
+> @@ -3556,64 +3617,6 @@ static void io_iopoll_req_issued(struct io_kiocb *req, unsigned int issue_flags)
+>  	}
+>  }
+>  
+> -static bool io_bdev_nowait(struct block_device *bdev)
+> -{
+> -	return !bdev || blk_queue_nowait(bdev_get_queue(bdev));
+> -}
+> -
+> -/*
+> - * If we tracked the file through the SCM inflight mechanism, we could support
+> - * any file. For now, just ensure that anything potentially problematic is done
+> - * inline.
+> - */
+> -static bool __io_file_supports_nowait(struct file *file, umode_t mode)
+> -{
+> -	if (S_ISBLK(mode)) {
+> -		if (IS_ENABLED(CONFIG_BLOCK) &&
+> -		    io_bdev_nowait(I_BDEV(file->f_mapping->host)))
+> -			return true;
+> -		return false;
+> -	}
+> -	if (S_ISSOCK(mode))
+> -		return true;
+> -	if (S_ISREG(mode)) {
+> -		if (IS_ENABLED(CONFIG_BLOCK) &&
+> -		    io_bdev_nowait(file->f_inode->i_sb->s_bdev) &&
+> -		    file->f_op != &io_uring_fops)
+> -			return true;
+> -		return false;
+> -	}
+> -
+> -	/* any ->read/write should understand O_NONBLOCK */
+> -	if (file->f_flags & O_NONBLOCK)
+> -		return true;
+> -	return file->f_mode & FMODE_NOWAIT;
+> -}
+> -
+> -/*
+> - * If we tracked the file through the SCM inflight mechanism, we could support
+> - * any file. For now, just ensure that anything potentially problematic is done
+> - * inline.
+> - */
+> -static unsigned int io_file_get_flags(struct file *file)
+> -{
+> -	umode_t mode = file_inode(file)->i_mode;
+> -	unsigned int res = 0;
+> -
+> -	if (S_ISREG(mode))
+> -		res |= FFS_ISREG;
+> -	if (__io_file_supports_nowait(file, mode))
+> -		res |= FFS_NOWAIT;
+> -	if (io_file_need_scm(file))
+> -		res |= FFS_SCM;
+> -	return res;
+> -}
+> -
+> -static inline bool io_file_supports_nowait(struct io_kiocb *req)
+> -{
+> -	return req->flags & REQ_F_SUPPORT_NOWAIT;
+> -}
+> -
+>  static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  {
+>  	struct kiocb *kiocb = &req->rw.kiocb;
+> 
+> -- Jens Axboe
+This change could make regression gone. The test result is as following:
+28d3a5662d44077aa6eb42bfcfa is your patch
 
-We would like to report the following bug which has been found by our
-modified version of syzkaller.
 
-======================================================
-description: KASAN: invalid-free in __io_uring_register
-affected file: fs/io_uring.c
-kernel version: 5.19-rc6
-kernel commit: 32346491ddf24599decca06190ebca03ff9de7f8
-git tree: upstream
-kernel config: https://syzkaller.appspot.com/text?tag=KernelConfig&x=cd73026ceaed1402
-crash reproducer: attached
-======================================================
-Crash log:
-======================================================
-BUG: KASAN: double-free or invalid-free in io_register_pbuf_ring
-fs/io_uring.c:12975 [inline]
-BUG: KASAN: double-free or invalid-free in
-__io_uring_register+0x16aa/0x19d0 fs/io_uring.c:13151
+584b0180f0f4d67d                   v5.19-rc7 28d3a5662d44077aa6eb42bfcfa
+---------------- --------------------------- ---------------------------
+       fail:runs  %reproduction    fail:runs  %reproduction    fail:runs
+           |             |             |             |             |
+        503:3         9297%         782:3          178%         509:3     dmesg.timestamp:last
+          3:3            0%           3:3            0%           3:3     pmeter.pmeter.fail
+           :3          100%           3:3          100%           3:3     kmsg.I/O_error,dev_loop#,sector#op#:(READ)flags#phys_seg#prio_class
+           :3         3755%         112:3         4016%         120:3     kmsg.timestamp:I/O_error,dev_loop#,sector#op#:(READ)flags#phys_seg#prio_class
+        465:3         9221%         742:3          235%         473:3     kmsg.timestamp:last
+         %stddev     %change         %stddev     %change         %stddev
+             \          |                \          |                \
+    972.00            -0.3%     968.67           +11.4%       1082        phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.iops
+    975.00            -0.3%     972.33           +11.5%       1086        phoronix-test-suite.fio.SequentialWrite.IO_uring.Yes.Yes.1MB.DefaultTestDirectory.mb_s
 
-CPU: 1 PID: 16619 Comm: syz-executor.4 Tainted: G           OE
-5.19.0-rc6-g2eae0556bb9d #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:313 [inline]
- print_report.cold+0xe5/0x659 mm/kasan/report.c:429
- kasan_report_invalid_free+0x5c/0x160 mm/kasan/report.c:458
- ____kasan_slab_free mm/kasan/common.c:351 [inline]
- __kasan_slab_free+0x182/0x1a0 mm/kasan/common.c:379
- kasan_slab_free include/linux/kasan.h:200 [inline]
- slab_free_hook mm/slub.c:1754 [inline]
- slab_free_freelist_hook mm/slub.c:1780 [inline]
- slab_free mm/slub.c:3536 [inline]
- kfree+0xec/0x4b0 mm/slub.c:4584
- io_register_pbuf_ring fs/io_uring.c:12975 [inline]
- __io_uring_register+0x16aa/0x19d0 fs/io_uring.c:13151
- __do_sys_io_uring_register fs/io_uring.c:13187 [inline]
- __se_sys_io_uring_register fs/io_uring.c:13167 [inline]
- __x64_sys_io_uring_register+0x2f2/0x650 fs/io_uring.c:13167
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7f7aa1a8d4ed
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7aa2b31be8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00007f7aa1babf60 RCX: 00007f7aa1a8d4ed
-RDX: 0000000020000000 RSI: 0000000000000016 RDI: 0000000000000006
-RBP: 00007f7aa1af92e1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff95597e6f R14: 00007f7aa1babf60 R15: 00007f7aa2b31d80
- </TASK>
+Comparing to v5.19-rc7 and 584b0180f0f4d67d, it could bring 11% regression back.
+Thanks.
 
-Allocated by task 16619:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:39
- kasan_set_track mm/kasan/common.c:46 [inline]
- set_alloc_info mm/kasan/common.c:441 [inline]
- ____kasan_kmalloc mm/kasan/common.c:526 [inline]
- ____kasan_kmalloc mm/kasan/common.c:479 [inline]
- __kasan_kmalloc+0xb5/0xe0 mm/kasan/common.c:535
- kasan_kmalloc include/linux/kasan.h:234 [inline]
- __kmalloc+0x1c9/0x4c0 mm/slub.c:4446
- kcalloc include/linux/slab.h:671 [inline]
- io_init_bl_list.isra.0+0x24/0x102 fs/io_uring.c:5703
- io_register_pbuf_ring fs/io_uring.c:12955 [inline]
- __io_uring_register.cold+0xd/0x10b5 fs/io_uring.c:13151
- __do_sys_io_uring_register fs/io_uring.c:13187 [inline]
- __se_sys_io_uring_register fs/io_uring.c:13167 [inline]
- __x64_sys_io_uring_register+0x2f2/0x650 fs/io_uring.c:13167
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
 
-Last potentially related work creation:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:39
- __kasan_record_aux_stack+0xbe/0xd0 mm/kasan/generic.c:356
- call_rcu kernel/rcu/tree.c:3126 [inline]
- call_rcu+0x99/0x740 kernel/rcu/tree.c:3101
- netlink_release+0xe42/0x1cb0 net/netlink/af_netlink.c:815
- __sock_release+0xcd/0x280 net/socket.c:650
- sock_close+0x18/0x20 net/socket.c:1365
- __fput+0x277/0x9d0 fs/file_table.c:317
- task_work_run+0xe0/0x1a0 kernel/task_work.c:177
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:169 [inline]
- exit_to_user_mode_prepare+0x253/0x260 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:294
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-Second to last potentially related work creation:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:39
- __kasan_record_aux_stack+0xbe/0xd0 mm/kasan/generic.c:356
- call_rcu kernel/rcu/tree.c:3126 [inline]
- call_rcu+0x99/0x740 kernel/rcu/tree.c:3101
- netlink_release+0xe42/0x1cb0 net/netlink/af_netlink.c:815
- __sock_release+0xcd/0x280 net/socket.c:650
- sock_close+0x18/0x20 net/socket.c:1365
- __fput+0x277/0x9d0 fs/file_table.c:317
- task_work_run+0xe0/0x1a0 kernel/task_work.c:177
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xb1e/0x2dd0 kernel/exit.c:797
- do_group_exit+0xd2/0x2f0 kernel/exit.c:927
- get_signal+0x2842/0x2870 kernel/signal.c:2857
- arch_do_signal_or_restart+0x82/0x2270 arch/x86/kernel/signal.c:869
- exit_to_user_mode_loop kernel/entry/common.c:166 [inline]
- exit_to_user_mode_prepare+0x174/0x260 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:294
- ret_from_fork+0x15/0x30 arch/x86/entry/entry_64.S:295
-
-The buggy address belongs to the object at ffff88815f2b7000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 256 bytes inside of
- 2048-byte region [ffff88815f2b7000, ffff88815f2b7800)
-
-The buggy address belongs to the physical page:
-page:ffffea00057cac00 refcount:1 mapcount:0 mapping:0000000000000000
-index:0x0 pfn:0x15f2b0
-head:ffffea00057cac00 order:3 compound_mapcount:0 compound_pincount:0
-flags: 0x17ff00000010200(slab|head|node=0|zone=2|lastcpupid=0x7ff)
-raw: 017ff00000010200 dead000000000100 dead000000000122 ffff888100042000
-raw: 0000000000000000 0000000080080008 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask
-0xd2a20(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC),
-pid 6687, tgid 6687 (syz-executor.3), ts 55285345771, free_ts
-54261940067
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook mm/page_alloc.c:2449 [inline]
- prep_new_page+0x297/0x330 mm/page_alloc.c:2456
- get_page_from_freelist+0x2142/0x3c80 mm/page_alloc.c:4198
- __alloc_pages+0x321/0x710 mm/page_alloc.c:5426
- alloc_pages+0x119/0x250 mm/mempolicy.c:2272
- alloc_slab_page mm/slub.c:1824 [inline]
- allocate_slab mm/slub.c:1969 [inline]
- new_slab+0x2a9/0x3f0 mm/slub.c:2029
- ___slab_alloc+0xd5a/0x1140 mm/slub.c:3031
- __slab_alloc.isra.0+0x4d/0xa0 mm/slub.c:3118
- slab_alloc_node mm/slub.c:3209 [inline]
- __kmalloc_node_track_caller+0x321/0x440 mm/slub.c:4979
- kmalloc_reserve+0x32/0xd0 net/core/skbuff.c:354
- __alloc_skb+0x11f/0x370 net/core/skbuff.c:426
- alloc_skb include/linux/skbuff.h:1426 [inline]
- nlmsg_new include/net/netlink.h:953 [inline]
- inet6_ifinfo_notify+0x72/0x150 net/ipv6/addrconf.c:6039
- addrconf_notify+0x49b/0x1bb0 net/ipv6/addrconf.c:3653
- notifier_call_chain+0xb5/0x200 kernel/notifier.c:87
- call_netdevice_notifiers_info net/core/dev.c:1945 [inline]
- call_netdevice_notifiers_info+0xb5/0x130 net/core/dev.c:1930
- call_netdevice_notifiers_extack net/core/dev.c:1983 [inline]
- call_netdevice_notifiers net/core/dev.c:1997 [inline]
- __dev_notify_flags+0x121/0x2c0 net/core/dev.c:8571
- dev_change_flags+0x112/0x170 net/core/dev.c:8609
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1371 [inline]
- free_pcp_prepare+0x51f/0xd00 mm/page_alloc.c:1421
- free_unref_page_prepare mm/page_alloc.c:3343 [inline]
- free_unref_page+0x19/0x5b0 mm/page_alloc.c:3438
- __vunmap+0x6ff/0xaa0 mm/vmalloc.c:2665
- __vfree+0x3c/0xd0 mm/vmalloc.c:2713
- vfree+0x5a/0x90 mm/vmalloc.c:2744
- kcov_put kernel/kcov.c:421 [inline]
- kcov_put+0x26/0x40 kernel/kcov.c:417
- kcov_close+0xc/0x10 kernel/kcov.c:517
- __fput+0x277/0x9d0 fs/file_table.c:317
- task_work_run+0xe0/0x1a0 kernel/task_work.c:177
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xb1e/0x2dd0 kernel/exit.c:797
- do_group_exit+0xd2/0x2f0 kernel/exit.c:927
- __do_sys_exit_group kernel/exit.c:938 [inline]
- __se_sys_exit_group kernel/exit.c:936 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:936
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-Memory state around the buggy address:
- ffff88815f2b7000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88815f2b7080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff88815f2b7100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                   ^
- ffff88815f2b7180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88815f2b7200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
--- 
-Thanks and Regards,
-
-Dipanjan
-
---00000000000011b8bd05e447396c
-Content-Type: application/octet-stream; name="repro.syz"
-Content-Disposition: attachment; filename="repro.syz"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l5ue9jt91>
-X-Attachment-Id: f_l5ue9jt91
-
-c2V0c29ja29wdCRwYWNrZXRfcnhfcmluZygweGZmZmZmZmZmZmZmZmZmZmYsIDB4MTA3LCAweDUs
-ICYoMHg3ZjAwMDAwMDAwMDApPUByZXE9ezB4MCwgMHgyLCAweDgsIDB4OH0sIDB4MTApCnIwID0g
-aW9fdXJpbmdfc2V0dXAoMHgxMjI0LCAmKDB4N2YwMDAwMDAwMjgwKSkKcjEgPSBpb191cmluZ19z
-ZXR1cCgweDEyMjQsICYoMHg3ZjAwMDAwMDAyODApKQpyMiA9IGlvX3VyaW5nX3JlZ2lzdGVyJElP
-UklOR19SRUdJU1RFUl9QRVJTT05BTElUWShyMSwgMHg5LCAweDAsIDB4MCkKaW9fdXJpbmdfcmVn
-aXN0ZXIkSU9SSU5HX1VOUkVHSVNURVJfUEVSU09OQUxJVFkocjAsIDB4MTYsIDB4MjAwMDAwMDAs
-IHIyKQo=
---00000000000011b8bd05e447396c
-Content-Type: text/x-csrc; charset="US-ASCII"; name="repro.c"
-Content-Disposition: attachment; filename="repro.c"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l5ue9jsl0>
-X-Attachment-Id: f_l5ue9jsl0
-
-Ly8gYXV0b2dlbmVyYXRlZCBieSBzeXprYWxsZXIgKGh0dHBzOi8vZ2l0aHViLmNvbS9nb29nbGUv
-c3l6a2FsbGVyKQoKI2RlZmluZSBfR05VX1NPVVJDRSAKCiNpbmNsdWRlIDxlbmRpYW4uaD4KI2lu
-Y2x1ZGUgPHN0ZGludC5oPgojaW5jbHVkZSA8c3RkaW8uaD4KI2luY2x1ZGUgPHN0ZGxpYi5oPgoj
-aW5jbHVkZSA8c3RyaW5nLmg+CiNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgojaW5jbHVkZSA8c3lz
-L3R5cGVzLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KCiNpZm5kZWYgX19OUl9pb191cmluZ19yZWdp
-c3RlcgojZGVmaW5lIF9fTlJfaW9fdXJpbmdfcmVnaXN0ZXIgNDI3CiNlbmRpZgojaWZuZGVmIF9f
-TlJfaW9fdXJpbmdfc2V0dXAKI2RlZmluZSBfX05SX2lvX3VyaW5nX3NldHVwIDQyNQojZW5kaWYK
-CnVpbnQ2NF90IHJbM10gPSB7MHhmZmZmZmZmZmZmZmZmZmZmLCAweGZmZmZmZmZmZmZmZmZmZmYs
-IDB4MH07CgppbnQgbWFpbih2b2lkKQp7CgkJc3lzY2FsbChfX05SX21tYXAsIDB4MWZmZmYwMDB1
-bCwgMHgxMDAwdWwsIDB1bCwgMHgzMnVsLCAtMSwgMHVsKTsKCXN5c2NhbGwoX19OUl9tbWFwLCAw
-eDIwMDAwMDAwdWwsIDB4MTAwMDAwMHVsLCA3dWwsIDB4MzJ1bCwgLTEsIDB1bCk7CglzeXNjYWxs
-KF9fTlJfbW1hcCwgMHgyMTAwMDAwMHVsLCAweDEwMDB1bCwgMHVsLCAweDMydWwsIC0xLCAwdWwp
-OwoJCQkJaW50cHRyX3QgcmVzID0gMDsKKih1aW50MzJfdCopMHgyMDAwMDAwMCA9IDA7CioodWlu
-dDMyX3QqKTB4MjAwMDAwMDQgPSAyOwoqKHVpbnQzMl90KikweDIwMDAwMDA4ID0gODsKKih1aW50
-MzJfdCopMHgyMDAwMDAwYyA9IDg7CglzeXNjYWxsKF9fTlJfc2V0c29ja29wdCwgLTEsIDB4MTA3
-LCA1LCAweDIwMDAwMDAwdWwsIDB4MTB1bCk7CioodWludDMyX3QqKTB4MjAwMDAyODQgPSAwOwoq
-KHVpbnQzMl90KikweDIwMDAwMjg4ID0gMDsKKih1aW50MzJfdCopMHgyMDAwMDI4YyA9IDA7Cioo
-dWludDMyX3QqKTB4MjAwMDAyOTAgPSAwOwoqKHVpbnQzMl90KikweDIwMDAwMjk4ID0gLTE7Cm1l
-bXNldCgodm9pZCopMHgyMDAwMDI5YywgMCwgMTIpOwoJcmVzID0gc3lzY2FsbChfX05SX2lvX3Vy
-aW5nX3NldHVwLCAweDEyMjQsIDB4MjAwMDAyODB1bCk7CglpZiAocmVzICE9IC0xKQoJCXJbMF0g
-PSByZXM7CioodWludDMyX3QqKTB4MjAwMDAyODQgPSAwOwoqKHVpbnQzMl90KikweDIwMDAwMjg4
-ID0gMDsKKih1aW50MzJfdCopMHgyMDAwMDI4YyA9IDA7CioodWludDMyX3QqKTB4MjAwMDAyOTAg
-PSAwOwoqKHVpbnQzMl90KikweDIwMDAwMjk4ID0gLTE7Cm1lbXNldCgodm9pZCopMHgyMDAwMDI5
-YywgMCwgMTIpOwoJcmVzID0gc3lzY2FsbChfX05SX2lvX3VyaW5nX3NldHVwLCAweDEyMjQsIDB4
-MjAwMDAyODB1bCk7CglpZiAocmVzICE9IC0xKQoJCXJbMV0gPSByZXM7CglyZXMgPSBzeXNjYWxs
-KF9fTlJfaW9fdXJpbmdfcmVnaXN0ZXIsIHJbMV0sIDl1bCwgMHVsLCAwdWwpOwoJaWYgKHJlcyAh
-PSAtMSkKCQlyWzJdID0gcmVzOwoJc3lzY2FsbChfX05SX2lvX3VyaW5nX3JlZ2lzdGVyLCByWzBd
-LCAweDE2dWwsIDB4MjAwMDAwMDB1bCwgclsyXSk7CglyZXR1cm4gMDsKfQo=
---00000000000011b8bd05e447396c--
+Regards
+Yin, Fengwei

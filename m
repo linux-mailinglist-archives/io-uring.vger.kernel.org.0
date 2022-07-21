@@ -2,72 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E263D57C93B
-	for <lists+io-uring@lfdr.de>; Thu, 21 Jul 2022 12:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2171557C978
+	for <lists+io-uring@lfdr.de>; Thu, 21 Jul 2022 13:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232520AbiGUKmM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Jul 2022 06:42:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
+        id S232693AbiGULBz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Jul 2022 07:01:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232869AbiGUKmH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Jul 2022 06:42:07 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E497481C3;
-        Thu, 21 Jul 2022 03:42:06 -0700 (PDT)
-Received: from [192.168.88.254] (unknown [125.160.97.11])
-        by gnuweeb.org (Postfix) with ESMTPSA id C4E3E7E24B;
-        Thu, 21 Jul 2022 10:42:03 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1658400125;
-        bh=RCXThBtAq0TfDuJT7F2JB16g3t+iEe5qppWuFWN4zH4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=R9UlvmChjdYvJMkWmizigTUkgmR24APhNXRyZGXeI/LRC8O2qON5i9UORYgIgOHCa
-         yyhh3fNz6/QggYAB0twPiFvc/FxBxjBefGfHOCrK/8PlC6BkVVagS2/fyV7DOnPnB4
-         sGrTc/UtmHbD6xJfMeKMetQZdqHuH/ciCimKEEK/X4K7lvxMdDB9LLRO5BECqw/XNF
-         89/WNMljteFCZ98waahwYLDseNb8tR5dOBw+kdTVzZJ3xALjDj7TpM/gZogPJp1XLn
-         h4GAtapN1daOgJQX4YYfPqkYZOThQ5b7PYsr67kk990QTrnMjMqatyfJ37pBgSdJvP
-         AvlLOL5OJ+/5w==
-Message-ID: <beae1b3b-eec3-1afb-cdf9-999a1d161db4@gnuweeb.org>
-Date:   Thu, 21 Jul 2022 17:41:52 +0700
+        with ESMTP id S232277AbiGULBy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Jul 2022 07:01:54 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B902845F74
+        for <io-uring@vger.kernel.org>; Thu, 21 Jul 2022 04:01:53 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26KNbEdY013264
+        for <io-uring@vger.kernel.org>; Thu, 21 Jul 2022 04:01:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=whhVqzSY/LO0DewExHF2H+9BIsdCKVF/W1wqXDtU4vs=;
+ b=aOrzG39w4NaSTRfYdS5WVdJ58/ibpbAC10EsBdP7vKiNUo3KZgm4uyqWGDD+YQoXEy6E
+ MQLNJ71I8/UUnWl+JNIxr0HGwmqybXX3mg1J2GzdWSd7g9S8gGS9Aazaa07fPG97STSh
+ n9untC5VdaxOZ1z4FAKRVi2N4tEwbNaCQ/8= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3he8wys17h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Thu, 21 Jul 2022 04:01:53 -0700
+Received: from twshared5640.09.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Thu, 21 Jul 2022 04:01:51 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 6E24D3572D41; Thu, 21 Jul 2022 04:01:37 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
+        Dylan Yudaken <dylany@fb.com>,
+        Dipanjan Das <mail.dipanjan.das@gmail.com>
+Subject: [PATCH] io_uring: fix free of unallocated buffer list
+Date:   Thu, 21 Jul 2022 04:01:15 -0700
+Message-ID: <20220721110115.3964104-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: Linux 5.19-rc7 liburing test `poll-mshot-overflow.t` and
- `read-write.t` fail
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Fernanda Ma'rouf <fernandafmr12@gnuweeb.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-References: <2709ed98-6459-70ea-50d4-f24b7278fb24@gnuweeb.org>
- <3489ef4e810b822d6fdb0948ef7fdaeb5547eeba.camel@fb.com>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <3489ef4e810b822d6fdb0948ef7fdaeb5547eeba.camel@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: yrnYIFCtk_60DNjWDsrbhv4KSRNQeTNl
+X-Proofpoint-GUID: yrnYIFCtk_60DNjWDsrbhv4KSRNQeTNl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-21_14,2022-07-20_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/21/22 4:48 PM, Dylan Yudaken wrote:
-> What fs are you using? testing on a fresh XFS fs read-write.t works for
-> me
+in the error path of io_register_pbuf_ring, only free bl if it was
+allocated.
 
-I am using btrfs.
+Reported-by: Dipanjan Das <mail.dipanjan.das@gmail.com>
+Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buff=
+ers")
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
+---
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-After I got your email, I tried to run the test on an ext4 directory and
-it works fine. But fails on a btrfs directory.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index a01ea49f3017..2b7bb62c7805 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -12931,7 +12931,7 @@ static int io_register_pbuf_ring(struct io_ring_c=
+tx *ctx, void __user *arg)
+ {
+ 	struct io_uring_buf_ring *br;
+ 	struct io_uring_buf_reg reg;
+-	struct io_buffer_list *bl;
++	struct io_buffer_list *bl, *free_bl =3D NULL;
+ 	struct page **pages;
+ 	int nr_pages;
+=20
+@@ -12963,7 +12963,7 @@ static int io_register_pbuf_ring(struct io_ring_c=
+tx *ctx, void __user *arg)
+ 		if (bl->buf_nr_pages || !list_empty(&bl->buf_list))
+ 			return -EEXIST;
+ 	} else {
+-		bl =3D kzalloc(sizeof(*bl), GFP_KERNEL);
++		free_bl =3D bl =3D kzalloc(sizeof(*bl), GFP_KERNEL);
+ 		if (!bl)
+ 			return -ENOMEM;
+ 	}
+@@ -12972,7 +12972,7 @@ static int io_register_pbuf_ring(struct io_ring_c=
+tx *ctx, void __user *arg)
+ 			     struct_size(br, bufs, reg.ring_entries),
+ 			     &nr_pages);
+ 	if (IS_ERR(pages)) {
+-		kfree(bl);
++		kfree(free_bl);
+ 		return PTR_ERR(pages);
+ 	}
+=20
 
-Any idea why does the test fail on a btrfs fs?
-
--- 
-Ammar Faizi
+base-commit: ff6992735ade75aae3e35d16b17da1008d753d28
+--=20
+2.30.2
 

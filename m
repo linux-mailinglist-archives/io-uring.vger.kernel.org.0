@@ -2,125 +2,152 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C03B57C97D
-	for <lists+io-uring@lfdr.de>; Thu, 21 Jul 2022 13:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B7D57C988
+	for <lists+io-uring@lfdr.de>; Thu, 21 Jul 2022 13:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbiGULEW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 21 Jul 2022 07:04:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
+        id S233005AbiGULGj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Jul 2022 07:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231157AbiGULEV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Jul 2022 07:04:21 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19858823B1;
-        Thu, 21 Jul 2022 04:04:20 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id r1-20020a05600c35c100b003a326685e7cso3075859wmq.1;
-        Thu, 21 Jul 2022 04:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=8D+GFUIwup8GiQ8wjmlmzozYYzES0Ij/KI+KIVTEcZc=;
-        b=abQvjliig+GNco1BwRCs/Zn5AwJua3Y6ei6pvepVNQnUAOPz0mz6Jj8WCe/ti6dzmV
-         1YKEKJLcusSAW0SBd6mUdS/ZjVWJdnM3AGGTyrVnoXD0eOVlGPX3ZDcDI0ibUQ+wpHZp
-         R9x8rFQ9wzA5ZOVhEomhwoxffaAEWH1Hsjc3Zgs36amjzB9hjAMI4Q1Depz1UU5nnkb0
-         AjDdFUaPLaKkrrdWnpxGDUNYvcT3vFd/9qdl0UQqDtH6ekZsod8e40pk8cJE1teIAsI5
-         DlRpHHS8EINOosu92+DCQr9+DgZVFPBbpIcUGjq0q5vG9+aesF/a0yuTZAPnCVJiTg2Z
-         oJpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=8D+GFUIwup8GiQ8wjmlmzozYYzES0Ij/KI+KIVTEcZc=;
-        b=7m/J0cMzpLA9fpz9p9jjxI3WbkqSgK8wjCdDswSNKwwF1gfd4Sb+fZiMCT1vdA7nYm
-         8RWcBo0FeZ+uTj9yFky6WDPqvtO4uZmV4w2FNnaN4tmI1z/CWUj0WopdTAyJOdIL7m/c
-         sbEIn73VM7cQ5DZSP0MtmSxr4ILsUHrzLzcitRkAjjpy0Ij7CDHCW2RTQrjuBTZEfls+
-         e9dek17KCLx8R5KPKjpmWkmTDmPBJ5Ar/t3GweNX0s7V62wkEktzvDuhJRW6uc5k5hPt
-         MY+xQJm9Lqi9OOdth9kla2WZOBbB/+p8h2B0B7fzhppu4XzYck/BtXO1J4F2V9pPbZKO
-         1apg==
-X-Gm-Message-State: AJIora+ooAnpnjLuYyjB2BJqAIJL5M/MwFsOzTONhfTIn0xKOyNTo75k
-        toZ5IeFuWtVT1hcq1JVtEo0=
-X-Google-Smtp-Source: AGRyM1vj7SaUwrZ1mj0cTngJgXlM9DRz8+gGUk9Zz3R1chZEav61jPNVXgQhl36feXdPeqyF7e5YpA==
-X-Received: by 2002:a05:600c:a4c:b0:39c:6517:1136 with SMTP id c12-20020a05600c0a4c00b0039c65171136mr7943198wmq.12.1658401458325;
-        Thu, 21 Jul 2022 04:04:18 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:e2e2])
-        by smtp.gmail.com with ESMTPSA id o9-20020a05600c058900b0039c54bb28f2sm1478105wmd.36.2022.07.21.04.04.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Jul 2022 04:04:17 -0700 (PDT)
-Message-ID: <a53873bd-2ba0-9ac2-fe17-4c878e332dd3@gmail.com>
-Date:   Thu, 21 Jul 2022 12:03:14 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] io_uring: fix free of unallocated buffer list
+        with ESMTP id S233013AbiGULGi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Jul 2022 07:06:38 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0EAA82FB9;
+        Thu, 21 Jul 2022 04:06:37 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26KNbFvF011311;
+        Thu, 21 Jul 2022 04:06:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=jXLR63N5kKHyKvwUR670khzRcYB7acyPvfVekzFeSJ4=;
+ b=TCqznL5wl0J7MIlyWwRHJvAQ/6TFNO732mzGLY3CK2lfFk3r9Vu3U8lZbPZXJIyJwanq
+ FIBmPQddyemuBSrXDyImkqXoTlxPfb1xBniMuiSeNjAhRmhAzgYz3fEkPxhuewVekWFI
+ 8e7iVI34bRL/+gjy55iy2dFO2i9VvoeVCAM= 
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2103.outbound.protection.outlook.com [104.47.55.103])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3he82dsba3-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Jul 2022 04:06:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fXys17kSJrKEaCJK5rs+FdIgbr7KHiw6PENBGLbguivOyukRAAQi/C8mY4GfcVe+A1Zil4Nyq5sih40zfEypysxiJ91LY0wB8moeAPFPFPDAL6OytjXlWLa4FLmgzA7VUptPr+axApYSlHdv7kCwIvnCpBP9J1Fc++sOTm+eB2hJOpc0l25LwCL9Af538t8KvOm/QS2GbZ9Wk/4odSxXCCKBKnF5WBIaWNEwfKrp1woM7j706kQR8rEt3U2WDTL2mLFXGf3socEEe376MhNGzHSYDejKHE4xdCQVeIlokh9bBGtKh8Os+NuEHr9RG7u2kMV4Wyta1H9AkHZG7SKI/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jXLR63N5kKHyKvwUR670khzRcYB7acyPvfVekzFeSJ4=;
+ b=AKXq3RIOBzW0zJ0xi0S1u5VtTlLw6YPeWS8qroPN9gigfg5DHud8y666Zm6/yK2ZMHUsfMJU5HKpo7zgT24en8hvm68s7zAYk1Q2pk5IihraNaFV/SDSKLaj219wu8+ZfoB3Zz2OwFz+ewzRXhM7PQDXpNiszPGeOqf+Yk9eSV5apA8a0Vpk1dUpotGDySEvWipTrsg+GhFxxvf8r5NJkuKWvxN4o01SwJET7+wnenX6lXsuhi1rhoDOwIlfXWO6pwwnNwb9DPPM4EmB0EsLmjRr2PNiBLsyN9qoUzevD87/rmeIv1+sU5azyDPAZtl+jaApfcdHOWa4m3owQztzBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Received: from SA1PR15MB4854.namprd15.prod.outlook.com (2603:10b6:806:1e1::19)
+ by BN8PR15MB3217.namprd15.prod.outlook.com (2603:10b6:408:aa::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.19; Thu, 21 Jul
+ 2022 11:06:33 +0000
+Received: from SA1PR15MB4854.namprd15.prod.outlook.com
+ ([fe80::15b5:7935:b8c2:4504]) by SA1PR15MB4854.namprd15.prod.outlook.com
+ ([fe80::15b5:7935:b8c2:4504%6]) with mapi id 15.20.5458.019; Thu, 21 Jul 2022
+ 11:06:33 +0000
+From:   Dylan Yudaken <dylany@fb.com>
+To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mail.dipanjan.das@gmail.com" <mail.dipanjan.das@gmail.com>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>
+CC:     "fleischermarius@googlemail.com" <fleischermarius@googlemail.com>,
+        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
+        "its.priyanka.bose@gmail.com" <its.priyanka.bose@gmail.com>
+Subject: Re: KASAN: use-after-free Read in __io_remove_buffers
+Thread-Topic: KASAN: use-after-free Read in __io_remove_buffers
+Thread-Index: AQHYnKMMh/zxMjVYwUGeiFeZyBTdAK2IqpmA
+Date:   Thu, 21 Jul 2022 11:06:33 +0000
+Message-ID: <e21e651299a4230b965cf79d4ae9efd1bc307491.camel@fb.com>
+References: <CANX2M5YiZBXU3L6iwnaLs-HHJXRvrxM8mhPDiMDF9Y9sAvOHUA@mail.gmail.com>
+In-Reply-To: <CANX2M5YiZBXU3L6iwnaLs-HHJXRvrxM8mhPDiMDF9Y9sAvOHUA@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-Cc:     Kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        Dipanjan Das <mail.dipanjan.das@gmail.com>
-References: <20220721110115.3964104-1-dylany@fb.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20220721110115.3964104-1-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1edef618-bb56-48fb-0986-08da6b0912a2
+x-ms-traffictypediagnostic: BN8PR15MB3217:EE_
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: eyTIrJ05Udt4Cj5DVclPscLsaXyFxlEu3y1TYKtJUO5kof/af927suAYqJK2uLgeS9FsO26nsqer94EWvJZLgHsU49wOb+PA1IUv61pJrvRqvz2g2pm5DqMRGHZ2Na4Jji3c6htvnKvV31Hs4BriUYdq0S8q9kVMMfdB+l9CQRNdodigj/f3yfi1caqvz+D/mhGJGs4D07uRYCmI1xk4C2jRXpJ9YBBId6d1DlrHgedbPOLxtFvH2XaTMZ0uKAKzqa7tEVA7SBegCQ176PuNQn4y1CU5UpO4jf1115VGweP1gOKY7xZjjqb3iLx0l8K/mfq1ZiZmraj5GNuOSGsLfIusUXFxmK8Ui8NR79PVtFspchS6ADWqy6lKNvqp5h5gPkXg7JmHmy6TuWAF4wedcLCy6PA4o2+qTbEfsRvapPNpFfsMOZ38SLom41OQZ+D/VRE7ZZolB9jl4hwKGjDZ8+MqjxF9uAx1SxNTqVB19kO6Va0C4ymqwelI35EykGWOamVVE9GVRvmej5efoJcpCyaZrKQz7nrvy6RLYl6Nu5+1bniYV/RZNk9VAL23a4uIx0Stk0ombFlG7J82kfRWybSMErzUKdpbksl7VaOjFcp7Ll2YVc9UbxoLZZM/d1RCLRyeD+xt1zPluwq4Tzv2hNgcdcnE5uHfQu7AhbFI5GLV65g4EGHjNSmHTjJGhEG5tvZo3sqgUsPXv95+fbSDUv/bQYfGLbi46w75KS5w4OHa7dPoG97H3cEjm+zfFjLEnGrl4LyKWoBsTxGLbS883hNM3yq5lJOn4pDRGxaIbWAM20pKtc9T2Q/bl7H8kGlH
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB4854.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(376002)(366004)(136003)(39860400002)(346002)(6506007)(6512007)(2616005)(186003)(5660300002)(4744005)(2906002)(478600001)(6486002)(36756003)(54906003)(41300700001)(71200400001)(316002)(110136005)(122000001)(86362001)(8936002)(66946007)(66556008)(66476007)(91956017)(76116006)(4326008)(38100700002)(8676002)(66446008)(64756008)(38070700005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cmUyWUNTakRPcDI5cGo2Vzk4MmR0ZlJNSlVaYmVEYzE2a29JeVBrMTdkQWgw?=
+ =?utf-8?B?TVlvaWdkVWI0NFNKVnZraHFmNTlEa3FyRzd6RGQ2TktKNFlTQmxtWWR1QVU1?=
+ =?utf-8?B?VVJ1T2dxTGd1T1kzRHppd0VROUpQVlRMZmpmVzFLVDIxTFV5S3lCTFNaYmRE?=
+ =?utf-8?B?Vm5DRFdKT2MwK3FKZkQvSGV0T3FWUlFDZm8xM1Q3dEtiZjlxbnF2Nzc2VUxG?=
+ =?utf-8?B?dHQyZlNxRkRvVGhUNG9qRHlnS3p6dkZ0UHJtVkU0blVqNDIzeFUvemt5dFhG?=
+ =?utf-8?B?RXFGang0dzhCc2hTWGtGbGUvRVRZOFFGQ0dtakJmdUZZRVFMNUpmd2NHait5?=
+ =?utf-8?B?TjRNaEJTbUJ0ZTl0WGNFVDBldk4rL2o4b1JGeTNDMUNnQXhVbnBtdEJJeWd6?=
+ =?utf-8?B?aktaVlJsdW0wN0tCV20zUlR4WkU2RFU0VDZ2d0Nnb1pTZ05vOCtRdU1KZ2d6?=
+ =?utf-8?B?WG4xRHpZMEV6QVlZRDd0ZFNDckh6K09CZ1VZVWppZFVyQkRZN0xjWFltRFc2?=
+ =?utf-8?B?RmR5Y2RNMXlZSXI4cWhJbEhsNlRHd0hyU3BWTHpRZ1NuMkMzTCtkdUxFaHh1?=
+ =?utf-8?B?NnN6Sy9lWHVjbVRmU1NPVktiZEZaOGJOTkZmSnFINFBqSkFYbEF4UHNLVkRy?=
+ =?utf-8?B?bTF6TXFPSDJZWXVhelBOalBnTVNRd09ibE85bmxBRTc2Rlp2RWJRekZYYXg2?=
+ =?utf-8?B?dVNGYkRWb043dDFvU29rb0dqVGVtaEhENUpacjc2aStYU2xPeDcxM3VzSTFs?=
+ =?utf-8?B?ZE9SSC9acmFndnpubm9haHJaQkxZbFlGSTRvU1haU0VEOE1sRVUveHZ3QlFG?=
+ =?utf-8?B?b1NOVTI4dXRiV05qYit1TmIrajV3NjZLOXdRYm5UUW82U3lEaGRVd0NzMG0z?=
+ =?utf-8?B?VGFkMnBQc3Rnc3p4UG9zWkNld2VWak1Uc0daQXZQWFl3cW93Qk42SjdGTFY2?=
+ =?utf-8?B?c3ZrMHgxT1BRZm5vOU9lZFlsbVdaSEg2cTZVWVYrbmFzYnhRbEJITmoyU0hF?=
+ =?utf-8?B?aTcwRlFjMDA5d3ZlTjhQQ0JlTllUY0FYcXRzT0FzNXgzN0FlSm9hZDlla3RR?=
+ =?utf-8?B?M25LQWg3SWZsUkVBdmF3SEVkTENlZzJkUHNhSS9oRll3bm10Y2UxRFhrblNj?=
+ =?utf-8?B?a00reGdxeHlBYm13U1FnazdLSlo5Z1g2QkxPZFlsTFdiYjNwZC8zMlMwQmdS?=
+ =?utf-8?B?dW9jb2dGRjZJRmtaZWFOaExJeG9WSnpvaWdrYjY3YzRaMlJDbE8yNkxmQVN4?=
+ =?utf-8?B?OUZaSVNod3ZiWHI5czMvTnlubEszcnBLd0lPZnoxaVdsdnZ3YnlteTkrNW9a?=
+ =?utf-8?B?UjRGRjAxdVB2NEV0VXQ0MC9laitPODZzc2x5NENHT2xyK2NZM3EvTWpBbTVj?=
+ =?utf-8?B?cnlYK3V1dXlzcjZwYm05aUpvWm14OW84SXNzOXV4WlVYRzVXODAzNktKZ1d2?=
+ =?utf-8?B?WkJUd25MTk9JaHgzTk9CeWE2bHNVc2Nua3Z1SXdDam84aTV6a2x3NFNzN2t1?=
+ =?utf-8?B?OVluWVp3YUtxbjZaUml1SG5BajNSUGh0M29uYmhSOTNiUEcyMVdCajI1bFow?=
+ =?utf-8?B?cENZRVZJY1QzYk03RFo2YkVEelo0bkluaitINUdlenI0TzdtaUZ2andFSjlk?=
+ =?utf-8?B?a05PSnVFb3IrN281Nmh5OXNKRmRaZFg3SzVrL3NtWDhzZWlLbGVwdEQva1ZF?=
+ =?utf-8?B?d1JxT1d1SDhhU2tSZ3FNQ0dabkw1bW9pQ0tlSmZNOHEvaGFhOUhuVDc5R2hl?=
+ =?utf-8?B?R01Kam9qT2c4aElnTUo0c2hMeHppK1pFckNmbStJUkRxVnF3RHJZNWxLU3Jq?=
+ =?utf-8?B?U2IvZmlrYzdVYkNFQTlmZkx0VzUzY0ZjMUR6dWJlWStnbGRaRHBHb2p3SWdE?=
+ =?utf-8?B?LzRLT2VjQkcvWXI1djBTQi9tajRwbnFXN0NMRDBKeVNjRWdVMnFQYnBMeGVR?=
+ =?utf-8?B?b3VxZFlMd0xMdnN6eS9Cd09McmxYU0xSandaMmx0aTAyK3ZMTjY5S2dTM1Jp?=
+ =?utf-8?B?M292cytxSVQ1bFh4RGt2M09Jc0hLL1lvVjNjSUltUjRuNEJ0Y2xQdmNrMTZY?=
+ =?utf-8?B?bmRNNXlKZUU2bkRVMktTVWppcS9iZis1OG9GYys4RGtDZGtjWFRmZVJUMDBz?=
+ =?utf-8?B?czlpelQxOGNOMUF1MEN4VHh0aDR3c0RySFZiUDFvUXRiS0pNMzU5ZGFEcVFP?=
+ =?utf-8?B?VkE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3FBC177D6A2A7F4082BCA04B845F3CC9@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: fb.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB4854.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1edef618-bb56-48fb-0986-08da6b0912a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2022 11:06:33.7363
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vn3lqVUnyz/TGOMobdZwsDAhtdIiA7cDSfEWwBxOBWcULBrQ797snBhlIDpL8vgg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB3217
+X-Proofpoint-ORIG-GUID: 7wJssg5RaFi8bMw9ceTypNwE9OPsvd-4
+X-Proofpoint-GUID: 7wJssg5RaFi8bMw9ceTypNwE9OPsvd-4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-21_14,2022-07-20_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/21/22 12:01, Dylan Yudaken wrote:
-> in the error path of io_register_pbuf_ring, only free bl if it was
-> allocated.
-
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
-
-> Reported-by: Dipanjan Das <mail.dipanjan.das@gmail.com>
-> Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
-> Signed-off-by: Dylan Yudaken <dylany@fb.com>
-> ---
->   fs/io_uring.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index a01ea49f3017..2b7bb62c7805 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -12931,7 +12931,7 @@ static int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
->   {
->   	struct io_uring_buf_ring *br;
->   	struct io_uring_buf_reg reg;
-> -	struct io_buffer_list *bl;
-> +	struct io_buffer_list *bl, *free_bl = NULL;
->   	struct page **pages;
->   	int nr_pages;
->   
-> @@ -12963,7 +12963,7 @@ static int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
->   		if (bl->buf_nr_pages || !list_empty(&bl->buf_list))
->   			return -EEXIST;
->   	} else {
-> -		bl = kzalloc(sizeof(*bl), GFP_KERNEL);
-> +		free_bl = bl = kzalloc(sizeof(*bl), GFP_KERNEL);
->   		if (!bl)
->   			return -ENOMEM;
->   	}
-> @@ -12972,7 +12972,7 @@ static int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
->   			     struct_size(br, bufs, reg.ring_entries),
->   			     &nr_pages);
->   	if (IS_ERR(pages)) {
-> -		kfree(bl);
-> +		kfree(free_bl);
->   		return PTR_ERR(pages);
->   	}
->   
-> 
-> base-commit: ff6992735ade75aae3e35d16b17da1008d753d28
-
--- 
-Pavel Begunkov
+T24gV2VkLCAyMDIyLTA3LTIwIGF0IDE4OjQxIC0wNzAwLCBEaXBhbmphbiBEYXMgd3JvdGU6DQo+
+IEhpLA0KPiANCj4gV2Ugd291bGQgbGlrZSB0byByZXBvcnQgdGhlIGZvbGxvd2luZyBidWcgd2hp
+Y2ggaGFzIGJlZW4gZm91bmQgYnkgb3VyDQo+IG1vZGlmaWVkIHZlcnNpb24gb2Ygc3l6a2FsbGVy
+Lg0KDQpIaSwNCg0KQm90aCBvZiB0aGUgYnVnIHJlcG9ydHMgeW91IHNlbnQgc2VlbSB0byBiZSBm
+aXhlZCBieSB0aGUgcGF0Y2ggSSBqdXN0DQpzZW50Lg0KDQpUaGlzIG9uZSBob3dldmVyIGRvZXMg
+bm90IHNlZW0gdG8gdGVybWluYXRlIG9uY2UgZml4ZWQuIElzIHRoZXJlIGFuDQpleHBlY3RlZCBy
+dW4gdGltZT8NCg0KVGhhbmtzIQ0K

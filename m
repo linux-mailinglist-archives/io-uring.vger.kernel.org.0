@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1440257E3A0
+	by mail.lfdr.de (Postfix) with ESMTP id 634E357E3A1
 	for <lists+io-uring@lfdr.de>; Fri, 22 Jul 2022 17:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234812AbiGVPVn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Jul 2022 11:21:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38664 "EHLO
+        id S233627AbiGVPVo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Jul 2022 11:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233627AbiGVPVm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jul 2022 11:21:42 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C563793601
-        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 08:21:40 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id z132so3905498iof.0
-        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 08:21:40 -0700 (PDT)
+        with ESMTP id S235096AbiGVPVn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jul 2022 11:21:43 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70CB93601
+        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 08:21:42 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id r70so3862000iod.10
+        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 08:21:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:in-reply-to:references:subject:message-id:date:mime-version
          :content-transfer-encoding;
-        bh=lu6edPMdEGjnOYcCO1GoY5J754b4rIPhEW+ZQl3jzlc=;
-        b=koeuRv+AkHsNVymF/A7qNBN2vz8VoCpIaT4vUwdYUyZiB1X7kc+QVr8YzlfVzPjsB+
-         rSnquFqhwv1ZSrKGTzRddve5FQzpV7OIFwRO2mfPMrsPq3i/xo3HT+jsPYP0yJmG042R
-         QDUD1/9XixYJV2nb+EP9UXYgG4KxLKerlbFnZwTCSbIUxINhemdbtDrnrsCTeDUmj4XX
-         W68L7ht/YPhTpjQ9bvPrLX5DJWLX6sFHjLbJbiywHpC1L8fc+f0aULbCLCwJcDFBNXlF
-         XkmilgE1VzD74T8Tqex4/GUhmX9eRd+SvJOhtbob+aMrhaypZnAjexvJ5gf63hMRlIr8
-         DWzw==
+        bh=oRqpYE3FVMvZb73yST+b1XLT7UUQD1kcizFDJP2UOjM=;
+        b=h5q0FHGbB10x1HKb7GTXGuIrWIV55lF2+FNg3AydybP/OsrcBeZ3WY2w1Fty6ZCAQD
+         k+2btFb2aiYY+O4EJpe/4E9XvdMsGvWlbO3ICo6RkEBqEAE7ONVJBJ2WQ1eQvrmJ+Z36
+         dN6ok+M7W29MR65/cUtWKrje9k4s9qgPnP/tIkhuAInHLa8DaYXKN+KctGn6Q/iUqCVB
+         MkTyPmFIEu8rlcyzX8xe+LWkb04Z/NWTzEobBmKSWKy8Eoa0pNuL73f3ceEKXZ3F0UP2
+         oRrlahIGyRnGdQcPhGv2+6MvyIbWE2233jYfmYF0svefG1y7ZmVwOb2wI8f85y9xOZRI
+         zd3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=lu6edPMdEGjnOYcCO1GoY5J754b4rIPhEW+ZQl3jzlc=;
-        b=DdUgDTsoKudj17kjw9KCbnmz82tq0H8FZ0D5KMPVgCaUq6EsqMnykREjzUs8wrbZ2S
-         u6aPXZywKq0wgPAI34GRJnquIO2nPhyVCvXQH68ReqAwrIgcjMG+JzYVYBz5smAOI4gD
-         dt2gU6w6u3OMLsVxnLH+oZttHH6Ja9BCKSdi6f09Ol/kuq9sbcmg+2E7AzbSRGvlLy8l
-         9tVH/5PO1FQ33bgKJSYo4gY3COhobmjehhTtnJgxjyUukOMwlSAtzSi+hh3D5z56IsIn
-         soQ/yyJBLB4yTSM8vN1IfYM52Dct1T2QDO09/RqRLbhAKwpX5eyD+C8CUSaA2gYceEtW
-         X+Dg==
-X-Gm-Message-State: AJIora9fiMk4fgQsT6aEHQg6M4u8KcEUdbFNPW2G6fr5axqYdKlf4we+
-        Vq5O/pWAklF06LmVMnl+QNOV07fUhwZ89Q==
-X-Google-Smtp-Source: AGRyM1ucZUPjx7kicz0fZ7zpZ+CLEDUUU+R3Uz3hEjbjt/hl9b8A74bjwgJne5OyUOZdXFxMiK5EFA==
-X-Received: by 2002:a05:6638:4394:b0:33f:3e15:ef88 with SMTP id bo20-20020a056638439400b0033f3e15ef88mr267149jab.248.1658503299937;
-        Fri, 22 Jul 2022 08:21:39 -0700 (PDT)
+        bh=oRqpYE3FVMvZb73yST+b1XLT7UUQD1kcizFDJP2UOjM=;
+        b=TuRbkJ0ZUbGVx5Ssj9Zuyc+Vzd1MLorRojt6miHns0KHpMhIY2RnYz33WdJPbQcFYo
+         Li+Ja8T2+d1elbdLifn1U0aEsjts+2I7K9jhzc1FkFxjQ/Ta+36DiHqf1EYYWzAjII9j
+         3C9BvSFt8WU3ecWD3Zi4iu2RQmxJxqLS4ObBx62jgagnjcRe2sfJ4eP/NTCcZMsdRQ/y
+         aHWVVYO0SKTXLV8iPSlB0VJTKT98MJT/L0IFIHXbs/WXeb3oYA+7gsB00BsJsbx8AAlS
+         txMzwP5aAf+rsLwQiwxiFRnmsD8TWLPQ3kTyzyOWqfAxJBJkx1qeyedIhwbPeNK6aQqY
+         3alw==
+X-Gm-Message-State: AJIora81uwK5vWKFNQniEzH1Qsl7qwHQjG83o+xUxWhYKgvtnPMiUjgX
+        OUUTv6it5T16VumsqEME3QwybeK5+gjZBg==
+X-Google-Smtp-Source: AGRyM1s94P6gZ2W2EGOC9Nq4rg3E6k8gMaYwd73BwD5R+541hWU5xNw4DmHnmBWN+lF1au5qUXuh7A==
+X-Received: by 2002:a05:6638:24c9:b0:341:4916:df8f with SMTP id y9-20020a05663824c900b003414916df8fmr277107jat.196.1658503302050;
+        Fri, 22 Jul 2022 08:21:42 -0700 (PDT)
 Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t10-20020a92dc0a000000b002dce032d817sm1846646iln.81.2022.07.22.08.21.38
+        by smtp.gmail.com with ESMTPSA id l1-20020a056e020e4100b002db4e72ead5sm1869155ilk.50.2022.07.22.08.21.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jul 2022 08:21:39 -0700 (PDT)
+        Fri, 22 Jul 2022 08:21:41 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, io-uring@vger.kernel.org
-In-Reply-To: <cover.1658484803.git.asml.silence@gmail.com>
-References: <cover.1658484803.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing v2 0/2] single issuer tests and poll bench
-Message-Id: <165850329890.235904.2867046538879716531.b4-ty@kernel.dk>
-Date:   Fri, 22 Jul 2022 09:21:38 -0600
+To:     io-uring@vger.kernel.org, asml.silence@gmail.com
+In-Reply-To: <9e282a50456df4451e28189bd3ac6e54d598ecc3.1658490521.git.asml.silence@gmail.com>
+References: <9e282a50456df4451e28189bd3ac6e54d598ecc3.1658490521.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing 1/1] man/io_uring_setup.2: document IORING_SETUP_SINGLE_ISSUER
+Message-Id: <165850330140.235950.18246034144313945687.b4-ty@kernel.dk>
+Date:   Fri, 22 Jul 2022 09:21:41 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,29 +66,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 22 Jul 2022 11:37:04 +0100, Pavel Begunkov wrote:
-> Add some IORING_SETUP_SINGLE_ISSUER testing and poll benchmark.
+On Fri, 22 Jul 2022 12:49:02 +0100, Pavel Begunkov wrote:
 > 
-> Pavel Begunkov (2):
->   examples: add a simple single-shot poll benchmark
->   tests: test IORING_SETUP_SINGLE_ISSUER
-> 
-> examples/Makefile     |   3 +-
->  examples/poll-bench.c | 101 ++++++++++++++++++++++++++++
->  test/Makefile         |   1 +
->  test/single-issuer.c  | 153 ++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 257 insertions(+), 1 deletion(-)
->  create mode 100644 examples/poll-bench.c
->  create mode 100644 test/single-issuer.c
-> 
-> [...]
+
 
 Applied, thanks!
 
-[1/2] examples: add a simple single-shot poll benchmark
-      commit: 8200139273363c9d30d6b2db187f33508b6cd49f
-[2/2] tests: test IORING_SETUP_SINGLE_ISSUER
-      commit: bda30ea972839abdd1e7a0ecdef83e00ff9db7c8
+[1/1] man/io_uring_setup.2: document IORING_SETUP_SINGLE_ISSUER
+      commit: 02adcf497c9f4ca20175b291f8269faff4da958c
 
 Best regards,
 -- 

@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6522257E01E
-	for <lists+io-uring@lfdr.de>; Fri, 22 Jul 2022 12:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F214E57E0FF
+	for <lists+io-uring@lfdr.de>; Fri, 22 Jul 2022 13:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiGVKiQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 22 Jul 2022 06:38:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46380 "EHLO
+        id S233608AbiGVLu1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 22 Jul 2022 07:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234249AbiGVKiP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jul 2022 06:38:15 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ACC6BA24E
-        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 03:38:14 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id d16so5910062wrv.10
-        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 03:38:14 -0700 (PDT)
+        with ESMTP id S230151AbiGVLu0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 22 Jul 2022 07:50:26 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AD53343D
+        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 04:50:25 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so5046835wme.0
+        for <io-uring@vger.kernel.org>; Fri, 22 Jul 2022 04:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uL+YcL1uM1wr+XEYcgTjSTJRq0qdYlELKmNXfoDNo1Y=;
-        b=ZN/xMS4QEFVQgYPoiPXRA8JBHyh4gCD9ikCmFzx4HKwlf0gtiSt5yQ2MB7EYgeivhn
-         ZqSJ+IWeCNQrBEn6nTDEMDnEw1WDsr2w5TxPnqSIRPGoFjIsuGkyzSzAOUezVmY+mH9r
-         oRuI8oFzgiTbYlWj2c4l3rY3z79iHl9ph5iRepJxIetMVor7yEbwPHRe6jxf7ia9BbCz
-         FZIRSwEYb9zrEfQQbY3No96hx+xjvQ6nAfs7YFjL1QlbN4HYv1Q1mzUsddUddeYOweSe
-         8y/+aXun4pECNI3rfjv597F5aB2HH1c5Th68jUeWGrYAnmKEW+p8jIM17N1Spn1j1qwX
-         Wnew==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HT6qpwF9Y4ADTJ8y2fUqQ9kABRQnIh/m7aED+Ze69tA=;
+        b=TVD0akM9PBYGGPrDIWLRo9vVjfuNK1RKPiH0vrG8Ft9SjpIsbZiPOeYtcyWi7tQHmP
+         FMdwRrqyj5FUkn1gZaxOzeu63oVfpJ0BLjjX7OKQMVqZq5FAaaDBx3hU6CURP+9R0xxI
+         mWLEhg6cI5NLW9C7G64N5hJpFXKTOgNfRiwsafIEprJSdtttssgXV/5drMyCSehhTlm2
+         ywhkCnkR4f3Q8quOKUxUPZ3iqa13bzt+D5fjwfzni+sq14tIcO9OkQ58DmesPWVeLEsm
+         Bd27wq6s7sd3DVYxF9x+Ml9+MPC9S4ifyfSsetEtE4OqPvGrjN71mCnQUp66QkBByz0/
+         Wcrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uL+YcL1uM1wr+XEYcgTjSTJRq0qdYlELKmNXfoDNo1Y=;
-        b=Hr7m3qjHGzZZLMi1ihnKydYie8Q1Ox0rO8hiVZ9BqmNLMvqVmac4ApYtU1lgAL4Phj
-         718ikm3CAsqDXfu6ML++U4MbII1ez3wu9yG8WBec7gtrCPvACH1BqYCyhWRKBjFjOFgQ
-         AnvxqLCyA1AfG4OhtjsrAvfoFfO6qhdgidhIouDwUVG6WpRGHB0lx1nXuo0CDUVGzUT5
-         abkG7UyHa1xD/uHU0gDW8JQ0mHliwxafLYVH/8DmG0k1MDfzc5orU++phScabadXUOhh
-         bHfIWwBN+/SaNaVNR+WOuKtgqoiQrF13NrI2DQKUtgmMV7xUSH+c5BdDq5L6dQdpM+bP
-         yjlg==
-X-Gm-Message-State: AJIora8e5QdJD7PwK6TajZqkWtvLWJPPf0tEBLGJTix0Ouhlh/iQC8pB
-        qLnpM75l437THRsx9TVzkpNF+Ic4cgc0Lg==
-X-Google-Smtp-Source: AGRyM1uZM7R+Qgst6uFpakuTZNT38jtOp7hJwc/bNuRu+FpIomKlXa705M+IO9WPJogAegKum6BuCA==
-X-Received: by 2002:a5d:5a98:0:b0:21e:203f:2897 with SMTP id bp24-20020a5d5a98000000b0021e203f2897mr2005398wrb.707.1658486292507;
-        Fri, 22 Jul 2022 03:38:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HT6qpwF9Y4ADTJ8y2fUqQ9kABRQnIh/m7aED+Ze69tA=;
+        b=ijxIB4/xxGCgQXD+yF5zDf2cTCCj/EnQZbeyv0HTr3RNt6rJY8iPLViacdzOsQ+VqJ
+         BAMiln37ZZjpuWCziBwmAjCspA80vP31UM/k7mMzIdcVi6fvv60ZjLwJK3/qRG35zl4V
+         iCPqvBpsnQMvaobBFSQN7OI3cFU6Z/BPQHa7Gphl/L8FGVqQCnIwieLSgS89Cytkhgvb
+         VMc5Fy4XUcPZVsHEeOqtVyqumWeMNOjIYm1TExdhbLlYX5wYIZFKPUZKRgyrcJItnVTs
+         TqPImYjWLloUqn/ouWka8cjxSDTZv/SY7PJEQZKSOzeWpZr6efb0qTz/3pc0WqEIiuqW
+         dhGg==
+X-Gm-Message-State: AJIora9luE7Rb+uiE4Zi4RSEWRMDobDS7esqTdrkpf4qlFTaAIsaFzc7
+        zTkzpDar8TFwsJ5IJKEYubaNtQJPBde00w==
+X-Google-Smtp-Source: AGRyM1vUoUty1bMMYft2ZPL/lDkwsRASHeKj7Tr/ASNM+l+ywwfuoUTc3I66PdovT8ebrzORgCyGPA==
+X-Received: by 2002:a05:600c:4e12:b0:3a3:2fe2:7d0e with SMTP id b18-20020a05600c4e1200b003a32fe27d0emr7026733wmq.151.1658490623116;
+        Fri, 22 Jul 2022 04:50:23 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:a3d])
-        by smtp.gmail.com with ESMTPSA id p21-20020a05600c205500b003a2eacc8179sm4572832wmg.27.2022.07.22.03.38.11
+        by smtp.gmail.com with ESMTPSA id k20-20020a05600c1c9400b003a31fd05e0fsm18257853wms.2.2022.07.22.04.50.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jul 2022 03:38:12 -0700 (PDT)
+        Fri, 22 Jul 2022 04:50:22 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing v2 2/2] tests: test IORING_SETUP_SINGLE_ISSUER
-Date:   Fri, 22 Jul 2022 11:37:06 +0100
-Message-Id: <54af31b0b34fea289dc82ac228ec0cabed408cb6.1658484803.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 1/1] man/io_uring_setup.2: document IORING_SETUP_SINGLE_ISSUER
+Date:   Fri, 22 Jul 2022 12:49:02 +0100
+Message-Id: <9e282a50456df4451e28189bd3ac6e54d598ecc3.1658490521.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.0
-In-Reply-To: <cover.1658484803.git.asml.silence@gmail.com>
-References: <cover.1658484803.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -70,182 +68,38 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/Makefile        |   1 +
- test/single-issuer.c | 153 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 154 insertions(+)
- create mode 100644 test/single-issuer.c
+ man/io_uring_setup.2 | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/test/Makefile b/test/Makefile
-index e958a35..8945368 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -174,6 +174,7 @@ test_srcs := \
- 	wakeup-hang.c \
- 	xattr.c \
- 	skip-cqe.c \
-+	single-issuer.c \
- 	# EOL
- 
- all_targets :=
-diff --git a/test/single-issuer.c b/test/single-issuer.c
-new file mode 100644
-index 0000000..3bbc6c4
---- /dev/null
-+++ b/test/single-issuer.c
-@@ -0,0 +1,153 @@
-+/* SPDX-License-Identifier: MIT */
-+#include <errno.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <error.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+
-+#include "liburing.h"
-+#include "test.h"
-+#include "helpers.h"
-+
-+static pid_t pid;
-+
-+static pid_t fork_t(void)
-+{
-+	pid = fork();
-+	if (pid == -1) {
-+		fprintf(stderr, "fork failed\n");
-+		exit(T_EXIT_FAIL);
-+	}
-+	return pid;
-+}
-+
-+static void wait_child_t(void)
-+{
-+	int wstatus;
-+
-+	if (waitpid(pid, &wstatus, 0) == (pid_t)-1) {
-+		perror("waitpid()");
-+		exit(T_EXIT_FAIL);
-+	}
-+	if (!WIFEXITED(wstatus)) {
-+		fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
-+		exit(T_EXIT_FAIL);
-+	}
-+	if (WEXITSTATUS(wstatus))
-+		exit(T_EXIT_FAIL);
-+}
-+
-+static int try_submit(struct io_uring *ring)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	int ret;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	io_uring_prep_nop(sqe);
-+	sqe->user_data = 42;
-+
-+	ret = io_uring_submit(ring);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret != 1)
-+		error(1, ret, "submit %i", ret);
-+	ret = io_uring_wait_cqe(ring, &cqe);
-+	if (ret)
-+		error(1, ret, "wait fail %i", ret);
-+
-+	if (cqe->res || cqe->user_data != 42)
-+		error(1, ret, "invalid cqe");
-+
-+	io_uring_cqe_seen(ring, cqe);
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct io_uring ring;
-+	int ret;
-+
-+	if (argc > 1)
-+		return T_EXIT_SKIP;
-+
-+	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER);
-+	if (ret == -EINVAL) {
-+		fprintf(stderr, "SETUP_SINGLE_ISSUER is not supported, skip\n");
-+		return T_EXIT_SKIP;
-+	} else if (ret) {
-+		fprintf(stderr, "io_uring_queue_init() failed %i\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* test that the creator iw allowed to submit */
-+	ret = try_submit(&ring);
-+	if (ret) {
-+		fprintf(stderr, "the creater can't submit %i\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* test that a second submitter doesn't succeed */
-+	if (!fork_t()) {
-+		ret = try_submit(&ring);
-+		if (ret != -EEXIST)
-+			fprintf(stderr, "not owner child could submit %i\n", ret);
-+		return ret != -EEXIST;
-+	}
-+	wait_child_t();
-+	io_uring_queue_exit(&ring);
-+
-+	/* test that the first submitter but not creator can submit */
-+	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER);
-+	if (ret)
-+		error(1, ret, "ring init (2) %i", ret);
-+
-+	if (!fork_t()) {
-+		ret = try_submit(&ring);
-+		if (ret)
-+			fprintf(stderr, "not owner child could submit %i\n", ret);
-+		return !!ret;
-+	}
-+	wait_child_t();
-+	io_uring_queue_exit(&ring);
-+
-+	/* test that anyone can submit to a SQPOLL|SINGLE_ISSUER ring */
-+	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER|IORING_SETUP_SQPOLL);
-+	if (ret)
-+		error(1, ret, "ring init (3) %i", ret);
-+
-+	ret = try_submit(&ring);
-+	if (ret) {
-+		fprintf(stderr, "SQPOLL submit failed (creator) %i\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	if (!fork_t()) {
-+		ret = try_submit(&ring);
-+		if (ret)
-+			fprintf(stderr, "SQPOLL submit failed (child) %i\n", ret);
-+		return !!ret;
-+	}
-+	wait_child_t();
-+	io_uring_queue_exit(&ring);
-+
-+	/* test that IORING_ENTER_REGISTERED_RING doesn't break anything */
-+	ret = io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER);
-+	if (ret)
-+		error(1, ret, "ring init (4) %i", ret);
-+
-+	if (!fork_t()) {
-+		ret = try_submit(&ring);
-+		if (ret)
-+			fprintf(stderr, "not owner child could submit %i\n", ret);
-+		return !!ret;
-+	}
-+	wait_child_t();
-+	io_uring_queue_exit(&ring);
-+	return T_EXIT_PASS;
-+}
+diff --git a/man/io_uring_setup.2 b/man/io_uring_setup.2
+index 75c69ff..0f57d8f 100644
+--- a/man/io_uring_setup.2
++++ b/man/io_uring_setup.2
+@@ -239,6 +239,24 @@ variant. This is a requirement for using certain request types, as of 5.19
+ only the
+ .B IORING_OP_URING_CMD
+ passthrough command for NVMe passthrough needs this. Available since 5.19.
++.TP
++.B IORING_SETUP_SINGLE_ISSUER
++A hint to the kernel that only a single task can submit requests, which is used
++for internal optimisations. The kernel enforces the rule, which only affects
++.I
++io_uring_enter(2)
++calls submitting requests and will fail them with
++.B -EEXIST
++if the restriction is violated.
++The submitter task may differ from the task that created the ring.
++Note that when
++.B IORING_SETUP_SQPOLL
++is set it is considered that the polling task is doing all submissions
++on behalf of the userspace and so it always complies with the rule disregarding
++how many userspace tasks do
++.I
++io_uring_enter(2).
++Available since 5.20.
+ .PP
+ If no flags are specified, the io_uring instance is setup for
+ interrupt driven I/O.  I/O may be submitted using
 -- 
 2.37.0
 

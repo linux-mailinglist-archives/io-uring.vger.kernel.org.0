@@ -2,108 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8EE57EF50
-	for <lists+io-uring@lfdr.de>; Sat, 23 Jul 2022 15:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD41557F3B7
+	for <lists+io-uring@lfdr.de>; Sun, 24 Jul 2022 09:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbiGWNzF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 23 Jul 2022 09:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
+        id S235555AbiGXHaj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 24 Jul 2022 03:30:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiGWNzE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 23 Jul 2022 09:55:04 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4D11A3B7;
-        Sat, 23 Jul 2022 06:55:03 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id AEE8932004CE;
-        Sat, 23 Jul 2022 09:54:59 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 23 Jul 2022 09:55:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1658584499; x=1658670899; bh=Q+8K3gHBNF
-        qHeIbtVzIb073wzdSnjciqKKDdNQyLlEY=; b=Ag2UIiZRazRWQyd3DdhVMX55en
-        2fA7Qg3pHLmXjadGIlcG29CVBtJtYiUchJD+57V30Du+xx7W49LtKiYRpjAGqAsa
-        CccWWsPhSBmimy6twPZ1c/BKKaG2O52EL1zYsfvdYRU/xpQ5xZ0dRcoSQxek+ydM
-        rQDNNUVuVaIT83xDnTEZTK4M3f1FI4hxcXtVkW1KqVEIcTn9DFOSUjpPlI85L2RQ
-        y56fHi5EzMV7n76vEHlb/4ot1wgymFipobvqhyHiXpzjUztn2ncCLhnz9FyZPAcy
-        W9SDqp8niXAA19X/N1O5zouw/nIQbLNmOVzTmx7zVRrbRQddnMygEaIYuSGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1658584499; x=1658670899; bh=Q+8K3gHBNFqHeIbtVzIb073wzdSn
-        jciqKKDdNQyLlEY=; b=t+MLJeKgT1TY1aE4NMp4Ns1iigNgfhEqqgBchwkwTG8e
-        yhRXzuWs2O0KH25O8D6NKtpzj5pR8NQ43buap1JbmlaG3Dw38K0HGOqNfbinPCeY
-        0xJzxSuvkSBcImYeqVVLUnhUfVVErgkdbzgMhj4hGi8k5ZX3jnYMfocRQi4D54tu
-        eDhkr7Tl6ZJEFceiG9fPUlGk3NCGthGSP+suBxX/nE9XiO+dYGqfCqb7Na51BgEK
-        3zOc9cfu/ibu0bHZX0CaqvOvoWYln3VLsvZA+UuAOsJoSPF0dx+bTMuetltIzn02
-        9iDMgbLD0G1imx59Uxkz/7dOJtTKH2LfVwF1l5+BTw==
-X-ME-Sender: <xms:sv3bYjo5z8BMdXyJ1MUFaWQ2Ji8EOtX_Sz5taB4ux0-fHDRE2aa7gw>
-    <xme:sv3bYtqVE5vv2eAnuHfVNt8kruVh20hgaodX_eLkpPMgjPkzVQRPWZZjyP4YWVHVw
-    RrTgtCNjktf3A>
-X-ME-Received: <xmr:sv3bYgMCUcggTFAMcn1ALFaQexyxaVUbHCDS6QrxYJgr0T0se7SK_Q8FRAk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvddtgedgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
-    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
-    hhrdgtohhm
-X-ME-Proxy: <xmx:sv3bYm7588vIXc-S6UM7WFR5XssKtopKZLUy3Xw5lNnkGAvNrsZJSQ>
-    <xmx:sv3bYi7MpZqFQS_LWxDLSJir6Jfk17eC_mPiiJDDc3OSp0jEuk3d2g>
-    <xmx:sv3bYujfV22KmAIzouaodBqpFzn7LJVoQtfGe6b9J0gBy0DYPPPesA>
-    <xmx:s_3bYizHWq0PcaSwzia3gg2A7Fx0zU5fKFToj1q3Xxh_Gemq6r32Gg>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 23 Jul 2022 09:54:58 -0400 (EDT)
-Date:   Sat, 23 Jul 2022 15:54:57 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Lee Jones <lee@kernel.org>, stable@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5.10 1/1] io_uring: Use original task for req identity
- in io_identity_cow()
-Message-ID: <Ytv9sdsy9iGcUrVy@kroah.com>
-References: <20220719115251.441526-1-lee@kernel.org>
- <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
+        with ESMTP id S231394AbiGXHai (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 24 Jul 2022 03:30:38 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 636595FCF;
+        Sun, 24 Jul 2022 00:30:37 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id oy13so15295170ejb.1;
+        Sun, 24 Jul 2022 00:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=psNAByhtc2S44J/noRtkFecmnWVyvGB3SDGwFE67vsQ=;
+        b=Z510fyBCVtjWxSJD6jmBVEpRe2Fr2/elQgNDkz+nU+0/N8jqcEMWvUoj66jbfxF/cR
+         ULowIG6FoXgwoCDTaEChTVZAWM6VsZ6v8btEw/6Tn6CzMCTMGP0C71IPPZn+78PJDnV5
+         sS9INQ0ZJhM9HbUJQUkup7RKLpXgEcdC5f1siPAh4NauBYBcAe+dqX7hR2y5EXxyyrcT
+         7RfwhSZvHt/cspQNOgUPv6JPgXHWGBi4ZEg2jlA1tDYtMkl8z7TljG2oiWU7+TX4B9mc
+         DAvFgIbK9XM84JVxOppA5bENtL6pcrMET/OrtRxif3Tvd+6vtHC0BxP5UZmHvcwnIbBn
+         vllQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=psNAByhtc2S44J/noRtkFecmnWVyvGB3SDGwFE67vsQ=;
+        b=50RO5LjLKrNHefHBqhBuJ7UO04T3FHFiI9D95t+mI9mFEfPXrNojaV9ezYbgF2ZLFP
+         AG0J60IJrRjyLcLZwn6ioHPHdFiaYykb9eKT6UunlWIdFBxpfcteCumEotfl8d4rQSAt
+         oN4sSZv7BC7Ip7K+P/QT1CB4aRQXwp8HDLBEscm7EO3W5GunB3sRECvKYCrNp5oGvosj
+         iReTUzD0WhqrgEpKVxfrPelhR0ndl5ZYs43kTya/PDx64WBfRFlMCd9kFkX5C36w+9a1
+         EVcDUdqQt56JfVn7AKPY3EDVTzNDlNOAX3XTK55yaerBaIe1qN0ChNpsE7Lr6cSrJwa8
+         vemw==
+X-Gm-Message-State: AJIora8Nn11dq01IDNCwy+8hZFpCE6Qcu3gWofsVZDaytosqxHCDzyrU
+        v/yQ7iFcQHjKVS5Um+4yzwPfaFWavhV6ls1oCSw=
+X-Google-Smtp-Source: AGRyM1vyN8JtIYBly0jo2YxBwqNLU4+SETUkvVfO8uZcRyyW5iXrUwzRVWgmHazX181bWGOTjHdmVnQq+nDiZWDclXM=
+X-Received: by 2002:a17:907:7f1c:b0:72b:6e63:1798 with SMTP id
+ qf28-20020a1709077f1c00b0072b6e631798mr5593276ejc.538.1658647835931; Sun, 24
+ Jul 2022 00:30:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CANX2M5YiZBXU3L6iwnaLs-HHJXRvrxM8mhPDiMDF9Y9sAvOHUA@mail.gmail.com>
+ <e21e651299a4230b965cf79d4ae9efd1bc307491.camel@fb.com>
+In-Reply-To: <e21e651299a4230b965cf79d4ae9efd1bc307491.camel@fb.com>
+From:   Dipanjan Das <mail.dipanjan.das@gmail.com>
+Date:   Sun, 24 Jul 2022 00:30:24 -0700
+Message-ID: <CANX2M5YXHVTZfst7h5vkPtyt-xBTn1-zsoA=XUAWztbVurioOA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in __io_remove_buffers
+To:     Dylan Yudaken <dylany@fb.com>
+Cc:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>,
+        "fleischermarius@googlemail.com" <fleischermarius@googlemail.com>,
+        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
+        "its.priyanka.bose@gmail.com" <its.priyanka.bose@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 06:48:09AM -0600, Jens Axboe wrote:
-> On 7/19/22 5:52 AM, Lee Jones wrote:
-> > This issue is conceptually identical to the one fixed in 29f077d07051
-> > ("io_uring: always use original task when preparing req identity"), so
-> > rather than reinvent the wheel, I'm shamelessly quoting the commit
-> > message from that patch - thanks Jens:
-> > 
-> >  "If the ring is setup with IORING_SETUP_IOPOLL and we have more than
-> >   one task doing submissions on a ring, we can up in a situation where
-> >   we assign the context from the current task rather than the request
-> >   originator.
-> > 
-> >   Always use req->task rather than assume it's the same as current.
-> > 
-> >   No upstream patch exists for this issue, as only older kernels with
-> >   the non-native workers have this problem."
-> 
-> Greg, can you pick this one up for 5.10-stable? Thanks!
+On Thu, Jul 21, 2022 at 4:06 AM Dylan Yudaken <dylany@fb.com> wrote:
+>
+> On Wed, 2022-07-20 at 18:41 -0700, Dipanjan Das wrote:
+> > Hi,
+> >
+> > We would like to report the following bug which has been found by our
+> > modified version of syzkaller.
+>
+> Hi,
+>
+> Both of the bug reports you sent seem to be fixed by the patch I just
+> sent.
+>
+> This one however does not seem to terminate once fixed. Is there an
+> expected run time?
 
-Now queued up, thanks.
+Sorry for the late reply. We have just started looking into it, and
+will get back on this shortly.
 
-greg k-h
+>
+> Thanks!
+
+
+
+-- 
+Thanks and Regards,
+
+Dipanjan

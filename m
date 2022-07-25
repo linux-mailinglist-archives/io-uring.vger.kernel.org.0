@@ -2,60 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A608D57FCC0
-	for <lists+io-uring@lfdr.de>; Mon, 25 Jul 2022 11:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0054157FCE9
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jul 2022 12:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbiGYJxv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 Jul 2022 05:53:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53960 "EHLO
+        id S234467AbiGYKFK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Jul 2022 06:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232778AbiGYJxu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jul 2022 05:53:50 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D821704C
-        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 02:53:49 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id b26so15193513wrc.2
-        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 02:53:49 -0700 (PDT)
+        with ESMTP id S234497AbiGYKFI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jul 2022 06:05:08 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE56717AAF
+        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 03:05:05 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id v5so6476407wmj.0
+        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 03:05:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YqG0evu8QU96PZzvZYAhUUI1Uw0ucnERiwnkZnU2xmI=;
-        b=FwAHLQpvj3X7nFNMr0reYM/T/qsF0DRdUPMneChBJlGTuCSFpQY2Envou9WkIHMZFi
-         P09PMRQWDy4I33ay+1NHcu10ceD+6JF77K65Ps7SOKtGL8YybeXF9CLGE9piz/RQOG3l
-         iIJY2BmbaxwsM16rZpgtUtZjklexJASDBRcWLGEuoNbWnw98a7NJXZRTHwZSdcAxV+VG
-         uLftku3M1A3Uh/z+3DDMvCg1Wmoo8yiMEAaYF3ThQC1msQ1Flo/djHpaCCKatzsL9aqT
-         VfxxVDzQ/airqu+SsvsRRWSCV4k4oXXp1irlJ7tiCZZ01zrLy80Clsd8js+gWwn4Ckmf
-         nZxQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eOaT3p8u2t3UfakztdJFNsorYbkvtWP9Cob0CNUdzXM=;
+        b=NPM3gNXFPj/CeOda/4n/aaL2d/XdcSBASiyc7RBMYAxjRKQX8m/505ZQMWfkhBBIeU
+         s7dt28Q5vpRK9G6kraOFuUVLdAkj/rbqr5ITr2v5yGBuDrVGernyk0cRnqjZx9jKVzHh
+         ulEwRznoKQtoX3+Ag32OHVAt+SNmWgEiGrJZtRsMeKLgv29rT3dN74KeYGLNtiX8iV4g
+         JgQAD09g8zGHzOuQ5VQuBfXSBE7kUqZcywZh0mNaYcs31Pl2Vl6DJ5D9hc9jCnZ7RoXP
+         huuh3DSNPWA4//0ABjbwVaYWiUxIL2Rn/wms4kKSyuHUBgsN/Xm8lz+hwf7KvZfxq1OG
+         PARQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YqG0evu8QU96PZzvZYAhUUI1Uw0ucnERiwnkZnU2xmI=;
-        b=WJo7g8qEVhXC8YhRJiHBV7li7BHSxjJOrGyE18s3MSfAYnlUGRtcK9OWhfdsPDHnAQ
-         oOctLmRdQub5+SP3iWh2b9GNaIkeB4LnxQBMV4w/WM+hWwpeS4dRpyNOw6vfVt4+iemD
-         pobknqj8Kno1cgnGhBliFwz6M/dloukJXz8KHFNL45Yz+2gt4Zay3ybQ9bxSeygM+SGe
-         6H1PmGgQEgaW/3XTlcHHodHOOVNOAR35i+EaJ13uagVP3aY4vYTmoYQ25pw3CwGzIbgd
-         EED/CqTsNtGnNNYmRism40CRJ4INa1YuonPTV/LnDUq6y907Qb63ASPIMHY9uGJszxxW
-         4clA==
-X-Gm-Message-State: AJIora/2VU/hOyerGFUtZrQs3Kp3Dq5I/NeakgIz7Szo1u6vWDabx9b/
-        EbsOznyd6GU+DnX0MhD/9nC7MVJ2nz/bqg==
-X-Google-Smtp-Source: AGRyM1s6o37bI4TRwzlzszVmWTUJk3WkxNOedCx7rSPadwa+QtvAdLRYP5M8lym3tGL71yZXxFBtPw==
-X-Received: by 2002:a5d:64a3:0:b0:21d:ad9e:afd7 with SMTP id m3-20020a5d64a3000000b0021dad9eafd7mr6991476wrp.524.1658742828928;
-        Mon, 25 Jul 2022 02:53:48 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:1720])
-        by smtp.gmail.com with ESMTPSA id n12-20020a05600c3b8c00b003a2ed2a40e4sm18909636wms.17.2022.07.25.02.53.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eOaT3p8u2t3UfakztdJFNsorYbkvtWP9Cob0CNUdzXM=;
+        b=rLdQ1IRQNKzUiGug/d+aDJj/y6S0fRDyGoHmA1uFMRL0nx8MHgxiCigO8VgnnwXz0E
+         PRi5LW9gklVQnIQALqRMkiGek1tRu39MPCLxd5swxHaLSHQrczzriwoLisntnt6SHqXc
+         GNmAValcbVEoWYLACSh1IE9hlkQEjlkOehBtZpzduMKaEnmQ71I1tfkkh9RJ2rzf8Cge
+         tQBcXNDo6KLhwX0CZkndypGH16xf3v4PgKiUIcDzc8hDiiEwHPMBEqgb01ieAa7KHa3o
+         LfuLRUYz7YCZrN1SgLA2kTPDVQ9AqtH2Xb9oagEIntptwFwtmYz0Qbgs1jG/gDNld4Rf
+         qt8Q==
+X-Gm-Message-State: AJIora++M4ZNJQ5qToaOeMIhx4cfomcfh1Su3Zm5e0TkMpqSOL4lFq0L
+        Olftn+u39pRm86Zz6oftE+HefKpjmZ1kmQ==
+X-Google-Smtp-Source: AGRyM1vg9dkDQQYeoCwc+NSRPHZlPeJOkw9a4VZofNNTLXAGbCsXm/m4K1fv21/dXrhoR0RMshLzRg==
+X-Received: by 2002:a1c:7213:0:b0:3a3:155a:dd5d with SMTP id n19-20020a1c7213000000b003a3155add5dmr7612061wmc.178.1658743503660;
+        Mon, 25 Jul 2022 03:05:03 -0700 (PDT)
+Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:9f35])
+        by smtp.gmail.com with ESMTPSA id j23-20020a05600c1c1700b003a32251c3f9sm20553959wms.5.2022.07.25.03.05.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jul 2022 02:53:48 -0700 (PDT)
+        Mon, 25 Jul 2022 03:05:03 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 4/4] io_uring/net: use unsigned for flags
-Date:   Mon, 25 Jul 2022 10:52:06 +0100
-Message-Id: <5cfaed13d3191337b14b8664ca68b515d9e2d1b4.1658742118.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 0/4] zerocopy send headers and tests
+Date:   Mon, 25 Jul 2022 11:03:53 +0100
+Message-Id: <cover.1658743360.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.0
-In-Reply-To: <cover.1658742118.git.asml.silence@gmail.com>
-References: <cover.1658742118.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -68,30 +66,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use unsigned int type for msg flags.
+Add zerocopy send headers, helpers and tests
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Pavel Begunkov (4):
+  io_uring.h: sync with kernel for zc send and notifiers
+  liburing: add zc send and notif helpers
+  tests: add tests for zerocopy send and notifications
+  examples: add a zerocopy send example
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index c13d971c7826..8276b9537194 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -55,10 +55,10 @@ struct io_sr_msg {
- 		struct user_msghdr __user	*umsg;
- 		void __user			*buf;
- 	};
--	int				msg_flags;
-+	unsigned			msg_flags;
-+	unsigned			flags;
- 	size_t				len;
- 	size_t				done_io;
--	unsigned int			flags;
- };
- 
- struct io_sendzc {
+ examples/Makefile               |   3 +-
+ examples/send-zerocopy.c        | 366 +++++++++++++
+ src/include/liburing.h          |  41 ++
+ src/include/liburing/io_uring.h |  37 +-
+ src/liburing.map                |   2 +
+ src/register.c                  |  20 +
+ test/Makefile                   |   1 +
+ test/send-zcopy.c               | 879 ++++++++++++++++++++++++++++++++
+ 8 files changed, 1346 insertions(+), 3 deletions(-)
+ create mode 100644 examples/send-zerocopy.c
+ create mode 100644 test/send-zcopy.c
+
 -- 
 2.37.0
 

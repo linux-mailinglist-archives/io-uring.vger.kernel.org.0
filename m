@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C8157FCBD
-	for <lists+io-uring@lfdr.de>; Mon, 25 Jul 2022 11:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4D257FCBE
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jul 2022 11:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233694AbiGYJxf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 Jul 2022 05:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53602 "EHLO
+        id S231825AbiGYJxm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Jul 2022 05:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231825AbiGYJxe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jul 2022 05:53:34 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B74167FF
-        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 02:53:33 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id v13so7400857wru.12
-        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 02:53:33 -0700 (PDT)
+        with ESMTP id S233423AbiGYJxk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jul 2022 05:53:40 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B666E17049
+        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 02:53:38 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id l15so11126254wro.11
+        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 02:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=A3sihs00hh7yUsVGm61oPxJU/8E8nz9XVaw8rankcW8=;
-        b=ey2T+l1twleuG+OFLy9ixDezRiqsXOosmaT+VNL4km6nC26+SIIaK83Y7DUaeyhg09
-         LoV6IrhMc1lyr7TKdDteQkatIvvl7I2NtYBRIsrKNb1UIGdjgrsY/C6q4flD12Dr+Nhp
-         xQLhUakkqcg/y39b+4TwNsjT94N1YwaYwVsX5JxloKhMI/cn79NGLN3oPZelRGFuFC6l
-         0rkiIT0xXfNPufAFrSnWSg/mD4lLASACiCG6gkraoLocATUm0ey6NlgYzyy+FH3QDfSl
-         wLENtuHdiPDfkhxkqWulj01c6ll5i1QedYDIjQVZRRLG4kEx5cB3E5I0ycS7Vu6xzG0l
-         9ljQ==
+        bh=sinLQ20yM4qKTkg/oyuzo+DXzfh3EUo3lAFbL25qdqs=;
+        b=BrOMhMeF39zBFDfjqdDUWvU/k+JqPqhXxEpkd0ZSWw2H7EMhlWmwBruRyX9htxPFXH
+         v+bVW2VBLLUMdFbu9/EQU0SGNQOGqdcsmd+ZaVvD9ypl/Jk3E2KhlDnsK0wtnOY5RdZp
+         RcqidU0dm6m1HYEUy1UjMnGKV0nJyrSWg7T7oKqqHeSgvUTvDqSkV5/qluEog92+ETvl
+         8k8DysvukTO0ZmCZ9Q++Wb2xXOKX6Jbq7FxE2hhVEgHc9YyMmz7mh7zAzBhkpoiF247s
+         CDCSctV4ik4OxIRDpSLE9EgAHqnJwBznz7ofQTYs2INWM0/UYHbNbJqRn8xx0qYtwkXt
+         KRJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=A3sihs00hh7yUsVGm61oPxJU/8E8nz9XVaw8rankcW8=;
-        b=QxBcWdTh2RQ1+cmWSmjhCsds6N6k8c+rwAvBolmWka6Aa1FwE0vW42uIQb0h20lY00
-         KcjP1L3XQ/YHt5HTGusgy9w+GhOx7ywbPtkxpKQRrZtFzPRjy6+vtc5mMWBiVOzc/gI6
-         hRMCVg7X+0ipnJliU2b84FMhAEP0p++hkxDdwQGTsv1ZvlVDztcJ9dyknFFkZ5OKYnAx
-         kksUiHdwuVCJv+SXsU8m5AlufqsUlVDdBeZhXBPpZy9Kq9u92rcHHe8ZNhYneqOKGqDx
-         ZqJ5dS92vfRI5ikLmD3J79jrKOPRaO1MB8r6vEIzXXejifDZbZg3OrMSqLQShdSWPCOs
-         5V6Q==
-X-Gm-Message-State: AJIora+gT0txJUum5k+xsnWM+rK+bxrG5jPHKHGBpxii68iLdrUihvdi
-        W6ZUyy11Xf6NNvKXHYrJiG5wqUk5PJulnw==
-X-Google-Smtp-Source: AGRyM1tV6ozSF8UOe5fzBkqnm0OEmKIDQSvJAHqzcXcll2hT+9hTADxkfvTqwU2LgQrDJI7LLL3kzw==
-X-Received: by 2002:a5d:5089:0:b0:21e:734e:24c6 with SMTP id a9-20020a5d5089000000b0021e734e24c6mr6113481wrt.42.1658742811264;
-        Mon, 25 Jul 2022 02:53:31 -0700 (PDT)
+        bh=sinLQ20yM4qKTkg/oyuzo+DXzfh3EUo3lAFbL25qdqs=;
+        b=iHN34X9HFfXlEsrvMSU+XIbaPZ7Gx4iR3UJAdsVT5XlzIEJIKFu+dPUZ0gzcA7M1HL
+         35ULsA+BngGrelTpEp1BKY8WONKNlghjSfu7O6FJJMIQczxmD/HuxMlavW9NYJkHCQOP
+         3PvzKnbcCoLhtW9adTjiAzRsfB08NxgyD5OGXg1GtnsUH+bXbsNlZPq8wveaz6RoalIu
+         zo8Zj0VsRQgGj5/51uklt3RAnPi1potxQrpZFD0krGQJWUh6XgX2CXgUJoapSyKrNDSs
+         viy1PXrnNxWg5m4lmh+A02/5PYE11H9P4VBiQ2VJiv5r+BeiW8YFD0Lk/yK8npWiS9BA
+         hl9w==
+X-Gm-Message-State: AJIora+yPr81wnR0U9bhBq5fQn/rHhr6DW5cxYpdRbtP3XVi05+J7C/d
+        gYfD+G7fviM9sDMZ5rWT3iA6oXe11yA2Cg==
+X-Google-Smtp-Source: AGRyM1vyJjwt7//2P2N+n+xSfgIaOahMT9aP5yaTidIV07ryPIWE10dotyI0mhoavnSeDd6HEmWuGg==
+X-Received: by 2002:a05:6000:1888:b0:21d:beeb:7873 with SMTP id a8-20020a056000188800b0021dbeeb7873mr7135592wri.393.1658742816717;
+        Mon, 25 Jul 2022 02:53:36 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:1720])
-        by smtp.gmail.com with ESMTPSA id n12-20020a05600c3b8c00b003a2ed2a40e4sm18909636wms.17.2022.07.25.02.53.26
+        by smtp.gmail.com with ESMTPSA id n12-20020a05600c3b8c00b003a2ed2a40e4sm18909636wms.17.2022.07.25.02.53.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jul 2022 02:53:30 -0700 (PDT)
+        Mon, 25 Jul 2022 02:53:36 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 1/4] io_uring/net: improve io_get_notif_slot types
-Date:   Mon, 25 Jul 2022 10:52:03 +0100
-Message-Id: <e4d15aefebb5e55729dd9b5ec01ab16b70033343.1658742118.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 2/4] io_uring/net: checks errors of zc mem accounting
+Date:   Mon, 25 Jul 2022 10:52:04 +0100
+Message-Id: <dae0542ed8e6706071bb83ad3e7ad6a70d207fd9.1658742118.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <cover.1658742118.git.asml.silence@gmail.com>
 References: <cover.1658742118.git.asml.silence@gmail.com>
@@ -68,26 +68,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't use signed int for slot indexing.
+mm_account_pinned_pages() may fail, don't ignore the return value.
 
+Fixes: d3b8269075f67 ("io_uring: account locked pages for non-fixed zc")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/notif.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/net.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/notif.h b/io_uring/notif.h
-index 6cd73d7b965b..3e05d2cecb6f 100644
---- a/io_uring/notif.h
-+++ b/io_uring/notif.h
-@@ -67,7 +67,7 @@ static inline struct io_notif *io_get_notif(struct io_ring_ctx *ctx,
- }
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 62be89837d82..8fb8469c3315 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -985,7 +985,9 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 					  &msg.msg_iter);
+ 		if (unlikely(ret))
+ 			return ret;
+-		mm_account_pinned_pages(&notif->uarg.mmp, zc->len);
++		ret = mm_account_pinned_pages(&notif->uarg.mmp, zc->len);
++		if (unlikely(ret))
++			return ret;
+ 	}
  
- static inline struct io_notif_slot *io_get_notif_slot(struct io_ring_ctx *ctx,
--						      int idx)
-+						      unsigned idx)
- 	__must_hold(&ctx->uring_lock)
- {
- 	if (idx >= ctx->nr_notif_slots)
+ 	if (zc->addr) {
 -- 
 2.37.0
 

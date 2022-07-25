@@ -2,76 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9776580072
-	for <lists+io-uring@lfdr.de>; Mon, 25 Jul 2022 16:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD7858022E
+	for <lists+io-uring@lfdr.de>; Mon, 25 Jul 2022 17:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235269AbiGYOIa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 25 Jul 2022 10:08:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
+        id S235146AbiGYPtC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 25 Jul 2022 11:49:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235499AbiGYOID (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jul 2022 10:08:03 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8D8B17ABB
-        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 07:07:54 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id z13so16123349wro.13
-        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 07:07:54 -0700 (PDT)
+        with ESMTP id S232697AbiGYPtB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 25 Jul 2022 11:49:01 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995D9DEE7
+        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 08:49:00 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id l24so9088303ion.13
+        for <io-uring@vger.kernel.org>; Mon, 25 Jul 2022 08:49:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Z9Io2TZT6ClcZgsL7PDcqqMHOyjLDeORT4JMtbh6Kg0=;
-        b=f5CqB+MFuiJvpdJ34dXDuwo9tIejR0yGKDLIDy48vLz6PgGXGX7GLLJaiaTyGHGrqf
-         tiFxd4CFqrUzOHngKDeqs9D6iF+UzsyF3H04tCMJwvCdxrCdd98G/teuB6z55J4h/4/x
-         nn8hojS+0RW1VRyQDuQU0+8mL5eaToU5kqeKX/5Ghos0/sjb+IoOyUk66tp2FZT1JOV1
-         QL7+ghbKUCaxInWNlidK4OQUNQZ1C13/BNHCF0OtYk5yIyBNFjW9fwB8xbkEuLlYAPDh
-         DhEUo9XuVom0H+wmWhwtkrORLJ/9i5m7Jrs21tw/uWiw7IcwWfqpfU/VtFY4DU7NRpVt
-         c2qQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=sGJ0zRynPcRnh4Vmjh7w//xnQvVr8wE5mTRuKp7iRUs=;
+        b=mgjG7rIX8/miVARaLUrwY9TIR2f5NvCQhWoaxnCvsvm2fsu69SZbSNlxIQNYSE9qyX
+         Bni3aYoKUqvy9BZ03+Nt/mLwwlzANkC/ANNDzk+cVlw0VJSGZqIExkXWZHh37iEbfJsG
+         O3k3y7ySE/dmDc8dEJj0/lihdSxtHa93RDPJEIb65S3MAUyWOdp4wPwhsOh+qnzyQc9q
+         yg7Rlw1+q4KNMZhb3D9aFO6NOes8xqLT6txPLDqL2jD+4fYewRO9kawZ/JGAk7jS0OB7
+         hqmERcGSqSCE2cXLLmoIdEW5XXx8iQnL235CT0jBOFTn3eDMRWmg8FpAa43TWnMD4Snn
+         xmJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Z9Io2TZT6ClcZgsL7PDcqqMHOyjLDeORT4JMtbh6Kg0=;
-        b=7AEZ+0qhTbvmrFviU0xwKE4QceIIQ2Y6flDC/a12JADM/PEf/SnG5/lWak4ysZspkg
-         SC5X+p2rIhfwhcGEJNJQf41+hqS+Wdo9yfWFhmIHQnkgCQIeyi0QDgAqDCg7+NqVT4Jk
-         XDatz2BDAUCu02Z5GEKbHTtY8R0wQbzvC+5I0brxxGWh6PH+aiDsIM+esd7twc6ncEXR
-         0XciUBbq3jk8xu4bqHHC7soFpm38wmcsYE8FpbyUAiaUkgo0jvFcsEMJrt7eO2cgnDEH
-         GT1shrqlLI2hGiJP092FtLpb/OaFx9OM9G0Z9BC3a0XeQjcvQMfMSSBLL4x55JHbpUSd
-         IcLA==
-X-Gm-Message-State: AJIora/Q27nLuHPEzUS24uKcFuDvGH2k9QGRGZWe1Rjvn7sM+3lgHNRl
-        Qrq8VnfXJPrvpfnqtUxAlXA=
-X-Google-Smtp-Source: AGRyM1tgys55CMxE7t2Y2OyhAGtoANtv8cZAYcnU7n1oiRzXCWnCs5vqJPzZ7qQ+LoP9eXFruQ0b3Q==
-X-Received: by 2002:a05:6000:1ac8:b0:21e:5842:7e49 with SMTP id i8-20020a0560001ac800b0021e58427e49mr7987161wry.672.1658758073060;
-        Mon, 25 Jul 2022 07:07:53 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:846e])
-        by smtp.gmail.com with ESMTPSA id o20-20020a05600c4fd400b003a305c0ab06sm20058697wmq.31.2022.07.25.07.07.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jul 2022 07:07:52 -0700 (PDT)
-Message-ID: <607cd14d-c1a6-52d2-0984-d67f04edf63f@gmail.com>
-Date:   Mon, 25 Jul 2022 15:07:41 +0100
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=sGJ0zRynPcRnh4Vmjh7w//xnQvVr8wE5mTRuKp7iRUs=;
+        b=IIjUQ0WI8+B6oEMvsxOXE3TnKEv+6/LNaNNanulVatZScYpmyRg+yNn75LBtedoYCN
+         5q6MnzdVlF5/kyc4hlwvZGRGFyj0pjlU3RCob+i5qhbonnyGDh0TwUeW4nA779sMqjD9
+         kmYqZrqDTJ2I7xpe+sx5sM2cI4a9uUYubaGDjGFjnPDbpjKOgZzHhJZDGqaUe48k2jk/
+         93kZkwU9sBGNMwzQFyROK6v1trA9O7uwnVctEIntEyHnYaP3yAwjqEYMQ2/KliNXWOrC
+         0msJITS78Q6tG4waYSWM9SKOG88opHz7EXjQpiJTS2VfDt36va15fLayT+QNrGOYyplH
+         C/wA==
+X-Gm-Message-State: AJIora/ixvx81XcThiE+4ySfgVvpQwQIUUhat4YFD6VZxfJniBHo9Gg8
+        yPjYneJmnshdICSjC7FUSmuolTs21yI8mw==
+X-Google-Smtp-Source: AGRyM1tyYjKCnQeqvYTEsDtp6HR7Stse+4R8K0V5XJc7bHc+Hnir9ddglZOSprahp25WLTFdGW1CQA==
+X-Received: by 2002:a5e:8f0d:0:b0:67b:d8fa:7bab with SMTP id c13-20020a5e8f0d000000b0067bd8fa7babmr4701708iok.118.1658764139932;
+        Mon, 25 Jul 2022 08:48:59 -0700 (PDT)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id y6-20020a92d206000000b002dc10fd4b88sm4868156ily.29.2022.07.25.08.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jul 2022 08:48:59 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     asml.silence@gmail.com, io-uring@vger.kernel.org
+Cc:     ammarfaizi2@gnuweeb.org
+In-Reply-To: <cover.1658748623.git.asml.silence@gmail.com>
+References: <cover.1658748623.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing v2 0/5] zerocopy send headers and tests
+Message-Id: <165876413920.1091866.13314205448104071871.b4-ty@kernel.dk>
+Date:   Mon, 25 Jul 2022 09:48:59 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH liburing 3/4] tests: add tests for zerocopy send and
- notifications
-Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Eli Schwartz <eschwartz93@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-References: <cover.1658743360.git.asml.silence@gmail.com>
- <92dccd4b172d5511646d72c51205241aa2e62458.1658743360.git.asml.silence@gmail.com>
- <bf034949-b5b3-f155-ca33-781712273881@gnuweeb.org>
- <c89d373f-bc0d-dccf-630f-763e8e1a0fe5@gmail.com>
- <7ed1000e-9d13-0d7f-80bd-7180969fec1c@gnuweeb.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <7ed1000e-9d13-0d7f-80bd-7180969fec1c@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,72 +67,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/25/22 13:08, Ammar Faizi wrote:
-> On 7/25/22 6:28 PM, Pavel Begunkov wrote:
->> Don't see any reason for that
+On Mon, 25 Jul 2022 12:33:17 +0100, Pavel Begunkov wrote:
+> Add zerocopy send headers, helpers and tests
 > 
-> Not that important, just for easy finding. Especially when the number of tests
-> increase. And yes, it always increases from time to time.
+> v2:
+> 	use T_EXIT_*
+> 	fix ptr <-> int conversions for 32 bits arches
+> 	slight renaming
+> 	get rid of error() in the test
+> 	add patch 5/5
 > 
->> especially since it's not sorted.
-> 
-> It was, but since that skip-cqe.c exists, it's no longer :p
-> OK, OK, that's trivial, never mind. Let's move on.
-> 
->>> New test should use the provided exit code protocol. This should have
->>> been "return T_EXIT_SKIP;"
->>
->> Oh, I already hate those rules, sounds like they were specifically
->> honed to make patching harder.
-> 
-> Lol, how damn hard is it to use it.
+> [...]
 
-Not hard to use, I agree, but it's rather yet another thing that
-I need to keep in mind and then it unavoidably gets forgotten and
-makes to spend extra 10 minutes to fix/retest/resend/etc., which
-is annoying.
+Applied, thanks!
 
-Testing is not the most exciting part, frameworks are usually
-trying to simplify writing tests even if there is a learning
-curve. Implicit rules make it worse. I wouldn't have been
-complaining if the compiler failed the build or at least
-runtests.sh warned about it.
+[1/5] io_uring.h: sync with kernel for zc send and notifiers
+      (no commit info)
+[2/5] liburing: add zc send and notif helpers
+      (no commit info)
+[3/5] tests: add tests for zerocopy send and notifications
+      (no commit info)
+[4/5] examples: add a zerocopy send example
+      (no commit info)
+[5/5] liburing: improve fallocate typecasting
+      (no commit info)
 
-
->> By the way, while we're at it, what is T_EXIT_ERROR? Why it's not used anywhere
->> and how it's different from T_EXIT_FAIL?
-> 
-> [ Adding Eli to the participants. ]
-> 
-> Ummm... yeah. I am curious about it too now. I just took a look at commit:
-> 
->     ed430fbeb33367 ("tests: migrate some tests to use enum-based exit codes").
-> 
-> Eli said:
-> 
->      From: Eli Schwartz <eschwartz93@gmail.com>
->      Date: Mon, 27 Jun 2022 14:39:05 -0400
->      Subject: [PATCH] tests: migrate some tests to use enum-based exit codes
-> 
->      For maintainability and clarity, eschew the use of integer literals in
->      reporting test statuses. Instead, use a helper enum which contains
->      various values from the GNU exitcode protocol. Returning 0 or 1 is
->      obvious, and in the previous commit the ability to read "skip" (77) was
->      implemented. The final exit status is 99, which indicates some kind of
->      error in running the test itself.
-> 
->      A partial migration of existing pass/fail values in test sources is
->      included.
-> 
->      Signed-off-by: Eli Schwartz <eschwartz93@gmail.com>
-> 
-> 
-> That T_EXIT_ERROR is 99 here. Not sure when to use it in liburing test. Eli?
-> 
-> [ Just for reference in case you (Eli) want to see the full message:
-> 
->    https://lore.kernel.org/io-uring/c89d373f-bc0d-dccf-630f-763e8e1a0fe5@gmail.com/  ]
-> 
-
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

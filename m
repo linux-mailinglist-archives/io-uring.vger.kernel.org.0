@@ -2,105 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89465581258
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 13:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC67058125A
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 13:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbiGZLvL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jul 2022 07:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58752 "EHLO
+        id S231473AbiGZLvZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jul 2022 07:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238919AbiGZLvK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 07:51:10 -0400
+        with ESMTP id S232887AbiGZLvY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 07:51:24 -0400
 Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AE432ED9
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 04:51:09 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220726115106epoutp0448a61d55bb96f7445c68f75a82606d1f~FXsurH1Dx0128801288epoutp047
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 11:51:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220726115106epoutp0448a61d55bb96f7445c68f75a82606d1f~FXsurH1Dx0128801288epoutp047
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A0932ED1
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 04:51:21 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220726115120epoutp04f2bd0dc85582b2df4a084879497d7f2b~FXs7QGTf83212932129epoutp04i
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 11:51:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220726115120epoutp04f2bd0dc85582b2df4a084879497d7f2b~FXs7QGTf83212932129epoutp04i
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1658836266;
-        bh=8ZRJ2yAa5YlNjP+lRsTxBfnnFz5zvSEZd11Xx72zjSU=;
+        s=mail20170921; t=1658836280;
+        bh=kx85pLS45GqWj2EfzdAuR6iDYDiGVWfmEvcTBt7REaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mPpNidHOaAR/KUb6hETdBwDHLfU2xN5LYbT0jy+fT079pl3H+aXGzNz0EkQmhlQlB
-         ZOXF7krU7gETdpIAyDqGdz/vkl7IXtXxfkBN32nNUxL58cqRqgREHEPNLiCONUfi1i
-         Q9kp8F7WgfZ77IJrbFjrABihAhjbA0Jfy1o/LQxE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220726115105epcas5p1af17983335de3e7e3cc779ca7dd6b58e~FXsuDksnq2881828818epcas5p1h;
-        Tue, 26 Jul 2022 11:51:05 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4LsZxM2w4fz4x9Pt; Tue, 26 Jul
-        2022 11:51:03 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        92.58.09566.525DFD26; Tue, 26 Jul 2022 20:51:01 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220726105815epcas5p2e19ff2fe748cfeb69517124370de3b7f~FW_lu3TMZ3232132321epcas5p20;
-        Tue, 26 Jul 2022 10:58:15 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220726105815epsmtrp11363e7f0314d62473ab7076b6c87a3e5~FW_luTVcI0116501165epsmtrp1Z;
-        Tue, 26 Jul 2022 10:58:15 +0000 (GMT)
-X-AuditID: b6c32a4a-ba3ff7000000255e-3a-62dfd52518b5
+        b=Vu+HWC+09Dj3TkiN3NGENw0e4gZOP2TSkMVE6xIfOTs3iPgOTDnAWZ4pMqP22rO6g
+         5INYvj2hA/dLleyZbX/4b5PtrpRXQeEETrj3Qtd7xn5Ib9Y9zprPySzSVTzeZX3Fua
+         CJp1GWZy98RhIawJzQ17tt0/3axmV0rnK6nViJ8g=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220726115119epcas5p38a9a9c61c64c78d4121cf8c0d8281583~FXs6phRkW3057330573epcas5p31;
+        Tue, 26 Jul 2022 11:51:19 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4LsZxc4HkKz4x9Q0; Tue, 26 Jul
+        2022 11:51:16 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8F.E9.09639.135DFD26; Tue, 26 Jul 2022 20:51:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220726105816epcas5p3365fed54f9ba20518dd8019a50c6c27c~FW_ml1qfp2226722267epcas5p3W;
+        Tue, 26 Jul 2022 10:58:16 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220726105816epsmtrp271e819bf9253d5cf0c708b35dd8b50f7~FW_mkvMI93043430434epsmtrp2a;
+        Tue, 26 Jul 2022 10:58:16 +0000 (GMT)
+X-AuditID: b6c32a4b-e83ff700000025a7-26-62dfd531dfb1
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        90.E9.08905.7C8CFD26; Tue, 26 Jul 2022 19:58:15 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E2.6E.08802.8C8CFD26; Tue, 26 Jul 2022 19:58:16 +0900 (KST)
 Received: from test-zns.sa.corp.samsungelectronics.net (unknown
         [107.110.206.5]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220726105815epsmtip1cfe10782a0c3effe98f87a22e2d7d254~FW_lAQ16b1956519565epsmtip1G;
-        Tue, 26 Jul 2022 10:58:14 +0000 (GMT)
+        20220726105816epsmtip157fcf9dbb6646880d7ab204b8b580bbb~FW_l1Cbdh2376423764epsmtip1E;
+        Tue, 26 Jul 2022 10:58:15 +0000 (GMT)
 From:   Ankit Kumar <ankit.kumar@samsung.com>
 To:     axboe@kernel.dk
 Cc:     io-uring@vger.kernel.org, joshi.k@samsung.com,
         Ankit Kumar <ankit.kumar@samsung.com>
-Subject: [PATCH liburing v2 3/5] nvme: add nvme opcodes, structures and
- helper functions
-Date:   Tue, 26 Jul 2022 16:22:28 +0530
-Message-Id: <20220726105230.12025-4-ankit.kumar@samsung.com>
+Subject: [PATCH liburing v2 4/5] test: add io_uring passthrough test
+Date:   Tue, 26 Jul 2022 16:22:29 +0530
+Message-Id: <20220726105230.12025-5-ankit.kumar@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220726105230.12025-1-ankit.kumar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsWy7bCmuq7q1ftJBocbpS3WXPnNbrH6bj+b
-        xbvWcywWR/+/ZXNg8bh8ttSjb8sqRo/Pm+QCmKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNN
-        zQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAlikplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVS
-        C1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjPWvHzJWLBRrmLWtkOsDYyzxLsYOTkkBEwk
-        midNY+ti5OIQEtjNKLHq3hd2COcTo8SlxuesEM43RomnB/4wwrQ83n8Vqmovo8SungawhJBA
-        K5PE/TlgNpuAtsSrtzeYQWwRAWGJ/R2tLCA2s0CUxJpXZ8FqhIHs5w9usILYLAKqEn9vnGcH
-        sXkFbCSuvNzIBrFMXmL1hgNgczgFbCWaXk4Bu0hCYBG7xLf9n6GKXCTmXHsLdZ2wxKvjW9gh
-        bCmJl/1tUHa2xKaHP5kg7AKJIy96mSFse4nWU/1ANgfQcZoS63fpQ4RlJaaeWscEcTOfRO/v
-        J1CtvBI75sHYQDffu80CYUtL3Hx3Fcr2kNg/4SUjJIAmMEq0vJvAPIFRbhbCigWMjKsYJVML
-        inPTU4tNC4zyUsvhsZacn7uJEZygtLx2MD588EHvECMTB+MhRgkOZiUR3oTo+0lCvCmJlVWp
-        RfnxRaU5qcWHGE2BATiRWUo0OR+YIvNK4g1NLA1MzMzMTCyNzQyVxHm9rm5KEhJITyxJzU5N
-        LUgtgulj4uCUamDawH609HL/H7vfwsybhTmfrGIuOSr+tZPljvyP3OXHJtrs8d3LvKVhxmXn
-        X9E3O+5msZ70855htnHeDM2yVSqHg20zNtWsumu8Vdo7yG3Ws/ATshPtn3UU2m6utW3eLrMq
-        9tHprgDRHQXLj2bN+sGww1H9qOiW7G7Gyswnl/6JLVFdrdNVW3j3g+bMILPz8rn3dlu95X/Y
-        rX32w5xDB5J1zL/ZZP9e2dmRf0viYp60avGsj27t+w0vs4YEWd9NnZMl8/jSF09VM04O0Xd7
-        akvU+HbG6s/hmts2df+izS2Pv4kc59FgcD/26V75pu8PehXl5k+zM+taF33kAJuFWMPxZ0cr
-        ir0ku6Z/uvUx7/5RJZbijERDLeai4kQAuUnJzdkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDJMWRmVeSWpSXmKPExsWy7bCSnO7xE/eTDD6+NbZYc+U3u8Xqu/1s
-        Fu9az7FYHP3/ls2BxePy2VKPvi2rGD0+b5ILYI7isklJzcksSy3St0vgyljz8iVjwUa5ilnb
-        DrE2MM4S72Lk5JAQMJF4vP8qexcjF4eQwG5GiY0nJgA5HEAJaYmF6xMhaoQlVv57DlXTzCTx
-        8fojZpAEm4C2xKu3N8BsEaCi/R2tLCA2s0CMxNQjh8FsYYEIiRnr3jKC2CwCqhJ/b5xnB7F5
-        BWwkrrzcyAaxQF5i9YYDYHM4BWwlml5OYQWxhYBq/h46xjaBkW8BI8MqRsnUguLc9NxiwwLD
-        vNRyveLE3OLSvHS95PzcTYzgANLS3MG4fdUHvUOMTByMhxglOJiVRHgTou8nCfGmJFZWpRbl
-        xxeV5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cDEniH5MapMtlVXa9v+nH9M
-        5hHbN+/If+qT1JT56b+YybuUR9wHClmYbGc86N1Z6b9lYfjOJWXnS70Orssv/TlBR7jPIOt9
-        UvSyNZ9FBa5n8Uos6Ci+zF71Jnleee9yPoHCUP7kS2ayUfO/3+k9ITtzY/TjjMLD03c/uzF3
-        le76imiDPyHVb5LXrxYxr/Yy+FIddP/aZY5m+fP2+6XDzn+ylXn89MGj017dHz8wsfJU5Yqc
-        Tz4V1Pmv9Jfxc9a2cz6bfh51CfePvfuw9UmSePOvKd2pE7fU3V0wK2C+8qmnKt0yN8K28e/L
-        bA09ZuXr5vPo1veTAvxzmQXWTingdi6ez9o3o3DNK62ym948Sw2UWIozEg21mIuKEwEyvMj3
-        jwIAAA==
-X-CMS-MailID: 20220726105815epcas5p2e19ff2fe748cfeb69517124370de3b7f
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsWy7bCmlq7h1ftJBge/q1isufKb3WL13X42
+        i3et51gsjv5/y+bA4nH5bKlH35ZVjB6fN8kFMEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8eb
+        mhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYALVNSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2Cql
+        FqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGf8nN3OUrDboeLT9E62BsbHBl2MnBwSAiYS
+        J0+2MHYxcnEICexmlNjReo4JwvnEKNE0czUrhPOZUWJ932RWmJa9F/uYIRK7GCXaFp9iB0kI
+        CbQySTz5BjaXTUBb4tXbG8wgtoiAsMT+jlYWEJtZIEpizauzjCC2sICLRMPSZWwgNouAqsSp
+        Y1vA4rwCNhKfenZALZOXWL3hANgcTgFbiaaXU8AukhBYxC7x8OcOJogiF4kZk46zQdjCEq+O
+        b2GHsKUkPr/bCxXPltj08CdUfYHEkRe9zBC2vUTrqX4gmwPoOE2J9bv0IcKyElNPrWOCuJlP
+        ovf3E6hWXokd82BsVYm/926zQNjSEjffXYWyPSTObjsEDcYJjBIH7yxmmcAoNwthxQJGxlWM
+        kqkFxbnpqcWmBcZ5qeXwWEvOz93ECE5QWt47GB89+KB3iJGJg/EQowQHs5IIb0L0/SQh3pTE
+        yqrUovz4otKc1OJDjKbAAJzILCWanA9MkXkl8YYmlgYmZmZmJpbGZoZK4rxeVzclCQmkJ5ak
+        ZqemFqQWwfQxcXBKNTBxiP/Nmuu8YtMbF2NNlovrRZ5xdf/NkTjLJl++0Uduu3WdzHfvwxeT
+        VoeH8uw7IL0qRLr4rSlL69bbta9OlFycJPxzzuxvKsmqjPv/+TwOd5rF4pJyOdvrHtu8q0tm
+        f0hhDV+tsPWg4TSZWMnTy003XeRdler6pnA7b890u2kiLN8zQ75wLRXz3bTpCcvWZ+4lGjWn
+        jk4I4Zl8svLMg8BDaQ4Ks38J37m2o2edyT2+3K87u83P6rK7NuyQ+toqLbT8r/DTyXJ+K7/7
+        fVh57vln+4/f1M13xKxuWiodXSP454/DvJ8Knh7fbOwULZWX1UipX8l9Iedmsv3sVsnONdvO
+        mbzXEw/wkFlwsdW37HqIEktxRqKhFnNRcSIAdcymRdkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDJMWRmVeSWpSXmKPExsWy7bCSnO6JE/eTDM73alusufKb3WL13X42
+        i3et51gsjv5/y+bA4nH5bKlH35ZVjB6fN8kFMEdx2aSk5mSWpRbp2yVwZfyc3c5SsNuh4tP0
+        TrYGxscGXYycHBICJhJ7L/YxdzFycQgJ7GCUeH98CZDDAZSQlli4PhGiRlhi5b/n7BA1zUwS
+        n6a3sYMk2AS0JV69vcEMYosAFe3vaGUBsZkFYiSmHjkMZgsLuEg0LF3GBmKzCKhKnDq2hRHE
+        5hWwkfjUs4MVYoG8xOoNB8DmcArYSjS9nAIWFwKq+XvoGNsERr4FjAyrGCVTC4pz03OLDQuM
+        8lLL9YoTc4tL89L1kvNzNzGCA0hLawfjnlUf9A4xMnEwHmKU4GBWEuFNiL6fJMSbklhZlVqU
+        H19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVANTp+eMs9/1Y1PihBr7Z20N
+        UenYp3I98Lq9w+vj5qtOb0tTnJ9QrpzT/OzX6hY1LenYp+Iz0i5EPVt6hsPH68rb/3fW3zd3
+        E3vzd0uBwwEp994W55NBJ+ULJdJOGfaE1Yt7GYhfcVVpebDUcJfWfIEvTMdYnqRVcFVoCXlp
+        lSie37jix262R/nnHzCdr/5gPkOEPdBqytHPYRnJZ6MmOnza+n8u96H0LbIu0yQrlJeeeRuV
+        +DzVc3dbcsCNhft/MXM7n/HOjrztUprmdt9vzfSKCdMZK3xc6wI/Knbes576Ry1Bl+3r3HXf
+        vB3D0t8xih56m9rRrtp+aEnhV3bORcqn/l+q2vD/6PKb60RiJj1WYinOSDTUYi4qTgQAK9P7
+        Vo8CAAA=
+X-CMS-MailID: 20220726105816epcas5p3365fed54f9ba20518dd8019a50c6c27c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220726105815epcas5p2e19ff2fe748cfeb69517124370de3b7f
+X-CMS-RootMailID: 20220726105816epcas5p3365fed54f9ba20518dd8019a50c6c27c
 References: <20220726105230.12025-1-ankit.kumar@samsung.com>
-        <CGME20220726105815epcas5p2e19ff2fe748cfeb69517124370de3b7f@epcas5p2.samsung.com>
+        <CGME20220726105816epcas5p3365fed54f9ba20518dd8019a50c6c27c@epcas5p3.samsung.com>
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
@@ -111,190 +110,355 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add bare minimum structures and helper functions required for
-io_uring passthrough commands. This will enable the follow up
-patch to add tests for nvme-ns generic character device.
+Add a way to test uring passthrough commands, which was added
+with 5.19 kernel. This requires nvme-ns character device (/dev/ngXnY)
+as filename argument. It runs a combination of read/write tests with
+sqthread poll, vectored and non-vectored commands, fixed I/O buffers.
 
 Signed-off-by: Ankit Kumar <ankit.kumar@samsung.com>
 ---
- test/nvme.h | 168 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 168 insertions(+)
- create mode 100644 test/nvme.h
+ test/Makefile               |   1 +
+ test/io_uring_passthrough.c | 319 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 320 insertions(+)
+ create mode 100644 test/io_uring_passthrough.c
 
-diff --git a/test/nvme.h b/test/nvme.h
+diff --git a/test/Makefile b/test/Makefile
+index a36ddb3..418c11c 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -90,6 +90,7 @@ test_srcs := \
+ 	io-cancel.c \
+ 	iopoll.c \
+ 	io_uring_enter.c \
++	io_uring_passthrough.c \
+ 	io_uring_register.c \
+ 	io_uring_setup.c \
+ 	lfs-openat.c \
+diff --git a/test/io_uring_passthrough.c b/test/io_uring_passthrough.c
 new file mode 100644
-index 0000000..866a7e6
+index 0000000..2e2b806
 --- /dev/null
-+++ b/test/nvme.h
-@@ -0,0 +1,168 @@
++++ b/test/io_uring_passthrough.c
+@@ -0,0 +1,319 @@
 +/* SPDX-License-Identifier: MIT */
 +/*
-+ * Description: Helpers for NVMe uring passthrough commands
++ * Description: basic read/write tests for io_uring passthrough commands
 + */
-+#ifndef LIBURING_NVME_H
-+#define LIBURING_NVME_H
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
 +
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++#include "helpers.h"
++#include "liburing.h"
++#include "nvme.h"
 +
-+#include <sys/ioctl.h>
-+#include <linux/nvme_ioctl.h>
++#define FILE_SIZE	(256 * 1024)
++#define BS		8192
++#define BUFFERS		(FILE_SIZE / BS)
++
++static struct iovec *vecs;
 +
 +/*
-+ * If the uapi headers installed on the system lacks nvme uring command
-+ * support, use the local version to prevent compilation issues.
++ * Each offset in the file has the ((test_case / 2) * FILE_SIZE)
++ * + (offset / sizeof(int)) stored for every
++ * sizeof(int) address.
 + */
-+#ifndef CONFIG_HAVE_NVME_URING
-+struct nvme_uring_cmd {
-+	__u8	opcode;
-+	__u8	flags;
-+	__u16	rsvd1;
-+	__u32	nsid;
-+	__u32	cdw2;
-+	__u32	cdw3;
-+	__u64	metadata;
-+	__u64	addr;
-+	__u32	metadata_len;
-+	__u32	data_len;
-+	__u32	cdw10;
-+	__u32	cdw11;
-+	__u32	cdw12;
-+	__u32	cdw13;
-+	__u32	cdw14;
-+	__u32	cdw15;
-+	__u32	timeout_ms;
-+	__u32   rsvd2;
-+};
-+
-+#define NVME_URING_CMD_IO	_IOWR('N', 0x80, struct nvme_uring_cmd)
-+#define NVME_URING_CMD_IO_VEC	_IOWR('N', 0x81, struct nvme_uring_cmd)
-+#endif /* CONFIG_HAVE_NVME_URING */
-+
-+#define NVME_DEFAULT_IOCTL_TIMEOUT 0
-+#define NVME_IDENTIFY_DATA_SIZE 4096
-+#define NVME_IDENTIFY_CSI_SHIFT 24
-+#define NVME_IDENTIFY_CNS_NS 0
-+#define NVME_CSI_NVM 0
-+
-+enum nvme_admin_opcode {
-+	nvme_admin_identify		= 0x06,
-+};
-+
-+enum nvme_io_opcode {
-+	nvme_cmd_write			= 0x01,
-+	nvme_cmd_read			= 0x02,
-+};
-+
-+int nsid;
-+__u32 lba_shift;
-+
-+struct nvme_lbaf {
-+	__le16			ms;
-+	__u8			ds;
-+	__u8			rp;
-+};
-+
-+struct nvme_id_ns {
-+	__le64			nsze;
-+	__le64			ncap;
-+	__le64			nuse;
-+	__u8			nsfeat;
-+	__u8			nlbaf;
-+	__u8			flbas;
-+	__u8			mc;
-+	__u8			dpc;
-+	__u8			dps;
-+	__u8			nmic;
-+	__u8			rescap;
-+	__u8			fpi;
-+	__u8			dlfeat;
-+	__le16			nawun;
-+	__le16			nawupf;
-+	__le16			nacwu;
-+	__le16			nabsn;
-+	__le16			nabo;
-+	__le16			nabspf;
-+	__le16			noiob;
-+	__u8			nvmcap[16];
-+	__le16			npwg;
-+	__le16			npwa;
-+	__le16			npdg;
-+	__le16			npda;
-+	__le16			nows;
-+	__le16			mssrl;
-+	__le32			mcl;
-+	__u8			msrc;
-+	__u8			rsvd81[11];
-+	__le32			anagrpid;
-+	__u8			rsvd96[3];
-+	__u8			nsattr;
-+	__le16			nvmsetid;
-+	__le16			endgid;
-+	__u8			nguid[16];
-+	__u8			eui64[8];
-+	struct nvme_lbaf	lbaf[16];
-+	__u8			rsvd192[192];
-+	__u8			vs[3712];
-+};
-+
-+static inline int ilog2(uint32_t i)
++static int verify_buf(int tc, void *buf, off_t off)
 +{
-+	int log = -1;
++	int i, u_in_buf = BS / sizeof(unsigned int);
++	unsigned int *ptr;
 +
-+	while (i) {
-+		i >>= 1;
-+		log++;
-+	}
-+	return log;
-+}
-+
-+int fio_nvme_get_info(const char *file)
-+{
-+	struct nvme_id_ns ns;
-+	int fd, err;
-+	__u32 lba_size;
-+
-+	fd = open(file, O_RDONLY);
-+	if (fd < 0)
-+		return -errno;
-+
-+	nsid = ioctl(fd, NVME_IOCTL_ID);
-+	if (nsid < 0) {
-+		fprintf(stderr, "failed to fetch namespace-id\n");
-+		close(fd);
-+		return -errno;
++	off /= sizeof(unsigned int);
++	off += (tc / 2) * FILE_SIZE;
++	ptr = buf;
++	for (i = 0; i < u_in_buf; i++) {
++		if (off != *ptr) {
++			fprintf(stderr, "Found %u, wanted %lu\n", *ptr, off);
++			return 1;
++		}
++		ptr++;
++		off++;
 +	}
 +
-+	struct nvme_passthru_cmd cmd = {
-+		.opcode         = nvme_admin_identify,
-+		.nsid           = nsid,
-+		.addr           = (__u64)(uintptr_t)&ns,
-+		.data_len       = NVME_IDENTIFY_DATA_SIZE,
-+		.cdw10          = NVME_IDENTIFY_CNS_NS,
-+		.cdw11          = NVME_CSI_NVM << NVME_IDENTIFY_CSI_SHIFT,
-+		.timeout_ms     = NVME_DEFAULT_IOCTL_TIMEOUT,
-+	};
-+
-+	err = ioctl(fd, NVME_IOCTL_ADMIN_CMD, &cmd);
-+	if (err) {
-+		fprintf(stderr, "failed to fetch identify namespace\n");
-+		close(fd);
-+		return err;
-+	}
-+
-+	lba_size = 1 << ns.lbaf[(ns.flbas & 0x0f)].ds;
-+	lba_shift = ilog2(lba_size);
-+
-+	close(fd);
 +	return 0;
 +}
 +
-+#ifdef __cplusplus
-+}
-+#endif
++static int fill_pattern(int tc)
++{
++	unsigned int val, *ptr;
++	int i, j;
++	int u_in_buf = BS / sizeof(val);
 +
++	val = (tc / 2) * FILE_SIZE;
++	for (i = 0; i < BUFFERS; i++) {
++		ptr = vecs[i].iov_base;
++		for (j = 0; j < u_in_buf; j++) {
++			*ptr = val;
++			val++;
++			ptr++;
++		}
++	}
++
++	return 0;
++}
++
++static int __test_io(const char *file, struct io_uring *ring, int tc, int read,
++		     int sqthread, int fixed, int nonvec)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	struct nvme_uring_cmd *cmd;
++	int open_flags;
++	int do_fixed;
++	int i, ret, fd = -1;
++	off_t offset;
++	__u64 slba;
++	__u32 nlb;
++
++#ifdef VERBOSE
++	fprintf(stdout, "%s: start %d/%d/%d/%d: ", __FUNCTION__, read,
++							sqthread, fixed,
++							nonvec);
 +#endif
++	if (read)
++		open_flags = O_RDONLY;
++	else
++		open_flags = O_WRONLY;
++
++	if (fixed) {
++		ret = t_register_buffers(ring, vecs, BUFFERS);
++		if (ret == T_SETUP_SKIP)
++			return 0;
++		if (ret != T_SETUP_OK) {
++			fprintf(stderr, "buffer reg failed: %d\n", ret);
++			goto err;
++		}
++	}
++
++	fd = open(file, open_flags);
++	if (fd < 0) {
++		perror("file open");
++		goto err;
++	}
++
++	if (sqthread) {
++		ret = io_uring_register_files(ring, &fd, 1);
++		if (ret) {
++			fprintf(stderr, "file reg failed: %d\n", ret);
++			goto err;
++		}
++	}
++
++	if (!read)
++		fill_pattern(tc);
++
++	offset = 0;
++	for (i = 0; i < BUFFERS; i++) {
++		sqe = io_uring_get_sqe(ring);
++		if (!sqe) {
++			fprintf(stderr, "sqe get failed\n");
++			goto err;
++		}
++		if (read) {
++			int use_fd = fd;
++
++			do_fixed = fixed;
++
++			if (sqthread)
++				use_fd = 0;
++			if (fixed && (i & 1))
++				do_fixed = 0;
++			if (do_fixed) {
++				io_uring_prep_read_fixed(sqe, use_fd, vecs[i].iov_base,
++								vecs[i].iov_len,
++								offset, i);
++				sqe->cmd_op = NVME_URING_CMD_IO;
++			} else if (nonvec) {
++				io_uring_prep_read(sqe, use_fd, vecs[i].iov_base,
++							vecs[i].iov_len, offset);
++				sqe->cmd_op = NVME_URING_CMD_IO;
++			} else {
++				io_uring_prep_readv(sqe, use_fd, &vecs[i], 1,
++								offset);
++				sqe->cmd_op = NVME_URING_CMD_IO_VEC;
++			}
++		} else {
++			int use_fd = fd;
++
++			do_fixed = fixed;
++
++			if (sqthread)
++				use_fd = 0;
++			if (fixed && (i & 1))
++				do_fixed = 0;
++			if (do_fixed) {
++				io_uring_prep_write_fixed(sqe, use_fd, vecs[i].iov_base,
++								vecs[i].iov_len,
++								offset, i);
++				sqe->cmd_op = NVME_URING_CMD_IO;
++			} else if (nonvec) {
++				io_uring_prep_write(sqe, use_fd, vecs[i].iov_base,
++							vecs[i].iov_len, offset);
++				sqe->cmd_op = NVME_URING_CMD_IO;
++			} else {
++				io_uring_prep_writev(sqe, use_fd, &vecs[i], 1,
++								offset);
++				sqe->cmd_op = NVME_URING_CMD_IO_VEC;
++			}
++		}
++		sqe->opcode = IORING_OP_URING_CMD;
++		sqe->user_data = ((uint64_t)offset << 32) | i;
++		if (sqthread)
++			sqe->flags |= IOSQE_FIXED_FILE;
++
++		/* 80 bytes for NVMe uring passthrough command */
++		cmd = (struct nvme_uring_cmd *)sqe->cmd;
++		memset(cmd, 0, sizeof(struct nvme_uring_cmd));
++
++		cmd->opcode = read ? nvme_cmd_read : nvme_cmd_write;
++
++		slba = offset >> lba_shift;
++		nlb = (BS >> lba_shift) - 1;
++
++		/* cdw10 and cdw11 represent starting lba */
++		cmd->cdw10 = slba & 0xffffffff;
++		cmd->cdw11 = slba >> 32;
++		/* cdw12 represent number of lba's for read/write */
++		cmd->cdw12 = nlb;
++		if (do_fixed || nonvec) {
++			cmd->addr = (__u64)(uintptr_t)vecs[i].iov_base;
++			cmd->data_len = vecs[i].iov_len;
++		} else {
++			cmd->addr = (__u64)(uintptr_t)&vecs[i];
++			cmd->data_len = 1;
++		}
++		cmd->nsid = nsid;
++
++		offset += BS;
++	}
++
++	ret = io_uring_submit(ring);
++	if (ret != BUFFERS) {
++		fprintf(stderr, "submit got %d, wanted %d\n", ret, BUFFERS);
++		goto err;
++	}
++
++	for (i = 0; i < BUFFERS; i++) {
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret) {
++			fprintf(stderr, "wait_cqe=%d\n", ret);
++			goto err;
++		}
++		if (cqe->res != 0) {
++			fprintf(stderr, "cqe res %d, wanted 0\n", cqe->res);
++			goto err;
++		}
++		io_uring_cqe_seen(ring, cqe);
++		if (read) {
++			int index = cqe->user_data & 0xffffffff;
++			void *buf = vecs[index].iov_base;
++			off_t voff = cqe->user_data >> 32;
++
++			if (verify_buf(tc, buf, voff))
++				goto err;
++		}
++	}
++
++	if (fixed) {
++		ret = io_uring_unregister_buffers(ring);
++		if (ret) {
++			fprintf(stderr, "buffer unreg failed: %d\n", ret);
++			goto err;
++		}
++	}
++	if (sqthread) {
++		ret = io_uring_unregister_files(ring);
++		if (ret) {
++			fprintf(stderr, "file unreg failed: %d\n", ret);
++			goto err;
++		}
++	}
++
++	close(fd);
++#ifdef VERBOSE
++	fprintf(stdout, "PASS\n");
++#endif
++	return 0;
++err:
++#ifdef VERBOSE
++	fprintf(stderr, "FAILED\n");
++#endif
++	if (fd != -1)
++		close(fd);
++	return 1;
++}
++
++static int test_io(const char *file, int tc, int read, int sqthread,
++		   int fixed, int nonvec)
++{
++	struct io_uring ring;
++	int ret, ring_flags = 0;
++
++	ring_flags |= IORING_SETUP_SQE128;
++	ring_flags |= IORING_SETUP_CQE32;
++
++	if (sqthread)
++		ring_flags |= IORING_SETUP_SQPOLL;
++
++	ret = t_create_ring(64, &ring, ring_flags);
++	if (ret == T_SETUP_SKIP)
++		return 0;
++	if (ret != T_SETUP_OK) {
++		fprintf(stderr, "ring create failed: %d\n", ret);
++		return 1;
++	}
++
++	ret = __test_io(file, &ring, tc, read, sqthread, fixed, nonvec);
++	io_uring_queue_exit(&ring);
++
++	return ret;
++}
++
++int main(int argc, char *argv[])
++{
++	int i, ret;
++	char *fname;
++
++	if (argc < 2) {
++		printf("%s: requires NVMe character device\n", argv[0]);
++		return T_EXIT_SKIP;
++	}
++
++	fname = argv[1];
++	ret = fio_nvme_get_info(fname);
++
++	if (ret) {
++		fprintf(stderr, "failed to fetch device info: %d\n", ret);
++		goto err;
++	}
++
++	vecs = t_create_buffers(BUFFERS, BS);
++
++	for (i = 0; i < 16; i++) {
++		int read = (i & 1) != 0;
++		int sqthread = (i & 2) != 0;
++		int fixed = (i & 4) != 0;
++		int nonvec = (i & 8) != 0;
++
++		ret = test_io(fname, i, read, sqthread, fixed, nonvec);
++		if (ret) {
++			fprintf(stderr, "test_io failed %d/%d/%d/%d\n",
++				read, sqthread, fixed, nonvec);
++			goto err;
++		}
++	}
++
++	return T_EXIT_PASS;
++err:
++	return T_EXIT_FAIL;
++}
 -- 
 2.17.1
 

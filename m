@@ -2,90 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF4E5817CD
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 18:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E09D5817D5
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 18:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232240AbiGZQrV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jul 2022 12:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56044 "EHLO
+        id S233883AbiGZQsb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jul 2022 12:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239199AbiGZQrU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 12:47:20 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34F3C255B1
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 09:47:19 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id 125so11645024iou.6
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 09:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=l3tkWv+HCtOtPBX1NCK5OjcSwghIgcQ6DASSm3bVFnk=;
-        b=s5t1FMowm/yLkHem1mdrAIUm/1/JlugGQPP3yEQWyU0NVPWsKjLg4CLYOF6YbePg1b
-         KKyzaJ8geFcadgvQfRv6Z+LXDdw0bLbNU+RA3PZoY91gTVUQ1FW8YFX5tKsDX5P/J3Xo
-         2TKftYoOAGS8njd2Hwj0B6OSoWTQ4zV+3ttfJKpaOA2xYdl4w2ZXaxZfdPBX3O0lqhGk
-         1+xxuPlHd0E1Xu5f2P0Gej/514NB/QO6V262co5kTYBlLLDWEZ30xXHUVPx4HJOTYFPF
-         zogyWrA6mollNIRcJstOtRyg0hYdY9JLsScuksYyKok1qnqlkarCLw09mxnGNKaovSFh
-         3FMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=l3tkWv+HCtOtPBX1NCK5OjcSwghIgcQ6DASSm3bVFnk=;
-        b=JSCfiLJOIvOWICQQwvGxGXOOHOK8IS7hbnSBE46FzbmCXuQ49H7D/K2QOLLgx8gq0U
-         yOL3ILgRzxQRA3VezLXjqoMv3D5v+R3Nt72RqF9Fh+AU+CRzzlZJX7h+FGpjoKuIQ0YR
-         b/Az4NUJN4A5+pDpeU2GZKn2+kH5Mp8EYtp9km8q8V5IKMc5Mu1Qz3msVy7R4kbse/pE
-         2aaSQaZ/ndiy21Ps0TP0QI5dKPmKmm2vXQh6zpwEJDI2uql6sgxh8KWSLa55pKVlpeh7
-         WMJYNqIidKKCgaJWgD50wF5yYlNDDWBZnX52iLQ3P8XfzCGfsfLQTgZLmsNe1T4frwBW
-         uk6Q==
-X-Gm-Message-State: AJIora8jELfbcjuO5i6PUBk9DAWBpMjPopASd07XUnCHw4mJSGNKN1X9
-        rR6mwd3QkuBjZxI1F/hDP/W2dA==
-X-Google-Smtp-Source: AGRyM1vNqTk65rBuuUwru5bRlxOLMARVKu7yDA++ULNlOFL69EPst/QzGRdWTtjElnBgcIksY3Pkkg==
-X-Received: by 2002:a05:6602:2e8d:b0:67c:c24c:fec4 with SMTP id m13-20020a0566022e8d00b0067cc24cfec4mr1025103iow.134.1658854038577;
-        Tue, 26 Jul 2022 09:47:18 -0700 (PDT)
-Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id v9-20020a92ab09000000b002dab4765893sm5715319ilh.66.2022.07.26.09.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jul 2022 09:47:17 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     ammarfaizi2@gnuweeb.org
-Cc:     asml.silence@gmail.com, gwml@gnuweeb.org, dylany@fb.com,
-        fernandafmr12@gnuweeb.org, kernel-team@fb.com,
-        io-uring@vger.kernel.org
-In-Reply-To: <20220726164310.266060-1-ammar.faizi@intel.com>
-References: <20220726164310.266060-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing] examples/io_uring-udp: Use a proper cast for `(struct sockaddr *)` argument
-Message-Id: <165885403738.1519500.7001976896562665856.b4-ty@kernel.dk>
-Date:   Tue, 26 Jul 2022 10:47:17 -0600
+        with ESMTP id S239328AbiGZQsa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 12:48:30 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C0925E9E
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 09:48:29 -0700 (PDT)
+Received: from [192.168.88.254] (unknown [125.160.106.238])
+        by gnuweeb.org (Postfix) with ESMTPSA id 3682C7E254;
+        Tue, 26 Jul 2022 16:48:25 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1658854108;
+        bh=gHHOXEloAo924tHqCgTdaJw+WSK4ZrFmYZEDj3X0B6I=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ZlfHDqP1B6VWZm3Glp6W64zWNswvRyepA6j15p35SFeMhX9DHea0vBCSaCMOh7rSw
+         fFLAZrINcSlwT6ZvXkgSZ+O79sEpKUeklaVck/90L1/3/gKTRtKGZYHk8kOG6DOmku
+         JLhv83rWHtIUuijNhJdxQFFX1g7sHK5jXbTSqFo7Ew84YDvYADQun2M4PxkFe7j+oF
+         xtK+Te+huC37NkVKchpqwj0b4DyHlEV7D/MHkACJhYwnziSwQLuzWvaDiQVEDY1/EW
+         uiamgCrd+h+b5ldP32jcDfDHBHr9C/ZJbb8XxJaLs3OqLP4uXTqrasdA+HFal7h7Sn
+         uN5TDrPCBFjqA==
+Message-ID: <ce7096fb-0d42-99d7-e7fa-d82251c1934a@gnuweeb.org>
+Date:   Tue, 26 Jul 2022 23:48:22 +0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH liburing 0/5] multishot recvmsg docs and example
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Dylan Yudaken <dylany@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Facebook Kernel Team <kernel-team@fb.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Ammar Faizi <ammarfaizi2@gmail.com>
+References: <20220726121502.1958288-1-dylany@fb.com>
+ <165885259629.1516215.11114286078111026121.b4-ty@kernel.dk>
+ <e1d3c53d-6b31-c18b-7259-69467afa8088@gmail.com>
+ <d14c5be4-b9d8-a52c-12db-6f697784fd9e@kernel.dk>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+In-Reply-To: <d14c5be4-b9d8-a52c-12db-6f697784fd9e@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 26 Jul 2022 23:44:59 +0700, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+On 7/26/22 11:40 PM, Jens Axboe wrote:
+> On 7/26/22 10:32 AM, Ammar Faizi wrote:
+>> On 7/26/22 11:23 PM, Jens Axboe wrote:
+>>> [5/5] add an example for a UDP server
+>>>         commit: 61d472b51e761e61cbf46caea40aaf40d8ed1484
+>>
+>> This one breaks clang-13 build, I'll send a patch.
 > 
-> Sometimes the compiler accepts `(struct sockaddr_in *)` and
-> `(struct sockaddr_in6 *)` to be passed in to `(struct sockaddr *)`
-> without a cast. But not all compilers agree with that. Building with
-> clang 13.0.1 yields the following errors:
-> 
-> [...]
+> Hmm, built fine with clang-13/14 here?
 
-Applied, thanks!
+Not sure what is going on, but clang-13 on my machine is not happy:
 
-[1/1] examples/io_uring-udp: Use a proper cast for `(struct sockaddr *)` argument
-      commit: 1842b2a74f4e914cb094019d0f339baeffa3023b
+     io_uring-udp.c:134:18: error: incompatible pointer types passing \
+     'struct sockaddr_in6 *' to parameter of type 'const struct sockaddr *' \
+     [-Werror,-Wincompatible-pointer-types
 
-Best regards,
+     io_uring-udp.c:142:18: error: incompatible pointer types passing \
+     'struct sockaddr_in *' to parameter of type 'const struct sockaddr *' \
+     [-Werror,-Wincompatible-pointer-types]
+
+Changing the compiler to GCC builds just fine. I have fixed something like
+this more than once. Strange indeed.
+
 -- 
-Jens Axboe
-
+Ammar Faizi
 

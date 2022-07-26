@@ -2,60 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD5505813AE
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 14:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 378245813B5
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 14:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238932AbiGZM6J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jul 2022 08:58:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54420 "EHLO
+        id S233268AbiGZM7a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jul 2022 08:59:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233522AbiGZM6F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 08:58:05 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5489526ADF
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 05:58:04 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id q41-20020a17090a1b2c00b001f2043c727aso13150975pjq.1
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 05:58:04 -0700 (PDT)
+        with ESMTP id S233038AbiGZM73 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 08:59:29 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2CDA255B5
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 05:59:28 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id li4so2035248pjb.3
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 05:59:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:in-reply-to:references:subject:message-id:date
          :mime-version:content-transfer-encoding;
-        bh=qCvw0POah4GzImKTH/+kyUqe1VQuk74b4knUGMb3jDg=;
-        b=D+MOCwPNc1uYXp/2nfO8j23oCeproBSS6O6sv2mDK73Zgd+q7QIGfQ5v0yx/UMXrsX
-         KYQdXZ6NJ2047JBs43s2k3YKV+SAqOHtMdOfIbCJlnGPFsSnlgXJIKTeWXsYzDrDpDea
-         dr8Pp2GKtj+QmDtd9LjXpxYf3ZEK6YyXOgqft/XMJKPAYvpMutqyvtSo7wl2ebQna3Oe
-         G5fLk3ZdJ9d1O5S6L7T2SlbNKanQ9qZKIiW95zPVXp36fMkaSQQh0T31HyLpm7PXQajo
-         olWEKJRceQQO8I+LpOqcIYkku97TOh/AXE9Klx/w386KeEeZMe6FzxpQ9vbGp3fwPKKG
-         0Teg==
+        bh=DrbYxdpvfuDhP0ehLAs90VoZ6/TyxfaeIwxXS3Tutp0=;
+        b=fZJQXaOYmiaIwWeIOH6GvkEWOFKAE2y+8KIoKLcozYIuhKsM35kp6Mi1SKOhjezr/s
+         NpenQCTuQ/RRgWLiH1EIF4qXAO+c+1Yrjn/c6Gyf56rsbGn8MuAiYnF08Mnz7rQe9Q/x
+         gDM4ivxHUpFk+A5aNu5F/yvMPCPWPlr7TPFAFuVwD9YjxG4zXPEEiVE+MKN6l3Dc+6jt
+         ADPPNmUQzvAXhcaN4i5vjfNxG0tDaVbkqq/MfzUhRtGl4Tv5QLNNYN1Nblyv6vLi5RaE
+         geYDrOT0XL+6lM6ZhC0CgkK9BAHegNRec5Sb5hbFo58BY7XRZBpHgaZXdTmdElihHZn1
+         Aq4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
          :message-id:date:mime-version:content-transfer-encoding;
-        bh=qCvw0POah4GzImKTH/+kyUqe1VQuk74b4knUGMb3jDg=;
-        b=7HMG+O2I+uveDeh6E9cRiciEwCe65ehFaxgYz/OL4rjsKk3911rXWI+kKF2lGKM9lD
-         GkYzxeZKX97uGqQMP15jA919NxPzvmrGOnZnAk+A2ZnvBkNRQnvWI3epc+gYZfrfPPJP
-         5wIubMtaunxaXqu4Vn6O19Cwxu1xo6LkEWnVP5xGG8bTcBrbYczRNBBmmJn9iJNFloVh
-         PGdT5YZYjAM92w17iZx51Vtt51DdapR3UFnYv89mjBguIFZLj2Rg/ITvvkpgu/q+n0Nj
-         XOJeV5u8SC7jkuXFbC+KZxfxIQPV7L+o6oerqXdV9LkNSxWW0zC8RAytS0ZEq52lYC3L
-         4mKA==
-X-Gm-Message-State: AJIora/OKWplSsuHQzhOFuzOhmwk1rXz3Ki/5M2tlm6G6NS+ruI8GJiT
-        9iA9p2bTz6iaanOn1uI6HEmOx1ZmA998TQ==
-X-Google-Smtp-Source: AGRyM1sg22VOzoCyxLUmuyGxonLRxp3YqPNAA8V1YUsYVssk2kFBHvD7AhLpE5UKl2qdoFfcfgSJAg==
-X-Received: by 2002:a17:90b:38c1:b0:1f2:c43b:a46b with SMTP id nn1-20020a17090b38c100b001f2c43ba46bmr8154454pjb.83.1658840283734;
-        Tue, 26 Jul 2022 05:58:03 -0700 (PDT)
+        bh=DrbYxdpvfuDhP0ehLAs90VoZ6/TyxfaeIwxXS3Tutp0=;
+        b=lS/h2cTvj3IxKWcc+mbSqdBA5+1xpBwX2aarVquHnUmu2bVaLl1oZvwm9wfu2qxh5G
+         6QIvs+KDFtmH9Uo1lcXKBWvo30LFjoWb6VA1uaiMAWgGqhz7AjoJynxv8vviXN5JDlJj
+         OE8ugS+f0BkAVJqL3LhisaAx+VyiPJRl1oGC8rBiEcoXAvZuTTOTfh6y7GKpMnH4Rv6C
+         hcthsBHL0PiVvR+xr/4KW7Jx1kN9ld3wRqSyqxWkjAfgMCuXm/VVYHY7pwAKtFSIUaBp
+         RBSIpCJKemny1D8q+sQmi+ZWtumucHXDiYIufxw33AVfMry/PXYLc5n1H8DRfPeF6WFR
+         aWoA==
+X-Gm-Message-State: AJIora+q8fDNGJ1BHpfHCEf4IsSyQJquSkRWegfS+geOCoIrrceQkuqF
+        DbKoQUgkag/i5GAjWvN5h0+Xgkt2/2BBpQ==
+X-Google-Smtp-Source: AGRyM1sFylP+QCau96QSH8gIiI8bJWBTd5OEwnsF1h9nLOTCWFo/Ila06N7z5dwj5CE4z8P5ibroxA==
+X-Received: by 2002:a17:903:110e:b0:16c:f81b:59d2 with SMTP id n14-20020a170903110e00b0016cf81b59d2mr16202401plh.142.1658840368050;
+        Tue, 26 Jul 2022 05:59:28 -0700 (PDT)
 Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id cp14-20020a170902e78e00b0016d80313a4esm3827185plb.164.2022.07.26.05.58.02
+        by smtp.gmail.com with ESMTPSA id q8-20020a63d608000000b00411b3d2bcadsm10105891pgg.25.2022.07.26.05.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jul 2022 05:58:03 -0700 (PDT)
+        Tue, 26 Jul 2022 05:59:27 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     alviro.iskandar@gnuweeb.org
-Cc:     gwml@vger.gnuweeb.org, ammarfaizi2@gnuweeb.org,
-        io-uring@vger.kernel.org
-In-Reply-To: <20220726111851.3608291-1-alviro.iskandar@gnuweeb.org>
-References: <20220726111851.3608291-1-alviro.iskandar@gnuweeb.org>
-Subject: Re: [PATCH liburing] arch/syscall: Use __NR_mmap2 existence for preprocessor condition
-Message-Id: <165884028283.1502668.6639349221847360074.b4-ty@kernel.dk>
-Date:   Tue, 26 Jul 2022 06:58:02 -0600
+To:     ammarfaizi2@gnuweeb.org
+Cc:     asml.silence@gmail.com, gwml@gnuweeb.org, io-uring@vger.kernel.org
+In-Reply-To: <20220726094908.226477-1-ammarfaizi2@gnuweeb.org>
+References: <20220726094908.226477-1-ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH liburing] .gitignore: Add poll-bench and send-zerocopy examples
+Message-Id: <165884036728.1504509.6256951797289184138.b4-ty@kernel.dk>
+Date:   Tue, 26 Jul 2022 06:59:27 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -69,18 +68,17 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 26 Jul 2022 11:18:51 +0000, Alviro Iskandar Setiawan wrote:
-> Now __NR_mmap2 is only used for i386. But it is also needed for other
-> archs like ARM and RISCV32. Decide to use it based on the __NR_mmap2
-> definition as it's not defined on other archs. Currently, this has no
-> effect because other archs use the generic mmap definition from libc.
+On Tue, 26 Jul 2022 16:49:08 +0700, Ammar Faizi wrote:
+> Previous commits add poll-bench and send-zerocopy examples but forgot
+> to add the compiled files to .gitignore. Add them to .gitignore to
+> make "git status" clean after build.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] arch/syscall: Use __NR_mmap2 existence for preprocessor condition
-      commit: 00c8a105ba688a3826304430f8e57835a302609d
+[1/1] .gitignore: Add poll-bench and send-zerocopy examples
+      commit: f0f95d7296eeee9ca6b403cf68faf3b7cd59aa0b
 
 Best regards,
 -- 

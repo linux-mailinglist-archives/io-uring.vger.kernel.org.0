@@ -2,47 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 654F9581879
-	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 19:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37386581888
+	for <lists+io-uring@lfdr.de>; Tue, 26 Jul 2022 19:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239452AbiGZRi1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 26 Jul 2022 13:38:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
+        id S238101AbiGZRig (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 26 Jul 2022 13:38:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238661AbiGZRi0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 13:38:26 -0400
+        with ESMTP id S239432AbiGZRia (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 26 Jul 2022 13:38:30 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02FCA2E9DB
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 10:38:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2942B279
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 10:38:28 -0700 (PDT)
 Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26QEJjja001473
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 10:38:22 -0700
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26QEJndW001509
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 10:38:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=upFvUplL9WdQZWsooaut7tyuD9AcqX5PVtTEGpxNelI=;
- b=e5hbVdD/ed7NyPaNMj2hRayAJBf3EQpIyC4KxiilOcmLx5tjxHzCy6SCbMBUXxTppJfb
- wxNyLI9wrHFbcsB5N/ia3m1MTpyDFVKnd9UoFxJMtLEz2FvKHw6Nn/VeYjpkHu9eOw+b
- Ct1e8ZkHA3XbESBfhz9lT43c9mIqI5+00X4= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hjhxashns-2
+ bh=xXA4PeA+Ixr6EVwKEP8AkMKM0BHBogXynqcDNFl5W98=;
+ b=FoGwSyh9qZ4SxN67Vue0TY6aaADsWFs8DPoqTqRgFdR85fBrM4FfU/E5+XNej4twOLx2
+ dmuS5PKtiKfyAUGkqNYzDb0RlmCpn9Wyd2lXzRBnOqMiwlupza77UTNhNxu0GBhI6OBY
+ WUPvRdjrPLqe3LOEG6mD7GJY8NK1Iobwrg4= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hjhxashpa-4
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 10:38:22 -0700
-Received: from twshared7556.02.ash8.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Tue, 26 Jul 2022 10:38:27 -0700
+Received: from twshared22413.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Tue, 26 Jul 2022 10:38:21 -0700
+ 15.1.2375.28; Tue, 26 Jul 2022 10:38:26 -0700
 Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 78B33698E4B0; Tue, 26 Jul 2022 10:38:15 -0700 (PDT)
+        id 8D0D1698E4B2; Tue, 26 Jul 2022 10:38:15 -0700 (PDT)
 From:   Keith Busch <kbusch@fb.com>
 To:     <linux-nvme@lists.infradead.org>, <linux-block@vger.kernel.org>,
         <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 CC:     <axboe@kernel.dk>, <hch@lst.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 4/5] io_uring: add support for dma pre-mapping
-Date:   Tue, 26 Jul 2022 10:38:13 -0700
-Message-ID: <20220726173814.2264573-5-kbusch@fb.com>
+Subject: [PATCH 5/5] nvme-pci: implement dma_map support
+Date:   Tue, 26 Jul 2022 10:38:14 -0700
+Message-ID: <20220726173814.2264573-6-kbusch@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220726173814.2264573-1-kbusch@fb.com>
 References: <20220726173814.2264573-1-kbusch@fb.com>
@@ -50,15 +50,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 16xvYgdSh3-L6l8uIrkVMaJrWyYoUrXK
-X-Proofpoint-GUID: 16xvYgdSh3-L6l8uIrkVMaJrWyYoUrXK
+X-Proofpoint-ORIG-GUID: M7Ejgf-TIjQlFKBm-MWsirGhTbvWhmcp
+X-Proofpoint-GUID: M7Ejgf-TIjQlFKBm-MWsirGhTbvWhmcp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-07-26_05,2022-07-26_01,2022-06-22_01
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -67,319 +67,382 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Keith Busch <kbusch@kernel.org>
 
-Provide a new register operation that can request to pre-map a known
-bvec to the driver of the requested file descriptor's specific
-implementation. If successful, io_uring will use the returned dma tag
-for future fixed buffer requests to the same file.
+Implement callbacks to convert a registered bio_vec to a prp list, and
+use this for each IO that uses the returned tag. This saves repeated IO
+conversions and dma mapping/unmapping. In many cases, the driver can
+skip per-IO pool allocations entirely, saving potentially signficant CPU
+cycles.
 
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- include/uapi/linux/io_uring.h |  12 ++++
- io_uring/io_uring.c           | 129 ++++++++++++++++++++++++++++++++++
- io_uring/net.c                |   2 +-
- io_uring/rsrc.c               |  13 +++-
- io_uring/rsrc.h               |  16 ++++-
- io_uring/rw.c                 |   2 +-
- 6 files changed, 166 insertions(+), 8 deletions(-)
+ drivers/nvme/host/pci.c | 291 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 283 insertions(+), 8 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index 1463cfecb56b..daacbe899d1d 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -485,6 +485,10 @@ enum {
- 	IORING_REGISTER_NOTIFIERS		=3D 26,
- 	IORING_UNREGISTER_NOTIFIERS		=3D 27,
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 644664098ae7..571d955eaef0 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -110,6 +110,14 @@ struct nvme_queue;
+ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
+ static bool __nvme_disable_io_queues(struct nvme_dev *dev, u8 opcode);
 =20
-+	/* dma map registered buffers */
-+	IORING_REGISTER_MAP_BUFFERS		=3D 28,
-+	IORING_REGISTER_UNMAP_BUFFERS		=3D 29,
-+
- 	/* this goes last */
- 	IORING_REGISTER_LAST
- };
-@@ -661,4 +665,12 @@ struct io_uring_recvmsg_out {
- 	__u32 flags;
- };
-=20
-+struct io_uring_map_buffers {
-+	__s32	fd;
-+	__s32	buf_start;
-+	__s32	buf_end;
-+	__u32	flags;
-+	__u64	rsvd[2];
++struct nvme_dma_mapping {
++	int nr_pages;
++	u16 offset;
++	u8  rsvd[2];
++	dma_addr_t prp_dma_addr;
++	__le64 *prps;
 +};
 +
- #endif
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 1d600a63643b..12f7354e0423 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3704,6 +3704,123 @@ static __cold int io_register_iowq_max_workers(st=
-ruct io_ring_ctx *ctx,
- 	return ret;
+ /*
+  * Represents an NVM Express device.  Each nvme_dev is a PCI function.
+  */
+@@ -544,6 +552,35 @@ static inline bool nvme_pci_use_sgls(struct nvme_dev=
+ *dev, struct request *req)
+ 	return true;
  }
 =20
-+#ifdef CONFIG_BLOCK
-+static int get_map_range(struct io_ring_ctx *ctx,
-+			 struct io_uring_map_buffers *map, void __user *arg)
++static void nvme_sync_dma(struct nvme_dev *dev, struct request *req)
 +{
-+	int ret;
++	int index, offset, i, length, nprps;
++	struct nvme_dma_mapping *mapping;
++	bool needs_sync;
 +
-+	if (copy_from_user(map, arg, sizeof(*map)))
-+		return -EFAULT;
-+	if (map->flags || map->rsvd[0] || map->rsvd[1])
-+		return -EINVAL;
-+	if (map->buf_start < 0)
-+		return -EINVAL;
-+	if (map->buf_start >=3D ctx->nr_user_bufs)
-+		return -EINVAL;
-+	if (map->buf_end > ctx->nr_user_bufs)
-+		map->buf_end =3D ctx->nr_user_bufs;
++	mapping =3D blk_rq_dma_tag(req);
++	offset =3D blk_rq_dma_offset(req) + mapping->offset;
++	index =3D offset >> NVME_CTRL_PAGE_SHIFT;
++	needs_sync =3D rq_data_dir(req) =3D=3D READ &&
++		 dma_need_sync(dev->dev, le64_to_cpu(mapping->prps[index]));
 +
-+	ret =3D map->buf_end - map->buf_start;
-+	if (ret <=3D 0)
-+		return -EINVAL;
++	if (!needs_sync)
++		return;
 +
-+	return ret;
-+}
++	offset =3D offset & (NVME_CTRL_PAGE_SIZE - 1);
++	length =3D blk_rq_payload_bytes(req) - (NVME_CTRL_PAGE_SIZE - offset);
++	nprps =3D DIV_ROUND_UP(length, NVME_CTRL_PAGE_SIZE);
 +
-+void io_dma_unmap(struct io_mapped_ubuf *imu)
-+{
-+	if (imu->dma_tag)
-+		block_dma_unmap(imu->bdev, imu->dma_tag);
-+}
-+
-+static int io_register_unmap_buffers(struct io_ring_ctx *ctx, void __use=
-r *arg)
-+{
-+	struct io_uring_map_buffers map;
-+	int i, ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+	ret =3D get_map_range(ctx, &map, arg);
-+	if (ret < 0)
-+		return ret;
-+
-+	for (i =3D map.buf_start; i < map.buf_end; i++) {
-+		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
-+
-+		io_dma_unmap(imu);
++	dma_sync_single_for_cpu(dev->dev,
++		le64_to_cpu(mapping->prps[index++]),
++		NVME_CTRL_PAGE_SIZE - offset, DMA_FROM_DEVICE);
++	for (i =3D 1; i < nprps; i++) {
++		dma_sync_single_for_cpu(dev->dev,
++			le64_to_cpu(mapping->prps[index++]),
++			NVME_CTRL_PAGE_SIZE, DMA_FROM_DEVICE);
 +	}
-+
-+	return 0;
 +}
 +
-+static int io_register_map_buffers(struct io_ring_ctx *ctx, void __user =
-*arg)
-+{
-+	struct io_uring_map_buffers map;
-+	struct block_device *bdev;
-+	struct file *file;
-+	int ret, i;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	ret =3D get_map_range(ctx, &map, arg);
-+	if (ret < 0)
-+		return ret;
-+
-+	file =3D fget(map.fd);
-+	if (!file)
-+		return -EBADF;
-+
-+	if (S_ISBLK(file_inode(file)->i_mode))
-+		bdev =3D I_BDEV(file->f_mapping->host);
-+	else if (S_ISREG(file_inode(file)->i_mode))
-+		bdev =3D file->f_inode->i_sb->s_bdev;
-+	else
-+		return -EOPNOTSUPP;
-+
-+	for (i =3D map.buf_start; i < map.buf_end; i++) {
-+		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
-+		void *tag;
-+
-+		if (imu->dma_tag) {
-+			ret =3D -EBUSY;
-+			goto err;
-+		}
-+
-+		tag =3D block_dma_map(bdev, imu->bvec, imu->nr_bvecs);
-+		if (IS_ERR(tag)) {
-+			ret =3D PTR_ERR(tag);
-+			goto err;
-+		}
-+
-+		imu->dma_tag =3D tag;
-+		imu->dma_file =3D file;
-+		imu->bdev =3D bdev;
-+	}
-+
-+	fput(file);
-+	return 0;
-+err:
-+	while (--i >=3D map.buf_start) {
-+		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
-+
-+		io_dma_unmap(imu);
-+	}
-+	fput(file);
-+	return ret;
-+}
-+#else /* CONFIG_BLOCK */
-+static int io_register_map_buffers(struct io_ring_ctx *ctx, void __user =
-*arg)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static int io_register_unmap_buffers(struct io_ring_ctx *ctx, void __use=
-r *arg)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif /* CONFIG_BLOCK */
-+
- static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			       void __user *arg, unsigned nr_args)
- 	__releases(ctx->uring_lock)
-@@ -3870,6 +3987,18 @@ static int __io_uring_register(struct io_ring_ctx =
-*ctx, unsigned opcode,
- 			break;
- 		ret =3D io_notif_unregister(ctx);
- 		break;
-+	case IORING_REGISTER_MAP_BUFFERS:
-+		ret =3D -EINVAL;
-+		if (!arg || nr_args !=3D 1)
-+			break;
-+		ret =3D io_register_map_buffers(ctx, arg);
-+		break;
-+	case IORING_REGISTER_UNMAP_BUFFERS:
-+		ret =3D -EINVAL;
-+		if (!arg || nr_args !=3D 1)
-+			break;
-+		ret =3D io_register_unmap_buffers(ctx, arg);
-+		break;
- 	default:
- 		ret =3D -EINVAL;
- 		break;
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 8276b9537194..68a996318959 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -977,7 +977,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issu=
-e_flags)
-=20
- 	if (zc->flags & IORING_RECVSEND_FIXED_BUF) {
- 		ret =3D io_import_fixed(WRITE, &msg.msg_iter, req->imu,
--					(u64)(uintptr_t)zc->buf, zc->len);
-+					(u64)(uintptr_t)zc->buf, zc->len, NULL);
- 		if (unlikely(ret))
- 				return ret;
- 	} else {
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 59704b9ac537..1a7a8dedbbd5 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -148,6 +148,7 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, =
-struct io_mapped_ubuf **slo
- 			unpin_user_page(imu->bvec[i].bv_page);
- 		if (imu->acct_pages)
- 			io_unaccount_mem(ctx, imu->acct_pages);
-+		io_dma_unmap(imu);
- 		kvfree(imu);
- 	}
- 	*slot =3D NULL;
-@@ -1285,6 +1286,7 @@ static int io_sqe_buffer_register(struct io_ring_ct=
-x *ctx, struct iovec *iov,
- 	imu->ubuf =3D (unsigned long) iov->iov_base;
- 	imu->ubuf_end =3D imu->ubuf + iov->iov_len;
- 	imu->nr_bvecs =3D nr_pages;
-+	imu->dma_tag =3D NULL;
- 	*pimu =3D imu;
- 	ret =3D 0;
- done:
-@@ -1359,9 +1361,8 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx=
-, void __user *arg,
- 	return ret;
- }
-=20
--int io_import_fixed(int ddir, struct iov_iter *iter,
--			   struct io_mapped_ubuf *imu,
--			   u64 buf_addr, size_t len)
-+int io_import_fixed(int ddir, struct iov_iter *iter, struct io_mapped_ub=
-uf *imu,
-+		    u64 buf_addr, size_t len, struct file *file)
+ static void nvme_free_prps(struct nvme_dev *dev, struct request *req)
  {
- 	u64 buf_end;
- 	size_t offset;
-@@ -1379,6 +1380,12 @@ int io_import_fixed(int ddir, struct iov_iter *ite=
-r,
- 	 * and advance us to the beginning.
- 	 */
- 	offset =3D buf_addr - imu->ubuf;
-+	if (imu->dma_tag && file =3D=3D imu->dma_file) {
-+		unsigned long nr_segs =3D (buf_addr & (PAGE_SIZE - 1)) +
-+					(len >> PAGE_SHIFT);
-+		iov_iter_dma_tag(iter, ddir, imu->dma_tag, offset, nr_segs, len);
-+		return 0;
-+	}
- 	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
+ 	const int last_prp =3D NVME_CTRL_PAGE_SIZE / sizeof(__le64) - 1;
+@@ -576,6 +613,21 @@ static void nvme_free_sgls(struct nvme_dev *dev, str=
+uct request *req)
+ 	}
+ }
 =20
- 	if (offset) {
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index f3a9a177941f..6e63b7a57b34 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -50,6 +50,11 @@ struct io_mapped_ubuf {
- 	u64		ubuf_end;
- 	unsigned int	nr_bvecs;
- 	unsigned long	acct_pages;
-+	void		*dma_tag;
-+	struct file	*dma_file;
-+#ifdef CONFIG_BLOCK
-+	struct block_device *bdev;
++static void nvme_free_prp_chain(struct nvme_dev *dev, struct request *re=
+q,
++				struct nvme_iod *iod)
++{
++	if (iod->npages < 0)
++		return;
++
++	if (iod->npages =3D=3D 0)
++		dma_pool_free(dev->prp_small_pool, nvme_pci_iod_list(req)[0],
++			      iod->first_dma);
++	else if (iod->use_sgl)
++		nvme_free_sgls(dev, req);
++	else
++		nvme_free_prps(dev, req);
++}
++
+ static void nvme_unmap_sg(struct nvme_dev *dev, struct request *req)
+ {
+ 	struct nvme_iod *iod =3D blk_mq_rq_to_pdu(req);
+@@ -595,18 +647,15 @@ static void nvme_unmap_data(struct nvme_dev *dev, s=
+truct request *req)
+ 		dma_unmap_page(dev->dev, iod->first_dma, iod->dma_len,
+ 			       rq_dma_dir(req));
+ 		return;
++	} else if (blk_rq_dma_tag(req)) {
++		nvme_sync_dma(dev, req);
++		nvme_free_prp_chain(dev, req, iod);
++		return;
+ 	}
+=20
+ 	WARN_ON_ONCE(!iod->nents);
+-
+ 	nvme_unmap_sg(dev, req);
+-	if (iod->npages =3D=3D 0)
+-		dma_pool_free(dev->prp_small_pool, nvme_pci_iod_list(req)[0],
+-			      iod->first_dma);
+-	else if (iod->use_sgl)
+-		nvme_free_sgls(dev, req);
+-	else
+-		nvme_free_prps(dev, req);
++	nvme_free_prp_chain(dev, req, iod);
+ 	mempool_free(iod->sg, dev->iod_mempool);
+ }
+=20
+@@ -835,6 +884,122 @@ static blk_status_t nvme_setup_sgl_simple(struct nv=
+me_dev *dev,
+ 	return BLK_STS_OK;
+ }
+=20
++static blk_status_t nvme_premapped(struct nvme_dev *dev, struct request =
+*req,
++				   struct nvme_rw_command *cmnd,
++				   struct nvme_iod *iod)
++{
++	static const int last_prp =3D NVME_CTRL_PAGE_SIZE / sizeof(__le64) - 1;
++	dma_addr_t prp_list_start, prp_list_end, prp_dma;
++	int index, offset, i, length, nprps, nprps_left;
++	void **list =3D nvme_pci_iod_list(req);
++	struct nvme_dma_mapping *mapping;
++	struct dma_pool *pool;
++	__le64 *prp_list;
++	bool needs_sync;
++
++	mapping =3D blk_rq_dma_tag(req);
++	offset =3D blk_rq_dma_offset(req) + mapping->offset;
++	index =3D offset >> NVME_CTRL_PAGE_SHIFT;
++	offset =3D offset & (NVME_CTRL_PAGE_SIZE - 1);
++	needs_sync =3D rq_data_dir(req) =3D=3D WRITE &&
++		 dma_need_sync(dev->dev, le64_to_cpu(mapping->prps[index]));
++
++	/*
++	 * XXX: For PAGE_SIZE > NVME_CTRL_PAGE_SIZE, is it faster to save the
++	 * PRP list implementation and sync multiple partial pages, more
++	 * efficient to sync PAGE_SIZE and build the PRP list per-IO from a
++	 * host PAGE_SIZE representation, or cleverly sync physically
++	 * contiguous regions?
++	 */
++	if (needs_sync) {
++		dma_sync_single_for_device(dev->dev,
++			le64_to_cpu(mapping->prps[index]),
++			NVME_CTRL_PAGE_SIZE - offset, DMA_TO_DEVICE);
++	}
++
++	length =3D blk_rq_payload_bytes(req) - (NVME_CTRL_PAGE_SIZE - offset);
++	cmnd->dptr.prp1 =3D cpu_to_le64(le64_to_cpu(mapping->prps[index++]) + o=
+ffset);
++
++	if (length <=3D 0)
++		return BLK_STS_OK;
++
++	if (length <=3D NVME_CTRL_PAGE_SIZE) {
++		if (needs_sync)
++			dma_sync_single_for_device(dev->dev,
++				le64_to_cpu(mapping->prps[index]),
++				NVME_CTRL_PAGE_SIZE, DMA_TO_DEVICE);
++		cmnd->dptr.prp2 =3D mapping->prps[index];
++		return BLK_STS_OK;
++	}
++
++	nprps =3D DIV_ROUND_UP(length, NVME_CTRL_PAGE_SIZE);
++	prp_list_start =3D mapping->prp_dma_addr + 8 * index;
++	prp_list_end =3D prp_list_start + 8 * nprps;
++
++	/* Optimization when remaining list fits in one nvme page */
++	if ((prp_list_start >> NVME_CTRL_PAGE_SHIFT) =3D=3D
++	    (prp_list_end >> NVME_CTRL_PAGE_SHIFT)) {
++		cmnd->dptr.prp2 =3D cpu_to_le64(prp_list_start);
++		goto sync;
++	}
++
++	if (nprps <=3D (256 / 8)) {
++		pool =3D dev->prp_small_pool;
++		iod->npages =3D 0;
++	} else {
++		pool =3D dev->prp_page_pool;
++		iod->npages =3D 1;
++	}
++
++	prp_list =3D dma_pool_alloc(pool, GFP_ATOMIC, &prp_dma);
++	if (!prp_list) {
++		iod->npages =3D -1;
++		return BLK_STS_RESOURCE;
++	}
++
++	list[0] =3D prp_list;
++	iod->first_dma =3D prp_dma;
++	i =3D 0;
++	for (;;) {
++		dma_addr_t next_prp_dma;
++		__le64 *next_prp_list;
++
++		if (nprps_left <=3D last_prp + 1) {
++			memcpy(prp_list, &mapping->prps[index], nprps_left * 8);
++			break;
++		}
++
++		memcpy(prp_list, &mapping->prps[index],
++		       NVME_CTRL_PAGE_SIZE - 8);
++		nprps_left -=3D last_prp;
++		index +=3D last_prp;
++
++		next_prp_list =3D dma_pool_alloc(pool, GFP_ATOMIC, &next_prp_dma);
++		if (!next_prp_list)
++			goto free_prps;
++
++		prp_list[last_prp] =3D cpu_to_le64(next_prp_dma);
++		prp_list =3D next_prp_list;
++		prp_dma =3D next_prp_dma;
++		list[iod->npages++] =3D prp_list;
++	}
++	cmnd->dptr.prp2 =3D cpu_to_le64(iod->first_dma);
++
++sync:
++	if (!needs_sync)
++		return BLK_STS_OK;
++
++	for (i =3D 0; i < nprps; i++)
++		dma_sync_single_for_device(dev->dev,
++			le64_to_cpu(mapping->prps[index++]),
++			NVME_CTRL_PAGE_SIZE, DMA_TO_DEVICE);
++	return BLK_STS_OK;
++
++free_prps:
++	nvme_free_prps(dev, req);
++	return BLK_STS_RESOURCE;
++}
++
+ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *=
+req,
+ 		struct nvme_command *cmnd)
+ {
+@@ -842,6 +1007,12 @@ static blk_status_t nvme_map_data(struct nvme_dev *=
+dev, struct request *req,
+ 	blk_status_t ret =3D BLK_STS_RESOURCE;
+ 	int nr_mapped;
+=20
++	if (blk_rq_dma_tag(req)) {
++		iod->dma_len =3D 0;
++		iod->use_sgl =3D false;
++		return nvme_premapped(dev, req, &cmnd->rw, iod);
++	}
++
+ 	if (blk_rq_nr_phys_segments(req) =3D=3D 1) {
+ 		struct bio_vec bv =3D req_bvec(req);
+=20
+@@ -1732,6 +1903,106 @@ static int nvme_create_queue(struct nvme_queue *n=
+vmeq, int qid, bool polled)
+ 	return result;
+ }
+=20
++#ifdef CONFIG_HAS_DMA
++/*
++ * Important: bvec must be describing a virtually contiguous buffer.
++ */
++static void *nvme_pci_dma_map(struct request_queue *q,
++			       struct bio_vec *bvec, int nr_vecs)
++{
++	const int nvme_pages =3D 1 << (PAGE_SIZE - NVME_CTRL_PAGE_SIZE);
++	struct nvme_ns *ns =3D q->queuedata;
++	struct nvme_dev *dev =3D to_nvme_dev(ns->ctrl);
++	struct nvme_dma_mapping *mapping;
++	int i, j, k, size, ret =3D -ENOMEM;
++
++	if (!nr_vecs)
++		return ERR_PTR(-EINVAL);
++
++	mapping =3D kzalloc(sizeof(*mapping), GFP_KERNEL);
++	if (!mapping)
++		return ERR_PTR(-ENOMEM);
++
++	mapping->nr_pages =3D nr_vecs * nvme_pages;
++	size =3D sizeof(*mapping->prps) * mapping->nr_pages;
++	mapping->prps =3D dma_alloc_coherent(dev->dev, size,
++				&mapping->prp_dma_addr, GFP_KERNEL);
++	if (!mapping->prps)
++		goto free_mapping;
++
++	for (i =3D 0, k =3D 0; i < nr_vecs; i++) {
++		struct bio_vec *bv =3D bvec + i;
++		int pages_per =3D nvme_pages;
++		dma_addr_t dma_addr;
++
++		if (i =3D=3D 0) {
++			mapping->offset =3D bv->bv_offset;
++			pages_per -=3D mapping->offset >> NVME_CTRL_PAGE_SHIFT;
++		} else if (bv->bv_offset) {
++			ret =3D -EINVAL;
++			goto err;
++		}
++
++		if (bv->bv_offset + bv->bv_len !=3D PAGE_SIZE &&
++		    i < nr_vecs - 1) {
++			ret =3D -EINVAL;
++			goto err;
++		}
++
++		dma_addr =3D dma_map_bvec(dev->dev, bv, 0, 0);
++		if (dma_mapping_error(dev->dev, dma_addr)) {
++			ret =3D -EIO;
++			goto err;
++		}
++
++		if (i =3D=3D 0)
++			dma_addr -=3D mapping->offset;
++
++		for (j =3D 0; j < nvme_pages; j++)
++			mapping->prps[k++] =3D cpu_to_le64(dma_addr +
++						j * NVME_CTRL_PAGE_SIZE);
++	}
++
++	get_device(dev->dev);
++	return mapping;
++
++err:
++	for (i =3D 0; i < k; i +=3D nvme_pages) {
++		__u64 dma_addr =3D le64_to_cpu(mapping->prps[i]);
++
++		dma_unmap_page(dev->dev, dma_addr,
++			       PAGE_SIZE - offset_in_page(dma_addr), 0);
++	}
++
++	dma_free_coherent(dev->dev, size, (void *)mapping->prps,
++			  mapping->prp_dma_addr);
++free_mapping:
++	kfree(mapping);
++	return ERR_PTR(ret);
++}
++
++static void nvme_pci_dma_unmap(struct request_queue *q, void *dma_tag)
++{
++	const int nvme_pages =3D 1 << (PAGE_SIZE - NVME_CTRL_PAGE_SIZE);
++	struct nvme_ns *ns =3D q->queuedata;
++	struct nvme_dev *dev =3D to_nvme_dev(ns->ctrl);
++	struct nvme_dma_mapping *mapping =3D dma_tag;
++	int i;
++
++	for (i =3D 0; i < mapping->nr_pages; i +=3D nvme_pages) {
++		__u64 dma_addr =3D le64_to_cpu(mapping->prps[i]);
++
++		dma_unmap_page(dev->dev, dma_addr,
++			       PAGE_SIZE - offset_in_page(dma_addr), 0);
++	}
++
++	dma_free_coherent(dev->dev, mapping->nr_pages * sizeof(*mapping->prps),
++			  (void *)mapping->prps, mapping->prp_dma_addr);
++	kfree(mapping);
++	put_device(dev->dev);
++}
 +#endif
- 	struct bio_vec	bvec[];
++
+ static const struct blk_mq_ops nvme_mq_admin_ops =3D {
+ 	.queue_rq	=3D nvme_queue_rq,
+ 	.complete	=3D nvme_pci_complete_rq,
+@@ -1750,6 +2021,10 @@ static const struct blk_mq_ops nvme_mq_ops =3D {
+ 	.map_queues	=3D nvme_pci_map_queues,
+ 	.timeout	=3D nvme_timeout,
+ 	.poll		=3D nvme_poll,
++#ifdef CONFIG_HAS_DMA
++	.dma_map	=3D nvme_pci_dma_map,
++	.dma_unmap	=3D nvme_pci_dma_unmap,
++#endif
  };
 =20
-@@ -64,9 +69,14 @@ int io_queue_rsrc_removal(struct io_rsrc_data *data, u=
-nsigned idx,
- void io_rsrc_node_switch(struct io_ring_ctx *ctx,
- 			 struct io_rsrc_data *data_to_kill);
-=20
--int io_import_fixed(int ddir, struct iov_iter *iter,
--			   struct io_mapped_ubuf *imu,
--			   u64 buf_addr, size_t len);
-+int io_import_fixed(int ddir, struct iov_iter *iter, struct io_mapped_ub=
-uf *imu,
-+		    u64 buf_addr, size_t len, struct file *file);
-+
-+#ifdef CONFIG_BLOCK
-+void io_dma_unmap(struct io_mapped_ubuf *imu);
-+#else
-+static inline void io_dma_unmap(struct io_mapped_ubuf *imu) {}
-+#endif
-=20
- void __io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
- int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 2b784795103c..9e2164d09adb 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -359,7 +359,7 @@ static struct iovec *__io_import_iovec(int ddir, stru=
-ct io_kiocb *req,
- 	ssize_t ret;
-=20
- 	if (opcode =3D=3D IORING_OP_READ_FIXED || opcode =3D=3D IORING_OP_WRITE=
-_FIXED) {
--		ret =3D io_import_fixed(ddir, iter, req->imu, rw->addr, rw->len);
-+		ret =3D io_import_fixed(ddir, iter, req->imu, rw->addr, rw->len, req->=
-file);
- 		if (ret)
- 			return ERR_PTR(ret);
- 		return NULL;
+ static void nvme_dev_remove_admin(struct nvme_dev *dev)
 --=20
 2.30.2
 

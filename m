@@ -2,76 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A10025822EE
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 11:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FBD2582329
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 11:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231579AbiG0JUG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 05:20:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33152 "EHLO
+        id S229767AbiG0JdK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 05:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230521AbiG0JUF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 05:20:05 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08D937FB7;
-        Wed, 27 Jul 2022 02:20:04 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id h8so23307133wrw.1;
-        Wed, 27 Jul 2022 02:20:04 -0700 (PDT)
+        with ESMTP id S229581AbiG0JdJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 05:33:09 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1732871D
+        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 02:33:08 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id q18so12945906wrx.8
+        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 02:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=6GV9r+xMhkzrix1zVwuoFAT+2lz1nxuiG9jX5dFRLKs=;
-        b=jBli6wkJvQPrlTu9I8L+7p+WAj9MTjQl4w5ECDX5sx3eT2wtgzR6bvLDoHk0lyZdCt
-         gonJKGM73VpyIANTBCwXOcgi7mT1+Y6P2CkLcessQmvcQYdW2V3HB4d/rX/MSYStA5i1
-         snT/HQWrN8Ep6AR+ITz8QEd2DP6uuEmblbehyVhnxwFb0p0iolZiKLtVzJexu7xvRLxA
-         vdI5B6RoEFwOl5TaBfcmhMk7phrzjekKTjPkyaHE8lizwcSYTUJMhzizGoKXpuWAqPLf
-         2lgDlMaQeYLxq63+shVdWeKAfaamT9G47fztwMlDbz41Y+RUIUXqznkc01t6W/WrpHTk
-         u7Sw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=giAsigE0efN/stLJlofKcRgbyeZb/i+ni79NmWS2CPg=;
+        b=BWp0TJO1C44DTZVgOJ/PWwAkhw0zFhCK6OTqEOKsI+ubqMxrX6MRA7FZw4pCYOcu4g
+         bX3Emdc0CJ9Gwr7J2qKUhgc2heBAJ3CBHg97kT87UpHXaFJDXj8jjLvuQwS9PMMiEXVv
+         j5Rt0/tCZ+h0RU+VXJPig3phPYDqLg5xZ8IRR0pV6p5jvtClB4xnuQFk22lxKr4GdeAu
+         Q3PBzk8vomCk6n3M+sl5SPKe3GlBsbJyxzsbLzeJY9bXC9YqSDyU18xfsc6Q4sPsrNrl
+         9EX7FtwmHyIhd/std7M1WQt2I+Suyx/T2NYoBbO7014+4XQo7ntCJOYmJ/wYtVuh+7Yi
+         Vh+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6GV9r+xMhkzrix1zVwuoFAT+2lz1nxuiG9jX5dFRLKs=;
-        b=smaTSizG3aGUHe3fRagmbG++XVboZ1MCTN+k/WLXrq4njd6Q4EcrcdklHlBT8ctSzG
-         8xv09dSaTLCJR9EtYkXiXe2nVrISVa4i2LTJDCfaavDcZAJyIdIUOh/QnMsuWGABrDBl
-         WBeuPTo1b0ML59AUmIjNV3oWyzcWZqQR/AXb0yO0t4UPcGYQzN524WUDxvjIkF3p14Kn
-         5ywTInEg6n95PJHbGdEECkrWR077383XGDSn1XfT0CwV4hYxjnhTEq+/mEPjr5MHQHqL
-         FllUAHQkeUlnKcWFf78V28Y9iQwALE8QoECVKuq+107g3lk0hqRQBKGgMLYAMUprhUVC
-         DfDA==
-X-Gm-Message-State: AJIora9AsCPmzlqwq3ROeDZ/BttIobBJuxnidSgW9HxidDmSp0zRlV8Y
-        nAkPTSY8Lb6WAo4+cETNrRg=
-X-Google-Smtp-Source: AGRyM1thbs/2gKvh2iI5ibtm/dj3VoLVCC5dmvTSrymmc9mjWk+zXeucjYFrY4JIWFWw8/FbSV05zA==
-X-Received: by 2002:a5d:64ec:0:b0:21e:92fe:ac77 with SMTP id g12-20020a5d64ec000000b0021e92feac77mr7032343wri.24.1658913602956;
-        Wed, 27 Jul 2022 02:20:02 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:5b44])
-        by smtp.gmail.com with ESMTPSA id bi26-20020a05600c3d9a00b003a2eacc8179sm1740076wmb.27.2022.07.27.02.20.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jul 2022 02:20:02 -0700 (PDT)
-Message-ID: <e4f4c89c-cdc5-2a37-c087-1c356a2a425a@gmail.com>
-Date:   Wed, 27 Jul 2022 10:18:56 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net-next v5 27/27] selftests/io_uring: test zerocopy send
-Content-Language: en-US
-To:     dust.li@linux.alibaba.com, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
-        kernel-team@fb.com
-References: <cover.1657643355.git.asml.silence@gmail.com>
- <03d5ec78061cf52db420f88ed0b48eb8f47ce9f7.1657643355.git.asml.silence@gmail.com>
- <20220727080101.GA14576@linux.alibaba.com>
+        bh=giAsigE0efN/stLJlofKcRgbyeZb/i+ni79NmWS2CPg=;
+        b=UVR+Ga/YXze+mX90pTKIHpN6HYfG+ngq8nXkp144ykAo7erKVn+yCEkmyCuC+9JabD
+         vQPUFZjyA/y4fqafwcz1wFKo3eKh6dZgtBiLUDNlY90LTuQbFuz7a4iH29xzBuTpwSmk
+         DYnhkLkoIKzM9cFtCvXC4w4h7vtUEmPc28z5df14Gl5a9uiPILLVH6/6T3eZYAlHO6OF
+         pGpmNQuWANUkFAy2CZdrfSUeFagSfz3jWjZx83pPrIiwAznow8G90S3SrHGNtwAXHyBo
+         TcW5B2pTrfhdFs/nhKk6SEtUXA5yeJlX6QIfRORIY1MSaokneXLKreXWkvfaPiqxR42Q
+         yp/g==
+X-Gm-Message-State: AJIora9xU3B6i3bes2tQmmH+Luq6h2iU0Jgfs4yUuvh6jxSLXAMCtV6D
+        VKc27ic/H0BKj3nV0wO9i6ct8zmohnuaTg==
+X-Google-Smtp-Source: AGRyM1v3Kt1DJc9LRLMiuwj1frTWSDShtmEEHm3zKeDjAxdvSvkJBN+BKlUcmjUyc0UzZBqt0O8Z5A==
+X-Received: by 2002:a05:6000:68b:b0:21e:5134:c80c with SMTP id bo11-20020a056000068b00b0021e5134c80cmr13741675wrb.625.1658914386279;
+        Wed, 27 Jul 2022 02:33:06 -0700 (PDT)
+Received: from 127.0.0.1localhost.com ([2620:10d:c093:600::1:754a])
+        by smtp.gmail.com with ESMTPSA id v1-20020adfe281000000b0021e5adb92desm15605302wri.60.2022.07.27.02.33.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jul 2022 02:33:05 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20220727080101.GA14576@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-next v2 0/2] notification optimisation
+Date:   Wed, 27 Jul 2022 10:30:39 +0100
+Message-Id: <cover.1658913593.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.37.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -80,25 +66,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/27/22 09:01, dust.li wrote:
+Reuse request infra for zc notifications for optimisation and also
+a nice line count reduction.
 
->> +static void do_test(int domain, int type, int protocol)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < IP_MAXPACKET; i++)
->> +		payload[i] = 'a' + (i % 26);
->> +	do_tx(domain, type, protocol);
->> +}
->> +
->> +static void usage(const char *filepath)
->> +{
->> +	error(1, 0, "Usage: %s [-f] [-n<N>] [-z0] [-s<payload size>] "
->> +		    "(-4|-6) [-t<time s>] -D<dst_ip> udp", filepath);
-> 
-> A small flaw, the usage here doesn't match the real options in parse_opts().
+v2:
+    add missing patch exporting io_alloc_req()
 
-Indeed. I'll adjust it, thanks!
+Pavel Begunkov (2):
+  io_uring: export req alloc from core
+  io_uring: notification completion optimisation
+
+ include/linux/io_uring_types.h |   7 --
+ io_uring/io_uring.c            |  25 +-----
+ io_uring/io_uring.h            |  21 +++++
+ io_uring/net.c                 |   4 +-
+ io_uring/notif.c               | 159 +++++++++++----------------------
+ io_uring/notif.h               |  42 +++------
+ 6 files changed, 89 insertions(+), 169 deletions(-)
 
 -- 
-Pavel Begunkov
+2.37.0
+

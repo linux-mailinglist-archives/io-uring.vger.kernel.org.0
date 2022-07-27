@@ -2,122 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7B85824D6
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 12:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9C35827FE
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 15:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbiG0Kwo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 06:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        id S232128AbiG0Nwe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 09:52:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbiG0Kwn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 06:52:43 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E8E3F33C;
-        Wed, 27 Jul 2022 03:52:42 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id b6so10271034wmq.5;
-        Wed, 27 Jul 2022 03:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=0kts4MJ4BN+E+a58r7nYbDkrBR4jxQA8muMjzr80HKA=;
-        b=qp5aMdDHfuSOtsbe172qq3FNRbcD2aeiQTli/1L8TmKl03UxaaBKBA5awN7PG35sLZ
-         81ycK/xzc1CHbJnR4hJca5SsBzwwbIn+dwfDGTBE4GOD71q9up/NBnCjhvq5i/HdoQRg
-         y7Ob1mVNc7+ZAUaUUqdJ5NDuqF2tZGYf8pMNNtQqtyUnLn5Mo46UNCQ/Sfrkd31d2kD+
-         m9FEC5j6Fa9NUSqEEJjGf3GA8vUqUUF/YEy3XfMAVAPCK/o73yHCOmvyAD4EkpSkz0Ss
-         PQgyQKnxg7JeCS8gjSKBlQr9Siyisma3p0DAD75f9wgKQqSLR8ZmTQDTA0HhSO4qDOX+
-         k82w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=0kts4MJ4BN+E+a58r7nYbDkrBR4jxQA8muMjzr80HKA=;
-        b=514n7vGh1QieUOpeUChgXOh+AytUSscHNvILChUQ50f7vi23N/gcfbTLX/KSZsV/fM
-         TXLt4TZwHYHj6qS2KxhA0160g9mJJ0KKdRL2Zo1TXKmB3HHktfQWKTZw7HJj9BkACvAC
-         PsLL788Xh4B8y5v8MqZuaNYl1sVjbHloJ/7NCVmLw/xBkY3IKAYD8ImCwLNt8C1R6y3p
-         NwuvMLcBPuNIUe01yfmraHtcQitM0U4sKVdagpRLa8G8R3Bfc/48GlDMASCVhUStk/Gb
-         Z9LLbnntZ5FMghTR1vX932WRVsmeh9P7fR7wpINsVh/SEtTBAV76NgvoCkgYXltl6PSE
-         jS2A==
-X-Gm-Message-State: AJIora/VmM1IzgeWjRD5fp8YvLN44q59OxX3OpSm0KS1hSIFmeu16Btz
-        G+7bajEx4Kq3GBAORGarRN1j+EyHMOpdRw==
-X-Google-Smtp-Source: AGRyM1u1nDQue+kFgwa04M6Tv3vO9euHL8yDa1xbmqN8GBUOO087IQYJmN2aOvVjbifOiOW+AFUFnw==
-X-Received: by 2002:a05:600c:6014:b0:3a3:7308:6a4b with SMTP id az20-20020a05600c601400b003a373086a4bmr2639465wmb.122.1658919160472;
-        Wed, 27 Jul 2022 03:52:40 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:b252])
-        by smtp.gmail.com with ESMTPSA id h130-20020a1c2188000000b003a3211112f8sm1883550wmh.46.2022.07.27.03.52.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jul 2022 03:52:39 -0700 (PDT)
-Message-ID: <0a3b7166-5f86-f808-e26d-67966bd521fe@gmail.com>
-Date:   Wed, 27 Jul 2022 11:51:25 +0100
+        with ESMTP id S231518AbiG0Nwd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 09:52:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F6330F70;
+        Wed, 27 Jul 2022 06:52:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EAF0B61784;
+        Wed, 27 Jul 2022 13:52:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB854C433C1;
+        Wed, 27 Jul 2022 13:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658929951;
+        bh=iDKLy0R2Z1r9BBUQnqSCBeU8s4vnDRz70BEF1qctZhE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V1TJJceAo7ccSkFs0C1gUxHdm0ySHqTL7CXQx2ex2LRwaYnEEqnQQlds2UdZnKPGy
+         RfZ8zJXwd/4nhVDxQniT6Q743saeIvndIoZNjDrXIc9yaa4yAcuWY/dOVxK9KUIKLx
+         hMHYTWNJKSBnT6Gu98xCadGSmJnbrJYolulxl1h70GYXATqm0m5CK3Tjq8Z8P22334
+         jbOIKEeLD4ugrVqh3wPQPi5NKQbFLPxiGIV5iJRjM8PzwOwTmvIZ4gSMIarYYLWhwj
+         nyfO9jkx0gLVXGhD+vOSc/cAJNbtnkIX6T3RQOLueG/s1x8VLvGp9FNV1ltif1AORG
+         6kjJxOjDl6IAg==
+Date:   Wed, 27 Jul 2022 07:52:27 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk, hch@lst.de
+Subject: Re: [PATCH 2/5] iov_iter: introduce type for preregistered dma tags
+Message-ID: <YuFDG1x/4//TYDNL@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220726173814.2264573-1-kbusch@fb.com>
+ <20220726173814.2264573-3-kbusch@fb.com>
+ <YuB0ado/bhkow+LY@ZenIV>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net-next v4 00/27] io_uring zerocopy send
-Content-Language: en-US
-To:     David Ahern <dsahern@kernel.org>, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
-References: <cover.1657194434.git.asml.silence@gmail.com>
- <2c49d634-bd8a-5a7f-0f66-65dba22bae0d@kernel.org>
- <bd9960ab-c9d8-8e5d-c347-8049cdf5708a@gmail.com>
- <0f54508f-e819-e367-84c2-7aa0d7767097@gmail.com>
- <d10f20a9-851a-33be-2615-a57ab92aca90@kernel.org>
- <bc48e2bb-37ee-5b7c-5a97-01e026de2ba4@gmail.com>
- <812c3233-1b64-8a0d-f820-26b98ff6642d@kernel.org>
- <3b81b3e1-2810-5125-f4a0-d6ba45c1fbd3@kernel.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <3b81b3e1-2810-5125-f4a0-d6ba45c1fbd3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YuB0ado/bhkow+LY@ZenIV>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/24/22 19:28, David Ahern wrote:
-> On 7/17/22 8:19 PM, David Ahern wrote:
->>>
->>> Haven't seen it back then. In general io_uring doesn't stop submitting
->>> requests if one request fails, at least because we're trying to execute
->>> requests asynchronously. And in general, requests can get executed
->>> out of order, so most probably submitting a bunch of requests to a single
->>> TCP sock without any ordering on io_uring side is likely a bug.
->>
->> TCP socket buffer fills resulting in a partial send (i.e, for a given
->> sqe submission only part of the write/send succeeded). io_uring was not
->> handling that case.
->>
->> I'll try to find some time to resurrect the iperf3 patch and try top of
->> tree kernel.
+On Wed, Jul 27, 2022 at 12:10:33AM +0100, Al Viro wrote:
+> On Tue, Jul 26, 2022 at 10:38:11AM -0700, Keith Busch wrote:
 > 
-> With your zc_v5 branch (plus the init fix on using msg->sg_from_iter),
-> iperf3 with io_uring support (non-ZC case) no longer shows completions
-> with incomplete sends. So that is good improvement over the last time I
-> tried it.
+> > +void iov_iter_dma_tag(struct iov_iter *i, unsigned int direction,
+> > +			void *dma_tag, unsigned int dma_offset,
+> > +			unsigned long nr_segs, size_t count)
+> > +{
+> > +	WARN_ON(direction & ~(READ | WRITE));
+> > +	*i = (struct iov_iter){
+> > +		.iter_type = ITER_DMA_TAG,
+> > +		.data_source = direction,
+> > +		.nr_segs = nr_segs,
 > 
-> However, adding in the ZC support and that problem resurfaces - a lot of
-> completions are for an incomplete size.
+> Could you can that cargo-culting?  Just what the hell is nr_segs
+> here?
 
-Makes sense, it explicitly retries with normal sends but I didn't
-implement it for zc. Might be a good thing to add.
-
-> liburing comes from your tree, zc_v4 branch. Upstream does not have
-> support for notifications yet, so I can not move to it.
-
-Upstreamed it
-
-> Changes to iperf3 are here:
->     https://github.com/dsahern/iperf mods-3.10-io_uring
-
--- 
-Pavel Begunkov
+Thanks for the catch. Setting nr_segs here is useless carry-over from an
+earlier version when I thought it would be used to build the request. Turns out
+it's not used at all.

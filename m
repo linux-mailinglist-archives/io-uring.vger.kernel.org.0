@@ -2,103 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 300C158344C
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 22:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A21C3583554
+	for <lists+io-uring@lfdr.de>; Thu, 28 Jul 2022 00:32:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233571AbiG0Ux5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 16:53:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49472 "EHLO
+        id S234255AbiG0Wcm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 18:32:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbiG0Ux4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 16:53:56 -0400
-Received: from euporie.uberspace.de (euporie.uberspace.de [185.26.156.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7AC5072E
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 13:53:52 -0700 (PDT)
-Received: (qmail 7572 invoked by uid 989); 27 Jul 2022 20:53:50 -0000
-Authentication-Results: euporie.uberspace.de;
-        auth=pass (plain)
-Date:   Wed, 27 Jul 2022 22:53:29 +0200
-From:   Florian Fischer <florian.fischer@muhq.space>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     io-uring@vger.kernel.org, Florian Schmaus <flow@cs.fau.de>
-Subject: Re: [PATCH liburing] add additional meson build system support
-Message-ID: <20220727205329.jgr5i5ou4oxc2ttc@pasture>
-Mail-Followup-To: Bart Van Assche <bvanassche@acm.org>,
-        io-uring@vger.kernel.org, Florian Schmaus <flow@cs.fau.de>
-References: <20220727152723.3320169-1-florian.fischer@muhq.space>
- <678c7d14-22da-1522-ea41-5dbd21e0c7b4@acm.org>
+        with ESMTP id S229644AbiG0Wcl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 18:32:41 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A5F9D558F5;
+        Wed, 27 Jul 2022 15:32:39 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-20-138.pa.nsw.optusnet.com.au [49.195.20.138])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0562262CC03;
+        Thu, 28 Jul 2022 08:32:34 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oGpZw-0065Ed-SD; Thu, 28 Jul 2022 08:32:32 +1000
+Date:   Thu, 28 Jul 2022 08:32:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Keith Busch <kbusch@fb.com>,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de
+Subject: Re: [PATCH 4/5] io_uring: add support for dma pre-mapping
+Message-ID: <20220727223232.GV3600936@dread.disaster.area>
+References: <20220726173814.2264573-1-kbusch@fb.com>
+ <20220726173814.2264573-5-kbusch@fb.com>
+ <YuB09cZh7rmd260c@ZenIV>
+ <YuFEhQuFtyWcw7rL@kbusch-mbp.dhcp.thefacebook.com>
+ <YuFGCO7M29fr3bVB@ZenIV>
+ <YuFT+UYxd2QtDPe5@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <678c7d14-22da-1522-ea41-5dbd21e0c7b4@acm.org>
-X-Rspamd-Bar: --
-X-Rspamd-Report: MIME_GOOD(-0.1) MID_RHS_NOT_FQDN(0.5) BAYES_HAM(-2.704215)
-X-Rspamd-Score: -2.304215
-Received: from unknown (HELO unkown) (::1)
-        by euporie.uberspace.de (Haraka/2.8.28) with ESMTPSA; Wed, 27 Jul 2022 22:53:50 +0200
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,
-        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YuFT+UYxd2QtDPe5@kbusch-mbp.dhcp.thefacebook.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62e1bd07
+        a=cxZHBGNDieHvTKNp/pucQQ==:117 a=cxZHBGNDieHvTKNp/pucQQ==:17
+        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=7-415B0cAAAA:8
+        a=jTGfvSW0_HNO3Awiv3YA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 27.07.2022 12:21, Bart Van Assche wrote:
-> On 7/27/22 08:27, Florian Fischer wrote:
-> >   11 files changed, 619 insertions(+), 4 deletions(-)
+On Wed, Jul 27, 2022 at 09:04:25AM -0600, Keith Busch wrote:
+> On Wed, Jul 27, 2022 at 03:04:56PM +0100, Al Viro wrote:
+> > On Wed, Jul 27, 2022 at 07:58:29AM -0600, Keith Busch wrote:
+> > > On Wed, Jul 27, 2022 at 12:12:53AM +0100, Al Viro wrote:
+> > > > On Tue, Jul 26, 2022 at 10:38:13AM -0700, Keith Busch wrote:
+> > > > 
+> > > > > +	if (S_ISBLK(file_inode(file)->i_mode))
+> > > > > +		bdev = I_BDEV(file->f_mapping->host);
+> > > > > +	else if (S_ISREG(file_inode(file)->i_mode))
+> > > > > +		bdev = file->f_inode->i_sb->s_bdev;
+> > > > 
+> > > > *blink*
+> > > > 
+> > > > Just what's the intended use of the second case here?
+> > > 
+> > > ??
+> > > 
+> > > The use case is same as the first's: dma map the user addresses to the backing
+> > > storage. There's two cases here because getting the block_device for a regular
+> > > filesystem file is different than a raw block device.
+> > 
+> > Excuse me, but "file on some filesystem + block number on underlying device"
+> > makes no sense as an API...
 > 
-> To me this diffstat tells me that this patch series adds a lot of complexity
-> instead of removing complexity.
+> Sorry if I'm misunderstanding your concern here.
+> 
+> The API is a file descriptor + index range of registered buffers (which is a
+> pre-existing io_uring API). The file descriptor can come from opening either a
+> raw block device (ex: /dev/nvme0n1), or any regular file on a mounted
+> filesystem using nvme as a backing store.
 
-That's because Jens wants to keep both build systems in the repository.
+That's fundamentally flawed. Filesystems can have multiple block
+devices backing them that the VFS doesn't actually know about (e.g.
+btrfs, XFS, etc). Further, some of these filesystems can spread
+indiivdual file data across mutliple block devices i.e. the backing
+bdev changes as file offset changes....
 
- .github/workflows/build.yml      |  44 +++++--
- .gitignore                       |   2 +
- Makefile                         |  84 ------------
- Makefile.common                  |   6 -
- Makefile.quiet                   |  11 --
- configure                        | 467 -----------------------------------------------------------------
- examples/Makefile                |  41 ------
- examples/meson.build             |  19 +++
- man/meson.build                  | 116 ++++++++++++++++
- meson.build                      | 119 +++++++++++++++++
- meson_options.txt                |  14 ++
- src/Makefile                     |  87 ------------
- src/include/liburing/compat.h.in |   7 +
- src/include/liburing/meson.build |  51 +++++++
- src/include/meson.build          |   3 +
- src/meson.build                  |  28 ++++
- test/Makefile                    | 238 ---------------------------------
- test/meson.build                 | 219 +++++++++++++++++++++++++++++++
- 18 files changed, 609 insertions(+), 947 deletions(-)
+Filesystems might not even have a block device (NFS, CIFS, etc) -
+what happens if you call this function on a file belonging to such a
+filesystem?
 
-This is what the diffstat could look like if we would remove the old build system.
+> You don't need to know about specific block numbers. You can use the result
+> with any offset in the underlying block device.
 
+Sure, but you how exactly do you know what block device the file
+offset maps to?
 
-> That leaves me wondering what the advantages of this patch series are?
+We have entire layers like fs/iomap or bufferheads for this - their
+entire purpose in life is to efficiently manage the translation
+between {file, file_offset} and {dev, dev_offset} for the purposes
+of IO and data access...
 
-The most notable advantages of having a meson-based build system are highlighted
-in the cover mail.
+Cheers,
 
-For me the by far most important feature and why I maintained the initial meson
-code from 2021 is the interoperability with other meson-based projects.
-
-Everything needed to consume liburing is to have a wrap file for liburing in your
-subprojects directory and use it in your meson build logic.
-
-subprojects/liburing.wrap:
-
-  [wrap-git]
-  url = https://git.kernel.dk/liburing
-  revision = master
-
-And use the following lines in your meson code:
-
-  liburing_proj = subproject('emper')
-  liburing_dep = liburing_proj/get_variable('uring')
-  # somehow use the dependency object
-
----
-Florian Fischer
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com

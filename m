@@ -2,44 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3035823E8
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 12:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338AF58240A
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 12:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbiG0KLX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 06:11:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48724 "EHLO
+        id S230398AbiG0KTV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 06:19:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232004AbiG0KLP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 06:11:15 -0400
+        with ESMTP id S230267AbiG0KTT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 06:19:19 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4655643323
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 03:11:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0817C41D3C
+        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 03:19:19 -0700 (PDT)
 Received: from [192.168.88.254] (unknown [125.160.106.238])
-        by gnuweeb.org (Postfix) with ESMTPSA id A78FA80108;
-        Wed, 27 Jul 2022 10:11:11 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id BC8177FA25;
+        Wed, 27 Jul 2022 10:19:15 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1658916674;
-        bh=D88NiykOLr8ePsFqbq3xq7Eknx0IQi7ilMjyCoOFu1g=;
+        s=default; t=1658917158;
+        bh=653IlshF3loul+oCTWxJfCAm/kdxAy953Myh73F1Bak=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=aGrmMsulo4R3OBQvKu1gNBvYWK9rBUmpiEFjDgXNB5Y9IViVVfj0AjQm2P5nbrmxk
-         MFdVDYvJukXOzk0UwXENH6uZ8PcdKUNZEWYOtD8/90QWmARb0hSEUmeTMM09qOQG9e
-         RsQC4OUvJuQfYGRii2Tax0sslAVrqlHe5ZgvtpqtmLqgzcHLnDavfe+KXtZZlSJgvX
-         u9rYj3JgBzf9iwpMBO+Smr9lCPH8iO1OFKKPFj2ssMe2L3cB4LF4s5Te5hKHGxAcRF
-         4iWKSOAyEy9uDg0EfrArSTL70v+1OdHa9vta6INLgP+567hYIEo12B7LBGOReMZ5me
-         VVyBe7kVCYclg==
-Message-ID: <9f3afabb-9c6b-4da4-c235-d02cd2142162@gnuweeb.org>
-Date:   Wed, 27 Jul 2022 17:11:08 +0700
+        b=l53A+ix4ljKYiPH7E5arzbq+6qo0M8fxiCgT5VCyOrG9mVGYYBfNClOqLaF9iDNMB
+         TPwR4n2Tt55NOaOQ7/2AiXQZIIh05KKK3HJGpXExAyCdwCf3Rxs5O+hAR/kCWGGvj5
+         dPDoTuUYx7x98cYZ9GskesW3uY9GiBRwyfHr/TT+3xLTPHAm/tor34+B3UGL4zpw+7
+         MB+nR40oueJ5w2H0nQS7s+NAvOxTQTqfsmWxtzRCnA152p/r1eLzclYsVjcVznNoDv
+         ZXnmVXdOyx62E1PGHkn2tlEHzGcz+5EU0RTAArSXIa/4kYakEw8NRCQ5St4oLjk5pL
+         CNVoBANGo5T7Q==
+Message-ID: <de92e7c3-ff9f-0d0c-19be-936383bc63c9@gnuweeb.org>
+Date:   Wed, 27 Jul 2022 17:19:12 +0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
 Subject: Re: [PATCH liburing 0/5] multishot recvmsg docs and example
 Content-Language: en-US
 To:     Dylan Yudaken <dylany@fb.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Facebook Kernel Team <kernel-team@fb.com>,
+Cc:     Facebook Kernel Team <kernel-team@fb.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         Ammar Faizi <ammarfaizi2@gmail.com>
 References: <20220726121502.1958288-1-dylany@fb.com>
  <165885259629.1516215.11114286078111026121.b4-ty@kernel.dk>
@@ -49,8 +49,9 @@ References: <20220726121502.1958288-1-dylany@fb.com>
  <e126981a-c4c1-ca53-b98e-63ba1322f675@kernel.dk>
  <30e8595a4570ff37eb04cb627f64b71a5f948fd5.camel@fb.com>
  <dcb072b9-89d8-bc9d-1f79-daaa7b51cbe1@gnuweeb.org>
+ <9f3afabb-9c6b-4da4-c235-d02cd2142162@gnuweeb.org>
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <dcb072b9-89d8-bc9d-1f79-daaa7b51cbe1@gnuweeb.org>
+In-Reply-To: <9f3afabb-9c6b-4da4-c235-d02cd2142162@gnuweeb.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -62,29 +63,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/27/22 4:59 PM, Ammar Faizi wrote:
-> Interestingly GCC also complains here, but it doesn't complain when
-> compiling your code. Your code only breaks my clang-13.
-> 
-> What is the magic behind this?
+On 7/27/22 5:11 PM, Ammar Faizi wrote:
+> So -D_GNU_SOURCE is the culprit. It seems to be unavoidable as
+> the warn seems to be compiler specific or something. Maybe that
+> _GNU_SOURCE patches the definition of bind().
 
-OK, I figured it out.
+I did:
 
-This work:
+   gcc -E -D_GNU_SOURCE test.c -o xtest.c
 
-    gcc -D_GNU_SOURCE test.c -o test;
+and examined the xtest.c output.
 
-These 3 break:
+So basically when we use _GNU_SOURCE, sometimes the declaration of
+bind() is like this:
 
-    clang -D_GNU_SOURCE test.c -o test;
-    clang test.c -o test;
-    gcc test.c -o test;
+extern int bind (int __fd, __CONST_SOCKADDR_ARG __addr, socklen_t __len)
+      __attribute__ ((__nothrow__ , __leaf__));
 
+With __CONST_SOCKADDR_ARG being a union:
 
-So -D_GNU_SOURCE is the culprit. It seems to be unavoidable as
-the warn seems to be compiler specific or something. Maybe that
-_GNU_SOURCE patches the definition of bind().
+typedef union {
+     const struct sockaddr *__restrict __sockaddr__;
+     const struct sockaddr_at *__restrict __sockaddr_at__;
+     const struct sockaddr_ax25 *__restrict __sockaddr_ax25__;
+     const struct sockaddr_dl *__restrict __sockaddr_dl__;
+     const struct sockaddr_eon *__restrict __sockaddr_eon__;
+     const struct sockaddr_in *__restrict __sockaddr_in__;
+     const struct sockaddr_in6 *__restrict __sockaddr_in6__;
+     const struct sockaddr_inarp *__restrict __sockaddr_inarp__;
+     const struct sockaddr_ipx *__restrict __sockaddr_ipx__;
+     const struct sockaddr_iso *__restrict __sockaddr_iso__;
+     const struct sockaddr_ns *__restrict __sockaddr_ns__;
+     const struct sockaddr_un *__restrict __sockaddr_un__;
+     const struct sockaddr_x25 *__restrict __sockaddr_x25__;
+} __CONST_SOCKADDR_ARG __attribute__ ((__transparent_union__));
+
+But not all header file included by the compiler has this union stuff.
+When it doesn't, it will throw a warning like that.
 
 -- 
 Ammar Faizi
-

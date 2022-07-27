@@ -2,173 +2,383 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 250025821A1
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 09:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2075821AD
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 10:01:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229664AbiG0H5m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 03:57:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53850 "EHLO
+        id S230161AbiG0IBP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 04:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbiG0H5l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 03:57:41 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16F3522B2A
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 00:57:39 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26QNDGu9032105
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 00:57:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=jESS1b7/4SeQXF9MKzdS/JmC83ypeUDf8099qBK3B5M=;
- b=LPZufaE6cr/XfnRwOj/D/mMRtsdnnrbD0NU9tx+J3YUm9rDE5yldD2iS1DVyBsThuLN3
- lCXFPzStltvJNZeJcn8+LYtwV45yxC4bEjfIppQq2n/3rJq489cQhYtGn5r+XnVLnBeN
- N148e4j1hp+h1i2IdZlwlz1JUxSgYNsnHlc= 
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hj9jmfxs5-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 00:57:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JBrCAKMIve1ryMfx8ydSg7/sUgF8g/8uUhCID4KXLxKq7NeKGYTz05AMBtPJN9i9PvT7DUSjjLP9LUx36wAHGFVrTS3CQ4gbm+8yMUzWe7HIQXr3F6fPK11b3AKenMhmtPnZlMfm3UzjN1nsIJnndanDFuAsQNIvRvTDHqzzP46jmiS5vWi9+VA/W1mn60TeRo8l+DlOktKfRSmEe04+wDEsefLPqjvYGIUvFFJK+Dy1TStOvhGCrQVQxQNXh6gB0wbuakFW52Pwd1fv+fd/KnAiRtGcizBYQwxeiFqOrsqzkgkG1txaAqlVCcWaRELI6dIJdSZ7DCxONrhbAkiw/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jESS1b7/4SeQXF9MKzdS/JmC83ypeUDf8099qBK3B5M=;
- b=Ic0Yv2UFhPw5lO2u9lV+sLO1dcMCbO4qvkNcuDM+/lrt3t7B6v0yoloeN23GvfI1QrcHy4R+5QjaaGbpTU6O0f/xzTIHug5TL8nRfmNr0u9J6mxCHc0J1YpSGcHAZe/o9YdbhqcNHGCvXyCpTHXRhgM39iLrTPS5jOlmKzt5DbhbxT++a84By0JmRghOozimR4KPa7xsJ/Sz3zh64pf5c1s4fSeJjhvL4Czh06aOUy/mOzHOq2QqBL/gDF4DwnGGMpWO1dnv4VzTZtp/0zVCu4Ps5Z+yBiCUensaVVNVgwzncjrLGpsCY4R41fV4WnUJHh9Jf7reTuxDGWA6QswLGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from SA1PR15MB4854.namprd15.prod.outlook.com (2603:10b6:806:1e1::19)
- by BN8PR15MB3379.namprd15.prod.outlook.com (2603:10b6:408:a6::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.25; Wed, 27 Jul
- 2022 07:57:36 +0000
-Received: from SA1PR15MB4854.namprd15.prod.outlook.com
- ([fe80::15b5:7935:b8c2:4504]) by SA1PR15MB4854.namprd15.prod.outlook.com
- ([fe80::15b5:7935:b8c2:4504%5]) with mapi id 15.20.5458.025; Wed, 27 Jul 2022
- 07:57:36 +0000
-From:   Dylan Yudaken <dylany@fb.com>
-To:     "ammarfaizi2@gnuweeb.org" <ammarfaizi2@gnuweeb.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     Kernel Team <Kernel-team@fb.com>,
-        "ammarfaizi2@gmail.com" <ammarfaizi2@gmail.com>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: Re: [PATCH liburing 0/5] multishot recvmsg docs and example
-Thread-Topic: [PATCH liburing 0/5] multishot recvmsg docs and example
-Thread-Index: AQHYoOldpNPjrur0lkesGZqF2sIsrq2Q1jIAgAACrYCAAAI0AIAAAiIAgAAAbICAAP2dAA==
-Date:   Wed, 27 Jul 2022 07:57:36 +0000
-Message-ID: <30e8595a4570ff37eb04cb627f64b71a5f948fd5.camel@fb.com>
-References: <20220726121502.1958288-1-dylany@fb.com>
-         <165885259629.1516215.11114286078111026121.b4-ty@kernel.dk>
-         <e1d3c53d-6b31-c18b-7259-69467afa8088@gmail.com>
-         <d14c5be4-b9d8-a52c-12db-6f697784fd9e@kernel.dk>
-         <ce7096fb-0d42-99d7-e7fa-d82251c1934a@gnuweeb.org>
-         <e126981a-c4c1-ca53-b98e-63ba1322f675@kernel.dk>
-In-Reply-To: <e126981a-c4c1-ca53-b98e-63ba1322f675@kernel.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b7b2e362-ceb3-4f00-cbc4-08da6fa5abb4
-x-ms-traffictypediagnostic: BN8PR15MB3379:EE_
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +3aQZqZo8Sss8bg1TqWwpmTKitaQQ10BbB+w4DxwEzdVFHm1ysTgfRzhzbQcjnH3f54ZapUxt9JEDExIX/w1uLhKOuXZ9S+b+ra6VP7yNupfuhuZHBhJN7N6bs6GEUQRqZdWMs4ed3A0TYXRiXEW4jFWwiYzHMXnS8hkm0cBNbJdijhT5Z4RxQmbNCqtHd+QUD0nxVWZSNaXppYP3HO6iNoFyZ5JvHBvh6LcQYTM4fTzykLyLoh0SEBi8Z7pJ8ENzxleP/NdLMebSeyLfYWPrJ0uFIiPvBJY2euKptjypsHPupp43gtrp7umMnxpud/9wuGa7O7Hs8VEs27Sa2w9WNRC9TTFfW5sIYi8KaYkEczWUjKMZGC7Wz7GkgbHBDvATVK1Hmli/Ctax/+0PRD057KvRsqevy6ps8jnroDKw0W3H+i0snS8kB3WRBk8i/Aylez+ortBPmY4fAUJR07KEr+asxrECrphtrDJl+YMjLO1lLEFFGNh8NTYDUU8Qhm0uVhIIDlrvayRkiQxNLvsBcryI288/TgOORvBRld9NMnlfrIOgnmckOx1ZdJtyTJLleT4sPkXiaI+nziGC4CBSHAZzOPGaTmQ3saRH5Jg0WsFDXnU+m+6R8ddowKxJ5w7houmGLyu3zMOZK5xah8T0EytFLyVJqw/bAwpjSIMCmhS7b4/R8dcPL28Hn13LPAs74vkueTKCRrcO6I7kpD0F9yRYCk5jYx3JfMlv9ori+MI9Bcre8RQkqd+gWfW/2/iIsY7IO3oYzOFr/IL1WeGVKJQ91k/8yJ32Pn6TELMF3WJlsHqDdpVrTKXQCmV6V3T
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB4854.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(376002)(396003)(346002)(366004)(6486002)(2616005)(478600001)(6512007)(8936002)(41300700001)(86362001)(2906002)(53546011)(5660300002)(186003)(316002)(6506007)(38100700002)(36756003)(54906003)(122000001)(110136005)(8676002)(4326008)(71200400001)(66446008)(66476007)(66946007)(91956017)(76116006)(66556008)(64756008)(38070700005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?V0RHT0NLYWMydnBKRnN0YkFsSUdidGF2UzBCSjM3Nk1IZ0p0VzVpWmRDMUFE?=
- =?utf-8?B?dW1TUHhTTklNMTkzV2RIY0VFRHp6cEM2aVNFeHNQd2duamsxQWxsZjg5V1NR?=
- =?utf-8?B?blNEUjNvWTFzRjdESUJwZ2kySXA2aFBrdFBMTi9UOWZNV3VPU3M3TkhXUHNv?=
- =?utf-8?B?UWkwUUJEelUvYjB6R05VeDl1R3FTVCtBdVVmdWRzT3JObHZVdmdXU0dSV1Ey?=
- =?utf-8?B?S0d3ZTJqSU5waHpaVGdPS29pejR2Z0Jja0FUemNvcDVSb1F4SUFkZXlvbW94?=
- =?utf-8?B?UUpoQTA0Yy9JR0svak1RZEVZeE14QnZQREJtUWx5MWhZNWdwTHlkaS90RUJ3?=
- =?utf-8?B?RTFxTTIrYmtmWnFHd3UwRmhYVGYva1czdUJ3ZlZSSmtSNGFaUTd6OE1JcmRL?=
- =?utf-8?B?QVRZenA0MTNrTUxiOEJNSEFPb21ybXpmeE9qWW9FZWJhM3YzZWdnajNCMFB1?=
- =?utf-8?B?TE0zRDlwL0JRbHUzK3hCNlducmRFS3Mxd0JUWVN0K0RERmcwSUFBV1NYam5G?=
- =?utf-8?B?Y3JlZFljeWV2UXZLTW9TejFsbFdmcnVRcS9XalRmcVRqRmptVnBleTJwVlUw?=
- =?utf-8?B?b01YdXZ5dVJsRC9TMFVNOEt5SzNWY0Nob21PSEsxR2NPRjhPN2tET25xTHhF?=
- =?utf-8?B?WG5hNlUwSi9yVlhvUHNhY05HUEhPcGxqblZIUWh0UUtkZ1MvWnZvWSs0dVFW?=
- =?utf-8?B?YVpTcS9VeEh4dEJoNVhqS0RWNjdJUkFINmpTbE9lN0Q0M3h6YTVjRUVnck45?=
- =?utf-8?B?VDVmTDlSbk5kaXBhVTcwVTBVdXZZd1kwL2czZlZRcEk0LzZRQUVoWU9Ta0RX?=
- =?utf-8?B?b1VSVEhwNHJVcXZMTktrNGQ0SlRmKzVXR2JLU216VlVPdUx2SFk5ZWhTZG1I?=
- =?utf-8?B?TXNxUVdNN2VwWHU1SjAyMWpNNjZNQlgwUStUallJdm9GS1hqUnNTcE5xSmJH?=
- =?utf-8?B?dUNTNFd5eWh5NmtnU29GbXBOVDJQSUxhTjdYazFWZy9ldWtYakJpSS9lbmg1?=
- =?utf-8?B?ZGVqSTdzRFBHZG16cFVaWi8vQ21sM3QrelVkRnNQSS96QXZPdDJMdGJMcmhN?=
- =?utf-8?B?YzdOQk0wU3RYQzJ4QnFiMzF6T0xReC9valZyb3dTd2ZkZC9ySUJEUVFrcHlp?=
- =?utf-8?B?bWNvYWZ1ZGxIYnpmNEVUeVc4OWEvOVdTNjltbmZyMFdKTS9sMGJIeWw5U0o2?=
- =?utf-8?B?OVRkcVVUT2ZDdFFwL0g0NS9VTVk2N0czSDRXbktQdzlEZFA1MDhTc3hpWmhY?=
- =?utf-8?B?YkdhTXZoTDVMWVFaQlpmSW9HSFFvUVE5Z25qbEhXVTkvM2tNVUJ2UjQ1UGFT?=
- =?utf-8?B?WUtvVnpVVmZVZlFwQ2JWS1hMQWd6TUlrZGxlSmdsVEwxT3Z2endVc3YySHlO?=
- =?utf-8?B?STkvRkxWUVFFMS9XWmVudEMxZ1RZVm5TdGRFOWwvZk9hYkpvNmlSV0wzNWRJ?=
- =?utf-8?B?NXJzWTdXMUV4S1IzWGhmWDNNSlgrSDZ3Q25NM1k1M0VJNmhSaXowcjN6M1Z1?=
- =?utf-8?B?Wk4yaFJXVFFGWSt4N1ZPNUU4dlA4MW5Jc3UydVhxNW1MaVU0RFpRRUFzbWpI?=
- =?utf-8?B?Q1ArWUw1RFp0QmtuR0FQbVlSTzZlV1dnNnQvMFFlNS9nQ01qYksweVlYOXE0?=
- =?utf-8?B?VTN0T2xuL0VWVEw1QjZqTkt1ZHRGRkNsWVZ4Y3kvWUl3YWFqZ3VnNkVpT2tJ?=
- =?utf-8?B?NTZuSVJkeVRKc1dMbDYwODlIc1R0RW5IWGlIb0d6U2hzWFkyN21zSVNoWDAz?=
- =?utf-8?B?VTRzeDBjYy9idWIyT1QvTjdpMFI4ZXpaMkVYaXRjc2dxbUc3UE5xaklLZWlG?=
- =?utf-8?B?Z3QxazNTaFZVV20zUDFocWxHRUkxWG1iN2lWWDc1dlE1UXBIYmZKVHlUQnpq?=
- =?utf-8?B?RDZIeXVaY0pNdGNUbFAzbEFWVnN6TnlxamJpeWJJUTdaZ2w2MXhINmdJZDdv?=
- =?utf-8?B?YXcvRzFQTnlYREVIU2FZanBIdG5lREJlRDJpcnVsOG50eUNLbU1VMDFEMG1s?=
- =?utf-8?B?QVRIcGl3QkFDdTRSaXNBdkhybGxIdDNxdEluR3VVMHBTN3o2NEhJOFUwQ3VG?=
- =?utf-8?B?OGkzZENYM2lLOUx1MlpwWEdJRnp0UzZaYkE0aVI3Yng3dlljZzZRbi9heDdh?=
- =?utf-8?B?QVRveWYwTndhcWJLVUhnMDRJVk5vZFlOVW1FbE1FajFiWDMvWXNZeVNPSkVM?=
- =?utf-8?B?cEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7B24ED2E48077347A2C7E8C54629943E@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        with ESMTP id S229961AbiG0IBO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 04:01:14 -0400
+Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1A9422E8;
+        Wed, 27 Jul 2022 01:01:09 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=dust.li@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VKa60au_1658908862;
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0VKa60au_1658908862)
+          by smtp.aliyun-inc.com;
+          Wed, 27 Jul 2022 16:01:02 +0800
+Date:   Wed, 27 Jul 2022 16:01:01 +0800
+From:   "dust.li" <dust.li@linux.alibaba.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH net-next v5 27/27] selftests/io_uring: test zerocopy send
+Message-ID: <20220727080101.GA14576@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
+References: <cover.1657643355.git.asml.silence@gmail.com>
+ <03d5ec78061cf52db420f88ed0b48eb8f47ce9f7.1657643355.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB4854.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7b2e362-ceb3-4f00-cbc4-08da6fa5abb4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2022 07:57:36.7229
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vm+0N0NMO9u6H5QDy6dwIwqbhyqrc7CI8fLXy9xRzJm1u6lm7VH+00Nc9utZgaHj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB3379
-X-Proofpoint-GUID: QdoRhcMeaup3-k6ZbO49hb4OD36XM7MO
-X-Proofpoint-ORIG-GUID: QdoRhcMeaup3-k6ZbO49hb4OD36XM7MO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-26_07,2022-07-26_01,2022-06-22_01
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03d5ec78061cf52db420f88ed0b48eb8f47ce9f7.1657643355.git.asml.silence@gmail.com>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-T24gVHVlLCAyMDIyLTA3LTI2IGF0IDEwOjQ5IC0wNjAwLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPiAN
-Cj4gT24gNy8yNi8yMiAxMDo0OCBBTSwgQW1tYXIgRmFpemkgd3JvdGU6DQo+ID4gT24gNy8yNi8y
-MiAxMTo0MCBQTSwgSmVucyBBeGJvZSB3cm90ZToNCj4gPiA+IE9uIDcvMjYvMjIgMTA6MzIgQU0s
-IEFtbWFyIEZhaXppIHdyb3RlOg0KPiA+ID4gPiBPbiA3LzI2LzIyIDExOjIzIFBNLCBKZW5zIEF4
-Ym9lIHdyb3RlOg0KPiA+ID4gPiA+IFs1LzVdIGFkZCBhbiBleGFtcGxlIGZvciBhIFVEUCBzZXJ2
-ZXINCj4gPiA+ID4gPiDCoMKgwqDCoMKgwqDCoCBjb21taXQ6IDYxZDQ3MmI1MWU3NjFlNjFjYmY0
-NmNhZWE0MGFhZjQwZDhlZDE0ODQNCj4gPiA+ID4gDQo+ID4gPiA+IFRoaXMgb25lIGJyZWFrcyBj
-bGFuZy0xMyBidWlsZCwgSSdsbCBzZW5kIGEgcGF0Y2guDQo+ID4gPiANCj4gPiA+IEhtbSwgYnVp
-bHQgZmluZSB3aXRoIGNsYW5nLTEzLzE0IGhlcmU/DQo+ID4gDQo+ID4gTm90IHN1cmUgd2hhdCBp
-cyBnb2luZyBvbiwgYnV0IGNsYW5nLTEzIG9uIG15IG1hY2hpbmUgaXMgbm90IGhhcHB5Og0KPiA+
-IA0KPiA+IMKgwqDCoCBpb191cmluZy11ZHAuYzoxMzQ6MTg6IGVycm9yOiBpbmNvbXBhdGlibGUg
-cG9pbnRlciB0eXBlcw0KPiA+IHBhc3NpbmcgXA0KPiA+IMKgwqDCoCAnc3RydWN0IHNvY2thZGRy
-X2luNiAqJyB0byBwYXJhbWV0ZXIgb2YgdHlwZSAnY29uc3Qgc3RydWN0DQo+ID4gc29ja2FkZHIg
-KicgXA0KPiA+IMKgwqDCoCBbLVdlcnJvciwtV2luY29tcGF0aWJsZS1wb2ludGVyLXR5cGVzDQo+
-ID4gDQo+ID4gwqDCoMKgIGlvX3VyaW5nLXVkcC5jOjE0MjoxODogZXJyb3I6IGluY29tcGF0aWJs
-ZSBwb2ludGVyIHR5cGVzDQo+ID4gcGFzc2luZyBcDQo+ID4gwqDCoMKgICdzdHJ1Y3Qgc29ja2Fk
-ZHJfaW4gKicgdG8gcGFyYW1ldGVyIG9mIHR5cGUgJ2NvbnN0IHN0cnVjdA0KPiA+IHNvY2thZGRy
-IConIFwNCj4gPiDCoMKgwqAgWy1XZXJyb3IsLVdpbmNvbXBhdGlibGUtcG9pbnRlci10eXBlc10N
-Cj4gPiANCj4gPiBDaGFuZ2luZyB0aGUgY29tcGlsZXIgdG8gR0NDIGJ1aWxkcyBqdXN0IGZpbmUu
-IEkgaGF2ZSBmaXhlZA0KPiA+IHNvbWV0aGluZyBsaWtlDQo+ID4gdGhpcyBtb3JlIHRoYW4gb25j
-ZS4gU3RyYW5nZSBpbmRlZWQuDQoNCg0KSW50ZXJlc3RpbmdseSBpdCBkaWQgbm90IHNob3cgdXAg
-b24gdGhlIEdpdGh1YiBDSSBlaXRoZXIuIFdoYXQgZmxhZ3MNCmFyZSB5b3Ugc2V0dGluZyBmb3Ig
-dGhpcz8gTWF5YmUgdGhlIENJIGNhbiBiZSBleHBhbmRlZCB0byBpbmNsdWRlIHRob3NlDQpmbGFn
-cy4NCkFzIHlvdSBzYXkgaXRzIG5vdCB0aGUgZmlyc3QgdGltZSB5b3UndmUgZml4ZWQgdGhpcywg
-b3IgdGhhdCBJJ3ZlIGRvbmUNCnRoaXMuDQoNCkR5bGFuDQoNCg==
+On Tue, Jul 12, 2022 at 09:52:51PM +0100, Pavel Begunkov wrote:
+>Add selftests for io_uring zerocopy sends and io_uring's notification
+>infrastructure. It's largely influenced by msg_zerocopy and uses it on
+>the receive side.
+>
+>Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>---
+> tools/testing/selftests/net/Makefile          |   1 +
+> .../selftests/net/io_uring_zerocopy_tx.c      | 605 ++++++++++++++++++
+> .../selftests/net/io_uring_zerocopy_tx.sh     | 131 ++++
+> 3 files changed, 737 insertions(+)
+> create mode 100644 tools/testing/selftests/net/io_uring_zerocopy_tx.c
+> create mode 100755 tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+>
+>diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+>index 7ea54af55490..51261483744e 100644
+>--- a/tools/testing/selftests/net/Makefile
+>+++ b/tools/testing/selftests/net/Makefile
+>@@ -59,6 +59,7 @@ TEST_GEN_FILES += toeplitz
+> TEST_GEN_FILES += cmsg_sender
+> TEST_GEN_FILES += stress_reuseport_listen
+> TEST_PROGS += test_vxlan_vnifiltering.sh
+>+TEST_GEN_FILES += io_uring_zerocopy_tx
+> 
+> TEST_FILES := settings
+> 
+>diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.c b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
+>new file mode 100644
+>index 000000000000..9d64c560a2d6
+>--- /dev/null
+>+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
+>@@ -0,0 +1,605 @@
+>+/* SPDX-License-Identifier: MIT */
+>+/* based on linux-kernel/tools/testing/selftests/net/msg_zerocopy.c */
+>+#include <assert.h>
+>+#include <errno.h>
+>+#include <error.h>
+>+#include <fcntl.h>
+>+#include <limits.h>
+>+#include <stdbool.h>
+>+#include <stdint.h>
+>+#include <stdio.h>
+>+#include <stdlib.h>
+>+#include <string.h>
+>+#include <unistd.h>
+>+
+>+#include <arpa/inet.h>
+>+#include <linux/errqueue.h>
+>+#include <linux/if_packet.h>
+>+#include <linux/io_uring.h>
+>+#include <linux/ipv6.h>
+>+#include <linux/socket.h>
+>+#include <linux/sockios.h>
+>+#include <net/ethernet.h>
+>+#include <net/if.h>
+>+#include <netinet/in.h>
+>+#include <netinet/ip.h>
+>+#include <netinet/ip6.h>
+>+#include <netinet/tcp.h>
+>+#include <netinet/udp.h>
+>+#include <sys/ioctl.h>
+>+#include <sys/mman.h>
+>+#include <sys/resource.h>
+>+#include <sys/socket.h>
+>+#include <sys/stat.h>
+>+#include <sys/time.h>
+>+#include <sys/types.h>
+>+#include <sys/un.h>
+>+#include <sys/wait.h>
+>+
+>+#define NOTIF_TAG 0xfffffffULL
+>+#define NONZC_TAG 0
+>+#define ZC_TAG 1
+>+
+
+<...>
+
+>+static void do_test(int domain, int type, int protocol)
+>+{
+>+	int i;
+>+
+>+	for (i = 0; i < IP_MAXPACKET; i++)
+>+		payload[i] = 'a' + (i % 26);
+>+	do_tx(domain, type, protocol);
+>+}
+>+
+>+static void usage(const char *filepath)
+>+{
+>+	error(1, 0, "Usage: %s [-f] [-n<N>] [-z0] [-s<payload size>] "
+>+		    "(-4|-6) [-t<time s>] -D<dst_ip> udp", filepath);
+
+A small flaw, the usage here doesn't match the real options in parse_opts().
+
+Thanks
+
+>+}
+>+
+>+static void parse_opts(int argc, char **argv)
+>+{
+>+	const int max_payload_len = sizeof(payload) -
+>+				    sizeof(struct ipv6hdr) -
+>+				    sizeof(struct tcphdr) -
+>+				    40 /* max tcp options */;
+>+	struct sockaddr_in6 *addr6 = (void *) &cfg_dst_addr;
+>+	struct sockaddr_in *addr4 = (void *) &cfg_dst_addr;
+>+	char *daddr = NULL;
+>+	int c;
+>+
+>+	if (argc <= 1)
+>+		usage(argv[0]);
+>+	cfg_payload_len = max_payload_len;
+>+
+>+	while ((c = getopt(argc, argv, "46D:p:s:t:n:fc:m:")) != -1) {
+>+		switch (c) {
+>+		case '4':
+>+			if (cfg_family != PF_UNSPEC)
+>+				error(1, 0, "Pass one of -4 or -6");
+>+			cfg_family = PF_INET;
+>+			cfg_alen = sizeof(struct sockaddr_in);
+>+			break;
+>+		case '6':
+>+			if (cfg_family != PF_UNSPEC)
+>+				error(1, 0, "Pass one of -4 or -6");
+>+			cfg_family = PF_INET6;
+>+			cfg_alen = sizeof(struct sockaddr_in6);
+>+			break;
+>+		case 'D':
+>+			daddr = optarg;
+>+			break;
+>+		case 'p':
+>+			cfg_port = strtoul(optarg, NULL, 0);
+>+			break;
+>+		case 's':
+>+			cfg_payload_len = strtoul(optarg, NULL, 0);
+>+			break;
+>+		case 't':
+>+			cfg_runtime_ms = 200 + strtoul(optarg, NULL, 10) * 1000;
+>+			break;
+>+		case 'n':
+>+			cfg_nr_reqs = strtoul(optarg, NULL, 0);
+>+			break;
+>+		case 'f':
+>+			cfg_flush = 1;
+>+			break;
+>+		case 'c':
+>+			cfg_cork = strtol(optarg, NULL, 0);
+>+			break;
+>+		case 'm':
+>+			cfg_mode = strtol(optarg, NULL, 0);
+>+			break;
+>+		}
+>+	}
+>+
+>+	switch (cfg_family) {
+>+	case PF_INET:
+>+		memset(addr4, 0, sizeof(*addr4));
+>+		addr4->sin_family = AF_INET;
+>+		addr4->sin_port = htons(cfg_port);
+>+		if (daddr &&
+>+		    inet_pton(AF_INET, daddr, &(addr4->sin_addr)) != 1)
+>+			error(1, 0, "ipv4 parse error: %s", daddr);
+>+		break;
+>+	case PF_INET6:
+>+		memset(addr6, 0, sizeof(*addr6));
+>+		addr6->sin6_family = AF_INET6;
+>+		addr6->sin6_port = htons(cfg_port);
+>+		if (daddr &&
+>+		    inet_pton(AF_INET6, daddr, &(addr6->sin6_addr)) != 1)
+>+			error(1, 0, "ipv6 parse error: %s", daddr);
+>+		break;
+>+	default:
+>+		error(1, 0, "illegal domain");
+>+	}
+>+
+>+	if (cfg_payload_len > max_payload_len)
+>+		error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
+>+	if (cfg_mode == MODE_NONZC && cfg_flush)
+>+		error(1, 0, "-f: only zerocopy modes support notifications");
+>+	if (optind != argc - 1)
+>+		usage(argv[0]);
+>+}
+>+
+>+int main(int argc, char **argv)
+>+{
+>+	const char *cfg_test = argv[argc - 1];
+>+
+>+	parse_opts(argc, argv);
+>+
+>+	if (!strcmp(cfg_test, "tcp"))
+>+		do_test(cfg_family, SOCK_STREAM, 0);
+>+	else if (!strcmp(cfg_test, "udp"))
+>+		do_test(cfg_family, SOCK_DGRAM, 0);
+>+	else
+>+		error(1, 0, "unknown cfg_test %s", cfg_test);
+>+	return 0;
+>+}
+>diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+>new file mode 100755
+>index 000000000000..6a65e4437640
+>--- /dev/null
+>+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+>@@ -0,0 +1,131 @@
+>+#!/bin/bash
+>+#
+>+# Send data between two processes across namespaces
+>+# Run twice: once without and once with zerocopy
+>+
+>+set -e
+>+
+>+readonly DEV="veth0"
+>+readonly DEV_MTU=65535
+>+readonly BIN_TX="./io_uring_zerocopy_tx"
+>+readonly BIN_RX="./msg_zerocopy"
+>+
+>+readonly RAND="$(mktemp -u XXXXXX)"
+>+readonly NSPREFIX="ns-${RAND}"
+>+readonly NS1="${NSPREFIX}1"
+>+readonly NS2="${NSPREFIX}2"
+>+
+>+readonly SADDR4='192.168.1.1'
+>+readonly DADDR4='192.168.1.2'
+>+readonly SADDR6='fd::1'
+>+readonly DADDR6='fd::2'
+>+
+>+readonly path_sysctl_mem="net.core.optmem_max"
+>+
+>+# No arguments: automated test
+>+if [[ "$#" -eq "0" ]]; then
+>+	IPs=( "4" "6" )
+>+	protocols=( "tcp" "udp" )
+>+
+>+	for IP in "${IPs[@]}"; do
+>+		for proto in "${protocols[@]}"; do
+>+			for mode in $(seq 1 3); do
+>+				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32
+>+				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -f
+>+				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -c -f
+>+			done
+>+		done
+>+	done
+>+
+>+	echo "OK. All tests passed"
+>+	exit 0
+>+fi
+>+
+>+# Argument parsing
+>+if [[ "$#" -lt "2" ]]; then
+>+	echo "Usage: $0 [4|6] [tcp|udp|raw|raw_hdrincl|packet|packet_dgram] <args>"
+>+	exit 1
+>+fi
+>+
+>+readonly IP="$1"
+>+shift
+>+readonly TXMODE="$1"
+>+shift
+>+readonly EXTRA_ARGS="$@"
+>+
+>+# Argument parsing: configure addresses
+>+if [[ "${IP}" == "4" ]]; then
+>+	readonly SADDR="${SADDR4}"
+>+	readonly DADDR="${DADDR4}"
+>+elif [[ "${IP}" == "6" ]]; then
+>+	readonly SADDR="${SADDR6}"
+>+	readonly DADDR="${DADDR6}"
+>+else
+>+	echo "Invalid IP version ${IP}"
+>+	exit 1
+>+fi
+>+
+>+# Argument parsing: select receive mode
+>+#
+>+# This differs from send mode for
+>+# - packet:	use raw recv, because packet receives skb clones
+>+# - raw_hdrinc: use raw recv, because hdrincl is a tx-only option
+>+case "${TXMODE}" in
+>+'packet' | 'packet_dgram' | 'raw_hdrincl')
+>+	RXMODE='raw'
+>+	;;
+>+*)
+>+	RXMODE="${TXMODE}"
+>+	;;
+>+esac
+>+
+>+# Start of state changes: install cleanup handler
+>+save_sysctl_mem="$(sysctl -n ${path_sysctl_mem})"
+>+
+>+cleanup() {
+>+	ip netns del "${NS2}"
+>+	ip netns del "${NS1}"
+>+	sysctl -w -q "${path_sysctl_mem}=${save_sysctl_mem}"
+>+}
+>+
+>+trap cleanup EXIT
+>+
+>+# Configure system settings
+>+sysctl -w -q "${path_sysctl_mem}=1000000"
+>+
+>+# Create virtual ethernet pair between network namespaces
+>+ip netns add "${NS1}"
+>+ip netns add "${NS2}"
+>+
+>+ip link add "${DEV}" mtu "${DEV_MTU}" netns "${NS1}" type veth \
+>+  peer name "${DEV}" mtu "${DEV_MTU}" netns "${NS2}"
+>+
+>+# Bring the devices up
+>+ip -netns "${NS1}" link set "${DEV}" up
+>+ip -netns "${NS2}" link set "${DEV}" up
+>+
+>+# Set fixed MAC addresses on the devices
+>+ip -netns "${NS1}" link set dev "${DEV}" address 02:02:02:02:02:02
+>+ip -netns "${NS2}" link set dev "${DEV}" address 06:06:06:06:06:06
+>+
+>+# Add fixed IP addresses to the devices
+>+ip -netns "${NS1}" addr add 192.168.1.1/24 dev "${DEV}"
+>+ip -netns "${NS2}" addr add 192.168.1.2/24 dev "${DEV}"
+>+ip -netns "${NS1}" addr add       fd::1/64 dev "${DEV}" nodad
+>+ip -netns "${NS2}" addr add       fd::2/64 dev "${DEV}" nodad
+>+
+>+# Optionally disable sg or csum offload to test edge cases
+>+# ip netns exec "${NS1}" ethtool -K "${DEV}" sg off
+>+
+>+do_test() {
+>+	local readonly ARGS="$1"
+>+
+>+	echo "ipv${IP} ${TXMODE} ${ARGS}"
+>+	ip netns exec "${NS2}" "${BIN_RX}" "-${IP}" -t 2 -C 2 -S "${SADDR}" -D "${DADDR}" -r "${RXMODE}" &
+>+	sleep 0.2
+>+	ip netns exec "${NS1}" "${BIN_TX}" "-${IP}" -t 1 -D "${DADDR}" ${ARGS} "${TXMODE}"
+>+	wait
+>+}
+>+
+>+do_test "${EXTRA_ARGS}"
+>+echo ok
+>-- 
+>2.37.0

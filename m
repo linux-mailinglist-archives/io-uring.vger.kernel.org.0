@@ -2,34 +2,34 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB22E582395
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 11:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E3035823E8
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 12:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230430AbiG0J7U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 05:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37546 "EHLO
+        id S230230AbiG0KLX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 06:11:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbiG0J7T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 05:59:19 -0400
+        with ESMTP id S232004AbiG0KLP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 06:11:15 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABC329800
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 02:59:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4655643323
+        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 03:11:14 -0700 (PDT)
 Received: from [192.168.88.254] (unknown [125.160.106.238])
-        by gnuweeb.org (Postfix) with ESMTPSA id 86D007FA25;
-        Wed, 27 Jul 2022 09:59:14 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id A78FA80108;
+        Wed, 27 Jul 2022 10:11:11 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1658915956;
-        bh=TJeeK3FtMTcQXDkf+pWRgY2OKXOu4GIob4sKD2nUpyE=;
+        s=default; t=1658916674;
+        bh=D88NiykOLr8ePsFqbq3xq7Eknx0IQi7ilMjyCoOFu1g=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=NsyLn+5e6gUjspuxrY6/vyqMec0IVTiCq+812RLXSvzVMJ6mKpBBC0BaEfnq1Ln2k
-         YsdoWdHSCcJUNyfnTKbpbAnxnwxFyoEBtWGJvS3uX4LzHP6NyfxrvD37VZ/yPDse6W
-         AcRXPYLl27/exHbK18yfYEBX4DIAkBwJjkehtpXgDhn3iB5V5nwIl6iyOKp12GYYyO
-         RANxr7Lo/PiEqnsfCq+F5ix9J0iBCaG9Ym1qdYJhDTzFXX9HCsEowKeW3/CfnZLVel
-         Bzm+h/4ABfk2p7vXkpgxkpzmIswM9fH2ALX/zlsYL35rwszvL/rfh/lB0RYKOXvDb3
-         O6NfAYzYXzanQ==
-Message-ID: <dcb072b9-89d8-bc9d-1f79-daaa7b51cbe1@gnuweeb.org>
-Date:   Wed, 27 Jul 2022 16:59:10 +0700
+        b=aGrmMsulo4R3OBQvKu1gNBvYWK9rBUmpiEFjDgXNB5Y9IViVVfj0AjQm2P5nbrmxk
+         MFdVDYvJukXOzk0UwXENH6uZ8PcdKUNZEWYOtD8/90QWmARb0hSEUmeTMM09qOQG9e
+         RsQC4OUvJuQfYGRii2Tax0sslAVrqlHe5ZgvtpqtmLqgzcHLnDavfe+KXtZZlSJgvX
+         u9rYj3JgBzf9iwpMBO+Smr9lCPH8iO1OFKKPFj2ssMe2L3cB4LF4s5Te5hKHGxAcRF
+         4iWKSOAyEy9uDg0EfrArSTL70v+1OdHa9vta6INLgP+567hYIEo12B7LBGOReMZ5me
+         VVyBe7kVCYclg==
+Message-ID: <9f3afabb-9c6b-4da4-c235-d02cd2142162@gnuweeb.org>
+Date:   Wed, 27 Jul 2022 17:11:08 +0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
@@ -48,10 +48,11 @@ References: <20220726121502.1958288-1-dylany@fb.com>
  <ce7096fb-0d42-99d7-e7fa-d82251c1934a@gnuweeb.org>
  <e126981a-c4c1-ca53-b98e-63ba1322f675@kernel.dk>
  <30e8595a4570ff37eb04cb627f64b71a5f948fd5.camel@fb.com>
+ <dcb072b9-89d8-bc9d-1f79-daaa7b51cbe1@gnuweeb.org>
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <30e8595a4570ff37eb04cb627f64b71a5f948fd5.camel@fb.com>
+In-Reply-To: <dcb072b9-89d8-bc9d-1f79-daaa7b51cbe1@gnuweeb.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -61,63 +62,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/27/22 2:57 PM, Dylan Yudaken wrote:
-> Interestingly it did not show up on the Github CI either. What flags
-> are you setting for this? Maybe the CI can be expanded to include those
-> flags.
-> As you say its not the first time you've fixed this, or that I've done
-> this.
+On 7/27/22 4:59 PM, Ammar Faizi wrote:
+> Interestingly GCC also complains here, but it doesn't complain when
+> compiling your code. Your code only breaks my clang-13.
+> 
+> What is the magic behind this?
 
-I use the same flag with the GitHub CI. Just a small experiment here...
+OK, I figured it out.
 
-I compile this with default compilation flags:
+This work:
 
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+    gcc -D_GNU_SOURCE test.c -o test;
 
-int main(void)
-{
-         struct sockaddr_in addr = { };
-         return bind(0, &addr, sizeof(addr));
-}
+These 3 break:
 
-===============================================================================
+    clang -D_GNU_SOURCE test.c -o test;
+    clang test.c -o test;
+    gcc test.c -o test;
 
-ammarfaizi2@integral2:/tmp$ gcc test.c -o test
-test.c: In function ‘main’:
-test.c:9:24: warning: passing argument 2 of ‘bind’ from incompatible pointer type [-Wincompatible-pointer-types]
-     9 |         return bind(0, &addr, sizeof(addr));
-       |                        ^~~~~
-       |                        |
-       |                        struct sockaddr_in *
-In file included from /usr/include/netinet/in.h:23,
-                  from /usr/include/arpa/inet.h:22,
-                  from test.c:2:
-/usr/include/x86_64-linux-gnu/sys/socket.h:112:49: note: expected ‘const struct sockaddr *’ but argument is of type ‘struct sockaddr_in *’
-   112 | extern int bind (int __fd, __CONST_SOCKADDR_ARG __addr, socklen_t __len)
-       |
 
-===============================================================================
-
-ammarfaizi2@integral2:/tmp$ clang test.c -o test
-test.c:9:17: warning: incompatible pointer types passing 'struct sockaddr_in *' to parameter of type 'const struct sockaddr *' [-Wincompatible-pointer-types]
-         return bind(0, &addr, sizeof(addr));
-                        ^~~~~
-/usr/include/x86_64-linux-gnu/sys/socket.h:112:49: note: passing argument to parameter '__addr' here
-extern int bind (int __fd, __CONST_SOCKADDR_ARG __addr, socklen_t __len)
-                                                 ^
-1 warning generated.
-
-===============================================================================
-
-Interestingly GCC also complains here, but it doesn't complain when
-compiling your code. Your code only breaks my clang-13.
-
-What is the magic behind this?
-
-We never disable -Wincompatible-pointer-types in liburing either.
-It's enabled by default.
+So -D_GNU_SOURCE is the culprit. It seems to be unavoidable as
+the warn seems to be compiler specific or something. Maybe that
+_GNU_SOURCE patches the definition of bind().
 
 -- 
 Ammar Faizi
+

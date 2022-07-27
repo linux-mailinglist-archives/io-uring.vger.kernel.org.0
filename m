@@ -2,150 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6331D5832DC
-	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 21:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53F86583373
+	for <lists+io-uring@lfdr.de>; Wed, 27 Jul 2022 21:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232300AbiG0TF4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Jul 2022 15:05:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46640 "EHLO
+        id S237184AbiG0TWr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Jul 2022 15:22:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233657AbiG0TFb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 15:05:31 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678EA26CD
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 11:33:23 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220727183318epoutp0267986f01045afc4a862d27db2d313e2c~Fw1LRe5J02295422954epoutp027
-        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 18:33:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220727183318epoutp0267986f01045afc4a862d27db2d313e2c~Fw1LRe5J02295422954epoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1658946798;
-        bh=RS48UBGGGvljPH7h1+NBuqS/5YoqaDr/bIkQd5s5U7U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pVcJAqzqV7gpwB+4t1LZonIfgFdJSWKSqjL45/nF8UzA08rQtaivJ7C+YyRNeRQ32
-         hUi6ATbhakrZYLHyrJJFnbV5lt3NW3JDZrjT6vWW422oTTkI+JXQMzjc9Jro/prxZv
-         YBGU486HqwjWNsc27L9sJ8CgSJn9Y+nF8e5h8Z7w=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220727183316epcas5p4f7eccff6f062601e185cfc7fcc8c1324~Fw1KGslWR1204012040epcas5p4s;
-        Wed, 27 Jul 2022 18:33:16 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4LtMpy2GF7z4x9Pp; Wed, 27 Jul
-        2022 18:33:14 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D2.A0.09662.7D481E26; Thu, 28 Jul 2022 03:32:55 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220727183254epcas5p2d51ddf874f460d40577651de9563cc78~Fw01LaAlI3021630216epcas5p2V;
-        Wed, 27 Jul 2022 18:32:54 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220727183254epsmtrp170fd873d0d978899e0a68b045f00534f~Fw01KyJ_p2382523825epsmtrp1E;
-        Wed, 27 Jul 2022 18:32:54 +0000 (GMT)
-X-AuditID: b6c32a49-86fff700000025be-e9-62e184d77480
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        78.0A.08905.6D481E26; Thu, 28 Jul 2022 03:32:54 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220727183253epsmtip1995a721c00814967d44d0937706dee41~Fw00lsn4Z1524915249epsmtip1y;
-        Wed, 27 Jul 2022 18:32:53 +0000 (GMT)
-Date:   Wed, 27 Jul 2022 23:57:28 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Ankit Kumar <ankit.kumar@samsung.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
-Subject: Re: [PATCH liburing v2 0/5] Add basic test for nvme uring
- passthrough commands
-Message-ID: <20220727182728.GB13647@test-zns>
+        with ESMTP id S233329AbiG0TWL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Jul 2022 15:22:11 -0400
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66138DC
+        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 12:21:15 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id o20-20020a17090aac1400b001f2da729979so3238289pjq.0
+        for <io-uring@vger.kernel.org>; Wed, 27 Jul 2022 12:21:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=26YTF165B9/GL95Dn7MlIrJ2keMRZ4Tsxp/YJDxP5Ns=;
+        b=6S/53OP5pS7GguM6TQ3yHne9d4pmI2qTEawsq9b/hGA5uoKXECI0QwIg4ZzyjOyVov
+         OlhlfkcVMX0bddQJjGm7lPGBRSonuo/6xaudzKwEGaNmLaW+Lan8w4RqQ7Qugx1WYte+
+         kewyDEx8YL7Y5Ixv24gV/aTRICS6XsdL6tiWt31MEBv1CK3xBK3w1tGcRELQFMqYoIja
+         JpPStgAzFzeJ8DupLtV0eUxNe9KO0zbIOmfkE5UZSMES3iF8G27KIuYhF4ZKfwp/eUoq
+         QCjShWs3wp+EajojRE8jK4WQqHG7TxD3afKbBtkWQ1wfXC3ljmQJZbU59+TJ5XDuuUax
+         2YNQ==
+X-Gm-Message-State: AJIora8iWE3HWuaDyW7siSeoF5LTJaTc9MEEicNHI4dugP3Xui0t4gRt
+        dm4vWYaonc6/7FAUJ0NDOR8AlogdGxI=
+X-Google-Smtp-Source: AGRyM1u6q882t8tGE2wQnFXX1efR0m3MJO4Z6icfdZt7GIksqzW8l9qOkfe9N0r4dkmdc0e99vn+qg==
+X-Received: by 2002:a17:902:c405:b0:16d:762d:8885 with SMTP id k5-20020a170902c40500b0016d762d8885mr15713994plk.115.1658949674862;
+        Wed, 27 Jul 2022 12:21:14 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:a84e:2ec1:1b57:b033? ([2620:15c:211:201:a84e:2ec1:1b57:b033])
+        by smtp.gmail.com with ESMTPSA id u3-20020a626003000000b005289eafbd08sm14760838pfb.18.2022.07.27.12.21.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Jul 2022 12:21:13 -0700 (PDT)
+Message-ID: <678c7d14-22da-1522-ea41-5dbd21e0c7b4@acm.org>
+Date:   Wed, 27 Jul 2022 12:21:12 -0700
 MIME-Version: 1.0
-In-Reply-To: <20220726105230.12025-1-ankit.kumar@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNKsWRmVeSWpSXmKPExsWy7bCmuu71lodJBt/vqVmsufKb3WL13X42
-        i3et51gcmD0uny316NuyitHj8ya5AOaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11D
-        SwtzJYW8xNxUWyUXnwBdt8wcoD1KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKT
-        Ar3ixNzi0rx0vbzUEitDAwMjU6DChOyMiWdvsxbs467YdXkaSwPjcc4uRk4OCQETiS9P97N1
-        MXJxCAnsZpTY86+TEcL5xChx5fVWNpAqIYFvjBKru3lhOrpu7mWFKNrLKDFz21wWCOcZo8Sh
-        jVfZQapYBFQlTm9qZepi5OBgE9CUuDC5FMQUATLnfWABqWAW0JVYvucxmC0sECnRfWY2O0gJ
-        L1D87RwpkDCvgKDEyZlPwEo4BWwlml5OYQWxRQWUJQ5sO84EslVC4BS7xPl7O1kgbnOROLti
-        GxuELSzx6vgWdghbSuJlfxuUnSxxaeY5Jgi7ROLxnoNQtr1E66l+ZpAbmAUyJFZ32EKcySfR
-        +/sJ2CMSArwSHW1CENWKEvcmPWWFsMUlHs5YAmV7SMz63skMCZAJwNBZcJFxAqPcLCTvzELY
-        MAtsg5VE54cmVoiwtMTyfxwQpqbE+l36CxhZVzFKphYU56anFpsWGOallsPjNzk/dxMjONVp
-        ee5gvPvgg94hRiYOxkOMEhzMSiK8CdH3k4R4UxIrq1KL8uOLSnNSiw8xmgKjZiKzlGhyPjDZ
-        5pXEG5pYGpiYmZmZWBqbGSqJ83pd3ZQkJJCeWJKanZpakFoE08fEwSnVwGR1LGrvmvBVjk0f
-        ldbqya9z0hKbznpl10qj27klNWFOvu2LDCf6rP1xkM96lmhq6P9TwsxfLEsmmF6XDJRvKPL6
-        zvCk/7Lpncf5LsWX2XkFt0q7W2b8TTDz4OI73nS4YYV12RXVJOssl/3Lj3VKzvDVrfuu7Bpg
-        vpLJy/ZL/V6OWZN2TrR5fvQYEz97X18P13ob17KScmc1zirxjJ0Xp24LSbWNXT37f9yZ5Y+O
-        Ll37XMr4u7iZ4c2YSTLSZTbbFFPXPTy83X1FgDdzycRI7r35OVa3vKOach1WR6e4KzZOjEip
-        ldz77RSzpEuMS2W64a5Lmts8fu6SepxiF8+W5HLoahFDm/2stbciph5XYinOSDTUYi4qTgQA
-        8Kzg0P4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSnO61lodJBtOnSlmsufKb3WL13X42
-        i3et51gcmD0uny316NuyitHj8ya5AOYoLpuU1JzMstQifbsErozOXY/ZCj5wVCxpfs/WwDiZ
-        vYuRk0NCwESi6+Ze1i5GLg4hgd2MEpPmb2WFSIhLNF/7AVUkLLHy33N2iKInjBL/On6xgSRY
-        BFQlTm9qZepi5OBgE9CUuDC5FMQUATLnfWABqWAW0JVYvucxmC0sECnRfWY2O0gJL1D87Rwp
-        iIkTGCXW3D8JVsMrIChxcuYTqF4ziXmbHzKD1DMLSEss/8cBEuYUsJVoejkF7EpRAWWJA9uO
-        M01gFJyFpHsWku5ZCN0LGJlXMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEB7CW5g7G
-        7as+6B1iZOJgPMQowcGsJMKbEH0/SYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6Ykl
-        qdmpqQWpRTBZJg5OqQamy78FJu+zyAoRdOpwddKdvGbH3Y2b99mdedjy6lnZjfUbtDsf7Fwg
-        7rM+2cb34Lf+zI2GV/bnOKfcq/A8qeG0i/WUacW9TemNDKt/bHQ0OzirOGfZFq5dop+bs9Vt
-        7i88u+VB0/Z/26WqPj/wzu0um3CzOpChKndL1S+lsxk8cwOWasa0a639ppvj//aFasCl1oNe
-        fjmZovI2S+KSc0yfst83Ou1uXvhtGeeEz42NlnJrrrvueLN51goh7SXK02obbtcdLRBfq9a8
-        rj3K1kD6Pl87g738ixma9Z4qjxx/L1CJiIqUWPmptUxonePpmS+2Sh1Oub5857s04eTCh5Gf
-        GTfHHLHP3HRy6c2Cs9PUlFiKMxINtZiLihMBD5yVHc8CAAA=
-X-CMS-MailID: 20220727183254epcas5p2d51ddf874f460d40577651de9563cc78
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----vB7n7NJswZTNf_AiIrah4kmnk8PbkRxRpEeyoX_UVTG8Sgsz=_211d1_"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220726105812epcas5p4a2946262206548f67e238845e23a122c
-References: <CGME20220726105812epcas5p4a2946262206548f67e238845e23a122c@epcas5p4.samsung.com>
-        <20220726105230.12025-1-ankit.kumar@samsung.com>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH liburing] add additional meson build system support
+Content-Language: en-US
+To:     Florian Fischer <florian.fischer@muhq.space>,
+        io-uring@vger.kernel.org
+Cc:     Florian Schmaus <flow@cs.fau.de>
+References: <20220727152723.3320169-1-florian.fischer@muhq.space>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20220727152723.3320169-1-florian.fischer@muhq.space>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-------vB7n7NJswZTNf_AiIrah4kmnk8PbkRxRpEeyoX_UVTG8Sgsz=_211d1_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On 7/27/22 08:27, Florian Fischer wrote:
+>   11 files changed, 619 insertions(+), 4 deletions(-)
 
-On Tue, Jul 26, 2022 at 04:22:25PM +0530, Ankit Kumar wrote:
->Hi Jens,
->
->This patchset adds a way to test NVMe uring passthrough commands with
->nvme-ns character device. The uring passthrough was introduced with 5.19
->io_uring.
->
->To send nvme uring passthrough commands we require helpers to fetch NVMe
->char device (/dev/ngXnY) specific fields such as namespace id, lba size etc.
->
->How to run:
->./test/io_uring_passthrough.t /dev/ng0n1
->
->The test covers write/read with verify for sqthread poll, vectored / nonvectored
->and fixed IO buffers, which can be extended in future. As of now iopoll is not
->supported for passthrough commands, there is a test for such case.
+To me this diffstat tells me that this patch series adds a lot of 
+complexity instead of removing complexity. That leaves me wondering what 
+the advantages of this patch series are?
 
-./test/io_uring_passthrough.t /dev/ng0n1
-doesn't support polled IO                 
+Thanks,
 
-Not sure if iopoll test is bit premature, as above message will keep
-coming until this is wired up in kernel-side.
-Perhaps this is fine to test as in initial stages graceful no-support
-error code was not coming from kernel. The above confirms that
-kernel bails out fine now.
-
-Things ran fine for me, so
-Tested-by: Kanchan Joshi <joshi.k@samsung.com>
-
-------vB7n7NJswZTNf_AiIrah4kmnk8PbkRxRpEeyoX_UVTG8Sgsz=_211d1_
-Content-Type: text/plain; charset="utf-8"
-
-
-------vB7n7NJswZTNf_AiIrah4kmnk8PbkRxRpEeyoX_UVTG8Sgsz=_211d1_--
+Bart.

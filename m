@@ -2,73 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F3B6583FA2
-	for <lists+io-uring@lfdr.de>; Thu, 28 Jul 2022 15:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407FF583FA3
+	for <lists+io-uring@lfdr.de>; Thu, 28 Jul 2022 15:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238776AbiG1NKM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Jul 2022 09:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48424 "EHLO
+        id S239040AbiG1NKT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Jul 2022 09:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236726AbiG1NKL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jul 2022 09:10:11 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C11F26C
-        for <io-uring@vger.kernel.org>; Thu, 28 Jul 2022 06:10:10 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id b10so1807403pjq.5
-        for <io-uring@vger.kernel.org>; Thu, 28 Jul 2022 06:10:10 -0700 (PDT)
+        with ESMTP id S236726AbiG1NKR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jul 2022 09:10:17 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4204363CB
+        for <io-uring@vger.kernel.org>; Thu, 28 Jul 2022 06:10:16 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d10so1882686pfd.9
+        for <io-uring@vger.kernel.org>; Thu, 28 Jul 2022 06:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=W2KkhamqxGK8aA70gn/75IeDBM7sA441l7amNOWHOdg=;
-        b=1fxrKd9MiK1ZeEW9gNICPYIVS1Bu+A4u7NH2NRpR50Kwc45hQ0WkCSA4EmZVbbmbP4
-         GgWyJl8bz8B3vTAJxiPTnW94m+NfE9VFg8kdq/IzWNJImpDtvBrJAapp7N0c/TZH0khQ
-         FTLqmxmprcbOtn7jj0+OKhDubMSuJyFs5rnDP82MWx6arSYbuhrbTPmdWr9HyUBtaRw5
-         tKq/NVXt9KpZ+8QeRxNWsJpz4ngnwt1e1qsJWsn2iB+H8p7GGfaEd1/1YjzfVVzK1vxi
-         jOOowWQsEYq51z9Kre6bio1RPitqpPQQOuJmp4yWsoSDPS+qTQl9JTlwrrBy3Gz+jFJ3
-         RBSA==
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=2NVf+itYTntZxP9B0iYHti1/imfgFu1hLm4YzestRpU=;
+        b=hxaHAu18W9By/GDUSysQJrn9eV9niftD58DkOuPqw5yC+eRyUZIU/OzNLzDNqeIIVy
+         kriUd3u71RJXMOj65MCLF1E1IWyovJSZNCslWciXDkAFlklfW9s8wRn4El3J//niFquO
+         fz7qTvBfb1gOEJ5hBtNCXGK8Hcjv0MSikqUiumw7v2gvkyV+jdlgoDqp+1yZcyZ4kZBN
+         CHw8c62OQ0MkwJQxbpL6gQ67EGorI8MKhRbxs8kXP7oxBiMsxqP6wdlY/Sayeynoe++V
+         z4ns8cTnTnhciD5K3gpI6b6e9GYCcfRrk9lSbiICRF5AkB+IbcUKhuJfox0JkB+0j8Js
+         JTyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=W2KkhamqxGK8aA70gn/75IeDBM7sA441l7amNOWHOdg=;
-        b=li+ExA3/DO7+8D+gMVO+TanNj5D/GtuzZCyuxxvSHz2y/4MxP10nByvT2vJbLAJEgw
-         Aa6cVwHLpRwqfhUBBLpux5gzz5tX5HiXLaVOg26HPjN2gqrBDB4juVALmU7Nz17VbC/H
-         mPbkWQN6mtX2nRtHQv4fY9rLo6dQL/CNJwO6sMIxlmrwKj8mgXshF721gQ5Fxwnh1Oku
-         9RzvKKMEcFP1F4uKgdy630DK4gdpse9W1Hr/XNDPxBAE1VP/oUKH4dWA4wrIHKTk5oIs
-         UvEKzWB9tbpuoXjjAKDxlnuwkxiizCaVSojUabrRtT+4UlzdgQFYvRgWo0ce0aNjyqE0
-         BB+Q==
-X-Gm-Message-State: AJIora9WOwvaEK2AuXy3JTLv0iQWNBUNngRlwHqau9ULLWK34LQcngRO
-        inEHIQTmFQ4twZ0ZSvc54/dkUQ==
-X-Google-Smtp-Source: AGRyM1tLXPqgSUDn1Ic7m98CgfrJgHkFVEp0WIRhMMZQeLwEu1y/Lm+wqpboS830As5e3oNSLbDvew==
-X-Received: by 2002:a17:90a:df96:b0:1f3:22e:7826 with SMTP id p22-20020a17090adf9600b001f3022e7826mr10061877pjv.21.1659013809865;
-        Thu, 28 Jul 2022 06:10:09 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x18-20020aa79a52000000b005254e44b748sm687225pfj.84.2022.07.28.06.10.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Jul 2022 06:10:09 -0700 (PDT)
-Message-ID: <ad07149b-6026-0e45-2a33-544f3b78187b@kernel.dk>
-Date:   Thu, 28 Jul 2022 07:10:08 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH liburing v3 0/5] Add basic test for nvme uring passthrough
- commands
-Content-Language: en-US
-To:     Ankit Kumar <ankit.kumar@samsung.com>
-Cc:     io-uring@vger.kernel.org, joshi.k@samsung.com
-References: <CGME20220728093902epcas5p40813f72b828e68e192f98819d29b2863@epcas5p4.samsung.com>
- <20220728093327.32580-1-ankit.kumar@samsung.com>
- <0a9c81d0-d6f6-effd-5d3f-132a92d54205@kernel.dk>
- <20220728130129.GA20031@test-zns>
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=2NVf+itYTntZxP9B0iYHti1/imfgFu1hLm4YzestRpU=;
+        b=iVVFLKkXHSeEyeREbFL5LslbJwXgRnc7fDMmMWOJkuyQVoh+PKst8tKgmY0zFgac6q
+         QWrqwj04k6VYOaMsQ6IrnRbZEK+p8ha+X6/3GJs389Y2FG4Mru4c/q/5ykAC/31jFBjr
+         gYgiWwWBSkZJC4Vq7kZhihcgjSfdLz9CJ2v/0Xy4Ap79y4rkO+ngDdYlfwzzI8pSKHnL
+         Md1UbrWDtYqYPWGfHOD+f08LrwIMzPMj5igqRPR/bpW3YhQ4j2ex1cZoLAA0Foi3XAIa
+         72JOo7p9QoETkwpJV4UoTDChW+YXDljZZhQJ0MubTksGln9pMht+gkQCkbnkQZoPqP9b
+         D+gw==
+X-Gm-Message-State: AJIora9KzM8TpYAnyYMr8uaEYusoZG1O1jLTr+AUiG73660TDeZXwADa
+        wEvmDNsMRSlMPovoKUv2mlGqhroXI0E9Aw==
+X-Google-Smtp-Source: AGRyM1tHB7PLe3C10GtaGt7cu3vPHU6YYHhdXJP/RjiDBIuVS7fSapIv6EQY8/xoV8Md86QjHR/XUQ==
+X-Received: by 2002:a63:1e5f:0:b0:419:d6bf:b9d7 with SMTP id p31-20020a631e5f000000b00419d6bfb9d7mr23408240pgm.593.1659013815739;
+        Thu, 28 Jul 2022 06:10:15 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id w187-20020a6230c4000000b0052c456eafe1sm682039pfw.176.2022.07.28.06.10.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Jul 2022 06:10:15 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220728130129.GA20031@test-zns>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     ankit.kumar@samsung.com
+Cc:     io-uring@vger.kernel.org, joshi.k@samsung.com
+In-Reply-To: <20220728093327.32580-1-ankit.kumar@samsung.com>
+References: <CGME20220728093902epcas5p40813f72b828e68e192f98819d29b2863@epcas5p4.samsung.com> <20220728093327.32580-1-ankit.kumar@samsung.com>
+Subject: Re: [PATCH liburing v3 0/5] Add basic test for nvme uring passthrough commands
+Message-Id: <165901381508.1769583.17350291271011652053.b4-ty@kernel.dk>
+Date:   Thu, 28 Jul 2022 07:10:15 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,44 +68,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/28/22 7:01 AM, Ankit Kumar wrote:
-> On Thu, Jul 28, 2022 at 06:36:51AM -0600, Jens Axboe wrote:
->> On 7/28/22 3:33 AM, Ankit Kumar wrote:
->>> This patchset adds a way to test NVMe uring passthrough commands with
->>> nvme-ns character device. The uring passthrough was introduced with 5.19
->>> io_uring.
->>>
->>> To send nvme uring passthrough commands we require helpers to fetch NVMe
->>> char device (/dev/ngXnY) specific fields such as namespace id, lba size etc.
->>>
->>> How to run:
->>> ./test/io_uring_passthrough.t /dev/ng0n1
->>>
->>> It requires argument to be NVMe device, if not the test will be skipped.
->>>
->>> The test covers write/read with verify for sqthread poll, vectored / nonvectored
->>> and fixed IO buffers, which can be extended in future. As of now iopoll is not
->>> supported for passthrough commands, there is a test for such case.
->>>
->>> Changes from v2 to v3
->>>  - Skip test if argument is not nvme device and remove prints, as
->>>    suggested by Jens.
->>>  - change nvme helper function name, as pointed by Jens.
->>>  - Remove wrong comment about command size, as per Kanchan's review
->>
->> I didn't get patch 2/5, and lore didn't either. Can you resend the series?
->>
->> -- 
->> Jens Axboe
->>
->>
-> Sorry, issue from my side it. You should have 2/5 now and I see its
-> there in lore as well. Hope its sufficient and doesn't require me to
-> resend the entire series again.
+On Thu, 28 Jul 2022 15:03:22 +0530, Ankit Kumar wrote:
+> This patchset adds a way to test NVMe uring passthrough commands with
+> nvme-ns character device. The uring passthrough was introduced with 5.19
+> io_uring.
+> 
+> To send nvme uring passthrough commands we require helpers to fetch NVMe
+> char device (/dev/ngXnY) specific fields such as namespace id, lba size etc.
+> 
+> [...]
 
-Yep I got it, and I've now applied it. Did a few cleanups on top, but
-nothing major. Thanks!
+Applied, thanks!
 
+[1/5] configure: check for nvme uring command support
+      commit: 7fc6c1e89f1b83f2bb80a974a40126d10ab95d46
+[2/5] io_uring.h: sync sqe entry with 5.20 io_uring
+      commit: 893b9d13b7571eb99d124c0804c48e331b4dbe3b
+[3/5] nvme: add nvme opcodes, structures and helper functions
+      commit: 612101cc61063eed06d5bd232b1ab7a43732f227
+[4/5] test: add io_uring passthrough test
+      commit: b593422fd0d624b6d1a59d0cc5a674dfdf22db6e
+[5/5] test/io_uring_passthrough: add test case for poll IO
+      commit: ba10a0e0b3039aab43352f08631845f25aa2b225
+
+Best regards,
 -- 
 Jens Axboe
+
 

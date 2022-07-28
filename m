@@ -2,97 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 407FF583FA3
-	for <lists+io-uring@lfdr.de>; Thu, 28 Jul 2022 15:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3686583FE9
+	for <lists+io-uring@lfdr.de>; Thu, 28 Jul 2022 15:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239040AbiG1NKT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Jul 2022 09:10:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
+        id S231783AbiG1NZq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Jul 2022 09:25:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236726AbiG1NKR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jul 2022 09:10:17 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4204363CB
-        for <io-uring@vger.kernel.org>; Thu, 28 Jul 2022 06:10:16 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d10so1882686pfd.9
-        for <io-uring@vger.kernel.org>; Thu, 28 Jul 2022 06:10:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=2NVf+itYTntZxP9B0iYHti1/imfgFu1hLm4YzestRpU=;
-        b=hxaHAu18W9By/GDUSysQJrn9eV9niftD58DkOuPqw5yC+eRyUZIU/OzNLzDNqeIIVy
-         kriUd3u71RJXMOj65MCLF1E1IWyovJSZNCslWciXDkAFlklfW9s8wRn4El3J//niFquO
-         fz7qTvBfb1gOEJ5hBtNCXGK8Hcjv0MSikqUiumw7v2gvkyV+jdlgoDqp+1yZcyZ4kZBN
-         CHw8c62OQ0MkwJQxbpL6gQ67EGorI8MKhRbxs8kXP7oxBiMsxqP6wdlY/Sayeynoe++V
-         z4ns8cTnTnhciD5K3gpI6b6e9GYCcfRrk9lSbiICRF5AkB+IbcUKhuJfox0JkB+0j8Js
-         JTyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=2NVf+itYTntZxP9B0iYHti1/imfgFu1hLm4YzestRpU=;
-        b=iVVFLKkXHSeEyeREbFL5LslbJwXgRnc7fDMmMWOJkuyQVoh+PKst8tKgmY0zFgac6q
-         QWrqwj04k6VYOaMsQ6IrnRbZEK+p8ha+X6/3GJs389Y2FG4Mru4c/q/5ykAC/31jFBjr
-         gYgiWwWBSkZJC4Vq7kZhihcgjSfdLz9CJ2v/0Xy4Ap79y4rkO+ngDdYlfwzzI8pSKHnL
-         Md1UbrWDtYqYPWGfHOD+f08LrwIMzPMj5igqRPR/bpW3YhQ4j2ex1cZoLAA0Foi3XAIa
-         72JOo7p9QoETkwpJV4UoTDChW+YXDljZZhQJ0MubTksGln9pMht+gkQCkbnkQZoPqP9b
-         D+gw==
-X-Gm-Message-State: AJIora9KzM8TpYAnyYMr8uaEYusoZG1O1jLTr+AUiG73660TDeZXwADa
-        wEvmDNsMRSlMPovoKUv2mlGqhroXI0E9Aw==
-X-Google-Smtp-Source: AGRyM1tHB7PLe3C10GtaGt7cu3vPHU6YYHhdXJP/RjiDBIuVS7fSapIv6EQY8/xoV8Md86QjHR/XUQ==
-X-Received: by 2002:a63:1e5f:0:b0:419:d6bf:b9d7 with SMTP id p31-20020a631e5f000000b00419d6bfb9d7mr23408240pgm.593.1659013815739;
-        Thu, 28 Jul 2022 06:10:15 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id w187-20020a6230c4000000b0052c456eafe1sm682039pfw.176.2022.07.28.06.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 06:10:15 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     ankit.kumar@samsung.com
-Cc:     io-uring@vger.kernel.org, joshi.k@samsung.com
-In-Reply-To: <20220728093327.32580-1-ankit.kumar@samsung.com>
-References: <CGME20220728093902epcas5p40813f72b828e68e192f98819d29b2863@epcas5p4.samsung.com> <20220728093327.32580-1-ankit.kumar@samsung.com>
-Subject: Re: [PATCH liburing v3 0/5] Add basic test for nvme uring passthrough commands
-Message-Id: <165901381508.1769583.17350291271011652053.b4-ty@kernel.dk>
-Date:   Thu, 28 Jul 2022 07:10:15 -0600
+        with ESMTP id S238051AbiG1NZp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Jul 2022 09:25:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A8039B92;
+        Thu, 28 Jul 2022 06:25:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CD239B80171;
+        Thu, 28 Jul 2022 13:25:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C213AC433D6;
+        Thu, 28 Jul 2022 13:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659014741;
+        bh=SIh451UOcr5P1ZCc5zO+DXTL5bn6jrzBhDakMU5uaXk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d4fyPdHKmYH+9jSIi/OFSrp+usiba4BARaXzUEdw/Vg6F51YzPcr+GlXTj4J428uW
+         Vc5AdT3NPuKTnbs+tcvGw4jKh4x1G/qNx0ZXk4D+R2fFiKD9jV6x58uUZuZw0UgDtp
+         r9Ne4++h5myKt/d2wpYAhv/ulTKK6MZrgvBF88siYvLycPng7h8vf33oTTUltOd6dT
+         fXu19t8l4X6Ngn07OLOq1EEL0ZEXlM3YVFhHkGtwo/Zzw6rjyyjWqiRImgEaZDrqxy
+         mVm1vZYYi+JjZVBGHYvIFKaSFYBNt5p6TObsbNCMRFowbSqK5EOEAJAgI2qlSDAo4v
+         6OgN3S6YuuVVw==
+Date:   Thu, 28 Jul 2022 07:25:38 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Keith Busch <kbusch@fb.com>,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de
+Subject: Re: [PATCH 4/5] io_uring: add support for dma pre-mapping
+Message-ID: <YuKOUh6MJGGFuIm/@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220726173814.2264573-1-kbusch@fb.com>
+ <20220726173814.2264573-5-kbusch@fb.com>
+ <YuB09cZh7rmd260c@ZenIV>
+ <YuFEhQuFtyWcw7rL@kbusch-mbp.dhcp.thefacebook.com>
+ <YuFGCO7M29fr3bVB@ZenIV>
+ <YuFT+UYxd2QtDPe5@kbusch-mbp.dhcp.thefacebook.com>
+ <20220727223232.GV3600936@dread.disaster.area>
+ <YuHDeRImQPuuV2Mr@kbusch-mbp.dhcp.thefacebook.com>
+ <20220728023511.GX3600936@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220728023511.GX3600936@dread.disaster.area>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 28 Jul 2022 15:03:22 +0530, Ankit Kumar wrote:
-> This patchset adds a way to test NVMe uring passthrough commands with
-> nvme-ns character device. The uring passthrough was introduced with 5.19
-> io_uring.
+On Thu, Jul 28, 2022 at 12:35:11PM +1000, Dave Chinner wrote:
+> On Wed, Jul 27, 2022 at 05:00:09PM -0600, Keith Busch wrote:
+> > The block_device driver has to opt-in to this feature. If a multi-device block
+> > driver wants to opt-in to this, then it would be responsible to handle
+> > translating that driver's specific cookie to whatever representation the
+> > drivers it stacks atop require. Otherwise, the cookie threaded through the bio
+> > is an opque value: nothing between io_uring and the block_device driver need to
+> > decode it.
 > 
-> To send nvme uring passthrough commands we require helpers to fetch NVMe
-> char device (/dev/ngXnY) specific fields such as namespace id, lba size etc.
+> I'm not talking about "multi-device" block devices like we build
+> with DM or MD to present a single stacked block device to the
+> filesystem. I'm talking about the fact that both btrfs and XFS
+> support multiple *independent* block devices in the one filesystem.
 > 
-> [...]
+> i.e.:
+> 
+> # mkfs.xfs -r rtdev=/dev/nvme0n1 -l logdev=/dev/nvme1n1,size=2000m /dev/nvme2n1
+> meta-data=/dev/nvme2n1           isize=512    agcount=4, agsize=22893287 blks
+>          =                       sectsz=512   attr=2, projid32bit=1
+>          =                       crc=1        finobt=1, sparse=1, rmapbt=0
+>          =                       reflink=0    bigtime=1 inobtcount=1 nrext64=0
+> data     =                       bsize=4096   blocks=91573146, imaxpct=25
+>          =                       sunit=0      swidth=0 blks
+> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+> log      =/dev/nvme1n1           bsize=4096   blocks=512000, version=2
+>          =                       sectsz=512   sunit=0 blks, lazy-count=1
+> realtime =/dev/nvme0n1           extsz=4096   blocks=91573146, rtextents=91573146
+> #
+> 
+> This builds an XFS filesystem which can write file data to either
+> /dev/nvme0n1 or /dev/nvme2n1, and journal IO will get sent to a
+> third block dev (/dev/nvme1n1).
+> 
+> So, which block device do we map for the DMA buffers that contain
+> the file data for any given file in that filesystem? There is no
+> guarantee that is is sb->s_bdev, because it only points at one of
+> the two block devices that can contain file data.
+> 
+> Btrfs is similar, but it might stripe data across /dev/nvme0n1,
+> /dev/nvme1n1 and /dev/nvme2n1 for a single file writes (and hence
+> reads) and so needs separate DMA mappings for each block device just
+> to do IO direct to/from one file....
+> 
+> Indeed, for XFS there's no requirement that the block devices have
+> the same capabilities or even storage types - the rtdev could be
+> spinning disks, the logdev an nvme SSD, and the datadev is pmem. If
+> XFs has to do something special, it queries the bdev it needs to
+> operate on (e.g. DAX mappings are only allowed on pmem based
+> devices).
+> 
+> Hence it is invalid to assume that sb->s_bdev points at the actual
+> block device the data for any given regular file is stored on. It is
+> also invalid to assume the characteristics of the device in
+> sb->s_bdev are common for all files in the filesystem.
+> 
+> IOWs, the only way you can make something like this work via
+> filesystem mapping infrastructure to translate file offset to
+> to a {dev, dev_offset} tuple to tell you what persistently mapped
+> device buffers you need to use for IO to the given file {offset,len}
+> range that IO needs to be done on....
 
-Applied, thanks!
+Thank you for the explanation. I understand now, sorry for my previous
+misunderstanding.
 
-[1/5] configure: check for nvme uring command support
-      commit: 7fc6c1e89f1b83f2bb80a974a40126d10ab95d46
-[2/5] io_uring.h: sync sqe entry with 5.20 io_uring
-      commit: 893b9d13b7571eb99d124c0804c48e331b4dbe3b
-[3/5] nvme: add nvme opcodes, structures and helper functions
-      commit: 612101cc61063eed06d5bd232b1ab7a43732f227
-[4/5] test: add io_uring passthrough test
-      commit: b593422fd0d624b6d1a59d0cc5a674dfdf22db6e
-[5/5] test/io_uring_passthrough: add test case for poll IO
-      commit: ba10a0e0b3039aab43352f08631845f25aa2b225
-
-Best regards,
--- 
-Jens Axboe
-
-
+I may consider just initially supporting direct raw block devices if I can't
+find a viable solution quick enough.

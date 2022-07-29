@@ -2,91 +2,84 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B58584CFD
-	for <lists+io-uring@lfdr.de>; Fri, 29 Jul 2022 09:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 160BE5856DD
+	for <lists+io-uring@lfdr.de>; Sat, 30 Jul 2022 00:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234945AbiG2Hxa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 29 Jul 2022 03:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
+        id S231698AbiG2WbA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 29 Jul 2022 18:31:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbiG2Hx3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jul 2022 03:53:29 -0400
-X-Greylist: delayed 331 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 29 Jul 2022 00:53:27 PDT
-Received: from faui40.informatik.uni-erlangen.de (faui40.informatik.uni-erlangen.de [IPv6:2001:638:a000:4134::ffff:40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70ACC7E016
-        for <io-uring@vger.kernel.org>; Fri, 29 Jul 2022 00:53:27 -0700 (PDT)
-Received: from [10.188.34.160] (i4laptop09.informatik.uni-erlangen.de [10.188.34.160])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S229950AbiG2Wa6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 29 Jul 2022 18:30:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB6B2BB19;
+        Fri, 29 Jul 2022 15:30:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: flow)
-        by faui40.informatik.uni-erlangen.de (Postfix) with ESMTPSA id 9A49E58C4AF;
-        Fri, 29 Jul 2022 09:47:51 +0200 (CEST)
-Message-ID: <29c0d848-0789-4062-dca0-88ab9e8ab3f6@cs.fau.de>
-Date:   Fri, 29 Jul 2022 09:47:47 +0200
+        by ams.source.kernel.org (Postfix) with ESMTPS id A61D4B829DA;
+        Fri, 29 Jul 2022 22:30:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1FFFC433D6;
+        Fri, 29 Jul 2022 22:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659133855;
+        bh=L99nrOz0sOglljuGihJFxiAQVZKNS3MgPeVmrXowoVw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=L9GhQYV8A3+t5rNpM67VQWjY//MnPcOaqesyri44DTsf+HZ/CAGnCSKgNad/RI1vm
+         kXN21xlUTzou6XlfxAEtYSWyxkgJElYUWLvlNVZ+cChvEruuRaFwZjv76S4pbmu7l1
+         wSDbovunqVMehYA4Wst0254gv2SrxgErgqRjy3bC442iNf2uFPGj+SRAGbVKPMqzbR
+         FTVP55b6WOo/YozZVCT1aHyp6UCjaVUmRrNciSzOx2RLzwhhCp+YfMVp/EfGNSTw2a
+         ydvJItwZNEIngS+chGG6Mef1/HD7FyRiyGqcnqWVIhiQkfKDoVs9wzuO+Yguz52Gtt
+         hS9CYZgyVUd/w==
+Message-ID: <c15eadde-bdbe-915f-7bc5-9ccee345f27b@kernel.org>
+Date:   Fri, 29 Jul 2022 16:30:54 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH liburing] add additional meson build system support
-Content-Language: en-GB
-To:     Bart Van Assche <bvanassche@acm.org>, io-uring@vger.kernel.org
-References: <20220727152723.3320169-1-florian.fischer@muhq.space>
- <678c7d14-22da-1522-ea41-5dbd21e0c7b4@acm.org>
- <20220727205329.jgr5i5ou4oxc2ttc@pasture>
-From:   Florian Schmaus <flow@cs.fau.de>
-In-Reply-To: <20220727205329.jgr5i5ou4oxc2ttc@pasture>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH net-next v4 00/27] io_uring zerocopy send
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
+References: <cover.1657194434.git.asml.silence@gmail.com>
+ <2c49d634-bd8a-5a7f-0f66-65dba22bae0d@kernel.org>
+ <bd9960ab-c9d8-8e5d-c347-8049cdf5708a@gmail.com>
+ <0f54508f-e819-e367-84c2-7aa0d7767097@gmail.com>
+ <d10f20a9-851a-33be-2615-a57ab92aca90@kernel.org>
+ <bc48e2bb-37ee-5b7c-5a97-01e026de2ba4@gmail.com>
+ <812c3233-1b64-8a0d-f820-26b98ff6642d@kernel.org>
+ <3b81b3e1-2810-5125-f4a0-d6ba45c1fbd3@kernel.org>
+ <0a3b7166-5f86-f808-e26d-67966bd521fe@gmail.com>
+From:   David Ahern <dsahern@kernel.org>
+In-Reply-To: <0a3b7166-5f86-f808-e26d-67966bd521fe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 27.07.22 22:53, Florian Fischer wrote:
-> On 27.07.2022 12:21, Bart Van Assche wrote:
->> On 7/27/22 08:27, Florian Fischer wrote:
->>>    11 files changed, 619 insertions(+), 4 deletions(-)
+On 7/27/22 4:51 AM, Pavel Begunkov wrote:
+>> With your zc_v5 branch (plus the init fix on using msg->sg_from_iter),
+>> iperf3 with io_uring support (non-ZC case) no longer shows completions
+>> with incomplete sends. So that is good improvement over the last time I
+>> tried it.
 >>
->> To me this diffstat tells me that this patch series adds a lot of complexity
->> instead of removing complexity.
+>> However, adding in the ZC support and that problem resurfaces - a lot of
+>> completions are for an incomplete size.
 > 
-> That's because Jens wants to keep both build systems in the repository.
+> Makes sense, it explicitly retries with normal sends but I didn't
+> implement it for zc. Might be a good thing to add.
 > 
->   .github/workflows/build.yml      |  44 +++++--
->   .gitignore                       |   2 +
->   Makefile                         |  84 ------------
->   Makefile.common                  |   6 -
->   Makefile.quiet                   |  11 --
->   configure                        | 467 -----------------------------------------------------------------
->   examples/Makefile                |  41 ------
->   examples/meson.build             |  19 +++
->   man/meson.build                  | 116 ++++++++++++++++
->   meson.build                      | 119 +++++++++++++++++
->   meson_options.txt                |  14 ++
->   src/Makefile                     |  87 ------------
->   src/include/liburing/compat.h.in |   7 +
->   src/include/liburing/meson.build |  51 +++++++
->   src/include/meson.build          |   3 +
->   src/meson.build                  |  28 ++++
->   test/Makefile                    | 238 ---------------------------------
->   test/meson.build                 | 219 +++++++++++++++++++++++++++++++
->   18 files changed, 609 insertions(+), 947 deletions(-)
-> 
-> This is what the diffstat could look like if we would remove the old build system.
 
-To point this out explicitly:
-
-old Makefile-based build system: 947 LoC
-new Meson-based build system:    609 LoC
-
-That is a significant reduction in build-system complexity, while the 
-new Meson-based build system has more features, e.g., out-of-source 
-builds and a sensible test framework. For further features, see the 
-cover-letter of this patch set.
-
-- Flow
-
-
+Yes, before this goes it. It will be confusing to users to get
+incomplete completions when using the ZC option.

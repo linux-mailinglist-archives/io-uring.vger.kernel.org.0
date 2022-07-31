@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA268585F5C
-	for <lists+io-uring@lfdr.de>; Sun, 31 Jul 2022 17:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B52B585F5F
+	for <lists+io-uring@lfdr.de>; Sun, 31 Jul 2022 17:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237240AbiGaPDf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 31 Jul 2022 11:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51924 "EHLO
+        id S237268AbiGaPDo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 31 Jul 2022 11:03:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237073AbiGaPDe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Jul 2022 11:03:34 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE74DEE3
-        for <io-uring@vger.kernel.org>; Sun, 31 Jul 2022 08:03:33 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id g12so8462022pfb.3
-        for <io-uring@vger.kernel.org>; Sun, 31 Jul 2022 08:03:33 -0700 (PDT)
+        with ESMTP id S232434AbiGaPDm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 31 Jul 2022 11:03:42 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0AE4DF31
+        for <io-uring@vger.kernel.org>; Sun, 31 Jul 2022 08:03:40 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id q22so210807plr.9
+        for <io-uring@vger.kernel.org>; Sun, 31 Jul 2022 08:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:from:subject:to:cc
          :content-language:content-transfer-encoding;
-        bh=CqarRD0qBma+nkDvEq8uD5MNW2b7at7eSJRZBX+iSRg=;
-        b=c+Lg4tTvxwhoOwnitw/8esS0JfRoc7588NH7ZMpcW3trPL7rLOUSI9E/7Fn9wyoTXR
-         iqvu1jS9uH0faNEStn9gcKsXTyKXNAgsmqpYhSSGq9GPLziCD8YhniqMqEL1C6pEj1Pc
-         x9DXY+9k/GIkN2xA3bfpjoUIqEL1v+nOIPfPx9A9YlQ8ZOTf+/wTMeWJr3nIvhmK/fud
-         w0zhCeQpGtOBIYB1QuxuCw0VwqqN8reqSThtHucdOm3MJ+N4+sE+KafHGvTugfal/DqZ
-         x1kOttY8idYKSHL64B/VsfAAZl6tTrvgoFWOsuvLGlEz36VhHp0nZOeUxRm7XFFOTKE3
-         96PQ==
+        bh=+KdIGDnlE1pFASraMJLIHKzyorzKHb1nnqifBa3MKrg=;
+        b=RUg1wFNT011vKK/EU8fzO3fwr5d99dgL5h0RGWowmoAy79hhfR0YLSXvCYfU00ANaa
+         MZNsI1iHefnwyIuxTo12N/Xnu4BnYZew0b6DsteYPw7/vzDoVjoMsEln8S6ho2CXancb
+         ZImcWNpSLI3Ml80Ic5VFxfrtRWRMwCuJU9PfxBsoMtUmnaGvqxh2RGU7DqXceuZLEMN2
+         Oz12h8VASL4Ks/mio1gRoHUPnjw77VcAJpeDleKdBQq78EnZwfviFWld7zbDArmDA62t
+         PJ2EQl6rlFThCTNAi0HJFmEn757AJuPihbFHwMsUFv0UFWBwZMut8LZm7E6D6K9Wx5n1
+         W3qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:from
          :subject:to:cc:content-language:content-transfer-encoding;
-        bh=CqarRD0qBma+nkDvEq8uD5MNW2b7at7eSJRZBX+iSRg=;
-        b=AOAY6eIRGyVwkTpDrFkDwoZuWdu6q5lFgYADfVbaoa280B1qv4aNgRYctT0mlYQqXe
-         WlrtLr6YO4e+U3LR8CGnhmRnd4vAcxnN4wR8knnRsjW8aK3EvCmZiWVT45KqKATD5M9/
-         3/W9nWObo7zk6oXRR8R1rPs/kce791vDkUeKjs01iL6dzculOPClgfzsz1V2TU/g6poi
-         wGX5Ec/F/HuR2M/aYK6crzBvbwCdWAUWMpyqhxFLPeWXNMx3f3uvGm6iphSMf/wlNefY
-         omfS6BmTHCMWqaoJkKTjhMSOcF6oEz/wWmQZcR4gZ7nsQ2On3PQt+PBSxulSIPQiZ0q4
-         ISPg==
-X-Gm-Message-State: AJIora9+pzL5SPkxUyQ0Fy+zGoCIZLea2aOv4B+jWgfxOU2ND5mGJP4x
-        Zk1WLG36I2HYj/aArghT7u85MA==
-X-Google-Smtp-Source: AGRyM1sbh/JldyhtTyQMu6gVq6HNWLs7pK2HOedzv2yx6vukYAF9/lxIclfHNmb5/Hjseat7ThTgNA==
-X-Received: by 2002:a63:eb0d:0:b0:41b:7a15:1fbb with SMTP id t13-20020a63eb0d000000b0041b7a151fbbmr10085682pgh.511.1659279812442;
-        Sun, 31 Jul 2022 08:03:32 -0700 (PDT)
+        bh=+KdIGDnlE1pFASraMJLIHKzyorzKHb1nnqifBa3MKrg=;
+        b=EEvksPp72Gz9a4e5mZNcq7NijkfeF6COEuYOe9XT4BDK2HT241RulcEn6kKl79kW69
+         nXng9vVSABb16U7rRFNju1+gJZSkdObm/uZOZmiwRIH9v65spENBPLJls0Yx5SH5As9N
+         qkrLYnSKGuB7CV5xRdtLUqpNweCfOLMg/jSudylq+L9RP47mcQN97BJr6+2oPpU9sFMZ
+         mJl0oQOWT93LTmIxUGS4RZ4S/txHtTkAvtOyCli4nsaspiscLdlv1o57AF7QY6wV9jnQ
+         jzAWLbfTbLgv5YnpIjHLLlAEYaa7vg1Swf3Rx51UtLSEL3yKt5WqWEVEvQAhF/E4TlLj
+         o1bg==
+X-Gm-Message-State: ACgBeo3R3Rp4CFepg0vam8hKQ2Yhe65Eo/MIVx2T0P2dpasY5T5OqsyS
+        UavGHINmoRVyBs8/K3OFwg2pZA==
+X-Google-Smtp-Source: AA6agR6hDzGoFs+MfCplLHrSs7L/fdVk0SXyCzVyP9OsjTRbH6ANhCc1D+RRc3qT1gtB6rHcsLG0zw==
+X-Received: by 2002:a17:902:8645:b0:16d:2b60:bc80 with SMTP id y5-20020a170902864500b0016d2b60bc80mr12602712plt.126.1659279818815;
+        Sun, 31 Jul 2022 08:03:38 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u17-20020a170903125100b0016d33b8a231sm7582928plh.270.2022.07.31.08.03.31
+        by smtp.gmail.com with ESMTPSA id u1-20020a170902714100b0016ed715d244sm2658986plm.300.2022.07.31.08.03.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Jul 2022 08:03:32 -0700 (PDT)
-Message-ID: <c737af00-e879-fe01-380c-ba95b555f423@kernel.dk>
-Date:   Sun, 31 Jul 2022 09:03:30 -0600
+        Sun, 31 Jul 2022 08:03:37 -0700 (PDT)
+Message-ID: <d5568318-39ea-0c39-c765-852411409b68@kernel.dk>
+Date:   Sun, 31 Jul 2022 09:03:36 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring support for buffered writes
+Subject: [GIT PULL] io_uring support for zerocopy send
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -72,26 +72,15 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Hi Linus,
 
-On top of the core io_uring changes for 5.20, this pull request contains
-support for buffered writes, specifically for XFS. btrfs is in progress,
-will be coming in the next release.
+On top of the core io_uring changes, this pull request adds support for
+efficient support for zerocopy sends through io_uring. Both ipv4 and
+ipv6 is supported, as well as both TCP and UDP.
 
-io_uring does support buffered writes on any file type, but since the
-buffered write path just always -EAGAIN (or -EOPNOTSUPP) any attempt to
-do so if IOCB_NOWAIT is set, any buffered write will effectively be
-handled by io-wq offload. This isn't very efficient, and we even have
-specific code in io-wq to serialize buffered writes to the same inode to
-avoid further inefficiencies with thread offload.
+The core network changes to support this is in a stable branch from
+Jakub that both io_uring and net-next has pulled in, and the io_uring
+changes are layered on top of that.
 
-This is particularly sad since most buffered writes don't block, they
-simply copy data to a page and dirty it. With this pull request, we can
-handle buffered writes a lot more effiently. If balance_dirty_pages()
-needs to block, we back off on writes as indicated.
-
-This improves buffered write support by 2-3x.
-
-Jan Kara helped with the mm bits for this, and Stefan handled the
-fs/iomap/xfs/io_uring parts of it.
+All of the work has been done by Pavel.
 
 Please pull!
 
@@ -102,50 +91,88 @@ The following changes since commit f6b543fd03d347e8bf245cee4f2d54eb6ffd8fcb:
 
 are available in the Git repository at:
 
-  git://git.kernel.dk/linux-block.git tags/for-5.20/io_uring-buffered-writes-2022-07-29
+  git://git.kernel.dk/linux-block.git tags/for-5.20/io_uring-zerocopy-send-2022-07-29
 
-for you to fetch changes up to 0dd316ba8692c2374fbb82cce57c0b23144f2977:
+for you to fetch changes up to 14b146b688ad9593f5eee93d51a34d09a47e50b5:
 
-  mm: honor FGP_NOWAIT for page cache page allocation (2022-07-24 18:39:32 -0600)
-
-----------------------------------------------------------------
-for-5.20/io_uring-buffered-writes-2022-07-29
+  io_uring: notification completion optimisation (2022-07-27 08:50:50 -0600)
 
 ----------------------------------------------------------------
-Jan Kara (3):
-      mm: Move starting of background writeback into the main balancing loop
-      mm: Move updates of dirty_exceeded into one place
-      mm: Add balance_dirty_pages_ratelimited_flags() function
+for-5.20/io_uring-zerocopy-send-2022-07-29
+
+----------------------------------------------------------------
+David Ahern (1):
+      net: Allow custom iter handler in msghdr
 
 Jens Axboe (2):
-      io_uring: fix issue with io_write() not always undoing sb_start_write()
-      mm: honor FGP_NOWAIT for page cache page allocation
+      Merge branch 'io_uring-zerocopy-send' of git://git.kernel.org/pub/scm/linux/kernel/git/kuba/linux into for-5.20/io_uring-zerocopy-send
+      Merge branch 'for-5.20/io_uring' into for-5.20/io_uring-zerocopy-send
 
-Stefan Roesch (11):
-      iomap: Add flags parameter to iomap_page_create()
-      iomap: Add async buffered write support
-      iomap: Return -EAGAIN from iomap_write_iter()
-      fs: add a FMODE_BUF_WASYNC flags for f_mode
-      fs: add __remove_file_privs() with flags parameter
-      fs: Split off inode_needs_update_time and __file_update_time
-      fs: Add async write file modification handling.
-      io_uring: Add support for async buffered writes
-      io_uring: Add tracepoint for short writes
-      xfs: Specify lockmode when calling xfs_ilock_for_iomap()
-      xfs: Add async buffered write support
+Pavel Begunkov (33):
+      ipv4: avoid partial copy for zc
+      ipv6: avoid partial copy for zc
+      skbuff: don't mix ubuf_info from different sources
+      skbuff: add SKBFL_DONT_ORPHAN flag
+      skbuff: carry external ubuf_info in msghdr
+      net: introduce managed frags infrastructure
+      net: introduce __skb_fill_page_desc_noacc
+      ipv4/udp: support externally provided ubufs
+      ipv6/udp: support externally provided ubufs
+      tcp: support externally provided ubufs
+      net: fix uninitialised msghdr->sg_from_iter
+      io_uring: initialise msghdr::msg_ubuf
+      io_uring: export io_put_task()
+      io_uring: add zc notification infrastructure
+      io_uring: cache struct io_notif
+      io_uring: complete notifiers in tw
+      io_uring: add rsrc referencing for notifiers
+      io_uring: add notification slot registration
+      io_uring: wire send zc request type
+      io_uring: account locked pages for non-fixed zc
+      io_uring: allow to pass addr into sendzc
+      io_uring: sendzc with fixed buffers
+      io_uring: flush notifiers after sendzc
+      io_uring: rename IORING_OP_FILES_UPDATE
+      io_uring: add zc notification flush requests
+      io_uring: enable managed frags with register buffers
+      selftests/io_uring: test zerocopy send
+      io_uring/net: improve io_get_notif_slot types
+      io_uring/net: checks errors of zc mem accounting
+      io_uring/net: make page accounting more consistent
+      io_uring/net: use unsigned for flags
+      io_uring: export req alloc from core
+      io_uring: notification completion optimisation
 
- fs/inode.c                      | 168 +++++++++++++++++++++++++++++-----------
- fs/iomap/buffered-io.c          |  67 ++++++++++++----
- fs/read_write.c                 |   4 +-
- fs/xfs/xfs_file.c               |  11 ++-
- fs/xfs/xfs_iomap.c              |  11 ++-
- include/linux/fs.h              |   4 +
- include/linux/writeback.h       |   7 ++
- include/trace/events/io_uring.h |  25 ++++++
- io_uring/rw.c                   |  41 ++++++++--
- mm/filemap.c                    |   4 +
- mm/page-writeback.c             |  89 +++++++++++++--------
- 11 files changed, 323 insertions(+), 108 deletions(-)
+ include/linux/io_uring_types.h                     |  30 +
+ include/linux/skbuff.h                             |  66 ++-
+ include/linux/socket.h                             |   5 +
+ include/uapi/linux/io_uring.h                      |  45 +-
+ io_uring/Makefile                                  |   2 +-
+ io_uring/io_uring.c                                |  61 +--
+ io_uring/io_uring.h                                |  43 ++
+ io_uring/net.c                                     | 193 ++++++-
+ io_uring/net.h                                     |   3 +
+ io_uring/notif.c                                   | 159 ++++++
+ io_uring/notif.h                                   |  90 +++
+ io_uring/opdef.c                                   |  24 +-
+ io_uring/rsrc.c                                    |  67 ++-
+ io_uring/rsrc.h                                    |  25 +-
+ io_uring/tctx.h                                    |  26 -
+ net/compat.c                                       |   1 +
+ net/core/datagram.c                                |  14 +-
+ net/core/skbuff.c                                  |  37 +-
+ net/ipv4/ip_output.c                               |  50 +-
+ net/ipv4/tcp.c                                     |  33 +-
+ net/ipv6/ip6_output.c                              |  49 +-
+ net/socket.c                                       |   2 +
+ tools/testing/selftests/net/Makefile               |   1 +
+ tools/testing/selftests/net/io_uring_zerocopy_tx.c | 605 +++++++++++++++++++++
+ .../testing/selftests/net/io_uring_zerocopy_tx.sh  | 131 +++++
+ 25 files changed, 1604 insertions(+), 158 deletions(-)
+ create mode 100644 io_uring/notif.c
+ create mode 100644 io_uring/notif.h
+ create mode 100644 tools/testing/selftests/net/io_uring_zerocopy_tx.c
+ create mode 100755 tools/testing/selftests/net/io_uring_zerocopy_tx.sh
 
 -- 
 Jens Axboe

@@ -2,121 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 556A558931D
-	for <lists+io-uring@lfdr.de>; Wed,  3 Aug 2022 22:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 037855893A4
+	for <lists+io-uring@lfdr.de>; Wed,  3 Aug 2022 22:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236282AbiHCUYg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 Aug 2022 16:24:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35060 "EHLO
+        id S238532AbiHCUwP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 Aug 2022 16:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236138AbiHCUYf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Aug 2022 16:24:35 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1E61839C;
-        Wed,  3 Aug 2022 13:24:34 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id ct13so10081126qvb.9;
-        Wed, 03 Aug 2022 13:24:34 -0700 (PDT)
+        with ESMTP id S238296AbiHCUwO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 Aug 2022 16:52:14 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F182631F
+        for <io-uring@vger.kernel.org>; Wed,  3 Aug 2022 13:52:13 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id d139so78046iof.4
+        for <io-uring@vger.kernel.org>; Wed, 03 Aug 2022 13:52:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=B96Bdg0Onzy13s4UbCLzMdjvnIzLbs1ULEk+vwxhe6w=;
-        b=mFNpMDWYQmBz4RM0qPHCKdPz3JSdS9ucyx/cPWERWMYyZr+LnBr/HfoI9HgbxRh+MX
-         5HPqvCZgeyYMZhhyHiyauF/J+cHYBqm0D5LFuW70QqkCFkxgNVxPGmBONmVB0WKnKmmC
-         wOKNiKpS2z3BaZUK5chEGmeofqTxGL+tSh92WIPAuvx3Y1+Ni9tpihVS9a0fPwCG9Na1
-         W/AvTKR4oJaLR5pNH7TudPv9Hn7kpsU7pGLb7c7LFhQWb/HeaCvdnaLjYLko3FdBRSBS
-         x7mAv5coCAencpv+t+przbZsdu2ERsUajGftT/IENDfLo5h5DRaT6ZsEn4cPQD0EQqwR
-         jE2A==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=f+kJgdEkgp30bWaERe4Vski1FE7alwIJq4u2OppbQ/w=;
+        b=nj16+e5UJJcV/iFA34nUwfYrmf8FXuwzPi/8/W6RQw0zoXtOJLIRLvJKTcBTtDpAp/
+         0XftVz4Z3LHV5y9B7DUgyqH5zFwxdjo8Qa3qZskoprp3/Wr32nmg3A00IP64hGUy7JsB
+         gVanoNCw962W3jg+fblI+m3JBB+U89fbrUB0LEY2pwHWdjynW7Uu3v0jyzTM84dLdNpi
+         gGZEl08Ftqzv8r41ziW5svbIDLuiXjiKjUQjeT46l23ys7WOY8x4HjXvzcoJGuH5ZmSV
+         roDBz/GQkfq1hWI4DZBtJMD09AWMgMAqwjre2LlcKlDG51KHsv2m4gQRh40jnt8zMDJH
+         yHEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=B96Bdg0Onzy13s4UbCLzMdjvnIzLbs1ULEk+vwxhe6w=;
-        b=itk7aW3pD0qu1hZJi3VKNC74dUuIw+OXXElRPuzVWrSFK4SU3/5IEtP5vYyr/6v7P8
-         VD2DBXGvDBJJ07YtlCmlDLJSEo+6b8CfYwyKZqsWYlgjmEThx4yLYcccPetooizRVdHf
-         ls9dwUaHb6EPiLsmBQCDJgpS7YLqFj6y/Y/kFhu7rk08qrn9yZGPk3yfGUEJOqHybtEQ
-         Loveu3SuwfuwgirNnUj9qlUu9EETj6x7aa6pwjA0cC9Q8uTe61CmqbHT8a1ScUBRr1aw
-         IsmFOQuima/cDQp08T0XqSlVLefNd8yVfyLRv1xxVidTwYXHARvKLp0PwOevJPFvPbbS
-         avJw==
-X-Gm-Message-State: ACgBeo25RByOOirDVt4tVtxJ8BUS6eJunUf+M9U4dGfYiQKnUuGjaSAC
-        E37voGGH81aMhKZ+OlKyb/RrHJBw6w==
-X-Google-Smtp-Source: AA6agR4zPKE+bteQz7BICzyQdDD01B8OZ+skbS9NvxF6LTbmkCquatAxhuNVjhJ3ZBa7Pdm0mVzWfA==
-X-Received: by 2002:a0c:cb0c:0:b0:476:d5e7:e0ca with SMTP id o12-20020a0ccb0c000000b00476d5e7e0camr8783614qvk.57.1659558273197;
-        Wed, 03 Aug 2022 13:24:33 -0700 (PDT)
-Received: from bytedance ([74.199.177.246])
-        by smtp.gmail.com with ESMTPSA id dm40-20020a05620a1d6800b006a6ab259261sm3415250qkb.29.2022.08.03.13.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Aug 2022 13:24:31 -0700 (PDT)
-Date:   Wed, 3 Aug 2022 13:24:26 -0700
-From:   Peilin Ye <yepeilin.cs@gmail.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Eric Paris <eparis@redhat.com>,
-        Peilin Ye <peilin.ye@bytedance.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com
-Subject: Re: [PATCH] audit, io_uring, io-wq: Fix memory leak in
- io_sq_thread() and io_wqe_worker()
-Message-ID: <20220803202426.GA31375@bytedance>
-References: <20220803050230.30152-1-yepeilin.cs@gmail.com>
- <CAHC9VhRXypjNgDAwdARZz-md_DaSTs+9BpMik8AzWojG7ChexA@mail.gmail.com>
- <CAHC9VhRYGgCLiWx5LCoqgTj_RW_iQRLrzivWci7_UneN_=rwmw@mail.gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=f+kJgdEkgp30bWaERe4Vski1FE7alwIJq4u2OppbQ/w=;
+        b=h3Gq1zXBZ/A7G1FzW91sT/BFrA0VM428eaBDlU7hyBkePZeTgn1yiEUm/5hOrECfmi
+         ZfCGbXn71ENzrJ/raooG3cRar95Pyg+qTgSQndxsFl4n3EBDWz3nQD06uuZvxEczyFGG
+         VzROSr8k8gzlRgitcoh+pyl8wPvo+PiNjksIteDys/1KvPCNgTN2LBewYjJRR9AVaFzt
+         uEvqWqnr3oPFeuCzus81C2a6v016sj6RHla987ee9CKIzDWyX/aLdqpwpOsQ27ydl6eh
+         ZjREBUlPXj7+OKQwB3RW0XueimUMHkOpMKdIEr8i3BpXjwAMIUf5R9vM7V6A3qcYV5ba
+         0qKg==
+X-Gm-Message-State: AJIora9Le0vs4zYaAO5k8rNc525mbjX92juzbGGw8KDCa26WlhDIeoaj
+        LFVTNPVIoY+sKHTeB55CVlwkTDG6/xHsUA==
+X-Google-Smtp-Source: AGRyM1tXxs7zhlm9Jvu6+p+FJ20VNCh4BqAcQdBeq/oalyDynJMU6/wzgc9VjBlrlK7mjN0rz9uRoQ==
+X-Received: by 2002:a5e:d817:0:b0:67c:38a8:8f25 with SMTP id l23-20020a5ed817000000b0067c38a88f25mr9333590iok.123.1659559932393;
+        Wed, 03 Aug 2022 13:52:12 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id f6-20020a02b786000000b003426eb18d1dsm5183460jam.105.2022.08.03.13.52.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Aug 2022 13:52:11 -0700 (PDT)
+Message-ID: <5f8fc910-8fad-f71a-704b-8017d364d0ed@kernel.dk>
+Date:   Wed, 3 Aug 2022 14:52:11 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRYGgCLiWx5LCoqgTj_RW_iQRLrzivWci7_UneN_=rwmw@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCHv2 0/7] dma mapping optimisations
+Content-Language: en-US
+To:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     hch@lst.de, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <Kernel-team@fb.com>,
+        Keith Busch <kbusch@kernel.org>
+References: <20220802193633.289796-1-kbusch@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220802193633.289796-1-kbusch@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
-
-On Wed, Aug 03, 2022 at 03:28:19PM -0400, Paul Moore wrote:
-> On Wed, Aug 3, 2022 at 9:16 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Aug 3, 2022 at 1:03 AM Peilin Ye <yepeilin.cs@gmail.com> wrote:
-> > > Hi all,
-> > >
-> > > A better way to fix this memleak would probably be checking
-> > > @args->io_thread in copy_process()?  Something like:
-> > >
-> > >     if (args->io_thread)
-> > >         retval = audit_alloc_kernel();
-> > >     else
-> > >         retval = audit_alloc();
-> > >
-> > > But I didn't want to add another if to copy_process() for this bugfix.
-> > > Please suggest, thanks!
-> >
-> > Thanks for the report and patch!  I'll take a closer look at this
-> > today and get back to you.
+On 8/2/22 1:36 PM, Keith Busch wrote:
+> device undergoes various represenations for every IO. Each consumes
+> memory and CPU cycles. When the backing storage is NVMe, the sequence
+> looks something like the following:
 > 
-> I think the best solution to this is simply to remove the calls to
-> audit_alloc_kernel() in the io_uring and io-wq code, as well as the
-> audit_alloc_kernel() function itself.  As long as create_io_thread()
-> ends up calling copy_process to create the new kernel thread the
-> audit_context should be allocated correctly.  Peilin Ye, are you able
-> to draft a patch to do that and give it a test?
+>   __user void *
+>   struct iov_iter
+>   struct pages[]
+>   struct bio_vec[]
+>   struct scatterlist[]
+>   __le64[]
+> 
+> Applications will often use the same buffer for many IO, though, so
+> these potentially costly per-IO transformations to reach the exact same
+> hardware descriptor can be skipped.
+> 
+> The io_uring interface already provides a way for users to register
+> buffers to get to the 'struct bio_vec[]'. That still leaves the
+> scatterlist needed for the repeated dma_map_sg(), then transform to
+> nvme's PRP list format.
+> 
+> This series takes the registered buffers a step further. A block driver
+> can implement a new .dma_map() callback to complete the representation
+> to the hardware's DMA mapped address, and return a cookie so a user can
+> reference it later for any given IO. When used, the block stack can skip
+> significant amounts of code, improving CPU utilization, and, if not
+> bandwidth limited, IOPs.
+> 
+> The implementation is currently limited to mapping a registered buffer
+> to a single file.
 
-Sure, I will write a v2 today.  Thanks for the suggestion!
+I ran this on my test box to see how we'd do. First the bad news:
+smaller block size IO seems slower. I ran with QD=8 and used 24 drives,
+and using t/io_uring (with registered buffers, polled, etc) and a 512b
+block size I get:
 
-> For those that may be wondering how this happened (I definitely was!),
-> it looks like when I first started working on the LSM/audit support
-> for io_uring it was before the v5.12-rc1 release when
-> create_io_thread() was introduced.  Prior to create_io_thread() it
-> appears that io_uring/io-wq wasn't calling into copy_process() and
-> thus was not getting an audit_context allocated in the kernel thread's
-> task_struct; the solution for those original development drafts was to
-> add a call to a new audit_alloc_kernel() which would handle the
-> audit_context allocation.  Unfortunately, I didn't notice the move to
-> create_io_thread() during development and the redundant
-> audit_alloc_kernel() calls remained :/
+IOPS=44.36M, BW=21.66GiB/s, IOS/call=1/1
+IOPS=44.64M, BW=21.80GiB/s, IOS/call=2/2
+IOPS=44.69M, BW=21.82GiB/s, IOS/call=1/1
+IOPS=44.55M, BW=21.75GiB/s, IOS/call=2/2
+IOPS=44.93M, BW=21.94GiB/s, IOS/call=1/1
+IOPS=44.79M, BW=21.87GiB/s, IOS/call=1/2
 
-Thanks,
-Peilin Ye
+and adding -D1 I get:
+
+IOPS=43.74M, BW=21.36GiB/s, IOS/call=1/1
+IOPS=44.04M, BW=21.50GiB/s, IOS/call=1/1
+IOPS=43.63M, BW=21.30GiB/s, IOS/call=2/2
+IOPS=43.67M, BW=21.32GiB/s, IOS/call=1/1
+IOPS=43.57M, BW=21.28GiB/s, IOS/call=1/2
+IOPS=43.53M, BW=21.25GiB/s, IOS/call=2/1
+
+which does regress that workload. Since we avoid more expensive setup at
+higher block sizes, I tested that too. Here's using 128k IOs with -D0:
+
+OPS=972.18K, BW=121.52GiB/s, IOS/call=31/31
+IOPS=988.79K, BW=123.60GiB/s, IOS/call=31/31
+IOPS=990.40K, BW=123.80GiB/s, IOS/call=31/31
+IOPS=987.80K, BW=123.48GiB/s, IOS/call=31/31
+IOPS=988.12K, BW=123.52GiB/s, IOS/call=31/31
+
+and here with -D1:
+
+IOPS=978.36K, BW=122.30GiB/s, IOS/call=31/31
+IOPS=996.75K, BW=124.59GiB/s, IOS/call=31/31
+IOPS=996.55K, BW=124.57GiB/s, IOS/call=31/31
+IOPS=996.52K, BW=124.56GiB/s, IOS/call=31/31
+IOPS=996.54K, BW=124.57GiB/s, IOS/call=31/31
+IOPS=996.51K, BW=124.56GiB/s, IOS/call=31/31
+
+which is a notable improvement. Then I checked CPU utilization,
+switching to IRQ driven IO instead. And the good news there for bs=128K
+we end up using half the CPU to achieve better performance. So definite
+win there!
+
+Just a quick dump on some quick result, I didn't look further into this
+just yet.
+
+-- 
+Jens Axboe
 

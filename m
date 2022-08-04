@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 957F3589D63
-	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 395C1589D64
+	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234846AbiHDOVb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Aug 2022 10:21:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39536 "EHLO
+        id S239162AbiHDOVd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Aug 2022 10:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232047AbiHDOVb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:31 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BDD41F2E7
-        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:30 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id z2so15156144edc.1
-        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:30 -0700 (PDT)
+        with ESMTP id S232047AbiHDOVc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:32 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7480733E27
+        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:31 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id a89so25561534edf.5
+        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=s0E5++4w/wKc0IHpdLr69LGiYg5m4f2WbebsnhEa8aU=;
-        b=T1KcProPY2Xt90dNg0xUoGEzwRemoaiOWhwR8pxED2XUd2meat8i7tPJdJAX+jd+PO
-         vkjpQ/y4v3YgtMan6YtWourOpwdhITL79A0dDppB07F++6f7eODVTY6bnu+vd0hh0zzO
-         L9kggrawUNKQubFnjXSlDrTVkzOizRLc/4VAYKqDLQJ+bhQvi3bSvHlH9MQvLGtT0Qil
-         dXKVz5ZreSMWUnebjHMI1TfC0WIloNQX3I9UTif3+Hn2zMJj5ojcsMHHDR/Hf5i0vyEU
-         wUznoBlVTfqrfvl9T8YAkHqD6t8uvKzCax/5haWfwGAuwQ0lDGcorGi098W9Lt5dPiTY
-         8X2Q==
+        bh=4fptWbivLL1R+OXMw15N9MuMx5z4TS9dJyEvA2bJdhU=;
+        b=ZdZaFYHjisbQdTkDWSnAw4OcmUDBoO6M9V3wSeZMiMdIrpNsKPKv64oku6pHUyJu6t
+         L5od8tdOkjtzartgGs8w9D04PwrFHYlY2JtX2idIB+Z/fVd73ONfQuJd60/EuVvB2nW8
+         2BpAGL7np/nYTinczjM6QtvSeZ1GUwxcyJGYIcTlmeploFBzokvXpgo/Q1vtlvu7ZA+s
+         GIrnElKZC2pIYFuX/R5LUONjlci81JCUl+w+iYT4ZDIMUTvJ3TYjjWS45tpz+WQipKFo
+         LPYmzr9qcmfm0yT47B8E9JK7eS05j2Tboz+ONSesgdAvYBVNtTOTL6P84zVOYTWfsrP/
+         HObg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=s0E5++4w/wKc0IHpdLr69LGiYg5m4f2WbebsnhEa8aU=;
-        b=eXJbpd0XWXplQ6/pSlN36anJs+YNeOIAqS4kEVe9wLTnY5M6dB5hu5PyLNSus72mCI
-         C5tBxddNuHsR2KJUTI6czdkyUa+UHLNH04U5y/PTI3K2FUqC50NZ0rkEP5UAI6A9FZ2T
-         J9UinOUpnxhPMe99WZvmoFYRZqUdhtFXWmxFPRJrpoPqlrZQNwqMmquI48Bnuae7RbX4
-         dIXwjRIu3HNwkf1oE3LKQYZrRYljzSafVPRGHRLT+vYH7WQUqMdIVdC22G9kASbnvbc/
-         fg5VVCyi5OQvu4wXdafcyz3LnSONlEXpaE7VAqyN5nb6dwxXhdA0mS5UcMZuwVjNsiPd
-         nrjA==
-X-Gm-Message-State: ACgBeo3/WNZHWvjPLhkHRSx5YiQxxdn6Ns/yhlKneBJpKeDkpxk/MUUN
-        aQesbPu3y1cYFs/2rAYQa8rF8ITROW4=
-X-Google-Smtp-Source: AA6agR4KceXeKnFGJSNIV+/j6Ddt42/TvUzby33m5A6SyGpbVZ8Np+K4sgIKLVoG0IRAzFs//ComCg==
-X-Received: by 2002:a05:6402:5247:b0:43e:cf46:45b3 with SMTP id t7-20020a056402524700b0043ecf4645b3mr1083074edd.153.1659622888585;
-        Thu, 04 Aug 2022 07:21:28 -0700 (PDT)
+        bh=4fptWbivLL1R+OXMw15N9MuMx5z4TS9dJyEvA2bJdhU=;
+        b=fmGOswfYKHNH3oWEH7h8iZ+nGInt2XFNItZPcMGiJKqFZ1CBTe46voPFhSvt58NsOW
+         /paX5htR65QcbZZp2Bfq1Y551320zZFf3o0clEDP5xCq+E9Vv4Nb6OgVbrZfEF+PAi4I
+         QLUJlussDjEAGlbd10yzBGF7LIP5aGYiddtyRAEv7YNU66MjpB9g5RgG5mT8h/oswkz9
+         wY/apsSy0BPhz+84m5Z8dW5nR7k9WfwrwO4Ek+2LUaKVUGuApkQ8Qsg94WqzX9LWNrGc
+         1oZR3RzraEB5QGKhF+wtnRvIJnW6cKj1dikljrFgg6YK738VsqLXKOuIBjkMFcaF8NnB
+         OQtQ==
+X-Gm-Message-State: ACgBeo0ttJEBI/ebhDecCYNWEry3aBnJJBt2l1ngi6EsPYCcoLlCmkt3
+        TU2bG/msnVgU+SBrvx8XDlf9q3tv4E8=
+X-Google-Smtp-Source: AA6agR7PEHng5IxxVd2HvqTdPhpw3zSANP2MZRuw+/HK0A2UUo5Nb7KhJ4evGDnG1bDs4nrEoSrlqQ==
+X-Received: by 2002:a05:6402:5cb:b0:434:eb48:754f with SMTP id n11-20020a05640205cb00b00434eb48754fmr2324125edx.421.1659622889751;
+        Thu, 04 Aug 2022 07:21:29 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.27
+        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 07:21:28 -0700 (PDT)
+        Thu, 04 Aug 2022 07:21:29 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 1/6] test/zc: improve error messages
-Date:   Thu,  4 Aug 2022 15:20:20 +0100
-Message-Id: <094a2939de904ea81e65277e10662a1db6e2a068.1659622771.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 2/6] tests/zc: test tcp
+Date:   Thu,  4 Aug 2022 15:20:21 +0100
+Message-Id: <29a52de00c6cc1bebc9d8fd70afd698746cc91c1.1659622771.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <cover.1659622771.git.asml.silence@gmail.com>
 References: <cover.1659622771.git.asml.silence@gmail.com>
@@ -68,43 +68,129 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Add tests for TCP zerocopy send
+
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ test/send-zerocopy.c | 53 +++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 11 deletions(-)
 
 diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index 6fa0535..c04e905 100644
+index c04e905..7999f46 100644
 --- a/test/send-zerocopy.c
 +++ b/test/send-zerocopy.c
-@@ -676,7 +676,7 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
+@@ -550,10 +550,12 @@ static int test_registration(int sock_tx, int sock_rx)
+ }
  
- 	ret = io_uring_submit(ring);
- 	if (ret != nr_reqs) {
--		fprintf(stderr, "submit failed %i expected %i\n", ret, nr_reqs);
-+		fprintf(stderr, "submit failed, got %i expected %i\n", ret, nr_reqs);
- 		return 1;
+ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock_server,
+-		      bool ipv6, bool client_connect, bool msg_zc)
++		      bool ipv6, bool client_connect, bool msg_zc, bool tcp)
+ {
+ 	int family, addr_size;
+ 	int ret, val;
++	int listen_sock = -1;
++	int sock;
+ 
+ 	memset(addr, 0, sizeof(*addr));
+ 	if (ipv6) {
+@@ -574,18 +576,29 @@ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock
  	}
  
-@@ -704,14 +704,15 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 
- 	ret = recv(sock_server, rx_buffer, send_size, 0);
- 	if (ret != send_size) {
--		fprintf(stderr, "recv less than expected or recv failed %i\n", ret);
-+		fprintf(stderr, "recv less than expected or recv failed, "
-+			"got %i, errno %i\n", ret, errno);
+ 	/* server sock setup */
+-	*sock_server = socket(family, SOCK_DGRAM, 0);
+-	if (*sock_server < 0) {
++	if (tcp) {
++		sock = listen_sock = socket(family, SOCK_STREAM, IPPROTO_TCP);
++	} else {
++		sock = *sock_server = socket(family, SOCK_DGRAM, 0);
++	}
++	if (sock < 0) {
+ 		perror("socket");
  		return 1;
  	}
+ 	val = 1;
+-	setsockopt(*sock_server, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+-	ret = bind(*sock_server, (struct sockaddr *)addr, addr_size);
++	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
++	val = 1;
++	setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
++
++	ret = bind(sock, (struct sockaddr *)addr, addr_size);
+ 	if (ret < 0) {
+ 		perror("bind");
+ 		return 1;
+ 	}
++	if (tcp) {
++		ret = listen(sock, 128);
++		assert(ret != -1);
++	}
  
- 	for (i = 0; i < send_size; i++) {
- 		if (buf[i] != rx_buffer[i]) {
--			fprintf(stderr, "botched data, first byte %i, %u vs %u\n",
--				i, buf[i], rx_buffer[i]);
-+			fprintf(stderr, "botched data, first mismated byte %i, "
-+				"%u vs %u\n", i, buf[i], rx_buffer[i]);
+ 	if (ipv6) {
+ 		struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)addr;
+@@ -598,7 +611,12 @@ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock
+ 	}
+ 
+ 	/* client sock setup */
+-	*sock_client = socket(family, SOCK_DGRAM, 0);
++	if (tcp) {
++		*sock_client = socket(family, SOCK_STREAM, IPPROTO_TCP);
++		assert(client_connect);
++	} else {
++		*sock_client = socket(family, SOCK_DGRAM, 0);
++	}
+ 	if (*sock_client < 0) {
+ 		perror("socket");
+ 		return 1;
+@@ -617,6 +635,14 @@ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock
+ 			return 1;
  		}
  	}
++	if (tcp) {
++		*sock_server = accept(listen_sock, NULL, NULL);
++		if (!*sock_server) {
++			fprintf(stderr, "can't accept\n");
++			return 1;
++		}
++		close(listen_sock);
++	}
  	return 0;
+ }
+ 
+@@ -721,17 +747,20 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
+ static int test_inet_send(struct io_uring *ring)
+ {
+ 	struct sockaddr_storage addr;
+-	int sock_client, sock_server;
+-	int ret, j;
+-	__u64 i;
++	int sock_client = -1, sock_server = -1;
++	int ret, j, i;
+ 
+-	for (j = 0; j < 8; j++) {
++	for (j = 0; j < 16; j++) {
+ 		bool ipv6 = j & 1;
+ 		bool client_connect = j & 2;
+ 		bool msg_zc_set = j & 4;
++		bool tcp = j & 8;
++
++		if (tcp && !client_connect)
++			continue;
+ 
+ 		ret = prepare_ip(&addr, &sock_client, &sock_server, ipv6,
+-				 client_connect, msg_zc_set);
++				 client_connect, msg_zc_set, tcp);
+ 		if (ret) {
+ 			fprintf(stderr, "sock prep failed %d\n", ret);
+ 			return 1;
+@@ -746,6 +775,8 @@ static int test_inet_send(struct io_uring *ring)
+ 			bool aligned = i & 32;
+ 			int buf_idx = aligned ? 0 : 1;
+ 
++			if (tcp && cork)
++				continue;
+ 			if (mix_register && (!cork || fixed_buf))
+ 				continue;
+ 			if (!client_connect && addr_arg == NULL)
 -- 
 2.37.0
 

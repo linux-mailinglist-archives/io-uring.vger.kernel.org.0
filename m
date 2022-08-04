@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 395C1589D64
-	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58FF589D65
+	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239162AbiHDOVd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Aug 2022 10:21:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39550 "EHLO
+        id S239754AbiHDOVg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Aug 2022 10:21:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232047AbiHDOVc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:32 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7480733E27
-        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:31 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id a89so25561534edf.5
-        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:31 -0700 (PDT)
+        with ESMTP id S239672AbiHDOVf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:35 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D15E33E35
+        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:32 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id s11so14142138edd.13
+        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=4fptWbivLL1R+OXMw15N9MuMx5z4TS9dJyEvA2bJdhU=;
-        b=ZdZaFYHjisbQdTkDWSnAw4OcmUDBoO6M9V3wSeZMiMdIrpNsKPKv64oku6pHUyJu6t
-         L5od8tdOkjtzartgGs8w9D04PwrFHYlY2JtX2idIB+Z/fVd73ONfQuJd60/EuVvB2nW8
-         2BpAGL7np/nYTinczjM6QtvSeZ1GUwxcyJGYIcTlmeploFBzokvXpgo/Q1vtlvu7ZA+s
-         GIrnElKZC2pIYFuX/R5LUONjlci81JCUl+w+iYT4ZDIMUTvJ3TYjjWS45tpz+WQipKFo
-         LPYmzr9qcmfm0yT47B8E9JK7eS05j2Tboz+ONSesgdAvYBVNtTOTL6P84zVOYTWfsrP/
-         HObg==
+        bh=zckFU/3r31KwkLbdteztPMNAFUqqjvC/+Xlbru31XI4=;
+        b=h9AySY89mXZtQ0076t67TR+GL1UA5X5w4fddynVA+tXxShfp1mf0YGdDnluxsT79xO
+         1c9HmvcVyqBUQVLpUi95t8Nb2hgCFnixMBODPSBlAU4cnKASDkbKooJWQ99+TaCk96Da
+         vnTwRpcZLBcEQr6fAw/k1//xis2DLX6uc2k4WlEyCkI+JxbQJqhPqMAjMt5FhJ6pbj6p
+         Or50ojrL8v/CjNIC+3vrREijKOCQK1ltSkZzesAAV0rbdZlS0sugep4tKadeRS6UDNWz
+         3itrtI/vBoi99ezg9dmGkxcKdilx4VF3/LWqCRXmW5673D4ZcctCoDAUkJ4yfc7JAxvE
+         jVtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=4fptWbivLL1R+OXMw15N9MuMx5z4TS9dJyEvA2bJdhU=;
-        b=fmGOswfYKHNH3oWEH7h8iZ+nGInt2XFNItZPcMGiJKqFZ1CBTe46voPFhSvt58NsOW
-         /paX5htR65QcbZZp2Bfq1Y551320zZFf3o0clEDP5xCq+E9Vv4Nb6OgVbrZfEF+PAi4I
-         QLUJlussDjEAGlbd10yzBGF7LIP5aGYiddtyRAEv7YNU66MjpB9g5RgG5mT8h/oswkz9
-         wY/apsSy0BPhz+84m5Z8dW5nR7k9WfwrwO4Ek+2LUaKVUGuApkQ8Qsg94WqzX9LWNrGc
-         1oZR3RzraEB5QGKhF+wtnRvIJnW6cKj1dikljrFgg6YK738VsqLXKOuIBjkMFcaF8NnB
-         OQtQ==
-X-Gm-Message-State: ACgBeo0ttJEBI/ebhDecCYNWEry3aBnJJBt2l1ngi6EsPYCcoLlCmkt3
-        TU2bG/msnVgU+SBrvx8XDlf9q3tv4E8=
-X-Google-Smtp-Source: AA6agR7PEHng5IxxVd2HvqTdPhpw3zSANP2MZRuw+/HK0A2UUo5Nb7KhJ4evGDnG1bDs4nrEoSrlqQ==
-X-Received: by 2002:a05:6402:5cb:b0:434:eb48:754f with SMTP id n11-20020a05640205cb00b00434eb48754fmr2324125edx.421.1659622889751;
-        Thu, 04 Aug 2022 07:21:29 -0700 (PDT)
+        bh=zckFU/3r31KwkLbdteztPMNAFUqqjvC/+Xlbru31XI4=;
+        b=dvpyyjgw6/iHiA0RKKSkto1e3IcjSP05KBi+UiU2oX174UitB90nPv4PtHYqAj0hPb
+         4V5E67vHI6d89cWLu2uCIBwDeFUv0U4GNaavWrFs6saaWamTLDyGm9kETomFYJTITWBE
+         ss2nbxmEE9TCYfJLKrO7iLHzybF2+LuAsJPA/o4jEoxBNqfQsIvNw+N+6b+hbkGb2gMH
+         838+br/c6gqofpQuLsvUO4R7GEi2gDpBEaCkObRG6XZnhOT4hm90LxgBzg5pYBArd1Nf
+         So1hALC+wyHCnTxZWg8ClTHRMlYrl1GynFBj6Vt2x0v0kQC8ZZkYKP2dsgfSliLcW8E0
+         QjGw==
+X-Gm-Message-State: ACgBeo2aakWI8bCkyY9QECnNsr+s1BQnQJ0b0A0cPTvGbTYreFaI0kZw
+        HOL/c0ek8NbrhLtsupK8IUWpvKSaLXM=
+X-Google-Smtp-Source: AA6agR7gjAkkVkCNSkTh4BqY/IRTkcF2y+vOqM+87eT9CbVSWXMpBgV7hh5M3dTcLpfJmOTC4ovd9Q==
+X-Received: by 2002:a05:6402:428a:b0:42e:8f7e:1638 with SMTP id g10-20020a056402428a00b0042e8f7e1638mr2279955edc.228.1659622890806;
+        Thu, 04 Aug 2022 07:21:30 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.28
+        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 07:21:29 -0700 (PDT)
+        Thu, 04 Aug 2022 07:21:30 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 2/6] tests/zc: test tcp
-Date:   Thu,  4 Aug 2022 15:20:21 +0100
-Message-Id: <29a52de00c6cc1bebc9d8fd70afd698746cc91c1.1659622771.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 3/6] test/zc: allocate buffers dynamically
+Date:   Thu,  4 Aug 2022 15:20:22 +0100
+Message-Id: <55d91cebef205ca8bf9c004980f36eca06dae966.1659622771.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <cover.1659622771.git.asml.silence@gmail.com>
 References: <cover.1659622771.git.asml.silence@gmail.com>
@@ -68,129 +68,86 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add tests for TCP zerocopy send
+A prep patch, allocate receive and transfer buffers dynamically.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 53 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 42 insertions(+), 11 deletions(-)
+ test/send-zerocopy.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
 diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index c04e905..7999f46 100644
+index 7999f46..a572407 100644
 --- a/test/send-zerocopy.c
 +++ b/test/send-zerocopy.c
-@@ -550,10 +550,12 @@ static int test_registration(int sock_tx, int sock_rx)
- }
+@@ -46,7 +46,6 @@
  
- static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock_server,
--		      bool ipv6, bool client_connect, bool msg_zc)
-+		      bool ipv6, bool client_connect, bool msg_zc, bool tcp)
+ #define NR_SLOTS 5
+ #define ZC_TAG 10000
+-#define MAX_PAYLOAD 8195
+ #define BUFFER_OFFSET 41
+ 
+ #ifndef ARRAY_SIZE
+@@ -54,14 +53,8 @@
+ #endif
+ 
+ static int seqs[NR_SLOTS];
+-static char tx_buffer[MAX_PAYLOAD] __attribute__((aligned(4096)));
+-static char rx_buffer[MAX_PAYLOAD] __attribute__((aligned(4096)));
+-static struct iovec buffers_iov[] = {
+-	{ .iov_base = tx_buffer,
+-	  .iov_len = sizeof(tx_buffer), },
+-	{ .iov_base = tx_buffer + BUFFER_OFFSET,
+-	  .iov_len = sizeof(tx_buffer) - BUFFER_OFFSET - 13, },
+-};
++static char *tx_buffer, *rx_buffer;
++static struct iovec buffers_iov[2];
+ 
+ static inline bool tag_userdata(__u64 user_data)
  {
- 	int family, addr_size;
- 	int ret, val;
-+	int listen_sock = -1;
-+	int sock;
+@@ -662,7 +655,7 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
+ 	char *buf = buffers_iov[buf_idx].iov_base;
  
- 	memset(addr, 0, sizeof(*addr));
- 	if (ipv6) {
-@@ -574,18 +576,29 @@ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock
- 	}
+ 	assert(send_size <= buffers_iov[buf_idx].iov_len);
+-	memset(rx_buffer, 0, sizeof(rx_buffer));
++	memset(rx_buffer, 0, send_size);
  
- 	/* server sock setup */
--	*sock_server = socket(family, SOCK_DGRAM, 0);
--	if (*sock_server < 0) {
-+	if (tcp) {
-+		sock = listen_sock = socket(family, SOCK_STREAM, IPPROTO_TCP);
-+	} else {
-+		sock = *sock_server = socket(family, SOCK_DGRAM, 0);
-+	}
-+	if (sock < 0) {
- 		perror("socket");
- 		return 1;
- 	}
- 	val = 1;
--	setsockopt(*sock_server, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
--	ret = bind(*sock_server, (struct sockaddr *)addr, addr_size);
-+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-+	val = 1;
-+	setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
-+
-+	ret = bind(sock, (struct sockaddr *)addr, addr_size);
- 	if (ret < 0) {
- 		perror("bind");
- 		return 1;
- 	}
-+	if (tcp) {
-+		ret = listen(sock, 128);
-+		assert(ret != -1);
-+	}
- 
- 	if (ipv6) {
- 		struct sockaddr_in6 *saddr = (struct sockaddr_in6 *)addr;
-@@ -598,7 +611,12 @@ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock
- 	}
- 
- 	/* client sock setup */
--	*sock_client = socket(family, SOCK_DGRAM, 0);
-+	if (tcp) {
-+		*sock_client = socket(family, SOCK_STREAM, IPPROTO_TCP);
-+		assert(client_connect);
-+	} else {
-+		*sock_client = socket(family, SOCK_DGRAM, 0);
-+	}
- 	if (*sock_client < 0) {
- 		perror("socket");
- 		return 1;
-@@ -617,6 +635,14 @@ static int prepare_ip(struct sockaddr_storage *addr, int *sock_client, int *sock
- 			return 1;
- 		}
- 	}
-+	if (tcp) {
-+		*sock_server = accept(listen_sock, NULL, NULL);
-+		if (!*sock_server) {
-+			fprintf(stderr, "can't accept\n");
-+			return 1;
-+		}
-+		close(listen_sock);
-+	}
- 	return 0;
- }
- 
-@@ -721,17 +747,20 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- static int test_inet_send(struct io_uring *ring)
+ 	for (i = 0; i < nr_reqs; i++) {
+ 		bool cur_fixed_buf = fixed_buf;
+@@ -804,10 +797,23 @@ int main(int argc, char *argv[])
  {
- 	struct sockaddr_storage addr;
--	int sock_client, sock_server;
--	int ret, j;
--	__u64 i;
-+	int sock_client = -1, sock_server = -1;
-+	int ret, j, i;
+ 	struct io_uring ring;
+ 	int i, ret, sp[2];
++	size_t len = 8096;
  
--	for (j = 0; j < 8; j++) {
-+	for (j = 0; j < 16; j++) {
- 		bool ipv6 = j & 1;
- 		bool client_connect = j & 2;
- 		bool msg_zc_set = j & 4;
-+		bool tcp = j & 8;
+ 	if (argc > 1)
+ 		return T_EXIT_SKIP;
+ 
++	tx_buffer = aligned_alloc(4096, len);
++	rx_buffer = aligned_alloc(4096, len);
++	if (!tx_buffer || !rx_buffer) {
++		fprintf(stderr, "can't allocate buffers\n");
++		return T_EXIT_FAIL;
++	}
 +
-+		if (tcp && !client_connect)
-+			continue;
++	buffers_iov[0].iov_base = tx_buffer;
++	buffers_iov[0].iov_len = len;
++	buffers_iov[1].iov_base = tx_buffer + BUFFER_OFFSET;
++	buffers_iov[1].iov_len = len - BUFFER_OFFSET - 13;
++
+ 	ret = io_uring_queue_init(32, &ring, 0);
+ 	if (ret) {
+ 		fprintf(stderr, "queue init failed: %d\n", ret);
+@@ -824,8 +830,9 @@ int main(int argc, char *argv[])
+ 	}
  
- 		ret = prepare_ip(&addr, &sock_client, &sock_server, ipv6,
--				 client_connect, msg_zc_set);
-+				 client_connect, msg_zc_set, tcp);
- 		if (ret) {
- 			fprintf(stderr, "sock prep failed %d\n", ret);
- 			return 1;
-@@ -746,6 +775,8 @@ static int test_inet_send(struct io_uring *ring)
- 			bool aligned = i & 32;
- 			int buf_idx = aligned ? 0 : 1;
+ 	srand((unsigned)time(NULL));
+-	for (i = 0; i < sizeof(tx_buffer); i++)
++	for (i = 0; i < len; i++)
+ 		tx_buffer[i] = i;
++	memset(rx_buffer, 0, len);
  
-+			if (tcp && cork)
-+				continue;
- 			if (mix_register && (!cork || fixed_buf))
- 				continue;
- 			if (!client_connect && addr_arg == NULL)
+ 	if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sp) != 0) {
+ 		perror("Failed to create Unix-domain socket pair\n");
 -- 
 2.37.0
 

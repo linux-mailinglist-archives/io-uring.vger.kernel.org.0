@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E31AC589D67
-	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D5D589D68
+	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239487AbiHDOVg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Aug 2022 10:21:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
+        id S239068AbiHDOVi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Aug 2022 10:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239700AbiHDOVg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:36 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8E4647BAA
-        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:34 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id w3so9894558edc.2
-        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:34 -0700 (PDT)
+        with ESMTP id S239672AbiHDOVh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:37 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D30533E27
+        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:36 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id e13so6605502edj.12
+        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=40GIJeWXkRh0CCXmtErKQ4+wmKT1qUseLdNeN4jDS1I=;
-        b=NjP+nxe7kjbf2fOOEa2DjEngm5PAj8nLlkiBWwDx/q6MUPfhCdFB3sTm6p+acK4qqN
-         38rWsL/75p9q4LuyVDnISoLw8E1FLX0bilWuZe0Hevm2YtqEv0xRMavw60VlMH6yOJqv
-         Vtg80zXhJfaWU0uFmWDxEtMRTggPFVK8WE26Od49cHmgGB59wVLTEHjWuf+j72METX0Q
-         5ljSOr8Kkre/pbjfEa1vkLK5wDnTvhiDA7J9+ipWk7JB72RCTzlwXB0vsPb27T1B9LFf
-         IQs4/JhNjEEaa/nWAxT5O1smF1FOqUrIpUYvDKwrAf6NWyM41a4wVMtcqSs2cz1/tpou
-         huPQ==
+        bh=pJ6Nu6ke0tEeP4WGcPqc987CZlnioHDjGxMs6lV8f9E=;
+        b=Dh4YVCEZ1/4ZsfBf39hKqqutmVilRgOMFeTSi9BAv0py0b65OX3Dcyfc5Fi46BSBa1
+         yIWVTIaV8MYyHWnj6LxWUJHmPlWU5jCKfxTQIMvP5qCladOqPqgu7IE7qstBjAXYhqUv
+         iBwvA9sfoSsDBia8GAzu84hKBQqg2cLi3Os9fircBao3Vf4Pz8N5KUAtyRrKMmpS796v
+         /jzD90nz5qtclnAT5XBtd32AM06BFG75WMiHKcYBiVTH6URJrMrqJPyqojgpQA74Oizp
+         BhyFzMFUL/qJxlIhWzaSU8k5WPd/sJvLx8IFKY13vQrm5sKbstbawkcxNqkUyv1M5+79
+         S4kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=40GIJeWXkRh0CCXmtErKQ4+wmKT1qUseLdNeN4jDS1I=;
-        b=udZj4apaA7cSGTVhCqEKK5/+fjohBsbExVao7DDEifa5lMkd4KT8Os0b0Ow5c/qLYb
-         6DFtamc3ag3U1eg6rJFCEy7CGgiPONWazTsb3HPiEdBS2Nq87FGyA8krf9v624vh2Yj1
-         66PBDNk7mbVPGQU0lGmVPnaGXSJT+o5OA2DcTA5PvRL+CMC+79OFJ5H2cDrMtAmw9jwY
-         YyTIZFuLyPC+HnINcJgGctvAxiwgD/39gSCn0mnCCgW1cCcNi0K+KhKGNC3Pl6jMh2Yu
-         9upSz7xmLd3HTgqg+MKOjL7KnUnMA/rr/Gz/l9zohKL17NXnaI44oQ/fEp/GD3+iL0pm
-         Ibwg==
-X-Gm-Message-State: ACgBeo0GktwQWr4PprXM9T4kUehaOyNfjSCawe4stmGefPteCBkvAqny
-        UAdLJrwdhGud15IHqE3mMLcodEnGa/k=
-X-Google-Smtp-Source: AA6agR48q/IlnYTgigRQnjYMLb+fwhDnI+ThTJYycHHxdsDvRD7Ad/5c3fskJrIDCa1LuSzcLIv6Kg==
-X-Received: by 2002:a05:6402:40ce:b0:43d:f8a0:9c4f with SMTP id z14-20020a05640240ce00b0043df8a09c4fmr2295319edb.95.1659622893062;
-        Thu, 04 Aug 2022 07:21:33 -0700 (PDT)
+        bh=pJ6Nu6ke0tEeP4WGcPqc987CZlnioHDjGxMs6lV8f9E=;
+        b=Y4G/6nQAqsSBN+cGOC/RhfmLcgm7pRyGlfFTvlAnTAmvsT1HnqX26L1n9wAQBydoxS
+         Gq2zJ+7NWXjSLyC0HNOzff4MViJRYfGY4CfRCTtozdBQX1NJBHoqhkmAd1DxDnruBish
+         3Zpd8J9xwF7ma8tk/xJnRmCx2E07/z+NWLdr7cqM2tR1zZCRkUa4MXLKFUWl/LEjyu57
+         V25DJvg3jozuGEJr1UgighyES+1KYdXhytFX9O9w5Db6gfRhIRncKKOaTFSdEgDSq1j1
+         IzVb7Tn7TeWcBt8/7GDJQqeCnZlhupANBjukSCjjtUtNpaeN5BUuQkCqRagsRT26bBnx
+         5YmA==
+X-Gm-Message-State: ACgBeo0pbu1Ho4yAPu4/Cx3TmI9+GM7DAyvQZPoge1hAbygXDY6wJLDb
+        WEF3Rys2/+jfi0Pceyt8xPeNu7pDOs4=
+X-Google-Smtp-Source: AA6agR4Jf6cAWJmRxZWXJAKkGZcUmDj5pU9rcJVMpTatG/Mhkci4gjpgX6IUOKYifkYAKRHj4Lwjmw==
+X-Received: by 2002:a05:6402:27c6:b0:43d:6fab:146e with SMTP id c6-20020a05640227c600b0043d6fab146emr2241308ede.376.1659622894256;
+        Thu, 04 Aug 2022 07:21:34 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.32
+        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 07:21:32 -0700 (PDT)
+        Thu, 04 Aug 2022 07:21:33 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 5/6] test/zc: recv asynchronously
-Date:   Thu,  4 Aug 2022 15:20:24 +0100
-Message-Id: <e50ed637cdba845e7f68f7e97fb05dee69b007d4.1659622771.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 6/6] test/zc: test short zc send
+Date:   Thu,  4 Aug 2022 15:20:25 +0100
+Message-Id: <6ee389d6b720356ec2a8c677a34a852c761c1627.1659622771.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <cover.1659622771.git.asml.silence@gmail.com>
 References: <cover.1659622771.git.asml.silence@gmail.com>
@@ -68,95 +68,100 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Receive in a separate task to avoid locking up in case of short sends.
+Zerocopy send should hide short writes for stream sockets, test it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 56 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 41 insertions(+), 15 deletions(-)
+ test/send-zerocopy.c | 34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
 diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index d0f5931..617e7a0 100644
+index 617e7a0..307c114 100644
 --- a/test/send-zerocopy.c
 +++ b/test/send-zerocopy.c
-@@ -653,7 +653,8 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 	size_t chunk_size = send_size / nr_reqs;
- 	size_t chunk_size_last = send_size - chunk_size * (nr_reqs - 1);
- 	char *buf = buffers_iov[buf_idx].iov_base;
--	size_t bytes_received = 0;
-+	pid_t p;
-+	int wstatus;
+@@ -54,7 +54,7 @@
  
- 	assert(send_size <= buffers_iov[buf_idx].iov_len);
- 	memset(rx_buffer, 0, send_size);
-@@ -700,16 +701,35 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 		return 1;
- 	}
+ static int seqs[NR_SLOTS];
+ static char *tx_buffer, *rx_buffer;
+-static struct iovec buffers_iov[2];
++static struct iovec buffers_iov[3];
  
--	while (bytes_received != send_size) {
--		ret = recv(sock_server,
--			   rx_buffer + bytes_received,
--			   send_size - bytes_received, 0);
--		if (ret <= 0) {
--			fprintf(stderr, "recv failed, got %i, errno %i\n",
--				ret, errno);
--			return 1;
-+	p = fork();
-+	if (p == -1) {
-+		fprintf(stderr, "fork() failed\n");
-+		return 1;
-+	}
-+
-+	if (p == 0) {
-+		size_t bytes_received = 0;
-+
-+		while (bytes_received != send_size) {
-+			ret = recv(sock_server,
-+				   rx_buffer + bytes_received,
-+				   send_size - bytes_received, 0);
-+			if (ret <= 0) {
-+				fprintf(stderr, "recv failed, got %i, errno %i\n",
-+					ret, errno);
-+				exit(1);
-+			}
-+			bytes_received += ret;
- 		}
--		bytes_received += ret;
-+
-+		for (i = 0; i < send_size; i++) {
-+			if (buf[i] != rx_buffer[i]) {
-+				fprintf(stderr, "botched data, first mismated byte %i, "
-+					"%u vs %u\n", i, buf[i], rx_buffer[i]);
-+				exit(1);
-+			}
-+		}
-+		exit(0);
- 	}
- 
+ static inline bool tag_userdata(__u64 user_data)
+ {
+@@ -662,7 +662,7 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
  	for (i = 0; i < nr_reqs; i++) {
-@@ -734,11 +754,17 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 		io_uring_cqe_seen(ring, cqe);
+ 		bool cur_fixed_buf = fixed_buf;
+ 		size_t cur_size = chunk_size;
+-		int msg_flags = 0;
++		int msg_flags = MSG_WAITALL;
+ 
+ 		if (mix_register)
+ 			cur_fixed_buf = rand() & 1;
+@@ -791,15 +791,26 @@ static int test_inet_send(struct io_uring *ring)
+ 			return 1;
+ 		}
+ 
+-		for (i = 0; i < 64; i++) {
++		for (i = 0; i < 128; i++) {
+ 			bool fixed_buf = i & 1;
+ 			struct sockaddr_storage *addr_arg = (i & 2) ? &addr : NULL;
+ 			size_t size = (i & 4) ? 137 : 4096;
+ 			bool cork = i & 8;
+ 			bool mix_register = i & 16;
+ 			bool aligned = i & 32;
++			bool large_buf = i & 64;
+ 			int buf_idx = aligned ? 0 : 1;
+ 
++			if (!tcp || !large_buf)
++				continue;
++			if (large_buf) {
++				buf_idx = 2;
++				size = buffers_iov[buf_idx].iov_len;
++				if (!aligned || !tcp)
++					continue;
++			}
++			if (!buffers_iov[buf_idx].iov_base)
++				continue;
+ 			if (tcp && cork)
+ 				continue;
+ 			if (mix_register && (!cork || fixed_buf))
+@@ -829,22 +840,33 @@ int main(int argc, char *argv[])
+ {
+ 	struct io_uring ring;
+ 	int i, ret, sp[2];
+-	size_t len = 8096;
++	size_t len;
+ 
+ 	if (argc > 1)
+ 		return T_EXIT_SKIP;
+ 
++	len = 1U << 25; /* 32MB, should be enough to trigger a short send */
+ 	tx_buffer = aligned_alloc(4096, len);
+ 	rx_buffer = aligned_alloc(4096, len);
++	if (tx_buffer && rx_buffer) {
++		buffers_iov[2].iov_base = tx_buffer;
++		buffers_iov[2].iov_len = len;
++	} else {
++		printf("skip large buffer tests, can't alloc\n");
++
++		len = 8192;
++		tx_buffer = aligned_alloc(4096, len);
++		rx_buffer = aligned_alloc(4096, len);
++	}
+ 	if (!tx_buffer || !rx_buffer) {
+ 		fprintf(stderr, "can't allocate buffers\n");
+ 		return T_EXIT_FAIL;
  	}
  
--	for (i = 0; i < send_size; i++) {
--		if (buf[i] != rx_buffer[i]) {
--			fprintf(stderr, "botched data, first mismated byte %i, "
--				"%u vs %u\n", i, buf[i], rx_buffer[i]);
--		}
-+	if (waitpid(p, &wstatus, 0) == (pid_t)-1) {
-+		perror("waitpid()");
-+		return 1;
-+	}
-+	if (!WIFEXITED(wstatus)) {
-+		fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
-+		return 1;
-+	}
-+	if (WEXITSTATUS(wstatus)) {
-+		fprintf(stderr, "child failed\n");
-+		return 1;
- 	}
- 	return 0;
- }
+ 	buffers_iov[0].iov_base = tx_buffer;
+-	buffers_iov[0].iov_len = len;
++	buffers_iov[0].iov_len = 8192;
+ 	buffers_iov[1].iov_base = tx_buffer + BUFFER_OFFSET;
+-	buffers_iov[1].iov_len = len - BUFFER_OFFSET - 13;
++	buffers_iov[1].iov_len = 8192 - BUFFER_OFFSET - 13;
+ 
+ 	ret = io_uring_queue_init(32, &ring, 0);
+ 	if (ret) {
 -- 
 2.37.0
 

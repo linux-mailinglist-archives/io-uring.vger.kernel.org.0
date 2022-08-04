@@ -2,166 +2,156 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D5D589D68
-	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31066589D81
+	for <lists+io-uring@lfdr.de>; Thu,  4 Aug 2022 16:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239068AbiHDOVi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 Aug 2022 10:21:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39634 "EHLO
+        id S234923AbiHDOcb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 Aug 2022 10:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239672AbiHDOVh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:21:37 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D30533E27
-        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:21:36 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id e13so6605502edj.12
-        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:21:36 -0700 (PDT)
+        with ESMTP id S232559AbiHDOca (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 Aug 2022 10:32:30 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD50E2613B
+        for <io-uring@vger.kernel.org>; Thu,  4 Aug 2022 07:32:29 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id w17-20020a17090a8a1100b001f326c73df6so5469199pjn.3
+        for <io-uring@vger.kernel.org>; Thu, 04 Aug 2022 07:32:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=pJ6Nu6ke0tEeP4WGcPqc987CZlnioHDjGxMs6lV8f9E=;
-        b=Dh4YVCEZ1/4ZsfBf39hKqqutmVilRgOMFeTSi9BAv0py0b65OX3Dcyfc5Fi46BSBa1
-         yIWVTIaV8MYyHWnj6LxWUJHmPlWU5jCKfxTQIMvP5qCladOqPqgu7IE7qstBjAXYhqUv
-         iBwvA9sfoSsDBia8GAzu84hKBQqg2cLi3Os9fircBao3Vf4Pz8N5KUAtyRrKMmpS796v
-         /jzD90nz5qtclnAT5XBtd32AM06BFG75WMiHKcYBiVTH6URJrMrqJPyqojgpQA74Oizp
-         BhyFzMFUL/qJxlIhWzaSU8k5WPd/sJvLx8IFKY13vQrm5sKbstbawkcxNqkUyv1M5+79
-         S4kA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Rr2Pmo9V1ip7mpaWN6TKvPgMKQ/gdhrNUf8Hfcj3w28=;
+        b=JeLiSXeWD5kKcICYxtuINTuI83kExyBVAByVqzorbfaPrFzMIUkdbtdcIl/7iWa24/
+         ynamBKsxBYq9g4YE2enYvNTCrozTaFhif0QQrPXVGABzDw3vNaRhPzXtQxLuGtLpU07l
+         JbjqVVcIIUw01hjT6uJrmwM0b9KPkpeTdtJQIONntn5AJAHIERliOsgzOs517JXXMocF
+         oSNx8zbP3bzrKtQ+Q0U/FUvc7YXgWsZeX/rjoZmwbweV+9eak2buR2/m5cRHFRd6Vn06
+         SJnFMOdEdzDr6BbtOa+kdaB0xspbzqqyZDPdq8UuZ0qscd1bJ+v6oE5oZKkm9UX5LLzW
+         Iwvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=pJ6Nu6ke0tEeP4WGcPqc987CZlnioHDjGxMs6lV8f9E=;
-        b=Y4G/6nQAqsSBN+cGOC/RhfmLcgm7pRyGlfFTvlAnTAmvsT1HnqX26L1n9wAQBydoxS
-         Gq2zJ+7NWXjSLyC0HNOzff4MViJRYfGY4CfRCTtozdBQX1NJBHoqhkmAd1DxDnruBish
-         3Zpd8J9xwF7ma8tk/xJnRmCx2E07/z+NWLdr7cqM2tR1zZCRkUa4MXLKFUWl/LEjyu57
-         V25DJvg3jozuGEJr1UgighyES+1KYdXhytFX9O9w5Db6gfRhIRncKKOaTFSdEgDSq1j1
-         IzVb7Tn7TeWcBt8/7GDJQqeCnZlhupANBjukSCjjtUtNpaeN5BUuQkCqRagsRT26bBnx
-         5YmA==
-X-Gm-Message-State: ACgBeo0pbu1Ho4yAPu4/Cx3TmI9+GM7DAyvQZPoge1hAbygXDY6wJLDb
-        WEF3Rys2/+jfi0Pceyt8xPeNu7pDOs4=
-X-Google-Smtp-Source: AA6agR4Jf6cAWJmRxZWXJAKkGZcUmDj5pU9rcJVMpTatG/Mhkci4gjpgX6IUOKYifkYAKRHj4Lwjmw==
-X-Received: by 2002:a05:6402:27c6:b0:43d:6fab:146e with SMTP id c6-20020a05640227c600b0043d6fab146emr2241308ede.376.1659622894256;
-        Thu, 04 Aug 2022 07:21:34 -0700 (PDT)
-Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id r10-20020aa7c14a000000b0043bc33530ddsm727945edp.32.2022.08.04.07.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 07:21:33 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 6/6] test/zc: test short zc send
-Date:   Thu,  4 Aug 2022 15:20:25 +0100
-Message-Id: <6ee389d6b720356ec2a8c677a34a852c761c1627.1659622771.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <cover.1659622771.git.asml.silence@gmail.com>
-References: <cover.1659622771.git.asml.silence@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Rr2Pmo9V1ip7mpaWN6TKvPgMKQ/gdhrNUf8Hfcj3w28=;
+        b=vtJAx7yZ5gBajI8qv9T8PZgKXWN/SXoU+z3WPkAsbXJA9HHAE3vYnASkPNSOhu4N1+
+         Gi05zKahiBvDkmpd+d7QDBMNh/IlKpLgDWggwVvQdEWED/K5DeWAJ1dXpYmhJ3zBA6Nt
+         PPYHH7OJG4nwmMPP6RRk/0mDkzTaTy4y5RXfZXdVR29R348MJWxux4MBVAGRWfRedsRl
+         2hXRUrTYRO4vVxWmZtzA1egcaiDR2rVHs7b+/BAmhCIXKAIFqD3egJq35Elx9vD5sfxh
+         s3RyMzgLX3AzOmA7oSVgy7Hu6k+IYMBa3aM8+0j5RuIaMZXs9EDTCNe/CA+6CLlPqZ+P
+         /0mA==
+X-Gm-Message-State: ACgBeo3SouliLRDHYAJ/WLBZKBCFiNXoR04M7CUaTb0YUGodttrZj+aS
+        hdNbcE8pvmEyFHWmszbVLhPzng==
+X-Google-Smtp-Source: AA6agR6ya5W9EiMXXKHhiSITfTpXmFpxuzceNoHfF8stnLD/15dphS0KEkGx6o/Lc1lNBXuUKRvaIg==
+X-Received: by 2002:a17:902:e74a:b0:16e:d768:158e with SMTP id p10-20020a170902e74a00b0016ed768158emr2123220plf.12.1659623549147;
+        Thu, 04 Aug 2022 07:32:29 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id i15-20020a170902c94f00b0016beceac426sm1071892pla.138.2022.08.04.07.32.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Aug 2022 07:32:28 -0700 (PDT)
+Message-ID: <5756a75e-ea84-a04b-be07-90e7ee6626d6@kernel.dk>
+Date:   Thu, 4 Aug 2022 08:32:27 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2] audit, io_uring, io-wq: Fix memory leak in
+ io_sq_thread() and io_wqe_worker()
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>, Peilin Ye <yepeilin.cs@gmail.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Eric Paris <eparis@redhat.com>,
+        Peilin Ye <peilin.ye@bytedance.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com
+References: <20220803050230.30152-1-yepeilin.cs@gmail.com>
+ <20220803222343.31673-1-yepeilin.cs@gmail.com>
+ <CAHC9VhSjA444kYPEsBwWz3fuvY7ohmYb-HKWej4EmBy4mbS4Fw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHC9VhSjA444kYPEsBwWz3fuvY7ohmYb-HKWej4EmBy4mbS4Fw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Zerocopy send should hide short writes for stream sockets, test it.
+On 8/4/22 7:51 AM, Paul Moore wrote:
+> On Wed, Aug 3, 2022 at 6:24 PM Peilin Ye <yepeilin.cs@gmail.com> wrote:
+>>
+>> From: Peilin Ye <peilin.ye@bytedance.com>
+>>
+>> Currently @audit_context is allocated twice for io_uring workers:
+>>
+>>   1. copy_process() calls audit_alloc();
+>>   2. io_sq_thread() or io_wqe_worker() calls audit_alloc_kernel() (which
+>>      is effectively audit_alloc()) and overwrites @audit_context,
+>>      causing:
+>>
+>>   BUG: memory leak
+>>   unreferenced object 0xffff888144547400 (size 1024):
+>> <...>
+>>     hex dump (first 32 bytes):
+>>       00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>>       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>     backtrace:
+>>       [<ffffffff8135cfc3>] audit_alloc+0x133/0x210
+>>       [<ffffffff81239e63>] copy_process+0xcd3/0x2340
+>>       [<ffffffff8123b5f3>] create_io_thread+0x63/0x90
+>>       [<ffffffff81686604>] create_io_worker+0xb4/0x230
+>>       [<ffffffff81686f68>] io_wqe_enqueue+0x248/0x3b0
+>>       [<ffffffff8167663a>] io_queue_iowq+0xba/0x200
+>>       [<ffffffff816768b3>] io_queue_async+0x113/0x180
+>>       [<ffffffff816840df>] io_req_task_submit+0x18f/0x1a0
+>>       [<ffffffff816841cd>] io_apoll_task_func+0xdd/0x120
+>>       [<ffffffff8167d49f>] tctx_task_work+0x11f/0x570
+>>       [<ffffffff81272c4e>] task_work_run+0x7e/0xc0
+>>       [<ffffffff8125a688>] get_signal+0xc18/0xf10
+>>       [<ffffffff8111645b>] arch_do_signal_or_restart+0x2b/0x730
+>>       [<ffffffff812ea44e>] exit_to_user_mode_prepare+0x5e/0x180
+>>       [<ffffffff844ae1b2>] syscall_exit_to_user_mode+0x12/0x20
+>>       [<ffffffff844a7e80>] do_syscall_64+0x40/0x80
+>>
+>> Then,
+>>
+>>   3. io_sq_thread() or io_wqe_worker() frees @audit_context using
+>>      audit_free();
+>>   4. do_exit() eventually calls audit_free() again, which is okay
+>>      because audit_free() does a NULL check.
+>>
+>> As suggested by Paul Moore, fix it by deleting audit_alloc_kernel() and
+>> redundant audit_free() calls.
+>>
+>> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+>> Suggested-by: Paul Moore <paul@paul-moore.com>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Peilin Ye <peilin.ye@bytedance.com>
+>> ---
+>> Change since v1:
+>>   - Delete audit_alloc_kernel() (Paul Moore)
+>>
+>>  fs/io-wq.c            |  3 ---
+>>  fs/io_uring.c         |  4 ----
+>>  include/linux/audit.h |  5 -----
+>>  kernel/auditsc.c      | 25 -------------------------
+>>  4 files changed, 37 deletions(-)
+> 
+> This looks good to me, thanks!  Although it looks like the io_uring
+> related changes will need to be applied by hand as they are pointing
+> to the old layout under fs/ as opposed to the newer layout in
+> io_uring/ introduced during this merge window.
+> 
+> Jens, did you want to take this via the io_uring tree or should I take
+> it via the audit tree?  If the latter, an ACK would be appreciated, if
+> the former my ACK is below.
+> 
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/send-zerocopy.c | 34 ++++++++++++++++++++++++++++------
- 1 file changed, 28 insertions(+), 6 deletions(-)
+Probably better if I take it, since I need to massage it into the
+current tree anyway. We can then use this one as the base for the stable
+backports that are going to be required.
 
-diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index 617e7a0..307c114 100644
---- a/test/send-zerocopy.c
-+++ b/test/send-zerocopy.c
-@@ -54,7 +54,7 @@
- 
- static int seqs[NR_SLOTS];
- static char *tx_buffer, *rx_buffer;
--static struct iovec buffers_iov[2];
-+static struct iovec buffers_iov[3];
- 
- static inline bool tag_userdata(__u64 user_data)
- {
-@@ -662,7 +662,7 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 	for (i = 0; i < nr_reqs; i++) {
- 		bool cur_fixed_buf = fixed_buf;
- 		size_t cur_size = chunk_size;
--		int msg_flags = 0;
-+		int msg_flags = MSG_WAITALL;
- 
- 		if (mix_register)
- 			cur_fixed_buf = rand() & 1;
-@@ -791,15 +791,26 @@ static int test_inet_send(struct io_uring *ring)
- 			return 1;
- 		}
- 
--		for (i = 0; i < 64; i++) {
-+		for (i = 0; i < 128; i++) {
- 			bool fixed_buf = i & 1;
- 			struct sockaddr_storage *addr_arg = (i & 2) ? &addr : NULL;
- 			size_t size = (i & 4) ? 137 : 4096;
- 			bool cork = i & 8;
- 			bool mix_register = i & 16;
- 			bool aligned = i & 32;
-+			bool large_buf = i & 64;
- 			int buf_idx = aligned ? 0 : 1;
- 
-+			if (!tcp || !large_buf)
-+				continue;
-+			if (large_buf) {
-+				buf_idx = 2;
-+				size = buffers_iov[buf_idx].iov_len;
-+				if (!aligned || !tcp)
-+					continue;
-+			}
-+			if (!buffers_iov[buf_idx].iov_base)
-+				continue;
- 			if (tcp && cork)
- 				continue;
- 			if (mix_register && (!cork || fixed_buf))
-@@ -829,22 +840,33 @@ int main(int argc, char *argv[])
- {
- 	struct io_uring ring;
- 	int i, ret, sp[2];
--	size_t len = 8096;
-+	size_t len;
- 
- 	if (argc > 1)
- 		return T_EXIT_SKIP;
- 
-+	len = 1U << 25; /* 32MB, should be enough to trigger a short send */
- 	tx_buffer = aligned_alloc(4096, len);
- 	rx_buffer = aligned_alloc(4096, len);
-+	if (tx_buffer && rx_buffer) {
-+		buffers_iov[2].iov_base = tx_buffer;
-+		buffers_iov[2].iov_len = len;
-+	} else {
-+		printf("skip large buffer tests, can't alloc\n");
-+
-+		len = 8192;
-+		tx_buffer = aligned_alloc(4096, len);
-+		rx_buffer = aligned_alloc(4096, len);
-+	}
- 	if (!tx_buffer || !rx_buffer) {
- 		fprintf(stderr, "can't allocate buffers\n");
- 		return T_EXIT_FAIL;
- 	}
- 
- 	buffers_iov[0].iov_base = tx_buffer;
--	buffers_iov[0].iov_len = len;
-+	buffers_iov[0].iov_len = 8192;
- 	buffers_iov[1].iov_base = tx_buffer + BUFFER_OFFSET;
--	buffers_iov[1].iov_len = len - BUFFER_OFFSET - 13;
-+	buffers_iov[1].iov_len = 8192 - BUFFER_OFFSET - 13;
- 
- 	ret = io_uring_queue_init(32, &ring, 0);
- 	if (ret) {
 -- 
-2.37.0
+Jens Axboe
 

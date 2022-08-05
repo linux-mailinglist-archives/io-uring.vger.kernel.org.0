@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDD3D58AE17
-	for <lists+io-uring@lfdr.de>; Fri,  5 Aug 2022 18:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F6958AE0D
+	for <lists+io-uring@lfdr.de>; Fri,  5 Aug 2022 18:26:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241098AbiHEQ0F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Aug 2022 12:26:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
+        id S240789AbiHEQZ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Aug 2022 12:25:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241115AbiHEQZq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Aug 2022 12:25:46 -0400
+        with ESMTP id S237496AbiHEQZp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 5 Aug 2022 12:25:45 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE1B1FD
-        for <io-uring@vger.kernel.org>; Fri,  5 Aug 2022 09:25:11 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 275G6sTQ012179
-        for <io-uring@vger.kernel.org>; Fri, 5 Aug 2022 09:25:11 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 413D174DE0
+        for <io-uring@vger.kernel.org>; Fri,  5 Aug 2022 09:25:01 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 275G77NA012154
+        for <io-uring@vger.kernel.org>; Fri, 5 Aug 2022 09:25:01 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=/ZWLqbL5tGSYE5Rcc02OrOw2EnF/iFGjGINklpZXyq8=;
- b=gQ1S6EffymZ1w7OH/pjBevA/cscGar7djsJcGQaB/vIz3x0MZAGdtoHX7Jhibe/IrZH4
- sO5iWYijReq3w6x/xavEVCu8+7oCPsriZh91mGmDIghvRaVWI6UtwvtM+jzf36cV+S4g
- l5MRwaDQ3ydjQij8SJAjAsNG8e7jXq0ND0A= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hs3cf1d84-13
+ bh=IjuZoeUQC57jrcsrdgxD4iuq+Q5XY6eRuRoh8MI0tK4=;
+ b=Spg2K299ay/HYxmGKWEv8haObNFKtg3SHkVpqnBmHeoZGVjs7Dre0lRRGdsWl99ds924
+ H2WcH/ntK7xxTvVgNjLNv6NxumRWlJTkZ+X491fvCCzlj5gakbl/Tn0+Qt73KiKM50Nt
+ Sl3QR3AukPa3Oh1isdy+JUjU3fD6iSckovw= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hrq2vmmgf-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 05 Aug 2022 09:25:11 -0700
-Received: from twshared22934.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Fri, 05 Aug 2022 09:25:00 -0700
+Received: from twshared33626.07.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Fri, 5 Aug 2022 09:25:02 -0700
+ 15.1.2375.28; Fri, 5 Aug 2022 09:24:59 -0700
 Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 9F1D7703750A; Fri,  5 Aug 2022 09:24:46 -0700 (PDT)
+        id E99A6703750C; Fri,  5 Aug 2022 09:24:46 -0700 (PDT)
 From:   Keith Busch <kbusch@fb.com>
 To:     <linux-nvme@lists.infradead.org>, <linux-block@vger.kernel.org>,
         <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
@@ -41,9 +41,9 @@ CC:     <axboe@kernel.dk>, <hch@lst.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Kernel Team <Kernel-team@fb.com>,
         Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv3 5/7] io_uring: introduce file slot release helper
-Date:   Fri, 5 Aug 2022 09:24:42 -0700
-Message-ID: <20220805162444.3985535-6-kbusch@fb.com>
+Subject: [PATCHv3 6/7] io_uring: add support for dma pre-mapping
+Date:   Fri, 5 Aug 2022 09:24:43 -0700
+Message-ID: <20220805162444.3985535-7-kbusch@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220805162444.3985535-1-kbusch@fb.com>
 References: <20220805162444.3985535-1-kbusch@fb.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 5VRWP6vKVrpLGPoT0FvcsMJ2iI8Vk5EJ
-X-Proofpoint-GUID: 5VRWP6vKVrpLGPoT0FvcsMJ2iI8Vk5EJ
+X-Proofpoint-GUID: 1UpuJMC3dQvPIRWEAfw08St1bCE-bukk
+X-Proofpoint-ORIG-GUID: 1UpuJMC3dQvPIRWEAfw08St1bCE-bukk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-08-05_09,2022-08-05_01,2022-06-22_01
@@ -69,128 +69,405 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Keith Busch <kbusch@kernel.org>
 
-Releasing the pre-registered file follows a repeated pattern. Introduce
-a helper to make it easier to add more complexity to this resource in
-the future.
+Provide a new register operation that can request to pre-map a known
+bvec to the requested fixed file's specific implementation. If
+successful, io_uring will use the returned dma tag for future fixed
+buffer requests to the same file.
 
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- io_uring/filetable.c | 33 +++++++++++++++++++++------------
- io_uring/filetable.h |  3 +++
- io_uring/rsrc.c      |  5 +----
- 3 files changed, 25 insertions(+), 16 deletions(-)
+ include/linux/io_uring_types.h |   2 +
+ include/uapi/linux/io_uring.h  |  12 +++
+ io_uring/filetable.c           |   7 +-
+ io_uring/filetable.h           |   7 +-
+ io_uring/io_uring.c            | 139 +++++++++++++++++++++++++++++++++
+ io_uring/net.c                 |   2 +-
+ io_uring/rsrc.c                |  22 ++++--
+ io_uring/rsrc.h                |  10 ++-
+ io_uring/rw.c                  |   2 +-
+ 9 files changed, 188 insertions(+), 15 deletions(-)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
+s.h
+index f7fab3758cb9..f62ea17cc480 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -23,6 +23,8 @@ struct io_wq_work {
+ 	int cancel_seq;
+ };
+=20
++struct io_mapped_ubuf;
++
+ struct io_fixed_file {
+ 	/* file * with additional FFS_* flags */
+ 	unsigned long file_ptr;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
+h
+index 1463cfecb56b..daacbe899d1d 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -485,6 +485,10 @@ enum {
+ 	IORING_REGISTER_NOTIFIERS		=3D 26,
+ 	IORING_UNREGISTER_NOTIFIERS		=3D 27,
+=20
++	/* dma map registered buffers */
++	IORING_REGISTER_MAP_BUFFERS		=3D 28,
++	IORING_REGISTER_UNMAP_BUFFERS		=3D 29,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST
+ };
+@@ -661,4 +665,12 @@ struct io_uring_recvmsg_out {
+ 	__u32 flags;
+ };
+=20
++struct io_uring_map_buffers {
++	__s32	fd;
++	__s32	buf_start;
++	__s32	buf_end;
++	__u32	flags;
++	__u64	rsvd[2];
++};
++
+ #endif
 diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index 7b473259f3f4..1b8db1918678 100644
+index 1b8db1918678..5ca2f27f317f 100644
 --- a/io_uring/filetable.c
 +++ b/io_uring/filetable.c
-@@ -76,19 +76,13 @@ static int io_install_fixed_file(struct io_ring_ctx *=
-ctx, struct file *file,
- 	file_slot =3D io_fixed_file_slot(&ctx->file_table, slot_index);
-=20
- 	if (file_slot->file_ptr) {
--		struct file *old_file;
--
- 		ret =3D io_rsrc_node_switch_start(ctx);
- 		if (ret)
- 			goto err;
-=20
--		old_file =3D (struct file *)(file_slot->file_ptr & FFS_MASK);
--		ret =3D io_queue_rsrc_removal(ctx->file_data, slot_index,
--					    ctx->rsrc_node, old_file);
-+		ret =3D io_file_slot_queue_removal(ctx, file_slot);
- 		if (ret)
- 			goto err;
--		file_slot->file_ptr =3D 0;
--		io_file_bitmap_clear(&ctx->file_table, slot_index);
- 		needs_switch =3D true;
- 	}
-=20
-@@ -148,7 +142,6 @@ int io_fixed_fd_install(struct io_kiocb *req, unsigne=
-d int issue_flags,
- int io_fixed_fd_remove(struct io_ring_ctx *ctx, unsigned int offset)
- {
- 	struct io_fixed_file *file_slot;
--	struct file *file;
+@@ -189,9 +189,10 @@ int io_file_slot_queue_removal(struct io_ring_ctx *c=
+tx,
+ 	struct file *file;
  	int ret;
 =20
- 	if (unlikely(!ctx->file_data))
-@@ -164,13 +157,10 @@ int io_fixed_fd_remove(struct io_ring_ctx *ctx, uns=
-igned int offset)
- 	if (!file_slot->file_ptr)
- 		return -EBADF;
-=20
 -	file =3D (struct file *)(file_slot->file_ptr & FFS_MASK);
--	ret =3D io_queue_rsrc_removal(ctx->file_data, offset, ctx->rsrc_node, f=
-ile);
-+	ret =3D io_file_slot_queue_removal(ctx, file_slot);
+-	ret =3D io_queue_rsrc_removal(ctx->file_data, slot_index,
+-				    ctx->rsrc_node, file);
++	file =3D io_file_from_fixed(file_slot);
++	io_dma_unmap_file(ctx, file_slot);
++	ret =3D io_queue_rsrc_removal(ctx->file_data, slot_index, ctx->rsrc_nod=
+e,
++				    file);
  	if (ret)
  		return ret;
 =20
--	file_slot->file_ptr =3D 0;
--	io_file_bitmap_clear(&ctx->file_table, offset);
- 	io_rsrc_node_switch(ctx, ctx->file_data);
- 	return 0;
+diff --git a/io_uring/filetable.h b/io_uring/filetable.h
+index e52ecf359199..3b2aae5bff76 100644
+--- a/io_uring/filetable.h
++++ b/io_uring/filetable.h
+@@ -58,12 +58,17 @@ io_fixed_file_slot(struct io_file_table *table, unsig=
+ned i)
+ 	return &table->files[i];
  }
-@@ -191,3 +181,22 @@ int io_register_file_alloc_range(struct io_ring_ctx =
-*ctx,
- 	io_file_table_set_alloc_range(ctx, range.off, range.len);
- 	return 0;
- }
-+
-+int io_file_slot_queue_removal(struct io_ring_ctx *ctx,
-+			       struct io_fixed_file *file_slot)
+=20
++static inline struct file *io_file_from_fixed(struct io_fixed_file *f)
 +{
-+	u32 slot_index =3D file_slot - ctx->file_table.files;
-+	struct file *file;
++	return (struct file *) (f->file_ptr & FFS_MASK);
++}
++
+ static inline struct file *io_file_from_index(struct io_file_table *tabl=
+e,
+ 					      int index)
+ {
+ 	struct io_fixed_file *slot =3D io_fixed_file_slot(table, index);
+=20
+-	return (struct file *) (slot->file_ptr & FFS_MASK);
++	return io_file_from_fixed(slot);
+ }
+=20
+ static inline void io_fixed_file_set(struct io_fixed_file *file_slot,
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index b54218da075c..7b44395877a3 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3681,6 +3681,133 @@ static __cold int io_register_iowq_max_workers(st=
+ruct io_ring_ctx *ctx,
+ 	return ret;
+ }
+=20
++static int get_map_range(struct io_ring_ctx *ctx,
++			 struct io_uring_map_buffers *map, void __user *arg)
++{
 +	int ret;
 +
-+	file =3D (struct file *)(file_slot->file_ptr & FFS_MASK);
-+	ret =3D io_queue_rsrc_removal(ctx->file_data, slot_index,
-+				    ctx->rsrc_node, file);
-+	if (ret)
++	if (copy_from_user(map, arg, sizeof(*map)))
++		return -EFAULT;
++	if (map->flags || map->rsvd[0] || map->rsvd[1])
++		return -EINVAL;
++	if (map->fd >=3D ctx->nr_user_files)
++		return -EINVAL;
++	if (map->buf_start < 0)
++		return -EINVAL;
++	if (map->buf_start >=3D ctx->nr_user_bufs)
++		return -EINVAL;
++	if (map->buf_end > ctx->nr_user_bufs)
++		map->buf_end =3D ctx->nr_user_bufs;
++
++	ret =3D map->buf_end - map->buf_start;
++	if (ret <=3D 0)
++		return -EINVAL;
++
++	return ret;
++}
++
++void io_dma_unmap(struct io_mapped_ubuf *imu)
++{
++	if (!imu->dma_tag)
++		return;
++
++	file_dma_unmap(imu->dma_file, imu->dma_tag);
++	imu->dma_file =3D NULL;
++	imu->dma_tag =3D NULL;
++}
++
++void io_dma_unmap_file(struct io_ring_ctx *ctx, struct io_fixed_file *fi=
+le_slot)
++{
++	struct file *file;
++	int i;
++
++	if (!file_slot->file_ptr)
++		return;
++
++	file =3D io_file_from_fixed(file_slot);
++	for (i =3D 0; i < ctx->nr_user_bufs; i++) {
++		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
++
++		if (!imu->dma_tag)
++			continue;
++
++		if (imu->dma_file =3D=3D file)
++			io_dma_unmap(imu);
++	}
++}
++
++static int io_register_unmap_buffers(struct io_ring_ctx *ctx, void __use=
+r *arg)
++{
++	struct io_uring_map_buffers map;
++	int i, ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++	ret =3D get_map_range(ctx, &map, arg);
++	if (ret < 0)
 +		return ret;
 +
-+	file_slot->file_ptr =3D 0;
-+	io_file_bitmap_clear(&ctx->file_table, slot_index);
++	for (i =3D map.buf_start; i < map.buf_end; i++) {
++		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
++
++		io_dma_unmap(imu);
++	}
 +
 +	return 0;
 +}
-diff --git a/io_uring/filetable.h b/io_uring/filetable.h
-index ff3a712e11bf..e52ecf359199 100644
---- a/io_uring/filetable.h
-+++ b/io_uring/filetable.h
-@@ -34,6 +34,9 @@ int io_fixed_fd_remove(struct io_ring_ctx *ctx, unsigne=
-d int offset);
- int io_register_file_alloc_range(struct io_ring_ctx *ctx,
- 				 struct io_uring_file_index_range __user *arg);
-=20
-+int io_file_slot_queue_removal(struct io_ring_ctx *ctx,
-+			       struct io_fixed_file *file_slot);
 +
- unsigned int io_file_get_flags(struct file *file);
++static int io_register_map_buffers(struct io_ring_ctx *ctx, void __user =
+*arg)
++{
++	struct io_uring_map_buffers map;
++	struct io_fixed_file *file_slot;
++	struct file *file;
++	int ret, i;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	ret =3D get_map_range(ctx, &map, arg);
++	if (ret < 0)
++		return ret;
++
++	file_slot =3D io_fixed_file_slot(&ctx->file_table,
++			array_index_nospec(map.fd, ctx->nr_user_files));
++	if (!file_slot->file_ptr)
++		return -EBADF;
++
++	file =3D io_file_from_fixed(file_slot);
++	if (!(file->f_flags & O_DIRECT))
++		return -EOPNOTSUPP;
++
++	for (i =3D map.buf_start; i < map.buf_end; i++) {
++		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
++		void *tag;
++
++		if (imu->dma_tag) {
++			ret =3D -EBUSY;
++			goto err;
++		}
++
++		tag =3D file_dma_map(file, imu->bvec, imu->nr_bvecs);
++		if (IS_ERR(tag)) {
++			ret =3D PTR_ERR(tag);
++			goto err;
++		}
++
++		imu->dma_tag =3D tag;
++		imu->dma_file =3D file;
++	}
++
++	return 0;
++err:
++	while (--i >=3D map.buf_start) {
++		struct io_mapped_ubuf *imu =3D ctx->user_bufs[i];
++
++		io_dma_unmap(imu);
++	}
++	return ret;
++}
++
+ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			       void __user *arg, unsigned nr_args)
+ 	__releases(ctx->uring_lock)
+@@ -3847,6 +3974,18 @@ static int __io_uring_register(struct io_ring_ctx =
+*ctx, unsigned opcode,
+ 			break;
+ 		ret =3D io_notif_unregister(ctx);
+ 		break;
++	case IORING_REGISTER_MAP_BUFFERS:
++		ret =3D -EINVAL;
++		if (!arg || nr_args !=3D 1)
++			break;
++		ret =3D io_register_map_buffers(ctx, arg);
++		break;
++	case IORING_REGISTER_UNMAP_BUFFERS:
++		ret =3D -EINVAL;
++		if (!arg || nr_args !=3D 1)
++			break;
++		ret =3D io_register_unmap_buffers(ctx, arg);
++		break;
+ 	default:
+ 		ret =3D -EINVAL;
+ 		break;
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 32fc3da04e41..2793fd7d99d5 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -977,7 +977,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issu=
+e_flags)
 =20
- static inline void io_file_bitmap_clear(struct io_file_table *table, int=
- bit)
+ 	if (zc->flags & IORING_RECVSEND_FIXED_BUF) {
+ 		ret =3D io_import_fixed(WRITE, &msg.msg_iter, req->imu,
+-					(u64)(uintptr_t)zc->buf, zc->len);
++					(u64)(uintptr_t)zc->buf, zc->len, NULL);
+ 		if (unlikely(ret))
+ 				return ret;
+ 	} else {
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 59704b9ac537..1f10eecad4d7 100644
+index 1f10eecad4d7..646e29bb904c 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -469,12 +469,9 @@ static int __io_sqe_files_update(struct io_ring_ctx =
-*ctx,
- 		file_slot =3D io_fixed_file_slot(&ctx->file_table, i);
+@@ -148,6 +148,7 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, =
+struct io_mapped_ubuf **slo
+ 			unpin_user_page(imu->bvec[i].bv_page);
+ 		if (imu->acct_pages)
+ 			io_unaccount_mem(ctx, imu->acct_pages);
++		io_dma_unmap(imu);
+ 		kvfree(imu);
+ 	}
+ 	*slot =3D NULL;
+@@ -809,12 +810,17 @@ void __io_sqe_files_unregister(struct io_ring_ctx *=
+ctx)
+ 	int i;
 =20
- 		if (file_slot->file_ptr) {
--			file =3D (struct file *)(file_slot->file_ptr & FFS_MASK);
--			err =3D io_queue_rsrc_removal(data, i, ctx->rsrc_node, file);
-+			err =3D io_file_slot_queue_removal(ctx, file_slot);
- 			if (err)
- 				break;
--			file_slot->file_ptr =3D 0;
--			io_file_bitmap_clear(&ctx->file_table, i);
- 			needs_switch =3D true;
- 		}
- 		if (fd !=3D -1) {
+ 	for (i =3D 0; i < ctx->nr_user_files; i++) {
+-		struct file *file =3D io_file_from_index(&ctx->file_table, i);
++		struct io_fixed_file *file_slot;
++		struct file *file;
+=20
+-		if (!file)
++		file_slot =3D io_fixed_file_slot(&ctx->file_table, i);
++		if (!file_slot->file_ptr)
+ 			continue;
+-		if (io_fixed_file_slot(&ctx->file_table, i)->file_ptr & FFS_SCM)
++		if (file_slot->file_ptr & FFS_SCM)
+ 			continue;
++
++		file =3D io_file_from_fixed(file_slot);
++		io_dma_unmap_file(ctx, file_slot);
+ 		io_file_bitmap_clear(&ctx->file_table, i);
+ 		fput(file);
+ 	}
+@@ -1282,6 +1288,7 @@ static int io_sqe_buffer_register(struct io_ring_ct=
+x *ctx, struct iovec *iov,
+ 	imu->ubuf =3D (unsigned long) iov->iov_base;
+ 	imu->ubuf_end =3D imu->ubuf + iov->iov_len;
+ 	imu->nr_bvecs =3D nr_pages;
++	imu->dma_tag =3D NULL;
+ 	*pimu =3D imu;
+ 	ret =3D 0;
+ done:
+@@ -1356,9 +1363,8 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx=
+, void __user *arg,
+ 	return ret;
+ }
+=20
+-int io_import_fixed(int ddir, struct iov_iter *iter,
+-			   struct io_mapped_ubuf *imu,
+-			   u64 buf_addr, size_t len)
++int io_import_fixed(int ddir, struct iov_iter *iter, struct io_mapped_ub=
+uf *imu,
++		    u64 buf_addr, size_t len, struct file *file)
+ {
+ 	u64 buf_end;
+ 	size_t offset;
+@@ -1376,6 +1382,10 @@ int io_import_fixed(int ddir, struct iov_iter *ite=
+r,
+ 	 * and advance us to the beginning.
+ 	 */
+ 	offset =3D buf_addr - imu->ubuf;
++	if (imu->dma_tag && file =3D=3D imu->dma_file) {
++		iov_iter_dma_tag(iter, ddir, imu->dma_tag, offset, len);
++		return 0;
++	}
+ 	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
+=20
+ 	if (offset) {
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index f3a9a177941f..ed3637d6a55d 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -50,6 +50,8 @@ struct io_mapped_ubuf {
+ 	u64		ubuf_end;
+ 	unsigned int	nr_bvecs;
+ 	unsigned long	acct_pages;
++	void		*dma_tag;
++	struct file	*dma_file;
+ 	struct bio_vec	bvec[];
+ };
+=20
+@@ -64,9 +66,11 @@ int io_queue_rsrc_removal(struct io_rsrc_data *data, u=
+nsigned idx,
+ void io_rsrc_node_switch(struct io_ring_ctx *ctx,
+ 			 struct io_rsrc_data *data_to_kill);
+=20
+-int io_import_fixed(int ddir, struct iov_iter *iter,
+-			   struct io_mapped_ubuf *imu,
+-			   u64 buf_addr, size_t len);
++int io_import_fixed(int ddir, struct iov_iter *iter, struct io_mapped_ub=
+uf *imu,
++		    u64 buf_addr, size_t len, struct file *file);
++
++void io_dma_unmap(struct io_mapped_ubuf *imu);
++void io_dma_unmap_file(struct io_ring_ctx *ctx, struct io_fixed_file *fi=
+le_slot);
+=20
+ void __io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 2b784795103c..9e2164d09adb 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -359,7 +359,7 @@ static struct iovec *__io_import_iovec(int ddir, stru=
+ct io_kiocb *req,
+ 	ssize_t ret;
+=20
+ 	if (opcode =3D=3D IORING_OP_READ_FIXED || opcode =3D=3D IORING_OP_WRITE=
+_FIXED) {
+-		ret =3D io_import_fixed(ddir, iter, req->imu, rw->addr, rw->len);
++		ret =3D io_import_fixed(ddir, iter, req->imu, rw->addr, rw->len, req->=
+file);
+ 		if (ret)
+ 			return ERR_PTR(ret);
+ 		return NULL;
 --=20
 2.30.2
 

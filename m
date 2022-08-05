@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92AC058AE10
-	for <lists+io-uring@lfdr.de>; Fri,  5 Aug 2022 18:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D78E258AE0B
+	for <lists+io-uring@lfdr.de>; Fri,  5 Aug 2022 18:26:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237496AbiHEQZ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 5 Aug 2022 12:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55960 "EHLO
+        id S241167AbiHEQZ6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 5 Aug 2022 12:25:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241015AbiHEQZp (ORCPT
+        with ESMTP id S240789AbiHEQZp (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 5 Aug 2022 12:25:45 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7782574DF7
-        for <io-uring@vger.kernel.org>; Fri,  5 Aug 2022 09:25:06 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 275G6sTG012179
-        for <io-uring@vger.kernel.org>; Fri, 5 Aug 2022 09:25:06 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A33E74362
+        for <io-uring@vger.kernel.org>; Fri,  5 Aug 2022 09:24:57 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 275G7biN003095
+        for <io-uring@vger.kernel.org>; Fri, 5 Aug 2022 09:24:56 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=SFDrbwl1OghudBrhZ8bM3Vo53Lyi9PUTsA+MOO0ackM=;
- b=K66/ajyfhoMGFqyKlRGwzYoQPV9ti373+Vl1CyXGcnEaSqcsa6LwkWBK/xibBpFnxwX1
- VcmWECqJXl6IondSLBp/qCnOLJgT91QouX7JZDwlVER7H1uFKx/MBwi1QxdMrvSw9aig
- fPxAwGQIf5cX2K6tZTsqhxiwQaxa2RUi5cM= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hs3cf1d84-5
+ bh=7eLK7n5MSmjwsNp02AHb8YY5HXvpcfFEurh3XLNu31E=;
+ b=GFCeQG1BSKObhcSU4vgJA4D+79FS9WYu9uXTAU77Ymcyq3KAaYSQ8+T2E9H2F5Wj8U1r
+ ISuWFaKvZC0GdEPM3+ETCUBDwMZ0WUwcS4nzhYCXCQ6ZpGNP93gi6b1njnTj6CerHn1V
+ FkRY1HJrbVe8lpCrqa0l72JTbm1fVAGR3Z0= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hrfvf84e9-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 05 Aug 2022 09:25:05 -0700
-Received: from twshared14818.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Fri, 05 Aug 2022 09:24:56 -0700
+Received: from twshared33626.07.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Fri, 5 Aug 2022 09:25:02 -0700
+ 15.1.2375.28; Fri, 5 Aug 2022 09:24:55 -0700
 Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 649997037501; Fri,  5 Aug 2022 09:24:45 -0700 (PDT)
+        id D1D317037505; Fri,  5 Aug 2022 09:24:45 -0700 (PDT)
 From:   Keith Busch <kbusch@fb.com>
 To:     <linux-nvme@lists.infradead.org>, <linux-block@vger.kernel.org>,
         <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
@@ -41,9 +41,9 @@ CC:     <axboe@kernel.dk>, <hch@lst.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Kernel Team <Kernel-team@fb.com>,
         Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv3 2/7] file: add ops to dma map bvec
-Date:   Fri, 5 Aug 2022 09:24:39 -0700
-Message-ID: <20220805162444.3985535-3-kbusch@fb.com>
+Subject: [PATCHv3 3/7] iov_iter: introduce type for preregistered dma tags
+Date:   Fri, 5 Aug 2022 09:24:40 -0700
+Message-ID: <20220805162444.3985535-4-kbusch@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220805162444.3985535-1-kbusch@fb.com>
 References: <20220805162444.3985535-1-kbusch@fb.com>
@@ -51,16 +51,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: GEgkQ6ts1_nVK0PwPhk4Z1wi0ja1yydM
-X-Proofpoint-GUID: GEgkQ6ts1_nVK0PwPhk4Z1wi0ja1yydM
+X-Proofpoint-GUID: WdZRghHV6nbKHzgijQa-v29J8dMmetcs
+X-Proofpoint-ORIG-GUID: WdZRghHV6nbKHzgijQa-v29J8dMmetcs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-05_09,2022-08-05_01,2022-06-22_01
+ definitions=2022-08-05_08,2022-08-05_01,2022-06-22_01
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -69,129 +68,133 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Keith Busch <kbusch@kernel.org>
 
-The same buffer may be used for many subsequent IO's. Instead of setting
-up the mapping per-IO, provide an interface that can allow a buffer to
-be premapped just once and referenced again later, and implement for the
-block device file.
+Introduce a new iov_iter type representing a pre-registered DMA address
+tag. The tag is an opaque cookie specific to the lower level driver that
+created it, and can be referenced at any arbitrary offset.
 
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- block/fops.c       | 20 ++++++++++++++++++++
- fs/file.c          | 15 +++++++++++++++
- include/linux/fs.h | 20 ++++++++++++++++++++
- 3 files changed, 55 insertions(+)
+ include/linux/uio.h |  9 +++++++++
+ lib/iov_iter.c      | 27 ++++++++++++++++++++++++---
+ 2 files changed, 33 insertions(+), 3 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index 29066ac5a2fa..db2d1e848f4b 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -670,6 +670,22 @@ static long blkdev_fallocate(struct file *file, int =
-mode, loff_t start,
- 	return error;
- }
-=20
-+#ifdef CONFIG_HAS_DMA
-+void *blkdev_dma_map(struct file *filp, struct bio_vec *bvec, int nr_vec=
-s)
-+{
-+	struct block_device *bdev =3D filp->private_data;
-+
-+	return block_dma_map(bdev, bvec, nr_vecs);
-+}
-+
-+void blkdev_dma_unmap(struct file *filp, void *dma_tag)
-+{
-+	struct block_device *bdev =3D filp->private_data;
-+
-+	return block_dma_unmap(bdev, dma_tag);
-+}
-+#endif
-+
- const struct file_operations def_blk_fops =3D {
- 	.open		=3D blkdev_open,
- 	.release	=3D blkdev_close,
-@@ -686,6 +702,10 @@ const struct file_operations def_blk_fops =3D {
- 	.splice_read	=3D generic_file_splice_read,
- 	.splice_write	=3D iter_file_splice_write,
- 	.fallocate	=3D blkdev_fallocate,
-+#ifdef CONFIG_HAS_DMA
-+	.dma_map	=3D blkdev_dma_map,
-+	.dma_unmap	=3D blkdev_dma_unmap,
-+#endif
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 34ba4a731179..a55e4b86413a 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -26,6 +26,7 @@ enum iter_type {
+ 	ITER_PIPE,
+ 	ITER_XARRAY,
+ 	ITER_DISCARD,
++	ITER_DMA_TAG,
  };
 =20
- static __init int blkdev_init(void)
-diff --git a/fs/file.c b/fs/file.c
-index 3bcc1ecc314a..767bf9d3205e 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1307,3 +1307,18 @@ int iterate_fd(struct files_struct *files, unsigne=
-d n,
- 	return res;
+ struct iov_iter_state {
+@@ -46,6 +47,7 @@ struct iov_iter {
+ 		const struct bio_vec *bvec;
+ 		struct xarray *xarray;
+ 		struct pipe_inode_info *pipe;
++		void *dma_tag;
+ 	};
+ 	union {
+ 		unsigned long nr_segs;
+@@ -85,6 +87,11 @@ static inline bool iov_iter_is_bvec(const struct iov_i=
+ter *i)
+ 	return iov_iter_type(i) =3D=3D ITER_BVEC;
  }
- EXPORT_SYMBOL(iterate_fd);
-+
-+#ifdef CONFIG_HAS_DMA
-+void *file_dma_map(struct file *file, struct bio_vec *bvec, int nr_vecs)
+=20
++static inline bool iov_iter_is_dma_tag(const struct iov_iter *i)
 +{
-+	if (file->f_op->dma_map)
-+		return file->f_op->dma_map(file, bvec, nr_vecs);
-+	return ERR_PTR(-EINVAL);
++	return iov_iter_type(i) =3D=3D ITER_DMA_TAG;
 +}
 +
-+void file_dma_unmap(struct file *file, void *dma_tag)
+ static inline bool iov_iter_is_pipe(const struct iov_iter *i)
+ {
+ 	return iov_iter_type(i) =3D=3D ITER_PIPE;
+@@ -229,6 +236,8 @@ void iov_iter_kvec(struct iov_iter *i, unsigned int d=
+irection, const struct kvec
+ 			unsigned long nr_segs, size_t count);
+ void iov_iter_bvec(struct iov_iter *i, unsigned int direction, const str=
+uct bio_vec *bvec,
+ 			unsigned long nr_segs, size_t count);
++void iov_iter_dma_tag(struct iov_iter *i, unsigned int direction, void *=
+dma_tag,
++			unsigned int dma_offset, size_t count);
+ void iov_iter_pipe(struct iov_iter *i, unsigned int direction, struct pi=
+pe_inode_info *pipe,
+ 			size_t count);
+ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t=
+ count);
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 507e732ef7cf..ebdf81473526 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1070,6 +1070,9 @@ void iov_iter_advance(struct iov_iter *i, size_t si=
+ze)
+ 		iov_iter_iovec_advance(i, size);
+ 	} else if (iov_iter_is_bvec(i)) {
+ 		iov_iter_bvec_advance(i, size);
++	} else if (iov_iter_is_dma_tag(i)) {
++		i->iov_offset +=3D size;
++		i->count -=3D size;
+ 	} else if (iov_iter_is_pipe(i)) {
+ 		pipe_advance(i, size);
+ 	} else if (unlikely(iov_iter_is_xarray(i))) {
+@@ -1201,6 +1204,21 @@ void iov_iter_bvec(struct iov_iter *i, unsigned in=
+t direction,
+ }
+ EXPORT_SYMBOL(iov_iter_bvec);
+=20
++void iov_iter_dma_tag(struct iov_iter *i, unsigned int direction,
++			void *dma_tag, unsigned int dma_offset,
++			size_t count)
 +{
-+	if (file->f_op->dma_unmap)
-+		return file->f_op->dma_unmap(file, dma_tag);
++	WARN_ON(direction & ~(READ | WRITE));
++	*i =3D (struct iov_iter){
++		.iter_type =3D ITER_DMA_TAG,
++		.data_source =3D direction,
++		.dma_tag =3D dma_tag,
++		.iov_offset =3D dma_offset,
++		.count =3D count
++	};
 +}
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9f131e559d05..8652bad763f3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2092,6 +2092,10 @@ struct dir_context {
- struct iov_iter;
- struct io_uring_cmd;
-=20
-+#ifdef CONFIG_HAS_DMA
-+struct bio_vec;
-+#endif
++EXPORT_SYMBOL(iov_iter_dma_tag);
 +
- struct file_operations {
- 	struct module *owner;
- 	loff_t (*llseek) (struct file *, loff_t, int);
-@@ -2134,6 +2138,10 @@ struct file_operations {
- 				   loff_t len, unsigned int remap_flags);
- 	int (*fadvise)(struct file *, loff_t, loff_t, int);
- 	int (*uring_cmd)(struct io_uring_cmd *ioucmd, unsigned int issue_flags)=
-;
-+#ifdef CONFIG_HAS_DMA
-+	void *(*dma_map)(struct file *, struct bio_vec *, int);
-+	void (*dma_unmap)(struct file *, void *);
-+#endif
- } __randomize_layout;
+ void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
+ 			struct pipe_inode_info *pipe,
+ 			size_t count)
+@@ -1335,6 +1353,9 @@ bool iov_iter_is_aligned(const struct iov_iter *i, =
+unsigned addr_mask,
+ 	if (iov_iter_is_bvec(i))
+ 		return iov_iter_aligned_bvec(i, addr_mask, len_mask);
 =20
- struct inode_operations {
-@@ -3595,4 +3603,16 @@ extern int vfs_fadvise(struct file *file, loff_t o=
-ffset, loff_t len,
- extern int generic_fadvise(struct file *file, loff_t offset, loff_t len,
- 			   int advice);
-=20
-+#ifdef CONFIG_HAS_DMA
-+void *file_dma_map(struct file *file, struct bio_vec *bvec, int nr_vecs)=
-;
-+void file_dma_unmap(struct file *file, void *dma_tag);
-+#else
-+static inline void *file_dma_map(struct file *file, struct bio_vec *bvec=
-,
-+				 int nr_vecs)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
-+static inline void file_dma_unmap(struct file *file, void *dma_tag) {}
-+#endif
++	if (iov_iter_is_dma_tag(i))
++		return !(i->iov_offset & addr_mask);
 +
- #endif /* _LINUX_FS_H */
+ 	if (iov_iter_is_pipe(i)) {
+ 		unsigned int p_mask =3D i->pipe->ring_size - 1;
+ 		size_t size =3D i->count;
+@@ -2124,8 +2145,8 @@ EXPORT_SYMBOL(import_single_range);
+  */
+ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
+ {
+-	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
+-			 !iov_iter_is_kvec(i))
++	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i) &&
++			 !iov_iter_is_dma_tag(i)) && !iov_iter_is_kvec(i))
+ 		return;
+ 	i->iov_offset =3D state->iov_offset;
+ 	i->count =3D state->count;
+@@ -2141,7 +2162,7 @@ void iov_iter_restore(struct iov_iter *i, struct io=
+v_iter_state *state)
+ 	BUILD_BUG_ON(sizeof(struct iovec) !=3D sizeof(struct kvec));
+ 	if (iov_iter_is_bvec(i))
+ 		i->bvec -=3D state->nr_segs - i->nr_segs;
+-	else
++	else if (!iov_iter_is_dma_tag(i))
+ 		i->iov -=3D state->nr_segs - i->nr_segs;
+ 	i->nr_segs =3D state->nr_segs;
+ }
 --=20
 2.30.2
 

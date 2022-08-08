@@ -2,39 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7458558C45D
-	for <lists+io-uring@lfdr.de>; Mon,  8 Aug 2022 09:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 732BE58C643
+	for <lists+io-uring@lfdr.de>; Mon,  8 Aug 2022 12:20:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235769AbiHHHqD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Aug 2022 03:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
+        id S242535AbiHHKUk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Aug 2022 06:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241995AbiHHHpz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Aug 2022 03:45:55 -0400
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D00E0E2;
-        Mon,  8 Aug 2022 00:45:51 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=ziyangzhang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VLfdfxM_1659944747;
-Received: from 30.227.91.246(mailfrom:ZiyangZhang@linux.alibaba.com fp:SMTPD_---0VLfdfxM_1659944747)
-          by smtp.aliyun-inc.com;
-          Mon, 08 Aug 2022 15:45:48 +0800
-Message-ID: <ddf90347-5f71-031a-90a7-62da57a75c59@linux.alibaba.com>
-Date:   Mon, 8 Aug 2022 15:45:47 +0800
+        with ESMTP id S242496AbiHHKUh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Aug 2022 06:20:37 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C5864E1;
+        Mon,  8 Aug 2022 03:20:36 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id q30so10295743wra.11;
+        Mon, 08 Aug 2022 03:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=M0he5Go9fj5sZtod3L10U6cY98vEYvhLvSwdvfZFRy4=;
+        b=LG5qSNqT2JJX558617sZsTm/x1GVdc33O5C2ZvV9LFwSf0Taya3QKaq2FNjiT1gmXa
+         AO34vQAZY27gcplpKOG5AYWyOuQNFORHwsVKv/SZh1h72ITT60s7iF0KnDLeAp/EXh28
+         fTeoqglikt4zTo1yW1UkYcrysdR1yKPYFAxyQjC81W2nrJYMK4oclK9OWphrnDJ5pw47
+         9W3+qcd3fx7EhN0X/yMXvGcENFkZscwuSJFBb+MvJLaMZv13mriWR+vb3MYg88IiPvHG
+         HPb5z06HWUNDhnAyBxB+G0KaPQXQd96d5+PP+WLhl4xxqVDNzGW3YCI8FKdte+/VUfCW
+         vupQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=M0he5Go9fj5sZtod3L10U6cY98vEYvhLvSwdvfZFRy4=;
+        b=AbQdcMlEmVaa5BYv9LhjfPrcVMH390N+P+/gB/LlQAykDyx9ppNJNrdVsjhC+3XLKH
+         jr2BHAc3btRKkzhNsZYX7QSYHU7HCPzLD5aDAcDHiw1uqW5vFQl8wGMaxUljDVt+66wg
+         H4j5B+9Orkzbo09hDAgsqSGlyWDiC3QN6GG4YTwVt45bT2LW3cixquJpxDBAItyDIqB3
+         JOl6bs9oGxDisq3fmZM5WsyZIjxlMCgUuiovXkPDWb59F8ZfTMRFn8jQgPU0H/jpXTU9
+         3lq1dMnT2cb1LPSqVZfIarZZpnEHeOMfuBzY1nZF5ZRz3MawLkBQvUJ6IMtOSn1VRpQG
+         xqHQ==
+X-Gm-Message-State: ACgBeo1nnDekqN7gXoX8iLMhYyBXzI+9Cg0RzlHN/iRNAjDfEfolA++1
+        Pr8RlmTkf+c2i/6Tj/GPIuk=
+X-Google-Smtp-Source: AA6agR7ax8R8c9mQtUybOaqiiYYyNxIdrYTlId2y5BpG1dayZFvQX7I3r27NmErdCjerQN67iza3iw==
+X-Received: by 2002:a05:6000:1445:b0:220:7fcb:23a8 with SMTP id v5-20020a056000144500b002207fcb23a8mr10818474wrx.204.1659954034513;
+        Mon, 08 Aug 2022 03:20:34 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:c70])
+        by smtp.gmail.com with ESMTPSA id d14-20020adfe84e000000b0021badf3cb26sm13111677wrn.63.2022.08.08.03.20.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Aug 2022 03:20:34 -0700 (PDT)
+Message-ID: <f2e5d71b-7eb7-5103-28c2-5e39c3c25aed@gmail.com>
+Date:   Mon, 8 Aug 2022 11:14:44 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-From:   Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-Subject: [bug report] ublk: re-issued blk-mq request may reference a freed
- io_uring context
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCHv3 2/7] file: add ops to dma map bvec
 Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <Kernel-team@fb.com>,
+        Keith Busch <kbusch@kernel.org>
+References: <20220805162444.3985535-1-kbusch@fb.com>
+ <20220805162444.3985535-3-kbusch@fb.com>
+ <20220808002124.GG3861211@dread.disaster.area>
+ <YvBjRfy4XzzBajTX@casper.infradead.org>
+ <20220808021501.GH3861211@dread.disaster.area>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20220808021501.GH3861211@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -42,153 +83,84 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi, all
+On 8/8/22 03:15, Dave Chinner wrote:
+> On Mon, Aug 08, 2022 at 02:13:41AM +0100, Matthew Wilcox wrote:
+>> On Mon, Aug 08, 2022 at 10:21:24AM +1000, Dave Chinner wrote:
+>>>> +#ifdef CONFIG_HAS_DMA
+>>>> +	void *(*dma_map)(struct file *, struct bio_vec *, int);
+>>>> +	void (*dma_unmap)(struct file *, void *);
+>>>> +#endif
+>>>
+>>> This just smells wrong. Using a block layer specific construct as a
+>>> primary file operation parameter shouts "layering violation" to me.
+>>
+>> A bio_vec is also used for networking; it's in disguise as an skb_frag,
+>> but it's there.
+> 
+> Which is just as awful. Just because it's done somewhere else
+> doesn't make it right.
+> 
+>>> What we really need is a callout that returns the bdevs that the
+>>> struct file is mapped to (one, or many), so the caller can then map
+>>> the memory addresses to the block devices itself. The caller then
+>>> needs to do an {file, offset, len} -> {bdev, sector, count}
+>>> translation so the io_uring code can then use the correct bdev and
+>>> dma mappings for the file offset that the user is doing IO to/from.
+>>
+>> I don't even know if what you're proposing is possible.  Consider a
+>> network filesystem which might transparently be moved from one network
+>> interface to another.  I don't even know if the filesystem would know
+>> which network device is going to be used for the IO at the time of
+>> IO submission.
+> 
+> Sure, but nobody is suggesting we support direct DMA buffer mapping
+> and reuse for network devices right now, whereas we have working
+> code for block devices in front of us.
 
-We are running test on ublk to verify its stability. While running
-tests/generic/002 in ublksrv[1] which kills ublksrv daemon while
-running fio at the same time, we find a null-deference error.
+Networking is not so far away, with zerocopy tx landed the next target
+is peer-to-peer, i.e. transfers from a device memory. It's nothing
+new and was already tried out quite some time ago, but to be fair,
+it's not ready yet as this patchset. In any case, they have to use
+common infra, which means we can't rely on struct block_device.
 
-[1] https://github.com/ming1/ubdsrv
+The first idea was to have a callback returning a struct device
+pointer and failing when the file can have multiple devices or change
+them on the fly. Networking already has a hook to assign a device to
+a socket, we just need to make it's immutable after the assignment.
+ From the userspace perspective, if host memory mapping failed it can
+be re-registered as a normal io_uring registered buffer with no change
+in the API on the submission side.
 
-***********************
-DMESG:
-***********************
+I like the idea to reserve ranges in the API for future use, but
+as I understand it, io_uring would need to do device lookups based on
+the I/O offset, which doesn't sound fast and I'm not convinced we want
+to go this way now. Could work if the specified range covers only one
+device but needs knowledge of how it's chunked and doesn't go well
+when devices alternate every 4KB or so.
 
-[ 1396.090924] BUG: kernel NULL pointer dereference, address: 0000000000000000
-[ 1396.098770] ublk_ctrl_uring_cmd: cmd done ret 0 cmd_op 2, dev id 0 qid 65535
-[ 1396.105714] #PF: supervisor write access in kernel mode
-[ 1396.105716] #PF: error_code(0x0002) - not-present page
-[ 1396.105718] PGD 800000013c762067 P4D 800000013c762067 PUD 634c8d067 PMD 0 
-[ 1396.132122] Oops: 0002 [#1] PREEMPT SMP PTI
-[ 1396.136613] CPU: 33 PID: 27341 Comm: kworker/33:2 Kdump: loaded Tainted: G S         OE      5.19.0 #121
-[ 1396.146382] Hardware name: Inventec     K900G3-10G/B900G3, BIOS A2.20 06/23/2017
-[ 1396.154069] Workqueue: events io_fallback_req_func
-[ 1396.159169] RIP: 0010:percpu_ref_get_many+0x23/0x30
-[ 1396.164360] Code: 0f 1f 80 00 00 00 00 55 48 89 f5 53 48 89 fb e8 83 93 be ff 48 8b 03 a8 03 75 0b 65 48 01 28 5b 5d e9 b1 f5 be ff 48 8b 43 08 <f0> 48 01 28 5b 5d e9 a2 f5 be ff 66 90 41 54 49 89 d4 55 48 89 f5
-[ 1396.183754] RSP: 0018:ffffae20e37c7e48 EFLAGS: 00010206
-[ 1396.189301] RAX: 0000000000000000 RBX: ffff9e966730d800 RCX: 0000000000000000
-[ 1396.196754] RDX: ffff9e9651ca9180 RSI: 0000000000000001 RDI: ffff9e966730d800
-[ 1396.204214] RBP: 0000000000000001 R08: 61626c6c61665f6f R09: 665f7165725f6b63
-[ 1396.211671] R10: 666562203a636e75 R11: 7265746920657269 R12: ffff9e965da36700
-[ 1396.219143] R13: ffff9e965da36788 R14: 0000000000000000 R15: ffff9ed4bf876905
-[ 1396.226607] FS:  0000000000000000(0000) GS:ffff9ed4bf840000(0000) knlGS:0000000000000000
-[ 1396.235026] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1396.241110] CR2: 0000000000000000 CR3: 000000068cf9c001 CR4: 00000000003706e0
-[ 1396.248587] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 1396.256054] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 1396.263523] Call Trace:
-[ 1396.266313]  <TASK>
-[ 1396.268747]  io_fallback_req_func+0x61/0x126
-[ 1396.273354]  process_one_work+0x1df/0x3b0
-[ 1396.277705]  worker_thread+0x49/0x2e0
-[ 1396.281712]  ? rescuer_thread+0x390/0x390
-[ 1396.286060]  kthread+0xe5/0x110
-[ 1396.289534]  ? kthread_complete_and_exit+0x20/0x20
-[ 1396.294644]  ret_from_fork+0x1f/0x30
-[ 1396.298551]  </TASK>
-[ 1396.301055] Modules linked in: ublk_drv(OE) tcp_diag(E) udp_diag(E) inet_diag(E) ip6_tables(E) iptable_filter(E) ebtable_nat(E) ebtables(E) binfmt_misc(E) intel_rapl_msr(E) intel_rapl_common(E) iosf_mbi(E) x86_pkg_temp_thermal(E) coretemp(E) bonding(E) tls(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) aesni_intel(E) iTCO_wdt(E) crypto_simd(E) iTCO_vendor_support(E) cryptd(E) mxm_wmi(E) mei_me(E) i2c_i801(E) lpc_ich(E) pcspkr(E) sg(E) i2c_smbus(E) mfd_core(E) mei(E) acpi_ipmi(E) ipmi_si(E) ipmi_devintf(E) ipmi_msghandler(E) wmi(E) acpi_power_meter(E) ip_tables(E) ast(E) i2c_algo_bit(E) drm_vram_helper(E) drm_kms_helper(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) fb_sys_fops(E) drm_ttm_helper(E) ttm(E) crc32c_intel(E) drm(E) nvme(E) i2c_core(E) ixgbe(E) nvme_core(E) mdio(E) dca(E) sd_mod(E) t10_pi(E) crc64_rocksoft(E) crc64(E) ahci(E) libahci(E) libata(E) [last unloaded: ublk_drv]
-[ 1396.386209] CR2: 0000000000000000
-
-***********************
-DESCRIPTION 1:
-***********************
-
-Here in percpu_ref_get_many():atomic_long_add(nr, &ref->data->count),
-ref->data is actually freed because io_uring's ctx->refs is freed at that
-time. We analyze ublk_drv.c and find a reason, assume there is only one
-tag per blk-mq queue:
-
-      CPU 0                     CPU 1                        CPU2                       CPU3
-
-__ublk_rq_task_work()               
-
-io_uring_cmd_done(io->cmd)
-
-****task crash****                                                                           
-                                                                                  io_ring_exit_work()
-                                                                           /* Now io_uring ctx can be freed
-                                                                           since all ioucmd(only one) are done */
-                                                                                     
-
-                      ublk_daemon_monitor_work()               
-                 blk_mq_end_request(req, BLK_STS_IOERR);
-  
-                                              
-              
-                                                       ublk_queue_rq() /* fio re-issue req because of IO error */
-                                                      ubq_daemon_is_dying() /* NOT SEE PF_EXITING */
-                                                 io_uring_cmd_complete_in_task(io->cmd) /* the io_uring ctx is freed! */
-                                                    io_fallback_req_func() /* io_uring fallback */
-                                                     percpu_ref_get_many() /* null-deref! */
-
-***********************
-DESCRIPTION 2:
-***********************
+Another question is whether we want to have some kind of notion of
+device groups so the userspace doesn't have to register a buffer
+multiple times when the mapping can be shared b/w files.
 
 
-I describe the above data flow here again:
-(1) After the ioucmd are io_uring_cmd_done(), a crash happens.
+> What I want to see is broad-based generic block device based
+> filesysetm support, not niche functionality that can only work on a
+> single type of block device. Network filesystems and devices are a
+> *long* way from being able to do anything like this, so I don't see
+> a need to cater for them at this point in time.
+> 
+> When someone has a network device abstraction and network filesystem
+> that can do direct data placement based on that device abstraction,
+> then we can talk about the high level interface we should use to
+> drive it....
+> 
+>> I think a totally different model is needed where we can find out if
+>> the bvec contains pages which are already mapped to the device, and map
+>> them if they aren't.  That also handles a DM case where extra devices
+>> are hot-added to a RAID, for example.
+> 
+> I cannot form a picture of what you are suggesting from such a brief
+> description. Care to explain in more detail?
 
-(2) The io_uring context is freed (at least part
-    of it, e.g. ctx->refs) because we don't reference it anymore.
-
-(3) Then, monitor_work aborts the blk-mq request and fio re-tries
-    because of the I/O error.
-
-(4) After that, ublk_queue_rq() is called for the re-issued request
-    but it does not see PF_EXITING!(Since ublk_queue_rq() is called
-    in another task different from ubq_daemon or ioucmd's task)
-
-(5) io_uring_cmd_complete_in_task() is called, and the ioucmd is
-    still the old one because the tag does not change.
-
-(6) io_fallback_req_func(), and ref->data is NULL while calling
-    atomic_long_add(nr, &ref->data->count).
-
-The root cause is that:
-
-(1) io_uring_cmd_complete_in_task() does not
-    immediately try to call task_work_add(), but puts the ioucmd's
-    task_work into a llist for batching. If task_work_add() is called
-    immediately in ublk_queue_rq(), this situation can be avoided.
-
-(2) In ublk_drv.c:ublk_queue_rq(), check on PF_EXITING is added:
-
-	 if (unlikely(ubq_daemon_is_dying(ubq))) {
-  fail:
-	      	 mod_delayed_work(system_wq, &ubq->dev->monitor_work, 0);
-		 return BLK_STS_IOERR;
-	 }
-
-    However, this check on PF_EXITING is unsafe since ublk_queue_rq() runs in
-    another task other than ubq_daemon(ioucmd's task). ublk_queue_rq() may not
-    see PF_EXITING after the ubq_daemon(ioucmd's task) crashes. With this
-    check, the above null-deref error rarely happens. But if we comment it out,
-    We are more likely to trigger this error.
-
-***********************
-HOW TO REPRODUCE:
-***********************
-
-(1) Forbid check on PF_EXITING. In ublk_drv.c:ublk_queue_rq(), comment out:
-	
-	if (unlikely(ubq_daemon_is_dying(ubq))) {
- fail:
-		mod_delayed_work(system_wq, &ubq->dev->monitor_work, 0);
-		return BLK_STS_IOERR;
-	}
-
-    This makes sense because this check is unsafe and we are more likely to re-produce
-    this error without this check.
-
-(2) Then, run:
-
-    make test T=generic/002
-
-    It may fail after running several times.
-
-Please point out my mistake because this bug is really complicated for me :)
-
-
-Regards,
-Zhang
+-- 
+Pavel Begunkov

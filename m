@@ -2,137 +2,229 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00FDA58BC8F
-	for <lists+io-uring@lfdr.de>; Sun,  7 Aug 2022 20:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C8FA58BE6D
+	for <lists+io-uring@lfdr.de>; Mon,  8 Aug 2022 02:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235629AbiHGSqt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 7 Aug 2022 14:46:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39280 "EHLO
+        id S229845AbiHHAVn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 7 Aug 2022 20:21:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235627AbiHGSqs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Aug 2022 14:46:48 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE7D2BD7
-        for <io-uring@vger.kernel.org>; Sun,  7 Aug 2022 11:46:47 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d16so6737682pll.11
-        for <io-uring@vger.kernel.org>; Sun, 07 Aug 2022 11:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=fRF6tDwiED09Qm8+jjF0m2XwEBk/N1T42MZbGGhUU2s=;
-        b=sUfIjnfFg6C7BTgJCAUiobCnbcymxCqjth0VgNCg5PRpdOLoFXN06GP/722jVG/hut
-         4X/7qgNXMYcShr8q27lbxVxfQ21iOwZdtwyZmgX8B72vmSMeYt2fLKSFupJubJr7uXAz
-         bIz7blhJEPqDbCHiBgiaBkm9/9AiWj1jDbf2w0cgyUeGKRlvs72m0HeNSYhJBhb06cru
-         GAJV2EIdUH2dYA6Vj1qmWmrRyWb2wpxuW9W2/7qjWeavx9CM5E59Ip9GnyxEE0GLELSd
-         QQuhncoy6aalVGBpadAattGstyajxkl5ceqlxvc/h1nN4eA8unicErsc1OGzuRb8ytB2
-         Yjbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=fRF6tDwiED09Qm8+jjF0m2XwEBk/N1T42MZbGGhUU2s=;
-        b=j5dgy7dV4Fnn0Ufwia1mWiJZAGa3/x9QVn7ctQdcHGMJE5b32PFHK/lwgWdX56SO4i
-         qYtLrVtqcOKwUxjBuGwlJXfAELlsOOGjnO3vw79ZnYgSk28QQXnhRPm+tCNRHzjbMWP/
-         61LMG1s6ge7zIAcntSgRwUwYnH6JwM1jAV3HK++Jk7/aJaqu3/kLkub57hJrvNrfKJM8
-         TOuwvvA4U4LsvvmSl3WU6Ds/rVJLmj/FBPZlrbT7WySFew68Nl7vipxVSZhz/bEFkk+7
-         nP79VPaGKuT8Lvye+3qqXSDeoUwZq4jhm4OtKbfUZURC0eyBSqd0A72pqVUuxkDsJylR
-         01Zw==
-X-Gm-Message-State: ACgBeo1F1RrVXq2agXv7edqFi6QrUUAJU+OGHES0m76U2o8GMa38w8UB
-        m5iaJGRG8sxwpC2jjz7wOYuIGQ==
-X-Google-Smtp-Source: AA6agR52R7nPXz6hA/NEJIpwExQy73zN+UQ2YPf1Pb4UGZRqFX/ApCGAZKP7G39++6dymp7prQKsLg==
-X-Received: by 2002:a17:902:c40a:b0:16e:cc02:b9ab with SMTP id k10-20020a170902c40a00b0016ecc02b9abmr15621295plk.81.1659898006947;
-        Sun, 07 Aug 2022 11:46:46 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id i25-20020a635419000000b0041c89bba5a8sm4787876pgb.25.2022.08.07.11.46.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Aug 2022 11:46:46 -0700 (PDT)
-Message-ID: <068737bb-7729-decd-bd3b-60380c6443fc@kernel.dk>
-Date:   Sun, 7 Aug 2022 12:46:45 -0600
+        with ESMTP id S230362AbiHHAVm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 7 Aug 2022 20:21:42 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2B9A438AF;
+        Sun,  7 Aug 2022 17:21:35 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-193-158.pa.nsw.optusnet.com.au [49.181.193.158])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9FFFB62CFF2;
+        Mon,  8 Aug 2022 10:21:25 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oKqWK-00ARYL-Dl; Mon, 08 Aug 2022 10:21:24 +1000
+Date:   Mon, 8 Aug 2022 10:21:24 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Keith Busch <kbusch@fb.com>
+Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <Kernel-team@fb.com>,
+        Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv3 2/7] file: add ops to dma map bvec
+Message-ID: <20220808002124.GG3861211@dread.disaster.area>
+References: <20220805162444.3985535-1-kbusch@fb.com>
+ <20220805162444.3985535-3-kbusch@fb.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 0/4] iopoll support for io_uring/nvme passthrough
-Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Keith Busch <kbusch@kernel.org>, hch@lst.de,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, ming.lei@redhat.com,
-        joshiiitr@gmail.com, gost.dev@samsung.com
-References: <CGME20220805155300epcas5p1b98722e20990d0095238964e2be9db34@epcas5p1.samsung.com>
- <20220805154226.155008-1-joshi.k@samsung.com>
- <78f0ac8e-cd45-d71d-4e10-e6d2f910ae45@kernel.dk>
- <a2a5184d-f3ab-0941-6cc4-87cf231d5333@kernel.dk>
- <Yu1dTRhrcOSXmYoN@kbusch-mbp.dhcp.thefacebook.com>
- <6bd091d6-e0e6-3095-fc6b-d32ec89db054@kernel.dk>
- <20220807175803.GA13140@test-zns>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220807175803.GA13140@test-zns>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220805162444.3985535-3-kbusch@fb.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62f0570e
+        a=SeswVvpAPK2RnNNwqI8AaA==:117 a=SeswVvpAPK2RnNNwqI8AaA==:17
+        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=_eoJad-yVWRv8vzf4-wA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/7/22 11:58 AM, Kanchan Joshi wrote:
-> On Fri, Aug 05, 2022 at 12:15:24PM -0600, Jens Axboe wrote:
->> On 8/5/22 12:11 PM, Keith Busch wrote:
->>> On Fri, Aug 05, 2022 at 11:18:38AM -0600, Jens Axboe wrote:
->>>> On 8/5/22 11:04 AM, Jens Axboe wrote:
->>>>> On 8/5/22 9:42 AM, Kanchan Joshi wrote:
->>>>>> Hi,
->>>>>>
->>>>>> Series enables async polling on io_uring command, and nvme passthrough
->>>>>> (for io-commands) is wired up to leverage that.
->>>>>>
->>>>>> 512b randread performance (KIOP) below:
->>>>>>
->>>>>> QD_batch    block    passthru    passthru-poll   block-poll
->>>>>> 1_1          80        81          158            157
->>>>>> 8_2         406       470          680            700
->>>>>> 16_4        620       656          931            920
->>>>>> 128_32      879       1056        1120            1132
->>>>>
->>>>> Curious on why passthru is slower than block-poll? Are we missing
->>>>> something here?
->>>>
->>>> I took a quick peek, running it here. List of items making it slower:
->>>>
->>>> - No fixedbufs support for passthru, each each request will go through
->>>>   get_user_pages() and put_pages() on completion. This is about a 10%
->>>>   change for me, by itself.
->>>
->>> Enabling fixed buffer support through here looks like it will take a
->>> little bit of work. The driver needs an opcode or flag to tell it the
->>> user address is a fixed buffer, and io_uring needs to export its
->>> registered buffer for a driver like nvme to get to.
->>
->> Yeah, it's not a straight forward thing. But if this will be used with
->> recycled buffers, then it'll definitely be worthwhile to look into.
+On Fri, Aug 05, 2022 at 09:24:39AM -0700, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> Had posted bio-cache and fixedbufs in the initial round but retracted
-> to get the foundation settled first.
-> https://lore.kernel.org/linux-nvme/20220308152105.309618-1-joshi.k@samsung.com/
+> The same buffer may be used for many subsequent IO's. Instead of setting
+> up the mapping per-IO, provide an interface that can allow a buffer to
+> be premapped just once and referenced again later, and implement for the
+> block device file.
 > 
-> I see that you brought back bio-cache already. I can refresh fixedbufs.
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>  block/fops.c       | 20 ++++++++++++++++++++
+>  fs/file.c          | 15 +++++++++++++++
+>  include/linux/fs.h | 20 ++++++++++++++++++++
+>  3 files changed, 55 insertions(+)
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index 29066ac5a2fa..db2d1e848f4b 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -670,6 +670,22 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+>  	return error;
+>  }
+>  
+> +#ifdef CONFIG_HAS_DMA
+> +void *blkdev_dma_map(struct file *filp, struct bio_vec *bvec, int nr_vecs)
+> +{
+> +	struct block_device *bdev = filp->private_data;
+> +
+> +	return block_dma_map(bdev, bvec, nr_vecs);
+> +}
+> +
+> +void blkdev_dma_unmap(struct file *filp, void *dma_tag)
+> +{
+> +	struct block_device *bdev = filp->private_data;
+> +
+> +	return block_dma_unmap(bdev, dma_tag);
+> +}
+> +#endif
+> +
+>  const struct file_operations def_blk_fops = {
+>  	.open		= blkdev_open,
+>  	.release	= blkdev_close,
+> @@ -686,6 +702,10 @@ const struct file_operations def_blk_fops = {
+>  	.splice_read	= generic_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fallocate	= blkdev_fallocate,
+> +#ifdef CONFIG_HAS_DMA
+> +	.dma_map	= blkdev_dma_map,
+> +	.dma_unmap	= blkdev_dma_unmap,
+> +#endif
+>  };
+>  
+>  static __init int blkdev_init(void)
+> diff --git a/fs/file.c b/fs/file.c
+> index 3bcc1ecc314a..767bf9d3205e 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1307,3 +1307,18 @@ int iterate_fd(struct files_struct *files, unsigned n,
+>  	return res;
+>  }
+>  EXPORT_SYMBOL(iterate_fd);
+> +
+> +#ifdef CONFIG_HAS_DMA
+> +void *file_dma_map(struct file *file, struct bio_vec *bvec, int nr_vecs)
+> +{
+> +	if (file->f_op->dma_map)
+> +		return file->f_op->dma_map(file, bvec, nr_vecs);
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+> +void file_dma_unmap(struct file *file, void *dma_tag)
+> +{
+> +	if (file->f_op->dma_unmap)
+> +		return file->f_op->dma_unmap(file, dma_tag);
+> +}
+> +#endif
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 9f131e559d05..8652bad763f3 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2092,6 +2092,10 @@ struct dir_context {
+>  struct iov_iter;
+>  struct io_uring_cmd;
+>  
+> +#ifdef CONFIG_HAS_DMA
+> +struct bio_vec;
+> +#endif
+> +
+>  struct file_operations {
+>  	struct module *owner;
+>  	loff_t (*llseek) (struct file *, loff_t, int);
+> @@ -2134,6 +2138,10 @@ struct file_operations {
+>  				   loff_t len, unsigned int remap_flags);
+>  	int (*fadvise)(struct file *, loff_t, loff_t, int);
+>  	int (*uring_cmd)(struct io_uring_cmd *ioucmd, unsigned int issue_flags);
+> +#ifdef CONFIG_HAS_DMA
+> +	void *(*dma_map)(struct file *, struct bio_vec *, int);
+> +	void (*dma_unmap)(struct file *, void *);
+> +#endif
+>  } __randomize_layout;
 
-Excellent, yes please bring back the fixedbufs. It's a 5-10% win,
-nothing to sneeze at.
+This just smells wrong. Using a block layer specific construct as a
+primary file operation parameter shouts "layering violation" to me.
 
-> Completion-batching seems too tightly coupled to block-path.
+Indeed, I can't see how this can be used by anything other than a
+block device file on a single, stand-alone block device. It's
+mapping a region of memory to something that has no file offset or
+length associated with it, and the implementation of the callout is
+specially pulling the bdev from the private file data.
 
-It's really not, in fact it'd be even simpler to do for passthru. The
-rq->end_io handler just needs to know about it.
+What we really need is a callout that returns the bdevs that the
+struct file is mapped to (one, or many), so the caller can then map
+the memory addresses to the block devices itself. The caller then
+needs to do an {file, offset, len} -> {bdev, sector, count}
+translation so the io_uring code can then use the correct bdev and
+dma mappings for the file offset that the user is doing IO to/from.
+
+For a stand-alone block device, the "get bdevs" callout is pretty
+simple. single device filesystems are trivial, too. XFS is trivial -
+it will return 1 or 2 block devices. stacked bdevs need to iterate
+recursively, as would filesystems like btrfs. Still, pretty easy,
+and for the case you care about here has almost zero overhead.
+
+Now you have a list of all the bdevs you are going to need to add
+dma mappings for, and you can call the bdev directly to set them up.
+THere is no need what-so-ever to do this through through the file
+operations layer - it's completely contained at the block device
+layer and below.
+
+Then, for each file IO range, we need a mapping callout in the file
+operations structure. That will take a  {file, offset, len} tuple
+and return a {bdev, sector, count} tuple that maps part or all of
+the file data.
+
+Again, for a standalone block device, this is simply a translation
+of filep->private to bdev, and offset,len from byte counts to sector
+counts. Trival, almost no overhead at all.
+
+For filesystems and stacked block devices, though, this gives you
+back all the information you need to select the right set of dma
+buffers and the {sector, count} information you need to issue the IO
+correctly. Setting this up is now all block device layer
+manipulation.[*]
+
+This is where I think this patchset needs to go, not bulldoze
+through abstractions that get in the way because all you are
+implementing is a special fast path for a single niche use case. We
+know how to make it work with filesystems and stacked devices, so
+can we please start with an API that allows us to implement the
+functionality without having to completely rewrite all the code that
+you are proposing to add right now?
+
+Cheers,
+
+Dave.
+
+[*] For the purposes of brevity, I'm ignoring the elephant in the
+middle of the room: how do you ensure that the filesystem doesn't
+run a truncate or hole punch while you have an outstanding DMA
+mapping and io_uring is doing IO direct to file offset via that
+mapping? i.e. how do you prevent such a non-filesystem controlled IO
+path from accessing to stale data (i.e.  use-after-free) of on-disk
+storage because there is nothing serialising it against other
+filesystem operations?
+
+This is very similar to the direct storage access issues that
+DAX+RDMA and pNFS file layouts have. pNFS solves it with file layout
+leases, and DAX has all the hooks into the filesystems needed to use
+file layout leases in place, too. I'd suggest that IO via io_uring
+persistent DMA mappings outside the scope of the filesysetm
+controlled IO path also need layout lease guarantees to avoid user
+IO from racing with truncate, etc....
 
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com

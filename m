@@ -2,157 +2,193 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B71C58C3F8
-	for <lists+io-uring@lfdr.de>; Mon,  8 Aug 2022 09:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7458558C45D
+	for <lists+io-uring@lfdr.de>; Mon,  8 Aug 2022 09:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235326AbiHHHbm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 8 Aug 2022 03:31:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38248 "EHLO
+        id S235769AbiHHHqD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 8 Aug 2022 03:46:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234798AbiHHHbl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Aug 2022 03:31:41 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0F83A60F5;
-        Mon,  8 Aug 2022 00:31:38 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-193-158.pa.nsw.optusnet.com.au [49.181.193.158])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id EC6C962CFDB;
-        Mon,  8 Aug 2022 17:31:36 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oKxEc-00AYwu-SY; Mon, 08 Aug 2022 17:31:34 +1000
-Date:   Mon, 8 Aug 2022 17:31:34 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <Kernel-team@fb.com>,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv3 2/7] file: add ops to dma map bvec
-Message-ID: <20220808073134.GI3861211@dread.disaster.area>
-References: <20220805162444.3985535-1-kbusch@fb.com>
- <20220805162444.3985535-3-kbusch@fb.com>
- <20220808002124.GG3861211@dread.disaster.area>
- <YvBjRfy4XzzBajTX@casper.infradead.org>
- <20220808021501.GH3861211@dread.disaster.area>
- <YvB5pbsfM6QuR5Y7@casper.infradead.org>
+        with ESMTP id S241995AbiHHHpz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 8 Aug 2022 03:45:55 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D00E0E2;
+        Mon,  8 Aug 2022 00:45:51 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=ziyangzhang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VLfdfxM_1659944747;
+Received: from 30.227.91.246(mailfrom:ZiyangZhang@linux.alibaba.com fp:SMTPD_---0VLfdfxM_1659944747)
+          by smtp.aliyun-inc.com;
+          Mon, 08 Aug 2022 15:45:48 +0800
+Message-ID: <ddf90347-5f71-031a-90a7-62da57a75c59@linux.alibaba.com>
+Date:   Mon, 8 Aug 2022 15:45:47 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YvB5pbsfM6QuR5Y7@casper.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62f0bbd9
-        a=SeswVvpAPK2RnNNwqI8AaA==:117 a=SeswVvpAPK2RnNNwqI8AaA==:17
-        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=7-415B0cAAAA:8
-        a=W59aziHrq2b68gXyYW4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+From:   Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+Subject: [bug report] ublk: re-issued blk-mq request may reference a freed
+ io_uring context
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Aug 08, 2022 at 03:49:09AM +0100, Matthew Wilcox wrote:
-> On Mon, Aug 08, 2022 at 12:15:01PM +1000, Dave Chinner wrote:
-> > On Mon, Aug 08, 2022 at 02:13:41AM +0100, Matthew Wilcox wrote:
-> > > On Mon, Aug 08, 2022 at 10:21:24AM +1000, Dave Chinner wrote:
-> > > > > +#ifdef CONFIG_HAS_DMA
-> > > > > +	void *(*dma_map)(struct file *, struct bio_vec *, int);
-> > > > > +	void (*dma_unmap)(struct file *, void *);
-> > > > > +#endif
-> > > > 
-> > > > This just smells wrong. Using a block layer specific construct as a
-> > > > primary file operation parameter shouts "layering violation" to me.
-> > > 
-> > > A bio_vec is also used for networking; it's in disguise as an skb_frag,
-> > > but it's there.
-> > 
-> > Which is just as awful. Just because it's done somewhere else
-> > doesn't make it right.
-> > 
-> > > > What we really need is a callout that returns the bdevs that the
-> > > > struct file is mapped to (one, or many), so the caller can then map
-> > > > the memory addresses to the block devices itself. The caller then
-> > > > needs to do an {file, offset, len} -> {bdev, sector, count}
-> > > > translation so the io_uring code can then use the correct bdev and
-> > > > dma mappings for the file offset that the user is doing IO to/from.
-> > > 
-> > > I don't even know if what you're proposing is possible.  Consider a
-> > > network filesystem which might transparently be moved from one network
-> > > interface to another.  I don't even know if the filesystem would know
-> > > which network device is going to be used for the IO at the time of
-> > > IO submission.
-> > 
-> > Sure, but nobody is suggesting we support direct DMA buffer mapping
-> > and reuse for network devices right now, whereas we have working
-> > code for block devices in front of us.
-> 
-> But we have working code already (merged) in the networking layer for
-> reusing pages that are mapped to particular devices.
+Hi, all
 
-Great! How is it hooked up to the network filesystems? I'm kinda
-betting that it isn't at all - it's the kernel bypass paths that use
-these device based mappings, right? And the user applications are
-bound directly to the devices, unlike network filesytsems?
+We are running test on ublk to verify its stability. While running
+tests/generic/002 in ublksrv[1] which kills ublksrv daemon while
+running fio at the same time, we find a null-deference error.
 
-> > What I want to see is broad-based generic block device based
-> > filesysetm support, not niche functionality that can only work on a
-> > single type of block device. Network filesystems and devices are a
-> > *long* way from being able to do anything like this, so I don't see
-> > a need to cater for them at this point in time.
-> > 
-> > When someone has a network device abstraction and network filesystem
-> > that can do direct data placement based on that device abstraction,
-> > then we can talk about the high level interface we should use to
-> > drive it....
-> > 
-> > > I think a totally different model is needed where we can find out if
-> > > the bvec contains pages which are already mapped to the device, and map
-> > > them if they aren't.  That also handles a DM case where extra devices
-> > > are hot-added to a RAID, for example.
-> > 
-> > I cannot form a picture of what you are suggesting from such a brief
-> > description. Care to explain in more detail?
-> 
-> Let's suppose you have a RAID 5 of NVMe devices.  One fails and now
-> the RAID-5 is operating in degraded mode.
+[1] https://github.com/ming1/ubdsrv
 
-Yes, but this is purely an example of a stacked device type that
-requires fined grained mapping of data offset to block device and
-offset. When the device fails, it just doesn't return a data mapping
-that points to the failed device.
+***********************
+DMESG:
+***********************
 
-> So you hot-unplug the failed
-> device, plug in a new NVMe drive and add it to the RAID.  The pages now
-> need to be DMA mapped to that new PCI device.
+[ 1396.090924] BUG: kernel NULL pointer dereference, address: 0000000000000000
+[ 1396.098770] ublk_ctrl_uring_cmd: cmd done ret 0 cmd_op 2, dev id 0 qid 65535
+[ 1396.105714] #PF: supervisor write access in kernel mode
+[ 1396.105716] #PF: error_code(0x0002) - not-present page
+[ 1396.105718] PGD 800000013c762067 P4D 800000013c762067 PUD 634c8d067 PMD 0 
+[ 1396.132122] Oops: 0002 [#1] PREEMPT SMP PTI
+[ 1396.136613] CPU: 33 PID: 27341 Comm: kworker/33:2 Kdump: loaded Tainted: G S         OE      5.19.0 #121
+[ 1396.146382] Hardware name: Inventec     K900G3-10G/B900G3, BIOS A2.20 06/23/2017
+[ 1396.154069] Workqueue: events io_fallback_req_func
+[ 1396.159169] RIP: 0010:percpu_ref_get_many+0x23/0x30
+[ 1396.164360] Code: 0f 1f 80 00 00 00 00 55 48 89 f5 53 48 89 fb e8 83 93 be ff 48 8b 03 a8 03 75 0b 65 48 01 28 5b 5d e9 b1 f5 be ff 48 8b 43 08 <f0> 48 01 28 5b 5d e9 a2 f5 be ff 66 90 41 54 49 89 d4 55 48 89 f5
+[ 1396.183754] RSP: 0018:ffffae20e37c7e48 EFLAGS: 00010206
+[ 1396.189301] RAX: 0000000000000000 RBX: ffff9e966730d800 RCX: 0000000000000000
+[ 1396.196754] RDX: ffff9e9651ca9180 RSI: 0000000000000001 RDI: ffff9e966730d800
+[ 1396.204214] RBP: 0000000000000001 R08: 61626c6c61665f6f R09: 665f7165725f6b63
+[ 1396.211671] R10: 666562203a636e75 R11: 7265746920657269 R12: ffff9e965da36700
+[ 1396.219143] R13: ffff9e965da36788 R14: 0000000000000000 R15: ffff9ed4bf876905
+[ 1396.226607] FS:  0000000000000000(0000) GS:ffff9ed4bf840000(0000) knlGS:0000000000000000
+[ 1396.235026] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1396.241110] CR2: 0000000000000000 CR3: 000000068cf9c001 CR4: 00000000003706e0
+[ 1396.248587] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 1396.256054] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 1396.263523] Call Trace:
+[ 1396.266313]  <TASK>
+[ 1396.268747]  io_fallback_req_func+0x61/0x126
+[ 1396.273354]  process_one_work+0x1df/0x3b0
+[ 1396.277705]  worker_thread+0x49/0x2e0
+[ 1396.281712]  ? rescuer_thread+0x390/0x390
+[ 1396.286060]  kthread+0xe5/0x110
+[ 1396.289534]  ? kthread_complete_and_exit+0x20/0x20
+[ 1396.294644]  ret_from_fork+0x1f/0x30
+[ 1396.298551]  </TASK>
+[ 1396.301055] Modules linked in: ublk_drv(OE) tcp_diag(E) udp_diag(E) inet_diag(E) ip6_tables(E) iptable_filter(E) ebtable_nat(E) ebtables(E) binfmt_misc(E) intel_rapl_msr(E) intel_rapl_common(E) iosf_mbi(E) x86_pkg_temp_thermal(E) coretemp(E) bonding(E) tls(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) aesni_intel(E) iTCO_wdt(E) crypto_simd(E) iTCO_vendor_support(E) cryptd(E) mxm_wmi(E) mei_me(E) i2c_i801(E) lpc_ich(E) pcspkr(E) sg(E) i2c_smbus(E) mfd_core(E) mei(E) acpi_ipmi(E) ipmi_si(E) ipmi_devintf(E) ipmi_msghandler(E) wmi(E) acpi_power_meter(E) ip_tables(E) ast(E) i2c_algo_bit(E) drm_vram_helper(E) drm_kms_helper(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) fb_sys_fops(E) drm_ttm_helper(E) ttm(E) crc32c_intel(E) drm(E) nvme(E) i2c_core(E) ixgbe(E) nvme_core(E) mdio(E) dca(E) sd_mod(E) t10_pi(E) crc64_rocksoft(E) crc64(E) ahci(E) libahci(E) libata(E) [last unloaded: ublk_drv]
+[ 1396.386209] CR2: 0000000000000000
 
-yup, and now the dma tags for the mappings to that sub-device return
-errors, which then tell the application that it needs to remap the
-dma buffers it is using.
+***********************
+DESCRIPTION 1:
+***********************
 
-That's just bog standard error handling - if a bdev goes away,
-access to the dma tags have to return IO errors, and it is up to the
-application level (i.e. the io_uring code) to handle that sanely.
+Here in percpu_ref_get_many():atomic_long_add(nr, &ref->data->count),
+ref->data is actually freed because io_uring's ctx->refs is freed at that
+time. We analyze ublk_drv.c and find a reason, assume there is only one
+tag per blk-mq queue:
 
-> What I'm saying is that the set of devices that the pages need to be
-> mapped to is not static and cannot be known at "setup time", even given
-> the additional information that you were proposing earlier in this thread.
-> It has to be dynamically adjusted.
+      CPU 0                     CPU 1                        CPU2                       CPU3
 
-Sure, I'm assuming that IOs based on dma tags will fail if there's a
-bdev issue.  The DMA mappings have to be set up somewhere, and it
-has to be done before the IO is started. That means there has to be
-"discovery" done at "setup time", and if there's an issue between
-setup and IO submission, then an error will result and the IO setup
-code is going to have to handle that. I can't see how this would
-work any other way....
+__ublk_rq_task_work()               
 
-Cheers,
+io_uring_cmd_done(io->cmd)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+****task crash****                                                                           
+                                                                                  io_ring_exit_work()
+                                                                           /* Now io_uring ctx can be freed
+                                                                           since all ioucmd(only one) are done */
+                                                                                     
+
+                      ublk_daemon_monitor_work()               
+                 blk_mq_end_request(req, BLK_STS_IOERR);
+  
+                                              
+              
+                                                       ublk_queue_rq() /* fio re-issue req because of IO error */
+                                                      ubq_daemon_is_dying() /* NOT SEE PF_EXITING */
+                                                 io_uring_cmd_complete_in_task(io->cmd) /* the io_uring ctx is freed! */
+                                                    io_fallback_req_func() /* io_uring fallback */
+                                                     percpu_ref_get_many() /* null-deref! */
+
+***********************
+DESCRIPTION 2:
+***********************
+
+
+I describe the above data flow here again:
+(1) After the ioucmd are io_uring_cmd_done(), a crash happens.
+
+(2) The io_uring context is freed (at least part
+    of it, e.g. ctx->refs) because we don't reference it anymore.
+
+(3) Then, monitor_work aborts the blk-mq request and fio re-tries
+    because of the I/O error.
+
+(4) After that, ublk_queue_rq() is called for the re-issued request
+    but it does not see PF_EXITING!(Since ublk_queue_rq() is called
+    in another task different from ubq_daemon or ioucmd's task)
+
+(5) io_uring_cmd_complete_in_task() is called, and the ioucmd is
+    still the old one because the tag does not change.
+
+(6) io_fallback_req_func(), and ref->data is NULL while calling
+    atomic_long_add(nr, &ref->data->count).
+
+The root cause is that:
+
+(1) io_uring_cmd_complete_in_task() does not
+    immediately try to call task_work_add(), but puts the ioucmd's
+    task_work into a llist for batching. If task_work_add() is called
+    immediately in ublk_queue_rq(), this situation can be avoided.
+
+(2) In ublk_drv.c:ublk_queue_rq(), check on PF_EXITING is added:
+
+	 if (unlikely(ubq_daemon_is_dying(ubq))) {
+  fail:
+	      	 mod_delayed_work(system_wq, &ubq->dev->monitor_work, 0);
+		 return BLK_STS_IOERR;
+	 }
+
+    However, this check on PF_EXITING is unsafe since ublk_queue_rq() runs in
+    another task other than ubq_daemon(ioucmd's task). ublk_queue_rq() may not
+    see PF_EXITING after the ubq_daemon(ioucmd's task) crashes. With this
+    check, the above null-deref error rarely happens. But if we comment it out,
+    We are more likely to trigger this error.
+
+***********************
+HOW TO REPRODUCE:
+***********************
+
+(1) Forbid check on PF_EXITING. In ublk_drv.c:ublk_queue_rq(), comment out:
+	
+	if (unlikely(ubq_daemon_is_dying(ubq))) {
+ fail:
+		mod_delayed_work(system_wq, &ubq->dev->monitor_work, 0);
+		return BLK_STS_IOERR;
+	}
+
+    This makes sense because this check is unsafe and we are more likely to re-produce
+    this error without this check.
+
+(2) Then, run:
+
+    make test T=generic/002
+
+    It may fail after running several times.
+
+Please point out my mistake because this bug is really complicated for me :)
+
+
+Regards,
+Zhang

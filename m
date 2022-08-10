@@ -2,107 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49FBE58ECB7
-	for <lists+io-uring@lfdr.de>; Wed, 10 Aug 2022 15:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A32E058EF9D
+	for <lists+io-uring@lfdr.de>; Wed, 10 Aug 2022 17:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231889AbiHJNDq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Aug 2022 09:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        id S231810AbiHJPvk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Aug 2022 11:51:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232404AbiHJND3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Aug 2022 09:03:29 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8174D6CD25
-        for <io-uring@vger.kernel.org>; Wed, 10 Aug 2022 06:03:28 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id b133so13659354pfb.6
-        for <io-uring@vger.kernel.org>; Wed, 10 Aug 2022 06:03:28 -0700 (PDT)
+        with ESMTP id S230468AbiHJPvj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Aug 2022 11:51:39 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF89F4BD19;
+        Wed, 10 Aug 2022 08:51:37 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id h13so18244219wrf.6;
+        Wed, 10 Aug 2022 08:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc;
-        bh=8ZVY3vqJaOknIHtjrvYyPFFYELYkd0zklixgN03Ylp0=;
-        b=o33nKyqANzON6RcliH0U2/ZKnMVR89wYj7ffyTUXWKtjD7utvDofPfrhd8AkGKxBn2
-         vKhD+ThjHE9wMpoGB5zc8o+d8YxwpW+HEy4XObFBX9B/3YxEEroKj1iepv4JI/Bu5S6o
-         28sz7ZvzEFDjbZUVKnZt50K15/e+lzGqPaUG9D6OMLsgjeHGw3WmF38i5v4oRruJHkjr
-         sRujBqq7dTAqVk6l4p2Ij81Ee7nOdD7Eg793TVpIIhaeROrYMfgD0vrglRdCum/KLy8T
-         69dsm34/FiP8QkE9uQgUNW+glHtcKl3BzBs4yJ/CgW27bNfyrLXzXDiImskMQ3ZVPEpS
-         zcTA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=eLUXa/7f03mrrlxRZvP1+mfNlm5ZK61/IOpf+UOnfpA=;
+        b=WqSg1M4LPvRvE7ifojxAgf7wRBU1icJ6/c02Okmzy1I7MNcWnJciMvgd9E29H25H4Q
+         hOSe7+Md7Co6t5MC+3/kIvdRVkg5NK+48WzlsJpoKmlT00h4hLNZDfBAFl5jNzjUkw2L
+         tDwbjfZBV458pAPRzXjVRiCGwRDFyQTytaD+8YF9Tuc0TmbJm9yw+HSJc6BXCFKIzpEK
+         D9d891nlEEq+OcCtS7778AT52Q5yAJ9ZCs40vzIlwX+6P3K1D46S8DHPJLWHUfGr37ct
+         L8IZcVVnoD/jWZzALGwunGKNX3cSyxrT1U/+O4o866OfJT0bJ2tZvGB0V4x8e0v/HdlK
+         ai3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=8ZVY3vqJaOknIHtjrvYyPFFYELYkd0zklixgN03Ylp0=;
-        b=We4h/rn749U3vs2dI9dUQy9w5xfsW5d1SadaBxCYNYvWTBV0AS3EV10doxpHepStnR
-         Xq/vtu7fv12Eo7LwQcOs64j5hkjfbBeuPKPuumwnSYxAZcS/Ftp4YcV1/u8no/rsmfLy
-         OlEvN0snV+nEUhZbtc4e/1CkC3m/8Sfa9/6q1TcjQbBOGaDSVJhpy7voyRKzXiz93Ec4
-         RPDn1Iz5B2Bs6wGd2pNNRV3rTHZz9Y3lPX8C/kPLdtbk2uG6885FfisP6nfdlex3Ribx
-         pUCAstwN/VUri/u6k32TY79nwe8sNOZR7xmYe68jelAdXoTZcS7JiNvKW6/XhGlR2YGP
-         2s7Q==
-X-Gm-Message-State: ACgBeo22fa2Rjt2symEPHWIuuCKTKfsr0GtoMrpG1+HooLNO52whvk30
-        Y/mYOCzSr6v2slCllX3GQDtZEg==
-X-Google-Smtp-Source: AA6agR5CPxkURBPr9JxamqOzDk4pwfi3LYkTs/dxpzl/IHgtJWcM1iGL2AixdxCs9pvVUfCHpXvhFg==
-X-Received: by 2002:a63:2cc6:0:b0:41c:5f9c:e15c with SMTP id s189-20020a632cc6000000b0041c5f9ce15cmr22740824pgs.241.1660136607014;
-        Wed, 10 Aug 2022 06:03:27 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h2-20020aa79f42000000b005281d926733sm1855589pfr.199.2022.08.10.06.03.25
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=eLUXa/7f03mrrlxRZvP1+mfNlm5ZK61/IOpf+UOnfpA=;
+        b=PDmlgHkjxhpRjysIgyU8FX7XTDV2pTtjJoJHk3fI/D9V4walimyaTK4CRsXt1W0Mal
+         imDWnQgvAHB73P9kza5SuxWIxGp4WORg+9U4HXcIMtDu2swoMLkwBvdlAfPSupk0gnjx
+         CAbZPMwO36XuvLFsAXj67RGFelK6gIlya9yWf8JJdvVPeEFp2j6PeC/ultZB69FpyKzp
+         X+H/l3koCWTbPcWjQG7ZCB9KoZyFLk1MU644GP4RNJQfHRImD0JaCuwUhVhKnBH4DHAl
+         UTqtfI5c0paVjICC50xQlUZgs+H3hEEGm3Kn++nw7Z+HFLVqVAh5GOdoCvZWYW7wst38
+         wOVg==
+X-Gm-Message-State: ACgBeo0J9DV2UUZR6tRSjf0dfJ37490P6A0Oa22uinFrbkZ8ch4trQCe
+        DXfMtkqr/JRE4MUfJmD7zM8aIbFs7Ok=
+X-Google-Smtp-Source: AA6agR5DJfVKYDlrSNLa3wNyuLPvwubsZF8VZQM6JU+GS2BugrOvjw9AFh0IiP8A3TZSNH/OEieLog==
+X-Received: by 2002:a05:6000:785:b0:220:6d7f:dd1f with SMTP id bu5-20020a056000078500b002206d7fdd1fmr18016045wrb.578.1660146695975;
+        Wed, 10 Aug 2022 08:51:35 -0700 (PDT)
+Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
+        by smtp.gmail.com with ESMTPSA id ay1-20020a05600c1e0100b003a342933727sm3004519wmb.3.2022.08.10.08.51.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 06:03:26 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     ammarfaizi2@gnuweeb.org
-Cc:     knscarlet@gnuweeb.org, vt@altlinux.org, io-uring@vger.kernel.org,
-        gwml@vger.gnuweeb.org, fernandafmr12@gnuweeb.org
-In-Reply-To: <20220810002735.2260172-1-ammar.faizi@intel.com>
-References: <20220810002735.2260172-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing v1 00/10] liburing test fixes
-Message-Id: <166013660588.2208282.14986932103707512836.b4-ty@kernel.dk>
-Date:   Wed, 10 Aug 2022 07:03:25 -0600
+        Wed, 10 Aug 2022 08:51:35 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Wei Liu <wei.liu@kernel.org>, Paul Durrant <paul@xen.org>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [RFC net-next io_uring 00/11] improve io_uring's ubuf_info refcounting
+Date:   Wed, 10 Aug 2022 16:49:08 +0100
+Message-Id: <cover.1660124059.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 10 Aug 2022 07:31:49 +0700, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> 
-> Hi Jens,
-> 
-> All test fixes of "reading uninitialized memory" bug. Mostly just a
-> one liner change.
-> 
-> [...]
+There is a couple of tricks we can do with io_uring to improve ubuf_info
+refcounting. First, we ammortise reference grabbing and then give them
+away to the network layer, which is implemented in 8 and 11. Also, we
+don't need need additional pinning for TCP, which is removed by 7.
 
-Applied, thanks!
+1-4 are needed because otherwise we're out of space in io_notif_data and
+using ->desc or some other field of ubuf_info would be ugly. It'll also
+facilitate further ideas like adding a simpler notification model for UDP.
 
-[01/10] test/cq-overflow: Don't call `io_uring_queue_exit()` if the ring is not initialized
-        commit: f5c96cb63b6f412e08b41d6cb8188da1535e70cd
-[02/10] test/eeed8b54e0df: Initialize the `malloc()`ed buffer before `write()`
-        commit: 397f5444bc442e566dd826466048a428f066a1eb
-[03/10] test/file-verify: Fix reading from uninitialized buffer
-        commit: d8efaf3df0abbda513af142da3ee6ff41955bdda
-[04/10] test/fixed-reuse: Fix reading from uninitialized array
-        commit: e1b740d46b08766da9d1dfe9ce88f051a238724e
-[05/10] test/fpos: Fix reading from uninitialized buffer
-        commit: 5ce220568c07b34766b5410e4cfee7ccd672e33b
-[06/10] test/statx: Fix reading from uninitialized buffer
-        commit: 776ac6cb9e6320feaf3ce516ae2e64d49ed4de37
-[07/10] test/submit-link-fail: Initialize the buffer before `write()`
-        commit: a97696720c41e7602c3ae5715b826fa3b566034b
-[08/10] test/232c93d07b74: Fix reading from uninitialized buffer
-        commit: c340e89671933bb13f0add1e04c5a350a03c672b
-[09/10] test/eventfd-disable: Fix reading uninitialized variable
-        commit: d879fbf9134e04f1e34e56b3575f9fafe9949c2d
-[10/10] test/file-register: Fix reading from uninitialized buffer
-        commit: 3bfe26a0c6e400d15060c8331ebc4280f01da4ca
+liburing/examples/io_uring-sendzc benchmark using a branch containing the
+patchset and some more [1] showed ~1.6% qps improvement for UDP (dummy dev),
+and ~1% for TCP (localhost + hacks enabling zc).
 
-Best regards,
+I didn't specifically test xen and vhost and not sure how, would love
+some help with that.
+
+[1] https://github.com/isilence/linux/tree/net/zc-ref-optimisation
+
+Pavel Begunkov (11):
+  net: introduce struct ubuf_info_msgzc
+  xen/netback: use struct ubuf_info_msgzc
+  vhost/net: use struct ubuf_info_msgzc
+  net: shrink struct ubuf_info
+  net: rename ubuf_info's flags
+  net: add flags for controlling ubuf_info
+  net/tcp: optimise tcp ubuf refcounting
+  net: let callers provide ->msg_ubuf refs
+  io_uring/notif: add helper for flushing refs
+  io_uring/notif: mark notifs with UARGFL_CALLER_PINNED
+  io_uring/notif: add ubuf_info ref caching
+
+ drivers/net/xen-netback/common.h    |  2 +-
+ drivers/net/xen-netback/interface.c |  4 +--
+ drivers/net/xen-netback/netback.c   |  7 +++---
+ drivers/vhost/net.c                 | 17 +++++++------
+ include/linux/skbuff.h              | 35 +++++++++++++++++++++++---
+ io_uring/net.c                      |  8 +++++-
+ io_uring/notif.c                    | 21 ++++++++++------
+ io_uring/notif.h                    | 22 +++++++++++++++-
+ net/core/skbuff.c                   | 39 ++++++++++++++++-------------
+ net/ipv4/ip_output.c                |  3 ++-
+ net/ipv4/tcp.c                      | 11 +++++---
+ net/ipv6/ip6_output.c               |  3 ++-
+ 12 files changed, 123 insertions(+), 49 deletions(-)
+
 -- 
-Jens Axboe
-
+2.37.0
 

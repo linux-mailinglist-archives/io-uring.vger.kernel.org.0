@@ -2,93 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD11258F217
-	for <lists+io-uring@lfdr.de>; Wed, 10 Aug 2022 20:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E32D58F231
+	for <lists+io-uring@lfdr.de>; Wed, 10 Aug 2022 20:14:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232482AbiHJSFP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 Aug 2022 14:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44056 "EHLO
+        id S232191AbiHJSOw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 Aug 2022 14:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231424AbiHJSFN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Aug 2022 14:05:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FC4B1A;
-        Wed, 10 Aug 2022 11:05:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 138CFB81611;
-        Wed, 10 Aug 2022 18:05:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11174C433D6;
-        Wed, 10 Aug 2022 18:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660154708;
-        bh=nhGr02sSN89GKEkq7FccjXFENhz9XIFY79Zk1MeBFDE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=giwdIhQSTRjg1XY592kRRArKEADaCYIFb0IfSAf5vSAAqZPkITd1VNS31sKmvjLHY
-         QZ5zTWD7x1qLyuh8xA3n7RFw4wR4aV4jBH78K2xHiYXQqMtPpepIUoftftH8NkARnz
-         froPTiPS0sbSWrcTJfKFysqmONFj/cExjXFDlcbqP1hTZrLlkVKbG0IlQYZ7h7519j
-         8jkQEU3HBANrmut4RcNOvhGZVr5yQBobhJGMqjYraFsHrpXfdjbgVU+drNYU2ER9Su
-         qD/ARUaZVD70Uc79Am1rehEVjBKYpmXPabLA1gSTrBhfCCwlKEiW+RwKzxvC9KxCcx
-         VFEPcUyWeyo1g==
-Date:   Wed, 10 Aug 2022 12:05:05 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCHv3 0/7] dma mapping optimisations
-Message-ID: <YvPzUSx87VkwSH2C@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220805162444.3985535-1-kbusch@fb.com>
- <20220809064613.GA9040@lst.de>
- <YvKPTGf56v/3iSxg@kbusch-mbp.dhcp.thefacebook.com>
- <20220809184137.GB15107@lst.de>
+        with ESMTP id S230433AbiHJSOv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 Aug 2022 14:14:51 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB9275389;
+        Wed, 10 Aug 2022 11:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Wdyptz8v1uMMnY9kHa999mGXzTZq4vrNBD6JJO975pY=; b=xQFEJRje+5KYZsm78qd561Znmf
+        3i3ixO5ZS9RypJYMDJuHQ/VVnpJ5ey3altYugRYiy3drQQ8N8HWCpLpIYWlbqfVzPd17sMCFv8Wwo
+        izZECbe0a8Jql4C6P94qRJdH8aY8N50tF0PrsS3hEH0yraNcuryt6RA7MIrca9sLI6bBNLHri/ct+
+        hD/fsxAykUqXjtMYm7VZaDWQ4cLkVx46dpxm6MFZVzdxi7+jwbFNo7V4A92mrI60xAa/OVKRt9EIC
+        6P0AKidp0kYcs/a41sR1v+oma/Psnh5Y+5+x3BmIcUuS1ji2YRWet1IOUaTKtvIIqlC5nj2vjjyys
+        wMWXbB2A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oLqE0-00De0o-Nx; Wed, 10 Aug 2022 18:14:36 +0000
+Date:   Wed, 10 Aug 2022 11:14:36 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+        casey@schaufler-ca.com, paul@paul-moore.com, joshi.k@samsung.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        a.manzanares@samsung.com, javier@javigon.com
+Subject: Re: [PATCH v2] lsm,io_uring: add LSM hooks for the new uring_cmd
+ file op
+Message-ID: <YvP1jK/J4m8TE8BZ@bombadil.infradead.org>
+References: <20220715191622.2310436-1-mcgrof@kernel.org>
+ <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220809184137.GB15107@lst.de>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <a56d191e-a3a3-76b9-6ca3-782803d2600c@kernel.dk>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 09, 2022 at 08:41:37PM +0200, Christoph Hellwig wrote:
-> On Tue, Aug 09, 2022 at 10:46:04AM -0600, Keith Busch wrote:
+On Fri, Jul 15, 2022 at 01:28:35PM -0600, Jens Axboe wrote:
+> On 7/15/22 1:16 PM, Luis Chamberlain wrote:
+> > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> > add infrastructure for uring-cmd"), this extended the struct
+> > file_operations to allow a new command which each subsystem can use
+> > to enable command passthrough. Add an LSM specific for the command
+> > passthrough which enables LSMs to inspect the command details.
+> > 
+> > This was discussed long ago without no clear pointer for something
+> > conclusive, so this enables LSMs to at least reject this new file
+> > operation.
 > 
-> > For swiotlb, though, we can error out the mapping if the requested memory uses
-> > swiotlb with the device: the driver's .dma_map() can return ENOTSUPP if
-> > is_swiotlb_buffer() is true. Would that be more acceptable?
+> From an io_uring perspective, this looks fine to me. It may be easier if
+> I take this through my tree due to the moving of the files, or the
+> security side can do it but it'd have to then wait for merge window (and
+> post io_uring branch merge) to do so. Just let me know. If done outside
+> of my tree, feel free to add:
 > 
-> No, is_swiotlb_buffer and similar are not exported APIs.
+> Acked-by: Jens Axboe <axboe@kernel.dk>
 
-The functions are implemented under 'include/linux/', indistinguishable from
-exported APIs. I think I understand why they are there, but they look the same
-as exported functions from a driver perspective.
+Paul, Casey, Jens,
 
-> More importantly with the various secure hypervisor schemes swiotlb is
-> unfortunately actually massively increasing these days.  On those systems all
-> streaming mappings use swiotlb.  And the only way to get any kind of
-> half-decent I/O performance would be the "special" premapped allocator, which
-> is another reason why I'd like to see it.
+should this be picked up now that we're one week into the merge window?
 
-Perhaps I'm being daft, but I'm totally missing why I should care if swiotlb
-leverages this feature. If you're using that, you've traded performance for
-security or compatibility already. If this idea can be used to make it perform
-better, then great, but that shouldn't be the reason to hold this up IMO.
-
-This optimization needs to be easy to reach if we expect anyone to use it.
-Working with arbitrary user addresses with minimal additions to the user ABI
-was deliberate. If you want a special allocator, we can always add one later;
-this series doesn't affect that.
-
-If this has potential to starve system resource though, I can constrain it to
-specific users like CAP_SYS_ADMIN, or maybe only memory allocated from
-hugetlbfs. Or perhaps a more complicated scheme of shuffling dma mapping
-resources on demand if that is an improvement over the status quo.
+  Luis

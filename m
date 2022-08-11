@@ -2,99 +2,163 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A315059062D
-	for <lists+io-uring@lfdr.de>; Thu, 11 Aug 2022 20:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED54759064F
+	for <lists+io-uring@lfdr.de>; Thu, 11 Aug 2022 20:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbiHKSIt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Aug 2022 14:08:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47028 "EHLO
+        id S235862AbiHKSmg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Aug 2022 14:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbiHKSIs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Aug 2022 14:08:48 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D15AA220C
-        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 11:08:45 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id z13so597565ilq.9
-        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 11:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=HE2GTmyQrCwEOBrwByEM4ojMdnw0XmOJ6nETNaA+tWc=;
-        b=xzhIvn/Es2ksZd/4FowlLsVez2Ux9GgSuHNnZvaZjIvFT2fWHKLGIoIn1GnsLA64EI
-         6u6LyKmftldJvTYGE+BWMPc0s2BSe7C8pWCW20M6yEIWK2zJAteyGpGi0TtDQDRfwpLJ
-         PNspl7RZeO6fMD6GcMRBjY/rzqlDQsK4kuc+pddM4M2uP2f6ZJXtToJ+Xc0MOemVpNtc
-         4luhbyFbaXS72WENdfObXdy9HjjhdT8CPRWeYnJj6UzR12mkZSI6LArvWNAixEnN81Yt
-         OLKVHNcSXi0wKxEjavr4sLEANhqA4n+CQ+Fvi9W1CSnu+7YaLhaO4ivzW/ceJeLf6Q7o
-         BLAg==
+        with ESMTP id S235856AbiHKSmd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Aug 2022 14:42:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A662397D63
+        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 11:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660243351;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1N+sfudTifSbHYKxE9qrlKzOedXyqPZF8dt12A/wwZ0=;
+        b=gBibRswCvrrhVssO4wzyX8dfaT/sGWJAJDPPoqeOYOsGQZJNrb5O9MRoJ+ODPp6dum41oW
+        di4FQUrpQgelNomPznKnolMMXImFNAhQ5flENaM3HR6pK8CfzUlgfiRhvlUf7y5TxBYyAA
+        Ef7/DRmttYVUcxoFyPpqo+pzXRtm+tM=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-371-QmMc5zT9N1mtiZhwg05sGA-1; Thu, 11 Aug 2022 14:42:30 -0400
+X-MC-Unique: QmMc5zT9N1mtiZhwg05sGA-1
+Received: by mail-ed1-f71.google.com with SMTP id i5-20020a05640242c500b0043e50334109so11415010edc.1
+        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 11:42:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=HE2GTmyQrCwEOBrwByEM4ojMdnw0XmOJ6nETNaA+tWc=;
-        b=eUiWA+UrNru+gG8XjWUTESG9rjnxS0+9H/q/9v9ZIgimf8gjRp0D3Y1SHjWFSTrMX+
-         95G4tEfoolfilZJpk8Ge0yV5fwZrDfRg7D3g6KkT6UF6cjoUicwGnRuQ/K1ojGHggu2C
-         y8Cbg4h61C47LNvmAYzhsqvIH7NWqg8mK81X/OOGue/p00pF/lZh+4PSLvCeF+XF2MG+
-         UOhUNDN0j2IMEk/1sDDb1xi9SmJ52T/VfxLqG2LThQTXMzaMOvwmIisOdbFg5NDjGPy/
-         PDZynfSQJOgWpL+rET1QvXVqDixIy21mqy57VyWTLawwobBtTV3fSvbxCDel982LrK4o
-         gBpQ==
-X-Gm-Message-State: ACgBeo3JDVWfyFls3USqaRB1UZIzQhp23buWw8uDw6PTTHock70UQxL+
-        KnMNvKvnU4ZXO1ebIRQZngjr8Q==
-X-Google-Smtp-Source: AA6agR78c4WWGkDE6zw4G5hqtIjA80yC3XPmKp+nAcWBT2GVHhzFZ9pcLFCmufqA/oVy4rxFYTGo/Q==
-X-Received: by 2002:a92:c56e:0:b0:2e0:e44c:7296 with SMTP id b14-20020a92c56e000000b002e0e44c7296mr198724ilj.23.1660241324588;
-        Thu, 11 Aug 2022 11:08:44 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id i9-20020a02c609000000b003434bb60a03sm47433jan.158.2022.08.11.11.08.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Aug 2022 11:08:44 -0700 (PDT)
-Message-ID: <ae138911-c669-5332-19ca-423d8f1a447b@kernel.dk>
-Date:   Thu, 11 Aug 2022 12:08:43 -0600
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=1N+sfudTifSbHYKxE9qrlKzOedXyqPZF8dt12A/wwZ0=;
+        b=V4XvkmL7+xhFzhkm46fKtZCWtwbaRbELQxLjwwcEMLNkBr8J8i4VmcHLXqBlu6Pmtg
+         AhVUHsVC7u1nP4ECRfFscf28+IhlS0lL0NH/OHJq/2WbG+eb+ZLhq9NcHkiQo3MYHll5
+         0tuivq1vvEE3cuv1Z1wQoFkapzlr9XWskZMlf4GzX3qHtD4ixJO5quqvbuAyFhJ3BPpJ
+         ol3An+KwnKaEevAh6D8dF4Kzr+4v6pgY+ixibmNOLfo1mv9uMpNheqN4IEb3h9pI6kmw
+         VhBsGU3Rzn7HNOvukxMG57iLvBsDHMYD6R1CPmPDKp5YHQdIIazaRA5ZWNiN+TZxdlw4
+         yhJg==
+X-Gm-Message-State: ACgBeo2TkhQ7calMNfeQdkYcGY8McrLc6Ke7NrkVpED1N0IN0u1/e3TC
+        H3VvFwXivB3zKonxVW+5ceB5G2xPX2VPrGfIWyxtp70v4JcCC5a5MK8OhqrklHk4vUpDF5ofpyp
+        2XAuVR88ud+jgGcYZHg8=
+X-Received: by 2002:a17:906:4fc6:b0:731:137:8656 with SMTP id i6-20020a1709064fc600b0073101378656mr268659ejw.582.1660243349063;
+        Thu, 11 Aug 2022 11:42:29 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR5DYRpr7HFJH/ifHNf55/xClsMWmSBMBVBK/FNBiruL/xrRpCO6iCiJrjPDBgKW3RfIxncBRQ==
+X-Received: by 2002:a17:906:4fc6:b0:731:137:8656 with SMTP id i6-20020a1709064fc600b0073101378656mr268644ejw.582.1660243348803;
+        Thu, 11 Aug 2022 11:42:28 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-178.retail.telecomitalia.it. [79.46.200.178])
+        by smtp.gmail.com with ESMTPSA id h12-20020aa7c94c000000b00440ced0e117sm101543edt.58.2022.08.11.11.42.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Aug 2022 11:42:28 -0700 (PDT)
+Date:   Thu, 11 Aug 2022 20:42:22 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Zhang chunchao <chunchao@nfschina.com>
+Cc:     Zhang chunchao <chunchao@nfschina.com>, asml.silence@gmail.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@nfschina.com
+Subject: Re: [PATCH] Modify the return value ret to EOPNOTSUPP when
+ initialized to reduce repeated assignment of errno
+Message-ID: <20220811184222.ey2nwpk2flrd6hzm@sgarzare-redhat>
+References: <20220811075638.36450-1-chunchao@nfschina.com>
+ <20220811150242.giygjmy4vimxtrzg@sgarzare-redhat>
+ <8f3d1bf5-48f6-411d-674e-1568e3841d75@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] io_uring: fix error handling for io_uring_cmd
-Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     anuj20.g@samsung.com, io-uring@vger.kernel.org, ming.lei@redhat.com
-References: <CGME20220811092503epcas5p2e945f7baa5cb0cd7e3d326602c740edb@epcas5p2.samsung.com>
- <20220811091459.6929-1-anuj20.g@samsung.com>
- <166023229266.192493.17453600546633974619.b4-ty@kernel.dk>
- <f172af9b-2321-c819-2e29-357d4f130159@kernel.dk>
- <20220811173553.GA16993@test-zns>
- <9b80f3d8-bef6-11a2-deb2-f94750414404@kernel.dk>
- <20220811175709.GB16993@test-zns>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220811175709.GB16993@test-zns>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <8f3d1bf5-48f6-411d-674e-1568e3841d75@kernel.dk>
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/11/22 11:57 AM, Kanchan Joshi wrote:
->>> BTW, we noticed the original issue while testing fixedbufs support.
->>> Thinking to add a liburing test that involves sending a command which
->>> nvme will fail during submission. Can come in handy.
+On Thu, Aug 11, 2022 at 09:41:38AM -0600, Jens Axboe wrote:
+>On 8/11/22 9:02 AM, Stefano Garzarella wrote:
+>> On Thu, Aug 11, 2022 at 03:56:38PM +0800, Zhang chunchao wrote:
+>>> Remove unnecessary initialization assignments.
+>>>
+>>> Signed-off-by: Zhang chunchao <chunchao@nfschina.com>
+>>> ---
+>>> io_uring/io_uring.c | 3 +--
+>>> 1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>> index b54218da075c..8c267af06401 100644
+>>> --- a/io_uring/io_uring.c
+>>> +++ b/io_uring/io_uring.c
+>>> @@ -3859,14 +3859,13 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+>>>         void __user *, arg, unsigned int, nr_args)
+>>> {
+>>>     struct io_ring_ctx *ctx;
+>>> -    long ret = -EBADF;
+>>> +    long ret = -EOPNOTSUPP;
+>>>     struct fd f;
+>>>
+>>>     f = fdget(fd);
+>>>     if (!f.file)
+>>>         return -EBADF;
+>>>
+>>> -    ret = -EOPNOTSUPP;
+>>>     if (!io_is_uring_fops(f.file))
+>>>         goto out_fput;
+>>>
 >>
->> I think that's a good idea - if you had eg a NOP linked after a passthru
->> command that failed, then that would catch this case.
-> 
-> Right. For now in liburing test we don't do anything that is guranteed
-> to fail from nvme-side. Test issues iopoll (that fails) but that failure
-> comes from io_uring itself (as .iopoll is not set). So another test that
-> will form a bad passthru command (e.g. wrong nsid) which only nvme can
-> (and will) fail.
+>> What about remove the initialization and assign it in the if branch?
+>> I find it a bit easier to read.
+>>
+>> I mean something like this:
+>>
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+>> @@ -3859,16 +3859,17 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+>>                 void __user *, arg, unsigned int, nr_args)
+>>  {
+>>         struct io_ring_ctx *ctx;
+>> -       long ret = -EBADF;
+>> +       long ret;
+>>         struct fd f;
+>>
+>>         f = fdget(fd);
+>>         if (!f.file)
+>>                 return -EBADF;
+>>
+>> -       ret = -EOPNOTSUPP;
+>> -       if (!io_is_uring_fops(f.file))
+>> +       if (!io_is_uring_fops(f.file)) {
+>> +               ret = -EOPNOTSUPP;
+>>                 goto out_fput;
+>> +       }
+>>
+>>         ctx = f.file->private_data;
+>>
+>>
+>> Otherwise remove the initialization, but leave the assignment as it is now.
+>
+>Generally the kernel likes to do:
+>
+>err = -EFOO;
+>if (something)
+>	goto err_out;
+>
+>rather than put it inside the if clause. I guess the rationale is it
+>makes it harder to forget to init the error value. I don't feel too
 
-Yes, that's a good idea in general, testing only successful completions
-doesn't really give full coverage.
+ah, thanks for pointing this out! Make sense to me, but I hope recent 
+compilers can spot that kind of issue :-)
 
--- 
-Jens Axboe
+>strongly, I'm fine with your patch too. Can you send it as a real patch?
+
+@Zhang: if you want, feel free to change your patch following the 
+suggestions and send a new version, otherwise I can send mine of course.
+
+Thanks,
+Stefano
 

@@ -2,59 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 070AA590081
+	by mail.lfdr.de (Postfix) with ESMTP id 9A20D590083
 	for <lists+io-uring@lfdr.de>; Thu, 11 Aug 2022 17:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236486AbiHKPn4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Aug 2022 11:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43178 "EHLO
+        id S236430AbiHKPn7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Aug 2022 11:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236427AbiHKPno (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Aug 2022 11:43:44 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D160F9FAAD
-        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 08:38:14 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id j20so10142732ila.6
-        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 08:38:14 -0700 (PDT)
+        with ESMTP id S236432AbiHKPnp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Aug 2022 11:43:45 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2AF59FAB6
+        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 08:38:16 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id c5so423261ilh.3
+        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 08:38:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc;
-        bh=yVPf9O+ocz+x+5P59o1KLoP+RNX/43F6g7pj/m1CaeI=;
-        b=OfXNMCg77xeI4zB0j9qiFlDC/ND+ucBOAMR4sbqcDrQMj0JKN1JmhmQTS4VDhzrSHn
-         FNWQYLNEgx2tDejOlOptgk4FmeYZqeqsnhaGVbROOzekbUmFvKVxIrMv+F6C0nyMz1Lt
-         2t4e3vMuWT3ECoXaLXp1DPsb8W/Ea71IZQTR0eClNUakepXF6ns5PWFhevpll4Hr0J36
-         BlHDu3YV9DCY6OKzD4LMckyeg0v1T7lfMFLcOf4XeYVEEMf8s8+H3NJ5r8hahX78alGh
-         OK+YLs9yO13xEyhtCn44gpo8o5jTI1F5DcyRIRXkIBcwXtBe6hLQgTe21HdQvnppq2RC
-         L27A==
+         :references:in-reply-to:to:from:from:to:cc;
+        bh=KO3raM6ybRo6Io+WhT3diaErE++wqwgEByg9nvNi494=;
+        b=VDjMjxNenmn0wVs3zX2PSXMI23rlKrU8bmkefya/wFWCAP0hAlBo+iUD3v9/XOR6ZW
+         RCqWfQXCVwR6f6AE+81Okixm0/6SJ27HKamoFQrEprSuxtNCdQUJaE/LTokNPPfvvcZv
+         +P3gC7DdJ6WhcfSX2/I51CQ+TevczA/yHnLqS9N+vcu8lSYL47+sEwAYU4Frx5HeA5nf
+         1uqLUObREnde3vNoYh8/vA0Yc4K3i1Ft3uVWSoEbmVyjb8cnc5etc4Ng891CiUBXWuKr
+         S6siUL6/mXBWCHYHfmTtioADfkBmjdHi0adMB9l9cOm4/ZioEE3DoR1N8KmkkVX8/Dqj
+         o8VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=yVPf9O+ocz+x+5P59o1KLoP+RNX/43F6g7pj/m1CaeI=;
-        b=YNveFrHCjV/+GdP/O2hKL4QrSIfQq249itvXUsbSQnImqmCaSvY/9eVj8UbR2+W5/K
-         GST+Pjy9ccya70CBfAVlUCKdyuR/8yFIMks/0BFVkZyBt2z4cgWddsVw9cC0SoM3u5MM
-         AaWPqn5nNpZywArsWjN8hvaHS69ETR9wraO+JtFnEXQQ1Msgt/T8SyyKIHiqYeHzEzbG
-         9mJsRKxt0VRvjysLa6u5hrNfHRB1ERKD7puUor3wC0Zret6eTfvwOqRDtJqBxh2/SY2a
-         9V2rYeRyqGhSp4Bg8Mgg+WkLm69SggT332hBW94L8jbnQeSbU2r7gITVLA+xIk4DWCmk
-         pUdg==
-X-Gm-Message-State: ACgBeo2SrdegoWmee2P5kSzZJf2yWUSNtSzc4vzvq4eAh8iAtwgNoNM/
-        t+k/jY2+qltPZzHOyyk8h7Md7A==
-X-Google-Smtp-Source: AA6agR4c+lmYF7C0ysV2JnnYMIHvHYNqSqlnjlrRsxk+fyJFrRmewxViV0PmgcwlMAiYO7tnkv0/EA==
-X-Received: by 2002:a92:ca47:0:b0:2de:a702:7a20 with SMTP id q7-20020a92ca47000000b002dea7027a20mr15695975ilo.307.1660232293320;
-        Thu, 11 Aug 2022 08:38:13 -0700 (PDT)
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc;
+        bh=KO3raM6ybRo6Io+WhT3diaErE++wqwgEByg9nvNi494=;
+        b=p34HaMERCROT169PJUEjOpDNO3mUCgEuehVKQVbxn4HGXzWyshy5Y2pwyaB6XSfHYh
+         oysamkDQeaeY5JcGgT2P4Mk6s8pDwdTZvDotXyudY6Q4rrIaRlJKJ2LiL022msg2EfKP
+         7a/+mstCBNXyk+CQE5idgz1LV6J8uJu57YGRaa0ZFcd+aXMkyoHaoRrheJMtBNnNJy2j
+         y7hfuD5BsKB6QauJW+GccjJ6hYxj/xVytwHE4J1khUfbP7w9rHCzTcAN4u+rpxXUdeIn
+         khUgGZAbcODaOAWLQZnEraYWIRdOlukLJ9xBpWB5DnZwLj6+x8sIqcwRki29KnVPvxIj
+         igSg==
+X-Gm-Message-State: ACgBeo27xpykD1nfhNq5DgHHsj5YOt2PP1zUJ+P03sZOR0obHUrYNaH+
+        B96pRvdT1YcsS4h296+ZmzI7EzOSlsEMVw==
+X-Google-Smtp-Source: AA6agR6kt0spXL+8Pf+8KRRhOLh6uJt6CQdZUFpzb4j+rhBhslhWdzqFnAAhqstg7IB5pNSYPT4hog==
+X-Received: by 2002:a05:6e02:1b8f:b0:2df:2930:28e4 with SMTP id h15-20020a056e021b8f00b002df293028e4mr15445120ili.198.1660232295434;
+        Thu, 11 Aug 2022 08:38:15 -0700 (PDT)
 Received: from [127.0.1.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id e12-20020a0566380ccc00b003434d0ae6e8sm1064719jak.118.2022.08.11.08.38.12
+        by smtp.gmail.com with ESMTPSA id r2-20020a02b102000000b003433d46b408sm2148559jah.85.2022.08.11.08.38.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Aug 2022 08:38:12 -0700 (PDT)
+        Thu, 11 Aug 2022 08:38:14 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     anuj20.g@samsung.com
-Cc:     joshi.k@samsung.com, io-uring@vger.kernel.org, ming.lei@redhat.com
-In-Reply-To: <20220811091459.6929-1-anuj20.g@samsung.com>
-References: <CGME20220811092503epcas5p2e945f7baa5cb0cd7e3d326602c740edb@epcas5p2.samsung.com> <20220811091459.6929-1-anuj20.g@samsung.com>
-Subject: Re: [PATCH] io_uring: fix error handling for io_uring_cmd
-Message-Id: <166023229266.192493.17453600546633974619.b4-ty@kernel.dk>
-Date:   Thu, 11 Aug 2022 09:38:12 -0600
+To:     io-uring@vger.kernel.org, metze@samba.org
+In-Reply-To: <cover.1660201408.git.metze@samba.org>
+References: <cover.1660201408.git.metze@samba.org>
+Subject: Re: [PATCH 0/3] typesafety improvements on io_uring-6.0
+Message-Id: <166023229481.192529.11362562365058444938.b4-ty@kernel.dk>
+Date:   Thu, 11 Aug 2022 09:38:14 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,20 +66,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 11 Aug 2022 14:44:59 +0530, Anuj Gupta wrote:
-> Commit 97b388d70b53 ("io_uring: handle completions in the core") moved the
-> error handling from handler to core. But for io_uring_cmd handler we end
-> up completing more than once (both in handler and in core) leading to
-> use_after_free.
-> Change io_uring_cmd handler to avoid calling io_uring_cmd_done in case
-> of error.
+On Thu, 11 Aug 2022 09:11:13 +0200, Stefan Metzmacher wrote:
+> with the split into individual files (which is gread)
+> and the introduction of the generic struct io_cmd_data,
+> we now have the risk do incompatible casting in
+> io_kiocb_to_cmd().
+> 
+> My patches catch casting problems with BUILD_BUG_ON() now.
+> While there I added missing BUILD_BUG_ON() checks
+> for new io_uring_sqe fields.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] io_uring: fix error handling for io_uring_cmd
-      commit: f1bb0fd63c374e1410ff05fb434aa78e1ce09ae4
+[1/3] io_uring: consistently make use of io_notif_to_data()
+      commit: 3608c38ea378cb7bb2d43ebe43c468c7be58b83a
+[2/3] io_uring: make io_kiocb_to_cmd() typesafe
+      commit: 28789defa868b7b731ed73cfd7e0c0bfcd901de7
+[3/3] io_uring: add missing BUILD_BUG_ON() checks for new io_uring_sqe fields
+      commit: 4167efe6463b09505112b6dc2c30b8ac68fcf348
 
 Best regards,
 -- 

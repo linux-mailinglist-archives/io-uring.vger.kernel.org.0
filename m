@@ -2,39 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D333958F825
-	for <lists+io-uring@lfdr.de>; Thu, 11 Aug 2022 09:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71ABA58F826
+	for <lists+io-uring@lfdr.de>; Thu, 11 Aug 2022 09:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233504AbiHKHLy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 Aug 2022 03:11:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49858 "EHLO
+        id S233522AbiHKHMH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 Aug 2022 03:12:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbiHKHLx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Aug 2022 03:11:53 -0400
+        with ESMTP id S229617AbiHKHMG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 Aug 2022 03:12:06 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAF228E451
-        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 00:11:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D808E451
+        for <io-uring@vger.kernel.org>; Thu, 11 Aug 2022 00:12:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
         s=42; h=Message-Id:Date:Cc:To:From;
-        bh=hNCklKwhnkxgpegKG9vOA7heL6xIAzE/3BG7ocIh58U=; b=iLCkDFXjuYJ/Iiyv4rxmDZ/8OC
-        LaMbM97xPtLbLOdqmFLD+A7tSLekeme2dqVF71dSuTnjXDCFlBEnZLdBB8Lhr7P4J2Qb7lXAOyN2I
-        W6OTXN6NkGOr6AoUVjS7P5AH/3kF0oc86OauUMfj1/uV9FlVaKloZFymOUdkwMbD/2prCNzsVg1/7
-        U4lqzhoKEMl13wJSe6x0YRQYg8l74AaeUNm9udIUIuEW0SJTgh5CUH6U/uw+BQjjxbL2BrfSk1HRa
-        ql1PP2JBWr0z16js6b+d1crP56RAl4KDM9aSZklfV2NoI5pegW3b8xiL8S4Q7WG5677E7PzTSVT0T
-        wxZ+JqNrOM7K2g/smfSaLOtU5agzOojN5z7J0kBwh75FlKTvaXKuVLrsgCsq0lYyyGAvSs5qPwif5
-        fl7Fbaa7XgEGCdK/e8ihuJMtOY6WmlUHyAQrpoRwzgqTFiguPyp0ylE8U/JzUzbI0oBP33qgnqWx3
-        ZEEBJC9j1Se34e3XIpJKweey;
+        bh=cEhuImJwLUq0T88OZjlPjOOpXeplbjIucn/rGqYrHbE=; b=tOTkL2PhyG9ehZqquaeQms6s98
+        WL6oZA7M1WKw/KIbdpIE7B6c2lqhsBJa+nB9nDquGExNvodG/lL5eFhcjFFH9vajJ+Up+F7QkIv3Z
+        fe8U58lfci4GrlqdK4HOsppGfrET0v/5IgX2feh6R7DK5b7whYQ6+tZsVoG1M5brpFMUZ9BRc9F4A
+        AGPWe6rJELa3Fqg12K+AmSIiC/et1xNvsE9bBFqw4o14MhePXzCOF47FAlw6YpAtFsrxCAsL7w9Ei
+        1o6wgunGk9eFCVIw3qiV+zNt4rA9wI+AdA/4hYAHc/RxBIUh1Cr79znY9Hz511OvHLSzpzp2JgexJ
+        +SSf75WL3J+6nObp0gL9ewp29rYEOLQVCFuq/+aoYxiCj0u/yw2AjXWNwsDU33g+Ti/q0YojA2fAU
+        eVeBH3ZfThbpjAWYn2xUaJPoR4m5HDjFtk+RLa4wLvCP6y4KNz8OghoFW/z++uJR2aa1jjdNjIWgX
+        Q4J65FAth50QujgE1ib1sXvl;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
         (Exim)
-        id 1oM2M7-0099uF-JA; Thu, 11 Aug 2022 07:11:49 +0000
+        id 1oM2MM-0099uf-PX; Thu, 11 Aug 2022 07:12:03 +0000
 From:   Stefan Metzmacher <metze@samba.org>
 To:     io-uring@vger.kernel.org, axboe@kernel.dk
 Cc:     Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH 0/3] typesafety improvements on io_uring-6.0
-Date:   Thu, 11 Aug 2022 09:11:13 +0200
-Message-Id: <cover.1660201408.git.metze@samba.org>
+Subject: [PATCH 1/3] io_uring: consistently make use of io_notif_to_data()
+Date:   Thu, 11 Aug 2022 09:11:14 +0200
+Message-Id: <8da6e9d12cf95ad4bc73274406d12bca7aabf72e.1660201408.git.metze@samba.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1660201408.git.metze@samba.org>
+References: <cover.1660201408.git.metze@samba.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -47,46 +49,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+This makes the assignment typesafe. It prepares
+changing io_kiocb_to_cmd() in the next commit.
 
-with the split into individual files (which is gread)
-and the introduction of the generic struct io_cmd_data,
-we now have the risk do incompatible casting in
-io_kiocb_to_cmd().
+Signed-off-by: Stefan Metzmacher <metze@samba.org>
+---
+ io_uring/notif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My patches catch casting problems with BUILD_BUG_ON() now.
-While there I added missing BUILD_BUG_ON() checks
-for new io_uring_sqe fields.
-
-Stefan Metzmacher (3):
-  io_uring: consistently make use of io_notif_to_data()
-  io_uring: make io_kiocb_to_cmd() typesafe
-  io_uring: add missing BUILD_BUG_ON() checks for new io_uring_sqe
-    fields
-
- include/linux/io_uring_types.h |  9 +++++++-
- io_uring/advise.c              |  8 +++----
- io_uring/cancel.c              |  4 ++--
- io_uring/epoll.c               |  4 ++--
- io_uring/fs.c                  | 28 +++++++++++------------
- io_uring/io_uring.c            | 19 ++++++++++++---
- io_uring/kbuf.c                |  8 +++----
- io_uring/msg_ring.c            |  8 +++----
- io_uring/net.c                 | 42 +++++++++++++++++-----------------
- io_uring/notif.c               |  4 +---
- io_uring/notif.h               |  2 +-
- io_uring/openclose.c           | 16 ++++++-------
- io_uring/poll.c                | 16 ++++++-------
- io_uring/rsrc.c                | 10 ++++----
- io_uring/rw.c                  | 28 +++++++++++------------
- io_uring/splice.c              |  8 +++----
- io_uring/statx.c               |  6 ++---
- io_uring/sync.c                | 12 +++++-----
- io_uring/timeout.c             | 26 ++++++++++-----------
- io_uring/uring_cmd.c           | 11 +++++----
- io_uring/xattr.c               | 18 +++++++--------
- 21 files changed, 154 insertions(+), 133 deletions(-)
-
+diff --git a/io_uring/notif.c b/io_uring/notif.c
+index b5f989dff9de..48d29dead62a 100644
+--- a/io_uring/notif.c
++++ b/io_uring/notif.c
+@@ -100,7 +100,7 @@ __cold int io_notif_unregister(struct io_ring_ctx *ctx)
+ 
+ 		if (!notif)
+ 			continue;
+-		nd = io_kiocb_to_cmd(notif);
++		nd = io_notif_to_data(notif);
+ 		slot->notif = NULL;
+ 		if (!refcount_dec_and_test(&nd->uarg.refcnt))
+ 			continue;
 -- 
 2.34.1
 

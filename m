@@ -2,110 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D8E591759
-	for <lists+io-uring@lfdr.de>; Sat, 13 Aug 2022 00:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E758591761
+	for <lists+io-uring@lfdr.de>; Sat, 13 Aug 2022 00:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233587AbiHLW2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Aug 2022 18:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40638 "EHLO
+        id S235808AbiHLWff (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Aug 2022 18:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235899AbiHLW1v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Aug 2022 18:27:51 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD8412773
-        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 15:27:40 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id y1so1886038plb.2
-        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 15:27:40 -0700 (PDT)
+        with ESMTP id S230118AbiHLWfe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Aug 2022 18:35:34 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D216F140F5
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 15:35:32 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id tl27so4241046ejc.1
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 15:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=iUUoih8UkwYRURLYPvlaNNAYPdp8A2anNSwFl3Z001I=;
-        b=SKNSOAgeG4eFTmKQsb9KpOCvK2uif4Xa7OEekK04P7DjkUjLZZIV0NC5PCwi0K0RYy
-         Fezn6g0bA373ufVS2R/KVp63ZXZoYbyxz+ztGR7ovRpnDKkZOHk8wQWv4MOiIgfWlLkP
-         ZmY8Ck4siev2ejaE8wuZxx6yuL/dCaOaP0NMneaCVfiVvapektKZWc33MEc2RSOLy6SP
-         32jsN3WN16Bxt/SYkrGRnPbVqYg7kCjNrgcEq52tIVHMlR69YN0HRxeAbK/HOG9D0r7c
-         j0AM6B6UwyYHj7q1OpNOIyVx5pd9CYdsPSeIs6tUMzdrWAK4bwFBTFAmgcDOqrPMlCQD
-         OCYQ==
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=3dffNjg2V0ub9IqECEnMjPuejsK+v8sH/hcA92lXNTc=;
+        b=hEZxHTSxBe1hplwyOwm0+i2gkHMpgTNdq52QOu5OXHE2Dnuqb0Iz8m0Vuz4T9wbOKm
+         fVVsMc0VJTvjT24VEquLY6eBxrd+Lskz2l0Z684wl6ZwhbtORqNGYBLvDMAVP91HsfmM
+         AMXvi4+yxzaEc+J+kxCW+6Br5sdxnDeU7Eea0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=iUUoih8UkwYRURLYPvlaNNAYPdp8A2anNSwFl3Z001I=;
-        b=k+SU5Fk+vh5XtHoTsPOdP06QM3man4ZqAU5iqA7InZU2Zzx6TfcmrsVVyhpAXz9dFn
-         XC6jTmML/b6Nkv7l14/srAglKEMnaUakragupJYwwzjMwKhqdQicB2Y2aEPJNhbeMi5E
-         buZakVll1LfTr3bLrQw43TVdx0vTdTivd3txJzdYD3q/QTBgJhqOAGObVcp96CP1lBTK
-         ra3BEwo7t8Qr2sXj/IevqmektLsFDs9rAeDsfmJFyzimMpP2Ywf2PLsktHKKIBrIc4lZ
-         9lpRm9hrB0e9YpFs9/EhaWS5llTDMV0Be6e8/MML8rLtO/Jy+dFaodv47o6RmKL3J/c6
-         ldeg==
-X-Gm-Message-State: ACgBeo2kLm79VSHRlLSOchnE+t94ILwldhv5cdmBVJENKqUV9Oz66VsI
-        P+GZiks7W5dgrsMnqttyLc6M+/wSW/r2aQ==
-X-Google-Smtp-Source: AA6agR4CD97kaEZkD5jjRNJpvvDZOF+ZWe53HBWUxcP1AvnueIQfVVMoAQ2KrrX+WepIeH0jABUVsw==
-X-Received: by 2002:a17:90b:1b07:b0:1f5:115c:79a4 with SMTP id nu7-20020a17090b1b0700b001f5115c79a4mr6294479pjb.166.1660343260160;
-        Fri, 12 Aug 2022 15:27:40 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id f10-20020a63f74a000000b003db7de758besm1819430pgk.5.2022.08.12.15.27.39
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=3dffNjg2V0ub9IqECEnMjPuejsK+v8sH/hcA92lXNTc=;
+        b=0U4UfSijxolqgzFfhbJFcbuHVKbGpVN/Db7AUYfInZEwxPd6d6kNctDetrPkPxlJ+V
+         SxMKUlxiNuzu1gE9yUyNreofYedeVFEMC+Ebxgr8G35BOBHWLR9712j5o9PJVZJoKAbn
+         uMix6zg+9CLpK/sCK/9sjARH8btZdTqz/bU3UU/gzHfv4VT5xoy8/zL+f0oWQB/jGamT
+         83ozu2IGajjBudibaVirea/8AFwit4g87sVau5U+cLysKDqdufMmA80WAjC9lTV4uTRv
+         8xYCBslgLgp+Bf+tpvnZBddvWHviOxDP0E9qrEjRqp4LQo1UUNG1ZL9NMsSEYhGW6o0z
+         I3eA==
+X-Gm-Message-State: ACgBeo0g/gGbtah9BHpY7b72sJkl8kLjKupY1N+S0Iy+czfxh25JhHff
+        WhnPNpP4MihzFoGTZr4AxRzLWZOn7WikQrvs
+X-Google-Smtp-Source: AA6agR4Qyg/3YZ+IOP0qQjmXAtSEdKokzpMiMuepP6mlaiWAjJUz+IwcSwYPH0P5Ce/TSsItDe5hTw==
+X-Received: by 2002:a17:906:7945:b0:731:2aeb:7941 with SMTP id l5-20020a170906794500b007312aeb7941mr3834385ejo.449.1660343731138;
+        Fri, 12 Aug 2022 15:35:31 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id c15-20020aa7d60f000000b0043d6ece495asm2030704edr.55.2022.08.12.15.35.30
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Aug 2022 15:27:39 -0700 (PDT)
-Message-ID: <7a29adb2-059c-9320-02e8-463cbe410c3e@kernel.dk>
-Date:   Fri, 12 Aug 2022 16:27:38 -0600
+        Fri, 12 Aug 2022 15:35:30 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id l22so2535721wrz.7
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 15:35:30 -0700 (PDT)
+X-Received: by 2002:a5d:6248:0:b0:222:cd3b:94c8 with SMTP id
+ m8-20020a5d6248000000b00222cd3b94c8mr3196936wrv.97.1660343730228; Fri, 12 Aug
+ 2022 15:35:30 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [GIT PULL] io_uring fixes for 6.0-rc1
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
 References: <CAHk-=wioqj4HUQM_dXdVoSJtPe+z0KxNrJPg0cs_R3j-gJJxAg@mail.gmail.com>
- <D92A7993-60C6-438C-AFA9-FA511646153C@kernel.dk>
- <6458eb59-554a-121b-d605-0b9755232818@kernel.dk>
- <ca630c3c-80ad-ceff-61a9-63b253ba5dbd@kernel.dk>
- <433f4500-427d-8581-b852-fbe257aa6120@kernel.dk>
+ <D92A7993-60C6-438C-AFA9-FA511646153C@kernel.dk> <6458eb59-554a-121b-d605-0b9755232818@kernel.dk>
+ <ca630c3c-80ad-ceff-61a9-63b253ba5dbd@kernel.dk> <433f4500-427d-8581-b852-fbe257aa6120@kernel.dk>
  <CAHk-=wi_oveXZexeUuxpJZnMLhLJWC=biyaZ8SoiNPd2r=6iUg@mail.gmail.com>
  <CAHk-=wj_2autvtY36nGbYYmgrcH4T+dW8ee1=6mV-rCXH7UF-A@mail.gmail.com>
- <bb3d5834-ebe2-a82d-2312-96282b5b5e2e@kernel.dk>
- <e9747e47-3b2a-539c-c60b-fd9ccfe5c5e4@kernel.dk>
+ <bb3d5834-ebe2-a82d-2312-96282b5b5e2e@kernel.dk> <e9747e47-3b2a-539c-c60b-fd9ccfe5c5e4@kernel.dk>
  <YvbS/OHMJowdz+X3@kbusch-mbp.dhcp.thefacebook.com>
- <700d3c1c-557a-f521-c1b1-2b59a76bb479@kernel.dk>
-In-Reply-To: <700d3c1c-557a-f521-c1b1-2b59a76bb479@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YvbS/OHMJowdz+X3@kbusch-mbp.dhcp.thefacebook.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 12 Aug 2022 15:35:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg0CjDftjxVDGGwfA+rrBsg-nSOsMRS59fAw54W9N53Pw@mail.gmail.com>
+Message-ID: <CAHk-=wg0CjDftjxVDGGwfA+rrBsg-nSOsMRS59fAw54W9N53Pw@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fixes for 6.0-rc1
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/12/22 4:25 PM, Jens Axboe wrote:
-> On 8/12/22 4:23 PM, Keith Busch wrote:
->> On Fri, Aug 12, 2022 at 04:19:06PM -0600, Jens Axboe wrote:
->>> On 8/12/22 4:11 PM, Jens Axboe wrote:
->>>> For that one suggestion, I suspect this will fix your issue. It's
->>>> obviously not a thing of beauty...
->>>
->>> While it did fix compile, it's also wrong obviously as io_rw needs to be
->>> in that union... Thanks Keith, again!
->>
->> I'd prefer if we can get away with forcing struct kiocb to not grow.
->> The below should have the randomization move the smallest two fields
->> together so we don't introduce more padding than necessary:
-> 
-> Keith suggested the same thing and was going to send it out, and I
-> definitely like that a lot more than mine. Can you commit something like
-> this? Should probably add a comment on why these are grouped like that,
-> though.
+On Fri, Aug 12, 2022 at 3:24 PM Keith Busch <kbusch@kernel.org> wrote:
+>
+> I'd prefer if we can get away with forcing struct kiocb to not grow. The below
+> should have the randomization move the smallest two fields together so we don't
+> introduce more padding than necessary:
 
-Guess I'm a bit too quick here as I read this one as being from Linus.
-Linus, what do you think of this? It'll prevent kiocb from growing due
-to fields being moved around.
+I like this concept, but I think you might hit issues on 32-bit, where
+"loff_t" can be a 64-bit entity with 64-bit alignment, and then you
+see the same "oops, now it grew because loff_t moved" there.
 
--- 
-Jens Axboe
+Note that you'd never see that on x86-32, because - for strange
+historical reasons - even 64-bit fields only have 32-bit alignment,
+but other 32-bit architectures don't act that way.
 
+Honestly, I think maybe we should just stop randomizing kiocb.
+
+Because it has six fields, and basically three of them we wouldn't
+want to randomly move around.
+
+At some point, randomization no longer even matters.
+
+            Linus

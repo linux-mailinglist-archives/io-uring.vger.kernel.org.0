@@ -2,65 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23026591668
-	for <lists+io-uring@lfdr.de>; Fri, 12 Aug 2022 22:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552D159168C
+	for <lists+io-uring@lfdr.de>; Fri, 12 Aug 2022 23:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233653AbiHLUoY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Aug 2022 16:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37056 "EHLO
+        id S233653AbiHLVCC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Aug 2022 17:02:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231355AbiHLUoX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Aug 2022 16:44:23 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EC491D03
-        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 13:44:21 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id q19so1891685pfg.8
-        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 13:44:21 -0700 (PDT)
+        with ESMTP id S232950AbiHLVCB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Aug 2022 17:02:01 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7CEB2D99
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 14:01:59 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id 13so1709286plo.12
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 14:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc;
-        bh=u8tn7W4R7O7TD8IMKH72/jWBstNz/+3Ad47m6F/q6Hg=;
-        b=cCDaqDZk91U41qBNCNfd2vThKYNILQCNIhywyb3y8vHXOsmaXSQ3tLG6gSx0P2afMP
-         VZ+hPbkqdCTIW4hpd8f/pmNeO6qxjP0kVMHksMl6A4tNqYrDzfu9vGTK/iOTCS6+RDS1
-         sz1zNkEhsx/3NfiwcOfK9H9p/3MrAu1H1Jm+RdQ7DZqN5IsBtJjpkahGpV1dNxu92zVX
-         Ift7F3bJNm8CjzkIXGPjj/08h4R4pVHEcTsHYEg8jKqiOnHQAZ/tG4YyiIjVtyUZDejF
-         C2hlZ7i9VG06qNJLq0pQMgsUICAnSLay1DSHY/NWebIgdC0/phbCoyuD3cLDlkV1XHoD
-         GLdA==
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=/dGi23gztXinQFG82CdStVX1Ptv58Il6HYvpfMqCA8Y=;
+        b=WzKW48014zCmiwQ3+d2geiEmgHhd1C0DtjiTb91amdtoTZuHzxzAHhzs2aevfmUcXN
+         ml3liKAt1ZgXu8XFLG6mWXB5Mspq5x0lHoBLETup5/lBVPwj+9sQqBEeSh4Ay1pTnlkO
+         bKKl0R+CshF4nelqcPh7O4jK7BwjoEXtlZ+eb9y9+UF6eXdQRnoEllgnVcOmO1XP8PIZ
+         B4EEhUsXDm5ni1Kbk22Z50YCaj0Xrqcd9MWwkPWyfqbjNVpX6AEZ8e4pmu4fhPZvnstS
+         A5MIAk0xHtbuVbfuaoBwdSUL8UHg6TQTAjbxDvTMXSzhX6RR8RG4wCW2kBDn0aT1eRKH
+         OyKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc;
-        bh=u8tn7W4R7O7TD8IMKH72/jWBstNz/+3Ad47m6F/q6Hg=;
-        b=wqU4k1/CJ7BWzOSSOCnpObnln4xLf0cjKVg8aohLmgBUbeOH6DMPjLCTEbBC1xl40s
-         21RC13IM+JpZ/elI7kBClDRB6co7TpJSwL90730oeAiNKM2L+lPlqoUSV4KEs5NZpkxF
-         vCTPcKFiZXTZRkrJzY06hhskJzS0LPQV+PE1AfX9EY0m1Zs3NU+do/kwwE9vQl0FQD4E
-         knKx3fgT0Ug1Zysu1dEJbdwtv9pn7FsoXPOTxB6X4GyjpQnKgqBgkxB0UmHrKIIZkBAh
-         +G++rCGVu/m42+pOVX5oEF+D+vgxLXlio7jSTzWf2+OBP787caVRTjV8nNJUJyH/o9qq
-         /htw==
-X-Gm-Message-State: ACgBeo3Fn3qrLeVVg0eDlJdDNoOfiTpIWZxNvpcIlQ5tW2SDHuWdW5X+
-        A2546IG5QsGSNT0411a/PS9lYjHCjW3qaA==
-X-Google-Smtp-Source: AA6agR6ar6gQThdyXOdesukcQkJMxffExYlLayzMZe0U3XZFVgx6CHVAgO9D6BOd8DZsB0IBnhOnsQ==
-X-Received: by 2002:aa7:88cf:0:b0:52f:fdad:9e0 with SMTP id k15-20020aa788cf000000b0052ffdad09e0mr5491579pff.74.1660337061171;
-        Fri, 12 Aug 2022 13:44:21 -0700 (PDT)
-Received: from smtpclient.apple ([2600:380:764d:1788:51a5:33dc:13d:cd0e])
-        by smtp.gmail.com with ESMTPSA id b189-20020a62cfc6000000b0052d1275a570sm2031156pfg.64.2022.08.12.13.44.19
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=/dGi23gztXinQFG82CdStVX1Ptv58Il6HYvpfMqCA8Y=;
+        b=7QcLhFYG5lIJ+LEdrDk8gRx0xcOVv4J/HCy/1LGv4cEmAP0pQbo+3Nr7gk3U/ozI+U
+         gz+ZTPCqV7IQa9D1ZBYUez5nizbm87wzDnxQ8DrHuIGP4QF8wVQteo0rnO9olxidBbra
+         E9iwTUE6FA86wvlrVbElcV9pm3yFgEiqE80Q7geXEcNXDA/rBL1rjgrfp7kAS73RtS/z
+         MkH51v+DsgniErvBuZccvc6rY40PBnzKUdaFubGR43JKpzANBHO8jj0xu2s7FDFSLFWl
+         zaZ+xGEMbb+odaAfkhkBh9UhlykX466hPYZ0W/W3ooHjGY1qUWF7anPYWI65UOsacSrI
+         wxgw==
+X-Gm-Message-State: ACgBeo2P2GrCCmfIsqcnjTe4ek5XYgA3i40tzWfdC7cDfoJbJ3lVL91e
+        rvoXlr4PHhooFcEea5vzyRVnpWI1l6trSg==
+X-Google-Smtp-Source: AA6agR6MujfVhvR/MYbgN7vBrQMLYsdaroVmEYhqqdiW6hG+kYNd7/HaagZfYfhA+MvMa0zFHXuVCg==
+X-Received: by 2002:a17:902:7c94:b0:170:aed6:7e6c with SMTP id y20-20020a1709027c9400b00170aed67e6cmr5584534pll.10.1660338119278;
+        Fri, 12 Aug 2022 14:01:59 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e10-20020a170902784a00b0015ee60ef65bsm2166081pln.260.2022.08.12.14.01.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Aug 2022 13:44:20 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Jens Axboe <axboe@kernel.dk>
-Mime-Version: 1.0 (1.0)
+        Fri, 12 Aug 2022 14:01:58 -0700 (PDT)
+Message-ID: <6458eb59-554a-121b-d605-0b9755232818@kernel.dk>
+Date:   Fri, 12 Aug 2022 15:01:57 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
 Subject: Re: [GIT PULL] io_uring fixes for 6.0-rc1
-Date:   Fri, 12 Aug 2022 14:44:18 -0600
-Message-Id: <D92A7993-60C6-438C-AFA9-FA511646153C@kernel.dk>
-References: <CAHk-=wioqj4HUQM_dXdVoSJtPe+z0KxNrJPg0cs_R3j-gJJxAg@mail.gmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>
-In-Reply-To: <CAHk-=wioqj4HUQM_dXdVoSJtPe+z0KxNrJPg0cs_R3j-gJJxAg@mail.gmail.com>
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: iPhone Mail (19G71)
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <CAHk-=wioqj4HUQM_dXdVoSJtPe+z0KxNrJPg0cs_R3j-gJJxAg@mail.gmail.com>
+ <D92A7993-60C6-438C-AFA9-FA511646153C@kernel.dk>
+In-Reply-To: <D92A7993-60C6-438C-AFA9-FA511646153C@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,MIME_QP_LONG_LINE,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,56 +73,100 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Aug 12, 2022, at 2:28 PM, Linus Torvalds <torvalds@linux-foundation.org> w=
-rote:
->=20
-> =EF=BB=BFOn Fri, Aug 12, 2022 at 5:46 AM Jens Axboe <axboe@kernel.dk> wrot=
-e:
->>=20
->> - Small series improving type safety of the sqe fields (Stefan)
->=20
-> This doesn't work AT ALL.
->=20
-> A basic allmodconfig build fails with tons of errors. It starts with
->=20
->  In function =E2=80=98io_kiocb_cmd_sz_check=E2=80=99,
->      inlined from =E2=80=98io_prep_rw=E2=80=99 at io_uring/rw.c:38:21:
->  ././include/linux/compiler_types.h:354:45: error: call to
-> =E2=80=98__compiletime_assert_802=E2=80=99 declared with attribute error: B=
-UILD_BUG_ON
-> failed: cmd_sz > sizeof(struct io_cmd_data)
->    354 |         _compiletime_assert(condition, msg,
-> __compiletime_assert_, __COUNTER__)
->        |                                             ^
->  ././include/linux/compiler_types.h:335:25: note: in definition of
-> macro =E2=80=98__compiletime_assert=E2=80=99
->    335 |                         prefix ## suffix();
->           \
->        |                         ^~~~~~
->  ././include/linux/compiler_types.h:354:9: note: in expansion of
-> macro =E2=80=98_compiletime_assert=E2=80=99
->    354 |         _compiletime_assert(condition, msg,
-> __compiletime_assert_, __COUNTER__)
->        |         ^~~~~~~~~~~~~~~~~~~
->  ./include/linux/build_bug.h:39:37: note: in expansion of macro
-> =E2=80=98compiletime_assert=E2=80=99
->     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), m=
-sg)
->        |                                     ^~~~~~~~~~~~~~~~~~
->  ./include/linux/build_bug.h:50:9: note: in expansion of macro
-> =E2=80=98BUILD_BUG_ON_MSG=E2=80=99
->     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: "
-> #condition)
->        |         ^~~~~~~~~~~~~~~~
->  ./include/linux/io_uring_types.h:496:9: note: in expansion of macro
-> =E2=80=98BUILD_BUG_ON=E2=80=99
->    496 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
->        |         ^~~~~~~~~~~~
->=20
-> and goes downhill from there.
->=20
-> I don't think this can have seen any testing at all.
+On 8/12/22 2:44 PM, Jens Axboe wrote:
+> On Aug 12, 2022, at 2:28 PM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>>
+>> ?On Fri, Aug 12, 2022 at 5:46 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>> - Small series improving type safety of the sqe fields (Stefan)
+>>
+>> This doesn't work AT ALL.
+>>
+>> A basic allmodconfig build fails with tons of errors. It starts with
+>>
+>>  In function ?io_kiocb_cmd_sz_check?,
+>>      inlined from ?io_prep_rw? at io_uring/rw.c:38:21:
+>>  ././include/linux/compiler_types.h:354:45: error: call to
+>> ?__compiletime_assert_802? declared with attribute error: BUILD_BUG_ON
+>> failed: cmd_sz > sizeof(struct io_cmd_data)
+>>    354 |         _compiletime_assert(condition, msg,
+>> __compiletime_assert_, __COUNTER__)
+>>        |                                             ^
+>>  ././include/linux/compiler_types.h:335:25: note: in definition of
+>> macro ?__compiletime_assert?
+>>    335 |                         prefix ## suffix();
+>>           \
+>>        |                         ^~~~~~
+>>  ././include/linux/compiler_types.h:354:9: note: in expansion of
+>> macro ?_compiletime_assert?
+>>    354 |         _compiletime_assert(condition, msg,
+>> __compiletime_assert_, __COUNTER__)
+>>        |         ^~~~~~~~~~~~~~~~~~~
+>>  ./include/linux/build_bug.h:39:37: note: in expansion of macro
+>> ?compiletime_assert?
+>>     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>>        |                                     ^~~~~~~~~~~~~~~~~~
+>>  ./include/linux/build_bug.h:50:9: note: in expansion of macro
+>> ?BUILD_BUG_ON_MSG?
+>>     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: "
+>> #condition)
+>>        |         ^~~~~~~~~~~~~~~~
+>>  ./include/linux/io_uring_types.h:496:9: note: in expansion of macro
+>> ?BUILD_BUG_ON?
+>>    496 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
+>>        |         ^~~~~~~~~~~~
+>>
+>> and goes downhill from there.
+>>
+>> I don't think this can have seen any testing at all.
+> 
+> Wtf? I always run allmodconfig before sending and it also ran testing.
+> I?ll check shortly. Sorry about that, whatever went wrong here. 
 
-Wtf? I always run allmodconfig before sending and it also ran testing. I=E2=80=
-=99ll check shortly. Sorry about that, whatever went wrong here.=20
+My test box is still on the same sha from this morning, which is:
+
+commit 2ae08b36c06ea8df73a79f6b80ff7964e006e9e3 (origin/master, origin/HEAD)
+Merge: 21f9c8a13bb2 8bb5e7f4dcd9
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu Aug 11 09:23:08 2022 -0700
+
+    Merge tag 'input-for-v5.20-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+
+with io_uring-6.0 (ff34d8d06a1f16b6a58fb41bfbaa475cc6c02497) and
+block-6.0 (aa0c680c3aa96a5f9f160d90dd95402ad578e2b0) pulled in, and it
+builds just fine for me:
+
+axboe@r7525 ~/gi/build (test)> make clean                                    9.827s
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/menu.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTLD  scripts/kconfig/conf
+#
+# No change to .config
+#
+axboe@r7525 ~/gi/build (test)> time make -j256 -s
+
+________________________________________________________
+Executed in  172.67 secs    fish           external
+   usr time  516.61 mins  396.00 micros  516.61 mins
+   sys time   44.40 mins    0.00 micros   44.40 mins
+
+using:
+
+axboe@r7525 ~/gi/build (test)> gcc --version
+gcc (Debian 12.1.0-7) 12.1.0
+
+Puzzled, I'll keep poking...
+
+-- 
+Jens Axboe
 

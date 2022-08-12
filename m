@@ -2,112 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D041A591368
-	for <lists+io-uring@lfdr.de>; Fri, 12 Aug 2022 18:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F5C591651
+	for <lists+io-uring@lfdr.de>; Fri, 12 Aug 2022 22:29:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237992AbiHLQDT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 12 Aug 2022 12:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57826 "EHLO
+        id S238086AbiHLU3V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 12 Aug 2022 16:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239066AbiHLQDS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Aug 2022 12:03:18 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44F99F0F3
-        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 09:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1660320196; bh=ar67XpiKs5jUstnS+Wuku87KNcIwPcCRu6ic4WVpGc8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BzzjZtWsGUopuAwlXkAtq0qBKuibV1cO9WNKN0SVlbx0deBCHsljJS+Au2PUoO5v3mIFdFLttM6t0Dype5kX0cKkj39izVoCEJMo0Ronxovc1fR8Q5A1tlKaoa1/4WunRH2nT6oj1tY5rCR4dNmTmxmqLhfznCbGgUtClsldibq0E2cZA53NrQqgaHPRrobgQPdY7wdLzAeWpe9GjbxNEPE/br4cUEiPLjPza/ZVeugbVKK4xLx2y3BwUvpER0Hz+rS69jdyhtDrpJPKiJ22/m1s/YGXnnvW1+R0uDjUb3aSsU9+6Emw/UPUSkf2ZZxXh6cQsYrJb0BV9a9JCZTaPQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1660320196; bh=PhVy4ByZnIW5Vj6k7DSaC2F+6QO5P3PDUqHteAuV44Y=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=B5IS1RgFNQ6jZueCDMDd76pL+tlhAem+OQshvkee3KvZZrVceNML/oEXAcDer/zvhKILmgRWHLKeJnOpFAuK22W4JHjZiHoctbHZqqzBx3kasf9hMuqje6M/z3xXTIzddW6nv7z9XAlCgU0yCRS1edeNqe+96sa1YPjmCbFSaBp/rcfBg79eHZ8WATawV4zxvHvd27TSGaHrU1emQWydQIas6PH3fzoGFMtZXkqI8zsxCDOuAeXhFTZXyrPnwvG7n+zmv0pp1pVAs5qVCNw1vxn6malKXwbe7WoP/lv898lICM6jVM35O3N1wGFDdAp2sofnfdLFN/248cDEGyEXbQ==
-X-YMail-OSG: U7PIn9IVM1nWLz6UfTncvkqQM85kO.slRjMZ9pQ6bwL9yNbKgEh5cBSQqUeVNNZ
- 4PWsq7whO2UFdbYYJxazwHM2Sp.aN2WFfrKwqQe.bG07JWGayFvPZYyuJgm3c3jegtjqPNIojud6
- pQPqJjfTY4MSWfqM4Mq3N3p5CLg9e6.5ahkvcODBie4UoPf_GiRQ7X9zcl.IJvdqo.3IgbRCGUJy
- nwYtVjDINFygvNuCmjQJtulqFY43DNPTkRfv9q.AvW91tMibPqdZOk_0FnHHtwxQPU9Snw2qjAir
- eaXJ_nu9JU0AIdlT3P5c7wszZB2sHHCHqFFGc.Mk9WL2xLau9001.c9gaQ3EYHCI7JJv9c8FKpPy
- lShic8kn3RY28Kya2Fr4u2Rv8uz.kUN.QZjyeQ943MLD01YHlr0tzfRb1l0zP7oO6yLwaYB9Hsgb
- InutfE0uKL_MkiyriZbp2gIUr.uJdUNJ__398XVTSBzt3W6HKKhjITEf.r99dFvhDhYTl_SQVEZr
- GpHP7zkQgqVeQxgtnYIKozQxnQP7a3UVDu_S6o0cWkhRZ7MmgPP4fEjvi9RIZnZDPmBbjoEfz_rq
- T5T9rA7M9gLRxeUumBtbWe5CxZrn7GbFvUwyd3TyvtXp70uG3vuwSrJo4NwVxAdXF73YQpbItW1g
- koQFseEJ2ajXhsAeqL2PZ5WzUDc2e4eCJ6B_At3L95pZvW23XJMgSecVMEyM.DxsL5JEQIWVmzHo
- 0mCCpPjEzDVK1BNYkaI53f_vge1p2nNamLZZDk8syF9twFrqUXcDWD1jjx0wpKp0fhrWdtJoJPBI
- xn1MljjSrk6vpHRbxdQutldrpUmvT05NTso_KtrnctiBOX9at.6oq2.RcYDD_9fXAIl9H1VxmUnl
- mjhwhA56vBhsxr._6S34f0me_FVqXQM4H4LCRAg_ruFP4C5ADmYBTo0UKxSIEocKeodC7VFBDTev
- G_FoiyqIiUJi5jBrQIibgYNg_WSBkzvssQzZgozDi5tia8wBjJ70XADx.Co.3y7vBAqS3PKeoYhw
- qPFHAWDaBYe.OnYnJumgPamIJ0FytOF5mtRrziJ5gbCodrSSX0EfRgE6Uu4edFri4Z1GqKq6GQv5
- GWMwYbAeVujzA_5T0hgRh7tl4VDd7adaRTEMaEkZttqUj97x7IVlGWh5udfg59TWWyaqvfMcxfwj
- 3PmOHsbVepQL6eGUHwFRAKSWU33G0L._N5HzsdRCEyHZl8.MaK22fDZmsoj3HXwxpddIRbPtXhzm
- gYPDmP6gJvH77yqP4_6oycnp.Th8wvFm5XFrmFwX0Qp4cMIjn9zrHlJaVOE3cIA5GSIMRFGFPSbo
- mpKtZha6O2cygRKzTyRTZhSgiYRqlMJAWwuy0ewvoPX3Vwph6z6ST.u1Mefh0ep3siyu33eqYdZh
- asYiA13bkQKmNsK8y6.gK.ZLerZN.AKbHqa2AQwW9so7TmaWdmG6J3ySQ1jOg10H3uAvJqemkszk
- I8fDtbK1_3JcOBSVRKFUTMgRM6H9jupd7na5kiCq4sCY4N3fvtAL1n5pTgg6YEf0R6PnerK21X08
- sXfAWo_RpicTIWzIUmfukSqyOnmZY4QyPB5O05co4DZMFeJuExQho..LrTI2bTdYZ51Zhee_bdZR
- cgQpflwhoRWPfi.WFwd6cjgmZ3l0Zj_qTMRN1.sNZAk0B1hJS3lBOCy2XwyM7uBLfX1UdalY2r5F
- oT9Oy973jHeT0OFP8UtQ9ih4f9esZ7e2vwL_bAJ5DeqVEEtxTpXIupXaPDH2G5iUyS2u2i3biYhH
- L93dKDOk8oYsFvVTjMtreECMjl97ybNKsDYTzGbFUvFS7b52A.gQsZjVCvNksFkq7xcAnvypih7v
- zP._ogWYLT9Fp0aXDwdJ1hmVUNxx85d1ZzmH89IVcBU3.nqwVSSWbVw1JutH1nfFz1DZdvd9iG0W
- 84Ud4hd1mIdxOqkOHo9HD7qflT3uqZIrLMbh.ETFePVI1LZzkI.rVbCIV04o8pM8X.nqmojN_Y6S
- L1dPI7owMp6w_XeVOrUnePE5fU04A.azkLA5w1GZRS4RiKkgIfBKcpymMgkijJldfl3hXTBi4yU.
- MpT7Ywcwq8.p8ggWGvrsTQmeRwixoxwuMVARXuLZoO0fT.v7j3PZtchZCQGLkJMxcQjccUK7ZhqC
- tNkZxkLr4OTVBoim50mQVFDZX0TDOkiDVBC_UovRMqoix2xJXyCjzFB.FZwcd_aRXhBcoHd2Y9lj
- S7mnA4C1mfZAYq0qLchgdyq3hUFgBEdWsaBX2pLVRg0IiehQF8QBhlVXGvFkvYbtu1vrRFb9imtZ
- 5HE4EpEv0uxI4z1SPYpjtEQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 12 Aug 2022 16:03:16 +0000
-Received: by hermes--production-bf1-7586675c46-4x8tg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a9013da29ef145efabdb73869e50d767;
-          Fri, 12 Aug 2022 16:03:15 +0000 (UTC)
-Message-ID: <6e90dc31-e4bb-b5c4-6e8c-112e18f3654f@schaufler-ca.com>
-Date:   Fri, 12 Aug 2022 09:03:12 -0700
+        with ESMTP id S235582AbiHLU2c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 12 Aug 2022 16:28:32 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C27DABD71
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 13:28:26 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id z20so2621627edb.9
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 13:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=V7/isdw5RaxnR4x4Z1NEl3zhP71kt9adgt7LrTVuEOM=;
+        b=El8VD13nzg3agNljUHLPoHv4wwL+To4mAxMrHxV3SLuFz9WCft48Az/7bBEs/uwZLt
+         CN6Nz0qn36aInhx+juIljUkGkGhuB/3FR6nsiASDI1CQg381F3cAcfgUKohL4Sdoc1J0
+         Q4Ad7yq+htx+vBs1sPyAVUz7JeBsam+5ldYHE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=V7/isdw5RaxnR4x4Z1NEl3zhP71kt9adgt7LrTVuEOM=;
+        b=ZOcll8M351hI8tW3rJppZN8xm8AmSW6VCwIy+nYqQihuAcmBrg5PxbjHJQ6uOUXayX
+         8hDzpT465zSsV3IdpIlMUtwIOHIaKkHH+bJKzsInq4LP5SeTjuMaqRpaPwOQ3j5J2U7I
+         fcTuLB1H4qZS9ySy4z5cnU0W8/JA2gC2GnldkUJKAKMiPtjSxPar1rFUKoVpUdUMi5Jo
+         N0B+7Cxhbo/gldQVqIPf/6t7bzcxUDzf8cM/ru7a3edLIZXsDj5Hcpu0iqJ9Dkfvd8SR
+         hGluXBs7jSD7E20uvCqBMHfJ3pozIkFOLBZbxLIdEOG6VHpaIknEv/NdyODs4Sf7m+tP
+         wT/Q==
+X-Gm-Message-State: ACgBeo0YjB9sx/dJ3BwQAg7ZfTUi+wlWDhAgcZ/5tvzPhZwRMzhxcs48
+        ySDabGJ3tUr9YhE4uVgg4TaKLHYV5GC6j8I1
+X-Google-Smtp-Source: AA6agR50r6nsaz8El/isXGbxtubAdG8wAN8OQcnfQik6c0S/EL8hOm+Pdz+bdLGgmpZERINndwVxOw==
+X-Received: by 2002:a05:6402:430e:b0:43d:1cf6:61ec with SMTP id m14-20020a056402430e00b0043d1cf661ecmr4873594edc.194.1660336104649;
+        Fri, 12 Aug 2022 13:28:24 -0700 (PDT)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
+        by smtp.gmail.com with ESMTPSA id k26-20020a17090646da00b0072b3464c043sm1117065ejs.116.2022.08.12.13.28.24
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Aug 2022 13:28:24 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 186-20020a1c02c3000000b003a34ac64bdfso4816064wmc.1
+        for <io-uring@vger.kernel.org>; Fri, 12 Aug 2022 13:28:24 -0700 (PDT)
+X-Received: by 2002:a05:600c:5013:b0:3a5:d528:9570 with SMTP id
+ n19-20020a05600c501300b003a5d5289570mr1763205wmr.8.1660336103804; Fri, 12 Aug
+ 2022 13:28:23 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH liburing 0/5] Add basic test for nvme uring passthrough
- commands
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     Ankit Kumar <ankit.kumar@samsung.com>, io-uring@vger.kernel.org,
-        joshi.k@samsung.com, casey@schaufler-ca.com
-References: <CGME20220719135821epcas5p1b071b0162cc3e1eb803ca687989f106d@epcas5p1.samsung.com>
- <20220719135234.14039-1-ankit.kumar@samsung.com>
- <116e04c2-3c45-48af-65f2-87fce6826683@schaufler-ca.com>
- <fc1e774f-8e7f-469c-df1a-e1ababbd5d64@kernel.dk>
- <CAHC9VhSBqWFBJrAdKVF5f3WR6gKwPq-+gtFR3=VkQ8M4iiNRwQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSBqWFBJrAdKVF5f3WR6gKwPq-+gtFR3=VkQ8M4iiNRwQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20531 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <b6f508ca-b1b2-5f40-7998-e4cff1cf7212@kernel.dk>
+In-Reply-To: <b6f508ca-b1b2-5f40-7998-e4cff1cf7212@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 12 Aug 2022 13:28:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wioqj4HUQM_dXdVoSJtPe+z0KxNrJPg0cs_R3j-gJJxAg@mail.gmail.com>
+Message-ID: <CAHk-=wioqj4HUQM_dXdVoSJtPe+z0KxNrJPg0cs_R3j-gJJxAg@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring fixes for 6.0-rc1
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/12/2022 8:33 AM, Paul Moore wrote:
-> On Thu, Aug 11, 2022 at 9:51 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 8/11/22 6:43 PM, Casey Schaufler wrote:
->>> On 7/19/2022 6:52 AM, Ankit Kumar wrote:
->>>> This patchset adds test/io_uring_passthrough.c to submit uring passthrough
->>>> commands to nvme-ns character device. The uring passthrough was introduced
->>>> with 5.19 io_uring.
->>>>
->>>> To send nvme uring passthrough commands we require helpers to fetch NVMe
->>>> char device (/dev/ngXnY) specific fields such as namespace id, lba size.
->>> There wouldn't be a way to run these tests using a more general
->>> configuration, would there? I spent way too much time trying to
->>> coax my systems into pretending it has this device.
->> It's only plumbed up for nvme. Just use qemu with an nvme device?
->>
->> -drive id=drv1,if=none,file=nvme.img,aio=io_uring,cache.direct=on,discard=on \
->> -device nvme,drive=drv1,serial=blah2
->>
->> Paul was pondering wiring up a no-op kind of thing for null, though.
-> Yep, I started working on that earlier this week, but I've gotten
-> pulled back into the SCTP stuff to try and sort out something odd.
+On Fri, Aug 12, 2022 at 5:46 AM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> Casey, what I have isn't tested, but I'll toss it into my next kernel
-> build to make sure it at least doesn't crash on boot and if it looks
-> good I'll send it to you off-list.
+> - Small series improving type safety of the sqe fields (Stefan)
 
-Super. Playing with qemu configuration always seems to suck time
-and rarely gets me where I want to be.
+This doesn't work AT ALL.
 
+A basic allmodconfig build fails with tons of errors. It starts with
+
+  In function =E2=80=98io_kiocb_cmd_sz_check=E2=80=99,
+      inlined from =E2=80=98io_prep_rw=E2=80=99 at io_uring/rw.c:38:21:
+  ././include/linux/compiler_types.h:354:45: error: call to
+=E2=80=98__compiletime_assert_802=E2=80=99 declared with attribute error: B=
+UILD_BUG_ON
+failed: cmd_sz > sizeof(struct io_cmd_data)
+    354 |         _compiletime_assert(condition, msg,
+__compiletime_assert_, __COUNTER__)
+        |                                             ^
+  ././include/linux/compiler_types.h:335:25: note: in definition of
+macro =E2=80=98__compiletime_assert=E2=80=99
+    335 |                         prefix ## suffix();
+           \
+        |                         ^~~~~~
+  ././include/linux/compiler_types.h:354:9: note: in expansion of
+macro =E2=80=98_compiletime_assert=E2=80=99
+    354 |         _compiletime_assert(condition, msg,
+__compiletime_assert_, __COUNTER__)
+        |         ^~~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:39:37: note: in expansion of macro
+=E2=80=98compiletime_assert=E2=80=99
+     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), m=
+sg)
+        |                                     ^~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:50:9: note: in expansion of macro
+=E2=80=98BUILD_BUG_ON_MSG=E2=80=99
+     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: "
+#condition)
+        |         ^~~~~~~~~~~~~~~~
+  ./include/linux/io_uring_types.h:496:9: note: in expansion of macro
+=E2=80=98BUILD_BUG_ON=E2=80=99
+    496 |         BUILD_BUG_ON(cmd_sz > sizeof(struct io_cmd_data));
+        |         ^~~~~~~~~~~~
+
+and goes downhill from there.
+
+I don't think this can have seen any testing at all.
+
+             Linus

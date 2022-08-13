@@ -2,115 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE30591A09
-	for <lists+io-uring@lfdr.de>; Sat, 13 Aug 2022 13:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F83591B00
+	for <lists+io-uring@lfdr.de>; Sat, 13 Aug 2022 16:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239401AbiHMLp2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 13 Aug 2022 07:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43654 "EHLO
+        id S237284AbiHMOdu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 13 Aug 2022 10:33:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbiHMLp2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Aug 2022 07:45:28 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 129DF1A054
-        for <io-uring@vger.kernel.org>; Sat, 13 Aug 2022 04:45:24 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220813114520epoutp0328136c5b19853887bb705a8668f2a021~K5O1FTyfB1042710427epoutp03L
-        for <io-uring@vger.kernel.org>; Sat, 13 Aug 2022 11:45:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220813114520epoutp0328136c5b19853887bb705a8668f2a021~K5O1FTyfB1042710427epoutp03L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1660391120;
-        bh=C+Z9+Hh51/GATncydt5AQuyqbUl6t40G6G27ctdztO8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qF5KrovxBA0FwoDImhcb3c/jf91ns8crjsmWbwqZAhKbiLuFbeZokdkCdj7PWoaVO
-         JoA+LUKauLm4EX7vFkBZkd8eF98HdAhXpW52CS617exv8ZbSEmSrPAYaVcIuERmOyO
-         O3kWcY++pw4Wkz2h1ls4P0VfrDG4Ai0BoeW/Vfkk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220813114519epcas5p230392e38d05f140adf7455990faad2ca~K5O0fhNo20988609886epcas5p2a;
-        Sat, 13 Aug 2022 11:45:19 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4M4dyP3xwhz4x9Pr; Sat, 13 Aug
-        2022 11:45:17 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EE.5D.49477.DCE87F26; Sat, 13 Aug 2022 20:45:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220813114516epcas5p29fbfc50f5bb0c9f43583ee5b12e73154~K5OxNS8T40550805508epcas5p2V;
-        Sat, 13 Aug 2022 11:45:16 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220813114516epsmtrp2d42f3c4348d6d4d197b79ceb4c6d64c8~K5OxH3qWP2533425334epsmtrp25;
-        Sat, 13 Aug 2022 11:45:16 +0000 (GMT)
-X-AuditID: b6c32a49-843ff7000000c145-68-62f78ecd0b9c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4F.B5.08802.BCE87F26; Sat, 13 Aug 2022 20:45:16 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220813114515epsmtip1f7decd4c9cc71c212f169c9c26518512~K5OwSnGzk3172331723epsmtip1S;
-        Sat, 13 Aug 2022 11:45:15 +0000 (GMT)
-Date:   Sat, 13 Aug 2022 17:05:42 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>,
-        Ankit Kumar <ankit.kumar@samsung.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH liburing 0/5] Add basic test for nvme uring passthrough
- commands
-Message-ID: <20220813113542.GA27790@test-zns>
+        with ESMTP id S239641AbiHMOdl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 13 Aug 2022 10:33:41 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A472E6B3
+        for <io-uring@vger.kernel.org>; Sat, 13 Aug 2022 07:33:39 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id t2-20020a17090a4e4200b001f21572f3a4so3277941pjl.0
+        for <io-uring@vger.kernel.org>; Sat, 13 Aug 2022 07:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=oGDoPSwTJYgAdoMJ+kZiCfF7XxCQIGieO3gROB11DDE=;
+        b=vJvtbTGJnRgtMQsWTZ6Qbypd0syVkchXxLMs3E+W9PXyfBih2lXOlPnaWXrHLT4IAP
+         dZ5jiwghUqSyif9LIIIQp0nIxGZP+vUrDCrDcJK87PbvEE/sjJUXMtEiRIeDWaK+cX28
+         RBYQdnKYlgHCdgPTxHdQSgBRknQvKQKldI9OM0ZAXGe3Z7r12YnFY6nLQ1HmJMyq2Nf7
+         GCiDJv/z+15ClQutb8rSDc4w4pB1mbyP/pHtMR1g0SgHLyJ/y4xEIDbYDgEzeSZ2aHFv
+         YVMXZcSUvAa5ZE+mCDaa3XfWEFPSC5zOvSAaBMRHJuwX7shWuzO3B5UE2rtm7n4qZ+E3
+         Vntg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=oGDoPSwTJYgAdoMJ+kZiCfF7XxCQIGieO3gROB11DDE=;
+        b=AjJfmYqPP57rYje4lo+fE7uOODQ0/MaJBH6dmP19+HA6b/w4sZrZtvzDjw399LGqQL
+         PN0e150ZE9Oa40GfrPozXtNhSF5l4zRELhhdVXEHBNJGSsD8qdksm97oDaOJhvwPTGZj
+         bY2ebzw9AEKBiqyiCRDoUv/Mdsr312HxRM0rOb6Pxv3nlcISkwFQ4GenWUAJqvADnJiz
+         Cb48ZjmDdEd2d1qzCMIDXh9Z8i2Dx4Yv3QY4akjn8IMF+kVutG4T4iqJ43l/eX00fwBS
+         tci3Ko1c5FWX1uSyOybXazChLssde/gP8AmbvGtodgAefJKSqZ+A3UfyGIb0gtPHRuiD
+         qq3A==
+X-Gm-Message-State: ACgBeo01euYIjQqKO/W+ZM3sAF1s2LHepBbhh4irmBSTPjiWRp5dKQ4D
+        qmdbEiI0KD7ph5qe56RMSc43SLcxju1tag==
+X-Google-Smtp-Source: AA6agR4pF+ulVNiCuFvbDcaHxBzt9kni8JCk8vWLmWDXeDM7CFJeSOAwesj0iY8kMuQey+M02srN9A==
+X-Received: by 2002:a17:902:ea03:b0:170:a235:b72b with SMTP id s3-20020a170902ea0300b00170a235b72bmr8833259plg.13.1660401218763;
+        Sat, 13 Aug 2022 07:33:38 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id n4-20020a170902e54400b0016dbaf3ff2esm3800879plf.22.2022.08.13.07.33.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Aug 2022 07:33:38 -0700 (PDT)
+Message-ID: <f93b320a-15ed-0673-e91d-b59964106663@kernel.dk>
+Date:   Sat, 13 Aug 2022 08:33:36 -0600
 MIME-Version: 1.0
-In-Reply-To: <6e90dc31-e4bb-b5c4-6e8c-112e18f3654f@schaufler-ca.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplk+LIzCtJLcpLzFFi42LZdlhTQ/ds3/ckg/XfJS3WXPnNbrH6bj+b
-        xb1tv9gs3rWeY7G4PWk6iwOrx+WzpR5r975g9OjbsorR4+j+RWwenzfJBbBGZdtkpCampBYp
-        pOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAO1WUihLzCkFCgUkFhcr
-        6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnvHq3jLXgoUDF
-        z01nWRsY2/m6GDk5JARMJJ7v7mXsYuTiEBLYzSix6FQbO4TziVFi9fpGVgjnM6PE4WMX2GFa
-        lj34AZXYxSixb85VJgjnGaPEzt0fmECqWARUJR5P62XpYuTgYBPQlLgwuRQkLCKgI7Fvz3Ow
-        FcwCrYwSPy8fZgVJCAuESSxb9A5sA6+ArsSzKWuYIGxBiZMzn7CA2JwCLhIv9v0Di4sKKEsc
-        2HYcbLGEwEd2iWePvkGd5yKxbP0PNghbWOLV8S1QcSmJz+/2QsWTJS7NPMcEYZdIPN5zEMq2
-        l2g91c8MYjMLZEjc+XKcFcLmk+j9/YQJ5BkJAV6JjjYhiHJFiXuTnrJC2OISD2csgbI9JD4/
-        mwgNlH9MEn/XHmOdwCg3C8k/s5CsgLCtJDo/NAHZHEC2tMTyfxwQpqbE+l36CxhZVzFKphYU
-        56anFpsWGOallsNjOTk/dxMjOD1qee5gvPvgg94hRiYOxkOMEhzMSiK8ZYs+JwnxpiRWVqUW
-        5ccXleakFh9iNAXGz0RmKdHkfGCCziuJNzSxNDAxMzMzsTQ2M1QS5/W6uilJSCA9sSQ1OzW1
-        ILUIpo+Jg1Oqgck5IMs5qVGed8/R3wFaoT0PgkJ/iIcejfb8N63kQ6L/7gDVt4b3Py7t4v/6
-        pfON+rVCict1j+POL7j+yJQj7szMu49Vc/b5/N78MKq/bG+QdkfAqVlvuGoi30aIv1klsPzx
-        yeQMo3ucB0WtH/XM+Cei39xlu8qsR1TU/bEEt1jsbqc9vRsv9vL9eex38gDX2d9Hg/8cXqK5
-        4bIY8wGtq1Fy79Y+ftzF/tkhcdHbH5UxJumSX5iMbe/cXsnk1ezNOWP/2+t7A9wShV11p+o1
-        znc94vxx+8xtm85WJSTbVZoLNpn+fLb7/aYGkc0382Y8anj9JjQ1fBUXi8Pvy5vfnRaaeO9s
-        Yt48i7yZYfOslpsqsRRnJBpqMRcVJwIA7/DNoxgEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsWy7bCSnO6Zvu9JBltbGC3WXPnNbrH6bj+b
-        xb1tv9gs3rWeY7G4PWk6iwOrx+WzpR5r975g9OjbsorR4+j+RWwenzfJBbBGcdmkpOZklqUW
-        6dslcGVM3bqUqWAyX8WS698YGxgvc3cxcnJICJhILHvwgxXEFhLYwShx7aAwRFxcovnaD3YI
-        W1hi5b/nQDYXUM0TRomtN58zgSRYBFQlHk/rZeli5OBgE9CUuDC5FCQsIqAjsW8PRD2zQCuj
-        xM5l25hBEsICYRLLFr0DG8oroCvxbMoaJoih/5gk7k2awwSREJQ4OfMJC4jNLGAmMW/zQ2aQ
-        BcwC0hLL/3GAhDkFXCRe7PsHVi4qoCxxYNtxpgmMgrOQdM9C0j0LoXsBI/MqRsnUguLc9Nxi
-        wwKjvNRyveLE3OLSvHS95PzcTYzgYNfS2sG4Z9UHvUOMTByMhxglOJiVRHjLFn1OEuJNSays
-        Si3Kjy8qzUktPsQozcGiJM57oetkvJBAemJJanZqakFqEUyWiYNTqoFJ+F5Tfg7DTX/toFp7
-        5g4pib3z3ZJc8hOkDZ+FzsmoXv0q//7Mmw11v80faLFOVi7ft57ZNT1+hexZ+0XRzLYv1B/8
-        eXk6vWu59hWenZVfVq9Zbt13v2Hy93v1yXP+73moYRxTOvnk19gby0XKzS6vmrmBuabx8MWG
-        UIV4N6GvGx5vXPJWjvlK/6p40yx2yc1Ky+7fn6V4TLyuifvk3qIdi9smdWWyuz9u33+tvOf+
-        HtMnryVFs6XlHZTUPYyO3LgjVxqmre/Je/RSIZ/T4vgT582SWK/evfVbV0l9imHjsV7Xyp2y
-        HD9eTQy5f6L+bkZjrEvDJWlu/xntH/l0zxz70eNYfaHGVcv54rPuY+lKLMUZiYZazEXFiQAk
-        LUrJ5QIAAA==
-X-CMS-MailID: 20220813114516epcas5p29fbfc50f5bb0c9f43583ee5b12e73154
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----NuB4zix05mrs21-izUqZH_CfDXeHJwDu-cyxw2zCq-3u00NA=_73535_"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220719135821epcas5p1b071b0162cc3e1eb803ca687989f106d
-References: <CGME20220719135821epcas5p1b071b0162cc3e1eb803ca687989f106d@epcas5p1.samsung.com>
-        <20220719135234.14039-1-ankit.kumar@samsung.com>
-        <116e04c2-3c45-48af-65f2-87fce6826683@schaufler-ca.com>
-        <fc1e774f-8e7f-469c-df1a-e1ababbd5d64@kernel.dk>
-        <CAHC9VhSBqWFBJrAdKVF5f3WR6gKwPq-+gtFR3=VkQ8M4iiNRwQ@mail.gmail.com>
-        <6e90dc31-e4bb-b5c4-6e8c-112e18f3654f@schaufler-ca.com>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] fs: don't randomized kiocb fields
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20220812225633.3287847-1-kbusch@fb.com>
+ <YvdZ6X4Bf6A1uisS@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <YvdZ6X4Bf6A1uisS@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -118,48 +75,13 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-------NuB4zix05mrs21-izUqZH_CfDXeHJwDu-cyxw2zCq-3u00NA=_73535_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On 8/13/22 1:59 AM, Christoph Hellwig wrote:
+> s/randomized/randomize/
+> 
+> in the subject?
 
-On Fri, Aug 12, 2022 at 09:03:12AM -0700, Casey Schaufler wrote:
->On 8/12/2022 8:33 AM, Paul Moore wrote:
->> On Thu, Aug 11, 2022 at 9:51 PM Jens Axboe <axboe@kernel.dk> wrote:
->>> On 8/11/22 6:43 PM, Casey Schaufler wrote:
->>>> On 7/19/2022 6:52 AM, Ankit Kumar wrote:
->>>>> This patchset adds test/io_uring_passthrough.c to submit uring passthrough
->>>>> commands to nvme-ns character device. The uring passthrough was introduced
->>>>> with 5.19 io_uring.
->>>>>
->>>>> To send nvme uring passthrough commands we require helpers to fetch NVMe
->>>>> char device (/dev/ngXnY) specific fields such as namespace id, lba size.
->>>> There wouldn't be a way to run these tests using a more general
->>>> configuration, would there? I spent way too much time trying to
->>>> coax my systems into pretending it has this device.
->>> It's only plumbed up for nvme. Just use qemu with an nvme device?
->>>
->>> -drive id=drv1,if=none,file=nvme.img,aio=io_uring,cache.direct=on,discard=on \
->>> -device nvme,drive=drv1,serial=blah2
->>>
->>> Paul was pondering wiring up a no-op kind of thing for null, though.
->> Yep, I started working on that earlier this week, but I've gotten
->> pulled back into the SCTP stuff to try and sort out something odd.
->>
->> Casey, what I have isn't tested, but I'll toss it into my next kernel
->> build to make sure it at least doesn't crash on boot and if it looks
->> good I'll send it to you off-list.
->
->Super. Playing with qemu configuration always seems to suck time
->and rarely gets me where I want to be.
+I did notice that one and made the edit yesterday.
 
-FWIW, one more option (not easier than no-op/null though) is to emulate
-nvme over a regular-file using loopback-fabrics target.
-A coarse script is here -
-https://github.com/joshkan/loopback-nvme-uring/commit/96853963a196f2d307d4d8e60d1276a08b520307
+-- 
+Jens Axboe
 
-
-------NuB4zix05mrs21-izUqZH_CfDXeHJwDu-cyxw2zCq-3u00NA=_73535_
-Content-Type: text/plain; charset="utf-8"
-
-
-------NuB4zix05mrs21-izUqZH_CfDXeHJwDu-cyxw2zCq-3u00NA=_73535_--

@@ -2,100 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56BC3591F46
-	for <lists+io-uring@lfdr.de>; Sun, 14 Aug 2022 11:31:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF67591F90
+	for <lists+io-uring@lfdr.de>; Sun, 14 Aug 2022 12:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbiHNJb1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 14 Aug 2022 05:31:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39686 "EHLO
+        id S231372AbiHNKfu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 14 Aug 2022 06:35:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiHNJb0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 14 Aug 2022 05:31:26 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1ADCE0
-        for <io-uring@vger.kernel.org>; Sun, 14 Aug 2022 02:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=nbWqST+XP2a7+u9AWI2dutjI764cPEu2zgT1SGkvhZE=; b=MkYS7sMf2V5IFRuwIYZ42DFHzs
-        neaCwRGY84hG7aYxEhzWO/+0P0zuME8+C/WMa5Nu0nScuGTPZkfn32LtMu1e6njgWOUOsGnX4MNJH
-        bvVIZdMF2VX7QDQqKjLvpQyvW1KO0xBFuPbTWLFB3VI7Bm09RHPnarl9hBU0cFB6MfuSRHw5+iikK
-        I4i2A0fvPRlWyeOOaYnJ7rjRkiIPcJizw54C8kILKm1PBQ9bp8Ka81c68gHR4JWMQTfeK/gagsyQN
-        bSwxB5AYJKa5xzvcDoWawWLmFJyfg46c+F+txJCTnf3eSp1SuDmJFgVhGcY+rStWpVAI6ZxMllD+4
-        nI5OEqFNjNz1TeYTOvJmJ6GqC7gONIcb/x4gfC9mZWekjUBPC9YDJXL926B50nkGiOJlxgBeVB4Vp
-        57Q8uZsYU7V4lgCsyzXSVfXS3QVzLfRoRgU66uZdoIU19HmPy0MeRUXRy38tqCy/87gg50KjRptzi
-        Zkqs4EcuVCtRCweu39jyJs6T;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1oN9xq-0005oS-Jn; Sun, 14 Aug 2022 09:31:22 +0000
-Message-ID: <064b4920-5441-1ae2-b492-cb75f7796d8d@samba.org>
-Date:   Sun, 14 Aug 2022 11:31:22 +0200
+        with ESMTP id S229723AbiHNKft (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 14 Aug 2022 06:35:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDAA963D7;
+        Sun, 14 Aug 2022 03:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=unBpQX/o/jdFbi5PDF32+lpRec8s1wLKO6YAY+7b0pk=; b=hc5Hj2cpu/Sj+ozro2hjKywwA0
+        VC1qciWJdmhx7yiF70Sekrt370qK6svkkAp+D0jU5UzGVz+ZOI20if+e/5tF7zzW5i7YHYJjBwEiw
+        2bez5llQSrEhFvdt9JorFS6DZdvJ8Jz1CgC6GDrcsHYHCelX3E/PtPKXq6zCItgNgBT6kE2c9mA3o
+        NoWeGR+U5g546aDMigFvyGdO8YhSKfLv37oQtst+cn9WviMbqSF65+TZb6gezsvwtUzHlsAzvvhL/
+        dO22jlTWgxUb2iUy2DR3AL97EmqliwfYc9Yb0lDVev6PAGc/xH72cgB3BqIpkGikIqpyiNTWpcb55
+        35b5CwJg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oNAxz-004iD8-Ih; Sun, 14 Aug 2022 10:35:35 +0000
+Date:   Sun, 14 Aug 2022 11:35:35 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Keith Busch <kbusch@fb.com>
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] fs: don't randomized kiocb fields
+Message-ID: <YvjP95SEuuEY7+Uo@casper.infradead.org>
+References: <20220812225633.3287847-1-kbusch@fb.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 1/1] io_uring/net: send retry for zerocopy
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <b876a4838597d9bba4f3215db60d72c33c448ad0.1659622472.git.asml.silence@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <b876a4838597d9bba4f3215db60d72c33c448ad0.1659622472.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220812225633.3287847-1-kbusch@fb.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Pavel,
+On Fri, Aug 12, 2022 at 03:56:33PM -0700, Keith Busch wrote:
+>  struct kiocb {
+>  	struct file		*ki_filp;
+> -
+> -	/* The 'ki_filp' pointer is shared in a union for aio */
+> -	randomized_struct_fields_start
+> -
+>  	loff_t			ki_pos;
+>  	void (*ki_complete)(struct kiocb *iocb, long ret);
+>  	void			*private;
+>  	int			ki_flags;
+>  	u16			ki_ioprio; /* See linux/ioprio.h */
+>  	struct wait_page_queue	*ki_waitq; /* for async buffered IO */
+> -	randomized_struct_fields_end
+>  };
 
-> io_uring handles short sends/recvs for stream sockets when MSG_WAITALL
-> is set, however new zerocopy send is inconsistent in this regard, which
-> might be confusing. Handle short sends.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   io_uring/net.c | 20 +++++++++++++++++---
->   1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/io_uring/net.c b/io_uring/net.c
-> index 32fc3da04e41..f9f080b3cc1e 100644
-> --- a/io_uring/net.c
-> +++ b/io_uring/net.c
-> @@ -70,6 +70,7 @@ struct io_sendzc {
->   	unsigned			flags;
->   	unsigned			addr_len;
->   	void __user			*addr;
-> +	size_t				done_io;
->   };
->   
->   #define IO_APOLL_MULTI_POLLED (REQ_F_APOLL_MULTISHOT | REQ_F_POLLED)
-> @@ -878,6 +879,7 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   
->   	zc->addr = u64_to_user_ptr(READ_ONCE(sqe->addr2));
->   	zc->addr_len = READ_ONCE(sqe->addr_len);
-> +	zc->done_io = 0;
->   
->   #ifdef CONFIG_COMPAT
->   	if (req->ctx->compat)
-> @@ -1012,11 +1014,23 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
->   	if (unlikely(ret < min_ret)) {
->   		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
->   			return -EAGAIN;
-> -		return ret == -ERESTARTSYS ? -EINTR : ret;
-> +		if (ret > 0 && io_net_retry(sock, msg.msg_flags)) {
-> +			zc->len -= ret;
-> +			zc->buf += ret;
-> +			zc->done_io += ret;
-> +			req->flags |= REQ_F_PARTIAL_IO;
+Now that I've read the thread ...
 
-Don't we need a prep_async function and/or something like
-io_setup_async_msg() here to handle address?
-
-metze
-
+If we care about struct size on 32-bit, we should fit something into
+the 32-bit hole before the 64-bit loff_t (assuming at least some 32-bit
+arches want loff_t to be 64-bit aligned; I thik x86 doesn't?)
+Easiest seems to be to put ki_complete before ki_pos?

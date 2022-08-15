@@ -2,70 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A13D3592C16
-	for <lists+io-uring@lfdr.de>; Mon, 15 Aug 2022 12:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192FB592C6E
+	for <lists+io-uring@lfdr.de>; Mon, 15 Aug 2022 12:51:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231243AbiHOJSr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Aug 2022 05:18:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43594 "EHLO
+        id S241608AbiHOJug (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Aug 2022 05:50:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233089AbiHOJSn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Aug 2022 05:18:43 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA6A22508
-        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 02:18:42 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id e27so3672476wra.11
-        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 02:18:42 -0700 (PDT)
+        with ESMTP id S231819AbiHOJuf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Aug 2022 05:50:35 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 659D51027;
+        Mon, 15 Aug 2022 02:50:34 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id n4so8433526wrp.10;
+        Mon, 15 Aug 2022 02:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=YeJwL0SGhH7TVmrhLe9TQyPGcOzlAS5D8shSJB7WYtw=;
-        b=V+/lTUoudlP8GvDtgiZPZpTBzXF/sQZzI6gllPxrajNgSakxexbkqok+SbGuUGYbva
-         6W+CGoIPFiajKsVxLw/8DOR1Bl8SHidSnEcxcHpakWDQM43R/+z2TIOnmcn7s13z+gJt
-         ZVg/UoTHw3hEgt2Kz+W++4F33nzuFp9RxkmBfOQof/4fFQL2LDnYWmk+gnPG/DhGDmUa
-         0okjJOQADqRa/Vf3N2hSt1ENx2TWIgzI5gR6+PScoFc7bB8nOPMYNW2zgfJcLk4btQTP
-         5Z2Js0zS1TVAfKFAVpo+Sr178FfdAuM4zW4TfV0EGoedghSAiN3z/mwAQpbOsxtKJxk2
-         gHOw==
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc;
+        bh=psPpKOGAtOeEDOvtXs+apIVxxYFLedxYJn8rDYeTSCI=;
+        b=PK2DQ3jN1k0ul0I4lNJsvoX8D8d/pWB4v4UqceK+ww+/lTWvd5YcI87PHTTT6XpZf4
+         bZiM4SGEDS5n6XS9YdXFl9ukYqIblFl17u/dEz1nikjXlzp4YuGzlElxqNKL5zIFzqX+
+         HGWkJI5Nk6+9yRgPza14UwKBsixMsAWVwUyCKlyotUwLV3xAgWOU+LcmUL58YMxqNMjL
+         EnGhB+Sx4eBQ1kMqCweDdN0oH+l2/+vJDDabgdE3451oiXitxmjVAqYo821OT1pjumJo
+         bao1AF5HusRVbeQeLr6cbydIwHkxgG43Lpg1jp6OigsHyfBxYbm95vUZuUjEZrktqv3b
+         r8Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=YeJwL0SGhH7TVmrhLe9TQyPGcOzlAS5D8shSJB7WYtw=;
-        b=usAP0V7UhGB5sqgMdrlt4AfVYz31x4aX1oQmp4QHy1YH/qz8dEYN5NKWejZr33kmzN
-         H2YaALikBFatviZYfZnw2hQlYEbpOyMfEvKRBxBU/EJk+YnshLRfB4I0fyvtJkf/9Mp9
-         prt/d32EonDv6fH2v2p5O1WrcLZOza1LG5HzO4CPHqUcqsYu0yKYX4nge8FebURA357U
-         wazlSxBRrkTC6ryQuQl07Je+U8RuCY2pfhbcyMtiV30cf0COGffb4NF40MxFtAwonTXN
-         h1jQdOMTGE7tHzaYarz3LpAKenQ4FUbIIknXwjqlqE9kCAAZaXeP2lTCCUP3vfRvYQRY
-         jPzg==
-X-Gm-Message-State: ACgBeo2q1Orrz+ZLUocVb+NR4i6gKrj6gWdmetmrqan8R9VLNN9N1piR
-        3uanzyIMeurv04UqUsZCHaQ=
-X-Google-Smtp-Source: AA6agR6HeSKt0iHZ1xI6VOgTwmEZ9ErlOOYZ9/343X2jSAWpJHfnXWl3qhuUS3Q4wU0DGBlFekug7Q==
-X-Received: by 2002:a05:6000:1686:b0:220:66b1:d897 with SMTP id y6-20020a056000168600b0022066b1d897mr8466249wrd.653.1660555121226;
-        Mon, 15 Aug 2022 02:18:41 -0700 (PDT)
+        bh=psPpKOGAtOeEDOvtXs+apIVxxYFLedxYJn8rDYeTSCI=;
+        b=F7ycitHfvkZeQrmJBHncTp4jq7yvzi2JoE8XAX1Dp7ckH6lTLoqNtgksU5h8ocYAe1
+         WUtEfgtJ9hOiMCDtDgcBfwlJj/2h/nVLAw+IKOqb2JdRK1wqSGbk8dE1cL/opUJnEiFd
+         p3p0xx7tZuPL8+E69R/EutpFlltttu4DeUA8rQp0qQNBuH7z4cSvMUanl6WA4cDYOB2r
+         G0EYV5ma2f8PyKNzWAI7jEjO8r6v4hBzxO0BgEdP+UzG7KTLqOrcGzUMz6lZwdniAoa6
+         ZnH0/0qDgv8MTTb9UxXwGilm2kQjw+SPnTcnsCQNuiTKceoqWH82egVBPN5YWKe0nPyA
+         VOHg==
+X-Gm-Message-State: ACgBeo3ajksAjYLNqblxwRXZ5EjqlAbiKhzLSsAv5nGMnRO/YiA7ZTOU
+        s8qPQkaESrTejJNlyoqPqD4=
+X-Google-Smtp-Source: AA6agR7Fll0IsHCmnqegeErvjOXbjZ88G3w3Re6FoaI23BQ+MWnCi0Ef8ldTP5VOGG2rxRelJEthrw==
+X-Received: by 2002:a05:6000:18a2:b0:221:7d32:e6a5 with SMTP id b2-20020a05600018a200b002217d32e6a5mr8282027wri.278.1660557032800;
+        Mon, 15 Aug 2022 02:50:32 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:5fc6])
-        by smtp.gmail.com with ESMTPSA id e6-20020a5d5306000000b0021e519eba9bsm6636920wrv.42.2022.08.15.02.18.40
+        by smtp.gmail.com with ESMTPSA id j3-20020a5d5643000000b0021f138e07acsm6832311wrw.35.2022.08.15.02.50.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Aug 2022 02:18:40 -0700 (PDT)
-Message-ID: <c9ab79bc-3e2c-635e-3991-2aa659166d96@gmail.com>
-Date:   Mon, 15 Aug 2022 10:14:59 +0100
+        Mon, 15 Aug 2022 02:50:32 -0700 (PDT)
+Message-ID: <db7bbfcd-fdd0-ed8e-3d8e-78d76f278af8@gmail.com>
+Date:   Mon, 15 Aug 2022 10:46:47 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH 1/1] io_uring/net: send retry for zerocopy
-Content-Language: en-US
-To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-References: <b876a4838597d9bba4f3215db60d72c33c448ad0.1659622472.git.asml.silence@gmail.com>
- <064b4920-5441-1ae2-b492-cb75f7796d8d@samba.org>
- <14283cb1-11b3-2847-4f48-9ea30c48c1bf@kernel.dk>
- <6357d22c-2fcc-ccc9-882c-9ebf83add50d@samba.org>
- <8d91ba5e-5b28-5ec0-b348-7eebd1edf2dd@kernel.dk>
- <6e523a67-96ce-e67e-e07d-3b63a86e5e3f@samba.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <6e523a67-96ce-e67e-e07d-3b63a86e5e3f@samba.org>
+Subject: Re: [RFC net-next v3 23/29] io_uring: allow to pass addr into sendzc
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
+References: <cover.1653992701.git.asml.silence@gmail.com>
+ <228d4841af5eeb9a4b73955136559f18cb7e43a0.1653992701.git.asml.silence@gmail.com>
+ <cccec667-d762-9bfd-f5a5-1c9fb46df5af@samba.org>
+ <56631a36-fec8-9c41-712b-195ad7e4cb9f@gmail.com>
+ <4eb0adae-660a-3582-df27-d6c254b97adb@samba.org>
+Content-Language: en-US
+In-Reply-To: <4eb0adae-660a-3582-df27-d6c254b97adb@samba.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -78,38 +82,90 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/14/22 15:48, Stefan Metzmacher wrote:
-> Am 14.08.22 um 16:13 schrieb Jens Axboe:
->> On 8/14/22 8:11 AM, Stefan Metzmacher wrote:
->>>>> Don't we need a prep_async function and/or something like
->>>>> io_setup_async_msg() here to handle address?
+On 8/13/22 09:45, Stefan Metzmacher wrote:
+> Hi Pavel,
 
->>> This has support for sockaddr address compared to io_send(),
->>> if the caller need to keep io_sendzc->addr valid until the qce arrived,
->>> then we need to clearly document that, as that doesn't match the common practice
->>> of other opcodes. Currently everything but data buffers can go after the sqe is
->>> submitted.
+Hi Stefan,
 
-Yes, can be this way if we agree it's preferable.
+Thanks for giving a thought about the API, are you trying
+to use it in samba?
 
->> Good point, it's not just the 'from' address. Pavel?
-
-It is
-
-> It's basically dest_addr from:
+>>> Given that this fills in msg almost completely can we also have
+>>> a version of SENDMSGZC, it would be very useful to also allow
+>>> msg_control to be passed and as well as an iovec.
+>>>
+>>> Would that be possible?
+>>
+>> Right, I left it to follow ups as the series is already too long.
+>>
+>> fwiw, I'm going to also add addr to IORING_OP_SEND.
 > 
->         ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,
->                        const struct sockaddr *dest_addr, socklen_t addrlen);
 > 
-> It's not used in most cases, but for non-connected udp sockets you need it.
-> 
-> Maybe the fixed io_op_def.async_size could be changed to something that only
-> allocated the async data if needed. Maybe the prep_async() hook could to the allocation
-> itself if needed.
+> Given the minimal differences, which were left between
+> IORING_OP_SENDZC and IORING_OP_SEND, wouldn't it be better
+> to merge things to IORING_OP_SEND using a IORING_RECVSEND_ZC_NOTIF
+> as indication to use the notif slot.
 
-It's details, easy to implement, e.g. we can just decouple the
-allocation from async preparation. I'll give it a try after sending
-other small zc API changes
+And will be even more similar in for-next, but with notifications
+I'd still prefer different opcodes to get a little bit more
+flexibility and not making the normal io_uring send path messier.
+
+> It would means we don't need to waste two opcodes for
+> IORING_OP_SENDZC and IORING_OP_SENDMSGZC (and maybe more)
+> 
+> 
+> I also noticed a problem in io_notif_update()
+> 
+>          for (; idx < idx_end; idx++) {
+>                  struct io_notif_slot *slot = &ctx->notif_slots[idx];
+> 
+>                  if (!slot->notif)
+>                          continue;
+>                  if (up->arg)
+>                          slot->tag = up->arg;
+>                  io_notif_slot_flush_submit(slot, issue_flags);
+>          }
+> 
+>   slot->tag = up->arg is skipped if there is no notif already.
+> 
+> So you can't just use a 2 linked sqe's with
+> 
+> IORING_RSRC_UPDATE_NOTIF followed by IORING_OP_SENDZC(with IORING_RECVSEND_NOTIF_FLUSH)
+
+slot->notif is lazily initialised with the first send attached to it,
+so in your example IORING_OP_SENDZC will first create a notification
+to execute the send and then will flush it.
+
+This "if" is there is only to have a more reliable API. We can
+go over the range and allocate all empty slots and then flush
+all of them, but allocation failures should be propagated to the
+userspace when currently the function it can't fail.
+
+> I think the if (!slot->notif) should be moved down a bit.
+
+Not sure what you mean
+
+> It would somehow be nice to avoid the notif slots at all and somehow
+> use some kind of multishot request in order to generate two qces.
+
+It is there first to ammortise overhead of zerocopy infra and bits
+for second CQE posting. But more importantly, without it for TCP
+the send payload size would need to be large enough or performance
+would suffer, but all depends on the use case. TL;DR; it would be
+forced to create a new SKB for each new send.
+
+For something simpler, I'll push another zc variant that doesn't
+have notifiers and posts only one CQE and only after the buffers
+are no more in use by the kernel. This works well for UDP and for
+some TCP scenarios, but doesn't cover all cases.
+> I'm also wondering what will happen if a notif will be referenced by the net layer
+> but the io_uring instance is already closed, wouldn't
+> io_uring_tx_zerocopy_callback() or __io_notif_complete_tw() crash
+> because notif->ctx is a stale pointer, of notif itself is already gone...
+
+io_uring will flush all slots and wait for all notifications
+to fire, i.e. io_uring_tx_zerocopy_callback(), so it's not a
+problem.
 
 -- 
 Pavel Begunkov

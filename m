@@ -2,192 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD51592FF2
-	for <lists+io-uring@lfdr.de>; Mon, 15 Aug 2022 15:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34576593031
+	for <lists+io-uring@lfdr.de>; Mon, 15 Aug 2022 15:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbiHONbR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Aug 2022 09:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43484 "EHLO
+        id S229889AbiHONrL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Aug 2022 09:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242386AbiHONas (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Aug 2022 09:30:48 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F32D22AE1;
-        Mon, 15 Aug 2022 06:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=DAW+JK1+w1rGYbURTQaZFFMQesVsw3aBfPZ2wMQaKes=; b=ODdYUQieyy0DoIcwkoTEtfqKYj
-        NJ/fz6cROM+tzkrjHHQZZTHJLspZ7evNSbyrdQeFLbH2Qg1GCa/eY9zsuly1kkM5CHxyH5xsrbmu6
-        4/KEbC8mt9s8iyz03EmFAqVbi5dO+qktd1CSAeA6GKr9TY76PMzczfGE4Kt9REbYcwvDLNaPEphsN
-        86oWhZE72Wh8SSotSjuuRUBv2UebIPvqVfw3qh6jesJzCjUe1gUsc8jmpub1Vwad8wkTRmkUeK1HR
-        QozCeEDoti1+2thSikBQ9q1WpUDzBg1OMX3H5Yv+9JniQOQ5cuRMtw/qVwnsxRSqOUWnZMKLI0PJj
-        Ls94l8IO/pB6k1LqC/j+0aIRV68WuKfJvON5dXIq+D0yHXXQSxJRmzA8mDhwTRTsTp6NC/IUyJDHJ
-        glkG6jHyR1toTE2nBHyoIM66vXqzzPkz9OOKrWPE+/gKNPtapWxc4flfR/j1T81ybzbGHYcjsqhs4
-        /zOjIyHnkyzAWWp/z1z/eIwo;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1oNaAr-000Gbd-1g; Mon, 15 Aug 2022 13:30:33 +0000
-Message-ID: <f8ec9b9e-80b5-a24f-eb12-4069b7b90bea@samba.org>
-Date:   Mon, 15 Aug 2022 15:30:32 +0200
+        with ESMTP id S229445AbiHONrK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Aug 2022 09:47:10 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A3C205EE
+        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 06:47:08 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id bv3so9151362wrb.5
+        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 06:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=Ij2tqXS+eSkXBmqorG5dlTgDVOfrAMlACCYb8o/mabw=;
+        b=bTNkHIXFjUwTyOV1Gy10mXmPcJXVwD/TT+RavYP+asN8kVVbaeOOXZkOXGfojViK/u
+         Wlq3cCtL10j7EKcgS1vRsHoK0nyUaIzQ789KXia+Q6TEReu9/WXhK5hLlNetPdqN5uad
+         Kg+EMGiWYUPo5+EpVN++Dn4JuvLYxzvzu317keyPFUz76hypplQawAtbyuMtUfy6/Rmx
+         y9VfGdiJW1xThFfp+vi7pDqHXD0KQz2/0ZBsTFPQktDtlMnUSos/x+ydhraNrcVO9EcE
+         7fCrjze8x2705lGtNuTzSvYQm6It+f7HOCGsxBa4s5aCxmvQ7xneebo0T7iUPpyUNM2T
+         Un0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=Ij2tqXS+eSkXBmqorG5dlTgDVOfrAMlACCYb8o/mabw=;
+        b=A/sO3sv7UQJ2dHyahKR7Eoj8Tm8sKt1T5L5gGc/9rUZLhdTA2WLlpHR2mFXTVa0jtX
+         1jQE74GZ6jFWc3AW+i9s5IWBtJdMuXPOkL86iZd6eq1fWWXa/pWrj2WeLpp1UDOaEYQC
+         Fopig8iHOuAWr+x2Pu0RXTx1Vqr9Wu5rzcpQOF+ndKDikHnW4rXAToeELHaahOrK6ZKK
+         8Bqbf6E0872jktwLh5zXJ/JKLxLmcJIbIcinEf6PoGWnECyrPHkOLcziG6cQcvtCkVYJ
+         2A4dkWRHzrZij0OBoRbmWLIhWDfeD30xk1aYlOC9Oc0SSB6MhKr9i5Yqo5NI4Xv9lLMO
+         sj5Q==
+X-Gm-Message-State: ACgBeo2mRvJb2uvGDqAcZFicGgm03NRTv7U1+l0A5DRfNeLogXTi56oJ
+        d4hAXjsFfeMzdCDu7NCsCsw=
+X-Google-Smtp-Source: AA6agR50A7utF1LEUOI/OfjMoY43JTM4hP/Fy98+WKqa7KHLVlx/XsUYRyfwd2z0SOC/TKrCYZq92A==
+X-Received: by 2002:a05:6000:1564:b0:222:c6c4:b445 with SMTP id 4-20020a056000156400b00222c6c4b445mr8542924wrz.602.1660571226493;
+        Mon, 15 Aug 2022 06:47:06 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:886])
+        by smtp.gmail.com with ESMTPSA id cl5-20020a5d5f05000000b00224f7c1328dsm5777291wrb.67.2022.08.15.06.47.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Aug 2022 06:47:06 -0700 (PDT)
+Message-ID: <119c96ef-5231-7576-e92f-62b9b35e2f8c@gmail.com>
+Date:   Mon, 15 Aug 2022 14:46:07 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
+Subject: Re: [PATCH for-next 1/7] io_uring: use local ctx variable
 Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
-References: <cover.1653992701.git.asml.silence@gmail.com>
- <228d4841af5eeb9a4b73955136559f18cb7e43a0.1653992701.git.asml.silence@gmail.com>
- <cccec667-d762-9bfd-f5a5-1c9fb46df5af@samba.org>
- <56631a36-fec8-9c41-712b-195ad7e4cb9f@gmail.com>
- <4eb0adae-660a-3582-df27-d6c254b97adb@samba.org>
- <db7bbfcd-fdd0-ed8e-3d8e-78d76f278af8@gmail.com>
- <246ef163-5711-01d6-feac-396fc176e14e@samba.org>
- <9edd5970-504c-b088-d2b1-3a2b7ad9b345@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [RFC net-next v3 23/29] io_uring: allow to pass addr into sendzc
-In-Reply-To: <9edd5970-504c-b088-d2b1-3a2b7ad9b345@gmail.com>
+To:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     Kernel-team@fb.com
+References: <20220815130911.988014-1-dylany@fb.com>
+ <20220815130911.988014-2-dylany@fb.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20220815130911.988014-2-dylany@fb.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Pavel,
-
->>> Thanks for giving a thought about the API, are you trying
->>> to use it in samba?
->>
->> Yes, but I'd need SENDMSGZC and then I'd like to test,
->> which variant gives the best performance. It also depends
->> on the configured samba vfs module stack.
+On 8/15/22 14:09, Dylan Yudaken wrote:
+> small change to use the local ctx
 > 
-> I can send you a branch this week if you would be
-> willing to try it out as I'll be sending the "msg" variant
-> only for 5.21
-
-I'm not sure I'll have time to do runtime testing,
-but it would be great to have a look at the code and give some comments
-based on that.
-
->> I think it should be:
->>
->>                    if (up->arg)
->>                            slot->tag = up->arg;
->>                    if (!slot->notif)
->>                            continue;
->>                    io_notif_slot_flush_submit(slot, issue_flags);
->>
->> or even:
->>
->>                    slot->tag = up->arg;
->>                    if (!slot->notif)
->>                            continue;
->>                    io_notif_slot_flush_submit(slot, issue_flags);
->>
->> otherwise IORING_RSRC_UPDATE_NOTIF would not be able to reset the tag,
->> if notif was never created or already be flushed.
+> Signed-off-by: Dylan Yudaken <dylany@fb.com>
+> ---
+>   io_uring/io_uring.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Ah, you want to update it for later. The idea was to affect only
-> those notifiers that are flushed by this update.
-> ...
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index ebfdb2212ec2..ab3e3d9e9fcd 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -1072,8 +1072,8 @@ void io_req_task_work_add(struct io_kiocb *req)
+>   		req = container_of(node, struct io_kiocb, io_task_work.node);
+>   		node = node->next;
+>   		if (llist_add(&req->io_task_work.node,
+> -			      &req->ctx->fallback_llist))
+> -			schedule_delayed_work(&req->ctx->fallback_work, 1);
+> +			      &ctx->fallback_llist))
+> +			schedule_delayed_work(&ctx->fallback_work, 1);
 
-notif->cqe.user_data = slot->tag; happens in io_alloc_notif(),
-so the slot->tag = up->arg; here is always for the next IO_SENDZC.
+Requests here can be from different rings, you can't use @ctx
+from above
 
-With IORING_RSRC_UPDATE_NOTIF linked to a IORING_OP_SENDZC(with IORING_RECVSEND_NOTIF_FLUSH)
-I basically try to reset slot->tag to the same (or related) user_data as the SENDZC itself.
-
-So that each SENDZC generates two CQEs with the same user_data belonging
-to the same userspace buffer.
-
-
-> I had a similar chat with Dylan last week. I'd rather not rob SQE of
-> additional u64 as there is only addr3 left and then we're fully packed,
-> but there is another option we were thinking about based on OVERRIDE_TAG
-> feature I scrapped from the final version of zerocopy patches.
-> 
-> Long story short, the idea is to copy req->cqe.user_data of a
-> send(+flush) request into the notification CQE, so you'll get 2 CQEs
-> with identical user_data but they can be distinguished by looking at
-> cqe->flags.
-> 
-> What do you think? Would it work for you?
-
-I guess that would work.
-
->>>> I'm also wondering what will happen if a notif will be referenced by the net layer
->>>> but the io_uring instance is already closed, wouldn't
->>>> io_uring_tx_zerocopy_callback() or __io_notif_complete_tw() crash
->>>> because notif->ctx is a stale pointer, of notif itself is already gone...
->>>
->>> io_uring will flush all slots and wait for all notifications
->>> to fire, i.e. io_uring_tx_zerocopy_callback(), so it's not a
->>> problem.
->>
->> I can't follow :-(
->>
->> What I see is that io_notif_unregister():
->>
->>                  nd = io_notif_to_data(notif);
->>                  slot->notif = NULL;
->>                  if (!refcount_dec_and_test(&nd->uarg.refcnt))
->>                          continue;
->>
->> So if the net layer still has a reference we just go on.
->>
->> Only a wild guess, is it something of:
->>
->> io_alloc_notif():
->>          ...
->>          notif->task = current;
->>          io_get_task_refs(1);
->>          notif->rsrc_node = NULL;
->>          io_req_set_rsrc_node(notif, ctx, 0);
->>          ...
->>
->> and
->>
->> __io_req_complete_put():
->>                  ...
->>                  io_req_put_rsrc(req);
->>                  /*
->>                   * Selected buffer deallocation in io_clean_op() assumes that
->>                   * we don't hold ->completion_lock. Clean them here to avoid
->>                   * deadlocks.
->>                   */
->>                  io_put_kbuf_comp(req);
->>                  io_dismantle_req(req);
->>                  io_put_task(req->task, 1);
->>                  ...
->>
->> that causes io_ring_exit_work() to wait for it.> It would be great if you or someone else could explain this in detail
->> and maybe adding some comments into the code.
-> 
-> Almost, the mechanism is absolutely the same as with requests,
-> and notifiers are actually requests for internal purposes.
-> 
-> In __io_alloc_req_refill() we grab ctx->refs, which are waited
-> for in io_ring_exit_work(). We usually put requests into a cache,
-> so when a request is complete we don't put the ref and therefore
-> in io_ring_exit_work() we also have a call to io_req_caches_free(),
-> which puts ctx->refs.
-
-Ok, thanks.
-
-Would a close() on the ring fd block? I guess not, but the exit_work may block, correct?
-So a process would be a zombie until net released all references?
-
-metze
-
+-- 
+Pavel Begunkov

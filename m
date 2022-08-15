@@ -2,93 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9410592F1E
-	for <lists+io-uring@lfdr.de>; Mon, 15 Aug 2022 14:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E235592F6C
+	for <lists+io-uring@lfdr.de>; Mon, 15 Aug 2022 15:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242284AbiHOMoJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 Aug 2022 08:44:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
+        id S232305AbiHONJ1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 Aug 2022 09:09:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242180AbiHOMoI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Aug 2022 08:44:08 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11184DEF4
-        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 05:44:07 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id p12-20020a7bcc8c000000b003a5360f218fso7756522wma.3
-        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 05:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=ERqPKONVQJ131A8xPa0b9ax3YX2g6jPp6AbgfsU/eyY=;
-        b=nkTlWqvuNIqozjLQZaSgd3mmaAJlO0mHdxuQ3UhQHbf4JUrTnC95bKJ00e4RYzQ+OH
-         yUilKHnDni+r+BQcaG3dLYgboujH5ObDlTyluLv0fkW17lYsDtTQd61pUN5UkSUG3Ma4
-         caOK0n+vUL5J/i04psX+uQID/0QJo+MCIxmZ4QWUZGxHg4IMl4HbyFYJUCZl5U+uItXM
-         8r6RCAO2vZxkv2WWDfeHzX7nExhNLYf7yQSRb3cPUZArtOsE2WK8BTJlTIYmWQFMY+V7
-         u3XtIWuzw7QNOR0tZVpcEptLh4ZGGIdyTwkMNlLD3THGVtjVxiYUVDw4tY0UXMlhnU2L
-         7NJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=ERqPKONVQJ131A8xPa0b9ax3YX2g6jPp6AbgfsU/eyY=;
-        b=kBJsLvNvjryTU4WScBIFS2U/xJsWIMJ0T+JFAfjVpoLA8cQ0SuK19TwqK6n5QoD99N
-         RreZVrUxlm5Vl87LWVhr0JJBT8Z/w5zG8NkdC0vWzRWfbgNp2+VUpn+U6YWqR0Zxxqhf
-         unQVRH85a81QcZZDp5bsLKS6E0GCucfvz4QuciJqmHpunhG8nD74dG+I8fLU7yt12ZXQ
-         J/qkIKvi9DV1A083uf57F0VgfxpcvOclOZY79lOFKtFmqoM206+hphbWBNBsI3j15TNO
-         v/HVeUW5PcK0CC4lTBH+ttuaA+SYmdWMBkz7yD9NI2nS2s4tMCVGzeT4sFXNAB+lsIIq
-         VH7w==
-X-Gm-Message-State: ACgBeo0nKkFSMRc//uGIrQPaI+lGS6MSx4tWxdvBZu2Voeu7I7CiDLq0
-        7QKtDsZPwau/p+Q6+swvIXX8chYWDX4=
-X-Google-Smtp-Source: AA6agR6k2ZCGQDP8Q0berMuW6o38LUI+xXDtzMmyTTzKijrSAqvGnlnglR1kv43N3Ps3klt3a4q3WA==
-X-Received: by 2002:a05:600c:210b:b0:3a5:bb92:d22d with SMTP id u11-20020a05600c210b00b003a5bb92d22dmr10007477wml.99.1660567445234;
-        Mon, 15 Aug 2022 05:44:05 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:5fc6])
-        by smtp.gmail.com with ESMTPSA id f13-20020a05600c154d00b003a54fffa809sm10296109wmg.17.2022.08.15.05.44.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 05:44:04 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-5.20 3/3] io_uring/notif: raise limit on notification slots
-Date:   Mon, 15 Aug 2022 13:42:02 +0100
-Message-Id: <eb78a0a5f2fa5941f8e845cdae5fb399bf7ba0be.1660566179.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <cover.1660566179.git.asml.silence@gmail.com>
-References: <cover.1660566179.git.asml.silence@gmail.com>
+        with ESMTP id S232311AbiHONJZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 Aug 2022 09:09:25 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B431E1BEB4
+        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 06:09:19 -0700 (PDT)
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27FBOT4m007726
+        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 06:09:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=fGnv4Ul5b7g3ZN0ccRxUD7DGjSIHpe8eu506Qmeadi8=;
+ b=Z12mR0XEN8CnR6b1OXQxpJFJTRwD6Erynewc63SAtvKp1fOGG+3F9kKGWvsMz73/0ViP
+ HQPi5UvRm2ERwEig8hAN+wTowi45xr34B94uPSsj+Pk6MqcxKN4xxnU8Wc46EfPXzlR8
+ XOylv8IZMDA5w+6P46qrkDBd08GfsoioUMw= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hyn83rexe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 15 Aug 2022 06:09:18 -0700
+Received: from twshared25684.07.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 15 Aug 2022 06:09:17 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 0C28A49B6CA1; Mon, 15 Aug 2022 06:09:13 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH for-next 0/7] io_uring: defer task work to when it is needed
+Date:   Mon, 15 Aug 2022 06:09:04 -0700
+Message-ID: <20220815130911.988014-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: N2xHIYGZGXcX-MBXIP86969Hl8aTs38b
+X-Proofpoint-GUID: N2xHIYGZGXcX-MBXIP86969Hl8aTs38b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-15_08,2022-08-15_01,2022-06-22_01
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-1024 notification slots is rather an arbitrary value, raise it up,
-everything is accounted to memcg.
+We have seen workloads which suffer due to the way task work is currently
+scheduled. This scheduling can cause non-trivial tasks to run interruptin=
+g
+useful work on the workload. For example in network servers, a large asyn=
+c
+recv may run, calling memcpy on a large packet, interrupting a send. Whic=
+h
+would add latency.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/notif.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series adds an option to defer async work until user space calls
+io_uring_enter with the GETEVENTS flag. This allows the workload to choos=
+e
+when to schedule async work and have finer control (at the expense of
+complexity of managing this) of scheduling.
 
-diff --git a/io_uring/notif.h b/io_uring/notif.h
-index 65f0b42f2555..80f6445e0c2b 100644
---- a/io_uring/notif.h
-+++ b/io_uring/notif.h
-@@ -8,7 +8,7 @@
- #include "rsrc.h"
- 
- #define IO_NOTIF_SPLICE_BATCH	32
--#define IORING_MAX_NOTIF_SLOTS (1U << 10)
-+#define IORING_MAX_NOTIF_SLOTS	(1U << 15)
- 
- struct io_notif_data {
- 	struct file		*file;
--- 
-2.37.0
+Patches 1/2/3 are prep patches
+Patch 4 changes io_uring_enter to not always pre-run task work. It is not
+obvious that this is useful regardless of this series
+Patch 5/6/7 adds the new flag and functionality
+
+Dylan Yudaken (7):
+  io_uring: use local ctx variable
+  io_uring: remove unnecessary variable
+  io_uring: introduce io_has_work
+  io_uring: do not always run task work at the start of io_uring_enter
+  io_uring: add IORING_SETUP_DEFER_TASKRUN
+  io_uring: move io_eventfd_put
+  io_uring: signal registered eventfd to process deferred task work
+
+ include/linux/io_uring_types.h |   3 +
+ include/uapi/linux/io_uring.h  |   7 +
+ io_uring/cancel.c              |   2 +-
+ io_uring/io_uring.c            | 232 +++++++++++++++++++++++++--------
+ io_uring/io_uring.h            |  31 ++++-
+ io_uring/rsrc.c                |   2 +-
+ 6 files changed, 221 insertions(+), 56 deletions(-)
+
+
+base-commit: ff34d8d06a1f16b6a58fb41bfbaa475cc6c02497
+--=20
+2.30.2
 

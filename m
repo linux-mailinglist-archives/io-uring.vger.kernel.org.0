@@ -2,236 +2,222 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A99595F70
-	for <lists+io-uring@lfdr.de>; Tue, 16 Aug 2022 17:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8EC595FAC
+	for <lists+io-uring@lfdr.de>; Tue, 16 Aug 2022 17:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236182AbiHPPjK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Aug 2022 11:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51654 "EHLO
+        id S231739AbiHPPzp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Aug 2022 11:55:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236165AbiHPPiV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Aug 2022 11:38:21 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 925E32DC5
-        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:38:00 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27GFbvaR008735
-        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:38:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=6WdHYVQ3hsIo/aoa0fsgO0YojZ2/DJHTafRogLVTmWc=;
- b=FQnxr6MNzXLMdF/eiSmt5smzHJMDDVtyYPCTDBhHbXCAGojKXp08e6+qn7riHjFTg0u3
- 1Py5goKhBZWE3e7aBrAMz7bzIUTcPRzlZ0yh/NqBPJ+D+/mYqhgSHF5tjNnaCv+JpNhq
- ouJEl4o2Psb+IpdfY0tCwBuJQ03tZNOpQCs= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3j030hkq22-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:38:00 -0700
-Received: from twshared1866.09.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 16 Aug 2022 08:37:52 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id F1DFF4AAA7CA; Tue, 16 Aug 2022 08:37:38 -0700 (PDT)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        <io-uring@vger.kernel.org>
-CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH for-next v2 6/6] io_uring: signal registered eventfd to process deferred task work
-Date:   Tue, 16 Aug 2022 08:37:28 -0700
-Message-ID: <20220816153728.2160601-7-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220816153728.2160601-1-dylany@fb.com>
-References: <20220816153728.2160601-1-dylany@fb.com>
+        with ESMTP id S236376AbiHPPz1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 Aug 2022 11:55:27 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5BD1106
+        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=DRftvI0EUu7XTQnnfbjyAtqR7uZr9LCUYGHrqEUvaSc=; b=t1hX8DUPDRLyySX5ugfD7lHI08
+        AXATQHFhRz2mplmjSEcrnIXWRDv+xr4CCTOcjZ+NJqLuuhLKy/0WfBB4cHPh+VOG+8Ig9UMGZKNi0
+        +tatCw3h/PJgxNQwees2J42cMJCug9QnKZa2HocouztoHQhKlxHmG969k1SPcJe8HjCv0RVgDMh/A
+        YcXYkQb8kG+wy/xYkWhN6K3LldszW7or5muNsWKTYWmvUe6nWdrKoWAtjQOG5KqV9euUqe2xFcEYl
+        pQerHBSsseFEpbkhDZ0o9M0sAR2s9mudQP2DjLKnw0wrwPDxZY2B/1XSzKGXlBDoPtziEDpmNXzjS
+        YhJkLiiOM07iGrpiUFL3LGTiuwoN0GmMQ7AFWqpD9Lc7ayJp5FrWFM/aT7NWMvLxTRGRyPtGnH86j
+        i/WL4PfteBslUnN7dZIOKCnMv5mvOYluzHHL/DpwlCw7gTMSZO3Ze+K/5LYFlHc7f69FlswlWh1Nf
+        3j6zdXOfgmkYJE9HXV31ApCH;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1oNysR-000Pci-Fj; Tue, 16 Aug 2022 15:53:11 +0000
+Message-ID: <a05f7831-92c2-0eb6-0088-73bbdd4acb89@samba.org>
+Date:   Tue, 16 Aug 2022 17:53:11 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: Y2EnvORa5fEKcT6DpAZgMXEPgFzFT187
-X-Proofpoint-ORIG-GUID: Y2EnvORa5fEKcT6DpAZgMXEPgFzFT187
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-16_08,2022-08-16_02,2022-06-22_01
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Olivier Langlois <olivier@trillion01.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+References: <b7bbc124-8502-0ee9-d4c8-7c41b4487264@kernel.dk>
+ <20220326122838.19d7193f@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+ <9a932cc6-2cb7-7447-769f-3898b576a479@kernel.dk>
+ <20220326130615.2d3c6c85@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+ <234e3155-e8b1-5c08-cfa3-730cc72c642c@kernel.dk>
+ <f6203da1-1bf4-c5f4-4d8e-c5d1e10bd7ea@kernel.dk>
+ <20220326143049.671b463c@kernel.org>
+ <78d9a5e2eaad11058f54b1392662099549aa925f.camel@trillion01.com>
+ <CAHk-=wiTyisXBgKnVHAGYCNvkmjk=50agS2Uk6nr+n3ssLZg2w@mail.gmail.com>
+ <32c3c699-3e3a-d85e-d717-05d1557c17b9@kernel.dk>
+ <CAHk-=wiCjtDY0UW8p5c++u_DGkrzx6k91bpEc9SyEqNYYgxbOw@mail.gmail.com>
+ <a59ba475-33fc-b91c-d006-b7d8cc6f964d@kernel.dk>
+ <CAHk-=wg9jtV5JWxBudYgoL0GkiYPefuRu47d=L+7701kLWoQaA@mail.gmail.com>
+ <ca0248b3-2080-3ea2-6a09-825d084ac005@kernel.dk>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Deprecation of IORING_OP_EPOLL_CTL (Re: [GIT PULL] io_uring updates
+ for 5.18-rc1)
+In-Reply-To: <ca0248b3-2080-3ea2-6a09-825d084ac005@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Some workloads rely on a registered eventfd (via
-io_uring_register_eventfd(3)) in order to wake up and process the
-io_uring.
 
-In the case of a ring setup with IORING_SETUP_DEFER_TASKRUN, that eventfd
-also needs to be signalled when there are tasks to run.
+Hi Jens, hi Linus,
 
-This changes an old behaviour which assumed 1 eventfd signal implied at
-least 1 CQE, however only when this new flag is set (and so old users wil=
-l
-not notice). This should be expected with the IORING_SETUP_DEFER_TASKRUN
-flag as it is not guaranteed that every task will result in a CQE.
+I just noticed this commit:
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- include/linux/io_uring_types.h |  1 +
- io_uring/io_uring.c            | 75 ++++++++++++++++++++++++----------
- 2 files changed, 55 insertions(+), 21 deletions(-)
+commit 61a2732af4b0337f7e36093612c846e9f5962965
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Wed Jun 1 12:36:42 2022 -0600
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-index d56ff2185168..42494176434a 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -184,6 +184,7 @@ struct io_ev_fd {
- 	struct eventfd_ctx	*cq_ev_fd;
- 	unsigned int		eventfd_async: 1;
- 	struct rcu_head		rcu;
-+	atomic_t		refs;
- };
-=20
- struct io_alloc_cache {
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 2eb9ad9edef3..65ea8ccd63e8 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -478,33 +478,33 @@ static __cold void io_queue_deferred(struct io_ring=
-_ctx *ctx)
- 	}
- }
-=20
-+
-+static inline void __io_eventfd_put(struct io_ev_fd *ev_fd)
-+{
-+	if (atomic_dec_and_test(&ev_fd->refs)) {
-+		eventfd_ctx_put(ev_fd->cq_ev_fd);
-+		kfree(ev_fd);
-+	}
-+}
-+
-+static void io_eventfd_signal_put(struct rcu_head *rcu)
-+{
-+	struct io_ev_fd *ev_fd =3D container_of(rcu, struct io_ev_fd, rcu);
-+
-+	eventfd_signal(ev_fd->cq_ev_fd, 1);
-+	__io_eventfd_put(ev_fd);
-+}
-+
- static void io_eventfd_put(struct rcu_head *rcu)
- {
- 	struct io_ev_fd *ev_fd =3D container_of(rcu, struct io_ev_fd, rcu);
-=20
--	eventfd_ctx_put(ev_fd->cq_ev_fd);
--	kfree(ev_fd);
-+	__io_eventfd_put(ev_fd);
- }
-=20
- static void io_eventfd_signal(struct io_ring_ctx *ctx)
- {
--	struct io_ev_fd *ev_fd;
--	bool skip;
--
--	spin_lock(&ctx->completion_lock);
--	/*
--	 * Eventfd should only get triggered when at least one event has been
--	 * posted. Some applications rely on the eventfd notification count onl=
-y
--	 * changing IFF a new CQE has been added to the CQ ring. There's no
--	 * depedency on 1:1 relationship between how many times this function i=
-s
--	 * called (and hence the eventfd count) and number of CQEs posted to th=
-e
--	 * CQ ring.
--	 */
--	skip =3D ctx->cached_cq_tail =3D=3D ctx->evfd_last_cq_tail;
--	ctx->evfd_last_cq_tail =3D ctx->cached_cq_tail;
--	spin_unlock(&ctx->completion_lock);
--	if (skip)
--		return;
-+	struct io_ev_fd *ev_fd =3D NULL;
-=20
- 	rcu_read_lock();
- 	/*
-@@ -522,13 +522,43 @@ static void io_eventfd_signal(struct io_ring_ctx *c=
-tx)
- 		goto out;
- 	if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
- 		goto out;
-+	if (ev_fd->eventfd_async && !io_wq_current_is_worker())
-+		goto out;
-=20
--	if (!ev_fd->eventfd_async || io_wq_current_is_worker())
-+	if (likely(eventfd_signal_allowed())) {
- 		eventfd_signal(ev_fd->cq_ev_fd, 1);
-+	} else {
-+		atomic_inc(&ev_fd->refs);
-+		call_rcu(&ev_fd->rcu, io_eventfd_signal_put);
-+	}
-+
- out:
- 	rcu_read_unlock();
- }
-=20
-+static void io_eventfd_flush_signal(struct io_ring_ctx *ctx)
-+{
-+	bool skip;
-+
-+	spin_lock(&ctx->completion_lock);
-+
-+	/*
-+	 * Eventfd should only get triggered when at least one event has been
-+	 * posted. Some applications rely on the eventfd notification count
-+	 * only changing IFF a new CQE has been added to the CQ ring. There's
-+	 * no depedency on 1:1 relationship between how many times this
-+	 * function is called (and hence the eventfd count) and number of CQEs
-+	 * posted to the CQ ring.
-+	 */
-+	skip =3D ctx->cached_cq_tail =3D=3D ctx->evfd_last_cq_tail;
-+	ctx->evfd_last_cq_tail =3D ctx->cached_cq_tail;
-+	spin_unlock(&ctx->completion_lock);
-+	if (skip)
-+		return;
-+
-+	io_eventfd_signal(ctx);
-+}
-+
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
- {
- 	if (ctx->off_timeout_used || ctx->drain_active) {
-@@ -540,7 +570,7 @@ void __io_commit_cqring_flush(struct io_ring_ctx *ctx=
-)
- 		spin_unlock(&ctx->completion_lock);
- 	}
- 	if (ctx->has_evfd)
--		io_eventfd_signal(ctx);
-+		io_eventfd_flush_signal(ctx);
- }
-=20
- static inline void io_cqring_ev_posted(struct io_ring_ctx *ctx)
-@@ -1066,6 +1096,8 @@ static void io_req_local_work_add(struct io_kiocb *=
-req)
- 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
- 		atomic_or(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
-=20
-+	if (ctx->has_evfd)
-+		io_eventfd_signal(ctx);
- 	io_cqring_wake(ctx);
- }
-=20
-@@ -2443,6 +2475,7 @@ static int io_eventfd_register(struct io_ring_ctx *=
-ctx, void __user *arg,
- 	ev_fd->eventfd_async =3D eventfd_async;
- 	ctx->has_evfd =3D true;
- 	rcu_assign_pointer(ctx->io_ev_fd, ev_fd);
-+	atomic_set(&ev_fd->refs, 1);
- 	return 0;
- }
-=20
---=20
-2.30.2
+     io_uring: deprecate epoll_ctl support
 
+     As far as we know, nobody ever adopted the epoll_ctl management via
+     io_uring. Deprecate it now with a warning, and plan on removing it in
+     a later kernel version. When we do remove it, we can revert the following
+     commits as well:
+
+     39220e8d4a2a ("eventpoll: support non-blocking do_epoll_ctl() calls")
+     58e41a44c488 ("eventpoll: abstract out epoll_ctl() handler")
+
+     Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+     Link: https://lore.kernel.org/io-uring/CAHk-=wiTyisXBgKnVHAGYCNvkmjk=50agS2Uk6nr+n3ssLZg2w@mail.gmail.com/
+     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+>> On Wed, Jun 1, 2022 at 11:34 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>> But as a first step, let's just mark it deprecated with a pr_warn() for
+>>> 5.20 and then plan to kill it off whenever a suitable amount of relases
+>>> have passed since that addition.
+>>
+>> I'd love to, but it's not actually realistic as things stand now.
+>> epoll() is used in a *lot* of random libraries. A "pr_warn()" would
+>> just be senseless noise, I bet.
+> 
+> I mean only for the IORING_OP_EPOLL_CTL opcode, which is the only epoll
+> connection we have in there.
+
++       pr_warn_once("%s: epoll_ctl support in io_uring is deprecated and will "
++                    "be removed in a future Linux kernel version.\n",
++                    current->comm);
+
+I don't think application writer will ever notice such warning in log files.
+
+Wouldn't it be better to rename IORING_OP_EPOLL_CTL to IORING_OP_EPOLL_CTL_DEPRECATED,
+so that developers notice the problem and can complain, because their application
+doesn't compile.
+
+As we don't know about any application using it, most likely nobody will ever notice that rename.
+
+If I haven't noticed that commit, by reading
+https://lwn.net/SubscriberLink/903487/5fddc7bb8e3bdcdd/
+I may have started to use it in future within Samba's libtevent.
+
+While researching on it I also noticed that
+.prep = io_eopnotsupp_prep, is not paired with .not_supported = 1;
+so that io_probe() will still report IO_URING_OP_SUPPORTED.
+I think io_uring_optable_init() should assert that both are in sync.
+
+>> No, there's a reason that EPOLL is still there, still 'default y',
+>> even though I dislike it and think it was a mistake, and we've had
+>> several nasty bugs related to it over the years.
+>>
+>> It really can be a very useful system call, it's just that it really
+>> doesn't work the way the actual ->poll() interface was designed, and
+>> it kind of hijacks it in ways that mostly work, but the have subtle
+>> lifetime issues that you don't see with a regular select/poll because
+>> those will always tear down the wait queues.
+>>
+>> Realistically, the proper fix to epoll is likely to make it explicit,
+>> and make files and drivers that want to support it have to actually
+>> opt in. Because a lot of the problems have been due to epoll() looking
+>> *exactly* like a regular poll/select to a driver or a filesystem, but
+>> having those very subtle extended requirements.
+>>
+>> (And no, the extended requirements aren't generally onerous, and
+>> regular ->poll() works fine for 99% of all cases. It's just that
+>> occasionally, special users are then fooled about special contexts).
+
+Currently we're using epoll_wait() as central blocking syscall,
+we use it with level triggering and only ask for a single
+struct epoll_event at a time. And we use the raw memory pointer
+values as epoll_event.data.ptr in order to find the related
+in memory structure belonging to the event.
+
+This works very nicely because if more than one file descriptor
+is ready, calling epoll_wait() seems traverse through the ready list,
+which generated fair results.
+
+We avoid asking for more events in a single epoll_wait() calls,
+because we often have multiple file descriptor belonging together
+to a high level application request. And the event handler for
+one file descriptor may close another file descriptor of changes it
+in some other way, which means the information of a 2nd epoll_event
+from a single epoll_wait(), is not unlikely be stale.
+
+So for userspace epoll seems to be a very useful interface
+(at least with level based triggering, I never understood edge-triggering).
+
+Are the epoll problems you were discussion mostly about edge-triggering
+and/or only kernel internals are also about the userspace intercace?
+
+I'm now wondering how we would be able to move to
+io_uring_enter() as central blocking syscall.
+
+Over time we'll try to use native calls like, IORING_OP_SENDMSG
+and others. But we'll ever have to support poll based notifications
+in order to try wait for file descriptor state changes.
+
+So I looked at IORING_OP_POLL_ADD/REMOVE and noticed the recent
+addition of IORING_POLL_ADD_LEVEL.
+
+But I'm having a hard time understanding how this will work
+at runtime.
+
+I'm seeing some interaction with task work and vfs_poll() but I'm
+not really sure what it means in the end.
+
+Taskwork (without IORING_SETUP_DEFER_TASKRUN) seems to run after each syscall.
+
+In case I did 10.000 IORING_OP_POLL_ADD calls to monitor 10.000 file descriptor,
+does it means after each syscall there's a loop of 10.000 vfs_poll() calls?
+
+What is the event that lets IORING_POLL_ADD_LEVEL trigger the next cqe?
+
+And with IORING_POLL_ADD_LEVEL does it means that each loop will try to post
+10.000 cqes (over and over again), if all 10.000 file descriptors are ready and would state that way.
+
+This would likely overflow the cqe array without a chance to recover itself.
+Also the information in the already posted cqes might be already out of date
+when they arrive in the application. While with epoll_wait(maxevents=1) I'm sure
+the information of the single event I'm extracting is recent.
+
+Dealing with cqe overflows it seems to be very nasty.
+And from userspace it seems to be easier to take single fd from epoll_create()
+and monitor that with IORING_OP_POLL_ADD and use IORING_OP_EPOLL_CTL to do
+modification while still calling epoll_wait(maxevents=1, timwout=0) to get just
+one event.
+
+You see that I'm very likely (hopefully) have the wrong picture in mind how
+epoll_wait could be avoided, so it would very nice if someone could explain
+it to me.
+
+I need to make the transition io_uring_enter() as central syscall first
+without any native IORING_OP_* calls, as there's no way I can convert all Samba
+code at once, and I also don't intend to try it at all for most parts, as we need
+to stay portable to platforms like freebsd and aix where we only have plain poll().
+So any hints how to do that plain replacement would be nice.
+
+When that's done I can start to convert performance critical in the fileserver
+to native IORING_OP_* calls.
+
+Sorry for the long mail and thanks for any comments in advance!
+metze

@@ -2,52 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEEDB595F59
+	by mail.lfdr.de (Postfix) with ESMTP id 2ED2A595F56
 	for <lists+io-uring@lfdr.de>; Tue, 16 Aug 2022 17:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236252AbiHPPi4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 Aug 2022 11:38:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51638 "EHLO
+        id S230050AbiHPPiz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 Aug 2022 11:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236062AbiHPPiT (ORCPT
+        with ESMTP id S236065AbiHPPiT (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 16 Aug 2022 11:38:19 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FD5C2
-        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:37:46 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27GBVjDs020558
-        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:37:46 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D62D5FE8
+        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:37:47 -0700 (PDT)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27GAOEVD016190
+        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:37:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=V9yYoa+NokyIICc/7pE2jRpAh4BhT7xgCYmIfDozaCM=;
- b=Ucb7xmm/+7N/j6DcQxdeg9QlNchywuAsPXMhXj5RO3BvbZxB38zeeoiZjDQik+wAseOu
- 8pALWQGbd/BJ90FPQB+DaewJwy1u9tR+luMJcHr/l5+Zkf3BKvWvdn/bmuIABSQiZGOq
- FGjJ9qX94FSkINySFNwijFKBK1dzQVVwzX8= 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=facebook;
+ bh=V329A0k++xK/PFVPubNpbm1rj3kPgFHzDDIMShBu9OQ=;
+ b=eSFq+X1gITFZBnTlXY8LsXizDdGQrgSELtlZcUQgr38iewZz70dfGDKjm+qn0DWuLNMu
+ vdqpoZHg4kVWf1s+qPJpsAIHqOpoAm3VQ+xhQja04LvjhyFVcikWpDTPNhDVovf7Eayp
+ wk1Amah2wBHuYUna0rpC+O38q7Wzx6Zc+bA= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3j0aek9kb9-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3j09en1x09-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:37:46 -0700
-Received: from twshared25684.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Tue, 16 Aug 2022 08:37:47 -0700
+Received: from twshared8442.02.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 16 Aug 2022 08:37:44 -0700
+ 15.1.2375.31; Tue, 16 Aug 2022 08:37:45 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id CD2614AAA7BE; Tue, 16 Aug 2022 08:37:38 -0700 (PDT)
+        id D13FD4AAA7C0; Tue, 16 Aug 2022 08:37:38 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         <io-uring@vger.kernel.org>
 CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH for-next v2 0/6] io_uring: defer task work to when it is needed
-Date:   Tue, 16 Aug 2022 08:37:22 -0700
-Message-ID: <20220816153728.2160601-1-dylany@fb.com>
+Subject: [PATCH for-next v2 1/6] io_uring: remove unnecessary variable
+Date:   Tue, 16 Aug 2022 08:37:23 -0700
+Message-ID: <20220816153728.2160601-2-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220816153728.2160601-1-dylany@fb.com>
+References: <20220816153728.2160601-1-dylany@fb.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: xTQHOQBRraEi5R5izGpfxxqdDX9eKJ0S
-X-Proofpoint-ORIG-GUID: xTQHOQBRraEi5R5izGpfxxqdDX9eKJ0S
+X-Proofpoint-ORIG-GUID: 64_cxu0Fet58qXvWeBY3NVDxIJxyAFwF
+X-Proofpoint-GUID: 64_cxu0Fet58qXvWeBY3NVDxIJxyAFwF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-08-16_08,2022-08-16_02,2022-06-22_01
@@ -61,53 +64,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have seen workloads which suffer due to the way task work is currently
-scheduled. This scheduling can cause non-trivial tasks to run interruptin=
-g
-useful work on the workload. For example in network servers, a large asyn=
-c
-recv may run, calling memcpy on a large packet, interrupting a send. Whic=
-h
-would add latency.
+'running' is set once and read once, so can easily just remove it
 
-This series adds an option to defer async work until user space calls
-io_uring_enter with the GETEVENTS flag. This allows the workload to choos=
-e
-when to schedule async work and have finer control (at the expense of
-complexity of managing this) of scheduling.
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
+---
+ io_uring/io_uring.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Patches 1,2 are prep patches
-Patch 3 changes io_uring_enter to not pre-run task work
-Patch 4/5/6 adds the new flag and functionality
-
-Changes since v1:
- - Removed the first patch (using ctx variable) which was broken
- - Require IORING_SETUP_SINGLE_ISSUER and make sure waiter task
-   is the same as the submitter task
- - Just don't run task work at the start of io_uring_enter (Pavel's
-   suggestion)
- - Remove io_move_task_work_from_local
- - Fix locking bugs
-
-Dylan Yudaken (6):
-  io_uring: remove unnecessary variable
-  io_uring: introduce io_has_work
-  io_uring: do not run task work at the start of io_uring_enter
-  io_uring: add IORING_SETUP_DEFER_TASKRUN
-  io_uring: move io_eventfd_put
-  io_uring: signal registered eventfd to process deferred task work
-
- include/linux/io_uring_types.h |   3 +
- include/uapi/linux/io_uring.h  |   7 ++
- io_uring/cancel.c              |   2 +-
- io_uring/io_uring.c            | 222 ++++++++++++++++++++++++++-------
- io_uring/io_uring.h            |  30 ++++-
- io_uring/rsrc.c                |   2 +-
- 6 files changed, 215 insertions(+), 51 deletions(-)
-
-
-base-commit: 5993000dc6b31b927403cee65fbc5f9f070fa3e4
-prerequisite-patch-id: cb1d024945aa728d09a131156140a33d30bc268b
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index ebfdb2212ec2..0c9fe0f1c174 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1052,12 +1052,9 @@ void io_req_task_work_add(struct io_kiocb *req)
+ 	struct io_uring_task *tctx =3D req->task->io_uring;
+ 	struct io_ring_ctx *ctx =3D req->ctx;
+ 	struct llist_node *node;
+-	bool running;
+-
+-	running =3D !llist_add(&req->io_task_work.node, &tctx->task_list);
+=20
+ 	/* task_work already pending, we're done */
+-	if (running)
++	if (!llist_add(&req->io_task_work.node, &tctx->task_list))
+ 		return;
+=20
+ 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
 --=20
 2.30.2
 

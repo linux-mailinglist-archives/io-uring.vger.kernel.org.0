@@ -2,144 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03A53596E9E
-	for <lists+io-uring@lfdr.de>; Wed, 17 Aug 2022 14:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 044745970E9
+	for <lists+io-uring@lfdr.de>; Wed, 17 Aug 2022 16:25:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236170AbiHQMqF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 Aug 2022 08:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44038 "EHLO
+        id S231609AbiHQOWf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 Aug 2022 10:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231527AbiHQMqE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Aug 2022 08:46:04 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96A68A6D6
-        for <io-uring@vger.kernel.org>; Wed, 17 Aug 2022 05:46:03 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id f8so2388402wru.13
-        for <io-uring@vger.kernel.org>; Wed, 17 Aug 2022 05:46:03 -0700 (PDT)
+        with ESMTP id S237072AbiHQOWe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 Aug 2022 10:22:34 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98EBF8F976
+        for <io-uring@vger.kernel.org>; Wed, 17 Aug 2022 07:22:33 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id n12so7381993iod.3
+        for <io-uring@vger.kernel.org>; Wed, 17 Aug 2022 07:22:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=HexOByiYqenVHa9X8Ku80nTExtFJvXKuqmJB+Inzpyc=;
-        b=VFAceZqS70r+SVfIBnBokfRK0NQquai7/O3dqiRLz94g0U4BEFIL9C5QVNnrWaBp/t
-         dL+vOI9HhDguu0lfcttZMPdsJMT4kBej7e9UNvedVQpfpXNrlibiF7WlK/uGUU2Uzq3D
-         2J86fqNMdLrv6E8zVaFNoVZfTRPA4n/bn5XTZmT6g4joGg5XFB296WzpsNxTqrLgIwSJ
-         R5F3hW9qha4PzjTUcntfUerX+hTRkSph2R94dFMtUliePE/VE9ifZU3I2MaHqi9CG0Cq
-         DkSB35xhxfpAieDimZhE9B2H+Fgw27ErYAC+LHLNBqmu2mKB/qCBZv5nhVEusIGU7C2l
-         TAlQ==
+        bh=Me5Eblpo77OL8yVoImUGgcZR3F3DnEB+a6/Z40BtEUw=;
+        b=h2zL1ufdtgJJFFU+85KTEoC4O6YSNXK2JjaJPFWG36R7ur2vGdkcOVcYxNWZXJhUmz
+         MdICl+1GPugAWr/Oi42oFCG7TN3IMujkNRDCNEKiBSEnEB/xbwWM6HAJUHCKFsdqtU08
+         kQFHHK+7GYYAwWSTo4gRNLdJGVr0WJtoDLP/quB08ODjfQGsB5B6+QRiOteonJXRpk8u
+         cxtDinQBhgntFAkMz0CmELxo/Nvd6rknf9Lbh7yH5aXf4OcecbHY/k6VTL8OfvVAfHot
+         GxWX5yCxgJjEx7zuMdKJSjf4Tsb/ne3/pnEAsXVdyiNxg/M3XCH9DcGVjROOLd+eMRck
+         Tk5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=HexOByiYqenVHa9X8Ku80nTExtFJvXKuqmJB+Inzpyc=;
-        b=6FgIfGAMlyWxuwJmm7kODQMc8Zjz8hHv3DeAUUF0MMHJ/RDaPLKLN4+Z+KQDrY6DVi
-         OlPBMr3UuLvjmfcrvjn3gV41i+R+GiD0JPWhZCcZpf0myg+2h7rdPSk0+ivXJO0ZWqFO
-         ptV9qZk6saDSOF/ioCGWtfja6hXZ4t7S7rA6xqwojijyMCDPSg9DkOGOZPL8VENqpsLy
-         4VOV3UlFcQHW2HQ7JxJx8r7tDqE4lMj3p6pwMo3JqrIvOyD9pyYbplJ2iovOfAjTOjao
-         ZGkzomCZUeb2Y17OITJF8BAlRPkxZir3BSh01NjLmeLyzde5vqyJWcV44YpwF10VUKq4
-         orwA==
-X-Gm-Message-State: ACgBeo3ZK+zegguVLdNgHbWJJUeE5dQT4Ko/y3CJ7rK4w0eMvSvdIEKe
-        WLzpVNnDJ4daQToe6B89amQ=
-X-Google-Smtp-Source: AA6agR4ZZjYrKUHwBfFuPyI1WTVQLJqk9ftqnTmL+8imhLGwmdyFf24UuO1zVwfD8frknOd9fJF9Ug==
-X-Received: by 2002:a05:6000:144c:b0:222:c5db:6caa with SMTP id v12-20020a056000144c00b00222c5db6caamr14114296wrx.421.1660740362165;
-        Wed, 17 Aug 2022 05:46:02 -0700 (PDT)
-Received: from [192.168.8.198] (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id p22-20020a05600c359600b003a35516ccc3sm2783954wmq.26.2022.08.17.05.46.01
+        bh=Me5Eblpo77OL8yVoImUGgcZR3F3DnEB+a6/Z40BtEUw=;
+        b=rrfrOmH87ftaNElHwlSArUPIXMcXUxPbfEinG9g9FLYO3ttqjoIgUmv71NGvk8yuO1
+         duDTkcq3jjh5SVu8cOhcWs/PKVRa2ec6C3E4K0ht7mSQyDtseWgQaogh317QGsyxKi09
+         4IrdCpGQmwekPipLeG33JEuXwXTDgnhTtzT9paeB5ga7bHKw7RDDNM0RQU8iRhnlbYii
+         d1gtHW5JqrGEEvBmsYjIDIYjLOwvL4wLc5DLPxXxpvjAHLi6ljnG9YF7W7PsyTcsUpqZ
+         109sdqSwflESSqwnnS694Pjqbbd+aIUNgCqCAbJ6EbVoDQjqwlqM9SlM1Z//HTtB0SFj
+         nJFw==
+X-Gm-Message-State: ACgBeo3AV5eVZqIF4cTf67hCg93ZujSUywC1l+OK7Oe3137la9zpU/a6
+        KxHm/t2eLJaV3f0R7ABwtJ5kog==
+X-Google-Smtp-Source: AA6agR7HQdtIfxPCr3oiJs2lcxa3+I+ci/q1ohQUdF0E5/wMxrEqfrF8MtdZR4Wj8edFWr6lWGHbLA==
+X-Received: by 2002:a05:6602:3cc:b0:678:eb57:5eb with SMTP id g12-20020a05660203cc00b00678eb5705ebmr10575715iov.125.1660746152190;
+        Wed, 17 Aug 2022 07:22:32 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id z20-20020a027a54000000b003429446e53dsm5645789jad.43.2022.08.17.07.22.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Aug 2022 05:46:01 -0700 (PDT)
-Message-ID: <82c718c2-9403-38b4-7cf4-5f8aa369b041@gmail.com>
-Date:   Wed, 17 Aug 2022 13:44:07 +0100
+        Wed, 17 Aug 2022 07:22:31 -0700 (PDT)
+Message-ID: <408038f9-654c-611a-2c48-c1b5d660a6a7@kernel.dk>
+Date:   Wed, 17 Aug 2022 08:22:29 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC 2/2] io_uring/net: allow to override notification tag
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: KASAN: null-ptr-deref Write in io_file_get_normal
 Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "metze@samba.org" <metze@samba.org>
-References: <cover.1660635140.git.asml.silence@gmail.com>
- <6aa0c662a3fec17a1ade512e7bbb519aa49e6e4d.1660635140.git.asml.silence@gmail.com>
- <4d344ba991c604f0ae28511143c26b3c9af75a2a.camel@fb.com>
- <96d18b77-06d8-3795-8569-34de5c8779f1@gmail.com>
- <4bd2100042b18eda569fc31f434f48cc922a7b84.camel@fb.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <4bd2100042b18eda569fc31f434f48cc922a7b84.camel@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Jiacheng Xu <578001344xu@gmail.com>, linux-kernel@vger.kernel.org,
+        asml.silence@gmail.co, io-uring@vger.kernel.org,
+        security@kernel.org
+References: <CAO4S-mdVW5GkODk0+vbQexNAAJZopwzFJ9ACvRCJ989fQ4A6Ow@mail.gmail.com>
+ <YvvD+wB64nBSpM3M@kroah.com> <5bf54200-5b12-33b0-8bf3-0d1c6718cfba@kernel.dk>
+ <YvyPe7cKY2sLzbJt@kroah.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <YvyPe7cKY2sLzbJt@kroah.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/17/22 13:04, Dylan Yudaken wrote:
-> On Wed, 2022-08-17 at 11:48 +0100, Pavel Begunkov wrote:
->> On 8/16/22 09:37, Dylan Yudaken wrote:
->>> On Tue, 2022-08-16 at 08:42 +0100, Pavel Begunkov wrote:
->>>> Considering limited amount of slots some users struggle with
->>>> registration time notification tag assignment as it's hard to
->>>> manage
->>>> notifications using sequence numbers. Add a simple feature that
->>>> copies
->>>> sqe->user_data of a send(+flush) request into the notification
->>>> CQE it
->>>> flushes (and only when it's flushes).
+On 8/17/22 12:49 AM, Greg KH wrote:
+> On Tue, Aug 16, 2022 at 10:57:39AM -0600, Jens Axboe wrote:
+>> On 8/16/22 10:21 AM, Greg KH wrote:
+>>> On Wed, Aug 17, 2022 at 12:10:09AM +0800, Jiacheng Xu wrote:
+>>>> Hello,
+>>>>
+>>>> When using modified Syzkaller to fuzz the Linux kernel-5.15.58, the
+>>>> following crash was triggered.
 >>>
->>> I think for this to be useful I think it would also be needed to
->>> have
->>> flags on the generated CQE.
->>>
->>> If there are more CQEs coming for the same request it should have
->>> IORING_CQE_F_MORE set. Otherwise user space would not be able to
->>> know
->>> if it is able to reuse local data.
+>>> As you sent this to public lists, there's no need to also cc:
+>>> security@k.o as there's nothing we can do about this.
 >>
->> If you want to have:
+>> Indeed...
 >>
->> expect_more = cqe->flags & IORING_CQE_F_MORE;
+>>> Also, random syzbot submissions are best sent with a fix for them,
+>>> otherwise it might be a while before they will be looked at.
 >>
->> Then in the current form you can perfectly do that with
+>> Greg, can you cherrypick:
 >>
->> // MSG_WAITALL
->> expect_more = (cqe->res == io_len);
->> // !MSG_WAITALL,
->> expect_more = (cqe->res >= 0);
+>> commit 386e4fb6962b9f248a80f8870aea0870ca603e89
+>> Author: Jens Axboe <axboe@kernel.dk>
+>> Date:   Thu Jun 23 11:06:43 2022 -0600
 >>
->> But might be more convenient to have IORING_CQE_F_MORE set,
->> one problem is a slight change of (implicit) semantics, i.e.
->> we don't execute linked requests when filling a IORING_CQE_F_MORE
->> CQE + CQE ordering implied from that.
+>>     io_uring: use original request task for inflight tracking
 >>
->> It's maybe worth to not rely on the link failing concept for
->> deciding whether to flush or not.
+>> into 5.15-stable? It should pick cleanly and also fix this issue.
+>>
+>> -- 
+>> Jens Axboe
+>>
+>>
 > 
-> Is the ordering guaranteed then to be <send cqe>, <notif cqe>?
+> Thanks, will do after this next round of releases go out.
 
-Not yet, need to send this patch
-
-https://github.com/isilence/linux/commit/9a1464905be3fc0cee4f68b01e43c5ad14a05b06
-
-> If so I would put the IORING_CQE_F_MORE more as a nice to have for
-> consistency with other ops
-> 
->>
->>
->>> Additionally it would need to provide a way of disambiguating the
->>> send
->>> CQE with the flush CQE.
->>
->> Do you mean like IORING_CQE_F_NOTIF from 1/2?
->>
-> 
-> Apologies - I missed that
-> 
+Thanks Greg.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

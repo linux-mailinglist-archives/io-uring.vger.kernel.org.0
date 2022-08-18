@@ -2,113 +2,182 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEDD0598A02
-	for <lists+io-uring@lfdr.de>; Thu, 18 Aug 2022 19:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A80D598AE8
+	for <lists+io-uring@lfdr.de>; Thu, 18 Aug 2022 20:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345403AbiHRRCy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Aug 2022 13:02:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34688 "EHLO
+        id S230418AbiHRSNf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 Aug 2022 14:13:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345444AbiHRRAv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Aug 2022 13:00:51 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A653FC00DC
-        for <io-uring@vger.kernel.org>; Thu, 18 Aug 2022 10:00:40 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id y187so1563572iof.0
-        for <io-uring@vger.kernel.org>; Thu, 18 Aug 2022 10:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=lYKXgue+zNpIvfPSql7O+R7TEPDE0QJoKDwJiREWf7Y=;
-        b=Yf1ObBTNqWoadaVv8CCeNUYTVV68c76B6bJj+OWtTMqEm6y9RVLZxi8pXcWODx7ozI
-         ysK0w8bPJ3a3/qEWgxWHSf8bNRPyd+gQ7P8S6Vy+EiuTtxmLhLMP9IGRbIxjif5isELg
-         CkB/mjrtD+rDJdFW9t9OnB0z1vy3zsqUsMw+O7MfuvbBQUojyYNprPOTHqsI050/FEBC
-         0AUP1wXNqc+Dc8g1iMp63xR65paoeeLq/qNmRaUBSjL51/fm5ViMoCa1vMcMTpN2Hzka
-         HZEvd1RftSYXrbo47FE9XPrlCNrx7zuzMGz7N92/ip6K6zZM5wea7ywlo58ZwoXdj0Nq
-         rIcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=lYKXgue+zNpIvfPSql7O+R7TEPDE0QJoKDwJiREWf7Y=;
-        b=4BWC4VGNOx/4XrTwunYaSCGBYs0WyZiHt1r6WLHtF/0lCBMKE0zDQi1i2jF33XyWVo
-         syn8Oz4UVQVSQ/q9Kwvk2v3MBFmLhtKVgJlw1DsmGQfwnxfkoXInAgSIGNuB5WpwJs3b
-         kvyAWsmWMDUw/1mBHmUmWAwFqfOk7ILUsLdpuHLxUti/di6aCv5LVWrJz8xZOssx4yTB
-         0jcBLAWrwMQGDp9lBNN9BxtfPgthfFyb/pLGzacUX5Rwr5W9Hp/piY6nngcxCuEDfTDO
-         eFoeKAbag3VqgqT6Fuhkhz5ZGFKbIFUsYtVRn3vcX+tSlvzYmFgfBa/bD5BaUcRWvJFu
-         hv1w==
-X-Gm-Message-State: ACgBeo1t/RHY+ct/nCifAmg44udOikpz2vELy6rTj4up3A/kr/zobn2P
-        G5oT547Zy18KrCj1I/cwx5Claw==
-X-Google-Smtp-Source: AA6agR5Qa8kN5z58ES35WCTjV5f+v9cONWrgP5RrInMX13yzSlj1T9r40gTJhrGdtS/rCxl6RfxTMA==
-X-Received: by 2002:a6b:3b87:0:b0:688:9085:cae8 with SMTP id i129-20020a6b3b87000000b006889085cae8mr1861996ioa.118.1660842039991;
-        Thu, 18 Aug 2022 10:00:39 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id bp17-20020a056638441100b0034366d9ff20sm754283jab.160.2022.08.18.10.00.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Aug 2022 10:00:39 -0700 (PDT)
-Message-ID: <b2865bd6-2346-8f4d-168b-17f06bbedbed@kernel.dk>
-Date:   Thu, 18 Aug 2022 11:00:38 -0600
+        with ESMTP id S238585AbiHRSNf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Aug 2022 14:13:35 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E341BDEED
+        for <io-uring@vger.kernel.org>; Thu, 18 Aug 2022 11:13:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=opcUi6ym9wpNQDcF2rL0NO2MywSIVjIhaI429JlWQyw=; b=vKb2I/EiuNB1+/4PwyTcR8PvRo
+        0fv4PbLlLAEyGRPesRdgKAdDOmpsu32j5/jW/B/JlyYGbDE+1K/bE7cJMn0VuNNf73qmNzxn1TVIg
+        khygOS44Pg0k3/YGtzB704e7ub5pO0peBaR6rvOxjnvR0UDmTzeZ2KYgnl80f5v1OssAdE9pU7XoF
+        wHvVCLYhSWvEH1ousRF4SJ666Qk4BON/ZTkuhMHowkT3I4PyxLcDA/3yMo6RB2uRSZb6UjiWGwRtj
+        DJlvBMBhBIPOEWzKgwlyJnypvuBR1Wv8GGqFl6gnpvlk+LD0ACuNKgIUL7GGEm04T3pQ4xC68a9Fo
+        UPraa0YjIepaLHFI4HEcDSs4P2pHEctTk22UxAHQT+Cg7DGnzWLU0cbhwk+Z1MC3mTWH6wTwVB9er
+        ngF3lWP6mGxhXgdnI+b5ibRpWuDsZfJ7hMdDL/UCJsGhJO5HVXkJ5mS9awZvvC19/8IL0RrvECZXZ
+        f3+LWf/8W9CQM3wbi5NBso3H;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1oOk1A-000jcP-MI; Thu, 18 Aug 2022 18:13:20 +0000
+Message-ID: <5fc449bd-9625-4ff0-5f1b-a9fbea721716@samba.org>
+Date:   Thu, 18 Aug 2022 20:13:20 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: generic/471 regression with async buffered writes?
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
 Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        fstests <fstests@vger.kernel.org>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        willy@infradead.org, Stefan Roesch <shr@fb.com>
-References: <Yv5quvRMZXlDXED/@magnolia>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Yv5quvRMZXlDXED/@magnolia>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>
+References: <cover.1660635140.git.asml.silence@gmail.com>
+ <6aa0c662a3fec17a1ade512e7bbb519aa49e6e4d.1660635140.git.asml.silence@gmail.com>
+ <bf3d5a0f-c337-f6f3-8bf4-b8665f92acaa@samba.org>
+ <9b998187-b985-2938-1494-0bc8c189a3b6@gmail.com>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [RFC 2/2] io_uring/net: allow to override notification tag
+In-Reply-To: <9b998187-b985-2938-1494-0bc8c189a3b6@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/18/22 10:37 AM, Darrick J. Wong wrote:
-> Hi everyone,
-> 
-> I noticed the following fstest failure on XFS on 6.0-rc1 that wasn't
-> there in 5.19:
-> 
-> --- generic/471.out
-> +++ generic/471.out.bad
-> @@ -2,12 +2,10 @@
->  pwrite: Resource temporarily unavailable
->  wrote 8388608/8388608 bytes at offset 0
->  XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> -RWF_NOWAIT time is within limits.
-> +pwrite: Resource temporarily unavailable
-> +(standard_in) 1: syntax error
-> +RWF_NOWAIT took  seconds
->  00000000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
->  *
-> -00200000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-> -*
-> -00300000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
-> -*
->  read 8388608/8388608 bytes at offset 0
->  XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> 
-> Is this related to the async buffered write changes, or should I keep
-> looking?  AFAICT nobody else has mentioned problems with 471...
 
-The test is just broken. It made some odd assumptions on what RWF_NOWAIT
-means with buffered writes. There's been a discussion on it previously,
-I'll see if I can find the links. IIRC, the tldr is that the test
-doesn't really tie RWF_NOWAIT to whether we'll block or not.
+Am 17.08.22 um 14:42 schrieb Pavel Begunkov:
+> On 8/16/22 09:23, Stefan Metzmacher wrote:
+>> Am 16.08.22 um 09:42 schrieb Pavel Begunkov:
+>>> Considering limited amount of slots some users struggle with
+>>> registration time notification tag assignment as it's hard to manage
+>>> notifications using sequence numbers. Add a simple feature that copies
+>>> sqe->user_data of a send(+flush) request into the notification CQE it
+>>> flushes (and only when it's flushes).
+>>>
+>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>> ---
+>>>   include/uapi/linux/io_uring.h | 4 ++++
+>>>   io_uring/net.c                | 6 +++++-
+>>>   2 files changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>> index 20368394870e..91e7944c9c78 100644
+>>> --- a/include/uapi/linux/io_uring.h
+>>> +++ b/include/uapi/linux/io_uring.h
+>>> @@ -280,11 +280,15 @@ enum io_uring_op {
+>>>    *
+>>>    * IORING_RECVSEND_NOTIF_FLUSH    Flush a notification after a successful
+>>>    *                successful. Only for zerocopy sends.
+>>> + *
+>>> + * IORING_RECVSEND_NOTIF_COPY_TAG Copy request's user_data into the notification
+>>> + *                  completion even if it's flushed.
+>>>    */
+>>>   #define IORING_RECVSEND_POLL_FIRST    (1U << 0)
+>>>   #define IORING_RECV_MULTISHOT        (1U << 1)
+>>>   #define IORING_RECVSEND_FIXED_BUF    (1U << 2)
+>>>   #define IORING_RECVSEND_NOTIF_FLUSH    (1U << 3)
+>>> +#define IORING_RECVSEND_NOTIF_COPY_TAG    (1U << 4)
+>>>   /* cqe->res mask for extracting the notification sequence number */
+>>>   #define IORING_NOTIF_SEQ_MASK        0xFFFFU
+>>> diff --git a/io_uring/net.c b/io_uring/net.c
+>>> index bd3fad9536ef..4d271a269979 100644
+>>> --- a/io_uring/net.c
+>>> +++ b/io_uring/net.c
+>>> @@ -858,7 +858,9 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>       zc->flags = READ_ONCE(sqe->ioprio);
+>>>       if (zc->flags & ~(IORING_RECVSEND_POLL_FIRST |
+>>> -              IORING_RECVSEND_FIXED_BUF | IORING_RECVSEND_NOTIF_FLUSH))
+>>> +              IORING_RECVSEND_FIXED_BUF |
+>>> +              IORING_RECVSEND_NOTIF_FLUSH |
+>>> +              IORING_RECVSEND_NOTIF_COPY_TAG))
+>>>           return -EINVAL;
+>>>       if (zc->flags & IORING_RECVSEND_FIXED_BUF) {
+>>>           unsigned idx = READ_ONCE(sqe->buf_index);
+>>> @@ -1024,6 +1026,8 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+>>>           if (ret == -ERESTARTSYS)
+>>>               ret = -EINTR;
+>>>       } else if (zc->flags & IORING_RECVSEND_NOTIF_FLUSH) {
+>>> +        if (zc->flags & IORING_RECVSEND_NOTIF_COPY_TAG)
+>>> +            notif->cqe.user_data = req->cqe.user_data;
+>>>           io_notif_slot_flush_submit(notif_slot, 0);
+>>>       }
+>>
+>> This would work but it seems to be confusing.
+>>
+>> Can't we have a slot-less mode, with slot_idx==U16_MAX,
+>> where we always allocate a new notif for each request,
+>> this would then get the same user_data and would be referenced on the
+>> request in order to reuse the same notif on an async retry after a short send.
+> 
+> Ok, retries may make slots managing much harder, let me think
 
--- 
-Jens Axboe
+With retries it would be much saner to use the same
+notif for the whole request. So keeping it referenced
+as zc->notif might be a way, maybe doing that in the _prep
+function in order to do it just once, then we don't need
+zc->slot_idx anymore.
+
+>> And this notif will always be flushed at the end of the request.
+>>
+>> This:
+>>
+>> struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
+>>                                  struct io_notif_slot *slot)
+>>
+>> would change to:
+>>
+>> struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
+>>                                  __u64 cqe_user_data,
+>>                  __s32 cqe_res)
+>>
+>>
+>> and:
+>>
+>> void io_notif_slot_flush(struct io_notif_slot *slot) __must_hold(&ctx->uring_lock)
+>>
+>> (__must_hold looks wrong there...)
+> 
+> Nope, it should be there
+
+Shouldn't it be something like
+__must_hold(&slot->notif->ctx->uring_lock)
+
+There is not 'ctx' argument.
+
+>> could just be:
+>>
+>> void io_notif_flush(struct io_notif_*notif)
+>>
+>> What do you think? It would remove the whole notif slot complexity
+>> from caller using IORING_RECVSEND_NOTIF_FLUSH for every request anyway.
+> 
+> The downside is that requests then should be pretty large or it'll
+> lose in performance. Surely not a problem for 8MB per request but
+> even 4KB won't suffice. And users may want to put in smaller chunks
+> on the wire instead of waiting for mode data to let tcp handle
+> pacing and potentially improve latencies by sending earlier.
+
+If this is optional applications can decide what fits better.
+
+> On the other hand that one notification per request idea mentioned
+> before can extended to 1-2 CQEs per request, which is interestingly
+> the approach zc send discussions started with.
+
+In order to make use of any of this I need any way
+to get 2 CQEs with user_data being the same or related.
+
+The only benefit for with slots is being able to avoid or
+batch additional CQEs, correct? Or is there more to it?
+
+metze

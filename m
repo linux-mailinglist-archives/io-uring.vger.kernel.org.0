@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C835E599E2F
-	for <lists+io-uring@lfdr.de>; Fri, 19 Aug 2022 17:31:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF864599E3C
+	for <lists+io-uring@lfdr.de>; Fri, 19 Aug 2022 17:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349457AbiHSPaB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 Aug 2022 11:30:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49448 "EHLO
+        id S1349539AbiHSPaG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Aug 2022 11:30:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349346AbiHSPaB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Aug 2022 11:30:01 -0400
+        with ESMTP id S1349346AbiHSPaF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Aug 2022 11:30:05 -0400
 Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E490E190F
-        for <io-uring@vger.kernel.org>; Fri, 19 Aug 2022 08:30:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 018BFE7242
+        for <io-uring@vger.kernel.org>; Fri, 19 Aug 2022 08:30:03 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1660922998;
+        t=1660923002;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+YsntrCxlmtQqRERzu/3Vp4m/8M9+TB2udMIBj6/Xpk=;
-        b=R2VLhr8kTQoRMeW3knzwqBu5KNW+rO/K2pzok6EeVvjQMtNyzkpFmzF7lzw+9wJjCe6OEb
-        K9et+WVp7mbeJN6LnCjxGvCD5Fj8nNEmrMfjvenJvANGqnlRciKCtHBRK8wXBH+yWPCq2x
-        ZxezT4kXDsdB2MMbjqgdhMg7gGbZMgI=
+        bh=TwWnIxxzn5kzktussrHgbIB7YahPQii5RZvqgpXAMjU=;
+        b=SCMs7unDIJz4PS8Ca5xPNV7udynbeu+Gsgc/HL9EQnHL4+bYRer7q9f1Ngw3aSIfDjMl3X
+        FSxD4iqbQ1DXmVjUMe+g78EeCezTOLMzr0Gyz82FIJfBY/4DL+kmReZlOBOEaXlbpJ2Ddh
+        ckNSGODznb1JgIs9dH8KmjZBLQQo/Cw=
 From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Ingo Molnar <mingo@kernel.org>,
         Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 12/19] io_uring: add uringlet worker cancellation function
-Date:   Fri, 19 Aug 2022 23:27:31 +0800
-Message-Id: <20220819152738.1111255-13-hao.xu@linux.dev>
+Subject: [PATCH 13/19] io-wq: add wq->owner for uringlet mode
+Date:   Fri, 19 Aug 2022 23:27:32 +0800
+Message-Id: <20220819152738.1111255-14-hao.xu@linux.dev>
 In-Reply-To: <20220819152738.1111255-1-hao.xu@linux.dev>
 References: <20220819152738.1111255-1-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -52,61 +52,99 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-uringlet worker submits sqes, so we need to do some cancellation work
-before it exits.
+In uringlet mode, we allow exact one worker to submit sqes at the same
+time. nr_running is not a good choice to aim that. Add an member
+wq->owner and its lock to achieve that, this avoids race condition
+between workers.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- io_uring/io_uring.c | 6 ++++++
- io_uring/io_uring.h | 1 +
- io_uring/tctx.c     | 2 ++
- 3 files changed, 9 insertions(+)
+ io_uring/io-wq.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index a5fb6fa02ded..67d02dc16ea5 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2922,6 +2922,12 @@ void __io_uring_cancel(bool cancel_all)
- 	io_uring_cancel_generic(cancel_all, NULL);
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 00a1cdefb787..9fcaeea7a478 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -96,6 +96,9 @@ struct io_wq {
+ 
+ 	void *private;
+ 
++	raw_spinlock_t lock;
++	struct io_worker *owner;
++
+ 	struct io_wqe *wqes[];
+ };
+ 
+@@ -381,6 +384,8 @@ static inline bool io_worker_test_submit(struct io_worker *worker)
+ 	return worker->flags & IO_WORKER_F_SUBMIT;
  }
  
-+struct io_wq_work *io_uringlet_cancel(struct io_wq_work *work)
-+{
-+	__io_uring_cancel(true);
-+	return NULL;
-+}
++#define IO_WQ_OWNER_TRANSMIT	((struct io_worker *)-1)
 +
- static void *io_uring_validate_mmap_request(struct file *file,
- 					    loff_t pgoff, size_t sz)
+ static void io_wqe_dec_running(struct io_worker *worker)
  {
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index b95d92619607..011d0beb33bf 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -71,6 +71,7 @@ int io_req_prep_async(struct io_kiocb *req);
- void io_uringlet_end(struct io_ring_ctx *ctx);
+ 	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
+@@ -401,6 +406,10 @@ static void io_wqe_dec_running(struct io_worker *worker)
  
- struct io_wq_work *io_wq_free_work(struct io_wq_work *work);
-+struct io_wq_work *io_uringlet_cancel(struct io_wq_work *work);
- int io_wq_submit_work(struct io_wq_work *work);
+ 		io_uringlet_end(wq->private);
+ 		io_worker_set_scheduled(worker);
++		raw_spin_lock(&wq->lock);
++		wq->owner = IO_WQ_OWNER_TRANSMIT;
++		raw_spin_unlock(&wq->lock);
++
+ 		raw_spin_lock(&wqe->lock);
+ 		rcu_read_lock();
+ 		activated = io_wqe_activate_free_worker(wqe, acct);
+@@ -674,6 +683,17 @@ static void io_wqe_worker_let(struct io_worker *worker)
  
- void io_free_req(struct io_kiocb *req);
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index b04d361bcf34..e10b20725066 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -41,9 +41,11 @@ struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx,
- 	if (ctx->flags & IORING_SETUP_URINGLET) {
- 		data.private = ctx;
- 		data.do_work = io_submit_sqes_let;
-+		data.free_work = io_uringlet_cancel;
- 	} else {
- 		data.private = NULL;
- 		data.do_work = io_wq_submit_work;
-+		data.free_work = io_wq_free_work;
- 	}
+ 	while (!test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
+ 		unsigned int empty_count = 0;
++		struct io_worker *owner;
++
++		raw_spin_lock(&wq->lock);
++		owner = wq->owner;
++		if (owner && owner != IO_WQ_OWNER_TRANSMIT && owner != worker) {
++			raw_spin_unlock(&wq->lock);
++			set_current_state(TASK_INTERRUPTIBLE);
++			goto sleep;
++		}
++		wq->owner = worker;
++		raw_spin_unlock(&wq->lock);
  
- 	/* Do QD, or 4 * CPUS, whatever is smallest */
+ 		__io_worker_busy(wqe, worker);
+ 		set_current_state(TASK_INTERRUPTIBLE);
+@@ -697,6 +717,7 @@ static void io_wqe_worker_let(struct io_worker *worker)
+ 			cond_resched();
+ 		} while (1);
+ 
++sleep:
+ 		raw_spin_lock(&wqe->lock);
+ 		__io_worker_idle(wqe, worker);
+ 		raw_spin_unlock(&wqe->lock);
+@@ -780,6 +801,14 @@ int io_uringlet_offload(struct io_wq *wq)
+ 	struct io_wqe_acct *acct = io_get_acct(wqe, true);
+ 	bool waken;
+ 
++	raw_spin_lock(&wq->lock);
++	if (wq->owner) {
++		raw_spin_unlock(&wq->lock);
++		return 0;
++	}
++	wq->owner = IO_WQ_OWNER_TRANSMIT;
++	raw_spin_unlock(&wq->lock);
++
+ 	raw_spin_lock(&wqe->lock);
+ 	rcu_read_lock();
+ 	waken = io_wqe_activate_free_worker(wqe, acct);
+@@ -1248,6 +1277,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	wq->free_work = data->free_work;
+ 	wq->do_work = data->do_work;
+ 	wq->private = data->private;
++	raw_spin_lock_init(&wq->lock);
+ 
+ 	ret = -ENOMEM;
+ 	for_each_node(node) {
 -- 
 2.25.1
 

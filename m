@@ -2,182 +2,164 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A80D598AE8
-	for <lists+io-uring@lfdr.de>; Thu, 18 Aug 2022 20:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F25565999EE
+	for <lists+io-uring@lfdr.de>; Fri, 19 Aug 2022 12:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbiHRSNf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 Aug 2022 14:13:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47448 "EHLO
+        id S1348447AbiHSKkw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 Aug 2022 06:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238585AbiHRSNf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 Aug 2022 14:13:35 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E341BDEED
-        for <io-uring@vger.kernel.org>; Thu, 18 Aug 2022 11:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=opcUi6ym9wpNQDcF2rL0NO2MywSIVjIhaI429JlWQyw=; b=vKb2I/EiuNB1+/4PwyTcR8PvRo
-        0fv4PbLlLAEyGRPesRdgKAdDOmpsu32j5/jW/B/JlyYGbDE+1K/bE7cJMn0VuNNf73qmNzxn1TVIg
-        khygOS44Pg0k3/YGtzB704e7ub5pO0peBaR6rvOxjnvR0UDmTzeZ2KYgnl80f5v1OssAdE9pU7XoF
-        wHvVCLYhSWvEH1ousRF4SJ666Qk4BON/ZTkuhMHowkT3I4PyxLcDA/3yMo6RB2uRSZb6UjiWGwRtj
-        DJlvBMBhBIPOEWzKgwlyJnypvuBR1Wv8GGqFl6gnpvlk+LD0ACuNKgIUL7GGEm04T3pQ4xC68a9Fo
-        UPraa0YjIepaLHFI4HEcDSs4P2pHEctTk22UxAHQT+Cg7DGnzWLU0cbhwk+Z1MC3mTWH6wTwVB9er
-        ngF3lWP6mGxhXgdnI+b5ibRpWuDsZfJ7hMdDL/UCJsGhJO5HVXkJ5mS9awZvvC19/8IL0RrvECZXZ
-        f3+LWf/8W9CQM3wbi5NBso3H;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1oOk1A-000jcP-MI; Thu, 18 Aug 2022 18:13:20 +0000
-Message-ID: <5fc449bd-9625-4ff0-5f1b-a9fbea721716@samba.org>
-Date:   Thu, 18 Aug 2022 20:13:20 +0200
+        with ESMTP id S1348376AbiHSKkv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 Aug 2022 06:40:51 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2283DF075C
+        for <io-uring@vger.kernel.org>; Fri, 19 Aug 2022 03:40:44 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220819104037epoutp03608808313959e9661e05ceac2d5bd5cd~MuOChHxAS1672816728epoutp03O
+        for <io-uring@vger.kernel.org>; Fri, 19 Aug 2022 10:40:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220819104037epoutp03608808313959e9661e05ceac2d5bd5cd~MuOChHxAS1672816728epoutp03O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1660905637;
+        bh=JGP/jpExxvVdC928u6XDcrs4zExHnARu8CONfihBAxk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=YTaPFCu4ppEJGlDSr0FmsunLKhHhE1SWdrE6tylNSt4teOF/opa8Dq4QMbi6KrBox
+         Bi4PE0j/pSi+p2F0ct5CXoKx0Qi36+V+yhdUCEtmDx0M05X6tjCGHws1dOOXwcx/pb
+         GoY7a5Jd/RtfOO2OdlSrPVu8YG6QNMBCkfZ0nW8o=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220819104036epcas5p4681d73d8f2b3dfee6778b5ca3b4dcb05~MuOBpUTwT3157731577epcas5p46;
+        Fri, 19 Aug 2022 10:40:36 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4M8JDz05KDz4x9Pp; Fri, 19 Aug
+        2022 10:40:35 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A6.E3.49477.0A86FF26; Fri, 19 Aug 2022 19:40:32 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220819104031epcas5p3d485526e1b2b42078ccce7e40a74b7f5~MuN9E7YjH1666016660epcas5p3U;
+        Fri, 19 Aug 2022 10:40:31 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220819104031epsmtrp2b2633f4bc22b41b43dd1aa2585a53486~MuN9CsnWa3211132111epsmtrp2D;
+        Fri, 19 Aug 2022 10:40:31 +0000 (GMT)
+X-AuditID: b6c32a49-82dff7000000c145-65-62ff68a0a661
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2A.7C.08905.F986FF26; Fri, 19 Aug 2022 19:40:31 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.110.206.5]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220819104030epsmtip152b228208b1a231374ab60f19e721276~MuN7iWjEg0595705957epsmtip1K;
+        Fri, 19 Aug 2022 10:40:29 +0000 (GMT)
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, ming.lei@redhat.com,
+        gost.dev@samsung.com, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH for-next 0/4] fixed-buffer for uring-cmd/passthrough
+Date:   Fri, 19 Aug 2022 16:00:17 +0530
+Message-Id: <20220819103021.240340-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>
-References: <cover.1660635140.git.asml.silence@gmail.com>
- <6aa0c662a3fec17a1ade512e7bbb519aa49e6e4d.1660635140.git.asml.silence@gmail.com>
- <bf3d5a0f-c337-f6f3-8bf4-b8665f92acaa@samba.org>
- <9b998187-b985-2938-1494-0bc8c189a3b6@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [RFC 2/2] io_uring/net: allow to override notification tag
-In-Reply-To: <9b998187-b985-2938-1494-0bc8c189a3b6@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTS3dBxv8kg7uzhS1W3+1ns7h5YCeT
+        xcrVR5ks3rWeY7E4+v8tm8WkQ9cYLfbe0raYv+wpu8Whyc1MDpwel8+Wemxa1cnmsXlJvcfu
+        mw1sHu/3XWXz6NuyitHj8ya5APaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtz
+        JYW8xNxUWyUXnwBdt8wcoLuUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrF
+        ibnFpXnpenmpJVaGBgZGpkCFCdkZL5d0shbM46uY9mkeawPjcu4uRk4OCQETiRdt7exdjFwc
+        QgK7GSXmHH7KDOF8YpSYeq6FBcL5xiixc/o11i5GDrCWlW2GIN1CAnsZJR6td4Oo+cwo8ezn
+        a2aQGjYBTYkLk0tBakQEjCT2fzrJClLDLLCWUeL03i9MIAlhAReJr8d2gM1kEVCVmN1pAxLm
+        FbCU6PtzkRHiOnmJmZe+s0PEBSVOznzCAmIzA8Wbt84GO1RC4C27xK7fDVC3uUh0/q+C6BWW
+        eHV8CzuELSXx+d1eNgg7WeLSzHNMEHaJxOM9B6Fse4nWU/1g5zMDnb9+lz7EKj6J3t9PmCCm
+        80p0tAlBVCtK3Jv0lBXCFpd4OGMJ1AEeEpvm+0ICJ1bi6O021gmMcrOQ3D8Lyf2zEHYtYGRe
+        xSiZWlCcm55abFpgmJdaDo/H5PzcTYzg1KjluYPx7oMPeocYmTgYDzFKcDArifDeuPMnSYg3
+        JbGyKrUoP76oNCe1+BCjKTBMJzJLiSbnA5NzXkm8oYmlgYmZmZmJpbGZoZI4r9fVTUlCAumJ
+        JanZqakFqUUwfUwcnFINTJUNuYzsj6ZluucJGms6GH1wW7/xQNk5VYF3hsG1e8UvZSUu9J27
+        0EWhWajl8u3byyWC3yy/LPdLe4r7rFdzr/3ect+nz+KvYX1gftE6odvqpptOOt3eMT2+I3gr
+        r8MDMcfuw537jsi/jQ999C14Zuur9JaX63nKg53f8PyOPDJrVdPUGONF3zvfxDZfdH702OHX
+        AalNPpMPtVYraDzbf6m7/as6y5eLLW+EZq3/vjbH/JHRo7W8DcaTH53JtY2dntCh2c7eekpE
+        74a3l/ac2ac3pHN+c66a6uniz/L8SYQnY/j6jXn5V31uBmf7fBZetfbuTftN9ScPen24qfjb
+        TOO+cGn8plMnL/2Wjt9qnaXEUpyRaKjFXFScCADDSTLDFgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsWy7bCSnO78jP9JBtcfKVisvtvPZnHzwE4m
+        i5WrjzJZvGs9x2Jx9P9bNotJh64xWuy9pW0xf9lTdotDk5uZHDg9Lp8t9di0qpPNY/OSeo/d
+        NxvYPN7vu8rm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBkvl3SyFszjq5j2aR5rA+Ny7i5G
+        Dg4JAROJlW2GXYxcHEICuxklXp9/x9zFyAkUF5dovvaDHcIWllj57zk7RNFHRolJ/y+zgzSz
+        CWhKXJhcClIjImAmsfTwGhaQGmaBzYwSn04fAxskLOAi8fXYDlaQehYBVYnZnTYgYV4BS4m+
+        PxcZIebLS8y89J0dIi4ocXLmExYQmxko3rx1NvMERr5ZSFKzkKQWMDKtYpRMLSjOTc8tNiww
+        zEst1ytOzC0uzUvXS87P3cQIDmItzR2M21d90DvEyMTBeIhRgoNZSYT3xp0/SUK8KYmVValF
+        +fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwnWhfuPPT5g199vMn9Cx9
+        rn9Y547Gyfj2hDlzYhfFf+OXuvTimXWRRplBp/jBInFe58PzOuP9s7eVRE+qm9W4+7tb2+J8
+        xa9t+1e+YHn8v8VW2izghfyPnf+57yZfO31b3+xt6IWFK3bPm5t5f3dor/XmLUkusTMzfr9i
+        n9HBuJLJr7wlVaUlwlvlibPjZMF9tRwZDv+W2Zs+Xu+8snXibocLEqo7rieZ6X1377rrfabT
+        8+2F13FzPoYxO6+pdu/bvCbSPyjppN2Dlo/a1nFbJs7KKZ9n+d1W2uPW5IgVZcs97x/9H6ny
+        2Yh3W0z030ib/DelDU8Off4VZPLf7Xg2b2OL3o+WOIX0GqVVdfKvlFiKMxINtZiLihMBlrk0
+        /NECAAA=
+X-CMS-MailID: 20220819104031epcas5p3d485526e1b2b42078ccce7e40a74b7f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220819104031epcas5p3d485526e1b2b42078ccce7e40a74b7f5
+References: <CGME20220819104031epcas5p3d485526e1b2b42078ccce7e40a74b7f5@epcas5p3.samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi,
 
-Am 17.08.22 um 14:42 schrieb Pavel Begunkov:
-> On 8/16/22 09:23, Stefan Metzmacher wrote:
->> Am 16.08.22 um 09:42 schrieb Pavel Begunkov:
->>> Considering limited amount of slots some users struggle with
->>> registration time notification tag assignment as it's hard to manage
->>> notifications using sequence numbers. Add a simple feature that copies
->>> sqe->user_data of a send(+flush) request into the notification CQE it
->>> flushes (and only when it's flushes).
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>   include/uapi/linux/io_uring.h | 4 ++++
->>>   io_uring/net.c                | 6 +++++-
->>>   2 files changed, 9 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>> index 20368394870e..91e7944c9c78 100644
->>> --- a/include/uapi/linux/io_uring.h
->>> +++ b/include/uapi/linux/io_uring.h
->>> @@ -280,11 +280,15 @@ enum io_uring_op {
->>>    *
->>>    * IORING_RECVSEND_NOTIF_FLUSH    Flush a notification after a successful
->>>    *                successful. Only for zerocopy sends.
->>> + *
->>> + * IORING_RECVSEND_NOTIF_COPY_TAG Copy request's user_data into the notification
->>> + *                  completion even if it's flushed.
->>>    */
->>>   #define IORING_RECVSEND_POLL_FIRST    (1U << 0)
->>>   #define IORING_RECV_MULTISHOT        (1U << 1)
->>>   #define IORING_RECVSEND_FIXED_BUF    (1U << 2)
->>>   #define IORING_RECVSEND_NOTIF_FLUSH    (1U << 3)
->>> +#define IORING_RECVSEND_NOTIF_COPY_TAG    (1U << 4)
->>>   /* cqe->res mask for extracting the notification sequence number */
->>>   #define IORING_NOTIF_SEQ_MASK        0xFFFFU
->>> diff --git a/io_uring/net.c b/io_uring/net.c
->>> index bd3fad9536ef..4d271a269979 100644
->>> --- a/io_uring/net.c
->>> +++ b/io_uring/net.c
->>> @@ -858,7 +858,9 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>       zc->flags = READ_ONCE(sqe->ioprio);
->>>       if (zc->flags & ~(IORING_RECVSEND_POLL_FIRST |
->>> -              IORING_RECVSEND_FIXED_BUF | IORING_RECVSEND_NOTIF_FLUSH))
->>> +              IORING_RECVSEND_FIXED_BUF |
->>> +              IORING_RECVSEND_NOTIF_FLUSH |
->>> +              IORING_RECVSEND_NOTIF_COPY_TAG))
->>>           return -EINVAL;
->>>       if (zc->flags & IORING_RECVSEND_FIXED_BUF) {
->>>           unsigned idx = READ_ONCE(sqe->buf_index);
->>> @@ -1024,6 +1026,8 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
->>>           if (ret == -ERESTARTSYS)
->>>               ret = -EINTR;
->>>       } else if (zc->flags & IORING_RECVSEND_NOTIF_FLUSH) {
->>> +        if (zc->flags & IORING_RECVSEND_NOTIF_COPY_TAG)
->>> +            notif->cqe.user_data = req->cqe.user_data;
->>>           io_notif_slot_flush_submit(notif_slot, 0);
->>>       }
->>
->> This would work but it seems to be confusing.
->>
->> Can't we have a slot-less mode, with slot_idx==U16_MAX,
->> where we always allocate a new notif for each request,
->> this would then get the same user_data and would be referenced on the
->> request in order to reuse the same notif on an async retry after a short send.
-> 
-> Ok, retries may make slots managing much harder, let me think
+Currently uring-cmd lacks the ability to leverage the pre-registered
+buffers. This series adds new fixed-buffer variant of uring command
+IORING_OP_URING_CMD_FIXED, and plumbs nvme passthrough to work with
+that.
 
-With retries it would be much saner to use the same
-notif for the whole request. So keeping it referenced
-as zc->notif might be a way, maybe doing that in the _prep
-function in order to do it just once, then we don't need
-zc->slot_idx anymore.
+Patch 1, 3 = prep/infrastructure
+Patch 2 = expand io_uring command to use registered-buffers
+Patch 4 = expand nvme passthrough to use registered-buffers
 
->> And this notif will always be flushed at the end of the request.
->>
->> This:
->>
->> struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
->>                                  struct io_notif_slot *slot)
->>
->> would change to:
->>
->> struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
->>                                  __u64 cqe_user_data,
->>                  __s32 cqe_res)
->>
->>
->> and:
->>
->> void io_notif_slot_flush(struct io_notif_slot *slot) __must_hold(&ctx->uring_lock)
->>
->> (__must_hold looks wrong there...)
-> 
-> Nope, it should be there
+Using registered-buffers showed 5-12% IOPS gain in my setup.
+QD   Without     With
+8     853        928
+32    1370       1528
+128   1505       1631
 
-Shouldn't it be something like
-__must_hold(&slot->notif->ctx->uring_lock)
+This series is prepared on top of:
+for-next + iopoll-passthru series [1] + passthru optimization series [2].
+A unified branch with all that is present here:
+https://github.com/OpenMPDK/linux/commits/feat/pt_fixedbufs_v1
 
-There is not 'ctx' argument.
+Fio that can use IORING_OP_URING_CMD_FIXED (on specifying fixedbufs=1)
+is here -
+https://github.com/joshkan/fio/commit/300f1187f75aaf2c502c180041943c340670d0ac
 
->> could just be:
->>
->> void io_notif_flush(struct io_notif_*notif)
->>
->> What do you think? It would remove the whole notif slot complexity
->> from caller using IORING_RECVSEND_NOTIF_FLUSH for every request anyway.
-> 
-> The downside is that requests then should be pretty large or it'll
-> lose in performance. Surely not a problem for 8MB per request but
-> even 4KB won't suffice. And users may want to put in smaller chunks
-> on the wire instead of waiting for mode data to let tcp handle
-> pacing and potentially improve latencies by sending earlier.
+[1] https://lore.kernel.org/linux-block/20220807183607.352351-1-joshi.k@samsung.com/
+[2] https://lore.kernel.org/linux-block/20220806152004.382170-1-axboe@kernel.dk/
 
-If this is optional applications can decide what fits better.
+Anuj Gupta (2):
+  io_uring: introduce io_uring_cmd_import_fixed
+  io_uring: introduce fixed buffer support for io_uring_cmd
 
-> On the other hand that one notification per request idea mentioned
-> before can extended to 1-2 CQEs per request, which is interestingly
-> the approach zc send discussions started with.
+Kanchan Joshi (2):
+  block: add helper to map bvec iterator for passthrough
+  nvme: wire up fixed buffer support for nvme passthrough
 
-In order to make use of any of this I need any way
-to get 2 CQEs with user_data being the same or related.
+ block/blk-map.c               | 71 +++++++++++++++++++++++++++++++++++
+ drivers/nvme/host/ioctl.c     | 38 +++++++++++++------
+ include/linux/blk-mq.h        |  1 +
+ include/linux/io_uring.h      | 10 +++++
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/opdef.c              | 10 +++++
+ io_uring/rw.c                 |  3 +-
+ io_uring/uring_cmd.c          | 26 +++++++++++++
+ 8 files changed, 147 insertions(+), 13 deletions(-)
 
-The only benefit for with slots is being able to avoid or
-batch additional CQEs, correct? Or is there more to it?
+-- 
+2.25.1
 
-metze

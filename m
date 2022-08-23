@@ -2,102 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B802959EBC7
-	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 21:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E862959EC59
+	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 21:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbiHWTGm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Aug 2022 15:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59556 "EHLO
+        id S231243AbiHWTcN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Aug 2022 15:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbiHWTGS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 15:06:18 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5024D40577
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:42:52 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id c4so10646078iof.3
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=dj0V9vBjxrXRd/VH7UbNkqJmV3lGrQEy29eZYEFgKEw=;
-        b=d1AqPL+6z/zUCez5sJAlJv3Ul3MZHzeWBb3kE74yBeY7aEiP/SLWTR+HwPkXJvDyWG
-         aRiB31jZaMVvkffWfFjxTxQzyc1gUg0iOotdZz70CpwHPvDJ8py9gCEdx8DTPpMAhBJW
-         ILP4Kjhqn3tdamyl1q134oq2/Xzs7ksEgvm7vu43OTYPaLPqyUy+Dk1Dks9jG717yruV
-         wbfFj7Xmgz3A+z2F11wp7DEu9v3pGWmeov0oYMI/Wc9PSzMUyYlWd5X55ZqVwV4cK4Lv
-         1zN/0Ae19LWt/Im+gsNkUwt4NavM81yEaoiw0rSObEwHE6A9NVEMVAPKQA8XwBFSPSqh
-         /o0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=dj0V9vBjxrXRd/VH7UbNkqJmV3lGrQEy29eZYEFgKEw=;
-        b=uG+Nb13szuDZhcSj5n43paQImemwvbKx5JP6of7c3mhNOwXnmBBu2riKKtb3xvdlP/
-         o47mNyZHkQUOfRqUoPz4QfnVYXEZ/kcd2mRDQABn1+CZwS1AUcxVCJFnzpYpBrPyxwEA
-         7DEuFWttt8QFw7LDohKAEhzgeIGZKzoScmfMx6vZLvUpulSt3NyM/zKnk/BZ5hdbekrq
-         fEwWmRlBZuKeHgk++ObynXLda1HSQH3SZB5Rdx/jDS9rUj/Sq4ihorbkCkFICjYjZxcw
-         yExdAuOBKR4XbFBB6syEtjshYpSmOzeaUlWhvgvWDOJBrpju8adkKP2EznTav0wnzSnG
-         Fy8Q==
-X-Gm-Message-State: ACgBeo2yAjoKegbgd3thZ2BxzA3zw5sMP06UGj8uEGrUsB/2rz210suS
-        J8B5MNvPfyUDJ6Sw4F98MCfTVvO2BkYZ3g==
-X-Google-Smtp-Source: AA6agR7cYrZ0JIABleSQS8i7ZByLwpXdwjmtzwUYH+slkev3xN9ReOPkjJ9RKJo7t7BzfWAD2sq1BQ==
-X-Received: by 2002:a05:6638:4784:b0:349:ec6c:e133 with SMTP id cq4-20020a056638478400b00349ec6ce133mr3273935jab.1.1661276333337;
-        Tue, 23 Aug 2022 10:38:53 -0700 (PDT)
-Received: from [192.168.1.170] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id j131-20020a026389000000b00342b327d709sm6489562jac.71.2022.08.23.10.38.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 10:38:52 -0700 (PDT)
-Message-ID: <4f341855-5c3f-ed01-7d63-fabfbdd4d952@kernel.dk>
-Date:   Tue, 23 Aug 2022 11:38:52 -0600
+        with ESMTP id S231276AbiHWTby (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 15:31:54 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817F9BF68;
+        Tue, 23 Aug 2022 11:23:23 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:60738)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oQYYb-0041Dr-Vo; Tue, 23 Aug 2022 12:23:22 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:37014 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oQYYa-00GUYx-1U; Tue, 23 Aug 2022 12:23:21 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Olivier Langlois <olivier@trillion01.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
+        <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
+        <87h7i694ij.fsf_-_@disp2133>
+        <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
+        <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
+        <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
+        <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
+        <303f7772-eb31-5beb-2bd0-4278566591b0@gmail.com>
+        <87ilsg13yz.fsf@email.froward.int.ebiederm.org>
+        <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
+        <a29a1649-5e50-4221-9f44-66a35fbdff80@kernel.dk>
+        <87y1wnrap0.fsf_-_@email.froward.int.ebiederm.org>
+        <87mtd3rals.fsf_-_@email.froward.int.ebiederm.org>
+        <61abfb5a517e0ee253b0dc7ba9cd32ebd558bcb0.camel@trillion01.com>
+        <bb423622f97826f483100a1a7f20ce10a9090158.camel@trillion01.com>
+Date:   Tue, 23 Aug 2022 13:22:53 -0500
+In-Reply-To: <bb423622f97826f483100a1a7f20ce10a9090158.camel@trillion01.com>
+        (Olivier Langlois's message of "Mon, 22 Aug 2022 23:35:37 -0400")
+Message-ID: <875yiisttu.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] io_uring: fix submission-failure handling for uring-cmd
-Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
-        anuj20.g@samsung.com
-References: <CGME20220823152018epcas5p3141ae99b73ba495f1501723d7834ee32@epcas5p3.samsung.com>
- <20220823151022.3136-1-joshi.k@samsung.com>
- <ceaf9d3f-7588-a64c-0661-79133222f443@kernel.dk>
- <20220823164716.GA3046@test-zns>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220823164716.GA3046@test-zns>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1oQYYa-00GUYx-1U;;;mid=<875yiisttu.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1/GeEI4Y8IQexfRUNq3YWki9SJ3OxiLRg4=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *****;Olivier Langlois <olivier@trillion01.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1387 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 11 (0.8%), b_tie_ro: 10 (0.7%), parse: 0.86
+        (0.1%), extract_message_metadata: 11 (0.8%), get_uri_detail_list: 1.19
+        (0.1%), tests_pri_-1000: 9 (0.6%), tests_pri_-950: 1.18 (0.1%),
+        tests_pri_-900: 0.96 (0.1%), tests_pri_-90: 72 (5.2%), check_bayes: 70
+        (5.1%), b_tokenize: 6 (0.4%), b_tok_get_all: 6 (0.4%), b_comp_prob:
+        2.0 (0.1%), b_tok_touch_all: 53 (3.8%), b_finish: 0.79 (0.1%),
+        tests_pri_0: 1254 (90.4%), check_dkim_signature: 0.50 (0.0%),
+        check_dkim_adsp: 2.7 (0.2%), poll_dns_idle: 0.42 (0.0%), tests_pri_10:
+        2.3 (0.2%), tests_pri_500: 21 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/2] coredump: Allow coredumps to pipes to work with
+ io_uring
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/23/22 10:47, Kanchan Joshi wrote:
-> On Tue, Aug 23, 2022 at 09:47:39AM -0600, Jens Axboe wrote:
->> On 8/23/22 9:10 AM, Kanchan Joshi wrote:
->>> If ->uring_cmd returned an error value different from -EAGAIN or
->>> -EIOCBQUEUED, it gets overridden with IOU_OK. This invites trouble
->>> as caller (io_uring core code) handles IOU_OK differently than other
->>> error codes.
->>> Fix this by returning the actual error code.
->>
->> Not sure if this is strictly needed, as the cqe error is set just
->> fine. But I guess some places also check return value of the issue
->> path.
-> 
-> So I was testing iopoll support and ran into this issue - submission
-> failed (expected one), control came back to this point, error code
-> got converted to IOU_OK, and it started polling endlessly for a command
-> that never got submitted.
-> io_issue_sqe continued to invoke io_iopoll_req_issued() rather than
-> bailing out.
+Olivier Langlois <olivier@trillion01.com> writes:
 
-Ah ok, yes for iopoll it'd make a difference...
+> On Mon, 2022-08-22 at 17:16 -0400, Olivier Langlois wrote:
+>> 
+>> What is stopping the task calling do_coredump() to be interrupted and
+>> call task_work_add() from the interrupt context?
+>> 
+>> This is precisely what I was experiencing last summer when I did work
+>> on this issue.
+>> 
+>> My understanding of how async I/O works with io_uring is that the
+>> task
+>> is added to a wait queue without being put to sleep and when the
+>> io_uring callback is called from the interrupt context,
+>> task_work_add()
+>> is called so that the next time io_uring syscall is invoked, pending
+>> work is processed to complete the I/O.
+>> 
+>> So if:
+>> 
+>> 1. io_uring request is initiated AND the task is in a wait queue
+>> 2. do_coredump() is called before the I/O is completed
+>> 
+>> IMHO, this is how you end up having task_work_add() called while the
+>> coredump is generated.
+>> 
+> I forgot to add that I have experienced the issue with TCP/IP I/O.
+>
+> I suspect that with a TCP socket, the race condition window is much
+> larger than if it was disk I/O and this might make it easier to
+> reproduce the issue this way...
 
--- 
-Jens Axboe
+I was under the apparently mistaken impression that the io_uring
+task_work_add only comes from the io_uring userspace helper threads.
+Those are definitely suppressed by my change.
 
+Do you have any idea in the code where io_uring code is being called in
+an interrupt context?  I would really like to trace that code path so I
+have a better grasp on what is happening.
+
+If task_work_add is being called from interrupt context then something
+additional from what I have proposed certainly needs to be done.
+
+Eric

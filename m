@@ -2,98 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB4F59E81A
-	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 18:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A9159E84E
+	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 19:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245628AbiHWQyo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Aug 2022 12:54:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53358 "EHLO
+        id S245701AbiHWQ7W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Aug 2022 12:59:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245345AbiHWQya (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 12:54:30 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6417A1367E0
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 06:23:43 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id r14-20020a17090a4dce00b001faa76931beso17223943pjl.1
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 06:23:43 -0700 (PDT)
+        with ESMTP id S1343571AbiHWQ6p (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 12:58:45 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D0D148D36
+        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 06:30:00 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id s31-20020a17090a2f2200b001faaf9d92easo17217315pjd.3
+        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 06:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=zqgEOt/TK3wL9wlmq1dIyUheKT1/TvyscS8U/UOxg50=;
-        b=WVljkVoKoCDGdZ3EvIR47a3FVfptjEqMh75J0HuMzDu97524zwum4RT7h+6tmgAh/5
-         sp69YR7PZ8RZx1/++gzHoNClG4UGCeURKfpEN5gnLI4iuf33zgW84boywVDt/ncFS2XH
-         XyGOA7txzhB3ypg+1QudaN1n9h5k/Fx9LYcE3eFehu1yzjpIe75IjDUSkVALJQF+QVuw
-         Ob7Iw9FicJShOGP0kS3g5nTvhMAXx2dHyJruNa9TZXudZvDAKUEFbcJz+ir7EA5EryKR
-         WpxppYfqCNumpRXJms3lQHQ1mfgeFtktuAZhM2sUQ7IxNhaVSIiKYXU15jro3mYVl5Zh
-         NDCg==
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc;
+        bh=yF5+dYKBU6/4lRvxr1wWHug6uDsrIoBvHUiDQ9KN0sc=;
+        b=4m4xoqRENdvVcEoTLkvlxnqT0MkDmoAMBP2aL/mtYVuuytoONX+B6zDLu3kFXyFNjZ
+         YQGSGUXjotMr8ZxRykNeeNeVkC3NkrO5JeTx0F2ROxAZiFrYhuvIK14PNuOr0idk51Ow
+         rVwe3qTfsSku9y1/PVzEHmjkkDxoX6BTFEsxJbiBFPhDCZrChP/jtF/OVOZzRIx5mXfp
+         /PbC0YQDesdy+drd8eNw+1TdsutscLUF9DYIIHgM/bHH6XKtvRHVy1ukx/UMbuZuyiog
+         lAkYd0vjEsO4Qq7xbXm0QZbrM4DoIuU79czAAJoSpkOhbGcS3y4trzNZCLBEim2nnLGX
+         52+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=zqgEOt/TK3wL9wlmq1dIyUheKT1/TvyscS8U/UOxg50=;
-        b=mRLN7evSZgkNy/oIm7ShWm+xisqYuTV9+y2TiMHZfnYeoGvQnpQah4uFXiJTwm6zwb
-         s/T+PZVdVa3UHC9XBkcF92/KM8Wcn8/xBijbiPfXlCXFet/PidCue6aqOkOT93pEANrx
-         GA5IWORoFfYrinTnkMjGYNaHujGX2yO5XC00vt6N2bkBFd1hJu7UErJDF2QtxOidWziM
-         4w7tIwA7kkDhiqcROi5LnqnlT1e8XaLlxl4J2e2RZPUtAWiDE0DhjpTdl5SySAodV7c3
-         doHVRmbQE8S49176ttyaP+f37UNaZAAUP1YEarDZw4gMKGOrOcVrXdPrL8Wgpkx7saBR
-         b9Hg==
-X-Gm-Message-State: ACgBeo2vUZ5y7oT0y6CtqmX+Q9CehxF3gBE7j2G6NeS3MDebB+RaPioK
-        MTqS/tpS+BOHy3aLd9D+z7iktg==
-X-Google-Smtp-Source: AA6agR7WdzCoE1JL+CoVyUMNuw7bM5L56qez9WvHY4et7Hh19jpwj5T6mv6ii+vELcSSSw647qnKDQ==
-X-Received: by 2002:a17:90b:2644:b0:1fa:e0be:4dcb with SMTP id pa4-20020a17090b264400b001fae0be4dcbmr3202423pjb.85.1661261022785;
-        Tue, 23 Aug 2022 06:23:42 -0700 (PDT)
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc;
+        bh=yF5+dYKBU6/4lRvxr1wWHug6uDsrIoBvHUiDQ9KN0sc=;
+        b=yi02BrgTsNpG2OgEMKVCGzKyKvf/a1MQilYUP2114mFPOZ9C6Sp8u/RVrkQetpIrLS
+         H+BqiJAQcxYTEmg3bPxxFTJ7x2Fpt8cuan6DMuPbLE+H382w5iCw9DcLtR+eOFToOIo+
+         iQdzq5F7v/sHDoCl5PXwr+fjaQ50JRbDtc/L2Klnye9UR8lf2N0Zn1cZ7aWVLT5a1OgJ
+         K1omH+y6PEghuu54MlbRLdyUp18LtjvR2SJhRIq7B0My9o67jhAMe3o7mei/ifmO9kDl
+         yGoF7BqmT8D6J+pC6OlzhcRxz4Bd76jjA43/uURwti9IYQJzwrKuwq3HfM6DgvzGE2Jf
+         06Zw==
+X-Gm-Message-State: ACgBeo2cSR98uYMV+5i6yHHMcCCFhoWEnEdxAqNnK3aYYP8zknL8KDyW
+        QJ8FazZa3rd7o1JCyRysF3Xfw0v2vfVRKw==
+X-Google-Smtp-Source: AA6agR7l+omYTZds48ZXq+vI/zhMaVeTD0fkVBCp61V49sWitHpqeJ60UJLyqygmN4AQy3o9QchG1g==
+X-Received: by 2002:a17:902:f64d:b0:172:d004:8b2d with SMTP id m13-20020a170902f64d00b00172d0048b2dmr15850918plg.14.1661261399350;
+        Tue, 23 Aug 2022 06:29:59 -0700 (PDT)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d22-20020a63fd16000000b0042ae03134a0sm2037708pgh.48.2022.08.23.06.23.41
+        by smtp.gmail.com with ESMTPSA id c138-20020a624e90000000b00528a097aeffsm10767912pfb.118.2022.08.23.06.29.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 06:23:41 -0700 (PDT)
-Message-ID: <63368ff3-d78a-5be3-2d38-5a9ff3cf7805@kernel.dk>
-Date:   Tue, 23 Aug 2022 07:23:40 -0600
+        Tue, 23 Aug 2022 06:29:57 -0700 (PDT)
+Message-ID: <b8d73db7-f25c-5651-6dae-4f087f45fd22@kernel.dk>
+Date:   Tue, 23 Aug 2022 07:29:56 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.1.2
-Subject: Re: [PATCH liburing 0/2] liburing uapi and manpage update
 Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Dylan Yudaken <dylany@fb.com>,
-        Facebook Kernel Team <kernel-team@fb.com>,
-        Kanna Scarlet <knscarlet@gnuweeb.org>
-References: <20220823114813.2865890-1-ammar.faizi@intel.com>
+To:     io-uring <io-uring@vger.kernel.org>
+Cc:     Luo Likang <luolikang@nsfocus.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220823114813.2865890-1-ammar.faizi@intel.com>
+Subject: [PATCH] io_uring: fix off-by-one in sync cancelation file check
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/23/22 5:52 AM, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> 
-> Hi Jens,
-> 
-> There are two patches in this series.
-> 
-> 1) Sync the argument data type with `man 2 renameat`.
-> 
-> 2) On top of io_uring series I just sent, copy uapi io_uring.h to
->    liburing. Sync with the kernel.
+The passed in index should be validated against the number of registered
+files we have, it needs to be smaller than the index value to avoid going
+one beyond the end.
 
-Applied, thanks.
+Fixes: 78a861b94959 ("io_uring: add sync cancelation API through io_uring_register()")
+Reported-by: Luo Likang <luolikang@nsfocus.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+index e4e1dc0325f0..5fc5d3e80fcb 100644
+--- a/io_uring/cancel.c
++++ b/io_uring/cancel.c
+@@ -218,7 +218,7 @@ static int __io_sync_cancel(struct io_uring_task *tctx,
+ 	    (cd->flags & IORING_ASYNC_CANCEL_FD_FIXED)) {
+ 		unsigned long file_ptr;
+ 
+-		if (unlikely(fd > ctx->nr_user_files))
++		if (unlikely(fd >= ctx->nr_user_files))
+ 			return -EBADF;
+ 		fd = array_index_nospec(fd, ctx->nr_user_files);
+ 		file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
 
 -- 
 Jens Axboe
-
-

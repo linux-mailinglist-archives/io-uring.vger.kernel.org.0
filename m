@@ -2,58 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6544859EB35
-	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 20:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B3459EB3B
+	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 20:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233046AbiHWSje (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Aug 2022 14:39:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
+        id S231722AbiHWSjz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Aug 2022 14:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233225AbiHWSjM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 14:39:12 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E4A1151CB
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:02:34 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id j5so16743709oih.6
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:02:34 -0700 (PDT)
+        with ESMTP id S230045AbiHWSjc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 14:39:32 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8439911559E
+        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:02:58 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id u14so16772769oie.2
+        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:02:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=NGK9SJL+jbcJ+81jw1EQdQeIyg8FgfHLJJZwNUv48rA=;
-        b=yMYBIle+g6JQATabokr1qmPm7dB1NceXKHg1qSJ5mVkoCQVYkYZ4hVMkQI79lRSrbM
-         UgzU23MM2hR74US26qOSr7XfbWiecTCCWcfLRSQSZITmmjAX4bDBXL5UOJ9XVcpkVH3X
-         wBbXBZWE4oQYgc7La98gH9Pl3GLjL1MoT9GvIo/AIt3DgFRGO83kCX0/qvvKVDc7sNeL
-         yAxIJO33R6IRH+o41c/P36Om9BtL7bpMd9l8g2TGv0HGArcC83+3tzk1vAodic3OnmnL
-         kid9cx5Xdbz5o6MF5LSVSoVL6WfLxCbUbC9okv8NmnK+kpsSxBbDpWjEIt9HHr1anyNe
-         RE+A==
+        bh=5ra72b4qNtNT5/Y8jyxLZXNvJFrA5g4ZvUa/siW8nrc=;
+        b=Rg9KqkTbhDsx/lxgn3tH/StZ2ZUh0LEpW0faHIyP8g0kYJTa+Ywx9u/V2wYpJ1V3Al
+         KEWkjzcT+JDbL2nzQ3d/L4mTsRM89S9fXveF64lTbLHmCHITSXDz9soOhkQOUOfFjA7K
+         se4JbQU3WkjCJCmGwwKzO7Ay94mxODHVwPqmnIlL5s/9YoHgi3hHnxHxgJOhSahkUmjd
+         xvmte1qK3TXfAP4aVgf45E3/8/1/LChRhBrbBnnbU7XDbpTYNkX5dm74zHttr8K1T1lg
+         3qkdBJ5xnX48IJbFyzWlAmMj+7FIyjNWpVfvPSxKUmi2swMd9PxVysP/f7gVNUBUOCRZ
+         PzCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=NGK9SJL+jbcJ+81jw1EQdQeIyg8FgfHLJJZwNUv48rA=;
-        b=Rkihg3GurzcAcbG3hHSKucDN78TJOm6Xyq1mWYjjh1ARITfbxZ6w2mW4Ha/rHfdzk7
-         l+0EP1piDV4yIOHC0+WaKye5GsT3SYr/7f+TJMMDYdHzrvs2qCMVRMSDKswsbx0h2qGx
-         A4pTpgS3v0BilusQXU6EkSyEi5QddzWu6RG675Xr84vf9vfJYclC9dSPqDo7f2zU6lvv
-         cTl+pEcUw4WHuC14gschZddXA9KpHpXvi7nU/3MRaKrUVSVAYPavucYC3cJp0UlVE2HJ
-         OY/CvmW8yhpqOtyuDLzGDdpl0h7mObK+kJvt8OteVdh0cO+vm5bM4xfPihh72iwes3be
-         s//A==
-X-Gm-Message-State: ACgBeo0GAMDy0nWzur3CbN1PIGHJ0MvhXEqXuM8N0qqBAfoFdkf5zks3
-        a/Se+34OPCT8UXQD4U61yNLuP6I+MevBsjb/3A73
-X-Google-Smtp-Source: AA6agR53O11aV/ezRM7BbFUHuJcDs3a0pSzF9hsHKGQhOx8rTVzKkK7KIbQ/aKwEaca9cTWClNVOcM6dTYZLjdSjdCs=
-X-Received: by 2002:aca:b7d5:0:b0:343:c478:91c6 with SMTP id
- h204-20020acab7d5000000b00343c47891c6mr1714816oif.136.1661274139335; Tue, 23
- Aug 2022 10:02:19 -0700 (PDT)
+        bh=5ra72b4qNtNT5/Y8jyxLZXNvJFrA5g4ZvUa/siW8nrc=;
+        b=s0fhsPKDagjkqUah+kYgmm860TPIUKJQDSBy2RIKRqVGuhNEdbVTOncpkiWCfpdI6n
+         1lPPdcFMsRmwRH8Gg7EhQae94YT2pXkz3TGeE8BXrVhIFRlu+FfPVc6/0CW5MCkvymaS
+         M2tWJgMvKjX4Uej9/hg1zvgzFjpLoku093IOhP94hP/QpNLgQOi3nhTl07FFnVKsfEf6
+         0QQXTQn/dpEUTLuqE1N094lWei33x1grA+ksUEZZrElNR831r0JtCW4Jjwi99QJPAMEE
+         ajVWrRmYxc0OyJPbajszHMxp7X/YqOnb9lPglAWyGxUD0WdXjLfxOs8Wahh5NJ5pKElR
+         FjhQ==
+X-Gm-Message-State: ACgBeo2gcHGR9ZWj7wBg+deMwTPgRTj64UY+k4ulrs07tmhAu/xvS3iv
+        PrhqGpSHcxMzdW/N5q6fgUOPUz0xUi3WGUoYJxIM
+X-Google-Smtp-Source: AA6agR7t8bOik6TV8VoD43ntts3M9ydgQUxiv64BSr02QdRPvcxKN04bquZG9GJRFCRRtbxhCt2WNmN+BWaOEhhjlmA=
+X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
+ n9-20020a05680803a900b003434b14cccemr1702207oie.41.1661274174127; Tue, 23 Aug
+ 2022 10:02:54 -0700 (PDT)
 MIME-Version: 1.0
 References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly> <YwR5HBazPxWjcYci@kroah.com>
-In-Reply-To: <YwR5HBazPxWjcYci@kroah.com>
+ <166120327984.369593.8371751426301540450.stgit@olly> <YwR41qQs07dYVnqD@kroah.com>
+ <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
+In-Reply-To: <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 23 Aug 2022 13:02:08 -0400
-Message-ID: <CAHC9VhQOSr_CnLmy0pwgUETPh565951DdejQtgkfNk7=tj+BNA@mail.gmail.com>
+Date:   Tue, 23 Aug 2022 13:02:43 -0400
+Message-ID: <CAHC9VhRiTDqL-EtUcJ9y8nzRPk2BAfGzWK97oe56Ld4KyZsmGg@mail.gmail.com>
 Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Luis Chamberlain <mcgrof@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -67,29 +69,57 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 2:52 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
-> > This patch adds support for the io_uring command pass through, aka
-> > IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> > /dev/null functionality, the implementation is just a simple sink
-> > where commands go to die, but it should be useful for developers who
-> > need a simple IORING_OP_URING_CMD test device that doesn't require
-> > any special hardware.
+On Tue, Aug 23, 2022 at 9:33 AM Jens Axboe <axboe@kernel.dk> wrote:
+> On 8/23/22 12:51 AM, Greg Kroah-Hartman wrote:
+> > On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
+> >> This patch adds support for the io_uring command pass through, aka
+> >> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
+> >> /dev/null functionality, the implementation is just a simple sink
+> >> where commands go to die, but it should be useful for developers who
+> >> need a simple IORING_OP_URING_CMD test device that doesn't require
+> >> any special hardware.
+> >>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >> ---
+> >>  drivers/char/mem.c |    6 ++++++
+> >>  1 file changed, 6 insertions(+)
+> >>
+> >> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+> >> index 84ca98ed1dad..32a932a065a6 100644
+> >> --- a/drivers/char/mem.c
+> >> +++ b/drivers/char/mem.c
+> >> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
+> >>      return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
+> >>  }
+> >>
+> >> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
+> >> +{
+> >> +    return 0;
+> >
+> > If a callback just returns 0, that implies it is not needed at all and
+> > can be removed and then you are back at the original file before your
+> > commit :)
 >
-> Also, shouldn't you document this somewhere?
+> In theory you are correct, but the empty hook is needed so that
+> submitting an io_uring cmd to the file type is attempted. If not it's
+> just errored upfront.
 >
-> At least in the code itself saying "this is here so that /dev/null works
-> as a io_uring sink" or something like that?  Otherwise it just looks
-> like it does nothing at all.
+> Paul, is it strictly needed to test the selinux uring cmd policy? If the
+> operation would've been attempted but null doesn't support it, you'd get
+> -1/EOPNOTSUPP - and supposedly you'd get EACCES/EPERM or something if
+> it's filtered?
 
-What about read_null() and write_null()?  I can definitely add a
-comment (there is no /dev/null documentation in the kernel source tree
-that I can see), but there is clearly precedence for /dev/null having
-"do nothing" file_operations functions.  If nothing else, it's pretty
-much in the *name*; we're adding the "uring_cmd_null()" member
-function to the "null_fops" struct for the "null" device ... come on
-Greg :)
+I haven't built a kernel without this patch to test, but yes, you are
+probably correct that it wouldn't be strictly necessary, but
+considering the extreme simplicity of this addition, what is the real
+harm here?  Wouldn't it be nice to have a rather simple
+IORING_OP_URING_CMD target?
+
+Also, just so we are clear, I didn't mark this patch with the
+stable/fixes tags because I don't believe this should go into -stable;
+while I believe it is a nice addition, it is definitely not critical.
 
 -- 
 paul-moore.com

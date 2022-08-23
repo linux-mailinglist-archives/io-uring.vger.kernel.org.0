@@ -2,124 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B3459EB3B
-	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 20:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B802959EBC7
+	for <lists+io-uring@lfdr.de>; Tue, 23 Aug 2022 21:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231722AbiHWSjz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 Aug 2022 14:39:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40574 "EHLO
+        id S229691AbiHWTGm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 Aug 2022 15:06:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbiHWSjc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 14:39:32 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8439911559E
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:02:58 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id u14so16772769oie.2
-        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:02:58 -0700 (PDT)
+        with ESMTP id S229818AbiHWTGS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 Aug 2022 15:06:18 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5024D40577
+        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:42:52 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id c4so10646078iof.3
+        for <io-uring@vger.kernel.org>; Tue, 23 Aug 2022 10:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=5ra72b4qNtNT5/Y8jyxLZXNvJFrA5g4ZvUa/siW8nrc=;
-        b=Rg9KqkTbhDsx/lxgn3tH/StZ2ZUh0LEpW0faHIyP8g0kYJTa+Ywx9u/V2wYpJ1V3Al
-         KEWkjzcT+JDbL2nzQ3d/L4mTsRM89S9fXveF64lTbLHmCHITSXDz9soOhkQOUOfFjA7K
-         se4JbQU3WkjCJCmGwwKzO7Ay94mxODHVwPqmnIlL5s/9YoHgi3hHnxHxgJOhSahkUmjd
-         xvmte1qK3TXfAP4aVgf45E3/8/1/LChRhBrbBnnbU7XDbpTYNkX5dm74zHttr8K1T1lg
-         3qkdBJ5xnX48IJbFyzWlAmMj+7FIyjNWpVfvPSxKUmi2swMd9PxVysP/f7gVNUBUOCRZ
-         PzCA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=dj0V9vBjxrXRd/VH7UbNkqJmV3lGrQEy29eZYEFgKEw=;
+        b=d1AqPL+6z/zUCez5sJAlJv3Ul3MZHzeWBb3kE74yBeY7aEiP/SLWTR+HwPkXJvDyWG
+         aRiB31jZaMVvkffWfFjxTxQzyc1gUg0iOotdZz70CpwHPvDJ8py9gCEdx8DTPpMAhBJW
+         ILP4Kjhqn3tdamyl1q134oq2/Xzs7ksEgvm7vu43OTYPaLPqyUy+Dk1Dks9jG717yruV
+         wbfFj7Xmgz3A+z2F11wp7DEu9v3pGWmeov0oYMI/Wc9PSzMUyYlWd5X55ZqVwV4cK4Lv
+         1zN/0Ae19LWt/Im+gsNkUwt4NavM81yEaoiw0rSObEwHE6A9NVEMVAPKQA8XwBFSPSqh
+         /o0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=5ra72b4qNtNT5/Y8jyxLZXNvJFrA5g4ZvUa/siW8nrc=;
-        b=s0fhsPKDagjkqUah+kYgmm860TPIUKJQDSBy2RIKRqVGuhNEdbVTOncpkiWCfpdI6n
-         1lPPdcFMsRmwRH8Gg7EhQae94YT2pXkz3TGeE8BXrVhIFRlu+FfPVc6/0CW5MCkvymaS
-         M2tWJgMvKjX4Uej9/hg1zvgzFjpLoku093IOhP94hP/QpNLgQOi3nhTl07FFnVKsfEf6
-         0QQXTQn/dpEUTLuqE1N094lWei33x1grA+ksUEZZrElNR831r0JtCW4Jjwi99QJPAMEE
-         ajVWrRmYxc0OyJPbajszHMxp7X/YqOnb9lPglAWyGxUD0WdXjLfxOs8Wahh5NJ5pKElR
-         FjhQ==
-X-Gm-Message-State: ACgBeo2gcHGR9ZWj7wBg+deMwTPgRTj64UY+k4ulrs07tmhAu/xvS3iv
-        PrhqGpSHcxMzdW/N5q6fgUOPUz0xUi3WGUoYJxIM
-X-Google-Smtp-Source: AA6agR7t8bOik6TV8VoD43ntts3M9ydgQUxiv64BSr02QdRPvcxKN04bquZG9GJRFCRRtbxhCt2WNmN+BWaOEhhjlmA=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr1702207oie.41.1661274174127; Tue, 23 Aug
- 2022 10:02:54 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=dj0V9vBjxrXRd/VH7UbNkqJmV3lGrQEy29eZYEFgKEw=;
+        b=uG+Nb13szuDZhcSj5n43paQImemwvbKx5JP6of7c3mhNOwXnmBBu2riKKtb3xvdlP/
+         o47mNyZHkQUOfRqUoPz4QfnVYXEZ/kcd2mRDQABn1+CZwS1AUcxVCJFnzpYpBrPyxwEA
+         7DEuFWttt8QFw7LDohKAEhzgeIGZKzoScmfMx6vZLvUpulSt3NyM/zKnk/BZ5hdbekrq
+         fEwWmRlBZuKeHgk++ObynXLda1HSQH3SZB5Rdx/jDS9rUj/Sq4ihorbkCkFICjYjZxcw
+         yExdAuOBKR4XbFBB6syEtjshYpSmOzeaUlWhvgvWDOJBrpju8adkKP2EznTav0wnzSnG
+         Fy8Q==
+X-Gm-Message-State: ACgBeo2yAjoKegbgd3thZ2BxzA3zw5sMP06UGj8uEGrUsB/2rz210suS
+        J8B5MNvPfyUDJ6Sw4F98MCfTVvO2BkYZ3g==
+X-Google-Smtp-Source: AA6agR7cYrZ0JIABleSQS8i7ZByLwpXdwjmtzwUYH+slkev3xN9ReOPkjJ9RKJo7t7BzfWAD2sq1BQ==
+X-Received: by 2002:a05:6638:4784:b0:349:ec6c:e133 with SMTP id cq4-20020a056638478400b00349ec6ce133mr3273935jab.1.1661276333337;
+        Tue, 23 Aug 2022 10:38:53 -0700 (PDT)
+Received: from [192.168.1.170] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id j131-20020a026389000000b00342b327d709sm6489562jac.71.2022.08.23.10.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Aug 2022 10:38:52 -0700 (PDT)
+Message-ID: <4f341855-5c3f-ed01-7d63-fabfbdd4d952@kernel.dk>
+Date:   Tue, 23 Aug 2022 11:38:52 -0600
 MIME-Version: 1.0
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly> <YwR41qQs07dYVnqD@kroah.com>
- <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
-In-Reply-To: <d2a66100-6660-8f99-a100-0f3c4f80d0ac@kernel.dk>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 23 Aug 2022 13:02:43 -0400
-Message-ID: <CAHC9VhRiTDqL-EtUcJ9y8nzRPk2BAfGzWK97oe56Ld4KyZsmGg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] io_uring: fix submission-failure handling for uring-cmd
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org,
+        anuj20.g@samsung.com
+References: <CGME20220823152018epcas5p3141ae99b73ba495f1501723d7834ee32@epcas5p3.samsung.com>
+ <20220823151022.3136-1-joshi.k@samsung.com>
+ <ceaf9d3f-7588-a64c-0661-79133222f443@kernel.dk>
+ <20220823164716.GA3046@test-zns>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220823164716.GA3046@test-zns>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 9:33 AM Jens Axboe <axboe@kernel.dk> wrote:
-> On 8/23/22 12:51 AM, Greg Kroah-Hartman wrote:
-> > On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
-> >> This patch adds support for the io_uring command pass through, aka
-> >> IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> >> /dev/null functionality, the implementation is just a simple sink
-> >> where commands go to die, but it should be useful for developers who
-> >> need a simple IORING_OP_URING_CMD test device that doesn't require
-> >> any special hardware.
-> >>
-> >> Cc: Arnd Bergmann <arnd@arndb.de>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >> ---
-> >>  drivers/char/mem.c |    6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> >> index 84ca98ed1dad..32a932a065a6 100644
-> >> --- a/drivers/char/mem.c
-> >> +++ b/drivers/char/mem.c
-> >> @@ -480,6 +480,11 @@ static ssize_t splice_write_null(struct pipe_inode_info *pipe, struct file *out,
-> >>      return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
-> >>  }
-> >>
-> >> +static int uring_cmd_null(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
-> >> +{
-> >> +    return 0;
-> >
-> > If a callback just returns 0, that implies it is not needed at all and
-> > can be removed and then you are back at the original file before your
-> > commit :)
->
-> In theory you are correct, but the empty hook is needed so that
-> submitting an io_uring cmd to the file type is attempted. If not it's
-> just errored upfront.
->
-> Paul, is it strictly needed to test the selinux uring cmd policy? If the
-> operation would've been attempted but null doesn't support it, you'd get
-> -1/EOPNOTSUPP - and supposedly you'd get EACCES/EPERM or something if
-> it's filtered?
+On 8/23/22 10:47, Kanchan Joshi wrote:
+> On Tue, Aug 23, 2022 at 09:47:39AM -0600, Jens Axboe wrote:
+>> On 8/23/22 9:10 AM, Kanchan Joshi wrote:
+>>> If ->uring_cmd returned an error value different from -EAGAIN or
+>>> -EIOCBQUEUED, it gets overridden with IOU_OK. This invites trouble
+>>> as caller (io_uring core code) handles IOU_OK differently than other
+>>> error codes.
+>>> Fix this by returning the actual error code.
+>>
+>> Not sure if this is strictly needed, as the cqe error is set just
+>> fine. But I guess some places also check return value of the issue
+>> path.
+> 
+> So I was testing iopoll support and ran into this issue - submission
+> failed (expected one), control came back to this point, error code
+> got converted to IOU_OK, and it started polling endlessly for a command
+> that never got submitted.
+> io_issue_sqe continued to invoke io_iopoll_req_issued() rather than
+> bailing out.
 
-I haven't built a kernel without this patch to test, but yes, you are
-probably correct that it wouldn't be strictly necessary, but
-considering the extreme simplicity of this addition, what is the real
-harm here?  Wouldn't it be nice to have a rather simple
-IORING_OP_URING_CMD target?
-
-Also, just so we are clear, I didn't mark this patch with the
-stable/fixes tags because I don't believe this should go into -stable;
-while I believe it is a nice addition, it is definitely not critical.
+Ah ok, yes for iopoll it'd make a difference...
 
 -- 
-paul-moore.com
+Jens Axboe
+

@@ -2,208 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 917E459F919
-	for <lists+io-uring@lfdr.de>; Wed, 24 Aug 2022 14:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CEA259FC83
+	for <lists+io-uring@lfdr.de>; Wed, 24 Aug 2022 16:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237289AbiHXMKm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Aug 2022 08:10:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
+        id S238868AbiHXOBJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Aug 2022 10:01:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237325AbiHXMKa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Aug 2022 08:10:30 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC29A402CC
-        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 05:10:28 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id w19so33141268ejc.7
-        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 05:10:28 -0700 (PDT)
+        with ESMTP id S238920AbiHXOBB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Aug 2022 10:01:01 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ED5587083
+        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 07:00:56 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id t11-20020a05683014cb00b0063734a2a786so11823928otq.11
+        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 07:00:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=OTyuNR9mG76hXCIvBRUfIr/jVV32q+g4El0FvvVYohU=;
-        b=RbTPM2PJchJZ/g5k8ym3yrfgMKb8i5/gz6RvPRJEWOF3YyfHeX5cIXMeEqbnXTk8Ik
-         UdySW7/GglDSZjacKflnIkYG1cEWe5Y9tyTuAzLJI6aaEwrGeLM16TMr0+EUKrttesxH
-         v8zqKFXHoAbuAx7gGw/PqSJ2hyVLDYx1/USKuto7fEifjNP5OBHpsW5fb8jq69je6PEU
-         1TGsOqhFmuqiKmagR0mXxzyivNiubiIhTl2aa/YO6HdJPR07MmNjuUFWjp+HXxA7CWtf
-         GBwld94GYDVAD1Wtu00X6JjQRk+h9qaXSQJ5T0AWyhK7D7iKKPviAD1zDbcrg5f1Gl0t
-         tReg==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=GvEowS2EBvbq9VPRlHSQopSA/WqPdS2i0F+uxDlmGjU=;
+        b=gAY4IAxElEgpBa+x9apxUjbCl+lGxNxRg6XyyZpOeKjrnbArjqF8CqEPO0VFuEDm2a
+         E4HQfbGQ7mndFQ8AdI+sbFsy2bvSPccu96OADLHEpJ6XAuYCaP4u0WmnzkUGDGMqnZDc
+         fp+BHBG17q5aGStyvIUn+A0BQnuHJXogmv2rYm7S51pQNOs6hget3p1Fj98UchKbYw9L
+         ZKJ5bx39sHz6QG0r5EXUJWOvHjSC4ZntB6YgihySFVyS6siDgDM4MOiae5x0la+NTuJc
+         8pG4otueF2WmPmepkBkV/hpeeX5kz+RHGEtBf1nSK6VH34gw65G6hzATjunjzhx+Np3Q
+         CrLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=OTyuNR9mG76hXCIvBRUfIr/jVV32q+g4El0FvvVYohU=;
-        b=TcJMWiu9gxxajc+i7e1ywGZnY2X2THmOMHrh7EkDqmE80gImlKFql96Psh+x0O69WW
-         o3A8qRndWP9sNzN/bH2WIDQEekO3qcx+QDmcCOKiTL40YdiPc5UeNbSMSl+HtQAYJjbm
-         sMCZQTuNx8R+W//OAlS4e18/iAi5UqrWu5FzXYzxOEWlZMOWOYVgOqc5bpJ7WkpVIRBt
-         viUiMSnKxjFzkkL7uPTA6pp1hHKl19vDhRLDPePKBCfxbjSNIAn5Zxmqg42+3bxGdqVo
-         yt2/Rvo9YMlrkHQ0Jg9qDLqhOqNfKwMmIxsi15Q3uX5VWZ7YuRSWKWtyAzPE+I6bfeBm
-         /QqA==
-X-Gm-Message-State: ACgBeo0Tfi2d/xTVe6E5h+pgVQ83YxVsRL9Un1ejVqBD/VZdFY0UJdn/
-        5DjcwxS0Q+3kUeDOLznrRfp93hyajvLGJw==
-X-Google-Smtp-Source: AA6agR6x9JLPjnPBNm3ZyR8w9u2sTiN97L2vpWc4dQAesZRONGjlTkFLOCMSote+CsxnOtPbGzXurA==
-X-Received: by 2002:a17:907:e8c:b0:73d:8146:9aa1 with SMTP id ho12-20020a1709070e8c00b0073d81469aa1mr2671746ejc.253.1661343026978;
-        Wed, 24 Aug 2022 05:10:26 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:7067])
-        by smtp.gmail.com with ESMTPSA id j2-20020a170906410200b007308bdef04bsm1094626ejk.103.2022.08.24.05.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Aug 2022 05:10:26 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
-        Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH 6/6] io_uring/net: save address for sendzc async execution
-Date:   Wed, 24 Aug 2022 13:07:43 +0100
-Message-Id: <d7512d7aa9abcd36e9afe1a4d292a24cb2d157e5.1661342812.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <cover.1661342812.git.asml.silence@gmail.com>
-References: <cover.1661342812.git.asml.silence@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=GvEowS2EBvbq9VPRlHSQopSA/WqPdS2i0F+uxDlmGjU=;
+        b=tVZdxEN78EoDOGa8OOYHlDR5xxWbXBtPTotsDsdd5sAThleF0aVlM3E+mZZWphWAq1
+         ynlJi9ZkwuN9DbQuPA40n5HWiKiH+77/MessPZE2MAYp2rgB2cGlmmtjap//2BUnh0IX
+         VukdYi89rvSTXvHIFe0yKDam0qguHotHFpjukwlCyzX9MteVQ0MoubqVDhw5IfLFO1qY
+         mXoZq4sL3qNQKz82O6WJWOu6HBBRmkWhAZ8/FYNhL1m4piSPJhKM9KUXcvSQMCFSWl5W
+         NP9heIm65J1wHIpXoSBZGw4q//2IEP+rH7SME0rTG82+4/bGzgftnUilSJlLOJMDB9lB
+         g2IA==
+X-Gm-Message-State: ACgBeo3m/s5xinbcLWv7ICZmS9jS1QZq9v8pawUllqeVfXv/jJBnPffp
+        JdWpGPHc12d6srGr/F0HlrzXj4F8bq1+RKKZdu+i
+X-Google-Smtp-Source: AA6agR6rtq2//tF95faC3o2HMbcYUfu3MoZDPOrj9rwG3FBcm4aIM9IQ+a48RDONgXu720yClBtTDCTitpiMFHdVzAM=
+X-Received: by 2002:a9d:2de3:0:b0:638:e210:c9da with SMTP id
+ g90-20020a9d2de3000000b00638e210c9damr10944491otb.69.1661349655908; Wed, 24
+ Aug 2022 07:00:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+ <166120326788.369593.18304806499678048620.stgit@olly> <YwR5fDR0Whp0W3sG@kroah.com>
+ <CAHC9VhSkmJCXbKBOLDJjnap1+pYYnSVt2CzO3iQXmV7TZ+17SA@mail.gmail.com> <YwXBMmdIJu3C5dPK@kroah.com>
+In-Reply-To: <YwXBMmdIJu3C5dPK@kroah.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 24 Aug 2022 10:00:44 -0400
+Message-ID: <CAHC9VhS3F-B848ZLvid9QFO4jT9B7T-vD7tmF7oVpf92b-53MA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] lsm,io_uring: add LSM hooks for the new uring_cmd
+ file op
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We usually copy all bits that a request needs from the userspace for
-async execution, so the userspace can keep them on the stack. However,
-send zerocopy violates this pattern for addresses and may reloads it
-e.g. from io-wq. Save the address if any in ->async_data as usual.
+On Wed, Aug 24, 2022 at 2:12 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Aug 23, 2022 at 12:48:30PM -0400, Paul Moore wrote:
+> > On Tue, Aug 23, 2022 at 2:53 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > On Mon, Aug 22, 2022 at 05:21:07PM -0400, Paul Moore wrote:
+> > > > From: Luis Chamberlain <mcgrof@kernel.org>
+> > > >
+> > > > io-uring cmd support was added through ee692a21e9bf ("fs,io_uring:
+> > > > add infrastructure for uring-cmd"), this extended the struct
+> > > > file_operations to allow a new command which each subsystem can use
+> > > > to enable command passthrough. Add an LSM specific for the command
+> > > > passthrough which enables LSMs to inspect the command details.
+> > > >
+> > > > This was discussed long ago without no clear pointer for something
+> > > > conclusive, so this enables LSMs to at least reject this new file
+> > > > operation.
+> > > >
+> > > > [0] https://lkml.kernel.org/r/8adf55db-7bab-f59d-d612-ed906b948d19@schaufler-ca.com
+> > > >
+> > > > Fixes: ee692a21e9bf ("fs,io_uring: add infrastructure for uring-cmd")
+> > >
+> > > You are not "fixing" anything, you are adding new functionality.
+> > > Careful with using "Fixes:" for something like this, you will trigger
+> > > the bug-detection scripts and have to fend off stable bot emails for a
+> > > long time for stuff that should not be backported to stable trees.
+> >
+> > This patch, as well as the SELinux and (soon to come) Smack hook
+> > implementations, fix a LSM access control regression that occured when
+> > the IORING_OP_URING_CMD functionality was merged in v5.19.  You may
+> > disagree about this being a regression Greg, but there are at least
+> > three people with their name on this patch that believe it is
+> > important: Luis (patch author), Jens (io_uring maintainer), and myself
+> > (LSM, SELinux maintainer).
+>
+> Ok, I'll let it be, but note that "Fixes:" tags do not mean that a patch
+> will ever get backported to a stable tree, so I guess we don't have to
+> worry about it :)
 
-Reported-by: Stefan Metzmacher <metze@samba.org>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c   | 52 +++++++++++++++++++++++++++++++++++++++++-------
- io_uring/net.h   |  1 +
- io_uring/opdef.c |  4 +++-
- 3 files changed, 49 insertions(+), 8 deletions(-)
+Ha!  Now that's the *proper* LSM dismissing GregKH comment this thread
+was missing :)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 3adcb09ae264..4eaeb805e720 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -182,6 +182,37 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
- 					&iomsg->free_iov);
- }
- 
-+int io_sendzc_prep_async(struct io_kiocb *req)
-+{
-+	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
-+	struct io_async_msghdr *io;
-+	int ret;
-+
-+	if (!zc->addr || req_has_async_data(req))
-+		return 0;
-+	if (io_alloc_async_data(req))
-+		return -ENOMEM;
-+
-+	io = req->async_data;
-+	ret = move_addr_to_kernel(zc->addr, zc->addr_len, &io->addr);
-+	return ret;
-+}
-+
-+static int io_setup_async_addr(struct io_kiocb *req,
-+			      struct sockaddr_storage *addr,
-+			      unsigned int issue_flags)
-+{
-+	struct io_async_msghdr *io;
-+
-+	if (!addr || req_has_async_data(req))
-+		return -EAGAIN;
-+	if (io_alloc_async_data(req))
-+		return -ENOMEM;
-+	io = req->async_data;
-+	memcpy(&io->addr, addr, sizeof(io->addr));
-+	return -EAGAIN;
-+}
-+
- int io_sendmsg_prep_async(struct io_kiocb *req)
- {
- 	int ret;
-@@ -944,7 +975,7 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
- 
- int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- {
--	struct sockaddr_storage address;
-+	struct sockaddr_storage __address, *addr;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
- 	struct io_notif_slot *notif_slot;
-@@ -978,10 +1009,16 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 	msg.msg_namelen = 0;
- 
- 	if (zc->addr) {
--		ret = move_addr_to_kernel(zc->addr, zc->addr_len, &address);
--		if (unlikely(ret < 0))
--			return ret;
--		msg.msg_name = (struct sockaddr *)&address;
-+		if (req_has_async_data(req)) {
-+			struct io_async_msghdr *io = req->async_data;
-+
-+			msg.msg_name = &io->addr;
-+		} else {
-+			ret = move_addr_to_kernel(zc->addr, zc->addr_len, &__address);
-+			if (unlikely(ret < 0))
-+				return ret;
-+			msg.msg_name = (struct sockaddr *)&__address;
-+		}
- 		msg.msg_namelen = zc->addr_len;
- 	}
- 
-@@ -1013,13 +1050,14 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	if (unlikely(ret < min_ret)) {
- 		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
--			return -EAGAIN;
-+			return io_setup_async_addr(req, addr, issue_flags);
-+
- 		if (ret > 0 && io_net_retry(sock, msg.msg_flags)) {
- 			zc->len -= ret;
- 			zc->buf += ret;
- 			zc->done_io += ret;
- 			req->flags |= REQ_F_PARTIAL_IO;
--			return -EAGAIN;
-+			return io_setup_async_addr(req, addr, issue_flags);
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 7c438d39c089..f91f56c6eeac 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -31,6 +31,7 @@ struct io_async_connect {
- int io_shutdown_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_shutdown(struct io_kiocb *req, unsigned int issue_flags);
- 
-+int io_sendzc_prep_async(struct io_kiocb *req);
- int io_sendmsg_prep_async(struct io_kiocb *req);
- void io_sendmsg_recvmsg_cleanup(struct io_kiocb *req);
- int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 72dd2b2d8a9d..41410126c1c6 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -478,13 +478,15 @@ const struct io_op_def io_op_defs[] = {
- 		.pollout		= 1,
- 		.audit_skip		= 1,
- 		.ioprio			= 1,
-+		.manual_alloc		= 1,
- #if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep			= io_sendzc_prep,
- 		.issue			= io_sendzc,
-+		.prep_async		= io_sendzc_prep_async,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
--
- 	},
- };
- 
 -- 
-2.37.2
-
+paul-moore.com

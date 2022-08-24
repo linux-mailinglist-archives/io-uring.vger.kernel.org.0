@@ -2,57 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B38259F910
-	for <lists+io-uring@lfdr.de>; Wed, 24 Aug 2022 14:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE5459F916
+	for <lists+io-uring@lfdr.de>; Wed, 24 Aug 2022 14:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236738AbiHXMKe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Aug 2022 08:10:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37646 "EHLO
+        id S237268AbiHXMKd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Aug 2022 08:10:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237241AbiHXMK0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Aug 2022 08:10:26 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B545F2A
+        with ESMTP id S237262AbiHXMK2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Aug 2022 08:10:28 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A003AB30
         for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 05:10:26 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id n7so14948372ejh.2
-        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 05:10:25 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id y3so6743472ejc.1
+        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 05:10:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=D/r0bwGS4j43HMvjNKZ5xY8Hl8R6rMXkcIwjNTHFPZs=;
-        b=N8FdgVacw5y4q3O7zBRiLOFYnR3WPHc1qN+nYeQ9oPcwHiZAlNykkU68jhPY81fZdT
-         a/YarC4GUBgOQeWftmx+xVlZZ8gcDcBF+VPxPA4uH7AiI0AM5oH4A4hYFYHJMpuoesPp
-         ky+cGoZMRGR/Fj/DnLaGWfM1oNJ7jdECEnnw62c2kAigfyqvni5fGs/iT5qkshtbOsro
-         s7oTRKZ2IJSCtsGpNV6J810Mo7PW/VEZ3bm2OFD4xnOlB/El8YxaoIuRTbu6Tjk8qk2H
-         vLLchYcaZfR/ZcveDsV1+aKfSPYEI9uJ/E37YdvIjvIRF0Mo3EqpAMMfMmXEQHZHo3xU
-         EnAw==
+        bh=53NZJ58ZuojeGaGvbnjakOC5xmXKAG4gfl0fQbTWQPA=;
+        b=h4Wei7FE2fKcj/Yq/rbfD+wW+nKUwkOfY+o84FieLhD4ZQieYDGBTfSjOMwHQ/R/yS
+         ZBk0TbOMWjTk/z5HFjmU0KWtBDkbglrxnF713ICuuMlSBU+4KVDHIbEzuP08q9V31q2V
+         PEyB5mzaljXiHpYs3/PGXMkUyWcMof/7Qv3lw2BnVZkGrliT0IcK0pOC4Yiqoqna3KGy
+         njBiw8E1bgxYNOLptAkryLTSAusqeYKktjvh+9+GpM5l/qo0AnL94phBLkr8fX9LzShg
+         gN0ld57Gm103BexBWhonj2p0QmZ6UQFCMwi6jUC+s3hu4QenhPNm9OTICHCmErN6Zmua
+         W4pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=D/r0bwGS4j43HMvjNKZ5xY8Hl8R6rMXkcIwjNTHFPZs=;
-        b=kY1X/d7GP9ilziBRYGvIF2+E1I5yCPRLQV2leC/5HThHXIhip5uevbaz1gaEQDiWg7
-         eGGjGYU0dAh43WP8vpbI0YP1AEoef+m+LOHjhsq3ilucBqOCSXUkOICWCfL1AeF3TwTf
-         tNe07EVTY6toFutfzjHvFGFl5ZempHJ1pN2tRKEulNpd9m5oTKsBL/FRlh2QAJNzy9ep
-         nrAgJOMOse8TSf9AZwFygWgQ8dB8uwzgAIkdRzTlKBI0wV+9ikEXdiC0dQ6AeZC7xOtA
-         z6xUTSkw5Zy0gOOIaO7HYDQfKL/O3mMrAgZKkNhMKN8vmxNg1hVw+q2becPviGw8Bo+e
-         rweA==
-X-Gm-Message-State: ACgBeo1ikIBq5VHDrw0Fr22+PzeQpKB8j2iV/IzaCXwL3+TtOwRzdI/k
-        25FsgxETMxOXApOaeeOl2kKY1XYOrXW4Xw==
-X-Google-Smtp-Source: AA6agR7cvIGW9228m/Q2vriyFjoqFD4uQnukd7a1zrareBLfwZhnXeihMNlYOdB3k3BW92Ieqd6w1g==
-X-Received: by 2002:a17:907:3e1d:b0:73d:a9c9:819d with SMTP id hp29-20020a1709073e1d00b0073da9c9819dmr2759830ejc.170.1661343024004;
+        bh=53NZJ58ZuojeGaGvbnjakOC5xmXKAG4gfl0fQbTWQPA=;
+        b=C96Zd8+IpmzsbdREHZ+Bj8Axfl06rQ5NcvJ08iKCGjok2l83MjCmvZsR6dxUvE12o/
+         L8mSgacRcNMUxUjzlth8zCr0PxVb24lu7uRoH55pRTAsMeN1fm/C3AjzivMwROCuyYCo
+         +Gp7R+CneCU91VluJ3riYvo++VlGXTpN2y+1LbyJsfPR2tEvkissId53WoZmhtBB21g4
+         ZjU8R6ncLhRn8Dv+HfzeQNXEXBZLnyRxQUfmQA2OnEDZ57/erF+atXlEcxbveaDih8BK
+         jyhTkgopHbmTYq65yH4p+6FZ/liG+jYcYS7ILVEdkg31XD/NQ6GmpgjUZ8iXFjdsXdwn
+         rstw==
+X-Gm-Message-State: ACgBeo1cGSgkCOepmXYqbWFpJjkiN4UNNTTFklyehtqH2QFp8ZwNMQ/f
+        vAgpruALC8azPDU94DUXWhFUaNf6BMyxcg==
+X-Google-Smtp-Source: AA6agR62MB20F/aGE51dHVCXFP1MtM7myn8zwwtQelNPnKh09AX6Myldyd8SFH8NTbVyMg/vgW2vhA==
+X-Received: by 2002:a17:907:6818:b0:730:d99f:7b91 with SMTP id qz24-20020a170907681800b00730d99f7b91mr2638275ejc.496.1661343024944;
         Wed, 24 Aug 2022 05:10:24 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:7067])
-        by smtp.gmail.com with ESMTPSA id j2-20020a170906410200b007308bdef04bsm1094626ejk.103.2022.08.24.05.10.23
+        by smtp.gmail.com with ESMTPSA id j2-20020a170906410200b007308bdef04bsm1094626ejk.103.2022.08.24.05.10.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Aug 2022 05:10:23 -0700 (PDT)
+        Wed, 24 Aug 2022 05:10:24 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 3/6] io_uring/net: fix indention
-Date:   Wed, 24 Aug 2022 13:07:40 +0100
-Message-Id: <bd5754e3764215ccd7fb04cd636ea9167aaa275d.1661342812.git.asml.silence@gmail.com>
+Subject: [PATCH 4/6] io_uring/notif: order notif vs send CQEs
+Date:   Wed, 24 Aug 2022 13:07:41 +0100
+Message-Id: <cddfd1c2bf91f22b9fe08e13b7dffdd8f858a151.1661342812.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1661342812.git.asml.silence@gmail.com>
 References: <cover.1661342812.git.asml.silence@gmail.com>
@@ -68,26 +68,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Fix up indention before we get complaints from tooling.
+Currently, there is no ordering between notification CQEs and
+completions of the send flushing it, this quite complicates the
+userspace, especially since we don't flush notification when the
+send(+flush) request fails, i.e. there will be only one CQE. What we
+can do is to make sure that notification completions come only after
+sends.
+
+The easiest way to achieve this is to not try to complete a notification
+inline from io_sendzc() but defer it to task_work, considering that
+io-wq sendzc is disallowed CQEs will be naturally ordered because
+task_works will only be executed after we're done with submission and so
+inline completion.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/notif.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index d6310c655a0f..3adcb09ae264 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -989,7 +989,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 		ret = io_import_fixed(WRITE, &msg.msg_iter, req->imu,
- 					(u64)(uintptr_t)zc->buf, zc->len);
- 		if (unlikely(ret))
--				return ret;
-+			return ret;
- 	} else {
- 		ret = import_single_range(WRITE, zc->buf, zc->len, &iov,
- 					  &msg.msg_iter);
+diff --git a/io_uring/notif.c b/io_uring/notif.c
+index 568ff17dc552..96f076b175e0 100644
+--- a/io_uring/notif.c
++++ b/io_uring/notif.c
+@@ -81,8 +81,10 @@ void io_notif_slot_flush(struct io_notif_slot *slot)
+ 	slot->notif = NULL;
+ 
+ 	/* drop slot's master ref */
+-	if (refcount_dec_and_test(&nd->uarg.refcnt))
+-		io_notif_complete(notif);
++	if (refcount_dec_and_test(&nd->uarg.refcnt)) {
++		notif->io_task_work.func = __io_notif_complete_tw;
++		io_req_task_work_add(notif);
++	}
+ }
+ 
+ __cold int io_notif_unregister(struct io_ring_ctx *ctx)
 -- 
 2.37.2
 

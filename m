@@ -2,111 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9153859FCBD
-	for <lists+io-uring@lfdr.de>; Wed, 24 Aug 2022 16:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8981B59FDA0
+	for <lists+io-uring@lfdr.de>; Wed, 24 Aug 2022 16:57:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238845AbiHXOHB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 Aug 2022 10:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48210 "EHLO
+        id S232675AbiHXO5s (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 Aug 2022 10:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239093AbiHXOGm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Aug 2022 10:06:42 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 694F098589
-        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 07:06:40 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id p187so12405134oia.9
-        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 07:06:40 -0700 (PDT)
+        with ESMTP id S238759AbiHXO5s (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 Aug 2022 10:57:48 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E32F86C0A
+        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 07:57:47 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id y187so13578425iof.0
+        for <io-uring@vger.kernel.org>; Wed, 24 Aug 2022 07:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=vuqWnah213DNr5H1tn4ngrXQB2l3I0G5wL/BS1TfAHU=;
-        b=4CTpJ2CA2srjZiBgpJuzNh70tqshr8M8JZlh7r1vXXVe6IkKJhWj6f4e/oyuwHt9Cb
-         3ln3zssJi3/pDymbdZrNuaLokwogS6IeSaFCwh7v2xh9C6Pf6DYvpmhiPTReI6BytPaw
-         iA735qCdspKC9+CznKtPS/nrI1eN9pLMdI3UTMhQ4yXncb0O77D723FMO/Oxi4q0XTXM
-         luM2X2HyV3tuUM5yr2TJQopFdQXCDRMzhFsIPw5GsE405w7wWX59Cc9EJx6j3SxvQL4U
-         ckB3+eYS/hH7UYXu+LIzeBg5ohZDojQNDcmw1b9TFqJRo786YF8i4Scqd1QmijDO/R0y
-         AzJg==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc;
+        bh=3ymjEgBuXLhh0HS/wZ43X1F1MazH/YRoJVB+yBCUsWM=;
+        b=YSwXv+uDMdsS5Hs2Y3HfZ3YPh17xbkHy9QqutST88Blg39aInTHxiO3ZgYQr77kO2/
+         piL96Bm0pkLINJA24UVWvByqyoRrYI6qGT6fQS21V2Sk2nPs6VTWjkEStPME1eFzyFJk
+         j9bGHXtsfS7cpppszrK46IQQww0wH9If+4mlr6c7lCgmuaEj/eeMpSoLx38xTciw6V0H
+         tyI/u7Qhu8U67ORG8pcqdxzE0NQHpUM1bXU3WYhGSyfhhqhSL35JqrXg+tXgHqxds2Hl
+         8Ro8q2ouPM0gtEpPjq4XYNlCh/U9RxSZ0dgJYDycv5wVy3PDuWvDILmpR+c7+maUXnZ6
+         MtBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=vuqWnah213DNr5H1tn4ngrXQB2l3I0G5wL/BS1TfAHU=;
-        b=7GecpuaiAyZIK4GKNz6gmPUOQXMCkMoZVHv2Sdrp7g+EWeP81QasgebQOocXyRFInQ
-         SN/Cm74j1xvl3HO2oLyim/ZEw5h/awGxDxh48TV2wr4+L6ez5tkQmVu1vnJE88YgCKLm
-         KZWFiJ1ELvPgRN9zZDyi5tzWx5+1akm5X3T+CJPe3tRRVHbspar+mtNN+46mYHOUhddo
-         tIJbolufVi+bvgCHw9fp4uqhcllewh9u9TyfzJ/n+R77bfmUmP94dwBReWrho4Dl/4Fh
-         a5CShD4ckCuWMPxGSvwzBBUR6EJ8kmoJrWupn3f08qr+u3/NpJHIYM/qe5vH8Yblc/8V
-         8inQ==
-X-Gm-Message-State: ACgBeo2b0RKnR2oE2qg4W/MNmklMVKbTROCq9ftEe0GY6Ci0ss76SPAs
-        +13gBeE+1SHlrjfwdrjD+Ha6i0NlwU5Ve7UUvcw/
-X-Google-Smtp-Source: AA6agR4kZuDhD9CQWEqCwv8GJP/H3Oi3rbFzJ9S9hgeov6GQmqTZiX0PeLxSUp3Vuw5SBnCLVZ9Lcjz5OyT5kUXOn0Q=
-X-Received: by 2002:a05:6808:3a9:b0:343:4b14:ccce with SMTP id
- n9-20020a05680803a900b003434b14cccemr3332125oie.41.1661349999371; Wed, 24 Aug
- 2022 07:06:39 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc;
+        bh=3ymjEgBuXLhh0HS/wZ43X1F1MazH/YRoJVB+yBCUsWM=;
+        b=y3A7oeerRvUXf+e29POYAg9c+BfEC49LJeQBXcCfFYZXdxGbpBJPESt+oI1gZ7UTYA
+         XhxdLcrdDkB0+zr670nOyJEisEcPtKMK4novTXpgUzsskkR8wSZ2SYATqR2DgagtK0WY
+         rUsTJW/FX4pFRdRKfwqtZ2qvUBm0RXWwu0Gdq20srwzMD9XQQqlN7mejd5OFQgVCVBZ/
+         t0q8aQ7VkT83Jram9SgLsgyGakLc+MrpSpRDm5dg7kmDR6i4b9/CJwtQnJHzFSMIz1uR
+         cKueConMDRiAebKY2jEEFV2fohdoOd08AaFcnu3xTCqL4bNirSP8YqyRvgk/m03Nh6q6
+         WWzA==
+X-Gm-Message-State: ACgBeo1lFPcGC/PcAxCa17emoPcnTP4xMbKmRpcgbGKI3U7XRwm2BoGJ
+        zoWyk9W+XIyjZqlQ9OKxDR8Dy9lH/8dsQA==
+X-Google-Smtp-Source: AA6agR5vig3ugub1YQYlFxdZEAe7ACViNIiK/qYIxPwNYahg5wOLuaJDX/fNbmrXLqcA/rKkKvp5XA==
+X-Received: by 2002:a6b:ba44:0:b0:688:876b:61c6 with SMTP id k65-20020a6bba44000000b00688876b61c6mr12864825iof.51.1661353066633;
+        Wed, 24 Aug 2022 07:57:46 -0700 (PDT)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id c13-20020a02330d000000b00346b4b25252sm7438219jae.13.2022.08.24.07.57.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Aug 2022 07:57:46 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1661342812.git.asml.silence@gmail.com>
+References: <cover.1661342812.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 0/6] bunch of zerocopy send changes
+Message-Id: <166135306587.10586.8502656702937373818.b4-ty@kernel.dk>
+Date:   Wed, 24 Aug 2022 08:57:45 -0600
 MIME-Version: 1.0
-References: <166120321387.369593.7400426327771894334.stgit@olly>
- <166120327984.369593.8371751426301540450.stgit@olly> <YwR5HBazPxWjcYci@kroah.com>
- <CAHC9VhQOSr_CnLmy0pwgUETPh565951DdejQtgkfNk7=tj+BNA@mail.gmail.com> <YwXA6f6SmAxyMxzX@kroah.com>
-In-Reply-To: <YwXA6f6SmAxyMxzX@kroah.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 24 Aug 2022 10:06:28 -0400
-Message-ID: <CAHC9VhR4ePCaJunmFC+D0_7a7V_rCXQEubuF+V5SLOL2BhGGaA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] /dev/null: add IORING_OP_URING_CMD support
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        io-uring@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-65ba7
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Aug 24, 2022 at 2:10 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Aug 23, 2022 at 01:02:08PM -0400, Paul Moore wrote:
-> > On Tue, Aug 23, 2022 at 2:52 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > On Mon, Aug 22, 2022 at 05:21:19PM -0400, Paul Moore wrote:
-> > > > This patch adds support for the io_uring command pass through, aka
-> > > > IORING_OP_URING_CMD, to the /dev/null driver.  As with all of the
-> > > > /dev/null functionality, the implementation is just a simple sink
-> > > > where commands go to die, but it should be useful for developers who
-> > > > need a simple IORING_OP_URING_CMD test device that doesn't require
-> > > > any special hardware.
-> > >
-> > > Also, shouldn't you document this somewhere?
-> > >
-> > > At least in the code itself saying "this is here so that /dev/null works
-> > > as a io_uring sink" or something like that?  Otherwise it just looks
-> > > like it does nothing at all.
-> >
-> > What about read_null() and write_null()?  I can definitely add a
-> > comment (there is no /dev/null documentation in the kernel source tree
-> > that I can see), but there is clearly precedence for /dev/null having
-> > "do nothing" file_operations functions.
->
-> Yes, they should "do nothing".
+On Wed, 24 Aug 2022 13:07:37 +0100, Pavel Begunkov wrote:
+> 4/6 adds some ordering guarantees for send vs notif CQEs.
+> 5 and 6 save address (if any) when it goes async, so we're more
+> consistent and don't read it twice.
+> 
+> Pavel Begunkov (6):
+>   io_uring/net: fix must_hold annotation
+>   io_uring/net: fix zc send link failing
+>   io_uring/net: fix indention
+>   io_uring/notif: order notif vs send CQEs
+>   io_uring: conditional ->async_data allocation
+>   io_uring/net: save address for sendzc async execution
+> 
+> [...]
 
-Right, I don't think anyone was disputing that.  You were asking for a
-comment for the new function that effectively says "this function does
-nothing", which seems a little silly given the simplicity of the
-function, the name, and the context of it all.
+Applied, thanks!
 
-> write_null() does report that it
-> consumed everything, why doesn't this function have to also do that?
+[1/6] io_uring/net: fix must_hold annotation
+      commit: 2cacedc873ab5f5945d8f1b71804b0bcea0383ff
+[2/6] io_uring/net: fix zc send link failing
+      commit: 5a848b7c9e5e4d94390fbc391ccb81d40f3ccfb5
+[3/6] io_uring/net: fix indention
+      commit: 986e263def32eec89153babf469859d837507d34
+[4/6] io_uring/notif: order notif vs send CQEs
+      commit: 53bdc88aac9a21aae937452724fa4738cd843795
+[5/6] io_uring: conditional ->async_data allocation
+      commit: 5916943943d19a854238d50d1fe2047467cbeb3c
+[6/6] io_uring/net: save address for sendzc async execution
+      commit: 0596fa5ef9aff29219021fa6f0117b604ff83d09
 
-Because a file write (file_operations->write) and a
-IORING_OP_URING_CMD (file_operations->uring_cmd) are fundamentally
-different operations; uring_cmd_null() returns 0, which is the success
-return code for this file op (not to mention a significant number of
-kernel functions that return an int).
-
+Best regards,
 -- 
-paul-moore.com
+Jens Axboe
+
+

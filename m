@@ -2,118 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C762B5A0DAE
-	for <lists+io-uring@lfdr.de>; Thu, 25 Aug 2022 12:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B545A1177
+	for <lists+io-uring@lfdr.de>; Thu, 25 Aug 2022 15:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239263AbiHYKPN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 25 Aug 2022 06:15:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
+        id S242327AbiHYNFk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 Aug 2022 09:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239952AbiHYKPK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Aug 2022 06:15:10 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050319FED
-        for <io-uring@vger.kernel.org>; Thu, 25 Aug 2022 03:15:02 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id u15so29891079ejt.6
-        for <io-uring@vger.kernel.org>; Thu, 25 Aug 2022 03:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=RJgPjT3mp3PF+G79ZsUeiLchnVzSl5vdX/OczrPX7MY=;
-        b=YKvnxh+9L2PoTyzVcxxNnCYiIWn6KgdMWZ1GVZCsHwDvoz+skrZIm9MElFOuFVRr58
-         J2rjah8fEVa1HYS/2F3IBQ/mFqz0ON2/r43iaBb8WH8Rsix+Z8gJ0far3SD8Q3Ri0eLH
-         9j3nHrsIiUFT3aD06UFgy5dHNUzm7Htl7224hZ0JD4I/gVdsRi6HvCTRKwYC9Y9rtlxi
-         Uc6lGFfYHoymYdqYnrfY4A/N+U4Too+XBfGgr+tQ6ykAoZlkrJuO0IiDCvz2xTfxDSH4
-         CSGpsJKFMIvMHz6YtV1c5eDAE5Ek+1420nzWm4tuGJul/guGdnU+9xZ9oWc6XVKhSijx
-         pdkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=RJgPjT3mp3PF+G79ZsUeiLchnVzSl5vdX/OczrPX7MY=;
-        b=Y7nyKe5aKliYc4iDnYDSHSyy4aCfux/f8mqYA6JFEtRKzt9q239L11BjhmSjuT+RuW
-         gJz9WXkzMV+GNkzonYejOULSYjH/ZqPW7f4Z/s0MaywfiS0yz94reuSBzNcvtXB5HIos
-         j+Z3qSaRrYW68EbF2xOJyVinSHyJROgqaQO0jVUkyPEse4gtzpGx2buBlu7Lp+BzMiO+
-         wpJ/MQLsp/rldOHVhRRiOQsHXz0AYkU1gjvh6hWlEPwvlEy5/nu2mo9EyNUW+uAx4A9t
-         ME0cKhifwy2+gJOe1BRl3JdrpRB7S4+j96TwUnHBhVB7q/TROOUHLBC6rohZkekfqEQI
-         oVCQ==
-X-Gm-Message-State: ACgBeo3O+yrkPO3eJNv06f0WxeBYGGLMpMOShW9DDr86QF3Ko8TCn/8p
-        U8GGdA1MDvvetbYZgoVr9Rt/7KZpmvQ96g==
-X-Google-Smtp-Source: AA6agR73kharXRlLiGW+SRtlivaGzj1aH7l2+HXvo+PDkbywpXcC3PH/sHgOD0DYZYxexEz7nHN2Ew==
-X-Received: by 2002:a17:906:ee8e:b0:730:3646:d178 with SMTP id wt14-20020a170906ee8e00b007303646d178mr2015385ejb.426.1661422499918;
-        Thu, 25 Aug 2022 03:14:59 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:6d47])
-        by smtp.gmail.com with ESMTPSA id s21-20020a17090699d500b0073dc8d0eabesm1076537ejn.15.2022.08.25.03.14.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Aug 2022 03:14:59 -0700 (PDT)
-Message-ID: <e77d4686-6a2d-fabf-0e25-b10bd9262984@gmail.com>
-Date:   Thu, 25 Aug 2022 11:13:59 +0100
+        with ESMTP id S242004AbiHYNFP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 Aug 2022 09:05:15 -0400
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACC3FB5E71
+        for <io-uring@vger.kernel.org>; Thu, 25 Aug 2022 06:04:08 -0700 (PDT)
+Message-ID: <8b0af4e0-67ef-7f3a-0835-79ae1f330bb6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1661432645;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fGScHOhQUyT2WH4S0KYD7xigiPCJ3OnnGn9QF2T15cg=;
+        b=FLNWtgOFPTE6oWq+RjXPE5Q6zZSCmRYbbziUpnDKLshNxmK3oRPoEDpO2X/pf3DvxqG/UW
+        /fMicsn6kmE6fthlmGkJTgfs7qM2OPVn85Wm5u+j8ECu3u3IRF4W7kiqiQiItKN8QcjWiP
+        3VTT/kzzvkUjF168oJ2+dGH/tJw9TOw=
+Date:   Thu, 25 Aug 2022 21:03:59 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] io_uring/net: fix uninitialised addr
+Subject: Re: [RFC 00/19] uringlet
 Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <52763f964626ec61f78c66d4d757331d62311a5b.1661421007.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <52763f964626ec61f78c66d4d757331d62311a5b.1661421007.git.asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Wanpeng Li <wanpengli@tencent.com>
+References: <20220819152738.1111255-1-hao.xu@linux.dev>
+In-Reply-To: <20220819152738.1111255-1-hao.xu@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/25/22 11:11, Pavel Begunkov wrote:
-> Don't forget to initialise and set addr in io_sendzc(), so if it goes
-> async we can copy it.
-
-Jens, can you amend it into the last commit?
-("io_uring/net: save address for sendzc async execution")
-
-
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   io_uring/net.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+On 8/19/22 23:27, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
 > 
-> diff --git a/io_uring/net.c b/io_uring/net.c
-> index 4eaeb805e720..0af8a02df580 100644
-> --- a/io_uring/net.c
-> +++ b/io_uring/net.c
-> @@ -975,7 +975,7 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
->   
->   int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
->   {
-> -	struct sockaddr_storage __address, *addr;
-> +	struct sockaddr_storage __address, *addr = NULL;
->   	struct io_ring_ctx *ctx = req->ctx;
->   	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
->   	struct io_notif_slot *notif_slot;
-> @@ -1012,12 +1012,13 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
->   		if (req_has_async_data(req)) {
->   			struct io_async_msghdr *io = req->async_data;
->   
-> -			msg.msg_name = &io->addr;
-> +			msg.msg_name = addr = &io->addr;
->   		} else {
->   			ret = move_addr_to_kernel(zc->addr, zc->addr_len, &__address);
->   			if (unlikely(ret < 0))
->   				return ret;
->   			msg.msg_name = (struct sockaddr *)&__address;
-> +			addr = &__address;
->   		}
->   		msg.msg_namelen = zc->addr_len;
->   	}
+> Hi Jens and all,
+> 
+> This is an early RFC for a new way to do async IO. Currently io_uring
+> works in a way like:
+>   - issue an IO request in nowait way
+>     here nowait means return error(EAGAIN) to io_uring layer when it would
+>     block in deeper kernel stack.
+> 
+>   - issue an IO request in a normal(block) way
+>     io_uring catches the EAGAIN error and create/wakeup a io-worker to
+>     redo the IO request in a block way. The original context turns to
+>     issue other requests. (some type of requests like buffered reads,
+>     leverage task work to wipe out io-workers)
+> 
+> This has two main disadvantages:
+>   - we have to find every block point along the kernel code path and
+>     modify it to support nowait.
+>     e.g.  alloc_memory() ----> if (alloc_memory() fails) return -EAGAIN
+>     This hugely adds programming complexisity, especially when the code
+>     path is long and complicated. For example, buffered write, we have
+>     to handle locks, possibly journal part, meta data like extent node
+>     misses.
+> 
+>   - By create/wakeup a new worker, we redo a IO request from the very
+>     beginning, which means we re-walk the path from beginning to the
+>     previous block point.
+>     The original context backtracks to the io_uring layer from the block
+>     point to submit other requests. While it's better to directly start
+>     the new submission.
+> 
+> This RFC provides a new way to do it.
+>   - We maintain a worker pool for each io_uring instance and each worker
+>     in it can submit requests. The original task only needs to create the
+>     first worker and return to userspace. Later it doesn't need to call
+>     io_uring_enter.[1]
+> 
+>   - the created worker begins to submit requests. When it blocks, just
+>     let it be blocked. Create/wakeup another worker to do the submission
+> 
+> [1] I currently keep these workers until the io_uring context exits. In
+>      other words, a worker does submission, sleep, wake up, but won't
+>      exit. Thus the original task don't need to create/wakeup workers.
+> 
+> I've done some testing:
+> name: buffered write
+> fs: xfs
+> env: qemu box, 4 cpu, 8G mem.
+> tool: fio
+> 
+>   - single file test:
+> 
+>     fio ioengine=io_uring, size=10M, bs=1024, direct=0,
+>         thread=1, rw=randwrite, time_based=1, runtime=180
+> 
+>     async buffered writes:
+>     iodepth
+>        1      write: IOPS=428k, BW=418MiB/s (438MB/s)(73.5GiB/180000msec);
+>        2      write: IOPS=406k, BW=396MiB/s (416MB/s)(69.7GiB/180002msec);
+>        4      write: IOPS=382k, BW=373MiB/s (391MB/s)(65.6GiB/180000msec);
+>        8      write: IOPS=255k, BW=249MiB/s (261MB/s)(43.7GiB/180001msec);
+>        16     write: IOPS=399k, BW=390MiB/s (409MB/s)(68.5GiB/180000msec);
+>        32     write: IOPS=433k, BW=423MiB/s (443MB/s)(74.3GiB/180000msec);
+> 
+>        1      lat (nsec): min=547, max=2929.3k, avg=1074.98, stdev=6498.72
+>        2      lat (nsec): min=607, max=84320k, avg=3619.15, stdev=109104.36
+>        4      lat (nsec): min=891, max=195941k, avg=9062.16, stdev=213600.71
+>        8      lat (nsec): min=684, max=204164k, avg=29308.56, stdev=542490.72
+>        16     lat (nsec): min=1002, max=77279k, avg=38716.65, stdev=461785.55
+>        32     lat (nsec): min=674, max=75279k, avg=72673.91, stdev=588002.49
+> 
+> 
+>     uringlet:
+>     iodepth
+>       1       write: IOPS=120k, BW=117MiB/s (123MB/s)(20.6GiB/180006msec);
+>       2       write: IOPS=273k, BW=266MiB/s (279MB/s)(46.8GiB/180010msec);
+>       4       write: IOPS=336k, BW=328MiB/s (344MB/s)(57.7GiB/180002msec);
+>       8       write: IOPS=373k, BW=365MiB/s (382MB/s)(64.1GiB/180000msec);
+>       16      write: IOPS=442k, BW=432MiB/s (453MB/s)(75.9GiB/180001msec);
+>       32      write: IOPS=444k, BW=434MiB/s (455MB/s)(76.2GiB/180010msec);
+> 
+>       1       lat (nsec): min=684, max=10790k, avg=6781.23, stdev=10000.69
+>       2       lat (nsec): min=650, max=91712k, avg=5690.52, stdev=136818.11
+>       4       lat (nsec): min=785, max=79038k, avg=10297.04, stdev=227375.52
+>       8       lat (nsec): min=862, max=97493k, avg=19804.67, stdev=350809.60
+>       16      lat (nsec): min=823, max=81279k, avg=34681.33, stdev=478427.17
+>       32      lat (usec): min=6, max=105935, avg=70.55, stdev=696.08
+> 
+> uringlet behaves worse on IOPS and lantency in small iodepth. I think
+> the reason is there are more sleep and wakeup.(not sure about it, I'll
+> look into it later)
+> 
+> The downside of uringlet:
+>   - it costs more cpu resource, the reason is similar with the sqpoll case: a
+>     uringlet worker keeps checking sqring to reduce latency.[2]
+>   - task->plug is disabled for now since uringlet is buggy with it.
+> 
+> [2] For now, I allow a uringlet worker spin on the empty sqring for some
+> times.
+> 
+> Any comments are welcome, This early RFC only supports buffered write for
+> now and if the idea under it is proved to be the right way, I'll change
+> it to a formal patchset and resolve the detail technical issues and try
+> to support more io_uring features.
+> 
+> Regards,
+> Hao
+> 
 
--- 
-Pavel Begunkov
+Friendly ping...
+Jens, any thoughts on this one?

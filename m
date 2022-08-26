@@ -2,66 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 305715A2C68
-	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C8145A2CD2
+	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241806AbiHZQgn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Aug 2022 12:36:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50624 "EHLO
+        id S1344386AbiHZQxV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Aug 2022 12:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243915AbiHZQgm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:36:42 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59391BA9F6
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:36:40 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id h78so1559941iof.13
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc;
-        bh=WV/E6O5Y9diFqiB3emBCf2qeCzPSUYOuQ4oXC52V5ts=;
-        b=c4MKpmAEQ72Wn5r+oIaDxXIvk8N7syD3Cgwjc4GtJMg/v5gLLJ86yodwl1r/bZgpue
-         zsM1/ybR2J7wWgkdf7bqJTEfrWoFsT/P+17JFDVBWr5YuELErZ9iVeu7TSUJKgnGNSi1
-         TOFOanqmUQEIBSexBEmOqAjKrEfba/8ckl0Fddg4MPUlZLKj22RcvivDQ5SsafgHOac8
-         rxFSZ5jri0I2CZeMjHECFRaG3DUAJthO37i2NIWnYvNWRUizScChJZ1dU0pGlcRQ7yTa
-         2G1fIa8pai3JYLBqb4IJiQkBAXVDCxGr7CIeUJRwtQNndFP2Iy0xOg1SL7ozQkWCuzFA
-         sqrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc;
-        bh=WV/E6O5Y9diFqiB3emBCf2qeCzPSUYOuQ4oXC52V5ts=;
-        b=PRp41yjwlN8UZOMobiR+1lJca5kNECXz6lxVr5+tRFN+In0y/2F88GeyWN6f8yDPq7
-         P2OE8j4AsdCnuiHlAwg947lg964hjXWUceyUDWij8FNUWtTizMYVdsOPHFoEq0KMpkbH
-         JnW5DmwA6lzas/vA6NIjUtRyAzOfeXkekhpOD8uXhMXnsiwNAn0LkV/i7hVFr2oRXQ5e
-         wMWnSkUoIpU2uFLgv4ee5JmMl1BIrySJPO0z6YuLGYIDA8k7CfCd/992cQphFkM9OHSE
-         B2VZ903QwApLK7ZK5Cxr7gZsSdx/4SGjpken+Baz7to01k3yBizXwUZQxVc3C38+f+rC
-         nI1w==
-X-Gm-Message-State: ACgBeo1yK2KJcn/VsVPqvvPOxiDTMm7aQai3JjTl9/f2VLlQnmP2Ca1P
-        Q3x4bAr3zPOIQON5+SYGGD68P3XSpJoeHA==
-X-Google-Smtp-Source: AA6agR7y/QvAF1wCBvH+JJ74RUhYtezeGWsRZ2IRf4fKGKlSadTNX5tky6l0DnS8PVbBjobKLB1efg==
-X-Received: by 2002:a05:6602:2d0d:b0:689:8260:e11d with SMTP id c13-20020a0566022d0d00b006898260e11dmr4019945iow.153.1661531799692;
-        Fri, 26 Aug 2022 09:36:39 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id l43-20020a026a2b000000b00349f2783ab3sm1100157jac.34.2022.08.26.09.36.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Aug 2022 09:36:38 -0700 (PDT)
-Message-ID: <ac58b020-5e09-0bbb-0a63-423faf9bcf5d@kernel.dk>
-Date:   Fri, 26 Aug 2022 10:36:35 -0600
+        with ESMTP id S1344476AbiHZQxP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:53:15 -0400
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE55A193C6
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661532793; bh=c89xvT1uL0/4FPkfiarrr4piCZWk1ESQCXyBnJ/ANf0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PJIf4RNENXLqUakPnNIATEFFFNcRPNnN055ilC5VF0IBka32tOM2hNMXJWvO6w84Envb8GWA2fGXBjsnZto0dLVNHbH2QsWyq5gLFRH7KJisMqkujkM/twTyWemeLSJ8eoFcXSebhsyyJ/N254e6XCdJwEk9lcRJQ7t+jpBb1yTCDfY7vR4UiIHxHSiYEK3EBqh+k0T3P/+sIoyWZ4Trep2BnK1ypo9MhqeqKRMsBo1fcu8ByHX+GQDcmBAq9Uri6pND9kg/uDsygBUbRzUt0HVke8ks17P+TsahwNwRAhQWKcrEtjiY3F4efUgiGHtnj0pOO49DUiFaYsbaDiQJKg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1661532793; bh=j1QFoVrR6EaDgl+1pCSJ7YY3kBIeLz2+MmfvY3sSeL8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OnuCjFZgUEMnOMYHkYkfH/e8104fobLRBtoeETjmeuEJSWsZ9XcBubZSrg95H/hkgAZslLN8/yEWS+r4ZI9F108ncgJPoIl/C4gJbE0DT+3xVXz38+htHUyh4ivBddzmqpru1GmNg2saMHW1sLjSH3GqwCfP7OiBPlKuWRLhIdsT5/cCeECnlfBVa6nWfMHq0zJdSLODDBqOscnmXEQL4rpeigELdsNSDIlJD00nZR9bQSva7biaTXtp4ESh+H7eKUTzM5Q2L9JV9HJ07F5I2eA7H6GTT0ese3LCzSNwmbIMe5PoATOkQ9AcLX6TAUznr0DYO+ih6tlWT9ALEvL7ww==
+X-YMail-OSG: T_iJYE4VM1mbMA1Mp3PZ.y6iAwS8QA0jgxCc5suw9LvBTTE5FW2EgwO18SznbTY
+ HKOTHY_CJpzF.DRZ6q1zBw_zVaNk.1gmoH67TojZl3R9wtR8DtMdeIX7KEi4yD_REtAYqnZj3BYD
+ e5emSdXFhceV6lNHtkbnP8Hejp8kKulphnLvFuR62k.5NZ_3oE.pp3Ro.lGv3pEQubZcgOtFI2Lg
+ VLg8AI2U.zWdkVYJ_fqgQKenG1HoB6sGM2j1JX93p1CAF31oM4hn4i.18umIyYEADFmAptJ.tGSd
+ Zn8hND9rvLkQhXE3R3arGWpAe3gjdR_MV1SyBR.jE2nzhyaQjIQ4HII_gAYaEEXmV._VX06mTg89
+ Dr19pe8P2jdHayUnwOq1FG1YII4Wj54nptQFCDJC9COmAoeai0EzE3wGtquTAV_JDSmmF9FEFJ9k
+ MOV6PKDrXe37kJ.F10zN1JTLITXosEgnNDz7XvihvOFjF3oxVX_4xKFFt5DtSkhnlO7CXc_hnr4.
+ OZnveCH2K7v.UDvxeMvdR4_O6fzjPPFNPoP7udqo_ROddGW6oeXDa6WqFHHQVAawsWTU5PZuIgXU
+ y5b0AcfAdGsiY9tAl.BnBIRZR9G5JYvjV3_YAv428G_5_tf0hIqWqEZXyuqebYXkaBEyfCbZ61Hl
+ 89FSZQgAhrjKoMM1rD1g.AIUYMPDup1hTCJtUKeJFbOwx5Yq.KblTg4gPzcLyunrFet34kxOGosa
+ cJ93h1nPpw0dk5zgYEYoAjnwrxKYYZWEqzEjhKUuf9rkRNKQge.1ZfvH9Pfg92ZQcd9Cz_0lEAZW
+ wspWE8C9OFyS9PIFyjGeWHudkH41BMwURslRqKzy0wxXTVjX8Ving3D126EbFVCnGWPpy3bpntvB
+ oDtiMW90p486fPZPT7JTGkfARA2I7ZjJ0tR119ym9NFs6V_sPR6MGicaF.1YGVApb54IhBP.NGXI
+ 00b4DQZCRaecMsJJgnYAb.OHSNPTAA82amDGRtRUJ9HSymWDXNoI4T894vlNLt.F250DF2dJ9qtR
+ x9zf0SDZrHcjKsFnxSkGyPMi.HbRFgD7KoDgw.LeH1ButdD5w6GpEY1Y08oSCuejPh0mqMjh740q
+ cQmvFi11.Ub4P1OeWKb5IIf.ZfF3BjsPfRmbTMMx81FdO5zjkCSUtKiq4xmVkToYiY7_GvJhkVTX
+ mAjm6LOaf9lgTCXFjgVCuj8XdOf_1oD5we2ZgYShagx4Z7KtBaYgh8qJua.AIIVenEKjUR9QF5sl
+ xi3.08r56wrZy6TQ6CYpvtqByhnGor7FWpCTOdhY5KLCyLLGFR9a.n73TJj7jxpBLWAlRofX8t5j
+ VhcoBh55hw55hpx9V9vzKyrxJP4mUeIAas5DRNjdSqQL1uyDg0RTAkaxykIOX6OyIjYIs5qppOSL
+ .SLC4ARtol197bT71dsdTbTA3btD1LDx5DiXQliVDrW4DahrCd3iLLGG4Aoxq53EeQsrLrNibtIV
+ U6LBnp7rdulYNOpYH3B1YAMK.xyGpex6CYiSZKfvihr_v_OkUBQpcYfptART_TC4Pli.9oHXOWcr
+ FvZgCus0c6YO.YOzShf.sA9c4LsYWXq7xdoAgpa.YpNj1MnRX0nJ1s3GtYRhqNTAzXwesnifYJWw
+ SYVs4wAyWOAtqF59GNP8zWqjWBJnQ6gytx_7HbjstU0LdlNZqpTwCNwJs_OhY5RCdpKapNtxkcZW
+ xy5RPxdD2DFABhySB4KQhCOfPwo43bF65f4Mg.ZSx3v9fmICgaXhmgLcbuNvfUUvtGLmGgQC5XCb
+ 8hEG8rRhPeveR5H4hk5WJP2UKymc9Oyl89llehf.M6pLcfAqspvpX16wa1n.7GhZC_Xa4ideINX6
+ KmHxBSVSjDCVBr0O8Cu8IRdf0imCp69YmL6hQzehgJ1qOVupCUkV7unQO3rSzv0BTF7mFT6Hwsi9
+ kaSujNm3q_de._CW.l8LEMFUkluBjXg0rfTwjna84nHyZmS5dg1JH82rTPkDnnPaw7x9FxAcPT8t
+ ehtdBcSxc7w9Qmyw9FgnJq6B7xCEM9tDi3uH4Fx.f6DtRlWOOHecBsNZuAUTJGWuiibZpWio0odq
+ zCDX2Gcy3oPIL18b0KYd9MexjeQ_Z.5181mxgiqoXJcLTgpSpbkQ77lJ_vHGzLvVrOm6dJQVCG7z
+ yCqhXed6d1OvZa6QK.maAefG8wXpigkmuf.zEkqEd1r_7Qz02CsDs8inqxFyXDpxjH.uBMUcnNAr
+ v.tfFYEcSi.3.unf9Ce3.FZ9IqMtCIzTP7T96LxWZpl4-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Fri, 26 Aug 2022 16:53:13 +0000
+Received: by hermes--production-ne1-6649c47445-5hpzl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4188394d357b6302f4f98842700a749f;
+          Fri, 26 Aug 2022 16:53:09 +0000 (UTC)
+Message-ID: <beeb2f29-287c-0191-b03c-8f7a2a6c5f86@schaufler-ca.com>
+Date:   Fri, 26 Aug 2022 09:53:08 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] Smack: Provide read control for io_uring_cmd
 Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.0-rc3
+To:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     Ankit Kumar <ankit.kumar@samsung.com>, io-uring@vger.kernel.org,
+        joshi.k@samsung.com, casey@schaufler-ca.com
+References: <CGME20220719135821epcas5p1b071b0162cc3e1eb803ca687989f106d@epcas5p1.samsung.com>
+ <20220719135234.14039-1-ankit.kumar@samsung.com>
+ <116e04c2-3c45-48af-65f2-87fce6826683@schaufler-ca.com>
+ <fc1e774f-8e7f-469c-df1a-e1ababbd5d64@kernel.dk>
+ <CAHC9VhSBqWFBJrAdKVF5f3WR6gKwPq-+gtFR3=VkQ8M4iiNRwQ@mail.gmail.com>
+ <83a121d5-a2ec-197b-708c-9ea2f9d0bd6a@schaufler-ca.com>
+ <CAHC9VhQStPdfWwTKwqfz67hr3PErHmdu+s_3mAfATb0mu7MD2w@mail.gmail.com>
+ <2e6b56cf-d04b-6537-62f4-a4cb0191172a@kernel.dk>
+ <CAHC9VhQ2gVEuHe_mhkv7=Ju8co1L+aQ7=WAR_CpmJ7wS8=0+0g@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhQ2gVEuHe_mhkv7=Ju8co1L+aQ7=WAR_CpmJ7wS8=0+0g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20595 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,81 +84,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On 8/26/2022 8:15 AM, Paul Moore wrote:
+> On Tue, Aug 23, 2022 at 8:07 PM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 8/23/22 6:05 PM, Paul Moore wrote:
+>>> On Tue, Aug 23, 2022 at 7:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Limit io_uring "cmd" options to files for which the caller has
+>>>> Smack read access. There may be cases where the cmd option may
+>>>> be closer to a write access than a read, but there is no way
+>>>> to make that determination.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> --
+>>>>  security/smack/smack_lsm.c | 32 ++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 32 insertions(+)
+>>>>
+>>>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>>>> index 001831458fa2..bffccdc494cb 100644
+>>>> --- a/security/smack/smack_lsm.c
+>>>> +++ b/security/smack/smack_lsm.c
+>>> ...
+>>>
+>>>> @@ -4732,6 +4733,36 @@ static int smack_uring_sqpoll(void)
+>>>>         return -EPERM;
+>>>>  }
+>>>>
+>>>> +/**
+>>>> + * smack_uring_cmd - check on file operations for io_uring
+>>>> + * @ioucmd: the command in question
+>>>> + *
+>>>> + * Make a best guess about whether a io_uring "command" should
+>>>> + * be allowed. Use the same logic used for determining if the
+>>>> + * file could be opened for read in the absence of better criteria.
+>>>> + */
+>>>> +static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
+>>>> +{
+>>>> +       struct file *file = ioucmd->file;
+>>>> +       struct smk_audit_info ad;
+>>>> +       struct task_smack *tsp;
+>>>> +       struct inode *inode;
+>>>> +       int rc;
+>>>> +
+>>>> +       if (!file)
+>>>> +               return -EINVAL;
+>>> Perhaps this is a better question for Jens, but ioucmd->file is always
+>>> going to be valid when the LSM hook is called, yes?
+>> file will always be valid for uring commands, as they are marked as
+>> requiring a file. If no valid fd is given for it, it would've been
+>> errored early on, before reaching f_op->uring_cmd().
+> Hey Casey, where do things stand with this patch?  To be specific, did
+> you want me to include this in the lsm/stable-6.0 PR for Linus or are
+> you planning to send it separately?  If you want me to send it up, are
+> you planning another revision?
+>
+> There is no right or wrong answer here as far as I'm concerned, I'm
+> just trying to make sure we are all on the same page.
 
-Set of fixes for io_uring that should go into this release:
+I think the whole LSM fix for io_uring looks better the more complete
+it is. I don't see the Smack check changing until such time as there's
+better information available to make decisions upon. If you send it along
+with the rest of the patch set I think we'll have done our best.
 
-- Add missing header file to the MAINTAINERS entry for io_uring (Ammar)
-
-- liburing and the kernel ship the same io_uring.h header, but one
-  change we've had for a long time only in liburing is to ensure it's
-  C++ safe. Add extern C around it, so we can more easily sync them in
-  the future (Ammar)
-
-- Fix an off-by-one in the sync cancel added in this merge window (me)
-
-- Error handling fix for passthrough (Kanchan)
-
-- Fix for address saving for async execution for the zc tx support
-  (Pavel)
-
-- Fix ordering for TCP zc notifications, so we always have them ordered
-  correctly between "data was sent" and "data was acked". This isn't
-  strictly needed with the notification slots, but we've been pondering
-  disabling the slot support for 6.0 - and if we do, then we do require
-  the ordering to be sane. Regardless of that, it's the sane thing to do
-  in terms of API (Pavel)
-
-- Minor cleanup for indentation and lockdep annotation (Pavel)
-
-Please pull!
-
-
-The following changes since commit 3f743e9bbb8fe20f4c477e4bf6341c4187a4a264:
-
-  io_uring/net: use right helpers for async_data (2022-08-18 07:27:20 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/io_uring-6.0-2022-08-26
-
-for you to fetch changes up to 581711c46612c1fd7f98960f9ad53f04fdb89853:
-
-  io_uring/net: save address for sendzc async execution (2022-08-25 07:52:30 -0600)
-
-----------------------------------------------------------------
-io_uring-6.0-2022-08-26
-
-----------------------------------------------------------------
-Ammar Faizi (2):
-      MAINTAINERS: Add `include/linux/io_uring_types.h`
-      io_uring: uapi: Add `extern "C"` in io_uring.h for liburing
-
-Jens Axboe (1):
-      io_uring: fix off-by-one in sync cancelation file check
-
-Kanchan Joshi (1):
-      io_uring: fix submission-failure handling for uring-cmd
-
-Pavel Begunkov (6):
-      io_uring/net: fix must_hold annotation
-      io_uring/net: fix zc send link failing
-      io_uring/net: fix indentation
-      io_uring/notif: order notif vs send CQEs
-      io_uring: conditional ->async_data allocation
-      io_uring/net: save address for sendzc async execution
-
- MAINTAINERS                   |  1 +
- include/uapi/linux/io_uring.h |  8 +++++++
- io_uring/cancel.c             |  2 +-
- io_uring/io_uring.c           |  7 +++---
- io_uring/net.c                | 56 ++++++++++++++++++++++++++++++++++++-------
- io_uring/net.h                |  1 +
- io_uring/notif.c              |  8 ++++---
- io_uring/opdef.c              |  4 +++-
- io_uring/opdef.h              |  2 ++
- io_uring/uring_cmd.c          |  2 +-
- 10 files changed, 74 insertions(+), 17 deletions(-)
-
--- 
-Jens Axboe

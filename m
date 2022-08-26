@@ -2,95 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB445A2C1B
-	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF8B5A2C4C
+	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344271AbiHZQQ4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Aug 2022 12:16:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50994 "EHLO
+        id S238115AbiHZQ1z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Aug 2022 12:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343642AbiHZQQw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:16:52 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB5DD91F6
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:16:49 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id gb36so4040345ejc.10
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:16:49 -0700 (PDT)
+        with ESMTP id S230408AbiHZQ1y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:27:54 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6031DF671
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:27:52 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id 92-20020a9d0be5000000b0063946111607so1327903oth.10
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:27:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=JNnUu8ABSVU1n2oKVBq8Yv/DQ1rdwKMHWnqS6x2DKh8=;
-        b=k5tVc+/MGTWFZbFZ1RALigng8pbxMu12eaQ16cd6YPyv2hsorXKwkZCxI3PrkbPPdn
-         6DK0Now5od4EPJDbPTRjjmWqD1ba52TS4iBNGAwSQRoQJi3/W6BsV3g3SP1CvxtjwgtR
-         gkzCl1S4hdgl1/PmWp7z9vGUl49pAvJVy55WSzX9hmQrlB83IOecxSWRCGCsX1Ercq+P
-         dF+rh+KwZ8L/RmbERue2zLu34IqZUltiXht6tCisXXj7vOmsZRm8L8jlY7WXvFKyVPcj
-         OTK5ss9gkg8XfHDEOarNYaDSAJ4dQA5ttXAw/S8nY20mxCX08Ld927oObR+LqPrq24K7
-         q6OQ==
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=47LwKtGNYlWQtvjArJ9MTlK2TLiKWMwqH2B+EdD3Yxg=;
+        b=tK4EUedtQOYlUbQ9rz8qZEWcPQfNuVKnEVcWSbjTZd+bSTZpYK6/V0nBX8U4y2Xx7D
+         tJ32A90gQvwji8I7cCfc7OOv/J1+FyQT5i9YPR02szHEivROhzf3e+2Sr0zI5GvqE39T
+         39kEPb6qX4NQ9XoXraVX8oEdfm8wATVbKxkDvrUsUDFUuJOElVoBDPLYceAphjjQVaqm
+         ahP+xIeyJapQkG1p+2OIfslb3zt7mIyC004jePjvQU/VMe/drS6Nc6nWSJfNpGRKPTTX
+         M+43a4AaciJ0YJAiYY66porxUXUTy1VFYubb2DO9ORNLpABv01tOiQlOOd5O70YqU7Eu
+         qjJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=JNnUu8ABSVU1n2oKVBq8Yv/DQ1rdwKMHWnqS6x2DKh8=;
-        b=Gw2JtHJyWfcChCoKgUa2ZL8rogdfIZf7AqOdLObluIdeFcKZUc02XGfx5rIXf5OQfp
-         UhGfXv+9r7lfn+68hOfDzJDcpT3HDJOO5H757SfakIZhXUkMnvFv9cbpZZTyKVEXp4tO
-         dbftFUh+n3cPECyIwyKNzdIbahaqW0V5w4HYCLpNXofhaDPTZVYjufOmF3lFuB8vvZnn
-         UPQL+x3HK8V5oYqdKl+H2OGhCWk1rg6yreqaGebqe5bwxj8bmL5+v8Ypqyte4mFZpTzF
-         pHHu5jFCJLw1YkXjpw97P/jISQCQNSrL+2N5oQzZNQkwjcAeGwR2wrKKu+LUlKKf5wAB
-         X2RQ==
-X-Gm-Message-State: ACgBeo0hPhqZhXiqpnMiy4qJaiHVU6yhejlnjnI65D+nwUrmOA7xyI3W
-        hasJUlLH5Zp2IX2767f0x89NvEu7PX0=
-X-Google-Smtp-Source: AA6agR7JqVDlE18Ibjbri137eoEvZYUXSK70t3g7UXEDfxhQ88GbEc2s90mxMVE81qT3tXenIz0nUQ==
-X-Received: by 2002:a17:907:2856:b0:73d:dd82:4ef0 with SMTP id el22-20020a170907285600b0073ddd824ef0mr3674505ejc.571.1661530608168;
-        Fri, 26 Aug 2022 09:16:48 -0700 (PDT)
-Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id c10-20020aa7c98a000000b00447dc591874sm1516419edt.37.2022.08.26.09.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Aug 2022 09:16:47 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RESEND for-5.20] io_uring/net: fix overexcessive retries
-Date:   Fri, 26 Aug 2022 17:15:47 +0100
-Message-Id: <0bc0d5179c665b4ef5c328377c84c7a1f298467e.1661530037.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.2
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=47LwKtGNYlWQtvjArJ9MTlK2TLiKWMwqH2B+EdD3Yxg=;
+        b=IdikiDTL5Vk7mElFMFvofnTM7rrdr4fo7SeD4+++kxvPeT9gPG3kJt8FBgFwiOWQ9p
+         Zh5funD2F3l5NLwRS/h4euUqrBlpVIRmmfbiIGscFD203CoS7QRmsl1Mo880W7NuCSMM
+         1iDrUrQr5bJbp9BxbWMUj3S/GWnCPCS4hSHQzW/GHGuOFSiwDl/vi0fql1mrnd5Alzou
+         eM25Cv0eoC+yE1Fkjg1ahdMVsIudd7UboKoPf3eT7QtA6a9HuF8utlmAZLf9KdxkUDUh
+         8UTG9a+VQqMylzZhr1Qfh76/WvgECnOUUy7UW3toBlWN1mbe3Ihf2an17WFPErA6JCaq
+         hNqw==
+X-Gm-Message-State: ACgBeo0FwpLP574UcbL+VdQuBrk+rGCNq9S2s8ZcOBSqs6OyHP57EqLb
+        3JZukCVy0a9YEq3jCTXa+6XWmwEAFdZ08WuMS4qMpBMKGQ==
+X-Google-Smtp-Source: AA6agR56wZjfLf4m3YYmXcc8h3RgFUmmJx5HKVS0cMVPJ5sAurta2N4ICkrCM6pnK6862M1r3F1DuF3Y72PkxTaVwFc=
+X-Received: by 2002:a9d:2de3:0:b0:638:e210:c9da with SMTP id
+ g90-20020a9d2de3000000b00638e210c9damr1643453otb.69.1661531272188; Fri, 26
+ Aug 2022 09:27:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <166120321387.369593.7400426327771894334.stgit@olly>
+In-Reply-To: <166120321387.369593.7400426327771894334.stgit@olly>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 26 Aug 2022 12:27:41 -0400
+Message-ID: <CAHC9VhRJXxx9LwQyapdW=cDioCcjdHpx4EEuiNC2SJVTz9Z7DA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] LSM hooks for IORING_OP_URING_CMD
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Length parameter of io_sg_from_iter() can be smaller than the iterator's
-size, as it's with TCP, so when we set from->count at the end of the
-function we truncate the iterator forcing TCP to return preliminary with
-a short send. It affects zerocopy sends with large payload sizes and
-leads to retries and possible request failures.
+On Mon, Aug 22, 2022 at 5:21 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> This patchset includes three patches: one to add a new LSM hook for
+> the IORING_OP_URING_CMD operation, one to add the SELinux
+> implementation for the new hook, and one to enable
+> IORING_OP_URING_CMD for /dev/null.  The last patch, the /dev/null
+> support, is obviously not critical but it makes testing so much
+> easier and I believe is in keeping with the general motivation behind
+> /dev/null.
+>
+> Luis' patch has already been vetted by Jens and the io_uring folks,
+> so the only new bits are the SELinux implementation and the trivial
+> /dev/null implementation of IORING_OP_URING_CMD.  Assuming no one
+> has any objections over the next few days, I'll plan on sending this
+> up to Linus during the v6.0-rcX cycle.
+>
+> I believe Casey is also currently working on Smack support for the
+> IORING_OP_URING_CMD hook, and as soon as he is ready I can add it
+> to this patchset (or Casey can send it up himself).
+>
+> -Paul
+>
+> ---
+>
+> Luis Chamberlain (1):
+>       lsm,io_uring: add LSM hooks for the new uring_cmd file op
+>
+> Paul Moore (2):
+>       selinux: implement the security_uring_cmd() LSM hook
+>       /dev/null: add IORING_OP_URING_CMD support
+>
+>
+>  drivers/char/mem.c                  |  6 ++++++
+>  include/linux/lsm_hook_defs.h       |  1 +
+>  include/linux/lsm_hooks.h           |  3 +++
+>  include/linux/security.h            |  5 +++++
+>  io_uring/uring_cmd.c                |  5 +++++
+>  security/security.c                 |  4 ++++
+>  security/selinux/hooks.c            | 24 ++++++++++++++++++++++++
+>  security/selinux/include/classmap.h |  2 +-
+>  8 files changed, 49 insertions(+), 1 deletion(-)
 
-Fixes: 3ff1a0d395c00 ("io_uring: enable managed frags with register buffers")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FYI, I just merged this into lsm/stable-6.0 and once the automated
+testing completes and we sort out the Smack patch I'll send this up to
+Linus.
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 0af8a02df580..7a5468cc905e 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -956,7 +956,7 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
- 	shinfo->nr_frags = frag;
- 	from->bvec += bi.bi_idx;
- 	from->nr_segs -= bi.bi_idx;
--	from->count = bi.bi_size;
-+	from->count -= copied;
- 	from->iov_offset = bi.bi_bvec_done;
- 
- 	skb->data_len += copied;
 -- 
-2.37.2
-
+paul-moore.com

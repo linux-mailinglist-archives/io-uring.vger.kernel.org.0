@@ -2,69 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24DDA5A2BF5
-	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:07:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB445A2C1B
+	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243678AbiHZQGv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Aug 2022 12:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33648 "EHLO
+        id S1344271AbiHZQQ4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Aug 2022 12:16:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244475AbiHZQGt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:06:49 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DAB6D4BFB
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:06:45 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id b44so2645884edf.9
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:06:45 -0700 (PDT)
+        with ESMTP id S1343642AbiHZQQw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:16:52 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB5DD91F6
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:16:49 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id gb36so4040345ejc.10
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:16:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=lNuUoGjB0N0z9P/4qDhLVr0L0/LOnmIFqtKh0E4MdJ0=;
-        b=D8OvH8BBNxGtjlVTQaS9vMqeftoZOARDtL9IMcqJuPrCcDQYdNp3jCvd8H1GzBvna2
-         nMI0mfnPaVg20+dWyXjHlOExtnsc0Mvf1laTklhgFXQJ6hZg7IThFmBbQpRmshRQZZeE
-         eRWwtWCDNXESUCm0Jcn30AevPUhFYA0J1nfaM/2ee+mhydIJrEoT5EgALAIIRHmHC65T
-         0dXos+5VORBQAJ/r8+sy/q3s7oOffIJHrZvtrjQmxHJ6z68mPYuqDh4eUV7n1aQdBbmr
-         VjLiiJttrAzVPn2v2MFPGH1qTH9VV4abN9+UsMXgN2avqen7NWhDw7gUh3AdxbAmQcj6
-         BpdQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=JNnUu8ABSVU1n2oKVBq8Yv/DQ1rdwKMHWnqS6x2DKh8=;
+        b=k5tVc+/MGTWFZbFZ1RALigng8pbxMu12eaQ16cd6YPyv2hsorXKwkZCxI3PrkbPPdn
+         6DK0Now5od4EPJDbPTRjjmWqD1ba52TS4iBNGAwSQRoQJi3/W6BsV3g3SP1CvxtjwgtR
+         gkzCl1S4hdgl1/PmWp7z9vGUl49pAvJVy55WSzX9hmQrlB83IOecxSWRCGCsX1Ercq+P
+         dF+rh+KwZ8L/RmbERue2zLu34IqZUltiXht6tCisXXj7vOmsZRm8L8jlY7WXvFKyVPcj
+         OTK5ss9gkg8XfHDEOarNYaDSAJ4dQA5ttXAw/S8nY20mxCX08Ld927oObR+LqPrq24K7
+         q6OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=lNuUoGjB0N0z9P/4qDhLVr0L0/LOnmIFqtKh0E4MdJ0=;
-        b=3XHNTTUQ2SPN3sLaEjmulUHFn9+0fWdns/hmBGif7Qx0B2a9BTTOnF2i2g/rcq79Wx
-         HzMGjtY9h9vezdwELogktVlXpc6i0XON+aAvnqjxY7iZ9ghwLcGPm5ciYdv3G87A76IN
-         itqmIQC/r3NKccnBzUpmiYvvduQkgGxcujs6Pk+Np43JW2pl6v7t13dqXyjsZ57eFxxY
-         PVgyOALdYlx9ZOLFdWygZg6sdr1rnYHzcS13HDVtBuUkOV2BEje/9hj0BzlxGrYaB96X
-         BX2yMZ3a58wWH/aX9uMTQB8oMuxhPgkJXM3vfCGrMJRQIqY9NGjFKZFfrZ5pDOfPGm8O
-         cAtg==
-X-Gm-Message-State: ACgBeo006f/ZmgUEEyAdgt1Lo0nzIjFgZifTWsdyEbxmiolyL1INFMBz
-        kRN1z/1YzdNtNkFBW70mRvSLlZCGFFU=
-X-Google-Smtp-Source: AA6agR4DdLBPUMOmyDGYVmGhH7hcV5j6f963zQn2voFDld7L2sOQGATWWb+qurFcuiCBuKlLjp408w==
-X-Received: by 2002:a05:6402:34c6:b0:43d:8cea:76c0 with SMTP id w6-20020a05640234c600b0043d8cea76c0mr7570623edc.268.1661530003212;
-        Fri, 26 Aug 2022 09:06:43 -0700 (PDT)
-Received: from [192.168.8.198] (188.28.126.24.threembb.co.uk. [188.28.126.24])
-        by smtp.gmail.com with ESMTPSA id v25-20020a056402175900b004462849aa06sm1499896edx.5.2022.08.26.09.06.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Aug 2022 09:06:42 -0700 (PDT)
-Message-ID: <bdb69c4e-83e4-dec8-1885-f15745c997df@gmail.com>
-Date:   Fri, 26 Aug 2022 17:05:42 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH for-5.20] io_uring/net: fix overexcessive retries
-Content-Language: en-US
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <7ae9790cdf2f30cd381efda5b159ef95c88cf8eb.1661529830.git.asml.silence@gmail.com>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=JNnUu8ABSVU1n2oKVBq8Yv/DQ1rdwKMHWnqS6x2DKh8=;
+        b=Gw2JtHJyWfcChCoKgUa2ZL8rogdfIZf7AqOdLObluIdeFcKZUc02XGfx5rIXf5OQfp
+         UhGfXv+9r7lfn+68hOfDzJDcpT3HDJOO5H757SfakIZhXUkMnvFv9cbpZZTyKVEXp4tO
+         dbftFUh+n3cPECyIwyKNzdIbahaqW0V5w4HYCLpNXofhaDPTZVYjufOmF3lFuB8vvZnn
+         UPQL+x3HK8V5oYqdKl+H2OGhCWk1rg6yreqaGebqe5bwxj8bmL5+v8Ypqyte4mFZpTzF
+         pHHu5jFCJLw1YkXjpw97P/jISQCQNSrL+2N5oQzZNQkwjcAeGwR2wrKKu+LUlKKf5wAB
+         X2RQ==
+X-Gm-Message-State: ACgBeo0hPhqZhXiqpnMiy4qJaiHVU6yhejlnjnI65D+nwUrmOA7xyI3W
+        hasJUlLH5Zp2IX2767f0x89NvEu7PX0=
+X-Google-Smtp-Source: AA6agR7JqVDlE18Ibjbri137eoEvZYUXSK70t3g7UXEDfxhQ88GbEc2s90mxMVE81qT3tXenIz0nUQ==
+X-Received: by 2002:a17:907:2856:b0:73d:dd82:4ef0 with SMTP id el22-20020a170907285600b0073ddd824ef0mr3674505ejc.571.1661530608168;
+        Fri, 26 Aug 2022 09:16:48 -0700 (PDT)
+Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
+        by smtp.gmail.com with ESMTPSA id c10-20020aa7c98a000000b00447dc591874sm1516419edt.37.2022.08.26.09.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Aug 2022 09:16:47 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <7ae9790cdf2f30cd381efda5b159ef95c88cf8eb.1661529830.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [RESEND for-5.20] io_uring/net: fix overexcessive retries
+Date:   Fri, 26 Aug 2022 17:15:47 +0100
+Message-Id: <0bc0d5179c665b4ef5c328377c84c7a1f298467e.1661530037.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.37.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -73,14 +66,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/26/22 17:04, Pavel Begunkov wrote:
-> Lenght parameter of io_sg_from_iter() can be smaller than the iterator's
-> size, as it's with TCP, so when we set from->count at the end of the
-> function we truncate the iterator forcing TCP to return preliminary with
-> a short send. It affects zerocopy sends with large payload sizes and
-> leads to retries and possible request failures.
+Length parameter of io_sg_from_iter() can be smaller than the iterator's
+size, as it's with TCP, so when we set from->count at the end of the
+function we truncate the iterator forcing TCP to return preliminary with
+a short send. It affects zerocopy sends with large payload sizes and
+leads to retries and possible request failures.
 
-sent a wrong one, please ignore
+Fixes: 3ff1a0d395c00 ("io_uring: enable managed frags with register buffers")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 0af8a02df580..7a5468cc905e 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -956,7 +956,7 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
+ 	shinfo->nr_frags = frag;
+ 	from->bvec += bi.bi_idx;
+ 	from->nr_segs -= bi.bi_idx;
+-	from->count = bi.bi_size;
++	from->count -= copied;
+ 	from->iov_offset = bi.bi_bvec_done;
+ 
+ 	skb->data_len += copied;
 -- 
-Pavel Begunkov
+2.37.2
+

@@ -2,131 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2125A2B06
-	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 17:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A522C5A2BEF
+	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 18:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbiHZPWa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Aug 2022 11:22:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33720 "EHLO
+        id S231189AbiHZQFa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Aug 2022 12:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344576AbiHZPWI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 11:22:08 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61DAF7C527
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 08:15:53 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id w196so2320637oiw.10
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 08:15:53 -0700 (PDT)
+        with ESMTP id S1344005AbiHZQF2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 12:05:28 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFBC6D9D8
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:05:24 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id fy31so3588419ejc.6
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 09:05:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=ShbxCkrGW9DfdQVLrPQRJ9UfGCb7QUf2OMEdTXmy04Y=;
-        b=giojp+OWiqrhpRDZ5dvyQ2zLFVlgc8lXEoGBEtPyAoQ5+8Y/nSv3DJnXPxsJ7aBTMp
-         O3JxDHCEKrxf2S77NuVyQbe8DqfTAO02cgquSD+3qYaVTmCXQLhHpTotbKcRVulu0ckt
-         vtpg9TkGBEgJ75n3sC2Hulewzklsgt3OntGNdYVZKsDgP+R+xlqtJUtrdv6+SPaKxjsP
-         VvDFdGN3dN2vfFkZ7zF9wdc4EWKQYx7tsIEI20yaxTm573ydtNBlNf2sRaeqBG53/MSm
-         OInUk8eQfQ6F1KlaKXAt3Zln4yL9/QqTV27npCAtWHRbEhSiOKQJnhJG0BROjYyDYlB8
-         lFHw==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=sPrbgBALcZC4eiQZheA5oE729kyR7I7z9balqV63ge4=;
+        b=QjgJH3UGaHHz5FImipyKdqwsGBGtBS6qzy3oqDeNZYsrUU1VIHi9zQkMT46AMlPigw
+         RKPwsIwqaXSu+WMvcZX8ZxY9CDlo1g//mKJDD3Bk6afC2QZpRe1tmz3ut8sV+Eu98PfV
+         xofC9IXawOrY8rhiyL6QU0MmFePkaHKfH5GAxmdkovIjjuh+wGENbQHrgCVHtnjiIdX9
+         JZlXhaF5WXgOZJ6Hxqm2fQvnThyPZ+VsrYEtEmaeQ91sXCnx7EsrGlIjbSkvATNUCbeI
+         jvFy5GbGrzVZCbTwXGy0b/0Uc2ETbu/gNwJ+yI+zIaJdKXCR2g/HE9giFbI6rLMEB+E+
+         pBLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=ShbxCkrGW9DfdQVLrPQRJ9UfGCb7QUf2OMEdTXmy04Y=;
-        b=U7TiTo6utJPU2HUNL9amU+WpfcKrwYL2WTN0Qx+YzBWG+vT0UumsqbMWvS41uX0oI6
-         z6dh2QUqJiHQszDmSX2C6Ku48tnWtUfSyC2ZT93j2eXtbmq/d4fpAuejcGrBoqnunSHK
-         9xdkjilR8P/P8NoyOxS69E233JFCE0enmnevTHtXtCwj2fzyuAC9PdpJVdNYLE2SgEZe
-         6vPzlZqaL+968iptAgFqEuWkQBGkPDNJfSUFwaN/QseF8wxd8JIBRDgcbbZ8Qs2orxTo
-         0VNOQFHmUo5up/k4UhPcrMcyP1Ss0rzXi9nGd96U6BPcYdzQQn4chKj+lSXvw+yshDL1
-         86tA==
-X-Gm-Message-State: ACgBeo0ldnUu8cEbRIFELHwjlXi0Dth7B4KiM/zaOZRHFHVesZppnJL4
-        GM30YoK1KAJ7yaCMe71SHs/K7mnmViatK/gYRZ4gIIGrTQ==
-X-Google-Smtp-Source: AA6agR46baW+w3Hw2OG0Ht2oaQK0LzlK8MO6J5K2QCqjWRuCavQasLOKr3UF4b59yAtTQd8beIaZO4uuf+Ot3yBoPg4=
-X-Received: by 2002:aca:b7d5:0:b0:343:c478:91c6 with SMTP id
- h204-20020acab7d5000000b00343c47891c6mr1869336oif.136.1661526952167; Fri, 26
- Aug 2022 08:15:52 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=sPrbgBALcZC4eiQZheA5oE729kyR7I7z9balqV63ge4=;
+        b=G9DyfnrntMzCJbfO676mRZWkpyQkTFvCJ2tvBjN3qLwyLPD3TrXDjkfN3+COu+GEPM
+         giACkRqC+yO/Lok9/oTX3qc+AsXzzI0PM7/xEqaKllUpc9Ihx6GJhEnHieHS1TT5NA3V
+         r1z8J2bh2fjFXfR/tOj1NYzMLE0aSo0ZzoCOSa7HFn0jtmUSh5HoPZwwIOhLCtYucwSm
+         +avTB9gFXFQQQLnQf64L+Z5x96NGUrCCXLj/DYIwWyOxJAZmYapz6o3/dTWfmsjxdFYo
+         qW4i0xdNGogA6tWMfPu6qKuPFO47xsbSUHQgp8blv4H7xp33TXBXhKA18GMP6YOL48DP
+         RsEQ==
+X-Gm-Message-State: ACgBeo13IHglfXBEu1dl/R9eYzVEOM2mI6YFOop7RWZ7kX5WskN7hsUp
+        zsf9lewU2e8lIStuST5rVph05bjVVtQ=
+X-Google-Smtp-Source: AA6agR6SVGL+UhncJZ5BVqJnGSW68wAlIe7V1c6aKZhly/o/lTubyrXC2hLMVzJABPD+j0rht+yx8Q==
+X-Received: by 2002:a17:907:72d5:b0:73d:d6ce:5d3a with SMTP id du21-20020a17090772d500b0073dd6ce5d3amr4758200ejc.489.1661529922372;
+        Fri, 26 Aug 2022 09:05:22 -0700 (PDT)
+Received: from 127.0.0.1localhost (188.28.126.24.threembb.co.uk. [188.28.126.24])
+        by smtp.gmail.com with ESMTPSA id s6-20020a056402036600b00448139a26d0sm68518edw.0.2022.08.26.09.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Aug 2022 09:05:21 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-5.20] io_uring/net: fix overexcessive retries
+Date:   Fri, 26 Aug 2022 17:04:12 +0100
+Message-Id: <7ae9790cdf2f30cd381efda5b159ef95c88cf8eb.1661529830.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-References: <CGME20220719135821epcas5p1b071b0162cc3e1eb803ca687989f106d@epcas5p1.samsung.com>
- <20220719135234.14039-1-ankit.kumar@samsung.com> <116e04c2-3c45-48af-65f2-87fce6826683@schaufler-ca.com>
- <fc1e774f-8e7f-469c-df1a-e1ababbd5d64@kernel.dk> <CAHC9VhSBqWFBJrAdKVF5f3WR6gKwPq-+gtFR3=VkQ8M4iiNRwQ@mail.gmail.com>
- <83a121d5-a2ec-197b-708c-9ea2f9d0bd6a@schaufler-ca.com> <CAHC9VhQStPdfWwTKwqfz67hr3PErHmdu+s_3mAfATb0mu7MD2w@mail.gmail.com>
- <2e6b56cf-d04b-6537-62f4-a4cb0191172a@kernel.dk>
-In-Reply-To: <2e6b56cf-d04b-6537-62f4-a4cb0191172a@kernel.dk>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 26 Aug 2022 11:15:41 -0400
-Message-ID: <CAHC9VhQ2gVEuHe_mhkv7=Ju8co1L+aQ7=WAR_CpmJ7wS8=0+0g@mail.gmail.com>
-Subject: Re: [PATCH] Smack: Provide read control for io_uring_cmd
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Ankit Kumar <ankit.kumar@samsung.com>,
-        io-uring@vger.kernel.org, joshi.k@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 8:07 PM Jens Axboe <axboe@kernel.dk> wrote:
-> On 8/23/22 6:05 PM, Paul Moore wrote:
-> > On Tue, Aug 23, 2022 at 7:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>
-> >> Limit io_uring "cmd" options to files for which the caller has
-> >> Smack read access. There may be cases where the cmd option may
-> >> be closer to a write access than a read, but there is no way
-> >> to make that determination.
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> --
-> >>  security/smack/smack_lsm.c | 32 ++++++++++++++++++++++++++++++++
-> >>  1 file changed, 32 insertions(+)
-> >>
-> >> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> >> index 001831458fa2..bffccdc494cb 100644
-> >> --- a/security/smack/smack_lsm.c
-> >> +++ b/security/smack/smack_lsm.c
-> >
-> > ...
-> >
-> >> @@ -4732,6 +4733,36 @@ static int smack_uring_sqpoll(void)
-> >>         return -EPERM;
-> >>  }
-> >>
-> >> +/**
-> >> + * smack_uring_cmd - check on file operations for io_uring
-> >> + * @ioucmd: the command in question
-> >> + *
-> >> + * Make a best guess about whether a io_uring "command" should
-> >> + * be allowed. Use the same logic used for determining if the
-> >> + * file could be opened for read in the absence of better criteria.
-> >> + */
-> >> +static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
-> >> +{
-> >> +       struct file *file = ioucmd->file;
-> >> +       struct smk_audit_info ad;
-> >> +       struct task_smack *tsp;
-> >> +       struct inode *inode;
-> >> +       int rc;
-> >> +
-> >> +       if (!file)
-> >> +               return -EINVAL;
-> >
-> > Perhaps this is a better question for Jens, but ioucmd->file is always
-> > going to be valid when the LSM hook is called, yes?
->
-> file will always be valid for uring commands, as they are marked as
-> requiring a file. If no valid fd is given for it, it would've been
-> errored early on, before reaching f_op->uring_cmd().
+Lenght parameter of io_sg_from_iter() can be smaller than the iterator's
+size, as it's with TCP, so when we set from->count at the end of the
+function we truncate the iterator forcing TCP to return preliminary with
+a short send. It affects zerocopy sends with large payload sizes and
+leads to retries and possible request failures.
 
-Hey Casey, where do things stand with this patch?  To be specific, did
-you want me to include this in the lsm/stable-6.0 PR for Linus or are
-you planning to send it separately?  If you want me to send it up, are
-you planning another revision?
+Fixes: 3ff1a0d395c00 ("io_uring: enable managed frags with register buffers")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is no right or wrong answer here as far as I'm concerned, I'm
-just trying to make sure we are all on the same page.
-
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 0af8a02df580..629a02a148d4 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -956,7 +956,7 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
+ 	shinfo->nr_frags = frag;
+ 	from->bvec += bi.bi_idx;
+ 	from->nr_segs -= bi.bi_idx;
+-	from->count = bi.bi_size;
++	from->count -= bi.bi_size;
+ 	from->iov_offset = bi.bi_bvec_done;
+ 
+ 	skb->data_len += copied;
 -- 
-paul-moore.com
+2.37.2
+

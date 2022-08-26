@@ -2,73 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F23E5A2E03
-	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 20:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD5C5A2F52
+	for <lists+io-uring@lfdr.de>; Fri, 26 Aug 2022 20:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344914AbiHZSK3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 26 Aug 2022 14:10:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41680 "EHLO
+        id S1345305AbiHZSr0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 26 Aug 2022 14:47:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344930AbiHZSK1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 14:10:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2FF9F742
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 11:10:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 29DCCB8321A
-        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 18:10:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CA5D2C433D6;
-        Fri, 26 Aug 2022 18:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661537423;
-        bh=TcoojfsaZr+fM3dVJi/evZ8BwRbwliYMt1Z1V9vxCrs=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=NxQQtT9FY8rwwFUXS7Prwjg0NH2Rj1PzvOL/YUZOlTTQH3Z055fGFquyTVhdSSDqm
-         Ah8wOUh71FGkTReVw6fbwq4C6Uhn/JUGF01vi6hhM+h2W1vjTEqOP2YjDgcI9vFFaB
-         NbuJOQnvMkqhB7f0kPk+aiVr3nz1t7wQmy3dA30d6Ii3/Qjeg2BJCtvv+ZeR6EGPc4
-         nfW0Ur1cJ9qVVfdErsQCofTTpbWCeJagclMeS8EGpROuW5wZqBZl6gxoBM73TaULm4
-         y+xUPQsBf60/4s0vtrw7czfjItBGEz7y3YDrEFrB3YZKGlzy3/LmwiNbhLcYuqeBY+
-         qtAfQoiSWglwA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B7BF5E2A03B;
-        Fri, 26 Aug 2022 18:10:23 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.0-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <ac58b020-5e09-0bbb-0a63-423faf9bcf5d@kernel.dk>
-References: <ac58b020-5e09-0bbb-0a63-423faf9bcf5d@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ac58b020-5e09-0bbb-0a63-423faf9bcf5d@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git tags/io_uring-6.0-2022-08-26
-X-PR-Tracked-Commit-Id: 581711c46612c1fd7f98960f9ad53f04fdb89853
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0b0861eb91cbfdd04d6df5a031152914c1114c18
-Message-Id: <166153742374.10059.11371233170314541025.pr-tracker-bot@kernel.org>
-Date:   Fri, 26 Aug 2022 18:10:23 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S1345323AbiHZSqc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 26 Aug 2022 14:46:32 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BFFD25CA
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 11:42:55 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id x14-20020a17090a8a8e00b001fb61a71d99so8893449pjn.2
+        for <io-uring@vger.kernel.org>; Fri, 26 Aug 2022 11:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc;
+        bh=H9ry820hgt63SdHx75zNbprqxwxgnWLZzPKHEI7n6d0=;
+        b=4+X3fkwt9b+i94Em3iEu6AtW/UBX3vfOZCMd5jFpEA5qYsOqHEG4OlUFaELp79ia5B
+         Cec2tdjkwhBPqHhMUQPowU67L4Iq3V3TddTg+exSDSmyKwHxnP+nmrRZ/fkAMD6OI3Zw
+         YOptYkhQYiA/evXff76zA+AROHdLuyEJ6D49z3oJ6m86hJHLQLcGThpEQ3S8Yz/WjoIu
+         3HiBxwdF+BMTOLUXtQmoFk5jT/LbIwR1CZuUIcnkqNEsWBXjEw8Rqp7SNd3iap5NWs/B
+         U0poFe/cXKTzsx5ZUaXh6YBD/KbQwqlNWLB/2TaXMg52SLgrMZU2kbqI/hHRT7pERLv1
+         7ZWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc;
+        bh=H9ry820hgt63SdHx75zNbprqxwxgnWLZzPKHEI7n6d0=;
+        b=0OhZtwImEwnmHCPI/IpNp8/aB7k9wOoD/pRzZfDVG897n9pBSTah3rw4ISfRGFQtMx
+         s0f71MO2A7bUk0tAYSoQ0jCqdwQyP9505CfF+xSjZwTS110D4iQtAYHNMHDq+eh81a7H
+         c8iiwI1lT6XKEDKLJLw08Z5mmhCi9VMlJ/B1t7/XpEZItEN/tYARP10a60XwsEmxaelG
+         1WqTHNuidgjj9CcWOVLXfa3dfBgTlLuZYa3i+dkQ9WC84Mz5ZTmGdMk9s7PGFVOQ83yH
+         GH38OmZCxYqohh0EjvjP2vlx9EfaFrEDwStWbTy23P+5rcsHimcXdp/DzxbREt+ZHhEn
+         WaIA==
+X-Gm-Message-State: ACgBeo34FvEgIpao/m656wWhCcupckOc4vjCTY9Jqt9aW0vmr57b+tTB
+        k6iWsifipNWxsoGse0h8A4Jt90j21JQCUQ==
+X-Google-Smtp-Source: AA6agR6BPCBgxZA78z5vbqDAteQSCkL1jm0CYwRriWciq2ULTA8UrqSLv+wX0X1r+/qW///OPmseqw==
+X-Received: by 2002:a17:903:1250:b0:172:614b:5f01 with SMTP id u16-20020a170903125000b00172614b5f01mr4975355plh.103.1661539374875;
+        Fri, 26 Aug 2022 11:42:54 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id l16-20020a170902f69000b0016f196209c9sm1968500plg.123.2022.08.26.11.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Aug 2022 11:42:54 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <0bc0d5179c665b4ef5c328377c84c7a1f298467e.1661530037.git.asml.silence@gmail.com>
+References: <0bc0d5179c665b4ef5c328377c84c7a1f298467e.1661530037.git.asml.silence@gmail.com>
+Subject: Re: [RESEND for-5.20] io_uring/net: fix overexcessive retries
+Message-Id: <166153937413.3329.15080755599100758844.b4-ty@kernel.dk>
+Date:   Fri, 26 Aug 2022 12:42:54 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-65ba7
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 26 Aug 2022 10:36:35 -0600:
+On Fri, 26 Aug 2022 17:15:47 +0100, Pavel Begunkov wrote:
+> Length parameter of io_sg_from_iter() can be smaller than the iterator's
+> size, as it's with TCP, so when we set from->count at the end of the
+> function we truncate the iterator forcing TCP to return preliminary with
+> a short send. It affects zerocopy sends with large payload sizes and
+> leads to retries and possible request failures.
+> 
+> 
+> [...]
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-6.0-2022-08-26
+Applied, thanks!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0b0861eb91cbfdd04d6df5a031152914c1114c18
+[1/1] io_uring/net: fix overexcessive retries
+      (no commit info)
 
-Thank you!
-
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
+

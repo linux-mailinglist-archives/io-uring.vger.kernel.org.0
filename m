@@ -2,250 +2,364 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E915A4154
-	for <lists+io-uring@lfdr.de>; Mon, 29 Aug 2022 05:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE395A434C
+	for <lists+io-uring@lfdr.de>; Mon, 29 Aug 2022 08:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbiH2DI6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 28 Aug 2022 23:08:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41750 "EHLO
+        id S229711AbiH2GdE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Aug 2022 02:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbiH2DIi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 28 Aug 2022 23:08:38 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A62543E751;
-        Sun, 28 Aug 2022 20:08:29 -0700 (PDT)
-Received: from localhost.localdomain (unknown [182.2.68.216])
-        by gnuweeb.org (Postfix) with ESMTPSA id F2F4780B02;
-        Mon, 29 Aug 2022 03:08:01 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1661742484;
-        bh=Z7kyL4CPsonKNtyPyqtiWRmBHktsZUsNF8lJjZBwrNs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PDVfYCXmPmtSGtGj0BMvWCnefkUGPjdqFfqt8IYLlecg1BDuHlLsLeJzdM+u5OHsx
-         GYeiQX5bEN9FMJ3Itg0qV3x6BGEv3OvWaPhoIBDvcg8MCxVzohBWjKKrTgCh3K+kho
-         rStT1NdDVHxc6SwWvykGXxLXF8/DzovRkGCmf6Jxf42IY4UqK7XmIsY7ycHDMpDrbZ
-         zQuGTBbxc1eY26ffswl0xXXehVpn47RWZzaDhRyTgo64i4fgefF5lihBK+labrIPYW
-         Gv/HnHDG/c6OqC16lm9EktExfN7CqNkq6uj8NO1B2KHuL5Cho/v4OrK6SVAOL1gSeZ
-         fuaPoRb22dCmw==
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Caleb Sander <csander@purestorage.com>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>,
-        Kanna Scarlet <knscarlet@gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [RFC PATCH liburing v1 4/4] test/io_uring_{enter,setup,register}: Use the exported syscall functions
-Date:   Mon, 29 Aug 2022 10:07:39 +0700
-Message-Id: <20220829030521.3373516-5-ammar.faizi@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220829030521.3373516-1-ammar.faizi@intel.com>
-References: <20220829030521.3373516-1-ammar.faizi@intel.com>
+        with ESMTP id S229446AbiH2GdE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Aug 2022 02:33:04 -0400
+Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0B82DAB4
+        for <io-uring@vger.kernel.org>; Sun, 28 Aug 2022 23:33:02 -0700 (PDT)
+Message-ID: <370dd3d4-1f54-279c-3d6a-8c9f8473a80a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1661754780;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ilinHGb2aX72TP7T44l6a/PfbrrUgN3ojDLIu4adnlg=;
+        b=aqlPDuWnOlRmK9VGVhuXK/Qgkz2S9BHYz6EXSAmgN68GvWGy3fUgitYnqW6w+LATWpPz7C
+        cWrrv5QkTG40XeOiCqJS6DZ8OOhLL1f7hh5q3qtsm2kFHzpVRrD5iJqTI9ez8o/poUnz5K
+        AF3nOhD7/apIC8YqRH2sdxjF66OMLYU=
+Date:   Mon, 29 Aug 2022 14:32:49 +0800
 MIME-Version: 1.0
+Subject: Re: [PATCH for-next v3 4/7] io_uring: add IORING_SETUP_DEFER_TASKRUN
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     Kernel-team@fb.com
+References: <20220819121946.676065-1-dylany@fb.com>
+ <20220819121946.676065-5-dylany@fb.com>
+ <d3ad2512-ab06-1a56-6394-0dc4a62f0028@gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <d3ad2512-ab06-1a56-6394-0dc4a62f0028@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+On 8/22/22 19:34, Pavel Begunkov wrote:
+> On 8/19/22 13:19, Dylan Yudaken wrote:
+>> Allow deferring async tasks until the user calls io_uring_enter(2) with
+>> the IORING_ENTER_GETEVENTS flag. Enable this mode with a flag at
+>> io_uring_setup time. This functionality requires that the later
+>> io_uring_enter will be called from the same submission task, and 
+>> therefore
+>> restrict this flag to work only when IORING_SETUP_SINGLE_ISSUER is also
+>> set.
+> 
+> Looks ok, a couple of small comments below, but I don't see anything
+> blocking it.
+> 
+>> Being able to hand pick when tasks are run prevents the problem where
+>> there is current work to be done, however task work runs anyway.
+>>
+>> For example, a common workload would obtain a batch of CQEs, and process
+>> each one. Interrupting this to additional taskwork would add latency but
+>> not gain anything. If instead task work is deferred to just before more
+>> CQEs are obtained then no additional latency is added.
+>>
+>> The way this is implemented is by trying to keep task work local to a
+>> io_ring_ctx, rather than to the submission task. This is required, as the
+>> application will want to wake up only a single io_ring_ctx at a time to
+>> process work, and so the lists of work have to be kept separate.
+>>
+>> This has some other benefits like not having to check the task 
+>> continually
+>> in handle_tw_list (and potentially unlocking/locking those), and reducing
+>> locks in the submit & process completions path.
+>>
+>> There are networking cases where using this option can reduce request
+>> latency by 50%. For example a contrived example using [1] where the 
+>> client
+>> sends 2k data and receives the same data back while doing some system
+>> calls (to trigger task work) shows this reduction. The reason ends up
+>> being that if sending responses is delayed by processing task work, then
+>> the client side sits idle. Whereas reordering the sends first means that
+>> the client runs it's workload in parallel with the local task work.
+> 
+> Quite contrived, for some it may cut latency in half but for others
+> as easily increate it twofold. In any case, it's not a critique of the
+> feature as it's optional, but rather raises a question whether we
+> need to add some fairness / scheduling here.
+> 
+>> [1]:
+>> Using https://github.com/DylanZA/netbench/tree/defer_run
+>> Client:
+>> ./netbench  --client_only 1 --control_port 10000 --host <host> --tx 
+>> "epoll --threads 16 --per_thread 1 --size 2048 --resp 2048 --workload 
+>> 1000"
+>> Server:
+>> ./netbench  --server_only 1 --control_port 10000  --rx "io_uring 
+>> --defer_taskrun 0 --workload 100"   --rx "io_uring  --defer_taskrun 1 
+>> --workload 100"
+>>
+>> Signed-off-by: Dylan Yudaken <dylany@fb.com>
+>> ---
+> 
+>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>> index 53696dd90626..6572d2276750 100644
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+> [...]
+> 
+>> +int io_run_local_work(struct io_ring_ctx *ctx, bool locked)
+>> +{
+>> +    struct llist_node *node;
+>> +    struct llist_node fake;
+>> +    struct llist_node *current_final = NULL;
+>> +    int ret;
+>> +
+>> +    if (unlikely(ctx->submitter_task != current)) {
+>> +        if (locked)
+>> +            mutex_unlock(&ctx->uring_lock);
+>> +
+>> +        /* maybe this is before any submissions */
+>> +        if (!ctx->submitter_task)
+>> +            return 0;
+>> +
+>> +        return -EEXIST;
+>> +    }
+>> +
+>> +    if (!locked)
+>> +        locked = mutex_trylock(&ctx->uring_lock);
+>> +
+>> +    node = io_llist_xchg(&ctx->work_llist, &fake);
+>> +    ret = 0;
+>> +again:
+>> +    while (node != current_final) {
+>> +        struct llist_node *next = node->next;
+>> +        struct io_kiocb *req = container_of(node, struct io_kiocb,
+>> +                            io_task_work.node);
+>> +        prefetch(container_of(next, struct io_kiocb, 
+>> io_task_work.node));
+>> +        req->io_task_work.func(req, &locked);
+>> +        ret++;
+>> +        node = next;
+>> +    }
+>> +
+>> +    if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
+>> +        atomic_andnot(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
+>> +
+>> +    node = io_llist_cmpxchg(&ctx->work_llist, &fake, NULL);
+>> +    if (node != &fake) {
+>> +        current_final = &fake;
+>> +        node = io_llist_xchg(&ctx->work_llist, &fake);
+>> +        goto again;
+>> +    }
+>> +
+>> +    if (locked) {
+>> +        io_submit_flush_completions(ctx);
+>> +        mutex_unlock(&ctx->uring_lock);
+>> +    }
+>> +    return ret;
+>> +}
+> 
+> I was thinking about:
+> 
+> int io_run_local_work(struct io_ring_ctx *ctx, bool *locked)
+> {
+>      locked = try_lock();
+> }
+> 
+> bool locked = false;
+> io_run_local_work(ctx, *locked);
+> if (locked)
+>      unlock();
+> 
+> // or just as below when already holding it
+> bool locked = true;
+> io_run_local_work(ctx, *locked);
+> 
+> Which would replace
+> 
+> if (DEFER) {
+>      // we're assuming that it'll unlock
+>      io_run_local_work(true);
+> } else {
+>      unlock();
+> }
+> 
+> with
+> 
+> if (DEFER) {
+>      bool locked = true;
+>      io_run_local_work(&locked);
+> }
+> unlock();
+> 
+> But anyway, it can be mulled later.
+> 
+> 
+>> -int io_run_task_work_sig(void)
+>> +int io_run_task_work_sig(struct io_ring_ctx *ctx)
+>>   {
+>> -    if (io_run_task_work())
+>> +    if (io_run_task_work_ctx(ctx))
+>>           return 1;
+>>       if (task_sigpending(current))
+>>           return -EINTR;
+>> @@ -2196,7 +2294,7 @@ static inline int io_cqring_wait_schedule(struct 
+>> io_ring_ctx *ctx,
+>>       unsigned long check_cq;
+>>       /* make sure we run task_work before checking for signals */
+>> -    ret = io_run_task_work_sig();
+>> +    ret = io_run_task_work_sig(ctx);
+>>       if (ret || io_should_wake(iowq))
+>>           return ret;
+>> @@ -2230,7 +2328,7 @@ static int io_cqring_wait(struct io_ring_ctx 
+>> *ctx, int min_events,
+>>           io_cqring_overflow_flush(ctx);
+>>           if (io_cqring_events(ctx) >= min_events)
+>>               return 0;
+>> -        if (!io_run_task_work())
+>> +        if (!io_run_task_work_ctx(ctx))
+>>               break;
+>>       } while (1);
+>> @@ -2573,6 +2671,9 @@ static __cold void io_ring_exit_work(struct 
+>> work_struct *work)
+>>        * as nobody else will be looking for them.
+>>        */
+>>       do {
+>> +        if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+>> +            io_move_task_work_from_local(ctx);
+>> +
+>>           while (io_uring_try_cancel_requests(ctx, NULL, true))
+>>               cond_resched();
+>> @@ -2768,6 +2869,8 @@ static __cold bool 
+>> io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+>>           }
+>>       }
+>> +    if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+>> +        ret |= io_run_local_work(ctx, false) > 0;
+>>       ret |= io_cancel_defer_files(ctx, task, cancel_all);
+>>       mutex_lock(&ctx->uring_lock);
+>>       ret |= io_poll_remove_all(ctx, task, cancel_all);
+>> @@ -3057,10 +3160,20 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, 
+>> fd, u32, to_submit,
+>>           }
+>>           if ((flags & IORING_ENTER_GETEVENTS) && ctx->syscall_iopoll)
+>>               goto iopoll_locked;
+>> +        if ((flags & IORING_ENTER_GETEVENTS) &&
+>> +            (ctx->flags & IORING_SETUP_DEFER_TASKRUN)) {
+>> +            int ret2 = io_run_local_work(ctx, true);
+>> +
+>> +            if (unlikely(ret2 < 0))
+>> +                goto out;
+> 
+> It's an optimisation and we don't have to handle errors here,
+> let's ignore them and make it looking a bit better.
+> 
+>> +            goto getevents_ran_local;
+>> +        }
+>>           mutex_unlock(&ctx->uring_lock);
+>>       }
+>> +
+>>       if (flags & IORING_ENTER_GETEVENTS) {
+>>           int ret2;
+>> +
+>>           if (ctx->syscall_iopoll) {
+>>               /*
+>>                * We disallow the app entering submit/complete with
+>> @@ -3081,6 +3194,12 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, 
+>> fd, u32, to_submit,
+>>               const sigset_t __user *sig;
+>>               struct __kernel_timespec __user *ts;
+>> +            if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
+> 
+> I think it should be in io_cqring_wait(), which calls it anyway
+> in the beginning. Instead of
+> 
+>      do {
+>          io_cqring_overflow_flush(ctx);
+>          if (io_cqring_events(ctx) >= min_events)
+>              return 0;
+>          if (!io_run_task_work())
+>              break;
+>      } while (1);
+> 
+> Let's have
+> 
+>      do {
+>          ret = io_run_task_work_ctx();
+>          // handle ret
+>          io_cqring_overflow_flush(ctx);
+>          if (io_cqring_events(ctx) >= min_events)
+>              return 0;
+>      } while (1);
+> 
+>> +                ret2 = io_run_local_work(ctx, false);
+>> +                if (unlikely(ret2 < 0))
+>> +                    goto getevents_out;
+>> +            }
+>> +getevents_ran_local:
+>>               ret2 = io_get_ext_arg(flags, argp, &argsz, &ts, &sig);
+>>               if (likely(!ret2)) {
+>>                   min_complete = min(min_complete,
+>> @@ -3090,6 +3209,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, 
+>> fd, u32, to_submit,
+>>               }
+>>           }
+>> +getevents_out:
+>>           if (!ret) {
+>>               ret = ret2;
+>> @@ -3289,17 +3409,29 @@ static __cold int io_uring_create(unsigned 
+>> entries, struct io_uring_params *p,
+>>       if (ctx->flags & IORING_SETUP_SQPOLL) {
+>>           /* IPI related flags don't make sense with SQPOLL */
+>>           if (ctx->flags & (IORING_SETUP_COOP_TASKRUN |
+>> -                  IORING_SETUP_TASKRUN_FLAG))
+>> +                  IORING_SETUP_TASKRUN_FLAG |
+>> +                  IORING_SETUP_DEFER_TASKRUN))
+> 
+> Sounds like we should also fail if SQPOLL is set, especially with
+> the task check on the waiting side.
 
-These tests use the internal definition of __sys_io_uring* functions.
-A previous commit exported new functions that do the same thing with
-those __sys_io_uring* functions. Test the exported functions instead of
-the internal functions.
+sqpoll as a natural single issuer case, shouldn't we support this
+feature for it? And surely, in that case, don't do local task work check
+in cqring wait time and be careful in other places like
+io_uring_register
 
-No functional change is intended.
-
-Cc: Caleb Sander <csander@purestorage.com>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- test/io_uring_enter.c    | 10 +++++-----
- test/io_uring_register.c | 34 ++++++++++++++++------------------
- test/io_uring_setup.c    |  4 ++--
- 3 files changed, 23 insertions(+), 25 deletions(-)
-
-diff --git a/test/io_uring_enter.c b/test/io_uring_enter.c
-index 67cc8c5..ecd54ff 100644
---- a/test/io_uring_enter.c
-+++ b/test/io_uring_enter.c
-@@ -38,7 +38,7 @@ static int expect_fail(int fd, unsigned int to_submit,
- {
- 	int ret;
- 
--	ret = __sys_io_uring_enter(fd, to_submit, min_complete, flags, sig);
-+	ret = io_uring_enter(fd, to_submit, min_complete, flags, sig);
- 	if (ret >= 0) {
- 		fprintf(stderr, "expected %s, but call succeeded\n", strerror(-error));
- 		return 1;
-@@ -62,7 +62,7 @@ static int try_io_uring_enter(int fd, unsigned int to_submit,
- 		return expect_fail(fd, to_submit, min_complete, flags, sig,
- 				   expect);
- 
--	ret = __sys_io_uring_enter(fd, to_submit, min_complete, flags, sig);
-+	ret = io_uring_enter(fd, to_submit, min_complete, flags, sig);
- 	if (ret != expect) {
- 		fprintf(stderr, "Expected %d, got %d\n", expect, ret);
- 		return 1;
-@@ -211,8 +211,8 @@ int main(int argc, char **argv)
- 	/* fill the sq ring */
- 	sq_entries = ring.sq.ring_entries;
- 	submit_io(&ring, sq_entries);
--	ret = __sys_io_uring_enter(ring.ring_fd, 0, sq_entries,
--					IORING_ENTER_GETEVENTS, NULL);
-+	ret = io_uring_enter(ring.ring_fd, 0, sq_entries,
-+			     IORING_ENTER_GETEVENTS, NULL);
- 	if (ret < 0) {
- 		fprintf(stderr, "io_uring_enter: %s\n", strerror(-ret));
- 		status = 1;
-@@ -246,7 +246,7 @@ int main(int argc, char **argv)
- 	 */
- 	io_uring_smp_store_release(sq->ktail, ktail);
- 
--	ret = __sys_io_uring_enter(ring.ring_fd, 1, 0, 0, NULL);
-+	ret = io_uring_enter(ring.ring_fd, 1, 0, 0, NULL);
- 	/* now check to see if our sqe was dropped */
- 	if (*sq->kdropped == dropped) {
- 		fprintf(stderr, "dropped counter did not increase\n");
-diff --git a/test/io_uring_register.c b/test/io_uring_register.c
-index 4609354..dd4af7c 100644
---- a/test/io_uring_register.c
-+++ b/test/io_uring_register.c
-@@ -36,17 +36,17 @@ static int expect_fail(int fd, unsigned int opcode, void *arg,
- {
- 	int ret;
- 
--	ret = __sys_io_uring_register(fd, opcode, arg, nr_args);
-+	ret = io_uring_register(fd, opcode, arg, nr_args);
- 	if (ret >= 0) {
- 		int ret2 = 0;
- 
- 		fprintf(stderr, "expected %s, but call succeeded\n", strerror(error));
- 		if (opcode == IORING_REGISTER_BUFFERS) {
--			ret2 = __sys_io_uring_register(fd,
--					IORING_UNREGISTER_BUFFERS, 0, 0);
-+			ret2 = io_uring_register(fd, IORING_UNREGISTER_BUFFERS,
-+						 0, 0);
- 		} else if (opcode == IORING_REGISTER_FILES) {
--			ret2 = __sys_io_uring_register(fd,
--					IORING_UNREGISTER_FILES, 0, 0);
-+			ret2 = io_uring_register(fd, IORING_UNREGISTER_FILES, 0,
-+						 0);
- 		}
- 		if (ret2) {
- 			fprintf(stderr, "internal error: failed to unregister\n");
-@@ -66,7 +66,7 @@ static int new_io_uring(int entries, struct io_uring_params *p)
- {
- 	int fd;
- 
--	fd = __sys_io_uring_setup(entries, p);
-+	fd = io_uring_setup(entries, p);
- 	if (fd < 0) {
- 		perror("io_uring_setup");
- 		exit(1);
-@@ -186,15 +186,14 @@ static int test_max_fds(int uring_fd)
- 	 */
- 	nr_fds = UINT_MAX;
- 	while (nr_fds) {
--		ret = __sys_io_uring_register(uring_fd, IORING_REGISTER_FILES,
--						fd_as, nr_fds);
-+		ret = io_uring_register(uring_fd, IORING_REGISTER_FILES, fd_as,
-+					nr_fds);
- 		if (ret != 0) {
- 			nr_fds /= 2;
- 			continue;
- 		}
- 		status = 0;
--		ret = __sys_io_uring_register(uring_fd, IORING_UNREGISTER_FILES,
--						0, 0);
-+		ret = io_uring_register(uring_fd, IORING_UNREGISTER_FILES, 0, 0);
- 		if (ret < 0) {
- 			ret = errno;
- 			errno = ret;
-@@ -230,7 +229,7 @@ static int test_memlock_exceeded(int fd)
- 	iov.iov_base = buf;
- 
- 	while (iov.iov_len) {
--		ret = __sys_io_uring_register(fd, IORING_REGISTER_BUFFERS, &iov, 1);
-+		ret = io_uring_register(fd, IORING_REGISTER_BUFFERS, &iov, 1);
- 		if (ret < 0) {
- 			if (errno == ENOMEM) {
- 				iov.iov_len /= 2;
-@@ -244,8 +243,7 @@ static int test_memlock_exceeded(int fd)
- 			free(buf);
- 			return 1;
- 		}
--		ret = __sys_io_uring_register(fd, IORING_UNREGISTER_BUFFERS,
--						NULL, 0);
-+		ret = io_uring_register(fd, IORING_UNREGISTER_BUFFERS, NULL, 0);
- 		if (ret != 0) {
- 			fprintf(stderr, "error: unregister failed with %d\n", errno);
- 			free(buf);
-@@ -283,14 +281,14 @@ static int test_iovec_nr(int fd)
- 
- 	/* reduce to UIO_MAXIOV */
- 	nr = UIO_MAXIOV;
--	ret = __sys_io_uring_register(fd, IORING_REGISTER_BUFFERS, iovs, nr);
-+	ret = io_uring_register(fd, IORING_REGISTER_BUFFERS, iovs, nr);
- 	if (ret && (errno == ENOMEM || errno == EPERM) && geteuid()) {
- 		fprintf(stderr, "can't register large iovec for regular users, skip\n");
- 	} else if (ret != 0) {
- 		fprintf(stderr, "expected success, got %d\n", errno);
- 		status = 1;
- 	} else {
--		__sys_io_uring_register(fd, IORING_UNREGISTER_BUFFERS, 0, 0);
-+		io_uring_register(fd, IORING_UNREGISTER_BUFFERS, 0, 0);
- 	}
- 	free(buf);
- 	free(iovs);
-@@ -344,7 +342,7 @@ static int test_iovec_size(int fd)
- 		 */
- 		iov.iov_base = buf;
- 		iov.iov_len = 2*1024*1024;
--		ret = __sys_io_uring_register(fd, IORING_REGISTER_BUFFERS, &iov, 1);
-+		ret = io_uring_register(fd, IORING_REGISTER_BUFFERS, &iov, 1);
- 		if (ret < 0) {
- 			if (ret == -ENOMEM)
- 				printf("Unable to test registering of a huge "
-@@ -356,8 +354,8 @@ static int test_iovec_size(int fd)
- 				status = 1;
- 			}
- 		} else {
--			ret = __sys_io_uring_register(fd,
--					IORING_UNREGISTER_BUFFERS, 0, 0);
-+			ret = io_uring_register(fd, IORING_UNREGISTER_BUFFERS,
-+						0, 0);
- 			if (ret < 0) {
- 				fprintf(stderr, "io_uring_unregister: %s\n",
- 					strerror(-ret));
-diff --git a/test/io_uring_setup.c b/test/io_uring_setup.c
-index 67d5f4f..d945421 100644
---- a/test/io_uring_setup.c
-+++ b/test/io_uring_setup.c
-@@ -102,7 +102,7 @@ try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
- {
- 	int ret;
- 
--	ret = __sys_io_uring_setup(entries, p);
-+	ret = io_uring_setup(entries, p);
- 	if (ret != expect) {
- 		fprintf(stderr, "expected %d, got %d\n", expect, ret);
- 		/* if we got a valid uring, close it */
-@@ -164,7 +164,7 @@ main(int argc, char **argv)
- 
- 	/* read/write on io_uring_fd */
- 	memset(&p, 0, sizeof(p));
--	fd = __sys_io_uring_setup(1, &p);
-+	fd = io_uring_setup(1, &p);
- 	if (fd < 0) {
- 		fprintf(stderr, "io_uring_setup failed with %d, expected success\n",
- 		       -fd);
--- 
-Ammar Faizi
+> 
+>>               goto err;
+>>           ctx->notify_method = TWA_SIGNAL_NO_IPI;
+>>       } else if (ctx->flags & IORING_SETUP_COOP_TASKRUN) {
+>>           ctx->notify_method = TWA_SIGNAL_NO_IPI;
+> [...]
+>>       mutex_lock(&ctx->uring_lock);
+>>       ret = __io_uring_register(ctx, opcode, arg, nr_args);
+>> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+>> index 2f73f83af960..a9fb115234af 100644
+>> --- a/io_uring/io_uring.h
+>> +++ b/io_uring/io_uring.h
+>> @@ -26,7 +26,8 @@ enum {
+> [...]
+>> +static inline int io_run_task_work_unlock_ctx(struct io_ring_ctx *ctx)
+>> +{
+>> +    int ret;
+>> +
+>> +    if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
+>> +        ret = io_run_local_work(ctx, true);
+>> +    } else {
+>> +        mutex_unlock(&ctx->uring_lock);
+>> +        ret = (int)io_run_task_work();
+> 
+> Why do we need a cast? let's keep the return type same
+> 
+> 
 

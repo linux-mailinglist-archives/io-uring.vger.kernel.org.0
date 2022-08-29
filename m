@@ -2,52 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25EB65A54CE
-	for <lists+io-uring@lfdr.de>; Mon, 29 Aug 2022 21:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B1F5A5511
+	for <lists+io-uring@lfdr.de>; Mon, 29 Aug 2022 21:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229446AbiH2Txb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Aug 2022 15:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
+        id S229749AbiH2T5H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Aug 2022 15:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiH2Txa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Aug 2022 15:53:30 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CE657EFC1
-        for <io-uring@vger.kernel.org>; Mon, 29 Aug 2022 12:53:28 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id b44so11493299edf.9
-        for <io-uring@vger.kernel.org>; Mon, 29 Aug 2022 12:53:28 -0700 (PDT)
+        with ESMTP id S230083AbiH2T4l (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Aug 2022 15:56:41 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A87C8FD48
+        for <io-uring@vger.kernel.org>; Mon, 29 Aug 2022 12:56:39 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id og21so17872515ejc.2
+        for <io-uring@vger.kernel.org>; Mon, 29 Aug 2022 12:56:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=purestorage.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=wGECd8qA2RkmX9DUfs/SFtBdSKgbGgulG6ur/Hs/iUk=;
-        b=Zmpu1nebw8q0dcKAYgbYOGB98Ujq44adRJiI6eia3u4qwyHqZ+caQlJeRFEwp3dZ7S
-         yQEzNM541f62JJcVPwwEVUNnf/U7RSR+NcKSKLCMmk9T2UHXjfXucJXdQUoOHbca1QGK
-         DRZ78+wJvCMsu2pK8fBky4HLC7BT2NMb1eh6Q=
+        bh=OZtQcxDcF+QJnwZreYS90MKUZehnViyLLZnnAfp7iKs=;
+        b=Jo+jRyct0JadtTzkSOhUx7jwb4EYB6forxbsGELDWVNkBd1q9xLcdkmTUn+j5y0lzz
+         Y7vKb84KPkahFmZ/EETT5udumcw2fZN5sQuV9h3P0HESObG58G0PVVZtQjw+HuDlm8/R
+         hbSpZxa/BrEAuzOF/uTE+3x4PBDG6PP0gDdIo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=wGECd8qA2RkmX9DUfs/SFtBdSKgbGgulG6ur/Hs/iUk=;
-        b=iFql7jzvRtTAqzx9GSmIVuYSIh0J7qjGh+YNrf5ifxJ7EQ+H6itRpkfSmNLdzUo+56
-         YY0c7hNDVtFt3bN4kqfDlPG5+rsr2E5cKXseS9Zu8HYB+my6siGZzCOjuCmmIwFygHaq
-         lYL72bjnU8D+qpthhfyefdjMAz4oSdwVPjlyUipY0/cXIAM+436bTMu97IfTDh33V8O0
-         r98oJgDw6AmGLykwWL+hyNoH1aaJnEr8zLr770WttrXj2dsND09w4er2Sihp9KXGafa3
-         C6Ev4Cpyl1urT784MXkfV85txW/JyWNcdyQaPDhpSO5d/sPniA0GOdE5YiBlm1Oom644
-         +0+A==
-X-Gm-Message-State: ACgBeo2gWKLp/YwQs1bDHqKPbK9ZEZwcZ6Jpluw5vD1AmSQCF9Mv14kx
-        bwiYZkv28opdQQSL0XxpuY7fKdK1wKxQlevLthINjw==
-X-Google-Smtp-Source: AA6agR4IFnG81zntzVELOxJweXuAGAArzxxUdF1u/q34z6MCI8p1T90p/XlskewwDa5Q5BLxkcQsi40bL0xY7I29X5s=
-X-Received: by 2002:a05:6402:2b91:b0:445:dfdb:778b with SMTP id
- fj17-20020a0564022b9100b00445dfdb778bmr18125839edb.367.1661802807026; Mon, 29
- Aug 2022 12:53:27 -0700 (PDT)
+        bh=OZtQcxDcF+QJnwZreYS90MKUZehnViyLLZnnAfp7iKs=;
+        b=kLutD3goeeVO58lh+6zTIwMxS51OvEEz0/JQ/piKt8JsfN3Qu63kDGlzQImkMgHNjZ
+         H7r6ndhyqTJ0dX1rHRf+CB65R0Xmkad5VGBo1Dc7LD7Xw/L1rp0ci58uz7DtGw1zjD4+
+         OYP6eCPI0Mcm+tkr7J8B2aIzemUC8ZWoJfmL7fISVyNtsfY6V9TzezycumpeKjqsXJri
+         ci/Qrzjv4UhotgznAPmAeiGxBiWa2hyzbAlnJGU+0660FCIIsCXXzIaN/Yb+aWK4jWh4
+         OMZ+hezKAbHkIke5PCxFvXGhHDl6rCQquGA7xUfEeT0Akz6Xrlp6ZSu3ME7YAdExXadZ
+         +jbA==
+X-Gm-Message-State: ACgBeo1vlXtQ0Opsfd65xJl+pQh6lCdNuDlnJ0oJbQGTYudy5fOUzoK3
+        dtG1/ISevOePDu1jernsjftjZDMeftUeJcD3R73wBg==
+X-Google-Smtp-Source: AA6agR7IIJCfR7Bw1y9Skcq/ysLsnHHHysKPUZQNxA+37xB2N1tL1nMt7iA++i2bDU2nDJNpzArXYHWJeu2COCEvdws=
+X-Received: by 2002:a17:906:7315:b0:741:5b1b:920d with SMTP id
+ di21-20020a170906731500b007415b1b920dmr6989272ejc.484.1661802997838; Mon, 29
+ Aug 2022 12:56:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220829030521.3373516-1-ammar.faizi@intel.com> <20220829030521.3373516-2-ammar.faizi@intel.com>
-In-Reply-To: <20220829030521.3373516-2-ammar.faizi@intel.com>
+References: <20220829030521.3373516-1-ammar.faizi@intel.com> <20220829030521.3373516-4-ammar.faizi@intel.com>
+In-Reply-To: <20220829030521.3373516-4-ammar.faizi@intel.com>
 From:   Caleb Sander <csander@purestorage.com>
-Date:   Mon, 29 Aug 2022 12:53:16 -0700
-Message-ID: <CADUfDZr0mPn_REb24aEPa477T+CYeoV5hcbURqX9kazCUqRp4A@mail.gmail.com>
-Subject: Re: [RFC PATCH liburing v1 1/4] syscall: Add io_uring syscall functions
+Date:   Mon, 29 Aug 2022 12:56:27 -0700
+Message-ID: <CADUfDZrEANpxTZ4y0F7sY2XW-9Arnix=M_xt132eBLs6NFwFCQ@mail.gmail.com>
+Subject: Re: [RFC PATCH liburing v1 3/4] man: Alias `io_uring_enter2()` to `io_uring_enter()`
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, Muhammad Rizki <kiizuha@gnuweeb.org>,
         Kanna Scarlet <knscarlet@gnuweeb.org>,
@@ -65,22 +65,36 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Aug 28, 2022 at 8:07 PM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
+There is no reference to "io_uring_enter2()" in this man page, only to
+the updated signature of "io_uring_enter()". Can we make it clearer
+that this is "io_uring_enter2()"? I would suggest adding the signature
+for io_uring_enter2() to the top of the man page and renaming
+"io_uring_enter()" to "io_uring_enter2()" in the "Since kernel 5.11"
+section.
+
+On Sun, Aug 28, 2022 at 8:08 PM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
 >
-> --- a/src/include/liburing.h
-> +++ b/src/include/liburing.h
-> @@ -202,6 +202,14 @@ int io_uring_register_file_alloc_range(struct io_uring *ring,
->  int io_uring_register_notifications(struct io_uring *ring, unsigned nr,
->                                     struct io_uring_notification_slot *slots);
->  int io_uring_unregister_notifications(struct io_uring *ring);
-> +int io_uring_enter(unsigned int fd, unsigned int to_submit,
-> +                  unsigned int min_complete, unsigned int flags,
-> +                  sigset_t *sig);
-> +int io_uring_enter2(int fd, unsigned to_submit, unsigned min_complete,
-> +                   unsigned flags, sigset_t *sig, int sz);
-
-Also, from the io_uring_enter() man page, it appears that "void *"
-would be a more appropriate type for the pointer argument in
-io_uring_enter2(). And "size_t" for sz.
-
---Caleb
+> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+>
+> We have a new function io_uring_enter2(), add the man page entry for it
+> by aliasing it to io_uring_enter(). This aliased man entry has already
+> explained it.
+>
+> Cc: Caleb Sander <csander@purestorage.com>
+> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> ---
+>  man/io_uring_enter2.2 | 1 +
+>  1 file changed, 1 insertion(+)
+>  create mode 120000 man/io_uring_enter2.2
+>
+> diff --git a/man/io_uring_enter2.2 b/man/io_uring_enter2.2
+> new file mode 120000
+> index 0000000..5566c09
+> --- /dev/null
+> +++ b/man/io_uring_enter2.2
+> @@ -0,0 +1 @@
+> +io_uring_enter.2
+> \ No newline at end of file
+> --
+> Ammar Faizi
+>

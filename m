@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E0F5A7016
-	for <lists+io-uring@lfdr.de>; Tue, 30 Aug 2022 23:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C889D5A7012
+	for <lists+io-uring@lfdr.de>; Tue, 30 Aug 2022 23:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231933AbiH3Vxp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Aug 2022 17:53:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55732 "EHLO
+        id S231959AbiH3Vxq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Aug 2022 17:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231941AbiH3Vwv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 17:52:51 -0400
+        with ESMTP id S232153AbiH3VxI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 17:53:08 -0400
 Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C517295E4B
-        for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 14:50:31 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id x27-20020a25ac9b000000b0069140cfbbd9so714276ybi.8
-        for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 14:50:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1274590C54
+        for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 14:50:34 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id i194-20020a253bcb000000b00676d86fc5d7so709737yba.9
+        for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 14:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc;
-        bh=QqkrsGdR9RIQpztjH+HKE2iaQK76d4alLlYGvP5mtuk=;
-        b=EmELHff//JPLhVllZqIpmS0Yi/n4CYn1PpFo5D7aAgY/mGxsMtS6XD/+ioRS2qZY8C
-         no10ngIVmFAT46GJYUJjGDNqdY92DoHLQ9QbhAJVsBRmHbrR9QbwqsDn7oDd7mF57S+J
-         MK/ad/Fah7kdPasA545qk8VUbJu+zxO3x46X50P0T+NbpE7jyYjWPsZQ5vgUXGysvUe/
-         W1W5uPUmm7KhCwcWdijNNG0C+OJlqBBAZwgyEyHf6FDcQet7W8l2Nexpz36zNi+sAkKv
-         CMElZPZokU2RO03oq7FRoEcd/C8olIjRx4EsriXjGCc7C59ySMMLL8R3CCw5o8VWV3mF
-         SxkQ==
+        bh=q8clZUHCVXNR9yzPtPwGAp/8c18i/nqvvNYb9V5EY+0=;
+        b=nwraOOA8rbsDfrvp5gBz8rYLe0NDJnSuxfKXWTc3i5fQmEeQNcPETe8KaY9Mt9/+1r
+         ov+Vf6KkAdui0Rmw1+5xSKYNrSBv2kWObfOZUmmiPaKz9kQgQUwPGyNfu/DYb4bPK42K
+         36D96qfHlnHXTqqxaW28I0UFsAs+LSQcoibyPA3rdTyOgd8YqbSgEUdft4zOlN2gaNbw
+         dVh3tFK6UzGRc+MjeMOQD3ATSE//iPHaMa+xktBjpyqEQSekSHvIyA0BP3Rq7kUAJkb0
+         tRcC/6q0Z5Rvm1vf/73MAHgozRrLOYJlaS49+Ebjg2YexCVtD/Vs4zwcF2pG9WHANRAT
+         ZYUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc;
-        bh=QqkrsGdR9RIQpztjH+HKE2iaQK76d4alLlYGvP5mtuk=;
-        b=12lBXjolFivAGO0mdePaWgxLk1SSrfkbaFzFOjOU6qj+sqHtwx7gtrbXd9KJF565kg
-         MOsBGDLj9Y4zZZBuzkaN2bO8v7cANWI2qC2d3HxiU+s1oHKujxgTZxfrtou1/OG1tZru
-         ekzXC0R7YA1n20QVkcb1E2z81xHSDd6hxmPHPEOQM0PMx+uaftPZXQQf0UBsIdVBxhlo
-         Pxn2c4tgKJH04tiSOtwnBheTxn15wtN9E1lQ0MEXPzg5OWon/rcfLSCL83fekHkSvw7G
-         oKLCtbb5I+LRZebSYGJ8FdH/VSlvUBr4KTWEBNfTkrjBlanFk1yLKB8RGzz5Xec8SsPA
-         703Q==
-X-Gm-Message-State: ACgBeo3QYK9fN8O/82WPIq0GLPvQG1b8N56itFKsUGQ+2PWvp0WRfZfY
-        Q7tr+tpnsmxQ1PzM50TfvQ9xlnbMzy4=
-X-Google-Smtp-Source: AA6agR5ND+Bk6d/UBSONHhQ297Nqdm//CwhSmMh2PEZtOl62aMkc4xfTQyNu/uBDVWhdtd26Z8NBy2Q9NdY=
+        bh=q8clZUHCVXNR9yzPtPwGAp/8c18i/nqvvNYb9V5EY+0=;
+        b=FX6Pf1RGf4iOT/+k4eMQ1GTNDnw9V68Hs37D/Exw01GuorIci3EXe/2fHwPLC74Qi8
+         M+2iZcKEeVCPQLZXc0/heyVWuXD1XpKye0+6jP8BXFSjMtpE22SJeOVz8AGxLVsctsY+
+         LDETQHdqRf4xVZafE6zfnFu6pmGtyXWJaDrKQyA/R2vZ5wj1FYJ8VeNnb40wtlrJ8+2N
+         9j+i9kS9KCiZTThRtKg7taKVG07LdbkxPUnqR6M8cirLhjjOXHkSevKx1l/SCahFd0qA
+         tXEXC4f+h1P44GFnAUbSxr/X9toX1i4wrez3WWkS4ocsSTmrHPQ2yV6m6gp2Cl3eNFu2
+         UOtA==
+X-Gm-Message-State: ACgBeo1PdKx+FZmmQzg4TvfJ9FWgndAW0Ux+9V4Mu5oo/MmEU57rF8wy
+        nO9lE54/iG3u0fsg4zURBycGvLG635k=
+X-Google-Smtp-Source: AA6agR6QQvnvy8mDyUDzzIm8p3bCu8QCjthbfoOD2oTtJsYiGZpiHSGB1TzI0H74pXNHM3rxRxKb4sF+hq0=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:200:a005:55b3:6c26:b3e4])
- (user=surenb job=sendgmr) by 2002:a25:4246:0:b0:699:186f:76ca with SMTP id
- p67-20020a254246000000b00699186f76camr13282039yba.272.1661896229901; Tue, 30
- Aug 2022 14:50:29 -0700 (PDT)
-Date:   Tue, 30 Aug 2022 14:49:14 -0700
+ (user=surenb job=sendgmr) by 2002:a5b:2ce:0:b0:67a:6054:9eb0 with SMTP id
+ h14-20020a5b02ce000000b0067a60549eb0mr13092972ybp.15.1661896232608; Tue, 30
+ Aug 2022 14:50:32 -0700 (PDT)
+Date:   Tue, 30 Aug 2022 14:49:15 -0700
 In-Reply-To: <20220830214919.53220-1-surenb@google.com>
 Mime-Version: 1.0
 References: <20220830214919.53220-1-surenb@google.com>
 X-Mailer: git-send-email 2.37.2.672.g94769d06f0-goog
-Message-ID: <20220830214919.53220-26-surenb@google.com>
-Subject: [RFC PATCH 25/30] lib/time_stats: New library for statistics on events
+Message-ID: <20220830214919.53220-27-surenb@google.com>
+Subject: [RFC PATCH 26/30] bcache: Convert to lib/time_stats
 From:   Suren Baghdasaryan <surenb@google.com>
 To:     akpm@linux-foundation.org
 Cc:     kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
@@ -72,12 +72,13 @@ Cc:     kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
         iommu@lists.linux.dev, kasan-dev@googlegroups.com,
         io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Coly Li <colyli@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -86,345 +87,383 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Kent Overstreet <kent.overstreet@linux.dev>
 
-This adds a small new library for tracking statistics on events that
-have a duration, i.e. a start and end time.
+This patch converts bcache to the new generic time_stats code
+lib/time_stats.c. The new code is from bcachefs, and has some changes
+from the version in bcache:
 
- - number of events
- - rate/frequency
- - average duration
- - max duration
- - duration quantiles
+ - we now use ktime_get_ns(), not local_clock(). When the code was
+   originally written multi processor systems that lacked synchronized
+   TSCs were still common, and so local_clock() was much cheaper than
+   sched_clock() (though not necessarily fully accurate, due to TSC
+   drift). ktime_get_ns() should be cheap enough on all common hardware
+   now, and more standard/correct.
 
-This code comes from bcachefs, and originally bcache: the next patch
-will be converting bcache to use this version, and a subsequent patch
-will be using code_tagging to instrument all wait_event() calls in the
-kernel.
+ - time_stats are now exported in a single file in sysfs, which means we
+   can improve the statistics we keep track of without changing all
+   users. This also means we don't have to manually specify which units
+   (ms, us, ns) a given time_stats should be printed in; that's handled
+   dynamically.
+
+ - There's a lazily-allocated percpu buffer, which now needs to be freed
+   with time_stats_exit().
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Coly Li <colyli@suse.de>
 ---
- include/linux/time_stats.h |  44 +++++++
- lib/Kconfig                |   3 +
- lib/Makefile               |   1 +
- lib/time_stats.c           | 236 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 284 insertions(+)
- create mode 100644 include/linux/time_stats.h
- create mode 100644 lib/time_stats.c
+ drivers/md/bcache/Kconfig  |  1 +
+ drivers/md/bcache/bcache.h |  1 +
+ drivers/md/bcache/bset.c   |  8 +++---
+ drivers/md/bcache/bset.h   |  1 +
+ drivers/md/bcache/btree.c  | 12 ++++----
+ drivers/md/bcache/super.c  |  3 ++
+ drivers/md/bcache/sysfs.c  | 43 ++++++++++++++++++++--------
+ drivers/md/bcache/util.c   | 30 --------------------
+ drivers/md/bcache/util.h   | 57 --------------------------------------
+ 9 files changed, 47 insertions(+), 109 deletions(-)
 
-diff --git a/include/linux/time_stats.h b/include/linux/time_stats.h
-new file mode 100644
-index 000000000000..7ae929e6f836
---- /dev/null
-+++ b/include/linux/time_stats.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _LINUX_TIMESTATS_H
-+#define _LINUX_TIMESTATS_H
-+
-+#include <linux/spinlock_types.h>
-+#include <linux/types.h>
-+
-+#define NR_QUANTILES	15
-+
-+struct quantiles {
-+	struct quantile_entry {
-+		u64	m;
-+		u64	step;
-+	}		entries[NR_QUANTILES];
-+};
-+
-+struct time_stat_buffer {
-+	unsigned int	nr;
-+	struct time_stat_buffer_entry {
-+		u64	start;
-+		u64	end;
-+	}		entries[32];
-+};
-+
-+struct time_stats {
-+	spinlock_t	lock;
-+	u64		count;
-+	/* all fields are in nanoseconds */
-+	u64		average_duration;
-+	u64		average_frequency;
-+	u64		max_duration;
-+	u64		last_event;
-+	struct quantiles quantiles;
-+
-+	struct time_stat_buffer __percpu *buffer;
-+};
-+
-+struct seq_buf;
-+void time_stats_update(struct time_stats *stats, u64 start);
-+void time_stats_to_text(struct seq_buf *out, struct time_stats *stats);
-+void time_stats_exit(struct time_stats *stats);
-+
-+#endif /* _LINUX_TIMESTATS_H */
-diff --git a/lib/Kconfig b/lib/Kconfig
-index fc6dbc425728..884fd9f2f06d 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -744,3 +744,6 @@ config ASN1_ENCODER
- 
- config POLYNOMIAL
-        tristate
-+
-+config TIME_STATS
-+	bool
-diff --git a/lib/Makefile b/lib/Makefile
-index 489ea000c528..e54392011f5e 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -232,6 +232,7 @@ obj-$(CONFIG_ALLOC_TAGGING) += alloc_tag.o
- obj-$(CONFIG_PAGE_ALLOC_TAGGING) += pgalloc_tag.o
- 
- obj-$(CONFIG_CODETAG_FAULT_INJECTION) += dynamic_fault.o
-+obj-$(CONFIG_TIME_STATS) += time_stats.o
- 
- lib-$(CONFIG_GENERIC_BUG) += bug.o
- 
-diff --git a/lib/time_stats.c b/lib/time_stats.c
-new file mode 100644
-index 000000000000..30362364fdd2
---- /dev/null
-+++ b/lib/time_stats.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/gfp.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/ktime.h>
-+#include <linux/percpu.h>
-+#include <linux/seq_buf.h>
-+#include <linux/spinlock.h>
+diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
+index 529c9d04e9a4..8d165052e508 100644
+--- a/drivers/md/bcache/Kconfig
++++ b/drivers/md/bcache/Kconfig
+@@ -4,6 +4,7 @@ config BCACHE
+ 	tristate "Block device as cache"
+ 	select BLOCK_HOLDER_DEPRECATED if SYSFS
+ 	select CRC64
++	select TIME_STATS
+ 	help
+ 	Allows a block device to be used as cache for other devices; uses
+ 	a btree for indexing and the layout is optimized for SSDs.
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 2acda9cea0f9..5100010a3897 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -185,6 +185,7 @@
+ #include <linux/rbtree.h>
+ #include <linux/rwsem.h>
+ #include <linux/refcount.h>
 +#include <linux/time_stats.h>
-+#include <linux/timekeeping.h>
+ #include <linux/types.h>
+ #include <linux/workqueue.h>
+ #include <linux/kthread.h>
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index 94d38e8a59b3..727e9b7aead4 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -1251,7 +1251,7 @@ static void __btree_sort(struct btree_keys *b, struct btree_iter *iter,
+ 		order = state->page_order;
+ 	}
+ 
+-	start_time = local_clock();
++	start_time = ktime_get_ns();
+ 
+ 	btree_mergesort(b, out, iter, fixup, false);
+ 	b->nsets = start;
+@@ -1286,7 +1286,7 @@ static void __btree_sort(struct btree_keys *b, struct btree_iter *iter,
+ 	bch_bset_build_written_tree(b);
+ 
+ 	if (!start)
+-		bch_time_stats_update(&state->time, start_time);
++		time_stats_update(&state->time, start_time);
+ }
+ 
+ void bch_btree_sort_partial(struct btree_keys *b, unsigned int start,
+@@ -1322,14 +1322,14 @@ void bch_btree_sort_and_fix_extents(struct btree_keys *b,
+ void bch_btree_sort_into(struct btree_keys *b, struct btree_keys *new,
+ 			 struct bset_sort_state *state)
+ {
+-	uint64_t start_time = local_clock();
++	uint64_t start_time = ktime_get_ns();
+ 	struct btree_iter iter;
+ 
+ 	bch_btree_iter_init(b, &iter, NULL);
+ 
+ 	btree_mergesort(b, new->set->data, &iter, false, true);
+ 
+-	bch_time_stats_update(&state->time, start_time);
++	time_stats_update(&state->time, start_time);
+ 
+ 	new->set->size = 0; // XXX: why?
+ }
+diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
+index d795c84246b0..13e524ad7783 100644
+--- a/drivers/md/bcache/bset.h
++++ b/drivers/md/bcache/bset.h
+@@ -3,6 +3,7 @@
+ #define _BCACHE_BSET_H
+ 
+ #include <linux/kernel.h>
++#include <linux/time_stats.h>
+ #include <linux/types.h>
+ 
+ #include "bcache_ondisk.h"
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 147c493a989a..abf543bc7551 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -242,7 +242,7 @@ static void btree_node_read_endio(struct bio *bio)
+ 
+ static void bch_btree_node_read(struct btree *b)
+ {
+-	uint64_t start_time = local_clock();
++	uint64_t start_time = ktime_get_ns();
+ 	struct closure cl;
+ 	struct bio *bio;
+ 
+@@ -270,7 +270,7 @@ static void bch_btree_node_read(struct btree *b)
+ 		goto err;
+ 
+ 	bch_btree_node_read_done(b);
+-	bch_time_stats_update(&b->c->btree_read_time, start_time);
++	time_stats_update(&b->c->btree_read_time, start_time);
+ 
+ 	return;
+ err:
+@@ -1789,7 +1789,7 @@ static void bch_btree_gc(struct cache_set *c)
+ 	struct gc_stat stats;
+ 	struct closure writes;
+ 	struct btree_op op;
+-	uint64_t start_time = local_clock();
++	uint64_t start_time = ktime_get_ns();
+ 
+ 	trace_bcache_gc_start(c);
+ 
+@@ -1815,7 +1815,7 @@ static void bch_btree_gc(struct cache_set *c)
+ 	bch_btree_gc_finish(c);
+ 	wake_up_allocators(c);
+ 
+-	bch_time_stats_update(&c->btree_gc_time, start_time);
++	time_stats_update(&c->btree_gc_time, start_time);
+ 
+ 	stats.key_bytes *= sizeof(uint64_t);
+ 	stats.data	<<= 9;
+@@ -2191,7 +2191,7 @@ static int btree_split(struct btree *b, struct btree_op *op,
+ {
+ 	bool split;
+ 	struct btree *n1, *n2 = NULL, *n3 = NULL;
+-	uint64_t start_time = local_clock();
++	uint64_t start_time = ktime_get_ns();
+ 	struct closure cl;
+ 	struct keylist parent_keys;
+ 
+@@ -2297,7 +2297,7 @@ static int btree_split(struct btree *b, struct btree_op *op,
+ 	btree_node_free(b);
+ 	rw_unlock(true, n1);
+ 
+-	bch_time_stats_update(&b->c->btree_split_time, start_time);
++	time_stats_update(&b->c->btree_split_time, start_time);
+ 
+ 	return 0;
+ err_free2:
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index ba3909bb6bea..26c8fa93b55d 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1691,6 +1691,9 @@ static void cache_set_free(struct closure *cl)
+ 		kobject_put(&ca->kobj);
+ 	}
+ 
++	time_stats_exit(&c->btree_gc_time);
++	time_stats_exit(&c->btree_split_time);
++	time_stats_exit(&c->sort.time);
+ 
+ 	if (c->moving_gc_wq)
+ 		destroy_workqueue(c->moving_gc_wq);
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index c6f677059214..01eec5877cd7 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -16,6 +16,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/sort.h>
+ #include <linux/sched/clock.h>
++#include <linux/seq_buf.h>
+ 
+ extern bool bcache_is_reboot;
+ 
+@@ -79,10 +80,10 @@ read_attribute(active_journal_entries);
+ read_attribute(backing_dev_name);
+ read_attribute(backing_dev_uuid);
+ 
+-sysfs_time_stats_attribute(btree_gc,	sec, ms);
+-sysfs_time_stats_attribute(btree_split, sec, us);
+-sysfs_time_stats_attribute(btree_sort,	ms,  us);
+-sysfs_time_stats_attribute(btree_read,	ms,  us);
++read_attribute(btree_gc_time);
++read_attribute(btree_split_time);
++read_attribute(btree_sort_time);
++read_attribute(btree_read_time);
+ 
+ read_attribute(btree_nodes);
+ read_attribute(btree_used_percent);
+@@ -731,6 +732,9 @@ static unsigned int bch_average_key_size(struct cache_set *c)
+ SHOW(__bch_cache_set)
+ {
+ 	struct cache_set *c = container_of(kobj, struct cache_set, kobj);
++	struct seq_buf s;
 +
-+static inline unsigned int eytzinger1_child(unsigned int i, unsigned int child)
-+{
-+	return (i << 1) + child;
-+}
-+
-+static inline unsigned int eytzinger1_right_child(unsigned int i)
-+{
-+	return eytzinger1_child(i, 1);
-+}
-+
-+static inline unsigned int eytzinger1_next(unsigned int i, unsigned int size)
-+{
-+	if (eytzinger1_right_child(i) <= size) {
-+		i = eytzinger1_right_child(i);
-+
-+		i <<= __fls(size + 1) - __fls(i);
-+		i >>= i > size;
-+	} else {
-+		i >>= ffz(i) + 1;
++	seq_buf_init(&s, buf, PAGE_SIZE);
+ 
+ 	sysfs_print(synchronous,		CACHE_SYNC(&c->cache->sb));
+ 	sysfs_print(journal_delay_ms,		c->journal_delay_ms);
+@@ -743,10 +747,25 @@ SHOW(__bch_cache_set)
+ 	sysfs_print(btree_cache_max_chain,	bch_cache_max_chain(c));
+ 	sysfs_print(cache_available_percent,	100 - c->gc_stats.in_use);
+ 
+-	sysfs_print_time_stats(&c->btree_gc_time,	btree_gc, sec, ms);
+-	sysfs_print_time_stats(&c->btree_split_time,	btree_split, sec, us);
+-	sysfs_print_time_stats(&c->sort.time,		btree_sort, ms, us);
+-	sysfs_print_time_stats(&c->btree_read_time,	btree_read, ms, us);
++	if (attr == &sysfs_btree_gc_time) {
++		time_stats_to_text(&s, &c->btree_gc_time);
++		return s.len;
 +	}
 +
-+	return i;
-+}
-+
-+static inline unsigned int eytzinger0_child(unsigned int i, unsigned int child)
-+{
-+	return (i << 1) + 1 + child;
-+}
-+
-+static inline unsigned int eytzinger0_first(unsigned int size)
-+{
-+	return rounddown_pow_of_two(size) - 1;
-+}
-+
-+static inline unsigned int eytzinger0_next(unsigned int i, unsigned int size)
-+{
-+	return eytzinger1_next(i + 1, size) - 1;
-+}
-+
-+#define eytzinger0_for_each(_i, _size)			\
-+	for ((_i) = eytzinger0_first((_size));		\
-+	     (_i) != -1;				\
-+	     (_i) = eytzinger0_next((_i), (_size)))
-+
-+#define ewma_add(ewma, val, weight)					\
-+({									\
-+	typeof(ewma) _ewma = (ewma);					\
-+	typeof(weight) _weight = (weight);				\
-+									\
-+	(((_ewma << _weight) - _ewma) + (val)) >> _weight;		\
-+})
-+
-+static void quantiles_update(struct quantiles *q, u64 v)
-+{
-+	unsigned int i = 0;
-+
-+	while (i < ARRAY_SIZE(q->entries)) {
-+		struct quantile_entry *e = q->entries + i;
-+
-+		if (unlikely(!e->step)) {
-+			e->m = v;
-+			e->step = max_t(unsigned int, v / 2, 1024);
-+		} else if (e->m > v) {
-+			e->m = e->m >= e->step
-+				? e->m - e->step
-+				: 0;
-+		} else if (e->m < v) {
-+			e->m = e->m + e->step > e->m
-+				? e->m + e->step
-+				: U32_MAX;
-+		}
-+
-+		if ((e->m > v ? e->m - v : v - e->m) < e->step)
-+			e->step = max_t(unsigned int, e->step / 2, 1);
-+
-+		if (v >= e->m)
-+			break;
-+
-+		i = eytzinger0_child(i, v > e->m);
-+	}
-+}
-+
-+static void time_stats_update_one(struct time_stats *stats,
-+				  u64 start, u64 end)
-+{
-+	u64 duration, freq;
-+
-+	duration	= time_after64(end, start)
-+		? end - start : 0;
-+	freq		= time_after64(end, stats->last_event)
-+		? end - stats->last_event : 0;
-+
-+	stats->count++;
-+
-+	stats->average_duration = stats->average_duration
-+		? ewma_add(stats->average_duration, duration, 6)
-+		: duration;
-+
-+	stats->average_frequency = stats->average_frequency
-+		? ewma_add(stats->average_frequency, freq, 6)
-+		: freq;
-+
-+	stats->max_duration = max(stats->max_duration, duration);
-+
-+	stats->last_event = end;
-+
-+	quantiles_update(&stats->quantiles, duration);
-+}
-+
-+void time_stats_update(struct time_stats *stats, u64 start)
-+{
-+	u64 end = ktime_get_ns();
-+	unsigned long flags;
-+
-+	if (!stats->buffer) {
-+		spin_lock_irqsave(&stats->lock, flags);
-+		time_stats_update_one(stats, start, end);
-+
-+		if (stats->average_frequency < 32 &&
-+		    stats->count > 1024)
-+			stats->buffer =
-+				alloc_percpu_gfp(struct time_stat_buffer,
-+						 GFP_ATOMIC);
-+		spin_unlock_irqrestore(&stats->lock, flags);
-+	} else {
-+		struct time_stat_buffer_entry *i;
-+		struct time_stat_buffer *b;
-+
-+		preempt_disable();
-+		b = this_cpu_ptr(stats->buffer);
-+
-+		BUG_ON(b->nr >= ARRAY_SIZE(b->entries));
-+		b->entries[b->nr++] = (struct time_stat_buffer_entry) {
-+			.start = start,
-+			.end = end
-+		};
-+
-+		if (b->nr == ARRAY_SIZE(b->entries)) {
-+			spin_lock_irqsave(&stats->lock, flags);
-+			for (i = b->entries;
-+			     i < b->entries + ARRAY_SIZE(b->entries);
-+			     i++)
-+				time_stats_update_one(stats, i->start, i->end);
-+			spin_unlock_irqrestore(&stats->lock, flags);
-+
-+			b->nr = 0;
-+		}
-+
-+		preempt_enable();
-+	}
-+}
-+EXPORT_SYMBOL(time_stats_update);
-+
-+static const struct time_unit {
-+	const char	*name;
-+	u32		nsecs;
-+} time_units[] = {
-+	{ "ns",		1		},
-+	{ "us",		NSEC_PER_USEC	},
-+	{ "ms",		NSEC_PER_MSEC	},
-+	{ "sec",	NSEC_PER_SEC	},
-+};
-+
-+static const struct time_unit *pick_time_units(u64 ns)
-+{
-+	const struct time_unit *u;
-+
-+	for (u = time_units;
-+	     u + 1 < time_units + ARRAY_SIZE(time_units) &&
-+	     ns >= u[1].nsecs << 1;
-+	     u++)
-+		;
-+
-+	return u;
-+}
-+
-+static void pr_time_units(struct seq_buf *out, u64 ns)
-+{
-+	const struct time_unit *u = pick_time_units(ns);
-+
-+	seq_buf_printf(out, "%llu %s", div_u64(ns, u->nsecs), u->name);
-+}
-+
-+void time_stats_to_text(struct seq_buf *out, struct time_stats *stats)
-+{
-+	const struct time_unit *u;
-+	u64 freq = READ_ONCE(stats->average_frequency);
-+	u64 q, last_q = 0;
-+	int i;
-+
-+	seq_buf_printf(out, "count:          %llu\n", stats->count);
-+	seq_buf_printf(out, "rate:           %llu/sec\n",
-+		       freq ? div64_u64(NSEC_PER_SEC, freq) : 0);
-+	seq_buf_printf(out, "frequency:      ");
-+	pr_time_units(out, freq);
-+	seq_buf_putc(out, '\n');
-+
-+	seq_buf_printf(out, "avg duration:   ");
-+	pr_time_units(out, stats->average_duration);
-+	seq_buf_putc(out, '\n');
-+
-+	seq_buf_printf(out, "max duration:   ");
-+	pr_time_units(out, stats->max_duration);
-+	seq_buf_putc(out, '\n');
-+
-+	i = eytzinger0_first(NR_QUANTILES);
-+	u = pick_time_units(stats->quantiles.entries[i].m);
-+	seq_buf_printf(out, "quantiles (%s): ", u->name);
-+	eytzinger0_for_each(i, NR_QUANTILES) {
-+		q = max(stats->quantiles.entries[i].m, last_q);
-+		seq_buf_printf(out, "%llu ", div_u64(q, u->nsecs));
-+		last_q = q;
++	if (attr == &sysfs_btree_split_time) {
++		time_stats_to_text(&s, &c->btree_split_time);
++		return s.len;
 +	}
 +
-+	seq_buf_putc(out, '\n');
-+}
-+EXPORT_SYMBOL_GPL(time_stats_to_text);
++	if (attr == &sysfs_btree_sort_time) {
++		time_stats_to_text(&s, &c->sort.time);
++		return s.len;
++	}
 +
-+void time_stats_exit(struct time_stats *stats)
-+{
-+	free_percpu(stats->buffer);
-+	stats->buffer = NULL;
-+}
-+EXPORT_SYMBOL_GPL(time_stats_exit);
++	if (attr == &sysfs_btree_read_time) {
++		time_stats_to_text(&s, &c->btree_read_time);
++		return s.len;
++	}
+ 
+ 	sysfs_print(btree_used_percent,	bch_btree_used(c));
+ 	sysfs_print(btree_nodes,	c->gc_stats.nodes);
+@@ -988,10 +1007,10 @@ KTYPE(bch_cache_set);
+ static struct attribute *bch_cache_set_internal_attrs[] = {
+ 	&sysfs_active_journal_entries,
+ 
+-	sysfs_time_stats_attribute_list(btree_gc, sec, ms)
+-	sysfs_time_stats_attribute_list(btree_split, sec, us)
+-	sysfs_time_stats_attribute_list(btree_sort, ms, us)
+-	sysfs_time_stats_attribute_list(btree_read, ms, us)
++	&sysfs_btree_gc_time,
++	&sysfs_btree_split_time,
++	&sysfs_btree_sort_time,
++	&sysfs_btree_read_time,
+ 
+ 	&sysfs_btree_nodes,
+ 	&sysfs_btree_used_percent,
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index ae380bc3992e..95282bf0f9a7 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -160,36 +160,6 @@ int bch_parse_uuid(const char *s, char *uuid)
+ 	return i;
+ }
+ 
+-void bch_time_stats_update(struct time_stats *stats, uint64_t start_time)
+-{
+-	uint64_t now, duration, last;
+-
+-	spin_lock(&stats->lock);
+-
+-	now		= local_clock();
+-	duration	= time_after64(now, start_time)
+-		? now - start_time : 0;
+-	last		= time_after64(now, stats->last)
+-		? now - stats->last : 0;
+-
+-	stats->max_duration = max(stats->max_duration, duration);
+-
+-	if (stats->last) {
+-		ewma_add(stats->average_duration, duration, 8, 8);
+-
+-		if (stats->average_frequency)
+-			ewma_add(stats->average_frequency, last, 8, 8);
+-		else
+-			stats->average_frequency  = last << 8;
+-	} else {
+-		stats->average_duration  = duration << 8;
+-	}
+-
+-	stats->last = now ?: 1;
+-
+-	spin_unlock(&stats->lock);
+-}
+-
+ /**
+  * bch_next_delay() - update ratelimiting statistics and calculate next delay
+  * @d: the struct bch_ratelimit to update
+diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+index 6f3cb7c92130..1e1bdbae9593 100644
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@ -345,68 +345,11 @@ ssize_t bch_hprint(char *buf, int64_t v);
+ bool bch_is_zero(const char *p, size_t n);
+ int bch_parse_uuid(const char *s, char *uuid);
+ 
+-struct time_stats {
+-	spinlock_t	lock;
+-	/*
+-	 * all fields are in nanoseconds, averages are ewmas stored left shifted
+-	 * by 8
+-	 */
+-	uint64_t	max_duration;
+-	uint64_t	average_duration;
+-	uint64_t	average_frequency;
+-	uint64_t	last;
+-};
+-
+-void bch_time_stats_update(struct time_stats *stats, uint64_t time);
+-
+ static inline unsigned int local_clock_us(void)
+ {
+ 	return local_clock() >> 10;
+ }
+ 
+-#define NSEC_PER_ns			1L
+-#define NSEC_PER_us			NSEC_PER_USEC
+-#define NSEC_PER_ms			NSEC_PER_MSEC
+-#define NSEC_PER_sec			NSEC_PER_SEC
+-
+-#define __print_time_stat(stats, name, stat, units)			\
+-	sysfs_print(name ## _ ## stat ## _ ## units,			\
+-		    div_u64((stats)->stat >> 8, NSEC_PER_ ## units))
+-
+-#define sysfs_print_time_stats(stats, name,				\
+-			       frequency_units,				\
+-			       duration_units)				\
+-do {									\
+-	__print_time_stat(stats, name,					\
+-			  average_frequency,	frequency_units);	\
+-	__print_time_stat(stats, name,					\
+-			  average_duration,	duration_units);	\
+-	sysfs_print(name ## _ ##max_duration ## _ ## duration_units,	\
+-			div_u64((stats)->max_duration,			\
+-				NSEC_PER_ ## duration_units));		\
+-									\
+-	sysfs_print(name ## _last_ ## frequency_units, (stats)->last	\
+-		    ? div_s64(local_clock() - (stats)->last,		\
+-			      NSEC_PER_ ## frequency_units)		\
+-		    : -1LL);						\
+-} while (0)
+-
+-#define sysfs_time_stats_attribute(name,				\
+-				   frequency_units,			\
+-				   duration_units)			\
+-read_attribute(name ## _average_frequency_ ## frequency_units);		\
+-read_attribute(name ## _average_duration_ ## duration_units);		\
+-read_attribute(name ## _max_duration_ ## duration_units);		\
+-read_attribute(name ## _last_ ## frequency_units)
+-
+-#define sysfs_time_stats_attribute_list(name,				\
+-					frequency_units,		\
+-					duration_units)			\
+-&sysfs_ ## name ## _average_frequency_ ## frequency_units,		\
+-&sysfs_ ## name ## _average_duration_ ## duration_units,		\
+-&sysfs_ ## name ## _max_duration_ ## duration_units,			\
+-&sysfs_ ## name ## _last_ ## frequency_units,
+-
+ #define ewma_add(ewma, val, weight, factor)				\
+ ({									\
+ 	(ewma) *= (weight) - 1;						\
 -- 
 2.37.2.672.g94769d06f0-goog
 

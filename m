@@ -2,21 +2,21 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7EA25A589B
-	for <lists+io-uring@lfdr.de>; Tue, 30 Aug 2022 02:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0BB95A58A5
+	for <lists+io-uring@lfdr.de>; Tue, 30 Aug 2022 02:58:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbiH3A5H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 29 Aug 2022 20:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56648 "EHLO
+        id S229649AbiH3A5J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 29 Aug 2022 20:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiH3A5B (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Aug 2022 20:57:01 -0400
+        with ESMTP id S229636AbiH3A5H (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 29 Aug 2022 20:57:07 -0400
 Received: from linux.gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098D0883EF;
-        Mon, 29 Aug 2022 17:56:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE398A1C0;
+        Mon, 29 Aug 2022 17:57:02 -0700 (PDT)
 Received: from localhost.localdomain (unknown [68.183.184.174])
-        by linux.gnuweeb.org (Postfix) with ESMTPSA id 5BB45374EC4;
-        Tue, 30 Aug 2022 00:56:55 +0000 (UTC)
+        by linux.gnuweeb.org (Postfix) with ESMTPSA id 439F8374EE2;
+        Tue, 30 Aug 2022 00:56:58 +0000 (UTC)
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -26,9 +26,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v2 2/7] syscall: Add io_uring syscall functions
-Date:   Tue, 30 Aug 2022 07:56:38 +0700
-Message-Id: <20220830005122.885209-3-ammar.faizi@intel.com>
+Subject: [PATCH liburing v2 3/7] man: Clarify "man 2" entry for io_uring syscalls
+Date:   Tue, 30 Aug 2022 07:56:39 +0700
+Message-Id: <20220830005122.885209-4-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220830005122.885209-1-ammar.faizi@intel.com>
 References: <20220830005122.885209-1-ammar.faizi@intel.com>
@@ -45,120 +45,109 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-We have:
+io_uring_enter(), io_uring_register(), and io_uring_setup() are not
+declared in `<linux/io_uring.h>` (and never were). A previous commit
+adds the implementation of these functions in liburing. Change the
+include header to `<liburing.h>`. Then clarify that those functions
+don't intentionally set the `errno` variable. Instead they return
+a negative error code when the syscall fails.
 
-  man 2 io_uring_setup;
-  man 2 io_uring_enter;
-  man 2 io_uring_register;
+Side note: On architectures _other_ than x86, x86-64, and aarch64, those
+functions _do_ set the `errno`. This is because the syscall is done via
+libc. Users should not rely on this behavior as it may change in the
+future when nolibc support is expanded to other architectures.
 
-Those entries say that io_uring syscall functions are declared in
-`<linux/io_uring.h>`. But they don't actually exist and never existed.
-This is causing confusion for people who read the manpage. Let's just
-implement them in liburing so they exist.
-
-This also allows the user to invoke io_uring syscalls directly instead
-of using the full liburing provided setup.
-
-v2:
-  - Use consistent argument types.
-  - Separate syscall declarations in liburing.h with a blank line.
-  - Remove unused include in syscall.c.
-
-Link: https://github.com/axboe/liburing/pull/646#issuecomment-1229639532
-Reviewed-by: Caleb Sander <csander@purestorage.com>
+Cc: Caleb Sander <csander@purestorage.com>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- src/Makefile           |  2 +-
- src/include/liburing.h | 12 ++++++++++++
- src/liburing.map       |  4 ++++
- src/syscall.c          | 29 +++++++++++++++++++++++++++++
- 4 files changed, 46 insertions(+), 1 deletion(-)
- create mode 100644 src/syscall.c
+ man/io_uring_enter.2    | 9 ++++-----
+ man/io_uring_register.2 | 9 ++++-----
+ man/io_uring_setup.2    | 8 +++-----
+ 3 files changed, 11 insertions(+), 15 deletions(-)
 
-diff --git a/src/Makefile b/src/Makefile
-index dad379d..73a98ba 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -32,7 +32,7 @@ endif
+diff --git a/man/io_uring_enter.2 b/man/io_uring_enter.2
+index 6bfe9c9..05f9f72 100644
+--- a/man/io_uring_enter.2
++++ b/man/io_uring_enter.2
+@@ -8,7 +8,7 @@
+ io_uring_enter \- initiate and/or complete asynchronous I/O
+ .SH SYNOPSIS
+ .nf
+-.BR "#include <linux/io_uring.h>"
++.BR "#include <liburing.h>"
+ .PP
+ .BI "int io_uring_enter(unsigned int " fd ", unsigned int " to_submit ,
+ .BI "                   unsigned int " min_complete ", unsigned int " flags ,
+@@ -1299,11 +1299,10 @@ completion queue entry (see section
+ rather than through the system call itself.
  
- all: $(all_targets)
+ Errors that occur not on behalf of a submission queue entry are returned via the
+-system call directly. On such an error,
+-.B -1
+-is returned and
++system call directly. On such an error, a negative error code is returned. The
++caller should not rely on
+ .I errno
+-is set appropriately.
++variable.
+ .PP
+ .SH ERRORS
+ These are the errors returned by
+diff --git a/man/io_uring_register.2 b/man/io_uring_register.2
+index 6c440b9..6791375 100644
+--- a/man/io_uring_register.2
++++ b/man/io_uring_register.2
+@@ -8,7 +8,7 @@
+ io_uring_register \- register files or user buffers for asynchronous I/O 
+ .SH SYNOPSIS
+ .nf
+-.BR "#include <linux/io_uring.h>"
++.BR "#include <liburing.h>"
+ .PP
+ .BI "int io_uring_register(unsigned int " fd ", unsigned int " opcode ,
+ .BI "                      void *" arg ", unsigned int " nr_args );
+@@ -583,11 +583,10 @@ Available since 5.18.
  
--liburing_srcs := setup.c queue.c register.c
-+liburing_srcs := setup.c queue.c register.c syscall.c
+ On success,
+ .BR io_uring_register ()
+-returns 0.  On error,
+-.B -1
+-is returned, and
++returns 0.  On error, a negative error code is returned. The caller should not
++rely on
+ .I errno
+-is set accordingly.
++variable.
  
- ifeq ($(CONFIG_NOLIBC),y)
- 	liburing_srcs += nolibc.c
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 66c5095..6e86847 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -203,6 +203,18 @@ int io_uring_register_notifications(struct io_uring *ring, unsigned nr,
- 				    struct io_uring_notification_slot *slots);
- int io_uring_unregister_notifications(struct io_uring *ring);
+ .SH ERRORS
+ .TP
+diff --git a/man/io_uring_setup.2 b/man/io_uring_setup.2
+index 0a5fa92..32a9e2e 100644
+--- a/man/io_uring_setup.2
++++ b/man/io_uring_setup.2
+@@ -9,7 +9,7 @@
+ io_uring_setup \- setup a context for performing asynchronous I/O
+ .SH SYNOPSIS
+ .nf
+-.BR "#include <linux/io_uring.h>"
++.BR "#include <liburing.h>"
+ .PP
+ .BI "int io_uring_setup(u32 " entries ", struct io_uring_params *" p );
+ .fi
+@@ -566,11 +566,9 @@ or
+ .BR io_uring_enter (2)
+ system calls.
  
-+/*
-+ * io_uring syscalls.
-+ */
-+int io_uring_enter(unsigned int fd, unsigned int to_submit,
-+		   unsigned int min_complete, unsigned int flags, sigset_t *sig);
-+int io_uring_enter2(unsigned int fd, unsigned int to_submit,
-+		    unsigned int min_complete, unsigned int flags,
-+		    sigset_t *sig, size_t sz);
-+int io_uring_setup(unsigned int entries, struct io_uring_params *p);
-+int io_uring_register(unsigned int fd, unsigned int opcode, const void *arg,
-+		      unsigned int nr_args);
-+
- /*
-  * Helper for the peek/wait single cqe functions. Exported because of that,
-  * but probably shouldn't be used directly in an application.
-diff --git a/src/liburing.map b/src/liburing.map
-index 7d8f143..8573dfc 100644
---- a/src/liburing.map
-+++ b/src/liburing.map
-@@ -62,4 +62,8 @@ LIBURING_2.3 {
- 		io_uring_register_file_alloc_range;
- 		io_uring_register_notifications;
- 		io_uring_unregister_notifications;
-+		io_uring_enter;
-+		io_uring_enter2;
-+		io_uring_setup;
-+		io_uring_register;
- } LIBURING_2.2;
-diff --git a/src/syscall.c b/src/syscall.c
-new file mode 100644
-index 0000000..2054d17
---- /dev/null
-+++ b/src/syscall.c
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: MIT */
-+
-+#include "syscall.h"
-+#include <liburing.h>
-+
-+int io_uring_enter(unsigned int fd, unsigned int to_submit,
-+		   unsigned int min_complete, unsigned int flags, sigset_t *sig)
-+{
-+	return __sys_io_uring_enter(fd, to_submit, min_complete, flags, sig);
-+}
-+
-+int io_uring_enter2(unsigned int fd, unsigned int to_submit,
-+		    unsigned int min_complete, unsigned int flags,
-+		    sigset_t *sig, size_t sz)
-+{
-+	return __sys_io_uring_enter2(fd, to_submit, min_complete, flags, sig,
-+				     sz);
-+}
-+
-+int io_uring_setup(unsigned int entries, struct io_uring_params *p)
-+{
-+	return __sys_io_uring_setup(entries, p);
-+}
-+
-+int io_uring_register(unsigned int fd, unsigned int opcode, const void *arg,
-+		      unsigned int nr_args)
-+{
-+	return __sys_io_uring_register(fd, opcode, arg, nr_args);
-+}
+-On error,
+-.B -1
+-is returned and
++On error, a negative error code is returned. The caller should not rely on
+ .I errno
+-is set appropriately.
++variable.
+ .PP
+ .SH ERRORS
+ .TP
 -- 
 Ammar Faizi
 

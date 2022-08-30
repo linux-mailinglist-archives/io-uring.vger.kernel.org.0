@@ -2,46 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 009F05A63DB
-	for <lists+io-uring@lfdr.de>; Tue, 30 Aug 2022 14:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE545A63DC
+	for <lists+io-uring@lfdr.de>; Tue, 30 Aug 2022 14:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbiH3Mup (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Aug 2022 08:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        id S229697AbiH3Mur (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Aug 2022 08:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbiH3Muo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 08:50:44 -0400
+        with ESMTP id S229982AbiH3Mup (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 08:50:45 -0400
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92A1B07D7
-        for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 05:50:43 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27U7a6aP008996
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11BA1B1B83
+        for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 05:50:44 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27UApFDt031298
         for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 05:50:43 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=OQHEKzKyP7ZsHmnHUwkSBWz9zshEZmyZlwADqUvl80I=;
- b=F4UWWKG1TsQZve/2QrQ/NYpNsukSBK5JcQL7LV9s539Yvo/uZa/LMaEPVB0s4wJhm83K
- Uqfk62slLv4oOMLBFmPQMzlJxqMocnh+Rp+LCYm/7Dm+xB1SoZlQNnoQ2Pcg3GN3KL+B
- UVrxzeFFbmV7Ra3l/Y7eNVs0cgx5U3AUyCc= 
+ bh=lQfLjUA9Wxmh/bZU7j4++b28yG85+qr8HmcaqcrdUWQ=;
+ b=Pmx1nWnTKZAhrFy2BrOzfCRYXqQTyEFiaNtQ71d/kTQuTUy/vXYOaLccIvlCAsF5W2NE
+ EIBlc6oS83MVeYtdYZyV142dxePLMul1XbOMdBStkLOJ4pqu5Hyc4WzhVuECd2zKBnI3
+ yucn6E6yLmgnAGo2lMEJpdrLyR33pwX2xT4= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3j9e9ysbge-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3j9h5dghxm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
         for <io-uring@vger.kernel.org>; Tue, 30 Aug 2022 05:50:43 -0700
-Received: from twshared0646.06.ash9.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+Received: from twshared0646.06.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.31; Tue, 30 Aug 2022 05:50:41 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id DEC8F55BF50A; Tue, 30 Aug 2022 05:50:30 -0700 (PDT)
+        id E369155BF50C; Tue, 30 Aug 2022 05:50:30 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         <io-uring@vger.kernel.org>
 CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH for-next v4 1/7] io_uring: remove unnecessary variable
-Date:   Tue, 30 Aug 2022 05:50:07 -0700
-Message-ID: <20220830125013.570060-2-dylany@fb.com>
+Subject: [PATCH for-next v4 2/7] io_uring: introduce io_has_work
+Date:   Tue, 30 Aug 2022 05:50:08 -0700
+Message-ID: <20220830125013.570060-3-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220830125013.570060-1-dylany@fb.com>
 References: <20220830125013.570060-1-dylany@fb.com>
@@ -49,8 +49,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: gvOuY4TegKqxxoNPMEmGWGd6Pliy5SjV
-X-Proofpoint-GUID: gvOuY4TegKqxxoNPMEmGWGd6Pliy5SjV
+X-Proofpoint-GUID: WwGLPEx3hEUYwL0plp2O1ESJeJvbCsnd
+X-Proofpoint-ORIG-GUID: WwGLPEx3hEUYwL0plp2O1ESJeJvbCsnd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-08-30_07,2022-08-30_01,2022-06-22_01
@@ -64,31 +64,61 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-'running' is set once and read once, so can easily just remove it
+This will be used later to know if the ring has outstanding work. Right
+now just if there is overflow CQEs to copy to the main CQE ring, but late=
+r
+will include deferred tasks
 
 Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- io_uring/io_uring.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ io_uring/io_uring.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 77616279000b..41eaf5ec70df 100644
+index 41eaf5ec70df..7998dc23360f 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1052,12 +1052,9 @@ void io_req_task_work_add(struct io_kiocb *req)
- 	struct io_uring_task *tctx =3D req->task->io_uring;
- 	struct io_ring_ctx *ctx =3D req->ctx;
- 	struct llist_node *node;
--	bool running;
--
--	running =3D !llist_add(&req->io_task_work.node, &tctx->task_list);
+@@ -2145,6 +2145,11 @@ struct io_wait_queue {
+ 	unsigned nr_timeouts;
+ };
 =20
- 	/* task_work already pending, we're done */
--	if (running)
-+	if (!llist_add(&req->io_task_work.node, &tctx->task_list))
- 		return;
++static inline bool io_has_work(struct io_ring_ctx *ctx)
++{
++	return test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq);
++}
++
+ static inline bool io_should_wake(struct io_wait_queue *iowq)
+ {
+ 	struct io_ring_ctx *ctx =3D iowq->ctx;
+@@ -2163,13 +2168,13 @@ static int io_wake_function(struct wait_queue_ent=
+ry *curr, unsigned int mode,
+ {
+ 	struct io_wait_queue *iowq =3D container_of(curr, struct io_wait_queue,
+ 							wq);
++	struct io_ring_ctx *ctx =3D iowq->ctx;
 =20
- 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
+ 	/*
+ 	 * Cannot safely flush overflowed CQEs from here, ensure we wake up
+ 	 * the task, and the next invocation will do it.
+ 	 */
+-	if (io_should_wake(iowq) ||
+-	    test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &iowq->ctx->check_cq))
++	if (io_should_wake(iowq) || io_has_work(ctx))
+ 		return autoremove_wake_function(curr, mode, wake_flags, key);
+ 	return -1;
+ }
+@@ -2505,8 +2510,8 @@ static __poll_t io_uring_poll(struct file *file, po=
+ll_table *wait)
+ 	 * Users may get EPOLLIN meanwhile seeing nothing in cqring, this
+ 	 * pushs them to do the flush.
+ 	 */
+-	if (io_cqring_events(ctx) ||
+-	    test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq))
++
++	if (io_cqring_events(ctx) || io_has_work(ctx))
+ 		mask |=3D EPOLLIN | EPOLLRDNORM;
+=20
+ 	return mask;
 --=20
 2.30.2
 

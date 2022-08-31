@@ -2,148 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E99D5A827B
-	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 17:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CEE35A828D
+	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 18:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231383AbiHaP4z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Aug 2022 11:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40958 "EHLO
+        id S230020AbiHaP7z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 31 Aug 2022 11:59:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231336AbiHaP4e (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 11:56:34 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60359A3447
-        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 08:56:22 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-33dc31f25f9so311250237b3.11
-        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 08:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=cCRpuq5ugrZCMPNASqLzmnmQqSHwIbDaqesnsW6hpVY=;
-        b=dp7ag/s/XswteEOQhIlZJ0Nr9OSh2piBWOaxYRC3sJJA1h7P9YiBLyTj5ZbqtTA5s/
-         QVBATN/coisioHRuuIpGq3gJNfqJZeq14BoEa/ktEy7OjVkakgw2dN07PvsjfH2DKU0B
-         bxLma1WzIl4FKw+quVea/qjMwPtAOmq0TevZHzdNCNncQhM1PD4uyKVu4HWZvLI6BqTx
-         H7kaRy09fBu1xgcDeDqWrzFeKvin7yA3AAOKZ6MQsBsn3T/kb8YICvKVh7LgyXMq+5Bi
-         FLuEciavzkBG7ruhxzyjiDdwLtfbNolH0swGrGj9z+IyuUE/sK6RMxqKOGNWiAhwfBa3
-         5mXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=cCRpuq5ugrZCMPNASqLzmnmQqSHwIbDaqesnsW6hpVY=;
-        b=KeyYehpSdX5ENZyOXAOjCXOoUQyhsnh6I0tAOdU4G9j/mVq9KiItvPGNufoNdHvf4H
-         c7VUQaND04EwY+F5eLImHroPwCYjFeoRlKnKB5wLzY0j+15IRPU62TeGvMYjk+xfNy44
-         yyAibBdTj7IxFuE9m2DayR86m0fGTftK242xhcUpOSl7kb23x6oEyAZfeEN5+rm6tQNc
-         7Y/0hZq+5hvGMGmmFmRb6d2hZIPIZS7iQ6FYiv9P8290e2mvn7T6Pj4VJ3v9wMigeCAJ
-         viYIsvuwbm1/6SR917F/GwIooBllk4V5mKIxChoi1P1KdNyR0wJp6VguPmHBuF2ZhCyz
-         gE8g==
-X-Gm-Message-State: ACgBeo0y6bqARVb8NVlmf8zSQLcQ0G4GxQJyyBNlaE02dgcFLCnUGqqw
-        nO3dHgV7N5i3ncLSDfU5H+Bz676muuNLiEBYH9DWcg==
-X-Google-Smtp-Source: AA6agR7Lu6PK9CdXu23xIn3AG3MYNgxqZ4pzHv7Fy3xw9o0fL/gGGSH+N2uXtSf2ZsqL9IuP0dnF/6Y/gY//h7qjU0c=
-X-Received: by 2002:a81:85c3:0:b0:33d:a4d9:4599 with SMTP id
- v186-20020a8185c3000000b0033da4d94599mr18562781ywf.237.1661961381492; Wed, 31
- Aug 2022 08:56:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-23-surenb@google.com>
- <b252a4e0-57a1-0f27-f4b0-598e851b47ea@infradead.org>
-In-Reply-To: <b252a4e0-57a1-0f27-f4b0-598e851b47ea@infradead.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 31 Aug 2022 08:56:10 -0700
-Message-ID: <CAJuCfpFff1iVx50QeJWE7=sJUZ2enig34VTAOCz75u_SY2EXKw@mail.gmail.com>
-Subject: Re: [RFC PATCH 22/30] Code tagging based fault injection
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Mel Gorman <mgorman@suse.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <liam.howlett@oracle.com>,
-        David Vernet <void@manifault.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
+        with ESMTP id S229476AbiHaP7y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 11:59:54 -0400
+Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A7625EB;
+        Wed, 31 Aug 2022 08:59:50 -0700 (PDT)
+Date:   Wed, 31 Aug 2022 11:59:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1661961589;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8eQR8jMOxB0pUJLRgI0y5+reUXpRdgSKiz76DZMbpZA=;
+        b=GKQv6dESmRNVlYrhLKqHqAEupQL+NGWnc+q+XSzgFWGRhe0CnbyNV+7rNtWq5MTMG51R4C
+        l0UYS35OVMaetPyb4bctosq1HXD3sGEB3YcTrl1fFrr7arsrOVKztpQ7iNKwwum1q08tZq
+        71z4eskGeNO/LfuPYzvdz8RnP/XW/uU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
+        juri.lelli@redhat.com, ldufour@linux.ibm.com, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
         masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>, dvyukov@google.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
-        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        kernel-team <kernel-team@android.com>,
-        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, arnd@arndb.de,
+        jbaron@akamai.com, rientjes@google.com, minchan@google.com,
+        kaleshsingh@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, iommu@lists.linux.dev,
         kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
         linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220831155941.q5umplytbx6offku@moria.home.lan>
+References: <20220830214919.53220-1-surenb@google.com>
+ <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
+ <20220831101948.f3etturccmp5ovkl@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220831101948.f3etturccmp5ovkl@suse.de>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 30, 2022 at 6:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
->
->
-> On 8/30/22 14:49, Suren Baghdasaryan wrote:
-> > From: Kent Overstreet <kent.overstreet@linux.dev>
-> >
-> > This adds a new fault injection capability, based on code tagging.
-> >
-> > To use, simply insert somewhere in your code
-> >
-> >   dynamic_fault("fault_class_name")
-> >
-> > and check whether it returns true - if so, inject the error.
-> > For example
-> >
-> >   if (dynamic_fault("init"))
-> >       return -EINVAL;
-> >
-> > There's no need to define faults elsewhere, as with
-> > include/linux/fault-injection.h. Faults show up in debugfs, under
-> > /sys/kernel/debug/dynamic_faults, and can be selected based on
-> > file/module/function/line number/class, and enabled permanently, or in
-> > oneshot mode, or with a specified frequency.
-> >
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
->
-> Missing Signed-off-by: from Suren.
-> See Documentation/process/submitting-patches.rst:
->
-> When to use Acked-by:, Cc:, and Co-developed-by:
-> ------------------------------------------------
->
-> The Signed-off-by: tag indicates that the signer was involved in the
-> development of the patch, or that he/she was in the patch's delivery path.
+On Wed, Aug 31, 2022 at 11:19:48AM +0100, Mel Gorman wrote:
+> On Wed, Aug 31, 2022 at 04:42:30AM -0400, Kent Overstreet wrote:
+> > On Wed, Aug 31, 2022 at 09:38:27AM +0200, Peter Zijlstra wrote:
+> > > On Tue, Aug 30, 2022 at 02:48:49PM -0700, Suren Baghdasaryan wrote:
+> > > > ===========================
+> > > > Code tagging framework
+> > > > ===========================
+> > > > Code tag is a structure identifying a specific location in the source code
+> > > > which is generated at compile time and can be embedded in an application-
+> > > > specific structure. Several applications of code tagging are included in
+> > > > this RFC, such as memory allocation tracking, dynamic fault injection,
+> > > > latency tracking and improved error code reporting.
+> > > > Basically, it takes the old trick of "define a special elf section for
+> > > > objects of a given type so that we can iterate over them at runtime" and
+> > > > creates a proper library for it.
+> > > 
+> > > I might be super dense this morning, but what!? I've skimmed through the
+> > > set and I don't think I get it.
+> > > 
+> > > What does this provide that ftrace/kprobes don't already allow?
+> > 
+> > You're kidding, right?
+> 
+> It's a valid question. From the description, it main addition that would
+> be hard to do with ftrace or probes is catching where an error code is
+> returned. A secondary addition would be catching all historical state and
+> not just state since the tracing started.
 
-Thanks for the note! Will fix in the next respin.
+Catching all historical state is pretty important in the case of memory
+allocation accounting, don't you think?
 
->
->
-> --
-> ~Randy
+Also, ftrace can drop events. Not really ideal if under system load your memory
+accounting numbers start to drift.
+
+> It's also unclear *who* would enable this. It looks like it would mostly
+> have value during the development stage of an embedded platform to track
+> kernel memory usage on a per-application basis in an environment where it
+> may be difficult to setup tracing and tracking. Would it ever be enabled
+> in production? Would a distribution ever enable this? If it's enabled, any
+> overhead cannot be disabled/enabled at run or boot time so anyone enabling
+> this would carry the cost without never necessarily consuming the data.
+
+The whole point of this is to be cheap enough to enable in production -
+especially the latency tracing infrastructure. There's a lot of value to
+always-on system visibility infrastructure, so that when a live machine starts
+to do something wonky the data is already there.
+
+What we've built here this is _far_ cheaper than anything that could be done
+with ftrace.
+
+> It might be an ease-of-use thing. Gathering the information from traces
+> is tricky and would need combining multiple different elements and that
+> is development effort but not impossible.
+> 
+> Whatever asking for an explanation as to why equivalent functionality
+> cannot not be created from ftrace/kprobe/eBPF/whatever is reasonable.
+
+I think perhaps some of the expectation should be on the "ftrace for
+everything!" people to explain a: how their alternative could be even built and
+b: how it would compare in terms of performance and ease of use.
+
+Look, I've been a tracing user for many years, and it has its uses, but some of
+the claims I've been hearing from tracing/bpf people when any alternative
+tooling is proposed sound like vaporware and bullshitting.

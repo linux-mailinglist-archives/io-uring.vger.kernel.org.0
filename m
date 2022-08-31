@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E70645A72EF
-	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 02:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD8B5A72F4
+	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 02:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230270AbiHaAsw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Aug 2022 20:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52748 "EHLO
+        id S231971AbiHaAtA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Aug 2022 20:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231779AbiHaAst (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 20:48:49 -0400
+        with ESMTP id S231809AbiHaAsx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 20:48:53 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE256F262;
-        Tue, 30 Aug 2022 17:48:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EA394E601;
+        Tue, 30 Aug 2022 17:48:51 -0700 (PDT)
 Received: from localhost.localdomain (unknown [182.2.75.186])
-        by gnuweeb.org (Postfix) with ESMTPSA id A913180B71;
-        Wed, 31 Aug 2022 00:48:44 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id EF73580B61;
+        Wed, 31 Aug 2022 00:48:47 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1661906927;
-        bh=iBes758DU4Vy6f+oLSWxX6fPMaaegbn7oMLvUt/NqyI=;
+        s=default; t=1661906930;
+        bh=OvuSN9WlWf8PL/Y35ukpx0DjD7WXaKShXli1j8KSvhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mvG3K52V2xFj9l+0F6oortTAxl2OB6f874/jQ3eNby89r4j/+ciyDJ0+BaT+ZhO+O
-         R0knMJRw8G8bb9ta/pgdo8bxu727ZcdnR2z8ZOnlVI1XpEFqriNWe53095Gg4RV0rA
-         feIqYgiZK9uaEnbhB/gCZayJeOGwUulNQsiU1b+WerKl2OW3iUdpxw8Yeifetvkw47
-         BwW71GS4MO3N3gR6qR3dlPh+9Tg3GZlzehbm5opUfHiRnVml3J4myvFfU151gfGk/C
-         I+1QMtFm6xWYsMTlLolPZMfw8kZvGvRYbb+qhQeXxo0560ofOfyvJZrTX5eiIC+J1r
-         /c7iEHrVYJW4g==
+        b=Fff4rn4OgixjfaN/v6w2QI6tzh7s4pE+GGScnaUGulPIWvh4ogOxbCW5OQHeWGybN
+         3cg15BaZcwxDihi5q0lT5PEydcyFA+1XJeCJxDaujnDaB9bs7ouj7kQnUc5k6oPSHK
+         AJ5aQgYTeLQdN8Fb1foRT1YAiiy4fDr149v/rVtFq0rvVFHXQDnSw3Ra4KGgfZwg8+
+         zuAHzHc+iyDUsfj2fYQfjypanh5eORBopSAHvxgqLW5HpyePH1E14faFRe5uEBRnjE
+         aPRA0Wf+z3Zvqz1Qpjcf+cfzTy/B8YxtIs7k9rbKiEUXJp94Mf58K3kWhtwHVDo155
+         jELs2xHu41aNA==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v1 2/3] CHANGELOG: Note about `io_uring_{enter,enter2,register,setup}`
-Date:   Wed, 31 Aug 2022 07:48:16 +0700
-Message-Id: <20220831004449.2619220-3-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 3/3] queue: Remove unnecessary goto and label
+Date:   Wed, 31 Aug 2022 07:48:17 +0700
+Message-Id: <20220831004449.2619220-4-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220831004449.2619220-1-ammar.faizi@intel.com>
 References: <20220831004449.2619220-1-ammar.faizi@intel.com>
@@ -55,29 +55,45 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Commit f0b43c84cb3d1 ("syscall: Add io_uring syscall functions")
-exports 4 new functions. Mention it in the CHANGELOG file.
+This 'goto done' and 'done:' label are not needed, there is no cleanup
+needed in this path. Simplify it. Just return 0 directly.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- CHANGELOG | 1 +
- 1 file changed, 1 insertion(+)
+ src/queue.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/CHANGELOG b/CHANGELOG
-index 9c054b0..1f37e92 100644
---- a/CHANGELOG
-+++ b/CHANGELOG
-@@ -1,9 +1,10 @@
- liburing-2.3 release
+diff --git a/src/queue.c b/src/queue.c
+index 277cdcc..a670a8e 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -158,25 +158,24 @@ again:
+ 			cqes[i] = &ring->cq.cqes[(head & mask) << shift];
  
- - Support non-libc build for aarch64.
-+- Add io_uring_{enter,enter2,register,setup} syscall functions.
+ 		return count;
+ 	}
  
+ 	if (overflow_checked)
+-		goto done;
++		return 0;
  
- liburing-2.2 release
+ 	if (cq_ring_needs_flush(ring)) {
+ 		int flags = IORING_ENTER_GETEVENTS;
  
- - Support non-libc builds.
- - Optimized syscall handling for x86-64/x86/aarch64.
+ 		if (ring->int_flags & INT_FLAG_REG_RING)
+ 			flags |= IORING_ENTER_REGISTERED_RING;
+ 		__sys_io_uring_enter(ring->enter_ring_fd, 0, 0, flags, NULL);
+ 		overflow_checked = true;
+ 		goto again;
+ 	}
+ 
+-done:
+ 	return 0;
+ }
+ 
+ /*
+  * Sync internal state with kernel ring state on the SQ side. Returns the
+  * number of pending items in the SQ ring, for the shared ring.
 -- 
 Ammar Faizi
 

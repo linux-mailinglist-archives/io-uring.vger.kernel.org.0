@@ -2,146 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 497305A881D
-	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 23:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAC75A8831
+	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 23:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232289AbiHaV3p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Aug 2022 17:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57448 "EHLO
+        id S231210AbiHaViZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 31 Aug 2022 17:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232329AbiHaV3o (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 17:29:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FC0BCB4;
-        Wed, 31 Aug 2022 14:19:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 73318B82371;
-        Wed, 31 Aug 2022 21:19:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8826FC433D6;
-        Wed, 31 Aug 2022 21:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661980793;
-        bh=EuFVtF27UHzZ95m2iAVZr88pBg2NFFrI0iNLOelRyrg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wljct3mBAodbROj8O/9kcBwlEJPrCw4g2YpmVaVswGofxdOZBYvrIE8+6eh9YfBir
-         klg/v3l7dfsHdTX/SQxogCaudW9U6u7Wz+t1mLOORCl8zws8d83jAwrHCCgFVtw+X0
-         +MIS81RaFP9pSm2aLQVGY1p5T8j/tr8Yu3ob9Tkj5O+2h8lSEX6jzIYeIknePODM2x
-         zXXQak7U22takWnvrBDyCc2LOBM6JxjOEi98IUOj5EBTrxZgddGU0lVtKQwNxHlrzG
-         VZVwDYklnwrT8kqS+2ziWX65x4wuzl5efs6oClsQnV+pbWPGo0XPFuGaJBfCtgiRk5
-         zpw1BC5hLlrAQ==
-Date:   Wed, 31 Aug 2022 15:19:49 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCHv3 0/7] dma mapping optimisations
-Message-ID: <Yw/Qdf+280vZSYU4@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220805162444.3985535-1-kbusch@fb.com>
- <20220809064613.GA9040@lst.de>
- <YvKPTGf56v/3iSxg@kbusch-mbp.dhcp.thefacebook.com>
- <20220809184137.GB15107@lst.de>
- <YvPzUSx87VkwSH2C@kbusch-mbp.dhcp.thefacebook.com>
- <20220811072232.GA13803@lst.de>
+        with ESMTP id S229572AbiHaViW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 17:38:22 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A098EBC817
+        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 14:38:20 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-33dc31f25f9so319332677b3.11
+        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 14:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=6E7G6kJMNs5Us6NEnCBcT2HO6AKiMVb4bH/0vpPA/4U=;
+        b=kAtSEhj7BWkD6SMRdd1t39qS+hQKouRS4qaWZ/zCB6oGUrFNrc2cBDYGv9jQ+MdF0J
+         uxQpVt2B9TyIrWXDxJ2lE/5kGqIlaGR3KL1ZUwaFBmwiXzmcYyLDuUovokIJ5gP+z9l0
+         0yNTpmhlKudmxd6FSbYJNy7iPqg2dLLVGTx3y1J7sDru+O7/1p0gaM3HCn5KVfOBeHdH
+         7y51BAxidLFb2zqNvKSOOe8d+T3vU43qoJCQXNWAECkcBOpBA8zLImxhZz3blz38Sv8b
+         A0VOTCczeuCjB41nhG0Ij40swVSwGGlY/9vVEbUAh5KhCZEJca7FVQKBTYw0uiQMXn3I
+         8fkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=6E7G6kJMNs5Us6NEnCBcT2HO6AKiMVb4bH/0vpPA/4U=;
+        b=DbZZV3joHYv69NhZhxxubN9UHuKMUcDNt92ZecOqq7Pi0unI8vdlUZz7CNHPxX6wtr
+         pBs68e9BFk+BQKe/VxvRIwElLX/kDOgQsJpKAFVpFjz0QFFN+sbYob7Ipeu4z01ID4Ek
+         XjgWWeLjcRaUTKRq16K2cbrB692ZF7VjSzlqtiiev3m0U+g2DSl84UKHM2s0R92nAqmz
+         mNc2rhIlMgCTst/tMW534aBnnKMUNTbRlYGAM4V8XIQ6OeDouGSK57Vb1CIkDPs3ngAo
+         g+HOrTyXAsU1LY2xzR3I5QQY1Ruy1FYubi46bp/5X5M8Q7JMIzorCF2JyjMkZLdmvo27
+         QmTg==
+X-Gm-Message-State: ACgBeo0feqAAAZL7HttP8NAUNdRb/W00Pcy1buTLfTkqCKftItBsKhVo
+        /Lwjdf6FlBmz5SVRQniW6LgKcpUfGc6d5qN3hUrtJQ==
+X-Google-Smtp-Source: AA6agR71/tBRa7ErmmsvPBq7WvGBz62OVsrJ1soclQl+ncNHwGSnn/9fM5Y5i7G0A989GWlS6M/O5IwMTPKxavhJCfc=
+X-Received: by 2002:a81:85c3:0:b0:33d:a4d9:4599 with SMTP id
+ v186-20020a8185c3000000b0033da4d94599mr19726685ywf.237.1661981899638; Wed, 31
+ Aug 2022 14:38:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220811072232.GA13803@lst.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220830214919.53220-1-surenb@google.com> <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan> <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz> <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+ <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
+In-Reply-To: <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 31 Aug 2022 14:38:08 -0700
+Message-ID: <CAJuCfpELZBoM8uG9prkra1sJ7tDiy_eF9TwetXSSN3XDssp8CQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+To:     Yosry Ahmed <yosryahmed@google.com>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R. Howlett" <liam.howlett@oracle.com>,
+        David Vernet <void@manifault.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>, dvyukov@google.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        Minchan Kim <minchan@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        kernel-team <kernel-team@android.com>,
+        Linux-MM <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 09:22:32AM +0200, Christoph Hellwig wrote:
-> On Wed, Aug 10, 2022 at 12:05:05PM -0600, Keith Busch wrote:
-> > The functions are implemented under 'include/linux/', indistinguishable from
-> > exported APIs. I think I understand why they are there, but they look the same
-> > as exported functions from a driver perspective.
-> 
-> swiotlb.h is not a driver API.  There's two leftovers used by the drm
-> code I'm trying to get fixed up, but in general the DMA API is the
-> interface and swiotlb is just an implementation detail.
-> 
-> > Perhaps I'm being daft, but I'm totally missing why I should care if swiotlb
-> > leverages this feature. If you're using that, you've traded performance for
-> > security or compatibility already. If this idea can be used to make it perform
-> > better, then great, but that shouldn't be the reason to hold this up IMO.
-> 
-> We firstly need to make sure that everything actually works on swiotlb, or
-> any other implementation that properly implements the DMA API.
-> 
-> And the fact that I/O performance currently sucks and we can fix it on
-> the trusted hypervisor is an important consideration.  At least as
-> importantant as micro-optimizing performance a little more on setups
-> not using them.  So not taking care of both in one go seems rather silly
-> for a feature that is in its current form pretty intrusive and thus needs
-> a really good justification.
+On Wed, Aug 31, 2022 at 1:56 PM Yosry Ahmed <yosryahmed@google.com> wrote:
+>
+> On Wed, Aug 31, 2022 at 12:02 PM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > On Wed, Aug 31, 2022 at 12:47:32PM +0200, Michal Hocko wrote:
+> > > On Wed 31-08-22 11:19:48, Mel Gorman wrote:
+> > > > Whatever asking for an explanation as to why equivalent functionality
+> > > > cannot not be created from ftrace/kprobe/eBPF/whatever is reasonable.
+> > >
+> > > Fully agreed and this is especially true for a change this size
+> > > 77 files changed, 3406 insertions(+), 703 deletions(-)
+> >
+> > In the case of memory allocation accounting, you flat cannot do this with ftrace
+> > - you could maybe do a janky version that isn't fully accurate, much slower,
+> > more complicated for the developer to understand and debug and more complicated
+> > for the end user.
+> >
+> > But please, I invite anyone who's actually been doing this with ftrace to
+> > demonstrate otherwise.
+> >
+> > Ftrace just isn't the right tool for the job here - we're talking about adding
+> > per callsite accounting to some of the fastest fast paths in the kernel.
+> >
+> > And the size of the changes for memory allocation accounting are much more
+> > reasonable:
+> >  33 files changed, 623 insertions(+), 99 deletions(-)
+> >
+> > The code tagging library should exist anyways, it's been open coded half a dozen
+> > times in the kernel already.
+> >
+> > And once we've got that, the time stats code is _also_ far simpler than doing it
+> > with ftrace would be. If anyone here has successfully debugged latency issues
+> > with ftrace, I'd really like to hear it. Again, for debugging latency issues you
+> > want something that can always be on, and that's not cheap with ftrace - and
+> > never mind the hassle of correlating start and end wait trace events, builting
+> > up histograms, etc. - that's all handled here.
+> >
+> > Cheap, simple, easy to use. What more could you want?
+> >
+>
+> This is very interesting work! Do you have any data about the overhead
+> this introduces, especially in a production environment? I am
+> especially interested in memory allocations tracking and detecting
+> leaks.
 
-Sorry for the delay response; I had some trouble with test setup.
+I had the numbers for my previous implementation, before we started using the
+lazy percpu counters but that would not apply to the new implementation. I'll
+rerun the measurements and will post the exact numbers in a day or so.
 
-Okay, I will restart developing this with swiotlb in mind.
-
-In the mean time, I wanted to share some results with this series because I'm
-thinking this might be past the threshold for when we can drop the "micro-"
-prefix on optimisations.
-
-The most significant data points are these:
-
-  * submission latency stays the same regardless of the transfer size or depth
-  * IOPs is always equal or better (usually better) with up to 50% reduced
-    cpu cost
-
-Based on this, I do think this type of optimisation is worth having a something
-like a new bio type. I know this introduces some complications in the io-path,
-but it is pretty minimal and doesn't add any size penalties to common structs
-for drivers that don't use them.
-
-Test details:
-
-  fio with ioengine=io_uring
-    'none': using __user void*
-    'bvec': using buf registered with IORING_REGISTER_BUFFERS
-    'dma': using buf registered with IORING_REGISTER_MAP_BUFFERS (new)
-
-  intel_iommu=on
-
-Results:
-
-(submission latency [slat] in nano-seconds)
-Q-Depth 1:
-
- Size |  Premap  |   IOPs  |  slat  | sys-cpu%
- .....|..........|.........|........|.........
- 4k   |    none  |  41.4k  |  2126  |   16.47%
-      |    bvec  |  43.8k  |  1843  |   15.79%
-      |     dma  |  46.8k  |  1504  |   14.94%
- 16k  |    none  |  33.3k  |  3279  |   17.78%
-      |    bvec  |  33.9k  |  2607  |   14.59%
-      |     dma  |  40.2k  |  1490  |   12.57%
- 64k  |    none  |  18.7k  |  6778  |   18.22%
-      |    bvec  |  20.0k  |  4626  |   13.80%
-      |     dma  |  22.6k  |  1586  |    7.58%
-
-Q-Depth 16:
-
- Size |  Premap  |   IOPs  |  slat  | sys-cpu%
- .....|..........|.........|........|.........
- 4k   |    none  |   207k  |  3657  |   72.81%
-      |    bvec  |   219k  |  3369  |   71.55%
-      |     dma  |   310k  |  2237  |   60.16%
- 16k  |    none  |   164k  |  5024  |   78.38%
-      |    bvec  |   177k  |  4553  |   76.29%
-      |     dma  |   186k  |  1880  |   43.56%
- 64k  |    none  |  46.7k  |  4424  |   30.51%
-      |    bvec  |  46.7k  |  4389  |   29.42%
-      |     dma  |  46.7k  |  1574  |   15.61%
-
+> (Sorry if you already posted this kind of data somewhere that I missed)

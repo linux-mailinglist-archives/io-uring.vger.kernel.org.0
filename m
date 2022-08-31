@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2C95A72EC
-	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 02:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E70645A72EF
+	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 02:48:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbiHaAsq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Aug 2022 20:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52672 "EHLO
+        id S230270AbiHaAsw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Aug 2022 20:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231571AbiHaAsq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 20:48:46 -0400
+        with ESMTP id S231779AbiHaAst (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 20:48:49 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83374E842;
-        Tue, 30 Aug 2022 17:48:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE256F262;
+        Tue, 30 Aug 2022 17:48:48 -0700 (PDT)
 Received: from localhost.localdomain (unknown [182.2.75.186])
-        by gnuweeb.org (Postfix) with ESMTPSA id 64C2C80B6D;
-        Wed, 31 Aug 2022 00:48:41 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id A913180B71;
+        Wed, 31 Aug 2022 00:48:44 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1661906924;
-        bh=+8I1uumCWG1OkrBQHCAZBfQtlAsV5zytkdAHrr1UCts=;
+        s=default; t=1661906927;
+        bh=iBes758DU4Vy6f+oLSWxX6fPMaaegbn7oMLvUt/NqyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UR3ZQBDFUxxu0VnGOCRSGBr+IyvM6ZsVN2L97BFzFci5RbETlAu/W4QIFGjom7ehg
-         Dk2cPk5t6xMeusYheeT/ONtEFfsb4KTH+c1kNnTZxnp4/ZCbtazIkOkdAaSlfF5niS
-         Gj2Vfg2VDQvkeuDod5IwvKHVtrPWWTMohXq/MZVeq2rXxm0WV46phgQvtlTI9NQvuJ
-         xF6AbEMhB2MV+4WkHUGHn53XL0Q9yzD5VYeeXtZFkf3eMiHce+da9rpYd1DmSRFISn
-         zJQgzIqr7JQ5sTznRc+scEXttOlGc86+rg2o6/G7j5Cre08gGBg4bTKO3DeaaCJrwg
-         mX2pXfzgA4odA==
+        b=mvG3K52V2xFj9l+0F6oortTAxl2OB6f874/jQ3eNby89r4j/+ciyDJ0+BaT+ZhO+O
+         R0knMJRw8G8bb9ta/pgdo8bxu727ZcdnR2z8ZOnlVI1XpEFqriNWe53095Gg4RV0rA
+         feIqYgiZK9uaEnbhB/gCZayJeOGwUulNQsiU1b+WerKl2OW3iUdpxw8Yeifetvkw47
+         BwW71GS4MO3N3gR6qR3dlPh+9Tg3GZlzehbm5opUfHiRnVml3J4myvFfU151gfGk/C
+         I+1QMtFm6xWYsMTlLolPZMfw8kZvGvRYbb+qhQeXxo0560ofOfyvJZrTX5eiIC+J1r
+         /c7iEHrVYJW4g==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -36,9 +36,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v1 1/3] github bot: Upgrade clang version to 16
-Date:   Wed, 31 Aug 2022 07:48:15 +0700
-Message-Id: <20220831004449.2619220-2-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 2/3] CHANGELOG: Note about `io_uring_{enter,enter2,register,setup}`
+Date:   Wed, 31 Aug 2022 07:48:16 +0700
+Message-Id: <20220831004449.2619220-3-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220831004449.2619220-1-ammar.faizi@intel.com>
 References: <20220831004449.2619220-1-ammar.faizi@intel.com>
@@ -55,36 +55,29 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-clang-16 is now available, use it.
+Commit f0b43c84cb3d1 ("syscall: Add io_uring syscall functions")
+exports 4 new functions. Mention it in the CHANGELOG file.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- .github/workflows/build.yml | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ CHANGELOG | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-index 333929c..2608644 100644
---- a/.github/workflows/build.yml
-+++ b/.github/workflows/build.yml
-@@ -91,15 +91,15 @@ jobs:
-       uses: actions/checkout@v2
+diff --git a/CHANGELOG b/CHANGELOG
+index 9c054b0..1f37e92 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,9 +1,10 @@
+ liburing-2.3 release
  
-     - name: Install Compilers
-       run: |
-         if [[ "${{matrix.cc_pkg}}" == "clang" ]]; then \
-             wget https://apt.llvm.org/llvm.sh -O /tmp/llvm.sh; \
--            sudo bash /tmp/llvm.sh 15; \
--            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 400; \
--            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 400; \
-+            sudo bash /tmp/llvm.sh 16; \
-+            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 400; \
-+            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 400; \
-         else \
-             sudo apt-get update -y; \
-             sudo apt-get install -y ${{matrix.cc_pkg}} ${{matrix.cxx_pkg}}; \
-         fi;
+ - Support non-libc build for aarch64.
++- Add io_uring_{enter,enter2,register,setup} syscall functions.
  
-     - name: Display compiler versions
+ 
+ liburing-2.2 release
+ 
+ - Support non-libc builds.
+ - Optimized syscall handling for x86-64/x86/aarch64.
 -- 
 Ammar Faizi
 

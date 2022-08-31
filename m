@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8695A738B
-	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 03:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 366A85A7399
+	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 03:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230043AbiHaBwk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 30 Aug 2022 21:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57402 "EHLO
+        id S231298AbiHaBx6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 30 Aug 2022 21:53:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbiHaBwj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 21:52:39 -0400
+        with ESMTP id S229946AbiHaBx4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 30 Aug 2022 21:53:56 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF788B02A9;
-        Tue, 30 Aug 2022 18:52:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BE30B1B81;
+        Tue, 30 Aug 2022 18:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
         Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=/x61W8ECxcYp6VApa7rbgykWRp7/DFT2S0h+uIWuEt0=; b=fE7O2deJ1RanMKunrQ/zfTMOSf
-        ifOEdubrRjpQzwW+wZCnCsaWL1H+dWIVEswSHglWXF4cq19WX45jSAEjFPyZFK2LXQ/wijSM7tb6W
-        k+uKJo3mowcOZdAppnjeLHiYp6lzcRvVqvUVCdEqW0pqgaFiMUCu5tCvL+up2/ud0wrXHAYStgD5a
-        X7gktDpA97ofBU/rvHf3O939oo9TWrRT3CvpoipMffjAPkcPIWHeNYHzqspR3VsERhUOHNzx430Z/
-        qd7jFqLKUOEu/+8WZcmicWNgLbhaqj0Z+mtdiwHRaBjVj4sH29gTT/fbGsv85v6mNxd4VsF6MswZB
-        9lmrzOIw==;
+        bh=RhkN3pjenFJ3Z4sU+BUfbopmS9x7erS/IYHXt0Yrgys=; b=QysnhHPVNUGamQ7lXkzW2eGveh
+        lrRg3+WUIjKPhlF4vYw9KekYa0WymOeuQ9HZPakLME5p5qV2twe7OuR2cUMRxXRUExVoM9Da2cXco
+        yxjaOKLwszB82khEd88lF0vcr9JboUUXxbv1iMGT6e8sXnviYouqPSuJ+bj2WkKHW8IkoHWJTYVAa
+        nyEihlkujx5tC79yFjtJBfsR8iMLwz25U0Q5QoAClOCZQUDuPmiYE4b2xfU5PgTlbLr8FZaKX/Pc6
+        90hO5RXPljYmishV1MXlptWBpBn7w9xcC6yjahtqPBxuBT6MCskGBWplJNcTqSA8jP2wkHctWyQFF
+        e1X2LPNQ==;
 Received: from [2601:1c0:6280:3f0::a6b3]
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oTCtd-0036Mt-9k; Wed, 31 Aug 2022 01:52:01 +0000
-Message-ID: <b252a4e0-57a1-0f27-f4b0-598e851b47ea@infradead.org>
-Date:   Tue, 30 Aug 2022 18:51:56 -0700
+        id 1oTCv3-0036yC-Ja; Wed, 31 Aug 2022 01:53:29 +0000
+Message-ID: <241c05a3-52a2-d49f-6962-3af5a94bc3fc@infradead.org>
+Date:   Tue, 30 Aug 2022 18:53:26 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.1.2
-Subject: Re: [RFC PATCH 22/30] Code tagging based fault injection
+Subject: Re: [RFC PATCH 27/30] Code tagging based latency tracking
 Content-Language: en-US
 To:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
 Cc:     kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
@@ -55,9 +55,9 @@ Cc:     kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20220830214919.53220-1-surenb@google.com>
- <20220830214919.53220-23-surenb@google.com>
+ <20220830214919.53220-28-surenb@google.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220830214919.53220-23-surenb@google.com>
+In-Reply-To: <20220830214919.53220-28-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,37 +73,23 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 
 On 8/30/22 14:49, Suren Baghdasaryan wrote:
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> 
-> This adds a new fault injection capability, based on code tagging.
-> 
-> To use, simply insert somewhere in your code
-> 
->   dynamic_fault("fault_class_name")
-> 
-> and check whether it returns true - if so, inject the error.
-> For example
-> 
->   if (dynamic_fault("init"))
->       return -EINVAL;
-> 
-> There's no need to define faults elsewhere, as with
-> include/linux/fault-injection.h. Faults show up in debugfs, under
-> /sys/kernel/debug/dynamic_faults, and can be selected based on
-> file/module/function/line number/class, and enabled permanently, or in
-> oneshot mode, or with a specified frequency.
-> 
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index b7d03afbc808..b0f86643b8f0 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1728,6 +1728,14 @@ config LATENCYTOP
+>  	  Enable this option if you want to use the LatencyTOP tool
+>  	  to find out which userspace is blocking on what kernel operations.
+>  
+> +config CODETAG_TIME_STATS
+> +	bool "Code tagging based latency measuring"
+> +	depends on DEBUG_FS
+> +	select TIME_STATS
+> +	select CODE_TAGGING
+> +	help
+> +	  Enabling this option makes latency statistics available in debugfs
 
-Missing Signed-off-by: from Suren.
-See Documentation/process/submitting-patches.rst:
-
-When to use Acked-by:, Cc:, and Co-developed-by:
-------------------------------------------------
-
-The Signed-off-by: tag indicates that the signer was involved in the
-development of the patch, or that he/she was in the patch's delivery path.
-
+Missing period at the end of the sentence.
 
 -- 
 ~Randy

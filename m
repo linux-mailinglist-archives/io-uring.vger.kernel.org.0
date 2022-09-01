@@ -2,340 +2,256 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E981D5A9539
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 12:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E965A955B
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 13:05:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234322AbiIAK6v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 06:58:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
+        id S233484AbiIALFT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 07:05:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234312AbiIAK6k (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 06:58:40 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF5412AF5
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 03:58:39 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id cu2so33941427ejb.0
-        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 03:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=Zb5ypFcKc6aO+28jhXvvQMpsztKeVNc6T7YSBFw79eI=;
-        b=opOP+4aQyOw3f9EbhfV1rx6g/VKhcyomUoOIAJhaRd4fVtNfsCTGawWvLdfVKUV7kb
-         MBMvRk3YR9+16mogqT4ZZDlSL4S8mYJkk5gqAS7q2Iyrt5vYObGWAs4rUHib88CCGwIW
-         hxlmAQ6zYDNXFQlmA/NoM9OBebbPx93/M1k78truEdtWDPo9UJ+FlkXCukwQrfkPOuW8
-         lXxBBuxEHmTT+v/ItDt6C7A39Us5KTG+UxYdJSa9LXlKxuncSBipWIfjqFR46/YIMYWf
-         apPRlxAIo4AXmMlE57JWq35DwM/LkEA9gTXGt9xfa3AWKDJMqxzBvX+6U/vGhysvKyS6
-         XTxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=Zb5ypFcKc6aO+28jhXvvQMpsztKeVNc6T7YSBFw79eI=;
-        b=73GKg8TMrWU7ETbEujSnkVHvJzDJePj1x8Rk1bWCfSv+dy6ocAXywrhsmFUHTpQumD
-         p0vkjnRLnERJKF4PX6sIqiPrOXTaiJ02Ws80lNTrtd486n34YFQvCe3aEvfznZAYsa0u
-         JDO/CVe8NFsKyj+BOlvOjwOa3mCJ28ZSGvfZc8uLSgvi/jAV1GlyUCmRoZ1fvNejHqlt
-         6TDqWmcUCg7SiyfrbQYTsWFtGVcISMm5EFM/z5I6JEo6qVLXhJFIYqik8imLO0vitis/
-         KYezR0cvuKjH2qRj/MNlXEwXAcqh4bMIxrkiIn0dP+WLltUqCgyUK5ZkL156xma9VuBU
-         GI4Q==
-X-Gm-Message-State: ACgBeo0FX2uPOVGj7Y3JBPXitRBQxtKtu/m5NY9UTeimb2JZnXDDkUT5
-        0Tdsx4Rbm6tEPlCsqzEMZXFnhjL9XwM=
-X-Google-Smtp-Source: AA6agR5rXOW3jb6hb/9gHv6VrP4Fn5Lnd04alCsqWqzb0e02iiUdkU9hSYaX2ia1L0lNPDJFzMxAsg==
-X-Received: by 2002:a17:907:2722:b0:731:2aeb:7942 with SMTP id d2-20020a170907272200b007312aeb7942mr23389941ejl.734.1662029917169;
-        Thu, 01 Sep 2022 03:58:37 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:e81f])
-        by smtp.gmail.com with ESMTPSA id z14-20020a1709060ace00b0073d6d6e698bsm8277762ejf.187.2022.09.01.03.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 03:58:36 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RFC 6/6] selftests/net: return back io_uring zc send tests
-Date:   Thu,  1 Sep 2022 11:54:05 +0100
-Message-Id: <c8e5018c516093bdad0b6e19f2f9847dea17e4d2.1662027856.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <cover.1662027856.git.asml.silence@gmail.com>
-References: <cover.1662027856.git.asml.silence@gmail.com>
+        with ESMTP id S233114AbiIALFS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 07:05:18 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEE0286EF;
+        Thu,  1 Sep 2022 04:05:13 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 0601C22679;
+        Thu,  1 Sep 2022 11:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1662030312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8Mq+Xr0OI+bfUf9L9MD4E1lYUlcZgNZF3vEeJl7iivY=;
+        b=qxrx6Job1q9NhDr8jWgNkmZI/DIOO/4e7B7RmUvgkYmx7g2HD/fgMwo5Yk3h0VlLoTt148
+        XYp7yip2SBIiuI+n/MfaQLawKmE1HR8l9pazuynzZByPC2unjCGeYASa4WYFvbNUExE7dA
+        7MiaajpJfHroyIAEi/eiNxfkWvr+0Tc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1662030312;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8Mq+Xr0OI+bfUf9L9MD4E1lYUlcZgNZF3vEeJl7iivY=;
+        b=aI8rpCPzOEsCk4iUnJ8AJ2D/wDZBIW/Yuzt0mzTQGVVpTTlaSfJwPqq4wfJerDAgBO140w
+        J3d/FttUmGmZwoAQ==
+Received: from suse.de (unknown [10.163.43.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 314B12C142;
+        Thu,  1 Sep 2022 11:05:08 +0000 (UTC)
+Date:   Thu, 1 Sep 2022 12:05:01 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
+        juri.lelli@redhat.com, ldufour@linux.ibm.com, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, arnd@arndb.de,
+        jbaron@akamai.com, rientjes@google.com, minchan@google.com,
+        kaleshsingh@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220901110501.o5rq5yzltomirxiw@suse.de>
+References: <20220830214919.53220-1-surenb@google.com>
+ <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
+ <20220831101948.f3etturccmp5ovkl@suse.de>
+ <20220831155941.q5umplytbx6offku@moria.home.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20220831155941.q5umplytbx6offku@moria.home.lan>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Enable io_uring zerocopy send tests back and fix them up to follow the
-new inteface.
+On Wed, Aug 31, 2022 at 11:59:41AM -0400, Kent Overstreet wrote:
+> On Wed, Aug 31, 2022 at 11:19:48AM +0100, Mel Gorman wrote:
+> > On Wed, Aug 31, 2022 at 04:42:30AM -0400, Kent Overstreet wrote:
+> > > On Wed, Aug 31, 2022 at 09:38:27AM +0200, Peter Zijlstra wrote:
+> > > > On Tue, Aug 30, 2022 at 02:48:49PM -0700, Suren Baghdasaryan wrote:
+> > > > > ===========================
+> > > > > Code tagging framework
+> > > > > ===========================
+> > > > > Code tag is a structure identifying a specific location in the source code
+> > > > > which is generated at compile time and can be embedded in an application-
+> > > > > specific structure. Several applications of code tagging are included in
+> > > > > this RFC, such as memory allocation tracking, dynamic fault injection,
+> > > > > latency tracking and improved error code reporting.
+> > > > > Basically, it takes the old trick of "define a special elf section for
+> > > > > objects of a given type so that we can iterate over them at runtime" and
+> > > > > creates a proper library for it.
+> > > > 
+> > > > I might be super dense this morning, but what!? I've skimmed through the
+> > > > set and I don't think I get it.
+> > > > 
+> > > > What does this provide that ftrace/kprobes don't already allow?
+> > > 
+> > > You're kidding, right?
+> > 
+> > It's a valid question. From the description, it main addition that would
+> > be hard to do with ftrace or probes is catching where an error code is
+> > returned. A secondary addition would be catching all historical state and
+> > not just state since the tracing started.
+> 
+> Catching all historical state is pretty important in the case of memory
+> allocation accounting, don't you think?
+> 
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- .../selftests/net/io_uring_zerocopy_tx.c      | 110 ++++++------------
- .../selftests/net/io_uring_zerocopy_tx.sh     |  10 +-
- 2 files changed, 41 insertions(+), 79 deletions(-)
+Not always. If the intent is to catch a memory leak that gets worse over
+time, early boot should be sufficient. Sure, there might be drivers that leak
+memory allocated at init but if it's not a growing leak, it doesn't matter.
 
-diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.c b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-index 7446ef364e9f..8ce48aca8321 100644
---- a/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-@@ -36,8 +36,6 @@
- #include <sys/un.h>
- #include <sys/wait.h>
+> Also, ftrace can drop events. Not really ideal if under system load your memory
+> accounting numbers start to drift.
+> 
+
+As pointed out elsewhere, attaching to the tracepoint and recording relevant
+state is an option other than trying to parse a raw ftrace feed. For memory
+leaks, there are already tracepoints for page allocation and free that could
+be used to track allocations that are not freed at a given point in time.
+There is also the kernel memory leak detector although I never had reason
+to use it (https://www.kernel.org/doc/html/v6.0-rc3/dev-tools/kmemleak.html)
+and it sounds like it would be expensive.
+
+> > It's also unclear *who* would enable this. It looks like it would mostly
+> > have value during the development stage of an embedded platform to track
+> > kernel memory usage on a per-application basis in an environment where it
+> > may be difficult to setup tracing and tracking. Would it ever be enabled
+> > in production? Would a distribution ever enable this? If it's enabled, any
+> > overhead cannot be disabled/enabled at run or boot time so anyone enabling
+> > this would carry the cost without never necessarily consuming the data.
+> 
+> The whole point of this is to be cheap enough to enable in production -
+> especially the latency tracing infrastructure. There's a lot of value to
+> always-on system visibility infrastructure, so that when a live machine starts
+> to do something wonky the data is already there.
+> 
+
+Sure, there is value but nothing stops the tracepoints being attached as
+a boot-time service where interested. For latencies, there is already
+bpf examples for tracing individual function latency over time e.g.
+https://github.com/iovisor/bcc/blob/master/tools/funclatency.py although
+I haven't used it recently.
+
+Live parsing of ftrace is possible, albeit expensive.
+https://github.com/gormanm/mmtests/blob/master/monitors/watch-highorder.pl
+tracks counts of high-order allocations and dumps a report on interrupt as
+an example of live parsing ftrace and only recording interesting state. It's
+not tracking state you are interested in but it demonstrates it is possible
+to rely on ftrace alone and monitor from userspace. It's bit-rotted but
+can be fixed with
+
+diff --git a/monitors/watch-highorder.pl b/monitors/watch-highorder.pl
+index 8c80ae79e556..fd0d477427df 100755
+--- a/monitors/watch-highorder.pl
++++ b/monitors/watch-highorder.pl
+@@ -52,7 +52,7 @@ my $regex_pagealloc;
  
--#if 0
--
- #define NOTIF_TAG 0xfffffffULL
- #define NONZC_TAG 0
- #define ZC_TAG 1
-@@ -49,7 +47,6 @@ enum {
- 	MODE_MIXED	= 3,
- };
+ # Static regex used. Specified like this for readability and for use with /o
+ #                      (process_pid)     (cpus      )   ( time  )   (tpoint    ) (details)
+-my $regex_traceevent = '\s*([a-zA-Z0-9-]*)\s*(\[[0-9]*\])\s*([0-9.]*):\s*([a-zA-Z_]*):\s*(.*)';
++my $regex_traceevent = '\s*([a-zA-Z0-9-]*)\s*(\[[0-9]*\])\s*([0-9. ]*):\s*([a-zA-Z_]*):\s*(.*)';
+ my $regex_statname = '[-0-9]*\s\((.*)\).*';
+ my $regex_statppid = '[-0-9]*\s\(.*\)\s[A-Za-z]\s([0-9]*).*';
  
--static bool cfg_flush		= false;
- static bool cfg_cork		= false;
- static int  cfg_mode		= MODE_ZC_FIXED;
- static int  cfg_nr_reqs		= 8;
-@@ -168,21 +165,6 @@ static int io_uring_register_buffers(struct io_uring *ring,
- 	return (ret < 0) ? -errno : ret;
- }
- 
--static int io_uring_register_notifications(struct io_uring *ring,
--					   unsigned nr,
--					   struct io_uring_notification_slot *slots)
--{
--	int ret;
--	struct io_uring_notification_register r = {
--		.nr_slots = nr,
--		.data = (unsigned long)slots,
--	};
--
--	ret = syscall(__NR_io_uring_register, ring->ring_fd,
--		      IORING_REGISTER_NOTIFIERS, &r, sizeof(r));
--	return (ret < 0) ? -errno : ret;
--}
--
- static int io_uring_mmap(int fd, struct io_uring_params *p,
- 			 struct io_uring_sq *sq, struct io_uring_cq *cq)
- {
-@@ -299,11 +281,10 @@ static inline void io_uring_prep_send(struct io_uring_sqe *sqe, int sockfd,
- 
- static inline void io_uring_prep_sendzc(struct io_uring_sqe *sqe, int sockfd,
- 				        const void *buf, size_t len, int flags,
--				        unsigned slot_idx, unsigned zc_flags)
-+				        unsigned zc_flags)
- {
- 	io_uring_prep_send(sqe, sockfd, buf, len, flags);
--	sqe->opcode = (__u8) IORING_OP_SENDZC_NOTIF;
--	sqe->notification_idx = slot_idx;
-+	sqe->opcode = (__u8) IORING_OP_SEND_ZC;
- 	sqe->ioprio = zc_flags;
- }
- 
-@@ -376,7 +357,6 @@ static int do_setup_tx(int domain, int type, int protocol)
- 
- static void do_tx(int domain, int type, int protocol)
- {
--	struct io_uring_notification_slot b[1] = {{.tag = NOTIF_TAG}};
- 	struct io_uring_sqe *sqe;
- 	struct io_uring_cqe *cqe;
- 	unsigned long packets = 0, bytes = 0;
-@@ -392,10 +372,6 @@ static void do_tx(int domain, int type, int protocol)
- 	if (ret)
- 		error(1, ret, "io_uring: queue init");
- 
--	ret = io_uring_register_notifications(&ring, 1, b);
--	if (ret)
--		error(1, ret, "io_uring: tx ctx registration");
--
- 	iov.iov_base = payload;
- 	iov.iov_len = cfg_payload_len;
- 
-@@ -411,9 +387,8 @@ static void do_tx(int domain, int type, int protocol)
- 		for (i = 0; i < cfg_nr_reqs; i++) {
- 			unsigned zc_flags = 0;
- 			unsigned buf_idx = 0;
--			unsigned slot_idx = 0;
- 			unsigned mode = cfg_mode;
--			unsigned msg_flags = 0;
-+			unsigned msg_flags = MSG_WAITALL;
- 
- 			if (cfg_mode == MODE_MIXED)
- 				mode = rand() % 3;
-@@ -425,13 +400,10 @@ static void do_tx(int domain, int type, int protocol)
- 						   cfg_payload_len, msg_flags);
- 				sqe->user_data = NONZC_TAG;
- 			} else {
--				if (cfg_flush) {
--					zc_flags |= IORING_RECVSEND_NOTIF_FLUSH;
--					compl_cqes++;
--				}
-+				compl_cqes++;
- 				io_uring_prep_sendzc(sqe, fd, payload,
- 						     cfg_payload_len,
--						     msg_flags, slot_idx, zc_flags);
-+						     msg_flags, zc_flags);
- 				if (mode == MODE_ZC_FIXED) {
- 					sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
- 					sqe->buf_index = buf_idx;
-@@ -444,51 +416,57 @@ static void do_tx(int domain, int type, int protocol)
- 		if (ret != cfg_nr_reqs)
- 			error(1, ret, "submit");
- 
-+		if (cfg_cork)
-+			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 0);
- 		for (i = 0; i < cfg_nr_reqs; i++) {
- 			ret = io_uring_wait_cqe(&ring, &cqe);
- 			if (ret)
- 				error(1, ret, "wait cqe");
- 
--			if (cqe->user_data == NOTIF_TAG) {
-+			if (cqe->user_data != NONZC_TAG &&
-+			    cqe->user_data != ZC_TAG)
-+				error(1, -EINVAL, "invalid cqe->user_data");
-+
-+			if (cqe->flags & IORING_CQE_F_NOTIF) {
-+				if (cqe->flags & IORING_CQE_F_MORE)
-+					error(1, -EINVAL, "invalid notif flags");
- 				compl_cqes--;
- 				i--;
--			} else if (cqe->user_data != NONZC_TAG &&
--				   cqe->user_data != ZC_TAG) {
--				error(1, cqe->res, "invalid user_data");
--			} else if (cqe->res <= 0 && cqe->res != -EAGAIN) {
-+			} else if (cqe->res <= 0) {
-+				if (cqe->flags & IORING_CQE_F_MORE)
-+					error(1, cqe->res, "more with a failed send");
- 				error(1, cqe->res, "send failed");
- 			} else {
--				if (cqe->res > 0) {
--					packets++;
--					bytes += cqe->res;
--				}
--				/* failed requests don't flush */
--				if (cfg_flush &&
--				    cqe->res <= 0 &&
--				    cqe->user_data == ZC_TAG)
--					compl_cqes--;
-+				if (cqe->user_data == ZC_TAG &&
-+				    !(cqe->flags & IORING_CQE_F_MORE))
-+					error(1, cqe->res, "missing more flag");
-+				packets++;
-+				bytes += cqe->res;
- 			}
- 			io_uring_cqe_seen(&ring);
- 		}
--		if (cfg_cork)
--			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 0);
- 	} while (gettimeofday_ms() < tstop);
- 
--	if (close(fd))
--		error(1, errno, "close");
--
--	fprintf(stderr, "tx=%lu (MB=%lu), tx/s=%lu (MB/s=%lu)\n",
--			packets, bytes >> 20,
--			packets / (cfg_runtime_ms / 1000),
--			(bytes >> 20) / (cfg_runtime_ms / 1000));
--
- 	while (compl_cqes) {
- 		ret = io_uring_wait_cqe(&ring, &cqe);
- 		if (ret)
- 			error(1, ret, "wait cqe");
-+		if (cqe->flags & IORING_CQE_F_MORE)
-+			error(1, -EINVAL, "invalid notif flags");
-+		if (!(cqe->flags & IORING_CQE_F_NOTIF))
-+			error(1, -EINVAL, "missing notif flag");
-+
- 		io_uring_cqe_seen(&ring);
- 		compl_cqes--;
- 	}
-+
-+	fprintf(stderr, "tx=%lu (MB=%lu), tx/s=%lu (MB/s=%lu)\n",
-+			packets, bytes >> 20,
-+			packets / (cfg_runtime_ms / 1000),
-+			(bytes >> 20) / (cfg_runtime_ms / 1000));
-+
-+	if (close(fd))
-+		error(1, errno, "close");
- }
- 
- static void do_test(int domain, int type, int protocol)
-@@ -502,8 +480,8 @@ static void do_test(int domain, int type, int protocol)
- 
- static void usage(const char *filepath)
- {
--	error(1, 0, "Usage: %s [-f] [-n<N>] [-z0] [-s<payload size>] "
--		    "(-4|-6) [-t<time s>] -D<dst_ip> udp", filepath);
-+	error(1, 0, "Usage: %s (-4|-6) (udp|tcp) -D<dst_ip> [-s<payload size>] "
-+		    "[-t<time s>] [-n<batch>] [-p<port>] [-m<mode>]", filepath);
- }
- 
- static void parse_opts(int argc, char **argv)
-@@ -521,7 +499,7 @@ static void parse_opts(int argc, char **argv)
- 		usage(argv[0]);
- 	cfg_payload_len = max_payload_len;
- 
--	while ((c = getopt(argc, argv, "46D:p:s:t:n:fc:m:")) != -1) {
-+	while ((c = getopt(argc, argv, "46D:p:s:t:n:c:m:")) != -1) {
- 		switch (c) {
- 		case '4':
- 			if (cfg_family != PF_UNSPEC)
-@@ -550,9 +528,6 @@ static void parse_opts(int argc, char **argv)
- 		case 'n':
- 			cfg_nr_reqs = strtoul(optarg, NULL, 0);
- 			break;
--		case 'f':
--			cfg_flush = 1;
--			break;
- 		case 'c':
- 			cfg_cork = strtol(optarg, NULL, 0);
- 			break;
-@@ -585,8 +560,6 @@ static void parse_opts(int argc, char **argv)
- 
- 	if (cfg_payload_len > max_payload_len)
- 		error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
--	if (cfg_mode == MODE_NONZC && cfg_flush)
--		error(1, 0, "-f: only zerocopy modes support notifications");
- 	if (optind != argc - 1)
- 		usage(argv[0]);
- }
-@@ -605,10 +578,3 @@ int main(int argc, char **argv)
- 		error(1, 0, "unknown cfg_test %s", cfg_test);
- 	return 0;
- }
--
--#else
--int main(int argc, char **argv)
--{
--	return 0;
--}
--#endif
-diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
-index 6a65e4437640..32aa6e9dacc2 100755
---- a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
-+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
-@@ -25,15 +25,11 @@ readonly path_sysctl_mem="net.core.optmem_max"
- # No arguments: automated test
- if [[ "$#" -eq "0" ]]; then
- 	IPs=( "4" "6" )
--	protocols=( "tcp" "udp" )
- 
- 	for IP in "${IPs[@]}"; do
--		for proto in "${protocols[@]}"; do
--			for mode in $(seq 1 3); do
--				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32
--				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -f
--				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -c -f
--			done
-+		for mode in $(seq 1 3); do
-+			$0 "$IP" udp -m "$mode" -t 1 -n 32
-+			$0 "$IP" tcp -m "$mode" -t 1 -n 32
- 		done
- 	done
- 
+@@ -73,6 +73,7 @@ sub generate_traceevent_regex {
+ 				$regex =~ s/%p/\([0-9a-f]*\)/g;
+ 				$regex =~ s/%d/\([-0-9]*\)/g;
+ 				$regex =~ s/%lu/\([0-9]*\)/g;
++				$regex =~ s/%lx/\([0-9a-zA-Z]*\)/g;
+ 				$regex =~ s/%s/\([A-Z_|]*\)/g;
+ 				$regex =~ s/\(REC->gfp_flags\).*/REC->gfp_flags/;
+ 				$regex =~ s/\",.*//;
+
+Example output
+
+3 instances order=2 normal gfp_flags=GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_ZERO
+ => trace_event_raw_event_mm_page_alloc+0x7d/0xc0 <ffffffffb1caeccd>
+ => __alloc_pages+0x188/0x250 <ffffffffb1cee8a8>
+ => kmalloc_large_node+0x3f/0x80 <ffffffffb1d1cd3f>
+ => __kmalloc_node+0x321/0x420 <ffffffffb1d22351>
+ => kvmalloc_node+0x46/0xe0 <ffffffffb1ca4906>
+ => ttm_sg_tt_init+0x88/0xb0 [ttm] <ffffffffc03a02c8>
+ => amdgpu_ttm_tt_create+0x4f/0x80 [amdgpu] <ffffffffc04cff0f>
+ => ttm_tt_create+0x59/0x90 [ttm] <ffffffffc03a03b9>
+ => ttm_bo_handle_move_mem+0x7e/0x1c0 [ttm] <ffffffffc03a0d9e>
+ => ttm_bo_validate+0xc5/0x140 [ttm] <ffffffffc03a2095>
+ => ttm_bo_init_reserved+0x17b/0x200 [ttm] <ffffffffc03a228b>
+ => amdgpu_bo_create+0x1a3/0x470 [amdgpu] <ffffffffc04d36c3>
+ => amdgpu_bo_create_user+0x34/0x60 [amdgpu] <ffffffffc04d39c4>
+ => amdgpu_gem_create_ioctl+0x131/0x3a0 [amdgpu] <ffffffffc04d94f1>
+ => drm_ioctl_kernel+0xb5/0x140 <ffffffffb21652c5>
+ => drm_ioctl+0x224/0x3e0 <ffffffffb2165574>
+ => amdgpu_drm_ioctl+0x49/0x80 [amdgpu] <ffffffffc04bd2d9>
+ => __x64_sys_ioctl+0x8a/0xc0 <ffffffffb1d7c2da>
+ => do_syscall_64+0x5c/0x90 <ffffffffb253016c>
+ => entry_SYSCALL_64_after_hwframe+0x63/0xcd <ffffffffb260009b>
+
+3 instances order=1 normal gfp_flags=GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_COMP|__GFP_ACCOUNT
+ => trace_event_raw_event_mm_page_alloc+0x7d/0xc0 <ffffffffb1caeccd>
+ => __alloc_pages+0x188/0x250 <ffffffffb1cee8a8>
+ => __folio_alloc+0x17/0x50 <ffffffffb1cef1a7>
+ => vma_alloc_folio+0x8f/0x350 <ffffffffb1d11e4f>
+ => __handle_mm_fault+0xa1e/0x1120 <ffffffffb1cc80ee>
+ => handle_mm_fault+0xb2/0x280 <ffffffffb1cc88a2>
+ => do_user_addr_fault+0x1b9/0x690 <ffffffffb1a89949>
+ => exc_page_fault+0x67/0x150 <ffffffffb2534627>
+ => asm_exc_page_fault+0x22/0x30 <ffffffffb2600b62>
+
+It's not tracking leaks because that is not what I was intrested in at
+the time but could using the same method and recording PFNs that were
+allocated, their call site but not freed. These days, this approach may
+be a bit unexpected but it was originally written 13 years ago. It could
+have been done with systemtap back then but my recollection was that it
+was difficult to keep systemtap working with rc kernels.
+
+> What we've built here this is _far_ cheaper than anything that could be done
+> with ftrace.
+> 
+> > It might be an ease-of-use thing. Gathering the information from traces
+> > is tricky and would need combining multiple different elements and that
+> > is development effort but not impossible.
+> > 
+> > Whatever asking for an explanation as to why equivalent functionality
+> > cannot not be created from ftrace/kprobe/eBPF/whatever is reasonable.
+> 
+> I think perhaps some of the expectation should be on the "ftrace for
+> everything!" people to explain a: how their alternative could be even built and
+> b: how it would compare in terms of performance and ease of use.
+> 
+
+The ease of use is a criticism as there is effort required to develop
+the state tracking of in-kernel event be it from live parsing ftrace,
+attaching to tracepoints with systemtap/bpf/whatever and the like. The
+main disadvantage with an in-kernel implementation is three-fold. First,
+it doesn't work with older kernels without backports. Second, if something
+slightly different it needed then it's a kernel rebuild.  Third, if the
+option is not enabled in the deployed kernel config then you are relying
+on the end user being willing to deploy a custom kernel.  The initial
+investment in doing memory leak tracking or latency tracking by attaching
+to tracepoints is significant but it works with older kernels up to a point
+and is less sensitive to the kernel config options selected as features
+like ftrace are often selected.
+
 -- 
-2.37.2
-
+Mel Gorman
+SUSE Labs

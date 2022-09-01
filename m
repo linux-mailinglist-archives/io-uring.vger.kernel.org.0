@@ -2,50 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A0D5A9336
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 11:33:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB53F5A9335
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 11:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233076AbiIAJde (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 05:33:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42900 "EHLO
+        id S233318AbiIAJdd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 05:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233450AbiIAJdd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 05:33:33 -0400
+        with ESMTP id S233076AbiIAJdc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 05:33:32 -0400
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2E9132EF6
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 02:33:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3329B1314E4
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 02:33:28 -0700 (PDT)
 Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2811L1WI002702
-        for <io-uring@vger.kernel.org>; Thu, 1 Sep 2022 02:33:28 -0700
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2811L1WG002702
+        for <io-uring@vger.kernel.org>; Thu, 1 Sep 2022 02:33:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=t1Asr9tRDaaI2rFoxKH7e153Co8XTQNQeo+rjD8KwVw=;
- b=O29K6FpViOEFzRU0EFFTdOWyWSEJpZtk+lmhviMdbhetQ0AvTfuWIxWXgjmwHjEQxrhn
- EmKRQSlFXgv3pZQYVbBZZgEwsfIMc7vo6agEmIqNSHKpvucSYVWE7dwKutiQBNm7p/m2
- ttWNMxVL4VTVN7KGB0Ho/gRtsTw6CcSInBc= 
+ bh=vdLgoPRmihW03RzES3m7kZr3l5AcEv78g4/43Qy3Cuw=;
+ b=YC2VP04MSo2erVFHZEBp+8svQ6jhqps0D17kfpLvd/kSZbh+JSgtq4SDE2EueoTeSEZe
+ nonKBf5+YFAAo71Hje9pbCyiNQFDHMTclg9U2JuqByO2RRJBMKYEMigQ2ogUEAjSD994
+ 4FjBiBWWiUS5VEFGRHc+BxFtoJ0pjZER4OM= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jaab2wgja-3
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jaab2wgja-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 02:33:28 -0700
-Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
- snc-exhub103.TheFacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 1 Sep 2022 02:33:26 -0700
-Received: from twshared11415.03.ash7.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 02:33:27 -0700
+Received: from twshared11415.03.ash7.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.31; Thu, 1 Sep 2022 02:33:26 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id B34A557693F8; Thu,  1 Sep 2022 02:33:06 -0700 (PDT)
+        id B8C9657693FA; Thu,  1 Sep 2022 02:33:06 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         <io-uring@vger.kernel.org>
 CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH liburing v2 05/12] update existing tests for defer taskrun
-Date:   Thu, 1 Sep 2022 02:32:56 -0700
-Message-ID: <20220901093303.1974274-6-dylany@fb.com>
+Subject: [PATCH liburing v2 06/12] add a defer-taskrun test
+Date:   Thu, 1 Sep 2022 02:32:57 -0700
+Message-ID: <20220901093303.1974274-7-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220901093303.1974274-1-dylany@fb.com>
 References: <20220901093303.1974274-1-dylany@fb.com>
@@ -53,8 +49,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 12D78sBDtF2Tb1HO-RHVL9sYJt5NL0Bh
-X-Proofpoint-ORIG-GUID: 12D78sBDtF2Tb1HO-RHVL9sYJt5NL0Bh
+X-Proofpoint-GUID: uVClqUNw3hOCQI3_bCTmXPeUfEYJ4wrc
+X-Proofpoint-ORIG-GUID: uVClqUNw3hOCQI3_bCTmXPeUfEYJ4wrc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-09-01_06,2022-08-31_03,2022-06-22_01
@@ -68,418 +64,368 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add defer_taskrun to a few choice tests that can expose some bad
-behaviour.
-This requires adding some io_uring_get_events calls to make sure deferred
-tasks are run
+Add a test specifically for IORING_SETUP_DEFER_TASKRUN
 
 Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- test/eventfd-disable.c     | 33 ++++++++++++++++++++++---
- test/iopoll.c              | 17 +++++++++----
- test/multicqes_drain.c     | 50 +++++++++++++++++++++++++++++++++-----
- test/poll-mshot-overflow.c | 40 +++++++++++++++++++++++++++---
- test/recv-multishot.c      | 33 ++++++++++++++++---------
- test/rsrc_tags.c           | 10 ++++++--
- 6 files changed, 152 insertions(+), 31 deletions(-)
+ test/Makefile        |   1 +
+ test/defer-taskrun.c | 333 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 334 insertions(+)
+ create mode 100644 test/defer-taskrun.c
 
-diff --git a/test/eventfd-disable.c b/test/eventfd-disable.c
-index 2c8cf6dad7c1..162f9f9bc783 100644
---- a/test/eventfd-disable.c
-+++ b/test/eventfd-disable.c
-@@ -15,7 +15,7 @@
- #include "liburing.h"
- #include "helpers.h"
-=20
--int main(int argc, char *argv[])
-+static int test(bool defer)
- {
- 	struct io_uring_params p =3D {};
- 	struct io_uring_sqe *sqe;
-@@ -28,8 +28,9 @@ int main(int argc, char *argv[])
- 	};
- 	int ret, evfd, i;
-=20
--	if (argc > 1)
--		return T_EXIT_SKIP;
-+	if (defer)
-+		p.flags |=3D IORING_SETUP_SINGLE_ISSUER |
-+			   IORING_SETUP_DEFER_TASKRUN;
-=20
- 	ret =3D io_uring_queue_init_params(64, &ring, &p);
- 	if (ret) {
-@@ -148,5 +149,31 @@ int main(int argc, char *argv[])
- 		io_uring_cqe_seen(&ring, cqe);
- 	}
-=20
-+	io_uring_queue_exit(&ring);
-+	close(evfd);
- 	return T_EXIT_PASS;
- }
+diff --git a/test/Makefile b/test/Makefile
+index 418c11c95875..78a499a357d7 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -62,6 +62,7 @@ test_srcs :=3D \
+ 	d4ae271dfaae.c \
+ 	d77a67ed5f27.c \
+ 	defer.c \
++	defer-taskrun.c \
+ 	double-poll-crash.c \
+ 	drop-submit.c \
+ 	eeed8b54e0df.c \
+diff --git a/test/defer-taskrun.c b/test/defer-taskrun.c
+new file mode 100644
+index 000000000000..aec8c5d3f223
+--- /dev/null
++++ b/test/defer-taskrun.c
+@@ -0,0 +1,333 @@
++// SPDX-License-Identifier: MIT
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <error.h>
++#include <sys/eventfd.h>
++#include <signal.h>
++#include <poll.h>
++#include <assert.h>
++#include <pthread.h>
++#include <sys/types.h>
++#include <sys/wait.h>
 +
-+int main(int argc, char *argv[])
++#include "liburing.h"
++#include "test.h"
++#include "helpers.h"
++
++#define EXEC_FILENAME ".defer-taskrun"
++#define EXEC_FILESIZE (1U<<20)
++
++static bool can_read_t(int fd, int time)
 +{
 +	int ret;
++	struct pollfd p =3D {
++		.fd =3D fd,
++		.events =3D POLLIN,
++	};
 +
-+	if (argc > 1)
-+		return T_EXIT_SKIP;
++	ret =3D poll(&p, 1, time);
 +
-+	ret =3D test(false);
-+	if (ret !=3D T_EXIT_PASS) {
-+		fprintf(stderr, "%s: test(false) failed\n", argv[0]);
-+		return ret;
-+	}
-+
-+	if (t_probe_defer_taskrun()) {
-+		ret =3D test(true);
-+		if (ret !=3D T_EXIT_PASS) {
-+			fprintf(stderr, "%s: test(true) failed\n", argv[0]);
-+			return ret;
-+		}
-+	}
-+
-+	return ret;
++	return ret =3D=3D 1;
 +}
-diff --git a/test/iopoll.c b/test/iopoll.c
-index 91cb71bd2e9c..20f91c7947be 100644
---- a/test/iopoll.c
-+++ b/test/iopoll.c
-@@ -274,7 +274,7 @@ ok:
- }
-=20
- static int test_io(const char *file, int write, int sqthread, int fixed,
--		   int buf_select)
-+		   int buf_select, int defer)
- {
- 	struct io_uring ring;
- 	int ret, ring_flags =3D IORING_SETUP_IOPOLL;
-@@ -282,6 +282,10 @@ static int test_io(const char *file, int write, int =
-sqthread, int fixed,
- 	if (no_iopoll)
- 		return 0;
-=20
-+	if (defer)
-+		ring_flags |=3D IORING_SETUP_SINGLE_ISSUER |
-+			      IORING_SETUP_DEFER_TASKRUN;
 +
- 	ret =3D t_create_ring(64, &ring, ring_flags);
- 	if (ret =3D=3D T_SETUP_SKIP)
- 		return 0;
-@@ -337,19 +341,22 @@ int main(int argc, char *argv[])
-=20
- 	vecs =3D t_create_buffers(BUFFERS, BS);
-=20
--	nr =3D 16;
-+	nr =3D 32;
- 	if (no_buf_select)
- 		nr =3D 8;
-+	else if (!t_probe_defer_taskrun())
-+		nr =3D 16;
- 	for (i =3D 0; i < nr; i++) {
- 		int write =3D (i & 1) !=3D 0;
- 		int sqthread =3D (i & 2) !=3D 0;
- 		int fixed =3D (i & 4) !=3D 0;
- 		int buf_select =3D (i & 8) !=3D 0;
-+		int defer =3D (i & 16) !=3D 0;
-=20
--		ret =3D test_io(fname, write, sqthread, fixed, buf_select);
-+		ret =3D test_io(fname, write, sqthread, fixed, buf_select, defer);
- 		if (ret) {
--			fprintf(stderr, "test_io failed %d/%d/%d/%d\n",
--				write, sqthread, fixed, buf_select);
-+			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d\n",
-+				write, sqthread, fixed, buf_select, defer);
- 			goto err;
- 		}
- 		if (no_iopoll)
-diff --git a/test/multicqes_drain.c b/test/multicqes_drain.c
-index 6cd03ba5f3f7..f95c4382b3f4 100644
---- a/test/multicqes_drain.c
-+++ b/test/multicqes_drain.c
-@@ -233,6 +233,8 @@ static int test_generic_drain(struct io_uring *ring)
-=20
- 		if (trigger_event(pipes[i]))
- 			goto err;
-+
-+		io_uring_get_events(ring);
- 	}
- 	sleep(1);
- 	i =3D 0;
-@@ -246,7 +248,7 @@ static int test_generic_drain(struct io_uring *ring)
- 	 * compl_bits is a bit map to record completions.
- 	 * eg. sqe[0], sqe[1], sqe[2] fully completed
- 	 * then compl_bits is 000...00111b
--	 *=20
-+	 *
- 	 */
- 	unsigned long long compl_bits =3D 0;
- 	for (j =3D 0; j < i; j++) {
-@@ -295,7 +297,12 @@ static int test_simple_drain(struct io_uring *ring)
- 	io_uring_prep_poll_add(sqe[1], pipe2[0], POLLIN);
- 	sqe[1]->user_data =3D 1;
-=20
--	ret =3D io_uring_submit(ring);
-+	/* This test relies on multishot poll to trigger events continually.
-+	 * however with IORING_SETUP_DEFER_TASKRUN this will only happen when
-+	 * triggered with a get_events. Hence we sprinkle get_events whenever
-+	 * there might be work to process in order to get the same result
-+	 */
-+	ret =3D io_uring_submit_and_get_events(ring);
- 	if (ret < 0) {
- 		printf("sqe submit failed\n");
- 		goto err;
-@@ -307,9 +314,11 @@ static int test_simple_drain(struct io_uring *ring)
- 	for (i =3D 0; i < 2; i++) {
- 		if (trigger_event(pipe1))
- 			goto err;
-+		io_uring_get_events(ring);
- 	}
- 	if (trigger_event(pipe2))
- 			goto err;
-+	io_uring_get_events(ring);
-=20
- 	for (i =3D 0; i < 2; i++) {
- 		sqe[i] =3D io_uring_get_sqe(ring);
-@@ -355,15 +364,17 @@ err:
- 	return 1;
- }
-=20
--int main(int argc, char *argv[])
-+static int test(bool defer_taskrun)
- {
- 	struct io_uring ring;
- 	int i, ret;
-+	unsigned int flags =3D 0;
-=20
--	if (argc > 1)
--		return T_EXIT_SKIP;
-+	if (defer_taskrun)
-+		flags =3D IORING_SETUP_SINGLE_ISSUER |
-+			IORING_SETUP_DEFER_TASKRUN;
-=20
--	ret =3D io_uring_queue_init(1024, &ring, 0);
-+	ret =3D io_uring_queue_init(1024, &ring, flags);
- 	if (ret) {
- 		printf("ring setup failed\n");
- 		return T_EXIT_FAIL;
-@@ -384,5 +395,32 @@ int main(int argc, char *argv[])
- 			return T_EXIT_FAIL;
- 		}
- 	}
-+
-+	io_uring_queue_exit(&ring);
-+
- 	return T_EXIT_PASS;
- }
-+
-+int main(int argc, char *argv[])
++static bool can_read(int fd)
 +{
++	return can_read_t(fd, 0);
++}
++
++static void eventfd_clear(int fd)
++{
++	uint64_t val;
 +	int ret;
 +
-+	if (argc > 1)
-+		return T_EXIT_SKIP;
-+
-+	ret =3D test(false);
-+	if (ret !=3D T_EXIT_PASS) {
-+		fprintf(stderr, "%s: test(false) failed\n", argv[0]);
-+		return ret;
-+	}
-+
-+	if (t_probe_defer_taskrun()) {
-+		ret =3D test(true);
-+		if (ret !=3D T_EXIT_PASS) {
-+			fprintf(stderr, "%s: test(true) failed\n", argv[0]);
-+			return ret;
-+		}
-+	}
-+
-+	return ret;
++	assert(can_read(fd));
++	ret =3D read(fd, &val, 8);
++	assert(ret =3D=3D 8);
 +}
-diff --git a/test/poll-mshot-overflow.c b/test/poll-mshot-overflow.c
-index 360df65d2b15..431a337f19ae 100644
---- a/test/poll-mshot-overflow.c
-+++ b/test/poll-mshot-overflow.c
-@@ -42,7 +42,7 @@ int check_final_cqe(struct io_uring *ring)
- 	return T_EXIT_PASS;
- }
-=20
--int main(int argc, char *argv[])
-+static int test(bool defer_taskrun)
- {
- 	struct io_uring_cqe *cqe;
- 	struct io_uring_sqe *sqe;
-@@ -50,9 +50,6 @@ int main(int argc, char *argv[])
- 	int pipe1[2];
- 	int ret, i;
-=20
--	if (argc > 1)
--		return 0;
--
- 	if (pipe(pipe1) !=3D 0) {
- 		perror("pipe");
- 		return T_EXIT_FAIL;
-@@ -66,6 +63,10 @@ int main(int argc, char *argv[])
- 		.cq_entries =3D 2
- 	};
-=20
-+	if (defer_taskrun)
-+		params.flags |=3D IORING_SETUP_SINGLE_ISSUER |
-+				IORING_SETUP_DEFER_TASKRUN;
 +
- 	ret =3D io_uring_queue_init_params(2, &ring, &params);
- 	if (ret)
- 		return T_EXIT_SKIP;
-@@ -113,6 +114,9 @@ int main(int argc, char *argv[])
- 		io_uring_cqe_seen(&ring, cqe);
- 	}
-=20
-+	/* make sure everything is processed */
++static void eventfd_trigger(int fd)
++{
++	uint64_t val =3D 1;
++	int ret;
++
++	ret =3D write(fd, &val, sizeof(val));
++	assert(ret =3D=3D sizeof(val));
++}
++
++#define CHECK(x) if (!(x)) { \
++		fprintf(stderr, "%s:%d %s failed\n", __FILE__, __LINE__, #x); \
++		return -1; }
++
++static int test_eventfd(void)
++{
++	struct io_uring ring;
++	int ret;
++	int fda, fdb;
++	struct io_uring_cqe *cqe;
++
++	ret =3D io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER |
++					    IORING_SETUP_DEFER_TASKRUN);
++	if (ret)
++		return ret;
++
++	fda =3D eventfd(0, EFD_NONBLOCK);
++	fdb =3D eventfd(0, EFD_NONBLOCK);
++
++	CHECK(fda >=3D 0 && fdb >=3D 0);
++
++	ret =3D io_uring_register_eventfd(&ring, fda);
++	if (ret)
++		return ret;
++
++	CHECK(!can_read(fda));
++	CHECK(!can_read(fdb));
++
++	io_uring_prep_poll_add(io_uring_get_sqe(&ring), fdb, POLLIN);
++	io_uring_submit(&ring);
++	CHECK(!can_read(fda)); /* poll should not have completed */
++
++	io_uring_prep_nop(io_uring_get_sqe(&ring));
++	io_uring_submit(&ring);
++	CHECK(can_read(fda)); /* nop should have */
++
++	CHECK(io_uring_peek_cqe(&ring, &cqe) =3D=3D 0);
++	CHECK(cqe->res =3D=3D 0);
++	io_uring_cqe_seen(&ring, cqe);
++	eventfd_clear(fda);
++
++	eventfd_trigger(fdb);
++	/* can take time due to rcu_call */
++	CHECK(can_read_t(fda, 1000));
++
++	/* should not have processed the cqe yet */
++	CHECK(io_uring_cq_ready(&ring) =3D=3D 0);
++
 +	io_uring_get_events(&ring);
++	CHECK(io_uring_cq_ready(&ring) =3D=3D 1);
 +
- 	/* now remove the poll */
- 	sqe =3D io_uring_get_sqe(&ring);
- 	io_uring_prep_poll_remove(sqe, 1);
-@@ -126,5 +130,33 @@ int main(int argc, char *argv[])
-=20
- 	ret =3D check_final_cqe(&ring);
-=20
-+	close(pipe1[0]);
-+	close(pipe1[1]);
++
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
++struct thread_data {
++	struct io_uring ring;
++	int efd;
++	char buff[8];
++};
++
++void *thread(void *t)
++{
++	struct thread_data *td =3D t;
++
++	io_uring_prep_read(io_uring_get_sqe(&td->ring), td->efd, td->buff, size=
+of(td->buff), 0);
++	io_uring_submit(&td->ring);
++
++	return NULL;
++}
++
++static int test_thread_shutdown(void)
++{
++	pthread_t t1;
++	int ret;
++	struct thread_data td;
++	struct io_uring_cqe *cqe;
++	uint64_t val =3D 1;
++
++	ret =3D io_uring_queue_init(8, &td.ring, IORING_SETUP_SINGLE_ISSUER |
++					       IORING_SETUP_DEFER_TASKRUN);
++	if (ret)
++		return ret;
++
++	/* check that even before submitting we don't get errors */
++	CHECK(io_uring_get_events(&td.ring) =3D=3D 0);
++
++	td.efd =3D eventfd(0, 0);
++	CHECK(td.efd >=3D 0);
++
++	CHECK(pthread_create(&t1, NULL, thread, &td) =3D=3D 0);
++	CHECK(pthread_join(t1, NULL) =3D=3D 0);
++
++	CHECK(write(td.efd, &val, sizeof(val)) =3D=3D sizeof(val));
++	CHECK(io_uring_wait_cqe(&td.ring, &cqe) =3D=3D -EEXIST);
++
++	close(td.efd);
++	io_uring_queue_exit(&td.ring);
++	return 0;
++}
++
++static int test_exec(const char *filename)
++{
++	int ret;
++	int fd;
++	struct io_uring ring;
++	pid_t fork_pid;
++	static char * const new_argv[] =3D {"1", "2", "3", NULL};
++	static char * const new_env[] =3D {NULL};
++	char *buff;
++
++	fork_pid =3D fork();
++	CHECK(fork_pid >=3D 0);
++	if (fork_pid > 0) {
++		int wstatus;
++
++		CHECK(waitpid(fork_pid, &wstatus, 0) !=3D (pid_t)-1);
++		if (!WIFEXITED(wstatus) || WEXITSTATUS(wstatus) !=3D T_EXIT_SKIP) {
++			fprintf(stderr, "child failed %i\n", WEXITSTATUS(wstatus));
++			return -1;
++		}
++		return 0;
++	}
++
++	ret =3D io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER |
++					    IORING_SETUP_DEFER_TASKRUN);
++	if (ret)
++		return ret;
++
++	if (filename) {
++		fd =3D open(filename, O_RDONLY | O_DIRECT);
++	} else {
++		t_create_file(EXEC_FILENAME, EXEC_FILESIZE);
++		fd =3D open(EXEC_FILENAME, O_RDONLY | O_DIRECT);
++		unlink(EXEC_FILENAME);
++	}
++	buff =3D (char*)malloc(EXEC_FILESIZE);
++	CHECK(posix_memalign((void **)&buff, 4096, EXEC_FILESIZE) =3D=3D 0);
++	CHECK(buff);
++
++	CHECK(fd >=3D 0);
++	io_uring_prep_read(io_uring_get_sqe(&ring), fd, buff, EXEC_FILESIZE, 0)=
+;
++	io_uring_submit(&ring);
++	ret =3D execve("/proc/self/exe", new_argv, new_env);
++	/* if we get here it failed anyway */
++	fprintf(stderr, "execve failed %d\n", ret);
++	return -1;
++}
++
++static int test_flag(void)
++{
++	struct io_uring ring;
++	int ret;
++	int fd;
++	struct io_uring_cqe *cqe;
++
++	ret =3D io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER |
++					    IORING_SETUP_DEFER_TASKRUN |
++					    IORING_SETUP_TASKRUN_FLAG);
++	CHECK(!ret);
++
++	fd =3D eventfd(0, EFD_NONBLOCK);
++	CHECK(fd >=3D 0);
++
++	io_uring_prep_poll_add(io_uring_get_sqe(&ring), fd, POLLIN);
++	io_uring_submit(&ring);
++	CHECK(!can_read(fd)); /* poll should not have completed */
++
++	eventfd_trigger(fd);
++	CHECK(can_read(fd));
++
++	/* should not have processed the poll cqe yet */
++	CHECK(io_uring_cq_ready(&ring) =3D=3D 0);
++
++	/* flag should be set */
++	CHECK(IO_URING_READ_ONCE(*ring.sq.kflags) & IORING_SQ_TASKRUN);
++
++	/* Specifically peek, knowing we have only no cqe
++	 * but because the flag is set, liburing should try and get more
++	 */
++	ret =3D io_uring_peek_cqe(&ring, &cqe);
++
++	CHECK(ret =3D=3D 0 && cqe);
++	CHECK(!(IO_URING_READ_ONCE(*ring.sq.kflags) & IORING_SQ_TASKRUN));
++
++	close(fd);
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
++static int test_ring_shutdown(void)
++{
++	struct io_uring ring;
++	int ret;
++	int fd[2];
++	char buff =3D '\0';
++	char send =3D 'X';
++
++	ret =3D io_uring_queue_init(8, &ring, IORING_SETUP_SINGLE_ISSUER |
++					    IORING_SETUP_DEFER_TASKRUN |
++					    IORING_SETUP_TASKRUN_FLAG);
++	CHECK(!ret);
++
++	ret =3D t_create_socket_pair(fd, true);
++	CHECK(!ret);
++
++	io_uring_prep_recv(io_uring_get_sqe(&ring), fd[0], &buff, 1, 0);
++	io_uring_submit(&ring);
++
++	ret =3D write(fd[1], &send, 1);
++	CHECK(ret =3D=3D 1);
++
++	/* should not have processed the poll cqe yet */
++	CHECK(io_uring_cq_ready(&ring) =3D=3D 0);
 +	io_uring_queue_exit(&ring);
 +
-+	return ret;
++	/* task work should have been processed by now */
++	CHECK(buff =3D 'X');
++
++	return 0;
 +}
 +
 +int main(int argc, char *argv[])
 +{
 +	int ret;
++	const char *filename =3D NULL;
 +
-+	if (argc > 1)
++	if (argc > 2)
++		return T_EXIT_SKIP;
++	if (argc =3D=3D 2) {
++		/* This test exposes interesting behaviour with a null-blk
++		 * device configured like:
++		 * $ modprobe null-blk completion_nsec=3D100000000 irqmode=3D2
++		 * and then run with $ defer-taskrun.t /dev/nullb0
++		 */
++		filename =3D argv[1];
++	}
++
++	if (!t_probe_defer_taskrun())
 +		return T_EXIT_SKIP;
 +
-+	ret =3D test(false);
-+	if (ret !=3D T_EXIT_PASS) {
-+		fprintf(stderr, "%s: test(false) failed\n", argv[0]);
-+		return ret;
++	ret =3D test_thread_shutdown();
++	if (ret) {
++		fprintf(stderr, "test_thread_shutdown failed\n");
++		return T_EXIT_FAIL;
 +	}
 +
-+	if (t_probe_defer_taskrun()) {
-+		ret =3D test(true);
-+		if (ret !=3D T_EXIT_PASS) {
-+			fprintf(stderr, "%s: test(true) failed\n", argv[0]);
-+			return ret;
-+		}
++	ret =3D test_exec(filename);
++	if (ret) {
++		fprintf(stderr, "test_exec failed\n");
++		return T_EXIT_FAIL;
 +	}
 +
- 	return ret;
- }
-diff --git a/test/recv-multishot.c b/test/recv-multishot.c
-index a322e4317232..1a041f8e865a 100644
---- a/test/recv-multishot.c
-+++ b/test/recv-multishot.c
-@@ -29,6 +29,7 @@ struct args {
- 	bool wait_each;
- 	bool recvmsg;
- 	enum early_error_t early_error;
-+	bool defer;
- };
-=20
- static int check_sockaddr(struct sockaddr_in *in)
-@@ -76,19 +77,22 @@ static int test(struct args *args)
- 		.tv_sec =3D 1,
- 	};
- 	struct msghdr msg;
-+	struct io_uring_params params =3D { };
-+	int n_sqe =3D 32;
-=20
- 	memset(recv_buffs, 0, sizeof(recv_buffs));
-=20
--	if (args->early_error =3D=3D ERROR_EARLY_OVERFLOW) {
--		struct io_uring_params params =3D {
--			.flags =3D IORING_SETUP_CQSIZE,
--			.cq_entries =3D N_CQE_OVERFLOW
--		};
-+	if (args->defer)
-+		params.flags |=3D IORING_SETUP_SINGLE_ISSUER |
-+				IORING_SETUP_DEFER_TASKRUN;
-=20
--		ret =3D io_uring_queue_init_params(N_CQE_OVERFLOW, &ring, &params);
--	} else {
--		ret =3D io_uring_queue_init(32, &ring, 0);
-+	if (args->early_error =3D=3D ERROR_EARLY_OVERFLOW) {
-+		params.flags |=3D IORING_SETUP_CQSIZE;
-+		params.cq_entries =3D N_CQE_OVERFLOW;
-+		n_sqe =3D N_CQE_OVERFLOW;
- 	}
++	ret =3D test_eventfd();
++	if (ret) {
++		fprintf(stderr, "eventfd failed\n");
++		return T_EXIT_FAIL;
++	}
 +
-+	ret =3D io_uring_queue_init_params(n_sqe, &ring, &params);
- 	if (ret) {
- 		fprintf(stderr, "queue init failed: %d\n", ret);
- 		return ret;
-@@ -457,23 +461,30 @@ int main(int argc, char *argv[])
- 	int ret;
- 	int loop;
- 	int early_error =3D 0;
-+	bool has_defer;
-=20
- 	if (argc > 1)
- 		return T_EXIT_SKIP;
-=20
--	for (loop =3D 0; loop < 8; loop++) {
-+	has_defer =3D t_probe_defer_taskrun();
++	ret =3D test_flag();
++	if (ret) {
++		fprintf(stderr, "flag failed\n");
++		return T_EXIT_FAIL;
++	}
 +
-+	for (loop =3D 0; loop < 16; loop++) {
- 		struct args a =3D {
- 			.stream =3D loop & 0x01,
- 			.wait_each =3D loop & 0x2,
- 			.recvmsg =3D loop & 0x04,
-+			.defer =3D loop & 0x08,
- 		};
-+		if (a.defer && !has_defer)
-+			continue;
- 		for (early_error =3D 0; early_error < ERROR_EARLY_LAST; early_error++)=
- {
- 			a.early_error =3D (enum early_error_t)early_error;
- 			ret =3D test(&a);
- 			if (ret) {
- 				fprintf(stderr,
--					"test stream=3D%d wait_each=3D%d recvmsg=3D%d early_error=3D%d fail=
-ed\n",
--					a.stream, a.wait_each, a.recvmsg, a.early_error);
-+					"test stream=3D%d wait_each=3D%d recvmsg=3D%d early_error=3D%d "
-+					" defer=3D%d failed\n",
-+					a.stream, a.wait_each, a.recvmsg, a.early_error, a.defer);
- 				return T_EXIT_FAIL;
- 			}
- 			if (no_recv_mshot)
-diff --git a/test/rsrc_tags.c b/test/rsrc_tags.c
-index 22370644b200..047e844acfbd 100644
---- a/test/rsrc_tags.c
-+++ b/test/rsrc_tags.c
-@@ -401,7 +401,8 @@ static int test_notag(void)
-=20
- int main(int argc, char *argv[])
- {
--	int ring_flags[] =3D {0, IORING_SETUP_IOPOLL, IORING_SETUP_SQPOLL};
-+	int ring_flags[] =3D {0, IORING_SETUP_IOPOLL, IORING_SETUP_SQPOLL,
-+			    IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN};
- 	int i, ret;
-=20
- 	if (argc > 1)
-@@ -423,7 +424,12 @@ int main(int argc, char *argv[])
- 	}
-=20
- 	for (i =3D 0; i < sizeof(ring_flags) / sizeof(ring_flags[0]); i++) {
--		ret =3D test_files(ring_flags[i]);
-+		int flag =3D ring_flags[i];
++	ret =3D test_ring_shutdown();
++	if (ret) {
++		fprintf(stderr, "test_ring_shutdown failed\n");
++		return T_EXIT_FAIL;
++	}
 +
-+		if (flag & IORING_SETUP_DEFER_TASKRUN && !t_probe_defer_taskrun())
-+			continue;
-+
-+		ret =3D test_files(flag);
- 		if (ret) {
- 			printf("test_tag failed, type %i\n", i);
- 			return ret;
++	return T_EXIT_PASS;
++}
 --=20
 2.30.2
 

@@ -2,46 +2,46 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA59D5A932F
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 11:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D70955A932E
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 11:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232332AbiIAJdU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 05:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42718 "EHLO
+        id S233351AbiIAJdT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 05:33:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233947AbiIAJdS (ORCPT
+        with ESMTP id S233925AbiIAJdS (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 05:33:18 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C672133F22
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 02:33:17 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2819Wfcx002750
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28D6133F1C
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 02:33:16 -0700 (PDT)
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 2812ajMT006574
         for <io-uring@vger.kernel.org>; Thu, 1 Sep 2022 02:33:16 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=m62++QvGAP5QwAjoFNb2kAM9wf7HOkGZQ/S9Zn7QLXQ=;
- b=IgWSqXgZDB1ruHgZ3zFBkevm/gnT0uFqneSVLNaJJ//7yAtY8NpKviV7Lx1tsCx9+zWw
- 2P2DAzDmP/Kc1wtWmC5kNbBlpoiEt7NWQ9YW32DF6glJ+iOeAXV3izO33ZBjfenclHHI
- BF6FNb5EkgQ3X2gZFLsYrjOP3jLYicwQt2Y= 
+ bh=TZ/ztmfb95jBi9x+10/fLYr4ENWRQmwIfguHotM8e7Y=;
+ b=jfpTKx3+LpRIqTYzkR8Xnm+d7rZfHSnTsky3NKJnEfp3aRFboXWxDiVPVQxfpLZL+nOZ
+ 3n6D0x3wOaMBxwujLGmKNdGKeybLwxBfXYkpE/cQvUlqwSJc/mFPthnVAptq4arJXEou
+ 8LbPA02rJ0zwn/a9QZKE8MHGc+iBwmGRheE= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jat6s003c-3
+        by m0089730.ppops.net (PPS) with ESMTPS id 3jam3v9jym-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
         for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 02:33:16 -0700
-Received: from twshared11415.03.ash7.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server
+Received: from twshared11415.03.ash7.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.31; Thu, 1 Sep 2022 02:33:14 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id A66AF57693F4; Thu,  1 Sep 2022 02:33:06 -0700 (PDT)
+        id ACFED57693F6; Thu,  1 Sep 2022 02:33:06 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         <io-uring@vger.kernel.org>
 CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH liburing v2 03/12] add io_uring_submit_and_get_events and io_uring_get_events
-Date:   Thu, 1 Sep 2022 02:32:54 -0700
-Message-ID: <20220901093303.1974274-4-dylany@fb.com>
+Subject: [PATCH liburing v2 04/12] add a t_probe_defer_taskrun helper function for tests
+Date:   Thu, 1 Sep 2022 02:32:55 -0700
+Message-ID: <20220901093303.1974274-5-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220901093303.1974274-1-dylany@fb.com>
 References: <20220901093303.1974274-1-dylany@fb.com>
@@ -49,8 +49,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: amwacZ_Ezfvn6FgtIERnn-s1utL2CENY
-X-Proofpoint-ORIG-GUID: amwacZ_Ezfvn6FgtIERnn-s1utL2CENY
+X-Proofpoint-GUID: t0xhKAy54BU1DGrYwKRrpGXYCMDmoMn-
+X-Proofpoint-ORIG-GUID: t0xhKAy54BU1DGrYwKRrpGXYCMDmoMn-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-09-01_06,2022-08-31_03,2022-06-22_01
@@ -64,105 +64,69 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With deferred task running, we would like to be able to combine submit
-with get events (regardless of if there are CQE's available), or if there
-is nothing to submit then simply do an enter with IORING_ENTER_GETEVENTS
-set, in order to process any available work.
-
-Expose these APIs
+Help tests to determine if they can use IORING_SETUP_DEFER_TASKRUN
 
 Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- src/include/liburing.h |  2 ++
- src/queue.c            | 26 ++++++++++++++++++--------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ test/helpers.c | 17 +++++++++++++++--
+ test/helpers.h |  2 ++
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 6e868472b77a..3c5097b255de 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -202,6 +202,8 @@ int io_uring_register_file_alloc_range(struct io_urin=
-g *ring,
- int io_uring_register_notifications(struct io_uring *ring, unsigned nr,
- 				    struct io_uring_notification_slot *slots);
- int io_uring_unregister_notifications(struct io_uring *ring);
-+int io_uring_get_events(struct io_uring *ring);
-+int io_uring_submit_and_get_events(struct io_uring *ring);
+diff --git a/test/helpers.c b/test/helpers.c
+index 014653313f41..80b75f4fed99 100644
+--- a/test/helpers.c
++++ b/test/helpers.c
+@@ -57,7 +57,7 @@ static void __t_create_file(const char *file, size_t si=
+ze, char pattern)
+ {
+ 	ssize_t ret;
+ 	char *buf;
+-	int fd;=20
++	int fd;
 =20
- /*
-  * io_uring syscalls.
-diff --git a/src/queue.c b/src/queue.c
-index a670a8ecd20d..b012a3dd950b 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -130,6 +130,15 @@ int __io_uring_get_cqe(struct io_uring *ring, struct=
- io_uring_cqe **cqe_ptr,
- 	return _io_uring_get_cqe(ring, cqe_ptr, &data);
- }
-=20
-+int io_uring_get_events(struct io_uring *ring)
-+{
-+	int flags =3D IORING_ENTER_GETEVENTS;
-+
-+	if (ring->int_flags & INT_FLAG_REG_RING)
-+		flags |=3D IORING_ENTER_REGISTERED_RING;
-+	return __sys_io_uring_enter(ring->enter_ring_fd, 0, 0, flags, NULL);
-+}
-+
- /*
-  * Fill in an array of IO completions up to count, if any are available.
-  * Returns the amount of IO completions filled.
-@@ -164,11 +173,7 @@ again:
- 		return 0;
-=20
- 	if (cq_ring_needs_flush(ring)) {
--		int flags =3D IORING_ENTER_GETEVENTS;
--
--		if (ring->int_flags & INT_FLAG_REG_RING)
--			flags |=3D IORING_ENTER_REGISTERED_RING;
--		__sys_io_uring_enter(ring->enter_ring_fd, 0, 0, flags, NULL);
-+		io_uring_get_events(ring);
- 		overflow_checked =3D true;
- 		goto again;
+ 	buf =3D t_malloc(size);
+ 	memset(buf, pattern, size);
+@@ -94,7 +94,7 @@ struct iovec *t_create_buffers(size_t buf_num, size_t b=
+uf_size)
+ 	vecs =3D t_malloc(buf_num * sizeof(struct iovec));
+ 	for (i =3D 0; i < buf_num; i++) {
+ 		t_posix_memalign(&vecs[i].iov_base, buf_size, buf_size);
+-		vecs[i].iov_len =3D buf_size;=20
++		vecs[i].iov_len =3D buf_size;
  	}
-@@ -340,9 +345,9 @@ int io_uring_wait_cqe_timeout(struct io_uring *ring,
-  * Returns number of sqes submitted
-  */
- static int __io_uring_submit(struct io_uring *ring, unsigned submitted,
--			     unsigned wait_nr)
-+			     unsigned wait_nr, bool getevents)
- {
--	bool cq_needs_enter =3D wait_nr || cq_ring_needs_enter(ring);
-+	bool cq_needs_enter =3D getevents || wait_nr || cq_ring_needs_enter(rin=
-g);
- 	unsigned flags;
- 	int ret;
-=20
-@@ -363,7 +368,7 @@ static int __io_uring_submit(struct io_uring *ring, u=
-nsigned submitted,
-=20
- static int __io_uring_submit_and_wait(struct io_uring *ring, unsigned wa=
-it_nr)
- {
--	return __io_uring_submit(ring, __io_uring_flush_sq(ring), wait_nr);
-+	return __io_uring_submit(ring, __io_uring_flush_sq(ring), wait_nr, fals=
-e);
+ 	return vecs;
  }
-=20
- /*
-@@ -386,6 +391,11 @@ int io_uring_submit_and_wait(struct io_uring *ring, =
-unsigned wait_nr)
- 	return __io_uring_submit_and_wait(ring, wait_nr);
+@@ -235,3 +235,16 @@ errno_cleanup:
+ 	close(fd[1]);
+ 	return ret;
  }
-=20
-+int io_uring_submit_and_get_events(struct io_uring *ring)
-+{
-+	return __io_uring_submit(ring, __io_uring_flush_sq(ring), 0, true);
-+}
 +
- #ifdef LIBURING_INTERNAL
- struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
- {
++bool t_probe_defer_taskrun(void)
++{
++	struct io_uring ring;
++	int ret;
++
++	ret =3D io_uring_queue_init(1, &ring, IORING_SETUP_SINGLE_ISSUER |
++					    IORING_SETUP_DEFER_TASKRUN);
++	if (ret < 0)
++		return false;
++	io_uring_queue_exit(&ring);
++	return true;
++}
+diff --git a/test/helpers.h b/test/helpers.h
+index 6d5726c9deb6..efce4b344f87 100644
+--- a/test/helpers.h
++++ b/test/helpers.h
+@@ -75,6 +75,8 @@ enum t_setup_ret t_register_buffers(struct io_uring *ri=
+ng,
+ 				    const struct iovec *iovecs,
+ 				    unsigned nr_iovecs);
+=20
++bool t_probe_defer_taskrun(void);
++
+ #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+=20
+ #ifdef __cplusplus
 --=20
 2.30.2
 

@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF635A953F
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 12:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E981D5A9539
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 12:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234312AbiIAK6w (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 06:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60852 "EHLO
+        id S234322AbiIAK6v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 06:58:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234308AbiIAK6k (ORCPT
+        with ESMTP id S234312AbiIAK6k (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 06:58:40 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3B2C7414
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 03:58:38 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id p16so30718455ejb.9
-        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 03:58:38 -0700 (PDT)
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF5412AF5
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 03:58:39 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id cu2so33941427ejb.0
+        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 03:58:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=OjX390DsH1Kp+02it10+FD3PDGAsJzS0kqcQGN91yks=;
-        b=lK8DQIRoKIHl+OR+eejno3tPDyWXycFW566jTdnkDU4uP4YR30luZkEhSLf8StY2pn
-         p9FxIVElTfhDvJ0Dg5Dx1el1axW3l4eRm9zrQVqhFAXIBkO0Cyz9uvRojGApmWlWSqzz
-         6bMoV1Ok+QKh/UkocAdEo+2fcvGAY7txkr0FRU0C8SgoDZep+lMMiN/W1JIh2hVVT69f
-         kRTYjHQ9rYLut4HW4Juz5Sv07lDEgQPaCaQ+enVPZKLDK0uHJw/vGK9/d5UPUbTlXHlM
-         CG2NKV+NnNKDTIhtXTNIYrPP6tiuRTP/pSyJ5rHi8LMtfikwUomOMSTBbNnMuguY10JS
-         NQjw==
+        bh=Zb5ypFcKc6aO+28jhXvvQMpsztKeVNc6T7YSBFw79eI=;
+        b=opOP+4aQyOw3f9EbhfV1rx6g/VKhcyomUoOIAJhaRd4fVtNfsCTGawWvLdfVKUV7kb
+         MBMvRk3YR9+16mogqT4ZZDlSL4S8mYJkk5gqAS7q2Iyrt5vYObGWAs4rUHib88CCGwIW
+         hxlmAQ6zYDNXFQlmA/NoM9OBebbPx93/M1k78truEdtWDPo9UJ+FlkXCukwQrfkPOuW8
+         lXxBBuxEHmTT+v/ItDt6C7A39Us5KTG+UxYdJSa9LXlKxuncSBipWIfjqFR46/YIMYWf
+         apPRlxAIo4AXmMlE57JWq35DwM/LkEA9gTXGt9xfa3AWKDJMqxzBvX+6U/vGhysvKyS6
+         XTxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=OjX390DsH1Kp+02it10+FD3PDGAsJzS0kqcQGN91yks=;
-        b=wce5lTetwBlDxdkoOQJc51MV7WFrpKMy89KmDRu1dU1Qs1Q5rNRfsmCyxTiBG9wizW
-         YncatdZMUy+TcDhIjG31exnHh3vuvbL+ZekVAS6QzukfuJZTbO+sBwSADYJ1x8MaiDRU
-         0P/RYH35ritVZTJ0KwFzTTivoCBBqYdTceomtSWIz3d6MPD2J+dfQRvnMUMdygTSK10g
-         fSC4k5GC1I8l/q/7mzNfIVsJNi8whSouioRmxzXzNFGHWLZHunc+S7lfxponzen+zCYn
-         Qm/PDyZfLIol8XOxqarY4qvCsd9Jn+heEjFagqh86pwdqXp6qXTYg4D697ThJ4U+kln5
-         vzfw==
-X-Gm-Message-State: ACgBeo1gQw+yrbi4fF/ak5BPBBHVgOVkr+vZWJytc6UFo93pMYbJ26jh
-        z34Kq9AcgUeZSdqzt9XSNnO4DoN3SLY=
-X-Google-Smtp-Source: AA6agR7g1MBj8WTrShpRw9uTDuflbxaEEewfW3yl2vJlAopfbSOd8msnxs10e1FX5EK528Jhvv3Qkw==
-X-Received: by 2002:a17:906:ef90:b0:730:9cd8:56d7 with SMTP id ze16-20020a170906ef9000b007309cd856d7mr22086752ejb.94.1662029916243;
-        Thu, 01 Sep 2022 03:58:36 -0700 (PDT)
+        bh=Zb5ypFcKc6aO+28jhXvvQMpsztKeVNc6T7YSBFw79eI=;
+        b=73GKg8TMrWU7ETbEujSnkVHvJzDJePj1x8Rk1bWCfSv+dy6ocAXywrhsmFUHTpQumD
+         p0vkjnRLnERJKF4PX6sIqiPrOXTaiJ02Ws80lNTrtd486n34YFQvCe3aEvfznZAYsa0u
+         JDO/CVe8NFsKyj+BOlvOjwOa3mCJ28ZSGvfZc8uLSgvi/jAV1GlyUCmRoZ1fvNejHqlt
+         6TDqWmcUCg7SiyfrbQYTsWFtGVcISMm5EFM/z5I6JEo6qVLXhJFIYqik8imLO0vitis/
+         KYezR0cvuKjH2qRj/MNlXEwXAcqh4bMIxrkiIn0dP+WLltUqCgyUK5ZkL156xma9VuBU
+         GI4Q==
+X-Gm-Message-State: ACgBeo0FX2uPOVGj7Y3JBPXitRBQxtKtu/m5NY9UTeimb2JZnXDDkUT5
+        0Tdsx4Rbm6tEPlCsqzEMZXFnhjL9XwM=
+X-Google-Smtp-Source: AA6agR5rXOW3jb6hb/9gHv6VrP4Fn5Lnd04alCsqWqzb0e02iiUdkU9hSYaX2ia1L0lNPDJFzMxAsg==
+X-Received: by 2002:a17:907:2722:b0:731:2aeb:7942 with SMTP id d2-20020a170907272200b007312aeb7942mr23389941ejl.734.1662029917169;
+        Thu, 01 Sep 2022 03:58:37 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:e81f])
-        by smtp.gmail.com with ESMTPSA id z14-20020a1709060ace00b0073d6d6e698bsm8277762ejf.187.2022.09.01.03.58.35
+        by smtp.gmail.com with ESMTPSA id z14-20020a1709060ace00b0073d6d6e698bsm8277762ejf.187.2022.09.01.03.58.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 03:58:35 -0700 (PDT)
+        Thu, 01 Sep 2022 03:58:36 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [RFC 5/6] io_uring/net: simplify zerocopy send user API
-Date:   Thu,  1 Sep 2022 11:54:04 +0100
-Message-Id: <95287640ab98fc9417370afb16e310677c63e6ce.1662027856.git.asml.silence@gmail.com>
+Subject: [RFC 6/6] selftests/net: return back io_uring zc send tests
+Date:   Thu,  1 Sep 2022 11:54:05 +0100
+Message-Id: <c8e5018c516093bdad0b6e19f2f9847dea17e4d2.1662027856.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1662027856.git.asml.silence@gmail.com>
 References: <cover.1662027856.git.asml.silence@gmail.com>
@@ -69,363 +69,273 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Following user feedback, this patch simplifies zerocopy send API. One of
-the main complaints is that the current API is difficult with the
-userspace managing notification slots, and then send retries with error
-handling make it even worse.
-
-Instead of keeping notification slots change it to the per-request
-notifications model, which posts both completion and notification CQEs
-for each request when any data has been sent, and only one CQE if it
-fails. All notification CQEs will have IORING_CQE_F_NOTIF set and
-IORING_CQE_F_MORE in completion CQEs indicates whether to wait a
-notification or not.
-
-IOSQE_CQE_SKIP_SUCCESS is disallowed with zerocopy sends for now.
-
-This is less flexible, but greatly simplifies the user API and also the
-kernel implementation. We reuse notif helpers in this patch, but in the
-future there won't be need for keeping two requests.
+Enable io_uring zerocopy send tests back and fix them up to follow the
+new inteface.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/uapi/linux/io_uring.h |  7 +++--
- io_uring/io_uring.c           |  4 +--
- io_uring/net.c                | 53 ++++++++++++++++++++++-------------
- io_uring/net.h                |  1 +
- io_uring/notif.c              | 12 ++------
- io_uring/notif.h              | 43 ++--------------------------
- io_uring/opdef.c              |  3 +-
- 7 files changed, 47 insertions(+), 76 deletions(-)
+ .../selftests/net/io_uring_zerocopy_tx.c      | 110 ++++++------------
+ .../selftests/net/io_uring_zerocopy_tx.sh     |  10 +-
+ 2 files changed, 41 insertions(+), 79 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index b11c57b0ebb5..6b83177fd41d 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -71,8 +71,8 @@ struct io_uring_sqe {
- 		__s32	splice_fd_in;
- 		__u32	file_index;
- 		struct {
--			__u16	notification_idx;
- 			__u16	addr_len;
-+			__u16	__pad3[1];
- 		};
- 	};
- 	union {
-@@ -205,7 +205,7 @@ enum io_uring_op {
- 	IORING_OP_GETXATTR,
- 	IORING_OP_SOCKET,
- 	IORING_OP_URING_CMD,
--	IORING_OP_SENDZC_NOTIF,
-+	IORING_OP_SEND_ZC,
+diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.c b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
+index 7446ef364e9f..8ce48aca8321 100644
+--- a/tools/testing/selftests/net/io_uring_zerocopy_tx.c
++++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
+@@ -36,8 +36,6 @@
+ #include <sys/un.h>
+ #include <sys/wait.h>
  
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -326,10 +326,13 @@ struct io_uring_cqe {
-  * IORING_CQE_F_BUFFER	If set, the upper 16 bits are the buffer ID
-  * IORING_CQE_F_MORE	If set, parent SQE will generate more CQE entries
-  * IORING_CQE_F_SOCK_NONEMPTY	If set, more data to read after socket recv
-+ * IORING_CQE_F_NOTIF	Set for notification CQEs. Can be used to distinct
-+ * 			them from sends.
-  */
- #define IORING_CQE_F_BUFFER		(1U << 0)
- #define IORING_CQE_F_MORE		(1U << 1)
- #define IORING_CQE_F_SOCK_NONEMPTY	(1U << 2)
-+#define IORING_CQE_F_NOTIF		(1U << 3)
- 
- enum {
- 	IORING_CQE_BUFFER_SHIFT		= 16,
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c2e06a3aa18d..f9be9b7eb654 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3923,8 +3923,8 @@ static int __init io_uring_init(void)
- 	BUILD_BUG_SQE_ELEM(42, __u16,  personality);
- 	BUILD_BUG_SQE_ELEM(44, __s32,  splice_fd_in);
- 	BUILD_BUG_SQE_ELEM(44, __u32,  file_index);
--	BUILD_BUG_SQE_ELEM(44, __u16,  notification_idx);
--	BUILD_BUG_SQE_ELEM(46, __u16,  addr_len);
-+	BUILD_BUG_SQE_ELEM(44, __u16,  addr_len);
-+	BUILD_BUG_SQE_ELEM(46, __u16,  __pad3[0]);
- 	BUILD_BUG_SQE_ELEM(48, __u64,  addr3);
- 	BUILD_BUG_SQE_ELEM_SIZE(48, 0, cmd);
- 	BUILD_BUG_SQE_ELEM(56, __u64,  __pad2);
-diff --git a/io_uring/net.c b/io_uring/net.c
-index aac6997b7d88..7047c1342541 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -65,12 +65,12 @@ struct io_sendzc {
- 	struct file			*file;
- 	void __user			*buf;
- 	size_t				len;
--	u16				slot_idx;
- 	unsigned			msg_flags;
- 	unsigned			flags;
- 	unsigned			addr_len;
- 	void __user			*addr;
- 	size_t				done_io;
-+	struct io_kiocb 		*notif;
+-#if 0
+-
+ #define NOTIF_TAG 0xfffffffULL
+ #define NONZC_TAG 0
+ #define ZC_TAG 1
+@@ -49,7 +47,6 @@ enum {
+ 	MODE_MIXED	= 3,
  };
  
- #define IO_APOLL_MULTI_POLLED (REQ_F_APOLL_MULTISHOT | REQ_F_POLLED)
-@@ -879,12 +879,26 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	return ret;
+-static bool cfg_flush		= false;
+ static bool cfg_cork		= false;
+ static int  cfg_mode		= MODE_ZC_FIXED;
+ static int  cfg_nr_reqs		= 8;
+@@ -168,21 +165,6 @@ static int io_uring_register_buffers(struct io_uring *ring,
+ 	return (ret < 0) ? -errno : ret;
  }
  
-+void io_sendzc_cleanup(struct io_kiocb *req)
-+{
-+	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
-+
-+	zc->notif->flags |= REQ_F_CQE_SKIP;
-+	io_notif_flush(zc->notif);
-+	zc->notif = NULL;
-+}
-+
- int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
- 	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_kiocb *notif;
- 
--	if (READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3))
-+	if (READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3) ||
-+	    READ_ONCE(sqe->__pad3[0]))
-+		return -EINVAL;
-+	/* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
-+	if (req->flags & REQ_F_CQE_SKIP)
- 		return -EINVAL;
- 
- 	zc->flags = READ_ONCE(sqe->ioprio);
-@@ -900,11 +914,17 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		req->imu = READ_ONCE(ctx->user_bufs[idx]);
- 		io_req_set_rsrc_node(req, ctx, 0);
- 	}
-+	notif = zc->notif = io_alloc_notif(ctx);
-+	if (!notif)
-+		return -ENOMEM;
-+	notif->cqe.user_data = req->cqe.user_data;
-+	notif->cqe.res = 0;
-+	notif->cqe.flags = IORING_CQE_F_NOTIF;
-+	req->flags |= REQ_F_NEED_CLEANUP;
- 
- 	zc->buf = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	zc->len = READ_ONCE(sqe->len);
- 	zc->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
--	zc->slot_idx = READ_ONCE(sqe->notification_idx);
- 	if (zc->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
- 
-@@ -976,33 +996,20 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
- int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct sockaddr_storage __address, *addr = NULL;
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
--	struct io_notif_slot *notif_slot;
--	struct io_kiocb *notif;
- 	struct msghdr msg;
- 	struct iovec iov;
- 	struct socket *sock;
--	unsigned msg_flags;
-+	unsigned msg_flags, cflags;
- 	int ret, min_ret = 0;
- 
- 	if (!(req->flags & REQ_F_POLLED) &&
- 	    (zc->flags & IORING_RECVSEND_POLL_FIRST))
- 		return -EAGAIN;
+-static int io_uring_register_notifications(struct io_uring *ring,
+-					   unsigned nr,
+-					   struct io_uring_notification_slot *slots)
+-{
+-	int ret;
+-	struct io_uring_notification_register r = {
+-		.nr_slots = nr,
+-		.data = (unsigned long)slots,
+-	};
 -
--	if (issue_flags & IO_URING_F_UNLOCKED)
--		return -EAGAIN;
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
- 
--	notif_slot = io_get_notif_slot(ctx, zc->slot_idx);
--	if (!notif_slot)
--		return -EINVAL;
--	notif = io_get_notif(ctx, notif_slot);
--	if (!notif)
--		return -ENOMEM;
+-	ret = syscall(__NR_io_uring_register, ring->ring_fd,
+-		      IORING_REGISTER_NOTIFIERS, &r, sizeof(r));
+-	return (ret < 0) ? -errno : ret;
+-}
 -
- 	msg.msg_name = NULL;
- 	msg.msg_control = NULL;
- 	msg.msg_controllen = 0;
-@@ -1033,7 +1040,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 					  &msg.msg_iter);
- 		if (unlikely(ret))
- 			return ret;
--		ret = io_notif_account_mem(notif, zc->len);
-+		ret = io_notif_account_mem(zc->notif, zc->len);
- 		if (unlikely(ret))
- 			return ret;
- 	}
-@@ -1045,7 +1052,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 		min_ret = iov_iter_count(&msg.msg_iter);
+ static int io_uring_mmap(int fd, struct io_uring_params *p,
+ 			 struct io_uring_sq *sq, struct io_uring_cq *cq)
+ {
+@@ -299,11 +281,10 @@ static inline void io_uring_prep_send(struct io_uring_sqe *sqe, int sockfd,
  
- 	msg.msg_flags = msg_flags;
--	msg.msg_ubuf = &io_notif_to_data(notif)->uarg;
-+	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
- 	msg.sg_from_iter = io_sg_from_iter;
- 	ret = sock_sendmsg(sock, &msg);
+ static inline void io_uring_prep_sendzc(struct io_uring_sqe *sqe, int sockfd,
+ 				        const void *buf, size_t len, int flags,
+-				        unsigned slot_idx, unsigned zc_flags)
++				        unsigned zc_flags)
+ {
+ 	io_uring_prep_send(sqe, sockfd, buf, len, flags);
+-	sqe->opcode = (__u8) IORING_OP_SENDZC_NOTIF;
+-	sqe->notification_idx = slot_idx;
++	sqe->opcode = (__u8) IORING_OP_SEND_ZC;
+ 	sqe->ioprio = zc_flags;
+ }
  
-@@ -1060,6 +1067,8 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 			req->flags |= REQ_F_PARTIAL_IO;
- 			return io_setup_async_addr(req, addr, issue_flags);
+@@ -376,7 +357,6 @@ static int do_setup_tx(int domain, int type, int protocol)
+ 
+ static void do_tx(int domain, int type, int protocol)
+ {
+-	struct io_uring_notification_slot b[1] = {{.tag = NOTIF_TAG}};
+ 	struct io_uring_sqe *sqe;
+ 	struct io_uring_cqe *cqe;
+ 	unsigned long packets = 0, bytes = 0;
+@@ -392,10 +372,6 @@ static void do_tx(int domain, int type, int protocol)
+ 	if (ret)
+ 		error(1, ret, "io_uring: queue init");
+ 
+-	ret = io_uring_register_notifications(&ring, 1, b);
+-	if (ret)
+-		error(1, ret, "io_uring: tx ctx registration");
+-
+ 	iov.iov_base = payload;
+ 	iov.iov_len = cfg_payload_len;
+ 
+@@ -411,9 +387,8 @@ static void do_tx(int domain, int type, int protocol)
+ 		for (i = 0; i < cfg_nr_reqs; i++) {
+ 			unsigned zc_flags = 0;
+ 			unsigned buf_idx = 0;
+-			unsigned slot_idx = 0;
+ 			unsigned mode = cfg_mode;
+-			unsigned msg_flags = 0;
++			unsigned msg_flags = MSG_WAITALL;
+ 
+ 			if (cfg_mode == MODE_MIXED)
+ 				mode = rand() % 3;
+@@ -425,13 +400,10 @@ static void do_tx(int domain, int type, int protocol)
+ 						   cfg_payload_len, msg_flags);
+ 				sqe->user_data = NONZC_TAG;
+ 			} else {
+-				if (cfg_flush) {
+-					zc_flags |= IORING_RECVSEND_NOTIF_FLUSH;
+-					compl_cqes++;
+-				}
++				compl_cqes++;
+ 				io_uring_prep_sendzc(sqe, fd, payload,
+ 						     cfg_payload_len,
+-						     msg_flags, slot_idx, zc_flags);
++						     msg_flags, zc_flags);
+ 				if (mode == MODE_ZC_FIXED) {
+ 					sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
+ 					sqe->buf_index = buf_idx;
+@@ -444,51 +416,57 @@ static void do_tx(int domain, int type, int protocol)
+ 		if (ret != cfg_nr_reqs)
+ 			error(1, ret, "submit");
+ 
++		if (cfg_cork)
++			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 0);
+ 		for (i = 0; i < cfg_nr_reqs; i++) {
+ 			ret = io_uring_wait_cqe(&ring, &cqe);
+ 			if (ret)
+ 				error(1, ret, "wait cqe");
+ 
+-			if (cqe->user_data == NOTIF_TAG) {
++			if (cqe->user_data != NONZC_TAG &&
++			    cqe->user_data != ZC_TAG)
++				error(1, -EINVAL, "invalid cqe->user_data");
++
++			if (cqe->flags & IORING_CQE_F_NOTIF) {
++				if (cqe->flags & IORING_CQE_F_MORE)
++					error(1, -EINVAL, "invalid notif flags");
+ 				compl_cqes--;
+ 				i--;
+-			} else if (cqe->user_data != NONZC_TAG &&
+-				   cqe->user_data != ZC_TAG) {
+-				error(1, cqe->res, "invalid user_data");
+-			} else if (cqe->res <= 0 && cqe->res != -EAGAIN) {
++			} else if (cqe->res <= 0) {
++				if (cqe->flags & IORING_CQE_F_MORE)
++					error(1, cqe->res, "more with a failed send");
+ 				error(1, cqe->res, "send failed");
+ 			} else {
+-				if (cqe->res > 0) {
+-					packets++;
+-					bytes += cqe->res;
+-				}
+-				/* failed requests don't flush */
+-				if (cfg_flush &&
+-				    cqe->res <= 0 &&
+-				    cqe->user_data == ZC_TAG)
+-					compl_cqes--;
++				if (cqe->user_data == ZC_TAG &&
++				    !(cqe->flags & IORING_CQE_F_MORE))
++					error(1, cqe->res, "missing more flag");
++				packets++;
++				bytes += cqe->res;
+ 			}
+ 			io_uring_cqe_seen(&ring);
  		}
-+		if (ret < 0 && !zc->done_io)
-+			zc->notif->flags |= REQ_F_CQE_SKIP;
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
- 		req_set_fail(req);
-@@ -1069,7 +1078,11 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 		ret += zc->done_io;
- 	else if (zc->done_io)
- 		ret = zc->done_io;
--	io_req_set_res(req, ret, 0);
+-		if (cfg_cork)
+-			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 0);
+ 	} while (gettimeofday_ms() < tstop);
+ 
+-	if (close(fd))
+-		error(1, errno, "close");
+-
+-	fprintf(stderr, "tx=%lu (MB=%lu), tx/s=%lu (MB/s=%lu)\n",
+-			packets, bytes >> 20,
+-			packets / (cfg_runtime_ms / 1000),
+-			(bytes >> 20) / (cfg_runtime_ms / 1000));
+-
+ 	while (compl_cqes) {
+ 		ret = io_uring_wait_cqe(&ring, &cqe);
+ 		if (ret)
+ 			error(1, ret, "wait cqe");
++		if (cqe->flags & IORING_CQE_F_MORE)
++			error(1, -EINVAL, "invalid notif flags");
++		if (!(cqe->flags & IORING_CQE_F_NOTIF))
++			error(1, -EINVAL, "missing notif flag");
 +
-+	io_notif_flush(zc->notif);
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	cflags = ret >= 0 ? IORING_CQE_F_MORE : 0;
-+	io_req_set_res(req, ret, cflags);
- 	return IOU_OK;
- }
- 
-diff --git a/io_uring/net.h b/io_uring/net.h
-index f91f56c6eeac..d744a0a874e7 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -55,6 +55,7 @@ int io_connect(struct io_kiocb *req, unsigned int issue_flags);
- 
- int io_sendzc(struct io_kiocb *req, unsigned int issue_flags);
- int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+void io_sendzc_cleanup(struct io_kiocb *req);
- 
- void io_netmsg_cache_free(struct io_cache_entry *entry);
- #else
-diff --git a/io_uring/notif.c b/io_uring/notif.c
-index 11f45640684a..38d77165edc3 100644
---- a/io_uring/notif.c
-+++ b/io_uring/notif.c
-@@ -42,8 +42,7 @@ static void io_uring_tx_zerocopy_callback(struct sk_buff *skb,
+ 		io_uring_cqe_seen(&ring);
+ 		compl_cqes--;
  	}
++
++	fprintf(stderr, "tx=%lu (MB=%lu), tx/s=%lu (MB/s=%lu)\n",
++			packets, bytes >> 20,
++			packets / (cfg_runtime_ms / 1000),
++			(bytes >> 20) / (cfg_runtime_ms / 1000));
++
++	if (close(fd))
++		error(1, errno, "close");
  }
  
--struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
--				struct io_notif_slot *slot)
-+struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
- 	__must_hold(&ctx->uring_lock)
- {
- 	struct io_kiocb *notif;
-@@ -59,27 +58,20 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
- 	io_get_task_refs(1);
- 	notif->rsrc_node = NULL;
- 	io_req_set_rsrc_node(notif, ctx, 0);
--	notif->cqe.user_data = slot->tag;
--	notif->cqe.flags = slot->seq++;
--	notif->cqe.res = 0;
+ static void do_test(int domain, int type, int protocol)
+@@ -502,8 +480,8 @@ static void do_test(int domain, int type, int protocol)
  
- 	nd = io_notif_to_data(notif);
- 	nd->account_pages = 0;
- 	nd->uarg.flags = SKBFL_ZEROCOPY_FRAG | SKBFL_DONT_ORPHAN;
- 	nd->uarg.callback = io_uring_tx_zerocopy_callback;
--	/* master ref owned by io_notif_slot, will be dropped on flush */
- 	refcount_set(&nd->uarg.refcnt, 1);
- 	return notif;
+ static void usage(const char *filepath)
+ {
+-	error(1, 0, "Usage: %s [-f] [-n<N>] [-z0] [-s<payload size>] "
+-		    "(-4|-6) [-t<time s>] -D<dst_ip> udp", filepath);
++	error(1, 0, "Usage: %s (-4|-6) (udp|tcp) -D<dst_ip> [-s<payload size>] "
++		    "[-t<time s>] [-n<batch>] [-p<port>] [-m<mode>]", filepath);
  }
  
--void io_notif_slot_flush(struct io_notif_slot *slot)
-+void io_notif_flush(struct io_kiocb *notif)
- 	__must_hold(&slot->notif->ctx->uring_lock)
- {
--	struct io_kiocb *notif = slot->notif;
- 	struct io_notif_data *nd = io_notif_to_data(notif);
+ static void parse_opts(int argc, char **argv)
+@@ -521,7 +499,7 @@ static void parse_opts(int argc, char **argv)
+ 		usage(argv[0]);
+ 	cfg_payload_len = max_payload_len;
  
--	slot->notif = NULL;
--
- 	/* drop slot's master ref */
- 	if (refcount_dec_and_test(&nd->uarg.refcnt)) {
- 		notif->io_task_work.func = __io_notif_complete_tw;
-diff --git a/io_uring/notif.h b/io_uring/notif.h
-index 8380eeff2f2e..5b4d710c8ca5 100644
---- a/io_uring/notif.h
-+++ b/io_uring/notif.h
-@@ -15,53 +15,14 @@ struct io_notif_data {
- 	unsigned long		account_pages;
- };
+-	while ((c = getopt(argc, argv, "46D:p:s:t:n:fc:m:")) != -1) {
++	while ((c = getopt(argc, argv, "46D:p:s:t:n:c:m:")) != -1) {
+ 		switch (c) {
+ 		case '4':
+ 			if (cfg_family != PF_UNSPEC)
+@@ -550,9 +528,6 @@ static void parse_opts(int argc, char **argv)
+ 		case 'n':
+ 			cfg_nr_reqs = strtoul(optarg, NULL, 0);
+ 			break;
+-		case 'f':
+-			cfg_flush = 1;
+-			break;
+ 		case 'c':
+ 			cfg_cork = strtol(optarg, NULL, 0);
+ 			break;
+@@ -585,8 +560,6 @@ static void parse_opts(int argc, char **argv)
  
--struct io_notif_slot {
--	/*
--	 * Current/active notifier. A slot holds only one active notifier at a
--	 * time and keeps one reference to it. Flush releases the reference and
--	 * lazily replaces it with a new notifier.
--	 */
--	struct io_kiocb		*notif;
--
--	/*
--	 * Default ->user_data for this slot notifiers CQEs
--	 */
--	u64			tag;
--	/*
--	 * Notifiers of a slot live in generations, we create a new notifier
--	 * only after flushing the previous one. Track the sequential number
--	 * for all notifiers and copy it into notifiers's cqe->cflags
--	 */
--	u32			seq;
--};
--
--void io_notif_slot_flush(struct io_notif_slot *slot);
--struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx,
--				struct io_notif_slot *slot);
-+void io_notif_flush(struct io_kiocb *notif);
-+struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx);
- 
- static inline struct io_notif_data *io_notif_to_data(struct io_kiocb *notif)
- {
- 	return io_kiocb_to_cmd(notif, struct io_notif_data);
+ 	if (cfg_payload_len > max_payload_len)
+ 		error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
+-	if (cfg_mode == MODE_NONZC && cfg_flush)
+-		error(1, 0, "-f: only zerocopy modes support notifications");
+ 	if (optind != argc - 1)
+ 		usage(argv[0]);
  }
- 
--static inline struct io_kiocb *io_get_notif(struct io_ring_ctx *ctx,
--					    struct io_notif_slot *slot)
+@@ -605,10 +578,3 @@ int main(int argc, char **argv)
+ 		error(1, 0, "unknown cfg_test %s", cfg_test);
+ 	return 0;
+ }
+-
+-#else
+-int main(int argc, char **argv)
 -{
--	if (!slot->notif)
--		slot->notif = io_alloc_notif(ctx, slot);
--	return slot->notif;
+-	return 0;
 -}
--
--static inline struct io_notif_slot *io_get_notif_slot(struct io_ring_ctx *ctx,
--						      unsigned idx)
--	__must_hold(&ctx->uring_lock)
--{
--	if (idx >= ctx->nr_notif_slots)
--		return NULL;
--	idx = array_index_nospec(idx, ctx->nr_notif_slots);
--	return &ctx->notif_slots[idx];
--}
--
- static inline int io_notif_account_mem(struct io_kiocb *notif, unsigned len)
- {
- 	struct io_ring_ctx *ctx = notif->ctx;
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 10b301ccf5cd..c61494e0a602 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -470,7 +470,7 @@ const struct io_op_def io_op_defs[] = {
- 		.issue			= io_uring_cmd,
- 		.prep_async		= io_uring_cmd_prep_async,
- 	},
--	[IORING_OP_SENDZC_NOTIF] = {
-+	[IORING_OP_SEND_ZC] = {
- 		.name			= "SENDZC_NOTIF",
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
-@@ -483,6 +483,7 @@ const struct io_op_def io_op_defs[] = {
- 		.prep			= io_sendzc_prep,
- 		.issue			= io_sendzc,
- 		.prep_async		= io_sendzc_prep_async,
-+		.cleanup		= io_sendzc_cleanup,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
+-#endif
+diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+index 6a65e4437640..32aa6e9dacc2 100755
+--- a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
++++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+@@ -25,15 +25,11 @@ readonly path_sysctl_mem="net.core.optmem_max"
+ # No arguments: automated test
+ if [[ "$#" -eq "0" ]]; then
+ 	IPs=( "4" "6" )
+-	protocols=( "tcp" "udp" )
+ 
+ 	for IP in "${IPs[@]}"; do
+-		for proto in "${protocols[@]}"; do
+-			for mode in $(seq 1 3); do
+-				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32
+-				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -f
+-				$0 "$IP" "$proto" -m "$mode" -t 1 -n 32 -c -f
+-			done
++		for mode in $(seq 1 3); do
++			$0 "$IP" udp -m "$mode" -t 1 -n 32
++			$0 "$IP" tcp -m "$mode" -t 1 -n 32
+ 		done
+ 	done
+ 
 -- 
 2.37.2
 

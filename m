@@ -2,184 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 456BF5A9D27
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 18:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FDAC5A9F36
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 20:38:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234634AbiIAQcH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 12:32:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56188 "EHLO
+        id S234801AbiIAShf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 14:37:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232156AbiIAQcG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 12:32:06 -0400
-Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2D183F13;
-        Thu,  1 Sep 2022 09:32:04 -0700 (PDT)
-Date:   Thu, 1 Sep 2022 12:31:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1662049922;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lF0nzK0I3dkKY+VmvooE06KpjT5GF7za7apoY2ziCzA=;
-        b=b+mGQz7e+S8nXflcP/Umq6k8mCFjCcajhS+oAKrOSAu3dWGCTZFUhafPBFCwtky43SVO1A
-        9liE+TRIsb/HqXx3Llx9NtT4cCnU5G225wc5/aVXkK7HBe0kN/DeWe/oPRR6yMuknOrEyX
-        Th1UnEJvMcgJF/T8At8EC/TVB4d1otU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
-        juri.lelli@redhat.com, ldufour@linux.ibm.com, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, arnd@arndb.de,
-        jbaron@akamai.com, rientjes@google.com, minchan@google.com,
-        kaleshsingh@google.com, kernel-team@android.com,
-        linux-mm@kvack.org, iommu@lists.linux.dev,
-        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <20220901163155.sz4dqtubicdvzmsw@moria.home.lan>
-References: <20220830214919.53220-1-surenb@google.com>
- <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
- <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
- <20220831101948.f3etturccmp5ovkl@suse.de>
- <20220831155941.q5umplytbx6offku@moria.home.lan>
- <20220901110501.o5rq5yzltomirxiw@suse.de>
+        with ESMTP id S233814AbiIAShK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 14:37:10 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB80EDF53
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 11:36:29 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id b17so2381359ilh.0
+        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 11:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=W4dZZ/e9WrjzOZSD1aUrjU7SvDDgtYBvwsJ63NqroSU=;
+        b=mwOfoQdlbckJqd/7kBKZE5ha8IAMrmT+B1xuXgspAdjI2JvcSZeEdw2GVj1CmVX9zx
+         f2FuyoAnTv1W0xrtqmA4si1/otsW37GkjvAaspPHwywHm9cJt9CYI77dJt28kAzf7iPN
+         +2G3QtS8tb4jB8mAj8qON4wiGG+ni/dqEI+splAxMgS62KzJtSxO8zPaJ0ZxZeDej4Ei
+         fbGXdjrCn1/aKJfNPDZ+vizRA+J0tSZFUUxPZcAaLi098G31HvE/Y/iBA8keaSVZxa+4
+         lyJxiFBfG3QqiF6SsusZ6NiOnU0350CTtfeg2e/IbCw+T5G+WhIVipASdOqOxA3Htapu
+         hVmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=W4dZZ/e9WrjzOZSD1aUrjU7SvDDgtYBvwsJ63NqroSU=;
+        b=e5sWI1Xe5HL921IbmkAd2K2o84xH9ksCWjs5d/1w71OxTxnD2IQ8bcOXjVHkc121T+
+         JzqUmHiHrVhHoxi07So5bQ2axJi6scKsJEyGHoluAGyZqS0t5gc5+MCXNCiWIRWG3edt
+         UcWpwJgJ2t5YFuxolmQ2GVDe5rTkwGalDGynCkY5S0lsI9BsVMrinsgpBgCH075Ql+TI
+         MOohkhfL2SOET/19xqLo16+kt5TJDFRcPGA18GcZZhcFPJUJW1W+oDUGpgBNFIZE3Egc
+         yzu8XYWLY42xeR5DHdaJ3qFEi6kJ+zsM6515RCzhvuQNXvLYhvDvI+X1eBVTUM01/V/F
+         n7fg==
+X-Gm-Message-State: ACgBeo0tc1IY82QP00v87Wo3FnK8R3pL/KwTWEwnGQCHcBaxjbrvx5G5
+        vSKtmppgG7ifTE5Pptg/Z8R32g==
+X-Google-Smtp-Source: AA6agR4ha86ad44RmoTGRkOFueHczN/W1jJKZakbRhL3ijQ0oJo12zaRUM6hJT0ppmZDcEmU6+DHUg==
+X-Received: by 2002:a92:c24a:0:b0:2eb:6640:944 with SMTP id k10-20020a92c24a000000b002eb66400944mr6156829ilo.246.1662057389042;
+        Thu, 01 Sep 2022 11:36:29 -0700 (PDT)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id h16-20020a92d850000000b002eb109706f4sm4660475ilq.84.2022.09.01.11.36.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Sep 2022 11:36:28 -0700 (PDT)
+Message-ID: <99ee9e0a-4bf2-10a3-b31c-0a58355dece8@kernel.dk>
+Date:   Thu, 1 Sep 2022 12:36:27 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220901110501.o5rq5yzltomirxiw@suse.de>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH liburing v2 03/12] add io_uring_submit_and_get_events and
+ io_uring_get_events
+Content-Language: en-US
+To:     Dylan Yudaken <dylany@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     Kernel-team@fb.com
+References: <20220901093303.1974274-1-dylany@fb.com>
+ <20220901093303.1974274-4-dylany@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220901093303.1974274-4-dylany@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 12:05:01PM +0100, Mel Gorman wrote:
-> As pointed out elsewhere, attaching to the tracepoint and recording relevant
-> state is an option other than trying to parse a raw ftrace feed. For memory
-> leaks, there are already tracepoints for page allocation and free that could
-> be used to track allocations that are not freed at a given point in time.
-
-Page allocation tracepoints are not sufficient for what we're trying to do here,
-and a substantial amount of effort in this patchset has gone into just getting
-the hooking locations right - our memory allocation interfaces are not trivial.
-
-That's something people should keep in mind when commenting on the size of this
-patchset, since that's effort that would have to be spent for /any/ complete
-solution, be in tracepoint based or no.
-
-Additionally, we need to be able to write assertions that verify that our hook
-locations are correct, that allocations or frees aren't getting double counted
-or missed - highly necessary given the maze of nested memory allocation
-interfaces we have (i.e. slab.h), and it's something a tracepoint based
-implementation would have to account for - otherwise, a tool isn't very useful
-if you can't trust the numbers it's giving you.
-
-And then you have to correlate the allocate and free events, so that you know
-which allocate callsite to decrement the amount freed from.
-
-How would you plan on doing that with tracepoints?
-
-> There is also the kernel memory leak detector although I never had reason
-> to use it (https://www.kernel.org/doc/html/v6.0-rc3/dev-tools/kmemleak.html)
-> and it sounds like it would be expensive.
-
-Kmemleak is indeed expensive, and in the past I've had issues with it not
-catching everything (I've noticed the kmemleak annotations growing, so maybe
-this is less of an issue than it was).
-
-And this is a more complete solution (though not something that could strictly
-replace kmemleak): strict memory leaks aren't the only issue, it's also drivers
-unexpectedly consuming more memory than expected.
-
-I'll bet you a beer that when people have had this awhile, we're going to have a
-bunch of bugs discovered and fixed along the lines of "oh hey, this driver
-wasn't supposed to be using this 1 MB of memory, I never noticed that before".
-
-> > > It's also unclear *who* would enable this. It looks like it would mostly
-> > > have value during the development stage of an embedded platform to track
-> > > kernel memory usage on a per-application basis in an environment where it
-> > > may be difficult to setup tracing and tracking. Would it ever be enabled
-> > > in production? Would a distribution ever enable this? If it's enabled, any
-> > > overhead cannot be disabled/enabled at run or boot time so anyone enabling
-> > > this would carry the cost without never necessarily consuming the data.
-> > 
-> > The whole point of this is to be cheap enough to enable in production -
-> > especially the latency tracing infrastructure. There's a lot of value to
-> > always-on system visibility infrastructure, so that when a live machine starts
-> > to do something wonky the data is already there.
-> > 
+On 9/1/22 3:32 AM, Dylan Yudaken wrote:
+> With deferred task running, we would like to be able to combine submit
+> with get events (regardless of if there are CQE's available), or if there
+> is nothing to submit then simply do an enter with IORING_ENTER_GETEVENTS
+> set, in order to process any available work.
 > 
-> Sure, there is value but nothing stops the tracepoints being attached as
-> a boot-time service where interested. For latencies, there is already
-> bpf examples for tracing individual function latency over time e.g.
-> https://github.com/iovisor/bcc/blob/master/tools/funclatency.py although
-> I haven't used it recently.
+> Expose these APIs
 
-So this is cool, I'll check it out today.
+Maybe this is added later, but man page entries are missing for these
+two.
 
-Tracing of /function/ latency is definitely something you'd want tracing/kprobes
-for - that's way more practical than any code tagging-based approach. And if the
-output is reliable and useful I could definitely see myself using this, thank
-you.
+We also need get these added to the liburing.map.
 
-But for data collection where it makes sense to annotate in the source code
-where the data collection points are, I see the code-tagging based approach as
-simpler - it cuts out a whole bunch of indirection. The diffstat on the code
-tagging time stats patch is
+-- 
+Jens Axboe
 
- 8 files changed, 233 insertions(+), 6 deletions(-)
 
-And that includes hooking wait.h - this is really simple, easy stuff.
-
-The memory allocation tracking patches are more complicated because we've got a
-ton of memory allocation interfaces and we're aiming for strict correctness
-there - because that tool needs strict correctness in order to be useful.
-
-> Live parsing of ftrace is possible, albeit expensive.
-> https://github.com/gormanm/mmtests/blob/master/monitors/watch-highorder.pl
-> tracks counts of high-order allocations and dumps a report on interrupt as
-> an example of live parsing ftrace and only recording interesting state. It's
-> not tracking state you are interested in but it demonstrates it is possible
-> to rely on ftrace alone and monitor from userspace. It's bit-rotted but
-> can be fixed with
-
-Yeah, if this is as far as people have gotten with ftrace on memory allocations
-than I don't think tracing is credible here, sorry.
-
-> The ease of use is a criticism as there is effort required to develop
-> the state tracking of in-kernel event be it from live parsing ftrace,
-> attaching to tracepoints with systemtap/bpf/whatever and the like. The
-> main disadvantage with an in-kernel implementation is three-fold. First,
-> it doesn't work with older kernels without backports. Second, if something
-> slightly different it needed then it's a kernel rebuild.  Third, if the
-> option is not enabled in the deployed kernel config then you are relying
-> on the end user being willing to deploy a custom kernel.  The initial
-> investment in doing memory leak tracking or latency tracking by attaching
-> to tracepoints is significant but it works with older kernels up to a point
-> and is less sensitive to the kernel config options selected as features
-> like ftrace are often selected.
-
-The next version of this patch set is going to use the alternatives mechanism to
-add a boot parameter.
-
-I'm not interested in backporting to older kernels - eesh. People on old
-enterprise kernels don't always get all the new shiny things :)

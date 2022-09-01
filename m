@@ -2,165 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9883B5A8A45
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 03:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 430D35A8CF5
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 06:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232154AbiIABH6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Aug 2022 21:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38662 "EHLO
+        id S232666AbiIAExB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 00:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbiIABH5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 21:07:57 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94066EEF1E
-        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 18:07:55 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id y197so6591507yby.13
-        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 18:07:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=MRPzoJhQ6jRX3IlC8DX7IgvLpQbZlMnsgnvZKuuei8w=;
-        b=FN6oNUdWK/epLWx1TsL9yA3judc8GEWbPUlFBZx3N+obm1zvmXwKLTgA0C+din1hae
-         QL+aeoxudtTxFElhfOjbFrb5XsjBAilaB08Ldofl1XN7K/KLlXYDWHTq4s13vSXmuj5f
-         DKOIAo7JDYtLr+88kw7IWfUfQEtwzvbREYO0F51ITJHJcS5BlsMkaJFVMWN04WfbWge0
-         QaMLxE28PQcRoEcCdCRT5hYYcc5qJq1t6S50Lj3dBP+TXgyTlXN6pUj2nAiR7uqNJFnz
-         LBjn/+WoYkZm8EFAaPai3sk01dRp3NFnU9eS/Pc/JsqSX+SuHO7G2QXvivbbuPpvEXP7
-         8nRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=MRPzoJhQ6jRX3IlC8DX7IgvLpQbZlMnsgnvZKuuei8w=;
-        b=ie/SAlfQ2J1eWYPKNbmeLeN4CkAt27cHBOry0fogAC3ucevLOQCYIx2i//zwdSlEAt
-         4Poc+oRum7erPSJwPBF0Xzp9oxQzI30lBvb9Smy1B1b2Q0sXmtP9c/uh8T1Kpv9GeQLF
-         WsIAUyGf/eW8tGru33bokehtqASsWeJs8kEZYQvdoHnU+JTyZPqK6KlgY4uJmffWFajN
-         qUAvHovHOo1vaUH7xSP5Fr7hRuD51s1S6m9eLMaSziw3LTOyPJx6/QBONtEX5WlEBpfj
-         yo+dkf/KtWC4+w9kt+3N3HozeW7rhzbdt5IAB8Y60tcgmy9XBY8QlExlxcSdbIYvnzrG
-         fgog==
-X-Gm-Message-State: ACgBeo1UZVTSj2fw7euJmtDA9j9HJt/Rn/tzbhzBcbrQIWvjuRx3MPH4
-        GWXv1PgiaMJlmS6YV10HeB1+ZmjbW5VyBn9xoEXgww==
-X-Google-Smtp-Source: AA6agR7ANRZu1y3V5ec1pN1knn4GFpXcEWezad8yEa+jyRtwuxFDik/95LNfhWenWi2n9p8vw7Ebn9CJDR6Mcs4MSyE=
-X-Received: by 2002:a05:6902:4c7:b0:69a:9e36:debe with SMTP id
- v7-20020a05690204c700b0069a9e36debemr14531815ybs.543.1661994474639; Wed, 31
- Aug 2022 18:07:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-11-surenb@google.com>
- <20220831101103.fj5hjgy3dbb44fit@suse.de> <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
-In-Reply-To: <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 31 Aug 2022 18:07:43 -0700
-Message-ID: <CAJuCfpGxxzHT7X+q2zzu+WRrmyjLsT+RMJ7+LFOECtFuXvt3gA@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/30] mm: enable page allocation tagging for
- __get_free_pages and alloc_pages
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <liam.howlett@oracle.com>,
-        David Vernet <void@manifault.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>, dvyukov@google.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
-        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        kernel-team <kernel-team@android.com>,
-        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        with ESMTP id S232635AbiIAEw7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 00:52:59 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A7D0114C6E;
+        Wed, 31 Aug 2022 21:52:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4811C221FE;
+        Thu,  1 Sep 2022 04:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1662007977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eTDe59i5UNhXbLPqqFo4WrMbXbqRlxGLfSkkAQ8Fk/c=;
+        b=MXuVo2yVstAVCBS1varMecEXswz7FuXIDAQoWezwenAAYl9Y3PpRhbQ5He3NmYqXLh+xPX
+        jn8EotqxdKlpoHsOLAGA9/hldaOwN5qgNQ9dGNBfKhsAkMyZOy8dG2wdiqd/dEPEUn2GH3
+        2GWaydR4UCkectkbjmLF+pOVJTedvZg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1662007977;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eTDe59i5UNhXbLPqqFo4WrMbXbqRlxGLfSkkAQ8Fk/c=;
+        b=g2uWhOe8Agl2O5OiQ5uOLDZi7V4xateLoucVNLb1+2O63J77RwR9Dmx9Wxfg3YF3VCD9bc
+        vcZMMEi8r2KuRXCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 67DE3139C4;
+        Thu,  1 Sep 2022 04:52:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id E7aqFqY6EGPsewAAMHmgww
+        (envelope-from <osalvador@suse.de>); Thu, 01 Sep 2022 04:52:54 +0000
+Date:   Thu, 1 Sep 2022 06:52:52 +0200
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
+        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
+        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        peterx@redhat.com, david@redhat.com, axboe@kernel.dk,
+        mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+        changbin.du@intel.com, ytcoode@gmail.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+        vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+        iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+        elver@google.com, dvyukov@google.com, shakeelb@google.com,
+        songmuchun@bytedance.com, arnd@arndb.de, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-mm@kvack.org, iommu@lists.linux.dev,
         kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
         linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <YxA6pCu0YNIiXkHf@localhost.localdomain>
+References: <20220830214919.53220-1-surenb@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220830214919.53220-1-surenb@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 10:46 AM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Wed, Aug 31, 2022 at 11:11:03AM +0100, Mel Gorman wrote:
-> > On Tue, Aug 30, 2022 at 02:48:59PM -0700, Suren Baghdasaryan wrote:
-> > > Redefine alloc_pages, __get_free_pages to record allocations done by
-> > > these functions. Instrument deallocation hooks to record object freeing.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > +#ifdef CONFIG_PAGE_ALLOC_TAGGING
-> > > +
-> > >  #include <linux/alloc_tag.h>
-> > >  #include <linux/page_ext.h>
-> > >
-> > > @@ -25,4 +27,37 @@ static inline void pgalloc_tag_dec(struct page *page, unsigned int order)
-> > >             alloc_tag_sub(get_page_tag_ref(page), PAGE_SIZE << order);
-> > >  }
-> > >
-> > > +/*
-> > > + * Redefinitions of the common page allocators/destructors
-> > > + */
-> > > +#define pgtag_alloc_pages(gfp, order)                                      \
-> > > +({                                                                 \
-> > > +   struct page *_page = _alloc_pages((gfp), (order));              \
-> > > +                                                                   \
-> > > +   if (_page)                                                      \
-> > > +           alloc_tag_add(get_page_tag_ref(_page), PAGE_SIZE << (order));\
-> > > +   _page;                                                          \
-> > > +})
-> > > +
-> >
-> > Instead of renaming alloc_pages, why is the tagging not done in
-> > __alloc_pages()? At least __alloc_pages_bulk() is also missed. The branch
-> > can be guarded with IS_ENABLED.
->
-> It can't be in a function, it has to be in a wrapper macro.
+On Tue, Aug 30, 2022 at 02:48:49PM -0700, Suren Baghdasaryan wrote:
+> ===========================
+> Code tagging framework
+> ===========================
+> Code tag is a structure identifying a specific location in the source code
+> which is generated at compile time and can be embedded in an application-
+> specific structure. Several applications of code tagging are included in
+> this RFC, such as memory allocation tracking, dynamic fault injection,
+> latency tracking and improved error code reporting.
+> Basically, it takes the old trick of "define a special elf section for
+> objects of a given type so that we can iterate over them at runtime" and
+> creates a proper library for it.
+> 
+> ===========================
+> Memory allocation tracking
+> ===========================
+> The goal for using codetags for memory allocation tracking is to minimize
+> performance and memory overhead. By recording only the call count and
+> allocation size, the required operations are kept at the minimum while
+> collecting statistics for every allocation in the codebase. With that
+> information, if users are interested in mode detailed context for a
+> specific allocation, they can enable more in-depth context tracking,
+> which includes capturing the pid, tgid, task name, allocation size,
+> timestamp and call stack for every allocation at the specified code
+> location.
+> Memory allocation tracking is implemented in two parts:
+> 
+> part1: instruments page and slab allocators to record call count and total
+> memory allocated at every allocation in the source code. Every time an
+> allocation is performed by an instrumented allocator, the codetag at that
+> location increments its call and size counters. Every time the memory is
+> freed these counters are decremented. To decrement the counters upon free,
+> allocated object needs a reference to its codetag. Page allocators use
+> page_ext to record this reference while slab allocators use memcg_data of
+> the slab page.
+> The data is exposed to the user space via a read-only debugfs file called
+> alloc_tags.
 
-Ah, right. __FILE__, __LINE__ and others we use to record the call
-location would point to include/linux/gfp.h instead of the location
-allocation is performed at.
+Hi Suren,
 
->
-> alloc_tag_add() is a macro that defines a static struct in a special elf
-> section. That struct holds the allocation counters, and putting it in a special
-> elf section is how the code to list it in debugfs finds it.
->
-> Look at the dynamic debug code for prior precedence for this trick in the kernel
-> - that's how it makes pr_debug() calls dynamically controllable at runtime, from
-> debugfs. We're taking that method and turning it into a proper library.
->
-> Because all the counters are statically allocated, without even a pointer deref
-> to get to them in the allocation path (one pointer deref to get to them in the
-> deallocate path), that makes this _much, much_ cheaper than anything that could
-> be done with tracing - cheap enough that I expect many users will want to enable
-> it in production.
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+I just posted a patch [1] and reading through your changelog and seeing your PoC,
+I think we have some kind of overlap.
+My patchset aims to give you the stacktrace <-> relationship information and it is
+achieved by a little amount of extra code mostly in page_owner.c/ and lib/stackdepot.
+
+Of course, your works seems to be more complete wrt. the information you get.
+
+I CCed you in case you want to have a look
+
+[1] https://lkml.org/lkml/2022/9/1/36
+
+Thanks
+
+
+-- 
+Oscar Salvador
+SUSE Labs

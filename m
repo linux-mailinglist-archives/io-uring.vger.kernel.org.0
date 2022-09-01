@@ -2,63 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDAC75A8831
-	for <lists+io-uring@lfdr.de>; Wed, 31 Aug 2022 23:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9883B5A8A45
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 03:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231210AbiHaViZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 31 Aug 2022 17:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
+        id S232154AbiIABH6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 31 Aug 2022 21:07:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiHaViW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 17:38:22 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A098EBC817
-        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 14:38:20 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-33dc31f25f9so319332677b3.11
-        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 14:38:20 -0700 (PDT)
+        with ESMTP id S231743AbiIABH5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 31 Aug 2022 21:07:57 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94066EEF1E
+        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 18:07:55 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id y197so6591507yby.13
+        for <io-uring@vger.kernel.org>; Wed, 31 Aug 2022 18:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=6E7G6kJMNs5Us6NEnCBcT2HO6AKiMVb4bH/0vpPA/4U=;
-        b=kAtSEhj7BWkD6SMRdd1t39qS+hQKouRS4qaWZ/zCB6oGUrFNrc2cBDYGv9jQ+MdF0J
-         uxQpVt2B9TyIrWXDxJ2lE/5kGqIlaGR3KL1ZUwaFBmwiXzmcYyLDuUovokIJ5gP+z9l0
-         0yNTpmhlKudmxd6FSbYJNy7iPqg2dLLVGTx3y1J7sDru+O7/1p0gaM3HCn5KVfOBeHdH
-         7y51BAxidLFb2zqNvKSOOe8d+T3vU43qoJCQXNWAECkcBOpBA8zLImxhZz3blz38Sv8b
-         A0VOTCczeuCjB41nhG0Ij40swVSwGGlY/9vVEbUAh5KhCZEJca7FVQKBTYw0uiQMXn3I
-         8fkg==
+        bh=MRPzoJhQ6jRX3IlC8DX7IgvLpQbZlMnsgnvZKuuei8w=;
+        b=FN6oNUdWK/epLWx1TsL9yA3judc8GEWbPUlFBZx3N+obm1zvmXwKLTgA0C+din1hae
+         QL+aeoxudtTxFElhfOjbFrb5XsjBAilaB08Ldofl1XN7K/KLlXYDWHTq4s13vSXmuj5f
+         DKOIAo7JDYtLr+88kw7IWfUfQEtwzvbREYO0F51ITJHJcS5BlsMkaJFVMWN04WfbWge0
+         QaMLxE28PQcRoEcCdCRT5hYYcc5qJq1t6S50Lj3dBP+TXgyTlXN6pUj2nAiR7uqNJFnz
+         LBjn/+WoYkZm8EFAaPai3sk01dRp3NFnU9eS/Pc/JsqSX+SuHO7G2QXvivbbuPpvEXP7
+         8nRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=6E7G6kJMNs5Us6NEnCBcT2HO6AKiMVb4bH/0vpPA/4U=;
-        b=DbZZV3joHYv69NhZhxxubN9UHuKMUcDNt92ZecOqq7Pi0unI8vdlUZz7CNHPxX6wtr
-         pBs68e9BFk+BQKe/VxvRIwElLX/kDOgQsJpKAFVpFjz0QFFN+sbYob7Ipeu4z01ID4Ek
-         XjgWWeLjcRaUTKRq16K2cbrB692ZF7VjSzlqtiiev3m0U+g2DSl84UKHM2s0R92nAqmz
-         mNc2rhIlMgCTst/tMW534aBnnKMUNTbRlYGAM4V8XIQ6OeDouGSK57Vb1CIkDPs3ngAo
-         g+HOrTyXAsU1LY2xzR3I5QQY1Ruy1FYubi46bp/5X5M8Q7JMIzorCF2JyjMkZLdmvo27
-         QmTg==
-X-Gm-Message-State: ACgBeo0feqAAAZL7HttP8NAUNdRb/W00Pcy1buTLfTkqCKftItBsKhVo
-        /Lwjdf6FlBmz5SVRQniW6LgKcpUfGc6d5qN3hUrtJQ==
-X-Google-Smtp-Source: AA6agR71/tBRa7ErmmsvPBq7WvGBz62OVsrJ1soclQl+ncNHwGSnn/9fM5Y5i7G0A989GWlS6M/O5IwMTPKxavhJCfc=
-X-Received: by 2002:a81:85c3:0:b0:33d:a4d9:4599 with SMTP id
- v186-20020a8185c3000000b0033da4d94599mr19726685ywf.237.1661981899638; Wed, 31
- Aug 2022 14:38:19 -0700 (PDT)
+        bh=MRPzoJhQ6jRX3IlC8DX7IgvLpQbZlMnsgnvZKuuei8w=;
+        b=ie/SAlfQ2J1eWYPKNbmeLeN4CkAt27cHBOry0fogAC3ucevLOQCYIx2i//zwdSlEAt
+         4Poc+oRum7erPSJwPBF0Xzp9oxQzI30lBvb9Smy1B1b2Q0sXmtP9c/uh8T1Kpv9GeQLF
+         WsIAUyGf/eW8tGru33bokehtqASsWeJs8kEZYQvdoHnU+JTyZPqK6KlgY4uJmffWFajN
+         qUAvHovHOo1vaUH7xSP5Fr7hRuD51s1S6m9eLMaSziw3LTOyPJx6/QBONtEX5WlEBpfj
+         yo+dkf/KtWC4+w9kt+3N3HozeW7rhzbdt5IAB8Y60tcgmy9XBY8QlExlxcSdbIYvnzrG
+         fgog==
+X-Gm-Message-State: ACgBeo1UZVTSj2fw7euJmtDA9j9HJt/Rn/tzbhzBcbrQIWvjuRx3MPH4
+        GWXv1PgiaMJlmS6YV10HeB1+ZmjbW5VyBn9xoEXgww==
+X-Google-Smtp-Source: AA6agR7ANRZu1y3V5ec1pN1knn4GFpXcEWezad8yEa+jyRtwuxFDik/95LNfhWenWi2n9p8vw7Ebn9CJDR6Mcs4MSyE=
+X-Received: by 2002:a05:6902:4c7:b0:69a:9e36:debe with SMTP id
+ v7-20020a05690204c700b0069a9e36debemr14531815ybs.543.1661994474639; Wed, 31
+ Aug 2022 18:07:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220830214919.53220-1-surenb@google.com> <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
- <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan> <20220831101948.f3etturccmp5ovkl@suse.de>
- <Yw88RFuBgc7yFYxA@dhcp22.suse.cz> <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
- <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
-In-Reply-To: <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
+References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-11-surenb@google.com>
+ <20220831101103.fj5hjgy3dbb44fit@suse.de> <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
+In-Reply-To: <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 31 Aug 2022 14:38:08 -0700
-Message-ID: <CAJuCfpELZBoM8uG9prkra1sJ7tDiy_eF9TwetXSSN3XDssp8CQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-To:     Yosry Ahmed <yosryahmed@google.com>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
+Date:   Wed, 31 Aug 2022 18:07:43 -0700
+Message-ID: <CAJuCfpGxxzHT7X+q2zzu+WRrmyjLsT+RMJ7+LFOECtFuXvt3gA@mail.gmail.com>
+Subject: Re: [RFC PATCH 10/30] mm: enable page allocation tagging for
+ __get_free_pages and alloc_pages
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Mel Gorman <mgorman@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Roman Gushchin <roman.gushchin@linux.dev>,
@@ -66,6 +64,7 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         Matthew Wilcox <willy@infradead.org>,
         "Liam R. Howlett" <liam.howlett@oracle.com>,
         David Vernet <void@manifault.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Juri Lelli <juri.lelli@redhat.com>,
         Laurent Dufour <ldufour@linux.ibm.com>,
         Peter Xu <peterx@redhat.com>,
@@ -78,7 +77,7 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         Benjamin Segall <bsegall@google.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Valentin Schneider <vschneid@redhat.com>,
-        Christoph Lameter <cl@linux.com>,
+        Christopher Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
         Alexander Potapenko <glider@google.com>,
@@ -89,71 +88,79 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         Minchan Kim <minchan@google.com>,
         Kalesh Singh <kaleshsingh@google.com>,
         kernel-team <kernel-team@android.com>,
-        Linux-MM <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
         kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
         linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 1:56 PM Yosry Ahmed <yosryahmed@google.com> wrote:
+On Wed, Aug 31, 2022 at 10:46 AM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
 >
-> On Wed, Aug 31, 2022 at 12:02 PM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Wed, Aug 31, 2022 at 12:47:32PM +0200, Michal Hocko wrote:
-> > > On Wed 31-08-22 11:19:48, Mel Gorman wrote:
-> > > > Whatever asking for an explanation as to why equivalent functionality
-> > > > cannot not be created from ftrace/kprobe/eBPF/whatever is reasonable.
+> On Wed, Aug 31, 2022 at 11:11:03AM +0100, Mel Gorman wrote:
+> > On Tue, Aug 30, 2022 at 02:48:59PM -0700, Suren Baghdasaryan wrote:
+> > > Redefine alloc_pages, __get_free_pages to record allocations done by
+> > > these functions. Instrument deallocation hooks to record object freeing.
 > > >
-> > > Fully agreed and this is especially true for a change this size
-> > > 77 files changed, 3406 insertions(+), 703 deletions(-)
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > +#ifdef CONFIG_PAGE_ALLOC_TAGGING
+> > > +
+> > >  #include <linux/alloc_tag.h>
+> > >  #include <linux/page_ext.h>
+> > >
+> > > @@ -25,4 +27,37 @@ static inline void pgalloc_tag_dec(struct page *page, unsigned int order)
+> > >             alloc_tag_sub(get_page_tag_ref(page), PAGE_SIZE << order);
+> > >  }
+> > >
+> > > +/*
+> > > + * Redefinitions of the common page allocators/destructors
+> > > + */
+> > > +#define pgtag_alloc_pages(gfp, order)                                      \
+> > > +({                                                                 \
+> > > +   struct page *_page = _alloc_pages((gfp), (order));              \
+> > > +                                                                   \
+> > > +   if (_page)                                                      \
+> > > +           alloc_tag_add(get_page_tag_ref(_page), PAGE_SIZE << (order));\
+> > > +   _page;                                                          \
+> > > +})
+> > > +
 > >
-> > In the case of memory allocation accounting, you flat cannot do this with ftrace
-> > - you could maybe do a janky version that isn't fully accurate, much slower,
-> > more complicated for the developer to understand and debug and more complicated
-> > for the end user.
-> >
-> > But please, I invite anyone who's actually been doing this with ftrace to
-> > demonstrate otherwise.
-> >
-> > Ftrace just isn't the right tool for the job here - we're talking about adding
-> > per callsite accounting to some of the fastest fast paths in the kernel.
-> >
-> > And the size of the changes for memory allocation accounting are much more
-> > reasonable:
-> >  33 files changed, 623 insertions(+), 99 deletions(-)
-> >
-> > The code tagging library should exist anyways, it's been open coded half a dozen
-> > times in the kernel already.
-> >
-> > And once we've got that, the time stats code is _also_ far simpler than doing it
-> > with ftrace would be. If anyone here has successfully debugged latency issues
-> > with ftrace, I'd really like to hear it. Again, for debugging latency issues you
-> > want something that can always be on, and that's not cheap with ftrace - and
-> > never mind the hassle of correlating start and end wait trace events, builting
-> > up histograms, etc. - that's all handled here.
-> >
-> > Cheap, simple, easy to use. What more could you want?
-> >
+> > Instead of renaming alloc_pages, why is the tagging not done in
+> > __alloc_pages()? At least __alloc_pages_bulk() is also missed. The branch
+> > can be guarded with IS_ENABLED.
 >
-> This is very interesting work! Do you have any data about the overhead
-> this introduces, especially in a production environment? I am
-> especially interested in memory allocations tracking and detecting
-> leaks.
+> It can't be in a function, it has to be in a wrapper macro.
 
-I had the numbers for my previous implementation, before we started using the
-lazy percpu counters but that would not apply to the new implementation. I'll
-rerun the measurements and will post the exact numbers in a day or so.
+Ah, right. __FILE__, __LINE__ and others we use to record the call
+location would point to include/linux/gfp.h instead of the location
+allocation is performed at.
 
-> (Sorry if you already posted this kind of data somewhere that I missed)
+>
+> alloc_tag_add() is a macro that defines a static struct in a special elf
+> section. That struct holds the allocation counters, and putting it in a special
+> elf section is how the code to list it in debugfs finds it.
+>
+> Look at the dynamic debug code for prior precedence for this trick in the kernel
+> - that's how it makes pr_debug() calls dynamically controllable at runtime, from
+> debugfs. We're taking that method and turning it into a proper library.
+>
+> Because all the counters are statically allocated, without even a pointer deref
+> to get to them in the allocation path (one pointer deref to get to them in the
+> deallocate path), that makes this _much, much_ cheaper than anything that could
+> be done with tracing - cheap enough that I expect many users will want to enable
+> it in production.
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>

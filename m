@@ -2,43 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97EC15A8F0E
-	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 09:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F32B5A8F47
+	for <lists+io-uring@lfdr.de>; Thu,  1 Sep 2022 09:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233425AbiIAHCG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 03:02:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50728 "EHLO
+        id S233450AbiIAHG6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 03:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233440AbiIAHBF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 03:01:05 -0400
+        with ESMTP id S233470AbiIAHGa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 03:06:30 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4940022515;
-        Thu,  1 Sep 2022 00:00:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA12261DA6;
+        Thu,  1 Sep 2022 00:06:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lP/axgW6wVbLw99T8GY0xIMHkeiyf6aNs2WovZZWBOY=; b=DsovPIHjiTzLDFEHMUZax6kdiz
-        YmrmwM4nfhUlXHU6+jwtzeSmRIqJzuk4utR6vlplHXI5NoTsSiI6NPT6mQ1h/o6UlCxpUVBSYBOGF
-        mAwUrbTARvU58QmTx2lzLaDbpKSsvApZwYA684cbuuNFGxM7GOsrIGOTXXVvQaBIhlfCdGZ/9loBM
-        L3IgWlK3G+key+g2ORNzZ1jfQX4w6GwCWwHdxGrO4bIeb/Qje5accP3+IyavFM2jCZdaLz1F3Z14t
-        Fw+hvjFeYcySCXoo9Bh3TdJ8voxVMcJyDg7RBGMnnwLLPADNOXfsqH/S6AwZDXh9BZoWO7rjOM3mx
-        f18fOvcQ==;
+        bh=PMcMlRof4aBmW9ZRc+eOO/2dgQwguo+jd6/zOIwkXz4=; b=CRTVAsmAK2cWYW898rb6ABFc5M
+        uLACuGzlIMyaVe8YmnHdnMTCzaRgU/yORC/GoxdMYsKfSqUkdBcV9CHFquRDxtBp1mrHH1Ek8iUcr
+        mn1JgrUbBdWhUq0dshggnSScCFSCXwzSSm1KuWPF7x5mOnsP+VDfpzlLoRknLlMRFYgTP9KQNHlgH
+        CH7qbZF+ZmtxkOzs27I6vkqhMH23AuEUp5/xcLcIfVX3lpAkPrSHOObJikPLlUvDymQfq9PPQJW2d
+        ahsXPS2phTb5F2Rtarg5EDnzM/T3m8B4GVcztEaB4FRglzTR7JDiDhZuuZYYAbZtb5/Iw4ZAPbP6X
+        Wmout+LA==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oTeBY-005ocA-Jf; Thu, 01 Sep 2022 07:00:20 +0000
+        id 1oTeGh-005oq6-Bs; Thu, 01 Sep 2022 07:05:39 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CF2673004C7;
-        Thu,  1 Sep 2022 09:00:17 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 417C030041D;
+        Thu,  1 Sep 2022 09:05:36 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A749520981381; Thu,  1 Sep 2022 09:00:17 +0200 (CEST)
-Date:   Thu, 1 Sep 2022 09:00:17 +0200
+        id 110AE20981381; Thu,  1 Sep 2022 09:05:36 +0200 (CEST)
+Date:   Thu, 1 Sep 2022 09:05:35 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Mel Gorman <mgorman@suse.de>,
         Suren Baghdasaryan <surenb@google.com>,
         akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
         hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
@@ -60,15 +60,16 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <YxBYgcyP7IvMLJwq@hirez.programming.kicks-ass.net>
+Message-ID: <YxBZv1pZ6N2vwcP3@hirez.programming.kicks-ass.net>
 References: <20220830214919.53220-1-surenb@google.com>
  <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
  <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
  <20220831101948.f3etturccmp5ovkl@suse.de>
+ <20220831155941.q5umplytbx6offku@moria.home.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220831101948.f3etturccmp5ovkl@suse.de>
+In-Reply-To: <20220831155941.q5umplytbx6offku@moria.home.lan>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
@@ -79,22 +80,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 11:19:48AM +0100, Mel Gorman wrote:
+On Wed, Aug 31, 2022 at 11:59:41AM -0400, Kent Overstreet wrote:
 
-> It's also unclear *who* would enable this. It looks like it would mostly
-> have value during the development stage of an embedded platform to track
-> kernel memory usage on a per-application basis in an environment where it
-> may be difficult to setup tracing and tracking. Would it ever be enabled
-> in production? 
+> Also, ftrace can drop events. Not really ideal if under system load your memory
+> accounting numbers start to drift.
 
-Afaict this is developer only; it is all unconditional code.
+You could attach custom handlers to tracepoints. If you were to replace
+these unconditional code hooks of yours with tracepoints then you could
+conditionally (say at boot) register custom handlers that do the
+accounting you want.
 
-> Would a distribution ever enable this? 
-
-I would sincerely hope not. Because:
-
-> If it's enabled, any overhead cannot be disabled/enabled at run or
-> boot time so anyone enabling this would carry the cost without never
-> necessarily consuming the data.
-
-this.
+Nobody is mandating you use the ftrace ringbuffer to consume tracepoints.
+Many people these days attach eBPF scripts to them and do whatever they
+want.

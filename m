@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D885AA772
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 07:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A06735AA797
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 08:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235136AbiIBF4V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 01:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53070 "EHLO
+        id S235346AbiIBGER (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 02:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232239AbiIBF4S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 01:56:18 -0400
+        with ESMTP id S234641AbiIBGER (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 02:04:17 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BF72ED4E
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 22:56:15 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-        by gnuweeb.org (Postfix) with ESMTPSA id 0126980C38
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 05:56:14 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75D72ABF00
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 23:04:16 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+        by gnuweeb.org (Postfix) with ESMTPSA id 2F2B480927
+        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 06:04:16 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662098175;
-        bh=sKw3GRvrlHKJ2AAFXTeJoXo+AEZOe311xdW9+JeN4xs=;
+        s=default; t=1662098656;
+        bh=5wv1FRwjtHTsyU5ym4Tk37flfqv47hU4ToU4RSBI7sU=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NUv8jU8zoOFGP/RnM0pyeS2xn4143kVOL+9NNOdzjLPHpjlaokyH1BklbByoGCkii
-         qKV7d87lu29Nl3dVVVoLQ856Kfx/xVO2Akd4qy1REFTP7MOrjNmakYyqz1TO1sjcOm
-         kFVYApQLuGw/iMKq72aZmgBNcU9qDmFw5xooS65h3XDzTKq0ow1RKT5kqFWRwQBitf
-         dXW+YeVIBAZmcrHhd3ekyWwqdkvTkPp2EvZtcpdqjaOr+qL7Lmb4opMOAum4SBiCEE
-         Xa3hKRTCRmlnYyZysAtlrcbeK55M2TFNxw5wsZySne6gJ/ZUZCSYu+HHgMKCt6RBRc
-         d9SX+lXEeb2Rg==
-Received: by mail-lf1-f46.google.com with SMTP id g7so1753356lfe.11
-        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 22:56:14 -0700 (PDT)
-X-Gm-Message-State: ACgBeo03LM5yTxmFEEgEPdsDrxP57p0xKp1ea+WXG3h6EXX32oa8IXwj
-        Z/2agaebBOLLfj6GjkAg6gVYaosiI48QencSzD8=
-X-Google-Smtp-Source: AA6agR5PN7WtPmQ+JVEoFx3G/75dRt+jUx81WnoR0nDTjg1SHBaWwcAxBPBxPZ1OiwlxA9gRJUTgIBZUy3ctcebHWuc=
-X-Received: by 2002:a05:6512:a8c:b0:48b:3e1c:c3ad with SMTP id
- m12-20020a0565120a8c00b0048b3e1cc3admr12289675lfu.678.1662098173023; Thu, 01
- Sep 2022 22:56:13 -0700 (PDT)
+        b=k5kLb6p04IKAhsqpvZkZHaFzxTeBlvizhbm7T2jIBCHyM/z3mdZfsEur/wEWB5FES
+         9uJpYTcHKP+42gjejH8y7nbQHsIgxUqKE097P2XnnOb3ERSFzko26opQywS+e5NTSt
+         g0CM7lNmxaoId63OmY/8SKw+qqCtT6z/Gc9SuMcQ3BacOie1ipefWqcIFX0ZWpHDz6
+         OkbHrwIaFiNFyQ7CuEjSibIGb0hr/nbN1stJH8BbxSrJGCPld2ByL2ncBAVcvoXaCJ
+         xjt+CFyklV7Y7lFm3e0c6PIl+Y890yQy27ZiPPhOQEsuA7PKAzOVmoVd9IBIZaSmRi
+         kBIdG1vaeVDAQ==
+Received: by mail-lj1-f170.google.com with SMTP id b19so1210936ljf.8
+        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 23:04:16 -0700 (PDT)
+X-Gm-Message-State: ACgBeo20emqnQA45HxOcFlNNXvx3trz6EoQtA7Rf+uL/7SZb7FzNzCHm
+        m+nvgqpZLLuj5RV0bDe+VBNJBs+avei3f8ss9ls=
+X-Google-Smtp-Source: AA6agR7T+SHU2sG4BKVImWbni4dx665N8fFyyMZeXM1hlO7xRCc0dVy1u/D0AqBOke9bcLpAq+jug3SYm+g9vcNIoJQ=
+X-Received: by 2002:a05:651c:b2c:b0:25e:6e68:ff51 with SMTP id
+ b44-20020a05651c0b2c00b0025e6e68ff51mr10315002ljr.349.1662098654338; Thu, 01
+ Sep 2022 23:04:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220902011548.2506938-1-ammar.faizi@intel.com> <20220902011548.2506938-2-ammar.faizi@intel.com>
-In-Reply-To: <20220902011548.2506938-2-ammar.faizi@intel.com>
+References: <20220902011548.2506938-1-ammar.faizi@intel.com> <20220902011548.2506938-3-ammar.faizi@intel.com>
+In-Reply-To: <20220902011548.2506938-3-ammar.faizi@intel.com>
 From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Date:   Fri, 2 Sep 2022 12:56:01 +0700
-X-Gmail-Original-Message-ID: <CAOG64qM=Q_fe1-3+DU672p4HbkLa=7=vGVUoPc8BfSCFm3+dwA@mail.gmail.com>
-Message-ID: <CAOG64qM=Q_fe1-3+DU672p4HbkLa=7=vGVUoPc8BfSCFm3+dwA@mail.gmail.com>
-Subject: Re: [RESEND PATCH liburing v1 01/12] test/helpers: Add
- `t_bind_ephemeral_port()` function
+Date:   Fri, 2 Sep 2022 13:04:03 +0700
+X-Gmail-Original-Message-ID: <CAOG64qNCEss+i-MQV4gJjZh4Eun1o0U1E2WcFrgeg1ifjUMo6Q@mail.gmail.com>
+Message-ID: <CAOG64qNCEss+i-MQV4gJjZh4Eun1o0U1E2WcFrgeg1ifjUMo6Q@mail.gmail.com>
+Subject: Re: [RESEND PATCH liburing v1 02/12] t/poll-link: Don't brute force
+ the port number
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>,
         Facebook Kernel Team <kernel-team@fb.com>,
@@ -64,36 +64,27 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On Fri, Sep 2, 2022 at 8:18 AM Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+>  static void signal_var(int *var)
+>  {
+>          pthread_mutex_lock(&mutex);
+>          *var = 1;
+> @@ -80,45 +81,37 @@ void *recv_thread(void *arg)
+>         ret = io_uring_queue_init(8, &ring, 0);
+>         assert(ret == 0);
 >
-> This is a prep patch to fix an intermittent issue with the port number.
+>         int s0 = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>         assert(s0 != -1);
 >
-> We have many places where we need to bind() a socket to any unused port
-> number. To achieve that, the current approach does one of the following
-> mechanisms:
+>         int32_t val = 1;
+>         ret = setsockopt(s0, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
+>         assert(ret != -1);
+>         ret = setsockopt(s0, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+>         assert(ret != -1);
 >
->   1) Randomly brute force the port number until the bind() syscall
->      succeeds.
->
->   2) Use a static port at compile time (randomly chosen too).
->
-> This is not reliable and it results in an intermittent issue (test
-> fails when the selected port is in use).
->
-> Setting @addr->sin_port to zero on a bind() syscall lets the kernel
-> choose a port number that is not in use. The caller then can know the
-> port number to be bound by invoking a getsockname() syscall after
-> bind() succeeds.
->
-> Wrap this procedure in a new function called t_bind_ephemeral_port().
-> The selected port will be returned into @addr->sin_port, the caller
-> can use it later to connect() or whatever they need.
->
-> Link: https://lore.kernel.org/r/918facd1-78ba-2de7-693a-5f8c65ea2fcd@gnuweeb.org
-> Cc: Dylan Yudaken <dylany@fb.com>
-> Cc: Facebook Kernel Team <kernel-team@fb.com>
-> Cc: Pavel Begunkov <asml.silence@gmail.com>
-> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> -       struct sockaddr_in addr;
+> +       struct sockaddr_in addr = { };
+
+move this variable to the top plz, with that fixed:
 
 Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 

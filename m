@@ -2,65 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF065AA565
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35D885AA772
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 07:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232014AbiIBB7E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 21:59:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60514 "EHLO
+        id S235136AbiIBF4V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 01:56:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiIBB7E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:59:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3516A98F4;
-        Thu,  1 Sep 2022 18:59:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8C6ACB8298F;
-        Fri,  2 Sep 2022 01:59:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171BAC433C1;
-        Fri,  2 Sep 2022 01:58:53 +0000 (UTC)
-Date:   Thu, 1 Sep 2022 21:59:25 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        peterx@redhat.com, david@redhat.com, axboe@kernel.dk,
-        mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org,
-        changbin.du@intel.com, ytcoode@gmail.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, bristot@redhat.com, vschneid@redhat.com,
-        cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com,
-        42.hyeyoo@gmail.com, glider@google.com, elver@google.com,
-        dvyukov@google.com, shakeelb@google.com, songmuchun@bytedance.com,
-        arnd@arndb.de, jbaron@akamai.com, rientjes@google.com,
-        minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-mm@kvack.org, iommu@lists.linux.dev,
-        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 27/30] Code tagging based latency tracking
-Message-ID: <20220901215925.59ae5cb0@gandalf.local.home>
-In-Reply-To: <20220902013532.6n5cyf3oofntljho@moria.home.lan>
-References: <20220830214919.53220-1-surenb@google.com>
-        <20220830214919.53220-28-surenb@google.com>
-        <20220901173844.36e1683c@gandalf.local.home>
-        <20220901215438.gy3bgqa4ghhm6ztm@moria.home.lan>
-        <20220901183430.120311ce@gandalf.local.home>
-        <20220901225515.ogg7pyljmfzezamr@moria.home.lan>
-        <20220901202311.546a53b5@gandalf.local.home>
-        <20220902013532.6n5cyf3oofntljho@moria.home.lan>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S232239AbiIBF4S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 01:56:18 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BF72ED4E
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 22:56:15 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+        by gnuweeb.org (Postfix) with ESMTPSA id 0126980C38
+        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 05:56:14 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1662098175;
+        bh=sKw3GRvrlHKJ2AAFXTeJoXo+AEZOe311xdW9+JeN4xs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NUv8jU8zoOFGP/RnM0pyeS2xn4143kVOL+9NNOdzjLPHpjlaokyH1BklbByoGCkii
+         qKV7d87lu29Nl3dVVVoLQ856Kfx/xVO2Akd4qy1REFTP7MOrjNmakYyqz1TO1sjcOm
+         kFVYApQLuGw/iMKq72aZmgBNcU9qDmFw5xooS65h3XDzTKq0ow1RKT5kqFWRwQBitf
+         dXW+YeVIBAZmcrHhd3ekyWwqdkvTkPp2EvZtcpdqjaOr+qL7Lmb4opMOAum4SBiCEE
+         Xa3hKRTCRmlnYyZysAtlrcbeK55M2TFNxw5wsZySne6gJ/ZUZCSYu+HHgMKCt6RBRc
+         d9SX+lXEeb2Rg==
+Received: by mail-lf1-f46.google.com with SMTP id g7so1753356lfe.11
+        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 22:56:14 -0700 (PDT)
+X-Gm-Message-State: ACgBeo03LM5yTxmFEEgEPdsDrxP57p0xKp1ea+WXG3h6EXX32oa8IXwj
+        Z/2agaebBOLLfj6GjkAg6gVYaosiI48QencSzD8=
+X-Google-Smtp-Source: AA6agR5PN7WtPmQ+JVEoFx3G/75dRt+jUx81WnoR0nDTjg1SHBaWwcAxBPBxPZ1OiwlxA9gRJUTgIBZUy3ctcebHWuc=
+X-Received: by 2002:a05:6512:a8c:b0:48b:3e1c:c3ad with SMTP id
+ m12-20020a0565120a8c00b0048b3e1cc3admr12289675lfu.678.1662098173023; Thu, 01
+ Sep 2022 22:56:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+References: <20220902011548.2506938-1-ammar.faizi@intel.com> <20220902011548.2506938-2-ammar.faizi@intel.com>
+In-Reply-To: <20220902011548.2506938-2-ammar.faizi@intel.com>
+From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Date:   Fri, 2 Sep 2022 12:56:01 +0700
+X-Gmail-Original-Message-ID: <CAOG64qM=Q_fe1-3+DU672p4HbkLa=7=vGVUoPc8BfSCFm3+dwA@mail.gmail.com>
+Message-ID: <CAOG64qM=Q_fe1-3+DU672p4HbkLa=7=vGVUoPc8BfSCFm3+dwA@mail.gmail.com>
+Subject: Re: [RESEND PATCH liburing v1 01/12] test/helpers: Add
+ `t_bind_ephemeral_port()` function
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>,
+        Facebook Kernel Team <kernel-team@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
+        Kanna Scarlet <knscarlet@gnuweeb.org>,
+        Muhammad Rizki <kiizuha@gnuweeb.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,41 +63,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 1 Sep 2022 21:35:32 -0400
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Fri, Sep 2, 2022 at 8:18 AM Ammar Faizi wrote:
+> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+>
+> This is a prep patch to fix an intermittent issue with the port number.
+>
+> We have many places where we need to bind() a socket to any unused port
+> number. To achieve that, the current approach does one of the following
+> mechanisms:
+>
+>   1) Randomly brute force the port number until the bind() syscall
+>      succeeds.
+>
+>   2) Use a static port at compile time (randomly chosen too).
+>
+> This is not reliable and it results in an intermittent issue (test
+> fails when the selected port is in use).
+>
+> Setting @addr->sin_port to zero on a bind() syscall lets the kernel
+> choose a port number that is not in use. The caller then can know the
+> port number to be bound by invoking a getsockname() syscall after
+> bind() succeeds.
+>
+> Wrap this procedure in a new function called t_bind_ephemeral_port().
+> The selected port will be returned into @addr->sin_port, the caller
+> can use it later to connect() or whatever they need.
+>
+> Link: https://lore.kernel.org/r/918facd1-78ba-2de7-693a-5f8c65ea2fcd@gnuweeb.org
+> Cc: Dylan Yudaken <dylany@fb.com>
+> Cc: Facebook Kernel Team <kernel-team@fb.com>
+> Cc: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-> On Thu, Sep 01, 2022 at 08:23:11PM -0400, Steven Rostedt wrote:
-> > If ftrace, perf, bpf can't do what you want, take a harder look to see if
-> > you can modify them to do so.  
-> 
-> Maybe we can use this exchange to make both of our tools better. I like your
-> histograms - the quantiles algorithm I've had for years is janky, I've been
-> meaning to rip that out, I'd love to take a look at your code for that. And
-> having an on/off switch is a good idea, I'll try to add that at some point.
-> Maybe you got some ideas from my stuff too.
-> 
-> I'd love to get better tracepoints for measuring latency - what I added to
-> init_wait() and finish_wait() was really only a starting point. Figuring out
-> the right places to measure is where I'd like to be investing my time in this
-> area, and there's no reason we couldn't both be making use of that.
+Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 
-Yes, this is exactly what I'm talking about. I'm not against your work, I
-just want you to work more with everyone to come up with ideas that can
-help everyone as a whole. That's how "open source communities" is suppose
-to work ;-)
+tq
 
-The histogram and synthetic events can use some more clean ups. There's a
-lot of places that can be improved in that code. But I feel the ideas
-behind that code is sound. It's just getting the implementation to be a bit
-more efficient.
-
-> 
-> e.g. with kernel waitqueues, I looked at hooking prepare_to_wait() first but not
-> all code uses that, init_wait() got me better coverage. But I've already seen
-> that that misses things, too, there's more work to be done.
-
-I picked prepare_to_wait() just because I was hacking up something quick
-and thought that was "close enough" ;-)
-
--- Steve
-
+-- Viro

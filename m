@@ -2,113 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC4E5AAE2E
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 14:13:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA465AB4A8
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 17:07:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232239AbiIBMLt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 08:11:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33848 "EHLO
+        id S237084AbiIBPHD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 11:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235287AbiIBMLm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 08:11:42 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5006B5335
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 05:11:39 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id t5so1895003pjs.0
-        for <io-uring@vger.kernel.org>; Fri, 02 Sep 2022 05:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=46aBPLkIQvF4Zc2qaB+8IQ8PDaV7KU+uxNNMa3ojlI8=;
-        b=Mf3vAf5q6Lqq/fVLwDtwp/S6C0omt7HLkuQ+8tZ4VTsB6aqSWyXuJUfAp2l5oLxZOj
-         oV7gv0gq28s1EJK2ocvv2CDFQlJljknGmiDZwG+3/ykGpMelXN9zZdeOwf6KIZVQg7fJ
-         6wm7QqyLXYD9FEVT0KavELWgGAYMmaVquDK8k0rSeog3I0TEQTBb8N1s2z3IFSwizWVo
-         Y2m6QYJZ/9uzZFRgeSjWmjPtEk+SSJ42Q+ian4AjfjhApNGtuUIQQTUJcpFJHzmOtEmt
-         6fyTHATB4JD/Kmiqwd0Nmd6z1tCHDJRWzzMQp0GuijMfccgPNirmi+zwHM7WABWiaQt+
-         aAmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=46aBPLkIQvF4Zc2qaB+8IQ8PDaV7KU+uxNNMa3ojlI8=;
-        b=CSYPp/UU3T+cPPijKERvUR/nhSztzL+ghPnMNX7TKQeo3Ls8r97bNtjI8R8IsbZ8HS
-         9gdaA9owTkEZ3WWtSxuWbMjFKso2eQOq3J/dCxSDbiqJ5PjBfywN3PqDzKRtzPW94lXm
-         K0KUlxjuVhRICsWsfc+EeGyfHsfNi9J9uoml3WG6LAtIehS9wxz0rNX++nS2VlHg8piT
-         bCueHxvku1b0XJjANC9gmIP+lK0UxL/Jnrt8lXqPML3iJNtWCTG9akgTNtbnKWjYAFu5
-         5C+WggQL3+coaQLimJYytnFSjdg1M7eBcE38WDA2llViIU2VRP2uggPsxRJchJxZh2tx
-         uNvQ==
-X-Gm-Message-State: ACgBeo2bmkuNLr4HK7XlnzCbwg3GPvUJd4lDHOPzAehkNvKUr/DzhUex
-        QtH4hI1dhXKAEwnEs4ESRXBzuQ==
-X-Google-Smtp-Source: AA6agR4LXSQM5sF4Q8J4n+QZmHjK9xRIjiHn2gX+naQCy9Yl3E9nvZXNM0RW0pjRgmX9WNXvbnqX3Q==
-X-Received: by 2002:a17:902:e751:b0:174:89f8:cef2 with SMTP id p17-20020a170902e75100b0017489f8cef2mr27415963plf.156.1662120698525;
-        Fri, 02 Sep 2022 05:11:38 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a23-20020a1709027d9700b00174923afa8asm1468993plm.3.2022.09.02.05.11.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 05:11:37 -0700 (PDT)
-Message-ID: <7b4f2fe5-9277-dacb-547c-00ae295a38cc@kernel.dk>
-Date:   Fri, 2 Sep 2022 06:11:35 -0600
+        with ESMTP id S237112AbiIBPGo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 11:06:44 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC69D24BD9;
+        Fri,  2 Sep 2022 07:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662129369; x=1693665369;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+u/+M+GVB//IFa5mAG5/Nmm+r8/YO9vetau5dx989Ow=;
+  b=MPspPPsVy/aBM33UOV3ueo64K2AO+oAq/8Ell7CPs3p2DEJq09Ndji+3
+   QeEc3XlDhLqf93u4nIRKFTFgI8yaMXnltxXsHsNTdqcBu3uqYql75p9Bl
+   pRJyWXD1Qv+qi9pHFGOsd/MYb1WHuM0qsBlPYagh1LcJGfqQANDK9N4po
+   /5pv0ZoqlAlS/yO+FIXE9mVRUAMlBqg1k6zs142UMU8po2mRioPAMmpsv
+   +gWNGlGAlvO7LeXHjLNtPRZ4n+tzjuqik/I2Sc+JDvBsWHhP0A3CtWg+1
+   8nyhFoxhBrPNEzr1aHPIg/JOM/c1icfTG89qPc0zkfx53rVwy7Eb1aGpT
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="279008759"
+X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
+   d="scan'208";a="279008759"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 07:34:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
+   d="scan'208";a="702162187"
+Received: from lkp-server02.sh.intel.com (HELO 95dfd251caa2) ([10.239.97.151])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Sep 2022 07:34:53 -0700
+Received: from kbuild by 95dfd251caa2 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oU7ky-0000C3-2Y;
+        Fri, 02 Sep 2022 14:34:52 +0000
+Date:   Fri, 2 Sep 2022 22:34:19 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Roesch <shr@fb.com>, kernel-team@fb.com,
+        io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, shr@fb.com, axboe@kernel.dk,
+        josef@toxicpanda.com
+Subject: Re: [PATCH v1 09/10] btrfs: make balance_dirty_pages nowait
+ compatible
+Message-ID: <202209022236.e41DKuIt-lkp@intel.com>
+References: <20220901225849.42898-10-shr@fb.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH liburing 0/4] zerocopy send API changes
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-References: <cover.1662116617.git.asml.silence@gmail.com>
- <5aa07bf0-a783-0882-0038-1b02588c7e33@gnuweeb.org>
- <c4958f35-11e5-5dd9-83c5-609d8b16801b@gnuweeb.org>
- <6fedd5a1-1353-9e71-6b3e-478810b5fc8a@kernel.dk>
- <cebbf0d4-2fba-71cc-16a1-b95d7b31d646@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <cebbf0d4-2fba-71cc-16a1-b95d7b31d646@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220901225849.42898-10-shr@fb.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/2/22 6:07 AM, Pavel Begunkov wrote:
-> On 9/2/22 13:03, Jens Axboe wrote:
->> On 9/2/22 6:01 AM, Ammar Faizi wrote:
->>> On 9/2/22 6:56 PM, Ammar Faizi wrote:
->>>> On 9/2/22 6:12 PM, Pavel Begunkov wrote:
->>>>> Fix up helpers and tests to match API changes and also add some more tests.
->>>>>
->>>>> Pavel Begunkov (4):
->>>>> ??? tests: verify that send addr is copied when async
->>>>> ??? zc: adjust sendzc to the simpler uapi
->>>>> ??? test: test iowq zc sends
->>>>> ??? examples: adjust zc bench to the new uapi
->>>>
->>>> Hi Pavel,
->>>>
->>>> Patch #2 and #3 are broken, but after applying patch #4, everything builds
->>>> just fine. Please resend and avoid breakage in the middle.
->>>>
->>>> Thanks!
->>>
->>> Nevermind. It's already upstream now.
->>
->> Ah shoot, how did I miss that... That's annoying.
-> 
-> We can squash them into a single commit if we care about it.
-> Don't really want do the disable + fix +e nable dancing here.
+Hi Stefan,
 
-It's already pushed out, so whatever is there is set in stone... Not a
-huge deal, but would've been nice to avoid. It's problematic when
-someone needs to bisect and issue and runs into a non-compiling step.
-Makes that process a lot more annoying, so yes we definitely do care
-about not introducing build breakage in a series of patches.
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on b90cb1053190353cc30f0fef0ef1f378ccc063c5]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Roesch/io-uring-btrfs-support-async-buffered-writes/20220902-070208
+base:   b90cb1053190353cc30f0fef0ef1f378ccc063c5
+config: i386-randconfig-a003 (https://download.01.org/0day-ci/archive/20220902/202209022236.e41DKuIt-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-5) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/b24b542d1de60f99e6bfeb7971168c9a9bc8b7e4
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Stefan-Roesch/io-uring-btrfs-support-async-buffered-writes/20220902-070208
+        git checkout b24b542d1de60f99e6bfeb7971168c9a9bc8b7e4
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "balance_dirty_pages_ratelimited_flags" [fs/btrfs/btrfs.ko] undefined!
 
 -- 
-Jens Axboe
+0-DAY CI Kernel Test Service
+https://01.org/lkp

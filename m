@@ -2,163 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 587C15AB8E0
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 21:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E76315AB8F3
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 21:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230322AbiIBTca (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 15:32:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
+        id S229839AbiIBTsw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 15:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbiIBTc3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 15:32:29 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B8D106D84
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 12:32:27 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id j9-20020a17090a3e0900b001fd9568b117so3071346pjc.3
-        for <io-uring@vger.kernel.org>; Fri, 02 Sep 2022 12:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Ry9qz4Ug3drArxnbcnODIH8HPoQFI54s25GygjQ0sKo=;
-        b=a0ajXOH9mNVz1/N39f8ZJF3YF5bhV30o5rq0H70STqonqeujYUpv8MdBDfAieLFM31
-         D5ICdUml4P3QyjlTxszdCBv//G/JfLZ/s7AhMVFbKt9jSuIJsxPOjaZNKGGfg5zmxZ53
-         ZGnL69DW31DvDxV1thYJzfYbcore8G5fXx/boUVbY9xwQ2jADEFMU8U21aJJVoYbE0+r
-         oUwVmDrABBHjBMxSs28k/bVcg7pMegIvipgJC3798fzaTSaR5lZWP3QUz9WUD9lJ6SWa
-         kpV8X6vf2/ndocxO9Op+ScnK0aAwtWA+zC32sTb2c8zXgcS8Mo6dfjx0k7FkLeFPm4Eu
-         qPeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Ry9qz4Ug3drArxnbcnODIH8HPoQFI54s25GygjQ0sKo=;
-        b=1UD9qBnRKI9fb6sKhZ81umFUCLZ9SGzKBi5JzTa4BXdqCAfwBaLxBsjbyWZn023cbT
-         F7N61pdu5X/Tx4pukMxZ/ndurF6BGJ3NJ1IviTSIREJz2Vx4kkMC7kddByXzCnS34jnx
-         dzai3gCOho1H0848XpmkiUyHhlh5Ty9ym2Y/AL6jSBnq9VwpyQCe0OoxAng7fst4lGdw
-         JAmqCDPWLGG0zujlM+0w4/kZl3K///2CkUvcAdTMx+DBhdJYTb4MKCng0xg0mdsgh1/9
-         FT8fvhV69QT58YLpLgY9A+EtHlE9FMJplxQq2IR56Uf5f/vW8awFITf6R+r8t7caZXEH
-         6U/A==
-X-Gm-Message-State: ACgBeo3gD/LzLVcuZOM0PqDF8bwzqRbxTvHJyD7w56ish9lXuT25LXBt
-        8fhW49vMTz/7lPW/p0leKlzFRQ==
-X-Google-Smtp-Source: AA6agR7Usv6PTE2jWCD39oaTpKAjmsJJNSWV0Z5hO6DIhiMc6IBH89jSLLrfTK3l0y2fIOTnHoozyg==
-X-Received: by 2002:a17:90b:3e86:b0:1f5:2b4f:7460 with SMTP id rj6-20020a17090b3e8600b001f52b4f7460mr6509336pjb.97.1662147147188;
-        Fri, 02 Sep 2022 12:32:27 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u6-20020a62d446000000b00537f7d04fb3sm2244296pfl.145.2022.09.02.12.32.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 12:32:26 -0700 (PDT)
-Message-ID: <48856ca4-5158-154e-a1f5-124aadc9780f@kernel.dk>
-Date:   Fri, 2 Sep 2022 13:32:24 -0600
+        with ESMTP id S229496AbiIBTsv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 15:48:51 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F3F120BEB;
+        Fri,  2 Sep 2022 12:48:50 -0700 (PDT)
+Date:   Fri, 2 Sep 2022 15:48:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662148127;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=n3Vt2n+PBD0eNIsvGTR1l3JrOeVtWEjP88FVSBBEvEY=;
+        b=mPyxzHSCWJDs7FY0KQSQlCnTELLgR0D5y3QUtw1jP0xws7G95PlcumsBf40lKyXM7CpTgQ
+        EQ03B0NpMd3GmyUjL7/LRRu2b7P7CYcc/5drjtaORm2I0b47gBiN9Kk3SiUGyi3Al05Eo0
+        A5b6cgfMPf2NEURa1fE7EOtxMOAAjIs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Yosry Ahmed <yosryahmed@google.com>,
+        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>, dave@stgolabs.net,
+        Matthew Wilcox <willy@infradead.org>, liam.howlett@oracle.com,
+        void@manifault.com, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        bsegall@google.com, bristot@redhat.com, vschneid@redhat.com,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, Linux-MM <linux-mm@kvack.org>,
+        iommu@lists.linux.dev, kasan-dev@googlegroups.com,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-modules@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220902194839.xqzgsoowous72jkz@moria.home.lan>
+References: <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+ <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+ <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
+ <YxExz+c1k3nbQMh4@P9FQF9L96D.corp.robot.car>
+ <20220901223720.e4gudprscjtwltif@moria.home.lan>
+ <YxE4BXw5i+BkxxD8@P9FQF9L96D.corp.robot.car>
+ <20220902001747.qqsv2lzkuycffuqe@moria.home.lan>
+ <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
+ <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH for-next v3 0/4] fixed-buffer for uring-cmd/passthrough
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     hch@lst.de, kbusch@kernel.org, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com
-References: <CGME20220902152701epcas5p1d4aca8eebc90fb96ac7ed5a8270816cf@epcas5p1.samsung.com>
- <20220902151657.10766-1-joshi.k@samsung.com>
- <f1e8a7fa-a1f8-c60a-c365-b2164421f98d@kernel.dk>
- <2b4a935c-a6b1-6e42-ceca-35a8f09d8f46@kernel.dk>
- <20220902184608.GA6902@test-zns>
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220902184608.GA6902@test-zns>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/2/22 12:46 PM, Kanchan Joshi wrote:
-> On Fri, Sep 02, 2022 at 10:32:16AM -0600, Jens Axboe wrote:
->> On 9/2/22 10:06 AM, Jens Axboe wrote:
->>> On 9/2/22 9:16 AM, Kanchan Joshi wrote:
->>>> Hi,
->>>>
->>>> Currently uring-cmd lacks the ability to leverage the pre-registered
->>>> buffers. This series adds the support in uring-cmd, and plumbs
->>>> nvme passthrough to work with it.
->>>>
->>>> Using registered-buffers showed peak-perf hike from 1.85M to 2.17M IOPS
->>>> in my setup.
->>>>
->>>> Without fixedbufs
->>>> *****************
->>>> # taskset -c 0 t/io_uring -b512 -d128 -c32 -s32 -p0 -F1 -B0 -O0 -n1 -u1 /dev/ng0n1
->>>> submitter=0, tid=5256, file=/dev/ng0n1, node=-1
->>>> polled=0, fixedbufs=0/0, register_files=1, buffered=1, QD=128
->>>> Engine=io_uring, sq_ring=128, cq_ring=128
->>>> IOPS=1.85M, BW=904MiB/s, IOS/call=32/31
->>>> IOPS=1.85M, BW=903MiB/s, IOS/call=32/32
->>>> IOPS=1.85M, BW=902MiB/s, IOS/call=32/32
->>>> ^CExiting on signal
->>>> Maximum IOPS=1.85M
->>>
->>> With the poll support queued up, I ran this one as well. tldr is:
->>>
->>> bdev (non pt)??? 122M IOPS
->>> irq driven??? 51-52M IOPS
->>> polled??????? 71M IOPS
->>> polled+fixed??? 78M IOPS
+On Fri, Sep 02, 2022 at 06:02:12AM -0600, Jens Axboe wrote:
+> On 9/1/22 7:04 PM, Roman Gushchin wrote:
+> > On Thu, Sep 01, 2022 at 08:17:47PM -0400, Kent Overstreet wrote:
+> >> On Thu, Sep 01, 2022 at 03:53:57PM -0700, Roman Gushchin wrote:
+> >>> I'd suggest to run something like iperf on a fast hardware. And maybe some
+> >>> io_uring stuff too. These are two places which were historically most sensitive
+> >>> to the (kernel) memory accounting speed.
+> >>
+> >> I'm getting wildly inconsistent results with iperf.
+> >>
+> >> io_uring-echo-server and rust_echo_bench gets me:
+> >> Benchmarking: 127.0.0.1:12345
+> >> 50 clients, running 512 bytes, 60 sec.
+> >>
+> >> Without alloc tagging:	120547 request/sec
+> >> With:			116748 request/sec
+> >>
+> >> https://github.com/frevib/io_uring-echo-server
+> >> https://github.com/haraldh/rust_echo_bench
+> >>
+> >> How's that look to you? Close enough? :)
+> > 
+> > Yes, this looks good (a bit too good).
+> > 
+> > I'm not that familiar with io_uring, Jens and Pavel should have a better idea
+> > what and how to run (I know they've workarounded the kernel memory accounting
+> > because of the performance in the past, this is why I suspect it might be an
+> > issue here as well).
 > 
-> except first one, rest three entries are for passthru? somehow I didn't
-> see that big of a gap. I will try to align my setup in coming days.
+> io_uring isn't alloc+free intensive on a per request basis anymore, it
+> would not be a good benchmark if the goal is to check for regressions in
+> that area.
 
-Right, sorry it was badly labeled. First one is bdev with polling,
-registered buffers, etc. The others are all the passthrough mode. polled
-goes to 74M with the caching fix, so it's about a 74M -> 82M bump using
-registered buffers with passthrough and polling.
+Good to know. The benchmark is still a TCP benchmark though, so still useful.
 
->> polled+fixed??? 82M
->>
->> I suspect the remainder is due to the lack of batching on the request
->> freeing side, at least some of it. Haven't really looked deeper yet.
->>
->> One issue I saw - try and use passthrough polling without having any
->> poll queues defined and it'll stall just spinning on completions. You
->> need to ensure that these are processed as well - look at how the
->> non-passthrough io_uring poll path handles it.
-> 
-> Had tested this earlier, and it used to run fine. And it does not now.
-> I see that io are getting completed, irq-completion is arriving in nvme
-> and it is triggering task-work based completion (by calling
-> io_uring_cmd_complete_in_task). But task-work never got called and
-> therefore no completion happened.
-> 
-> io_uring_cmd_complete_in_task -> io_req_task_work_add -> __io_req_task_work_add
-> 
-> Seems task work did not get added. Something about newly added
-> IORING_SETUP_DEFER_TASKRUN changes the scenario.
-> 
-> static inline void __io_req_task_work_add(struct io_kiocb *req, bool allow_local)
-> {
-> ?????? struct io_uring_task *tctx = req->task->io_uring;
-> ?????? struct io_ring_ctx *ctx = req->ctx;
-> ?????? struct llist_node *node;
-> 
-> ?????? if (allow_local && ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
-> ?????????????? io_req_local_work_add(req);
-> ?????????????? return;
-> ?????? }
-> ????....
-> 
-> To confirm, I commented that in t/io_uring and it runs fine.
-> Please see if that changes anything for you? I will try to find the
-> actual fix tomorow.
+Matthew suggested
+  while true; do echo 1 >/tmp/foo; rm /tmp/foo; done
 
-Ah gotcha, yes that actually makes a lot of sense. I wonder if regular
-polling is then also broken without poll queues if
-IORING_SETUP_DEFER_TASKRUN is set. It should be, I'll check into
-io_iopoll_check().
+I ran that on tmpfs, and the numbers with and without alloc tagging were
+statistically equal - there was a fair amount of variation, it wasn't a super
+controlled test, anywhere from 38-41 seconds with 100000 iterations (and alloc
+tagging was some of the faster runs).
 
--- 
-Jens Axboe
+But with memcg off, it ran in 32-33 seconds. We're piggybacking on the same
+mechanism memcg uses for stashing per-object pointers, so it looks like that's
+the bigger cost.

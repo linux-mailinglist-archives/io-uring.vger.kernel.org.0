@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD7F5AA89B
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 09:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AACD5AA89D
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 09:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235136AbiIBHQI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 03:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38046 "EHLO
+        id S235369AbiIBHQP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 03:16:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbiIBHQH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 03:16:07 -0400
+        with ESMTP id S235295AbiIBHQM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 03:16:12 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0903A52E66
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 00:16:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ACF7550BB
+        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 00:16:10 -0700 (PDT)
 Received: from localhost.localdomain (unknown [182.2.70.226])
-        by gnuweeb.org (Postfix) with ESMTPSA id 06D0380C52;
-        Fri,  2 Sep 2022 07:16:01 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 585AB80C38;
+        Fri,  2 Sep 2022 07:16:06 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662102965;
-        bh=8CxoNLdpfZGlVSeMG07m4BkqhkERVBRYGewViV876js=;
+        s=default; t=1662102970;
+        bh=2p9uHfWtW3AKFDRIFltihLhNPVLqKFuiwaVh2DT6Y5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HKHIB9nGvMeZb6apL5hbyK7KrXb9vKmkKmbgF2hmXXR+uiTWMzv0SBhlbvYvRi2Eg
-         qg/AhXKCkKNwxVohbuOGw5Dll5M/kuID/mok8qZLTs88EH52cHcwwXnCbj0UTiu+O2
-         qjo1+yFcHZVr2JqAs6ImkEZIVcExyhzUnn52rxNdUVC9hj9RxWdLYC8EBk9JWKEyXL
-         9+SMlw9E8N29l+riCEc4t+IAAhrpkes0RNIAweXQD980IVPUJfv8IPmgAEothGpTjv
-         VFyHtRCqrDzqGD2Ksz+rE9jyQ3Bc5vQxSnfyjePM1CUZhNO1fwaVXyFa9I13/5sACl
-         ss4AuIvA6oqOQ==
+        b=RrIeiej1KF92eSZmADJXkEKGyDRjyW8ytRoMswcTlcucwZqHuG4atHc1JNiksrN9r
+         ujifqSb3OrbnukXsn+DHgECASUaHq7/t3CduP3+bAahnPymu/iCgdBjenjhgodpeJI
+         HiBw/8mcrY0JcDdFaKqRee37uWqembyerVe3VfnJssSHJvV5furSxkBE5rTWhcXaaa
+         mu0ieKCTf72HFliiiTiLZXtApNJiTOAYB71fNWkfOTVmciMA4X9iGp+jocoit1xEnv
+         7Ds+sC8jP+v9+r0R1G+88FH0XdYALnHrAkIpsf/1o+VSLDOxtlsvGe5abhocEMx+rq
+         wmFwO1h+jN5/g==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -39,9 +39,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Kanna Scarlet <knscarlet@gnuweeb.org>,
         Muhammad Rizki <kiizuha@gnuweeb.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Subject: [PATCH liburing v2 09/12] t/shutdown: Don't use a static port number
-Date:   Fri,  2 Sep 2022 14:15:02 +0700
-Message-Id: <20220902071153.3168814-10-ammar.faizi@intel.com>
+Subject: [PATCH liburing v2 10/12] t/recv-msgall: Don't use a static port number
+Date:   Fri,  2 Sep 2022 14:15:03 +0700
+Message-Id: <20220902071153.3168814-11-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220902071153.3168814-1-ammar.faizi@intel.com>
 References: <20220902071153.3168814-1-ammar.faizi@intel.com>
@@ -68,61 +68,79 @@ Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Tested-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/shutdown.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ test/recv-msgall.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/test/shutdown.c b/test/shutdown.c
-index 14c7407..064ee36 100644
---- a/test/shutdown.c
-+++ b/test/shutdown.c
-@@ -15,44 +15,43 @@
+diff --git a/test/recv-msgall.c b/test/recv-msgall.c
+index a6f7cfc..ae123e4 100644
+--- a/test/recv-msgall.c
++++ b/test/recv-msgall.c
+@@ -12,45 +12,43 @@
  #include <sys/socket.h>
- #include <sys/un.h>
- #include <netinet/tcp.h>
- #include <netinet/in.h>
- #include <arpa/inet.h>
+ #include <pthread.h>
  
  #include "liburing.h"
-+#include "helpers.h"
+ #include "helpers.h"
  
- static void sig_pipe(int sig)
+ #define MAX_MSG	128
+-
+-#define PORT	10201
+ #define HOST	"127.0.0.1"
++static __be16 bind_port;
+ 
+ static int recv_prep(struct io_uring *ring, struct iovec *iov, int *sock,
+ 		     int use_recvmsg)
  {
- }
+ 	struct sockaddr_in saddr;
+ 	struct io_uring_sqe *sqe;
+ 	int sockfd, ret, val;
+ 	struct msghdr msg = { };
  
- int main(int argc, char *argv[])
- {
- 	int p_fd[2], ret;
- 	int32_t recv_s0;
- 	int32_t val = 1;
--	struct sockaddr_in addr;
-+	struct sockaddr_in addr = { };
+ 	memset(&saddr, 0, sizeof(saddr));
+ 	saddr.sin_family = AF_INET;
+ 	saddr.sin_addr.s_addr = htonl(INADDR_ANY);
+-	saddr.sin_port = htons(PORT);
  
- 	if (argc > 1)
- 		return 0;
- 
- 	srand(getpid());
- 
- 	recv_s0 = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
- 
- 	ret = setsockopt(recv_s0, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
- 	assert(ret != -1);
- 	ret = setsockopt(recv_s0, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
- 	assert(ret != -1);
- 
- 	addr.sin_family = AF_INET;
--	addr.sin_port = htons((rand() % 61440) + 4096);
- 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
- 
--	ret = bind(recv_s0, (struct sockaddr*)&addr, sizeof(addr));
--	assert(ret != -1);
-+	assert(!t_bind_ephemeral_port(recv_s0, &addr));
- 	ret = listen(recv_s0, 128);
- 	assert(ret != -1);
- 
- 	p_fd[1] = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
+ 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+ 	if (sockfd < 0) {
+ 		perror("socket");
+ 		return 1;
+ 	}
  
  	val = 1;
- 	ret = setsockopt(p_fd[1], IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
+ 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+ 
+-	ret = bind(sockfd, (struct sockaddr *)&saddr, sizeof(saddr));
+-	if (ret < 0) {
++	if (t_bind_ephemeral_port(sockfd, &saddr)) {
+ 		perror("bind");
+ 		goto err;
+ 	}
++	bind_port = saddr.sin_port;
+ 
+ 	sqe = io_uring_get_sqe(ring);
+ 	if (!use_recvmsg) {
+ 		io_uring_prep_recv(sqe, sockfd, iov->iov_base, iov->iov_len,
+ 					MSG_WAITALL);
+ 	} else {
+ 		msg.msg_namelen = sizeof(struct sockaddr_in);
+@@ -161,15 +159,15 @@ static int do_send(void)
+ 
+ 	buf = malloc(MAX_MSG * sizeof(int));
+ 	for (i = 0; i < MAX_MSG; i++)
+ 		buf[i] = i;
+ 
+ 	memset(&saddr, 0, sizeof(saddr));
+ 	saddr.sin_family = AF_INET;
+-	saddr.sin_port = htons(PORT);
++	saddr.sin_port = bind_port;
+ 	inet_pton(AF_INET, HOST, &saddr.sin_addr);
+ 
+ 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+ 	if (sockfd < 0) {
+ 		perror("socket");
+ 		return 1;
+ 	}
 -- 
 Ammar Faizi
 

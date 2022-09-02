@@ -2,217 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5165AA4FB
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A7325AA527
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:35:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235290AbiIBBTI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 21:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
+        id S235184AbiIBBfp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 21:35:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235184AbiIBBSw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:18:52 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0FA4A6AD3
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 18:18:46 -0700 (PDT)
-Received: from localhost.localdomain (unknown [182.2.38.99])
-        by gnuweeb.org (Postfix) with ESMTPSA id 5BF7580927;
-        Fri,  2 Sep 2022 01:18:42 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662081525;
-        bh=//7uly+1u1he/eHyd6032YyKChRFDV3/b/0CMS/ftak=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WHsueKAUiTia4VfQ5Lstrv07MXNskOaRy0OkNO2ZD+G59Mv8+iuHDKtA9kV43jhl0
-         453XEVPfcna09Z8yWAFbVDIA9mlc4jxS3TSyJohap3MCl5SNSng9c568UdfdGhABVF
-         qEVCnRlEhc/sMFcULBvmd4pGqp/7ceOpM5a4IPca4gjRm7SCGShSYqtPA/pRig6PEq
-         laYnwkhfFfOwr6nj3kgdjk9//e7t5ZIg0/FtWM78NLyMo0jtVghsFxFcHMs58/ZqCQ
-         w8siPFBPDbSoq+Ni0TTKnAoyCk7ZLhP5qZTg8oaOZHIfei6uopmlwkTXpFqz9WcKdW
-         mblySzOrc3GGA==
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Dylan Yudaken <dylany@fb.com>,
-        Facebook Kernel Team <kernel-team@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Kanna Scarlet <knscarlet@gnuweeb.org>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>
-Subject: [RESEND PATCH liburing v1 12/12] t/recv-msgall-stream: Don't use a static port number
-Date:   Fri,  2 Sep 2022 08:17:52 +0700
-Message-Id: <20220902011548.2506938-13-ammar.faizi@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220902011548.2506938-1-ammar.faizi@intel.com>
-References: <20220902011548.2506938-1-ammar.faizi@intel.com>
+        with ESMTP id S234557AbiIBBfn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:35:43 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB4587696;
+        Thu,  1 Sep 2022 18:35:40 -0700 (PDT)
+Date:   Thu, 1 Sep 2022 21:35:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662082539;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DKbeuQ0KEVmGJmd1nxH6IkYl6hlcE8fBK782zCfa3dY=;
+        b=djK/rzc16o2I5st6iLU+mmFycopk8nXeACxAiaLCYMzWJYltipsNT6kJ+bcD6p5dv0fhQK
+        tsO6ER4nJ6etmNpcfsjSsEGbvTpJzvOlYT1SEGzRruYg/z2yOc4vkCLRQmY8hz09hO4/JQ
+        EYL/angxfkhwhSI7Gv5opBj0F7OyMnA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
+        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        peterx@redhat.com, david@redhat.com, axboe@kernel.dk,
+        mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+        changbin.du@intel.com, ytcoode@gmail.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, bristot@redhat.com, vschneid@redhat.com,
+        cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com,
+        42.hyeyoo@gmail.com, glider@google.com, elver@google.com,
+        dvyukov@google.com, shakeelb@google.com, songmuchun@bytedance.com,
+        arnd@arndb.de, jbaron@akamai.com, rientjes@google.com,
+        minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-mm@kvack.org, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 27/30] Code tagging based latency tracking
+Message-ID: <20220902013532.6n5cyf3oofntljho@moria.home.lan>
+References: <20220830214919.53220-1-surenb@google.com>
+ <20220830214919.53220-28-surenb@google.com>
+ <20220901173844.36e1683c@gandalf.local.home>
+ <20220901215438.gy3bgqa4ghhm6ztm@moria.home.lan>
+ <20220901183430.120311ce@gandalf.local.home>
+ <20220901225515.ogg7pyljmfzezamr@moria.home.lan>
+ <20220901202311.546a53b5@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220901202311.546a53b5@gandalf.local.home>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+On Thu, Sep 01, 2022 at 08:23:11PM -0400, Steven Rostedt wrote:
+> If ftrace, perf, bpf can't do what you want, take a harder look to see if
+> you can modify them to do so.
 
-Don't use a static port number. It might already be in use, resulting
-in a test failure. Use an ephemeral port to make this test reliable.
+Maybe we can use this exchange to make both of our tools better. I like your
+histograms - the quantiles algorithm I've had for years is janky, I've been
+meaning to rip that out, I'd love to take a look at your code for that. And
+having an on/off switch is a good idea, I'll try to add that at some point.
+Maybe you got some ideas from my stuff too.
 
-Cc: Dylan Yudaken <dylany@fb.com>
-Cc: Facebook Kernel Team <kernel-team@fb.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- test/recv-msgall-stream.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+I'd love to get better tracepoints for measuring latency - what I added to
+init_wait() and finish_wait() was really only a starting point. Figuring out
+the right places to measure is where I'd like to be investing my time in this
+area, and there's no reason we couldn't both be making use of that.
 
-diff --git a/test/recv-msgall-stream.c b/test/recv-msgall-stream.c
-index a188cc1..65b4d22 100644
---- a/test/recv-msgall-stream.c
-+++ b/test/recv-msgall-stream.c
-@@ -1,67 +1,65 @@
- /* SPDX-License-Identifier: MIT */
- /*
-  * Test MSG_WAITALL for recv/recvmsg and include normal sync versions just
-  * for comparison.
-  */
-+#include <assert.h>
- #include <errno.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
- #include <fcntl.h>
- #include <arpa/inet.h>
- #include <sys/types.h>
- #include <sys/socket.h>
- #include <pthread.h>
- 
- #include "liburing.h"
- #include "helpers.h"
- 
- #define MAX_MSG	128
- 
--static int port = 31200;
--
- struct recv_data {
- 	pthread_mutex_t mutex;
- 	int use_recvmsg;
- 	int use_sync;
--	int port;
-+	__be16 port;
- };
- 
- static int get_conn_sock(struct recv_data *rd, int *sockout)
- {
- 	struct sockaddr_in saddr;
- 	int sockfd, ret, val;
- 
- 	memset(&saddr, 0, sizeof(saddr));
- 	saddr.sin_family = AF_INET;
- 	saddr.sin_addr.s_addr = htonl(INADDR_ANY);
--	saddr.sin_port = htons(rd->port);
- 
- 	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
- 	if (sockfd < 0) {
- 		perror("socket");
- 		goto err;
- 	}
- 
- 	val = 1;
- 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
- 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
- 
--	ret = bind(sockfd, (struct sockaddr *)&saddr, sizeof(saddr));
--	if (ret < 0) {
-+	if (t_bind_ephemeral_port(sockfd, &saddr)) {
- 		perror("bind");
- 		goto err;
- 	}
-+	rd->port = saddr.sin_port;
- 
- 	ret = listen(sockfd, 16);
- 	if (ret < 0) {
- 		perror("listen");
- 		goto err;
- 	}
- 
- 	pthread_mutex_unlock(&rd->mutex);
- 
- 	ret = accept(sockfd, NULL, NULL);
- 	if (ret < 0) {
- 		perror("accept");
-@@ -270,36 +268,36 @@ static int do_send(struct recv_data *rd)
- 	int *buf;
- 
- 	ret = io_uring_queue_init(2, &ring, 0);
- 	if (ret) {
- 		fprintf(stderr, "queue init failed: %d\n", ret);
- 		return 1;
- 	}
- 
- 	buf = malloc(MAX_MSG * sizeof(int));
- 	for (i = 0; i < MAX_MSG; i++)
- 		buf[i] = i;
- 
--	memset(&saddr, 0, sizeof(saddr));
--	saddr.sin_family = AF_INET;
--	saddr.sin_port = htons(rd->port);
--	inet_pton(AF_INET, "127.0.0.1", &saddr.sin_addr);
--
- 	sockfd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
- 	if (sockfd < 0) {
- 		perror("socket");
- 		return 1;
- 	}
- 
- 	pthread_mutex_lock(&rd->mutex);
-+	assert(rd->port != 0);
-+	memset(&saddr, 0, sizeof(saddr));
-+	saddr.sin_family = AF_INET;
-+	saddr.sin_port = rd->port;
-+	inet_pton(AF_INET, "127.0.0.1", &saddr.sin_addr);
- 
- 	ret = connect(sockfd, (struct sockaddr *)&saddr, sizeof(saddr));
- 	if (ret < 0) {
- 		perror("connect");
- 		return 1;
- 	}
- 
- 	iov.iov_base = buf;
- 	iov.iov_len = MAX_MSG * sizeof(int) / 2;
- 	for (i = 0; i < 2; i++) {
- 		sqe = io_uring_get_sqe(&ring);
- 		io_uring_prep_send(sqe, sockfd, iov.iov_base, iov.iov_len, 0);
-@@ -342,25 +340,25 @@ static int test(int use_recvmsg, int use_sync)
- 	pthread_mutexattr_t attr;
- 	pthread_t recv_thread;
- 	struct recv_data rd;
- 	int ret;
- 	void *retval;
- 
- 	pthread_mutexattr_init(&attr);
- 	pthread_mutexattr_setpshared(&attr, 1);
- 	pthread_mutex_init(&rd.mutex, &attr);
- 	pthread_mutex_lock(&rd.mutex);
- 	rd.use_recvmsg = use_recvmsg;
- 	rd.use_sync = use_sync;
--	rd.port = port++;
-+	rd.port = 0;
- 
- 	ret = pthread_create(&recv_thread, NULL, recv_fn, &rd);
- 	if (ret) {
- 		fprintf(stderr, "Thread create failed: %d\n", ret);
- 		pthread_mutex_unlock(&rd.mutex);
- 		return 1;
- 	}
- 
- 	do_send(&rd);
- 	pthread_join(recv_thread, &retval);
- 	return (intptr_t)retval;
- }
--- 
-Ammar Faizi
+e.g. with kernel waitqueues, I looked at hooking prepare_to_wait() first but not
+all code uses that, init_wait() got me better coverage. But I've already seen
+that that misses things, too, there's more work to be done.
 
+random thought: might try adding a warning in schedule() any time it's called
+and codetag_time_stats_start() hasn't been called, that'll be a starting
+point...

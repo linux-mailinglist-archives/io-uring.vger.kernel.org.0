@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 911265AA4F6
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C36D65AA4EC
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:19:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233871AbiIBBSE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 21:18:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55504 "EHLO
+        id S234732AbiIBBSI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 21:18:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232758AbiIBBSE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:18:04 -0400
+        with ESMTP id S235151AbiIBBSH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:18:07 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D64F78BCA
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 18:18:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12FD278BC6
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 18:18:07 -0700 (PDT)
 Received: from localhost.localdomain (unknown [182.2.38.99])
-        by gnuweeb.org (Postfix) with ESMTPSA id EDCD480C19;
-        Fri,  2 Sep 2022 01:17:59 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id A093080BC2;
+        Fri,  2 Sep 2022 01:18:03 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662081483;
-        bh=1TE1GHzigpzQDCdNCY36kIyOGLAC2Vz4T/RbbxKeJqE=;
+        s=default; t=1662081486;
+        bh=NdcWOVgA/+JNXYgu2bfVYwufZVhddbidhJxVIINy8VA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WShROCcT1f546rnDZbY29JxyJdpF99IGa6W3wAJo4XN6J0eFQY/Dt0bevvjfi7ZY5
-         hqSHJb1Ju1GBlvebxAg0zsiw5+gNNY6/lQIx/KfemUuVbl+znUlTMJr+UDRQuES8Il
-         3QiCwsLtNCWchoV6mFR6mHvfvlbYUskXCY5C6b365mCSZznhYbIX889z7/qkHwWcih
-         DCJ4I5Dgjehefbjq6zEtNweB9xv2U69DS4OVZDb55MhtDwd4yrfjvID0lQDRnAAnuM
-         EVbFVj6snBjDjeYvHdSS/yp1Vq9NQmI8mnzkXgFEPVl1MCOaYJgquZvKcl2XF+yBgR
-         2gHBeD48ExopA==
+        b=MOoAWQ/s4hr7w1lMCyBqk76DoTgplDYi2jK/vrsDyoHGUMd4dh8DL/UWBeEy65olk
+         MSAB3l6/uXTLAmfvQx4oXjooLTCbUUUV72umtBPSlOlK6dZ6dJX7RwAFCIA8MVArP2
+         Ok6+YjPifItzDF4MvbNS5tm804MmSGhJgxifrWaz1L8M0JVJ7n5pIiosfgtLd3dF1f
+         18fxgJ9Gb8WILuA5mikVey0ROhr4G5sRdbRavDVdfyrWiIWijBeApEPR4UogFHMjch
+         XAnBRmax+Kqu2fkoI0On7E296sd/WWu+g2YAMzhZEDXcELbfQY9t9XcLWYCyTRXio6
+         y93LjzShZPbzg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -38,9 +38,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
         Kanna Scarlet <knscarlet@gnuweeb.org>,
         Muhammad Rizki <kiizuha@gnuweeb.org>
-Subject: [RESEND PATCH liburing v1 01/12] test/helpers: Add `t_bind_ephemeral_port()` function
-Date:   Fri,  2 Sep 2022 08:17:41 +0700
-Message-Id: <20220902011548.2506938-2-ammar.faizi@intel.com>
+Subject: [RESEND PATCH liburing v1 02/12] t/poll-link: Don't brute force the port number
+Date:   Fri,  2 Sep 2022 08:17:42 +0700
+Message-Id: <20220902011548.2506938-3-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220902011548.2506938-1-ammar.faizi@intel.com>
 References: <20220902011548.2506938-1-ammar.faizi@intel.com>
@@ -57,122 +57,125 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-This is a prep patch to fix an intermittent issue with the port number.
+Don't brute force the port number, use `t_bind_ephemeral_port()`,
+much simpler and reliable for choosing a port number that is not
+in use.
 
-We have many places where we need to bind() a socket to any unused port
-number. To achieve that, the current approach does one of the following
-mechanisms:
-
-  1) Randomly brute force the port number until the bind() syscall
-     succeeds.
-
-  2) Use a static port at compile time (randomly chosen too).
-
-This is not reliable and it results in an intermittent issue (test
-fails when the selected port is in use).
-
-Setting @addr->sin_port to zero on a bind() syscall lets the kernel
-choose a port number that is not in use. The caller then can know the
-port number to be bound by invoking a getsockname() syscall after
-bind() succeeds.
-
-Wrap this procedure in a new function called t_bind_ephemeral_port().
-The selected port will be returned into @addr->sin_port, the caller
-can use it later to connect() or whatever they need.
-
-Link: https://lore.kernel.org/r/918facd1-78ba-2de7-693a-5f8c65ea2fcd@gnuweeb.org
 Cc: Dylan Yudaken <dylany@fb.com>
 Cc: Facebook Kernel Team <kernel-team@fb.com>
 Cc: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/helpers.c | 18 ++++++++++++++++++
- test/helpers.h |  7 +++++++
- 2 files changed, 25 insertions(+)
+ test/poll-link.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/test/helpers.c b/test/helpers.c
-index 0146533..4d5c402 100644
---- a/test/helpers.c
-+++ b/test/helpers.c
-@@ -19,24 +19,42 @@
+diff --git a/test/poll-link.c b/test/poll-link.c
+index 197ad77..a6fe0de 100644
+--- a/test/poll-link.c
++++ b/test/poll-link.c
+@@ -4,24 +4,25 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <fcntl.h>
+ #include <assert.h>
+ #include <pthread.h>
+ #include <sys/socket.h>
+ #include <netinet/tcp.h>
+ #include <netinet/in.h>
+ #include <poll.h>
+ #include <arpa/inet.h>
  
- /*
-  * Helper for allocating memory in tests.
-  */
- void *t_malloc(size_t size)
++#include "helpers.h"
+ #include "liburing.h"
+ 
+ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+ pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+ 
+ static int recv_thread_ready = 0;
+ static int recv_thread_done = 0;
+ 
+ static void signal_var(int *var)
  {
- 	void *ret;
- 	ret = malloc(size);
- 	assert(ret);
- 	return ret;
+         pthread_mutex_lock(&mutex);
+         *var = 1;
+@@ -80,45 +81,37 @@ void *recv_thread(void *arg)
+ 	ret = io_uring_queue_init(8, &ring, 0);
+ 	assert(ret == 0);
+ 
+ 	int s0 = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+ 	assert(s0 != -1);
+ 
+ 	int32_t val = 1;
+ 	ret = setsockopt(s0, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
+ 	assert(ret != -1);
+ 	ret = setsockopt(s0, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+ 	assert(ret != -1);
+ 
+-	struct sockaddr_in addr;
++	struct sockaddr_in addr = { };
+ 
+ 	addr.sin_family = AF_INET;
+ 	data->addr = inet_addr("127.0.0.1");
+ 	addr.sin_addr.s_addr = data->addr;
+ 
+-	i = 0;
+-	do {
+-		data->port = htons(1025 + (rand() % 64510));
+-		addr.sin_port = data->port;
+-
+-		if (bind(s0, (struct sockaddr*)&addr, sizeof(addr)) != -1)
+-			break;
+-	} while (++i < 100);
+-
+-	if (i >= 100) {
+-		fprintf(stderr, "Can't find good port, skipped\n");
++	if (t_bind_ephemeral_port(s0, &addr)) {
++		perror("bind");
+ 		data->stop = 1;
+ 		signal_var(&recv_thread_ready);
+-		goto out;
++		goto err;
+ 	}
++	data->port = addr.sin_port;
+ 
+ 	ret = listen(s0, 128);
+ 	assert(ret != -1);
+ 
+ 	signal_var(&recv_thread_ready);
+ 
+ 	sqe = io_uring_get_sqe(&ring);
+ 	assert(sqe != NULL);
+ 
+ 	io_uring_prep_poll_add(sqe, s0, POLLIN | POLLHUP | POLLERR);
+ 	sqe->flags |= IOSQE_IO_LINK;
+ 	sqe->user_data = 1;
+@@ -149,25 +142,24 @@ void *recv_thread(void *arg)
+ 					(uint64_t) cqe->user_data, cqe->res,
+ 					data->expected[idx]);
+ 			goto err;
+ 		} else if (!data->is_mask[idx] && cqe->res != data->expected[idx]) {
+ 			fprintf(stderr, "cqe %" PRIu64 " got %d, wanted %d\n",
+ 					(uint64_t) cqe->user_data, cqe->res,
+ 					data->expected[idx]);
+ 			goto err;
+ 		}
+ 		io_uring_cqe_seen(&ring, cqe);
+ 	}
+ 
+-out:
+ 	signal_var(&recv_thread_done);
+ 	close(s0);
+ 	io_uring_queue_exit(&ring);
+ 	return NULL;
+ err:
+ 	signal_var(&recv_thread_done);
+ 	close(s0);
+ 	io_uring_queue_exit(&ring);
+ 	return (void *) 1;
  }
  
-+/*
-+ * Helper for binding socket to an ephemeral port.
-+ * The port number to be bound is returned in @addr->sin_port.
-+ */
-+int t_bind_ephemeral_port(int fd, struct sockaddr_in *addr)
-+{
-+	socklen_t addrlen;
-+
-+	addr->sin_port = 0;
-+	if (bind(fd, (struct sockaddr *)addr, sizeof(*addr)))
-+		return -errno;
-+
-+	addrlen = sizeof(*addr);
-+	assert(!getsockname(fd, (struct sockaddr *)addr, &addrlen));
-+	assert(addr->sin_port != 0);
-+	return 0;
-+}
-+
- /*
-  * Helper for allocating size bytes aligned on a boundary.
-  */
- void t_posix_memalign(void **memptr, size_t alignment, size_t size)
- {
- 	int ret;
- 	ret = posix_memalign(memptr, alignment, size);
- 	assert(!ret);
- }
- 
- /*
-  * Helper for allocating space for an array of nmemb elements
-diff --git a/test/helpers.h b/test/helpers.h
-index 6d5726c..9ad9947 100644
---- a/test/helpers.h
-+++ b/test/helpers.h
-@@ -13,24 +13,31 @@ extern "C" {
- 
- enum t_setup_ret {
- 	T_SETUP_OK	= 0,
- 	T_SETUP_SKIP,
- };
- 
- enum t_test_result {
- 	T_EXIT_PASS   = 0,
- 	T_EXIT_FAIL   = 1,
- 	T_EXIT_SKIP   = 77,
- };
- 
-+/*
-+ * Helper for binding socket to an ephemeral port.
-+ * The port number to be bound is returned in @addr->sin_port.
-+ */
-+int t_bind_ephemeral_port(int fd, struct sockaddr_in *addr);
-+
-+
- /*
-  * Helper for allocating memory in tests.
-  */
- void *t_malloc(size_t size);
- 
- 
- /*
-  * Helper for allocating size bytes aligned on a boundary.
-  */
- void t_posix_memalign(void **memptr, size_t alignment, size_t size);
- 
- 
+ static int test_poll_timeout(int do_connect, unsigned long timeout)
 -- 
 Ammar Faizi
 

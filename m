@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DD45AA4ED
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D94D05AA4F7
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 03:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232782AbiIBBSU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 1 Sep 2022 21:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
+        id S234299AbiIBBS0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 1 Sep 2022 21:18:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234698AbiIBBST (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:18:19 -0400
+        with ESMTP id S234572AbiIBBSZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 1 Sep 2022 21:18:25 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDF05A3D5C
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 18:18:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C56CA5C7A
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 18:18:23 -0700 (PDT)
 Received: from localhost.localdomain (unknown [182.2.38.99])
-        by gnuweeb.org (Postfix) with ESMTPSA id D7D3280BAE;
-        Fri,  2 Sep 2022 01:18:14 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 5381380927;
+        Fri,  2 Sep 2022 01:18:19 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662081498;
-        bh=5BqT3slwT3fHxa5r0dGJXvXj9KMzEoJox4VMoAXlKHo=;
+        s=default; t=1662081502;
+        bh=4ZRPWkdArbg7F0Dd1BU/wZj++4oPm5+IG+qHvo4RewM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=paf94rR0OFXmV137EAVsj40V2EZbSeq9y24LQQsbtk89r9mM3Gg4OfrWMSpXrF4EX
-         7ZtvlcPTsMJUhoOczBeT+uWDn25vzlxV8wZ9Xm2vFhPjShq3/G6ntvOU8eoLycOgTX
-         qAiPJay/K6/TTl/CM1/0K6klFn1qM4Pp83osFfRotYvuw8tT9UjbtamWZtJvMQ+Joa
-         jdHVTabyTuFL5JnIO1oMrQWKTsxEitXoEjE1iv/UL8Ochll7z8ddQMozM+zFia/B0O
-         DyD1AhEnkmHrY1L2jfxCvImdmgnw2pYdILK3SF07ulymWioycN3ZCVgVq4B5rvfKx+
-         tv69I3BKFXoQQ==
+        b=obISpPmhbNgizCNr2Op0L6+tCuZRhpI3IBGhdWFuEyIHrn6/jjJoB60Gl7v7vpsIM
+         IjPuXx1ets7zK5zFGMfMgMUiqXOEzRXhicYTawlaU6tmxoFDXsnkDG6ztfW/jOhpkE
+         dJlVz3vK3GeONtmh9f6yMF2LuOJafQp0P3L2OUoODVy/gusJKIn03dh5DAxjERYw8f
+         k1i0DY2IyOGwzs1kBLeWlLQq/b3JgSE1hSirFx8AtpgXY08hgz7cgO2OreexA48den
+         ypa/aZRFrOLkmG4Ts8YTfOYERNE2tnq8+U45GnCYsedPZw1MCyyd+ByxboAJo6ljZA
+         clecM+d8UvQWA==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -38,9 +38,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
         Kanna Scarlet <knscarlet@gnuweeb.org>,
         Muhammad Rizki <kiizuha@gnuweeb.org>
-Subject: [RESEND PATCH liburing v1 05/12] t/socket-rw-offset: Don't brute force the port number
-Date:   Fri,  2 Sep 2022 08:17:45 +0700
-Message-Id: <20220902011548.2506938-6-ammar.faizi@intel.com>
+Subject: [RESEND PATCH liburing v1 06/12] t/files-exit-hang-poll: Don't brute force the port number
+Date:   Fri,  2 Sep 2022 08:17:46 +0700
+Message-Id: <20220902011548.2506938-7-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220902011548.2506938-1-ammar.faizi@intel.com>
 References: <20220902011548.2506938-1-ammar.faizi@intel.com>
@@ -66,74 +66,116 @@ Cc: Facebook Kernel Team <kernel-team@fb.com>
 Cc: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/socket-rw-offset.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ test/files-exit-hang-poll.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-diff --git a/test/socket-rw-offset.c b/test/socket-rw-offset.c
-index 987b6c9..c422442 100644
---- a/test/socket-rw-offset.c
-+++ b/test/socket-rw-offset.c
-@@ -11,58 +11,49 @@
- #include <assert.h>
- 
- #include <errno.h>
- #include <fcntl.h>
- #include <unistd.h>
+diff --git a/test/files-exit-hang-poll.c b/test/files-exit-hang-poll.c
+index 0c609f1..04febc8 100644
+--- a/test/files-exit-hang-poll.c
++++ b/test/files-exit-hang-poll.c
+@@ -10,26 +10,24 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <strings.h>
  #include <sys/socket.h>
- #include <sys/un.h>
- #include <netinet/tcp.h>
- #include <netinet/in.h>
- #include <arpa/inet.h>
- 
+ #include <unistd.h>
+ #include <poll.h>
  #include "liburing.h"
-+#include "helpers.h"
+ #include "helpers.h"
+ 
+ #define BACKLOG 512
+ 
+-#define PORT 9100
+-
+ static struct io_uring ring;
+ 
+ static void add_poll(struct io_uring *ring, int fd)
+ {
+ 	struct io_uring_sqe *sqe;
+ 
+ 	sqe = io_uring_get_sqe(ring);
+ 	io_uring_prep_poll_add(sqe, fd, POLLIN);
+ 	sqe->flags |= IOSQE_IO_LINK;
+ }
+ 
+ static void add_accept(struct io_uring *ring, int fd)
+@@ -55,55 +53,43 @@ static int setup_io_uring(void)
+ 
+ static void alarm_sig(int sig)
+ {
+ 	exit(0);
+ }
  
  int main(int argc, char *argv[])
  {
- 	int p_fd[2], ret;
- 	int32_t recv_s0;
- 	int32_t val = 1;
- 	struct sockaddr_in addr;
- 	struct iovec iov_r[1], iov_w[1];
+ 	struct sockaddr_in serv_addr;
+ 	struct io_uring_cqe *cqe;
+ 	int ret, sock_listen_fd;
+ 	const int val = 1;
+-	int i;
  
  	if (argc > 1)
- 		return 0;
+ 		return T_EXIT_SKIP;
  
- 	srand(getpid());
+ 	sock_listen_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+ 	if (sock_listen_fd < 0) {
+ 		perror("socket");
+ 		return T_EXIT_FAIL;
+ 	}
  
- 	recv_s0 = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
+ 	setsockopt(sock_listen_fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
  
- 	ret = setsockopt(recv_s0, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
- 	assert(ret != -1);
- 	ret = setsockopt(recv_s0, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
- 	assert(ret != -1);
+ 	memset(&serv_addr, 0, sizeof(serv_addr));
+ 	serv_addr.sin_family = AF_INET;
+ 	serv_addr.sin_addr.s_addr = INADDR_ANY;
  
- 	addr.sin_family = AF_INET;
- 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+-	for (i = 0; i < 100; i++) {
+-		serv_addr.sin_port = htons(PORT + i);
 -
--	do {
--		addr.sin_port = htons((rand() % 61440) + 4096);
--		ret = bind(recv_s0, (struct sockaddr*)&addr, sizeof(addr));
+-		ret = bind(sock_listen_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 -		if (!ret)
 -			break;
 -		if (errno != EADDRINUSE) {
--			perror("bind");
--			exit(1);
+-			fprintf(stderr, "bind: %s\n", strerror(errno));
+-			return T_EXIT_FAIL;
 -		}
--	} while (1);
-+	assert(!t_bind_ephemeral_port(recv_s0, &addr));
- 	ret = listen(recv_s0, 128);
- 	assert(ret != -1);
+-		if (i == 99) {
+-			printf("Gave up on finding a port, skipping\n");
+-			goto skip;
+-		}
++	if (t_bind_ephemeral_port(sock_listen_fd, &serv_addr)) {
++		perror("bind");
++		return T_EXIT_FAIL;
+ 	}
  
+ 	if (listen(sock_listen_fd, BACKLOG) < 0) {
+ 		perror("Error listening on socket\n");
+ 		return T_EXIT_FAIL;
+ 	}
  
- 	p_fd[1] = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
+ 	if (setup_io_uring())
+ 		return T_EXIT_FAIL;
  
- 	val = 1;
- 	ret = setsockopt(p_fd[1], IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
- 	assert(ret != -1);
+ 	add_poll(&ring, sock_listen_fd);
+ 	add_accept(&ring, sock_listen_fd);
+@@ -116,16 +102,13 @@ int main(int argc, char *argv[])
  
- 	int32_t flags = fcntl(p_fd[1], F_GETFL, 0);
- 	assert(flags != -1);
+ 	signal(SIGALRM, alarm_sig);
+ 	alarm(1);
+ 
+ 	ret = io_uring_wait_cqe(&ring, &cqe);
+ 	if (ret) {
+ 		fprintf(stderr, "wait_cqe=%d\n", ret);
+ 		return T_EXIT_FAIL;
+ 	}
+ 
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_PASS;
+-skip:
+-	io_uring_queue_exit(&ring);
+-	return T_EXIT_SKIP;
+ }
 -- 
 Ammar Faizi
 

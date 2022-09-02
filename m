@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7661E5AA7BF
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 08:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6335AA7CE
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 08:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235372AbiIBGHZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 02:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
+        id S235363AbiIBGJC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 02:09:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235344AbiIBGHY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 02:07:24 -0400
+        with ESMTP id S235403AbiIBGJB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 02:09:01 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812FAB9590
-        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 23:07:23 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-        by gnuweeb.org (Postfix) with ESMTPSA id 0A92280C4A
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 06:07:23 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC43B9F9B
+        for <io-uring@vger.kernel.org>; Thu,  1 Sep 2022 23:09:00 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        by gnuweeb.org (Postfix) with ESMTPSA id EA50680C44
+        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 06:08:59 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662098843;
+        s=default; t=1662098939;
         bh=PiaEYF9V4R1/VV1YtAFSzk79pFqLN+y5TIiv+FSE56s=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Z7Rh/808MC1d295cYONfwratc/40JzY46xWBTRIAYRA891Vd2eJrK0pCkpeTz90Bf
-         74N9GpilRiOSDo4aOcBOkxY2M1nPd/9Skv4vqdze5Oznh6HVLRzdKaqEKR6uSXXbIc
-         bOrc3KPWQHN51+v7wXGnd9XBeGarDa0lIQx1rOgjfzCbqPb/yCFjdkw7ZLPJHtFoab
-         8ySXspYn0OpHgBAMQhlm2aXYn8PwWWGR76ockLVPKH3n8FoffpwTRRiwct6nOiA+8/
-         0asADNae00sYuTkIzW/W/y3cf5qCb80g0D9povcVCRR7FZPnyBP0HfECkAhjjLdVXF
-         qoK5SioPst+BA==
-Received: by mail-lf1-f43.google.com with SMTP id g7so1783578lfe.11
-        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 23:07:22 -0700 (PDT)
-X-Gm-Message-State: ACgBeo2b92AMAe1NHpUf/bEns2lDtxl9/ZyF2VHgL98i9WBJQNciWPVZ
-        JE+vY9zOtTIdRnHaT9F3JMlLs8HhlPG7vXqhLwM=
-X-Google-Smtp-Source: AA6agR7zqAsNA+aX2F4bX+1NP6kq6bzXPrNhUcfyFtj/mY5Hk6EztOTtUT+BnxMoMJgMUdv+WSSOFuldDEcqwbEogxY=
-X-Received: by 2002:ac2:544d:0:b0:494:7842:23c6 with SMTP id
- d13-20020ac2544d000000b00494784223c6mr5630346lfn.641.1662098841108; Thu, 01
- Sep 2022 23:07:21 -0700 (PDT)
+        b=FoxacsGyRqlOMscLly2xCJoUqIOP6vmlo0jDryUQ7Er8OYVgk962JXQwI1YiNMyYF
+         zixVTcaRCxub5w98y1jVoMinf8SUghThkEHncbazlUDfyyCLLlI98PjwH3qNqNfy2C
+         VG/qK+gzqyev/TiwjWKcI0F2cYtjQ2J+8+OIAAujDDAn6+PEvy7Xyjhh51AvqDWsy9
+         kIGW2Zb5IfwhkGaudqOLeh7H9dU2AP1uxbl8Jssys5Si1s5QRQz8Z1I3pKNXqhXzl+
+         rW8ivJHwyh+3fbn/OYuTqpC/indagkYGopIQ7HxHbYDfu0pKHHoVxJvHGnuWZ/3BT4
+         CHZPgEeVu5DKg==
+Received: by mail-lj1-f175.google.com with SMTP id k22so1248532ljg.2
+        for <io-uring@vger.kernel.org>; Thu, 01 Sep 2022 23:08:59 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2tNesjZ8pEGr2IUiegYsGmMCaMoRNjlugEsojDgbGkk6bKsOzX
+        GjcG0nzrI+8BNhY7xcz3kki+wIVHpOR0NWU5yrg=
+X-Google-Smtp-Source: AA6agR57RRvbPcbubO/dVy33aUkXLDWqXt/0LwfbblGLuGTqWtIXf30RJIz9/yGOjHtxdQ8W1W7lexTMnPpw0XkDiC0=
+X-Received: by 2002:a05:651c:1110:b0:268:982a:8805 with SMTP id
+ e16-20020a05651c111000b00268982a8805mr3014608ljo.394.1662098938087; Thu, 01
+ Sep 2022 23:08:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220902011548.2506938-1-ammar.faizi@intel.com> <20220902011548.2506938-4-ammar.faizi@intel.com>
-In-Reply-To: <20220902011548.2506938-4-ammar.faizi@intel.com>
+References: <20220902011548.2506938-1-ammar.faizi@intel.com> <20220902011548.2506938-5-ammar.faizi@intel.com>
+In-Reply-To: <20220902011548.2506938-5-ammar.faizi@intel.com>
 From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Date:   Fri, 2 Sep 2022 13:07:09 +0700
-X-Gmail-Original-Message-ID: <CAOG64qNRX7DwcJHX_VMTMODXygxZTc-ciKtM7rcFfNLvGD_Ujg@mail.gmail.com>
-Message-ID: <CAOG64qNRX7DwcJHX_VMTMODXygxZTc-ciKtM7rcFfNLvGD_Ujg@mail.gmail.com>
-Subject: Re: [RESEND PATCH liburing v1 03/12] t/socket-rw: Don't brute force
- the port number
+Date:   Fri, 2 Sep 2022 13:08:46 +0700
+X-Gmail-Original-Message-ID: <CAOG64qODh4hQ_KMuVXFjxM70Cbm+Ph3h=Y9NsnZa+bNBG4ukDg@mail.gmail.com>
+Message-ID: <CAOG64qODh4hQ_KMuVXFjxM70Cbm+Ph3h=Y9NsnZa+bNBG4ukDg@mail.gmail.com>
+Subject: Re: [RESEND PATCH liburing v1 04/12] t/socket-rw-eagain: Don't brute
+ force the port number
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>,
         Facebook Kernel Team <kernel-team@fb.com>,

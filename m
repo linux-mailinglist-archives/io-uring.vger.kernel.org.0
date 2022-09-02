@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC6C5AA899
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 09:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD7F5AA89B
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 09:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234970AbiIBHQE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 03:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37894 "EHLO
+        id S235136AbiIBHQI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 03:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbiIBHQD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 03:16:03 -0400
+        with ESMTP id S233931AbiIBHQH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 03:16:07 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C189250725
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 00:16:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0903A52E66
+        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 00:16:06 -0700 (PDT)
 Received: from localhost.localdomain (unknown [182.2.70.226])
-        by gnuweeb.org (Postfix) with ESMTPSA id BC97180C38;
-        Fri,  2 Sep 2022 07:15:57 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 06D0380C52;
+        Fri,  2 Sep 2022 07:16:01 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662102961;
-        bh=fB/SGSBw+8SZhNANAbgH+HD11RWuT2SAsbQ2ZNOIGLY=;
+        s=default; t=1662102965;
+        bh=8CxoNLdpfZGlVSeMG07m4BkqhkERVBRYGewViV876js=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cSbLiMsWBY5yKtSLcrjP2QWCPHCuaD03SbnWVZGJEDYJNpSaBz85v7U4Wytjul2bA
-         BWj1CBt6hfBHbM3F4ATQh2svj69MkOSMmXE/FxJz2IITHkRCNkOXdKA2h6fL86pQz2
-         MW8ArP7BpMdVTCC1+g8eLpRctoaetDKqNcocYWkKfSZTXNfadnNsoJR52FSlq5+ptL
-         goCbOqt2AYOgTTepoSOlFggeR9R6mRr0Yu4UX+Lfs/vHLioeJJt1qAui+PgOVg0dWf
-         8yAwAMvT1gfhyjv7S9Myi1qzd3J2pSh0F881YfWxUfnmUrJCq3e5O/ifbIR4uaJQ58
-         OrRAwrjY+D4zw==
+        b=HKHIB9nGvMeZb6apL5hbyK7KrXb9vKmkKmbgF2hmXXR+uiTWMzv0SBhlbvYvRi2Eg
+         qg/AhXKCkKNwxVohbuOGw5Dll5M/kuID/mok8qZLTs88EH52cHcwwXnCbj0UTiu+O2
+         qjo1+yFcHZVr2JqAs6ImkEZIVcExyhzUnn52rxNdUVC9hj9RxWdLYC8EBk9JWKEyXL
+         9+SMlw9E8N29l+riCEc4t+IAAhrpkes0RNIAweXQD980IVPUJfv8IPmgAEothGpTjv
+         VFyHtRCqrDzqGD2Ksz+rE9jyQ3Bc5vQxSnfyjePM1CUZhNO1fwaVXyFa9I13/5sACl
+         ss4AuIvA6oqOQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -39,9 +39,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Kanna Scarlet <knscarlet@gnuweeb.org>,
         Muhammad Rizki <kiizuha@gnuweeb.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Subject: [PATCH liburing v2 08/12] t/connect: Don't use a static port number
-Date:   Fri,  2 Sep 2022 14:15:01 +0700
-Message-Id: <20220902071153.3168814-9-ammar.faizi@intel.com>
+Subject: [PATCH liburing v2 09/12] t/shutdown: Don't use a static port number
+Date:   Fri,  2 Sep 2022 14:15:02 +0700
+Message-Id: <20220902071153.3168814-10-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220902071153.3168814-1-ammar.faizi@intel.com>
 References: <20220902071153.3168814-1-ammar.faizi@intel.com>
@@ -68,34 +68,61 @@ Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Tested-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/accept.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ test/shutdown.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/test/accept.c b/test/accept.c
-index b35ded4..1821faa 100644
---- a/test/accept.c
-+++ b/test/accept.c
-@@ -190,19 +190,16 @@ static int start_accept_listen(struct sockaddr_in *addr, int port_off,
+diff --git a/test/shutdown.c b/test/shutdown.c
+index 14c7407..064ee36 100644
+--- a/test/shutdown.c
++++ b/test/shutdown.c
+@@ -15,44 +15,43 @@
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <netinet/tcp.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
  
- 	struct sockaddr_in laddr;
+ #include "liburing.h"
++#include "helpers.h"
  
- 	if (!addr)
- 		addr = &laddr;
- 
- 	addr->sin_family = AF_INET;
--	addr->sin_port = htons(0x1235 + port_off);
- 	addr->sin_addr.s_addr = inet_addr("127.0.0.1");
--
--	ret = bind(fd, (struct sockaddr*)addr, sizeof(*addr));
--	assert(ret != -1);
-+	assert(!t_bind_ephemeral_port(fd, addr));
- 	ret = listen(fd, 128);
- 	assert(ret != -1);
- 
- 	return fd;
+ static void sig_pipe(int sig)
+ {
  }
  
- static int set_client_fd(struct sockaddr_in *addr)
+ int main(int argc, char *argv[])
+ {
+ 	int p_fd[2], ret;
+ 	int32_t recv_s0;
+ 	int32_t val = 1;
+-	struct sockaddr_in addr;
++	struct sockaddr_in addr = { };
+ 
+ 	if (argc > 1)
+ 		return 0;
+ 
+ 	srand(getpid());
+ 
+ 	recv_s0 = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
+ 
+ 	ret = setsockopt(recv_s0, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
+ 	assert(ret != -1);
+ 	ret = setsockopt(recv_s0, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+ 	assert(ret != -1);
+ 
+ 	addr.sin_family = AF_INET;
+-	addr.sin_port = htons((rand() % 61440) + 4096);
+ 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+ 
+-	ret = bind(recv_s0, (struct sockaddr*)&addr, sizeof(addr));
+-	assert(ret != -1);
++	assert(!t_bind_ephemeral_port(recv_s0, &addr));
+ 	ret = listen(recv_s0, 128);
+ 	assert(ret != -1);
+ 
+ 	p_fd[1] = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
+ 
+ 	val = 1;
+ 	ret = setsockopt(p_fd[1], IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
 -- 
 Ammar Faizi
 

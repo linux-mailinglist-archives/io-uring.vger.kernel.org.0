@@ -2,73 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9762B5AB697
-	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 18:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655F65AB6B4
+	for <lists+io-uring@lfdr.de>; Fri,  2 Sep 2022 18:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235637AbiIBQcV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Sep 2022 12:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53018 "EHLO
+        id S234554AbiIBQhi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Sep 2022 12:37:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234477AbiIBQcT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 12:32:19 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0103E3423
-        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 09:32:18 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id d68so2020314iof.11
-        for <io-uring@vger.kernel.org>; Fri, 02 Sep 2022 09:32:18 -0700 (PDT)
+        with ESMTP id S236446AbiIBQhg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Sep 2022 12:37:36 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A34DF4C9D
+        for <io-uring@vger.kernel.org>; Fri,  2 Sep 2022 09:37:34 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id d68so2034828iof.11
+        for <io-uring@vger.kernel.org>; Fri, 02 Sep 2022 09:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=P71PQXWfMeET9rAMhMnbA2YOGMCwyBz9FWAbE+ia6CM=;
-        b=vbLAECgY8YiLQlt98OatJfJLII0Jpj11iKaaL+5iZa7pJ+fq+GMSMzHOJWXgUc0/7x
-         JPLzIVnctYIOeCRSj2M2bufoGd/6YbirudlP4T9rX48BRZZ3KxMSgBLnaZEcYkCeVzH8
-         n7Qn6WTQuawON+uwEYrqPAX/sO25n9yiIPujWt5nP7dtx3JxXqEO9DqHGXsjoxRozvGb
-         Ucybbzq152zLm/aRUTYOwoo+vy3RmtM+mRuRAxfzJhZgZn3wYRYktiZDUSSVGWGSH+El
-         NBxm23v80X3GtUDd7JbbCHza2U3vj40A184b2LKyG4jCFbOTs90HxJ8/pNlzQo67qbfy
-         dKow==
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
+        bh=92u+Oz7epeLsXlQb8vzZRBTIP3oSa4A2Z9E9O/4PymM=;
+        b=VRWmENqzCV0m/70l9WtdAcIloCQZjfUXWOhGzzO1splGN8CqbVrPYtZj2v5QHSANDD
+         /eN+80GTkOsSUNBWe+CVvGEsaznuaXvQP7y+FqvGjvxhrpX6G72TwpAh0TBdxqHtn4qQ
+         vgtaA/MJ7d5wWcayBlpksfIP4rlBbE81DCRbIeTts1+h8Ay/sFgAD5A863keg5LYDxBN
+         ie3Z11DjDiVWhV+QB1oJUrG6pD99h/MpcaHqL+W9+LTELg7TcaGvPJRo+vpWjah7MIGP
+         7MK+oGgvpbd0qbxAWsSDL8h/Zf798hrwVKzMWmiuV2VnQCH+Fo4MvNzzLj3IrfCnVm4D
+         /oSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=P71PQXWfMeET9rAMhMnbA2YOGMCwyBz9FWAbE+ia6CM=;
-        b=z/12PzfTfyBNrmAMv3deQS3DUMwzoa51IcI6WY+TBwvJ2MwOfUyoq5QnpY/cOEie+J
-         ElN7KOu3eoMfnNjHwcFdw4dGfK3GNqhBhvu+j0T3q4p3IEfVKEGOMnv2kb8JMifmXPsv
-         c1m80MNi8YIfLqwaeqEGIncb4hn3jyDN5LBwEB0S+/qnr70HSc4g33t53xxa/EExpimF
-         ohJLFy3jd0K3eoEBwBTENpyCZtnSPbVRPa+FyL76Pelk/3r5I/Gj1Oz+azjjfZWTMs21
-         wbBtG6BKjXk+jvfNSblUgwxRRtt2xzctxRsldwkuRQVNWGfD0Say/qyGota1IJBg8lSG
-         KnOg==
-X-Gm-Message-State: ACgBeo3hSH4iPrWePTtRisacde4+8/srpO5cDCJKJeH+3vZcX+R/VcgA
-        5BdAck9YWuLBY6wVMVHXBQ3wyw==
-X-Google-Smtp-Source: AA6agR5t0hiYdcQSzlOQvgxYMtgGqRrkAxAwKlh2pBZDsfLxA9RcQtKvtayVkimGdSxSjCsZrltZWw==
-X-Received: by 2002:a05:6602:14c1:b0:689:34d0:a0ef with SMTP id b1-20020a05660214c100b0068934d0a0efmr17291360iow.69.1662136338200;
-        Fri, 02 Sep 2022 09:32:18 -0700 (PDT)
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date;
+        bh=92u+Oz7epeLsXlQb8vzZRBTIP3oSa4A2Z9E9O/4PymM=;
+        b=vNd0SD3SlecxgKeioRvcYeOlWj3ZXg0GhZUykUfaMQDncoQETwlqauCRhn8e6s3Gqd
+         V2Ddz3iUWJBL84yLAhsYdzptDHLdz5PBT4elH/Q8inD/kqr+qGz+eG+9DOUR1A6bg5oD
+         fVTdRXpvK2cpl7vwD7SFRBqIubZppXh2zmGlSThiG2SVx6Ob19N1O/Y20LoTrarLQ+0v
+         hAFIb6QXk5TUZZC2bjE7uKRyqWzoKYQGTadl+UGgwfrYa7l2bMA/GC/WfIXVQOt9+LGU
+         0YjoMa8P4ciyocEVzBhkqt5oLzMTds9OfNV0g5bwZG20yUhfej3fY2wjQ1vhjnyAAQY4
+         zBbg==
+X-Gm-Message-State: ACgBeo2xIap56kirQOTUILmruA9Yr6f3lBAykgAFfgZla5OIuBGXVAX3
+        7D1B6z7rZxRvnMlYb9PiYQD//UtvU0mEVQ==
+X-Google-Smtp-Source: AA6agR6GucJts6u9knW27wq2Otq0eeMuGnIpcpXDlJJojq+z4j7rgPF05iuRadsAojffQ8IfjH54xw==
+X-Received: by 2002:a5e:a508:0:b0:689:a16c:fbc7 with SMTP id 8-20020a5ea508000000b00689a16cfbc7mr16942227iog.143.1662136653878;
+        Fri, 02 Sep 2022 09:37:33 -0700 (PDT)
 Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id n33-20020a056602342100b00689007ec164sm1004408ioz.48.2022.09.02.09.32.17
+        by smtp.gmail.com with ESMTPSA id o17-20020a02a1d1000000b0034e2ed44d5bsm1034247jah.147.2022.09.02.09.37.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 09:32:17 -0700 (PDT)
-Message-ID: <2b4a935c-a6b1-6e42-ceca-35a8f09d8f46@kernel.dk>
-Date:   Fri, 2 Sep 2022 10:32:16 -0600
+        Fri, 02 Sep 2022 09:37:33 -0700 (PDT)
+Message-ID: <2f02c7b9-4b7a-61fc-d8d6-4de76a15fc9f@kernel.dk>
+Date:   Fri, 2 Sep 2022 10:37:32 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.1.2
-Subject: Re: [PATCH for-next v3 0/4] fixed-buffer for uring-cmd/passthrough
 Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de, kbusch@kernel.org,
-        asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com
-References: <CGME20220902152701epcas5p1d4aca8eebc90fb96ac7ed5a8270816cf@epcas5p1.samsung.com>
- <20220902151657.10766-1-joshi.k@samsung.com>
- <f1e8a7fa-a1f8-c60a-c365-b2164421f98d@kernel.dk>
-In-Reply-To: <f1e8a7fa-a1f8-c60a-c365-b2164421f98d@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.0-rc4
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,67 +69,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/2/22 10:06 AM, Jens Axboe wrote:
-> On 9/2/22 9:16 AM, Kanchan Joshi wrote:
->> Hi,
->>
->> Currently uring-cmd lacks the ability to leverage the pre-registered
->> buffers. This series adds the support in uring-cmd, and plumbs
->> nvme passthrough to work with it.
->>
->> Using registered-buffers showed peak-perf hike from 1.85M to 2.17M IOPS
->> in my setup.
->>
->> Without fixedbufs
->> *****************
->> # taskset -c 0 t/io_uring -b512 -d128 -c32 -s32 -p0 -F1 -B0 -O0 -n1 -u1 /dev/ng0n1
->> submitter=0, tid=5256, file=/dev/ng0n1, node=-1
->> polled=0, fixedbufs=0/0, register_files=1, buffered=1, QD=128
->> Engine=io_uring, sq_ring=128, cq_ring=128
->> IOPS=1.85M, BW=904MiB/s, IOS/call=32/31
->> IOPS=1.85M, BW=903MiB/s, IOS/call=32/32
->> IOPS=1.85M, BW=902MiB/s, IOS/call=32/32
->> ^CExiting on signal
->> Maximum IOPS=1.85M
-> 
-> With the poll support queued up, I ran this one as well. tldr is:
-> 
-> bdev (non pt)	122M IOPS
-> irq driven	51-52M IOPS
-> polled		71M IOPS
-> polled+fixed	78M IOPS
-> 
-> Looking at profiles, it looks like the bio is still being allocated
-> and freed and not dipping into the alloc cache, which is using a
-> substantial amount of CPU. I'll poke a bit and see what's going on...
+Hi Linus,
 
-It's using the fs_bio_set, and that doesn't have the PERCPU alloc cache
-enabled. With the below, we then do:
+Two parts in this pull request:
 
-polled+fixed	82M
+- Single fix for over-eager retries for networking (Pavel)
 
-I suspect the remainder is due to the lack of batching on the request
-freeing side, at least some of it. Haven't really looked deeper yet.
+- Revert of the notification slot support for zerocopy sends. Turns out
+  that even after more than a year or development and testing, there's
+  not full agreement on whether just using plain ordered notifications
+  is Good Enough to avoid the complexity of using the notifications
+  slots. Because of that, we decided that it's best left to a future
+  final decision. We can always bring back this feature, but we can't
+  really change it or remove it once we've released 6.0 with it enabled.
+  The reverts leave the usual CQE notifications as the primary interface
+  for knowing when data was sent, and when it was acked. (Pavel)
 
-One issue I saw - try and use passthrough polling without having any
-poll queues defined and it'll stall just spinning on completions. You
-need to ensure that these are processed as well - look at how the
-non-passthrough io_uring poll path handles it.
+Please pull!
 
 
-diff --git a/block/bio.c b/block/bio.c
-index 3d3a2678fea2..cba6b1c02eb8 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1754,7 +1754,7 @@ static int __init init_bio(void)
- 	cpuhp_setup_state_multi(CPUHP_BIO_DEAD, "block/bio:dead", NULL,
- 					bio_cpu_dead);
- 
--	if (bioset_init(&fs_bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS))
-+	if (bioset_init(&fs_bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS | BIOSET_PERCPU_CACHE))
- 		panic("bio: can't allocate bios\n");
- 
- 	if (bioset_integrity_create(&fs_bio_set, BIO_POOL_SIZE))
+The following changes since commit 581711c46612c1fd7f98960f9ad53f04fdb89853:
+
+  io_uring/net: save address for sendzc async execution (2022-08-25 07:52:30 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-6.0-2022-09-02
+
+for you to fetch changes up to 916d72c10a4ca80ea51f1421e774cb765b53f28f:
+
+  selftests/net: return back io_uring zc send tests (2022-09-01 09:13:33 -0600)
+
+----------------------------------------------------------------
+io_uring-6.0-2022-09-02
+
+----------------------------------------------------------------
+Pavel Begunkov (7):
+      io_uring/net: fix overexcessive retries
+      selftests/net: temporarily disable io_uring zc test
+      Revert "io_uring: add zc notification flush requests"
+      Revert "io_uring: rename IORING_OP_FILES_UPDATE"
+      io_uring/notif: remove notif registration
+      io_uring/net: simplify zerocopy send user API
+      selftests/net: return back io_uring zc send tests
+
+ include/uapi/linux/io_uring.h                      |  28 ++----
+ io_uring/io_uring.c                                |  14 +--
+ io_uring/net.c                                     |  59 +++++++-----
+ io_uring/net.h                                     |   1 +
+ io_uring/notif.c                                   |  83 +----------------
+ io_uring/notif.h                                   |  54 +----------
+ io_uring/opdef.c                                   |  12 +--
+ io_uring/rsrc.c                                    |  55 +----------
+ io_uring/rsrc.h                                    |   4 +-
+ tools/testing/selftests/net/io_uring_zerocopy_tx.c | 101 ++++++++-------------
+ .../testing/selftests/net/io_uring_zerocopy_tx.sh  |  10 +-
+ 11 files changed, 99 insertions(+), 322 deletions(-)
 
 -- 
 Jens Axboe

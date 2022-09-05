@@ -2,109 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74B575AD62F
-	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 17:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67D5D5AD885
+	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 19:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237835AbiIEPTU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Sep 2022 11:19:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47006 "EHLO
+        id S231407AbiIERmL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Sep 2022 13:42:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238704AbiIEPTP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 11:19:15 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 164291EEF2
-        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 08:19:13 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id og21so17771427ejc.2
-        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 08:19:13 -0700 (PDT)
+        with ESMTP id S230496AbiIERmK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 13:42:10 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CC64C607
+        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 10:42:07 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id a5-20020a17090aa50500b002008eeb040eso580908pjq.1
+        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 10:42:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=GsCy44wdMFCuadHqTui9YjzW4+OMVccBA+mChcrb/98=;
-        b=qU5ZbaqZFpHpiG6lBUgyVjC3zHTZcibH8G+BMsWCllDxKkrdTJgLxsdFNwiAvFbkf0
-         H6eFRU44jhOWAS5B6m8KrRQFwZEoQrap98sSjwMA9mZ57LuLkTbg1Rdw3cd6Z92hw6cb
-         LQHQFoBxXkJiZ6rLGEnEDmMP7ITUtZh2DrPY8pMkXYs5Yl07+5ZKKJyKaVzDUSO8XXhW
-         BXZL5SWdfXARn7lELkB8Vbe5Xh2/OC1F8cTg4Zr6WwtzATeApHKmIGr/gYlkyDaFL/Om
-         djpDlUmsxK1DHNEWWOPDVXxJQHRWUqh92i67b6BuBXv41qmyxwTHS/vvhss/Sws0XaBd
-         LNLQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
+        bh=OZJt9bKXiECdEj4vCJHWJlzYrm4PjBMHRNBkmycpQm0=;
+        b=e2GnhQIvXUzxRI78HUogEjgzuBq+Vzn8wX6E1bQvFMTsVrZwBdNXn33IDV5sfPTM23
+         atWH9a62RgpmmX/yvrzLli6x3z2hqkgaRoDdtCGJwScudQcXEFigSPUttAhzFu50LDTg
+         BGBUqVdl7MzOg5EXLbXka4yzvDf6iejLC+pzKZHHDu43+7ylSrm/FT00lV8UENCNZm8x
+         fERA0pTC7b7n6LihGhWgq4IhR71DI2fhsO404T1R8FCHWLwZUlpqVTzGSikE8heqVFfM
+         JHp3Mg4HlnM+ESqyho3mJmYGT49OESgRDjxBc7mOB0TGdLzSCVXAkBILGmIbrSFg1ijQ
+         GQZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=GsCy44wdMFCuadHqTui9YjzW4+OMVccBA+mChcrb/98=;
-        b=vB+q+mkoDW7bDhf1Z7MLEHNjoK+Q/3S1wq4bmA3DqVLmlO4kDD4A3mqVEbZa/oSmxf
-         y9TR0Mp5NdsCdDCoUeP0y4pGl/lPjkIfxsa5lEbG7bUiBy4j0TBidBm7E0OioNx6Dp20
-         mvSPYSbQ1qfRSbpk5FJIDufmCB3yhOwT3K91ZgW6+TXlFByczv2PXJox/PSKTB5nHXSd
-         aMrKRHupjjo1MsMLMb9LvoZAvq9GlC8BYyqtGA4DVaQU90/hV6t0tPCsZj3VHGkuw9TQ
-         hvEjN4aln+YijN3lR9geqNKC/lHIaT2bfbvXJRugT+1bms3XCbr0EJS3qf8k4wT3OawB
-         8mQA==
-X-Gm-Message-State: ACgBeo3WildfyobAjL535nJqN95/Uf4akbcR+KpsrDMdSpm815iwZj5G
-        PokpeBVWVcmZVPbG8w94QAXfxceVfXM=
-X-Google-Smtp-Source: AA6agR73no8X9eobVcqNctMZ+sdDEIW9B21Vd0Vq8kOFtAZmOAvEEEyC3ozNdkaZqyVZl2HCMAKXlw==
-X-Received: by 2002:a17:906:2245:b0:715:7c81:e39d with SMTP id 5-20020a170906224500b007157c81e39dmr37652225ejr.262.1662391152417;
-        Mon, 05 Sep 2022 08:19:12 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:a118])
-        by smtp.gmail.com with ESMTPSA id j2-20020a17090623e200b0072b33e91f96sm5262018ejg.190.2022.09.05.08.19.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 08:19:12 -0700 (PDT)
-Message-ID: <c625ed9d-07b4-65c6-f318-a5233e0b667e@gmail.com>
-Date:   Mon, 5 Sep 2022 16:17:37 +0100
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=OZJt9bKXiECdEj4vCJHWJlzYrm4PjBMHRNBkmycpQm0=;
+        b=3rpcAJB1SV0gmmzZa1YckFhsTh+0SaHrvvkIHO7QiiKirWqzZDUXP+tZSKo6Ry1h0M
+         DT0lPPe0+s8sCjEJhKaEyFBGbCds4yFvqpoSiP/zqB8bvN+mjg0haLWEqR2DkXkbfcGK
+         U9Hghk88h8u5v7X6ajw/ZFaIjmahKuRPpHodvF0wSQob5Wz8nFaYAi0iFrkv3zdKjx9k
+         jhzOzuso35B3psHfK14D42Kesw7h0jNXrcQFUI/LF7EtLlS2L1fycK0dkG60nfNjNf08
+         qsyrRICf5OrTkMLbY17+Ifa72ovgUKi5P3zaCb6qgv/78KEOiMfZxTbWFTOTG0cyuvJK
+         JlwA==
+X-Gm-Message-State: ACgBeo1qG3YNeKO1LTbxMVVKxQ0giA7ofmWuvrdmB5lCB0+RuvV0bXD9
+        PyOijhgbzajMAWGuq9zb6ka3qca9Qo2tJQ==
+X-Google-Smtp-Source: AA6agR4NlGjeLCBYHqQhh91mkrQxNTpvlB4hv2QEpZOAqytKqVLpv2ZatWq3LWTLaFy1ko3sCToO8Q==
+X-Received: by 2002:a17:90b:4a86:b0:200:b21:e357 with SMTP id lp6-20020a17090b4a8600b002000b21e357mr14664270pjb.13.1662399725991;
+        Mon, 05 Sep 2022 10:42:05 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y15-20020a17090a16cf00b002005fcd2cb4sm2361586pje.2.2022.09.05.10.42.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Sep 2022 10:42:05 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Dylan Yudaken <dylany@fb.com>, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, Kernel-team@fb.com
+In-Reply-To: <20220905132258.1858915-1-dylany@fb.com>
+References: <20220905132258.1858915-1-dylany@fb.com>
+Subject: Re: [PATCH liburing v3 00/11] Defer taskrun changes
+Message-Id: <166239972526.372447.7435917288581693562.b4-ty@kernel.dk>
+Date:   Mon, 05 Sep 2022 11:42:05 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH liburing 4/4] tests/zc: name buffer flavours
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Cc:     "axboe@kernel.dk" <axboe@kernel.dk>
-References: <cover.1662387423.git.asml.silence@gmail.com>
- <f4ceecede6399ba722c8e73312e0e0755f53a8a6.1662387423.git.asml.silence@gmail.com>
- <87e297ef0a2bef869c890bda92c0a07fee171f43.camel@fb.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <87e297ef0a2bef869c890bda92c0a07fee171f43.camel@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: b4 0.10.0-dev-65ba7
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/5/22 16:00, Dylan Yudaken wrote:
-> On Mon, 2022-09-05 at 15:21 +0100, Pavel Begunkov wrote:
->> Remove duplicating tests and pass a buf index instead of dozens of
->> flags to specify the buffer we want to use.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>   test/send-zerocopy.c | 60 +++++++++++++++++++++++-------------------
->> --
->>   1 file changed, 32 insertions(+), 28 deletions(-)
->>
->> diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
->> index bfe4cf7..2efbcf9 100644
->> --- a/test/send-zerocopy.c
->> +++ b/test/send-zerocopy.c
->> @@ -51,8 +51,16 @@
->>          #define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
->>   #endif
->>   
->> +enum {
->> +       BUF_T_NORMAL,
->> +       BUF_T_SMALL,
->> +       BUF_T_NONALIGNED,
->> +       BUF_T_LARGE,
->> +       __BUT_T_MAX,
+On Mon, 5 Sep 2022 06:22:47 -0700, Dylan Yudaken wrote:
+> This series adds support to liburing for the IORING_SETUP_DEFER_TASKRUN flag.
 > 
-> __BUF_T_MAX?
+> This flag needs a couple of new API calls to force a call to get events for
+> users that are polling the io_uring fd (or a registered eventfd).
+> 
+> The second half of the series is a bit mixed and includes some documentation
+> fixes, overflow cleanups and test cleanups. I sent these a couple of months
+> ago and forgot about it, but now it does depend on the new API so it needs to
+> be ordered.
+> I can send it separately if you like.
+> 
+> [...]
 
-eh, should've been. I think I'll just kill it in a resend.
+Applied, thanks!
 
+[01/11] Copy defer task run definition from kernel
+        commit: 1999c963b86b0378b44edb2820e9d5102b7b531a
+[02/11] Add documentation for IORING_SETUP_DEFER_TASKRUN flag
+        commit: f8bac73b2529d33a10002905351c08f9cc457fd7
+[03/11] add io_uring_submit_and_get_events and io_uring_get_events
+        commit: daa5b2dff32f0ba3383d66b48badf122bd6d2898
+[04/11] add a t_probe_defer_taskrun helper function for tests
+        commit: cc2e1bce106f2356c3a3ddd528b56980b8ea8a77
+[05/11] update existing tests for defer taskrun
+        commit: f91105d5495546403ec5c15aa0768ae6a93d5ab1
+[06/11] add a defer-taskrun test
+        commit: bfca8f112cf1bd9cf8781cdcaa8f0f52bc727506
+[07/11] update io_uring_enter.2 docs for IORING_FEAT_NODROP
+        commit: f84b884aa865435ca2e691dad72d6c89529eb60b
+[08/11] add docs for overflow lost errors
+        commit: d5be8c01ee0d80f20da17fbc8b241d44157c06b6
+[09/11] expose CQ ring overflow state
+        commit: 3f2835810413beee65dad84a69b1c6280fb79eb8
+[10/11] overflow: add tests
+        commit: c9663ac060552aa4dc3f1b5af0fb5319a2a9b24e
+[11/11] file-verify test: log if short read
+        commit: 8bcc9029e3f7292bd17ed67d48c1122f1d56e36b
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

@@ -2,45 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9C65AD3DA
-	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 15:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB795AD3DD
+	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 15:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237251AbiIEN1j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Sep 2022 09:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51566 "EHLO
+        id S237726AbiIEN11 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Sep 2022 09:27:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237798AbiIEN1f (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 09:27:35 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33D2A4A800
-        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 06:27:33 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 285D1Slm025577
-        for <io-uring@vger.kernel.org>; Mon, 5 Sep 2022 06:27:32 -0700
+        with ESMTP id S237705AbiIEN1Z (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 09:27:25 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5A049B61
+        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 06:27:24 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 284MVFAl022261
+        for <io-uring@vger.kernel.org>; Mon, 5 Sep 2022 06:27:24 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=fz5pnw/sUz497BcBgEqTIuHhjU7Ehd04Bem7rgx4F+I=;
- b=V6ny8Vog4jypm8PQ3vGdUFcdukiAuec+p8eji9El3PEe5oHoLsRQrlencdxLuth1tzp9
- iK4QqiIWMYPJlD4ZwJIwLX4A5honHfb/iOBmHw217mQZXpA+KoYaGaQ2h8pWfBxVVVAr
- aI8S46i6gOJKKrJ3zypuZzXXbIaSnFgxzcM= 
+ bh=ac2oEHDxsKQWx0CIIypZ0l2ErwqOmMqV+RiizuiRdmE=;
+ b=MDSkCcvSsxMY+pdt8AI2IokOlh/B+WtQIZTETAhHDm+dD9UbBGe+GHqgozJj6dOVgpf4
+ 6IGLDeTOexO17KV7rNSpQa8fU42Jvb61hdoKDjuW1yIig85+kY0IiiNlrqp9++v56dKU
+ 8JoNs5eeXrU8cOk+Mlm0wfx78X0a1BESOvk= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jc4p00kpk-5
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jcgaeegwy-11
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 06:27:32 -0700
-Received: from twshared8288.05.ash9.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 06:27:24 -0700
+Received: from twshared3888.09.ash9.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 5 Sep 2022 06:27:30 -0700
+ 15.1.2375.31; Mon, 5 Sep 2022 06:27:22 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 57E645AC517D; Mon,  5 Sep 2022 06:24:50 -0700 (PDT)
+        id 5E5D85AC517F; Mon,  5 Sep 2022 06:24:50 -0700 (PDT)
 From:   Dylan Yudaken <dylany@fb.com>
 To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
 CC:     <io-uring@vger.kernel.org>, <Kernel-team@fb.com>,
         Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH liburing v3 10/11] overflow: add tests
-Date:   Mon, 5 Sep 2022 06:22:57 -0700
-Message-ID: <20220905132258.1858915-11-dylany@fb.com>
+Subject: [PATCH liburing v3 11/11] file-verify test: log if short read
+Date:   Mon, 5 Sep 2022 06:22:58 -0700
+Message-ID: <20220905132258.1858915-12-dylany@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220905132258.1858915-1-dylany@fb.com>
 References: <20220905132258.1858915-1-dylany@fb.com>
@@ -48,8 +48,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Hjtg-0Flf8cK7uP4AUbcAwY7jtN6tQGH
-X-Proofpoint-GUID: Hjtg-0Flf8cK7uP4AUbcAwY7jtN6tQGH
+X-Proofpoint-ORIG-GUID: XlFvKfp6LSywIuJWRirHbYlh7iSzC5DR
+X-Proofpoint-GUID: XlFvKfp6LSywIuJWRirHbYlh7iSzC5DR
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-09-05_09,2022-09-05_02,2022-06-22_01
@@ -63,358 +63,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add tests that verify that overflow conditions behave appropriately.
-Specifically:
- * if overflow is continually flushed, then CQEs should arrive mostly in
- order to prevent starvation of some completions
- * if CQEs are dropped due to GFP_ATOMIC allocation failures it is
- possible to terminate cleanly. This is not tested by default as it
- requires debug kernel config, and also has system-wide effects
+This test assumes any success is a full read. If it was a short read the
+test would still fail (as verification would fail) but tracking down the
+reason can be annoying.
+For now we can just log if it's short and fail at that point.
 
 Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
- test/cq-overflow.c | 243 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 236 insertions(+), 7 deletions(-)
+ test/file-verify.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/test/cq-overflow.c b/test/cq-overflow.c
-index 312b414b2a79..1087eefaacf0 100644
---- a/test/cq-overflow.c
-+++ b/test/cq-overflow.c
-@@ -9,6 +9,7 @@
- #include <stdlib.h>
- #include <string.h>
- #include <fcntl.h>
-+#include <assert.h>
-=20
- #include "helpers.h"
- #include "liburing.h"
-@@ -21,6 +22,32 @@ static struct iovec *vecs;
-=20
- #define ENTRIES	8
-=20
-+/*
-+ * io_uring has rare cases where CQEs are lost.
-+ * This happens when there is no space in the CQ ring, and also there is=
- no
-+ * GFP_ATOMIC memory available. In reality this probably means that the =
-process
-+ * is about to be killed as many other things might start failing, but w=
-e still
-+ * want to test that liburing and the kernel deal with this properly. Th=
-e fault
-+ * injection framework allows us to test this scenario. Unfortunately th=
-is
-+ * requires some system wide changes and so we do not enable this by def=
-ault.
-+ * The tests in this file should work in both cases (where overflows are=
- queued
-+ * and where they are dropped) on recent kernels.
-+ *
-+ * In order to test dropped CQEs you should enable fault injection in th=
-e kernel
-+ * config:
-+ *
-+ * CONFIG_FAULT_INJECTION=3Dy
-+ * CONFIG_FAILSLAB=3Dy
-+ * CONFIG_FAULT_INJECTION_DEBUG_FS=3Dy
-+ *
-+ * and then run the test as follows:
-+ * echo Y > /sys/kernel/debug/failslab/task-filter
-+ * echo 100 > /sys/kernel/debug/failslab/probability
-+ * echo 0 > /sys/kernel/debug/failslab/verbose
-+ * echo 100000 > /sys/kernel/debug/failslab/times
-+ * bash -c "echo 1 > /proc/self/make-it-fail && exec ./cq-overflow.t"
-+ */
-+
- static int test_io(const char *file, unsigned long usecs, unsigned *drop=
-s, int fault)
- {
- 	struct io_uring_sqe *sqe;
-@@ -29,6 +56,7 @@ static int test_io(const char *file, unsigned long usec=
-s, unsigned *drops, int f
- 	unsigned reaped, total;
- 	struct io_uring ring;
- 	int nodrop, i, fd, ret;
-+	bool cqe_dropped =3D false;
-=20
- 	fd =3D open(file, O_RDONLY | O_DIRECT);
- 	if (fd < 0) {
-@@ -104,8 +132,8 @@ static int test_io(const char *file, unsigned long us=
-ecs, unsigned *drops, int f
- reap_it:
- 	reaped =3D 0;
- 	do {
--		if (nodrop) {
--			/* nodrop should never lose events */
-+		if (nodrop && !cqe_dropped) {
-+			/* nodrop should never lose events unless cqe_dropped */
- 			if (reaped =3D=3D total)
- 				break;
- 		} else {
-@@ -113,7 +141,10 @@ reap_it:
- 				break;
- 		}
- 		ret =3D io_uring_wait_cqe(&ring, &cqe);
--		if (ret) {
-+		if (nodrop && ret =3D=3D -EBADR) {
-+			cqe_dropped =3D true;
-+			continue;
-+		} else if (ret) {
- 			fprintf(stderr, "wait_cqe=3D%d\n", ret);
- 			goto err;
- 		}
-@@ -133,7 +164,7 @@ reap_it:
- 		goto err;
- 	}
-=20
--	if (!nodrop) {
-+	if (!nodrop || cqe_dropped) {
- 		*drops =3D *ring.cq.koverflow;
- 	} else if (*ring.cq.koverflow) {
- 		fprintf(stderr, "Found %u overflows\n", *ring.cq.koverflow);
-@@ -154,18 +185,29 @@ static int reap_events(struct io_uring *ring, unsig=
-ned nr_events, int do_wait)
- {
- 	struct io_uring_cqe *cqe;
- 	int i, ret =3D 0, seq =3D 0;
-+	unsigned int start_overflow =3D *ring->cq.koverflow;
-+	bool dropped =3D false;
-=20
- 	for (i =3D 0; i < nr_events; i++) {
- 		if (do_wait)
- 			ret =3D io_uring_wait_cqe(ring, &cqe);
- 		else
- 			ret =3D io_uring_peek_cqe(ring, &cqe);
--		if (ret) {
-+		if (do_wait && ret =3D=3D -EBADR) {
-+			unsigned int this_drop =3D *ring->cq.koverflow -
-+				start_overflow;
-+
-+			dropped =3D true;
-+			start_overflow =3D *ring->cq.koverflow;
-+			assert(this_drop > 0);
-+			i +=3D (this_drop - 1);
-+			continue;
-+		} else if (ret) {
- 			if (ret !=3D -EAGAIN)
- 				fprintf(stderr, "cqe peek failed: %d\n", ret);
- 			break;
- 		}
--		if (cqe->user_data !=3D seq) {
-+		if (!dropped && cqe->user_data !=3D seq) {
- 			fprintf(stderr, "cqe sequence out-of-order\n");
- 			fprintf(stderr, "got %d, wanted %d\n", (int) cqe->user_data,
- 					seq);
-@@ -242,19 +284,206 @@ err:
- 	return 1;
- }
-=20
-+
-+static void submit_one_nop(struct io_uring *ring, int ud)
-+{
-+	struct io_uring_sqe *sqe;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+	assert(sqe);
-+	io_uring_prep_nop(sqe);
-+	sqe->user_data =3D ud;
-+	ret =3D io_uring_submit(ring);
-+	assert(ret =3D=3D 1);
-+}
-+
-+/*
-+ * Create an overflow condition and ensure that SQEs are still processed
-+ */
-+static int test_overflow_handling(bool batch, int cqe_multiple, bool pol=
-l,
-+				  bool defer)
-+{
-+	struct io_uring ring;
-+	struct io_uring_params p;
-+	int ret, i, j, ud, cqe_count;
-+	unsigned int count;
-+	int const N =3D 8;
-+	int const LOOPS =3D 128;
-+	int const QUEUE_LENGTH =3D 1024;
-+	int completions[N];
-+	int queue[QUEUE_LENGTH];
-+	int queued =3D 0;
-+	int outstanding =3D 0;
-+	bool cqe_dropped =3D false;
-+
-+	memset(&completions, 0, sizeof(int) * N);
-+	memset(&p, 0, sizeof(p));
-+	p.cq_entries =3D 2 * cqe_multiple;
-+	p.flags |=3D IORING_SETUP_CQSIZE;
-+
-+	if (poll)
-+		p.flags |=3D IORING_SETUP_IOPOLL;
-+
-+	if (defer)
-+		p.flags |=3D IORING_SETUP_SINGLE_ISSUER |
-+			   IORING_SETUP_DEFER_TASKRUN;
-+
-+	ret =3D io_uring_queue_init_params(2, &ring, &p);
-+	if (ret) {
-+		fprintf(stderr, "io_uring_queue_init failed %d\n", ret);
-+		return 1;
-+	}
-+
-+	assert(p.cq_entries < N);
-+	/* submit N SQEs, some should overflow */
-+	for (i =3D 0; i < N; i++) {
-+		submit_one_nop(&ring, i);
-+		outstanding++;
-+	}
-+
-+	for (i =3D 0; i < LOOPS; i++) {
-+		struct io_uring_cqe *cqes[N];
-+
-+		if (io_uring_cq_has_overflow(&ring)) {
-+			/*
-+			 * Flush any overflowed CQEs and process those. Actively
-+			 * flush these to make sure CQEs arrive in vague order
-+			 * of being sent.
-+			 */
-+			ret =3D io_uring_get_events(&ring);
-+			if (ret !=3D 0) {
-+				fprintf(stderr,
-+					"io_uring_get_events returned %d\n",
-+					ret);
+diff --git a/test/file-verify.c b/test/file-verify.c
+index 595dafd4bd8d..3a395f9dccda 100644
+--- a/test/file-verify.c
++++ b/test/file-verify.c
+@@ -430,6 +430,10 @@ static int test(struct io_uring *ring, const char *f=
+name, int buffered,
+ 				fprintf(stderr, "bad read %d, read %d\n", cqe->res, i);
+ 				goto err;
+ 			}
++			if (cqe->res < CHUNK_SIZE) {
++				fprintf(stderr, "short read %d, read %d\n", cqe->res, i);
 +				goto err;
 +			}
-+		} else if (!cqe_dropped) {
-+			for (j =3D 0; j < queued; j++) {
-+				submit_one_nop(&ring, queue[j]);
-+				outstanding++;
-+			}
-+			queued =3D 0;
-+		}
-+
-+		/* We have lost some random cqes, stop if no remaining. */
-+		if (cqe_dropped && outstanding =3D=3D *ring.cq.koverflow)
-+			break;
-+
-+		ret =3D io_uring_wait_cqe(&ring, &cqes[0]);
-+		if (ret =3D=3D -EBADR) {
-+			cqe_dropped =3D true;
-+			fprintf(stderr, "CQE dropped\n");
-+			continue;
-+		} else if (ret !=3D 0) {
-+			fprintf(stderr, "io_uring_wait_cqes failed %d\n", ret);
-+			goto err;
-+		}
-+		cqe_count =3D 1;
-+		if (batch) {
-+			ret =3D io_uring_peek_batch_cqe(&ring, &cqes[0], 2);
-+			if (ret < 0) {
-+				fprintf(stderr,
-+					"io_uring_peek_batch_cqe failed %d\n",
-+					ret);
-+				goto err;
-+			}
-+			cqe_count =3D ret;
-+		}
-+		for (j =3D 0; j < cqe_count; j++) {
-+			assert(cqes[j]->user_data < N);
-+			ud =3D cqes[j]->user_data;
-+			completions[ud]++;
-+			assert(queued < QUEUE_LENGTH);
-+			queue[queued++] =3D (int)ud;
-+		}
-+		io_uring_cq_advance(&ring, cqe_count);
-+		outstanding -=3D cqe_count;
-+	}
-+
-+	/* See if there were any drops by flushing the CQ ring *and* overflow *=
-/
-+	do {
-+		struct io_uring_cqe *cqe;
-+
-+		ret =3D io_uring_get_events(&ring);
-+		if (ret < 0) {
-+			if (ret =3D=3D -EBADR) {
-+				fprintf(stderr, "CQE dropped\n");
-+				cqe_dropped =3D true;
-+				break;
-+			}
-+			goto err;
-+		}
-+		if (outstanding && !io_uring_cq_ready(&ring))
-+			ret =3D io_uring_wait_cqe_timeout(&ring, &cqe, NULL);
-+
-+		if (ret && ret !=3D -ETIME) {
-+			if (ret =3D=3D -EBADR) {
-+				fprintf(stderr, "CQE dropped\n");
-+				cqe_dropped =3D true;
-+				break;
-+			}
-+			fprintf(stderr, "wait_cqe_timeout =3D %d\n", ret);
-+			goto err;
-+		}
-+		count =3D io_uring_cq_ready(&ring);
-+		io_uring_cq_advance(&ring, count);
-+		outstanding -=3D count;
-+	} while (count);
-+
-+	io_uring_queue_exit(&ring);
-+
-+	/* Make sure that completions come back in the same order they were
-+	 * sent. If they come back unfairly then this will concentrate on a
-+	 * couple of indices.
-+	 */
-+	for (i =3D 1; !cqe_dropped && i < N; i++) {
-+		if (abs(completions[i] - completions[i - 1]) > 1) {
-+			fprintf(stderr, "bad completion size %d %d\n",
-+				completions[i], completions[i - 1]);
-+			goto err;
-+		}
-+	}
-+	return 0;
-+err:
-+	io_uring_queue_exit(&ring);
-+	return 1;
-+}
-+
- int main(int argc, char *argv[])
- {
- 	const char *fname =3D ".cq-overflow";
- 	unsigned iters, drops;
- 	unsigned long usecs;
- 	int ret;
-+	int i;
-+	bool can_defer;
-=20
- 	if (argc > 1)
- 		return T_EXIT_SKIP;
-=20
-+	can_defer =3D t_probe_defer_taskrun();
-+	for (i =3D 0; i < 16; i++) {
-+		bool batch =3D i & 1;
-+		int mult =3D (i & 2) ? 1 : 2;
-+		bool poll =3D i & 4;
-+		bool defer =3D i & 8;
-+
-+		if (defer && !can_defer)
-+			continue;
-+
-+		ret =3D test_overflow_handling(batch, mult, poll, defer);
-+		if (ret) {
-+			fprintf(stderr, "test_overflow_handling("
-+				"batch=3D%d, mult=3D%d, poll=3D%d, defer=3D%d) failed\n",
-+				batch, mult, poll, defer);
-+			goto err;
-+		}
-+	}
-+
- 	ret =3D test_overflow();
- 	if (ret) {
--		printf("test_overflow failed\n");
-+		fprintf(stderr, "test_overflow failed\n");
- 		return ret;
- 	}
-=20
+ 			if (cqe->flags & IORING_CQE_F_BUFFER)
+ 				index =3D cqe->flags >> 16;
+ 			else
 --=20
 2.30.2
 

@@ -2,116 +2,142 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8EB5AD1B4
-	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 13:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 064475AD3CD
+	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 15:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236202AbiIELmm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Sep 2022 07:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
+        id S236985AbiIENY7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Sep 2022 09:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238141AbiIELml (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 07:42:41 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5115D5C34C;
-        Mon,  5 Sep 2022 04:42:39 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id u9so16546366ejy.5;
-        Mon, 05 Sep 2022 04:42:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Vllfxcnhs9OfIM3TW4UNvTfKmafbGxf3KdCROHXKN8A=;
-        b=ZmvWAAJ7c4+BHEsjiaprB7htjTLDbMlry2Z/c+ExPQyAIiLlgIVRrI0MvElSRbVtqg
-         nQpcHsWOTiWfyit/prQK21kqFBahi4hmrPY7sD1a1ATX1uDrqifs5DhLWUrSdWJr5815
-         RS736w0rTdZJO5soxkdOqRqMJpPBEBUhnRWL3A9pHKqYDLWn3nZNFiD7LH6SqyLNTqE8
-         sl+guaEVd8LMTl0w3jqjNQfsD9/pvelEBJ5W5u0iKULu3+uZw9uYqh3gv2SqIrjTbfF5
-         z/0SQgkmLOiCj8kRv3FIfiiaaOXFudSkyU+rtO1lXoBKbRV6njNAY4gLXqzuYLV7ZEgm
-         v5ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Vllfxcnhs9OfIM3TW4UNvTfKmafbGxf3KdCROHXKN8A=;
-        b=uOGE4L1wgh7V7JIzLPo/2PX/vyaVG99rrOCf2ogBq+GuO7TNVwVlJjDWkcfmegTCEV
-         OQnWGv+1JnIlrGz3VPlk/fxKnWy7htB3o63ADfXmBd8a7IGkIDYUWKxmIRaw8qowV4dW
-         wNjxScIpOP81Rk9oGl0WtpyTqUqvWel4N6ZQPsOefVbOphLpLwTkSIObZpXJqUTMCvwl
-         VIYsrxM/ZcDnPCZGRz9hYiSTj4Ivu9CwVpjGvyjPonVne5P/kTFRMYs6GESji9IjSMPB
-         ktwYPhs7VZzuurJtCepiNqKrB+Pu0oeI4DZCV4JmetdhES4gHpiAdbXCWircdh2lf6yh
-         LovA==
-X-Gm-Message-State: ACgBeo2/bzuqGCorp456DUzLI3EaPALKaknAtamBmBRNW85GF4LNqRjF
-        OkZ67nriS5gRGlaUIqp9wsISIxxh9RU=
-X-Google-Smtp-Source: AA6agR7kngSpBTnmierD9JfvVK7jS1367pXPg5TONv6zLkBmoFPToyz+AARL0661stTFZakhyd/G6Q==
-X-Received: by 2002:a17:907:72cd:b0:741:905e:9150 with SMTP id du13-20020a17090772cd00b00741905e9150mr25290026ejc.88.1662378157758;
-        Mon, 05 Sep 2022 04:42:37 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:a118])
-        by smtp.gmail.com with ESMTPSA id i19-20020a50fc13000000b00446639c01easm6323449edr.44.2022.09.05.04.42.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 04:42:37 -0700 (PDT)
-Message-ID: <e55fa28e-6f9c-dcb4-3406-95dfbea8387a@gmail.com>
-Date:   Mon, 5 Sep 2022 12:41:18 +0100
+        with ESMTP id S236467AbiIENY5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 09:24:57 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7F813DD5
+        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 06:24:56 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 284NwsKc004203
+        for <io-uring@vger.kernel.org>; Mon, 5 Sep 2022 06:24:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=KE9I45MgUSS9DNHz8lex/ORUA6uucLfHW67f4IB9C8U=;
+ b=T/uEEn4OFp5Pr+BrMCAWKldEq5+i+xWleHe2pektmJscCLwL1SwV7saqJk99Bvl318eD
+ ntyGhgVCYz0Ke3UrzXr7Ipe7I2CforKM/2GrVSCawTjpTLCY0OXTUVuRkoeVTwmsk8Rz
+ UV0Zw9C4Qgr6vP2454ix235kRXuzzlreTog= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3jc2kx0wmn-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 06:24:55 -0700
+Received: from twshared8288.05.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 5 Sep 2022 06:24:53 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 140425AC5168; Mon,  5 Sep 2022 06:24:50 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, <Kernel-team@fb.com>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH liburing v3 00/11] Defer taskrun changes
+Date:   Mon, 5 Sep 2022 06:22:47 -0700
+Message-ID: <20220905132258.1858915-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] io_uring/notif: Remove the unused function
- io_notif_complete()
-Content-Language: en-US
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abaci Robot <abaci@linux.alibaba.com>
-References: <20220905020436.51894-1-jiapeng.chong@linux.alibaba.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20220905020436.51894-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: caVIwtKimoiuKzM-0ap5poDZF4_CVmjV
+X-Proofpoint-GUID: caVIwtKimoiuKzM-0ap5poDZF4_CVmjV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-09-05_09,2022-09-05_02,2022-06-22_01
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/5/22 03:04, Jiapeng Chong wrote:
-> The function io_notif_complete() is defined in the notif.c file, but not
-> called elsewhere, so delete this unused function.
+This series adds support to liburing for the IORING_SETUP_DEFER_TASKRUN f=
+lag.
 
-Yep, forgot to kill it, LGTM
+This flag needs a couple of new API calls to force a call to get events f=
+or
+users that are polling the io_uring fd (or a registered eventfd).
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+The second half of the series is a bit mixed and includes some documentat=
+ion
+fixes, overflow cleanups and test cleanups. I sent these a couple of mont=
+hs
+ago and forgot about it, but now it does depend on the new API so it need=
+s to
+be ordered.
+I can send it separately if you like.
+
+Patches:
+
+1 copies the definition from the kernel include file
+2 introduces new APIs required for this feature
+3/4/5 add tests for IORING_SETUP_DEFER_TASKRUN
+
+6/7/8 clean and update existing documentation to match upstream
+9 exposes the overflow state to the application
+10 uses this and tests overflow functionality
+11 gives an explicit warning if there is a short read in file-verify
+
+Changes since v2:
+ - Add documentation and .map file for new API
+ - remove shutdown test
+
+Changes since v1:
+ - update tests to require IORING_SETUP_SINGLE_ISSUER
+ - add docs for IORING_SETUP_DEFER_TASKRUN
+ - add shutdown test
+
+Dylan Yudaken (11):
+  Copy defer task run definition from kernel
+  Add documentation for IORING_SETUP_DEFER_TASKRUN flag
+  add io_uring_submit_and_get_events and io_uring_get_events
+  add a t_probe_defer_taskrun helper function for tests
+  update existing tests for defer taskrun
+  add a defer-taskrun test
+  update io_uring_enter.2 docs for IORING_FEAT_NODROP
+  add docs for overflow lost errors
+  expose CQ ring overflow state
+  overflow: add tests
+  file-verify test: log if short read
+
+ man/io_uring_cq_has_overflow.3       |  25 ++
+ man/io_uring_enter.2                 |  24 +-
+ man/io_uring_get_events.3            |  33 +++
+ man/io_uring_setup.2                 |  30 ++-
+ man/io_uring_submit_and_get_events.3 |  31 +++
+ src/include/liburing.h               |  12 +
+ src/include/liburing/io_uring.h      |   7 +
+ src/liburing.map                     |   2 +
+ src/queue.c                          |  26 ++-
+ test/Makefile                        |   1 +
+ test/cq-overflow.c                   | 243 ++++++++++++++++++-
+ test/defer-taskrun.c                 | 333 +++++++++++++++++++++++++++
+ test/eventfd-disable.c               |  33 ++-
+ test/file-verify.c                   |   4 +
+ test/helpers.c                       |  17 +-
+ test/helpers.h                       |   2 +
+ test/iopoll.c                        |  17 +-
+ test/multicqes_drain.c               |  50 +++-
+ test/poll-mshot-overflow.c           |  40 +++-
+ test/recv-multishot.c                |  33 ++-
+ test/rsrc_tags.c                     |  10 +-
+ 21 files changed, 922 insertions(+), 51 deletions(-)
+ create mode 100644 man/io_uring_cq_has_overflow.3
+ create mode 100644 man/io_uring_get_events.3
+ create mode 100644 man/io_uring_submit_and_get_events.3
+ create mode 100644 test/defer-taskrun.c
 
 
-> io_uring/notif.c:24:20: warning: unused function 'io_notif_complete' [-Wunused-function].
-> 
-> Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=2047
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->   io_uring/notif.c | 8 --------
->   1 file changed, 8 deletions(-)
-> 
-> diff --git a/io_uring/notif.c b/io_uring/notif.c
-> index 96f076b175e0..1a7abd7e5ca5 100644
-> --- a/io_uring/notif.c
-> +++ b/io_uring/notif.c
-> @@ -21,14 +21,6 @@ static void __io_notif_complete_tw(struct io_kiocb *notif, bool *locked)
->   	io_req_task_complete(notif, locked);
->   }
->   
-> -static inline void io_notif_complete(struct io_kiocb *notif)
-> -	__must_hold(&notif->ctx->uring_lock)
-> -{
-> -	bool locked = true;
-> -
-> -	__io_notif_complete_tw(notif, &locked);
-> -}
-> -
->   static void io_uring_tx_zerocopy_callback(struct sk_buff *skb,
->   					  struct ubuf_info *uarg,
->   					  bool success)
+base-commit: 3bd7d6b27e6b7d7950bba1491bc9c385378fe4dd
+--=20
+2.30.2
 
--- 
-Pavel Begunkov

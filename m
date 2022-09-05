@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 327165AD897
-	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 19:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DB15AD8A2
+	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 19:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231630AbiIERuZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Sep 2022 13:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58168 "EHLO
+        id S230020AbiIERzg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Sep 2022 13:55:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiIERuY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 13:50:24 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601EE5F12A
-        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 10:50:23 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id mj6so8994494pjb.1
-        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 10:50:23 -0700 (PDT)
+        with ESMTP id S232222AbiIERxo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 13:53:44 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436256052A
+        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 10:53:43 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id p1-20020a17090a2d8100b0020040a3f75eso4267751pjd.4
+        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 10:53:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=PNaCX0S9iGhKAlyPWJAoKRpsa01FH9FlALaZF1PJLS0=;
-        b=lMnZ13siCUzc0zOynH5OarlVG770rcTKcozKwKhb4GoNXLZfY5qo+9mE7Rm0XEkk4a
-         7+b9inDvYw4dIC8yt82RCx0511+bCZvHLylAQVe083yQrOokin8d4Bu3HfKuV8CbVJRA
-         EhJOGja7bkAuGXfJEMJrqCAC+0bBEoAJ8NzdfFy3Ye4uHrtYsANZomFnRc7ReT3dtOxA
-         Tny4ZaZ8Z7mRAtzJcKiOSUfRnpFgEMc+IAx5tVYfGT+f3C2vL9f9efDWiKMUbsqQhCUS
-         /7uLU76kveNyfhJz3meNYUioN4Kodaak/BlvSmO+zX+o1pSAJQ+cXnLiZyy8e4MSnhwd
-         5kKA==
+        bh=zeGc0vwJDgBIJyeNrQDrz976x5n1fo0aH2VcrMu6kPU=;
+        b=3TzLFPJsgQVoyzIEgelyj96PTJ9RA2qoPFKMvnvgNEGKK3Xg7EfO0JMiwAXt32iElf
+         vfYSQMKS+7btTv0zYBL+JqK4B164T+u6A4q65qijRqZyjFwAkIJp873GODXmEqUbmCCl
+         a4PU+gLa9IJVBoluV1WyE8I2Zq7+YUslviqLsKLMihwruNHwSorxpHp+7VzMqUYi3TBx
+         YFyW7ALBsYtKGUQT/cNuSBySGtF5RFshRyz4JQlfcDDqnfeOdKj2rIW3G6/Iq+Iicinq
+         dqOHLOCjuAfw7X/gYLQhSZJIUxQsokZNds8p706H8863+sWLzEVugxnU1gj8eVaU8mZ3
+         4+sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=PNaCX0S9iGhKAlyPWJAoKRpsa01FH9FlALaZF1PJLS0=;
-        b=s7K0U6RtrAoBClaKuhhAuTj7wdlElEWF9jyCyLIhgIMlhq/GJlJxGa0ZNgaoeQ2kn/
-         AabcDg3q5SPPOzus3JFTlb8ev2v3v28z3pxqRGlmtFNUVsnky+a7OE9d47B92yVPNqwJ
-         yi9Sv7IygU9P6k3J6hNz8CKZuaOY88bDA8MbIhZ0Rq6TAHLeZPalP9WZclO7LSsDomhy
-         yZ1PXWGcdGZwsVa/HTAzHdQ2u9NoOerjbpaPQE+dg9PHtz3GU6c50E4iieDO6DcEhvQm
-         sCzh9aplzyzLZf7OygsYnbeN60mQTNP23udcyc32WFHCy9WafvmrDk+U1UYDSGjiuEb0
-         zu5A==
-X-Gm-Message-State: ACgBeo3YLwOiXSWGpufKdboWFgrqiVHzjsWntvcGkqk8bGTIOQ24F0XB
-        +3F6sIJ+Iv0caGX1YXByiFuFiw==
-X-Google-Smtp-Source: AA6agR5R9puDZtsQGlvBHmoPXUZgxeA3Szf5wt3UY93HyWP9kB/FpM7r9D8ZOEgLdp4cZ5V/aaVWYw==
-X-Received: by 2002:a17:90b:4b81:b0:1fd:d736:9d04 with SMTP id lr1-20020a17090b4b8100b001fdd7369d04mr20794110pjb.121.1662400222422;
-        Mon, 05 Sep 2022 10:50:22 -0700 (PDT)
+        bh=zeGc0vwJDgBIJyeNrQDrz976x5n1fo0aH2VcrMu6kPU=;
+        b=uTr60EqxMwAsegwgptjj+e+Fio0xK5IyYLpemtxIXZM3eC9EJgQSpKZIFozNgWb/NG
+         NBDiY3VIcrBydvdEGVZPcgcez5MYxxuSgKuv3KYfYdenzkmQmUn5wKsHwo5y+ySTOnno
+         6gtwFeEUAHNT4Mhf5oom3rxkVORwE9lvvcj6w34/a37Zpig1qqKkjUKRF3awkJfKctlg
+         ssWPhqia4hjP8N404PC8E4So/knGJBi6Mu6eH2i8yvi1MLDDjUUHRPhh600XEybEZ+X7
+         DG/eVQL7Rmg6pxlKOODacfZad/HHlvniWFY9Ev3OZG+BE/sqwV8XkyGPmLc96V5M+X+n
+         XYlA==
+X-Gm-Message-State: ACgBeo2RSpja3gU2yxYAVWYcQ76U6fwfQPJDgLXKD01XyodyCoidMQM5
+        clGpL3GBzCkwe37O2c8j0rwnPw==
+X-Google-Smtp-Source: AA6agR7DiMNf6wfT4ZoG5rsHUmL/ehmUhw+ETrtpWSzJRoiOawk/VgiGVH9Vb1lT8IaVGei10sbUSg==
+X-Received: by 2002:a17:902:e848:b0:176:c746:1f69 with SMTP id t8-20020a170902e84800b00176c7461f69mr1501581plg.125.1662400422716;
+        Mon, 05 Sep 2022 10:53:42 -0700 (PDT)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x12-20020a170902ec8c00b0017543086eb3sm7914486plg.274.2022.09.05.10.50.21
+        by smtp.gmail.com with ESMTPSA id u67-20020a626046000000b00537e1b30793sm8331899pfb.11.2022.09.05.10.53.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 10:50:21 -0700 (PDT)
-Message-ID: <8a6f1186-e202-7d0c-6e4a-6a456cf7f4f7@kernel.dk>
-Date:   Mon, 5 Sep 2022 11:50:20 -0600
+        Mon, 05 Sep 2022 10:53:42 -0700 (PDT)
+Message-ID: <5a0f98a5-8710-0719-91e6-e75af1818b1b@kernel.dk>
+Date:   Mon, 5 Sep 2022 11:53:41 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.1.2
@@ -71,7 +71,8 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -79,56 +80,34 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 9/5/22 7:48 AM, Kanchan Joshi wrote:
-> From: Anuj Gupta <anuj20.g@samsung.com>
-> 
-> This is a new helper that callers can use to obtain a bvec iterator for
-> the previously mapped buffer. This is preparatory work to enable
-> fixed-buffer support for io_uring_cmd.
-> 
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> ---
->  include/linux/io_uring.h |  8 ++++++++
->  io_uring/uring_cmd.c     | 11 +++++++++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-> index 58676c0a398f..dba6fb47aa6c 100644
-> --- a/include/linux/io_uring.h
-> +++ b/include/linux/io_uring.h
-> @@ -4,6 +4,7 @@
+> @@ -124,3 +125,13 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
 >  
->  #include <linux/sched.h>
->  #include <linux/xarray.h>
-> +#include <uapi/linux/io_uring.h>
->  
->  enum io_uring_cmd_flags {
->  	IO_URING_F_COMPLETE_DEFER	= 1,
-> @@ -32,6 +33,8 @@ struct io_uring_cmd {
->  };
->  
->  #if defined(CONFIG_IO_URING)
-> +int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> +		struct iov_iter *iter, void *ioucmd);
->  void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2);
->  void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
->  			void (*task_work_cb)(struct io_uring_cmd *));
-> @@ -59,6 +62,11 @@ static inline void io_uring_free(struct task_struct *tsk)
->  		__io_uring_free(tsk);
+>  	return IOU_ISSUE_SKIP_COMPLETE;
 >  }
->  #else
-> +int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> +		struct iov_iter *iter, void *ioucmd)
+> +
+> +int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len,
+> +		int rw, struct iov_iter *iter, void *ioucmd)
 > +{
-> +	return -1;
+> +	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+> +	struct io_mapped_ubuf *imu = req->imu;
+> +
+> +	return io_import_fixed(rw, iter, imu, ubuf, len);
 > +}
+> +EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
 
-Is this right? Shouldn't it return -EOPNOTSUPP or another suitable actual
-error value?
+Oh, and since we're probably respinning this one anyway, I'd do:
 
-Apart from that, I think the patchset looks fine now.
+int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+			      struct iov_iter *iter, void *ioucmd)
+{
+	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+
+	return io_import_fixed(rw, iter, req->imu, ubuf, len);
+}
+EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
+
+to both fix the indentation and get rid of the 'imu' variable that isn't
+really necessary.
 
 -- 
 Jens Axboe
-
-

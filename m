@@ -2,65 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5195ADB8B
-	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 00:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DA25ADBF3
+	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 01:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbiIEWvf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Sep 2022 18:51:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45350 "EHLO
+        id S231828AbiIEXry (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Sep 2022 19:47:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbiIEWve (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 18:51:34 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F6D0696F0
-        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 15:51:33 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id a5-20020a17090aa50500b002008eeb040eso985569pjq.1
-        for <io-uring@vger.kernel.org>; Mon, 05 Sep 2022 15:51:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date;
-        bh=qU3jGavE03rEnvpk8EEW4BOFFNIw+qE6zh6QKGqfP1o=;
-        b=HHorfd81MIAZHKA0tlH6MuHXwVQ1ZJamo5Vw8j5FQwjtxrFzhfLjriTLXgPWoz3Uqv
-         wQdnAx7FWALmiSwzRpz8Xtb8yd4r/Zn6ETj5extic07V2HRlXgkM8jsHUXQWRYKNIPPM
-         FKZgVSpZii9D9j3VBew5UVWybRjcSCx/DpN2FUFdW3OeO1n2oDcCQIA1H4Sab2LFjssr
-         c5f7nHr1ToTQe2mmVvbKhxe7ZHQZD0GtLc1zPmminy1XixGSk/PFDvWI3QlYQ8TaUKYS
-         BVfo4Wf9bYBDTzhgXNltWBL3J+oMx0yQSsrtDkJY4zdZNRhgC8vCfPcITgm6I3sdeSLR
-         W4Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=qU3jGavE03rEnvpk8EEW4BOFFNIw+qE6zh6QKGqfP1o=;
-        b=G/KK0/v8AxrhM5tYnmFf4tb9pb07MnVwLXfKhBEfJqcQ/kkLtzW0rWzQ++LUBd3veO
-         TNMru+MK5N6qTcmP0tEKZXW6wsjJKg3nnoeGLImnGIKZEMGdLLytlUhSd9RsPiiOA2xm
-         lzWuZwr4Fambd2UX/N93EQgtMlwNNolLpmM3Bhk2kQa5WX67cbv+1NldSutLCeZxIXYa
-         KyQ+uAJZn+2Lz+VW69jtZ6fClJ5iGXWujxhO1w82fJjgGYHZlJa6C+xaaOv9OtA+Jpd6
-         S82suEpXLfEEa0M6jpeYuNjqshaFnw7/C67/hQJkcxKM9ieTS5AUw1fK5eIZ4OdzNr0k
-         bBiw==
-X-Gm-Message-State: ACgBeo2540ilTriQ6cgEEOLq2eaKcQaqRmXr5UNPnviQ+901FsTiuaEV
-        Ek6QOkJ8KCQmmT9jQc5lnvrsMh5LK51wjw==
-X-Google-Smtp-Source: AA6agR5xeRg1Wq0hJlZBho7Aok5Pcs5NZxosDsFdRkmZvqE5HJxPMn4zWt8qpcEfIcZ5tRr0L+fRmA==
-X-Received: by 2002:a17:902:f683:b0:176:cc02:ce83 with SMTP id l3-20020a170902f68300b00176cc02ce83mr1280096plg.88.1662418292985;
-        Mon, 05 Sep 2022 15:51:32 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y13-20020a655a0d000000b00434a8e676b0sm67871pgs.45.2022.09.05.15.51.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Sep 2022 15:51:31 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-In-Reply-To: <cover.1662404421.git.asml.silence@gmail.com>
-References: <cover.1662404421.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing v2 0/5] zc tests improvements
-Message-Id: <166241829140.462526.10540188211710260669.b4-ty@kernel.dk>
-Date:   Mon, 05 Sep 2022 16:51:31 -0600
+        with ESMTP id S229546AbiIEXrx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 19:47:53 -0400
+Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0C99459A6;
+        Mon,  5 Sep 2022 16:47:51 -0700 (PDT)
+Date:   Mon, 5 Sep 2022 19:46:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662421670;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aV58+8xM7vZiC+ARHrNwrMa2NOiuYoscS5I3pyUTgBc=;
+        b=g/enLV1JWMwpy1AyXIuK4kHtWcmra4fxFsTUcPxQ3hUWakh3HZFxjFpnVO9NhK3wjScc9f
+        irWUYVuNDjD8ENf7YkMd2RUCrJ2/ViqqPY2BhztGYYDjlWUSm+DOVdUpVQh8M2jqIup2FQ
+        tYI+IaNim7kGQArVz8zbq85hmG2o2lA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R. Howlett" <liam.howlett@oracle.com>,
+        David Vernet <void@manifault.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        Minchan Kim <minchan@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        kernel-team <kernel-team@android.com>,
+        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220905234649.525vorzx27ybypsn@kmo-framework>
+References: <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
+ <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+ <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+ <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
+ <CAJuCfpGhwPFYdkOLjwwD4ra9JxPqq1T5d1jd41Jy3LJnVnhNdg@mail.gmail.com>
+ <YxEE1vOwRPdzKxoq@dhcp22.suse.cz>
+ <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
+ <20220901201502.sn6223bayzwferxv@moria.home.lan>
+ <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-65ba7
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,37 +94,15 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 5 Sep 2022 23:05:57 +0100, Pavel Begunkov wrote:
-> Return accidentially disabled UDP testing, reduce runtime, and clean it up
-> in preparation for zc sendmsg.
-> 
-> v2: kill __BUF_T_MAX
->     add patch 5/5
-> 
-> Pavel Begunkov (5):
->   tests/zc: move send size calc into do_test_inet_send
->   tests/zc: use io_uring for rx
->   tests/zc: fix udp testing
->   tests/zc: name buffer flavours
->   tests/zc: skip tcp w/ addr
-> 
-> [...]
+On Mon, Sep 05, 2022 at 10:49:38AM +0200, Michal Hocko wrote:
+> This is really my main concern about this whole work. Not only it adds a
+> considerable maintenance burden to the core MM because
 
-Applied, thanks!
+[citation needed]
 
-[1/5] tests/zc: move send size calc into do_test_inet_send
-      commit: 7f80be601474ed3702ecf9a39da14534df897560
-[2/5] tests/zc: use io_uring for rx
-      commit: ec19550c0fec57bef77c49a1326e4e6837b039ae
-[3/5] tests/zc: fix udp testing
-      commit: 3674cb90514a316ce83fe17c3ac5bfff3da453d3
-[4/5] tests/zc: name buffer flavours
-      commit: 74970081956c2d9a937c3a98fac60173d479f394
-[5/5] tests/zc: skip tcp w/ addr
-      commit: c7ad43212d4aa576171ae7465f31b047e880da9e
+> it adds on top of
+> our existing allocator layers complexity but it would need to spread beyond
+> MM to be useful because it is usually outside of MM where leaks happen.
 
-Best regards,
--- 
-Jens Axboe
-
-
+If you want the tracking to happen at a different level of the call stack, just
+call _kmalloc() directly and call alloc_tag_add()/sub() yourself.

@@ -2,158 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FA65ACC26
-	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 09:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A7E5ACD75
+	for <lists+io-uring@lfdr.de>; Mon,  5 Sep 2022 10:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237320AbiIEHTI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Sep 2022 03:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33224 "EHLO
+        id S236523AbiIEIMd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Sep 2022 04:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237566AbiIEHSf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 03:18:35 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F204DB30
-        for <io-uring@vger.kernel.org>; Mon,  5 Sep 2022 00:13:46 -0700 (PDT)
-Received: from localhost.localdomain (unknown [182.2.39.110])
-        by gnuweeb.org (Postfix) with ESMTPSA id 2F2747E254;
-        Mon,  5 Sep 2022 07:12:42 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662361967;
-        bh=KNnxh4u9cUj673J8B4AGd0GRsIg4ioEtEBcVVBlMeA8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XUEAOMVty/REKqmrjuSz9M7+TP5GGAyIm5RudocDucCV8+b8LKzAuw7vDm1fLc0VF
-         JHR14v8hFHdEC4ePoj0BeqzmqgvaPGWZbFQAjWGQyVCkGWEJvvnajotZ9bh9yt/Wuo
-         D3We0gspErpHCpc1Guq0HbsMFgMdjuTKA4l25IImZKqZ0zqYubRC1FsSpyTrPPPfIe
-         jjbkrOTufcIajuf2yVia2sFwSNvvwxHac8+brZKzSAjDyEXPxJkWCLaHX2AiuW0WZx
-         +z6MaN7eT5BqQ/3nfM/MhpatPfWeSKr2RXBzG58UPP9sZ00qJvdnVMUkErb+Jf82be
-         XZc2ctp5vyG5Q==
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Kanna Scarlet <knscarlet@gnuweeb.org>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>
-Subject: [PATCH liburing v1] test/ringbuf-read: Delete `.ringbuf-read.%d` before exit
-Date:   Mon,  5 Sep 2022 14:12:28 +0700
-Message-Id: <20220905070633.187725-1-ammar.faizi@intel.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S235312AbiIEIMc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Sep 2022 04:12:32 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF9A3ED5D;
+        Mon,  5 Sep 2022 01:12:30 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6CC095FCCC;
+        Mon,  5 Sep 2022 08:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1662365549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vLBCtbeiMkaT10it/2QfW3oy9NGXJ0931FNcJJeTs+E=;
+        b=hvJuONTlqXa3IZLVuzAZ3mvfimjG/HG5K1UYXiiMd6Jxc7MnBmd8EvFQgw5oSEYQnG/f0V
+        +51wd/30Jfiv7ka9ky5kghqEmUu9AoehBsL4FA/S3udtvnMmZ/ybc1m3/Htxqdr3KL53Wv
+        TIehxfs6fvCI+DApLUGQDHmpY/iq5bI=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4046313A66;
+        Mon,  5 Sep 2022 08:12:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id vpI8D22vFWNpBAAAMHmgww
+        (envelope-from <mhocko@suse.com>); Mon, 05 Sep 2022 08:12:29 +0000
+Date:   Mon, 5 Sep 2022 10:12:28 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R. Howlett" <liam.howlett@oracle.com>,
+        David Vernet <void@manifault.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        Minchan Kim <minchan@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        kernel-team <kernel-team@android.com>,
+        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <YxWvbMYLkPoJrQyr@dhcp22.suse.cz>
+References: <20220830214919.53220-1-surenb@google.com>
+ <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
+ <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+ <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+ <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
+ <CAJuCfpGhwPFYdkOLjwwD4ra9JxPqq1T5d1jd41Jy3LJnVnhNdg@mail.gmail.com>
+ <YxEE1vOwRPdzKxoq@dhcp22.suse.cz>
+ <CAJuCfpFrRwXXQ=wAvZ-oUNKXUJ=uUA=fiDrkhRu5VGXcM+=cuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpFrRwXXQ=wAvZ-oUNKXUJ=uUA=fiDrkhRu5VGXcM+=cuA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+On Sun 04-09-22 18:32:58, Suren Baghdasaryan wrote:
+> On Thu, Sep 1, 2022 at 12:15 PM Michal Hocko <mhocko@suse.com> wrote:
+[...]
+> > Yes, tracking back the call trace would be really needed. The question
+> > is whether this is really prohibitively expensive. How much overhead are
+> > we talking about? There is no free lunch here, really.  You either have
+> > the overhead during runtime when the feature is used or on the source
+> > code level for all the future development (with a maze of macros and
+> > wrappers).
+> 
+> As promised, I profiled a simple code that repeatedly makes 10
+> allocations/frees in a loop and measured overheads of code tagging,
+> call stack capturing and tracing+BPF for page and slab allocations.
+> Summary:
+> 
+> Page allocations (overheads are compared to get_free_pages() duration):
+> 6.8% Codetag counter manipulations (__lazy_percpu_counter_add + __alloc_tag_add)
+> 8.8% lookup_page_ext
+> 1237% call stack capture
+> 139% tracepoint with attached empty BPF program
 
-Running test/ringbuf-read.t leaves untracked files in git status:
+Yes, I am not surprised that the call stack capturing is really
+expensive comparing to the allocator fast path (which is really highly
+optimized and I suspect that with 10 allocation/free loop you mostly get
+your memory from the pcp lists). Is this overhead still _that_ visible
+for somehow less microoptimized workloads which have to take slow paths
+as well?
 
-  Untracked files:
-    (use "git add <file>..." to include in what will be committed)
-          .ringbuf-read.163521
-          .ringbuf-read.163564
-          .ringbuf-read.163605
-          .ringbuf-read.163648
+Also what kind of stack unwinder is configured (I guess ORC)? This is
+not my area but from what I remember the unwinder overhead varies
+between ORC and FP.
 
-Make sure we unlink it properly.
-
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- test/ringbuf-read.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/test/ringbuf-read.c b/test/ringbuf-read.c
-index 673f2de..060eb1d 100644
---- a/test/ringbuf-read.c
-+++ b/test/ringbuf-read.c
-@@ -133,63 +133,64 @@ static int test(const char *filename, int dio, int async)
- 
- int main(int argc, char *argv[])
- {
- 	char buf[BUF_SIZE];
- 	char fname[80];
- 	int ret, fd, i, do_unlink;
- 
- 	if (argc > 1) {
- 		strcpy(fname, argv[1]);
- 		do_unlink = 0;
- 	} else {
- 		sprintf(fname, ".ringbuf-read.%d", getpid());
- 		t_create_file(fname, FSIZE);
- 		do_unlink = 1;
- 	}
- 
- 	fd = open(fname, O_WRONLY);
- 	if (fd < 0) {
- 		perror("open");
--		goto err;
-+		ret = 1;
-+		goto out;
- 	}
- 	for (i = 0; i < NR_BUFS; i++) {
- 		memset(buf, i + 1, BUF_SIZE);
- 		ret = write(fd, buf, BUF_SIZE);
- 		if (ret != BUF_SIZE) {
- 			fprintf(stderr, "bad file prep write\n");
--			goto err;
-+			ret = 1;
-+			close(fd);
-+			goto out;
- 		}
- 	}
- 	close(fd);
- 
- 	ret = test(fname, 1, 0);
- 	if (ret) {
- 		fprintf(stderr, "dio test failed\n");
--		return ret;
-+		goto out;
-+	}
-+	if (no_buf_ring) {
-+		ret = 0;
-+		goto out;
- 	}
--	if (no_buf_ring)
--		return 0;
- 
- 	ret = test(fname, 0, 0);
- 	if (ret) {
- 		fprintf(stderr, "buffered test failed\n");
--		return ret;
-+		goto out;
- 	}
- 
- 	ret = test(fname, 1, 1);
- 	if (ret) {
- 		fprintf(stderr, "dio async test failed\n");
--		return ret;
-+		goto out;
- 	}
- 
- 	ret = test(fname, 0, 1);
--	if (ret) {
-+	if (ret)
- 		fprintf(stderr, "buffered async test failed\n");
--		return ret;
--	}
--
--	return 0;
--err:
-+out:
- 	if (do_unlink)
- 		unlink(fname);
--	return 1;
-+	return ret;
- }
-
-base-commit: 3bd7d6b27e6b7d7950bba1491bc9c385378fe4dd
+And just to make it clear. I do realize that an overhead from the stack
+unwinding is unavoidable. And code tagging would logically have lower
+overhead as it performs much less work. But the main point is whether
+our existing stack unwiding approach is really prohibitively expensive
+to be used for debugging purposes on production systems. I might
+misremember but I recall people having bigger concerns with page_owner
+memory footprint than the actual stack unwinder overhead.
 -- 
-Ammar Faizi
-
+Michal Hocko
+SUSE Labs

@@ -2,119 +2,292 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2CB5AE966
-	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 15:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B3B5AEEF7
+	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 17:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239964AbiIFNWe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Sep 2022 09:22:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
+        id S233478AbiIFPgR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Sep 2022 11:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234103AbiIFNWe (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Sep 2022 09:22:34 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A20402E1
-        for <io-uring@vger.kernel.org>; Tue,  6 Sep 2022 06:22:32 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id bf4-20020a056602368400b0068baaa4f99bso6709841iob.3
-        for <io-uring@vger.kernel.org>; Tue, 06 Sep 2022 06:22:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=k7QWw2QHO0H3mOKLS7XQj1IGVFb2UQKAqmEs/aBD0Dk=;
-        b=FoiyGekvdafjQjmTdWB4L1Oo3S/A6GFUq8U1gvLpn3qq0gNPzRjgofk4NzC1hL3eR/
-         Muu5SAgRoGRFUmkhy/X40vxOwRVqaEZu/gMvbNK2tQwNi4ejbyQaU0G7C+fwq5jsc06w
-         Ps/aSUIe6XDSWWfbro61t3Ux/xvBnNd53fCTSnHbyGR4OOt/2UwM5F1YNiu2vkN2VsRM
-         POlI4f69Zq5/R11ESr7na6GJlaLGtkZW4ULiuBdMDDgAem2lHMe3G/FqQowCjuobrgjK
-         ODn87nC5Rq8fS6v90sho1Nwuatz7zHK3VtS6owJsJXxt7LaNJmN3yOoMFonU3YwN/AyA
-         pv+g==
-X-Gm-Message-State: ACgBeo0X1gUjLUlPSMbz178DWKayVnC2M4bwaJyhJGR/JOaf/9l+8vlE
-        tq6xVXyZJApYwEnvoErqxtJVwL25O4JSvbN6CkueaZKm3nYp
-X-Google-Smtp-Source: AA6agR4qlFnIjDVaJHjvxi34jyClkHd1wenKq1EIYpkvdrpRgT/xP9bugSu7jJ8oIqR5rcfrAxrqfM6ff0Zg+TtecMDDMGepNWu/
+        with ESMTP id S233671AbiIFPgB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Sep 2022 11:36:01 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65DFDB4B7
+        for <io-uring@vger.kernel.org>; Tue,  6 Sep 2022 07:45:11 -0700 (PDT)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 286EhglM017303
+        for <io-uring@vger.kernel.org>; Tue, 6 Sep 2022 07:45:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=TAWNvJ+djFb3bxmwt95xSnQUTpuR+X6d6FhL6uRiQjE=;
+ b=gqi1QoueJEszHaVmJjmMHMsQADi7WDAmm5m80XOwO3/9s4BrFfZzpZnWCy/0OSxE3m6r
+ CiOOhszq0gjSWgOnAKF9JE0oIGAIS5a5vFadygS+3BGMz5HeCdWUUpvlBydX7TEVXxbf
+ 3i7PGK1T/q7fHldnaloAiiTq1bNU2anmivE= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3je87gg0ah-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 06 Sep 2022 07:45:00 -0700
+Received: from twshared11415.03.ash7.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 6 Sep 2022 07:44:49 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 692AA5BB4AC4; Tue,  6 Sep 2022 07:44:44 -0700 (PDT)
+From:   Dylan Yudaken <dylany@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        <io-uring@vger.kernel.org>
+CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH for-next] io_uring: allow buffer recycling in READV
+Date:   Tue, 6 Sep 2022 07:44:25 -0700
+Message-ID: <20220906144425.1458218-1-dylany@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:378f:b0:356:4966:9b7b with SMTP id
- w15-20020a056638378f00b0035649669b7bmr2296530jal.103.1662470552354; Tue, 06
- Sep 2022 06:22:32 -0700 (PDT)
-Date:   Tue, 06 Sep 2022 06:22:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b9066905e802163a@google.com>
-Subject: [syzbot] KMSAN: uninit-value in io_req_cqe_overflow
-From:   syzbot <syzbot+12dde80bf174ac8ae285@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, glider@google.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 4exHDIW84JPp7uFSky39A7KMtFg3he_Z
+X-Proofpoint-GUID: 4exHDIW84JPp7uFSky39A7KMtFg3he_Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-06_07,2022-09-06_02,2022-06-22_01
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+In commit 934447a603b2 ("io_uring: do not recycle buffer in READV") a
+temporary fix was put in io_kbuf_recycle to simply never recycle READV
+buffers.
 
-syzbot found the following issue on:
+Instead of that, rather treat READV with REQ_F_BUFFER_SELECTED the same a=
+s
+a READ with REQ_F_BUFFER_SELECTED. Since READV requires iov_len of 1 they
+are essentially the same.
+In order to do this inside io_prep_rw() add some validation to check that
+it is in fact only length 1, and also extract the length of the buffer at
+prep time.
 
-HEAD commit:    ac3859c02d7f block: kmsan: skip bio block merging logic fo..
-git tree:       https://github.com/google/kmsan.git master
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1394e48b080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8e64bc5364a1307e
-dashboard link: https://syzkaller.appspot.com/bug?extid=12dde80bf174ac8ae285
-compiler:       clang version 15.0.0 (https://github.com/llvm/llvm-project.git 610139d2d9ce6746b3c617fb3e2f7886272d26ff), GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12cb6983080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17744fbd080000
+This allows removal of the io_iov_buffer_select codepaths as they are onl=
+y
+used from the READV op.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+12dde80bf174ac8ae285@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in io_req_cqe_overflow+0x1f8/0x220 io_uring/io_uring.c:687
- io_req_cqe_overflow+0x1f8/0x220 io_uring/io_uring.c:687
- __io_fill_cqe_req+0x4ad/0x830 io_uring/io_uring.h:121
- __io_submit_flush_completions io_uring/io_uring.c:1192 [inline]
- io_submit_flush_completions+0x11c/0x390 io_uring/io_uring.c:166
- io_submit_state_end io_uring/io_uring.c:2025 [inline]
- io_submit_sqes+0x7d3/0xd50 io_uring/io_uring.c:2137
- __do_sys_io_uring_enter io_uring/io_uring.c:3053 [inline]
- __se_sys_io_uring_enter+0x597/0x1d30 io_uring/io_uring.c:2983
- __x64_sys_io_uring_enter+0x117/0x190 io_uring/io_uring.c:2983
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Uninit was stored to memory at:
- io_req_set_res io_uring/io_uring.h:156 [inline]
- io_recv_finish io_uring/net.c:537 [inline]
- io_recv+0x18ee/0x1d00 io_uring/net.c:845
- io_issue_sqe+0x3b1/0x11d0 io_uring/io_uring.c:1576
- io_queue_sqe io_uring/io_uring.c:1753 [inline]
- io_submit_sqe+0xb40/0x1be0 io_uring/io_uring.c:2011
- io_submit_sqes+0x542/0xd50 io_uring/io_uring.c:2122
- __do_sys_io_uring_enter io_uring/io_uring.c:3053 [inline]
- __se_sys_io_uring_enter+0x597/0x1d30 io_uring/io_uring.c:2983
- __x64_sys_io_uring_enter+0x117/0x190 io_uring/io_uring.c:2983
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Local variable msg created at:
- io_recv+0x4b/0x1d00 io_uring/net.c:763
- io_issue_sqe+0x3b1/0x11d0 io_uring/io_uring.c:1576
-
-CPU: 0 PID: 3487 Comm: syz-executor126 Not tainted 6.0.0-rc2-syzkaller-47461-gac3859c02d7f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-=====================================================
-
-
+Signed-off-by: Dylan Yudaken <dylany@fb.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ io_uring/kbuf.h |   8 ---
+ io_uring/rw.c   | 134 +++++++++++++++++++-----------------------------
+ 2 files changed, 52 insertions(+), 90 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index d6af208d109f..c23e15d7d3ca 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -86,14 +86,6 @@ static inline bool io_do_buffer_select(struct io_kiocb=
+ *req)
+=20
+ static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_=
+flags)
+ {
+-	/*
+-	 * READV uses fields in `struct io_rw` (len/addr) to stash the selected
+-	 * buffer data. However if that buffer is recycled the original request
+-	 * data stored in addr is lost. Therefore forbid recycling for now.
+-	 */
+-	if (req->opcode =3D=3D IORING_OP_READV)
+-		return;
+-
+ 	if (req->flags & REQ_F_BUFFER_SELECTED)
+ 		io_kbuf_recycle_legacy(req, issue_flags);
+ 	if (req->flags & REQ_F_BUFFER_RING)
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 4a061326c664..214260b943f0 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -33,6 +33,46 @@ static inline bool io_file_supports_nowait(struct io_k=
+iocb *req)
+ 	return req->flags & REQ_F_SUPPORT_NOWAIT;
+ }
+=20
++#ifdef CONFIG_COMPAT
++static int io_iov_compat_buffer_select_prep(struct io_rw *rw)
++{
++	struct compat_iovec __user *uiov;
++	compat_ssize_t clen;
++
++	uiov =3D u64_to_user_ptr(rw->addr);
++	if (!access_ok(uiov, sizeof(*uiov)))
++		return -EFAULT;
++	if (__get_user(clen, &uiov->iov_len))
++		return -EFAULT;
++	if (clen < 0)
++		return -EINVAL;
++
++	rw->len =3D clen;
++	return 0;
++}
++#endif
++
++static int io_iov_buffer_select_prep(struct io_kiocb *req)
++{
++	struct iovec __user *uiov;
++	struct iovec iov;
++	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
++
++	if (rw->len !=3D 1)
++		return -EINVAL;
++
++#ifdef CONFIG_COMPAT
++	if (req->ctx->compat)
++		return io_iov_compat_buffer_select_prep(rw);
++#endif
++
++	uiov =3D u64_to_user_ptr(rw->addr);
++	if (copy_from_user(&iov, uiov, sizeof(*uiov)))
++		return -EFAULT;
++	rw->len =3D iov.iov_len;
++	return 0;
++}
++
+ int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
+@@ -69,6 +109,16 @@ int io_prep_rw(struct io_kiocb *req, const struct io_=
+uring_sqe *sqe)
+ 	rw->addr =3D READ_ONCE(sqe->addr);
+ 	rw->len =3D READ_ONCE(sqe->len);
+ 	rw->flags =3D READ_ONCE(sqe->rw_flags);
++
++	/* Have to do this validation here, as this is in io_read() rw->len mig=
+ht
++	 * have chanaged due to buffer selection
++	 */
++	if (req->opcode =3D=3D IORING_OP_READV && req->flags & REQ_F_BUFFER_SEL=
+ECT) {
++		ret =3D io_iov_buffer_select_prep(req);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+=20
+@@ -273,79 +323,6 @@ static int kiocb_done(struct io_kiocb *req, ssize_t =
+ret,
+ 	return IOU_ISSUE_SKIP_COMPLETE;
+ }
+=20
+-#ifdef CONFIG_COMPAT
+-static ssize_t io_compat_import(struct io_kiocb *req, struct iovec *iov,
+-				unsigned int issue_flags)
+-{
+-	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
+-	struct compat_iovec __user *uiov;
+-	compat_ssize_t clen;
+-	void __user *buf;
+-	size_t len;
+-
+-	uiov =3D u64_to_user_ptr(rw->addr);
+-	if (!access_ok(uiov, sizeof(*uiov)))
+-		return -EFAULT;
+-	if (__get_user(clen, &uiov->iov_len))
+-		return -EFAULT;
+-	if (clen < 0)
+-		return -EINVAL;
+-
+-	len =3D clen;
+-	buf =3D io_buffer_select(req, &len, issue_flags);
+-	if (!buf)
+-		return -ENOBUFS;
+-	rw->addr =3D (unsigned long) buf;
+-	iov[0].iov_base =3D buf;
+-	rw->len =3D iov[0].iov_len =3D (compat_size_t) len;
+-	return 0;
+-}
+-#endif
+-
+-static ssize_t __io_iov_buffer_select(struct io_kiocb *req, struct iovec=
+ *iov,
+-				      unsigned int issue_flags)
+-{
+-	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
+-	struct iovec __user *uiov =3D u64_to_user_ptr(rw->addr);
+-	void __user *buf;
+-	ssize_t len;
+-
+-	if (copy_from_user(iov, uiov, sizeof(*uiov)))
+-		return -EFAULT;
+-
+-	len =3D iov[0].iov_len;
+-	if (len < 0)
+-		return -EINVAL;
+-	buf =3D io_buffer_select(req, &len, issue_flags);
+-	if (!buf)
+-		return -ENOBUFS;
+-	rw->addr =3D (unsigned long) buf;
+-	iov[0].iov_base =3D buf;
+-	rw->len =3D iov[0].iov_len =3D len;
+-	return 0;
+-}
+-
+-static ssize_t io_iov_buffer_select(struct io_kiocb *req, struct iovec *=
+iov,
+-				    unsigned int issue_flags)
+-{
+-	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
+-
+-	if (req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)) {
+-		iov[0].iov_base =3D u64_to_user_ptr(rw->addr);
+-		iov[0].iov_len =3D rw->len;
+-		return 0;
+-	}
+-	if (rw->len !=3D 1)
+-		return -EINVAL;
+-
+-#ifdef CONFIG_COMPAT
+-	if (req->ctx->compat)
+-		return io_compat_import(req, iov, issue_flags);
+-#endif
+-
+-	return __io_iov_buffer_select(req, iov, issue_flags);
+-}
+-
+ static struct iovec *__io_import_iovec(int ddir, struct io_kiocb *req,
+ 				       struct io_rw_state *s,
+ 				       unsigned int issue_flags)
+@@ -368,7 +345,8 @@ static struct iovec *__io_import_iovec(int ddir, stru=
+ct io_kiocb *req,
+ 	buf =3D u64_to_user_ptr(rw->addr);
+ 	sqe_len =3D rw->len;
+=20
+-	if (opcode =3D=3D IORING_OP_READ || opcode =3D=3D IORING_OP_WRITE) {
++	if (opcode =3D=3D IORING_OP_READ || opcode =3D=3D IORING_OP_WRITE ||
++	    (req->flags & REQ_F_BUFFER_SELECT)) {
+ 		if (io_do_buffer_select(req)) {
+ 			buf =3D io_buffer_select(req, &sqe_len, issue_flags);
+ 			if (!buf)
+@@ -384,14 +362,6 @@ static struct iovec *__io_import_iovec(int ddir, str=
+uct io_kiocb *req,
+ 	}
+=20
+ 	iovec =3D s->fast_iov;
+-	if (req->flags & REQ_F_BUFFER_SELECT) {
+-		ret =3D io_iov_buffer_select(req, iovec, issue_flags);
+-		if (ret)
+-			return ERR_PTR(ret);
+-		iov_iter_init(iter, ddir, iovec, 1, iovec->iov_len);
+-		return NULL;
+-	}
+-
+ 	ret =3D __import_iovec(ddir, buf, sqe_len, UIO_FASTIOV, &iovec, iter,
+ 			      req->ctx->compat);
+ 	if (unlikely(ret < 0))
+
+base-commit: a73c11acbf98767f8fb464e463198bc75992ef28
+--=20
+2.30.2
+

@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B30955AF09B
-	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 18:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E979D5AF099
+	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 18:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234075AbiIFQhO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Sep 2022 12:37:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45470 "EHLO
+        id S233190AbiIFQhM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Sep 2022 12:37:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238987AbiIFQgs (ORCPT
+        with ESMTP id S238981AbiIFQgs (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 6 Sep 2022 12:36:48 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED7BE2FD
-        for <io-uring@vger.kernel.org>; Tue,  6 Sep 2022 09:13:11 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id lx1so24380684ejb.12
-        for <io-uring@vger.kernel.org>; Tue, 06 Sep 2022 09:13:11 -0700 (PDT)
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F5825C2
+        for <io-uring@vger.kernel.org>; Tue,  6 Sep 2022 09:13:12 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 29so10752394edv.2
+        for <io-uring@vger.kernel.org>; Tue, 06 Sep 2022 09:13:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=9aXUsW604JS9V3Fc+GjNX2IX1E1/9dHoWdwhnM48rJ0=;
-        b=Ed2boOrvQ3UGGKJMhcfosQKcKXCTeLogGLhIXbTtUfGc47V5By/VItHpQjUGLdVh7Y
-         WaiyAtnPZKxP83X3wRoxXwu9lDSiYff8qE56Hy2PbbUq6SqLvVmwi371QY/X0V9LxOOn
-         HC00+HgzSSLCDrduqoQhx3wIrRNKNrsPm5rztAAW1Jpr6kcDnX4V5UCwG0F4ke07NEcb
-         7wA08ACNSdR7jVpmkEYPGMOvZT3vA6OOuezWR3LdGYw3yyaXUCCaOn3hVzTnEapU6CLY
-         PTtI+dEioZ4nfSeLsV6V8FfLZX4XKLMXtx2g1KJ3/Wj3cnnGyKoCuxxnT25t+Nolm9cW
-         XXUQ==
+        bh=YAbMgM01V49HxL5Pe0OgAVzIDluMWHFxnOBMGiW49oI=;
+        b=EqG2gLIQy8gC+HLZSSbid/4SsX4Ye5XmNtumXjC2pS8el2rxLbisBbRT7XDFcBEOok
+         LMWn2lE4Is8riZxBRBnzaB0gwWGZZGI2oyhBjS3XQxOKtPiQf9TcQCrsetx5UsYuJooR
+         /LRwLHEQAN08SW+KG7aIRWP0xCu6VWqKmK2du/+HETjeMXNo1rSF1OBalVX9B75r8PWb
+         mHMRKAeU8ifNUBDKNCU/7AhnacoX5QH6hnOXssreb2V0GzFKLi7J4B81xsswLXZ26Bc0
+         aDJ2c+/PIhB/cxfgRYShFxuuMQFYMi7FZ+bDiOJjGnFw7XBkl4NONI1bl9kREKam8zgL
+         gARA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=9aXUsW604JS9V3Fc+GjNX2IX1E1/9dHoWdwhnM48rJ0=;
-        b=sPSmmIzBtY6om0qH0FFVWQGQEYdMn21hloQ8cMaUO+Dxw8ZT32KknR3FFl8xIH6lx5
-         zQ70Y8lcck3uWGtKr/l49q8EGSF/6S1tIPAl1eYXVlao0SSHo9+nrsBiu25rEMw0jW+k
-         F6V/EoQ+EOG2m3N70ufbbeJIUbTLWZwwFe4CFUO/+nvg7XFZ6p2DU4BU6IfHRn+qBEAt
-         0kkXxUapXObumpkXYIuFO9joK7/ku4yi+aD8ZBhASRZsdLDbP2+d5WThZekAeKEx9zlL
-         SyYC5RyTXCWzcYTaxvIVzbGL1OkmlDnWPG9zwzkAtB1Rv53dQ5ftpig1bl4ERX6gOIkD
-         YbvQ==
-X-Gm-Message-State: ACgBeo3yPTEeLW5bhM9WEBap34YWsx8KOtEx0OfFOISa0dOSjtNTmdnZ
-        uelwahE5ms04QiyxRqlxwLv51dEHMq4=
-X-Google-Smtp-Source: AA6agR6kRxu6FmfcFXDO1eHyyCq0jZd380XWPCPyxZVi0mQdn684uU3BwT+vuNkmoGIntsiiL5XtXQ==
-X-Received: by 2002:a17:907:720b:b0:731:6e49:dc93 with SMTP id dr11-20020a170907720b00b007316e49dc93mr40827369ejc.421.1662480790228;
-        Tue, 06 Sep 2022 09:13:10 -0700 (PDT)
+        bh=YAbMgM01V49HxL5Pe0OgAVzIDluMWHFxnOBMGiW49oI=;
+        b=fqDHGQi9TTZb9azo8lsToJXQLEOaUdOlsWJaXsZfDWpfFiJSXp1mYBaXG6OWuqbmJx
+         Q5hX4VUzQA+7WDM7NiBAYIKXX/1QIagfHbyiH7kiQ6OVkzvyP0hWQSpmlxrg7AgZqEA0
+         RmlX+O4hSw8upsicNs6Kp7e7f5sNqLy3QrP65qx67nCnDsVuW90nH5O626KITsZwCg9N
+         3buvZpTGngZQn/++IFun7WjrZe0OKFy1999dU29FawncDbCXR2JX/hmSA9UqgJgUdlgp
+         bw9k+P+MNKMWd9TVt6/4LBskdVDyMFFMwmqQ6pbyVSGnCjLwxJS51J7inYiuxy/i1XZ+
+         3Ufg==
+X-Gm-Message-State: ACgBeo1fYnKBQIVWhEMKC/Vc/hU8kjg+jEWUH6dfst845pqk4PcvsBjk
+        sxHv2/0FcBey+NqkSIYzQc3AvSgmpLw=
+X-Google-Smtp-Source: AA6agR4bWXEGrlsuFeqsvm54BgXA2M8jw3hHeJbkT7iFwuvlg+6bZQEpcF5TnLNVZjP7RLXfs7+uTQ==
+X-Received: by 2002:a05:6402:42c3:b0:43d:682f:c0ca with SMTP id i3-20020a05640242c300b0043d682fc0camr48050019edc.334.1662480791214;
+        Tue, 06 Sep 2022 09:13:11 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:1bab])
-        by smtp.gmail.com with ESMTPSA id kw16-20020a170907771000b007512bf1b7ecsm6556385ejc.118.2022.09.06.09.13.09
+        by smtp.gmail.com with ESMTPSA id kw16-20020a170907771000b007512bf1b7ecsm6556385ejc.118.2022.09.06.09.13.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 09:13:09 -0700 (PDT)
+        Tue, 06 Sep 2022 09:13:10 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/2] io_uring/kbuf: fix not advancing READV kbuf ring
-Date:   Tue,  6 Sep 2022 17:11:16 +0100
-Message-Id: <a6d85e2611471bcb5d5dcd63a8342077ddc2d73d.1662480490.git.asml.silence@gmail.com>
+Subject: [PATCH 2/2] io_uring: recycle kbuf recycle on tw requeue
+Date:   Tue,  6 Sep 2022 17:11:17 +0100
+Message-Id: <a19bc9e211e3184215a58e129b62f440180e9212.1662480490.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1662480490.git.asml.silence@gmail.com>
 References: <cover.1662480490.git.asml.silence@gmail.com>
@@ -69,36 +69,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When we don't recycle a selected ring buffer we should advance the head
-of the ring, so don't just skip io_kbuf_recycle() for IORING_OP_READV
-but adjust the ring.
+When we queue a request via tw for execution it's not going to be
+executed immediately, so when io_queue_async() hits IO_APOLL_READY
+and queues a tw but doesn't try to recycle/consume the buffer some other
+request may try to use the the buffer.
 
-Fixes: 934447a603b22 ("io_uring: do not recycle buffer in READV")
+Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/kbuf.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ io_uring/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index d6af208d109f..746fbf31a703 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -91,9 +91,13 @@ static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
- 	 * buffer data. However if that buffer is recycled the original request
- 	 * data stored in addr is lost. Therefore forbid recycling for now.
- 	 */
--	if (req->opcode == IORING_OP_READV)
-+	if (req->opcode == IORING_OP_READV) {
-+		if ((req->flags & REQ_F_BUFFER_RING) && req->buf_list) {
-+			req->buf_list->head++;
-+			req->buf_list = NULL;
-+		}
- 		return;
--
-+	}
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		io_kbuf_recycle_legacy(req, issue_flags);
- 	if (req->flags & REQ_F_BUFFER_RING)
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f9be9b7eb654..b9640ad5069f 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1728,6 +1728,7 @@ static void io_queue_async(struct io_kiocb *req, int ret)
+ 
+ 	switch (io_arm_poll_handler(req, 0)) {
+ 	case IO_APOLL_READY:
++		io_kbuf_recycle(req, 0);
+ 		io_req_task_queue(req);
+ 		break;
+ 	case IO_APOLL_ABORTED:
 -- 
 2.37.2
 

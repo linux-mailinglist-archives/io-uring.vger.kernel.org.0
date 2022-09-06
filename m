@@ -2,101 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E47525AE911
-	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 15:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2CB5AE966
+	for <lists+io-uring@lfdr.de>; Tue,  6 Sep 2022 15:22:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240200AbiIFNGr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Sep 2022 09:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39992 "EHLO
+        id S239964AbiIFNWe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Sep 2022 09:22:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239979AbiIFNGq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Sep 2022 09:06:46 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7974257E07
-        for <io-uring@vger.kernel.org>; Tue,  6 Sep 2022 06:06:44 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id pj10so774368pjb.2
-        for <io-uring@vger.kernel.org>; Tue, 06 Sep 2022 06:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=hUilgeHP0biCxsciT92z9y8bpDsjjbeBXQD/8msdltU=;
-        b=GNIWuM9ISomgaI/MfitDMgzaSir/kv+ZiB7ykUG2JOEKioLzlKVIKzosdx3Gr1VZNN
-         FSyjgitEn0OlLuUwBj2EKYYhuA8aLqigTBk1n05agFHu9TeGsM2Oy4dxutyDDiB/Kp0q
-         g/rs0M+JjhZ6KPqyCIf9xmLsAItYR8v3SejXlDNl/xUw0z3xVOH9YFEZ/PdO9X2FFFKS
-         P4euUSP1/v3VHzh5WqkrA600b469pljHUiNI8QZSjczO3F1Qj8ymAh80e35446W96mOE
-         urk/jacqVYb2DQ8MHSdSUIGUfDrWb1YGpO2ROSah0jbUKf4theoc5vr4uFzUe74s50Vs
-         DF8g==
+        with ESMTP id S234103AbiIFNWe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Sep 2022 09:22:34 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A20402E1
+        for <io-uring@vger.kernel.org>; Tue,  6 Sep 2022 06:22:32 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id bf4-20020a056602368400b0068baaa4f99bso6709841iob.3
+        for <io-uring@vger.kernel.org>; Tue, 06 Sep 2022 06:22:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=hUilgeHP0biCxsciT92z9y8bpDsjjbeBXQD/8msdltU=;
-        b=etpH0+TZ8/Cv34CzFNWGL06YILlszAOT6Id/78bwjyOEPtcZoGIiFneyQ8pP0QNphn
-         qXlSHdGPFZaVqrsO5hWRfilMdz1Krs5X02yVF6lzmRCm3PMI5w9EMXMCzCErqTckPydY
-         RrflgqNb9swK8n8ukPoZvFQwBDiix2A3nHC8/IYTeJSCpg5zGdYq3eqHBmuwlO0W7ksr
-         DzZL5Z8bU5ICc6S3Wg3793ZJ/8zVC1EqbqsUMzDwqGV9NB6U4yZkkMX/jtkJaM1/gjc+
-         TOwMYRKBukEtegqkm9qBzdIPFqEWTWjDqZ47gVRAk85Pg9crjO9em+d6RmJ4PK8cgMEM
-         x42Q==
-X-Gm-Message-State: ACgBeo2lnBPeGZsMG3m3iBq9mDgmJPdpsSIy6bR2aOeVxCKuB+4CaaJa
-        D10rQSIS/byw+YR4ahlVz4nemg==
-X-Google-Smtp-Source: AA6agR65LNUY4ND6VirT9/iIW5+aJ6BogblGjGp/Ah6rCqXQ1W0A40gbtwhWH0/EwhhBy8biBCwTgA==
-X-Received: by 2002:a17:90a:ac2:b0:1fd:fad1:e506 with SMTP id r2-20020a17090a0ac200b001fdfad1e506mr25026991pje.66.1662469603875;
-        Tue, 06 Sep 2022 06:06:43 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n12-20020a170902d2cc00b00174c1855cd9sm9819866plc.267.2022.09.06.06.06.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Sep 2022 06:06:42 -0700 (PDT)
-Message-ID: <2ad36f9d-6472-f748-b013-9678ad94e8d0@kernel.dk>
-Date:   Tue, 6 Sep 2022 07:06:40 -0600
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=k7QWw2QHO0H3mOKLS7XQj1IGVFb2UQKAqmEs/aBD0Dk=;
+        b=FoiyGekvdafjQjmTdWB4L1Oo3S/A6GFUq8U1gvLpn3qq0gNPzRjgofk4NzC1hL3eR/
+         Muu5SAgRoGRFUmkhy/X40vxOwRVqaEZu/gMvbNK2tQwNi4ejbyQaU0G7C+fwq5jsc06w
+         Ps/aSUIe6XDSWWfbro61t3Ux/xvBnNd53fCTSnHbyGR4OOt/2UwM5F1YNiu2vkN2VsRM
+         POlI4f69Zq5/R11ESr7na6GJlaLGtkZW4ULiuBdMDDgAem2lHMe3G/FqQowCjuobrgjK
+         ODn87nC5Rq8fS6v90sho1Nwuatz7zHK3VtS6owJsJXxt7LaNJmN3yOoMFonU3YwN/AyA
+         pv+g==
+X-Gm-Message-State: ACgBeo0X1gUjLUlPSMbz178DWKayVnC2M4bwaJyhJGR/JOaf/9l+8vlE
+        tq6xVXyZJApYwEnvoErqxtJVwL25O4JSvbN6CkueaZKm3nYp
+X-Google-Smtp-Source: AA6agR4qlFnIjDVaJHjvxi34jyClkHd1wenKq1EIYpkvdrpRgT/xP9bugSu7jJ8oIqR5rcfrAxrqfM6ff0Zg+TtecMDDMGepNWu/
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH for-next v4 3/4] block: add helper to map bvec iterator
- for passthrough
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>
-Cc:     kbusch@kernel.org, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        Anuj Gupta <anuj20.g@samsung.com>
-References: <20220905134833.6387-1-joshi.k@samsung.com>
- <CGME20220905135851epcas5p3d107b140fd6cba1feb338c1a31c4feb1@epcas5p3.samsung.com>
- <20220905134833.6387-4-joshi.k@samsung.com> <20220906062522.GA1566@lst.de>
- <20220906063329.GA27127@test-zns> <20220906065122.GA2190@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220906065122.GA2190@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:378f:b0:356:4966:9b7b with SMTP id
+ w15-20020a056638378f00b0035649669b7bmr2296530jal.103.1662470552354; Tue, 06
+ Sep 2022 06:22:32 -0700 (PDT)
+Date:   Tue, 06 Sep 2022 06:22:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b9066905e802163a@google.com>
+Subject: [syzbot] KMSAN: uninit-value in io_req_cqe_overflow
+From:   syzbot <syzbot+12dde80bf174ac8ae285@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, glider@google.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/6/22 12:51 AM, Christoph Hellwig wrote:
-> On Tue, Sep 06, 2022 at 12:03:29PM +0530, Kanchan Joshi wrote:
->>> This context looks weird?  That bio_alloc_bioset should not be there,
->>> as biosets are only used for file system I/O, which this is not.
->>
->> if you think it's a deal-breaker, maybe I can add a new bioset in nvme and
->> pass that as argument to this helper. Would you prefer that over the
->> current approach.
-> 
-> The whole point is that biosets exist to allow for forward progress
-> guarantees required for file system I/O.  For passthrough I/O
-> bio_kmalloc is perfectly fine and much simpler.  Adding yet another
-> bio_set just makes things even worse.
+Hello,
 
-It's a performance concern too, efficiency is much worse by using
-kmalloc+kfree for passthrough. You don't get bio caching that way.
+syzbot found the following issue on:
 
--- 
-Jens Axboe
+HEAD commit:    ac3859c02d7f block: kmsan: skip bio block merging logic fo..
+git tree:       https://github.com/google/kmsan.git master
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1394e48b080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8e64bc5364a1307e
+dashboard link: https://syzkaller.appspot.com/bug?extid=12dde80bf174ac8ae285
+compiler:       clang version 15.0.0 (https://github.com/llvm/llvm-project.git 610139d2d9ce6746b3c617fb3e2f7886272d26ff), GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12cb6983080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17744fbd080000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+12dde80bf174ac8ae285@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in io_req_cqe_overflow+0x1f8/0x220 io_uring/io_uring.c:687
+ io_req_cqe_overflow+0x1f8/0x220 io_uring/io_uring.c:687
+ __io_fill_cqe_req+0x4ad/0x830 io_uring/io_uring.h:121
+ __io_submit_flush_completions io_uring/io_uring.c:1192 [inline]
+ io_submit_flush_completions+0x11c/0x390 io_uring/io_uring.c:166
+ io_submit_state_end io_uring/io_uring.c:2025 [inline]
+ io_submit_sqes+0x7d3/0xd50 io_uring/io_uring.c:2137
+ __do_sys_io_uring_enter io_uring/io_uring.c:3053 [inline]
+ __se_sys_io_uring_enter+0x597/0x1d30 io_uring/io_uring.c:2983
+ __x64_sys_io_uring_enter+0x117/0x190 io_uring/io_uring.c:2983
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Uninit was stored to memory at:
+ io_req_set_res io_uring/io_uring.h:156 [inline]
+ io_recv_finish io_uring/net.c:537 [inline]
+ io_recv+0x18ee/0x1d00 io_uring/net.c:845
+ io_issue_sqe+0x3b1/0x11d0 io_uring/io_uring.c:1576
+ io_queue_sqe io_uring/io_uring.c:1753 [inline]
+ io_submit_sqe+0xb40/0x1be0 io_uring/io_uring.c:2011
+ io_submit_sqes+0x542/0xd50 io_uring/io_uring.c:2122
+ __do_sys_io_uring_enter io_uring/io_uring.c:3053 [inline]
+ __se_sys_io_uring_enter+0x597/0x1d30 io_uring/io_uring.c:2983
+ __x64_sys_io_uring_enter+0x117/0x190 io_uring/io_uring.c:2983
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Local variable msg created at:
+ io_recv+0x4b/0x1d00 io_uring/net.c:763
+ io_issue_sqe+0x3b1/0x11d0 io_uring/io_uring.c:1576
+
+CPU: 0 PID: 3487 Comm: syz-executor126 Not tainted 6.0.0-rc2-syzkaller-47461-gac3859c02d7f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

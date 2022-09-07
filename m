@@ -2,45 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1655B0242
-	for <lists+io-uring@lfdr.de>; Wed,  7 Sep 2022 13:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4947E5B04A4
+	for <lists+io-uring@lfdr.de>; Wed,  7 Sep 2022 15:05:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbiIGLAN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Sep 2022 07:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
+        id S230011AbiIGNFB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Sep 2022 09:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbiIGLAM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Sep 2022 07:00:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59ABD74372;
-        Wed,  7 Sep 2022 04:00:11 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0A82C2033D;
-        Wed,  7 Sep 2022 11:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1662548410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229976AbiIGNE7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Sep 2022 09:04:59 -0400
+Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309461838B;
+        Wed,  7 Sep 2022 06:04:56 -0700 (PDT)
+Date:   Wed, 7 Sep 2022 09:04:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662555894;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=HmaE7iOjn6DeLFkNOLr8ASPOm5MulkrwVeS3GjvYnFQ=;
-        b=XJuKUxE3K2H/o+zbOpLWLhtXEgxHdoiWAQxKGUR4cKIaV8UfyJO/UQK0u1N/Q0GiZv99Cx
-        kg8xGbUHizgdfJURCEVo7e1R7yjc93Oufl/51InNOknj8+BajqsA6lihzRcavskk7trfVf
-        XL6FEF6zeAMocGbRwpJqhrx4BFTASfU=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D477413486;
-        Wed,  7 Sep 2022 11:00:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id +m1RM7l5GGMSVwAAMHmgww
-        (envelope-from <mhocko@suse.com>); Wed, 07 Sep 2022 11:00:09 +0000
-Date:   Wed, 7 Sep 2022 13:00:09 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
+        bh=3UodEGmtAL0Z2fi75TPwE5UbXZRqdKXtyJj7vm5kpXk=;
+        b=er2MzJbTg47iAo/XMusErAaGYdN6LhjL9qJ7uEt4qEtP6HbsNa3eddpgjMgNqeDLP23aLT
+        Gwip6c5VZ7JEEH0cUPSDYRDY/kPSA/0lPyiKeXik8d/k2hQ2yrItfs4NovpVivoEk4ZzdX
+        atkHw1ns446d4aZFxAc03p1ps6wQ2SU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Michal Hocko <mhocko@suse.com>
 Cc:     Suren Baghdasaryan <surenb@google.com>,
         Mel Gorman <mgorman@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -82,9 +68,8 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
-References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
- <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
+Message-ID: <20220907130323.rwycrntnckc6h43n@kmo-framework>
+References: <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
  <CAJuCfpGhwPFYdkOLjwwD4ra9JxPqq1T5d1jd41Jy3LJnVnhNdg@mail.gmail.com>
  <YxEE1vOwRPdzKxoq@dhcp22.suse.cz>
  <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
@@ -93,26 +78,29 @@ References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
  <20220905234649.525vorzx27ybypsn@kmo-framework>
  <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
  <20220906182058.iijmpzu4rtxowy37@kmo-framework>
+ <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220906182058.iijmpzu4rtxowy37@kmo-framework>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue 06-09-22 14:20:58, Kent Overstreet wrote:
-[...]
-> Otherwise, saying "code has to be maintained" is a little bit like saying water
-> is wet, and we're all engineers here, I think we know that :)
+On Wed, Sep 07, 2022 at 01:00:09PM +0200, Michal Hocko wrote:
+> Hmm, it seems that further discussion doesn't really make much sense
+> here. I know how to use my time better.
 
-Hmm, it seems that further discussion doesn't really make much sense
-here. I know how to use my time better.
--- 
-Michal Hocko
-SUSE Labs
+Just a thought, but I generally find it more productive to propose ideas than to
+just be disparaging.
+
+Cheers,
+Kent

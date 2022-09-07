@@ -2,58 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D23785B0AA2
-	for <lists+io-uring@lfdr.de>; Wed,  7 Sep 2022 18:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA4B5B0ACF
+	for <lists+io-uring@lfdr.de>; Wed,  7 Sep 2022 18:57:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbiIGQwH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Sep 2022 12:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37662 "EHLO
+        id S229829AbiIGQ5o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Sep 2022 12:57:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiIGQwH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Sep 2022 12:52:07 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC94915C9
-        for <io-uring@vger.kernel.org>; Wed,  7 Sep 2022 09:52:04 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 287FnGnp030632
-        for <io-uring@vger.kernel.org>; Wed, 7 Sep 2022 09:52:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=116JAnPmsjXR4BoK9ZAEmBe6m61HgOU5+tvsQFEYRyo=;
- b=Iu6izS05S5UDYwE1BeRCpfVO/vSHJX1URiWTlmaFQPV6O4NodixJVunZL/YfnBOGk8MK
- /rWBYrp2lEnSom8EsO5uQPVVHQ+78gv3IZavHqn+DPgHTFE/kIgmHBOkfpPDDBIVYgK5
- wfwxza4kNuVjHSThuWMmQaVd/B3U2eyOwo8= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jet8ma5xs-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 07 Sep 2022 09:52:04 -0700
-Received: from twshared7509.08.ash8.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 7 Sep 2022 09:52:03 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 1DA785CAC8B7; Wed,  7 Sep 2022 09:51:54 -0700 (PDT)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        <io-uring@vger.kernel.org>
-CC:     <Kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH for-next v2] io_uring: allow buffer recycling in READV
-Date:   Wed, 7 Sep 2022 09:51:52 -0700
-Message-ID: <20220907165152.994979-1-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S230030AbiIGQ5j (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Sep 2022 12:57:39 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E34BD1D7
+        for <io-uring@vger.kernel.org>; Wed,  7 Sep 2022 09:57:31 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id q81so11971580iod.9
+        for <io-uring@vger.kernel.org>; Wed, 07 Sep 2022 09:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
+        bh=iEJ+Ajjl9N/7s7xBqcVQQRgxcDOg3e4kIU6TjS93Its=;
+        b=qINhS9Y42383a8TQBLJNUYwk0cKvTuM9eTzLbh+VLUbhd5y2CuJ3oHZHTNruhRdKId
+         sMX9dArunrVRNyWeqouxoJbQT1pkNMjY7LZtZVQPx6xlloXX4uPQCw7WmLQDz/pu0wnM
+         TvQlDNkv3T7N9hVv28bz+ln7RTUwXQqalH1HJR2k+5rMVgJtMpEP4L4mFKGH5p5R83rf
+         rB/1Bd7Xdw52dEO7xEWcrUCJ/eHs1r01vFfUbS/OcL94lO0ugAPy7gpdeQaJjV5BXjGJ
+         SACWc7bdMsgiJbeu3r8uOc/tpTT071xNeOONkHW/dmVzbfn1vs6Oh6jDMpKsvyOlgNPZ
+         KZMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=iEJ+Ajjl9N/7s7xBqcVQQRgxcDOg3e4kIU6TjS93Its=;
+        b=g+seGMcB15dHoAGW2YgDHrGaq4NKffiT5ZqFmudZyxB86wMn0/I/WitfhfXjKEG0GH
+         rhqkXkZkUiP5nRNLEAopSKpfgRIHsJd0hYsvTa466HG340/wn1960aXeyAjqIQCi+EAw
+         72AgkKCdbkL3aIXVvjECcG/C22LKu034hyUk62aCJ3TbOZgNm5PBWd3+Dl21dnOmzmwq
+         T0ZbsJKIaUyf3MUxLfYYfW8e1nEfpehyyE+Lc8P5dIvoa4HkMS+9cr4id0Yk7DCraql2
+         UxWrPMcksdqDvfOr95rDNp3m/Y0oqTIcXFEz5a47XDfKSmPbJcqvFyAomcpHIzXyOJqt
+         Ex9Q==
+X-Gm-Message-State: ACgBeo0aGdDdyEsnmE1tQNqhb0o07zqU4SvsB9MKTF5r/D7kSGNijTay
+        2Tx+s5pOvBdCMuzrKgE0w8yFag==
+X-Google-Smtp-Source: AA6agR4Jda/RVn7M0fIhMC12ld7S5NVvqj/YWS7gpYtu8n1CWksCzdiJUBdzuiNP240pto6a950rcg==
+X-Received: by 2002:a05:6638:2714:b0:356:74ed:a441 with SMTP id m20-20020a056638271400b0035674eda441mr2711670jav.250.1662569851090;
+        Wed, 07 Sep 2022 09:57:31 -0700 (PDT)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id c17-20020a0290d1000000b00349e1922573sm7337677jag.170.2022.09.07.09.57.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 09:57:30 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Dylan Yudaken <dylany@fb.com>, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Kernel-team@fb.com
+In-Reply-To: <20220907165152.994979-1-dylany@fb.com>
+References: <20220907165152.994979-1-dylany@fb.com>
+Subject: Re: [PATCH for-next v2] io_uring: allow buffer recycling in READV
+Message-Id: <166256985044.1932974.15663220087273783004.b4-ty@kernel.dk>
+Date:   Wed, 07 Sep 2022 10:57:30 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Hn6vd2P_Zkiw84YiHfH5K7V-JvLsh6GY
-X-Proofpoint-GUID: Hn6vd2P_Zkiw84YiHfH5K7V-JvLsh6GY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-07_08,2022-09-07_02,2022-06-22_01
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-65ba7
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,241 +70,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In commit 934447a603b2 ("io_uring: do not recycle buffer in READV") a
-temporary fix was put in io_kbuf_recycle to simply never recycle READV
-buffers.
+On Wed, 7 Sep 2022 09:51:52 -0700, Dylan Yudaken wrote:
+> In commit 934447a603b2 ("io_uring: do not recycle buffer in READV") a
+> temporary fix was put in io_kbuf_recycle to simply never recycle READV
+> buffers.
+> 
+> Instead of that, rather treat READV with REQ_F_BUFFER_SELECTED the same as
+> a READ with REQ_F_BUFFER_SELECTED. Since READV requires iov_len of 1 they
+> are essentially the same.
+> In order to do this inside io_prep_rw() add some validation to check that
+> it is in fact only length 1, and also extract the length of the buffer at
+> prep time.
+> 
+> [...]
 
-Instead of that, rather treat READV with REQ_F_BUFFER_SELECTED the same a=
-s
-a READ with REQ_F_BUFFER_SELECTED. Since READV requires iov_len of 1 they
-are essentially the same.
-In order to do this inside io_prep_rw() add some validation to check that
-it is in fact only length 1, and also extract the length of the buffer at
-prep time.
+Applied, thanks!
 
-This allows removal of the io_iov_buffer_select codepaths as they are onl=
-y
-used from the READV op.
+[1/1] io_uring: allow buffer recycling in READV
+      commit: 8e966e46c38df6d4f45d2122e321b2d5982fcaf8
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
+Best regards,
+-- 
+Jens Axboe
 
-since v1:
- - no change, just rebased on latest 6.0 branch
-
- io_uring/kbuf.h |  12 -----
- io_uring/rw.c   | 134 +++++++++++++++++++-----------------------------
- 2 files changed, 52 insertions(+), 94 deletions(-)
-
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 746fbf31a703..c23e15d7d3ca 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -86,18 +86,6 @@ static inline bool io_do_buffer_select(struct io_kiocb=
- *req)
-=20
- static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_=
-flags)
- {
--	/*
--	 * READV uses fields in `struct io_rw` (len/addr) to stash the selected
--	 * buffer data. However if that buffer is recycled the original request
--	 * data stored in addr is lost. Therefore forbid recycling for now.
--	 */
--	if (req->opcode =3D=3D IORING_OP_READV) {
--		if ((req->flags & REQ_F_BUFFER_RING) && req->buf_list) {
--			req->buf_list->head++;
--			req->buf_list =3D NULL;
--		}
--		return;
--	}
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		io_kbuf_recycle_legacy(req, issue_flags);
- 	if (req->flags & REQ_F_BUFFER_RING)
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 1babd77da79c..74d467fe423d 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -33,6 +33,46 @@ static inline bool io_file_supports_nowait(struct io_k=
-iocb *req)
- 	return req->flags & REQ_F_SUPPORT_NOWAIT;
- }
-=20
-+#ifdef CONFIG_COMPAT
-+static int io_iov_compat_buffer_select_prep(struct io_rw *rw)
-+{
-+	struct compat_iovec __user *uiov;
-+	compat_ssize_t clen;
-+
-+	uiov =3D u64_to_user_ptr(rw->addr);
-+	if (!access_ok(uiov, sizeof(*uiov)))
-+		return -EFAULT;
-+	if (__get_user(clen, &uiov->iov_len))
-+		return -EFAULT;
-+	if (clen < 0)
-+		return -EINVAL;
-+
-+	rw->len =3D clen;
-+	return 0;
-+}
-+#endif
-+
-+static int io_iov_buffer_select_prep(struct io_kiocb *req)
-+{
-+	struct iovec __user *uiov;
-+	struct iovec iov;
-+	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
-+
-+	if (rw->len !=3D 1)
-+		return -EINVAL;
-+
-+#ifdef CONFIG_COMPAT
-+	if (req->ctx->compat)
-+		return io_iov_compat_buffer_select_prep(rw);
-+#endif
-+
-+	uiov =3D u64_to_user_ptr(rw->addr);
-+	if (copy_from_user(&iov, uiov, sizeof(*uiov)))
-+		return -EFAULT;
-+	rw->len =3D iov.iov_len;
-+	return 0;
-+}
-+
- int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
-@@ -69,6 +109,16 @@ int io_prep_rw(struct io_kiocb *req, const struct io_=
-uring_sqe *sqe)
- 	rw->addr =3D READ_ONCE(sqe->addr);
- 	rw->len =3D READ_ONCE(sqe->len);
- 	rw->flags =3D READ_ONCE(sqe->rw_flags);
-+
-+	/* Have to do this validation here, as this is in io_read() rw->len mig=
-ht
-+	 * have chanaged due to buffer selection
-+	 */
-+	if (req->opcode =3D=3D IORING_OP_READV && req->flags & REQ_F_BUFFER_SEL=
-ECT) {
-+		ret =3D io_iov_buffer_select_prep(req);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
-=20
-@@ -273,79 +323,6 @@ static int kiocb_done(struct io_kiocb *req, ssize_t =
-ret,
- 	return IOU_ISSUE_SKIP_COMPLETE;
- }
-=20
--#ifdef CONFIG_COMPAT
--static ssize_t io_compat_import(struct io_kiocb *req, struct iovec *iov,
--				unsigned int issue_flags)
--{
--	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
--	struct compat_iovec __user *uiov;
--	compat_ssize_t clen;
--	void __user *buf;
--	size_t len;
--
--	uiov =3D u64_to_user_ptr(rw->addr);
--	if (!access_ok(uiov, sizeof(*uiov)))
--		return -EFAULT;
--	if (__get_user(clen, &uiov->iov_len))
--		return -EFAULT;
--	if (clen < 0)
--		return -EINVAL;
--
--	len =3D clen;
--	buf =3D io_buffer_select(req, &len, issue_flags);
--	if (!buf)
--		return -ENOBUFS;
--	rw->addr =3D (unsigned long) buf;
--	iov[0].iov_base =3D buf;
--	rw->len =3D iov[0].iov_len =3D (compat_size_t) len;
--	return 0;
--}
--#endif
--
--static ssize_t __io_iov_buffer_select(struct io_kiocb *req, struct iovec=
- *iov,
--				      unsigned int issue_flags)
--{
--	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
--	struct iovec __user *uiov =3D u64_to_user_ptr(rw->addr);
--	void __user *buf;
--	ssize_t len;
--
--	if (copy_from_user(iov, uiov, sizeof(*uiov)))
--		return -EFAULT;
--
--	len =3D iov[0].iov_len;
--	if (len < 0)
--		return -EINVAL;
--	buf =3D io_buffer_select(req, &len, issue_flags);
--	if (!buf)
--		return -ENOBUFS;
--	rw->addr =3D (unsigned long) buf;
--	iov[0].iov_base =3D buf;
--	rw->len =3D iov[0].iov_len =3D len;
--	return 0;
--}
--
--static ssize_t io_iov_buffer_select(struct io_kiocb *req, struct iovec *=
-iov,
--				    unsigned int issue_flags)
--{
--	struct io_rw *rw =3D io_kiocb_to_cmd(req, struct io_rw);
--
--	if (req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)) {
--		iov[0].iov_base =3D u64_to_user_ptr(rw->addr);
--		iov[0].iov_len =3D rw->len;
--		return 0;
--	}
--	if (rw->len !=3D 1)
--		return -EINVAL;
--
--#ifdef CONFIG_COMPAT
--	if (req->ctx->compat)
--		return io_compat_import(req, iov, issue_flags);
--#endif
--
--	return __io_iov_buffer_select(req, iov, issue_flags);
--}
--
- static struct iovec *__io_import_iovec(int ddir, struct io_kiocb *req,
- 				       struct io_rw_state *s,
- 				       unsigned int issue_flags)
-@@ -368,7 +345,8 @@ static struct iovec *__io_import_iovec(int ddir, stru=
-ct io_kiocb *req,
- 	buf =3D u64_to_user_ptr(rw->addr);
- 	sqe_len =3D rw->len;
-=20
--	if (opcode =3D=3D IORING_OP_READ || opcode =3D=3D IORING_OP_WRITE) {
-+	if (opcode =3D=3D IORING_OP_READ || opcode =3D=3D IORING_OP_WRITE ||
-+	    (req->flags & REQ_F_BUFFER_SELECT)) {
- 		if (io_do_buffer_select(req)) {
- 			buf =3D io_buffer_select(req, &sqe_len, issue_flags);
- 			if (!buf)
-@@ -384,14 +362,6 @@ static struct iovec *__io_import_iovec(int ddir, str=
-uct io_kiocb *req,
- 	}
-=20
- 	iovec =3D s->fast_iov;
--	if (req->flags & REQ_F_BUFFER_SELECT) {
--		ret =3D io_iov_buffer_select(req, iovec, issue_flags);
--		if (ret)
--			return ERR_PTR(ret);
--		iov_iter_init(iter, ddir, iovec, 1, iovec->iov_len);
--		return NULL;
--	}
--
- 	ret =3D __import_iovec(ddir, buf, sqe_len, UIO_FASTIOV, &iovec, iter,
- 			      req->ctx->compat);
- 	if (unlikely(ret < 0))
-
-base-commit: 336d28a8f38013a069f2d46e73aaa1880ef17a47
---=20
-2.30.2
 

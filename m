@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E6E5B19C2
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C63715B19C6
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbiIHKQb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 06:16:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
+        id S229695AbiIHKRH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 06:17:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiIHKQ3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:16:29 -0400
+        with ESMTP id S230190AbiIHKRG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:17:06 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7A5B6566;
-        Thu,  8 Sep 2022 03:16:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3841EB655A;
+        Thu,  8 Sep 2022 03:17:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 662ECB81E80;
-        Thu,  8 Sep 2022 10:16:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE3EC433C1;
-        Thu,  8 Sep 2022 10:16:21 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 69A9AB8202D;
+        Thu,  8 Sep 2022 10:17:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21601C433C1;
+        Thu,  8 Sep 2022 10:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662632181;
-        bh=j4Q4LwmhEo/x9jzNYVfCpPx/5TZ3N2+Au/UnimeW2bI=;
+        s=k20201202; t=1662632221;
+        bh=kk/5P5ROJUorBgv/h8aQCrqW0jLADiXy2bTmIJ/vpRI=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tT3FC1AaUVbP/AIF+YLMuOf/VIVmnmtxW6/imbNvS20Fvn/EF64b/O8Mq0xSa7/SN
-         Z1tCihK3RLIXUCqhqy2ZpA37KnFYt28yANvM4R+yCshTdMwAUrLpv+J6b8i731w3xw
-         iX8R2kUgCDgS4y4/mSK9v02XRHg8IroFczWXUitNdPgWNkPxn9mbMe4DInSmAPGyt8
-         E8CBu9gvqjf4FUzp2BWNwH1xg9uuQV80VvEyy4VpzQJq7oWKcqTDO9yeRyKTD8U3H6
-         E7vX73EDEqNvT2tyhOee7vi8ANuH4MAtz9An7E0inhLyT9ymjXlWS0TzEfF6wWXqXb
-         V4GCSz0XviWDA==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-12803ac8113so9776094fac.8;
-        Thu, 08 Sep 2022 03:16:21 -0700 (PDT)
-X-Gm-Message-State: ACgBeo1Szdp2vOd4N7Wv4ygqnCb4j/mZqR8ScbN8/8McFJHsD4dPvPu1
-        7sbJoBd9eQTYDcgrBrcO2pWx6sAG7Suc8P3Eezg=
-X-Google-Smtp-Source: AA6agR5FcWw6bO0z6Q0Bh9LfQac06LtkkxRHD1eJO7/rFRXlO9DsMTAdiRHtxotXdQwZ0uEDmHdTD2hFcTD9vEj5mp0=
-X-Received: by 2002:a05:6870:ea83:b0:fe:365f:cb9d with SMTP id
- s3-20020a056870ea8300b000fe365fcb9dmr1494894oap.98.1662632180235; Thu, 08 Sep
- 2022 03:16:20 -0700 (PDT)
+        b=SVXl1AB/040dMPwWIK7LAxmY7P1LjfV+zLIqyrIScWqUkdCTDP7dutguIA6yyW+bF
+         Y0JOz3tcQuv//UQ3Mpt/wySD63raJRLn3oG6N75P5tvHVrO86IhRDoqCyTUBLCRDSl
+         SPELHtKfu/iY27AnRWacYIor9R3ory8it8yqENcVuAGr+ylZ2Dh7fxb4nBuM+qJyCa
+         wSx/a6gJUoXNP1syafAEylyIP8cr7TgvWAvq/uaL7J5CFmeFIm0zjpFMvqknEDmoOr
+         0qgeN/y5yWQ5SthjaAp4BomG8x9pS2xq5CXu6INywiRPDephUkT83pYaCZMX8/5sLT
+         hHjKF1YZC6khg==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-127ba06d03fso19497965fac.3;
+        Thu, 08 Sep 2022 03:17:01 -0700 (PDT)
+X-Gm-Message-State: ACgBeo0qUECXYoDK6EU46amSXW5iJCKxO4qMNWlmkEpqrNjC3OY3V0rj
+        11Nh1WdWrEuVF8VTW2kH7w9M0XC+byjMK14TDWc=
+X-Google-Smtp-Source: AA6agR7caALn4zm8e/g0PWFqNsX/S6cN7tVNOcDNmX+XRItZULW2L0mYjNKAodif9FkJION82zLkeEHee5/yKtmSkXI=
+X-Received: by 2002:a05:6808:f14:b0:343:5f65:a540 with SMTP id
+ m20-20020a0568080f1400b003435f65a540mr1060813oiw.92.1662632220342; Thu, 08
+ Sep 2022 03:17:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-12-shr@fb.com>
-In-Reply-To: <20220908002616.3189675-12-shr@fb.com>
+References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-11-shr@fb.com>
+In-Reply-To: <20220908002616.3189675-11-shr@fb.com>
 From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Thu, 8 Sep 2022 11:15:44 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H56dfcQP+vMK0T22nJwZQ=Qq217wT=idkHZdW4J4ar9fQ@mail.gmail.com>
-Message-ID: <CAL3q7H56dfcQP+vMK0T22nJwZQ=Qq217wT=idkHZdW4J4ar9fQ@mail.gmail.com>
-Subject: Re: [PATCH v2 11/12] btrfs: add assert to search functions
+Date:   Thu, 8 Sep 2022 11:16:24 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H7Zh0VzPG_F2cM5e37QzpOEkRNaCjPrzicKtm=muidR9A@mail.gmail.com>
+Message-ID: <CAL3q7H7Zh0VzPG_F2cM5e37QzpOEkRNaCjPrzicKtm=muidR9A@mail.gmail.com>
+Subject: Re: [PATCH v2 10/12] btrfs: make balance_dirty_pages nowait compatible
 To:     Stefan Roesch <shr@fb.com>
 Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
         linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com
@@ -63,79 +63,59 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Thu, Sep 8, 2022 at 1:26 AM Stefan Roesch <shr@fb.com> wrote:
 >
-> This adds warnings to search functions, which should not have the nowait
-> flag set when called.
-
-This could be more clear, by saying btree search functions which are
-not used for the buffered IO
-and direct IO paths, which are the only users of nowait btree searches.
-
-Also the subject: "btrfs: add assert to search functions"
-
-Mentions assert, but the code adds warnings, which are not the same.
-It could also be more clear like:   "btrfs: assert nowait mode is not
-used for some btree search functions''
-
-
+> This replaces the call to function balance_dirty_pages_ratelimited() in
+> the function btrfs_buffered_write() with a call to
+> balance_dirty_pages_ratelimited_flags().
+>
+> It also moves the function after the again label. This can cause the
+> function to be called a bit later, but this should have no impact in the
+> real world.
 >
 > Signed-off-by: Stefan Roesch <shr@fb.com>
 > ---
->  fs/btrfs/ctree.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  fs/btrfs/file.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 >
-> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-> index 71b238364939..9caf0f87cbcb 100644
-> --- a/fs/btrfs/ctree.c
-> +++ b/fs/btrfs/ctree.c
-> @@ -2165,6 +2165,9 @@ int btrfs_search_old_slot(struct btrfs_root *root, const struct btrfs_key *key,
->         lowest_level = p->lowest_level;
->         WARN_ON(p->nodes[0] != NULL);
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 6e191e353b22..fd42ba9de7a7 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1654,6 +1654,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
+>         loff_t old_isize = i_size_read(inode);
+>         unsigned int ilock_flags = 0;
+>         bool nowait = iocb->ki_flags & IOCB_NOWAIT;
+> +       unsigned int bdp_flags = nowait ? BDP_ASYNC : 0;
 >
-> +       if (WARN_ON_ONCE(p->nowait == 1))
+>         if (nowait)
+>                 ilock_flags |= BTRFS_ILOCK_TRY;
+> @@ -1756,6 +1757,10 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
+>
+>                 release_bytes = reserve_bytes;
+>  again:
+> +               ret = balance_dirty_pages_ratelimited_flags(inode->i_mapping, bdp_flags);
+> +               if (unlikely(ret))
 
-This doesn't follow the existing code style, which is to treat path
-members as booleans, and just do:
-
-WARN_ON_ONCE(p->nowait)
-
-I.e., no explicit " == 1"
-
-As this is a developer thing, I would use ASSERT() instead.
-
-For release builds that typically have CONFIG_BTRFS_ASSERT not set
-(like Ubuntu and Debian), it would
-still allow the search to continue, which is fine from a functional
-perspective, since not respecting nowait
-semantics is just a performance thing.
+We normally only use likely or unlikely in contextes where we observe
+that it makes a significant difference.
+What's the motivation here, have you verified that in this case it has
+a significant impact?
 
 Thanks.
 
-
-> +               return -EINVAL;
+> +                       break;
 > +
->         if (p->search_commit_root) {
->                 BUG_ON(time_seq);
->                 return btrfs_search_slot(NULL, root, key, p, 0, 0);
-> @@ -4465,6 +4468,9 @@ int btrfs_search_forward(struct btrfs_root *root, struct btrfs_key *min_key,
->         int ret = 1;
->         int keep_locks = path->keep_locks;
+>                 /*
+>                  * This is going to setup the pages array with the number of
+>                  * pages we want, so we don't really need to worry about the
+> @@ -1860,8 +1865,6 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
 >
-> +       if (WARN_ON_ONCE(path->nowait == 1))
-> +               return -EINVAL;
-> +
->         path->keep_locks = 1;
->  again:
->         cur = btrfs_read_lock_root_node(root);
-> @@ -4645,6 +4651,9 @@ int btrfs_next_old_leaf(struct btrfs_root *root, struct btrfs_path *path,
->         int ret;
->         int i;
+>                 cond_resched();
 >
-> +       if (WARN_ON_ONCE(path->nowait == 1))
-> +               return -EINVAL;
-> +
->         nritems = btrfs_header_nritems(path->nodes[0]);
->         if (nritems == 0)
->                 return 1;
+> -               balance_dirty_pages_ratelimited(inode->i_mapping);
+> -
+>                 pos += copied;
+>                 num_written += copied;
+>         }
 > --
 > 2.30.2
 >

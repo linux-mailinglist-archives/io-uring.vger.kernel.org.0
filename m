@@ -2,106 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC7FE5B1DD4
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 15:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84EAC5B1E88
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 15:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbiIHNDL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 09:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48918 "EHLO
+        id S232404AbiIHNT2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 09:19:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230505AbiIHNDK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 09:03:10 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CA70D5715
-        for <io-uring@vger.kernel.org>; Thu,  8 Sep 2022 06:03:09 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id z17so9783510eje.0
-        for <io-uring@vger.kernel.org>; Thu, 08 Sep 2022 06:03:09 -0700 (PDT)
+        with ESMTP id S232392AbiIHNT0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 09:19:26 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB4AF56E7
+        for <io-uring@vger.kernel.org>; Thu,  8 Sep 2022 06:19:17 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id g14so12770346qto.11
+        for <io-uring@vger.kernel.org>; Thu, 08 Sep 2022 06:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=WHh7g2lyaDRtekZvnYczsesHgKRobTJTrXN7urs+nvs=;
-        b=hkHQun1cyqHX2espChNuid+93bw7T7ugI5U8cWMgyv0m26dywzo996HyoFLBP580Ap
-         ExKuJ03E7e+y04Wol5y3mCqDvSRbtxvc+W3KyHiCF1Tt/+n75KOdGAEP5aR+E0EGIRdD
-         6H+9oYxbNdClKI+eYqb2L4Qou0fCesYR878z3wWWV+2bNvaXs2b2lITa+Y9kdu1LYLav
-         aFPVCEkLgDd26T6GUoTZ/PqlXjKDfQzz/C9dbFySAtPFAGm5zuHPHjrbX4XVUnHtV6j/
-         coFkuWDWivXy712p+bowx67cuvaHe8UMUii0jJsOkCfxXZ6guttQltOt/M4z4S+p/eNt
-         ZfnQ==
+        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=t3AIoEdxLklUxJhZuRgTE0ZgbVDpOfOMa+f5H31fp8U=;
+        b=2syY6wI2LrfQiL9tPugq3WH57mYUUsLNxQsj5s/1TAaRqgGPK16/oVCPub2IV4SKBO
+         0WiAtTmpACPF5uaJUvqdy4knzBt9Fc04OsSfssonTLzDHtH/9Lqhue1aPN0LPzABSbD0
+         L1zY17ylNu8An9DxyKwkE1bO0eko+QL5FRvYVJi8eqLHM07nXcz8fNwqUEGEkuPCjwea
+         DYTZo7AHKOl3YXudG0D0eU5mpbyLUP+gXjbVvShjm9xVGDNVybW80p1g79Z797V5c362
+         t4cKUXRq/gZodgUFiJ8AZT0TUSF1HxUc8/BLS2QxU1v9GnCp+zWoad6blFMjYnv8R+mk
+         z7ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=WHh7g2lyaDRtekZvnYczsesHgKRobTJTrXN7urs+nvs=;
-        b=o8ClXmVMkycAy+5qifcXXde81W4mc96Xd2G3t8v1jTP3F/PmVoHrAQ9dp8Pyf9vymf
-         ZcJaUaAdwJTLXVUuw5qatjHzFEu6KKfFid0RLRpPcbcz+slL5t7DVFA9fDSwYTUnibr6
-         lXfHeUjt67Fp/PPhR5em4JQU4n0UYxgUbK0DWo+WBQ3YUUjh61Ch9BlYJrSAVd8m8o/1
-         SJnWTMshTppTab78QUwmU4X4UKRluvpjJHV34qf8ZzV67pZYjJMl4O0A5vG0OyEsQRSm
-         6aPp96yRYSrWL6Rw06boOhUQ6zs1keQpDBFMocYhbJn1FGzfu3EppBXoRuXjaxoFl6ml
-         0sbw==
-X-Gm-Message-State: ACgBeo0WdrJcIjbbXp72LyUx3Nzymp8W7Z9opoST9Fv7PuJz9MAJfq/N
-        7VYw+L14msNoY3LxmDOHLrv74EXSy2s=
-X-Google-Smtp-Source: AA6agR4eT0pgvqqnwD6J5mKeCavHL9+9GI3Y7kMNPSRKANcb3f8sjaWyeYZH32lXCkrD3ySYmvwksA==
-X-Received: by 2002:a17:907:6d1d:b0:741:5b1b:5c9a with SMTP id sa29-20020a1709076d1d00b007415b1b5c9amr5992832ejc.642.1662642187462;
-        Thu, 08 Sep 2022 06:03:07 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:cfb9])
-        by smtp.gmail.com with ESMTPSA id x68-20020a50baca000000b0044bfdbd8a33sm12462441ede.88.2022.09.08.06.03.06
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=t3AIoEdxLklUxJhZuRgTE0ZgbVDpOfOMa+f5H31fp8U=;
+        b=R+4+5He7kTR1PBteLExOk+E60JHEAJ5fmVm4zaxYXit2a9wGk7gqajgWW80PreayqD
+         buGGcVqsTD7gr2pWVTtktuvcEY4nO9SdKQJHr8mGfbwsHrprVUvRZ63MACobj8MOXEip
+         oWDp0L7ZcRSqfNrU2oq5Fz7a6tg9NXpiC5YLLOtcTGp6548pV4EuL7VKZEjzUt+vkXNy
+         P9mmcmM4ZhK0HMpDJD3b3uAIJZeqCbLm7mqFzRa1gGsI9tnhezSZFU7FfFkg0ZlR6Qbr
+         iSO+yCAIlwS2mnjm5v67mGJHBrk34p9GMmZavpjPvW1hN0YCl+hT/exbxusz+X3q8XqI
+         +ZIQ==
+X-Gm-Message-State: ACgBeo1pnRg1qrWYwb2Iaiz4Mj7BZcVoPvT3E5J0IHF8A8dh9pElvc/O
+        5btZ75xyqDOMKEJ4i72zKoYmDA==
+X-Google-Smtp-Source: AA6agR50R5+r2bzVBIPJ4PjbnEVIoBYtqIKObmTAxPyc4OSLoye1L+MrlMCVk7IHOLWfD9Y3AZwjrQ==
+X-Received: by 2002:a05:622a:1b92:b0:343:6cd6:a972 with SMTP id bp18-20020a05622a1b9200b003436cd6a972mr7800949qtb.262.1662643156738;
+        Thu, 08 Sep 2022 06:19:16 -0700 (PDT)
+Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id t32-20020a05622a182000b0033aac3da27dsm14625472qtc.19.2022.09.08.06.19.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 06:03:06 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 6.0] io_uring/net: copy addr for zc on POLL_FIRST
-Date:   Thu,  8 Sep 2022 14:01:10 +0100
-Message-Id: <ab1d0657890d6721339c56d2e161a4bba06f85d0.1662642013.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.2
+        Thu, 08 Sep 2022 06:19:16 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 09:19:15 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, axboe@kernel.dk, fdmanana@gmail.com
+Subject: Re: [PATCH v2 02/12] btrfs: implement a nowait option for tree
+ searches
+Message-ID: <Yxnr0/7w8VC6ObEJ@localhost.localdomain>
+References: <20220908002616.3189675-1-shr@fb.com>
+ <20220908002616.3189675-3-shr@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220908002616.3189675-3-shr@fb.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Every time we return from an issue handler and expect the request to be
-retried we should also setup it for async exec ourselves. Do that when
-we return on IORING_RECVSEND_POLL_FIRST in io_sendzc(), otherwise it'll
-re-read the address, which might be a surprise for the userspace.
+On Wed, Sep 07, 2022 at 05:26:06PM -0700, Stefan Roesch wrote:
+> From: Josef Bacik <josef@toxicpanda.com>
+> 
+> For NOWAIT IOCB's we'll need a way to tell search to not wait on locks
+> or anything.  Accomplish this by adding a path->nowait flag that will
+> use trylocks and skip reading of metadata, returning -EWOULDBLOCK in
+> either of these cases.  For now we only need this for reads, so only the
+> read side is handled.  Add an ASSERT() to catch anybody trying to use
+> this for writes so they know they'll have to implement the write side.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Stefan Roesch <shr@fb.com>
 
-Fixes: 092aeedb750a9 ("io_uring: allow to pass addr into sendzc")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Should update my changelog to say use -EAGAIN instead of -EWOULDBLOCK.  Thanks,
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 7047c1342541..e9efed40cf3d 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -1003,9 +1003,6 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 	unsigned msg_flags, cflags;
- 	int ret, min_ret = 0;
- 
--	if (!(req->flags & REQ_F_POLLED) &&
--	    (zc->flags & IORING_RECVSEND_POLL_FIRST))
--		return -EAGAIN;
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
-@@ -1030,6 +1027,10 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 		msg.msg_namelen = zc->addr_len;
- 	}
- 
-+	if (!(req->flags & REQ_F_POLLED) &&
-+	    (zc->flags & IORING_RECVSEND_POLL_FIRST))
-+		return io_setup_async_addr(req, addr, issue_flags);
-+
- 	if (zc->flags & IORING_RECVSEND_FIXED_BUF) {
- 		ret = io_import_fixed(WRITE, &msg.msg_iter, req->imu,
- 					(u64)(uintptr_t)zc->buf, zc->len);
--- 
-2.37.2
-
+Josef

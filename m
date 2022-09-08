@@ -2,33 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E8D5B155E
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 09:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A515B156C
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 09:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbiIHHHh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 03:07:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38128 "EHLO
+        id S229911AbiIHHMt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 03:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231246AbiIHHHf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 03:07:35 -0400
-Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F219FAB8;
-        Thu,  8 Sep 2022 00:07:33 -0700 (PDT)
-Date:   Thu, 8 Sep 2022 03:07:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1662620851;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229708AbiIHHMs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 03:12:48 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C18ED474F;
+        Thu,  8 Sep 2022 00:12:47 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id A735433D05;
+        Thu,  8 Sep 2022 07:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1662621165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=wTEYgGZ5tSon77wS7vl2ROsEnkkCO0gsMgQptW+CPqI=;
-        b=iJA14xapCDtkxxFZ191Tkejngxj1CUcv4kW7CKzkjsz7ATcaQDWEu0NFSqx3I6BQdf18/S
-        WTbuPmJUiio1UduO89kjDWGE8I/TqqMPK7/HJWAK+mBPhtt24ufrZC9OZJmb5VRtm8xK61
-        6ZzGjTRW6DZ8SglZivSmm0qDFb8PFdY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Suren Baghdasaryan <surenb@google.com>
+        bh=wQxYLHyDLglTrc96Dwo9w9RPNpsCq3XWN1HyAjbRYNs=;
+        b=tzO1hqg8Cf+V3DOldPoJ0tAbfrcHQ/buUKHG+8XEIMml22acom6ipoa6KJxfv7pXLWnzPb
+        dvicd90Pr+rF+mf7X8aPjxI/j/QR3x9TEVgZ2XHIm66QAHuxOs5AWnjVv3I99n9b6GSa8l
+        ClarGp9lNgYGmVJgqD7angv+UmF6LpU=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7F64713A6D;
+        Thu,  8 Sep 2022 07:12:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Rg4TH+2VGWOnDAAAMHmgww
+        (envelope-from <mhocko@suse.com>); Thu, 08 Sep 2022 07:12:45 +0000
+Date:   Thu, 8 Sep 2022 09:12:45 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
 Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Mel Gorman <mgorman@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Vlastimil Babka <vbabka@suse.cz>,
@@ -67,8 +82,9 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <20220908070719.ootyzzbd47dd5rkv@kmo-framework>
-References: <20220901201502.sn6223bayzwferxv@moria.home.lan>
+Message-ID: <YxmV7a2pnj1Kldzi@dhcp22.suse.cz>
+References: <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
+ <20220901201502.sn6223bayzwferxv@moria.home.lan>
  <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
  <20220905234649.525vorzx27ybypsn@kmo-framework>
  <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
@@ -77,16 +93,13 @@ References: <20220901201502.sn6223bayzwferxv@moria.home.lan>
  <20220907130323.rwycrntnckc6h43n@kmo-framework>
  <20220907094306.3383dac2@gandalf.local.home>
  <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
- <CAJuCfpEQG3+d-45PXhS=pD6ktrmqNQQnpf_-3+c2CG7rzuz+2g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpEQG3+d-45PXhS=pD6ktrmqNQQnpf_-3+c2CG7rzuz+2g@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -94,53 +107,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Sep 07, 2022 at 11:49:37PM -0700, Suren Baghdasaryan wrote:
-> I would really appreciate if everyone could please stick to the
-> technical side of the conversation. That way we can get some
-> constructive feedback. Everything else is not helpful and at best is a
-> distraction.
-> Maintenance burden is a price we pay and I think it's the prerogative
-> of the maintainers to take that into account. Our job is to prove that
-> the price is worth paying.
+On Thu 08-09-22 02:35:48, Kent Overstreet wrote:
+> On Wed, Sep 07, 2022 at 09:45:18AM -0400, Steven Rostedt wrote:
+> > On Wed, 7 Sep 2022 09:04:28 -0400
+> > Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > 
+> > > On Wed, Sep 07, 2022 at 01:00:09PM +0200, Michal Hocko wrote:
+> > > > Hmm, it seems that further discussion doesn't really make much sense
+> > > > here. I know how to use my time better.  
+> > > 
+> > > Just a thought, but I generally find it more productive to propose ideas than to
+> > > just be disparaging.
+> > > 
+> > 
+> > But it's not Michal's job to do so. He's just telling you that the given
+> > feature is not worth the burden. He's telling you the issues that he has
+> > with the patch set. It's the submitter's job to address those concerns and
+> > not the maintainer's to tell you how to make it better.
+> > 
+> > When Linus tells us that a submission is crap, we don't ask him how to make
+> > it less crap, we listen to why he called it crap, and then rewrite to be
+> > not so crappy. If we cannot figure it out, it doesn't get in.
+> 
+> When Linus tells someone a submission is crap, he _always_ has a sound, and
+> _specific_ technical justification for doing so.
+> 
+> "This code is going to be a considerable maintenance burden" is vapid, and lazy.
+> It's the kind of feedback made by someone who has looked at the number of lines
+> of code a patch touches and not much more.
 
-Well said.
+Then you have probably missed a huge part of my emails. Please
+re-read. If those arguments are not clear, feel free to ask for
+clarification. Reducing the whole my reasoning and objections to the
+sentence above and calling that vapid and lazy is not only unfair but
+also disrespectful.
 
-I'd also like to add - slab.h does look pretty overgrown and messy. We've grown
-a _lot_ of special purpose memory allocation interfaces, and I think it probably
-is time to try and wrangle that back.
-
-The API complexity isn't just an issue for this patch - it's an issue for
-anything that has to wrap and plumb through memory allocation interfaces. It's a
-pain point for the Rust people, and also comes in e.g. the mempool API.
-
-I think we should keep going with the memalloc_no*_save()/restore() approach,
-and extend it to other things:
-
- - memalloc_nowait_save()
- - memalloc_highpri_save()
-
-(these two get you GFP_ATOMIC).
-
-Also, I don't think these all need to be separate functions, we could have
-
-memalloc_gfp_apply()
-memalloc_gfp_restore()
-
-which simply takes a gfp flags argument and applies it to the current
-PF_MEMALLOC flags.
-
-We've had long standing bugs where vmalloc() can't correctly take gfp flags
-because some of the allocations it does for page tables don't have it correctly
-plumbed through; switching to the memalloc_*_(save|restore) is something people
-have been wanting in order to fix this - for years. Actually following through
-and completing this would let us kill the gfp flags arguments to our various
-memory allocators entirely.
-
-I think we can do the same thing with the numa node parameter - kill
-kmalloc_node() et. all, move it to task_struct with a set of save/restore
-functions.
-
-There's probably other things we can do to simplify slab.h if we look more. I've
-been hoping to start pushing patches for some of this stuff - it's going to be
-some time before I can get to it though, can only handle so many projects in
-flight at a time :)
+-- 
+Michal Hocko
+SUSE Labs

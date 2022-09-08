@@ -2,52 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7655B19CA
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 370AD5B19CC
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:18:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbiIHKR6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 06:17:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37806 "EHLO
+        id S230040AbiIHKS2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 06:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiIHKR5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:17:57 -0400
+        with ESMTP id S229529AbiIHKS1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:18:27 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F75B81F0;
-        Thu,  8 Sep 2022 03:17:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F87C0BF6;
+        Thu,  8 Sep 2022 03:18:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A4E9961BEA;
-        Thu,  8 Sep 2022 10:17:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1E0C433D6;
-        Thu,  8 Sep 2022 10:17:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 73AEA61C39;
+        Thu,  8 Sep 2022 10:18:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF0EC433D6;
+        Thu,  8 Sep 2022 10:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662632276;
-        bh=dWyxK9jP2WV93aLxJVYMrcErXjL30EfeKVj61CKAdFM=;
+        s=k20201202; t=1662632304;
+        bh=cGU3ZhRsnrpBj9RrqcP1OAYGhP7ba7hfeGBp9XoY8yM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GeZd2WDQ8IkvfSxKxZc1klqY044eNyEev16jjhgYSFMj/M9BQkCVmCrXLLJUiFU+U
-         6htI09gP+6J5p3vxA1iJqJnxRvw8YSKDMhXXp7S1+GtaYS00qIvueZe8ZhaVtjqsID
-         RrFLyqqHxVl2YqEdx1KNF8BvdUgGyszY4bvkuqLmRb8Wf5TfOs1GMZuSDrHJjl2hOo
-         jI+NlRP4GhNMAnxQGZoaVqkCRqlr8Os43r89ivpM3KiDRvE4C0auONGBoySGXEKd6F
-         9O3Qv1sCKQY9RluIapKOAlk54+M0dDqnKdMSUVmO/rCUmdHq5Z16vFOcTgwo6FVJJz
-         71X46hsh3hNxA==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-127ba06d03fso19503107fac.3;
-        Thu, 08 Sep 2022 03:17:56 -0700 (PDT)
-X-Gm-Message-State: ACgBeo3BeMYphl8jLubcJn6bNPP0UhpRFG6ONN1OO7P+YP5ClOPTycno
-        xMFK208O6h+G/N3ii0j1VOcsyzWi+S/EWBYW3lE=
-X-Google-Smtp-Source: AA6agR4RbXvgp7YDtSufRijhQM8A0B/CkG/zA2VlL/q5Zg1YaFcB1AO+ZcBKrYeL84S6n7DZnNQXruxuH2CFyro3SsQ=
-X-Received: by 2002:a05:6870:538c:b0:11b:e64f:ee1b with SMTP id
- h12-20020a056870538c00b0011be64fee1bmr1391001oan.92.1662632275255; Thu, 08
- Sep 2022 03:17:55 -0700 (PDT)
+        b=BSR4z8LUxjpHZYQQ4wcwdi2bUzhjsmwGKhjDB6x+q4gYELkryGFaWIreUvfTANaw4
+         psOtQpGMy/RiHclaGTp9aBL2tfDxpNKBmkpiMTIEjM0w3SjkBmyg0npzMFzfoL9toi
+         XKkgLXBf/Cl6k+B3rAnZdgWV0dNUF3GwK6uP58eULFLGMGa43AyyMvcSwN1UMysH5Z
+         znX6OOijOpfsmaQNJKcTcR+wG6fJLR9hAS+eTHdP9sd1kQrQghSxTcmN5VKTFzFdgk
+         2b28VttTE7YmaYl2roxSC4lEmTBW14k9MGQIeuRSY2prYxKgL+dGwu/uVpUyx4X1Ui
+         LMFJTrVp8FqPw==
+Received: by mail-ot1-f53.google.com with SMTP id h9-20020a9d5549000000b0063727299bb4so12039583oti.9;
+        Thu, 08 Sep 2022 03:18:24 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2xGqqECQjYbV6qAZ16awVcQTno2BWUuJETuywWni30dUSA4yPE
+        GhbkusEg9T8a0f92Wz5JFXZiEEoJXELUp8nbr0c=
+X-Google-Smtp-Source: AA6agR5zS/pLw5Iq8wd+0iIDAhgdLVQQNbG9tuBugvelYCxRLRYVrpnSQwgdLwsjN6suJD/S6ZrsPzfLf+nx7fGX1Z0=
+X-Received: by 2002:a05:6830:120f:b0:639:1a06:d09d with SMTP id
+ r15-20020a056830120f00b006391a06d09dmr2961632otp.345.1662632304060; Thu, 08
+ Sep 2022 03:18:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-9-shr@fb.com>
-In-Reply-To: <20220908002616.3189675-9-shr@fb.com>
+References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-8-shr@fb.com>
+In-Reply-To: <20220908002616.3189675-8-shr@fb.com>
 From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Thu, 8 Sep 2022 11:17:19 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5QnvPNtNq-uvXBsFNT=URXU4pKDaUqZGrf3MPt7VgBSA@mail.gmail.com>
-Message-ID: <CAL3q7H5QnvPNtNq-uvXBsFNT=URXU4pKDaUqZGrf3MPt7VgBSA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] btrfs: make lock_and_cleanup_extent_if_need
- nowait compatible
+Date:   Thu, 8 Sep 2022 11:17:47 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H77thY5_1zMiwVZ8oBk3b4KwFUsff=DojUSgJdAMP-2DQ@mail.gmail.com>
+Message-ID: <CAL3q7H77thY5_1zMiwVZ8oBk3b4KwFUsff=DojUSgJdAMP-2DQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/12] btrfs: make prepare_pages nowait compatible
 To:     Stefan Roesch <shr@fb.com>
 Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
         linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com
@@ -64,66 +63,108 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Thu, Sep 8, 2022 at 1:26 AM Stefan Roesch <shr@fb.com> wrote:
 >
-> This adds the nowait parameter to lock_and_cleanup_extent_if_need(). If
-> the nowait parameter is specified we try to lock the extent in nowait
-> mode.
+> Add nowait parameter to the prepare_pages function. In case nowait is
+> specified for an async buffered write request, do a nowait allocation or
+> return -EAGAIN.
 >
 > Signed-off-by: Stefan Roesch <shr@fb.com>
 > ---
->  fs/btrfs/file.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
+>  fs/btrfs/file.c | 43 ++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 36 insertions(+), 7 deletions(-)
 >
 > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index a154a3cec44b..4e1745e585cb 100644
+> index cf19d381ead6..a154a3cec44b 100644
 > --- a/fs/btrfs/file.c
 > +++ b/fs/btrfs/file.c
-> @@ -1440,7 +1440,7 @@ static noinline int
->  lock_and_cleanup_extent_if_need(struct btrfs_inode *inode, struct page **pages,
->                                 size_t num_pages, loff_t pos,
->                                 size_t write_bytes,
-> -                               u64 *lockstart, u64 *lockend,
-> +                               u64 *lockstart, u64 *lockend, bool nowait,
->                                 struct extent_state **cached_state)
->  {
->         struct btrfs_fs_info *fs_info = inode->root->fs_info;
-> @@ -1455,8 +1455,20 @@ lock_and_cleanup_extent_if_need(struct btrfs_inode *inode, struct page **pages,
->         if (start_pos < inode->vfs_inode.i_size) {
->                 struct btrfs_ordered_extent *ordered;
+> @@ -1339,26 +1339,55 @@ static int prepare_uptodate_page(struct inode *inode,
+>         return 0;
+>  }
 >
-> -               lock_extent_bits(&inode->io_tree, start_pos, last_pos,
-> +               if (nowait) {
-> +                       if (!try_lock_extent(&inode->io_tree, start_pos, last_pos)) {
-> +                               for (i = 0; i < num_pages; i++) {
-> +                                       unlock_page(pages[i]);
-> +                                       put_page(pages[i]);
+> +static int get_prepare_fgp_flags(bool nowait)
+> +{
+> +       int fgp_flags;
+> +
+> +       fgp_flags = FGP_LOCK|FGP_ACCESSED|FGP_CREAT;
 
-Since this is a non-local array, I'd prefer if we also set pages[i] to NULL.
-That may help prevent hard to debug bugs in the future.
+Please follow the existing code style and add a space before and after
+each bitwise or operator.
+Not only does it conform to the btrfs style, it's also easier to read.
+
+The assignment could also be done when declaring the variable, since
+it's short and simple.
 
 Thanks.
 
-
-> +                               }
+> +       if (nowait)
+> +               fgp_flags |= FGP_NOWAIT;
 > +
-> +                               return -EAGAIN;
-> +                       }
-> +               } else {
-> +                       lock_extent_bits(&inode->io_tree, start_pos, last_pos,
->                                 cached_state);
-> +               }
+> +       return fgp_flags;
+> +}
 > +
->                 ordered = btrfs_lookup_ordered_range(inode, start_pos,
->                                                      last_pos - start_pos + 1);
->                 if (ordered &&
-> @@ -1755,7 +1767,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->                 extents_locked = lock_and_cleanup_extent_if_need(
->                                 BTRFS_I(inode), pages,
->                                 num_pages, pos, write_bytes, &lockstart,
-> -                               &lockend, &cached_state);
-> +                               &lockend, false, &cached_state);
->                 if (extents_locked < 0) {
->                         if (extents_locked == -EAGAIN)
+> +static gfp_t get_prepare_gfp_flags(struct inode *inode, bool nowait)
+> +{
+> +       gfp_t gfp;
+> +
+> +       gfp = btrfs_alloc_write_mask(inode->i_mapping);
+> +       if (nowait) {
+> +               gfp &= ~__GFP_DIRECT_RECLAIM;
+> +               gfp |= GFP_NOWAIT;
+> +       }
+> +
+> +       return gfp;
+> +}
+> +
+>  /*
+>   * this just gets pages into the page cache and locks them down.
+>   */
+>  static noinline int prepare_pages(struct inode *inode, struct page **pages,
+>                                   size_t num_pages, loff_t pos,
+> -                                 size_t write_bytes, bool force_uptodate)
+> +                                 size_t write_bytes, bool force_uptodate,
+> +                                 bool nowait)
+>  {
+>         int i;
+>         unsigned long index = pos >> PAGE_SHIFT;
+> -       gfp_t mask = btrfs_alloc_write_mask(inode->i_mapping);
+> +       gfp_t mask = get_prepare_gfp_flags(inode, nowait);
+> +       int fgp_flags = get_prepare_fgp_flags(nowait);
+>         int err = 0;
+>         int faili;
+>
+>         for (i = 0; i < num_pages; i++) {
+>  again:
+> -               pages[i] = find_or_create_page(inode->i_mapping, index + i,
+> -                                              mask | __GFP_WRITE);
+> +               pages[i] = pagecache_get_page(inode->i_mapping, index + i,
+> +                                       fgp_flags, mask | __GFP_WRITE);
+>                 if (!pages[i]) {
+>                         faili = i - 1;
+> -                       err = -ENOMEM;
+> +                       if (nowait)
+> +                               err = -EAGAIN;
+> +                       else
+> +                               err = -ENOMEM;
+>                         goto fail;
+>                 }
+>
+> @@ -1376,7 +1405,7 @@ static noinline int prepare_pages(struct inode *inode, struct page **pages,
+>                                                     pos + write_bytes, false);
+>                 if (err) {
+>                         put_page(pages[i]);
+> -                       if (err == -EAGAIN) {
+> +                       if (!nowait && err == -EAGAIN) {
+>                                 err = 0;
 >                                 goto again;
+>                         }
+> @@ -1716,7 +1745,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
+>                  */
+>                 ret = prepare_pages(inode, pages, num_pages,
+>                                     pos, write_bytes,
+> -                                   force_page_uptodate);
+> +                                   force_page_uptodate, false);
+>                 if (ret) {
+>                         btrfs_delalloc_release_extents(BTRFS_I(inode),
+>                                                        reserve_bytes);
 > --
 > 2.30.2
 >

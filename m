@@ -2,54 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F93A5B19D1
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CBDF5B19D3
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:19:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229529AbiIHKTT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 06:19:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38672 "EHLO
+        id S229989AbiIHKTk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 06:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiIHKTT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:19:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB251C59E0;
-        Thu,  8 Sep 2022 03:19:17 -0700 (PDT)
+        with ESMTP id S229502AbiIHKTj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:19:39 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C860A1E3D2;
+        Thu,  8 Sep 2022 03:19:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7AD3161BEA;
-        Thu,  8 Sep 2022 10:19:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F3BC433D6;
-        Thu,  8 Sep 2022 10:19:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8210EB81E80;
+        Thu,  8 Sep 2022 10:19:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48936C433C1;
+        Thu,  8 Sep 2022 10:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662632356;
-        bh=TZ4L8QnNNF/+AmlYlp0if1mTsgNobXuva4gjwcTX6Ks=;
+        s=k20201202; t=1662632375;
+        bh=DDvumvMuoY52duEMPQmq3aa1zu1YyA33ZAQCwJDZyPc=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QEHMEXkVrFGEQqdSTTg3Mkac6I93c0DVRSmnugbPv16fnyLAX39yCKE/t+qGrr62V
-         ig1oSF4hWgeEyPLP2YPJPX1bOfByZB8UqaEsbVP+wbIbvxNYJ4lUVa2ziOpQ/+827K
-         Ra611rmjbqD9a6C8NxJzMuzgE97SNhKoREHo0xSz0rYXlr/wtawVEscxrP+5a0td/W
-         oEx46LduoEsDG8SWWDa7OUSdtf6oa2/+pAJ+SH3OdJAte8i0ZyI6Xa8Pr/s1TdkPGb
-         S4fWgkBLi76L4Tb/s6NBWxA/6WuDhS/V5L2zh7W5INTrGADDXr8eFmAuLWEmDlxMKx
-         3g1wRi+7AYAEg==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1280590722dso9606723fac.1;
-        Thu, 08 Sep 2022 03:19:16 -0700 (PDT)
-X-Gm-Message-State: ACgBeo3nscCk0pd0eh40cM666sXGgEpzEWDMZ1e+Gw+qzP9ZD5fG/CpF
-        L0osn6ccrlMwpxm4d31tmgol5CLJ5Uks/cdyEfA=
-X-Google-Smtp-Source: AA6agR4gDVC5kkxYGsFYe8wvb81RmXpuQfbHwDbd+74flaujMhKwwASKTVUXHSfXCHpZh7XJ6/xGHClYpZu0tlClM9I=
-X-Received: by 2002:a05:6870:538c:b0:11b:e64f:ee1b with SMTP id
- h12-20020a056870538c00b0011be64fee1bmr1393439oan.92.1662632356053; Thu, 08
- Sep 2022 03:19:16 -0700 (PDT)
+        b=K7UOX7fGGrpioUfS0dCu/NlHdodXOsQksSPiF+hcFP7iNfNgjlDTC/xksapvXDm9w
+         NrIObr17if3Kozz1h+tKlssKg2gnyrmkuRbP1XIfsLlhyfO98gNGV+9hIoZw74gPZ2
+         f1z+Ves6ma+TRpR0ewDhaqBQHaxRE3t1z7JWCDvwH9yWj8RciymAzLVAsoUcGlmCmV
+         iV/YidyH4gW6Vii0OulZgRSvnm+4UkjjlLc9uAhTOIOsOBi04zur/2KmzJPcwfmrKn
+         SZxlW6+UCYJp6pmHcxfiEtBp7TrHltjshwY6fmF5ifGVmoY6ksNQSncee4PFyKst4D
+         5te5EBq0n8l4w==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-127ba06d03fso19512025fac.3;
+        Thu, 08 Sep 2022 03:19:35 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2Ful1AZYZvLqYUPS2xcg5if85ivdxSP0qdDJIj5VHb2j0i9dgk
+        YzyRJRd0Y4viMookEmQ0ByOy5XYVvKQGmkChPeA=
+X-Google-Smtp-Source: AA6agR6VLfHR1xOfGKPPzL+CVKHwjGnMRAYZ+z/scNXlV0jBqEgYXnL3Yg+79UkgylG5L8PKwTjq4JSeSd9NghLJD4E=
+X-Received: by 2002:a05:6870:ea83:b0:fe:365f:cb9d with SMTP id
+ s3-20020a056870ea8300b000fe365fcb9dmr1501036oap.98.1662632374484; Thu, 08 Sep
+ 2022 03:19:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-6-shr@fb.com>
-In-Reply-To: <20220908002616.3189675-6-shr@fb.com>
+References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-2-shr@fb.com>
+In-Reply-To: <20220908002616.3189675-2-shr@fb.com>
 From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Thu, 8 Sep 2022 11:18:39 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7pRTH7YFnSmeQ1iZcp2Hr2ddkW-qBEBp31n9a50KJ-9w@mail.gmail.com>
-Message-ID: <CAL3q7H7pRTH7YFnSmeQ1iZcp2Hr2ddkW-qBEBp31n9a50KJ-9w@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] btrfs: add btrfs_try_lock_ordered_range
+Date:   Thu, 8 Sep 2022 11:18:58 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H57eV35bi_mS8JJiM0GHBGs6qSRHaz=FHNwZs_SE5rfQw@mail.gmail.com>
+Message-ID: <CAL3q7H57eV35bi_mS8JJiM0GHBGs6qSRHaz=FHNwZs_SE5rfQw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] mm: export balance_dirty_pages_ratelimited_flags()
 To:     Stefan Roesch <shr@fb.com>
 Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com
+        linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com,
+        kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
@@ -63,75 +64,32 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Thu, Sep 8, 2022 at 1:26 AM Stefan Roesch <shr@fb.com> wrote:
 >
-> From: Josef Bacik <josef@toxicpanda.com>
+> Export the function balance_dirty_pages_ratelimited_flags(). It is now
+> also called from btrfs.
 >
-> For IOCB_NOWAIT we're going to want to use try lock on the extent lock,
-> and simply bail if there's an ordered extent in the range because the
-> only choice there is to wait for the ordered extent to complete.
->
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > Signed-off-by: Stefan Roesch <shr@fb.com>
+> Reported-by: kernel test robot <lkp@intel.com>
 > ---
->  fs/btrfs/ordered-data.c | 28 ++++++++++++++++++++++++++++
->  fs/btrfs/ordered-data.h |  1 +
->  2 files changed, 29 insertions(+)
+>  mm/page-writeback.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
-> index 1952ac85222c..3cdfdcedb088 100644
-> --- a/fs/btrfs/ordered-data.c
-> +++ b/fs/btrfs/ordered-data.c
-> @@ -1041,6 +1041,34 @@ void btrfs_lock_and_flush_ordered_range(struct btrfs_inode *inode, u64 start,
->         }
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 032a7bf8d259..7e9d8d857ecc 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -1933,6 +1933,7 @@ int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
+>         wb_put(wb);
+>         return ret;
 >  }
->
-> +/*
-> + * btrfs_try_lock_ordered_range - lock the passed range and ensure all pending
-> + * ordered extents in it are run to completion in nowait mode.
-> + *
-> + * @inode:        Inode whose ordered tree is to be searched
-> + * @start:        Beginning of range to flush
-> + * @end:          Last byte of range to lock
-> + *
-> + * This function returns 1 if btrfs_lock_ordered_range does not return any
-> + * extents, otherwise 0.
+> +EXPORT_SYMBOL_GPL(balance_dirty_pages_ratelimited_flags);
 
-Why not a bool, true/false? That's all that is needed, and it's clear.
+Even though it's a trivial change, the linux-mm list should be CC'ed.
 
 Thanks.
 
-> + */
-> +int btrfs_try_lock_ordered_range(struct btrfs_inode *inode, u64 start, u64 end)
-> +{
-> +       struct btrfs_ordered_extent *ordered;
-> +
-> +       if (!try_lock_extent(&inode->io_tree, start, end))
-> +               return 0;
-> +
-> +       ordered = btrfs_lookup_ordered_range(inode, start, end - start + 1);
-> +       if (!ordered)
-> +               return 1;
-> +
-> +       btrfs_put_ordered_extent(ordered);
-> +       unlock_extent(&inode->io_tree, start, end);
-> +       return 0;
-> +}
-> +
-> +
->  static int clone_ordered_extent(struct btrfs_ordered_extent *ordered, u64 pos,
->                                 u64 len)
->  {
-> diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
-> index 87792f85e2c4..ec27ebf0af4b 100644
-> --- a/fs/btrfs/ordered-data.h
-> +++ b/fs/btrfs/ordered-data.h
-> @@ -218,6 +218,7 @@ void btrfs_wait_ordered_roots(struct btrfs_fs_info *fs_info, u64 nr,
->  void btrfs_lock_and_flush_ordered_range(struct btrfs_inode *inode, u64 start,
->                                         u64 end,
->                                         struct extent_state **cached_state);
-> +int btrfs_try_lock_ordered_range(struct btrfs_inode *inode, u64 start, u64 end);
->  int btrfs_split_ordered_extent(struct btrfs_ordered_extent *ordered, u64 pre,
->                                u64 post);
->  int __init ordered_data_init(void);
+>
+>  /**
+>   * balance_dirty_pages_ratelimited - balance dirty memory state.
 > --
 > 2.30.2
 >

@@ -2,61 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FFBE5B151C
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 08:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87E8D5B155E
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 09:07:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbiIHGub (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 02:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55824 "EHLO
+        id S231135AbiIHHHh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 03:07:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbiIHGtw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 02:49:52 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3409A543CE
-        for <io-uring@vger.kernel.org>; Wed,  7 Sep 2022 23:49:50 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id a67so13264948ybb.3
-        for <io-uring@vger.kernel.org>; Wed, 07 Sep 2022 23:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=6UU7RPsFxQr+5ujpTkN8WcG542NNzl57+boNHvVA5zY=;
-        b=JG/SHVRfqPRHCrjuBmlApXDX/0abpJphKrT6tyZKJBPfjdSoDudABKV77zHlEN88Fn
-         gauZaKg028mQXz4IhYxWZ6Al32CCP7yJWGueoM6BfqmIyFGbhNHc42e0XX3fkUwzZeB7
-         iahq4zbGmhiQP33NCZ4T4eKaA3vZuTmEr9lnFAypcBd+txISnaxXaWXjTNPPmjg9GajS
-         6tRoG+4jxmfz1oriGaY/Kn1wnCqhPvgpDkXyvbhPKfNgBFNHlvzvS89+D7eIK/a1Yl6T
-         kxR18XZMyg4CCoy23A8LpUnI5xLUkeiu/ZUM9+hqU3uz7MWOC86ALqrtypYUZ97mcz9b
-         OvFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=6UU7RPsFxQr+5ujpTkN8WcG542NNzl57+boNHvVA5zY=;
-        b=fF2z223d2+IVSGgWaXIcnnDEV7Hite0Y37K8Ik4jaa2ZYZV+3r4CiC3rw8T2ZM/vn8
-         Gi6XaIygCy+02KxhJy+/5MwkV2mqAqfGFJARKDy7YTn28d79a6z8o7xCfc3pdVZYWtzg
-         1WO5/BTXkeZJ2s/MiCWJz6ZDldjmoAsUIH2eB3vakxWITfxEOUkN7P4cDblrbVTTnoR2
-         6KBMO3+gIqBMs/quRnTLvkC775sQLR7XPlN4KDxYwYl0SU/xJn3Wuqs/k8qr1tpcuPUY
-         qbHxqYENoDFWSDmJiGKwMUucwqT09j2TMirN8/UavDoUnBI4BeUBD/LIGX1A43Ifsjf4
-         d2Gg==
-X-Gm-Message-State: ACgBeo3OLKf3eXIng6Ka90irG/LbJfbyM0/M4O8zLYo9s0Vl9aQVjYrz
-        ykGviWHJUd/Bdi35RuNryDARhJ70+0+AjI7Je12IEg==
-X-Google-Smtp-Source: AA6agR5jgN0SarKose7cXaAc78GK8TgcCf+kCWZDJ6j/hZNw94xbAsDdKa9I2VH+YZqtbSZxUJOMS41d9AU0E7sKk2c=
-X-Received: by 2002:a5b:cc4:0:b0:6ae:2a6c:59e6 with SMTP id
- e4-20020a5b0cc4000000b006ae2a6c59e6mr1980963ybr.59.1662619789134; Wed, 07 Sep
- 2022 23:49:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <YxEE1vOwRPdzKxoq@dhcp22.suse.cz> <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
- <20220901201502.sn6223bayzwferxv@moria.home.lan> <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
- <20220905234649.525vorzx27ybypsn@kmo-framework> <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
- <20220906182058.iijmpzu4rtxowy37@kmo-framework> <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
- <20220907130323.rwycrntnckc6h43n@kmo-framework> <20220907094306.3383dac2@gandalf.local.home>
- <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
-In-Reply-To: <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 7 Sep 2022 23:49:37 -0700
-Message-ID: <CAJuCfpEQG3+d-45PXhS=pD6ktrmqNQQnpf_-3+c2CG7rzuz+2g@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-To:     Kent Overstreet <kent.overstreet@linux.dev>
+        with ESMTP id S231246AbiIHHHf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 03:07:35 -0400
+Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F219FAB8;
+        Thu,  8 Sep 2022 00:07:33 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 03:07:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662620851;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wTEYgGZ5tSon77wS7vl2ROsEnkkCO0gsMgQptW+CPqI=;
+        b=iJA14xapCDtkxxFZ191Tkejngxj1CUcv4kW7CKzkjsz7ATcaQDWEu0NFSqx3I6BQdf18/S
+        WTbuPmJUiio1UduO89kjDWGE8I/TqqMPK7/HJWAK+mBPhtt24ufrZC9OZJmb5VRtm8xK61
+        6ZzGjTRW6DZ8SglZivSmm0qDFb8PFdY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Suren Baghdasaryan <surenb@google.com>
 Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -96,58 +66,81 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220908070719.ootyzzbd47dd5rkv@kmo-framework>
+References: <20220901201502.sn6223bayzwferxv@moria.home.lan>
+ <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
+ <20220905234649.525vorzx27ybypsn@kmo-framework>
+ <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
+ <20220906182058.iijmpzu4rtxowy37@kmo-framework>
+ <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
+ <20220907130323.rwycrntnckc6h43n@kmo-framework>
+ <20220907094306.3383dac2@gandalf.local.home>
+ <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
+ <CAJuCfpEQG3+d-45PXhS=pD6ktrmqNQQnpf_-3+c2CG7rzuz+2g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpEQG3+d-45PXhS=pD6ktrmqNQQnpf_-3+c2CG7rzuz+2g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Sep 7, 2022 at 11:35 PM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Wed, Sep 07, 2022 at 09:45:18AM -0400, Steven Rostedt wrote:
-> > On Wed, 7 Sep 2022 09:04:28 -0400
-> > Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >
-> > > On Wed, Sep 07, 2022 at 01:00:09PM +0200, Michal Hocko wrote:
-> > > > Hmm, it seems that further discussion doesn't really make much sense
-> > > > here. I know how to use my time better.
-> > >
-> > > Just a thought, but I generally find it more productive to propose ideas than to
-> > > just be disparaging.
-> > >
-> >
-> > But it's not Michal's job to do so. He's just telling you that the given
-> > feature is not worth the burden. He's telling you the issues that he has
-> > with the patch set. It's the submitter's job to address those concerns and
-> > not the maintainer's to tell you how to make it better.
-> >
-> > When Linus tells us that a submission is crap, we don't ask him how to make
-> > it less crap, we listen to why he called it crap, and then rewrite to be
-> > not so crappy. If we cannot figure it out, it doesn't get in.
->
-> When Linus tells someone a submission is crap, he _always_ has a sound, and
-> _specific_ technical justification for doing so.
->
-> "This code is going to be a considerable maintenance burden" is vapid, and lazy.
-> It's the kind of feedback made by someone who has looked at the number of lines
-> of code a patch touches and not much more.
+On Wed, Sep 07, 2022 at 11:49:37PM -0700, Suren Baghdasaryan wrote:
+> I would really appreciate if everyone could please stick to the
+> technical side of the conversation. That way we can get some
+> constructive feedback. Everything else is not helpful and at best is a
+> distraction.
+> Maintenance burden is a price we pay and I think it's the prerogative
+> of the maintainers to take that into account. Our job is to prove that
+> the price is worth paying.
 
-I would really appreciate if everyone could please stick to the
-technical side of the conversation. That way we can get some
-constructive feedback. Everything else is not helpful and at best is a
-distraction.
-Maintenance burden is a price we pay and I think it's the prerogative
-of the maintainers to take that into account. Our job is to prove that
-the price is worth paying.
+Well said.
 
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+I'd also like to add - slab.h does look pretty overgrown and messy. We've grown
+a _lot_ of special purpose memory allocation interfaces, and I think it probably
+is time to try and wrangle that back.
+
+The API complexity isn't just an issue for this patch - it's an issue for
+anything that has to wrap and plumb through memory allocation interfaces. It's a
+pain point for the Rust people, and also comes in e.g. the mempool API.
+
+I think we should keep going with the memalloc_no*_save()/restore() approach,
+and extend it to other things:
+
+ - memalloc_nowait_save()
+ - memalloc_highpri_save()
+
+(these two get you GFP_ATOMIC).
+
+Also, I don't think these all need to be separate functions, we could have
+
+memalloc_gfp_apply()
+memalloc_gfp_restore()
+
+which simply takes a gfp flags argument and applies it to the current
+PF_MEMALLOC flags.
+
+We've had long standing bugs where vmalloc() can't correctly take gfp flags
+because some of the allocations it does for page tables don't have it correctly
+plumbed through; switching to the memalloc_*_(save|restore) is something people
+have been wanting in order to fix this - for years. Actually following through
+and completing this would let us kill the gfp flags arguments to our various
+memory allocators entirely.
+
+I think we can do the same thing with the numa node parameter - kill
+kmalloc_node() et. all, move it to task_struct with a set of save/restore
+functions.
+
+There's probably other things we can do to simplify slab.h if we look more. I've
+been hoping to start pushing patches for some of this stuff - it's going to be
+some time before I can get to it though, can only handle so many projects in
+flight at a time :)

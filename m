@@ -2,21 +2,21 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61A3B5B1106
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 02:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6573B5B1121
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 02:29:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229905AbiIHA1A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 7 Sep 2022 20:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35468 "EHLO
+        id S229476AbiIHA3s (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Sep 2022 20:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbiIHA06 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Sep 2022 20:26:58 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60499D0232
-        for <io-uring@vger.kernel.org>; Wed,  7 Sep 2022 17:26:56 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 287HnglT011049
-        for <io-uring@vger.kernel.org>; Wed, 7 Sep 2022 17:26:55 -0700
+        with ESMTP id S229572AbiIHA3q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Sep 2022 20:29:46 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9041ADB2
+        for <io-uring@vger.kernel.org>; Wed,  7 Sep 2022 17:29:34 -0700 (PDT)
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 287HndTa020483
+        for <io-uring@vger.kernel.org>; Wed, 7 Sep 2022 17:29:21 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
@@ -25,13 +25,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc
  ZS17iTNi9Gkwjh2BedQFNPl/v+O6f2JZS7sYtQmeIj7+gmxKnOYZ9Ve8n7QjKju3Xt0e
  EfFvaE+/Zt/fCM9MxxE/KMG2av44th9RLt4= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jegypfdnm-2
+        by m0089730.ppops.net (PPS) with ESMTPS id 3jee6bgf6e-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 07 Sep 2022 17:26:54 -0700
-Received: from twshared13579.04.prn5.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 07 Sep 2022 17:29:21 -0700
+Received: from twshared13579.04.prn5.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 7 Sep 2022 17:26:53 -0700
+ 15.1.2375.31; Wed, 7 Sep 2022 17:29:19 -0700
 Received: by dev1180.prn1.facebook.com (Postfix, from userid 425415)
         id EA1711D2F048; Wed,  7 Sep 2022 17:26:19 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
@@ -49,8 +49,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: wd09Ghxfc2pRxgr7PRqg3TjcbrJEKMCA
-X-Proofpoint-GUID: wd09Ghxfc2pRxgr7PRqg3TjcbrJEKMCA
+X-Proofpoint-ORIG-GUID: d0Xl7k50sf_TsMRyyGq-wmJQloWnYpLn
+X-Proofpoint-GUID: d0Xl7k50sf_TsMRyyGq-wmJQloWnYpLn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-07_10,2022-09-07_02,2022-06-22_01

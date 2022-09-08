@@ -2,45 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A515B156C
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 09:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 168875B15AB
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 09:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbiIHHMt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 03:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47544 "EHLO
+        id S230404AbiIHHak (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 03:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbiIHHMs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 03:12:48 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C18ED474F;
-        Thu,  8 Sep 2022 00:12:47 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A735433D05;
-        Thu,  8 Sep 2022 07:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1662621165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S230166AbiIHHaj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 03:30:39 -0400
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601AE91D18;
+        Thu,  8 Sep 2022 00:30:38 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 03:29:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662622236;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=wQxYLHyDLglTrc96Dwo9w9RPNpsCq3XWN1HyAjbRYNs=;
-        b=tzO1hqg8Cf+V3DOldPoJ0tAbfrcHQ/buUKHG+8XEIMml22acom6ipoa6KJxfv7pXLWnzPb
-        dvicd90Pr+rF+mf7X8aPjxI/j/QR3x9TEVgZ2XHIm66QAHuxOs5AWnjVv3I99n9b6GSa8l
-        ClarGp9lNgYGmVJgqD7angv+UmF6LpU=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7F64713A6D;
-        Thu,  8 Sep 2022 07:12:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Rg4TH+2VGWOnDAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Thu, 08 Sep 2022 07:12:45 +0000
-Date:   Thu, 8 Sep 2022 09:12:45 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
+        bh=DqfWXb2eEuuOxMq6abU6PffruFzdNn4Aud1F5cFJAhI=;
+        b=Fw8tAVGZj5GyiSqYxRkRmSk4x1RT2ZwVJU0JDfghWsKBfIGHKaRr04lhoKOVAsK9mBuLF+
+        9iI0Zcp5Zlk1fasn3UZcG2E28IiTTnVsfmeKdAq1LMPY/5nchmAf+pI4zvkYYgOYnJoj7B
+        58GfzCiu+o2KhFlYF9EH5IZegrVCLG0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Michal Hocko <mhocko@suse.com>
 Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Suren Baghdasaryan <surenb@google.com>,
         Mel Gorman <mgorman@suse.de>,
@@ -82,9 +68,8 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <YxmV7a2pnj1Kldzi@dhcp22.suse.cz>
-References: <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
- <20220901201502.sn6223bayzwferxv@moria.home.lan>
+Message-ID: <20220908072950.yapakb5scocxezhy@kmo-framework>
+References: <20220901201502.sn6223bayzwferxv@moria.home.lan>
  <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
  <20220905234649.525vorzx27ybypsn@kmo-framework>
  <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
@@ -93,13 +78,16 @@ References: <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
  <20220907130323.rwycrntnckc6h43n@kmo-framework>
  <20220907094306.3383dac2@gandalf.local.home>
  <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
+ <YxmV7a2pnj1Kldzi@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <YxmV7a2pnj1Kldzi@dhcp22.suse.cz>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -107,41 +95,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu 08-09-22 02:35:48, Kent Overstreet wrote:
-> On Wed, Sep 07, 2022 at 09:45:18AM -0400, Steven Rostedt wrote:
-> > On Wed, 7 Sep 2022 09:04:28 -0400
-> > Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > 
-> > > On Wed, Sep 07, 2022 at 01:00:09PM +0200, Michal Hocko wrote:
-> > > > Hmm, it seems that further discussion doesn't really make much sense
-> > > > here. I know how to use my time better.  
-> > > 
-> > > Just a thought, but I generally find it more productive to propose ideas than to
-> > > just be disparaging.
-> > > 
-> > 
-> > But it's not Michal's job to do so. He's just telling you that the given
-> > feature is not worth the burden. He's telling you the issues that he has
-> > with the patch set. It's the submitter's job to address those concerns and
-> > not the maintainer's to tell you how to make it better.
-> > 
-> > When Linus tells us that a submission is crap, we don't ask him how to make
-> > it less crap, we listen to why he called it crap, and then rewrite to be
-> > not so crappy. If we cannot figure it out, it doesn't get in.
-> 
-> When Linus tells someone a submission is crap, he _always_ has a sound, and
-> _specific_ technical justification for doing so.
-> 
-> "This code is going to be a considerable maintenance burden" is vapid, and lazy.
-> It's the kind of feedback made by someone who has looked at the number of lines
-> of code a patch touches and not much more.
+On Thu, Sep 08, 2022 at 09:12:45AM +0200, Michal Hocko wrote:
+> Then you have probably missed a huge part of my emails. Please
+> re-read. If those arguments are not clear, feel free to ask for
+> clarification. Reducing the whole my reasoning and objections to the
+> sentence above and calling that vapid and lazy is not only unfair but
+> also disrespectful.
 
-Then you have probably missed a huge part of my emails. Please
-re-read. If those arguments are not clear, feel free to ask for
-clarification. Reducing the whole my reasoning and objections to the
-sentence above and calling that vapid and lazy is not only unfair but
-also disrespectful.
+What, where you complained about slab's page allocations showing up in the
+profile instead of slab, and I pointed out to you that actually each and every
+slab call is instrumented, and you're just seeing some double counting (that we
+will no doubt fix?)
 
--- 
-Michal Hocko
-SUSE Labs
+Or when you complained about allocation sites where it should actually be the
+caller that should be instrumented, and I pointed out that it'd be quite easy to
+simply change that code to use _kmalloc() and slab_tag_add() directly, if it
+becomes an issue.
+
+Of course, if we got that far, we'd have this code to thank for telling us where
+to look!
+
+Did I miss anything?

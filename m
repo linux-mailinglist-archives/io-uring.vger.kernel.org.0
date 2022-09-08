@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A21925B22EC
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 17:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 577415B22ED
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 17:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbiIHP7E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 11:59:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32798 "EHLO
+        id S230241AbiIHP7F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 11:59:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbiIHP7D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 11:59:03 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7237C9CCCC
-        for <io-uring@vger.kernel.org>; Thu,  8 Sep 2022 08:59:02 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id e18so25067163edj.3
-        for <io-uring@vger.kernel.org>; Thu, 08 Sep 2022 08:59:02 -0700 (PDT)
+        with ESMTP id S229795AbiIHP7E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 11:59:04 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847A6E55BB
+        for <io-uring@vger.kernel.org>; Thu,  8 Sep 2022 08:59:03 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id gb36so39048591ejc.10
+        for <io-uring@vger.kernel.org>; Thu, 08 Sep 2022 08:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=rNeqALpVAO/+TKzL6QzySY7His6uDpVJ/a3IOMvrhUM=;
-        b=AyJxHXZx83BgPSTWK3GKzIaFp2W+0NGspXoBGvyw6T/q1LBFOtIaw+bdpWSjxiWjVQ
-         UfRukVeuvSyJcFoAqkCF28mc5Aj7/E7/728L5xw7zqR1Yx2JsIX/yYG1gBAMMD3eA/y/
-         uNEejpOsbLnB+DikMd0hQxYm3A7bQQ5SHhvDA7tjLwXP9OMvtkUQNv0ETW1aMkvjnX3L
-         N/O+Mv+zA2P+s+rZZxl/RUN4dRWw0CU1rrEvnNaPMc/5vZ9LoYVOyGdZV59xqS0kpEvv
-         TIXpJCrRZxs3V2sDja0foO21DHKtiJ26NUw+S+KhjlZC9qfeac1VUMlO8KhnvrF0SWjM
-         D2Vw==
+        bh=mgVWDGO+sTjtFaqfFa3pHvlo4gSFJ+pkOC743IR4S0A=;
+        b=o7kEKh3Li7g6nSerKYuR02tKSfmvGHmpR+zhctJKMF+gz4vIlhsI8XKt4Lpr/sTzjF
+         Oy70Jy1q225JaceK87UHBA0A7kYtxu2og2GAEVUwW/IPoTg2pyDVUNg920aoL06xrIZm
+         3AWB8FcHu8wZEw8AcD2miN6xIQSF+vtcxUnF8yijBTr1NNjwxkrAto/t7+09ttS1S+Uh
+         D6lAQw+joiJji/BFAaoG2T0C2UuNVO/DUQNLtMi5ZGmTGAgMVjklL+f5T5p+PBncShyo
+         hJzXrrkim2Qyfi2rbnaFVv4qsLBj9NRofVl7kcDkT1EDO0iVjiOXgMi8yAxo71NPi3d9
+         SmFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=rNeqALpVAO/+TKzL6QzySY7His6uDpVJ/a3IOMvrhUM=;
-        b=XyUwwdIZWRiMWlofP05eL08vG+IldzCtl0im/e4eG1LSfUP1pWTtq0VbaP6s4KxPqG
-         m07IQYJmDz6VenB4w2MR+VxwtTrRhZABxJx9yBxmK3I4Gx/ZpzkSeXPAbueruro5ehku
-         qx+9Hv2ouo4vbjGmZeHG08SXMehZJhnrsQb2SbeB5cMtwZJvb5sEr+RzWQ+VVn36yQuT
-         yd4W0MBkNBcOHPYpjLp21C5vHBboJWgw6qSK+k2HqRH/X5/KtvS4Dq7GJuU57lNWnsD3
-         TK/+s7Z66/Ic93izWOMBLORl8maavxRokrbeJlWUjhz+PR+W5cYIJ+sw1q9argGQgzuB
-         PonA==
-X-Gm-Message-State: ACgBeo0fd+qXNdBBJa/2wkPn7GgpujeXPUZA34oH2CVr44wEiXRJxY8u
-        5pOy007RdkIQFjW9Pq8WynB5aw6TMHQ=
-X-Google-Smtp-Source: AA6agR7OFURyitmmo/k6yrCq72/O4j2DtjzIaBj7k51x0Ydc3s1R0/VQUz0lAa6w3nlIr5a4BZmPVg==
-X-Received: by 2002:aa7:c458:0:b0:44e:9078:5712 with SMTP id n24-20020aa7c458000000b0044e90785712mr8012745edr.25.1662652740765;
-        Thu, 08 Sep 2022 08:59:00 -0700 (PDT)
+        bh=mgVWDGO+sTjtFaqfFa3pHvlo4gSFJ+pkOC743IR4S0A=;
+        b=hLFLZA0UNLWUBerWvIaeiHVeGylAiC1rY/J7L9PSHSasS5+wGbiz4slBOmVIOauLQj
+         X7OuoiUvSIhV2/C4ESymbjgBIBsdayWlvzsdCx5drpe8+V8tW7tDyqab+BRw3YCqfKaN
+         bxTphRILgZ5v5dfaPQqeIcSsuZZL8zGH9rajCfyI4VY2QCR21GAr37+x9zXT1x3oiAWR
+         knEXubUtMmmTVe1Lb01T51tm1dgyU5foo1yH3kv+jKrAFmrBAPNMWH1bbmPHkwh6zeZk
+         zd4ZEJSLk3jg02dWrApNGl1FlsMUdahg2e8HsYbzBCtSdU8cVPsjCCJUdhR2ERzd9yTG
+         yhQA==
+X-Gm-Message-State: ACgBeo15pgLPhQ6UsapqtOCRB3/FPgsekehv9JYGgtZ1erUFDhOCc2Eq
+        PPa1ag9vEvPO7VvNVpuHnfeRIoznaL4=
+X-Google-Smtp-Source: AA6agR4hvOUpK/+fgFlm5oGZZHq/OJDujT2FVrFelWJUSMnIoFhclgtv3XFyOgDweLrQ+NwrzOuOsw==
+X-Received: by 2002:a17:906:730d:b0:73d:c8a1:a6ae with SMTP id di13-20020a170906730d00b0073dc8a1a6aemr6694199ejc.540.1662652741567;
+        Thu, 08 Sep 2022 08:59:01 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:cfb9])
         by smtp.gmail.com with ESMTPSA id q26-20020a1709060e5a00b0073872f367cesm1392503eji.112.2022.09.08.08.59.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 08:59:00 -0700 (PDT)
+        Thu, 08 Sep 2022 08:59:01 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
         Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH 2/6] io_uring: disallow defer-tw run w/ no submitters
-Date:   Thu,  8 Sep 2022 16:56:53 +0100
-Message-Id: <b4f0d3f14236d7059d08c5abe2661ef0b78b5528.1662652536.git.asml.silence@gmail.com>
+Subject: [PATCH 3/6] io_uring/iopoll: fix unexpected returns
+Date:   Thu,  8 Sep 2022 16:56:54 +0100
+Message-Id: <c442bb87f79cea10b3f857cbd4b9a4f0a0493fa3.1662652536.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1662652536.git.asml.silence@gmail.com>
 References: <cover.1662652536.git.asml.silence@gmail.com>
@@ -70,56 +70,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We try to restrict CQ waiters when IORING_SETUP_DEFER_TASKRUN is set,
-but if nothing has been submitted yet it'll allow any waiter, which
-violates the contract.
+We may propagate a positive return value of io_run_task_work() out of
+io_iopoll_check(), which breaks our tests. io_run_task_work() doesn't
+return anything useful for us, ignore the return value.
 
 Fixes: dacbb30102689 ("io_uring: add IORING_SETUP_DEFER_TASKRUN")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 7 +------
- io_uring/io_uring.h | 9 ++-------
- 2 files changed, 3 insertions(+), 13 deletions(-)
+ io_uring/io_uring.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index dc6f64ecd926..7f60d384e917 100644
+index 7f60d384e917..8233a375e8c9 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1169,13 +1169,8 @@ int __io_run_local_work(struct io_ring_ctx *ctx, bool locked)
- 	int ret;
- 	unsigned int loops = 1;
+@@ -1435,12 +1435,9 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
+ 				u32 tail = ctx->cached_cq_tail;
  
--	if (unlikely(ctx->submitter_task != current)) {
--		/* maybe this is before any submissions */
--		if (!ctx->submitter_task)
--			return 0;
+ 				mutex_unlock(&ctx->uring_lock);
+-				ret = io_run_task_work();
++				io_run_task_work();
+ 				mutex_lock(&ctx->uring_lock);
+ 
+-				if (ret < 0)
+-					break;
 -
-+	if (unlikely(ctx->submitter_task != current))
- 		return -EEXIST;
--	}
- 
- 	node = io_llist_xchg(&ctx->work_llist, &fake);
- 	ret = 0;
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 4eea0836170e..d38173b9ac19 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -331,13 +331,8 @@ static inline struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
- 
- static inline bool io_allowed_run_tw(struct io_ring_ctx *ctx)
- {
--	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
--		return true;
--	if (unlikely(ctx->submitter_task != current)) {
--		/* maybe this is before any submissions */
--		return !ctx->submitter_task;
--	}
--	return true;
-+	return likely(!(ctx->flags & IORING_SETUP_DEFER_TASKRUN) ||
-+		      ctx->submitter_task == current);
- }
- 
- #endif
+ 				/* some requests don't go through iopoll_list */
+ 				if (tail != ctx->cached_cq_tail ||
+ 				    wq_list_empty(&ctx->iopoll_list))
 -- 
 2.37.2
 

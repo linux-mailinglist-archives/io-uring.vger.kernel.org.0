@@ -2,51 +2,51 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F97C5B19CF
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F93A5B19D1
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbiIHKTI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 06:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38520 "EHLO
+        id S229529AbiIHKTT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 06:19:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiIHKTH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:19:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9FEC652B;
-        Thu,  8 Sep 2022 03:19:06 -0700 (PDT)
+        with ESMTP id S229502AbiIHKTT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:19:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB251C59E0;
+        Thu,  8 Sep 2022 03:19:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ECF8BB81F7E;
-        Thu,  8 Sep 2022 10:19:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A85C8C43470;
-        Thu,  8 Sep 2022 10:19:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7AD3161BEA;
+        Thu,  8 Sep 2022 10:19:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F3BC433D6;
+        Thu,  8 Sep 2022 10:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662632343;
-        bh=MkhfUcM9hU6OJxV0FCySLY20o80C1zt1uk+JGv+GfDE=;
+        s=k20201202; t=1662632356;
+        bh=TZ4L8QnNNF/+AmlYlp0if1mTsgNobXuva4gjwcTX6Ks=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JZMbsAlxi9nTrOFrMJvUT+VMbc3H1SIqrC8DNfhXvBkdLUIg6EDD12rs3QO7Sx5Ti
-         vswjenfu4gnymoE/TMGWHMbXbc4gBqSwD4eveA2e3wHNCqaN51TgIu2uotAUT+Tsg0
-         lXYUpaRgSCrUDHNXqLAwQdrhK9uDFRqUkrzxYDVtvxlDiP5Bo9p2ZYAFBRMFiiBWIu
-         qcF6hqA1HQC/ez1eXRfcZG+y057T03wHE4JEOFlZOLx11cAYJ4sdYmBnCtm+m8MubY
-         TyQasIeeCXhuQclO6F84zptPWkMViITGDAv+eeKA8Q7Mh4fDDFBzkjq5/RlRLiyi45
-         Dq6DiYtXNre9g==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-11eab59db71so42979829fac.11;
-        Thu, 08 Sep 2022 03:19:03 -0700 (PDT)
-X-Gm-Message-State: ACgBeo2R4HsOjm0gk5IWyk0FSH/vtP3/zoRiRHwCDMWnFbtds1FQvW5A
-        vsKLgjNY0WoSt/xpVfmvMkthgliz3Om/8T6hqOs=
-X-Google-Smtp-Source: AA6agR6l0tX0LYfuj1LgHtEHgwHx05c5xfwNbdURKi+C9QrZ8zSNhlgSgY0unUBuc554uU0iO2HlHIfHqMmrawN7f7k=
-X-Received: by 2002:a05:6870:ea83:b0:fe:365f:cb9d with SMTP id
- s3-20020a056870ea8300b000fe365fcb9dmr1500051oap.98.1662632342789; Thu, 08 Sep
- 2022 03:19:02 -0700 (PDT)
+        b=QEHMEXkVrFGEQqdSTTg3Mkac6I93c0DVRSmnugbPv16fnyLAX39yCKE/t+qGrr62V
+         ig1oSF4hWgeEyPLP2YPJPX1bOfByZB8UqaEsbVP+wbIbvxNYJ4lUVa2ziOpQ/+827K
+         Ra611rmjbqD9a6C8NxJzMuzgE97SNhKoREHo0xSz0rYXlr/wtawVEscxrP+5a0td/W
+         oEx46LduoEsDG8SWWDa7OUSdtf6oa2/+pAJ+SH3OdJAte8i0ZyI6Xa8Pr/s1TdkPGb
+         S4fWgkBLi76L4Tb/s6NBWxA/6WuDhS/V5L2zh7W5INTrGADDXr8eFmAuLWEmDlxMKx
+         3g1wRi+7AYAEg==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1280590722dso9606723fac.1;
+        Thu, 08 Sep 2022 03:19:16 -0700 (PDT)
+X-Gm-Message-State: ACgBeo3nscCk0pd0eh40cM666sXGgEpzEWDMZ1e+Gw+qzP9ZD5fG/CpF
+        L0osn6ccrlMwpxm4d31tmgol5CLJ5Uks/cdyEfA=
+X-Google-Smtp-Source: AA6agR4gDVC5kkxYGsFYe8wvb81RmXpuQfbHwDbd+74flaujMhKwwASKTVUXHSfXCHpZh7XJ6/xGHClYpZu0tlClM9I=
+X-Received: by 2002:a05:6870:538c:b0:11b:e64f:ee1b with SMTP id
+ h12-20020a056870538c00b0011be64fee1bmr1393439oan.92.1662632356053; Thu, 08
+ Sep 2022 03:19:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-7-shr@fb.com>
-In-Reply-To: <20220908002616.3189675-7-shr@fb.com>
+References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-6-shr@fb.com>
+In-Reply-To: <20220908002616.3189675-6-shr@fb.com>
 From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Thu, 8 Sep 2022 11:18:26 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H6mJEK=T78DF6o=xYmZht=x0jPVgDw3eVoHOKLyxfvdOA@mail.gmail.com>
-Message-ID: <CAL3q7H6mJEK=T78DF6o=xYmZht=x0jPVgDw3eVoHOKLyxfvdOA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] btrfs: make btrfs_check_nocow_lock nowait compatible
+Date:   Thu, 8 Sep 2022 11:18:39 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H7pRTH7YFnSmeQ1iZcp2Hr2ddkW-qBEBp31n9a50KJ-9w@mail.gmail.com>
+Message-ID: <CAL3q7H7pRTH7YFnSmeQ1iZcp2Hr2ddkW-qBEBp31n9a50KJ-9w@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] btrfs: add btrfs_try_lock_ordered_range
 To:     Stefan Roesch <shr@fb.com>
 Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
         linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com
@@ -65,119 +65,73 @@ On Thu, Sep 8, 2022 at 1:26 AM Stefan Roesch <shr@fb.com> wrote:
 >
 > From: Josef Bacik <josef@toxicpanda.com>
 >
-> Now all the helpers that btrfs_check_nocow_lock uses handle nowait, add
-> a nowait flag to btrfs_check_nocow_lock so it can be used by the write
-> path.
+> For IOCB_NOWAIT we're going to want to use try lock on the extent lock,
+> and simply bail if there's an ordered extent in the range because the
+> only choice there is to wait for the ordered extent to complete.
 >
 > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > Signed-off-by: Stefan Roesch <shr@fb.com>
 > ---
->  fs/btrfs/ctree.h |  2 +-
->  fs/btrfs/file.c  | 33 ++++++++++++++++++++++-----------
->  fs/btrfs/inode.c |  2 +-
->  3 files changed, 24 insertions(+), 13 deletions(-)
+>  fs/btrfs/ordered-data.c | 28 ++++++++++++++++++++++++++++
+>  fs/btrfs/ordered-data.h |  1 +
+>  2 files changed, 29 insertions(+)
 >
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index 536bbc8551fc..06cb25f2d3bd 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -3482,7 +3482,7 @@ int btrfs_dirty_pages(struct btrfs_inode *inode, struct page **pages,
->                       struct extent_state **cached, bool noreserve);
->  int btrfs_fdatawrite_range(struct inode *inode, loff_t start, loff_t end);
->  int btrfs_check_nocow_lock(struct btrfs_inode *inode, loff_t pos,
-> -                          size_t *write_bytes);
-> +                          size_t *write_bytes, bool nowait);
->  void btrfs_check_nocow_unlock(struct btrfs_inode *inode);
+> diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+> index 1952ac85222c..3cdfdcedb088 100644
+> --- a/fs/btrfs/ordered-data.c
+> +++ b/fs/btrfs/ordered-data.c
+> @@ -1041,6 +1041,34 @@ void btrfs_lock_and_flush_ordered_range(struct btrfs_inode *inode, u64 start,
+>         }
+>  }
 >
->  /* tree-defrag.c */
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 0f257205c63d..cf19d381ead6 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -1481,7 +1481,7 @@ lock_and_cleanup_extent_if_need(struct btrfs_inode *inode, struct page **pages,
->   * NOTE: Callers need to call btrfs_check_nocow_unlock() if we return > 0.
->   */
->  int btrfs_check_nocow_lock(struct btrfs_inode *inode, loff_t pos,
-> -                          size_t *write_bytes)
-> +                          size_t *write_bytes, bool nowait)
->  {
->         struct btrfs_fs_info *fs_info = inode->root->fs_info;
->         struct btrfs_root *root = inode->root;
-> @@ -1500,16 +1500,21 @@ int btrfs_check_nocow_lock(struct btrfs_inode *inode, loff_t pos,
->                            fs_info->sectorsize) - 1;
->         num_bytes = lockend - lockstart + 1;
->
-> -       btrfs_lock_and_flush_ordered_range(inode, lockstart, lockend, NULL);
-> +       if (nowait) {
-> +               if (!btrfs_try_lock_ordered_range(inode, lockstart, lockend)) {
-> +                       btrfs_drew_write_unlock(&root->snapshot_lock);
-> +                       return -EAGAIN;
-> +               }
-> +       } else {
-> +               btrfs_lock_and_flush_ordered_range(inode, lockstart, lockend, NULL);
-> +       }
->         ret = can_nocow_extent(&inode->vfs_inode, lockstart, &num_bytes,
-> -                       NULL, NULL, NULL, false, false);
-> -       if (ret <= 0) {
-> -               ret = 0;
-> +                       NULL, NULL, NULL, nowait, false);
-> +       if (ret <= 0)
->                 btrfs_drew_write_unlock(&root->snapshot_lock);
-> -       } else {
-> +       else
->                 *write_bytes = min_t(size_t, *write_bytes ,
->                                      num_bytes - pos + lockstart);
-> -       }
->         unlock_extent(&inode->io_tree, lockstart, lockend);
->
->         return ret;
-> @@ -1666,16 +1671,22 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->                                                   &data_reserved, pos,
->                                                   write_bytes, false);
->                 if (ret < 0) {
-> +                       int tmp;
-> +
->                         /*
->                          * If we don't have to COW at the offset, reserve
->                          * metadata only. write_bytes may get smaller than
->                          * requested here.
->                          */
-> -                       if (btrfs_check_nocow_lock(BTRFS_I(inode), pos,
-> -                                                  &write_bytes) > 0)
-> -                               only_release_metadata = true;
-> -                       else
-> +                       tmp = btrfs_check_nocow_lock(BTRFS_I(inode), pos,
-> +                                                    &write_bytes, false);
-> +                       if (tmp < 0)
-> +                               ret = tmp;
-> +                       if (tmp > 0)
-> +                               ret = 0;
-> +                       if (ret)
+> +/*
+> + * btrfs_try_lock_ordered_range - lock the passed range and ensure all pending
+> + * ordered extents in it are run to completion in nowait mode.
+> + *
+> + * @inode:        Inode whose ordered tree is to be searched
+> + * @start:        Beginning of range to flush
+> + * @end:          Last byte of range to lock
+> + *
+> + * This function returns 1 if btrfs_lock_ordered_range does not return any
+> + * extents, otherwise 0.
 
-A variable named tmp is not a great name, something like "can_nocow'
-would be a lot more clear.
+Why not a bool, true/false? That's all that is needed, and it's clear.
 
 Thanks.
 
-
->                                 break;
-> +                       only_release_metadata = true;
->                 }
->
->                 num_pages = DIV_ROUND_UP(write_bytes + offset, PAGE_SIZE);
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 36e755f73764..5426d4f4ac23 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -4884,7 +4884,7 @@ int btrfs_truncate_block(struct btrfs_inode *inode, loff_t from, loff_t len,
->         ret = btrfs_check_data_free_space(inode, &data_reserved, block_start,
->                                           blocksize, false);
->         if (ret < 0) {
-> -               if (btrfs_check_nocow_lock(inode, block_start, &write_bytes) > 0) {
-> +               if (btrfs_check_nocow_lock(inode, block_start, &write_bytes, false) > 0) {
->                         /* For nocow case, no need to reserve data space */
->                         only_release_metadata = true;
->                 } else {
+> + */
+> +int btrfs_try_lock_ordered_range(struct btrfs_inode *inode, u64 start, u64 end)
+> +{
+> +       struct btrfs_ordered_extent *ordered;
+> +
+> +       if (!try_lock_extent(&inode->io_tree, start, end))
+> +               return 0;
+> +
+> +       ordered = btrfs_lookup_ordered_range(inode, start, end - start + 1);
+> +       if (!ordered)
+> +               return 1;
+> +
+> +       btrfs_put_ordered_extent(ordered);
+> +       unlock_extent(&inode->io_tree, start, end);
+> +       return 0;
+> +}
+> +
+> +
+>  static int clone_ordered_extent(struct btrfs_ordered_extent *ordered, u64 pos,
+>                                 u64 len)
+>  {
+> diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
+> index 87792f85e2c4..ec27ebf0af4b 100644
+> --- a/fs/btrfs/ordered-data.h
+> +++ b/fs/btrfs/ordered-data.h
+> @@ -218,6 +218,7 @@ void btrfs_wait_ordered_roots(struct btrfs_fs_info *fs_info, u64 nr,
+>  void btrfs_lock_and_flush_ordered_range(struct btrfs_inode *inode, u64 start,
+>                                         u64 end,
+>                                         struct extent_state **cached_state);
+> +int btrfs_try_lock_ordered_range(struct btrfs_inode *inode, u64 start, u64 end);
+>  int btrfs_split_ordered_extent(struct btrfs_ordered_extent *ordered, u64 pre,
+>                                u64 post);
+>  int __init ordered_data_init(void);
 > --
 > 2.30.2
 >

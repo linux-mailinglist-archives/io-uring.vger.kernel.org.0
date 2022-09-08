@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EDED5B22EE
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 17:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CEDA5B22F0
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 17:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbiIHP7G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 11:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32838 "EHLO
+        id S231237AbiIHP7J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 11:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230168AbiIHP7F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 11:59:05 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B490F7546
-        for <io-uring@vger.kernel.org>; Thu,  8 Sep 2022 08:59:04 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id lz22so18247624ejb.3
-        for <io-uring@vger.kernel.org>; Thu, 08 Sep 2022 08:59:04 -0700 (PDT)
+        with ESMTP id S230407AbiIHP7G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 11:59:06 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F7DF827F
+        for <io-uring@vger.kernel.org>; Thu,  8 Sep 2022 08:59:05 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id l14so15622663eja.7
+        for <io-uring@vger.kernel.org>; Thu, 08 Sep 2022 08:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=djYdNzXWZEtmnQhM1MYMHWws4q0FI7BUKIiZyuQPvkA=;
-        b=g1Xq2d+q8JLBTZIE0j2J4dUEvqy5lkzYuwyNG9QlUJlIcQm3tsIekgWl8aimIcLrqs
-         AA1HZ4PHe+7cEh8ZCnGb35fBu+aBgrJN7LO/ev1+aWJ3YogpQe8zSb0+pnu5LyK6e5Ki
-         INypVmeupLt/2P0JtNP1LZz6yQ8ZjbaiCx5WROi3iyoouRG/wBBPJ1brXo3w9SvtBwGv
-         H+D9xe7l1TcRBv6pA41hnyH7lc52M/Ec3c6y5oODQ4uF4Zi4ySKESOG3EzQKTEfbWgwA
-         j4bE+MtfnkxG9CwqZn+8tMXyQkiJN9XOIERhlrggxCcOFL1xPMpwCRbAHtJzKVLur3+O
-         NWkA==
+        bh=v9r22If6h69B1ae0T4+KgnzjvLRV9orbZ+tGlc/KePA=;
+        b=liAwAX8RYVmIYFl6pJUImMIE+VXAw+4dzJsTJf1gNfbORPKRWuIBeWkBPO+55D7cMh
+         kBJ8q5YwVjJC0al34icZSRvxrh2xFkBn6KLCUl2W3T32T2ncdJA/I1bzUWGq8sQ1azi0
+         hVe+ablw54+cytgjz6vinvq/TBu9ggpGdeFUJyJybQjB+K9u1XsYRmDTTLJjvJx7ZQTF
+         i6cGG8p0lfPWVAxudV+ySR7GN/2p5ledFsg6yDuwJnDFHnzn5qeo6V2dicp5KU3ALuee
+         rcHRXTUN9zi93X1R+tFZb90mORhMQZOPodtDKpLkyVALCWizipH38LtpnID8gGz3mQaI
+         h2nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=djYdNzXWZEtmnQhM1MYMHWws4q0FI7BUKIiZyuQPvkA=;
-        b=TUs5gIxXPPOzNX/Dac0hcex8aLWNp6grMucJ96oTy9ZqypP8iXtjXraLLXs6nfB9g/
-         u8ZmZ8KmNwsqyZfV9ObG+/KVoTaU+Pwtwo+bgaDr7vNyaeELuGZkk5P7PEw1awPn+TtV
-         sqLWklnU5w9PjFhIkFoWzR/Wps4UGpXycQMa9B73h4aWTfN5OyuPdz6+C/jXtX7mWVGz
-         Fdq82/ln+SpXeOt4/PNfoEHCwY+R2Vr7XOEPMu5K/B36lggZ/hpBfq/Byu8AJZZOOHID
-         YtYhgKdrdSddmIFnVb/lOMRoq6FSgN7KF5qdP3COzIUpHthXrpALQtYo/CdmetChLsiM
-         2+9g==
-X-Gm-Message-State: ACgBeo2cey6zI36ZcAaXbRrWgfclhDa9kfx6WR/FlWiz1jY2J70aztMw
-        16LbD2ePXCQmfEADng+GHQ5gTiaSIDY=
-X-Google-Smtp-Source: AA6agR6MFe7vTAFz0crNTi8xGBvLnqUvC2hRwUdm/PzYzUHVLFs91moi84B089u7fQ3F4cwJ6MTSuA==
-X-Received: by 2002:a17:906:ef90:b0:730:9d18:17b3 with SMTP id ze16-20020a170906ef9000b007309d1817b3mr6810418ejb.141.1662652742579;
-        Thu, 08 Sep 2022 08:59:02 -0700 (PDT)
+        bh=v9r22If6h69B1ae0T4+KgnzjvLRV9orbZ+tGlc/KePA=;
+        b=RqKmOecGsqkEs0mLbWQNJiZ/TsSDU/yQX5wFenkkr+wL6PBjIjr3x6EriL/GC+Mpyg
+         G9Wcof/Imh2b/dtj35AU67NEjfHRur+whnOhsfnNPC3j6b3n5LzTwNqm0UGj527YptHv
+         vsG5ab73w+QHuop80m/ocynGq65ESm/8zivyHvzSKDXA/MYOuAKbHOOd7dhVBI1wHjZs
+         xXuQnQvB+1iHcBgzK5tPMATB/NI/1hvCjO3M9XGSrsaDuTTn5dIsv+pUMraP3C5/ovqJ
+         uW+O5ZnZ3OVTSccvo5v5f8ca45Ue4oOak2PaiOsGuGCi8p0VAZ9Inior7iz0cxLndOlI
+         HHQg==
+X-Gm-Message-State: ACgBeo28dt8eE+nomE5Zs55wKzAa81nI0thKSELSLxqoKbONgu7Rwk1R
+        cKy3EBP4ZLaIY7GQfdpLq95lry+gxRI=
+X-Google-Smtp-Source: AA6agR5p1ZvUb4chugFj7qMOaj7gPWy6tcbc/XUwuvKD+NYoAkJzE/QVCXD6LhxTNuUx86ndtArrhw==
+X-Received: by 2002:a17:907:94c2:b0:73d:c534:1ac0 with SMTP id dn2-20020a17090794c200b0073dc5341ac0mr6598776ejc.461.1662652743423;
+        Thu, 08 Sep 2022 08:59:03 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:cfb9])
-        by smtp.gmail.com with ESMTPSA id q26-20020a1709060e5a00b0073872f367cesm1392503eji.112.2022.09.08.08.59.01
+        by smtp.gmail.com with ESMTPSA id q26-20020a1709060e5a00b0073872f367cesm1392503eji.112.2022.09.08.08.59.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 08:59:02 -0700 (PDT)
+        Thu, 08 Sep 2022 08:59:03 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
         Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH 4/6] io_uring/iopoll: unify tw breaking logic
-Date:   Thu,  8 Sep 2022 16:56:55 +0100
-Message-Id: <d2fa8a44f8114f55a4807528da438cde93815360.1662652536.git.asml.silence@gmail.com>
+Subject: [PATCH 5/6] io_uring: add fast path for io_run_local_work()
+Date:   Thu,  8 Sep 2022 16:56:56 +0100
+Message-Id: <f6a885f372bad2d77d9cd87341b0a86a4000c0ff.1662652536.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1662652536.git.asml.silence@gmail.com>
 References: <cover.1662652536.git.asml.silence@gmail.com>
@@ -70,48 +70,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Let's keep checks for whether to break the iopoll loop or not same for
-normal and defer tw, this includes ->cached_cq_tail checks guarding
-against polling more than asked for.
+We'll grab uring_lock and call __io_run_local_work() with several
+atomics inside even if there are no task works. Skip it if ->work_llist
+is empty.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ io_uring/io_uring.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 8233a375e8c9..2fb5f1e78fb2 100644
+index 2fb5f1e78fb2..85b795e4dc6a 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1428,21 +1428,21 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
- 		 */
- 		if (wq_list_empty(&ctx->iopoll_list) ||
- 		    io_task_work_pending(ctx)) {
-+			u32 tail = ctx->cached_cq_tail;
+@@ -1208,6 +1208,9 @@ int io_run_local_work(struct io_ring_ctx *ctx)
+ 	bool locked;
+ 	int ret;
+ 
++	if (llist_empty(&ctx->work_llist))
++		return 0;
 +
- 			if (!llist_empty(&ctx->work_llist))
- 				__io_run_local_work(ctx, true);
-+
- 			if (task_work_pending(current) ||
- 			    wq_list_empty(&ctx->iopoll_list)) {
--				u32 tail = ctx->cached_cq_tail;
--
- 				mutex_unlock(&ctx->uring_lock);
- 				io_run_task_work();
- 				mutex_lock(&ctx->uring_lock);
--
--				/* some requests don't go through iopoll_list */
--				if (tail != ctx->cached_cq_tail ||
--				    wq_list_empty(&ctx->iopoll_list))
--					break;
- 			}
-+			/* some requests don't go through iopoll_list */
-+			if (tail != ctx->cached_cq_tail ||
-+			    wq_list_empty(&ctx->iopoll_list))
-+				break;
- 		}
- 		ret = io_do_iopoll(ctx, !min);
- 		if (ret < 0)
+ 	locked = mutex_trylock(&ctx->uring_lock);
+ 	ret = __io_run_local_work(ctx, locked);
+ 	if (locked)
 -- 
 2.37.2
 

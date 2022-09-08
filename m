@@ -2,133 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BECED5B19BF
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E6E5B19C2
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230464AbiIHKPA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 06:15:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33748 "EHLO
+        id S229480AbiIHKQb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 06:16:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiIHKO7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:14:59 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6B2220DF;
-        Thu,  8 Sep 2022 03:14:57 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1274ec87ad5so28154024fac.0;
-        Thu, 08 Sep 2022 03:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date;
-        bh=As/kg0zWR0hyURQdFDAJ9z39WKwycUQL+ZOB/bkcic8=;
-        b=n1OjXkaUH8Cq3ga7utl3wLG+60ssXM0gJ6f+OguBnIFEnlqWIMYYnQwaMzOd6JpZUS
-         33wZxVzNht+vct3Xjv+o+ZNnlwGjvYjgGb0Tkp/NB5E1gKfaRfCrvbyPY0I/3S9cczXW
-         86/7XqBRV87bcBYU+ZJUZlzqQmmAK3iG2hvvDayBUzAeNhvfLF8xPjU6Hz99Dmqg/r3R
-         YpJZ52cF9GsMFdyPY6+gvxeyE1l041j9rsPHVFDSioRsHLwm5pFrgqG5/EUP9i90cdhG
-         nxwH9npx/d6X2njFLTE8CMIayGxAvwVaT1gN+MlwvpgUgu96kt9oDlGW8+IzeGuI0+TQ
-         5eGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=As/kg0zWR0hyURQdFDAJ9z39WKwycUQL+ZOB/bkcic8=;
-        b=Q03s2KcR35NvIVsQOSLwZTxgbZU8U2m6dVaXeRrLAsjyLr/7Hbq0M4tjZH2V/saRD3
-         YY37zmv2lMOgVrah4prZuigaabmvjRQwkKr0vgtA875ksiBmxFCmQEEW4o2jWhIoxLun
-         Y5z48L4CxlT5dE1zp/xr3qsSZsti+IPjGxCPgBpIIUdfJnMRw1T0otpqtSVmm3UyYbAS
-         vgNB68nk4xE4zp3z43WElEMYXWoOwG+zRLj1NuJEZZHF2dpKq4ZsWbOnEY7gBA3lDHm4
-         entix5qaZkZnGj0UsxSbkZwy6L+tFggbrzEjMSG2HRGNuvka6dnhH0uWiOqNv91rB7FF
-         +08Q==
-X-Gm-Message-State: ACgBeo3QmbOanIB2OUQ18Pu2RQpaFEHEwnbzxPPOu4yoXDdhyFJJ4MD/
-        AOnrAbf6MHKKyhn/e2NUW3elbgmhqxB6yIQRxrQ=
-X-Google-Smtp-Source: AA6agR7qZsOs+LB6x5FuTdMEyKH400ILN+ShF0296FZ1+36MfqXuPGWJlGrC57Y99yABhgF9V+2aiPtR8ClS85TzhjM=
+        with ESMTP id S229565AbiIHKQ3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:16:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7A5B6566;
+        Thu,  8 Sep 2022 03:16:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 662ECB81E80;
+        Thu,  8 Sep 2022 10:16:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE3EC433C1;
+        Thu,  8 Sep 2022 10:16:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662632181;
+        bh=j4Q4LwmhEo/x9jzNYVfCpPx/5TZ3N2+Au/UnimeW2bI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tT3FC1AaUVbP/AIF+YLMuOf/VIVmnmtxW6/imbNvS20Fvn/EF64b/O8Mq0xSa7/SN
+         Z1tCihK3RLIXUCqhqy2ZpA37KnFYt28yANvM4R+yCshTdMwAUrLpv+J6b8i731w3xw
+         iX8R2kUgCDgS4y4/mSK9v02XRHg8IroFczWXUitNdPgWNkPxn9mbMe4DInSmAPGyt8
+         E8CBu9gvqjf4FUzp2BWNwH1xg9uuQV80VvEyy4VpzQJq7oWKcqTDO9yeRyKTD8U3H6
+         E7vX73EDEqNvT2tyhOee7vi8ANuH4MAtz9An7E0inhLyT9ymjXlWS0TzEfF6wWXqXb
+         V4GCSz0XviWDA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-12803ac8113so9776094fac.8;
+        Thu, 08 Sep 2022 03:16:21 -0700 (PDT)
+X-Gm-Message-State: ACgBeo1Szdp2vOd4N7Wv4ygqnCb4j/mZqR8ScbN8/8McFJHsD4dPvPu1
+        7sbJoBd9eQTYDcgrBrcO2pWx6sAG7Suc8P3Eezg=
+X-Google-Smtp-Source: AA6agR5FcWw6bO0z6Q0Bh9LfQac06LtkkxRHD1eJO7/rFRXlO9DsMTAdiRHtxotXdQwZ0uEDmHdTD2hFcTD9vEj5mp0=
 X-Received: by 2002:a05:6870:ea83:b0:fe:365f:cb9d with SMTP id
- s3-20020a056870ea8300b000fe365fcb9dmr1492168oap.98.1662632097244; Thu, 08 Sep
- 2022 03:14:57 -0700 (PDT)
+ s3-20020a056870ea8300b000fe365fcb9dmr1494894oap.98.1662632180235; Thu, 08 Sep
+ 2022 03:16:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-13-shr@fb.com>
-In-Reply-To: <20220908002616.3189675-13-shr@fb.com>
-Reply-To: fdmanana@gmail.com
-From:   Filipe Manana <fdmanana@gmail.com>
-Date:   Thu, 8 Sep 2022 11:14:21 +0100
-Message-ID: <CAL3q7H7dM3tdbnLReyrX1Vm=43NdjTPXmRrhJF7nO=Uy3fyKDA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] btrfs: enable nowait async buffered writes
+References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-12-shr@fb.com>
+In-Reply-To: <20220908002616.3189675-12-shr@fb.com>
+From:   Filipe Manana <fdmanana@kernel.org>
+Date:   Thu, 8 Sep 2022 11:15:44 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H56dfcQP+vMK0T22nJwZQ=Qq217wT=idkHZdW4J4ar9fQ@mail.gmail.com>
+Message-ID: <CAL3q7H56dfcQP+vMK0T22nJwZQ=Qq217wT=idkHZdW4J4ar9fQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/12] btrfs: add assert to search functions
 To:     Stefan Roesch <shr@fb.com>
 Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
         linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Sep 8, 2022 at 1:29 AM Stefan Roesch <shr@fb.com> wrote:
+On Thu, Sep 8, 2022 at 1:26 AM Stefan Roesch <shr@fb.com> wrote:
 >
-> Enable nowait async buffered writes in btrfs_do_write_iter() and
-> btrfs_file_open().
+> This adds warnings to search functions, which should not have the nowait
+> flag set when called.
 
-This is too terse, see below.
+This could be more clear, by saying btree search functions which are
+not used for the buffered IO
+and direct IO paths, which are the only users of nowait btree searches.
+
+Also the subject: "btrfs: add assert to search functions"
+
+Mentions assert, but the code adds warnings, which are not the same.
+It could also be more clear like:   "btrfs: assert nowait mode is not
+used for some btree search functions''
+
 
 >
 > Signed-off-by: Stefan Roesch <shr@fb.com>
 > ---
->  fs/btrfs/file.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  fs/btrfs/ctree.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index fd42ba9de7a7..887497fd524f 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -2107,13 +2107,13 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, s=
-truct iov_iter *from,
->         if (BTRFS_FS_ERROR(inode->root->fs_info))
->                 return -EROFS;
+> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+> index 71b238364939..9caf0f87cbcb 100644
+> --- a/fs/btrfs/ctree.c
+> +++ b/fs/btrfs/ctree.c
+> @@ -2165,6 +2165,9 @@ int btrfs_search_old_slot(struct btrfs_root *root, const struct btrfs_key *key,
+>         lowest_level = p->lowest_level;
+>         WARN_ON(p->nodes[0] != NULL);
 >
-> -       if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIR=
-ECT))
-> -               return -EOPNOTSUPP;
-> -
->         if (sync)
->                 atomic_inc(&inode->sync_writers);
->
->         if (encoded) {
-> +               if (iocb->ki_flags & IOCB_NOWAIT)
-> +                       return -EOPNOTSUPP;
+> +       if (WARN_ON_ONCE(p->nowait == 1))
 
-The changelog should provide some rationale about why encoded writes
-are not supported.
+This doesn't follow the existing code style, which is to treat path
+members as booleans, and just do:
+
+WARN_ON_ONCE(p->nowait)
+
+I.e., no explicit " == 1"
+
+As this is a developer thing, I would use ASSERT() instead.
+
+For release builds that typically have CONFIG_BTRFS_ASSERT not set
+(like Ubuntu and Debian), it would
+still allow the search to continue, which is fine from a functional
+perspective, since not respecting nowait
+semantics is just a performance thing.
 
 Thanks.
 
+
+> +               return -EINVAL;
 > +
->                 num_written =3D btrfs_encoded_write(iocb, from, encoded);
->                 num_sync =3D encoded->len;
->         } else if (iocb->ki_flags & IOCB_DIRECT) {
-> @@ -3755,7 +3755,7 @@ static int btrfs_file_open(struct inode *inode, str=
-uct file *filp)
->  {
+>         if (p->search_commit_root) {
+>                 BUG_ON(time_seq);
+>                 return btrfs_search_slot(NULL, root, key, p, 0, 0);
+> @@ -4465,6 +4468,9 @@ int btrfs_search_forward(struct btrfs_root *root, struct btrfs_key *min_key,
+>         int ret = 1;
+>         int keep_locks = path->keep_locks;
+>
+> +       if (WARN_ON_ONCE(path->nowait == 1))
+> +               return -EINVAL;
+> +
+>         path->keep_locks = 1;
+>  again:
+>         cur = btrfs_read_lock_root_node(root);
+> @@ -4645,6 +4651,9 @@ int btrfs_next_old_leaf(struct btrfs_root *root, struct btrfs_path *path,
 >         int ret;
+>         int i;
 >
-> -       filp->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC;
-> +       filp->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WAS=
-YNC;
->
->         ret =3D fsverity_file_open(inode, filp);
->         if (ret)
+> +       if (WARN_ON_ONCE(path->nowait == 1))
+> +               return -EINVAL;
+> +
+>         nritems = btrfs_header_nritems(path->nodes[0]);
+>         if (nritems == 0)
+>                 return 1;
 > --
 > 2.30.2
 >
-
-
---=20
-Filipe David Manana,
-
-=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
- right.=E2=80=9D

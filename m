@@ -2,51 +2,52 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCCB65B19C8
-	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7655B19CA
+	for <lists+io-uring@lfdr.de>; Thu,  8 Sep 2022 12:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiIHKRi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Sep 2022 06:17:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37668 "EHLO
+        id S229835AbiIHKR6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Sep 2022 06:17:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiIHKRh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:17:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFAE4B2776;
-        Thu,  8 Sep 2022 03:17:36 -0700 (PDT)
+        with ESMTP id S229529AbiIHKR5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Sep 2022 06:17:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F75B81F0;
+        Thu,  8 Sep 2022 03:17:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CE8061C22;
-        Thu,  8 Sep 2022 10:17:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A90C433B5;
-        Thu,  8 Sep 2022 10:17:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A4E9961BEA;
+        Thu,  8 Sep 2022 10:17:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1E0C433D6;
+        Thu,  8 Sep 2022 10:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662632255;
-        bh=WdsPjLSIs54p8FRw+3ahrbrME4jbmeaKHKXaX+FnNbc=;
+        s=k20201202; t=1662632276;
+        bh=dWyxK9jP2WV93aLxJVYMrcErXjL30EfeKVj61CKAdFM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TvgNquWipvGtG35REy2yhh75DJVBr5/b/uNHQLXG9AzBR+BBHbXSEPvds96SEyGFC
-         6iPUeVaYIS2BCbtzZAHGIgjuHZguqqL22CItKcrtCZ0giuCIfODYnNlwACNueBumgp
-         HBqCaayclslZEt3FXOjL02FwcdhJ0VelGrh6sHZEbp2DlNDatN6I9ON1EcNhY1SsAZ
-         Tg41MvVv8YPQGxtLiIokrJWbZ0wLpI7zt5SxvAB+5IL9+zbwwLiwKgIa+Tsa95SDcM
-         h1GbaiuNEJASg49SohDrkL6qSa6H+KE+mSs4HLYiS2iumytJlJPH5iBbbRThErr/tk
-         +oIfPp3S5R/+A==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-127f5411b9cso11715471fac.4;
-        Thu, 08 Sep 2022 03:17:35 -0700 (PDT)
-X-Gm-Message-State: ACgBeo2ufo8sbg85CvuxMS6mRqgKDgeP0OHTZoUaj86lN322NFBa2kYW
-        3Fbsu4mNxmk6Wblu6AW4xlMvoL/BaPhGDnKi2KI=
-X-Google-Smtp-Source: AA6agR7qxRxphmI1M+ilHIpHsy5UABKzZMAI4lTnf7LNpXRM08EaqxZLq9+YMWn0SAkT9XoH9nK2aYmVD7WlS9AkpEA=
-X-Received: by 2002:a05:6808:308c:b0:343:53c7:fbbb with SMTP id
- bl12-20020a056808308c00b0034353c7fbbbmr1141289oib.98.1662632254943; Thu, 08
- Sep 2022 03:17:34 -0700 (PDT)
+        b=GeZd2WDQ8IkvfSxKxZc1klqY044eNyEev16jjhgYSFMj/M9BQkCVmCrXLLJUiFU+U
+         6htI09gP+6J5p3vxA1iJqJnxRvw8YSKDMhXXp7S1+GtaYS00qIvueZe8ZhaVtjqsID
+         RrFLyqqHxVl2YqEdx1KNF8BvdUgGyszY4bvkuqLmRb8Wf5TfOs1GMZuSDrHJjl2hOo
+         jI+NlRP4GhNMAnxQGZoaVqkCRqlr8Os43r89ivpM3KiDRvE4C0auONGBoySGXEKd6F
+         9O3Qv1sCKQY9RluIapKOAlk54+M0dDqnKdMSUVmO/rCUmdHq5Z16vFOcTgwo6FVJJz
+         71X46hsh3hNxA==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-127ba06d03fso19503107fac.3;
+        Thu, 08 Sep 2022 03:17:56 -0700 (PDT)
+X-Gm-Message-State: ACgBeo3BeMYphl8jLubcJn6bNPP0UhpRFG6ONN1OO7P+YP5ClOPTycno
+        xMFK208O6h+G/N3ii0j1VOcsyzWi+S/EWBYW3lE=
+X-Google-Smtp-Source: AA6agR4RbXvgp7YDtSufRijhQM8A0B/CkG/zA2VlL/q5Zg1YaFcB1AO+ZcBKrYeL84S6n7DZnNQXruxuH2CFyro3SsQ=
+X-Received: by 2002:a05:6870:538c:b0:11b:e64f:ee1b with SMTP id
+ h12-20020a056870538c00b0011be64fee1bmr1391001oan.92.1662632275255; Thu, 08
+ Sep 2022 03:17:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-10-shr@fb.com>
-In-Reply-To: <20220908002616.3189675-10-shr@fb.com>
+References: <20220908002616.3189675-1-shr@fb.com> <20220908002616.3189675-9-shr@fb.com>
+In-Reply-To: <20220908002616.3189675-9-shr@fb.com>
 From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Thu, 8 Sep 2022 11:16:58 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5Pij0A5G9vEFHKrgUSQuhUA8U6Eh9oAhKRcjeex19U=Q@mail.gmail.com>
-Message-ID: <CAL3q7H5Pij0A5G9vEFHKrgUSQuhUA8U6Eh9oAhKRcjeex19U=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 09/12] btrfs: btrfs: plumb NOWAIT through the write path
+Date:   Thu, 8 Sep 2022 11:17:19 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5QnvPNtNq-uvXBsFNT=URXU4pKDaUqZGrf3MPt7VgBSA@mail.gmail.com>
+Message-ID: <CAL3q7H5QnvPNtNq-uvXBsFNT=URXU4pKDaUqZGrf3MPt7VgBSA@mail.gmail.com>
+Subject: Re: [PATCH v2 08/12] btrfs: make lock_and_cleanup_extent_if_need
+ nowait compatible
 To:     Stefan Roesch <shr@fb.com>
 Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
         linux-btrfs@vger.kernel.org, axboe@kernel.dk, josef@toxicpanda.com
@@ -63,85 +64,66 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Thu, Sep 8, 2022 at 1:26 AM Stefan Roesch <shr@fb.com> wrote:
 >
-> We have everywhere setup for nowait, plumb NOWAIT through the write path.
-
-Note, there's a double "btrfs: " prefix in the subject line.
-
+> This adds the nowait parameter to lock_and_cleanup_extent_if_need(). If
+> the nowait parameter is specified we try to lock the extent in nowait
+> mode.
 >
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > Signed-off-by: Stefan Roesch <shr@fb.com>
 > ---
->  fs/btrfs/file.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
+>  fs/btrfs/file.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
 >
 > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 4e1745e585cb..6e191e353b22 100644
+> index a154a3cec44b..4e1745e585cb 100644
 > --- a/fs/btrfs/file.c
 > +++ b/fs/btrfs/file.c
-> @@ -1653,8 +1653,9 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->         bool force_page_uptodate = false;
->         loff_t old_isize = i_size_read(inode);
->         unsigned int ilock_flags = 0;
-> +       bool nowait = iocb->ki_flags & IOCB_NOWAIT;
+> @@ -1440,7 +1440,7 @@ static noinline int
+>  lock_and_cleanup_extent_if_need(struct btrfs_inode *inode, struct page **pages,
+>                                 size_t num_pages, loff_t pos,
+>                                 size_t write_bytes,
+> -                               u64 *lockstart, u64 *lockend,
+> +                               u64 *lockstart, u64 *lockend, bool nowait,
+>                                 struct extent_state **cached_state)
+>  {
+>         struct btrfs_fs_info *fs_info = inode->root->fs_info;
+> @@ -1455,8 +1455,20 @@ lock_and_cleanup_extent_if_need(struct btrfs_inode *inode, struct page **pages,
+>         if (start_pos < inode->vfs_inode.i_size) {
+>                 struct btrfs_ordered_extent *ordered;
+>
+> -               lock_extent_bits(&inode->io_tree, start_pos, last_pos,
+> +               if (nowait) {
+> +                       if (!try_lock_extent(&inode->io_tree, start_pos, last_pos)) {
+> +                               for (i = 0; i < num_pages; i++) {
+> +                                       unlock_page(pages[i]);
+> +                                       put_page(pages[i]);
 
-Can be made const.
+Since this is a non-local array, I'd prefer if we also set pages[i] to NULL.
+That may help prevent hard to debug bugs in the future.
 
 Thanks.
 
->
-> -       if (iocb->ki_flags & IOCB_NOWAIT)
-> +       if (nowait)
->                 ilock_flags |= BTRFS_ILOCK_TRY;
->
->         ret = btrfs_inode_lock(inode, ilock_flags);
-> @@ -1710,17 +1711,22 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->                 extent_changeset_release(data_reserved);
->                 ret = btrfs_check_data_free_space(BTRFS_I(inode),
->                                                   &data_reserved, pos,
-> -                                                 write_bytes, false);
-> +                                                 write_bytes, nowait);
->                 if (ret < 0) {
->                         int tmp;
->
-> +                       if (nowait && (ret == -ENOSPC || ret == -EAGAIN)) {
-> +                               ret = -EAGAIN;
-> +                               break;
-> +                       }
+
+> +                               }
 > +
->                         /*
->                          * If we don't have to COW at the offset, reserve
->                          * metadata only. write_bytes may get smaller than
->                          * requested here.
->                          */
->                         tmp = btrfs_check_nocow_lock(BTRFS_I(inode), pos,
-> -                                                    &write_bytes, false);
-> +                                                    &write_bytes, nowait);
->                         if (tmp < 0)
->                                 ret = tmp;
->                         if (tmp > 0)
-> @@ -1737,7 +1743,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->                 WARN_ON(reserve_bytes == 0);
->                 ret = btrfs_delalloc_reserve_metadata(BTRFS_I(inode),
->                                                       reserve_bytes,
-> -                                                     reserve_bytes, false);
-> +                                                     reserve_bytes, nowait);
->                 if (ret) {
->                         if (!only_release_metadata)
->                                 btrfs_free_reserved_data_space(BTRFS_I(inode),
-> @@ -1767,10 +1773,11 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
+> +                               return -EAGAIN;
+> +                       }
+> +               } else {
+> +                       lock_extent_bits(&inode->io_tree, start_pos, last_pos,
+>                                 cached_state);
+> +               }
+> +
+>                 ordered = btrfs_lookup_ordered_range(inode, start_pos,
+>                                                      last_pos - start_pos + 1);
+>                 if (ordered &&
+> @@ -1755,7 +1767,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
 >                 extents_locked = lock_and_cleanup_extent_if_need(
 >                                 BTRFS_I(inode), pages,
 >                                 num_pages, pos, write_bytes, &lockstart,
-> -                               &lockend, false, &cached_state);
-> +                               &lockend, nowait, &cached_state);
+> -                               &lockend, &cached_state);
+> +                               &lockend, false, &cached_state);
 >                 if (extents_locked < 0) {
-> -                       if (extents_locked == -EAGAIN)
-> +                       if (!nowait && extents_locked == -EAGAIN)
+>                         if (extents_locked == -EAGAIN)
 >                                 goto again;
-> +
->                         btrfs_delalloc_release_extents(BTRFS_I(inode),
->                                                        reserve_bytes);
->                         ret = extents_locked;
 > --
 > 2.30.2
 >

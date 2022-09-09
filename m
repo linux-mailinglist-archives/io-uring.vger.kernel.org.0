@@ -2,105 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA5DB5B2D51
-	for <lists+io-uring@lfdr.de>; Fri,  9 Sep 2022 06:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBBD35B2F13
+	for <lists+io-uring@lfdr.de>; Fri,  9 Sep 2022 08:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbiIIETz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Sep 2022 00:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
+        id S231201AbiIIGfZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Sep 2022 02:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbiIIETw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Sep 2022 00:19:52 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FCB1F60E;
-        Thu,  8 Sep 2022 21:19:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662697190; x=1694233190;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eSrNIJmzCvQPmppednT9KsYGtdgqhbjbMBSL7ABNuFE=;
-  b=L3tlBXr7y/clvetqJDhsc3Bh3qdsPD/zzOxzl81dtZ6mYUr/OqxpkbK6
-   0yAV8Yw0GH2mTWXdN57gaCX0sq7eU/WlhTUq2Hbo+se82sI18HFrAyyQc
-   3xPMVpt7HJi0FZW1ljrAbR9Fxdu754L29TaI055yq+Sw7ZHQXnIGPGDGi
-   SvEVk46yRlJ2Ox/BCGR6C0SCptfTBNENNVlzR+XTnmUNaQdTFNtYJtbKQ
-   dhLImmkwzrnjSE6Kv9fptJDvL94XdlkfFukNWRYl6ao1rfoEXYQqeFVhn
-   wWfDJgKwnEqQraXEhzLCbDsa94VqCd5R1VPdSS6mUfNOVf0kVSo3C+U4Q
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10464"; a="277125911"
-X-IronPort-AV: E=Sophos;i="5.93,302,1654585200"; 
-   d="scan'208";a="277125911"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2022 21:19:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,302,1654585200"; 
-   d="scan'208";a="704273208"
-Received: from lkp-server02.sh.intel.com (HELO b2938d2e5c5a) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Sep 2022 21:19:47 -0700
-Received: from kbuild by b2938d2e5c5a with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oWVUY-0000i7-1P;
-        Fri, 09 Sep 2022 04:19:46 +0000
-Date:   Fri, 9 Sep 2022 12:19:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hch@lst.de,
-        kbusch@kernel.org, asml.silence@gmail.com
-Cc:     kbuild-all@lists.01.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH for-next v6 1/5] io_uring: add io_uring_cmd_import_fixed
-Message-ID: <202209091233.3r9bDGWS-lkp@intel.com>
-References: <20220908183511.2253-2-joshi.k@samsung.com>
+        with ESMTP id S231165AbiIIGfX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Sep 2022 02:35:23 -0400
+Received: from mta-01.yadro.com (mta-02.yadro.com [89.207.88.252])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FAD9481C4;
+        Thu,  8 Sep 2022 23:35:21 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 6DACE566F1;
+        Fri,  9 Sep 2022 06:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:date:subject:subject:from:from
+        :received:received:received:received; s=mta-01; t=1662705318; x=
+        1664519719; bh=103tqh1X9vgRK9R4xZs/S2qKAynHwmjKGuc+Y20yVGQ=; b=b
+        Xc3G+SDj7E8K7zIlZWkkeDzzxLaplulitWx5Bq8HX+EJB2o2FovT4zM9m65avDqP
+        BDuZpN0RsSztI893cVedQCLA2GQwgd3ReVtePO7JdJFnYxBXY127SMkKcqBqKjon
+        ksqaipGXDXJ4mu4S8Nzh40EDgwVaoE+40btRujA9ic=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7aR_vaqlQme6; Fri,  9 Sep 2022 09:35:18 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (T-EXCH-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id 4C83B566CB;
+        Fri,  9 Sep 2022 09:35:16 +0300 (MSK)
+Received: from T-EXCH-09.corp.yadro.com (172.17.11.59) by
+ T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.669.32; Fri, 9 Sep 2022 09:35:16 +0300
+Received: from altair.lan (172.17.190.47) by T-EXCH-09.corp.yadro.com
+ (172.17.11.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1118.9; Fri, 9 Sep 2022
+ 09:35:12 +0300
+From:   "Alexander V. Buev" <a.buev@yadro.com>
+To:     <linux-block@vger.kernel.org>
+CC:     <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        "Christoph Hellwig" <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Mikhail Malygin <m.malygin@yadro.com>, <linux@yadro.com>,
+        "Alexander V. Buev" <a.buev@yadro.com>
+Subject: [PATCH v3 0/3] implement direct IO with integrity
+Date:   Fri, 9 Sep 2022 09:32:54 +0300
+Message-ID: <20220909063257.1072450-1-a.buev@yadro.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220908183511.2253-2-joshi.k@samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.17.190.47]
+X-ClientProxiedBy: T-EXCH-02.corp.yadro.com (172.17.10.102) To
+ T-EXCH-09.corp.yadro.com (172.17.11.59)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Kanchan,
+This series of patches makes possible to do direct block IO
+with integrity payload using io uring kernel interface.
+Userspace app can utilize new READV_PI/WRITEV_PI operation with a new
+fields in sqe struct (pi_addr/pi_len) to provide iovec's with
+integrity data.
 
-Thank you for the patch! Yet something to improve:
+Changes since v2:
+ - separate code from fast path
+ - keep rw_pi struct size <= 64 byte
+ - using kiocb->private pointer to pass
+   PI data iterator to block direct IO layer   
+ - improved bio_integrity_add_iovec function 
 
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on linus/master v6.0-rc4 next-20220908]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Alexander V. Buev (3):
+  block: bio-integrity: add PI iovec to bio
+  block: io-uring: add READV_PI/WRITEV_PI operations
+  block: fops: handle IOCB_USE_PI in direct IO
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kanchan-Joshi/io_uring-add-io_uring_cmd_import_fixed/20220909-033508
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-config: riscv-nommu_virt_defconfig (https://download.01.org/0day-ci/archive/20220909/202209091233.3r9bDGWS-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/0b61830b28b6a720a99d34aba08d3d466fe516ec
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Kanchan-Joshi/io_uring-add-io_uring_cmd_import_fixed/20220909-033508
-        git checkout 0b61830b28b6a720a99d34aba08d3d466fe516ec
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   riscv64-linux-ld: kernel/exit.o: in function `io_uring_cmd_import_fixed':
->> exit.c:(.text+0x642): multiple definition of `io_uring_cmd_import_fixed'; kernel/fork.o:fork.c:(.text+0x6e8): first defined here
-   riscv64-linux-ld: fs/exec.o: in function `io_uring_cmd_import_fixed':
-   exec.c:(.text+0xc6e): multiple definition of `io_uring_cmd_import_fixed'; kernel/fork.o:fork.c:(.text+0x6e8): first defined here
+ block/bio-integrity.c         | 163 +++++++++
+ block/fops.c                  |  80 +++++
+ include/linux/bio.h           |   8 +
+ include/linux/fs.h            |   1 +
+ include/uapi/linux/io_uring.h |   6 +
+ include/uapi/linux/uio.h      |   3 +-
+ io_uring/Makefile             |   3 +-
+ io_uring/io_uring.c           |   2 +
+ io_uring/opdef.c              |  27 ++
+ io_uring/rw.h                 |   4 +
+ io_uring/rw_pi.c              | 619 ++++++++++++++++++++++++++++++++++
+ io_uring/rw_pi.h              |  34 ++
+ 12 files changed, 948 insertions(+), 2 deletions(-)
+ create mode 100644 io_uring/rw_pi.c
+ create mode 100644 io_uring/rw_pi.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.30.2
+

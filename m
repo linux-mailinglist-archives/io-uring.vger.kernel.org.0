@@ -2,78 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D8135B3CD8
-	for <lists+io-uring@lfdr.de>; Fri,  9 Sep 2022 18:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3755B3DE0
+	for <lists+io-uring@lfdr.de>; Fri,  9 Sep 2022 19:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229941AbiIIQUL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Sep 2022 12:20:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35230 "EHLO
+        id S230324AbiIIRYc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Sep 2022 13:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231130AbiIIQUG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Sep 2022 12:20:06 -0400
-Received: from mta-01.yadro.com (mta-02.yadro.com [89.207.88.252])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A6C47BAB;
-        Fri,  9 Sep 2022 09:20:04 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 7AA0C57018;
-        Fri,  9 Sep 2022 16:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        in-reply-to:content-transfer-encoding:content-disposition
-        :content-type:content-type:mime-version:references:message-id
-        :subject:subject:from:from:date:date:received:received:received
-        :received; s=mta-01; t=1662740401; x=1664554802; bh=7t1pkpI3Kyvk
-        wk7f3trAVX9nZtHLRyiBTdqTz4+V0iw=; b=Gmi1jgGjnLzDm6aV4O/FSLi6mmQM
-        LIEugbBPERS3MyND4dqmwD+3TcEKt5D7hjTGcmB5YGj1oGsj+W4clEWKQHTTQsOg
-        zokfoD4OLfZbl85f3rm/6dGi5DN9/+AJkveB/CofieSwqMlEZc9AwcdULTxqrd34
-        S5g3dpmg6rEoBU4=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ZfB7VV8H76WB; Fri,  9 Sep 2022 19:20:01 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (T-EXCH-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id 185D556FFB;
-        Fri,  9 Sep 2022 19:20:00 +0300 (MSK)
-Received: from T-EXCH-09.corp.yadro.com (172.17.11.59) by
- T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.669.32; Fri, 9 Sep 2022 19:20:00 +0300
-Received: from yadro.com (10.199.18.119) by T-EXCH-09.corp.yadro.com
- (172.17.11.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1118.9; Fri, 9 Sep 2022
- 19:19:59 +0300
-Date:   Fri, 9 Sep 2022 19:19:57 +0300
-From:   "Alexander V. Buev" <a.buev@yadro.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "Pavel Begunkov" <asml.silence@gmail.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Mikhail Malygin <m.malygin@yadro.com>, <linux@yadro.com>
-Subject: Re: [PATCH v4 1/3] block: bio-integrity: add PI iovec to bio
-Message-ID: <20220909161957.5zhkgmximg6ghxtr@yadro.com>
-Mail-Followup-To: "Alexander V. Buev" <a.buev@yadro.com>,
-        Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Mikhail Malygin <m.malygin@yadro.com>, linux@yadro.com
-References: <20220909122040.1098696-1-a.buev@yadro.com>
- <20220909122040.1098696-2-a.buev@yadro.com>
- <20220909143818.GA10143@lst.de>
+        with ESMTP id S229567AbiIIRYb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Sep 2022 13:24:31 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6021295
+        for <io-uring@vger.kernel.org>; Fri,  9 Sep 2022 10:24:22 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id l16so1163063ilj.2
+        for <io-uring@vger.kernel.org>; Fri, 09 Sep 2022 10:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
+        bh=QPl2gznPow37Cr4NNQSMzlrGiSf35LGDmI0/fT/qB/Q=;
+        b=UOMXHEAo1NEZksZqWa09VzD6Hn3uEF7yag50j7vroqKhJG4lxgdhKCdwiQy/N8KHR9
+         bDwJIPHPocap4NZygecrRatCIqGIW6OlJEvM2Hy3Dhygg0kezO0b2PP+92k3d0hBNges
+         S2IdqW5kbdEvvfhTOzgSTODjj521Io8wwY34nKHqO5QxNdkfMANErC2iHd2/bcJuZjOb
+         FsH45VtpfFQmmKCp1Jsd5EB2WnYgj3zKgdxVqZcRtafHPWuEudw1Burr8WomaZ8idVBg
+         9737MyfRYm6OfbDVwpLA+c9Ft6ECfaLEozXpwYQ8MxdGfcEu3D/SjonBS5yvf8MJCMMy
+         S+Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date;
+        bh=QPl2gznPow37Cr4NNQSMzlrGiSf35LGDmI0/fT/qB/Q=;
+        b=5eljFFb7Sojg3FhVXpDJFFl64PTKozTtEwP1UIHSOx7IN5vt/d7Nl2v4+I136V9hQn
+         1W1s20lx7XzGL4pDT72uWnWd+lK5mbwLWxu+Jep0qb2YuZ5EuMTP0E9eGa4L1E0sFrND
+         r7qpi6YGrVClO0N9teqSRa3Z9QhcsSLsSXPtFh7ci1yitxR4ofjHcK7+4/tB9H6qvmiS
+         oieEmFvHdl2yBLofECq6W+g3LXTvtDSK0F5kIs+DOztgyUDOtbBJ2iqmf4teQlQRBCi8
+         tx5Q+QG7hnBZ+SR5N/LDakVHP3xLeP7JRE4l8bqdaz6k6Xc1T9z19LArv6M4FWERj2YF
+         YdcQ==
+X-Gm-Message-State: ACgBeo1D11h/Pk1VkUNuFcmLzd90AfvHkp/UgN81B76VdoLzWHFmVaSn
+        h30g2taN1MmNU0FqfweHaS2RnghRLrFOSw==
+X-Google-Smtp-Source: AA6agR4w1unFV0LdSrAeQbfyz5x92jKzt8Jm5yAynJIZGU7jG9RtMv53sJJhMG+T/l9NCsoAUghVug==
+X-Received: by 2002:a05:6e02:1c83:b0:2f1:2bd7:302d with SMTP id w3-20020a056e021c8300b002f12bd7302dmr5046269ill.190.1662744261707;
+        Fri, 09 Sep 2022 10:24:21 -0700 (PDT)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id l13-20020a056e021c0d00b002dd0bfd2467sm359600ilh.11.2022.09.09.10.24.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Sep 2022 10:24:20 -0700 (PDT)
+Message-ID: <9f7bc0ca-70c5-b4c1-5f70-f64de412e496@kernel.dk>
+Date:   Fri, 9 Sep 2022 11:24:19 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220909143818.GA10143@lst.de>
-X-Originating-IP: [10.199.18.119]
-X-ClientProxiedBy: T-EXCH-02.corp.yadro.com (172.17.10.102) To
- T-EXCH-09.corp.yadro.com (172.17.11.59)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.0-rc5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,40 +69,52 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> «Внимание! Данное письмо от внешнего адресата!»
-> 
-> On Fri, Sep 09, 2022 at 03:20:38PM +0300, Alexander V. Buev wrote:
-> > Added functions to attach user PI iovec pages to bio and release this
-> > pages via bio_integrity_free.
-> 
-> Before I get into nitpicking on the nitty gritty details:
-> 
-> what is the reason for pinning down the memory for the iovecs here?
-> Other interfaces like the nvme passthrough code simply copy from
-> user assuming that the amount of metadata passed will usually be
-> rather small, and thus faster doing a copy.
+Hi Linus,
 
-In short, for the universality of the solution.
-From my point of view we have a data & metadata (PI) 
-and process data & PI with the same method.
+A set of fixes that should go into the 6.0 release:
 
-We also worked with large IO and PI can be greater than PAGE_SIZE.
-I think that allocating & copying of data with PAGE_SIZE bytes of length (an in the feature more) 
-per one IO is not good idea.
-Also any block driver can register it's own integrity profile 
-with tuple_size more than 8 or 16 bytes.
+- Removed function that became unused after last weeks merge (Jiapeng)
 
-May be I am wrong but in the feature we can register some amount buffers
-and pin them once at start. This is very same idea as "SELECT BUFFERS" technics but
-for vector operations and with PI support.
+- Two small fixes for kbuf recycling (Pavel)
 
-For now we want to be able make IO with PI to block device
-with minimal restriction in interface.
+- Include address copy for zc send for POLLFIRST (Pavel)
 
-But I think you are right - on small IO it's may be faster to allocate & copy 
-instead of pin pages. May be this is point for feature optimization?
+- Fix for short IO handling in the normal read/write path (Pavel)
+
+Please pull!
 
 
+The following changes since commit 916d72c10a4ca80ea51f1421e774cb765b53f28f:
+
+  selftests/net: return back io_uring zc send tests (2022-09-01 09:13:33 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-6.0-2022-09-09
+
+for you to fetch changes up to 4d9cb92ca41dd8e905a4569ceba4716c2f39c75a:
+
+  io_uring/rw: fix short rw error handling (2022-09-09 08:57:57 -0600)
+
+----------------------------------------------------------------
+io_uring-6.0-2022-09-09
+
+----------------------------------------------------------------
+Jiapeng Chong (1):
+      io_uring/notif: Remove the unused function io_notif_complete()
+
+Pavel Begunkov (4):
+      io_uring/kbuf: fix not advancing READV kbuf ring
+      io_uring: recycle kbuf recycle on tw requeue
+      io_uring/net: copy addr for zc on POLL_FIRST
+      io_uring/rw: fix short rw error handling
+
+ io_uring/io_uring.c |  1 +
+ io_uring/kbuf.h     |  8 ++++++--
+ io_uring/net.c      |  7 ++++---
+ io_uring/notif.c    |  8 --------
+ io_uring/rw.c       | 30 ++++++++++++++++++------------
+ 5 files changed, 29 insertions(+), 25 deletions(-)
 
 -- 
-Alexander Buev
+Jens Axboe

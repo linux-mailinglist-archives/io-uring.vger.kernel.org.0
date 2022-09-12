@@ -2,72 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D564D5B5F2D
-	for <lists+io-uring@lfdr.de>; Mon, 12 Sep 2022 19:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 171045B61A8
+	for <lists+io-uring@lfdr.de>; Mon, 12 Sep 2022 21:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbiILRWI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Sep 2022 13:22:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56002 "EHLO
+        id S229456AbiILT2E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Sep 2022 15:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbiILRWH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Sep 2022 13:22:07 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C25F41C907
-        for <io-uring@vger.kernel.org>; Mon, 12 Sep 2022 10:22:05 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id bq9so16490451wrb.4
-        for <io-uring@vger.kernel.org>; Mon, 12 Sep 2022 10:22:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=TotLyiE56zuju2bIR0/IixXlh9n/Os8RM6b6LuIDxo0=;
-        b=pLDRwI453Kf9TuMk6M3OM00Aa6W4kFDR5Nh5GDnkOb/KJM+O3oscdnAylaxfCA7TLY
-         cRPQoXuihM3MrPSH3vra0min4DvaT4rb37+2kOxmFZ4paASdIsowpMpO2FgZqQ2uxA/N
-         sl+r+5B02VS8qTKDFYFMmuKynZ/1bTfXEPdgtqcPMzND/uPETw384w04ZCR0JrN1NPt9
-         g0ZRLPBd/jkMMIeibflUkpXxvf2/CRnutSgDI5RNHFbQzNlo7RVGw39ULai6++zfkJIn
-         q05kPIJQpv506UwxU2o9JnyVX3BQpuRDjMIyDDTKTJjTgefInHuDU5witL66eWXUz0Sn
-         oKvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=TotLyiE56zuju2bIR0/IixXlh9n/Os8RM6b6LuIDxo0=;
-        b=I461L5bU2Mm2O/pQKKIru/zuhwGePm/1jBIFC24W09fbQpirfdLUDQQVMxqem0YH8h
-         fhHfQVUCg5+0qZeLw5bIWp1D/7ZnhCzh6Lzk4bTImN+9oPaZl5QGl2h4cc0j3885tfhk
-         /Tz2XeYlpq78hS9NJell0dPKTY66jNFhvfea2snnFM6sqTKYJSpuXpn3E+FYWps+Zrc+
-         E7i+haVgBqEFSbVn6Eo5wtL3QgPwmoXkEunrZEaHxrPrb0eJp/J7a1zlEYxSRqb7CQBA
-         qoBbZaQfKiuJS1aOLu96Mn96ZAyK1SNfTBkhzbxp/wcl7CwmOBmJgkxKwwln89oXsmZp
-         4slA==
-X-Gm-Message-State: ACgBeo3gzPWZAu+ilqUX3URraQoPknSJ36zp01qC2zDL2sFOnYdqum1b
-        j50OhnUeEE0FN0rrm6t162ANag==
-X-Google-Smtp-Source: AA6agR5+RLpYhQ1H+qYkMBJdVwUlHyuBw4wpuglz4UxjSk/g11oXBbZ62RqU2DEu9kdu/bv3Yq18zQ==
-X-Received: by 2002:a05:6000:1687:b0:22a:3516:4f98 with SMTP id y7-20020a056000168700b0022a35164f98mr11705056wrd.525.1663003324247;
-        Mon, 12 Sep 2022 10:22:04 -0700 (PDT)
-Received: from [172.16.38.121] ([185.122.133.20])
-        by smtp.gmail.com with ESMTPSA id l5-20020a05600c1d0500b003b477532e66sm10244180wms.2.2022.09.12.10.22.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Sep 2022 10:22:03 -0700 (PDT)
-Message-ID: <601dac34-c3e3-5e86-852f-aaa489226733@kernel.dk>
-Date:   Mon, 12 Sep 2022 11:22:02 -0600
+        with ESMTP id S229502AbiILT2D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Sep 2022 15:28:03 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B408E4455E
+        for <io-uring@vger.kernel.org>; Mon, 12 Sep 2022 12:28:01 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28CHVFj0010392
+        for <io-uring@vger.kernel.org>; Mon, 12 Sep 2022 12:28:01 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=FmPcMYlNEdzY+NAVa51bcno64s7MYjavMzUqAhehX/A=;
+ b=TCtz/98aJSWsmTrVld8LoRZ/gCFSo1AdhrPMY00mJoHh+Bgw0u3L8BY25m3Pr0SEi5gh
+ kcsfkV8i3Z0jdSBTotvozRvzdPu7zspXvClR8hRTwHAVvc8EWtA+Hn/2fFxBCqqFaejp
+ GALsgY/Clhq0cT7rQIqK6VAPBCoc4T3xrTM= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3jgr9smh6y-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 12 Sep 2022 12:28:01 -0700
+Received: from twshared20183.05.prn5.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 12 Sep 2022 12:27:59 -0700
+Received: by dev1180.prn1.facebook.com (Postfix, from userid 425415)
+        id E35742085226; Mon, 12 Sep 2022 12:27:53 -0700 (PDT)
+From:   Stefan Roesch <shr@fb.com>
+To:     <kernel-team@fb.com>, <io-uring@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <linux-mm@kvack.org>
+CC:     <shr@fb.com>, <axboe@kernel.dk>, <josef@toxicpanda.com>,
+        <fdmanana@gmail.com>
+Subject: [PATCH v3 00/12] io-uring/btrfs: support async buffered writes 
+Date:   Mon, 12 Sep 2022 12:27:40 -0700
+Message-ID: <20220912192752.3785061-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: [PATCH v1] block: blk_queue_enter() / __bio_queue_enter() must
- return -EAGAIN for nowait
-To:     Bart Van Assche <bvanassche@acm.org>, Stefan Roesch <shr@fb.com>,
-        kernel-team@fb.com, linux-block@vger.kernel.org
-Cc:     io-uring@vger.kernel.org
-References: <20220912165325.2858746-1-shr@fb.com>
- <24aad185-fc3e-420b-b638-227c4564bcf8@acm.org>
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <24aad185-fc3e-420b-b638-227c4564bcf8@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ex41x4vK-PofjX5k5dT--BnuVPeLlmor
+X-Proofpoint-GUID: ex41x4vK-PofjX5k5dT--BnuVPeLlmor
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-12_13,2022-09-12_02,2022-06-22_01
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,25 +61,122 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/12/22 11:14 AM, Bart Van Assche wrote:
-> On 9/12/22 09:53, Stefan Roesch wrote:
->> Today blk_queue_enter() and __bio_queue_enter() return -EBUSY for the
->> nowait code path. This is not correct: they should return -EAGAIN
->> instead.
-> 
-> Why is this considered incorrect? Please explain.
-> 
-> Since this patch also affects other code, e.g. NVMe pass-through, can
-> this patch break existing user space code by changing the value
-> returned to user space?
+This patch series adds support for async buffered writes when using both
+btrfs and io-uring. Currently io-uring only supports buffered writes (for=
+ btrfs)
+in the slow path, by processing them in the io workers. With this patch s=
+eries
+it is now possible to support buffered writes in the fast path. To be abl=
+e to use
+the fast path, the required pages must be in the page cache, the required=
+ locks
+in btrfs can be granted immediately and no additional blocks need to be r=
+ead
+form disk.
 
-It is currently broken because we always return EAGAIN/EWOULDBLOCK for
-these cases, if a non-block flag is set of some sort. I strongly suspect
-that nobody has really being doing non-blocking IO to devices before
-io_uring made it a lot more common. EAGAIN means "try again later, or
-without nonblock said".
+This patch series makes use of the changes that have been introduced by a
+previous patch series: "io-uring/xfs: support async buffered writes"
 
-We should be consistent here.
+Performance results:
 
--- 
-Jens Axboe
+The new patch improves throughput by over two times (compared to the exit=
+ing
+behavior, where buffered writes are processed by an io-worker process) an=
+d also
+the latency is considerably reduced. Detailled results are part of the ch=
+angelog
+of the first commit.
+
+
+BTRFS changes:
+ -Add option for NOWAIT IOCB's to tell that searches do not wait on locks=
+. This
+  adds the nowait option to btrfs_path.
+ -For NOWAIT buffered writes on PREALLOC or NOCOW extents tell can_nocow_=
+extent()
+  that we don't want to wait on any locks or metadata IO.
+ -Support no_flush reservations for nowait buffered writes.
+ -Add btrfs_try_lock_ordered_range() function.
+ -Add nowait flag to btrfs_check_nocow_lock() to use it in write code pat=
+h.
+ -Add nowait parameter to prepare_pages() function.
+ -Plumb nowait through the write code path.
+ -Enable nowait buffered writes.
+
+
+Testing:
+  This patch has been tested with xfstests, fsx, fio. xfstests shows no n=
+ew
+  diffs compared to running without the patch series.
+
+
+Changes:
+
+V3:
+ - Updated changelog of "btrfs: implement a nowait option for tree search=
+es"
+   to say -EAGAIN.
+ - Use bool return value in signature of btrfs_try_lock_ordered_range
+ - Renamed variable tmp to can_nocow in btrfs_buffered_write
+ - Fixed coding style in get_prepare_fgp_flags
+ - Set pages[i] to NULL in error code path of lock_and_cleanup_extent_if_=
+need()
+ - Added const in definition of "bool nowait"
+ - Removed unlikely from btrfs_buffered_write
+ - Rephrased changelog for "btrfs: add assert to search functions" and us=
+ed
+   asserts instead of warnings
+ - Explained why enocded writes are not supported in the changelog
+ - Moved performance results to changelog of first commit
+=20
+V2:
+ - Replace EWOULDBLOCK with EAGAIN. In Version 1 it was not used consiste=
+ntly
+ - Export function balance_dirty_pages_ratelimited_flags()
+ - Add asserts/warnings for search functions when nowait is set, but we d=
+on't
+   expect that they are invoked with nowait set.
+
+
+
+Josef Bacik (5):
+  btrfs: implement a nowait option for tree searches
+  btrfs: make can_nocow_extent nowait compatible
+  btrfs: add the ability to use NO_FLUSH for data reservations
+  btrfs: add btrfs_try_lock_ordered_range
+  btrfs: make btrfs_check_nocow_lock nowait compatible
+
+Stefan Roesch (7):
+  mm: export balance_dirty_pages_ratelimited_flags()
+  btrfs: make prepare_pages nowait compatible
+  btrfs: make lock_and_cleanup_extent_if_need nowait compatible
+  btrfs: plumb NOWAIT through the write path
+  btrfs: make balance_dirty_pages nowait compatible
+  btrfs: assert nowait mode is not used for some btree search functions
+  btrfs: enable nowait async buffered writes
+
+ fs/btrfs/block-group.c    |   2 +-
+ fs/btrfs/ctree.c          |  43 ++++++++++++-
+ fs/btrfs/ctree.h          |   8 ++-
+ fs/btrfs/delalloc-space.c |  13 +++-
+ fs/btrfs/delalloc-space.h |   3 +-
+ fs/btrfs/extent-tree.c    |   5 ++
+ fs/btrfs/file-item.c      |   4 +-
+ fs/btrfs/file.c           | 124 ++++++++++++++++++++++++++++----------
+ fs/btrfs/inode.c          |  22 ++++---
+ fs/btrfs/locking.c        |  23 +++++++
+ fs/btrfs/locking.h        |   1 +
+ fs/btrfs/ordered-data.c   |  28 +++++++++
+ fs/btrfs/ordered-data.h   |   1 +
+ fs/btrfs/relocation.c     |   2 +-
+ fs/btrfs/scrub.c          |   4 +-
+ fs/btrfs/space-info.c     |   3 +-
+ fs/btrfs/tree-log.c       |   6 +-
+ mm/page-writeback.c       |   1 +
+ 18 files changed, 234 insertions(+), 59 deletions(-)
+
+
+base-commit: 80e78fcce86de0288793a0ef0f6acf37656ee4cf
+--=20
+2.30.2
+

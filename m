@@ -2,60 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 379335B6E92
-	for <lists+io-uring@lfdr.de>; Tue, 13 Sep 2022 15:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B741F5B76B8
+	for <lists+io-uring@lfdr.de>; Tue, 13 Sep 2022 18:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232322AbiIMNrb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Sep 2022 09:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55044 "EHLO
+        id S231222AbiIMQth (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Sep 2022 12:49:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbiIMNr3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Sep 2022 09:47:29 -0400
+        with ESMTP id S231355AbiIMQtM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Sep 2022 12:49:12 -0400
 Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A10A846601
-        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 06:47:27 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id z14-20020a05600c0a0e00b003b486df42a3so4437797wmp.2
-        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 06:47:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80C3844D0
+        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 08:43:19 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id v185-20020a1cacc2000000b003b42e4f278cso10653444wme.5
+        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 08:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
-        bh=Xsk4ckFKWgBNzg5Uz1aVIdS6Q/GiNN7CE/4nenxqTak=;
-        b=i1AVRCrOflfLDsskcnbs8IhMN9+cJTec/74dJx4XrIcnTL2yoEdx/+4m4tRdz1fuFE
-         02kCHWWrxguSmcZXRBfyY9c4X+ENr0iaeXZCfoa9eMEYVoNjpAIQF7vmAPDxhuMeTv3R
-         sefD2oIrwgZPWJNx6H9QpcGj+DapaJPSAgwW3CBJLeMVPAuwhs0Td4pzaLOUClF4Qj0G
-         8L9N0n/oV3Sqwbr/EFw6ST2sq2x7cqJxnpi0hKufEEYJ7LtG4wlkSW4g3LhN9Ef2jAEs
-         lAFZlxdUtguxK48f5Yoi++5aWU4PN84fmhZjJg6dh8yiM9kHSUAY/RZQP+npWavYg2X/
-         HwhA==
+         :references:in-reply-to:to:from:from:to:cc:subject:date;
+        bh=PNUop9wzkrl205kt1PFyyUHEjZzMpaJTpUhi0Rg63yE=;
+        b=CiayYDwXafv8cgRkWA0uJ7ol2jQmCXYq1PTflRtNSxhYB4Wx+qxVONMjOUV1FYJYli
+         XiiJPvgbsYrVENILgPOrdnPc9qz4DV38VKLpRj3fY+qgYhDMILcQc37YBD7qkzW+/G9f
+         RF7F3m5dcMnixI4qw5eTtNCuf8DLGA09xcYBbtX51Bic+kjzomeQNfUMY5CqDOpgdjbv
+         1cxKLU3NZi3t2kfOjjW7hIGetuGhgezfmv5RQ7Ut1gM3JC719/0BNxwCdEtoujPjuRrg
+         +J1xQoRdpbFrEbTj4p4QfGcydqAtCmrmYBhW94GWjDDOzfcshlxxRE+m14l1S9biDH4V
+         +N4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=Xsk4ckFKWgBNzg5Uz1aVIdS6Q/GiNN7CE/4nenxqTak=;
-        b=kG/eLuVdVMjxa6FY6VHT9u3Ddt5OjlHLXLMpp7AQNE10BIdfHVwpIPvFDdnnVF12Hq
-         mxDTl1/IUMS3dicEDP38fI90kD3nSatixRyRVQe/atyAZQF43tyGwTIrKG+1rOiqjVpA
-         kvUTQbaMJj/hgXLYhCosYGOPjVn8R+IxkEYDedsBySN/61Xr49NsxfgA5Do3feqvWBNi
-         eCsHn9/HlBjF8c/v+EIK3T8ZDND0zHKbUcwuDJbWf8Y+CEcWtapCAI6FT7iLw0sgd/KN
-         zg0uQbMGSN8gBerBS5aKFUTnaFb3K7dstJ7ettEwE5hNopUXXPn+2Mz4goSmpd9SJFrv
-         06UQ==
-X-Gm-Message-State: ACgBeo11EG33FFUpDsAc8IDo+NdZjFjbjVft4IoaV2rNuF1BEH8vzXGJ
-        Pabd0+fwCz6OmcNnUZHtW1X4wvmSqxHKIUQz
-X-Google-Smtp-Source: AA6agR5qTU6zUSk6wfAd2sk/RO33d2Rrf4NYqKuNJuCO/FS/O96uFPchTdXFyLl7amld8lOaGbXBew==
-X-Received: by 2002:a05:600c:3781:b0:3b4:63c8:554b with SMTP id o1-20020a05600c378100b003b463c8554bmr2507792wmr.25.1663076846111;
-        Tue, 13 Sep 2022 06:47:26 -0700 (PDT)
+        bh=PNUop9wzkrl205kt1PFyyUHEjZzMpaJTpUhi0Rg63yE=;
+        b=hVXb12KJ6SCQ2wLI9JAGPSShmjeykgSXTuSitO4UVRr22IsZvtDhSapVXg/bBw4GAj
+         q0fc/E1M78pmhyZmYC8xa7NbS5K2Xut6hhXutCh1awnWq84rA+zxViqaN4LQWoE5a+O0
+         iEIwBv6dzGJERl1FUQTnqv/YljKqnS1pp9+pQR9o5AqeX0cz+wnpRWLQlrTek79emBSo
+         PkmOfUnKORxe7pE3AzZ7RTkp3PnhJY4MuidIppp5Nzf1/N0RpVlOTxW0Wly56J30LHyH
+         uVGZIC9/moinSmldEgjeUdHjrCwbcTExd0QZf498S9lG5C3TC3KRlh0BJgFMBTFq6s3A
+         nBUA==
+X-Gm-Message-State: ACgBeo27b+MmYYFFgdmpIEBaanRKY2sDPs4zYphOQIht3h2YSz3C3cYN
+        A4dOQ6qEPbXVXJcYiPbkxu/NIAY/dwHKwdBf
+X-Google-Smtp-Source: AA6agR6VxaJ/1JfpH+3+XMCKZMjAHOevX67LQMIZ915lGaN+GCoiWVPQ2tIzHenozqRSfRPJLysnGA==
+X-Received: by 2002:a1c:7213:0:b0:3b3:4065:66cc with SMTP id n19-20020a1c7213000000b003b3406566ccmr2905914wmc.184.1663082623913;
+        Tue, 13 Sep 2022 08:23:43 -0700 (PDT)
 Received: from [127.0.0.1] ([185.122.133.20])
-        by smtp.gmail.com with ESMTPSA id o28-20020a05600c511c00b003b462b314e7sm14253993wms.16.2022.09.13.06.47.25
+        by smtp.gmail.com with ESMTPSA id u14-20020a05600c19ce00b003b4931eb435sm4334017wmq.26.2022.09.13.08.23.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Sep 2022 06:47:25 -0700 (PDT)
+        Tue, 13 Sep 2022 08:23:43 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     kernel test robot <lkp@intel.com>
-In-Reply-To: <9754a0970af1861e7865f9014f735c70dc60bf79.1663071587.git.asml.silence@gmail.com>
-References: <9754a0970af1861e7865f9014f735c70dc60bf79.1663071587.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/rw: fix error'ed retry return values
-Message-Id: <166307684510.3784.2511923201984525328.b4-ty@kernel.dk>
-Date:   Tue, 13 Sep 2022 07:47:25 -0600
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <2ed8db2b22f7840977bdc58b6d282be750c878bb.1662900803.git.asml.silence@gmail.com>
+References: <2ed8db2b22f7840977bdc58b6d282be750c878bb.1662900803.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing 1/1] tests: fixup defer-taskrun.c after api change
+Message-Id: <166308262318.27067.7371790942437307726.b4-ty@kernel.dk>
+Date:   Tue, 13 Sep 2022 09:23:43 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -69,18 +68,14 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 13 Sep 2022 13:21:23 +0100, Pavel Begunkov wrote:
-> Kernel test robot reports that we test negativity of an unsigned in
-> io_fixup_rw_res() after a recent change, which masks error codes and
-> messes up the return value in case I/O is re-retried and failed with
-> an error.
+On Tue, 13 Sep 2022 13:07:11 +0100, Pavel Begunkov wrote:
 > 
-> 
+
 
 Applied, thanks!
 
-[1/1] io_uring/rw: fix error'ed retry return values
-      commit: 62bb0647b14646fa6c9aa25ecdf67ad18f13523c
+[1/1] tests: fixup defer-taskrun.c after api change
+      commit: 2fadaf2ca667fc62f2275e21c229411d0834ec4b
 
 Best regards,
 -- 

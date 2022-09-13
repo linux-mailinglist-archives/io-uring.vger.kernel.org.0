@@ -2,96 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A36EE5B6D16
-	for <lists+io-uring@lfdr.de>; Tue, 13 Sep 2022 14:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 379335B6E92
+	for <lists+io-uring@lfdr.de>; Tue, 13 Sep 2022 15:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231848AbiIMMWf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Sep 2022 08:22:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56228 "EHLO
+        id S232322AbiIMNrb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Sep 2022 09:47:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230408AbiIMMW2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Sep 2022 08:22:28 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FA33C8EA
-        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 05:22:27 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id k9so20569386wri.0
-        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 05:22:27 -0700 (PDT)
+        with ESMTP id S231302AbiIMNr3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Sep 2022 09:47:29 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A10A846601
+        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 06:47:27 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id z14-20020a05600c0a0e00b003b486df42a3so4437797wmp.2
+        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 06:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=JvORTvNvoMPUsRno65bZWjtpNCjrcXic60bBWZSxOvk=;
-        b=AzFYkaYDxUKQsBf5x1EC8sl4ZkvP5bAtivuWQQxATDydrj199Moz/YnZviK6iQ+Fef
-         kP/qcEWM2/rwUxKFyNL1rIaMe5qVqPgnyA+R55OV+JzNejsveRYiO1TAwMZaqS7gfTVU
-         QAb+INvvuGE4lIY6FgHAMEzRU6pDY7MVrXZUJkRPRtZa1Gnecc3B9DFrDLYyTeBknxY7
-         8oXknQJ3ZvUOjRwAVRkMi/4nJNIYgr2GEkbYUCyDI1CRnxsIt1/mOWE/UoZOlPCqKKLL
-         /ZePxhmGP/CJDbwFAZVqaDCHIry7AvqhDCXRWPudSTAX+o0aPvb3OauXiQAPt1dDKRul
-         zVIQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
+        bh=Xsk4ckFKWgBNzg5Uz1aVIdS6Q/GiNN7CE/4nenxqTak=;
+        b=i1AVRCrOflfLDsskcnbs8IhMN9+cJTec/74dJx4XrIcnTL2yoEdx/+4m4tRdz1fuFE
+         02kCHWWrxguSmcZXRBfyY9c4X+ENr0iaeXZCfoa9eMEYVoNjpAIQF7vmAPDxhuMeTv3R
+         sefD2oIrwgZPWJNx6H9QpcGj+DapaJPSAgwW3CBJLeMVPAuwhs0Td4pzaLOUClF4Qj0G
+         8L9N0n/oV3Sqwbr/EFw6ST2sq2x7cqJxnpi0hKufEEYJ7LtG4wlkSW4g3LhN9Ef2jAEs
+         lAFZlxdUtguxK48f5Yoi++5aWU4PN84fmhZjJg6dh8yiM9kHSUAY/RZQP+npWavYg2X/
+         HwhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=JvORTvNvoMPUsRno65bZWjtpNCjrcXic60bBWZSxOvk=;
-        b=e1Y+DPRmXAKs//gnXpzOWLgPoMutOeQr6mcq9ZvwNwt3uwFhtRtoVc7Fndw17XUHtD
-         IQkSYvzXcxw3VfJmdcMjtLYaxcKgbvXMvgbRq7jr5igFgMtTv85PxC+kqoKwkLM59rai
-         k4mjGDJgw0JvPHowO9VovEjiGna31W/9pXfvR1h/Yab8Y3lSCGfIFIT0rsuqSUz7WHHp
-         /mpJbw437P8W0n0Rlm3sLXqecOT1ccIIij7du5DujEfX0CPtK9U1z/G0oM4z/Q6sgm4z
-         FBpT6xUXIkONwuh3yathK5C4MeftSMVCJbRsSYUPA6yFXj6nnv9vCYPXP0x978bWidut
-         rwIQ==
-X-Gm-Message-State: ACgBeo2JmbFjWWqeggZ3dkHcoBj3QhfCDJLNMP2t+4AG/jW3e2cGHilG
-        Sv6eAXrkpl3wPH0Lb9rjidoHTCsbRygMlQ==
-X-Google-Smtp-Source: AA6agR7muHVR6hMu5e1xn5LX6BSyPjuWrnJd2AR0XITZNXfWpQVxdRqsxugv8YBRe714pCbzJDUepA==
-X-Received: by 2002:a5d:6d8f:0:b0:225:6285:47fb with SMTP id l15-20020a5d6d8f000000b00225628547fbmr18828194wrs.211.1663071745862;
-        Tue, 13 Sep 2022 05:22:25 -0700 (PDT)
-Received: from 127.0.0.network ([185.122.133.20])
-        by smtp.gmail.com with ESMTPSA id r16-20020a5d4990000000b00228a6ce17b4sm10424130wrq.37.2022.09.13.05.22.25
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=Xsk4ckFKWgBNzg5Uz1aVIdS6Q/GiNN7CE/4nenxqTak=;
+        b=kG/eLuVdVMjxa6FY6VHT9u3Ddt5OjlHLXLMpp7AQNE10BIdfHVwpIPvFDdnnVF12Hq
+         mxDTl1/IUMS3dicEDP38fI90kD3nSatixRyRVQe/atyAZQF43tyGwTIrKG+1rOiqjVpA
+         kvUTQbaMJj/hgXLYhCosYGOPjVn8R+IxkEYDedsBySN/61Xr49NsxfgA5Do3feqvWBNi
+         eCsHn9/HlBjF8c/v+EIK3T8ZDND0zHKbUcwuDJbWf8Y+CEcWtapCAI6FT7iLw0sgd/KN
+         zg0uQbMGSN8gBerBS5aKFUTnaFb3K7dstJ7ettEwE5hNopUXXPn+2Mz4goSmpd9SJFrv
+         06UQ==
+X-Gm-Message-State: ACgBeo11EG33FFUpDsAc8IDo+NdZjFjbjVft4IoaV2rNuF1BEH8vzXGJ
+        Pabd0+fwCz6OmcNnUZHtW1X4wvmSqxHKIUQz
+X-Google-Smtp-Source: AA6agR5qTU6zUSk6wfAd2sk/RO33d2Rrf4NYqKuNJuCO/FS/O96uFPchTdXFyLl7amld8lOaGbXBew==
+X-Received: by 2002:a05:600c:3781:b0:3b4:63c8:554b with SMTP id o1-20020a05600c378100b003b463c8554bmr2507792wmr.25.1663076846111;
+        Tue, 13 Sep 2022 06:47:26 -0700 (PDT)
+Received: from [127.0.0.1] ([185.122.133.20])
+        by smtp.gmail.com with ESMTPSA id o28-20020a05600c511c00b003b462b314e7sm14253993wms.16.2022.09.13.06.47.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Sep 2022 05:22:25 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH 1/1] io_uring/rw: fix error'ed retry return values
-Date:   Tue, 13 Sep 2022 13:21:23 +0100
-Message-Id: <9754a0970af1861e7865f9014f735c70dc60bf79.1663071587.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.2
+        Tue, 13 Sep 2022 06:47:25 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     kernel test robot <lkp@intel.com>
+In-Reply-To: <9754a0970af1861e7865f9014f735c70dc60bf79.1663071587.git.asml.silence@gmail.com>
+References: <9754a0970af1861e7865f9014f735c70dc60bf79.1663071587.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring/rw: fix error'ed retry return values
+Message-Id: <166307684510.3784.2511923201984525328.b4-ty@kernel.dk>
+Date:   Tue, 13 Sep 2022 07:47:25 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: b4 0.10.0-dev-95855
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Kernel test robot reports that we test negativity of an unsigned in
-io_fixup_rw_res() after a recent change, which masks error codes and
-messes up the return value in case I/O is re-retried and failed with
-an error.
+On Tue, 13 Sep 2022 13:21:23 +0100, Pavel Begunkov wrote:
+> Kernel test robot reports that we test negativity of an unsigned in
+> io_fixup_rw_res() after a recent change, which masks error codes and
+> messes up the return value in case I/O is re-retried and failed with
+> an error.
+> 
+> 
 
-Fixes: 4d9cb92ca41dd ("io_uring/rw: fix short rw error handling")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 1e18a44adcf5..76ebcfebc9a6 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -206,7 +206,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
- 	return false;
- }
- 
--static inline unsigned io_fixup_rw_res(struct io_kiocb *req, unsigned res)
-+static inline int io_fixup_rw_res(struct io_kiocb *req, long res)
- {
- 	struct io_async_rw *io = req->async_data;
- 
+[1/1] io_uring/rw: fix error'ed retry return values
+      commit: 62bb0647b14646fa6c9aa25ecdf67ad18f13523c
+
+Best regards,
 -- 
-2.37.2
+Jens Axboe
+
 

@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E7915B6CC5
-	for <lists+io-uring@lfdr.de>; Tue, 13 Sep 2022 14:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A36EE5B6D16
+	for <lists+io-uring@lfdr.de>; Tue, 13 Sep 2022 14:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231997AbiIMMIf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 13 Sep 2022 08:08:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35654 "EHLO
+        id S231848AbiIMMWf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Sep 2022 08:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231952AbiIMMIf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Sep 2022 08:08:35 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E6435F113
-        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 05:08:34 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id b5so20417095wrr.5
-        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 05:08:33 -0700 (PDT)
+        with ESMTP id S230408AbiIMMW2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Sep 2022 08:22:28 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FA33C8EA
+        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 05:22:27 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id k9so20569386wri.0
+        for <io-uring@vger.kernel.org>; Tue, 13 Sep 2022 05:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=Aot8Hw6nod/XTpCOr/9CQK6hngdU8bW4zeLaXvI3jYY=;
-        b=cVQ2KlWpo8dAC7O60zg/FdESDhpCNCxv7KvaUuNdsuJhRg8Zp4J00Cw6GT5IpIuyOZ
-         VQ+fkCvUeUxkltoQK2nxorHT+8mjQvF4N55jDNbp3c2ILuk9XhQzkgfLrgHgnD+DOP6J
-         c30pO1w0UagA18fslezOL3cbXmwfLnbvWmDMeBzE42eIXbUF4NhsKBf/dI+PHT3Ut0qu
-         HxwJu03CZuCuav1dp3W1LXapDDLmrD0ffLV+MPowJnqPS2F323Mmp5lzq2EMxixGdERR
-         1G59vmpdgGOKb7/E130XjmIsGPnabrUj9F9ECtgYpk8+VMcLRfDfRkw4b6CsY1AAYrWN
-         7wtw==
+        bh=JvORTvNvoMPUsRno65bZWjtpNCjrcXic60bBWZSxOvk=;
+        b=AzFYkaYDxUKQsBf5x1EC8sl4ZkvP5bAtivuWQQxATDydrj199Moz/YnZviK6iQ+Fef
+         kP/qcEWM2/rwUxKFyNL1rIaMe5qVqPgnyA+R55OV+JzNejsveRYiO1TAwMZaqS7gfTVU
+         QAb+INvvuGE4lIY6FgHAMEzRU6pDY7MVrXZUJkRPRtZa1Gnecc3B9DFrDLYyTeBknxY7
+         8oXknQJ3ZvUOjRwAVRkMi/4nJNIYgr2GEkbYUCyDI1CRnxsIt1/mOWE/UoZOlPCqKKLL
+         /ZePxhmGP/CJDbwFAZVqaDCHIry7AvqhDCXRWPudSTAX+o0aPvb3OauXiQAPt1dDKRul
+         zVIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=Aot8Hw6nod/XTpCOr/9CQK6hngdU8bW4zeLaXvI3jYY=;
-        b=LjT0PGxwoKlbr1Eju2B0E9JGbpSz/BZF1qKnjzoWD3MpAI+P6r5g361gABUTFRi1OS
-         4980OvtoiZkS7p99C4gRibr3brb50pEj0VcTfc+BOcOVC1qjB9YbwVhHiEF6QEql6icJ
-         VNA1vD/wvt6eC2L38qnVP/zTikfA5iXOlQ0pskfNEZ75mvO+7egiswtuEVgDgm45DB3s
-         rBgIQJ7OKcFUqbf54isy9PIYpI1VqfykRVci9ciDKF6U3hBr96AXsistT6x6Di4aXdSt
-         Qu3iwhMCYVExYCB4wP88Xjwx79xgEsXFu/a6mhAEYSuxFmeFAEBSulpvqg4EYLqCOEES
-         x9ag==
-X-Gm-Message-State: ACgBeo108EkDG9ieqQ5A8ctOVzU2TThE34QSzw5Rflh65Zwv7rljYFF5
-        1RUrrrVdWKTpZJB+VUh/1YmFjnA1kH87yg==
-X-Google-Smtp-Source: AA6agR7wm7B9JJ1mceIQCB4pVwfaHtCgGs0g7noLGfe+fkyvkCkozzlN9vDMr+x9RWMUKPAHuCek8g==
-X-Received: by 2002:a05:6000:1888:b0:22a:4868:6048 with SMTP id a8-20020a056000188800b0022a48686048mr10125717wri.32.1663070912131;
-        Tue, 13 Sep 2022 05:08:32 -0700 (PDT)
+        bh=JvORTvNvoMPUsRno65bZWjtpNCjrcXic60bBWZSxOvk=;
+        b=e1Y+DPRmXAKs//gnXpzOWLgPoMutOeQr6mcq9ZvwNwt3uwFhtRtoVc7Fndw17XUHtD
+         IQkSYvzXcxw3VfJmdcMjtLYaxcKgbvXMvgbRq7jr5igFgMtTv85PxC+kqoKwkLM59rai
+         k4mjGDJgw0JvPHowO9VovEjiGna31W/9pXfvR1h/Yab8Y3lSCGfIFIT0rsuqSUz7WHHp
+         /mpJbw437P8W0n0Rlm3sLXqecOT1ccIIij7du5DujEfX0CPtK9U1z/G0oM4z/Q6sgm4z
+         FBpT6xUXIkONwuh3yathK5C4MeftSMVCJbRsSYUPA6yFXj6nnv9vCYPXP0x978bWidut
+         rwIQ==
+X-Gm-Message-State: ACgBeo2JmbFjWWqeggZ3dkHcoBj3QhfCDJLNMP2t+4AG/jW3e2cGHilG
+        Sv6eAXrkpl3wPH0Lb9rjidoHTCsbRygMlQ==
+X-Google-Smtp-Source: AA6agR7muHVR6hMu5e1xn5LX6BSyPjuWrnJd2AR0XITZNXfWpQVxdRqsxugv8YBRe714pCbzJDUepA==
+X-Received: by 2002:a5d:6d8f:0:b0:225:6285:47fb with SMTP id l15-20020a5d6d8f000000b00225628547fbmr18828194wrs.211.1663071745862;
+        Tue, 13 Sep 2022 05:22:25 -0700 (PDT)
 Received: from 127.0.0.network ([185.122.133.20])
-        by smtp.gmail.com with ESMTPSA id d10-20020a056000114a00b002253604bbefsm10664971wrx.75.2022.09.13.05.08.30
+        by smtp.gmail.com with ESMTPSA id r16-20020a5d4990000000b00228a6ce17b4sm10424130wrq.37.2022.09.13.05.22.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Sep 2022 05:08:31 -0700 (PDT)
+        Tue, 13 Sep 2022 05:22:25 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 1/1] tests: fixup defer-taskrun.c after api change
-Date:   Tue, 13 Sep 2022 13:07:11 +0100
-Message-Id: <2ed8db2b22f7840977bdc58b6d282be750c878bb.1662900803.git.asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH 1/1] io_uring/rw: fix error'ed retry return values
+Date:   Tue, 13 Sep 2022 13:21:23 +0100
+Message-Id: <9754a0970af1861e7865f9014f735c70dc60bf79.1663071587.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,25 +67,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Kernel test robot reports that we test negativity of an unsigned in
+io_fixup_rw_res() after a recent change, which masks error codes and
+messes up the return value in case I/O is re-retried and failed with
+an error.
+
+Fixes: 4d9cb92ca41dd ("io_uring/rw: fix short rw error handling")
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/defer-taskrun.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ io_uring/rw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/test/defer-taskrun.c b/test/defer-taskrun.c
-index aec8c5d..c6e0ea0 100644
---- a/test/defer-taskrun.c
-+++ b/test/defer-taskrun.c
-@@ -142,8 +142,7 @@ static int test_thread_shutdown(void)
- 	if (ret)
- 		return ret;
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 1e18a44adcf5..76ebcfebc9a6 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -206,7 +206,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
+ 	return false;
+ }
  
--	/* check that even before submitting we don't get errors */
--	CHECK(io_uring_get_events(&td.ring) == 0);
-+	CHECK(io_uring_get_events(&td.ring) == -EEXIST);
+-static inline unsigned io_fixup_rw_res(struct io_kiocb *req, unsigned res)
++static inline int io_fixup_rw_res(struct io_kiocb *req, long res)
+ {
+ 	struct io_async_rw *io = req->async_data;
  
- 	td.efd = eventfd(0, 0);
- 	CHECK(td.efd >= 0);
 -- 
 2.37.2
 

@@ -2,178 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC725BA31B
-	for <lists+io-uring@lfdr.de>; Fri, 16 Sep 2022 01:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B11AE5BA905
+	for <lists+io-uring@lfdr.de>; Fri, 16 Sep 2022 11:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbiIOXW7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Sep 2022 19:22:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36160 "EHLO
+        id S230245AbiIPJG6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Sep 2022 05:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiIOXW6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Sep 2022 19:22:58 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C527C75A;
-        Thu, 15 Sep 2022 16:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663284177; x=1694820177;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4Aotw1s2HbqfBcOfpO1TwzDGwI8uCbHCjQTddLKguTw=;
-  b=cy3QCpyUKItDG03fuTj/4B2Ri9zu2kUc8NBFkE0H/OyJPJuWLaDuzNjk
-   +xtRyZVyYJckON60X27k4grQywsHYfEgJoAoU7oZI7zqWyUD/EJTPvNYy
-   alYgIYQXL8UY0JACDQPwf7d/p/J594mYgluY97AsbfLSM2KwZ8RcqzQna
-   O1mlgpXQyIA34+vmKpZ16/rlx9+orLRyK1pXi5szPWj/yIiZlzbvO/ci8
-   7K3HyFzzO7jhfIteAZcBSwM/EoF9wc5NNYGkgnRp8j9IaCBTbKxbguSyV
-   omJjAtMCMplqo6gHjysmCTGpBNfqI7BfqX9T23aicNImwon/ShNGzevEx
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10471"; a="281893229"
-X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
-   d="scan'208";a="281893229"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 16:22:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
-   d="scan'208";a="568623143"
-Received: from lkp-server02.sh.intel.com (HELO 41300c7200ea) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 15 Sep 2022 16:22:54 -0700
-Received: from kbuild by 41300c7200ea with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oYyC5-0001Aa-2R;
-        Thu, 15 Sep 2022 23:22:53 +0000
-Date:   Fri, 16 Sep 2022 07:22:06 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Alexander V. Buev" <a.buev@yadro.com>, linux-block@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, io-uring@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Mikhail Malygin <m.malygin@yadro.com>, linux@yadro.com,
-        "Alexander V. Buev" <a.buev@yadro.com>
-Subject: Re: [PATCH v4 2/3] block: io-uring: add READV_PI/WRITEV_PI operations
-Message-ID: <202209160737.29uHLqYq-lkp@intel.com>
-References: <20220909122040.1098696-3-a.buev@yadro.com>
+        with ESMTP id S230059AbiIPJG4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Sep 2022 05:06:56 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF5741D05
+        for <io-uring@vger.kernel.org>; Fri, 16 Sep 2022 02:06:55 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id b5so34935491wrr.5
+        for <io-uring@vger.kernel.org>; Fri, 16 Sep 2022 02:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
+        bh=LuHki7u4WofRJ1pZrU3kZnmRuOA7zvUsbeOtmfG68C4=;
+        b=voBdo1LYuPqMJCgPaKQf2j0Hq2vs95dy1VAsFSQXkh9XZGhfxhX4j0wDBSnoU/BX1q
+         NAjybK6vBQHKoCNEG8zz1mZ44+feInjVFBM7MOj7x7KhLhfvoyuR+hiHDSEf+/SuXeBK
+         hkgFffbnvFHNoepR9ewzc74nmI1SGQjFWzm5casCP7O47mBeNiqxmHmgR6fBqUr1X5f4
+         1Mg0TfygyRhOSrqMi8F1laAWC7xOPM0xIGXNu70ZUIFiLBP8OPuZ5ACN+a03KMpeVrYu
+         1wOIrnh1pliwqmLDMWhNmZK05R9CwHLmRhxZuxVNokF086euPOE2RpCx+QfxnDDBaMV6
+         R8Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date;
+        bh=LuHki7u4WofRJ1pZrU3kZnmRuOA7zvUsbeOtmfG68C4=;
+        b=NHXIHwdp9+zQXshLfZalx4mRpMeuygaMVvreO3zLwxUmP/9hMytn4RgmmcIpNczNGb
+         zamtrxxwRgVvNjbdv+BI1xN3diu1xhQ+JTfqS2ZLJzNgKg5Ung286jOTmUB8RS4PjjHm
+         8WJE5uS702WK343R43HC4rDRy0jP2ak7LGCSSq4vv0bPX/UL3fGgN6dX5TU2KshePCDV
+         DPTGP36EahoLYXGOTsB/1q6XhVSIfFMKxxLL/jl3n4zwKKOOBP5Eh/QRlbABqXW5IyVn
+         kf7Ctnw4MENWOFIbiM7Q5JO76inlUqICzyQuu7thcaq5LTXReBSH2QDW1Hm3Ypvcsx9/
+         s8AQ==
+X-Gm-Message-State: ACrzQf3/qj7cRmcqrguIEKqWHjYmB97gnebOT0WIr1YAnXTXiKfdz4Wf
+        fqmHDrYYJVS+LgnLrU0WdrweG104wWVYcv5V
+X-Google-Smtp-Source: AMsMyM7wOv2M/cAR3+ZambTEPl5/CSvhmBRr+GSAlxe8UJ7EN27jif3tY+d4ZCUBqn04jf26hwWZew==
+X-Received: by 2002:adf:db03:0:b0:22a:dd80:4b45 with SMTP id s3-20020adfdb03000000b0022add804b45mr1299898wri.111.1663319213498;
+        Fri, 16 Sep 2022 02:06:53 -0700 (PDT)
+Received: from [10.200.94.69] ([82.141.251.28])
+        by smtp.gmail.com with ESMTPSA id u11-20020adfdb8b000000b0022add371ed2sm1151072wri.55.2022.09.16.02.06.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Sep 2022 02:06:52 -0700 (PDT)
+Message-ID: <370dbf8d-3966-3626-20aa-1d70521fa9b7@kernel.dk>
+Date:   Fri, 16 Sep 2022 03:06:51 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220909122040.1098696-3-a.buev@yadro.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.0-rc6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Alexander,
+Hi Linus,
 
-Thank you for the patch! Perhaps something to improve:
+Two small patches:
 
-[auto build test WARNING on axboe-block/for-next]
-[also build test WARNING on linus/master v6.0-rc5 next-20220915]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+- Fix using an unsigned tupe for the return value, introduced in this
+  release (Pavel)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-V-Buev/implement-direct-IO-with-integrity/20220909-202433
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-config: parisc-randconfig-s053-20220914 (https://download.01.org/0day-ci/archive/20220916/202209160737.29uHLqYq-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 12.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-39-gce1a6720-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/81de858455c5cf1e5870106f544fe1fd179fa324
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Alexander-V-Buev/implement-direct-IO-with-integrity/20220909-202433
-        git checkout 81de858455c5cf1e5870106f544fe1fd179fa324
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=parisc SHELL=/bin/bash
+- Stable fix for a missing check for a fixed file on put (me)
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+Please pull!
 
-sparse warnings: (new ones prefixed by >>)
-   io_uring/rw_pi.c: note: in included file (through io_uring/io_uring.h):
-   io_uring/slist.h:138:29: sparse: sparse: no newline at end of file
-   io_uring/rw_pi.c:248:27: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *private @@     got void [noderef] __user * @@
-   io_uring/rw_pi.c:248:27: sparse:     expected void *private
-   io_uring/rw_pi.c:248:27: sparse:     got void [noderef] __user *
-   io_uring/rw_pi.c:458:43: sparse: sparse: Using plain integer as NULL pointer
-   io_uring/rw_pi.c:543:43: sparse: sparse: Using plain integer as NULL pointer
->> io_uring/rw_pi.c:266:17: sparse: sparse: cast removes address space '__user' of expression
-   io_uring/rw_pi.c:266:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:266:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:266:14: sparse:     got struct iovec *
-   io_uring/rw_pi.c:275:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:275:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:275:14: sparse:     got struct iovec *
->> io_uring/rw_pi.c:266:17: sparse: sparse: cast removes address space '__user' of expression
-   io_uring/rw_pi.c:266:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:266:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:266:14: sparse:     got struct iovec *
-   io_uring/rw_pi.c:275:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:275:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:275:14: sparse:     got struct iovec *
->> io_uring/rw_pi.c:266:17: sparse: sparse: cast removes address space '__user' of expression
-   io_uring/rw_pi.c:266:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:266:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:266:14: sparse:     got struct iovec *
-   io_uring/rw_pi.c:275:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:275:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:275:14: sparse:     got struct iovec *
->> io_uring/rw_pi.c:266:17: sparse: sparse: cast removes address space '__user' of expression
-   io_uring/rw_pi.c:266:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:266:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:266:14: sparse:     got struct iovec *
-   io_uring/rw_pi.c:275:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct iovec [noderef] __user *uvec @@     got struct iovec * @@
-   io_uring/rw_pi.c:275:14: sparse:     expected struct iovec [noderef] __user *uvec
-   io_uring/rw_pi.c:275:14: sparse:     got struct iovec *
 
-vim +/__user +266 io_uring/rw_pi.c
+The following changes since commit 4d9cb92ca41dd8e905a4569ceba4716c2f39c75a:
 
-   255	
-   256	
-   257	static inline int
-   258	io_import_iovecs_pi(int io_dir, struct io_kiocb *req, struct iovec **iovec,
-   259				struct io_rw_state *s_data, struct __io_rw_pi_state *s_pi)
-   260	{
-   261		struct io_rw_pi *rw = io_kiocb_to_cmd(req, struct io_rw_pi);
-   262		struct iovec __user *uvec;
-   263		ssize_t ret;
-   264	
-   265		/* data */
- > 266		uvec = (struct iovec *)u64_to_user_ptr(rw->addr);
-   267		iovec[DATA] = s_data->fast_iov;
-   268		ret = __import_iovec(io_dir, uvec, rw->nr_segs,
-   269					UIO_FASTIOV, iovec + DATA,
-   270					&s_data->iter, req->ctx->compat);
-   271	
-   272		if (unlikely(ret <= 0))
-   273			return (ret) ? ret : -EINVAL;
-   274		/* pi */
-   275		uvec = (struct iovec *)rw->kiocb.private;
-   276		iovec[PI] = s_pi->fast_iov;
-   277		ret = __import_iovec(io_dir, uvec, rw->nr_pi_segs,
-   278					UIO_FASTIOV_PI, iovec + PI,
-   279					&s_pi->iter, req->ctx->compat);
-   280		if (unlikely(ret <= 0)) {
-   281			if (iovec[DATA])
-   282				kfree(iovec[DATA]);
-   283			return (ret) ? ret : -EINVAL;
-   284		}
-   285	
-   286		/* save states */
-   287		io_rw_pi_state_iter_save(s_data, s_pi);
-   288	
-   289		return 0;
-   290	}
-   291	
+  io_uring/rw: fix short rw error handling (2022-09-09 08:57:57 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux-block.git tags/io_uring-6.0-2022-09-16
+
+for you to fetch changes up to fc7222c3a9f56271fba02aabbfbae999042f1679:
+
+  io_uring/msg_ring: check file type before putting (2022-09-15 11:44:35 -0600)
+
+----------------------------------------------------------------
+io_uring-6.0-2022-09-16
+
+----------------------------------------------------------------
+Jens Axboe (1):
+      io_uring/msg_ring: check file type before putting
+
+Pavel Begunkov (1):
+      io_uring/rw: fix error'ed retry return values
+
+ io_uring/msg_ring.c | 3 ++-
+ io_uring/rw.c       | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jens Axboe

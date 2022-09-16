@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 129655BB404
-	for <lists+io-uring@lfdr.de>; Fri, 16 Sep 2022 23:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 644AD5BB405
+	for <lists+io-uring@lfdr.de>; Fri, 16 Sep 2022 23:39:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbiIPVjT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Sep 2022 17:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
+        id S229642AbiIPVjz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Sep 2022 17:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbiIPVjS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Sep 2022 17:39:18 -0400
+        with ESMTP id S229735AbiIPVjy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Sep 2022 17:39:54 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67677AB430
-        for <io-uring@vger.kernel.org>; Fri, 16 Sep 2022 14:39:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC35183A0
+        for <io-uring@vger.kernel.org>; Fri, 16 Sep 2022 14:39:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
         s=42; h=Message-Id:Date:Cc:To:From;
-        bh=ZoSZ9iwEKr6Q7TA8DRWCeyki7nGJWBiXI/c3WJ2ARhY=; b=vN42wpXoAlXhPDNFUEd5tHK9ng
-        /lwuQjv2E7CTfKS8RyjQFkS8Vki0XZBJtQsxMDrBetJ/HvOiPlUb+LoRX7djzDkXv/YGbBchN8vwW
-        1K2ImtxtZN52mEM6jH2f4WuZ+Dazsj6IpjCbIErvBdthT/XdS/Y6VTDG+/fHgt2xmu9TwUiITy3tV
-        nhPoZ8IBstLOSyaxgG3ip5vAnArqxIQoinl76lRAQTDKtA5eE3brE/KiZMx4rIf8WXRzvNz5Fh6LI
-        Gp2bg8ne81hVYN2nunE1rCDP7X4hWbtrqzT+i1TbTNgM89xHfX4g22rtKCOrx2pZIaYrqZ1kdBvET
-        h6T9/9lH8BOv9qC6CLsF6d2J6bJpIjTNrNBVxBQKLKun0hkpWqxgSa65BPUdZ1lxThJQ/SMZB6fw7
-        uZmurOGTBW1OUYHghh+wOOCP1rg/HdEMVFicPNXiQ05w4p71HQjj5oUCT5dLQ7vXBf5Sri5FTU5j9
-        dEjGkQhY3HNd44B8qMYbZqM6;
+        bh=7r/3CRTEJ4Ti2LV8Jee1aCkQwPQjB3aQ4I+qL2BWcc0=; b=EarU7R68DsdiHPZoM65ZA7RKV5
+        XqZls+pW6u+xZuPwdmhjl8JwCwTlr/Kx8GYrW1S04fQxNlGvK5881zSC4p4TRHRAUWzumkPMrl3w9
+        1IsTuSscl3K9ICwjXN0HOVq8KUzwDyhrpsjuXFX/FyPD26S/FU67Q5re8fnowDZin438G3AOkQDDg
+        0lzq8TifPd9H5YipX6tkOZVxWyTN0sSUrAayvjgbRUp7RZUYkUWrlRClNJrb+JoKNfdeDjnd+JWis
+        YOZ4g76LrNnq4hXuP/AaNKpGV5XQ2AKl/ilc2mFqh2IEW0Ex91lhW4Zh39Ce/JB7bADjwBH0PYHA6
+        8MKnxRw7OlgkPUCqQI3Ffx4wandrWUfGc4eA7YZ4KqQVkXEEPJ0OrpPx3ffb7I2uObDqZ5457dW5h
+        1GRVpKBI+Pd8X/vMz414/Z2QKlNlCXTWKz+ho/YH0SpPvbIKl+k1ou9OGURx0wda97YjV6yC8Q6vc
+        wyOVzG659kNXxOaENf/eWGez;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
         (Exim)
-        id 1oZJ3K-000j7J-VW; Fri, 16 Sep 2022 21:39:15 +0000
+        id 1oZJ3u-000j7V-QP; Fri, 16 Sep 2022 21:39:51 +0000
 From:   Stefan Metzmacher <metze@samba.org>
 To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com
 Cc:     Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH 3/5] io_uring/core: keep req->cqe.flags on generic errors
-Date:   Fri, 16 Sep 2022 23:36:27 +0200
-Message-Id: <5df304b3cb6eeb412b758ce638a5e129c4d6f6da.1663363798.git.metze@samba.org>
+Subject: [PATCH 4/5] io_uring/net: let io_sendzc set IORING_CQE_F_MORE before sock_sendmsg()
+Date:   Fri, 16 Sep 2022 23:36:28 +0200
+Message-Id: <88c6e27ee0b4a945ccbf347d354cccf862936f55.1663363798.git.metze@samba.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1663363798.git.metze@samba.org>
 References: <cover.1663363798.git.metze@samba.org>
@@ -48,15 +48,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Soon we'll have the case where IORING_OP_SEND_ZC will
-add IORING_CQE_F_MORE to req->cqe.flags before calling
-into sock_sendmsg() and once we did that we have to
-keep that flag even if we will hit some generic error
-later, e.g. in the partial io retry case.
+sock_sendmsg() can take references to the passed buffers even on
+failure!
 
-Hopefully passing req->cqe.flags to inline io_req_set_res(),
-allows the compiler to optimize out the effective
-req->cqe.flags = req->cqe.flags.
+So we need to make sure we'll set IORING_CQE_F_MORE before
+calling sock_sendmsg().
+
+As REQ_F_CQE_SKIP for notif and IORING_CQE_F_MORE for the main request
+go hand in hand, lets simplify the REQ_F_CQE_SKIP logic too.
+
+We just start with REQ_F_CQE_SKIP set and reset it when we
+set IORING_CQE_F_MORE on the main request in order to have
+the transition in one isolated place.
+
+In future we might be able to revert IORING_CQE_F_MORE and
+!REQ_F_CQE_SKIP again if we find out that no reference was
+taken by the network layer. But that's a change for another day.
+The important thing would just be that the documentation for
+IORING_OP_SEND_ZC would indicate that the kernel may decide
+to return just a single cqe without IORING_CQE_F_MORE, even
+in the success case, so that userspace would not break when
+we add such an optimization at a layer point.
 
 Fixes: b48c312be05e8 ("io_uring/net: simplify zerocopy send user API")
 Signed-off-by: Stefan Metzmacher <metze@samba.org>
@@ -64,49 +76,74 @@ Cc: Pavel Begunkov <asml.silence@gmail.com>
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org
 ---
- io_uring/io_uring.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ io_uring/net.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index ae69cff94664..062edbc04168 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -212,7 +212,7 @@ bool io_match_task_safe(struct io_kiocb *head, struct task_struct *task,
- static inline void req_fail_link_node(struct io_kiocb *req, int res)
+diff --git a/io_uring/net.c b/io_uring/net.c
+index e9efed40cf3d..61e6194b01b7 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -883,7 +883,6 @@ void io_sendzc_cleanup(struct io_kiocb *req)
  {
- 	req_set_fail(req);
--	io_req_set_res(req, res, 0);
-+	io_req_set_res(req, res, req->cqe.flags);
+ 	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
+ 
+-	zc->notif->flags |= REQ_F_CQE_SKIP;
+ 	io_notif_flush(zc->notif);
+ 	zc->notif = NULL;
  }
+@@ -920,6 +919,8 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	notif->cqe.user_data = req->cqe.user_data;
+ 	notif->cqe.res = 0;
+ 	notif->cqe.flags = IORING_CQE_F_NOTIF;
++	/* skip the notif cqe until we call sock_sendmsg() */
++	notif->flags |= REQ_F_CQE_SKIP;
+ 	req->flags |= REQ_F_NEED_CLEANUP;
  
- static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx *ctx)
-@@ -824,7 +824,8 @@ inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags)
- void io_req_complete_failed(struct io_kiocb *req, s32 res)
- {
- 	req_set_fail(req);
--	io_req_set_res(req, res, io_put_kbuf(req, IO_URING_F_UNLOCKED));
-+	req->cqe.flags |= io_put_kbuf(req, IO_URING_F_UNLOCKED);
-+	io_req_set_res(req, res, req->cqe.flags);
- 	io_req_complete_post(req);
- }
+ 	zc->buf = u64_to_user_ptr(READ_ONCE(sqe->addr));
+@@ -1000,7 +1001,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct msghdr msg;
+ 	struct iovec iov;
+ 	struct socket *sock;
+-	unsigned msg_flags, cflags;
++	unsigned msg_flags;
+ 	int ret, min_ret = 0;
  
-@@ -1106,7 +1107,7 @@ void io_req_task_submit(struct io_kiocb *req, bool *locked)
+ 	sock = sock_from_file(req->file);
+@@ -1055,6 +1056,15 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 	msg.msg_flags = msg_flags;
+ 	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
+ 	msg.sg_from_iter = io_sg_from_iter;
++
++	/*
++	 * Now that we call sock_sendmsg,
++	 * we need to assume that the data is referenced
++	 * even on failure!
++	 * So we need to force a NOTIF cqe
++	 */
++	zc->notif->flags &= ~REQ_F_CQE_SKIP;
++	req->cqe.flags |= IORING_CQE_F_MORE;
+ 	ret = sock_sendmsg(sock, &msg);
  
- void io_req_task_queue_fail(struct io_kiocb *req, int ret)
- {
--	io_req_set_res(req, ret, 0);
+ 	if (unlikely(ret < min_ret)) {
+@@ -1068,8 +1078,6 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 			req->flags |= REQ_F_PARTIAL_IO;
+ 			return io_setup_async_addr(req, addr, issue_flags);
+ 		}
+-		if (ret < 0 && !zc->done_io)
+-			zc->notif->flags |= REQ_F_CQE_SKIP;
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+ 		req_set_fail(req);
+@@ -1082,8 +1090,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	io_notif_flush(zc->notif);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+-	cflags = ret >= 0 ? IORING_CQE_F_MORE : 0;
+-	io_req_set_res(req, ret, cflags);
 +	io_req_set_res(req, ret, req->cqe.flags);
- 	req->io_task_work.func = io_req_task_cancel;
- 	io_req_task_work_add(req);
+ 	return IOU_OK;
  }
-@@ -1847,6 +1848,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	/* same numerical values with corresponding REQ_F_*, safe to copy */
- 	req->flags = sqe_flags = READ_ONCE(sqe->flags);
- 	req->cqe.user_data = READ_ONCE(sqe->user_data);
-+	req->cqe.flags = 0;
- 	req->file = NULL;
- 	req->rsrc_node = NULL;
- 	req->task = current;
+ 
 -- 
 2.34.1
 

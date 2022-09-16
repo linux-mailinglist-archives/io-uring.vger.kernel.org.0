@@ -2,38 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 644AD5BB405
-	for <lists+io-uring@lfdr.de>; Fri, 16 Sep 2022 23:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D07E85BB407
+	for <lists+io-uring@lfdr.de>; Fri, 16 Sep 2022 23:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiIPVjz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 16 Sep 2022 17:39:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33864 "EHLO
+        id S229675AbiIPVkb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Sep 2022 17:40:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbiIPVjy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Sep 2022 17:39:54 -0400
+        with ESMTP id S229735AbiIPVka (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Sep 2022 17:40:30 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC35183A0
-        for <io-uring@vger.kernel.org>; Fri, 16 Sep 2022 14:39:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08C382F009;
+        Fri, 16 Sep 2022 14:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
         s=42; h=Message-Id:Date:Cc:To:From;
-        bh=7r/3CRTEJ4Ti2LV8Jee1aCkQwPQjB3aQ4I+qL2BWcc0=; b=EarU7R68DsdiHPZoM65ZA7RKV5
-        XqZls+pW6u+xZuPwdmhjl8JwCwTlr/Kx8GYrW1S04fQxNlGvK5881zSC4p4TRHRAUWzumkPMrl3w9
-        1IsTuSscl3K9ICwjXN0HOVq8KUzwDyhrpsjuXFX/FyPD26S/FU67Q5re8fnowDZin438G3AOkQDDg
-        0lzq8TifPd9H5YipX6tkOZVxWyTN0sSUrAayvjgbRUp7RZUYkUWrlRClNJrb+JoKNfdeDjnd+JWis
-        YOZ4g76LrNnq4hXuP/AaNKpGV5XQ2AKl/ilc2mFqh2IEW0Ex91lhW4Zh39Ce/JB7bADjwBH0PYHA6
-        8MKnxRw7OlgkPUCqQI3Ffx4wandrWUfGc4eA7YZ4KqQVkXEEPJ0OrpPx3ffb7I2uObDqZ5457dW5h
-        1GRVpKBI+Pd8X/vMz414/Z2QKlNlCXTWKz+ho/YH0SpPvbIKl+k1ou9OGURx0wda97YjV6yC8Q6vc
-        wyOVzG659kNXxOaENf/eWGez;
+        bh=7/bK9/j4+KDJ0CqnTjC8j/mEzvOMjp40NmmYbeModGU=; b=gV+hgdr99PEWfLxDGTYE1h9OWC
+        vnCZRE1zKY1SatyZ7/7QlQlBeVCD4GTuVrbBmCNbNJlUuLzdysxcnCUWdu8U5L2jgAQUnkneYvJXn
+        SFW6eTsYyuEDz6PY5hco0+AkXIvaCj7QptHJa9tZRzXc+8qnDXLGh+37/98HSgXpW8qrrwCB/dQ+j
+        ZXG9nKnMpqge3h1MMYILkkG6qinSYIcSe5PrcSiN4qV1WsuCjvO+pWt2x/9ulUdkTzqcs5eanHVaB
+        A2MXiV+tOpbxCQ+12ZGejd/1gtbKPfAu50wxcF524tS2k536825AVq5RT+duzjtXBDwWLdlTHFyO+
+        ZEncZ+e4a9x0Hu6lbGEY6WGZ/TfVyPRvhK8SnEWdFzyNMZ9F7xAjRThjJ1IiYUK+MXxx5ppGQ7GdG
+        H3MSAxB0olFfIQv41MlWtdEYyI5We7zp4nP2x2Rfu8Isx0VnNluQ+tVO5oN7685KOgL60Dx66A67l
+        QEVB2EgQ2qBxStGPtU8fk6Dn;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
         (Exim)
-        id 1oZJ3u-000j7V-QP; Fri, 16 Sep 2022 21:39:51 +0000
+        id 1oZJ4T-000j7f-KT; Fri, 16 Sep 2022 21:40:26 +0000
 From:   Stefan Metzmacher <metze@samba.org>
 To:     io-uring@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com
-Cc:     Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH 4/5] io_uring/net: let io_sendzc set IORING_CQE_F_MORE before sock_sendmsg()
-Date:   Fri, 16 Sep 2022 23:36:28 +0200
-Message-Id: <88c6e27ee0b4a945ccbf347d354cccf862936f55.1663363798.git.metze@samba.org>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH 5/5] io_uring/notif: let userspace know how effective the zero copy usage was
+Date:   Fri, 16 Sep 2022 23:36:29 +0200
+Message-Id: <76cdd53f618e2793e1ec298c837bb17c3b9f12ee.1663363798.git.metze@samba.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1663363798.git.metze@samba.org>
 References: <cover.1663363798.git.metze@samba.org>
@@ -48,102 +49,113 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-sock_sendmsg() can take references to the passed buffers even on
-failure!
+The 2nd cqe for IORING_OP_SEND_ZC has IORING_CQE_F_NOTIF set in cqe->flags
+and it will now have the number of successful completed
+io_uring_tx_zerocopy_callback() callbacks in the lower 31-bits
+of cqe->res, the high bit (0x80000000) is set when
+io_uring_tx_zerocopy_callback() was called with success=false.
 
-So we need to make sure we'll set IORING_CQE_F_MORE before
-calling sock_sendmsg().
+If cqe->res is still 0, zero copy wasn't used at all.
 
-As REQ_F_CQE_SKIP for notif and IORING_CQE_F_MORE for the main request
-go hand in hand, lets simplify the REQ_F_CQE_SKIP logic too.
-
-We just start with REQ_F_CQE_SKIP set and reset it when we
-set IORING_CQE_F_MORE on the main request in order to have
-the transition in one isolated place.
-
-In future we might be able to revert IORING_CQE_F_MORE and
-!REQ_F_CQE_SKIP again if we find out that no reference was
-taken by the network layer. But that's a change for another day.
-The important thing would just be that the documentation for
-IORING_OP_SEND_ZC would indicate that the kernel may decide
-to return just a single cqe without IORING_CQE_F_MORE, even
-in the success case, so that userspace would not break when
-we add such an optimization at a layer point.
+These values give userspace a change to adjust its strategy
+choosing IORING_OP_SEND_ZC or IORING_OP_SEND. And it's a bit
+richer than just a simple SO_EE_CODE_ZEROCOPY_COPIED indication.
 
 Fixes: b48c312be05e8 ("io_uring/net: simplify zerocopy send user API")
+Fixes: eb315a7d1396b ("tcp: support externally provided ubufs")
+Fixes: 1fd3ae8c906c0 ("ipv6/udp: support externally provided ubufs")
+Fixes: c445f31b3cfaa ("ipv4/udp: support externally provided ubufs")
 Signed-off-by: Stefan Metzmacher <metze@samba.org>
 Cc: Pavel Begunkov <asml.silence@gmail.com>
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org
 ---
- io_uring/net.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ io_uring/notif.c      | 18 ++++++++++++++++++
+ net/ipv4/ip_output.c  |  3 ++-
+ net/ipv4/tcp.c        |  2 ++
+ net/ipv6/ip6_output.c |  3 ++-
+ 4 files changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index e9efed40cf3d..61e6194b01b7 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -883,7 +883,6 @@ void io_sendzc_cleanup(struct io_kiocb *req)
- {
- 	struct io_sendzc *zc = io_kiocb_to_cmd(req, struct io_sendzc);
+diff --git a/io_uring/notif.c b/io_uring/notif.c
+index e37c6569d82e..b07d2a049931 100644
+--- a/io_uring/notif.c
++++ b/io_uring/notif.c
+@@ -28,7 +28,24 @@ static void io_uring_tx_zerocopy_callback(struct sk_buff *skb,
+ 	struct io_notif_data *nd = container_of(uarg, struct io_notif_data, uarg);
+ 	struct io_kiocb *notif = cmd_to_io_kiocb(nd);
  
--	zc->notif->flags |= REQ_F_CQE_SKIP;
- 	io_notif_flush(zc->notif);
- 	zc->notif = NULL;
- }
-@@ -920,6 +919,8 @@ int io_sendzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	notif->cqe.user_data = req->cqe.user_data;
- 	notif->cqe.res = 0;
- 	notif->cqe.flags = IORING_CQE_F_NOTIF;
-+	/* skip the notif cqe until we call sock_sendmsg() */
-+	notif->flags |= REQ_F_CQE_SKIP;
- 	req->flags |= REQ_F_NEED_CLEANUP;
- 
- 	zc->buf = u64_to_user_ptr(READ_ONCE(sqe->addr));
-@@ -1000,7 +1001,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 	struct msghdr msg;
- 	struct iovec iov;
- 	struct socket *sock;
--	unsigned msg_flags, cflags;
-+	unsigned msg_flags;
- 	int ret, min_ret = 0;
- 
- 	sock = sock_from_file(req->file);
-@@ -1055,6 +1056,15 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 	msg.msg_flags = msg_flags;
- 	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
- 	msg.sg_from_iter = io_sg_from_iter;
++	uarg->zerocopy = uarg->zerocopy & success;
 +
-+	/*
-+	 * Now that we call sock_sendmsg,
-+	 * we need to assume that the data is referenced
-+	 * even on failure!
-+	 * So we need to force a NOTIF cqe
-+	 */
-+	zc->notif->flags &= ~REQ_F_CQE_SKIP;
-+	req->cqe.flags |= IORING_CQE_F_MORE;
- 	ret = sock_sendmsg(sock, &msg);
++	if (success && notif->cqe.res < S32_MAX)
++		notif->cqe.res++;
++
+ 	if (refcount_dec_and_test(&uarg->refcnt)) {
++		/*
++		 * If we hit at least one case that
++		 * was not able to use zero copy,
++		 * we set the high bit 0x80000000
++		 * so that notif->cqe.res < 0, means it was
++		 * as least copied once.
++		 *
++		 * The other 31 bits are the success count.
++		 */
++		if (!uarg->zerocopy)
++			notif->cqe.res |= S32_MIN;
++
+ 		notif->io_task_work.func = __io_notif_complete_tw;
+ 		io_req_task_work_add(notif);
+ 	}
+@@ -53,6 +70,7 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
  
- 	if (unlikely(ret < min_ret)) {
-@@ -1068,8 +1078,6 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 			req->flags |= REQ_F_PARTIAL_IO;
- 			return io_setup_async_addr(req, addr, issue_flags);
- 		}
--		if (ret < 0 && !zc->done_io)
--			zc->notif->flags |= REQ_F_CQE_SKIP;
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
- 		req_set_fail(req);
-@@ -1082,8 +1090,7 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	io_notif_flush(zc->notif);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
--	cflags = ret >= 0 ? IORING_CQE_F_MORE : 0;
--	io_req_set_res(req, ret, cflags);
-+	io_req_set_res(req, ret, req->cqe.flags);
- 	return IOU_OK;
- }
- 
+ 	nd = io_notif_to_data(notif);
+ 	nd->account_pages = 0;
++	nd->uarg.zerocopy = 1;
+ 	nd->uarg.flags = SKBFL_ZEROCOPY_FRAG | SKBFL_DONT_ORPHAN;
+ 	nd->uarg.callback = io_uring_tx_zerocopy_callback;
+ 	refcount_set(&nd->uarg.refcnt, 1);
+diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+index d7bd1daf022b..4bdea7a4b2f7 100644
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -1032,7 +1032,8 @@ static int __ip_append_data(struct sock *sk,
+ 				paged = true;
+ 				zc = true;
+ 				uarg = msg->msg_ubuf;
+-			}
++			} else
++				msg->msg_ubuf->zerocopy = 0;
+ 		} else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+ 			uarg = msg_zerocopy_realloc(sk, length, skb_zcopy(skb));
+ 			if (!uarg)
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 970e9a2cca4a..27a22d470741 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1231,6 +1231,8 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+ 			uarg = msg->msg_ubuf;
+ 			net_zcopy_get(uarg);
+ 			zc = sk->sk_route_caps & NETIF_F_SG;
++			if (!zc)
++				uarg->zerocopy = 0;
+ 		} else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+ 			uarg = msg_zerocopy_realloc(sk, size, skb_zcopy(skb));
+ 			if (!uarg) {
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index f152e51242cb..d85036e91cf7 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1556,7 +1556,8 @@ static int __ip6_append_data(struct sock *sk,
+ 				paged = true;
+ 				zc = true;
+ 				uarg = msg->msg_ubuf;
+-			}
++			} else
++				msg->msg_ubuf->zerocopy = 0;
+ 		} else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+ 			uarg = msg_zerocopy_realloc(sk, length, skb_zcopy(skb));
+ 			if (!uarg)
 -- 
 2.34.1
 

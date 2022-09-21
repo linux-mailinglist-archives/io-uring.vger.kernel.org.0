@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 507005BFCD7
-	for <lists+io-uring@lfdr.de>; Wed, 21 Sep 2022 13:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3275BFCD8
+	for <lists+io-uring@lfdr.de>; Wed, 21 Sep 2022 13:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbiIULUs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Sep 2022 07:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59828 "EHLO
+        id S229498AbiIULUt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Sep 2022 07:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiIULUs (ORCPT
+        with ESMTP id S229673AbiIULUs (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 21 Sep 2022 07:20:48 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF996FA31
-        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:44 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id i203-20020a1c3bd4000000b003b3df9a5ecbso8842803wma.1
-        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:44 -0700 (PDT)
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B382A6FA3F
+        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:45 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id bq9so9348408wrb.4
+        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=7SrEQCUZFJdvUZqJql9L8RzvaOosvdHtufDGMGa9UeI=;
-        b=S48fZWCVUxi9xKrw+Nl5JKAPpHsjXBQ1+jmvL1VmldfxZIAW19DBwEKIcWMmBUofaS
-         Xvum3HlobAQbKeEBcwJT7KNKuTunG/rRRJ0j/y6OTq2yn3H3L23LKsgsxUjt7vC1ZcjE
-         eCBtqcwEC3kXymh0pKWIPRJ5JDMGxzr7x8vcE0SsAq3QVMeAIOBQp3rYOwXSj3Yj3T78
-         pti64xvIw0S559Y9UfDK4TpcbaYb2aSw+jq6wq/sEkI9qV+t6q1vjnzcA51SNbZL7Qn2
-         fKJwPFgN33wa22eWhyfxwdnLGpa/wNqf9/m/8jCoMCEXBHOl+ToAJ/V6f5S8gX2Ywloq
-         UG1A==
+        bh=ap2H0ruFKwI5eh8H8ZEfrhtrnIj5BqPVQCmUv7B2rCA=;
+        b=g7W5eSDwC1uF+d0O9+bmHMKQhjzy/PA5bLVlTYhZpgAZsaCgfwdxmQ4oCQwpgDLfZu
+         GxRURsnm6mjdbf1bg7nWk2v36VqX6RBCqPMfJYzZ1XO1ew4xvVAs00m4ZRVqibhhK2i7
+         1vVD9stKNlPXqkI/AtLcCCKJo435Vj80m5rHmzqB/cDnhtBoFhtZppHzXI5Wap/cZa/U
+         dMxmalDOuYvW8a2NgfJLzbfe3PDbKkMTJpTZ1nyxKnuSYjGkGoFeLwhFhYsJ1XyApHHS
+         8V1JMX7sUHkYssjnj4SyycRcs6/RM5Pov1TOJ51Jvu3EM7LgA8BtMcQt9TBgJ5KKdEpo
+         7gqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=7SrEQCUZFJdvUZqJql9L8RzvaOosvdHtufDGMGa9UeI=;
-        b=dQVS6e7p0Ku7gTIowBSZ3fNwBeerPKNNBjTF7HUeg14h1tU/ePIKGxxhM2x3x5oZOP
-         jAenrAYq829ZnWcerJGKNGAG5PiGd2HQozHVUNCNLR8vkPTwq6j5FmG5ahcfm/oWgPWi
-         m97NwZqWE//Gh/wU/5/6lXODCH83zO31DkfAFx/AichOdG/RLzfwqH6Z+U9Ea/nBvGlv
-         mRQwn7DlARsd3ibZuBi2BhLZi3kG33mJrW4LX6qpuaBWWwsFWMfH10kzRMf6C0bKSEHC
-         q9sLO7VbKXstAXfniy4TYXDQi2aqWNx6iGJ61QeP2gXebjdrlo9Bw1WT9LpC6UJOyeFI
-         IzxA==
-X-Gm-Message-State: ACrzQf2y7AYVn64m9NrtiXzvdrGAeJdkUpuR6C0a/H4a3nU1Owro/rsd
-        HQw/wM65aEUTNYXhS9mWjJsJ2z13Rrc=
-X-Google-Smtp-Source: AMsMyM6mmIcXH3/TSCbiwD4CUZ/C0AjGS/0n9Uufd5u5/rV6+Crajf4f0uZJLkBIPQEBM52kE5PotQ==
-X-Received: by 2002:a05:600c:2043:b0:3b3:c84c:ca33 with SMTP id p3-20020a05600c204300b003b3c84cca33mr5495455wmg.15.1663759242781;
-        Wed, 21 Sep 2022 04:20:42 -0700 (PDT)
+        bh=ap2H0ruFKwI5eh8H8ZEfrhtrnIj5BqPVQCmUv7B2rCA=;
+        b=gXjacFdd3CZ+i+WYfNjtKMYj0pSJqIxfl9nSRmCVOO0hbMYFG9apMcmUfv/Zn7GyNN
+         ydMnc359dyf7QUlJ25khb3N3gmw2VAzZJrMZQwON5ERZ4uqm3Pm1J2Za/EHOpSx85rFR
+         0vQmYvnzbMLrl5DHyQR3N6OWnyBAFnn5gu4zijhu3RCxGmZ76nPrBAQU3OvUfIXtvJTG
+         U4qq5D4jOqxJYi3MlC/DX4vjMjBjfaTusrtj6NdywwCC1oeDvER708gWt4oYSwKo8cae
+         laOrmo1L9Bib8TKZOjzVkPo+z7i+0L7ZC3c6NcF6T0iw71C8L/jE45fQzvIk2rHX0u6W
+         Yh5Q==
+X-Gm-Message-State: ACrzQf3EepNvFSyynNXLZYUIzGEN6e2gCn6qAAK6RTVH1AbMzziDUUI3
+        P6vG3y9BelJ9+B321sCWnUpZBeZ7rss=
+X-Google-Smtp-Source: AMsMyM6zYF7LZD0WXGbAE9XZvzFseVXrgpBy4NQiE8iQySaWCwIcoICT1XzjYALdFLGkGw4AjjT4dQ==
+X-Received: by 2002:a5d:457b:0:b0:22b:24d6:1a9f with SMTP id a27-20020a5d457b000000b0022b24d61a9fmr1423887wrc.201.1663759243844;
+        Wed, 21 Sep 2022 04:20:43 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.205.62.threembb.co.uk. [188.28.205.62])
-        by smtp.gmail.com with ESMTPSA id s17-20020a5d6a91000000b00228da845d4dsm2206732wru.94.2022.09.21.04.20.41
+        by smtp.gmail.com with ESMTPSA id s17-20020a5d6a91000000b00228da845d4dsm2206732wru.94.2022.09.21.04.20.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 04:20:42 -0700 (PDT)
+        Wed, 21 Sep 2022 04:20:43 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 2/9] io_uring/rw: don't lose partial IO result on fail
-Date:   Wed, 21 Sep 2022 12:17:47 +0100
-Message-Id: <05e0879c226bcd53b441bf92868eadd4bf04e2fc.1663668091.git.asml.silence@gmail.com>
+Subject: [PATCH 3/9] io_uring/net: don't lose partial send/recv on fail
+Date:   Wed, 21 Sep 2022 12:17:48 +0100
+Message-Id: <a4ff95897b5419356fca9ea55db91ac15b2975f9.1663668091.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1663668091.git.asml.silence@gmail.com>
 References: <cover.1663668091.git.asml.silence@gmail.com>
@@ -69,97 +69,88 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A partially done read/write may end up in io_req_complete_failed() and
-loose the result, make sure we return the number of bytes processed.
+Just as with rw, partial send/recv may end up in
+io_req_complete_failed() and loose the result, make sure we return the
+number of bytes processed.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/opdef.c | 6 ++++++
- io_uring/rw.c    | 8 ++++++++
- io_uring/rw.h    | 1 +
- 3 files changed, 15 insertions(+)
+ io_uring/net.c   | 10 ++++++++++
+ io_uring/net.h   |  2 ++
+ io_uring/opdef.c |  4 ++++
+ 3 files changed, 16 insertions(+)
 
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index c6e089900394..788393ec3ff4 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -69,6 +69,7 @@ const struct io_op_def io_op_defs[] = {
- 		.issue			= io_read,
- 		.prep_async		= io_readv_prep_async,
- 		.cleanup		= io_readv_writev_cleanup,
-+		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_WRITEV] = {
- 		.needs_file		= 1,
-@@ -85,6 +86,7 @@ const struct io_op_def io_op_defs[] = {
- 		.issue			= io_write,
- 		.prep_async		= io_writev_prep_async,
- 		.cleanup		= io_readv_writev_cleanup,
-+		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_FSYNC] = {
- 		.needs_file		= 1,
-@@ -105,6 +107,7 @@ const struct io_op_def io_op_defs[] = {
- 		.name			= "READ_FIXED",
- 		.prep			= io_prep_rw,
- 		.issue			= io_read,
-+		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_WRITE_FIXED] = {
- 		.needs_file		= 1,
-@@ -119,6 +122,7 @@ const struct io_op_def io_op_defs[] = {
- 		.name			= "WRITE_FIXED",
- 		.prep			= io_prep_rw,
- 		.issue			= io_write,
-+		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_POLL_ADD] = {
- 		.needs_file		= 1,
-@@ -275,6 +279,7 @@ const struct io_op_def io_op_defs[] = {
- 		.name			= "READ",
- 		.prep			= io_prep_rw,
- 		.issue			= io_read,
-+		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_WRITE] = {
- 		.needs_file		= 1,
-@@ -289,6 +294,7 @@ const struct io_op_def io_op_defs[] = {
- 		.name			= "WRITE",
- 		.prep			= io_prep_rw,
- 		.issue			= io_write,
-+		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_FADVISE] = {
- 		.needs_file		= 1,
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index b777c35378b9..8f4e6b3f2b3f 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -954,6 +954,14 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
- 		io_cqring_wake(ctx);
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 84df6d4253b7..e86a82ef4fbf 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1093,6 +1093,16 @@ int io_sendzc(struct io_kiocb *req, unsigned int issue_flags)
+ 	return IOU_OK;
  }
  
-+void io_rw_fail(struct io_kiocb *req)
++void io_sendrecv_fail(struct io_kiocb *req)
 +{
-+	int res;
++	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
++	int res = req->cqe.res;
 +
-+	res = io_fixup_rw_res(req, req->cqe.res);
++	if (req->flags & REQ_F_PARTIAL_IO)
++		res = sr->done_io;
 +	io_req_set_res(req, res, req->cqe.flags);
 +}
 +
- int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  {
- 	struct io_wq_work_node *pos, *start, *prev;
-diff --git a/io_uring/rw.h b/io_uring/rw.h
-index 0204c3fcafa5..3b733f4b610a 100644
---- a/io_uring/rw.h
-+++ b/io_uring/rw.h
-@@ -21,3 +21,4 @@ int io_readv_prep_async(struct io_kiocb *req);
- int io_write(struct io_kiocb *req, unsigned int issue_flags);
- int io_writev_prep_async(struct io_kiocb *req);
- void io_readv_writev_cleanup(struct io_kiocb *req);
-+void io_rw_fail(struct io_kiocb *req);
+ 	struct io_accept *accept = io_kiocb_to_cmd(req, struct io_accept);
+diff --git a/io_uring/net.h b/io_uring/net.h
+index d744a0a874e7..109ffb3a1a3f 100644
+--- a/io_uring/net.h
++++ b/io_uring/net.h
+@@ -43,6 +43,8 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags);
+ int io_recv(struct io_kiocb *req, unsigned int issue_flags);
+ 
++void io_sendrecv_fail(struct io_kiocb *req);
++
+ int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_accept(struct io_kiocb *req, unsigned int issue_flags);
+ 
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index 788393ec3ff4..8d8a0f9bb5b6 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -158,6 +158,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.issue			= io_sendmsg,
+ 		.prep_async		= io_sendmsg_prep_async,
+ 		.cleanup		= io_sendmsg_recvmsg_cleanup,
++		.fail			= io_sendrecv_fail,
+ #else
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
+@@ -176,6 +177,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.issue			= io_recvmsg,
+ 		.prep_async		= io_recvmsg_prep_async,
+ 		.cleanup		= io_sendmsg_recvmsg_cleanup,
++		.fail			= io_sendrecv_fail,
+ #else
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
+@@ -318,6 +320,7 @@ const struct io_op_def io_op_defs[] = {
+ #if defined(CONFIG_NET)
+ 		.prep			= io_sendmsg_prep,
+ 		.issue			= io_send,
++		.fail			= io_sendrecv_fail,
+ #else
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
+@@ -333,6 +336,7 @@ const struct io_op_def io_op_defs[] = {
+ #if defined(CONFIG_NET)
+ 		.prep			= io_recvmsg_prep,
+ 		.issue			= io_recv,
++		.fail			= io_sendrecv_fail,
+ #else
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
 -- 
 2.37.2
 

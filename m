@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7729C5BFCD6
-	for <lists+io-uring@lfdr.de>; Wed, 21 Sep 2022 13:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 507005BFCD7
+	for <lists+io-uring@lfdr.de>; Wed, 21 Sep 2022 13:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbiIULUq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Sep 2022 07:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
+        id S229788AbiIULUs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Sep 2022 07:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiIULUo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Sep 2022 07:20:44 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E9670E44
-        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:43 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id az6so4189153wmb.4
-        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:43 -0700 (PDT)
+        with ESMTP id S229498AbiIULUs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Sep 2022 07:20:48 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF996FA31
+        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:44 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id i203-20020a1c3bd4000000b003b3df9a5ecbso8842803wma.1
+        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 04:20:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=uEeWCm94KOo7VZwDqBvTmmSVgBJlmWvoPwkZEcEjcrA=;
-        b=LpZu15pMAJiR5RNtbYdbI9TV53fr3/sLz7AauD1Fcmnk0irl3SntbXOepAzoVHpzqc
-         I65U69Q/32rx5PUAz5mgFuHRuYZFIDWThIvSBWTDmqF/y7XB/bNZKy5tbXKeUSWbSEQ+
-         1Os47wgsjyTjxhk0EZFLSrNYiA/sO+OZ8VNcGLu0QCcr1k6nw5uEs34G5/Q2YWwnrBzJ
-         u6sphbD0A2wJWJuTIQmcKPhiqVx8uVzEHh5q08guum8OLa9EShlXlcK+M2DFWIx3yweb
-         KDZf2dH4563tmTE+gxL4felrQ2BeWbBCeoAbxiZS1Chh+m5BlFuaLgfexR3WATDCEkJw
-         2Vxg==
+        bh=7SrEQCUZFJdvUZqJql9L8RzvaOosvdHtufDGMGa9UeI=;
+        b=S48fZWCVUxi9xKrw+Nl5JKAPpHsjXBQ1+jmvL1VmldfxZIAW19DBwEKIcWMmBUofaS
+         Xvum3HlobAQbKeEBcwJT7KNKuTunG/rRRJ0j/y6OTq2yn3H3L23LKsgsxUjt7vC1ZcjE
+         eCBtqcwEC3kXymh0pKWIPRJ5JDMGxzr7x8vcE0SsAq3QVMeAIOBQp3rYOwXSj3Yj3T78
+         pti64xvIw0S559Y9UfDK4TpcbaYb2aSw+jq6wq/sEkI9qV+t6q1vjnzcA51SNbZL7Qn2
+         fKJwPFgN33wa22eWhyfxwdnLGpa/wNqf9/m/8jCoMCEXBHOl+ToAJ/V6f5S8gX2Ywloq
+         UG1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=uEeWCm94KOo7VZwDqBvTmmSVgBJlmWvoPwkZEcEjcrA=;
-        b=WmrOsSkgxBcwrf+r7XV3Zq7JhJ6bGqi4YbEfxCBgA6/qwVqZnQ9fQRhNlVLGcyOUrA
-         XCsyPX/R3T2egJUxUmM5NqzOJHShYkAvrxDaOm0uSozDL1ud0I3AX1oCjbRDxtFlUrbj
-         noWavl2tWetejci1pUIFnR+f2kWOvXlglfIaV0Q9A6eHIPkdlhVn5BCC7MonKtNEk8dn
-         fjw0BM3ncCw0jG+RZ9UdAGFBq91BKSsr/Egs5xg0DU4bdb97Yy9duykTQgzYekEKkAu/
-         WLLSMj+GU6bDM/cU2iVB65TcRY3l6A6Eadc9g69VNAXQnGqJk3CsLGza5SMcC6yvNjEb
-         I2Mg==
-X-Gm-Message-State: ACrzQf2psfTFJrZmRXodhyKynAeaNa6LUbfbSjZ8M833f32sIJO+AUWh
-        NvDr0OPOOS2Z8GyOeykrCWZQORzSYUg=
-X-Google-Smtp-Source: AMsMyM5ihFLim9R7SDnN2PC1YLmcBbWjbH8DvLuTOSqgr1nXudgIhpFKmU5TCPYemmmn82qrFUdZIg==
-X-Received: by 2002:a7b:ce0d:0:b0:3b4:8728:3e7e with SMTP id m13-20020a7bce0d000000b003b487283e7emr5294340wmc.182.1663759241382;
-        Wed, 21 Sep 2022 04:20:41 -0700 (PDT)
+        bh=7SrEQCUZFJdvUZqJql9L8RzvaOosvdHtufDGMGa9UeI=;
+        b=dQVS6e7p0Ku7gTIowBSZ3fNwBeerPKNNBjTF7HUeg14h1tU/ePIKGxxhM2x3x5oZOP
+         jAenrAYq829ZnWcerJGKNGAG5PiGd2HQozHVUNCNLR8vkPTwq6j5FmG5ahcfm/oWgPWi
+         m97NwZqWE//Gh/wU/5/6lXODCH83zO31DkfAFx/AichOdG/RLzfwqH6Z+U9Ea/nBvGlv
+         mRQwn7DlARsd3ibZuBi2BhLZi3kG33mJrW4LX6qpuaBWWwsFWMfH10kzRMf6C0bKSEHC
+         q9sLO7VbKXstAXfniy4TYXDQi2aqWNx6iGJ61QeP2gXebjdrlo9Bw1WT9LpC6UJOyeFI
+         IzxA==
+X-Gm-Message-State: ACrzQf2y7AYVn64m9NrtiXzvdrGAeJdkUpuR6C0a/H4a3nU1Owro/rsd
+        HQw/wM65aEUTNYXhS9mWjJsJ2z13Rrc=
+X-Google-Smtp-Source: AMsMyM6mmIcXH3/TSCbiwD4CUZ/C0AjGS/0n9Uufd5u5/rV6+Crajf4f0uZJLkBIPQEBM52kE5PotQ==
+X-Received: by 2002:a05:600c:2043:b0:3b3:c84c:ca33 with SMTP id p3-20020a05600c204300b003b3c84cca33mr5495455wmg.15.1663759242781;
+        Wed, 21 Sep 2022 04:20:42 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.205.62.threembb.co.uk. [188.28.205.62])
-        by smtp.gmail.com with ESMTPSA id s17-20020a5d6a91000000b00228da845d4dsm2206732wru.94.2022.09.21.04.20.40
+        by smtp.gmail.com with ESMTPSA id s17-20020a5d6a91000000b00228da845d4dsm2206732wru.94.2022.09.21.04.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 04:20:40 -0700 (PDT)
+        Wed, 21 Sep 2022 04:20:42 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/9] io_uring: add custom opcode hooks on fail
-Date:   Wed, 21 Sep 2022 12:17:46 +0100
-Message-Id: <b734cff4e67cb30cca976b9face321023f37549a.1663668091.git.asml.silence@gmail.com>
+Subject: [PATCH 2/9] io_uring/rw: don't lose partial IO result on fail
+Date:   Wed, 21 Sep 2022 12:17:47 +0100
+Message-Id: <05e0879c226bcd53b441bf92868eadd4bf04e2fc.1663668091.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <cover.1663668091.git.asml.silence@gmail.com>
 References: <cover.1663668091.git.asml.silence@gmail.com>
@@ -69,45 +69,97 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Sometimes we have to do a little bit of a fixup on a request failuer in
-io_req_complete_failed(). Add a callback in opdef for that.
+A partially done read/write may end up in io_req_complete_failed() and
+loose the result, make sure we return the number of bytes processed.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 4 ++++
- io_uring/opdef.h    | 1 +
- 2 files changed, 5 insertions(+)
+ io_uring/opdef.c | 6 ++++++
+ io_uring/rw.c    | 8 ++++++++
+ io_uring/rw.h    | 1 +
+ 3 files changed, 15 insertions(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 433466455a5f..3875ea897cdf 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -865,8 +865,12 @@ inline void __io_req_complete(struct io_kiocb *req, unsigned issue_flags)
- 
- void io_req_complete_failed(struct io_kiocb *req, s32 res)
- {
-+	const struct io_op_def *def = &io_op_defs[req->opcode];
-+
- 	req_set_fail(req);
- 	io_req_set_res(req, res, io_put_kbuf(req, IO_URING_F_UNLOCKED));
-+	if (def->fail)
-+		def->fail(req);
- 	io_req_complete_post(req);
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index c6e089900394..788393ec3ff4 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -69,6 +69,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.issue			= io_read,
+ 		.prep_async		= io_readv_prep_async,
+ 		.cleanup		= io_readv_writev_cleanup,
++		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_WRITEV] = {
+ 		.needs_file		= 1,
+@@ -85,6 +86,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.issue			= io_write,
+ 		.prep_async		= io_writev_prep_async,
+ 		.cleanup		= io_readv_writev_cleanup,
++		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_FSYNC] = {
+ 		.needs_file		= 1,
+@@ -105,6 +107,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.name			= "READ_FIXED",
+ 		.prep			= io_prep_rw,
+ 		.issue			= io_read,
++		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_WRITE_FIXED] = {
+ 		.needs_file		= 1,
+@@ -119,6 +122,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.name			= "WRITE_FIXED",
+ 		.prep			= io_prep_rw,
+ 		.issue			= io_write,
++		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_POLL_ADD] = {
+ 		.needs_file		= 1,
+@@ -275,6 +279,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.name			= "READ",
+ 		.prep			= io_prep_rw,
+ 		.issue			= io_read,
++		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_WRITE] = {
+ 		.needs_file		= 1,
+@@ -289,6 +294,7 @@ const struct io_op_def io_op_defs[] = {
+ 		.name			= "WRITE",
+ 		.prep			= io_prep_rw,
+ 		.issue			= io_write,
++		.fail			= io_rw_fail,
+ 	},
+ 	[IORING_OP_FADVISE] = {
+ 		.needs_file		= 1,
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index b777c35378b9..8f4e6b3f2b3f 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -954,6 +954,14 @@ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
+ 		io_cqring_wake(ctx);
  }
  
-diff --git a/io_uring/opdef.h b/io_uring/opdef.h
-index 763c6e54e2ee..3efe06d25473 100644
---- a/io_uring/opdef.h
-+++ b/io_uring/opdef.h
-@@ -36,6 +36,7 @@ struct io_op_def {
- 	int (*issue)(struct io_kiocb *, unsigned int);
- 	int (*prep_async)(struct io_kiocb *);
- 	void (*cleanup)(struct io_kiocb *);
-+	void (*fail)(struct io_kiocb *);
- };
- 
- extern const struct io_op_def io_op_defs[];
++void io_rw_fail(struct io_kiocb *req)
++{
++	int res;
++
++	res = io_fixup_rw_res(req, req->cqe.res);
++	io_req_set_res(req, res, req->cqe.flags);
++}
++
+ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+diff --git a/io_uring/rw.h b/io_uring/rw.h
+index 0204c3fcafa5..3b733f4b610a 100644
+--- a/io_uring/rw.h
++++ b/io_uring/rw.h
+@@ -21,3 +21,4 @@ int io_readv_prep_async(struct io_kiocb *req);
+ int io_write(struct io_kiocb *req, unsigned int issue_flags);
+ int io_writev_prep_async(struct io_kiocb *req);
+ void io_readv_writev_cleanup(struct io_kiocb *req);
++void io_rw_fail(struct io_kiocb *req);
 -- 
 2.37.2
 

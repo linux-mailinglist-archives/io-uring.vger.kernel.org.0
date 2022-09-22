@@ -2,68 +2,76 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBA0C5E584D
-	for <lists+io-uring@lfdr.de>; Thu, 22 Sep 2022 03:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88ADF5E62BE
+	for <lists+io-uring@lfdr.de>; Thu, 22 Sep 2022 14:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbiIVByl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Sep 2022 21:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52646 "EHLO
+        id S231537AbiIVMs4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Sep 2022 08:48:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231171AbiIVByj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Sep 2022 21:54:39 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F28B01
-        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 18:54:32 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id 3so7734289pga.1
-        for <io-uring@vger.kernel.org>; Wed, 21 Sep 2022 18:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=v7udx63NJLPOWnkmiZoa0Esgcb0822FZgS1XvDl3bDM=;
-        b=Mp780LFDO1D6TvZI6HEIyl72aJodqLT/UzmQDcDGyTpoKjwicarElWc90PWCqxqe5J
-         tJ6NDKrhlGwcwBCqhNFTjpcWr1CfO4srCm/6MjMq6nN1xWLew+yXCZtZaSe+gYNLOIPe
-         1S9P2UV9tGDoIN0dCAer3ImuCdNKFLv+9AfpCz9Rf6YSpRcmG5qLUmw4HEYCEQ4i9ahw
-         ox+wb3TY3zgRI0m5hUskFsiacg+JxUNWBB08dfD2SH/Fs1JkVGiN8zwBOk180WXVqzr3
-         tCJqjGf5UecKcjGsFrBgoS+7sFCdvWFuw8HkE4QJTQT4/135N85NFrtljgHH/amGY8UW
-         Ma0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=v7udx63NJLPOWnkmiZoa0Esgcb0822FZgS1XvDl3bDM=;
-        b=xykugGxrEi7QTUfXE8kctXddGOv53VInEseM1u/XIYAdPDuFZu5QkQPbgnATIvzUgK
-         KoKb2qOesPaz2V8X4Iv59fsQeoX6Lzc6lFj1VqrPrRuTm/fXC7R/s2AkaKBm5fu2piCx
-         dOp0EZbStJYada3KOpEHGaLheDf6uyLHmSpKjEve7v1TJ1wYTd8jbsvzXtNDdEY96lVf
-         WCEBaaFbAIyUpQrf3vq6VR6+HSqe5WaeAtuLN8LK/XhQ8H3vaw2TJUVTGcImRXUgphCP
-         RUcFOn+wBMlLzbXnjymGOEjmG//bbX7aNpROJ+2G1rVLHqysKZWCjCdjEyYG7FBdA7jt
-         dLIA==
-X-Gm-Message-State: ACrzQf2zjSYI2EwhX06ELDXzKa0EFT9p0/kqheS8PwMdV7p0UFknSxYr
-        JlWH0xUdmR2urlafiSHjrUdZ6t+RNhdb3Q==
-X-Google-Smtp-Source: AMsMyM7UR8Gh40vbiw77NwquHP3i5uDNmoODc3JPggPw2vMFNLaCxi4sUpo8qxEQb0n8Ki7OFVaLBg==
-X-Received: by 2002:a05:6a00:189d:b0:53e:79de:3fc1 with SMTP id x29-20020a056a00189d00b0053e79de3fc1mr1199895pfh.2.1663811672005;
-        Wed, 21 Sep 2022 18:54:32 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id i62-20020a17090a3dc400b001facf455c91sm2570287pjc.21.2022.09.21.18.54.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Sep 2022 18:54:31 -0700 (PDT)
-Message-ID: <20adf5fe-98a0-06a0-7058-e6f9ba7d9e2a@kernel.dk>
-Date:   Wed, 21 Sep 2022 19:54:30 -0600
+        with ESMTP id S231530AbiIVMsz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Sep 2022 08:48:55 -0400
+Received: from mta-01.yadro.com (mta-02.yadro.com [89.207.88.252])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E682B24B3;
+        Thu, 22 Sep 2022 05:48:53 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 0976E40418;
+        Thu, 22 Sep 2022 12:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        in-reply-to:content-disposition:content-type:content-type
+        :mime-version:references:message-id:subject:subject:from:from
+        :date:date:received:received:received:received; s=mta-01; t=
+        1663850930; x=1665665331; bh=1oTTLOVpNbb59fNrT4bLbmXqUOOFkWyDmNS
+        tFQJjWsY=; b=OxyZVAHSNb4N4uBmgadpoko/FuYsetRvK5Sdo/9xLGsP1e7GCtl
+        xiUKwBf8NjOfkDf3SPSkMS8CgeDJ2fN+arhjsMabL6Q8Tr49B9U7NJOtPWwJzhMZ
+        /bPMHdkUjiSrhDZ5MPHuSJ9eSvvmAa4oGAl5rOy1r8OCGgWtsQODZ0og=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nAxnMvok_hvf; Thu, 22 Sep 2022 15:48:50 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (T-EXCH-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id D1EE140354;
+        Thu, 22 Sep 2022 15:48:49 +0300 (MSK)
+Received: from T-EXCH-09.corp.yadro.com (172.17.11.59) by
+ T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.669.32; Thu, 22 Sep 2022 15:48:49 +0300
+Received: from yadro.com (10.199.18.119) by T-EXCH-09.corp.yadro.com
+ (172.17.11.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1118.9; Thu, 22 Sep
+ 2022 15:48:48 +0300
+Date:   Thu, 22 Sep 2022 15:48:46 +0300
+From:   "Alexander V. Buev" <a.buev@yadro.com>
+To:     Jens Axboe <axboe@kernel.dk>
+CC:     <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>,
+        "Christoph Hellwig" <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Mikhail Malygin <m.malygin@yadro.com>, <linux@yadro.com>
+Subject: Re: [PATCH v5 2/3] block: io-uring: add READV_PI/WRITEV_PI operations
+Message-ID: <20220922124846.d4mhaugyd4is7gd5@yadro.com>
+Mail-Followup-To: "Alexander V. Buev" <a.buev@yadro.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Mikhail Malygin <m.malygin@yadro.com>, linux@yadro.com
+References: <20220920144618.1111138-1-a.buev@yadro.com>
+ <20220920144618.1111138-3-a.buev@yadro.com>
+ <54666720-609b-c639-430d-1dc61e96a6c6@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: Memory ordering description in io_uring.pdf
-Content-Language: en-US
-To:     "J. Hanne" <io_uring@jf.hanne.name>, io-uring@vger.kernel.org
-References: <20220918165616.38AC12FC059D@dd11108.kasserver.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220918165616.38AC12FC059D@dd11108.kasserver.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <54666720-609b-c639-430d-1dc61e96a6c6@kernel.dk>
+X-Originating-IP: [10.199.18.119]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-09.corp.yadro.com (172.17.11.59)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,82 +79,25 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/18/22 10:56 AM, J. Hanne wrote:
-> Hi,
-> 
-> I have a couple of questions regarding the necessity of including memory
-> barriers when using io_uring, as outlined in
-> https://kernel.dk/io_uring.pdf. I'm fine with using liburing, but still I
-> do want to understand what is going on behind the scenes, so any comment
-> would be appreciated.
+> In general, I think this feature is useful. I do echo Keith's response
+> that it should probably be named a bit differently, as PI is just one
+> use case of this.
+Accepted. 
+In the next version, this suffix "pi" will be renamed to "meta"
+(meta_addr, meta_len, READV_META, WRITEV_META and etc...)
 
-In terms of the barriers, that doc is somewhat outdated...
 
-> Firstly, I wonder why memory barriers are required at all, when NOT using
-> polled mode. Because requiring them in non-polled mode somehow implies that:
-> - Memory re-ordering occurs across system-call boundaries (i.e. when
->   submitting, the tail write could happen after the io_uring_enter
->   syscall?!)
-> - CPU data dependency checks do not work
-> So, are memory barriers really required when just using a simple
-> loop around io_uring_enter with completely synchronous processing?
-
-No, I don't beleive that they are. The exception is SQPOLL, as you mention,
-as there's not necessarily a syscall involved with that.
-
-> Secondly, the examples in io_uring.pdf suggest that checking completion
-> entries requires a read_barrier and a write_barrier and submitting entries
-> requires *two* write_barriers. Really?
-> 
-> My expectation would be, just as with "normal" inter-thread userspace ipc,
-> that plain store-release and load-acquire semantics are sufficient, e.g.: 
-> - For reading completion entries:
-> -- first read the CQ ring head (without any ordering enforcement)
-> -- then use __atomic_load(__ATOMIC_ACQUIRE) to read the CQ ring tail
-> -- then use __atomic_store(__ATOMIC_RELEASE) to update the CQ ring head
-> - For submitting entries:
-> -- first read the SQ ring tail (without any ordering enforcement)
-> -- then use __atomic_load(__ATOMIC_ACQUIRE) to read the SQ ring head
-> -- then use __atomic_store(__ATOMIC_RELEASE) to update the SQ ring tail
-> Wouldn't these be sufficient?!
-
-Please check liburing to see what that does. Would be interested in
-your feedback (and patches!). Largely x86 not caring too much about
-these have meant that I think we've erred on the side of caution
-on that front.
-
-> Thirdly, io_uring.pdf and
-> https://github.com/torvalds/linux/blob/master/io_uring/io_uring.c seem a
-> little contradicting, at least from my reading:
-> 
-> io_uring.pdf, in the completion entry example:
-> - Includes a read_barrier() **BEFORE** it reads the CQ ring tail
-> - Include a write_barrier() **AFTER** updating CQ head
-> 
-> io_uring.c says on completion entries:
-> - **AFTER** the application reads the CQ ring tail, it must use an appropriate
->   smp_rmb() [...].
-> - It also needs a smp_mb() **BEFORE** updating CQ head [...].
-> 
-> io_uring.pdf, in the submission entry example:
-> - Includes a write_barrier() **BEFORE** updating the SQ tail
-> - Includes a write_barrier() **AFTER** updating the SQ tail
-> 
-> io_uring.c says on submission entries:
-> - [...] the application must use an appropriate smp_wmb() **BEFORE**
->   writing the SQ tail
->   (this matches io_uring.pdf)
-> - And it needs a barrier ordering the SQ head load before writing new
->   SQ entries
->   
-> I know, io_uring.pdf does mention that the memory ordering description
-> is simplified. So maybe this is the whole explanation for my confusion?
-
-The canonical resource at this point is the kernel code, as some of
-the revamping of the memory ordering happened way later than when
-that doc was written. Would be nice to get it updated at some point.
+> But for this patch in particular, not a huge fan of the rote copying of
+> rw.c into a new file. Now we have to patch two different spots whenever
+> a bug is found in there, that's not very maintainable. I do appreciate
+> the fact that this keeps the PI work out of the fast path for
+> read/write, but I do think this warrants a bit of refactoring work first
+> to ensure that there are helpers that can be shared between rw and
+> rw_pi. That definitely needs to be solved before this can be considered
+> for inclusion.
+I think it would be better to move some of the shared code to another file. 
+For example "rw_common.[ch]". What do you think about?
+As an alternative I can leave such code in "rw.[ch]" file as is.
 
 -- 
-Jens Axboe
-
-
+Alexander V. Buev

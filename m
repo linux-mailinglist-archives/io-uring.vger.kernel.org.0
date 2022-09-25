@@ -2,233 +2,182 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F4A5E92E8
-	for <lists+io-uring@lfdr.de>; Sun, 25 Sep 2022 14:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EAF5E946E
+	for <lists+io-uring@lfdr.de>; Sun, 25 Sep 2022 18:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbiIYMDR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 25 Sep 2022 08:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56646 "EHLO
+        id S231146AbiIYQow (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 25 Sep 2022 12:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbiIYMDP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Sep 2022 08:03:15 -0400
-Received: from dd11108.kasserver.com (dd11108.kasserver.com [85.13.147.108])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C1424BDC
-        for <io-uring@vger.kernel.org>; Sun, 25 Sep 2022 05:03:13 -0700 (PDT)
-Received: from smtpclient.apple (p54876f31.dip0.t-ipconnect.de [84.135.111.49])
-        by dd11108.kasserver.com (Postfix) with ESMTPSA id CA5092FC208F;
-        Sun, 25 Sep 2022 14:03:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hanne.name;
-        s=kas202209201026; t=1664107391;
-        bh=RoEjD9lCe+rOkyEZ76YyZEK2jK+3/fvoptYN8tn3C24=;
-        h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-        b=hH+LD4ZzW0hkUpAYHSWJvf4b8XeUhvU8putOZb46plVrXyTanxpiA/kAof8dnWjhg
-         r44TB139SFDS7VXglrlFtRbYyOCa/E3OfXfvvyJv7AYrJv0tlO09u2kDo+SNJNrTyh
-         SO1All3J0O3ENQXAsxJbOs/cooJ/Q9SAx/TMSK6XPRcumAupuvZXCQMxxcs9Rombrh
-         jYl1SyuIVTvJw10FatrA2FWhCbpCASGERNXNVSJ2ze/TjMPRdS1PnJwzo3cBCIdyqN
-         Ozd+2CaOJHUc1O0NX2ZrUe6c2qYI9l4ERx2xL16sL3BQAXvqtGuUy4SXulD5sZsHiO
-         GHJ3fZPd7Rtyg==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: Memory ordering description in io_uring.pdf
-From:   "J. Hanne" <io_uring@jf.hanne.name>
-In-Reply-To: <F05A663E-BA85-40F7-ABA7-5C75B267FE22@jf.hanne.name>
-Date:   Sun, 25 Sep 2022 14:03:11 +0200
-Cc:     io-uring@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <34BFB203-FC7D-45AB-85D2-B6C0B26C57FA@jf.hanne.name>
-References: <20220918165616.38AC12FC059D@dd11108.kasserver.com>
- <20adf5fe-98a0-06a0-7058-e6f9ba7d9e2a@kernel.dk>
- <F05A663E-BA85-40F7-ABA7-5C75B267FE22@jf.hanne.name>
-To:     Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S230387AbiIYQov (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Sep 2022 12:44:51 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C08010FF8;
+        Sun, 25 Sep 2022 09:44:47 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id B6F8A5C008F;
+        Sun, 25 Sep 2022 12:44:43 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sun, 25 Sep 2022 12:44:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        joshtriplett.org; h=cc:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1664124283; x=1664210683; bh=nYRqMwSy8Z
+        ZKm+VpVVjWnWK5Uz29ogk3At+/jsQjtpw=; b=WTcwaltYPThzBVbTCZFZxCi7gc
+        hbQWF91Eax9PgQGNLMS7bFhPbFARm6ordGTIJmPQy93pXqqcZ0cuR4C7RU3m0XiI
+        8hrSCUNkIG+rXLiojI6/P5GQOnmerLQ3DkuWwfJd7xmo95346NzUVCkeYznZza57
+        /3C0SL5NUe9SEynAU0dGWVlTu90LOrnglzMNdciERkPm09SlkWrVOOoiYVbr1dvV
+        Cbvtt/uFTO1NlDlElEcGJx+N2XhxpmPlXc8T76FcTjQhRQD3HvqxliPWFuTFePth
+        JmeFdAaqnv+/6uLT62Efo5CMPf2nhE6MoUiy6hi1wlGxrA/NlJ3gV1ez5Hww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:message-id:mime-version
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1664124283; x=
+        1664210683; bh=nYRqMwSy8ZZKm+VpVVjWnWK5Uz29ogk3At+/jsQjtpw=; b=l
+        ku5ye0nbXEX5IjesLcPRPzSbpUg0ukGowybR2gT6dCyT0EkPpS1gxeLYl3uLWcjr
+        Kk3vrEmafFh5E5Ud7dSiI2afTuJv6Iqi1/ZysZfflk7+0287yuKCSWibYMZN88YN
+        XvKcG8G+66uWUI0htErOp/vjvqQ46YjBHPWRdkT72rRD2bhLC+99pz1R2YYmJroc
+        MyKmvlVXiZRy5oUht846d1dgp5DPjW5ODa4gxOhzxhyxXaWW/hYqTSlhJdFbRmhp
+        NPDDC12ThW5kjX/uGNDahl7xN3GzBNyfYHTpjYybAvGWAuRGOBuoiupa84ty7Le6
+        E9GRWdc6HVrxL714wqvUA==
+X-ME-Sender: <xms:e4UwYycFOUvC5VRmDBZ4BbbeKZaGtBEYgWqGXB_iRlNcr0tF71_qgg>
+    <xme:e4UwY8NX0hta5Ag-b8g4VV78hHbQy_4cayYx9smJA2xScYHHte8ToDl6ONn-TF021
+    SH22zTbwuC1P9KzftA>
+X-ME-Received: <xmr:e4UwYzjojMxBhW67fIYo2mm2GonsOCvUZBsDsoXtGmXRGS1Ezduv-vs7Nvq6fpSPW6FW9uWUqf7ArFv0mqsUw-7ePiGTLXiUFiIbNkYo4CaA5ezR>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeegtddguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkgggtugesthdtredttddtvdenucfhrhhomheplfhoshhhucfv
+    rhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgqeenucggtf
+    frrghtthgvrhhnpeelleeggedtjeejfeeuvddufeeggfektdefkeehveeuvedvvdfhgeff
+    gfdvgfffkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+X-ME-Proxy: <xmx:e4UwY_-bJJmAIOkEvwgkeExjx7yM_3ENbENmS9L5YuLu73zQ5RFryg>
+    <xmx:e4UwY-tJFUZnS2kXxyHxMYq1dJK8l8YPuLoWr3oJIu3PL9LrQpzKaw>
+    <xmx:e4UwY2E3BGdmLdGtQ16C4dgkYPuaGsp0F2-xX5Vgbdq4IyPCfa745Q>
+    <xmx:e4UwY36JaaISHIkWvHi8BgYz0PjEfFuNIiiCDN63mg-NjeI54S2Hqg>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 25 Sep 2022 12:44:41 -0400 (EDT)
+Date:   Sun, 25 Sep 2022 17:44:39 +0100
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: Support calling io_uring_register with a
+ registered ring fd
+Message-ID: <3cbedc531b633af4fe8632f7276aa843b5a54875.1664123680.git.josh@joshtriplett.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Add a new flag IORING_REGISTER_USE_REGISTERED_RING (set via the high bit
+of the opcode) to treat the fd as a registered index rather than a file
+descriptor.
 
-what needs to be brought into an consistent state:
-- https://kernel.dk/io_uring.pdf (where is the source??)
-- https://git.kernel.dk/cgit/liburing/tree/man/io_uring.7 =
-(https://manpages.debian.org/testing/liburing-dev/io_uring.7.en.html)
-- https://git.kernel.dk/cgit/liburing/tree/src/queue.c (using macros =
-from =
-https://git.kernel.dk/cgit/liburing/tree/src/include/liburing/barrier.h)
-- https://github.com/torvalds/linux/blob/master/io_uring/io_uring.c
+This makes it possible for a library to open an io_uring, register the
+ring fd, close the ring fd, and subsequently use the ring entirely via
+registered index.
 
-I=E2=80=99ll start with submission queue handling.
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+---
 
-Quoting myself, my (possibly naive) approach for submitting entries =
-would be, using gcc atomic builtins in absence of standardized C =
-functions:
-- (1) first read the SQ ring tail (without any ordering enforcement)
-- (2) then use __atomic_load(__ATOMIC_ACQUIRE) to read the SQ ring head
-- (3) then use __atomic_store(__ATOMIC_RELEASE) to update the SQ ring =
-tail
+This is enough for many libraries to use io_uring transparently without
+disrupting any callers. Libraries with even more stringent requirements
+(e.g. never even transiently having a file descriptor open) will need
+two additional pieces:
+- Adding a flag to io_uring_setup to set up the ring directly as a
+  registered file descriptor, without ever putting it in the file
+  descriptor table.
+- Supporting the initial mmap via a registered file descriptor, such as
+  via an io_uring_register call.
 
-Comparing with the existing documentation, (3) matches everywhere:
-- io_uring.pdf confirms (3), as it inserts a write_barrier() before =
-updating the ring tail
-- io_uring.7 confirms (3), as it uses atomic_store_release to update the =
-ring tail
-- __io_uring_flush_sq in queue.c confirms (3), as it uses =
-io_uring_smp_store_release to update the ring tail
-  (BUT, __io_uring_flush_sq in queue.c also special cases =
-IORING_SETUP_SQPOLL, which I do not fully understand)
-- io_uring.c says: "the application must use an appropriate smp_wmb() =
-before writing the SQ tail (ordering SQ entry stores with the tail =
-store)"
+ include/uapi/linux/io_uring.h |  6 +++++-
+ io_uring/io_uring.c           | 30 +++++++++++++++++++++++-------
+ 2 files changed, 28 insertions(+), 8 deletions(-)
 
-However, (2) is not so clear:
-- io_uring.pdf never reads the ring head (but at least it mentions that =
-the example is simplified as it is missing a queue full check)
-- io_uring.7 never reads the ring head (as it does not check if the ring =
-is full, which it does not even mention)
-- __io_uring_flush_sq in queue.c confirms that, usually, acquire =
-semantics are needed for reading the ring head, but seems to handle it =
-elsewhere due to how it works internally (?)
-- io_uring.c says: =E2=80=9C[the application] needs a barrier ordering =
-the SQ head load before writing new SQ entries (smp_load_acquire to read =
-head will do)."
-  (BUT, it does not mention WHY the application needs to load the ring =
-head)
-
-Lastly, I absolutely do not understand the second write_barrier in =
-io_uring.pdf after updating the ring tail. =
-https://git.kernel.dk/cgit/liburing/commit/?id=3Decefd7958eb32602df07f12e9=
-808598b2c2de84b more or less just removed it. Before removal, it had =
-this comment: =E2=80=9CThe kernel has the matching read barrier for =
-reading the SQ tail.=E2=80=9C. Yes, the kernel does need such a read =
-barrier, but the write barrier *before* the ring tail update should be =
-enough?!
-
-So, my recommendation for documentation updates is:
-- In io_uring.pdf, remove the second write_barrier after the ring tail =
-update.
-- In io_uring.pdf, augment the submission example with reading the ring =
-head (to check for a queue-full condition), including a read_barrier =
-after
-- In io_uring.7, also add a queue-full check
-- In io_uring.c extend the comment to say WHY the application needs to =
-read the ring head
-
-Comments?
-
-Regards,
-  Johann
-
-> Am 25.09.2022 um 12:34 schrieb J. Hanne <io_uring@jf.hanne.name>:
->=20
-> Hi,
->=20
->> Am 22.09.2022 um 03:54 schrieb Jens Axboe <axboe@kernel.dk>:
->>=20
->> On 9/18/22 10:56 AM, J. Hanne wrote:
->>> Hi,
->>>=20
->>> I have a couple of questions regarding the necessity of including =
-memory
->>> barriers when using io_uring, as outlined in
->>> https://kernel.dk/io_uring.pdf. I'm fine with using liburing, but =
-still I
->>> do want to understand what is going on behind the scenes, so any =
-comment
->>> would be appreciated.
->>=20
->> In terms of the barriers, that doc is somewhat outdated...
-> Ok, that pretty much explains why I got an inconsistent view after =
-studying multiple sources=E2=80=A6
->=20
->>=20
->>> Firstly, I wonder why memory barriers are required at all, when NOT =
-using
->>> polled mode. Because requiring them in non-polled mode somehow =
-implies that:
->>> - Memory re-ordering occurs across system-call boundaries (i.e. when
->>> submitting, the tail write could happen after the io_uring_enter
->>> syscall?!)
->>> - CPU data dependency checks do not work
->>> So, are memory barriers really required when just using a simple
->>> loop around io_uring_enter with completely synchronous processing?
->>=20
->> No, I don't beleive that they are. The exception is SQPOLL, as you =
-mention,
->> as there's not necessarily a syscall involved with that.
->>=20
->>> Secondly, the examples in io_uring.pdf suggest that checking =
-completion
->>> entries requires a read_barrier and a write_barrier and submitting =
-entries
->>> requires *two* write_barriers. Really?
->>>=20
->>> My expectation would be, just as with "normal" inter-thread =
-userspace ipc,
->>> that plain store-release and load-acquire semantics are sufficient, =
-e.g.:=20
->>> - For reading completion entries:
->>> -- first read the CQ ring head (without any ordering enforcement)
->>> -- then use __atomic_load(__ATOMIC_ACQUIRE) to read the CQ ring tail
->>> -- then use __atomic_store(__ATOMIC_RELEASE) to update the CQ ring =
-head
->>> - For submitting entries:
->>> -- first read the SQ ring tail (without any ordering enforcement)
->>> -- then use __atomic_load(__ATOMIC_ACQUIRE) to read the SQ ring head
->>> -- then use __atomic_store(__ATOMIC_RELEASE) to update the SQ ring =
-tail
->>> Wouldn't these be sufficient?!
->>=20
->> Please check liburing to see what that does. Would be interested in
->> your feedback (and patches!). Largely x86 not caring too much about
->> these have meant that I think we've erred on the side of caution
->> on that front.
-> Ok, I will check. My practical experience with memory barriers is =
-limited however, so I=E2=80=99m not in the position to give a final =
-judgement
->=20
->>=20
->>> Thirdly, io_uring.pdf and
->>> https://github.com/torvalds/linux/blob/master/io_uring/io_uring.c =
-seem a
->>> little contradicting, at least from my reading:
->>>=20
->>> io_uring.pdf, in the completion entry example:
->>> - Includes a read_barrier() **BEFORE** it reads the CQ ring tail
->>> - Include a write_barrier() **AFTER** updating CQ head
->>>=20
->>> io_uring.c says on completion entries:
->>> - **AFTER** the application reads the CQ ring tail, it must use an =
-appropriate
->>> smp_rmb() [...].
->>> - It also needs a smp_mb() **BEFORE** updating CQ head [...].
->>>=20
->>> io_uring.pdf, in the submission entry example:
->>> - Includes a write_barrier() **BEFORE** updating the SQ tail
->>> - Includes a write_barrier() **AFTER** updating the SQ tail
->>>=20
->>> io_uring.c says on submission entries:
->>> - [...] the application must use an appropriate smp_wmb() **BEFORE**
->>> writing the SQ tail
->>> (this matches io_uring.pdf)
->>> - And it needs a barrier ordering the SQ head load before writing =
-new
->>> SQ entries
->>>=20
->>> I know, io_uring.pdf does mention that the memory ordering =
-description
->>> is simplified. So maybe this is the whole explanation for my =
-confusion?
->>=20
->> The canonical resource at this point is the kernel code, as some of
->> the revamping of the memory ordering happened way later than when
->> that doc was written. Would be nice to get it updated at some point.
-> Ok, I will try. Where is the io_uring.pdf source (tex? markdown??)?
->=20
-> Regards,
->  Johann
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 6b83177fd41d..103b4babc175 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -427,6 +427,7 @@ struct io_uring_params {
+ #define IORING_FEAT_RSRC_TAGS		(1U << 10)
+ #define IORING_FEAT_CQE_SKIP		(1U << 11)
+ #define IORING_FEAT_LINKED_FILE		(1U << 12)
++#define IORING_FEAT_REG_REG_RING	(1U << 13)
+ 
+ /*
+  * io_uring_register(2) opcodes and arguments
+@@ -474,7 +475,10 @@ enum {
+ 	IORING_REGISTER_FILE_ALLOC_RANGE	= 25,
+ 
+ 	/* this goes last */
+-	IORING_REGISTER_LAST
++	IORING_REGISTER_LAST,
++
++	/* flag added to the opcode to use a registered ring fd */
++	IORING_REGISTER_USE_REGISTERED_RING	= 1U << 31
+ };
+ 
+ /* io-wq worker categories */
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 2965b354efc8..efe5170d3e77 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3350,7 +3350,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED |
+ 			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
+ 			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
+-			IORING_FEAT_LINKED_FILE;
++			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING;
+ 
+ 	if (copy_to_user(params, p, sizeof(*p))) {
+ 		ret = -EFAULT;
+@@ -3857,13 +3857,29 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+ 	long ret = -EBADF;
+ 	struct fd f;
+ 
+-	f = fdget(fd);
+-	if (!f.file)
+-		return -EBADF;
++	/*
++	 * Ring fd has been registered via IORING_REGISTER_RING_FDS, we
++	 * need only dereference our task private array to find it.
++	 */
++	if (opcode & IORING_REGISTER_USE_REGISTERED_RING) {
++		struct io_uring_task *tctx = current->io_uring;
+ 
+-	ret = -EOPNOTSUPP;
+-	if (!io_is_uring_fops(f.file))
+-		goto out_fput;
++		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
++			return -EINVAL;
++		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
++		f.file = tctx->registered_rings[fd];
++		f.flags = 0;
++		if (unlikely(!f.file))
++			return -EBADF;
++		opcode &= ~IORING_REGISTER_USE_REGISTERED_RING;
++	} else {
++		f = fdget(fd);
++		if (unlikely(!f.file))
++			return -EBADF;
++		ret = -EOPNOTSUPP;
++		if (!io_is_uring_fops(f.file))
++			goto out_fput;
++	}
+ 
+ 	ctx = f.file->private_data;
+ 
+-- 
+2.37.2
 

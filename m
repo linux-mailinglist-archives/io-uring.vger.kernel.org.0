@@ -2,119 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AD25EB170
-	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 21:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F03185EB1D6
+	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 22:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbiIZTk1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Sep 2022 15:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33208 "EHLO
+        id S229615AbiIZUKJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 16:10:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbiIZTkX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 15:40:23 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16F693A169
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 12:40:23 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id a2so4060852iln.13
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 12:40:23 -0700 (PDT)
+        with ESMTP id S230075AbiIZUKG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 16:10:06 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3B82A710;
+        Mon, 26 Sep 2022 13:10:05 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id bk15so4155091wrb.13;
+        Mon, 26 Sep 2022 13:10:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=j9FDUSegpM2My40Q0GYwrtXUht9x9W4KI4N0s+zvhdA=;
-        b=HtAla7BIeUYXzMZDHVJttG0Yk3NxdOh2RPkjqtpQZpyshosbK33HTckXK7oWSC6tHh
-         X2pVrDEFeUaR/yYNsn8l1kD8RWRODqqN6OZc1D1QJqjLvIRN69/eGJo4+EgJiNEbBTQG
-         /CLbrHu/PVkFeyGoMeViterZDPdtHLUe9QeTSak3GFJj3MAcRPi5FzskAaN0SRhyeOgy
-         2nAEyW6DTfxjLEs63lf2pLuzptOpRkvMGlC5BRnYRBHzLMIv2p9A520aD1OUyyKHwyGq
-         h0mCJmvFYQBUKl5LW9VBieMRSZHRTA/lsxj06A9Ti/QE91Pr5ws/lJzM6E8qoV+k+T0e
-         H/ZQ==
+        bh=XMnwPZnwThAE4Ka6hIcctD7xP5BaW3tuhFZmcRvzFlg=;
+        b=SBIFR70zxURT+LWWLEfwvyZjuFngwXp2GYa6lKWsrtGexM9TlF58m6/Jbl3y/B+Qxc
+         msi7ARatidnq/2cGdQuxJ2ZJhcjHeJyh+rRgx9hj+k6BtMigjYL82Cg/iO9tQhehtx9E
+         CzTkB1+kI0PfnvL/jgvGf6Qlz6INcfxdn6Sm7jRM5mplxz1yF3GutcCzEPLS5jaKCrtu
+         g1wMlSRlksSD3LK4Wl39GuVKUjBzONDieC7LdrdUjlOsK/BHZw/kqN5MvhUWlHZgzkbH
+         YTMNpqlmN/15v197DAtYY45pkVqUjsXHDTSrV8LYK19VLSOc+GKkoqkb2MdwyStbkwui
+         L7/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=j9FDUSegpM2My40Q0GYwrtXUht9x9W4KI4N0s+zvhdA=;
-        b=Itey0fvQSnhsAP5nehg1sfXc1jWxgnxgP65jTDE1m9TR+kYHQAL3dlWbJc6uknTE2I
-         JbZZoEHa87o1BVHYQV3N/8zk0jNz0Wxs33P8hiAXKVVUsBpAT4924LER9AqpAKX9yZ0P
-         AsDxppOPXgn17HvwOuf7HcbUxDvwCne9I4++0+lo9uvC19zw5xrc4Fqqr8OXgODWuXX3
-         Im5z+81mw/ZQJlmycYWuMUnzZQGJXg2Oc2BJOC0Z9/6AtLqOXSml6XmUvyinzaBny0iR
-         BUbIzmT+P4aBiO+dpDjyYSYZl97tNe3yWQN49bHDM0U9gafdlKMLIAsOxSnhAiGocsVw
-         kkKw==
-X-Gm-Message-State: ACrzQf3/XbYcJ2T6NRsy/C0jLwFsRdLvYLyANg3uWuTJ2Cl9fMJFMMRV
-        vCoQs89Ju64X+ASyVvGxep+rwg==
-X-Google-Smtp-Source: AMsMyM7gMtJKyCn1oFEo7CEeb8NWTK927lW1NwcBYUN+o05U0VJT8NVG/dOjAUzFDL94FA9ZXke5hw==
-X-Received: by 2002:a05:6e02:12e2:b0:2f1:c14a:8a9c with SMTP id l2-20020a056e0212e200b002f1c14a8a9cmr11474915iln.267.1664221222113;
-        Mon, 26 Sep 2022 12:40:22 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id x22-20020a0566380cb600b00349d33a92a2sm7510777jad.140.2022.09.26.12.40.21
+        bh=XMnwPZnwThAE4Ka6hIcctD7xP5BaW3tuhFZmcRvzFlg=;
+        b=ijrHnRWw7Ijkr2RjxRg07XMnJHByvdwwLeiLCTmNpxH52DApkmnK43J6MSlItUCxer
+         7IV8vA6cy+PVB2JHidYFYd0YkSaAaSTNQlx9xcz7p131ROj4TbtWR1YKM+ij+YKAGOtT
+         mZebKhmZR5bKKrpoZiqpuBAoGj0nrOCazTSAoEo8PswTT4lg7VC/O1EY5yV8JX0bVJt8
+         GMupMOaFAzjxgioQgas+DBR9SmJWK8XXUGD3cLxuthbLQXCyXbZv5PbMWkIa1hq6ay0h
+         2ayhoZjPM8z94fjklq8S/OkIm23eEPEbaMXlXf/vdXf/R8AwGZYZ+qBnxB3RlGttH0/O
+         IjYw==
+X-Gm-Message-State: ACrzQf3jp9pkcVHFkC6ICdjAXEyHNrJCBPtM2wbXw5BP+i559+gtQR4K
+        aGrQT0HKa9qYeF5dXlUCjq0=
+X-Google-Smtp-Source: AMsMyM51TxDI//YOTTSoB5oBl8N+Z/VqLtU/7S94TZ40JdoQgUEJMH2aE3v3p3yAooS6z9TWk4ISJw==
+X-Received: by 2002:a5d:59ae:0:b0:22a:ff17:db96 with SMTP id p14-20020a5d59ae000000b0022aff17db96mr15109396wrr.299.1664223004343;
+        Mon, 26 Sep 2022 13:10:04 -0700 (PDT)
+Received: from [192.168.8.100] (94.196.228.157.threembb.co.uk. [94.196.228.157])
+        by smtp.gmail.com with ESMTPSA id r3-20020a5d4e43000000b00228dc1c7063sm15109742wrt.85.2022.09.26.13.10.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 12:40:21 -0700 (PDT)
-Message-ID: <4623be74-d877-9042-f876-09feba2f0587@kernel.dk>
-Date:   Mon, 26 Sep 2022 13:40:20 -0600
+        Mon, 26 Sep 2022 13:10:03 -0700 (PDT)
+Message-ID: <24b050e0-433f-dc97-7aab-15c9175f49fa@gmail.com>
+Date:   Mon, 26 Sep 2022 21:08:27 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 1/3] io_uring: register single issuer task at creation
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH net-next v4 00/27] io_uring zerocopy send
 Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Dylan Yudaken <dylany@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-References: <20220926170927.3309091-1-dylany@fb.com>
- <20220926170927.3309091-2-dylany@fb.com>
- <35d9be6b-89ca-f2a1-ce5f-53e72610db6e@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <35d9be6b-89ca-f2a1-ce5f-53e72610db6e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+To:     David Ahern <dsahern@kernel.org>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jens Axboe <axboe@kernel.dk>, kernel-team@fb.com
+References: <cover.1657194434.git.asml.silence@gmail.com>
+ <2c49d634-bd8a-5a7f-0f66-65dba22bae0d@kernel.org>
+ <bd9960ab-c9d8-8e5d-c347-8049cdf5708a@gmail.com>
+ <0f54508f-e819-e367-84c2-7aa0d7767097@gmail.com>
+ <d10f20a9-851a-33be-2615-a57ab92aca90@kernel.org>
+ <bc48e2bb-37ee-5b7c-5a97-01e026de2ba4@gmail.com>
+ <812c3233-1b64-8a0d-f820-26b98ff6642d@kernel.org>
+ <3b81b3e1-2810-5125-f4a0-d6ba45c1fbd3@kernel.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <3b81b3e1-2810-5125-f4a0-d6ba45c1fbd3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/26/22 1:12 PM, Pavel Begunkov wrote:
-> On 9/26/22 18:09, Dylan Yudaken wrote:
->> Instead of picking the task from the first submitter task, rather use the
->> creator task or in the case of disabled (IORING_SETUP_R_DISABLED) the
->> enabling task.
+On 7/24/22 19:28, David Ahern wrote:
+> On 7/17/22 8:19 PM, David Ahern wrote:
+>>>
+>>> Haven't seen it back then. In general io_uring doesn't stop submitting
+>>> requests if one request fails, at least because we're trying to execute
+>>> requests asynchronously. And in general, requests can get executed
+>>> out of order, so most probably submitting a bunch of requests to a single
+>>> TCP sock without any ordering on io_uring side is likely a bug.
 >>
->> This approach allows a lot of simplification of the logic here. This
->> removes init logic from the submission path, which can always be a bit
->> confusing, but also removes the need for locking to write (or read) the
->> submitter_task.
+>> TCP socket buffer fills resulting in a partial send (i.e, for a given
+>> sqe submission only part of the write/send succeeded). io_uring was not
+>> handling that case.
 >>
->> Users that want to move a ring before submitting can create the ring
->> disabled and then enable it on the submitting task.
+>> I'll try to find some time to resurrect the iperf3 patch and try top of
+>> tree kernel.
 > 
-> I think Dylan briefly mentioned before that it might be a good
-> idea to task limit registration as well. I can't think of a use
-> case at the moment but I agree we may find some in the future.
+> With your zc_v5 branch (plus the init fix on using msg->sg_from_iter),
+> iperf3 with io_uring support (non-ZC case) no longer shows completions
+> with incomplete sends. So that is good improvement over the last time I
+> tried it.
 > 
+> However, adding in the ZC support and that problem resurfaces - a lot of
+> completions are for an incomplete size.
 > 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 242d896c00f3..60a471e43fd9 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -3706,6 +3706,9 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
->      if (WARN_ON_ONCE(percpu_ref_is_dying(&ctx->refs)))
->          return -ENXIO;
->  
-> +    if (ctx->submitter_task && ctx->submitter_task != current)
-> +        return -EEXIST;
-> +
->      if (ctx->restricted) {
->          if (opcode >= IORING_REGISTER_LAST)
->              return -EINVAL;
+> liburing comes from your tree, zc_v4 branch. Upstream does not have
+> support for notifications yet, so I can not move to it.
+> 
+> Changes to iperf3 are here:
+>     https://github.com/dsahern/iperf mods-3.10-io_uring
 
-Yes, I don't see any reason why not to enforce this for registration
-too. Don't think there's currently a need to do so, but it'd be easy
-to miss once we do add that. Let's queue that up for 6.1?
+Tried it out, the branch below fixes a small problem, adds a couple
+of extra optimisations and now it actually uses registered buffers.
+
+     https://github.com/isilence/iperf iou-sendzc
+
+Still, the submission loop looked a bit weird, i.e. it submits I/O
+to io_uring only when it exhausts sqes instead of sending right
+away with some notion of QD and/or sending in batches. The approach
+is good for batching (SQ size =16 here), but not so for latency.
+
+I also see some CPU cycles being burnt in select(2). io_uring wait
+would be more natural and perhaps more performant, but I didn't
+spend enough time with iperf to say for sure.
 
 -- 
-Jens Axboe
-
-
+Pavel Begunkov

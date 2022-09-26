@@ -2,117 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E525EAE5F
-	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 19:42:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDD95EAE77
+	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 19:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbiIZRmf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Sep 2022 13:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        id S231253AbiIZRsN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 13:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230218AbiIZRmP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 13:42:15 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0813178BC
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:09:39 -0700 (PDT)
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 28Q9CnoI018797
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:09:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=QjTyb5cqB8JpM+faMD/4F0TT8m42x/Q1YTWctvgR8EE=;
- b=K3MpZKDPFT+Sn8s4QizUGgYe7GZ9DToWTuRPkhEVZPt2THTp0xlX6kmqgk6R7EmqDRj9
- dc21rqeaiJg6RVzD+WVZQUAndV/43+m05lt863/QGe3CB7fSeVRYApps70i/VO7LE5+L
- f62eWmOCLbx6Sdhb0vO95QiEBokXgE6McxM= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3jswjumsd3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:09:38 -0700
-Received: from twshared2996.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 26 Sep 2022 10:09:38 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id D682A6B0A930; Mon, 26 Sep 2022 10:09:27 -0700 (PDT)
-From:   Dylan Yudaken <dylany@fb.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>, Dylan Yudaken <dylany@fb.com>
-Subject: [PATCH v2 3/3] io_uring: remove io_register_submitter
-Date:   Mon, 26 Sep 2022 10:09:27 -0700
-Message-ID: <20220926170927.3309091-4-dylany@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220926170927.3309091-1-dylany@fb.com>
-References: <20220926170927.3309091-1-dylany@fb.com>
+        with ESMTP id S231225AbiIZRrv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 13:47:51 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF7913D16
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:18:53 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id h194so5795756iof.4
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=SBNDj5502h57IDXl6FPkcvdwxfI7lqUcfi/UyHv3Ggk=;
+        b=5Hr0FN2rvhIGD2yLM53TEBcHUKNKxSbXdN9xRpCLGWXieVa22OlXxj8zosFbs3quwJ
+         vCrDrImqSiKmCNnGxqkQBiBnmfT6P4qsRfeujtQtCo48G3U3am3pLMqpNaTNBrxlW3fJ
+         LpJdU/f+i76/xaH12KPojzdElCdjJ7eAEwVwOjcBekcleJrYg856jBg2ds4/KKF0Jtxx
+         TCFPWJTUcDGnmkm6VA8ILPQq4aTZSSl0xBS2c57aVhDWFq0L4HmHrmt4ZFN3QzYCdU09
+         hEKnYeUEy7StrIcE8bI58yjQYTd6WHNyveZu2PNR1OLxRyWZU2elvauQMrO1C/mb80XG
+         3Eng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=SBNDj5502h57IDXl6FPkcvdwxfI7lqUcfi/UyHv3Ggk=;
+        b=El0gNqWQnrNLhPMnvvOk+1FIDWYpfY4g/7ZAtxah1+QuqrDKRTxwcQ7ZfKrFbRfFOO
+         nmsxtu2YzlVALgKduth/m4npcWSVT1hD65H9IgH+PHLPbOUCeExLJ+46H5WVu+UyaP2P
+         eooMPfckzO3DOR7RQQxLe9kinTlQqnMd/U/soA7ry5Le7EDjK7JpeTv/js5aBCGHlX5N
+         7BR60xiD2QFMlkHqU9QERe5Xwq9WE77oJMj2ai4K7s1FsTnKsjqced/mXqpsl99srZf0
+         xM0MqDHMwDWUyEoy2c0p3bFIDvlNzBOtjSAI338U/oqFUkniiaJGXw/DKdqbnyaFkpwq
+         zozQ==
+X-Gm-Message-State: ACrzQf2NXb9P2ygEu0/HDf6g9KErLmxpIc2RYxYtr47CPpSpv7XsHDX7
+        88oXFMjNEVcFc//jWK9j9w9UfA==
+X-Google-Smtp-Source: AMsMyM6ixmNifzDMC/xdHbCnQo/lvoLsTJ2LfeLmoseogVIt9sIOnEYSMjC0/8J20xyTOeneGDwwyg==
+X-Received: by 2002:a05:6638:144f:b0:35a:68a4:b3cb with SMTP id l15-20020a056638144f00b0035a68a4b3cbmr12375012jad.251.1664212732569;
+        Mon, 26 Sep 2022 10:18:52 -0700 (PDT)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id t11-20020a056602140b00b00689007ec164sm7527902iov.48.2022.09.26.10.18.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Sep 2022 10:18:52 -0700 (PDT)
+Message-ID: <ae593f43-4972-8f96-b99e-2208b21b8051@kernel.dk>
+Date:   Mon, 26 Sep 2022 11:18:51 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: lMlNPfJHK3P9C5T7sWIFbQR9K2qiU0sU
-X-Proofpoint-ORIG-GUID: lMlNPfJHK3P9C5T7sWIFbQR9K2qiU0sU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-26_09,2022-09-22_02,2022-06-22_01
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH liburing 0/2] 6.0 updates
+Content-Language: en-US
+To:     Dylan Yudaken <dylany@fb.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
+References: <20220926151412.2515493-1-dylany@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220926151412.2515493-1-dylany@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-this is no longer needed, as submitter_task is set at creation time.
+On 9/26/22 9:14 AM, Dylan Yudaken wrote:
+> Two liburing updates for 6.0:
+> 
+> Patch 1 updates to account for the single issuer ring being assigned at
+> ring creation time.
+> 
+> Patch 2 updates man pages from 5.20 -> 6.0
 
-Signed-off-by: Dylan Yudaken <dylany@fb.com>
----
- io_uring/tctx.c | 22 +++-------------------
- 1 file changed, 3 insertions(+), 19 deletions(-)
+I'll wait for a v2 of this one as well, as at least the documentation will
+need updating for v2 of the kernel side.
 
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index dd0205fcdb13..4324b1cf1f6a 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -91,20 +91,6 @@ __cold int io_uring_alloc_task_context(struct task_str=
-uct *task,
- 	return 0;
- }
-=20
--static int io_register_submitter(struct io_ring_ctx *ctx)
--{
--	int ret =3D 0;
--
--	mutex_lock(&ctx->uring_lock);
--	if (!ctx->submitter_task)
--		ctx->submitter_task =3D get_task_struct(current);
--	else if (ctx->submitter_task !=3D current)
--		ret =3D -EEXIST;
--	mutex_unlock(&ctx->uring_lock);
--
--	return ret;
--}
--
- int __io_uring_add_tctx_node(struct io_ring_ctx *ctx)
- {
- 	struct io_uring_task *tctx =3D current->io_uring;
-@@ -151,11 +137,9 @@ int __io_uring_add_tctx_node_from_submit(struct io_r=
-ing_ctx *ctx)
- {
- 	int ret;
-=20
--	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
--		ret =3D io_register_submitter(ctx);
--		if (ret)
--			return ret;
--	}
-+	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER
-+	    && ctx->submitter_task !=3D current)
-+		return -EEXIST;
-=20
- 	ret =3D __io_uring_add_tctx_node(ctx);
- 	if (ret)
---=20
-2.30.2
+-- 
+Jens Axboe
+
 

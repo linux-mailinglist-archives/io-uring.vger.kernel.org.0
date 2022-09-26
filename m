@@ -2,247 +2,245 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC485E95F3
-	for <lists+io-uring@lfdr.de>; Sun, 25 Sep 2022 22:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7D75E9D2A
+	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 11:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232798AbiIYUd6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 25 Sep 2022 16:33:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33042 "EHLO
+        id S234831AbiIZJPo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 05:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232924AbiIYUdv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Sep 2022 16:33:51 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BBAD2C66A
-        for <io-uring@vger.kernel.org>; Sun, 25 Sep 2022 13:33:46 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220925203344epoutp0276851c72a4a6edf998537fad4c3dbb95~YNLdclxAz0567005670epoutp02r
-        for <io-uring@vger.kernel.org>; Sun, 25 Sep 2022 20:33:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220925203344epoutp0276851c72a4a6edf998537fad4c3dbb95~YNLdclxAz0567005670epoutp02r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1664138024;
-        bh=3A/lgcvkDGVjeLIHZ4//Y527GGsAiDQHEVnPedJDOak=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BTO6wvIjGoc/6gToX9oFuSDO/RwibMHGuoR1HD9IrM2PtDcpUyWHIUxqIzMTnzn/x
-         ZkqWzfSI7ALRKQyz/1GmIW7ua9jAmf3//0FvbTiQoeHIY/18WBpGTijYuklLsssRps
-         4rq5WYz0dZB9MphJ4F5tBq2/KJTYjHxj4dKjbYow=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220925203343epcas5p43cb2a8a5a1be684719c3999ac01d90e0~YNLcXUpGs2832328323epcas5p4C;
-        Sun, 25 Sep 2022 20:33:43 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4MbHfF1NmBz4x9Pq; Sun, 25 Sep
-        2022 20:33:41 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        52.AF.26992.42BB0336; Mon, 26 Sep 2022 05:33:41 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220925203340epcas5p21bd73962a73c36c7bd56841299c0d229~YNLZy-Zs10635906359epcas5p2b;
-        Sun, 25 Sep 2022 20:33:40 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220925203340epsmtrp21c70fa682ece6af7df1b29015edba3b1~YNLZyUb9Q1586315863epsmtrp2N;
-        Sun, 25 Sep 2022 20:33:40 +0000 (GMT)
-X-AuditID: b6c32a49-319fb70000016970-33-6330bb245163
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8C.1A.18644.42BB0336; Mon, 26 Sep 2022 05:33:40 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.110.206.5]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220925203338epsmtip1f20161add80368655d19994a5028e4c0~YNLXi3WkZ3161131611epsmtip1X;
-        Sun, 25 Sep 2022 20:33:37 +0000 (GMT)
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        Kanchan Joshi <joshi.k@samsung.com>
-Subject: [PATCH for-next v9 7/7] nvme: wire up fixed buffer support for nvme
- passthrough
-Date:   Mon, 26 Sep 2022 01:53:04 +0530
-Message-Id: <20220925202304.28097-8-joshi.k@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220925202304.28097-1-joshi.k@samsung.com>
+        with ESMTP id S234830AbiIZJO4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 05:14:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CD51208A;
+        Mon, 26 Sep 2022 02:14:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8A31CB8076A;
+        Mon, 26 Sep 2022 09:14:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE90AC433C1;
+        Mon, 26 Sep 2022 09:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664183683;
+        bh=dHs+YgAl2GmuM02+rSRwgCFpJ7OKLgE+oTY6U6YQ03U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vIdexGJpR/ycF5w0nQivoFwFs9rr05K9AJjyXJ2+uTzeN+wvvWIaabK3i2cDSBeYG
+         TaVc9VDVreQnaFtMJjWoYmCcAQZi5k4teYCLkYzSw0uBOAY9A3bzsa7JmOlyB7hZYY
+         1aCcAQokeguse/wMCPJOOnRP8noBNv0qwPFarRXrlalLAV79WpH5eBX5+Z398+ankO
+         lVQZMqZzq/pDdDpBLD0m2aT8ec5c3m68JG9xwiZ5rNWTkKBNs3lqffAeG/p+0v7Tlm
+         oBsm/AQVLF52qVV3rfY/dYd9b2uIzvGt4Vkpswn2s1/wi7VrOZAJxCCCqllnn5lUO/
+         XgVlJAyEOVtqA==
+Date:   Mon, 26 Sep 2022 10:14:40 +0100
+From:   Filipe Manana <fdmanana@kernel.org>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     kernel-team@fb.com, io-uring@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-mm@kvack.org, axboe@kernel.dk,
+        josef@toxicpanda.com, fdmanana@gmail.com
+Subject: Re: [PATCH v3 02/12] btrfs: implement a nowait option for tree
+ searches
+Message-ID: <20220926091440.GA1198392@falcondesktop>
+References: <20220912192752.3785061-1-shr@fb.com>
+ <20220912192752.3785061-3-shr@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgk+LIzCtJLcpLzFFi42LZdlhTQ1d1t0Gywdt9zBar7/azWdw8sJPJ
-        YuXqo0wW71rPsVgc/f+WzWLSoWuMFntvaVvMX/aU3YHD4/LZUo9NqzrZPDYvqffYfbOBzaNv
-        yypGj8+b5ALYorJtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwC
-        dN0yc4CuUVIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZY
-        GRoYGJkCFSZkZ7y/2s5e8EO14vSXFSwNjG/luhg5OSQETCS2zdzL0sXIxSEksJtRYtuS+UwQ
-        zidGiR+r1jJCOJ8ZJb6ensUK03Jj7gpmEFtIYBejxJ2HqXBF1443s3UxcnCwCWhKXJhcClIj
-        ImAksf/TSVaQGmaBGYwSqztes4PUCAtESaz7XQFSwyKgKrHs3VcWEJtXwEJi6bRpTBC75CVm
-        XvrODmJzClhKPJm7lRmiRlDi5MwnYPXMQDXNW2czg8yXEPjILvH8aRfYDRICLhILdplBzBGW
-        eHV8CzuELSXx+d1eNgg7WeLSzHNQu0okHu85CGXbS7Se6mcGGcMM9Mr6XfoQq/gken8/YYKY
-        zivR0SYEUa0ocW/SU2joiEs8nLEEyvaQ2NfVxA4JnR5GibVTH7FNYJSfheSDWUg+mIWwbQEj
-        8ypGydSC4tz01GLTAsO81HJ4tCbn525iBCdJLc8djHcffNA7xMjEwXiIUYKDWUmEN+WibrIQ
-        b0piZVVqUX58UWlOavEhRlNgEE9klhJNzgem6bySeEMTSwMTMzMzE0tjM0Mlcd7FM7SShQTS
-        E0tSs1NTC1KLYPqYODilGpgsS7wSdi/Wm/2OzVVXb32gw7ZiqT+cl9s2Xbup9dVD8+239SrB
-        Bi5MTLO4Gxmeres2WazWuvz7khfCc6+2MqnxL203zuSTOeysW+c7a0WfYt2sU5JH5+3coPRL
-        i1d02+PXLh01CmlC5rJFH5xfXH7FIsm1fGniX8F/8Z+m/T12KyzlJF9VjKF5EEdSzandrgWP
-        hCa+rGOxEgzYHRG0z2cNe/261LiTk65/DywQerHjjFnwVecpPIIe6pnq8bsrlN4tuPcvKEPL
-        pvSBjumyqL9hbBkp09qm39my7PKupO8zbK1yHO0e+jzQ8+9IXcO6Ys5f9YUXDp8PCo0Ndl+V
-        q1Wx7NXP5VbTWYxTOE5OnaHEUpyRaKjFXFScCAD9rXHUGwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsWy7bCSnK7KboNkg4UTJCxW3+1ns7h5YCeT
-        xcrVR5ks3rWeY7E4+v8tm8WkQ9cYLfbe0raYv+wpuwOHx+WzpR6bVnWyeWxeUu+x+2YDm0ff
-        llWMHp83yQWwRXHZpKTmZJalFunbJXBlvL/azl7wQ7Xi9JcVLA2Mb+W6GDk5JARMJG7MXcHc
-        xcjFISSwg1Fi39wdTBAJcYnmaz/YIWxhiZX/nrNDFH1klJjX/xHI4eBgE9CUuDC5FKRGRMBM
-        YunhNSwgNcwCcxglLl/eA9YsLBAhsWrSO2YQm0VAVWLZu68sIDavgIXE0mnToJbJS8y89B2s
-        nlPAUuLJ3K3MIPOFgGq2nteCKBeUODnzCVgrM1B589bZzBMYBWYhSc1CklrAyLSKUTK1oDg3
-        PbfYsMAoL7Vcrzgxt7g0L10vOT93EyM4xLW0djDuWfVB7xAjEwfjIUYJDmYlEd6Ui7rJQrwp
-        iZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTBJ8Pc/82H/9q9j
-        3VPdl/+iNy09xMbVMVM5Nv7N8e2yN0U+vlLR6edlSTh7+KEES9er6G/SLQuaYvwivY8xfQty
-        u18m9n7XLP2d/+TnTXRuV1dXda87tXbXXp7A7k7ljYHC9Zqtb/fxxhUZXKlsuCY6abFHzhIO
-        gzaRZ2xrl82rK/zHts6zotBi0o/OU89v8VSuWNaaJbTCKfkY6wWmp9f/LGO6KBPIbcN2dGLz
-        9r7UsEqJk9O0ZNuLNQxeidjN4Gy+E1LynzvNWc99QZMmZ526y5P50vrRLP6KCwWy9XpW2U1b
-        3qY28wRXZPeZBMHoSS0s83fwu3Kd/cejVpN1IeexSN7xKAXFeoXjvo5rlViKMxINtZiLihMB
-        yUEp0eACAAA=
-X-CMS-MailID: 20220925203340epcas5p21bd73962a73c36c7bd56841299c0d229
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220925203340epcas5p21bd73962a73c36c7bd56841299c0d229
-References: <20220925202304.28097-1-joshi.k@samsung.com>
-        <CGME20220925203340epcas5p21bd73962a73c36c7bd56841299c0d229@epcas5p2.samsung.com>
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220912192752.3785061-3-shr@fb.com>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-if io_uring sends passthrough command with IORING_URING_CMD_FIXED flag,
-use the pre-registered buffer for IO (non-vectored variant). Pass the
-buffer/length to io_uring and get the bvec iterator for the range. Next,
-pass this bvec to block-layer helper and obtain a bio/request for
-subsequent processing.
-While at it, modify nvme_submit_user_cmd to take ubuffer as plain integer
-argument, and do away with nvme_to_user_ptr conversion in callers.
+On Mon, Sep 12, 2022 at 12:27:42PM -0700, Stefan Roesch wrote:
+> From: Josef Bacik <josef@toxicpanda.com>
+> 
+> For NOWAIT IOCB's we'll need a way to tell search to not wait on locks
+> or anything.  Accomplish this by adding a path->nowait flag that will
+> use trylocks and skip reading of metadata, returning -EAGAIN in either
+> of these cases.  For now we only need this for reads, so only the read
+> side is handled.  Add an ASSERT() to catch anybody trying to use this
+> for writes so they know they'll have to implement the write side.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
+>  fs/btrfs/ctree.c   | 39 ++++++++++++++++++++++++++++++++++++---
+>  fs/btrfs/ctree.h   |  1 +
+>  fs/btrfs/locking.c | 23 +++++++++++++++++++++++
+>  fs/btrfs/locking.h |  1 +
+>  4 files changed, 61 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+> index ebfa35fe1c38..71b238364939 100644
+> --- a/fs/btrfs/ctree.c
+> +++ b/fs/btrfs/ctree.c
+> @@ -1447,6 +1447,11 @@ read_block_for_search(struct btrfs_root *root, struct btrfs_path *p,
+>  			return 0;
+>  		}
+>  
+> +		if (p->nowait) {
+> +			free_extent_buffer(tmp);
+> +			return -EAGAIN;
+> +		}
+> +
+>  		if (unlock_up)
+>  			btrfs_unlock_up_safe(p, level + 1);
+>  
+> @@ -1467,6 +1472,8 @@ read_block_for_search(struct btrfs_root *root, struct btrfs_path *p,
+>  			ret = -EAGAIN;
+>  
+>  		goto out;
+> +	} else if (p->nowait) {
+> +		return -EAGAIN;
+>  	}
+>  
+>  	if (unlock_up) {
+> @@ -1634,7 +1641,13 @@ static struct extent_buffer *btrfs_search_slot_get_root(struct btrfs_root *root,
+>  		 * We don't know the level of the root node until we actually
+>  		 * have it read locked
+>  		 */
+> -		b = btrfs_read_lock_root_node(root);
+> +		if (p->nowait) {
+> +			b = btrfs_try_read_lock_root_node(root);
+> +			if (IS_ERR(b))
+> +				return b;
+> +		} else {
+> +			b = btrfs_read_lock_root_node(root);
+> +		}
+>  		level = btrfs_header_level(b);
+>  		if (level > write_lock_level)
+>  			goto out;
+> @@ -1910,6 +1923,13 @@ int btrfs_search_slot(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+>  	WARN_ON(p->nodes[0] != NULL);
+>  	BUG_ON(!cow && ins_len);
+>  
+> +	/*
+> +	 * For now only allow nowait for read only operations.  There's no
+> +	 * strict reason why we can't, we just only need it for reads so I'm
+> +	 * only implementing it for reads right now.
+> +	 */
+> +	ASSERT(!p->nowait || !cow);
+> +
+>  	if (ins_len < 0) {
+>  		lowest_unlock = 2;
+>  
+> @@ -1936,7 +1956,12 @@ int btrfs_search_slot(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+>  
+>  	if (p->need_commit_sem) {
+>  		ASSERT(p->search_commit_root);
+> -		down_read(&fs_info->commit_root_sem);
+> +		if (p->nowait) {
+> +			if (!down_read_trylock(&fs_info->commit_root_sem))
+> +				return -EAGAIN;
+> +		} else {
+> +			down_read(&fs_info->commit_root_sem);
+> +		}
+>  	}
+>  
+>  again:
+> @@ -2082,7 +2107,15 @@ int btrfs_search_slot(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+>  				btrfs_tree_lock(b);
+>  				p->locks[level] = BTRFS_WRITE_LOCK;
+>  			} else {
+> -				btrfs_tree_read_lock(b);
+> +				if (p->nowait) {
+> +					if (!btrfs_try_tree_read_lock(b)) {
+> +						free_extent_buffer(b);
+> +						ret = -EAGAIN;
+> +						goto done;
+> +					}
+> +				} else {
+> +					btrfs_tree_read_lock(b);
+> +				}
+>  				p->locks[level] = BTRFS_READ_LOCK;
+>  			}
+>  			p->nodes[level] = b;
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index df8c99c99df9..ca59ba6421a9 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -443,6 +443,7 @@ struct btrfs_path {
+>  	 * header (ie. sizeof(struct btrfs_item) is not included).
+>  	 */
+>  	unsigned int search_for_extension:1;
+> +	unsigned int nowait:1;
+>  };
+>  #define BTRFS_MAX_EXTENT_ITEM_SIZE(r) ((BTRFS_LEAF_DATA_SIZE(r->fs_info) >> 4) - \
+>  					sizeof(struct btrfs_item))
+> diff --git a/fs/btrfs/locking.c b/fs/btrfs/locking.c
+> index 9063072b399b..d6c88922d3e2 100644
+> --- a/fs/btrfs/locking.c
+> +++ b/fs/btrfs/locking.c
+> @@ -285,6 +285,29 @@ struct extent_buffer *btrfs_read_lock_root_node(struct btrfs_root *root)
+>  	return eb;
+>  }
+>  
+> +/*
+> + * Loop around taking references on and locking the root node of the tree in
+> + * nowait mode until we end up with a lock on the root node or returning to
+> + * avoid blocking.
+> + *
+> + * Return: root extent buffer with read lock held or -EWOULDBLOCK.
+> + */
+> +struct extent_buffer *btrfs_try_read_lock_root_node(struct btrfs_root *root)
+> +{
+> +	struct extent_buffer *eb;
+> +
+> +	while (1) {
+> +		eb = btrfs_root_node(root);
+> +		if (!btrfs_try_tree_read_lock(eb))
+> +			return ERR_PTR(-EAGAIN);
 
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
----
- drivers/nvme/host/ioctl.c | 44 +++++++++++++++++++++++++--------------
- 1 file changed, 28 insertions(+), 16 deletions(-)
+There's a leak of the extent buffer here.
+This fixes it up:
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index b9f17dc87de9..505a548d4da5 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -83,9 +83,10 @@ static struct request *nvme_alloc_user_request(struct request_queue *q,
- 	return req;
- }
+diff --git a/fs/btrfs/locking.c b/fs/btrfs/locking.c
+index 9d53bcfb6d9b..0eab3cb274a1 100644
+--- a/fs/btrfs/locking.c
++++ b/fs/btrfs/locking.c
+@@ -298,8 +298,10 @@ struct extent_buffer *btrfs_try_read_lock_root_node(struct btrfs_root *root)
  
--static int nvme_map_user_request(struct request *req, void __user *ubuffer,
-+static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
--		u32 meta_seed, void **metap, bool vec)
-+		u32 meta_seed, void **metap, struct io_uring_cmd *ioucmd,
-+		bool vec)
- {
- 	struct request_queue *q = req->q;
- 	struct nvme_ns *ns = q->queuedata;
-@@ -93,23 +94,34 @@ static int nvme_map_user_request(struct request *req, void __user *ubuffer,
- 	struct bio *bio = NULL;
- 	void *meta = NULL;
- 	int ret;
-+	bool fixedbufs = ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED);
- 
--	if (!vec)
--		ret = blk_rq_map_user(q, req, NULL, ubuffer, bufflen,
--			GFP_KERNEL);
--	else {
-+	if (vec) {
- 		struct iovec fast_iov[UIO_FASTIOV];
- 		struct iovec *iov = fast_iov;
- 		struct iov_iter iter;
- 
--		ret = import_iovec(rq_data_dir(req), ubuffer, bufflen,
--				UIO_FASTIOV, &iov, &iter);
-+		/* fixedbufs is only for non-vectored io */
-+		WARN_ON_ONCE(fixedbufs);
-+		ret = import_iovec(rq_data_dir(req), nvme_to_user_ptr(ubuffer),
-+				bufflen, UIO_FASTIOV, &iov, &iter);
- 		if (ret < 0)
- 			goto out;
- 
- 		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
- 		kfree(iov);
--	}
-+	} else if (fixedbufs) {
-+		struct iov_iter iter;
-+
-+		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
-+				rq_data_dir(req), &iter, ioucmd);
-+		if (ret < 0)
-+			goto out;
-+		ret = blk_rq_map_user_bvec(req, &iter);
-+	} else
-+		ret = blk_rq_map_user(q, req, NULL,
-+					nvme_to_user_ptr(ubuffer), bufflen,
-+					GFP_KERNEL);
- 	if (ret)
- 		goto out;
- 	bio = req->bio;
-@@ -136,7 +148,7 @@ static int nvme_map_user_request(struct request *req, void __user *ubuffer,
- }
- 
- static int nvme_submit_user_cmd(struct request_queue *q,
--		struct nvme_command *cmd, void __user *ubuffer,
-+		struct nvme_command *cmd, u64 ubuffer,
- 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
- 		u32 meta_seed, u64 *result, unsigned timeout, bool vec)
- {
-@@ -152,7 +164,7 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 	req->timeout = timeout;
- 	if (ubuffer && bufflen) {
- 		ret = nvme_map_user_request(req, ubuffer, bufflen, meta_buffer,
--				meta_len, meta_seed, &meta, vec);
-+				meta_len, meta_seed, &meta, NULL, vec);
- 		if (ret)
- 			goto out;
- 	}
-@@ -231,7 +243,7 @@ static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
- 	c.rw.appmask = cpu_to_le16(io.appmask);
- 
- 	return nvme_submit_user_cmd(ns->queue, &c,
--			nvme_to_user_ptr(io.addr), length,
-+			io.addr, length,
- 			metadata, meta_len, lower_32_bits(io.slba), NULL, 0,
- 			false);
- }
-@@ -285,7 +297,7 @@ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		timeout = msecs_to_jiffies(cmd.timeout_ms);
- 
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
--			nvme_to_user_ptr(cmd.addr), cmd.data_len,
-+			cmd.addr, cmd.data_len,
- 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
- 			0, &result, timeout, false);
- 
-@@ -331,7 +343,7 @@ static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		timeout = msecs_to_jiffies(cmd.timeout_ms);
- 
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
--			nvme_to_user_ptr(cmd.addr), cmd.data_len,
-+			cmd.addr, cmd.data_len,
- 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
- 			0, &cmd.result, timeout, vec);
- 
-@@ -475,9 +487,9 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
- 
- 	if (d.addr && d.data_len) {
--		ret = nvme_map_user_request(req, nvme_to_user_ptr(d.addr),
-+		ret = nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
--			d.metadata_len, 0, &meta, vec);
-+			d.metadata_len, 0, &meta, ioucmd, vec);
- 		if (ret)
- 			goto out_err;
- 	}
--- 
-2.25.1
+        while (1) {
+                eb = btrfs_root_node(root);
+-               if (!btrfs_try_tree_read_lock(eb))
++               if (!btrfs_try_tree_read_lock(eb)) {
++                       free_extent_buffer(eb);
+                        return ERR_PTR(-EAGAIN);
++               }
+                if (eb == root->node)
+                        break;
+                btrfs_tree_read_unlock(eb);
 
+
+Thanks.
+
+> +		if (eb == root->node)
+> +			break;
+> +		btrfs_tree_read_unlock(eb);
+> +		free_extent_buffer(eb);
+> +	}
+> +	return eb;
+> +}
+> +
+>  /*
+>   * DREW locks
+>   * ==========
+> diff --git a/fs/btrfs/locking.h b/fs/btrfs/locking.h
+> index ab268be09bb5..490c7a79e995 100644
+> --- a/fs/btrfs/locking.h
+> +++ b/fs/btrfs/locking.h
+> @@ -94,6 +94,7 @@ int btrfs_try_tree_read_lock(struct extent_buffer *eb);
+>  int btrfs_try_tree_write_lock(struct extent_buffer *eb);
+>  struct extent_buffer *btrfs_lock_root_node(struct btrfs_root *root);
+>  struct extent_buffer *btrfs_read_lock_root_node(struct btrfs_root *root);
+> +struct extent_buffer *btrfs_try_read_lock_root_node(struct btrfs_root *root);
+>  
+>  #ifdef CONFIG_BTRFS_DEBUG
+>  static inline void btrfs_assert_tree_write_locked(struct extent_buffer *eb)
+> -- 
+> 2.30.2
+> 

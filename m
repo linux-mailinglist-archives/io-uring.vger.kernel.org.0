@@ -2,57 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2645EA973
-	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 17:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 900985EA983
+	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 17:04:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235396AbiIZPDC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Sep 2022 11:03:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56762 "EHLO
+        id S234392AbiIZPEo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 11:04:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234536AbiIZPCT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 11:02:19 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E4C44F19B
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 06:34:29 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id r7so10291814wrm.2
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 06:34:29 -0700 (PDT)
+        with ESMTP id S235824AbiIZPEL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 11:04:11 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E7098D06
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 06:36:21 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id t4so4509069wmj.5
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 06:36:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=qoamLtSYKDbF7m1xh1KcYGmvTM3OlM4cGMedGE/GRfc=;
-        b=kutX7WsmyLRQCVSrwIs1SYx5RKf44zQj2tnHSCDahdmgj5kpeO/AEELba1GfuT68so
-         K/BaiJNcK4aEGpnkpRwO+J8r3s6kjEU3Hf+trhXjRBGaJTOITWnzr42qR5d1yg6cN5sT
-         kZY6RPN+UgOZvWqaTsGxMu5ngPaW5MbDJeDfVWhJ3AIuhFILQhZjqPS8mtKsY41+z71R
-         3EdswADJn6UB6BAu+ETbw/57lEqEDd2L0fJQNSADSsyVQbvezM+jWborVhQHFjzWU8zR
-         +SxJQ9znSpO6iz4gvUIOOkCsUV7jWWTJfnSUh9Q3rCVmEpestjpxdN3vY3D+T0gFucKC
-         1KIw==
+        bh=BlWLvM8JQzb2J2hCtIaJ2q7OGFOLh+/VoUp8BBJZ8Jg=;
+        b=PYnr+6Xk6SHOsS7XyVRCVDWcJSMdfLdMXTRtRXu1L/9VR/Pd8woi2SZ88Wf9VhmwTi
+         oJVaRXDM/BF9pqWJ/k5OdQVcZc3BAoozrXG2zgox60l6otp3YGg51tYTluoVdk+NGWjs
+         Jn4xL9y3O7KD41/vte4t/yU2fN8smdQGufr+zN3oQoNUE1HWNi5j30UGl2659sPw4wu5
+         rMAZxIrCcCg38rmv+ayZZ3ylFMA7IcjeAP0hgtw6mDkh52JDFWLOj9O6G1FJ8er0mLql
+         Pd3UIluzUSqVQhuz8vyGVMc9ga7oCYjfK6nwebOx9sCgz3zWbhm3bcAKTN0y1vFIUvsO
+         VBtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=qoamLtSYKDbF7m1xh1KcYGmvTM3OlM4cGMedGE/GRfc=;
-        b=NZTQRqFFjPoVHlj6i8dmXKkztaL9GNrnhT+8bKMRRQud+tE8H5nwJ0IkHvpNpRJV/d
-         g/iBPXM4xRmt8qK0zAouEsBqVYe8VVLzTcurLp6ea2dTe8FBVhVTcdjVpqL7nTajFG1Z
-         06jtdXUXR/iSGa+G41L5sowBtxj3tWksed11YCMbBXv3rgZsAg7+gOBcnau34OaG+A1t
-         cvD2yCqBGafipShPFDLfNsCL+60u2wqdJZOVu0DgMI7EXAeD12Bvx18ByAWb+58uNhcs
-         FJeko9MHVHt4xB3kOHGcvW2jWwRpWyv5lnNwa3h6hkFqrZalJNHIJi4gg1rgBA+Ww0MV
-         HqcA==
-X-Gm-Message-State: ACrzQf0UgFhpBq0uLLjIHCzefPdwD46EIpD5FEUsB1lOdUrvntq5p2dB
-        1LqxUv+zi1qI0BewPCt9ByAEELYAmqA=
-X-Google-Smtp-Source: AMsMyM5y8dZPCMtLfvhrGEOO4g9JpXo79gjiSJKfHhHY7+cHs0bnZXMLNC+mD8GLItQVjFH+qex8qA==
-X-Received: by 2002:adf:e841:0:b0:22a:cb58:f8c1 with SMTP id d1-20020adfe841000000b0022acb58f8c1mr13802682wrn.173.1664199267766;
-        Mon, 26 Sep 2022 06:34:27 -0700 (PDT)
+        bh=BlWLvM8JQzb2J2hCtIaJ2q7OGFOLh+/VoUp8BBJZ8Jg=;
+        b=b1sFJQ1fwYhugHlCT8Rw/YZ402Te2B1/fbzyqAGk0dAA0MHPlMibAeqTalb6U1lFP3
+         wjB89hNDSfDwfN+JepzhEobNppcW+bjWT7JVVCPRUN7V36qiRvFd91scYhfaZEFezZcd
+         Zxk/azt2r9Y75wfIZxatIHyt2oeRr6wxX9pubPDQMZUE6x+RikK22arQCc/tW2lljUdi
+         e13XOzkaNU+Ity205tA9o8eBDIHqaEo8FYQrN+8QxhbLcWgCk+XNekALMCKvsAqKWvxd
+         M83Ckdq1d6lXP1gucUDwsIynI0J1nZacQVV7ctK5AWG7TwtH4Uy0odClpP52lIrPOnAS
+         17Tw==
+X-Gm-Message-State: ACrzQf1ZyQIY4A5+E5lV2346kCNa8y5mubk4CT46RUX7DlUT2lYETIG4
+        4Dedx8j6RGzG6hl1tgIumZhlKgO/lns=
+X-Google-Smtp-Source: AMsMyM7yTkJTppiNztZfyCe99mOySfkTND53+NHohymR9BqkWWLyTjjB2ujQHx7lOpNAi4CK2xMHgw==
+X-Received: by 2002:a05:600c:4e0a:b0:3b4:91fe:80e3 with SMTP id b10-20020a05600c4e0a00b003b491fe80e3mr15151798wmq.91.1664199379320;
+        Mon, 26 Sep 2022 06:36:19 -0700 (PDT)
 Received: from 127.0.0.1localhost (188.28.209.34.threembb.co.uk. [188.28.209.34])
-        by smtp.gmail.com with ESMTPSA id r8-20020a05600c35c800b003a84375d0d1sm11797195wmq.44.2022.09.26.06.34.26
+        by smtp.gmail.com with ESMTPSA id g21-20020a05600c4c9500b003b476cabf1csm10937045wmp.26.2022.09.26.06.36.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Sep 2022 06:34:27 -0700 (PDT)
+        Mon, 26 Sep 2022 06:36:18 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next] tests: test async_data double-free with sendzc
-Date:   Mon, 26 Sep 2022 14:33:12 +0100
-Message-Id: <aae98072a1e606a7f11dd68cf904d1ccb9e39ebe.1664193624.git.asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
+Subject: [PATCH for-next 1/1] io_uring/net: fix cleanup double free free_iov init
+Date:   Mon, 26 Sep 2022 14:35:09 +0100
+Message-Id: <f159b763c92ef80496ee6e33457b460f41d88651.1664199279.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,97 +67,98 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Similar to send_recv.c:test_invalid().
+Having ->async_data doesn't mean it's initialised and previously we vere
+relying on setting F_CLEANUP at the right moment. With zc sendmsg
+though, we set F_CLEANUP early in prep when we alloc a notif and so we
+may allocate async_data, fail in copy_msg_hdr() leaving
+struct io_async_msghdr not initialised correctly but with F_CLEANUP
+set, which causes a ->free_iov double free and probably other nastiness.
 
+Always initialise ->free_iov. Also, now it might point to fast_iov when
+fails, so avoid freeing it during cleanups.
+
+Reported-by: syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
+Fixes: 493108d95f146 ("io_uring/net: zerocopy sendmsg")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 59 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 57 insertions(+), 2 deletions(-)
+ io_uring/net.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index 80723de..1c4e5f2 100644
---- a/test/send-zerocopy.c
-+++ b/test/send-zerocopy.c
-@@ -533,6 +533,55 @@ static bool io_check_zc_sendmsg(struct io_uring *ring)
- 	return p->ops_len > IORING_OP_SENDMSG_ZC;
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 2af56661590a..6b69eff6887e 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -124,20 +124,22 @@ static struct io_async_msghdr *io_msg_alloc_async(struct io_kiocb *req,
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_cache_entry *entry;
++	struct io_async_msghdr *hdr;
+ 
+ 	if (!(issue_flags & IO_URING_F_UNLOCKED) &&
+ 	    (entry = io_alloc_cache_get(&ctx->netmsg_cache)) != NULL) {
+-		struct io_async_msghdr *hdr;
+-
+ 		hdr = container_of(entry, struct io_async_msghdr, cache);
++		hdr->free_iov = NULL;
+ 		req->flags |= REQ_F_ASYNC_DATA;
+ 		req->async_data = hdr;
+ 		return hdr;
+ 	}
+ 
+-	if (!io_alloc_async_data(req))
+-		return req->async_data;
+-
++	if (!io_alloc_async_data(req)) {
++		hdr = req->async_data;
++		hdr->free_iov = NULL;
++		return hdr;
++	}
+ 	return NULL;
  }
  
-+/* see also send_recv.c:test_invalid */
-+static int test_invalid_zc(void)
-+{
-+	struct io_uring ring;
-+	int ret, fds[2];
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	bool notif = false;
-+
-+	if (!has_sendmsg)
-+		return 0;
-+
-+	ret = t_create_ring(8, &ring, 0);
-+	if (ret)
-+		return ret;
-+	ret = t_create_socket_pair(fds, true);
-+	if (ret)
-+		return ret;
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	io_uring_prep_sendmsg(sqe, fds[0], NULL, MSG_WAITALL);
-+	sqe->opcode = IORING_OP_SENDMSG_ZC;
-+	sqe->flags |= IOSQE_ASYNC;
-+
-+	ret = io_uring_submit(&ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "submit failed %i\n", ret);
-+		return ret;
-+	}
-+	ret = io_uring_wait_cqe(&ring, &cqe);
-+	if (ret)
-+		return 1;
-+	if (cqe->flags & IORING_CQE_F_MORE)
-+		notif = true;
-+	io_uring_cqe_seen(&ring, cqe);
-+
-+	if (notif) {
-+		ret = io_uring_wait_cqe(&ring, &cqe);
-+		if (ret)
-+			return 1;
-+		io_uring_cqe_seen(&ring, cqe);
-+	}
-+
-+	io_uring_queue_exit(&ring);
-+	close(fds[0]);
-+	close(fds[1]);
-+	return 0;
-+}
-+
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring;
-@@ -602,7 +651,7 @@ int main(int argc, char *argv[])
- 	ret = test_async_addr(&ring);
- 	if (ret) {
- 		fprintf(stderr, "test_async_addr() failed\n");
--		return ret;
-+		return T_EXIT_FAIL;
- 	}
+@@ -192,7 +194,6 @@ int io_send_prep_async(struct io_kiocb *req)
+ 	io = io_msg_alloc_async_prep(req);
+ 	if (!io)
+ 		return -ENOMEM;
+-	io->free_iov = NULL;
+ 	ret = move_addr_to_kernel(zc->addr, zc->addr_len, &io->addr);
+ 	return ret;
+ }
+@@ -209,7 +210,6 @@ static int io_setup_async_addr(struct io_kiocb *req,
+ 	io = io_msg_alloc_async(req, issue_flags);
+ 	if (!io)
+ 		return -ENOMEM;
+-	io->free_iov = NULL;
+ 	memcpy(&io->addr, addr_storage, sizeof(io->addr));
+ 	return -EAGAIN;
+ }
+@@ -479,7 +479,6 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
  
- 	ret = t_register_buffers(&ring, buffers_iov, ARRAY_SIZE(buffers_iov));
-@@ -617,7 +666,13 @@ int main(int argc, char *argv[])
- 	ret = test_inet_send(&ring);
- 	if (ret) {
- 		fprintf(stderr, "test_inet_send() failed\n");
--		return ret;
-+		return T_EXIT_FAIL;
-+	}
-+
-+	ret = test_invalid_zc();
-+	if (ret) {
-+		fprintf(stderr, "test_invalid_zc() failed\n");
-+		return T_EXIT_FAIL;
+ 		if (msg.msg_iovlen == 0) {
+ 			sr->len = 0;
+-			iomsg->free_iov = NULL;
+ 		} else if (msg.msg_iovlen > 1) {
+ 			return -EINVAL;
+ 		} else {
+@@ -490,7 +489,6 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 			if (clen < 0)
+ 				return -EINVAL;
+ 			sr->len = clen;
+-			iomsg->free_iov = NULL;
+ 		}
+ 
+ 		if (req->flags & REQ_F_APOLL_MULTISHOT) {
+@@ -913,7 +911,9 @@ void io_send_zc_cleanup(struct io_kiocb *req)
+ 
+ 	if (req_has_async_data(req)) {
+ 		io = req->async_data;
+-		kfree(io->free_iov);
++		/* might be ->fast_iov if *msg_copy_hdr failed */
++		if (io->free_iov != io->fast_iov)
++			kfree(io->free_iov);
  	}
- out:
- 	io_uring_queue_exit(&ring);
+ 	if (zc->notif) {
+ 		zc->notif->flags |= REQ_F_CQE_SKIP;
 -- 
 2.37.2
 

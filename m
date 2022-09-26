@@ -2,99 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4B75EABA0
-	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 17:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AAA95EABAC
+	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 17:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbiIZPu5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Sep 2022 11:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49098 "EHLO
+        id S234845AbiIZPxD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 11:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234477AbiIZPuf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 11:50:35 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B075B51A0E
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 07:37:55 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id d8so5350668iof.11
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 07:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=sw6FZfqvzqmIX08UU5Lp/Uj6v4XlSe1NzsiXFnfdCQQ=;
-        b=Sgk7alXXb92f8PuIwx5286o8RmTgibl09jojUbn0aQnglsvqSkRc63Rbb/PKHCsnWp
-         Zp9Ql3jXYfs9f9jPlBoEVH+KcUOtZTf9qDObHCVzc2DN/f32kF4n2DdbShZSIQWZ2LCp
-         xphNxJPxas1kCrrp1f7LcqXPD/7Z0ir5kthtSk9Yt5F7Oe9x3WASdtNVhHQsRAawoqsO
-         ZehgRkevoTRmE3+taiu8haTclgXb7j+oWKXpQEzTjWCU6pIP011YlIZLPU/z6H4/6/hM
-         Cs10ttseX8HJ3duSUtX7rqDDEMYL2OnWWcy2LI/uOE7zIf3bwZCTJzFhyjcxlqhx2Elc
-         GfoQ==
+        with ESMTP id S234166AbiIZPwd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 11:52:33 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974CD8FD7E
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 07:40:19 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id k6-20020a92c246000000b002f80993e780so4615105ilo.13
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 07:40:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=sw6FZfqvzqmIX08UU5Lp/Uj6v4XlSe1NzsiXFnfdCQQ=;
-        b=zA7A3D6OWWL6bjVKmfSrxL1mF5db8Sr4JSZ26LR9KeWRwJwypWeZQdOWYHNsYYMHIN
-         ETaTNey9y327LIuP2r8kDOBW1VTIBfHaPObuHchRoOf2h61b1SiG1W3O9cq245dwnPhz
-         opDRs4QvGnnsEIkY1i0XtZM+5qqpdijOrFua0m9hTwu6up4tdKK8R8IPa/LDycvn+tSj
-         WGLH/RkOv3kFKY71Pdk5A6Q1M3Gxw09mAcAfq2Ukd44qo8gex2x8AFFtA5uprLAJ/DQS
-         pSji/v3xb8Mc+20pcX6udRxNhzA52C1WRTrokC6slHx4Vvf+QxW2bptgh/9Y1IlihAGu
-         BQNw==
-X-Gm-Message-State: ACrzQf1wW38M0UtTqFLZfaJSRLqokokWZzOE8y5todCJXnCgE71h83oj
-        COTUDjFEl8sSuh21VSHS5PRLTQ==
-X-Google-Smtp-Source: AMsMyM6dc8lGAnVF5vWLwpmxZCPIcuTQGiT+kISHXfhf5AFSZVDgnKY327j0Xn7BDiTqruKZzb9eHA==
-X-Received: by 2002:a02:2711:0:b0:35a:4fb3:efcf with SMTP id g17-20020a022711000000b0035a4fb3efcfmr11779967jaa.14.1664203074842;
-        Mon, 26 Sep 2022 07:37:54 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id i7-20020a056638380700b00349d2d52f6asm7097615jav.37.2022.09.26.07.37.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 07:37:54 -0700 (PDT)
-Message-ID: <e1ddd430-384d-f704-2373-41a455288380@kernel.dk>
-Date:   Mon, 26 Sep 2022 08:37:53 -0600
+        bh=ng/WLGY7e/twhA8GiPNA9Temvif9bAJ4lIqtpvMFShs=;
+        b=y2TFEOvA9TvS/Qrfv2FuYIQxwrveb320qDSr+3Jmyt+4x0FYmoVArceuYdenKJ7O1j
+         2z4OJW58VuyZkaTp1boV9db4bLvcFgw1AvVU67R/P5ip+rBVGqpgNMR/qgewYF5rop2q
+         PXSoe4wbjqh7fV2YmHnJchUEyL6ywqN2Ger5OWS68U5KXbXJ5m17kHY7RfH1dS3jgSYb
+         7KL/nCBCySazQx0aJNybCzipTxGkpyTQl3EvgZD5b8axXU3Hk8oGZ53ViIGcMub7HgM9
+         N5PmE4oMxL4xF8YuIPQ7R9ApWnmzt5cTJcf2KC8QbePn7C+WIIgUxG5L85JAzyElJOvB
+         CW7w==
+X-Gm-Message-State: ACrzQf0qN486nBBr/j79gUJBMHb4Ds2/FW/cljguEiDhs9xhy3N8kihU
+        eqFR9FwHsw0b+dhKCbrsTL5Ha10DbPosWgtE+6ULHA10gRIh
+X-Google-Smtp-Source: AMsMyM62K5wgeVkJhA1nQ1HJUjj8Yz+G+91GaXIoM1LGdh7k20zDaYb/G/y8rK3pCmogwop2Xyn0KJ+OcIUH0OrgLZ8A4JCkz+z3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 0/3] io_uring: register single issuer task at creation
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-References: <20220926140304.1973990-1-dylany@fb.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220926140304.1973990-1-dylany@fb.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:c24a:0:b0:2f8:16a6:e0e2 with SMTP id
+ k10-20020a92c24a000000b002f816a6e0e2mr5257616ilo.291.1664203218789; Mon, 26
+ Sep 2022 07:40:18 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 07:40:18 -0700
+In-Reply-To: <ee12470f-4fca-a036-1195-d68a3ca1f3f9@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b0ab5505e995814a@google.com>
+Subject: Re: [syzbot] KASAN: invalid-free in io_clean_op
+From:   syzbot <syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/26/22 8:03 AM, Dylan Yudaken wrote:
-> Registering the single issuer task from the first submit adds unnecesary
-> complications to the API as well as the implementation. Where simply
-> registering it at creation should not impose any barriers to getting the
-> same performance wins.
-> 
-> There is another problem in 6.1, with IORING_SETUP_DEFER_TASKRUN. That
-> would like to check the submitter_task from unlocked contexts, which would
-> be racy. If upfront the submitter_task is set at creation time it will
-> simplify the logic there and probably increase performance (though this is
-> unmeasured).
-> 
-> Patch 1 registers the task at creation of the io_uring, this works
-> standalone in case you want to only merge this part for 6.0
-> 
-> Patch 2/3 cleans up the code from the old style
+Hello,
 
-Applied 1/3 for 6.0, and then created a new branch for 6.1 that holds
-2-3/3. Thanks!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-Jens Axboe
+Reported-and-tested-by: syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         f159b763 io_uring/net: fix cleanup double free free_io..
+git tree:       https://github.com/isilence/linux.git io_uring/net-free-iov-bug
+console output: https://syzkaller.appspot.com/x/log.txt?x=15697b18880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3521db70c6a595c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=edfd15cd4246a3fc615a
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.

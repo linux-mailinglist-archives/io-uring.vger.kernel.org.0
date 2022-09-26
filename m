@@ -2,66 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDD95EAE77
-	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 19:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4645EAEB8
+	for <lists+io-uring@lfdr.de>; Mon, 26 Sep 2022 19:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbiIZRsN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Sep 2022 13:48:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53686 "EHLO
+        id S231189AbiIZRzC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 13:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231225AbiIZRrv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 13:47:51 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF7913D16
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:18:53 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id h194so5795756iof.4
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:18:53 -0700 (PDT)
+        with ESMTP id S231219AbiIZRy0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 13:54:26 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6666F6B
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:30:09 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id y141so5820971iof.5
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 10:30:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=SBNDj5502h57IDXl6FPkcvdwxfI7lqUcfi/UyHv3Ggk=;
-        b=5Hr0FN2rvhIGD2yLM53TEBcHUKNKxSbXdN9xRpCLGWXieVa22OlXxj8zosFbs3quwJ
-         vCrDrImqSiKmCNnGxqkQBiBnmfT6P4qsRfeujtQtCo48G3U3am3pLMqpNaTNBrxlW3fJ
-         LpJdU/f+i76/xaH12KPojzdElCdjJ7eAEwVwOjcBekcleJrYg856jBg2ds4/KKF0Jtxx
-         TCFPWJTUcDGnmkm6VA8ILPQq4aTZSSl0xBS2c57aVhDWFq0L4HmHrmt4ZFN3QzYCdU09
-         hEKnYeUEy7StrIcE8bI58yjQYTd6WHNyveZu2PNR1OLxRyWZU2elvauQMrO1C/mb80XG
-         3Eng==
+        bh=3UDB+4Tbwce9pR58c0ZN5geJK+uyQ//9lahofej6FOQ=;
+        b=joF09ODOj2sn8V5OOw855GR4U83EMwZ+3twmgamSgjjg1BP6TBmzO7jNoFSOOCuNny
+         mKF7J2mhJyi+LzstukLDBD7ji7ZDJsj+9BEpzm9eRMGqbdujbVUkrilHP3/s+pfjui7g
+         66MRX6OBRQ9d5VOsTHeWfV/O7ItW75IsrudWxPPaAzLP8IkzQLzLCBYMtRoZx5A2OLgW
+         DAeWpXX0biRU+b9RnlKAVEHrIwn1u30an5E1Ytnj2Ef8TexD9n2y5Ix8fQuxxNuWku9Q
+         xg14DCuMx20sKfExJvEYEV4SpP5O4/jHmp1nCR0QB/GY3YML4xL5eiW/PNdyDKGxm1sD
+         6g2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=SBNDj5502h57IDXl6FPkcvdwxfI7lqUcfi/UyHv3Ggk=;
-        b=El0gNqWQnrNLhPMnvvOk+1FIDWYpfY4g/7ZAtxah1+QuqrDKRTxwcQ7ZfKrFbRfFOO
-         nmsxtu2YzlVALgKduth/m4npcWSVT1hD65H9IgH+PHLPbOUCeExLJ+46H5WVu+UyaP2P
-         eooMPfckzO3DOR7RQQxLe9kinTlQqnMd/U/soA7ry5Le7EDjK7JpeTv/js5aBCGHlX5N
-         7BR60xiD2QFMlkHqU9QERe5Xwq9WE77oJMj2ai4K7s1FsTnKsjqced/mXqpsl99srZf0
-         xM0MqDHMwDWUyEoy2c0p3bFIDvlNzBOtjSAI338U/oqFUkniiaJGXw/DKdqbnyaFkpwq
-         zozQ==
-X-Gm-Message-State: ACrzQf2NXb9P2ygEu0/HDf6g9KErLmxpIc2RYxYtr47CPpSpv7XsHDX7
-        88oXFMjNEVcFc//jWK9j9w9UfA==
-X-Google-Smtp-Source: AMsMyM6ixmNifzDMC/xdHbCnQo/lvoLsTJ2LfeLmoseogVIt9sIOnEYSMjC0/8J20xyTOeneGDwwyg==
-X-Received: by 2002:a05:6638:144f:b0:35a:68a4:b3cb with SMTP id l15-20020a056638144f00b0035a68a4b3cbmr12375012jad.251.1664212732569;
-        Mon, 26 Sep 2022 10:18:52 -0700 (PDT)
+        bh=3UDB+4Tbwce9pR58c0ZN5geJK+uyQ//9lahofej6FOQ=;
+        b=qtRf3t4V+fVTLrhkkl4lTIIj6R9BglHcGZtXdBmWNJcdn32fJUP31xYx5pt/bYF61u
+         q4ctBoaHLYBZecbzoS6DlSjaxBsV45NDn2tE6hU52NNhOx6QDSEYvWk86r/BmPo+YYno
+         uVuu7bZPDdsNi92hevcX77OIuU7AwZBXhaNVHLI/nfvqADxFIg0KCL9QK60R7m4CQD98
+         CQNATZKhPQhiBDrdIhAJxOEw1CHpgxBkeLR1RWn0kxXztwkaMrSD5mpMue5JSSClvb4L
+         JD8n1kyIAVHslKCpNa4LXntUhAw5dJYy4zr9S41COfaR/bddlcLvQwm+4ZEpoNgZoakP
+         W0Zw==
+X-Gm-Message-State: ACrzQf3aoofd0LgtjGc5/CiBkI75bFSz6zSExg527+5Okdwg3U964Uxb
+        iJJuiiMxBeKCB9zxkXJ6vJDdJw==
+X-Google-Smtp-Source: AMsMyM7gfz3r1GWzTF3o2F6a+B6rA4hC8+lR9eZOD80wLjz0jLnwU6GITfP6n9gcxvQz/ikKb+VgJQ==
+X-Received: by 2002:a02:900a:0:b0:35a:84e4:39aa with SMTP id w10-20020a02900a000000b0035a84e439aamr12597620jaf.191.1664213408836;
+        Mon, 26 Sep 2022 10:30:08 -0700 (PDT)
 Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t11-20020a056602140b00b00689007ec164sm7527902iov.48.2022.09.26.10.18.51
+        by smtp.gmail.com with ESMTPSA id a11-20020a927f0b000000b002f5abff23aasm6611384ild.46.2022.09.26.10.30.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 10:18:52 -0700 (PDT)
-Message-ID: <ae593f43-4972-8f96-b99e-2208b21b8051@kernel.dk>
-Date:   Mon, 26 Sep 2022 11:18:51 -0600
+        Mon, 26 Sep 2022 10:30:08 -0700 (PDT)
+Message-ID: <2098a505-3668-30cb-e3b6-2111a703b27e@kernel.dk>
+Date:   Mon, 26 Sep 2022 11:30:07 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: [PATCH liburing 0/2] 6.0 updates
+Subject: Re: [PATCH v2 0/3] io_uring: register single issuer task at creation
 Content-Language: en-US
 To:     Dylan Yudaken <dylany@fb.com>,
         Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
-References: <20220926151412.2515493-1-dylany@fb.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+References: <20220926170927.3309091-1-dylany@fb.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220926151412.2515493-1-dylany@fb.com>
+In-Reply-To: <20220926170927.3309091-1-dylany@fb.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,16 +74,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/26/22 9:14 AM, Dylan Yudaken wrote:
-> Two liburing updates for 6.0:
+On 9/26/22 11:09 AM, Dylan Yudaken wrote:
+> Registering the single issuer task from the first submit adds unnecesary
+> complications to the API as well as the implementation. Where simply
+> registering it at creation should not impose any barriers to getting the
+> same performance wins. The only catch is users that might want to move the
+> ring after creation but before submission. For these users allow them to
+> create the ring with IORING_SETUP_R_DISABLED and then enable it on the
+> submission task.
 > 
-> Patch 1 updates to account for the single issuer ring being assigned at
-> ring creation time.
+> There is another problem in 6.1, with IORING_SETUP_DEFER_TASKRUN. That
+> would like to check the submitter_task from unlocked contexts, which would
+> be racy. If upfront the submitter_task is set at creation time it will
+> simplify the logic there and probably increase performance (though this is
+> unmeasured).
 > 
-> Patch 2 updates man pages from 5.20 -> 6.0
+> Patch 1 registers the task at creation of the io_uring, this works
+> standalone in case you want to only merge this part for 6.0
+> 
+> Patch 2/3 cleans up the code from the old style
 
-I'll wait for a v2 of this one as well, as at least the documentation will
-need updating for v2 of the kernel side.
+Thanks, I like 1/3 a lot better now. Will provide applications with an
+easy path to use SINGLE_ISSUER, even if they currently setup the ring
+from a different thread/task than they end up using it from.
+
+I've updated the 6.0 and 6.1 repos to reflect this.
 
 -- 
 Jens Axboe

@@ -2,61 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E645EB5F3
-	for <lists+io-uring@lfdr.de>; Tue, 27 Sep 2022 01:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E22525EB622
+	for <lists+io-uring@lfdr.de>; Tue, 27 Sep 2022 02:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229542AbiIZXqE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 26 Sep 2022 19:46:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41228 "EHLO
+        id S229542AbiI0AOk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Sep 2022 20:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbiIZXqD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 19:46:03 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C00D18A1FB
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 16:46:01 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id c11so12466152wrp.11
-        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 16:46:01 -0700 (PDT)
+        with ESMTP id S229570AbiI0AOj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Sep 2022 20:14:39 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C2412AFF
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 17:14:36 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id bk15so4816252wrb.13
+        for <io-uring@vger.kernel.org>; Mon, 26 Sep 2022 17:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=yeTVKqHS44D0sYF8vHhQLsW0veSVF9jujNYiKozf49E=;
-        b=nKxEZ2zVV9wpyGPciSAddIOdShVzxIeV1w0WQ9HVHY2yefVmSJcwl1gx1/8yD+JihW
-         6ZI9x6YLaxfZRSyauC7JXB4P594f3NQ1NnKaxz4w0jOCjP7U9o7OSOOtm5Kdl7z63w/f
-         mm/SjNc4qOe4QHPDJ36ANX3zs8EVIKRunEpUumqZtB1Y/8mTWy6HXMlGJb5cneBWi8Ny
-         qeRmhKg5JOR7Oj0qQ6i71dYZnlr1U3dEHsJIOi/13RbRbtXb+UxjcVJMy2jqQAJqPIxv
-         WWxrVZhqj0+NnviSZZviiC61qSvgd88TEsD7jfL5Ej9SjPBLeGEu4y3TR0zdDaqT0T5j
-         UnsA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=fBrnHn/bzSCaOML05ZUAlbmm6hmaDOm8trEbduJJr94=;
+        b=TjzHRN0vcvsFnNlT29dLPId2su4cj2c3JqgOVko1rjIslBDyXpCNACXoBCRtWW69vI
+         jo3Ms4BJKcd9ZlIoJSC+oYYXeBQV/QV+vpNVgVoQNUU4J9HZN1LVAVDShJrqxEeYNiAg
+         QGHla8fsnA6iiRjwcU1O9nBU9JXuZy2uGzHXg7kYCcGeWfgXygxSH7BblQRFinjWKRTT
+         xTWIz8altnZ401CvF1aROYxV9S9LnSWXwZMfQZhij3O7977LI2wCcBsleG/JVXzE3oN+
+         osaB6lkF8vOaAg/AXbHb74xFt9YfuYshvSGLnlF1p06RMLQ2WDPzcOABiffRs8G4yDNA
+         sR0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=yeTVKqHS44D0sYF8vHhQLsW0veSVF9jujNYiKozf49E=;
-        b=EmnMe26U7eRY78QucYHNLFVMqJvKFdRuJCnp9kXj7El7/mfHJUUoeqWYbdkpazGpHU
-         X5GAd/Re8DyqGO6jNPOJORTK/hdkdJmAi5ITfiZqOXZUslMc+gYOk97Z98fo3D/RdI0g
-         OVhlv7MjdkYjOUHblUO2Tm2I3ydQ2Xaj8aJcpDGVodRVvmgX6D4tnyDC3Qbi0z7CpFQr
-         iqUnMfKWEA2QWLEuLmvgQ+2xi9KFXMjNr98UHJGdm+XD/c7874M+A6/6jnLiSfINqmFD
-         V2zRG/azB3D50lVVrKceCjS41zEPsHY8Ow0005hyVPQ5//vt+HPSTXEd88iReUlwkVpX
-         ZDyw==
-X-Gm-Message-State: ACrzQf0PzBsqxrmKTBNHRpCbgGP5IsMKcCeg82+YIaz1oDcnoYCyZOcC
-        4hMGliyTHnge4imr2xc+XRd+UMCd82I=
-X-Google-Smtp-Source: AMsMyM7+p5WimJbflwdGsKdLNGJQXk2SD8CkQkDmlX0eTAhPgmcqIvOG+kklHgikpA5chHwuJFPv7Q==
-X-Received: by 2002:adf:b646:0:b0:221:76eb:b3ba with SMTP id i6-20020adfb646000000b0022176ebb3bamr14665544wre.237.1664235960065;
-        Mon, 26 Sep 2022 16:46:00 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=fBrnHn/bzSCaOML05ZUAlbmm6hmaDOm8trEbduJJr94=;
+        b=2Hjcm3FuIzqagEXhXjpJbHetsavuTB5o4AfOiS3yVUi9DaWUcH+xIh8ZLF8a3D3KkE
+         8UiXTzcFsEJ1h2aixbyTdQgqCZODhVBS7qZ+C+g5/CK40nYm7CjiWUC0GXhOSZsf4PUF
+         b5CbBDTJqIL6/7Bx20eco/pHVRAqgPy4frF3mfZwGvimWk9j0RWJ/w+OBEC2/5g0kxV+
+         /AtRKlE73R+FSnEAEPCk8L1csWbhqwSOVQ3sSS/LHOFNrV0HlFbWeQUatP4YphwPjyQy
+         3+WXDPQeaLaUrDxsEGTTT6vgkcXIpXetX9t+aXgpuEQdv9dHgNKbxndenb+L/SMa6drz
+         KFGQ==
+X-Gm-Message-State: ACrzQf1GoR562H09buA4uCy5K64pRtseoqPEDB/8sA+S7kAGM8ndN2ay
+        Z0N9xjFHqtx5KEIuG6X5z0CHemy1pFg=
+X-Google-Smtp-Source: AMsMyM7U7P8DP3/UkAY6wwtnsSR6c4HcA+5HarJiUZ56ETUhpbc4tXGxJo1JfDfXt9gN1ixBSIURaw==
+X-Received: by 2002:adf:e4cc:0:b0:22a:d755:aaf7 with SMTP id v12-20020adfe4cc000000b0022ad755aaf7mr15088999wrm.692.1664237674362;
+        Mon, 26 Sep 2022 17:14:34 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.196.228.157.threembb.co.uk. [94.196.228.157])
-        by smtp.gmail.com with ESMTPSA id l16-20020a05600012d000b0022abd7d57b1sm89318wrx.115.2022.09.26.16.45.59
+        by smtp.gmail.com with ESMTPSA id r4-20020a05600c320400b003b4de550e34sm53514wmp.40.2022.09.26.17.14.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Sep 2022 16:45:59 -0700 (PDT)
+        Mon, 26 Sep 2022 17:14:33 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 2/2] io_uring/rw: don't lose short results on io_setup_async_rw()
-Date:   Tue, 27 Sep 2022 00:44:40 +0100
-Message-Id: <0e8d20cebe5fc9c96ed268463c394237daabc384.1664235732.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 1/1] io_uring: limit registration w/ SINGLE_ISSUER
+Date:   Tue, 27 Sep 2022 01:13:30 +0100
+Message-Id: <f52a6a9c8a8990d4a831f73c0571e7406aac2bba.1664237592.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <cover.1664235732.git.asml.silence@gmail.com>
-References: <cover.1664235732.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -69,35 +66,32 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If a retry io_setup_async_rw() fails we lose result from the first
-io_iter_do_read(), which is a problem mostly for streams/sockets.
+IORING_SETUP_SINGLE_ISSUER restricts what tasks can submit requests.
+Extend it to registration as well, so non-owning task can't do
+registrations. It's not necessary at the moment but might be useful in
+the future.
 
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org> # 6.0
+Fixes: 97bbdc06a444 ("io_uring: add IORING_SETUP_SINGLE_ISSUER")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rw.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ io_uring/io_uring.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index ed14322aadb9..1ae1e52ab4cb 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -764,10 +764,12 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 	iov_iter_restore(&s->iter, &s->iter_state);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 73ac6948debb..3f6eb3cf07ac 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3890,6 +3890,9 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 	if (WARN_ON_ONCE(percpu_ref_is_dying(&ctx->refs)))
+ 		return -ENXIO;
  
- 	ret2 = io_setup_async_rw(req, iovec, s, true);
--	if (ret2)
--		return ret2;
--
- 	iovec = NULL;
-+	if (ret2) {
-+		ret = ret > 0 ? ret : ret2;
-+		goto done;
-+	}
++	if (ctx->submitter_task && ctx->submitter_task != current)
++		return -EEXIST;
 +
- 	io = req->async_data;
- 	s = &io->s;
- 	/*
+ 	if (ctx->restricted) {
+ 		if (opcode >= IORING_REGISTER_LAST)
+ 			return -EINVAL;
 -- 
 2.37.2
 

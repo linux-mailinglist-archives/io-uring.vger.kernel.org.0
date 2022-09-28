@@ -2,138 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FB55EDE1D
-	for <lists+io-uring@lfdr.de>; Wed, 28 Sep 2022 15:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E745EDE35
+	for <lists+io-uring@lfdr.de>; Wed, 28 Sep 2022 15:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233688AbiI1NuD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Sep 2022 09:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45012 "EHLO
+        id S234239AbiI1Nxv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Sep 2022 09:53:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233717AbiI1NuC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Sep 2022 09:50:02 -0400
+        with ESMTP id S234232AbiI1Nxp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Sep 2022 09:53:45 -0400
 Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDC61DA74
-        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 06:49:58 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id g1-20020a17090a708100b00203c1c66ae3so1758284pjk.2
-        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 06:49:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06AE088DF9
+        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 06:53:40 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id x1-20020a17090ab00100b001fda21bbc90so2352678pjq.3
+        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 06:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=XaZ9l5+JQAjS+1i23sQhZijdNJNA1u7/9uBDcpqr0B4=;
-        b=z3it592yGFbroMYJXqDUmgBr1UgJ9kMDwDove2ODnZDqkWsKZP5Q1XYgx/ojyH/9iL
-         pLLmnHrSyOTlgDg8kYVpHkqOfNum0Yk6HzYZbd3qxnjGp8wLEZ6BMp8Ca+OMB7vWwUlu
-         DbUq5OXhEHIkhaDMvwrXbsnqJlrk1ZTZrsItc71ZBRsP2mOl+62+6j8+HpkGaBG5aRbm
-         JbQahZcWHllLGXmNO4UzWptm2MUr67vmVWydaYBQXqI8sHPlczTq5sGRfOO0yfgwGHQ5
-         hmeFMyEFOYmXwJxeiRflRx+ExibnwOJnRhYEUG/Z2YulHwJGYQB/4qoZr4uDhEeybNq7
-         tamA==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
+        bh=bFQCAifLmujnnLkDNk0kkjrd3BKfKN4tlM/6U19pNH0=;
+        b=x8KCqMEeS/mobkx+JpTqnIrL422uM5gB6Tqi5RY/F2IPSmLl+wV1MZookEVR5GvJLf
+         UdrPUtRo8j+mRFqQ/teHu4ANY2lvCbPl8oLGCHrEmTKHlDnK1FV3UGY5MUVZ71jhBBDy
+         Y1qfWZU/5coF9yw/5eVuUQox7td80bYBTDH/hb94sOD3H8IwV2faUQYyiwJRhMZSCgig
+         yIGnJGusjeCW+DLeLxS+jKAGIpYsue9gz2ybWxEdU8XawguUoes0T8rbMzmmWkDsMrxE
+         9rAPmD5rt9EUgPggZa6aXJq2101u4m2OriufcYUoHp+6eFcyNO85I/I67v9bHbbNuEo3
+         yT3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=XaZ9l5+JQAjS+1i23sQhZijdNJNA1u7/9uBDcpqr0B4=;
-        b=PAA/Urjko7zfQow9CJjBjW1a+hA3nphq6XI2u3h+exDMu4283YERsEkmRy3EgClyuo
-         twtihwdUuZfutRpA/wydDZ9pRRMbkWad9fuBhiCEvGURzkIVMCIlUqdCVWWrlGKdnBjB
-         mLggrCibHDZcmVmTuCnfx9g1ogCV4TBdHcLh/yXITnutjkarMvs4bDvCsWViDCrdikU9
-         BdWH2+D8JIxnfegrB6h4Xd56lpF1+MHNmNgsRQ7SRB2CyZIUbGXV2iUdyTDebDDhl5ki
-         kiBbqkV5/Yt3x9U6IA6D368ZHaNv/fwOC7E6kMFmVpkIN/Dgo6n+jW6m+DminbkUJ++5
-         ge8A==
-X-Gm-Message-State: ACrzQf1KrBwqMem0VjpTGKRiGhPkLGRbrjwR/+1V7qo6qCQikjvagUiI
-        911QV1HjokDFq5MH8nV4wrIKyC15AquUOQ==
-X-Google-Smtp-Source: AMsMyM4VpMzsTWAvWSWDuUVdlafNHYmVHNyX4U8m2Dtpcg4h1FbKn0UzulWYo28S6UBOZ9Vv27+oYw==
-X-Received: by 2002:a17:903:41cb:b0:178:36c2:a98 with SMTP id u11-20020a17090341cb00b0017836c20a98mr31942904ple.47.1664372997673;
-        Wed, 28 Sep 2022 06:49:57 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id k185-20020a6284c2000000b00541196bd2d9sm4077080pfd.68.2022.09.28.06.49.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Sep 2022 06:49:57 -0700 (PDT)
-Message-ID: <176940f4-c819-86f9-03ee-dc456c3099d8@kernel.dk>
-Date:   Wed, 28 Sep 2022 07:49:56 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: Chaining accept+read
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Ben Noordhuis <info@bnoordhuis.nl>
-Cc:     io-uring@vger.kernel.org
-References: <CAHQurc-0iK9zawpc_k_-wSUVMp_+v14K+t-EJEDXL0pYkzD80A@mail.gmail.com>
- <ff41b5f7-93a5-26ee-bae5-80fc828e1a45@gmail.com>
- <CAHQurc9e=BU3gXbc=brb1b+vLb7nmeyeVaGwqkgRoqnSyHT2AQ@mail.gmail.com>
- <8059c7e2-c3e7-c3c1-6994-2fdb75d5d5dd@gmail.com>
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=bFQCAifLmujnnLkDNk0kkjrd3BKfKN4tlM/6U19pNH0=;
+        b=WrRfDis56Ej0x5FhOuRfQqVyNavzNYtLh7lul1Bg44XWDvb8WvtYP3KH3hXERqadvm
+         SnuYVi4kqb4XZ+ImbV+nPJO0/Pw74zjtrjSlMh2Za+YURpvRGOwh0JyMD1fExJzzVcFb
+         R/NTR/7Sawu1oGCcioIP4hTLnzywiBHQJ7QFkT2tMID9YRrFgPc/blRLOFwJKr8wmaEx
+         JHq9fq67bTXPxPFAj2Qpp0gU6Ctkcn77GetWuKqO4Dufi4onB4Ul/XN/dnqXvzbR4iA7
+         y6JJV9tYBlNDBSlq3Z/uKgL7of1cAIBRkd0I1UsbBS9Uls6xg7ooXa024AK1BEzyuU0D
+         t6Hw==
+X-Gm-Message-State: ACrzQf2yUFJwwJCn992017wmfrOunF+rbnOOAscenGka79cJ1U3DL7fH
+        qsdwy9H7a8BL5lbLOCAL38mEXn9/CxN2Dg==
+X-Google-Smtp-Source: AMsMyM4wSGauBvGV28hSUlB6IeekuCHzLWVx+H29xIfF51By6aP80GKkyaLn7zLzHAHNf7RxdCUdbA==
+X-Received: by 2002:a17:90b:1c82:b0:1ee:eb41:b141 with SMTP id oo2-20020a17090b1c8200b001eeeb41b141mr10923840pjb.143.1664373220254;
+        Wed, 28 Sep 2022 06:53:40 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id t16-20020aa79470000000b0053e5b905843sm4039942pfq.203.2022.09.28.06.53.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 06:53:39 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <8059c7e2-c3e7-c3c1-6994-2fdb75d5d5dd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <9c8bead87b2b980fcec441b8faef52188b4a6588.1664292100.git.asml.silence@gmail.com>
+References: <9c8bead87b2b980fcec441b8faef52188b4a6588.1664292100.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-6.1] io_uring/net: don't skip notifs for failed requests
+Message-Id: <166437321950.10271.14794575735421337726.b4-ty@kernel.dk>
+Date:   Wed, 28 Sep 2022 07:53:39 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: b4 0.11.0-dev-d9ed3
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/28/22 5:59 AM, Pavel Begunkov wrote:
-> On 9/28/22 11:55, Ben Noordhuis wrote:
->> On Wed, Sep 28, 2022 at 12:02 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>
->>> On 9/28/22 10:50, Ben Noordhuis wrote:
->>>> I'm trying to chain accept+read but it's not working.
->>>>
->>>> My code looks like this:
->>>>
->>>>       *sqe1 = (struct io_uring_sqe){
->>>>         .opcode     = IORING_OP_ACCEPT,
->>>>         .flags      = IOSQE_IO_LINK,
->>>>         .fd         = listenfd,
->>>>         .file_index = 42, // or 42+1
->>>>       };
->>>>       *sqe2 = (struct io_uring_sqe){
->>>>         .opcode     = IORING_OP_READ,
->>>>         .flags      = IOSQE_FIXED_FILE,
->>>>         .addr       = (u64) buf,
->>>>         .len        = len,
->>>>         .fd         = 42,
->>>>       };
->>>>       submit();
->>>>
->>>> Both ops fail immediately; accept with -ECANCELED, read with -EBADF,
->>>> presumably because fixed fd 42 doesn't exist at the time of submission.
->>>>
->>>> Would it be possible to support this pattern in io_uring or are there
->>>> reasons for why things are the way they are?
->>>
->>> It should already be supported. And errors look a bit odd, I'd rather
->>> expect -EBADF or some other for accept and -ECANCELED for the read.
->>> Do you have a test program / reporoducer? Hopefully in C.
->>
->> Of course, please see below. Error handling elided for brevity. Hope
->> I'm not doing anything stupid.
+On Wed, 28 Sep 2022 00:51:49 +0100, Pavel Begunkov wrote:
+> We currently only add a notification CQE when the send succeded, i.e.
+> cqe.res >= 0. However, it'd be more robust to do buffer notifications
+> for failed requests as well in case drivers decide do something fanky.
 > 
-> Perfect thanks
+> Always return a buffer notification after initial prep, don't hide it.
+> This behaviour is better aligned with documentation and the patch also
+> helps the userspace to respect it.
 > 
->> For me it immediately prints this:
->>
->> 0 res=-125
->> 1 res=-9
-> 
-> The reason is that in older kernels we're resolving the read's
-> file not after accept but when assembling the link, which was
-> specifically fixed a bit later.
+> [...]
 
-Right, IORING_FEAT_LINKED_FILE can be checked to see if this is
-properly supported or not on the host.
+Applied, thanks!
 
-> Jens, are there any plans to backport it?
+[1/1] io_uring/net: don't skip notifs for failed requests
+      commit: 6ae91ac9a6aa7d6005c3c6d0f4d263fbab9f377f
 
-If I recall I briefly looked at it, but it was a bit more involved
-that I would've liked. But then it got simplified a bit after the
-fact, so should probably be doable to get into 5.15-stable at least.
-Anything earlier than that stable wise is too old anyway.
-
+Best regards,
 -- 
 Jens Axboe
 

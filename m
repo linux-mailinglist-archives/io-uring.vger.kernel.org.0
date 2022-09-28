@@ -2,170 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB765EE357
-	for <lists+io-uring@lfdr.de>; Wed, 28 Sep 2022 19:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2B75EE375
+	for <lists+io-uring@lfdr.de>; Wed, 28 Sep 2022 19:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234014AbiI1Rkp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Sep 2022 13:40:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
+        id S234070AbiI1Rtf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Sep 2022 13:49:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234486AbiI1Rko (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Sep 2022 13:40:44 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140669C2CE;
-        Wed, 28 Sep 2022 10:40:43 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8233B68BEB; Wed, 28 Sep 2022 19:40:39 +0200 (CEST)
-Date:   Wed, 28 Sep 2022 19:40:39 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
-        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        Anuj Gupta <anuj20.g@samsung.com>
-Subject: Re: [PATCH for-next v10 6/7] block: extend functionality to map
- bvec iterator
-Message-ID: <20220928174039.GD17153@lst.de>
-References: <20220927173610.7794-1-joshi.k@samsung.com> <CGME20220927174639epcas5p22b46aed144d81d82b2a9b9de586808ac@epcas5p2.samsung.com> <20220927173610.7794-7-joshi.k@samsung.com>
+        with ESMTP id S232666AbiI1Rtd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Sep 2022 13:49:33 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871ACF6F55
+        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 10:49:30 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id h8-20020a17090a054800b00205ccbae31eso3291596pjf.5
+        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 10:49:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=sbvQ8+O7Iu5pDsUhnetggBoxhwtGlOoUgDtHy9h5j3o=;
+        b=ExvBbQ5KKBknu9xSg+qWbY/X1hG+kanpywR1B5ZpLcX5zZMnkusUvVsE2yTTNy5dS2
+         KCUd9fpK0oJsxxdKmsquEDXqv/RqAl7gJrDyiBrtgLMVwNiZsMEao2uixWNVPMzCHm65
+         FjlvXnxkvLI34FlfoH2qArhBK8IaqHYaS7EB7QuO85H5tr8wWWKsqASJDnhE6xwbZXiU
+         UpdfLCo9hO90zqVeAVVQBS/NdcKO2uCxQUkreZpEvZySxDRIIeSU39dV/l3zbmWfI/eP
+         Dg8uW0kll6L/k/5+b2dTO5ij+YIQRhM4MmSA5sl7+6opXvMDtTlilsugD3ft2z8W2Wha
+         6gQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=sbvQ8+O7Iu5pDsUhnetggBoxhwtGlOoUgDtHy9h5j3o=;
+        b=RkAW4FwhiVObzTGSicdnPGHk67XveoMNcoZJIUdwR3RprHMo5d85D1PoO2Q8hQTxBx
+         a2+bBtWFWo/kmcQ8VMM5+qWLNQjnld33XG1u1JRSPUsXWgrrzVHg9zY3wozJPBTSx291
+         BRJ5S9vj+iImm1RnXQOnLiqe9UsWedA84WNwemK/UWxMq6VYXhED/UVl9yV1828sMqvE
+         dUw5YwTYBgEIc0OeGccGSFQ5G7LE3PF2qaY3sfUseExgeGgcRXXeX8A6iCzglC3Kl1j6
+         54qsRPH6TKB5lJsKH2Woypx38hhI3ctu4/TU6b8QewxJXLcw6EzsIQ8ZJcI+ekoAzUjh
+         cMNQ==
+X-Gm-Message-State: ACrzQf2F70UuKGmfKvtVqhN5TBex2lqtfOpu6YIKbQCC25cZ4fzGUN+8
+        xDVTqubjJ3emHTZHCQJskajFu5Fv3ph7wQ==
+X-Google-Smtp-Source: AMsMyM6mVbp8UjUgd6Ua1oZ/TXcLqXeNHxfIUwGmNRJyCLGXI4Ip9GabzGAflN9Nblr0Z3b/p3hrUg==
+X-Received: by 2002:a17:902:da81:b0:178:1d8b:6cb4 with SMTP id j1-20020a170902da8100b001781d8b6cb4mr948463plx.43.1664387369974;
+        Wed, 28 Sep 2022 10:49:29 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id f27-20020aa79d9b000000b0053e3ed14419sm4256392pfq.48.2022.09.28.10.49.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Sep 2022 10:49:29 -0700 (PDT)
+Message-ID: <6ffd1719-e7c2-420f-1f9e-0b6d16540b46@kernel.dk>
+Date:   Wed, 28 Sep 2022 11:49:27 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220927173610.7794-7-joshi.k@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH for-next v10 5/7] block: factor out bio_map_get helper
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>
+Cc:     kbusch@kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        gost.dev@samsung.com
+References: <20220927173610.7794-1-joshi.k@samsung.com>
+ <CGME20220927174636epcas5p49008baa36dcbf2f61c25ba89c4707c0c@epcas5p4.samsung.com>
+ <20220927173610.7794-6-joshi.k@samsung.com> <20220928173121.GC17153@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220928173121.GC17153@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 11:06:09PM +0530, Kanchan Joshi wrote:
-> Extend blk_rq_map_user_iov so that it can handle bvec iterator.
-> It  maps the pages from bvec iterator into a bio and place the bio into
-> request.
+On 9/28/22 11:31 AM, Christoph Hellwig wrote:
+> On Tue, Sep 27, 2022 at 11:06:08PM +0530, Kanchan Joshi wrote:
+>> Move bio allocation logic from bio_map_user_iov to a new helper
+>> bio_map_get. It is named so because functionality is opposite of what is
+>> done inside bio_map_put. This is a prep patch.
 > 
-> This helper will be used by nvme for uring-passthrough path when IO is
-> done using pre-mapped buffers.
+> I'm still not a fan of using bio_sets for passthrough and would be
+> much happier if we could drill down what the problems with the
+> slab per-cpu allocator are, but it seems like I've lost that fight
+> against Jens..
 
-Can we avoid duplicating some of the checks?  Something like the below
-incremental patch.  Note that this now also allows the copy path for
-all kinds of iov_iters, but as the copy from/to iter code is safe
-and the sanity check was just or the map path that should be fine.
-It's best split into a prep patch, though.
+I don't think there are necessarily big problems with the slab side,
+it's just that the per-cpu freeing there needs to be IRQ safe. And the
+double cmpxchg() used for that isn't that fast compared to being able
+to cache these locally with just preempt protection.
 
----
-diff --git a/block/blk-map.c b/block/blk-map.c
-index a1aa8dacb02bc..c51de30767403 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -549,26 +549,16 @@ int blk_rq_append_bio(struct request *rq, struct bio *bio)
- EXPORT_SYMBOL(blk_rq_append_bio);
- 
- /* Prepare bio for passthrough IO given ITER_BVEC iter */
--static int blk_rq_map_user_bvec(struct request *rq, const struct iov_iter *iter,
--				bool *copy)
-+static int blk_rq_map_user_bvec(struct request *rq, const struct iov_iter *iter)
- {
- 	struct request_queue *q = rq->q;
--	size_t nr_iter, nr_segs, i;
--	struct bio *bio = NULL;
--	struct bio_vec *bv, *bvecs, *bvprvp = NULL;
-+	size_t nr_iter = iov_iter_count(iter);
-+	size_t nr_segs = iter->nr_segs;
-+	struct bio_vec *bvecs, *bvprvp = NULL;
- 	struct queue_limits *lim = &q->limits;
- 	unsigned int nsegs = 0, bytes = 0;
--	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
--
--	/* see if we need to copy pages due to any weird situation */
--	if (blk_queue_may_bounce(q))
--		goto out_copy;
--	else if (iov_iter_alignment(iter) & align)
--		goto out_copy;
--	/* virt-alignment gap is checked anyway down, so avoid extra loop here */
--
--	nr_iter = iov_iter_count(iter);
--	nr_segs = iter->nr_segs;
-+	struct bio *bio;
-+	size_t i;
- 
- 	if (!nr_iter || (nr_iter >> SECTOR_SHIFT) > queue_max_hw_sectors(q))
- 		return -EINVAL;
-@@ -586,14 +576,15 @@ static int blk_rq_map_user_bvec(struct request *rq, const struct iov_iter *iter,
- 	/* loop to perform a bunch of sanity checks */
- 	bvecs = (struct bio_vec *)iter->bvec;
- 	for (i = 0; i < nr_segs; i++) {
--		bv = &bvecs[i];
-+		struct bio_vec *bv = &bvecs[i];
-+
- 		/*
- 		 * If the queue doesn't support SG gaps and adding this
- 		 * offset would create a gap, fallback to copy.
- 		 */
- 		if (bvprvp && bvec_gap_to_prev(lim, bvprvp, bv->bv_offset)) {
- 			bio_map_put(bio);
--			goto out_copy;
-+			return -EREMOTEIO;
- 		}
- 		/* check full condition */
- 		if (nsegs >= nr_segs || bytes > UINT_MAX - bv->bv_len)
-@@ -611,9 +602,6 @@ static int blk_rq_map_user_bvec(struct request *rq, const struct iov_iter *iter,
- put_bio:
- 	bio_map_put(bio);
- 	return -EINVAL;
--out_copy:
--	*copy = true;
--	return 0;
- }
- 
- /**
-@@ -635,33 +623,35 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
- 			struct rq_map_data *map_data,
- 			const struct iov_iter *iter, gfp_t gfp_mask)
- {
--	bool copy = false;
-+	bool copy = false, map_bvec = false;
- 	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
- 	struct bio *bio = NULL;
- 	struct iov_iter i;
- 	int ret = -EINVAL;
- 
--	if (iov_iter_is_bvec(iter)) {
--		ret = blk_rq_map_user_bvec(rq, iter, &copy);
--		if (ret != 0)
--			goto fail;
--		if (copy)
--			goto do_copy;
--		return ret;
--	}
--	if (!iter_is_iovec(iter))
--		goto fail;
--
- 	if (map_data)
- 		copy = true;
- 	else if (blk_queue_may_bounce(q))
- 		copy = true;
- 	else if (iov_iter_alignment(iter) & align)
- 		copy = true;
-+	else if (iov_iter_is_bvec(iter))
-+		map_bvec = true;
-+	else if (!iter_is_iovec(iter))
-+		copy = true;
- 	else if (queue_virt_boundary(q))
- 		copy = queue_virt_boundary(q) & iov_iter_gap_alignment(iter);
- 
--do_copy:
-+	if (map_bvec) {
-+		ret = blk_rq_map_user_bvec(rq, iter);
-+		if (!ret)
-+			return 0;
-+		if (ret != -EREMOTEIO)
-+			goto fail;
-+		/* fall back to copying the data on limits mismatches */
-+		copy = true;
-+	}
-+
- 	i = *iter;
- 	do {
- 		if (copy)
+>> +static struct bio *bio_map_get(struct request *rq, unsigned int nr_vecs,
+>>  		gfp_t gfp_mask)
+> 
+> But these names just seems rather misleading.  Why not someting
+> like blk_rq_map_bio_alloc and blk_mq_map_bio_put?
+> 
+> Not really new in this code but a question to Jens:  The existing
+> bio_map_user_iov has no real upper bounds on the number of bios
+> allocated, how does that fit with the very limited pool size of
+> fs_bio_set?
+
+Good question - I think we'd need to ensure that once we get
+past the initial alloc that we clear any gfp flags that'd make
+the mempool_alloc() wait for completions.
+
+-- 
+Jens Axboe
+
+

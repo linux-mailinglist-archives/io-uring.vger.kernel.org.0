@@ -2,116 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B03E5EDEC1
-	for <lists+io-uring@lfdr.de>; Wed, 28 Sep 2022 16:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 509B25EE03E
+	for <lists+io-uring@lfdr.de>; Wed, 28 Sep 2022 17:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbiI1O2K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Sep 2022 10:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49038 "EHLO
+        id S234335AbiI1PZY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 28 Sep 2022 11:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234351AbiI1O2I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Sep 2022 10:28:08 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61356AB42A
-        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 07:28:04 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id v10-20020a17090a634a00b00205e48cf845so2489059pjs.4
-        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 07:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=RlRvct3277EYFToPkW4od6VyhmMFB2bnHNyqnEFyrBM=;
-        b=CTdt4QqtPWlmjOer5e4jfzrIOLyZndPvQViX2DxuaaYRi8jdHNRDhr15r7TTLmXcif
-         ebtsA7cI6Yht1jcDtTlaI7tNQWSyu3lyLXeJvrYgKh2N6YcU+2pmRUbVjWWDCE00cbeg
-         CHLGEXblutHx4aNfjvq7TzZheZqNR2IMKSDnFFZItikZb4W9FkWqXYG/Yyghk5Y/aEwT
-         Ety7xrr38GrtQZE8vq52oiX0kfyEPpqLuMs8SlObeRtqUOlmpbe7RPUep0w/NeKfsql0
-         6R5KsKOtX3ryXHOHNa0Qop+K8XGpOtUsbEPzMExvi7giv7WI3IsfIe2zhzJYnGWRov6U
-         cyYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=RlRvct3277EYFToPkW4od6VyhmMFB2bnHNyqnEFyrBM=;
-        b=G+jXrfLHkPaEDtbKFKdxtzC9mysprhFhsIu00wUiA4yfiY102+P6SH4jlKnYcnSvwD
-         aD8SC28q6aPxukRf2FheBrKRu0KbEDzRGtnuohN7AHb9s/8RqcGZIs0x16SmPUuphLPm
-         e0Plfvh5T+UwTrPoCi8eOorIw8M1t8HKqUD7kJ2cxkux4ZrPjCWB62KXOIz7k3d0K24p
-         3XplrIKNcVMjAXyhecTwFUxmX2aLovZrwM5x15KglXBoklyQUiQqIysvjWyI1ms1UOmK
-         /oqkgKVFfNZSIupdqk1bT3uHaCwo9lkkNwGmnY0zmzZLBkr6/vYcCAGgwCVXUuop7SIo
-         T8fQ==
-X-Gm-Message-State: ACrzQf2cIb/DdUP1zYeR4+Ot3K6+eDrH1MrfUSNSgp/4TnkUIxH0veQ8
-        xsuuNVv4khh+eYV1ZKm5L6+rvA==
-X-Google-Smtp-Source: AMsMyM4REYpTDSAfEZcJo3ADi76E0K/8bIe2v79W+pe1cKZ3OjTnXEc2ij22YaVeD7Sl7qwFecHbkg==
-X-Received: by 2002:a17:902:dac7:b0:178:b5e0:3627 with SMTP id q7-20020a170902dac700b00178b5e03627mr72355plx.147.1664375283710;
-        Wed, 28 Sep 2022 07:28:03 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u8-20020a170903124800b00178b717a143sm3907725plh.126.2022.09.28.07.28.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Sep 2022 07:28:03 -0700 (PDT)
-Message-ID: <96154f6c-c02a-4364-c2a8-c714d79806d3@kernel.dk>
-Date:   Wed, 28 Sep 2022 08:28:02 -0600
+        with ESMTP id S234123AbiI1PYr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Sep 2022 11:24:47 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630DB5C9C6
+        for <io-uring@vger.kernel.org>; Wed, 28 Sep 2022 08:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=wEFaQL1IVgRK5SMizJhfLK5HnMNoWpFzBlYtumOd/iQ=; b=ly3GjMjatafQ+dzH6ZhVRk0XlZ
+        fpm7EiiNPO4H2ile7u6qyWIH7KpHmtn6qpFP4N+cRolo9RGveBgSL4ubJVLPh8ZL2+MeLGeWdZQrt
+        0sDusJh2GS/M9V/uLTg0ek+JzGKG6k/suv4IqDz4TJZFzbqBiBvISPO4Mb9owe0wpochRfATo9o3w
+        6nNqt45gEoaosjWmGlplyJGFpk56mVJBvM9GS44ROfcKSasPFBaIdh/AWpEo5DajMGpZkr3svigCE
+        yJfgOGWfy3iXWMO4PnAPdkwPaenUZbPPvFizbhgasx4dhFdHpnOb2i77t782XyJmgerniz9m3LG0o
+        FNojSyrJDieuBQC7LWXo/TXTHsB9xw4hwHyCoiDXE65twbWPe8C5Gjyj9uSnDgnFUo72641EuCYp9
+        8dKFFsCC2AKKeFMpn40j7xuwuxBCgAH57PHoZWkXB021mQ1HHF0RaRSE9u26II7bGQO+pjGU78hM4
+        lFVBPb4OSeAwHo62xe9gZ398;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1odYuX-002F6r-1S; Wed, 28 Sep 2022 15:23:45 +0000
+Message-ID: <ba8eafce-c4cb-6993-7902-1db17168d37b@samba.org>
+Date:   Wed, 28 Sep 2022 17:23:44 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH for-next v10 0/7] Fixed-buffer for uring-cmd/passthru
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
 Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de, kbusch@kernel.org
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com
-References: <CGME20220927174622epcas5p1685c0f97a7ee2ee13ba25f5fb58dff00@epcas5p1.samsung.com>
- <20220927173610.7794-1-joshi.k@samsung.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220927173610.7794-1-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+References: <9c8bead87b2b980fcec441b8faef52188b4a6588.1664292100.git.asml.silence@gmail.com>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH for-6.1] io_uring/net: don't skip notifs for failed
+ requests
+In-Reply-To: <9c8bead87b2b980fcec441b8faef52188b4a6588.1664292100.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/27/22 11:36 AM, Kanchan Joshi wrote:
-> Hi
+
+Hi Pavel,
+
+> We currently only add a notification CQE when the send succeded, i.e.
+> cqe.res >= 0. However, it'd be more robust to do buffer notifications
+> for failed requests as well in case drivers decide do something fanky.
 > 
-> uring-cmd lacks the ability to leverage the pre-registered buffers.
-> This series adds that support in uring-cmd, and plumbs nvme passthrough
-> to work with it.
-> Patch 3 and 4 contains a bunch of general nvme cleanups, which got added
-> along the iterations.
-> 
-> Using registered-buffers showed IOPS hike from 1.65M to 2.04M.
-> Without fixedbufs
-> *****************
-> # taskset -c 0 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B0 -O0 -n1 -u1 /dev/ng0n1
-> submitter=0, tid=2178, file=/dev/ng0n1, node=-1
-> polled=1, fixedbufs=0/0, register_files=1, buffered=1, QD=128
-> Engine=io_uring, sq_ring=128, cq_ring=128
-> IOPS=1.63M, BW=796MiB/s, IOS/call=32/31
-> IOPS=1.64M, BW=800MiB/s, IOS/call=32/32
-> IOPS=1.64M, BW=801MiB/s, IOS/call=32/32
-> IOPS=1.65M, BW=803MiB/s, IOS/call=32/31
-> ^CExiting on signal
-> Maximum IOPS=1.65M
-> 
-> With fixedbufs
-> **************
-> # taskset -c 0 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O0 -n1 -u1 /dev/ng0n1
-> submitter=0, tid=2180, file=/dev/ng0n1, node=-1
-> polled=1, fixedbufs=1/0, register_files=1, buffered=1, QD=128
-> Engine=io_uring, sq_ring=128, cq_ring=128
-> IOPS=2.03M, BW=991MiB/s, IOS/call=32/31
-> IOPS=2.04M, BW=998MiB/s, IOS/call=32/32
-> IOPS=2.04M, BW=997MiB/s, IOS/call=32/31
-> ^CExiting on signal
-> Maximum IOPS=2.04M
+> Always return a buffer notification after initial prep, don't hide it.
+> This behaviour is better aligned with documentation and the patch also
+> helps the userspace to respect it.
 
-Christoph, are you happy with the changes at this point?
+Just as reference, this was the version I was testing with:
+https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=7ffb896cdb8ccd55065f7ffae9fb8050e39211c7
 
--- 
-Jens Axboe
+>   void io_sendrecv_fail(struct io_kiocb *req)
+>   {
+>   	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+> -	int res = req->cqe.res;
+>   
+>   	if (req->flags & REQ_F_PARTIAL_IO)
+> -		res = sr->done_io;
+> +		req->cqe.res = sr->done_io;
+> +
+>   	if ((req->flags & REQ_F_NEED_CLEANUP) &&
+> -	    (req->opcode == IORING_OP_SEND_ZC || req->opcode == IORING_OP_SENDMSG_ZC)) {
+> -		/* preserve notification for partial I/O */
+> -		if (res < 0)
+> -			sr->notif->flags |= REQ_F_CQE_SKIP;
+> -		io_notif_flush(sr->notif);
+> -		sr->notif = NULL;
 
+Here we rely on io_send_zc_cleanup(), correct?
 
+Note that I hit a very bad problem during my tests of SENDMSG_ZC.
+BUG(); in first_iovec_segment() triggered very easily.
+The problem is io_setup_async_msg() in the partial retry case,
+which seems to happen more often with _ZC.
+
+        if (!async_msg->free_iov)
+                async_msg->msg.msg_iter.iov = async_msg->fast_iov;
+
+Is wrong it needs to be something like this:
+
++       if (!kmsg->free_iov) {
++               size_t fast_idx = kmsg->msg.msg_iter.iov - kmsg->fast_iov;
++               async_msg->msg.msg_iter.iov = &async_msg->fast_iov[fast_idx];
++       }
+
+As iov_iter_iovec_advance() may change i->iov in order to have i->iov_offset
+being only relative to the first element.
+
+I'm not sure about the 'kmsg->free_iov' case, do we reuse the
+callers memory or should we make a copy?
+I initially used this
+https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=e1d3a9f5c7708a37172d258753ed7377eaac9e33
+But I didn't test with the non-fast_iov case.
+
+BTW: I tested with 5 vectors with length like this 4, 0, 64, 32, 8388608
+and got a short write with about ~ 2000000.
+
+I'm not sure if it was already a problem before:
+
+commit 257e84a5377fbbc336ff563833a8712619acce56
+io_uring: refactor sendmsg/recvmsg iov managing
+
+But I guess it was a potential problem before starting with
+7ba89d2af17aa879dda30f5d5d3f152e587fc551 where io_net_retry()
+was introduced.
+
+metze

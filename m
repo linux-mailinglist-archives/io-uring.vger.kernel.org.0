@@ -2,114 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CCBC5EF550
-	for <lists+io-uring@lfdr.de>; Thu, 29 Sep 2022 14:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 966725EF552
+	for <lists+io-uring@lfdr.de>; Thu, 29 Sep 2022 14:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235605AbiI2MYB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Sep 2022 08:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56162 "EHLO
+        id S235527AbiI2MYV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Sep 2022 08:24:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235286AbiI2MXx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Sep 2022 08:23:53 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C2E149D12
-        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 05:23:50 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220929122348epoutp03befd9cc81960c1441872b63242a37b4b~ZVE1xG1Us2090720907epoutp03R
-        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 12:23:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220929122348epoutp03befd9cc81960c1441872b63242a37b4b~ZVE1xG1Us2090720907epoutp03R
+        with ESMTP id S235624AbiI2MYF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Sep 2022 08:24:05 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E70D01DE
+        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 05:24:03 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220929122401epoutp02ee24216f93a9ed917f4900904796e741~ZVFBiIj6E0891408914epoutp02E
+        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 12:24:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220929122401epoutp02ee24216f93a9ed917f4900904796e741~ZVFBiIj6E0891408914epoutp02E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1664454228;
-        bh=Z3PK6vAIkjNPzydQ/3AsMAslieosT5m/aEKA82hKphM=;
+        s=mail20170921; t=1664454241;
+        bh=Ed9XhutZ9yja1KBK7s/NhIde4D4RLW0LgjBzhdzQQuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SlAni5IQMe/LI2qf819CONh/gzHX0S4y/nbOvnwUZzZJvbQQ/8laRXMEZBt/WV2WB
-         EvWALVc52Y3LZiAbpGQlM4LAqO8ohzS0gYviWXElWIi5TLyn8NM6sRpOROSsGWs9Vr
-         Bx5NcxY7JkZ0d118yohSbvFpvfttROlcmHnuQVC8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        b=AbeZZLbV7rjhuUgAGZYFSbJUzaZAYr0NDNhFvHdBwqyjjMuBErrQC/nXj4Tz33JDP
+         5Qv3DsOK/BmYKSS3hNZw585qqhhsgN/ZnTNq0gOqS53dbL3odVqthA2+YkE3U+njES
+         ZtF1f8LaVcvOwRwi/KY+lWnLr2ASnvrIYkl96/rE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
         epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220929122348epcas5p34e0fb4decac1005f3080c4ab016d5946~ZVE1XEd_10262002620epcas5p3X;
-        Thu, 29 Sep 2022 12:23:48 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4MdXb51Dhtz4x9Q1; Thu, 29 Sep
-        2022 12:23:45 +0000 (GMT)
+        20220929122400epcas5p39665fba01ab3370f40e476dd3bd9b128~ZVFA43Ipd1893018930epcas5p3K;
+        Thu, 29 Sep 2022 12:24:00 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4MdXbL71dVz4x9Pv; Thu, 29 Sep
+        2022 12:23:58 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FD.9F.56352.15E85336; Thu, 29 Sep 2022 21:23:45 +0900 (KST)
+        D3.AF.56352.E5E85336; Thu, 29 Sep 2022 21:23:58 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220929121701epcas5p287a6d3f851626a5c7580d9a534432e9b~ZU_6oC5ll2579425794epcas5p2S;
-        Thu, 29 Sep 2022 12:17:01 +0000 (GMT)
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220929121704epcas5p3415fd4782cbcffa7b1e6ddf774bebb03~ZU_9bhHI91775017750epcas5p3N;
+        Thu, 29 Sep 2022 12:17:04 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220929121701epsmtrp2a681b5bef377744050439db211fd039b~ZU_6mGWvn1794617946epsmtrp2f;
-        Thu, 29 Sep 2022 12:17:01 +0000 (GMT)
-X-AuditID: b6c32a4b-5f7fe7000001dc20-42-63358e511047
+        20220929121704epsmtrp205ece237de06921f9d1411640ee76168~ZU_9ZoCzH1811218112epsmtrp2a;
+        Thu, 29 Sep 2022 12:17:04 +0000 (GMT)
+X-AuditID: b6c32a4b-383ff7000001dc20-61-63358e5e3185
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E7.43.14392.DBC85336; Thu, 29 Sep 2022 21:17:01 +0900 (KST)
+        DA.43.14392.0CC85336; Thu, 29 Sep 2022 21:17:04 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.110.206.5]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220929121700epsmtip1034d1120294b80632ca910941a802a1f~ZU_5LcNVb3029530295epsmtip1A;
-        Thu, 29 Sep 2022 12:17:00 +0000 (GMT)
+        20220929121703epsmtip189c153b1e68dc628dac9008781c8f1ed~ZU_8CDj-x3141831418epsmtip1p;
+        Thu, 29 Sep 2022 12:17:03 +0000 (GMT)
 From:   Anuj Gupta <anuj20.g@samsung.com>
 To:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, gost.dev@samsung.com,
-        linux-scsi@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-Subject: [PATCH for-next v11 09/13] nvme: pass ubuffer as an integer
-Date:   Thu, 29 Sep 2022 17:36:28 +0530
-Message-Id: <20220929120632.64749-10-anuj20.g@samsung.com>
+        linux-scsi@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH for-next v11 10/13] nvme: wire up fixed buffer support for
+ nvme passthrough
+Date:   Thu, 29 Sep 2022 17:36:29 +0530
+Message-Id: <20220929120632.64749-11-anuj20.g@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220929120632.64749-1-anuj20.g@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmlm5gn2mywdbXbBZNE/4yW6y+289m
-        cfPATiaLlauPMlm8az3HYnH0/1s2i0mHrjFa7L2lbTF/2VN2i+7rO9gcuDwuny312LSqk81j
-        85J6j903G9g8+rasYvT4vEkugC0q2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJc
-        SSEvMTfVVsnFJ0DXLTMH6C4lhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5x
-        Ym5xaV66Xl5qiZWhgYGRKVBhQnbG0VtzWQoeSlVcO3uZuYGxW6yLkZNDQsBEYtOzQ4xdjFwc
-        QgK7GSWm3N7LCuF8YpQ4uX4mO0iVkMA3Ronmn9IwHa8fvWKCKNrLKLF+9zRmCOczo8TXWbvA
-        OtgE1CWOPG9lBLFFBIwk9n86CTaWWeAm0KRj+5hAEsICLhIH9q9jA7FZBFQlvr26DdbMK2Al
-        sfXkCWaIdfISMy99B4tzAsUXX5vDClEjKHFy5hMWEJsZqKZ562ywKyQEGjkknjSdAyriAHJc
-        JF4fhDpbWOLV8S3sELaUxOd3e9kg7HSJH5efMkHYBSC3MULY9hKtp/qZQcYwC2hKrN+lDxGW
-        lZh6ah0TxFo+id7fT6BaeSV2zIOxlSTaV86BsiUk9p5rgLI9JO7NugYNuV5GiTMzHjNOYFSY
-        heSdWUjemYWwegEj8ypGydSC4tz01GLTAuO81HJ4LCfn525iBKdVLe8djI8efNA7xMjEwXiI
-        UYKDWUmEV7zANFmINyWxsiq1KD++qDQntfgQoykwvCcyS4km5wMTe15JvKGJpYGJmZmZiaWx
-        maGSOO/iGVrJQgLpiSWp2ampBalFMH1MHJxSDUw88y7PWxWrb7GMVeLigtvbwlrm174SPJkV
-        JSf4d0rh8do7lyfLf2dh7exu/lQ1rUBZZm97l/6LY9v6XulWP3vEHChXY/jPOUDpDcOBMxK9
-        Vyctufd1G++Kk3PfazifsxRc8SquwlzH4A5jaqzUpujPX6qfiDpdcD2R3C734MGUYLUQi+4l
-        X9jufY98M7n2+5S7b7NM5y3Vzo/98PjPqaajXEUXf06J2VeV9GC/S1LGiVjjho231txk/NjA
-        kxIaxuym2rsl/uf9+4kzzmw7vya74CF7+QnPg35njh092Ny6bZunGZ/Mrb8Hpxx8/lyA9drh
-        +b3PDmj+O7irSXWmr/yzNfMeb5zkdErvnKRGXcXEDUosxRmJhlrMRcWJANQd9Uw0BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsWy7bCSnO7eHtNkgzPfNC2aJvxltlh9t5/N
-        4uaBnUwWK1cfZbJ413qOxeLo/7dsFpMOXWO02HtL22L+sqfsFt3Xd7A5cHlcPlvqsWlVJ5vH
-        5iX1HrtvNrB59G1ZxejxeZNcAFsUl01Kak5mWWqRvl0CV8bRW3NZCh5KVVw7e5m5gbFbrIuR
-        k0NCwETi9aNXTF2MXBxCArsZJa7eWskEkZCQOPVyGSOELSyx8t9zdoiij4wSE64fYwFJsAmo
-        Sxx53gpWJCJgJrH08BoWkCJmgfuMEm+bd4MVCQu4SBzYv44NxGYRUJX49uo2O4jNK2AlsfXk
-        CWaIDfISMy99B4tzAsUXX5vD2sXIAbTNUmL7TQWIckGJkzOfgI1kBipv3jqbeQKjwCwkqVlI
-        UgsYmVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgQHvpbmDsbtqz7oHWJk4mA8xCjB
-        wawkwiteYJosxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdC18l4IYH0xJLU7NTUgtQimCwTB6dU
-        A9OJmyZWqXqJ9u9VPJ92ih+bVNTO7iNXuOnd6m+6dmdWv5Gx7FuztOAsf+M1lxen2K86GXgz
-        2LqWFutadhW3zXu1aAE7T/7xvZ1aZt/0e3p+2GzkdmHNXBHCm7egeTv3qV0erm5tWQJ94tPf
-        vZt+f4XmpY/7/9TPux/1S3zDFucGqf0OVfc26f3ZJZW/24nx66qcckWrB4zie8W0lhxzk/kj
-        U/q6LGKO3ZoXGw5Gma4VWODLsO6JgvsvCSPFY9W/5yzribv/hbd8yrSu8vfdHumMcU7bfrXv
-        Vikx+7v54QfGDO3w4M+xt6fJK86f1Oa3SvSF5KrCKVMaecTZNTaz1laev9fIp1hnw7ZIraLq
-        mxJLcUaioRZzUXEiAJBoCtzrAgAA
-X-CMS-MailID: 20220929121701epcas5p287a6d3f851626a5c7580d9a534432e9b
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmlm5cn2mywZ7nZhar7/azWdw8sJPJ
+        YuXqo0wW71rPsVgc/f+WzWLSoWuMFntvaVvMX/aU3aL7+g42B06Py2dLPTat6mTz2Lyk3mP3
+        zQY2j74tqxg9Pm+SC2CLyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xN
+        tVVy8QnQdcvMATpJSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqX
+        rpeXWmJlaGBgZApUmJCd8e7xDaaCHv6Ks5dXMjcwzuHpYuTkkBAwkeg9eYkJxBYS2M0o8WO7
+        UBcjF5D9iVHi5qrbLBDON0aJtctPsXUxcoB19M3ygojvZZTY1rKQCcL5zCjx5cYhRpBRbALq
+        Ekeet4LZIgJGEvs/nWQFKWIW2MIo0bxuMTtIQlggVmL5m3VgRSwCqhJv1k9lAdnAK2AlcfKN
+        AcR58hIzL30HK+cECi++NocVxOYVEJQ4OfMJC4jNDFTTvHU2M8h8CYFGDok5PbcYIZpdJDZ9
+        fMQOYQtLvDq+BcqWkvj8bi8bhJ0u8ePyUyYIu0Ci+dg+qF57idZT/cwg9zALaEqs36UPEZaV
+        mHpqHRPEXj6J3t9PoFp5JXbMg7GVJNpXzoGyJST2nmuAsj0kmr71QwOrl1Fi47oDjBMYFWYh
+        +WcWkn9mIaxewMi8ilEytaA4Nz212LTAOC+1HB7Jyfm5mxjBqVTLewfjowcf9A4xMnEwHmKU
+        4GBWEuEVLzBNFuJNSaysSi3Kjy8qzUktPsRoCgzvicxSosn5wGSeVxJvaGJpYGJmZmZiaWxm
+        qCTOu3iGVrKQQHpiSWp2ampBahFMHxMHp1QDU0K5UeOnyQrfM5Q063Y+y/l16o7Cl37mYnvN
+        u7N5jvf9l4/rDr3UdInP4nGT6l59cxNOncUzz+++yL3P/PAy/uk7NT8caWfNnsC2/FV8wjyz
+        paHvs+Nj1LRNZ7TJBx36+JK3z+w409HbDsH+35duvL5f/3Wq3Pz0jbkf5zQc3MrDvmHKZquz
+        P/RdW+9fd7hUWBwW2V82WatrQ+SRx8nzVJwipYWetXc2nn4iubR5qfzEBJEjkrV3p8wRMLio
+        lc5TmLP111TuYxM6nOJFBAy0M89+EAptvbZ0+YmdCtlsCuKOr3t8/HiuO0vaH9tt8UPK2vHf
+        m5QtP/pXvlp0YEmTQZiaGqvO302caW8O8i4xUGIpzkg01GIuKk4EAN2kFjkuBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSnO6BHtNkg1t9ahar7/azWdw8sJPJ
+        YuXqo0wW71rPsVgc/f+WzWLSoWuMFntvaVvMX/aU3aL7+g42B06Py2dLPTat6mTz2Lyk3mP3
+        zQY2j74tqxg9Pm+SC2CL4rJJSc3JLEst0rdL4Mp49/gGU0EPf8XZyyuZGxjn8HQxcnBICJhI
+        9M3y6mLk4hAS2M0osejLC9YuRk6guITEqZfLGCFsYYmV/56zQxR9ZJS4cvQSC0iCTUBd4sjz
+        VrAiEQEziaWH17CAFDEL7GKUmLv1GzNIQlggWmJbzy8mEJtFQFXizfqpLCCbeQWsJE6+MYBY
+        IC8x89J3dhCbEyi8+NocVpASIQFLie03FUDCvAKCEidnPgFbywxU3rx1NvMERoFZSFKzkKQW
+        MDKtYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIDnUtzR2M21d90DvEyMTBeIhRgoNZ
+        SYRXvMA0WYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQam
+        tvIH5ZqnZJP1NE83fefcYqAUHr9l86m005Ed7p/bgnducbBbsTL709XJ7NsmL7a8q1Lcu9Fi
+        +2LBe/k/97blOV16HPvK3qh/Um/EFLlK93cK0q/ef7PLeZFQ1GsX+OqC0m9fc/tTifobc95E
+        WHyY8WyxWODp3hjJqrs1dX+uPYh9Hv309v+/Mj6zZnWKfM3tUHf8MUngZMQM89JXfMFx20Mi
+        V/VLT/bNOCcZofmgI2TKiT/qXUlvp/X4PZ915ZfLtPiVrV6Nj6q6k7ltJ7g4Xt3+Y2fYFVFm
+        Z75+NYZpnqpuMms/9/X1ql9j4mav8rdMPbc7QtYsh/v3gpDW5nNPJnEZVq05OyPZsT5YZoUS
+        S3FGoqEWc1FxIgBJBL7I5AIAAA==
+X-CMS-MailID: 20220929121704epcas5p3415fd4782cbcffa7b1e6ddf774bebb03
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220929121701epcas5p287a6d3f851626a5c7580d9a534432e9b
+X-CMS-RootMailID: 20220929121704epcas5p3415fd4782cbcffa7b1e6ddf774bebb03
 References: <20220929120632.64749-1-anuj20.g@samsung.com>
-        <CGME20220929121701epcas5p287a6d3f851626a5c7580d9a534432e9b@epcas5p2.samsung.com>
+        <CGME20220929121704epcas5p3415fd4782cbcffa7b1e6ddf774bebb03@epcas5p3.samsung.com>
 X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -118,90 +118,61 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Kanchan Joshi <joshi.k@samsung.com>
 
-This is a prep patch. Modify nvme_submit_user_cmd and
-nvme_map_user_request to take ubuffer as plain integer
-argument, and do away with nvme_to_user_ptr conversion in callers.
+if io_uring sends passthrough command with IORING_URING_CMD_FIXED flag,
+use the pre-registered buffer for IO (non-vectored variant). Pass the
+buffer/length to io_uring and get the bvec iterator for the range. Next,
+pass this bvec to block-layer and obtain a bio/request for subsequent
+processing.
 
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+Suggested-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/nvme/host/ioctl.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/nvme/host/ioctl.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 0143f62b27c2..4a7e45a263b6 100644
+index 4a7e45a263b6..25a68e8c60db 100644
 --- a/drivers/nvme/host/ioctl.c
 +++ b/drivers/nvme/host/ioctl.c
-@@ -83,9 +83,10 @@ static struct request *nvme_alloc_user_request(struct request_queue *q,
- 	return req;
- }
+@@ -95,21 +95,31 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 	void *meta = NULL;
+ 	int ret;
  
--static int nvme_map_user_request(struct request *req, void __user *ubuffer,
-+static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
--		u32 meta_seed, void **metap, bool vec)
-+		u32 meta_seed, void **metap, struct io_uring_cmd *ioucmd,
-+		bool vec)
- {
- 	struct request_queue *q = req->q;
- 	struct nvme_ns *ns = q->queuedata;
-@@ -136,7 +137,7 @@ static int nvme_map_user_request(struct request *req, void __user *ubuffer,
- }
+-	if (!vec)
+-		ret = blk_rq_map_user(q, req, NULL, ubuffer, bufflen,
+-			GFP_KERNEL);
+-	else {
++	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
++		struct iov_iter iter;
++
++		/* fixedbufs is only for non-vectored io */
++		if (WARN_ON_ONCE(vec))
++			return -EINVAL;
++		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
++				rq_data_dir(req), &iter, ioucmd);
++		if (ret < 0)
++			goto out;
++		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
++	} else if (vec) {
+ 		struct iovec fast_iov[UIO_FASTIOV];
+ 		struct iovec *iov = fast_iov;
+ 		struct iov_iter iter;
  
- static int nvme_submit_user_cmd(struct request_queue *q,
--		struct nvme_command *cmd, void __user *ubuffer,
-+		struct nvme_command *cmd, u64 ubuffer,
- 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
- 		u32 meta_seed, u64 *result, unsigned timeout, bool vec)
- {
-@@ -154,7 +155,7 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 	req->timeout = timeout;
- 	if (ubuffer && bufflen) {
- 		ret = nvme_map_user_request(req, ubuffer, bufflen, meta_buffer,
--				meta_len, meta_seed, &meta, vec);
-+				meta_len, meta_seed, &meta, NULL, vec);
- 		if (ret)
+-		ret = import_iovec(rq_data_dir(req), ubuffer, bufflen,
+-				UIO_FASTIOV, &iov, &iter);
++		ret = import_iovec(rq_data_dir(req), nvme_to_user_ptr(ubuffer),
++				bufflen, UIO_FASTIOV, &iov, &iter);
+ 		if (ret < 0)
  			goto out;
+-
+ 		ret = blk_rq_map_user_iov(q, req, NULL, &iter, GFP_KERNEL);
+ 		kfree(iov);
++	} else {
++		ret = blk_rq_map_user(q, req, NULL,
++				nvme_to_user_ptr(ubuffer), bufflen, GFP_KERNEL);
  	}
-@@ -239,7 +240,7 @@ static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
- 	c.rw.appmask = cpu_to_le16(io.appmask);
- 
- 	return nvme_submit_user_cmd(ns->queue, &c,
--			nvme_to_user_ptr(io.addr), length,
-+			io.addr, length,
- 			metadata, meta_len, lower_32_bits(io.slba), NULL, 0,
- 			false);
- }
-@@ -293,7 +294,7 @@ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		timeout = msecs_to_jiffies(cmd.timeout_ms);
- 
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
--			nvme_to_user_ptr(cmd.addr), cmd.data_len,
-+			cmd.addr, cmd.data_len,
- 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
- 			0, &result, timeout, false);
- 
-@@ -339,7 +340,7 @@ static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 		timeout = msecs_to_jiffies(cmd.timeout_ms);
- 
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
--			nvme_to_user_ptr(cmd.addr), cmd.data_len,
-+			cmd.addr, cmd.data_len,
- 			nvme_to_user_ptr(cmd.metadata), cmd.metadata_len,
- 			0, &cmd.result, timeout, vec);
- 
-@@ -525,9 +526,9 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 	req->timeout = d.timeout_ms ? msecs_to_jiffies(d.timeout_ms) : 0;
- 
- 	if (d.addr && d.data_len) {
--		ret = nvme_map_user_request(req, nvme_to_user_ptr(d.addr),
-+		ret = nvme_map_user_request(req, d.addr,
- 			d.data_len, nvme_to_user_ptr(d.metadata),
--			d.metadata_len, 0, &meta, vec);
-+			d.metadata_len, 0, &meta, ioucmd, vec);
- 		if (ret)
- 			goto out_err;
- 	}
+ 	if (ret)
+ 		goto out;
 -- 
 2.25.1
 

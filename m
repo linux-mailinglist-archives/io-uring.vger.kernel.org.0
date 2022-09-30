@@ -2,93 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 997AA5F0186
-	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 01:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 092215F0237
+	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 03:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbiI2XrY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Sep 2022 19:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41234 "EHLO
+        id S229449AbiI3B0b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Sep 2022 21:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiI2XrX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Sep 2022 19:47:23 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E5E91F34A1
-        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 16:47:21 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id z3so1601945plb.10
-        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 16:47:21 -0700 (PDT)
+        with ESMTP id S229985AbiI3B0a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Sep 2022 21:26:30 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C214313A073
+        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 18:26:28 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id b21so2705318plz.7
+        for <io-uring@vger.kernel.org>; Thu, 29 Sep 2022 18:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date;
-        bh=t35BZcZkzyh/GRIN+tvZc+wR6c+kizCSpDQzVcJ4wpY=;
-        b=VNFNmWXXLHKcqNGUCAQRCK2AXnmcOfOgsHACPcI8SlQZ4MdI/Hz+XIbm+YLk0FFk5J
-         qpCvpBMfXXKjk9VQE95o5e0/s+GFpBxLToesHGcXbuHLASuNCDueAWEgFsGtfuchQzdn
-         5Dw0P4/0Ith0DQfgC27YHwPr1+lenSPVK/3vnKzV1y98gtqq/pMbuAj2KQJao5yLd9tY
-         mIakx4rRK41H7pQEpbUA49aIgDsElgqkm8sQPe5d2U8PwfkMtyNOsWmdpcaSh3WMMMVc
-         2FCgfDSy4erbtpeXcWQRuG3RLi5ZoO865/0hBgbdqPEnqZFaFrSzlfQ/QZ+7nP4DFBW8
-         b+Rg==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=Cg6k590d1gYe1qvzLK8US59eUH7WJXJdcnukMaAq5JQ=;
+        b=h1bgzldX+/L9fXhKSk/XewnvXXMCnpgpXGG+N2Vrmw1HCHa2Ue3P1gJ7lte3NhLNQQ
+         opK+geSBRBxre64a+lTdmBjopIL/SaVrmYu2tOsXNhLUrZzsi+1uC/7omK6b5UzWoMrU
+         0s+n2Jt5Y7fRUSttfrhG9F9OFaCS+v/BB4zpkWDUFBPy7qgp0BYAj0/rj4sUlDwL5mqi
+         lf6Dj936AuSMLz8c2Ts/9Gp1dt93hERti9oZ7/X4OSGNgSrMxOaiDlqtnUbMvvbdaS98
+         8LuBaifjg5iqEfMuaYIueKFg4evNfIFH/KNja02Zt80LaLRRT/RSyj0XAI3hKP5OV+gV
+         vUdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=t35BZcZkzyh/GRIN+tvZc+wR6c+kizCSpDQzVcJ4wpY=;
-        b=uh4Qu5pIAxz6JFeD0GiptjngMqCWP6q+Op30Kk31JCCce+ctaSITvs+DLkLlca8Rx1
-         +sFzILOr7e1oyNQV+3rP/HFgPkpqPPQRQt1mHd1DzhFkvyQ3uH01kDjabWzlNQ/6K0hp
-         aKAnGSapWiRfvi51u9Ti0xQKNWcrlUvuVt1FuTDxorIjVONaS8NOS5oz+iTIsWaNjB3k
-         Q6+ToZfy9i9RWnvY0i7pvUgCNtTOlJkMVWtZXSVUvshA6dzDm9G1vM5ffe4jgH2XVUaJ
-         uNQAm2129AIQQww1grsfHjYhj9Upv8O2CttbiIhDHU44rCAXUCKdeP/iN8Q/Z9MNqkvC
-         V0kw==
-X-Gm-Message-State: ACrzQf0ok6Wie/cvzjp28tILFfqpU7CLbqKyiQ+oDTbWWAcTtRCpa8nz
-        0GcZwu36qDgrE9vfZTkaFEabr06BV7ZTdw==
-X-Google-Smtp-Source: AMsMyM6TSvP9ApECUq9QA/kHpoq3vbwF2OVrH5S4ozBnyocy7KP9WWnC9rpriiPux899NQz9524seg==
-X-Received: by 2002:a17:90b:388d:b0:202:be54:1691 with SMTP id mu13-20020a17090b388d00b00202be541691mr6513368pjb.31.1664495240772;
-        Thu, 29 Sep 2022 16:47:20 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id w18-20020a170902e89200b00176b63535ccsm440370plg.193.2022.09.29.16.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 16:47:20 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1664486545.git.asml.silence@gmail.com>
-References: <cover.1664486545.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 0/2] net fixes
-Message-Id: <166449523995.2986.3987117149082797841.b4-ty@kernel.dk>
-Date:   Thu, 29 Sep 2022 17:47:19 -0600
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=Cg6k590d1gYe1qvzLK8US59eUH7WJXJdcnukMaAq5JQ=;
+        b=WXUd5pj2XUIbhoTFh1NYH0tY6GYp7fyn3t+TB869GZiwwFfuzx2ZAqhIet0zhB9cZH
+         D7soJmIyePBKxjSNozm+zTCe/Xc4Ze47+HrD6zChnrAr23C3G5zjLVs4W5c7B1LiarBz
+         fJEK4bxjzpi8p8ZsX05rB7w5kMZRswRLmERwxLXM0qHZNsLKVmuslXtY+BKnu9lX4MZW
+         NBEde5/L0t0atK61q2v2dKOFWiNh3nang+OzarDwnE1HhMCXyKzbcU+O7MCf46n57I2M
+         yLBtNxiYUlK+0KXAXttiD1lJkrMWRC1XfuXLYzfAraRPXzFzZB6CtBiwfctdHCIVGDx6
+         ZISA==
+X-Gm-Message-State: ACrzQf3zX+G0fswKfIiVd4h0If3lmlEqelo6ogiI7nofX0PkET3ZoKMS
+        iSDkiEyVbwwOlSX4l6W3zLX+9g==
+X-Google-Smtp-Source: AMsMyM54XYNL60ZKYJnXrSIFgmbWTCJkL3I8OdtaVHNuzxN6EhKViW84Cz8nyS9OLFnrbEHSDcY+kw==
+X-Received: by 2002:a17:90b:3b47:b0:202:a81f:4059 with SMTP id ot7-20020a17090b3b4700b00202a81f4059mr19768268pjb.150.1664501188259;
+        Thu, 29 Sep 2022 18:26:28 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s10-20020a63e80a000000b0042fe1914e26sm558361pgh.37.2022.09.29.18.26.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Sep 2022 18:26:27 -0700 (PDT)
+Message-ID: <eaa47591-10e0-426a-6345-2881963be080@kernel.dk>
+Date:   Thu, 29 Sep 2022 19:26:26 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-d9ed3
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH for-next v11 02/13] io_uring: introduce fixed buffer
+ support for io_uring_cmd
+Content-Language: en-US
+To:     Anuj Gupta <anuj20.g@samsung.com>, hch@lst.de, kbusch@kernel.org
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, gost.dev@samsung.com,
+        linux-scsi@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20220929120632.64749-1-anuj20.g@samsung.com>
+ <CGME20220929121637epcas5p2ff344c7951037f79d117d000e405dd45@epcas5p2.samsung.com>
+ <20220929120632.64749-3-anuj20.g@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220929120632.64749-3-anuj20.g@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 29 Sep 2022 22:23:17 +0100, Pavel Begunkov wrote:
-> two extra io_uring/net fixes
-> 
-> Pavel Begunkov (2):
->   io_uring/net: don't update msg_name if not provided
->   io_uring/net: fix notif cqe reordering
-> 
-> io_uring/net.c | 27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> [...]
+On 9/29/22 6:06 AM, Anuj Gupta wrote:
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 6a6d69523d75..faefa9f6f259 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/file.h>
+>  #include <linux/io_uring.h>
+>  #include <linux/security.h>
+> +#include <linux/nospec.h>
+>  
+>  #include <uapi/linux/io_uring.h>
+>  
+> @@ -77,8 +78,21 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  {
+>  	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+>  
+> -	if (sqe->rw_flags || sqe->__pad1)
+> +	if (sqe->__pad1)
+>  		return -EINVAL;
+> +
+> +	ioucmd->flags = READ_ONCE(sqe->uring_cmd_flags);
 
-Applied, thanks!
+After reading this and checking for IORING_URING_CMD_FIXED, this should
+have a:
 
-[1/2] io_uring/net: don't update msg_name if not provided
-      commit: 6f10ae8a155446248055c7ddd480ef40139af788
-[2/2] io_uring/net: fix notif cqe reordering
-      commit: 108893ddcc4d3aa0a4a02aeb02d478e997001227
+	if (iocmd->flags & ~IORING_URING_CMD_FIXED)
+		return -EINVAL;
 
-Best regards,
+to ensure we can safely add more flags in the future. Apart from that,
+this looks good.
+
 -- 
 Jens Axboe
-
-

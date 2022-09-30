@@ -2,134 +2,173 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C2A5F0781
-	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 11:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2C55F0C96
+	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 15:42:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230255AbiI3JYW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 30 Sep 2022 05:24:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59938 "EHLO
+        id S231522AbiI3NmU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Sep 2022 09:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230308AbiI3JYV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Sep 2022 05:24:21 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D880156C14;
-        Fri, 30 Sep 2022 02:24:19 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id lx7so3769351pjb.0;
-        Fri, 30 Sep 2022 02:24:19 -0700 (PDT)
+        with ESMTP id S231488AbiI3NmK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Sep 2022 09:42:10 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 559FF198684
+        for <io-uring@vger.kernel.org>; Fri, 30 Sep 2022 06:42:08 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id z191so3262243iof.10
+        for <io-uring@vger.kernel.org>; Fri, 30 Sep 2022 06:42:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=6iCG4gazXB3pWG0Bfe/MnWxlMViLhtA9EAJcveW3FPM=;
-        b=W8OHm3zvUFFggryKe7RZxVt5JEGExVo3SyxpqYHCRTDO48QYpRWDUDvTaQ6MtxbOl/
-         ryUTCUoPBtbcqWZw0R7IRMb0+C9HqtXCLNXViblCLZTjDRkzYmfNfE/4i4a58lLi7vsa
-         4n6GdPfagn4cQj1WX5/emS676OYXTYRv57IT/K2NhQkELAFeEZvGWt0ofqlLZi5ciuWs
-         9pcv1VjqQOrq+UaxiCYkVmPLlY9kLYn4xkHz2480/0r2O3invpGRPxHMr7EHB1yzVBZy
-         Us5bWBxoEjPuFC4io5ABSU0ceUr7xoQzozmxLabsHlNnBWo9GfEEQHihVQsuLaiI0PaE
-         lMHg==
+        bh=xqlNMZQ3D1AS+gGJtbQ5nwPfHLNZekdJiLeGB/2P0Oo=;
+        b=g/SZlfEnW/xtL+38NFDeER7npa/YEubRwkLHoo7w9fm/7CxnBOtSpUYdY2mj8BA0Zs
+         0oGpWEt4q45AGsJo6T8vpUTuRGV7Arl8LoU48M6d65vi+Kb8kfT8Lwi4ZxCaLuKCBxyZ
+         xTqB13NvJVsAycKAY8x4J2NFMBqpPnf6YDMYXj6068D10m7OxZOK0zsVynWpRHUH+der
+         Y8lxqnZlpfL/AvT/Se1lXMGoEEk409Lqu6W2OHwmAnoKHM0E2+T8U8drsN+CSTfUAm1A
+         xGiejsbM8mDML6UBOFft3rtgMR3brw30FEz9h1IBIv51w7absU4zHRrgH4SudrGfWNEH
+         sj7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=6iCG4gazXB3pWG0Bfe/MnWxlMViLhtA9EAJcveW3FPM=;
-        b=lkyUhx7A5227DSeSCtYCWpU3NXuh8G6LcCB9iNY4DfIb/RK+ZECF3vOG2KWfWeZjT1
-         Xb8i1elvNEJOd0FmvImds3OhryqbUPGSHVwXMHqBxR6WPdaUC7Ts7Sucq5/4x75cesJT
-         izn8hZpvJ6JEKqAqRxQrN1FSn6sjQCqRK7nVK0V0QNPR+LGAL3+DQIlM73TyCig+Er38
-         uXotz8Egsyk3Wz4wuzDGB3h36BczlsNwyVPvG4b0UARJdwg6XUL3b5SWx3fVY4sCZmYw
-         tSiL4S5QWHgEjRcCPDQIVhyYSOn4anInFNJvB5dSd8fCNW1+34zWpzrbzh8cK60MNRnW
-         J4UQ==
-X-Gm-Message-State: ACrzQf1CK8cuHtyAS4zrIsmD5z+1deD/DxWEE9PRBgms9y8QxvWZFuIn
-        2y8lQhtRQFuv6phm1Wbx6J1yPrU8Nu8tVw==
-X-Google-Smtp-Source: AMsMyM7eeeVzQYgbUMSdujcKlMzcGJ72cz07MoTFpwokTQWD0n1LgIel+K8xU1qvisQNl/8S8qZd5w==
-X-Received: by 2002:a17:902:e552:b0:179:e796:b432 with SMTP id n18-20020a170902e55200b00179e796b432mr7823816plf.21.1664529858681;
-        Fri, 30 Sep 2022 02:24:18 -0700 (PDT)
-Received: from T590 ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k11-20020a17090a404b00b001f559e00473sm4879248pjg.43.2022.09.30.02.24.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 02:24:18 -0700 (PDT)
-Date:   Fri, 30 Sep 2022 17:24:11 +0800
-From:   Ming Lei <tom.leiming@gmail.com>
-To:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Kirill Tkhai <kirill.tkhai@openvz.org>,
-        Manuel Bentele <development@manuel-bentele.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: ublk-qcow2: ublk-qcow2 is available
-Message-ID: <Yza1u1KfKa7ycQm0@T590>
+        bh=xqlNMZQ3D1AS+gGJtbQ5nwPfHLNZekdJiLeGB/2P0Oo=;
+        b=rqxl32FevheDkHEYxmSnsSX4UvSiZCbPavRbtvA83ZcBVIfkFbOiM6+6O+VsS2hb2h
+         Piydeu7z5lg3eNx4GKUbbrcIRX3tNqe30dEAzP/JiOUiR9M8BpVH73UgGIx2BqWJZME1
+         qP/gieoD2WoqX0zBkEwEcaSe6pZQbdMOEQl61lriJNIlKLHXBIihoMLAErYSOB1Q/CkL
+         fIw4qIDtH3fqAd53gi9bEO3uNk1rku3xuy0cb/OEbKAJpkqarz2xDxPMMbH+wnTf+LgL
+         dKHTwW/2ZncdgwmA5+9Uzpj38v9Ra9EL3gU/+EJDYpyWYlr1wt6ukNlm13aySMYFfoxf
+         6hlA==
+X-Gm-Message-State: ACrzQf3QZh5vHaoguYzG2Q2xaxA7B0sIp0A7MbX4AV7WxA9hW6tSkjCp
+        r8BOd08tuwIGanjaRZsAZ0BimA==
+X-Google-Smtp-Source: AMsMyM68NxJth0vMZTHBU5g6/kMmGIAZO++J6bTpObKSqOmiBAa83Dd5SOy69a0F9kxxELXGdjUJww==
+X-Received: by 2002:a05:6638:22c5:b0:35a:88fa:3d3a with SMTP id j5-20020a05663822c500b0035a88fa3d3amr4803594jat.115.1664545327131;
+        Fri, 30 Sep 2022 06:42:07 -0700 (PDT)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id d17-20020a0566022bf100b006a10d068d39sm1111030ioy.41.2022.09.30.06.42.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Sep 2022 06:42:06 -0700 (PDT)
+Message-ID: <a08df763-b84f-0360-f1bf-4dd1da3a97bc@kernel.dk>
+Date:   Fri, 30 Sep 2022 07:42:04 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URI_DOTEDU autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH for-next v12 02/12] io_uring: introduce fixed buffer
+ support for io_uring_cmd
+To:     Anuj Gupta <anuj20.g@samsung.com>, hch@lst.de, kbusch@kernel.org
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, gost.dev@samsung.com,
+        linux-scsi@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20220930062749.152261-1-anuj20.g@samsung.com>
+ <CGME20220930063809epcas5p328b9e14ead49e9612b905e6f5b6682f7@epcas5p3.samsung.com>
+ <20220930062749.152261-3-anuj20.g@samsung.com>
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220930062749.152261-3-anuj20.g@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 9/30/22 12:27 AM, Anuj Gupta wrote:
+> Add IORING_URING_CMD_FIXED flag that is to be used for sending io_uring
+> command with previously registered buffers. User-space passes the buffer
+> index in sqe->buf_index, same as done in read/write variants that uses
+> fixed buffers.
+> 
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> ---
+>  include/linux/io_uring.h      |  2 +-
+>  include/uapi/linux/io_uring.h |  9 +++++++++
+>  io_uring/uring_cmd.c          | 18 +++++++++++++++++-
+>  3 files changed, 27 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+> index 1dbf51115c30..e10c5cc81082 100644
+> --- a/include/linux/io_uring.h
+> +++ b/include/linux/io_uring.h
+> @@ -28,7 +28,7 @@ struct io_uring_cmd {
+>  		void *cookie;
+>  	};
+>  	u32		cmd_op;
+> -	u32		pad;
+> +	u32		flags;
+>  	u8		pdu[32]; /* available inline for free use */
+>  };
+>  
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 92f29d9505a6..ab7458033ee3 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -56,6 +56,7 @@ struct io_uring_sqe {
+>  		__u32		hardlink_flags;
+>  		__u32		xattr_flags;
+>  		__u32		msg_ring_flags;
+> +		__u32		uring_cmd_flags;
+>  	};
+>  	__u64	user_data;	/* data to be passed back at completion time */
+>  	/* pack this to avoid bogus arm OABI complaints */
+> @@ -219,6 +220,14 @@ enum io_uring_op {
+>  	IORING_OP_LAST,
+>  };
+>  
+> +/*
+> + * sqe->uring_cmd_flags
+> + * IORING_URING_CMD_FIXED	use registered buffer; pass thig flag
+> + *				along with setting sqe->buf_index.
+> + */
+> +#define IORING_URING_CMD_FIXED	(1U << 0)
+> +
+> +
+>  /*
+>   * sqe->fsync_flags
+>   */
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 6a6d69523d75..05e8ad8cef87 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/file.h>
+>  #include <linux/io_uring.h>
+>  #include <linux/security.h>
+> +#include <linux/nospec.h>
+>  
+>  #include <uapi/linux/io_uring.h>
+>  
+> @@ -77,7 +78,22 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  {
+>  	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+>  
+> -	if (sqe->rw_flags || sqe->__pad1)
+> +	if (sqe->__pad1)
+> +		return -EINVAL;
+> +
+> +	ioucmd->flags = READ_ONCE(sqe->uring_cmd_flags);
+> +	if (ioucmd->flags & IORING_URING_CMD_FIXED) {
+> +		struct io_ring_ctx *ctx = req->ctx;
+> +		u16 index;
+> +
+> +		req->buf_index = READ_ONCE(sqe->buf_index);
+> +		if (unlikely(req->buf_index >= ctx->nr_user_bufs))
+> +			return -EFAULT;
+> +		index = array_index_nospec(req->buf_index, ctx->nr_user_bufs);
+> +		req->imu = ctx->user_bufs[index];
+> +		io_req_set_rsrc_node(req, ctx, 0);
+> +	}
+> +	if (ioucmd->flags & ~IORING_URING_CMD_FIXED)
+>  		return -EINVAL;
 
-ublk-qcow2 is available now.
+Not that it _really_ matters, but why isn't this check the first thing
+that is done after reading the flags? No need to respin, I can just move
+it myself.
 
-So far it provides basic read/write function, and compression and snapshot
-aren't supported yet. The target/backend implementation is completely
-based on io_uring, and share the same io_uring with ublk IO command
-handler, just like what ublk-loop does.
-
-Follows the main motivations of ublk-qcow2:
-
-- building one complicated target from scratch helps libublksrv APIs/functions
-  become mature/stable more quickly, since qcow2 is complicated and needs more
-  requirement from libublksrv compared with other simple ones(loop, null)
-
-- there are several attempts of implementing qcow2 driver in kernel, such as
-  ``qloop`` [2], ``dm-qcow2`` [3] and ``in kernel qcow2(ro)`` [4], so ublk-qcow2
-  might useful be for covering requirement in this field
-
-- performance comparison with qemu-nbd, and it was my 1st thought to evaluate
-  performance of ublk/io_uring backend by writing one ublk-qcow2 since ublksrv
-  is started
-
-- help to abstract common building block or design pattern for writing new ublk
-  target/backend
-
-So far it basically passes xfstest(XFS) test by using ublk-qcow2 block
-device as TEST_DEV, and kernel building workload is verified too. Also
-soft update approach is applied in meta flushing, and meta data
-integrity is guaranteed, 'make test T=qcow2/040' covers this kind of
-test, and only cluster leak is reported during this test.
-
-The performance data looks much better compared with qemu-nbd, see
-details in commit log[1], README[5] and STATUS[6]. And the test covers both
-empty image and pre-allocated image, for example of pre-allocated qcow2
-image(8GB):
-
-- qemu-nbd (make test T=qcow2/002)
-	randwrite(4k): jobs 1, iops 24605
-	randread(4k): jobs 1, iops 30938
-	randrw(4k): jobs 1, iops read 13981 write 14001
-	rw(512k): jobs 1, iops read 724 write 728
-
-- ublk-qcow2 (make test T=qcow2/022)
-	randwrite(4k): jobs 1, iops 104481
-	randread(4k): jobs 1, iops 114937
-	randrw(4k): jobs 1, iops read 53630 write 53577
-	rw(512k): jobs 1, iops read 1412 write 1423
-
-Also ublk-qcow2 aligns queue's chunk_sectors limit with qcow2's cluster size,
-which is 64KB at default, this way simplifies backend io handling, but
-it could be increased to 512K or more proper size for improving sequential
-IO perf, just need one coroutine to handle more than one IOs.
-
-
-[1] https://github.com/ming1/ubdsrv/commit/9faabbec3a92ca83ddae92335c66eabbeff654e7
-[2] https://upcommons.upc.edu/bitstream/handle/2099.1/9619/65757.pdf?sequence=1&isAllowed=y
-[3] https://lwn.net/Articles/889429/
-[4] https://lab.ks.uni-freiburg.de/projects/kernel-qcow2/repository
-[5] https://github.com/ming1/ubdsrv/blob/master/qcow2/README.rst
-[6] https://github.com/ming1/ubdsrv/blob/master/qcow2/STATUS.rst
-
-Thanks,
-Ming
+-- 
+Jens Axboe

@@ -2,115 +2,222 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3049F5F0C9D
-	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 15:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A325F0CC4
+	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 15:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231268AbiI3NnI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 30 Sep 2022 09:43:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54426 "EHLO
+        id S231586AbiI3Nvl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Sep 2022 09:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231532AbiI3NnH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Sep 2022 09:43:07 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC804177788
-        for <io-uring@vger.kernel.org>; Fri, 30 Sep 2022 06:43:05 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id u10so368510ilm.5
-        for <io-uring@vger.kernel.org>; Fri, 30 Sep 2022 06:43:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
-        bh=NQjKgC/UdZmJCeMSRjBvRPDzgaGLtNVKWNgpvd7u/ww=;
-        b=Xhab3tYVATBZjfZhxZpgjup+JN5YgCo0lJfdn0DMWOQuv4xJuk7VlJPs/1VLo/orfT
-         RIC64ve8gBeY4vDHUQYD0o+G62cFqlh/AeTaKC1RO9H6sigBZzkRU2/za80Vi/vxIOkq
-         Cedarxfew5uwXT5Wx4Tf2SUL5wZpu1kWvTzBIHLolMamcJWIbtjDTjBYmotFUu69Gk3Z
-         Ivcm9hiGrWUC45STSobicO8trAw2XxHaGrzmAMZXNEOXGfWcIv2/+kx8a259LiMR7p1G
-         VfcXryiiW2CH+iUJZmq1ljpi8zJVd/amKDuQquw/hdEspbBdQgOuYfv67XXanhpl2Sjs
-         Wu8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date;
-        bh=NQjKgC/UdZmJCeMSRjBvRPDzgaGLtNVKWNgpvd7u/ww=;
-        b=W7TBIELzkfRzndKu7K+8gakrNUByXw1mqjd1KAspWXKx0YLNn67a+zi93J8t8W6apV
-         W9/XQ1hM9lIkNiIGYEuc4uYT4P3QwoF/DZdAqqO5SqxNS/JXRv8BgF46F/7gFljoOvZy
-         qVoB7m+7kQye/hXAPjuRrZENmJKjYVzsC3YXhej6l3jCC2CeON+OLZQo01rTUKRP5MzH
-         qLs+1IE7tOfkmNxq2VqhZKKYrqLk+Z2kmoWMBy/LHrWIxSXX4y7ZDNLD8/UbDJUk+PnA
-         8fkRY/+nGtoxxVXPDzL/ZmrhsF0j9xNfYzXsh8os9oEORD8dTWvzsszfHmIwxub/V91x
-         OrNA==
-X-Gm-Message-State: ACrzQf3XjFDQAwhoq6VDXeqQUaVlhqT5Azj8k2KRp8xC3rfYTYk6khYO
-        2LybYFrvJM7dVKooVaJz5fFlPKBNE46XGg==
-X-Google-Smtp-Source: AMsMyM6ynqdWcLulUinx6jTaurH605/2o1VAofpPKQVI4p/amaLU8eETuBd7hVC1WRybLSV5kjeCfQ==
-X-Received: by 2002:a05:6e02:1c27:b0:2f9:1d1a:9619 with SMTP id m7-20020a056e021c2700b002f91d1a9619mr4537031ilh.209.1664545385098;
-        Fri, 30 Sep 2022 06:43:05 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id q22-20020a05663810d600b0035a0d844e43sm919512jad.159.2022.09.30.06.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Sep 2022 06:43:04 -0700 (PDT)
-Message-ID: <5c6d5c40-8ec8-a54e-97f8-d2377515656b@kernel.dk>
-Date:   Fri, 30 Sep 2022 07:43:00 -0600
+        with ESMTP id S230266AbiI3Nvi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Sep 2022 09:51:38 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF67112BD99;
+        Fri, 30 Sep 2022 06:51:36 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 82BB4218E2;
+        Fri, 30 Sep 2022 13:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1664545895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4GdU9yhf2cWOLwfKEktqz2k86HrzmLHXXLi7u9FGdEc=;
+        b=LKiOAiPNHKE8u6bKwBFJV5F4RnmPPex++wXBAh28wlvaTB7z+Wc9vhcvw7ykgslcTKJIH/
+        ZkrIuMDZHoIbC3pQkOl9OLLn2Fi43fU42U4wxdKydFQH5+lhwM0g8jSYaDiifoYhQ3BrpN
+        p0aXavbJ9UlBEE2W/wCJRtpMYmfxM80=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1664545895;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4GdU9yhf2cWOLwfKEktqz2k86HrzmLHXXLi7u9FGdEc=;
+        b=X7UOV5cPGmi/Nv1sosGTP2P2dZT3VTzpD9DqzGCdAVxPQgU4Cbz46QLtup5sqn45sFa7Bn
+        MyWcB7RnUZKEn0CA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4DFAF13776;
+        Fri, 30 Sep 2022 13:51:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id cGf6Emf0NmOcSgAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 30 Sep 2022 13:51:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7852BA0668; Fri, 30 Sep 2022 15:51:34 +0200 (CEST)
+Date:   Fri, 30 Sep 2022 15:51:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        syzbot <syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mhiramat@kernel.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org
+Subject: Re: [syzbot] inconsistent lock state in kmem_cache_alloc
+Message-ID: <20220930135134.6retnj7vqm6i5ypo@quack3>
+References: <00000000000074b50005e997178a@google.com>
+ <edef9f69-4b29-4c00-8c1a-67c4b8f36af0@suse.cz>
+ <20220929135627.ykivmdks2w5vzrwg@quack3>
+ <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
+ <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.0-final
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Thu 29-09-22 10:54:07, Jens Axboe wrote:
+> On 9/29/22 8:07 AM, Jens Axboe wrote:
+> > On 9/29/22 7:56 AM, Jan Kara wrote:
+> >> On Thu 29-09-22 15:24:22, Vlastimil Babka wrote:
+> >>> On 9/26/22 18:33, syzbot wrote:
+> >>>> Hello,
+> >>>>
+> >>>> syzbot found the following issue on:
+> >>>>
+> >>>> HEAD commit:    105a36f3694e Merge tag 'kbuild-fixes-v6.0-3' of git://git...
+> >>>> git tree:       upstream
+> >>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=152bf540880000
+> >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7db7ad17eb14cb7
+> >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=dfcc5f4da15868df7d4d
+> >>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> >>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1020566c880000
+> >>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104819e4880000
+> >>>>
+> >>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >>>> Reported-by: syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com
+> >>>
+> >>> +CC more folks
+> >>>
+> >>> I'm not fully sure what this report means but I assume it's because there's
+> >>> a GFP_KERNEL kmalloc() allocation from softirq context? Should it perhaps
+> >>> use memalloc_nofs_save() at some well defined point?
+> >>
+> >> Thanks for the CC. The problem really is that io_uring is calling into
+> >> fsnotify_access() from softirq context. That isn't going to work. The
+> >> allocation is just a tip of the iceberg. Fsnotify simply does not expect to
+> >> be called from softirq context. All the dcache locks are not IRQ safe, it
+> >> can even obtain some sleeping locks and call to userspace if there are
+> >> suitable watches set up.
+> >>
+> >> So either io_uring needs to postpone fsnotify calls to a workqueue or we
+> >> need a way for io_uring code to tell iomap dio code that the completion
+> >> needs to always happen from a workqueue (as it currently does for writes).
+> >> Jens?
+> > 
+> > Something like this should probably work - I'll write a test case and
+> > vet it.
+> 
+> Ran that with the attached test case, triggers it before but not with
+> the patch. Side note - I do wish that the syzbot reproducers were not
+> x86 specific, I always have to go and edit them for arm64. For this
+> particular one, I just gave up and wrote one myself.
+> 
+> Thanks for the heads-up Jan, I'll queue up this fix and mark for stable
+> with the right attributions.
 
-Two fixes that should go into 6.0:
+Thanks for fixing this so quickly! The test looks good to me.
 
-- Tweak the single issuer logic to register the task at creation, rather
-  than at first submit. SINGLE_ISSUER was added for 6.0, and after some
-  discussion on this, we decided to make it a bit stricter while it's
-  still possible to do so (Dylan).
+								Honza
 
-- Stefan from Samba had some doubts on the level triggered poll that was
-  added for this release. Rather than attempt to mess around with it
-  now, just do the quick one-liner to disable it for release and we have
-  time to discuss and change it for 6.1 instead (me).
-
-Please pull!
-
-
-The following changes since commit e775f93f2ab976a2cdb4a7b53063cbe890904f73:
-
-  io_uring: ensure that cached task references are always put on exit (2022-09-23 18:51:08 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.0-2022-09-29
-
-for you to fetch changes up to d59bd748db0a97a5d6a33b284b6c58b7f6f4f768:
-
-  io_uring/poll: disable level triggered poll (2022-09-28 19:27:11 -0600)
-
-----------------------------------------------------------------
-io_uring-6.0-2022-09-29
-
-----------------------------------------------------------------
-Dylan Yudaken (1):
-      io_uring: register single issuer task at creation
-
-Jens Axboe (1):
-      io_uring/poll: disable level triggered poll
-
- io_uring/io_uring.c | 7 +++++++
- io_uring/poll.c     | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
+> #define _GNU_SOURCE
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <fcntl.h>
+> #include <sys/fanotify.h>
+> #include <sys/wait.h>
+> #include <liburing.h>
+> 
+> int main(int argc, char *argv[])
+> {
+> 	struct io_uring_sqe *sqe;
+> 	struct io_uring_cqe *cqe;
+> 	struct io_uring ring;
+> 	int fan, ret, fd;
+> 	void *buf;
+> 
+> 	fan = fanotify_init(FAN_CLASS_NOTIF|FAN_CLASS_CONTENT, 0);
+> 	if (fan < 0) {
+> 		if (errno == ENOSYS)
+> 			return 0;
+> 		perror("fanotify_init");
+> 		return 1;
+> 	}
+> 
+> 	if (argc > 1) {
+> 		fd = open(argv[1], O_RDONLY | O_DIRECT);
+> 		if (fd < 0) {
+> 			perror("open");
+> 			return 1;
+> 		}
+> 	} else {
+> 		fd = open("file0", O_RDONLY | O_DIRECT);
+> 		if (fd < 0) {
+> 			perror("open");
+> 			return 1;
+> 		}
+> 	}
+> 
+> 	ret = fanotify_mark(fan, FAN_MARK_ADD, FAN_ACCESS|FAN_MODIFY, fd, NULL);
+> 	if (ret < 0) {
+> 		perror("fanotify_mark");
+> 		return 1;
+> 	}
+> 
+> 	ret = 0;
+> 	if (fork()) {
+> 		int wstat;
+> 
+> 		io_uring_queue_init(4, &ring, 0);
+> 		if (posix_memalign(&buf, 4096, 4096))
+> 			return 0;
+> 		sqe = io_uring_get_sqe(&ring);
+> 		io_uring_prep_read(sqe, fd, buf, 4096, 0);
+> 		io_uring_submit(&ring);
+> 		ret = io_uring_wait_cqe(&ring, &cqe);
+> 		if (ret) {
+> 			fprintf(stderr, "wait_ret=%d\n", ret);
+> 			return 1;
+> 		}
+> 		wait(&wstat);
+> 		ret = WEXITSTATUS(wstat);
+> 	} else {
+> 		struct fanotify_event_metadata m;
+> 		int fret;
+> 
+> 		fret = read(fan, &m, sizeof(m));
+> 		if (fret < 0)
+> 			perror("fanotify read");
+> 		/* fail if mask isn't right or pid indicates non-task context */
+> 		else if (!(m.mask & 1) || !m.pid)
+> 			exit(1);
+> 		exit(0);
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> -- 
+> Jens Axboe
 -- 
-Jens Axboe
+Jan Kara <jack@suse.com>
+SUSE Labs, CR

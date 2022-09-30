@@ -2,222 +2,173 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A325F0CC4
-	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 15:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C86705F0CFF
+	for <lists+io-uring@lfdr.de>; Fri, 30 Sep 2022 16:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbiI3Nvl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 30 Sep 2022 09:51:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47016 "EHLO
+        id S229679AbiI3OFM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 30 Sep 2022 10:05:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230266AbiI3Nvi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Sep 2022 09:51:38 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF67112BD99;
-        Fri, 30 Sep 2022 06:51:36 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 82BB4218E2;
-        Fri, 30 Sep 2022 13:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1664545895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4GdU9yhf2cWOLwfKEktqz2k86HrzmLHXXLi7u9FGdEc=;
-        b=LKiOAiPNHKE8u6bKwBFJV5F4RnmPPex++wXBAh28wlvaTB7z+Wc9vhcvw7ykgslcTKJIH/
-        ZkrIuMDZHoIbC3pQkOl9OLLn2Fi43fU42U4wxdKydFQH5+lhwM0g8jSYaDiifoYhQ3BrpN
-        p0aXavbJ9UlBEE2W/wCJRtpMYmfxM80=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1664545895;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4GdU9yhf2cWOLwfKEktqz2k86HrzmLHXXLi7u9FGdEc=;
-        b=X7UOV5cPGmi/Nv1sosGTP2P2dZT3VTzpD9DqzGCdAVxPQgU4Cbz46QLtup5sqn45sFa7Bn
-        MyWcB7RnUZKEn0CA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4DFAF13776;
-        Fri, 30 Sep 2022 13:51:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id cGf6Emf0NmOcSgAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 30 Sep 2022 13:51:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7852BA0668; Fri, 30 Sep 2022 15:51:34 +0200 (CEST)
-Date:   Fri, 30 Sep 2022 15:51:34 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
-        syzbot <syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mhiramat@kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew Bobrowski <repnop@google.com>,
-        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org
-Subject: Re: [syzbot] inconsistent lock state in kmem_cache_alloc
-Message-ID: <20220930135134.6retnj7vqm6i5ypo@quack3>
-References: <00000000000074b50005e997178a@google.com>
- <edef9f69-4b29-4c00-8c1a-67c4b8f36af0@suse.cz>
- <20220929135627.ykivmdks2w5vzrwg@quack3>
- <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
- <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
+        with ESMTP id S229930AbiI3OFK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 30 Sep 2022 10:05:10 -0400
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F567BF1F2;
+        Fri, 30 Sep 2022 07:05:09 -0700 (PDT)
+Received: by mail-ua1-x930.google.com with SMTP id a4so1765448uao.0;
+        Fri, 30 Sep 2022 07:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=gIimetwHznaZAvAfIsX13X27CMEyzU9Pww8hIggO0fw=;
+        b=cnW1BdIwQxXFqQdIGdQKkJQdMdHlrKFHz1p4DhziNtTs0tO+tJ9Lx0H7U2/5rqoCei
+         kk77fR3R4/LKx7IXh8tJMuljKjNchkGeNslTpaetLqrO/jmGRHySVscKwyt5W8W0H0Nw
+         3Z6JJ31hsijU0lnXF0jz2TCTRxpt1aBEu5KedM50mNY7biix0dLKjOvd5HttVj+vXILa
+         rjTnTgsrQgBGipEnQz6+zfsUH9JS0qqUyO9nV5yrwJB/0vWoDjgwzQL0zn2EUjQx3LEG
+         bM+suOgoWvq/QlXHRqddlEtzJ57p+nHhC5P/DH4RSLKyHZ8zRL6Spaboiwp9JTaeKWwO
+         teaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=gIimetwHznaZAvAfIsX13X27CMEyzU9Pww8hIggO0fw=;
+        b=oXOIEsDiwqbCNaZUgGyIwKV/AF+rbm00UEq+xvOWO5Od3/rVx+v19ZQ6Q7BbSWYxNo
+         vqlkHceht/FyhGRHjSPwc9cZS9bbUj2CMHAAecrntoretnq9WXvEeYzpN/+Oo8t2k3RX
+         VAzN2R7Su23WL86b3u9Zvyf0w4FcSUr2JI4rhpBpZGeB/M4E7+48VYDC/8gXxaez5xA9
+         Jpg/PiBfUYdK0wYScBjAkTB2jKLlbKsSDzauViBE/5eIUlvp+3vz8zr79x6UdDlkMH5/
+         HoBaaaGD4H7WxrAXGka4/YFqdLJXSHmChgLQyZCgtBT1/x24EPJMEnzgJLsrAp3/yaj2
+         +M1Q==
+X-Gm-Message-State: ACrzQf2JiQGdzsgo3mFHAz4DjGOkPWEjG7Ga9/xDrMRc1YqRqbSFSe3z
+        dZRhDDKdBqav4+bxiPreOXvbbTYmj/96yKcG0I9dQT8znUYEvPbtEQ==
+X-Google-Smtp-Source: AMsMyM7nKCE11zyNdHQZhsFQnKND0g9ACmhxTByy15NScbKCJquyPwcdiRsiKjb6uEP6Kf3aSxAStueT5FM5lY0t4aM=
+X-Received: by 2002:a9f:2c46:0:b0:39e:fdd4:d272 with SMTP id
+ s6-20020a9f2c46000000b0039efdd4d272mr5040761uaj.64.1664546706776; Fri, 30 Sep
+ 2022 07:05:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20220930062749.152261-1-anuj20.g@samsung.com> <CGME20220930063809epcas5p328b9e14ead49e9612b905e6f5b6682f7@epcas5p3.samsung.com>
+ <20220930062749.152261-3-anuj20.g@samsung.com> <a08df763-b84f-0360-f1bf-4dd1da3a97bc@kernel.dk>
+In-Reply-To: <a08df763-b84f-0360-f1bf-4dd1da3a97bc@kernel.dk>
+From:   Anuj gupta <anuj1072538@gmail.com>
+Date:   Fri, 30 Sep 2022 19:34:30 +0530
+Message-ID: <CACzX3At9PmwEV03E0PqjS1H1yz07tco-7GyLCKw_mOqFDHVq6g@mail.gmail.com>
+Subject: Re: [PATCH for-next v12 02/12] io_uring: introduce fixed buffer
+ support for io_uring_cmd
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Anuj Gupta <anuj20.g@samsung.com>, hch@lst.de, kbusch@kernel.org,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, gost.dev@samsung.com,
+        linux-scsi@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu 29-09-22 10:54:07, Jens Axboe wrote:
-> On 9/29/22 8:07 AM, Jens Axboe wrote:
-> > On 9/29/22 7:56 AM, Jan Kara wrote:
-> >> On Thu 29-09-22 15:24:22, Vlastimil Babka wrote:
-> >>> On 9/26/22 18:33, syzbot wrote:
-> >>>> Hello,
-> >>>>
-> >>>> syzbot found the following issue on:
-> >>>>
-> >>>> HEAD commit:    105a36f3694e Merge tag 'kbuild-fixes-v6.0-3' of git://git...
-> >>>> git tree:       upstream
-> >>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=152bf540880000
-> >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7db7ad17eb14cb7
-> >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=dfcc5f4da15868df7d4d
-> >>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> >>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1020566c880000
-> >>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104819e4880000
-> >>>>
-> >>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >>>> Reported-by: syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com
-> >>>
-> >>> +CC more folks
-> >>>
-> >>> I'm not fully sure what this report means but I assume it's because there's
-> >>> a GFP_KERNEL kmalloc() allocation from softirq context? Should it perhaps
-> >>> use memalloc_nofs_save() at some well defined point?
-> >>
-> >> Thanks for the CC. The problem really is that io_uring is calling into
-> >> fsnotify_access() from softirq context. That isn't going to work. The
-> >> allocation is just a tip of the iceberg. Fsnotify simply does not expect to
-> >> be called from softirq context. All the dcache locks are not IRQ safe, it
-> >> can even obtain some sleeping locks and call to userspace if there are
-> >> suitable watches set up.
-> >>
-> >> So either io_uring needs to postpone fsnotify calls to a workqueue or we
-> >> need a way for io_uring code to tell iomap dio code that the completion
-> >> needs to always happen from a workqueue (as it currently does for writes).
-> >> Jens?
-> > 
-> > Something like this should probably work - I'll write a test case and
-> > vet it.
-> 
-> Ran that with the attached test case, triggers it before but not with
-> the patch. Side note - I do wish that the syzbot reproducers were not
-> x86 specific, I always have to go and edit them for arm64. For this
-> particular one, I just gave up and wrote one myself.
-> 
-> Thanks for the heads-up Jan, I'll queue up this fix and mark for stable
-> with the right attributions.
+On Fri, Sep 30, 2022 at 7:28 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/30/22 12:27 AM, Anuj Gupta wrote:
+> > Add IORING_URING_CMD_FIXED flag that is to be used for sending io_uring
+> > command with previously registered buffers. User-space passes the buffer
+> > index in sqe->buf_index, same as done in read/write variants that uses
+> > fixed buffers.
+> >
+> > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> > Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> > ---
+> >  include/linux/io_uring.h      |  2 +-
+> >  include/uapi/linux/io_uring.h |  9 +++++++++
+> >  io_uring/uring_cmd.c          | 18 +++++++++++++++++-
+> >  3 files changed, 27 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+> > index 1dbf51115c30..e10c5cc81082 100644
+> > --- a/include/linux/io_uring.h
+> > +++ b/include/linux/io_uring.h
+> > @@ -28,7 +28,7 @@ struct io_uring_cmd {
+> >               void *cookie;
+> >       };
+> >       u32             cmd_op;
+> > -     u32             pad;
+> > +     u32             flags;
+> >       u8              pdu[32]; /* available inline for free use */
+> >  };
+> >
+> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> > index 92f29d9505a6..ab7458033ee3 100644
+> > --- a/include/uapi/linux/io_uring.h
+> > +++ b/include/uapi/linux/io_uring.h
+> > @@ -56,6 +56,7 @@ struct io_uring_sqe {
+> >               __u32           hardlink_flags;
+> >               __u32           xattr_flags;
+> >               __u32           msg_ring_flags;
+> > +             __u32           uring_cmd_flags;
+> >       };
+> >       __u64   user_data;      /* data to be passed back at completion time */
+> >       /* pack this to avoid bogus arm OABI complaints */
+> > @@ -219,6 +220,14 @@ enum io_uring_op {
+> >       IORING_OP_LAST,
+> >  };
+> >
+> > +/*
+> > + * sqe->uring_cmd_flags
+> > + * IORING_URING_CMD_FIXED    use registered buffer; pass thig flag
+> > + *                           along with setting sqe->buf_index.
+> > + */
+> > +#define IORING_URING_CMD_FIXED       (1U << 0)
+> > +
+> > +
+> >  /*
+> >   * sqe->fsync_flags
+> >   */
+> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > index 6a6d69523d75..05e8ad8cef87 100644
+> > --- a/io_uring/uring_cmd.c
+> > +++ b/io_uring/uring_cmd.c
+> > @@ -4,6 +4,7 @@
+> >  #include <linux/file.h>
+> >  #include <linux/io_uring.h>
+> >  #include <linux/security.h>
+> > +#include <linux/nospec.h>
+> >
+> >  #include <uapi/linux/io_uring.h>
+> >
+> > @@ -77,7 +78,22 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> >  {
+> >       struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+> >
+> > -     if (sqe->rw_flags || sqe->__pad1)
+> > +     if (sqe->__pad1)
+> > +             return -EINVAL;
+> > +
+> > +     ioucmd->flags = READ_ONCE(sqe->uring_cmd_flags);
+> > +     if (ioucmd->flags & IORING_URING_CMD_FIXED) {
+> > +             struct io_ring_ctx *ctx = req->ctx;
+> > +             u16 index;
+> > +
+> > +             req->buf_index = READ_ONCE(sqe->buf_index);
+> > +             if (unlikely(req->buf_index >= ctx->nr_user_bufs))
+> > +                     return -EFAULT;
+> > +             index = array_index_nospec(req->buf_index, ctx->nr_user_bufs);
+> > +             req->imu = ctx->user_bufs[index];
+> > +             io_req_set_rsrc_node(req, ctx, 0);
+> > +     }
+> > +     if (ioucmd->flags & ~IORING_URING_CMD_FIXED)
+> >               return -EINVAL;
+>
+> Not that it _really_ matters, but why isn't this check the first thing
+> that is done after reading the flags? No need to respin, I can just move
+> it myself.
+>
+Right, checking this condition should have been the first thing to do after
+reading the flags. Thanks for taking care of it.
 
-Thanks for fixing this so quickly! The test looks good to me.
-
-								Honza
-
-> #define _GNU_SOURCE
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> #include <sys/fanotify.h>
-> #include <sys/wait.h>
-> #include <liburing.h>
-> 
-> int main(int argc, char *argv[])
-> {
-> 	struct io_uring_sqe *sqe;
-> 	struct io_uring_cqe *cqe;
-> 	struct io_uring ring;
-> 	int fan, ret, fd;
-> 	void *buf;
-> 
-> 	fan = fanotify_init(FAN_CLASS_NOTIF|FAN_CLASS_CONTENT, 0);
-> 	if (fan < 0) {
-> 		if (errno == ENOSYS)
-> 			return 0;
-> 		perror("fanotify_init");
-> 		return 1;
-> 	}
-> 
-> 	if (argc > 1) {
-> 		fd = open(argv[1], O_RDONLY | O_DIRECT);
-> 		if (fd < 0) {
-> 			perror("open");
-> 			return 1;
-> 		}
-> 	} else {
-> 		fd = open("file0", O_RDONLY | O_DIRECT);
-> 		if (fd < 0) {
-> 			perror("open");
-> 			return 1;
-> 		}
-> 	}
-> 
-> 	ret = fanotify_mark(fan, FAN_MARK_ADD, FAN_ACCESS|FAN_MODIFY, fd, NULL);
-> 	if (ret < 0) {
-> 		perror("fanotify_mark");
-> 		return 1;
-> 	}
-> 
-> 	ret = 0;
-> 	if (fork()) {
-> 		int wstat;
-> 
-> 		io_uring_queue_init(4, &ring, 0);
-> 		if (posix_memalign(&buf, 4096, 4096))
-> 			return 0;
-> 		sqe = io_uring_get_sqe(&ring);
-> 		io_uring_prep_read(sqe, fd, buf, 4096, 0);
-> 		io_uring_submit(&ring);
-> 		ret = io_uring_wait_cqe(&ring, &cqe);
-> 		if (ret) {
-> 			fprintf(stderr, "wait_ret=%d\n", ret);
-> 			return 1;
-> 		}
-> 		wait(&wstat);
-> 		ret = WEXITSTATUS(wstat);
-> 	} else {
-> 		struct fanotify_event_metadata m;
-> 		int fret;
-> 
-> 		fret = read(fan, &m, sizeof(m));
-> 		if (fret < 0)
-> 			perror("fanotify read");
-> 		/* fail if mask isn't right or pid indicates non-task context */
-> 		else if (!(m.mask & 1) || !m.pid)
-> 			exit(1);
-> 		exit(0);
-> 	}
-> 
-> 	return ret;
-> }
-> 
-> -- 
+> --
 > Jens Axboe
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+--
+Anuj Gupta

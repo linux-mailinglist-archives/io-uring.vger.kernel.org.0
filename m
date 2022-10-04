@@ -2,93 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E6E5F47CD
-	for <lists+io-uring@lfdr.de>; Tue,  4 Oct 2022 18:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7486A5F4BA6
+	for <lists+io-uring@lfdr.de>; Wed,  5 Oct 2022 00:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbiJDQmE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Oct 2022 12:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37508 "EHLO
+        id S230174AbiJDWL2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Oct 2022 18:11:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiJDQmB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 12:42:01 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52D75EDE3
-        for <io-uring@vger.kernel.org>; Tue,  4 Oct 2022 09:41:59 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id l127so8451033iof.12
-        for <io-uring@vger.kernel.org>; Tue, 04 Oct 2022 09:41:59 -0700 (PDT)
+        with ESMTP id S230405AbiJDWLU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 18:11:20 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D566D576
+        for <io-uring@vger.kernel.org>; Tue,  4 Oct 2022 15:10:42 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id f140so9032111pfa.1
+        for <io-uring@vger.kernel.org>; Tue, 04 Oct 2022 15:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
-        bh=lt3R8izx9EnX89I3uY2yDhaSLHndLcmUEL/LtZodjaY=;
-        b=4whC8w21HxpHbBgXcbkK+k9Dme0ceJdK8HQgGSiK1NrT+tiSOV/WovVFQVtTt/HWsH
-         PxDSm9IMoMN56VIypuQlxPir7yKTu3416OSfvxdz8wjrQPdKsuB5aLzIV2tMXVjsZnxx
-         Zf2AxvfhM6NjRd4iy50dYj+5WYz7sXolHOtKjF2wcddvnYdA+2TiTsyZqm2hKWuOGUA1
-         bW+BXMfOhKohux5uY5//0UM4H8Xe8yZMttoZXGr1P3qh8usqy3zq7ZUsGAF+hYY6tvz9
-         KWcZGkXaLU9IbqgJkdQV+Ot4xTMx3/NEgTSGQ/PrL53v95l8n4h64mB4vO6f1VgvD9yx
-         htkw==
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date;
+        bh=9c4M4NaKYwplMQyV+GkcSll4buW+t3Sjd/Yj4MDRHKw=;
+        b=tQsA8k2mYw22xI7s9M70ai/xj/eaL4qPzJ2kiDmzw+z1Ju72fmABqKfwSsOxfAbucD
+         tWfGaY0DW5BrnU74eRKCRRl+yecWlCMLDIblUa0YC/zIiYViOgApabgUs/f2E45QN4xB
+         4cJ06b0rcoUP2TOZ6+r5IZGKcLFY4StU9yXN1XNvD0eB3htUOmJmtpNQ+OTyF7yUFYII
+         zm5zkAv4SSIFpeQVkSmDazhU0Fp0N2AHRo/RdHhw1/VhqS0RBmV+/FH9CqASxk47ffh+
+         ymDjOcJd+Hl9RicJkCVkSbxAmMdd3MNDDbJmQVMmyhYrKpSqSaAiL9R2kN40QV337xpX
+         R1bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=lt3R8izx9EnX89I3uY2yDhaSLHndLcmUEL/LtZodjaY=;
-        b=6GyvlvRxqhLv+qR5eydWNYuUSvgC5rxPnPbjPqoLhKSYURJnjCZ7dtcAlsx3go6qQa
-         P15iTx/72ZJlNv+VMEklCFp874PEpi7tWUMBn+6yyCVoRPgZuoAMHKRUbySvKxGa6hgv
-         TPl0j7xHn3LSLueob9ClWO0D9+/0h2CDGG4x2QiQkyOZojJYeXsE2Cg3M05gi1Ap/BoD
-         EL9kPoIM5vw8m16nWNg2M4RPekiyHoKfiHJ5pVCdvuvLeC+O2YLNxf4xTLYdyXhJC9fY
-         NbQmIABLXYZ/WjWs60Erm76wb7kaesFo6W9qm0eYOuHwC/H7pWS0jNH99scdsEFUvIA+
-         0Ytw==
-X-Gm-Message-State: ACrzQf301OckdKSVVFLbXMintOPRpQdwDJFsz+DC4szebRstou/K82cL
-        lfjahd3Y2LBNZuk2f7vjl8EWHQ==
-X-Google-Smtp-Source: AMsMyM66XfQoGK2nj7BD85MJUj1tCABZ27DOBIP9gg+iCQnkjMCaxKGu+fuKGHRY23gOP5qYfUMukw==
-X-Received: by 2002:a02:9687:0:b0:363:50b6:6ec7 with SMTP id w7-20020a029687000000b0036350b66ec7mr1464489jai.39.1664901719184;
-        Tue, 04 Oct 2022 09:41:59 -0700 (PDT)
-Received: from [127.0.0.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id c72-20020a02964e000000b003633ef39bd3sm1638823jai.92.2022.10.04.09.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Oct 2022 09:41:58 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Kanchan Joshi <joshi.k@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <7404b4a696f64e33e5ef3c5bd3754d4f26d13e50.1664887093.git.geert+renesas@glider.be>
-References: <7404b4a696f64e33e5ef3c5bd3754d4f26d13e50.1664887093.git.geert+renesas@glider.be>
-Subject: Re: [PATCH -next] io_uring: Add missing inline to io_uring_cmd_import_fixed() dummy
-Message-Id: <166490171822.91699.6395333922745034798.b4-ty@kernel.dk>
-Date:   Tue, 04 Oct 2022 10:41:58 -0600
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=9c4M4NaKYwplMQyV+GkcSll4buW+t3Sjd/Yj4MDRHKw=;
+        b=jmCm/eE2UkAKdmgXszTDAnTMOtIkXBRoz7/2M+Fz/X2zFnqZywIlScSjRB/EiFNe7W
+         9O5u1JsC0FP68zAGuFNi0GGgLILwqmtxkiyKMWrgqSKMKFAAfE9/ihbN8ErPGf+ho5jp
+         S4ulj13Knv2QAe72rrOpRTlwaFHI9xr4uvGy5cvfsux7fuaRaZ5FFasutDa5oLLGwZ5P
+         T1qF8LuQEPXAvJ/2KK63SKDFeJODlHK8GjUNu1y5ozng0As8vVqSBybr8FG52XSQsZqi
+         Eft12sSlPJq0m4f5TkzOJvS9F8GbG2gQkTEU+hCIhAlV61UkthS0p0gHMWBGTMy7Suei
+         kl/Q==
+X-Gm-Message-State: ACrzQf0kVtWtEbRMmkAaR0qDNQ9/LjSjz1smzGBj+jT56ZQPgKm23zym
+        J+Ern+p230ZQQAA3ooVtK/zpjQ==
+X-Google-Smtp-Source: AMsMyM7Mmvf+MrajTLKjZd44LA1r6QmvaJbevAc7dpsqiube9kj0tGNFPBv3uIaDW2ws9h0BFKryRw==
+X-Received: by 2002:a65:6e47:0:b0:438:c2f0:c0eb with SMTP id be7-20020a656e47000000b00438c2f0c0ebmr24742972pgb.236.1664921441082;
+        Tue, 04 Oct 2022 15:10:41 -0700 (PDT)
+Received: from ?IPV6:2600:380:4b7a:dece:391e:b400:2f06:c12f? ([2600:380:4b7a:dece:391e:b400:2f06:c12f])
+        by smtp.gmail.com with ESMTPSA id z13-20020a63330d000000b00434651f9a96sm8758274pgz.15.2022.10.04.15.10.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Oct 2022 15:10:40 -0700 (PDT)
+Message-ID: <d7d4befa-bfff-e01f-817c-03158528e46e@kernel.dk>
+Date:   Tue, 4 Oct 2022 16:10:38 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-d9ed3
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [GIT PULL] Passthrough updates for 6.1-rc1
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
+References: <dcefcabc-db87-f285-ddce-ad8db26feb2e@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <dcefcabc-db87-f285-ddce-ad8db26feb2e@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 4 Oct 2022 14:39:10 +0200, Geert Uytterhoeven wrote:
-> If CONFIG_IO_URING is not set:
+On 10/3/22 1:40 PM, Jens Axboe wrote:
+> Hi Linus,
 > 
->     include/linux/io_uring.h:65:12: error: ‘io_uring_cmd_import_fixed’ defined but not used [-Werror=unused-function]
->        65 | static int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> 	  |            ^~~~~~~~~~~~~~~~~~~~~~~~~
+> On top of the block and io_uring branches, here are a set of updates for
+> the passthrough support that was merged in the 6.0 kernel. With these
+> changes, passthrough NVMe support over io_uring now performs at the same
+> level as block device O_DIRECT, and in many cases 6-8% better. This pull
+> request contains:
 > 
-> Fix this by adding the missing "inline" keyword.
+> - Add support for fixed buffers for passthrough (Anuj, Kanchan)
 > 
-> [...]
+> - Enable batched allocations and freeing on passthrough, similarly to
+>   what we support on the normal storage path (me)
+> 
+> Please pull!
 
-Applied, thanks!
+Geert noticed that there was an issue if io_uring wasn't configured,
+there's been a patch added for that. I'll send a v2 of this pull request.
 
-[1/1] io_uring: Add missing inline to io_uring_cmd_import_fixed() dummy
-      (no commit info)
-
-Best regards,
 -- 
 Jens Axboe
 

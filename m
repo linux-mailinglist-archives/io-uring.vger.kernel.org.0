@@ -2,81 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC98C5F4522
-	for <lists+io-uring@lfdr.de>; Tue,  4 Oct 2022 16:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60E6E5F47CD
+	for <lists+io-uring@lfdr.de>; Tue,  4 Oct 2022 18:42:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbiJDOHD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Oct 2022 10:07:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47272 "EHLO
+        id S230167AbiJDQmE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Oct 2022 12:42:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbiJDOHC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 10:07:02 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE5742B621
-        for <io-uring@vger.kernel.org>; Tue,  4 Oct 2022 07:07:00 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id u10so5025534ilm.5
-        for <io-uring@vger.kernel.org>; Tue, 04 Oct 2022 07:07:00 -0700 (PDT)
+        with ESMTP id S229525AbiJDQmB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 12:42:01 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52D75EDE3
+        for <io-uring@vger.kernel.org>; Tue,  4 Oct 2022 09:41:59 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id l127so8451033iof.12
+        for <io-uring@vger.kernel.org>; Tue, 04 Oct 2022 09:41:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=p7Q82Ogq2xPg4acUPUahYN0JbViii+RELCYpkPeC9jE=;
-        b=yBgSQpIX7cQ6hBHbax02T/j2z640YYWeqwqhkYs3OjQKDN6eGxPkfX75S8dVSYnD9c
-         ym24uy79rQTKFq4KLcLeYeh/lfeS6wCg+d5MQHqmSH31YYLiwhBjO8SRAahSUdO4onnI
-         6sWS2Zv0Ic5QWA+b0qSlvU+2f14y4ZfFUVw05rUgVxtAsRQwejhHAjw+DXQxK+OP5iMD
-         OrzIvCA7jhE+zXcVuz8CWr86p+BSLVBykezyFmkzkAQN1OlfbbEjRuPg31+5zUmWSsLP
-         Qu7tRoJb4shlpMnsncl9GVYI2J52vCoRFLyamaNdkt0mS1NPwNRH/toekBSrQ+wlD46X
-         arlQ==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
+        bh=lt3R8izx9EnX89I3uY2yDhaSLHndLcmUEL/LtZodjaY=;
+        b=4whC8w21HxpHbBgXcbkK+k9Dme0ceJdK8HQgGSiK1NrT+tiSOV/WovVFQVtTt/HWsH
+         PxDSm9IMoMN56VIypuQlxPir7yKTu3416OSfvxdz8wjrQPdKsuB5aLzIV2tMXVjsZnxx
+         Zf2AxvfhM6NjRd4iy50dYj+5WYz7sXolHOtKjF2wcddvnYdA+2TiTsyZqm2hKWuOGUA1
+         bW+BXMfOhKohux5uY5//0UM4H8Xe8yZMttoZXGr1P3qh8usqy3zq7ZUsGAF+hYY6tvz9
+         KWcZGkXaLU9IbqgJkdQV+Ot4xTMx3/NEgTSGQ/PrL53v95l8n4h64mB4vO6f1VgvD9yx
+         htkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=p7Q82Ogq2xPg4acUPUahYN0JbViii+RELCYpkPeC9jE=;
-        b=11334lMnUraRZnkKCjK13nirIqDreffo59ML9u9OUVu8Rj4vu5SkHrekjH8+R8MysG
-         CifDaTxp3Bw375DQXU6dpN08nhHugom7SGvoceLdAfwBtpz7yH5KvgYbvEp4Q36nKYzc
-         /lzr9KjcLMidJy4vZImhBm2JvKlyeyC+/hvmWFm3R0GmmSVBiPWOZjwJ9xUwYGsdHLdu
-         kaTCbVnr5IO6ch7VOOlWQmZuN0+Umolp3vWPpwpxGnN/RxE3zIcjuUdRKBDg1NIKg+t7
-         ROuVxFuwGMRvonO0LHxm/HlaAdGwN7G3tbQTe8xA4tjz9JcGtosYXN5yHltUhq1wYjpK
-         ofNw==
-X-Gm-Message-State: ACrzQf3G0LRQJ+7TWvHt/25KY9xOrls+MCWKxkQVmoaUpkVAyB6JYh8v
-        EH6Yeo0rcerMfFvIof3cJPI0PA==
-X-Google-Smtp-Source: AMsMyM4ANRazDqOQe3xQ3sT/KDLWplHBAO38i3wNHZfDVn0bHoq93tczpiGj/hXsPj98ziQEBX9WIw==
-X-Received: by 2002:a05:6e02:158a:b0:2d3:f1c0:6b68 with SMTP id m10-20020a056e02158a00b002d3f1c06b68mr12355952ilu.38.1664892420229;
-        Tue, 04 Oct 2022 07:07:00 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id l28-20020a02665c000000b00356744215f6sm5276128jaf.47.2022.10.04.07.06.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Oct 2022 07:06:59 -0700 (PDT)
-Message-ID: <79fd16a6-2585-2c68-5212-bf523ac02dd1@kernel.dk>
-Date:   Tue, 4 Oct 2022 08:06:58 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH -next] io_uring: Add missing inline to
- io_uring_cmd_import_fixed() dummy
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Anuj Gupta <anuj20.g@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <7404b4a696f64e33e5ef3c5bd3754d4f26d13e50.1664887093.git.geert+renesas@glider.be>
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=lt3R8izx9EnX89I3uY2yDhaSLHndLcmUEL/LtZodjaY=;
+        b=6GyvlvRxqhLv+qR5eydWNYuUSvgC5rxPnPbjPqoLhKSYURJnjCZ7dtcAlsx3go6qQa
+         P15iTx/72ZJlNv+VMEklCFp874PEpi7tWUMBn+6yyCVoRPgZuoAMHKRUbySvKxGa6hgv
+         TPl0j7xHn3LSLueob9ClWO0D9+/0h2CDGG4x2QiQkyOZojJYeXsE2Cg3M05gi1Ap/BoD
+         EL9kPoIM5vw8m16nWNg2M4RPekiyHoKfiHJ5pVCdvuvLeC+O2YLNxf4xTLYdyXhJC9fY
+         NbQmIABLXYZ/WjWs60Erm76wb7kaesFo6W9qm0eYOuHwC/H7pWS0jNH99scdsEFUvIA+
+         0Ytw==
+X-Gm-Message-State: ACrzQf301OckdKSVVFLbXMintOPRpQdwDJFsz+DC4szebRstou/K82cL
+        lfjahd3Y2LBNZuk2f7vjl8EWHQ==
+X-Google-Smtp-Source: AMsMyM66XfQoGK2nj7BD85MJUj1tCABZ27DOBIP9gg+iCQnkjMCaxKGu+fuKGHRY23gOP5qYfUMukw==
+X-Received: by 2002:a02:9687:0:b0:363:50b6:6ec7 with SMTP id w7-20020a029687000000b0036350b66ec7mr1464489jai.39.1664901719184;
+        Tue, 04 Oct 2022 09:41:59 -0700 (PDT)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id c72-20020a02964e000000b003633ef39bd3sm1638823jai.92.2022.10.04.09.41.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Oct 2022 09:41:58 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
+To:     Kanchan Joshi <joshi.k@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 In-Reply-To: <7404b4a696f64e33e5ef3c5bd3754d4f26d13e50.1664887093.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+References: <7404b4a696f64e33e5ef3c5bd3754d4f26d13e50.1664887093.git.geert+renesas@glider.be>
+Subject: Re: [PATCH -next] io_uring: Add missing inline to io_uring_cmd_import_fixed() dummy
+Message-Id: <166490171822.91699.6395333922745034798.b4-ty@kernel.dk>
+Date:   Tue, 04 Oct 2022 10:41:58 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: b4 0.11.0-dev-d9ed3
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/4/22 6:39 AM, Geert Uytterhoeven wrote:
+On Tue, 4 Oct 2022 14:39:10 +0200, Geert Uytterhoeven wrote:
 > If CONFIG_IO_URING is not set:
 > 
 >     include/linux/io_uring.h:65:12: error: ‘io_uring_cmd_import_fixed’ defined but not used [-Werror=unused-function]
@@ -84,9 +80,15 @@ On 10/4/22 6:39 AM, Geert Uytterhoeven wrote:
 > 	  |            ^~~~~~~~~~~~~~~~~~~~~~~~~
 > 
 > Fix this by adding the missing "inline" keyword.
+> 
+> [...]
 
-Thanks Geert, I'll get this added.
+Applied, thanks!
 
+[1/1] io_uring: Add missing inline to io_uring_cmd_import_fixed() dummy
+      (no commit info)
+
+Best regards,
 -- 
 Jens Axboe
 

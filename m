@@ -2,114 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E085F3B62
-	for <lists+io-uring@lfdr.de>; Tue,  4 Oct 2022 04:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E98DA5F3C89
+	for <lists+io-uring@lfdr.de>; Tue,  4 Oct 2022 07:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbiJDC1X (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 Oct 2022 22:27:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
+        id S229544AbiJDFwZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Oct 2022 01:52:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbiJDC1V (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Oct 2022 22:27:21 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C75613DF0C
-        for <io-uring@vger.kernel.org>; Mon,  3 Oct 2022 19:26:55 -0700 (PDT)
-Received: by mail-wr1-f50.google.com with SMTP id b7so11588555wrq.9
-        for <io-uring@vger.kernel.org>; Mon, 03 Oct 2022 19:26:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=qjKXbgy884E4Ld0bEwyZ+YfW1H1MNcfT3u0lwRIjN74=;
-        b=G3fmC1nN4V1ZBa3jGBh1j4QKqbGDH8g42r8gkVIfkwa4O6MQlpS03GD8CuKR2arkZE
-         R1Jzv3W5IIixEyldEEtAAyEDEpsvZuO/B8C8n4dc91Ep35hMNmUldyKQhdXJLdj9TzRc
-         bcoW/hmOpLEGgfnSOLqAklakacFBjn1dmsAp3rNajTZpfQ6w/uRhXqx9YvrXSHkJtpEx
-         udYb1YB6JNRTwRBb5ut0u2WosahcLiKbeyZcqHKLg1N9tAHhj1yCDWatu1h1tpgwpBLa
-         TDuIWUliMhsDAm87ysnrDuhEDbusfPEmh8hkvOilhsr58E55/tWo+0cfyo4kbQ+8lzb1
-         wmXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=qjKXbgy884E4Ld0bEwyZ+YfW1H1MNcfT3u0lwRIjN74=;
-        b=Ly4tK91X4fbLIp0swYkI9n5on1GIniEkL7CShGuD0wEYRVCAN/coffkq+8avhcA+cJ
-         /h5DPq9sovPK5ntLNYYQmaP4U22qt1P2tjFlzGZVhsPdKjk3WIrQ+Am8E+x3Cu9BhsCV
-         3VdakdMqSwZXuurZI9aF+fe/1cbTlFt4N+N/pcF0YyfxnrC+wOxemSTdWEd2fvyMCrEk
-         5Ra/XKKS/aQdPWKppWLROAMD80ajNyd0sgEOG6DBcSvCVzs79OHw4cWuWc3RTQWYXE9q
-         5263kKW3Dxw82yxNgLOInR0BWSaa5wbj3Gus2kkhiLAE/eMuGCEflgqRZzhr5kS0GBZc
-         PXyA==
-X-Gm-Message-State: ACrzQf33sGF6Yvq5MLG95nkBuNwKxrHo7+PjfMtd1W29dx9v5dJsor9x
-        jHNVhgIjy7tgMDDTFaoGNupKWt7pVGk=
-X-Google-Smtp-Source: AMsMyM5Ks2y5D5AqrQHrSQq7TsD6upxgB2BId37S8cP1jCUPIv1QokXDmqBYj8VSjQdk3Z0Fi9v+Vg==
-X-Received: by 2002:a5d:5a9e:0:b0:22a:498d:d2fd with SMTP id bp30-20020a5d5a9e000000b0022a498dd2fdmr14710798wrb.390.1664850026100;
-        Mon, 03 Oct 2022 19:20:26 -0700 (PDT)
-Received: from 127.0.0.1localhost (188.30.232.152.threembb.co.uk. [188.30.232.152])
-        by smtp.gmail.com with ESMTPSA id j13-20020a5d452d000000b00228a6ce17b4sm11074665wra.37.2022.10.03.19.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 19:20:25 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-6.1 1/1] io_uring: remove notif leftovers
-Date:   Tue,  4 Oct 2022 03:19:25 +0100
-Message-Id: <8df8877d677be5a2b43afd936d600e60105ea960.1664849941.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        with ESMTP id S229486AbiJDFwY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 01:52:24 -0400
+X-Greylist: delayed 510 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 03 Oct 2022 22:52:20 PDT
+Received: from host1.nc.manuel-bentele.de (host1.nc.manuel-bentele.de [92.60.37.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03841658B;
+        Mon,  3 Oct 2022 22:52:20 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A63855E497;
+        Tue,  4 Oct 2022 07:43:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manuel-bentele.de;
+        s=dkim; t=1664862223;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:
+         content-transfer-encoding:content-language:in-reply-to:references;
+        bh=0IQPBk0HRTduHZsmHP+k9foHwxcORE1gRHiBPhFIav4=;
+        b=HYo7qjDZPXw/Zx384ZSCycLpWLZ8ARxxF4hctF/XC4EHHN5OWRAcgumnAT62QQtgEenAXs
+        wuU9J1w2Twolufls/op925rK7Tuxugpl0BEpSrpsnxBnUKKeMTHRHJh/V1nyyr6yHpzQzT
+        SsXQdoLDK5rLQFiBcrRpMm0Ssj39BIMZkthL8u0/yPbKxAmVDIxVXPlG3z0a4MOK5elBci
+        /JcnG6fQiR0Y3zTyF3xgDGD3d8D0CiVRQBCVm8WgmxykF7FIdtIYBSjSGUxuEotx+hawFg
+        QkTys34BKXZk7Q3S22/tRuf2wD+AiW55L6DM+tIqJA3Uo1omnf4YKeKNc6b0RA==
+Message-ID: <b15c2ff8-ae30-8e8e-4178-c9976346afde@manuel-bentele.de>
+Date:   Tue, 4 Oct 2022 07:43:40 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: ublk-qcow2: ublk-qcow2 is available
+Content-Language: en-US
+To:     Ming Lei <tom.leiming@gmail.com>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Kirill Tkhai <kirill.tkhai@openvz.org>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Simon Rettberg <simon.rettberg@rz.uni-freiburg.de>,
+        Dirk von Suchodoletz <dirk.von.suchodoletz@rz.uni-freiburg.de>
+References: <Yza1u1KfKa7ycQm0@T590>
+From:   Manuel Bentele <development@manuel-bentele.de>
+In-Reply-To: <Yza1u1KfKa7ycQm0@T590>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URI_DOTEDU
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Notifications were killed but there is a couple of fields and struct
-declarations left, remove them.
+Hi all,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/linux/io_uring_types.h | 5 -----
- io_uring/io_uring.c            | 1 -
- 2 files changed, 6 deletions(-)
+thanks for the notification.I want to note that the official "in kernel
+qcow2 (ro)" project was renamed to "xloop" and is now maintained on
+Github [1]. So far we are successfully using xloop toimplement our use
+case explained in [2].
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index aa4d90a53866..f5b687a787a3 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -34,9 +34,6 @@ struct io_file_table {
- 	unsigned int alloc_hint;
- };
- 
--struct io_notif;
--struct io_notif_slot;
--
- struct io_hash_bucket {
- 	spinlock_t		lock;
- 	struct hlist_head	list;
-@@ -242,8 +239,6 @@ struct io_ring_ctx {
- 		unsigned		nr_user_files;
- 		unsigned		nr_user_bufs;
- 		struct io_mapped_ubuf	**user_bufs;
--		struct io_notif_slot	*notif_slots;
--		unsigned		nr_notif_slots;
- 
- 		struct io_submit_state	submit_state;
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 73b841d4cfd0..5e7c086685bf 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2625,7 +2625,6 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	}
- #endif
- 	WARN_ON_ONCE(!list_empty(&ctx->ltimeout_list));
--	WARN_ON_ONCE(ctx->notif_slots || ctx->nr_notif_slots);
- 
- 	if (ctx->mm_account) {
- 		mmdrop(ctx->mm_account);
--- 
-2.37.3
+Seems like we have a technical alternative to get file-format specific
+functionality out of the kernel. When I presented the "in kernel qcow2
+(ro)" project idea on the mailing list [3], there was a discussion about
+whether file formats like qcow2 should be implemented in the kernel or
+not? Now, this question should be obsolete.
 
+[1] https://github.com/bwLehrpool/xloop
+[2] https://www.spinics.net/lists/linux-block/msg44858.html
+[3] https://www.spinics.net/lists/linux-block/msg39538.html
+
+Regards,
+Manuel
+
+On 9/30/22 11:24, Ming Lei wrote:
+> Hello,
+>
+> ublk-qcow2 is available now.
+>
+> So far it provides basic read/write function, and compression and snapshot
+> aren't supported yet. The target/backend implementation is completely
+> based on io_uring, and share the same io_uring with ublk IO command
+> handler, just like what ublk-loop does.
+>
+> Follows the main motivations of ublk-qcow2:
+>
+> - building one complicated target from scratch helps libublksrv APIs/functions
+>   become mature/stable more quickly, since qcow2 is complicated and needs more
+>   requirement from libublksrv compared with other simple ones(loop, null)
+>
+> - there are several attempts of implementing qcow2 driver in kernel, such as
+>   ``qloop`` [2], ``dm-qcow2`` [3] and ``in kernel qcow2(ro)`` [4], so ublk-qcow2
+>   might useful be for covering requirement in this field
+>
+> - performance comparison with qemu-nbd, and it was my 1st thought to evaluate
+>   performance of ublk/io_uring backend by writing one ublk-qcow2 since ublksrv
+>   is started
+>
+> - help to abstract common building block or design pattern for writing new ublk
+>   target/backend
+>
+> So far it basically passes xfstest(XFS) test by using ublk-qcow2 block
+> device as TEST_DEV, and kernel building workload is verified too. Also
+> soft update approach is applied in meta flushing, and meta data
+> integrity is guaranteed, 'make test T=qcow2/040' covers this kind of
+> test, and only cluster leak is reported during this test.
+>
+> The performance data looks much better compared with qemu-nbd, see
+> details in commit log[1], README[5] and STATUS[6]. And the test covers both
+> empty image and pre-allocated image, for example of pre-allocated qcow2
+> image(8GB):
+>
+> - qemu-nbd (make test T=qcow2/002)
+> 	randwrite(4k): jobs 1, iops 24605
+> 	randread(4k): jobs 1, iops 30938
+> 	randrw(4k): jobs 1, iops read 13981 write 14001
+> 	rw(512k): jobs 1, iops read 724 write 728
+>
+> - ublk-qcow2 (make test T=qcow2/022)
+> 	randwrite(4k): jobs 1, iops 104481
+> 	randread(4k): jobs 1, iops 114937
+> 	randrw(4k): jobs 1, iops read 53630 write 53577
+> 	rw(512k): jobs 1, iops read 1412 write 1423
+>
+> Also ublk-qcow2 aligns queue's chunk_sectors limit with qcow2's cluster size,
+> which is 64KB at default, this way simplifies backend io handling, but
+> it could be increased to 512K or more proper size for improving sequential
+> IO perf, just need one coroutine to handle more than one IOs.
+>
+>
+> [1] https://github.com/ming1/ubdsrv/commit/9faabbec3a92ca83ddae92335c66eabbeff654e7
+> [2] https://upcommons.upc.edu/bitstream/handle/2099.1/9619/65757.pdf?sequence=1&isAllowed=y
+> [3] https://lwn.net/Articles/889429/
+> [4] https://lab.ks.uni-freiburg.de/projects/kernel-qcow2/repository
+> [5] https://github.com/ming1/ubdsrv/blob/master/qcow2/README.rst
+> [6] https://github.com/ming1/ubdsrv/blob/master/qcow2/STATUS.rst
+>
+> Thanks,
+> Ming

@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0EEF5F4DBD
-	for <lists+io-uring@lfdr.de>; Wed,  5 Oct 2022 04:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C08F5F4DE6
+	for <lists+io-uring@lfdr.de>; Wed,  5 Oct 2022 04:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229446AbiJECfE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Oct 2022 22:35:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50436 "EHLO
+        id S230161AbiJECpg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Oct 2022 22:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbiJECfC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 22:35:02 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9664613E07
-        for <io-uring@vger.kernel.org>; Tue,  4 Oct 2022 19:35:00 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id a23so6508528pgi.10
-        for <io-uring@vger.kernel.org>; Tue, 04 Oct 2022 19:35:00 -0700 (PDT)
+        with ESMTP id S230149AbiJECoe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Oct 2022 22:44:34 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C687E72873
+        for <io-uring@vger.kernel.org>; Tue,  4 Oct 2022 19:43:52 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id b5so14205990pgb.6
+        for <io-uring@vger.kernel.org>; Tue, 04 Oct 2022 19:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
-        bh=zQbW+5OCsry4zMFWE4a6Xr5jbROqHyZ9G+KNpoilOvg=;
-        b=t75OUgSioKorSyr3iSN4seE0Nmm/lOZRWjSKigile+UdGR7ynoXYvhvwxr0wPKPMT9
-         y67qRaiAB6SQY1JwTFh+m8KEY4+k3R2CpvPmzFMAyUpUek2HmRAaO6Xqsr9ymVDiK1/g
-         e8/MFo7IJAEHaCenKQuDFK0/+BIp12BjaD58x+3g3fOjZNCgk1AvEhaMtKqtvWqXmFS9
-         qDv9VtlyMifiiJhqjxhqUvvoaJAlwLMbcWJFgiXbDgFeCOfca3GID0d4hO5Fuh6dhQJF
-         OC6lOhpikF8ZSdPnBBpjlbavY/UTPT+JI/rzMq2+xWzrc064goEzxdhchf/3sItpssYZ
-         Nlnw==
+        bh=VFDx91/GIoLhChZbz6/LvbWKFiyoMI92tOlDuAV7nGM=;
+        b=WXdSLytRlnJxmkUSVZEaVhljcGPlvJAY10H+N+uKLSczglKG8Xbc71t7QkWVMxzI7U
+         VwBbXmefNA8CYwyR7j5pHgIlkVoSNV6Hyf64mgOUNs08w9u8EJOjMmeKsPPboZP6VxNA
+         ZrGkqUHPp+8pilYJtCOnuKLD3XmcVnOofoVG37kkIC4Z5gZPvyfibyFKUhg7iaRX3Xhl
+         XrNd1qwQuiG7Sx/Eu2+wIXLJAyMrAS8/fX9Xmz1zDi6vDeUPSWuNxnEnGj/mIl7S8DFR
+         7Yn1B61d2iqf9NOVoZuq1EFrDlDBY3mD/ZXY9dP2LfSDORx4VfFVBwaHO6gPcQ7l3crY
+         SM9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date;
-        bh=zQbW+5OCsry4zMFWE4a6Xr5jbROqHyZ9G+KNpoilOvg=;
-        b=ON59FBDWCKZW/q/JpoTaPFeCa3c+jIPdjpK8rHciCajHoQr65+1AUnRfssdqWEabci
-         OAQwM4Wh1ko+xDAjinwkZ1GN8BYWbFuK4GF5t5pjbt9opGMkhVuSb1LUw8H7MSWN9VeX
-         HoS+To0ePUowXPVO5NDhoLa2tSVY+oBF194RHZ16aEWrWftRNIyRyvemTm83m8vMfCdR
-         /0GJJjEIC5FbdT1+Ju2TyMlCv6W1p/7Y4rBY7ScjqUqyEbbyAhts/hOSAAfmo8waexIK
-         U4voerPsUAGCn7Wr+OLK+8+/H/Udc7IXBaR1btaIMHM6Y9EECPP6DKev0NsWp/wyP0to
-         dU/A==
-X-Gm-Message-State: ACrzQf0LLK+ApQkqMQuqyZQBgCdObIeZGkVI7hsGwFP5Am5hD4ZflN5z
-        mQRAq0JlvPGbhcRUhEKHMYjonO9OcaAVww==
-X-Google-Smtp-Source: AMsMyM675NIyvI7mg9/ZcnhlRuwTDIZmkJbuEcWQMMRkDvb+k7IBsUmw/Psj+9MITEL0g128NJtDWw==
-X-Received: by 2002:a65:6d86:0:b0:438:f775:b45d with SMTP id bc6-20020a656d86000000b00438f775b45dmr26015297pgb.291.1664937299818;
-        Tue, 04 Oct 2022 19:34:59 -0700 (PDT)
+        bh=VFDx91/GIoLhChZbz6/LvbWKFiyoMI92tOlDuAV7nGM=;
+        b=i1mF+vw+vaUHgLFQCYOQJ1xFvIufJ6m7peb5ZTq7y7DTRkQwjgcfRIgOE90mq8YGx5
+         vw1p4NR4qHGY8XS7TJ9ampb49lmZPHeZfNmEGCWpMJ80TXiHWMN27ihaEPHPg78Y8ReZ
+         5gBcx6HImoDCHGfHvz+vAnDLLuA6S/tBa9THDxTiS1WFRjTmDsRV8WAlQFAweZ4ANM4H
+         TOJNteLmUsEL+JAPdJC0z/GFzv7ODXpbBx+5+P+30bP5VLPx2M/ULsPcHpecMkhpdS+X
+         WxsUmdnFlAoIpurYFp7a7KbFgfeZcERTtYG2GpRx/dq6D+mTiEtWMZQQgxToZQ27yUc2
+         pifQ==
+X-Gm-Message-State: ACrzQf2SRhuzQvp4fD/8p38C4TBowu6cWut/g/S9a29igZ3AmnTLmKhI
+        1UFh8hf2Trhue6vgyo3Owt63H7sit2vcKA==
+X-Google-Smtp-Source: AMsMyM4TT0L7B9BL6A1J0iE+IxHuqZvBmoD2hfLSSSLP7hyQIxxqcM0dwARLsj1huJ/tekgLnyrNIw==
+X-Received: by 2002:a65:6944:0:b0:43c:da07:5421 with SMTP id w4-20020a656944000000b0043cda075421mr26161208pgq.72.1664937832004;
+        Tue, 04 Oct 2022 19:43:52 -0700 (PDT)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e7-20020a170902ef4700b0017b264a2d4asm3949882plx.44.2022.10.04.19.34.58
+        by smtp.gmail.com with ESMTPSA id z9-20020a170903018900b001746f66244asm9764672plg.18.2022.10.04.19.43.51
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Oct 2022 19:34:59 -0700 (PDT)
-Message-ID: <225ba417-7a82-59e0-6339-37cfd0ad4f7d@kernel.dk>
-Date:   Tue, 4 Oct 2022 20:34:58 -0600
+        Tue, 04 Oct 2022 19:43:51 -0700 (PDT)
+Message-ID: <ce9c96ce-c04d-6814-a8e4-46e15acb589c@kernel.dk>
+Date:   Tue, 4 Oct 2022 20:43:50 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
 Content-Language: en-US
 To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/net: handle -EINPROGRESS correct for
+Subject: [PATCH v2] io_uring/net: handle -EINPROGRESS correct for
  IORING_OP_CONNECT
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -86,8 +86,13 @@ Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
+Since v1:
+
+- Send out the right version of the patch, there's no need to
+  setup async data for the EINPROGRESS retry.
+
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 6b69eff6887e..2b6d55e365cb 100644
+index 6b69eff6887e..c2fbe8f083fb 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
 @@ -46,6 +46,7 @@ struct io_connect {
@@ -106,9 +111,9 @@ index 6b69eff6887e..2b6d55e365cb 100644
  	return 0;
  }
  
-@@ -1404,11 +1406,25 @@ int io_connect(struct io_kiocb *req, unsigned int issue_flags)
- 		io = &__io;
- 	}
+@@ -1393,6 +1395,18 @@ int io_connect(struct io_kiocb *req, unsigned int issue_flags)
+ 	int ret;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
  
 +	if (connect->in_progress) {
 +		struct socket *socket;
@@ -122,16 +127,33 @@ index 6b69eff6887e..2b6d55e365cb 100644
 +		goto out;
 +	}
 +
- 	file_flags = force_nonblock ? O_NONBLOCK : 0;
- 
+ 	if (req_has_async_data(req)) {
+ 		io = req->async_data;
+ 	} else {
+@@ -1409,13 +1423,17 @@ int io_connect(struct io_kiocb *req, unsigned int issue_flags)
  	ret = __sys_connect_file(req->file, &io->address,
  					connect->addr_len, file_flags);
  	if ((ret == -EAGAIN || ret == -EINPROGRESS) && force_nonblock) {
-+		if (ret == -EINPROGRESS)
+-		if (req_has_async_data(req))
+-			return -EAGAIN;
+-		if (io_alloc_async_data(req)) {
+-			ret = -ENOMEM;
+-			goto out;
++		if (ret == -EINPROGRESS) {
 +			connect->in_progress = true;
- 		if (req_has_async_data(req))
- 			return -EAGAIN;
- 		if (io_alloc_async_data(req)) {
++		} else {
++			if (req_has_async_data(req))
++				return -EAGAIN;
++			if (io_alloc_async_data(req)) {
++				ret = -ENOMEM;
++				goto out;
++			}
++			memcpy(req->async_data, &__io, sizeof(__io));
+ 		}
+-		memcpy(req->async_data, &__io, sizeof(__io));
+ 		return -EAGAIN;
+ 	}
+ 	if (ret == -ERESTARTSYS)
 
 -- 
 Jens Axboe

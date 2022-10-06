@@ -2,136 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F4D5F5E4E
-	for <lists+io-uring@lfdr.de>; Thu,  6 Oct 2022 03:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A109D5F6436
+	for <lists+io-uring@lfdr.de>; Thu,  6 Oct 2022 12:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229969AbiJFBIE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Oct 2022 21:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55792 "EHLO
+        id S230227AbiJFKOJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Oct 2022 06:14:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229985AbiJFBHv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Oct 2022 21:07:51 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6F07F262
-        for <io-uring@vger.kernel.org>; Wed,  5 Oct 2022 18:07:25 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id iv17so140517wmb.4
-        for <io-uring@vger.kernel.org>; Wed, 05 Oct 2022 18:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NeBe1cap0U1tPjihDnkNieRZh/P2hvuTrEE/iEOYMOw=;
-        b=N8jTZQya77dyARFSfcnSQqiC5voTJVyhwz/zA9a5uyaidQF+dhhVIqUTvw0/JVObi4
-         zucmRP0s+LVYBEW9a/82DU3mqX/pUsRzoY88cwQL+cDZu1xsT/uJEgETF8s6fBkeLy3y
-         I8svbnd5bYbQKbyy1+CJJOJGmNd+ioiQBa+7iqPeI+UWjjxDIQd25Ll1faqOBrHIc6qs
-         FLr7F+mPNdolsvZqtVla9oQOBCK3gSRrNuKYW0TdplHrJMdkUrWLZSH0IpugKn+cFdLQ
-         ZK+IYwz/e/Ln+pTiXBGdvikiZQZenp1rBowvf2rL3klnsdNdugyDtonEHwDKcY3QEZcQ
-         nWaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NeBe1cap0U1tPjihDnkNieRZh/P2hvuTrEE/iEOYMOw=;
-        b=BpLlz+r8/IgpAAsPGiUk2HnXxPLZRd9QR2SbHPWAWcRF63CamG9C9DFKrrg7iKqTqe
-         8QKvyIs3WFMCT6XU8Gm4CtgJZ3ejd+6Hnt7YrLMd6FBP+tjUMoHVp6fUe8zFuZAUT0fZ
-         83vfsPoSFv+19/cyIu19yB/CZPplI/AK47GT10eyk7GntmsoVuViXkFbOIof69WRAJi2
-         T0nGrZwkUeQGP+LLjKfEP++3dKhQuIUbOabby8KJG7uq++MamnfxQ8QtJRj/d4DbxY6R
-         PYpeSMroGETcC+SCqmCDScKTBDoP8xRGHbknJlHpNEGBqvhPgLSK5PBdwlt16n0nzzVn
-         Y58w==
-X-Gm-Message-State: ACrzQf3cT8QbJhP51Zw3oouyRxsHE9Y4jmNCLEyYt3CiK7ZhO00o6Jmh
-        XvBNILeIbfYF7GoF5Hk3jMdqecoEWoI=
-X-Google-Smtp-Source: AMsMyM5vposABGzw7L+7dkm+MgBfX1CLiea7xiOtNTv7bR0ZmkJm4UC988Yfk8/GlAP6ld6hCBFyFw==
-X-Received: by 2002:a05:600c:3781:b0:3b4:63c8:554b with SMTP id o1-20020a05600c378100b003b463c8554bmr4947121wmr.25.1665018443410;
-        Wed, 05 Oct 2022 18:07:23 -0700 (PDT)
-Received: from 127.0.0.1localhost (94.196.209.4.threembb.co.uk. [94.196.209.4])
-        by smtp.gmail.com with ESMTPSA id q3-20020a1c4303000000b003b4bd18a23bsm3369982wma.12.2022.10.05.18.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 18:07:22 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: optimise mb() in io_req_local_work_add
-Date:   Thu,  6 Oct 2022 02:06:10 +0100
-Message-Id: <43983bc8bc507172adda7a0f00cab1aff09fd238.1665018309.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        with ESMTP id S229844AbiJFKOH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Oct 2022 06:14:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A766C13E
+        for <io-uring@vger.kernel.org>; Thu,  6 Oct 2022 03:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1665051245;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dAdYI9+QG+yvH01DAjeN7mJ9hlotsPkqRPFvWXOIksI=;
+        b=Qgnyv9ecFAPqGx6XXytI+AikxS82KmI1YXCSDg+FySGh1GLzHZI+03rHWAsPvtRoK+svrn
+        eXgbz68sKIOaP7JTlVMnEnRsrAuKS5V/dHpoek0LGJlemqowZOqO2ZCGvCxetMS5apcS1E
+        d1WRGGJjeqR+wkmiu3BpksbLoeTCK9g=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-518-SWus2_ThNQC2TQKOd7pj9g-1; Thu, 06 Oct 2022 06:14:02 -0400
+X-MC-Unique: SWus2_ThNQC2TQKOd7pj9g-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B209C29AA2F4;
+        Thu,  6 Oct 2022 10:14:01 +0000 (UTC)
+Received: from localhost (unknown [10.39.194.193])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 24E49477F55;
+        Thu,  6 Oct 2022 10:14:01 +0000 (UTC)
+Date:   Thu, 6 Oct 2022 11:14:00 +0100
+From:   "Richard W.M. Jones" <rjones@redhat.com>
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kirill Tkhai <kirill.tkhai@openvz.org>,
+        Manuel Bentele <development@manuel-bentele.de>,
+        qemu-devel@nongnu.org, Kevin Wolf <kwolf@redhat.com>,
+        Xie Yongji <xieyongji@bytedance.com>,
+        "Denis V. Lunev" <den@openvz.org>,
+        Stefano Garzarella <sgarzare@redhat.com>
+Subject: Re: ublk-qcow2: ublk-qcow2 is available
+Message-ID: <20221006101400.GC7636@redhat.com>
+References: <Yza1u1KfKa7ycQm0@T590>
+ <Yzs9xQlVuW41TuNC@fedora>
+ <YzwARuAZdaoGTUfP@T590>
+ <CAJSP0QXVK=wUy_JgJ9NmNMtKTRoRX0MwOZUuFWU-1mVWWKij8A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJSP0QXVK=wUy_JgJ9NmNMtKTRoRX0MwOZUuFWU-1mVWWKij8A@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_cqring_wake() needs a barrier for the waitqueue_active() check.
-However, in case of io_req_local_work_add() prior it calls llist_add(),
-which implies an atomic, and with that we can replace smb_mb() with
-smp_mb__after_atomic().
+On Tue, Oct 04, 2022 at 09:53:32AM -0400, Stefan Hajnoczi wrote:
+> qemu-nbd doesn't use io_uring to handle the backend IO,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/io_uring.c |  5 +++--
- io_uring/io_uring.h | 11 +++++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+Would this be fixed by your (not yet upstream) libblkio driver for
+qemu?
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 5e7c086685bf..355fc1f3083d 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1106,6 +1106,8 @@ static void io_req_local_work_add(struct io_kiocb *req)
- 
- 	if (!llist_add(&req->io_task_work.node, &ctx->work_llist))
- 		return;
-+	/* need it for the following io_cqring_wake() */
-+	smp_mb__after_atomic();
- 
- 	if (unlikely(atomic_read(&req->task->io_uring->in_idle))) {
- 		io_move_task_work_from_local(ctx);
-@@ -1117,8 +1119,7 @@ static void io_req_local_work_add(struct io_kiocb *req)
- 
- 	if (ctx->has_evfd)
- 		io_eventfd_signal(ctx);
--	io_cqring_wake(ctx);
--
-+	__io_cqring_wake(ctx);
- }
- 
- static inline void __io_req_task_work_add(struct io_kiocb *req, bool allow_local)
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 177bd55357d7..e733d31f31d2 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -203,17 +203,24 @@ static inline void io_commit_cqring(struct io_ring_ctx *ctx)
- 	smp_store_release(&ctx->rings->cq.tail, ctx->cached_cq_tail);
- }
- 
--static inline void io_cqring_wake(struct io_ring_ctx *ctx)
-+/* requires smb_mb() prior, see wq_has_sleeper() */
-+static inline void __io_cqring_wake(struct io_ring_ctx *ctx)
- {
- 	/*
- 	 * wake_up_all() may seem excessive, but io_wake_function() and
- 	 * io_should_wake() handle the termination of the loop and only
- 	 * wake as many waiters as we need to.
- 	 */
--	if (wq_has_sleeper(&ctx->cq_wait))
-+	if (waitqueue_active(&ctx->cq_wait))
- 		wake_up_all(&ctx->cq_wait);
- }
- 
-+static inline void io_cqring_wake(struct io_ring_ctx *ctx)
-+{
-+	smp_mb();
-+	__io_cqring_wake(ctx);
-+}
-+
- static inline bool io_sqring_full(struct io_ring_ctx *ctx)
- {
- 	struct io_rings *r = ctx->rings;
+Rich.
+
 -- 
-2.37.3
+Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rjones
+Read my programming and virtualization blog: http://rwmj.wordpress.com
+virt-p2v converts physical machines to virtual machines.  Boot with a
+live CD or over the network (PXE) and turn machines into KVM guests.
+http://libguestfs.org/virt-v2v
 

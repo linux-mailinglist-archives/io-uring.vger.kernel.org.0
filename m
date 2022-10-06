@@ -2,140 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A61845F572A
-	for <lists+io-uring@lfdr.de>; Wed,  5 Oct 2022 17:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67F4D5F5E4E
+	for <lists+io-uring@lfdr.de>; Thu,  6 Oct 2022 03:08:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbiJEPMH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Oct 2022 11:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46668 "EHLO
+        id S229969AbiJFBIE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Oct 2022 21:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbiJEPMG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Oct 2022 11:12:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFC96E2C1
-        for <io-uring@vger.kernel.org>; Wed,  5 Oct 2022 08:12:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1664982724;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/WGubC4HbVqcwNsvts+AiFEUTLkMeqajhao/HLtOsbc=;
-        b=YO0e5jqX6ZnXLEVoX+4+3QIOwrxsDlQFFHs6n33ScDjiW/aLoDhCQkTiuHWs/lktPWIsER
-        L083E6dRPfBEKdBXFTjwmXqA1FsqtF5MI4wzC44UWgVmMe7O2yllLAddzeWWMq6Pw1o7DK
-        Cb2N6GE6SNIudeZxV1xTSENfiV7vaio=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-636-Pud9b8BxNhaiVC77lbmreg-1; Wed, 05 Oct 2022 11:12:01 -0400
-X-MC-Unique: Pud9b8BxNhaiVC77lbmreg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E66C3C0D1A4;
-        Wed,  5 Oct 2022 15:11:58 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 59626C15BA4;
-        Wed,  5 Oct 2022 15:11:51 +0000 (UTC)
-Date:   Wed, 5 Oct 2022 11:11:32 -0400
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     "Denis V. Lunev" <den@virtuozzo.com>
-Cc:     Ming Lei <tom.leiming@gmail.com>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kirill Tkhai <kirill.tkhai@openvz.org>,
-        Manuel Bentele <development@manuel-bentele.de>,
-        qemu-devel@nongnu.org, Kevin Wolf <kwolf@redhat.com>,
-        rjones@redhat.com, Xie Yongji <xieyongji@bytedance.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: Re: ublk-qcow2: ublk-qcow2 is available
-Message-ID: <Yz2epPwoufj0mug/@fedora>
-References: <Yza1u1KfKa7ycQm0@T590>
- <Yzs9xQlVuW41TuNC@fedora>
- <6659a0d5-60ab-9ac7-d25d-b4ff1940c6ab@virtuozzo.com>
+        with ESMTP id S229985AbiJFBHv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Oct 2022 21:07:51 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6F07F262
+        for <io-uring@vger.kernel.org>; Wed,  5 Oct 2022 18:07:25 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id iv17so140517wmb.4
+        for <io-uring@vger.kernel.org>; Wed, 05 Oct 2022 18:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NeBe1cap0U1tPjihDnkNieRZh/P2hvuTrEE/iEOYMOw=;
+        b=N8jTZQya77dyARFSfcnSQqiC5voTJVyhwz/zA9a5uyaidQF+dhhVIqUTvw0/JVObi4
+         zucmRP0s+LVYBEW9a/82DU3mqX/pUsRzoY88cwQL+cDZu1xsT/uJEgETF8s6fBkeLy3y
+         I8svbnd5bYbQKbyy1+CJJOJGmNd+ioiQBa+7iqPeI+UWjjxDIQd25Ll1faqOBrHIc6qs
+         FLr7F+mPNdolsvZqtVla9oQOBCK3gSRrNuKYW0TdplHrJMdkUrWLZSH0IpugKn+cFdLQ
+         ZK+IYwz/e/Ln+pTiXBGdvikiZQZenp1rBowvf2rL3klnsdNdugyDtonEHwDKcY3QEZcQ
+         nWaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NeBe1cap0U1tPjihDnkNieRZh/P2hvuTrEE/iEOYMOw=;
+        b=BpLlz+r8/IgpAAsPGiUk2HnXxPLZRd9QR2SbHPWAWcRF63CamG9C9DFKrrg7iKqTqe
+         8QKvyIs3WFMCT6XU8Gm4CtgJZ3ejd+6Hnt7YrLMd6FBP+tjUMoHVp6fUe8zFuZAUT0fZ
+         83vfsPoSFv+19/cyIu19yB/CZPplI/AK47GT10eyk7GntmsoVuViXkFbOIof69WRAJi2
+         T0nGrZwkUeQGP+LLjKfEP++3dKhQuIUbOabby8KJG7uq++MamnfxQ8QtJRj/d4DbxY6R
+         PYpeSMroGETcC+SCqmCDScKTBDoP8xRGHbknJlHpNEGBqvhPgLSK5PBdwlt16n0nzzVn
+         Y58w==
+X-Gm-Message-State: ACrzQf3cT8QbJhP51Zw3oouyRxsHE9Y4jmNCLEyYt3CiK7ZhO00o6Jmh
+        XvBNILeIbfYF7GoF5Hk3jMdqecoEWoI=
+X-Google-Smtp-Source: AMsMyM5vposABGzw7L+7dkm+MgBfX1CLiea7xiOtNTv7bR0ZmkJm4UC988Yfk8/GlAP6ld6hCBFyFw==
+X-Received: by 2002:a05:600c:3781:b0:3b4:63c8:554b with SMTP id o1-20020a05600c378100b003b463c8554bmr4947121wmr.25.1665018443410;
+        Wed, 05 Oct 2022 18:07:23 -0700 (PDT)
+Received: from 127.0.0.1localhost (94.196.209.4.threembb.co.uk. [94.196.209.4])
+        by smtp.gmail.com with ESMTPSA id q3-20020a1c4303000000b003b4bd18a23bsm3369982wma.12.2022.10.05.18.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Oct 2022 18:07:22 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: optimise mb() in io_req_local_work_add
+Date:   Thu,  6 Oct 2022 02:06:10 +0100
+Message-Id: <43983bc8bc507172adda7a0f00cab1aff09fd238.1665018309.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0HJHRezJw1wbMhDd"
-Content-Disposition: inline
-In-Reply-To: <6659a0d5-60ab-9ac7-d25d-b4ff1940c6ab@virtuozzo.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+io_cqring_wake() needs a barrier for the waitqueue_active() check.
+However, in case of io_req_local_work_add() prior it calls llist_add(),
+which implies an atomic, and with that we can replace smb_mb() with
+smp_mb__after_atomic().
 
---0HJHRezJw1wbMhDd
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/io_uring.c |  5 +++--
+ io_uring/io_uring.h | 11 +++++++++--
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-On Tue, Oct 04, 2022 at 01:57:50AM +0200, Denis V. Lunev wrote:
-> On 10/3/22 21:53, Stefan Hajnoczi wrote:
-> > On Fri, Sep 30, 2022 at 05:24:11PM +0800, Ming Lei wrote:
-> > > ublk-qcow2 is available now.
-> > Cool, thanks for sharing!
-> yep
->=20
-> > > So far it provides basic read/write function, and compression and sna=
-pshot
-> > > aren't supported yet. The target/backend implementation is completely
-> > > based on io_uring, and share the same io_uring with ublk IO command
-> > > handler, just like what ublk-loop does.
-> > >=20
-> > > Follows the main motivations of ublk-qcow2:
-> > >=20
-> > > - building one complicated target from scratch helps libublksrv APIs/=
-functions
-> > >    become mature/stable more quickly, since qcow2 is complicated and =
-needs more
-> > >    requirement from libublksrv compared with other simple ones(loop, =
-null)
-> > >=20
-> > > - there are several attempts of implementing qcow2 driver in kernel, =
-such as
-> > >    ``qloop`` [2], ``dm-qcow2`` [3] and ``in kernel qcow2(ro)`` [4], s=
-o ublk-qcow2
-> > >    might useful be for covering requirement in this field
-> There is one important thing to keep in mind about all partly-userspace
-> implementations though:
-> * any single allocation happened in the context of the
-> =A0=A0 userspace daemon through try_to_free_pages() in
-> =A0=A0 kernel has a possibility to trigger the operation,
-> =A0=A0 which will require userspace daemon action, which
-> =A0=A0 is inside the kernel now.
-> * the probability of this is higher in the overcommitted
-> =A0=A0 environment
->=20
-> This was the main motivation of us in favor for the in-kernel
-> implementation.
-
-CCed Josef Bacik because the Linux NBD driver has dealt with memory
-reclaim hangs in the past.
-
-Josef: Any thoughts on userspace block drivers (whether NBD or ublk) and
-how to avoid hangs in memory reclaim?
-
-Stefan
-
---0HJHRezJw1wbMhDd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmM9nqQACgkQnKSrs4Gr
-c8iEoAf/eIubb5NIhncZ0gl2w50kSq02L7TslR04+6oMZQN+WN/pe3IPaCA2AFEC
-5FronSoFT2uNPoARvGAzXKOMgM6L3qLtrstcvVRDm46hBbmJewj6Z3/7oT/KRr5t
-vJtZLmOW4vItXWRmC2v41SmKgkOKMqESjCcBrVXUSXRvYCIsD516MjSE3r+0Lawa
-hPrbD4/1SAz5P0Qtoh1rqFiDSqIpqA7X86InkW/+GHNv0t3pw6E0Bp/CbPC0UVrf
-XU/34RMn/0+ETiTLsrUXgirmHdimpxNdnRgmFGYSsrbwI/Yy0k/2aqQF/JWAo1zi
-6el/KNsveFmDYtRkVC1tYgcwFFNFpw==
-=xRRN
------END PGP SIGNATURE-----
-
---0HJHRezJw1wbMhDd--
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 5e7c086685bf..355fc1f3083d 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1106,6 +1106,8 @@ static void io_req_local_work_add(struct io_kiocb *req)
+ 
+ 	if (!llist_add(&req->io_task_work.node, &ctx->work_llist))
+ 		return;
++	/* need it for the following io_cqring_wake() */
++	smp_mb__after_atomic();
+ 
+ 	if (unlikely(atomic_read(&req->task->io_uring->in_idle))) {
+ 		io_move_task_work_from_local(ctx);
+@@ -1117,8 +1119,7 @@ static void io_req_local_work_add(struct io_kiocb *req)
+ 
+ 	if (ctx->has_evfd)
+ 		io_eventfd_signal(ctx);
+-	io_cqring_wake(ctx);
+-
++	__io_cqring_wake(ctx);
+ }
+ 
+ static inline void __io_req_task_work_add(struct io_kiocb *req, bool allow_local)
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 177bd55357d7..e733d31f31d2 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -203,17 +203,24 @@ static inline void io_commit_cqring(struct io_ring_ctx *ctx)
+ 	smp_store_release(&ctx->rings->cq.tail, ctx->cached_cq_tail);
+ }
+ 
+-static inline void io_cqring_wake(struct io_ring_ctx *ctx)
++/* requires smb_mb() prior, see wq_has_sleeper() */
++static inline void __io_cqring_wake(struct io_ring_ctx *ctx)
+ {
+ 	/*
+ 	 * wake_up_all() may seem excessive, but io_wake_function() and
+ 	 * io_should_wake() handle the termination of the loop and only
+ 	 * wake as many waiters as we need to.
+ 	 */
+-	if (wq_has_sleeper(&ctx->cq_wait))
++	if (waitqueue_active(&ctx->cq_wait))
+ 		wake_up_all(&ctx->cq_wait);
+ }
+ 
++static inline void io_cqring_wake(struct io_ring_ctx *ctx)
++{
++	smp_mb();
++	__io_cqring_wake(ctx);
++}
++
+ static inline bool io_sqring_full(struct io_ring_ctx *ctx)
+ {
+ 	struct io_rings *r = ctx->rings;
+-- 
+2.37.3
 

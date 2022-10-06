@@ -2,111 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFCEC5F6FCB
-	for <lists+io-uring@lfdr.de>; Thu,  6 Oct 2022 22:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 416EF5F6FD7
+	for <lists+io-uring@lfdr.de>; Thu,  6 Oct 2022 23:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbiJFUzH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 6 Oct 2022 16:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37412 "EHLO
+        id S229555AbiJFU76 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 6 Oct 2022 16:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbiJFUzG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Oct 2022 16:55:06 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71A7629C92
-        for <io-uring@vger.kernel.org>; Thu,  6 Oct 2022 13:55:04 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id u10so4473629wrq.2
-        for <io-uring@vger.kernel.org>; Thu, 06 Oct 2022 13:55:04 -0700 (PDT)
+        with ESMTP id S231796AbiJFU75 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 6 Oct 2022 16:59:57 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 684AF10FC2
+        for <io-uring@vger.kernel.org>; Thu,  6 Oct 2022 13:59:53 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id b204so2269199iof.2
+        for <io-uring@vger.kernel.org>; Thu, 06 Oct 2022 13:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=F3AxfhxQb68xnV9J9LEAZgKXEDnloxUT0DxXhxt4t0Q=;
-        b=YjYB+/Gh+6qryPAS/UdtXkDolj4r2KGutlMmrwztNR+uPbKLxzB/kP5nGulMUgka3C
-         gqGX1qa/MEkE9qv9N+OTBjMNAhyjAHkpRnh9SSopGVFGAYw2+5W8QWKoQjDnQfrbGOdT
-         567dINjNVT/EoZgPk74rZn4vBD5mEGP4oMJv0hPSDQV2ebsvVyl3V7ZHdzo49q8RnGf7
-         Xn4LtPnp0ZIwIph1lDN5H4EQRr+ncvkSewZDGEgvX0Ujg0QC+uQcYgBeGkBfaCRMA0sL
-         N09I68ViMFCk54+VghinJO7a0b0royQ9YDw5WJbx/ysGiUFEEnWUJdpKi0VSGOom87RT
-         VeGw==
+        bh=UxX2+F1Ms44bne6elzII/AZze0FZiZPJMcKyEJ0D7TA=;
+        b=zhbVGVLhUYo6Lc8ujEsBTVbYhfNgQ676QR84RZJQtdSNl9eL9Ns9krm49Klwf09vhV
+         AXhxL0J7bvxYZ7q99yVZOs+q/VhTSmW2cUvDqhJ32gLfSJNWCCebEdb2ECbiiB6F64vY
+         QWclbbCuiDBoywTzFvNdjeP6AE5Otc63ar0kDtgu3xQ+gKBgZV/WtyHJ8BVdeSmWmcnu
+         Bp0kjQ52RJmPyRDoI1WjyWBqJ+ICBDUjWgWnD1iFuDCSaLnGWUaMEWlGMqnPkO5KetZH
+         1ivf/R8lG+zqIB007MiCPUuTyCd6d/C2tl91EG67ARrAXcHrpRRmvg9ltPVb1cTz2NzY
+         ihiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F3AxfhxQb68xnV9J9LEAZgKXEDnloxUT0DxXhxt4t0Q=;
-        b=LoLgrliAeXoX8tCuuMcpCLUx/nY//plgV3ClI2xs6ln8vyxe/7ED6FA7pPeLXEOgzP
-         cp8XTJZnISxQxf6YQE8CxOVtWMGG7CQ2hjEvliZ7efbpgImcz0AxLQCk/ZcH07upHw9F
-         oS0uDduCOqnlt1QifpqrTxZg5TVLybUpMHN3wfZHGpNNfs5W3HAesGpLwOoyzY36TOYu
-         FKfAObhw5szV3m/eN2M1vAJ1U04d1Td9XiwriuW7D5xjO03lMicpwWUv6hfdbHvjcsS2
-         3IiEHviv4b0JfTmrjTrXwPWV42LHlBja2lF8PSAQo9W3r1aMQEfB39g1BZMJswRh7Yly
-         pfwg==
-X-Gm-Message-State: ACrzQf3uyqdyJIeOm8/SPZgUy65clsi7Zv38Awthx0C16ap8omaiDH/B
-        71KAt3353AJd0OFWbq1ZuahDml55YjU=
-X-Google-Smtp-Source: AMsMyM6jHSu3deQpWUuI3eJNdg2bfvUGGIbE+wlCWynADmiWwV4urmKryTvEvPTzkkpj6QU/VbDO6Q==
-X-Received: by 2002:a05:6000:2ad:b0:22a:399b:5611 with SMTP id l13-20020a05600002ad00b0022a399b5611mr1168742wry.434.1665089702545;
-        Thu, 06 Oct 2022 13:55:02 -0700 (PDT)
-Received: from [192.168.8.100] (94.196.209.4.threembb.co.uk. [94.196.209.4])
-        by smtp.gmail.com with ESMTPSA id bv10-20020a0560001f0a00b00228fa832b7asm308448wrb.52.2022.10.06.13.55.01
+        bh=UxX2+F1Ms44bne6elzII/AZze0FZiZPJMcKyEJ0D7TA=;
+        b=QrpR74Xp7JcD6UspRoJWDOdyUnuVWhau0kK0r+OICjGS8e6J2yiovDNz7NNyKjsWRL
+         hivthpnLPe7mWqYh1A3rKKwRRF5TqxoPWJg7W2ESrBYr0W6O0XsZuyx3lzuJd1ZIB/re
+         QUQFqmGYXq6w0ccrC9lMjLSv4g63gE2PMd27iOe0+SA1++u8tmVFsVMm4ySulk+M/s/B
+         Z96C9G+7ZwF4D9ethDNmdYeXdRZ4le+ZeymW6CP45o73GIUYFCdnjy9wjInlqwuwOocY
+         i7v6D7gvU5MX/sPxBoLk6BFsGeq9Ss31nL1NzIilbUHU5b63EPhDnZK8fp78fcAT+r2E
+         +pTQ==
+X-Gm-Message-State: ACrzQf1C2PTq6thzgiOGlHvsA/kt+X2dFOMwaru+pZm4WOEGD4UKQDVH
+        vWIduiJy5EGs6Pan5dup3knOYwenHtXQkg==
+X-Google-Smtp-Source: AMsMyM7dKh+CZAsartSW/PVLJFSbH9a4uTPQWImZqZTTe0rJjIf9vEVAqyDcmS5yQeGrM3CYnjpXLQ==
+X-Received: by 2002:a05:6638:3183:b0:35a:9857:582e with SMTP id z3-20020a056638318300b0035a9857582emr858292jak.100.1665089993169;
+        Thu, 06 Oct 2022 13:59:53 -0700 (PDT)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id q130-20020a6b2a88000000b006a153f7e34asm225562ioq.6.2022.10.06.13.59.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Oct 2022 13:55:02 -0700 (PDT)
-Message-ID: <b715a101-3ef6-6772-fb13-c6270520b7e9@gmail.com>
-Date:   Thu, 6 Oct 2022 21:54:00 +0100
+        Thu, 06 Oct 2022 13:59:52 -0700 (PDT)
+Message-ID: <0dbacebb-48bc-4254-6ad5-c00e6d54de8b@kernel.dk>
+Date:   Thu, 6 Oct 2022 14:59:51 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH for-next 0/2] net fixes
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH 1/1] io_uring: optimise locking for local tw with
+ submit_wait
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1664486545.git.asml.silence@gmail.com>
- <166449523995.2986.3987117149082797841.b4-ty@kernel.dk>
- <27c5613c-6333-c908-0c73-02904a8e5c37@gmail.com>
- <266638fb-7406-907d-c537-656bed72fac3@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <266638fb-7406-907d-c537-656bed72fac3@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     Dylan Yudaken <dylany@fb.com>
+References: <281fc79d98b5d91fe4778c5137a17a2ab4693e5c.1665088876.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <281fc79d98b5d91fe4778c5137a17a2ab4693e5c.1665088876.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/6/22 21:46, Jens Axboe wrote:
-> On 10/6/22 2:30 PM, Pavel Begunkov wrote:
->> On 9/30/22 00:47, Jens Axboe wrote:
->>> On Thu, 29 Sep 2022 22:23:17 +0100, Pavel Begunkov wrote:
->>>> two extra io_uring/net fixes
->>>>
->>>> Pavel Begunkov (2):
->>>>     io_uring/net: don't update msg_name if not provided
->>>>     io_uring/net: fix notif cqe reordering
->>>>
->>>> io_uring/net.c | 27 +++++++++++++++++++++------
->>>>    1 file changed, 21 insertions(+), 6 deletions(-)
->>>>
->>>> [...]
->>>
->>> Applied, thanks!
->>
->> Hmm, where did these go? Don't see neither in for-6.1
->> nor 6.1-late
+On 10/6/22 2:42 PM, Pavel Begunkov wrote:
+> Running local task_work requires taking uring_lock, for submit + wait we
+> can try to run them right after submit while we still hold the lock and
+> save one lock/unlokc pair. The optimisation was implemented in the first
+> local tw patches but got dropped for simplicity.
 > 
-> They are in for-6.1/io_uring with the shas listed here too:
+> Suggested-by: Dylan Yudaken <dylany@fb.com>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  io_uring/io_uring.c | 12 ++++++++++--
+>  io_uring/io_uring.h |  7 +++++++
+>  2 files changed, 17 insertions(+), 2 deletions(-)
 > 
->>> [1/2] io_uring/net: don't update msg_name if not provided
->>>         commit: 6f10ae8a155446248055c7ddd480ef40139af788
->>> [2/2] io_uring/net: fix notif cqe reordering
->>>         commit: 108893ddcc4d3aa0a4a02aeb02d478e997001227
-> 
-> Top of tree, in fact:
-> 
-> https://git.kernel.dk/cgit/linux-block/log/?h=for-6.1/io_uring
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 355fc1f3083d..b092473eca1d 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3224,8 +3224,16 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>  			mutex_unlock(&ctx->uring_lock);
+>  			goto out;
+>  		}
+> -		if ((flags & IORING_ENTER_GETEVENTS) && ctx->syscall_iopoll)
+> -			goto iopoll_locked;
+> +		if (flags & IORING_ENTER_GETEVENTS) {
+> +			if (ctx->syscall_iopoll)
+> +				goto iopoll_locked;
+> +			/*
+> +			 * Ignore errors, we'll soon call io_cqring_wait() and
+> +			 * it should handle ownership problems if any.
+> +			 */
+> +			if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+> +				(void)io_run_local_work_locked(ctx);
+> +		}
+>  		mutex_unlock(&ctx->uring_lock);
+>  	}
+>  
+> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+> index e733d31f31d2..8504bc1f3839 100644
+> --- a/io_uring/io_uring.h
+> +++ b/io_uring/io_uring.h
+> @@ -275,6 +275,13 @@ static inline int io_run_task_work_ctx(struct io_ring_ctx *ctx)
+>  	return ret;
+>  }
+>  
+> +static inline int io_run_local_work_locked(struct io_ring_ctx *ctx)
+> +{
+> +	if (llist_empty(&ctx->work_llist))
+> +		return 0;
+> +	return __io_run_local_work(ctx, true);
+> +}
 
-See now, thanks, seems messed up pulling branches
+Do you have pending patches that also use this? If not, maybe we
+should just keep it in io_uring.c? If you do, then this looks fine
+to me rather than needing to shuffle it later.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

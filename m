@@ -2,36 +2,40 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 394975F7F9E
-	for <lists+io-uring@lfdr.de>; Fri,  7 Oct 2022 23:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB025F7F9B
+	for <lists+io-uring@lfdr.de>; Fri,  7 Oct 2022 23:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbiJGVRc convert rfc822-to-8bit (ORCPT
+        id S229517AbiJGVRc convert rfc822-to-8bit (ORCPT
         <rfc822;lists+io-uring@lfdr.de>); Fri, 7 Oct 2022 17:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59260 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbiJGVRa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Oct 2022 17:17:30 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C47365D0E5
-        for <io-uring@vger.kernel.org>; Fri,  7 Oct 2022 14:17:23 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 297I5EHY006830
-        for <io-uring@vger.kernel.org>; Fri, 7 Oct 2022 14:17:23 -0700
+        with ESMTP id S229728AbiJGVR3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Oct 2022 17:17:29 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4EBB3743C
+        for <io-uring@vger.kernel.org>; Fri,  7 Oct 2022 14:17:17 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 297I5hq9008393
+        for <io-uring@vger.kernel.org>; Fri, 7 Oct 2022 14:17:17 -0700
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3k2acdekgv-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3k26gy8673-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 07 Oct 2022 14:17:22 -0700
-Received: from twshared19720.14.frc2.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Fri, 07 Oct 2022 14:17:17 -0700
+Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
+ snc-exhub204.TheFacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 7 Oct 2022 14:17:17 -0700
+Received: from twshared3028.05.ash9.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 7 Oct 2022 14:17:21 -0700
+ 15.1.2375.31; Fri, 7 Oct 2022 14:17:16 -0700
 Received: by devvm2494.atn0.facebook.com (Postfix, from userid 172786)
-        id 7B0A521DAFDA4; Fri,  7 Oct 2022 14:17:13 -0700 (PDT)
+        id 8221E21DAFDA6; Fri,  7 Oct 2022 14:17:13 -0700 (PDT)
 From:   Jonathan Lemon <jonathan.lemon@gmail.com>
 To:     <io-uring@vger.kernel.org>
-Subject: [RFC v1 7/9] page_pool: add page allocation and free hooks.
-Date:   Fri, 7 Oct 2022 14:17:11 -0700
-Message-ID: <20221007211713.170714-8-jonathan.lemon@gmail.com>
+Subject: [RFC v1 8/9] io_uring: provide functions for the page_pool.
+Date:   Fri, 7 Oct 2022 14:17:12 -0700
+Message-ID: <20221007211713.170714-9-jonathan.lemon@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221007211713.170714-1-jonathan.lemon@gmail.com>
 References: <20221007211713.170714-1-jonathan.lemon@gmail.com>
@@ -39,8 +43,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: D9Qslwxk4TApAMcvHPvXEVFE0medB46G
-X-Proofpoint-GUID: D9Qslwxk4TApAMcvHPvXEVFE0medB46G
+X-Proofpoint-GUID: BEUKy5UjV6T0kxidTWmue8cH7J_O407D
+X-Proofpoint-ORIG-GUID: BEUKy5UjV6T0kxidTWmue8cH7J_O407D
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-10-07_04,2022-10-07_01,2022-06-22_01
@@ -55,128 +59,190 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In order to allow for user-allocated page backing, add hooks to the
-page pool so pages can be obtained and released from a user-supplied
-provider instead of the system page allocator.
+These functions are called by the page_pool, in order to refill
+the pool with user-supplied pages, or returning excess pages back
+from the pool.
 
-skbs are marked with skb_mark_for_recycle() if they contain pages
-belonging to a page pool, and page_put() will deliver the pages back
-to the pool instead of freeing them to the system page allocator.
+If no pages are present in the region cache, then an attempt is
+made to obtain more pages from the interface fill queue.
 
 Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 ---
- include/net/page_pool.h |  6 ++++++
- net/core/page_pool.c    | 41 ++++++++++++++++++++++++++++++++++-------
- 2 files changed, 40 insertions(+), 7 deletions(-)
+ include/linux/io_uring.h | 24 ++++++++++++
+ io_uring/kbuf.c          | 13 +++++++
+ io_uring/kbuf.h          |  2 +
+ io_uring/zctap.c         | 82 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 121 insertions(+)
 
-diff --git a/include/net/page_pool.h b/include/net/page_pool.h
-index 813c93499f20..85c8423f9a7e 100644
---- a/include/net/page_pool.h
-+++ b/include/net/page_pool.h
-@@ -82,6 +82,12 @@ struct page_pool_params {
- 	unsigned int	offset;  /* DMA addr offset */
- 	void (*init_callback)(struct page *page, void *arg);
- 	void *init_arg;
-+	struct page *(*alloc_pages)(void *arg, int nid, gfp_t gfp,
-+				    unsigned int order);
-+	unsigned long (*alloc_bulk)(void *arg, gfp_t gfp, int nid,
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 4a2f6cc5a492..b92e65e0a469 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -37,6 +37,14 @@ void __io_uring_free(struct task_struct *tsk);
+ void io_uring_unreg_ringfd(void);
+ const char *io_uring_get_opcode(u8 opcode);
+ 
++struct io_zctap_ifq;
++struct page *io_zctap_ifq_get_page(struct io_zctap_ifq *ifq,
++                                   unsigned int order);
++unsigned long io_zctap_ifq_get_bulk(struct io_zctap_ifq *ifq,
++                                    unsigned long nr_pages,
++                                    struct page **page_array);
++bool io_zctap_ifq_put_page(struct io_zctap_ifq *ifq, struct page *page);
++
+ static inline void io_uring_files_cancel(void)
+ {
+ 	if (current->io_uring) {
+@@ -80,6 +88,22 @@ static inline const char *io_uring_get_opcode(u8 opcode)
+ {
+ 	return "";
+ }
++static inline struct page *io_zctap_ifq_get_page(struct io_zctap_ifq *ifq,
++                                   unsigned int order)
++{
++	return NULL;
++}
++sttaic unsigned long io_zctap_ifq_get_bulk(struct io_zctap_ifq *ifq,
++                                    unsigned long nr_pages,
++                                    struct page **page_array)
++{
++	return 0;
++}
++bool io_zctap_ifq_put_page(struct io_zctap_ifq *ifq, struct page *page)
++{
++	return false;
++}
++
+ #endif
+ 
+ #endif
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 25cd724ade18..caae2755e3d5 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -188,6 +188,19 @@ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+ 	return ret;
+ }
+ 
++/* XXX May called from the driver, in napi context. */
++u64 io_zctap_buffer(struct io_kiocb *req, size_t *len)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_buffer_list *bl;
++	void __user *ret = NULL;
++
++	bl = io_buffer_get_list(ctx, req->buf_index);
++	if (likely(bl))
++		ret = io_ring_buffer_select(req, len, bl, IO_URING_F_UNLOCKED);
++	return (u64)ret;
++}
++
+ static __cold int io_init_bl_list(struct io_ring_ctx *ctx)
+ {
+ 	int i;
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index 746fbf31a703..1379e0e9f870 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -50,6 +50,8 @@ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
+ 
+ void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
+ 
++u64 io_zctap_buffer(struct io_kiocb *req, size_t *len);
++
+ static inline void io_kbuf_recycle_ring(struct io_kiocb *req)
+ {
+ 	/*
+diff --git a/io_uring/zctap.c b/io_uring/zctap.c
+index 9db3421fb9fa..8bebe7c36c82 100644
+--- a/io_uring/zctap.c
++++ b/io_uring/zctap.c
+@@ -311,3 +311,85 @@ int io_provide_ifq_region(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	return -EEXIST;
+ }
++
++/* gets a user-supplied buffer from the fill queue */
++static struct page *io_zctap_get_buffer(struct io_zctap_ifq *ifq)
++{
++	struct io_kiocb req = {
++		.ctx = ifq->ctx,
++		.buf_index = ifq->fill_bgid,
++	};
++	struct io_mapped_ubuf *imu;
++	struct ifq_region *ifr;
++	size_t len;
++	u64 addr;
++	int idx;
++
++	len = 0;
++	ifr = ifq->region;
++	imu = ifr->imu;
++
++	addr = io_zctap_buffer(&req, &len);
++	if (!addr)
++		goto fail;
++
++	/* XXX poor man's implementation of io_import_fixed */
++
++	if (addr < ifr->start || addr + len > ifr->end)
++		goto fail;
++
++	idx = (addr - ifr->start) >> PAGE_SHIFT;
++
++	return imu->bvec[ifr->imu_idx + idx].bv_page;
++
++fail:
++	/* warn and just drop buffer */
++	WARN_RATELIMIT(1, "buffer addr %llx invalid", addr);
++	return NULL;
++}
++
++struct page *io_zctap_ifq_get_page(struct io_zctap_ifq *ifq,
++				   unsigned int order)
++{
++	struct ifq_region *ifr = ifq->region;
++
++	if (WARN_RATELIMIT(order != 1, "order %d", order))
++		return NULL;
++
++	if (ifr->count)
++		return ifr->page[--ifr->count];
++
++	return io_zctap_get_buffer(ifq);
++}
++
++unsigned long io_zctap_ifq_get_bulk(struct io_zctap_ifq *ifq,
 +				    unsigned long nr_pages,
-+				    struct page **page_array);
-+	void (*put_page)(void *arg, struct page *page);
- };
- 
- #ifdef CONFIG_PAGE_POOL_STATS
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 9b203d8660e4..21c6ee97bc7f 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -342,19 +342,47 @@ static void page_pool_clear_pp_info(struct page *page)
- 	page->pp = NULL;
- }
- 
-+/* hooks to either page provider or system page allocator */
-+static void page_pool_mm_put_page(struct page_pool *pool, struct page *page)
++				    struct page **page_array)
 +{
-+	if (pool->p.put_page)
-+		return pool->p.put_page(pool->p.init_arg, page);
-+	put_page(page);
++	struct ifq_region *ifr = ifq->region;
++	int count;
++
++	count = min_t(unsigned long, nr_pages, ifr->count);
++	if (count) {
++		ifr->count -= count;
++		memcpy(page_array, &ifr->page[ifr->count],
++		       count * sizeof(struct page *));
++	}
++
++	return count;
 +}
 +
-+static unsigned long page_pool_mm_alloc_bulk(struct page_pool *pool,
-+					     gfp_t gfp,
-+					     unsigned long nr_pages)
++bool io_zctap_ifq_put_page(struct io_zctap_ifq *ifq, struct page *page)
 +{
-+	if (pool->p.alloc_bulk)
-+		return pool->p.alloc_bulk(pool->p.init_arg, gfp,
-+					  pool->p.nid, nr_pages,
-+					  pool->alloc.cache);
-+	return alloc_pages_bulk_array_node(gfp, pool->p.nid,
-+					   nr_pages, pool->alloc.cache);
-+}
++	struct ifq_region *ifr = ifq->region;
 +
-+static struct page *page_pool_mm_alloc(struct page_pool *pool, gfp_t gfp)
-+{
-+	if (pool->p.alloc_pages)
-+		return pool->p.alloc_pages(pool->p.init_arg, pool->p.nid,
-+					   gfp, pool->p.order);
-+	return alloc_pages_node(pool->p.nid, gfp, pool->p.order);
-+}
++	/* if page is not usermapped, then throw an error */
 +
- static struct page *__page_pool_alloc_page_order(struct page_pool *pool,
- 						 gfp_t gfp)
- {
- 	struct page *page;
- 
- 	gfp |= __GFP_COMP;
--	page = alloc_pages_node(pool->p.nid, gfp, pool->p.order);
-+	page = page_pool_mm_alloc(pool, gfp);
- 	if (unlikely(!page))
- 		return NULL;
- 
- 	if ((pool->p.flags & PP_FLAG_DMA_MAP) &&
- 	    unlikely(!page_pool_dma_map(pool, page))) {
--		put_page(page);
-+		page_pool_mm_put_page(pool, page);
- 		return NULL;
- 	}
- 
-@@ -389,8 +417,7 @@ static struct page *__page_pool_alloc_pages_slow(struct page_pool *pool,
- 	/* Mark empty alloc.cache slots "empty" for alloc_pages_bulk_array */
- 	memset(&pool->alloc.cache, 0, sizeof(void *) * bulk);
- 
--	nr_pages = alloc_pages_bulk_array_node(gfp, pool->p.nid, bulk,
--					       pool->alloc.cache);
-+	nr_pages = page_pool_mm_alloc_bulk(pool, gfp, bulk);
- 	if (unlikely(!nr_pages))
- 		return NULL;
- 
-@@ -401,7 +428,7 @@ static struct page *__page_pool_alloc_pages_slow(struct page_pool *pool,
- 		page = pool->alloc.cache[i];
- 		if ((pp_flags & PP_FLAG_DMA_MAP) &&
- 		    unlikely(!page_pool_dma_map(pool, page))) {
--			put_page(page);
-+			page_pool_mm_put_page(pool, page);
- 			continue;
- 		}
- 
-@@ -501,7 +528,7 @@ static void page_pool_return_page(struct page_pool *pool, struct page *page)
- {
- 	page_pool_release_page(pool, page);
- 
--	put_page(page);
-+	page_pool_mm_put_page(pool, page);
- 	/* An optimization would be to call __free_pages(page, pool->p.order)
- 	 * knowing page is not part of page-cache (thus avoiding a
- 	 * __page_cache_release() call).
-@@ -593,7 +620,7 @@ __page_pool_put_page(struct page_pool *pool, struct page *page,
- 	recycle_stat_inc(pool, released_refcnt);
- 	/* Do not replace this with page_pool_return_page() */
- 	page_pool_release_page(pool, page);
--	put_page(page);
-+	page_pool_mm_put_page(pool, page);
- 
- 	return NULL;
- }
++	/* sanity check - leak pages here if hit */
++	if (WARN_RATELIMIT(ifr->count >= ifr->nr_pages, "page overflow"))
++		return true;
++
++	ifr->page[ifr->count++] = page;
++
++	return true;
++}
 -- 
 2.30.2
 

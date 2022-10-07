@@ -2,78 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FEEA5F770F
-	for <lists+io-uring@lfdr.de>; Fri,  7 Oct 2022 12:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B8155F7753
+	for <lists+io-uring@lfdr.de>; Fri,  7 Oct 2022 13:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbiJGKva (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Oct 2022 06:51:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
+        id S229547AbiJGLV7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Oct 2022 07:21:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbiJGKv2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Oct 2022 06:51:28 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEF774DFB;
-        Fri,  7 Oct 2022 03:51:27 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id i7-20020a17090a65c700b0020ad9666a86so6924043pjs.0;
-        Fri, 07 Oct 2022 03:51:27 -0700 (PDT)
+        with ESMTP id S229579AbiJGLV4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Oct 2022 07:21:56 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151D1CA8B4;
+        Fri,  7 Oct 2022 04:21:55 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id h8-20020a17090a054800b00205ccbae31eso6936700pjf.5;
+        Fri, 07 Oct 2022 04:21:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTvt+1KxN81nv4emVPFwVSM2mZYXcyeZO34VlI7n2Wc=;
-        b=Ptsz1USi/2TGDKKhXt66WFQjg4TRl7WzX4+ZrlKZfSHWwiQmiC8iGrcvvomXWgUCYK
-         UntPFqZNlggVnlGjJsybKCjlhf1NeRb76Rju0Ljnl1ZZFGjG36NPVwuNnz0uS7e5PIxM
-         rIzYZq3iykU82MDWJMjfVUNXa8b+xMARDUm1TZ+sIh75vYPgaTg6UzjPPElkANf9wziV
-         OZkFD9CiLD1Afxw6F3msIFRWLqKIwTi8beQVm3XSSQ7GtxqN5i68rQ8zuZUlsMiYrd6F
-         EIwZw001N25staHphYbII+E2Bo10kfj2X1RSlY4jXTAsToGdBZ6rIGk78LnbGOg23DuD
-         kpoQ==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pamNmJzUJKJNy6FyTVxlPHnqdQUJnUaTsgljCI4D3ew=;
+        b=WY2pgA5K9BMTRxxJmSjLCisnKuJse3zwFSQ/Hld3ttTFFoIdLw2C4Rq6zpdJ2uMpBS
+         92ku71ANn3TWar6XapgZJKZirLm5iYBkoI90ktciHMEg9IQt1W5fdWr/Y2YGBEyrcLuA
+         iKCSQmVjJELP0qYF+RFa3TiR9PKw8rzwo++viPDYqZdCxUxArjy8uVxVtonEdWO4Q6Dt
+         yOHPv4CtciGDnlYsl02WQwMwXtpSz+IOUxfY8IyhDovTZ30pr7uh240wQWkPwRCCbDpZ
+         v/GRk/XOOZwxgbtaueAHQqBR6SHXYCG+QUTuFo9c79IJKW4zesB8HYYcSUKn+Z6vEJaG
+         1pFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MTvt+1KxN81nv4emVPFwVSM2mZYXcyeZO34VlI7n2Wc=;
-        b=nTNVshKhAKBLAgxqpKsbnJE1Y3nGjaLlBtO8/fNX4onZWGFt34pwY0k6tOJanM6Y1v
-         V9kzaLAnPXtLDfn8ISDzr1TgSpfbYSVgrEb4f++9XGG9pFwkq5fAC780Jy1PM/aADtZh
-         /8JmcLvN5Tocu9RHwXn80PDB8M70+/6k3okzw/R0p7iTctDjDuuAHq1+5obZDAQ5drsn
-         KKlTDjvzfSgqJxYMkE+pLApT69evu6gmqeiM4PHfbGeDBOCYt4+d1hOKvDW3frNgWt61
-         MhQ2ZfysqR0qqhYTz617BVyVT73FRJig1LWT103vxiBpe/955DJpw4KKM2/GMhfoTJuL
-         /7Og==
-X-Gm-Message-State: ACrzQf3XKciMbgW6HSCGcuWS9j22tUOHJE1nkbkayicf9s8Abpd1BWlr
-        BiyaUNsiFimj8eluAsEHDFV+oftb1b1Flw==
-X-Google-Smtp-Source: AMsMyM4UYj9mPdx6CGqi1jcII/NdOQBi/Xafy7j5/o5rhD7M/PKmw8DBeBhklWk7ab+7xo5lxD1ozg==
-X-Received: by 2002:a17:902:e547:b0:178:7cf4:90e9 with SMTP id n7-20020a170902e54700b001787cf490e9mr4385567plf.158.1665139886761;
-        Fri, 07 Oct 2022 03:51:26 -0700 (PDT)
-Received: from T590 ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x13-20020aa79acd000000b00561c3ec5346sm1271459pfp.129.2022.10.07.03.51.19
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pamNmJzUJKJNy6FyTVxlPHnqdQUJnUaTsgljCI4D3ew=;
+        b=eazMLXM1KW1HXNYw27/BFgTVCisNyUDIq08sCeNNsWJ5H9TCnLwRu/RU8eamWS0svY
+         /O7tiXN9c1IUwavOyLxOlpDlq2TV8sul1uqmU09N9PzkeU0x9ZIe57uUyqlum3wSdaHk
+         GVeru/zZq/DtN6TDmYjWDZmvgnp03tsNBU6I8wQEj8s5UF6YqTCSyi62xs8NTWGpe1e0
+         bg440B6lUvjx4x0OoyeaXBELsh266FecaBW/VtePYa0ChNIQqanxevOWJ0AdULVl+Xt8
+         wKUoZ26yIQif5s2Sg3C9L+T6sSAJRsr8+dw8xlvgXy4PWE3VJMwlfA35tm7u6W1r597e
+         6jaw==
+X-Gm-Message-State: ACrzQf1TpCAopBEUC9x/7oGL3tdN+h3g7Ia145sT/yU0RoJ2USx2KnPs
+        UTfVohXcWBQPPsOYuIFO2/w=
+X-Google-Smtp-Source: AMsMyM7dU59UK/R1LAzJHYcDsG9br/NwyKNla0UMuFshhjVuUMXZeq14XRnK2QOrJpZgS4gwzJJkrw==
+X-Received: by 2002:a17:902:c950:b0:17c:2248:11b1 with SMTP id i16-20020a170902c95000b0017c224811b1mr4356494pla.165.1665141714506;
+        Fri, 07 Oct 2022 04:21:54 -0700 (PDT)
+Received: from T590 ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id e14-20020a056a0000ce00b005626a1c77c8sm1348807pfj.80.2022.10.07.04.21.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 03:51:25 -0700 (PDT)
-Date:   Fri, 7 Oct 2022 18:51:16 +0800
+        Fri, 07 Oct 2022 04:21:54 -0700 (PDT)
+Date:   Fri, 7 Oct 2022 19:21:45 +0800
 From:   Ming Lei <tom.leiming@gmail.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Stefan Hajnoczi <stefanha@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     "Denis V. Lunev" <den@virtuozzo.com>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kirill Tkhai <kirill.tkhai@openvz.org>,
         Manuel Bentele <development@manuel-bentele.de>,
         qemu-devel@nongnu.org, Kevin Wolf <kwolf@redhat.com>,
-        rjones@redhat.com, "Denis V. Lunev" <den@openvz.org>,
-        Stefano Garzarella <sgarzare@redhat.com>
+        rjones@redhat.com, Xie Yongji <xieyongji@bytedance.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Mike Christie <mchristi@redhat.com>
 Subject: Re: ublk-qcow2: ublk-qcow2 is available
-Message-ID: <Y0AEpCWzXmupJ8K3@T590>
+Message-ID: <Y0ALyTexTFGQ/8VU@T590>
 References: <Yza1u1KfKa7ycQm0@T590>
  <Yzs9xQlVuW41TuNC@fedora>
- <YzwARuAZdaoGTUfP@T590>
- <CAJSP0QXVK=wUy_JgJ9NmNMtKTRoRX0MwOZUuFWU-1mVWWKij8A@mail.gmail.com>
- <Yz0FrzJVZTqlQtJ5@T590>
- <CAJSP0QUQgA8Az3Kx8-6ynbWxDxaSVW3xWOPj4VBPhhUhsRYT9g@mail.gmail.com>
- <Yz668hfMAuES2/lt@T590>
- <CACycT3t346g2gc9anp_T8vz5=9ds=NAGJhcSU8T2EmyCNuDCSw@mail.gmail.com>
+ <6659a0d5-60ab-9ac7-d25d-b4ff1940c6ab@virtuozzo.com>
+ <Yz2epPwoufj0mug/@fedora>
+ <Yz6tR24T8HPHJ70D@T590>
+ <Yz7fTANAxAQ8KT4v@fedora>
+ <Yz7vvNKSNRyBVObo@T590>
+ <Yz8eo0IWMAJOwKWn@fedora>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CACycT3t346g2gc9anp_T8vz5=9ds=NAGJhcSU8T2EmyCNuDCSw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Yz8eo0IWMAJOwKWn@fedora>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -84,180 +86,91 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Oct 07, 2022 at 06:04:29PM +0800, Yongji Xie wrote:
-> On Thu, Oct 6, 2022 at 7:24 PM Ming Lei <tom.leiming@gmail.com> wrote:
-> >
-> > On Wed, Oct 05, 2022 at 08:21:45AM -0400, Stefan Hajnoczi wrote:
-> > > On Wed, 5 Oct 2022 at 00:19, Ming Lei <tom.leiming@gmail.com> wrote:
-> > > >
-> > > > On Tue, Oct 04, 2022 at 09:53:32AM -0400, Stefan Hajnoczi wrote:
-> > > > > On Tue, 4 Oct 2022 at 05:44, Ming Lei <tom.leiming@gmail.com> wrote:
-> > > > > >
-> > > > > > On Mon, Oct 03, 2022 at 03:53:41PM -0400, Stefan Hajnoczi wrote:
+On Thu, Oct 06, 2022 at 02:29:55PM -0400, Stefan Hajnoczi wrote:
+> On Thu, Oct 06, 2022 at 11:09:48PM +0800, Ming Lei wrote:
+> > On Thu, Oct 06, 2022 at 09:59:40AM -0400, Stefan Hajnoczi wrote:
+> > > On Thu, Oct 06, 2022 at 06:26:15PM +0800, Ming Lei wrote:
+> > > > On Wed, Oct 05, 2022 at 11:11:32AM -0400, Stefan Hajnoczi wrote:
+> > > > > On Tue, Oct 04, 2022 at 01:57:50AM +0200, Denis V. Lunev wrote:
+> > > > > > On 10/3/22 21:53, Stefan Hajnoczi wrote:
 > > > > > > > On Fri, Sep 30, 2022 at 05:24:11PM +0800, Ming Lei wrote:
 > > > > > > > > ublk-qcow2 is available now.
-> > > > > > >
 > > > > > > > Cool, thanks for sharing!
-> > > > > > >
-> > > > > > > >
+> > > > > > yep
+> > > > > > 
 > > > > > > > > So far it provides basic read/write function, and compression and snapshot
 > > > > > > > > aren't supported yet. The target/backend implementation is completely
 > > > > > > > > based on io_uring, and share the same io_uring with ublk IO command
 > > > > > > > > handler, just like what ublk-loop does.
-> > > > > > > >
+> > > > > > > > 
 > > > > > > > > Follows the main motivations of ublk-qcow2:
-> > > > > > > >
+> > > > > > > > 
 > > > > > > > > - building one complicated target from scratch helps libublksrv APIs/functions
-> > > > > > > >   become mature/stable more quickly, since qcow2 is complicated and needs more
-> > > > > > > >   requirement from libublksrv compared with other simple ones(loop, null)
-> > > > > > > >
+> > > > > > > >    become mature/stable more quickly, since qcow2 is complicated and needs more
+> > > > > > > >    requirement from libublksrv compared with other simple ones(loop, null)
+> > > > > > > > 
 > > > > > > > > - there are several attempts of implementing qcow2 driver in kernel, such as
-> > > > > > > >   ``qloop`` [2], ``dm-qcow2`` [3] and ``in kernel qcow2(ro)`` [4], so ublk-qcow2
-> > > > > > > >   might useful be for covering requirement in this field
-> > > > > > > >
-> > > > > > > > - performance comparison with qemu-nbd, and it was my 1st thought to evaluate
-> > > > > > > >   performance of ublk/io_uring backend by writing one ublk-qcow2 since ublksrv
-> > > > > > > >   is started
-> > > > > > > >
-> > > > > > > > - help to abstract common building block or design pattern for writing new ublk
-> > > > > > > >   target/backend
-> > > > > > > >
-> > > > > > > > So far it basically passes xfstest(XFS) test by using ublk-qcow2 block
-> > > > > > > > device as TEST_DEV, and kernel building workload is verified too. Also
-> > > > > > > > soft update approach is applied in meta flushing, and meta data
-> > > > > > > > integrity is guaranteed, 'make test T=qcow2/040' covers this kind of
-> > > > > > > > test, and only cluster leak is reported during this test.
-> > > > > > > >
-> > > > > > > > The performance data looks much better compared with qemu-nbd, see
-> > > > > > > > details in commit log[1], README[5] and STATUS[6]. And the test covers both
-> > > > > > > > empty image and pre-allocated image, for example of pre-allocated qcow2
-> > > > > > > > image(8GB):
-> > > > > > > >
-> > > > > > > > - qemu-nbd (make test T=qcow2/002)
-> > > > > > >
-> > > > > > > Single queue?
-> > > > > >
-> > > > > > Yeah.
-> > > > > >
-> > > > > > >
-> > > > > > > >     randwrite(4k): jobs 1, iops 24605
-> > > > > > > >     randread(4k): jobs 1, iops 30938
-> > > > > > > >     randrw(4k): jobs 1, iops read 13981 write 14001
-> > > > > > > >     rw(512k): jobs 1, iops read 724 write 728
-> > > > > > >
-> > > > > > > Please try qemu-storage-daemon's VDUSE export type as well. The
-> > > > > > > command-line should be similar to this:
-> > > > > > >
-> > > > > > >   # modprobe virtio_vdpa # attaches vDPA devices to host kernel
-> > > > > >
-> > > > > > Not found virtio_vdpa module even though I enabled all the following
-> > > > > > options:
-> > > > > >
-> > > > > >         --- vDPA drivers
-> > > > > >           <M>   vDPA device simulator core
-> > > > > >           <M>     vDPA simulator for networking device
-> > > > > >           <M>     vDPA simulator for block device
-> > > > > >           <M>   VDUSE (vDPA Device in Userspace) support
-> > > > > >           <M>   Intel IFC VF vDPA driver
-> > > > > >           <M>   Virtio PCI bridge vDPA driver
-> > > > > >           <M>   vDPA driver for Alibaba ENI
-> > > > > >
-> > > > > > BTW, my test environment is VM and the shared data is done in VM too, and
-> > > > > > can virtio_vdpa be used inside VM?
-> > > > >
-> > > > > I hope Xie Yongji can help explain how to benchmark VDUSE.
-> > > > >
-> > > > > virtio_vdpa is available inside guests too. Please check that
-> > > > > VIRTIO_VDPA ("vDPA driver for virtio devices") is enabled in "Virtio
-> > > > > drivers" menu.
-> > > > >
-> > > > > >
-> > > > > > >   # modprobe vduse
-> > > > > > >   # qemu-storage-daemon \
-> > > > > > >       --blockdev file,filename=test.qcow2,cache.direct=of|off,aio=native,node-name=file \
-> > > > > > >       --blockdev qcow2,file=file,node-name=qcow2 \
-> > > > > > >       --object iothread,id=iothread0 \
-> > > > > > >       --export vduse-blk,id=vduse0,name=vduse0,num-queues=$(nproc),node-name=qcow2,writable=on,iothread=iothread0
-> > > > > > >   # vdpa dev add name vduse0 mgmtdev vduse
-> > > > > > >
-> > > > > > > A virtio-blk device should appear and xfstests can be run on it
-> > > > > > > (typically /dev/vda unless you already have other virtio-blk devices).
-> > > > > > >
-> > > > > > > Afterwards you can destroy the device using:
-> > > > > > >
-> > > > > > >   # vdpa dev del vduse0
-> > > > > > >
-> > > > > > > >
-> > > > > > > > - ublk-qcow2 (make test T=qcow2/022)
-> > > > > > >
-> > > > > > > There are a lot of other factors not directly related to NBD vs ublk. In
-> > > > > > > order to get an apples-to-apples comparison with qemu-* a ublk export
-> > > > > > > type is needed in qemu-storage-daemon. That way only the difference is
-> > > > > > > the ublk interface and the rest of the code path is identical, making it
-> > > > > > > possible to compare NBD, VDUSE, ublk, etc more precisely.
-> > > > > >
-> > > > > > Maybe not true.
-> > > > > >
-> > > > > > ublk-qcow2 uses io_uring to handle all backend IO(include meta IO) completely,
-> > > > > > and so far single io_uring/pthread is for handling all qcow2 IOs and IO
-> > > > > > command.
-> > > > >
-> > > > > qemu-nbd doesn't use io_uring to handle the backend IO, so we don't
-> > > >
-> > > > I tried to use it via --aio=io_uring for setting up qemu-nbd, but not succeed.
-> > > >
-> > > > > know whether the benchmark demonstrates that ublk is faster than NBD,
-> > > > > that the ublk-qcow2 implementation is faster than qemu-nbd's qcow2,
-> > > > > whether there are miscellaneous implementation differences between
-> > > > > ublk-qcow2 and qemu-nbd (like using the same io_uring context for both
-> > > > > ublk and backend IO), or something else.
-> > > >
-> > > > The theory shouldn't be too complicated:
-> > > >
-> > > > 1) io uring passthough(pt) communication is fast than socket, and io command
-> > > > is carried over io_uring pt commands, and should be fast than virio
-> > > > communication too.
-> > > >
-> > > > 2) io uring io handling is fast than libaio which is taken in the
-> > > > test on qemu-nbd, and all qcow2 backend io(include meta io) is handled
-> > > > by io_uring.
-> > > >
-> > > > https://github.com/ming1/ubdsrv/blob/master/tests/common/qcow2_common
-> > > >
-> > > > 3) ublk uses one single io_uring to handle all io commands and qcow2
-> > > > backend IOs, so batching handling is common, and it is easy to see
-> > > > dozens of IOs/io commands handled in single syscall, or even more.
-> > >
-> > > I agree with the theory but theory has to be tested through
-> > > experiments in order to validate it. We can all learn from systematic
-> > > performance analysis - there might even be bottlenecks in ublk that
-> > > can be solved to improve performance further.
-> >
-> > Indeed, one thing is that ublk uses get user pages to retrieve user pages
-> > for copying data, this way may add latency for big chunk IO, since
-> > latency of get user pages should be increased linearly by nr_pages.
-> >
-> > I looked into vduse code a bit too, and vduse still needs the page copy,
-> > but lots of bounce pages are allocated and cached in the whole device
-> > lifetime, this way can void the latency for retrieving & allocating
-> > pages runtime with cost of extra memory consumption. Correct me
-> > if it is wrong, Xie Yongji or anyone?
-> >
+> > > > > > > >    ``qloop`` [2], ``dm-qcow2`` [3] and ``in kernel qcow2(ro)`` [4], so ublk-qcow2
+> > > > > > > >    might useful be for covering requirement in this field
+> > > > > > There is one important thing to keep in mind about all partly-userspace
+> > > > > > implementations though:
+> > > > > > * any single allocation happened in the context of the
+> > > > > >    userspace daemon through try_to_free_pages() in
+> > > > > >    kernel has a possibility to trigger the operation,
+> > > > > >    which will require userspace daemon action, which
+> > > > > >    is inside the kernel now.
+> > > > > > * the probability of this is higher in the overcommitted
+> > > > > >    environment
+> > > > > > 
+> > > > > > This was the main motivation of us in favor for the in-kernel
+> > > > > > implementation.
+> > > > > 
+> > > > > CCed Josef Bacik because the Linux NBD driver has dealt with memory
+> > > > > reclaim hangs in the past.
+> > > > > 
+> > > > > Josef: Any thoughts on userspace block drivers (whether NBD or ublk) and
+> > > > > how to avoid hangs in memory reclaim?
+> > > > 
+> > > > If I remember correctly, there isn't new report after the last NBD(TCMU) deadlock
+> > > > in memory reclaim was addressed by 8d19f1c8e193 ("prctl: PR_{G,S}ET_IO_FLUSHER
+> > > > to support controlling memory reclaim").
+> > > 
+> > > Denis: I'm trying to understand the problem you described. Is this
+> > > correct:
+> > > 
+> > > Due to memory pressure, the kernel reclaims pages and submits a write to
+> > > a ublk block device. The userspace process attempts to allocate memory
+> > > in order to service the write request, but it gets stuck because there
+> > > is no memory available. As a result reclaim gets stuck, the system is
+> > > unable to free more memory and therefore it hangs?
+> > 
+> > The process should be killed in this situation if PR_SET_IO_FLUSHER
+> > is applied since the page allocation is done in VM fault handler.
 > 
-> Yes, you are right. Another way is registering the preallocated
-> userspace memory as bounce buffer.
+> Thanks for mentioning PR_SET_IO_FLUSHER. There is more info in commit
+> 8d19f1c8e1937baf74e1962aae9f90fa3aeab463 ("prctl: PR_{G,S}ET_IO_FLUSHER
+> to support controlling memory reclaim").
+> 
+> It requires CAP_SYS_RESOURCE :/. This makes me wonder whether
+> unprivileged ublk will ever be possible.
 
-Thanks for the clarification.
+IMO, it shouldn't be one blocker, there might be lots of choices for us
 
-IMO, the pages consumption is too much for vduse, each vdpa device
-has one vduse_iova_domain which may allocate 64K bounce pages at most,
-and these pages won't be freed until freeing the device.
+- unprivileged ublk can simply not call it, if such io hang is triggered,
+ublksrv is capable of figuring out this problem, then kill & recover the device.
 
-But it is one solution for implementing generic userspace device(not
-limit to block device), and this idea seems great.
+- set PR_IO_FLUSHER for current task in ublk_ch_uring_cmd(UBLK_IO_FETCH_REQ)
+
+- ...
+
+> 
+> I think this addresses Denis' concern about hangs, but it doesn't solve
+> them because I/O will fail. The real solution is probably what you
+> mentioned...
+
+So far, not see real report yet, and it may be never one issue if proper
+swap device/file is configured.
 
 
-
-
-Thanks,
+Thanks, 
 Ming

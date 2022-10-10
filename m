@@ -2,59 +2,40 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BDE35F9ECF
-	for <lists+io-uring@lfdr.de>; Mon, 10 Oct 2022 14:42:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA695FA445
+	for <lists+io-uring@lfdr.de>; Mon, 10 Oct 2022 21:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbiJJMmi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Oct 2022 08:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47016 "EHLO
+        id S229495AbiJJTkt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Oct 2022 15:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbiJJMmh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Oct 2022 08:42:37 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A0550F97;
-        Mon, 10 Oct 2022 05:42:36 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id q9so20087132ejd.0;
-        Mon, 10 Oct 2022 05:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=F1ZctX6XDmO3TswyeHBG/Q26Ppmm5MVYMtNhscdLU40=;
-        b=m0RAaSsgDpVjL7zYC56uy68TGt3WWpOTzFm4ianTg8+q2uOqWyubb99P6NLVDkCmNZ
-         X/kZIpjYlGR2Tv76D3wokM+t7MwXZ3EsRuQrpqwwaiSdvIxOLdXu5UtS8w32jM2uutxE
-         enTTbflfoRRf53M4cUb4hWvnPKfpI3pPjabO11wnnGO+1ouiT1EVd5EiszK5Tbu+jgi2
-         /L9v2p+w3Hca9Mcp4abS0XdNEj4y/QDVYfVsqHisAxMqMCqp24iijF4aU2VftaEohNsa
-         A1cLas6Q5akos8p7ouiDgijJBDnrbKr42xIPCyhPTe6fafjLg2Gm4cHZPJQUPdQb7RfP
-         Q7DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F1ZctX6XDmO3TswyeHBG/Q26Ppmm5MVYMtNhscdLU40=;
-        b=YbzkNzDfrJUyOs/X8mi3mHKuEStkwJ9VJ/dp2YgdXBD8dxsNOZlSigwRgwdKHpH/sF
-         iBsNon+8X6fuYm/V+Emv9a5klkzb9o6MH96fnXX2aHyzvwXSDYuRaTPQ/hlpEcBlt8nx
-         LFbGXwJJ2kloIWS7e+P6Awy7ByGpr/RkMdExqjJ0Pye4xcHnzJbCeXPbFxIYOs/FbuGp
-         xWbTEosvbNVfm44OjjcKjN/5bj82fXZEFJvgfoqveZLoS+/pjy4Yv0aNvlBAVBYWWSbk
-         f+/rWiASUb1HosBVj0ab/+J1LlsmN4m12OmJ75DJxMwhxIFNSivatOMHrxgam6f8urIc
-         Apjg==
-X-Gm-Message-State: ACrzQf0pT7vlM4/pOSK69RYLLt57nX3qYhdZaytxbu1bidEYkgyX9pzo
-        hTOlOE8YdNKQ5BshBRCq+LTN8MugPpfaRet728NtfS+BMfI=
-X-Google-Smtp-Source: AMsMyM6cY4SdiWzUd0GXPZdkdPGrNlDG+7POU4e9pOzYLbUWMlneaXmL+VS6qzBgXtEpqJfTlvZfq6bYjxjqc6k0/+E=
-X-Received: by 2002:a17:907:948f:b0:78b:5a89:a23e with SMTP id
- dm15-20020a170907948f00b0078b5a89a23emr14716796ejc.421.1665405754508; Mon, 10
- Oct 2022 05:42:34 -0700 (PDT)
+        with ESMTP id S229477AbiJJTks (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Oct 2022 15:40:48 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 10 Oct 2022 12:40:46 PDT
+Received: from smtp3.emailarray.com (smtp3.emailarray.com [65.39.216.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D9215FF48
+        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 12:40:45 -0700 (PDT)
+Received: (qmail 7681 invoked by uid 89); 10 Oct 2022 19:34:05 -0000
+Received: from unknown (HELO ?IPV6:2620:10d:c085:2103:475:ef07:bb37:8b7b?) (amxlbW9uQGZsdWdzdmFtcC5jb21AMTYzLjExNC4xMzIuMw==) (POLARISLOCAL)  
+  by smtp3.emailarray.com with SMTP; 10 Oct 2022 19:34:05 -0000
+Message-ID: <ff17c609-7a6d-a144-c835-a72d5a965d28@flugsvamp.com>
+Date:   Mon, 10 Oct 2022 12:34:03 -0700
 MIME-Version: 1.0
-From:   Wei Chen <harperchen1110@gmail.com>
-Date:   Mon, 10 Oct 2022 20:41:59 +0800
-Message-ID: <CAO4mrffiwEOr2tC+LXnjzP7QZ56M+V3o87K43Y7m6-rvHfwjwA@mail.gmail.com>
-Subject: BUG: corrupted list in io_poll_task_func
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.3.2
+Subject: Re: [RFC v1 0/9] zero-copy RX for io_uring
+Content-Language: en-US
+To:     dust.li@linux.alibaba.com,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        io-uring@vger.kernel.org
+References: <20221007211713.170714-1-jonathan.lemon@gmail.com>
+ <20221010073712.GE108825@linux.alibaba.com>
+From:   Jonathan Lemon <jlemon@flugsvamp.com>
+In-Reply-To: <20221010073712.GE108825@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,75 +43,55 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Dear Linux Developer,
+On 10/10/22 12:37 AM, dust.li wrote:
+> On Fri, Oct 07, 2022 at 02:17:04PM -0700, Jonathan Lemon wrote:
+>> This series is a RFC for io_uring/zctap.  This is an evolution of
+>> the earlier zctap work, re-targeted to use io_uring as the userspace
+>> API.  The current code is intended to provide a zero-copy RX path for
+>> upper-level networking protocols (aka TCP and UDP).  The current draft
+>> focuses on host-provided memory (not GPU memory).
+>>
+>> This RFC contains the upper-level core code required for operation,
+>> with the intent of soliciting feedback on the general API.  This does
+>> not contain the network driver side changes required for complete
+>> operation.  Also please note that as an RFC, there are some things
+>> which are incomplete or in need of rework.
+>>
+>> The intent is to use a network driver which provides header/data
+>> splitting, so the frame header (which is processed by the networking
+>> stack) does not reside in user memory.
+>>
+>> The code is roughly working (in that it has successfully received
+>> a TCP stream from a remote sender), but as an RFC, the intent is
+>> to solicit feedback on the API and overall design.  The current code
+>> will also work with system pages, copying the data out to the
+>> application - this is intended as a fallback/testing path.
+>>
+>> High level description:
+>>
+>> The application allocates a frame backing store, and provides this
+>> to the kernel for use.  An interface queue is requested from the
+>> networking device, and incoming frames are deposited into the provided
+>> memory region.
+>>
+>> Responsibility for correctly steering incoming frames to the queue
+>> is outside the scope of this work - it is assumed that the user
+>> has set steering rules up separately.
+>>
+>> Incoming frames are sent up the stack as skb's and eventually
+>> land in the application's socket receive queue.  This differs
+>>from AF_XDP, which receives raw frames directly to userspace,
+>> without protocol processing.
+>>
+>> The RECV_ZC opcode then returns an iov[] style vector which points
+>> to the data in userspace memory.  When the application has completed
+>> processing of the data, the buffer is returned back to the kernel
+>> through a fill ring for reuse.
+> 
+> Interesting work ! Any userspace demo and performance data ?
 
-Recently when using our tool to fuzz kernel, the following crash was triggered:
+Coming soon!  I'm hoping to get feedback on the overall API though, did 
+you have any thoughts here?
+-- 
+Jonathan
 
-HEAD commit: c5eb0a61238d Linux 5.18-rc6
-git tree: upstream
-compiler: clang 12.0.0
-console output:
-https://drive.google.com/file/d/1Obzlp9wrLFx9BogwmOHhmnQqyMYa2z_k/view?usp=sharing
-kernel config: https://drive.google.com/file/d/12fNP5UArsFqTi2jjGomWuCk5evtgU0Gu/view?usp=sharing
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: Wei Chen <harperchen1110@gmail.com>
-
-list_del corruption. prev->next should be ffff88810ec0ae30, but was
-ffff888114119218. (prev=ffff888114119218)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:53!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 0 PID: 20805 Comm: iou-sqp-20802 Not tainted 5.18.0-rc6 #10
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:__list_del_entry_valid+0xa7/0xc0
-Code: 48 c7 c7 54 12 3f 83 4c 89 fe 48 89 da 31 c0 e8 89 e0 21 01 0f
-0b 48 c7 c7 6f d7 48 83 4c 89 fe 4c 89 e1 31 c0 e8 73 e0 21 01 <0f> 0b
-48 c7 c7 17 b4 42 83 4c 89 fe 4c 89 f1 31 c0 e8 5d e0 21 01
-RSP: 0018:ffffc900026dbb58 EFLAGS: 00010046
-RAX: 000000000000006d RBX: dead000000000122 RCX: 6101d1e720e71900
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88810ec0ae08 R08: ffffffff8115f303 R09: 0000000000000000
-R10: 0001ffffffffffff R11: 000188813bc1b460 R12: ffff888114119218
-R13: ffff88810ec0ae00 R14: ffff888114119218 R15: ffff88810ec0ae30
-FS:  00007f1e57534700(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1e574afdb8 CR3: 00000001394b3000 CR4: 0000000000750ef0
-DR0: 0000000020000140 DR1: 0000000020000440 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-PKRU: 55555554
-Call Trace:
- <TASK>
- io_poll_task_func+0x1ca/0x4f0
- tctx_task_work+0x808/0xae0
- task_work_run+0x8e/0x110
- get_signal+0x13c6/0x1520
- io_sq_thread+0x382/0xbd0
- ret_from_fork+0x1f/0x30
- </TASK>
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid+0xa7/0xc0
-Code: 48 c7 c7 54 12 3f 83 4c 89 fe 48 89 da 31 c0 e8 89 e0 21 01 0f
-0b 48 c7 c7 6f d7 48 83 4c 89 fe 4c 89 e1 31 c0 e8 73 e0 21 01 <0f> 0b
-48 c7 c7 17 b4 42 83 4c 89 fe 4c 89 f1 31 c0 e8 5d e0 21 01
-RSP: 0018:ffffc900026dbb58 EFLAGS: 00010046
-RAX: 000000000000006d RBX: dead000000000122 RCX: 6101d1e720e71900
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88810ec0ae08 R08: ffffffff8115f303 R09: 0000000000000000
-R10: 0001ffffffffffff R11: 000188813bc1b460 R12: ffff888114119218
-R13: ffff88810ec0ae00 R14: ffff888114119218 R15: ffff88810ec0ae30
-FS:  00007f1e57534700(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1e574afdb8 CR3: 00000001394b3000 CR4: 0000000000750ef0
-DR0: 0000000020000140 DR1: 0000000020000440 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-PKRU: 55555554
-
-Best,
-Wei

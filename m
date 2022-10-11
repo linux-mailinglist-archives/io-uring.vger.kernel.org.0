@@ -2,64 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3905B5FA999
-	for <lists+io-uring@lfdr.de>; Tue, 11 Oct 2022 03:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 145A25FA9BB
+	for <lists+io-uring@lfdr.de>; Tue, 11 Oct 2022 03:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbiJKBGH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Oct 2022 21:06:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48664 "EHLO
+        id S229504AbiJKBJC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Oct 2022 21:09:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiJKBGG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Oct 2022 21:06:06 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5283551401
-        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 18:06:05 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id bp11so6529508wrb.9
-        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 18:06:05 -0700 (PDT)
+        with ESMTP id S229563AbiJKBJB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Oct 2022 21:09:01 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B2743DBD1;
+        Mon, 10 Oct 2022 18:08:59 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id e18so7699960wmq.3;
+        Mon, 10 Oct 2022 18:08:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3HLSDasW/qE2O218K7CPuwWXUGu236QWXVEieFBqto=;
-        b=esnCUIF78bELU2g4+xK5kf2Vc+gQoyOvwSAddk8BBHZLTWafPGIyc+qILkaFoDqYS2
-         DCpKsvB24jxwfF4czPI86kVmftgyVJ8iDiiYnxqD62oJbzWqb1zpm219yiq3wNkBx+Ql
-         rlqWU1IaGdeULWFnCcyissmw24BYZCR9GMAsN4bqS8R2PN77VuCGZjTd+wlyvgpVgs1Q
-         7Air5TO1Cj26LDr+niSn1BUnenyxq/U0PcrnMsQ4JoAAGBubDj5d06tDULStIWOdfsud
-         5K4UPGoZSa/JZ7nyJ8ndhksUecQTLz+QPUxsh3EQIJ3/o/vhlnqV25YSKzPYaCj/7lJT
-         sMwg==
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=od2bJIu5rWon4PHbH9X3cJf5MWnSpigV9GhPB7yFis8=;
+        b=nvBPiW+pf60cfRpcaSfztDoFClIFK6mZhphdVGr+3bhkmwDcKiv+G8ndguvaxeZS/Z
+         ukDWhPsb4TzIySVx0C3pfRbAG1vIFgD0gAUIAJzhh4ob0OvRmmttdn8qEKo8myCLsAbn
+         k6jSBnm6Zfr2KdaaTyntStQpq5Isyw5Q9yH6hRUX22v4ji+OZiZwzKdD5qltiAc7lRMZ
+         TYcjXNexleFXiwyKCvUwnkvhHWYlEqfI1OAbimdYbSLpV5RMm945kiWmCEjhGmiSgHkG
+         HnZed6UXz5SzCen7fCdJyNzZgLsG6/hj72VAFBE6kAynjU1N03xeAXHSwtLuQgArwoB1
+         UNEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/3HLSDasW/qE2O218K7CPuwWXUGu236QWXVEieFBqto=;
-        b=4sZ6sGrk0PE6iRRtkRzTKzFGzjpH2JZxmIDhTLmD5P6q2nilqbHGOo8vO7L88xuOcQ
-         sJlQWf50eu5gEBHLe7XV++P6rpMcC4mW/05vUx5iQm/CpXbk7ZX0THz4bLlfZiwZ2aUw
-         Q9+8+zlTO5WSHn+WQaOQ9oMIorMA/yjVlQ/y8pYN0nyV/MrvOVq2eF6LHZlinyOR+O8f
-         MyBy/uoGCI3q4PyX6iAXsAGhwEZoB7/q3j4F2TAp4eLmttbIpJjY5eY6lalleKilLgWZ
-         6m+VG9GJh6aYZPnB2yxr6FB1NEyubDgAipQaQN1cdnGsgx45meW+cmry0py4t51nzUAZ
-         v+Fg==
-X-Gm-Message-State: ACrzQf2JFwoG6+VevFEbLtL/H7a9gSfgRT/KOzCNv2ABAN/Jt+3d4gu+
-        loknCLSNuTYffYB5akO7b3MWU321I50=
-X-Google-Smtp-Source: AMsMyM5Q+ewRxzQGNHowQW8eKkkYOIfyP3D1FP//qzpNQCLaYQQDqxHsjTAynGv7UvPmLh2YRgzzJA==
-X-Received: by 2002:a05:6000:18a:b0:22e:c396:6c3d with SMTP id p10-20020a056000018a00b0022ec3966c3dmr11689056wrx.499.1665450363448;
-        Mon, 10 Oct 2022 18:06:03 -0700 (PDT)
-Received: from 127.0.0.1localhost (94.196.221.180.threembb.co.uk. [94.196.221.180])
-        by smtp.gmail.com with ESMTPSA id z3-20020adff1c3000000b0022cdeba3f83sm9971593wro.84.2022.10.10.18.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Oct 2022 18:06:03 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
-        syzbot+e5198737e8a2d23d958c@syzkaller.appspotmail.com
-Subject: [PATCH 1/1] io_uring: fix fdinfo sqe offsets calculation
-Date:   Tue, 11 Oct 2022 01:59:57 +0100
-Message-Id: <8b41287cb75d5efb8fcb5cccde845ddbbadd8372.1665449983.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.38.0
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=od2bJIu5rWon4PHbH9X3cJf5MWnSpigV9GhPB7yFis8=;
+        b=olO3wJw7S8Jh7awj1nfAtoooZPVuqJiJw7eWTqfJ1lbapZElyVijTIE4hCyt5VjDMA
+         ZC0ST6x5Lv2AcCX5pxPewoZH6wqsZpBpahWptrind3PB9Mc6RSFDpWwpDY1I/VLOrPcN
+         5dpc0j+vW0atE+x/naHOfW6QQz0nQvuN6c5qy7PaunSc7kNCnJiAcBPuGtiG0Yc0FQwx
+         mq4Za14d3XZ0vUgPlKHDVc3oM5pyOOqaTiZ3Hh4N8vMF4+CZRZppOVa3FklmRQnm/7XV
+         3P8oWuAZoiC39Gngx1kRRyIj8WevNQlp/Bs2qV3Slg9QXzA1PzBR2CKkJy9F4o3HJ4l8
+         9Oog==
+X-Gm-Message-State: ACrzQf1DskKLNRc1SGcFVk9PAyMj82pRJcdh8aJL8URWFS/MKJJArAGh
+        GvmOLj25CpvG2U7rDfyzPx8yRI7oqdo=
+X-Google-Smtp-Source: AMsMyM5v6kbCc6IHFBeGXc1MFknzwovRtWVfYrRBoa07bYd32Qd9PhDmC9kBsx9GeJEbAUYOavMWPA==
+X-Received: by 2002:a05:600c:3506:b0:3b4:c086:fa37 with SMTP id h6-20020a05600c350600b003b4c086fa37mr22592292wmq.165.1665450537891;
+        Mon, 10 Oct 2022 18:08:57 -0700 (PDT)
+Received: from [192.168.8.100] (94.196.221.180.threembb.co.uk. [94.196.221.180])
+        by smtp.gmail.com with ESMTPSA id l36-20020a05600c1d2400b003a62052053csm22351435wms.18.2022.10.10.18.08.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Oct 2022 18:08:57 -0700 (PDT)
+Message-ID: <e4487267-effa-32dc-1199-db439dd3bf03@gmail.com>
+Date:   Tue, 11 Oct 2022 02:03:02 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: BUG: corrupted list in io_poll_task_func
+To:     Wei Chen <harperchen1110@gmail.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <CAO4mrffiwEOr2tC+LXnjzP7QZ56M+V3o87K43Y7m6-rvHfwjwA@mail.gmail.com>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAO4mrffiwEOr2tC+LXnjzP7QZ56M+V3o87K43Y7m6-rvHfwjwA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -68,29 +74,85 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Only with the big sqe feature they take 128 bytes per entry, but we
-unconditionally advance by 128B. Fix it by using sq_shift.
+On 10/10/22 13:41, Wei Chen wrote:
+> Dear Linux Developer,
+> 
+> Recently when using our tool to fuzz kernel, the following crash was triggered:
+> 
+> HEAD commit: c5eb0a61238d Linux 5.18-rc6
+> git tree: upstream
+> compiler: clang 12.0.0
+> console output:
+> https://drive.google.com/file/d/1Obzlp9wrLFx9BogwmOHhmnQqyMYa2z_k/view?usp=sharing
+> kernel config: https://drive.google.com/file/d/12fNP5UArsFqTi2jjGomWuCk5evtgU0Gu/view?usp=sharing
 
-Fixes: 3b8fdd1dc35e3 ("io_uring/fdinfo: fix sqe dumping for IORING_SETUP_SQE128")
-Reported-and-tested-by: syzbot+e5198737e8a2d23d958c@syzkaller.appspotmail.com
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/fdinfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's hard to tell anything as it's rc6 and we have a couple of
+poll fixes backported to stable 5.18. Would be great if you tell
+whether you see it with a stable kernel. Also a repro would
+help if it finds it. Thanks
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 4eae088046d0..2e04850a657b 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -94,7 +94,7 @@ static __cold void __io_uring_show_fdinfo(struct io_ring_ctx *ctx,
- 		sq_idx = READ_ONCE(ctx->sq_array[entry & sq_mask]);
- 		if (sq_idx > sq_mask)
- 			continue;
--		sqe = &ctx->sq_sqes[sq_idx << 1];
-+		sqe = &ctx->sq_sqes[sq_idx << sq_shift];
- 		seq_printf(m, "%5u: opcode:%s, fd:%d, flags:%x, off:%llu, "
- 			      "addr:0x%llx, rw_flags:0x%x, buf_index:%d "
- 			      "user_data:%llu",
+
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: Wei Chen <harperchen1110@gmail.com>
+> 
+> list_del corruption. prev->next should be ffff88810ec0ae30, but was
+> ffff888114119218. (prev=ffff888114119218)
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:53!
+> invalid opcode: 0000 [#1] PREEMPT SMP
+> CPU: 0 PID: 20805 Comm: iou-sqp-20802 Not tainted 5.18.0-rc6 #10
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+> 1.13.0-1ubuntu1.1 04/01/2014
+> RIP: 0010:__list_del_entry_valid+0xa7/0xc0
+> Code: 48 c7 c7 54 12 3f 83 4c 89 fe 48 89 da 31 c0 e8 89 e0 21 01 0f
+> 0b 48 c7 c7 6f d7 48 83 4c 89 fe 4c 89 e1 31 c0 e8 73 e0 21 01 <0f> 0b
+> 48 c7 c7 17 b4 42 83 4c 89 fe 4c 89 f1 31 c0 e8 5d e0 21 01
+> RSP: 0018:ffffc900026dbb58 EFLAGS: 00010046
+> RAX: 000000000000006d RBX: dead000000000122 RCX: 6101d1e720e71900
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: ffff88810ec0ae08 R08: ffffffff8115f303 R09: 0000000000000000
+> R10: 0001ffffffffffff R11: 000188813bc1b460 R12: ffff888114119218
+> R13: ffff88810ec0ae00 R14: ffff888114119218 R15: ffff88810ec0ae30
+> FS:  00007f1e57534700(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f1e574afdb8 CR3: 00000001394b3000 CR4: 0000000000750ef0
+> DR0: 0000000020000140 DR1: 0000000020000440 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+> PKRU: 55555554
+> Call Trace:
+>   <TASK>
+>   io_poll_task_func+0x1ca/0x4f0
+>   tctx_task_work+0x808/0xae0
+>   task_work_run+0x8e/0x110
+>   get_signal+0x13c6/0x1520
+>   io_sq_thread+0x382/0xbd0
+>   ret_from_fork+0x1f/0x30
+>   </TASK>
+> Modules linked in:
+> Dumping ftrace buffer:
+>     (ftrace buffer empty)
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__list_del_entry_valid+0xa7/0xc0
+> Code: 48 c7 c7 54 12 3f 83 4c 89 fe 48 89 da 31 c0 e8 89 e0 21 01 0f
+> 0b 48 c7 c7 6f d7 48 83 4c 89 fe 4c 89 e1 31 c0 e8 73 e0 21 01 <0f> 0b
+> 48 c7 c7 17 b4 42 83 4c 89 fe 4c 89 f1 31 c0 e8 5d e0 21 01
+> RSP: 0018:ffffc900026dbb58 EFLAGS: 00010046
+> RAX: 000000000000006d RBX: dead000000000122 RCX: 6101d1e720e71900
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: ffff88810ec0ae08 R08: ffffffff8115f303 R09: 0000000000000000
+> R10: 0001ffffffffffff R11: 000188813bc1b460 R12: ffff888114119218
+> R13: ffff88810ec0ae00 R14: ffff888114119218 R15: ffff88810ec0ae30
+> FS:  00007f1e57534700(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f1e574afdb8 CR3: 00000001394b3000 CR4: 0000000000750ef0
+> DR0: 0000000020000140 DR1: 0000000020000440 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+> PKRU: 55555554
+> 
+> Best,
+> Wei
+
 -- 
-2.38.0
-
+Pavel Begunkov

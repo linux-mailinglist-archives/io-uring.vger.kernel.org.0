@@ -2,62 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2115FAAC6
-	for <lists+io-uring@lfdr.de>; Tue, 11 Oct 2022 04:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2397C5FAAC7
+	for <lists+io-uring@lfdr.de>; Tue, 11 Oct 2022 04:55:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229514AbiJKCy6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Oct 2022 22:54:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
+        id S229663AbiJKCzA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Oct 2022 22:55:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbiJKCyz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Oct 2022 22:54:55 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED90311466
-        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 19:54:46 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id 10so12050675pli.0
-        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 19:54:46 -0700 (PDT)
+        with ESMTP id S229820AbiJKCy7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Oct 2022 22:54:59 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE18F11833
+        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 19:54:47 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id 67so12282792pfz.12
+        for <io-uring@vger.kernel.org>; Mon, 10 Oct 2022 19:54:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AOkbJttegoZM886HdJQKhx14yi8CBB/BFNg/aQUAKrc=;
-        b=vitJi9HNhKJ05CZV7NjB6WoqXd2SUugVXuAKBMPezTt8uhjZBYrU3WqiRVMP3eyvLa
-         p25PD3NL1x0+y+elu4WB2UmNJuFWvK1GxfsTRdmW8ePhZddOPK+iFz3ujAGkpZ977SEt
-         KpJUzZZRaeKFEPP8sarJiR2Yyitb0jlxLWIqJMTyToLsE1s+adhRefSpYQDUlmj1bt9h
-         vvruOoloDKDcdTdMKRi5iw4oMY9jvATJiqoTnnBGSu4u460hNIqBeaZRABRzb1EXeCxp
-         K0ecBOp/bwvAKqOtbba39BoRmNV2eWD8rrnPhQjRB03lyCaY46OJRihBvmbKxLwNYy6T
-         FegA==
+        bh=+FgNNXlCiUicoezSxpnxF8vkD9vtUqAzzBYNmVEcZzM=;
+        b=i8A5dqmBsTNxnvtHWYTb5pKH7x0GKxTgav73mRgY8mkAvEmYjQBYJw0tQiaUtP+xLX
+         Gr5or/rfJ2kdVNObAfWU2ifEznjVsu1ssqR7WYNjd68K9nJ6ikQQJMXa6MOVHUUDLJdf
+         5WlL29J0rv/E8qTOgwPSGVM1fu9GUe5wtV69Vh6gTqWFu/jSEoEzbgqvevoiD/q0BqWp
+         bsYXXaB1zg1aMnKDo8VUucPDmDb4YgvqtwAAtw+R8m5JA/ysAlNtZna6xi90D0QjzN4Y
+         gIZdsj2Xj/+b0J5H3QLWfqFTRiC5F+9KWGc/nE3pvKArfxkzFrRv05B7D9ZaTuw9/ZkA
+         ob8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AOkbJttegoZM886HdJQKhx14yi8CBB/BFNg/aQUAKrc=;
-        b=1CnKr2Tc3J48PJjX0t/XbOfiIn27wbJaoYApxHqn4bQP+osV05ikp38Z90OgY7JPmk
-         PFWeYuhD/JMCHQy2ig539JJYNY38tglBdZK/dlAS8nDsPXH/pqDaV/e/Ort+gqgqAdPd
-         Kfa6z6Hh3LOs0E3FokDHLvNKu8vhAaiV4fB/MkDOPyN2TwU9vmK7puSUh/Mo4SYX78sk
-         pPdrYTqt7ZH0QxzJeAUJH3BH1iXCtXbSO9d6lUgswde4V8pHS2A4GItj8UP+IgGaZdcA
-         qSH6INfEofj106ojIUDEIVygTJ2FWHHd+KPfLvjLVu5PEziwh2BcfXnrw5sxO93euEok
-         Zk3Q==
-X-Gm-Message-State: ACrzQf1+9hojthPwZUxuNSEXDBNUqEuzuuZsWETjQpJemWEPSDbin2wu
-        YDJ840MASE2NknQspY/I/iVW5esUzU1HfQkG
-X-Google-Smtp-Source: AMsMyM6R5/dOJyZdf7xum0vLW2KNzxfQoq1kWTPzOxfmLzJCUGI9rcIAIV0ns+w8bGvpxR1FxUWn+Q==
-X-Received: by 2002:a17:902:8347:b0:178:6e81:35ce with SMTP id z7-20020a170902834700b001786e8135cemr21273210pln.23.1665456885639;
-        Mon, 10 Oct 2022 19:54:45 -0700 (PDT)
+        bh=+FgNNXlCiUicoezSxpnxF8vkD9vtUqAzzBYNmVEcZzM=;
+        b=EEdofFrIiO4Oaq2O+D8/K8GknI1sVSZ7I7bSalCh31YI44FAl2UHShGVY3DOHN12y2
+         VApto0ZLF2LN3Bct/usFgoFbpx29zlWKaELXrAZ4S0JIz3bu7daNZTpGZ1ESbPdbj5i/
+         H6AP3nDSa+ITL213GDeBbMSDoHMTUFCDjeRPwxmAxct0X3WTj3WFh+yahpRb0wZKt2R/
+         uO48+ER3cLbW0Ffa5tvRY9c18FVRh+J2e/ynKcCb/RIG7OS9u9SSlwTevT2ktE0AkS0A
+         cjh0mvLZDLQHVlvEExLs8Mf1BsVIwMTq379dPtxEmGrM6aecD00uNp/6QoFsOjhXx1j3
+         meKA==
+X-Gm-Message-State: ACrzQf3v8UBeeJzWkgyf0Q7XFS8Z+FVGoxrYz2GbIR+Pf5NcaNVX/1xo
+        Sckdr979sKB9FnLVAznOOfAcTAp9yyELV13f
+X-Google-Smtp-Source: AMsMyM7ChN3euMUx7llvJKxXzgahroXI38OZ7Y6a9PmbaMVtLzcnCfEzqU9/GLdBn9OS5YP+L41ZwQ==
+X-Received: by 2002:a05:6a00:1a04:b0:52a:d4dc:5653 with SMTP id g4-20020a056a001a0400b0052ad4dc5653mr22997089pfv.69.1665456886733;
+        Mon, 10 Oct 2022 19:54:46 -0700 (PDT)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id z10-20020a63c04a000000b004561e7569f8sm6931709pgi.8.2022.10.10.19.54.44
+        by smtp.gmail.com with ESMTPSA id z10-20020a63c04a000000b004561e7569f8sm6931709pgi.8.2022.10.10.19.54.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Oct 2022 19:54:45 -0700 (PDT)
+        Mon, 10 Oct 2022 19:54:46 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, kernel-team@fb.com,
-        Stefan Roesch <shr@devkernel.io>
-Cc:     kernel test robot <lkp@intel.com>
-In-Reply-To: <20221010234330.244244-1-shr@devkernel.io>
-References: <20221010234330.244244-1-shr@devkernel.io>
-Subject: Re: [PATCH v1] io_uring: local variable rw shadows outer variable in io_write
-Message-Id: <166545688494.43404.17546041612960841102.b4-ty@kernel.dk>
-Date:   Mon, 10 Oct 2022 20:54:44 -0600
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc:     syzbot+e5198737e8a2d23d958c@syzkaller.appspotmail.com
+In-Reply-To: <8b41287cb75d5efb8fcb5cccde845ddbbadd8372.1665449983.git.asml.silence@gmail.com>
+References: <8b41287cb75d5efb8fcb5cccde845ddbbadd8372.1665449983.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: fix fdinfo sqe offsets calculation
+Message-Id: <166545688578.43404.7690238453501271177.b4-ty@kernel.dk>
+Date:   Mon, 10 Oct 2022 20:54:45 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,16 +70,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 10 Oct 2022 16:43:30 -0700, Stefan Roesch wrote:
-> This fixes the shadowing of the outer variable rw in the function
-> io_write().
+On Tue, 11 Oct 2022 01:59:57 +0100, Pavel Begunkov wrote:
+> Only with the big sqe feature they take 128 bytes per entry, but we
+> unconditionally advance by 128B. Fix it by using sq_shift.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] io_uring: local variable rw shadows outer variable in io_write
-      commit: 01c620cf9e96b1355c87545ed26521deef4aef80
+[1/1] io_uring: fix fdinfo sqe offsets calculation
+      commit: 9af3f837a9bf59ede807303831892448eaa2ed0b
 
 Best regards,
 -- 

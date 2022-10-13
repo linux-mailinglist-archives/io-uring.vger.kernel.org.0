@@ -2,170 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4105FD00A
-	for <lists+io-uring@lfdr.de>; Thu, 13 Oct 2022 02:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A525FD301
+	for <lists+io-uring@lfdr.de>; Thu, 13 Oct 2022 03:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbiJMAYa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Oct 2022 20:24:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56008 "EHLO
+        id S229907AbiJMBvQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Oct 2022 21:51:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230513AbiJMAXr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Oct 2022 20:23:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBC9AC4B6;
-        Wed, 12 Oct 2022 17:21:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B01F2616E6;
-        Thu, 13 Oct 2022 00:20:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6F9C433D6;
-        Thu, 13 Oct 2022 00:20:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620459;
-        bh=tyzS1ViS9KrTaJvN1d+884IZktdTBQB32Pz7bvn/AqE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kG1nIsMypeoBlagjXuYhrFMQ5BFHLoXFtzl1Zn66BAGNX1uOsRlqcpALCOq7xXEwA
-         OasyGipXtZq4ixbfRrNoefs/7c0MpESbWDoxitMXVye/0FLWA3kDaLBL7OQ6z/Fgo/
-         kaEd9setU/SKMOdClYwrP3KwJHTSL1nKK/GkZ/+3XpszMe5Z+9xBUyhWUIMlM74zrE
-         m7l+DWibuP44BI8gHANYM5IAd5VSgDS09nlPZFYU2pvVfObUPhZ3TfJr8lABEYUuPK
-         W0YJAaD6Le8WGtxrXNQtIwmR02P1Mguqrjd0WTSPgBATZP8m8R0qTkkfs7UPkYPo8H
-         Bz8d+RqH4IUXw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        agk@redhat.com, snitzer@kernel.org, dm-devel@redhat.com,
-        song@kernel.org, linux-block@vger.kernel.org,
-        linux-raid@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 54/63] block: replace blk_queue_nowait with bdev_nowait
-Date:   Wed, 12 Oct 2022 20:18:28 -0400
-Message-Id: <20221013001842.1893243-54-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013001842.1893243-1-sashal@kernel.org>
-References: <20221013001842.1893243-1-sashal@kernel.org>
+        with ESMTP id S229910AbiJMBvD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Oct 2022 21:51:03 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048EFEE0A7;
+        Wed, 12 Oct 2022 18:51:03 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id i3so632555pfk.9;
+        Wed, 12 Oct 2022 18:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+fj3xaPXr55GP2FJv1sRZl6lOLiSQ/9qXaPvpYFz2w=;
+        b=Sm9uh2W7FEzUaBs04hT8hSWvVQG5de9bJ5uV8g35ZaNBfyeQEyzQyCv+/COgZdKuCY
+         xWQrkJLHa18E97WyAsMNpkzyzvHEF36kq4d0D+e58dDnP54SV0Ks68V8xNbyGhz+nbA5
+         ZgrjkUYgcIGUNkJTBiM4NrZPt0yHxPJ2SSqya2v3jIS1ivwnuQQzj6alQ2j9gw/3nJkx
+         bfdcAKCVWHNB0UF1m4qfnjW+buy87goAruDFsHQrqdQqYc53xqSfN6BZDepREMH7dFrt
+         SPBSrE3MIPPoIrxOyyKxQxCYIFzwWu8Hpu1c0GnG69tbmQKQlijJ6aMkrbr4gvzrPMSo
+         Yi8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k+fj3xaPXr55GP2FJv1sRZl6lOLiSQ/9qXaPvpYFz2w=;
+        b=bID/9CBFT8uTibYpCNEyMpmd6It/v8pUrK67a+nRGJWMncXq6KuZ3VFTadlMlgummx
+         8nvHQCN0xoRs0e/TnVSFEWmc8OkMUOiyTKGU7eJ4X4GsCO1YKQKBnbmDpGoK+/Tt2XiI
+         LK4ux4O1vmTH/VSYxFSgy+Z+G33qFqD5h4e2DEBb2GZKrf5uul5iIG1+2viChapEgbgr
+         dr9VnwM+ltkOcS0+f/Deq5DuSEDM/AjgYGWYGIK1YO25aNq13j8ZkIyvMiacl/lhwk8f
+         aHDMYxGKGu0Mws1hqZFYOjE7vV0JbKp6MtwNMZdTaeb9QsamLP906XO12n3oYy8DvEsQ
+         bhpg==
+X-Gm-Message-State: ACrzQf2eQ6jWgu8ALPR8+9OjiDWObEJA4x6H2ukM5KQ91E/+rYOVlpq1
+        i3RCF1j+gzJBID/q+iiGl/A=
+X-Google-Smtp-Source: AMsMyM75EDZVE7nkn1nTc50WrEt+rGU6bP4inf/wRAlexWY2XHy+pHtUGiG0l8M07fJ9CT1+s4wSCQ==
+X-Received: by 2002:a63:c145:0:b0:44e:9366:f982 with SMTP id p5-20020a63c145000000b0044e9366f982mr27587348pgi.584.1665625862576;
+        Wed, 12 Oct 2022 18:51:02 -0700 (PDT)
+Received: from T590 ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id y4-20020a623204000000b00562ab71b863sm496161pfy.214.2022.10.12.18.50.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Oct 2022 18:51:02 -0700 (PDT)
+Date:   Thu, 13 Oct 2022 09:50:55 +0800
+From:   Ming Lei <tom.leiming@gmail.com>
+To:     Stefan Hajnoczi <stefanha@gmail.com>
+Cc:     "Richard W.M. Jones" <rjones@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kirill Tkhai <kirill.tkhai@openvz.org>,
+        Manuel Bentele <development@manuel-bentele.de>,
+        qemu-devel@nongnu.org, Kevin Wolf <kwolf@redhat.com>,
+        Xie Yongji <xieyongji@bytedance.com>,
+        "Denis V. Lunev" <den@openvz.org>,
+        Stefano Garzarella <sgarzare@redhat.com>
+Subject: Re: ublk-qcow2: ublk-qcow2 is available
+Message-ID: <Y0du/9K3II70tZTD@T590>
+References: <Yza1u1KfKa7ycQm0@T590>
+ <Yzs9xQlVuW41TuNC@fedora>
+ <YzwARuAZdaoGTUfP@T590>
+ <CAJSP0QXVK=wUy_JgJ9NmNMtKTRoRX0MwOZUuFWU-1mVWWKij8A@mail.gmail.com>
+ <20221006101400.GC7636@redhat.com>
+ <CAJSP0QXbnhkVgfgMfC=MAyvF63Oof_ZGDvNFhniDCvVY-f6Hmw@mail.gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJSP0QXbnhkVgfgMfC=MAyvF63Oof_ZGDvNFhniDCvVY-f6Hmw@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+On Wed, Oct 12, 2022 at 10:15:28AM -0400, Stefan Hajnoczi wrote:
+> On Thu, 6 Oct 2022 at 06:14, Richard W.M. Jones <rjones@redhat.com> wrote:
+> >
+> > On Tue, Oct 04, 2022 at 09:53:32AM -0400, Stefan Hajnoczi wrote:
+> > > qemu-nbd doesn't use io_uring to handle the backend IO,
+> >
+> > Would this be fixed by your (not yet upstream) libblkio driver for
+> > qemu?
+> 
+> I was wrong, qemu-nbd has syntax to use io_uring:
+> 
+>   $ qemu-nbd ... --image-opts driver=file,filename=test.img,aio=io_uring
 
-[ Upstream commit 568ec936bf1384fc15873908c96a9aeb62536edb ]
+Yeah, I saw the option, previously when I tried io_uring via:
 
-Replace blk_queue_nowait with a bdev_nowait helpers that takes the
-block_device given that the I/O submission path should not have to
-look into the request_queue.
+qemu-nbd -c /dev/nbd11 -n --aio=io_uring $my_file
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-Link: https://lore.kernel.org/r/20220927075815.269694-1-hch@lst.de
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- block/blk-core.c       | 2 +-
- drivers/md/dm-table.c  | 4 +---
- drivers/md/md.c        | 4 ++--
- include/linux/blkdev.h | 6 +++++-
- io_uring/io_uring.c    | 2 +-
- 5 files changed, 10 insertions(+), 8 deletions(-)
+It complains that 'qemu-nbd: Invalid aio mode 'io_uring'' even though
+that 'qemu-nbd --help' does say that io_uring is supported.
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 7743c68177e8..5970c47ae86f 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -727,7 +727,7 @@ void submit_bio_noacct(struct bio *bio)
- 	 * For a REQ_NOWAIT based request, return -EOPNOTSUPP
- 	 * if queue does not support NOWAIT.
- 	 */
--	if ((bio->bi_opf & REQ_NOWAIT) && !blk_queue_nowait(q))
-+	if ((bio->bi_opf & REQ_NOWAIT) && !bdev_nowait(bdev))
- 		goto not_supported;
- 
- 	if (should_fail_bio(bio))
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index bd539afbfe88..1f73ce6ac925 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1869,9 +1869,7 @@ static bool dm_table_supports_write_zeroes(struct dm_table *t)
- static int device_not_nowait_capable(struct dm_target *ti, struct dm_dev *dev,
- 				     sector_t start, sector_t len, void *data)
- {
--	struct request_queue *q = bdev_get_queue(dev->bdev);
--
--	return !blk_queue_nowait(q);
-+	return !bdev_nowait(dev->bdev);
- }
- 
- static bool dm_table_supports_nowait(struct dm_table *t)
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 25d18b67a162..cb8eddcd018e 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -5852,7 +5852,7 @@ int md_run(struct mddev *mddev)
- 			}
- 		}
- 		sysfs_notify_dirent_safe(rdev->sysfs_state);
--		nowait = nowait && blk_queue_nowait(bdev_get_queue(rdev->bdev));
-+		nowait = nowait && bdev_nowait(rdev->bdev);
- 	}
- 
- 	if (!bioset_initialized(&mddev->bio_set)) {
-@@ -6989,7 +6989,7 @@ static int hot_add_disk(struct mddev *mddev, dev_t dev)
- 	 * If the new disk does not support REQ_NOWAIT,
- 	 * disable on the whole MD.
- 	 */
--	if (!blk_queue_nowait(bdev_get_queue(rdev->bdev))) {
-+	if (!bdev_nowait(rdev->bdev)) {
- 		pr_info("%s: Disabling nowait because %pg does not support nowait\n",
- 			mdname(mddev), rdev->bdev);
- 		blk_queue_flag_clear(QUEUE_FLAG_NOWAIT, mddev->queue);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 83eb8869a8c9..a49ea5e19a9b 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -614,7 +614,6 @@ bool blk_queue_flag_test_and_set(unsigned int flag, struct request_queue *q);
- #define blk_queue_quiesced(q)	test_bit(QUEUE_FLAG_QUIESCED, &(q)->queue_flags)
- #define blk_queue_pm_only(q)	atomic_read(&(q)->pm_only)
- #define blk_queue_registered(q)	test_bit(QUEUE_FLAG_REGISTERED, &(q)->queue_flags)
--#define blk_queue_nowait(q)	test_bit(QUEUE_FLAG_NOWAIT, &(q)->queue_flags)
- #define blk_queue_sq_sched(q)	test_bit(QUEUE_FLAG_SQ_SCHED, &(q)->queue_flags)
- 
- extern void blk_set_pm_only(struct request_queue *q);
-@@ -1314,6 +1313,11 @@ static inline bool bdev_fua(struct block_device *bdev)
- 	return test_bit(QUEUE_FLAG_FUA, &bdev_get_queue(bdev)->queue_flags);
- }
- 
-+static inline bool bdev_nowait(struct block_device *bdev)
-+{
-+	return test_bit(QUEUE_FLAG_NOWAIT, &bdev_get_queue(bdev)->queue_flags);
-+}
-+
- static inline enum blk_zoned_model bdev_zoned_model(struct block_device *bdev)
- {
- 	struct request_queue *q = bdev_get_queue(bdev);
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 15a6f1e93e5a..5d80229169da 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3348,7 +3348,7 @@ static void io_iopoll_req_issued(struct io_kiocb *req, unsigned int issue_flags)
- 
- static bool io_bdev_nowait(struct block_device *bdev)
- {
--	return !bdev || blk_queue_nowait(bdev_get_queue(bdev));
-+	return !bdev || bdev_nowait(bdev);
- }
- 
- /*
--- 
-2.35.1
+Today just tried it on Fedora 37, looks it starts working with
+--aio=io_uring, but the IOPS is basically same with --aio=native, and
+IO trace shows that io_uring is used by qemu-nbd.
 
+
+Thanks,
+Ming

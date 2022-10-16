@@ -2,62 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE085600347
-	for <lists+io-uring@lfdr.de>; Sun, 16 Oct 2022 22:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 061496003D8
+	for <lists+io-uring@lfdr.de>; Mon, 17 Oct 2022 00:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbiJPUdK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 16 Oct 2022 16:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42294 "EHLO
+        id S229562AbiJPWJz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 16 Oct 2022 18:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbiJPUdJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Oct 2022 16:33:09 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3003B3057D
-        for <io-uring@vger.kernel.org>; Sun, 16 Oct 2022 13:33:08 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id b2so20856216eja.6
-        for <io-uring@vger.kernel.org>; Sun, 16 Oct 2022 13:33:08 -0700 (PDT)
+        with ESMTP id S229670AbiJPWJy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Oct 2022 18:09:54 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AF81B7BB
+        for <io-uring@vger.kernel.org>; Sun, 16 Oct 2022 15:09:53 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id e18so13601485edj.3
+        for <io-uring@vger.kernel.org>; Sun, 16 Oct 2022 15:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tUHvLcKLFL36tYPs8CH/YI7G5vNcC4S7LNovyR3sUgc=;
-        b=ovv705iLe0E+UXCWEah8EIgQ2/ufU/yy4BhLzRIe2SVT1vBd/il4wPPJlbuYOo49MR
-         aCx9hSn45FXuc54eJj9oVNIStE+9D/hUtVbEc7PmxnVeTARgGdyfSPUVdgWpN4uLNnvz
-         2RdQzQ8qAb41h8INVG2KnxJkUX3u8xYxVQ8lzxTpjsAAprXLahMHzDncOWqe8l/i8d+a
-         6kbFE7gurVgwnIDaB5PJckvfEjZIYEHHSx3ZuKpb0VEROaEqrBsaT4VcR4WU8xsdMVIP
-         rX1pdCOIACVNny4kZtVA+4kK4AFxXfokfL6GooMIdJHp7j/0mm9A0m9f2fQwUhRZWubZ
-         owMQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AgbW6Doc8boTRQALD5ED+CMJ4H08iThDApHNmiIxAeI=;
+        b=Nnj2Usco1eU370ZeGQx1YVYaVpPxpiRZpZQAharo4Xb7uSNTXnOLes+5yUqJzd6qFs
+         EyOp6DckTkywVXOoJ1amTfDD08Qf6usqCcORg2zKCdlfbajJVPXZqcx8kc45quOr3VD2
+         w806/3X8q8DPD1c1wiRHKEm52X4AzHwXC5r8SnAGUf4hyMqHIn1mdqcyG7I0ZNzWGGXz
+         P2P+6DafNGxZu9ZkjpfdZBcR+Q+UKJ3kCjkfp3B8xjiqXqkByyz5d/xte9r0QerJVX84
+         6KatoTAEJU/13VawMLG2Ngbfp4f0H6SJenAKqs1590Ajt1peV9Abk5qLz1koZNPLb+l4
+         i42A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tUHvLcKLFL36tYPs8CH/YI7G5vNcC4S7LNovyR3sUgc=;
-        b=WN4rghDmmp8SnzBvKtkHFy5LdOY1yFfhrzciL2DtHw2zehaA9TSFmGyQyfYqqHEtd+
-         W8lMtJAj7ClOirv56pHwcHwS6Yxdj8kPAfKzN+H0dtBFUoyTJ+zGTduxCz1X0KhCWWwh
-         D3BMsb/4nL9EqLjJhlZQk2wMgEr+xu0RdFalORGNp//tIqbpPXfzoz0z6EwjbBWz8LcN
-         gGEvKOmB7cw2+/F7hK4gjTIWAeX5CZ1oQuUdViCCg9zW0jMmveCJo5HNJLqn7xOmdQdk
-         85Mm/xh65kzaL+i9Tc6B3hNnZ/GpFH9nEy5274QW+VcQphqdOfchLpJ1zDkPs5ZxqcI/
-         MDRQ==
-X-Gm-Message-State: ACrzQf0+4AISWj5saJR2PSWrYktsRDgKcwij+CbrHKAUUe2fsz80dDjV
-        lcSniO349J9vaGaWVLOdkVF3l1sVjJE=
-X-Google-Smtp-Source: AMsMyM4AJoTfU0xZCQG6xrkIZphYHuHMHT7WAKWQIK5KLL65H0rRwh3+p2U3HT4dLPp1Yio61OhUrg==
-X-Received: by 2002:a17:907:162a:b0:78e:2859:76be with SMTP id hb42-20020a170907162a00b0078e285976bemr6152436ejc.768.1665952386449;
-        Sun, 16 Oct 2022 13:33:06 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AgbW6Doc8boTRQALD5ED+CMJ4H08iThDApHNmiIxAeI=;
+        b=WwuZDNt6Pdib8QxSkV292Qi8EEQrg6zOhin/jwda6IqDqf28wmWLHq5/ke8v93Fk2q
+         Y86r1mHc2rt/vEoeNrlOMXZk+vRhQeNUtcPsyTBnsp1OcNA/TvvVC0eTM2HdYwsF8gll
+         vFQEi9dgDLmRAfrvI4uObXKXb5mRe6wF9ap/nmMqoLMTivIWKGE3lynUyGhE+alaITC8
+         fqsqV+vNxQw1S3H10OZb9s6lR/aqaQKOZEMR8/zaDYzHdn+9d/7nlCgKjNnESzLoOO2f
+         zgT/xE0laE+iL5hZYYdLsTQUugqysT20PoF9q6tk6FmIzLu2e1nenrli2RHTMXVzmsyE
+         5jhg==
+X-Gm-Message-State: ACrzQf0Mv9Ch56rQU/fn/se7DvvrGGNwNXoiKVGgibdj+J1FU/LFzwyf
+        GWxedX/KQdAG6E3X9ldswMx9GjB+qSM=
+X-Google-Smtp-Source: AMsMyM57hGykVplU5CTYwRWwjE33o6eKQ/NfctRh+Orl2k8D2yBrXGO469hieFQ4ApYeAoyxAXpW5g==
+X-Received: by 2002:a05:6402:2751:b0:443:d90a:43d4 with SMTP id z17-20020a056402275100b00443d90a43d4mr7727186edd.368.1665958191317;
+        Sun, 16 Oct 2022 15:09:51 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.196.234.149.threembb.co.uk. [94.196.234.149])
-        by smtp.gmail.com with ESMTPSA id y11-20020a1709060a8b00b00788c622fa2csm5069345ejf.135.2022.10.16.13.33.05
+        by smtp.gmail.com with ESMTPSA id r11-20020a170906704b00b0073d9630cbafsm5161496ejj.126.2022.10.16.15.09.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Oct 2022 13:33:06 -0700 (PDT)
+        Sun, 16 Oct 2022 15:09:50 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 4/4] io_uring: don't iopoll from io_ring_ctx_wait_and_kill()
-Date:   Sun, 16 Oct 2022 21:30:51 +0100
-Message-Id: <7c03cc91455c4a1af49c6b9cbda4e57ea467aa11.1665891182.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 1/1] tests: fix zc support checks
+Date:   Sun, 16 Oct 2022 23:07:35 +0100
+Message-Id: <0c8bf4d5dd7135c990f4fa9232a54c8cd6cc024f.1665958020.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.0
-In-Reply-To: <cover.1665891182.git.asml.silence@gmail.com>
-References: <cover.1665891182.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -70,42 +67,27 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We should not be completing requests from a task context that already
-undergone io_uring cancellations, i.e. __io_uring_cancel(), as there are
-some assumptions, e.g. aroundd cached task refs draining. Remove
-iopolling from io_ring_ctx_wait_and_kill() as it can be called later
-after PF_EXITING is set with the last task_work run.
+We should be checking cqe->res for -EINVAL to figure out whether we
+support zerocopy or not. It makes the test fail with older kernels.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ test/send-zerocopy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 62be51fbf39c..6cc16e39b27f 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2804,15 +2804,12 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 		io_poll_remove_all(ctx, NULL, true);
- 	mutex_unlock(&ctx->uring_lock);
- 
--	/* failed during ring init, it couldn't have issued any requests */
--	if (ctx->rings) {
-+	/*
-+	 * If we failed setting up the ctx, we might not have any rings
-+	 * and therefore did not submit any requests
-+	 */
-+	if (ctx->rings)
- 		io_kill_timeouts(ctx, NULL, true);
--		/* if we failed setting up the ctx, we might not have any rings */
--		io_iopoll_try_reap_events(ctx);
--		/* drop cached put refs after potentially doing completions */
--		if (current->io_uring)
--			io_uring_drop_tctx_refs(current);
--	}
- 
- 	INIT_WORK(&ctx->exit_work, io_ring_exit_work);
- 	/*
+diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
+index 31d66e3..c6279bc 100644
+--- a/test/send-zerocopy.c
++++ b/test/send-zerocopy.c
+@@ -91,7 +91,7 @@ static int test_basic_send(struct io_uring *ring, int sock_tx, int sock_rx)
+ 	ret = io_uring_wait_cqe(ring, &cqe);
+ 	assert(!ret);
+ 	assert(cqe->user_data == 1);
+-	if (ret == -EINVAL) {
++	if (cqe->res == -EINVAL) {
+ 		assert(!(cqe->flags & IORING_CQE_F_MORE));
+ 		return T_EXIT_SKIP;
+ 	}
 -- 
 2.38.0
 

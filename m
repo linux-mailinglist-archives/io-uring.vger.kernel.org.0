@@ -2,261 +2,535 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A2E3602EB2
-	for <lists+io-uring@lfdr.de>; Tue, 18 Oct 2022 16:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B7A602EEA
+	for <lists+io-uring@lfdr.de>; Tue, 18 Oct 2022 16:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiJROm5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Oct 2022 10:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49904 "EHLO
+        id S229844AbiJROzC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Oct 2022 10:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiJROm5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Oct 2022 10:42:57 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211D9659E2
-        for <io-uring@vger.kernel.org>; Tue, 18 Oct 2022 07:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=FeMpMpKEwZZoOySPZv9Z9tp9CCoHdBGcy4kTMvMFrnA=; b=m8vmg7oWKKHg2Sqv3hPrs6545o
-        RmMgSrzmFrAHqXUYTcgzQSRj4h5ALZ1JuFVXCizHW1SQ2KZqxCUP3U9gPlvaBWNClmYUhJaisBbLE
-        BPIUQCikSkvhnDcoDcqwzGXncml40zGsTDaANJ+DNz4NrZeLkoBdxH5fcCF1udjaTbRSQhdyffQ1s
-        Pwnz6q0UPMtTOcgKfnBimvfgCmlgvMlrOrRIYxR5aVfCD1d0pFnYC31TPKJx049aG15+XKHPtpWQ4
-        jG6YjPKTN93B4KCBxrITT1Z/pD9o1q2ey4D2+Fsw3EjZmXQqQW2RjRXjlXZfAM7SLzs/VAR2+FreJ
-        T1Oyk8V+ud1BYoQ/0CSP3jKWUOvoqUxzuHHF+sKl02j7ijP8rLBaksbRzvBfr+yBgrDeUfTeemjca
-        kevHkJRFeiqZBbHLIcxwTlypImw2FL8ubgd4UFHuO0rRJPbUqh+RkbyYFdSrczCoj6jBKev+PqnFv
-        1ZYr3vcii1dRliUUeCE0u+HA;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1oknnw-004kYx-SK; Tue, 18 Oct 2022 14:42:53 +0000
-Message-ID: <c01f72ac-b2f1-0b1c-6757-26769ee071e2@samba.org>
-Date:   Tue, 18 Oct 2022 16:42:50 +0200
+        with ESMTP id S229698AbiJROzA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Oct 2022 10:55:00 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C054BD14;
+        Tue, 18 Oct 2022 07:54:58 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 126so17278210ybw.3;
+        Tue, 18 Oct 2022 07:54:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tatliyhHtL/WC7QUNGUK4QZw7Qa55Dy/aWdWQu9/Dwk=;
+        b=HoAY9ZsxqtEjFe5Udlcqmz88UMYCjDPu1KfTBSW+Y34iadGUeX0VkOsl3J5NSrHa+d
+         0Io9vvTnOxDE2AieuMnFbhYrI/ulQkARUJjMo+tp/HWmwptxmWjbA9sUI+SmBMGd7jqE
+         X1d+SvN2fFilPZcMu3a7z0FWnwm3kAt1GWaYOuZds2cJznXxN4ptZh1vhuh6GO6xusPj
+         O1i1lPVdfq9htz4UXH2ZNPOlUeZKvoQUpmglP6yRAmWkj5o7aear8IlDicUY8+V1jelz
+         Bz8v7IwZtbVH9m2CdqObpfwxGCRNufgtSuGxMrOuBg4Y9RDmS1KUenaaDnpXu3kRJRXQ
+         dxjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tatliyhHtL/WC7QUNGUK4QZw7Qa55Dy/aWdWQu9/Dwk=;
+        b=GVPguUO9+K9eI3ytzb2nzDRXxY06DF0WkSFMKhx1QfljssoI+gvrY45/EkaJBeyqs1
+         s1DLOeWzf2HyRiQkqfKNT3j2T97Dwlx1s5e/6E4gF1XU9CEFGahLqgnxbUZZofz0I5ZM
+         EETpDu/Rvvau++1qouUQVa6kr3FBFnOQETQDA0fB0QYikKUsp6O9iX64p8BFs6YZnEvC
+         PLcb/7XDmjMTguNDbuBosE4V/BYjmRjGpr1codcCuRYBIMiYBkBNiLWz67FPbcHSNwv1
+         bNhvWxungOUqaO0M9nJ2a7kGu6M10ebT2ZjRglEKu9Aa5oQreT028VBHGpwc1anmxamX
+         mlig==
+X-Gm-Message-State: ACrzQf1zOLAxzROBbSnaIIsLaRRN84TvWhhZBo3KH+pHWmgJpOz2/Xjy
+        DMhMKVIY+0jf1ERdJ0A10aWPIsrE84tWT3NS1No=
+X-Google-Smtp-Source: AMsMyM4DCZMcP3zUzXmbo90YBISUynvWMDyGs2D5JZ8Sh09/KCVZfR01Bm5yvlszL2bwPxjdBAL6VDSNle7j8GJbNE8=
+X-Received: by 2002:a25:4883:0:b0:6c0:7938:5b4d with SMTP id
+ v125-20020a254883000000b006c079385b4dmr2870428yba.537.1666104897613; Tue, 18
+ Oct 2022 07:54:57 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Samba Technical <samba-technical@lists.samba.org>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Problems replacing epoll with io_uring in tevent
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <Yza1u1KfKa7ycQm0@T590> <Yzs9xQlVuW41TuNC@fedora>
+ <YzwARuAZdaoGTUfP@T590> <CAJSP0QXVK=wUy_JgJ9NmNMtKTRoRX0MwOZUuFWU-1mVWWKij8A@mail.gmail.com>
+ <Yz0FrzJVZTqlQtJ5@T590> <50827796-af93-4af5-4121-dc13c31a67fc@linux.alibaba.com>
+ <CAJSP0QXW9TmuvJpQPRF-AF01aW79jH8tnkHPEf+do5vQ1crGFA@mail.gmail.com>
+ <CACycT3ufcN+a_wtWe6ioOWZUCak-JmcMgSa=rqeEsS63_HqSog@mail.gmail.com>
+ <Y0lcmZTP5sr467z6@T590> <CACycT3u8yYUS-WnNzgHQtQFYuK-XcyffpFc35HVZzrCS7hH5Sg@mail.gmail.com>
+ <Y05OzeC7wImts4p7@T590> <CACycT3sK1AzA4RH1ZfbstV3oax-oeBVtEz+sY+8scBU0=1x46g@mail.gmail.com>
+In-Reply-To: <CACycT3sK1AzA4RH1ZfbstV3oax-oeBVtEz+sY+8scBU0=1x46g@mail.gmail.com>
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+Date:   Tue, 18 Oct 2022 10:54:45 -0400
+Message-ID: <CAJSP0QVevA0gvyGABAFSoMhBN9ydZqUJh4qJYgNbGeyRXL8AjA@mail.gmail.com>
+Subject: Re: ublk-qcow2: ublk-qcow2 is available
+To:     Yongji Xie <xieyongji@bytedance.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Denis V. Lunev" <den@openvz.org>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+On Tue, 18 Oct 2022 at 09:17, Yongji Xie <xieyongji@bytedance.com> wrote:
+>
+> On Tue, Oct 18, 2022 at 2:59 PM Ming Lei <tom.leiming@gmail.com> wrote:
+> >
+> > On Mon, Oct 17, 2022 at 07:11:59PM +0800, Yongji Xie wrote:
+> > > On Fri, Oct 14, 2022 at 8:57 PM Ming Lei <tom.leiming@gmail.com> wrot=
+e:
+> > > >
+> > > > On Thu, Oct 13, 2022 at 02:48:04PM +0800, Yongji Xie wrote:
+> > > > > On Wed, Oct 12, 2022 at 10:22 PM Stefan Hajnoczi <stefanha@gmail.=
+com> wrote:
+> > > > > >
+> > > > > > On Sat, 8 Oct 2022 at 04:43, Ziyang Zhang <ZiyangZhang@linux.al=
+ibaba.com> wrote:
+> > > > > > >
+> > > > > > > On 2022/10/5 12:18, Ming Lei wrote:
+> > > > > > > > On Tue, Oct 04, 2022 at 09:53:32AM -0400, Stefan Hajnoczi w=
+rote:
+> > > > > > > >> On Tue, 4 Oct 2022 at 05:44, Ming Lei <tom.leiming@gmail.c=
+om> wrote:
+> > > > > > > >>>
+> > > > > > > >>> On Mon, Oct 03, 2022 at 03:53:41PM -0400, Stefan Hajnoczi=
+ wrote:
+> > > > > > > >>>> On Fri, Sep 30, 2022 at 05:24:11PM +0800, Ming Lei wrote=
+:
+> > > > > > > >>>>> ublk-qcow2 is available now.
+> > > > > > > >>>>
+> > > > > > > >>>> Cool, thanks for sharing!
+> > > > > > > >>>>
+> > > > > > > >>>>>
+> > > > > > > >>>>> So far it provides basic read/write function, and compr=
+ession and snapshot
+> > > > > > > >>>>> aren't supported yet. The target/backend implementation=
+ is completely
+> > > > > > > >>>>> based on io_uring, and share the same io_uring with ubl=
+k IO command
+> > > > > > > >>>>> handler, just like what ublk-loop does.
+> > > > > > > >>>>>
+> > > > > > > >>>>> Follows the main motivations of ublk-qcow2:
+> > > > > > > >>>>>
+> > > > > > > >>>>> - building one complicated target from scratch helps li=
+bublksrv APIs/functions
+> > > > > > > >>>>>   become mature/stable more quickly, since qcow2 is com=
+plicated and needs more
+> > > > > > > >>>>>   requirement from libublksrv compared with other simpl=
+e ones(loop, null)
+> > > > > > > >>>>>
+> > > > > > > >>>>> - there are several attempts of implementing qcow2 driv=
+er in kernel, such as
+> > > > > > > >>>>>   ``qloop`` [2], ``dm-qcow2`` [3] and ``in kernel qcow2=
+(ro)`` [4], so ublk-qcow2
+> > > > > > > >>>>>   might useful be for covering requirement in this fiel=
+d
+> > > > > > > >>>>>
+> > > > > > > >>>>> - performance comparison with qemu-nbd, and it was my 1=
+st thought to evaluate
+> > > > > > > >>>>>   performance of ublk/io_uring backend by writing one u=
+blk-qcow2 since ublksrv
+> > > > > > > >>>>>   is started
+> > > > > > > >>>>>
+> > > > > > > >>>>> - help to abstract common building block or design patt=
+ern for writing new ublk
+> > > > > > > >>>>>   target/backend
+> > > > > > > >>>>>
+> > > > > > > >>>>> So far it basically passes xfstest(XFS) test by using u=
+blk-qcow2 block
+> > > > > > > >>>>> device as TEST_DEV, and kernel building workload is ver=
+ified too. Also
+> > > > > > > >>>>> soft update approach is applied in meta flushing, and m=
+eta data
+> > > > > > > >>>>> integrity is guaranteed, 'make test T=3Dqcow2/040' cove=
+rs this kind of
+> > > > > > > >>>>> test, and only cluster leak is reported during this tes=
+t.
+> > > > > > > >>>>>
+> > > > > > > >>>>> The performance data looks much better compared with qe=
+mu-nbd, see
+> > > > > > > >>>>> details in commit log[1], README[5] and STATUS[6]. And =
+the test covers both
+> > > > > > > >>>>> empty image and pre-allocated image, for example of pre=
+-allocated qcow2
+> > > > > > > >>>>> image(8GB):
+> > > > > > > >>>>>
+> > > > > > > >>>>> - qemu-nbd (make test T=3Dqcow2/002)
+> > > > > > > >>>>
+> > > > > > > >>>> Single queue?
+> > > > > > > >>>
+> > > > > > > >>> Yeah.
+> > > > > > > >>>
+> > > > > > > >>>>
+> > > > > > > >>>>>     randwrite(4k): jobs 1, iops 24605
+> > > > > > > >>>>>     randread(4k): jobs 1, iops 30938
+> > > > > > > >>>>>     randrw(4k): jobs 1, iops read 13981 write 14001
+> > > > > > > >>>>>     rw(512k): jobs 1, iops read 724 write 728
+> > > > > > > >>>>
+> > > > > > > >>>> Please try qemu-storage-daemon's VDUSE export type as we=
+ll. The
+> > > > > > > >>>> command-line should be similar to this:
+> > > > > > > >>>>
+> > > > > > > >>>>   # modprobe virtio_vdpa # attaches vDPA devices to host=
+ kernel
+> > > > > > > >>>
+> > > > > > > >>> Not found virtio_vdpa module even though I enabled all th=
+e following
+> > > > > > > >>> options:
+> > > > > > > >>>
+> > > > > > > >>>         --- vDPA drivers
+> > > > > > > >>>           <M>   vDPA device simulator core
+> > > > > > > >>>           <M>     vDPA simulator for networking device
+> > > > > > > >>>           <M>     vDPA simulator for block device
+> > > > > > > >>>           <M>   VDUSE (vDPA Device in Userspace) support
+> > > > > > > >>>           <M>   Intel IFC VF vDPA driver
+> > > > > > > >>>           <M>   Virtio PCI bridge vDPA driver
+> > > > > > > >>>           <M>   vDPA driver for Alibaba ENI
+> > > > > > > >>>
+> > > > > > > >>> BTW, my test environment is VM and the shared data is don=
+e in VM too, and
+> > > > > > > >>> can virtio_vdpa be used inside VM?
+> > > > > > > >>
+> > > > > > > >> I hope Xie Yongji can help explain how to benchmark VDUSE.
+> > > > > > > >>
+> > > > > > > >> virtio_vdpa is available inside guests too. Please check t=
+hat
+> > > > > > > >> VIRTIO_VDPA ("vDPA driver for virtio devices") is enabled =
+in "Virtio
+> > > > > > > >> drivers" menu.
+> > > > > > > >>
+> > > > > > > >>>
+> > > > > > > >>>>   # modprobe vduse
+> > > > > > > >>>>   # qemu-storage-daemon \
+> > > > > > > >>>>       --blockdev file,filename=3Dtest.qcow2,cache.direct=
+=3Dof|off,aio=3Dnative,node-name=3Dfile \
+> > > > > > > >>>>       --blockdev qcow2,file=3Dfile,node-name=3Dqcow2 \
+> > > > > > > >>>>       --object iothread,id=3Diothread0 \
+> > > > > > > >>>>       --export vduse-blk,id=3Dvduse0,name=3Dvduse0,num-q=
+ueues=3D$(nproc),node-name=3Dqcow2,writable=3Don,iothread=3Diothread0
+> > > > > > > >>>>   # vdpa dev add name vduse0 mgmtdev vduse
+> > > > > > > >>>>
+> > > > > > > >>>> A virtio-blk device should appear and xfstests can be ru=
+n on it
+> > > > > > > >>>> (typically /dev/vda unless you already have other virtio=
+-blk devices).
+> > > > > > > >>>>
+> > > > > > > >>>> Afterwards you can destroy the device using:
+> > > > > > > >>>>
+> > > > > > > >>>>   # vdpa dev del vduse0
+> > > > > > > >>>>
+> > > > > > > >>>>>
+> > > > > > > >>>>> - ublk-qcow2 (make test T=3Dqcow2/022)
+> > > > > > > >>>>
+> > > > > > > >>>> There are a lot of other factors not directly related to=
+ NBD vs ublk. In
+> > > > > > > >>>> order to get an apples-to-apples comparison with qemu-* =
+a ublk export
+> > > > > > > >>>> type is needed in qemu-storage-daemon. That way only the=
+ difference is
+> > > > > > > >>>> the ublk interface and the rest of the code path is iden=
+tical, making it
+> > > > > > > >>>> possible to compare NBD, VDUSE, ublk, etc more precisely=
+.
+> > > > > > > >>>
+> > > > > > > >>> Maybe not true.
+> > > > > > > >>>
+> > > > > > > >>> ublk-qcow2 uses io_uring to handle all backend IO(include=
+ meta IO) completely,
+> > > > > > > >>> and so far single io_uring/pthread is for handling all qc=
+ow2 IOs and IO
+> > > > > > > >>> command.
+> > > > > > > >>
+> > > > > > > >> qemu-nbd doesn't use io_uring to handle the backend IO, so=
+ we don't
+> > > > > > > >
+> > > > > > > > I tried to use it via --aio=3Dio_uring for setting up qemu-=
+nbd, but not succeed.
+> > > > > > > >
+> > > > > > > >> know whether the benchmark demonstrates that ublk is faste=
+r than NBD,
+> > > > > > > >> that the ublk-qcow2 implementation is faster than qemu-nbd=
+'s qcow2,
+> > > > > > > >> whether there are miscellaneous implementation differences=
+ between
+> > > > > > > >> ublk-qcow2 and qemu-nbd (like using the same io_uring cont=
+ext for both
+> > > > > > > >> ublk and backend IO), or something else.
+> > > > > > > >
+> > > > > > > > The theory shouldn't be too complicated:
+> > > > > > > >
+> > > > > > > > 1) io uring passthough(pt) communication is fast than socke=
+t, and io command
+> > > > > > > > is carried over io_uring pt commands, and should be fast th=
+an virio
+> > > > > > > > communication too.
+> > > > > > > >
+> > > > > > > > 2) io uring io handling is fast than libaio which is taken =
+in the
+> > > > > > > > test on qemu-nbd, and all qcow2 backend io(include meta io)=
+ is handled
+> > > > > > > > by io_uring.
+> > > > > > > >
+> > > > > > > > https://github.com/ming1/ubdsrv/blob/master/tests/common/qc=
+ow2_common
+> > > > > > > >
+> > > > > > > > 3) ublk uses one single io_uring to handle all io commands =
+and qcow2
+> > > > > > > > backend IOs, so batching handling is common, and it is easy=
+ to see
+> > > > > > > > dozens of IOs/io commands handled in single syscall, or eve=
+n more.
+> > > > > > > >
+> > > > > > > >>
+> > > > > > > >> I'm suggesting measuring changes to just 1 variable at a t=
+ime.
+> > > > > > > >> Otherwise it's hard to reach a conclusion about the root c=
+ause of the
+> > > > > > > >> performance difference. Let's learn why ublk-qcow2 perform=
+s well.
+> > > > > > > >
+> > > > > > > > Turns out the latest Fedora 37-beta doesn't support vdpa ye=
+t, so I built
+> > > > > > > > qemu from the latest github tree, and finally it starts to =
+work. And test kernel
+> > > > > > > > is v6.0 release.
+> > > > > > > >
+> > > > > > > > Follows the test result, and all three devices are setup as=
+ single
+> > > > > > > > queue, and all tests are run in single job, still done in o=
+ne VM, and
+> > > > > > > > the test images are stored on XFS/virito-scsi backed SSD.
+> > > > > > > >
+> > > > > > > > The 1st group tests all three block device which is backed =
+by empty
+> > > > > > > > qcow2 image.
+> > > > > > > >
+> > > > > > > > The 2nd group tests all the three block devices backed by p=
+re-allocated
+> > > > > > > > qcow2 image.
+> > > > > > > >
+> > > > > > > > Except for big sequential IO(512K), there is still not smal=
+l gap between
+> > > > > > > > vdpa-virtio-blk and ublk.
+> > > > > > > >
+> > > > > > > > 1. run fio on block device over empty qcow2 image
+> > > > > > > > 1) qemu-nbd
+> > > > > > > > running qcow2/001
+> > > > > > > > run perf test on empty qcow2 image via nbd
+> > > > > > > >       fio (nbd(/mnt/data/ublk_null_8G_nYbgF.qcow2), libaio,=
+ bs 4k, dio, hw queues:1)...
+> > > > > > > >       randwrite: jobs 1, iops 8549
+> > > > > > > >       randread: jobs 1, iops 34829
+> > > > > > > >       randrw: jobs 1, iops read 11363 write 11333
+> > > > > > > >       rw(512k): jobs 1, iops read 590 write 597
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > 2) ublk-qcow2
+> > > > > > > > running qcow2/021
+> > > > > > > > run perf test on empty qcow2 image via ublk
+> > > > > > > >       fio (ublk/qcow2( -f /mnt/data/ublk_null_8G_s761j.qcow=
+2), libaio, bs 4k, dio, hw queues:1, uring_comp: 0, get_data: 0).
+> > > > > > > >       randwrite: jobs 1, iops 16086
+> > > > > > > >       randread: jobs 1, iops 172720
+> > > > > > > >       randrw: jobs 1, iops read 35760 write 35702
+> > > > > > > >       rw(512k): jobs 1, iops read 1140 write 1149
+> > > > > > > >
+> > > > > > > > 3) vdpa-virtio-blk
+> > > > > > > > running debug/test_dev
+> > > > > > > > run io test on specified device
+> > > > > > > >       fio (vdpa(/dev/vdc), libaio, bs 4k, dio, hw queues:1)=
+...
+> > > > > > > >       randwrite: jobs 1, iops 8626
+> > > > > > > >       randread: jobs 1, iops 126118
+> > > > > > > >       randrw: jobs 1, iops read 17698 write 17665
+> > > > > > > >       rw(512k): jobs 1, iops read 1023 write 1031
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > 2. run fio on block device over pre-allocated qcow2 image
+> > > > > > > > 1) qemu-nbd
+> > > > > > > > running qcow2/002
+> > > > > > > > run perf test on pre-allocated qcow2 image via nbd
+> > > > > > > >       fio (nbd(/mnt/data/ublk_data_8G_sc0SB.qcow2), libaio,=
+ bs 4k, dio, hw queues:1)...
+> > > > > > > >       randwrite: jobs 1, iops 21439
+> > > > > > > >       randread: jobs 1, iops 30336
+> > > > > > > >       randrw: jobs 1, iops read 11476 write 11449
+> > > > > > > >       rw(512k): jobs 1, iops read 718 write 722
+> > > > > > > >
+> > > > > > > > 2) ublk-qcow2
+> > > > > > > > running qcow2/022
+> > > > > > > > run perf test on pre-allocated qcow2 image via ublk
+> > > > > > > >       fio (ublk/qcow2( -f /mnt/data/ublk_data_8G_yZiaJ.qcow=
+2), libaio, bs 4k, dio, hw queues:1, uring_comp: 0, get_data: 0).
+> > > > > > > >       randwrite: jobs 1, iops 98757
+> > > > > > > >       randread: jobs 1, iops 110246
+> > > > > > > >       randrw: jobs 1, iops read 47229 write 47161
+> > > > > > > >       rw(512k): jobs 1, iops read 1416 write 1427
+> > > > > > > >
+> > > > > > > > 3) vdpa-virtio-blk
+> > > > > > > > running debug/test_dev
+> > > > > > > > run io test on specified device
+> > > > > > > >       fio (vdpa(/dev/vdc), libaio, bs 4k, dio, hw queues:1)=
+...
+> > > > > > > >       randwrite: jobs 1, iops 47317
+> > > > > > > >       randread: jobs 1, iops 74092
+> > > > > > > >       randrw: jobs 1, iops read 27196 write 27234
+> > > > > > > >       rw(512k): jobs 1, iops read 1447 write 1458
+> > > > > > > >
+> > > > > > > >
+> > > > > > >
+> > > > > > > Hi All,
+> > > > > > >
+> > > > > > > We are interested in VDUSE vs UBLK, too. And I have tested th=
+em with nullblk backend.
+> > > > > > > Let me share some results here.
+> > > > > > >
+> > > > > > > I setup UBLK with:
+> > > > > > >   ublk add -t loop -f /dev/nullb0 -d QUEUE_DEPTH -q NR_QUEUE
+> > > > > > >
+> > > > > > > I setup VDUSE with:
+> > > > > > >   qemu-storage-daemon \
+> > > > > > >        --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock=
+,server=3Don,wait=3Doff \
+> > > > > > >        --monitor chardev=3Dcharmonitor \
+> > > > > > >        --blockdev driver=3Dhost_device,cache.direct=3Don,file=
+name=3D/dev/nullb0,node-name=3Ddisk0 \
+> > > > > > >        --export vduse-blk,id=3Dtest,node-name=3Ddisk0,name=3D=
+vduse_test,writable=3Don,num-queues=3DNR_QUEUE,queue-size=3DQUEUE_DEPTH
+> > > > > > >
+> > > > > > > Here QUEUE_DEPTH is 1, 32 or 128 and NR_QUEUE is 1 or 4.
+> > > > > > >
+> > > > > > > Note:
+> > > > > > > (1) VDUSE requires QUEUE_DEPTH >=3D 2. I cannot setup QUEUE_D=
+EPTH to 1.
+> > > > > > > (2) I use qemu 7.1.0-rc3. It supports vduse-blk.
+> > > > > > > (3) I do not use ublk null target so that the test is fair.
+> > > > > > > (4) I setup fio with direct=3D1, bs=3D4k.
+> > > > > > >
+> > > > > > > ------------------------------
+> > > > > > > 1 job 1 iodepth, lat=EF=BC=88usec)
+> > > > > > >                 vduse   ublk
+> > > > > > > seq-read        22.55   11.15
+> > > > > > > rand-read       22.49   11.17
+> > > > > > > seq-write       25.67   10.25
+> > > > > > > rand-write      24.13   10.16
+> > > > > >
+> > > > > > Thanks for sharing. Any idea what the bottlenecks are for vduse=
+ and ublk?
+> > > > > >
+> > > > >
+> > > > > I think one reason for the latency gap of sync I/O is that vduse =
+uses
+> > > > > workqueue in the I/O completion path but ublk doesn't.
+> > > > >
+> > > > > And one bottleneck for the async I/O in vduse is that vduse will =
+do
+> > > > > memcpy inside the critical section of virtqueue's spinlock in the
+> > > > > virtio-blk driver. That will hurt the performance heavily when
+> > > > > virtio_queue_rq() and virtblk_done() run concurrently. And it can=
+ be
+> > > > > mitigated by the advance DMA mapping feature [1] or irq binding
+> > > > > support [2].
+> > > >
+> > > > Hi Yongji,
+> > > >
+> > > > Yeah, that is the cost you paid for virtio. Wrt. userspace block de=
+vice
+> > > > or other sort of userspace devices, cmd completion is driven by
+> > > > userspace, not sure if one such 'irq' is needed.
+> > >
+> > > I'm not sure, it can be an optional feature in the future if needed.
+> > >
+> > > > Even not sure if virtio
+> > > > ring is one good choice for such use case, given io_uring has been =
+proved
+> > > > as very efficient(should be better than virtio ring, IMO).
+> > > >
+> > >
+> > > Since vduse is aimed at creating a generic userspace device framework=
+,
+> > > virtio should be the right way IMO.
+> >
+> > OK, it is the right way, but may not be the effective one.
+> >
+>
+> Maybe, but I think we can try to optimize it.
+>
+> > > And with the vdpa framework, the
+> > > userspace device can serve both virtual machines and containers.
+> >
+> > virtio is good for VM, but not sure it is good enough for other
+> > cases.
+> >
+> > >
+> > > Regarding the performance issue, actually I can't measure how much of
+> > > the performance loss is due to the difference between virtio ring and
+> > > iouring. But I think it should be very small. The main costs come fro=
+m
+> > > the two bottlenecks I mentioned before which could be mitigated in th=
+e
+> > > future.
+> >
+> > Per my understanding, at least there are two places where virtio ring i=
+s
+> > less efficient than io_uring:
+> >
+>
+> I might have misunderstood what you mean by virtio ring before. My
+> previous understanding of the virtio ring does not include the
+> virtio-blk driver.
+>
+> > 1) io_uring uses standalone submission queue(SQ) and completion queue(C=
+Q),
+> > so no contention exists between submission and completion; but virtio q=
+ueue
+> > requires per-vq lock in both submission and completion.
+> >
+>
+> Yes, this is the bottleneck of the virtio-blk driver, even in the VM
+> case. We are also trying to optimize this lock.
+>
+> One way to mitigate it is making submission and completion happen in
+> the same core.
 
-here's first summary of the problems I hit when trying to
-add an io_uring backend to Samba's libtevent.
+QEMU sizes virtio-blk device num-queues to match the vCPU count. The
+virtio-blk driver is a blk-mq driver, so submissions and completions
+for a given virtqueue should already be processed by the same vCPU.
 
-BTW: It would be nice to get some feedback to my mail from August 16th 2022:
-"Deprecation of IORING_OP_EPOLL_CTL (Re: [GIT PULL] io_uring updates for 5.18-rc1)"
-https://lore.kernel.org/io-uring/a05f7831-92c2-0eb6-0088-73bbdd4acb89@samba.org/
-@Linus, that's basically the reason I cc'ed you...
+Unless the device is misconfigured or the guest software chooses a
+custom vq:vCPU mapping, there should be no vq lock contention between
+vCPUs.
 
-First an overview of what features tevent needs from the os and
-provides for its consumers, then how I tried to use io_uring, followed by the problems I hit):
-(skip to 9. if you just want to see the problems)
+I can think of a reason why submission and completion require
+coordination: descriptors are occupied until completion. The
+submission logic chooses free descriptors from the table. The
+completion logic returns free descriptors so they can be used in
+future submissions.
 
-1. tevent is basically looping around a tevent_loop_once() function,
-    which will use epoll_wait() or poll() as blocking function in the backend.
-    It only invokes a single event handler, which is very important for us
-    as it avoids a whole class of use after free problem we had in the earlier days.
+Other ring designs expose the submission ring head AND tail index so
+that it's clear which submissions have been processed by the other
+side. Once processed, the descriptors are no longer occupied and can
+be reused for future submissions immediately. This means that
+submission and completion do not share state.
 
-    There's a tevent_loop_wait() wrapper, which will typically called
-    by main() in order to have an endless server loop.
+This is for the split virtqueue layout. For the packed layout I think
+there is a similar dependency because descriptors are used for both
+submission and completion.
 
-2. tevent has support for the following event handlers:
-    - 'immediate': It's a way to call something directly in the next
-                   tevent_loop_once() iteration.
-    - 'timer':     It's a way to call something at a specific time
-    - 'signal':    It's a way to call something when a signal e.g. SIGHUP arrived
-    - 'fd':        It's a way to get notified with TEVENT_FD_READ and/or TEVENT_FD_WRITE
-                   on a given file descriptor
+I have CCed Michael Tsirkin in case he has any thoughts on the
+independence of submission and completion in the vring design.
 
-    'immediate', 'timer' and 'signal' events are handled in the core tevent code
-    and only if none of them is ready the backend is called to wait for fd events
-    to get ready. The backend is passed the timeout for the next timer.
+BTW I have written about difference in the VIRTIO, NVMe, and io_uring
+descriptor ring designs here:
+https://blog.vmsplice.net/2022/06/comparing-virtio-nvme-and-iouring-queue.h=
+tml
 
-3. 'fd' events operate with the following properties:
-    a) level triggering mode: TEVENT_FD_READ/TEVENT_FD_WRITE are delivered over and over again,
-       if the handler doesn't consume or send data, you would get 100% cpu spinning, but you can't
-       miss any event (which could happen with edge triggering)
-    b) all registered fd handlers are called in a fair fashion, they are part of a linked list
-       and rotated to the end after each invocation.
-    c) as written above only a single fd event is reported per tevent_loop_once()
-    d) when the file descriptor is closed using close() the event handler will no longer trigger
-    e) we allow separate handlers for TEVENT_FD_READ and TEVENT_FD_WRITE for the same file descriptor
-    f) there's a hook into the backend to set/clear the TEVENT_FD_READ/TEVENT_FD_WRITE on
-       an existing event handler state (tevent_fd_get/set_flags())
-
-4. A single process may have more than a single central/global tevent context instance.
-    a) Separate instances might be allocated and may registered the same file descriptors as
-       other instances.
-    b) The individual instances might be used just temporary or never while
-       they may be allocated for a long time. It means that tevent_loop_once() may not be called
-       for a long time.
-
-5. On linux we use epoll:
-    a) We use epoll_wait() with maxevents=1, in order to avoid stale epoll_event.user_data,
-       as the fd event handler for one fd may change/remove the state of another one.
-
-    b) When we get EEXIST from EPOLL_CTL_ADD, we merge/dispatch multiple events for the same
-       file descriptor in user space.
-
-    c) Without epoll, we use poll() generating the pollfd array and dispatch based on the
-       sorted/rotated list.
-
-With that background I created an io_uring based backend. I modeled it like this:
-
-6. Data model:
-    a) Per tevent_context I have private struct samba_io_uring, wrapping struct io_uring and a list of
-       samba_io_uring_submission structures.
-
-    b) struct samba_io_uring_completion basically maps 'uint64_t user_data' by using its own pointer
-       address to a callback function pointer and a private callback argument.
-
-    c) struct samba_io_uring_submission basically wraps struct io_uring_sqe and has a pointer
-       a struct samba_io_uring_completion in order to fill sqe.user_data.
-
-7. The core tevent_loop_once() logic is this:
-
-    a) loop over the queued samba_io_uring->submissions and move them into lowlevel
-       kernel ring based on io_uring_sq_space_left/io_uring_get_sqe
-       (we also call samba_io_uring_submission->submission_fn() in order to
-       have a way to capture a timestamp for profiling or have a last chance
-       to cancel the submission)
-
-    b) call io_uring_submit_and_wait_timeout() waiting for 1 cqe or a timeout
-
-    c) for the resulting cqe we lookup the samba_io_uring_completion and call
-       samba_io_uring_completion->completion_fn()
-
-    This loop will also allow generic io_uring operations like IORING_OP_SENDMSG
-    and others (unrelated to what tevent normally provides). This will be used
-    in order to improve the performance is performance critical code with io_uring
-    aware code.
-
-8. The mapping of fd events to IORING_OP_POLL_ADD/REMOVE
-
-    By default we won't have io_uring aware code as most of
-    it is not performance critical and we want to be portable also
-    to non linux environments. So as a first step everything still needs
-    to function while just exchanging the tevent backend.
-
-    a) In order to represent what all kernels provide I only
-       used the basic IORING_OP_POLL_ADD/REMOVE (without any update)
-
-    b) In order to provide the level triggered behavior outlined in (3.a above)
-       we need to loop over IORING_OP_POLL_ADD operations.
-       If the requested poll mask is already ready, IORING_OP_POLL_ADD returns
-       immediately. If it's not ready edge triggering (EPOLLET) will trigger a single
-       (EPOLLONESHOT) completion. But as we call IORING_OP_POLL_ADD again,
-       we'll get the effective level triggering, which we need.
-
-    c) IORING_OP_POLL_ADD is queued into samba_io_uring->submissions
-       while 7.a will construct the final sqe via the submission_fn
-       reflecting the current POLLIN/OUT flags.
-
-    d) When the TEVENT_FD_READ/WRITE flags change (via tevent_fd_set_flags()
-       we may change the pending submission (before submission_fn() was called)
-
-    e) If IORING_OP_POLL_ADD is already pending in the kernel
-       we use IORING_OP_POLL_REMOVE to remove it hard linked
-       with a new IORING_OP_POLL_ADD representing the current POLLIN/OUT flags.
-       For that to work reliable I toggle between 2 IORING_OP_POLL_ADD completions.
-
-9. The above works mostly, but manual testing and our massive automated regression tests
-    found the following problems:
-
-    a) Related to https://github.com/axboe/liburing/issues/684 I was also wondering
-       about the return value of io_uring_submit_and_wait_timeout(),
-       but in addition I noticed that the timeout parameter doesn't work
-       as expected, the function will wait for two times of the timeout value.
-       I hacked a fix here:
-       https://git.samba.org/?p=metze/samba/wip.git;a=commitdiff;h=06fec644dd9f5748952c8b875878e0e1b0000d33
-
-    b) The major show stopper is that IORING_OP_POLL_ADD calls fget(), while
-       it's pending. Which means that a close() on the related file descriptor
-       is not able to remove the last reference! This is a problem for points 3.d,
-       4.a and 4.b from above.
-
-       I doubt IORING_ASYNC_CANCEL_FD would be able to be used as there's not always
-       code being triggered around a raw close() syscall, which could do a sync cancel.
-
-       For now I plan to epoll_ctl (or IORING_OP_EPOLL_CTL) and only
-       register the fd from epoll_create() with IORING_OP_POLL_ADD
-       or I keep epoll_wait() as blocking call and register the io_uring fd
-       with epoll.
-
-       I looked at the related epoll code and found that it uses
-       a list in struct file->f_ep to keep the reference, which gets
-       detached also via eventpoll_release_file() called from __fput()
-
-       Would it be possible move IORING_OP_POLL_ADD to use a similar model
-       so that close() will causes a cqe with -ECANCELED?
-
-    c) A simple pipe based performance test shows the following numbers:
-       - 'poll':               Got 232387.31 pipe events/sec
-       - 'epoll':              Got 251125.25 pipe events/sec
-       - 'samba_io_uring_ev':  Got 210998.77 pipe events/sec
-       So the io_uring backend is even slower than the 'poll' backend.
-       I guess the reason is the constant re-submission of IORING_OP_POLL_ADD.
-       My hope would be that IORING_POLL_ADD_MULTI + IORING_POLL_ADD_LEVEL
-       would be able to avoid the performance problem with samba_io_uring_ev
-       compared to epoll.
-
-       I looked at how epoll implements level triggered notifications:
-       The key is that is maintains two logical lists:
-       - interest list with all registered file descriptor in the "epoll set"
-         each registration is also registered into the file's waitqueue via
-         init_poll_funcptr() -> vfs_poll() -> [sock_]poll_wait()
-       - ready list, this is filled by the callback passed to init_poll_funcptr(),
-         which is triggered when there's an "edge"/state change on the fd.
-       The thing is that epoll_wait() fills the passed epoll_event array
-       by traversing the ready list. For each element in the ready list
-       we call vfs_poll() to re-check the most recent state before putting
-       in the result array. For level triggered registrations the entry is move
-       to the end of the ready list in order to provide fair results, otherwise
-       the entry is remove from the ready list, for one shot entries it's also
-       removed from the interest list.
-
-       In order to implement level triggering in io_uring
-       we would need to have some kind of ready list and have a way
-       to let the caller configure a number of cqe's which should be generated
-       during a single io_uring_enter() syscall based on the ready list,
-       without such a value we'd constantly overflow the cqe array.
-
-       As a site note the problem with your IORING_POLL_ADD_LEVEL was this:
-       - IORING_OP_POLL_ADD does check the current value with vfs_poll,
-         but it never triggers the io_poll_can_finish_inline case,
-         so it will *always* wait for the next edge triggering to happen
-         in the background.
-
-         So it means it's move a deferred edge triggering and has nothing to
-         do with level triggering (see 3.a).
-
-         Even if I allow the io_poll_can_finish_inline case, I don't get
-         level triggering, I tried it with there commits:
-         https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=4f89a3fb02c1e4ea4650ea6f9fa9fd642453d2b2
-         https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=4d10a69d9925f546214f9437aef424bade9c5aaa
-         https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=306e743af055fea105df792c2756a0a81a95871a
-         setting the io_uring_poll_always_finish_now option to true...
-
-
-As summary I think 9.a (io_uring_submit_and_wait_timeout) should be trivial to fix.
-
-In order to get the best performance it would be great to get 9.b and (most likely) 9.c
-addressed.
-
-Sorry for the long mail, but I hope we can figure out how to move forward.
-
-Thanks!
-metze
+Stefan

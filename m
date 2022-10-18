@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46BA66032C5
-	for <lists+io-uring@lfdr.de>; Tue, 18 Oct 2022 20:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A66F6032BC
+	for <lists+io-uring@lfdr.de>; Tue, 18 Oct 2022 20:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiJRSs6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Oct 2022 14:48:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44852 "EHLO
+        id S230245AbiJRSsw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Oct 2022 14:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230280AbiJRSs4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Oct 2022 14:48:56 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED24DA2A8E;
-        Tue, 18 Oct 2022 11:48:45 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id u21so21847613edi.9;
-        Tue, 18 Oct 2022 11:48:45 -0700 (PDT)
+        with ESMTP id S229453AbiJRSsw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Oct 2022 14:48:52 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3746A2ABB;
+        Tue, 18 Oct 2022 11:48:47 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id z97so21858617ede.8;
+        Tue, 18 Oct 2022 11:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lFeaHcw3WNcJNFaRay0No0wm3D4s1Mkz5fJGwkqsY20=;
-        b=gJClO7ErBlCfzKPWJy/tFBQfQ+rctfzUBl11vrUnH9Tlr8O8uu0mIEqiByfJHvpTv0
-         dgJpBSC8TeNV/KvUIkibb7wKldRyBTdC4LwAbxVitkVdrNAum8saXf5SC8Bh8T/ftmGH
-         jULwwtjrC6JIKLC0qu7Nu+Zr7l2ZslMOxX8olHV9ag9HRYNKRTwbBfsAJohPVl1d7+7t
-         gogXXmQu52TXETJAsIj1dTYakj25eas+y0+Xd7469/26WacHW26Ze9IVD0HhKFvatQ04
-         9pmatdw2sd+f3jYjF5ObCtj9PbWa8t6QYXcUy5L+kqwQvAlXsBv4OxD9pqwZW2dStCej
-         w+cQ==
+        bh=u5GqQPQo1EN7QTPOq98P7aatI+dm61orL9Tt4wQrx+M=;
+        b=pQVhTRrUCNr5iWknH5+wZ6tovh3QucpIXrfLs3BqoUkMXX5cbjzVfBS4+FhSKAU7kq
+         cbLGxN3Bx0WzENB/z0YXhLKrxTbiaU6y3EGLc4dz4KZPwiZY/rlP5h3oVf/AcYu6p4im
+         Uajr6V1YveMZIlhVs7KtCulPeJ1rJBCD7wdRwIO1u1eC0xgL4XxuhTvGIfcIKELNVrEK
+         IJNyEpEkRxTHUaQvOPxa8Ph4iwEytWtPfQ3DUXpFJY5B7HwhOCwUcv90rLkrnA2vtfvb
+         6Bt2TpTEic8L7crNDFmNGPR05IsBB5YGLlxgADDBPHtDyekeYL9GkQocaKXTD1DycdU2
+         Jqfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lFeaHcw3WNcJNFaRay0No0wm3D4s1Mkz5fJGwkqsY20=;
-        b=zTVb9/G9/5g8ryDQkcqET9ETsXGmmCwE5+k0LB7qG4akj1/sWwmR9+VNXyFrvZ/Jcr
-         neUyuybGXdgiPe8ws6gXSX95tx7I26vXws2K0sUdOdvIJBDLMrcrwGj+zSj3ChJ1VF70
-         ly34B2RQLn5CIytWa2u21+Uc8qGWPBAbhUkf8BXdeYGBzY4aNKvkgPeoUWLaa1CCcpbk
-         3WS2XQExB9kpKTeulGGv45zwAwyrbAiBD7Ha1F0mIoaCSXq71LVVSD2USe7LMLj4xVcX
-         zz6LJsL5g2K72o/JONX62myoqQSBVpUp9ajBII1OvxbrKgw2HR0yPUzVLP9LAgN3UZQL
-         ejkw==
-X-Gm-Message-State: ACrzQf3CsQ9rebTp9pKmMSRYEkZY2mbk33yu6tyw7rkVKBZjLf65ciEt
-        BYcLt7eizj6L012U+Pfmwg8=
-X-Google-Smtp-Source: AMsMyM6JVKjrpUvR48PVYI1Cp/s2Dq8HVr7aM9kYFcHTtSYpQDnkl8cfZLhYvBvOs7fV6B2h3y1kdQ==
-X-Received: by 2002:a05:6402:5489:b0:43b:b935:db37 with SMTP id fg9-20020a056402548900b0043bb935db37mr4018153edb.347.1666118923767;
-        Tue, 18 Oct 2022 11:48:43 -0700 (PDT)
+        bh=u5GqQPQo1EN7QTPOq98P7aatI+dm61orL9Tt4wQrx+M=;
+        b=xumUHBiu28KJJ5JpV3gwShRxFZN9TzfE8V3czluST51kk2HpLdBMYRgwQrTvCH9rG8
+         frgCzljnA5ZdufWbeIQL5W6LEDehp4FEu4RK2g54Q4dPhA7wnzVkLbXVZE974A7riIhx
+         TJeh00y8YTL3xKCneYd+Pwpw21saaNarGb9s2lDvTCSWF9Emlq/YTp5UnrLoDy77Goft
+         kKQWRjtZOwgjGM3XWM7CSAjtGYbCuzgc9vrJiiLxX3weT0f/yKGqwEOAazcBP46+OiKz
+         abmgtXbpYq3HpfswzX57eWnGdPCbwUhCODvTov7huApCsYOi7awhoZG024MGCH41B5vY
+         tQYA==
+X-Gm-Message-State: ACrzQf2fvcrx58/X9R/fvFm8UnT3yhCuOItXY+aWTxE94ddCeO9g5Ijw
+        XzNC+pyN3xT8q+WrgwG5XRE=
+X-Google-Smtp-Source: AMsMyM4hCMBwizRT+tDQIvDOjWgarwgj+ZsFLHsRMaUJopOWfLq+XSgiU4G1Ahe/9J9GRUK/Ci0XaA==
+X-Received: by 2002:aa7:d28c:0:b0:459:3cc5:3cb8 with SMTP id w12-20020aa7d28c000000b004593cc53cb8mr3997366edq.261.1666118925643;
+        Tue, 18 Oct 2022 11:48:45 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.197.72.2.threembb.co.uk. [94.197.72.2])
-        by smtp.gmail.com with ESMTPSA id j18-20020a17090623f200b0078db18d7972sm7855355ejg.117.2022.10.18.11.48.42
+        by smtp.gmail.com with ESMTPSA id j18-20020a17090623f200b0078db18d7972sm7855355ejg.117.2022.10.18.11.48.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:48:42 -0700 (PDT)
+        Tue, 18 Oct 2022 11:48:44 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC for-next 1/4] bio: safeguard REQ_ALLOC_CACHE bio put
-Date:   Tue, 18 Oct 2022 19:47:13 +0100
-Message-Id: <558d78313476c4e9c233902efa0092644c3d420a.1666114003.git.asml.silence@gmail.com>
+Subject: [RFC for-next 2/4] bio: split pcpu cache part of bio_put into a helper
+Date:   Tue, 18 Oct 2022 19:47:14 +0100
+Message-Id: <cd6df8c5289a2df20c338d0842172950b0dedef2.1666114003.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <cover.1666114003.git.asml.silence@gmail.com>
 References: <cover.1666114003.git.asml.silence@gmail.com>
@@ -72,29 +72,71 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-bio_put() with REQ_ALLOC_CACHE assumes that it's executed not from
-an irq context. Let's add a warning if the invariant is not respected,
-especially since there is a couple of places removing REQ_POLLED by hand
-without also clearing REQ_ALLOC_CACHE.
+Extract a helper out of bio_put for recycling into percpu caches.
+It's a preparation patch without functional changes.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- block/bio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/bio.c | 38 +++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 7cb7d2ff139b..5b4594daa259 100644
+index 5b4594daa259..ac16cc154476 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -741,7 +741,7 @@ void bio_put(struct bio *bio)
+@@ -725,6 +725,28 @@ static void bio_alloc_cache_destroy(struct bio_set *bs)
+ 	bs->cache = NULL;
+ }
+ 
++static inline void bio_put_percpu_cache(struct bio *bio)
++{
++	struct bio_alloc_cache *cache;
++
++	cache = per_cpu_ptr(bio->bi_pool->cache, get_cpu());
++	bio_uninit(bio);
++
++	if ((bio->bi_opf & REQ_POLLED) && !WARN_ON_ONCE(in_interrupt())) {
++		bio->bi_next = cache->free_list;
++		cache->free_list = bio;
++		cache->nr++;
++	} else {
++		put_cpu();
++		bio_free(bio);
++		return;
++	}
++
++	if (cache->nr > ALLOC_CACHE_MAX + ALLOC_CACHE_SLACK)
++		bio_alloc_cache_prune(cache, ALLOC_CACHE_SLACK);
++	put_cpu();
++}
++
+ /**
+  * bio_put - release a reference to a bio
+  * @bio:   bio to release reference to
+@@ -740,20 +762,10 @@ void bio_put(struct bio *bio)
+ 		if (!atomic_dec_and_test(&bio->__bi_cnt))
  			return;
  	}
+-
+-	if ((bio->bi_opf & REQ_ALLOC_CACHE) && !WARN_ON_ONCE(in_interrupt())) {
+-		struct bio_alloc_cache *cache;
+-
+-		bio_uninit(bio);
+-		cache = per_cpu_ptr(bio->bi_pool->cache, get_cpu());
+-		bio->bi_next = cache->free_list;
+-		cache->free_list = bio;
+-		if (++cache->nr > ALLOC_CACHE_MAX + ALLOC_CACHE_SLACK)
+-			bio_alloc_cache_prune(cache, ALLOC_CACHE_SLACK);
+-		put_cpu();
+-	} else {
++	if (bio->bi_opf & REQ_ALLOC_CACHE)
++		bio_put_percpu_cache(bio);
++	else
+ 		bio_free(bio);
+-	}
+ }
+ EXPORT_SYMBOL(bio_put);
  
--	if (bio->bi_opf & REQ_ALLOC_CACHE) {
-+	if ((bio->bi_opf & REQ_ALLOC_CACHE) && !WARN_ON_ONCE(in_interrupt())) {
- 		struct bio_alloc_cache *cache;
- 
- 		bio_uninit(bio);
 -- 
 2.38.0
 

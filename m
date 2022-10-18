@@ -2,105 +2,144 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1F76032CA
-	for <lists+io-uring@lfdr.de>; Tue, 18 Oct 2022 20:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37C09603328
+	for <lists+io-uring@lfdr.de>; Tue, 18 Oct 2022 21:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbiJRStH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Oct 2022 14:49:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44828 "EHLO
+        id S229741AbiJRTQM convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Tue, 18 Oct 2022 15:16:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230291AbiJRSs5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Oct 2022 14:48:57 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4589EA0242;
-        Tue, 18 Oct 2022 11:48:50 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id d26so34480907eje.10;
-        Tue, 18 Oct 2022 11:48:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OEXvp1IreEp3SXV31DiUhQRIjvrLdojheHeDjSM1+mQ=;
-        b=StZ853wy/e5RtsJT54EGTUKpdC1tUlgOYlrs3sEGGMffoVhFCAcySZ+zNVfaD1MQTp
-         hMR7D7Kq7Xkwj7xChLcHAirblIX5aaAaqxy0G/6wY09rasb4Wyz7bPp1wQmhVBenkfs3
-         XaUUSrpMu+p7lybYOS2F+fq432f0WVK60coyn97CguE3CAs29HGOugjHrvxF/A8W/foA
-         evsF12c3sbuzYKU+33M7yTxBruThoComQQJs1211x2nevgPNAk6CvOnmOw1ecu6qEER1
-         33dhbDf7rIyUZWUKI6TvvvWxR8b8S8I4Ekt328WSeicvjAGCOySDvgplDFdTSIHYEOGB
-         dNUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OEXvp1IreEp3SXV31DiUhQRIjvrLdojheHeDjSM1+mQ=;
-        b=rEd69rZm96JdZRjEzTiuJU0cq2IEvTSYB/FkH6WI4irV8c43pxo5+DKOLhwryrb9S5
-         0TkKESplNyIfm/U4omXALfThSThVt5EQbdhIkjHOgfHsefn9JTX7uWkjjXy/YB7q37SM
-         g47aueFhSKrnHl4zXEk00JgqZjwNJ8Saeq21q9a16xlrd5gb2RMQt6B7RFOD5DPwRcju
-         eTMlNCQ746UTuKhEwzC0ZET3YWlo96bhccNVfzK3ePNFGlTQtvV4EmdNshLPPKjT2/MA
-         jY2Eyh7/HPtKp96rgZDRXMxh/0573Sl0cf+xefMld3+XSi7eAnm/eoq3gFUktb//zZPX
-         HMVQ==
-X-Gm-Message-State: ACrzQf0WXswtPtC8zGQWolWrabbjJwLwiaTivXRENkJPoLC12lft6WaQ
-        fwJpaDaQM2e3r056f3+apB0=
-X-Google-Smtp-Source: AMsMyM5Y5ZS6TDv/2mH05016sSTBXkDL48kYZI7q6Xe+foRLWaJOLgSM1up164i2Bm1RjXBT7PL2RQ==
-X-Received: by 2002:a17:907:7632:b0:78d:b5ba:87db with SMTP id jy18-20020a170907763200b0078db5ba87dbmr3568466ejc.661.1666118928064;
-        Tue, 18 Oct 2022 11:48:48 -0700 (PDT)
-Received: from 127.0.0.1localhost (94.197.72.2.threembb.co.uk. [94.197.72.2])
-        by smtp.gmail.com with ESMTPSA id j18-20020a17090623f200b0078db18d7972sm7855355ejg.117.2022.10.18.11.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:48:47 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC for-next 4/4] io_uring/rw: enable bio caches for IRQ rw
-Date:   Tue, 18 Oct 2022 19:47:16 +0100
-Message-Id: <11cf38513c45083955d4ee2cedbb46df0a9f6081.1666114003.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <cover.1666114003.git.asml.silence@gmail.com>
-References: <cover.1666114003.git.asml.silence@gmail.com>
+        with ESMTP id S229572AbiJRTQL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Oct 2022 15:16:11 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3569B580B9
+        for <io-uring@vger.kernel.org>; Tue, 18 Oct 2022 12:16:10 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 29IDgBx3004361
+        for <io-uring@vger.kernel.org>; Tue, 18 Oct 2022 12:16:09 -0700
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3k9abe6w65-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 18 Oct 2022 12:16:09 -0700
+Received: from twshared9384.24.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 18 Oct 2022 12:16:08 -0700
+Received: by devvm2494.atn0.facebook.com (Postfix, from userid 172786)
+        id 44055227F0509; Tue, 18 Oct 2022 12:16:02 -0700 (PDT)
+From:   Jonathan Lemon <jonathan.lemon@gmail.com>
+To:     <io-uring@vger.kernel.org>
+CC:     <kernel-team@meta.com>
+Subject: [RFC PATCH v2 00/13] zero-copy RX for io_uring
+Date:   Tue, 18 Oct 2022 12:15:49 -0700
+Message-ID: <20221018191602.2112515-1-jonathan.lemon@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8BIT
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: SWWtPse7TSz1M-rLW8WO7jCWm2PjCGNO
+X-Proofpoint-ORIG-GUID: SWWtPse7TSz1M-rLW8WO7jCWm2PjCGNO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-18_07,2022-10-18_01,2022-06-22_01
+X-Spam-Status: No, score=-0.2 required=5.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+        FORGED_GMAIL_RCVD,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,NML_ADSP_CUSTOM_MED,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        SPOOFED_FREEMAIL,SPOOF_GMAIL_MID autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Now we can use IOCB_ALLOC_CACHE not only for iopoll'ed reads/write but
-also for normal IRQ driven I/O.
+This series is a RFC for io_uring/zctap.  This is an evolution of
+the earlier zctap work, re-targeted to use io_uring as the userspace
+API.  The current code is intended to provide a zero-copy RX path for
+upper-level networking protocols (aka TCP and UDP).  The current draft
+focuses on host-provided memory (not GPU memory).
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This RFC contains the upper-level core code required for operation,
+with the intent of soliciting feedback on the general API.  This does
+not contain the network driver side changes required for complete
+operation.  Also please note that as an RFC, there are some things
+which are incomplete or in need of rework.
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 100de2626e47..ff609b762742 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -667,6 +667,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 	ret = kiocb_set_rw_flags(kiocb, rw->flags);
- 	if (unlikely(ret))
- 		return ret;
-+	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
- 
- 	/*
- 	 * If the file is marked O_NONBLOCK, still allow retry for it if it
-@@ -682,7 +683,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 			return -EOPNOTSUPP;
- 
- 		kiocb->private = NULL;
--		kiocb->ki_flags |= IOCB_HIPRI | IOCB_ALLOC_CACHE;
-+		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
- 		req->iopoll_completed = 0;
- 	} else {
+The intent is to use a network driver which provides header/data
+splitting, so the frame header (which is processed by the networking
+stack) does not reside in user memory.
+
+The code is successfully receiving a zero-copy TCP stream from a
+remote sender.  An RFC, the intent is to solicit feedback on the
+API and overall design.  The current code will also work with
+system pages, copying the data out to the application - this is
+intended as a fallback/testing path.
+
+Performance numbers are coming soon!
+
+High level description:
+
+The application allocates a frame backing store, and provides this
+to the kernel for use.  An interface queue is requested from the
+networking device, and incoming frames are deposited into the provided
+memory region.
+
+Responsibility for correctly steering incoming frames to the queue
+is outside the scope of this work - it is assumed that the user 
+has set steering rules up separately.
+
+Incoming frames are sent up the stack as skb's and eventually
+land in the application's socket receive queue.  This differs
+from AF_XDP, which receives raw frames directly to userspace,
+without protocol processing.
+
+The RECV_ZC opcode then returns an iov[] style vector which points
+to the data in userspace memory.  When the application has completed
+processing of the data, the buffer is returned back to the kernel
+through a fill ring for reuse.
+
+Changelog:
+ v1: initial version
+ v2: Remove separate PROVIDE_REGION opcode, fold this functionality
+     into REGISTER_IFQ.  Remove page_pool hooks, as it appears the 
+     page pool is currently incompatible with user-mapped memory.
+     Add io_zctap_buffers and network driver API.
+.
+
+Jonathan Lemon (13):
+  io_uring: add zctap ifq definition
+  netdevice: add SETUP_ZCTAP to the netdev_bpf structure
+  io_uring: add register ifq opcode
+  io_uring: create a zctap region for a mapped buffer
+  io_uring: create page freelist for the ifq region
+  io_uring: Provide driver API for zctap packet buffers.
+  io_uring: Allocate the zctap buffers for the device
+  io_uring: Add zctap buffer get/put functions and refcounting.
+  skbuff: Introduce SKBFL_FIXED_FRAG and skb_fixed()
+  io_uring: Allocate a uarg for use by the ifq RX
+  io_uring: Define the zctap iov[] returned to the user.
+  io_uring: add OP_RECV_ZC command.
+  io_uring: Make remove_ifq_region a delayed work call
+
+ include/linux/io_uring.h       |  35 ++
+ include/linux/io_uring_types.h |  11 +
+ include/linux/netdevice.h      |   6 +
+ include/linux/skbuff.h         |  10 +-
+ include/uapi/linux/io_uring.h  |  24 +
+ io_uring/Makefile              |   3 +-
+ io_uring/io_uring.c            |   8 +
+ io_uring/kbuf.c                |  13 +
+ io_uring/kbuf.h                |   2 +
+ io_uring/net.c                 | 123 +++++
+ io_uring/opdef.c               |  15 +
+ io_uring/zctap.c               | 842 +++++++++++++++++++++++++++++++++
+ io_uring/zctap.h               |  16 +
+ 13 files changed, 1106 insertions(+), 2 deletions(-)
+ create mode 100644 io_uring/zctap.c
+ create mode 100644 io_uring/zctap.h
+
 -- 
-2.38.0
+2.30.2
 

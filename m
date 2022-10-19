@@ -2,64 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9246050B6
-	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 21:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 086F86050B7
+	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 21:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbiJSTtX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Oct 2022 15:49:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59740 "EHLO
+        id S230266AbiJSTtY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Oct 2022 15:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230266AbiJSTtW (ORCPT
+        with ESMTP id S230314AbiJSTtW (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 15:49:22 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F146EE81
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 12:49:19 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id c24so18257716pls.9
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 12:49:19 -0700 (PDT)
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC166315
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 12:49:21 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id p14so18247520pfq.5
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 12:49:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DE+pC1xoa6jKzJgz9ssD3qXjzyl5nNC8ht+oyc3rAWU=;
-        b=yUHzem6sIADgl8VuoSM7oJkVqb+B5GHyJmRtSkk0r+NAk9gYc798fS+bCXMzJ0sPqz
-         gvhK1tXz6VWvJO1Aut71+PSwDju5EPluhhqCTyB9zoRDkmzWhYIiZJNVrEjApe8DORn8
-         KcevE4cLtP5SHAZpXPXIFh4xUNN7j9hoL5P4wBDwwUNG4OFARL04b8gmHZGE5jbZZ/Ph
-         AtWzdmd0UHVDDpgIdbRXMTQwQmEG7tr4dm2DJk2KynNJ1xzwv826mP1LceJ3JBfgdFYx
-         PAvM2DUd4lH0lArT6GV6RokgNsDgwR1/9x8oR9ELO347v6rLm6YNmMTkiseODRtqZ+/3
-         0WgQ==
+        bh=JXIMZyeHIiCmjMKrbWzQzcTbZ+nhaZipBFXLjdQJfi8=;
+        b=SJvRJj4SIYYNskpr0nXY+QmbqmvzewIWEU3PXol4PWtUvWaxt8/vKVotDGGlzvcAnT
+         Ddx64tHHNmkTYNYfgRMIw9ujx6+nIphsqgZnKYk417roB/0slMH1UQydreYCLtoqBjmh
+         pbwhl5+qBl7K1KkdE1IdDOREXeBc+LQiCsZ9QxpJIfiyVKEwkJU56C4OgsZxR8Oav2h3
+         0DWHZ64uWxAktzgywQDw2okNCfS6khkneEjFHhqwTS+uPX/iG6Q86dlRJ2xuE7jSoISl
+         RNJp0n3eiwmS7J4k7HCQeaTWTPabpJBtazBr6HhaJeWVuPhMIWByT19m6MQCcrnbV/Rx
+         Lp3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DE+pC1xoa6jKzJgz9ssD3qXjzyl5nNC8ht+oyc3rAWU=;
-        b=zmDq6rUIpayvnazvM/8DlKv259dPmfFfxcMm6E7NYWPzz3d8LmcsmIvUDGRUN7Blhl
-         RbUgJtNXxYJW/zZX3N787I3WLTMu/K5n07pUw4MAnEuFf/zx85pPE2uf8u+tyj5lQ2EN
-         uVAukoNP59PBALrvRFwuaMnxfnSVPsWNNt+RCkbqKj6Qe6xlmX+1xpeshWcypUqbAMrq
-         l4mEuzkUTu3r0H7fkuLb6beLPfPk7tWNFSwvLblqpJ+xsDMVXL4h2dCbJEPzpkJLpgP6
-         aoxf9kOD3apT+R3TmOdQZk1hsOQu7AiNzEdaZ/qPJiWIt/e+WnXIU+NXjvYYowFre69k
-         hiZQ==
-X-Gm-Message-State: ACrzQf2QnGrhziJJ/m3CMj/t8TQxPr3nKZ064HR3jJifVDEfXpKQ8+af
-        8fJE4S9Vd8K0pNxSLTAVw2p7Kw==
-X-Google-Smtp-Source: AMsMyM7m5RpbE9FxNm/vTBWuqHTRCXyAoU5oSnqjcB5Qa4UB1SAgXCrRAktuhVVRZXJoQ6L3/ANkCw==
-X-Received: by 2002:a17:90a:a088:b0:20d:67b7:546d with SMTP id r8-20020a17090aa08800b0020d67b7546dmr12127533pjp.6.1666208959487;
-        Wed, 19 Oct 2022 12:49:19 -0700 (PDT)
+        bh=JXIMZyeHIiCmjMKrbWzQzcTbZ+nhaZipBFXLjdQJfi8=;
+        b=w7TVWwc8MhlrjQlCl/PVHuXP2hNU0G4Lb3ProzBDc4TRxlMMCoKdlvNii1sJG6seYj
+         fmQvobpbTuhX93xC9DHdeMlKL+NubGC8HKoWlR/rvhjep4wVAc5+U7XRECToMNkBqSd0
+         0t3Oa9IOsX4Us+gx64ibvFQxon6jmx8KsQ9rgywZ1+X5UHKS4nnHZknl6/2opiWgveoX
+         P2epc+RzuwkTvvn0AolZqj7CaQNrtQMpBW3TJIkptYZpkJ4Ck/s1EgPWGGMCQd9KES6T
+         Q7H4M5QjnI+XuYB1FxlWKaF4/5Nk50ExSdfrMQajiY3Vw+JwieqEpufH5HUtdiDlBzIo
+         7+zw==
+X-Gm-Message-State: ACrzQf111vnqRDlsqLRAVnKM8xeyu4A9daUni+5na+pMU6W0RyssYirz
+        bwX1FbktCrh34giSjojTIj8jLA==
+X-Google-Smtp-Source: AMsMyM4jJuYEK5loTCVz2Mg57OSG5BQADotG0zeIMY8PR10zHO2hvuKgA/yruOmZkhLOL0hruMvbkw==
+X-Received: by 2002:a05:6a00:24c2:b0:52e:7181:a8a0 with SMTP id d2-20020a056a0024c200b0052e7181a8a0mr10311040pfv.57.1666208960507;
+        Wed, 19 Oct 2022 12:49:20 -0700 (PDT)
 Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id 72-20020a62194b000000b00562362dbbc1sm11531811pfz.157.2022.10.19.12.49.18
+        by smtp.gmail.com with ESMTPSA id 72-20020a62194b000000b00562362dbbc1sm11531811pfz.157.2022.10.19.12.49.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 12:49:19 -0700 (PDT)
+        Wed, 19 Oct 2022 12:49:20 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org, vegard.nossum@oracle.com,
-        io-uring@vger.kernel.org, harshit.m.mogalapalli@gmail.com,
-        syzkaller <syzkaller@googlegroups.com>
-In-Reply-To: <20221019171218.1337614-1-harshit.m.mogalapalli@oracle.com>
-References: <20221019171218.1337614-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH] io_uring/msg_ring: Fix NULL pointer dereference in io_msg_send_fd()
-Message-Id: <166620895849.131373.4257100476341517725.b4-ty@kernel.dk>
-Date:   Wed, 19 Oct 2022 12:49:18 -0700
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Dylan Yudaken <dylany@meta.com>
+Cc:     kernel-team@fb.com, io-uring@vger.kernel.org
+In-Reply-To: <20221019145042.446477-1-dylany@meta.com>
+References: <20221019145042.446477-1-dylany@meta.com>
+Subject: Re: [PATCH liburing 0/2] liburing: fix shortening api issues
+Message-Id: <166620895960.131373.1254090404604128877.b4-ty@kernel.dk>
+Date:   Wed, 19 Oct 2022 12:49:19 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -73,43 +71,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 19 Oct 2022 10:12:18 -0700, Harshit Mogalapalli wrote:
-> Syzkaller produced the below call trace:
+On Wed, 19 Oct 2022 07:50:40 -0700, Dylan Yudaken wrote:
+> The liburing public API has a couple of int shortening issues found by
+> compiling with cc="clang -Wshorten-64-to-32 -Werror"
 > 
->  BUG: KASAN: null-ptr-deref in io_msg_ring+0x3cb/0x9f0
->  Write of size 8 at addr 0000000000000070 by task repro/16399
-> 
->  CPU: 0 PID: 16399 Comm: repro Not tainted 6.1.0-rc1 #28
->  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.el7
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0xcd/0x134
->   ? io_msg_ring+0x3cb/0x9f0
->   kasan_report+0xbc/0xf0
->   ? io_msg_ring+0x3cb/0x9f0
->   kasan_check_range+0x140/0x190
->   io_msg_ring+0x3cb/0x9f0
->   ? io_msg_ring_prep+0x300/0x300
->   io_issue_sqe+0x698/0xca0
->   io_submit_sqes+0x92f/0x1c30
->   __do_sys_io_uring_enter+0xae4/0x24b0
-> ....
->  RIP: 0033:0x7f2eaf8f8289
->  RSP: 002b:00007fff40939718 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
->  RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2eaf8f8289
->  RDX: 0000000000000000 RSI: 0000000000006f71 RDI: 0000000000000004
->  RBP: 00007fff409397a0 R08: 0000000000000000 R09: 0000000000000039
->  R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004006d0
->  R13: 00007fff40939880 R14: 0000000000000000 R15: 0000000000000000
->   </TASK>
->  Kernel panic - not syncing: panic_on_warn set ...
+> There are a few more in the main library, and a *lot* in the tests, which
+> would be nice to fix up at some point. The public API changes are
+> particularly useful for build systems that include these files and run
+> with these errors enabled.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] io_uring/msg_ring: Fix NULL pointer dereference in io_msg_send_fd()
-      (no commit info)
+[1/2] fix int shortening bug in io_uring_recvmsg_validate
+      commit: d916aa80993438dbcec700202b21b550edc03941
+[2/2] fix len type of fgettxattr etc
+      commit: 5698e179a1308aa8019a482ca910a832b5737e5f
 
 Best regards,
 -- 

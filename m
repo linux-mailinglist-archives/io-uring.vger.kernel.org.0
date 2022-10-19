@@ -2,21 +2,21 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC62604AAE
-	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 17:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B320C604B70
+	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 17:30:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbiJSPJr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Oct 2022 11:09:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53160 "EHLO
+        id S231218AbiJSPaz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Oct 2022 11:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbiJSPJB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 11:09:01 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB5D4F664
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:01:10 -0700 (PDT)
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29JEOseU030282
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:01:09 -0700
+        with ESMTP id S231388AbiJSPae (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 11:30:34 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F4A612D82B
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:22:50 -0700 (PDT)
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 29JC5SjF000990
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:07:04 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
@@ -26,14 +26,14 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : 
  E7pFtChu/o/2ZV97ZmK0jo8m/pwbyEzYX2Z1a8VAyAxfITMyGu4BzEdNjnXr+3thhnY6
  zc49Di7Im46d+a+8gcVqDbgRqZGr1IPAVMWIKX86cx3dkcVkX18nyoYCJhHIqOL7UeI4
  /LRil9HPkjUvqHENNuIq0CBimYhiIfsRM7Bd0ugMnC4JyKbOjrNISpmeA8SL4gV7ZOjg Rw== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3k9tpeprem-2
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net (PPS) with ESMTPS id 3kagxa1qcc-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:01:08 -0700
-Received: from twshared9088.05.ash9.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:07:04 -0700
+Received: from twshared9269.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 08:01:07 -0700
+ 15.1.2375.31; Wed, 19 Oct 2022 08:07:01 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
         id 608357E52F5F; Wed, 19 Oct 2022 07:50:49 -0700 (PDT)
 From:   Dylan Yudaken <dylany@meta.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: EEgSJZAffg1BBaxb0VOIB6b7IBmRNAGM
-X-Proofpoint-GUID: EEgSJZAffg1BBaxb0VOIB6b7IBmRNAGM
+X-Proofpoint-ORIG-GUID: e2puY_jJjC0F3tbgrupBTMYUa4L4-B-C
+X-Proofpoint-GUID: e2puY_jJjC0F3tbgrupBTMYUa4L4-B-C
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-10-19_09,2022-10-19_03,2022-06-22_01

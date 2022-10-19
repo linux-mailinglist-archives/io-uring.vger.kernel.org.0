@@ -2,132 +2,143 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C9E604CD4
-	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 18:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01FFD604E41
+	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 19:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbiJSQMZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Oct 2022 12:12:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59482 "EHLO
+        id S229687AbiJSRMf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Oct 2022 13:12:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230494AbiJSQMW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 12:12:22 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41A7D192DA1;
-        Wed, 19 Oct 2022 09:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=WNEsWRsc9YQ7S7HzOE/ZygTuGJweijxa7FYHUIU8grc=; b=phuFdzZj7saAx1oykcGf8qserz
-        mepCDfKO0OlbkbPWO5GqZpSeBtGC4T3V/w7lL9CxztytOxmwicOpwzOwvWsv83We8uLkuHGtqvfPz
-        OJlY/MfheYXZTqJQTwmrhnAyz5kEF5sKfP5Lli9TxZ3S6Ihx591Wb/poVixWwOI4oUnL52F1zp37P
-        wnlL1N/0JZyO4rhleTWkx2tmshfZ6jaMV+tmPMh93dPUfl15yS1BlTGHIi18XqJ8wIqQGoNu8/WA1
-        TsUglwJKnNSCDhvHViAY8dM3JxJHHZV9kM375OjECig9k0jYhw0+rV3/4Ezoa8iYyp4tftjwKRBEP
-        lF2i9HfHsFt95cpZhdiOrCHYxgRNo+vCo+jBHS9pVENUUBckrMRwFJGxPfAeFz5P3c2wh7+4Ugn2T
-        OBvuVfNk0bjOeX+FIhtXKyqjvZILi+kWz3Wel7Tyedut3L9ZCxJZxiL8s+PyJc+JcTdX7Fe8jXTE8
-        LOS1AdhSibRjqxrXw3miwfiJ;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1olBfx-004tmH-7w; Wed, 19 Oct 2022 16:12:13 +0000
-Message-ID: <df47dbd0-75e4-5f39-58ad-ec28e50d0b9c@samba.org>
-Date:   Wed, 19 Oct 2022 18:12:12 +0200
+        with ESMTP id S229497AbiJSRMe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 13:12:34 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5911C19C9;
+        Wed, 19 Oct 2022 10:12:33 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29JGnuGu003161;
+        Wed, 19 Oct 2022 17:12:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2022-7-12; bh=9+6DkXbVc2UcQKAgPXBH88iNfcHzIH1zQo7sOPvAnqo=;
+ b=hIX40z7/5PP4LZC7jlB0YIiOIlp4OazY76uDRC3woSVlNS4JMj/G+STls3lGzxl4i+10
+ jjjntWIvlt64yWptVFDkvptQHhZUDVScyycKmIppmgtsropgMtNLcRriMjUAMnJuE7qw
+ qL8OC5O8eE0aZsnlfvtimiMjG5HbqzzXqo4S58pdXD8r4/9nkE49mGuJKLzIMiNjp4Cj
+ ChaqhlVlW6bIvVEFNReMB3mVQGGvcHebtBWgPuZpLAdVQz5XIyqmzJEt8ZlW7aBzFSn+
+ oK5K58mIQe/zRXfdnkc0b58xwwIeAbdhCgFg745CKb8BeezjmzSDhiey5v2Hbc+UcQU6 xg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3k99ntetas-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Oct 2022 17:12:30 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 29JGA1gf040515;
+        Wed, 19 Oct 2022 17:12:29 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3k8hu7xukx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Oct 2022 17:12:29 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 29JHCToN030014;
+        Wed, 19 Oct 2022 17:12:29 GMT
+Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3k8hu7xuk8-1;
+        Wed, 19 Oct 2022 17:12:29 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     vegard.nossum@oracle.com, harshit.m.mogalapalli@gmail.com,
+        harshit.m.mogalapalli@oracle.com,
+        syzkaller <syzkaller@googlegroups.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/msg_ring: Fix NULL pointer dereference in io_msg_send_fd()
+Date:   Wed, 19 Oct 2022 10:12:18 -0700
+Message-Id: <20221019171218.1337614-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>,
-        Dylan Yudaken <dylany@fb.com>
-References: <4385ba84-55dd-6b08-0ca7-6b4a43f9d9a2@samba.org>
- <6f0a9137-2d2b-7294-f59f-0fcf9cdfc72d@gmail.com>
- <4bbf6bc1-ee4b-8758-7860-a06f57f35d14@samba.org>
- <cd87b6d0-a6d6-8f24-1af4-4b8845aa669c@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: IORING_CQE_F_COPIED
-In-Reply-To: <cd87b6d0-a6d6-8f24-1af4-4b8845aa669c@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-19_10,2022-10-19_04,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=829
+ malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2210190097
+X-Proofpoint-ORIG-GUID: AKVqXiDS9XCt4XX4eCt2ClYOrHEqshge
+X-Proofpoint-GUID: AKVqXiDS9XCt4XX4eCt2ClYOrHEqshge
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Pavel,
+Syzkaller produced the below call trace:
 
->> As I basically use the same logic that's used to generate SO_EE_CODE_ZEROCOPY_COPIED
->> for the native MSG_ZEROCOPY, I don't see the problem with IORING_CQE_F_COPIED.
->> Can you be more verbose why you're thinking about something different?
-> 
-> Because it feels like something that should be done roughly once and in
-> advance. Performance wise, I agree that a bunch of extra instructions in
-> the (io_uring) IO path won't make difference as the net overhead is
-> already high, but I still prefer to keep it thin. The complexity is a
-> good point though, if only we could piggy back it onto MSG_PROBE.
-> Ok, let's do IORING_CQE_F_COPIED and aim 6.2 + possibly backport.
+ BUG: KASAN: null-ptr-deref in io_msg_ring+0x3cb/0x9f0
+ Write of size 8 at addr 0000000000000070 by task repro/16399
 
-Thanks!
+ CPU: 0 PID: 16399 Comm: repro Not tainted 6.1.0-rc1 #28
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.el7
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0xcd/0x134
+  ? io_msg_ring+0x3cb/0x9f0
+  kasan_report+0xbc/0xf0
+  ? io_msg_ring+0x3cb/0x9f0
+  kasan_check_range+0x140/0x190
+  io_msg_ring+0x3cb/0x9f0
+  ? io_msg_ring_prep+0x300/0x300
+  io_issue_sqe+0x698/0xca0
+  io_submit_sqes+0x92f/0x1c30
+  __do_sys_io_uring_enter+0xae4/0x24b0
+....
+ RIP: 0033:0x7f2eaf8f8289
+ RSP: 002b:00007fff40939718 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+ RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2eaf8f8289
+ RDX: 0000000000000000 RSI: 0000000000006f71 RDI: 0000000000000004
+ RBP: 00007fff409397a0 R08: 0000000000000000 R09: 0000000000000039
+ R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004006d0
+ R13: 00007fff40939880 R14: 0000000000000000 R15: 0000000000000000
+  </TASK>
+ Kernel panic - not syncing: panic_on_warn set ...
 
-Experimenting with this stuff lets me wish to have a way to
-have a different 'user_data' field for the notif cqe,
-maybe based on a IORING_RECVSEND_ flag, it may make my life
-easier and would avoid some complexity in userspace...
-As I need to handle retry on short writes even with MSG_WAITALL
-as EINTR and other errors could cause them.
+We don't have a NULL check on file_ptr in io_msg_send_fd() function,
+so when file_ptr is NUL src_file is also NULL and get_file()
+dereferences a NULL pointer and leads to above crash.
 
-What do you think?
+Add a NULL check to fix this issue.
 
-> First, there is no more ubuf_info::zerocopy, see for-next, but you can
-> grab space in io_kiocb, io_kiocb::iopoll_completed is a good candidate.
+Fixes: e6130eba8a84 ("io_uring: add support for passing fixed file descriptors")
+Reported-by: syzkaller <syzkaller@googlegroups.com>
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+I am not completely sure whether to place the NULL check on file_ptr
+which i did in this case as file_ptr is NULL, or the masked src_file.
 
-Ok I found your "net: introduce struct ubuf_info_msgzc" and
-"net: shrink struct ubuf_info" commits.
+Similar checks are present in other files, io_uring/filetable.c has NULL
+check before masking and io_uring/cancel.c has NULL check after masking
+with FFS_MASK.
+---
+ io_uring/msg_ring.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I think the change would be trivial, the zerocopy field would just move
-to struct io_notif_data..., maybe as 'bool copied'.
-
-> You would want to take one io_uring patch I'm going to send (will CC
-> you), with that you won't need to change anything in net/.
-
-The problem is that e.g. tcp_sendmsg_locked() won't ever call
-the callback at all if 'zc' is false.
-
-That's why there's the:
-
-                         if (!zc)
-                                 uarg->zerocopy = 0;
-
-Maybe I can inverse the logic and use two variables 'zero_copied'
-and 'copied'.
-
-We'd start with both being false and this logic in the callback:
-
-if (success) {
-     if (unlikely(!nd->zero_copied && !nd->copied))
-        nd->zero_copied = true;
-} else {
-     if (unlikely(!nd->copied)) {
-        nd->copied = true;
-        nd->zero_copied = false;
-     }
-}
-
-And __io_notif_complete_tw still needs:
-
-         if (!nd->zero_copied)
-                 notif->cqe.flags |= IORING_CQE_F_COPIED;
-
-instead of if (nd->copied)
-
-> And the last bit, let's make the zc probing conditional under IORING_RECVSEND_* flag,
-> I'll make it zero overhead when not set later by replacing the callback.
-
-And the if statement to select a highspeed callback based on
-a IORING_RECVSEND_ flag is less overhead than
-the if statements in the slow callback version?
-
-metze
+diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+index 4a7e5d030c78..90d2fc6fd80e 100644
+--- a/io_uring/msg_ring.c
++++ b/io_uring/msg_ring.c
+@@ -95,6 +95,9 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	msg->src_fd = array_index_nospec(msg->src_fd, ctx->nr_user_files);
+ 	file_ptr = io_fixed_file_slot(&ctx->file_table, msg->src_fd)->file_ptr;
++	if (!file_ptr)
++		goto out_unlock;
++
+ 	src_file = (struct file *) (file_ptr & FFS_MASK);
+ 	get_file(src_file);
+ 
+-- 
+2.37.1
 

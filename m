@@ -2,139 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F35F1604BC5
-	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 17:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA13604B03
+	for <lists+io-uring@lfdr.de>; Wed, 19 Oct 2022 17:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230307AbiJSPjy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Oct 2022 11:39:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40964 "EHLO
+        id S232055AbiJSPRI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Oct 2022 11:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232615AbiJSPjM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 11:39:12 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB4019E033
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:35:40 -0700 (PDT)
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 29J3pPqT030718
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:12:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=KgF9aEzQqyB98FNrrI36bFwoTwssNDTibbiRcHxWjt4=;
- b=lbUGHWjOAIMDHkcJJu3EW192e+XpvdeQRECaSDKWiNXW12t79c6gK+H1mv+XRv4zRT+B
- Ici+HOfhib9qdS8BGD7s6rqryaN4dxSo7pXTgexbN3+oChVhAteBvyEQ9mHoAvCNPWpV
- E7pFtChu/o/2ZV97ZmK0jo8m/pwbyEzYX2Z1a8VAyAxfITMyGu4BzEdNjnXr+3thhnY6
- zc49Di7Im46d+a+8gcVqDbgRqZGr1IPAVMWIKX86cx3dkcVkX18nyoYCJhHIqOL7UeI4
- /LRil9HPkjUvqHENNuIq0CBimYhiIfsRM7Bd0ugMnC4JyKbOjrNISpmeA8SL4gV7ZOjg Rw== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3ka9pmw7by-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 08:12:57 -0700
-Received: from twshared9269.07.ash9.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 08:12:55 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 608357E52F5F; Wed, 19 Oct 2022 07:50:49 -0700 (PDT)
-From:   Dylan Yudaken <dylany@meta.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
-        Dylan Yudaken <dylany@meta.com>
-Subject: [PATCH liburing 2/2] fix len type of fgettxattr etc
-Date:   Wed, 19 Oct 2022 07:50:42 -0700
-Message-ID: <20221019145042.446477-3-dylany@meta.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221019145042.446477-1-dylany@meta.com>
-References: <20221019145042.446477-1-dylany@meta.com>
+        with ESMTP id S230506AbiJSPQx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 11:16:53 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58F6DB06;
+        Wed, 19 Oct 2022 08:09:43 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id g27so25710221edf.11;
+        Wed, 19 Oct 2022 08:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FsK6D2EcEarsvcUmqw3tszIjhZoyFqfrl8GwrgBvxW0=;
+        b=M8GlvtbyG4JohVHZeHH0E5EIn1v/UHCWXcf83Tdnxdu7SzSAFHPqhZRUQpeWgACN7W
+         PQ2dCU1m3KTZoieLTfzwQIXoQHaIIuWnfS80ATkBM796ObX7L07fNiv88WTn2DbhXP/D
+         twnZUmXPbLmXIV/NSjz+kHaU95+MUvYXTEtIMApABhx/SVt5R1qlaepQ3cfHTS4TAzmB
+         Uai0OKTCN/CfWQ8BTOKpeQZ/cSwDMWE0E+E7VHXu1u/1kxA+0OBaj+k5bla+qpGgBc+b
+         db8gGsQFPQ4CX7I7Gfnhs9Pgm45D29M5o6bSrlcKz91efQdyUSxyXapnrUPzhLr4cnRS
+         le8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FsK6D2EcEarsvcUmqw3tszIjhZoyFqfrl8GwrgBvxW0=;
+        b=H9mAeht5QTr9FLYIVYE8hL6DwiPmhBRiQ3JDNYvIyITsNFyH+N4j4Y6bK6TFvzfDt/
+         xfksvzivaiTrZxRLsv4otWWUa3cpuViNembmO9cX97fiw/ddHUM6kAMznzHIn3T0Ar8I
+         gJA7QpqpWJRl9Tv1PtEJFIS34flOD6K3M0Lwh/QGhhPRj2TONZUoNmNgq0wkWwpNo2rW
+         zDxlAuAeuTsOanK4CLXaegkLrQHkYgxfZYykB0g43JurlId1m6BFXRkfJNQ2DFTwugCS
+         9bYPsBbq1ouV58FzeIkQHE8mXHF8L/9LlE7guTKwpZaWvW1YLcmFRki8RhW1ONy+bmoa
+         5vTg==
+X-Gm-Message-State: ACrzQf1JmOqfBT48ExkK38XrGqCtbspKkYdtCswAcY7/ECDCRfWbbTCq
+        unn5hZ6Eo/4KhHIBhmoU51Q1EagWq9M=
+X-Google-Smtp-Source: AMsMyM4QeQXHGNpz0csIxioO6j1olYXj5owzzkOdQ4O2BFleAeAZZFEwSERIP9nY6oL5+eluroGOuA==
+X-Received: by 2002:a05:6402:2d8:b0:458:c152:67bd with SMTP id b24-20020a05640202d800b00458c15267bdmr7941831edx.308.1666192072118;
+        Wed, 19 Oct 2022 08:07:52 -0700 (PDT)
+Received: from [192.168.8.100] (94.197.72.2.threembb.co.uk. [94.197.72.2])
+        by smtp.gmail.com with ESMTPSA id k10-20020a170906578a00b007306a4ecc9dsm9189924ejq.18.2022.10.19.08.07.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Oct 2022 08:07:51 -0700 (PDT)
+Message-ID: <cd87b6d0-a6d6-8f24-1af4-4b8845aa669c@gmail.com>
+Date:   Wed, 19 Oct 2022 16:06:50 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: kQ0Pmthl812pwJjwoeOeeaIxYgTBy9wv
-X-Proofpoint-ORIG-GUID: kQ0Pmthl812pwJjwoeOeeaIxYgTBy9wv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-19_09,2022-10-19_03,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: IORING_CQE_F_COPIED
+To:     Stefan Metzmacher <metze@samba.org>,
+        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>,
+        Dylan Yudaken <dylany@fb.com>
+References: <4385ba84-55dd-6b08-0ca7-6b4a43f9d9a2@samba.org>
+ <6f0a9137-2d2b-7294-f59f-0fcf9cdfc72d@gmail.com>
+ <4bbf6bc1-ee4b-8758-7860-a06f57f35d14@samba.org>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <4bbf6bc1-ee4b-8758-7860-a06f57f35d14@samba.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The size_t len was passed to an unsigned int directly.
-Take an unsigned int instead which is what is expected by io_uring_prep_r=
-w
+On 10/18/22 09:43, Stefan Metzmacher wrote:
+> Hi Pavel,
+> 
+>> On 10/14/22 12:06, Stefan Metzmacher wrote:
+>>> Hi Pavel,
+>>>
+>>> In the tests I made I used this version of IORING_CQE_F_COPIED:
+>>> https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=645d3b584c417a247d92d71baa6266a5f3d0d17d
+>>> (also inlined at the end)
+>>>
+>>> Would that something we want for 6.1? (Should I post that with a useful commit message, after doing some more tests)
+>>
+>> I was thinking, can it be delivered separately but not in the same cqe?
+>> The intention is to keep it off the IO path. For example, it can emit a
+>> zc status CQE or maybe keep a "zc failed" counter inside the ring. Other
+>> options? And we can add a separate callback for that, will make a couple
+>> of things better.
+>>
+>> What do you think? Especially from the userspace usability perspective.
+> 
+> So far I can't think of any other way that would be useful yet,
+> but that doesn't mean something else might exist...
+> 
+> IORING_CQE_F_COPIED is available per request and makes it possible
+> to judge why the related SENDMSG_ZC was fast or not.
+> It's also available in trace-cmd report.
+> 
+> Everything else would likely re-introduce similar complexity like we
+> had with the notif slots.
+> 
+> Instead of a new IORING_CQE_F_COPIED flag we could also set
+> cqe.res = SO_EE_CODE_ZEROCOPY_COPIED, but that isn't really different.
+> 
+> As I basically use the same logic that's used to generate SO_EE_CODE_ZEROCOPY_COPIED
+> for the native MSG_ZEROCOPY, I don't see the problem with IORING_CQE_F_COPIED.
+> Can you be more verbose why you're thinking about something different?
 
-Fixes: 73849e908ce0 ("liburing: Add helper functions for fgetxattr and ge=
-txattr")
-Fixes: 72f55e271377 ("liburing: add helper functions for setxattr and fse=
-txattr")
-Signed-off-by: Dylan Yudaken <dylany@meta.com>
----
- src/include/liburing.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Because it feels like something that should be done roughly once and in
+advance. Performance wise, I agree that a bunch of extra instructions in
+the (io_uring) IO path won't make difference as the net overhead is
+already high, but I still prefer to keep it thin. The complexity is a
+good point though, if only we could piggy back it onto MSG_PROBE.
+Ok, let's do IORING_CQE_F_COPIED and aim 6.2 + possibly backport.
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index 118bba9eea15..780a19ccb1d9 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -991,7 +991,7 @@ static inline void io_uring_prep_getxattr(struct io_u=
-ring_sqe *sqe,
- 					  const char *name,
- 					  char *value,
- 					  const char *path,
--					  size_t len)
-+					  unsigned int len)
- {
- 	io_uring_prep_rw(IORING_OP_GETXATTR, sqe, 0, name, len,
- 				(__u64) (uintptr_t) value);
-@@ -1004,7 +1004,7 @@ static inline void io_uring_prep_setxattr(struct io=
-_uring_sqe *sqe,
- 					  const char *value,
- 					  const char *path,
- 					  int flags,
--					  size_t len)
-+					  unsigned int len)
- {
- 	io_uring_prep_rw(IORING_OP_SETXATTR, sqe, 0, name, len,
- 				(__u64) (uintptr_t) value);
-@@ -1013,10 +1013,10 @@ static inline void io_uring_prep_setxattr(struct =
-io_uring_sqe *sqe,
- }
-=20
- static inline void io_uring_prep_fgetxattr(struct io_uring_sqe *sqe,
--		                           int         fd,
-+					   int fd,
- 					   const char *name,
- 					   char *value,
--					   size_t      len)
-+					   unsigned int len)
- {
- 	io_uring_prep_rw(IORING_OP_FGETXATTR, sqe, fd, name, len,
- 				(__u64) (uintptr_t) value);
-@@ -1024,11 +1024,11 @@ static inline void io_uring_prep_fgetxattr(struct=
- io_uring_sqe *sqe,
- }
-=20
- static inline void io_uring_prep_fsetxattr(struct io_uring_sqe *sqe,
--					   int         fd,
--					   const char *name,
--					   const char *value,
--					   int         flags,
--					   size_t      len)
-+					   int		fd,
-+					   const char	*name,
-+					   const char	*value,
-+					   int		flags,
-+					   unsigned int len)
- {
- 	io_uring_prep_rw(IORING_OP_FSETXATTR, sqe, fd, name, len,
- 				(__u64) (uintptr_t) value);
---=20
-2.30.2
+First, there is no more ubuf_info::zerocopy, see for-next, but you can
+grab space in io_kiocb, io_kiocb::iopoll_completed is a good candidate.
+You would want to take one io_uring patch I'm going to send (will CC
+you), with that you won't need to change anything in net/. And the last
+bit, let's make the zc probing conditional under IORING_RECVSEND_* flag,
+I'll make it zero overhead when not set later by replacing the callback.
 
+-- 
+Pavel Begunkov

@@ -2,111 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 383F060609C
-	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 14:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7200B6060A0
+	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 14:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbiJTMwM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Oct 2022 08:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32872 "EHLO
+        id S230273AbiJTMxN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Oct 2022 08:53:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiJTMwL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Oct 2022 08:52:11 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBD817F283
-        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 05:52:11 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id h12so19715717pjk.0
-        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 05:52:11 -0700 (PDT)
+        with ESMTP id S230269AbiJTMxL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Oct 2022 08:53:11 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC98A17F2A7
+        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 05:53:09 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id 67so20140649pfz.12
+        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 05:53:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OL486cRIa/yjkXsURsjAZu0Hh8MyUBVelkMnNnPhT6Q=;
-        b=UjO/JDY1FIN5uts78LmRtIxR84g/4ss1SSTNaZylujSbG5V55TZhRTxp/Y5CvoHRXi
-         n45pW4nC1TF2MT1pEeT8o2QqgZZJEx3hffcAuL6ErDIwxQaf6wSburuNiwz/4mwbVKkV
-         agaOyw9nsc7Uh63XMoE+jZpaOVr9HqJPHyRrYyWgjeQKf/+4Rx4MX42h7WrQykoqTNs1
-         c551lnqpZVbHB9TGOqThzP6sqo/pKBZZRgBh0GTa6kFLrmGViOOD3FT8UUwLpou2BQBC
-         LdpFS0GTtgsQRCh2t///xr4ohKu2GJZRLddnc3Per+ML3Yh3gfVeFcKRLqPdcpjqwClH
-         9OEQ==
+        bh=m1tSUOR0CGd4Km4WU9EABqtl9X4dWfnj8PpCfOdNXBc=;
+        b=3Fin5tR+DxTOnCymWvNQXvC4DP5A9CvW/OpgGKccrmRGVFcE1OuUJQGkrqlo+ckrFh
+         U+MGbaf9A8ztgk82880CFy4vbbjNXjhtqi5eSxxDu3XyziyuvWI7H9MeAMWY9hrAejxi
+         5j3rfjrvbU7Jl3E5wgG3nrBCZsTDZVxaUgfEZrWPMEwVm19q7lbCXQAV/HzVjWBqk9GO
+         L885iNCloh3qLdmRxDaEq+Ev5GUBKwzDFWxEGiVCxKxZsoqeQIyFeiWyyAZSrDkSNbV9
+         FtkzOyVRIr86K6bOzCntYKwU4AnrmZYaZKMBUbcAFaKDCq/xXZjENs8qIFYfy1MYehUi
+         L4Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OL486cRIa/yjkXsURsjAZu0Hh8MyUBVelkMnNnPhT6Q=;
-        b=vDNIq1ZOp7cs679cUzbXcACMVPtjfAsel3AENPdxtxEoAbOpb23Qy9zleg7UZXUbio
-         Vthg36/fiiGWmbXS3TNszzFa3gYamWVspSSkmGegAGT0sBd5tPXo1qSQB0F4zJMlpDAT
-         YyuPAH9DcKRYW5SwWbWdu3QGPW6X8ihGokMf3cwBczyYYP/CWRMi3whvXgwsffk9t9p3
-         Lk07QRiW1SlEyfBuMEDie+hHZXchlLiGDMjR/qye9Ps2oxSdtx/eNGFaP0SAMWAxZUp5
-         xAFQdx3YoUm+l3YyjmSnEX0pzvmNqWGHOprcF744+jhp7x4Jll3hpE04/ITR+yJBKEVK
-         o7XA==
-X-Gm-Message-State: ACrzQf3vwoBxnU/gnMyx4aFv+bvClINKC3DZ5HQ2GjXNG5iGBYTaDHmO
-        Qr+qLFx/C8zQNu3a7y/mcky9kg==
-X-Google-Smtp-Source: AMsMyM60cDyvyOthu9kKpiIQifR9anhrqnoXVAMxGCKjYj8tunVESySU5eFBeH8DDzWI/qazI3MQ7g==
-X-Received: by 2002:a17:902:ce12:b0:17a:3e76:8568 with SMTP id k18-20020a170902ce1200b0017a3e768568mr13922858plg.11.1666270330759;
-        Thu, 20 Oct 2022 05:52:10 -0700 (PDT)
+        bh=m1tSUOR0CGd4Km4WU9EABqtl9X4dWfnj8PpCfOdNXBc=;
+        b=mT096dSfB/czhoEWvLwNt49afuMY3uGiLUqCbhotio/XHxoYRQ4WWhHxv+6WXJGTyc
+         tQaUVrtarnCtuxindUO1h6ubQDUaKpkse5Rpti3dJOYFq5zS69OZoKQTwL9/EtPZSb5B
+         1z1IT9q8HdoDTxVu1/qztbyS0nFvmTblORVv0eZMvm+zY+CDE3/4ZckbADPVME7UpSVT
+         BpN7I/onPT28Y6Gk8ZniEjhdJfE/DtzZDzSfNsqdpM3FooqkgFtwfgbJG+QMi9fklYnp
+         MAxPsZV0M04yBbP4dqURwjnKg/HopCxkO2VKwvvA0uj0NamcZmtUj8p/W+HaF9xQh5F0
+         P1Ug==
+X-Gm-Message-State: ACrzQf2o+qmTdkW4018vXRGtWZZmc0mZNE/w1Fhr1CFi5h8Zu3bkrBBc
+        zZ1DpBNipoewPpU4GLhUUpjiIA==
+X-Google-Smtp-Source: AMsMyM7f5pr+Q4da5tL5VdWH16B7hstNTIj3sdj6G8HPE6MKotRnhdQnl2hrqR7v/as4WRggLhM+mw==
+X-Received: by 2002:a63:1612:0:b0:461:4180:d88b with SMTP id w18-20020a631612000000b004614180d88bmr11920615pgl.434.1666270389223;
+        Thu, 20 Oct 2022 05:53:09 -0700 (PDT)
 Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id b6-20020a170902650600b00186617af88fsm1560427plk.174.2022.10.20.05.52.09
+        by smtp.gmail.com with ESMTPSA id 186-20020a6215c3000000b005626ef1a48bsm13162954pfv.197.2022.10.20.05.53.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Oct 2022 05:52:10 -0700 (PDT)
-Message-ID: <f905c8cb-702f-6b2c-8954-1a736feb1ee7@kernel.dk>
-Date:   Thu, 20 Oct 2022 05:52:08 -0700
+        Thu, 20 Oct 2022 05:53:08 -0700 (PDT)
+Message-ID: <80702edc-3e81-441b-efe7-a746c36f1d01@kernel.dk>
+Date:   Thu, 20 Oct 2022 05:53:07 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH liburing v1 1/3] liburing: Clean up `-Wshorten-64-to-32`
- warnings from clang
+Subject: Re: [RFC for-next v2 0/4] enable pcpu bio caching for IRQ I/O
 Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Dylan Yudaken <dylany@meta.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Facebook Kernel Team <kernel-team@fb.com>,
-        Dylan Yudaken <dylany@fb.com>
-References: <20221020114814.63133-1-ammar.faizi@intel.com>
- <20221020114814.63133-2-ammar.faizi@intel.com>
- <0e72af49-9e6c-2cc2-c53c-3966b20517cf@gnuweeb.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1666122465.git.asml.silence@gmail.com>
+ <Y1EHjbhS1wuw3qcr@infradead.org>
+ <dd22bf6a-8620-49c1-ec27-195e39cb4c33@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0e72af49-9e6c-2cc2-c53c-3966b20517cf@gnuweeb.org>
+In-Reply-To: <dd22bf6a-8620-49c1-ec27-195e39cb4c33@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/20/22 5:12 AM, Ammar Faizi wrote:
-> On 10/20/22 6:52 PM, Ammar Faizi wrote:
->> From: Dylan Yudaken<dylany@fb.com>
+On 10/20/22 5:40 AM, Pavel Begunkov wrote:
+> On 10/20/22 09:32, Christoph Hellwig wrote:
+>> On Tue, Oct 18, 2022 at 08:50:54PM +0100, Pavel Begunkov wrote:
+>>> This series implements bio pcpu caching for normal / IRQ-driven I/O
+>>> extending REQ_ALLOC_CACHE currently limited to iopoll. The allocation side
+>>> still only works from non-irq context, which is the reason it's not enabled
+>>> by default, but turning it on for other users (e.g. filesystems) is
+>>> as a matter of passing a flag.
+>>>
+>>> t/io_uring with an Optane SSD setup showed +7% for batches of 32 requests
+>>> and +4.3% for batches of 8.
 >>
->> liburing has a couple of int shortening issues found by clang. Clean
->> them all. This cleanup is particularly useful for build systems that
->> include these files and run with that error enabled.
->>
->> Link:https://lore.kernel.org/io-uring/20221019145042.446477-1-dylany@meta.com
->> Signed-off-by: Dylan Yudaken<dylany@fb.com>
->> Co-authored-by: Ammar Faizi<ammarfaizi2@gnuweeb.org>
->> Signed-off-by: Ammar Faizi<ammarfaizi2@gnuweeb.org>
+>> This looks much nicer to me than the previous attempt exposing the bio
+>> internals to io_uring, thanks.
 > 
-> BTW, before it's too late. I think we should be consistent on the cast
-> style:
-> 
->    (type) a
-> 
-> or
-> 
->    (type)a
-> 
-> What do you think?
+> Yeah, I saw the one Jens posted before but I wanted this one to be more
+> generic, i.e. applicable not only to io_uring. Thanks for taking a look.
 
-I tend to prefer (type) a, but sometimes if you have multiple casts
-or the lines become too long, I'll do (type)a. I don't think it's
-super important in terms of style, as it isn't that prevalent.
+It is indeed better like that, also because we can get rid of the alloc
+cache flag long term and just have it be the way that bio allocations
+work.
 
 -- 
 Jens Axboe

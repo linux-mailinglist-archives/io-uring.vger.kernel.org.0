@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0CAC605530
-	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 03:51:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A71605531
+	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 03:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiJTBvH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Oct 2022 21:51:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48772 "EHLO
+        id S231154AbiJTBvI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Oct 2022 21:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiJTBvH (ORCPT
+        with ESMTP id S230420AbiJTBvH (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 21:51:07 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F367515DB1B
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 18:51:03 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id b12so27810280edd.6
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 18:51:03 -0700 (PDT)
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3833015A94F
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 18:51:05 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id g27so27795741edf.11
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 18:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sOADn8KXXdxqhykTm0vT0ios/ldhkL7Pihf8mO8xsCI=;
-        b=efKBk04+su1JZVBDHTBFE5+l6EZleILrsZJyDMTXba0JPz5ocuXLKSOh654o8LszfS
-         iLjDuBsS6VMqq4kIgLP8k6eH4uPNzKZgweS1mbcx1WtAXmQmp3+QGHOTqEkXoKaE80Ap
-         +xQWrI3auLyQzr25uCgU7HABX7MirkjL13nb7vx6L0IkydMRTe8aL5c2i235YhW0sd8f
-         m/bHhl8QB4koXfegAxlGJHuMyBH76MMTLCi5qOzHmYl44yrHzcgLdVWPeovwCBeO6dKV
-         pYdJxB0LUY2s8BUneAOPUwJbVhlPrYQjxl3NA11IJwwIWZgSQYhOyhv12xhOz7H/zJku
-         KV/w==
+        bh=Ub88FywDu/eXdG3lLXCfpl1aayVyR5vajjvg/EkU7D0=;
+        b=c1s+QO69bAJsj2YPg+YYnR4Px/gthTJCY0Mqm2N41JNX/6TryFRITTJqqT79BbgOn2
+         V8TiVhzpqAZAHL0VFjR6civYcOd3nn75IPtJ9/y7bmKHv6YgC6hN4rfmYF130mZhoPlT
+         JbfoJu420IFlx0sdGpwEDEr7D8zO5ceK4uI1Nxtn+4jN0Sj2gXMNhlAo4+e4tlEbRxxW
+         sCjOZ8k+sBNGuRsLmteILggRWASFR+baCoeRATc1noxonfLn6q32qDszJcAuPfXagK03
+         IoPboz1nPCDXmoswzz2JeeJXFJTqqUaZPkhc2r1vjKCNFeUIcqfiOkYzA6N7j3bfwH+e
+         6txw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sOADn8KXXdxqhykTm0vT0ios/ldhkL7Pihf8mO8xsCI=;
-        b=fJwzHlkmhANJFjoX8wxgJTXS1qJi2cOdSwvhopKP83ZJwLwfs4p5X4ZHhz2CYCYs8u
-         6wo6VZ5Vxh4/brp/WJoGy3ImxcEM4G8u8uG7Wl79rbJXFEQlqRP9yyAZ1iIH/xhoWfUN
-         LwuBwzcpb5GKsbIlSaaCXqHTa0F3AVzCsXLuwKJXKLUkskmBTeMgacTe6j/8r2lhj2iR
-         zqJKGct5826H4virYzB8OQ5GyxEtPj0dDuy9Zxc37F89XaGt9dqIMYvwyOfLgdwGxxQj
-         IzC6E9PltJz2kXAT0CcFFAz89ABzABD8u39dJve0tODxWB9lFUQ36XRagTAtQA0q5i+B
-         eo1w==
-X-Gm-Message-State: ACrzQf0WQsydftu88rITgAkizyxvRILOTsxl1ZbLjogk2/Zdf3F+FO3p
-        bESK4NDozRGzerrGN67O1r+/BQeXBM0=
-X-Google-Smtp-Source: AMsMyM5bSmY8Ne7XAnAj9o28qoumiM0EiIpev1RckaHt3EA0TImOnTxREU17c7XuUYcsTIoNVaeVuQ==
-X-Received: by 2002:a05:6402:f96:b0:459:4180:6cf4 with SMTP id eh22-20020a0564020f9600b0045941806cf4mr10075822edb.64.1666230662190;
-        Wed, 19 Oct 2022 18:51:02 -0700 (PDT)
+        bh=Ub88FywDu/eXdG3lLXCfpl1aayVyR5vajjvg/EkU7D0=;
+        b=DYl9/9DGbAr0ky1kcyG2rjd9GIUDHAevFWQI4cb6uu6nZjYCURpQpxKgUq5vh+XheA
+         PVCaTV/Ob+TaDjUzqDi3fhzgD2tgoiNn2ZrxH9fqSqn5GFK2LmQzw5698igE47xVOwUU
+         XEPQ1cnQ+f5C2zWSSQwByLJ6x90iRhBETGwLFJ+/kfqonPU1zrJbp1b5iLnoZarpMXhd
+         GH5dQJOkNKYRmdk1EsYMtILlM8yEj8cW/DdAx7zK4bMPlybhiEkVTiBiJzdtDJxPlZ4w
+         OSVTeuvFuHG9I59WFYeS9YLL3eYxXGQr+NuPFwgABjvJPdQpQR3SQQRCUqWMeTshu7XA
+         qAvA==
+X-Gm-Message-State: ACrzQf07S3H0YDFzxH3JAhJiUtoOqnOvqmvBQ4/F3+idzkAIvBdOHJ/G
+        mmIDq5c26Zhz95+QeUZfmhCK6oVlG+M=
+X-Google-Smtp-Source: AMsMyM46WbPK5gNQhKIdgjsFew9ZpJ0hbVukIfdlBjj/NZBm7yaJyO8/hPiYAaOgQnhJi1GPh+3Tgg==
+X-Received: by 2002:a05:6402:ca5:b0:459:3fb0:c157 with SMTP id cn5-20020a0564020ca500b004593fb0c157mr9791563edb.389.1666230663343;
+        Wed, 19 Oct 2022 18:51:03 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.197.72.2.threembb.co.uk. [94.197.72.2])
-        by smtp.gmail.com with ESMTPSA id a13-20020a50ff0d000000b00451319a43dasm11318420edu.2.2022.10.19.18.51.01
+        by smtp.gmail.com with ESMTPSA id a13-20020a50ff0d000000b00451319a43dasm11318420edu.2.2022.10.19.18.51.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 18:51:01 -0700 (PDT)
+        Wed, 19 Oct 2022 18:51:02 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing for-next 2/5] tests: pass params in a struct
-Date:   Thu, 20 Oct 2022 02:49:52 +0100
-Message-Id: <3bf40c6b184b49a9f7a6fe569a25932c209446f6.1666230529.git.asml.silence@gmail.com>
+Subject: [PATCH liburing for-next 3/5] tests: add non-zc tests in send-zerocopy.c
+Date:   Thu, 20 Oct 2022 02:49:53 +0100
+Message-Id: <5d3f1be7afe67c2fcff8bcf63c686928477476b6.1666230529.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <cover.1666230529.git.asml.silence@gmail.com>
 References: <cover.1666230529.git.asml.silence@gmail.com>
@@ -70,171 +70,94 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+We don't have good tests for normal non-zerocopy paths. Add them to
+test_inet_send(), which covers lots of different cases. We can move
+it into send_recv.c or so later.
+
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 81 ++++++++++++++++++++++++--------------------
- 1 file changed, 45 insertions(+), 36 deletions(-)
+ test/send-zerocopy.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
 diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index 005220d..a69279a 100644
+index a69279a..646a895 100644
 --- a/test/send-zerocopy.c
 +++ b/test/send-zerocopy.c
-@@ -254,25 +254,34 @@ static int create_socketpair_ip(struct sockaddr_storage *addr,
- 	return 0;
- }
- 
-+struct send_conf {
-+	bool fixed_buf;
-+	bool mix_register;
-+	bool cork;
-+	bool force_async;
-+	bool use_sendmsg;
-+	bool tcp;
-+	int buf_index;
-+	struct sockaddr_storage *addr;
-+};
-+
- static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_server,
--			     bool fixed_buf, struct sockaddr_storage *addr,
--			     bool cork, bool mix_register,
--			     int buf_idx, bool force_async, bool use_sendmsg)
-+			     struct send_conf *conf)
- {
- 	struct iovec iov[CORK_REQS];
- 	struct msghdr msghdr[CORK_REQS];
- 	const unsigned zc_flags = 0;
- 	struct io_uring_sqe *sqe;
- 	struct io_uring_cqe *cqe;
--	int nr_reqs = cork ? CORK_REQS : 1;
-+	int nr_reqs = conf->cork ? CORK_REQS : 1;
- 	int i, ret, nr_cqes, addr_len = 0;
--	size_t send_size = buffers_iov[buf_idx].iov_len;
-+	size_t send_size = buffers_iov[conf->buf_index].iov_len;
- 	size_t chunk_size = send_size / nr_reqs;
- 	size_t chunk_size_last = send_size - chunk_size * (nr_reqs - 1);
--	char *buf = buffers_iov[buf_idx].iov_base;
-+	char *buf = buffers_iov[conf->buf_index].iov_base;
- 
--	if (addr) {
--		sa_family_t fam = ((struct sockaddr_in *)addr)->sin_family;
-+	if (conf->addr) {
-+		sa_family_t fam = ((struct sockaddr_in *)conf->addr)->sin_family;
- 
- 		addr_len = (fam == AF_INET) ? sizeof(struct sockaddr_in) :
- 					      sizeof(struct sockaddr_in6);
-@@ -281,11 +290,11 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 	memset(rx_buffer, 0, send_size);
- 
- 	for (i = 0; i < nr_reqs; i++) {
--		bool real_fixed_buf = fixed_buf;
-+		bool real_fixed_buf = conf->fixed_buf;
- 		size_t cur_size = chunk_size;
- 		int msg_flags = MSG_WAITALL;
- 
--		if (mix_register)
-+		if (conf->mix_register)
- 			real_fixed_buf = rand() & 1;
- 
- 		if (i != nr_reqs - 1)
-@@ -295,15 +304,15 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 
+@@ -261,6 +261,7 @@ struct send_conf {
+ 	bool force_async;
+ 	bool use_sendmsg;
+ 	bool tcp;
++	bool zc;
+ 	int buf_index;
+ 	struct sockaddr_storage *addr;
+ };
+@@ -305,8 +306,14 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
  		sqe = io_uring_get_sqe(ring);
  
--		if (!use_sendmsg) {
-+		if (!conf->use_sendmsg) {
- 			io_uring_prep_send_zc(sqe, sock_client, buf + i * chunk_size,
- 					      cur_size, msg_flags, zc_flags);
+ 		if (!conf->use_sendmsg) {
+-			io_uring_prep_send_zc(sqe, sock_client, buf + i * chunk_size,
+-					      cur_size, msg_flags, zc_flags);
++			if (conf->zc) {
++				io_uring_prep_send_zc(sqe, sock_client, buf + i * chunk_size,
++						      cur_size, msg_flags, zc_flags);
++			} else {
++				io_uring_prep_send(sqe, sock_client, buf + i * chunk_size,
++						      cur_size, msg_flags);
++			}
++
  			if (real_fixed_buf) {
  				sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
--				sqe->buf_index = buf_idx;
-+				sqe->buf_index = conf->buf_index;
- 			}
--			if (addr)
--				io_uring_prep_send_set_addr(sqe, (const struct sockaddr *)addr,
-+			if (conf->addr)
-+				io_uring_prep_send_set_addr(sqe, (const struct sockaddr *)conf->addr,
+ 				sqe->buf_index = conf->buf_index;
+@@ -315,7 +322,10 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
+ 				io_uring_prep_send_set_addr(sqe, (const struct sockaddr *)conf->addr,
  							    addr_len);
  		} else {
- 			io_uring_prep_sendmsg_zc(sqe, sock_client, &msghdr[i], msg_flags);
-@@ -313,13 +322,13 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
- 			iov[i].iov_base = buf + i * chunk_size;
- 			msghdr[i].msg_iov = &iov[i];
- 			msghdr[i].msg_iovlen = 1;
--			if (addr) {
--				msghdr[i].msg_name = addr;
-+			if (conf->addr) {
-+				msghdr[i].msg_name = conf->addr;
- 				msghdr[i].msg_namelen = addr_len;
- 			}
- 		}
- 		sqe->user_data = i;
--		if (force_async)
-+		if (conf->force_async)
- 			sqe->flags |= IOSQE_ASYNC;
- 		if (i != nr_reqs - 1)
- 			sqe->flags |= IOSQE_IO_LINK;
-@@ -388,6 +397,7 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
+-			io_uring_prep_sendmsg_zc(sqe, sock_client, &msghdr[i], msg_flags);
++			if (conf->zc)
++				io_uring_prep_sendmsg_zc(sqe, sock_client, &msghdr[i], msg_flags);
++			else
++				io_uring_prep_sendmsg(sqe, sock_client, &msghdr[i], msg_flags);
  
- static int test_inet_send(struct io_uring *ring)
- {
-+	struct send_conf conf;
- 	struct sockaddr_storage addr;
- 	int sock_client = -1, sock_server = -1;
- 	int ret, j, i;
-@@ -409,35 +419,34 @@ static int test_inet_send(struct io_uring *ring)
+ 			memset(&msghdr[i], 0, sizeof(msghdr[i]));
+ 			iov[i].iov_len = cur_size;
+@@ -418,7 +428,7 @@ static int test_inet_send(struct io_uring *ring)
+ 			return 1;
  		}
  
- 		for (i = 0; i < 256; i++) {
--			int buf_flavour = i & 3;
--			bool fixed_buf = i & 4;
--			struct sockaddr_storage *addr_arg = (i & 8) ? &addr : NULL;
--			bool cork = i & 16;
--			bool mix_register = i & 32;
--			bool force_async = i & 64;
--			bool use_sendmsg = i & 128;
--
--			if (buf_flavour == BUF_T_LARGE && !tcp)
-+			conf.buf_index = i & 3;
-+			conf.fixed_buf = i & 4;
-+			conf.addr = (i & 8) ? &addr : NULL;
-+			conf.cork = i & 16;
-+			conf.mix_register = i & 32;
-+			conf.force_async = i & 64;
-+			conf.use_sendmsg = i & 128;
-+			conf.tcp = tcp;
-+
-+			if (conf.buf_index == BUF_T_LARGE && !tcp)
- 				continue;
--			if (!buffers_iov[buf_flavour].iov_base)
-+			if (!buffers_iov[conf.buf_index].iov_base)
- 				continue;
--			if (tcp && (cork || addr_arg))
-+			if (tcp && (conf.cork || conf.addr))
- 				continue;
--			if (mix_register && (!cork || fixed_buf))
-+			if (conf.mix_register && (!conf.cork || conf.fixed_buf))
- 				continue;
--			if (!client_connect && addr_arg == NULL)
-+			if (!client_connect && conf.addr == NULL)
- 				continue;
--			if (use_sendmsg && (mix_register || fixed_buf || !has_sendmsg))
-+			if (conf.use_sendmsg && (conf.mix_register || conf.fixed_buf || !has_sendmsg))
- 				continue;
+-		for (i = 0; i < 256; i++) {
++		for (i = 0; i < 512; i++) {
+ 			conf.buf_index = i & 3;
+ 			conf.fixed_buf = i & 4;
+ 			conf.addr = (i & 8) ? &addr : NULL;
+@@ -426,8 +436,19 @@ static int test_inet_send(struct io_uring *ring)
+ 			conf.mix_register = i & 32;
+ 			conf.force_async = i & 64;
+ 			conf.use_sendmsg = i & 128;
++			conf.zc = i & 256;
+ 			conf.tcp = tcp;
  
--			ret = do_test_inet_send(ring, sock_client, sock_server, fixed_buf,
--						addr_arg, cork, mix_register,
--						buf_flavour, force_async, use_sendmsg);
-+			ret = do_test_inet_send(ring, sock_client, sock_server, &conf);
++			if (!conf.zc) {
++				if (conf.mix_register || conf.fixed_buf)
++					continue;
++				/*
++				* Non zerocopy send w/ addr was added together with sendmsg_zc,
++				* skip if we the kernel doesn't support it.
++				*/
++				if (conf.addr && !has_sendmsg)
++					continue;
++			}
+ 			if (conf.buf_index == BUF_T_LARGE && !tcp)
+ 				continue;
+ 			if (!buffers_iov[conf.buf_index].iov_base)
+@@ -440,6 +461,8 @@ static int test_inet_send(struct io_uring *ring)
+ 				continue;
+ 			if (conf.use_sendmsg && (conf.mix_register || conf.fixed_buf || !has_sendmsg))
+ 				continue;
++			if (msg_zc_set && !conf.zc)
++				continue;
+ 
+ 			ret = do_test_inet_send(ring, sock_client, sock_server, &conf);
  			if (ret) {
- 				fprintf(stderr, "send failed fixed buf %i, conn %i, addr %i, "
- 					"cork %i\n",
--					fixed_buf, client_connect, !!addr_arg,
--					cork);
-+					conf.fixed_buf, client_connect, !!conf.addr,
-+					conf.cork);
- 				return 1;
- 			}
- 		}
 -- 
 2.38.0
 

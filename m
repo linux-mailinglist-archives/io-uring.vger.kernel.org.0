@@ -2,77 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA0A605BE1
-	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 12:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59406605F4D
+	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 13:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbiJTKKr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Oct 2022 06:10:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46404 "EHLO
+        id S230349AbiJTLvr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Oct 2022 07:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230335AbiJTKKj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Oct 2022 06:10:39 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3539EF5A0;
-        Thu, 20 Oct 2022 03:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=HUHMjvy6X1ykgOyrAFE3euzxp8Bf/zIF9a/YZERB/To=; b=0ZGajmakJWAyWuagWTPYViA5BH
-        yJHeAo2sws0f10Qop1dftuz2jCwFSFYy3/ILN4OCRQPFVfEvQzv3PpEXCOQ4cNIsYO1GGCG8/4KM2
-        uahYrZxVR9CblGg4IKgta/epOUBOMCR8L9x3n1e857TNjWL/0VCmkDQgramw6+mpL9HAu/2mleWjs
-        mH67wqmxZNuMWzFkI42j6J+7czaEirGr+T+t4G4Ygbo2nf4XhwD4YqupNuTbmpoL727ZVZk7g8NJC
-        wmKWkmE8yKZFvgrZH/qHD17TDYbXtl+DMoEK+kaUQoZPcYEUyv9oJKTY3DmhL0asGY3lx9ipjJqCz
-        zJJRxfpdwHkc7ThhwyBQ4F9gPB1xc9W7hkKObadfOUKAic07PEwt46szjZEkPsKL8OF1U83mrsV/o
-        lUdMMBQNsI0zZ6ieKBPgqpdmpz/nLoHOaeLmmihHGLmyUdZkWd/mbBzFZ/lGjcsg9NRU385erHvhk
-        3uI1GcQNuNzphQ8q2EL/mEBG;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1olSVS-004zoW-MR; Thu, 20 Oct 2022 10:10:30 +0000
-Message-ID: <3e7b7606-c655-2d10-f2ae-12aba9abbc76@samba.org>
-Date:   Thu, 20 Oct 2022 12:10:23 +0200
+        with ESMTP id S229604AbiJTLvq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Oct 2022 07:51:46 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D03B1C6BE7
+        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 04:51:45 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 29K8KA1O020833
+        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 04:51:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=u+3OWBUDOoX66R5wv8E+o2AQ8PfvzE/ISOfi6efA3tE=;
+ b=IDzHbNvtVhRWzpDz8yV0cFAr0hCnsynE9heTVP5AKNh/NCRZzePRKEaJD55GzfbKIkzj
+ ot//CnU6QxeKzaBCp4OE7gja9mw/Kkv8JbHZNuiK33CbrOMdZq71jJWUdXIJlp138c0V
+ EJsJx6bFaIf9RLggTCDMt8POWiUZrQe8EQOJtwrQjgAY2ORHQ8NWtza0bDoPTx9jPYC9
+ Fp3+kRT3xORy7bs5XS6zznFdgyXvMsx9Nz+7iqRCEtmXgSnMtPGeskCLAmuOfWrM+wWz
+ YjNHp55AngcoqFVPwWnyzGyejWkAyD9bp7Z6LhCmGKBVTI1ND6tAcHwNGgmBHW5Q4DI5 hA== 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3kb2qp9rhk-16
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Thu, 20 Oct 2022 04:51:44 -0700
+Received: from twshared0933.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 20 Oct 2022 04:51:43 -0700
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id EC2317FF03CB; Thu, 20 Oct 2022 04:51:41 -0700 (PDT)
+From:   Dylan Yudaken <dylany@meta.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, Dylan Yudaken <dylany@meta.com>,
+        Frank Rehwinkel <frankrehwinkel@gmail.com>
+Subject: [PATCH liburing] Document maximum ring size for io_uring_register_buf_ring
+Date:   Thu, 20 Oct 2022 04:51:41 -0700
+Message-ID: <20221020115141.3723324-1-dylany@meta.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Content-Language: en-US, de-DE
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>,
-        Dylan Yudaken <dylany@fb.com>
-References: <4385ba84-55dd-6b08-0ca7-6b4a43f9d9a2@samba.org>
- <6f0a9137-2d2b-7294-f59f-0fcf9cdfc72d@gmail.com>
- <4bbf6bc1-ee4b-8758-7860-a06f57f35d14@samba.org>
- <cd87b6d0-a6d6-8f24-1af4-4b8845aa669c@gmail.com>
- <df47dbd0-75e4-5f39-58ad-ec28e50d0b9c@samba.org>
- <fb6a7599-8a9b-15e5-9b64-6cd9d01c6ff4@gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: IORING_SEND_NOTIF_USER_DATA (was Re: IORING_CQE_F_COPIED)
-In-Reply-To: <fb6a7599-8a9b-15e5-9b64-6cd9d01c6ff4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: oS8lZ-D-omJGbGGig6U0Qmd_EYsRbERI
+X-Proofpoint-ORIG-GUID: oS8lZ-D-omJGbGGig6U0Qmd_EYsRbERI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-20_03,2022-10-20_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Pavel,
+The maximum size was not documented, so do that.
 
->> Experimenting with this stuff lets me wish to have a way to
->> have a different 'user_data' field for the notif cqe,
->> maybe based on a IORING_RECVSEND_ flag, it may make my life
->> easier and would avoid some complexity in userspace...
->> As I need to handle retry on short writes even with MSG_WAITALL
->> as EINTR and other errors could cause them.
->>
->> What do you think?
+Reported-by: Frank Rehwinkel <frankrehwinkel@gmail.com>
+Signed-off-by: Dylan Yudaken <dylany@meta.com>
+---
+ man/io_uring_register_buf_ring.3 | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Any comment on this?
+diff --git a/man/io_uring_register_buf_ring.3 b/man/io_uring_register_buf=
+_ring.3
+index f75063fc9f2c..357a3fb39a0c 100644
+--- a/man/io_uring_register_buf_ring.3
++++ b/man/io_uring_register_buf_ring.3
+@@ -55,7 +55,8 @@ or similar. The size of the ring is the product of
+ and the size of
+ .IR "struct io_uring_buf" .
+ .I ring_entries
+-is the desired size of the ring, and must be a power-of-2 in size.
++is the desired size of the ring, and must be a power-of-2 in size. The m=
+aximum size=20
++allowed is 2^15 (32768).
+ .I bgid
+ is the buffer group ID associated with this ring. SQEs that select a buf=
+fer
+ has a buffer group associated with them in their
 
-IORING_SEND_NOTIF_USER_DATA could let us use
-notif->cqe.user_data = sqe->addr3;
-
-metze
+base-commit: 13f3fe3af811d8508676dbd1ef552f2b459e1b21
+--=20
+2.30.2
 

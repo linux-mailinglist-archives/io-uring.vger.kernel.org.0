@@ -2,107 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED572605581
-	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 04:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1326055F8
+	for <lists+io-uring@lfdr.de>; Thu, 20 Oct 2022 05:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbiJTC0p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Oct 2022 22:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40132 "EHLO
+        id S229619AbiJTDfX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Oct 2022 23:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231226AbiJTC0i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 22:26:38 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A28031C2F16
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 19:26:32 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id u6so1494359plq.12
-        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 19:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zH/lcm6LmIXvgGP1ltmqCC3mJjw/Vvw4xUY5ydYPviw=;
-        b=ilEEMWRnUl3o49fNEPGwCo+yy7Lklg/mWQuFr9uNU+Od4sCkzxROw6s2pk9C1PUpz0
-         UGFE1VKwiHehojbJTf4JiS+G1x+G2qZcptiODeMpQtG083R/1hxG2H3tfhrWvMMpBN5W
-         J8p+RBvYpnA5Ow2Jq1w37xhs7q2I7H/Oeyo8UpfJjA2g/Up6Hd/u+9t27wkUWeQ1z4+N
-         woqEO97+2DawOh0kbE+IvRNboPgGKHtdQJb1zp2WcHtZakh9z4eoL11u+D2THcoNY3hQ
-         C6EAU9hDeXHJBwoE5ac3D77ZpP/LauDjQpgmQhafl9gCpP93vrVejX8XrvmyiR0x718k
-         jcWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zH/lcm6LmIXvgGP1ltmqCC3mJjw/Vvw4xUY5ydYPviw=;
-        b=BWmEwWEqul9yeUpngch9120GPo6dlI5z8XeC/heI0I2S7YYYWqt/CiJ2RQankHZ1/h
-         Rn3Wodkbet5gEJqwLKGdTKVkLT5gU23q+zboQBNY21dVYb5fZp3Nonay/xPDj8bcTqs8
-         qYFAbTRYVIkn9HU1nNupIudLYPN9oLxFdsZLD/CrsLZa+krkav23BW7OOwWYKBPlia6K
-         XVFEE5GV8ByR50kQc/wk1hxFMQup0CJrV0vi+xN/ttUDb7q96HBVYJ4/aMGE9acvZgCW
-         kw3A/8AC+uB7/1sPav1D7LRISc6AOre+CDsL40g57F2evaoDrmEkSQlOgnX0ecxKPet5
-         LSgg==
-X-Gm-Message-State: ACrzQf3nGA7ugIzOwsBI5N46JV2z4D6X8UIPVD5lzPJ9nfAGaZ8kO9ij
-        xBpBlR4yTyOEY1V5ABDyq6MNKS9Sp8iOnqYe
-X-Google-Smtp-Source: AMsMyM7c8RTmfI+75QrXdZQGyYNNXuzZYsJrOTCHFJN7lC6X/4vpOGOmoZtTK1Kh0qp/J3bexjiSUA==
-X-Received: by 2002:a17:90a:8c8e:b0:202:883b:2644 with SMTP id b14-20020a17090a8c8e00b00202883b2644mr48398722pjo.89.1666232791147;
-        Wed, 19 Oct 2022 19:26:31 -0700 (PDT)
-Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id n190-20020a6227c7000000b00565cf8c52c8sm12435892pfn.174.2022.10.19.19.26.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 19:26:30 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Rafael Mendonca <rafaelmendsr@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20221020014710.902201-1-rafaelmendsr@gmail.com>
-References: <20221020014710.902201-1-rafaelmendsr@gmail.com>
-Subject: Re: [PATCH] io-wq: Fix memory leak in worker creation
-Message-Id: <166623279015.153364.8618304798678076215.b4-ty@kernel.dk>
-Date:   Wed, 19 Oct 2022 19:26:30 -0700
+        with ESMTP id S229565AbiJTDfW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Oct 2022 23:35:22 -0400
+Received: from out199-3.us.a.mail.aliyun.com (out199-3.us.a.mail.aliyun.com [47.90.199.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D965BDED14
+        for <io-uring@vger.kernel.org>; Wed, 19 Oct 2022 20:35:19 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=ziyangzhang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VSdMTGR_1666236914;
+Received: from 30.97.56.192(mailfrom:ZiyangZhang@linux.alibaba.com fp:SMTPD_---0VSdMTGR_1666236914)
+          by smtp.aliyun-inc.com;
+          Thu, 20 Oct 2022 11:35:15 +0800
+Message-ID: <500982a6-da38-0d8c-dc5d-e08787362d71@linux.alibaba.com>
+Date:   Thu, 20 Oct 2022 11:35:14 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-d9ed3
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [RFC PATCH v2 00/13] zero-copy RX for io_uring
+Content-Language: en-US
+To:     Jonathan Lemon <jonathan.lemon@gmail.com>
+Cc:     io-uring@vger.kernel.org,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+References: <20221018191602.2112515-1-jonathan.lemon@gmail.com>
+From:   Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+In-Reply-To: <20221018191602.2112515-1-jonathan.lemon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 19 Oct 2022 22:47:09 -0300, Rafael Mendonca wrote:
-> If the CPU mask allocation for a node fails, then the memory allocated for
-> the 'io_wqe' struct of the current node doesn't get freed on the error
-> handling path, since it has not yet been added to the 'wqes' array.
+On 2022/10/19 03:15, Jonathan Lemon wrote:
+> This series is a RFC for io_uring/zctap.  This is an evolution of
+> the earlier zctap work, re-targeted to use io_uring as the userspace
+> API.  The current code is intended to provide a zero-copy RX path for
+> upper-level networking protocols (aka TCP and UDP).  The current draft
+> focuses on host-provided memory (not GPU memory).
 > 
-> This was spotted when fuzzing v6.1-rc1 with Syzkaller:
-> BUG: memory leak
-> unreferenced object 0xffff8880093d5000 (size 1024):
->   comm "syz-executor.2", pid 7701, jiffies 4295048595 (age 13.900s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000cb463369>] __kmem_cache_alloc_node+0x18e/0x720
->     [<00000000147a3f9c>] kmalloc_node_trace+0x2a/0x130
->     [<000000004e107011>] io_wq_create+0x7b9/0xdc0
->     [<00000000c38b2018>] io_uring_alloc_task_context+0x31e/0x59d
->     [<00000000867399da>] __io_uring_add_tctx_node.cold+0x19/0x1ba
->     [<000000007e0e7a79>] io_uring_setup.cold+0x1b80/0x1dce
->     [<00000000b545e9f6>] __x64_sys_io_uring_setup+0x5d/0x80
->     [<000000008a8a7508>] do_syscall_64+0x5d/0x90
->     [<000000004ac08bec>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> This RFC contains the upper-level core code required for operation,
+> with the intent of soliciting feedback on the general API.  This does
+> not contain the network driver side changes required for complete
+> operation.  Also please note that as an RFC, there are some things
+> which are incomplete or in need of rework.
 > 
-> [...]
+> The intent is to use a network driver which provides header/data
+> splitting, so the frame header (which is processed by the networking
+> stack) does not reside in user memory.
+> 
+> The code is successfully receiving a zero-copy TCP stream from a
+> remote sender.  An RFC, the intent is to solicit feedback on the
+> API and overall design.  The current code will also work with
+> system pages, copying the data out to the application - this is
+> intended as a fallback/testing path.
+> 
+> Performance numbers are coming soon!
+> 
+> High level description:
+> 
+> The application allocates a frame backing store, and provides this
+> to the kernel for use.  An interface queue is requested from the
+> networking device, and incoming frames are deposited into the provided
+> memory region.
+> 
+> Responsibility for correctly steering incoming frames to the queue
+> is outside the scope of this work - it is assumed that the user 
+> has set steering rules up separately.
+> 
+> Incoming frames are sent up the stack as skb's and eventually
+> land in the application's socket receive queue.  This differs
+> from AF_XDP, which receives raw frames directly to userspace,
+> without protocol processing.
+> 
+> The RECV_ZC opcode then returns an iov[] style vector which points
+> to the data in userspace memory.  When the application has completed
+> processing of the data, the buffer is returned back to the kernel
+> through a fill ring for reuse.
+> 
+> Changelog:
+>  v1: initial version
+>  v2: Remove separate PROVIDE_REGION opcode, fold this functionality
+>      into REGISTER_IFQ.  Remove page_pool hooks, as it appears the 
+>      page pool is currently incompatible with user-mapped memory.
+>      Add io_zctap_buffers and network driver API.
+> .
+> 
+> Jonathan Lemon (13):
+>   io_uring: add zctap ifq definition
+>   netdevice: add SETUP_ZCTAP to the netdev_bpf structure
+>   io_uring: add register ifq opcode
+>   io_uring: create a zctap region for a mapped buffer
+>   io_uring: create page freelist for the ifq region
+>   io_uring: Provide driver API for zctap packet buffers.
+>   io_uring: Allocate the zctap buffers for the device
+>   io_uring: Add zctap buffer get/put functions and refcounting.
+>   skbuff: Introduce SKBFL_FIXED_FRAG and skb_fixed()
+>   io_uring: Allocate a uarg for use by the ifq RX
+>   io_uring: Define the zctap iov[] returned to the user.
+>   io_uring: add OP_RECV_ZC command.
+>   io_uring: Make remove_ifq_region a delayed work call
+> 
+>  include/linux/io_uring.h       |  35 ++
+>  include/linux/io_uring_types.h |  11 +
+>  include/linux/netdevice.h      |   6 +
+>  include/linux/skbuff.h         |  10 +-
+>  include/uapi/linux/io_uring.h  |  24 +
+>  io_uring/Makefile              |   3 +-
+>  io_uring/io_uring.c            |   8 +
+>  io_uring/kbuf.c                |  13 +
+>  io_uring/kbuf.h                |   2 +
+>  io_uring/net.c                 | 123 +++++
+>  io_uring/opdef.c               |  15 +
+>  io_uring/zctap.c               | 842 +++++++++++++++++++++++++++++++++
+>  io_uring/zctap.h               |  16 +
+>  13 files changed, 1106 insertions(+), 2 deletions(-)
+>  create mode 100644 io_uring/zctap.c
+>  create mode 100644 io_uring/zctap.h
+> 
 
-Applied, thanks!
+Hi, Jonathan
 
-[1/1] io-wq: Fix memory leak in worker creation
-      commit: 839a0c962971a5a95515c1637aede8a4fbc6547f
+We are interested in your work, too. I think the API is better than V1.
+I have a question: Is this patchset still incomplete? We'd like to know how to
+split msg header and body by XDP with io_uring ZC_RECV. Or could you please
+share one runnable demo which could run with your previous liburing patch.
 
-Best regards,
--- 
-Jens Axboe
-
+Regards,
+Zhang.
 

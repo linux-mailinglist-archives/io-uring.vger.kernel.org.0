@@ -2,137 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 287786076AA
-	for <lists+io-uring@lfdr.de>; Fri, 21 Oct 2022 14:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4BCE6076B3
+	for <lists+io-uring@lfdr.de>; Fri, 21 Oct 2022 14:10:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbiJUMCm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Oct 2022 08:02:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
+        id S229866AbiJUMKo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Oct 2022 08:10:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbiJUMCl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Oct 2022 08:02:41 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60D7B253EE7
-        for <io-uring@vger.kernel.org>; Fri, 21 Oct 2022 05:02:37 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id u71so2387699pgd.2
-        for <io-uring@vger.kernel.org>; Fri, 21 Oct 2022 05:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xebQeLAQvVoENjunu7zrmOLYbHaVpxw9tNTWe51AMjU=;
-        b=y6amnYXZ/IOmxwU54iCvdOgKRPj82TMn3t6wW367iSIiReNGF49V8v48NIVcYm8Caz
-         WJNWs+sBo9JTJpcL39IKT9Y9vM9xDqX1MI+pd1H1DSH7eLH8g2GM1hQsuqLw7/7VCsW9
-         eqPGeXVWH2+Z1xNsBbZG90bUVJ5Yuj6wltSP6ZVL91HNse2Pxlt1J4/ARvmgiKPqpvXp
-         2MAx2Obnm4Zzq7Q4YpNK1mivkc5kuQYRFyG1rxLZfaiMOxfnHHOy15LCu+wbfRebMM0t
-         bQb/Pc8Q7y0ktlOGWRKpN9JpqKtR5ETCxyoLL6TQJoH+xuHHsHRDAwvm6glPBhox6GcG
-         3eKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xebQeLAQvVoENjunu7zrmOLYbHaVpxw9tNTWe51AMjU=;
-        b=PYJgwGacbqH0fiQHtVBiPHvUvC82r0bpMGZ36Ou9vD1+PQg16Ax5ZHoiCyg9C28qE1
-         ajB4Y4aV6qXQ3If8V69Qj0aXNSFCOK4BtPfHglwL/oZ1yGdrvWmnaC5oLtsbUwkmHagk
-         oZPFWuXucTD6VYfoIVR9WxdyGYZ7afI3D+xIXUdriZZTLyvOvhvIRKVZ3BWZsDW01zaX
-         7+P7pUvFRac7950DNiGlV/gf47n6LRETkX2CEBFIN+1VRT3Mt4VBuSKv+5Ww9P/ZU5uj
-         KxIy6WG6ygtnrFz+kKt0RCIlXI+8aMK9c2YUz3yHtyQa279yUNh+iIYBoI3AEa8Fn2mL
-         kRSA==
-X-Gm-Message-State: ACrzQf2+VmWyp5G5Imxkb7MFvU9FBjVMQtfore3h6pEEWFH+JOWtHu5C
-        IF+pXMNt57KxCUdHwHDalH0bDQrbMWkB6LEP
-X-Google-Smtp-Source: AMsMyM6iIherZTwp+7nDfVak/t0uviTNWSQdTwXiVe5Sjhtkg6W/x1BVylLPGu0yvsG5uLaoY8I8AQ==
-X-Received: by 2002:a05:6a02:20d:b0:430:3886:59e8 with SMTP id bh13-20020a056a02020d00b00430388659e8mr15927645pgb.516.1666353756772;
-        Fri, 21 Oct 2022 05:02:36 -0700 (PDT)
-Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id p9-20020a170902780900b001865c298588sm4416526pll.258.2022.10.21.05.02.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Oct 2022 05:02:36 -0700 (PDT)
-Message-ID: <57da23c7-63bc-6986-8c16-7bdd53c971ef@kernel.dk>
-Date:   Fri, 21 Oct 2022 05:02:35 -0700
+        with ESMTP id S229531AbiJUMKn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Oct 2022 08:10:43 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA1F2112A3;
+        Fri, 21 Oct 2022 05:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=nUxwDjmQZFDmqopuW/cyPC3LxSsMIIgXqtPnaDKVD0s=; b=uvaYuXFcBbRaZyjByrM/jsba3Z
+        dvtWm4wkOUQA/PIYGS1eiCsbhMAzgFWwsLKkak9wXGqnWct78GygrstUXMOPQx7N7wW0MplpZLsmF
+        aaN27lO2CQuQwRXOZtt98kLjePR9MG2Y5op/oiic6GkIUiBpI3aTt7tpWfCoEjD9WOMsmrD2rSHrq
+        Ei3WU8cIbMfxsml1JGW4g52SnILsx/W8KKfxjTXLR1bWfhAiC6ycP55TpgCtmnZWr4XedMSDIzibx
+        rvkrKJTIb2SCf4SlSvzGE89derlHpDemDd479RVZo5e4HeP9LTR2gOlC9jDrQHOzDT7uxKM/OgU2m
+        CDChHgUrNT3vb554/r96oeKwtAPbcOeuk//b18tlWB7wF6vlfd2ojQssJ3VydGecOsX5wiXLm4dl/
+        EdJFYgFsFBrNav4cp3oqV9w6mIEdIe4579iiNSneeDs5RmVHFXEQozHJ/SXHROzov9Ue6SroDtGaN
+        98rNtEzFXWK2hQB+nWjA33kK;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1olqrF-0059fa-7Z; Fri, 21 Oct 2022 12:10:37 +0000
+Message-ID: <43d3dad4-2158-dbcc-1c62-5b4021b95376@samba.org>
+Date:   Fri, 21 Oct 2022 14:10:36 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.1-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>,
+        Dylan Yudaken <dylany@fb.com>
+References: <4385ba84-55dd-6b08-0ca7-6b4a43f9d9a2@samba.org>
+ <6f0a9137-2d2b-7294-f59f-0fcf9cdfc72d@gmail.com>
+ <4bbf6bc1-ee4b-8758-7860-a06f57f35d14@samba.org>
+ <cd87b6d0-a6d6-8f24-1af4-4b8845aa669c@gmail.com>
+ <df47dbd0-75e4-5f39-58ad-ec28e50d0b9c@samba.org>
+ <fb6a7599-8a9b-15e5-9b64-6cd9d01c6ff4@gmail.com>
+ <3e7b7606-c655-2d10-f2ae-12aba9abbc76@samba.org>
+ <ae88cd67-906a-7c89-eaf8-7ae190c4674b@gmail.com>
+ <86763cf2-72ed-2d05-99c3-237ce4905611@samba.org>
+ <fc3967d3-ef72-7940-2436-3d8aa329151e@gmail.com>
+ <a5bf4d77-0fad-1d3f-159f-b97128f58af2@samba.org>
+ <2092f2db-d847-dd78-1690-359ed9bb7f14@gmail.com>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: IORING_SEND_NOTIF_USER_DATA (was Re: IORING_CQE_F_COPIED)
+In-Reply-To: <2092f2db-d847-dd78-1690-359ed9bb7f14@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Am 21.10.22 um 13:20 schrieb Pavel Begunkov:
+> On 10/21/22 10:45, Stefan Metzmacher wrote:
+>> Am 21.10.22 um 11:27 schrieb Pavel Begunkov:
+>>> On 10/21/22 09:32, Stefan Metzmacher wrote:
+>>>> Hi Pavel,
+>>>>
+>>>>>>>> Experimenting with this stuff lets me wish to have a way to
+>>>>>>>> have a different 'user_data' field for the notif cqe,
+>>>>>>>> maybe based on a IORING_RECVSEND_ flag, it may make my life
+>>>>>>>> easier and would avoid some complexity in userspace...
+>>>>>>>> As I need to handle retry on short writes even with MSG_WAITALL
+>>>>>>>> as EINTR and other errors could cause them.
+>>>>>>>>
+>>>>>>>> What do you think?
+>>>>>>
+>>>>>> Any comment on this?
+>>>>>>
+>>>>>> IORING_SEND_NOTIF_USER_DATA could let us use
+>>>>>> notif->cqe.user_data = sqe->addr3;
+>>>>>
+>>>>> I'd rather not use the last available u64, tbh, that was the
+>>>>> reason for not adding a second user_data in the first place.
+>>>>
+>>>> As far as I can see io_send_zc_prep has this:
+>>>>
+>>>>          if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
+>>>>                  return -EINVAL;
+>>>>
+>>>> both are u64...
+>>>
+>>> Hah, true, completely forgot about that one
+>>
+>> So would a commit like below be fine for you?
+>>
+>> Do you have anything in mind for SEND[MSG]_ZC that could possibly use
+>> another u64 in future?
+> 
+> It'll most likely be taken in the future, some features are planned
+> some I can imagine.
 
-A few fixes for this release:
+Can give examples? As I can't imagine any possible feature.
 
-- Fix a potential memory leak in the error handling path of io-wq setup
-  (Rafael)
+> The question is how necessary this one is and/or
+> how much simpler it would make it considering that CQEs are ordered
+> and apps still need to check for F_MORE. It shouldn't even require
+> refcounting. Can you elaborate on the simplifying userspace part?
+> 
+It's not critical, it would just make it easier to dispatch
+a different callback functions for the two cases.
 
-- Kill an errant debug statement that got added in this release (me)
+The current problem I'm facing is that I have a structure
+holding the state of an response and that has a single embedded
+completion structure:
 
-- Fix an oops with an invalid direct descriptor with IORING_OP_MSG_RING
-  (Harshit)
+(simplified) struct completion {
+    uint32_t generation;
+    void (*callback_fn)(void *callback_private, const struct io_uring_cqe *cqe);
+    void *callback_private;
+};
 
-- Remove unneeded FFS_SCM flagging (Pavel)
+I use the memory address of the completion structure glued with the lower bits of the generation
+as 'user_data'. Imagine that I got a short write from SENDMSG_ZC/WAITALL
+because EINTR was generated, then I need to retry from userspace, which
+I'd try immediately without waiting for the NOTIF cqe to arrive.
 
-- Remove polling off the exit path (Pavel)
+For each incoming cqe I get the completion address and the generation
+out of user_data and then verify the generation against the one stored in
+the completion in order to detect bugs, before passing over to callback_fn().
 
-- Move out direct descriptor debug check to the cleanup path (Pavel)
+Because I still need to handle the NOTIF cqe from the first try
+I can't change the generation for the next try.
 
-- Use the proper helper rather than open-coding cached request get
-  (Pavel)
+I thought about using two completion structures, one for the main SENDMSG_ZC result
+(which gets its generation incremented with each retry) and one for the NOTIF cqes
+just keeping generation stable having a simple callback_fn just waiting for a
+refcount to get 0.
 
-Please pull!
+Most likely I just need to sit down concentrated to get the
+recounting and similar things sorted out.
 
+If there are really useful things we will do with addr3 and __pad2[0],
+I can try to cope with it... It would just be sad if they wouldn't be used anyway.
 
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
-
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.1-2022-10-20
-
-for you to fetch changes up to 996d3efeb091c503afd3ee6b5e20eabf446fd955:
-
-  io-wq: Fix memory leak in worker creation (2022-10-20 05:48:59 -0700)
-
-----------------------------------------------------------------
-io_uring-6.1-2022-10-20
-
-----------------------------------------------------------------
-Harshit Mogalapalli (1):
-      io_uring/msg_ring: Fix NULL pointer dereference in io_msg_send_fd()
-
-Jens Axboe (1):
-      io_uring/rw: remove leftover debug statement
-
-Pavel Begunkov (4):
-      io_uring: remove FFS_SCM
-      io_uring: kill hot path fixed file bitmap debug checks
-      io_uring: reuse io_alloc_req()
-      io_uring: don't iopoll from io_ring_ctx_wait_and_kill()
-
-Rafael Mendonca (1):
-      io-wq: Fix memory leak in worker creation
-
- io_uring/filetable.h | 16 ++--------------
- io_uring/io-wq.c     |  2 +-
- io_uring/io_uring.c  | 24 +++++++-----------------
- io_uring/msg_ring.c  |  3 +++
- io_uring/rsrc.c      |  7 ++-----
- io_uring/rsrc.h      |  4 ----
- io_uring/rw.c        |  2 --
- 7 files changed, 15 insertions(+), 43 deletions(-)
-
--- 
-Jens Axboe
+metze

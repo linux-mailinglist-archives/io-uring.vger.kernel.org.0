@@ -2,98 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89A2C6074E7
-	for <lists+io-uring@lfdr.de>; Fri, 21 Oct 2022 12:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 345376074F9
+	for <lists+io-uring@lfdr.de>; Fri, 21 Oct 2022 12:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230510AbiJUKT1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Oct 2022 06:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47406 "EHLO
+        id S229841AbiJUK1d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Oct 2022 06:27:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231184AbiJUKSs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Oct 2022 06:18:48 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DB725DAF3;
-        Fri, 21 Oct 2022 03:18:42 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id iv17so1856596wmb.4;
-        Fri, 21 Oct 2022 03:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M/A4q3HXrE5Zm8Jfq7QBtdlkzWJNy1pjXWdj/kLDVls=;
-        b=cj9sSxFCdimjWtRyw8D7kG8AtHwWzcLT8BPA2YG8stWB07xQNMhvGRel/9RWcCEdFh
-         eTG/Pr8blMWgpBHWHEZU6hbtUk3GlIsr1rt/20NOu6uCorb+/IUnUfUSYpron6dz4EUv
-         yG3agISXBKHqsa2BpflAscVh6QSFLUuuUs6Yok5wlLPG0nEcEezzzYdhj9XAGWHhkU+Z
-         4JE/A9x5sbIh0KzAOdS3SOkVwaOQWGN5CPMAxzmttBjX26zXan+5EZYIdFIAmHllSKJq
-         hvVyqyga/a7DnLZfG6R4uVOcnT/q53vRGdNVdHHEHUboMpxT8r9uJNTvjjJ9G8UHONdf
-         dJsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M/A4q3HXrE5Zm8Jfq7QBtdlkzWJNy1pjXWdj/kLDVls=;
-        b=5/gufWgQR9EfUnHO/urSbxLbiBGFc6Q1eDHwsU0M1NIFlS8UCTJIJVpBAIAc0crZi7
-         hzqMRFNQM+ORxvSYo4ghBkHTHWj+x+ao9D0/5efjp1ibzmgnzbPqnkb/yabYIVjUOHVT
-         lLS3AH1nxlzpKu86YfUlxSp5ErHlghsb4+oEo8Edq/r0CrXZB3Dq/OcuiFlYZk/tU80R
-         eufX+q1O6oXKYy6Sb3NrTsJHZMqMtFXIAuYcfN/5ZG318D8cof9v6Qwi44N+M8LpMevK
-         sveTXrV4sxiQt/7JWh/ErcHSXMGYP1ZXrm4V32XbEugnghVkc9SOxcHN8mvmZPiXT+7k
-         VQdg==
-X-Gm-Message-State: ACrzQf2QBjonEihBG+nL/lxPpa/CpqO8tgSldXJO6PgyYrJoXrPXS6M3
-        t+P2R9hcjxhEW1NKbTtLz1uNFrPLAso=
-X-Google-Smtp-Source: AMsMyM48tf2dQfO7hQr6iPZ99mqU9YYyg/Mbx68rSS7aHJKyLp80qNh4oX/6gYCXq+MQsP10VVyZ0w==
-X-Received: by 2002:a7b:c841:0:b0:3c6:ce2f:3438 with SMTP id c1-20020a7bc841000000b003c6ce2f3438mr12551544wml.51.1666347520315;
-        Fri, 21 Oct 2022 03:18:40 -0700 (PDT)
-Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:f27e])
-        by smtp.gmail.com with ESMTPSA id ba3-20020a0560001c0300b002365254ea42sm1565184wrb.1.2022.10.21.03.18.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 03:18:39 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
+        with ESMTP id S229514AbiJUK1c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Oct 2022 06:27:32 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480B62565E7;
+        Fri, 21 Oct 2022 03:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=Kb4GP8DAreI8S/J2byURlpp2EiVOpoaHEyYyicfid1k=; b=x8JWXsOk6ysRahrcxdiURaVS1r
+        Ey8DuVmvMmjASeaACCgc2rw5D0aR44ta/gOGzOJ3KIlCXItcniqz6/dh4eGsiG7grMDt/ivw2ryOM
+        qn4LgewJHPlC409JS+FUseSPtLuRfOTJpxpxIpUBGLCcqGmvnkHztsS6RyGCDY9CJTKmFr9XQMPsw
+        xIfEzWIDhwh1unV5pCZ93trTJfd+X15AYmNY9cG0+2PmgAK7SdgUyO23r5gtBL5/WbloXZpGCHoC2
+        b1MNgKasCO3x9ZIBuT5n8JMbmZljLedNT0QujXurTuLkq0QEMx8Xj+C8cuh8aIUmVUVQy8v8lpa88
+        wr8Z68uxMtBQe0bDxrgQaeQDvqf77nJSTE7boRmd1LHbG5kVpLqf2p2DjKg40Ui934zS4Cyv5SJYF
+        8vkhWT9ub8/p1s3kMnFejqwfcic96QG5JLAaIXK/av8+NT+26AKC3fH9NfHdlpbCqU+9iOkFvUsSW
+        pIsclVDNynyzXn55KogYSuzc;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1olpFQ-00591t-CC; Fri, 21 Oct 2022 10:27:28 +0000
+Message-ID: <d4d6f627-46cc-8176-6d52-c93219db8c2f@samba.org>
+Date:   Fri, 21 Oct 2022 12:27:28 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         "David S . Miller" <davem@davemloft.net>
-Cc:     io-uring@vger.kernel.org, asml.silence@gmail.com,
-        netdev@vger.kernel.org, Stefan Metzmacher <metze@samba.org>
-Subject: [PATCH for-6.1 3/3] io_uring/net: fail zc sendmsg when unsupported by socket
-Date:   Fri, 21 Oct 2022 11:16:41 +0100
-Message-Id: <0854e7bb4c3d810a48ec8b5853e2f61af36a0467.1666346426.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <cover.1666346426.git.asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org
 References: <cover.1666346426.git.asml.silence@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [PATCH for-6.1 0/3] fail io_uring zc with sockets not supporting
+ it
+In-Reply-To: <cover.1666346426.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The previous patch fails zerocopy send requests for protocols that don't
-support it, do the same for zerocopy sendmsg.
+Hi Pavel,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Some sockets don't care about msghdr::ubuf_info and would execute the
+> request by copying data. Such fallback behaviour was always a pain in
+> my experience, so we'd rather want to fail such requests and have a more
+> robust api in the future.
+> 
+> Mark struct socket that support it with a new SOCK_SUPPORT_ZC flag.
+> I'm not entirely sure it's the best place for the flag but at least
+> we don't have to do a bunch of extra dereferences in the hot path.
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 26ff3675214d..15dea91625e2 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -1153,6 +1153,8 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags)
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
-+	if (!test_bit(SOCK_SUPPORT_ZC, &sock->flags))
-+		return -EOPNOTSUPP;
- 
- 	if (req_has_async_data(req)) {
- 		kmsg = req->async_data;
--- 
-2.38.0
+I'd give the flag another name that indicates msg_ubuf and
+have a 2nd flag that can indicate support for SO_ZEROCOPY in sk_setsockopt()
 
+The SO_ZEROCOPY version is also provided by AF_RDS.
+
+metze

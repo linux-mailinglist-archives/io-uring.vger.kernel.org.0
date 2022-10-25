@@ -2,74 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5855260CF9E
-	for <lists+io-uring@lfdr.de>; Tue, 25 Oct 2022 16:53:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F61A60D4D5
+	for <lists+io-uring@lfdr.de>; Tue, 25 Oct 2022 21:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbiJYOxo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Oct 2022 10:53:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57934 "EHLO
+        id S232201AbiJYTmQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Oct 2022 15:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbiJYOxm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Oct 2022 10:53:42 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA2E19E91E;
-        Tue, 25 Oct 2022 07:53:41 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5so506376wmo.1;
-        Tue, 25 Oct 2022 07:53:41 -0700 (PDT)
+        with ESMTP id S232179AbiJYTmP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Oct 2022 15:42:15 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4752B3B0F
+        for <io-uring@vger.kernel.org>; Tue, 25 Oct 2022 12:42:14 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id q75so1619257iod.7
+        for <io-uring@vger.kernel.org>; Tue, 25 Oct 2022 12:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A+O8rQxYMCKxiugB25CpOR5TRiPSVHAXloU6ZW0+2ew=;
-        b=pw2goslS3d3YvdLr34VC/tMBSPVNUxcfMFEACL/u5/FDOrUTKYELsEqTZ1Qhq0erDw
-         lVNIxCUOtDALppjPpKhIfGd4z1rbvTz6uLvxvA6a+rYhWUThM5FWQ9mwQrOlVkOMHGGo
-         jgzeAxkVSMPb+bNWd3lmlcWotCVStpokXeema2bhYB35NS9YAslYye/3PX3sZ2tvt0TO
-         79A8JHvawHz2EWIn0b3oAWnVHWCkIRnKw6tTLMyOzVF9bKQ9g+de8NlO3qaPEMJTsCBh
-         5Ibch6MjWdBOdr7mIZbusCjtZ2Oug6S46d3aXf/0HFxFoD5/geW4PaJ9a6vx7Yweggk/
-         bkrQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wo5gCdV4HOvdCiIDRmFlmf80DqTwgnkZIIgLG7LqzFw=;
+        b=POGwl/v2rAIo0Tt8sQBMm76r7/ZH/JK2/Bf6HuuKIWp+RTvj20FhYbzdX77Nur/6Bv
+         VaYgFwBsjPzEQN6j70X43WCcut6uSzrwySJTL9c2SJWkNu5QCLte63YBL05pklfjK4Pw
+         avjIVI1XK7tlszMx5qvLCLFKLVw/cZjy1/UVZkc8RX4BLMRcehnJVpPdGIwa7R/+67u9
+         U2tnUaFc7AI8AWJn17LTsd7imwunI6K4zK97jEB44Z8yuNM9wRZAyWUCc1NDNhUn1cK8
+         3+FT8wZNLu4QfCTqhlA6Rm+auoPbYvHBhxpc3aATbmhWwVOLltX8J/mTYEglJCDMucdc
+         Ff6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A+O8rQxYMCKxiugB25CpOR5TRiPSVHAXloU6ZW0+2ew=;
-        b=aDgtnsdAkaxadI7lYU4Hl1mSzQl5DXzI7bJ2gEPTdQ7YhdT5b/GNi8HskSVNa9ZnjP
-         sNM65hiBLw+Q9hW8I+8RVacFE+kiiJxWkOXTvKJYgejwlc5nf4LzH5TyNvQAbCdnx3xd
-         rVHlriqwDmfS/nvmMCWAxzAvM7S+Aj/1LZ/zMWLCeyy11sorsE+SDtQXckQmwmy7eof8
-         umDpzmS9DGbvZpodJgxINhptkwpjhyZShqGpE7fZz4T5MrmuxS4yEIBsfJ+lX9MEW4G+
-         DdBrlNlEDzPwNoq1pUPxvIwlGnjk12XvRPbbdToqPYaqb7epNJv62B5S6Y2AK/rCOFvH
-         lSFQ==
-X-Gm-Message-State: ACrzQf0lIS1yrkuFGMtFKqLHfrhObVomXNCYTGufSlSA8ptBhtCfceG+
-        T2Z+fXMWZ0lVNZkVBcRpHh3Cj+ps6mdVWA==
-X-Google-Smtp-Source: AMsMyM5KkaSWVGkgxvT1Hnc2uk6gGbPrMvIJsthGvrjpaVipp3s1NodJ4PrH3fMGk4iOew3wAt+RfQ==
-X-Received: by 2002:a05:600c:4588:b0:3c6:f645:dad0 with SMTP id r8-20020a05600c458800b003c6f645dad0mr27572232wmo.114.1666709620462;
-        Tue, 25 Oct 2022 07:53:40 -0700 (PDT)
-Received: from [10.1.2.99] (wifi-guest-gw.tecnico.ulisboa.pt. [193.136.152.65])
-        by smtp.gmail.com with ESMTPSA id e17-20020a5d5011000000b002305cfb9f3dsm2724433wrt.89.2022.10.25.07.53.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Oct 2022 07:53:40 -0700 (PDT)
-Message-ID: <25567965-4eb5-7557-db49-e17776cec3d4@gmail.com>
-Date:   Tue, 25 Oct 2022 15:51:52 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wo5gCdV4HOvdCiIDRmFlmf80DqTwgnkZIIgLG7LqzFw=;
+        b=xijh/YgiK8dIh2J2cH0o83coQF3xWF5+FJa6mQmiSSGQQ7IOrG0eNCSqmoplT8zD2n
+         y0xfWRPDzeJ8a1C8ErPM3IVyfiuFGioRYOVTewXbOIhnejqfhz4ILRYUhRLLV6EilGsF
+         TB4ZEbu2VumXhZlp3Db5IG8YWixbm2XHJ+4va6JhROBt3q/QVi6s2qLW1cjhDN+II3ur
+         XQ4GRvYD9zUNrqbotwWgzxUCMflxXaBj+zSfhCq4rMwGe9JpeSSrH5GVt/98P+jsMzB5
+         LRlpXQf8h5whZZeXJzPExKWm4beQWYD5BqdgKRrH0Ph7u276mgYxlPjyatByf8uSIypm
+         jlKA==
+X-Gm-Message-State: ACrzQf1x4avQ8qLHqkJ1Bael0beUhQSZ6JQZIbkxnKr8qilt6rFhPIJ/
+        ju/Af5lk1DWY4Hkpns29yoAcHQ==
+X-Google-Smtp-Source: AMsMyM48aBtAi9RmmmRoZZeLkaEfwha1HYWhziCKd3iVYYUja5LyHNtr3FZa1xP/yiCE6+RA1WsXTg==
+X-Received: by 2002:a05:6638:25d1:b0:374:f8c2:bf7a with SMTP id u17-20020a05663825d100b00374f8c2bf7amr5089585jat.270.1666726933999;
+        Tue, 25 Oct 2022 12:42:13 -0700 (PDT)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id n17-20020a92d9d1000000b002f9b55e7e92sm1318548ilq.0.2022.10.25.12.42.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Oct 2022 12:42:13 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-block@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        io-uring@vger.kernel.org
+In-Reply-To: <cover.1666347703.git.asml.silence@gmail.com>
+References: <cover.1666347703.git.asml.silence@gmail.com>
 Subject: Re: [PATCH for-next v3 0/3] implement pcpu bio caching for IRQ I/O
-Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-References: <CGME20221021103627epcas5p34eaaf3c8161bbee33160cce8b58efd5f@epcas5p3.samsung.com>
- <cover.1666347703.git.asml.silence@gmail.com>
- <20221025132502.GA31530@test-zns>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20221025132502.GA31530@test-zns>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-Id: <166672693299.6037.1642967404693492462.b4-ty@kernel.dk>
+Date:   Tue, 25 Oct 2022 13:42:12 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Mailer: b4 0.11.0-dev-d9ed3
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,40 +72,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/25/22 14:25, Kanchan Joshi wrote:
-> On Fri, Oct 21, 2022 at 11:34:04AM +0100, Pavel Begunkov wrote:
->> Add bio pcpu caching for normal / IRQ-driven I/O extending REQ_ALLOC_CACHE,
->> which was limited to iopoll. 
+On Fri, 21 Oct 2022 11:34:04 +0100, Pavel Begunkov wrote:
+> Add bio pcpu caching for normal / IRQ-driven I/O extending REQ_ALLOC_CACHE,
+> which was limited to iopoll. t/io_uring with an Optane SSD setup showed +7%
+> for batches of 32 requests and +4.3% for batches of 8.
 > 
-> So below comment (stating process context as MUST) can also be removed as
-> part of this series now?
-
-Right, good point
-
-
-> 495  * If REQ_ALLOC_CACHE is set, the final put of the bio MUST be done from process
-> 496  * context, not hard/soft IRQ.
-> 497  *
-> 498  * Returns: Pointer to new bio on success, NULL on failure.
-> 499  */
-> 500 struct bio *bio_alloc_bioset(struct block_device *bdev, unsigned short nr_vecs,
-> 501                              blk_opf_t opf, gfp_t gfp_mask,
-> 502                              struct bio_set *bs)
-> 503 {
-[...]
->> The next step will be turning it on for other users, hopefully by default.
->> The only restriction we currently have is that the allocations can't be
->> done from non-irq context and so needs auditing.
+> IRQ, 128/32/32, cache off
+> IOPS=59.08M, BW=28.84GiB/s, IOS/call=31/31
+> IOPS=59.30M, BW=28.96GiB/s, IOS/call=32/32
+> IOPS=59.97M, BW=29.28GiB/s, IOS/call=31/31
+> IOPS=59.92M, BW=29.26GiB/s, IOS/call=32/32
+> IOPS=59.81M, BW=29.20GiB/s, IOS/call=32/31
 > 
-> Isn't allocation (of bio) happening in non-irq context already?
+> [...]
 
-That's my assumption, true for most of them, but I need to actually
-check that. Will be following up after this series is merged.
+Applied, thanks!
 
+[1/3] bio: split pcpu cache part of bio_put into a helper
+      commit: 0b0735a8c24f006d2d9d8b2b408b8c90f3163abd
+[2/3] block/bio: add pcpu caching for non-polling bio_put
+      commit: 13a184e269656994180e8c64ff56db03ed737902
+[3/3] io_uring/rw: enable bio caches for IRQ rw
+      commit: 93dad04746ea1340dec267f0e98ac42e8bc67160
 
-> Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
-
-thanks
-
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

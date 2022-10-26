@@ -2,58 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC5D60EC0C
-	for <lists+io-uring@lfdr.de>; Thu, 27 Oct 2022 01:14:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE9460EC90
+	for <lists+io-uring@lfdr.de>; Thu, 27 Oct 2022 01:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbiJZXOD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Oct 2022 19:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51606 "EHLO
+        id S234440AbiJZX2a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Oct 2022 19:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiJZXOA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Oct 2022 19:14:00 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FF08D216
-        for <io-uring@vger.kernel.org>; Wed, 26 Oct 2022 16:13:59 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id t4so11266435wmj.5
-        for <io-uring@vger.kernel.org>; Wed, 26 Oct 2022 16:13:59 -0700 (PDT)
+        with ESMTP id S234261AbiJZX16 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Oct 2022 19:27:58 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11706371;
+        Wed, 26 Oct 2022 16:27:28 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id bp11so28493887wrb.9;
+        Wed, 26 Oct 2022 16:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w2WrTugIcdNs4nMY6CBHKJh4z2Pixco8CZGbHxnRnNM=;
-        b=Uor6syvk0vXrBsk8LaM4RzWm1LoKEs3cxwJ3+rt1pjjcpY7MzoU/7mBqk0qBfftK4A
-         XpRLY9zqj/zgZBo/bdK2eIeEW85RA/6RxOyxJgpN/VdXPVuhTIWNHQFs7WmioQo8Af99
-         iA+AdC8TyXr7nDyMArxtthMfrlo/b4tfC1XVTj6qdSdlsCWOP6XeyjuioYmBzExI+OhD
-         MTu23+mJu06RW054MalE6uV/fOT5r53O9bng/L+OI6PZyqAkxBntQsRVi9AJ8qBW4iAV
-         6mmmG8vIV2u4N5EomCBCN6P0q/qS12ZNXruHk1YNmiyJy7PlzqoTqIvdHcBnvFr5EC5j
-         4bng==
+        bh=XwaiR4O/rZjigAPWT1KoMEzhsR2kF/G+5vxIJc6wD5s=;
+        b=Bu4bo56Jm6v4TfxmzjqZcJRChktHS1B0iE+RX3L0RFbVpDfbKrDXl/LiUc6r8zCQPl
+         6dc9Jtrac8FLTRkKUgsaxBAHwXCNQtQw5VnD1SzHokOMIUfrOl+zw3rBW4MJ7ENzx7WA
+         MyVN8JHW1wG0CVTk5Q+dCFY0NQ56f7nwsbv3V7l9d2YOQKZVolOnzib0tghIlCc0NZMm
+         IF0rZYGWhKe8anumFRYzoPUWDepAYE85bXoJeGPnIsvpFb5svBQFf3GHgyBSPVkIxi4m
+         jFHvLf03QJClqAP/JmjoHauOCoyMOHFLMpUMXhA7etYYCwAN4MEEmfjhfIf+u5S/F1nJ
+         zDlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w2WrTugIcdNs4nMY6CBHKJh4z2Pixco8CZGbHxnRnNM=;
-        b=WQjvrHX+QMBM5Wc/vuI0nJ4oB7Qg0N8IPxzKFp88b2c1IBY4gFcPEfWsfBPiSEWHds
-         n0d3SDwBoWChsbQX80o4ZnmU3eIOlZRGAlIMvSf7Vb7eaIsrA4L017YuUTcVkM9gR7De
-         426MnZS9EiX9BiQASUPiUAR0YLu2qknergiA/DzHh3Qv2f8XGUz0HrJSlax/CY000E7L
-         BdysWLm//LneTuAM+XqA94zYh44l2WyaQjXx7vT9sXcWij7yFhXBRynGK/sKyJXBO5Ps
-         B08zZySr7sj6YCtmTU8O/v85yu3WG+GiXYE97VokNIWPaoy42PSksbpQPmaoQyBvIncP
-         n3PA==
-X-Gm-Message-State: ACrzQf1H6g6Ev+e0UopZxJuStUKemeZZNULZ27wGVnt8NOhq45WuokGS
-        OTwk4T5B8JCi73mXVYBdxKPV83q1JM9IjA==
-X-Google-Smtp-Source: AMsMyM6n+qSppJ/3G1xfATu3yUblZAEX3W6e1quqV/tRtVtC1KnsCBXgIOAEs7q/ATjHy9nQUfUFrw==
-X-Received: by 2002:a05:600c:1d95:b0:3c6:fc59:5ed0 with SMTP id p21-20020a05600c1d9500b003c6fc595ed0mr3762644wms.21.1666826037569;
-        Wed, 26 Oct 2022 16:13:57 -0700 (PDT)
+        bh=XwaiR4O/rZjigAPWT1KoMEzhsR2kF/G+5vxIJc6wD5s=;
+        b=a1FHr7bhYIUxr6omRUXlSEtH+tcqDMMldFNErbkhAHTFLfst7or5dcEX5TmsjR2GDC
+         hMJUZwsbzkwK/hA9yeXYEqtd0oOmd01qJ7gshACbqWdSK6hLUY5zRuUgqKqV4bf6neS6
+         vPbEBJgT0/SqHRLgIzwTOdlrPC8Oc5cy5BVItvr1RPB+adJwQgTLgvfOVPV+T8c+F+C3
+         uiT4tiJ1idosrm2ujZQuWEH+XUDWk6/Qwc6DspIRIWPQdRR/QZk1isfqOH3KmKahW+zg
+         LZByRZlq4LfmM8ltulSImjWlueVCm7gHfFZxaSQ3Hw4dzhhqoVt02WSHXHew77T9FSa1
+         9oow==
+X-Gm-Message-State: ACrzQf0MZGeCXl4J2dhU/RSpYmpo1AWC4/56HZB7u9XhtMVxq8//fC8j
+        GtC5ZjFw6zQWod5gOYkoCtrvRwmr9IHuVw==
+X-Google-Smtp-Source: AMsMyM4rQXMTCsG9gei9GXpVUvZWRKX7LWUzJRvZ8Q2ffYqX00rAdyk4Vjc8mzsmZIM9xBo9zd1d4A==
+X-Received: by 2002:adf:e0cb:0:b0:22e:2e7e:e57d with SMTP id m11-20020adfe0cb000000b0022e2e7ee57dmr31101308wri.170.1666826847085;
+        Wed, 26 Oct 2022 16:27:27 -0700 (PDT)
 Received: from 127.0.0.1localhost (213-205-70-130.net.novis.pt. [213.205.70.130])
-        by smtp.gmail.com with ESMTPSA id h13-20020adfe98d000000b0022ccae2fa62sm6137670wrm.22.2022.10.26.16.13.56
+        by smtp.gmail.com with ESMTPSA id y4-20020adfd084000000b002368424f89esm4897526wrh.67.2022.10.26.16.27.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Oct 2022 16:13:57 -0700 (PDT)
+        Wed, 26 Oct 2022 16:27:26 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing-next 1/1] tests: test both TCP ends in send zc tests
-Date:   Thu, 27 Oct 2022 00:13:00 +0100
-Message-Id: <83dce097a9930b47788cc5c14a9f19b0f901146e.1666807018.git.asml.silence@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, io-uring@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>,
+        asml.silence@gmail.com
+Subject: [PATCH net 0/4] a few corrections for SOCK_SUPPORT_ZC
+Date:   Thu, 27 Oct 2022 00:25:55 +0100
+Message-Id: <cover.1666825799.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,50 +70,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Test sending data from both ends of a TCP connection to tests any
-modifications need for zc in the accept path.
+There are several places/cases that got overlooked in regards to
+SOCK_SUPPORT_ZC. We're lacking the flag for IPv6 UDP sockets and
+accepted TCP sockets. We also should clear the flag when someone
+tries to hijack a socket by replacing the ->sk_prot callbacks.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/send-zerocopy.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Pavel Begunkov (3):
+  udp: advertise ipv6 udp support for msghdr::ubuf_info
+  net: remove SOCK_SUPPORT_ZC from sockmap
+  net/ulp: remove SOCK_SUPPORT_ZC from tls sockets
 
-diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index a061d49..5030d63 100644
---- a/test/send-zerocopy.c
-+++ b/test/send-zerocopy.c
-@@ -445,14 +445,17 @@ static int test_inet_send(struct io_uring *ring)
- 	int sock_client = -1, sock_server = -1;
- 	int ret, j, i;
- 
--	for (j = 0; j < 16; j++) {
-+	for (j = 0; j < 32; j++) {
- 		bool ipv6 = j & 1;
- 		bool client_connect = j & 2;
- 		bool msg_zc_set = j & 4;
- 		bool tcp = j & 8;
-+		bool swap_sockets = j & 16;
- 
- 		if (tcp && !client_connect)
- 			continue;
-+		if (swap_sockets && !tcp)
-+			continue;
- 
- 		ret = prepare_ip(&addr, &sock_client, &sock_server, ipv6,
- 				 client_connect, msg_zc_set, tcp);
-@@ -460,6 +463,12 @@ static int test_inet_send(struct io_uring *ring)
- 			fprintf(stderr, "sock prep failed %d\n", ret);
- 			return 1;
- 		}
-+		if (swap_sockets) {
-+			int tmp_sock = sock_client;
-+
-+			sock_client = sock_server;
-+			sock_server = tmp_sock;
-+		}
- 
- 		for (i = 0; i < 4096; i++) {
- 			bool regbuf;
+Stefan Metzmacher (1):
+  net: also flag accepted sockets supporting msghdr originated zerocopy
+
+ include/net/sock.h  | 7 +++++++
+ net/ipv4/af_inet.c  | 2 ++
+ net/ipv4/tcp_bpf.c  | 4 ++--
+ net/ipv4/tcp_ulp.c  | 3 +++
+ net/ipv4/udp_bpf.c  | 4 ++--
+ net/ipv6/udp.c      | 1 +
+ net/unix/unix_bpf.c | 8 ++++----
+ 7 files changed, 21 insertions(+), 8 deletions(-)
+
 -- 
 2.38.0
 

@@ -2,101 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F61A60D4D5
-	for <lists+io-uring@lfdr.de>; Tue, 25 Oct 2022 21:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 109D160E51F
+	for <lists+io-uring@lfdr.de>; Wed, 26 Oct 2022 18:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232201AbiJYTmQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Oct 2022 15:42:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55428 "EHLO
+        id S234342AbiJZQAg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Oct 2022 12:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232179AbiJYTmP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Oct 2022 15:42:15 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4752B3B0F
-        for <io-uring@vger.kernel.org>; Tue, 25 Oct 2022 12:42:14 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id q75so1619257iod.7
-        for <io-uring@vger.kernel.org>; Tue, 25 Oct 2022 12:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wo5gCdV4HOvdCiIDRmFlmf80DqTwgnkZIIgLG7LqzFw=;
-        b=POGwl/v2rAIo0Tt8sQBMm76r7/ZH/JK2/Bf6HuuKIWp+RTvj20FhYbzdX77Nur/6Bv
-         VaYgFwBsjPzEQN6j70X43WCcut6uSzrwySJTL9c2SJWkNu5QCLte63YBL05pklfjK4Pw
-         avjIVI1XK7tlszMx5qvLCLFKLVw/cZjy1/UVZkc8RX4BLMRcehnJVpPdGIwa7R/+67u9
-         U2tnUaFc7AI8AWJn17LTsd7imwunI6K4zK97jEB44Z8yuNM9wRZAyWUCc1NDNhUn1cK8
-         3+FT8wZNLu4QfCTqhlA6Rm+auoPbYvHBhxpc3aATbmhWwVOLltX8J/mTYEglJCDMucdc
-         Ff6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wo5gCdV4HOvdCiIDRmFlmf80DqTwgnkZIIgLG7LqzFw=;
-        b=xijh/YgiK8dIh2J2cH0o83coQF3xWF5+FJa6mQmiSSGQQ7IOrG0eNCSqmoplT8zD2n
-         y0xfWRPDzeJ8a1C8ErPM3IVyfiuFGioRYOVTewXbOIhnejqfhz4ILRYUhRLLV6EilGsF
-         TB4ZEbu2VumXhZlp3Db5IG8YWixbm2XHJ+4va6JhROBt3q/QVi6s2qLW1cjhDN+II3ur
-         XQ4GRvYD9zUNrqbotwWgzxUCMflxXaBj+zSfhCq4rMwGe9JpeSSrH5GVt/98P+jsMzB5
-         LRlpXQf8h5whZZeXJzPExKWm4beQWYD5BqdgKRrH0Ph7u276mgYxlPjyatByf8uSIypm
-         jlKA==
-X-Gm-Message-State: ACrzQf1x4avQ8qLHqkJ1Bael0beUhQSZ6JQZIbkxnKr8qilt6rFhPIJ/
-        ju/Af5lk1DWY4Hkpns29yoAcHQ==
-X-Google-Smtp-Source: AMsMyM48aBtAi9RmmmRoZZeLkaEfwha1HYWhziCKd3iVYYUja5LyHNtr3FZa1xP/yiCE6+RA1WsXTg==
-X-Received: by 2002:a05:6638:25d1:b0:374:f8c2:bf7a with SMTP id u17-20020a05663825d100b00374f8c2bf7amr5089585jat.270.1666726933999;
-        Tue, 25 Oct 2022 12:42:13 -0700 (PDT)
-Received: from [127.0.0.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id n17-20020a92d9d1000000b002f9b55e7e92sm1318548ilq.0.2022.10.25.12.42.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Oct 2022 12:42:13 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        io-uring@vger.kernel.org
-In-Reply-To: <cover.1666347703.git.asml.silence@gmail.com>
-References: <cover.1666347703.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next v3 0/3] implement pcpu bio caching for IRQ I/O
-Message-Id: <166672693299.6037.1642967404693492462.b4-ty@kernel.dk>
-Date:   Tue, 25 Oct 2022 13:42:12 -0600
+        with ESMTP id S234489AbiJZQAX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Oct 2022 12:00:23 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3CAC1CB1A
+        for <io-uring@vger.kernel.org>; Wed, 26 Oct 2022 09:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=Cc:To:From:Date:Message-ID;
+        bh=fVzsQ/n3xidCgHOgggbTsOzSs8w9KN0nQUS0HrYlBgA=; b=Y8bVgwhYQP2zf846Miyd/M02WF
+        uRZqnBHxeRg7DTN5bSuN9SlnNfTuPE9SK7SjjolOhFrH/f1gP0rSudYAMNUv2qFbb6GChGXgRH/gX
+        KWFyoP1NCMBk52r7adj3viUqL4WAd2qMee0jejK4AkHLpuZf4XC6NNUPCgQoqOd3Ccf38oDUHGW2a
+        aHkANGMzskRHtbHLjyKWoj0VX8pN24GRkMmVJq4nBqD73RtgE9nPTRHsXDYWZKCtQCg130Zh9icEE
+        AUQepqyo2keepLaD8y+hhJhzN717qVFc11TKxWehorRw+tv+8wtaFTY+Ebum4GYiRvfS4QFryMrin
+        WGeBzl02NnYOZDnSS8Jotjo1iPJkHsJtLIln6/eRx8pRLGQHjvCxYh17xRI1q4jqAFK7zIjQ9rcnd
+        XiHEyPPZ+UunQAReIkAW+/V8zSi5Ohe0CLsIWQ+AtjfeuA90j/EOxZiPFHYv8CU0p19ZvaM2BWBwx
+        ugViLVU+VbW5cnrmQtuaH1Zb;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1onipB-005tvB-7k; Wed, 26 Oct 2022 16:00:13 +0000
+Message-ID: <949fdb8e-bd12-03dc-05c6-c972f26ec0ec@samba.org>
+Date:   Wed, 26 Oct 2022 18:00:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: Problems replacing epoll with io_uring in tevent
+Content-Language: en-US, de-DE
+From:   Stefan Metzmacher <metze@samba.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Samba Technical <samba-technical@lists.samba.org>
+References: <c01f72ac-b2f1-0b1c-6757-26769ee071e2@samba.org>
+In-Reply-To: <c01f72ac-b2f1-0b1c-6757-26769ee071e2@samba.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-d9ed3
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 21 Oct 2022 11:34:04 +0100, Pavel Begunkov wrote:
-> Add bio pcpu caching for normal / IRQ-driven I/O extending REQ_ALLOC_CACHE,
-> which was limited to iopoll. t/io_uring with an Optane SSD setup showed +7%
-> for batches of 32 requests and +4.3% for batches of 8.
+Hi Jens,
+
+> 9. The above works mostly, but manual testing and our massive automated regression tests
+>     found the following problems:
 > 
-> IRQ, 128/32/32, cache off
-> IOPS=59.08M, BW=28.84GiB/s, IOS/call=31/31
-> IOPS=59.30M, BW=28.96GiB/s, IOS/call=32/32
-> IOPS=59.97M, BW=29.28GiB/s, IOS/call=31/31
-> IOPS=59.92M, BW=29.26GiB/s, IOS/call=32/32
-> IOPS=59.81M, BW=29.20GiB/s, IOS/call=32/31
+>     a) Related to https://github.com/axboe/liburing/issues/684 I was also wondering
+>        about the return value of io_uring_submit_and_wait_timeout(),
+>        but in addition I noticed that the timeout parameter doesn't work
+>        as expected, the function will wait for two times of the timeout value.
+>        I hacked a fix here:
+>        https://git.samba.org/?p=metze/samba/wip.git;a=commitdiff;h=06fec644dd9f5748952c8b875878e0e1b0000d33
+
+Thanks for doing an upstream fix for the problem.
+
+>     b) The major show stopper is that IORING_OP_POLL_ADD calls fget(), while
+>        it's pending. Which means that a close() on the related file descriptor
+>        is not able to remove the last reference! This is a problem for points 3.d,
+>        4.a and 4.b from above.
 > 
-> [...]
+>        I doubt IORING_ASYNC_CANCEL_FD would be able to be used as there's not always
+>        code being triggered around a raw close() syscall, which could do a sync cancel.
+> 
+>        For now I plan to epoll_ctl (or IORING_OP_EPOLL_CTL) and only
+>        register the fd from epoll_create() with IORING_OP_POLL_ADD
+>        or I keep epoll_wait() as blocking call and register the io_uring fd
+>        with epoll.
+> 
+>        I looked at the related epoll code and found that it uses
+>        a list in struct file->f_ep to keep the reference, which gets
+>        detached also via eventpoll_release_file() called from __fput()
+> 
+>        Would it be possible move IORING_OP_POLL_ADD to use a similar model
+>        so that close() will causes a cqe with -ECANCELED?
 
-Applied, thanks!
+I'm currently trying to prototype for an IORING_POLL_CANCEL_ON_CLOSE
+flag that can be passed to POLL_ADD. With that we'll register
+the request in &req->file->f_uring_poll (similar to the file->f_ep list for epoll)
+Then we only get a real reference to the file during the call to
+vfs_poll() otherwise we drop the fget/fput reference and rely on
+an io_uring_poll_release_file() (similar to eventpoll_release_file())
+to cancel our registered poll request.
 
-[1/3] bio: split pcpu cache part of bio_put into a helper
-      commit: 0b0735a8c24f006d2d9d8b2b408b8c90f3163abd
-[2/3] block/bio: add pcpu caching for non-polling bio_put
-      commit: 13a184e269656994180e8c64ff56db03ed737902
-[3/3] io_uring/rw: enable bio caches for IRQ rw
-      commit: 93dad04746ea1340dec267f0e98ac42e8bc67160
+>     c) A simple pipe based performance test shows the following numbers:
+>        - 'poll':               Got 232387.31 pipe events/sec
+>        - 'epoll':              Got 251125.25 pipe events/sec
+>        - 'samba_io_uring_ev':  Got 210998.77 pipe events/sec
+>        So the io_uring backend is even slower than the 'poll' backend.
+>        I guess the reason is the constant re-submission of IORING_OP_POLL_ADD.
 
-Best regards,
--- 
-Jens Axboe
+Added some feature autodetection today and I'm now using
+IORING_SETUP_COOP_TASKRUN, IORING_SETUP_TASKRUN_FLAG,
+IORING_SETUP_SINGLE_ISSUER and IORING_SETUP_DEFER_TASKRUN if supported
+by the kernel.
 
+On a 6.1 kernel this improved the performance a lot, it's now faster
+than the epoll backend.
+
+The key flag is IORING_SETUP_DEFER_TASKRUN. On a different system than above
+I'm getting the following numbers:
+- epoll:                                    Got 114450.16 pipe events/sec
+- poll:                                     Got 105872.52 pipe events/sec
+- samba_io_uring_ev-without-defer_taskrun': Got  95564.22 pipe events/sec
+- samba_io_uring_ev-with-defer_taskrun':    Got 122853.85 pipe events/sec
+
+>        My hope would be that IORING_POLL_ADD_MULTI + IORING_POLL_ADD_LEVEL
+>        would be able to avoid the performance problem with samba_io_uring_ev
+>        compared to epoll.
+
+I've started with a IORING_POLL_ADD_MULTI + IORING_POLL_ADD_LEVEL prototype,
+but it's not very far yet and due to the IORING_SETUP_DEFER_TASKRUN
+speedup, I'll postpone working on IORING_POLL_ADD_LEVEL.
+
+metze
 

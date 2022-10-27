@@ -2,50 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F81160F211
-	for <lists+io-uring@lfdr.de>; Thu, 27 Oct 2022 10:18:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2FAA60F2D2
+	for <lists+io-uring@lfdr.de>; Thu, 27 Oct 2022 10:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234581AbiJ0ISo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Oct 2022 04:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
+        id S234842AbiJ0Ir0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Oct 2022 04:47:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234616AbiJ0ISn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Oct 2022 04:18:43 -0400
+        with ESMTP id S234879AbiJ0IrR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Oct 2022 04:47:17 -0400
 Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B788140E77
-        for <io-uring@vger.kernel.org>; Thu, 27 Oct 2022 01:18:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552896565;
+        Thu, 27 Oct 2022 01:47:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=5pRIr/CEGrd301dx2fv2rhY+NkoU1ynkrYBBkgsUcnc=; b=Tv7uruQnsf5NKGOOUJuZGUEMrp
-        UlmLqA8MMo1MpRIPaLZyhLc+7nmKIs1vmRLF0clev1jWaiVOkTxv25/4izS0XDGmR7gJZ5+JHOwoX
-        p818QEtPyJ1DFaYF/K9qZcCXUHZ7aAVH8OZ3HZp6lnsS0MeHiJHiE9OO4YxTytQLjUSyXsYNLNhQk
-        RYByFUDujJiRljinOO/g7oVLUjqevSi5Loz8is4cvSbuOGNiQi0R2JAkkAgOcb2xhAAnUMu5mPYwg
-        m21ukcScARCH2yC8LXO/h2nKHxDLpOnjWfvfoJk4CGuS8WL6VBlrBzzsF7ZV3YLPzZwVIzUIEN2fe
-        dwR1fRlhEIak49URG0M4jMz1qeyJHSAAlcQvddSDvjq1oNoNYGu0pqYgioq4MF3D7TqXYCR5v1d+/
-        W3FNoKqF5ZjiDQ6pICYE3BQrViV/RD0GTH9ZYbp9nkJFVu+w0zXsDPatjtWcWSQv3oNhYzWyJV4/H
-        3ccjFStsjSSq79bbp9L+f5Wh;
+        s=42; h=Cc:To:From:Date:Message-ID;
+        bh=c91ZA6UyAnjSnGuYSqvGMyiTSv2BODQBStlLpswDA3c=; b=Bc8wcLBbsL+7AsjKbKYU9RFCf8
+        3bmrOjyZsvSr01/ZYcNvSei6sTHEkj3gjUCCnUUszPwgcxlbAhK+WJgAa8zpvq4UOcZMIj6MU4j0P
+        0qckpKmYM+YieqAXeyCXAtayE+P2q8TwWYxcRwrOCAD+gbwYknzRFlQWBYdUAksRgSFUA3tnijTld
+        GLw264FDPM9MrV9ZrknSUKJwwC7ZCx0vGfDMSMLOReaQAoF/cbLkxeouk4+wK8TMvjXLtVoYWKOfr
+        Xb5gIW9vrCuuG5WBpi5H/iyiBp0M/EptiOrcUuoy1yl00JRZk6Ghnw+5O2Hrvt8Fm4q1i8eBPMVr7
+        4s33Io+rQ5Np6G1krL44WBdDkrVZqouxGwlhtRRaDjwEklK4aWtA/RhZ8kOdrTm3/kkUrCbDItkSP
+        XlmeOm9tEQ6sOVFqCn/66KSYyUCxHORACxTekETe12PVN+0IaS4uMTMJkY60Mx2p4rp7Dg/NZEMZu
+        uSoz+Xu0htS9ffhjA9r9zelk;
 Received: from [127.0.0.2] (localhost [127.0.0.1])
         by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
         (Exim)
-        id 1ony62-0060BK-Qw; Thu, 27 Oct 2022 08:18:38 +0000
-Message-ID: <3a437318-3c94-4e5e-1cb4-c6108625d165@samba.org>
-Date:   Thu, 27 Oct 2022 10:18:38 +0200
+        id 1onyXh-0060NS-Hw; Thu, 27 Oct 2022 08:47:13 +0000
+Message-ID: <678e490a-e876-47d2-e308-5a8f140774f8@samba.org>
+Date:   Thu, 27 Oct 2022 10:47:12 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: Re: Problems replacing epoll with io_uring in tevent
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <c01f72ac-b2f1-0b1c-6757-26769ee071e2@samba.org>
- <949fdb8e-bd12-03dc-05c6-c972f26ec0ec@samba.org>
- <270f3b9a-8fa6-68bf-7c57-277f107167c9@kernel.dk>
- <063b631b-19a7-fb24-23e7-65cbcc141554@gmail.com>
+Subject: Re: IORING_SEND_NOTIF_REPORT_USAGE (was Re: IORING_CQE_F_COPIED)
 Content-Language: en-US
 From:   Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <063b631b-19a7-fb24-23e7-65cbcc141554@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     Jakub Kicinski <kuba@kernel.org>, netdev <netdev@vger.kernel.org>,
+        Dylan Yudaken <dylany@fb.com>
+References: <4385ba84-55dd-6b08-0ca7-6b4a43f9d9a2@samba.org>
+ <6f0a9137-2d2b-7294-f59f-0fcf9cdfc72d@gmail.com>
+ <4bbf6bc1-ee4b-8758-7860-a06f57f35d14@samba.org>
+ <cd87b6d0-a6d6-8f24-1af4-4b8845aa669c@gmail.com>
+ <df47dbd0-75e4-5f39-58ad-ec28e50d0b9c@samba.org>
+ <fb6a7599-8a9b-15e5-9b64-6cd9d01c6ff4@gmail.com>
+ <acad81e4-c2ef-59cc-5f0c-33b99082d270@samba.org>
+ <d05e9a24-c02b-5f0d-e206-9053a786179e@gmail.com>
+ <e87610a6-27a6-6175-1c66-a8dcdc4c14cb@samba.org>
+ <c7505b91-16c3-8f83-9782-a520e8b0f484@gmail.com>
+ <3e56c92b-567c-7bb4-2644-dc1ad1d8c3ae@samba.org>
+ <273f154a-4cbd-2412-d056-a31fab5368d3@gmail.com>
+ <11755fdb-4a28-0ea5-89a4-d51b2715f8c2@samba.org>
+In-Reply-To: <11755fdb-4a28-0ea5-89a4-d51b2715f8c2@samba.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -59,53 +67,26 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Hi Pavel,
 
->>> I'm currently trying to prototype for an IORING_POLL_CANCEL_ON_CLOSE
->>> flag that can be passed to POLL_ADD. With that we'll register
->>> the request in &req->file->f_uring_poll (similar to the file->f_ep list for epoll)
->>> Then we only get a real reference to the file during the call to
->>> vfs_poll() otherwise we drop the fget/fput reference and rely on
->>> an io_uring_poll_release_file() (similar to eventpoll_release_file())
->>> to cancel our registered poll request.
+>> Ala a IORING_SEND_* flag? Yes please.
 >>
->> Yes, this is a bit tricky as we hold the file ref across the operation. I'd
->> be interested in seeing your approach to this, and also how it would
->> interact with registered files...
-> 
-> Not sure I mentioned before but shutdown(2) / IORING_OP_SHUTDOWN
-> usually helps. Is there anything keeping you from doing that?
-
-The thing is that the tevent backend has no control over what
-callers do and there's no way to audit all high level samba code,
-everything needs to work exactly as it does with the poll and epoll backends.
-
-Only high level code that actively/directly uses io_uring features could cope
-with io_uring specific behavior.
-
-As a side note I recently work on bug related to half closed tcp sockets,
-see https://bugzilla.samba.org/show_bug.cgi?id=15202
-It seems that shutdown() (even with SHUT_RDWR) behaves differently
-for tcp sockets compared to a (final) close().
-
-> Do you only poll sockets or pipes as well?
-
-Anything that's supported by poll needs to work.
-
->>> The key flag is IORING_SETUP_DEFER_TASKRUN. On a different system than above
->>> I'm getting the following numbers:
->>> - epoll:                                    Got 114450.16 pipe events/sec
->>> - poll:                                     Got 105872.52 pipe events/sec
->>> - samba_io_uring_ev-without-defer_taskrun': Got  95564.22 pipe events/sec
->>> - samba_io_uring_ev-with-defer_taskrun':    Got 122853.85 pipe events/sec
+>> *_REPORT_USAGE was fine but I'd make it IORING_SEND_ZC_REPORT_USAGE.
+>> And can be extended if there is more info needed in the future.
 >>
->> Any chance you can do a run with just IORING_SETUP_COOP_TASKRUN set? I'm
->> curious how big of an impact the IPI elimination is, where it slots in
->> compared to the defer taskrun and the default settings.
+>> And I don't mind using a bit in cqe->res, makes cflags less polluted.
 > 
-> And if it doesn't take too much time to test, it would also be interesting
-> to see if there is any impact from IORING_SETUP_SINGLE_ISSUER alone,
-> without TASKRUN flags.
+> So no worries about the delayed/skip sendmsg completion anymore?
+> 
+> Should I define it like this, ok?
+> 
+> #define IORING_NOTIF_USAGE_ZC_COPIED    (1U << 31)
+> 
+> See the full patch below...
 
-See the other mail to Jens.
+Apart from still having IORING_SEND_NOTIF_REPORT_USAGE
+in the comment... (which I'll fix...)
 
+Is this now fine for you? Then I would post a real patch.
+
+Thanks!
 metze
 

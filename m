@@ -2,104 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11993611C3F
-	for <lists+io-uring@lfdr.de>; Fri, 28 Oct 2022 23:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC3C561203D
+	for <lists+io-uring@lfdr.de>; Sat, 29 Oct 2022 06:50:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbiJ1VMI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Oct 2022 17:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
+        id S229799AbiJ2EuY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Oct 2022 00:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiJ1VMH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Oct 2022 17:12:07 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2ED1C69DB
-        for <io-uring@vger.kernel.org>; Fri, 28 Oct 2022 14:12:02 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id y13so5788811pfp.7
-        for <io-uring@vger.kernel.org>; Fri, 28 Oct 2022 14:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bCW1xv8kmr/Vi1PMpuVu5hSF3/jz7414gU5nYLIQuwk=;
-        b=6Tblmfs0i4Ubg9yjoJinEu1zWGbYkSAb1Qri5RTBKSO5afeKjhp9BElfsUZd5b2Qvj
-         PI6bWlrn8N6i8iJ0bLLEK2tQvxIdH1cLt9tLGi/0N/svrSAOoJuzTP4tDxpeakTXC1xi
-         HD+uc2C8mDbWq+LKOQkZUc/4MKTJqQUwG2bVZ0VTuD36TtD4uwq2esEcY7OLK7TOE3JP
-         wX7DEddUjke2fMRHctRL+dXpYy65eNfNWryNCuiPVX13yFyhu1TrukkDogO62RYq9PrU
-         4pRtJplRSS7DcS9t1X/vnJGk70lcfwb6fBDOEti5TZwCu365V2w9ET7ybVscXdnaNe7+
-         HyQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bCW1xv8kmr/Vi1PMpuVu5hSF3/jz7414gU5nYLIQuwk=;
-        b=P3Y9Uh1kcY6VQTaK3RA3O8nYtE1F3Hp7Sd5ybTD4Pk6PSBFAKlYoGPYQbUlyy3i9Wa
-         wO8PDQqZ5zSF7wYPZhGiMiT4n6LIMZoF7jFpH4oMJVg8K++R9/63L5WahJgyN3DecQxg
-         +48BEe0KXI8IU7p4g1D1/Sa4L2HHT62m2eTsuIYk96Rg0CLxeYNB7r4HOGN485EqJtLw
-         WAYfzxKyf92kklnWqqrvRefU8NbGfgiQsKyp4y5Wn2hxxp81A88D9R/jeCRKIdlaYQ9h
-         5cAlNmy52cs1JhLRtlhYCHs4iaxN3kuGwEZorYr9ovFjbrNwfiilP+fTJMigyjAB5doU
-         VmeQ==
-X-Gm-Message-State: ACrzQf3Zx/xoufFfazvP3vp+xepOjSmaq98QylTEdEmPL8QHxsGiDke4
-        FgO/lcamvnZcRqCYHxB2mA4LoFeRVuOXaApF
-X-Google-Smtp-Source: AMsMyM6KlYVLPUjXgdwwFHAYuRAny9iP6Kse9OmvG0yv8VEc/z+DeOVnT6AjD8efHZEy5AVKLfEnQQ==
-X-Received: by 2002:a63:ef18:0:b0:439:befc:d89c with SMTP id u24-20020a63ef18000000b00439befcd89cmr1220065pgh.504.1666991522076;
-        Fri, 28 Oct 2022 14:12:02 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id bn17-20020a056a02031100b00460ea630c1bsm3089270pgb.46.2022.10.28.14.12.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Oct 2022 14:12:01 -0700 (PDT)
-Message-ID: <0644eeea-0e0a-d09c-2b65-365b7ab823ba@kernel.dk>
-Date:   Fri, 28 Oct 2022 15:12:00 -0600
+        with ESMTP id S229761AbiJ2EuU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Oct 2022 00:50:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1E85C372;
+        Fri, 28 Oct 2022 21:50:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE58860AE3;
+        Sat, 29 Oct 2022 04:50:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 497FBC433D6;
+        Sat, 29 Oct 2022 04:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667019018;
+        bh=1OUZ9GQqAYE2CM6NYJAVm09J1cU/wBieSiYN2PgzGMY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=V3h18iBrNSRB52oGTRki6FXlXq20sic+UNurIaS5su5dIAaYAFd6jUJynYSClcVd7
+         5vGDdiK6IJhmBfy/CZmK7uOdu9STUQtMymevIy9ECZ7cHnZxdm8FZaEf/3zUFfT8v+
+         YfLAXxg8EtYjPa8et42WnD/RROdGbxQCM74fbTq3BrLd5KTjObAG+yXWhS4VkKU7SL
+         QZTQxCdDuPthwStT1i64Ok8KcRdTlOnf07SnOCoz+XK83RNMzKjJ/aM3rZB1Ayjj4m
+         Z/9Norpq4/29hGOUWhESNMLW4R9FyObhgrAMUzuJ+FXLEbbixHUDo9SVxwLXXupdhN
+         uXKVFPCe5a2oQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2DC0EC41672;
+        Sat, 29 Oct 2022 04:50:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.1-rc3
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/4] a few corrections for SOCK_SUPPORT_ZC
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166701901817.13014.7707035824604308004.git-patchwork-notify@kernel.org>
+Date:   Sat, 29 Oct 2022 04:50:18 +0000
+References: <cover.1666825799.git.asml.silence@gmail.com>
+In-Reply-To: <cover.1666825799.git.asml.silence@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     netdev@vger.kernel.org, kuba@kernel.org, davem@davemloft.net,
+        io-uring@vger.kernel.org, john.fastabend@gmail.com
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hello:
 
-Just a fix for a locking regression introduced with the deferred
-task_work running from this merge window. Please pull!
+This series was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Thu, 27 Oct 2022 00:25:55 +0100 you wrote:
+> There are several places/cases that got overlooked in regards to
+> SOCK_SUPPORT_ZC. We're lacking the flag for IPv6 UDP sockets and
+> accepted TCP sockets. We also should clear the flag when someone
+> tries to hijack a socket by replacing the ->sk_prot callbacks.
+> 
+> Pavel Begunkov (3):
+>   udp: advertise ipv6 udp support for msghdr::ubuf_info
+>   net: remove SOCK_SUPPORT_ZC from sockmap
+>   net/ulp: remove SOCK_SUPPORT_ZC from tls sockets
+> 
+> [...]
 
-The following changes since commit cc767e7c6913f770741d9fad1efa4957c2623744:
+Here is the summary with links:
+  - [net,1/4] udp: advertise ipv6 udp support for msghdr::ubuf_info
+    https://git.kernel.org/netdev/net/c/8f279fb00bb2
+  - [net,2/4] net: remove SOCK_SUPPORT_ZC from sockmap
+    https://git.kernel.org/netdev/net/c/fee9ac06647e
+  - [net,3/4] net/ulp: remove SOCK_SUPPORT_ZC from tls sockets
+    https://git.kernel.org/netdev/net/c/e276d62dcfde
+  - [net,4/4] net: also flag accepted sockets supporting msghdr originated zerocopy
+    https://git.kernel.org/netdev/net/c/71b7786ea478
 
-  io_uring/net: fail zc sendmsg when unsupported by socket (2022-10-22 08:43:03 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.1-2022-10-28
-
-for you to fetch changes up to b3026767e15b488860d4bbf1649d69612bab2c25:
-
-  io_uring: unlock if __io_run_local_work locked inside (2022-10-27 09:52:12 -0600)
-
-----------------------------------------------------------------
-io_uring-6.1-2022-10-28
-
-----------------------------------------------------------------
-Dylan Yudaken (2):
-      io_uring: use io_run_local_work_locked helper
-      io_uring: unlock if __io_run_local_work locked inside
-
- io_uring/io_uring.c | 11 +++++------
- io_uring/io_uring.h | 13 +++++++++++--
- 2 files changed, 16 insertions(+), 8 deletions(-)
-
+You are awesome, thank you!
 -- 
-Jens Axboe
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+

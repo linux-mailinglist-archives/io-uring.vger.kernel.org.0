@@ -2,63 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D438613842
-	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 14:42:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0F5613AED
+	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 17:02:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231211AbiJaNmI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 31 Oct 2022 09:42:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
+        id S231134AbiJaQCF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 31 Oct 2022 12:02:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230288AbiJaNmH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 09:42:07 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28F4101FD
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:42:06 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29VDFQsD007133
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:42:06 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=Yf3Oe7nNm4mTSc3Ipcgjg8uc6Rp9QEcyG6HSDoB+xZ4=;
- b=EKCOfaSaFDOw74Oktjbuvt+1B3GImoF+0Pfdv2cyjnPw429BZ+ClRwFoyWfRyOhCoLbk
- srwnnDHvwHwVxhzhSvXK2Z7WAKjhfn1wumR5w4AUJSIdrhbpVSlgB4tLouGw6xhuBiK6
- VfZtnpKX9PvKcaPRVutZmpOQ7Hn7s8qgdKF5t2gopF6CiCyzarCq8aWMtOTwY+c3AFs/
- Hkm8yuwghA5Nr5gRqkzFk8sMX4XECa/Hy6UyAF5RgyFsJ0/3U80IHQa1p58tbI+QYCCj
- Q6jaKBRXV78rgtnvmAH8N9UrMoT6Xxak2/zzS09Px7R97t4maN2Iro0SSSb+g0GioxdW 4Q== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kh1x1xcd2-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:42:05 -0700
-Received: from twshared23862.08.ash9.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 31 Oct 2022 06:42:04 -0700
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 038E48A19664; Mon, 31 Oct 2022 06:41:36 -0700 (PDT)
-From:   Dylan Yudaken <dylany@meta.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
-        Dylan Yudaken <dylany@meta.com>
-Subject: [PATCH for-next 12/12] io_uring: poll_add retarget_rsrc support
-Date:   Mon, 31 Oct 2022 06:41:26 -0700
-Message-ID: <20221031134126.82928-13-dylany@meta.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221031134126.82928-1-dylany@meta.com>
-References: <20221031134126.82928-1-dylany@meta.com>
+        with ESMTP id S230502AbiJaQCD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 12:02:03 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA3E2EAA
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 09:02:02 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id b29so11019531pfp.13
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 09:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=88NZ1ZlQuvYg173XUs6YmRoMOZIyR2+eA0HY3gAx2n0=;
+        b=60XvKgSyQ3SE3Dw2ywtCPJCUMkftkf42TdeUsGFYBokm5tZjFT9TPzuEPHqyFemOhP
+         G1jpPcnjkwNd0O5X+vjL/NQ/lCL30+HN1ibsyAWXZWWEiVCePSBmXA7ag2KGXJL38reX
+         +KK3YAPP9cSi6GbC2CV6LXVdih+BHTGOkPKotWOeitZYHhNOzS1vnnkFmv+VQHSWnBOg
+         dLGFSq0o+IH+DjIr7lgV77DVs4Dy+bi4bCqxstNWQ43Cu/IjoghivjirO8AjSJLAAwyF
+         uzRegueNSq6WWQ99Rghr41EeyDlAiq0BEyrLiU/w5SmouVYog301IEUE18R4QnjfFAGD
+         s91g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=88NZ1ZlQuvYg173XUs6YmRoMOZIyR2+eA0HY3gAx2n0=;
+        b=zpqOYWOrKHNdAM3VurukLjF6Sf+mnGz3xtPehx3femuV7UiXsnN9dSd/thZd/A+W1k
+         daD7aQHyhYCztyan/1B7RNHKLVi9dSjzt/wt/BDYKlIHbfsbWoEnP9uHx6pi23EAMoEF
+         l8HCjpSSOk4UCJ8PMMKgOZn6dDlbA1b6EoC/xwcaowvi6e3GGRPHONimOwr+rnmBIkZj
+         8uhyloMUAO5PqlQR38HKMiJTGD8rdbiVyR0wuGYazBurnC+ndME+vgYIM69iYQGl9ai9
+         2uwXRvRNHQV5cwGwCcOZHrY4FKviF6VolUBqbt+jHmIDy1Wd15mbZ9v8S3UX+rl4oW57
+         uAhw==
+X-Gm-Message-State: ACrzQf2gCSa6YN3kxyXBdec1sR179ZE1kvPMj/mw/yJkcKdiEWiiqNUU
+        WYyV6TXtaHdqm/A0cM2FeUwK2g==
+X-Google-Smtp-Source: AMsMyM6l4mvSeHhFKt7dkCyF968C4haVN+KReIshDsqt2KFn4oguoTAgKxPSuqgtVhAoMRAl9jd3Xg==
+X-Received: by 2002:a63:2cd2:0:b0:41c:5901:67d8 with SMTP id s201-20020a632cd2000000b0041c590167d8mr13198010pgs.365.1667232122328;
+        Mon, 31 Oct 2022 09:02:02 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d85-20020a621d58000000b0056bc30e618dsm4768850pfd.38.2022.10.31.09.02.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Oct 2022 09:02:01 -0700 (PDT)
+Message-ID: <83a1653e-a593-ec0e-eb0d-7850d1a0c694@kernel.dk>
+Date:   Mon, 31 Oct 2022 10:02:00 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: ZsbdbKjEvdcRSEIRfN8njtPqINm1f7AF
-X-Proofpoint-GUID: ZsbdbKjEvdcRSEIRfN8njtPqINm1f7AF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-31_15,2022-10-31_01,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH for-next 04/12] io_uring: reschedule retargeting at
+ shutdown of ring
+Content-Language: en-US
+To:     Dylan Yudaken <dylany@meta.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
+References: <20221031134126.82928-1-dylany@meta.com>
+ <20221031134126.82928-5-dylany@meta.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20221031134126.82928-5-dylany@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,79 +75,44 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add can_retarget_rsrc handler for poll.
+On 10/31/22 7:41 AM, Dylan Yudaken wrote:
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 8d0d40713a63..40b37899e943 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -248,12 +248,20 @@ static unsigned int io_rsrc_retarget_table(struct io_ring_ctx *ctx,
+>  	return refs;
+>  }
+>  
+> -static void io_rsrc_retarget_schedule(struct io_ring_ctx *ctx)
+> +static void io_rsrc_retarget_schedule(struct io_ring_ctx *ctx, bool delay)
+>  	__must_hold(&ctx->uring_lock)
+>  {
+> -	percpu_ref_get(&ctx->refs);
+> -	mod_delayed_work(system_wq, &ctx->rsrc_retarget_work, 60 * HZ);
+> -	ctx->rsrc_retarget_scheduled = true;
+> +	unsigned long del;
+> +
+> +	if (delay)
+> +		del = 60 * HZ;
+> +	else
+> +		del = 0;
+> +
+> +	if (likely(!mod_delayed_work(system_wq, &ctx->rsrc_retarget_work, del))) {
+> +		percpu_ref_get(&ctx->refs);
+> +		ctx->rsrc_retarget_scheduled = true;
+> +	}
+>  }
 
-Note that the copy of fd is stashed in the middle of the struct io_poll a=
-s
-there is a hole there, and this is the only way to ensure that the
-structure does not grow beyond the size of struct io_cmd_data.
+What happens for del == 0 and the work running ala:
 
-Signed-off-by: Dylan Yudaken <dylany@meta.com>
----
- io_uring/opdef.c |  1 +
- io_uring/poll.c  | 12 ++++++++++++
- io_uring/poll.h  |  2 ++
- 3 files changed, 15 insertions(+)
+CPU 0				CPU 1
+mod_delayed_work(.., 0);
+				delayed_work runs
+					put ctx
+percpu_ref_get(ctx)
 
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 5159b3abc2b2..952ea8ff5032 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -133,6 +133,7 @@ const struct io_op_def io_op_defs[] =3D {
- 		.name			=3D "POLL_ADD",
- 		.prep			=3D io_poll_add_prep,
- 		.issue			=3D io_poll_add,
-+		.can_retarget_rsrc	=3D io_poll_can_retarget_rsrc,
- 	},
- 	[IORING_OP_POLL_REMOVE] =3D {
- 		.audit_skip		=3D 1,
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 0d9f49c575e0..fde8060b9399 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -863,6 +863,7 @@ int io_poll_add_prep(struct io_kiocb *req, const stru=
-ct io_uring_sqe *sqe)
- 		return -EINVAL;
-=20
- 	poll->events =3D io_poll_parse_events(sqe, flags);
-+	poll->fd =3D req->cqe.fd;
- 	return 0;
- }
-=20
-@@ -963,3 +964,14 @@ void io_apoll_cache_free(struct io_cache_entry *entr=
-y)
- {
- 	kfree(container_of(entry, struct async_poll, cache));
- }
-+
-+bool io_poll_can_retarget_rsrc(struct io_kiocb *req)
-+{
-+	struct io_poll *poll =3D io_kiocb_to_cmd(req, struct io_poll);
-+
-+	if (req->flags & REQ_F_FIXED_FILE &&
-+	    io_file_peek_fixed(req, poll->fd) !=3D req->file)
-+		return false;
-+
-+	return true;
-+}
-diff --git a/io_uring/poll.h b/io_uring/poll.h
-index 5f3bae50fc81..dcc4b06bcea1 100644
---- a/io_uring/poll.h
-+++ b/io_uring/poll.h
-@@ -12,6 +12,7 @@ struct io_poll {
- 	struct file			*file;
- 	struct wait_queue_head		*head;
- 	__poll_t			events;
-+	int				fd; /* only used by poll_add */
- 	struct wait_queue_entry		wait;
- };
-=20
-@@ -37,3 +38,4 @@ bool io_poll_remove_all(struct io_ring_ctx *ctx, struct=
- task_struct *tsk,
- 			bool cancel_all);
-=20
- void io_apoll_cache_free(struct io_cache_entry *entry);
-+bool io_poll_can_retarget_rsrc(struct io_kiocb *req);
---=20
-2.30.2
+Also I think that likely() needs to get dropped.
 
+-- 
+Jens Axboe

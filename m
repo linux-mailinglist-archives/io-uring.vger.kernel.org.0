@@ -2,55 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF91613836
-	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 14:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A06E4613838
+	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 14:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbiJaNll (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 31 Oct 2022 09:41:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43446 "EHLO
+        id S231278AbiJaNlu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 31 Oct 2022 09:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231267AbiJaNlk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 09:41:40 -0400
+        with ESMTP id S231231AbiJaNlt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 09:41:49 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCFA2101FC
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:38 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29VDFXe2007794
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:38 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDB8101F8
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:48 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29VDFZhB018811
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:48 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=s2048-2021-q4;
- bh=kK7g1Lujtkd2mfDFDGcBFNvGpEoKwNNfCjLnYvNGz74=;
- b=VtZRCRWGtuwwt+ENx+fBaMFWcTtHNoSmVbF3YhLZdQ3ZXr3683x8fM+m63wIxtpBi7KT
- nPPQUoVu5Mq7giE67KTotnwbSAqm6kSzq8rp3wCf5QkvWYswiJFcVfkrF7yG+etXRL29
- 0E84oBP0tMLLPbGydf3pOXAN+2eJ2w4Dd1jqzhmBE0VTtu84v4gRHviTWjXVnskMqLWl
- FNK48jsSjT1JNZjPj9/Sg4iJW9QkO80o5qEKkbNWTdZgsyHe0cG8QoXqwtjo1KDOhw72
- hSbn8vIJj09Z+ng4OYFYj8l1k9GkIIGuWaowi9flRIbkKmIO/6Q9Zpwws+DGJaPYRgNF +g== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=s2048-2021-q4;
+ bh=bSy4dJny2RPucbubAwvu4900axwZa+ZbHsR4KWJN7lc=;
+ b=l9JdGew+kllVLwlkaQRDBV/yyf64Bozyzj0LCBdG/byGiLnUxoLbb/nLukJYQHWO0nwf
+ tDGDyjPTqlDJEWUUT8xB2kUy42ycGGS5OTSYi3jiWqK4Jh3OlMq+Jr3F4MnZ9KYBo6yb
+ SwegQr35SeP28/59kvG+zJve0BRbt8qypX7F90qOp0tMAvtx5/29Tyr2stwYPJgCRP+q
+ 1vrz8sL8GJXenUrpBuER5vwaOJVQRhoekrI0psYfP8TXJmDSiClJrUxvvYnXN8PsJBeh
+ AT8GiO/d3TEx4WB6Jo6dtQsKxf0gFweaYzxvEmM470L4ScPbiWDnnQxx+KJ7jJausLpY Tg== 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kh07p6943-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kh1vpwwh9-12
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:38 -0700
-Received: from twshared5476.02.ash7.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:48 -0700
+Received: from twshared6758.06.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 31 Oct 2022 06:41:37 -0700
+ 15.1.2375.31; Mon, 31 Oct 2022 06:41:47 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id A17438A19647; Mon, 31 Oct 2022 06:41:35 -0700 (PDT)
+        id A3CDE8A19648; Mon, 31 Oct 2022 06:41:35 -0700 (PDT)
 From:   Dylan Yudaken <dylany@meta.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         Dylan Yudaken <dylany@meta.com>
-Subject: [PATCH for-next 00/12] io_uring: retarget rsrc nodes periodically
-Date:   Mon, 31 Oct 2022 06:41:14 -0700
-Message-ID: <20221031134126.82928-1-dylany@meta.com>
+Subject: [PATCH for-next 01/12] io_uring: infrastructure for retargeting rsrc nodes
+Date:   Mon, 31 Oct 2022 06:41:15 -0700
+Message-ID: <20221031134126.82928-2-dylany@meta.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20221031134126.82928-1-dylany@meta.com>
+References: <20221031134126.82928-1-dylany@meta.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: IycgthpKJzo1wyzMTTJV4gbsRoaJ5lh-
-X-Proofpoint-ORIG-GUID: IycgthpKJzo1wyzMTTJV4gbsRoaJ5lh-
+X-Proofpoint-GUID: UODCCKAtLr0g9UgiNoqgIT5xzuFo9pLK
+X-Proofpoint-ORIG-GUID: UODCCKAtLr0g9UgiNoqgIT5xzuFo9pLK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-10-31_15,2022-10-31_01,2022-06-22_01
@@ -64,83 +66,194 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-There is a problem with long running io_uring requests and rsrc node
-cleanup, where a single long running request can block cleanup of all
-subsequent nodes. For example a network server may have both long running
-accepts and also use registered files for connections. When sockets are
-closed and returned (either through close_direct, or through
-register_files_update) the underlying file will not be freed until that
-original accept completes. For the case of multishot this may be the
-lifetime of the application, which will cause file numbers to grow
-unbounded - resulting in either OOMs or ENFILE errors.
+rsrc node cleanup can be indefinitely delayed when there are long lived
+requests. For example if a file is located in the same rsrc node as a lon=
+g
+lived socket with multishot poll, then even if unregistering the file it
+will not be closed while the poll request is still active.
 
-To fix this I propose retargeting the rsrc nodes from ongoing requests to
-the current main request of the io_uring. This only needs to happen for
-long running requests types, and specifically those that happen as a
-result of some external event. For this reason I exclude write/send style
-ops for the time being as even though these can cause this issue in
-reality it would be unexpected to have a write block for hours. This
-support can obviously be added later if needed.
+Introduce a timer when rsrc node is switched, so that periodically we can
+retarget these long lived requests to the newest nodes. That will allow
+the old nodes to be cleaned up, freeing resources.
 
-In order to retarget nodes all the outstanding requests (in both poll
-tables and io-wq) need to be iterated and the request needs to be checked
-to make sure the retargeting is valid. For example for FIXED_FILE request=
-s
-this involves ensuring the file is still referenced in the current node.
-This O(N) operation seems to take ~1ms locally for 30k outstanding
-requests. Note it locks the io_uring while it happens and so no other wor=
-k
-can occur. In order to amortize this cost slightly, I propose running thi=
-s
-operation at most every 60 seconds. It is hard coded currently, but would
-be happy to take suggestions if this should be customizable (and how to d=
-o
-such a thing).
+Signed-off-by: Dylan Yudaken <dylany@meta.com>
+---
+ include/linux/io_uring_types.h |  2 +
+ io_uring/io_uring.c            |  1 +
+ io_uring/opdef.h               |  1 +
+ io_uring/rsrc.c                | 92 ++++++++++++++++++++++++++++++++++
+ io_uring/rsrc.h                |  1 +
+ 5 files changed, 97 insertions(+)
 
-Without customizable retargeting period, it's a bit difficult to submit
-tests for this. I have a test but it obviously takes a many minutes to ru=
-n
-which is not going to be acceptable for liburing.
-
-Patches 1-5 are the basic io_uring infrastructure
-Patch 6 is a helper function used in the per op customisations
-Patch 7 splits out the zerocopy specific field in io_sr_msg
-Patches 8-12 are opcode implementations for retargeting
-
-Dylan Yudaken (12):
-  io_uring: infrastructure for retargeting rsrc nodes
-  io_uring: io-wq helper to iterate all work
-  io_uring: support retargeting rsrc on requests in the io-wq
-  io_uring: reschedule retargeting at shutdown of ring
-  io_uring: add tracing for io_uring_rsrc_retarget
-  io_uring: add fixed file peeking function
-  io_uring: split send_zc specific struct out of io_sr_msg
-  io_uring: recv/recvmsg retarget_rsrc support
-  io_uring: accept retarget_rsrc support
-  io_uring: read retarget_rsrc support
-  io_uring: read_fixed retarget_rsrc support
-  io_uring: poll_add retarget_rsrc support
-
- include/linux/io_uring_types.h  |   2 +
- include/trace/events/io_uring.h |  30 +++++++
- io_uring/io-wq.c                |  49 +++++++++++
- io_uring/io-wq.h                |   3 +
- io_uring/io_uring.c             |  28 ++++--
- io_uring/io_uring.h             |   1 +
- io_uring/net.c                  | 114 ++++++++++++++++--------
- io_uring/net.h                  |   2 +
- io_uring/opdef.c                |   7 ++
- io_uring/opdef.h                |   1 +
- io_uring/poll.c                 |  12 +++
- io_uring/poll.h                 |   2 +
- io_uring/rsrc.c                 | 148 ++++++++++++++++++++++++++++++++
- io_uring/rsrc.h                 |   2 +
- io_uring/rw.c                   |  29 +++++++
- io_uring/rw.h                   |   2 +
- 16 files changed, 390 insertions(+), 42 deletions(-)
-
-
-base-commit: 30209debe98b6f66b13591e59e5272cb65b3945e
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
+s.h
+index f5b687a787a3..1d4eff4e632c 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -327,6 +327,8 @@ struct io_ring_ctx {
+ 	struct llist_head		rsrc_put_llist;
+ 	struct list_head		rsrc_ref_list;
+ 	spinlock_t			rsrc_ref_lock;
++	struct delayed_work		rsrc_retarget_work;
++	bool				rsrc_retarget_scheduled;
+=20
+ 	struct list_head		io_buffers_pages;
+=20
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 6cc16e39b27f..ea2260359c56 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -320,6 +320,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(s=
+truct io_uring_params *p)
+ 	spin_lock_init(&ctx->rsrc_ref_lock);
+ 	INIT_LIST_HEAD(&ctx->rsrc_ref_list);
+ 	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
++	INIT_DELAYED_WORK(&ctx->rsrc_retarget_work, io_rsrc_retarget_work);
+ 	init_llist_head(&ctx->rsrc_put_llist);
+ 	init_llist_head(&ctx->work_llist);
+ 	INIT_LIST_HEAD(&ctx->tctx_list);
+diff --git a/io_uring/opdef.h b/io_uring/opdef.h
+index 3efe06d25473..1b72b14cb5ab 100644
+--- a/io_uring/opdef.h
++++ b/io_uring/opdef.h
+@@ -37,6 +37,7 @@ struct io_op_def {
+ 	int (*prep_async)(struct io_kiocb *);
+ 	void (*cleanup)(struct io_kiocb *);
+ 	void (*fail)(struct io_kiocb *);
++	bool (*can_retarget_rsrc)(struct io_kiocb *);
+ };
+=20
+ extern const struct io_op_def io_op_defs[];
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 55d4ab96fb92..106210e0d5d5 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -15,6 +15,7 @@
+ #include "io_uring.h"
+ #include "openclose.h"
+ #include "rsrc.h"
++#include "opdef.h"
+=20
+ struct io_rsrc_update {
+ 	struct file			*file;
+@@ -204,6 +205,95 @@ void io_rsrc_put_work(struct work_struct *work)
+ 	}
+ }
+=20
++
++static unsigned int io_rsrc_retarget_req(struct io_ring_ctx *ctx,
++					 struct io_kiocb *req)
++	__must_hold(&ctx->uring_lock)
++{
++	if (!req->rsrc_node ||
++	     req->rsrc_node =3D=3D ctx->rsrc_node)
++		return 0;
++	if (!io_op_defs[req->opcode].can_retarget_rsrc)
++		return 0;
++	if (!(*io_op_defs[req->opcode].can_retarget_rsrc)(req))
++		return 0;
++
++	io_rsrc_put_node(req->rsrc_node, 1);
++	req->rsrc_node =3D ctx->rsrc_node;
++	return 1;
++}
++
++static unsigned int io_rsrc_retarget_table(struct io_ring_ctx *ctx,
++				   struct io_hash_table *table)
++{
++	unsigned int nr_buckets =3D 1U << table->hash_bits;
++	unsigned int refs =3D 0;
++	struct io_kiocb *req;
++	int i;
++
++	for (i =3D 0; i < nr_buckets; i++) {
++		struct io_hash_bucket *hb =3D &table->hbs[i];
++
++		spin_lock(&hb->lock);
++		hlist_for_each_entry(req, &hb->list, hash_node)
++			refs +=3D io_rsrc_retarget_req(ctx, req);
++		spin_unlock(&hb->lock);
++	}
++	return refs;
++}
++
++static void io_rsrc_retarget_schedule(struct io_ring_ctx *ctx)
++	__must_hold(&ctx->uring_lock)
++{
++	percpu_ref_get(&ctx->refs);
++	mod_delayed_work(system_wq, &ctx->rsrc_retarget_work, 60 * HZ);
++	ctx->rsrc_retarget_scheduled =3D true;
++}
++
++static void __io_rsrc_retarget_work(struct io_ring_ctx *ctx)
++	__must_hold(&ctx->uring_lock)
++{
++	struct io_rsrc_node *node;
++	unsigned int refs;
++	bool any_waiting;
++
++	if (!ctx->rsrc_node)
++		return;
++
++	spin_lock_irq(&ctx->rsrc_ref_lock);
++	any_waiting =3D false;
++	list_for_each_entry(node, &ctx->rsrc_ref_list, node) {
++		if (!node->done) {
++			any_waiting =3D true;
++			break;
++		}
++	}
++	spin_unlock_irq(&ctx->rsrc_ref_lock);
++
++	if (!any_waiting)
++		return;
++
++	refs =3D io_rsrc_retarget_table(ctx, &ctx->cancel_table);
++	refs +=3D io_rsrc_retarget_table(ctx, &ctx->cancel_table_locked);
++
++	ctx->rsrc_cached_refs -=3D refs;
++	while (unlikely(ctx->rsrc_cached_refs < 0))
++		io_rsrc_refs_refill(ctx);
++}
++
++void io_rsrc_retarget_work(struct work_struct *work)
++{
++	struct io_ring_ctx *ctx;
++
++	ctx =3D container_of(work, struct io_ring_ctx, rsrc_retarget_work.work)=
+;
++
++	mutex_lock(&ctx->uring_lock);
++	ctx->rsrc_retarget_scheduled =3D false;
++	__io_rsrc_retarget_work(ctx);
++	mutex_unlock(&ctx->uring_lock);
++	percpu_ref_put(&ctx->refs);
++}
++
+ void io_wait_rsrc_data(struct io_rsrc_data *data)
+ {
+ 	if (data && !atomic_dec_and_test(&data->refs))
+@@ -285,6 +375,8 @@ void io_rsrc_node_switch(struct io_ring_ctx *ctx,
+ 		atomic_inc(&data_to_kill->refs);
+ 		percpu_ref_kill(&rsrc_node->refs);
+ 		ctx->rsrc_node =3D NULL;
++		if (!ctx->rsrc_retarget_scheduled)
++			io_rsrc_retarget_schedule(ctx);
+ 	}
+=20
+ 	if (!ctx->rsrc_node) {
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 81445a477622..2b94df8fd9e8 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -54,6 +54,7 @@ struct io_mapped_ubuf {
+ };
+=20
+ void io_rsrc_put_work(struct work_struct *work);
++void io_rsrc_retarget_work(struct work_struct *work);
+ void io_rsrc_refs_refill(struct io_ring_ctx *ctx);
+ void io_wait_rsrc_data(struct io_rsrc_data *data);
+ void io_rsrc_node_destroy(struct io_rsrc_node *ref_node);
 --=20
 2.30.2
 

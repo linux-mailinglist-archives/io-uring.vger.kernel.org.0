@@ -2,48 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F0C61383F
-	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 14:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01215613840
+	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 14:42:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231326AbiJaNl7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 31 Oct 2022 09:41:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43682 "EHLO
+        id S231305AbiJaNmC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 31 Oct 2022 09:42:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231307AbiJaNl6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 09:41:58 -0400
+        with ESMTP id S231339AbiJaNmB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 09:42:01 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FBEB101F3
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:56 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29VDFakU007975
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:56 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ABDD10546
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:42:00 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29VDFZps018814
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:42:00 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=kCnz8uQ/hWag4I8ws1bxcXGmJng6+FeiSra6gGWm1+E=;
- b=L/PL/Wcdh2dCBoAmXSDU2Hw9D705tySeVDCv86Sm+m3C8m2uAoqgsK7ayKWlc/FqkVSu
- aZzBu/jdIJ5osmqqMYH/eZ4Lw7r2Xm6XEuAjDHcUfCx3QnY3O35FYgt+NNLMTV3lwVKW
- tYw53heDKzmXOoyfsJaZDj02hj/eQTzV+1GcjjJiNVp9m0sRzS0BxQ34AI+6V+ceqnAT
- lhrgmX6jgMn18dnFCzop1GmljKGewxGqCw3IGpCLfNnDaD3bQR5d3wAjfitQTfWKTK9d
- 2+L6/GAAj5+V9zbSWGDEWYeKnHNsQHhyn2OARuRBSd3jyIeSv0gjwDwgTdLCR7h8y4Vh lg== 
+ bh=E1UE+ZnF0mN9rIV+saxMrAyTQOyM78gziti+cvX/DRw=;
+ b=RCFCN22TywnMLijtreE+zDiz52eOjBPXpK9+CtDmFqgYH6mz58QuPrWo4zEYK+qBKeAD
+ 0Ly8o5mHFBMX8Kw9aqtnI9vzGcVwXMsCk5I6ap6EzLk+Nr2t7Df6rqOFXFymXTXgX/Qs
+ W0wMpL5LQ1y+dhlf/IOerTkX6IZEdkt6W/jlW7KCJmk75qxhOYWpYlvmRRqPKVkEu0ho
+ TboXLNEv5a+1yA+9WeJiQPS0+rlNjfI3kFvFg23nn0pIEK+jdFDnIhjRqovRlZLdTv+b
+ fqpMIopV1YKqmxUFdy2RwlsLuny9K0QPXufhBbUGaHFId+iqEKGomKHshpONm45+6szz Fg== 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kh07p697e-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kh1vpwwp2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:55 -0700
-Received: from twshared14438.02.ash8.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 06:41:59 -0700
+Received: from twshared6758.06.ash9.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 31 Oct 2022 06:41:55 -0700
+ 15.1.2375.31; Mon, 31 Oct 2022 06:41:59 -0700
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id E3BDD8A1965C; Mon, 31 Oct 2022 06:41:35 -0700 (PDT)
+        id E9F4F8A19660; Mon, 31 Oct 2022 06:41:35 -0700 (PDT)
 From:   Dylan Yudaken <dylany@meta.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         Dylan Yudaken <dylany@meta.com>
-Subject: [PATCH for-next 09/12] io_uring: accept retarget_rsrc support
-Date:   Mon, 31 Oct 2022 06:41:23 -0700
-Message-ID: <20221031134126.82928-10-dylany@meta.com>
+Subject: [PATCH for-next 10/12] io_uring: read retarget_rsrc support
+Date:   Mon, 31 Oct 2022 06:41:24 -0700
+Message-ID: <20221031134126.82928-11-dylany@meta.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221031134126.82928-1-dylany@meta.com>
 References: <20221031134126.82928-1-dylany@meta.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: af97CRxj55TuegxBFZBu6YP-4yR7vEKm
-X-Proofpoint-ORIG-GUID: af97CRxj55TuegxBFZBu6YP-4yR7vEKm
+X-Proofpoint-GUID: NX7Zf1TSW4lWC6gK9cA9O2bkyNxPe_gn
+X-Proofpoint-ORIG-GUID: NX7Zf1TSW4lWC6gK9cA9O2bkyNxPe_gn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-10-31_15,2022-10-31_01,2022-06-22_01
@@ -66,82 +66,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add can_retarget_rsrc handler for accept
+Add can_retarget_rsrc handler for read
 
 Signed-off-by: Dylan Yudaken <dylany@meta.com>
 ---
- io_uring/net.c   | 15 +++++++++++++++
- io_uring/net.h   |  1 +
- io_uring/opdef.c |  1 +
+ io_uring/opdef.c |  2 ++
+ io_uring/rw.c    | 14 ++++++++++++++
+ io_uring/rw.h    |  1 +
  3 files changed, 17 insertions(+)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 0fa05ef52dd3..429176f3d191 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -30,6 +30,7 @@ struct io_accept {
- 	int				flags;
- 	u32				file_slot;
- 	unsigned long			nofile;
-+	int				retarget_fd;
- };
-=20
- struct io_socket {
-@@ -1255,6 +1256,15 @@ void io_sendrecv_fail(struct io_kiocb *req)
- 		req->cqe.flags |=3D IORING_CQE_F_MORE;
- }
-=20
-+bool io_accept_can_retarget_rsrc(struct io_kiocb *req)
-+{
-+	struct io_accept *accept =3D io_kiocb_to_cmd(req, struct io_accept);
-+
-+	if (accept->retarget_fd < 0)
-+		return false;
-+	return io_file_peek_fixed(req, accept->retarget_fd) =3D=3D req->file;
-+}
-+
- int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_accept *accept =3D io_kiocb_to_cmd(req, struct io_accept);
-@@ -1285,6 +1295,11 @@ int io_accept_prep(struct io_kiocb *req, const str=
-uct io_uring_sqe *sqe)
- 		accept->flags =3D (accept->flags & ~SOCK_NONBLOCK) | O_NONBLOCK;
- 	if (flags & IORING_ACCEPT_MULTISHOT)
- 		req->flags |=3D REQ_F_APOLL_MULTISHOT;
-+
-+	if (req->flags & REQ_F_FIXED_FILE)
-+		accept->retarget_fd =3D req->cqe.fd;
-+	else
-+		accept->retarget_fd =3D -1;
- 	return 0;
- }
-=20
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 6b5719084494..67fafb94d7de 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -49,6 +49,7 @@ void io_sendrecv_fail(struct io_kiocb *req);
-=20
- int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)=
-;
- int io_accept(struct io_kiocb *req, unsigned int issue_flags);
-+bool io_accept_can_retarget_rsrc(struct io_kiocb *req);
-=20
- int io_socket_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)=
-;
- int io_socket(struct io_kiocb *req, unsigned int issue_flags);
 diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 1a0be5681c7b..7c94f1a4315a 100644
+index 7c94f1a4315a..0018fe39cbb5 100644
 --- a/io_uring/opdef.c
 +++ b/io_uring/opdef.c
-@@ -207,6 +207,7 @@ const struct io_op_def io_op_defs[] =3D {
- #if defined(CONFIG_NET)
- 		.prep			=3D io_accept_prep,
- 		.issue			=3D io_accept,
-+		.can_retarget_rsrc	=3D io_accept_can_retarget_rsrc,
- #else
- 		.prep			=3D io_eopnotsupp_prep,
- #endif
+@@ -70,6 +70,7 @@ const struct io_op_def io_op_defs[] =3D {
+ 		.prep_async		=3D io_readv_prep_async,
+ 		.cleanup		=3D io_readv_writev_cleanup,
+ 		.fail			=3D io_rw_fail,
++		.can_retarget_rsrc	=3D io_read_can_retarget_rsrc,
+ 	},
+ 	[IORING_OP_WRITEV] =3D {
+ 		.needs_file		=3D 1,
+@@ -284,6 +285,7 @@ const struct io_op_def io_op_defs[] =3D {
+ 		.prep			=3D io_prep_rw,
+ 		.issue			=3D io_read,
+ 		.fail			=3D io_rw_fail,
++		.can_retarget_rsrc	=3D io_read_can_retarget_rsrc,
+ 	},
+ 	[IORING_OP_WRITE] =3D {
+ 		.needs_file		=3D 1,
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index bb47cc4da713..7618e402dcec 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -1068,3 +1068,17 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool for=
+ce_nonspin)
+ 	io_free_batch_list(ctx, pos);
+ 	return nr_events;
+ }
++
++bool io_read_can_retarget_rsrc(struct io_kiocb *req)
++{
++	struct file *f;
++
++	if (!(req->flags & REQ_F_FIXED_FILE))
++		return true;
++
++	f =3D io_file_peek_fixed(req, req->cqe.fd);
++	if (f !=3D req->file)
++		return false;
++
++	return true;
++}
+diff --git a/io_uring/rw.h b/io_uring/rw.h
+index 3b733f4b610a..715e7249463b 100644
+--- a/io_uring/rw.h
++++ b/io_uring/rw.h
+@@ -22,3 +22,4 @@ int io_write(struct io_kiocb *req, unsigned int issue_f=
+lags);
+ int io_writev_prep_async(struct io_kiocb *req);
+ void io_readv_writev_cleanup(struct io_kiocb *req);
+ void io_rw_fail(struct io_kiocb *req);
++bool io_read_can_retarget_rsrc(struct io_kiocb *req);
 --=20
 2.30.2
 

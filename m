@@ -2,68 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 557A5613AEE
-	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 17:02:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A110613AF3
+	for <lists+io-uring@lfdr.de>; Mon, 31 Oct 2022 17:04:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbiJaQCl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 31 Oct 2022 12:02:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35362 "EHLO
+        id S230432AbiJaQEz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 31 Oct 2022 12:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiJaQCk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 12:02:40 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3741261E
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 09:02:39 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id b185so11050293pfb.9
-        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 09:02:39 -0700 (PDT)
+        with ESMTP id S231134AbiJaQEy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Oct 2022 12:04:54 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D50EB1C
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 09:04:52 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id b185so11055655pfb.9
+        for <io-uring@vger.kernel.org>; Mon, 31 Oct 2022 09:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gkA5OyNAhk007GQiM2VY4M3onWgK8ANgh6rRb43MkoI=;
-        b=wX3nLpv5aRxJwWgkjXWvwv1jyNQN/amV8K79Jehtd2NMIQMFWKRu1EcVXtb7cYhNYj
-         Fj7STp6ytVOhOw4CoJtVtu98KdpBFLL/HrIeNWVjAkwkO59yjg7Mdb5MLU0Jq7oGJC4V
-         GTsPVadTENt3gBOUm7rbM1/YqjVnJYWHzsdC5IbGoXpRC0/gswLi8vPs+DMX0OFngXrw
-         uFOOBQzQUUaUTGMZt5VB6NQQnV9B/5SBoDA4/DuD/LUWj7CXXB0Zz2IJSX8nxJU8h12W
-         FJ1LysNGsRd4kCF1iIOZ9WWuhS2EN2WDL/cD9lTxWHQU8xemCmNkt7EJ0Fb9C9+71vta
-         ArHA==
+        bh=rSxb84llw5POmmDA6ANBBpK1C+wa4yK5aiX+cAdV+hQ=;
+        b=wfc3Jrq74YPfGpzxtxUmtyS4g4tEsefyYpaaeP/m8Y6g1TK40zlXsPBMYLtut1z1Xc
+         Xgw8QBUCSE0Pa+/+qnzzAIY9ONtjsoGuFvD6cxf2SpCvXRe/LUNzTb5LKKVCBUqWTXhw
+         6fB2UXh6NJ9ExCQR0TPti3l8soQqsZkrGU9gTFuWXVj3kzANF4j5ODiwyv44XqyhPjFb
+         7JrW4wCYNpHc7Gejfi+P49slp4LQ+bhB4Ae9r0rF5UbWYhMtMrdCSgycWrf4iMDhUIPW
+         qudbCRBUBZ5hL4LgTv0oFIResTiL/+8PIc0VgDwfKood+OvJrTbTQdyC2BoWWWbIArmC
+         q0bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gkA5OyNAhk007GQiM2VY4M3onWgK8ANgh6rRb43MkoI=;
-        b=jkOydij6i2cKCOifH5UyXgMT6/EWaNOcOgrmLv3LGBHfW/XcIHlQhUKIeSfWVoz7YA
-         i1DD5NpM/mRh0ORCl3H0as4zESTNcQ06e9ovq4jLb9JFhZWGnArj/tc41D/3mlUbEsFD
-         o9hxGsGtuZjahaClXp0TRgS5WYFAZfiAO4mu9+nL2gbtwqLtQ8FBJokfda1ESS+3ZuOS
-         a/W//8TD8V2JSVf1gDdEbEUgo5HLA9dbYmv/7W9DckR5GPU6cz1XFXSTjjPryhAUgxgb
-         +vKWgpnsaLHQzAZHvJ1b2ToVMy+c5Yj4eA0ExOB8AGq8RrUpfSpBcyWQIhmf3WOHN8Yd
-         EiDg==
-X-Gm-Message-State: ACrzQf2XzJKIjKzsolmp+NkpkB+x77k/73/c3U1pUQ+81KD30i8gtbWc
-        lxHpM2RF4dac6RfIa59p23LJTg==
-X-Google-Smtp-Source: AMsMyM62R7mvTRZnzBwj90duoRiv4sxNBfx2v/HXEN9135fAvN23FV2f4oBOd59Mwct3PLPLvyvyHw==
-X-Received: by 2002:a63:81c8:0:b0:462:953a:8534 with SMTP id t191-20020a6381c8000000b00462953a8534mr13050028pgd.69.1667232158872;
-        Mon, 31 Oct 2022 09:02:38 -0700 (PDT)
+        bh=rSxb84llw5POmmDA6ANBBpK1C+wa4yK5aiX+cAdV+hQ=;
+        b=dj5/wyTyyJAWRXflNnDZCCQgA4m1drSg14ri5AyyI6W06yYb7pUUSF5rV02CDykX+V
+         83rT/lkMlifeN9Buvifsq/NUgNzAWzOFATrmB7G23MXbPSb0WrJ7qWttmku2Opf7Iaos
+         YmI7TvZxGL+ELZsjQd+s5DY2ce9t0aHhSJScBF7/Ps5gKyOPKZCvK8Wze+b6FrIJ/7FY
+         pzK/HA8AJMHHRtVQ2Xhzlv5OMGNVu2RZTaYYLl3M7Ye2RwTTxb57maa37aS45IFP1+Up
+         zQk7F7cg148QmJrbLm7NIMO2DL3yRwP60Lnp9Ghec3CKwgn827vgR7zXqW2DuGr+2FxS
+         yp5g==
+X-Gm-Message-State: ACrzQf0mEZCzRnBII/Z09WVt4Ianb56cfH3ftcfRpQJsRZULWCALqe+O
+        1bdq/syGXl5Au+8EfZ4lLT8lrA==
+X-Google-Smtp-Source: AMsMyM4Q1mux/0uAFUByTW1nXvkrB3s3i6oh+BGSkusb61cT0gx2djrwLat5ngHoi/zskMgAX7sqzg==
+X-Received: by 2002:a63:1349:0:b0:44b:2240:b311 with SMTP id 9-20020a631349000000b0044b2240b311mr13013766pgt.405.1667232291619;
+        Mon, 31 Oct 2022 09:04:51 -0700 (PDT)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id r10-20020a170902e3ca00b00180033438a0sm4629582ple.106.2022.10.31.09.02.37
+        by smtp.gmail.com with ESMTPSA id 2-20020a620502000000b0056203db46ffsm4908543pff.172.2022.10.31.09.04.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 09:02:38 -0700 (PDT)
-Message-ID: <987d3d6b-7ea6-4fca-0688-060507706777@kernel.dk>
-Date:   Mon, 31 Oct 2022 10:02:36 -0600
+        Mon, 31 Oct 2022 09:04:51 -0700 (PDT)
+Message-ID: <a482ab89-37af-2df7-1863-438a7615c905@kernel.dk>
+Date:   Mon, 31 Oct 2022 10:04:50 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
-Subject: Re: [PATCH for-next 01/12] io_uring: infrastructure for retargeting
- rsrc nodes
+Subject: Re: [PATCH for-next 06/12] io_uring: add fixed file peeking function
 Content-Language: en-US
 To:     Dylan Yudaken <dylany@meta.com>,
         Pavel Begunkov <asml.silence@gmail.com>
 Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
 References: <20221031134126.82928-1-dylany@meta.com>
- <20221031134126.82928-2-dylany@meta.com>
+ <20221031134126.82928-7-dylany@meta.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20221031134126.82928-2-dylany@meta.com>
+In-Reply-To: <20221031134126.82928-7-dylany@meta.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,16 +75,38 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 10/31/22 7:41 AM, Dylan Yudaken wrote:
-> +static void io_rsrc_retarget_schedule(struct io_ring_ctx *ctx)
-> +	__must_hold(&ctx->uring_lock)
-> +{
-> +	percpu_ref_get(&ctx->refs);
-> +	mod_delayed_work(system_wq, &ctx->rsrc_retarget_work, 60 * HZ);
-> +	ctx->rsrc_retarget_scheduled = true;
-> +}
+> @@ -1849,17 +1866,14 @@ inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+>  	unsigned long file_ptr;
+>  
+>  	io_ring_submit_lock(ctx, issue_flags);
+> -
+> -	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
+> -		goto out;
+> -	fd = array_index_nospec(fd, ctx->nr_user_files);
+> -	file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
+> +	file_ptr = __io_file_peek_fixed(req, fd);
+>  	file = (struct file *) (file_ptr & FFS_MASK);
+>  	file_ptr &= ~FFS_MASK;
+>  	/* mask in overlapping REQ_F and FFS bits */
+>  	req->flags |= (file_ptr << REQ_F_SUPPORT_NOWAIT_BIT);
+>  	io_req_set_rsrc_node(req, ctx, 0);
+> -out:
+> +	WARN_ON_ONCE(file && !test_bit(fd, ctx->file_table.bitmap));
+> +
+>  	io_ring_submit_unlock(ctx, issue_flags);
+>  	return file;
+>  }
 
-Can this ever be called with rsrc_retarget_work already pending? If so,
-that would seem to leak a ctx ref.
+Is this WARN_ON_ONCE() a leftover from being originally based on a tree
+before:
+
+commit 4d5059512d283dab7372d282c2fbd43c7f5a2456
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Sun Oct 16 21:30:49 2022 +0100
+
+    io_uring: kill hot path fixed file bitmap debug checks
+
+got added? Seems not related to the changes here otherwise.
 
 -- 
 Jens Axboe

@@ -2,65 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE292615D9C
-	for <lists+io-uring@lfdr.de>; Wed,  2 Nov 2022 09:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA6B616115
+	for <lists+io-uring@lfdr.de>; Wed,  2 Nov 2022 11:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbiKBIZM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Nov 2022 04:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59876 "EHLO
+        id S229516AbiKBKnL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Nov 2022 06:43:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbiKBIZI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 04:25:08 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8373EDEDE;
-        Wed,  2 Nov 2022 01:25:07 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id 128so15637603pga.1;
-        Wed, 02 Nov 2022 01:25:07 -0700 (PDT)
+        with ESMTP id S230006AbiKBKnI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 06:43:08 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9FA658F
+        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 03:43:07 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id h9so23941567wrt.0
+        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 03:43:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRyHMgHaSqkNxbbATyAsbyQifwj1DbDNtGJlZ1TH0ZA=;
-        b=glKaTqBbaso1cyJebYMm+yYb/7RCFfKIbT9tq16O+aXrjgnPNUFRWWSgB//ZsKgsJc
-         Ea/4HuATjpvqm5DyXdrBS9IqpILxOl3zz6mozZ21zMQWpJ5CN7amfttuyRcVaXkzlnfI
-         Z2gkcLyCfacqWqC1m1Mz1CONAs1A+o5liXo6Hd0sgvb77Jmp2S176+5sE+97QkSy1SKX
-         BiCXJA1refmnV9+92jHvzVyaF3yc03RC4MbrRCEYl6QsaDyCvFFURYyZBqxMAFUSfoeP
-         UvINmRnoRsOh7cEusj4tbJwhQ0vtzF5yhlpyRcFF9jePUrYwCJLKXRUHLRl76SyqHgyd
-         McLg==
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6Q01A0hdPaAHLx/ofl5mPZghsUCeuquh+nRBu74DPtA=;
+        b=b3DFOOtK4q2Ox5gwdoAIdVZSnX+h0q5DcnHLJUA8ZlwWKtj3kTIZvUb34QGyA2ybOh
+         HCdPFTYW9zLi9Xz6aJtMu/EBijRUbLoDoUjBmm+WEmHMTNMUj66M5vKqpxUt1eQMf2h1
+         Xxvp8fQLA5Nd+AggpZhE3X+tRcxhj5bBGu0slyzLKfw0zPXHO26ZVRgGS6oSBb14pYvn
+         G8NATxKBfcrqh+awRZnh2ovHyHH6KFRYYRbcuNx8YiFvoCsB3meFc9fDhmlt8+zgIkFy
+         /UJ547H4MMEP2WUsYUzY9XzJS6tyOHqeRdUEvwQ3somYPsAcRTZdrOlRrYulhctXlk8m
+         KdbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hRyHMgHaSqkNxbbATyAsbyQifwj1DbDNtGJlZ1TH0ZA=;
-        b=J2EIk7Gl8QhXe7SxOPs+7sBEUgv88/DwekLz823l6MRqB8fd1JjALqLbjzT2zRNZqH
-         W5FB3FKum/Aea9vBYVp8XE8PwM4j93cCIUflwJvvj2dwt5VNFGSg1xVkuXmAhti8Hrta
-         kC7J224TCuHfNgg9tlY++9AG6ZowuZjhUU1N/rDShN8nY8u1VLSiRFzuoxXTGAH6eQKV
-         ZWmdCg2kQszLQt1aAaxlhFKNcuJn9ljVvWcdxRmABWcVSv/MlQkAmaxQP+t/m22xbK7/
-         EeGY29HK8dtpRtSnvhJb2bA5UR+Lpcapb01i4u7vPd1prALccM20cmcSkoZMTXVJiqpb
-         UOjA==
-X-Gm-Message-State: ACrzQf3q9FsOvgZYbgxrUvXvPVnw+cSNen65fV0Smk7UXKWMlDvi/wDX
-        16S2UJAEVtRHtWQUYYgAtcDBAwrGiLxc24cg
-X-Google-Smtp-Source: AMsMyM48TS22Xlfj8eNZNl6ciP8mJyynC2qRJitOTv4mebnMm9o/NmQ1UHUCrQa87jPY5HpLJ56pOw==
-X-Received: by 2002:a05:6a00:1304:b0:555:6d3f:1223 with SMTP id j4-20020a056a00130400b005556d3f1223mr24104749pfu.60.1667377506878;
-        Wed, 02 Nov 2022 01:25:06 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.83])
-        by smtp.gmail.com with ESMTPSA id w9-20020a17090a780900b0020adf65cebbsm907009pjk.8.2022.11.02.01.25.05
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 02 Nov 2022 01:25:06 -0700 (PDT)
-From:   korantwork@gmail.com
-To:     axboe@kernel.dk, asml.silence@gmail.com
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        Xinghui Li <korantli@tencent.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] io_uring: fix two assignments in if conditions
-Date:   Wed,  2 Nov 2022 16:25:03 +0800
-Message-Id: <20221102082503.32236-1-korantwork@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Q01A0hdPaAHLx/ofl5mPZghsUCeuquh+nRBu74DPtA=;
+        b=qGhhHFzE7UT3TFPTS5GIu8uOVaiAqmwkepsJAbGnDzr+GDFFMAjuovZZE4OHAv741o
+         Y4leyIs97Qmh15Yf9FZc31/G5io0pXDFlsUtPvqLw2uX3Ogpo1bDjHRVMzGbWWsJU91Z
+         JnF8gPoJlgqpC0MPhVDGp2wvwdMBDts1dWCKX3955ksDpoUb2eiLrkNA0/4YmdIdFaO3
+         vK+Z/qmZZNDRy8ABZ/qPvx0qLGxw9uNrRmv1p9RNdbVhq++pI/7GuItLBU3500gnfqIE
+         jfUCJ/HOoNbZ5R7UVvzx6MPj3qyNJrslFsA9/evYM7uPGUK+4YZ/4aIytg5ppBHeoRZC
+         Z4Ng==
+X-Gm-Message-State: ACrzQf1nv0vD6u97iiQf9+t+WDiBBcEJ66LU5LdJcY2Ph42K/J63/0eb
+        wJEJXhgGvZkrCu2Kejpwtd8MGrRmzcg=
+X-Google-Smtp-Source: AMsMyM7/I7coyYw1bdy7+by3xmBOwP7eD/VaBps6xZZCwouAN4mkQAHQpwkhZtfXizKfVkAmO6tQog==
+X-Received: by 2002:adf:f5c4:0:b0:236:c419:710f with SMTP id k4-20020adff5c4000000b00236c419710fmr11040759wrp.56.1667385785072;
+        Wed, 02 Nov 2022 03:43:05 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:2739])
+        by smtp.gmail.com with ESMTPSA id n6-20020a05600c4f8600b003cf4d99fd2asm1855770wmq.6.2022.11.02.03.43.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Nov 2022 03:43:04 -0700 (PDT)
+Message-ID: <06f60984-151c-61c2-895f-41197271858f@gmail.com>
+Date:   Wed, 2 Nov 2022 10:42:09 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH for-6.1 1/1] selftests/net: don't tests batched TCP
+ io_uring zc
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+References: <b547698d5938b1b1a898af1c260188d8546ded9a.1666700897.git.asml.silence@gmail.com>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b547698d5938b1b1a898af1c260188d8546ded9a.1666700897.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -69,73 +74,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Xinghui Li <korantli@tencent.com>
+On 10/27/22 00:11, Pavel Begunkov wrote:
+> It doesn't make sense batch submitting io_uring requests to a single TCP
+> socket without linking or some other kind of ordering. Moreover, it
+> causes spurious -EINTR fails due to interaction with task_work. Disable
+> it for now and keep queue depth=1.
 
-Fixs two error:
+Jens, let's pick it up unless you have objections
 
-"ERROR: do not use assignment in if condition
-130: FILE: io_uring/net.c:130:
-+       if (!(issue_flags & IO_URING_F_UNLOCKED) &&
 
-ERROR: do not use assignment in if condition
-599: FILE: io_uring/poll.c:599:
-+       } else if (!(issue_flags & IO_URING_F_UNLOCKED) &&"
-reported by checkpatch.pl in net.c and poll.c .
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>   tools/testing/selftests/net/io_uring_zerocopy_tx.sh | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+> index 32aa6e9dacc2..9ac4456d48fc 100755
+> --- a/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+> +++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.sh
+> @@ -29,7 +29,7 @@ if [[ "$#" -eq "0" ]]; then
+>   	for IP in "${IPs[@]}"; do
+>   		for mode in $(seq 1 3); do
+>   			$0 "$IP" udp -m "$mode" -t 1 -n 32
+> -			$0 "$IP" tcp -m "$mode" -t 1 -n 32
+> +			$0 "$IP" tcp -m "$mode" -t 1 -n 1
+>   		done
+>   	done
+>   
 
-Signed-off-by: Xinghui Li <korantli@tencent.com>
-Reported-by: kernel test robot <lkp@intel.com>
----
- io_uring/net.c  | 16 +++++++++-------
- io_uring/poll.c |  7 +++++--
- 2 files changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 15dea91625e2..cbd655c88499 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -127,13 +127,15 @@ static struct io_async_msghdr *io_msg_alloc_async(struct io_kiocb *req,
- 	struct io_cache_entry *entry;
- 	struct io_async_msghdr *hdr;
- 
--	if (!(issue_flags & IO_URING_F_UNLOCKED) &&
--	    (entry = io_alloc_cache_get(&ctx->netmsg_cache)) != NULL) {
--		hdr = container_of(entry, struct io_async_msghdr, cache);
--		hdr->free_iov = NULL;
--		req->flags |= REQ_F_ASYNC_DATA;
--		req->async_data = hdr;
--		return hdr;
-+	if (!(issue_flags & IO_URING_F_UNLOCKED)) {
-+		entry = io_alloc_cache_get(&ctx->netmsg_cache);
-+		if (entry != NULL) {
-+			hdr = container_of(entry, struct io_async_msghdr, cache);
-+			hdr->free_iov = NULL;
-+			req->flags |= REQ_F_ASYNC_DATA;
-+			req->async_data = hdr;
-+			return hdr;
-+		}
- 	}
- 
- 	if (!io_alloc_async_data(req)) {
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 0d9f49c575e0..4b3b4441e9ca 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -596,10 +596,13 @@ static struct async_poll *io_req_alloc_apoll(struct io_kiocb *req,
- 	if (req->flags & REQ_F_POLLED) {
- 		apoll = req->apoll;
- 		kfree(apoll->double_poll);
--	} else if (!(issue_flags & IO_URING_F_UNLOCKED) &&
--		   (entry = io_alloc_cache_get(&ctx->apoll_cache)) != NULL) {
-+	} else if (!(issue_flags & IO_URING_F_UNLOCKED)) {
-+		entry = io_alloc_cache_get(&ctx->apoll_cache);
-+		if (entry == NULL)
-+			goto out;
- 		apoll = container_of(entry, struct async_poll, cache);
- 	} else {
-+out:
- 		apoll = kmalloc(sizeof(*apoll), GFP_ATOMIC);
- 		if (unlikely(!apoll))
- 			return NULL;
 -- 
-2.34.1
-
+Pavel Begunkov

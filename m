@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 904346172D8
-	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 00:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA0456172D5
+	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 00:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231158AbiKBXkQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Wed, 2 Nov 2022 19:40:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
+        id S231260AbiKBXkO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Wed, 2 Nov 2022 19:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231220AbiKBXj4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 19:39:56 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D5B2AEB
-        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 16:32:59 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2NVql7014628
-        for <io-uring@vger.kernel.org>; Wed, 2 Nov 2022 16:32:58 -0700
-Received: from maileast.thefacebook.com ([163.114.130.3])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kkva13p5j-1
+        with ESMTP id S231529AbiKBXjz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 19:39:55 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB701057D
+        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 16:32:52 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 2A2NVrCt026647
+        for <io-uring@vger.kernel.org>; Wed, 2 Nov 2022 16:32:51 -0700
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3kkshcwd1v-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 16:32:58 -0700
-Received: from twshared9088.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 16:32:51 -0700
+Received: from twshared5287.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 2 Nov 2022 16:32:57 -0700
+ 15.1.2375.31; Wed, 2 Nov 2022 16:32:50 -0700
 Received: by devvm2494.atn0.facebook.com (Postfix, from userid 172786)
-        id 7A8AC235B6175; Wed,  2 Nov 2022 16:32:44 -0700 (PDT)
+        id 80E45235B6177; Wed,  2 Nov 2022 16:32:44 -0700 (PDT)
 From:   Jonathan Lemon <jonathan.lemon@gmail.com>
 To:     <io-uring@vger.kernel.org>
 CC:     <kernel-team@meta.com>
-Subject: [RFC PATCH v3 03/15] io_uring: add register ifq opcode
-Date:   Wed, 2 Nov 2022 16:32:32 -0700
-Message-ID: <20221102233244.4022405-4-jonathan.lemon@gmail.com>
+Subject: [RFC PATCH v3 04/15] io_uring: create a zctap region for a mapped buffer
+Date:   Wed, 2 Nov 2022 16:32:33 -0700
+Message-ID: <20221102233244.4022405-5-jonathan.lemon@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221102233244.4022405-1-jonathan.lemon@gmail.com>
 References: <20221102233244.4022405-1-jonathan.lemon@gmail.com>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: mA0lnUEowPbdkves5WIBFqTSqava6VDQ
-X-Proofpoint-ORIG-GUID: mA0lnUEowPbdkves5WIBFqTSqava6VDQ
+X-Proofpoint-ORIG-GUID: sNo5h92106dO5WjXscC-FL_s1MaJmd22
+X-Proofpoint-GUID: sNo5h92106dO5WjXscC-FL_s1MaJmd22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-02_15,2022-11-02_01,2022-06-22_01
@@ -56,254 +56,133 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add initial support for support for hooking in zero-copy interface
-queues to io_uring.  This command requests a user-managed queue
-from the specified network device.
+This function takes all of a memory region that was previously
+registered with io_uring, and assigns it as the backing store for
+the specified ifq, binding the pages to a specific device.
 
-This only includes the register opcode, unregistration is currently
-done implicitly when the ring is removed.
+The entire region is registered instead of providing individual
+bufferrs, as this allows the hardware to select the optimal buffer
+size for incoming packets.
+
+The region is registered as part of the register_ifq opcode,
+instead of separately, since the ifq ring requires memory when
+it is created.
 
 Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 ---
- include/uapi/linux/io_uring.h |  15 ++++
- io_uring/Makefile             |   3 +-
- io_uring/io_uring.c           |   8 +++
- io_uring/zctap.c              | 131 ++++++++++++++++++++++++++++++++++
- io_uring/zctap.h              |   9 +++
- 5 files changed, 165 insertions(+), 1 deletion(-)
- create mode 100644 io_uring/zctap.c
- create mode 100644 io_uring/zctap.h
+ io_uring/zctap.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++-
+ io_uring/zctap.h |  2 ++
+ 2 files changed, 64 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index ab7458033ee3..3e8375b25a84 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -490,6 +490,9 @@ enum {
- 	/* register a range of fixed file slots for automatic slot allocation */
- 	IORING_REGISTER_FILE_ALLOC_RANGE	= 25,
+diff --git a/io_uring/zctap.c b/io_uring/zctap.c
+index 295505c2b1ed..b7df51948b87 100644
+--- a/io_uring/zctap.c
++++ b/io_uring/zctap.c
+@@ -6,16 +6,73 @@
+ #include <linux/mm.h>
+ #include <linux/io_uring.h>
+ #include <linux/netdevice.h>
++#include <linux/nospec.h>
  
-+	/* register a network ifq for zerocopy RX */
-+	IORING_REGISTER_IFQ			= 26,
-+
- 	/* this goes last */
- 	IORING_REGISTER_LAST
- };
-@@ -666,6 +669,18 @@ struct io_uring_recvmsg_out {
- 	__u32 flags;
- };
+ #include <uapi/linux/io_uring.h>
  
-+/*
-+ * Argument for IORING_REGISTER_IFQ
-+ */
-+struct io_uring_ifq_req {
-+	__u32	ifindex;
-+	__u16	queue_id;
-+	__u16	ifq_id;
-+	__u16	fill_bgid;
-+	__u16	region_id;
-+	__u16	__pad[2];
+ #include "io_uring.h"
+ #include "zctap.h"
++#include "rsrc.h"
++#include "kbuf.h"
+ 
+ #define NR_ZCTAP_IFQS	1
+ 
++struct ifq_region {
++	struct io_mapped_ubuf	*imu;
++	int			free_count;
++	int			nr_pages;
++	u16			id;
++	struct page		*freelist[];
 +};
 +
- #ifdef __cplusplus
- }
- #endif
-diff --git a/io_uring/Makefile b/io_uring/Makefile
-index 8cc8e5387a75..9d87e2e45ef9 100644
---- a/io_uring/Makefile
-+++ b/io_uring/Makefile
-@@ -7,5 +7,6 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o xattr.o nop.o fs.o splice.o \
- 					openclose.o uring_cmd.o epoll.o \
- 					statx.o net.o msg_ring.o timeout.o \
- 					sqpoll.o fdinfo.o tctx.o poll.o \
--					cancel.o kbuf.o rsrc.o rw.o opdef.o notif.o
-+					cancel.o kbuf.o rsrc.o rw.o opdef.o \
-+					notif.o zctap.o
- obj-$(CONFIG_IO_WQ)		+= io-wq.o
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 6cc16e39b27f..a9ed288f4b74 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -91,6 +91,7 @@
- #include "cancel.h"
- #include "net.h"
- #include "notif.h"
-+#include "zctap.h"
+ typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
  
- #include "timeout.h"
- #include "poll.h"
-@@ -2800,6 +2801,7 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 		__io_cqring_overflow_flush(ctx, true);
- 	xa_for_each(&ctx->personalities, index, creds)
- 		io_unregister_personality(ctx, index);
-+	io_unregister_zctap_all(ctx);
- 	if (ctx->rings)
- 		io_poll_remove_all(ctx, NULL, true);
- 	mutex_unlock(&ctx->uring_lock);
-@@ -4032,6 +4034,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			break;
- 		ret = io_register_file_alloc_range(ctx, arg);
- 		break;
-+	case IORING_REGISTER_IFQ:
-+		ret = -EINVAL;
-+		if (!arg || nr_args != 1)
-+			break;
-+		ret = io_register_ifq(ctx, arg);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/io_uring/zctap.c b/io_uring/zctap.c
-new file mode 100644
-index 000000000000..295505c2b1ed
---- /dev/null
-+++ b/io_uring/zctap.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/fs.h>
-+#include <linux/file.h>
-+#include <linux/mm.h>
-+#include <linux/io_uring.h>
-+#include <linux/netdevice.h>
-+
-+#include <uapi/linux/io_uring.h>
-+
-+#include "io_uring.h"
-+#include "zctap.h"
-+
-+#define NR_ZCTAP_IFQS	1
-+
-+typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
-+
-+static int __io_queue_mgmt(struct net_device *dev, struct io_zctap_ifq *ifq,
-+			   u16 queue_id)
++static void io_remove_ifq_region(struct ifq_region *ifr)
 +{
-+	struct netdev_bpf cmd;
-+	bpf_op_t ndo_bpf;
-+
-+	ndo_bpf = dev->netdev_ops->ndo_bpf;
-+	if (!ndo_bpf)
-+		return -EINVAL;
-+
-+	cmd.command = XDP_SETUP_ZCTAP;
-+	cmd.zct.ifq = ifq;
-+	cmd.zct.queue_id = queue_id;
-+
-+	return ndo_bpf(dev, &cmd);
++	kvfree(ifr);
 +}
 +
-+static int io_open_zctap_ifq(struct io_zctap_ifq *ifq, u16 queue_id)
++int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
 +{
-+	return __io_queue_mgmt(ifq->dev, ifq, queue_id);
-+}
++	struct io_ring_ctx *ctx = ifq->ctx;
++	struct io_mapped_ubuf *imu;
++	struct ifq_region *ifr;
++	int i, nr_pages;
++	struct page *page;
 +
-+static int io_close_zctap_ifq(struct io_zctap_ifq *ifq, u16 queue_id)
-+{
-+	return __io_queue_mgmt(ifq->dev, NULL, queue_id);
-+}
-+
-+static struct io_zctap_ifq *io_zctap_ifq_alloc(struct io_ring_ctx *ctx)
-+{
-+	struct io_zctap_ifq *ifq;
-+
-+	ifq = kzalloc(sizeof(*ifq), GFP_KERNEL);
-+	if (!ifq)
-+		return NULL;
-+
-+	ifq->ctx = ctx;
-+	ifq->queue_id = -1;
-+	return ifq;
-+}
-+
-+static void io_zctap_ifq_free(struct io_zctap_ifq *ifq)
-+{
-+	if (ifq->queue_id != -1)
-+		io_close_zctap_ifq(ifq, ifq->queue_id);
-+	if (ifq->dev)
-+		dev_put(ifq->dev);
-+	kfree(ifq);
-+}
-+
-+int io_register_ifq(struct io_ring_ctx *ctx,
-+		    struct io_uring_ifq_req __user *arg)
-+{
-+	struct io_uring_ifq_req req;
-+	struct io_zctap_ifq *ifq;
-+	int err;
-+
-+	if (copy_from_user(&req, arg, sizeof(req)))
++	/* XXX for now, only allow one region per ifq. */
++	if (ifq->region)
 +		return -EFAULT;
 +
-+	if (req.ifq_id >= NR_ZCTAP_IFQS)
++	if (unlikely(id >= ctx->nr_user_bufs))
++		return -EFAULT;
++	id = array_index_nospec(id, ctx->nr_user_bufs);
++	imu = ctx->user_bufs[id];
++
++	/* XXX check region is page aligned */
++	if (imu->ubuf & ~PAGE_MASK || imu->ubuf_end & ~PAGE_MASK)
 +		return -EFAULT;
 +
-+	if (ctx->zctap_ifq)
-+		return -EBUSY;
-+
-+	ifq = io_zctap_ifq_alloc(ctx);
-+	if (!ifq)
++	nr_pages = imu->nr_bvecs;
++	ifr = kvmalloc(struct_size(ifr, freelist, nr_pages), GFP_KERNEL);
++	if (!ifr)
 +		return -ENOMEM;
 +
-+	ifq->fill_bgid = req.fill_bgid;
++	ifr->nr_pages = nr_pages;
++	ifr->imu = imu;
++	ifr->free_count = nr_pages;
++	ifr->id = id;
 +
-+	err = -ENODEV;
-+	ifq->dev = dev_get_by_index(&init_net, req.ifindex);
-+	if (!ifq->dev)
-+		goto out;
++	for (i = 0; i < nr_pages; i++) {
++		page = imu->bvec[i].bv_page;
++		ifr->freelist[i] = page;
++	}
 +
-+	/* region attachment TBD */
++	ifq->region = ifr;
 +
-+	err = io_open_zctap_ifq(ifq, req.queue_id);
++	return 0;
++}
++
+ static int __io_queue_mgmt(struct net_device *dev, struct io_zctap_ifq *ifq,
+ 			   u16 queue_id)
+ {
+@@ -60,6 +117,8 @@ static void io_zctap_ifq_free(struct io_zctap_ifq *ifq)
+ {
+ 	if (ifq->queue_id != -1)
+ 		io_close_zctap_ifq(ifq, ifq->queue_id);
++	if (ifq->region)
++		io_remove_ifq_region(ifq->region);
+ 	if (ifq->dev)
+ 		dev_put(ifq->dev);
+ 	kfree(ifq);
+@@ -92,7 +151,9 @@ int io_register_ifq(struct io_ring_ctx *ctx,
+ 	if (!ifq->dev)
+ 		goto out;
+ 
+-	/* region attachment TBD */
++	err = io_provide_ifq_region(ifq, req.region_id);
 +	if (err)
 +		goto out;
-+	ifq->queue_id = req.queue_id;
-+
-+	ctx->zctap_ifq = ifq;
-+
-+	return 0;
-+
-+out:
-+	io_zctap_ifq_free(ifq);
-+	return err;
-+}
-+
-+int io_unregister_zctap_ifq(struct io_ring_ctx *ctx, unsigned long index)
-+{
-+	struct io_zctap_ifq *ifq;
-+
-+	ifq = ctx->zctap_ifq;
-+	if (!ifq)
-+		return -EINVAL;
-+
-+	ctx->zctap_ifq = NULL;
-+	io_zctap_ifq_free(ifq);
-+
-+	return 0;
-+}
-+
-+void io_unregister_zctap_all(struct io_ring_ctx *ctx)
-+{
-+	int i;
-+
-+	for (i = 0; i < NR_ZCTAP_IFQS; i++)
-+		io_unregister_zctap_ifq(ctx, i);
-+}
+ 
+ 	err = io_open_zctap_ifq(ifq, req.queue_id);
+ 	if (err)
 diff --git a/io_uring/zctap.h b/io_uring/zctap.h
-new file mode 100644
-index 000000000000..bbe4a509408b
---- /dev/null
+index bbe4a509408b..bb44f8e972e8 100644
+--- a/io_uring/zctap.h
 +++ b/io_uring/zctap.h
-@@ -0,0 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifndef IOU_ZCTAP_H
-+#define IOU_ZCTAP_H
+@@ -6,4 +6,6 @@ int io_register_ifq(struct io_ring_ctx *ctx,
+ 		    struct io_uring_ifq_req __user *arg);
+ void io_unregister_zctap_all(struct io_ring_ctx *ctx);
+ 
++int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id);
 +
-+int io_register_ifq(struct io_ring_ctx *ctx,
-+		    struct io_uring_ifq_req __user *arg);
-+void io_unregister_zctap_all(struct io_ring_ctx *ctx);
-+
-+#endif
+ #endif
 -- 
 2.30.2
 

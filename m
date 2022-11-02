@@ -2,67 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D86596161A3
-	for <lists+io-uring@lfdr.de>; Wed,  2 Nov 2022 12:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 998296161B5
+	for <lists+io-uring@lfdr.de>; Wed,  2 Nov 2022 12:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230306AbiKBLVc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 2 Nov 2022 07:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55670 "EHLO
+        id S229570AbiKBLYl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 2 Nov 2022 07:24:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbiKBLVb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 07:21:31 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A9C1120A0
-        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 04:21:30 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id y16so24015196wrt.12
-        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 04:21:30 -0700 (PDT)
+        with ESMTP id S229516AbiKBLYl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 07:24:41 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E33A2248D3
+        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 04:24:39 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso556950wmo.1
+        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 04:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0UyCoU1s0RtnVHYqQ2GDxHKz3+s7CDJTR0mhXHfjDOk=;
-        b=dzUkYKhvxmKhTUYBv7qut22TP1idONIenHPJFO7cIh3sc1E1FFunkwGitMIAcuPKe2
-         KJ83Kktxmpx+V2StXQV8HeIvbEhqwPKnfoQ5oVJHkeOwSaaD/atAORBRmoVF6S9k6UXL
-         srGNIzPsi4kgWG4ktHkUeAXSCH7yvqD+MGGiDQidbddGX42Ow0UHBEUvatjIYw0od5z9
-         2jlCugynEUbg112z2l9z/eX9nZl4P0vtUHf04zltVeUyhnLFHACAalUfj2PJWzw8Gwp8
-         VFwkgUaR7vrp6Ph9XzK6bVsi+5xFH2IxQmV9+ZJyPL6s2sffzsGfk5MMYfBygVGasIIk
-         222A==
+        bh=tuTanurUbLKcc2K4q7M4tosl+H4Sl2sL53ZQkhvnhGE=;
+        b=dKWUMmylghJpfofN4v4xc6eWK5JOYOSUuxd5onAgPggHxSLHGgmEe9WR8eDdttoNgh
+         3mSpKF5tOP++tmxu1VUbaSFgkj3pc1F2HBiPg61dHQk6uy831N7JKGojJ/zWVb0mNvn4
+         SU/HvAJrGjS9ZKO0IqDUOG3+2gw72njtW7JbjeLCB+zvgTugLbNlkyxZ0CRzwgc/geTA
+         co8ClSPZoqlOsz1J247uDkfaACz+q5tjv+egDTzue7dK9X/uvrIGPlMbXoyZuXVPKzCi
+         F8bPb9NXk+9zD4ygEFu4xO6QZ4WonyIJ/ZRalu8j+IJemkQ9TkufRXSOVx+s4Ee3T2rc
+         sFbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0UyCoU1s0RtnVHYqQ2GDxHKz3+s7CDJTR0mhXHfjDOk=;
-        b=5UTleHDoxAEqZUcj5zkgd9Ujhip/O0SkQvcA7IemzIBM3rNKzvDrxDojoSsxkLqLyr
-         jqFN0Ri8tybft+gDjVwiLttyQnZS25b5GxSjQR0kI7GDLAgxp8j+bI2hPynrYXN4RN4J
-         pEBIwN7kfqP08yDZNrUOY1tLvXlCqR7emxaPJyFq1z6tE6VjBIQXWcrZVA3e+hOReb6S
-         cSTN6FuwoC6FZ+mvN4vleOmxsXbripoTt9QhXKOL9U+4sSDEciYaZbbel2cxNPb1qcxC
-         8NlYnh+T+4QhNZRHXLKYNLPlazT8S3YtvXjvyxeJ+NvC2OLAEUziunYFcKau8WmP1T/5
-         kx6g==
-X-Gm-Message-State: ACrzQf1yJouWwX0bLtOf3k4fgEYxuLyI3vbV0zPogbWannApCcOMuyuQ
-        UVvEZuY7bykB5I5lAVw6RAprFouqMH4=
-X-Google-Smtp-Source: AMsMyM5Gp3Q7xLMOZKrWWShtt1QodiKFH+T+QQYUTGRbBkgmXyiA82WZYrrBY7IuIBHGL7WbkjqB/Q==
-X-Received: by 2002:a5d:50cf:0:b0:236:86df:257f with SMTP id f15-20020a5d50cf000000b0023686df257fmr14825585wrt.374.1667388088711;
-        Wed, 02 Nov 2022 04:21:28 -0700 (PDT)
+        bh=tuTanurUbLKcc2K4q7M4tosl+H4Sl2sL53ZQkhvnhGE=;
+        b=JXRLAA01EBe+L3k4o6QjCn19QmGdEbPqxeG+ctFrxXHUImA2+EH0vK/tXmAUj+Jzu3
+         MSodPk/FMrcBOGRGf/wAbzo5IG9qp03S+coM7Te2HSKG70QxzVseGtFeanllsIT0SK8d
+         ArQD/+jmKmnjS4IwIM2o9yMviS8q6mydCyuiAONkzr/swZuOUL7A2Wt/DEx4Jj4PDwvt
+         qEaNEsdC7xZQaagvKzhNFSuSCmA5NjlI/SEu0GVpkVYSngINTV6//TugrObii1G1Joqp
+         NYJxsDpGvW8R1dJB3D8pkNvEAVR9oR6TIjlxTF5hv4noZCTrtYkZWlCQRDNU2rLAk+0Q
+         eYpQ==
+X-Gm-Message-State: ACrzQf3ej1aCC1G9b+PN9BHMcg1dtodhJGqUsk72B3sMha5EMCrIfzE5
+        3cnQqFIHlxSzrxh2ne4R5W9m4+aUCy4=
+X-Google-Smtp-Source: AMsMyM5WOhw9sawcQ5Z2gGebun+dZQFA/Kyc5DO4yBziwPpbVDgWHbgFb5c44RIbqPanZtLlpAH31w==
+X-Received: by 2002:a05:600c:4fcf:b0:3c6:cdb9:b68f with SMTP id o15-20020a05600c4fcf00b003c6cdb9b68fmr25960230wmq.73.1667388278351;
+        Wed, 02 Nov 2022 04:24:38 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:2739])
-        by smtp.gmail.com with ESMTPSA id t24-20020a7bc3d8000000b003b4935f04a4sm1764883wmj.5.2022.11.02.04.21.27
+        by smtp.gmail.com with ESMTPSA id fc19-20020a05600c525300b003cf57329221sm2374158wmb.14.2022.11.02.04.24.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Nov 2022 04:21:28 -0700 (PDT)
-Message-ID: <5234ce36-b8d9-edbd-302b-58ceeb896c7d@gmail.com>
-Date:   Wed, 2 Nov 2022 11:20:31 +0000
+        Wed, 02 Nov 2022 04:24:37 -0700 (PDT)
+Message-ID: <04c1de23-3957-f550-9ab0-940cc6bb9e66@gmail.com>
+Date:   Wed, 2 Nov 2022 11:23:41 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.1
-Subject: Re: [PATCH for-next 01/12] io_uring: infrastructure for retargeting
- rsrc nodes
+Subject: Re: [PATCH for-next 06/12] io_uring: add fixed file peeking function
 Content-Language: en-US
 To:     Dylan Yudaken <dylany@meta.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
 References: <20221031134126.82928-1-dylany@meta.com>
- <20221031134126.82928-2-dylany@meta.com>
+ <20221031134126.82928-7-dylany@meta.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20221031134126.82928-2-dylany@meta.com>
+In-Reply-To: <20221031134126.82928-7-dylany@meta.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,205 +75,82 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 10/31/22 13:41, Dylan Yudaken wrote:
-> rsrc node cleanup can be indefinitely delayed when there are long lived
-> requests. For example if a file is located in the same rsrc node as a long
-> lived socket with multishot poll, then even if unregistering the file it
-> will not be closed while the poll request is still active.
-> 
-> Introduce a timer when rsrc node is switched, so that periodically we can
-> retarget these long lived requests to the newest nodes. That will allow
-> the old nodes to be cleaned up, freeing resources.
+> Add a helper function to grab the fixed file at a given offset. Will be
+> useful for retarget op handlers.
 > 
 > Signed-off-by: Dylan Yudaken <dylany@meta.com>
 > ---
->   include/linux/io_uring_types.h |  2 +
->   io_uring/io_uring.c            |  1 +
->   io_uring/opdef.h               |  1 +
->   io_uring/rsrc.c                | 92 ++++++++++++++++++++++++++++++++++
->   io_uring/rsrc.h                |  1 +
->   5 files changed, 97 insertions(+)
+>   io_uring/io_uring.c | 26 ++++++++++++++++++++------
+>   io_uring/io_uring.h |  1 +
+>   2 files changed, 21 insertions(+), 6 deletions(-)
 > 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index f5b687a787a3..1d4eff4e632c 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -327,6 +327,8 @@ struct io_ring_ctx {
->   	struct llist_head		rsrc_put_llist;
->   	struct list_head		rsrc_ref_list;
->   	spinlock_t			rsrc_ref_lock;
-> +	struct delayed_work		rsrc_retarget_work;
-> +	bool				rsrc_retarget_scheduled;
->   
->   	struct list_head		io_buffers_pages;
->   
 > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 6cc16e39b27f..ea2260359c56 100644
+> index 32eb305c4ce7..a052653fc65e 100644
 > --- a/io_uring/io_uring.c
 > +++ b/io_uring/io_uring.c
-> @@ -320,6 +320,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   	spin_lock_init(&ctx->rsrc_ref_lock);
->   	INIT_LIST_HEAD(&ctx->rsrc_ref_list);
->   	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
-> +	INIT_DELAYED_WORK(&ctx->rsrc_retarget_work, io_rsrc_retarget_work);
->   	init_llist_head(&ctx->rsrc_put_llist);
->   	init_llist_head(&ctx->work_llist);
->   	INIT_LIST_HEAD(&ctx->tctx_list);
-> diff --git a/io_uring/opdef.h b/io_uring/opdef.h
-> index 3efe06d25473..1b72b14cb5ab 100644
-> --- a/io_uring/opdef.h
-> +++ b/io_uring/opdef.h
-> @@ -37,6 +37,7 @@ struct io_op_def {
->   	int (*prep_async)(struct io_kiocb *);
->   	void (*cleanup)(struct io_kiocb *);
->   	void (*fail)(struct io_kiocb *);
-> +	bool (*can_retarget_rsrc)(struct io_kiocb *);
-
-side note: need to be split at some moment into 2 tables depending
-on hotness, we want better caching for ->issue and ->prep
-
->   };
->   
->   extern const struct io_op_def io_op_defs[];
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 55d4ab96fb92..106210e0d5d5 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -15,6 +15,7 @@
->   #include "io_uring.h"
->   #include "openclose.h"
->   #include "rsrc.h"
-> +#include "opdef.h"
->   
->   struct io_rsrc_update {
->   	struct file			*file;
-> @@ -204,6 +205,95 @@ void io_rsrc_put_work(struct work_struct *work)
->   	}
+> @@ -1841,6 +1841,23 @@ void io_wq_submit_work(struct io_wq_work *work)
+>   		io_req_task_queue_fail(req, ret);
 >   }
 >   
-> +
-> +static unsigned int io_rsrc_retarget_req(struct io_ring_ctx *ctx,
-> +					 struct io_kiocb *req)
-> +	__must_hold(&ctx->uring_lock)
+> +static unsigned long __io_file_peek_fixed(struct io_kiocb *req, int fd)
+> +	__must_hold(&req->ctx->uring_lock)
+
+Let's mark it inline, it's in the hot path. Yeah, It's small but I
+battled compilers enough because from time to time they leave it
+not inlined.
+
+
 > +{
-> +	if (!req->rsrc_node ||
-> +	     req->rsrc_node == ctx->rsrc_node)
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +
+> +	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
 > +		return 0;
-> +	if (!io_op_defs[req->opcode].can_retarget_rsrc)
-> +		return 0;
-> +	if (!(*io_op_defs[req->opcode].can_retarget_rsrc)(req))
-> +		return 0;
-
-nit, there should be no need to deref fptr.
-
-if (!io_op_defs[req->opcode].can_retarget_rsrc(req)) ...
-
-> +
-> +	io_rsrc_put_node(req->rsrc_node, 1);
-> +	req->rsrc_node = ctx->rsrc_node;
-> +	return 1;
+> +	fd = array_index_nospec(fd, ctx->nr_user_files);
+> +	return io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
 > +}
 > +
-> +static unsigned int io_rsrc_retarget_table(struct io_ring_ctx *ctx,
-> +				   struct io_hash_table *table)
+> +struct file *io_file_peek_fixed(struct io_kiocb *req, int fd)
+> +	__must_hold(&req->ctx->uring_lock)
 > +{
-> +	unsigned int nr_buckets = 1U << table->hash_bits;
-> +	unsigned int refs = 0;
-> +	struct io_kiocb *req;
-> +	int i;
-> +
-> +	for (i = 0; i < nr_buckets; i++) {
-> +		struct io_hash_bucket *hb = &table->hbs[i];
-> +
-> +		spin_lock(&hb->lock);
-> +		hlist_for_each_entry(req, &hb->list, hash_node)
-> +			refs += io_rsrc_retarget_req(ctx, req);
-> +		spin_unlock(&hb->lock);
-> +	}
-> +	return refs;
+> +	return (struct file *) (__io_file_peek_fixed(req, fd) & FFS_MASK);
 > +}
 > +
-> +static void io_rsrc_retarget_schedule(struct io_ring_ctx *ctx)
-> +	__must_hold(&ctx->uring_lock)
-> +{
-> +	percpu_ref_get(&ctx->refs);
-> +	mod_delayed_work(system_wq, &ctx->rsrc_retarget_work, 60 * HZ);
-> +	ctx->rsrc_retarget_scheduled = true;
-> +}
-> +
-> +static void __io_rsrc_retarget_work(struct io_ring_ctx *ctx)
-> +	__must_hold(&ctx->uring_lock)
-> +{
-> +	struct io_rsrc_node *node;
-> +	unsigned int refs;
-> +	bool any_waiting;
-> +
-> +	if (!ctx->rsrc_node)
-> +		return;
-> +
-> +	spin_lock_irq(&ctx->rsrc_ref_lock);
-> +	any_waiting = false;
-> +	list_for_each_entry(node, &ctx->rsrc_ref_list, node) {
-> +		if (!node->done) {
-> +			any_waiting = true;
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock_irq(&ctx->rsrc_ref_lock);
-> +
-> +	if (!any_waiting)
-> +		return;
-> +
-> +	refs = io_rsrc_retarget_table(ctx, &ctx->cancel_table);
-> +	refs += io_rsrc_retarget_table(ctx, &ctx->cancel_table_locked);
-> +
-> +	ctx->rsrc_cached_refs -= refs;
-> +	while (unlikely(ctx->rsrc_cached_refs < 0))
-> +		io_rsrc_refs_refill(ctx);
-
-We can charge ->rsrc_cached_refs after setting up nodes in prep / submission
-without underflowing the actual refs because we know that the requests are
-not yet submitted and so won't consume refs. This one looks more troublesome
-
-
-> +}
-> +
-> +void io_rsrc_retarget_work(struct work_struct *work)
-> +{
-> +	struct io_ring_ctx *ctx;
-> +
-> +	ctx = container_of(work, struct io_ring_ctx, rsrc_retarget_work.work);
-> +
-> +	mutex_lock(&ctx->uring_lock);
-> +	ctx->rsrc_retarget_scheduled = false;
-> +	__io_rsrc_retarget_work(ctx);
-> +	mutex_unlock(&ctx->uring_lock);
-> +	percpu_ref_put(&ctx->refs);
-> +}
-> +
->   void io_wait_rsrc_data(struct io_rsrc_data *data)
+>   inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+>   				      unsigned int issue_flags)
 >   {
->   	if (data && !atomic_dec_and_test(&data->refs))
-> @@ -285,6 +375,8 @@ void io_rsrc_node_switch(struct io_ring_ctx *ctx,
->   		atomic_inc(&data_to_kill->refs);
->   		percpu_ref_kill(&rsrc_node->refs);
->   		ctx->rsrc_node = NULL;
-> +		if (!ctx->rsrc_retarget_scheduled)
-> +			io_rsrc_retarget_schedule(ctx);
->   	}
+> @@ -1849,17 +1866,14 @@ inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+>   	unsigned long file_ptr;
 >   
->   	if (!ctx->rsrc_node) {
-> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-> index 81445a477622..2b94df8fd9e8 100644
-> --- a/io_uring/rsrc.h
-> +++ b/io_uring/rsrc.h
-> @@ -54,6 +54,7 @@ struct io_mapped_ubuf {
->   };
+>   	io_ring_submit_lock(ctx, issue_flags);
+> -
+> -	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
+> -		goto out;
+> -	fd = array_index_nospec(fd, ctx->nr_user_files);
+> -	file_ptr = io_fixed_file_slot(&ctx->file_table, fd)->file_ptr;
+> +	file_ptr = __io_file_peek_fixed(req, fd);
+>   	file = (struct file *) (file_ptr & FFS_MASK);
+>   	file_ptr &= ~FFS_MASK;
+>   	/* mask in overlapping REQ_F and FFS bits */
+>   	req->flags |= (file_ptr << REQ_F_SUPPORT_NOWAIT_BIT);
+>   	io_req_set_rsrc_node(req, ctx, 0);
+> -out:
+> +	WARN_ON_ONCE(file && !test_bit(fd, ctx->file_table.bitmap));
+> +
+>   	io_ring_submit_unlock(ctx, issue_flags);
+>   	return file;
+>   }
+> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+> index ef77d2aa3172..781471bfba12 100644
+> --- a/io_uring/io_uring.h
+> +++ b/io_uring/io_uring.h
+> @@ -44,6 +44,7 @@ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
+>   struct file *io_file_get_normal(struct io_kiocb *req, int fd);
+>   struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+>   			       unsigned issue_flags);
+> +struct file *io_file_peek_fixed(struct io_kiocb *req, int fd);
 >   
->   void io_rsrc_put_work(struct work_struct *work);
-> +void io_rsrc_retarget_work(struct work_struct *work);
->   void io_rsrc_refs_refill(struct io_ring_ctx *ctx);
->   void io_wait_rsrc_data(struct io_rsrc_data *data);
->   void io_rsrc_node_destroy(struct io_rsrc_node *ref_node);
+>   static inline bool io_req_ffs_set(struct io_kiocb *req)
+>   {
 
 -- 
 Pavel Begunkov

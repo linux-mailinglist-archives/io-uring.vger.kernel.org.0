@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA1B6172DC
+	by mail.lfdr.de (Postfix) with ESMTP id 3BCA16172DA
 	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 00:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbiKBXkS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Wed, 2 Nov 2022 19:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57326 "EHLO
+        id S230056AbiKBXkR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Wed, 2 Nov 2022 19:40:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230308AbiKBXj5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 19:39:57 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F323B26F7
-        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 16:33:03 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2NVrbW008281
-        for <io-uring@vger.kernel.org>; Wed, 2 Nov 2022 16:33:03 -0700
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kkrv4wyqe-1
+        with ESMTP id S231526AbiKBXj4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 2 Nov 2022 19:39:56 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2098A6300
+        for <io-uring@vger.kernel.org>; Wed,  2 Nov 2022 16:33:00 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2NVql9014628
+        for <io-uring@vger.kernel.org>; Wed, 2 Nov 2022 16:32:59 -0700
+Received: from maileast.thefacebook.com ([163.114.130.3])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kkva13p5j-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 16:33:03 -0700
-Received: from twshared27579.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Wed, 02 Nov 2022 16:32:58 -0700
+Received: from twshared9088.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 2 Nov 2022 16:33:02 -0700
+ 15.1.2375.31; Wed, 2 Nov 2022 16:32:57 -0700
 Received: by devvm2494.atn0.facebook.com (Postfix, from userid 172786)
-        id 9583A235B617E; Wed,  2 Nov 2022 16:32:44 -0700 (PDT)
+        id 9E1A7235B6180; Wed,  2 Nov 2022 16:32:44 -0700 (PDT)
 From:   Jonathan Lemon <jonathan.lemon@gmail.com>
 To:     <io-uring@vger.kernel.org>
 CC:     <kernel-team@meta.com>
-Subject: [RFC PATCH v3 07/15] io_uring: Allocate zctap device buffers and dma map them.
-Date:   Wed, 2 Nov 2022 16:32:36 -0700
-Message-ID: <20221102233244.4022405-8-jonathan.lemon@gmail.com>
+Subject: [RFC PATCH v3 08/15] io_uring: Add zctap buffer get/put functions and refcounting.
+Date:   Wed, 2 Nov 2022 16:32:37 -0700
+Message-ID: <20221102233244.4022405-9-jonathan.lemon@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221102233244.4022405-1-jonathan.lemon@gmail.com>
 References: <20221102233244.4022405-1-jonathan.lemon@gmail.com>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: chgXHM6gK3iTZOMKtL1C2f1OxpP5LfT_
-X-Proofpoint-GUID: chgXHM6gK3iTZOMKtL1C2f1OxpP5LfT_
+X-Proofpoint-GUID: 1UMXJGa2dFUHfqrqo9pIwxhgIVoSaXSk
+X-Proofpoint-ORIG-GUID: 1UMXJGa2dFUHfqrqo9pIwxhgIVoSaXSk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-02_15,2022-11-02_01,2022-06-22_01
@@ -56,166 +56,231 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The goal is to register a memory region with the device, and
-later specify the desired packet buffer size.  The code currently
-assumes a page size.
+Flesh out the driver API functions introduced earlier.
 
-Create the desired number of zctap buffers and DMA map them
-to the target device, recording the dma address for later use.
+The driver gets a buffer, and is responsible for setting its own
+bias count.
 
-Hold a page reference while the page is dma mapped.
+The bias is decremented as skb fragments go up the stack, and
+the driver releases the references when finished with the buffer.
 
-Change the freelist from an array of page pointers to an index
-into the device buffer list.
+When ownership of the fragment is transferred to the user, a
+user refcount is incremented, and correspondingly decremented
+when returned.  When all refcounts are released, the buffer is safe
+to reuse.  The user/kernel split is needed to differentiate between
+"safe to reuse the buffer" and "still in use by the kernel".
+
+The locking here can likely be improved.
 
 Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 ---
- io_uring/zctap.c | 78 ++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 63 insertions(+), 15 deletions(-)
+ io_uring/kbuf.c  |  13 +++++
+ io_uring/kbuf.h  |   2 +
+ io_uring/zctap.c | 127 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 141 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/zctap.c b/io_uring/zctap.c
-index c088655ade22..9f892e9ed8f2 100644
---- a/io_uring/zctap.c
-+++ b/io_uring/zctap.c
-@@ -18,11 +18,14 @@
- #define NR_ZCTAP_IFQS	1
- 
- struct ifq_region {
-+	struct io_zctap_ifq	*ifq;		/* only for delayed_work */
- 	struct io_mapped_ubuf	*imu;
- 	int			free_count;
- 	int			nr_pages;
- 	u16			id;
--	struct page		*freelist[];
-+
-+	struct io_zctap_buf	*buf;
-+	u16			freelist[];
- };
- 
- typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
-@@ -60,49 +63,85 @@ bool io_zctap_put_page(struct io_zctap_ifq *ifq, struct page *page)
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 25cd724ade18..caae2755e3d5 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -188,6 +188,19 @@ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+ 	return ret;
  }
- EXPORT_SYMBOL(io_zctap_put_page);
  
-+static inline struct device *
-+netdev2device(struct net_device *dev)
++/* XXX May called from the driver, in napi context. */
++u64 io_zctap_buffer(struct io_kiocb *req, size_t *len)
 +{
-+	return dev->dev.parent;			/* from SET_NETDEV_DEV() */
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_buffer_list *bl;
++	void __user *ret = NULL;
++
++	bl = io_buffer_get_list(ctx, req->buf_index);
++	if (likely(bl))
++		ret = io_ring_buffer_select(req, len, bl, IO_URING_F_UNLOCKED);
++	return (u64)ret;
 +}
 +
- static void io_remove_ifq_region(struct ifq_region *ifr)
+ static __cold int io_init_bl_list(struct io_ring_ctx *ctx)
  {
--	struct io_mapped_ubuf *imu;
--	struct page *page;
-+	struct device *device = netdev2device(ifr->ifq->dev);
-+	struct io_zctap_buf *buf;
  	int i;
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index c23e15d7d3ca..b530e987b438 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -50,6 +50,8 @@ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
  
--	imu = ifr->imu;
- 	for (i = 0; i < ifr->nr_pages; i++) {
--		page = imu->bvec[i].bv_page;
--
--		ClearPagePrivate(page);
--		set_page_private(page, 0);
-+		buf = &ifr->buf[i];
-+		set_page_private(buf->page, 0);
-+		ClearPagePrivate(buf->page);
-+		dma_unmap_page_attrs(device, buf->dma, PAGE_SIZE,
-+				     DMA_BIDIRECTIONAL,
-+				     DMA_ATTR_SKIP_CPU_SYNC);
-+		put_page(buf->page);
- 	}
+ void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
  
-+	kvfree(ifr->buf);
- 	kvfree(ifr);
- }
- 
--static int io_zctap_map_region(struct ifq_region *ifr)
-+static int io_zctap_map_region(struct ifq_region *ifr, struct device *device)
++u64 io_zctap_buffer(struct io_kiocb *req, size_t *len);
++
+ static inline void io_kbuf_recycle_ring(struct io_kiocb *req)
  {
- 	struct io_mapped_ubuf *imu;
-+	struct io_zctap_buf *buf;
- 	struct page *page;
-+	dma_addr_t addr;
-+	int i, err;
- 	u64 info;
--	int i;
+ 	/*
+diff --git a/io_uring/zctap.c b/io_uring/zctap.c
+index 9f892e9ed8f2..766da3bb2e41 100644
+--- a/io_uring/zctap.c
++++ b/io_uring/zctap.c
+@@ -24,6 +24,8 @@ struct ifq_region {
+ 	int			nr_pages;
+ 	u16			id;
  
- 	imu = ifr->imu;
- 	for (i = 0; i < ifr->nr_pages; i++) {
- 		page = imu->bvec[i].bv_page;
--		if (PagePrivate(page))
++	spinlock_t		freelist_lock;
 +
-+		if (PagePrivate(page)) {
-+			err = -EEXIST;
- 			goto out;
-+		}
-+
- 		SetPagePrivate(page);
- 		info = zctap_mk_page_info(ifr->id, i);
- 		zctap_set_page_info(page, info);
--		ifr->freelist[i] = page;
-+
-+		buf = &ifr->buf[i];
-+		addr = dma_map_page_attrs(device, page, 0, PAGE_SIZE,
-+					  DMA_BIDIRECTIONAL,
-+					  DMA_ATTR_SKIP_CPU_SYNC);
-+		if (dma_mapping_error(device, addr)) {
-+			set_page_private(page, 0);
-+			ClearPagePrivate(page);
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		buf->dma = addr;
-+		buf->page = page;
-+		atomic_set(&buf->refcount, 0);
-+		get_page(page);
-+
-+		ifr->freelist[i] = i;
- 	}
- 	return 0;
- 
- out:
- 	while (i--) {
- 		page = imu->bvec[i].bv_page;
--		ClearPagePrivate(page);
- 		set_page_private(page, 0);
-+		ClearPagePrivate(page);
-+		buf = &ifr->buf[i];
-+		dma_unmap_page_attrs(device, buf->dma, PAGE_SIZE,
-+				     DMA_BIDIRECTIONAL,
-+				     DMA_ATTR_SKIP_CPU_SYNC);
-+		put_page(page);
- 	}
--	return -EEXIST;
-+	return err;
+ 	struct io_zctap_buf	*buf;
+ 	u16			freelist[];
+ };
+@@ -40,20 +42,142 @@ static u64 zctap_mk_page_info(u16 region_id, u16 pgid)
+ 	return (u64)0xface << 48 | (u64)region_id << 16 | (u64)pgid;
  }
  
- int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
-@@ -131,13 +170,22 @@ int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
- 	if (!ifr)
- 		return -ENOMEM;
- 
-+	ifr->buf = kvmalloc_array(nr_pages, sizeof(*ifr->buf), GFP_KERNEL);
-+	if (!ifr->buf) {
-+		kvfree(ifr);
-+		return -ENOMEM;
++static u64 zctap_page_info(const struct page *page)
++{
++	return page_private(page);
++}
++
++static u16 zctap_page_id(const struct page *page)
++{
++	return zctap_page_info(page) & 0xffff;
++}
++
++/* driver bias cannot be larger than this */
++#define IO_ZCTAP_UREF		0x10000
++#define IO_ZCTAP_KREF_MASK	(IO_ZCTAP_UREF - 1)
++
++/* return user refs back, indicate whether buffer is reusable */
++static bool io_zctap_put_buf_uref(struct io_zctap_buf *buf)
++{
++	if (atomic_read(&buf->refcount) < IO_ZCTAP_UREF) {
++		WARN_ONCE(1, "uref botch: %x < %x, id:%d page:%px\n",
++			atomic_read(&buf->refcount), IO_ZCTAP_UREF,
++			zctap_page_id(buf->page),
++			buf->page);
++		return false;
 +	}
 +
++	return atomic_sub_and_test(IO_ZCTAP_UREF, &buf->refcount);
++}
++
++/* gets a user-supplied buffer from the fill queue */
++static struct io_zctap_buf *io_zctap_get_buffer(struct io_zctap_ifq *ifq,
++						u16 *buf_pgid)
++{
++	struct io_zctap_buf *buf;
++	struct ifq_region *ifr;
++	struct io_kiocb req;
++	size_t len = 0;
++	u64 addr;
++	int pgid;
++
++	ifr = ifq->region;
++retry:
++	req = (struct io_kiocb) {
++		.ctx = ifq->ctx,
++		.buf_index = ifq->fill_bgid,
++	};
++	/*  IN: uses buf_index as buffer group.
++	 * OUT: buf_index of actual buffer. (and req->buf_list set)
++	 *	(this comes from the user-supplied bufid)
++	 */
++	addr = io_zctap_buffer(&req, &len);
++	if (!addr)
++		return NULL;
++
++	pgid = addr & 0xffff;
++//	region_id = (addr >> 16) & 0xffff;
++
++	if (pgid > ifr->nr_pages) {
++		WARN_RATELIMIT(1, "bufid %d > max %d", pgid, ifr->nr_pages);
++		return NULL;
++	}
++
++	buf = &ifr->buf[pgid];
++	if (!io_zctap_put_buf_uref(buf))
++		goto retry;
++
++	*buf_pgid = pgid;
++	return buf;
++}
++
++/* if on exit/teardown path, can skip this work */
++static void io_zctap_recycle_buf(struct ifq_region *ifr,
++				 struct io_zctap_buf *buf)
++{
++	spin_lock(&ifr->freelist_lock);
++
++	ifr->freelist[ifr->free_count++] = buf - ifr->buf;
++
++	spin_unlock(&ifr->freelist_lock);
++}
++
+ struct io_zctap_buf *io_zctap_get_buf(struct io_zctap_ifq *ifq, int refc)
+ {
+-	return NULL;
++	struct ifq_region *ifr = ifq->region;
++	struct io_zctap_buf *buf;
++	u16 pgid;
++
++	spin_lock(&ifr->freelist_lock);
++
++	buf = NULL;
++	if (ifr->free_count) {
++		pgid = ifr->freelist[--ifr->free_count];
++		buf = &ifr->buf[pgid];
++	}
++
++	spin_unlock(&ifr->freelist_lock);
++
++	if (!buf) {
++		buf = io_zctap_get_buffer(ifq, &pgid);
++		if (!buf)
++			return NULL;
++	}
++
++	WARN_ON(atomic_read(&buf->refcount));
++	atomic_set(&buf->refcount, refc & IO_ZCTAP_KREF_MASK);
++
++	return buf;
+ }
+ EXPORT_SYMBOL(io_zctap_get_buf);
+ 
++/* called from driver and networking stack. */
+ void io_zctap_put_buf(struct io_zctap_ifq *ifq, struct io_zctap_buf *buf)
+ {
++	struct ifq_region *ifr = ifq->region;
++
++	/* XXX move to inline function later. */
++	if (!atomic_dec_and_test(&buf->refcount))
++		return;
++
++	io_zctap_recycle_buf(ifr, buf);
+ }
+ EXPORT_SYMBOL(io_zctap_put_buf);
+ 
++/* called from driver and networking stack. */
+ void io_zctap_put_buf_refs(struct io_zctap_ifq *ifq, struct io_zctap_buf *buf,
+ 			   unsigned count)
+ {
++	struct ifq_region *ifr = ifq->region;
++	unsigned refs;
++
++	refs = atomic_read(&buf->refcount) & IO_ZCTAP_KREF_MASK;
++	WARN(refs < count, "driver refcount botch: %u < %u\n", refs, count);
++
++	if (!atomic_sub_and_test(count, &buf->refcount))
++		return;
++
++	io_zctap_recycle_buf(ifr, buf);
+ }
+ EXPORT_SYMBOL(io_zctap_put_buf_refs);
+ 
+@@ -176,6 +300,7 @@ int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
+ 		return -ENOMEM;
+ 	}
+ 
++	spin_lock_init(&ifr->freelist_lock);
  	ifr->nr_pages = nr_pages;
  	ifr->imu = imu;
  	ifr->free_count = nr_pages;
- 	ifr->id = id;
- 
--	err = io_zctap_map_region(ifr);
-+	ifr->ifq = ifq;		/* XXX */
-+
-+	err = io_zctap_map_region(ifr, netdev2device(ifq->dev));
- 	if (err) {
-+		kvfree(ifr->buf);
- 		kvfree(ifr);
- 		return err;
- 	}
 -- 
 2.30.2
 

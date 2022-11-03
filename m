@@ -2,41 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E0C61792F
-	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 09:52:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B312861792A
+	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 09:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbiKCIw1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Nov 2022 04:52:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52614 "EHLO
+        id S231403AbiKCIwF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Nov 2022 04:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231431AbiKCIwH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Nov 2022 04:52:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC88D2D6
-        for <io-uring@vger.kernel.org>; Thu,  3 Nov 2022 01:51:09 -0700 (PDT)
+        with ESMTP id S231459AbiKCIvx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Nov 2022 04:51:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC37271E
+        for <io-uring@vger.kernel.org>; Thu,  3 Nov 2022 01:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667465469;
+        s=mimecast20190719; t=1667465452;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i8JvcZbpi+InOaWaSSfJsW/LYP35SvNLfn87x+CwQHU=;
-        b=KGSuo+zYq2IRB1dQOW5/DEU5wbFQAHNm1i7VpBpwY0vyv/hv3HFY52UjaYOyI/XQb3fKBt
-        9VO0KLPQzyfzL2sEQhCe3bS0uObmXzwhwkYNEp3bAkEtww+GCxbxL4Qz61olyf2vFfhkNf
-        xFxOzJ3J3At0klGsVwcaeX6PoIOInDs=
+        bh=s24KGcV2Z54EoXUCNfpVmCq/LLHmEm9f0arH5p9T5iM=;
+        b=LWMbnlNsdzDmHxxAqZ9DMp7LffyVbSONd6lTpRRxKW1HqZikIREgYs4AClUWOP/QaWmSyp
+        OmRPcV6elhzoJYFLCu2ZQLeMD+EBXYqYmWcRakgR8GQgK+J2FkcUPZ1wM1AwejFipgGazG
+        bAe5JRS/UV2p2jjA0a92dyB6HOFMeoM=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-522-94rabdZCPhWvVKR2uC06aw-1; Thu, 03 Nov 2022 04:50:43 -0400
-X-MC-Unique: 94rabdZCPhWvVKR2uC06aw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ us-mta-623-P1tEpVr6PqigEItNTJ3Wjw-1; Thu, 03 Nov 2022 04:50:48 -0400
+X-MC-Unique: P1tEpVr6PqigEItNTJ3Wjw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 09448101A5AD;
-        Thu,  3 Nov 2022 08:50:43 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C4270858F13;
+        Thu,  3 Nov 2022 08:50:47 +0000 (UTC)
 Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF4F0C15BA4;
-        Thu,  3 Nov 2022 08:50:35 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B901840C2140;
+        Thu,  3 Nov 2022 08:50:46 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -45,14 +45,14 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Hajnoczi <stefanha@redhat.com>,
         ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
         Ming Lei <ming.lei@redhat.com>
-Subject: [RFC PATCH 3/4] io_uring/splice: support splice from ->splice_read to ->splice_read
-Date:   Thu,  3 Nov 2022 16:50:03 +0800
-Message-Id: <20221103085004.1029763-4-ming.lei@redhat.com>
+Subject: [RFC PATCH 4/4] ublk_drv: support splice based read/write zero copy
+Date:   Thu,  3 Nov 2022 16:50:04 +0800
+Message-Id: <20221103085004.1029763-5-ming.lei@redhat.com>
 In-Reply-To: <20221103085004.1029763-1-ming.lei@redhat.com>
 References: <20221103085004.1029763-1-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -63,317 +63,291 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The 1st ->splice_read produces buffer to the pipe of
-current->splice_pipe, and the 2nd ->splice_read consumes the buffer
-in this pipe.
+Pass ublk block IO request pages to kernel backend IO handling code via
+pipe, and request page copy can be avoided. So far, the existed
+pipe/splice mechanism works for handling write request only.
 
-This way helps to support zero copy of read request for ublk and fuse.
+The initial idea of using splice for zero copy is from Miklos and Stefan.
 
+Read request's zero copy requires pipe's change to allow one read end to
+produce buffers for another read end to consume. The added SPLICE_F_READ_TO_READ
+flag is for supporting this feature.
+
+READ is handled by sending IORING_OP_SPLICE with SPLICE_F_DIRECT |
+SPLICE_F_READ_TO_READ. WRITE is handled by sending IORING_OP_SPLICE with
+SPLICE_F_DIRECT. Kernel internal pipe is used for simplifying userspace,
+meantime potential info leak could be avoided.
+
+Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
+Suggested-by: Stefan Hajnoczi <stefanha@redhat.com>
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- fs/splice.c               | 146 ++++++++++++++++++++++++++++++++++++--
- include/linux/fs.h        |   2 +
- include/linux/pipe_fs_i.h |   9 +++
- include/linux/splice.h    |  11 +++
- io_uring/splice.c         |  13 ++--
- 5 files changed, 169 insertions(+), 12 deletions(-)
+ drivers/block/ublk_drv.c      | 151 +++++++++++++++++++++++++++++++++-
+ include/uapi/linux/ublk_cmd.h |  34 +++++++-
+ 2 files changed, 182 insertions(+), 3 deletions(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index f8999ffe6215..cd5255f9ff13 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -330,17 +330,70 @@ ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
- 	struct iov_iter to;
- 	struct kiocb kiocb;
- 	int ret;
-+	struct bio_vec *array = NULL;
-+	bool consumer;
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index f96cb01e9604..c9d061547877 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -42,6 +42,8 @@
+ #include <linux/mm.h>
+ #include <asm/page.h>
+ #include <linux/task_work.h>
++#include <linux/pipe_fs_i.h>
++#include <linux/splice.h>
+ #include <uapi/linux/ublk_cmd.h>
+ 
+ #define UBLK_MINORS		(1U << MINORBITS)
+@@ -51,7 +53,8 @@
+ 		| UBLK_F_URING_CMD_COMP_IN_TASK \
+ 		| UBLK_F_NEED_GET_DATA \
+ 		| UBLK_F_USER_RECOVERY \
+-		| UBLK_F_USER_RECOVERY_REISSUE)
++		| UBLK_F_USER_RECOVERY_REISSUE \
++		| UBLK_F_SPLICE_ZC)
+ 
+ /* All UBLK_PARAM_TYPE_* should be included here */
+ #define UBLK_PARAM_TYPE_ALL (UBLK_PARAM_TYPE_BASIC | UBLK_PARAM_TYPE_DISCARD)
+@@ -61,6 +64,7 @@ struct ublk_rq_data {
+ 		struct callback_head work;
+ 		struct llist_node node;
+ 	};
++	atomic_t	handled;
+ };
+ 
+ struct ublk_uring_cmd_pdu {
+@@ -480,6 +484,9 @@ static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
+ 	if (req_op(req) != REQ_OP_WRITE && req_op(req) != REQ_OP_FLUSH)
+ 		return rq_bytes;
+ 
++	if (ubq->flags & UBLK_F_SPLICE_ZC)
++		return rq_bytes;
 +
-+	/*
-+	 * So far, in->fops->splice_read() has to make sure the following
-+	 * simple page use model works.
-+	 *
-+	 * pipe->consumed_by_read is set by the in end of the pipe
-+	 */
-+	if ((flags & SPLICE_F_READ_TO_READ) && pipe->consumed_by_read) {
-+		unsigned int head, tail, mask;
-+		int nbufs = pipe->max_usage;
-+		size_t left = len;
-+		int n;
+ 	if (ublk_rq_has_data(req)) {
+ 		struct ublk_map_data data = {
+ 			.ubq	=	ubq,
+@@ -501,6 +508,9 @@ static int ublk_unmap_io(const struct ublk_queue *ubq,
+ {
+ 	const unsigned int rq_bytes = blk_rq_bytes(req);
+ 
++	if (ubq->flags & UBLK_F_SPLICE_ZC)
++		return rq_bytes;
 +
-+		if (WARN_ON_ONCE(!(flags & SPLICE_F_DIRECT)))
-+			return -EINVAL;
+ 	if (req_op(req) == REQ_OP_READ && ublk_rq_has_data(req)) {
+ 		struct ublk_map_data data = {
+ 			.ubq	=	ubq,
+@@ -858,6 +868,19 @@ static blk_status_t ublk_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	if (ublk_queue_can_use_recovery(ubq) && unlikely(ubq->force_abort))
+ 		return BLK_STS_IOERR;
+ 
++	if (ubq->flags & UBLK_F_SPLICE_ZC) {
++		struct ublk_rq_data *data = blk_mq_rq_to_pdu(rq);
 +
-+		head = pipe->head;
-+		tail = pipe->tail;
-+		mask = pipe->ring_size - 1;
++		atomic_set(&data->handled, 0);
 +
-+		array = kcalloc(nbufs, sizeof(struct bio_vec), GFP_KERNEL);
-+		if (!array)
-+			return -ENOMEM;
++		/*
++		 * Order write ->handled and write rq->state in
++		 * blk_mq_start_request, the pair barrier is the one
++		 * implied in atomic_inc_return() in ublk_splice_read
++		 */
++		smp_wmb();
++	}
 +
-+		for (n = 0; !pipe_empty(head, tail) && left && n < nbufs;
-+				tail++) {
-+			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
-+			size_t this_len = buf->len;
+ 	blk_mq_start_request(bd->rq);
+ 
+ 	if (unlikely(ubq_daemon_is_dying(ubq))) {
+@@ -1299,13 +1322,137 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 	return -EIOCBQUEUED;
+ }
+ 
++static void ublk_pipe_buf_release(struct pipe_inode_info *pipe,
++			      struct pipe_buffer *buf)
++{
++}
 +
-+			/* zero-length bvecs are not supported, skip them */
-+			if (!this_len)
++static const struct pipe_buf_operations ublk_pipe_buf_ops = {
++        .release        = ublk_pipe_buf_release,
++};
++
++/*
++ * Pass request page reference to kernel backend IO handler via pipe
++ *
++ * ublk server has to handle backend IO via splice()
++ */
++static ssize_t ublk_splice_read(struct file *in, loff_t *ppos,
++		struct pipe_inode_info *pipe,
++		size_t len, unsigned int flags)
++{
++	struct ublk_device *ub = in->private_data;
++	struct req_iterator rq_iter;
++	struct bio_vec bv;
++	struct request *req;
++	struct ublk_queue *ubq;
++	u16 tag, q_id;
++	unsigned int done;
++	int ret, buf_offset;
++	struct ublk_rq_data *data;
++
++	if (!(flags & SPLICE_F_DIRECT))
++		return -EPERM;
++
++	/* No, we have to be the in side */
++	if (pipe->consumed_by_read)
++		return -EINVAL;
++
++	if (!ub)
++		return -EPERM;
++
++	tag = ublk_pos_to_tag(*ppos);
++	q_id = ublk_pos_to_hwq(*ppos);
++	buf_offset = ublk_pos_to_buf_offset(*ppos);
++
++	if (q_id >= ub->dev_info.nr_hw_queues)
++		return -EINVAL;
++
++	ubq = ublk_get_queue(ub, q_id);
++	if (!ubq)
++		return -EINVAL;
++
++	if (!(ubq->flags & UBLK_F_SPLICE_ZC))
++		return -EINVAL;
++
++	if (tag >= ubq->q_depth)
++		return -EINVAL;
++
++	req = blk_mq_tag_to_rq(ub->tag_set.tags[q_id], tag);
++	if (!req || !blk_mq_request_started(req))
++		return -EINVAL;
++
++	data = blk_mq_rq_to_pdu(req);
++	if (atomic_add_return(len, &data->handled) > blk_rq_bytes(req) || !len)
++		return -EACCES;
++
++	ret = -EINVAL;
++	if (!ublk_rq_has_data(req))
++		goto exit;
++
++	pr_devel("%s: qid %d tag %u offset %x, request bytes %u, len %llu\n",
++			__func__, tag, q_id, buf_offset, blk_rq_bytes(req),
++			(unsigned long long)len);
++
++	if (buf_offset + len > blk_rq_bytes(req))
++		goto exit;
++
++	if ((req_op(req) == REQ_OP_READ) &&
++			!(flags & SPLICE_F_READ_TO_READ))
++		goto exit;
++
++	if ((req_op(req) != REQ_OP_READ) &&
++			(flags & SPLICE_F_READ_TO_READ))
++		goto exit;
++
++	done = ret = 0;
++	/* todo: is iov_iter ready for handling multipage bvec? */
++	rq_for_each_segment(bv, req, rq_iter) {
++		struct pipe_buffer buf = {
++			.ops = &ublk_pipe_buf_ops,
++			.flags = 0,
++			.page = bv.bv_page,
++			.offset = bv.bv_offset,
++			.len = bv.bv_len,
++		};
++
++		if (buf_offset > 0) {
++			if (buf_offset >= bv.bv_len) {
++				buf_offset -= bv.bv_len;
 +				continue;
-+			this_len = min(this_len, left);
-+
-+			array[n].bv_page = buf->page;
-+			array[n].bv_len = this_len;
-+			array[n].bv_offset = buf->offset;
-+			left -= this_len;
-+			n++;
++			} else {
++				buf.offset += buf_offset;
++				buf.len -= buf_offset;
++				buf_offset = 0;
++			}
 +		}
 +
-+		consumer = true;
-+		iov_iter_bvec(&to, READ, array, n, len - left);
-+	} else {
-+		/* !consumer means one pipe buf producer */
-+		consumer = false;
-+		iov_iter_pipe(&to, READ, pipe, len);
-+	}
- 
--	iov_iter_pipe(&to, READ, pipe, len);
- 	init_sync_kiocb(&kiocb, in);
- 	kiocb.ki_pos = *ppos;
- 	ret = call_read_iter(in, &kiocb, &to);
- 	if (ret > 0) {
- 		*ppos = kiocb.ki_pos;
- 		file_accessed(in);
-+
-+		if (consumer)
-+			splice_dismiss_pipe(pipe, ret);
- 	} else if (ret < 0) {
- 		/* free what was emitted */
--		pipe_discard_from(pipe, to.start_head);
-+		if (!consumer)
-+			pipe_discard_from(pipe, to.start_head);
- 		/*
- 		 * callers of ->splice_read() expect -EAGAIN on
- 		 * "can't put anything in there", rather than -EFAULT.
-@@ -349,6 +402,11 @@ ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
- 			ret = -EAGAIN;
- 	}
- 
-+	if (consumer) {
-+		kfree(array);
-+		pipe->consumed_by_read = false;
++		ret = add_to_pipe(pipe, &buf);
++		if (unlikely(ret < 0))
++			break;
++		done += ret;
 +	}
 +
- 	return ret;
- }
- EXPORT_SYMBOL(generic_file_splice_read);
-@@ -782,7 +840,7 @@ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
-  */
- static long do_splice_to(struct file *in, loff_t *ppos,
- 			 struct pipe_inode_info *pipe, size_t len,
--			 unsigned int flags)
-+			 unsigned int flags, bool consumer)
- {
- 	unsigned int p_space;
- 	int ret;
-@@ -790,8 +848,12 @@ static long do_splice_to(struct file *in, loff_t *ppos,
- 	if (unlikely(!(in->f_mode & FMODE_READ)))
- 		return -EBADF;
- 
--	/* Don't try to read more the pipe has space for. */
--	p_space = pipe->max_usage - pipe_occupancy(pipe->head, pipe->tail);
-+	if (consumer) /* read is consumer */
-+		p_space = pipe_occupancy(pipe->head, pipe->tail);
-+	else
-+		/* Don't try to read more the pipe has space for. */
-+		p_space = pipe->max_usage - pipe_occupancy(pipe->head,
-+				pipe->tail);
- 	len = min_t(size_t, len, p_space << PAGE_SHIFT);
- 
- 	ret = rw_verify_area(READ, in, ppos, len);
-@@ -875,7 +937,7 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 		size_t read_len;
- 		loff_t pos = sd->pos, prev_pos = pos;
- 
--		ret = do_splice_to(in, &pos, pipe, len, flags);
-+		ret = do_splice_to(in, &pos, pipe, len, flags, false);
- 		if (unlikely(ret <= 0))
- 			goto out_release;
- 
-@@ -992,6 +1054,76 @@ long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
- }
- EXPORT_SYMBOL(do_splice_direct);
- 
-+static int direct_splice_read_consumer_actor(struct pipe_inode_info *pipe,
-+			       struct splice_desc *sd)
-+{
-+	struct file *file = sd->u.file;
++	if (flags & SPLICE_F_READ_TO_READ)
++		pipe->consumed_by_read = true;
 +
-+	/* Pipe in side has to notify us by ->consumed_by_read */
-+	if (!pipe->consumed_by_read)
-+		return -EINVAL;
++	WARN_ON_ONCE(done > len);
 +
-+	return do_splice_to(file, sd->opos, pipe, sd->total_len,
-+			sd->flags, true);
-+}
-+
-+/**
-+ * do_splice_direct_read_consumer - splices data directly with producer/
-+ *    consumer model
-+ * @in:		file to splice from
-+ * @ppos:	input file offset
-+ * @out:	file to splice to
-+ * @opos:	output file offset
-+ * @len:	number of bytes to splice
-+ * @flags:	splice modifier flags, SPLICE_F_READ_TO_READ is required
-+ *
-+ * Description:
-+ *    For use by ublk or fuse to implement zero copy for READ request, and
-+ *    splice directly over internal pipe from device to file, and device's
-+ *    ->splice_read() produces pipe buffers, and file's ->splice_read()
-+ *    consumes the buffers.
-+ *
-+ */
-+long do_splice_direct_read_consumer(struct file *in, loff_t *ppos,
-+				    struct file *out, loff_t *opos,
-+				    size_t len, unsigned int flags)
-+{
-+	struct splice_desc sd = {
-+		.len		= len,
-+		.total_len	= len,
-+		.flags		= flags,
-+		.pos		= *ppos,
-+		.u.file		= out,
-+		.opos		= opos,
-+	};
-+	long ret;
-+
-+	if (!(flags & (SPLICE_F_DIRECT | SPLICE_F_READ_TO_READ)))
-+		return -EINVAL;
-+
-+	if (unlikely(!(out->f_mode & FMODE_READ)))
-+		return -EBADF;
-+
-+	/*
-+	 * So far we just support F_READ_TO_READ if it is one plain
-+	 * file which ->splice_read points to generic_file_splice_read
-+	 */
-+	if (out->f_op->splice_read != generic_file_splice_read)
-+		return -EINVAL;
-+
-+	ret = rw_verify_area(READ, out, opos, len);
-+	if (unlikely(ret < 0))
-+		return ret;
-+
-+	ret = splice_direct_to_actor(in, &sd,
-+			direct_splice_read_consumer_actor);
-+	if (ret > 0)
-+		*ppos = sd.pos;
-+
++	if (done) {
++		*ppos += done;
++		ret = done;
++	}
++exit:
 +	return ret;
 +}
-+EXPORT_SYMBOL(do_splice_direct_read_consumer);
 +
- static int wait_for_space(struct pipe_inode_info *pipe, unsigned flags)
- {
- 	for (;;) {
-@@ -1023,7 +1155,7 @@ long splice_file_to_pipe(struct file *in,
- 	pipe_lock(opipe);
- 	ret = wait_for_space(opipe, flags);
- 	if (!ret)
--		ret = do_splice_to(in, offset, opipe, len, flags);
-+		ret = do_splice_to(in, offset, opipe, len, flags, false);
- 	pipe_unlock(opipe);
- 	if (ret > 0)
- 		wakeup_pipe_readers(opipe);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e654435f1651..e5f84902f149 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3169,6 +3169,8 @@ extern ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe,
- 		struct file *out, loff_t *, size_t len, unsigned int flags);
- extern long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
- 		loff_t *opos, size_t len, unsigned int flags);
-+extern long do_splice_direct_read_consumer(struct file *in, loff_t *ppos,
-+		struct file *out, loff_t *opos, size_t len, unsigned int flags);
+ static const struct file_operations ublk_ch_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = ublk_ch_open,
+ 	.release = ublk_ch_release,
+-	.llseek = no_llseek,
++	.llseek = noop_llseek,
+ 	.uring_cmd = ublk_ch_uring_cmd,
+ 	.mmap = ublk_ch_mmap,
++	.splice_read = ublk_splice_read,
+ };
  
+ static void ublk_deinit_queue(struct ublk_device *ub, int q_id)
+diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
+index 8f88e3a29998..93d9ca7650ce 100644
+--- a/include/uapi/linux/ublk_cmd.h
++++ b/include/uapi/linux/ublk_cmd.h
+@@ -52,7 +52,36 @@
+ #define UBLKSRV_IO_BUF_OFFSET	0x80000000
  
- extern void
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 6cb65df3e3ba..90c6ff8c82ef 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -72,6 +72,15 @@ struct pipe_inode_info {
- 	unsigned int r_counter;
- 	unsigned int w_counter;
- 	bool poll_usage;
+ /* tag bit is 12bit, so at most 4096 IOs for each queue */
+-#define UBLK_MAX_QUEUE_DEPTH	4096
++#define UBLK_TAG_BITS		12
++#define UBLK_MAX_QUEUE_DEPTH	(1U << UBLK_TAG_BITS)
 +
-+	/*
-+	 * If SPLICE_F_READ_TO_READ is applied, in->fops->splice_read()
-+	 * should set this flag, so that out->fops->splice_read() can
-+	 * observe this flag, then consume buffers in the pipe.
-+	 *
-+	 * Used by do_splice_direct_read_consumer() only.
-+	 */
-+	bool consumed_by_read;
- 	struct page *tmp_page;
- 	struct fasync_struct *fasync_readers;
- 	struct fasync_struct *fasync_writers;
-diff --git a/include/linux/splice.h b/include/linux/splice.h
-index 9121624ad198..f48044e5e173 100644
---- a/include/linux/splice.h
-+++ b/include/linux/splice.h
-@@ -26,6 +26,17 @@
- /* used for io_uring interface only */
- #define SPLICE_F_DIRECT	(0x10)	/* direct splice and user needn't provide pipe */
- 
-+/*
-+ * The usual splice is file-to-pipe and pipe-to-file, and this flag means the
-+ * splice is file-to-pipe and file-to-pipe. Looks this way is stupid, but
-+ * please understand from producer & consumer viewpoint, the 1st file-to-pipe
-+ * is producer, and the 2nd file-to-pipe is consumer, so here the 2nd
-+ * ->slice_read just consumes buffers stored in the pipe.
-+ *
-+ *  And this flag is only valid in case of SPLICE_F_DIRECT.
-+ */
-+#define SPLICE_F_READ_TO_READ	(0x20)
++/* used in ->splice_read for supporting zero-copy */
++#define UBLK_BUFS_SIZE_BITS	42
++#define UBLK_BUFS_SIZE_MASK    ((1ULL << UBLK_BUFS_SIZE_BITS) - 1)
++#define UBLK_BUF_SIZE_BITS     (UBLK_BUFS_SIZE_BITS - UBLK_TAG_BITS)
++#define UBLK_BUF_MAX_SIZE      (1ULL << UBLK_BUF_SIZE_BITS)
 +
++static inline __u16 ublk_pos_to_hwq(__u64 pos)
++{
++	return pos >> UBLK_BUFS_SIZE_BITS;
++}
++
++static inline __u32 ublk_pos_to_buf_offset(__u64 pos)
++{
++	return (pos & UBLK_BUFS_SIZE_MASK) & (UBLK_BUF_MAX_SIZE - 1);
++}
++
++static inline __u16 ublk_pos_to_tag(__u64 pos)
++{
++	return (pos & UBLK_BUFS_SIZE_MASK) >> UBLK_BUF_SIZE_BITS;
++}
++
++/* offset of single buffer, which has to be < UBLK_BUX_MAX_SIZE */
++static inline __u64 ublk_pos(__u16 q_id, __u16 tag, __u32 offset)
++{
++	return (((__u64)q_id) << UBLK_BUFS_SIZE_BITS) |
++		((((__u64)tag) << UBLK_BUF_SIZE_BITS) + offset);
++}
+ 
  /*
-  * Passed to the actors
-  */
-diff --git a/io_uring/splice.c b/io_uring/splice.c
-index c11ea4cd1c7e..df66d89f4f17 100644
---- a/io_uring/splice.c
-+++ b/io_uring/splice.c
-@@ -28,7 +28,7 @@ static int __io_splice_prep(struct io_kiocb *req,
- {
- 	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
- 	unsigned int valid_flags = SPLICE_F_FD_IN_FIXED | SPLICE_F_ALL |
--		SPLICE_F_DIRECT;
-+		SPLICE_F_DIRECT | SPLICE_F_READ_TO_READ;
+  * zero copy requires 4k block size, and can remap ublk driver's io
+@@ -79,6 +108,9 @@
  
- 	sp->len = READ_ONCE(sqe->len);
- 	sp->flags = READ_ONCE(sqe->splice_flags);
-@@ -111,12 +111,15 @@ int io_splice(struct io_kiocb *req, unsigned int issue_flags)
- 	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+ #define UBLK_F_USER_RECOVERY_REISSUE	(1UL << 4)
  
- 	if (sp->len) {
--		if (flags & SPLICE_F_DIRECT)
--			ret = do_splice_direct(in, poff_in, out, poff_out,
--					sp->len, flags);
--		else
-+		if (!(flags & (SPLICE_F_DIRECT | SPLICE_F_READ_TO_READ)))
- 			ret = do_splice(in, poff_in, out, poff_out, sp->len,
- 					flags);
-+		else if (flags & SPLICE_F_READ_TO_READ)
-+			ret = do_splice_direct_read_consumer(in, poff_in, out,
-+					poff_out, sp->len, flags);
-+		else
-+			ret = do_splice_direct(in, poff_in, out, poff_out,
-+					sp->len, flags);
- 	}
- 
- 	if (!(sp->flags & SPLICE_F_FD_IN_FIXED))
++/* slice based write zero copy */
++#define UBLK_F_SPLICE_ZC	(1UL << 5)
++
+ /* device state */
+ #define UBLK_S_DEV_DEAD	0
+ #define UBLK_S_DEV_LIVE	1
 -- 
 2.31.1
 

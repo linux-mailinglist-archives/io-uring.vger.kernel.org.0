@@ -2,38 +2,39 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB64618B16
-	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 23:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DADB618B23
+	for <lists+io-uring@lfdr.de>; Thu,  3 Nov 2022 23:09:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbiKCWE1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 3 Nov 2022 18:04:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        id S231272AbiKCWJY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 3 Nov 2022 18:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbiKCWE0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Nov 2022 18:04:26 -0400
+        with ESMTP id S229501AbiKCWJX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 3 Nov 2022 18:09:23 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B03BE3C;
-        Thu,  3 Nov 2022 15:04:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E039FC28;
+        Thu,  3 Nov 2022 15:09:22 -0700 (PDT)
 Received: from [10.7.7.5] (unknown [182.253.183.90])
-        by gnuweeb.org (Postfix) with ESMTPSA id 82B3881441;
-        Thu,  3 Nov 2022 22:04:23 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 55F8480632;
+        Thu,  3 Nov 2022 22:09:20 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1667513065;
-        bh=VfzmpAbAcBU3OdTyJA75CAnErDaaFDHFlzkEa8sfAq8=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=NGHbK6DzFoS/08cefO0sLUXVL0DDBWO/HlQ6X00Rn0tBl5/pcM187Gv6WB5NI8DZ4
-         nSF4eZmyOmQP1RDRGOA7wm2FmuXQYmql7SBB18Lk96GBHb+m1/nyenY0Cobcp6P6GP
-         Znq1jEOCE1sZKfWRECrhwlST81co5ZUaWgIW9QtCAB6UnQ8N/K/Ew+SMFfP6j/bQWk
-         pu2Cg+3Gbbr17IKiCF95kW7AaXKNh73oYqlKZGkpTPr7r0CyEH7JTf+Lo+QbHOVd8M
-         E9Tr1ovd4429VqYPBcvutwEHY8ma3kBcNnizyRffT9OfQ4tcOxAtRti3XjXGhf7duA
-         2SR1q5BxukFeA==
-Message-ID: <d9761f0b-0a31-1ec9-66b8-371cb22250f9@gnuweeb.org>
-Date:   Fri, 4 Nov 2022 05:04:16 +0700
+        s=default; t=1667513362;
+        bh=wNOq3MiFcUj14NJGygtN4kFjlbY0Nz1cscHKRtA0gZQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=EJ85xoEw44fR/hYgLsIdIDQ0dc41/VkTJVjk+Krx+gfnD6OAfoUDpR8y+7wA9QqGm
+         JtRAQh2wvBaytov8zB0l22kXTySTSbnH2B1BqQ9Ik9ELBZtGKJUzEC+l+vyEE+n2pm
+         1Z/PGswtgf5Ipb4pSClOQjDdpFJZtAcSI0HXqcnTuM56mesZCMVSGf760hAsjnDViJ
+         yFn3i9bgNqUngfC2Y74WXzQqYZU7Y3CsATj1ck8iCaZENrye9zhLVKE4siXdYCMS2d
+         pRG9JpxEpDSEOKWxZpRSV/dRwrWQJqhBFP5le0pt037FSyHmERZdFUNvRMvzIyQVbA
+         yQ1BWjo380SZw==
+Message-ID: <c8387cab-c969-79cb-7e7f-3c8f0b4e7a9c@gnuweeb.org>
+Date:   Fri, 4 Nov 2022 05:09:17 +0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Content-Language: en-US
+Subject: Re: [RFC PATCH v1 1/3] liburing: add api to set napi busy poll
+ timeout
 To:     Stefan Roesch <shr@devkernel.io>,
         Facebook Kernel Team <kernel-team@fb.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -42,10 +43,10 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         netdev Mailing List <netdev@vger.kernel.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>
 References: <20221103204017.670757-1-shr@devkernel.io>
- <20221103204017.670757-4-shr@devkernel.io>
+ <20221103204017.670757-2-shr@devkernel.io>
+Content-Language: en-US
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [RFC PATCH v1 3/3] liburing: add test programs for napi busy poll
-In-Reply-To: <20221103204017.670757-4-shr@devkernel.io>
+In-Reply-To: <20221103204017.670757-2-shr@devkernel.io>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -58,31 +59,17 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 11/4/22 3:40 AM, Stefan Roesch wrote:
-> +struct option longopts[] =
-> +{
-> +        {"address"  , 1, NULL, 'a'},
-> +        {"busy"     , 0, NULL, 'b'},
-> +        {"help"     , 0, NULL, 'h'},
-> +        {"num_pings", 1, NULL, 'n'},
-> +        {"port"     , 1, NULL, 'p'},
-> +        {"sqpoll"   , 0, NULL, 's'},
-> +	{"timeout"  , 1, NULL, 't'},
+> This adds the two functions to register and unregister the napi busy
+> poll timeout:
+> - io_uring_register_busy_poll_timeout
+> - io_uring_unregister_busy_poll_timeout
+> 
+> Signed-off-by: Stefan Roesch <shr@devkernel.io>
 
-Inconsistent indentation.
+Also, please update the CHANGELOG file if you add a new feature.
+Create a new entry for liburing-2.4 release.
 
-> +	if (strlen(opt.addr) == 0) {
-> +		fprintf(stderr, "address option is mandatory\n");
-> +		printUsage(argv[0]);
-> +		exit(-1);
-> +	}
-Don't use integer literal like 0 or -1 as the exit code in tests, use the
-exit code protocol:
-
-   T_EXIT_PASS
-   T_EXIT_FAIL
-   T_EXIT_SKIP
-
-They are defined in test/helpers.h.
+Ref: https://github.com/axboe/liburing/discussions/696#discussioncomment-3962770
 
 -- 
 Ammar Faizi

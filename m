@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A030619514
-	for <lists+io-uring@lfdr.de>; Fri,  4 Nov 2022 12:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0611619519
+	for <lists+io-uring@lfdr.de>; Fri,  4 Nov 2022 12:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231873AbiKDLDP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 4 Nov 2022 07:03:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
+        id S230157AbiKDLDT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 4 Nov 2022 07:03:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231906AbiKDLCd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Nov 2022 07:02:33 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9222C124
-        for <io-uring@vger.kernel.org>; Fri,  4 Nov 2022 04:02:31 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id a67so7016880edf.12
-        for <io-uring@vger.kernel.org>; Fri, 04 Nov 2022 04:02:31 -0700 (PDT)
+        with ESMTP id S229900AbiKDLCi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 4 Nov 2022 07:02:38 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76A562CDC1
+        for <io-uring@vger.kernel.org>; Fri,  4 Nov 2022 04:02:36 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id k2so12342182ejr.2
+        for <io-uring@vger.kernel.org>; Fri, 04 Nov 2022 04:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iTMFnPh1n90Hv/m+Li9XRv95Ppzz2u2qp0OsR4mKGF0=;
-        b=jIQcxt0sQTe2ZHqDQT4pUMQ0X7a3QaTCDhtMHrFsrFyY/xJ3kIp453/TVtj8PBuves
-         D9LrFhf+eGIqbc+6DjgXrRqyUMdLMeR0YCH2TZXKQ6hvITkn831sLx+nPKcozPiO5sDK
-         c7Rah8P16FMJK36VBZC/VDLoyluxghtx5dHE4BXqbDDeKhM6lKLlzWvcbeFjj/ilvH9c
-         BTdb6FpJI+Loz5KzXs4HoogDeWoHJIMU6hy32Rj40tIZCcvkln4p0gwxzHg0Ipf0HRrl
-         2J5iaCs/1zY1fv2fhSF5KcPaTZuOPYyoR4iOl5TaUwjAXse3Vs2A+NuS31rdk4b18BJF
-         v4og==
+        bh=HrKFQ51HZlKuVt9GY4ZNgwEwhz5/8UDovxxA86AN5mc=;
+        b=bU6JVE+EJbIOlsetxvV/1/i53fyeXnSn2uaE7yigQBdUE1g3bfxTY32cVom/xAL2Uq
+         kfawbUBgoz3sFLBa150ccBZEy2sSXmXPW7t6gsQKLd3rEiTtwAt+wdLm0Ii1nfVxW5S4
+         YfJdTgakQTESKzaCl9McmEVGrqQuowXHO6okNdsVtLTlLVJV9XdyqbyzmAD7z11Mfu+N
+         EhG98OpHmn4+dEMzsaHnKeQAMGvXkvkFZN/r/DEwVZ5blJ36L7FqCpu7N6jjUNYVO4/U
+         3/nYbK4crR2qjtqm1RjNLXUFLboQA5llxA01iHddkSCGzKnyhhYIsef6oo4THbSt4gLE
+         SLNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iTMFnPh1n90Hv/m+Li9XRv95Ppzz2u2qp0OsR4mKGF0=;
-        b=Fa4zcP0yXGqrFXC3xRLKW94vQaodLWOCOreejl1ZLlPKdfEnb5i2Qoa6GmrXE0EbjF
-         EK2oxOve8IbiDkzR7KYepGEkWqSzgmjbZf00x8Pjyk0mfRKhpgUUyvFMubnoToK+jUXE
-         M41AZ3Ca7gRiq1cKQ2dtqFlxiE8AGSoU62QSDE6b6wyztcwtfe7r8d7DvzXe56r3Kp7p
-         F6xMMIYlsnw4YpQ/MLZozK8it3pgcPmt2DMJWxyMmUIewwR0duwqYjrZvlArpvjRQawo
-         1OldZWMngLkROusQHzT6IAj4eWq53fr08O3U9YpuOFURKwa7BNq2JYpKASlU7crahnFQ
-         qT4Q==
-X-Gm-Message-State: ACrzQf2yHSHDsr4QyJND9PR4dvIMC2CTAkcMSazanZ703eEXGLahyr8L
-        Imib946rO4jpJTSf+dpUhhmDV5/fj5s=
-X-Google-Smtp-Source: AMsMyM6UjdQcswrjB8AYRRgEv+NGQxHB4xscMhVDEeX8fgV41zuX3pZx2Y6afxPUhVBdAS0qnUiutw==
-X-Received: by 2002:a05:6402:1771:b0:463:c94d:c7d9 with SMTP id da17-20020a056402177100b00463c94dc7d9mr16974998edb.135.1667559750011;
+        bh=HrKFQ51HZlKuVt9GY4ZNgwEwhz5/8UDovxxA86AN5mc=;
+        b=UwJhU4gl2MBIU9eIzhLo+b2g0mGTBNM5z9LnEE4BALCtyvLxD8CwcKSawbdNKfHaNx
+         YnrGZyvI3lhbshV8DtEqY6R/vFoeeaOtduhtEpjIYIhvDjSZUV22blQ5ozh9hyOOwxOp
+         zEsfBRPIUWTFYXUTZuGo+dnMn4S35pQB5c9iKMfADFZuVwFJnens2db++jLE0HNvb0Dl
+         kekzOy+F39M/yZxaTtmOzLBqt8jCa/c4eU89BM1zORGVkhn0BXugQI4tu3wV4kyPeRe/
+         X2BxF0/q1LtwViuDX/tYlhj7QmHD8Ing1+0ukH7Lbh2uELgMmw8rRD8+NwRHIqqgd/62
+         j59w==
+X-Gm-Message-State: ACrzQf2pKyU5YaF9H5Lpx+sNZ2ewCHNypcPyzbPeOEHUZx2p0gSWQaHV
+        ZpwXNlB745+LFhamEZJLthzDBKuOxuQ=
+X-Google-Smtp-Source: AMsMyM5qUXix6wJGqGU8twKx6WZY+Ne/sPotEsNTyUizqy3mk5EaypB+bWssg8enjnEn/35g+XnM1g==
+X-Received: by 2002:a17:907:25c5:b0:783:f5df:900e with SMTP id ae5-20020a17090725c500b00783f5df900emr31926173ejc.491.1667559750918;
         Fri, 04 Nov 2022 04:02:30 -0700 (PDT)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:4173])
-        by smtp.gmail.com with ESMTPSA id u25-20020aa7db99000000b00458947539desm1757768edt.78.2022.11.04.04.02.28
+        by smtp.gmail.com with ESMTPSA id u25-20020aa7db99000000b00458947539desm1757768edt.78.2022.11.04.04.02.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 04:02:29 -0700 (PDT)
+        Fri, 04 Nov 2022 04:02:30 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 2/7] io_uring/net: remove extra notif rsrc setup
-Date:   Fri,  4 Nov 2022 10:59:41 +0000
-Message-Id: <dbe4875ac33e180b9799d8537a5e27935e82aac4.1667557923.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 3/7] io_uring/net: preset notif tw handler
+Date:   Fri,  4 Nov 2022 10:59:42 +0000
+Message-Id: <7acdbea5e20eadd844513320cd454af14ba50f64.1667557923.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <cover.1667557923.git.asml.silence@gmail.com>
 References: <cover.1667557923.git.asml.silence@gmail.com>
@@ -70,26 +70,49 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_send_zc_prep() sets up notification's rsrc_node when needed, don't
-unconditionally install it on notif alloc.
+We're going to have multiple notification tw functions. In preparation
+for future changes default the tw callback in advance so later we can
+replace it with other versions.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/notif.c | 1 -
- 1 file changed, 1 deletion(-)
+ io_uring/notif.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/notif.c b/io_uring/notif.c
-index 4bfef10161fa..59dafc42b8e0 100644
+index 59dafc42b8e0..6afb58b94297 100644
 --- a/io_uring/notif.c
 +++ b/io_uring/notif.c
-@@ -60,7 +60,6 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
+@@ -39,10 +39,8 @@ static void io_uring_tx_zerocopy_callback(struct sk_buff *skb,
+ 			WRITE_ONCE(nd->zc_copied, true);
+ 	}
+ 
+-	if (refcount_dec_and_test(&uarg->refcnt)) {
+-		notif->io_task_work.func = __io_notif_complete_tw;
++	if (refcount_dec_and_test(&uarg->refcnt))
+ 		io_req_task_work_add(notif);
+-	}
+ }
+ 
+ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
+@@ -60,6 +58,7 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
  	notif->task = current;
  	io_get_task_refs(1);
  	notif->rsrc_node = NULL;
--	io_req_set_rsrc_node(notif, ctx, 0);
++	notif->io_task_work.func = __io_notif_complete_tw;
  
  	nd = io_notif_to_data(notif);
  	nd->account_pages = 0;
+@@ -76,8 +75,6 @@ void io_notif_flush(struct io_kiocb *notif)
+ 	struct io_notif_data *nd = io_notif_to_data(notif);
+ 
+ 	/* drop slot's master ref */
+-	if (refcount_dec_and_test(&nd->uarg.refcnt)) {
+-		notif->io_task_work.func = __io_notif_complete_tw;
++	if (refcount_dec_and_test(&nd->uarg.refcnt))
+ 		io_req_task_work_add(notif);
+-	}
+ }
 -- 
 2.38.0
 

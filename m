@@ -2,118 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B08D61FC63
-	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 18:58:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E18561FC68
+	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 18:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232617AbiKGR6y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 7 Nov 2022 12:58:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40260 "EHLO
+        id S232907AbiKGR7y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Nov 2022 12:59:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232667AbiKGR62 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 12:58:28 -0500
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBD924BC1;
-        Mon,  7 Nov 2022 09:55:39 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 748B02B06720;
-        Mon,  7 Nov 2022 12:55:36 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 07 Nov 2022 12:55:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
-        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1667843736; x=1667847336; bh=t6apQupa5E
-        xKvVKMnSCvI2cCQitFW+bB9izCYo5tbVw=; b=I8h0fN/gwwqU6lMYJj3bsLxl3p
-        l6iORqWSoUrIGOKqpSDP9q9nDISCp8Rt6XmzXYRhbUC3CLbqvPWakXi+cngNrAsh
-        e1vNnvBLpP4j2HKOrAJdAvX1rdNYGqSQC3hUl3DINJ1E84OjpgXCX6cppyeH/VTI
-        xTa+3wybk49fM+hEnd6+4JW4QmEtAz4glviIox7GOX7iuBNxjrExRy+B3g4xHDq+
-        PMfzyrSToHeMMSwwDzGvAruwR05TUxBq8v4Bxr2VEd25+3+ewOsXA+uq/Os9LR1S
-        hmxQ6r9P+Uu0T5PoixQ6DGil+0Ud5xrVzacsDY7o/8txJYlvQDm/1j4Y6qUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1667843736; x=1667847336; bh=t6apQupa5ExKvVKMnSCvI2cCQitF
-        W+bB9izCYo5tbVw=; b=hDZHFXgt/ovNv0xiFt7SSNrETEcaoMnbKQoIDMO0+cQr
-        4hu3WElp9gCo9OxUxhgieZ3MgeUQiDSM9UpFMqqHEDvRpKQw/FPZ3cjILHsOAXB7
-        QVZIWzyVNMbTODf701kDyrFnSZ5L/iCEVg3/gucDvgdVJeP7inNoe3epUM5rX1Km
-        hYRuMKEVxN35i/2CrJGRB5RqGc2GM4MmESiJdmxPZT15PonWW64vnOeRRPgDib9a
-        VEPA5ZsdOxGCOtyOdsYXoMKp8ZcIJ5C2xzYrKtrtr+OovOtY/rVQUnnLHQDL74aZ
-        8koBMyY68thCqsLYK49mCeNLJIedz12Hg96OYWrRnA==
-X-ME-Sender: <xms:l0ZpY3UmTf8OrWog6cHzmjRXWKZkadu_t9nOP0uAhBOeCQxDNf1wIQ>
-    <xme:l0ZpY_mZODY6QTs9sWupgwvHH7h6mvrJXHSL9V4TVz1xYT1h74I_TqeceDuusn5Ux
-    iqbnU1BbApiJTgPQR4>
-X-ME-Received: <xmr:l0ZpYzadW8eAlps5Bwbyobq2rUjmMpZx_B-ID7shjIiCXmlHC1GKMvDgRVFQvPwRfeE6IqNdL82QXe5ZMutaYwlFzkFlhzRCiippdhWT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrvdekgddutdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghf
-    rghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrth
-    htvghrnhepveelgffghfehudeitdehjeevhedthfetvdfhledutedvgeeikeeggefgudeg
-    uedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
-    hhrhesuggvvhhkvghrnhgvlhdrihho
-X-ME-Proxy: <xmx:l0ZpYyXg6zeztZA9ghKYBDpD3d8wCHcglDzMN9BxMFIpj7HYwRFf9w>
-    <xmx:l0ZpYxlyL6-hwetHgfAboGSDX6cqOhAPcahAS9ywj010J2Nov84B2Q>
-    <xmx:l0ZpY_emqJU-EWzy2eKngh7X8WNbKlPI1EzzAF5wyuZtdGQKWZ66xA>
-    <xmx:l0ZpY0to83OZA-vw3S3PyTYnXEjmi914ezW49_OktLIwE84L0RrLsABg-7E>
-Feedback-ID: i84614614:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Nov 2022 12:55:34 -0500 (EST)
-References: <20221103204017.670757-1-shr@devkernel.io>
- <20221103204017.670757-2-shr@devkernel.io>
- <478e464b-0dbf-82fb-ce86-8a796019584b@gnuweeb.org>
-User-agent: mu4e 1.6.11; emacs 28.2.50
-From:   Stefan Roesch <shr@devkernel.io>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Facebook Kernel Team <kernel-team@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Olivier Langlois <olivier@trillion01.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netdev Mailing List <netdev@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-Subject: Re: [RFC PATCH v1 1/3] liburing: add api to set napi busy poll timeout
-Date:   Mon, 07 Nov 2022 09:54:48 -0800
-In-reply-to: <478e464b-0dbf-82fb-ce86-8a796019584b@gnuweeb.org>
-Message-ID: <qvqwzgd2abu8.fsf@dev0134.prn3.facebook.com>
+        with ESMTP id S232279AbiKGR7i (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 12:59:38 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC9B2A40C
+        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 09:56:19 -0800 (PST)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A7Glixl007970
+        for <io-uring@vger.kernel.org>; Mon, 7 Nov 2022 09:56:19 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=rKbQINmKWukh6tJOjHplZmnS+uoDK4d+/tWup2ptUOI=;
+ b=QERIf5uzyf0uePa9WfFL07fW4ypnjP0s8jekVkXvgWhdyUTaCLWc5I4lhjWPZLuSplwZ
+ nWdTiZSHbj3Sf//JZxCVNd9YVpXbgHwZKbHZQbgCoc6I1C7+u1vN1qJJ3fnQ54Zw4rND
+ hymXybvrcraJj+4VKnF883NY10Ac75SZLES8e/HPaMz+pMU9XtvF/e/g7G3rUVLAwkHa
+ 7rUH5tbCfkTxYIrYtgj3PJqCa0yRRsI1NoPNpRCMKcZrfjHJHeogSx7QbLDBYvB8zaW3
+ bvoP2bQvW1FJ9YEf4YD4xZsu5+kNz7V82GVH1READx99gnYhuwTU/1iWUFIwDRnMTXry YA== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3knmxss1mw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 07 Nov 2022 09:56:19 -0800
+Received: from twshared27579.05.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 7 Nov 2022 09:56:18 -0800
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id 5C25FADF1C96; Mon,  7 Nov 2022 09:56:11 -0800 (PST)
+From:   Keith Busch <kbusch@meta.com>
+To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
+        <io-uring@vger.kernel.org>
+CC:     <asml.silence@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 0/4] io_uring: use ITER_UBUF
+Date:   Mon, 7 Nov 2022 09:56:06 -0800
+Message-ID: <20221107175610.349807-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
 Content-Type: text/plain
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,URIBL_BLACK autolearn=no autolearn_force=no version=3.4.6
+X-Proofpoint-ORIG-GUID: 2f06ZlmvkR19rYQhvtRUrTUj6nr31nX-
+X-Proofpoint-GUID: 2f06ZlmvkR19rYQhvtRUrTUj6nr31nX-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-07_08,2022-11-07_02,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+From: Keith Busch <kbusch@kernel.org>
 
-Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
+ITER_UBUF is a more efficient representation when using single vector
+buffers, providing small optimizations in the fast path. Most of this
+series came from Jens; I just ported them forward to the current release
+and tested against various filesystems and devices.
 
-> On 11/4/22 3:40 AM, Stefan Roesch wrote:
->> This adds the two functions to register and unregister the napi busy
->> poll timeout:
->> - io_uring_register_busy_poll_timeout
->> - io_uring_unregister_busy_poll_timeout
->> Signed-off-by: Stefan Roesch <shr@devkernel.io>
->> ---
->>   src/include/liburing.h          |  3 +++
->>   src/include/liburing/io_uring.h |  4 ++++
->>   src/register.c                  | 12 ++++++++++++
->>   3 files changed, 19 insertions(+)
->> diff --git a/src/include/liburing.h b/src/include/liburing.h
->> index 12a703f..ef2510e 100644
->> --- a/src/include/liburing.h
->> +++ b/src/include/liburing.h
->> @@ -235,6 +235,9 @@ int io_uring_register_sync_cancel(struct io_uring *ring,
->>   int io_uring_register_file_alloc_range(struct io_uring *ring,
->>   					unsigned off, unsigned len);
->>   +int io_uring_register_busy_poll_timeout(struct io_uring *ring, unsigned int
->> to);
->> +int io_uring_unregister_busy_poll_timeout(struct io_uring *ring);
->> +
->
-> If you export a non inline function, you should also update the liburing.map
-> file.
+Usage for this new iter type has been extensively exercised via
+read/write syscall interface for some time now, so I don't expect
+surprises from supporting this with io_uring. There are, however, a
+couple difference between the two interfaces:
 
-In version 2 of the patch, the file liburing.map is updated.
+  1. io_uring will always prefer using the _iter versions of read/write
+     callbacks if file_operations implement both, where as the generic
+     syscalls will use .read/.write (if implemented) for non-vectored IO.
+=20
+  2. io_uring will use the ITER_UBUF representation for single vector
+     readv/writev, but the generic syscalls currently uses ITER_IOVEC for
+     these.
+
+That should mean, then, the only potential areas for problem are for
+file_operations that implement both .read/.read_iter or
+.write/.write_iter. Fortunately there are very few that do that, and I
+found only two of them that won't readily work: qib_file_ops, and
+snd_pcm_f_ops. The former is already broken with io_uring before this
+series, and the latter's vectored read/write only works with ITER_IOVEC,
+so that will break, but I don't think anyone is using io_uring to talk
+to a sound card driver.
+
+Jens Axboe (3):
+  iov: add import_ubuf()
+  io_uring: switch network send/recv to ITER_UBUF
+  io_uring: use ubuf for single range imports for read/write
+
+Keith Busch (1):
+  iov_iter: move iter_ubuf check inside restore WARN
+
+ include/linux/uio.h |  1 +
+ io_uring/net.c      | 13 ++++---------
+ io_uring/rw.c       |  9 ++++++---
+ lib/iov_iter.c      | 15 +++++++++++++--
+ 4 files changed, 24 insertions(+), 14 deletions(-)
+
+--=20
+2.30.2
+

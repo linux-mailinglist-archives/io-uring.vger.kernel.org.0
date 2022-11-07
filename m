@@ -2,97 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D7661FC6E
-	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 19:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED6B61FC7D
+	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 19:02:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232083AbiKGSAH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 7 Nov 2022 13:00:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40010 "EHLO
+        id S231580AbiKGSC1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Nov 2022 13:02:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232376AbiKGR7p (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 12:59:45 -0500
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B5B2A962
-        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 09:56:22 -0800 (PST)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A7Glixq007970
-        for <io-uring@vger.kernel.org>; Mon, 7 Nov 2022 09:56:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=IrY4FfXRGP3pHaS7CSwjdJr9fKO0nPIkNCwM9wSvb68=;
- b=mWEUF2nkXD3j+I+tgK86OdnSPMhwn1i9moNNp1lJzMS4nR2EaWLCnns6NiNVX4NGKeRj
- CIOxnufDsrElrXJeksU/asCbU+JUVxHmdM8otUvvYKZF2FnW+96rZ2sfkEHawKheQ4iD
- BOH5UocvIa6ojjG8kayoefJwp+yxMr1oWopl1wttJ0b0EFSq8BBBQb/m4FlMeMjrBvLc
- GUgnCg2mC0B1lUEbne08RiZEG6/nYkVwTCevTc6PI5SHx7W5TDdNJ/e8PQx4i5e9Jf0h
- jm5IeiRH4IGDpYIwWLDCA1KMIpcsIG3t30LGpq/lKuCh3ULlqyTGuP07AR9ESfKohzwA dw== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3knmxss1mw-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 07 Nov 2022 09:56:21 -0800
-Received: from twshared27579.05.ash9.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 7 Nov 2022 09:56:19 -0800
-Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id B1BA2ADF1C9E; Mon,  7 Nov 2022 09:56:11 -0800 (PST)
-From:   Keith Busch <kbusch@meta.com>
-To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
-        <io-uring@vger.kernel.org>
-CC:     <asml.silence@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 4/4] iov_iter: move iter_ubuf check inside restore WARN
-Date:   Mon, 7 Nov 2022 09:56:10 -0800
-Message-ID: <20221107175610.349807-5-kbusch@meta.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221107175610.349807-1-kbusch@meta.com>
-References: <20221107175610.349807-1-kbusch@meta.com>
+        with ESMTP id S233090AbiKGSBz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 13:01:55 -0500
+Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99892275F9;
+        Mon,  7 Nov 2022 09:57:52 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id 914BC2B06725;
+        Mon,  7 Nov 2022 12:57:51 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 07 Nov 2022 12:57:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1667843871; x=1667847471; bh=XO0EOt7FUL
+        YlHx772XzPhlZxOfiZ7lFQETl4I1WXvcg=; b=klF4V71LCsFLTLGSfQCO2GhC0w
+        kQIMbHuxgJZeNAK7xyl/7YDpNoneP3xqKBLJYnO66jzScXzMyoxUy/I3l1ACUiiK
+        vNfKYI++fpgUfsXLRBKxo2JCXSL3tiuefbSfpODZjyfQLNnNJyKqQ8GDnyJQj9DG
+        Hj+scXzFwwYGsuDRSWezLl7DK5WXv3pldgU3QQt6JWC6pBOLTMrUhv72RMnNQmT3
+        RndWTLvl5Xd8Ka8qfgesEQC0h66lim69hRV4R/dm58JWdpvWO2ZvB7+CcCAg/jZc
+        zOb6FjgjMK33sGn/E+barsv0qb5BJQ9q1+HN9LHHLY3G/KgN9QDDg90wBXMw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1667843871; x=1667847471; bh=XO0EOt7FULYlHx772XzPhlZxOfiZ
+        7lFQETl4I1WXvcg=; b=pGRANgAV0DcJOf7vlYTvhFDIlF6AOayveuy+ha/jUeWM
+        IWZ96M2iqMaQ5I9AY0mtLQCr4u0GD6ybY2zWzNAAzWj8A7YMf/UQVfBXcRqNqqLn
+        /JPf3mFnuJsXBXhtZXabDxo7CTCahQLodbrMxpYtK58QaP8M9k/XiMAHH5lrQVXB
+        g9RNCXAXmP3QuDaENlTHfji4d4JVBPVlQlrK0zG7AM0yKBBiKQ5K/eLS0R4AGpbM
+        vKtxEyPKzkgejWlQjPpmSR+Xk/8YUPLK1cRTuk/wodvByRMZIpPM6LXFZawD3hqx
+        YRDMdUHmOG3qsiJeeOWEwBaJQ5PFQgOF//+KJigEoA==
+X-ME-Sender: <xms:HkdpY2uGDFZsnT10eW6fJjnvf5lZ6bQ0_BwnNqxF7m5nE1zc77XxiA>
+    <xme:HkdpY7d5s-AH2DcudSREEj3ZK_991OEZ0ysHgI3NevX2swGIHi3pZbPuCuu537Llm
+    sHYNMO5JuG-44_QxWw>
+X-ME-Received: <xmr:HkdpYxyV2cl7rblH5YJtl5MbZAO9fW_8C-xWWD_JK7R6MrUgVPP6v0QDE8lIkprsX33C1XQlTyZYDk7y0mS9phDhyq0VgvE6q0jiFp-tKw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrvdekgddutdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghf
+    rghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrth
+    htvghrnhepveelgffghfehudeitdehjeevhedthfetvdfhledutedvgeeikeeggefgudeg
+    uedtnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    hhrhesuggvvhhkvghrnhgvlhdrihho
+X-ME-Proxy: <xmx:HkdpYxMRT3AtP3VP-WxQi50g1hb1Gxo4UBmALBgWPLyZzPzX8Rf7UA>
+    <xmx:HkdpY28byU7g2QuwZRXy9U8FRFj07Njhl5lDKYSefVqIuX83OwpnrA>
+    <xmx:HkdpY5UEgUdW1KcAZRz2h739EB5voLcNlHtWOAM25ogEj8Atp20REA>
+    <xmx:H0dpY9klwZq-OxDzs86W4KdnZPxE5MtRuvB3VJFFQpoHa2qBnFoLHc-FtP4>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Nov 2022 12:57:50 -0500 (EST)
+References: <20221103204017.670757-1-shr@devkernel.io>
+ <20221103204017.670757-4-shr@devkernel.io>
+ <d9761f0b-0a31-1ec9-66b8-371cb22250f9@gnuweeb.org>
+User-agent: mu4e 1.6.11; emacs 28.2.50
+From:   Stefan Roesch <shr@devkernel.io>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Facebook Kernel Team <kernel-team@fb.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Olivier Langlois <olivier@trillion01.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netdev Mailing List <netdev@vger.kernel.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: Re: [RFC PATCH v1 3/3] liburing: add test programs for napi busy poll
+Date:   Mon, 07 Nov 2022 09:57:04 -0800
+In-reply-to: <d9761f0b-0a31-1ec9-66b8-371cb22250f9@gnuweeb.org>
+Message-ID: <qvqwr0yeabqa.fsf@dev0134.prn3.facebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: tJxP4RLspSsIRo3CN3DkKTpRCuOD2VUk
-X-Proofpoint-GUID: tJxP4RLspSsIRo3CN3DkKTpRCuOD2VUk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-07_08,2022-11-07_02,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,URIBL_BLACK autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
 
-io_uring is using iter_ubuf types for single vector requests. We expect
-state restore may happen for this type now, and it is already handled
-correctly, so move the check inside the warning to suppress it.
+Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- lib/iov_iter.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> On 11/4/22 3:40 AM, Stefan Roesch wrote:
+>> +struct option longopts[] =
+>> +{
+>> +        {"address"  , 1, NULL, 'a'},
+>> +        {"busy"     , 0, NULL, 'b'},
+>> +        {"help"     , 0, NULL, 'h'},
+>> +        {"num_pings", 1, NULL, 'n'},
+>> +        {"port"     , 1, NULL, 'p'},
+>> +        {"sqpoll"   , 0, NULL, 's'},
+>> +	{"timeout"  , 1, NULL, 't'},
+>
+> Inconsistent indentation.
+>
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 07adf18e5e40..aa192a386bd7 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1880,8 +1880,8 @@ int import_ubuf(int rw, void __user *buf, size_t le=
-n, struct iov_iter *i)
-  */
- void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
- {
--	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
--			 !iov_iter_is_kvec(i) && !iter_is_ubuf(i))
-+	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i) &&
-+			 !iter_is_ubuf(i)) && !iov_iter_is_kvec(i))
- 		return;
- 	i->iov_offset =3D state->iov_offset;
- 	i->count =3D state->count;
---=20
-2.30.2
+Version 2 of the patch fixes this.
 
+>> +	if (strlen(opt.addr) == 0) {
+>> +		fprintf(stderr, "address option is mandatory\n");
+>> +		printUsage(argv[0]);
+>> +		exit(-1);
+>> +	}
+> Don't use integer literal like 0 or -1 as the exit code in tests, use the
+> exit code protocol:
+>
+>   T_EXIT_PASS
+>   T_EXIT_FAIL
+>   T_EXIT_SKIP
+>
+> They are defined in test/helpers.h.
+
+Version 2 of the patch uses the above constants.

@@ -2,65 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6700561E81B
-	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 02:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB71961EFA8
+	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 10:54:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbiKGBGN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 6 Nov 2022 20:06:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
+        id S231543AbiKGJyE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Nov 2022 04:54:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiKGBGL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 6 Nov 2022 20:06:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BABBC0C
-        for <io-uring@vger.kernel.org>; Sun,  6 Nov 2022 17:05:18 -0800 (PST)
+        with ESMTP id S231944AbiKGJxz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 04:53:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7B51839C
+        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 01:52:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667783118;
+        s=mimecast20190719; t=1667814775;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SNimcy03lVO1HY+U4NDPJI3Wpm45K80Mxm9Usc2lI5A=;
-        b=FPR9UNkE45KcrYzKYEUisimPX49+u7zVraXpctncRDfnZwptId9MwhztOP/ovwmmOe6E4d
-        OLT4nyNVRJUgFdL1dxxDECY5RVo0ysCG1KeTrydfAw5eaauNHs6HRxtxJ2yrrbpnVTt5k0
-        zNUlPNLv+fapK6AppBST7Rm+UP6fCpk=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PRG3TK5PkvceDpSktl/XoLwICyvkxZzD1g+3ZIVVWaA=;
+        b=Awu8DJwYOyhR5GyAdVV5W3UwplZDG53jPQbmhLngWLNuz79GN3IvLcFjBB+MP0dyOcII5Z
+        4ISp3qCmju8mBrj52h7oiOHsLF7lLW6na3YC+FPbVrli4gUUXqko6z6BN/fCG/BTyGuRGg
+        RSGavV8lg+0HL5TkO/y/2QvhnTYx5W4=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-670-_RKCmUxEOBKh-hXpjIX--g-1; Sun, 06 Nov 2022 20:05:14 -0500
-X-MC-Unique: _RKCmUxEOBKh-hXpjIX--g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+ us-mta-7-n8Lus9X6OkKLq4OgQeNMkw-1; Mon, 07 Nov 2022 04:52:53 -0500
+X-MC-Unique: n8Lus9X6OkKLq4OgQeNMkw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73AF78027ED;
-        Mon,  7 Nov 2022 01:05:14 +0000 (UTC)
-Received: from T590 (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 652E740C6EC4;
-        Mon,  7 Nov 2022 01:05:07 +0000 (UTC)
-Date:   Mon, 7 Nov 2022 09:05:05 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>
-Subject: Re: [RFC PATCH 4/4] ublk_drv: support splice based read/write zero
- copy
-Message-ID: <Y2hZwWdY28bCn+iT@T590>
-References: <20221103085004.1029763-1-ming.lei@redhat.com>
- <20221103085004.1029763-5-ming.lei@redhat.com>
- <712cd802-f3bb-9840-e334-385cd42325f2@fastmail.fm>
- <Y2Rgem8+oYafTLVO@T590>
- <ead8a6cc-13eb-6dc0-2c17-a87e78d8a422@fastmail.fm>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1ADFD86F155;
+        Mon,  7 Nov 2022 09:52:53 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A1DF6140EBF5;
+        Mon,  7 Nov 2022 09:52:47 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     viro@zeniv.linux.org.uk, jlayton@kernel.org, chuck.lever@oracle.com
+Cc:     axboe@kernel.dk, asml.silence@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org, ceph-devel@vger.kernel.org,
+        mchangir@redhat.com, idryomov@gmail.com, lhenriques@suse.de,
+        gfarnum@redhat.com, Xiubo Li <xiubli@redhat.com>
+Subject: [RFC PATCH] fs/lock: increase the filp's reference for Posix-style locks
+Date:   Mon,  7 Nov 2022 17:52:32 +0800
+Message-Id: <20221107095232.36828-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ead8a6cc-13eb-6dc0-2c17-a87e78d8a422@fastmail.fm>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,120 +59,307 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Nov 05, 2022 at 12:37:21AM +0100, Bernd Schubert wrote:
-> 
-> 
-> On 11/4/22 01:44, Ming Lei wrote:
-> > On Thu, Nov 03, 2022 at 11:28:29PM +0100, Bernd Schubert wrote:
-> > > 
-> > > 
-> > > On 11/3/22 09:50, Ming Lei wrote:
-> > > > Pass ublk block IO request pages to kernel backend IO handling code via
-> > > > pipe, and request page copy can be avoided. So far, the existed
-> > > > pipe/splice mechanism works for handling write request only.
-> > > > 
-> > > > The initial idea of using splice for zero copy is from Miklos and Stefan.
-> > > > 
-> > > > Read request's zero copy requires pipe's change to allow one read end to
-> > > > produce buffers for another read end to consume. The added SPLICE_F_READ_TO_READ
-> > > > flag is for supporting this feature.
-> > > > 
-> > > > READ is handled by sending IORING_OP_SPLICE with SPLICE_F_DIRECT |
-> > > > SPLICE_F_READ_TO_READ. WRITE is handled by sending IORING_OP_SPLICE with
-> > > > SPLICE_F_DIRECT. Kernel internal pipe is used for simplifying userspace,
-> > > > meantime potential info leak could be avoided.
-> > > 
-> > > 
-> > > Sorry to ask, do you have an ublk branch that gives an example how to use
-> > > this?
-> > 
-> > Follows the ublk splice-zc branch:
-> > 
-> > https://github.com/ming1/ubdsrv/commits/splice-zc
-> > 
-> > which is mentioned in cover letter, but I guess it should be added to
-> > here too, sorry for that, so far only ublk-loop supports it by:
-> > 
-> >     ublk add -t loop -f $BACKING -z
-> > 
-> > without '-z', ublk-loop is created with zero copy disabled.
-> 
-> Ah, thanks a lot! And sorry, I had missed this part in the cover letter.
-> 
-> I will take a look on your new zero copy code on Monday.
-> 
-> 
-> > 
-> > > 
-> > > I still have several things to fix in my branches, but I got basic fuse
-> > > uring with copies working. Adding back splice would be next after posting
-> > > rfc patches. My initial assumption was that I needed to duplicate everything
-> > > splice does into the fuse .uring_cmd handler - obviously there is a better
-> > > way with your patches.
-> > > 
-> > > This week I have a few days off, by end of next week or the week after I
-> > > might have patches in an rfc state (one thing I'm going to ask about is how
-> > > do I know what is the next CQE in the kernel handler - ublk does this with
-> > > tags through mq, but I don't understand yet where the tag is increased and
-> > > what the relation between tag and right CQE order is).
-> > 
-> > tag is one attribute of io request, which is originated from ublk
-> > driver, and it is unique for each request among one queue. So ublksrv
-> > won't change it at all, just use it, and ublk driver guarantees that
-> > it is unique.
-> > 
-> > In ublkserv implementation, the tag info is set in cqe->user_data, so
-> > we can retrieve the io request via tag part of cqe->user_data.
-> 
-> Yeah, this is the easy part I understood. At least I hope so :)
-> 
-> > 
-> > Also I may not understand your question of 'the relation between tag and right
-> > CQE order', io_uring provides IOSQE_IO_DRAIN/IOSQE_IO_LINK for ordering
-> > SQE, and ublksrv only applies IOSQE_IO_LINK in ublk-qcow2, so care to
-> > explain it in a bit details about the "the relation between tag and right
-> > CQE order"?
-> 
-> 
-> For fuse (kernel) a vfs request comes in and I need to choose a command in
-> the ring queue. Right now this is just an atomic counter % queue_size
-> 
-> fuse_request_alloc_ring()
-> 	req_cnt = atomic_inc_return(&queue->req_cnt);
-> 	tag = req_cnt & (fc->ring.queue_depth - 1); /* cnt % queue_depth */
-> 
-> 	ring_req = &queue->ring_req[tag];
-> 
-> 
-> 
-> I might be wrong, but I think that can be compared a bit to ublk_queue_rq().
-> Looks like ublk_queue_rq gets called in blk-mq context and blk-mq seems to
-> provide rq->tag, which then determines the command in the ring queue -
-> completion of commands is done in tag-order provided by blk-mq? The part I
+From: Xiubo Li <xiubli@redhat.com>
 
-The two are not related, blk-mq tag number means nothing wrt. io
-handling order:
+When closing the file descripters in parallel in multiple threads,
+who are sharing the same file descripters, the filp_close() will
+remove all the Posix-style locks. But if two threads both calling
+the filp_close() it may race and cause use-after-free crash:
 
-- tag is allocated via sbitmap, which may return tag number in any
-  order, you may think the returned number is just random
-- blk-mq may re-order requests and dispatch them with any order
-- once requests are issued to io_uring, userspace may handles these IOs
-  with any order
-- after backend io is queued via io_uring or libaio or whatever to kernel, it
-could be completed at any order
+ PID: 327771   TASK: ffff952aa1db3180  CPU: 8    COMMAND: "db2fmp"
+  #0 [ffff95202f33b960] machine_kexec at ffffffff890662f4
+  #1 [ffff95202f33b9c0] __crash_kexec at ffffffff89122b82
+  #2 [ffff95202f33ba90] crash_kexec at ffffffff89122c70
+  #3 [ffff95202f33baa8] oops_end at ffffffff89791798
+  #4 [ffff95202f33bad0] no_context at ffffffff89075d14
+  #5 [ffff95202f33bb20] __bad_area_nosemaphore at ffffffff89075fe2
+  #6 [ffff95202f33bb70] bad_area_nosemaphore at ffffffff89076104
+  #7 [ffff95202f33bb80] __do_page_fault at ffffffff89794750
+  #8 [ffff95202f33bbf0] do_page_fault at ffffffff89794975
+  #9 [ffff95202f33bc20] page_fault at ffffffff89790778
+     [exception RIP: ceph_fl_release_lock+20]
+     RIP: ffffffffc08247a4  RSP: ffff95202f33bcd0  RFLAGS: 00010286
+     RAX: ffff952d4ebd8a00  RBX: 0000000000000000  RCX: dead000000000200
+     RDX: ffff95202f33bd60  RSI: ffff95202f33bd60  RDI: ffff9526b6ac5b00
+     RBP: ffff95202f33bce0   R8: ffff9526b6ac5b18   R9: ffffffffc083c368
+     R10: 0000000000001109  R11: 0000000000000000  R12: ffff95202f33bd60
+     R13: ffff9526b6ac5b00  R14: 0000000000000000  R15: 0000000000000000
+     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+ #10 [ffff95202f33bce8] locks_release_private at ffffffff892ab3d7
+ #11 [ffff95202f33bd00] locks_free_lock at ffffffff892ac34d
+ #12 [ffff95202f33bd18] locks_dispose_list at ffffffff892ac44b
+ #13 [ffff95202f33bd40] __posix_lock_file at ffffffff892acdfa
+ #14 [ffff95202f33bda8] posix_lock_file at ffffffff892ad146
+ #15 [ffff95202f33bdb8] ceph_lock at ffffffffc0824e8a [ceph]
+ #16 [ffff95202f33bdf8] vfs_lock_file at ffffffff892ad185
+ #17 [ffff95202f33be08] locks_remove_posix at ffffffff892ad239
+ #18 [ffff95202f33bee0] locks_remove_posix at ffffffff892ad2a0
+ #19 [ffff95202f33bef0] filp_close at ffffffff8924baa6
+ #20 [ffff95202f33bf18] __close_fd at ffffffff8926f89c
+ #21 [ffff95202f33bf40] sys_close at ffffffff8924d503
+ #22 [ffff95202f33bf50] system_call_fastpath at ffffffff89799f92
+     RIP: 00007f806ec446ab  RSP: 00007f80517f0d90  RFLAGS: 00010206
+     RAX: 0000000000000003  RBX: 00007f8030001a20  RCX: 00007f80300386b0
+     RDX: 00007f806ef0d880  RSI: 0000000000000001  RDI: 0000000000000006
+     RBP: 00007f806ef0e3c0   R8: 00007f80517fa700   R9: 0000000000000000
+     R10: 0000000000000000  R11: 0000000000000206  R12: 0000000000000000
+     R13: 00007f80300035b0  R14: 00007f80517f1104  R15: 000000000000006c
+     ORIG_RAX: 0000000000000003  CS: 0033  SS: 002b
 
-> didn't figure out yet is where the tag value gets set.
-> Also interesting is that there is no handler if the ring is already full -
-> like the ublk_io command is currently busy in ublksrv (user space). Handled
-> auto-magically with blk-mq?
+We need to make sure that the filp in the file_lock shouldn't be
+release when any file_lock is still referring to it.
 
-For ublk, the queue has fixed depth, so the pre-allocated io_uring size is
-enough, and blk-mq can throttle IOs from the beginning if the max queue depth is
-reached, so ublk needn't to worry about io_uring size/depth.
+For the Posix-style locks, whose owner will be the thread ids, we
+will increase the filp's reference.
 
-But fuse may have to consider request throttle.
+URL: https://tracker.ceph.com/issues/57986
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ drivers/android/binder.c |  2 +-
+ fs/file.c                | 15 ++++++++++-----
+ fs/locks.c               | 18 +++++++++++++++---
+ include/linux/fs.h       | 14 ++++++++++++++
+ io_uring/openclose.c     |  3 ++-
+ 5 files changed, 42 insertions(+), 10 deletions(-)
 
-
-Thanks, 
-Ming
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 880224ec6abb..03692564d940 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -1924,7 +1924,7 @@ static void binder_deferred_fd_close(int fd)
+ 	if (twcb->file) {
+ 		// pin it until binder_do_fd_close(); see comments there
+ 		get_file(twcb->file);
+-		filp_close(twcb->file, current->files);
++		filp_close(twcb->file, file_lock_make_thread_owner(current->files));
+ 		task_work_add(current, &twcb->twork, TWA_RESUME);
+ 	} else {
+ 		kfree(twcb);
+diff --git a/fs/file.c b/fs/file.c
+index 5f9c802a5d8d..39ad8e74a8d9 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -417,6 +417,7 @@ static struct fdtable *close_files(struct files_struct * files)
+ 	 * files structure.
+ 	 */
+ 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
++	fl_owner_t owner = file_lock_make_thread_owner(files);
+ 	unsigned int i, j = 0;
+ 
+ 	for (;;) {
+@@ -429,7 +430,7 @@ static struct fdtable *close_files(struct files_struct * files)
+ 			if (set & 1) {
+ 				struct file * file = xchg(&fdt->fd[i], NULL);
+ 				if (file) {
+-					filp_close(file, files);
++					filp_close(file, owner);
+ 					cond_resched();
+ 				}
+ 			}
+@@ -653,6 +654,7 @@ static struct file *pick_file(struct files_struct *files, unsigned fd)
+ int close_fd(unsigned fd)
+ {
+ 	struct files_struct *files = current->files;
++	fl_owner_t owner = file_lock_make_thread_owner(files);
+ 	struct file *file;
+ 
+ 	spin_lock(&files->file_lock);
+@@ -661,7 +663,7 @@ int close_fd(unsigned fd)
+ 	if (!file)
+ 		return -EBADF;
+ 
+-	return filp_close(file, files);
++	return filp_close(file, owner);
+ }
+ EXPORT_SYMBOL(close_fd); /* for ksys_close() */
+ 
+@@ -695,6 +697,7 @@ static inline void __range_cloexec(struct files_struct *cur_fds,
+ static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
+ 				 unsigned int max_fd)
+ {
++	fl_owner_t owner = file_lock_make_thread_owner(cur_fds);
+ 	unsigned n;
+ 
+ 	rcu_read_lock();
+@@ -711,7 +714,7 @@ static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
+ 
+ 		if (file) {
+ 			/* found a valid file to close */
+-			filp_close(file, cur_fds);
++			filp_close(file, owner);
+ 			cond_resched();
+ 		}
+ 	}
+@@ -816,6 +819,7 @@ struct file *close_fd_get_file(unsigned int fd)
+ 
+ void do_close_on_exec(struct files_struct *files)
+ {
++	fl_owner_t owner = file_lock_make_thread_owner(files);
+ 	unsigned i;
+ 	struct fdtable *fdt;
+ 
+@@ -841,7 +845,7 @@ void do_close_on_exec(struct files_struct *files)
+ 			rcu_assign_pointer(fdt->fd[fd], NULL);
+ 			__put_unused_fd(files, fd);
+ 			spin_unlock(&files->file_lock);
+-			filp_close(file, files);
++			filp_close(file, owner);
+ 			cond_resched();
+ 			spin_lock(&files->file_lock);
+ 		}
+@@ -1080,6 +1084,7 @@ static int do_dup2(struct files_struct *files,
+ 	struct file *file, unsigned fd, unsigned flags)
+ __releases(&files->file_lock)
+ {
++	fl_owner_t owner = file_lock_make_thread_owner(files);
+ 	struct file *tofree;
+ 	struct fdtable *fdt;
+ 
+@@ -1111,7 +1116,7 @@ __releases(&files->file_lock)
+ 	spin_unlock(&files->file_lock);
+ 
+ 	if (tofree)
+-		filp_close(tofree, files);
++		filp_close(tofree, owner);
+ 
+ 	return fd;
+ 
+diff --git a/fs/locks.c b/fs/locks.c
+index 607f94a0e789..e8b67f87e0ee 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -331,6 +331,8 @@ EXPORT_SYMBOL_GPL(locks_owner_has_blockers);
+ /* Free a lock which is not in use. */
+ void locks_free_lock(struct file_lock *fl)
+ {
++	if (fl->fl_file && file_lock_is_thread_owner(fl->fl_owner))
++		fput(fl->fl_file);
+ 	locks_release_private(fl);
+ 	kmem_cache_free(filelock_cache, fl);
+ }
+@@ -384,7 +386,10 @@ void locks_copy_lock(struct file_lock *new, struct file_lock *fl)
+ 
+ 	locks_copy_conflock(new, fl);
+ 
+-	new->fl_file = fl->fl_file;
++	if (file_lock_is_thread_owner(new->fl_owner))
++		new->fl_file = get_file(fl->fl_file);
++	else
++		new->fl_file = fl->fl_file;
+ 	new->fl_ops = fl->fl_ops;
+ 
+ 	if (fl->fl_ops) {
+@@ -488,13 +493,14 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
+ 	} else
+ 		fl->fl_end = OFFSET_MAX;
+ 
+-	fl->fl_owner = current->files;
++	fl->fl_owner = file_lock_make_thread_owner(current->files);
+ 	fl->fl_pid = current->tgid;
+-	fl->fl_file = filp;
++	fl->fl_file = get_file(filp);
+ 	fl->fl_flags = FL_POSIX;
+ 	fl->fl_ops = NULL;
+ 	fl->fl_lmops = NULL;
+ 
++
+ 	return assign_type(fl, l->l_type);
+ }
+ 
+@@ -2243,6 +2249,7 @@ int fcntl_getlk(struct file *filp, unsigned int cmd, struct flock *flock)
+ 
+ 		fl->fl_flags |= FL_OFDLCK;
+ 		fl->fl_owner = filp;
++		fput(filp);
+ 	}
+ 
+ 	error = vfs_test_lock(filp, fl);
+@@ -2376,6 +2383,7 @@ int fcntl_setlk(unsigned int fd, struct file *filp, unsigned int cmd,
+ 		cmd = F_SETLK;
+ 		file_lock->fl_flags |= FL_OFDLCK;
+ 		file_lock->fl_owner = filp;
++		fput(filp);
+ 		break;
+ 	case F_OFD_SETLKW:
+ 		error = -EINVAL;
+@@ -2385,6 +2393,7 @@ int fcntl_setlk(unsigned int fd, struct file *filp, unsigned int cmd,
+ 		cmd = F_SETLKW;
+ 		file_lock->fl_flags |= FL_OFDLCK;
+ 		file_lock->fl_owner = filp;
++		fput(filp);
+ 		fallthrough;
+ 	case F_SETLKW:
+ 		file_lock->fl_flags |= FL_SLEEP;
+@@ -2450,6 +2459,7 @@ int fcntl_getlk64(struct file *filp, unsigned int cmd, struct flock64 *flock)
+ 		cmd = F_GETLK64;
+ 		fl->fl_flags |= FL_OFDLCK;
+ 		fl->fl_owner = filp;
++		fput(filp);
+ 	}
+ 
+ 	error = vfs_test_lock(filp, fl);
+@@ -2499,6 +2509,7 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
+ 		cmd = F_SETLK64;
+ 		file_lock->fl_flags |= FL_OFDLCK;
+ 		file_lock->fl_owner = filp;
++		fput(filp);
+ 		break;
+ 	case F_OFD_SETLKW:
+ 		error = -EINVAL;
+@@ -2508,6 +2519,7 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
+ 		cmd = F_SETLKW64;
+ 		file_lock->fl_flags |= FL_OFDLCK;
+ 		file_lock->fl_owner = filp;
++		fput(filp);
+ 		fallthrough;
+ 	case F_SETLKW64:
+ 		file_lock->fl_flags |= FL_SLEEP;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e654435f1651..d7d81962a863 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1028,6 +1028,20 @@ static inline struct file *get_file(struct file *f)
+ /* legacy typedef, should eventually be removed */
+ typedef void *fl_owner_t;
+ 
++/*
++ * Set the last significant bit to 1 to mark that
++ * we have get a reference of the fl->fl_file.
++ */
++static inline fl_owner_t file_lock_make_thread_owner(fl_owner_t owner)
++{
++	return (fl_owner_t)((unsigned long)owner | 1UL);
++}
++
++static inline bool file_lock_is_thread_owner(fl_owner_t owner)
++{
++	return ((unsigned long)owner & 1UL);
++}
++
+ struct file_lock;
+ 
+ struct file_lock_operations {
+diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+index 67178e4bb282..5a12cdf7f8d0 100644
+--- a/io_uring/openclose.c
++++ b/io_uring/openclose.c
+@@ -212,6 +212,7 @@ int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ int io_close(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct files_struct *files = current->files;
++	fl_owner_t owner = file_lock_make_thread_owner(files);
+ 	struct io_close *close = io_kiocb_to_cmd(req, struct io_close);
+ 	struct fdtable *fdt;
+ 	struct file *file;
+@@ -247,7 +248,7 @@ int io_close(struct io_kiocb *req, unsigned int issue_flags)
+ 		goto err;
+ 
+ 	/* No ->flush() or already async, safely close from here */
+-	ret = filp_close(file, current->files);
++	ret = filp_close(file, owner);
+ err:
+ 	if (ret < 0)
+ 		req_set_fail(req);
+-- 
+2.31.1
 

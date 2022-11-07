@@ -2,48 +2,48 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A10261FC71
-	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 19:00:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1208C61FC6B
+	for <lists+io-uring@lfdr.de>; Mon,  7 Nov 2022 19:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbiKGSAO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 7 Nov 2022 13:00:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38684 "EHLO
+        id S232939AbiKGSAG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 7 Nov 2022 13:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232236AbiKGR7s (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 12:59:48 -0500
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35D52A944
-        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 09:56:24 -0800 (PST)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A7Glivp023222
-        for <io-uring@vger.kernel.org>; Mon, 7 Nov 2022 09:56:22 -0800
+        with ESMTP id S232958AbiKGR7o (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 7 Nov 2022 12:59:44 -0500
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612072A43A
+        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 09:56:20 -0800 (PST)
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 2A7Glfk5028694
+        for <io-uring@vger.kernel.org>; Mon, 7 Nov 2022 09:56:20 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=L3jw1UOj6ixjglp00dy1V087hjPkrNjvSa5Six2yGI0=;
- b=M9ZqP5hok/+fvIkhOQjZnDGyICKctDvZD2af06hYRhVQrIT0I5R1DwRvlKCf/iwVMeot
- rOMpxVG2phTo7Fd6Uo1xnrNJ8keushyttYBf70d3Q/K7ZzrxZ+FuN2rUNLTXzEO8tGwp
- IB/7roO7MZ1RswdW3hQ/SonoJEaCrltoU3uGWjTuf+yWw0CxokdpWL8JjGCTvmPQSMXO
- J7EtxuaOOQ5Da/56zqXZYAXggZWHAcmgb7EyTlRCi4lT+LzM9wlDKx1wd50+mL/Cg70W
- v5nHCwXQFaqCO4tLF4LCKyKOraPGt+gT9sK8epBYU/ctZM23trjAHzCrISX6LXHuBwaa aQ== 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3knnbyrfye-5
+ bh=QnMdpgYmbsjbHhQ1lDDFeQrvaJxuQSXg0MrwT8Db3lk=;
+ b=fs97lz8jkDdcsspWBSL8QgngIhy2g4fNGPgQFaUKngtVgj6HawGHH5uNlNNIbVw7Ml5/
+ Ap2FohdIEeoRQ4d22N2yHIhjf/aBccDybNcQRj9N/SyY00sYnDb90Qq+CsxjWkCMc5Tv
+ fvxLiwN9cZaSp/AJAb4OTtcYkmiXdpHq2uSaasiCRYMpalunfUK+Kqq2/j7UiNM6jwbk
+ QpCTVoozLTvqGA+S8+s5XqdEU5jtZBMU4XwZLIM/k1cYl8ZfbFIS0NYr714myN5Yf/Uc
+ sCE4bndFhVw/18U3yBBe6GkYSo97jN9J4319+0vrZRNdG8yQzm8JQ85ulgIj8hFkoPgK 9g== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by m0089730.ppops.net (PPS) with ESMTPS id 3knkb819w1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 07 Nov 2022 09:56:22 -0800
-Received: from twshared5287.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 07 Nov 2022 09:56:20 -0800
+Received: from twshared27579.05.ash9.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 7 Nov 2022 09:56:20 -0800
+ 15.1.2375.31; Mon, 7 Nov 2022 09:56:18 -0800
 Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 7EDBDADF1C9B; Mon,  7 Nov 2022 09:56:11 -0800 (PST)
+        id 995E8ADF1C9D; Mon,  7 Nov 2022 09:56:11 -0800 (PST)
 From:   Keith Busch <kbusch@meta.com>
 To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
         <io-uring@vger.kernel.org>
 CC:     <asml.silence@gmail.com>, <linux-fsdevel@vger.kernel.org>,
         Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 2/4] io_uring: switch network send/recv to ITER_UBUF
-Date:   Mon, 7 Nov 2022 09:56:08 -0800
-Message-ID: <20221107175610.349807-3-kbusch@meta.com>
+Subject: [PATCH 3/4] io_uring: use ubuf for single range imports for read/write
+Date:   Mon, 7 Nov 2022 09:56:09 -0800
+Message-ID: <20221107175610.349807-4-kbusch@meta.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221107175610.349807-1-kbusch@meta.com>
 References: <20221107175610.349807-1-kbusch@meta.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 5qVPEtRoFFygW6Rg0P03xJCuQZVZxqvU
-X-Proofpoint-GUID: 5qVPEtRoFFygW6Rg0P03xJCuQZVZxqvU
+X-Proofpoint-GUID: SyJw7Krdujj8MQfw9fo7CKKQfpiC5LOh
+X-Proofpoint-ORIG-GUID: SyJw7Krdujj8MQfw9fo7CKKQfpiC5LOh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-07_08,2022-11-07_02,2022-06-22_01
@@ -71,77 +71,49 @@ From: Jens Axboe <axboe@kernel.dk>
 This is more efficient than ITER_IOVEC.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[merged to 6.1]
+[merge to 6.1, random fixes]
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- io_uring/net.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ io_uring/rw.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 9a07e79cc0e6..12c68b5ec62d 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -170,7 +170,7 @@ static int io_setup_async_msg(struct io_kiocb *req,
- 	if (async_msg->msg.msg_name)
- 		async_msg->msg.msg_name =3D &async_msg->addr;
- 	/* if were using fast_iov, set it to the new one */
--	if (!kmsg->free_iov) {
-+	if (iter_is_iovec(&kmsg->msg.msg_iter) && !kmsg->free_iov) {
- 		size_t fast_idx =3D kmsg->msg.msg_iter.iov - kmsg->fast_iov;
- 		async_msg->msg.msg_iter.iov =3D &async_msg->fast_iov[fast_idx];
- 	}
-@@ -333,7 +333,6 @@ int io_send(struct io_kiocb *req, unsigned int issue_=
-flags)
- 	struct sockaddr_storage __address;
- 	struct io_sr_msg *sr =3D io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct msghdr msg;
--	struct iovec iov;
- 	struct socket *sock;
- 	unsigned flags;
- 	int min_ret =3D 0;
-@@ -367,7 +366,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_=
-flags)
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
-=20
--	ret =3D import_single_range(WRITE, sr->buf, sr->len, &iov, &msg.msg_ite=
-r);
-+	ret =3D import_ubuf(WRITE, sr->buf, sr->len, &msg.msg_iter);
- 	if (unlikely(ret))
- 		return ret;
-=20
-@@ -752,10 +751,7 @@ int io_recvmsg(struct io_kiocb *req, unsigned int is=
-sue_flags)
- 			}
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 1ce065709724..19551b5e8088 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -391,7 +391,7 @@ static struct iovec *__io_import_iovec(int ddir, stru=
+ct io_kiocb *req,
+ 			rw->len =3D sqe_len;
  		}
 =20
--		kmsg->fast_iov[0].iov_base =3D buf;
--		kmsg->fast_iov[0].iov_len =3D len;
--		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->fast_iov, 1,
--				len);
-+		iov_iter_ubuf(&kmsg->msg.msg_iter, READ, buf, len);
- 	}
+-		ret =3D import_single_range(ddir, buf, sqe_len, s->fast_iov, iter);
++		ret =3D import_ubuf(ddir, buf, sqe_len, iter);
+ 		if (ret)
+ 			return ERR_PTR(ret);
+ 		return NULL;
+@@ -450,7 +450,10 @@ static ssize_t loop_rw_iter(int ddir, struct io_rw *=
+rw, struct iov_iter *iter)
+ 		struct iovec iovec;
+ 		ssize_t nr;
 =20
- 	flags =3D sr->msg_flags;
-@@ -824,7 +820,6 @@ int io_recv(struct io_kiocb *req, unsigned int issue_=
-flags)
- 	struct io_sr_msg *sr =3D io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct msghdr msg;
- 	struct socket *sock;
--	struct iovec iov;
- 	unsigned int cflags;
- 	unsigned flags;
- 	int ret, min_ret =3D 0;
-@@ -849,7 +844,7 @@ int io_recv(struct io_kiocb *req, unsigned int issue_=
-flags)
- 		sr->buf =3D buf;
- 	}
-=20
--	ret =3D import_single_range(READ, sr->buf, len, &iov, &msg.msg_iter);
-+	ret =3D import_ubuf(READ, sr->buf, len, &msg.msg_iter);
- 	if (unlikely(ret))
- 		goto out_free;
-=20
+-		if (!iov_iter_is_bvec(iter)) {
++		if (iter_is_ubuf(iter)) {
++			iovec.iov_base =3D iter->ubuf + iter->iov_offset;
++			iovec.iov_len =3D iov_iter_count(iter);
++		} else if (!iov_iter_is_bvec(iter)) {
+ 			iovec =3D iov_iter_iovec(iter);
+ 		} else {
+ 			iovec.iov_base =3D u64_to_user_ptr(rw->addr);
+@@ -495,7 +498,7 @@ static void io_req_map_rw(struct io_kiocb *req, const=
+ struct iovec *iovec,
+ 	io->free_iovec =3D iovec;
+ 	io->bytes_done =3D 0;
+ 	/* can only be fixed buffers, no need to do anything */
+-	if (iov_iter_is_bvec(iter))
++	if (iov_iter_is_bvec(iter) || iter_is_ubuf(iter))
+ 		return;
+ 	if (!iovec) {
+ 		unsigned iov_off =3D 0;
 --=20
 2.30.2
 

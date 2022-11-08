@@ -2,89 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8C86215A1
-	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 15:13:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C058562168A
+	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 15:28:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235287AbiKHONr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Nov 2022 09:13:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
+        id S234121AbiKHO2x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Nov 2022 09:28:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235296AbiKHONq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 09:13:46 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE9213F2F
-        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 06:13:45 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id q9so13913527pfg.5
-        for <io-uring@vger.kernel.org>; Tue, 08 Nov 2022 06:13:45 -0800 (PST)
+        with ESMTP id S234028AbiKHO0Y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 09:26:24 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2725A1033
+        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 06:25:13 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id h14so13939328pjv.4
+        for <io-uring@vger.kernel.org>; Tue, 08 Nov 2022 06:25:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SrTEk6LDLCIYS7emXZW0HctyZXKHLz66hfnEY7yyW0A=;
-        b=uWv3rMzR4lvsgn9j3Lha5krn20PitjAxwCUAgSStWoE7C1mVn5sWhSof+44G1ugLkP
-         pALdxF31nfHiBjBJmY0xkko0mQvVVcjRgjC/8r2qKlziPex0vwR1RPzC6KHWCUVTGfWK
-         uGBAcbT1mSkHIleVQ4IVdmURsVKRftGHqdHwgB7xKNnlNNDayLhTON1b/pFu99rm5oC5
-         SgN6X5WJmW2L+mZygRZL4vCFXy2PBczzo/NKTT/oZnQpiVcMKk0CTY/IVtQSKJIOJzzU
-         YUXxwOceXgfYKsguOLoH+nSU0Ushi9b7F0u/tlAGaWwKi27BSLWnv2ql9TA3ogJZfgR1
-         strw==
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
+        b=qJPWO9SMfKs9CV4DzOtfpg0tG5L2kEZQtV/LBBChMrnKplvig/HcfOA36QzOFbaour
+         tgINSm9CFH0IH0weUkbi8oL7C5P0uFU99A+FANpQrOPV/x2at1b6HjUUAphEgu/Nt2rO
+         YdZzEeguInvIt6hR0YTDbuGc0g6QmBH3JOdUVEiMakuZ8pUv0rSqDGDPPz36WP9L+M70
+         Yi8Qvn61/fVJa/s6+O6bNGj9Vrx81J7VmEWQcrrTipgg1zMWjvYHOXsRX3Tp8F7t1isZ
+         URWNY0E6DDGhkUjSdRf6tRRt6Dm01iRomcQNGIBkoA7vu4q8ZFmcmXCe9DgPR3TaW/OT
+         odpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SrTEk6LDLCIYS7emXZW0HctyZXKHLz66hfnEY7yyW0A=;
-        b=K2MeyUOLnQlyh+kwhZ6LrDAPyz++MbCSiJsSEuW/RbAQtX7DkDPas47y4xSumDUkQY
-         ZdvTUUfrpvEx7i4mMOoZ3vkxKFdDC28z+mQutkmtZLcGvsIQKaSXoazfZkDasKNyoB/a
-         WFccEJ+8TRBIRX7JN2EdT6veCUZzeX2bSMg/4sG6mt8wr+C09eaGZIMgCMk8HU9+a0mE
-         cGDwAVSXJuK6KDtBXjStb/e5yk0U/KZqfu1IWssS4buVtGSwyPJXDZMzAwcIiW1E6A4U
-         2zZPaHhOhYgs8HOTwT5xZq6RNQjGR44h++HilumYiYWkv8Nk7Pq0Uu70tFUasTmMlEXM
-         cVrQ==
-X-Gm-Message-State: ACrzQf0i+TmxVrTOKAZYQ5rcnwBn6ykBaSa/TfF7Irk5KP/D/QfwTRTg
-        cKkl4LKFF06EoDQj0pYMW8MBT9jfnSHa+YDs
-X-Google-Smtp-Source: AMsMyM6TK1K/9Be/J8su+ph0A/YsC50WWWcGeWNBD/YWbnvADY72hJMxFa/HSd3YfiWGTqVomJl5Kg==
-X-Received: by 2002:a63:8ac2:0:b0:46f:b278:183b with SMTP id y185-20020a638ac2000000b0046fb278183bmr41464813pgd.6.1667916824982;
-        Tue, 08 Nov 2022 06:13:44 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s13-20020a170902b18d00b00186da904da0sm7009630plr.154.2022.11.08.06.13.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 06:13:44 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Dylan Yudaken <dylany@meta.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org
-In-Reply-To: <20221108124207.751615-1-dylany@meta.com>
-References: <20221108124207.751615-1-dylany@meta.com>
-Subject: Re: [PATCH liburing v4] test that unregister_files processes task work
-Message-Id: <166791682383.41236.13099308010589502791.b4-ty@kernel.dk>
-Date:   Tue, 08 Nov 2022 07:13:43 -0700
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
+        b=EOjJe7x7mCaAOlNq/Hziz5Z6Th867zciqvHvKhsCxzlMmsB77knyCor9F0RLW51MOX
+         LI5ha5gxc5a2miYfDCGT4SrcC2Afx3VUHcyD4pXVSQ2iRiYpcfxKdaUiktr3pwzWI40N
+         TDXVe/O1MiWpZyT+DIX3o6THBeSa/SCRxIuzoYYQIw/fbJJ249H4mB+xunH3t7vgz9JG
+         3+3YrQ4/XUJVOKTDxmaYXr+ipqy+F0QwogTIauW0J9jBHiclGlY9qeGtmwWrw9RKW52b
+         QwcWAiqniBzglnzKpkdWFmjD6HaR0pwc8n7vpliX2hTHgSfIP1pw5jLyWXgVPuSzsXDv
+         Ewew==
+X-Gm-Message-State: ACrzQf1eyr1IRgzg8H2g3Q9SPk6fzFmYBKD3m0TRa4usiEZfFW/b9UOJ
+        fTYkM1RJWgjY5EJ4ZgnvKmCxFkNlyOdBUcKFhKI=
+X-Google-Smtp-Source: AMsMyM7xjnW3BCIcPmRXceI8CMPrgJsNpwknP0oXmxg9pb3hPM8UnVyASTbWsNqLc31U8nSLRepoWwOH4L/DHUye4LA=
+X-Received: by 2002:a17:90b:1d90:b0:213:c798:86f6 with SMTP id
+ pf16-20020a17090b1d9000b00213c79886f6mr52558648pjb.84.1667917512394; Tue, 08
+ Nov 2022 06:25:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-d9ed3
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Received: by 2002:a05:7300:5388:b0:85:81c6:896c with HTTP; Tue, 8 Nov 2022
+ 06:25:11 -0800 (PST)
+Reply-To: mr.abraham022@gmail.com
+From:   "Mr.Abraham" <davidkekeli11@gmail.com>
+Date:   Tue, 8 Nov 2022 14:25:11 +0000
+Message-ID: <CAPBO+FJ3Nhd2ncX9Z_fDUqYStiGQU821nC6EEFSDx5iCTdXkaQ@mail.gmail.com>
+Subject: Greeting
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:102e listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4972]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [mr.abraham022[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [davidkekeli11[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [davidkekeli11[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
+        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, 8 Nov 2022 04:42:07 -0800, Dylan Yudaken wrote:
-> Ensure that unregister_files processes task work from defer_taskrun even
-> when not explicitly flushed.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] test that unregister_files processes task work
-      commit: 78463f30a5f3235c8cce82cbf1b8ff437f6536cd
-
-Best regards,
--- 
-Jens Axboe
-
-
+My Greeting, Did you receive the letter i sent to you. Please answer me.
+Regard, Mr.Abraham

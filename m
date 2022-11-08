@@ -2,97 +2,160 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C058562168A
-	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 15:28:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A41621849
+	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 16:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234121AbiKHO2x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Nov 2022 09:28:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36336 "EHLO
+        id S234118AbiKHPae (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Nov 2022 10:30:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234028AbiKHO0Y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 09:26:24 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2725A1033
-        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 06:25:13 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id h14so13939328pjv.4
-        for <io-uring@vger.kernel.org>; Tue, 08 Nov 2022 06:25:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
-        b=qJPWO9SMfKs9CV4DzOtfpg0tG5L2kEZQtV/LBBChMrnKplvig/HcfOA36QzOFbaour
-         tgINSm9CFH0IH0weUkbi8oL7C5P0uFU99A+FANpQrOPV/x2at1b6HjUUAphEgu/Nt2rO
-         YdZzEeguInvIt6hR0YTDbuGc0g6QmBH3JOdUVEiMakuZ8pUv0rSqDGDPPz36WP9L+M70
-         Yi8Qvn61/fVJa/s6+O6bNGj9Vrx81J7VmEWQcrrTipgg1zMWjvYHOXsRX3Tp8F7t1isZ
-         URWNY0E6DDGhkUjSdRf6tRRt6Dm01iRomcQNGIBkoA7vu4q8ZFmcmXCe9DgPR3TaW/OT
-         odpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
-        b=EOjJe7x7mCaAOlNq/Hziz5Z6Th867zciqvHvKhsCxzlMmsB77knyCor9F0RLW51MOX
-         LI5ha5gxc5a2miYfDCGT4SrcC2Afx3VUHcyD4pXVSQ2iRiYpcfxKdaUiktr3pwzWI40N
-         TDXVe/O1MiWpZyT+DIX3o6THBeSa/SCRxIuzoYYQIw/fbJJ249H4mB+xunH3t7vgz9JG
-         3+3YrQ4/XUJVOKTDxmaYXr+ipqy+F0QwogTIauW0J9jBHiclGlY9qeGtmwWrw9RKW52b
-         QwcWAiqniBzglnzKpkdWFmjD6HaR0pwc8n7vpliX2hTHgSfIP1pw5jLyWXgVPuSzsXDv
-         Ewew==
-X-Gm-Message-State: ACrzQf1eyr1IRgzg8H2g3Q9SPk6fzFmYBKD3m0TRa4usiEZfFW/b9UOJ
-        fTYkM1RJWgjY5EJ4ZgnvKmCxFkNlyOdBUcKFhKI=
-X-Google-Smtp-Source: AMsMyM7xjnW3BCIcPmRXceI8CMPrgJsNpwknP0oXmxg9pb3hPM8UnVyASTbWsNqLc31U8nSLRepoWwOH4L/DHUye4LA=
-X-Received: by 2002:a17:90b:1d90:b0:213:c798:86f6 with SMTP id
- pf16-20020a17090b1d9000b00213c79886f6mr52558648pjb.84.1667917512394; Tue, 08
- Nov 2022 06:25:12 -0800 (PST)
+        with ESMTP id S231740AbiKHPaa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 10:30:30 -0500
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EACD3DE87
+        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 07:30:24 -0800 (PST)
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A86jPa9019822
+        for <io-uring@vger.kernel.org>; Tue, 8 Nov 2022 07:30:24 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=FxFmoB7+/MIXW+M0JoKQjQ2m4rLd0qta5uWqX8l921E=;
+ b=Vk5r+/oGdfilnNXdItH9FTueiuK2SklbC9cPWH16mxq7dZ/4IaFd9sEidL+NcBXhtF0G
+ CWteWpo7rG/6qnusgnBwjZIo6arhSpEJKnWlly9f2wSxNhjacjZLehaGEtKFuYBMkjoN
+ Rh6b9TrQq6QGxDuZ51NafBg8MHHd5uE+DkSzra9jLQHZYn2GnoQSwvl98mv8aG5dqTSw
+ q4t1sV4hn3UWLp+tNTVEH+3+Lj1lzu2XIkaelq4z3PvCMPWYKHVDGDHdjMXxX7Y000Qp
+ CdItGgRaJtiCeelTLfyh+T6sfDXxGtD84DmkpU8qqBUTFkvw2y/vWNnRgE4KyPwHoSMD Yg== 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kqj3nkgk6-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 08 Nov 2022 07:30:23 -0800
+Received: from twshared5287.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 8 Nov 2022 07:30:22 -0800
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id C504191E4B4F; Tue,  8 Nov 2022 07:30:17 -0800 (PST)
+From:   Dylan Yudaken <dylany@meta.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        Dylan Yudaken <dylany@meta.com>
+Subject: [PATCH] io_uring: calculate CQEs from the user visible value
+Date:   Tue, 8 Nov 2022 07:30:16 -0800
+Message-ID: <20221108153016.1854297-1-dylany@meta.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Received: by 2002:a05:7300:5388:b0:85:81c6:896c with HTTP; Tue, 8 Nov 2022
- 06:25:11 -0800 (PST)
-Reply-To: mr.abraham022@gmail.com
-From:   "Mr.Abraham" <davidkekeli11@gmail.com>
-Date:   Tue, 8 Nov 2022 14:25:11 +0000
-Message-ID: <CAPBO+FJ3Nhd2ncX9Z_fDUqYStiGQU821nC6EEFSDx5iCTdXkaQ@mail.gmail.com>
-Subject: Greeting
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:102e listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4972]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [mr.abraham022[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [davidkekeli11[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [davidkekeli11[at]gmail.com]
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
-        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: yeydwle9CevjWIVOsQCRCftiZYgso02q
+X-Proofpoint-GUID: yeydwle9CevjWIVOsQCRCftiZYgso02q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-07_11,2022-11-08_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-My Greeting, Did you receive the letter i sent to you. Please answer me.
-Regard, Mr.Abraham
+io_cqring_wait (and it's wake function io_has_work) used cached_cq_tail i=
+n
+order to calculate the number of CQEs. cached_cq_tail is set strictly
+before the user visible rings->cq.tail
+
+However as far as userspace is concerned,  if io_uring_enter(2) is called
+with a minimum number of events, they will verify by checking
+rings->cq.tail.
+
+It is therefore possible for io_uring_enter(2) to return early with fewer
+events visible to the user.
+
+Instead make the wait functions read from the user visible value, so ther=
+e
+will be no discrepency.
+
+This is triggered eventually by the following reproducer:
+
+struct io_uring_sqe *sqe;
+struct io_uring_cqe *cqe;
+unsigned int cqe_ready;
+struct io_uring ring;
+int ret, i;
+
+ret =3D io_uring_queue_init(N, &ring, 0);
+assert(!ret);
+while(true) {
+	for (i =3D 0; i < N; i++) {
+		sqe =3D io_uring_get_sqe(&ring);
+		io_uring_prep_nop(sqe);
+		sqe->flags |=3D IOSQE_ASYNC;
+	}
+	ret =3D io_uring_submit(&ring);
+	assert(ret =3D=3D N);
+
+	do {
+		ret =3D io_uring_wait_cqes(&ring, &cqe, N, NULL, NULL);
+	} while(ret =3D=3D -EINTR);
+	cqe_ready =3D io_uring_cq_ready(&ring);
+	assert(!ret);
+	assert(cqe_ready =3D=3D N);
+	io_uring_cq_advance(&ring, N);
+}
+
+Fixes: ad3eb2c89fb2 ("io_uring: split overflow state into SQ and CQ side"=
+)
+Signed-off-by: Dylan Yudaken <dylany@meta.com>
+---
+ io_uring/io_uring.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index ac8c488e3077..4a1e482747cc 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -176,6 +176,11 @@ static inline unsigned int __io_cqring_events(struct=
+ io_ring_ctx *ctx)
+ 	return ctx->cached_cq_tail - READ_ONCE(ctx->rings->cq.head);
+ }
+=20
++static inline unsigned int __io_cqring_events_user(struct io_ring_ctx *c=
+tx)
++{
++	return READ_ONCE(ctx->rings->cq.tail) - READ_ONCE(ctx->rings->cq.head);
++}
++
+ static bool io_match_linked(struct io_kiocb *head)
+ {
+ 	struct io_kiocb *req;
+@@ -2315,7 +2320,7 @@ static inline bool io_has_work(struct io_ring_ctx *=
+ctx)
+ static inline bool io_should_wake(struct io_wait_queue *iowq)
+ {
+ 	struct io_ring_ctx *ctx =3D iowq->ctx;
+-	int dist =3D ctx->cached_cq_tail - (int) iowq->cq_tail;
++	int dist =3D READ_ONCE(ctx->rings->cq.tail) - (int) iowq->cq_tail;
+=20
+ 	/*
+ 	 * Wake up if we have enough events, or if a timeout occurred since we
+@@ -2399,7 +2404,8 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, =
+int min_events,
+ 			return ret;
+ 		io_cqring_overflow_flush(ctx);
+=20
+-		if (io_cqring_events(ctx) >=3D min_events)
++		/* if user messes with these they will just get an early return */
++		if (__io_cqring_events_user(ctx) >=3D min_events)
+ 			return 0;
+ 	} while (ret > 0);
+=20
+
+base-commit: f0c4d9fc9cc9462659728d168387191387e903cc
+--=20
+2.30.2
+

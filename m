@@ -2,93 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3C86212D8
-	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 14:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE9EE621571
+	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 15:12:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234170AbiKHNnV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Nov 2022 08:43:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42818 "EHLO
+        id S235340AbiKHOM1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Nov 2022 09:12:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234200AbiKHNnU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 08:43:20 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B2C5288E
-        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 05:43:19 -0800 (PST)
-Received: from [10.7.7.5] (unknown [182.253.88.158])
-        by gnuweeb.org (Postfix) with ESMTPSA id 36FE5814AD;
-        Tue,  8 Nov 2022 13:43:16 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1667914999;
-        bh=FfkY917Pk5lEu17blLjRVd2joBbvDpflxtNHAFaslJ0=;
-        h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-        b=fPSpWqs3+GEvbQYKTp97e721fg/3DZNBAVPljlU3/oeqFmH0GJjX2P2GhMGDVWJji
-         /bFIQOy++xARxcbDXmfIC7cpaMqOf02irBt9zTuQlSIu2YczK6/U26c/msQJVH4yjL
-         tE4S7SqMxUWdDee6grAE8Kn9qfkwR5oqQEQxuwb30DP1GS1ok+GwYMK40hgobnX87F
-         f7x/BBPj0wcQi+ff2+Bvv1nSqSJVsu/f5de7g7PABBIqOIfO7+9eiusR+VBz/q0e48
-         utTYdvPoUUU/q6aAuTt/WgsrK0b5iGUvody7JdlI3iUckf+kNbkg17ggSTL7dWrpUN
-         ZZsnbzkq1Z2/A==
-Message-ID: <6360ecfb-8f71-72c5-d903-f7d1531a1f6d@gnuweeb.org>
-Date:   Tue, 8 Nov 2022 20:43:14 +0700
+        with ESMTP id S235254AbiKHOMI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 09:12:08 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FF657B64
+        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 06:11:39 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id f5-20020a17090a4a8500b002131bb59d61so1375317pjh.1
+        for <io-uring@vger.kernel.org>; Tue, 08 Nov 2022 06:11:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oZHx4y3weBuBx+FzuZMSRre6FOFJgGjdQjTkVXXo5u4=;
+        b=o48oSb1SL0C2lmFgsiJTLeloedwOdAai/2XQ1N7l93I/NbHqzYlWkgh0yGaodWsOk/
+         6XDStMW9l5r7wXxN9nLqhKESb78Ibla5yoFh00NyH20T8foWaz7OhRsKRox9Gn+ff4JB
+         qWO/5AKFfLSOI847viAIp7ZoPQ4yi9ykVYqFRwr7hsE/Bb4DZ+fSHLcTILVSxKo+4DzH
+         QYIUFAQGLavZYduv2uNxhg21nuNSiUyAM6pZ0Ae8ZgoIfeg5WMGy7DphzVPGuaQoXu3Y
+         Y3E+hGdSkyajrcT/hlOTAGJoor0a6+tbg1NbXUpEWNixQGNMcfCiLSH+3XexrE7oifbl
+         XZiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oZHx4y3weBuBx+FzuZMSRre6FOFJgGjdQjTkVXXo5u4=;
+        b=x/bt0MxHc1HMT5iRoj3u0PFw+WTAXUyIha/g426K5rq8H28rnKMdo1H4mnWEPhN54g
+         qFpowOVvsZskr37Hg4afSr1mHNssYNKN4ET+gX+hjv1I6MypH5hM7ND+Dk2KpXT7zAV8
+         XLtAjgYvOoCdaLlhJm0zhLOYw2/pyYaw9pQLt9rysR0We+4SNVQtAiCyXbwZCHE4iw93
+         nMN6Cx64c6aJ1MbdA/YSo8plI699xcWisRc/xjnfhLXdSCDLehI5KcCQyLjd4tc9D0WT
+         FGjJHrgbt/8ArfJsLffC/RPDfzSj3lYrfl1Tfjwls6mjQ8lCkErO38kIuwkUFv7AVIv9
+         NGeg==
+X-Gm-Message-State: ACrzQf01rLLR9fXhZuWYw3e4UHqnj7uQJzRh9zmaQv2VPI0FZpua0UAR
+        YrqGOE88M/FNAdq3fdyr4iBLSQ==
+X-Google-Smtp-Source: AMsMyM4Yhs/VjvzEgByTTPu4cGBFNDdbEMZ0OhJCS8xo1iKsouZrBYWRBkDNaBEdQHiGINEjIiRm6w==
+X-Received: by 2002:a17:90a:f2cb:b0:213:9afa:d13a with SMTP id gt11-20020a17090af2cb00b002139afad13amr56652486pjb.180.1667916698561;
+        Tue, 08 Nov 2022 06:11:38 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id v126-20020a626184000000b00565cf8c52c8sm6625328pfb.174.2022.11.08.06.11.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Nov 2022 06:11:37 -0800 (PST)
+Message-ID: <7f50c81a-6cb6-b8d7-8f80-bd3e49b0f401@kernel.dk>
+Date:   Tue, 8 Nov 2022 07:11:34 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: samba does not work with liburing 2.3
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH liburing v4] test that unregister_files processes task
+ work
 Content-Language: en-US
-To:     Stefan Metzmacher <metze@samba.org>
-References: <5a3d3b11-0858-e85f-e381-943263a92202@msgid.tls.msk.ru>
- <df789124-d596-cec3-1ca0-cdebf7b823da@msgid.tls.msk.ru>
- <6dde692a-145f-63bd-95bd-1eb1c1b108ce@samba.org>
-Cc:     Caleb Sander <csander@purestorage.com>,
-        Michael Tokarev <mjt@tls.msk.ru>,
-        Samba Technical Mailing List 
-        <samba-technical@lists.samba.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-In-Reply-To: <6dde692a-145f-63bd-95bd-1eb1c1b108ce@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Dylan Yudaken <dylany@meta.com>
+Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <20221108124207.751615-1-dylany@meta.com>
+ <741d8fb7-863a-b0c5-c42b-5e227d0f7937@gnuweeb.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <741d8fb7-863a-b0c5-c42b-5e227d0f7937@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-+ Adding Caleb Sander <csander@purestorage.com> to the CC list.
-
-On 11/8/22 8:26 PM, Stefan Metzmacher wrote:
-> Am 08.11.22 um 13:56 schrieb Michael Tokarev via samba-technical:
->> 08.11.2022 13:25, Michael Tokarev via samba-technical wrote:
->>> FWIW, samba built against the relatively new liburing-2.3 does not
->>> work right, io_uring-enabled samba just times out in various i/o
->>> operations (eg from smbclient) when liburing used at compile time
->>> was 2.3. It works fine with liburing 2.2.
+On 11/8/22 5:50 AM, Ammar Faizi wrote:
+> On 11/8/22 7:42 PM, Dylan Yudaken wrote:
+>> Ensure that unregister_files processes task work from defer_taskrun even
+>> when not explicitly flushed.
 >>
->> This turned out to be debian packaging issue, but it might affect
->> others too. liburing 2.3 breaks ABI by changing layout of the main
->> struct io_uring object in a significant way.
->>
->> http://bugs.debian.org/1023654
+>> Signed-off-by: Dylan Yudaken <dylany@meta.com>
 > 
-> I don't see where this changes the struct size:
-> 
-> -       unsigned pad[4];
-> +       unsigned ring_mask;
-> +       unsigned ring_entries;
-> +
-> +       unsigned pad[2];
-> 
-> But I see a problem when you compile against 2.3 and run against 2.2
-> as the new values are not filled.
-> 
-> The problem is the mixture of inline and non-inline functions...
-> 
-> The packaging should make sure it requires the version is build against...
+> I feel a bit irritated because the close() and io_uring_queue_exit()
+> don't get invoked in the error paths. But not a big deal, since in the
+> test we'll be exiting soon after that :p
+
+Yeah, lots of tests to that - in case of error, just return the error
+and the test will exit anyway. Obviously not kosher for a real
+application, but I view it like leaking heap data in that regard. It'll
+get reaped when the application goes away, and is again not something
+you'd do in a real application.
 
 -- 
-Ammar Faizi
-
+Jens Axboe

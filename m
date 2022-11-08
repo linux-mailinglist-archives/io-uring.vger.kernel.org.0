@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB676208C3
-	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 06:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E206208C6
+	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 06:05:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233128AbiKHFFm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Tue, 8 Nov 2022 00:05:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38920 "EHLO
+        id S232896AbiKHFFp convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+io-uring@lfdr.de>); Tue, 8 Nov 2022 00:05:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232693AbiKHFFj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 00:05:39 -0500
+        with ESMTP id S233095AbiKHFFl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 00:05:41 -0500
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D468C17414
-        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 21:05:37 -0800 (PST)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A80Utrf007228
-        for <io-uring@vger.kernel.org>; Mon, 7 Nov 2022 21:05:37 -0800
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kqcmqse66-1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F6913DC2
+        for <io-uring@vger.kernel.org>; Mon,  7 Nov 2022 21:05:39 -0800 (PST)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A7LKpss010010
+        for <io-uring@vger.kernel.org>; Mon, 7 Nov 2022 21:05:39 -0800
+Received: from maileast.thefacebook.com ([163.114.130.3])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3knq54wajv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 07 Nov 2022 21:05:37 -0800
-Received: from twshared5287.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+        for <io-uring@vger.kernel.org>; Mon, 07 Nov 2022 21:05:39 -0800
+Received: from twshared2001.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
  mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 7 Nov 2022 21:05:36 -0800
+ 15.1.2375.31; Mon, 7 Nov 2022 21:05:37 -0800
 Received: by devvm2494.atn0.facebook.com (Postfix, from userid 172786)
-        id 3F51D23B26023; Mon,  7 Nov 2022 21:05:22 -0800 (PST)
+        id 46E1F23B26025; Mon,  7 Nov 2022 21:05:22 -0800 (PST)
 From:   Jonathan Lemon <jonathan.lemon@gmail.com>
 To:     <io-uring@vger.kernel.org>
 CC:     <kernel-team@meta.com>
-Subject: [PATCH v1 14/15] io_uring: Add a buffer caching mechanism for zctap.
-Date:   Mon, 7 Nov 2022 21:05:20 -0800
-Message-ID: <20221108050521.3198458-15-jonathan.lemon@gmail.com>
+Subject: [PATCH v1 15/15] io_uring: Notify the application as the fillq is drained.
+Date:   Mon, 7 Nov 2022 21:05:21 -0800
+Message-ID: <20221108050521.3198458-16-jonathan.lemon@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221108050521.3198458-1-jonathan.lemon@gmail.com>
 References: <20221108050521.3198458-1-jonathan.lemon@gmail.com>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: uLN2KgYEjEVswIJzAphGSuyolc2n4ZmO
-X-Proofpoint-ORIG-GUID: uLN2KgYEjEVswIJzAphGSuyolc2n4ZmO
+X-Proofpoint-ORIG-GUID: t0aHdp26enFR9ERwmHglAucZKqu-VipG
+X-Proofpoint-GUID: t0aHdp26enFR9ERwmHglAucZKqu-VipG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-07_11,2022-11-07_02,2022-06-22_01
@@ -56,239 +56,162 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is based on the same concept as the page pool.
+Userspace maintains a free count of space available in the fillq,
+and only returns entries based on the available space.  As the
+kernel removes these entries, it needs to notify the application
+so more buffers can be queued.
 
-Here, there are 4 separate buffer sources:
-  cache - small (128) cache the driver can use locklessly.
-  ptr_ring - buffers freed through skb_release_data()
-  fillq - entries returned from the application
-  freelist - spinlock protected pool of free entries.
+Only one outstanding notifier per queue is used, and it provides
+the most recent count of entries removed from the queue.
 
-The driver first tries the lockless cache, before attempting to
-refill it from the ptr ring.  If there are still no buffers, then
-the fill ring is examined, before going to the freelist.
-
-If the ptr_ring is full when buffers are released as the skb is
-dropped (or the driver returns the buffers), then they are placed
-back on the freelist.
+Also post a notifier when the NIC is unable to obtain any buffers.
+When this happens, the NIC may just drop packets or stall.
 
 Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 ---
- io_uring/zctap.c | 128 ++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 99 insertions(+), 29 deletions(-)
+ io_uring/zctap.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
 diff --git a/io_uring/zctap.c b/io_uring/zctap.c
-index 262aa50de8c4..c7897fe2ccf6 100644
+index c7897fe2ccf6..e6c7ed85d4ee 100644
 --- a/io_uring/zctap.c
 +++ b/io_uring/zctap.c
-@@ -18,8 +18,12 @@
+@@ -15,6 +15,7 @@
+ #include "zctap.h"
+ #include "rsrc.h"
+ #include "kbuf.h"
++#include "refs.h"
  
  #define NR_ZCTAP_IFQS	1
  
-+#define REGION_CACHE_COUNT	128
-+#define REGION_REFILL_COUNT	64
-+
- struct ifq_region {
- 	struct io_zctap_ifq	*ifq;
-+	int			cache_count;
+@@ -26,7 +27,9 @@ struct ifq_region {
+ 	int			cache_count;
  	int			free_count;
  	int			nr_pages;
++	int			taken;
  	u16			id;
-@@ -28,6 +32,10 @@ struct ifq_region {
- 	struct delayed_work	release_work;
- 	unsigned long		delay_end;
++	bool			empty;
  
-+	u16			cache[REGION_CACHE_COUNT];
-+
-+	struct ptr_ring		ring;
-+
- 	struct io_zctap_buf	*buf;
- 	u16			freelist[];
+ 	spinlock_t		freelist_lock;
+ 	struct delayed_work	release_work;
+@@ -44,8 +47,14 @@ struct ifq_region {
+ struct io_zctap_ifq_priv {
+ 	struct io_zctap_ifq	ifq;
+ 	struct ubuf_info	uarg;
++	struct io_kiocb		req;
  };
-@@ -103,8 +111,29 @@ static bool io_zctap_put_buf_uref(struct io_zctap_buf *buf)
- 	return atomic_sub_and_test(IO_ZCTAP_UREF, &buf->refcount);
+ 
++static struct io_kiocb *io_zctap_ifq_notifier(struct io_zctap_ifq *ifq)
++{
++	return &((struct io_zctap_ifq_priv *)ifq)->req;
++}
++
+ static void io_zctap_ifq_put(struct io_zctap_ifq *ifq);
+ 
+ typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
+@@ -131,6 +140,34 @@ static void io_zctap_recycle_buf(struct ifq_region *ifr,
+ 	}
  }
  
-+/* if on exit/teardown path, can skip this work */
-+static void io_zctap_recycle_buf(struct ifq_region *ifr,
-+				 struct io_zctap_buf *buf)
++struct io_zctap_notif {
++	struct file *file;
++	u64 udata;
++	int res;
++	int cflags;
++};
++
++static void io_zctap_post_notify(struct io_kiocb *req, bool *locked)
 +{
-+	int rc;
++	struct io_zctap_notif *n = io_kiocb_to_cmd(req, struct io_zctap_notif);
 +
-+	if (in_serving_softirq())
-+		rc = ptr_ring_produce(&ifr->ring, buf);
-+	else
-+		rc = ptr_ring_produce_bh(&ifr->ring, buf);
++	io_post_aux_cqe(req->ctx, n->udata,  n->res, n->cflags, true);
++	io_req_task_complete(req, locked);
++}
 +
-+	if (rc) {
-+		spin_lock(&ifr->freelist_lock);
++static void io_zctap_notify(struct io_kiocb *req, int bgid, int count)
++{
++	struct io_zctap_notif *n = io_kiocb_to_cmd(req, struct io_zctap_notif);
 +
-+		ifr->freelist[ifr->free_count++] = buf - ifr->buf;
++	n->udata = 0xface0000;		/* XXX */
++	n->res = (bgid << 16) | count;
++	n->cflags = IORING_CQE_F_BUFFER|IORING_CQE_F_NOTIF;
 +
-+		spin_unlock(&ifr->freelist_lock);
-+	}
++	req_ref_get(req);
++	req->io_task_work.func = io_zctap_post_notify;
++	io_req_task_work_add(req);
 +}
 +
  /* gets a user-supplied buffer from the fill queue
   *   note: may drain N entries, but still have no usable buffers
-+ *   XXX add retry limit?
-  */
- static struct io_zctap_buf *io_zctap_get_buffer(struct io_zctap_ifq *ifq,
- 						u16 *buf_pgid)
-@@ -150,40 +179,71 @@ static struct io_zctap_buf *io_zctap_get_buffer(struct io_zctap_ifq *ifq,
- 	return buf;
- }
+  *   XXX add retry limit?
+@@ -159,6 +196,7 @@ static struct io_zctap_buf *io_zctap_get_buffer(struct io_zctap_ifq *ifq,
+ 	if (!addr)
+ 		return NULL;
  
--/* if on exit/teardown path, can skip this work */
--static void io_zctap_recycle_buf(struct ifq_region *ifr,
--				 struct io_zctap_buf *buf)
-+static int io_zctap_get_buffers(struct io_zctap_ifq *ifq, u16 *cache, int n)
++	ifr->taken++;
+ 	pgid = addr & 0xffff;
+ 	region_id = (addr >> 16) & 0xffff;
+ 	if (region_id) {
+@@ -196,6 +234,7 @@ struct io_zctap_buf *io_zctap_get_buf(struct io_zctap_ifq *ifq, int refc)
  {
--	spin_lock(&ifr->freelist_lock);
-+	struct io_zctap_buf *buf;
-+	int i;
- 
--	ifr->freelist[ifr->free_count++] = buf - ifr->buf;
--
--	spin_unlock(&ifr->freelist_lock);
-+	for (i = 0; i < n; i++) {
-+		buf = io_zctap_get_buffer(ifq, &cache[i]);
-+		if (!buf)
-+			break;
-+	}
-+	return i;
- }
- 
- struct io_zctap_buf *io_zctap_get_buf(struct io_zctap_ifq *ifq, int refc)
- {
--	struct ifq_region *ifr = ifq->region;
  	struct io_zctap_buf *buf;
-+	struct ifq_region *ifr;
-+	int count;
+ 	struct ifq_region *ifr;
++	struct io_kiocb *req;
+ 	int count;
  	u16 pgid;
  
-+	ifr = ifq->region;
-+	if (ifr->cache_count)
-+		goto out;
-+
-+	if (!__ptr_ring_empty(&ifr->ring)) {
-+		do {
-+			buf = __ptr_ring_consume(&ifr->ring);
-+			if (!buf)
-+				break;
-+			ifr->cache[ifr->cache_count++] = buf - ifr->buf;
-+		} while (ifr->cache_count < REGION_REFILL_COUNT);
-+
-+		if (ifr->cache_count)
-+			goto out;
+@@ -218,6 +257,12 @@ struct io_zctap_buf *io_zctap_get_buf(struct io_zctap_ifq *ifq, int refc)
+ 	count = io_zctap_get_buffers(ifq, ifr->cache, REGION_REFILL_COUNT);
+ 	ifr->cache_count += count;
+ 
++	req = io_zctap_ifq_notifier(ifq);
++	if (ifr->taken && atomic_read(&req->refs) == 1) {
++		io_zctap_notify(req, ifq->fill_bgid, ifr->taken);
++		ifr->taken = 0;
 +	}
 +
-+	count = io_zctap_get_buffers(ifq, ifr->cache, REGION_REFILL_COUNT);
-+	ifr->cache_count += count;
+ 	if (ifr->cache_count)
+ 		goto out;
+ 
+@@ -234,11 +279,17 @@ struct io_zctap_buf *io_zctap_get_buf(struct io_zctap_ifq *ifq, int refc)
+ 	if (ifr->cache_count)
+ 		goto out;
+ 
++	if (!ifr->empty && atomic_read(&req->refs) == 1) {
++		io_zctap_notify(req, ifq->fill_bgid, 0);
++		ifr->empty = true;
++	}
 +
-+	if (ifr->cache_count)
-+		goto out;
-+
- 	spin_lock(&ifr->freelist_lock);
+ 	return NULL;
  
--	buf = NULL;
--	if (ifr->free_count) {
--		pgid = ifr->freelist[--ifr->free_count];
--		buf = &ifr->buf[pgid];
--	}
-+	count = min_t(int, ifr->free_count, REGION_CACHE_COUNT);
-+	ifr->free_count -= count;
-+	ifr->cache_count += count;
-+	memcpy(ifr->cache, &ifr->freelist[ifr->free_count],
-+	       count * sizeof(u16));
+ out:
+ 	pgid = ifr->cache[--ifr->cache_count];
+ 	buf = &ifr->buf[pgid];
++	ifr->empty = false;
  
- 	spin_unlock(&ifr->freelist_lock);
- 
--	if (!buf) {
--		buf = io_zctap_get_buffer(ifq, &pgid);
--		if (!buf)
--			return NULL;
--	}
-+	if (ifr->cache_count)
-+		goto out;
- 
--	WARN_ON(atomic_read(&buf->refcount));
-+	return NULL;
-+
-+out:
-+	pgid = ifr->cache[--ifr->cache_count];
-+	buf = &ifr->buf[pgid];
-+
-+	WARN_RATELIMIT(atomic_read(&buf->refcount),
-+		       "pgid:%d refc:%d cache_count:%d\n",
-+		       pgid, atomic_read(&buf->refcount),
-+		       ifr->cache_count);
- 	atomic_set(&buf->refcount, refc & IO_ZCTAP_KREF_MASK);
- 
- 	return buf;
-@@ -278,6 +338,7 @@ static void io_remove_ifq_region_work(struct work_struct *work)
- 	}
- 
- 	io_zctap_ifq_put(ifr->ifq);
-+	ptr_ring_cleanup(&ifr->ring, NULL);
- 	kvfree(ifr->buf);
- 	kvfree(ifr);
- }
-@@ -365,16 +426,18 @@ int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
- 	if (imu->ubuf & ~PAGE_MASK || imu->ubuf_end & ~PAGE_MASK)
- 		return -EFAULT;
- 
-+	err = -ENOMEM;
- 	nr_pages = imu->nr_bvecs;
- 	ifr = kvmalloc(struct_size(ifr, freelist, nr_pages), GFP_KERNEL);
- 	if (!ifr)
--		return -ENOMEM;
-+		goto fail;
- 
- 	ifr->buf = kvmalloc_array(nr_pages, sizeof(*ifr->buf), GFP_KERNEL);
--	if (!ifr->buf) {
--		kvfree(ifr);
--		return -ENOMEM;
--	}
-+	if (!ifr->buf)
-+		goto fail_buf;
-+
-+	if (ptr_ring_init(&ifr->ring, 1024, GFP_KERNEL))
-+		goto fail_ring;
- 
- 	spin_lock_init(&ifr->freelist_lock);
- 	ifr->nr_pages = nr_pages;
-@@ -382,18 +445,25 @@ int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
+ 	WARN_RATELIMIT(atomic_read(&buf->refcount),
+ 		       "pgid:%d refc:%d cache_count:%d\n",
+@@ -445,6 +496,8 @@ int io_provide_ifq_region(struct io_zctap_ifq *ifq, u16 id)
  	ifr->id = id;
  	ifr->ifq = ifq;
  	ifr->delay_end = 0;
-+	ifr->cache_count = 0;
++	ifr->taken = 0;
++	ifr->empty = false;
+ 	ifr->cache_count = 0;
  
  	err = io_zctap_map_region(ifr, imu);
--	if (err) {
--		kvfree(ifr->buf);
--		kvfree(ifr);
--		return err;
--	}
-+	if (err)
-+		goto fail_map;
- 
- 	ifq->region = ifr;
- 	refcount_inc(&ifq->refcount);
- 
- 	return 0;
+@@ -533,6 +586,11 @@ static struct io_zctap_ifq *io_zctap_ifq_alloc(struct io_ring_ctx *ctx)
+ 	priv->ifq.ctx = ctx;
+ 	priv->ifq.queue_id = -1;
+ 	priv->ifq.uarg = &priv->uarg;
 +
-+fail_map:
-+	ptr_ring_cleanup(&ifr->ring, NULL);
-+fail_ring:
-+	kvfree(ifr->buf);
-+fail_buf:
-+	kvfree(ifr);
-+fail:
-+	return err;
++	priv->req.ctx = ctx;
++	priv->req.task = current;
++	io_req_set_refcount(&priv->req);
++
+ 	return &priv->ifq;
  }
  
- static int __io_queue_mgmt(struct net_device *dev, struct io_zctap_ifq *ifq,
 -- 
 2.30.2
 

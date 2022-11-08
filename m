@@ -2,126 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5DE9620C9C
-	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 10:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04308620CB2
+	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 10:54:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233680AbiKHJrN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Nov 2022 04:47:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58524 "EHLO
+        id S233195AbiKHJx7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Nov 2022 04:53:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233619AbiKHJrM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 04:47:12 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A24A1000;
-        Tue,  8 Nov 2022 01:47:09 -0800 (PST)
-Received: from [10.7.7.5] (unknown [182.253.88.158])
-        by gnuweeb.org (Postfix) with ESMTPSA id 91E75814AD;
-        Tue,  8 Nov 2022 09:47:06 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1667900828;
-        bh=hec5BClcYHWFBpHYwJDP97ZA1bduUUp5G0OKaPR7veo=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=NF2OkuBe3IwvLdvnYVu6SgD49Iev9ehcr7N7/2aXlSQ3mBb9ojY7CM3NsG0iarGLt
-         gNRidC0oYl3kQ2LkJhGldNjwfVN4wBDrPoE/N7tvZkdz2eSWEzte2lBOM2yf0gZRqX
-         plJZ5cFDsey0DIcbWh6UsnwwZF+IZJjBqVfRmU/gT6RNS/wEJLY92e7I26MljEkYIb
-         hDkQuP7s5cPuFXN1Y7r35kATAOTOaJ8gedbt/NzQJhOTinhdcH1ToqHx9f45pjG9C5
-         fH5sAMn3iGfqqPDc7dvaN857/HB1ZJx/WptaffPtPE9rTeNUcq1urZ4dsR3PiuXSPt
-         JSX0b9n0Wu4ZA==
-Message-ID: <3361ec99-d880-1155-f10a-13dd6a10e626@gnuweeb.org>
-Date:   Tue, 8 Nov 2022 16:47:03 +0700
+        with ESMTP id S232641AbiKHJx6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 04:53:58 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A254713D4A
+        for <io-uring@vger.kernel.org>; Tue,  8 Nov 2022 01:53:57 -0800 (PST)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A85pwqp017006
+        for <io-uring@vger.kernel.org>; Tue, 8 Nov 2022 01:53:57 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=A/O8DBN86Y9lZfEcYDppiozjEhGvHZHUkXwDnZO5ZK8=;
+ b=SA8lLEImnAQt4u6VrQYsZr2puhcqwWUSTSYaP1r4Ff0sjh+jvSgD+HmdDDt/HNtaVbZt
+ GHq84bP0VbsNVrM7b6AiLwloxmxXewBj2zDgcG/FTOirvjCUzrvukPBx7t3pKGGLLkWY
+ e5q1iDmB1z+671qzOqCs5xepbnxXUuPtr3LYt6Dcem+WuZRGqJgETbVhoCtvqtC4kAwi
+ X1GG/cunEjiYSLOcTcLA9laOEhqTVFYZxbuWhjZMOhqZvY4SGvYYb49cTHUA75Q3jEWp
+ kAnYj6akzk91FC7e5vXFbeoEzYNEM6apU5s7tqD6epC4zNxIcTsLMM+7G0F8WW7HMild /g== 
+Received: from maileast.thefacebook.com ([163.114.130.8])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kqhba17cs-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Tue, 08 Nov 2022 01:53:57 -0800
+Received: from twshared27579.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 8 Nov 2022 01:53:55 -0800
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id 035E991AC267; Tue,  8 Nov 2022 01:53:48 -0800 (PST)
+From:   Dylan Yudaken <dylany@meta.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        Dylan Yudaken <dylany@meta.com>
+Subject: [PATCH liburing v2] test that unregister_files processes task work
+Date:   Tue, 8 Nov 2022 01:53:47 -0800
+Message-ID: <20221108095347.3830634-1-dylany@meta.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [RFC PATCH v2 3/4] liburing: add test programs for napi busy poll
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Stefan Roesch <shr@devkernel.io>,
-        Facebook Kernel Team <kernel-team@fb.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Olivier Langlois <olivier@trillion01.com>,
-        netdev Mailing List <netdev@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20221107175357.2733763-1-shr@devkernel.io>
- <20221107175357.2733763-4-shr@devkernel.io>
- <c4b27170-d166-171e-dc9e-c63d95e42509@gnuweeb.org>
-Content-Language: en-US
-In-Reply-To: <c4b27170-d166-171e-dc9e-c63d95e42509@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: wDYCHQTOkAgOOB_a-JawPB5CxdtcDOyk
+X-Proofpoint-GUID: wDYCHQTOkAgOOB_a-JawPB5CxdtcDOyk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-07_11,2022-11-07_02,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/8/22 2:01 PM, Ammar Faizi wrote:
-> On 11/8/22 12:53 AM, Stefan Roesch wrote:
->> This adds two test programs to test the napi busy poll functionality. It
->> consists of a client program and a server program. To get a napi id, the
->> client and the server program need to be run on different hosts.
->>
->> To test the napi busy poll timeout, the -t needs to be specified. A
->> reasonable value for the busy poll timeout is 100. By specifying the
->> busy poll timeout on the server and the client the best results are
->> accomplished.
->>
->> Signed-off-by: Stefan Roesch <shr@devkernel.io>
->> ---
->>   test/Makefile                |   2 +
->>   test/napi-busy-poll-client.c | 422 +++++++++++++++++++++++++++++++++++
->>   test/napi-busy-poll-server.c | 372 ++++++++++++++++++++++++++++++
->>   3 files changed, 796 insertions(+)
->>   create mode 100644 test/napi-busy-poll-client.c
->>   create mode 100644 test/napi-busy-poll-server.c
-> 
-> Hi Stefan,
-> 
-> We don't write liburing tests this way. Your new tests break the "make runtests"
-> command:
-> 
->    ...
->    ...
->    Running test napi-busy-poll-client.t                                address option is mandatory
->    Usage: ./napi-busy-poll-client.t [-l|--listen] [-a|--address ip_address] [-p|--port port-no] [-s|--sqpoll] [-b|--busy] [-n|--num pings] [-t|--timeout busy-poll-timeout] [-h|--help]
->    ... snip ...
-> 
->    Test napi-busy-poll-client.t failed with ret 1
->    Running test napi-busy-poll-server.t                                address option is mandatory
->    Usage: ./napi-busy-poll-server.t [-l|--listen] [-a|--address ip_address] [-p|--port port-no] [-s|--sqpoll] [-b|--busy] [-n|--num pings] [-t|--timeout busy-poll-timeout] [-h|--help]
->    ... snip ...
->    ...
->    ...
->    Tests failed (3): <napi-busy-poll-client.t> <napi-busy-poll-server.t> <pipe-bug.t>
->    make[1]: *** [Makefile:235: runtests] Error 1
->    make[1]: Leaving directory '/home/ammarfaizi2/app/liburing/test'
->    make: *** [Makefile:21: runtests] Error 2
-> 
-> All test programs in the "test/" directory are run by "make runtests" command.
-> Please try to run them with "make runtests" command.
-> 
-> If you want to test several arguments combination variants, you can do something
-> like this:
-> 
->     https://github.com/axboe/liburing/blob/754bc068ec482/test/socket.c#L369-L409
-> 
-> Note: Since you're adding a new feature, your test program should check whether
-> the running kernel supports the new feature. If the running kernel doesn't
-> support it, use T_EXIT_SKIP as the exit code.
+Ensure that unregister_files processes task work from defer_taskrun even
+when not explicitly flushed.
 
-Note: In that example, it doesn't use T_EXIT_* as the exit code because this
-exit code protocol is a new framework. We haven't finished to port the old
-tests to follow this rule.
+Signed-off-by: Dylan Yudaken <dylany@meta.com>
+---
 
-It's introduced in commit (in liburing-2.3):
+v2:
+ - fix return code when ring init fails
 
-    ed430fbeb3336 ("tests: migrate some tests to use enum-based exit codes")
+ test/file-register.c | 57 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-New tests should follow the T_EXIT_* convention for exit code.
+diff --git a/test/file-register.c b/test/file-register.c
+index 634ef8159cec..975f89d5a94b 100644
+--- a/test/file-register.c
++++ b/test/file-register.c
+@@ -935,6 +935,55 @@ static int test_zero_range_alloc(struct io_uring *ri=
+ng, int fds[2])
+ 	return 0;
+ }
+=20
++static int test_defer_taskrun(void)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring ring;
++	int ret, fds[2];
++	char buff =3D 'x';
++
++	ret =3D io_uring_queue_init(8, &ring,
++				  IORING_SETUP_DEFER_TASKRUN | IORING_SETUP_SINGLE_ISSUER);
++	if (ret) {
++		fprintf(stderr, "ring init\n");
++		return 1;
++	}
++
++	ret =3D pipe(fds);
++	if (ret) {
++		fprintf(stderr, "bad pipes\n");
++		return 1;
++	}
++
++	ret =3D io_uring_register_files(&ring, &fds[0], 2);
++
++	sqe =3D io_uring_get_sqe(&ring);
++	io_uring_prep_read(sqe, 0, &buff, 1, 0);
++	sqe->flags |=3D IOSQE_FIXED_FILE;
++	ret =3D io_uring_submit(&ring);
++	if (ret !=3D 1) {
++		fprintf(stderr, "bad submit\n");
++		return 1;
++	}
++
++	ret =3D write(fds[1], &buff, 1);
++	if (ret !=3D 1) {
++		fprintf(stderr, "bad pipe write\n");
++		return 1;
++	}
++
++	ret =3D io_uring_unregister_files(&ring);
++	if (ret) {
++		fprintf(stderr, "bad unregister %d\n", ret);
++		return 1;
++	}
++
++	close(fds[0]);
++	close(fds[1]);
++	io_uring_queue_exit(&ring);
++	return 0;
++}
++
+ static int test_file_alloc_ranges(void)
+ {
+ 	struct io_uring ring;
+@@ -1120,5 +1169,13 @@ int main(int argc, char *argv[])
+ 		return T_EXIT_FAIL;
+ 	}
+=20
++	if (t_probe_defer_taskrun()) {
++		ret =3D test_defer_taskrun();
++		if (ret) {
++			fprintf(stderr, "test_defer_taskrun failed\n");
++			return T_EXIT_FAIL;
++		}
++	}
++
+ 	return T_EXIT_PASS;
+ }
 
--- 
-Ammar Faizi
+base-commit: 754bc068ec482c5338a07dd74b7d3892729bb847
+--=20
+2.30.2
 

@@ -2,43 +2,43 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6036209C2
-	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 07:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2566209C9
+	for <lists+io-uring@lfdr.de>; Tue,  8 Nov 2022 07:55:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233352AbiKHGyM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Nov 2022 01:54:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50922 "EHLO
+        id S233263AbiKHGzz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Nov 2022 01:55:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiKHGyM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 01:54:12 -0500
+        with ESMTP id S232641AbiKHGzy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Nov 2022 01:55:54 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ACD31F639;
-        Mon,  7 Nov 2022 22:54:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 065CD1F9D0;
+        Mon,  7 Nov 2022 22:55:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=VOakFTCaKuLEv2D82OsubD8D3LPFiH3ckd5BU32nB6c=; b=zQYXaJOW6FGyL9jF7Lhii2muZj
-        TeEqbO6rv/5PGxbx49t18GEjv3piBdOQDek931YO+oLwtD6q1Z1G9+8cRntrKgteUYTJXjsdqTlaX
-        9SIaWNE+Ugr0mmvcWtfDPTLTht/oyqbbX3mCY66ozEPg5D4mHJXh3iCLobh00HFEOeWABjbr1GhCW
-        18teDAk+mv+XHHjawk1EDAILFyW2G/tW5b3AFDBYhbB+f4Wq/C6HBBkfXblTJUWyx9DwrZVqYqS5N
-        po7N+aR3GbeUswvMsPzfSFd6vOi2C9XuddOhN/GqbueiyoVGNkrukfXq1Spx1SdLNftCYtDhJH0Qu
-        moljlSFg==;
+        bh=4tzqoSh3DSl3FicrwkaEghaNBV3MO8lFSsah/Hl61GE=; b=AaCN5AiFZ6TzgSsWHH1falK9KY
+        mc52Kyhdw3FaFvQAhqpVB6aKKSJQ4N9uWkedeulkyVwM5oz0uaVaO+yZjaYIWoJgf2A7oxrBTINIx
+        2RytMjn2L1qmSmxDaaRfwBwEpxG3kJ/RUtRpRC122gGClYZidTqg90Msu6TRPZGSO2V03W36qmUui
+        TnpFoscRLQeezK6XJQPVOzGBlPvKe4QL1H9xnpKce0lBie1OE+KkHmpFw1ZVEMVydotgtTA94I4wM
+        9VYpe4201XqRks84LxDf4TjbFtG9/nYPKn6fVSmY33njkPT0JhqgLlsgt70gVfei4uKduQOKp76Qe
+        m6otl0MQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1osIUo-003IJZ-Bs; Tue, 08 Nov 2022 06:54:06 +0000
-Date:   Mon, 7 Nov 2022 22:54:06 -0800
+        id 1osIWT-003Ijn-IV; Tue, 08 Nov 2022 06:55:49 +0000
+Date:   Mon, 7 Nov 2022 22:55:49 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Keith Busch <kbusch@meta.com>
 Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk, io-uring@vger.kernel.org,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH 0/4] io_uring: use ITER_UBUF
-Message-ID: <Y2n9DteukhGuvdGe@infradead.org>
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/4] iov: add import_ubuf()
+Message-ID: <Y2n9dd3QOwcgk5Cx@infradead.org>
 References: <20221107175610.349807-1-kbusch@meta.com>
+ <20221107175610.349807-2-kbusch@meta.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221107175610.349807-1-kbusch@meta.com>
+In-Reply-To: <20221107175610.349807-2-kbusch@meta.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -49,21 +49,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 07, 2022 at 09:56:06AM -0800, Keith Busch wrote:
->   1. io_uring will always prefer using the _iter versions of read/write
->      callbacks if file_operations implement both, where as the generic
->      syscalls will use .read/.write (if implemented) for non-vectored IO.
+On Mon, Nov 07, 2022 at 09:56:07AM -0800, Keith Busch wrote:
+> From: Jens Axboe <axboe@kernel.dk>
+> 
+> Like import_single_range(), but for ITER_UBUF.
 
-There are very few file operations that have both, and for those
-the difference matters, e.g. the strange vectors semantics for the
-sound code.  I would strongly suggest to mirror what the normal
-read/write path does here.
+So what is the argument for not simplify switching
+import_single_range to always do a ITER_UBUF?  Maybe there is a reason
+against that, but it should be clearly stated here.
 
->   2. io_uring will use the ITER_UBUF representation for single vector
->      readv/writev, but the generic syscalls currently uses ITER_IOVEC for
->      these.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Same here.  It might be woth to use ITER_UBUF for single vector
-readv/writev, but this should be the same for all interfaces.  I'd
-suggest to drop this for now and do a separate series with careful
-review from Al for this.
+Now that this went through your hands it also needs your signoff.

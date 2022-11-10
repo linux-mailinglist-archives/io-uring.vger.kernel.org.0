@@ -2,61 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62A2A62438D
-	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 14:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B29006248B8
+	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 18:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbiKJNsM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Nov 2022 08:48:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60198 "EHLO
+        id S231401AbiKJRyR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Nov 2022 12:54:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231229AbiKJNsK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 08:48:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DD565848
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 05:47:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668088032;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wuf9noReeDTnEejiioybQ/q0wC+8BYRrkgoqDNlpdD0=;
-        b=AMs+wfjvc6WLVtJULcUOJuOqzN6kuYl0CQiTgB9AB7TCNkVSJ/9mqbWkHRQZ9mpVG6bE+e
-        8KVNp6q8MSiGKnYcpSRzSzByNsZT2kLaoqZDKghUCo92rlPyVnUkaEyJFEnhBCdqm1aBF7
-        KueSnN4UoARV3nonzjJrUJqZyl6xnBE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-502-AEp9Y6V-Nnq58A-iQprDFQ-1; Thu, 10 Nov 2022 08:47:08 -0500
-X-MC-Unique: AEp9Y6V-Nnq58A-iQprDFQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3BF938027F5;
-        Thu, 10 Nov 2022 13:47:08 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9536B40C6F73;
-        Thu, 10 Nov 2022 13:46:54 +0000 (UTC)
-Date:   Thu, 10 Nov 2022 08:46:52 -0500
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Dylan Yudaken <dylany@meta.com>
-Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "jmoyer@redhat.com" <jmoyer@redhat.com>,
-        "dominik@thalhammer.it" <dominik@thalhammer.it>,
-        "rjones@redhat.com" <rjones@redhat.com>
-Subject: Re: liburing 2.3 API/ABI breakage
-Message-ID: <Y20AzFN03U3+1rUi@fedora>
-References: <Y2xaz5HwrGcbKJK8@fedora>
- <baf1f51132d42319a6a845ba391b21731ef80d6a.camel@fb.com>
+        with ESMTP id S230181AbiKJRyQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 12:54:16 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C05749B68
+        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 09:54:15 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id 13so6987122ejn.3
+        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 09:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfHz50Kg7kyBZpgLz1L+duIpLshaF3vQXrti1dXGZLQ=;
+        b=himkAUve95kura1F4xyrjgF2Ao9L01DaBYcsivT7aKJ5J4AF6ajPklOMnZ88snF8S/
+         Sm6FEemOqLF/MrgUC5yLIaXtMop2DLyIxPzRPUoUFaA5aKTYxAFSqWUMJk850gnqShNb
+         wE7XZ4ZD0YABNLuFjY+X3KglYL7nJG8JNkkvLu3QJtRk3djhDQghiY7LCQX3IS7glCq2
+         M3Z3rUTcmamKd9fp2ozIcuSHynhl1Xgi/GnqGciIWHpaSJNBKuTCOn3Ej65qPgsyN7ok
+         8FB28sjmPUx11WchT1uogNEcf84eSNHyyoLzumQXLDUlwM/q3BMdB2xufOMmSmbksCWm
+         YjnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kfHz50Kg7kyBZpgLz1L+duIpLshaF3vQXrti1dXGZLQ=;
+        b=nau5r6nvfArkQh5EhGrU3TiRqZz5mnqSYZbare2OlYd899JQUJ1JvO9OX14PUxtrip
+         aFmk3p0UmwggmxWshXZ29/4h2cyGMe1DYlHSwHUm6wjRK6oTkpdvy1cutxAldSyUoU49
+         7Xn8p3MkSoVEGUyLBwJyaba2s7iRULd6L2To/ivrUGwiKQfTJ7DK5Nxd7W3o3QvaW+Sb
+         EvBON47ZNFSx5UjaybDaGy/5RKiSgaI4Tx4gGHdm5MpS8Dm4gzdhxEZiOBBzjzu7+NYn
+         zURpx2vHbCbH/eQR9/xgsTT2WpP4Gvockbr1uprpntMPmZmF7zrT1BhWWHydCyiFkuas
+         5Nxw==
+X-Gm-Message-State: ACrzQf01mOEZ8wPET/wZH+u6j434gaDL/UmwO/CmODD0Q835uqFogJ7C
+        WyMtR9XSci2PPrHmFbG5Kj3WSQ3itB6VAmC3zNDIdg==
+X-Google-Smtp-Source: AMsMyM6vrGhmh/p4SKFqy2anpSAGg2zavB8DiqImU+Pk6mNYMjVBxK6TvhzwwuErIW2caX7ljkBnR/t2VrPytOoRZ6I=
+X-Received: by 2002:a17:906:b34b:b0:7ad:e8dd:837c with SMTP id
+ cd11-20020a170906b34b00b007ade8dd837cmr3571084ejb.264.1668102853085; Thu, 10
+ Nov 2022 09:54:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BOjdgTgdt3+JE/Ok"
-Content-Disposition: inline
-In-Reply-To: <baf1f51132d42319a6a845ba391b21731ef80d6a.camel@fb.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <20221107205754.2635439-1-cukie@google.com> <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
+From:   Jeffrey Vander Stoep <jeffv@google.com>
+Date:   Thu, 10 Nov 2022 18:54:00 +0100
+Message-ID: <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Gil Cukierman <cukie@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,52 +73,90 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi Paul,
 
---BOjdgTgdt3+JE/Ok
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are a few reasons why we want this particular hook.
 
-On Thu, Nov 10, 2022 at 09:43:48AM +0000, Dylan Yudaken wrote:
-> On Wed, 2022-11-09 at 20:58 -0500, Stefan Hajnoczi wrote:
-> > > 2. Going from size_t to unsigned int is ABI breakage. This is
-> > > mitigated
-> > > =A0=A0 on CPU architectures that share 32-bit/64-bit registers (i.e.
-> > > rax/eax
-> > > =A0=A0 on x86-64 and r0/x0/w0 on aarch64). There's no guarantee this
-> > > works
-> > > =A0=A0 on all architectures, especially when the calling convention
-> > > passes
-> > > =A0=A0 arguments on the stack.
-> >=20
-> > Good news, I realized that io_uring_prep_getxattr() and friends are
-> > static inline functions. ABI breakage doesn't come into play because
-> > they are compiled into the application.
->=20
-> Additionally the inline code was doing the narrowing cast anyway, so
-> there was no narrowing issues.
->=20
-> I really should have put this explanation in the commit message though
-> - will remember for next time.
+1.  It aligns well with how other resources are managed by selinux
+where access to the resource is the first control point (e.g. "create"
+for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+"open" for perf_event) and then additional functionality or
+capabilities require additional permissions.
+2. It aligns well with how resources are managed on Android. We often
+do not grant direct access to resources (like memory buffers). For
+example, a single domain on Android manages the loading of all bpf
+programs and the creation of all bpf maps. Other domains can be
+granted access to these only once they're created. We can enforce base
+properties with MAC, while allowing the system to manage and grant
+access to resources at run-time via DAC (e.g. using Android's
+permission model). This allows us to do better management and
+accounting of resources.
+3. Attack surface management. One of the primary uses of selinux on
+Android is to assess and limit attack surface (e.g.
+https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+io_uring vulnerabilities have made their way through our vulnerability
+management system, it's become apparent that it's complicated to
+assess the impact. Is a use-after-free reachable? Creating
+proof-of-concept exploits takes a lot of time, and often functionality
+can be reached by multiple paths. How many of the known io_uring
+vulnerabilities would be gated by the existing checks? How many future
+ones will be gated by the existing checks? I don't know the answer to
+either of these questions and it's not obvious. I believe some of them
+currently are exploitable without any selinux permissions. But in any
+case, this hook makes that initial assessment simple and effective.
 
-Thanks, that will help!
+On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
+> >
+> > This patchset provides the changes required for controlling access to
+> > the io_uring_setup system call by LSMs. It does this by adding a new
+> > hook to io_uring. It also provides the SELinux implementation for a new
+> > permission, io_uring { setup }, using the new hook.
+> >
+> > This is important because existing io_uring hooks only support limiting
+> > the sharing of credentials and access to the sensitive uring_cmd file
+> > op. Users of LSMs may also want the ability to tightly control which
+> > callers can retrieve an io_uring capable fd from the kernel, which is
+> > needed for all subsequent io_uring operations.
+>
+> It isn't immediately obvious to me why simply obtaining a io_uring fd
+> from io_uring_setup() would present a problem, as the security
+> relevant operations that are possible with that io_uring fd *should*
+> still be controlled by other LSM hooks.  Can you help me understand
+> what security issue you are trying to resolve with this control?
 
-Stefan
 
---BOjdgTgdt3+JE/Ok
-Content-Type: application/pgp-signature; name="signature.asc"
+I think there are a few reasons why we want this particular hook.
 
------BEGIN PGP SIGNATURE-----
+1.  It aligns well with how other resources are managed by selinux
+where access to the resource is the first control point (e.g. "create"
+for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
+"open" for perf_event) and then additional functionality or
+capabilities require additional permissions.
+2. It aligns well with how resources are managed on Android. We often
+do not grant direct access to resources (like memory buffers). For
+example, a single domain on Android manages the loading of all bpf
+programs and the creation of all bpf maps. Other domains can be
+granted access to these only once they're created. We can enforce base
+properties with MAC, while allowing the system to manage and grant
+access to resources at run-time via DAC (e.g. using Android's
+permission model). This allows us to do better management and
+accounting of resources.
+3. Attack surface management. One of the primary uses of selinux on
+Android is to assess and limit attack surface (e.g.
+https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
+io_uring vulnerabilities have made their way through our vulnerability
+management system, it's become apparent that it's complicated to
+assess the impact. Is a use-after-free reachable? Creating
+proof-of-concept exploits takes a lot of time, and often functionality
+can be reached by multiple paths. How many of the known io_uring
+vulnerabilities would be gated by the existing checks? How many future
+ones will be gated by the existing checks? I don't know the answer to
+either of these questions and it's not obvious. This hook makes that
+initial assessment simple and effective.
+>
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmNtAMwACgkQnKSrs4Gr
-c8i5/ggAiwRcRUd933XAprxoOEf79Idt3fpiIKsSAKiy4OMv0nEyqYP/6fuGimNq
-f/RR5LRDCTnFHVBfoYH30TZtfQjyzwtTzmHSaSmg0+WoT2UNJ0+gq439m/sYXDrd
-6eJwgmAbfkawMEB+Je2sAkhTWjkFKabr5z/bsqBHUtRg2cHICzMYeHI3pf+JKS44
-S1Cc/HTXIumkvDwVKyE/bQtmiqkD4OTvYy44MyJvZxYD4D/SzNgyCxsDUnHbXLkT
-Cl9+uKsKjXxY11ImR59zEhdsviDCfJpYdh5JeE7x2CO/2CYGiZLhlt+gSZa/IBWf
-aghZmDXgkdAcJKU2XmX3yicUmbiVBQ==
-=e+sA
------END PGP SIGNATURE-----
-
---BOjdgTgdt3+JE/Ok--
-
+>
+> --
+> paul-moore.com

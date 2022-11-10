@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5715862492B
-	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 19:16:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 092D662492C
+	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 19:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231661AbiKJSQM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Nov 2022 13:16:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54636 "EHLO
+        id S231728AbiKJSQO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Nov 2022 13:16:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231612AbiKJSQM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 13:16:12 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326D320BFC
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:16:11 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id z9so1400059ilu.10
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:16:11 -0800 (PST)
+        with ESMTP id S231612AbiKJSQN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 13:16:13 -0500
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8A4220BFC
+        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:16:12 -0800 (PST)
+Received: by mail-io1-xd35.google.com with SMTP id z3so1889437iof.3
+        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:16:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WqXDyseogDTLpFF0eQHv9pOMaqFVWgVUbVjrKvFMsy0=;
-        b=5ycQ1sacv7ViSywRAaNstwvoGkdomC5JIRvZIkKbU9rck8mmh3GieD2uo/M4nG261Z
-         vLI8kNdoBruGSniE5hS6Q2HKx3gNULA/IsVx6DseuhOXHBdqxyIItoOhVs5Fr348bUEg
-         uPvZAAqzh98Y092uZs+LfzrG2YoRfvEKEmUpoDiBy98sgY8S0SMBL9GTDx0R3jyBmFYf
-         iHbhizld9PESZraYOU9OPtQ1YZrwwoUMNT1Y10lzqX3Tb2yiZ7I+R7t8wsXwjTiHjyTJ
-         dKvwF5X/gV53zx4r+2UBR9mS2SkTxFvo7EXjoTESAJuKLva+E7r+DAdGcCCZ7WrOSmdX
-         L76g==
+        bh=BwiJ2SMIDDKVYRQ7wQe9txGQX85SKk+nkzBYRxOOnlM=;
+        b=kHfiqARDwfuITn29KeBalVuK/L3P0wuICJMmftMNqljzDzeKnSqXYkys6ad3bnWHbm
+         KOSAJOT0nn78yyg6lcthYlAKAtLFmK25HdZZ0XHrC3YFGsz6jCxHW2KaJy8cXylewl9j
+         94EjvQS+rX3cd0z5SvCQWz3jdxhDC9GLykyczbthVFFWLCi/dj4Asg0DrliHXVTfea6H
+         uJKRb0H2E9IYIRfNJdB8hrrDA8bC06vMGmIxsUGUoGRL449eCQsmdQWxp7My+ldlnPh8
+         c1HvH4jz8+0gADtvrsyAIrmF4NIpBsvhqwNlvKIAcDE92oqZZ3KhSeWK+xLRf3bnMZ0u
+         iYFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WqXDyseogDTLpFF0eQHv9pOMaqFVWgVUbVjrKvFMsy0=;
-        b=MNaEE7WT5C7E9DundC8nmps/5VT4ceMZmgoSJP+4fv+J9TfpugRpF/kP7UnyiFwg2h
-         NB5np+H41RzBuYxbNWd1bMl4T2fp5JVcFDG9vHJ7wZ2UW3jHRy9UnVJBoADG5sQNgHCX
-         5d6gJJ0ZJUJFuiU8VB/kfsdK78g/RdcsM0UsH7WYBDtg5Pg+uswFDbLipHCf1ZamDCBL
-         9unC2Hp9RdkMH+WE9qu1lOKM4jwUV4DBdrVheHDDAfCBn7+qPd2g1C9vI9IBxaHvGY3o
-         37W03FToBMyfwMlZJpmfF8y4ZlFkvfUVirKRU17T+8/IgRUF1zBRliUoYqBKkkBAb06m
-         /xdA==
-X-Gm-Message-State: ACrzQf0du2KOtxEn13rL/bQLE64uiDFNCjF86rHxBNhAwCABk1QvsZ4U
-        1ktJNSLe0fbVj2RM+kcWiB8Xf66zd3JzKA==
-X-Google-Smtp-Source: AMsMyM7wUzyJCMy2ly1qpNqkFird1qvyTn2mB5jZlKmwnt+SUAUKAgFGKJ0Y/tZ8LeRzzgTrXsVB7w==
-X-Received: by 2002:a92:d84a:0:b0:300:bee0:1468 with SMTP id h10-20020a92d84a000000b00300bee01468mr3307519ilq.129.1668104170287;
-        Thu, 10 Nov 2022 10:16:10 -0800 (PST)
+        bh=BwiJ2SMIDDKVYRQ7wQe9txGQX85SKk+nkzBYRxOOnlM=;
+        b=v31XskMi6+de98Ve79k1AcDQuqn8/CAGPnrFpBuOqHpYltblRXxPnb6BXxmPWE4FSa
+         UZdrfwB3USNsc5Wr5JHbM+vPR8lwld+7pHw9s3cpRfQyO6ahrDa5xKIWvoIWblPnwrrG
+         d9TI9IEPtgsaYyEmxGJAs9cNLmaN7Co18OuXdeMx1jPoaODQw3CwhN7/uE01jDhRv2HT
+         yHd/Jc3CAMY3eHJ1O/YWV2cX/q6GVIQ0eZrqpAvti5MCp1+FCVpUQ5wS2M2V3B0B5e/8
+         WnDB1xwdG6ryeje1zavBMMhMdbn8362XSMkpiqzYNIps9eV09p5gM40E2Zd6QQuZcYz9
+         STAg==
+X-Gm-Message-State: ACrzQf1LzYOFH9qSsLHLu+ISvcRbq3igMg95EH/lWOpyAB4jQWRZnXYz
+        TPE76hzJMDPQN2W+2TcBQLLh6g==
+X-Google-Smtp-Source: AMsMyM69A0Wcg2ODJ2yCKZOtlp0FodOQRHVchYC9CEXPAD7WUuvbfsgOHhvCu+AR21g6kJVWX9Q6WA==
+X-Received: by 2002:a05:6602:3608:b0:6cc:e295:7bde with SMTP id bc8-20020a056602360800b006cce2957bdemr3178744iob.183.1668104172188;
+        Thu, 10 Nov 2022 10:16:12 -0800 (PST)
 Received: from [127.0.0.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id s2-20020a02b142000000b00363cce75bffsm31120jah.151.2022.11.10.10.16.09
+        by smtp.gmail.com with ESMTPSA id s2-20020a02b142000000b00363cce75bffsm31120jah.151.2022.11.10.10.16.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 10:16:09 -0800 (PST)
+        Thu, 10 Nov 2022 10:16:11 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lin Ma <linma@zju.edu.cn>, asml.silence@gmail.com
-In-Reply-To: <20221110060313.16303-1-linma@zju.edu.cn>
-References: <20221110060313.16303-1-linma@zju.edu.cn>
-Subject: Re: [PATCH v1] io_uring: remove outdated comments of caching
-Message-Id: <166810416930.167294.6129265009506240894.b4-ty@kernel.dk>
-Date:   Thu, 10 Nov 2022 11:16:09 -0700
+To:     linux-kernel@vger.kernel.org, Lin Ma <linma@zju.edu.cn>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org
+In-Reply-To: <20221110122103.20120-1-linma@zju.edu.cn>
+References: <20221110122103.20120-1-linma@zju.edu.cn>
+Subject: Re: [PATCH v1] io_uring: update outdated comment of callbacks
+Message-Id: <166810417041.167294.11773819036145518870.b4-ty@kernel.dk>
+Date:   Thu, 10 Nov 2022 11:16:10 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -70,20 +70,17 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 10 Nov 2022 14:03:13 +0800, Lin Ma wrote:
-> Previous commit 13a99017ff19 ("io_uring: remove events caching
-> atavisms") entirely removes the events caching optimization introduced
-> by commit 81459350d581 ("io_uring: cache req->apoll->events in
-> req->cflags"). Hence the related comment should also be removed to avoid
-> misunderstanding.
+On Thu, 10 Nov 2022 20:21:03 +0800, Lin Ma wrote:
+> Previous commit ebc11b6c6b87 ("io_uring: clean io-wq callbacks") rename
+> io_free_work() into io_wq_free_work() for consistency. This patch also
+> updates relevant comment to avoid misunderstanding.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] io_uring: remove outdated comments of caching
-      commit: ff611c848d0fd408ce90ef93a09ea0a70400cd86
+[1/1] io_uring: update outdated comment of callbacks
+      commit: 55acb7980966a3a007af6173910c7aa7b600226f
 
 Best regards,
 -- 

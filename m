@@ -2,98 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8948D623969
-	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 03:02:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBBD3623B95
+	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 07:03:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbiKJCBx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Nov 2022 21:01:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
+        id S232220AbiKJGDW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Nov 2022 01:03:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232196AbiKJB7v (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Nov 2022 20:59:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67DC61F2E3
-        for <io-uring@vger.kernel.org>; Wed,  9 Nov 2022 17:58:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668045527;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to; bh=1hVSUd4YaY6HwwWOKR0jXW16HT+uN3MPbG1vVO4zXwA=;
-        b=a4bSPVV5e1/K1ppioFhqGbHGJJDv6a4TKw9IWVbR9QOppAHbLf9L7MTeSvRJKkjGF0YXEp
-        KvoN6n3Ax/bU8OZ/gEHbAfBvDaSqBat/AlxbIIV8iz4bB1fR7g1pFCL5NKgbR91wdY8lzf
-        /q5SdEls0KMymdQLiiGCwEyLZOWemXk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-9-vS3pbUNcOMmmjpYkALR_9g-1; Wed, 09 Nov 2022 20:58:43 -0500
-X-MC-Unique: vS3pbUNcOMmmjpYkALR_9g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 93827101A528;
-        Thu, 10 Nov 2022 01:58:42 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B441140EBF5;
-        Thu, 10 Nov 2022 01:58:40 +0000 (UTC)
-Date:   Wed, 9 Nov 2022 20:58:39 -0500
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk
-Cc:     Dylan Yudaken <dylany@meta.com>,
-        Dominik Thalhammer <dominik@thalhammer.it>, rjones@redhat.com,
-        jmoyer@redhat.com
-Subject: Re: liburing 2.3 API/ABI breakage
-Message-ID: <Y2xaz5HwrGcbKJK8@fedora>
+        with ESMTP id S229449AbiKJGDV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 01:03:21 -0500
+Received: from zju.edu.cn (mail.zju.edu.cn [61.164.42.155])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1CF97248EC;
+        Wed,  9 Nov 2022 22:03:18 -0800 (PST)
+Received: from zju.edu.cn (unknown [10.12.77.33])
+        by mail-app4 (Coremail) with SMTP id cS_KCgAHCc0jlGxjOmznBw--.42812S4;
+        Thu, 10 Nov 2022 14:03:15 +0800 (CST)
+From:   Lin Ma <linma@zju.edu.cn>
+To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Lin Ma <linma@zju.edu.cn>
+Subject: [PATCH v1] io_uring: remove outdated comments of caching
+Date:   Thu, 10 Nov 2022 14:03:13 +0800
+Message-Id: <20221110060313.16303-1-linma@zju.edu.cn>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qx/8DVgGN8OKrBZC"
-Content-Disposition: inline
-In-Reply-To: <Y2wcUfHyS7pjlGNy@fedora>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: cS_KCgAHCc0jlGxjOmznBw--.42812S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrW3Cw4kXF48Ary3uw4UArb_yoWkCrb_XF
+        ZxJrWkZayjyFsFk3yUCr40qrW2vw429F4xuF47JasrJa47AFZ5Cr4qyryfXr98Cw47Cr90
+        ka98KayfJr429jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb28Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
+        wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
+        vE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vEx4A2
+        jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52
+        x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWU
+        GwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+        8JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv
+        6cx26r4fKr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGw
+        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48J
+        MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMI
+        IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+        87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Previous commit 13a99017ff19 ("io_uring: remove events caching
+atavisms") entirely removes the events caching optimization introduced 
+by commit 81459350d581 ("io_uring: cache req->apoll->events in
+req->cflags"). Hence the related comment should also be removed to avoid
+misunderstanding.
 
---qx/8DVgGN8OKrBZC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: 13a99017ff19 ("io_uring: remove events caching atavisms")
+Signed-off-by: Lin Ma <linma@zju.edu.cn>
+---
+ io_uring/poll.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-> 2. Going from size_t to unsigned int is ABI breakage. This is mitigated
->    on CPU architectures that share 32-bit/64-bit registers (i.e. rax/eax
->    on x86-64 and r0/x0/w0 on aarch64). There's no guarantee this works
->    on all architectures, especially when the calling convention passes
->    arguments on the stack.
-
-Good news, I realized that io_uring_prep_getxattr() and friends are
-static inline functions. ABI breakage doesn't come into play because
-they are compiled into the application.
-
-The const char * to char * API breakage issue still remains but there's
-a pretty good chance that real applications already pass in char *.
-
-Thanks,
-Stefan
-
---qx/8DVgGN8OKrBZC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmNsWs8ACgkQnKSrs4Gr
-c8gYcQf9Hw9WxJP3vPIb4AElcN5oFDtnEYXHcpQrLBtDzxUCKj5t+W+DVxYKKEpv
-umxU8676NeV9oXcZX14KRgRmOH9oxr7Blsp0zQ6ZV0eHgm+VZ2ygLiwL5Bx24oKp
-xRgFIS/gm3WwwT5ggPxRqXLzLsg6v9mdJ0RvpRnnpHqAjVivT5IxRJS+44DC1sxW
-8isjJaY+rHUOz9c//YBv+KnheBu+h5/RpYVzGQPAyGMOvgAnWGqeE4zI3KqjuRth
-pQOEEwX9UIIaHZ/amAlY7jPe0X3d3U/wAWF+QoldyGZp0aZ4lCATEqmF4NXQFpGM
-nnP+q8mEb/uBnSGrJzYBpI7TyFZ/YA==
-=tRWF
------END PGP SIGNATURE-----
-
---qx/8DVgGN8OKrBZC--
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 0d9f49c575e0..74ba910c1f22 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -310,12 +310,7 @@ static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
+ static void __io_poll_execute(struct io_kiocb *req, int mask)
+ {
+ 	io_req_set_res(req, mask, 0);
+-	/*
+-	 * This is useful for poll that is armed on behalf of another
+-	 * request, and where the wakeup path could be on a different
+-	 * CPU. We want to avoid pulling in req->apoll->events for that
+-	 * case.
+-	 */
++
+ 	if (req->opcode == IORING_OP_POLL_ADD)
+ 		req->io_task_work.func = io_poll_task_func;
+ 	else
+-- 
+2.38.1
 

@@ -2,93 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CCA3624915
-	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 19:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5715862492B
+	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 19:16:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbiKJSId (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Nov 2022 13:08:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50822 "EHLO
+        id S231661AbiKJSQM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Nov 2022 13:16:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbiKJSIc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 13:08:32 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD39B624C
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:08:31 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id 7so1381954ilg.11
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:08:31 -0800 (PST)
+        with ESMTP id S231612AbiKJSQM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 13:16:12 -0500
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326D320BFC
+        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:16:11 -0800 (PST)
+Received: by mail-il1-x130.google.com with SMTP id z9so1400059ilu.10
+        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 10:16:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MCKfI4Yw+EIdc0EQpxxDDtfncLisnx8qWHLpEEIttd4=;
-        b=LlPhhU0rvjfDTwZfam4iYJi/qFEPwdfvX9wJ+oO0+TwrGtRIT/AicWvxrQ90LRVjnb
-         Wm4gG7uhTjQV4j2CGhn2Tb8jnjvn7rBHLfKearLovT/CE1ulLEKjZcj7NgUehfcBxDtM
-         Q/ep8nqTbPhIjqvzr/UNnkyK4he3rlqZ53mRgpWWHne5JrclbROalewiVn+xAv0sDwAq
-         qZOpAWlcUGbNtkP2Spthfef42hjwInK3HUc7/gSDFbBWaf4t6psMLTO5ZYt7U72+RZZo
-         XUDT/MDz+zw6ApveE6Xm0AhiVgW1JM5Xlg4eC7or7G56dRXW2SHwu5QfnXPEaH3D0f0q
-         XBxQ==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WqXDyseogDTLpFF0eQHv9pOMaqFVWgVUbVjrKvFMsy0=;
+        b=5ycQ1sacv7ViSywRAaNstwvoGkdomC5JIRvZIkKbU9rck8mmh3GieD2uo/M4nG261Z
+         vLI8kNdoBruGSniE5hS6Q2HKx3gNULA/IsVx6DseuhOXHBdqxyIItoOhVs5Fr348bUEg
+         uPvZAAqzh98Y092uZs+LfzrG2YoRfvEKEmUpoDiBy98sgY8S0SMBL9GTDx0R3jyBmFYf
+         iHbhizld9PESZraYOU9OPtQ1YZrwwoUMNT1Y10lzqX3Tb2yiZ7I+R7t8wsXwjTiHjyTJ
+         dKvwF5X/gV53zx4r+2UBR9mS2SkTxFvo7EXjoTESAJuKLva+E7r+DAdGcCCZ7WrOSmdX
+         L76g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MCKfI4Yw+EIdc0EQpxxDDtfncLisnx8qWHLpEEIttd4=;
-        b=ucaTO69O+H8bOyUkEt+Na7ScnhTycdXPuzrcNrOeFz+wcJyjLsOR4VF51iTmuUUMAD
-         x+f0GGIkZzGitZIov73MfmNoSExLIaU827e66YbeljvHGC1KSM/b6UlmPR5Sekhv22tl
-         l+q9rCmpPF+Q9VOILAgWJOZq42DwlIYddEjH/OH6O8rN6tYQqpH++PfUPtSnXBom7DRh
-         KLZtd1r9VlNW/hliwNtzY5fvVV1iHFh52HmJV/cT5rDAxbg47G1gkIk38NEyGdVkOuCx
-         qyKHI5LMK6OzmuE443vyVY98AH62y7wd8Ygn6Xntk6QMxkw49g8uyCUCIMgIF+3ST1Qp
-         n8qA==
-X-Gm-Message-State: ACrzQf1lHWCS5ZDmZQ65LHyombOT0UyzymxU/GYnxfEinDwWoejtbPrn
-        12yVoo+s3hUtroPjFOlYJEE79VfChbD1IQ==
-X-Google-Smtp-Source: AMsMyM57SriVe8oiJgQqHaJWQJRrIrRewNrZw2XrAfiTBKjpUt/Ju0vl6WNDRauzImWZRhFUfeurfw==
-X-Received: by 2002:a05:6e02:cb0:b0:300:e6f0:432b with SMTP id 16-20020a056e020cb000b00300e6f0432bmr3016478ilg.193.1668103710708;
-        Thu, 10 Nov 2022 10:08:30 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id n5-20020a056e02140500b00300bd581944sm95500ilo.25.2022.11.10.10.08.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Nov 2022 10:08:30 -0800 (PST)
-Message-ID: <ac6a421e-db41-379a-db74-f4578637eb78@kernel.dk>
-Date:   Thu, 10 Nov 2022 11:08:28 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH] io_uring: check for rollover of buffer ID when providing
- buffers
-Content-Language: en-US
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WqXDyseogDTLpFF0eQHv9pOMaqFVWgVUbVjrKvFMsy0=;
+        b=MNaEE7WT5C7E9DundC8nmps/5VT4ceMZmgoSJP+4fv+J9TfpugRpF/kP7UnyiFwg2h
+         NB5np+H41RzBuYxbNWd1bMl4T2fp5JVcFDG9vHJ7wZ2UW3jHRy9UnVJBoADG5sQNgHCX
+         5d6gJJ0ZJUJFuiU8VB/kfsdK78g/RdcsM0UsH7WYBDtg5Pg+uswFDbLipHCf1ZamDCBL
+         9unC2Hp9RdkMH+WE9qu1lOKM4jwUV4DBdrVheHDDAfCBn7+qPd2g1C9vI9IBxaHvGY3o
+         37W03FToBMyfwMlZJpmfF8y4ZlFkvfUVirKRU17T+8/IgRUF1zBRliUoYqBKkkBAb06m
+         /xdA==
+X-Gm-Message-State: ACrzQf0du2KOtxEn13rL/bQLE64uiDFNCjF86rHxBNhAwCABk1QvsZ4U
+        1ktJNSLe0fbVj2RM+kcWiB8Xf66zd3JzKA==
+X-Google-Smtp-Source: AMsMyM7wUzyJCMy2ly1qpNqkFird1qvyTn2mB5jZlKmwnt+SUAUKAgFGKJ0Y/tZ8LeRzzgTrXsVB7w==
+X-Received: by 2002:a92:d84a:0:b0:300:bee0:1468 with SMTP id h10-20020a92d84a000000b00300bee01468mr3307519ilq.129.1668104170287;
+        Thu, 10 Nov 2022 10:16:10 -0800 (PST)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id s2-20020a02b142000000b00363cce75bffsm31120jah.151.2022.11.10.10.16.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Nov 2022 10:16:09 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Olivier Langlois <olivier@trillion01.com>
-References: <82171764-77aa-0f8a-a9c7-3c465ffe51a5@kernel.dk>
-In-Reply-To: <82171764-77aa-0f8a-a9c7-3c465ffe51a5@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lin Ma <linma@zju.edu.cn>, asml.silence@gmail.com
+In-Reply-To: <20221110060313.16303-1-linma@zju.edu.cn>
+References: <20221110060313.16303-1-linma@zju.edu.cn>
+Subject: Re: [PATCH v1] io_uring: remove outdated comments of caching
+Message-Id: <166810416930.167294.6129265009506240894.b4-ty@kernel.dk>
+Date:   Thu, 10 Nov 2022 11:16:09 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-d9ed3
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/10/22 10:55 AM, Jens Axboe wrote:
-> We already check if the chosen starting offset for the buffer IDs fit
-> within an unsigned short, as 65535 is the maximum value for a provided
-> buffer. But if the caller asks to add N buffers at offset M, and M + N
-> would exceed the size of the unsigned short, we simply add buffers with
-> wrapping around the ID.
+On Thu, 10 Nov 2022 14:03:13 +0800, Lin Ma wrote:
+> Previous commit 13a99017ff19 ("io_uring: remove events caching
+> atavisms") entirely removes the events caching optimization introduced
+> by commit 81459350d581 ("io_uring: cache req->apoll->events in
+> req->cflags"). Hence the related comment should also be removed to avoid
+> misunderstanding.
 > 
-> This is not necessarily a bug and could in fact be a valid use case, but
-> it seems confusing and inconsistent with the initial check for starting
-> offset. Let's check for wrap consistently, and error the addition if we
-> do need to wrap.
 > 
-> Reported-by: Oliver Lang <Oliver.Lang@gossenmetrawatt.com>
+> [...]
 
-Sorry, that was the wrong email, I have updated the commit locally.
+Applied, thanks!
 
+[1/1] io_uring: remove outdated comments of caching
+      commit: ff611c848d0fd408ce90ef93a09ea0a70400cd86
+
+Best regards,
 -- 
 Jens Axboe
 

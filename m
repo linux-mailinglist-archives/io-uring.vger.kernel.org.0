@@ -2,162 +2,190 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6B52624C67
-	for <lists+io-uring@lfdr.de>; Thu, 10 Nov 2022 22:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E27624E99
+	for <lists+io-uring@lfdr.de>; Fri, 11 Nov 2022 00:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231243AbiKJVFA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Nov 2022 16:05:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57984 "EHLO
+        id S230175AbiKJXzZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Nov 2022 18:55:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiKJVE7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 16:04:59 -0500
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3646354B23
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 13:04:58 -0800 (PST)
-Received: by mail-ot1-x32b.google.com with SMTP id d26-20020a05683018fa00b0066ab705617aso1793018otf.13
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 13:04:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIrljlA1dEtBNb/SQwVUbOm8b8PLiK9imBoRLMqAwOM=;
-        b=5FoAs7dr/wOchaUTGl/b0nYwRXinDLnGoOv0h+fep/0JC0/sv1eoPL1n/efnv3SVsM
-         7yQzWdA35UMFnrCREAr5KLtOCGLLQW4fpxty2Vjv0m0ioH8N5d1ZZrTOSUqBkKuVl3Qm
-         FiUDd1g3SBIzV5cuMBl6MrqZ6pYJLnPWzHMlyG4uw4XzG5+AW+8vKGIDcpDvno1l1IaT
-         0nloMmE5CdKCabKhnx3cU0I6exqxxfDw09UgP/wIuag8fa/Dp77+51STHkdLpkI8A3UD
-         E4+pbPkOolbdSczwSEUjP0sTCi0FS/PmKtO53Fd0j9u0nDiYpwgcgPGCF4U6h7QbEJP5
-         sY+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MIrljlA1dEtBNb/SQwVUbOm8b8PLiK9imBoRLMqAwOM=;
-        b=DueAy/UWzHI4qtHp0UQT3UnSOCRSEAmysQV/gDZ28tFN7V4cAMxgjN3DxSc1275qzf
-         GH6CfA0IKG3sJSdwxxKME/vsThDlYrDh58lK0VeHbP4ID2wOViUcGdXC8UzLGhMRx0GB
-         4yqwklShpnLctsB2TMn8SLt20CZjGLs/gePhJ2hXE/Vln16BMxv7iQ6yoLPi8Mg47XxN
-         iTgWl3uoPq6S6D7B3GQCe8fFCmtXFCQNOtXiP9sVC13nNq1ushu2M1GCLFKIpzkBp6e+
-         0DM+WQNKinQeW19EG5S0MejNdJYNjt8u/nY4jlLebA7TMpdxeGE7Nm2t3ZoVBL9ZcK2N
-         ATDQ==
-X-Gm-Message-State: ACrzQf1Ruz3RiV1lgtsdETYRdTDhP4RLKg0pQFHItfOTf5CwUpOKFzyH
-        m967TMJWccMtA97khaP43BM5GY5bngynIeheTvPo
-X-Google-Smtp-Source: AMsMyM61pxTlWJ/CpIa/bZyF6jsToHWzHHVWCcQYEFS5vW6C2awDGiTfoblGb9FXRye+y2lGs2HToS5+l7V3lfn3fl8=
-X-Received: by 2002:a9d:71cb:0:b0:66c:3703:f04e with SMTP id
- z11-20020a9d71cb000000b0066c3703f04emr2095693otj.287.1668114297404; Thu, 10
- Nov 2022 13:04:57 -0800 (PST)
+        with ESMTP id S229907AbiKJXzY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 18:55:24 -0500
+Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A5611A24;
+        Thu, 10 Nov 2022 15:55:23 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id 8BAA82B067E9;
+        Thu, 10 Nov 2022 18:55:18 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 10 Nov 2022 18:55:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1668124518; x=1668128118; bh=GlHnesMTaT
+        HPOW5v2dVqh6mrEs/2tfUVgZLuAhyUON4=; b=VJJa9HXQQdrqzha7u9staRnQGV
+        L+KlkG4DXHBuBtF6BHtkyXXrSs0paGWAht51JwICosxk/jwIjD7fH3D22RHwZ2eP
+        VgHR+hBabIBaNCZLgyT8Zh+gvXXixIAoVEJ/vcgHPO1ou8V1Fu9nJmIsAHkPwQJV
+        /3bA4frZ+GMTsNHz4HYX0cPprAAF1K6KNQrnu3gqWPJjiLTusBjWL5O/28J3pH4U
+        StSVwzZ28oSVt7TvaynqiqhclDg04JWPUU1tnxAJKbU/TMeTVi8QrJdu8j8tcaWC
+        NoXlYe2P1EkEy8TPvyf/y3NEMXIYtYiO1aNVZpQiwoXrQOXY7Y/MN8KYcOaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1668124518; x=1668128118; bh=GlHnesMTaTHPOW5v2dVqh6mrEs/2
+        tfUVgZLuAhyUON4=; b=UELb4RTqh5k7s5Y9IgTet29BBr/ATHTvmiAW7l97JDbZ
+        JpXPNqFCqRmjPTltxyqaEHszByDOOEfCCXs24oySmmd5JDqScFWOB6bSi8AhlRyD
+        nlnQ494bXcQB25zDg66FceQ0bOGL8TGc8O/05HNUp4MWKBOjO/jUIoWdyDl5yPGf
+        xiKYYhBwRXwPqyUXvFNP/vshKFr5djdvdbFF0wSSxDQf/B+ePyYIo2k7bqGofLB8
+        UiqWCqT097pxopgAX0XVxgNNKaxRGvqK3yajZUqMc3xnZE6DDHvyFlZRp9cQ8Wt4
+        1LH9bECa8a+31yZwCzu6Rsp9+6Pnb21+cw1oziAwNg==
+X-ME-Sender: <xms:ZY9tY-9K9LSCkFObbXSc3o6qeXxKFjAcqo291uWuzFLePGxTkU68hg>
+    <xme:ZY9tY-u9oCVGrLw0XRGZG6G54hC3jQgS3IbTe19_d7RBmYcgZGKp260yCnqS_Px7G
+    7FyXU_bt_Ac4F1HuKo>
+X-ME-Received: <xmr:ZY9tY0BXFkbcdXkb34e7hNS-54K5xjLcoFSeit1BHPmCdAgNw3A4zlQj3MKlrnLnXIiuosTjyckTmnCIX0kzAwshYR-JIOMIdMORlm4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrfeehgddujecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfhgfhffvvefuffgjkfggtgesthdtre
+    dttdertdenucfhrhhomhepufhtvghfrghnucftohgvshgthhcuoehshhhrseguvghvkhgv
+    rhhnvghlrdhioheqnecuggftrfgrthhtvghrnhepveelgffghfehudeitdehjeevhedthf
+    etvdfhledutedvgeeikeeggefgudeguedtnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomhepshhhrhesuggvvhhkvghrnhgvlhdrihho
+X-ME-Proxy: <xmx:ZY9tY2cSyh1-WpCkBVb3qyALlnnL_rOUO4nT88ca-94RKjxtHH_UoA>
+    <xmx:ZY9tYzMkysBUKkJo1fkaiydQ6xMhEq98X6u_NAbHhzc2IQaZkYnqnQ>
+    <xmx:ZY9tYwnYgcy-8gM0fV2ATzrT4zIo3IDvHIxbYpkfyehxybNruv3Ckg>
+    <xmx:ZY9tY4oiLX8H-W8O06IAVN-GoD0DBvJOQIF8G5WfpUWUOw0ire4hsl_m5ss>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Nov 2022 18:55:16 -0500 (EST)
+References: <20221107175240.2725952-1-shr@devkernel.io>
+ <20221107175240.2725952-2-shr@devkernel.io>
+ <20221108165659.59d6f6b1@kernel.org>
+User-agent: mu4e 1.6.11; emacs 28.2.50
+From:   Stefan Roesch <shr@devkernel.io>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     kernel-team@fb.com, axboe@kernel.dk, olivier@trillion01.com,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/2] io_uring: add napi busy polling support
+Date:   Thu, 10 Nov 2022 15:36:34 -0800
+In-reply-to: <20221108165659.59d6f6b1@kernel.org>
+Message-ID: <qvqweduae55u.fsf@dev0134.prn3.facebook.com>
 MIME-Version: 1.0
-References: <20221107205754.2635439-1-cukie@google.com> <CAHC9VhTLBWkw2XzqdFx1LFVKDtaAL2pEfsmm+LEmS0OWM1mZgA@mail.gmail.com>
- <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
-In-Reply-To: <CABXk95ChjusTneWJgj5a58CZceZv0Ay-P-FwBcH2o4rO0g2Ggw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Nov 2022 16:04:46 -0500
-Message-ID: <CAHC9VhRTWGuiMpJJiFrUpgsm7nQaNA-n1CYRMPS-24OLvzdA2A@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add LSM access controls for io_uring_setup
-To:     Jeffrey Vander Stoep <jeffv@google.com>
-Cc:     Gil Cukierman <cukie@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Nov 10, 2022 at 12:54 PM Jeffrey Vander Stoep <jeffv@google.com> wrote:
-> On Mon, Nov 7, 2022 at 10:17 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Mon, Nov 7, 2022 at 3:58 PM Gil Cukierman <cukie@google.com> wrote:
-> > >
-> > > This patchset provides the changes required for controlling access to
-> > > the io_uring_setup system call by LSMs. It does this by adding a new
-> > > hook to io_uring. It also provides the SELinux implementation for a new
-> > > permission, io_uring { setup }, using the new hook.
-> > >
-> > > This is important because existing io_uring hooks only support limiting
-> > > the sharing of credentials and access to the sensitive uring_cmd file
-> > > op. Users of LSMs may also want the ability to tightly control which
-> > > callers can retrieve an io_uring capable fd from the kernel, which is
-> > > needed for all subsequent io_uring operations.
-> >
-> > It isn't immediately obvious to me why simply obtaining a io_uring fd
-> > from io_uring_setup() would present a problem, as the security
-> > relevant operations that are possible with that io_uring fd *should*
-> > still be controlled by other LSM hooks.  Can you help me understand
-> > what security issue you are trying to resolve with this control?
+
+Jakub Kicinski <kuba@kernel.org> writes:
+
+> On Mon,  7 Nov 2022 09:52:39 -0800 Stefan Roesch wrote:
+>> This adds the napi busy polling support in io_uring.c. It adds a new
+>> napi_list to the io_ring_ctx structure. This list contains the list of
+>> napi_id's that are currently enabled for busy polling. The list is
+>> synchronized by the new napi_lock spin lock. The current default napi
+>> busy polling time is stored in napi_busy_poll_to. If napi busy polling
+>> is not enabled, the value is 0.
+>>
+>> The busy poll timeout is also stored as part of the io_wait_queue. This
+>> is necessary as for sq polling the poll interval needs to be adjusted
+>> and the napi callback allows only to pass in one value.
+>>
+>> Testing has shown that the round-trip times are reduced to 38us from
+>> 55us by enabling napi busy polling with a busy poll timeout of 100us.
 >
-> I think there are a few reasons why we want this particular hook.
+> What's the test, exactly? What's the network latency? Did you busy poll
+> on both ends?
 >
-> 1.  It aligns well with how other resources are managed by selinux
-> where access to the resource is the first control point (e.g. "create"
-> for files, sockets, or bpf_maps, "prog_load" for bpf programs, and
-> "open" for perf_event) and then additional functionality or
-> capabilities require additional permissions.
 
-[NOTE: there were two reply sections in your email, and while similar,
-they were not identical; I've trimmed the other for the sake of
-clarity]
+The test programs are part of the liburing patches. They consist of a
+client and server program. The client sends a request, which has a timestamp
+in its payload and the server replies with the same payload. The client
+calculates the roundtrip time and stores it to calcualte the results.
 
-The resources you mention are all objects which contain some type of
-information (either user data, configuration, or program
-instructions), with the resulting fd being a handle to those objects.
-In the case of io_uring the fd is a handle to the io_uring
-interface/rings, which by itself does not contain any information
-which is not already controlled by other permissions.
+The client is running on host1 and the server is running on host 2. The
+measured times below are roundtrip times. These are average times over
+10 runs each.
 
-I/O operations which transfer data between the io_uring buffers and
-other system objects, e.g. IORING_OP_READV, are still subject to the
-same file access controls as those done by the application using
-syscalls.  Even the IORING_OP_OPENAT command goes through the standard
-VFS code path which means it will trigger the same access control
-checks as an open*() done by the application normally.
+If no napi busy polling wait is used                 : 55us
+If napi with client busy polling is used             : 44us
+If napi busy polling is used on the client and server: 38us
 
-The 'interesting' scenarios are those where the io_uring operation
-servicing credentials, aka personalities, differ from the task
-controlling the io_uring.  However in those cases we have the new
-io_uring controls to gate these delegated operations.  Passing an
-io_uring fd is subject to the fd/use permission like any other fd.
+If you think the numbers are not that useful, I can remove them from the
+commit message.
 
-Although perhaps the most relevant to your request is the fact that
-the io_uring inode is created using the new(ish) secure anon inode
-interface which ensures that the creating task has permission to
-create an io_uring.  This io_uring inode label also comes into play
-when a task attempts to mmap() the io_uring rings, a critical part of
-the io_uring API.
+> I reckon we should either find a real application or not include any
+> numbers. Most of the quoted win likely comes from skipping IRQ
+> coalescing. Which can just be set lowered if latency of 30usec is
+> a win in itself..
+>
+> Would it be possible to try to integrate this with Jonathan's WIP
+> zero-copy work? I presume he has explicit NAPI/queue <> io_uring
+> instance mapping which is exactly the kind of use case we should
+> make a first-class citizen here.
+>
 
-If I'm missing something you believe to be important, please share the details.
+I'll have a look at Jonathan's patches.
 
-> 2. It aligns well with how resources are managed on Android. We often
-> do not grant direct access to resources (like memory buffers).
+>> +	spin_lock(&ctx->napi_lock);
+>> +	list_for_each_entry(ne, &ctx->napi_list, list) {
+>> +		if (ne->napi_id == napi_id) {
+>> +			ne->timeout = jiffies + NAPI_TIMEOUT;
+>
+> What's the NAPI_TIMEOUT thing? I don't see it mentioned in
+> the commit msg.
+>
 
-Accessing the io_uring buffers requires a task to mmap() the io_uring
-fd which is controlled by the normal SELinux mmap() access controls.
+To make sure that the napi id's are cleaned up, they have a timeout. The
+function io_napi_check_entry_timeout checks if the timeout expired. This
+has been added to make sure the list does not grow without bound.
 
-> 3. Attack surface management. One of the primary uses of selinux on
-> Android is to assess and limit attack surface (e.g.
-> https://twitter.com/jeffvanderstoep/status/1422771606309335043) . As
-> io_uring vulnerabilities have made their way through our vulnerability
-> management system, it's become apparent that it's complicated to
-> assess the impact. Is a use-after-free reachable? Creating
-> proof-of-concept exploits takes a lot of time, and often functionality
-> can be reached by multiple paths. How many of the known io_uring
-> vulnerabilities would be gated by the existing checks? How many future
-> ones will be gated by the existing checks? I don't know the answer to
-> either of these questions and it's not obvious. This hook makes that
-> initial assessment simple and effective.
+>> +	list_for_each_entry_safe(ne, n, napi_list, list) {
+>> +		napi_busy_loop(ne->napi_id, NULL, NULL, true, BUSY_POLL_BUDGET);
+>
+> You can't opt the user into prefer busy poll without the user asking
+> for it. Default to false and add an explicit knob like patch 2.
+>
 
-It should be possible to deny access to io_uring via the anonymous
-inode labels, the mmap() controls, and the fd/use permission.  If you
-find a way to do meaningful work with an io_uring fd that can't be
-controlled via an existing permission check please let me know.
+The above code is from the function io_napi_blocking_busy_loop().
+However this function is only called when a busy poll timeout has been
+configured.
 
---
-paul-moore.com
+#ifdef CONFIG_NET_RX_BUSY_POLL
+         if (iowq.busy_poll_to)
+                 io_napi_blocking_busy_loop(&local_napi_list, &iowq);
+
+However we don't have that check for sqpoll, so we should add a check
+for the napi busy poll timeout in __io_sq_thread.
+
+Do we really need a knob to store if napi busy polling is enabled or is
+sufficent to store a napi busy poll timeout value?
+
+>>  		timeout = ktime_add_ns(timespec64_to_ktime(ts), ktime_get_ns());
+>>  	}
+>> +#ifdef CONFIG_NET_RX_BUSY_POLL
+>> +	else if (!list_empty(&local_napi_list)) {
+>> +		iowq.busy_poll_to = READ_ONCE(ctx->napi_busy_poll_to);
+>> +	}
+>> +#endif
+>
+> You don't have to break the normal bracket placement for an ifdef:
+>
+> 	if (something) {
+> 		boring_code();
+>
+> #ifdef CONFIG_WANT_CHEESE
+> 	} else if (is_gouda) {
+> 		/* mmm */
+> 		nom_nom();
+> #endif
+> 	}
+
+I'll fix the above with the next version of the patch.
+'

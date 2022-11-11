@@ -2,94 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5CE6251C0
-	for <lists+io-uring@lfdr.de>; Fri, 11 Nov 2022 04:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7EA4625FD6
+	for <lists+io-uring@lfdr.de>; Fri, 11 Nov 2022 17:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbiKKDhc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Nov 2022 22:37:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38534 "EHLO
+        id S234071AbiKKQxK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 11 Nov 2022 11:53:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231688AbiKKDhb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Nov 2022 22:37:31 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2852C3FB97
-        for <io-uring@vger.kernel.org>; Thu, 10 Nov 2022 19:37:30 -0800 (PST)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N7knj6kWgzbnfR;
-        Fri, 11 Nov 2022 11:33:45 +0800 (CST)
-Received: from dggpemm500002.china.huawei.com (7.185.36.229) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 11 Nov 2022 11:37:28 +0800
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm500002.china.huawei.com (7.185.36.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 11 Nov 2022 11:37:27 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <axboe@kernel.dk>, <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, <wangxiongfeng2@huawei.com>,
-        <yangyingliang@huawei.com>
-Subject: [PATCH] tools/io_uring/io_uring-cp: fix compile warning in copy_file()
-Date:   Fri, 11 Nov 2022 11:56:02 +0800
-Message-ID: <20221111035602.9322-1-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        with ESMTP id S232004AbiKKQxJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Nov 2022 11:53:09 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91CD657D0
+        for <io-uring@vger.kernel.org>; Fri, 11 Nov 2022 08:53:08 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id a5so8358047edb.11
+        for <io-uring@vger.kernel.org>; Fri, 11 Nov 2022 08:53:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nTSoVo5qOjM2nNXLRP0SD7r1MnATBwqiSo09F/XtH+k=;
+        b=XSL65kRQ2bTj1k7n+acGX76vCROWTXk5z17STMEJehAlYxTlDNKMlXmgLNqkiJwaRM
+         1oofWxvP1VD+6Y76GtXgnG5lUqKj1Ghpk05RfnIFWjxzFLQ1a6jp2fdmhFJu6hyRIp/g
+         P0f0LPPHzndsV4YbZqhMGjQpEcLPYpTfZYDOCc8TEZyqamO9IycWPPplsevO9umG2lKR
+         vC+Yy4mc8sEqd2wlOcAGqEIRntxZF8vow0YhtxrlW/72IquoUhbkNQ1GnBMd0s5Tq8zr
+         kFqraCLC4VxRoqHy/3a4WsDDCDmEmeTGX54eITgGouWsEZhwfmVrfSB4CxR2uZ6GoyAJ
+         E92g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nTSoVo5qOjM2nNXLRP0SD7r1MnATBwqiSo09F/XtH+k=;
+        b=QcFIxaJVPKx3KFmwARWEfj3iwtqmOTrtuAUQB7phRXTpjyajFfhiQ4lXCBlCJShKuq
+         67iSDHlSOb6m1H5YtQ4NnaDGUD8jrpip4WSycD9Uea8C8ucXn9hPVKXSLBAfX/JMvE2X
+         XMmp7WUhntiV5Geq+yTZ/Jue+Fm2wLhelM9dH0V9TITkm5Uyh1pc+/85OLfXl1IhYlkX
+         gVUwfQl8ttdQehxPY4OKOeVG7G++jc3qFRoQrblFL7LKUiqlH1dZ10SBIQ9HfuvKQk/S
+         vT2exFQD6VWMxg16Iy90E01JlNA3m305IenY0+ePxrB13qOV8PB0NkUkXBsUnMIn19kA
+         eYcQ==
+X-Gm-Message-State: ANoB5pnxHUKgAaVo9qR0x8HhBPWmC4oj1RU6nl0azbJiWgJCTHH+qTs0
+        Jn++iJujjykmweH+P/9slZKJgYtU2Fs=
+X-Google-Smtp-Source: AA0mqf5Ad1KNL5Q3qROEw1CcMqC+azli9lf2h82W9+poGz1C8WMX/Hj8UDClFgmNAcZcbYRpLPjMBA==
+X-Received: by 2002:a05:6402:1ccb:b0:458:fbda:c618 with SMTP id ds11-20020a0564021ccb00b00458fbdac618mr2149130edb.428.1668185587051;
+        Fri, 11 Nov 2022 08:53:07 -0800 (PST)
+Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:7f38])
+        by smtp.gmail.com with ESMTPSA id ft31-20020a170907801f00b0078d9cd0d2d6sm1103837ejc.11.2022.11.11.08.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Nov 2022 08:53:06 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-6.1 0/2] Subject: [PATCH for-6.1 0/2] 6.1 poll patches
+Date:   Fri, 11 Nov 2022 16:51:28 +0000
+Message-Id: <cover.1668184658.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500002.china.huawei.com (7.185.36.229)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Build tools/io_uring emits the following warnings.
+1/2 is a fix following with a small patch adding a lockdep annotation
+in one place for io_uring poll.
 
-io_uring-cp.c: In function ‘copy_file’:
-io_uring-cp.c:158:17: warning: comparison of integer expressions of different signedness: ‘int’ and ‘long unsigned int’ [-Wsign-compare]
-  158 |   if (had_reads != reads) {
-      |                 ^~
-io_uring-cp.c:201:24: warning: comparison of integer expressions of different signedness: ‘__s32’ {aka ‘int’} and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
-  201 |    } else if (cqe->res != data->iov.iov_len) {
-      |                        ^~
+Pavel Begunkov (2):
+  io_uring/poll: fix double poll req->flags races
+  io_uring/poll: lockdep annote io_poll_req_insert_locked
 
-Change the type of 'had_reads' to 'unsigned long' to fix the first
-compile warning. For the second warning, cast 'cqe->res' to
-'__kernel_size_t' before comparison to fix it.
+ io_uring/poll.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
----
- tools/io_uring/io_uring-cp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/io_uring/io_uring-cp.c b/tools/io_uring/io_uring-cp.c
-index d9bd6f5f8f46..643c226f91ac 100644
---- a/tools/io_uring/io_uring-cp.c
-+++ b/tools/io_uring/io_uring-cp.c
-@@ -131,7 +131,8 @@ static int copy_file(struct io_uring *ring, off_t insize)
- 	writes = reads = offset = 0;
- 
- 	while (insize || write_left) {
--		int had_reads, got_comp;
-+		unsigned long had_reads;
-+		int got_comp;
- 
- 		/*
- 		 * Queue up as many reads as we can
-@@ -198,7 +199,7 @@ static int copy_file(struct io_uring *ring, off_t insize)
- 				fprintf(stderr, "cqe failed: %s\n",
- 						strerror(-cqe->res));
- 				return 1;
--			} else if (cqe->res != data->iov.iov_len) {
-+			} else if ((__kernel_size_t)cqe->res != data->iov.iov_len) {
- 				/* Short read/write, adjust and requeue */
- 				data->iov.iov_base += cqe->res;
- 				data->iov.iov_len -= cqe->res;
 -- 
-2.20.1
+2.38.1
 

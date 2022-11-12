@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F29106264CF
-	for <lists+io-uring@lfdr.de>; Fri, 11 Nov 2022 23:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A983626A5F
+	for <lists+io-uring@lfdr.de>; Sat, 12 Nov 2022 17:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234101AbiKKW7u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Nov 2022 17:59:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37988 "EHLO
+        id S230447AbiKLQAd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 12 Nov 2022 11:00:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233911AbiKKW7t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Nov 2022 17:59:49 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564F411A3C
-        for <io-uring@vger.kernel.org>; Fri, 11 Nov 2022 14:59:48 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id c2so5323564plz.11
-        for <io-uring@vger.kernel.org>; Fri, 11 Nov 2022 14:59:48 -0800 (PST)
+        with ESMTP id S230257AbiKLQAc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 12 Nov 2022 11:00:32 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EEF013DFB
+        for <io-uring@vger.kernel.org>; Sat, 12 Nov 2022 08:00:31 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id v3so6700680pgh.4
+        for <io-uring@vger.kernel.org>; Sat, 12 Nov 2022 08:00:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NlOaUI3wlenw4IeQRidxC7Bv1qeQ3OOSWR19UuCJAPI=;
-        b=Tcd+QCY2+x1SUqoL3VU6toVU45SGG453iv93TsfNME9FZcMA8c+gZZd69MkJUEjoiK
-         pp/NhQbrDMajm6tsgCUCn5E5VPf2unoMWvox1U10lFosBpskWZWl5OqKKm+1Ts75yLrO
-         X7xJqzRiM8oPjqXJOBnrMt/lvY5vNaFj2r3hCeCWDEr62cmUgczI6HuMkH4EBbb1D+us
-         Nt3e0SyrYlFwh5aiLO94Dm2JpYcuHfe9vBjOb2GIGLtz671jVSR4MstDpNtqDcZPuSVZ
-         fwEf4eYOPWLN8AwdngAg2qdzU0xtznObqisE2YZABcIfJ2vNdugB2hTbyaH8r4vU2/bG
-         /GVg==
+        bh=0feAgfD67gdhLi22lYYT+MnadL3HyaKN/JV5g+vrsVY=;
+        b=Au+Wlq/oHGQzxnonnsllF68+W07wKiEJ0FBms7QqjN20KKsSeE6YwZew5N3yotrvX5
+         bNQaqJ0/LYvZ/d1Rhp43YMLRJysZXgXyLVyWsxmjSx98zE5dZ2tM/lJPmiSxQS8WDOnM
+         E70Zw8PEa4Jbx1feiGMzNhjn64c7OZswkrDvCbybUbOR/hUyMB49xSE3mHzhjZiX15u3
+         JczA9Dze4fsDsdjUNYitito9jPOLmrUDi0WAM6HKyKGseqiCKhCAMbubXHYzEYHQ5xnz
+         0hMWoKluewZGBw+/sMf6MckMocS3xtpAJTxLc7kRcsrRMZQJnSPaY/rDDCwHt7/TCSFv
+         fc5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NlOaUI3wlenw4IeQRidxC7Bv1qeQ3OOSWR19UuCJAPI=;
-        b=hLydLPjAgQ77qTqigN6GfoggKZMKc3U73awmAr/Zc1jEdQ+4Ga/jW2KaBm+PwvElGv
-         iP0gYAvecXMyN9gOZWTEuW0FBI26fOsCHrBUklbx9S9TN0BnWRbdFUSYlvflilUf8Fan
-         jvvyraeID/3it7+2NReYwEl7J1kmYH6Q0xZNFG01ntXScuyCxLkM81UU7dV9LoCyoGHQ
-         b9+1Awm93u274++SnH3edVDzzrxFcE9wPHLk7zX0QGkwBeluh9UxTsllnpwGRr6uCWAC
-         FdGrnU8YUfg1kH81BIHUPrySvh0a4j64yb+mkHqx9dH1S4YMcw7YWo6t7tHPjxaasugw
-         PNKg==
-X-Gm-Message-State: ANoB5pmCB7mAPrSUjssZ0wOs6iQWg8+wmfX65eE5N/cnJ9OAJGTS2Yhn
-        sH6mDlfw3EHFx+OSw3ITSHZjtIfdTwmY9Q==
-X-Google-Smtp-Source: AA0mqf4r+EqEw6Se8GR8sBOXV3rPU70+X9/OqytW+zAE1xmFcZdxOQQ0Z86OT0vUFfIQQLUcFsqmng==
-X-Received: by 2002:a17:902:f30c:b0:187:3030:b1c2 with SMTP id c12-20020a170902f30c00b001873030b1c2mr4272819ple.125.1668207587560;
-        Fri, 11 Nov 2022 14:59:47 -0800 (PST)
+        bh=0feAgfD67gdhLi22lYYT+MnadL3HyaKN/JV5g+vrsVY=;
+        b=qio/kRJtUZ5uxljzntSbe+0mgXrVCNfOZwWKve11vYu/FZXjOBedFgfJ3MuIq9NfKt
+         FdDg+1g2HJLZKORIAC+ljYdmePL4Dwod8w9LvTTvZO+RGS15uYD11ui741uu1rmtd5p4
+         8EtsnSBvo61PAdN5eycc+DC4P7NGBoUhTgdrhB5S4sFzjS6vZ3qvuxD3WdspluViT/Ol
+         k9RMDGxYx5tpeIBnZAxBogKWu74jJbN4oI2qa9e1GThHIFMlMjTb7CNoY6lUPJeBc4Fg
+         ynDp7vACbcdEEd4/bQo6ungQVf4Qv6KWjDKhvt1vh7F8ukCSixoPL63pn8w5dyaz0Zm8
+         zwWw==
+X-Gm-Message-State: ANoB5pmApigW/cu1MW21dfG6IIwqwMokh1vjtySrgSo/vIGuV97XLGnn
+        sOctU7C7B/6YT1tuSAMCulJRcWBFt35krA==
+X-Google-Smtp-Source: AA0mqf4FHtxS1h0a7gnIzPdwhkeVNpDeyOnaTl2GtRTmAPKgCwHG1yUNfu7dKFZXPYGdn3RETaqoGw==
+X-Received: by 2002:aa7:9011:0:b0:561:c295:7568 with SMTP id m17-20020aa79011000000b00561c2957568mr7262727pfo.35.1668268830633;
+        Sat, 12 Nov 2022 08:00:30 -0800 (PST)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g17-20020aa79f11000000b0056da2bf607csm2052888pfr.214.2022.11.11.14.59.46
+        by smtp.gmail.com with ESMTPSA id p4-20020a622904000000b0056d73ef41fdsm3471141pfp.75.2022.11.12.08.00.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 14:59:46 -0800 (PST)
+        Sat, 12 Nov 2022 08:00:29 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1668184658.git.asml.silence@gmail.com>
-References: <cover.1668184658.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-6.1 0/2] Subject: [PATCH for-6.1 0/2] 6.1 poll patches
-Message-Id: <166820758620.2555.11114813042825322072.b4-ty@kernel.dk>
-Date:   Fri, 11 Nov 2022 15:59:46 -0700
+In-Reply-To: <cover.1668162751.git.asml.silence@gmail.com>
+References: <cover.1668162751.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-next 0/2] small tw add improvements
+Message-Id: <166826882960.6274.15659185946887455040.b4-ty@kernel.dk>
+Date:   Sat, 12 Nov 2022 09:00:29 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -69,22 +69,22 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 11 Nov 2022 16:51:28 +0000, Pavel Begunkov wrote:
-> 1/2 is a fix following with a small patch adding a lockdep annotation
-> in one place for io_uring poll.
+On Fri, 11 Nov 2022 16:54:07 +0000, Pavel Begunkov wrote:
+> Fiddle with inlining of task_work add so the compiler generates more
+> concise and efficient code.
 > 
 > Pavel Begunkov (2):
->   io_uring/poll: fix double poll req->flags races
->   io_uring/poll: lockdep annote io_poll_req_insert_locked
+>   io_uring: inline io_req_task_work_add()
+>   io_uring: split tw fallback into a function
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] io_uring/poll: fix double poll req->flags races
-      commit: 30a33669fa21cd3dc7d92a00ba736358059014b7
-[2/2] io_uring/poll: lockdep annote io_poll_req_insert_locked
-      commit: 5576035f15dfcc6cb1cec236db40c2c0733b0ba4
+[1/2] io_uring: inline io_req_task_work_add()
+      commit: 912f3f541dd8fb9e987e4bef0f2466b5233ec480
+[2/2] io_uring: split tw fallback into a function
+      commit: 79fde04791f9a6789ff1a9b90b06e754efb55bd7
 
 Best regards,
 -- 

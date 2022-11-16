@@ -2,92 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5652B62B37A
-	for <lists+io-uring@lfdr.de>; Wed, 16 Nov 2022 07:49:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 168A462B4C2
+	for <lists+io-uring@lfdr.de>; Wed, 16 Nov 2022 09:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbiKPGtY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Nov 2022 01:49:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57164 "EHLO
+        id S237902AbiKPIO3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Nov 2022 03:14:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231708AbiKPGtX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Nov 2022 01:49:23 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C002871F;
-        Tue, 15 Nov 2022 22:49:22 -0800 (PST)
-Received: from [192.168.88.87] (unknown [125.160.109.228])
-        by gnuweeb.org (Postfix) with ESMTPSA id 5738F815D1;
-        Wed, 16 Nov 2022 06:49:20 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1668581362;
-        bh=ddQLC+19w51VNciA5GePbW/kweB3Q6cmanRt4xXRJMk=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=qbtl8MfRFhFqRenLVGMCJGgvxxnwhRmHNeNtIjZoDmusvx1Z8bg55tvp0AJPLV32h
-         XrJj8nEuMNKRKTuk3Vts08+N2R2DFV7LMjcBA9pYjm0CnwCndXI6ejM1tYOdte9lFo
-         4zRnFFGs6osXfQcRwhiUySW/BcD2XEcSJK60UlpF0i2NtjEYqSo2STKUClrqdyrgyZ
-         zDV8qo2I3BUvCN650YLC7MCYygA60LJqRv3INxgCYd44HdxZRMCky7FWJrWjTjcqFN
-         OCYX+8snHgT9UqBQBf8Q2nFPHpranHONVOnZFlz6MMsc1dbkbODGn7couJpVtUlmFA
-         UCRBXrKepkYwA==
-Message-ID: <ebb81617-2deb-3794-a42a-8ca075149be8@gnuweeb.org>
-Date:   Wed, 16 Nov 2022 13:49:08 +0700
+        with ESMTP id S238570AbiKPIOC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Nov 2022 03:14:02 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23A9D13D62
+        for <io-uring@vger.kernel.org>; Wed, 16 Nov 2022 00:12:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mX8HRc+Qs94VVpMfxca3KwFv02cRSnw9qReJd3IwxLQ=; b=brz6RY60VrtL/14Li19H7MonDU
+        AOm9Se/79IMjZ6RJVbM7nDzC1qqOJqo+L9US/RxOWAFZftljmOv5WrlO+S3TC3EcU+bXwJxkd/4ML
+        fkZFJDm7YErP3Djg5BWQK/x2u7qjNQk2wkegt24JWiXSnPAMuzWvi/RRwWIW+ePcpxsm5gjrajXpB
+        T1HlknIlzcKM1yDv5/BzumAQ3UrLBAaVWF02OQKGAuvNAlZJTH0LH7LSdje9PgFdjfdLoEybrIvh9
+        hNGyaIx3j9FNeATWO1pL78cf40/SdPwakvZycC3R7GPrD0Dr8ecGeq36GAUE/TQzT7ivsTwH80g/N
+        TsUeRSwA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ovDXT-0017EV-FQ; Wed, 16 Nov 2022 08:12:55 +0000
+Date:   Wed, 16 Nov 2022 00:12:55 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jonathan Lemon <jonathan.lemon@gmail.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v1 05/15] io_uring: mark pages in ifq region with zctap
+ information.
+Message-ID: <Y3Sbh7N+IbTv2JJf@infradead.org>
+References: <20221108050521.3198458-1-jonathan.lemon@gmail.com>
+ <20221108050521.3198458-6-jonathan.lemon@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: (subset) [PATCH v1 0/2] io_uring uapi updates
-Content-Language: en-US
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Metzmacher <metze@samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20221115212614.1308132-1-ammar.faizi@intel.com>
- <166855408973.7702.1716032255757220554.b4-ty@kernel.dk>
- <61293423-8541-cb8b-32b4-9a4decb3544f@gnuweeb.org>
-In-Reply-To: <61293423-8541-cb8b-32b4-9a4decb3544f@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_SORBS_WEB,
-        SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221108050521.3198458-6-jonathan.lemon@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/16/22 1:34 PM, Ammar Faizi wrote:
-> On 11/16/22 6:14 AM, Jens Axboe wrote:
->> On Wed, 16 Nov 2022 04:29:51 +0700, Ammar Faizi wrote:
->>> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
->>>
->>> Hi Jens,
->>>
->>> io_uring uapi updates:
->>>
->>> 1) Don't force linux/time_types.h for userspace. Linux's io_uring.h is
->>>     synced 1:1 into liburing's io_uring.h. liburing has a configure
->>>     check to detect the need for linux/time_types.h (Stefan).
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/2] io_uring: uapi: Don't force linux/time_types.h for userspace
->>        commit: 958bfdd734b6074ba88ee3abc69d0053e26b7b9c
-> 
-> Jens, please drop this commit. It breaks the build:
-> 
-> All errors (new ones prefixed by >>):
-> 
->     In file included from <command-line>:
->>> ./usr/include/linux/io_uring.h:654:41: error: field 'timeout' has incomplete type
->       654 |         struct __kernel_timespec        timeout;
->           |                                         ^~~~~~~
+On Mon, Nov 07, 2022 at 09:05:11PM -0800, Jonathan Lemon wrote:
+> The network stack passes up pages, which must be mapped to
+> zctap device buffers in order to get the reference count and
+> other items.  Mark the page as private, and use the page_private
+> field to record the lookup and ownership information.
 
-https://lore.kernel.org/r/202211161421.AfP10hq6-lkp@intel.com
-
--- 
-Ammar Faizi
-
+Who coordinate ownership of page_private here?  What other parts
+of the kernel could touch these pages?

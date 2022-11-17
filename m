@@ -2,112 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E0462E563
-	for <lists+io-uring@lfdr.de>; Thu, 17 Nov 2022 20:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54FB362E56A
+	for <lists+io-uring@lfdr.de>; Thu, 17 Nov 2022 20:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234007AbiKQTpM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Nov 2022 14:45:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45980 "EHLO
+        id S240412AbiKQTqU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Nov 2022 14:46:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234710AbiKQTpM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Nov 2022 14:45:12 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 232FA87571
-        for <io-uring@vger.kernel.org>; Thu, 17 Nov 2022 11:45:11 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 52AA621921;
-        Thu, 17 Nov 2022 19:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1668714309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NDaPeUx9EQCPAaJDsOlYHj6Ing0L3O816O783kommYk=;
-        b=WsKF9pnu8T3/N671NiXsFac2Ad6Gt+8BmtP8k2DvQPKpAuF9UKF5fFFaWKWBFKO28xUsLM
-        qVEFFgYMYoOY6rHOYxx7aSOBJgqRpIcrgmsH6L9UMqXu92YteGNae+iTI7g8B2yPgD2XEX
-        oztFu6aZ3O7QTUl6XfwsQEZlmHSMryo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1668714309;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NDaPeUx9EQCPAaJDsOlYHj6Ing0L3O816O783kommYk=;
-        b=dQM65QY/uPfKE5r5r6ZlaDMQQwyCVm+dTP45aQTsdR0dT6z8KVR7R1TWi6/MhndXcNHd0z
-        26BOdD1gPyECxgCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C5A9213A12;
-        Thu, 17 Nov 2022 19:45:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9R+VH0SPdmNrAgAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 17 Nov 2022 19:45:08 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] io_uring: kill tw-related outdated comments
-References: <deb4db0984b07e026d08b7bd1886cfc120d67f17.1668710788.git.asml.silence@gmail.com>
-Date:   Thu, 17 Nov 2022 14:45:04 -0500
-In-Reply-To: <deb4db0984b07e026d08b7bd1886cfc120d67f17.1668710788.git.asml.silence@gmail.com>
-        (Pavel Begunkov's message of "Thu, 17 Nov 2022 18:47:04 +0000")
-Message-ID: <87r0y1wekf.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        with ESMTP id S240424AbiKQTqT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Nov 2022 14:46:19 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4506F8A157
+        for <io-uring@vger.kernel.org>; Thu, 17 Nov 2022 11:46:18 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id q5so1440983ilt.13
+        for <io-uring@vger.kernel.org>; Thu, 17 Nov 2022 11:46:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rpmdak7qHeRDheaJ5rTrkx9jz12Z06Xol/Zeu4xVqjI=;
+        b=cUKjjEiYEXbV+FedcLvNCiPjFUTR36ux0O2m1WsYoUrMzwOUvHRB7CjKFHq6OyKs2l
+         JO/7TSFsjd7qZ2p8vWCCV2cmBMvEktNPsKiK+4mEmjwfbaJ+d4Dg2yAcCjKy+B3bPGRv
+         f6mmbBPL3MVXFO9dZR54LgPMdDrBnFngnndiVCP0HG6apHRuRR430e7rAlpfKBfAx6As
+         9oYcsfcufbZL/C09VZCAjgnK7Gr4CuyMs+Y+oLnS+tqlBDWSv8e0NpdOOVlEtKy0lzv7
+         hzuZXnbVRP2Fl1wyIfY+LHk7/9/PPbTEVjaaejaLKEoytiT5SkAzZgDhFqwaVvMRZwBh
+         a3Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rpmdak7qHeRDheaJ5rTrkx9jz12Z06Xol/Zeu4xVqjI=;
+        b=tOXkOhBEOb8BW7rIQcEuTVkMHbJZY3HGXYou5Wd5fyKafOKXb7VK5IrvIipYQUXlXm
+         bImJLZKb2F1aLtjCKA+/AqNh06NcYOR02omXwZ89XyYa2Iv8I5whPkn2pBDjT9cgdJdX
+         QXdYUKSK/AfJHb9BwkGxIU/JJHL6fNTaSdy8OvBOHiTa1cuE753tNljdJ9cRqcN3zNTo
+         HFG4Ydl/cKq65/SNAXtpGd6Y5x9TfX2PtNBTnnzi4ORPlYecL1ydBFjm+XV429VfkvPo
+         zIebl6G7/Lj1gVpPNppGJKUg+1wJ5x8oM5F+EoM/v51ce1BY7eGAmf5VZ53/3GAU4tZM
+         Ju1Q==
+X-Gm-Message-State: ANoB5pnSH9DT+hTaSzPBQwlFaxBs95xPF6L63q1uFd7JakzR9glxfGy0
+        Uabif1iF4+sRWE39mwalvvuWnXq06z2CYw==
+X-Google-Smtp-Source: AA0mqf5lia2BzdJbVQQCTsweob9UqylTReUPQy4n5PAhMiHOsJYdA+d/V329ZQ8aQUUqEEbSJBT0SQ==
+X-Received: by 2002:a92:dc45:0:b0:300:530d:93f8 with SMTP id x5-20020a92dc45000000b00300530d93f8mr1999224ilq.136.1668714377435;
+        Thu, 17 Nov 2022 11:46:17 -0800 (PST)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id n13-20020a6b590d000000b006ddd85d06c2sm606951iob.55.2022.11.17.11.46.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 11:46:16 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1668710222.git.asml.silence@gmail.com>
+References: <cover.1668710222.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-6.1 0/4] minor poll fixes
+Message-Id: <166871437654.150999.16488043354208837402.b4-ty@kernel.dk>
+Date:   Thu, 17 Nov 2022 12:46:16 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-28747
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pavel Begunkov <asml.silence@gmail.com> writes:
+On Thu, 17 Nov 2022 18:40:13 +0000, Pavel Begunkov wrote:
+> First two patches fix poll missing events.
+> 3 and 4 fix leaks of multishot apoll requests.
+> 
+> Pavel Begunkov (4):
+>   io_uring: update res mask in io_poll_check_events
+>   io_uring: fix tw losing poll events
+>   io_uring: fix multishot accept request leaks
+>   io_uring: fix multishot recv request leaks
+> 
+> [...]
 
-> task_work fallback is executed from a workqueue, so current and
-> req->task are not necessarily the same. It's still safe to poke into it
-> as the request holds a task_struct reference.
+Applied, thanks!
 
-Makes sense to me.  Feel free to add
+[1/4] io_uring: update res mask in io_poll_check_events
+      (no commit info)
+[2/4] io_uring: fix tw losing poll events
+      (no commit info)
+[3/4] io_uring: fix multishot accept request leaks
+      (no commit info)
+[4/4] io_uring: fix multishot recv request leaks
+      (no commit info)
 
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
->
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  io_uring/io_uring.c | 2 +-
->  io_uring/poll.c     | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 94329c1ce91d..5a8a43fb6750 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1249,7 +1249,7 @@ static void io_req_task_cancel(struct io_kiocb *req, bool *locked)
->  void io_req_task_submit(struct io_kiocb *req, bool *locked)
->  {
->  	io_tw_lock(req->ctx, locked);
-> -	/* req->task == current here, checking PF_EXITING is safe */
-> +
->  	if (likely(!(req->task->flags & PF_EXITING)))
->  		io_queue_sqe(req);
->  	else
-> diff --git a/io_uring/poll.c b/io_uring/poll.c
-> index 2830b7daf952..5d4a0a4a379a 100644
-> --- a/io_uring/poll.c
-> +++ b/io_uring/poll.c
-> @@ -214,7 +214,6 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
->  	struct io_ring_ctx *ctx = req->ctx;
->  	int v, ret;
->  
-> -	/* req->task == current here, checking PF_EXITING is safe */
->  	if (unlikely(req->task->flags & PF_EXITING))
->  		return -ECANCELED;
-
+Best regards,
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
+

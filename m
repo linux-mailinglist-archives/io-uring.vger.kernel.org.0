@@ -2,67 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B020E62FF2A
-	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 22:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D25630042
+	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 23:39:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbiKRVIp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Nov 2022 16:08:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56008 "EHLO
+        id S229862AbiKRWjc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Nov 2022 17:39:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbiKRVIn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 16:08:43 -0500
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13AD113EA1
-        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 13:08:41 -0800 (PST)
-Received: by mail-il1-x12b.google.com with SMTP id o13so3120811ilc.7
-        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 13:08:41 -0800 (PST)
+        with ESMTP id S229720AbiKRWjb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 17:39:31 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741097615F
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 14:39:30 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id s12so9072692edd.5
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 14:39:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WX5vpbQBtjN3WPC7oKkqZKVQt5je7AXbSXSQn0evje4=;
-        b=E4kPUrs3M4S/d/UYAjYJ3dKEDyljZ/dXCmH6M/X4OyCl4pmLxkjJgflumWvUYnv0ai
-         KF5Dhrgst3y+QfYKDaXvYFRtFEjm0E3jPLz0078mBh+9BULxcMTW+aajSWYjHrJebBGa
-         LZ5XIYXmDQ7XQN1+h6OrSTB+XLgHoqFGAI8OIkUKa9ovc2SmhFcsV221WLBPtr+GSZ9a
-         2LnaHBMuvH9NjAufV+nNolQaQKzi6FnjLlncKXV/N/U6DjKoznTVsXn+eM3KYRem0LDe
-         uHgajDf4vV7dWsfr8hqrZ5Z/A80gijDj2CrOwMurKn1qH84jEGezDiKPLrmaYfvWRe04
-         No2w==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1BGpxpj2TDu7xbuC1ns4teIkSkEA6cf/goeA6UYS/vA=;
+        b=jihopXEESN7AeHe5WptFGZ/z+QlniFrbdj5O7Q3MW8jde9hA51jOj7lkV5iv08NlsX
+         vDLydtUOmPR7n6cR+baMcUJ2Wk2ilzZxzHWa+X3zXXJ0tlrv1/KY1sb9Wp/o9TSwqIc7
+         JXWcx9vozHjtGQ9DY9ux1WdgMBOLqW3+l46XDE7Etu5wOavFeg3KpQHCWW6XCT53zqho
+         d9A59ntUZvNtO7wR1kMXjBdv6XCB6hkpLVwm3s0XROiYdgw3+Vv8kI0EsUdnAE1uIf3n
+         PFwTh7uyGTnmnI7TBZTxYMcJpb+uqq2jexKgl5R+7dvYHszawrzknolH+jDB2/jtMFKp
+         e2sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WX5vpbQBtjN3WPC7oKkqZKVQt5je7AXbSXSQn0evje4=;
-        b=tn6DS1rHky4cTvQXb7NRkf8ErGA+M5tOXKO6WBkf0Rhw3yOVMvBebzbnkVXSP/GHS6
-         V8p54biu1U6T1yVSi62RCD2QB6DcVAszeLVUA5skc9dnbCGgKGLVC5gWqVfGloEN/osB
-         Fnn2WCJUYqWOmg5gpjxOhkrIZuR1WM3QKSms3KYcCnY2ImBzkN39Ukjz52RjQkcr3mFo
-         0uqiQS8Js4mIVOrJnd+AODbyWlH+M10XOi9aMRSQmkaS8eJPe8cczDGvR+VOKq+nEK4u
-         lxAmYiBI5VM203Ra8EsYKDSvriOooubRbNyds9V2savlEFTrzM7EUtJ+M2ee16hT+Bcg
-         VIUg==
-X-Gm-Message-State: ANoB5pnPAqaKC07WBmgNI4IcY8+/pD2PyY04zpPxaP+i9+yH0GNXbWD/
-        f8nE3J84suWOuiCmym85/A0Yhw==
-X-Google-Smtp-Source: AA0mqf5l3gN5PJlfXVi7ME0i2EA9cG0kW078MKPmID1V+/Uch+RRva7jeYTd/3ZaD2EldZGIWdLYcg==
-X-Received: by 2002:a92:d03:0:b0:302:988e:4ea7 with SMTP id 3-20020a920d03000000b00302988e4ea7mr3992925iln.224.1668805721058;
-        Fri, 18 Nov 2022 13:08:41 -0800 (PST)
-Received: from [127.0.0.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id h10-20020a02c72a000000b00363fbcad265sm1586170jao.25.2022.11.18.13.08.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 13:08:40 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc:     Lin Horse <kylin.formalin@gmail.com>
-In-Reply-To: <394b02d5ebf9d3f8ec0428bb512e6a8cd4a69d0f.1668802389.git.asml.silence@gmail.com>
-References: <394b02d5ebf9d3f8ec0428bb512e6a8cd4a69d0f.1668802389.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-6.1 v2] io_uring: make poll refs more robust
-Message-Id: <166880572013.94530.4234904740779650209.b4-ty@kernel.dk>
-Date:   Fri, 18 Nov 2022 14:08:40 -0700
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1BGpxpj2TDu7xbuC1ns4teIkSkEA6cf/goeA6UYS/vA=;
+        b=cx0MEmuans6EmeWmjra6aQ1m2X7Ovg+9FB4ceepBCbErFYB1fAisc5tSFrkEhwnrTm
+         90VeA+XDRUemU8oYccSbFw/Yd4BRX/JpwtdbC81DR+VUBCmuJUyGpCV18ktPKmGuocjU
+         +WZlhjJnQn2gashSf2MJJ6+p6Jka1JDKMbckwEi9+28NioitnFPj+eTArrfucTeXvvuT
+         6kDMmMelMJrXza7g1ZFG/qTtE+tB2km+5Vo3/X+ekglvsAJ5PXBhg5GO28QnjBRlZ5W2
+         Vcq4PXdhRpam8S3MWBlrazEOkA3EIw3iBhbOPdlvLwzx4Qy/cZ+oCpaMS5psrNFYCrza
+         1ozA==
+X-Gm-Message-State: ANoB5plmGlVvUJeI2JQNLGPcjiTNAhY8mD0diNOwV8u1V/oJ9CPEvbKj
+        l5PmxgksA0hXi2SH1/IgAXASksmeGxo=
+X-Google-Smtp-Source: AA0mqf7IsCVBeTkwPO9AnOBI4V0RKciN+w4fcSjRn6YXtgeXVl70X45rSYLWKzDO6HTezWmJ0NeDCA==
+X-Received: by 2002:a05:6402:4:b0:463:cb99:5c8 with SMTP id d4-20020a056402000400b00463cb9905c8mr7876931edu.395.1668811168631;
+        Fri, 18 Nov 2022 14:39:28 -0800 (PST)
+Received: from [192.168.8.100] (188.28.224.148.threembb.co.uk. [188.28.224.148])
+        by smtp.gmail.com with ESMTPSA id ee47-20020a056402292f00b00468f7bb4895sm1995830edb.43.2022.11.18.14.39.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Nov 2022 14:39:28 -0800 (PST)
+Message-ID: <f95c8321-3f64-4a34-7fdd-343e4a6718d3@gmail.com>
+Date:   Fri, 18 Nov 2022 22:39:00 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-28747
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH for-6.1 v2] io_uring: make poll refs more robust
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Lin Horse <kylin.formalin@gmail.com>
+References: <394b02d5ebf9d3f8ec0428bb512e6a8cd4a69d0f.1668802389.git.asml.silence@gmail.com>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <394b02d5ebf9d3f8ec0428bb512e6a8cd4a69d0f.1668802389.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,7 +73,7 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 18 Nov 2022 20:20:29 +0000, Pavel Begunkov wrote:
+On 11/18/22 20:20, Pavel Begunkov wrote:
 > poll_refs carry two functions, the first is ownership over the request.
 > The second is notifying the io_poll_check_events() that there was an
 > event but wake up couldn't grab the ownership, so io_poll_check_events()
@@ -85,15 +88,26 @@ On Fri, 18 Nov 2022 20:20:29 +0000, Pavel Begunkov wrote:
 > __io_arm_poll_handler() and cancellation. From those four, only poll wake
 > ups may be executed multiple times, but they're protected by a spin.
 > 
-> [...]
+> Cc: stable@vger.kernel.org
+> Reported-by: Lin Horse <kylin.formalin@gmail.com>
+> Fixes: aa43477b04025 ("io_uring: poll rework")
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+[...]
+> @@ -590,7 +624,7 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
+>   		 * locked, kick it off for them.
+>   		 */
+>   		v = atomic_dec_return(&req->poll_refs);
+> -		if (unlikely(v & IO_POLL_REF_MASK))
+> +		if (unlikely(v & IO_POLL_RETRY_MASK))
 
-Applied, thanks!
+Still no good, this chunk is about ownership and so should use
+IO_POLL_REF_MASK as before. Jens, please drop the patch, needs
+more testing
 
-[1/1] io_uring: make poll refs more robust
-      (no commit info)
+>   			__io_poll_execute(req, 0);
+>   	}
+>   	return 0;
 
-Best regards,
 -- 
-Jens Axboe
-
-
+Pavel Begunkov

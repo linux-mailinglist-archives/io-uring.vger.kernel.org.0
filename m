@@ -2,64 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6955362F996
-	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 16:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3A0562FA46
+	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 17:29:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbiKRPnI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Nov 2022 10:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55578 "EHLO
+        id S235242AbiKRQ3r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Nov 2022 11:29:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242238AbiKRPnH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 10:43:07 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25AE159175
-        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 07:43:07 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id x2so7707591edd.2
-        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 07:43:07 -0800 (PST)
+        with ESMTP id S242010AbiKRQ3q (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 11:29:46 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BF6F109A
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 08:29:45 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id d123so4186860iof.7
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 08:29:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YKuubekYFmhQpvPasuTk8ymDDJ8LyjeEFp1F3U1uKtM=;
-        b=OIyoq7bZ9LO5jAjstuB3tj86qWj0L3JGD7lEaxU+1jqtn2GZd1pEWLiAQe+cK3ki0+
-         eCbp/3qsaTAVXsAOFdZWMjJfj95vYClqf4Kj3OEsfyaIqBe5hWe/i5864nXM2oWwaY8e
-         z38p8pr5vei8lA2OGHpLEEk/3MxrxhFnGTtD8flE6HLj7DXAMePQYtoriNwcX5JwGfhR
-         ZxM2o2NrSFG3q+HTNFQJLsIbtQeg0YYTIVh8ELoXhSzLpWlB1sxCJtRaE3rUisXA3kW0
-         8mth/VN48IZdhPRr2gxfJiJCRQ3fqHD0d1ZYjF/W1OwZjlKciUX4UrppHudqvjDsYWRT
-         s6sQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h5Ex91eT1z0YVGUD2xs+1Qz5a25lfzUWwJxTOeAGf3M=;
+        b=iqVMW3Rbbavv98kOExuBqB1YP2q/Wwgfu8+6Cc5WAgvwsJquT7mH0FXQ3EUTYhDaXM
+         cEv72HLI01nluHdsXKYMTNMxuzJI5E/aKMmGdiiRoegw+r24YEdEvU2s3JzxGUahr1rI
+         rW8w3yU6mvtbetsenuRvoYQDIXE2bPN9cxvt5fAdgTEZAN282FZw7v6E8LoUVDrwVeZS
+         Ji5i6ibY77iQQrucbmYp9XC4ZsViyi4qmAHeYOSzXY3hQc3npFen+b+VZCpTZIBwDhaw
+         /6mxPdD4MQM/vsMkslaNCyCZnWgD6sSn+KnNuxuT+PyD9qK8F1N3zfFXUeNY1Dzbb7b4
+         Y24A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YKuubekYFmhQpvPasuTk8ymDDJ8LyjeEFp1F3U1uKtM=;
-        b=DICky0O82HUxNbmEhCY00n+ZiZ2Sv1QrVlM9m096ITvo6295lWpFHUQuGGCmM4c9G4
-         fqNSjh6FShqE8gK1tPCHncYIX/PX3SqHHK2natPnaqighTqwagiTpp4WMYVewKzFZkui
-         eF8RfS+YAkJy+jeHsA6zBuh1uYWdITzRUggETWvyN9HWUoe0UoxCmTszh/l8kucik2aO
-         SbUd6M2nzBBVtiPM4D/8SaBcHhB9xUE1XxLQfKC+7jFH/4R8HSQ9uX9Ykxnu40AqO5RX
-         ICGLtlrxgvIZdYoqUiyQiPvgzA5ieRD5rb4ZMJ5G68GzWbOkMrIIW7sFMCIQZ3id3XaD
-         EMMw==
-X-Gm-Message-State: ANoB5pnybdUa4Y4jAFzeAmEttGgejuklgBe29T0VwGoocEi3XSxBCimr
-        KoHR/UBgQDSpPlQa2sy0La8u17yJsn8=
-X-Google-Smtp-Source: AA0mqf6s+fOLRXnf67mJFkBIAEyatgmr1UaGQFyKgYatKvAgP0pg1hNzApnY2xr68KaBUy1uwRI8Ww==
-X-Received: by 2002:aa7:c508:0:b0:461:84de:7ac4 with SMTP id o8-20020aa7c508000000b0046184de7ac4mr6690541edq.206.1668786185192;
-        Fri, 18 Nov 2022 07:43:05 -0800 (PST)
-Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:c0b4])
-        by smtp.gmail.com with ESMTPSA id kx21-20020a170907775500b0078128c89439sm1827595ejc.6.2022.11.18.07.43.04
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h5Ex91eT1z0YVGUD2xs+1Qz5a25lfzUWwJxTOeAGf3M=;
+        b=ZCxegfPbjcq8bCmSm/+SdW5hleF/AEY4JojuzfxRJQkiRASLWMOBcZYKurTVSh2Z3y
+         6XpcA0dOLDv3osgeFwNbJgmW4JjzlXzooY34Dx3rmyRLf2Mb0ILtCi8KopgDd9eBKwQz
+         cvhJkIp9NyW14fSwn3gu2xEyabkqW8QXtwXxAIU3LFA0iTPaC6M5r4OJavcodXYDuJAi
+         g1eVDLdQCTIHivB5O34u6TpkoRpAepdXfGJpXuSf1azD1EpYbR/90yAeSF54chd9Nz1T
+         nyrMaVloo/uulZ064hkHqvpeMuR91C3tnJSMcRsyMWFozHDh3WOlqhnZ6yikT8jY8KS4
+         o1Qw==
+X-Gm-Message-State: ANoB5pkN8gclyouSXgrOInweIcpBka1kUd7C6trRNGEfHvorMNdklT9T
+        5MNQOJrvyZzVwlMlvycRMbiwEHVDqBjciw==
+X-Google-Smtp-Source: AA0mqf6M5bA+oygpHINRRaaI2IM9Gh8WBdZ4CcgDXsGF6MemCQu3Sc06HR8Zmppung9MMNkVkz7cjQ==
+X-Received: by 2002:a02:5146:0:b0:371:1431:d4f2 with SMTP id s67-20020a025146000000b003711431d4f2mr3598770jaa.184.1668788984716;
+        Fri, 18 Nov 2022 08:29:44 -0800 (PST)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id p18-20020a92d692000000b002ffcf2e2e05sm1357521iln.58.2022.11.18.08.29.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 07:43:04 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-6.1] io_uring: disallow self-propelled ring polling
-Date:   Fri, 18 Nov 2022 15:41:41 +0000
-Message-Id: <3124038c0e7474d427538c2d915335ec28c92d21.1668785722.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Fri, 18 Nov 2022 08:29:43 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <3124038c0e7474d427538c2d915335ec28c92d21.1668785722.git.asml.silence@gmail.com>
+References: <3124038c0e7474d427538c2d915335ec28c92d21.1668785722.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-6.1] io_uring: disallow self-propelled ring polling
+Message-Id: <166878898377.7355.14584218754403506688.b4-ty@kernel.dk>
+Date:   Fri, 18 Nov 2022 09:29:43 -0700
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Mailer: b4 0.11.0-dev-28747
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,36 +69,26 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When we post a CQE we wake all ring pollers as it normally should be.
-However, if a CQE was generated by a multishot poll request targeting
-its own ring, it'll wake that request up, which will make it to post
-a new CQE, which will wake the request and so on until it exhausts all
-CQ entries.
+On Fri, 18 Nov 2022 15:41:41 +0000, Pavel Begunkov wrote:
+> When we post a CQE we wake all ring pollers as it normally should be.
+> However, if a CQE was generated by a multishot poll request targeting
+> its own ring, it'll wake that request up, which will make it to post
+> a new CQE, which will wake the request and so on until it exhausts all
+> CQ entries.
+> 
+> Don't allow multishot polling io_uring files but downgrade them to
+> oneshots, which was always stated as a correct behaviour that the
+> userspace should check for.
+> 
+> [...]
 
-Don't allow multishot polling io_uring files but downgrade them to
-oneshots, which was always stated as a correct behaviour that the
-userspace should check for.
+Applied, thanks!
 
-Cc: stable@vger.kernel.org
-Fixes: aa43477b04025 ("io_uring: poll rework")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/poll.c | 2 ++
- 1 file changed, 2 insertions(+)
+[1/1] io_uring: disallow self-propelled ring polling
+      commit: 7fdbc5f014c3f71bc44673a2d6c5bb2d12d45f25
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index f500506984ec..9fe31c1ebb7b 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -239,6 +239,8 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
- 			continue;
- 		if (req->apoll_events & EPOLLONESHOT)
- 			return IOU_POLL_DONE;
-+		if (io_is_uring_fops(req->file))
-+			return IOU_POLL_DONE;
- 
- 		/* multishot, just fill a CQE and proceed */
- 		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
+Best regards,
 -- 
-2.38.1
+Jens Axboe
+
 

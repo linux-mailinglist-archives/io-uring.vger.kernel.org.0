@@ -2,66 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A0562FA46
-	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 17:29:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC82562FCE4
+	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 19:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235242AbiKRQ3r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Nov 2022 11:29:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
+        id S235379AbiKRSlF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Nov 2022 13:41:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242010AbiKRQ3q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 11:29:46 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BF6F109A
-        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 08:29:45 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id d123so4186860iof.7
-        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 08:29:45 -0800 (PST)
+        with ESMTP id S235316AbiKRSlE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 13:41:04 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90FB41E701
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 10:41:01 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id t25so15115624ejb.8
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 10:41:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h5Ex91eT1z0YVGUD2xs+1Qz5a25lfzUWwJxTOeAGf3M=;
-        b=iqVMW3Rbbavv98kOExuBqB1YP2q/Wwgfu8+6Cc5WAgvwsJquT7mH0FXQ3EUTYhDaXM
-         cEv72HLI01nluHdsXKYMTNMxuzJI5E/aKMmGdiiRoegw+r24YEdEvU2s3JzxGUahr1rI
-         rW8w3yU6mvtbetsenuRvoYQDIXE2bPN9cxvt5fAdgTEZAN282FZw7v6E8LoUVDrwVeZS
-         Ji5i6ibY77iQQrucbmYp9XC4ZsViyi4qmAHeYOSzXY3hQc3npFen+b+VZCpTZIBwDhaw
-         /6mxPdD4MQM/vsMkslaNCyCZnWgD6sSn+KnNuxuT+PyD9qK8F1N3zfFXUeNY1Dzbb7b4
-         Y24A==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejKvKVpxJrg3Cwq4Nm19XfMU6u6D2+DBY338FTVR5hM=;
+        b=GpgUn6+DtusbadLCZM0WgVHBV/59CBRLDh3n12OlVQrjVxs5ioUSnI96WK8y7DtSTd
+         DWxi1vyCAVlaR3qqxO3ZxXulwtuiFsSbqaBrMpffqDNuMuLOik5miXh1fIhGKlYONhpW
+         AMGGson7kEmLMi+LTTO8RezEph/b9d5orW5fB4dFXhIoTW+5W1/JFcSumAZHKQm7m3VD
+         6ynmiDWA+EwNUQIZCXOgyqJYvKOKhY5k9EKsNE/5Hpn0eIACx0ZmiArgx74GgPsfhMPe
+         LvOCInHasUOWUnnHhtDyw8+5C0iPY7F7TtqABJcYxQVkacywxQwdfNp0Pa7QCdelCyTX
+         Z4Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h5Ex91eT1z0YVGUD2xs+1Qz5a25lfzUWwJxTOeAGf3M=;
-        b=ZCxegfPbjcq8bCmSm/+SdW5hleF/AEY4JojuzfxRJQkiRASLWMOBcZYKurTVSh2Z3y
-         6XpcA0dOLDv3osgeFwNbJgmW4JjzlXzooY34Dx3rmyRLf2Mb0ILtCi8KopgDd9eBKwQz
-         cvhJkIp9NyW14fSwn3gu2xEyabkqW8QXtwXxAIU3LFA0iTPaC6M5r4OJavcodXYDuJAi
-         g1eVDLdQCTIHivB5O34u6TpkoRpAepdXfGJpXuSf1azD1EpYbR/90yAeSF54chd9Nz1T
-         nyrMaVloo/uulZ064hkHqvpeMuR91C3tnJSMcRsyMWFozHDh3WOlqhnZ6yikT8jY8KS4
-         o1Qw==
-X-Gm-Message-State: ANoB5pkN8gclyouSXgrOInweIcpBka1kUd7C6trRNGEfHvorMNdklT9T
-        5MNQOJrvyZzVwlMlvycRMbiwEHVDqBjciw==
-X-Google-Smtp-Source: AA0mqf6M5bA+oygpHINRRaaI2IM9Gh8WBdZ4CcgDXsGF6MemCQu3Sc06HR8Zmppung9MMNkVkz7cjQ==
-X-Received: by 2002:a02:5146:0:b0:371:1431:d4f2 with SMTP id s67-20020a025146000000b003711431d4f2mr3598770jaa.184.1668788984716;
-        Fri, 18 Nov 2022 08:29:44 -0800 (PST)
-Received: from [127.0.0.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id p18-20020a92d692000000b002ffcf2e2e05sm1357521iln.58.2022.11.18.08.29.43
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ejKvKVpxJrg3Cwq4Nm19XfMU6u6D2+DBY338FTVR5hM=;
+        b=tnyYR55TsZO7mer2jSqKv1DaiTTMBh/lHY7i2o0Xt7E3JBQM8xM54Uzs+T3ntBDMZM
+         KyZfCF22/jPqyeYC6fuFzBJybVcDqSU1h/4eTtcOv+KqAZn+nSDLyuBH96eUuiBNWbHc
+         JDReZfQGck/iiTYxw8Pq1p2g/6V97sh93ImzjvmSDTUv45ZHe9AOdUA7oe1BcAJE6xs2
+         NgQNKEKh/k6hrEXycKHopMcds9zq2+4z6zniCp0hm6xt1U8rzzQgtwXuJSmZvw8q1wgF
+         qiVCuRW8J7QHLdgZn4uCXp5ruepFTMfYVIylfxPLUzvEOEuiQpBql0iVrqceqhxr7mtg
+         c8UQ==
+X-Gm-Message-State: ANoB5pkDdwPMkK6ao5d3QRhx65ZX1QV9ExlFggKv11mg3yFHftHbbeJF
+        wnQO2kLtk0q5gYRM8FXhBpkjlzndDL0=
+X-Google-Smtp-Source: AA0mqf5zGr1UyaWHG5vCplUNi7E34NHtWxwLjVFq5IfyGvZLkUK8SLKdyua2OoFLuQ++1JYf1qOZag==
+X-Received: by 2002:a17:906:a1cb:b0:781:fcf6:e73a with SMTP id bx11-20020a170906a1cb00b00781fcf6e73amr6880614ejb.352.1668796859721;
+        Fri, 18 Nov 2022 10:40:59 -0800 (PST)
+Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:38ce])
+        by smtp.gmail.com with ESMTPSA id q24-20020a170906541800b007add28659b0sm2046529ejo.140.2022.11.18.10.40.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 08:29:43 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-In-Reply-To: <3124038c0e7474d427538c2d915335ec28c92d21.1668785722.git.asml.silence@gmail.com>
-References: <3124038c0e7474d427538c2d915335ec28c92d21.1668785722.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-6.1] io_uring: disallow self-propelled ring polling
-Message-Id: <166878898377.7355.14584218754403506688.b4-ty@kernel.dk>
-Date:   Fri, 18 Nov 2022 09:29:43 -0700
+        Fri, 18 Nov 2022 10:40:59 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        Lin Horse <kylin.formalin@gmail.com>
+Subject: [PATCH for-6.1 1/1] io_uring: make poll refs more robust
+Date:   Fri, 18 Nov 2022 18:39:24 +0000
+Message-Id: <47cac5a4cb6b2e8d2f72f8f94adb088dbfd9308c.1668796727.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-28747
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,26 +68,107 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, 18 Nov 2022 15:41:41 +0000, Pavel Begunkov wrote:
-> When we post a CQE we wake all ring pollers as it normally should be.
-> However, if a CQE was generated by a multishot poll request targeting
-> its own ring, it'll wake that request up, which will make it to post
-> a new CQE, which will wake the request and so on until it exhausts all
-> CQ entries.
-> 
-> Don't allow multishot polling io_uring files but downgrade them to
-> oneshots, which was always stated as a correct behaviour that the
-> userspace should check for.
-> 
-> [...]
+poll_refs carry two functions, the first is ownership over the request.
+The second is notifying the io_poll_check_events() that there was an
+event but wake up couldn't grab the ownership, so io_poll_check_events()
+should retry.
 
-Applied, thanks!
+We want to make poll_refs more robust against overflows. Instead of
+always incrementing it, which covers two purposes with one atomic, check
+if poll_refs is large and if so set a retry flag without attempts to
+grab ownership. The gap between the bias check and following atomics may
+seem racy, but we don't need it to be strict. Moreover there might only
+be maximum 4 parallel updates: by the first and the second poll entries,
+__io_arm_poll_handler() and cancellation. From those four, only poll wake
+ups may be executed multiple times, but they're protected by a spin.
 
-[1/1] io_uring: disallow self-propelled ring polling
-      commit: 7fdbc5f014c3f71bc44673a2d6c5bb2d12d45f25
+Cc: stable@vger.kernel.org
+Reported-by: Lin Horse <kylin.formalin@gmail.com>
+Fixes: aa43477b04025 ("io_uring: poll rework")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/poll.c | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 055632e9092a..63f152332bf6 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -40,7 +40,15 @@ struct io_poll_table {
+ };
+ 
+ #define IO_POLL_CANCEL_FLAG	BIT(31)
+-#define IO_POLL_REF_MASK	GENMASK(30, 0)
++#define IO_POLL_RETRY_FLAG	BIT(30)
++#define IO_POLL_REF_MASK	GENMASK(29, 0)
++#define IO_POLL_RETRY_MASK	(IO_POLL_REF_MASK | IO_POLL_RETRY_FLAG)
++
++/*
++ * We usually have 1-2 refs taken, 128 is more than enough and we want to
++ * maximise the margin between this amount and the moment when it overflows.
++ */
++#define IO_POLL_REF_BIAS	128
+ 
+ #define IO_WQE_F_DOUBLE		1
+ 
+@@ -58,6 +66,21 @@ static inline bool wqe_is_double(struct wait_queue_entry *wqe)
+ 	return priv & IO_WQE_F_DOUBLE;
+ }
+ 
++static bool io_poll_get_ownership_slowpath(struct io_kiocb *req)
++{
++	int v;
++
++	/*
++	 * poll_refs are already elevated and we don't have much hope for
++	 * grabbing the ownership. Instead of incrementing set a retry flag
++	 * to notify the loop that there might have been some change.
++	 */
++	v = atomic_fetch_or(IO_POLL_RETRY_FLAG, &req->poll_refs);
++	if (!(v & IO_POLL_REF_MASK))
++		return !(atomic_fetch_inc(&req->poll_refs) & IO_POLL_REF_MASK);
++	return false;
++}
++
+ /*
+  * If refs part of ->poll_refs (see IO_POLL_REF_MASK) is 0, it's free. We can
+  * bump it and acquire ownership. It's disallowed to modify requests while not
+@@ -66,6 +89,8 @@ static inline bool wqe_is_double(struct wait_queue_entry *wqe)
+  */
+ static inline bool io_poll_get_ownership(struct io_kiocb *req)
+ {
++	if (unlikely(atomic_read(&req->poll_refs) >= IO_POLL_REF_BIAS))
++		return io_poll_get_ownership_slowpath(req);
+ 	return !(atomic_fetch_inc(&req->poll_refs) & IO_POLL_REF_MASK);
+ }
+ 
+@@ -233,7 +258,7 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ 		 * and all others are be lost. Redo vfs_poll() to get
+ 		 * up to date state.
+ 		 */
+-		if ((v & IO_POLL_REF_MASK) != 1)
++		if ((v & IO_POLL_RETRY_MASK) != 1)
+ 			req->cqe.res = 0;
+ 
+ 		/* the mask was stashed in __io_poll_execute */
+@@ -274,7 +299,7 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ 		 * Release all references, retry if someone tried to restart
+ 		 * task_work while we were executing it.
+ 		 */
+-	} while (atomic_sub_return(v & IO_POLL_REF_MASK, &req->poll_refs));
++	} while (atomic_sub_return(v & IO_POLL_RETRY_MASK, &req->poll_refs));
+ 
+ 	return IOU_POLL_NO_ACTION;
+ }
+@@ -590,7 +615,7 @@ static int __io_arm_poll_handler(struct io_kiocb *req,
+ 		 * locked, kick it off for them.
+ 		 */
+ 		v = atomic_dec_return(&req->poll_refs);
+-		if (unlikely(v & IO_POLL_REF_MASK))
++		if (unlikely(v & IO_POLL_RETRY_MASK))
+ 			__io_poll_execute(req, 0);
+ 	}
+ 	return 0;
 -- 
-Jens Axboe
-
+2.38.1
 

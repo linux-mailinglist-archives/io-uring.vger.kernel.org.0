@@ -2,67 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9521062E7D1
-	for <lists+io-uring@lfdr.de>; Thu, 17 Nov 2022 23:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6955362F996
+	for <lists+io-uring@lfdr.de>; Fri, 18 Nov 2022 16:43:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234794AbiKQWK6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Nov 2022 17:10:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47754 "EHLO
+        id S235357AbiKRPnI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Nov 2022 10:43:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240595AbiKQWKn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Nov 2022 17:10:43 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A464774A92
-        for <io-uring@vger.kernel.org>; Thu, 17 Nov 2022 14:10:19 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id d20so2890737plr.10
-        for <io-uring@vger.kernel.org>; Thu, 17 Nov 2022 14:10:19 -0800 (PST)
+        with ESMTP id S242238AbiKRPnH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 10:43:07 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25AE159175
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 07:43:07 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id x2so7707591edd.2
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 07:43:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/4ID+KGqIpF7f9TNHDnM6KtMWXO/tfa6FGXAfCVxIwI=;
-        b=LvMwcx1KQczxaWg9/bbbSWwIqx/kxafm8W9ecNm3Ux4i3SrQ8+hFXoZtzYqMBYUNV6
-         iYElfm1vnVPlEBY8K33r4+S0vUpf+l10yOqLrgA40UYXLUFwi4QcSETHzi/jUL8wEC4T
-         OnJUYpO//NEiMuAuO1EHANwiTTT3Xn2JkIbTf6OiU9vLhBltP190dGl6lLnYfS49odBy
-         NSZ18yyyDumt7kUP9zFrPo5Rqt3dtvpf0ZtNmyfEpf+fUR8tFQtDQHhqPwo7i7C78Ey2
-         TehU6XMMxfS9p3VFlHugdyOAe5uQZDXpuUnsOvlewv4TEB2LBA7IzWUmJipQKzo6abG9
-         VN2Q==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKuubekYFmhQpvPasuTk8ymDDJ8LyjeEFp1F3U1uKtM=;
+        b=OIyoq7bZ9LO5jAjstuB3tj86qWj0L3JGD7lEaxU+1jqtn2GZd1pEWLiAQe+cK3ki0+
+         eCbp/3qsaTAVXsAOFdZWMjJfj95vYClqf4Kj3OEsfyaIqBe5hWe/i5864nXM2oWwaY8e
+         z38p8pr5vei8lA2OGHpLEEk/3MxrxhFnGTtD8flE6HLj7DXAMePQYtoriNwcX5JwGfhR
+         ZxM2o2NrSFG3q+HTNFQJLsIbtQeg0YYTIVh8ELoXhSzLpWlB1sxCJtRaE3rUisXA3kW0
+         8mth/VN48IZdhPRr2gxfJiJCRQ3fqHD0d1ZYjF/W1OwZjlKciUX4UrppHudqvjDsYWRT
+         s6sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/4ID+KGqIpF7f9TNHDnM6KtMWXO/tfa6FGXAfCVxIwI=;
-        b=jRT6Y+zyAxQzotGrQFT098HTLporuAdKpgrzm2iVMYujt+BvZ2BSnBydS3vMxYCtlm
-         bxJm2WsZtSHoleeEA9JJ+To7O0YrXU5EB1PfMxVu9ft26hZUOYK/aJ+hZMoMs/kk8yLj
-         UHsDikheE2mr1rf8P1XuzVCsBx7i8nAwfszw6OwrJKmSRrQsjU9HhnfwHE5p1OmVCsTn
-         vtlBhhO8MLICZRAln9vsyr7rcM9CcUeUYIhZ5t+sPHPMJEebD/GyPEwfMbHZRN0RpR6C
-         xCDxUaYHkqXm/2zWQdWnbyB7/uwkOQo2mQSGWuGDxG1YeHyp1mnyduG2KY7pztVRoCoK
-         3ClA==
-X-Gm-Message-State: ANoB5pndK8eiwWcIELn3fsHYJ5eXBDYVeV5G64D/qrcW7Sn5WUzga8y9
-        xePyhpAEoczHfqGpc9pc3m5Okqm04Bo0Tm6cGnUTezs51A==
-X-Google-Smtp-Source: AA0mqf6n+LAt2AwQRla1Lj5qZPoGeOE7479aiIYy8ezwA6Z6pfLIMdYFmsUC0gygdu7M4FQz543/y1sB3TRrpkf+hKs=
-X-Received: by 2002:a17:902:edcd:b0:186:c3b2:56d1 with SMTP id
- q13-20020a170902edcd00b00186c3b256d1mr4681556plk.15.1668723019096; Thu, 17
- Nov 2022 14:10:19 -0800 (PST)
+        bh=YKuubekYFmhQpvPasuTk8ymDDJ8LyjeEFp1F3U1uKtM=;
+        b=DICky0O82HUxNbmEhCY00n+ZiZ2Sv1QrVlM9m096ITvo6295lWpFHUQuGGCmM4c9G4
+         fqNSjh6FShqE8gK1tPCHncYIX/PX3SqHHK2natPnaqighTqwagiTpp4WMYVewKzFZkui
+         eF8RfS+YAkJy+jeHsA6zBuh1uYWdITzRUggETWvyN9HWUoe0UoxCmTszh/l8kucik2aO
+         SbUd6M2nzBBVtiPM4D/8SaBcHhB9xUE1XxLQfKC+7jFH/4R8HSQ9uX9Ykxnu40AqO5RX
+         ICGLtlrxgvIZdYoqUiyQiPvgzA5ieRD5rb4ZMJ5G68GzWbOkMrIIW7sFMCIQZ3id3XaD
+         EMMw==
+X-Gm-Message-State: ANoB5pnybdUa4Y4jAFzeAmEttGgejuklgBe29T0VwGoocEi3XSxBCimr
+        KoHR/UBgQDSpPlQa2sy0La8u17yJsn8=
+X-Google-Smtp-Source: AA0mqf6s+fOLRXnf67mJFkBIAEyatgmr1UaGQFyKgYatKvAgP0pg1hNzApnY2xr68KaBUy1uwRI8Ww==
+X-Received: by 2002:aa7:c508:0:b0:461:84de:7ac4 with SMTP id o8-20020aa7c508000000b0046184de7ac4mr6690541edq.206.1668786185192;
+        Fri, 18 Nov 2022 07:43:05 -0800 (PST)
+Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:c0b4])
+        by smtp.gmail.com with ESMTPSA id kx21-20020a170907775500b0078128c89439sm1827595ejc.6.2022.11.18.07.43.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 07:43:04 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-6.1] io_uring: disallow self-propelled ring polling
+Date:   Fri, 18 Nov 2022 15:41:41 +0000
+Message-Id: <3124038c0e7474d427538c2d915335ec28c92d21.1668785722.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com> <20221117094004.b5l64ipicitphkun@localhost>
-In-Reply-To: <20221117094004.b5l64ipicitphkun@localhost>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 17 Nov 2022 17:10:07 -0500
-Message-ID: <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        mcgrof@kernel.org, linux-security-module@vger.kernel.org,
-        io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,40 +67,36 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+When we post a CQE we wake all ring pollers as it normally should be.
+However, if a CQE was generated by a multishot poll request targeting
+its own ring, it'll wake that request up, which will make it to post
+a new CQE, which will wake the request and so on until it exhausts all
+CQ entries.
 
-...
+Don't allow multishot polling io_uring files but downgrade them to
+oneshots, which was always stated as a correct behaviour that the
+userspace should check for.
 
-> > * As we discussed previously, the real problem is the fact that we are
-> > missing the necessary context in the LSM hook to separate the
-> > different types of command targets.  With traditional ioctls we can
-> > look at the ioctl number and determine both the type of
-> > device/subsystem/etc. as well as the operation being requested; there
-> > is no such information available with the io_uring command
-> > passthrough.  In this sense, the io_uring command passthrough is
-> > actually worse than traditional ioctls from an access control
-> > perspective.  Until we have an easy(ish)[1] way to determine the
-> > io_uring command target type, changes like the one suggested here are
-> > going to be doomed as each target type is free to define their own
-> > io_uring commands.
->
-> The only thing that comes immediately to mind is that we can have
-> io_uring users define a function that is then passed to the LSM
-> infrastructure. This function will have all the logic to give relative
-> context to LSM. It would be general enough to fit all the possible commands
-> and the logic would be implemented in the "drivers" side so there is no
-> need for LSM folks to know all io_uring users.
+Cc: stable@vger.kernel.org
+Fixes: aa43477b04025 ("io_uring: poll rework")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/poll.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Passing a function pointer to the LSM to fetch, what will likely be
-just a constant value, seems kinda ugly, but I guess we only have ugly
-options at this point.  I imagine we could cache the result in the
-inode's security blob, assuming the device type remained constant (I
-can't think of why it would change); still ugly but at least it
-doesn't require multiple indirect calls.
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index f500506984ec..9fe31c1ebb7b 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -239,6 +239,8 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ 			continue;
+ 		if (req->apoll_events & EPOLLONESHOT)
+ 			return IOU_POLL_DONE;
++		if (io_is_uring_fops(req->file))
++			return IOU_POLL_DONE;
+ 
+ 		/* multishot, just fill a CQE and proceed */
+ 		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
+-- 
+2.38.1
 
-It's probably worth throwing together a quick patch so we can discuss
-this further.
-
---
-paul-moore.com

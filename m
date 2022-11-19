@@ -2,86 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CA16309C9
-	for <lists+io-uring@lfdr.de>; Sat, 19 Nov 2022 03:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8736630BC7
+	for <lists+io-uring@lfdr.de>; Sat, 19 Nov 2022 05:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235381AbiKSCSs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 18 Nov 2022 21:18:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58250 "EHLO
+        id S233598AbiKSEMp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 18 Nov 2022 23:12:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234787AbiKSCSL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 21:18:11 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9198EB3886;
-        Fri, 18 Nov 2022 18:13:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id EE30ECE2104;
-        Sat, 19 Nov 2022 02:13:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1998C43141;
-        Sat, 19 Nov 2022 02:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668824032;
-        bh=Fu6DzExXhRgqLhgG4YGKf6SpJ0oVOOjKmdZ+iEn3Rjc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wig7QjyQ71m3Y32KcvRQgzQ3Eaq4Rvn0C91S7ub02WmkR2nTeX9dG8KMEqxVuUiXz
-         832lcovCKo6pjhZw6s7s9/3gia4J/HDJdZQFUSEcYxEQjPqV72XRHnfKN805v0V4cp
-         ctlaFvV7Flqq5BIC5m3wM4gVBNb1PQvsBDy2n1002ezRpoir20RD8KdNfKAFwddE4p
-         5xduK1PHrnI0Ka+BmP3l6SeRXvZw0K2+PkD1eUfydEBYSJcf+9OegDRPGCcYkgPfFN
-         nZYie8iNL6u07ARXHiwpHUVSOIidi1Y2pY72b4H+fe11hJWGn8VNnbt+eXf/WCejTF
-         R+EObOiSpxSLg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 44/44] io_uring/poll: lockdep annote io_poll_req_insert_locked
-Date:   Fri, 18 Nov 2022 21:11:24 -0500
-Message-Id: <20221119021124.1773699-44-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221119021124.1773699-1-sashal@kernel.org>
-References: <20221119021124.1773699-1-sashal@kernel.org>
+        with ESMTP id S233496AbiKSEMK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 18 Nov 2022 23:12:10 -0500
+Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9017DC8A
+        for <io-uring@vger.kernel.org>; Fri, 18 Nov 2022 20:11:26 -0800 (PST)
+Received: by dev0134.prn3.facebook.com (Postfix, from userid 425415)
+        id E2F851956725; Fri, 18 Nov 2022 20:11:14 -0800 (PST)
+From:   Stefan Roesch <shr@devkernel.io>
+To:     kernel-team@fb.com
+Cc:     shr@devkernel.io, axboe@kernel.dk, olivier@trillion01.com,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
+        ammarfaizi2@gnuweeb.org
+Subject: [RFC PATCH v4 0/4] liburing: add api for napi busy poll
+Date:   Fri, 18 Nov 2022 20:11:09 -0800
+Message-Id: <20221119041113.146790-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
+        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+This adds two new api's to set/clear the napi busy poll settings. The two
+new functions are called:
+- io_uring_register_napi
+- io_uring_unregister_napi
 
-[ Upstream commit 5576035f15dfcc6cb1cec236db40c2c0733b0ba4 ]
+The patch series also contains the documentation for the two new function=
+s
+and two example programs. The client program is called napi-busy-poll-cli=
+ent
+and the server program napi-busy-poll-server. The client measures the
+roundtrip times of requests.
 
-Add a lockdep annotation in io_poll_req_insert_locked().
+There is also a kernel patch "io-uring: support napi busy poll" to enable
+this feature on the kernel side.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Link: https://lore.kernel.org/r/8115d8e702733754d0aea119e9b5bb63d1eb8b24.1668184658.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- io_uring/poll.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes:
+- V4:
+  - Modify functions to use a structure to pass the napi busy poll settin=
+gs
+    to the kernel.
+  - Return previous values when returning from the above functions.
+  - Rename the functions and remove one function (no longer needed as the
+    data is passed as a structure)
+- V3:
+  - Updated liburing.map file
+  - Moved example programs from the test directory to the example directo=
+ry.
+    The two example programs don't fit well in the test category and need=
+ to
+    be run from separate hosts.
+  - Added the io_uring_register_napi_prefer_busy_poll API.
+  - Added the call to io_uring_register_napi_prefer_busy_poll to the exam=
+ple
+    programs
+  - Updated the documentation
+- V2:
+  - Updated the liburing.map file for the two new functions.
+    (added a 2.4 section)
+  - Added a description of the new feature to the changelog file
+  - Fixed the indentation of the longopts structure
+  - Used defined exit constants
+  - Fixed encodeUserData to support 32 bit builds
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 0d9f49c575e0..810425ec2736 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -116,6 +116,8 @@ static void io_poll_req_insert_locked(struct io_kiocb *req)
- 	struct io_hash_table *table = &req->ctx->cancel_table_locked;
- 	u32 index = hash_long(req->cqe.user_data, table->hash_bits);
- 
-+	lockdep_assert_held(&req->ctx->uring_lock);
-+
- 	hlist_add_head(&req->hash_node, &table->hbs[index].list);
- }
- 
--- 
-2.35.1
+
+Signed-off-by: Stefan Roesch <shr@devkernel.io>
+*** BLURB HERE ***
+
+Stefan Roesch (4):
+  liburing: add api to set napi busy poll settings
+  liburing: add documentation for new napi busy polling
+  liburing: add example programs for napi busy poll
+  liburing: update changelog with new feature
+
+ .gitignore                       |   2 +
+ CHANGELOG                        |   3 +
+ examples/Makefile                |   2 +
+ examples/napi-busy-poll-client.c | 441 +++++++++++++++++++++++++++++++
+ examples/napi-busy-poll-server.c | 385 +++++++++++++++++++++++++++
+ man/io_uring_register_napi.3     |  40 +++
+ man/io_uring_unregister_napi.3   |  27 ++
+ src/include/liburing.h           |   3 +
+ src/include/liburing/io_uring.h  |  12 +
+ src/liburing.map                 |   6 +
+ src/register.c                   |  12 +
+ 11 files changed, 933 insertions(+)
+ create mode 100644 examples/napi-busy-poll-client.c
+ create mode 100644 examples/napi-busy-poll-server.c
+ create mode 100644 man/io_uring_register_napi.3
+ create mode 100644 man/io_uring_unregister_napi.3
+
+
+base-commit: 8fc22e3b3348c0a6384ec926e0b19b6707622e58
+--=20
+2.30.2
 

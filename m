@@ -2,101 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC29631583
-	for <lists+io-uring@lfdr.de>; Sun, 20 Nov 2022 18:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46CE86315DD
+	for <lists+io-uring@lfdr.de>; Sun, 20 Nov 2022 20:34:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbiKTR2V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Nov 2022 12:28:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
+        id S229558AbiKTTei (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Nov 2022 14:34:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiKTR2P (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Nov 2022 12:28:15 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4DF275
-        for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 09:28:14 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id w23so8618006ply.12
-        for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 09:28:14 -0800 (PST)
+        with ESMTP id S229449AbiKTTeh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Nov 2022 14:34:37 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B959B1C13D
+        for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 11:34:35 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id y6so7312698iof.9
+        for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 11:34:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8PFYeB16E8OQeb3PH9IjjhzmkhNWhHwQwZNzRu+UA0Q=;
-        b=dCxZIiOHkwbwo5XNI4H68fmTG4oB1Ws5wPLUZKh5+mTC/48TuDgcneIlTt8i1L/kep
-         VsxiRlO1MEsVvDNiCdOobUARKsehLLMkKarPLMzMW++gmiOWIfgsTYM7cok7dEFWvXLA
-         R7DJUOM9j4icjTpUQVjZKpcQ399jd66aEdek1AvB8Vh6zQAs18JtV6hVivMvqqfbHRXx
-         FfaEzKchY4d8W4dIaX/Ax0aDxvQyYRDLq6MSir4Hbz3ctsQOdJ0iSOHmzW4seSTTWlWr
-         ul0tC7MSGlnYTVvlRoizXX7R1q5JHRuPdq+mQrK7bXnk1ySW/1WZh/iH+b0/kyDY1scA
-         aszw==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LuePv/pavw21XE4iMWsDDj/UT/RcPgcTxx/EYf0wgNo=;
+        b=2LbDvZeCzMQf+P5ITKvzG/alvHoENlcZxJVBWppphQyviNbMAdEiOHQfmQQ2q7e7wn
+         bXIfhEGsiPzZCowNBx6qzbX4gEcflH4syAqTyKZ9TDoN7Z6txYI6rBPyTE68ZMIDgHrp
+         /SyacBCj7x6D6rUOPRdDhaGz5rlUMAr4C23U9YLQ5lNnBbAqOrvwlpHo2uUBdAkoytbI
+         GhaEAW3NBv7OEKp8NoVm44vb6mWN+H9NlXU/V94xHVEFcOo7nTspqhf/xEfgn9wOnJ0y
+         wbIKP8VCzNXA6S7bY+gNykOt5B+P1sJ7Is6FAnYl1RAG5bLEmREi6zS7Yr8D7P+n4i7O
+         LC9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8PFYeB16E8OQeb3PH9IjjhzmkhNWhHwQwZNzRu+UA0Q=;
-        b=twUpk36pSukshdoduzLXL649iuz6CVPkQZvqDap8el+VbsM+xoK9L4zQmH+aiEjmLt
-         4b17m9RmiN9EPE1FlFf/nR63dk17+vhW7ShYVKhXLT6Rl+m9dXXJSQw0zZWfK8b30Msa
-         4mDNIVVmYNbQMPzif+x4vjE0Ul5eWhn5BxuVNLehnBoIJp/8BXgGwbHnLdbEKb1TTBam
-         wqkRtrR9jr/CwsNZfYjh1tiqJuLu1EK6Ht2AtTubKt6dq8mQ3PzmbsVHo5p1Z2pYJvta
-         en6Z9pt5HqXZhHa70INRNnewA4m7n2pMny9UPWPPz6g0t4NacOtNA6OcRv3XiZHypwpT
-         7iUw==
-X-Gm-Message-State: ANoB5pnKi2k3Wwm5Vz2zF3CDSWzyehhioM9BrY9mp1AsVJIxmeeLd7/Z
-        uJkTzGjtDkmbN3d9/6wUxhkL2DyCPNZZPQ==
-X-Google-Smtp-Source: AA0mqf4N9SralDyhqe7mXeyNuD3r4ax1RIwjl0w0y/M62wlRvR0MriYA8b1xKzn1JUOyUcici9sW1A==
-X-Received: by 2002:a17:902:6b07:b0:186:df61:4693 with SMTP id o7-20020a1709026b0700b00186df614693mr1646301plk.173.1668965294106;
-        Sun, 20 Nov 2022 09:28:14 -0800 (PST)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d12-20020a170903230c00b0017e9b820a1asm7876953plh.100.2022.11.20.09.28.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Nov 2022 09:28:13 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] Revert "io_uring: disallow self-propelled ring polling"
-Date:   Sun, 20 Nov 2022 10:28:07 -0700
-Message-Id: <20221120172807.358868-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221120172807.358868-1-axboe@kernel.dk>
-References: <20221120172807.358868-1-axboe@kernel.dk>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuePv/pavw21XE4iMWsDDj/UT/RcPgcTxx/EYf0wgNo=;
+        b=MZz3ozmbphxJdghtvnrFNWipSwDq0XpcT6kgZs16uk958G2Fo1DGkA1ZUAy0nED+3u
+         ettUIS5fOByXEPS3c2z5Gus2ZCshlpJQvR3+d02+srDNLlufQ4jPgMThfH6/u6fGDtup
+         hBRrXFFhWjmHB0wkkpxkWzhicRglhwjSJWaY9v99e8b3Lq7fTGyeEzcq0hHF0u6/56ve
+         bad+M/Rh6MzOm8TAseJEushVxGES2zflg1hFNThrLGbQAhVTfO92onPvYJa9GD4ypYbt
+         tFzSqQ1Tm6/dglf6WnUp2jnlUXo+Eg3/4svuk2Sg3D8WzNHOQIXgAb1UfZsuclsa4pPo
+         RuVg==
+X-Gm-Message-State: ANoB5pln/SoGxN10AQt2yS0YPnhI5/PdPPuJvKedERXWwEz67T0HtX9L
+        0R1mz6GZOL0oLBby6WqBnKZcSQ==
+X-Google-Smtp-Source: AA0mqf5YQQ2Un68mfLlzW+f6DFLgFdW8JJwAOoWq25x3jVdIoMd/Qg7KkHokf94fApfGWK4RFvhyeQ==
+X-Received: by 2002:a02:5d45:0:b0:375:da4e:ae77 with SMTP id w66-20020a025d45000000b00375da4eae77mr6980172jaa.303.1668972874997;
+        Sun, 20 Nov 2022 11:34:34 -0800 (PST)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id x13-20020a026f0d000000b0037cb59b5c28sm860100jab.52.2022.11.20.11.34.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Nov 2022 11:34:34 -0800 (PST)
+Message-ID: <fead96f7-dfc4-9ffc-c665-7b2dc870d69f@kernel.dk>
+Date:   Sun, 20 Nov 2022 12:34:33 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [RFC PATCH v4 0/4] liburing: add api for napi busy poll
+Content-Language: en-US
+To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
+Cc:     olivier@trillion01.com, netdev@vger.kernel.org,
+        io-uring@vger.kernel.org, kuba@kernel.org, ammarfaizi2@gnuweeb.org
+References: <20221119041149.152899-1-shr@devkernel.io>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20221119041149.152899-1-shr@devkernel.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This reverts commit 7fdbc5f014c3f71bc44673a2d6c5bb2d12d45f25.
+On 11/18/22 9:11 PM, Stefan Roesch wrote:
+> This adds two new api's to set/clear the napi busy poll settings. The two
+> new functions are called:
+> - io_uring_register_napi
+> - io_uring_unregister_napi
+> 
+> The patch series also contains the documentation for the two new functions
+> and two example programs. The client program is called napi-busy-poll-client
+> and the server program napi-busy-poll-server. The client measures the
+> roundtrip times of requests.
+> 
+> There is also a kernel patch "io-uring: support napi busy poll" to enable
+> this feature on the kernel side.
 
-This patch dealt with a subset of the real problem, which is a potential
-circular dependency on the wakup path for io_uring itself. Outside of
-io_uring, eventfd can also trigger this (see details in 8c881e87feae)
-and so can epoll (see details in 426930308abf). Now that we have a
-generic solution to this problem, get rid of the io_uring specific
-work-around.
+Did you post the kernel side, because I don't see it? That's the most
+important one to get sorted first.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/poll.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index b5d9426c60f6..5733ed334738 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -246,8 +246,6 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
- 			continue;
- 		if (req->apoll_events & EPOLLONESHOT)
- 			return IOU_POLL_DONE;
--		if (io_is_uring_fops(req->file))
--			return IOU_POLL_DONE;
- 
- 		/* multishot, just fill a CQE and proceed */
- 		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
 -- 
-2.35.1
+Jens Axboe
+
 

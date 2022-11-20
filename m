@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 028EE631582
+	by mail.lfdr.de (Postfix) with ESMTP id CBC29631583
 	for <lists+io-uring@lfdr.de>; Sun, 20 Nov 2022 18:28:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiKTR2S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Nov 2022 12:28:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47512 "EHLO
+        id S229702AbiKTR2V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 20 Nov 2022 12:28:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbiKTR2O (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Nov 2022 12:28:14 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F4881166
+        with ESMTP id S229491AbiKTR2P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Nov 2022 12:28:15 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4DF275
         for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 09:28:14 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id g10so8627170plo.11
+Received: by mail-pl1-x636.google.com with SMTP id w23so8618006ply.12
         for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 09:28:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=76MVOt/up7BUknWuGmpl00ZmM3I7BwtXZcmniA9qmuo=;
-        b=cAcq15oFVNssiAaA1+sTqwpgHDh1e15jWmeDPDy66NuGC25jNsln9F+0KT/gT8gBuU
-         5wE12fGK1ljHRM4UykWbPJQt0AgnRTp5cveXEZz6yNqqD3G63ciwNMc+vsBvzFmza12O
-         VBOZq5POobHQs/aBFdP2XaP6Qp8veK0GMjYrAkKbu5yXtM1diyHq9iKmc9cEn9568KX7
-         HvWBGh1KR9BQ5Rf2TQLxBZMOj1bUsuOHXsAcQPkTZQh24L3A0Hi1omghwJkNmxX0kAOq
-         Xil6NcaJht/RmwvUEPcOeRLe2nV9S83hYKI2zw9KCwmU1L27IN7psoln3sP8cmZDt0Sg
-         /dLg==
+        bh=8PFYeB16E8OQeb3PH9IjjhzmkhNWhHwQwZNzRu+UA0Q=;
+        b=dCxZIiOHkwbwo5XNI4H68fmTG4oB1Ws5wPLUZKh5+mTC/48TuDgcneIlTt8i1L/kep
+         VsxiRlO1MEsVvDNiCdOobUARKsehLLMkKarPLMzMW++gmiOWIfgsTYM7cok7dEFWvXLA
+         R7DJUOM9j4icjTpUQVjZKpcQ399jd66aEdek1AvB8Vh6zQAs18JtV6hVivMvqqfbHRXx
+         FfaEzKchY4d8W4dIaX/Ax0aDxvQyYRDLq6MSir4Hbz3ctsQOdJ0iSOHmzW4seSTTWlWr
+         ul0tC7MSGlnYTVvlRoizXX7R1q5JHRuPdq+mQrK7bXnk1ySW/1WZh/iH+b0/kyDY1scA
+         aszw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=76MVOt/up7BUknWuGmpl00ZmM3I7BwtXZcmniA9qmuo=;
-        b=uybbb0UfZyZnatRX0lPy/3MPEMPqQjbiHBV4KCwpV4/pR81Jo4etrA4Hkarit0ztcs
-         yIWAzEIGHLZL08rJ0gIUXOK+p3Fbqr/bYyZo6yOoYb7p9thL8rDw64Tl7p1kXrl+lAVV
-         SSW2RhbJIqcDKf39o0qJtRGfk09MDHNxhrA9/z/2+Gqdh/VS29uPRLXI2EF0PkBJSrMi
-         vabFpymLISakRqBMBWQC/9jM6V8+Y5oeFfC/pzm6kVP1EheZOouH/NCvaPeBCSrzYl+l
-         xPjMAUWMgtQFa5CiLvipYMu67hGwi4afJ5CZbTMmNqnIHehRyGvvWXUIUlDPaNJv72yF
-         q2eg==
-X-Gm-Message-State: ANoB5pn7qtClibYK0hLOdUPWo5/e7GkoQZbEHj4NDw2UReNjjFTDjAwm
-        dnDqjNoehyrH5+rwBvn9IqJnzFocG/RHsg==
-X-Google-Smtp-Source: AA0mqf5Ob53srCCwHBdEZtPbGznP6xqpEBrkCTE62mgckR3fwPb9gp+xuIjYU6tp4RK9OpW76n3LyQ==
-X-Received: by 2002:a17:902:d88c:b0:186:a7f1:8d2b with SMTP id b12-20020a170902d88c00b00186a7f18d2bmr8029594plz.137.1668965293255;
-        Sun, 20 Nov 2022 09:28:13 -0800 (PST)
+        bh=8PFYeB16E8OQeb3PH9IjjhzmkhNWhHwQwZNzRu+UA0Q=;
+        b=twUpk36pSukshdoduzLXL649iuz6CVPkQZvqDap8el+VbsM+xoK9L4zQmH+aiEjmLt
+         4b17m9RmiN9EPE1FlFf/nR63dk17+vhW7ShYVKhXLT6Rl+m9dXXJSQw0zZWfK8b30Msa
+         4mDNIVVmYNbQMPzif+x4vjE0Ul5eWhn5BxuVNLehnBoIJp/8BXgGwbHnLdbEKb1TTBam
+         wqkRtrR9jr/CwsNZfYjh1tiqJuLu1EK6Ht2AtTubKt6dq8mQ3PzmbsVHo5p1Z2pYJvta
+         en6Z9pt5HqXZhHa70INRNnewA4m7n2pMny9UPWPPz6g0t4NacOtNA6OcRv3XiZHypwpT
+         7iUw==
+X-Gm-Message-State: ANoB5pnKi2k3Wwm5Vz2zF3CDSWzyehhioM9BrY9mp1AsVJIxmeeLd7/Z
+        uJkTzGjtDkmbN3d9/6wUxhkL2DyCPNZZPQ==
+X-Google-Smtp-Source: AA0mqf4N9SralDyhqe7mXeyNuD3r4ax1RIwjl0w0y/M62wlRvR0MriYA8b1xKzn1JUOyUcici9sW1A==
+X-Received: by 2002:a17:902:6b07:b0:186:df61:4693 with SMTP id o7-20020a1709026b0700b00186df614693mr1646301plk.173.1668965294106;
+        Sun, 20 Nov 2022 09:28:14 -0800 (PST)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d12-20020a170903230c00b0017e9b820a1asm7876953plh.100.2022.11.20.09.28.12
+        by smtp.gmail.com with ESMTPSA id d12-20020a170903230c00b0017e9b820a1asm7876953plh.100.2022.11.20.09.28.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Nov 2022 09:28:12 -0800 (PST)
+        Sun, 20 Nov 2022 09:28:13 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org
-Subject: [PATCH 3/4] io_uring: pass in EPOLL_URING as part of eventfd signaling and wakeups
-Date:   Sun, 20 Nov 2022 10:28:06 -0700
-Message-Id: <20221120172807.358868-4-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4/4] Revert "io_uring: disallow self-propelled ring polling"
+Date:   Sun, 20 Nov 2022 10:28:07 -0700
+Message-Id: <20221120172807.358868-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221120172807.358868-1-axboe@kernel.dk>
 References: <20221120172807.358868-1-axboe@kernel.dk>
@@ -70,97 +70,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Pass in EPOLL_URING when signaling eventfd or doing poll related wakups,
-so that we can check for a circular event dependency between eventfd
-and epoll. If this flag is set when our wakeup handlers are called, then
-we know we have a dependency that needs to terminate multishot requests.
+This reverts commit 7fdbc5f014c3f71bc44673a2d6c5bb2d12d45f25.
 
-eventfd and epoll are the only such possible dependencies.
+This patch dealt with a subset of the real problem, which is a potential
+circular dependency on the wakup path for io_uring itself. Outside of
+io_uring, eventfd can also trigger this (see details in 8c881e87feae)
+and so can epoll (see details in 426930308abf). Now that we have a
+generic solution to this problem, get rid of the io_uring specific
+work-around.
 
-Cc: stable@vger.kernel.org # 6.0
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c |  4 ++--
- io_uring/io_uring.h | 15 +++++++++++----
- io_uring/poll.c     |  8 ++++++++
- 3 files changed, 21 insertions(+), 6 deletions(-)
+ io_uring/poll.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 8840cf3e20f2..53d0043b77a5 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -495,7 +495,7 @@ static void io_eventfd_ops(struct rcu_head *rcu)
- 	int ops = atomic_xchg(&ev_fd->ops, 0);
- 
- 	if (ops & BIT(IO_EVENTFD_OP_SIGNAL_BIT))
--		eventfd_signal(ev_fd->cq_ev_fd, 1);
-+		eventfd_signal_mask(ev_fd->cq_ev_fd, 1, EPOLL_URING);
- 
- 	/* IO_EVENTFD_OP_FREE_BIT may not be set here depending on callback
- 	 * ordering in a race but if references are 0 we know we have to free
-@@ -531,7 +531,7 @@ static void io_eventfd_signal(struct io_ring_ctx *ctx)
- 		goto out;
- 
- 	if (likely(eventfd_signal_allowed())) {
--		eventfd_signal(ev_fd->cq_ev_fd, 1);
-+		eventfd_signal_mask(ev_fd->cq_ev_fd, 1, EPOLL_URING);
- 	} else {
- 		atomic_inc(&ev_fd->refs);
- 		if (!atomic_fetch_or(BIT(IO_EVENTFD_OP_SIGNAL_BIT), &ev_fd->ops))
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index cef5ff924e63..f6cf74cd692b 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -4,6 +4,7 @@
- #include <linux/errno.h>
- #include <linux/lockdep.h>
- #include <linux/io_uring_types.h>
-+#include <uapi/linux/eventpoll.h>
- #include "io-wq.h"
- #include "slist.h"
- #include "filetable.h"
-@@ -207,12 +208,18 @@ static inline void io_commit_cqring(struct io_ring_ctx *ctx)
- static inline void __io_cqring_wake(struct io_ring_ctx *ctx)
- {
- 	/*
--	 * wake_up_all() may seem excessive, but io_wake_function() and
--	 * io_should_wake() handle the termination of the loop and only
--	 * wake as many waiters as we need to.
-+	 * Trigger waitqueue handler on all waiters on our waitqueue. This
-+	 * won't necessarily wake up all the tasks, io_should_wake() will make
-+	 * that decision.
-+	 *
-+	 * Pass in EPOLLIN|EPOLL_URING as the poll wakeup key. The latter set
-+	 * in the mask so that if we recurse back into our own poll waitqueue
-+	 * handlers, we know we have a dependency between eventfd or epoll and
-+	 * should terminate multishot poll at that point.
- 	 */
- 	if (waitqueue_active(&ctx->cq_wait))
--		wake_up_all(&ctx->cq_wait);
-+		__wake_up(&ctx->cq_wait, TASK_NORMAL, 0,
-+				poll_to_key(EPOLL_URING | EPOLLIN));
- }
- 
- static inline void io_cqring_wake(struct io_ring_ctx *ctx)
 diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 055632e9092a..b5d9426c60f6 100644
+index b5d9426c60f6..5733ed334738 100644
 --- a/io_uring/poll.c
 +++ b/io_uring/poll.c
-@@ -394,6 +394,14 @@ static int io_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 		return 0;
+@@ -246,8 +246,6 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ 			continue;
+ 		if (req->apoll_events & EPOLLONESHOT)
+ 			return IOU_POLL_DONE;
+-		if (io_is_uring_fops(req->file))
+-			return IOU_POLL_DONE;
  
- 	if (io_poll_get_ownership(req)) {
-+		/*
-+		 * If we trigger a multishot poll off our own wakeup path,
-+		 * disable multishot as there is a circular dependency between
-+		 * CQ posting and triggering the event.
-+		 */
-+		if (mask & EPOLL_URING)
-+			poll->events |= EPOLLONESHOT;
-+
- 		/* optional, saves extra locking for removal in tw handler */
- 		if (mask && poll->events & EPOLLONESHOT) {
- 			list_del_init(&poll->wait.entry);
+ 		/* multishot, just fill a CQE and proceed */
+ 		if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
 -- 
 2.35.1
 

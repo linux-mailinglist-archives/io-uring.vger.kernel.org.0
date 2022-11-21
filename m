@@ -2,70 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CE86315DD
-	for <lists+io-uring@lfdr.de>; Sun, 20 Nov 2022 20:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1BA631E89
+	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 11:36:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbiKTTei (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Nov 2022 14:34:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
+        id S229514AbiKUKga (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 05:36:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiKTTeh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Nov 2022 14:34:37 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B959B1C13D
-        for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 11:34:35 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id y6so7312698iof.9
-        for <io-uring@vger.kernel.org>; Sun, 20 Nov 2022 11:34:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LuePv/pavw21XE4iMWsDDj/UT/RcPgcTxx/EYf0wgNo=;
-        b=2LbDvZeCzMQf+P5ITKvzG/alvHoENlcZxJVBWppphQyviNbMAdEiOHQfmQQ2q7e7wn
-         bXIfhEGsiPzZCowNBx6qzbX4gEcflH4syAqTyKZ9TDoN7Z6txYI6rBPyTE68ZMIDgHrp
-         /SyacBCj7x6D6rUOPRdDhaGz5rlUMAr4C23U9YLQ5lNnBbAqOrvwlpHo2uUBdAkoytbI
-         GhaEAW3NBv7OEKp8NoVm44vb6mWN+H9NlXU/V94xHVEFcOo7nTspqhf/xEfgn9wOnJ0y
-         wbIKP8VCzNXA6S7bY+gNykOt5B+P1sJ7Is6FAnYl1RAG5bLEmREi6zS7Yr8D7P+n4i7O
-         LC9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LuePv/pavw21XE4iMWsDDj/UT/RcPgcTxx/EYf0wgNo=;
-        b=MZz3ozmbphxJdghtvnrFNWipSwDq0XpcT6kgZs16uk958G2Fo1DGkA1ZUAy0nED+3u
-         ettUIS5fOByXEPS3c2z5Gus2ZCshlpJQvR3+d02+srDNLlufQ4jPgMThfH6/u6fGDtup
-         hBRrXFFhWjmHB0wkkpxkWzhicRglhwjSJWaY9v99e8b3Lq7fTGyeEzcq0hHF0u6/56ve
-         bad+M/Rh6MzOm8TAseJEushVxGES2zflg1hFNThrLGbQAhVTfO92onPvYJa9GD4ypYbt
-         tFzSqQ1Tm6/dglf6WnUp2jnlUXo+Eg3/4svuk2Sg3D8WzNHOQIXgAb1UfZsuclsa4pPo
-         RuVg==
-X-Gm-Message-State: ANoB5pln/SoGxN10AQt2yS0YPnhI5/PdPPuJvKedERXWwEz67T0HtX9L
-        0R1mz6GZOL0oLBby6WqBnKZcSQ==
-X-Google-Smtp-Source: AA0mqf5YQQ2Un68mfLlzW+f6DFLgFdW8JJwAOoWq25x3jVdIoMd/Qg7KkHokf94fApfGWK4RFvhyeQ==
-X-Received: by 2002:a02:5d45:0:b0:375:da4e:ae77 with SMTP id w66-20020a025d45000000b00375da4eae77mr6980172jaa.303.1668972874997;
-        Sun, 20 Nov 2022 11:34:34 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id x13-20020a026f0d000000b0037cb59b5c28sm860100jab.52.2022.11.20.11.34.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Nov 2022 11:34:34 -0800 (PST)
-Message-ID: <fead96f7-dfc4-9ffc-c665-7b2dc870d69f@kernel.dk>
-Date:   Sun, 20 Nov 2022 12:34:33 -0700
+        with ESMTP id S230178AbiKUKgK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 05:36:10 -0500
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63FCD27CE5
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:36:05 -0800 (PST)
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AKNw8Am031436
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:36:04 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=s2048-2021-q4;
+ bh=l8DuvicMTRUxwUYfOiT9wR28CJ3GwHzYpX9zBTv4VfM=;
+ b=BUjvANGlPCgisooZHHWXMMvg8Od0Ry+CJyZ2E5MEU5cxKK36Rgi8oV9OlQ0vNFDTeZqq
+ gVIXEmOM7Er8B9R6nHlxMW2Yc79JwpXJEWnbg5n7KNzugyadOaP446d9kyqVjRwOI/hn
+ 5d28d9JnlSOnJS2y/85iqzpMGnP9et9B1JFZR0zZ1LJu7OHc/aMRf73RBxQ6bLzbDCCV
+ VDxFjY+tKUatmu8D2NA5y1OWvK8YSDXl4LIlV5F5QpQRejb5/Y3P5rwF58oeBOPgIpCf
+ rUkqIV/Xi+H2F68te0www98OJCfWK18t280BvGCsnbP0pJsjsFZYUjE1tnpcP5h/wH7W mQ== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kxwv03nys-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:36:04 -0800
+Received: from twshared9088.05.ash9.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 21 Nov 2022 02:36:03 -0800
+Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
+        id DDA129E66F66; Mon, 21 Nov 2022 02:03:54 -0800 (PST)
+From:   Dylan Yudaken <dylany@meta.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        Dylan Yudaken <dylany@meta.com>
+Subject: [PATCH for-next 00/10] io_uring: batch multishot completions
+Date:   Mon, 21 Nov 2022 02:03:43 -0800
+Message-ID: <20221121100353.371865-1-dylany@meta.com>
+X-Mailer: git-send-email 2.30.2
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: W7Fo1NOoUR_Kb6coHZRvl9OIjwNzhN2m
+X-Proofpoint-GUID: W7Fo1NOoUR_Kb6coHZRvl9OIjwNzhN2m
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [RFC PATCH v4 0/4] liburing: add api for napi busy poll
-Content-Language: en-US
-To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
-Cc:     olivier@trillion01.com, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, kuba@kernel.org, ammarfaizi2@gnuweeb.org
-References: <20221119041149.152899-1-shr@devkernel.io>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20221119041149.152899-1-shr@devkernel.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-21_06,2022-11-18_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,24 +65,63 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/18/22 9:11 PM, Stefan Roesch wrote:
-> This adds two new api's to set/clear the napi busy poll settings. The two
-> new functions are called:
-> - io_uring_register_napi
-> - io_uring_unregister_napi
-> 
-> The patch series also contains the documentation for the two new functions
-> and two example programs. The client program is called napi-busy-poll-client
-> and the server program napi-busy-poll-server. The client measures the
-> roundtrip times of requests.
-> 
-> There is also a kernel patch "io-uring: support napi busy poll" to enable
-> this feature on the kernel side.
+Multishot completions currently all go through io_post_aux_cqe which will
+do a lock/unlock pair of the completion spinlock, and also possibly signal
+an eventfd if registered. This can slow down applications that use these
+features.
 
-Did you post the kernel side, because I don't see it? That's the most
-important one to get sorted first.
+This series allows the posted completions to be batched using the same
+IO_URING_F_COMPLETE_DEFER as exists for non multishot completions. A
+critical property of this is that all multishot completions must be
+flushed to the CQ ring before the non-multishot completion (say an error)
+or else ordering will break. This implies that if some completions were
+deferred, then the rest must also be to keep that ordering. In order to do
+this the first few patches move all the completion code into a simpler
+path that defers completions when possible.
 
--- 
-Jens Axboe
+The batching is done by keeping an array of 16 CQEs, and adding to it
+rather than posting immediately. If it fills up the posting happens then.
 
+A microbenchmark was run ([1]) to test this and showed a 2.3x rps
+improvment (8.3 M/s vs 19.3 M/s).
+
+Patches 1-7 clean up the completion paths
+Patch 8 introduces the cqe array
+Patch 9 allows io_post_aux_cqe to use the cqe array to defer completions
+Patch 10 enables defered completions for multishot polled requests
+
+[1]: https://github.com/DylanZA/liburing/commit/9ac66b36bcf4477bfafeff1c5f1=
+07896b7ae31cf
+Run with $ make -j && ./benchmark/reg.b -s 1 -t 2000 -r 10
+
+Note - I this will have a merge conflict with the recent
+"io_uring: inline __io_req_complete_post()" commit. I can respin once that
+is in for-next.
+
+Dylan Yudaken (10):
+  io_uring: merge io_req_tw_post and io_req_task_complete
+  io_uring: __io_req_complete should defer if available
+  io_uring: split io_req_complete_failed into post/defer
+  io_uring: lock on remove in io_apoll_task_func
+  io_uring: timeout should use io_req_task_complete
+  io_uring: simplify io_issue_sqe
+  io_uring: make io_req_complete_post static
+  io_uring: allow defer completion for aux posted cqes
+  io_uring: allow io_post_aux_cqe to defer completion
+  io_uring: allow multishot polled reqs to defer completion
+
+ include/linux/io_uring_types.h |   2 +
+ io_uring/io_uring.c            | 133 +++++++++++++++++++++++++--------
+ io_uring/io_uring.h            |   5 +-
+ io_uring/msg_ring.c            |  10 ++-
+ io_uring/net.c                 |  15 ++--
+ io_uring/poll.c                |   7 +-
+ io_uring/rsrc.c                |   4 +-
+ io_uring/timeout.c             |   3 +-
+ 8 files changed, 126 insertions(+), 53 deletions(-)
+
+
+base-commit: 40fa774af7fd04d06014ac74947c351649b6f64f
+--=20
+2.30.2
 

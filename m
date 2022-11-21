@@ -2,135 +2,164 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 935A9632E6A
-	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 22:05:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13B97633112
+	for <lists+io-uring@lfdr.de>; Tue, 22 Nov 2022 00:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiKUVFv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 16:05:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        id S230237AbiKUX7i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 18:59:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbiKUVFu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 16:05:50 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A76DB847
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 13:05:49 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id o5-20020a17090a678500b00218cd5a21c9so65942pjj.4
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 13:05:49 -0800 (PST)
+        with ESMTP id S229739AbiKUX7g (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 18:59:36 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C6CB10559
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 15:59:29 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id b1-20020a17090a7ac100b00213fde52d49so12837486pjl.3
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 15:59:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R045ZF72NR23G1ZVkzr/C9+6Gj8dK4yaud4FFWB06A8=;
-        b=6hHoQ5SI00tWEj/5CciSWhgxmyxPJEPavjeSlkZNktCb1TAU2XWeQJnIzx+tcdQCsA
-         kGOg/T2nPxDXmEddcqW6PFa5JP7WgOPCkosyW0tk5A6oEC3JJNFomMtL2NE1cRlno/ey
-         hm+zAHuz0FpCiPtrCaaej0udDxiQ4yTBVMNOfzXD2MKfUlrJs71P+RITDEzBbYJFNffl
-         6AkTkOaFXu0n3W+eBGRik1iUGC+Qhyk1gbeloVpzAcVKalh+7fst4JD0LvNPOgwEPHiW
-         y/UZs1/1qoXpeWPcl8b2rxJIkNw/QUSn0v5Ws/VbL0WbguXnJ7U8hCx+7fO2eJyffFRp
-         B98g==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jccJ4Bm2honkk55HL5L3ubecWLHTgsBISaT1aAHD2nQ=;
+        b=5QhulFzI1G8WHE9oKX4gt1WUeh1Fynoxt5ZWH2vyk7Oo9+FSoHFRaWUZLEr3pywHNF
+         nGb0E+jUepD7p20/iTExnyVbiziyc8byaeDw4KWtx5Z+RTbTKJ1cxsZBZCli/lr/yRI+
+         cAvro7xKn6Te2WNhjfzLv7u4hLfGfqYiUr5sePWuVMDXVHngVq9HENgpdAB5xVqc1l/x
+         BVborIe3koNOM4bggrC9+HzY6mwzYgLUVM1gGVu+2vwcIGjmNToc0rqflPYE4TRgEEpf
+         +5lnj9VX1VE3A2MrgNLnCB6v2AdV3wFaQ95in+L+uZ1Qr6Rm9qEemD8a3KJHbFhPBsi9
+         T/Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R045ZF72NR23G1ZVkzr/C9+6Gj8dK4yaud4FFWB06A8=;
-        b=NJ5COihp7PMc2eAOy6/aualXYzfGKnlmISNbYSFiJ1tcwczq+WRmUQR1cTaeej88XR
-         PRgiNcaKaUd72uPr0HYT12J68AnFsT/WnDSAmtgpVb7Aka/7sBMtw7R3vAwcEQ/Rz1V3
-         Een4FJirLfC+aAZD3dr+hUy3Z5Q7AEWNmFe2wQg2COcjhAzIdlWJ86aX0GPI3GJoPqET
-         renvOkkyF+w9MJzrQcE3PTRBtCimkuTBCKsAFFxFpA5n1RJGbJ3nbg2uCAnqWfFx8+J6
-         ZbxTZThB2a0kgWhzGGfT7iHPGVlibYH/EUQiWBIk1dHRqg3Arcmh/K2E4zaOHFkFuzS8
-         T8Ng==
-X-Gm-Message-State: ANoB5pl2qs18zL84rD3Vs7dMWzjYiozJ4McoS7YRs2ykGlcPlVC2N3N+
-        lj37NbyZrTbpwJynQTS6/3PvPJwAhwNfjAHWOG0cy5c4Nw==
-X-Google-Smtp-Source: AA0mqf6Nq00AjeM4Q5AsrjkZOzvkvQDZmdltkcREvU9Z7I0fFwvWETBtmo1aujho8qq2qp7HrObB9C5zedBzI6roC6w=
-X-Received: by 2002:a17:902:f7cc:b0:17b:4ace:b67f with SMTP id
- h12-20020a170902f7cc00b0017b4aceb67fmr14179105plw.12.1669064749107; Mon, 21
- Nov 2022 13:05:49 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jccJ4Bm2honkk55HL5L3ubecWLHTgsBISaT1aAHD2nQ=;
+        b=A+utGZc6KVWnGSwcKfy8J2eA9P0739OdoyCiQWx5PzlH87lpvAxQehsPWGmliEThk7
+         q08If5IulArBN8N1Roi3PugVBjBM1eGyqRTYrzUh8n8cKvumsBWrcV6Sh+kwofhAoa/5
+         Ik6cpyuZYSWe9TAXHcR+QT31Br+kD0qAYxS02Qd0KzKXNqIf/u1MFFqUo7pVZH3KbjUr
+         n9mDaEVLTf8qEIcdaylCmym/kfPIXhejGxEvym7GGnNr0SddfX9KFomFTXRlXC24MZ6v
+         lxSVIwe81C+0TpRc1tyBRX+GJQpg1oajXNAMQFFwvwa4ghjvyNzIpL0NjM/Fd5m2Ps3O
+         avvQ==
+X-Gm-Message-State: ANoB5pn13AisLWHkm2RUtUvjJ79GB7qiWAH7vG7Rfq+pDEcJHxV4zvwc
+        D8FYwgDPKXdY1v3GIL1ngqWT4/zl37gwVQ==
+X-Google-Smtp-Source: AA0mqf6Qm/z49ORGSNpdORDWI9uJV5l4u+ZQ0/SajrYhCffr1+7KkL52SrzOdM2ahfQEvSvHL5HLNA==
+X-Received: by 2002:a17:903:2144:b0:188:a1eb:9a8a with SMTP id s4-20020a170903214400b00188a1eb9a8amr5571440ple.153.1669075168333;
+        Mon, 21 Nov 2022 15:59:28 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id t8-20020aa79468000000b005625d6d2999sm9231276pfq.187.2022.11.21.15.59.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Nov 2022 15:59:27 -0800 (PST)
+Message-ID: <74feda24-37fd-11ea-af0e-1eff9ed4941e@kernel.dk>
+Date:   Mon, 21 Nov 2022 16:59:26 -0700
 MIME-Version: 1.0
-References: <20221116125051.3338926-1-j.granados@samsung.com>
- <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com> <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
- <20221117094004.b5l64ipicitphkun@localhost> <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
- <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
-In-Reply-To: <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 21 Nov 2022 16:05:37 -0500
-Message-ID: <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Joel Granados <j.granados@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v5 1/3] io_uring: add napi busy polling support
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
+Cc:     olivier@trillion01.com, netdev@vger.kernel.org,
+        io-uring@vger.kernel.org, kuba@kernel.org
+References: <20221121191437.996297-1-shr@devkernel.io>
+ <20221121191437.996297-2-shr@devkernel.io>
+ <067a22bc-72ba-9035-05da-93c43ce356f2@kernel.dk>
+In-Reply-To: <067a22bc-72ba-9035-05da-93c43ce356f2@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
-> > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
-> >
-> > ...
-> >
-> > > > * As we discussed previously, the real problem is the fact that we are
-> > > > missing the necessary context in the LSM hook to separate the
-> > > > different types of command targets.  With traditional ioctls we can
-> > > > look at the ioctl number and determine both the type of
-> > > > device/subsystem/etc. as well as the operation being requested; there
-> > > > is no such information available with the io_uring command
-> > > > passthrough.  In this sense, the io_uring command passthrough is
-> > > > actually worse than traditional ioctls from an access control
-> > > > perspective.  Until we have an easy(ish)[1] way to determine the
-> > > > io_uring command target type, changes like the one suggested here are
-> > > > going to be doomed as each target type is free to define their own
-> > > > io_uring commands.
-> > >
-> > > The only thing that comes immediately to mind is that we can have
-> > > io_uring users define a function that is then passed to the LSM
-> > > infrastructure. This function will have all the logic to give relative
-> > > context to LSM. It would be general enough to fit all the possible commands
-> > > and the logic would be implemented in the "drivers" side so there is no
-> > > need for LSM folks to know all io_uring users.
-> >
-> > Passing a function pointer to the LSM to fetch, what will likely be
-> > just a constant value, seems kinda ugly, but I guess we only have ugly
-> > options at this point.
->
-> I am not sure if this helps yet, but queued on modules-next we now have
-> an improvement in speed of about 1500x for kallsyms_lookup_name(), and
-> so symbol lookups are now fast. Makes me wonder if a type of special
-> export could be drawn up for specific calls which follow a structure
-> and so the respective lsm could be inferred by a prefix instead of
-> placing the calls in-place. Then it would not mattter where a call is
-> used, so long as it would follow a specific pattern / structure with
-> all the crap you need on it.
+On 11/21/22 12:45?PM, Jens Axboe wrote:
+> On 11/21/22 12:14?PM, Stefan Roesch wrote:
+>> +/*
+>> + * io_napi_add() - Add napi id to the busy poll list
+>> + * @file: file pointer for socket
+>> + * @ctx:  io-uring context
+>> + *
+>> + * Add the napi id of the socket to the napi busy poll list.
+>> + */
+>> +void io_napi_add(struct file *file, struct io_ring_ctx *ctx)
+>> +{
+>> +	unsigned int napi_id;
+>> +	struct socket *sock;
+>> +	struct sock *sk;
+>> +	struct io_napi_entry *ne;
+>> +
+>> +	if (!io_napi_busy_loop_on(ctx))
+>> +		return;
+>> +
+>> +	sock = sock_from_file(file);
+>> +	if (!sock)
+>> +		return;
+>> +
+>> +	sk = sock->sk;
+>> +	if (!sk)
+>> +		return;
+>> +
+>> +	napi_id = READ_ONCE(sk->sk_napi_id);
+>> +
+>> +	/* Non-NAPI IDs can be rejected */
+>> +	if (napi_id < MIN_NAPI_ID)
+>> +		return;
+>> +
+>> +	spin_lock(&ctx->napi_lock);
+>> +	list_for_each_entry(ne, &ctx->napi_list, list) {
+>> +		if (ne->napi_id == napi_id) {
+>> +			ne->timeout = jiffies + NAPI_TIMEOUT;
+>> +			goto out;
+>> +		}
+>> +	}
+>> +
+>> +	ne = kmalloc(sizeof(*ne), GFP_NOWAIT);
+>> +	if (!ne)
+>> +		goto out;
+>> +
+>> +	ne->napi_id = napi_id;
+>> +	ne->timeout = jiffies + NAPI_TIMEOUT;
+>> +	list_add_tail(&ne->list, &ctx->napi_list);
+>> +
+>> +out:
+>> +	spin_unlock(&ctx->napi_lock);
+>> +}
+> 
+> I think this all looks good now, just one minor comment on the above. Is
+> the expectation here that we'll basically always add to the napi list?
+> If so, then I think allocating 'ne' outside the spinlock would be a lot
+> saner, and then just kfree() it for the unlikely case where we find a
+> duplicate.
 
-I suspect we may be talking about different things here, I don't think
-the issue is which LSM(s) may be enabled, as the call is to
-security_uring_cmd() regardless.  I believe the issue is more of how
-do the LSMs determine the target of the io_uring command, e.g. nvme or
-ublk.
+After thinking about this a bit more, I don't think this is done in the
+most optimal fashion. If the list is longer than a few entries, this
+check (or check-alloc-insert) is pretty expensive and it'll add
+substantial overhead to the poll path for sockets if napi is enabled.
 
-My understanding is that Joel was suggesting a change to the LSM hook
-to add a function specific pointer (presumably defined as part of the
-file_operations struct) that could be called by the LSM to determine
-the target.
+I think we should do something ala:
 
-Although now that I'm looking again at the file_operations struct, I
-wonder if we would be better off having the LSMs inspect the
-file_operations::owner field, potentially checking the module::name
-field.  It's a little painful in the sense that it is potentially
-multiple strcmp() calls for each security_uring_cmd() call, but I'm
-not sure the passed function approach would be much better.  Do we
-have a consistent per-module scalar value we can use instead of a
-character string?
+1) When arming poll AND napi has been enabled for the ring, then
+    alloc io_napi_entry upfront and store it in ->async_data.
 
---
-paul-moore.com
+2) Maintain the state in the io_napi_entry. If we're on the list,
+    that can be checked with just list_empty(), for example. If not
+    on the list, assign timeout and add.
+
+3) Have regular request cleanup free it.
+
+This could be combined with an alloc cache, I would not do that for the
+first iteration though.
+
+This would make io_napi_add() cheap - no more list iteration, and no
+more allocations. And that is arguably the most important part, as that
+is called everytime the poll is woken up. Particularly for multishot
+that makes a big difference.
+
+It's also designed much better imho, moving the more expensive bits to
+the setup side.
+
+-- 
+Jens Axboe

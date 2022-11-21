@@ -2,88 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 037FC632B24
-	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 18:37:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C83F6632B5A
+	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 18:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbiKURhR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 12:37:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57654 "EHLO
+        id S230109AbiKURp1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 12:45:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbiKURhL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 12:37:11 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE1E1D229F
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 09:37:06 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id q13so520134ild.3
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 09:37:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MO0lXOaUJMcSU5gcE4R86VgJetqMf/tYYGUYIliy6BY=;
-        b=qtEtmo04Cip0qdaiMu9+pZcN+2ePGBLBpZ3xi6T8E9z5eUaIPyaHkY8qdoa8Za8u0k
-         msifVNk12PLwyfGTvnMZ/PUJy2tRbi3m2YSyRfwVtNks/l+UoQ4CG/dODyTInAsLHOFd
-         GVmEgYW9jHiYwT92EVavk8sxPF/RXxsfxoKjCzPpLmS2zKi4wYH+URuzpWwmTEsMfPBP
-         6vV49eGw4cK8TA0z77up72hQbUQtew6eBtu76BDG766jiGjEVlLTnhYimP93Q8qKH5iD
-         X42vaD9SCIqHaPbQajf9MvhDZe7bhHnSDjWGHCz3AAVFsG84uwZAbr4vu8G2uNERzQVZ
-         ANFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MO0lXOaUJMcSU5gcE4R86VgJetqMf/tYYGUYIliy6BY=;
-        b=AFDBusFiS9Nb4zaiJw8CFsM8o1TZzjHHtFY75aZ/vu73Gx7Tso+5jTJK3zKO5loEXq
-         8w+q8SheIkOxV6pBGWa/tfqjU0+PrsjjFk5eihVcCmyKa6eiK/gfGf2drPo9ZAIdxZUi
-         irhfMKRvCzu9L8bLL+MN098EhRp7QytZvIAlSW8e8aYKy6WvRwJLa+2I6gGoJAaHhn5M
-         kKfB/jCw+fojZ8Jh/A4mjJXaoOjP7pPG/hk9jk+hH3xZJ/3c6fAxr/3qO57PGOoa1/fu
-         22mtsDM54L1H0ez40m2P0MBGccIJaN3srWIDKziL2e6eQDkN59Karo+u7BH50zhQSPdb
-         FZHg==
-X-Gm-Message-State: ANoB5pkhxmQjQVX5jyBFaksVTA4ywKcd/eWezb09zB9ZztsC8gkQWq7+
-        SavcANQf8toJeLmUvEvIltzWyQ==
-X-Google-Smtp-Source: AA0mqf7Bss4XzXRaMHLIiEwELIJgyOiC4NAJfphjOUwsXlCDwvtalBnz1hyWRY7spIAWa/7EqtQJJA==
-X-Received: by 2002:a92:dd82:0:b0:2f6:52ad:27e2 with SMTP id g2-20020a92dd82000000b002f652ad27e2mr8158908iln.285.1669052226081;
-        Mon, 21 Nov 2022 09:37:06 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id b21-20020a056602331500b006ccc36c963fsm4462455ioz.43.2022.11.21.09.37.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Nov 2022 09:37:05 -0800 (PST)
-Message-ID: <33473b5b-5d56-a6cd-b95e-726d778502c9@kernel.dk>
-Date:   Mon, 21 Nov 2022 10:37:04 -0700
+        with ESMTP id S230132AbiKURpX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 12:45:23 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9534853ECF;
+        Mon, 21 Nov 2022 09:45:21 -0800 (PST)
+Received: from [10.7.7.5] (unknown [182.253.183.240])
+        by gnuweeb.org (Postfix) with ESMTPSA id 8E47F816AE;
+        Mon, 21 Nov 2022 17:45:18 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1669052720;
+        bh=dyD0zchae5y2rg9SSls4wz00jK0afhTlcmMVE/acKtM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=K3QMGo6/Up7PCwiWCDLe90Em2kiceIrd2ngcIYlyUZEAagrFXw2qBt+Ut71X+qv9X
+         y1JyDWDFhFBFvVpTnk5wmoIdCp8+p3xljGJHOywiRmTigyViDOCmLr6nibpGs2+6k/
+         pduLoutvD/hRl9lLTC+vzUD6oRua5lqmoti+wmjuerkdl33nfOl7/Fp7tdr+sjZFzb
+         1XCkDZrqujN2UFxgxT5Ib5H3L+kZMbW4gxYDChHvWR3rZQMrGs64vongIGC0vJ/Nx0
+         0eMZyIj5wfBnhT/7UliVoeyQmDllv84jtmKVGk/pI3TV7DOnwFNjGxSiWHIRODRms7
+         +5BCSwirUM9kA==
+Message-ID: <2dde9961-b820-c301-6eb7-c5a26309c019@gnuweeb.org>
+Date:   Tue, 22 Nov 2022 00:45:15 +0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Subject: Re: [RFC PATCH v4 2/3] io_uring: add api to set / get napi
  configuration.
-Content-Language: en-US
-To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
-Cc:     olivier@trillion01.com, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, kuba@kernel.org
+To:     Stefan Roesch <shr@devkernel.io>,
+        Facebook Kernel Team <kernel-team@fb.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Olivier Langlois <olivier@trillion01.com>,
+        netdev Mailing List <netdev@vger.kernel.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>
 References: <20221121172953.4030697-1-shr@devkernel.io>
  <20221121172953.4030697-3-shr@devkernel.io>
-From:   Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 In-Reply-To: <20221121172953.4030697-3-shr@devkernel.io>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/21/22 10:29?AM, Stefan Roesch wrote:
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 4f432694cbed..cf0e7cc8ad2e 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -4122,6 +4122,48 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
->  	return ret;
->  }
->  
+On 11/22/22 12:29 AM, Stefan Roesch wrote:
 > +static int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
 > +{
 > +#ifdef CONFIG_NET_RX_BUSY_POLL
@@ -104,13 +79,16 @@ On 11/21/22 10:29?AM, Stefan Roesch wrote:
 > +		return -EFAULT;
 > +
 > +	return 0;
-> +#else
-> +	return -EINVAL;
-> +#endif
-> +}
 
-This should return -EINVAL if any of the padding or reserved fields are
-non-zero. If you don't do that, then it's not expendable in the future.
+Considering:
+
+    1) `struct io_uring_napi` is 16 bytes in size.
+
+    2) The lifetime of `struct io_uring_napi *napi;` is brief.
+
+There is no need to use memdup_user() and kfree(). You can place it
+on the stack and use copy_from_user() instead.
 
 -- 
-Jens Axboe
+Ammar Faizi
+

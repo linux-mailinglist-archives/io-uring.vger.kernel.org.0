@@ -2,21 +2,21 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F44A631DC2
-	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 11:08:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 074EA631E5C
+	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 11:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230105AbiKUKIw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 05:08:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46034 "EHLO
+        id S229453AbiKUKaH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 05:30:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbiKUKIY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 05:08:24 -0500
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7674384D
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:08:09 -0800 (PST)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AKBn6B3032730
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:08:02 -0800
+        with ESMTP id S229505AbiKUKaG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 05:30:06 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F991DF3B
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:30:05 -0800 (PST)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AKNt8Kr008867
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:30:05 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
@@ -27,13 +27,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : 
  v5JFLsvZf3Un+203wjRwhuzbsx6npQbaJtfxW1zITV1pS1nlCLhXB1C66LwvYGaHDV+Y
  z5OLpPbOBOEOwShOo7Bi/K6rppURoItWF8rxiC3Yo3z1PimXBvE+cOppEsSwHGqdpJbF LA== 
 Received: from maileast.thefacebook.com ([163.114.130.8])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kxws6uje6-11
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kxwqtuevr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:08:02 -0800
-Received: from twshared41876.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:30:04 -0800
+Received: from twshared9088.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 21 Nov 2022 02:08:01 -0800
+ 15.1.2375.31; Mon, 21 Nov 2022 02:30:03 -0800
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
         id 923B09E66F80; Mon, 21 Nov 2022 02:03:56 -0800 (PST)
 From:   Dylan Yudaken <dylany@meta.com>
@@ -51,15 +51,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: F_9n4XbSI9bex2EyoZenSyIru7dyxkJo
-X-Proofpoint-ORIG-GUID: F_9n4XbSI9bex2EyoZenSyIru7dyxkJo
+X-Proofpoint-ORIG-GUID: vKkyg9990ejS3bAi6a24vDBDEJol1CRu
+X-Proofpoint-GUID: vKkyg9990ejS3bAi6a24vDBDEJol1CRu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-21_06,2022-11-18_01,2022-06-22_01
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk

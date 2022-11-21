@@ -2,21 +2,21 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D694C631E12
-	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 11:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E55B3631E39
+	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 11:24:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230346AbiKUKSO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 05:18:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56372 "EHLO
+        id S231398AbiKUKYT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 05:24:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbiKUKSN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 05:18:13 -0500
+        with ESMTP id S231424AbiKUKYO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 05:24:14 -0500
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C367F27CE0
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:18:12 -0800 (PST)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AKElpKK025590
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:18:12 -0800
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC90AEA61
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:24:11 -0800 (PST)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AKJK9Ae030695
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:24:11 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
@@ -26,14 +26,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : 
  LSD1zobqPABon34vg01d/H1jQ1/XypF9H1zJ8dG1KGi9OvFr3kCpjyRMEXBHfnJKq64G
  v5JFLsvZf3Un+203wjRwhuzbsx6npQbaJtfxW1zITV1pS1nlCLhXB1C66LwvYGaHDV+Y
  z5OLpPbOBOEOwShOo7Bi/K6rppURoItWF8rxiC3Yo3z1PimXBvE+cOppEsSwHGqdpJbF LA== 
-Received: from maileast.thefacebook.com ([163.114.130.3])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kxwqtud51-1
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kxv2r3s9y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:18:12 -0800
-Received: from twshared3131.02.ash7.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 02:24:11 -0800
+Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
+ snc-exhub204.TheFacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 21 Nov 2022 02:24:11 -0800
+Received: from twshared9088.05.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 21 Nov 2022 02:18:11 -0800
+ 15.1.2375.31; Mon, 21 Nov 2022 02:24:10 -0800
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
         id 923B09E66F80; Mon, 21 Nov 2022 02:03:56 -0800 (PST)
 From:   Dylan Yudaken <dylany@meta.com>
@@ -51,8 +55,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Xg1y-Y0rkg-vL4oplSkjVBfP_gFoOIVP
-X-Proofpoint-GUID: Xg1y-Y0rkg-vL4oplSkjVBfP_gFoOIVP
+X-Proofpoint-ORIG-GUID: JSgnDoFznRhTvlNnyqjw6-NDjowlBl6t
+X-Proofpoint-GUID: JSgnDoFznRhTvlNnyqjw6-NDjowlBl6t
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-21_06,2022-11-18_01,2022-06-22_01

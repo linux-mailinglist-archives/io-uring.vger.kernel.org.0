@@ -2,134 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD87632A1E
-	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 17:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE334632A6A
+	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 18:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbiKUQ4A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 11:56:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49730 "EHLO
+        id S229721AbiKURKK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 12:10:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiKUQz7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 11:55:59 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB91460EB4
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 08:55:58 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id h206so9027088iof.10
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 08:55:58 -0800 (PST)
+        with ESMTP id S229586AbiKURKJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 12:10:09 -0500
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336F5DED0
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 09:10:09 -0800 (PST)
+Received: by mail-il1-x134.google.com with SMTP id x13so2642891ilp.8
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 09:10:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u2MGEDR2oV7h7pFcRQjpy7U4Qu9Ey3K1zKZyAfQttag=;
-        b=MWgDttL/7g+v43Ihdc2MQD7/xUOUmKu4feM6G1+hhxKituw8pRrhRUHLi9P8mStXIM
-         CjCXPbY6NEYbvukm4jqIslA4QJUCLED/iykcsSj97qxoQS69Lbpi+3ZdVivPrRYSeKPw
-         I3u33JoYDxXe8WygjKTtyb3Dxoo/isrSrhj/Untu/rD3FONq3Xgf9UVfpslKDymuD6Pq
-         ueVxXir/5t7xAybtD2rI0IR7u9OxRc5r5cGZvj2mVBW3EQDpYiuO5WWnVQBAlvKUHo8b
-         kOlPVdQRamS41qGiRAvkFtmT9L82SMMyBKFm20FOc4J+Z3LAFSrTNQoxaHLIokRiEndr
-         6ZrQ==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EtkWtcbaJkBmtGU/sjvsDJMEYXWMEHtOYjWjLql/jWM=;
+        b=u6ToD3K3HLr55Fbq2ZXMTEjJ8SI6oftuawXhN0txHczgJ5WrclEks6mjqNgtmvdKlW
+         +/Z4Q4bTIKHYV/fopN124P4hSUd7gloi9W+DBe3/looaRetKHQhaik0YXD495IzeYjDT
+         OPaLi+GQrsdlKVaWjiIiXvGsplurb/F5bPQK41uoDRjuUhl5xmOLZe6VTltd+zY12JBS
+         Y5mw2cOoudnoYEcdf1c/4TONiORWUR7TtgM0dv3UvxJWKECVPIh9vqv9eq2DoQptfnPi
+         THgem2JoHOtFOLCmrf6oPbM9HWFKhXWQx7LcTi7ZzSouJShftc5Qz1jAjCHD78XcUwLR
+         ttzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2MGEDR2oV7h7pFcRQjpy7U4Qu9Ey3K1zKZyAfQttag=;
-        b=tpEjteyPY1AeTC7O6i3YoYgIjuCXq4OcE2oLylm+4dXEIFTq8PDx0Ixz6rRUhWXNCX
-         ZYukzPGzRzksnDrAv8BEDVBiwrOjwtXpn+ndUe2SxNDV4wQD4NtErebn/DTu145zPoeI
-         x53ZUBGDj/X7MeqdvwxVxvAey8c3sme1ZpKcGWwGifPyPr5ksbErUWkTynvyVmFDiOYy
-         BKM3tn/uxDuaN4Zsqcy1JsjZizO61WThJbbNC7U8+a7EJQum1Zuc+Jsoh0UDAY6iFN9p
-         gqx+DrfInEouRwfm/CuCkUOSsbdRVYSjOA9JrQQaaGNwmhsus1IZ6B+yBpoI2cFcYgCV
-         eqfw==
-X-Gm-Message-State: ANoB5pkBX1O8W4Oo+m3C+UjGfaOeihlFi6ibqpLTD8ouYGw+DjcOzKny
-        mKWz/dUgz9A2gkemPlSp1SslXSkCvizCYQ==
-X-Google-Smtp-Source: AA0mqf4kXJTtd5w73k28smU1OUDJJTjgq4eXPtq7slE5dyQ3p0ikGjwGTE49R2OPgmr7T1vJTXQevQ==
-X-Received: by 2002:a6b:310e:0:b0:6bd:36d3:a858 with SMTP id j14-20020a6b310e000000b006bd36d3a858mr8715516ioa.20.1669049757940;
-        Mon, 21 Nov 2022 08:55:57 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id g21-20020a056602151500b006c05ff4cd91sm4472975iow.35.2022.11.21.08.55.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Nov 2022 08:55:57 -0800 (PST)
-Message-ID: <5c39ed45-4c0b-3ec7-decd-eb0fc1885591@kernel.dk>
-Date:   Mon, 21 Nov 2022 09:55:54 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH for-next 09/10] io_uring: allow io_post_aux_cqe to defer
- completion
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@meta.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
-References: <20221121100353.371865-1-dylany@meta.com>
- <20221121100353.371865-10-dylany@meta.com>
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EtkWtcbaJkBmtGU/sjvsDJMEYXWMEHtOYjWjLql/jWM=;
+        b=Y/Bo0TUxKle4KLUJRrKbHYZj3LXN/LA+Ml78aPtMsmUPgc4NHk7XAaeAtVewItWCNf
+         MhrLKZnS/EBkMJBLzQxMADjyUpuLGZMlzfuWjtjHT33uBo+JhrQg9gUjIq63FL0pglG9
+         QPHsgqh2synqAp/UTd/6z34EwiSVYTsiOvzTyRKixm2uiacdkEZgsiVEYUt23jsMc1bx
+         t2+scOOG/yoIP/tdJtj+Srh1kFxu4Z90ynR86wvFKHU+K8ap8acNfrMsZ6ohRiGhXSl3
+         /oJozAJH5Wee7sVRsOAh6vTjIPpAnJSodIr4QnR1BILIca69+PLWop4j2iDBJRQElIpe
+         bjzA==
+X-Gm-Message-State: ANoB5pkT/besM/Tb0BoN3vToQgZTEF6XiBVB3gvpvpYaWAy9XjlWTSUy
+        3xoFUS5CDHvtuqUe19cO07o382SKrjJ6tQ==
+X-Google-Smtp-Source: AA0mqf4cb2uK7GeXDDGUND89K6QVwZwgZLU7lN7UBQDMLHHHYlo8vg2f1rqXaKSs4w8hyyeYaTLy/g==
+X-Received: by 2002:a05:6e02:1210:b0:2f9:aecd:6397 with SMTP id a16-20020a056e02121000b002f9aecd6397mr8680225ilq.100.1669050608247;
+        Mon, 21 Nov 2022 09:10:08 -0800 (PST)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id f9-20020a056e0204c900b002f916f15625sm4056414ils.23.2022.11.21.09.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Nov 2022 09:10:07 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20221121100353.371865-10-dylany@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <cover.1668963050.git.asml.silence@gmail.com>
+References: <cover.1668963050.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v3 0/2] poll_refs armoring
+Message-Id: <166905060765.3007.1682250454703276983.b4-ty@kernel.dk>
+Date:   Mon, 21 Nov 2022 10:10:07 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-28747
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/21/22 3:03 AM, Dylan Yudaken wrote:
-> Use the just introduced deferred post cqe completion state when possible
-> in io_post_aux_cqe.
+On Sun, 20 Nov 2022 16:57:40 +0000, Pavel Begunkov wrote:
+> Make poll_refs more robust and protected from overflows. The mechanism
+> description is in 2/2. 1/2 helps to make the second patch a little bit
+> cleaner by tunnelling all edge cases from arming to a tw.
 > 
-> Signed-off-by: Dylan Yudaken <dylany@meta.com>
-> ---
->  io_uring/io_uring.c | 21 ++++++++++++++++++++-
->  io_uring/io_uring.h |  2 +-
->  io_uring/msg_ring.c | 10 ++++++----
->  io_uring/net.c      | 15 ++++++++-------
->  io_uring/poll.c     |  2 +-
->  io_uring/rsrc.c     |  4 ++--
->  6 files changed, 38 insertions(+), 16 deletions(-)
+> A good way to test is to set IO_POLL_REF_BIAS to 0 and 1. 0 will make
+> the slowpath to be hit every single time, and 1 triggers it in case of
+> races.
 > 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index c797f9a75dfe..5c240d01278a 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -845,11 +845,30 @@ static void __io_flush_post_cqes(struct io_ring_ctx *ctx)
->  	state->cqes_count = 0;
->  }
->  
-> -bool io_post_aux_cqe(struct io_ring_ctx *ctx,
-> +bool io_post_aux_cqe(struct io_ring_ctx *ctx, bool defer,
->  		     u64 user_data, s32 res, u32 cflags)
->  {
->  	bool filled;
->  
-> +	if (defer) {
-> +		unsigned int length = ARRAY_SIZE(ctx->submit_state.cqes);
-> +		struct io_uring_cqe *cqe;
-> +
-> +		lockdep_assert_held(&ctx->uring_lock);
-> +
-> +		if (ctx->submit_state.cqes_count == length) {
-> +			io_cq_lock(ctx);
-> +			__io_flush_post_cqes(ctx);
-> +			/* no need to flush - flush is deferred */
-> +			spin_unlock(&ctx->completion_lock);
-> +		}
-> +
-> +		cqe  = ctx->submit_state.cqes + ctx->submit_state.cqes_count++;
-> +		cqe->user_data = user_data;
-> +		cqe->res = res;
-> +		cqe->flags = cflags;
-> +		return true;
-> +	}
->  	io_cq_lock(ctx);
->  	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
->  	io_cq_unlock_post(ctx);
+> [...]
 
-Seems like this would be cleaner with a separate helper and make that
-decision in the caller. For the ones that just pass false that is
-trivial of course, then just gate it on the locked nature of the ring in
-the other spots?
+Applied, thanks!
 
+[1/2] io_uring: cmpxchg for poll arm refs release
+      (no commit info)
+[2/2] io_uring: make poll refs more robust
+      (no commit info)
+
+Best regards,
 -- 
 Jens Axboe
+
+

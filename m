@@ -2,119 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21857632C98
-	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 20:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6477632CB5
+	for <lists+io-uring@lfdr.de>; Mon, 21 Nov 2022 20:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbiKUTFS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 14:05:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38872 "EHLO
+        id S229625AbiKUTPI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Nov 2022 14:15:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229985AbiKUTFR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 14:05:17 -0500
-Received: from wnew1-smtp.messagingengine.com (wnew1-smtp.messagingengine.com [64.147.123.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224DE63164;
-        Mon, 21 Nov 2022 11:05:17 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 325042B06861;
-        Mon, 21 Nov 2022 14:05:16 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 21 Nov 2022 14:05:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
-        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1669057515; x=1669061115; bh=MDmNofgTyd
-        /8UJfQtKp6/eKZa3jaDLLUvSfgZm02MsI=; b=U4ipgXYUivaC94aBfx6XqnWmWA
-        z1DEstIN2TL3iTMRVb1PJbOBNfeqnWh7OFP5MRRwdvfDfk0FYiJ25i+JHVPnCEOS
-        KD+he402psUwBnwD1PwwjyFrsMNYIrWoA9hL+WqN/7+HisOefgOL52AijzLwIuJw
-        Eto2fsuee1hmP1n45UVnrhZ95bSHNHdJlHODAzBuxZt7PYReJsPwlHOjZABV07Cq
-        CJrDO/6VB0clCFUa1Hex2Mq1x3uHuw2YewAxEWXppnA6Fy5e5kWgtdRmxKbCjhkB
-        p8BQITIilJxj8b3WPqjwEoaalQV/YqQldI66wIzKetySxjKO0UZHz6/bnbOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1669057515; x=1669061115; bh=MDmNofgTyd/8UJfQtKp6/eKZa3ja
-        DLLUvSfgZm02MsI=; b=wlGV0HVpqhyc54HAb14+iQ//Ar4ooFcIpbKVLqGI3aQz
-        Hij6tusG9eza/IcNmMRjV0qC8iDnoBOiQgbEd/rFU0aBHdQCzHeALJrNHMO2kvHb
-        UBqRr4B7dCTN3+PmQGFrdOoYPIkURjch2zZNqOVs5bE0KXzOroG3P3U0u9wEieT4
-        UkvhFLwBSZR0nEsBPjHEyotbqR0OcfzwQzlw4ATBPltHRUhy3MimjMChGlZZWOwE
-        4129tGOrVyiZ2LBf2f493dS5BOLK3iHG3qcoSbnz3TcgAJxcnYHPno7Obcabj6JJ
-        3HmeGSck0JRA2Kd2hIJpCXTaLrOjLTGIg7NFtCb0oQ==
-X-ME-Sender: <xms:68t7Y8H7sOVM9xQ72rpcjeSoeFvxZFab5r3NzHO6kiXmWr7sWgX8rQ>
-    <xme:68t7Y1WzbIqUwbvBA8k3cNY4AUijbkMdsVb5iPumJK2NL9YqmZuQWrixZ6tC7XUf_
-    IjtiQFnEaygZQQThjg>
-X-ME-Received: <xmr:68t7Y2IRI5lWrNIf4vHfWGCJBI412H1G04EUxhIxAPreK8XgVDB_yMx6JTZmD5CNVSZ9gG99T35H-FMLCB3M5yHaUX6Tkmau6oIcjlT_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrheeigdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghf
-    rghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrth
-    htvghrnhepveelgffghfehudeitdehjeevhedthfetvdfhledutedvgeeikeeggefgudeg
-    uedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
-    hhrhesuggvvhhkvghrnhgvlhdrihho
-X-ME-Proxy: <xmx:68t7Y-Hex_w2PjWzu7reUVSe7uPIXrSu7hfVYKa7BRo9_Bf4jHdV5w>
-    <xmx:68t7YyXQBwXHmh6kWuf5p26xYs9tVKqDD7okplJmoAyIPRhMaz4nmA>
-    <xmx:68t7YxN6V6KMaiHSfEYM3tp47Xxe4r2GUtuD8uTvhHO4_HICYyg6fg>
-    <xmx:68t7Y0fqJ7qpL0DK6rPhDLccGdTENJT5ZOSsT2iOfCQuFOcTskW3yXJ6es8>
-Feedback-ID: i84614614:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Nov 2022 14:05:14 -0500 (EST)
-References: <20221119041149.152899-1-shr@devkernel.io>
- <20221119041149.152899-3-shr@devkernel.io>
- <24e5c8a3-faba-2e1a-eb9f-69bcbc2b28cd@gnuweeb.org>
-User-agent: mu4e 1.6.11; emacs 28.2.50
+        with ESMTP id S229505AbiKUTOv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 14:14:51 -0500
+Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E424E429
+        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 11:14:50 -0800 (PST)
+Received: by dev0134.prn3.facebook.com (Postfix, from userid 425415)
+        id 1830D1B812AD; Mon, 21 Nov 2022 11:14:39 -0800 (PST)
 From:   Stefan Roesch <shr@devkernel.io>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Facebook Kernel Team <kernel-team@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Olivier Langlois <olivier@trillion01.com>,
-        netdev Mailing List <netdev@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [RFC PATCH v4 2/4] liburing: add documentation for new napi
- busy polling
-Date:   Mon, 21 Nov 2022 11:04:59 -0800
-In-reply-to: <24e5c8a3-faba-2e1a-eb9f-69bcbc2b28cd@gnuweeb.org>
-Message-ID: <qvqwfsec3z85.fsf@dev0134.prn3.facebook.com>
+To:     kernel-team@fb.com
+Cc:     shr@devkernel.io, axboe@kernel.dk, olivier@trillion01.com,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org
+Subject: [PATCH v5 0/3] io_uring: add napi busy polling support 
+Date:   Mon, 21 Nov 2022 11:14:34 -0800
+Message-Id: <20221121191437.996297-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,URIBL_BLACK autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
+        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+This adds the napi busy polling support in io_uring.c. It adds a new
+napi_list to the io_ring_ctx structure. This list contains the list of
+napi_id's that are currently enabled for busy polling. This list is
+used to determine which napi id's enabled busy polling.
 
-Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
+io-uring allows specifying two parameters:
+- busy poll timeout and
+- prefer busy poll to call of io_napi_busy_loop()
+This sets the above parameters for the ring. The settings are passed
+with a new structure io_uring_napi.
 
-> On 11/19/22 11:11 AM, Stefan Roesch wrote:
->> This adds two man pages for the two new functions:
->> - io_uring_register_nap
->
-> Typo:
->
->    s/io_uring_register_nap/io_uring_register_napi/
->
->> +.SH RETURN VALUE
->> +On success
->> +.BR io_uring_register_napi_prefer_busy_poll (3)
->> +return 0. On failure they return
->> +.BR -errno .
->> +It also updates the napi structure with the current values.
->
-> io_uring_register_napi_prefer_busy_poll() no longer exists in this version.
->
->> +.SH RETURN VALUE
->> +On success
->> +.BR io_uring_unregister_napi_busy_poll_timeout (3)
->> +return 0. On failure they return
->> +.BR -errno .
->> +It also updates the napi structure with the current values.
->
-> io_uring_unregister_napi_busy_poll_timeout() no longer exists in this version.
+There is also a corresponding liburing patch series, which enables this
+feature. The name of the series is "liburing: add add api for napi busy
+poll timeout". It also contains two programs to test the this.
 
-Fixed in the next version.
+Testing has shown that the round-trip times are reduced to 38us from
+55us by enabling napi busy polling with a busy poll timeout of 100us.
+More detailled results are part of the commit message of the first
+patch.
+
+
+Changes:
+- V5:
+  - Refreshed to 6.1-rc6
+  - Use copy_from_user instead of memdup/kfree
+  - Removed the moving of napi_busy_poll_to
+  - Return -EINVAL if any of the reserved or padded fields are not 0.
+- V4:
+  - Pass structure for napi config, instead of individual parameters
+- V3:
+  - Refreshed to 6.1-rc5
+  - Added a new io-uring api for the prefer napi busy poll api and wire
+    it to io_napi_busy_loop().
+  - Removed the unregister (implemented as register)
+  - Added more performance results to the first commit message.
+- V2:
+  - Add missing defines if CONFIG_NET_RX_BUSY_POLL is not defined
+  - Changes signature of function io_napi_add_list to static inline
+    if CONFIG_NET_RX_BUSY_POLL is not defined
+  - define some functions as static
+
+
+Signed-off-by: Stefan Roesch <shr@devkernel.io>
+Acked-by: Jakub Kicinski <kuba@kernel.org>
+
+
+Stefan Roesch (3):
+  io_uring: add napi busy polling support
+  io_uring: add api to set / get napi configuration.
+  io_uring: add api to set napi prefer busy poll
+
+ include/linux/io_uring_types.h |   8 +
+ include/uapi/linux/io_uring.h  |  12 ++
+ io_uring/io_uring.c            | 302 +++++++++++++++++++++++++++++++++
+ io_uring/napi.h                |  22 +++
+ io_uring/poll.c                |   3 +
+ io_uring/sqpoll.c              |  10 ++
+ 6 files changed, 357 insertions(+)
+ create mode 100644 io_uring/napi.h
+
+
+base-commit: eb7081409f94a9a8608593d0fb63a1aa3d6f95d8
+--=20
+2.30.2
+

@@ -2,289 +2,172 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B44A633FF3
-	for <lists+io-uring@lfdr.de>; Tue, 22 Nov 2022 16:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A2B6343BD
+	for <lists+io-uring@lfdr.de>; Tue, 22 Nov 2022 19:40:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232729AbiKVPSd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Nov 2022 10:18:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33892 "EHLO
+        id S234203AbiKVSkY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Nov 2022 13:40:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232611AbiKVPSc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Nov 2022 10:18:32 -0500
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com (sonic309-26.consmr.mail.ne1.yahoo.com [66.163.184.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1DF25E96
-        for <io-uring@vger.kernel.org>; Tue, 22 Nov 2022 07:18:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669130310; bh=lh0xvKqPsvTEab2FBjEgJnCksuYlIa0lLQsXPA4oQLM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=D2fO3b9xz4e40Lee71Br56vAFY++o8Y22JxdK4P/DQ6kl2n0Ctx7Oib76ieJND92yEo6iuSGT2Y2KrgYNyIPbNOBCHA6gDqh5bzHTKvHqpSS8aNXzucUOK5YvXJFKrkYoSXZhG5GtHmX92q55x0z5cN5dPAddpLo7b0obJDKsWL5TWyXwj4RU+wv49duS7uehktWPaM1GhZ7k7GhgVsGqF0q8VZ3uqHqxdxV2040ZUeaPOTcwwiK8sgG0MxNJMaHjqZ4Ejm5NDLH35km9xXU2NZlW5inq8H1ZuuZAGY+mVyGM9QqBP7DHRlnUxe91dxqQNLXEyFFaMkH+88ZEigaHw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1669130310; bh=UVga/hSeeuCTS3fIJ4Vo02C4xpCRiVQ+J9fd9v9QTsH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nsqHzT23TcGMgmwyp5m0XLqSp5hbc7Mu2nc/ent4C/ARurY2I5PW7bTwo97gx+fzj1LBSy44UnQP5BZhF2E4pVWFtfp4OUISUgC6ybfJctMbS5AzPdbdZGxfwg2dG7Lo3G3ONtl4HAx42nqBAvyoeTnDXL4jlhjjHqUi5JcV/GLO1qekJnvqBgpE4uMdnt2RilC4gEwOJ8d7YIXQ0R2oZDHXhwHTiYPDENaO4Sk9jY9QfV6Z3+PhKtH7X0FSHK7xq7RjCYb7zduBemLHOB2ABsITTK8w2Ei62obYfmhNhNYI6rOpsTDdVyQYXAD9JkOEpvd9KRB81Q+Obhbgpekc+Q==
-X-YMail-OSG: MjekJCAVM1nAIjDws8gKPVrM5kk_rZA7_pGvKR7BprCvQ0rkyzbTLfCMVGi4dSl
- rI4PT_l44bG2Ks7CYZ_CmjSW2xxIMAKdn1gvQJ3jBOPvHo.PtqH_Kfk2uDSb6SRURenJeK.e3_J_
- XjUPFL6Kb.x.ClY8FR.DfalO9t0.jrdjjhPapbvehhnmVg0FamufvwEgTKKOAiHq4MMnJCUknYH.
- RKtUTdtcyASAMQll4tY7JHG0hacPnihWhK67KKh9OZnjjoyFuo7r.gORgkb8McllaWhznU0N7tl5
- gfQVIjaSz2j5lxBnoolSDgbYgrWz.so4Dc37MBhUoo.x8b.lfNpdIW6XTYFJpfQ9y8jpsnx21nT8
- .cwPW3kRlwcx_hJMiwM6oSwgeixPOiUsvD8JHMW1RXbweAA6rst3FHqStljODraMq.3UNA9PqJ07
- XlqB6fOBRnvniJFh7tdmq6tnnkh.FCiT1TZtbOhBhcqwQipBPs10bpANMv4qVr0ViDv9vr8f9h0s
- wSQSjYMDiQelaAy0QiLctFKKt72epuB8vubfN49SShrA.SdbmN5g4yTls.pB0kWFx6OUuv6YgaER
- R0v1xKLbrQmtxYXE9s0cD37FaUIigK4OJ55lITg._fcWCI8EvazjxWjpEZYHbwUXnHNVZr7rooso
- LbxwK65Ef6uHdK7114tlKOja9vwTa4m2JT9d6ozBB6YIcQnUCeWtnVHJjG2DjysSMPTnv3vSRaZ9
- qKDZ0JyldIzMJbErdNeJEkSMihoM7qbEDf7Fqg.oD.QGiBU2TA6gAC6yHBeATOxQPWJMeOAVODho
- uBoG2s8cbskUuLkUlQ4qq1x30jLRfzw4kW8CT6T4Bl2xZFemsxbNmscNnGK1Mkah85AdPZ1K_H7e
- p1ZF6RtZhmJ2N191.JrKJuwZ.GV9S4UQVHY8lOoY.CqAns3d4Rlw9p.jvMx62yMphusIHCUdZqBN
- XxMS3Zpj8sR46uRi2h2ZkFBubbKepvP48OOMvl552mLJlXWnEcflRpJ1Sf8fMpWE4qWAaYisuAcw
- gw_8zQ9WtLoaJ89uL4J3DZXINfm0_98KnX7nCts.59ss3zbwIXjZIR.VeXLYJsVyTY4P1ptLqHC_
- B5iP_Tg6QXS3InO3MFlZXziursbFaalCFELR2AsQWONcGgCZlCVa8mdeztvUywbmrBRGrn71wu57
- WfHfEyd42ijTsztZk8DXQmbPyK1AQcLd9lS3DyE.rbeqzZcropQ3LbMJhrX9aHYIi677Lr0fxEqT
- JqT09Jcqz40XwQyZEW4QJWa74aC0plJZYreoFApEDlWlxNuIObEOD43pHJ7j4t0JyMMQGQwYynD5
- zQuTAiLknE_QsUunEXHHUUdF2vgfqVvTkF50dKxHPuFULlvEXGwO7ULQUYTEOVOjgELOgWWPIOeT
- rHkxjDqfBvjVd1ZU5XnACyXGP4vvDSNNl_3UNCgoE7au_rVPeJ5ZeDFCjBsFYm.JPPRjuBuVQrFP
- R5uWjWeam_8KFAaoU6G6hXwQVEhPOsBKmaaYG0v3qFkl5ll6jHKXAS5vv97dTqb4MJO_JJtjZFqJ
- 8nqnFoSzCo_hAGRo59Zd_MnwH11A56LuO.FDSyLAEm_sELoq5MrTnw6DhEOTKUdlPO7l_QBJeIfO
- wHGjpw7Svq9ilNSrarWJxDIipjiS_VYMaCgSefQMW7LQA9Vov3vq_zgq6MnI7FMffDV1Eov0HDvM
- Wc6jCGAXmfFOHFxmsulhEwFr_cxphupYFizKXETd_tkWUWaEwZ.6WgE04.1M7C0HCUk.ff_dGTuq
- 2dDHFQJzptNiCbUd3G6_M6nWsERmzYfNP4lmuTBKmyq2r3tIYtwo4Qg.1sygS3YGzThkOdKr41pN
- 9883Seh2mFmkrliZmSB7L5MVQobHLqZxGNeRVjsuahloDjxu5Vr.MvbXwz9A9NzEdUCmMQ9niHgE
- iQFWgzNk7kxWx4gPgWTZcO1ZTJsEyWh8uC.AQbsQHFxKFMSNP5GjItv5JJ2tCk4.pH2C3z2p7ONU
- 0Hv2XNGrjeZGLIUhE1ubBVFDt1dPyzBAzm40sLKPDhtWsJxYWS5Lw_UL0u2pq0E8trkPXEMjZiPy
- NLwp8A8efgzk4xAqhElfRxXlVGi_vDcsGkdZ9MbnhMCdGDoUTfZP24Ye5Wjhsjlp8VftLA63b.c1
- n1vox6.g_ABpZT2zEAdl0KLh_WD4zlqWm.Gp1mmwIFW0s.7DqLOv9TEDa2IFt.Vr0MgkGfDqeHJ9
- QuyeVfmkl1GUDewT1Mdoj791IBzzx9fRKUvCl
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 22 Nov 2022 15:18:30 +0000
-Received: by hermes--production-gq1-579bc4bddd-4x2tb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 11b1f4945ac2a3b0f226371f1ef10484;
-          Tue, 22 Nov 2022 15:18:26 +0000 (UTC)
-Message-ID: <1afc3928-710e-9b0f-5b0a-cf2cf8d79cb9@schaufler-ca.com>
-Date:   Tue, 22 Nov 2022 07:18:24 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
-Content-Language: en-US
-To:     Joel Granados <j.granados@samsung.com>, mcgrof@kernel.org,
-        ddiss@suse.de, joshi.k@samsung.com, paul@paul-moore.com
-Cc:     ming.lei@redhat.com, linux-security-module@vger.kernel.org,
-        axboe@kernel.dk, io-uring@vger.kernel.org, casey@schaufler-ca.com
-References: <20221122103144.960752-1-j.granados@samsung.com>
- <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
- <20221122103144.960752-2-j.granados@samsung.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20221122103144.960752-2-j.granados@samsung.com>
+        with ESMTP id S234415AbiKVSkX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Nov 2022 13:40:23 -0500
+Received: from zju.edu.cn (spam.zju.edu.cn [61.164.42.155])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD8B17FF01;
+        Tue, 22 Nov 2022 10:40:18 -0800 (PST)
+Received: by ajax-webmail-mail-app4 (Coremail) ; Wed, 23 Nov 2022 02:40:15
+ +0800 (GMT+08:00)
+X-Originating-IP: [10.192.27.165]
+Date:   Wed, 23 Nov 2022 02:40:15 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   "Lin Ma" <linma@zju.edu.cn>
+To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] io_uring/filetable: fix file reference underflow
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20210104(ab8c30b6)
+ Copyright (c) 2002-2022 www.mailtech.cn zju.edu.cn
+Content-Transfer-Encoding: base64
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20863 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+Message-ID: <be4ba4b.5d44.184a0a406a4.Coremail.linma@zju.edu.cn>
+X-Coremail-Locale: en_US
+X-CM-TRANSID: cS_KCgA3OMyQF31jqjpFCA--.49693W
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/1tbiAwQRElNG3I7oMgANsU
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/22/2022 2:31 AM, Joel Granados wrote:
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
-> ---
->  drivers/nvme/host/core.c      | 10 ++++++++++
->  include/linux/fs.h            |  2 ++
->  include/linux/lsm_hook_defs.h |  3 ++-
->  include/linux/security.h      | 16 ++++++++++++++--
->  io_uring/uring_cmd.c          |  3 ++-
->  security/security.c           |  5 +++--
->  security/selinux/hooks.c      | 16 +++++++++++++++-
->  7 files changed, 48 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index f94b05c585cb..275826fe3c9e 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2011-2014, Intel Corporation.
->   */
->  
-> +#include "linux/security.h"
->  #include <linux/blkdev.h>
->  #include <linux/blk-mq.h>
->  #include <linux/blk-integrity.h>
-> @@ -3308,6 +3309,13 @@ static int nvme_dev_release(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> +int nvme_uring_cmd_sec(struct io_uring_cmd *ioucmd,  struct security_uring_cmd *sec)
-> +{
-> +	sec->flags = 0;
-> +	sec->flags = SECURITY_URING_CMD_TYPE_IOCTL;
-> +	return 0;
-> +}
-> +
->  static const struct file_operations nvme_dev_fops = {
->  	.owner		= THIS_MODULE,
->  	.open		= nvme_dev_open,
-> @@ -3315,6 +3323,7 @@ static const struct file_operations nvme_dev_fops = {
->  	.unlocked_ioctl	= nvme_dev_ioctl,
->  	.compat_ioctl	= compat_ptr_ioctl,
->  	.uring_cmd	= nvme_dev_uring_cmd,
-> +	.uring_cmd_sec	= nvme_uring_cmd_sec,
->  };
->  
->  static ssize_t nvme_sysfs_reset(struct device *dev,
-> @@ -3982,6 +3991,7 @@ static const struct file_operations nvme_ns_chr_fops = {
->  	.compat_ioctl	= compat_ptr_ioctl,
->  	.uring_cmd	= nvme_ns_chr_uring_cmd,
->  	.uring_cmd_iopoll = nvme_ns_chr_uring_cmd_iopoll,
-> +	.uring_cmd_sec	= nvme_uring_cmd_sec,
->  };
->  
->  static int nvme_add_ns_cdev(struct nvme_ns *ns)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e654435f1651..af743a2dd562 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2091,6 +2091,7 @@ struct dir_context {
->  
->  struct iov_iter;
->  struct io_uring_cmd;
-> +struct security_uring_cmd;
->  
->  struct file_operations {
->  	struct module *owner;
-> @@ -2136,6 +2137,7 @@ struct file_operations {
->  	int (*uring_cmd)(struct io_uring_cmd *ioucmd, unsigned int issue_flags);
->  	int (*uring_cmd_iopoll)(struct io_uring_cmd *, struct io_comp_batch *,
->  				unsigned int poll_flags);
-> +	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*);
->  } __randomize_layout;
->  
->  struct inode_operations {
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index ec119da1d89b..6cef29bce373 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -408,5 +408,6 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
->  #ifdef CONFIG_IO_URING
->  LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
->  LSM_HOOK(int, 0, uring_sqpoll, void)
-> -LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
-> +LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd,
-> +	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
-
-I'm slow, and I'm sure the question has been covered elsewhere,
-but I have real trouble understanding why you're sending a function
-to fetch the security data rather than the data itself. Callbacks
-are not usual for LSM interfaces. If multiple security modules have
-uring_cmd hooks (e.g. SELinux and landlock) the callback has to be
-called multiple times.
-
->  #endif /* CONFIG_IO_URING */
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index ca1b7109c0db..146b1bbdc2e0 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -2065,10 +2065,20 @@ static inline int security_perf_event_write(struct perf_event *event)
->  #endif /* CONFIG_PERF_EVENTS */
->  
->  #ifdef CONFIG_IO_URING
-> +enum security_uring_cmd_type
-> +{
-> +	SECURITY_URING_CMD_TYPE_IOCTL,
-> +};
-> +
-> +struct security_uring_cmd {
-> +	u64 flags;
-> +};
->  #ifdef CONFIG_SECURITY
->  extern int security_uring_override_creds(const struct cred *new);
->  extern int security_uring_sqpoll(void);
-> -extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
-> +extern int security_uring_cmd(struct io_uring_cmd *ioucmd,
-> +		int (*uring_cmd_sec)(struct io_uring_cmd *,
-> +			struct security_uring_cmd*));
->  #else
->  static inline int security_uring_override_creds(const struct cred *new)
->  {
-> @@ -2078,7 +2088,9 @@ static inline int security_uring_sqpoll(void)
->  {
->  	return 0;
->  }
-> -static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
-> +static inline int security_uring_cmd(struct io_uring_cmd *ioucmd,
-> +		int (*uring_cmd_sec)(struct io_uring_cmd *,
-> +			struct security_uring_cmd*))
->  {
->  	return 0;
->  }
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index e50de0b6b9f8..2f650b346756 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -108,10 +108,11 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->  	struct file *file = req->file;
->  	int ret;
->  
-> +	//req->file->f_op->owner->ei_funcs
->  	if (!req->file->f_op->uring_cmd)
->  		return -EOPNOTSUPP;
->  
-> -	ret = security_uring_cmd(ioucmd);
-> +	ret = security_uring_cmd(ioucmd, req->file->f_op->uring_cmd_sec);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/security/security.c b/security/security.c
-> index 79d82cb6e469..d3360a32f971 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2667,8 +2667,9 @@ int security_uring_sqpoll(void)
->  {
->  	return call_int_hook(uring_sqpoll, 0);
->  }
-> -int security_uring_cmd(struct io_uring_cmd *ioucmd)
-> +int security_uring_cmd(struct io_uring_cmd *ioucmd,
-> +	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
->  {
-> -	return call_int_hook(uring_cmd, 0, ioucmd);
-> +	return call_int_hook(uring_cmd, 0, ioucmd, uring_cmd_sec);
->  }
->  #endif /* CONFIG_IO_URING */
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index f553c370397e..9fe3a230c671 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -21,6 +21,8 @@
->   *  Copyright (C) 2016 Mellanox Technologies
->   */
->  
-> +#include "linux/nvme_ioctl.h"
-> +#include "linux/security.h"
->  #include <linux/init.h>
->  #include <linux/kd.h>
->  #include <linux/kernel.h>
-> @@ -6999,18 +7001,30 @@ static int selinux_uring_sqpoll(void)
->   * IORING_OP_URING_CMD against the device/file specified in @ioucmd.
->   *
->   */
-> -static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> +static int selinux_uring_cmd(struct io_uring_cmd *ioucmd,
-> +	int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
->  {
->  	struct file *file = ioucmd->file;
->  	struct inode *inode = file_inode(file);
->  	struct inode_security_struct *isec = selinux_inode(inode);
->  	struct common_audit_data ad;
-> +	const struct cred *cred = current_cred();
-> +	struct security_uring_cmd sec_uring = {0};
-> +	int ret;
->  
->  	ad.type = LSM_AUDIT_DATA_FILE;
->  	ad.u.file = file;
->  
-> +	ret = uring_cmd_sec(ioucmd, &sec_uring);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (sec_uring.flags & SECURITY_URING_CMD_TYPE_IOCTL)
-> +		return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
-> +
->  	return avc_has_perm(&selinux_state, current_sid(), isec->sid,
->  			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
-> +
->  }
->  #endif /* CONFIG_IO_URING */
->  
+VGhlcmUgaXMgYW4gaW50ZXJlc3RpbmcgcmVmZXJlbmNlIGJ1ZyB3aGVuIC1FTk9NRU0gb2NjdXJz
+IGluIGNhbGxpbmcgb2YKaW9faW5zdGFsbF9maXhlZF9maWxlKCkuIEtBU2FuIHJlcG9ydCBsaWtl
+IGJlbG93OgoKWyAgIDE0LjA1NzEzMV0gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ClsgICAxNC4wNTkxNjFdIEJVRzogS0FT
+QU46IHVzZS1hZnRlci1mcmVlIGluIHVuaXhfZ2V0X3NvY2tldCsweDEwLzB4OTAKWyAgIDE0LjA2
+MDk3NV0gUmVhZCBvZiBzaXplIDggYXQgYWRkciBmZmZmODg4MDBiMDljZjIwIGJ5IHRhc2sga3dv
+cmtlci91ODoyLzQ1ClsgICAxNC4wNjI2ODRdClsgICAxNC4wNjI3NjhdIENQVTogMiBQSUQ6IDQ1
+IENvbW06IGt3b3JrZXIvdTg6MiBOb3QgdGFpbnRlZCA2LjEuMC1yYzQgIzEKWyAgIDE0LjA2MzA5
+OV0gSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5Niks
+IEJJT1MgcmVsLTEuMTYuMC0wLWdkMjM5NTUyY2U3MjItcHJlYnVpbHQucWVtdS5vcmcgMDQvMDEv
+MjAxNApbICAgMTQuMDYzNjY2XSBXb3JrcXVldWU6IGV2ZW50c191bmJvdW5kIGlvX3JpbmdfZXhp
+dF93b3JrClsgICAxNC4wNjM5MzZdIENhbGwgVHJhY2U6ClsgICAxNC4wNjQwNjVdICA8VEFTSz4K
+WyAgIDE0LjA2NDE3NV0gIGR1bXBfc3RhY2tfbHZsKzB4MzQvMHg0OApbICAgMTQuMDY0MzYwXSAg
+cHJpbnRfcmVwb3J0KzB4MTcyLzB4NDc1ClsgICAxNC4wNjQ1NDddICA/IF9yYXdfc3Bpbl9sb2Nr
+X2lycSsweDgzLzB4ZTAKWyAgIDE0LjA2NDc1OF0gID8gX192aXJ0X2FkZHJfdmFsaWQrMHhlZi8w
+eDE3MApbICAgMTQuMDY0OTc1XSAgPyB1bml4X2dldF9zb2NrZXQrMHgxMC8weDkwClsgICAxNC4w
+NjUxNjddICBrYXNhbl9yZXBvcnQrMHhhZC8weDEzMApbICAgMTQuMDY1MzUzXSAgPyB1bml4X2dl
+dF9zb2NrZXQrMHgxMC8weDkwClsgICAxNC4wNjU1NTNdICB1bml4X2dldF9zb2NrZXQrMHgxMC8w
+eDkwClsgICAxNC4wNjU3NDRdICBfX2lvX3NxZV9maWxlc191bnJlZ2lzdGVyKzB4ODcvMHgxZTAK
+WyAgIDE0LjA2NTk4OV0gID8gaW9fcnNyY19yZWZzX2Ryb3ArMHgxYy8weGQwClsgICAxNC4wNjYx
+OTldICBpb19yaW5nX2V4aXRfd29yaysweDM4OC8weDZhNQpbICAgMTQuMDY2NDEwXSAgPyBpb191
+cmluZ190cnlfY2FuY2VsX3JlcXVlc3RzKzB4NWJmLzB4NWJmClsgICAxNC4wNjY2NzRdICA/IHRy
+eV90b193YWtlX3VwKzB4ZGIvMHg5MTAKWyAgIDE0LjA2Njg3M10gID8gdmlydF90b19oZWFkX3Bh
+Z2UrMHhiZS8weGJlClsgICAxNC4wNjcwODBdICA/IF9fc2NoZWR1bGUrMHg1NzQvMHhkMjAKWyAg
+IDE0LjA2NzI3M10gID8gcmVhZF93b3JkX2F0X2FfdGltZSsweGUvMHgyMApbICAgMTQuMDY3NDky
+XSAgPyBzdHJzY3B5KzB4YjUvMHgxOTAKWyAgIDE0LjA2NzY2NV0gIHByb2Nlc3Nfb25lX3dvcmsr
+MHg0MjMvMHg3MTAKWyAgIDE0LjA2Nzg3OV0gIHdvcmtlcl90aHJlYWQrMHgyYTIvMHg2ZjAKWyAg
+IDE0LjA2ODA3M10gID8gcHJvY2Vzc19vbmVfd29yaysweDcxMC8weDcxMApbICAgMTQuMDY4Mjg0
+XSAga3RocmVhZCsweDE2My8weDFhMApbICAgMTQuMDY4NDU0XSAgPyBrdGhyZWFkX2NvbXBsZXRl
+X2FuZF9leGl0KzB4MjAvMHgyMApbICAgMTQuMDY4Njk3XSAgcmV0X2Zyb21fZm9yaysweDIyLzB4
+MzAKWyAgIDE0LjA2ODg4Nl0gIDwvVEFTSz4KWyAgIDE0LjA2OTAwMF0KWyAgIDE0LjA2OTA4OF0g
+QWxsb2NhdGVkIGJ5IHRhc2sgMjg5OgpbICAgMTQuMDY5MjY5XSAga2FzYW5fc2F2ZV9zdGFjaysw
+eDFlLzB4NDAKWyAgIDE0LjA2OTQ2M10gIGthc2FuX3NldF90cmFjaysweDIxLzB4MzAKWyAgIDE0
+LjA2OTY1Ml0gIF9fa2FzYW5fc2xhYl9hbGxvYysweDU4LzB4NzAKWyAgIDE0LjA2OTg5OV0gIGtt
+ZW1fY2FjaGVfYWxsb2MrMHhjNS8weDIwMApbICAgMTQuMDcwMTAwXSAgX19hbGxvY19maWxlKzB4
+MjAvMHgxNjAKWyAgIDE0LjA3MDI4M10gIGFsbG9jX2VtcHR5X2ZpbGUrMHgzYi8weGMwClsgICAx
+NC4wNzA0NzldICBwYXRoX29wZW5hdCsweGMzLzB4MTc3MApbICAgMTQuMDcwNjg5XSAgZG9fZmls
+cF9vcGVuKzB4MTUwLzB4MjcwClsgICAxNC4wNzA4ODhdICBkb19zeXNfb3BlbmF0MisweDExMy8w
+eDI3MApbICAgMTQuMDcxMDgxXSAgX194NjRfc3lzX29wZW5hdCsweGM4LzB4MTQwClsgICAxNC4w
+NzEyODNdICBkb19zeXNjYWxsXzY0KzB4M2IvMHg5MApbICAgMTQuMDcxNDY2XSAgZW50cnlfU1lT
+Q0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NjMvMHhjZApbICAgMTQuMDcxNzkxXQpbICAgMTQuMDcx
+ODc0XSBGcmVlZCBieSB0YXNrIDA6ClsgICAxNC4wNzIwMjddICBrYXNhbl9zYXZlX3N0YWNrKzB4
+MWUvMHg0MApbICAgMTQuMDcyMjI0XSAga2FzYW5fc2V0X3RyYWNrKzB4MjEvMHgzMApbICAgMTQu
+MDcyNDE1XSAga2FzYW5fc2F2ZV9mcmVlX2luZm8rMHgyYS8weDUwClsgICAxNC4wNzI2MjddICBf
+X2thc2FuX3NsYWJfZnJlZSsweDEwNi8weDE5MApbICAgMTQuMDcyODU4XSAga21lbV9jYWNoZV9m
+cmVlKzB4OTgvMHgzNDAKWyAgIDE0LjA3MzA3NV0gIHJjdV9jb3JlKzB4NDI3LzB4ZTUwClsgICAx
+NC4wNzMyNDldICBfX2RvX3NvZnRpcnErMHgxMTAvMHgzY2QKWyAgIDE0LjA3MzQ0MF0KWyAgIDE0
+LjA3MzUyM10gTGFzdCBwb3RlbnRpYWxseSByZWxhdGVkIHdvcmsgY3JlYXRpb246ClsgICAxNC4w
+NzM4MDFdICBrYXNhbl9zYXZlX3N0YWNrKzB4MWUvMHg0MApbICAgMTQuMDc0MDE3XSAgX19rYXNh
+bl9yZWNvcmRfYXV4X3N0YWNrKzB4OTcvMHhiMApbICAgMTQuMDc0MjY0XSAgY2FsbF9yY3UrMHg0
+MS8weDU1MApbICAgMTQuMDc0NDM2XSAgdGFza193b3JrX3J1bisweGY0LzB4MTcwClsgICAxNC4w
+NzQ2MTldICBleGl0X3RvX3VzZXJfbW9kZV9wcmVwYXJlKzB4MTEzLzB4MTIwClsgICAxNC4wNzQ4
+NThdICBzeXNjYWxsX2V4aXRfdG9fdXNlcl9tb2RlKzB4MWQvMHg0MApbICAgMTQuMDc1MDkyXSAg
+ZG9fc3lzY2FsbF82NCsweDQ4LzB4OTAKWyAgIDE0LjA3NTI3Ml0gIGVudHJ5X1NZU0NBTExfNjRf
+YWZ0ZXJfaHdmcmFtZSsweDYzLzB4Y2QKWyAgIDE0LjA3NTUyOV0KWyAgIDE0LjA3NTYxMl0gU2Vj
+b25kIHRvIGxhc3QgcG90ZW50aWFsbHkgcmVsYXRlZCB3b3JrIGNyZWF0aW9uOgpbICAgMTQuMDc1
+OTAwXSAga2FzYW5fc2F2ZV9zdGFjaysweDFlLzB4NDAKWyAgIDE0LjA3NjA5OF0gIF9fa2FzYW5f
+cmVjb3JkX2F1eF9zdGFjaysweDk3LzB4YjAKWyAgIDE0LjA3NjMyNV0gIHRhc2tfd29ya19hZGQr
+MHg3Mi8weDFiMApbICAgMTQuMDc2NTEyXSAgZnB1dCsweDY1LzB4YzAKWyAgIDE0LjA3NjY1N10g
+IGZpbHBfY2xvc2UrMHg4ZS8weGEwClsgICAxNC4wNzY4MjVdICBfX3g2NF9zeXNfY2xvc2UrMHgx
+NS8weDUwClsgICAxNC4wNzcwMTldICBkb19zeXNjYWxsXzY0KzB4M2IvMHg5MApbICAgMTQuMDc3
+MTk5XSAgZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NjMvMHhjZApbICAgMTQuMDc3
+NDQ4XQpbICAgMTQuMDc3NTMwXSBUaGUgYnVnZ3kgYWRkcmVzcyBiZWxvbmdzIHRvIHRoZSBvYmpl
+Y3QgYXQgZmZmZjg4ODAwYjA5Y2YwMApbICAgMTQuMDc3NTMwXSAgd2hpY2ggYmVsb25ncyB0byB0
+aGUgY2FjaGUgZmlscCBvZiBzaXplIDIzMgpbICAgMTQuMDc4MTA1XSBUaGUgYnVnZ3kgYWRkcmVz
+cyBpcyBsb2NhdGVkIDMyIGJ5dGVzIGluc2lkZSBvZgpbICAgMTQuMDc4MTA1XSAgMjMyLWJ5dGUg
+cmVnaW9uIFtmZmZmODg4MDBiMDljZjAwLCBmZmZmODg4MDBiMDljZmU4KQpbICAgMTQuMDc4Njg1
+XQpbICAgMTQuMDc4NzcxXSBUaGUgYnVnZ3kgYWRkcmVzcyBiZWxvbmdzIHRvIHRoZSBwaHlzaWNh
+bCBwYWdlOgpbICAgMTQuMDc5MDQ2XSBwYWdlOjAwMDAwMDAwMWJkNTIwZTcgcmVmY291bnQ6MSBt
+YXBjb3VudDowIG1hcHBpbmc6MDAwMDAwMDAwMDAwMDAwMCBpbmRleDoweGZmZmY4ODgwMGIwOWRl
+MDAgcGZuOjB4YjA5YwpbICAgMTQuMDc5NTc1XSBoZWFkOjAwMDAwMDAwMWJkNTIwZTcgb3JkZXI6
+MSBjb21wb3VuZF9tYXBjb3VudDowIGNvbXBvdW5kX3BpbmNvdW50OjAKWyAgIDE0LjA3OTk0Nl0g
+ZmxhZ3M6IDB4MTAwMDAwMDAwMDEwMjAwKHNsYWJ8aGVhZHxub2RlPTB8em9uZT0xKQpbICAgMTQu
+MDgwMjQ0XSByYXc6IDAxMDAwMDAwMDAwMTAyMDAgMDAwMDAwMDAwMDAwMDAwMCBkZWFkMDAwMDAw
+MDAwMDAxIGZmZmY4ODgwMDQ5M2NjODAKWyAgIDE0LjA4MDYyOV0gcmF3OiBmZmZmODg4MDBiMDlk
+ZTAwIDAwMDAwMDAwODAxOTAwMTggMDAwMDAwMDFmZmZmZmZmZiAwMDAwMDAwMDAwMDAwMDAwClsg
+ICAxNC4wODEwMTZdIHBhZ2UgZHVtcGVkIGJlY2F1c2U6IGthc2FuOiBiYWQgYWNjZXNzIGRldGVj
+dGVkClsgICAxNC4wODEyOTNdClsgICAxNC4wODEzNzZdIE1lbW9yeSBzdGF0ZSBhcm91bmQgdGhl
+IGJ1Z2d5IGFkZHJlc3M6ClsgICAxNC4wODE2MThdICBmZmZmODg4MDBiMDljZTAwOiAwMCAwMCAw
+MCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMApbICAgMTQuMDgxOTc0XSAg
+ZmZmZjg4ODAwYjA5Y2U4MDogMDAgMDAgMDAgMDAgMDAgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMg
+ZmMgZmMgZmMKWyAgIDE0LjA4MjMzNl0gPmZmZmY4ODgwMGIwOWNmMDA6IGZhIGZiIGZiIGZiIGZi
+IGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiClsgICAxNC4wODI2OTBdICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBeClsgICAxNC4wODI5MDldICBmZmZmODg4MDBiMDljZjgw
+OiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYyBmYyBmYwpbICAgMTQu
+MDgzMjY2XSAgZmZmZjg4ODAwYjA5ZDAwMDogZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmEgZmIg
+ZmIgZmIgZmIgZmIgZmIgZmIKWyAgIDE0LjA4MzYyMl0gPT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CgpUaGUgYWN0dWFsIHRy
+YWNpbmcgb2YgdGhpcyBidWcgaXMgc2hvd24gYmVsb3c6Cgpjb21taXQgOGM3MWZlNzUwMjE1ICgi
+aW9fdXJpbmc6IGVuc3VyZSBmcHV0KCkgY2FsbGVkIGNvcnJlc3BvbmRpbmdseQp3aGVuIGRpcmVj
+dCBpbnN0YWxsIGZhaWxzIikgYWRkcyBhbiBhZGRpdGlvbmFsIGZwdXQoKSBpbgppb19maXhlZF9m
+ZF9pbnN0YWxsKCkgd2hlbiBpb19maWxlX2JpdG1hcF9nZXQoKSByZXR1cm5zIGVycm9yIHZhbHVl
+cy4gSW4KdGhhdCBjYXNlLCB0aGUgcm91dGluZSB3aWxsIG5ldmVyIG1ha2UgaXQgdG8gaW9faW5z
+dGFsbF9maXhlZF9maWxlKCkgZHVlCnRvIGFuIGVhcmx5IHJldHVybi4KCnN0YXRpYyBpbnQgaW9f
+Zml4ZWRfZmRfaW5zdGFsbCguLi4pCnsKICBpZiAoYWxsb2Nfc2xvdCkgewogICAgLi4uCiAgICBy
+ZXQgPSBpb19maWxlX2JpdG1hcF9nZXQoY3R4KTsKICAgIGlmICh1bmxpa2VseShyZXQgPCAwKSkg
+ewogICAgICBpb19yaW5nX3N1Ym1pdF91bmxvY2soY3R4LCBpc3N1ZV9mbGFncyk7CiAgICAgIGZw
+dXQoZmlsZSk7CiAgICAgIHJldHVybiByZXQ7CiAgICB9CiAgICAuLi4KICB9CiAgLi4uCiAgcmV0
+ID0gaW9faW5zdGFsbF9maXhlZF9maWxlKHJlcSwgZmlsZSwgaXNzdWVfZmxhZ3MsIGZpbGVfc2xv
+dCk7CiAgLi4uCn0KCkluIHRoZSBhYm92ZSBzY2VuYXJpbywgdGhlIHJlZmVyZW5jZSBpcyBva2F5
+IGFzIGlvX2ZpeGVkX2ZkX2luc3RhbGwoKQplbnN1cmVzIHRoZSBmcHV0KCkgaXMgY2FsbGVkIHdo
+ZW4gc29tZXRoaW5nIGJhZCBoYXBwZW5zLCBlaXRoZXIgdmlhCmJpdG1hcCBvciB2aWEgaW5uZXIg
+aW9faW5zdGFsbF9maXhlZF9maWxlKCkuCgpIb3dldmVyLCB0aGUgY29tbWl0IDYxYzFiNDRhMjFk
+NyAoImlvX3VyaW5nOiBmaXggZGVhZGxvY2sgb24gaW93cSBmaWxlCnNsb3QgYWxsb2MiKSBicmVh
+a3MgdGhlIGJhbGFuY2UgYmVjYXVzZSBpdCBwbGFjZXMgZnB1dCgpIGludG8gdGhlIGNvbW1vbgpw
+YXRoIGZvciBib3RoIGlvX2ZpbGVfYml0bWFwX2dldCgpIGFuZCBpb19pbnN0YWxsX2ZpeGVkX2Zp
+bGUoKS4gU2luY2UKaW9faW5zdGFsbF9maXhlZF9maWxlKCkgaGFuZGxlcyB0aGUgZnB1dCgpIGl0
+c2VsZiwgdGhlIHJlZmVyZW5jZQp1bmRlcmZsb3cgY29tZSBhY3Jvc3MgdGhlbi4KClRoZXJlIGFy
+ZSBzb21lIGV4dHJhIGNvbW1pdHMgbWFrZSB0aGUgY3VycmVudCBjb2RlIGludG8KaW9fZml4ZWRf
+ZmRfaW5zdGFsbCgpIC0+IF9faW9fZml4ZWRfZmRfaW5zdGFsbCgpIC0+CmlvX2luc3RhbGxfZml4
+ZWRfZmlsZSgpCgpIb3dldmVyLCB0aGUgZmFjdCB0aGF0IHRoZXJlIGlzIGFuIGV4dHJhIGZwdXQo
+KSBpcyBjYWxsZWQgaWYKaW9faW5zdGFsbF9maXhlZF9maWxlKCkgY2FsbHMgZnB1dCgpLiBUcmF2
+ZXJzaW5nIHRocm91Z2ggdGhlIGNvZGUsIEkKZmluZCB0aGF0IHRoZSBleGlzdGluZyB0d28gY2Fs
+bGVycyB0byBfX2lvX2ZpeGVkX2ZkX2luc3RhbGwoKToKaW9fZml4ZWRfZmRfaW5zdGFsbCgpIGFu
+ZCBpb19tc2dfc2VuZF9mZCgpIGhhdmUgZnB1dCgpIHdoZW4gaGFuZGxpbmcKZXJyb3IgcmV0dXJu
+LCB0aGlzIHBhdGNoIHNpbXBseSByZW1vdmVzIHRoZSBmcHV0KCkgaW4KaW9faW5zdGFsbF9maXhl
+ZF9maWxlKCkgdG8gZml4IHRoZSBidWcuCgpGaXhlczogNjFjMWI0NGEyMWQ3ICgiaW9fdXJpbmc6
+IGZpeCBkZWFkbG9jayBvbiBpb3dxIGZpbGUgc2xvdCBhbGxvYyIpClNpZ25lZC1vZmYtYnk6IExp
+biBNYSA8bGlubWFAemp1LmVkdS5jbj4KLS0tClYwLT5WMTogZml4IHR5cG9zClYxLT5WMjogYWRk
+IGNyYXNoIHN0YWNrCgogaW9fdXJpbmcvZmlsZXRhYmxlLmMgfCAyIC0tCiAxIGZpbGUgY2hhbmdl
+ZCwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9pb191cmluZy9maWxldGFibGUuYyBiL2lv
+X3VyaW5nL2ZpbGV0YWJsZS5jCmluZGV4IDdiNDczMjU5ZjNmNC4uNjhkZmM2OTM2YWE3IDEwMDY0
+NAotLS0gYS9pb191cmluZy9maWxldGFibGUuYworKysgYi9pb191cmluZy9maWxldGFibGUuYwpA
+QCAtMTAxLDggKzEwMSw2IEBAIHN0YXRpYyBpbnQgaW9faW5zdGFsbF9maXhlZF9maWxlKHN0cnVj
+dCBpb19yaW5nX2N0eCAqY3R4LCBzdHJ1Y3QgZmlsZSAqZmlsZSwKIGVycjoKIAlpZiAobmVlZHNf
+c3dpdGNoKQogCQlpb19yc3JjX25vZGVfc3dpdGNoKGN0eCwgY3R4LT5maWxlX2RhdGEpOwotCWlm
+IChyZXQpCi0JCWZwdXQoZmlsZSk7CiAJcmV0dXJuIHJldDsKIH0KIAotLSAKMi4zOC4x

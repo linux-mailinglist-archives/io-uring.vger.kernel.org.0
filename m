@@ -2,164 +2,161 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13B97633112
-	for <lists+io-uring@lfdr.de>; Tue, 22 Nov 2022 00:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C190633A50
+	for <lists+io-uring@lfdr.de>; Tue, 22 Nov 2022 11:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbiKUX7i (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 21 Nov 2022 18:59:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34506 "EHLO
+        id S230009AbiKVKlu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Nov 2022 05:41:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbiKUX7g (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Nov 2022 18:59:36 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C6CB10559
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 15:59:29 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id b1-20020a17090a7ac100b00213fde52d49so12837486pjl.3
-        for <io-uring@vger.kernel.org>; Mon, 21 Nov 2022 15:59:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jccJ4Bm2honkk55HL5L3ubecWLHTgsBISaT1aAHD2nQ=;
-        b=5QhulFzI1G8WHE9oKX4gt1WUeh1Fynoxt5ZWH2vyk7Oo9+FSoHFRaWUZLEr3pywHNF
-         nGb0E+jUepD7p20/iTExnyVbiziyc8byaeDw4KWtx5Z+RTbTKJ1cxsZBZCli/lr/yRI+
-         cAvro7xKn6Te2WNhjfzLv7u4hLfGfqYiUr5sePWuVMDXVHngVq9HENgpdAB5xVqc1l/x
-         BVborIe3koNOM4bggrC9+HzY6mwzYgLUVM1gGVu+2vwcIGjmNToc0rqflPYE4TRgEEpf
-         +5lnj9VX1VE3A2MrgNLnCB6v2AdV3wFaQ95in+L+uZ1Qr6Rm9qEemD8a3KJHbFhPBsi9
-         T/Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jccJ4Bm2honkk55HL5L3ubecWLHTgsBISaT1aAHD2nQ=;
-        b=A+utGZc6KVWnGSwcKfy8J2eA9P0739OdoyCiQWx5PzlH87lpvAxQehsPWGmliEThk7
-         q08If5IulArBN8N1Roi3PugVBjBM1eGyqRTYrzUh8n8cKvumsBWrcV6Sh+kwofhAoa/5
-         Ik6cpyuZYSWe9TAXHcR+QT31Br+kD0qAYxS02Qd0KzKXNqIf/u1MFFqUo7pVZH3KbjUr
-         n9mDaEVLTf8qEIcdaylCmym/kfPIXhejGxEvym7GGnNr0SddfX9KFomFTXRlXC24MZ6v
-         lxSVIwe81C+0TpRc1tyBRX+GJQpg1oajXNAMQFFwvwa4ghjvyNzIpL0NjM/Fd5m2Ps3O
-         avvQ==
-X-Gm-Message-State: ANoB5pn13AisLWHkm2RUtUvjJ79GB7qiWAH7vG7Rfq+pDEcJHxV4zvwc
-        D8FYwgDPKXdY1v3GIL1ngqWT4/zl37gwVQ==
-X-Google-Smtp-Source: AA0mqf6Qm/z49ORGSNpdORDWI9uJV5l4u+ZQ0/SajrYhCffr1+7KkL52SrzOdM2ahfQEvSvHL5HLNA==
-X-Received: by 2002:a17:903:2144:b0:188:a1eb:9a8a with SMTP id s4-20020a170903214400b00188a1eb9a8amr5571440ple.153.1669075168333;
-        Mon, 21 Nov 2022 15:59:28 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t8-20020aa79468000000b005625d6d2999sm9231276pfq.187.2022.11.21.15.59.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Nov 2022 15:59:27 -0800 (PST)
-Message-ID: <74feda24-37fd-11ea-af0e-1eff9ed4941e@kernel.dk>
-Date:   Mon, 21 Nov 2022 16:59:26 -0700
+        with ESMTP id S232870AbiKVKkz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Nov 2022 05:40:55 -0500
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8DC5DBBD
+        for <io-uring@vger.kernel.org>; Tue, 22 Nov 2022 02:35:39 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20221122103537euoutp01107f279b67efc5fe802b99f5e8d68162~p4bya6plF1716017160euoutp01d
+        for <io-uring@vger.kernel.org>; Tue, 22 Nov 2022 10:35:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20221122103537euoutp01107f279b67efc5fe802b99f5e8d68162~p4bya6plF1716017160euoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1669113337;
+        bh=ukr95FvjHp9T4vWMYC+S93/K/TYCn3nOZHCdPWgfXB0=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=fRi7s+c4VAWITiWgnWCv/MiQMILKHmR+o9Ta969RQwQb5ntHTZKsHliWsDo9MZehZ
+         TveDPlDqsuxWewNFFfA1l5YTIHwGxFgPG9lW12ap04Ymz6ZzuKWN8cBJRkulHAbHpG
+         Y0H5awFQ2R/0wTsELKpYEakAOBnMlvk9rqMCwHas=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221122103536eucas1p17457201f2e5ed32f8fcc0b0b7e47f4b7~p4byNtDXa0149301493eucas1p1m;
+        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 00.2E.09561.8F5AC736; Tue, 22
+        Nov 2022 10:35:36 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221122103536eucas1p2a0bc5ebdf063715f063e5b6254d0b058~p4bx4dqCf0354803548eucas1p22;
+        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221122103536eusmtrp265da2d93bc9e98274bb4427a31be3183~p4bx33Kdj1081210812eusmtrp2_;
+        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
+X-AuditID: cbfec7f2-0b3ff70000002559-f0-637ca5f8de50
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C5.0D.08916.8F5AC736; Tue, 22
+        Nov 2022 10:35:36 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221122103536eusmtip2bc320b9a6f1b2dfbda748f2aee0ecbbc~p4bxr5LH52937029370eusmtip2P;
+        Tue, 22 Nov 2022 10:35:36 +0000 (GMT)
+Received: from localhost (106.110.32.33) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Tue, 22 Nov 2022 10:35:28 +0000
+From:   Joel Granados <j.granados@samsung.com>
+To:     <mcgrof@kernel.org>, <ddiss@suse.de>, <joshi.k@samsung.com>,
+        <paul@paul-moore.com>
+CC:     <ming.lei@redhat.com>, <linux-security-module@vger.kernel.org>,
+        <axboe@kernel.dk>, <io-uring@vger.kernel.org>,
+        Joel Granados <j.granados@samsung.com>
+Subject: [RFC v2 0/1] RFC on how to include LSM hooks for io_uring commands
+Date:   Tue, 22 Nov 2022 11:31:43 +0100
+Message-ID: <20221122103144.960752-1-j.granados@samsung.com>
+X-Mailer: git-send-email 2.30.2
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v5 1/3] io_uring: add napi busy polling support
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
-Cc:     olivier@trillion01.com, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, kuba@kernel.org
-References: <20221121191437.996297-1-shr@devkernel.io>
- <20221121191437.996297-2-shr@devkernel.io>
- <067a22bc-72ba-9035-05da-93c43ce356f2@kernel.dk>
-In-Reply-To: <067a22bc-72ba-9035-05da-93c43ce356f2@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [106.110.32.33]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42LZduzned0fS2uSDR5uNbBYfbefzeLr/+ks
+        Fu9az7FYfOh5xGZxY8JTRotDk5uZLG5Pms7iwO5x+Wypx6ZVnWwea/e+YPR4v+8qm8fm09Ue
+        nzfJBbBFcdmkpOZklqUW6dslcGU8n/GcrWAjX8XPfrsGxuXcXYycHBICJhKX3vWzdjFycQgJ
+        rGCUeDptHytIQkjgC6PEzefCEInPjBK7Zq9m72JkB+v4EwFRspxR4tb1UAgbqGTTHWWI8s2M
+        Eo82rWQDSbAJ6Eicf3OHGcQWEYiQ2PTmFztIEbPAXEaJux9ugSWEBbwljq1bALaYRUBV4uGv
+        RSwgNq+AjcTT7R/YIC6Vl2i7Pp2xi5EDqFlTYv0ufYgSQYmTM5+AlTMDlTRvnc0MUa4osWXO
+        d1YIu1bi1JZbTCB7JQTucEj8OLUFqshFYsvyQ1DzhSVeHd/CDmHLSPzfOZ8Jws6W2DllF1R9
+        gcSsk1PZQG6QELCW6DuTAxF2lNi5sREqzCdx460gxDl8EpO2TWeGCPNKdLQJQVSrSexo2so4
+        gVF5FsIvs5D8MgvJLwsYmVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEppnT/45/2sE4
+        99VHvUOMTByMhxglOJiVRHjrPWuShXhTEiurUovy44tKc1KLDzFKc7AoifOyzdBKFhJITyxJ
+        zU5NLUgtgskycXBKNTBN7V72YxLHpJULdhuG7/9ScDpwleLe9UqLyqeorb6e1TXzxqvjvQx7
+        hNvtOJdtSI/NzP55tYH/f2TbDr5co8k37pl6Fkpt5XrMHPnkygTtiR9sf2w8vGvVe0N25w31
+        go4dj/S+Hjn9yr3qwmOxmmxptY2vdpxQuDB99fa9ov7R13WmzemV7L4/wcz78ZOzM6x06u7r
+        l0wOZH3VZCFXP3V+QJQ2M4NTrORni0uaKUlinu4FTefvMT2s4/pwQ3u9ruJ9ddWXcX/5M3My
+        /zodU43Zt9Kjh4//0deAGYdZN96PLO79/Ihn1hoN9ZlPXhhqdr+8aXCdrVc2cKZ7alAJX8yR
+        WEbr898ttn4wZ/q8y0dTiaU4I9FQi7moOBEAjSukraIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsVy+t/xe7o/ltYkGzw4IGGx+m4/m8XX/9NZ
+        LN61nmOx+NDziM3ixoSnjBaHJjczWdyeNJ3Fgd3j8tlSj02rOtk81u59wejxft9VNo/Np6s9
+        Pm+SC2CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL
+        0Mt4PuM5W8FGvoqf/XYNjMu5uxjZOSQETCT+RHQxcnIICSxllPjyzQPElhCQkfh05SM7hC0s
+        8edaF1sXIxdQzUdGid6/yxghnM2MEnPefGICqWIT0JE4/+YOM4gtIhAhsenNL3aQImaBuYwS
+        dz/cAksIC3hLHFu3gBXEZhFQlXj4axELiM0rYCPxdPsHNoh18hJt16cDbeAAataUWL9LH6JE
+        UOLkzCdg5cxAJc1bZzNDlCtKbJnznRXCrpX4/PcZ4wRGoVkI3bOQdM9C0r2AkXkVo0hqaXFu
+        em6xoV5xYm5xaV66XnJ+7iZGYGxtO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMJb71mTLMSbklhZ
+        lVqUH19UmpNafIjRFOibicxSosn5wOjOK4k3NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1O
+        TS1ILYLpY+LglGpg4jQXynxztuTIw/uqm4I5HzTdW2VbWbJFdEvDNhZ+D/464a8C29MW6Lsz
+        Njr1K7Y+VI64znmAZyPrx7v3FLS4jkWcSjdwEzih0Z60SGJJ3YlpSscvxa6Ss0y2efTxmm9l
+        /S3v/GAfrtT0grPfLl1P/Rco8GZ9yFGBRiYl8TNHck+tsDEparP8ujHyjqVhY6qycnnI0tUH
+        Hc67X9p6dl/o+clLeyRePsncbmpVUzhpeazRd9EXm5az+ofKBqZ8mSBlXDB/djpv+KadH1ZM
+        Nr+yRFy3/vT7FfPP9a3N4Eze7eZwQrffSc/SrPB+Rvte29lvZZv53Fv1+X0yjmyr31IzoTXP
+        TiD/0rFid0Gb5wpKLMUZiYZazEXFiQBuYmKPNgMAAA==
+X-CMS-MailID: 20221122103536eucas1p2a0bc5ebdf063715f063e5b6254d0b058
+X-Msg-Generator: CA
+X-RootMTR: 20221122103536eucas1p2a0bc5ebdf063715f063e5b6254d0b058
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20221122103536eucas1p2a0bc5ebdf063715f063e5b6254d0b058
+References: <CGME20221122103536eucas1p2a0bc5ebdf063715f063e5b6254d0b058@eucas1p2.samsung.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/21/22 12:45?PM, Jens Axboe wrote:
-> On 11/21/22 12:14?PM, Stefan Roesch wrote:
->> +/*
->> + * io_napi_add() - Add napi id to the busy poll list
->> + * @file: file pointer for socket
->> + * @ctx:  io-uring context
->> + *
->> + * Add the napi id of the socket to the napi busy poll list.
->> + */
->> +void io_napi_add(struct file *file, struct io_ring_ctx *ctx)
->> +{
->> +	unsigned int napi_id;
->> +	struct socket *sock;
->> +	struct sock *sk;
->> +	struct io_napi_entry *ne;
->> +
->> +	if (!io_napi_busy_loop_on(ctx))
->> +		return;
->> +
->> +	sock = sock_from_file(file);
->> +	if (!sock)
->> +		return;
->> +
->> +	sk = sock->sk;
->> +	if (!sk)
->> +		return;
->> +
->> +	napi_id = READ_ONCE(sk->sk_napi_id);
->> +
->> +	/* Non-NAPI IDs can be rejected */
->> +	if (napi_id < MIN_NAPI_ID)
->> +		return;
->> +
->> +	spin_lock(&ctx->napi_lock);
->> +	list_for_each_entry(ne, &ctx->napi_list, list) {
->> +		if (ne->napi_id == napi_id) {
->> +			ne->timeout = jiffies + NAPI_TIMEOUT;
->> +			goto out;
->> +		}
->> +	}
->> +
->> +	ne = kmalloc(sizeof(*ne), GFP_NOWAIT);
->> +	if (!ne)
->> +		goto out;
->> +
->> +	ne->napi_id = napi_id;
->> +	ne->timeout = jiffies + NAPI_TIMEOUT;
->> +	list_add_tail(&ne->list, &ctx->napi_list);
->> +
->> +out:
->> +	spin_unlock(&ctx->napi_lock);
->> +}
-> 
-> I think this all looks good now, just one minor comment on the above. Is
-> the expectation here that we'll basically always add to the napi list?
-> If so, then I think allocating 'ne' outside the spinlock would be a lot
-> saner, and then just kfree() it for the unlikely case where we find a
-> duplicate.
+The motivation for this patch is to continue the discussion around how to
+include LSM callback hooks in the io_uring infrastructure. This is the
+second version of the RFC and is meant to elicit discussion. I'll leave
+general questions and the descriptions of the different approaches.
+Comments are greatly appreciated
 
-After thinking about this a bit more, I don't think this is done in the
-most optimal fashion. If the list is longer than a few entries, this
-check (or check-alloc-insert) is pretty expensive and it'll add
-substantial overhead to the poll path for sockets if napi is enabled.
+Approaches:
+V2: I add a callback to the file_operations struct that will set a
+security_uring structure with all the elements needed for LSMs to make a
+decision. io_uring is still agnostic as it will just pass the callback
+along and LSM can just focus on getting the data they need in the uring
+security struct. When security is not defined in CONFIG the
+security_uring_cmd can just be a noop (or itself be in an ifdef).
 
-I think we should do something ala:
+V1: I take the nvme io_uring passthrough and try to include it in the
+already existing LSM infrastructure that is there for ioctl. This is far
+from a general io_uring approach, but its a start :)
 
-1) When arming poll AND napi has been enabled for the ring, then
-    alloc io_napi_entry upfront and store it in ->async_data.
+Questions:
+1. Besides what is contained in the patch, would there be something
+additional to plumb in LSM?
 
-2) Maintain the state in the io_napi_entry. If we're on the list,
-    that can be checked with just list_empty(), for example. If not
-    on the list, assign timeout and add.
+2. Is this general enough to fit all io_uring passthrough commands?
 
-3) Have regular request cleanup free it.
+3. I'm trying to separate responsabilities. The LSM folks can take care of
+LSM stuff and the io_uring users can take care of their specific domain.
+Does this patch fulfill this?
 
-This could be combined with an alloc cache, I would not do that for the
-first iteration though.
+4. Are there other approaches to solve this problem?
 
-This would make io_napi_add() cheap - no more list iteration, and no
-more allocations. And that is arguably the most important part, as that
-is called everytime the poll is woken up. Particularly for multishot
-that makes a big difference.
+Joel Granados (1):
+  Use a fs callback to set security specific data
 
-It's also designed much better imho, moving the more expensive bits to
-the setup side.
+ drivers/nvme/host/core.c      | 10 ++++++++++
+ include/linux/fs.h            |  2 ++
+ include/linux/lsm_hook_defs.h |  3 ++-
+ include/linux/security.h      | 16 ++++++++++++++--
+ io_uring/uring_cmd.c          |  3 ++-
+ security/security.c           |  5 +++--
+ security/selinux/hooks.c      | 16 +++++++++++++++-
+ 7 files changed, 48 insertions(+), 7 deletions(-)
 
 -- 
-Jens Axboe
+2.30.2
+

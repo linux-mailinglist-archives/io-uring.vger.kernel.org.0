@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC8F6371DA
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 06:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED74A6371DB
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 06:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbiKXFqi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 00:46:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56638 "EHLO
+        id S229499AbiKXFql (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 00:46:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbiKXFqh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 00:46:37 -0500
+        with ESMTP id S229459AbiKXFqk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 00:46:40 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55067C6885
-        for <io-uring@vger.kernel.org>; Wed, 23 Nov 2022 21:46:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B95C68A9
+        for <io-uring@vger.kernel.org>; Wed, 23 Nov 2022 21:46:39 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.240])
-        by gnuweeb.org (Postfix) with ESMTPSA id 130F881352;
-        Thu, 24 Nov 2022 05:46:32 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 7DD9881709;
+        Thu, 24 Nov 2022 05:46:36 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1669268795;
-        bh=TWnO8ccZT8DwY8edMo6cXHYw//1oIyJ9rAXDe9m6Dqc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FoiQuNUuEQ1S5JhHD+51oxyw3/0gE08+DCLA81s3vk91rp23XzQ3fQxqDB9Hw0AKR
-         abMikWm3OeWtWL5jWGNj8WiaF59XKbfuoSK4S1VkWTDdHlFF6RmreNfMsfIncqckoF
-         ea5fTJxK8J5dXP7hxt0e6TQAgT0GolD6TOQAvZ0odxYl1VVDfBIY8EzpXRgt5W0Mm6
-         5P92YiuYBAGDKMHiCz0iaLdiA2ORlyVq76UZCg3pJ8Lv/5ytb+2kNe0x/fBG2z8dss
-         pCj/3oMXNd8t3naRkuJrNVZJfmFULb3fioF/+djgtmkrhHMRR8twdkWn2vr6QBvPhG
-         yqX/rEZGTNdrg==
+        s=default; t=1669268799;
+        bh=po0Ui+1bsqgq0rpqMMRSwDHS0WRi99bILLgkyxdVK/M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mk88+lUl300qHePcGlJhSeL7DK5dcFL4/BNIHGBgN28IygYHc6B79dAlk/zKTnw/K
+         3DiOF4Jz1o35mrpxWx79XPsslYarXDVXoOg1q3smE4O7JyAf3014ralubIjrqE1d4u
+         K99mCNZWpfVkpI60Pn3+ecxUwn91Mjl/Je7yPogfhqvAk0eaVzam2GFECe7vwcR4+s
+         37+5WBEQdzlTLePSwrJtuF1e0qSNrP/yb4pCHA31C+11Dpue/l5glNU6ID+nbuWklE
+         lHK5ssi9eVFaiWwOhZ9gijK3cM6LFeAd+Jq5gBOm8YpTDsVs4C4gYkrozExxVz02Mk
+         XdNkgHstr9ZOQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -37,10 +37,12 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Muhammad Rizki <kiizuha@gnuweeb.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         Gilang Fachrezy <gilang4321@gmail.com>, kernel@vnlx.org
-Subject: [RFC PATCH liburing v1 0/2] Fix memset() issue and simplify function naming
-Date:   Thu, 24 Nov 2022 12:46:14 +0700
-Message-Id: <20221124054345.3752171-1-ammar.faizi@intel.com>
+Subject: [RFC PATCH liburing v1 1/2] nolibc: Do not define `memset()` function in liburing
+Date:   Thu, 24 Nov 2022 12:46:15 +0700
+Message-Id: <20221124054345.3752171-2-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221124054345.3752171-1-ammar.faizi@intel.com>
+References: <20221124054345.3752171-1-ammar.faizi@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -54,55 +56,98 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Hi Jens,
-
-On top of "remove useless branches" series. This is an RFC for
-liburing nolibc. There are two patches in this series.
-
-## Patch 1: A fix for memset() issue.
-
 liburing has its own memset() in nolibc.c. liburing nolibc can be
-linked to apps that use libc. libc has an optimized version of
-memset() function. Alviro reports that he found the memset() from
-liburing replaces the optimized memset() from libc when he compiled
-liburing statically. When we statically link liburing, the linker will
-choose the statically linked memset() over the dynamically linked
-memset() that the libc provides.
+linked to apps that use libc. libc has an optimized version of memset()
+function.
+
+Alviro reports that he found the memset() from liburing replaces the
+optimized memset() from libc when he compiled liburing statically.
+
+A simple reproducer:
+
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+
+  int main(void)
+  {
+          static const size_t len = 1024ul  1024ul  1024ul * 4ul;
+          char *p;
+
+          p = malloc(len);
+          __asm__ volatile ("":"+m"(p));
+          memset(p, 0, len);
+          __asm__ volatile ("":"+m"(p));
+          return 0;
+  }
+
+Compile liburing with:
+
+  # Build liburing nolibc.
+  ./configure --nolibc;
+  make -j8;
+
+  # Without liburing, memset() comes from libc (good)
+  gcc x.c -o x;
+  objdump -d x;
+
+  # With liburing.a, memset() comes from liburing (bad)
+  gcc x.c -o x src/liburing.a;
+  objdump -d x;
+
+When we statically link liburing, the linker will choose the statically
+linked memset() over the dynamically linked memset() that the libc
+provides.
 
 Change the function name to __uring_memset() and define a macro
 memset() as:
 
-    #define memset(PTR, C, LEN) __uring_memset(PTR, C, LEN)
+   #define memset(PTR, C, LEN) __uring_memset(PTR, C, LEN)
 
-when CONFIG_NOLIBC is enabled. This we don't have to touch the
-memset() callers.
+when CONFIG_NOLIBC is enabled so we don't have to touch the callers.
 
-
-## Patch 2: Simplify function naming.
-
-Define malloc() and free() as __uring_malloc() and __uring_free() with
-macros when CONFIG_NOLIBC is enabled. This way the callers will just
-use malloc() and free() instead of uring_malloc() and uring_free().
-
+Fixes: f48ee3168cdc325233825603269f304d348d323c ("Add nolibc build support")
+Reported-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
+ src/lib.h    | 5 +++++
+ src/nolibc.c | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-Ammar Faizi (2):
-  nolibc: Do not define `memset()` function in liburing
-  nolibc: Simplify function naming
-
- src/lib.h    | 21 +++++----------------
- src/nolibc.c |  2 +-
- src/setup.c  |  6 +++---
- 3 files changed, 9 insertions(+), 20 deletions(-)
-
-
-base-commit: 8fc22e3b3348c0a6384ec926e0b19b6707622e58
-prerequisite-patch-id: d74c76e906701902456e2b19f23c100f38f13326
-prerequisite-patch-id: bd6f97f77c8f99bd374cde916f97d6223bcbfa33
-prerequisite-patch-id: 7c0f399d75e806786b8a7da4d6e23bdb62876710
-prerequisite-patch-id: c087dd983f1732fcb9aad8e5b20baf8b9350a935
-prerequisite-patch-id: f22f5b7bf9443839ee5bdb5a162c7c7c723a87eb
+diff --git a/src/lib.h b/src/lib.h
+index f347191..5a9b87c 100644
+--- a/src/lib.h
++++ b/src/lib.h
+@@ -37,6 +37,7 @@
+ #define __hot			__attribute__((__hot__))
+ #define __cold			__attribute__((__cold__))
+ 
++void *__uring_memset(void *s, int c, size_t n);
+ void *__uring_malloc(size_t len);
+ void __uring_free(void *p);
+ 
+@@ -58,4 +59,8 @@ static inline void uring_free(void *ptr)
+ #endif
+ }
+ 
++#ifdef CONFIG_NOLIBC
++#define memset(PTR, C, LEN)	__uring_memset(PTR, C, LEN)
++#endif
++
+ #endif /* #ifndef LIBURING_LIB_H */
+diff --git a/src/nolibc.c b/src/nolibc.c
+index 9a04ead..3207e33 100644
+--- a/src/nolibc.c
++++ b/src/nolibc.c
+@@ -7,7 +7,7 @@
+ #include "lib.h"
+ #include "syscall.h"
+ 
+-void *memset(void *s, int c, size_t n)
++void *__uring_memset(void *s, int c, size_t n)
+ {
+ 	size_t i;
+ 	unsigned char *p = s;
 -- 
 Ammar Faizi
 

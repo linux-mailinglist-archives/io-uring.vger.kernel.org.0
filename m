@@ -2,101 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E26ED6379EC
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31FE5637A08
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbiKXN1e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 08:27:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51012 "EHLO
+        id S229808AbiKXNeQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 08:34:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbiKXN1d (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:27:33 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A099FCA
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:27:32 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id mv18so1412179pjb.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:27:32 -0800 (PST)
+        with ESMTP id S229846AbiKXNeP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:34:15 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E48D985EE3
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:34:13 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id 136so1599692pga.1
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6PUjkejs+nls1t0g8306qXKrK0t8sq0eiojWBp1T41k=;
-        b=ygwjtPLkzl+RyY/tk3SD4LOBlJUDjJnwGvA8ADxDdx138iq9g9xHwOimu7NGC8wczQ
-         +Nh7QsgWnkfvaf6F12mOXbx0NoIKOmtU/5LV5IHADEWQ7vL1yz69987iL/sQsMUE1ZXm
-         tDNXfDAqDhtAmIzF1Wm8oDBqqp2fRSKpVqhtizA3bjryXHl9JQIkSTl6Ebt0zCyP0CbF
-         1humz6LK/mFefZKTqkGOIMOlqy2P54dIIJypDkMn5MzdPWtHvUoXNev/y6BdD6WiNndx
-         GCmi6Y/GL86qcLkq4QqDvIB4BHnkndG4QXyLH/nKIsNBX8xt6wOJ/tJQISYVvGsUNd8i
-         1NFQ==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LkHsW53ssyoiPijIOfUjfPXDhEXLzUoOoVAnZpxyriQ=;
+        b=eEgGECfQLeWTtYc8llhIsFZ1FCEYe0+Wk9K5kqS1ja8YiJAhF2R611bQnBzHGcqCU3
+         qVgDzBOW9H9PeSN6FL0lByUxaQtvf2N1Pb1JS6acFlqXnC1YUu69Zptm4XvxH7/VuNRE
+         4Y0TwAWBoAoCdJAWtauaot4XZu5slpAoMarIyerNX47Rw0GSFKT8VG/gJvzXJVUBwDoB
+         XHEhGc3vF2nIP+DDZtcMTeTI1w61Sc9xE6AI7z6NL8ZMR5gZHuy57/mqlveqsZ5xc3hz
+         VUbdQHaFd8eETKlvTjWLPvKZf+iGInwmj31Lnz0P/sfJYEkoGnzCRuU0RxDyGJWOw3N4
+         kTLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6PUjkejs+nls1t0g8306qXKrK0t8sq0eiojWBp1T41k=;
-        b=aIpo3s4DXPJy0tJ4B/Z22SibU/t3mcaO5eEZBBx1A2P4Jw57MYZ0AsRqeDOvb7uxq0
-         5YtqCRRVrvJy0OA8yfdCDfMARC+CO27MuXfJz5qde3kMAH9mtaxIqhNb/VljZrwvcAes
-         urytTSnM2WVK+GWGC5j0APbkBinY9bBaGvpriTbFOnPxOjh4h1dkFk2A1BX1OHWssHfw
-         hU9kyd1OjN0WN7pqEEjKuGcPdrQxtK9Ya9jA7LL2kMZbEQgv21aSmsC4VRGQUNr3hIVA
-         2I1LvUrP4HmX2C66mIx4XKyba2Sl+pUpMMmksFnN5dxYu/e4AHh0TxEK8bMNKWjN0cpo
-         2djg==
-X-Gm-Message-State: ANoB5pmp4da+Lkf5Bd2+YneHHijUlwkR8tkjEpCEZO3rbi3fnAYm+YHI
-        Bmh3vndpGnfS9Y7euLlIGr4zSVg2QGbl5fT3
-X-Google-Smtp-Source: AA0mqf53lyI6J898djDryaNUL6PElJapvl4Kf9JYydoaSogpRMuJ8FYENAEMKZQB4XYCVvASJIM1FQ==
-X-Received: by 2002:a17:903:26ce:b0:187:31da:a27e with SMTP id jg14-20020a17090326ce00b0018731daa27emr13389502plb.111.1669296451473;
-        Thu, 24 Nov 2022 05:27:31 -0800 (PST)
-Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id v3-20020a170902e8c300b00186c3afb49esm1251774plg.209.2022.11.24.05.27.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Nov 2022 05:27:30 -0800 (PST)
-Message-ID: <6491d7b5-0a52-e6d1-0f86-d36ec88bbc15@kernel.dk>
-Date:   Thu, 24 Nov 2022 06:27:29 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH liburing v1 1/7] liburing.h: Export
- `__io_uring_flush_sq()` function
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Dylan Yudaken <dylany@meta.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Gilang Fachrezy <gilang4321@gmail.com>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        VNLX Kernel Department <kernel@vnlx.org>
-References: <20221124075846.3784701-1-ammar.faizi@intel.com>
- <20221124075846.3784701-2-ammar.faizi@intel.com>
- <f750be65c33e5d3a782cebf85954319caa77672f.camel@fb.com>
- <b303bde6-91b1-2ea2-7b1d-e64546c8ae7f@gnuweeb.org>
-Content-Language: en-US
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LkHsW53ssyoiPijIOfUjfPXDhEXLzUoOoVAnZpxyriQ=;
+        b=pdg60OtU4E34+EaeN/xDceQ6dzLTAB9GoAB+WYyfRz+4fYtXuXIAuyzYQ2rbxkrhZk
+         Nb/gojWD2U8oOI0ebMxf3t7hlq+vMjwR/zAXEzWLr7RZLALDQQWWFR3X0U2tAFfeOGj+
+         qUpOTG21+6vhIReAjAfRkieCdtxFehaUb9foTcdKZ9iijcQJMwV0DjY9jYgeRZLRhQoj
+         1WENqgkkLVZ7FItykmNMN6l0lxR8u5V8FX6uh6Ji/1wMq3HEgI6K0yH5g1idlbN8Ck7x
+         luzgXQo21qSigk1tu7jzi/nMir/rcoRFRhvTPy0Jlb8a/DuMLOOHJjmCrb0Zc0cM+3cu
+         bCOA==
+X-Gm-Message-State: ANoB5pmqUKbjbYO1NKK4dRGESftBRtrrjvhtnwgt8u6vpmn+01JLhqV0
+        jExm78y7Stz/D4kbNU5O5Yx/J6g8FYC47F8F
+X-Google-Smtp-Source: AA0mqf5ut+GoEpa/ICJrQc3kNpRvnd3uATxcbx9d6QpH8zwfkBjPTodMS0w2UrtfiMtrNW1tIQrwzQ==
+X-Received: by 2002:a62:ab18:0:b0:56b:9ae8:ca05 with SMTP id p24-20020a62ab18000000b0056b9ae8ca05mr14160440pff.59.1669296853376;
+        Thu, 24 Nov 2022 05:34:13 -0800 (PST)
+Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id c80-20020a624e53000000b00561dcfa700asm1207920pfb.107.2022.11.24.05.34.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Nov 2022 05:34:11 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b303bde6-91b1-2ea2-7b1d-e64546c8ae7f@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        Muhammad Rizki <kiizuha@gnuweeb.org>, kernel@vnlx.org,
+        Gilang Fachrezy <gilang4321@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20221123124922.3612798-1-ammar.faizi@intel.com>
+References: <20221123124922.3612798-1-ammar.faizi@intel.com>
+Subject: Re: [PATCH liburing v1 0/5] Remove useless brances in register functions
+Message-Id: <166929685122.52524.1408682990080341796.b4-ty@kernel.dk>
+Date:   Thu, 24 Nov 2022 06:34:11 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-28747
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/22 4:47 AM, Ammar Faizi wrote:
-> On 11/24/22 5:14 PM, Dylan Yudaken wrote:
->> I think changing the tests to use the public API is probably better
->> than exporting this function. I don't believe it has much general use?
+On Wed, 23 Nov 2022 19:53:12 +0700, Ammar Faizi wrote:
+> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 > 
-> But there is no public API that does the same thing. I'll mark it
-> as static and create a copy of that function in iopoll.c (in v2).
+> Hi Jens,
 > 
-> Something like this, what do you think?
+> This series removes useless branches in register functions:
+>   - io_uring_register_eventfd()
+>   - io_uring_unregister_eventfd()
+>   - io_uring_register_eventfd_async()
+>   - io_uring_register_buffers()
+>   - io_uring_unregister_buffers()
+>   - io_uring_unregister_files()
+>   - io_uring_register_probe()
+>   - io_uring_register_restrictions()
+> 
+> [...]
 
-Yeah I think this is better for now, and then we can work on fixing
-the test. Sanity of the core parts of the library is a lot more
-important than some test case.
+Applied, thanks!
 
+[1/5] register: Remove useless branches in {un,}register eventfd
+      commit: ed62cc1a3048e9aed33cf5fb8f47655fc5175bb4
+[2/5] register: Remove useless branches in {un,}register buffers
+      commit: a4ae8662b61bee4b89d6953348944030461f276d
+[3/5] register: Remove useless branch in unregister files
+      commit: 2ca898e57658b0b7a3506c9b97dd6d2a2238c2a3
+[4/5] register: Remove useless branch in register probe
+      commit: 3a418e3e95d0406b2868d79414065d8fa04f2238
+[5/5] register: Remove useless branch in register restrictions
+      commit: 636b6bdaa8d84f1b5318e27d1e4ffa86361ae66d
+
+Best regards,
 -- 
 Jens Axboe
 

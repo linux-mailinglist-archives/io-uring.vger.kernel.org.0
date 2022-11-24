@@ -2,72 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FE5637A08
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B6B3637D67
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 16:57:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbiKXNeQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 08:34:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56648 "EHLO
+        id S229497AbiKXP5u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 10:57:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbiKXNeP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:34:15 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E48D985EE3
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:34:13 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id 136so1599692pga.1
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:34:13 -0800 (PST)
+        with ESMTP id S229481AbiKXP5t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 10:57:49 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F67125E85
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 07:57:46 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id l39-20020a05600c1d2700b003cf93c8156dso1537828wms.4
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 07:57:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LkHsW53ssyoiPijIOfUjfPXDhEXLzUoOoVAnZpxyriQ=;
-        b=eEgGECfQLeWTtYc8llhIsFZ1FCEYe0+Wk9K5kqS1ja8YiJAhF2R611bQnBzHGcqCU3
-         qVgDzBOW9H9PeSN6FL0lByUxaQtvf2N1Pb1JS6acFlqXnC1YUu69Zptm4XvxH7/VuNRE
-         4Y0TwAWBoAoCdJAWtauaot4XZu5slpAoMarIyerNX47Rw0GSFKT8VG/gJvzXJVUBwDoB
-         XHEhGc3vF2nIP+DDZtcMTeTI1w61Sc9xE6AI7z6NL8ZMR5gZHuy57/mqlveqsZ5xc3hz
-         VUbdQHaFd8eETKlvTjWLPvKZf+iGInwmj31Lnz0P/sfJYEkoGnzCRuU0RxDyGJWOw3N4
-         kTLg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JKAc1pn8oIOUbPy6Wcay1hfR1Ug3WTqcIVEEqhfO9Is=;
+        b=DW2oFsAkUr4XhF6F0UrO1Aae3/kcedZenWCHVtEpdfkhaNKd/0m57b/Mvr7Dr3bMQu
+         sBuAEx0jClnZZAIQz73ix01gFK27CYok+lLAeDHzQbgXnkmwCzwikJ7CbXEGcg9P6X+6
+         LrNTve1iaVMEYl96d88kqF3jziVby8GWkNJRyqH7WjFMu8xX0rTXyJlaWROvqWCsOSyu
+         SgsnbOryGvvLwMtuwDBtsQi0mfLC0wlv94T28coRndNMG9+hfw2Ysv/kPg4W4XgOG0CR
+         SdsBiMpFxW4yizytQaUoV4SvWQ+zQN55l4n6wZSce/69EQu5Q2Wtj4/ZCNeyw48QW4OF
+         2TSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LkHsW53ssyoiPijIOfUjfPXDhEXLzUoOoVAnZpxyriQ=;
-        b=pdg60OtU4E34+EaeN/xDceQ6dzLTAB9GoAB+WYyfRz+4fYtXuXIAuyzYQ2rbxkrhZk
-         Nb/gojWD2U8oOI0ebMxf3t7hlq+vMjwR/zAXEzWLr7RZLALDQQWWFR3X0U2tAFfeOGj+
-         qUpOTG21+6vhIReAjAfRkieCdtxFehaUb9foTcdKZ9iijcQJMwV0DjY9jYgeRZLRhQoj
-         1WENqgkkLVZ7FItykmNMN6l0lxR8u5V8FX6uh6Ji/1wMq3HEgI6K0yH5g1idlbN8Ck7x
-         luzgXQo21qSigk1tu7jzi/nMir/rcoRFRhvTPy0Jlb8a/DuMLOOHJjmCrb0Zc0cM+3cu
-         bCOA==
-X-Gm-Message-State: ANoB5pmqUKbjbYO1NKK4dRGESftBRtrrjvhtnwgt8u6vpmn+01JLhqV0
-        jExm78y7Stz/D4kbNU5O5Yx/J6g8FYC47F8F
-X-Google-Smtp-Source: AA0mqf5ut+GoEpa/ICJrQc3kNpRvnd3uATxcbx9d6QpH8zwfkBjPTodMS0w2UrtfiMtrNW1tIQrwzQ==
-X-Received: by 2002:a62:ab18:0:b0:56b:9ae8:ca05 with SMTP id p24-20020a62ab18000000b0056b9ae8ca05mr14160440pff.59.1669296853376;
-        Thu, 24 Nov 2022 05:34:13 -0800 (PST)
-Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id c80-20020a624e53000000b00561dcfa700asm1207920pfb.107.2022.11.24.05.34.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 05:34:11 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>, kernel@vnlx.org,
-        Gilang Fachrezy <gilang4321@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20221123124922.3612798-1-ammar.faizi@intel.com>
-References: <20221123124922.3612798-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing v1 0/5] Remove useless brances in register functions
-Message-Id: <166929685122.52524.1408682990080341796.b4-ty@kernel.dk>
-Date:   Thu, 24 Nov 2022 06:34:11 -0700
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JKAc1pn8oIOUbPy6Wcay1hfR1Ug3WTqcIVEEqhfO9Is=;
+        b=dFlNomM6LK/upGy8m+1hwnXXpzx2RXq3CAifZ7InokjFf6MEo/vh8VFGrHQC68h4Bf
+         wZlzIhtjOQwtdX7b6+6e8uoUTAtnO08ZAAeTE5uljnpBGqfSgalZRV9yM1I6aqEEUz0D
+         eSrHVJDnKgvTtl2AN+SdIJ6DH1bMEcklMcoSFutsOJbJUxsGQg2tWI+kh0h30Pwvnh60
+         kpKjxe+gK9vegUbJ380px+m3LZYkN//AUYNhaAZgA7/TFMWcva9njCfjfVAXstwgFmGA
+         0cnRixkjXCkXLbI6ovHMUNDLz8ZwpKdjaX9TsBKZ8OWXkSGu448Dm8/fUrV4kMXQIfxw
+         0Qbw==
+X-Gm-Message-State: ANoB5pnXIpWx+FmLzt6TwfKx//G9xZYd4LEUX8aCiIK4KW0bQbyyP/3g
+        1d0G+kaBJLQ3yKPVmppcv3K93oHijO0=
+X-Google-Smtp-Source: AA0mqf772EDWS7rPgx/iBFRUBxOrLXorwQd2ND7gPDZSdqIhlU/PrODQu9RzNjpTlnBQUs+h5gH+Gw==
+X-Received: by 2002:a1c:6a13:0:b0:3cf:7801:c780 with SMTP id f19-20020a1c6a13000000b003cf7801c780mr24533687wmc.29.1669305465012;
+        Thu, 24 Nov 2022 07:57:45 -0800 (PST)
+Received: from [192.168.8.100] (188.28.226.30.threembb.co.uk. [188.28.226.30])
+        by smtp.gmail.com with ESMTPSA id y3-20020adff6c3000000b00241c712916fsm2070430wrp.0.2022.11.24.07.57.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Nov 2022 07:57:44 -0800 (PST)
+Message-ID: <f5cb5923-6ae5-2376-bce2-5de1ede393d9@gmail.com>
+Date:   Thu, 24 Nov 2022 15:56:09 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-28747
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH for-next v3 1/9] io_uring: io_req_complete_post should
+ defer if available
+To:     Dylan Yudaken <dylany@meta.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
+References: <20221124093559.3780686-1-dylany@meta.com>
+ <20221124093559.3780686-2-dylany@meta.com>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20221124093559.3780686-2-dylany@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,38 +75,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, 23 Nov 2022 19:53:12 +0700, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+On 11/24/22 09:35, Dylan Yudaken wrote:
+> For consistency always defer completion if specified in the issue flags.
 > 
-> Hi Jens,
+> Signed-off-by: Dylan Yudaken <dylany@meta.com>
+> ---
+>   io_uring/io_uring.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> This series removes useless branches in register functions:
->   - io_uring_register_eventfd()
->   - io_uring_unregister_eventfd()
->   - io_uring_register_eventfd_async()
->   - io_uring_register_buffers()
->   - io_uring_unregister_buffers()
->   - io_uring_unregister_files()
->   - io_uring_register_probe()
->   - io_uring_register_restrictions()
-> 
-> [...]
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index cc27413129fc..ec23ebb63489 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -852,7 +852,9 @@ static void __io_req_complete_post(struct io_kiocb *req)
+>   
+>   void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+>   {
+> -	if (!(issue_flags & IO_URING_F_UNLOCKED) ||
+> +	if (issue_flags & IO_URING_F_COMPLETE_DEFER) {
+> +		io_req_complete_defer(req);
+> +	} else if (!(issue_flags & IO_URING_F_UNLOCKED) ||
+>   	    !(req->ctx->flags & IORING_SETUP_IOPOLL)) {
+>   		__io_req_complete_post(req);
+>   	} else {
 
-Applied, thanks!
+I think it's better to leave it and not impose a second meaning
+onto it. We can explicitly call io_req_complete_defer() in all
+places that require it, maybe with a new helper like io_req_complete()
+if needed.
 
-[1/5] register: Remove useless branches in {un,}register eventfd
-      commit: ed62cc1a3048e9aed33cf5fb8f47655fc5175bb4
-[2/5] register: Remove useless branches in {un,}register buffers
-      commit: a4ae8662b61bee4b89d6953348944030461f276d
-[3/5] register: Remove useless branch in unregister files
-      commit: 2ca898e57658b0b7a3506c9b97dd6d2a2238c2a3
-[4/5] register: Remove useless branch in register probe
-      commit: 3a418e3e95d0406b2868d79414065d8fa04f2238
-[5/5] register: Remove useless branch in register restrictions
-      commit: 636b6bdaa8d84f1b5318e27d1e4ffa86361ae66d
-
-Best regards,
 -- 
-Jens Axboe
-
-
+Pavel Begunkov

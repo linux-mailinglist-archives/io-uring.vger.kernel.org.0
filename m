@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A41637346
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 09:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3688637347
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 09:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbiKXIBu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 03:01:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49846 "EHLO
+        id S229716AbiKXIBz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 03:01:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbiKXIBt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 03:01:49 -0500
+        with ESMTP id S229726AbiKXIBx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 03:01:53 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED15C6611
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 00:01:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7144CC17E
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 00:01:52 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.240])
-        by gnuweeb.org (Postfix) with ESMTPSA id D1B9C816FF;
-        Thu, 24 Nov 2022 08:01:44 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id C4C3081352;
+        Thu, 24 Nov 2022 08:01:48 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1669276908;
-        bh=I8+aPRh++xFhEmPVgD+jVUkqZVdfhhklZ90+OLkmncE=;
+        s=default; t=1669276912;
+        bh=XmqNASuTOUfQYepVgge6guKR+RUrIm89rG2vy1bPaFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CJtpFAMrVlWU5FM4cAulJ8XV2htCkp/nyWEXhujh+DvzGNLZKileiMv+Aq2BtYSWw
-         hi0dmE2sGO+ezgdxVT+0+qVj54KohYn4onpXMTD0t1cLjDOHjs+dnjzkphLCPYCW3O
-         qlgNSLJHLIovPUSJCAMehNTm+UhNqQoUjHy7k0aBqxmmtpbzCRpFzIdhJ0EB13nQRJ
-         qujP0267+ovIyuD1A2viX/LHlvoN/N4J+p2HXv2e8XATi/oL/n+OhH+TnP8uDfDHe1
-         ss8H7zbVlPU9bW2yCINwlwoQFZYOutxdt0zvfkCN9IBZaFvihvk9R7bShFr25xHwnw
-         f9Jud+s1oghBQ==
+        b=JDZhfJJv4qlvI9QyXxIKxjXgZIP63RVaE4tHZYt66LnAtO6CUQmagaNU2vHZo7jCv
+         J2jY7VCln8slp683tAYHxnd4iITdgBmM2zwW2eryOKeYFj87YB0gzfyY08yCvMe7a1
+         5y7D6qG89OiSuHyRG167Yj7yDn8IB8ne8XcmEUBdFr9Ysiv3/XywSkibEq7I/Mh2kr
+         fYtC0/76Tv5nhhqKItn/DTA1CW5mYTRsJSgjh2ZkcLEBP5dQNMp81DKk9zd60AD/x4
+         j5zFX9Pvcf25IHmI3UaioKgUvkwpdeTVa8FN33QK38rGL+9zKfT8LSguyhBcFMSDSb
+         PPl/sQ70QwYrg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -38,9 +38,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Muhammad Rizki <kiizuha@gnuweeb.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         VNLX Kernel Department <kernel@vnlx.org>
-Subject: [PATCH liburing v1 6/7] test/Makefile: Omit `-Wmissing-prototypes` from the C++ compiler flags
-Date:   Thu, 24 Nov 2022 15:01:01 +0700
-Message-Id: <20221124075846.3784701-7-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 7/7] github: Add `-Wmissing-prototypes` for GitHub CI bot
+Date:   Thu, 24 Nov 2022 15:01:02 +0700
+Message-Id: <20221124075846.3784701-8-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221124075846.3784701-1-ammar.faizi@intel.com>
 References: <20221124075846.3784701-1-ammar.faizi@intel.com>
@@ -57,45 +57,43 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-This is a preparation patch to integrate -Wmissing-prototypes to the
-CI test robot. Clang++ is not happy with -Wmissing-prototypes:
-
-    cc1plus: warning: command-line option '-Wmissing-prototypes' \
-    is valid for C/ObjC but not for C++
-
-Omit this flag when we are compiling a C++ source file.
-
 Using -Wmissing-prototypes ensures we mark functions and variables as
-static if we don't use them outside the translation unit.
+static if we don't use them outside the translation unit. This
+enforcement is good because it hints the compiler to do escape analysis
+and optimization better.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/Makefile | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ .github/workflows/build.yml | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/test/Makefile b/test/Makefile
-index 8ad9964..87b1fe1 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -214,8 +214,17 @@ helpers.o: helpers.c
- %.t: %.c $(helpers) helpers.h ../src/liburing.a
- 	$(QUIET_CC)$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index b0e669d..4c0bd26 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -26,7 +26,8 @@ jobs:
+             cxx_pkg: clang
+             cc: clang
+             cxx: clang++
+-            extra_flags: -Wshorten-64-to-32
++            liburing_extra_flags: -Wshorten-64-to-32
++            extra_flags: -Wmissing-prototypes
  
-+#
-+# Clang++ is not happy with -Wmissing-prototypes:
-+#
-+#   cc1plus: warning: command-line option '-Wmissing-prototypes' \
-+#   is valid for C/ObjC but not for C++
-+#
- %.t: %.cc $(helpers) helpers.h ../src/liburing.a
--	$(QUIET_CXX)$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< $(helpers) $(LDFLAGS)
-+	$(QUIET_CXX)$(CXX) \
-+	$(patsubst -Wmissing-prototypes,,$(CPPFLAGS)) \
-+	$(patsubst -Wmissing-prototypes,,$(CXXFLAGS)) \
-+	-o $@ $< $(helpers) $(LDFLAGS)
+           # x86 (32-bit) gcc
+           - arch: i686
+@@ -85,10 +86,10 @@ jobs:
+             cxx: mips-linux-gnu-g++
  
+     env:
+-      FLAGS: -g -O3 -Wall -Wextra -Werror
++      FLAGS: -g -O3 -Wall -Wextra -Werror ${{matrix.extra_flags}}
  
- install: $(test_targets) runtests.sh runtests-loop.sh
+       # Flags for building sources in src/ dir only.
+-      LIBURING_CFLAGS: ${{matrix.extra_flags}}
++      LIBURING_CFLAGS: ${{matrix.liburing_extra_flags}}
+ 
+     steps:
+     - name: Checkout source
 -- 
 Ammar Faizi
 

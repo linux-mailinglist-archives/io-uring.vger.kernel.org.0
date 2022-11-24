@@ -2,137 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 802D26377E3
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 12:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59FA36379E3
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbiKXLro (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 06:47:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52068 "EHLO
+        id S229863AbiKXNZL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 08:25:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230213AbiKXLrl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 06:47:41 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EE0FFF
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 03:47:30 -0800 (PST)
-Received: from [10.7.7.5] (unknown [182.253.183.240])
-        by gnuweeb.org (Postfix) with ESMTPSA id 3372C8166D;
-        Thu, 24 Nov 2022 11:47:26 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1669290450;
-        bh=eiWoW7SsKexMoYK+aXHgvZrDbaN0ONDDt4rC72Y21aQ=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=UmWUU/sZ4uj9unRYIZMI8CWaYypc3mNhPN4ExuAeBLf4QbXgtGL5iND/PbfNYdgE5
-         GVHvV4btUDODFo1BOKgWJzMIpK890X4UZur01NiZW31SKmHU/QHchi7lN6A2jCcSkI
-         dnj1j/J7bU1S/bHXBBrMBAHxJegJ1X2NNW1NTkT25OQxWNPMQ6X40B38lyX3f+fNUx
-         YlxQ3ophoFYiNpZopkbCMnfENp6kAJEY+UNg8M+2rr8mu+R1t9PTJppf/8DaVKVXWD
-         4ODdgQFGBnHrtMMRqV8PsRevh8MflgFP2AukZTGVzi4/t150wDtaeFsrj280HvH57e
-         bIj4313FBrDJw==
-Message-ID: <b303bde6-91b1-2ea2-7b1d-e64546c8ae7f@gnuweeb.org>
-Date:   Thu, 24 Nov 2022 18:47:24 +0700
+        with ESMTP id S229555AbiKXNZL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:25:11 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D78ED8EB46
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:09 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id w4-20020a17090ac98400b002186f5d7a4cso5184466pjt.0
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zTuZD1zhaQgPtH6ABGZHAVqqZ895k/czCwRBZ6kQb+s=;
+        b=XOEelMiOQyf97Ji8rXVURetzE4gkmEqCM0Pc7T+vQF4bGJaPNmpyAOgiuNsPsI20cJ
+         Zkc63xQ25DGtMCtpvF14eUjX2NUnkIo+Y76a3a3KKD8cqKpw2xdiabsJ+XHrzrIo9FX0
+         pL7ERYLnraeWuFe+4AY9J7Z0CyZn+QqiZVd5qDyEKmulN9TOuCNhPCyK4Lq1UC1JmIkJ
+         ww8Eshfu++cWpyCUEQv6kwLwjDq+puYohWx/zWn8N2UcqA1to0kqOfJznSUw3P9z3hV/
+         206RQhnB1xSj5M26M0qbIX7xEnx0DUbBDoWyitI/w02hmhpyjZqq7MOTNJvsU3aQN4xy
+         vhVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zTuZD1zhaQgPtH6ABGZHAVqqZ895k/czCwRBZ6kQb+s=;
+        b=dbSWbpAnx43iWoK2DAN4VwBvEEeAFYZFnOOd+aMjcGSmhMZ3pt6zLVMvsteoygzc6E
+         lhQm4tq2YRuV6Ald8IDrcswZQvogy6Y+IkfzHqnSzwZHpcpGuazA0YWDmdGKJRRBk4oH
+         mDCs90G5uTN5YC9tMJwbdiJb1WnHteWJ3fK8CffVBfS9iMb/r8YwM6rZq2ffCD5H49UY
+         K8y82+c3VjE1FA0COJ+3tS9jCeivM36vAdFkDEQdFY0LskDqr20bxl7JqyOa1pixdIHz
+         T4ws4ogXtahrvYyOfDZHhIUNsdxqsEQsj0L00FwnDWy1DEFvSTwgv+fo6S+1X6OR6Mr5
+         uwog==
+X-Gm-Message-State: ANoB5pn6ibld1B2fnQJ1pSpfGC3a6NE+zZqsZffUKqoh78iu7pT9vhgk
+        RP5pAiDwufveORuF2qLDb5zg9g==
+X-Google-Smtp-Source: AA0mqf4JlM4E8UNDOGBwJx7U+cormhbJOzuZIiyxiKWlGnwUrTdtLrX7dYmKtd4AdMdGzpGxnod4fQ==
+X-Received: by 2002:a17:902:e849:b0:188:ff96:a7df with SMTP id t9-20020a170902e84900b00188ff96a7dfmr14521390plg.38.1669296309283;
+        Thu, 24 Nov 2022 05:25:09 -0800 (PST)
+Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id x8-20020a170902a38800b0018912c37c8fsm1278130pla.129.2022.11.24.05.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Nov 2022 05:25:08 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Dylan Yudaken <dylany@meta.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     kernel-team@fb.com, io-uring@vger.kernel.org
+In-Reply-To: <20221124093559.3780686-1-dylany@meta.com>
+References: <20221124093559.3780686-1-dylany@meta.com>
+Subject: Re: [PATCH for-next v3 0/9] io_uring: batch multishot completions
+Message-Id: <166929630828.50735.17664587654563028601.b4-ty@kernel.dk>
+Date:   Thu, 24 Nov 2022 06:25:08 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@meta.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Gilang Fachrezy <gilang4321@gmail.com>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        VNLX Kernel Department <kernel@vnlx.org>
-References: <20221124075846.3784701-1-ammar.faizi@intel.com>
- <20221124075846.3784701-2-ammar.faizi@intel.com>
- <f750be65c33e5d3a782cebf85954319caa77672f.camel@fb.com>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v1 1/7] liburing.h: Export
- `__io_uring_flush_sq()` function
-In-Reply-To: <f750be65c33e5d3a782cebf85954319caa77672f.camel@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-28747
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/22 5:14 PM, Dylan Yudaken wrote:
-> I think changing the tests to use the public API is probably better
-> than exporting this function. I don't believe it has much general use?
+On Thu, 24 Nov 2022 01:35:50 -0800, Dylan Yudaken wrote:
+> Multishot completions currently all go through io_post_aux_cqe which will
+> do a lock/unlock pair of the completion spinlock, and also possibly signal
+> an eventfd if registered. This can slow down applications that use these
+> features.
+> 
+> This series allows the posted completions to be batched using the same
+> IO_URING_F_COMPLETE_DEFER as exists for non multishot completions. A
+> critical property of this is that all multishot completions must be
+> flushed to the CQ ring before the non-multishot completion (say an error)
+> or else ordering will break. This implies that if some completions were
+> deferred, then the rest must also be to keep that ordering. In order to do
+> this the first few patches move all the completion code into a simpler
+> path that defers completions when possible.
+> 
+> [...]
 
-But there is no public API that does the same thing. I'll mark it
-as static and create a copy of that function in iopoll.c (in v2).
+Applied, thanks!
 
-Something like this, what do you think?
+[1/9] io_uring: io_req_complete_post should defer if available
+      commit: 8fa737e0de7d3c4dc3d7cb9a9d9a6362d872c3f3
+[2/9] io_uring: always lock in io_apoll_task_func
+      commit: ca23d244ec99cc1a7a1c91f6a25bb074ea00bff1
+[3/9] io_uring: defer all io_req_complete_failed
+      commit: d62208d1e2d73d9949c7c58518fbd915eacad102
+[4/9] io_uring: allow defer completion for aux posted cqes
+      commit: 8e003ae8505a7bb728cb158198ca88912818da70
+[5/9] io_uring: add io_aux_cqe which allows deferred completion
+      commit: 9101a50761cf126399014cbfa518804c75c64157
+[6/9] io_uring: make io_fill_cqe_aux static
+      commit: 84eca39b41bc03372d647db83319ec0f6c230cda
+[7/9] io_uring: add lockdep assertion in io_fill_cqe_aux
+      commit: 3827133217eb3cdcb3824b22a31b76bf106a2ae3
+[8/9] io_uring: remove overflow param from io_post_aux_cqe
+      commit: 48ca51e666ed91f75a548a460faa60d08cfd3af6
+[9/9] io_uring: allow multishot polled reqs to defer completion
+      commit: 41d52216bb00504be5cf08e2d5ec8a41d16d9a67
 
-  src/queue.c   |  2 +-
-  test/iopoll.c | 33 ++++++++++++++++++++++++++++++++-
-  2 files changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/src/queue.c b/src/queue.c
-index feea0ad..b784b10 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -201,7 +201,7 @@ again:
-   * Sync internal state with kernel ring state on the SQ side. Returns the
-   * number of pending items in the SQ ring, for the shared ring.
-   */
--unsigned __io_uring_flush_sq(struct io_uring *ring)
-+static unsigned __io_uring_flush_sq(struct io_uring *ring)
-  {
-  	struct io_uring_sq *sq = &ring->sq;
-  	unsigned tail = sq->sqe_tail;
-diff --git a/test/iopoll.c b/test/iopoll.c
-index 20f91c7..5edd5c3 100644
---- a/test/iopoll.c
-+++ b/test/iopoll.c
-@@ -201,7 +201,38 @@ err:
-  	return 1;
-  }
-  
--extern unsigned __io_uring_flush_sq(struct io_uring *ring);
-+/*
-+ * Sync internal state with kernel ring state on the SQ side. Returns the
-+ * number of pending items in the SQ ring, for the shared ring.
-+ */
-+static unsigned __io_uring_flush_sq(struct io_uring *ring)
-+{
-+	struct io_uring_sq *sq = &ring->sq;
-+	unsigned tail = sq->sqe_tail;
-+
-+	if (sq->sqe_head != tail) {
-+		sq->sqe_head = tail;
-+		/*
-+		 * Ensure kernel sees the SQE updates before the tail update.
-+		 */
-+		if (!(ring->flags & IORING_SETUP_SQPOLL))
-+			IO_URING_WRITE_ONCE(*sq->ktail, tail);
-+		else
-+			io_uring_smp_store_release(sq->ktail, tail);
-+	}
-+	/*
-+	 * This _may_ look problematic, as we're not supposed to be reading
-+	 * SQ->head without acquire semantics. When we're in SQPOLL mode, the
-+	 * kernel submitter could be updating this right now. For non-SQPOLL,
-+	 * task itself does it, and there's no potential race. But even for
-+	 * SQPOLL, the load is going to be potentially out-of-date the very
-+	 * instant it's done, regardless or whether or not it's done
-+	 * atomically. Worst case, we're going to be over-estimating what
-+	 * we can submit. The point is, we need to be able to deal with this
-+	 * situation regardless of any perceived atomicity.
-+	 */
-+	return tail - *sq->khead;
-+}
-  
-  /*
-   * if we are polling io_uring_submit needs to always enter the
-
-
+Best regards,
 -- 
-Ammar Faizi
+Jens Axboe
+
 

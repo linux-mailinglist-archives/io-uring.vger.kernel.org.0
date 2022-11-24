@@ -2,62 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59FA36379E3
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:25:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79CF46379E4
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbiKXNZL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 08:25:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49368 "EHLO
+        id S229555AbiKXNZN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 08:25:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbiKXNZL (ORCPT
+        with ESMTP id S229764AbiKXNZL (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:25:11 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D78ED8EB46
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:09 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id w4-20020a17090ac98400b002186f5d7a4cso5184466pjt.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:09 -0800 (PST)
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BDF13D3A
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:10 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id jn7so1445232plb.13
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zTuZD1zhaQgPtH6ABGZHAVqqZ895k/czCwRBZ6kQb+s=;
-        b=XOEelMiOQyf97Ji8rXVURetzE4gkmEqCM0Pc7T+vQF4bGJaPNmpyAOgiuNsPsI20cJ
-         Zkc63xQ25DGtMCtpvF14eUjX2NUnkIo+Y76a3a3KKD8cqKpw2xdiabsJ+XHrzrIo9FX0
-         pL7ERYLnraeWuFe+4AY9J7Z0CyZn+QqiZVd5qDyEKmulN9TOuCNhPCyK4Lq1UC1JmIkJ
-         ww8Eshfu++cWpyCUEQv6kwLwjDq+puYohWx/zWn8N2UcqA1to0kqOfJznSUw3P9z3hV/
-         206RQhnB1xSj5M26M0qbIX7xEnx0DUbBDoWyitI/w02hmhpyjZqq7MOTNJvsU3aQN4xy
-         vhVQ==
+        bh=I+tug0I1NwssgRDHq6k+Qmpi8bfrwch+IoJYnGWlVLQ=;
+        b=ctMWW2KzY5FAya8MG/6VNJ3u/poOr8TDoCI7xej1Q6V2mGeCnfVUL5Eu9iUqazodSe
+         Ix/RBgdYBQ5AQl+b0SwiZgHR2kwdP9kN/4zB/1rlOks/OIxdoBwtPaNULdorVhvzj61L
+         UMrBPbpwFYxrXIQJ4j8Ic1CSYos1RtDgct0INT+aiUCcOZC1RnDova37hkzJoo0eFf0N
+         N5plFhA8asJ4l6WHETvIj4+eod2cw91crav3WcoV6gHJuC+GivjSbQhXBL6bkVF+xWk+
+         X8vahFqdKSKzyOrK1pGKgjY1SidH3WaGK1arS/ZhGR0kVyewVaAec3ZvhnvcXztmvAMz
+         0s0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zTuZD1zhaQgPtH6ABGZHAVqqZ895k/czCwRBZ6kQb+s=;
-        b=dbSWbpAnx43iWoK2DAN4VwBvEEeAFYZFnOOd+aMjcGSmhMZ3pt6zLVMvsteoygzc6E
-         lhQm4tq2YRuV6Ald8IDrcswZQvogy6Y+IkfzHqnSzwZHpcpGuazA0YWDmdGKJRRBk4oH
-         mDCs90G5uTN5YC9tMJwbdiJb1WnHteWJ3fK8CffVBfS9iMb/r8YwM6rZq2ffCD5H49UY
-         K8y82+c3VjE1FA0COJ+3tS9jCeivM36vAdFkDEQdFY0LskDqr20bxl7JqyOa1pixdIHz
-         T4ws4ogXtahrvYyOfDZHhIUNsdxqsEQsj0L00FwnDWy1DEFvSTwgv+fo6S+1X6OR6Mr5
-         uwog==
-X-Gm-Message-State: ANoB5pn6ibld1B2fnQJ1pSpfGC3a6NE+zZqsZffUKqoh78iu7pT9vhgk
-        RP5pAiDwufveORuF2qLDb5zg9g==
-X-Google-Smtp-Source: AA0mqf4JlM4E8UNDOGBwJx7U+cormhbJOzuZIiyxiKWlGnwUrTdtLrX7dYmKtd4AdMdGzpGxnod4fQ==
-X-Received: by 2002:a17:902:e849:b0:188:ff96:a7df with SMTP id t9-20020a170902e84900b00188ff96a7dfmr14521390plg.38.1669296309283;
-        Thu, 24 Nov 2022 05:25:09 -0800 (PST)
+        bh=I+tug0I1NwssgRDHq6k+Qmpi8bfrwch+IoJYnGWlVLQ=;
+        b=4yFb5wv6Hf8YKOkBGFrUSi5HrSwBOrGjhIR2nvK8JtfR1LVv/j/UGai8CKvMQkahxf
+         It1RcAzaBBbz6u8Ge+yWts/qRdyM5gHsim4yScHebW4kXCCpd/KqYN3dlF+/12nja1Jv
+         RkchhbQlTkHeIUgXYwCYpOsz0XboZ0JZ8X3C4bWGXZdzrkhiGOWz0i0nIQXpHZfhj0mc
+         cOq6KF/3Jc9vIAAU+dmiOZ8r0yGMMvdOgswmgL5rQv9m6XD6iBVEXh+kEiC3fzZOuctf
+         8GLXbGvIAzt9wZCPGUrWZ+0qyVGbSQhGNTFnpdTQKtnecTykWVw+MIeUqHor2FX8Y5WJ
+         coDg==
+X-Gm-Message-State: ANoB5pk8LSXLyBBB3ncYX1lxWgnOw5qzw2jd9dxKJPWL87T64BRyJfmo
+        b+utzsgk0GwAwYZuk9wIT73yPi7kfVikEaE2
+X-Google-Smtp-Source: AA0mqf6N6ZQY86gZW3wx31K8/4Fee16Kv9hQiGGMk0bLkKKOibQbdQayGwjPBKy3no54EFpOlVMLrw==
+X-Received: by 2002:a17:90b:3c0a:b0:212:510b:5851 with SMTP id pb10-20020a17090b3c0a00b00212510b5851mr34846318pjb.57.1669296310479;
+        Thu, 24 Nov 2022 05:25:10 -0800 (PST)
 Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id x8-20020a170902a38800b0018912c37c8fsm1278130pla.129.2022.11.24.05.25.08
+        by smtp.gmail.com with ESMTPSA id x8-20020a170902a38800b0018912c37c8fsm1278130pla.129.2022.11.24.05.25.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 05:25:08 -0800 (PST)
+        Thu, 24 Nov 2022 05:25:09 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     Dylan Yudaken <dylany@meta.com>,
         Pavel Begunkov <asml.silence@gmail.com>
-Cc:     kernel-team@fb.com, io-uring@vger.kernel.org
-In-Reply-To: <20221124093559.3780686-1-dylany@meta.com>
-References: <20221124093559.3780686-1-dylany@meta.com>
-Subject: Re: [PATCH for-next v3 0/9] io_uring: batch multishot completions
-Message-Id: <166929630828.50735.17664587654563028601.b4-ty@kernel.dk>
-Date:   Thu, 24 Nov 2022 06:25:08 -0700
+Cc:     io-uring@vger.kernel.org
+In-Reply-To: <20221124103042.4129289-1-dylany@meta.com>
+References: <20221124103042.4129289-1-dylany@meta.com>
+Subject: Re: [PATCH liburing 0/2] tests for deferred multishot completions
+Message-Id: <166929630942.50735.5964782149427153998.b4-ty@kernel.dk>
+Date:   Thu, 24 Nov 2022 06:25:09 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,43 +71,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 24 Nov 2022 01:35:50 -0800, Dylan Yudaken wrote:
-> Multishot completions currently all go through io_post_aux_cqe which will
-> do a lock/unlock pair of the completion spinlock, and also possibly signal
-> an eventfd if registered. This can slow down applications that use these
-> features.
+On Thu, 24 Nov 2022 02:30:40 -0800, Dylan Yudaken wrote:
+> This adds a couple of tests that expose some trickier corner cases for
+> multishot APIS, specifically in light of the latest series to batch &
+> defer multishot completion.
 > 
-> This series allows the posted completions to be batched using the same
-> IO_URING_F_COMPLETE_DEFER as exists for non multishot completions. A
-> critical property of this is that all multishot completions must be
-> flushed to the CQ ring before the non-multishot completion (say an error)
-> or else ordering will break. This implies that if some completions were
-> deferred, then the rest must also be to keep that ordering. In order to do
-> this the first few patches move all the completion code into a simpler
-> path that defers completions when possible.
+> 
+> Dylan Yudaken (2):
+>   Add a test for errors in multishot recv
+>   add a test for multishot downgrading
 > 
 > [...]
 
 Applied, thanks!
 
-[1/9] io_uring: io_req_complete_post should defer if available
-      commit: 8fa737e0de7d3c4dc3d7cb9a9d9a6362d872c3f3
-[2/9] io_uring: always lock in io_apoll_task_func
-      commit: ca23d244ec99cc1a7a1c91f6a25bb074ea00bff1
-[3/9] io_uring: defer all io_req_complete_failed
-      commit: d62208d1e2d73d9949c7c58518fbd915eacad102
-[4/9] io_uring: allow defer completion for aux posted cqes
-      commit: 8e003ae8505a7bb728cb158198ca88912818da70
-[5/9] io_uring: add io_aux_cqe which allows deferred completion
-      commit: 9101a50761cf126399014cbfa518804c75c64157
-[6/9] io_uring: make io_fill_cqe_aux static
-      commit: 84eca39b41bc03372d647db83319ec0f6c230cda
-[7/9] io_uring: add lockdep assertion in io_fill_cqe_aux
-      commit: 3827133217eb3cdcb3824b22a31b76bf106a2ae3
-[8/9] io_uring: remove overflow param from io_post_aux_cqe
-      commit: 48ca51e666ed91f75a548a460faa60d08cfd3af6
-[9/9] io_uring: allow multishot polled reqs to defer completion
-      commit: 41d52216bb00504be5cf08e2d5ec8a41d16d9a67
+[1/2] Add a test for errors in multishot recv
+      (no commit info)
+[2/2] add a test for multishot downgrading
+      (no commit info)
 
 Best regards,
 -- 

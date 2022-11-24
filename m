@@ -2,47 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3AE6637688
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 11:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E493637689
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 11:31:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbiKXKbB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 05:31:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50094 "EHLO
+        id S229518AbiKXKbD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 05:31:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229633AbiKXKaz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 05:30:55 -0500
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1F5CFE90
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 02:30:54 -0800 (PST)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.19/8.17.1.19) with ESMTP id 2ANHsAIO030046
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 02:30:53 -0800
+        with ESMTP id S229487AbiKXKbA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 05:31:00 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5F3C4C3C
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 02:30:59 -0800 (PST)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ANNUJqP005994
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 02:30:59 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=876XmUNbUJSAwowMEwFdHFm3FXR4aUcKSzFkgqkGecw=;
- b=IBeqa6DyX71wcIcgZ3g/bHg5IQgcoB3KmP0KNtbzQagekXv8SNhSccfqqPYn25wANfsr
- VxnTUeJULU3MJuXmh/HG9YNPMKKEzsqHEkeYeqyFKEa3gpB32CmKLYYYdxCnYhSZPQY/
- 2zH5ZpPQAkpto+WAbnVhsTsIhX0fU9LzTl1aF+nvFeAWTBmouUxcEWXEcWuSKk6eQf++
- VYK/jJhl5wffgxyhYhFsOEJIfC+STL7McQZqrO3trEC13fLgqNpRxGQtED4Q0fSc3GXJ
- G3xbIi+uxW6bjlLGyIqvogw5DTg1Sf7Vgor6Sl7B6eNiiCO5bzwnoHRL10d5jz8F41oZ Bw== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3m1c7rhre8-2
+ bh=ZA8S52yrV1LkZmwK5xhYciZX9lpikAkTtp6zVIawG70=;
+ b=cstox6/HA7mCSuJI+4lPEyhf9NFZtrZPUlKjTkdbWhoVYwfDWQ9E9VgRhpdtImx9ak10
+ JWdxre2dcH3cBeSmneeSUxDhlxwQLMiFUyxiMBOkrx+PR46MZaP9A/9XeNg+bTMEZlFc
+ qvBOQojLMF9HwF1tWQH/KExXL/LGvyRzh4BdZR2sNMAfcMVBa/5PImTlRJweunwl3PAI
+ 5gv4qK6bkGIpWYmcfRFetvCUX5YYWiNLnAGpkS5hzy59eheHo3rC5PAiHc6z+B4qhuoe
+ R+Jr3biSlwuacdBJ13WN/f5ycrS1IOZymbpe/Jgu306+w3SV6sqH5M8Rh7RW2xka/L+w +w== 
+Received: from maileast.thefacebook.com ([163.114.130.8])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3m1w88tyhb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 02:30:53 -0800
-Received: from twshared0705.02.ash8.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 02:30:59 -0800
+Received: from twshared2003.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 24 Nov 2022 02:30:51 -0800
+ 15.1.2375.31; Thu, 24 Nov 2022 02:30:58 -0800
 Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 5B63FA17DB91; Thu, 24 Nov 2022 02:30:43 -0800 (PST)
+        id 65CD3A17DB93; Thu, 24 Nov 2022 02:30:43 -0800 (PST)
 From:   Dylan Yudaken <dylany@meta.com>
 To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 CC:     <io-uring@vger.kernel.org>, Dylan Yudaken <dylany@meta.com>
-Subject: [PATCH liburing 1/2] Add a test for errors in multishot recv
-Date:   Thu, 24 Nov 2022 02:30:41 -0800
-Message-ID: <20221124103042.4129289-2-dylany@meta.com>
+Subject: [PATCH liburing 2/2] add a test for multishot downgrading
+Date:   Thu, 24 Nov 2022 02:30:42 -0800
+Message-ID: <20221124103042.4129289-3-dylany@meta.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221124103042.4129289-1-dylany@meta.com>
 References: <20221124103042.4129289-1-dylany@meta.com>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: nvdyiPjc_cOA8wc3ejRZHGpGFUHcE0N9
-X-Proofpoint-ORIG-GUID: nvdyiPjc_cOA8wc3ejRZHGpGFUHcE0N9
+X-Proofpoint-ORIG-GUID: W1X3TLkTbpEadrdnF3fZ76GtuzMzwJvt
+X-Proofpoint-GUID: W1X3TLkTbpEadrdnF3fZ76GtuzMzwJvt
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-24_07,2022-11-24_01,2022-06-22_01
@@ -65,102 +65,109 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In a later kernel release there will be deferred completions of multishot
-ops. Add a test to ensure ordering is preserved when there is an error
-during the multishot operation.
+If the poll overflows we expect multishot poll to eventually downgrade to
+single shot. Also the ordering of CQE's must be consistent, so check that=
+.
 
 Signed-off-by: Dylan Yudaken <dylany@meta.com>
 ---
- test/recv-multishot.c | 85 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+ test/poll-mshot-overflow.c | 105 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 104 insertions(+), 1 deletion(-)
 
-diff --git a/test/recv-multishot.c b/test/recv-multishot.c
-index ed26a5f78759..08a2e8629f5b 100644
---- a/test/recv-multishot.c
-+++ b/test/recv-multishot.c
-@@ -9,6 +9,7 @@
- #include <sys/types.h>
- #include <sys/socket.h>
- #include <pthread.h>
-+#include <assert.h>
-=20
- #include "liburing.h"
- #include "helpers.h"
-@@ -469,6 +470,84 @@ cleanup:
+diff --git a/test/poll-mshot-overflow.c b/test/poll-mshot-overflow.c
+index 431a337f19ae..0dc8ee5eb6f8 100644
+--- a/test/poll-mshot-overflow.c
++++ b/test/poll-mshot-overflow.c
+@@ -137,20 +137,123 @@ static int test(bool defer_taskrun)
  	return ret;
  }
 =20
-+static int test_enobuf(void)
++static int test_downgrade(bool support_defer)
 +{
-+	struct io_uring ring;
++	struct io_uring_cqe cqes[128];
++	struct io_uring_cqe *cqe;
 +	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqes[16];
-+	char buffs[256];
-+	int ret, i, fds[2];
++	struct io_uring ring;
++	int fds[2];
++	int ret, i, cqe_count, tmp =3D 0, more_cqe_count;
 +
-+	if (t_create_ring(8, &ring, 0) !=3D T_SETUP_OK) {
-+		fprintf(stderr, "ring create\n");
++	if (pipe(fds) !=3D 0) {
++		perror("pipe");
 +		return -1;
 +	}
 +
-+	ret =3D t_create_socket_pair(fds, false);
++	struct io_uring_params params =3D {
++		.flags =3D IORING_SETUP_CQSIZE,
++		.cq_entries =3D 2
++	};
++
++	ret =3D io_uring_queue_init_params(2, &ring, &params);
 +	if (ret) {
-+		fprintf(stderr, "t_create_socket_pair\n");
-+		return ret;
++		fprintf(stderr, "queue init: %d\n", ret);
++		return -1;
 +	}
 +
 +	sqe =3D io_uring_get_sqe(&ring);
-+	assert(sqe);
-+	/* deliberately only 2 provided buffers */
-+	io_uring_prep_provide_buffers(sqe, &buffs[0], 1, 2, 0, 0);
-+	io_uring_sqe_set_data64(sqe, 0);
-+
-+	sqe =3D io_uring_get_sqe(&ring);
-+	assert(sqe);
-+	io_uring_prep_recv_multishot(sqe, fds[0], NULL, 0, 0);
++	if (!sqe) {
++		fprintf(stderr, "get sqe failed\n");
++		return -1;
++	}
++	io_uring_prep_poll_multishot(sqe, fds[0], POLLIN);
 +	io_uring_sqe_set_data64(sqe, 1);
-+	sqe->buf_group =3D 0;
-+	sqe->flags |=3D IOSQE_BUFFER_SELECT;
++	io_uring_submit(&ring);
 +
-+	ret =3D io_uring_submit(&ring);
-+	if (ret !=3D 2) {
-+		fprintf(stderr, "bad submit %d\n", ret);
++	for (i =3D 0; i < 8; i++) {
++		ret =3D write(fds[1], &tmp, sizeof(tmp));
++		if (ret !=3D sizeof(tmp)) {
++			perror("write");
++			return -1;
++		}
++		ret =3D read(fds[0], &tmp, sizeof(tmp));
++		if (ret !=3D sizeof(tmp)) {
++			perror("read");
++			return -1;
++		}
++	}
++
++	cqe_count =3D 0;
++	while (!io_uring_peek_cqe(&ring, &cqe)) {
++		cqes[cqe_count++] =3D *cqe;
++		io_uring_cqe_seen(&ring, cqe);
++	}
++
++	/* Some kernels might allow overflows to poll,
++	 * but if they didn't it should stop the MORE flag
++	 */
++	if (cqe_count < 3) {
++		fprintf(stderr, "too few cqes: %d\n", cqe_count);
 +		return -1;
-+	}
-+	for (i =3D 0; i < 3; i++) {
-+		do {
-+			ret =3D write(fds[1], "?", 1);
-+		} while (ret =3D=3D -1 && errno =3D=3D EINTR);
-+	}
-+
-+	ret =3D io_uring_wait_cqes(&ring, &cqes[0], 4, NULL, NULL);
-+	if (ret) {
-+		fprintf(stderr, "wait cqes\n");
-+		return ret;
-+	}
-+
-+	ret =3D io_uring_peek_batch_cqe(&ring, &cqes[0], 4);
-+	if (ret !=3D 4) {
-+		fprintf(stderr, "peek batch cqes\n");
-+		return -1;
++	} else if (cqe_count =3D=3D 8) {
++		more_cqe_count =3D cqe_count;
++		/* downgrade only available since support_defer */
++		if (support_defer) {
++			fprintf(stderr, "did not downgrade on overflow\n");
++			return -1;
++		}
++	} else {
++		more_cqe_count =3D cqe_count - 1;
++		cqe =3D &cqes[cqe_count - 1];
++		if (cqe->flags & IORING_CQE_F_MORE) {
++			fprintf(stderr, "incorrect MORE flag %x\n", cqe->flags);
++			return -1;
++		}
 +	}
 +
-+	/* provide buffers */
-+	assert(cqes[0]->user_data =3D=3D 0);
-+	assert(cqes[0]->res =3D=3D 0);
-+
-+	/* valid recv */
-+	assert(cqes[1]->user_data =3D=3D 1);
-+	assert(cqes[2]->user_data =3D=3D 1);
-+	assert(cqes[1]->res =3D=3D 1);
-+	assert(cqes[2]->res =3D=3D 1);
-+	assert(cqes[1]->flags & (IORING_CQE_F_BUFFER | IORING_CQE_F_MORE));
-+	assert(cqes[2]->flags & (IORING_CQE_F_BUFFER | IORING_CQE_F_MORE));
-+
-+	/* missing buffer */
-+	assert(cqes[3]->user_data =3D=3D 1);
-+	assert(cqes[3]->res =3D=3D -ENOBUFS);
-+	assert(!(cqes[3]->flags & (IORING_CQE_F_BUFFER | IORING_CQE_F_MORE)));
++	for (i =3D 0; i < more_cqe_count; i++) {
++		cqe =3D &cqes[i];
++		if (!(cqe->flags & IORING_CQE_F_MORE)) {
++			fprintf(stderr, "missing MORE flag\n");
++			return -1;
++		}
++		if (cqe->res < 0) {
++			fprintf(stderr, "bad res: %d\n", cqe->res);
++			return -1;
++		}
++	}
 +
 +	close(fds[0]);
 +	close(fds[1]);
@@ -171,20 +178,32 @@ index ed26a5f78759..08a2e8629f5b 100644
  int main(int argc, char *argv[])
  {
  	int ret;
-@@ -509,5 +588,11 @@ int main(int argc, char *argv[])
- 		}
- 	}
++	bool support_defer;
 =20
-+	ret =3D test_enobuf();
+ 	if (argc > 1)
+ 		return T_EXIT_SKIP;
+=20
++	support_defer =3D t_probe_defer_taskrun();
++	ret =3D test_downgrade(support_defer);
 +	if (ret) {
-+		fprintf(stderr, "test_enobuf() failed: %d\n", ret);
++		fprintf(stderr, "%s: test_downgrade(%d) failed\n", argv[0], support_de=
+fer);
 +		return T_EXIT_FAIL;
 +	}
 +
- 	return T_EXIT_PASS;
- }
-
-base-commit: b90a28636e5b5efe6dc1383acc90aec61814d9ba
+ 	ret =3D test(false);
++	if (ret =3D=3D T_EXIT_SKIP)
++		return ret;
+ 	if (ret !=3D T_EXIT_PASS) {
+ 		fprintf(stderr, "%s: test(false) failed\n", argv[0]);
+ 		return ret;
+ 	}
+=20
+-	if (t_probe_defer_taskrun()) {
++	if (support_defer) {
+ 		ret =3D test(true);
+ 		if (ret !=3D T_EXIT_PASS) {
+ 			fprintf(stderr, "%s: test(true) failed\n", argv[0]);
 --=20
 2.30.2
 

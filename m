@@ -2,161 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED6D636BC3
-	for <lists+io-uring@lfdr.de>; Wed, 23 Nov 2022 22:02:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC8F6371DA
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 06:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236495AbiKWVCS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Nov 2022 16:02:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54126 "EHLO
+        id S229502AbiKXFqi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 00:46:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236472AbiKWVCQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Nov 2022 16:02:16 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909DF14D01
-        for <io-uring@vger.kernel.org>; Wed, 23 Nov 2022 13:02:14 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id w15-20020a17090a380f00b0021873113cb4so2936455pjb.0
-        for <io-uring@vger.kernel.org>; Wed, 23 Nov 2022 13:02:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXNu/5sdUu54/3xRezmFfaQGf0ULUrlzhHPjZKuz8hc=;
-        b=LqP9vDAGHjunvnBSFzK6eHm6pcBhE2DIK3H0IJR5r3jwfC2cCMe4ioodlRfla6K8ar
-         S75OMcY0z0zUOw5jbgCBHNTf+0YQYjAmUB6BZHuQQmfHLsURmNfPM7CizRBIQ+ZmzYIe
-         PF++GGxmPkHkyTWxbA7tqvN+nOGQtTyaGoFeeqSmvsF07UIdO8ccXA2YA6v7bhzdy/Fk
-         IfcxcTpKt/nyNqj+V8QCOUuBGZXyQCON3ReZ0t3YlqsubrXHGS+X6EgBAWCNrIft0uPw
-         ydfB8IpzcHMVvm6Ht/VgUetjk1h5YZmcI2rXIr8zckY05ytS3XRUzFt9/JHXfpJ2/U9+
-         Efpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DXNu/5sdUu54/3xRezmFfaQGf0ULUrlzhHPjZKuz8hc=;
-        b=7Anj6+Vv4SaaCwFj5NVuLcRMSgGukDYNsG63QkGsj0SoBHh6uiuAjgyHFlW3C8uOYr
-         nTOxcowmXIjQZ6tDeiKFh1UBC2tQLg/n4EiqsdpxrocN1L75XW0bTz1mPzIE7MQPQllh
-         rXNpxYM0qr7FAR75AYKpcH8PV1GVSiYc02BT8dlXWg81Ex4syY4W4MDiGhgLGmjhHmNW
-         blGPJWPMZil5v8xa8gBycAF7CBM9bC1Gea3t1PSDtJy4tTuG1v79AuPSBaY9dIJzoHdc
-         81lfeWeM6BHQSiWK7X9YX/nygi9SO4SqsovOXbbeAcPjH2ybqYnq6B+b97DeUheoucvN
-         Ob/A==
-X-Gm-Message-State: ANoB5plTXmP8FpJczjdGDe/OPwEblh+eM+lQR3JIvPXBX/Sp0E+u3Tu+
-        1/e6rKcUmA948Ovz7NbISEOPyQnmob2/mtAK8/HK
-X-Google-Smtp-Source: AA0mqf7yEFdm4U7MIuJ1kv2Y49g9b4lHCnYve95PMyFP13hr//coM5n8qZYIl69e2iSOsVg9xJNzbNLzvA6ZrEsPIQY=
-X-Received: by 2002:a17:902:6505:b0:186:e568:3442 with SMTP id
- b5-20020a170902650500b00186e5683442mr23431706plk.56.1669237333841; Wed, 23
- Nov 2022 13:02:13 -0800 (PST)
+        with ESMTP id S229499AbiKXFqh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 00:46:37 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55067C6885
+        for <io-uring@vger.kernel.org>; Wed, 23 Nov 2022 21:46:36 -0800 (PST)
+Received: from localhost.localdomain (unknown [182.253.183.240])
+        by gnuweeb.org (Postfix) with ESMTPSA id 130F881352;
+        Thu, 24 Nov 2022 05:46:32 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1669268795;
+        bh=TWnO8ccZT8DwY8edMo6cXHYw//1oIyJ9rAXDe9m6Dqc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FoiQuNUuEQ1S5JhHD+51oxyw3/0gE08+DCLA81s3vk91rp23XzQ3fQxqDB9Hw0AKR
+         abMikWm3OeWtWL5jWGNj8WiaF59XKbfuoSK4S1VkWTDdHlFF6RmreNfMsfIncqckoF
+         ea5fTJxK8J5dXP7hxt0e6TQAgT0GolD6TOQAvZ0odxYl1VVDfBIY8EzpXRgt5W0Mm6
+         5P92YiuYBAGDKMHiCz0iaLdiA2ORlyVq76UZCg3pJ8Lv/5ytb+2kNe0x/fBG2z8dss
+         pCj/3oMXNd8t3naRkuJrNVZJfmFULb3fioF/+djgtmkrhHMRR8twdkWn2vr6QBvPhG
+         yqX/rEZGTNdrg==
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        Muhammad Rizki <kiizuha@gnuweeb.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Gilang Fachrezy <gilang4321@gmail.com>, kernel@vnlx.org
+Subject: [RFC PATCH liburing v1 0/2] Fix memset() issue and simplify function naming
+Date:   Thu, 24 Nov 2022 12:46:14 +0700
+Message-Id: <20221124054345.3752171-1-ammar.faizi@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
- <20221122103144.960752-1-j.granados@samsung.com> <20221122103144.960752-2-j.granados@samsung.com>
-In-Reply-To: <20221122103144.960752-2-j.granados@samsung.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 23 Nov 2022 16:02:02 -0500
-Message-ID: <CAHC9VhTs26x+6TSbPyQg7y0j=gLCc=_GPgmiUgA34wfxmakvZQ@mail.gmail.com>
-Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     mcgrof@kernel.org, ddiss@suse.de, joshi.k@samsung.com,
-        ming.lei@redhat.com, linux-security-module@vger.kernel.org,
-        axboe@kernel.dk, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 5:35 AM Joel Granados <j.granados@samsung.com> wrote:
->
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
-> ---
->  drivers/nvme/host/core.c      | 10 ++++++++++
->  include/linux/fs.h            |  2 ++
->  include/linux/lsm_hook_defs.h |  3 ++-
->  include/linux/security.h      | 16 ++++++++++++++--
->  io_uring/uring_cmd.c          |  3 ++-
->  security/security.c           |  5 +++--
->  security/selinux/hooks.c      | 16 +++++++++++++++-
->  7 files changed, 48 insertions(+), 7 deletions(-)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-...
+Hi Jens,
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index f553c370397e..9fe3a230c671 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -21,6 +21,8 @@
->   *  Copyright (C) 2016 Mellanox Technologies
->   */
->
-> +#include "linux/nvme_ioctl.h"
-> +#include "linux/security.h"
->  #include <linux/init.h>
->  #include <linux/kd.h>
->  #include <linux/kernel.h>
-> @@ -6999,18 +7001,30 @@ static int selinux_uring_sqpoll(void)
->   * IORING_OP_URING_CMD against the device/file specified in @ioucmd.
->   *
->   */
-> -static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> +static int selinux_uring_cmd(struct io_uring_cmd *ioucmd,
-> +       int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct security_uring_cmd*))
->  {
+On top of "remove useless branches" series. This is an RFC for
+liburing nolibc. There are two patches in this series.
 
-As we discussed in the previous thread, and Casey mentioned already,
-passing a function pointer for the LSM to call isn't a great practice.
-When it was proposed we hadn't really thought of any alternatives, but
-if we can't find a good scalar value to compare somewhere, I think
-inspecting the file_operations::owner::name string to determine the
-target is preferable to the function pointer approach described here.
+## Patch 1: A fix for memset() issue.
 
-Although I really would like to see us find, or create, some sort of
-scalar token ID we could use instead.  I fear that doing a lot of
-strcmp()'s to identify the uring command target is going to be a
-problem (one strcmp() for each possible target, multiplied by the
-number of LSMs which implement a io_uring command hook).
+liburing has its own memset() in nolibc.c. liburing nolibc can be
+linked to apps that use libc. libc has an optimized version of
+memset() function. Alviro reports that he found the memset() from
+liburing replaces the optimized memset() from libc when he compiled
+liburing statically. When we statically link liburing, the linker will
+choose the statically linked memset() over the dynamically linked
+memset() that the libc provides.
 
->         struct file *file = ioucmd->file;
->         struct inode *inode = file_inode(file);
->         struct inode_security_struct *isec = selinux_inode(inode);
->         struct common_audit_data ad;
-> +       const struct cred *cred = current_cred();
-> +       struct security_uring_cmd sec_uring = {0};
-> +       int ret;
->
->         ad.type = LSM_AUDIT_DATA_FILE;
->         ad.u.file = file;
->
-> +       ret = uring_cmd_sec(ioucmd, &sec_uring);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (sec_uring.flags & SECURITY_URING_CMD_TYPE_IOCTL)
-> +               return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) ioucmd->cmd_op);
+Change the function name to __uring_memset() and define a macro
+memset() as:
 
-As mentioned previously, we'll need a SELinux policy capability here
-to preserve the SECCLASS_IO_URING/IO_URING__CMD access check for
-existing users/policies.  I expect the logic would look something like
-this (of course the details are dependent on how we identify the
-target module/device/etc.):
+    #define memset(PTR, C, LEN) __uring_memset(PTR, C, LEN)
 
-  if (polcap_foo && uring_tgt) {
-    switch (uring_tgt) {
-    case NVME:
-      return avc_has_perm(...);
-    default:
-      WARN();
-      return avc_has_perm(SECCLASS_IO_URING, IO_URING__CMD);
-    }
-  } else
-    return avc_has_perm(SECCLASS_IO_URING, IO_URING__CMD);
+when CONFIG_NOLIBC is enabled. This we don't have to touch the
+memset() callers.
 
->         return avc_has_perm(&selinux_state, current_sid(), isec->sid,
->                             SECCLASS_IO_URING, IO_URING__CMD, &ad);
-> +
->  }
->  #endif /* CONFIG_IO_URING */
 
+## Patch 2: Simplify function naming.
+
+Define malloc() and free() as __uring_malloc() and __uring_free() with
+macros when CONFIG_NOLIBC is enabled. This way the callers will just
+use malloc() and free() instead of uring_malloc() and uring_free().
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+
+Ammar Faizi (2):
+  nolibc: Do not define `memset()` function in liburing
+  nolibc: Simplify function naming
+
+ src/lib.h    | 21 +++++----------------
+ src/nolibc.c |  2 +-
+ src/setup.c  |  6 +++---
+ 3 files changed, 9 insertions(+), 20 deletions(-)
+
+
+base-commit: 8fc22e3b3348c0a6384ec926e0b19b6707622e58
+prerequisite-patch-id: d74c76e906701902456e2b19f23c100f38f13326
+prerequisite-patch-id: bd6f97f77c8f99bd374cde916f97d6223bcbfa33
+prerequisite-patch-id: 7c0f399d75e806786b8a7da4d6e23bdb62876710
+prerequisite-patch-id: c087dd983f1732fcb9aad8e5b20baf8b9350a935
+prerequisite-patch-id: f22f5b7bf9443839ee5bdb5a162c7c7c723a87eb
 -- 
-paul-moore.com
+Ammar Faizi
+

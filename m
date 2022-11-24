@@ -2,95 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 79CF46379E4
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E26ED6379EC
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 14:27:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbiKXNZN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 08:25:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49372 "EHLO
+        id S229627AbiKXN1e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 08:27:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbiKXNZL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:25:11 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BDF13D3A
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:10 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id jn7so1445232plb.13
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:25:10 -0800 (PST)
+        with ESMTP id S229493AbiKXN1d (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 08:27:33 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A099FCA
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:27:32 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id mv18so1412179pjb.0
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 05:27:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+tug0I1NwssgRDHq6k+Qmpi8bfrwch+IoJYnGWlVLQ=;
-        b=ctMWW2KzY5FAya8MG/6VNJ3u/poOr8TDoCI7xej1Q6V2mGeCnfVUL5Eu9iUqazodSe
-         Ix/RBgdYBQ5AQl+b0SwiZgHR2kwdP9kN/4zB/1rlOks/OIxdoBwtPaNULdorVhvzj61L
-         UMrBPbpwFYxrXIQJ4j8Ic1CSYos1RtDgct0INT+aiUCcOZC1RnDova37hkzJoo0eFf0N
-         N5plFhA8asJ4l6WHETvIj4+eod2cw91crav3WcoV6gHJuC+GivjSbQhXBL6bkVF+xWk+
-         X8vahFqdKSKzyOrK1pGKgjY1SidH3WaGK1arS/ZhGR0kVyewVaAec3ZvhnvcXztmvAMz
-         0s0A==
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6PUjkejs+nls1t0g8306qXKrK0t8sq0eiojWBp1T41k=;
+        b=ygwjtPLkzl+RyY/tk3SD4LOBlJUDjJnwGvA8ADxDdx138iq9g9xHwOimu7NGC8wczQ
+         +Nh7QsgWnkfvaf6F12mOXbx0NoIKOmtU/5LV5IHADEWQ7vL1yz69987iL/sQsMUE1ZXm
+         tDNXfDAqDhtAmIzF1Wm8oDBqqp2fRSKpVqhtizA3bjryXHl9JQIkSTl6Ebt0zCyP0CbF
+         1humz6LK/mFefZKTqkGOIMOlqy2P54dIIJypDkMn5MzdPWtHvUoXNev/y6BdD6WiNndx
+         GCmi6Y/GL86qcLkq4QqDvIB4BHnkndG4QXyLH/nKIsNBX8xt6wOJ/tJQISYVvGsUNd8i
+         1NFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I+tug0I1NwssgRDHq6k+Qmpi8bfrwch+IoJYnGWlVLQ=;
-        b=4yFb5wv6Hf8YKOkBGFrUSi5HrSwBOrGjhIR2nvK8JtfR1LVv/j/UGai8CKvMQkahxf
-         It1RcAzaBBbz6u8Ge+yWts/qRdyM5gHsim4yScHebW4kXCCpd/KqYN3dlF+/12nja1Jv
-         RkchhbQlTkHeIUgXYwCYpOsz0XboZ0JZ8X3C4bWGXZdzrkhiGOWz0i0nIQXpHZfhj0mc
-         cOq6KF/3Jc9vIAAU+dmiOZ8r0yGMMvdOgswmgL5rQv9m6XD6iBVEXh+kEiC3fzZOuctf
-         8GLXbGvIAzt9wZCPGUrWZ+0qyVGbSQhGNTFnpdTQKtnecTykWVw+MIeUqHor2FX8Y5WJ
-         coDg==
-X-Gm-Message-State: ANoB5pk8LSXLyBBB3ncYX1lxWgnOw5qzw2jd9dxKJPWL87T64BRyJfmo
-        b+utzsgk0GwAwYZuk9wIT73yPi7kfVikEaE2
-X-Google-Smtp-Source: AA0mqf6N6ZQY86gZW3wx31K8/4Fee16Kv9hQiGGMk0bLkKKOibQbdQayGwjPBKy3no54EFpOlVMLrw==
-X-Received: by 2002:a17:90b:3c0a:b0:212:510b:5851 with SMTP id pb10-20020a17090b3c0a00b00212510b5851mr34846318pjb.57.1669296310479;
-        Thu, 24 Nov 2022 05:25:10 -0800 (PST)
-Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id x8-20020a170902a38800b0018912c37c8fsm1278130pla.129.2022.11.24.05.25.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 05:25:09 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Dylan Yudaken <dylany@meta.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org
-In-Reply-To: <20221124103042.4129289-1-dylany@meta.com>
-References: <20221124103042.4129289-1-dylany@meta.com>
-Subject: Re: [PATCH liburing 0/2] tests for deferred multishot completions
-Message-Id: <166929630942.50735.5964782149427153998.b4-ty@kernel.dk>
-Date:   Thu, 24 Nov 2022 06:25:09 -0700
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6PUjkejs+nls1t0g8306qXKrK0t8sq0eiojWBp1T41k=;
+        b=aIpo3s4DXPJy0tJ4B/Z22SibU/t3mcaO5eEZBBx1A2P4Jw57MYZ0AsRqeDOvb7uxq0
+         5YtqCRRVrvJy0OA8yfdCDfMARC+CO27MuXfJz5qde3kMAH9mtaxIqhNb/VljZrwvcAes
+         urytTSnM2WVK+GWGC5j0APbkBinY9bBaGvpriTbFOnPxOjh4h1dkFk2A1BX1OHWssHfw
+         hU9kyd1OjN0WN7pqEEjKuGcPdrQxtK9Ya9jA7LL2kMZbEQgv21aSmsC4VRGQUNr3hIVA
+         2I1LvUrP4HmX2C66mIx4XKyba2Sl+pUpMMmksFnN5dxYu/e4AHh0TxEK8bMNKWjN0cpo
+         2djg==
+X-Gm-Message-State: ANoB5pmp4da+Lkf5Bd2+YneHHijUlwkR8tkjEpCEZO3rbi3fnAYm+YHI
+        Bmh3vndpGnfS9Y7euLlIGr4zSVg2QGbl5fT3
+X-Google-Smtp-Source: AA0mqf53lyI6J898djDryaNUL6PElJapvl4Kf9JYydoaSogpRMuJ8FYENAEMKZQB4XYCVvASJIM1FQ==
+X-Received: by 2002:a17:903:26ce:b0:187:31da:a27e with SMTP id jg14-20020a17090326ce00b0018731daa27emr13389502plb.111.1669296451473;
+        Thu, 24 Nov 2022 05:27:31 -0800 (PST)
+Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id v3-20020a170902e8c300b00186c3afb49esm1251774plg.209.2022.11.24.05.27.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Nov 2022 05:27:30 -0800 (PST)
+Message-ID: <6491d7b5-0a52-e6d1-0f86-d36ec88bbc15@kernel.dk>
+Date:   Thu, 24 Nov 2022 06:27:29 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH liburing v1 1/7] liburing.h: Export
+ `__io_uring_flush_sq()` function
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Dylan Yudaken <dylany@meta.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Gilang Fachrezy <gilang4321@gmail.com>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Muhammad Rizki <kiizuha@gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        VNLX Kernel Department <kernel@vnlx.org>
+References: <20221124075846.3784701-1-ammar.faizi@intel.com>
+ <20221124075846.3784701-2-ammar.faizi@intel.com>
+ <f750be65c33e5d3a782cebf85954319caa77672f.camel@fb.com>
+ <b303bde6-91b1-2ea2-7b1d-e64546c8ae7f@gnuweeb.org>
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <b303bde6-91b1-2ea2-7b1d-e64546c8ae7f@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-28747
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 24 Nov 2022 02:30:40 -0800, Dylan Yudaken wrote:
-> This adds a couple of tests that expose some trickier corner cases for
-> multishot APIS, specifically in light of the latest series to batch &
-> defer multishot completion.
+On 11/24/22 4:47 AM, Ammar Faizi wrote:
+> On 11/24/22 5:14 PM, Dylan Yudaken wrote:
+>> I think changing the tests to use the public API is probably better
+>> than exporting this function. I don't believe it has much general use?
 > 
+> But there is no public API that does the same thing. I'll mark it
+> as static and create a copy of that function in iopoll.c (in v2).
 > 
-> Dylan Yudaken (2):
->   Add a test for errors in multishot recv
->   add a test for multishot downgrading
-> 
-> [...]
+> Something like this, what do you think?
 
-Applied, thanks!
+Yeah I think this is better for now, and then we can work on fixing
+the test. Sanity of the core parts of the library is a lot more
+important than some test case.
 
-[1/2] Add a test for errors in multishot recv
-      (no commit info)
-[2/2] add a test for multishot downgrading
-      (no commit info)
-
-Best regards,
 -- 
 Jens Axboe
 

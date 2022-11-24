@@ -2,67 +2,65 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 012DE637D75
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 17:05:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 306ED637D86
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 17:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbiKXQFl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 11:05:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
+        id S229612AbiKXQRw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 11:17:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiKXQFj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 11:05:39 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A721C15BB19
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:05:38 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id cl5so3072958wrb.9
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:05:38 -0800 (PST)
+        with ESMTP id S229468AbiKXQRw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 11:17:52 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00BB21E02
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:17:50 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id o30so1638747wms.2
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:17:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3RsCd0y3JXIWpBBsgPE4Mq6m8ajfxKQAwJ9NPVzGKKY=;
-        b=lUA/g/9lfHyHn75QEqbAglkuQR/pm6ypTeapF0DhzB0WFZN5tssI8HAGOxTXanW78k
-         h7Y2ommBmM+zVKAsigSsfxxwVs3q12fRVZlDXTOVzcZR5rHDS2dWYr94ApdxXu25J4+W
-         qnQCYNzkDIPeUxYi6WVV3KmnEqyZRE+dQqn7Ibt/9x1lpzM2ppedUbKZ36IDa9pYiDif
-         a9l/p6K34+ysPv0LfojpDlz3H2zygaf5rcTb7dF789K1YAkg/t+Rt/OeSn/Wgr6e8Kw9
-         7ZR5NKnIfh82YOiK83wgHwbTceg0grwYiDYAGnnLggzXjR9StZdq5fysX1KsAxT8UPEx
-         eO9g==
+        bh=6HPxzHuBF1SJWGz5S2yPNh5XH+p5oMAKH0Ba78ujOGI=;
+        b=mkOvKQn2tNYBPHvV9JFB5ttvRKgpFjZHjs/KJts/wTXjSVuuo0odMh8IpDicH162Jl
+         +O7tEjLUp3109pcgqweznMSRRIyT4I12t2TK80i2tgZT8Y4L/IfCIK+SDqd7jPJ8nynM
+         Gq+v7XMyPbe761ZPIANdGWRFjjB/LIEQLWH3d56jLIVPxFp9x42bwBThE25WFYRwW6Yp
+         WeoGvhA2IJkUmcLUr629PUVCzIipSt3sDEkQq48K5fQzNcRCKADJyfdTxDvypaDS0f+o
+         DGNYwgWtUvoI6BOJMs9TwTsL/yQ5jKgAY8rLEg1FonGe+z0F5b1k0krq4zACDqcdnxuH
+         yqng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3RsCd0y3JXIWpBBsgPE4Mq6m8ajfxKQAwJ9NPVzGKKY=;
-        b=Y/fqCdy3hYC9pAr6x3By1MO0Z4hG0tkTPChhFj5aSBwjOILN2+sCl+/ZDiJlFvbQj6
-         oUZTXUXEaMoo6/Rh0/au90wDfD2LhU7PvD9lobfkH3pZV+FJqp/6ub9Lxlvi0yOz8vAi
-         yxe3NFzi5mKj6zLTpMF4ZzE8ZYVdk293HmLLUmi72p0xNPMqic+uX9po1rH+AKWwP2vL
-         Tjll+p+xqIVQ4IRNjMRufGIJUkywtsL6cWFMZH6wuSdcY9fjTIPHsuOvWCp29zzR1Rak
-         NRGBCQOOyAIg7ISM1gCtqhLsH7CHVfnfTADMcv1rqkOFBx1kYWFDSAKxmFXtSNGwxnfU
-         Rohw==
-X-Gm-Message-State: ANoB5plNB5mVpuRPJRSPf47nxA19PTAv/zvYFPxaGm33pByzhTaUfu1Z
-        x/uB6ijmzuv9eE7fD66+qhY=
-X-Google-Smtp-Source: AA0mqf5k0ZnsUMeSDVnszsa/fFNV+cPtGPKLjKiSMM+Xiq04nIPKxwyZSFCbAd8PKzsXmGS7cAEj8w==
-X-Received: by 2002:a5d:526b:0:b0:242:380:c10e with SMTP id l11-20020a5d526b000000b002420380c10emr295387wrc.132.1669305936860;
-        Thu, 24 Nov 2022 08:05:36 -0800 (PST)
+        bh=6HPxzHuBF1SJWGz5S2yPNh5XH+p5oMAKH0Ba78ujOGI=;
+        b=GhEnEJkGN3AHIYbnqSmQUSV+0LFxEqetUtTGOJCspMcmPSewE9oO9KZbdQS+IfJjlP
+         ObaL6LBKg25A9V4Hthn8nm8ErmQ7/UtXDDsrehZEGDTxCYpUONje9r6ggLvMw0BFOfRq
+         VBIqFJpA3Yy3rgJK4FvLzYum3JL+vxqq8tCjOdT6O1hMDAuUWy180iBHAiuLQVQ4u77T
+         Hwop2VAHh4/axBOvF6M9lb+7BJ+B9T4/vz6jJxXntzN5NURi7ZG6hlJvwMksW1PQ16tV
+         e7nJ5M+tAuiy5cIWCDcOjPjtBSodyMSoDwtsr1ecHgnvXbtsW6ixI0TYNeRKOul0vJZY
+         H6sw==
+X-Gm-Message-State: ANoB5pl8FnVb3yff9ZlQSwDF2WoZlIa5rBUgtdjUpMfgVwjKcEjaFCZT
+        b5FJtZuz+lwKeu7eIDepoAgwfD6rDc8=
+X-Google-Smtp-Source: AA0mqf74HttTdWpvDBgdPRTp9gmZCpmoUxC4BUl7Hy9/ktWBcdmkFQMuoDRIF+elCBpTJocMS4+Q8A==
+X-Received: by 2002:a7b:cb83:0:b0:3cf:96da:3846 with SMTP id m3-20020a7bcb83000000b003cf96da3846mr26885064wmi.10.1669306669250;
+        Thu, 24 Nov 2022 08:17:49 -0800 (PST)
 Received: from [192.168.8.100] (188.28.226.30.threembb.co.uk. [188.28.226.30])
-        by smtp.gmail.com with ESMTPSA id cc18-20020a5d5c12000000b002238ea5750csm2078727wrb.72.2022.11.24.08.05.36
+        by smtp.gmail.com with ESMTPSA id t2-20020a5d42c2000000b0023662d97130sm1693540wrr.20.2022.11.24.08.17.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Nov 2022 08:05:36 -0800 (PST)
-Message-ID: <5a490cb1-bf73-fddf-fd7b-8ee3f0c21b42@gmail.com>
-Date:   Thu, 24 Nov 2022 16:04:00 +0000
+        Thu, 24 Nov 2022 08:17:48 -0800 (PST)
+Message-ID: <c03977b8-85a1-5984-ebda-8a0c7d0087d2@gmail.com>
+Date:   Thu, 24 Nov 2022 16:16:11 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH for-next v3 4/9] io_uring: allow defer completion for aux
- posted cqes
+Subject: Re: [PATCH] io_uring: kill io_cqring_ev_posted() and
+ __io_cq_unlock_post()
 Content-Language: en-US
-To:     Dylan Yudaken <dylany@meta.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
-References: <20221124093559.3780686-1-dylany@meta.com>
- <20221124093559.3780686-5-dylany@meta.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <c09446bd-faca-13cc-97af-c06fa324e798@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20221124093559.3780686-5-dylany@meta.com>
+In-Reply-To: <c09446bd-faca-13cc-97af-c06fa324e798@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,115 +73,61 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 11/24/22 09:35, Dylan Yudaken wrote:
-> Multishot ops cannot use the compl_reqs list as the request must stay in
-> the poll list, but that means they need to run each completion without
-> benefiting from batching.
-> 
-> Here introduce batching infrastructure for only small (ie 16 byte)
-> CQEs. This restriction is ok because there are no use cases posting 32
-> byte CQEs.
-> 
-> In the ring keep a batch of up to 16 posted results, and flush in the same
-> way as compl_reqs.
-> 
-> 16 was chosen through experimentation on a microbenchmark ([1]), as well
-> as trying not to increase the size of the ring too much. This increases
-> the size to 1472 bytes from 1216.
+On 11/21/22 14:52, Jens Axboe wrote:
+> __io_cq_unlock_post() is identical to io_cq_unlock_post(), and
+> io_cqring_ev_posted() has a single caller so migth as well just inline
+> it there.
 
-It might be cleaner to defer io_cqring_ev_posted() instead of caching
-cqes and spinlocking is not a big problem, because we can globally
-get rid of them.
+It was there for one purpose, to inline it in the hottest path,
+i.e. __io_submit_flush_completions(). I'll be reverting it back
 
 
-> [1]: https://github.com/DylanZA/liburing/commit/9ac66b36bcf4477bfafeff1c5f107896b7ae31cf
-> Run with $ make -j && ./benchmark/reg.b -s 1 -t 2000 -r 10
-> Gives results:
-> baseline	8309 k/s
-> 8		18807 k/s
-> 16		19338 k/s
-> 32		20134 k/s
+
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > 
-> Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> Signed-off-by: Dylan Yudaken <dylany@meta.com>
 > ---
->   include/linux/io_uring_types.h |  2 ++
->   io_uring/io_uring.c            | 27 ++++++++++++++++++++++++---
->   2 files changed, 26 insertions(+), 3 deletions(-)
 > 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index f5b687a787a3..accdfecee953 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -174,7 +174,9 @@ struct io_submit_state {
->   	bool			plug_started;
->   	bool			need_plug;
->   	unsigned short		submit_nr;
-> +	unsigned int		cqes_count;
->   	struct blk_plug		plug;
-> +	struct io_uring_cqe	cqes[16];
->   };
->   
->   struct io_ev_fd {
 > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index cbd271b6188a..53b61b5cde80 100644
+> index 762ecab801f2..2260fb7aa7f2 100644
 > --- a/io_uring/io_uring.c
 > +++ b/io_uring/io_uring.c
-> @@ -167,7 +167,8 @@ EXPORT_SYMBOL(io_uring_get_socket);
+> @@ -581,23 +581,14 @@ void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
+>   		io_eventfd_flush_signal(ctx);
+>   }
 >   
->   static inline void io_submit_flush_completions(struct io_ring_ctx *ctx)
+> -static inline void io_cqring_ev_posted(struct io_ring_ctx *ctx)
+> -{
+> -	io_commit_cqring_flush(ctx);
+> -	io_cqring_wake(ctx);
+> -}
+> -
+> -static inline void __io_cq_unlock_post(struct io_ring_ctx *ctx)
+> +void io_cq_unlock_post(struct io_ring_ctx *ctx)
+>   	__releases(ctx->completion_lock)
 >   {
-> -	if (!wq_list_empty(&ctx->submit_state.compl_reqs))
-> +	if (!wq_list_empty(&ctx->submit_state.compl_reqs) ||
-> +	    ctx->submit_state.cqes_count)
->   		__io_submit_flush_completions(ctx);
+>   	io_commit_cqring(ctx);
+>   	spin_unlock(&ctx->completion_lock);
+> -	io_cqring_ev_posted(ctx);
+> -}
+>   
+> -void io_cq_unlock_post(struct io_ring_ctx *ctx)
+> -{
+> -	__io_cq_unlock_post(ctx);
+> +	io_commit_cqring_flush(ctx);
+> +	io_cqring_wake(ctx);
 >   }
 >   
-> @@ -802,6 +803,21 @@ bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
->   	return false;
->   }
->   
-> +static void __io_flush_post_cqes(struct io_ring_ctx *ctx)
-> +	__must_hold(&ctx->uring_lock)
-> +{
-> +	struct io_submit_state *state = &ctx->submit_state;
-> +	unsigned int i;
-> +
-> +	lockdep_assert_held(&ctx->uring_lock);
-> +	for (i = 0; i < state->cqes_count; i++) {
-> +		struct io_uring_cqe *cqe = &state->cqes[i];
-> +
-> +		io_fill_cqe_aux(ctx, cqe->user_data, cqe->res, cqe->flags, true);
-> +	}
-> +	state->cqes_count = 0;
-> +}
-> +
->   bool io_post_aux_cqe(struct io_ring_ctx *ctx,
->   		     u64 user_data, s32 res, u32 cflags,
->   		     bool allow_overflow)
-> @@ -1325,6 +1341,9 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
->   	struct io_submit_state *state = &ctx->submit_state;
->   
->   	io_cq_lock(ctx);
-> +	/* must come first to preserve CQE ordering in failure cases */
-> +	if (state->cqes_count)
-> +		__io_flush_post_cqes(ctx);
->   	wq_list_for_each(node, prev, &state->compl_reqs) {
->   		struct io_kiocb *req = container_of(node, struct io_kiocb,
->   					    comp_list);
-> @@ -1334,8 +1353,10 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+>   /* Returns true if there are no backlogged entries after the flush */
+> @@ -1346,7 +1337,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+>   		if (!(req->flags & REQ_F_CQE_SKIP))
+>   			__io_fill_cqe_req(ctx, req);
 >   	}
->   	io_cq_unlock_post(ctx);
+> -	__io_cq_unlock_post(ctx);
+> +	io_cq_unlock_post(ctx);
 >   
-> -	io_free_batch_list(ctx, state->compl_reqs.first);
-> -	INIT_WQ_LIST(&state->compl_reqs);
-> +	if (!wq_list_empty(&ctx->submit_state.compl_reqs)) {
-> +		io_free_batch_list(ctx, state->compl_reqs.first);
-> +		INIT_WQ_LIST(&state->compl_reqs);
-> +	}
->   }
->   
->   /*
+>   	io_free_batch_list(ctx, state->compl_reqs.first);
+>   	INIT_WQ_LIST(&state->compl_reqs);
+> 
 
 -- 
 Pavel Begunkov

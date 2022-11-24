@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F8B637D9D
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 17:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A4AC637D9E
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 17:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbiKXQ32 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 11:29:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60828 "EHLO
+        id S229379AbiKXQ3b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 11:29:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiKXQ31 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 11:29:27 -0500
+        with ESMTP id S229514AbiKXQ3b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 11:29:31 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8D18170273
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:29:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A62C6170277
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:29:30 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.240])
-        by gnuweeb.org (Postfix) with ESMTPSA id A9CD381754;
-        Thu, 24 Nov 2022 16:29:22 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id D09A88175E;
+        Thu, 24 Nov 2022 16:29:26 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1669307366;
-        bh=Ov7T+cVML2fZWPau1xESLQDyLzqpY18IJ9L7HJxRzOs=;
+        s=default; t=1669307370;
+        bh=IjiWigqeUBXqOFxVyLVTRYHaAHBjdEuLBkIGHoU0ZZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lIBFbsbD/mCTU7jwTy94VYUTOgEke5VjBkoYDXe8R3CLW8xO5Fk0ucoeYtS/nQ57u
-         v4PdC/s+zFggn9kvV3XIBIfSQnPyp5L1TCYRFqVCyiq4eKAYYS+5zKh9SnV1LZZ0JS
-         lnXCUmag/nsWulKpdlH76tgQhiOqY4IVfP1FTJaDeSOZwse5qtw6N4amn0lnFJ2Dj9
-         A4M9lm81+5ZDMu8bMO3vRVarWD6zPQVbIBWv9TBkH2uESm0U0ZNm1Uy1K+0gO0RJly
-         /8/U8dh2lajJQ4ZURbHS8wmZQ70rZ4zxfcdDqc1QpkJTAXrIR0QpkoQBiPGr+rlvBe
-         rkz/aNqt7P7JQ==
+        b=X6zIvaQxvBvB2xnnL7KBWtT7ZK5b367vvLbOBhK73HhEICkMbuH3O8vFqZF392v9A
+         ZFBC4KWTbqeKXyxHBwiwUbeR3e5GlGgV4APmbhj1/kMne2LJ0oSdpjhsJV5qYZNsOr
+         a208DEXwGlDmQiPcir37VAl9+1A8A/SB0cqpWRVWxIoEzHdTQD10a+I6EXxgRnsCNp
+         uuGRwfYw2Meourrh0h4/wZ3HBPuWYnWwLQu8a9nMZTBJAP87FbkQmudr0hkoSZ3rnd
+         URVkYBR5KzPAquu+X29QphoPFlc11q2jJ9byj4h/z23euKs6dR8r3otWAmVXsSK7Gy
+         ju+Tuv9Hp6QNA==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -39,13 +39,14 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         VNLX Kernel Department <kernel@vnlx.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v2 3/8] test/io_uring_setup: Remove unused functions
-Date:   Thu, 24 Nov 2022 23:28:56 +0700
-Message-Id: <20221124162633.3856761-4-ammar.faizi@intel.com>
+Subject: [PATCH liburing v2 4/8] ucontext-cp: Remove an unused function
+Date:   Thu, 24 Nov 2022 23:28:57 +0700
+Message-Id: <20221124162633.3856761-5-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221124162633.3856761-1-ammar.faizi@intel.com>
 References: <20221124162633.3856761-1-ammar.faizi@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
@@ -59,130 +60,51 @@ X-Mailing-List: io-uring@vger.kernel.org
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
 When marking all internal functions as static after an attempt to
-integrate `-Wmissing-prototypes` flag. Unused functions are found:
+integrate `-Wmissing-prototypes` flag. An unused function is found:
 
-  io_uring_setup.c:22:14: error: unused function 'features_string' [-Werror,-Wunused-function]
-  static char *features_string(struct io_uring_params *p)
-               ^
-  io_uring_setup.c:44:14: error: unused function 'flags_string' [-Werror,-Wunused-function]
-  static char *flags_string(struct io_uring_params *p)
-               ^
-  io_uring_setup.c:83:15: error: unused function 'dump_resv' [-Werror,-Wunused-function]
-  static char * dump_resv(struct io_uring_params *p)
-                ^
-  3 errors generated.
-  make[1]: *** [Makefile:215: io_uring_setup.t] Error 1
-  make[1]: *** Waiting for unfinished jobs....
+  ucontext-cp.c:71:12: error: ‘await_poll’ defined but not used [-Werror=unused-function]
+     71 | static int await_poll(async_context *pctx, int fd, short poll_mask)
+        |            ^~~~~~~~~~
+  cc1: all warnings being treated as errors
+  make[1]: *** [Makefile:36: ucontext-cp] Error 1
 
-Remove them.
+Remove it.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/io_uring_setup.c | 82 ++-----------------------------------------
- 1 file changed, 2 insertions(+), 80 deletions(-)
+ examples/ucontext-cp.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/test/io_uring_setup.c b/test/io_uring_setup.c
-index d945421..9e1a353 100644
---- a/test/io_uring_setup.c
-+++ b/test/io_uring_setup.c
-@@ -19,86 +19,9 @@
+diff --git a/examples/ucontext-cp.c b/examples/ucontext-cp.c
+index 281013f..ed3b342 100644
+--- a/examples/ucontext-cp.c
++++ b/examples/ucontext-cp.c
+@@ -68,23 +68,8 @@ DEFINE_AWAIT_OP(readv)
+ DEFINE_AWAIT_OP(writev)
+ #undef DEFINE_AWAIT_OP
  
- #include "../syscall.h"
- 
--char *features_string(struct io_uring_params *p)
--{
--	static char flagstr[64];
+-int await_poll(async_context *pctx, int fd, short poll_mask) {
+-	struct io_uring_sqe *sqe = io_uring_get_sqe(pctx->ring);
+-	struct io_uring_cqe *cqe;
+-	if (!sqe)
+-		return -1;
 -
--	if (!p || !p->features)
--		return "none";
+-	io_uring_prep_poll_add(sqe, fd, poll_mask);
+-	io_uring_sqe_set_data(sqe, pctx);
+-	swapcontext(&pctx->ctx_fnew, &pctx->ctx_main);
+-	io_uring_peek_cqe(pctx->ring, &cqe);
+-	assert(cqe);
+-	io_uring_cqe_seen(pctx->ring, cqe);
 -
--	if (p->features & ~IORING_FEAT_SINGLE_MMAP) {
--		snprintf(flagstr, 64, "0x%.8x", p->features);
--		return flagstr;
--	}
--
--	if (p->features & IORING_FEAT_SINGLE_MMAP)
--		strncat(flagstr, "IORING_FEAT_SINGLE_MMAP", 64 - strlen(flagstr));
--
--	return flagstr;
+-	return cqe->res;
 -}
 -
--/*
-- * Attempt the call with the given args.  Return 0 when expect matches
-- * the return value of the system call, 1 otherwise.
-- */
--char *
--flags_string(struct io_uring_params *p)
--{
--	static char flagstr[64];
--	int add_pipe = 0;
--
--	memset(flagstr, 0, sizeof(flagstr));
--
--	if (!p || p->flags == 0)
--		return "none";
--
--	/*
--	 * If unsupported flags are present, just print the bitmask.
--	 */
--	if (p->flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
--			 IORING_SETUP_SQ_AFF)) {
--		snprintf(flagstr, 64, "0x%.8x", p->flags);
--		return flagstr;
--	}
--
--	if (p->flags & IORING_SETUP_IOPOLL) {
--		strncat(flagstr, "IORING_SETUP_IOPOLL", 64 - strlen(flagstr));
--		add_pipe = 1;
--	}
--	if (p->flags & IORING_SETUP_SQPOLL) {
--		if (add_pipe)
--			strncat(flagstr, "|", 64 - strlen(flagstr));
--		else
--			add_pipe = 1;
--		strncat(flagstr, "IORING_SETUP_SQPOLL", 64 - strlen(flagstr));
--	}
--	if (p->flags & IORING_SETUP_SQ_AFF) {
--		if (add_pipe)
--			strncat(flagstr, "|", 64 - strlen(flagstr));
--		strncat(flagstr, "IORING_SETUP_SQ_AFF", 64 - strlen(flagstr));
--	}
--
--	return flagstr;
--}
--
--char *
--dump_resv(struct io_uring_params *p)
--{
--	static char resvstr[4096];
--
--	if (!p)
--		return "";
--
--	sprintf(resvstr, "0x%.8x 0x%.8x 0x%.8x", p->resv[0],
--		p->resv[1], p->resv[2]);
--
--	return resvstr;
--}
--
- /* bogus: setup returns a valid fd on success... expect can't predict the
-    fd we'll get, so this really only takes 1 parameter: error */
--int
--try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
-+int try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
- {
- 	int ret;
- 
-@@ -123,8 +46,7 @@ try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
- 	return 0;
- }
- 
--int
--main(int argc, char **argv)
-+int main(int argc, char **argv)
- {
- 	int fd;
- 	unsigned int status = 0;
+-int await_delay(async_context *pctx, time_t seconds) {
++int await_delay(async_context *pctx, time_t seconds)
++{
+ 	struct io_uring_sqe *sqe = io_uring_get_sqe(pctx->ring);
+ 	struct io_uring_cqe *cqe;
+ 	struct __kernel_timespec ts = {
 -- 
 Ammar Faizi
 

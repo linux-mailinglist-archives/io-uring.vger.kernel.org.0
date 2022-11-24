@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9262637D9C
-	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 17:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F8B637D9D
+	for <lists+io-uring@lfdr.de>; Thu, 24 Nov 2022 17:29:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiKXQ3Y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Nov 2022 11:29:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60786 "EHLO
+        id S229502AbiKXQ32 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Nov 2022 11:29:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiKXQ3X (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 11:29:23 -0500
+        with ESMTP id S229379AbiKXQ31 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Nov 2022 11:29:27 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FAB170277
-        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:29:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8D18170273
+        for <io-uring@vger.kernel.org>; Thu, 24 Nov 2022 08:29:26 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.240])
-        by gnuweeb.org (Postfix) with ESMTPSA id 838CF8164B;
-        Thu, 24 Nov 2022 16:29:18 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id A9CD381754;
+        Thu, 24 Nov 2022 16:29:22 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1669307362;
-        bh=WNN4MSAzEnSdNPtHpyHl24nIGH/PyYRQzsAIHhjoQtM=;
+        s=default; t=1669307366;
+        bh=Ov7T+cVML2fZWPau1xESLQDyLzqpY18IJ9L7HJxRzOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bK/PexH8up11U/oWlP8PXaTxgRhvnzDnYjrJ2LYiUtpiBXRoiei0E/Ccmlzg54Vz4
-         nucKYLLS/VrjBuEz5gH+RhH5iyA2Xi3i4AACb36AOToTYJTnGZBvRRakJmSb0RnYBZ
-         Jy9SKifV78EOsxJ3sbLzFb/HYD/yvnba0Q4ThyWYhcQ+xpnVkcj/2dvUpeRgdhMZo7
-         VWj1/DIwJP8Ca4Snd8Vx/4stKZ+NUg56BMxS/O2IX88qae0oJ5Y4rij62h9pQ01AQN
-         J6biKIUQC/tbnUV/gTgBB8zR3O7tUUFIMW80ec8GDFL+4i4z5I1FaKNd6s+YPcispg
-         OU8YyjwB6Gchg==
+        b=lIBFbsbD/mCTU7jwTy94VYUTOgEke5VjBkoYDXe8R3CLW8xO5Fk0ucoeYtS/nQ57u
+         v4PdC/s+zFggn9kvV3XIBIfSQnPyp5L1TCYRFqVCyiq4eKAYYS+5zKh9SnV1LZZ0JS
+         lnXCUmag/nsWulKpdlH76tgQhiOqY4IVfP1FTJaDeSOZwse5qtw6N4amn0lnFJ2Dj9
+         A4M9lm81+5ZDMu8bMO3vRVarWD6zPQVbIBWv9TBkH2uESm0U0ZNm1Uy1K+0gO0RJly
+         /8/U8dh2lajJQ4ZURbHS8wmZQ70rZ4zxfcdDqc1QpkJTAXrIR0QpkoQBiPGr+rlvBe
+         rkz/aNqt7P7JQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -39,9 +39,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         VNLX Kernel Department <kernel@vnlx.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v2 2/8] queue: Mark `__io_uring_flush_sq()` as static
-Date:   Thu, 24 Nov 2022 23:28:55 +0700
-Message-Id: <20221124162633.3856761-3-ammar.faizi@intel.com>
+Subject: [PATCH liburing v2 3/8] test/io_uring_setup: Remove unused functions
+Date:   Thu, 24 Nov 2022 23:28:56 +0700
+Message-Id: <20221124162633.3856761-4-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221124162633.3856761-1-ammar.faizi@intel.com>
 References: <20221124162633.3856761-1-ammar.faizi@intel.com>
@@ -58,128 +58,131 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-This function is not exported, mark it as static. Clang says:
+When marking all internal functions as static after an attempt to
+integrate `-Wmissing-prototypes` flag. Unused functions are found:
 
-  queue.c:204:10: error: no previous prototype for function \
-  '__io_uring_flush_sq' [-Werror,-Wmissing-prototypes] \
-  unsigned __io_uring_flush_sq(struct io_uring *ring)
-           ^
-  queue.c:204:1: note: declare 'static' if the function is not intended \
-  to be used outside of this translation unit \
-  unsigned __io_uring_flush_sq(struct io_uring *ring)
+  io_uring_setup.c:22:14: error: unused function 'features_string' [-Werror,-Wunused-function]
+  static char *features_string(struct io_uring_params *p)
+               ^
+  io_uring_setup.c:44:14: error: unused function 'flags_string' [-Werror,-Wunused-function]
+  static char *flags_string(struct io_uring_params *p)
+               ^
+  io_uring_setup.c:83:15: error: unused function 'dump_resv' [-Werror,-Wunused-function]
+  static char * dump_resv(struct io_uring_params *p)
+                ^
+  3 errors generated.
+  make[1]: *** [Makefile:215: io_uring_setup.t] Error 1
+  make[1]: *** Waiting for unfinished jobs....
 
-Side note:
-There was an attempt to export this function because it is used by
-test/iopoll.c and test/io_uring_passthrough.c. But after a discussion
-with Dylan and Jens, it's better to make a copy of this function for
-those tests only instead of exporting it. Therefore, also create a
-copy of this function in test/helpers.c.
+Remove them.
 
-Cc: Dylan Yudaken <dylany@meta.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Link: https://lore.kernel.org/io-uring/6491d7b5-0a52-e6d1-0f86-d36ec88bbc15@kernel.dk
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- src/queue.c                 |  2 +-
- test/helpers.c              | 33 +++++++++++++++++++++++++++++++++
- test/helpers.h              |  2 ++
- test/io_uring_passthrough.c |  2 --
- test/iopoll.c               |  2 --
- 5 files changed, 36 insertions(+), 5 deletions(-)
+ test/io_uring_setup.c | 82 ++-----------------------------------------
+ 1 file changed, 2 insertions(+), 80 deletions(-)
 
-diff --git a/src/queue.c b/src/queue.c
-index feea0ad..b784b10 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -201,7 +201,7 @@ again:
-  * Sync internal state with kernel ring state on the SQ side. Returns the
-  * number of pending items in the SQ ring, for the shared ring.
-  */
--unsigned __io_uring_flush_sq(struct io_uring *ring)
-+static unsigned __io_uring_flush_sq(struct io_uring *ring)
+diff --git a/test/io_uring_setup.c b/test/io_uring_setup.c
+index d945421..9e1a353 100644
+--- a/test/io_uring_setup.c
++++ b/test/io_uring_setup.c
+@@ -19,86 +19,9 @@
+ 
+ #include "../syscall.h"
+ 
+-char *features_string(struct io_uring_params *p)
+-{
+-	static char flagstr[64];
+-
+-	if (!p || !p->features)
+-		return "none";
+-
+-	if (p->features & ~IORING_FEAT_SINGLE_MMAP) {
+-		snprintf(flagstr, 64, "0x%.8x", p->features);
+-		return flagstr;
+-	}
+-
+-	if (p->features & IORING_FEAT_SINGLE_MMAP)
+-		strncat(flagstr, "IORING_FEAT_SINGLE_MMAP", 64 - strlen(flagstr));
+-
+-	return flagstr;
+-}
+-
+-/*
+- * Attempt the call with the given args.  Return 0 when expect matches
+- * the return value of the system call, 1 otherwise.
+- */
+-char *
+-flags_string(struct io_uring_params *p)
+-{
+-	static char flagstr[64];
+-	int add_pipe = 0;
+-
+-	memset(flagstr, 0, sizeof(flagstr));
+-
+-	if (!p || p->flags == 0)
+-		return "none";
+-
+-	/*
+-	 * If unsupported flags are present, just print the bitmask.
+-	 */
+-	if (p->flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
+-			 IORING_SETUP_SQ_AFF)) {
+-		snprintf(flagstr, 64, "0x%.8x", p->flags);
+-		return flagstr;
+-	}
+-
+-	if (p->flags & IORING_SETUP_IOPOLL) {
+-		strncat(flagstr, "IORING_SETUP_IOPOLL", 64 - strlen(flagstr));
+-		add_pipe = 1;
+-	}
+-	if (p->flags & IORING_SETUP_SQPOLL) {
+-		if (add_pipe)
+-			strncat(flagstr, "|", 64 - strlen(flagstr));
+-		else
+-			add_pipe = 1;
+-		strncat(flagstr, "IORING_SETUP_SQPOLL", 64 - strlen(flagstr));
+-	}
+-	if (p->flags & IORING_SETUP_SQ_AFF) {
+-		if (add_pipe)
+-			strncat(flagstr, "|", 64 - strlen(flagstr));
+-		strncat(flagstr, "IORING_SETUP_SQ_AFF", 64 - strlen(flagstr));
+-	}
+-
+-	return flagstr;
+-}
+-
+-char *
+-dump_resv(struct io_uring_params *p)
+-{
+-	static char resvstr[4096];
+-
+-	if (!p)
+-		return "";
+-
+-	sprintf(resvstr, "0x%.8x 0x%.8x 0x%.8x", p->resv[0],
+-		p->resv[1], p->resv[2]);
+-
+-	return resvstr;
+-}
+-
+ /* bogus: setup returns a valid fd on success... expect can't predict the
+    fd we'll get, so this really only takes 1 parameter: error */
+-int
+-try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
++int try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
  {
- 	struct io_uring_sq *sq = &ring->sq;
- 	unsigned tail = sq->sqe_tail;
-diff --git a/test/helpers.c b/test/helpers.c
-index 8fb32b8..869e903 100644
---- a/test/helpers.c
-+++ b/test/helpers.c
-@@ -266,3 +266,36 @@ bool t_probe_defer_taskrun(void)
- 	io_uring_queue_exit(&ring);
- 	return true;
- }
-+
-+/*
-+ * Sync internal state with kernel ring state on the SQ side. Returns the
-+ * number of pending items in the SQ ring, for the shared ring.
-+ */
-+unsigned __io_uring_flush_sq(struct io_uring *ring)
-+{
-+	struct io_uring_sq *sq = &ring->sq;
-+	unsigned tail = sq->sqe_tail;
-+
-+	if (sq->sqe_head != tail) {
-+		sq->sqe_head = tail;
-+		/*
-+		 * Ensure kernel sees the SQE updates before the tail update.
-+		 */
-+		if (!(ring->flags & IORING_SETUP_SQPOLL))
-+			IO_URING_WRITE_ONCE(*sq->ktail, tail);
-+		else
-+			io_uring_smp_store_release(sq->ktail, tail);
-+	}
-+	/*
-+	 * This _may_ look problematic, as we're not supposed to be reading
-+	 * SQ->head without acquire semantics. When we're in SQPOLL mode, the
-+	 * kernel submitter could be updating this right now. For non-SQPOLL,
-+	 * task itself does it, and there's no potential race. But even for
-+	 * SQPOLL, the load is going to be potentially out-of-date the very
-+	 * instant it's done, regardless or whether or not it's done
-+	 * atomically. Worst case, we're going to be over-estimating what
-+	 * we can submit. The point is, we need to be able to deal with this
-+	 * situation regardless of any perceived atomicity.
-+	 */
-+	return tail - *sq->khead;
-+}
-diff --git a/test/helpers.h b/test/helpers.h
-index 4375a9e..cb814ca 100644
---- a/test/helpers.h
-+++ b/test/helpers.h
-@@ -85,6 +85,8 @@ enum t_setup_ret t_register_buffers(struct io_uring *ring,
+ 	int ret;
  
- bool t_probe_defer_taskrun(void);
- 
-+unsigned __io_uring_flush_sq(struct io_uring *ring);
-+
- #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
- 
- #ifdef __cplusplus
-diff --git a/test/io_uring_passthrough.c b/test/io_uring_passthrough.c
-index ee9ab87..d8468c5 100644
---- a/test/io_uring_passthrough.c
-+++ b/test/io_uring_passthrough.c
-@@ -268,8 +268,6 @@ static int test_io(const char *file, int tc, int read, int sqthread,
- 	return ret;
+@@ -123,8 +46,7 @@ try_io_uring_setup(unsigned entries, struct io_uring_params *p, int expect)
+ 	return 0;
  }
  
--extern unsigned __io_uring_flush_sq(struct io_uring *ring);
--
- /*
-  * Send a passthrough command that nvme will fail during submission.
-  * This comes handy for testing error handling.
-diff --git a/test/iopoll.c b/test/iopoll.c
-index 20f91c7..f8ab1f1 100644
---- a/test/iopoll.c
-+++ b/test/iopoll.c
-@@ -201,8 +201,6 @@ err:
- 	return 1;
- }
- 
--extern unsigned __io_uring_flush_sq(struct io_uring *ring);
--
- /*
-  * if we are polling io_uring_submit needs to always enter the
-  * kernel to fetch events
+-int
+-main(int argc, char **argv)
++int main(int argc, char **argv)
+ {
+ 	int fd;
+ 	unsigned int status = 0;
 -- 
 Ammar Faizi
 

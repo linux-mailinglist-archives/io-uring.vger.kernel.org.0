@@ -2,96 +2,95 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E73AB638797
-	for <lists+io-uring@lfdr.de>; Fri, 25 Nov 2022 11:34:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B450638AF5
+	for <lists+io-uring@lfdr.de>; Fri, 25 Nov 2022 14:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbiKYKeg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Nov 2022 05:34:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60974 "EHLO
+        id S229462AbiKYNNl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Nov 2022 08:13:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbiKYKee (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Nov 2022 05:34:34 -0500
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E82B42F5C
-        for <io-uring@vger.kernel.org>; Fri, 25 Nov 2022 02:34:33 -0800 (PST)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AP1torj023634
-        for <io-uring@vger.kernel.org>; Fri, 25 Nov 2022 02:34:32 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=DuCAbePoNtVA9YhQGc2rxpjQN3n4AJ+7V0URsBoLK5c=;
- b=lVZRZFcGVHSbu+NBiIKdfGIAu/GqHiLBqHcmgMQm0MXW8Ape7DVbqrKUEFxPK4GHbDWz
- Ru05ILj4PXs3ZdQjjvsy/5hYWkya7PY8EDNtegqWhdNgNB8K4cnoDpjoAy+bTKWmMrk6
- Om7VvNcvjB/IPnE6ZvxKTFSeAO2EARMuODA7ssFxV8H4nfsDHY6PiuV4OyC7/3pOcNcY
- HklgYXf65HEiqg6xvBQZO0YSNOlxYUkbpAKNkYHxY5XiW2dUaivmqg1jJMJFrKQ2rOOo
- 5h+H7Fv56HcHSbzSOXXInZcNNx3X/nw06Jr8ffqWJMysE6rzn65a7dNZmmsl/UDCLgDz eg== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3m2b2hnq4m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Fri, 25 Nov 2022 02:34:32 -0800
-Received: from twshared8047.05.ash9.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 25 Nov 2022 02:34:31 -0800
-Received: by devbig038.lla2.facebook.com (Postfix, from userid 572232)
-        id 41AACA283ECB; Fri, 25 Nov 2022 02:34:20 -0800 (PST)
-From:   Dylan Yudaken <dylany@meta.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        with ESMTP id S229700AbiKYNNk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Nov 2022 08:13:40 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237E52CCA1
+        for <io-uring@vger.kernel.org>; Fri, 25 Nov 2022 05:13:39 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id d6so3964654pll.7
+        for <io-uring@vger.kernel.org>; Fri, 25 Nov 2022 05:13:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h0HUe6tWhaDxDnvrAogxxmavqFnQikdeTTz24GcpsuY=;
+        b=iLckk79MFXzkzymKDchDC2K6ulZ2RmiTairxvp8Lk3/kEW+psISULZpqVvmc/EcN/w
+         c6iUm0odqifVkJpO6U53SvN02/TE3JUyIaGUq/zt/rFqWlpiMDeJWXA/NPlVdUKCov/J
+         gSV2ubSgNCnvRQXL6DkXIfAMTReNdyW8WMxP7f3VhiVcC/zsR/5f72cBSWygQkGA72qA
+         5CNnebDv4gBy5UC7A21A3qmrWQiYDw7KsOElsMO9KXhI9deikcnNO6+tGMzjgyaZdJlG
+         /ij2ITnRYR/PMZnrs+xZlux/PVrGkUe9pzr2GvL6wcEVGqCRByy1pWXnqZs68siJUJeq
+         /Xfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h0HUe6tWhaDxDnvrAogxxmavqFnQikdeTTz24GcpsuY=;
+        b=ymxP/1DYfdKkLflrjFxIQJrfyohvgQKD0/nrQMslSP1OPM8XvFyvd0KhT0Uu/m1s4Z
+         w8CjQHPErQDR21yAqkHNWmy3vodUxlkw/ZiRJ1S+TZSM1Q4A7WABLyZsgQo+j0rFl/Vy
+         vQZoCroil7HiLiyfAmJk7duELqgCqT1HKKWsnBMkRZkj1ZcOk+G30Wak+hiNzKDv7LEs
+         cuvYYZUXqxW7GU0e10OkO9Aq6SQtMcVdptdRNZIWUakj+daM2IRmsiFg8vWgO+rwrAOb
+         Hkq7HczS6hA9GYo7JNOSCdaDoCfnlPClNTbUiO4oVy6XulIt4MJSYWxFwpbdBZx0FvIL
+         DByQ==
+X-Gm-Message-State: ANoB5pkmRBuL4NG/7qOmjVCjmBo1JzWlYS2k+21/dSExsILi5zPCKFAE
+        cZoDTqtzbWXbdtqay7GVedYHiJn3ZBbr2nzZ
+X-Google-Smtp-Source: AA0mqf7ieizeGB/gx/xQISp1lWzt9RgP/eXwDAHP1a+Bnl1ff+QJK9r2V3rI6Sjy54jkjpz98SlnRQ==
+X-Received: by 2002:a17:90b:3c0a:b0:213:7030:b2ec with SMTP id pb10-20020a17090b3c0a00b002137030b2ecmr46547928pjb.95.1669382018210;
+        Fri, 25 Nov 2022 05:13:38 -0800 (PST)
+Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id d6-20020a170902654600b00188fcc4fc00sm3362643pln.79.2022.11.25.05.13.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Nov 2022 05:13:37 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
         Dylan Yudaken <dylany@meta.com>
-Subject: [PATCH for-next 3/3] io_uring: Revert "io_uring: io_req_complete_post should defer if available"
-Date:   Fri, 25 Nov 2022 02:34:12 -0800
-Message-ID: <20221125103412.1425305-4-dylany@meta.com>
-X-Mailer: git-send-email 2.30.2
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com
 In-Reply-To: <20221125103412.1425305-1-dylany@meta.com>
 References: <20221125103412.1425305-1-dylany@meta.com>
+Subject: Re: (subset) [PATCH for-next 0/3] io_uring: completion cleanups
+Message-Id: <166938201711.7977.7521431805922797296.b4-ty@kernel.dk>
+Date:   Fri, 25 Nov 2022 06:13:37 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: aDxxcv5B4od95rEL0Rb7Z0nOyfvYaf_V
-X-Proofpoint-GUID: aDxxcv5B4od95rEL0Rb7Z0nOyfvYaf_V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-25_02,2022-11-25_01,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-28747
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is not needed, as everywhere that calls io_req_complete_post
-already knows it will not be deferring.
+On Fri, 25 Nov 2022 02:34:09 -0800, Dylan Yudaken wrote:
+> A couple of tiny cleanups and 1 revert. I think the revert may be neater
+> if you just drop it from your tree.
+> 
+> Patch 1: small cleanup removing a not-needed
+> Patch 2: spelling fix
+> Patch 3: I think I merged this badly, or at least misunderstood the recent
+> changes. It was not needed, and confuses the _post suffix with also deferring.
+> 
+> [...]
 
-This reverts commit 8fa737e0de7d3c4dc3d7cb9a9d9a6362d872c3f3.
+Applied, thanks!
 
-Signed-off-by: Dylan Yudaken <dylany@meta.com>
----
- io_uring/io_uring.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+[1/3] io_uring: remove io_req_complete_post_tw
+      commit: 27f35fe9096b183d45ff6f22ad277ddf107d8428
+[2/3] io_uring: spelling fix
+      commit: 10d8bc35416d9e83ffe9644478756281c7bd4f52
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c1e84ef84bea..d9c9e347346d 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -908,9 +908,7 @@ static void __io_req_complete_post(struct io_kiocb *r=
-eq)
-=20
- void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- {
--	if (issue_flags & IO_URING_F_COMPLETE_DEFER) {
--		io_req_complete_defer(req);
--	} else if (!(issue_flags & IO_URING_F_UNLOCKED) ||
-+	if (!(issue_flags & IO_URING_F_UNLOCKED) ||
- 	    !(req->ctx->flags & IORING_SETUP_IOPOLL)) {
- 		__io_req_complete_post(req);
- 	} else {
---=20
-2.30.2
+Best regards,
+-- 
+Jens Axboe
+
 

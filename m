@@ -2,114 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFBB63A4EA
-	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 10:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A3963A5CC
+	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 11:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230141AbiK1J1V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Nov 2022 04:27:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52050 "EHLO
+        id S230177AbiK1KNh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Nov 2022 05:13:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230087AbiK1J1S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 04:27:18 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9055518E2E;
-        Mon, 28 Nov 2022 01:27:14 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20221128092712euoutp0261173c1cabdabfbf147a5c7e04f03aa1~rtXxdPMls2891228912euoutp02-;
-        Mon, 28 Nov 2022 09:27:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20221128092712euoutp0261173c1cabdabfbf147a5c7e04f03aa1~rtXxdPMls2891228912euoutp02-
+        with ESMTP id S229911AbiK1KNg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 05:13:36 -0500
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FBE113E3B;
+        Mon, 28 Nov 2022 02:13:34 -0800 (PST)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20221128101332euoutp01fdb6fb00c4c9f29fc8476c5086890a62~ruAOvHNk23166731667euoutp01Y;
+        Mon, 28 Nov 2022 10:13:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20221128101332euoutp01fdb6fb00c4c9f29fc8476c5086890a62~ruAOvHNk23166731667euoutp01Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1669627632;
-        bh=jlmtysTo2zXH1bzRY6C5IgZ1Ep13550z9Ybaw+sDGwA=;
+        s=mail20170921; t=1669630412;
+        bh=qMvlhXPd4Uz2aVO//JVo8dPMm6K+lJu+nwCb764lyOs=;
         h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=IzEwcP+GWafS0wzAmkVZGDgg1d+mP8Q9OccfNl3ovNAxEDuT/kgyEag2fEWl1QIFD
-         5jOL/dKB1SZXUCl+a5btJE4bIRjT4+fkJubGGukGvxMvP5O4RMkrfQS2R48EGBhLJ+
-         nG2L0SHNA4sQ3c94k35Qm1GbuANTNfGgdWrPUViw=
+        b=J4hjL3cbfRW/RZjltKquY/LIafVIKrccbIBn0l/w9v6JukAdsAHdnPiC7GtkmKRX6
+         LixABIpmq5o/TPqc2UTwOkQ+BXFR7H8FnatxempoWr7Q53aHADgNWgjrpRe5IF5XFr
+         4O8mri9gFULboleVwdcRRRF1zOdqBXySNSi6R+LU=
 Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20221128092712eucas1p190431d9a53f883f1fbff25bd3115f049~rtXxSSe_O3050730507eucas1p14;
-        Mon, 28 Nov 2022 09:27:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3F.7B.10112.0FE74836; Mon, 28
-        Nov 2022 09:27:12 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221128092712eucas1p21911bd6c1780f59bfc923f4e7e4f2ba6~rtXw6dl2Z3263332633eucas1p2V;
-        Mon, 28 Nov 2022 09:27:12 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20221128101332eucas1p2eee67107433a9481fe439c89d4ea531d~ruAOhrL171104411044eucas1p2J;
+        Mon, 28 Nov 2022 10:13:32 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 32.C7.10112.CC984836; Mon, 28
+        Nov 2022 10:13:32 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20221128101332eucas1p1e9a55da84f95426b47d238990f5f88e3~ruAOGTf_c0914109141eucas1p14;
+        Mon, 28 Nov 2022 10:13:32 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221128092712eusmtrp163775f6450cd3d9349cc04f41b2e0cfe~rtXw5tFfY1456814568eusmtrp1X;
-        Mon, 28 Nov 2022 09:27:12 +0000 (GMT)
-X-AuditID: cbfec7f4-cf3ff70000002780-3e-63847ef0a82a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D1.07.09026.FEE74836; Mon, 28
-        Nov 2022 09:27:11 +0000 (GMT)
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221128101332eusmtrp2d2053f00a72f4a52cfa1c490d5122ec1~ruAOFn2pI1566115661eusmtrp2t;
+        Mon, 28 Nov 2022 10:13:32 +0000 (GMT)
+X-AuditID: cbfec7f4-d09ff70000002780-18-638489cc21e3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id ED.50.09026.BC984836; Mon, 28
+        Nov 2022 10:13:32 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221128092711eusmtip17e55abe82590d56e4184e6c510f882df~rtXwvLhYl2152721527eusmtip1-;
-        Mon, 28 Nov 2022 09:27:11 +0000 (GMT)
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20221128101331eusmtip27ef299cd3571d4d093df7e29fa48ed68~ruAN4aD1i0777707777eusmtip2d;
+        Mon, 28 Nov 2022 10:13:31 +0000 (GMT)
 Received: from localhost (106.210.248.49) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Mon, 28 Nov 2022 09:27:11 +0000
-Date:   Mon, 28 Nov 2022 10:27:09 +0100
+        Mon, 28 Nov 2022 10:13:31 +0000
+Date:   Mon, 28 Nov 2022 11:13:29 +0100
 From:   Joel Granados <j.granados@samsung.com>
-To:     Paul Moore <paul@paul-moore.com>
-CC:     <mcgrof@kernel.org>, <ddiss@suse.de>, <joshi.k@samsung.com>,
-        <ming.lei@redhat.com>, <linux-security-module@vger.kernel.org>,
-        <axboe@kernel.dk>, <io-uring@vger.kernel.org>
-Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
-Message-ID: <20221128092709.5rq27tasnyek5ych@localhost>
+To:     Ming Lei <ming.lei@redhat.com>
+CC:     Paul Moore <paul@paul-moore.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kanchan Joshi <joshi.k@samsung.com>, <ddiss@suse.de>,
+        <linux-security-module@vger.kernel.org>, <io-uring@vger.kernel.org>
+Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
+ implement the ioctl op convention
+Message-ID: <20221128101329.lcn3bimihmtwsqqm@localhost>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="xd7levmh2jfxsrdl"
+        protocol="application/pgp-signature"; boundary="azktuxapv6mevsy2"
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTs26x+6TSbPyQg7y0j=gLCc=_GPgmiUgA34wfxmakvZQ@mail.gmail.com>
+In-Reply-To: <Y3zW02nH1LQhb/qz@T590>
 X-Originating-IP: [106.210.248.49]
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WSf0yMcRzH973n6em53NnTVe6jMC5CncLC+ZUfs7nYxBijGbfziHVdueuU
-        /JhKRrMcp8URdwvVpZNKu2oubpZxuFYiP9pxXbJK5coIKz09GZv/3p/X+/Pe9/PeviQmeO4V
-        SO5XJtMqpUwhInzwqvpBx5y+Yyfkc1vc/pKS1rOE5OtwHi7pyXqOS/rOuAhJi7YdSWy6TI7k
-        7fk8fKW3tOmZRlpuOk1IS+99QtJeazMhrbAflvaXT9lI7PBZtodW7D9IqyKidvvsu9/cjCW1
-        iVOv9j0gjqPG4GzEJYGKhE7tCywb+ZACqgjBgLWLww4DCDo8uTg79CNocDbhfyI30xsI1ihE
-        cO9XN8EYo1tv82JZo3JED3dzGAOnZoDzVj7GaIISg6P73aj2p6ZDQfttxAQwqhyB52e2N2P4
-        UdHw/oR+5DmS5FOLoNQyh8F8yhceX3KPXoFRqfCs4qoXs4JRQVA4RDKYS20C50M3Yg8Vwa0W
-        K8Hqo/Ck8s1oNaAuc8GRfsGbNdbAx/6OsYAfdD6qHOOTwK47M9Y4Hqov1GCsTgL941yCeReo
-        pZDzVMHiVdBafZ/D4vHQ8tmXvXI8nK/Kw1jMh1MnBex2CFgy7iItCtb/00v/Ty/9314sFoOh
-        1kP8h8PgprELY/VyMJt7cQPyNiEhrVEnxNHq+Uo6JVwtS1BrlHHh8sSEcjTyzexDjwYsqLDz
-        S7gNcUhkQ9NHwq6ykgYUiCsTlbTInz8bZcoF/D2yQ2m0KnGXSqOg1TYUROIiIZ+4GCoXUHGy
-        ZDqeppNo1R+XQ3IDj3NCphZ1+OZP+3HD69oyP6PoHJoorltrWF5X3BuX5Z62+k3izJdLznFj
-        6gXSKrPLs7lrxcNvufKi7QcWmDJ0whiDq27ni57rU33b3g8euOE+ojVJDOag2pWd7Ys1Tn6T
-        eeurfE/aLKMqxzgcFq0zxhfycgrKYosHMq4c3L67eNypS5nZ61t3xtcO1g61Bn+4bCO77N+r
-        QwN+rNJGTw4IS9aVvMYXlvCEW3jphyPd+Q5LTERUbGmj/eVJcZZqqCdi7zerwmWNbFsS9YTE
-        UzyvyMand4+lBAVa1u0yEQEbqqQhMucd3pHFZdHCtPkO//rTNbFLF07oTuUFF2DbeDUV6VST
-        CFfvk80LxVRq2W9ILv944QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xu7rv61qSDd6+sbRYfbefzeLr/+ks
-        Fu9az7FYfOh5xGZxY8JTRotDk5uZLG5Pms7iwO5x+Wypx6ZVnWwea/e+YPR4v+8qm8fm09Ue
-        nzfJBbBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl
-        6GUcvHSQveChTsXZzi2MDYwXlLsYOTkkBEwkljVeYOti5OIQEljKKPF8z3pmiISMxKcrH9kh
-        bGGJP9e6oIo+Mkp8fPqWHcLZAtSxejoLSBWLgKrE/TVzwbrZBHQkzr+5A2aLCKhILH66nhGk
-        gVlgE6PEp99dYGOFBTwlHrTMAmrm4OAVMJdYu0MXYmgXk8TyLpB1nEBxQYmTM5+ALWAWKJPo
-        ntXMBFLPLCAtsfwfB0iYUyBQ4v6RJ4wQlypJrLmxjw3CrpX4/PcZ4wRG4VlIJs1CMmkWwiSI
-        sJbEjX8vMYW1JZYtfM0MYdtKrFv3nmUBI/sqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwMje
-        duznlh2MK1991DvEyMTBeIhRBajz0YbVFxilWPLy81KVRHg1GZuThXhTEiurUovy44tKc1KL
-        DzGaAkNxIrOUaHI+MOXklcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFw
-        SjUwmQrXOZbEioYdYhevmTSrzFrLs7qtOqC/Mm/Z3Oca1Re9o6u7EkpelLlmn+t3O7Bw5/fj
-        j+7rPf5qdMe/uy7r5EGdqpvJHx0dOH4H/7kX+qPuEg9TVOvBkAbRztmvS4KSl31z3R8y+eTm
-        lXO9Onuci1KP36l+rW9iY2FjtNPE+51y7VN1S0nu/xP/MNcvPfI5I0dq8rnZ4Ru6Mt+w6XVM
-        fGgWK9odv+gtZ5Imt451ku7G4v2cSd9nHjW5a95tyfplVoRJ6kuBU+/mXl7Bx7qsazJf1Hs/
-        v+7+T1anbkn/0GYIOXp75oMl4VXXQ9dLRN3nnrZn9RMNm67Lk748fRY9JycwIYnjvkL662Ij
-        7/NKLMUZiYZazEXFiQAjtkKigQMAAA==
-X-CMS-MailID: 20221128092712eucas1p21911bd6c1780f59bfc923f4e7e4f2ba6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7djPc7pnOluSDRrfSlt8/T+dxeJd6zkW
+        iw89j9gsbkx4ymhxaHIzk8XtSdNZHNg8Nq3qZPNYu/cFo8f7fVfZPDafrvb4vEkugDWKyyYl
+        NSezLLVI3y6BK2PTwVmsBec1K97PnMXSwLhYsYuRk0NCwERixeH37F2MXBxCAisYJbr7bjGB
+        JIQEvjBKnG11gEh8ZpR4PuEaI0zHmidtjBCJ5YwS874+Z4ar2tc5kQXC2cIoMen2SlaQFhYB
+        VYmX3bPA5rIJ6Eicf3OHGcQWEVCSuHt3NdhyZoGTjBJdHz6wgCSEBXIkrm57wwZi8wqYS3Rf
+        OAVlC0qcnPkErIZZoEJiyek9QAs4gGxpieX/OEDCnAIqEp/OTWOHOFVJYs2NfWwQdq3EqS0Q
+        v0kITOaUOPQlCcJ2kVjw7iIrhC0s8er4FqheGYn/O+dD1WdL7JyyixnCLpCYdXIqG8haCQFr
+        ib4zORBhR4n2+ZsZIcJ8EjfeCkIcyScxadt0Zogwr0RHmxBEtZrEjqatjBMYlWcheWsWkrdm
+        IbwFEdaRWLD7ExuGsLbEsoWvmSFsW4l1696zLGBkX8UonlpanJueWmyUl1quV5yYW1yal66X
+        nJ+7iRGYuk7/O/5lB+PyVx/1DjEycTAeYlQBan60YfUFRimWvPy8VCURXk3G5mQh3pTEyqrU
+        ovz4otKc1OJDjNIcLErivGwztJKFBNITS1KzU1MLUotgskwcnFINTFt4rzFJtLzhys6M9d+g
+        +IDnzXsxkZ8bVgcwOTwRy7nOqOOUzPaz0p/p/mPJlkdnjqfnPnq0RvxD3tRYlW//nwd4OW4o
+        Vkh5wrZJeh6vQJz/yQ3mCTGnODdP6X96c/tFP8/SBZpPd9ZLf3++quRE6Y9FyTPNklI/TF3J
+        3/J+yqrzvkk8682fbq+pOpyaqzX/+vOV+/f++1V3wG/V5ssVnyUj+19d3pS95FvK5b9Wt08E
+        qH1tfsC+RzRNylgyxE9wZfjLdafeuF5K2jk1/2Tuvf7Ln108eFOn2RpbLdwVNMdU44nQgcWT
+        WG0fLJ9l4cjVsvPGTrlZLxeaLWl6d35K+xcnAyWeX2J1WmdNjRnevPdWYinOSDTUYi4qTgQA
+        n52B9tgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xe7pnOluSDb63MFp8/T+dxeJd6zkW
+        iw89j9gsbkx4ymhxaHIzk8XtSdNZHNg8Nq3qZPNYu/cFo8f7fVfZPDafrvb4vEkugDVKz6Yo
+        v7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+PfvgdsBWc1
+        K9ac3MvawLhQsYuRk0NCwERizZM2xi5GLg4hgaWMEscX72OHSMhIfLryEcoWlvhzrYsNougj
+        o8TPW01sIAkhgS2MEgeWB4LYLAKqEi+7ZzGB2GwCOhLn39xhBrFFBJQk7t5dzQ7SzCxwklGi
+        68MHFpCEsECOxNVtb8AG8QqYS3RfOAW1YSOLxIqVJ5kgEoISJ2c+AWrgAOouk2jsroYwpSWW
+        /+MAqeAUUJH4dG4a1KFKEmtu7GODsGslPv99xjiBUXgWkkGzEAbNQhgEUsEsoCVx499LJgxh
+        bYllC18zQ9i2EuvWvWdZwMi+ilEktbQ4Nz232EivODG3uDQvXS85P3cTIzCGtx37uWUH48pX
+        H/UOMTJxMB5iVAHqfLRh9QVGKZa8/LxUJRFeTcbmZCHelMTKqtSi/Pii0pzU4kOMpsBAnMgs
+        JZqcD0wueSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJJanZqakFqUUwfUwcnFINTDMrnSTm
+        z18nL/ho8e30vkyufUreQTc/zdAK4BbycT9257JfJ9+rl6u4NVe9mhA366qjk3iftd9s7Rb1
+        tzObZ57//KRsy6cq9Y3nl29Ztta7rf9ue1rFquP8VXpq0qe/5N5O6q1cfu5AQqSx2rPLwfFM
+        r7VOHeApfDRh6mpvzoKGL5qr38yQmfcvKjzxdnrLjpWTegtnrZx15suVF1ZMHR1rWLVqM/3M
+        ZT4yu6iG7SvUUWV9tmTt6m3Kd6sv2PsuOc/E6NxgyP3Lu3bLfNWV+7fNaBMUvpYcN9/fJvdl
+        9YacUxKhVlOqr/7d07NofuI+5p+f7TInHdaas/+tjPoXrsB31xx953+9OPWD1MOi9AVKLMUZ
+        iYZazEXFiQB6lUXKdgMAAA==
+X-CMS-MailID: 20221128101332eucas1p1e9a55da84f95426b47d238990f5f88e3
 X-Msg-Generator: CA
-X-RootMTR: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
+X-RootMTR: 20221116125431eucas1p1dfd03b80863fce674a7c662660c94092
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20221122103536eucas1p28f1c88f2300e49942c789721fe70c428
-References: <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
-        <20221122103144.960752-1-j.granados@samsung.com>
-        <20221122103144.960752-2-j.granados@samsung.com>
-        <CAHC9VhTs26x+6TSbPyQg7y0j=gLCc=_GPgmiUgA34wfxmakvZQ@mail.gmail.com>
+X-CMS-RootMailID: 20221116125431eucas1p1dfd03b80863fce674a7c662660c94092
+References: <20221116125051.3338926-1-j.granados@samsung.com>
+        <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
+        <20221116125051.3338926-2-j.granados@samsung.com>
+        <20221116173821.GC5094@test-zns>
+        <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
+        <20221117094004.b5l64ipicitphkun@localhost>
+        <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
+        <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
+        <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
+        <Y3zW02nH1LQhb/qz@T590>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
@@ -120,153 +128,119 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
---xd7levmh2jfxsrdl
+--azktuxapv6mevsy2
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 23, 2022 at 04:02:02PM -0500, Paul Moore wrote:
-> On Tue, Nov 22, 2022 at 5:35 AM Joel Granados <j.granados@samsung.com> wr=
+On Tue, Nov 22, 2022 at 10:04:03PM +0800, Ming Lei wrote:
+> On Mon, Nov 21, 2022 at 04:05:37PM -0500, Paul Moore wrote:
+> > On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wr=
 ote:
-> >
-> > Signed-off-by: Joel Granados <j.granados@samsung.com>
-> > ---
-> >  drivers/nvme/host/core.c      | 10 ++++++++++
-> >  include/linux/fs.h            |  2 ++
-> >  include/linux/lsm_hook_defs.h |  3 ++-
-> >  include/linux/security.h      | 16 ++++++++++++++--
-> >  io_uring/uring_cmd.c          |  3 ++-
-> >  security/security.c           |  5 +++--
-> >  security/selinux/hooks.c      | 16 +++++++++++++++-
-> >  7 files changed, 48 insertions(+), 7 deletions(-)
+> > > On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
+> > > > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.c=
+om> wrote:
+> > > > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
+> > > >
+> > > > ...
+> > > >
+> > > > > > * As we discussed previously, the real problem is the fact that=
+ we are
+> > > > > > missing the necessary context in the LSM hook to separate the
+> > > > > > different types of command targets.  With traditional ioctls we=
+ can
+> > > > > > look at the ioctl number and determine both the type of
+> > > > > > device/subsystem/etc. as well as the operation being requested;=
+ there
+> > > > > > is no such information available with the io_uring command
+> > > > > > passthrough.  In this sense, the io_uring command passthrough is
+> > > > > > actually worse than traditional ioctls from an access control
+> > > > > > perspective.  Until we have an easy(ish)[1] way to determine the
+> > > > > > io_uring command target type, changes like the one suggested he=
+re are
+> > > > > > going to be doomed as each target type is free to define their =
+own
+> > > > > > io_uring commands.
+> > > > >
+> > > > > The only thing that comes immediately to mind is that we can have
+> > > > > io_uring users define a function that is then passed to the LSM
+> > > > > infrastructure. This function will have all the logic to give rel=
+ative
+> > > > > context to LSM. It would be general enough to fit all the possibl=
+e commands
+> > > > > and the logic would be implemented in the "drivers" side so there=
+ is no
+> > > > > need for LSM folks to know all io_uring users.
+> > > >
+> > > > Passing a function pointer to the LSM to fetch, what will likely be
+> > > > just a constant value, seems kinda ugly, but I guess we only have u=
+gly
+> > > > options at this point.
+> > >
+> > > I am not sure if this helps yet, but queued on modules-next we now ha=
+ve
+> > > an improvement in speed of about 1500x for kallsyms_lookup_name(), and
+> > > so symbol lookups are now fast. Makes me wonder if a type of special
+> > > export could be drawn up for specific calls which follow a structure
+> > > and so the respective lsm could be inferred by a prefix instead of
+> > > placing the calls in-place. Then it would not mattter where a call is
+> > > used, so long as it would follow a specific pattern / structure with
+> > > all the crap you need on it.
+> >=20
+> > I suspect we may be talking about different things here, I don't think
+> > the issue is which LSM(s) may be enabled, as the call is to
+> > security_uring_cmd() regardless.  I believe the issue is more of how
+> > do the LSMs determine the target of the io_uring command, e.g. nvme or
+> > ublk.
+> >=20
+> > My understanding is that Joel was suggesting a change to the LSM hook
+> > to add a function specific pointer (presumably defined as part of the
+> > file_operations struct) that could be called by the LSM to determine
+> > the target.
+> >=20
+> > Although now that I'm looking again at the file_operations struct, I
+> > wonder if we would be better off having the LSMs inspect the
+> > file_operations::owner field, potentially checking the module::name
+> > field.  It's a little painful in the sense that it is potentially
+> > multiple strcmp() calls for each security_uring_cmd() call, but I'm
+> > not sure the passed function approach would be much better.  Do we
+> > have a consistent per-module scalar value we can use instead of a
+> > character string?
 >=20
-> ...
->=20
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index f553c370397e..9fe3a230c671 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -21,6 +21,8 @@
-> >   *  Copyright (C) 2016 Mellanox Technologies
-> >   */
-> >
-> > +#include "linux/nvme_ioctl.h"
-> > +#include "linux/security.h"
-> >  #include <linux/init.h>
-> >  #include <linux/kd.h>
-> >  #include <linux/kernel.h>
-> > @@ -6999,18 +7001,30 @@ static int selinux_uring_sqpoll(void)
-> >   * IORING_OP_URING_CMD against the device/file specified in @ioucmd.
-> >   *
-> >   */
-> > -static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
-> > +static int selinux_uring_cmd(struct io_uring_cmd *ioucmd,
-> > +       int (*uring_cmd_sec)(struct io_uring_cmd *ioucmd, struct securi=
-ty_uring_cmd*))
-> >  {
->=20
-> As we discussed in the previous thread, and Casey mentioned already,
-> passing a function pointer for the LSM to call isn't a great practice.
-> When it was proposed we hadn't really thought of any alternatives, but
-> if we can't find a good scalar value to compare somewhere, I think
-> inspecting the file_operations::owner::name string to determine the
-> target is preferable to the function pointer approach described here.
+> In future there may be more uring_cmd kernel users, maybe we need to
+> consider to use one reserved field in io_uring_sqe for describing the
+> target type if it is one must for security subsystem, and this way
+> will be similar with traditional ioctl which encodes this kind of
+> info in command type.
+This is of course another option. I was a bit reluctant to start the
+discussion with this implementation, but now that you have brought it up
+I can come up with an initial RFC and we can add it to the mix of
+possibilities.
 
-We don't only need to determine the target; we need the target to
-specify the current operation to the LSM infra so it can do its thing.
-
-To me, if we just identify, we would need to have some logic in the
-uring_cmd that goes through all the possible uring users to execute
-their security specific functions. (Paul please correct me if I'm
-misunderstanding you). Something like this
-
-switch (uring_user_type(req->file->f_op->name)):
-case nvme:
-  nvme_specific_sec_call();
-case ublk:
-  ublk_specific_sec_call();
-case user3:
-  user3_specific_sec_call();
-=2E.... etc...
-
-This is not scalable because there would need to be uring user code in
-uring and that makes no sense as uring is agnostic to whatever is using
-it.
-
+Would you just add it to the end of the struct? or what reserved field
+are you referring to?
 >=20
-> Although I really would like to see us find, or create, some sort of
-> scalar token ID we could use instead.  I fear that doing a lot of
-> strcmp()'s to identify the uring command target is going to be a
-> problem (one strcmp() for each possible target, multiplied by the
-> number of LSMs which implement a io_uring command hook).
-Agreed, depending on string compare does not scale.
+>=20
+> Thanks,
+> Ming
+>=20
 
->=20
-> >         struct file *file =3D ioucmd->file;
-> >         struct inode *inode =3D file_inode(file);
-> >         struct inode_security_struct *isec =3D selinux_inode(inode);
-> >         struct common_audit_data ad;
-> > +       const struct cred *cred =3D current_cred();
-> > +       struct security_uring_cmd sec_uring =3D {0};
-> > +       int ret;
-> >
-> >         ad.type =3D LSM_AUDIT_DATA_FILE;
-> >         ad.u.file =3D file;
-> >
-> > +       ret =3D uring_cmd_sec(ioucmd, &sec_uring);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       if (sec_uring.flags & SECURITY_URING_CMD_TYPE_IOCTL)
-> > +               return ioctl_has_perm(cred, file, FILE__IOCTL, (u16) io=
-ucmd->cmd_op);
->=20
-> As mentioned previously, we'll need a SELinux policy capability here
-> to preserve the SECCLASS_IO_URING/IO_URING__CMD access check for
-> existing users/policies.  I expect the logic would look something like
-> this (of course the details are dependent on how we identify the
-> target module/device/etc.):
->=20
->   if (polcap_foo && uring_tgt) {
->     switch (uring_tgt) {
->     case NVME:
->       return avc_has_perm(...);
->     default:
->       WARN();
->       return avc_has_perm(SECCLASS_IO_URING, IO_URING__CMD);
->     }
->   } else
->     return avc_has_perm(SECCLASS_IO_URING, IO_URING__CMD);
->=20
-This is selinux specific. right? I ask because I want to have it
-strait in my head what is LSM generic and what is needed for a specific
-implementation of an LSM.
-
-> >         return avc_has_perm(&selinux_state, current_sid(), isec->sid,
-> >                             SECCLASS_IO_URING, IO_URING__CMD, &ad);
-> > +
-> >  }
-> >  #endif /* CONFIG_IO_URING */
->=20
-> --=20
-> paul-moore.com
-
---xd7levmh2jfxsrdl
+--azktuxapv6mevsy2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmOEfusACgkQupfNUreW
-QU9mwgv+McQu6DKFwvGb/nN+1SlCtuoJUyzA7TaNWmFSummwUdPvaaU31AxPOI5U
-uVSVPqeqG6yq/QeB4cUEryhQ1ofDj9xfbBlwdZ/MKfc3APya06PyKK/4OSnVFhb+
-Y/qGXWmoq/IVmqxT0F0vKkA8slPhRpua6jbsvamFyrn5wZ6taDM+X9g/l4vDf/ep
-ehR9j5uk9OmrCTVR8m1SwUDIzu0q/2JoueH1AtASx5oYPnR0cfcj5uSEpSlkyAQy
-4/MKODxukZ6JCXwEr2rdmKffH8k5kQC6SelMD4PssSSxXtrGRHuvPEkCECg6vY4E
-ORuBKrD3AqjX9pqKOg0YZT7RA7sDHVyMz3GReBH5sF0C8IeM5rqQVyMPXvhyRCgl
-8UIJPPXwM9Bm/8jy/TfDtI+DSjY+F/3hSoVjVzop3JdKLIDUlzBMjDv3kGeHAbQ8
-4pJ9U3H8MJd0qx9rQZLzMSQDNP+LxLaTzM4kkNIKJujC1oWxn/X3D5gU2WTWTo2f
-1OHVmmqt
-=1Xku
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmOEiccACgkQupfNUreW
+QU92Dgv/ScMT3mr8AvxoRo5sZiP3f3dtxeH205PV7agYJKInt/x5Tn00YZKj3Xzh
+lr2It6u/uyR8SpB/nLOHdVszR8OqdrANZdmEWEKX9uGfHNeBuCDP/ZX84FKr+Kio
+SD4hP2U7VjLnV13o8HoP1W9TImsKBVG8q9Wyu23QgF8k5S1G0HVHl/0s5/xda+JM
+Xwsopo06SM9p4bpa/HV28UZQY5RGjQSQyw1/CmfgH+wUm7glHf0WT/MkfIJP5Om0
+Bx5/bHYwzJkGy4+IhjD6sCJsd4oki85zjIeagr2VPgU9INcqTyhIMCBRK4nROjBa
+1YilhKdY8PkczE3tKv/nsZyd7NjIiZ3AcY1Joy3+Vgnygpv8mdLZjQKmEpzi9qA1
+NOEXxvX9UEW6WPYGKAueZbyfSYu632wirb+ANLEQOlILRunD/1LhFi+uCAALpyeR
+LNOMD2fRwl5a6qrWe9jyJ5h4WWMD2KtrSze44DGSeW5uvj+0qylFHPzceu9oDhyE
+yIrMj893
+=N71E
 -----END PGP SIGNATURE-----
 
---xd7levmh2jfxsrdl--
+--azktuxapv6mevsy2--

@@ -2,116 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6734063AAA4
-	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 15:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B7463B2ED
+	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 21:23:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232416AbiK1OPv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Nov 2022 09:15:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
+        id S233055AbiK1UXE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Nov 2022 15:23:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232116AbiK1OPt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 09:15:49 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A8E2188C
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 06:15:46 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so14123719pjs.4
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 06:15:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfUJYq7G47MzzTuau0KWiEvHR/P0v0C3Vt90Nu0s9w4=;
-        b=bMPU2L8vsLHfGnSnuq+zbeiIr0GzsIaKO9dg1OTewlDKA50QM1ylIalbtux+MTiwvD
-         kOHSKE/gHxEV1Mk0fxREwOJeDE0YRm9D7XgpYv7vezAup7ngX08A4uhuYRbcaYa/oOxx
-         1dqT1+dA7+PbjqUHUC2nH3PD1uLabsWVw92EjwsZ5Wx6NSaWVtIlGuEB0No36TbVx+m7
-         OCsrvehTR9mYfTZfIjGRbly2SMKC6mqRhgaj9j/dQt1rQKnXVsNOXS0pxTZNo5V07Rc2
-         RW2KemvFyAMermOywlDEgl/3M7Itt6Qfp0yQdgRfb+kN0JcIc/PfI2yNAsugyIsrlKRY
-         YBUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HfUJYq7G47MzzTuau0KWiEvHR/P0v0C3Vt90Nu0s9w4=;
-        b=7XlRZkmgIhWnJs2NZ+P4Jwv/RqeWz78W5zaqScp6gZCOzXH+5pnV/YCGL84cqsXnGo
-         sUfixGfJtcDo61lxtI8J+DLtfN1QB9CtWr5HcNvJegJ3jcNiak+zY5dMqEdpRt4ObXpl
-         BN5xJOAGODAu6rJoODyDZHuwVYhyUdRbo48Gz+ADPMW/0Ur87sQyIdIre56AnDs1jjmq
-         ALsIEuhVVZwr9s+H1mAUj9JGI19PKb0zlWyzuDx7b48eGw+6C/u/dmrYgVAVh9Pj2DZb
-         O1HudiKb9C/UPPfa3zwXXqWfa/NtmC1KRL4Zj1dsuKChuVRAIKjkHABzJ5ugOc8OPjoI
-         AA/A==
-X-Gm-Message-State: ANoB5pkZsxHBAuUlNeRzh23/npV8F3twC6NyjmRCANFOXxC7gb/Ye/FH
-        2RY3B+do+WbeKPVth4eql1KjmGu+ZyAtlsM4
-X-Google-Smtp-Source: AA0mqf4RlfduB70qFQfkFKxWY27m/b1gGNmiA1/yu87ZLAAWgKKUfcAaK/s4FdnIWc3vhomHL7d34w==
-X-Received: by 2002:a17:902:e886:b0:185:4ec3:c703 with SMTP id w6-20020a170902e88600b001854ec3c703mr33291278plg.165.1669644945553;
-        Mon, 28 Nov 2022 06:15:45 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v2-20020a626102000000b005609d3d3008sm8331640pfb.171.2022.11.28.06.15.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Nov 2022 06:15:44 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
+        with ESMTP id S233180AbiK1UXA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 15:23:00 -0500
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FE01181F;
+        Mon, 28 Nov 2022 12:22:56 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 896095C0121;
+        Mon, 28 Nov 2022 15:22:53 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 28 Nov 2022 15:22:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1669666973; x=1669753373; bh=5odtQpxcpL
+        RpIAgNgVmpr3RoZXhTyrR8tVbx14N+8PU=; b=r6+ws4x/8zq2djKuDUXM5q4so1
+        aEFNQZ/nzaswcg0swUyZT6DRqMYW5weYZ0lvAB+ydTXXlkJncGbZpO9gBgw4Ixx5
+        UxGxaOEOtH8amu0ml8oVihpibVdzDNFgF6yQE49co7h07GcoC9gkK1E1js5jGHyl
+        MPwiIS/OCAsC8DXjZnek6KzM7/WSe3ghUmgAwgW3qiaiUi2RcCRbbgWkjel5LJZj
+        MmYCWEyeLQSQpSM++xK/Taw3CPsmZtCEUs8KQep64EkRrQAa+v//V8a2e567VOrm
+        RgQFS3XB5L5m9MfVzuGADJyCUIxyEXrInX96k/JIZE2tDbBVfUZMj8hBu0Bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1669666973; x=1669753373; bh=5odtQpxcpLRpIAgNgVmpr3RoZXhT
+        yrR8tVbx14N+8PU=; b=qcykueiSHiIG8n+OWglwiHoTk2YV1fOCMiO45vI1j49g
+        G4zCnIwDWdhTQK4tfFhUyB8ulTlILDL+ISTJFRQpjgtMVSUpx56DCL25BxjsQDvs
+        4zkTYc/tuC0p3lB9cPSph+NgYL2JX6jH0rBq6aP1d8bOjoMsNDGGEH7ekM9BApEp
+        b3WB+iwyyMMov4QeCIVOw9yt/Jz56ob9mdhuQtqVDxsENhxJgsYA9IASW5Pqewyt
+        9YIcN1UzlAwe/ys534hH9Gg5HxenL4bLJ6GsaylscotnhsbsPZFms24aHX2f2vU2
+        Re+gWot1wj/DSPsFpXBFSMb5VG+G4ujpHpb9cuX25g==
+X-ME-Sender: <xms:nRiFY02kIez_ftXexQpZHsuIWQx-UEJn28q7_c-G65RdbheCmHKaiQ>
+    <xme:nRiFY_E-4kjO4BOoeZDcy-2x2HMTodG5OS2O-OlL5H7CTdkBM2HpAuRkK0_M4hSwM
+    -ZFHQA1Kekuu-khCmM>
+X-ME-Received: <xmr:nRiFY86qbUg3iwR39QiO6KvjqyzMhJx_jt9NbugpzJUxENH8GOa_orVXdD5JYgjciOat-ygqK2W9E1NoN1BSy-KTPRxPnW1j_b6vP39H>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrjedvgddufeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghf
+    rghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrth
+    htvghrnhepveelgffghfehudeitdehjeevhedthfetvdfhledutedvgeeikeeggefgudeg
+    uedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    hhrhesuggvvhhkvghrnhgvlhdrihho
+X-ME-Proxy: <xmx:nRiFY9058ry0cZ9zJWp9wrYht6KSc4FtZXlCJSirk9Qx23Kqv7qAsw>
+    <xmx:nRiFY3H1Hk3_P5Z8xKuyfoI-AjNPKS8U71BdN5lIBgCblHfvfuFBBA>
+    <xmx:nRiFY2-jxGn6ccpn7G3t1AuEvnK9sfNALbSevDKI8pkzeA2M6g-P5A>
+    <xmx:nRiFY4MUUPM9imqXUIY5v_UEqF-KgNCw1-jImNe_ENdyVfhcSVyrAw>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Nov 2022 15:22:52 -0500 (EST)
+References: <20221121191437.996297-1-shr@devkernel.io>
+ <20221121191437.996297-3-shr@devkernel.io>
+ <6ab47920-7e13-cd67-76c8-2d4ca8a31fd5@gnuweeb.org>
+User-agent: mu4e 1.6.11; emacs 28.2.50
+From:   Stefan Roesch <shr@devkernel.io>
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Gilang Fachrezy <gilang4321@gmail.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        VNLX Kernel Department <kernel@vnlx.org>,
-        Dylan Yudaken <dylany@meta.com>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-        Muhammad Rizki <kiizuha@gnuweeb.org>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-In-Reply-To: <20221124162633.3856761-1-ammar.faizi@intel.com>
-References: <20221124162633.3856761-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing v2 0/8] Ensure we mark non-exported functions and variables as static
-Message-Id: <166964494429.5513.5606852896761842745.b4-ty@kernel.dk>
-Date:   Mon, 28 Nov 2022 07:15:44 -0700
+Cc:     Facebook Kernel Team <kernel-team@fb.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Olivier Langlois <olivier@trillion01.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netdev Mailing List <netdev@vger.kernel.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] io_uring: add api to set / get napi configuration.
+Date:   Mon, 28 Nov 2022 12:22:19 -0800
+In-reply-to: <6ab47920-7e13-cd67-76c8-2d4ca8a31fd5@gnuweeb.org>
+Message-ID: <qvqwedtmzv55.fsf@dev0134.prn3.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-28747
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,URIBL_BLACK
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 24 Nov 2022 23:28:53 +0700, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> 
-> Hi Jens,
-> 
-> This is a v2 revision.
-> 
-> This series is a -Wmissing-prototypes enforcement. -Wmissing-prototypes
-> is a clang C compiler flag that warns us if we have functions or
-> variables that are not used outisde the translation unit, but not marked
-> as static.
-> 
-> [...]
 
-Applied, thanks!
+Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
 
-[1/8] queue: Fix typo "entererd" -> "entered"
-      (no commit info)
-[2/8] queue: Mark `__io_uring_flush_sq()` as static
-      (no commit info)
-[3/8] test/io_uring_setup: Remove unused functions
-      (no commit info)
-[4/8] ucontext-cp: Remove an unused function
-      (no commit info)
-[5/8] tests: Mark non-exported functions as static
-      (no commit info)
-[6/8] ucontext-cp: Mark a non-exported function as static
-      (no commit info)
-[7/8] test/Makefile: Omit `-Wmissing-prototypes` from the C++ compiler flags
-      (no commit info)
-[8/8] github: Add `-Wmissing-prototypes` for GitHub CI bot
-      (no commit info)
+> On 11/22/22 2:14 AM, Stefan Roesch wrote:
+>> +static int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
+>> +{
+>> +#ifdef CONFIG_NET_RX_BUSY_POLL
+>> +	const struct io_uring_napi curr = {
+>> +		.busy_poll_to = ctx->napi_busy_poll_to,
+>> +	};
+>> +
+>> +	if (copy_to_user(arg, &curr, sizeof(curr)))
+>> +		return -EFAULT;
+>> +
+>> +	WRITE_ONCE(ctx->napi_busy_poll_to, 0);
+>> +	return 0;
+>> +#else
+>> +	return -EINVAL;
+>> +#endif
+>> +}
+>> +
+> I suggest allowing users to pass a NULL as the arg in case they
+> don't want to care about the old values.
+>
+> Something like:
+>
+>    io_uring_unregister_napi(ring, NULL);
+>
+> What do you think?
 
-Best regards,
--- 
-Jens Axboe
-
-
+Sounds good, i can make that change in the next version.

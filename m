@@ -2,120 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B7463B2ED
-	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 21:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B01663B445
+	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 22:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233055AbiK1UXE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Nov 2022 15:23:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36166 "EHLO
+        id S233721AbiK1Vel (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Nov 2022 16:34:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233180AbiK1UXA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 15:23:00 -0500
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FE01181F;
-        Mon, 28 Nov 2022 12:22:56 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 896095C0121;
-        Mon, 28 Nov 2022 15:22:53 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 28 Nov 2022 15:22:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
-        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1669666973; x=1669753373; bh=5odtQpxcpL
-        RpIAgNgVmpr3RoZXhTyrR8tVbx14N+8PU=; b=r6+ws4x/8zq2djKuDUXM5q4so1
-        aEFNQZ/nzaswcg0swUyZT6DRqMYW5weYZ0lvAB+ydTXXlkJncGbZpO9gBgw4Ixx5
-        UxGxaOEOtH8amu0ml8oVihpibVdzDNFgF6yQE49co7h07GcoC9gkK1E1js5jGHyl
-        MPwiIS/OCAsC8DXjZnek6KzM7/WSe3ghUmgAwgW3qiaiUi2RcCRbbgWkjel5LJZj
-        MmYCWEyeLQSQpSM++xK/Taw3CPsmZtCEUs8KQep64EkRrQAa+v//V8a2e567VOrm
-        RgQFS3XB5L5m9MfVzuGADJyCUIxyEXrInX96k/JIZE2tDbBVfUZMj8hBu0Bw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1669666973; x=1669753373; bh=5odtQpxcpLRpIAgNgVmpr3RoZXhT
-        yrR8tVbx14N+8PU=; b=qcykueiSHiIG8n+OWglwiHoTk2YV1fOCMiO45vI1j49g
-        G4zCnIwDWdhTQK4tfFhUyB8ulTlILDL+ISTJFRQpjgtMVSUpx56DCL25BxjsQDvs
-        4zkTYc/tuC0p3lB9cPSph+NgYL2JX6jH0rBq6aP1d8bOjoMsNDGGEH7ekM9BApEp
-        b3WB+iwyyMMov4QeCIVOw9yt/Jz56ob9mdhuQtqVDxsENhxJgsYA9IASW5Pqewyt
-        9YIcN1UzlAwe/ys534hH9Gg5HxenL4bLJ6GsaylscotnhsbsPZFms24aHX2f2vU2
-        Re+gWot1wj/DSPsFpXBFSMb5VG+G4ujpHpb9cuX25g==
-X-ME-Sender: <xms:nRiFY02kIez_ftXexQpZHsuIWQx-UEJn28q7_c-G65RdbheCmHKaiQ>
-    <xme:nRiFY_E-4kjO4BOoeZDcy-2x2HMTodG5OS2O-OlL5H7CTdkBM2HpAuRkK0_M4hSwM
-    -ZFHQA1Kekuu-khCmM>
-X-ME-Received: <xmr:nRiFY86qbUg3iwR39QiO6KvjqyzMhJx_jt9NbugpzJUxENH8GOa_orVXdD5JYgjciOat-ygqK2W9E1NoN1BSy-KTPRxPnW1j_b6vP39H>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrjedvgddufeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghf
-    rghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrth
-    htvghrnhepveelgffghfehudeitdehjeevhedthfetvdfhledutedvgeeikeeggefgudeg
-    uedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
-    hhrhesuggvvhhkvghrnhgvlhdrihho
-X-ME-Proxy: <xmx:nRiFY9058ry0cZ9zJWp9wrYht6KSc4FtZXlCJSirk9Qx23Kqv7qAsw>
-    <xmx:nRiFY3H1Hk3_P5Z8xKuyfoI-AjNPKS8U71BdN5lIBgCblHfvfuFBBA>
-    <xmx:nRiFY2-jxGn6ccpn7G3t1AuEvnK9sfNALbSevDKI8pkzeA2M6g-P5A>
-    <xmx:nRiFY4MUUPM9imqXUIY5v_UEqF-KgNCw1-jImNe_ENdyVfhcSVyrAw>
-Feedback-ID: i84614614:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 28 Nov 2022 15:22:52 -0500 (EST)
-References: <20221121191437.996297-1-shr@devkernel.io>
- <20221121191437.996297-3-shr@devkernel.io>
- <6ab47920-7e13-cd67-76c8-2d4ca8a31fd5@gnuweeb.org>
-User-agent: mu4e 1.6.11; emacs 28.2.50
-From:   Stefan Roesch <shr@devkernel.io>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Facebook Kernel Team <kernel-team@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Olivier Langlois <olivier@trillion01.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netdev Mailing List <netdev@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-Subject: Re: [PATCH v5 2/3] io_uring: add api to set / get napi configuration.
-Date:   Mon, 28 Nov 2022 12:22:19 -0800
-In-reply-to: <6ab47920-7e13-cd67-76c8-2d4ca8a31fd5@gnuweeb.org>
-Message-ID: <qvqwedtmzv55.fsf@dev0134.prn3.facebook.com>
+        with ESMTP id S231252AbiK1Vej (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 16:34:39 -0500
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF572FFDC
+        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 13:34:37 -0800 (PST)
+Received: by mail-io1-f72.google.com with SMTP id x5-20020a6bda05000000b006db3112c1deso6850312iob.0
+        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 13:34:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c8gSxVgdaAR7lRcCfZ2yDO/aV/WJWwxDePyjK/ZIADQ=;
+        b=bN3wfAdwVLlD6XWNmAx/oJLsbQkt1bIt5jsfExr3iFNahqqcvrNUP98dRCEbINr/rA
+         4VdRgBPYpJ2wIsyPlIwtTrFaK1NVJEnQ5bG90h4bqcE1tPc7LIZFRZ0xaWPt+w5+dTSV
+         d/FVQZogwUINvumlr/62i/ywohLpEVimkzuEuOLnZSk5wVDBqQaONTAav7gJuwJCcN6o
+         uOmJ5kTi74YFWyuQmV66FjvvK1ttCr4wY7B8yizdUdSS3fj3yKdZyu/n9nWta3NrxgiV
+         rGCc6KyazXqVcTsLOHmrSzMeZS0nEqkWxb8KdOD2eCdl2iGREw4YgVU41ZafT98mZLmf
+         bCDA==
+X-Gm-Message-State: ANoB5pmhLMqZAVNrzI6Wf+eKvC7ncn7GMIAcVGeL8JP6LqDgfXkHsNlf
+        d2m1gbzkXW+V4z1DZGjkoKedZUadb2cCSthWSho8vUTiKOAs
+X-Google-Smtp-Source: AA0mqf66McWjyUifFkuhfDapgg2ShTwWb3jQsxIK+Yo/02t2689D1sfMeMzZqm6KASF5/B3KYLrJaytaDedlzuIAk3xThPY/LtAR
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,URIBL_BLACK
-        autolearn=no autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:8e08:0:b0:302:c028:895b with SMTP id
+ c8-20020a928e08000000b00302c028895bmr15003482ild.154.1669671276390; Mon, 28
+ Nov 2022 13:34:36 -0800 (PST)
+Date:   Mon, 28 Nov 2022 13:34:36 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000052344f05ee8ea3b8@google.com>
+Subject: [syzbot] WARNING in io_req_complete_failed
+From:   syzbot <syzbot+bc54516b728ef2a08d76@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hello,
 
-Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
+syzbot found the following issue on:
 
-> On 11/22/22 2:14 AM, Stefan Roesch wrote:
->> +static int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
->> +{
->> +#ifdef CONFIG_NET_RX_BUSY_POLL
->> +	const struct io_uring_napi curr = {
->> +		.busy_poll_to = ctx->napi_busy_poll_to,
->> +	};
->> +
->> +	if (copy_to_user(arg, &curr, sizeof(curr)))
->> +		return -EFAULT;
->> +
->> +	WRITE_ONCE(ctx->napi_busy_poll_to, 0);
->> +	return 0;
->> +#else
->> +	return -EINVAL;
->> +#endif
->> +}
->> +
-> I suggest allowing users to pass a NULL as the arg in case they
-> don't want to care about the old values.
->
-> Something like:
->
->    io_uring_unregister_napi(ring, NULL);
->
-> What do you think?
+HEAD commit:    c35bd4e42885 Add linux-next specific files for 20221124
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=130f4e73880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=11e19c740a0b2926
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc54516b728ef2a08d76
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10082015880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11107a05880000
 
-Sounds good, i can make that change in the next version.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/968fee464d14/disk-c35bd4e4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4f46fe801b5b/vmlinux-c35bd4e4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c2cdf8fb264e/bzImage-c35bd4e4.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bc54516b728ef2a08d76@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 151 at io_uring/io_uring.c:872 io_req_complete_failed+0x223/0x280 io_uring/io_uring.c:872
+Modules linked in:
+CPU: 0 PID: 151 Comm: kworker/0:2 Not tainted 6.1.0-rc6-next-20221124-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Workqueue: events io_fallback_req_func
+RIP: 0010:io_req_complete_failed+0x223/0x280 io_uring/io_uring.c:872
+Code: 58 be ff ff ff ff 48 8d b8 a8 00 00 00 e8 a5 24 03 06 31 ff 89 c3 89 c6 e8 3a 43 7d fd 85 db 0f 85 66 fe ff ff e8 7d 46 7d fd <0f> 0b e9 5a fe ff ff e8 91 66 cb fd e9 06 fe ff ff e8 67 67 cb fd
+RSP: 0018:ffffc90002e9fc28 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88801a690000 RSI: ffffffff84038513 RDI: 0000000000000005
+RBP: ffff88807e9aa3c0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 1ffffffff21621e8 R12: 0000000000000016
+R13: 00000000ffffff83 R14: dffffc0000000000 R15: ffffffffffffff78
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe6e758a01d CR3: 000000000c48e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ io_apoll_task_func+0x14d/0x170 io_uring/poll.c:319
+ io_fallback_req_func+0xfd/0x1b2 io_uring/io_uring.c:250
+ process_one_work+0x9bf/0x1710 kernel/workqueue.c:2289
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2436
+ kthread+0x2e8/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches

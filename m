@@ -2,68 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D40F63A689
-	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 12:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6734063AAA4
+	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 15:15:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230461AbiK1LAW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Nov 2022 06:00:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51074 "EHLO
+        id S232416AbiK1OPv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Nov 2022 09:15:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbiK1LAM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 06:00:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EBC114D3E
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 02:59:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669633156;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=peJt9P7iZNSaiwA/6aObimwPef1VvCVnc1Ve9gvBOC8=;
-        b=BLroK5vUWzY++k7DnvQyAHG8BvtAmGCJL/btX31FkW/XyUR8PyCaN8NEBvy2MudD+J0RS5
-        lkkUnvyXYvph3VGvg+W5NGvnv3AvGh6+Q1IGhhXoeQAtiSFR99malK0sZPcMkxLK+PkiKD
-        6BXAya0nGon3NoAnciDaET50EcH+tFE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-347-0pe5WdpIPcOmbJGqYwPiCw-1; Mon, 28 Nov 2022 05:59:13 -0500
-X-MC-Unique: 0pe5WdpIPcOmbJGqYwPiCw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D15B1811E75;
-        Mon, 28 Nov 2022 10:59:12 +0000 (UTC)
-Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8D1E40C6EC2;
-        Mon, 28 Nov 2022 10:59:07 +0000 (UTC)
-Date:   Mon, 28 Nov 2022 18:59:02 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kanchan Joshi <joshi.k@samsung.com>, ddiss@suse.de,
-        linux-security-module@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC 1/1] Use ioctl selinux callback io_uring commands that
- implement the ioctl op convention
-Message-ID: <Y4SUdt5HqTUPJwcT@T590>
-References: <CGME20221116125431eucas1p1dfd03b80863fce674a7c662660c94092@eucas1p1.samsung.com>
- <20221116125051.3338926-2-j.granados@samsung.com>
- <20221116173821.GC5094@test-zns>
- <CAHC9VhSVzujW9LOj5Km80AjU0EfAuukoLrxO6BEfnXeK_s6bAg@mail.gmail.com>
- <20221117094004.b5l64ipicitphkun@localhost>
- <CAHC9VhSa3Yrjf9z5L0oS8Cx=20gUrgfA8evizoVjBNs4AB_cXg@mail.gmail.com>
- <Y3vXLQz1k8E/qu5A@bombadil.infradead.org>
- <CAHC9VhR+RFqJ7c6mFhnMFdDXPcCBg-pnAzEuyOc-TX5hmsubwg@mail.gmail.com>
- <Y3zW02nH1LQhb/qz@T590>
- <20221128101329.lcn3bimihmtwsqqm@localhost>
+        with ESMTP id S232116AbiK1OPt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 09:15:49 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A8E2188C
+        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 06:15:46 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so14123719pjs.4
+        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 06:15:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HfUJYq7G47MzzTuau0KWiEvHR/P0v0C3Vt90Nu0s9w4=;
+        b=bMPU2L8vsLHfGnSnuq+zbeiIr0GzsIaKO9dg1OTewlDKA50QM1ylIalbtux+MTiwvD
+         kOHSKE/gHxEV1Mk0fxREwOJeDE0YRm9D7XgpYv7vezAup7ngX08A4uhuYRbcaYa/oOxx
+         1dqT1+dA7+PbjqUHUC2nH3PD1uLabsWVw92EjwsZ5Wx6NSaWVtIlGuEB0No36TbVx+m7
+         OCsrvehTR9mYfTZfIjGRbly2SMKC6mqRhgaj9j/dQt1rQKnXVsNOXS0pxTZNo5V07Rc2
+         RW2KemvFyAMermOywlDEgl/3M7Itt6Qfp0yQdgRfb+kN0JcIc/PfI2yNAsugyIsrlKRY
+         YBUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HfUJYq7G47MzzTuau0KWiEvHR/P0v0C3Vt90Nu0s9w4=;
+        b=7XlRZkmgIhWnJs2NZ+P4Jwv/RqeWz78W5zaqScp6gZCOzXH+5pnV/YCGL84cqsXnGo
+         sUfixGfJtcDo61lxtI8J+DLtfN1QB9CtWr5HcNvJegJ3jcNiak+zY5dMqEdpRt4ObXpl
+         BN5xJOAGODAu6rJoODyDZHuwVYhyUdRbo48Gz+ADPMW/0Ur87sQyIdIre56AnDs1jjmq
+         ALsIEuhVVZwr9s+H1mAUj9JGI19PKb0zlWyzuDx7b48eGw+6C/u/dmrYgVAVh9Pj2DZb
+         O1HudiKb9C/UPPfa3zwXXqWfa/NtmC1KRL4Zj1dsuKChuVRAIKjkHABzJ5ugOc8OPjoI
+         AA/A==
+X-Gm-Message-State: ANoB5pkZsxHBAuUlNeRzh23/npV8F3twC6NyjmRCANFOXxC7gb/Ye/FH
+        2RY3B+do+WbeKPVth4eql1KjmGu+ZyAtlsM4
+X-Google-Smtp-Source: AA0mqf4RlfduB70qFQfkFKxWY27m/b1gGNmiA1/yu87ZLAAWgKKUfcAaK/s4FdnIWc3vhomHL7d34w==
+X-Received: by 2002:a17:902:e886:b0:185:4ec3:c703 with SMTP id w6-20020a170902e88600b001854ec3c703mr33291278plg.165.1669644945553;
+        Mon, 28 Nov 2022 06:15:45 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id v2-20020a626102000000b005609d3d3008sm8331640pfb.171.2022.11.28.06.15.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 06:15:44 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Gilang Fachrezy <gilang4321@gmail.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        VNLX Kernel Department <kernel@vnlx.org>,
+        Dylan Yudaken <dylany@meta.com>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        Muhammad Rizki <kiizuha@gnuweeb.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+In-Reply-To: <20221124162633.3856761-1-ammar.faizi@intel.com>
+References: <20221124162633.3856761-1-ammar.faizi@intel.com>
+Subject: Re: [PATCH liburing v2 0/8] Ensure we mark non-exported functions and variables as static
+Message-Id: <166964494429.5513.5606852896761842745.b4-ty@kernel.dk>
+Date:   Mon, 28 Nov 2022 07:15:44 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221128101329.lcn3bimihmtwsqqm@localhost>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-28747
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,87 +77,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 11:13:29AM +0100, Joel Granados wrote:
-> On Tue, Nov 22, 2022 at 10:04:03PM +0800, Ming Lei wrote:
-> > On Mon, Nov 21, 2022 at 04:05:37PM -0500, Paul Moore wrote:
-> > > On Mon, Nov 21, 2022 at 2:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > > On Thu, Nov 17, 2022 at 05:10:07PM -0500, Paul Moore wrote:
-> > > > > On Thu, Nov 17, 2022 at 4:40 AM Joel Granados <j.granados@samsung.com> wrote:
-> > > > > > On Wed, Nov 16, 2022 at 02:21:14PM -0500, Paul Moore wrote:
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > > * As we discussed previously, the real problem is the fact that we are
-> > > > > > > missing the necessary context in the LSM hook to separate the
-> > > > > > > different types of command targets.  With traditional ioctls we can
-> > > > > > > look at the ioctl number and determine both the type of
-> > > > > > > device/subsystem/etc. as well as the operation being requested; there
-> > > > > > > is no such information available with the io_uring command
-> > > > > > > passthrough.  In this sense, the io_uring command passthrough is
-> > > > > > > actually worse than traditional ioctls from an access control
-> > > > > > > perspective.  Until we have an easy(ish)[1] way to determine the
-> > > > > > > io_uring command target type, changes like the one suggested here are
-> > > > > > > going to be doomed as each target type is free to define their own
-> > > > > > > io_uring commands.
-> > > > > >
-> > > > > > The only thing that comes immediately to mind is that we can have
-> > > > > > io_uring users define a function that is then passed to the LSM
-> > > > > > infrastructure. This function will have all the logic to give relative
-> > > > > > context to LSM. It would be general enough to fit all the possible commands
-> > > > > > and the logic would be implemented in the "drivers" side so there is no
-> > > > > > need for LSM folks to know all io_uring users.
-> > > > >
-> > > > > Passing a function pointer to the LSM to fetch, what will likely be
-> > > > > just a constant value, seems kinda ugly, but I guess we only have ugly
-> > > > > options at this point.
-> > > >
-> > > > I am not sure if this helps yet, but queued on modules-next we now have
-> > > > an improvement in speed of about 1500x for kallsyms_lookup_name(), and
-> > > > so symbol lookups are now fast. Makes me wonder if a type of special
-> > > > export could be drawn up for specific calls which follow a structure
-> > > > and so the respective lsm could be inferred by a prefix instead of
-> > > > placing the calls in-place. Then it would not mattter where a call is
-> > > > used, so long as it would follow a specific pattern / structure with
-> > > > all the crap you need on it.
-> > > 
-> > > I suspect we may be talking about different things here, I don't think
-> > > the issue is which LSM(s) may be enabled, as the call is to
-> > > security_uring_cmd() regardless.  I believe the issue is more of how
-> > > do the LSMs determine the target of the io_uring command, e.g. nvme or
-> > > ublk.
-> > > 
-> > > My understanding is that Joel was suggesting a change to the LSM hook
-> > > to add a function specific pointer (presumably defined as part of the
-> > > file_operations struct) that could be called by the LSM to determine
-> > > the target.
-> > > 
-> > > Although now that I'm looking again at the file_operations struct, I
-> > > wonder if we would be better off having the LSMs inspect the
-> > > file_operations::owner field, potentially checking the module::name
-> > > field.  It's a little painful in the sense that it is potentially
-> > > multiple strcmp() calls for each security_uring_cmd() call, but I'm
-> > > not sure the passed function approach would be much better.  Do we
-> > > have a consistent per-module scalar value we can use instead of a
-> > > character string?
-> > 
-> > In future there may be more uring_cmd kernel users, maybe we need to
-> > consider to use one reserved field in io_uring_sqe for describing the
-> > target type if it is one must for security subsystem, and this way
-> > will be similar with traditional ioctl which encodes this kind of
-> > info in command type.
-> This is of course another option. I was a bit reluctant to start the
-> discussion with this implementation, but now that you have brought it up
-> I can come up with an initial RFC and we can add it to the mix of
-> possibilities.
+On Thu, 24 Nov 2022 23:28:53 +0700, Ammar Faizi wrote:
+> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 > 
-> Would you just add it to the end of the struct? or what reserved field
-> are you referring to?
+> Hi Jens,
+> 
+> This is a v2 revision.
+> 
+> This series is a -Wmissing-prototypes enforcement. -Wmissing-prototypes
+> is a clang C compiler flag that warns us if we have functions or
+> variables that are not used outisde the translation unit, but not marked
+> as static.
+> 
+> [...]
 
-io_uring_sqe is uapi, so you can't add any field to sqe, and '__pad1'
-could be best field for carrying this info, given it is close to 'cmd_op',
-and 'u8' should be enough for storing target type info.
+Applied, thanks!
 
+[1/8] queue: Fix typo "entererd" -> "entered"
+      (no commit info)
+[2/8] queue: Mark `__io_uring_flush_sq()` as static
+      (no commit info)
+[3/8] test/io_uring_setup: Remove unused functions
+      (no commit info)
+[4/8] ucontext-cp: Remove an unused function
+      (no commit info)
+[5/8] tests: Mark non-exported functions as static
+      (no commit info)
+[6/8] ucontext-cp: Mark a non-exported function as static
+      (no commit info)
+[7/8] test/Makefile: Omit `-Wmissing-prototypes` from the C++ compiler flags
+      (no commit info)
+[8/8] github: Add `-Wmissing-prototypes` for GitHub CI bot
+      (no commit info)
 
-thanks,
-Ming
+Best regards,
+-- 
+Jens Axboe
+
 

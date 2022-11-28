@@ -2,113 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B01663B445
-	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 22:34:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 848C163B4D9
+	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 23:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233721AbiK1Vel (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Nov 2022 16:34:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34272 "EHLO
+        id S234096AbiK1Wep (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 28 Nov 2022 17:34:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231252AbiK1Vej (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 16:34:39 -0500
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF572FFDC
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 13:34:37 -0800 (PST)
-Received: by mail-io1-f72.google.com with SMTP id x5-20020a6bda05000000b006db3112c1deso6850312iob.0
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 13:34:37 -0800 (PST)
+        with ESMTP id S233865AbiK1Wec (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 17:34:32 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6952D2409D
+        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 14:34:30 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id d6so11613815pll.7
+        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 14:34:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/GLUhPDCCf7kucWFAvMfJ/3f6dWOrGWgjwB0w2qpYvw=;
+        b=6tApGSAVcZHP2My3Auyzl9gqFaw+IAUnJ0zUg3mwSnaQ/uOnyR1zq4CbZIr5ezT3XN
+         PJF5GZ6UCQHAX9WLXfdyGXGk4ObswH+pQEh4N6YRRAL0ArPZUJ+lgel4MKcrBje/0h9/
+         vax5QJ7LwoJY1gZ4wM0rsiYygo6u3WgtOkNS16OafijlMRRE2jVXFCv8YMU11MyCLR8l
+         1PBuUTkhZN5qQq0ZAMoGUaP9aca+5L1fNdFLXmk2nJd8l29Af5x60klXRz3hGRbHrmJZ
+         BG+sfcziJStm6Yy/tsinXIz70Do8vHdkpnqmyVzlV99tiwy+lsmlFOc3O7JoLtI+o9bf
+         QnfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c8gSxVgdaAR7lRcCfZ2yDO/aV/WJWwxDePyjK/ZIADQ=;
-        b=bN3wfAdwVLlD6XWNmAx/oJLsbQkt1bIt5jsfExr3iFNahqqcvrNUP98dRCEbINr/rA
-         4VdRgBPYpJ2wIsyPlIwtTrFaK1NVJEnQ5bG90h4bqcE1tPc7LIZFRZ0xaWPt+w5+dTSV
-         d/FVQZogwUINvumlr/62i/ywohLpEVimkzuEuOLnZSk5wVDBqQaONTAav7gJuwJCcN6o
-         uOmJ5kTi74YFWyuQmV66FjvvK1ttCr4wY7B8yizdUdSS3fj3yKdZyu/n9nWta3NrxgiV
-         rGCc6KyazXqVcTsLOHmrSzMeZS0nEqkWxb8KdOD2eCdl2iGREw4YgVU41ZafT98mZLmf
-         bCDA==
-X-Gm-Message-State: ANoB5pmhLMqZAVNrzI6Wf+eKvC7ncn7GMIAcVGeL8JP6LqDgfXkHsNlf
-        d2m1gbzkXW+V4z1DZGjkoKedZUadb2cCSthWSho8vUTiKOAs
-X-Google-Smtp-Source: AA0mqf66McWjyUifFkuhfDapgg2ShTwWb3jQsxIK+Yo/02t2689D1sfMeMzZqm6KASF5/B3KYLrJaytaDedlzuIAk3xThPY/LtAR
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/GLUhPDCCf7kucWFAvMfJ/3f6dWOrGWgjwB0w2qpYvw=;
+        b=2mgVaHFGGS/kh6sh2PDZct5TJH017pPg8ZrixSw+a3MNC+hiyDM0h1fxC8/DyvAlIj
+         DFLJAAeqXZOLGy3utyw44awvdCIOYhKmOSWfwA1ZWEpu9aCiXEo4TASNDvBmv+cg9eRV
+         YWSv2YaYJoHqqA1cedO1yLK7ZQwuiAfhnk81PbYWg9a9hR8fwa+l4jpF0kSyrz4XhqWM
+         IWhyAf95ut7LBaZHbETAmfpWneQJiz+OV9AZh6e4zDNf5DrRXDy36xji0qp59d//sRN/
+         xzwkZsG9HLFNn10qT4tX7ESTSZrS7MulF32rl2rG5NiON9UILiJkC5yxoy+3cmFUsjN3
+         QHtw==
+X-Gm-Message-State: ANoB5pnJoTLO2h6LiIEC+8lJ90CvW1Psl6ccSuaNpN6cStmXHLyOkYH9
+        07y2lCaxZEsExKcpIQ2o5eAcCA==
+X-Google-Smtp-Source: AA0mqf4PEb0x8rOV0Vcqv/DiNWHurjZZdbFpcK5BQMQMXDgKqdDkWgdw41uQV+2e9mVBEe/BspnpOw==
+X-Received: by 2002:a17:903:2491:b0:189:854e:93a8 with SMTP id p17-20020a170903249100b00189854e93a8mr8589333plw.124.1669674869873;
+        Mon, 28 Nov 2022 14:34:29 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 66-20020a621745000000b0056c2e497b02sm8833430pfx.173.2022.11.28.14.34.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Nov 2022 14:34:29 -0800 (PST)
+Message-ID: <5901e89b-4ba6-2c77-892e-c43776842b5a@kernel.dk>
+Date:   Mon, 28 Nov 2022 15:34:27 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a92:8e08:0:b0:302:c028:895b with SMTP id
- c8-20020a928e08000000b00302c028895bmr15003482ild.154.1669671276390; Mon, 28
- Nov 2022 13:34:36 -0800 (PST)
-Date:   Mon, 28 Nov 2022 13:34:36 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000052344f05ee8ea3b8@google.com>
-Subject: [syzbot] WARNING in io_req_complete_failed
-From:   syzbot <syzbot+bc54516b728ef2a08d76@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [syzbot] WARNING in io_req_complete_failed
+To:     syzbot <syzbot+bc54516b728ef2a08d76@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <00000000000052344f05ee8ea3b8@google.com>
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <00000000000052344f05ee8ea3b8@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+#syz fix: io_uring: always lock in io_apoll_task_func
 
-syzbot found the following issue on:
-
-HEAD commit:    c35bd4e42885 Add linux-next specific files for 20221124
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=130f4e73880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11e19c740a0b2926
-dashboard link: https://syzkaller.appspot.com/bug?extid=bc54516b728ef2a08d76
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10082015880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11107a05880000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/968fee464d14/disk-c35bd4e4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4f46fe801b5b/vmlinux-c35bd4e4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c2cdf8fb264e/bzImage-c35bd4e4.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bc54516b728ef2a08d76@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 151 at io_uring/io_uring.c:872 io_req_complete_failed+0x223/0x280 io_uring/io_uring.c:872
-Modules linked in:
-CPU: 0 PID: 151 Comm: kworker/0:2 Not tainted 6.1.0-rc6-next-20221124-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events io_fallback_req_func
-RIP: 0010:io_req_complete_failed+0x223/0x280 io_uring/io_uring.c:872
-Code: 58 be ff ff ff ff 48 8d b8 a8 00 00 00 e8 a5 24 03 06 31 ff 89 c3 89 c6 e8 3a 43 7d fd 85 db 0f 85 66 fe ff ff e8 7d 46 7d fd <0f> 0b e9 5a fe ff ff e8 91 66 cb fd e9 06 fe ff ff e8 67 67 cb fd
-RSP: 0018:ffffc90002e9fc28 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff88801a690000 RSI: ffffffff84038513 RDI: 0000000000000005
-RBP: ffff88807e9aa3c0 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 1ffffffff21621e8 R12: 0000000000000016
-R13: 00000000ffffff83 R14: dffffc0000000000 R15: ffffffffffffff78
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe6e758a01d CR3: 000000000c48e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- io_apoll_task_func+0x14d/0x170 io_uring/poll.c:319
- io_fallback_req_func+0xfd/0x1b2 io_uring/io_uring.c:250
- process_one_work+0x9bf/0x1710 kernel/workqueue.c:2289
- worker_thread+0x669/0x1090 kernel/workqueue.c:2436
- kthread+0x2e8/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
+-- 
+Jens Axboe
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

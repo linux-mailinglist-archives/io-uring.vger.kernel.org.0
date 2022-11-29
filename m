@@ -2,80 +2,80 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 848C163B4D9
-	for <lists+io-uring@lfdr.de>; Mon, 28 Nov 2022 23:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C6B63C25F
+	for <lists+io-uring@lfdr.de>; Tue, 29 Nov 2022 15:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234096AbiK1Wep (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 28 Nov 2022 17:34:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37814 "EHLO
+        id S233498AbiK2OYK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 29 Nov 2022 09:24:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233865AbiK1Wec (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 28 Nov 2022 17:34:32 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6952D2409D
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 14:34:30 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id d6so11613815pll.7
-        for <io-uring@vger.kernel.org>; Mon, 28 Nov 2022 14:34:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/GLUhPDCCf7kucWFAvMfJ/3f6dWOrGWgjwB0w2qpYvw=;
-        b=6tApGSAVcZHP2My3Auyzl9gqFaw+IAUnJ0zUg3mwSnaQ/uOnyR1zq4CbZIr5ezT3XN
-         PJF5GZ6UCQHAX9WLXfdyGXGk4ObswH+pQEh4N6YRRAL0ArPZUJ+lgel4MKcrBje/0h9/
-         vax5QJ7LwoJY1gZ4wM0rsiYygo6u3WgtOkNS16OafijlMRRE2jVXFCv8YMU11MyCLR8l
-         1PBuUTkhZN5qQq0ZAMoGUaP9aca+5L1fNdFLXmk2nJd8l29Af5x60klXRz3hGRbHrmJZ
-         BG+sfcziJStm6Yy/tsinXIz70Do8vHdkpnqmyVzlV99tiwy+lsmlFOc3O7JoLtI+o9bf
-         QnfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/GLUhPDCCf7kucWFAvMfJ/3f6dWOrGWgjwB0w2qpYvw=;
-        b=2mgVaHFGGS/kh6sh2PDZct5TJH017pPg8ZrixSw+a3MNC+hiyDM0h1fxC8/DyvAlIj
-         DFLJAAeqXZOLGy3utyw44awvdCIOYhKmOSWfwA1ZWEpu9aCiXEo4TASNDvBmv+cg9eRV
-         YWSv2YaYJoHqqA1cedO1yLK7ZQwuiAfhnk81PbYWg9a9hR8fwa+l4jpF0kSyrz4XhqWM
-         IWhyAf95ut7LBaZHbETAmfpWneQJiz+OV9AZh6e4zDNf5DrRXDy36xji0qp59d//sRN/
-         xzwkZsG9HLFNn10qT4tX7ESTSZrS7MulF32rl2rG5NiON9UILiJkC5yxoy+3cmFUsjN3
-         QHtw==
-X-Gm-Message-State: ANoB5pnJoTLO2h6LiIEC+8lJ90CvW1Psl6ccSuaNpN6cStmXHLyOkYH9
-        07y2lCaxZEsExKcpIQ2o5eAcCA==
-X-Google-Smtp-Source: AA0mqf4PEb0x8rOV0Vcqv/DiNWHurjZZdbFpcK5BQMQMXDgKqdDkWgdw41uQV+2e9mVBEe/BspnpOw==
-X-Received: by 2002:a17:903:2491:b0:189:854e:93a8 with SMTP id p17-20020a170903249100b00189854e93a8mr8589333plw.124.1669674869873;
-        Mon, 28 Nov 2022 14:34:29 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 66-20020a621745000000b0056c2e497b02sm8833430pfx.173.2022.11.28.14.34.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Nov 2022 14:34:29 -0800 (PST)
-Message-ID: <5901e89b-4ba6-2c77-892e-c43776842b5a@kernel.dk>
-Date:   Mon, 28 Nov 2022 15:34:27 -0700
+        with ESMTP id S232773AbiK2OYJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Nov 2022 09:24:09 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0158A10B;
+        Tue, 29 Nov 2022 06:24:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fz04soVIIxstbn3F7s2xAQwLGgrsxhbGusIGRw7EDcA=; b=LqNhmDidQYzCiTE/JGo6cVudGr
+        WD0WqUJW1Z9OeMnJbRX7eOLh/fTIj+6UNLwQTR/aeR71RFbjyHbL0tCgfBWtVXvLOySXK5bcOq+eA
+        skkE2K8c+mn19piPsFYQO0Mq6rWRlKs3ThRNn+6cu/Uvi+ypHb5AN95Q2lbHnu+DvYbasGouc5M4B
+        itDUEVtWV6WT4xyA94ClTlK3BdyB2YeS64Gclx4BOA3i82ffAeKUx4sM47Iegjk0kYPjwR5JhmtV8
+        VAWflCgcd4sYeZgTRnHoIOypcj+5hw1UqMoo5qGK0+RfHs/dvD3aDcYEI2VNUb05m45OxcOVJRJu2
+        F7VfRX3w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1p01Wi-009DFv-MU; Tue, 29 Nov 2022 14:24:00 +0000
+Date:   Tue, 29 Nov 2022 06:24:00 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     mcgrof@kernel.org, ddiss@suse.de, joshi.k@samsung.com,
+        paul@paul-moore.com, ming.lei@redhat.com,
+        linux-security-module@vger.kernel.org, axboe@kernel.dk,
+        io-uring@vger.kernel.org
+Subject: Re: [RFC v2 1/1] Use a fs callback to set security specific data
+Message-ID: <Y4YWACJqlhQ80Xby@infradead.org>
+References: <20221122103144.960752-1-j.granados@samsung.com>
+ <CGME20221122103536eucas1p28f1c88f2300e49942c789721fe70c428@eucas1p2.samsung.com>
+ <20221122103144.960752-2-j.granados@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [syzbot] WARNING in io_req_complete_failed
-To:     syzbot <syzbot+bc54516b728ef2a08d76@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000052344f05ee8ea3b8@google.com>
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <00000000000052344f05ee8ea3b8@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221122103144.960752-2-j.granados@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-#syz fix: io_uring: always lock in io_apoll_task_func
+This seems to be missing any kind of changelog.  Also the
+subject should say file_operations.  Most of the instances here are
+not in a file system, and they most certainly aren't callbacks.
 
--- 
-Jens Axboe
+I think you've also missed a whole lot of maintainers.
 
+> +#include "linux/security.h"
 
+That's now how we include kernel-wide headers.
+
+>  #include <linux/blkdev.h>
+>  #include <linux/blk-mq.h>
+>  #include <linux/blk-integrity.h>
+> @@ -3308,6 +3309,13 @@ static int nvme_dev_release(struct inode *inode, struct file *file)
+>  	return 0;
+>  }
+>  
+> +int nvme_uring_cmd_sec(struct io_uring_cmd *ioucmd,  struct security_uring_cmd *sec)
+
+Douple white space and overly long line.
+
+> +{
+> +	sec->flags = 0;
+> +	sec->flags = SECURITY_URING_CMD_TYPE_IOCTL;
+
+Double initialization of ->flags.  But how is this supposed to work
+to start with?

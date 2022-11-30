@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0F463D952
+	by mail.lfdr.de (Postfix) with ESMTP id E3FE663D953
 	for <lists+io-uring@lfdr.de>; Wed, 30 Nov 2022 16:23:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbiK3PXa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 30 Nov 2022 10:23:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48260 "EHLO
+        id S229868AbiK3PXb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Nov 2022 10:23:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiK3PX2 (ORCPT
+        with ESMTP id S229894AbiK3PX2 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 30 Nov 2022 10:23:28 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E9B769E6
-        for <io-uring@vger.kernel.org>; Wed, 30 Nov 2022 07:23:26 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id h11so20345281wrw.13
-        for <io-uring@vger.kernel.org>; Wed, 30 Nov 2022 07:23:26 -0800 (PST)
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3391177210
+        for <io-uring@vger.kernel.org>; Wed, 30 Nov 2022 07:23:27 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id f18so5560337wrj.5
+        for <io-uring@vger.kernel.org>; Wed, 30 Nov 2022 07:23:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zLXpILH9PcccMmd6KkcbcpMJ63pfhz2reMG+GunS118=;
-        b=Sx5AMy3L8jxqD5t1jZt+qxpaWUUji45LC5pgWQTC7q9xi0IR+kefFApl4Uakl9PwBJ
-         0JsP4DjrEFQn9SYzP9oILju1lJvoxAs94Huo91QqKuWDuiSqxKElxyuyiUPtXknUIntn
-         U04aImEuKHc35sM+GhS/mmYuZrz5yDlkv9/gMW+ImJN2tE1jf3QZtS0gL4vNOVYxjKgq
-         ztgyqgxZFTzrhoNbld/rparfz/S/jwXBaI6Y1uQgpNWLgAyvom6LPEcj+XvXQqqu/zhr
-         Z9D3c7+oWLOi8N5grng8LvILFFEyHyxPoXZvcf69JuFoXnbgJlwLc0VPvICyINpEq6F6
-         3VwQ==
+        bh=NKZvNdTv2UR+lj5KsPKwOG/zN0kLMd+y14jmvQ1MFlY=;
+        b=ORbnk+ZpgNEqqfAZdFbRtrSot8of8CrFkhsabWaOFtu4odoGjCmnNt6rsLPTw0xfZ/
+         W/2FJ2fm5Pqw/11X7cTikoamajfwqTUXnb5NiQ5gQxvpMBrCOVutbCsDxVUIMvGt/uLN
+         QieqdigvZfI3adYmhmO4USP96bv6AFEGH3Z6nIQPGpiWeX0N45Oy7Q7LZ8FHwstWUsg9
+         hpbY9pWGerbSvyaWs0UvDQ16ocGjeWC7zplbFe4miEp5BitOCTWf5PVZUntkvGYRuSFO
+         rBCc+25/CfK161oRkoYLoAYdMT9vGJwcd+RLgpYTaBkLSxTMw441REnEfed+Er4mn7Ux
+         rWwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zLXpILH9PcccMmd6KkcbcpMJ63pfhz2reMG+GunS118=;
-        b=D9bMgPeWb09rhEOaRyrBn6E8xKFzb9xjsqsbCXkHrh+6Pf/rkG0UBilIpVrzzYZMw8
-         6GN9u+uEl1L4QsHGf+JZJ/o6/iQ0hcvBjnxuFAr/yHVTkKEwMqKtoEPSku3jW35fl3SR
-         I3RSW1xCUGPbZwhcFSto6TIyQ2VV17ej+GqnAABjgy8x1HNs+AlqBPXR7s2oEVdcn8js
-         oBRvuCekzRyi5sbw0U60vwK0JoS17q8PBJkY4Jdso0w61cL760d+cHkcxOGEpLOz9LmY
-         JQtGfPPoP6KjY6WeD8eHE9nKFosKIIYK2c2k5mxR/U54c4o0e000Fr2e792AFzcYDvQJ
-         HYzw==
-X-Gm-Message-State: ANoB5pk6/i83B3pmIaNlu2mJOSHrnBlJdYjM/raN8upGc8F1HL8VBJkY
-        K4Kbaq5B4aUI6C9TjhpY7yCrvjMogHI=
-X-Google-Smtp-Source: AA0mqf7B0HYPbJlgTTU8SbCgxD6taAwV92D36eseT5V+Z4RfKiHghX+2Fkh4Vsh2bLD3g9LQIKAqaw==
-X-Received: by 2002:a5d:464c:0:b0:242:2ac1:375 with SMTP id j12-20020a5d464c000000b002422ac10375mr2388381wrs.432.1669821804950;
-        Wed, 30 Nov 2022 07:23:24 -0800 (PST)
+        bh=NKZvNdTv2UR+lj5KsPKwOG/zN0kLMd+y14jmvQ1MFlY=;
+        b=NB3Q2WeA4VWs6YDP4UGYMdx9OAvwSD/dMiQGLvJoir8gsgdDhywmV3K23cXCZAZVMO
+         uDxQZHq/nHzxvT63Lo+CEouiooGXm8eZ9j9Je64ixnyPJcTj3L1HrpxJMmminTWMBRIp
+         7iiraMxFrKmqP0QVVBiIBrtARhOg1eHUQgUGhPE7c1RoW89dnChWNnbcaOnmbSf+UkJ1
+         E7vgsp/+stUf5CSUZiSVwD2Lr7Yxzf/he0x0U+/usdBJtZEsoUzw8UDFzW5MeDu7FUsm
+         GxaLCeKrXtYX4BLpLFCKmAK0jj7YbH8Lv9LGdWHG0OeytqGF5Q1rK4AQEG35quhEB2cf
+         Trkw==
+X-Gm-Message-State: ANoB5pk7dkP+XPYIXrVyLeWFZwmLJ5YFuTU95pbgBSClR8YDe3/XQhc4
+        2eQ3zZhr9XQSnphktVs/Rfse7o8LDm4=
+X-Google-Smtp-Source: AA0mqf51EnaMsUKxzocTCzURQAIYNECjeeof0ps6lGyLBbXCUIABpp0nO2kXDEvJ/qvtQlqjLUvFXQ==
+X-Received: by 2002:adf:e28b:0:b0:241:c2c3:26c8 with SMTP id v11-20020adfe28b000000b00241c2c326c8mr34788307wri.278.1669821805564;
+        Wed, 30 Nov 2022 07:23:25 -0800 (PST)
 Received: from 127.0.0.1localhost.com ([2620:10d:c092:600::2:97d])
-        by smtp.gmail.com with ESMTPSA id v14-20020a05600c444e00b003a1980d55c4sm6381844wmn.47.2022.11.30.07.23.24
+        by smtp.gmail.com with ESMTPSA id v14-20020a05600c444e00b003a1980d55c4sm6381844wmn.47.2022.11.30.07.23.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 07:23:24 -0800 (PST)
+        Wed, 30 Nov 2022 07:23:25 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 5/9] io_uring: combine poll tw handlers
-Date:   Wed, 30 Nov 2022 15:21:55 +0000
-Message-Id: <482e59edb9fc81bd275fdbf486837330fb27120a.1669821213.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 6/9] io_uring: don't raw spin unlock to match cq_lock
+Date:   Wed, 30 Nov 2022 15:21:56 +0000
+Message-Id: <4ca4f0564492b90214a190cd5b2a6c76522de138.1669821213.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1669821213.git.asml.silence@gmail.com>
 References: <cover.1669821213.git.asml.silence@gmail.com>
@@ -70,89 +70,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Merge apoll and regular poll tw handlers, it will help with inlining.
+There is one newly added place when we lock ring with io_cq_lock() but
+unlocking is hand coded calling spin_unlock directly. It's ugly and
+troublesome in the long run.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/poll.c | 54 +++++++++++++++++++------------------------------
- 1 file changed, 21 insertions(+), 33 deletions(-)
+ io_uring/io_uring.c | 2 +-
+ io_uring/io_uring.h | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 8f16d2a48ff8..ee7da6150ec4 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -321,50 +321,38 @@ static void io_poll_task_func(struct io_kiocb *req, bool *locked)
- 	ret = io_poll_check_events(req, locked);
- 	if (ret == IOU_POLL_NO_ACTION)
- 		return;
--
--	if (ret == IOU_POLL_DONE) {
--		struct io_poll *poll = io_kiocb_to_cmd(req, struct io_poll);
--		req->cqe.res = mangle_poll(req->cqe.res & poll->events);
--	} else if (ret != IOU_POLL_REMOVE_POLL_USE_RES) {
--		req->cqe.res = ret;
--		req_set_fail(req);
--	}
--
- 	io_poll_remove_entries(req);
- 	io_poll_tw_hash_eject(req, locked);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 15d285d8ce0f..c30765579a8e 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -860,7 +860,7 @@ bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32
+ 		io_cq_lock(ctx);
+ 		__io_flush_post_cqes(ctx);
+ 		/* no need to flush - flush is deferred */
+-		spin_unlock(&ctx->completion_lock);
++		io_cq_unlock(ctx);
+ 	}
  
--	io_req_set_res(req, req->cqe.res, 0);
--	io_req_task_complete(req, locked);
--}
-+	if (req->opcode == IORING_OP_POLL_ADD) {
-+		if (ret == IOU_POLL_DONE) {
-+			struct io_poll *poll;
- 
--static void io_apoll_task_func(struct io_kiocb *req, bool *locked)
--{
--	int ret;
--
--	ret = io_poll_check_events(req, locked);
--	if (ret == IOU_POLL_NO_ACTION)
--		return;
--
--	io_tw_lock(req->ctx, locked);
--	io_poll_remove_entries(req);
--	io_poll_tw_hash_eject(req, locked);
-+			poll = io_kiocb_to_cmd(req, struct io_poll);
-+			req->cqe.res = mangle_poll(req->cqe.res & poll->events);
-+		} else if (ret != IOU_POLL_REMOVE_POLL_USE_RES) {
-+			req->cqe.res = ret;
-+			req_set_fail(req);
-+		}
- 
--	if (ret == IOU_POLL_REMOVE_POLL_USE_RES)
-+		io_req_set_res(req, req->cqe.res, 0);
- 		io_req_task_complete(req, locked);
--	else if (ret == IOU_POLL_DONE)
--		io_req_task_submit(req, locked);
--	else
--		io_req_defer_failed(req, ret);
-+	} else {
-+		io_tw_lock(req->ctx, locked);
-+
-+		if (ret == IOU_POLL_REMOVE_POLL_USE_RES)
-+			io_req_task_complete(req, locked);
-+		else if (ret == IOU_POLL_DONE)
-+			io_req_task_submit(req, locked);
-+		else
-+			io_req_defer_failed(req, ret);
-+	}
+ 	/* For defered completions this is not as strict as it is otherwise,
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 062899b1fe86..2277c05f52a6 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -93,6 +93,11 @@ static inline void io_cq_lock(struct io_ring_ctx *ctx)
+ 	spin_lock(&ctx->completion_lock);
  }
  
- static void __io_poll_execute(struct io_kiocb *req, int mask)
- {
- 	io_req_set_res(req, mask, 0);
--
--	if (req->opcode == IORING_OP_POLL_ADD)
--		req->io_task_work.func = io_poll_task_func;
--	else
--		req->io_task_work.func = io_apoll_task_func;
-+	req->io_task_work.func = io_poll_task_func;
++static inline void io_cq_unlock(struct io_ring_ctx *ctx)
++{
++	spin_unlock(&ctx->completion_lock);
++}
++
+ void io_cq_unlock_post(struct io_ring_ctx *ctx);
  
- 	trace_io_uring_task_add(req, mask);
- 	io_req_task_work_add(req);
+ static inline struct io_uring_cqe *io_get_cqe_overflow(struct io_ring_ctx *ctx,
 -- 
 2.38.1
 

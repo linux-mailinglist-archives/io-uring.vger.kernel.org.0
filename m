@@ -2,100 +2,300 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2907640ED9
-	for <lists+io-uring@lfdr.de>; Fri,  2 Dec 2022 21:03:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C17CC6411F1
+	for <lists+io-uring@lfdr.de>; Sat,  3 Dec 2022 01:23:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234110AbiLBUDb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 2 Dec 2022 15:03:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39394 "EHLO
+        id S234816AbiLCAXZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 2 Dec 2022 19:23:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234244AbiLBUDa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Dec 2022 15:03:30 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3814AEF8B5
-        for <io-uring@vger.kernel.org>; Fri,  2 Dec 2022 12:03:28 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id w15-20020a17090a380f00b0021873113cb4so6123219pjb.0
-        for <io-uring@vger.kernel.org>; Fri, 02 Dec 2022 12:03:28 -0800 (PST)
+        with ESMTP id S234795AbiLCAXY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 2 Dec 2022 19:23:24 -0500
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD2D69380A
+        for <io-uring@vger.kernel.org>; Fri,  2 Dec 2022 16:23:22 -0800 (PST)
+Received: by mail-pg1-x54a.google.com with SMTP id j21-20020a63fc15000000b00476d6932baeso5805044pgi.23
+        for <io-uring@vger.kernel.org>; Fri, 02 Dec 2022 16:23:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=txQclJb9oi0Me7DZzzvwz2AlJuouPl2NgQYw/V4geF4=;
-        b=6USiv9udBCaNfbXTx+MsfBHRsysaZ09pWTLfPzU4ioge1spLru/xygHHxrFtHOc6Zn
-         V2Xhqwz1pUQwW/CQoT+7cPr4zC6TgviAQ6oPz9hkDm7FO2IT9zvuyEq5bfY+RbLe6+xq
-         z/WOZi+srl0k25FaeI4cDvo0+oOKRiBeqOjUFWY10zAJgOw/NAtXV9D8A9F7Q7u8jMkn
-         qe1VtBUk+NdDwUj3T0PoNMFzeyAOIL58d18x93vMYo4AmUObuphoRGVNq+sbe24iM9lV
-         kVzWH5sf+1bIOp1FYPvtYYY+MMHttM6UOQrVZQJ9vkzl72cx/FLKnvJxVoiezrZddAKC
-         6T2w==
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ckYytnVepoWbimE5xbgdrdPOmCNvH6nlU8CJOTSK59I=;
+        b=AP2QhyJjEnq1NfXdCq5GJzqo/eyTwtvHuv53zolMCj3Hhx0DpJARPIek3x1v2zrpl+
+         tKrE/iQh0D51pFvtUw3y9iiZqqzOH9eECRf0tljCZHxmvY3oOi97LxNgc6fmW/ly7i7z
+         NEOlL1JPir1fl9Pr9TVSl8pbIcJrfrE8Z3SpuL9SUBC6u83i2dvinSMQTndUCOq60ZoD
+         HCBDIeYKFMzCs5nT8xGMbHiSgm0j+f70d+tQdelf8btJqPXOMnnNOP/szMI5DrMuZqTq
+         BfPZhT+xMLYjuhTMfAiijZ+vooyKLFXtPlmAZapo2GcOZUYgFhdQQDcCYazRLwgZcD4A
+         DvYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txQclJb9oi0Me7DZzzvwz2AlJuouPl2NgQYw/V4geF4=;
-        b=PhI0ua6oIsVMrNkSyJo0lRvZzMRyCBDPFSYUgRAYPXmUEQMu7+YeoeNJxtwNR9m0h4
-         xOZXAiWR3P/iThl0P+oaJ9YbTcaQ6hpEc98Pmm9lWP+HlPkFTcmz2WqWCn8Ix9PcbLC5
-         CUgR+2lDZEX1qUDSNgl81J9+g/6gCfqUVTeMJdJSrzOsxjWYXyvRCLBpA76aW/jR9P0C
-         5QALJ7xBO3IzEOB3d3IatuhGd+MqDT3uXup/RVVQwwJcpYM/k/hmBRGXlgHDbvVjSbwe
-         nUN85gbxJkCXkciAwsPZbFPMOofrD6WZP4q01I2u3RVJkQZB/tYUEwNOnBSb15YDNu9l
-         aCJQ==
-X-Gm-Message-State: ANoB5pl394dftPx8dL9uJStl84evAbkHbFl6vDOFvPIVSr0FfQLx2lFB
-        rNOjKgCmEZ46SIJXbybargYEQA==
-X-Google-Smtp-Source: AA0mqf621e2Gg8OCNnvaaHdscvIsWMWBqvVYvVbK35rt7J6NLlXMALlXkP+5GtfyxBEolRm/6FD5Ug==
-X-Received: by 2002:a17:903:291:b0:186:994b:5b55 with SMTP id j17-20020a170903029100b00186994b5b55mr16706735plr.100.1670011407618;
-        Fri, 02 Dec 2022 12:03:27 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ij22-20020a170902ab5600b001893a002107sm5978685plb.0.2022.12.02.12.03.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 12:03:27 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1670002973.git.asml.silence@gmail.com>
-References: <cover.1670002973.git.asml.silence@gmail.com>
-Subject: Re: [PATCH for-next 0/4] some 6.2 cleanups
-Message-Id: <167001140694.936996.12312748109578334067.b4-ty@kernel.dk>
-Date:   Fri, 02 Dec 2022 13:03:26 -0700
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.11.0-dev-50ba3
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ckYytnVepoWbimE5xbgdrdPOmCNvH6nlU8CJOTSK59I=;
+        b=CMpnvKgjbQuL6uGlbVhAoiJm7yoJnfuMZM+azjjVJzzVNuWpaaadtcKGMu1Ayqj5Tl
+         7Ex188wORa+eJFG4pNvttvq5XqCzd2grHRlf+EaKICD014RnJF1ggJkzMYPuQH5SlVme
+         Sy+yt//1OQbwJzsbkKgpuFyK0lnG7CgM2xPyn4KRloUyathOwc4ua2SOjLvFHbdu8E2v
+         fWjgH4J39Qo6vF2gd6WhZQQ9Ib6PRCSTvuYRMuJDmcfzgQtmuiyJxo2skArdG4vNcQUI
+         PYzPruc7ptutKnER5twJnHolLNUsCyG1xZveYDwC8bLKC6H6AgI0fGTfBeqtilvMCNAb
+         zGuw==
+X-Gm-Message-State: ANoB5pmY8Uw+5RejqPg3lJgbMBqswtGOhMQe5w6pAW9j7/eLKyLboFCW
+        A1mX8tzIUGOvhJCmIEfMZOwXaacHKZ6NPg==
+X-Google-Smtp-Source: AA0mqf5FLpxaeAUlECyuixx/9UtFbHUy3NZB8q/YFzDXHiW9Q/SRa3bZUzJNss5DBiNM89zzDNtRsKiqTDumYQ==
+X-Received: from skhawaja-linux-us.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:3f34])
+ (user=skhawaja job=sendgmr) by 2002:a17:902:e849:b0:186:dd96:ce45 with SMTP
+ id t9-20020a170902e84900b00186dd96ce45mr54603645plg.73.1670027002387; Fri, 02
+ Dec 2022 16:23:22 -0800 (PST)
+Date:   Sat,  3 Dec 2022 00:23:05 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.39.0.rc0.267.gcb52ba06e7-goog
+Message-ID: <20221203002305.1203792-1-skhawaja@google.com>
+Subject: [PATCH] io_uring: don't hold uring_lock when calling io_run_task_work*
+From:   Samiullah Khawaja <skhawaja@google.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Hao Xu <haoxu@linux.alibaba.com>,
+        Abaci <abaci@linux.alibaba.com>,
+        Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+From: Hao Xu <haoxu@linux.alibaba.com>
 
-On Fri, 02 Dec 2022 17:47:21 +0000, Pavel Begunkov wrote:
-> Random cleanups, mostly around locking and timeouts. Even though 1/4 is
-> makred for stable it shouldn't be too important.
-> 
-> Pavel Begunkov (4):
->   io_uring: protect cq_timeouts with timeout_lock
->   io_uring: revise completion_lock locking
->   io_uring: ease timeout flush locking requirements
->   io_uring: rename __io_fill_cqe_req
-> 
-> [...]
+commit 8bad28d8a305b0e5ae444c8c3051e8744f5a4296 upstream.
 
-Applied, thanks!
+[Backported on top of stable 5.10 since the issue was introduced into it
+with commit referred in Fixes tag below. The backport is done without
+`file` to `rsrc` refactoring since it is not in 5.10].
 
-[1/4] io_uring: protect cq_timeouts with timeout_lock
-      commit: f9df7554e30aa244a860a09ba8f68d9d25f5d1fb
-[2/4] io_uring: revise completion_lock locking
-      commit: f12da342ec9c81fd109dfbafa05f3b17ddd88b2a
-[3/4] io_uring: ease timeout flush locking requirements
-      commit: 4124d26a5930e5e259ea5452866749dc385b5144
-[4/4] io_uring: rename __io_fill_cqe_req
-      commit: 03d5549e3cb7b7f26147fd27f9627c1b4851807b
+Abaci reported the below issue:
+[  141.400455] hrtimer: interrupt took 205853 ns
+[  189.869316] process 'usr/local/ilogtail/ilogtail_0.16.26' started with executable stack
+[  250.188042]
+[  250.188327] ============================================
+[  250.189015] WARNING: possible recursive locking detected
+[  250.189732] 5.11.0-rc4 #1 Not tainted
+[  250.190267] --------------------------------------------
+[  250.190917] a.out/7363 is trying to acquire lock:
+[  250.191506] ffff888114dbcbe8 (&ctx->uring_lock){+.+.}-{3:3}, at: __io_req_task_submit+0x29/0xa0
+[  250.192599]
+[  250.192599] but task is already holding lock:
+[  250.193309] ffff888114dbfbe8 (&ctx->uring_lock){+.+.}-{3:3}, at: __x64_sys_io_uring_register+0xad/0x210
+[  250.194426]
+[  250.194426] other info that might help us debug this:
+[  250.195238]  Possible unsafe locking scenario:
+[  250.195238]
+[  250.196019]        CPU0
+[  250.196411]        ----
+[  250.196803]   lock(&ctx->uring_lock);
+[  250.197420]   lock(&ctx->uring_lock);
+[  250.197966]
+[  250.197966]  *** DEADLOCK ***
+[  250.197966]
+[  250.198837]  May be due to missing lock nesting notation
+[  250.198837]
+[  250.199780] 1 lock held by a.out/7363:
+[  250.200373]  #0: ffff888114dbfbe8 (&ctx->uring_lock){+.+.}-{3:3}, at: __x64_sys_io_uring_register+0xad/0x210
+[  250.201645]
+[  250.201645] stack backtrace:
+[  250.202298] CPU: 0 PID: 7363 Comm: a.out Not tainted 5.11.0-rc4 #1
+[  250.203144] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[  250.203887] Call Trace:
+[  250.204302]  dump_stack+0xac/0xe3
+[  250.204804]  __lock_acquire+0xab6/0x13a0
+[  250.205392]  lock_acquire+0x2c3/0x390
+[  250.205928]  ? __io_req_task_submit+0x29/0xa0
+[  250.206541]  __mutex_lock+0xae/0x9f0
+[  250.207071]  ? __io_req_task_submit+0x29/0xa0
+[  250.207745]  ? 0xffffffffa0006083
+[  250.208248]  ? __io_req_task_submit+0x29/0xa0
+[  250.208845]  ? __io_req_task_submit+0x29/0xa0
+[  250.209452]  ? __io_req_task_submit+0x5/0xa0
+[  250.210083]  __io_req_task_submit+0x29/0xa0
+[  250.210687]  io_async_task_func+0x23d/0x4c0
+[  250.211278]  task_work_run+0x89/0xd0
+[  250.211884]  io_run_task_work_sig+0x50/0xc0
+[  250.212464]  io_sqe_files_unregister+0xb2/0x1f0
+[  250.213109]  __io_uring_register+0x115a/0x1750
+[  250.213718]  ? __x64_sys_io_uring_register+0xad/0x210
+[  250.214395]  ? __fget_files+0x15a/0x260
+[  250.214956]  __x64_sys_io_uring_register+0xbe/0x210
+[  250.215620]  ? trace_hardirqs_on+0x46/0x110
+[  250.216205]  do_syscall_64+0x2d/0x40
+[  250.216731]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  250.217455] RIP: 0033:0x7f0fa17e5239
+[  250.218034] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05  3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 ec 2c 00 f7 d8 64 89 01 48
+[  250.220343] RSP: 002b:00007f0fa1eeac48 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+[  250.221360] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0fa17e5239
+[  250.222272] RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000008
+[  250.223185] RBP: 00007f0fa1eeae20 R08: 0000000000000000 R09: 0000000000000000
+[  250.224091] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+[  250.224999] R13: 0000000000021000 R14: 0000000000000000 R15: 00007f0fa1eeb700
 
-Best regards,
+This is caused by calling io_run_task_work_sig() to do work under
+uring_lock while the caller io_sqe_files_unregister() already held
+uring_lock.
+To fix this issue, briefly drop uring_lock when calling
+io_run_task_work_sig(), and there are two things to concern:
+
+- hold uring_lock in io_ring_ctx_free() around io_sqe_files_unregister()
+    this is for consistency of lock/unlock.
+- add new fixed rsrc ref node before dropping uring_lock
+    it's not safe to do io_uring_enter-->percpu_ref_get() with a dying one.
+- check if rsrc_data->refs is dying to avoid parallel io_sqe_files_unregister
+
+Reported-by: Abaci <abaci@linux.alibaba.com>
+Fixes: ce00a7d0d9523 ("io_uring: fix io_sqe_files_unregister() hangs")
+Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+[axboe: fixes from Pavel folded in]
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Samiullah Khawaja <skhawaja@google.com>
+---
+ fs/io_uring.c | 82 ++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 61 insertions(+), 21 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d1cb1addea96..c5c22b067cd8 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -217,6 +217,7 @@ struct fixed_file_data {
+ 	struct completion		done;
+ 	struct list_head		ref_list;
+ 	spinlock_t			lock;
++	bool				quiesce;
+ };
+ 
+ struct io_buffer {
+@@ -7105,41 +7106,79 @@ static void io_sqe_files_set_node(struct fixed_file_data *file_data,
+ 	percpu_ref_get(&file_data->refs);
+ }
+ 
+-static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+-{
+-	struct fixed_file_data *data = ctx->file_data;
+-	struct fixed_file_ref_node *backup_node, *ref_node = NULL;
+-	unsigned nr_tables, i;
+-	int ret;
+ 
+-	if (!data)
+-		return -ENXIO;
+-	backup_node = alloc_fixed_file_ref_node(ctx);
+-	if (!backup_node)
+-		return -ENOMEM;
++static void io_sqe_files_kill_node(struct fixed_file_data *data)
++{
++	struct fixed_file_ref_node *ref_node = NULL;
+ 
+ 	spin_lock_bh(&data->lock);
+ 	ref_node = data->node;
+ 	spin_unlock_bh(&data->lock);
+ 	if (ref_node)
+ 		percpu_ref_kill(&ref_node->refs);
++}
++
++static int io_file_ref_quiesce(struct fixed_file_data *data,
++			       struct io_ring_ctx *ctx)
++{
++	int ret;
++	struct fixed_file_ref_node *backup_node;
+ 
+-	percpu_ref_kill(&data->refs);
++	if (data->quiesce)
++		return -ENXIO;
+ 
+-	/* wait for all refs nodes to complete */
+-	flush_delayed_work(&ctx->file_put_work);
++	data->quiesce = true;
+ 	do {
++		backup_node = alloc_fixed_file_ref_node(ctx);
++		if (!backup_node)
++			break;
++
++		io_sqe_files_kill_node(data);
++		percpu_ref_kill(&data->refs);
++		flush_delayed_work(&ctx->file_put_work);
++
+ 		ret = wait_for_completion_interruptible(&data->done);
+ 		if (!ret)
+ 			break;
++
++		percpu_ref_resurrect(&data->refs);
++		io_sqe_files_set_node(data, backup_node);
++		backup_node = NULL;
++		reinit_completion(&data->done);
++		mutex_unlock(&ctx->uring_lock);
+ 		ret = io_run_task_work_sig();
+-		if (ret < 0) {
+-			percpu_ref_resurrect(&data->refs);
+-			reinit_completion(&data->done);
+-			io_sqe_files_set_node(data, backup_node);
+-			return ret;
+-		}
++		mutex_lock(&ctx->uring_lock);
++
++		if (ret < 0)
++			break;
++		backup_node = alloc_fixed_file_ref_node(ctx);
++		ret = -ENOMEM;
++		if (!backup_node)
++			break;
+ 	} while (1);
++	data->quiesce = false;
++
++	if (backup_node)
++		destroy_fixed_file_ref_node(backup_node);
++	return ret;
++}
++
++static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
++{
++	struct fixed_file_data *data = ctx->file_data;
++	unsigned nr_tables, i;
++	int ret;
++
++	/*
++	 * percpu_ref_is_dying() is to stop parallel files unregister
++	 * Since we possibly drop uring lock later in this function to
++	 * run task work.
++	 */
++	if (!data || percpu_ref_is_dying(&data->refs))
++		return -ENXIO;
++	ret = io_file_ref_quiesce(data, ctx);
++	if (ret)
++		return ret;
+ 
+ 	__io_sqe_files_unregister(ctx);
+ 	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
+@@ -7150,7 +7189,6 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	kfree(data);
+ 	ctx->file_data = NULL;
+ 	ctx->nr_user_files = 0;
+-	destroy_fixed_file_ref_node(backup_node);
+ 	return 0;
+ }
+ 
+@@ -8444,7 +8482,9 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 		css_put(ctx->sqo_blkcg_css);
+ #endif
+ 
++	mutex_lock(&ctx->uring_lock);
+ 	io_sqe_files_unregister(ctx);
++	mutex_unlock(&ctx->uring_lock);
+ 	io_eventfd_unregister(ctx);
+ 	io_destroy_buffers(ctx);
+ 
 -- 
-Jens Axboe
-
+2.39.0.rc0.267.gcb52ba06e7-goog
 

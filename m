@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C593B6421AC
-	for <lists+io-uring@lfdr.de>; Mon,  5 Dec 2022 03:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFD86421AD
+	for <lists+io-uring@lfdr.de>; Mon,  5 Dec 2022 03:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbiLECpp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 4 Dec 2022 21:45:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
+        id S231186AbiLECpr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 4 Dec 2022 21:45:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231206AbiLECpo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Dec 2022 21:45:44 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85EC10060
-        for <io-uring@vger.kernel.org>; Sun,  4 Dec 2022 18:45:43 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id q7so16627571wrr.8
-        for <io-uring@vger.kernel.org>; Sun, 04 Dec 2022 18:45:43 -0800 (PST)
+        with ESMTP id S231302AbiLECpp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 4 Dec 2022 21:45:45 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8035510077
+        for <io-uring@vger.kernel.org>; Sun,  4 Dec 2022 18:45:44 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso8964763wmo.1
+        for <io-uring@vger.kernel.org>; Sun, 04 Dec 2022 18:45:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IkqYtqviC3RF91Z5Z3rSsyFaerXGj63h6THg5DwVRpU=;
-        b=O9QWAK9HCsnvW4fc/e+iFHZPx9gWOeDiv1WamZvgQv3zXPUQTmlBuG2YqYvg91abp/
-         qvwM7C1Kg/gDzmlOp2kl8POddopHZSzEo+YOOFO+6b8dd9PMPnM5Glk0Bw2hCQsQh+L9
-         Nc5WseAdOmR7nyR6DaoT8SuxJx3rzcEaiwU7Up5c1u+UGEeulChBepMmJ7zmVhjOEPV4
-         BX+s2BXelt5aPaqCvBFo4oytz5qOQuFisULuxFBNDQMZsjEE790h0gyJRN0Ch6ijxhwO
-         KPu1X5tDL3/QTZa+gHQlIeEUCd4z+nWwiAZNiBv8UGBrfFu1/85JiUM/AmU652YoIbzS
-         s7ZA==
+        bh=3Yv9W3MRI4b+o6DpSQxY7QbWQXPCf1pUEqejWq6FCA8=;
+        b=MmLd64M0amzzpl35D4YprfTAXwtXsY7BTh4bCsmAHD2PTQ3BSBE/SvZRQpO7j5l+s5
+         wZSMEHuSkUCLegn1tBrCH5DkpP3i3qkctjRqbx/uHIkIER3Lr2AI5+f3W8O5+pCNtdG1
+         oalGg2tZ89tv/UvmNTBOuW/l0j7LcDyrchAcv5FqFb5D9e3xRjT1NRTL+zkISQfEJOSc
+         7U1mYDD3sgf6nKF6wyQyIJkUUJj9YjXCCXO+sbHkEjGbZmghPJES2XF5g+g8pWV0S9vm
+         YKLfuLbXrTdzLfWH+ezizseAZqG7IZtK7ecvhNaaXVV/LK01Pm0HAZTSK9yJXrYpuW2g
+         TVwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IkqYtqviC3RF91Z5Z3rSsyFaerXGj63h6THg5DwVRpU=;
-        b=3ltu1tYBdxgMJpJil9Ot6dTDQ69PVzBX32SZ5bCjcgKBXKst9miTCcyHobA/l7CXii
-         p2gQHh8bdtXVrHYapGucVKP4RQUFrsdI8J1qGNKJphKjSd3PEQ4/2g2oK7qlQ2S4knF6
-         yqdDn95xq8lstWOdBo7Go+iBmiCi7xj7YmmD1JxC+NsPRJbF9yB8Aea0oISQ7GTQxJ1G
-         RrTo7CaIAQp2/Esb2KCs1sf0WI67+X+tiK2tyP0uVRYYNRAmp94TLg0Ahal3F2T6Jeii
-         L0OH26Iwy2ucaNO/Xq9byoMOzVowVXZ6ORJk1dmRQH58gJNUGva6Clx5FbJWmXh0w9j6
-         GppA==
-X-Gm-Message-State: ANoB5pksQ9NeaJoLW4WrnKLs/t7UdFZhtwryIx8nzY7Cy+MRj2Gg6gWF
-        ihw8gbZ47yeIYs39wVfRv9HBLYWhw70=
-X-Google-Smtp-Source: AA0mqf4ZszM4cDnO4QFcQ3/w+TnpcNBzYXKg0daAWyn9euY98yH5IMbFKL7ZhJaM+Xc8C4OkJVanAg==
-X-Received: by 2002:adf:db87:0:b0:242:2719:5784 with SMTP id u7-20020adfdb87000000b0024227195784mr15157913wri.130.1670208341996;
-        Sun, 04 Dec 2022 18:45:41 -0800 (PST)
+        bh=3Yv9W3MRI4b+o6DpSQxY7QbWQXPCf1pUEqejWq6FCA8=;
+        b=NU3QwLXOFEzK2HAUrtFNhDWmkOXLYB8E2XPfJPoHoUsKP2YEosCPR7wH/8vR+s0DES
+         Zlr5AUyIQgTeSDqQZO5ZLtRtCKj/5a4SSqRNb17Rv1cUZNpEfcXfD8Gd0xJ9G0YGKYCP
+         4qyZa+De/Uwnm3aseQ6LFvzBwxur9v7j3j9FKFpnPN6XbcnIMLXcyssUGhr5wlGUUk8Q
+         poBSH8lf2OfXEFVKM3nMqZ9Xt5zusCOgNcwnhGtQ8UHzN9MdR29cNqL4zooTP96DKUvF
+         EeNuFxSNWKISXICXPJ35WSluydIulSA32wHwbXpMtOJK1MgpPz7G7Mgufm38XnpUGXeL
+         Yw2g==
+X-Gm-Message-State: ANoB5pnqewZpYOyeqp4L2hJZsIHcl2Btv68ILK6IVJxJqF65V0BIalLR
+        xR4SgU0eL9/jKDzx62L6XQJrfPs+fVY=
+X-Google-Smtp-Source: AA0mqf4E9btS7fyFBWIAt1E3ZEYJOM6PtzvhQi8Xl6eQ7bK/gs1FVrUJr4QP65p+U1051wfpiwwuvg==
+X-Received: by 2002:a05:600c:4a99:b0:3cf:91e5:3d69 with SMTP id b25-20020a05600c4a9900b003cf91e53d69mr63084137wmp.160.1670208342783;
+        Sun, 04 Dec 2022 18:45:42 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.241.58.threembb.co.uk. [94.196.241.58])
-        by smtp.gmail.com with ESMTPSA id t17-20020a05600c41d100b003cf71b1f66csm15281532wmh.0.2022.12.04.18.45.41
+        by smtp.gmail.com with ESMTPSA id t17-20020a05600c41d100b003cf71b1f66csm15281532wmh.0.2022.12.04.18.45.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Dec 2022 18:45:41 -0800 (PST)
+        Sun, 04 Dec 2022 18:45:42 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next 6/7] io_uring: use tw for putting rsrc
-Date:   Mon,  5 Dec 2022 02:44:30 +0000
-Message-Id: <9b35443a6f758f76ea75bb7438e6ff5a7b4f40e3.1670207706.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 7/7] io_uring: skip spinlocking for ->task_complete
+Date:   Mon,  5 Dec 2022 02:44:31 +0000
+Message-Id: <76ed0107ff51cec483eda84056363cc0d0775c7e.1670207706.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1670207706.git.asml.silence@gmail.com>
 References: <cover.1670207706.git.asml.silence@gmail.com>
@@ -70,90 +70,213 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use task_work for completing rsrc removals, it'll be needed later for
-spinlock optimisations.
+->task_complete was added to serialised CQE posting by doing it from
+the task context only (or fallback wq when the task is dead), and now we
+can use that to avoid taking ->completion_lock while filling CQ entries.
+The patch skips spinlocking only in two spots,
+__io_submit_flush_completions() and flushing in io_aux_cqe, it's safer
+and covers all cases we care about. Extra care is taken to force taking
+the lock while queueing overflow entries.
+
+It fundamentally relies on SINGLE_ISSUER to have only one task posting
+events. It also need to take into account overflowed CQEs, flushing of
+which happens in the cq wait path, and so this implementation also needs
+DEFER_TASKRUN to limit waiters. For the same reason we disable it for
+SQPOLL, and for IOPOLL as it won't benefit from it in any case.
+DEFER_TASKRUN, SQPOLL and IOPOLL requirement may be relaxed in the
+future.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  1 +
- io_uring/io_uring.c            |  1 +
- io_uring/rsrc.c                | 19 +++++++++++++++++--
- io_uring/rsrc.h                |  1 +
- 4 files changed, 20 insertions(+), 2 deletions(-)
+ io_uring/io_uring.c | 71 +++++++++++++++++++++++++++++++++------------
+ io_uring/io_uring.h | 12 ++++++--
+ 2 files changed, 62 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 6be1e1359c89..dcd8a563ab52 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -328,6 +328,7 @@ struct io_ring_ctx {
- 	struct io_rsrc_data		*buf_data;
- 
- 	struct delayed_work		rsrc_put_work;
-+	struct callback_head		rsrc_put_tw;
- 	struct llist_head		rsrc_put_llist;
- 	struct list_head		rsrc_ref_list;
- 	spinlock_t			rsrc_ref_lock;
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 7fda57dc0e8c..9eb771a4c912 100644
+index 9eb771a4c912..36cb63e4174f 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -326,6 +326,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	spin_lock_init(&ctx->rsrc_ref_lock);
- 	INIT_LIST_HEAD(&ctx->rsrc_ref_list);
- 	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
-+	init_task_work(&ctx->rsrc_put_tw, io_rsrc_put_tw);
- 	init_llist_head(&ctx->rsrc_put_llist);
- 	init_llist_head(&ctx->work_llist);
- 	INIT_LIST_HEAD(&ctx->tctx_list);
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index d25309400a45..18de10c68a15 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -204,6 +204,14 @@ void io_rsrc_put_work(struct work_struct *work)
- 	}
+@@ -594,13 +594,25 @@ static inline void io_cq_unlock(struct io_ring_ctx *ctx)
+ 	spin_unlock(&ctx->completion_lock);
  }
  
-+void io_rsrc_put_tw(struct callback_head *cb)
++static inline void __io_cq_lock(struct io_ring_ctx *ctx)
++	__acquires(ctx->completion_lock)
 +{
-+	struct io_ring_ctx *ctx = container_of(cb, struct io_ring_ctx,
-+					       rsrc_put_tw);
-+
-+	io_rsrc_put_work(&ctx->rsrc_put_work.work);
++	if (!ctx->task_complete)
++		spin_lock(&ctx->completion_lock);
 +}
 +
- void io_wait_rsrc_data(struct io_rsrc_data *data)
- {
- 	if (data && !atomic_dec_and_test(&data->refs))
-@@ -242,8 +250,15 @@ static __cold void io_rsrc_node_ref_zero(struct percpu_ref *ref)
- 	}
- 	spin_unlock_irqrestore(&ctx->rsrc_ref_lock, flags);
- 
--	if (first_add)
--		mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
-+	if (!first_add)
-+		return;
++static inline void __io_cq_unlock(struct io_ring_ctx *ctx)
++{
++	if (!ctx->task_complete)
++		spin_unlock(&ctx->completion_lock);
++}
 +
-+	if (ctx->submitter_task) {
-+		if (!task_work_add(ctx->submitter_task, &ctx->rsrc_put_tw,
-+				   ctx->notify_method))
-+			return;
-+	}
-+	mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
+ /* keep it inlined for io_submit_flush_completions() */
+-static inline void io_cq_unlock_post_inline(struct io_ring_ctx *ctx)
++static inline void __io_cq_unlock_post(struct io_ring_ctx *ctx)
+ 	__releases(ctx->completion_lock)
+ {
+ 	io_commit_cqring(ctx);
+-	spin_unlock(&ctx->completion_lock);
+-
++	__io_cq_unlock(ctx);
+ 	io_commit_cqring_flush(ctx);
+ 	io_cqring_wake(ctx);
+ }
+@@ -608,7 +620,10 @@ static inline void io_cq_unlock_post_inline(struct io_ring_ctx *ctx)
+ void io_cq_unlock_post(struct io_ring_ctx *ctx)
+ 	__releases(ctx->completion_lock)
+ {
+-	io_cq_unlock_post_inline(ctx);
++	io_commit_cqring(ctx);
++	spin_unlock(&ctx->completion_lock);
++	io_commit_cqring_flush(ctx);
++	io_cqring_wake(ctx);
  }
  
- static struct io_rsrc_node *io_rsrc_node_alloc(void)
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 81445a477622..2b8743645efc 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -53,6 +53,7 @@ struct io_mapped_ubuf {
- 	struct bio_vec	bvec[];
- };
+ /* Returns true if there are no backlogged entries after the flush */
+@@ -795,12 +810,13 @@ struct io_uring_cqe *__io_get_cqe(struct io_ring_ctx *ctx, bool overflow)
+ 	return &rings->cqes[off];
+ }
  
-+void io_rsrc_put_tw(struct callback_head *cb);
- void io_rsrc_put_work(struct work_struct *work);
- void io_rsrc_refs_refill(struct io_ring_ctx *ctx);
- void io_wait_rsrc_data(struct io_rsrc_data *data);
+-static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags,
+-			    bool allow_overflow)
++static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res,
++			      u32 cflags)
+ {
+ 	struct io_uring_cqe *cqe;
+ 
+-	lockdep_assert_held(&ctx->completion_lock);
++	if (!ctx->task_complete)
++		lockdep_assert_held(&ctx->completion_lock);
+ 
+ 	ctx->cq_extra++;
+ 
+@@ -823,10 +839,6 @@ static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32
+ 		}
+ 		return true;
+ 	}
+-
+-	if (allow_overflow)
+-		return io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
+-
+ 	return false;
+ }
+ 
+@@ -840,7 +852,17 @@ static void __io_flush_post_cqes(struct io_ring_ctx *ctx)
+ 	for (i = 0; i < state->cqes_count; i++) {
+ 		struct io_uring_cqe *cqe = &state->cqes[i];
+ 
+-		io_fill_cqe_aux(ctx, cqe->user_data, cqe->res, cqe->flags, true);
++		if (!io_fill_cqe_aux(ctx, cqe->user_data, cqe->res, cqe->flags)) {
++			if (ctx->task_complete) {
++				spin_lock(&ctx->completion_lock);
++				io_cqring_event_overflow(ctx, cqe->user_data,
++							cqe->res, cqe->flags, 0, 0);
++				spin_unlock(&ctx->completion_lock);
++			} else {
++				io_cqring_event_overflow(ctx, cqe->user_data,
++							cqe->res, cqe->flags, 0, 0);
++			}
++		}
+ 	}
+ 	state->cqes_count = 0;
+ }
+@@ -851,7 +873,10 @@ static bool __io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u
+ 	bool filled;
+ 
+ 	io_cq_lock(ctx);
+-	filled = io_fill_cqe_aux(ctx, user_data, res, cflags, allow_overflow);
++	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
++	if (!filled && allow_overflow)
++		filled = io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
++
+ 	io_cq_unlock_post(ctx);
+ 	return filled;
+ }
+@@ -887,10 +912,10 @@ bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32
+ 	lockdep_assert_held(&ctx->uring_lock);
+ 
+ 	if (ctx->submit_state.cqes_count == length) {
+-		io_cq_lock(ctx);
++		__io_cq_lock(ctx);
+ 		__io_flush_post_cqes(ctx);
+ 		/* no need to flush - flush is deferred */
+-		io_cq_unlock(ctx);
++		__io_cq_unlock_post(ctx);
+ 	}
+ 
+ 	/* For defered completions this is not as strict as it is otherwise,
+@@ -1418,7 +1443,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	struct io_wq_work_node *node, *prev;
+ 	struct io_submit_state *state = &ctx->submit_state;
+ 
+-	io_cq_lock(ctx);
++	__io_cq_lock(ctx);
+ 	/* must come first to preserve CQE ordering in failure cases */
+ 	if (state->cqes_count)
+ 		__io_flush_post_cqes(ctx);
+@@ -1426,10 +1451,18 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 		struct io_kiocb *req = container_of(node, struct io_kiocb,
+ 					    comp_list);
+ 
+-		if (!(req->flags & REQ_F_CQE_SKIP))
+-			io_fill_cqe_req(ctx, req);
++		if (!(req->flags & REQ_F_CQE_SKIP) &&
++		    unlikely(!__io_fill_cqe_req(ctx, req))) {
++			if (ctx->task_complete) {
++				spin_lock(&ctx->completion_lock);
++				io_req_cqe_overflow(req);
++				spin_unlock(&ctx->completion_lock);
++			} else {
++				io_req_cqe_overflow(req);
++			}
++		}
+ 	}
+-	io_cq_unlock_post_inline(ctx);
++	__io_cq_unlock_post(ctx);
+ 
+ 	if (!wq_list_empty(&ctx->submit_state.compl_reqs)) {
+ 		io_free_batch_list(ctx, state->compl_reqs.first);
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index a0b11a631e29..c20f15f5024d 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -112,7 +112,7 @@ static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
+ 	return io_get_cqe_overflow(ctx, false);
+ }
+ 
+-static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
++static inline bool __io_fill_cqe_req(struct io_ring_ctx *ctx,
+ 				     struct io_kiocb *req)
+ {
+ 	struct io_uring_cqe *cqe;
+@@ -124,7 +124,7 @@ static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
+ 	 */
+ 	cqe = io_get_cqe(ctx);
+ 	if (unlikely(!cqe))
+-		return io_req_cqe_overflow(req);
++		return false;
+ 
+ 	trace_io_uring_complete(req->ctx, req, req->cqe.user_data,
+ 				req->cqe.res, req->cqe.flags,
+@@ -147,6 +147,14 @@ static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
+ 	return true;
+ }
+ 
++static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
++				   struct io_kiocb *req)
++{
++	if (likely(__io_fill_cqe_req(ctx, req)))
++		return true;
++	return io_req_cqe_overflow(req);
++}
++
+ static inline void req_set_fail(struct io_kiocb *req)
+ {
+ 	req->flags |= REQ_F_FAIL;
 -- 
 2.38.1
 

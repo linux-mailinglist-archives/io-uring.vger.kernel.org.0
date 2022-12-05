@@ -2,121 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A10A7642B44
-	for <lists+io-uring@lfdr.de>; Mon,  5 Dec 2022 16:19:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25DDF642CFA
+	for <lists+io-uring@lfdr.de>; Mon,  5 Dec 2022 17:36:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbiLEPTJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Dec 2022 10:19:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50304 "EHLO
+        id S232709AbiLEQgH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Dec 2022 11:36:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231694AbiLEPSo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Dec 2022 10:18:44 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4375D12083
-        for <io-uring@vger.kernel.org>; Mon,  5 Dec 2022 07:18:43 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id b13-20020a17090a5a0d00b0021906102d05so11755604pjd.5
-        for <io-uring@vger.kernel.org>; Mon, 05 Dec 2022 07:18:43 -0800 (PST)
+        with ESMTP id S230138AbiLEQfn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Dec 2022 11:35:43 -0500
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E5E420362
+        for <io-uring@vger.kernel.org>; Mon,  5 Dec 2022 08:34:32 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id vp12so29174622ejc.8
+        for <io-uring@vger.kernel.org>; Mon, 05 Dec 2022 08:34:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Szp24HOMzPoiGQ4BSX7m574iUR6RH29idrxwSk0ZbYA=;
-        b=KVZjZs00oLLG0wM9hD6pe9mzElhwptMQlZdTFbVs7YhS7MH4teKnATVWfNlv61muxB
-         iZMvag3MIvgXEtfv5/cG2HVGcndgi2JY4C7yT9mBxAdpKbExxwtLbDOp3AgYDwPc1k0X
-         yOw4yIapU85g2lzQCaFDKXyP+putijoF/4W2WZc3plbPykTETzXuQrrx/RU8DjFloTWd
-         yuLzxOu3XpfMxD2aJU3QqevAT32ggyz2nX7hYq2tKKhaNBPD7Ogv1h3x9Tj8ALXXxQjO
-         QzIwci7pWLU9PIJnaGoTzA3UnyYXZ7h92dn9lBoc1d/S7WCcj5x3DgybF4hGZe9DwFyz
-         jqtA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O4WPtqOs6pYDke8VCfpzwsIX+8zN33o8tLS2XMy/lFU=;
+        b=M4hL4Dkh0GS+ejIid/YSsq8jpzXdTpGAgUJKycJ35EFDygxWeaszkk7Z6rnTlj8Hn+
+         NuQvQcVQMOFEzRX19K5Y1qo9cY3xjKlONbvZNOcKp/98mrRm1CKGttwKzdqvvqPMOe4A
+         3mlI3wUilgBVy+Wqly7/hLRvzYcWi4MStMmcJnc62nvI81vAge4l628SQCDQWwMJ/LLZ
+         DtfBlL8NRNKRbfKvxz7qa+Qu1CFcWsvJrR6ppkf9ONYkGljYFc9SqXm3F4bNc22qctAr
+         5d6UxG1WJ04P0X0t/6skAgZ1hjriOEdGIMRXyQGrfp+8Nfdhf3OouuOm9tmj93CJYtCE
+         Yzwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Szp24HOMzPoiGQ4BSX7m574iUR6RH29idrxwSk0ZbYA=;
-        b=nYxJfnxUgE6H6SNasEipXaIQ+gkK4x0STKFZtXi2gKsOtlDcVIY23VX3GUNteRzsbo
-         b7AuOcEPqiedW0z5WVQ8+kb+4jPnTbHa4yf3yEAvJJIVpB1jIim8UWOW21fjOkP5/shX
-         rG3/5yNRSlyh+eX6hEe84+cdUhRwXVuG57dS7bsVEE/p7Ie2RZaqiK7puGvCW4TLS3aH
-         xwshhe5INyanOtzJd58FL23llyv5CHaKCq0+46/I3CPJ/JVE3j2X9DVNf7M4iFPQRru7
-         +GZX8ID/Pv3wQ486IO0AJbgcNQpYgezyPRANABlQUOkqJ+Mkv/ZLXpPt911+vzfAZJjk
-         Bdsg==
-X-Gm-Message-State: ANoB5pnjK3RRcqFYaIcP/JIMgUDKW5RCYMAtSgvbvHTxUx5E2VwfiCoF
-        PPiELz8S2itKTwhcEpiQerLwbg==
-X-Google-Smtp-Source: AA0mqf5soJtvNKH35kKfFrYPJLYVdPpXBn9TRYNaBN41uR4Qnkc1TPUhZHRrdJ7ApCu+9g1+KeajUg==
-X-Received: by 2002:a17:903:495:b0:189:911a:6b57 with SMTP id jj21-20020a170903049500b00189911a6b57mr37204072plb.110.1670253522570;
-        Mon, 05 Dec 2022 07:18:42 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y14-20020a655a0e000000b0047712e4bc51sm8453033pgs.55.2022.12.05.07.18.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Dec 2022 07:18:42 -0800 (PST)
-Message-ID: <bc83f604-bdde-e86e-9d12-dfc6aa0a91af@kernel.dk>
-Date:   Mon, 5 Dec 2022 08:18:41 -0700
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O4WPtqOs6pYDke8VCfpzwsIX+8zN33o8tLS2XMy/lFU=;
+        b=1lHCQfaLWt2RciMAdryxrxmRvgtJa9VcjuECeNs6g4y3z8f/CIU6AcdLxr1yuvBbCK
+         OhRPtVoVeuvyhR/fL5G6YwJK/R0Gzn8ZVgfVPSaX4Kxiiy0HHcRp5gqDLjWHpQh0OeuH
+         jZPSBenGUcNn/5zjWrLv3pgBOtPMAoQ9Ir77fjbqrFieLyQ3Fltu0g8Guo6ZnIyvQTAw
+         pl45JxisIvkQ1UbtTqmyfNkiV5IEb5wDDle+JXz4QOR6tSf1/r4GeLdFHBkg8p7NoEF1
+         3RZccpGApRJh5AeGn7jmWrS1xzxRGxX2+zNBWki/7hAVfdfNORZBoOVTJLdByCPJa87T
+         xypA==
+X-Gm-Message-State: ANoB5pl5fWRd5ND6ka9iEcb4ggvI+efdAWzycVmIBLUs4CRsMBFjQoBr
+        rvIogyMJzHVElUrUoY5QaQewMPoY9hpt/m/2FrE=
+X-Google-Smtp-Source: AA0mqf4Fgg09FLsqqE3BrNtfLt56BRMkjH137pnBFQmTk19/gBlz8mHCBmdhXz0809KBf4m8ZHJEYSuDE16GSJgzhaI=
+X-Received: by 2002:a17:906:2404:b0:7ad:d411:30af with SMTP id
+ z4-20020a170906240400b007add41130afmr27376154eja.636.1670258070902; Mon, 05
+ Dec 2022 08:34:30 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH for-next 5/7] io_uring: post msg_ring CQE in task context
-Content-Language: en-US
-To:     Dylan Yudaken <dylany@meta.com>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <cover.1670207706.git.asml.silence@gmail.com>
- <bb0e9ee516e182802da798258f303bf22ecdc151.1670207706.git.asml.silence@gmail.com>
- <3b15e83e-52d6-d775-3561-5bec32cf1297@kernel.dk>
- <d64021e26df111c20c7e194627abf5c526636b73.camel@fb.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <d64021e26df111c20c7e194627abf5c526636b73.camel@fb.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Received: by 2002:a05:6f02:3b6:b0:27:90e6:e1d1 with HTTP; Mon, 5 Dec 2022
+ 08:34:30 -0800 (PST)
+Reply-To: plml47@hotmail.com
+From:   Philip Manul <alomassou1972@gmail.com>
+Date:   Mon, 5 Dec 2022 08:34:30 -0800
+Message-ID: <CA+_U6tjoYsXiWpQTRE+oV+pARumxEg919oTO_B7BXFDqCyL2TA@mail.gmail.com>
+Subject: REP:
+To:     in <in@proposal.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=2.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/5/22 8:12?AM, Dylan Yudaken wrote:
-> On Mon, 2022-12-05 at 04:53 -0700, Jens Axboe wrote:
->> On 12/4/22 7:44?PM, Pavel Begunkov wrote:
->>> We want to limit post_aux_cqe() to the task context when -
->>>> task_complete
->>> is set, and so we can't just deliver a IORING_OP_MSG_RING CQE to
->>> another
->>> thread. Instead of trying to invent a new delayed CQE posting
->>> mechanism
->>> push them into the overflow list.
->>
->> This is really the only one out of the series that I'm not a big fan
->> of.
->> If we always rely on overflow for msg_ring, then that basically
->> removes
->> it from being usable in a higher performance setting.
->>
->> The natural way to do this would be to post the cqe via task_work for
->> the target, ring, but we also don't any storage available for that.
->> Might still be better to alloc something ala
->>
->> struct tw_cqe_post {
->> ????????struct task_work work;
->> ????????s32 res;
->> ????????u32 flags;
->> ????????u64 user_data;
->> }
->>
->> and post it with that?
->>
-> 
-> It might work to post the whole request to the target, post the cqe,
-> and then return the request back to the originating ring via tw for the
-> msg_ring CQE and cleanup.
-
-I did consider that, but then you need to ref that request as well as
-bounce it twice via task_work. Probably easier to just alloc at that
-point? Though if you do that, then the target cqe would post later than
-the original. And potentially lose -EOVERFLOW if the target ring is
-overflown...
-
--- 
-Jens Axboe
+--=20
+Guten tag,
+Mein Name ist Philip Manul. Ich bin von Beruf Rechtsanwalt. Ich habe
+einen verstorbenen Kunden, der zuf=C3=A4llig denselben Namen mit Ihnen
+teilt. Ich habe alle Papierdokumente in meinem Besitz. Ihr Verwandter,
+mein verstorbener Kunde, hat hier in meinem Land einen nicht
+beanspruchten Fonds zur=C3=BCckgelassen. Ich warte auf Ihre Antwort zum
+Verfahren.
+Philip Manul.

@@ -2,76 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29ED66449C0
-	for <lists+io-uring@lfdr.de>; Tue,  6 Dec 2022 17:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE6E644A2D
+	for <lists+io-uring@lfdr.de>; Tue,  6 Dec 2022 18:17:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234971AbiLFQxs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Dec 2022 11:53:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37386 "EHLO
+        id S232572AbiLFRRV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Dec 2022 12:17:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231990AbiLFQxr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 11:53:47 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA08223
-        for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 08:53:46 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id h6so4312047iof.9
-        for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 08:53:46 -0800 (PST)
+        with ESMTP id S232046AbiLFRRT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 12:17:19 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE24CE32
+        for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 09:17:17 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id m15so6771135ilq.2
+        for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 09:17:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IIobkFc8+r1LnSRyVhyVnlejzYVDaAKKEF43tgDC9p0=;
-        b=Z4IGxJ0UxmIFqYvmxUW2lCg83tCTSVFUEJAHXdEv1StiJQG8yLzvA9V87c9AeQWX37
-         S120vVywNpGzyNa2SunLiwI+RGJ5QkQumlM8Ob5JYByEhppwdR5G7BsYoQ9JhHSWDGdZ
-         jVq/bRrDzdxSpZfWnja46P66PWzWoPZzNzsiKBr1PtH+eQVE7VaUiuvD6LQIBoBdSYq1
-         UbUR+Nn+68pxKP8b+wGubqr03Lu6ZgzNP2lQfT/SeMlr+1v+j2ipTpxB+T99LRDIz4Uq
-         Itx0ipaKWNv60WpLrsm2CM+w+GOqbyqL5+iNUqVQIIgk5cOkgIKhblwtAD03bmis+bfj
-         gRQg==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vnw2xPvVO8oOmE+QWt+r7RB7ZKiATsnbepvL6xDiN7g=;
+        b=0LeYep77pGkPineLutKJswL3Ed/PgcaTiKetLJ/JfNBxwO4wznf3PUW11aGHnQ9HXB
+         Cor+0xOXmzIQrPRZMwkB686dYtqep4/1ODc1+IEFMqviHgSlIqer779L1b57gCUMrQdf
+         wZyL/l0jTvx5agDoFXukDjg+U4iQMDCpDHnsnJsfXFv3hCWWqC4bypPihCg9/MN256ne
+         oSiz8QUM99A9tQshcKfYmvg+3TnSIxtMCykGUByxsu2nYOK0W63rtzP7XHFQR+IMCT59
+         MG5gOY5zc4yzDTv1W45+/KyNcVm5xgDzEIh8MTFme15t7GWRZrCaNVI1pnYLPQY0BFBn
+         vzQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIobkFc8+r1LnSRyVhyVnlejzYVDaAKKEF43tgDC9p0=;
-        b=4c5M5iSGXrdnz8z94xHG5eabQOovS/I2yyBUxF06Ta1WOzPRA0jUL2cc4LEzY2RUlD
-         ZVBt8F2xt9JljT18v7KK9y6Tdty4VKZTk4ClVESj2fUPEwpTrCiTKaKb2k02G80nkbnv
-         4K1IpXzVKK+tB0A9kto6KfIhjAMT2XFR65B8ftM3RvEWrbr1eAdiwO0bNbNn2Ay/+7Ls
-         FCTkK740h2tBlWi5jMrVcNagkPDZ4kJDSL4P9xukgnXKeD3G0WP6olx+P7XJewXRdfDu
-         m+u0sQuOC+VA99Xm7lnnX2LIDDhQflyKDGBR5UBN+WfucGnh/jaw+hABT142mC0ozXjn
-         Fc7w==
-X-Gm-Message-State: ANoB5pk1uXgqCrTB7AlucrzIoIC0AzwS9VqxpK2PmVnaYCKfM75vugxz
-        DHnc3yte6EY0O8oJCpDMI3kGfbPTaTmUwXP7BQQ=
-X-Google-Smtp-Source: AA0mqf5/J9FevO6/waWJ5uVrzAtYaDQ/WkS93xhjSWUefEK5wmlucuHnLVw3GU76VlJ12CksAUAWKA==
-X-Received: by 2002:a02:856a:0:b0:389:ce3b:6bc0 with SMTP id g97-20020a02856a000000b00389ce3b6bc0mr21373459jai.61.1670345625519;
-        Tue, 06 Dec 2022 08:53:45 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id f7-20020a028487000000b0036cc14af7adsm6908231jai.149.2022.12.06.08.53.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Dec 2022 08:53:44 -0800 (PST)
-Message-ID: <1d2905ba-8d76-b54c-a812-a1b3fde05d13@kernel.dk>
-Date:   Tue, 6 Dec 2022 09:53:41 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH for-next 0/7] CQ locking optimisation
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1670207706.git.asml.silence@gmail.com>
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vnw2xPvVO8oOmE+QWt+r7RB7ZKiATsnbepvL6xDiN7g=;
+        b=MHFc0nH+WmfR4pBt0Jje9+Pp4IdqshgxJ6zapEV2UaLEJdq/8Z7lMeLG+UwhctSlA3
+         KAaZz5aXUgvks7lEq5KAv8ZTTjxRTWam9rGQ97Cm/0hbOWK9oxIz0JNvNq+I4rCutB3U
+         3lbv0thef7/p+QBxzadDVQdC1ylOqCFRhZJzLHZ/uncYSLSO4L2u5iOTV45t4JbbmFQS
+         /W96LnCpJH4xNFfi7Bd7uhYf9xSY2PsNx5HpZQCEIbPWi0rUSgbEmcTrloJo1fQdqo/D
+         Xz16vNaDXUpToD2Y2p498n7w6jxAh+RNd2dfTcCAUYdSRqUKUgQQih9P01TXRpmXrr50
+         HK3w==
+X-Gm-Message-State: ANoB5pmBzr54DaWFgWnviRit1PO95mrKmNRIytyRizdrdO763tdlfy5B
+        bYbXhyMnGDSVN+t99GX5GYgHTr9pJ5MyYgB92v8=
+X-Google-Smtp-Source: AA0mqf7A2Lg+N/XVEQzk6oA/QaiUFeB7TlMGh2kKQ0qVnXEfYhbD2hghygJBar7YAWuC/76EdIGwdQ==
+X-Received: by 2002:a92:a30b:0:b0:302:555a:f761 with SMTP id a11-20020a92a30b000000b00302555af761mr29940056ili.323.1670347037027;
+        Tue, 06 Dec 2022 09:17:17 -0800 (PST)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id v12-20020a056638008c00b0036374fc6523sm6908825jao.24.2022.12.06.09.17.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Dec 2022 09:17:16 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
 In-Reply-To: <cover.1670207706.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <cover.1670207706.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-next 0/7] CQ locking optimisation
+Message-Id: <167034703635.331285.11373766340886831558.b4-ty@kernel.dk>
+Date:   Tue, 06 Dec 2022 10:17:16 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.11.0-dev-50ba3
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/4/22 7:44 PM, Pavel Begunkov wrote:
+
+On Mon, 05 Dec 2022 02:44:24 +0000, Pavel Begunkov wrote:
 > Optimise CQ locking for event posting depending on a number of ring setup flags.
 > QD1 nop benchmark showed 12.067 -> 12.565 MIOPS increase, which more than 8.5%
 > of the io_uring kernel overhead (taking into account that the syscall overhead
@@ -79,15 +78,26 @@ On 12/4/22 7:44 PM, Pavel Begunkov wrote:
 > QD1, applications can submit a bunch of requests but their completions will may
 > arrive randomly hurting batching and so performance (or latency).
 > 
-> The downside is that we have to punt all io-wq completions to the
-> original task. The performance win should diminish with better
-> completion batching, but it should be worth it for as it also helps tw,
-> which in reality often don't complete too many requests.
-> 
-> The feature depends on DEFER_TASKRUN but can be relaxed to SINGLE_ISSUER
+> [...]
 
-Let's hash out the details for MSG_RING later, if we have to.
+Applied, thanks!
 
+[1/7] io_uring: skip overflow CQE posting for dying ring
+      commit: 3dac93b1fae0b90211ed50fac8c2b48df1fc01dc
+[2/7] io_uring: don't check overflow flush failures
+      commit: a3f63209455a1d453ee8d9b87d0e07971b3c356e
+[3/7] io_uring: complete all requests in task context
+      commit: ab857514be26e0050e29696f363a96d238d8817e
+[4/7] io_uring: force multishot CQEs into task context
+      commit: 6db5fe86590f68c69747e8d5a3190b710e36ffb2
+[5/7] io_uring: post msg_ring CQE in task context
+      commit: d9143438fdccc62eb31a0985caa00c2876f8aa75
+[6/7] io_uring: use tw for putting rsrc
+      commit: 3a65f4413a2ccd362227c7d121ef549aa5a92b46
+[7/7] io_uring: skip spinlocking for ->task_complete
+      commit: 65a52cc3de9d7a93aa4c52a4a03e4a91ad7d1943
+
+Best regards,
 -- 
 Jens Axboe
 

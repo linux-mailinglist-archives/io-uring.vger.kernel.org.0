@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1616452B9
-	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 524286452BA
+	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiLGDyl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Dec 2022 22:54:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41652 "EHLO
+        id S229843AbiLGDyn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Dec 2022 22:54:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiLGDyl (ORCPT
+        with ESMTP id S229829AbiLGDyl (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 22:54:41 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3222027168
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93E352158
         for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 19:54:40 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id z92so23228278ede.1
+Received: by mail-ed1-x536.google.com with SMTP id e13so23144085edj.7
         for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 19:54:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dP2+0OXomyqgmdewLzhRA7A0yMZuCYWYtsUc2p+oA/E=;
-        b=jZEtXosr1wHSijYps7NTiYoCV9t5ecY9GqrKTPRvTz1aXlx+2+cz3WhfSv1euMFuWx
-         xj1vY1gxKIR+lO9v0rvSo4IBsTsMGoLIN0bmShQgElg5sacHP/0n6bptv3rw8S8NSpFm
-         I91LFmJdRWNJGqqLm2hWQ45WOldmG7X1YcRZoCCscMU7hU5iVJ5sK4mG7SEsiGRm+Jwn
-         74b8il++wbEl1w8c+fzoJdqrJTEtxzS7bhoOsJmOHQQ3nnPOYTXqFBID74u1O36wURI+
-         nYb/CD+ck6Ywazq62IHg/qMZ7nLqZ0aTRSw+lOLB+A3/3+dm5yo/xS+HiZ/vFDOuD6hp
-         QoFQ==
+        bh=r5fgO8A8lvZ98Yk+tc8eOFrqMx1DtgiAeuBltW/yuOA=;
+        b=mNyRTWAGsag5ljFZSekhTerSRx48o8RQeSDc449OmHrp18NxwHe129CrQJH+hi6dU0
+         pRc7tLDOx2LAEMHA+hLaQHOm68hGqft6/vHnM6+Ha60fzk135CTaUICAglpvD9UuCO0u
+         FRFLcBpznBV1LGkyO1BFsTyq0HaNLs7yqDYlVHZArrF/s/PFCT5bCZ7hUJJH5SarxkKg
+         rmn7QPcRMd2K8X4Iv+FP7hjOZvUT+dVN8RarQzluuwyz8+pThYJPgJ5Jripu/bNrFEaU
+         Ssmzp8d3Uqya1lfvlKmBtWwGUEv6jGOqbbEu5Vn9QcRSls56X//7LBP86cQ/evZ3v4mz
+         6J5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dP2+0OXomyqgmdewLzhRA7A0yMZuCYWYtsUc2p+oA/E=;
-        b=B/589n3+6rJt5dt0HqI4xHAWwZUiqFMIOTGDG21a870g4q5tFZjpcWsqBoT8JeBNF/
-         l4tKhSMRKGMgZl//TpN2qyl5vzml9Z7rklU4R48gM46aUQQ+7J0wq1N3raQiCaIJpipz
-         m6K7tNsmKop/oCdymjDd6KXhqMfHmR1jtd8x8MpY5Ohh0hmhJRk4I4D+AIZIckPq77Tp
-         c8B52Jo2GYDfKxBHSjs9C1LcGBKX/Kve6C89bo4apG5+klVtgQ0SYuaIlLnNE3+IUvYQ
-         f1qaI4oiM+jzcoeEK/gsBsXBCbityNqXmEkfRAIH2TsqvKlf11ooxsnepO6GTkUjGOpd
-         8vZg==
-X-Gm-Message-State: ANoB5plqptYEDXpKLiNcSWyu74Fi66AYt1xE0qUqEZrUaSoDHwLsac9L
-        FvqQpXNhpVjUQdcheMMIJvBdyM/G9n0=
-X-Google-Smtp-Source: AA0mqf46lduNoX0OZAZJgZJLLMHAAU5QRm7jafa5d9NdBCUEFnDW3f2R8WTg0v7hx0TWbtsZFiQ/Yg==
-X-Received: by 2002:a05:6402:2052:b0:46b:5dcf:5365 with SMTP id bc18-20020a056402205200b0046b5dcf5365mr33369699edb.157.1670385278600;
-        Tue, 06 Dec 2022 19:54:38 -0800 (PST)
+        bh=r5fgO8A8lvZ98Yk+tc8eOFrqMx1DtgiAeuBltW/yuOA=;
+        b=qKcTpg083qxNIpZvxD3m6Vb1ERstiqf9aHm3Go3Hb2ZUNvcBNHDbkKNcig0QqqnbMb
+         ayEYJwIfFU9IINXb/hkvSLzRLoipGhmZkXWeR9AREP15X6CJrIse+uVPcbKBxjYq4Wu3
+         vvDZBJru6EK7X5hFfWTeLxrl6osYz9hDrptxm90RsxnyxFMOMZN5ZfPW75lEaCGZGjOI
+         ZDj5MBkJ+CiuX6ne8AW/7Sn0OKOYEh91wA0K7ibQJyG6HhLzAP4Z3PtIGHBRt8OrxaRW
+         KOj0pwogCy+AbfuMKQGF+pfC5U/Sldn2FTLoKmIdJBgn5Jh3CiJpAr4hYCqUKv8Jj753
+         51cQ==
+X-Gm-Message-State: ANoB5plaEhljU7+gi1Va5n+9Dv/dhd9QAhyChN+C6lL/8rLWkDQXtdfG
+        D1BFJY3x6ivbWkHlRvzIzjWL3SxOj1A=
+X-Google-Smtp-Source: AA0mqf7dM3J636vTKokAE6NkXwDWARNABM005EFropR0+g4fqlcoTze3SMNXWR3vbnr3hydMCxBh1Q==
+X-Received: by 2002:a05:6402:548a:b0:468:e8e2:31c9 with SMTP id fg10-20020a056402548a00b00468e8e231c9mr14184891edb.310.1670385279242;
+        Tue, 06 Dec 2022 19:54:39 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.241.58.threembb.co.uk. [94.196.241.58])
-        by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.37
+        by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 19:54:38 -0800 (PST)
+        Tue, 06 Dec 2022 19:54:39 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 07/12] io_uring: use tw for putting rsrc
-Date:   Wed,  7 Dec 2022 03:53:32 +0000
-Message-Id: <cbba5d53a11ee6fc2194dacea262c1d733c8b529.1670384893.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 08/12] io_uring: never run tw and fallback in parallel
+Date:   Wed,  7 Dec 2022 03:53:33 +0000
+Message-Id: <96f4987265c4312f376f206511c6af3e77aaf5ac.1670384893.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1670384893.git.asml.silence@gmail.com>
 References: <cover.1670384893.git.asml.silence@gmail.com>
@@ -70,90 +70,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Use task_work for completing rsrc removals, it'll be needed later for
-spinlock optimisations.
+Once we fallback a tw we want all requests to that task to be given to
+the fallback wq so we dont run it in parallel with the last, i.e. post
+PF_EXITING, tw run of the task.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  1 +
- io_uring/io_uring.c            |  1 +
- io_uring/rsrc.c                | 19 +++++++++++++++++--
- io_uring/rsrc.h                |  1 +
- 4 files changed, 20 insertions(+), 2 deletions(-)
+ io_uring/io_uring.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 6be1e1359c89..dcd8a563ab52 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -328,6 +328,7 @@ struct io_ring_ctx {
- 	struct io_rsrc_data		*buf_data;
- 
- 	struct delayed_work		rsrc_put_work;
-+	struct callback_head		rsrc_put_tw;
- 	struct llist_head		rsrc_put_llist;
- 	struct list_head		rsrc_ref_list;
- 	spinlock_t			rsrc_ref_lock;
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 52ea83f241c6..3a422a7b7132 100644
+index 3a422a7b7132..0e424d8721ab 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -326,6 +326,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	spin_lock_init(&ctx->rsrc_ref_lock);
- 	INIT_LIST_HEAD(&ctx->rsrc_ref_list);
- 	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
-+	init_task_work(&ctx->rsrc_put_tw, io_rsrc_put_tw);
- 	init_llist_head(&ctx->rsrc_put_llist);
- 	init_llist_head(&ctx->work_llist);
- 	INIT_LIST_HEAD(&ctx->tctx_list);
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index d25309400a45..18de10c68a15 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -204,6 +204,14 @@ void io_rsrc_put_work(struct work_struct *work)
- 	}
- }
+@@ -149,6 +149,7 @@ static void io_clean_op(struct io_kiocb *req);
+ static void io_queue_sqe(struct io_kiocb *req);
+ static void io_move_task_work_from_local(struct io_ring_ctx *ctx);
+ static void __io_submit_flush_completions(struct io_ring_ctx *ctx);
++static __cold void io_fallback_tw(struct io_uring_task *tctx);
  
-+void io_rsrc_put_tw(struct callback_head *cb)
-+{
-+	struct io_ring_ctx *ctx = container_of(cb, struct io_ring_ctx,
-+					       rsrc_put_tw);
-+
-+	io_rsrc_put_work(&ctx->rsrc_put_work.work);
-+}
-+
- void io_wait_rsrc_data(struct io_rsrc_data *data)
- {
- 	if (data && !atomic_dec_and_test(&data->refs))
-@@ -242,8 +250,15 @@ static __cold void io_rsrc_node_ref_zero(struct percpu_ref *ref)
- 	}
- 	spin_unlock_irqrestore(&ctx->rsrc_ref_lock, flags);
+ static struct kmem_cache *req_cachep;
  
--	if (first_add)
--		mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
-+	if (!first_add)
+@@ -1160,10 +1161,17 @@ void tctx_task_work(struct callback_head *cb)
+ 	struct io_uring_task *tctx = container_of(cb, struct io_uring_task,
+ 						  task_work);
+ 	struct llist_node fake = {};
+-	struct llist_node *node = io_llist_xchg(&tctx->task_list, &fake);
++	struct llist_node *node;
+ 	unsigned int loops = 1;
+-	unsigned int count = handle_tw_list(node, &ctx, &uring_locked, NULL);
++	unsigned int count;
++
++	if (unlikely(current->flags & PF_EXITING)) {
++		io_fallback_tw(tctx);
 +		return;
-+
-+	if (ctx->submitter_task) {
-+		if (!task_work_add(ctx->submitter_task, &ctx->rsrc_put_tw,
-+				   ctx->notify_method))
-+			return;
 +	}
-+	mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
- }
  
- static struct io_rsrc_node *io_rsrc_node_alloc(void)
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 81445a477622..2b8743645efc 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -53,6 +53,7 @@ struct io_mapped_ubuf {
- 	struct bio_vec	bvec[];
- };
- 
-+void io_rsrc_put_tw(struct callback_head *cb);
- void io_rsrc_put_work(struct work_struct *work);
- void io_rsrc_refs_refill(struct io_ring_ctx *ctx);
- void io_wait_rsrc_data(struct io_rsrc_data *data);
++	node = io_llist_xchg(&tctx->task_list, &fake);
++	count = handle_tw_list(node, &ctx, &uring_locked, NULL);
+ 	node = io_llist_cmpxchg(&tctx->task_list, &fake, NULL);
+ 	while (node != &fake) {
+ 		loops++;
 -- 
 2.38.1
 

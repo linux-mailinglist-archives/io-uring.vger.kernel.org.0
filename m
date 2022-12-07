@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 009EC6452B8
-	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1616452B9
+	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbiLGDyl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S229818AbiLGDyl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Tue, 6 Dec 2022 22:54:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41624 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiLGDyk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 22:54:40 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764835216D
-        for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 19:54:39 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id n20so11184054ejh.0
-        for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 19:54:39 -0800 (PST)
+        with ESMTP id S229534AbiLGDyl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 22:54:41 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3222027168
+        for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 19:54:40 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id z92so23228278ede.1
+        for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 19:54:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BzK/zrdj76nrH7tgY872zfma02vZfGuAP6Fn/6zdEXI=;
-        b=n7eguXwsQ0qfm1aLJchTAdxOyM9dWwFjfm9/jySjjXRqSM/ga6hyjRSv31DqHYU7JG
-         lu//oJ7zscuZQUj/fqs/H79NRo9ypEasYQ1xJ0Mox22fXAuQsZcmSR/LVxKxu5I1KHBF
-         Z0cq2sq/484Ha52Lxbr9mxIY3oUya2OPGXAicpIbctVzM9mbMCIiPpblaxEbL8G5nZgz
-         bcxEzfj11QOFvN0EyLj/AA4OhuRN/4gkF44MpLq4SPMFY0XGmTAYnEkWEStga58RHuaz
-         4k3WBkeBdH4nPR9qd6jPiBmVeotSMKa4n9PDfmL4+j+xTV0Gm+g3wpVsVOxVj4QWKFWj
-         FgOQ==
+        bh=dP2+0OXomyqgmdewLzhRA7A0yMZuCYWYtsUc2p+oA/E=;
+        b=jZEtXosr1wHSijYps7NTiYoCV9t5ecY9GqrKTPRvTz1aXlx+2+cz3WhfSv1euMFuWx
+         xj1vY1gxKIR+lO9v0rvSo4IBsTsMGoLIN0bmShQgElg5sacHP/0n6bptv3rw8S8NSpFm
+         I91LFmJdRWNJGqqLm2hWQ45WOldmG7X1YcRZoCCscMU7hU5iVJ5sK4mG7SEsiGRm+Jwn
+         74b8il++wbEl1w8c+fzoJdqrJTEtxzS7bhoOsJmOHQQ3nnPOYTXqFBID74u1O36wURI+
+         nYb/CD+ck6Ywazq62IHg/qMZ7nLqZ0aTRSw+lOLB+A3/3+dm5yo/xS+HiZ/vFDOuD6hp
+         QoFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BzK/zrdj76nrH7tgY872zfma02vZfGuAP6Fn/6zdEXI=;
-        b=TnIt6sTzMhnKUAorghqVCIL8mgEpgQUFBlWIJnXQ59q+7+d51PAQ6iCWvYMwpSonRi
-         j0voRpjIrhpd+4MMS8l5Cym0MbFcEKX0wSIdu23gvAd+l7GuFN5LLxf/zXaIhogu32ET
-         AifDq+7g9/ypYusdQ/dlo4wOEhVUL7SAuyk08kRO06/SV9fFtJRZOD0SxxSMFGQ1UiC4
-         WP0KwOxG0E6Dy/wvKEzcUvDxaGuOOk7u+7DOCZd5A4nwZBsoBWZ/naa+yPgV765ybN8D
-         vh84dEVPcknsmdgi3Oliox8WG74zyNXleVTR5bVOeIGht2J+GTRibxa3DtMQSxTTgmn4
-         2CoQ==
-X-Gm-Message-State: ANoB5pnxfOw+a76pMwUjZxBohjh7ucgGFAABRsN4WJORNbSsKv3sPYuK
-        uSqdCn8+ysBsNACj/rbp8h1maSZXG1o=
-X-Google-Smtp-Source: AA0mqf6SnTUGML1/xmclXec+2OkM1iXAOZlbGwRULnBFke3XlTRXso8367M8SFCZX5GeGYqfTx8hxQ==
-X-Received: by 2002:a17:906:c011:b0:778:f9b6:6fc with SMTP id e17-20020a170906c01100b00778f9b606fcmr76790178ejz.580.1670385277852;
-        Tue, 06 Dec 2022 19:54:37 -0800 (PST)
+        bh=dP2+0OXomyqgmdewLzhRA7A0yMZuCYWYtsUc2p+oA/E=;
+        b=B/589n3+6rJt5dt0HqI4xHAWwZUiqFMIOTGDG21a870g4q5tFZjpcWsqBoT8JeBNF/
+         l4tKhSMRKGMgZl//TpN2qyl5vzml9Z7rklU4R48gM46aUQQ+7J0wq1N3raQiCaIJpipz
+         m6K7tNsmKop/oCdymjDd6KXhqMfHmR1jtd8x8MpY5Ohh0hmhJRk4I4D+AIZIckPq77Tp
+         c8B52Jo2GYDfKxBHSjs9C1LcGBKX/Kve6C89bo4apG5+klVtgQ0SYuaIlLnNE3+IUvYQ
+         f1qaI4oiM+jzcoeEK/gsBsXBCbityNqXmEkfRAIH2TsqvKlf11ooxsnepO6GTkUjGOpd
+         8vZg==
+X-Gm-Message-State: ANoB5plqptYEDXpKLiNcSWyu74Fi66AYt1xE0qUqEZrUaSoDHwLsac9L
+        FvqQpXNhpVjUQdcheMMIJvBdyM/G9n0=
+X-Google-Smtp-Source: AA0mqf46lduNoX0OZAZJgZJLLMHAAU5QRm7jafa5d9NdBCUEFnDW3f2R8WTg0v7hx0TWbtsZFiQ/Yg==
+X-Received: by 2002:a05:6402:2052:b0:46b:5dcf:5365 with SMTP id bc18-20020a056402205200b0046b5dcf5365mr33369699edb.157.1670385278600;
+        Tue, 06 Dec 2022 19:54:38 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.241.58.threembb.co.uk. [94.196.241.58])
         by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 19:54:37 -0800 (PST)
+        Tue, 06 Dec 2022 19:54:38 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 06/12] io_uring: force multishot CQEs into task context
-Date:   Wed,  7 Dec 2022 03:53:31 +0000
-Message-Id: <d7714aaff583096769a0f26e8e747759e556feb1.1670384893.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 07/12] io_uring: use tw for putting rsrc
+Date:   Wed,  7 Dec 2022 03:53:32 +0000
+Message-Id: <cbba5d53a11ee6fc2194dacea262c1d733c8b529.1670384893.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1670384893.git.asml.silence@gmail.com>
 References: <cover.1670384893.git.asml.silence@gmail.com>
@@ -70,70 +70,90 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Multishot are posting CQEs outside of the normal request completion
-path, which is usually done from within a task work handler. However, it
-might be not the case when it's yet to be polled but has been punted to
-io-wq. Make it abide ->task_complete and push it to the polling path
-when executed by io-wq.
+Use task_work for completing rsrc removals, it'll be needed later for
+spinlock optimisations.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/net.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ include/linux/io_uring_types.h |  1 +
+ io_uring/io_uring.c            |  1 +
+ io_uring/rsrc.c                | 19 +++++++++++++++++--
+ io_uring/rsrc.h                |  1 +
+ 4 files changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 90342dcb6b1d..f276f6dd5b09 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -67,6 +67,19 @@ struct io_sr_msg {
- 	struct io_kiocb 		*notif;
- };
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 6be1e1359c89..dcd8a563ab52 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -328,6 +328,7 @@ struct io_ring_ctx {
+ 	struct io_rsrc_data		*buf_data;
  
-+static inline bool io_check_multishot(struct io_kiocb *req,
-+				      unsigned int issue_flags)
+ 	struct delayed_work		rsrc_put_work;
++	struct callback_head		rsrc_put_tw;
+ 	struct llist_head		rsrc_put_llist;
+ 	struct list_head		rsrc_ref_list;
+ 	spinlock_t			rsrc_ref_lock;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 52ea83f241c6..3a422a7b7132 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -326,6 +326,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	spin_lock_init(&ctx->rsrc_ref_lock);
+ 	INIT_LIST_HEAD(&ctx->rsrc_ref_list);
+ 	INIT_DELAYED_WORK(&ctx->rsrc_put_work, io_rsrc_put_work);
++	init_task_work(&ctx->rsrc_put_tw, io_rsrc_put_tw);
+ 	init_llist_head(&ctx->rsrc_put_llist);
+ 	init_llist_head(&ctx->work_llist);
+ 	INIT_LIST_HEAD(&ctx->tctx_list);
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index d25309400a45..18de10c68a15 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -204,6 +204,14 @@ void io_rsrc_put_work(struct work_struct *work)
+ 	}
+ }
+ 
++void io_rsrc_put_tw(struct callback_head *cb)
 +{
-+	/*
-+	 * When ->locked_cq is set we only allow to post CQEs from the original
-+	 * task context. Usual request completions will be handled in other
-+	 * generic paths but multipoll may decide to post extra cqes.
-+	 */
-+	return !(issue_flags & IO_URING_F_IOWQ) ||
-+		!(issue_flags & IO_URING_F_MULTISHOT) ||
-+		!req->ctx->task_complete;
++	struct io_ring_ctx *ctx = container_of(cb, struct io_ring_ctx,
++					       rsrc_put_tw);
++
++	io_rsrc_put_work(&ctx->rsrc_put_work.work);
 +}
 +
- int io_shutdown_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ void io_wait_rsrc_data(struct io_rsrc_data *data)
  {
- 	struct io_shutdown *shutdown = io_kiocb_to_cmd(req, struct io_shutdown);
-@@ -730,6 +743,9 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
- 		return io_setup_async_msg(req, kmsg, issue_flags);
+ 	if (data && !atomic_dec_and_test(&data->refs))
+@@ -242,8 +250,15 @@ static __cold void io_rsrc_node_ref_zero(struct percpu_ref *ref)
+ 	}
+ 	spin_unlock_irqrestore(&ctx->rsrc_ref_lock, flags);
  
-+	if (!io_check_multishot(req, issue_flags))
-+		return io_setup_async_msg(req, kmsg, issue_flags);
+-	if (first_add)
+-		mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
++	if (!first_add)
++		return;
 +
- retry_multishot:
- 	if (io_do_buffer_select(req)) {
- 		void __user *buf;
-@@ -829,6 +845,9 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
- 		return -EAGAIN;
++	if (ctx->submitter_task) {
++		if (!task_work_add(ctx->submitter_task, &ctx->rsrc_put_tw,
++				   ctx->notify_method))
++			return;
++	}
++	mod_delayed_work(system_wq, &ctx->rsrc_put_work, delay);
+ }
  
-+	if (!io_check_multishot(req, issue_flags))
-+		return -EAGAIN;
-+
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
-@@ -1280,6 +1299,8 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 	struct file *file;
- 	int ret, fd;
+ static struct io_rsrc_node *io_rsrc_node_alloc(void)
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 81445a477622..2b8743645efc 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -53,6 +53,7 @@ struct io_mapped_ubuf {
+ 	struct bio_vec	bvec[];
+ };
  
-+	if (!io_check_multishot(req, issue_flags))
-+		return -EAGAIN;
- retry:
- 	if (!fixed) {
- 		fd = __get_unused_fd_flags(accept->flags, accept->nofile);
++void io_rsrc_put_tw(struct callback_head *cb);
+ void io_rsrc_put_work(struct work_struct *work);
+ void io_rsrc_refs_refill(struct io_ring_ctx *ctx);
+ void io_wait_rsrc_data(struct io_rsrc_data *data);
 -- 
 2.38.1
 

@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 381576452BC
-	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFB66452BE
+	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229838AbiLGDyr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Dec 2022 22:54:47 -0500
+        id S229544AbiLGDyt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Dec 2022 22:54:49 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229828AbiLGDyn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 22:54:43 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEBDD52165
-        for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 19:54:42 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id e13so23144168edj.7
-        for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 19:54:42 -0800 (PST)
+        with ESMTP id S229853AbiLGDyq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 22:54:46 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FB752149
+        for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 19:54:44 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id bj12so10993334ejb.13
+        for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 19:54:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W6AZVOd5+CvwsZBv9HzpXB3puSLMulw5+42cLdFvuTo=;
-        b=jn55tq4vWKouaacc90kTGTerojt/VHK6Yn/SSxrikk9RjqR0EP1r8sItbvfX/JFkNv
-         MdEuFnSTZQIgwW6vgSz3xUK9elYg4PEYrdiTNmvBegVmfFvxerrCkkaVjlIZ0FLJNadp
-         MMdm/Vws06YPesFe+igfuEobKbu/ng1fj+uRl88j9juhijS6U+9MfV1fSVCgHiDHTY2K
-         SuTPQKjHvooel1Z8asBoqZa3iHmAXpNsyUCTAGneRQ7NKngqXcPzqZzo38I8vu9vE07/
-         c4KfPozAwU+Epy4scbSJQ7i3n5kYzoJulHMd2RYgkmX7H28qcoyz3gP7PgPjH9dFstzQ
-         l2JQ==
+        bh=VFoHvlXm6jZqrvKe7FCJj4gL6hq6dRVmZkk3fOr4bcQ=;
+        b=PPMMm0qTXUcovbtDSAdEz8yvpYppj84MF3JYdQkEz5pyV4FvKe9onYfZSpViEFqk/b
+         9ElniL+wz7N2a2WHqpR3cWx4wF9NaHJnfnW322HiYl56cUDhMN4DqaSnjUrKLK19FR1y
+         je0/QzdtSTPcgGFaB7qghiuP4pB+Cs8SluaKfWL8RHwLvqim9ig5M9oBSAkqHOYDNJFG
+         7KdzVTL6CP+WBqpfDDQDSsaI1BpUwXNAc5RNtqfc1w+gj9GsFaZ7VUUR0sx3uV+5MGxg
+         a11fXGpNVNqDyvzbCKGj6A4chWRq3ercQsMP8cLpENsGppBvfTrt246DB0vW4WexTSI7
+         4CnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W6AZVOd5+CvwsZBv9HzpXB3puSLMulw5+42cLdFvuTo=;
-        b=sYd6tUKnppf6pSe5gn5YvniDk++OCwHiZZnk5hAnScLkwepsP4J/IoMV1mQNpTWUgl
-         ftN7/omitqYrW0l8IGcPDsNWS/i9bHQP2fFg8UHRS/xzF9L32JAbkd4JfiZ2EeB+bCLd
-         wYxIZc+j5+VvhCPDXeczvE+dK6agsP5ikqFzXxVz8JaoPjGPHX2RHBapU4R+asiTJqyG
-         SrILAQbTX32bmVIw4oNLKl3yEuQC4fzGzE30cvlBzOQXRJT5DemnqlHm1axsuzzJZJTb
-         CTvBCl0z4UucOmtxmrTiPA6lGs0E8ydrBgylujG79aYRwEBuQomYqDpaJJ91/vkaWHz8
-         qmdQ==
-X-Gm-Message-State: ANoB5plJW+Ozx33PfBZ4B11gbW3+PN9OGQQHm+zm5mrewc68rDH0kTfI
-        BCfzjhKEHa7cF5R2T7kyvAyYgiTARUo=
-X-Google-Smtp-Source: AA0mqf71qryQdtW4v2qxqvSJDjg/nEnBHw9Bt5iUdgU3BtQ8jkrHxec9P3eugCWeNLnaXbgmcfqIGQ==
-X-Received: by 2002:a05:6402:5406:b0:467:4b3d:f2ed with SMTP id ev6-20020a056402540600b004674b3df2edmr63311147edb.101.1670385282137;
-        Tue, 06 Dec 2022 19:54:42 -0800 (PST)
+        bh=VFoHvlXm6jZqrvKe7FCJj4gL6hq6dRVmZkk3fOr4bcQ=;
+        b=1oM13JwR01ufcMo67xpD9/2OIdhI7i3qi4ZkQpcUxKnNpDf2APD5MVsoPbYSB567ub
+         MaQhkpMuwHO9zzcmdYnxcQ1mb5T93IuEkUZhXKmDCKW0DJZfy/+s6q+b8hmvO9Jpwoqq
+         /ldwk5Iay/InbUWC6NL8EunqL+DfW4XaSVtZy5pMr4Dak7DvgpbfnnD3Rr0Jo5/ePRd7
+         a17j3FnZkHOLQFZFcjCA3/zpxqNtcav1Be/GdWWSNU5f83txkLpPRPWcWRlJM+xzxrD1
+         x5iqLf6pJmvsnGbjmRxRqai0ApWNfuvplyrtuIDGCXBpGOQiBVQx7VfYiIAdwfUmtyni
+         9rLw==
+X-Gm-Message-State: ANoB5pke0sYuqH5LYXWJlgFErmXYYvxzRmSP9PGAJpPNgEp+j5530tt7
+        w9jWzauwkSyUWCIV/XhVxdZLAau7j6A=
+X-Google-Smtp-Source: AA0mqf63iD2cKIxfxJ4VgXy2IgX6alYdOg21qeswsSEw+bCvjg9UP2z/onPBHKLSpaGRG6jPiarviA==
+X-Received: by 2002:a17:907:2387:b0:7c0:d6b2:1fd4 with SMTP id vf7-20020a170907238700b007c0d6b21fd4mr14859861ejb.703.1670385283243;
+        Tue, 06 Dec 2022 19:54:43 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.241.58.threembb.co.uk. [94.196.241.58])
-        by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.41
+        by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 19:54:41 -0800 (PST)
+        Tue, 06 Dec 2022 19:54:43 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 11/12] io_uring: do msg_ring in target task via tw
-Date:   Wed,  7 Dec 2022 03:53:36 +0000
-Message-Id: <4d76c7b28ed5d71b520de4482fbb7f660f21cd80.1670384893.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 12/12] io_uring: skip spinlocking for ->task_complete
+Date:   Wed,  7 Dec 2022 03:53:37 +0000
+Message-Id: <2a8c91fd82cfcdcc1d2e5bac7051fe2c183bda73.1670384893.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1670384893.git.asml.silence@gmail.com>
 References: <cover.1670384893.git.asml.silence@gmail.com>
@@ -70,121 +70,213 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-While executing in a context of one io_uring instance msg_ring
-manipulates another ring. We're trying to keep CQEs posting contained in
-the context of the ring-owner task, use task_work to send the request to
-the target ring's task when we're modifying its CQ or trying to install
-a file. Note, we can't safely use io_uring task_work infra and have to
-use task_work directly.
+->task_complete was added to serialised CQE posting by doing it from
+the task context only (or fallback wq when the task is dead), and now we
+can use that to avoid taking ->completion_lock while filling CQ entries.
+The patch skips spinlocking only in two spots,
+__io_submit_flush_completions() and flushing in io_aux_cqe, it's safer
+and covers all cases we care about. Extra care is taken to force taking
+the lock while queueing overflow entries.
+
+It fundamentally relies on SINGLE_ISSUER to have only one task posting
+events. It also need to take into account overflowed CQEs, flushing of
+which happens in the cq wait path, and so this implementation also needs
+DEFER_TASKRUN to limit waiters. For the same reason we disable it for
+SQPOLL, and for IOPOLL as it won't benefit from it in any case.
+DEFER_TASKRUN, SQPOLL and IOPOLL requirement may be relaxed in the
+future.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/msg_ring.c | 56 ++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 53 insertions(+), 3 deletions(-)
+ io_uring/io_uring.c | 71 +++++++++++++++++++++++++++++++++------------
+ io_uring/io_uring.h | 12 ++++++--
+ 2 files changed, 62 insertions(+), 21 deletions(-)
 
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 525063ac3dab..24e6cc477515 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -16,6 +16,7 @@
- struct io_msg {
- 	struct file			*file;
- 	struct file			*src_file;
-+	struct callback_head		tw;
- 	u64 user_data;
- 	u32 len;
- 	u32 cmd;
-@@ -35,6 +36,23 @@ void io_msg_ring_cleanup(struct io_kiocb *req)
- 	msg->src_file = NULL;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 0e424d8721ab..529ea5942dea 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -595,13 +595,25 @@ static inline void io_cq_unlock(struct io_ring_ctx *ctx)
+ 	spin_unlock(&ctx->completion_lock);
  }
  
-+static void io_msg_tw_complete(struct callback_head *head)
++static inline void __io_cq_lock(struct io_ring_ctx *ctx)
++	__acquires(ctx->completion_lock)
 +{
-+	struct io_msg *msg = container_of(head, struct io_msg, tw);
-+	struct io_kiocb *req = cmd_to_io_kiocb(msg);
-+	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	int ret = 0;
-+
-+	if (current->flags & PF_EXITING)
-+		ret = -EOWNERDEAD;
-+	else if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
-+		ret = -EOVERFLOW;
-+
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_queue_tw_complete(req, ret);
++	if (!ctx->task_complete)
++		spin_lock(&ctx->completion_lock);
 +}
 +
- static int io_msg_ring_data(struct io_kiocb *req)
- {
- 	struct io_ring_ctx *target_ctx = req->file->private_data;
-@@ -43,6 +61,15 @@ static int io_msg_ring_data(struct io_kiocb *req)
- 	if (msg->src_fd || msg->dst_fd || msg->flags)
- 		return -EINVAL;
- 
-+	if (target_ctx->task_complete && current != target_ctx->submitter_task) {
-+		init_task_work(&msg->tw, io_msg_tw_complete);
-+		if (task_work_add(target_ctx->submitter_task, &msg->tw,
-+				  TWA_SIGNAL))
-+			return -EOWNERDEAD;
-+
-+		return IOU_ISSUE_SKIP_COMPLETE;
-+	}
-+
- 	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
- 		return 0;
- 
-@@ -124,6 +151,19 @@ static int io_msg_install_complete(struct io_kiocb *req, unsigned int issue_flag
- 	return ret;
- }
- 
-+static void io_msg_tw_fd_complete(struct callback_head *head)
++static inline void __io_cq_unlock(struct io_ring_ctx *ctx)
 +{
-+	struct io_msg *msg = container_of(head, struct io_msg, tw);
-+	struct io_kiocb *req = cmd_to_io_kiocb(msg);
-+	int ret = -EOWNERDEAD;
-+
-+	if (!(current->flags & PF_EXITING))
-+		ret = io_msg_install_complete(req, IO_URING_F_UNLOCKED);
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_queue_tw_complete(req, ret);
++	if (!ctx->task_complete)
++		spin_unlock(&ctx->completion_lock);
 +}
 +
- static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
+ /* keep it inlined for io_submit_flush_completions() */
+-static inline void io_cq_unlock_post_inline(struct io_ring_ctx *ctx)
++static inline void __io_cq_unlock_post(struct io_ring_ctx *ctx)
+ 	__releases(ctx->completion_lock)
  {
- 	struct io_ring_ctx *target_ctx = req->file->private_data;
-@@ -140,6 +180,15 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
- 		msg->src_file = src_file;
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 	}
-+
-+	if (target_ctx->task_complete && current != target_ctx->submitter_task) {
-+		init_task_work(&msg->tw, io_msg_tw_fd_complete);
-+		if (task_work_add(target_ctx->submitter_task, &msg->tw,
-+				  TWA_SIGNAL))
-+			return -EOWNERDEAD;
-+
-+		return IOU_ISSUE_SKIP_COMPLETE;
-+	}
- 	return io_msg_install_complete(req, issue_flags);
+ 	io_commit_cqring(ctx);
+-	spin_unlock(&ctx->completion_lock);
+-
++	__io_cq_unlock(ctx);
+ 	io_commit_cqring_flush(ctx);
+ 	io_cqring_wake(ctx);
+ }
+@@ -609,7 +621,10 @@ static inline void io_cq_unlock_post_inline(struct io_ring_ctx *ctx)
+ void io_cq_unlock_post(struct io_ring_ctx *ctx)
+ 	__releases(ctx->completion_lock)
+ {
+-	io_cq_unlock_post_inline(ctx);
++	io_commit_cqring(ctx);
++	spin_unlock(&ctx->completion_lock);
++	io_commit_cqring_flush(ctx);
++	io_cqring_wake(ctx);
  }
  
-@@ -185,10 +234,11 @@ int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
+ /* Returns true if there are no backlogged entries after the flush */
+@@ -796,12 +811,13 @@ struct io_uring_cqe *__io_get_cqe(struct io_ring_ctx *ctx, bool overflow)
+ 	return &rings->cqes[off];
+ }
+ 
+-static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags,
+-			    bool allow_overflow)
++static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res,
++			      u32 cflags)
+ {
+ 	struct io_uring_cqe *cqe;
+ 
+-	lockdep_assert_held(&ctx->completion_lock);
++	if (!ctx->task_complete)
++		lockdep_assert_held(&ctx->completion_lock);
+ 
+ 	ctx->cq_extra++;
+ 
+@@ -824,10 +840,6 @@ static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32
+ 		}
+ 		return true;
+ 	}
+-
+-	if (allow_overflow)
+-		return io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
+-
+ 	return false;
+ }
+ 
+@@ -841,7 +853,17 @@ static void __io_flush_post_cqes(struct io_ring_ctx *ctx)
+ 	for (i = 0; i < state->cqes_count; i++) {
+ 		struct io_uring_cqe *cqe = &state->cqes[i];
+ 
+-		io_fill_cqe_aux(ctx, cqe->user_data, cqe->res, cqe->flags, true);
++		if (!io_fill_cqe_aux(ctx, cqe->user_data, cqe->res, cqe->flags)) {
++			if (ctx->task_complete) {
++				spin_lock(&ctx->completion_lock);
++				io_cqring_event_overflow(ctx, cqe->user_data,
++							cqe->res, cqe->flags, 0, 0);
++				spin_unlock(&ctx->completion_lock);
++			} else {
++				io_cqring_event_overflow(ctx, cqe->user_data,
++							cqe->res, cqe->flags, 0, 0);
++			}
++		}
+ 	}
+ 	state->cqes_count = 0;
+ }
+@@ -852,7 +874,10 @@ static bool __io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u
+ 	bool filled;
+ 
+ 	io_cq_lock(ctx);
+-	filled = io_fill_cqe_aux(ctx, user_data, res, cflags, allow_overflow);
++	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
++	if (!filled && allow_overflow)
++		filled = io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
++
+ 	io_cq_unlock_post(ctx);
+ 	return filled;
+ }
+@@ -876,10 +901,10 @@ bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32
+ 	lockdep_assert_held(&ctx->uring_lock);
+ 
+ 	if (ctx->submit_state.cqes_count == length) {
+-		io_cq_lock(ctx);
++		__io_cq_lock(ctx);
+ 		__io_flush_post_cqes(ctx);
+ 		/* no need to flush - flush is deferred */
+-		io_cq_unlock(ctx);
++		__io_cq_unlock_post(ctx);
  	}
  
- done:
--	if (ret == -EAGAIN)
--		return -EAGAIN;
--	if (ret < 0)
-+	if (ret < 0) {
-+		if (ret == -EAGAIN || ret == IOU_ISSUE_SKIP_COMPLETE)
-+			return ret;
- 		req_set_fail(req);
-+	}
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
+ 	/* For defered completions this is not as strict as it is otherwise,
+@@ -1414,7 +1439,7 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	struct io_wq_work_node *node, *prev;
+ 	struct io_submit_state *state = &ctx->submit_state;
+ 
+-	io_cq_lock(ctx);
++	__io_cq_lock(ctx);
+ 	/* must come first to preserve CQE ordering in failure cases */
+ 	if (state->cqes_count)
+ 		__io_flush_post_cqes(ctx);
+@@ -1422,10 +1447,18 @@ static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 		struct io_kiocb *req = container_of(node, struct io_kiocb,
+ 					    comp_list);
+ 
+-		if (!(req->flags & REQ_F_CQE_SKIP))
+-			io_fill_cqe_req(ctx, req);
++		if (!(req->flags & REQ_F_CQE_SKIP) &&
++		    unlikely(!__io_fill_cqe_req(ctx, req))) {
++			if (ctx->task_complete) {
++				spin_lock(&ctx->completion_lock);
++				io_req_cqe_overflow(req);
++				spin_unlock(&ctx->completion_lock);
++			} else {
++				io_req_cqe_overflow(req);
++			}
++		}
+ 	}
+-	io_cq_unlock_post_inline(ctx);
++	__io_cq_unlock_post(ctx);
+ 
+ 	if (!wq_list_empty(&ctx->submit_state.compl_reqs)) {
+ 		io_free_batch_list(ctx, state->compl_reqs.first);
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 62227ec3260c..c117e029c8dc 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -110,7 +110,7 @@ static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
+ 	return io_get_cqe_overflow(ctx, false);
  }
+ 
+-static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
++static inline bool __io_fill_cqe_req(struct io_ring_ctx *ctx,
+ 				     struct io_kiocb *req)
+ {
+ 	struct io_uring_cqe *cqe;
+@@ -122,7 +122,7 @@ static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
+ 	 */
+ 	cqe = io_get_cqe(ctx);
+ 	if (unlikely(!cqe))
+-		return io_req_cqe_overflow(req);
++		return false;
+ 
+ 	trace_io_uring_complete(req->ctx, req, req->cqe.user_data,
+ 				req->cqe.res, req->cqe.flags,
+@@ -145,6 +145,14 @@ static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
+ 	return true;
+ }
+ 
++static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
++				   struct io_kiocb *req)
++{
++	if (likely(__io_fill_cqe_req(ctx, req)))
++		return true;
++	return io_req_cqe_overflow(req);
++}
++
+ static inline void req_set_fail(struct io_kiocb *req)
+ {
+ 	req->flags |= REQ_F_FAIL;
 -- 
 2.38.1
 

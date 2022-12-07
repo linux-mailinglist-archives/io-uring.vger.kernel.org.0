@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 087AE6452BD
-	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 381576452BC
+	for <lists+io-uring@lfdr.de>; Wed,  7 Dec 2022 04:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbiLGDys (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Dec 2022 22:54:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
+        id S229838AbiLGDyr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 6 Dec 2022 22:54:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbiLGDyn (ORCPT
+        with ESMTP id S229828AbiLGDyn (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 6 Dec 2022 22:54:43 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D40652158
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEBDD52165
         for <io-uring@vger.kernel.org>; Tue,  6 Dec 2022 19:54:42 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id d20so23234328edn.0
+Received: by mail-ed1-x536.google.com with SMTP id e13so23144168edj.7
         for <io-uring@vger.kernel.org>; Tue, 06 Dec 2022 19:54:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CQ9KJKd7U+9IDFMcUWamULroPRymnHOqPsKek3NuXMM=;
-        b=C9jFDLvDjPZIC5ksjJJFom+cC9zQ0raq5uLSf4vKE/mV4HPzIqks0BTaMNoWWFoWUi
-         bxZbUI2wTTDHv/9yVT3vIjaHsDMAPdtJaYuH+Or1nFxa2SI7jVyE3o0j8peCYRXRiEai
-         T2TMkFHfUkzIVb3UX9uCGDFeVucqXbbBpjunRvP0XxwHYwSsH03i9E2onBwDcuSSUiM1
-         surojpdbGw7tUhDpdVfjN45bDJzeXSf8TEHyWOrJZAWQjJieZn/lDuRo+cTeVsh7ONyL
-         dmSBNZi6JulkiAQKxcgJA6dEuc3rFV66+RoY7ZXTxXjjKUgnEpyriUiK9NSGo7cl6WFL
-         fRVw==
+        bh=W6AZVOd5+CvwsZBv9HzpXB3puSLMulw5+42cLdFvuTo=;
+        b=jn55tq4vWKouaacc90kTGTerojt/VHK6Yn/SSxrikk9RjqR0EP1r8sItbvfX/JFkNv
+         MdEuFnSTZQIgwW6vgSz3xUK9elYg4PEYrdiTNmvBegVmfFvxerrCkkaVjlIZ0FLJNadp
+         MMdm/Vws06YPesFe+igfuEobKbu/ng1fj+uRl88j9juhijS6U+9MfV1fSVCgHiDHTY2K
+         SuTPQKjHvooel1Z8asBoqZa3iHmAXpNsyUCTAGneRQ7NKngqXcPzqZzo38I8vu9vE07/
+         c4KfPozAwU+Epy4scbSJQ7i3n5kYzoJulHMd2RYgkmX7H28qcoyz3gP7PgPjH9dFstzQ
+         l2JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CQ9KJKd7U+9IDFMcUWamULroPRymnHOqPsKek3NuXMM=;
-        b=clQqtFOGy1a8NgTogB0HNiwuMuQcg0vv3Gub+3bGdnEVZjatRNsqO49CEf07wGv39i
-         6Otl/3ieS+ojm9IBcBDJ5aQbu+3L1fbByRoA7SwP2Ao6ntSsEZZ1D8ZmGF7ZgqX6K9BA
-         VDzifAYgKglNuHPFtG2E9BQpkpXurtGHTXp18QLNELgRAZv/dSksSU/wG1VufUefcIKl
-         tBbd7z6zlLlNhqBbMOY/OAM2jk0ZjrZ8SUBX4MgZL2RNnWMvKz4B2FNZt7Vn6fbnrKbM
-         ouu6QngbWpvr2iQ9MFDhsDyZ9PFqFsQ5VQEkwAKhr5o2YuRLx5m/tiafCwEDncu7V+tH
-         FUmA==
-X-Gm-Message-State: ANoB5pl0QGoq6wHcipdpFVKbaS9EdgU9EAiJjWs2h74Zmo8krO/A2aRv
-        9fyzKfaZBuTTc3X6MfzNH4QiypIhfvY=
-X-Google-Smtp-Source: AA0mqf7/9qBMMFy87ZWzndKGsXOTJVEfjmKR/ljZN1xCPqQky4EAnwybCYfhS6EU1yeYOlTqUmo7dA==
-X-Received: by 2002:a05:6402:e04:b0:469:e6ef:9164 with SMTP id h4-20020a0564020e0400b00469e6ef9164mr31999116edh.185.1670385281035;
-        Tue, 06 Dec 2022 19:54:41 -0800 (PST)
+        bh=W6AZVOd5+CvwsZBv9HzpXB3puSLMulw5+42cLdFvuTo=;
+        b=sYd6tUKnppf6pSe5gn5YvniDk++OCwHiZZnk5hAnScLkwepsP4J/IoMV1mQNpTWUgl
+         ftN7/omitqYrW0l8IGcPDsNWS/i9bHQP2fFg8UHRS/xzF9L32JAbkd4JfiZ2EeB+bCLd
+         wYxIZc+j5+VvhCPDXeczvE+dK6agsP5ikqFzXxVz8JaoPjGPHX2RHBapU4R+asiTJqyG
+         SrILAQbTX32bmVIw4oNLKl3yEuQC4fzGzE30cvlBzOQXRJT5DemnqlHm1axsuzzJZJTb
+         CTvBCl0z4UucOmtxmrTiPA6lGs0E8ydrBgylujG79aYRwEBuQomYqDpaJJ91/vkaWHz8
+         qmdQ==
+X-Gm-Message-State: ANoB5plJW+Ozx33PfBZ4B11gbW3+PN9OGQQHm+zm5mrewc68rDH0kTfI
+        BCfzjhKEHa7cF5R2T7kyvAyYgiTARUo=
+X-Google-Smtp-Source: AA0mqf71qryQdtW4v2qxqvSJDjg/nEnBHw9Bt5iUdgU3BtQ8jkrHxec9P3eugCWeNLnaXbgmcfqIGQ==
+X-Received: by 2002:a05:6402:5406:b0:467:4b3d:f2ed with SMTP id ev6-20020a056402540600b004674b3df2edmr63311147edb.101.1670385282137;
+        Tue, 06 Dec 2022 19:54:42 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.241.58.threembb.co.uk. [94.196.241.58])
-        by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.40
+        by smtp.gmail.com with ESMTPSA id 9-20020a170906210900b0073de0506745sm7938939ejt.197.2022.12.06.19.54.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 19:54:40 -0800 (PST)
+        Tue, 06 Dec 2022 19:54:41 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-next v2 10/12] io_uring: extract a io_msg_install_complete helper
-Date:   Wed,  7 Dec 2022 03:53:35 +0000
-Message-Id: <1500ca1054cc4286a3ee1c60aacead57fcdfa02a.1670384893.git.asml.silence@gmail.com>
+Subject: [PATCH for-next v2 11/12] io_uring: do msg_ring in target task via tw
+Date:   Wed,  7 Dec 2022 03:53:36 +0000
+Message-Id: <4d76c7b28ed5d71b520de4482fbb7f660f21cd80.1670384893.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1670384893.git.asml.silence@gmail.com>
 References: <cover.1670384893.git.asml.silence@gmail.com>
@@ -70,83 +70,121 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Extract a helper called io_msg_install_complete() from io_msg_send_fd(),
-will be used later.
+While executing in a context of one io_uring instance msg_ring
+manipulates another ring. We're trying to keep CQEs posting contained in
+the context of the ring-owner task, use task_work to send the request to
+the target ring's task when we're modifying its CQ or trying to install
+a file. Note, we can't safely use io_uring task_work infra and have to
+use task_work directly.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/msg_ring.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ io_uring/msg_ring.c | 56 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 53 insertions(+), 3 deletions(-)
 
 diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 387c45a58654..525063ac3dab 100644
+index 525063ac3dab..24e6cc477515 100644
 --- a/io_uring/msg_ring.c
 +++ b/io_uring/msg_ring.c
-@@ -92,36 +92,25 @@ static struct file *io_msg_grab_file(struct io_kiocb *req, unsigned int issue_fl
- 	return file;
+@@ -16,6 +16,7 @@
+ struct io_msg {
+ 	struct file			*file;
+ 	struct file			*src_file;
++	struct callback_head		tw;
+ 	u64 user_data;
+ 	u32 len;
+ 	u32 cmd;
+@@ -35,6 +36,23 @@ void io_msg_ring_cleanup(struct io_kiocb *req)
+ 	msg->src_file = NULL;
  }
  
--static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
-+static int io_msg_install_complete(struct io_kiocb *req, unsigned int issue_flags)
++static void io_msg_tw_complete(struct callback_head *head)
++{
++	struct io_msg *msg = container_of(head, struct io_msg, tw);
++	struct io_kiocb *req = cmd_to_io_kiocb(msg);
++	struct io_ring_ctx *target_ctx = req->file->private_data;
++	int ret = 0;
++
++	if (current->flags & PF_EXITING)
++		ret = -EOWNERDEAD;
++	else if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
++		ret = -EOVERFLOW;
++
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_queue_tw_complete(req, ret);
++}
++
+ static int io_msg_ring_data(struct io_kiocb *req)
  {
  	struct io_ring_ctx *target_ctx = req->file->private_data;
- 	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
--	struct io_ring_ctx *ctx = req->ctx;
- 	struct file *src_file = msg->src_file;
- 	int ret;
+@@ -43,6 +61,15 @@ static int io_msg_ring_data(struct io_kiocb *req)
+ 	if (msg->src_fd || msg->dst_fd || msg->flags)
+ 		return -EINVAL;
  
--	if (target_ctx == ctx)
--		return -EINVAL;
--	if (!src_file) {
--		src_file = io_msg_grab_file(req, issue_flags);
--		if (!src_file)
--			return -EBADF;
--		msg->src_file = src_file;
--		req->flags |= REQ_F_NEED_CLEANUP;
--	}
--
- 	if (unlikely(io_double_lock_ctx(target_ctx, issue_flags)))
- 		return -EAGAIN;
- 
- 	ret = __io_fixed_fd_install(target_ctx, src_file, msg->dst_fd);
- 	if (ret < 0)
- 		goto out_unlock;
++	if (target_ctx->task_complete && current != target_ctx->submitter_task) {
++		init_task_work(&msg->tw, io_msg_tw_complete);
++		if (task_work_add(target_ctx->submitter_task, &msg->tw,
++				  TWA_SIGNAL))
++			return -EOWNERDEAD;
 +
- 	msg->src_file = NULL;
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
++		return IOU_ISSUE_SKIP_COMPLETE;
++	}
++
+ 	if (io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
+ 		return 0;
  
- 	if (msg->flags & IORING_MSG_RING_CQE_SKIP)
- 		goto out_unlock;
--
- 	/*
- 	 * If this fails, the target still received the file descriptor but
- 	 * wasn't notified of the fact. This means that if this request
-@@ -135,6 +124,25 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
+@@ -124,6 +151,19 @@ static int io_msg_install_complete(struct io_kiocb *req, unsigned int issue_flag
  	return ret;
  }
  
-+static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
++static void io_msg_tw_fd_complete(struct callback_head *head)
 +{
-+	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct file *src_file = msg->src_file;
++	struct io_msg *msg = container_of(head, struct io_msg, tw);
++	struct io_kiocb *req = cmd_to_io_kiocb(msg);
++	int ret = -EOWNERDEAD;
 +
-+	if (target_ctx == ctx)
-+		return -EINVAL;
-+	if (!src_file) {
-+		src_file = io_msg_grab_file(req, issue_flags);
-+		if (!src_file)
-+			return -EBADF;
-+		msg->src_file = src_file;
-+		req->flags |= REQ_F_NEED_CLEANUP;
-+	}
-+	return io_msg_install_complete(req, issue_flags);
++	if (!(current->flags & PF_EXITING))
++		ret = io_msg_install_complete(req, IO_URING_F_UNLOCKED);
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_queue_tw_complete(req, ret);
 +}
 +
- int io_msg_ring_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
  {
- 	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
+ 	struct io_ring_ctx *target_ctx = req->file->private_data;
+@@ -140,6 +180,15 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
+ 		msg->src_file = src_file;
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	}
++
++	if (target_ctx->task_complete && current != target_ctx->submitter_task) {
++		init_task_work(&msg->tw, io_msg_tw_fd_complete);
++		if (task_work_add(target_ctx->submitter_task, &msg->tw,
++				  TWA_SIGNAL))
++			return -EOWNERDEAD;
++
++		return IOU_ISSUE_SKIP_COMPLETE;
++	}
+ 	return io_msg_install_complete(req, issue_flags);
+ }
+ 
+@@ -185,10 +234,11 @@ int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ 
+ done:
+-	if (ret == -EAGAIN)
+-		return -EAGAIN;
+-	if (ret < 0)
++	if (ret < 0) {
++		if (ret == -EAGAIN || ret == IOU_ISSUE_SKIP_COMPLETE)
++			return ret;
+ 		req_set_fail(req);
++	}
+ 	io_req_set_res(req, ret, 0);
+ 	return IOU_OK;
+ }
 -- 
 2.38.1
 

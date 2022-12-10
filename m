@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 220D8648F7A
-	for <lists+io-uring@lfdr.de>; Sat, 10 Dec 2022 16:36:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E73B1648F7B
+	for <lists+io-uring@lfdr.de>; Sat, 10 Dec 2022 16:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbiLJPgB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 10 Dec 2022 10:36:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34330 "EHLO
+        id S229665AbiLJPgE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 10 Dec 2022 10:36:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiLJPgA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Dec 2022 10:36:00 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7378619C26
-        for <io-uring@vger.kernel.org>; Sat, 10 Dec 2022 07:35:57 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id w4-20020a17090ac98400b002186f5d7a4cso11213071pjt.0
-        for <io-uring@vger.kernel.org>; Sat, 10 Dec 2022 07:35:57 -0800 (PST)
+        with ESMTP id S229568AbiLJPgD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 10 Dec 2022 10:36:03 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A1EC77B
+        for <io-uring@vger.kernel.org>; Sat, 10 Dec 2022 07:36:02 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id f3so5443916pgc.2
+        for <io-uring@vger.kernel.org>; Sat, 10 Dec 2022 07:36:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mA1s/o8+B66Z04RXV1T/P38TpwIqpXoliaf3EjJQqKQ=;
-        b=igB8OCcTBMWTOOwvafd6gppC/hnJ98uZntLWrv32kjF1vGf/B1phOYGKH30SCAQYU7
-         QevxpRHvOOhETaBtxooor2nZUY5L14m+kS9xLSTU9f1Q039LFeHPUqoQeyaB/M1XqNpM
-         SBE2RHFl+kNl8OBAQ+nbKrTLGfjJ37BfRvkAE5PaAz5wBQeKos8u5+4MnpLPekwURuuS
-         mcOIDX1vKP5S7k37kSXltit9EuqZlhnwt6PRr+u0qJra5I+O/3u3sRxmmil4O6nKpvrw
-         hBU42pVchf7u87Fp1mMYUsRXVYBEF7iO63EfPozp6DM2tgPa/bE/juBpNRPlwlIH13aG
-         VTAQ==
+        bh=gOw8KScuh/3E/UpSqDsJsWDJS6tJ64Rk7bcz3f298tc=;
+        b=cy9smLyjCwqyJ4cUv5gUOPWzy8Jf4itVM6EG8gY+veeC95dx1PYnDBBQvl0TXH/jMG
+         o7usNq3zP9QPOmg/DwO9wM42f8MZvCldnHnhYhOQH0RFlDcyyiWeD56ybHOlQ1XFBoJ7
+         uYdTOvSNd0GC7JqexUxSP8u9kzTjCUlz1lr88b/fH60Kn3Ou9ILws6t3mV12UQ25dyUN
+         5EHEWy1d3d7E9VGaCKNwYgV4lmsYbonJOznYZrCOJgY+6VGtNUxSl/Fg13LEClyWYGKJ
+         7WTHfkYWYaRJl1tyPihmUuFg6bSTQxTx+AKxpqey/VhyyEVOB6Lf0Bdnwrij19+cYaVY
+         4MXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=mA1s/o8+B66Z04RXV1T/P38TpwIqpXoliaf3EjJQqKQ=;
-        b=Oy4xVvMJD/I1MLuyXZNBY7IXMwUSllLxgRRE3vqryz3/M/a/Db/mp/3jHfc/5TbY27
-         qr9hrkn7w7sGSQmA8GOrm1tc+c/JMFi3ae3Pe0x4mnV/AEqbZ4AH05pZF8aMfi3QGAh2
-         CV1REY4Z5ESuoLaG3DYX+rI3WJp8cA3HrBY8Xy9Yaba7D8oIKuDG8qezITAlgZr4I75v
-         7v795ILsmYqGB+SfyYrImr1Cq8e/y18b3J8ZFGqcy8CyMoIkD0PBpf7YqoqPEmY4dCxd
-         9oehBpRQyx0/h9ioS7ZvjrjaDfJyslaHmwP3dWkwmpLWPdMQN3fZsSEGnw+3HXENzdi8
-         XV/A==
-X-Gm-Message-State: ANoB5plzO4/ALW85wHKK2zi3KzKMrYNKAarSmCqr23EtLRwW5egxd4ba
-        vkyiQMLZO9FkyLW6OO1pUP9SkA==
-X-Google-Smtp-Source: AA0mqf5kkZi0OrpbcCjXeB0jr9duCfO4MCCn1pwhPvg28qYLcVfQ0MPKpRGnIl2UdNHXbQswdP7ZXA==
-X-Received: by 2002:a17:902:ea10:b0:189:b74f:46ad with SMTP id s16-20020a170902ea1000b00189b74f46admr2934162plg.3.1670686556769;
-        Sat, 10 Dec 2022 07:35:56 -0800 (PST)
+        bh=gOw8KScuh/3E/UpSqDsJsWDJS6tJ64Rk7bcz3f298tc=;
+        b=NvCZGq15GDvTL9bhYag+k5Ul+Xu2MtzJZe1X0s8twl78E1Dgxj7wOUeuZc58SsCQdz
+         ra2NBXG00vNu+wpXb5iTMA1ol6fqECUbm9BKyNU4CnAIa91kpZpHoOcZoZxp0C37VAZT
+         jMitqw6PxOPEFiXmMmrc60sF8rLtKOCXASkaNGkGvJxPCGK0qOoObfA4mqbxVz8Sjgc1
+         SOYhz1aEuHlczeTPXGD76vTEC8jw3Z4GddM96v3ZWy992rZ/zt9DqqDrg+3oHwFvZURv
+         68ozqPoIFFURc7Pw5lq68rk8twcBvXpSG7iBjj9xPGu1F12ytTB5JG095M/IGtBsxqEi
+         BxXw==
+X-Gm-Message-State: ANoB5pmyhWXXU4uNDT+S/r0ly9FwqG2zopjXZIHOHKsEdkD+UaRi4gHd
+        tG234o89ZDBOwekq3JKAdxMyXUJMOm73sPjg7WY=
+X-Google-Smtp-Source: AA0mqf6i7u4aCRqWJhtl1YAg5nJoUfsAjki2FA/QXVQxVKbw7MwnxyMg/Ui6CHawbjwWKymGGeckZA==
+X-Received: by 2002:a62:190f:0:b0:578:450a:853c with SMTP id 15-20020a62190f000000b00578450a853cmr26014pfz.2.1670686562216;
+        Sat, 10 Dec 2022 07:36:02 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u17-20020a17090341d100b00187033cac81sm3136363ple.145.2022.12.10.07.35.55
+        by smtp.gmail.com with ESMTPSA id i1-20020a62c101000000b0053e62b6fd22sm2880877pfg.126.2022.12.10.07.36.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Dec 2022 07:35:56 -0800 (PST)
-Message-ID: <a4a56cca-be7c-84de-40f7-69cdd1e96a1d@kernel.dk>
-Date:   Sat, 10 Dec 2022 08:35:55 -0700
+        Sat, 10 Dec 2022 07:36:01 -0800 (PST)
+Message-ID: <b5bd1613-6ae9-d6d0-84b5-22d0469d87b1@kernel.dk>
+Date:   Sat, 10 Dec 2022 08:36:00 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] First round io_uring updates for 6.2-rc1
+Subject: [GIT PULL] io_uring followup updates for 6.2-rc1
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     io-uring <io-uring@vger.kernel.org>
 Content-Language: en-US
@@ -73,127 +73,87 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Hi Linus,
 
-First part of the io_uring changes for the 6.2 merge window. We ended up
-splitting this into two, to avoid unnecessary merge conflicts with fixes
-that went into 6.1 later in the cycle.
+As mentioned, here are the followup changes for io_uring. This branch
+only exists to avoid the poll related conflicts that would've otherwise
+arised without the split.
 
 This pull request contains:
 
-- Always ensure proper ordering in case of CQ ring overflow, which then
-  means we can remove some work-arounds for that (Dylan)
+- Misc fixes (me, Lin)
 
-- Support completion batching for multishot, greatly increasing the
-  efficiency for those (Dylan)
+- Series from Pavel extending the single task exclusive ring mode,
+  yielding nice improvements for the common case of having a single ring
+  per thread (Pavel)
 
-- Flag epoll/eventfd wakeups done from io_uring, so that we can easily
-  tell if we're recursing into io_uring again. Previously, this would
-  have resulted in repeated multishot notifications if we had a
-  dependency there. That could happen if an eventfd was registered as
-  the ring eventfd, and we multishot polled for events on it. Or if an
-  io_uring fd was added to epoll, and io_uring had a multishot request
-  for the epoll fd. Test cases here [1]. Previously these got terminated
-  when the CQ ring eventually overflowed, now it's handled gracefully
-  (me).
+- Cleanup for MSG_RING, removing our IOPOLL hack (Pavel)
 
-- Tightening of the IOPOLL based completions (Pavel)
+- Further poll cleanups and fixes (Pavel)
 
-- Optimizations of the networking zero-copy paths (Pavel)
-
-- Various tweaks and fixes (Dylan, Pavel)
-
-[1] https://git.kernel.dk/cgit/liburing/commit/?id=919755a7d0096fda08fb6d65ac54ad8d0fe027cd
+- Misc cleanups and fixes (Pavel)
 
 Please pull!
 
 
-The following changes since commit eb7081409f94a9a8608593d0fb63a1aa3d6f95d8:
+The following changes since commit b7b275e60bcd5f89771e865a8239325f86d9927d:
 
-  Linux 6.1-rc6 (2022-11-20 16:02:16 -0800)
+  Linux 6.1-rc7 (2022-11-27 13:31:48 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.dk/linux.git tags/for-6.2/io_uring-2022-12-08
+  git://git.kernel.dk/linux.git tags/for-6.2/io_uring-next-2022-12-08
 
-for you to fetch changes up to 5d772916855f593672de55c437925daccc8ecd73:
+for you to fetch changes up to 761c61c15903db41343532882b0443addb8c2faf:
 
-  io_uring: keep unlock_post inlined in hot path (2022-11-25 06:11:15 -0700)
-
-----------------------------------------------------------------
-for-6.2/io_uring-2022-12-08
+  io_uring/msg_ring: flag target ring as having task_work, if needed (2022-12-08 09:36:02 -0700)
 
 ----------------------------------------------------------------
-Dylan Yudaken (13):
-      io_uring: do not always force run task_work in io_uring_register
-      io_uring: revert "io_uring fix multishot accept ordering"
-      io_uring: allow multishot recv CQEs to overflow
-      io_uring: always lock in io_apoll_task_func
-      io_uring: defer all io_req_complete_failed
-      io_uring: allow defer completion for aux posted cqes
-      io_uring: add io_aux_cqe which allows deferred completion
-      io_uring: make io_fill_cqe_aux static
-      io_uring: add lockdep assertion in io_fill_cqe_aux
-      io_uring: remove overflow param from io_post_aux_cqe
-      io_uring: allow multishot polled reqs to defer completion
-      io_uring: remove io_req_complete_post_tw
-      io_uring: spelling fix
+for-6.2/io_uring-next-2022-12-08
 
-Jens Axboe (5):
-      eventpoll: add EPOLL_URING_WAKE poll wakeup flag
-      eventfd: provide a eventfd_signal_mask() helper
-      io_uring: pass in EPOLL_URING_WAKE for eventfd signaling and wakeups
-      Revert "io_uring: disallow self-propelled ring polling"
-      io_uring: kill io_cqring_ev_posted() and __io_cq_unlock_post()
+----------------------------------------------------------------
+Jens Axboe (2):
+      Merge branch 'for-6.2/io_uring' into for-6.2/io_uring-next
+      io_uring/msg_ring: flag target ring as having task_work, if needed
 
 Lin Ma (2):
       io_uring/poll: remove outdated comments of caching
       io_uring: update outdated comment of callbacks
 
-Pavel Begunkov (19):
-      io_uring: move kbuf put out of generic tw complete
-      io_uring/net: remove extra notif rsrc setup
-      io_uring/net: preset notif tw handler
-      io_uring/net: rename io_uring_tx_zerocopy_callback
-      io_uring/net: inline io_notif_flush()
-      io_uring: move zc reporting from the hot path
-      io_uring/net: move mm accounting to a slower path
-      io_uring: inline io_req_task_work_add()
-      io_uring: split tw fallback into a function
-      io_uring: inline __io_req_complete_post()
-      io_uring: add completion locking for iopoll
-      io_uring: hold locks for io_req_complete_failed
-      io_uring: use io_req_task_complete() in timeout
-      io_uring: remove io_req_tw_post_queue
-      io_uring: inline __io_req_complete_put()
-      io_uring: iopoll protect complete_post
-      io_uring: remove iopoll spinlock
-      io_uring: don't use complete_post in kbuf
-      io_uring: keep unlock_post inlined in hot path
+Pavel Begunkov (21):
+      io_uring: kill io_poll_issue's PF_EXITING check
+      io_uring: carve io_poll_check_events fast path
+      io_uring: remove ctx variable in io_poll_check_events
+      io_uring: improve poll warning handling
+      io_uring: combine poll tw handlers
+      io_uring: don't raw spin unlock to match cq_lock
+      io_uring: improve rsrc quiesce refs checks
+      io_uring: don't reinstall quiesce node for each tw
+      io_uring: reshuffle issue_flags
+      io_uring: dont remove file from msg_ring reqs
+      io_uring: improve io_double_lock_ctx fail handling
+      io_uring: skip overflow CQE posting for dying ring
+      io_uring: don't check overflow flush failures
+      io_uring: complete all requests in task context
+      io_uring: force multishot CQEs into task context
+      io_uring: use tw for putting rsrc
+      io_uring: never run tw and fallback in parallel
+      io_uring: get rid of double locking
+      io_uring: extract a io_msg_install_complete helper
+      io_uring: do msg_ring in target task via tw
+      io_uring: skip spinlocking for ->task_complete
 
-Stefan Metzmacher (1):
-      io_uring/net: introduce IORING_SEND_ZC_REPORT_USAGE flag
-
-Xinghui Li (1):
-      io_uring: fix two assignments in if conditions
-
- fs/eventfd.c                   |  37 ++++---
- fs/eventpoll.c                 |  18 ++--
- include/linux/eventfd.h        |   7 ++
- include/linux/io_uring_types.h |   2 +
- include/uapi/linux/eventpoll.h |   6 ++
- include/uapi/linux/io_uring.h  |  18 ++++
- io_uring/io_uring.c            | 223 ++++++++++++++++++++++++-----------------
- io_uring/io_uring.h            |  43 +++++---
- io_uring/kbuf.c                |  14 +--
- io_uring/msg_ring.c            |   4 +-
- io_uring/net.c                 |  56 +++++++----
- io_uring/notif.c               |  57 +++++++----
- io_uring/notif.h               |  15 ++-
- io_uring/poll.c                |  33 +++---
- io_uring/rsrc.c                |  11 +-
- io_uring/rw.c                  |   6 ++
- io_uring/timeout.c             |  10 +-
- io_uring/uring_cmd.c           |   2 +-
- 18 files changed, 355 insertions(+), 207 deletions(-)
+ include/linux/io_uring.h       |  13 +--
+ include/linux/io_uring_types.h |   3 +
+ io_uring/io_uring.c            | 167 ++++++++++++++++++++++-----------
+ io_uring/io_uring.h            |  15 ++-
+ io_uring/msg_ring.c            | 164 ++++++++++++++++++++++----------
+ io_uring/msg_ring.h            |   1 +
+ io_uring/net.c                 |  21 +++++
+ io_uring/opdef.c               |   8 ++
+ io_uring/opdef.h               |   2 +
+ io_uring/poll.c                |  98 +++++++++----------
+ io_uring/rsrc.c                |  72 ++++++++------
+ io_uring/rsrc.h                |   1 +
+ 12 files changed, 369 insertions(+), 196 deletions(-)
 
 -- 
 Jens Axboe

@@ -2,41 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4353C649F11
-	for <lists+io-uring@lfdr.de>; Mon, 12 Dec 2022 13:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A519649F21
+	for <lists+io-uring@lfdr.de>; Mon, 12 Dec 2022 13:51:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232290AbiLLMtU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Dec 2022 07:49:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55134 "EHLO
+        id S232307AbiLLMvb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Dec 2022 07:51:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231462AbiLLMtU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Dec 2022 07:49:20 -0500
+        with ESMTP id S232277AbiLLMv3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Dec 2022 07:51:29 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 785ECCC2
-        for <io-uring@vger.kernel.org>; Mon, 12 Dec 2022 04:49:19 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D94F265F
+        for <io-uring@vger.kernel.org>; Mon, 12 Dec 2022 04:51:29 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.130])
-        by gnuweeb.org (Postfix) with ESMTPSA id E350C8060C;
-        Mon, 12 Dec 2022 12:49:16 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 28DBA8180C;
+        Mon, 12 Dec 2022 12:51:26 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1670849358;
+        s=default; t=1670849489;
         bh=L4DAuy9QEuLloxUWvI4Fq15R5BWulmfOXVpjFL7WRhw=;
         h=From:To:Cc:Subject:Date:From;
-        b=P91aL1VhrSTjaaI5UOOmbggW5jJPVL+AT06DueEF1WwIlitskrq9zVc+NH9wBDgUh
-         ClwHwECxeT+wl8t914kk84i8IVsFrDRreCJTN+NjMTcq/pubZTCplJ8lnSxc341OMe
-         WsERtM5SVzzVyHYvNDHX6SUlscSLkmdpy5ATzkpfOxKQSpx169g4VR4P5bAdTHGlhC
-         Z6mqBafFoESqsuMtMkKKENmjR5F+b3LZSWRd0UnvOLgXygpMzgSDG4//P+/e4OYO3r
-         Vaqs9z6GPPHMN8AcGVyHHqfRT9d3AojJXdICxi443dmoQJnBADOFEzQ6goPUbJqsKy
-         9cV6jjKohzvnA==
+        b=icaKKnMnSjp1o+jxq4UKJR2MFQalXtobo3wmvY6egspC/h+o2j5Gd1+co04IcsCNT
+         y3tFNm2FTyjTKU99uwF6pHvFDbObwysdFIr9/MqVK3v1GmdQ/ZB71TxA05bHvcAnVo
+         73MKiyimGpDu8BCNiB1sAiZZJKW4Esi+LtyvEez8pNzkLM/QZ3lfaL09btcbW/TnSc
+         lsUJfsffKhJc2GXxGSNRQp00IGgPoaW8lnHgRbTgdfL3OZzuvKbNRjfx4bN7H3hRaS
+         SQZwtuEgeq/JfDsH3vfD7mi9IUtyJcO+ASCpkcdhAfgIubb5ONxUFZEYAllIvauyU4
+         NwJDUOBtRDMhw==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
         Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Nicolai Stange <nstange@suse.de>,
         Yuriy Chernyshov <georgthegreat@gmail.com>
-Subject: [PATCH] test/sendmsg_fs_cve: Fix the wrong SPDX-License-Identifier
-Date:   Mon, 12 Dec 2022 19:48:57 +0700
-Message-Id: <20221124162633.3856761-1-ammar.faizi@intel.com>
+Subject: [RESEND PATCH] test/sendmsg_fs_cve: Fix the wrong SPDX-License-Identifier
+Date:   Mon, 12 Dec 2022 19:51:21 +0700
+Message-Id: <20221212125121.68094-1-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit

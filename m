@@ -2,94 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0967B64A871
-	for <lists+io-uring@lfdr.de>; Mon, 12 Dec 2022 21:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8F964BCA1
+	for <lists+io-uring@lfdr.de>; Tue, 13 Dec 2022 20:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231964AbiLLUKg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Dec 2022 15:10:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49880 "EHLO
+        id S236769AbiLMTD3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 13 Dec 2022 14:03:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbiLLUKf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Dec 2022 15:10:35 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1964EBC00
-        for <io-uring@vger.kernel.org>; Mon, 12 Dec 2022 12:10:35 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id z9so3944509ilu.10
-        for <io-uring@vger.kernel.org>; Mon, 12 Dec 2022 12:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=duVg7YE8kXobQYG89edMgB9ZK3Pd44ubaYu/ZnbS5Ms=;
-        b=0eOQpFAKdhAY23J8uN8pdqNtoji/zWW2Yt5oQ4Rk8N1AZTCrpQg460mjt2prb94gK0
-         P23i4zq6LRMF1enxdKD21S6WxloFUQt1g0AkmjsfKIPMYpFWD64hXe0f7IQYrgvtaZZM
-         exrU5vEIFJvaaiVSooukIjLZLf2MoZ44IwqJlzCDttSBpcu3nSCO4n/Hiry77lpjYJZf
-         jLVRuFGqOnB+6nQ6PBNa4ohRhqIDBVCWi4/R4Po4vUq+8ktePNkCMdpmrOaWDpDbJcGR
-         AGA3G0OqxMTN11uh1AvUO6KYAlB5h6xgH0QPoEFCzDei5sWDhfwHcfg44+2TF7/cLjpY
-         uBFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=duVg7YE8kXobQYG89edMgB9ZK3Pd44ubaYu/ZnbS5Ms=;
-        b=DpBwKvmCb/C4zVxT2KWDw4CIrwft7wJMoatuSBa66cqRYtrT6wJ4ucWmAu3AFwkPcw
-         RchT2TlRx5qokwiruOAS7MazEVuiS5gNnkcriUwUbqoGSAPoUtYB/b79gilauejTwHAT
-         yxKc0pfY35DJtAy35xvBXpRh7oEE2C2D6GnjaBOW2IpIC4AkzuAmIBwFJhogLOUMF4Fl
-         vjO0qZLLt6vxkahU7e5i6JYtLXh2Ic6sMACDYw+J8No6ew2WVrykjLisDzhEU4dmJ7XO
-         3WSXB3BphDo0z3BYFtUZwk1IY/pnJ3J+wcrIOSNcL9Xi1pTwkOqZNbLjA8yOu+wtXggM
-         gX9A==
-X-Gm-Message-State: ANoB5pmRn/SWUd9ecMsvYFnRCK3rOBhztiac6E6CmDwENI9vlMq66uBE
-        b86/xAZutZKpbs7zt4MqNoH6AY+WsQgMVIsP7/4=
-X-Google-Smtp-Source: AA0mqf6aNVtOH3Ye/8SYQl6RstdFYdnav6OcK6a5Qaacve8kwG+Cxiko3Qb+kMNPHIiVyCq0oy5Tsw==
-X-Received: by 2002:a92:cd8d:0:b0:302:d99a:bfd1 with SMTP id r13-20020a92cd8d000000b00302d99abfd1mr2735864ilb.0.1670875834339;
-        Mon, 12 Dec 2022 12:10:34 -0800 (PST)
-Received: from [127.0.0.1] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id u26-20020a02b1da000000b00375f143b0c2sm218397jah.8.2022.12.12.12.10.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 12:10:33 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Yuriy Chernyshov <georgthegreat@gmail.com>
-In-Reply-To: <20221212125121.68094-1-ammarfaizi2@gnuweeb.org>
-References: <20221212125121.68094-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [RESEND PATCH] test/sendmsg_fs_cve: Fix the wrong SPDX-License-Identifier
-Message-Id: <167087583333.16472.16779657643774982927.b4-ty@kernel.dk>
-Date:   Mon, 12 Dec 2022 13:10:33 -0700
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.11.0-dev-50ba3
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S237030AbiLMTDJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 13 Dec 2022 14:03:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4692163F7
+        for <io-uring@vger.kernel.org>; Tue, 13 Dec 2022 11:02:56 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 032A3B815AE
+        for <io-uring@vger.kernel.org>; Tue, 13 Dec 2022 19:02:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C1A03C433EF;
+        Tue, 13 Dec 2022 19:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670958173;
+        bh=JHYQsm952xs6CVLmvFg7g3UEOwJaceTl27toMW8Kip4=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=ON/dsD4qR63WzlPyGyrZf5ZX45FqKxPF0Tfd+uvjDU3kGA+BxDKzUaDwBqaGdK+sm
+         UtCalLpb+XW6DChSi8t0jaShYzCem0Q5As478NH3Ee6zfMXhmCRc5GPla+6BwSO53u
+         QqmHASp1vZtW3FF8KFoNHg2FQP0GgjUmPjJdvyXiUS4miigsiGdtkNjLGVEV+rIEy4
+         HmmZt6765dOAL9l2lbl8KgYLFW79dXPyGCox1ry24rOVPaY2WODzXgeOwHPjJn5nAf
+         3Oil4luAe3hDlMfd8fNR3hD4rDfqYJZHVieaSMnfvocY+6fjnfpwhxv7/PkVrzsKMZ
+         AdCtJ75mVha7w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B0DDEC00445;
+        Tue, 13 Dec 2022 19:02:53 +0000 (UTC)
+Subject: Re: [GIT PULL] First round io_uring updates for 6.2-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <a4a56cca-be7c-84de-40f7-69cdd1e96a1d@kernel.dk>
+References: <a4a56cca-be7c-84de-40f7-69cdd1e96a1d@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <a4a56cca-be7c-84de-40f7-69cdd1e96a1d@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/for-6.2/io_uring-2022-12-08
+X-PR-Tracked-Commit-Id: 5d772916855f593672de55c437925daccc8ecd73
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b2cf789f6cb6d449f2b457ee3fb055b7f431481f
+Message-Id: <167095817371.20557.16316227971305721192.pr-tracker-bot@kernel.org>
+Date:   Tue, 13 Dec 2022 19:02:53 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+The pull request you sent on Sat, 10 Dec 2022 08:35:55 -0700:
 
-On Mon, 12 Dec 2022 19:51:21 +0700, Ammar Faizi wrote:
-> This test program's license is GPL-2.0-or-later, but I put the wrong
-> SPDX-License-Identifier in commit:
-> 
->    d36db0b72b9 ("test: Add missing SPDX-License-Identifier")
-> 
-> Fix it.
-> 
-> [...]
+> git://git.kernel.dk/linux.git tags/for-6.2/io_uring-2022-12-08
 
-Applied, thanks!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b2cf789f6cb6d449f2b457ee3fb055b7f431481f
 
-[1/1] test/sendmsg_fs_cve: Fix the wrong SPDX-License-Identifier
-      commit: 4458aa0372738e844008397f71c062bd8bfadcac
+Thank you!
 
-Best regards,
 -- 
-Jens Axboe
-
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

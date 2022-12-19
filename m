@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD182650F51
-	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 16:53:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF666650F52
+	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 16:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbiLSPxh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Dec 2022 10:53:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37388 "EHLO
+        id S232641AbiLSPxi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Dec 2022 10:53:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232641AbiLSPxH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 10:53:07 -0500
+        with ESMTP id S232645AbiLSPxI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 10:53:08 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C307C1B4
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 07:50:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5347ABB4
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 07:50:42 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.89])
-        by gnuweeb.org (Postfix) with ESMTPSA id 12FD08191F;
-        Mon, 19 Dec 2022 15:50:36 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 1AE348191C;
+        Mon, 19 Dec 2022 15:50:39 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1671465039;
-        bh=FcFldO2XkCyGQk/T9GzZXEhIxtSmKQMGCrurrZHkRCM=;
+        s=default; t=1671465042;
+        bh=CvUQd37G+LX9A5SN2izZvKT3GxHNSWIKrHqN3MCv2JY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mTLapAOBsnSvsIS0Cg9gLq4rO6KJqyL2m0ep2mHMfm9jYtNiVtxizCBtVH6zx+kgQ
-         NTk4P1P3bym5JvnSo6Ur0LXh+Hg6ZdOujOzIE9njldWgfhIXSzQn7WrQcb7UT3xky1
-         dk53iA75hnPuJYrYzwKfjj7XPifjEgGni8A7olMq+IlQ0MRJ/gFNXna8h8FFqNIHqK
-         JRb51LtvZ/rv8H+ntoSMbs9OqTDbk7M45HzzoHI8IpA9hrZVcqaymdyAUXUU5ZZB/5
-         H70URctkZnBsbQl7Mgu2r5QbvTWzWFQYBiTZUl+YGDzrXj+ComED+oX6PBPJf+Cfv+
-         rDLhDMRk01ZYg==
+        b=LiakWzwqU27gQ7pxUxQEBH6PgCNwjO5HczJ+Zr7XSpQsuBvU5Bv5UxxRUhnRF/jhc
+         4CadGUPiFXwFPnq9btiovUfbM6uxm88xDkCxKIpfC5r768xjsBkjDYrpZSRjM5P19e
+         9nF3gOpuL6Ph4IiQkCczyJdyXsr7MSm0CPrcYZyaAjsJ3P9ajlfjfucpBVLDm49OKv
+         GeY4mpDb4sbXozjXsBoDEFWWsC+KEajaJ5E6JCEXoPKT0Qr2nfWa6puQ+QTVyt/pXr
+         zOoL4Zd/uiSJUy2sKq8ph5vl0AR8J7Qw1fbF090e6N1QLghIlFzT9j8i5f1XmVARqA
+         mCyQuQhqP99Pg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -37,9 +37,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         VNLX Kernel Department <kernel@vnlx.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>
-Subject: [PATCH liburing v1 4/8] test/ring-leak: Remove a "break" statement in a "for loop"
-Date:   Mon, 19 Dec 2022 22:49:56 +0700
-Message-Id: <20221219155000.2412524-5-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 5/8] tests: Fix clang `-Wunreachable-code` warning
+Date:   Mon, 19 Dec 2022 22:49:57 +0700
+Message-Id: <20221219155000.2412524-6-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221219155000.2412524-1-ammar.faizi@intel.com>
 References: <20221219155000.2412524-1-ammar.faizi@intel.com>
@@ -56,46 +56,86 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Clang says:
 
-  ring-leak.c:235:21: warning: loop will run at most once \
-  (loop increment never executed) [-Wunreachable-code-loop-increment]
-          for (i = 0; i < 2; i++) {
-                             ^~~
+  fadvise.c:190:3: warning: code will never be executed [-Wunreachable-code]
+                  fprintf(stderr, "Suspicious timings\n");
+                  ^~~~~~~
+  fadvise.c:189:6: note: silence by adding parentheses to mark code as \
+  explicitly dead
+          if (0 && bad > good) {
+              ^
+              /* DISABLES CODE */ ( )
 
-This "break" statement makes the "for loop" meaningless. Remove it. We
-are supposed to run the test function with 2 different arguments using
-this "for loop".
+  madvise.c:186:3: warning: code will never be executed [-Wunreachable-code]
+                  fprintf(stderr, "Suspicious timings (%u > %u)\n", bad, good);
+                  ^~~~~~~
+  madvise.c:185:6: note: silence by adding parentheses to mark code as \
+  explicitly dead
+          if (0 && bad > good)
+              ^
+              /* DISABLES CODE */ ( )
+
+Add parentheses to silence the warning.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- test/ring-leak.c | 1 -
- 1 file changed, 1 deletion(-)
+ test/fadvise.c | 2 +-
+ test/madvise.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/test/ring-leak.c b/test/ring-leak.c
-index f2ba74f..97b5a3f 100644
---- a/test/ring-leak.c
-+++ b/test/ring-leak.c
-@@ -234,21 +234,20 @@ int main(int argc, char *argv[])
- 
- 	for (i = 0; i < 2; i++) {
- 		bool update = !!(i & 1);
- 
- 		ret = test_scm_cycles(update);
- 		if (ret) {
- 			fprintf(stderr, "test_scm_cycles() failed %i\n",
- 				update);
- 			return 1;
- 		}
--		break;
+diff --git a/test/fadvise.c b/test/fadvise.c
+index 889f447..4f4d85f 100644
+--- a/test/fadvise.c
++++ b/test/fadvise.c
+@@ -179,21 +179,21 @@ int main(int argc, char *argv[])
+ 			goto err;
+ 		} else if (!ret)
+ 			good++;
+ 		else if (ret == 2)
+ 			bad++;
+ 		if (i >= MIN_LOOPS && !bad)
+ 			break;
  	}
  
- 	if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sp) != 0) {
- 		perror("Failed to create Unix-domain socket pair\n");
- 		return 1;
+ 	/* too hard to reliably test, just ignore */
+-	if (0 && bad > good) {
++	if ((0) && bad > good) {
+ 		fprintf(stderr, "Suspicious timings\n");
+ 		goto err;
  	}
  
- 	ring_fd = get_ring_fd();
- 	if (ring_fd < 0)
- 		return 1;
+ 	if (fname != argv[1])
+ 		unlink(fname);
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_PASS;
+ err:
+ 	if (fname != argv[1])
+diff --git a/test/madvise.c b/test/madvise.c
+index 8848143..7938ec4 100644
+--- a/test/madvise.c
++++ b/test/madvise.c
+@@ -175,21 +175,21 @@ int main(int argc, char *argv[])
+ 			goto err;
+ 		} else if (!ret)
+ 			good++;
+ 		else if (ret == 2)
+ 			bad++;
+ 		if (i >= MIN_LOOPS && !bad)
+ 			break;
+ 	}
+ 
+ 	/* too hard to reliably test, just ignore */
+-	if (0 && bad > good)
++	if ((0) && bad > good)
+ 		fprintf(stderr, "Suspicious timings (%u > %u)\n", bad, good);
+ 	if (fname != argv[1])
+ 		unlink(fname);
+ 	io_uring_queue_exit(&ring);
+ 	return T_EXIT_PASS;
+ err:
+ 	if (fname != argv[1])
+ 		unlink(fname);
+ 	return T_EXIT_FAIL;
+ }
 -- 
 Ammar Faizi
 

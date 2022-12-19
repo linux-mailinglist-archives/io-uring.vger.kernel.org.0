@@ -2,118 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56402650CC3
-	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 14:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4464650D51
+	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 15:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbiLSNnH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Dec 2022 08:43:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46208 "EHLO
+        id S231997AbiLSOcz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Dec 2022 09:32:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230403AbiLSNnH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 08:43:07 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 208D5F03C
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 05:43:06 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id h16so8622938wrz.12
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 05:43:06 -0800 (PST)
+        with ESMTP id S232435AbiLSOcS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 09:32:18 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FC11A4
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 06:31:37 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id s7so9186918plk.5
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 06:31:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HtrgrLpkHxh8gEPJ4KfcEeRr6pL/NkzA0rDFgq9a9nA=;
-        b=VHOK3i3+VNyVM3WzgUZ6NBKpGpCI6oblsVcDjxFUVdTirozTNuTaFcElXPKp74k/jE
-         WIYSKHqcgeUIApr+KTjiM1EFUBzh4Jrwdg7M5umLkrOl2NEPMbSMbKgPm0+6Ur6NT9PQ
-         +XhmRNIO1Ud84gAbbDmQFf6Lady6NAgBt5I8D7shIOEo2A4eN6toiPBwZ/MaE0Ncq+NC
-         eTXocmvDRw0dDxbNewRMdWhFoZIqRhgwW1XjXryRCXJ3jjNVQx4YUx8g5YIVrQrBX2Xz
-         8utEqFbZkK/tTMFr/ceEqywS7ktdKUwCt7SlKz3p097VTeoVnKFQ5mfEHDu+7wAHOZw9
-         dblQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HuqIP5LGl7DjXndmCVG8SH85v1dpGijNePy1Y/NSabQ=;
+        b=qMZk5abf2Vnrqyx8Jc3ff46UZQw5G3bN6pgkub2OnrI4prUu8kP9SOxCPtzmn6kg+y
+         g/J9qgPL8iEYZmR2Vht/MCBn+mmN66imxsnMH6+AI7JKao4XCS/NIQNY5inTvMXAvZ8R
+         0iXpPGGnJIZabCQ2Pwuhi9HzfZ05Qhgt2PKxFn21/EuP0D5DnbKgx/NiR6hwTES8dqvr
+         0mUuHJDeNt0tCZPHRHFmSFf4fiyen7qwUtnqKgrIbyQ8kUzgvueO0GskVs5dybH4865F
+         4Cpuf/a6/IDv9xvUGktnTYM53lk7AXfNyBQfx971x1+xVy/JLFdMz0wh1XP8wD4avycU
+         5oew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HtrgrLpkHxh8gEPJ4KfcEeRr6pL/NkzA0rDFgq9a9nA=;
-        b=Hv9SSEn2ZQA7vt8TJ/JgP4MHebiV0F4LgmI/3EIdke0iCDG+DCKxfiGHaZD+BAJ//s
-         DfturjrUlQHnCgXWGME5L4i5SOQ+CGghGAh9h2w8qEhkhk1CXNd/Kvvoy0NH1+/zvIKC
-         scnrewKUeKeHvVOLI8GkI0uk/yeiE8gDf4M2ldVIdZMm2/4cIvk4ZZO6RtuKc3UlZLuC
-         mDukqS4pVel8mbArav+QSjq/D9ef0oeDi7w+7fecXzpoxvqkPMyivag47+kJxWmu87Mp
-         86O22gVA8uUTT0kdTsW2ONAvNr3TOtz8kLlflkE0ABKYmsIf9Dc5Hq51rVaQQavoiHUR
-         JQHw==
-X-Gm-Message-State: ANoB5ple3v4eJ6YFN0GS1rS2b0Kk+vZJqDuU1PBaDgfJPkiDXzOnLJ3p
-        UFIl7K3FMyUG/A672+heOKH2LH/ZKNs=
-X-Google-Smtp-Source: AA0mqf5yedGWs6nqfD9Bl3xeADEAJUsYjhTRrfjTWl5KTNME7WMN8pLVNR2gSTM7i2LMxiy++hjy3Q==
-X-Received: by 2002:a5d:4005:0:b0:244:e704:df2c with SMTP id n5-20020a5d4005000000b00244e704df2cmr24695014wrp.57.1671457384569;
-        Mon, 19 Dec 2022 05:43:04 -0800 (PST)
-Received: from [192.168.8.100] (188.28.224.246.threembb.co.uk. [188.28.224.246])
-        by smtp.gmail.com with ESMTPSA id z15-20020a5d4d0f000000b0023677e1157fsm9907718wrt.56.2022.12.19.05.43.04
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HuqIP5LGl7DjXndmCVG8SH85v1dpGijNePy1Y/NSabQ=;
+        b=mhr58+MDWkpKmBIFxqZDlnddUw3tcHRZspKY4W/vqUBxtC4GFZ4vATyhKUPH6r7RgU
+         8hZq2M00zJI8AnmDOvDVOmhGhGOUN6ScNEALcgt6U3aN9fgamG5KmOMF5x9fI9P1Zm5C
+         H8SkQaG5IoPDtr+sIzSiVSZ8CaWOmvbo2sh5mFnxiB6uiFnPBvUY09b5A8sD8mRAA5Jj
+         Cpe4/GF1kjoE2qEV33z+wK3PWm/QfPL/qbHnZ7IL8LxVoGzHf61zbsYLgd2xytMk3I90
+         g0xdRWSkd9ULZJwJHAndy9obJuh0DguSTbIGNg8aPDc0Hy/eCPne+3p+8Ezi+NHekE+2
+         JrFg==
+X-Gm-Message-State: ANoB5pnCMAy99sVOMhSzgqZSSLlOyF0P/Ji17vnlBICO1xBS0MfDqwHS
+        5J/d6mdJgUAW3xh9z7Ms+xjDQ16ncBk+QKbVfyQ=
+X-Google-Smtp-Source: AA0mqf4uo3uxFocnTb9XlE7CW0CHmOIgMiz/nB185umDJv77R/+lB9iZGp7T8ILvJ7iRL5rTYntyBw==
+X-Received: by 2002:a17:902:d58d:b0:189:f277:3834 with SMTP id k13-20020a170902d58d00b00189f2773834mr12253007plh.6.1671460295998;
+        Mon, 19 Dec 2022 06:31:35 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id h14-20020a170902f7ce00b00189c93ce5easm7182819plw.166.2022.12.19.06.31.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Dec 2022 05:43:04 -0800 (PST)
-Message-ID: <105573b9-efda-80b1-0a66-b00569e89911@gmail.com>
-Date:   Mon, 19 Dec 2022 13:42:08 +0000
+        Mon, 19 Dec 2022 06:31:35 -0800 (PST)
+Message-ID: <a8ab87bc-760d-a17f-9110-ae99cb59311f@kernel.dk>
+Date:   Mon, 19 Dec 2022 07:31:34 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
-Subject: Re: User-triggerable 6.1 crash [was: io_uring/net: fix cleanup double
- free free_iov init]
 Content-Language: en-US
-To:     Jiri Slaby <jirislaby@kernel.org>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
-References: <f159b763c92ef80496ee6e33457b460f41d88651.1664199279.git.asml.silence@gmail.com>
- <c80c1e3f-800b-dc49-f2f5-acc8ceb34d51@gmail.com>
- <032f142f-8439-b2e2-5108-4f41e66e3b0c@kernel.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <032f142f-8439-b2e2-5108-4f41e66e3b0c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/net: ensure compat import handlers clear free_iov
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jiri Slaby <jirislaby@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/19/22 12:32, Jiri Slaby wrote:
-> On 19. 12. 22, 11:23, Jiri Slaby wrote:
->> On 26. 09. 22, 15:35, Pavel Begunkov wrote:
->>> Having ->async_data doesn't mean it's initialised and previously we vere
->>> relying on setting F_CLEANUP at the right moment. With zc sendmsg
->>> though, we set F_CLEANUP early in prep when we alloc a notif and so we
->>> may allocate async_data, fail in copy_msg_hdr() leaving
->>> struct io_async_msghdr not initialised correctly but with F_CLEANUP
->>> set, which causes a ->free_iov double free and probably other nastiness.
->>>
->>> Always initialise ->free_iov. Also, now it might point to fast_iov when
->>> fails, so avoid freeing it during cleanups.
->>>
->>> Reported-by: syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
->>> Fixes: 493108d95f146 ("io_uring/net: zerocopy sendmsg")
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>
->> Hi,
->>
->> it's rather easy to crash 6.1 with this patch now. Compile liburing-2.2/test/send_recvmsg.c with -m32, run it as an ordinary user and see the below WARNING followed by many BUGs.
->>
->> It dies in this kfree() in io_recvmsg():
->>          if (mshot_finished) {
->>                  io_netmsg_recycle(req, issue_flags);
->>                  /* fast path, check for non-NULL to avoid function call */
->>                  if (kmsg->free_iov)
->>                          kfree(kmsg->free_iov);
->>                  req->flags &= ~REQ_F_NEED_CLEANUP;
->>          }
-> 
-> I am attaching a KASAN report instead:
-> 
-> BUG: KASAN: invalid-free in __kmem_cache_free (mm/slub.c:3661 mm/slub.c:3674)
-> Free of addr ffff8881049ff328 by task send_recvmsg.t/733
+If we're not allocating the vectors because the count is below
+UIO_FASTIOV, we still do need to properly clear ->free_iov to prevent
+an erronous free of on-stack data.
 
-Thanks for letting us know, I'll take a look
+Reported-by: Jiri Slaby <jirislaby@gmail.com>
+Fixes: 4c17a496a7a0 ("io_uring/net: fix cleanup double free free_iov init")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
+---
 
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 5229976cb582..5aebdfd05de7 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -496,6 +496,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 
+ 		if (msg.msg_iovlen == 0) {
+ 			sr->len = 0;
++			iomsg->free_iov = NULL;
+ 		} else if (msg.msg_iovlen > 1) {
+ 			return -EINVAL;
+ 		} else {
+@@ -506,6 +507,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 			if (clen < 0)
+ 				return -EINVAL;
+ 			sr->len = clen;
++			iomsg->free_iov = NULL;
+ 		}
+ 
+ 		if (req->flags & REQ_F_APOLL_MULTISHOT) {
 -- 
-Pavel Begunkov
+Jens Axboe
+

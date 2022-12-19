@@ -2,64 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4464650D51
-	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 15:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F31A2650D70
+	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 15:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231997AbiLSOcz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Dec 2022 09:32:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
+        id S232480AbiLSOgf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Dec 2022 09:36:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232435AbiLSOcS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 09:32:18 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FC11A4
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 06:31:37 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id s7so9186918plk.5
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 06:31:37 -0800 (PST)
+        with ESMTP id S232489AbiLSOgL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 09:36:11 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91558638A
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 06:36:06 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id a9so9185437pld.7
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 06:36:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
+        h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HuqIP5LGl7DjXndmCVG8SH85v1dpGijNePy1Y/NSabQ=;
-        b=qMZk5abf2Vnrqyx8Jc3ff46UZQw5G3bN6pgkub2OnrI4prUu8kP9SOxCPtzmn6kg+y
-         g/J9qgPL8iEYZmR2Vht/MCBn+mmN66imxsnMH6+AI7JKao4XCS/NIQNY5inTvMXAvZ8R
-         0iXpPGGnJIZabCQ2Pwuhi9HzfZ05Qhgt2PKxFn21/EuP0D5DnbKgx/NiR6hwTES8dqvr
-         0mUuHJDeNt0tCZPHRHFmSFf4fiyen7qwUtnqKgrIbyQ8kUzgvueO0GskVs5dybH4865F
-         4Cpuf/a6/IDv9xvUGktnTYM53lk7AXfNyBQfx971x1+xVy/JLFdMz0wh1XP8wD4avycU
-         5oew==
+        bh=c9MNKv6cA2M1dbecWKum7EhJMeeMPDbM2TD9KnukXtY=;
+        b=J+1lGc+zbIuuzKY2z5QLdA6oc9KeKYni/WbOo+8xdaaPyU+tWp79Uc7wBl0gDBJQOd
+         fCEVYzQTAek+kaGzEkjd2z4hXkw5n8L9/mgO+qm8Am47ppy/Z6/eWDVTuDDJe1A3Jv5L
+         IOaVQHiNLb3tDVVo246LsGT3wz1qtf+WqkBg+UV74mBFHf27omHar/sybcLhKeYhqlPQ
+         7fc/+rumuZwJRtfyIJyxz4USGfuJYth53pSzjIUcxMeWqXgQWf3wjkRKyyV2VEcbN0H1
+         +WSSoxjt9Sgd2qvHA0Q/LVj55R157l+kMYiVmU0C7QBOI9fddUALJRgGM/vScZ+7MvzJ
+         bucQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
+        h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=HuqIP5LGl7DjXndmCVG8SH85v1dpGijNePy1Y/NSabQ=;
-        b=mhr58+MDWkpKmBIFxqZDlnddUw3tcHRZspKY4W/vqUBxtC4GFZ4vATyhKUPH6r7RgU
-         8hZq2M00zJI8AnmDOvDVOmhGhGOUN6ScNEALcgt6U3aN9fgamG5KmOMF5x9fI9P1Zm5C
-         H8SkQaG5IoPDtr+sIzSiVSZ8CaWOmvbo2sh5mFnxiB6uiFnPBvUY09b5A8sD8mRAA5Jj
-         Cpe4/GF1kjoE2qEV33z+wK3PWm/QfPL/qbHnZ7IL8LxVoGzHf61zbsYLgd2xytMk3I90
-         g0xdRWSkd9ULZJwJHAndy9obJuh0DguSTbIGNg8aPDc0Hy/eCPne+3p+8Ezi+NHekE+2
-         JrFg==
-X-Gm-Message-State: ANoB5pnCMAy99sVOMhSzgqZSSLlOyF0P/Ji17vnlBICO1xBS0MfDqwHS
-        5J/d6mdJgUAW3xh9z7Ms+xjDQ16ncBk+QKbVfyQ=
-X-Google-Smtp-Source: AA0mqf4uo3uxFocnTb9XlE7CW0CHmOIgMiz/nB185umDJv77R/+lB9iZGp7T8ILvJ7iRL5rTYntyBw==
-X-Received: by 2002:a17:902:d58d:b0:189:f277:3834 with SMTP id k13-20020a170902d58d00b00189f2773834mr12253007plh.6.1671460295998;
-        Mon, 19 Dec 2022 06:31:35 -0800 (PST)
+        bh=c9MNKv6cA2M1dbecWKum7EhJMeeMPDbM2TD9KnukXtY=;
+        b=Bl1P0s6XBTFM6ynikafxJUFviRzvkrOozhIK2p43IRr+nCjg2SMv7e0notuG98pW8u
+         bIsUdbHVAYh+sOpKnOf46N+/WfrfbD661czTE26n6McpHCb18+bzxiHFbAyHCA0po5ot
+         33tZLwyTVUdQkbtx35GFDJo/iO4Ru2p0iaYKxSZQF07Igsgp+Lod+OpOCHcrQGGQNRkq
+         9UxY5hxbiH+MuKAlamrw/sQLlk9SxLDJAryXA2Qs6O1XI8EJyx4omHSR9j6MWyIyBFg6
+         z14r7MWRc672cspYroPLqddhSMFyzJq99NlRkhABa7VqZyvBo/NT+miO3iaxUWR3yG1a
+         4l4Q==
+X-Gm-Message-State: ANoB5pmS8Mfjj72b9uIEtCRufV2a/eW84d+BlLH1HkTv41d2LPqZ9Pow
+        CBb/df5g5IEBQ2W2s8y2cFBc0LEmRqbu+PpvVv4=
+X-Google-Smtp-Source: AA0mqf4yy59uMM1TOsB+0o3T3fkL4zaK7sGLtm1cd6+kJNXwiWtzOpwgO9NH9cmM/4SGEdp2GHXm9A==
+X-Received: by 2002:a05:6a21:328a:b0:aa:4783:efc1 with SMTP id yt10-20020a056a21328a00b000aa4783efc1mr16731957pzb.2.1671460565270;
+        Mon, 19 Dec 2022 06:36:05 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h14-20020a170902f7ce00b00189c93ce5easm7182819plw.166.2022.12.19.06.31.35
+        by smtp.gmail.com with ESMTPSA id e35-20020a631e23000000b004784cdc196dsm6360572pge.24.2022.12.19.06.36.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Dec 2022 06:31:35 -0800 (PST)
-Message-ID: <a8ab87bc-760d-a17f-9110-ae99cb59311f@kernel.dk>
-Date:   Mon, 19 Dec 2022 07:31:34 -0700
+        Mon, 19 Dec 2022 06:36:04 -0800 (PST)
+Message-ID: <1fcaa6f3-6dc7-0685-1cb3-3b1179409609@kernel.dk>
+Date:   Mon, 19 Dec 2022 07:36:03 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/net: ensure compat import handlers clear free_iov
+Subject: [PATCH v2] io_uring/net: ensure compat import handlers clear free_iov
+To:     io-uring <io-uring@vger.kernel.org>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Jiri Slaby <jirislaby@gmail.com>
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -83,26 +83,22 @@ Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
+v2: let's play it a bit safer and just always clear at the top rather
+    in the individual cases.
+
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 5229976cb582..5aebdfd05de7 100644
+index 5229976cb582..f76b688f476e 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -496,6 +496,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+@@ -494,6 +494,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 	if (req->flags & REQ_F_BUFFER_SELECT) {
+ 		compat_ssize_t clen;
  
++		iomsg->free_iov = NULL;
  		if (msg.msg_iovlen == 0) {
  			sr->len = 0;
-+			iomsg->free_iov = NULL;
  		} else if (msg.msg_iovlen > 1) {
- 			return -EINVAL;
- 		} else {
-@@ -506,6 +507,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
- 			if (clen < 0)
- 				return -EINVAL;
- 			sr->len = clen;
-+			iomsg->free_iov = NULL;
- 		}
- 
- 		if (req->flags & REQ_F_APOLL_MULTISHOT) {
+
 -- 
 Jens Axboe
 

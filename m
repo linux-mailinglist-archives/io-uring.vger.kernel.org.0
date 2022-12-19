@@ -2,103 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD9B650CC1
-	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 14:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56402650CC3
+	for <lists+io-uring@lfdr.de>; Mon, 19 Dec 2022 14:43:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231556AbiLSNlU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Dec 2022 08:41:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
+        id S231439AbiLSNnH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Dec 2022 08:43:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230403AbiLSNlT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 08:41:19 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C1CF03C
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 05:41:16 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id t2so9063416ply.2
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 05:41:16 -0800 (PST)
+        with ESMTP id S230403AbiLSNnH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Dec 2022 08:43:07 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 208D5F03C
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 05:43:06 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id h16so8622938wrz.12
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 05:43:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PbVcnw7aPS6IKAHy4Q2oItsiPHCr12afkxHIEH3YCzY=;
-        b=qSv3UAl9cIjWfLyNMWol8BYXZdfW2p3RNkUKDejGkcKF/EwLU9AAkusIrpoGl7/jr+
-         OQbdMQslNXF1gpXqpIt2vSuFxlJZyh/xLJQxma0W8Bud6+r0NJbG3ik7S4Zvq9pepmXv
-         7Kj02O87Q5eJ+tq+s15pnIc4rZQ4Hc6B24VtShBC2BBtBu+51aYBP4F2TA9oPpbDy/6Z
-         ZwAuNH76kvUMbw7JmWFXkUFOtk5PK4LFXyuafcENY535BYto+X7mwngtqVvP37oITXs5
-         sk6rECPltSy43tYKrdaysQZTJFujLh96XyIzWw0SaYT4XRlcCWV5C7F+tBhmBxM5GIIh
-         Cmrg==
+        bh=HtrgrLpkHxh8gEPJ4KfcEeRr6pL/NkzA0rDFgq9a9nA=;
+        b=VHOK3i3+VNyVM3WzgUZ6NBKpGpCI6oblsVcDjxFUVdTirozTNuTaFcElXPKp74k/jE
+         WIYSKHqcgeUIApr+KTjiM1EFUBzh4Jrwdg7M5umLkrOl2NEPMbSMbKgPm0+6Ur6NT9PQ
+         +XhmRNIO1Ud84gAbbDmQFf6Lady6NAgBt5I8D7shIOEo2A4eN6toiPBwZ/MaE0Ncq+NC
+         eTXocmvDRw0dDxbNewRMdWhFoZIqRhgwW1XjXryRCXJ3jjNVQx4YUx8g5YIVrQrBX2Xz
+         8utEqFbZkK/tTMFr/ceEqywS7ktdKUwCt7SlKz3p097VTeoVnKFQ5mfEHDu+7wAHOZw9
+         dblQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PbVcnw7aPS6IKAHy4Q2oItsiPHCr12afkxHIEH3YCzY=;
-        b=ghhKBTqbvCiUJaWtn7/oDFM02+P/Wblp2r75ZhLcvQnJCd1JvT4BpQ7wSKNGEZrhAV
-         z872PIb1DH3oB8wYlbMZYTlXX42vUUsw+CKsKWPR1EIh0siyOavEU5SrCEZzbkvXnXiG
-         McTmnY0R52QNjI5DPtn3KISAEfFb2xB31SeKKC4qjIkRY5Iv3GcQuaprp4XvT//clwae
-         lp2pwbcBcTgE8UxZuZYaApLVLG9bo7/2G5NZ1NH39W15uUYG4JqoFPJ9CbuVFE1hp7X9
-         LGDVusEYKWUJaJFVX/xPNb6E6uv57y7Kd2Cg012rB2IGnOI51cPaEFgzEEpnVxHCyD29
-         P7Og==
-X-Gm-Message-State: AFqh2kq+BsfquYZXJTRXhT7aAf9abZmbMlBq1k3RdGrvzHRD3F1Yuebc
-        X5VjE3YVrgDnWMMldtPPN9NdRkrIhgahOGysAC0=
-X-Google-Smtp-Source: AMrXdXtVRN3tjyqlgE298piw1X/lwH3k16wP6Gc56CexoguOPJ3JGmCDTzesbPMUnJnBFNOkMlE3QQ==
-X-Received: by 2002:a05:6a20:bb1e:b0:b1:d045:2818 with SMTP id fc30-20020a056a20bb1e00b000b1d0452818mr310028pzb.2.1671457275903;
-        Mon, 19 Dec 2022 05:41:15 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 71-20020a63064a000000b0047911890728sm6295275pgg.79.2022.12.19.05.41.14
+        bh=HtrgrLpkHxh8gEPJ4KfcEeRr6pL/NkzA0rDFgq9a9nA=;
+        b=Hv9SSEn2ZQA7vt8TJ/JgP4MHebiV0F4LgmI/3EIdke0iCDG+DCKxfiGHaZD+BAJ//s
+         DfturjrUlQHnCgXWGME5L4i5SOQ+CGghGAh9h2w8qEhkhk1CXNd/Kvvoy0NH1+/zvIKC
+         scnrewKUeKeHvVOLI8GkI0uk/yeiE8gDf4M2ldVIdZMm2/4cIvk4ZZO6RtuKc3UlZLuC
+         mDukqS4pVel8mbArav+QSjq/D9ef0oeDi7w+7fecXzpoxvqkPMyivag47+kJxWmu87Mp
+         86O22gVA8uUTT0kdTsW2ONAvNr3TOtz8kLlflkE0ABKYmsIf9Dc5Hq51rVaQQavoiHUR
+         JQHw==
+X-Gm-Message-State: ANoB5ple3v4eJ6YFN0GS1rS2b0Kk+vZJqDuU1PBaDgfJPkiDXzOnLJ3p
+        UFIl7K3FMyUG/A672+heOKH2LH/ZKNs=
+X-Google-Smtp-Source: AA0mqf5yedGWs6nqfD9Bl3xeADEAJUsYjhTRrfjTWl5KTNME7WMN8pLVNR2gSTM7i2LMxiy++hjy3Q==
+X-Received: by 2002:a5d:4005:0:b0:244:e704:df2c with SMTP id n5-20020a5d4005000000b00244e704df2cmr24695014wrp.57.1671457384569;
+        Mon, 19 Dec 2022 05:43:04 -0800 (PST)
+Received: from [192.168.8.100] (188.28.224.246.threembb.co.uk. [188.28.224.246])
+        by smtp.gmail.com with ESMTPSA id z15-20020a5d4d0f000000b0023677e1157fsm9907718wrt.56.2022.12.19.05.43.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Dec 2022 05:41:15 -0800 (PST)
-Message-ID: <da59d091-48f3-e574-5110-3fa99ae0fc8d@kernel.dk>
-Date:   Mon, 19 Dec 2022 06:41:13 -0700
+        Mon, 19 Dec 2022 05:43:04 -0800 (PST)
+Message-ID: <105573b9-efda-80b1-0a66-b00569e89911@gmail.com>
+Date:   Mon, 19 Dec 2022 13:42:08 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
 Subject: Re: User-triggerable 6.1 crash [was: io_uring/net: fix cleanup double
  free free_iov init]
 Content-Language: en-US
-To:     Jiri Slaby <jirislaby@gmail.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
+To:     Jiri Slaby <jirislaby@kernel.org>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
 References: <f159b763c92ef80496ee6e33457b460f41d88651.1664199279.git.asml.silence@gmail.com>
  <c80c1e3f-800b-dc49-f2f5-acc8ceb34d51@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <c80c1e3f-800b-dc49-f2f5-acc8ceb34d51@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <032f142f-8439-b2e2-5108-4f41e66e3b0c@kernel.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <032f142f-8439-b2e2-5108-4f41e66e3b0c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 12/19/22 3:23 AM, Jiri Slaby wrote:
-> On 26. 09. 22, 15:35, Pavel Begunkov wrote:
->> Having ->async_data doesn't mean it's initialised and previously we vere
->> relying on setting F_CLEANUP at the right moment. With zc sendmsg
->> though, we set F_CLEANUP early in prep when we alloc a notif and so we
->> may allocate async_data, fail in copy_msg_hdr() leaving
->> struct io_async_msghdr not initialised correctly but with F_CLEANUP
->> set, which causes a ->free_iov double free and probably other nastiness.
+On 12/19/22 12:32, Jiri Slaby wrote:
+> On 19. 12. 22, 11:23, Jiri Slaby wrote:
+>> On 26. 09. 22, 15:35, Pavel Begunkov wrote:
+>>> Having ->async_data doesn't mean it's initialised and previously we vere
+>>> relying on setting F_CLEANUP at the right moment. With zc sendmsg
+>>> though, we set F_CLEANUP early in prep when we alloc a notif and so we
+>>> may allocate async_data, fail in copy_msg_hdr() leaving
+>>> struct io_async_msghdr not initialised correctly but with F_CLEANUP
+>>> set, which causes a ->free_iov double free and probably other nastiness.
+>>>
+>>> Always initialise ->free_iov. Also, now it might point to fast_iov when
+>>> fails, so avoid freeing it during cleanups.
+>>>
+>>> Reported-by: syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
+>>> Fixes: 493108d95f146 ("io_uring/net: zerocopy sendmsg")
+>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 >>
->> Always initialise ->free_iov. Also, now it might point to fast_iov when
->> fails, so avoid freeing it during cleanups.
+>> Hi,
 >>
->> Reported-by: syzbot+edfd15cd4246a3fc615a@syzkaller.appspotmail.com
->> Fixes: 493108d95f146 ("io_uring/net: zerocopy sendmsg")
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> it's rather easy to crash 6.1 with this patch now. Compile liburing-2.2/test/send_recvmsg.c with -m32, run it as an ordinary user and see the below WARNING followed by many BUGs.
+>>
+>> It dies in this kfree() in io_recvmsg():
+>>          if (mshot_finished) {
+>>                  io_netmsg_recycle(req, issue_flags);
+>>                  /* fast path, check for non-NULL to avoid function call */
+>>                  if (kmsg->free_iov)
+>>                          kfree(kmsg->free_iov);
+>>                  req->flags &= ~REQ_F_NEED_CLEANUP;
+>>          }
 > 
-> Hi,
+> I am attaching a KASAN report instead:
 > 
-> it's rather easy to crash 6.1 with this patch now. Compile liburing-2.2/test/send_recvmsg.c with -m32, run it as an ordinary user and see the below WARNING followed by many BUGs.
+> BUG: KASAN: invalid-free in __kmem_cache_free (mm/slub.c:3661 mm/slub.c:3674)
+> Free of addr ffff8881049ff328 by task send_recvmsg.t/733
 
-I'll take a look at this.
+Thanks for letting us know, I'll take a look
+
 
 -- 
-Jens Axboe
-
-
+Pavel Begunkov

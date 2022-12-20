@@ -2,72 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D14F9651A8D
-	for <lists+io-uring@lfdr.de>; Tue, 20 Dec 2022 07:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D26BD651ADB
+	for <lists+io-uring@lfdr.de>; Tue, 20 Dec 2022 07:45:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232678AbiLTGJc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Dec 2022 01:09:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
+        id S229527AbiLTGpP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Dec 2022 01:45:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbiLTGJb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Dec 2022 01:09:31 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A52B026EC
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 22:09:29 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id t17so26855060eju.1
-        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 22:09:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eZx+l47CzuZ3xlEKU80E40CSh3ZgdwDHh7dVN/b5kRo=;
-        b=UlISU/fKRQ1Hz+/V0lJ7TuZ/t0ZRVZiQEAxiciy8BUiFUm27wD3kYRRAWKv2v5SmoD
-         wVU9b3M9IArce+Nr9KWIyGjIu2QR3Z9G5KO4cf0ptEhTwiYXhXUwPCyigNyLPbgrawhl
-         hZJeu29S8zU/+uinFRTAJmIXPq7lAdtA/wnpWNiazkp6NqgYaY0MxqMQdoqDWaXxrB9o
-         XhOHho1u/Y+5xAuED57LpuuiDNKJAfga0qZw5VBvowQF98RSSSf2BqmVC7R4CLsm/fvb
-         P3evxRRyShqzU+vTujMcy97mi9nTvvvUQAKGhLUeN6XKtEXcU9e3VXO9/lFCMr8fJuCd
-         BhQA==
+        with ESMTP id S233173AbiLTGpN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Dec 2022 01:45:13 -0500
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32C8013EA2
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 22:45:12 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id ud5so26957720ejc.4
+        for <io-uring@vger.kernel.org>; Mon, 19 Dec 2022 22:45:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eZx+l47CzuZ3xlEKU80E40CSh3ZgdwDHh7dVN/b5kRo=;
-        b=Lh+gz12teTQEse6IQknlC+QUhV+ZGApdv9yIddvuSSoJiFuXLIaCBz4+8Q50R8k27w
-         /0/54TyrDoGydWLVvrneYi4CZdfaOkTmtgveIzz3lwF7/kGzYj5/mRoYyeAL7D/xJMTE
-         nj/OpF3tx9jhFkfBtgY+NPGuIeA/gXYhEf7gmwROEQ2refuFQUooznlqgKD5O636JGFs
-         P3r+MteGPyZOV9HNmIw6xXMaayIvzXh3XjxyevPpmYXhREPHivV9ijZvv0NJLYu+Rrrz
-         vR8eRJCWnrGPYUJi6Xu+znu42TAK0Wju8srQjXSXkCW8DKVZDIYtLG7HpbagGixa9YRG
-         Z2qg==
-X-Gm-Message-State: ANoB5pmNiqQBZArOl+Ly2J74DKqlA+DipJijaRFg/BrKDlLdrE0acPUR
-        /oxRMUBWtqxMYPnmslJ27RqNeWeCsLrbGUsgOCI=
-X-Google-Smtp-Source: AA0mqf7ppxLF7qxPmNCdfEgtJwV5Vd4oFzSPHummjuidUWmJq1YWv5y0jyi/bQtjJpVrvOuobujSyRg8BUsF3Bq0eW4=
-X-Received: by 2002:a17:906:7e57:b0:7c1:bb5:1937 with SMTP id
- z23-20020a1709067e5700b007c10bb51937mr12211453ejr.251.1671516568064; Mon, 19
- Dec 2022 22:09:28 -0800 (PST)
+        bh=A6aEp+DhaS6CPT/s+Q2Xa2jbdy1Fi3ohWfF0bfWUwsE=;
+        b=n527IwxT190xPl9GmYjaEOz8PHM8Ul+gdTq4K+m788XABFbIyrhj1wGcJMblvSWZpG
+         BuRNk1mBUJmXrj2pkpkLiybt/KkE92yWcfr0DcIatEUp/RxYW3itBM7yzZVMQfedrMMl
+         lbfjYHZkEG5s3pMHYWiaiU8TohF6WaQ4SGbWmq05LhRF7aMFOK7Hg0MziAkM1oPp+RiH
+         ETij5y/Foka/gsDi+qfjeBY9A0YoGfQ9M+FoGFrNtVjMRr2vEDa3w69/njK8+fV6+VRS
+         xHqNPfOLTggatKtppaTHFUwK2hr2+CH7BnIKyixcvBDMhl/b1qu709f21AWFb9Cf1+q+
+         X7qw==
+X-Gm-Message-State: ANoB5pl6HR6FrleTaNt/Or3gPz/GFpTZnupHcaOzZr/v4RgEljOAtI9P
+        E2KS4/zvjK1uvthwQvFXp56llayzWcw=
+X-Google-Smtp-Source: AA0mqf6O0nh6vkt8+Gcnzf9WaPjXnWRcoCruZ0TUTG16adyDIqVS1JZIHPn4FNPErBzS+C4CP3m3cQ==
+X-Received: by 2002:a17:906:b181:b0:7c1:65f7:18d8 with SMTP id w1-20020a170906b18100b007c165f718d8mr31195549ejy.60.1671518710731;
+        Mon, 19 Dec 2022 22:45:10 -0800 (PST)
+Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id z7-20020aa7d407000000b0046b531fcf9fsm5257004edq.59.2022.12.19.22.45.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Dec 2022 22:45:10 -0800 (PST)
+Message-ID: <bf44714f-cdc9-7b07-dff1-a0c1e2b8e437@kernel.org>
+Date:   Tue, 20 Dec 2022 07:45:09 +0100
 MIME-Version: 1.0
-Received: by 2002:a05:7208:104:b0:60:28cf:890c with HTTP; Mon, 19 Dec 2022
- 22:09:27 -0800 (PST)
-Reply-To: seyba_daniel@yahoo.com
-From:   Seyba Daniel <belitourdamien@gmail.com>
-Date:   Tue, 20 Dec 2022 07:09:27 +0100
-Message-ID: <CAE8i9FjCvntzeaUjdSVrbFfC80PY7XPQ13cF9rOBSPdrSQ+waA@mail.gmail.com>
-Subject: Seyba Daniel
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2] io_uring/net: ensure compat import handlers clear
+ free_iov
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+References: <1fcaa6f3-6dc7-0685-1cb3-3b1179409609@kernel.dk>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <1fcaa6f3-6dc7-0685-1cb3-3b1179409609@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-I urgently seek your service to represent me in investing in
-your region / country and you will be rewarded for your service without
-affecting your present job with very little time invested in it
-My dearest regards
+On 19. 12. 22, 15:36, Jens Axboe wrote:
+> If we're not allocating the vectors because the count is below
+> UIO_FASTIOV, we still do need to properly clear ->free_iov to prevent
+> an erronous free of on-stack data.
+> 
+> Reported-by: Jiri Slaby <jirislaby@gmail.com>
+> Fixes: 4c17a496a7a0 ("io_uring/net: fix cleanup double free free_iov init")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Seyba Daniel
+Tested-by: Jiri Slaby <jirislaby@kernel.org>
+
+
+> ---
+> 
+> v2: let's play it a bit safer and just always clear at the top rather
+>      in the individual cases.
+> 
+> diff --git a/io_uring/net.c b/io_uring/net.c
+> index 5229976cb582..f76b688f476e 100644
+> --- a/io_uring/net.c
+> +++ b/io_uring/net.c
+> @@ -494,6 +494,7 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+>   	if (req->flags & REQ_F_BUFFER_SELECT) {
+>   		compat_ssize_t clen;
+>   
+> +		iomsg->free_iov = NULL;
+>   		if (msg.msg_iovlen == 0) {
+>   			sr->len = 0;
+>   		} else if (msg.msg_iovlen > 1) {
+> 
+
+thanks,
+-- 
+js
+suse labs
+

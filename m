@@ -2,73 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 425336533C7
-	for <lists+io-uring@lfdr.de>; Wed, 21 Dec 2022 17:10:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 023E96537B3
+	for <lists+io-uring@lfdr.de>; Wed, 21 Dec 2022 21:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbiLUQKb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Dec 2022 11:10:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52408 "EHLO
+        id S229652AbiLUUmm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Dec 2022 15:42:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiLUQKa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Dec 2022 11:10:30 -0500
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1508218B1
-        for <io-uring@vger.kernel.org>; Wed, 21 Dec 2022 08:10:29 -0800 (PST)
-Received: by mail-io1-f72.google.com with SMTP id o16-20020a056602225000b006e032e361ccso7000071ioo.13
-        for <io-uring@vger.kernel.org>; Wed, 21 Dec 2022 08:10:29 -0800 (PST)
+        with ESMTP id S234961AbiLUUmX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Dec 2022 15:42:23 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CED7C275F0
+        for <io-uring@vger.kernel.org>; Wed, 21 Dec 2022 12:41:53 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id h6so8637770iof.9
+        for <io-uring@vger.kernel.org>; Wed, 21 Dec 2022 12:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t1yzOmm6ToE262pU3uBC9wuXg/0Sq6TX0VpAt7Es0bU=;
+        b=0jcc35ECS+P1uvshnoXgTB2m2l8b/h/XZHSJGK85sDEewrPkBpf1Y0TjU2oyebn/yl
+         iXwD2bARYVRyOJCiGgmHt/7Z5rwR1fz8vWX/5IWF+1ku9dc04AFvubY7nONXiTRNqri9
+         BbKaq04YAkCNPWQCx/AgpMFzBqKE3B+m4pnCV8eNSF3osd8tJSg90qFSzYQJ81QrW+DK
+         eOzqvO8F4OWN3dn68RnXmzxZjoWanmfd2sNdW9pfzWFQ0hI1UW98pTDcOH1+KXZ73EKp
+         qwaEKZq1EgHQ4/ea99LZixliyEbtJre0zHxYq1MwAH7soxxFkGyMbswpfwvMnKs4/stp
+         OicA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=la4vkjbmp/hoBiwyPidnlDXslDjnZqNzD4iiQiAwR94=;
-        b=gVSuPQXwpu0IhiXKj0lLZrigIxEO+R41qV11WXbTum6caaep4TMI88FN5GcviXc2ry
-         R7cQcnBVRTpKkZD5wRy96Ru89k7RRjzn9xzETQUZrhrVD8FssaMFVfosou5haYfFZemb
-         ag5Zyw+7toRog8kL6pZ3PiL3WSIcP3T+tqLD9fgegXKPM+xOcWwAUu5Z7hq7HXW9iHzo
-         LYCvcMSEKz6a5IBscTKp6RseEByh5IhhZ48uOAlJB5KdX7MfCBfun5RB4AxBHX36YbSF
-         A3GmuGnWWZNTwKGBHxE8dfcdT1juxwnoL5gueQiszILuOvXj9LOGt/UE7RtpELQaYTfK
-         58CQ==
-X-Gm-Message-State: AFqh2kpN9dbLAM3PNPbKSEK8pDQoDIfflJrjIz+3oFfrL7q/FMR4QEP6
-        iHp77Dp6blRmDwZk2jqicndFHv8a0zNFQ/ZcfsFltVORVC3/
-X-Google-Smtp-Source: AMrXdXvTaIHDV02F+gBN/7BxU/Jg7ssMmiZ9326P326GYCmN7SMnumn5KR5+R2sxh6DqFQF8gNFqXa0r5U+3Zef+PScetgItthKv
+        bh=t1yzOmm6ToE262pU3uBC9wuXg/0Sq6TX0VpAt7Es0bU=;
+        b=QN2hLG7VHcSSptzsDRuZVOIwCTJG7HJWQ8cUFSFYJ6VtBVOk0QZhONwqw6NSOIPZ2p
+         b+ui01Uv1LUbsizNTKi+HnPOOSKzb1b1UAL54vndUn3mjAcpHzzg4t0ynXplat3UwNPY
+         zsRXyX9FImPPuM+E2/+4m3C+l5PVXsgxmBzS4L8vTkYtbMbe/TxSh06cBnITomD1P9i/
+         OHRDEHPaZ1qr1H9zxJOIq/P3SeqvnoFmzPDr/37867dctWjPtGPNpa/yhouK5x/dX7vc
+         68g9BBBBIjQJS+MaeRRpDvJG5nZ6MnwEdaPHLKKgqDpoEk1hDEMye/tSHBuZ87mvus9H
+         lXEA==
+X-Gm-Message-State: AFqh2krlEZeGxEiVw1KlNs0SznaHYgrviQwlUifidlf60uRrZgDEyUxS
+        xAd7bbtrOQJiGRFdOnrHlATp/w==
+X-Google-Smtp-Source: AMrXdXvcPC8kEPqWiiDETHKp877+RHhAAN+wl8ShPN+7U/DGr4wVxkZehPd0dNvTOiZ2igHpgVPzJA==
+X-Received: by 2002:a05:6602:218a:b0:6df:b991:c03e with SMTP id b10-20020a056602218a00b006dfb991c03emr412052iob.1.1671655312649;
+        Wed, 21 Dec 2022 12:41:52 -0800 (PST)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id b12-20020a05660214cc00b006eba8966048sm3741196iow.54.2022.12.21.12.41.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Dec 2022 12:41:52 -0800 (PST)
+Message-ID: <0021f079-0d7e-0c51-64ad-9d9d17652e88@kernel.dk>
+Date:   Wed, 21 Dec 2022 13:41:50 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a92:d602:0:b0:30b:dae5:c56 with SMTP id
- w2-20020a92d602000000b0030bdae50c56mr101654ilm.99.1671639029041; Wed, 21 Dec
- 2022 08:10:29 -0800 (PST)
-Date:   Wed, 21 Dec 2022 08:10:29 -0800
-In-Reply-To: <7c89b1c8-f012-3965-ab77-3bc19b3cedaa@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000084d53b05f058cabc@google.com>
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
 Subject: Re: [syzbot] WARNING in io_sync_cancel
-From:   syzbot <syzbot+7df055631cd1be4586fd@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+Content-Language: en-US
+To:     syzbot <syzbot+7df055631cd1be4586fd@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <00000000000084d53b05f058cabc@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <00000000000084d53b05f058cabc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 12/21/22 9:10 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> INFO: rcu detected stall in corrupted
+> 
+> rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P5778 } 2634 jiffies s: 2893 root: 0x0/T
+> rcu: blocking rcu_node structures (internal RCU debug):
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in corrupted
+#syz test: git://git.kernel.dk/linux.git io_uring-6.2
 
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P5778 } 2634 jiffies s: 2893 root: 0x0/T
-rcu: blocking rcu_node structures (internal RCU debug):
+-- 
+Jens Axboe
 
 
-Tested on:
-
-commit:         071531e9 io_uring/cancel: mark task running before re-..
-git tree:       git://git.kernel.dk/linux.git io_uring-6.2
-console output: https://syzkaller.appspot.com/x/log.txt?x=13042ae8480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2edd87fe5cbdf43f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7df055631cd1be4586fd
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Note: no patches were applied.

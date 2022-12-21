@@ -2,49 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B97652CA6
-	for <lists+io-uring@lfdr.de>; Wed, 21 Dec 2022 07:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4776653248
+	for <lists+io-uring@lfdr.de>; Wed, 21 Dec 2022 15:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234445AbiLUGDq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Dec 2022 01:03:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59762 "EHLO
+        id S229472AbiLUOOx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Dec 2022 09:14:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234469AbiLUGDj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Dec 2022 01:03:39 -0500
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46FBD15829
-        for <io-uring@vger.kernel.org>; Tue, 20 Dec 2022 22:03:38 -0800 (PST)
-Received: by mail-il1-f200.google.com with SMTP id s1-20020a056e021a0100b003026adad6a9so9611593ild.18
-        for <io-uring@vger.kernel.org>; Tue, 20 Dec 2022 22:03:38 -0800 (PST)
+        with ESMTP id S230014AbiLUOOw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Dec 2022 09:14:52 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 076CD2AE4
+        for <io-uring@vger.kernel.org>; Wed, 21 Dec 2022 06:14:48 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id x3so1526990pjv.4
+        for <io-uring@vger.kernel.org>; Wed, 21 Dec 2022 06:14:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=37lNoQq1RpE7D88vghh65+GrfN54fVBslwF0L9xaF0c=;
+        b=xZ6bVGYT/Cy/hyUlm2lLnDs6b1x9D3i9M4l/SxjCFtp1vmITg9gJ4SxQbhMeM4CcU0
+         Kkk9M7NWHDx+cU0ohA+Vfsx0SdM+04+/MO+aW1xrli0V1kA8VucH0N0ILbSWI+ofyDwL
+         g6usPvs9WdIaWazoD5uE+AE2wn9qXZ/QaDEht3qJDGwiphspdXqswdEG6alCupUldf62
+         QABx/qOWAeAbenKDgDfgn5PCi3rSVqaKxnDWO4zNvlI2xUUMXk3O0lpNWgOk3B4kYg9P
+         5fXAKJ/45GNVf0KdMuYIWVWwuCaZoCp93f4kojv66l+rZXGdqN+z4MoaILkPug+NS2lX
+         Ww/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=onq5DwacPyPQ+cFXzEgJdtVxJlTaEMuU0hdJQMmJGfk=;
-        b=KmETOBsdjCx2Z8idugDST62zkLwxI124M4rAIMeoXf4uiGhj+cferThtRg5CkDkva7
-         A9Kown9SoV5h2ExbovErbbwD4fF+IyIulvnUSEGghfmSaz0NEiHI/soCJX4M3o8Iz4S0
-         oITFmuHIUfqbwZDDMODB9W7fichR9ACFgRWtzJty/X0YiPbtNMOqijLpD1UvyIB+WTBL
-         SYzzppwATpbnoc/hNLcoDrifPzw2+tjUdccOGst3jRKWiMFtuyv+nngijqcZwA1ucNV5
-         81ZwumkQAnKovn+bU7a8JVvnkTZTjykXEg1AtpAwwCkTkUwph7Fd6PSINZM7ppexxX1M
-         qe7g==
-X-Gm-Message-State: AFqh2ko2MF8AFiSPmT0Ju2dNC5DBF87jBtfeioT7WmA+rdYeOmiaf6dP
-        ywhImiiMJMzkrQbDejWkn5e2Is5SMeAbL7CkLVHnf1JShK63
-X-Google-Smtp-Source: AMrXdXup3/6FtCOVwF+ggAVabPMfxpo3hhvQn492Lvgs5n7McxQfpEyT76UpsdnFjt15xS7mmclJaPP01o/yFnkIBrSF+v+I4OcB
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=37lNoQq1RpE7D88vghh65+GrfN54fVBslwF0L9xaF0c=;
+        b=qJ+hlIFHSLOsTNZfR8cWQmd3GIuQ2URrkxjFdlTP0TF6Iv8NCdxPocwZwucNFoJ2M4
+         1j6H6XYokyWp0itY2Y3jpMO8OJshzl0ehwDmTX9S3b+RL7LeqSEsVwPigYwVU0rNsrt/
+         3h68kDcFN6UbbVZKX67X9jCIKo7JME6TIpYTW1fLua+92yXhKNC/+aSrefcytOVdEesQ
+         F+qm6oJfd8SElxqhYSRDFcf9jTdLSrBRnmsyvu47ykP+dD3r8yeonRTYb6rbdi+QChIs
+         oes/XA93+mZgfFPGhbXLXFnB8gly/tugNA80jt+x219XvBskls9ssS+LdizlXtJ8kH6H
+         LTQA==
+X-Gm-Message-State: AFqh2kqmR/glU8HUUDgWAIwFAbvPD6xgJtZSMNOTpv7ooFDHIlV11su7
+        9hxbviQJrbvGzN7kuHUKN3LTkw==
+X-Google-Smtp-Source: AMrXdXu35UlMwrogJQXaPIzwp+iYHSfmxfpCb0jfsXBqoAAphZ7pKu2csUeD7UWVnWcF0N6uqfRU1A==
+X-Received: by 2002:a17:903:285:b0:189:cb1a:7eee with SMTP id j5-20020a170903028500b00189cb1a7eeemr492176plr.1.1671632087392;
+        Wed, 21 Dec 2022 06:14:47 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id u10-20020a170902e5ca00b001897a8b537asm11599308plf.221.2022.12.21.06.14.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Dec 2022 06:14:46 -0800 (PST)
+Message-ID: <11a32a29-fbe6-3e00-9f76-36bcd305ea94@kernel.dk>
+Date:   Wed, 21 Dec 2022 07:14:45 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a92:cb42:0:b0:304:ad4b:974a with SMTP id
- f2-20020a92cb42000000b00304ad4b974amr77296ilq.93.1671602617584; Tue, 20 Dec
- 2022 22:03:37 -0800 (PST)
-Date:   Tue, 20 Dec 2022 22:03:37 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003a14a905f05050b0@google.com>
-Subject: [syzbot] WARNING in io_sync_cancel
-From:   syzbot <syzbot+7df055631cd1be4586fd@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [syzbot] WARNING in io_cqring_overflow_flush
+To:     syzbot <syzbot+cf6ea1d6bb30a4ce10b2@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+References: <000000000000cb143a05f04eee15@google.com>
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <000000000000cb143a05f04eee15@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=0.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
         SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,73 +73,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On 12/20/22 9:24 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    77856d911a8c Merge tag 'arm64-fixes' of git://git.kernel.o..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13e722d7880000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=334a10f27a9ee2e0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cf6ea1d6bb30a4ce10b2
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112eeb13880000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b78bdb880000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/84863f051feb/disk-77856d91.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/87614e2a8a26/vmlinux-77856d91.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/cb76bad63a90/bzImage-77856d91.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+cf6ea1d6bb30a4ce10b2@syzkaller.appspotmail.com
 
-syzbot found the following issue on:
+#syz test: git://git.kernel.dk/linux.git io_uring-6.2
 
-HEAD commit:    77856d911a8c Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102b57e0480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=334a10f27a9ee2e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=7df055631cd1be4586fd
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ac9ee7880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142b36b7880000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/84863f051feb/disk-77856d91.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/87614e2a8a26/vmlinux-77856d91.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cb76bad63a90/bzImage-77856d91.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7df055631cd1be4586fd@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-do not call blocking ops when !TASK_RUNNING; state=1 set at [<ffffffff81607e7c>] prepare_to_wait+0x7c/0x380 kernel/sched/wait.c:272
-WARNING: CPU: 1 PID: 5096 at kernel/sched/core.c:9908 __might_sleep+0x109/0x160 kernel/sched/core.c:9908
-Modules linked in:
-CPU: 1 PID: 5096 Comm: syz-executor144 Not tainted 6.1.0-syzkaller-13031-g77856d911a8c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:__might_sleep+0x109/0x160 kernel/sched/core.c:9908
-Code: ac 03 00 48 8d bb b8 16 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 75 34 48 8b 93 b8 16 00 00 48 c7 c7 80 d6 2b 8a e8 74 f6 5b 08 <0f> 0b e9 75 ff ff ff e8 7b 78 78 00 e9 26 ff ff ff 89 34 24 e8 8e
-RSP: 0018:ffffc90003dffad0 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888022358000 RCX: 0000000000000000
-RDX: ffff888022358000 RSI: ffffffff8166707c RDI: fffff520007bff4c
-RBP: ffffffff8a2c3500 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000000 R12: 0000000000000244
-R13: dffffc0000000000 R14: 00000000fffffffc R15: ffffc90003dffd28
-FS:  00007fe7d4cb4700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe7d4c93718 CR3: 000000007bdf1000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __mutex_lock_common kernel/locking/mutex.c:580 [inline]
- __mutex_lock+0x9f/0x1360 kernel/locking/mutex.c:747
- io_sync_cancel+0x590/0x630 io_uring/cancel.c:297
- __io_uring_register io_uring/io_uring.c:4130 [inline]
- __do_sys_io_uring_register+0x1006/0x1440 io_uring/io_uring.c:4164
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fe7d4d44f09
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe7d4cb41f8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00007fe7d4dcd408 RCX: 00007fe7d4d44f09
-RDX: 0000000020000080 RSI: 0000000000000018 RDI: 0000000000000003
-RBP: 00007fe7d4dcd400 R08: 00007fe7d4cb4700 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007fe7d4dcd40c
-R13: 00007ffc08404dcf R14: 00007fe7d4cb4300 R15: 0000000000022000
- </TASK>
+-- 
+Jens Axboe
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

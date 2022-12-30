@@ -2,120 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6379765932F
-	for <lists+io-uring@lfdr.de>; Fri, 30 Dec 2022 00:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B956593EF
+	for <lists+io-uring@lfdr.de>; Fri, 30 Dec 2022 02:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234068AbiL2XdC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Dec 2022 18:33:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43638 "EHLO
+        id S234162AbiL3BBK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Dec 2022 20:01:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbiL2XdB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Dec 2022 18:33:01 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E35F16585
-        for <io-uring@vger.kernel.org>; Thu, 29 Dec 2022 15:33:00 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id d9so3561626pll.9
-        for <io-uring@vger.kernel.org>; Thu, 29 Dec 2022 15:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Zn7KEuWn+MhTT9pyB0PWpde9uaUpIeJ00WXXNv00Ug=;
-        b=yESxo+fP47oIhUVH5Wn4XLlVCbCgteTmcVWRQ4FYT3nxnZj9JDbOsuwkaeTK6wEQnO
-         0IzbjjGIQIKlZvCbNzo4Ss8RHQhxsR8HBH3qBAWgforfKiXVdy+BUXOb7P7Pin0iyRJY
-         EZmguQsR5rWZQL9d7wyqQAGVLjsTrvUbBppY7G3nx4OXRTqIi9nfQVgJE2AnLbJzS7K3
-         eczDlNWzNxq1VMYcuEqjukBu8fl+e6SAZkab47bjAba58ZUCQwQ/mpeWEJi4q4Pk0lJK
-         rJQ9aHlID9BOncG7QklJJXDAhgJs2DXDbRW7ibqqAhds9Ep2YlBrI3z7h4BxJQ7o5gMf
-         bNZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0Zn7KEuWn+MhTT9pyB0PWpde9uaUpIeJ00WXXNv00Ug=;
-        b=mER/fd68n99g8ryVdmfVcFz858g+lwVG1Mi+cuMybd6SWBcE8fIePRBRI379VGC9UA
-         D6XqHsUZjPSDXjaOQxpV2F8nilSWobnViE0yPKsNODjiNJf7inhd2Ki4Ex8Cm2qaOo9x
-         4IIYZrqB4w9smN7UwK9AM9K7JD1PkUME0J62tyg7RhNYdu0yv2o1Oqa/7F9PiE8+R6qn
-         drJqsn4rCIcptjy+OHKmO03rwnyPhpR3LZW2UTlNgjNnfDc44nr7EmAk1iXRSHMqCxij
-         WDckpLrnz3KG1nF4iGKYhkF4+y96CjZ54doUydg4EU2Uz6NBk3p/yrrP+K1gzSKOMQBP
-         C5kA==
-X-Gm-Message-State: AFqh2krukwCRNGk3vv7utvvoH+gKL/RKmnrX8dgtma/Sy49kRpR9onbz
-        nAIGunxXvHd5VCKZiNqspBkdw+p0RLb/s2d4
-X-Google-Smtp-Source: AMrXdXu2EiMBXs9Vh17SPE5sgDrq7n7s1g4ZcHxOYXp/n13HyPrKimFju4NQrRU7rbB4hOJZFC+cxw==
-X-Received: by 2002:a05:6a20:3a9e:b0:9d:efc1:116c with SMTP id d30-20020a056a203a9e00b0009defc1116cmr7342662pzh.6.1672356779821;
-        Thu, 29 Dec 2022 15:32:59 -0800 (PST)
-Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id q24-20020a631f58000000b0043c732e1536sm11544275pgm.45.2022.12.29.15.32.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Dec 2022 15:32:58 -0800 (PST)
-Message-ID: <89c38b66-a3eb-1674-a135-d905de0264c6@kernel.dk>
-Date:   Thu, 29 Dec 2022 16:32:57 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.2-rc2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S229820AbiL3BBI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Dec 2022 20:01:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B3CB62D1
+        for <io-uring@vger.kernel.org>; Thu, 29 Dec 2022 17:01:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CB81B61A01
+        for <io-uring@vger.kernel.org>; Fri, 30 Dec 2022 01:01:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F1F5C433D2;
+        Fri, 30 Dec 2022 01:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672362067;
+        bh=J9J3+BjZLAK0RHZr5ul+Z0XJnrGb08uVzf/XiH75xPA=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=qkbAzEBTGQnWav1H+B6wyKOPUmlNwA7IcKKY7NIzoyCsYFhTEZPK6AD6sbJrKWzfx
+         ndgToCHrKkv1NVa+OVFCKvsamdhpLlWnSeBAhfFJhGgSqNt9Bc7MqqK/GPE8iTOAqJ
+         4peWN2PCu4uWpjQXHiwn8mKuZjViOLqSkoEmjUDpdounYxZsdKk6A2P7aqO88vI72A
+         j0IWBwxjRtsTmUW0VAgHsOJNmodErJrpmMLF/VFBHC2P6ssdFBjpKr+AAYd1UyHd9x
+         R9saena8KXT5qGqED/RiteQoyM+n0G7h6OQeDZWsGteuqVPM5P3swpFpLB4L2gvNhy
+         sxTV0u7VW/VgA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2D2B3C197B4;
+        Fri, 30 Dec 2022 01:01:07 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 6.2-rc2
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <89c38b66-a3eb-1674-a135-d905de0264c6@kernel.dk>
+References: <89c38b66-a3eb-1674-a135-d905de0264c6@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <89c38b66-a3eb-1674-a135-d905de0264c6@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.2-2022-12-29
+X-PR-Tracked-Commit-Id: 9eb803402a2a83400c6c6afd900e3b7c87c06816
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ac787ffa5a246e53675ae93294420ea948600818
+Message-Id: <167236206718.9684.1490636779591539327.pr-tracker-bot@kernel.org>
+Date:   Fri, 30 Dec 2022 01:01:07 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Thu, 29 Dec 2022 16:32:57 -0700:
 
-Set of fixes for io_uring that should go into the 6.2 release:
+> git://git.kernel.dk/linux.git tags/io_uring-6.2-2022-12-29
 
-- Two fixes for mutex grabbing when the task state is != TASK_RUNNING
-  (me)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ac787ffa5a246e53675ae93294420ea948600818
 
-- Check for invalid opcode in io_uring_register() a bit earlier, to
-  avoid going through the quiesce machinery just to return -EINVAL later
-  in the process (me)
-
-- Fix for the uapi io_uring header, skipping including time_types.h when
-  necessary (Stefan)
-
-Please pull!
-
-
-The following changes since commit 5ad70eb27d2b87ec722fedd23638354be37ea0b0:
-
-  MAINTAINERS: io_uring: Add include/trace/events/io_uring.h (2022-12-19 09:56:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.2-2022-12-29
-
-for you to fetch changes up to 9eb803402a2a83400c6c6afd900e3b7c87c06816:
-
-  uapi:io_uring.h: allow linux/time_types.h to be skipped (2022-12-27 07:32:51 -0700)
-
-----------------------------------------------------------------
-io_uring-6.2-2022-12-29
-
-----------------------------------------------------------------
-Jens Axboe (3):
-      io_uring: finish waiting before flushing overflow entries
-      io_uring/cancel: re-grab ctx mutex after finishing wait
-      io_uring: check for valid register opcode earlier
-
-Stefan Metzmacher (1):
-      uapi:io_uring.h: allow linux/time_types.h to be skipped
-
- include/uapi/linux/io_uring.h |  8 ++++++++
- io_uring/cancel.c             |  9 ++++-----
- io_uring/io_uring.c           | 30 +++++++++++++++++++-----------
- 3 files changed, 31 insertions(+), 16 deletions(-)
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

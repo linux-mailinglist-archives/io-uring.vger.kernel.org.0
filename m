@@ -2,41 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6806A65B4CD
-	for <lists+io-uring@lfdr.de>; Mon,  2 Jan 2023 17:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F03A65B4D2
+	for <lists+io-uring@lfdr.de>; Mon,  2 Jan 2023 17:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236490AbjABQJv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Jan 2023 11:09:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
+        id S232972AbjABQKR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 2 Jan 2023 11:10:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236472AbjABQJt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Jan 2023 11:09:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36EC5BF2
-        for <io-uring@vger.kernel.org>; Mon,  2 Jan 2023 08:09:10 -0800 (PST)
+        with ESMTP id S236540AbjABQJ7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Jan 2023 11:09:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6063215
+        for <io-uring@vger.kernel.org>; Mon,  2 Jan 2023 08:09:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1672675749;
+        s=mimecast20190719; t=1672675752;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/KmBUrtOn1BMOkdcQJmrOKgCHuRXJmWehWSjwC/MXzU=;
-        b=daJhQqnQ3LcDFF1M+OEvkNH4s4RDWQ1FRAmOlCXMSQgVvAGibXEE0+4lowavQtAwj+LJLi
-        qFsnDmyp3uH6sLRn2ZWZ0cBE8Doz4Y70C1PIFe7REJXY2o9TRvOkbf5i9xqaEvqMmBRPl/
-        s/WcJU6+K5Frit837hWLr9/27HA6R7s=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Sh73hBCrQns8aoevVV+OOnfi6R1HtUp1NLv5DeAjtKc=;
+        b=WgybEYmh49GhZOS/zL+rI1LaVc2MXgfvdPFK7yKVQNx0fxV/z5G7MadflcnSppqdix5sRk
+        YZRmjfXqrT0OYCdSQR3LkReQwcMC65K07ZXY590GV+zFusSAolY/627G+tX6/7Hu8ybcOJ
+        7Uhdr0CpRlLI7USr9xq7XYIwuVODstg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-280-xSeEzPZEPJqZEG66yU6B_Q-1; Mon, 02 Jan 2023 11:09:06 -0500
-X-MC-Unique: xSeEzPZEPJqZEG66yU6B_Q-1
+ us-mta-517-h6RgIbbbPnKtMqdUN9kSDg-1; Mon, 02 Jan 2023 11:09:09 -0500
+X-MC-Unique: h6RgIbbbPnKtMqdUN9kSDg-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CD3461C08792;
-        Mon,  2 Jan 2023 16:09:05 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 48408811E6E;
+        Mon,  2 Jan 2023 16:09:08 +0000 (UTC)
 Received: from t480s.redhat.com (unknown [10.39.193.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F4E751EF;
-        Mon,  2 Jan 2023 16:09:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D18D35455;
+        Mon,  2 Jan 2023 16:09:06 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nicolas Pitre <nico@fluxnic.net>, Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH mm-unstable v1 2/3] mm/nommu: don't use VM_MAYSHARE for MAP_PRIVATE mappings
-Date:   Mon,  2 Jan 2023 17:08:55 +0100
-Message-Id: <20230102160856.500584-3-david@redhat.com>
+Subject: [PATCH mm-unstable v1 3/3] drivers/misc/open-dice: don't touch VM_MAYSHARE
+Date:   Mon,  2 Jan 2023 17:08:56 +0100
+Message-Id: <20230102160856.500584-4-david@redhat.com>
 In-Reply-To: <20230102160856.500584-1-david@redhat.com>
 References: <20230102160856.500584-1-david@redhat.com>
 MIME-Version: 1.0
@@ -64,118 +64,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Let's stop using VM_MAYSHARE for MAP_PRIVATE mappings and use VM_MAYOVERLAY
-instead. Rewrite determine_vm_flags() to make the whole logic easier to
-digest, and to cleanly separate MAP_PRIVATE vs. MAP_SHARED.
+A MAP_SHARED mapping always has VM_MAYSHARE set, and writable
+(VM_MAYWRITE) MAP_SHARED mappings have VM_SHARED set as well. To
+identify a MAP_SHARED mapping, it's sufficient to look at VM_MAYSHARE.
 
-No functional change intended.
+We cannot have VM_MAYSHARE|VM_WRITE mappings without having VM_SHARED
+set. Consequently, current code will never actually end up clearing
+VM_MAYSHARE and that code is confusing, because nobody is supposed to
+mess with VM_MAYWRITE.
 
+Let's clean it up and restructure the code. No functional change intended.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/mm.h |  7 ++++++-
- mm/nommu.c         | 51 +++++++++++++++++++++++++++-------------------
- 2 files changed, 36 insertions(+), 22 deletions(-)
+ drivers/misc/open-dice.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 28568a92e5df..510f2e7cccdb 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -276,7 +276,12 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_MAYSHARE	0x00000080
+diff --git a/drivers/misc/open-dice.c b/drivers/misc/open-dice.c
+index c61be3404c6f..9dda47b3fd70 100644
+--- a/drivers/misc/open-dice.c
++++ b/drivers/misc/open-dice.c
+@@ -90,15 +90,13 @@ static int open_dice_mmap(struct file *filp, struct vm_area_struct *vma)
+ {
+ 	struct open_dice_drvdata *drvdata = to_open_dice_drvdata(filp);
  
- #define VM_GROWSDOWN	0x00000100	/* general info on the segment */
-+#ifdef CONFIG_MMU
- #define VM_UFFD_MISSING	0x00000200	/* missing pages tracking */
-+#else /* CONFIG_MMU */
-+#define VM_MAYOVERLAY	0x00000200	/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
-+#define VM_UFFD_MISSING	0
-+#endif /* CONFIG_MMU */
- #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
- #define VM_UFFD_WP	0x00001000	/* wrprotect pages tracking */
- 
-@@ -1358,7 +1363,7 @@ static inline bool is_nommu_shared_mapping(vm_flags_t flags)
- 	 * ptrace does not apply. Note that there is no mprotect() to upgrade
- 	 * write permissions later.
- 	 */
--	return flags & VM_MAYSHARE;
-+	return flags & (VM_MAYSHARE | VM_MAYOVERLAY);
- }
- #endif
- 
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 6c4bdc07a776..5c628c868648 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -892,29 +892,36 @@ static unsigned long determine_vm_flags(struct file *file,
- 	unsigned long vm_flags;
- 
- 	vm_flags = calc_vm_prot_bits(prot, 0) | calc_vm_flag_bits(flags);
--	/* vm_flags |= mm->def_flags; */
- 
--	if (!(capabilities & NOMMU_MAP_DIRECT)) {
--		/* attempt to share read-only copies of mapped file chunks */
-+	if (!file) {
-+		/*
-+		 * MAP_ANONYMOUS. MAP_SHARED is mapped to MAP_PRIVATE, because
-+		 * there is no fork().
-+		 */
- 		vm_flags |= VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
--		if (file && !(prot & PROT_WRITE))
--			vm_flags |= VM_MAYSHARE;
-+	} else if (flags & MAP_PRIVATE) {
-+		/* MAP_PRIVATE file mapping */
-+		if (capabilities & NOMMU_MAP_DIRECT)
-+			vm_flags |= (capabilities & NOMMU_VMFLAGS);
-+		else
-+			vm_flags |= VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
-+
-+		if (!(prot & PROT_WRITE) && !current->ptrace)
-+			/*
-+			 * R/O private file mapping which cannot be used to
-+			 * modify memory, especially also not via active ptrace
-+			 * (e.g., set breakpoints) or later by upgrading
-+			 * permissions (no mprotect()). We can try overlaying
-+			 * the file mapping, which will work e.g., on chardevs,
-+			 * ramfs/tmpfs/shmfs and romfs/cramf.
-+			 */
-+			vm_flags |= VM_MAYOVERLAY;
- 	} else {
--		/* overlay a shareable mapping on the backing device or inode
--		 * if possible - used for chardevs, ramfs/tmpfs/shmfs and
--		 * romfs/cramfs */
--		vm_flags |= VM_MAYSHARE | (capabilities & NOMMU_VMFLAGS);
--		if (flags & MAP_SHARED)
--			vm_flags |= VM_SHARED;
-+		/* MAP_SHARED file mapping: NOMMU_MAP_DIRECT is set. */
-+		vm_flags |= VM_SHARED | VM_MAYSHARE |
-+			    (capabilities & NOMMU_VMFLAGS);
- 	}
- 
--	/* refuse to let anyone share private mappings with this process if
--	 * it's being traced - otherwise breakpoints set in it may interfere
--	 * with another untraced process
--	 */
--	if ((flags & MAP_PRIVATE) && current->ptrace)
--		vm_flags &= ~VM_MAYSHARE;
+-	/* Do not allow userspace to modify the underlying data. */
+-	if ((vma->vm_flags & VM_WRITE) && (vma->vm_flags & VM_SHARED))
+-		return -EPERM;
 -
- 	return vm_flags;
- }
+-	/* Ensure userspace cannot acquire VM_WRITE + VM_SHARED later. */
+-	if (vma->vm_flags & VM_WRITE)
+-		vma->vm_flags &= ~VM_MAYSHARE;
+-	else if (vma->vm_flags & VM_SHARED)
++	if (vma->vm_flags & VM_MAYSHARE) {
++		/* Do not allow userspace to modify the underlying data. */
++		if (vma->vm_flags & VM_WRITE)
++			return -EPERM;
++		/* Ensure userspace cannot acquire VM_WRITE later. */
+ 		vma->vm_flags &= ~VM_MAYWRITE;
++	}
  
-@@ -952,9 +959,11 @@ static int do_mmap_private(struct vm_area_struct *vma,
- 	void *base;
- 	int ret, order;
- 
--	/* invoke the file's mapping function so that it can keep track of
--	 * shared mappings on devices or memory
--	 * - VM_MAYSHARE will be set if it may attempt to share
-+	/*
-+	 * Invoke the file's mapping function so that it can keep track of
-+	 * shared mappings on devices or memory. VM_MAYOVERLAY will be set if
-+	 * it may attempt to share, which will make is_nommu_shared_mapping()
-+	 * happy.
- 	 */
- 	if (capabilities & NOMMU_MAP_DIRECT) {
- 		ret = call_mmap(vma->vm_file, vma);
+ 	/* Create write-combine mapping so all clients observe a wipe. */
+ 	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
 -- 
 2.39.0
 

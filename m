@@ -2,104 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A4465DBDF
-	for <lists+io-uring@lfdr.de>; Wed,  4 Jan 2023 19:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF91665DDAB
+	for <lists+io-uring@lfdr.de>; Wed,  4 Jan 2023 21:26:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235170AbjADSIY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Jan 2023 13:08:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60402 "EHLO
+        id S240096AbjADU02 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Jan 2023 15:26:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239978AbjADSIR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Jan 2023 13:08:17 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537093AA8D
-        for <io-uring@vger.kernel.org>; Wed,  4 Jan 2023 10:08:07 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id p9so1605672iod.13
-        for <io-uring@vger.kernel.org>; Wed, 04 Jan 2023 10:08:07 -0800 (PST)
+        with ESMTP id S235279AbjADU00 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Jan 2023 15:26:26 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E63373AE
+        for <io-uring@vger.kernel.org>; Wed,  4 Jan 2023 12:26:25 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id g10so12755501wmo.1
+        for <io-uring@vger.kernel.org>; Wed, 04 Jan 2023 12:26:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CvtWPBzSmSfG9uiTI9yUlj0gyBN2IzC4A2BlvRXyvu4=;
-        b=NW3Rg7ZMJFmsgQvqo6tCc7fcbW3CxTJsPl2kUNgsucAzEdn7gueUN8yiVIjG9BTrFB
-         bLvj7+OE9ni3QIBe/aXtZ9flf2C1u0RSXafk3X2tcw7XwaGrU83VAWasDKfVRHhKXGod
-         IbigJ7/0hG6WDNhiKwKQ9HXuTfKihBvGyY4EStthkRBo7Y9HZv9b4NNBeNCfSzLal+dl
-         wGFCSvqRLl001rn2pqAYB743r1jL+KXHPqZa/YVtwV+rkbCpphl9iQUd2SnpAn1fCavS
-         bCKP9oOJOwlvnhdWy9P12HHbW83smNJRrZpZ+lviMtMEUTuNX7Q1fqmdee4fg3FaHw0/
-         T5EQ==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bbl6oAOcfLHSCEiuys6oEiZDm4zugAYZf4BtxWSsPTI=;
+        b=QeMnbLn5BTZRw4oV8zJ425PbS86Mu3WYzXN4bwG0owlMtSr2MM2UEPVXLMOKkAHMIh
+         d3XckLWurcTdwV75r2nKfpOgtNUsJjnM4jtbVqCQEd3W5YBlzklVezk7k8951A8i1NxF
+         GwIgFs0xmjBK7JNg2Jgvi/lNWVEAaV87/ZVFrd+LCf2WHcJR4Qw4Z/LDqrHC3a8eQ6Fm
+         F7zpPG+JM9eB7Zr/Xs5XnzKdTtgBGBkGTtPrNGtim76bGjmcVN/h/8Xm3BbdYCuPPdMU
+         OC4KnKVpLA7hSCvn3u0WAweTReJaWiFfCJgFxQM8rd9sjZpw0nwrPvosop4HfljZ64Es
+         rsNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CvtWPBzSmSfG9uiTI9yUlj0gyBN2IzC4A2BlvRXyvu4=;
-        b=DBo5S2uTyveHXKN+0XlJxJkp2UxFS5jit+QIKl/5p9loTJUl8ku0mukaL4wyb1LOfS
-         4cjn9W54KXNAukcD6uUNd7457cmsNGYUPAgmv1dih8a4V7CPuSyFiInPbxmkHltuQHFi
-         wGKbDxV9xI8/G41HXAUe64eO4WKMrkGHE9LQeIxCD2t9C3xKFgQppMRSU/+NQQjwAsOD
-         SrxwBGJyErA1staqBX6aorBo9PwKduGox1lxJal8Wc3x5wlbdm1pej1v83U8fygf9NF0
-         SV6KfvLluBbe4oYe7My5+jGDgD4qh+p80rYn2VP7/sL2095ysn6nwx7sqO6TedUFKF7d
-         eFXg==
-X-Gm-Message-State: AFqh2kpcCDKip7aCv4eAqbI10rcKAqL435xwVMCBI+coEQ16kq0N1Fmo
-        JfJvWBawkbJNU/ZXC6abw/8+Np5RAGNhMDVa
-X-Google-Smtp-Source: AMrXdXu4MJGb6AqJ7FInPz0ycm4EcLI/smUstbrGo2nklOAeWMQEknoJz9WcS3PvJCfszsI38roN2A==
-X-Received: by 2002:a05:6602:2439:b0:6dd:7096:d9bc with SMTP id g25-20020a056602243900b006dd7096d9bcmr6463981iob.2.1672855686525;
-        Wed, 04 Jan 2023 10:08:06 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id e7-20020a056602044700b006de73a731dbsm12292044iov.51.2023.01.04.10.08.05
+        bh=Bbl6oAOcfLHSCEiuys6oEiZDm4zugAYZf4BtxWSsPTI=;
+        b=FxWQxLYDwU3dkppXSkbn2X2amguHeEj9TRk2CSwYcbbVKMdvMGsukxlpoaKYW0PyXx
+         c6pz2cX3gIlK+/yW+T/U5qdZYpf13QG4B5AmrebJbMjQSpRmOJBlKuAQN296VYo5XaLI
+         qqfPMO1WwPF0/izbaZnBtjYRGc0vi8ljL7H4nMNm3J4L4DVqN0E4hjZ3DIbM7OHaeAUc
+         LMDpw6qBAeWRvIMAawIXlXeJSbyxJS9dGgIsVQjcmku7HY05xsgyRR4sF/w9kJgm7h7Q
+         CrcuQ8XXnwFti70kI511B+ENtl7v5lHU2jKWqK6LNnRjw3dh9YI7z094cIKUXQNhUdYw
+         f0gA==
+X-Gm-Message-State: AFqh2kotI1Fu0I2zzIDRKnIW2d7k0zilpKnxgxYWkdwwUe5OHb2IF48Y
+        fHtaO8hGoMgsfEElANFoG8yMmjZGdtg=
+X-Google-Smtp-Source: AMrXdXsZJcCB3lHVLG8LboCnwpCwfhFtdM1jka/XQ3Jy5/RGu7p5z8khZsMM1vHVhuju2UQANRoCEA==
+X-Received: by 2002:a05:600c:ace:b0:3d1:fe0a:f134 with SMTP id c14-20020a05600c0ace00b003d1fe0af134mr34720530wmr.19.1672863983261;
+        Wed, 04 Jan 2023 12:26:23 -0800 (PST)
+Received: from [192.168.8.100] (188.28.229.101.threembb.co.uk. [188.28.229.101])
+        by smtp.gmail.com with ESMTPSA id m18-20020a05600c3b1200b003a6125562e1sm51742317wms.46.2023.01.04.12.26.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jan 2023 10:08:05 -0800 (PST)
-Message-ID: <1968c5b9-dd2b-4ed1-14a0-8f78b302bf2d@kernel.dk>
-Date:   Wed, 4 Jan 2023 11:08:04 -0700
+        Wed, 04 Jan 2023 12:26:22 -0800 (PST)
+Message-ID: <65da93cd-7521-2070-3317-2986a46f9914@gmail.com>
+Date:   Wed, 4 Jan 2023 20:25:20 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RFC v2 09/13] io_uring: separate wq for ring polling
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [RFC v2 00/13] CQ waiting and wake up optimisations
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
 References: <cover.1672713341.git.asml.silence@gmail.com>
- <0fbee0baf170cbfb8488773e61890fc78ed48d1e.1672713341.git.asml.silence@gmail.com>
 Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0fbee0baf170cbfb8488773e61890fc78ed48d1e.1672713341.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1672713341.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/2/23 8:04 PM, Pavel Begunkov wrote:
-> Don't use ->cq_wait for ring polling but add a separate wait queue for
-> it. We need it for following patches.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  include/linux/io_uring_types.h | 1 +
->  io_uring/io_uring.c            | 3 ++-
->  io_uring/io_uring.h            | 9 +++++++++
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index dcd8a563ab52..cbcd3aaddd9d 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -286,6 +286,7 @@ struct io_ring_ctx {
->  		unsigned		cq_entries;
->  		struct io_ev_fd	__rcu	*io_ev_fd;
->  		struct wait_queue_head	cq_wait;
-> +		struct wait_queue_head	poll_wq;
->  		unsigned		cq_extra;
->  	} ____cacheline_aligned_in_smp;
->  
+On 1/3/23 03:03, Pavel Begunkov wrote:
+> The series replaces waitqueues for CQ waiting with a custom waiting
+> loop and adds a couple more perf tweak around it. Benchmarking is done
+> for QD1 with simulated tw arrival right after we start waiting, it
+> gets us from 7.5 MIOPS to 9.2, which is +22%, or double the number for
+> the in-kernel io_uring overhead (i.e. without syscall and userspace).
+> That matches profiles, wake_up() _without_ wake_up_state() was taking
+> 12-14% and prepare_to_wait_exclusive() was around 4-6%.
 
-Should we move poll_wq somewhere else, more out of the way? Would need to
-gate the check a flag or something.
+The numbers are gathered with an in-kernel trick. Tried to quickly
+measure without it:
+
+modprobe null_blk no_sched=1 irqmode=2 completion_nsec=0
+taskset -c 0 fio/t/io_uring -d1 -s1 -c1 -p0 -B1 -F1 -X -b512 -n4 /dev/nullb0
+
+The important part here is using timers-backed nullblk and pinning
+multiple workers to a single CPU. -n4 was enough for me to keep
+the CPU 100% busy.
+
+old:
+IOPS=539.51K, BW=2.11GiB/s, IOS/call=1/1
+IOPS=542.26K, BW=2.12GiB/s, IOS/call=1/1
+IOPS=540.73K, BW=2.11GiB/s, IOS/call=1/1
+IOPS=541.28K, BW=2.11GiB/s, IOS/call=0/0
+
+new:
+IOPS=561.85K, BW=2.19GiB/s, IOS/call=1/1
+IOPS=561.58K, BW=2.19GiB/s, IOS/call=1/1
+IOPS=561.56K, BW=2.19GiB/s, IOS/call=1/1
+IOPS=559.94K, BW=2.19GiB/s, IOS/call=1/1
+
+The different is only ~3.5%  because of huge additional overhead
+for nullb timers, block qos and other unnecessary bits.
+
+P.S. tested with an out-of-tree patch adding a flag enabling/disabling
+the feature to remove variance b/w reboots.
 
 -- 
-Jens Axboe
-
-
+Pavel Begunkov

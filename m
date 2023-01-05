@@ -2,142 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 837E365DDE4
-	for <lists+io-uring@lfdr.de>; Wed,  4 Jan 2023 21:53:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E2465E399
+	for <lists+io-uring@lfdr.de>; Thu,  5 Jan 2023 04:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235514AbjADUxp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Jan 2023 15:53:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49032 "EHLO
+        id S229678AbjAEDif (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Jan 2023 22:38:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235489AbjADUxo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Jan 2023 15:53:44 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE6C3AA80
-        for <io-uring@vger.kernel.org>; Wed,  4 Jan 2023 12:53:43 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id q190so18635830iod.10
-        for <io-uring@vger.kernel.org>; Wed, 04 Jan 2023 12:53:43 -0800 (PST)
+        with ESMTP id S229654AbjAEDh4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Jan 2023 22:37:56 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178A148CD9
+        for <io-uring@vger.kernel.org>; Wed,  4 Jan 2023 19:37:55 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id o8-20020a17090a9f8800b00223de0364beso730262pjp.4
+        for <io-uring@vger.kernel.org>; Wed, 04 Jan 2023 19:37:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4bt9EaLCTYfjAm0yaVoPQbigPx+o3/Zv6b2C05q9TvM=;
-        b=MieaCqjAUPW91r7KRQP0KjOCEQ6oVxjM/dAqxT7iii5s3oWSRg3MfYTN8lRo7Ihn0x
-         qshproRw7QZGmLF4NuOsFWlsz1+04zvm39GRRKsorwPLDjFFpG26V/VwFBwcW5emcXuH
-         z0s3UF7fMqWPqy5cRkF+U3Jl+XwIVetVwctEV40dx1Pa1m+cC70s22iz0DC08DRncTS3
-         D3J1EwEKQtjkzC08F4Yf3T2j9c/Skk4ycvgCPif8ltrVoX4pjXVcXT611i74HrSUoIvV
-         EEcDPbBBjGK3P51POz7V64We8TgOoRqIUWaCaRQqzx9PjxiJ4LqMhMvJUI2wMg1R5KhZ
-         QhCw==
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r1JpqbJ9++K/xzT47dMTEov/5+2eYul5oJHyAzUfPlI=;
+        b=BHsuebGz7UeGzGoW+IgpyeSNW0q2RdIcdyQ1lia+mDfh5WQUzUcg8FBu5cGvL5bmVd
+         h1MHDMLC2Bq/qIYjylAiEzm4JqV+i62MO4R1/zf0ccUhdL6YKFMCIrdjdhNEu1v5AEST
+         zlkrBx6EmfW3RoHcj6qm3k7WqJQLxSVeHAh2Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4bt9EaLCTYfjAm0yaVoPQbigPx+o3/Zv6b2C05q9TvM=;
-        b=JYio3fdaCp6qwQI4vSMkyFmQNNLm/5OWiR1HMaPxoTbRvyna8glAYVWxbKJa4Si2Bz
-         OtA5d7XXLohpr4dUhcinuI6sSd3vNrIVyAWdnJ/es8gQem51E0JejARd68GbMhNOu4gD
-         HsNYNiXtm1Rj52zKvDzotoj72lz0wpoA7ZouFnr0P1fd1bLPWdEy/3EO3BMFybWbDEko
-         kT+rgTfAGnbpaAqQHQhIeE6Xf+0XxyfhDUpVwl6U7MCNKaEoZV1AUgZFGaOvptp2UoWR
-         fjQHu2EfJX8QwL6mN838i2FQKdkpwIat97dqzx9X2oZ9eH3BJFmzms6J10bPkix4uGDH
-         OhuQ==
-X-Gm-Message-State: AFqh2kq6YeDdxnVfsGo385Jx6gSNoPmAtkEd6WHeBKV1JlA2gNOyeApd
-        reVwd5LlS42wUE83Vh29FvKddOKh4N5DVh2e
-X-Google-Smtp-Source: AMrXdXvyrWIjZYMFZzrJPg8J/RGIP4Y0W0be4ns0J0UEbJITrOo7NkPpEKz8RrgcArngCL4grPwVqA==
-X-Received: by 2002:a5d:91d5:0:b0:6cc:8b29:9a73 with SMTP id k21-20020a5d91d5000000b006cc8b299a73mr7738789ior.1.1672865622561;
-        Wed, 04 Jan 2023 12:53:42 -0800 (PST)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id y31-20020a029522000000b0039e28b92b51sm2132808jah.121.2023.01.04.12.53.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jan 2023 12:53:42 -0800 (PST)
-Message-ID: <128f7392-9fe3-f157-73c9-9c86332457ac@kernel.dk>
-Date:   Wed, 4 Jan 2023 13:53:41 -0700
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r1JpqbJ9++K/xzT47dMTEov/5+2eYul5oJHyAzUfPlI=;
+        b=20lL2ZQ39RXYQeEeXv0phByTJBa9EL3U8HfFWOkNkW11nmb6PQYefqAPODpFjQ4XW1
+         LxAgOvUUUeokZ/pQf6Ar3grsls8RKuT3zndYxMiCJY6/vUXiaeIp8eihjCJ71FYInFGz
+         yhSuqGrCRPQv9KGnbVCgyTZiD0OC8aDKGio5XmmgJnaLiL/9gMGg44K9EfyTEv+s5sgh
+         esuVZL25OBhYRRWfAFacOi/v7oDYUFtyG5BptdpTfZoFfgHflrPQxqmbkgwPOw+NRz42
+         mVF7s+ZP1tne8Lf0y4DIYLRlko2rUIyI3jTVTBFW70AxNOKY9xYIKHgftshm9ZNSLDaq
+         gOjA==
+X-Gm-Message-State: AFqh2kosU+jd6BRfcOUy+QDj0HYHhqLiZQBxqcsgKpPbTQ84lIvlGA9J
+        IHC2HqrFLgc8d6m+ZnXcFTC+mw==
+X-Google-Smtp-Source: AMrXdXuZ+klPVs4aw4KC1gI9YsEim8vZPlGfK9UnseD5KlDls5SUP49aFkwWSHMo97GKojdho/07Tw==
+X-Received: by 2002:a17:90a:f697:b0:226:1dbc:9f89 with SMTP id cl23-20020a17090af69700b002261dbc9f89mr27025085pjb.28.1672889874597;
+        Wed, 04 Jan 2023 19:37:54 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o18-20020a17090ad25200b001fb1de10a4dsm280956pjw.33.2023.01.04.19.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jan 2023 19:37:54 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        stable@vger.kernel.org, io-uring@vger.kernel.org,
+        Dylan Yudaken <dylany@fb.com>, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH] io_uring: Replace 0-length array with flexible array
+Date:   Wed,  4 Jan 2023 19:37:48 -0800
+Message-Id: <20230105033743.never.628-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RFC v2 09/13] io_uring: separate wq for ring polling
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1672713341.git.asml.silence@gmail.com>
- <0fbee0baf170cbfb8488773e61890fc78ed48d1e.1672713341.git.asml.silence@gmail.com>
- <1968c5b9-dd2b-4ed1-14a0-8f78b302bf2d@kernel.dk>
- <894c3092-9561-1a32-fb4c-8bf33e3667a1@gmail.com>
- <75dcfbaf-5822-0b20-5580-1f6ac3ba7f20@kernel.dk>
- <9638d8ff-6995-c7f4-1bbc-dccae70eb936@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <9638d8ff-6995-c7f4-1bbc-dccae70eb936@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1795; h=from:subject:message-id; bh=r+TSIVb2BAWhTrGlFufqT3ga06iplRy8uL8xmu6l8Nc=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjtkYLP77BW3IAXqPW/RhqrA24FMPNCSI45CQs2IEd fy5cqKeJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY7ZGCwAKCRCJcvTf3G3AJqxND/ 4oGtR93uxHdilcizcL38yy4WDqC1zZkr1T3PXAepEgKMvcdsHqd9vzYPr2LgRHkCHsXo40ZPZR82Wz sUz0G6mP2tbZB85d990jEkkNQZE6Dc6OHj5I+dEsbm59Axce8iv0TpSEt8K8CZYg3VSuG/cQwyLKWa 4LLH3lIemP13XM3j4h035U+MPCF6jawWAw4chzz75/ulJIUSvDiS0ZxuAKPYZDTbbFsqkqMZzrAp6D azrxOyTr1c22SdkFTrF+0yqN4d245n9b8ueQlddoV5yPVaOQy1oDUXFlkgXJ2jvwNPa0phSgWastVe 6fjWF2k5OHzljQeBNtb8RqEf5Ud735dMTgPEU9o3lqQc8IkmGXyAsPi89wVk/eksoWrqcMP0s6XGcP hPrzB0Ixz2AW2bM2xyWPneebhaQlYnR3RO7xn83E8lbtKSTRRxcL0KhtD4Edoizki4soYMPUHFnvnG KC1035zSBZpj9w+SWeEGDgsSJlOria6hjC0f9gfypCRMvLRdVRRhy9amB+31qZ8a5fk9TtB4jbTjZY vqZu/+TYJuwU4zTLbR8YPtSipI4GKsxg7g/aN6FGlH7euKWsWi1JfGfraY+sAB6ZsrEqH/qCcAChe8 jmUNLNZCX8679hAFztKUsOc+IgPTku8pHV1XKvutWA5doN2Yq23jvjHDPujA==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/4/23 1:45?PM, Pavel Begunkov wrote:
-> On 1/4/23 20:34, Jens Axboe wrote:
->> On 1/4/23 1:28?PM, Pavel Begunkov wrote:
->>> On 1/4/23 18:08, Jens Axboe wrote:
->>>> On 1/2/23 8:04?PM, Pavel Begunkov wrote:
->>>>> Don't use ->cq_wait for ring polling but add a separate wait queue for
->>>>> it. We need it for following patches.
->>>>>
->>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>>>> ---
->>>>>    include/linux/io_uring_types.h | 1 +
->>>>>    io_uring/io_uring.c            | 3 ++-
->>>>>    io_uring/io_uring.h            | 9 +++++++++
->>>>>    3 files changed, 12 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
->>>>> index dcd8a563ab52..cbcd3aaddd9d 100644
->>>>> --- a/include/linux/io_uring_types.h
->>>>> +++ b/include/linux/io_uring_types.h
->>>>> @@ -286,6 +286,7 @@ struct io_ring_ctx {
->>>>>            unsigned        cq_entries;
->>>>>            struct io_ev_fd    __rcu    *io_ev_fd;
->>>>>            struct wait_queue_head    cq_wait;
->>>>> +        struct wait_queue_head    poll_wq;
->>>>>            unsigned        cq_extra;
->>>>>        } ____cacheline_aligned_in_smp;
->>>>>    
->>>>
->>>> Should we move poll_wq somewhere else, more out of the way?
->>>
->>> If we care about polling perf and cache collisions with
->>> cq_wait, yeah we can. In any case it's a good idea to at
->>> least move it after cq_extra.
->>>
->>>> Would need to gate the check a flag or something.
->>>
->>> Not sure I follow
->>
->> I guess I could've been a bit more verbose... If we consider poll on the
->> io_uring rather uncommon, then moving the poll_wq outside of the hotter
->> cq_wait cacheline(s) would make sense. Each wait_queue_head is more than
->> a cacheline.
-> 
-> Looks it's 24B, and wait_queue_entry is uncomfortable 40B.
+Zero-length arrays are deprecated[1]. Replace struct io_uring_buf_ring's
+"bufs" with a flexible array member. (How is the size of this array
+verified?) Detected with GCC 13, using -fstrict-flex-arrays=3:
 
-(also see followup email). Yes, it's only 24 bytes indeed.
+In function 'io_ring_buffer_select',
+    inlined from 'io_buffer_select' at io_uring/kbuf.c:183:10:
+io_uring/kbuf.c:141:23: warning: array subscript 255 is outside the bounds of an interior zero-length array 'struct io_uring_buf[0]' [-Wzero-length-bounds]
+  141 |                 buf = &br->bufs[head];
+      |                       ^~~~~~~~~~~~~~~
+In file included from include/linux/io_uring.h:7,
+                 from io_uring/kbuf.c:10:
+include/uapi/linux/io_uring.h: In function 'io_buffer_select':
+include/uapi/linux/io_uring.h:628:41: note: while referencing 'bufs'
+  628 |                 struct io_uring_buf     bufs[0];
+      |                                         ^~~~
 
->> Then we could have a flag in a spot that's hot anyway
->> whether to check it or not, eg in that same section as cq_wait.
->> Looking at the layout right now, we're at 116 bytes for that section, or
->> two cachelines with 12 bytes to spare. If we add poll_wq, then we'll be
->> at 196 bytes, which is 4 bytes over the next cacheline. So it'd
->> essentially double the size of that section. If we moved it outside of
->> the aligned sections, then it'd pack better.
-> 
-> Than it's not about hotness and caches but rather memory
-> consumption due to padding, which is still a good argument.
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays
 
-Right, it's nice to not keep io_ring_ctx bigger than it needs to be. And
-if moved out-of-line, then it'd pack better and we would not "waste"
-another cacheline on adding this wait_queue_head for polling.
+Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: stable@vger.kernel.org
+Cc: io-uring@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/uapi/linux/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 2780bce62faf..9d8861899cde 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -625,7 +625,7 @@ struct io_uring_buf_ring {
+ 			__u16	resv3;
+ 			__u16	tail;
+ 		};
+-		struct io_uring_buf	bufs[0];
++		struct io_uring_buf	bufs[];
+ 	};
+ };
+ 
 -- 
-Jens Axboe
+2.34.1
 

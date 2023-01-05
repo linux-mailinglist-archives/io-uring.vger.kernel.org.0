@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 873CC65E9C0
-	for <lists+io-uring@lfdr.de>; Thu,  5 Jan 2023 12:23:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E316865E9B9
+	for <lists+io-uring@lfdr.de>; Thu,  5 Jan 2023 12:23:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232452AbjAELXw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 5 Jan 2023 06:23:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55912 "EHLO
+        id S231725AbjAELXn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 5 Jan 2023 06:23:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233203AbjAELXe (ORCPT
+        with ESMTP id S233184AbjAELXe (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 5 Jan 2023 06:23:34 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE9C4FD75
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 792D35014E
         for <io-uring@vger.kernel.org>; Thu,  5 Jan 2023 03:23:33 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id z8-20020a05600c220800b003d33b0bda11so2276277wml.0
+Received: by mail-wm1-x32d.google.com with SMTP id g25-20020a7bc4d9000000b003d97c8d4941so1053647wmk.4
         for <io-uring@vger.kernel.org>; Thu, 05 Jan 2023 03:23:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+pkim4tG4NDBUuRyin4QQLRlT/GqMiXafE1MXKCTtQQ=;
-        b=Shg+/8OfjNobEeonLkO2VJyizuRofDISgUhR7IaaHYVFZV/PsaPcx5L5CXDJphaZVC
-         8o+XbEaje+zJhNXmF02KkzbfEdtcs3t5OJYj6up7W572ysIXG5wnpxhMBseIV4PL9FPJ
-         FeoBudGZSRsWex7U1WiXgvaoax8Aq2pjBywAcGaHQ8OBlzdoVSrtFq5lTED62iFyZJDj
-         IZTDT0vyS2cvrGRXEmnNldMntfRhUW20ljZv42FT10vVkLVDyG+LSWLqxsQRo7wfYXtm
-         vYehp396ly8wQtS8GfkKJC35Rc3W6ZyCWUAVhVNHs7VmDuxBBAMHD/TPckTuF9yP0lHh
-         TDpw==
+        bh=pqtjp7Gb7AWv2wE6SfRrEbU95vMm3JEyoyqrEoS+6sM=;
+        b=pQ7Ksk/v1AzsRAICPNo666blYJutdQfZ4NqPPf2AHgFMRIjtqLqXBnibmzS1aE8Q0/
+         JfvA56YJTS4BceMka0awGvtluA6qLhp0vGj9oehjrhD+eZ0m8/rQOdMe7DGWSl1grT+D
+         l5E12AzyF4lhlCR3h2w09Df89s4R5W651/CpB5TO4zHb9ngvFFL92gDtIAhGxLuUZDIO
+         EP0KG6LKFmt4JwdNftMuT9f0DcVcTQcXo6SyWJ8KzICGocwHLzN5i6CE+xNVRlclaszu
+         4BMBdHHn2j6rB5GycrYHv5wOtz4rKESO/PbKwyjDhaHUxg27V9D0EV1ZPd+XgA4bieo5
+         LPpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+pkim4tG4NDBUuRyin4QQLRlT/GqMiXafE1MXKCTtQQ=;
-        b=yqVrLfRWZiOx59qu0BXh9mv3Eyd0yOwAEg5M/WQ1QDioCTB9V+Z29ccde4/9ZuXXOC
-         myTGMp+R5u1XypLmsJMUwiUeDhwbK75bPKfDR/dImi+OlOq1OwwXs++HfPTddaN09bXI
-         Z7L7IyVdnOiyrr4x8SoFx/Dqaaz0cl4ua6DC+8PJBAiU/0kv7pvF+tpMs+gHp9seSOn2
-         2eSNKZbAXRBL5eLoK0kFqYd95mwj4N41kdSjrPwCkWs34lyvZm1Z5dP72Vfsf0C7wFZ0
-         ke0PmoAIlrbxnlHnLR5hk4OFOcoF4+wAmtoE08bDREovsbq6wkDLxctDVBc+7u4doAYT
-         2jgQ==
-X-Gm-Message-State: AFqh2kqK2j9t6Q3FlNKK6OifDblClVbIjO5BKc7Kk+JUVzabc0YKdmRz
-        WNDOCfXFozMv4hhcGKhASorhDvy2eig=
-X-Google-Smtp-Source: AMrXdXsSUl5+BwFTHDvZReujZQRpgLh/F4VCbBg9XnTHZ4Rh/7AVLwWSjS7RYeHteamZnpKwoH0yyQ==
-X-Received: by 2002:a05:600c:220c:b0:3d2:3831:e5c4 with SMTP id z12-20020a05600c220c00b003d23831e5c4mr39546346wml.40.1672917812165;
+        bh=pqtjp7Gb7AWv2wE6SfRrEbU95vMm3JEyoyqrEoS+6sM=;
+        b=L9QMuFglZogj09UulzrjTg4ddK0Rw+eMoXRvrRshZ9GSvExJ7zi+AZ+BD9oaX2f/Jo
+         0aVsuNJQtjIHgqCYOUJDW9ZK10xIps+Jqt+FVv26iqvPbECedXbStg5KXCOIW501LNbx
+         SfaCGMrfws8wdOfWGwy8AKWp8DPBXuaW5QStLaRbBgyiF/oksvzZ40WS+XNpIxRR3YPa
+         ZgpbpMVpwmpPbNG3AxlFOBizvKpZ1j3xlPzd0CCUHzKs3tCGT7diWHTJTWz3YJHd8T+x
+         QPgJPpnbuO+fyg8T0m8+xQmBcJTRoE4NeX6ew3mUGbaQbx8asfX7juYzGMHNjoH4s3GP
+         Rqeg==
+X-Gm-Message-State: AFqh2kpkGHSsscdK9Tw+twmVGfW7joLBuChnAGMhR2f7VtIVcto8he3n
+        fSTXHhTL9WqfBmWpWz0Ola3MYnPF1Gg=
+X-Google-Smtp-Source: AMrXdXvZ2HgHmhUYDZexuHUXQNNZ1UR0bl0iOY6dZcSMPsvLYoHX4AF0IGuI3P9XXqck4wbJGVGSiA==
+X-Received: by 2002:a05:600c:a51:b0:3cf:6f4d:c259 with SMTP id c17-20020a05600c0a5100b003cf6f4dc259mr35086538wmq.39.1672917812926;
         Thu, 05 Jan 2023 03:23:32 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::2:5c5f])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003c6f1732f65sm2220688wmq.38.2023.01.05.03.23.31
+        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003c6f1732f65sm2220688wmq.38.2023.01.05.03.23.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 03:23:31 -0800 (PST)
+        Thu, 05 Jan 2023 03:23:32 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCHSET REBASE 06/10] io_uring: mimimise io_cqring_wait_schedule
-Date:   Thu,  5 Jan 2023 11:22:25 +0000
-Message-Id: <2814fabe75e2e019e7ca43ea07daa94564349805.1672916894.git.asml.silence@gmail.com>
+Subject: [PATCHSET REBASE 07/10] io_uring: simplify io_has_work
+Date:   Thu,  5 Jan 2023 11:22:26 +0000
+Message-Id: <26af9f73c09a56c9a035f94db56127358688f3aa.1672916894.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1672916894.git.asml.silence@gmail.com>
 References: <cover.1672916894.git.asml.silence@gmail.com>
@@ -70,90 +70,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_cqring_wait_schedule() is called after we started waiting on the cq
-wq and set the state to TASK_INTERRUPTIBLE, for that reason we have to
-constantly worry whether we has returned the state back to running or
-not. Leave only quick checks in io_cqring_wait_schedule() and move the
-rest including running task work to the callers. Note, we run tw in the
-loop after the sched checks because of the fast path in the beginning of
-the function.
+->work_llist should never be non-empty for a non DEFER_TASKRUN ring, so
+we can safely skip checking the flag.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ io_uring/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 067e3577ac9b..b4ca238cbd63 100644
+index b4ca238cbd63..2376adce9570 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2467,24 +2467,19 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 					  struct io_wait_queue *iowq,
- 					  ktime_t *timeout)
+@@ -2416,8 +2416,7 @@ struct io_wait_queue {
+ static inline bool io_has_work(struct io_ring_ctx *ctx)
  {
--	int ret;
--
- 	if (unlikely(READ_ONCE(ctx->check_cq)))
- 		return 1;
--	/* make sure we run task_work before checking for signals */
--	ret = io_run_task_work_sig(ctx);
--	if (ret || io_should_wake(iowq))
--		return ret;
-+	if (unlikely(!llist_empty(&ctx->work_llist)))
-+		return 1;
-+	if (unlikely(test_thread_flag(TIF_NOTIFY_SIGNAL)))
-+		return 1;
-+	if (unlikely(task_sigpending(current)))
-+		return -EINTR;
-+	if (unlikely(io_should_wake(iowq)))
-+		return 0;
- 	if (!schedule_hrtimeout(timeout, HRTIMER_MODE_ABS))
- 		return -ETIME;
--
--	/*
--	 * Run task_work after scheduling. If we got woken because of
--	 * task_work being processed, run it now rather than let the caller
--	 * do another wait loop.
--	 */
--	ret = io_run_task_work_sig(ctx);
--	return ret < 0 ? ret : 1;
-+	return 0;
+ 	return test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq) ||
+-	       ((ctx->flags & IORING_SETUP_DEFER_TASKRUN) &&
+-		!llist_empty(&ctx->work_llist));
++	       !llist_empty(&ctx->work_llist);
  }
  
- /*
-@@ -2545,6 +2540,16 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 		prepare_to_wait_exclusive(&ctx->cq_wait, &iowq.wq,
- 						TASK_INTERRUPTIBLE);
- 		ret = io_cqring_wait_schedule(ctx, &iowq, &timeout);
-+		if (ret < 0)
-+			break;
-+		/*
-+		 * Run task_work after scheduling and before io_should_wake().
-+		 * If we got woken because of task_work being processed, run it
-+		 * now rather than let the caller do another wait loop.
-+		 */
-+		io_run_task_work();
-+		if (!llist_empty(&ctx->work_llist))
-+			io_run_local_work(ctx);
- 
- 		check_cq = READ_ONCE(ctx->check_cq);
- 		if (unlikely(check_cq)) {
-@@ -2559,10 +2564,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 			}
- 		}
- 
--		if (__io_cqring_events_user(ctx) >= min_events)
-+		if (io_should_wake(&iowq)) {
-+			ret = 0;
- 			break;
-+		}
- 		cond_resched();
--	} while (ret > 0);
-+	} while (1);
- 
- 	finish_wait(&ctx->cq_wait, &iowq.wq);
- 	restore_saved_sigmask_unless(ret == -EINTR);
+ static inline bool io_should_wake(struct io_wait_queue *iowq)
 -- 
 2.38.1
 

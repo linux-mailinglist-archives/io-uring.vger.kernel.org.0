@@ -2,112 +2,173 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3426603BB
-	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 16:53:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE606603C7
+	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 16:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbjAFPx3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Jan 2023 10:53:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57330 "EHLO
+        id S229687AbjAFP5F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Jan 2023 10:57:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233287AbjAFPxX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 10:53:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 238E5809A4;
-        Fri,  6 Jan 2023 07:53:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C9683B81DA7;
-        Fri,  6 Jan 2023 15:53:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F198C433D2;
-        Fri,  6 Jan 2023 15:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673020400;
-        bh=ozokV6pT8SVbzlyCUBZ1GdL2Q6oCef7CdvW7wB8pYIE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hqnYqccDRPe4zfjFlZlGq9bMi1QK1K/ENv4FdpwXxTFpOni3HtRWSJbgGb2Y8pzB7
-         yXA630rU76YOWSRSXCN4o6T+ZbnSn7QtzfV3S28bz19GlBWQuPzbUxKo8dkSt4vE+C
-         5jVMF5S/TsAezCXVjg9o74v/H6ZKIYtLF0KKsiYWhUiyHgDUS61mqKlLPYKGwThD3k
-         kdJLlvgA2c6DNe6DTPTSZEiWVpMr/ePm8XBVVkt1FVtJUOh+AeioKGe0oxf4TO02Nv
-         SLOE0zta+l4LUtsqgIITFqD+OCEfPF04GI79Ur80y0moYs2CtCGxhbAaiEZIJwzs4+
-         77/N4m6dMlQ7w==
-Date:   Fri, 6 Jan 2023 09:53:25 -0600
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
+        with ESMTP id S229877AbjAFP5E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 10:57:04 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E225013D50
+        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 07:57:01 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+        by gnuweeb.org (Postfix) with ESMTPSA id AC50D7E553
+        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 15:57:01 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1673020621;
+        bh=3yk5OjojUAg+mIi1GmODvt7cJoOcb0zv9JyBiLvlm74=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nSMxJGbho3eo5vsFZpBfiXTtI4YIFVsnSyJmXWUcPlmbQhqKh1CV0lqwlMeCsXuMU
+         2k8d/MUFyqKXziI0Z+AS42IAkR5AikL4umZfqQWjjVAz3Q2PGh/EJ0PHxNko9oFSZh
+         Y8sAaTROSj0SBV9CMIuq24L7JO1luOAKdR5+WpTYuJGLAaPxCFlqdyhR5gkvxKz09i
+         onJw0kHf5Mh2Mx5L2j9qxDkWu0/3yKHqce2DjCPGwIsZLiphBah26KX/wZKHMbcLsZ
+         dtokbLAs7i2LRx0DOp+2ohj4haJbU362YLwNWJAIPuE81cjBRF89lYrzQJ1dU59WiU
+         i11JAfLCA5B3w==
+Received: by mail-lf1-f45.google.com with SMTP id v25so2493901lfe.12
+        for <io-uring@vger.kernel.org>; Fri, 06 Jan 2023 07:57:01 -0800 (PST)
+X-Gm-Message-State: AFqh2kpLeWU91Ico76h/s2IY/+ZYBzVar+WNZQCB8FKiJZo9JLOA/9Cs
+        1MLEbTEspndckkzNdtYiaCmMHzG8cpxk8r8BUFk=
+X-Google-Smtp-Source: AMrXdXu5xQfBypRqsl2Jxc6dnBe4QlS4n6jAos+yaqMCZb6A5qivk8yxb4cL+GrYlRXVQ/u8Kfnofd5ys3ckhGW3iDU=
+X-Received: by 2002:ac2:4851:0:b0:4cc:5a57:ba99 with SMTP id
+ 17-20020ac24851000000b004cc5a57ba99mr456859lfy.678.1673020619779; Fri, 06 Jan
+ 2023 07:56:59 -0800 (PST)
+MIME-Version: 1.0
+References: <20230106154259.556542-1-ammar.faizi@intel.com> <20230106154259.556542-2-ammar.faizi@intel.com>
+In-Reply-To: <20230106154259.556542-2-ammar.faizi@intel.com>
+From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Date:   Fri, 6 Jan 2023 22:56:48 +0700
+X-Gmail-Original-Message-ID: <CAOG64qOo6Co0Z8i48MYyNbmA+arMbhktAGgpTrzBzJa3bqrORw@mail.gmail.com>
+Message-ID: <CAOG64qOo6Co0Z8i48MYyNbmA+arMbhktAGgpTrzBzJa3bqrORw@mail.gmail.com>
+Subject: Re: [PATCH liburing v1 1/2] nolibc: Fix bloated memset due to
+ unexpected vectorization
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        stable@vger.kernel.org, io-uring@vger.kernel.org,
-        Dylan Yudaken <dylany@fb.com>, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] io_uring: Replace 0-length array with flexible array
-Message-ID: <Y7hD9XNAsNZ1zIcS@work>
-References: <20230105190507.gonna.131-kees@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230105190507.gonna.131-kees@kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Gilang Fachrezy <gilang4321@gmail.com>,
+        VNLX Kernel Department <kernel@vnlx.org>,
+        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jan 05, 2023 at 11:05:11AM -0800, Kees Cook wrote:
-> Zero-length arrays are deprecated[1]. Replace struct io_uring_buf_ring's
-> "bufs" with a flexible array member. (How is the size of this array
-> verified?) Detected with GCC 13, using -fstrict-flex-arrays=3:
-> 
-> In function 'io_ring_buffer_select',
->     inlined from 'io_buffer_select' at io_uring/kbuf.c:183:10:
-> io_uring/kbuf.c:141:23: warning: array subscript 255 is outside the bounds of an interior zero-length array 'struct io_uring_buf[0]' [-Wzero-length-bounds]
->   141 |                 buf = &br->bufs[head];
->       |                       ^~~~~~~~~~~~~~~
-> In file included from include/linux/io_uring.h:7,
->                  from io_uring/kbuf.c:10:
-> include/uapi/linux/io_uring.h: In function 'io_buffer_select':
-> include/uapi/linux/io_uring.h:628:41: note: while referencing 'bufs'
->   628 |                 struct io_uring_buf     bufs[0];
->       |                                         ^~~~
-> 
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays
-> 
-> Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Pavel Begunkov <asml.silence@gmail.com>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: stable@vger.kernel.org
-> Cc: io-uring@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Fri, Jan 6, 2023 at 10:43 PM Ammar Faizi wrote:
+> Clang and GCC generate an insane vectorized memset() in nolibc.c.
+> liburing doesn't need such a powerful memset(). Add an empty inline ASM
+> to prevent the compilers from over-optimizing the memset().
+>
+> Just for comparison, see the following Assembly code (generated by
+> Clang).
+>
+> Before this patch:
+>
+> ```
+>   0000000000003a00 <__uring_memset>:
+>     3a00:  mov    %rdi,%rax
+>     3a03:  test   %rdx,%rdx
+>     3a06:  je     3b2c <__uring_memset+0x12c>
+>     3a0c:  cmp    $0x8,%rdx
+>     3a10:  jae    3a19 <__uring_memset+0x19>
+>     3a12:  xor    %ecx,%ecx
+>     3a14:  jmp    3b20 <__uring_memset+0x120>
+>     3a19:  movzbl %sil,%r8d
+>     3a1d:  cmp    $0x20,%rdx
+>     3a21:  jae    3a2a <__uring_memset+0x2a>
+>     3a23:  xor    %ecx,%ecx
+>     3a25:  jmp    3ae0 <__uring_memset+0xe0>
+>     3a2a:  mov    %rdx,%rcx
+>     3a2d:  and    $0xffffffffffffffe0,%rcx
+>     3a31:  movd   %r8d,%xmm0
+>     3a36:  punpcklbw %xmm0,%xmm0
+>     3a3a:  pshuflw $0x0,%xmm0,%xmm0
+>     3a3f:  pshufd $0x0,%xmm0,%xmm0
+>     3a44:  lea    -0x20(%rcx),%rdi
+>     3a48:  mov    %rdi,%r10
+>     3a4b:  shr    $0x5,%r10
+>     3a4f:  inc    %r10
+>     3a52:  mov    %r10d,%r9d
+>     3a55:  and    $0x3,%r9d
+>     3a59:  cmp    $0x60,%rdi
+>     3a5d:  jae    3a63 <__uring_memset+0x63>
+>     3a5f:  xor    %edi,%edi
+>     3a61:  jmp    3aa9 <__uring_memset+0xa9>
+>     3a63:  and    $0xfffffffffffffffc,%r10
+>     3a67:  xor    %edi,%edi
+>     3a69:  nopl   0x0(%rax)
+>     3a70:  movdqu %xmm0,(%rax,%rdi,1)
+>     3a75:  movdqu %xmm0,0x10(%rax,%rdi,1)
+>     3a7b:  movdqu %xmm0,0x20(%rax,%rdi,1)
+>     3a81:  movdqu %xmm0,0x30(%rax,%rdi,1)
+>     3a87:  movdqu %xmm0,0x40(%rax,%rdi,1)
+>     3a8d:  movdqu %xmm0,0x50(%rax,%rdi,1)
+>     3a93:  movdqu %xmm0,0x60(%rax,%rdi,1)
+>     3a99:  movdqu %xmm0,0x70(%rax,%rdi,1)
+>     3a9f:  sub    $0xffffffffffffff80,%rdi
+>     3aa3:  add    $0xfffffffffffffffc,%r10
+>     3aa7:  jne    3a70 <__uring_memset+0x70>
+>     3aa9:  test   %r9,%r9
+>     3aac:  je     3ad6 <__uring_memset+0xd6>
+>     3aae:  lea    (%rdi,%rax,1),%r10
+>     3ab2:  add    $0x10,%r10
+>     3ab6:  shl    $0x5,%r9
+>     3aba:  xor    %edi,%edi
+>     3abc:  nopl   0x0(%rax)
+>     3ac0:  movdqu %xmm0,-0x10(%r10,%rdi,1)
+>     3ac7:  movdqu %xmm0,(%r10,%rdi,1)
+>     3acd:  add    $0x20,%rdi
+>     3ad1:  cmp    %rdi,%r9
+>     3ad4:  jne    3ac0 <__uring_memset+0xc0>
+>     3ad6:  cmp    %rdx,%rcx
+>     3ad9:  je     3b2c <__uring_memset+0x12c>
+>     3adb:  test   $0x18,%dl
+>     3ade:  je     3b20 <__uring_memset+0x120>
+>     3ae0:  mov    %rcx,%rdi
+>     3ae3:  mov    %rdx,%rcx
+>     3ae6:  and    $0xfffffffffffffff8,%rcx
+>     3aea:  movd   %r8d,%xmm0
+>     3aef:  punpcklbw %xmm0,%xmm0
+>     3af3:  pshuflw $0x0,%xmm0,%xmm0
+>     3af8:  nopl   0x0(%rax,%rax,1)
+>     3b00:  movq   %xmm0,(%rax,%rdi,1)
+>     3b05:  add    $0x8,%rdi
+>     3b09:  cmp    %rdi,%rcx
+>     3b0c:  jne    3b00 <__uring_memset+0x100>
+>     3b0e:  cmp    %rdx,%rcx
+>     3b11:  je     3b2c <__uring_memset+0x12c>
+>     3b13:  data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
+>     3b20:  mov    %sil,(%rax,%rcx,1)
+>     3b24:  inc    %rcx
+>     3b27:  cmp    %rcx,%rdx
+>     3b2a:  jne    3b20 <__uring_memset+0x120>
+>     3b2c:  ret
+>     3b2d:  nopl   (%rax)
+> ```
+>
+> After this patch:
+>
+> ```
+>   0000000000003424 <__uring_memset>:
+>     3424:  mov    %rdi,%rax
+>     3427:  test   %rdx,%rdx
+>     342a:  je     343a <__uring_memset+0x16>
+>     342c:  xor    %ecx,%ecx
+>     342e:  mov    %sil,(%rax,%rcx,1)
+>     3432:  inc    %rcx
+>     3435:  cmp    %rcx,%rdx
+>     3438:  jne    342e <__uring_memset+0xa>
+>     343a:  ret
+> ```
+>
+> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks!
---
-Gustavo
-
-> ---
-> v2: use helper since these flex arrays are in a union.
-> v1: https://lore.kernel.org/lkml/20230105033743.never.628-kees@kernel.org
-> ---
->  include/uapi/linux/io_uring.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 2780bce62faf..434f62e0fb72 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -625,7 +625,7 @@ struct io_uring_buf_ring {
->  			__u16	resv3;
->  			__u16	tail;
->  		};
-> -		struct io_uring_buf	bufs[0];
-> +		__DECLARE_FLEX_ARRAY(struct io_uring_buf, bufs);
->  	};
->  };
->  
-> -- 
-> 2.34.1
-> 
+Reviewed-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>

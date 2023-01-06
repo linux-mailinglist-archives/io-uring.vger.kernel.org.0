@@ -2,72 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2960E6608B9
-	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 22:19:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B07166099C
+	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 23:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236414AbjAFVTN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Jan 2023 16:19:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55296 "EHLO
+        id S235973AbjAFWjo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Jan 2023 17:39:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236370AbjAFVTK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 16:19:10 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA63081C2E
-        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 13:19:08 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5DD4EB81E44
-        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 21:19:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0EED1C433D2;
-        Fri,  6 Jan 2023 21:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673039947;
-        bh=wznMqMErTEeYUKyi/2S0j1YOSv0Voxuj3FPotFgxP6U=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=AC5vqBvF0igmsJDW8FKaRNpnJyB6Eo0pOuhJqoF/0zms7yxJXqLo72ruEDYGngojD
-         uESaH8vM1FzRoXO36/B+JOZBYcmt4ZpXMC9Xog9bq+Hqrz4PBbzbeSmapvNRE0m39r
-         8Z3RdwaG9gWLR0F1DmI4v7zM+BnaTZgf2JNik133THmakY1PFTwNiWQLJIh+xub6xF
-         iZz8k6VeBR/aaM+kRTs4HOUDr8zrOcTpiaFunYwJMV3A3DKTVuD27yV7/Alb+wjaTc
-         pC0pQvdL/Cta4TAxq/kLz2vT+GnvSfw8dqwsY6vi+bcv08//9asIi8xDdpJUsHGHPM
-         WQFTCwG9Sfcrg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F1474E57254;
-        Fri,  6 Jan 2023 21:19:06 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.2-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <2caed411-58e8-2286-2c4d-c0eaf91f26e1@kernel.dk>
-References: <2caed411-58e8-2286-2c4d-c0eaf91f26e1@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2caed411-58e8-2286-2c4d-c0eaf91f26e1@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-2023-01-06
-X-PR-Tracked-Commit-Id: 12521a5d5cb7ff0ad43eadfc9c135d86e1131fa8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ef1a4a770994b97a86988fd86f5a2784b87449f7
-Message-Id: <167303994698.10294.10738259781786695288.pr-tracker-bot@kernel.org>
-Date:   Fri, 06 Jan 2023 21:19:06 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S235860AbjAFWjn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 17:39:43 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12AA87295
+        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 14:39:41 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id n63so1464033iod.7
+        for <io-uring@vger.kernel.org>; Fri, 06 Jan 2023 14:39:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8JyunlHx89aJ1DIcnU1d6CAIOc8LCkoiYgUFT+hW1A=;
+        b=IK8yrSYg0nR3j8zdG2BWDoB6bWyG3L+teq4qTLGrouGweE1VI1RK4J1suUkuKGzko3
+         H+l6q0Uu9HMjhnWIMKAqRwPC6OHTOmTVczBsVs9QulD6qqLvK3s04TmKU+G6ENAnqccQ
+         5SjQHvLFeNM8MkGkv3fMg3i3mIyIkE9Lz+Wp9wgO0+KYoOgl/fGeaygrR39ggu6UrR4T
+         nte/3sbcIIkzp81TdZLw/pn6I41dv+WaeVPEuCaKc4a+9MTkCQ1GECxU/LzlLWOUylAQ
+         R2f2V4p34dBZDsUMaYBBD4vSQ/LMUN4mqdCijsNcQVuNL35xRMmvtEorweQwG8wqMr+K
+         j4xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B8JyunlHx89aJ1DIcnU1d6CAIOc8LCkoiYgUFT+hW1A=;
+        b=IHmDsjk96qrEiMtZ9euDmFBVkL7bVIn9/9pq/n7oeI72PEbp4NKeF4mu3kZ6X2JGGe
+         MANJfWSi9u39ACb0oj2hgtw7fXZeNPRFXziBkhBzhMnc3ucliKVEtoVUJMcpv1m4IyQY
+         D10eeWm3hdcBx20EX6ZanjYY92MJWABa0584Pft4Ft7GTHyUcV38TeeeIABmglwuyXlk
+         8ArQZ36xp0PMZB1ibHhTkg58WIGbaJvE9oHZ5hiL4NheqOOoSB0UavM3k6OW7RAMtD3Q
+         I6B09VzaABZfpzpFXkCXz9aFN9HFG2JyReVa2uaUtFORvb6rQrpveU6Qom0HnpAqeDCa
+         E3QA==
+X-Gm-Message-State: AFqh2kpGcS+0XHBvm8QoiGngvkdoBEjTJUGtX/Z6g2BBpyoJW4mx+2IC
+        dI41+097Z+F9/CdsNlXN/Td1Lg==
+X-Google-Smtp-Source: AMrXdXsP2pADr+KUESdgw0Osko2ASnuPYVREmaUskDlnIe1gnQQxg141QIIE6oDR1/Cxg/U9jE0vnQ==
+X-Received: by 2002:a6b:7d46:0:b0:6ed:1ad7:56bc with SMTP id d6-20020a6b7d46000000b006ed1ad756bcmr8173152ioq.0.1673044781177;
+        Fri, 06 Jan 2023 14:39:41 -0800 (PST)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id d97-20020a0285ea000000b0039deb26853csm669292jai.10.2023.01.06.14.39.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jan 2023 14:39:40 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Gilang Fachrezy <gilang4321@gmail.com>,
+        VNLX Kernel Department <kernel@vnlx.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+In-Reply-To: <20230106155202.558533-1-ammar.faizi@intel.com>
+References: <20230106155202.558533-1-ammar.faizi@intel.com>
+Subject: Re: [RFC PATCH liburing v1 0/2] Always enable CONFIG_NOLIBC if
+ supported and deprecate --nolibc option
+Message-Id: <167304477992.67146.5312219906954771753.b4-ty@kernel.dk>
+Date:   Fri, 06 Jan 2023 15:39:39 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-cc11a
+X-Spam-Status: No, score=-0.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLACK
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 6 Jan 2023 09:25:13 -0700:
 
-> git://git.kernel.dk/linux.git tags/io_uring-2023-01-06
+On Fri, 06 Jan 2023 22:52:00 +0700, Ammar Faizi wrote:
+> This is an RFC patchset. It's already build-tested.
+> 
+> Currently, the default liburing compilation uses libc as its dependency.
+> liburing doesn't depend on libc when it's compiled on x86-64, x86
+> (32-bit), and aarch64. There is no benefit to having libc.so linked to
+> liburing.so on those architectures.
+> 
+> [...]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ef1a4a770994b97a86988fd86f5a2784b87449f7
+Applied, thanks!
 
-Thank you!
+[1/2] github: Remove nolibc build on the GitHub CI bot
+      commit: 439cff00aa9a3b8bc6b88787ffca90d32655ce2f
+[2/2] configure: Always enable `CONFIG_NOLIBC` if the arch is supported
+      commit: bfb432f4cce52cb3e3bd9c1823e94ff29bd4fb80
 
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
+

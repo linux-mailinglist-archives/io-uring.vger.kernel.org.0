@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 781586603B6
+	by mail.lfdr.de (Postfix) with ESMTP id C310A6603B7
 	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 16:52:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjAFPwW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Jan 2023 10:52:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56930 "EHLO
+        id S232218AbjAFPwX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Jan 2023 10:52:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234693AbjAFPwS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 10:52:18 -0500
+        with ESMTP id S234720AbjAFPwU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 10:52:20 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A42D11A27
-        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 07:52:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7705911A27
+        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 07:52:19 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.184])
-        by gnuweeb.org (Postfix) with ESMTPSA id 848447E509;
-        Fri,  6 Jan 2023 15:52:13 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id A65F97E51F;
+        Fri,  6 Jan 2023 15:52:16 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1673020336;
-        bh=vMr/dqwnZoaMfjWMuhaE7Kb5PPHdL3rS1WAeVIsUgUI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FBU8BT1q9StBTlOUhS4PNEzGIczFqgMS0czxJfOED2X+2SaQr/gLWP3E7wKljmXNs
-         h5+dgrnfjX/y81yc5o5TgOs34LVc+netbr/gH5A7G280ttvHsVHLAKrBZlcGbzXQro
-         dVkLLsKPcaFq+6GKtW7PvnLefvD09vhEKfpEvQzN01moIOSwZQ2BR15Ud1BoMA9Lys
-         0+50y8DHgX6pnUG/t41qN/xD2db4CMdkHlNoCsZrG8ooJ20M0HxuaoK2XJAGk4fpED
-         Jgcm43ed//zemoeDFxwjcYbaJZQvaQ+DfcH2jgQ1+DNykHP44ixK4a+fQntrCyPxDr
-         93xpwjRYFFN7A==
+        s=default; t=1673020339;
+        bh=QaFA/PFZVrWHpLbUPPChboMLcuyCxW3JGVxmlBUo5uU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BQHhEyhaeaxincCwJeezghgRhnDKuk1E8d1Ui1A9XfQHiJRqINfTBXCMbfE3A2+9J
+         BGduiMmwKCGMMcEtAvxBmWVjqbZYEBUhOnqUwbK295CGFcPzXmQCg+DDpji4aRw/wU
+         84xu45DCESifJ81CW5fRuRsEKAORpMZveXzP4tuAiGpsmwQp64Xj9X8Zemf5VcF1mF
+         GiflpNiDVZvzI3z5nEQsxCCnbxJe2uYZ3JkF39D4DTLbix0RnDKcV31OBDjQj+Tbdl
+         I2V9bQabHy1viS12uc4FVv81cjB4GclovYecSS8m+iQJ5ZrWXH7NT4J6ZOcJx5BKLH
+         xngZarPV+AP1Q==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -37,15 +37,17 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>
-Subject: [RFC PATCH liburing v1 0/2] Always enable CONFIG_NOLIBC if supported and deprecate --nolibc option
-Date:   Fri,  6 Jan 2023 22:52:00 +0700
-Message-Id: <20230106155202.558533-1-ammar.faizi@intel.com>
+Subject: [RFC PATCH liburing v1 1/2] github: Remove nolibc build on the GitHub CI bot
+Date:   Fri,  6 Jan 2023 22:52:01 +0700
+Message-Id: <20230106155202.558533-2-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230106155202.558533-1-ammar.faizi@intel.com>
+References: <20230106155202.558533-1-ammar.faizi@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        URIBL_BLACK autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -54,45 +56,34 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Hi Jens,
+This is a preparation patch to deprecate `--nolibc` configure option.
 
-This is an RFC patchset. It's already build-tested.
-
-Currently, the default liburing compilation uses libc as its dependency.
-liburing doesn't depend on libc when it's compiled on x86-64, x86
-(32-bit), and aarch64. There is no benefit to having libc.so linked to
-liburing.so on those architectures.
-
-Always enable CONFIG_NOLBIC if the arch is supported. If the
-architecture is not supported, fallback to libc.
-
-There are 2 patches in this series:
-
-   - A preparation patch, remove --nolibc from the GitHub CI.
-
-   - Always enable CONFIG_NOLIBC if supported and deprecate --nolibc.
-
-After this series, --nolibc option is deprecated and has no effect.
-I plan to remove this option in a future liburing release.
-
-Comments welcome...
-
-Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
-
-Alviro Iskandar Setiawan (1):
-  configure: Always enable `CONFIG_NOLIBC` if the arch is supported
-
-Ammar Faizi (1):
-  github: Remove nolibc build on the GitHub CI bot
-
  .github/workflows/build.yml | 10 ----------
- configure                   | 40 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 35 insertions(+), 15 deletions(-)
+ 1 file changed, 10 deletions(-)
 
-
-base-commit: c76d392035fd271980faa297334268f2cd77d774
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index c2aa3e6..f18f069 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -117,16 +117,6 @@ jobs:
+         ./configure --cc=${{matrix.cc}} --cxx=${{matrix.cxx}};
+         make -j$(nproc) V=1 CPPFLAGS="-Werror" CFLAGS="$FLAGS" CXXFLAGS="$FLAGS";
+ 
+-    - name: Build nolibc
+-      run: |
+-        if [[ "${{matrix.arch}}" == "x86_64" || "${{matrix.arch}}" == "i686" || "${{matrix.arch}}" == "aarch64" ]]; then \
+-            make clean; \
+-            ./configure --cc=${{matrix.cc}} --cxx=${{matrix.cxx}} --nolibc; \
+-            make -j$(nproc) V=1 CPPFLAGS="-Werror" CFLAGS="$FLAGS" CXXFLAGS="$FLAGS"; \
+-        else \
+-            echo "Skipping nolibc build, this arch doesn't support building liburing without libc"; \
+-        fi;
+-
+     - name: Test install command
+       run: |
+         sudo make install;
 -- 
 Ammar Faizi
 

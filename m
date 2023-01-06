@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE606603C7
-	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 16:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D1006603D0
+	for <lists+io-uring@lfdr.de>; Fri,  6 Jan 2023 17:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbjAFP5F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Jan 2023 10:57:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60088 "EHLO
+        id S232591AbjAFQAX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Jan 2023 11:00:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbjAFP5E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 10:57:04 -0500
+        with ESMTP id S234091AbjAFQAN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Jan 2023 11:00:13 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E225013D50
-        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 07:57:01 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-        by gnuweeb.org (Postfix) with ESMTPSA id AC50D7E553
-        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 15:57:01 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6980054D94
+        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 08:00:11 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+        by gnuweeb.org (Postfix) with ESMTPSA id 336CB7E552
+        for <io-uring@vger.kernel.org>; Fri,  6 Jan 2023 16:00:11 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1673020621;
-        bh=3yk5OjojUAg+mIi1GmODvt7cJoOcb0zv9JyBiLvlm74=;
+        s=default; t=1673020811;
+        bh=cQatdWmMG0sGd67JA8N1SWncNYJiAn/XaMuh4drZ2H8=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nSMxJGbho3eo5vsFZpBfiXTtI4YIFVsnSyJmXWUcPlmbQhqKh1CV0lqwlMeCsXuMU
-         2k8d/MUFyqKXziI0Z+AS42IAkR5AikL4umZfqQWjjVAz3Q2PGh/EJ0PHxNko9oFSZh
-         Y8sAaTROSj0SBV9CMIuq24L7JO1luOAKdR5+WpTYuJGLAaPxCFlqdyhR5gkvxKz09i
-         onJw0kHf5Mh2Mx5L2j9qxDkWu0/3yKHqce2DjCPGwIsZLiphBah26KX/wZKHMbcLsZ
-         dtokbLAs7i2LRx0DOp+2ohj4haJbU362YLwNWJAIPuE81cjBRF89lYrzQJ1dU59WiU
-         i11JAfLCA5B3w==
-Received: by mail-lf1-f45.google.com with SMTP id v25so2493901lfe.12
-        for <io-uring@vger.kernel.org>; Fri, 06 Jan 2023 07:57:01 -0800 (PST)
-X-Gm-Message-State: AFqh2kpLeWU91Ico76h/s2IY/+ZYBzVar+WNZQCB8FKiJZo9JLOA/9Cs
-        1MLEbTEspndckkzNdtYiaCmMHzG8cpxk8r8BUFk=
-X-Google-Smtp-Source: AMrXdXu5xQfBypRqsl2Jxc6dnBe4QlS4n6jAos+yaqMCZb6A5qivk8yxb4cL+GrYlRXVQ/u8Kfnofd5ys3ckhGW3iDU=
-X-Received: by 2002:ac2:4851:0:b0:4cc:5a57:ba99 with SMTP id
- 17-20020ac24851000000b004cc5a57ba99mr456859lfy.678.1673020619779; Fri, 06 Jan
- 2023 07:56:59 -0800 (PST)
+        b=CK02iYJst3j6PNYyV8EZVV3HwswUyavnYusU9HKYO+n1DKpN2xooVcENjtsfKeMoQ
+         EnFaffqGD9P8sG7cM3t4gIjUblMshYLX7n5ETTejrVwgW0UFXOoHCrYFb3As9HGQIf
+         XZJeG+0P3HZdCetec7hikwBXDRD3YE6Vkp/GQ7tHAyPX7Q0sXNBXjeLJjG4MzkOiZr
+         2wiY0WxO6ZxYOaBbXv0A2lyabNl7wBizqEu6yV2Osb4kpD4a91VabRIjcKSGUr6ZZN
+         xJjbv8szr1wHawMRk7baeTXyasXoCiqhM2fI9kl0z7CPFXNksqjBnq6w7a1fu9s3+c
+         J6GyLxAnCw+sg==
+Received: by mail-lj1-f182.google.com with SMTP id g14so1843217ljh.10
+        for <io-uring@vger.kernel.org>; Fri, 06 Jan 2023 08:00:11 -0800 (PST)
+X-Gm-Message-State: AFqh2kpCun3WdlRy5VdDbjBE526Xq94UhyiJuwmr28tRJZFE6xt4HInM
+        5m6HyKq+VN91N/wlNSVB++rqSLBU5rmsS+uCHzU=
+X-Google-Smtp-Source: AMrXdXvGlt+89P/4w16V62O+v8qXipr40Jc3uY7SEnzMWJrJ0bZrezVik3/B/Pf89vq6KFYzmn8oJsTtc5myq0kIPoE=
+X-Received: by 2002:a2e:bd01:0:b0:27f:c69a:11b7 with SMTP id
+ n1-20020a2ebd01000000b0027fc69a11b7mr3060574ljq.111.1673020809362; Fri, 06
+ Jan 2023 08:00:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20230106154259.556542-1-ammar.faizi@intel.com> <20230106154259.556542-2-ammar.faizi@intel.com>
-In-Reply-To: <20230106154259.556542-2-ammar.faizi@intel.com>
+References: <20230106154259.556542-1-ammar.faizi@intel.com> <20230106154259.556542-3-ammar.faizi@intel.com>
+In-Reply-To: <20230106154259.556542-3-ammar.faizi@intel.com>
 From:   Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Date:   Fri, 6 Jan 2023 22:56:48 +0700
-X-Gmail-Original-Message-ID: <CAOG64qOo6Co0Z8i48MYyNbmA+arMbhktAGgpTrzBzJa3bqrORw@mail.gmail.com>
-Message-ID: <CAOG64qOo6Co0Z8i48MYyNbmA+arMbhktAGgpTrzBzJa3bqrORw@mail.gmail.com>
-Subject: Re: [PATCH liburing v1 1/2] nolibc: Fix bloated memset due to
- unexpected vectorization
+Date:   Fri, 6 Jan 2023 22:59:58 +0700
+X-Gmail-Original-Message-ID: <CAOG64qOJTRQbEEUMPZoPYzMrPAxN=9=jD+E25KuH7o0yVFa1Jw@mail.gmail.com>
+Message-ID: <CAOG64qOJTRQbEEUMPZoPYzMrPAxN=9=jD+E25KuH7o0yVFa1Jw@mail.gmail.com>
+Subject: Re: [PATCH liburing v1 2/2] register: Simplify `io_uring_register_file_alloc_range()`
+ function
 To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
@@ -63,110 +63,63 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On Fri, Jan 6, 2023 at 10:43 PM Ammar Faizi wrote:
-> Clang and GCC generate an insane vectorized memset() in nolibc.c.
-> liburing doesn't need such a powerful memset(). Add an empty inline ASM
-> to prevent the compilers from over-optimizing the memset().
+> Use a struct initializer instead of memset(). It simplifies the C code
+> plus effectively reduces the code size.
 >
-> Just for comparison, see the following Assembly code (generated by
-> Clang).
+> Extra bonus on x86-64. It reduces the stack allocation because it
+> doesn't need to allocate stack for the local variable @range. It can
+> just use 128 bytes of redzone below the `%rsp` (redzone is only
+> available in a leaf function).
 >
 > Before this patch:
 >
 > ```
->   0000000000003a00 <__uring_memset>:
->     3a00:  mov    %rdi,%rax
->     3a03:  test   %rdx,%rdx
->     3a06:  je     3b2c <__uring_memset+0x12c>
->     3a0c:  cmp    $0x8,%rdx
->     3a10:  jae    3a19 <__uring_memset+0x19>
->     3a12:  xor    %ecx,%ecx
->     3a14:  jmp    3b20 <__uring_memset+0x120>
->     3a19:  movzbl %sil,%r8d
->     3a1d:  cmp    $0x20,%rdx
->     3a21:  jae    3a2a <__uring_memset+0x2a>
->     3a23:  xor    %ecx,%ecx
->     3a25:  jmp    3ae0 <__uring_memset+0xe0>
->     3a2a:  mov    %rdx,%rcx
->     3a2d:  and    $0xffffffffffffffe0,%rcx
->     3a31:  movd   %r8d,%xmm0
->     3a36:  punpcklbw %xmm0,%xmm0
->     3a3a:  pshuflw $0x0,%xmm0,%xmm0
->     3a3f:  pshufd $0x0,%xmm0,%xmm0
->     3a44:  lea    -0x20(%rcx),%rdi
->     3a48:  mov    %rdi,%r10
->     3a4b:  shr    $0x5,%r10
->     3a4f:  inc    %r10
->     3a52:  mov    %r10d,%r9d
->     3a55:  and    $0x3,%r9d
->     3a59:  cmp    $0x60,%rdi
->     3a5d:  jae    3a63 <__uring_memset+0x63>
->     3a5f:  xor    %edi,%edi
->     3a61:  jmp    3aa9 <__uring_memset+0xa9>
->     3a63:  and    $0xfffffffffffffffc,%r10
->     3a67:  xor    %edi,%edi
->     3a69:  nopl   0x0(%rax)
->     3a70:  movdqu %xmm0,(%rax,%rdi,1)
->     3a75:  movdqu %xmm0,0x10(%rax,%rdi,1)
->     3a7b:  movdqu %xmm0,0x20(%rax,%rdi,1)
->     3a81:  movdqu %xmm0,0x30(%rax,%rdi,1)
->     3a87:  movdqu %xmm0,0x40(%rax,%rdi,1)
->     3a8d:  movdqu %xmm0,0x50(%rax,%rdi,1)
->     3a93:  movdqu %xmm0,0x60(%rax,%rdi,1)
->     3a99:  movdqu %xmm0,0x70(%rax,%rdi,1)
->     3a9f:  sub    $0xffffffffffffff80,%rdi
->     3aa3:  add    $0xfffffffffffffffc,%r10
->     3aa7:  jne    3a70 <__uring_memset+0x70>
->     3aa9:  test   %r9,%r9
->     3aac:  je     3ad6 <__uring_memset+0xd6>
->     3aae:  lea    (%rdi,%rax,1),%r10
->     3ab2:  add    $0x10,%r10
->     3ab6:  shl    $0x5,%r9
->     3aba:  xor    %edi,%edi
->     3abc:  nopl   0x0(%rax)
->     3ac0:  movdqu %xmm0,-0x10(%r10,%rdi,1)
->     3ac7:  movdqu %xmm0,(%r10,%rdi,1)
->     3acd:  add    $0x20,%rdi
->     3ad1:  cmp    %rdi,%r9
->     3ad4:  jne    3ac0 <__uring_memset+0xc0>
->     3ad6:  cmp    %rdx,%rcx
->     3ad9:  je     3b2c <__uring_memset+0x12c>
->     3adb:  test   $0x18,%dl
->     3ade:  je     3b20 <__uring_memset+0x120>
->     3ae0:  mov    %rcx,%rdi
->     3ae3:  mov    %rdx,%rcx
->     3ae6:  and    $0xfffffffffffffff8,%rcx
->     3aea:  movd   %r8d,%xmm0
->     3aef:  punpcklbw %xmm0,%xmm0
->     3af3:  pshuflw $0x0,%xmm0,%xmm0
->     3af8:  nopl   0x0(%rax,%rax,1)
->     3b00:  movq   %xmm0,(%rax,%rdi,1)
->     3b05:  add    $0x8,%rdi
->     3b09:  cmp    %rdi,%rcx
->     3b0c:  jne    3b00 <__uring_memset+0x100>
->     3b0e:  cmp    %rdx,%rcx
->     3b11:  je     3b2c <__uring_memset+0x12c>
->     3b13:  data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
->     3b20:  mov    %sil,(%rax,%rcx,1)
->     3b24:  inc    %rcx
->     3b27:  cmp    %rcx,%rdx
->     3b2a:  jne    3b20 <__uring_memset+0x120>
->     3b2c:  ret
->     3b2d:  nopl   (%rax)
+>   0000000000003910 <io_uring_register_file_alloc_range>:
+>     3910:  push   %rbp
+>     3911:  push   %r15
+>     3913:  push   %r14
+>     3915:  push   %rbx
+>     3916:  sub    $0x18,%rsp
+>     391a:  mov    %edx,%r14d
+>     391d:  mov    %esi,%ebp
+>     391f:  mov    %rdi,%rbx
+>     3922:  lea    0x8(%rsp),%r15
+>     3927:  mov    $0x10,%edx
+>     392c:  mov    %r15,%rdi
+>     392f:  xor    %esi,%esi
+>     3931:  call   3a00 <__uring_memset>
+>     3936:  mov    %ebp,0x8(%rsp)
+>     393a:  mov    %r14d,0xc(%rsp)
+>     393f:  mov    0xc4(%rbx),%edi
+>     3945:  mov    $0x1ab,%eax
+>     394a:  mov    $0x19,%esi
+>     394f:  mov    %r15,%rdx
+>     3952:  xor    %r10d,%r10d
+>     3955:  syscall
+>     3957:  add    $0x18,%rsp
+>     395b:  pop    %rbx
+>     395c:  pop    %r14
+>     395e:  pop    %r15
+>     3960:  pop    %rbp
+>     3961:  ret
+>     3962:  cs nopw 0x0(%rax,%rax,1)
+>     396c:  nopl   0x0(%rax)
 > ```
 >
 > After this patch:
 >
 > ```
->   0000000000003424 <__uring_memset>:
->     3424:  mov    %rdi,%rax
->     3427:  test   %rdx,%rdx
->     342a:  je     343a <__uring_memset+0x16>
->     342c:  xor    %ecx,%ecx
->     342e:  mov    %sil,(%rax,%rcx,1)
->     3432:  inc    %rcx
->     3435:  cmp    %rcx,%rdx
->     3438:  jne    342e <__uring_memset+0xa>
->     343a:  ret
+>   0000000000003910 <io_uring_register_file_alloc_range>:
+>     3910:  mov    %esi,-0x10(%rsp) # set range.off
+>     3914:  mov    %edx,-0xc(%rsp)  # set range.len
+>     3918:  movq   $0x0,-0x8(%rsp)  # zero the resv
+>     3921:  mov    0xc4(%rdi),%edi
+>     3927:  lea    -0x10(%rsp),%rdx
+>     392c:  mov    $0x1ab,%eax
+>     3931:  mov    $0x19,%esi
+>     3936:  xor    %r10d,%r10d
+>     3939:  syscall
+>     393b:  ret
 > ```
 >
 > Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>

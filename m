@@ -2,71 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40DDF6633B9
-	for <lists+io-uring@lfdr.de>; Mon,  9 Jan 2023 23:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A95EC6634E4
+	for <lists+io-uring@lfdr.de>; Tue, 10 Jan 2023 00:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235228AbjAIWM0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Jan 2023 17:12:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43326 "EHLO
+        id S237625AbjAIXPE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Jan 2023 18:15:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237022AbjAIWMZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Jan 2023 17:12:25 -0500
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85B71EEDA
-        for <io-uring@vger.kernel.org>; Mon,  9 Jan 2023 14:12:23 -0800 (PST)
-Received: by mail-io1-f71.google.com with SMTP id 16-20020a5d9c10000000b00702de2ee669so5186438ioe.10
-        for <io-uring@vger.kernel.org>; Mon, 09 Jan 2023 14:12:23 -0800 (PST)
+        with ESMTP id S237661AbjAIXOu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Jan 2023 18:14:50 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5383BEA7
+        for <io-uring@vger.kernel.org>; Mon,  9 Jan 2023 15:14:50 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id 20so1996432pfu.13
+        for <io-uring@vger.kernel.org>; Mon, 09 Jan 2023 15:14:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g/cvNab0UVqQrwLLdidvTsUqTZD9TEA9knBaZUuG2Gg=;
+        b=GT7StzQARo45EtczBA++lJVu3K7Qqudxsxj/D07FBbT6r8GFWnZqVTHSCrcUPxhn4W
+         pdmcIFoQrhDYJC7b5nVkq4FHQZ1iaKvc7ivP4DcWQUqz62KEmqTd/EkjS2djjtqIE1kM
+         6QcB7AxEvhaHsPwWxClW340BPwS+odIOHmyC0FEAwVNC+fz4XG9ELHLSTqU8qmw0imV4
+         0F/4xDcRwMEBcOoUywl/7NASq+Wz6qZEZQVStNMeE+n878QenlZmBgY29Vj1lKhi31Q0
+         IS+spdo82p1ZmHnm1xKtd0Q4KgzHCYttRE3oGRiZ++qiax+lcP9HbEV3aVZnEx3ibfCO
+         zp1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DTUK3cZDq7+5e5U091ru+GvF8C+iMdCzHADni7W4eDI=;
-        b=f7VOGbMMjLvJH0E/iisQuzWYmeJ6dhtJW+2ZvjjTLkWwpbI/TSlPZKh30U2RrKLERg
-         avtPCFzDXzAPe42lGak9hy278wwfdyPCNunQyZW8scv/5tISQB6WEClDbRNP8T1ILpFF
-         10Jz7GCDejOaq8WUYtRQrXr2N1Up3AZigI8aQvBke2Ynr3mK5Rm0WuPO0gkO5Lv0ruPY
-         SkKgQwZiNHREq58zW7vTORJ+1JfdCFXavtEq4o6PR/L69FaeN89UcuL5dJqR1GH3mqOO
-         gKawlHfQo9oPjsC3d81QeUznDzaSx43MxDyDQeD9EA6xzw4bTGsVlqB1O3fgCKKtU1hX
-         aJLQ==
-X-Gm-Message-State: AFqh2kqpKh8Q8BeMkENQDnYFRc0bU7ZWFMnOyXG0mM3tMjyC9F2MxtuD
-        y5VU2a2uBKpaHnh0IavlceXPw+o+gX0+KRCfGU/msrfFXJ2b
-X-Google-Smtp-Source: AMrXdXt22QvHMfgLmlMKJ4fSPICEnPJL8xHSmNJ/v5/CvyV6F7eDLPbLBcUQgUfuus7Oa0Foa7X9MTvgJeY8H6S/U9vanvNTKuMu
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g/cvNab0UVqQrwLLdidvTsUqTZD9TEA9knBaZUuG2Gg=;
+        b=p2zVpPjzQ1wYBhYKwRE5WSdMmdnmgygow5IyyilzXXQYdr69wyig6Ap8e5h+l2f6rd
+         CI19nI0MrgLSgiXT8vNIVVIJsftB3vL6aa9DB2KhujWsKow1ALRo4NxOcDke0cVyS1Bm
+         tVfDA9frmMMZTw1zRfI7QeJpLUNTKxnV2Iasgyl/QPPmiOKFBR//BvgWOg1062LiYr+x
+         O4vUvEsjZnerXbeFVHRGtTb1HN6zb9eqS9exw2IzO3UL9kcifPs6RZXxoqD/0chdavUb
+         HYecp11ZiTJhmPrkth53aZGXb1C82AzjPj5BxrOgaQJTYObryPoCBit9NvfV9lii/cRN
+         AxEQ==
+X-Gm-Message-State: AFqh2kpqThU1myfkQ7IeQxpc/9xmzvxaWDXnanYysnn8xdrDI5hnFo8x
+        s+iOoLGvWTEe0+Yrq3Qzk8TEE1ae50R6/hbj
+X-Google-Smtp-Source: AMrXdXui3UGGFzw1SFPz9BNe+kAM6XV183XXKHnwsHI3TA392TPOGt8NooPW8BKVkbLjR58EKhbV4Q==
+X-Received: by 2002:a62:1484:0:b0:587:9e50:3af9 with SMTP id 126-20020a621484000000b005879e503af9mr1437822pfu.0.1673306089205;
+        Mon, 09 Jan 2023 15:14:49 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id i131-20020a628789000000b00573eb4a775esm6803982pfe.17.2023.01.09.15.14.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 15:14:48 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     asml.silence@gmail.com, Dmitrii Bundin <dmitrii.bundin.a@gmail.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230109185854.25698-1-dmitrii.bundin.a@gmail.com>
+References: <20230109185854.25698-1-dmitrii.bundin.a@gmail.com>
+Subject: Re: [PATCH] io_uring: remove excessive unlikely on IS_ERR
+Message-Id: <167330608847.5627.8808533650294290115.b4-ty@kernel.dk>
+Date:   Mon, 09 Jan 2023 16:14:48 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:927:b0:30d:96b6:5cd2 with SMTP id
- o7-20020a056e02092700b0030d96b65cd2mr1750200ilt.31.1673302343067; Mon, 09 Jan
- 2023 14:12:23 -0800 (PST)
-Date:   Mon, 09 Jan 2023 14:12:23 -0800
-In-Reply-To: <e3029146-e399-aaaf-6192-2af8f1c1e131@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c2b1b505f1dc0f10@google.com>
-Subject: Re: [syzbot] memory leak in io_submit_sqes (4)
-From:   syzbot <syzbot+6c95df01470a47fc3af4@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-cc11a
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Mon, 09 Jan 2023 21:58:54 +0300, Dmitrii Bundin wrote:
+> The IS_ERR function uses the IS_ERR_VALUE macro under the hood which
+> already wraps the condition into unlikely.
+> 
+> 
 
-Reported-and-tested-by: syzbot+6c95df01470a47fc3af4@syzkaller.appspotmail.com
+Applied, thanks!
 
-Tested on:
+[1/1] io_uring: remove excessive unlikely on IS_ERR
+      commit: 119fda37c54736ea65a669273d0b3c394c99a75c
 
-commit:         0af4af97 io_uring/poll: add hash if ready poll request..
-git tree:       git://git.kernel.dk/linux.git syztest
-console output: https://syzkaller.appspot.com/x/log.txt?x=1105391c480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=72a4287b7f412c8a
-dashboard link: https://syzkaller.appspot.com/bug?extid=6c95df01470a47fc3af4
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+Best regards,
+-- 
+Jens Axboe
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+

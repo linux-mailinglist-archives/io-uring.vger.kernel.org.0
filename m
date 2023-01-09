@@ -2,80 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA94D661796
-	for <lists+io-uring@lfdr.de>; Sun,  8 Jan 2023 18:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8238E661C60
+	for <lists+io-uring@lfdr.de>; Mon,  9 Jan 2023 03:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233401AbjAHRlx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 Jan 2023 12:41:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32860 "EHLO
+        id S233703AbjAICeZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 Jan 2023 21:34:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjAHRlv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Jan 2023 12:41:51 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0E70DF31
-        for <io-uring@vger.kernel.org>; Sun,  8 Jan 2023 09:41:49 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id jl4so7057061plb.8
-        for <io-uring@vger.kernel.org>; Sun, 08 Jan 2023 09:41:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GutKW8U2GM5XZih+XF7hrer9blrDoFElwh/AVJL3Kiw=;
-        b=bz1YBn0J1v2FzSyZ/9+9yoBi/gRTJ8so+KoKcgMhp4pKQOGvgVF2oZP0PXbeY/DIrS
-         8Tn6I7aPJAEE/mD96vNVltwvIa3AoravwhMIV/A0urYUKFUTVwOInbcYUtHWvmcLCkMj
-         GacZJW3vRXV/4TzBE3m+C2kkU1eMGnXD+TiGrhhCIgZsKqjKUhL58wMvF0SSflSmPfxY
-         c4zcMhu/fCb8mNwjOKfgy5EZYzNXgoMRwEgN2PBAc+miuVF35+hNZlxVzVzdSfjQSPu2
-         vWyaXssx2w5KqrXEp+FWYLUz8vc0EHSI4CPnHEaLtGtuYa7zM/gUnTJNhRxsi4nd2PAD
-         lk7g==
+        with ESMTP id S233096AbjAICeY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Jan 2023 21:34:24 -0500
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22BAA45E
+        for <io-uring@vger.kernel.org>; Sun,  8 Jan 2023 18:34:23 -0800 (PST)
+Received: by mail-io1-f71.google.com with SMTP id d24-20020a5d9bd8000000b006ee2ddf6d77so4011677ion.6
+        for <io-uring@vger.kernel.org>; Sun, 08 Jan 2023 18:34:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GutKW8U2GM5XZih+XF7hrer9blrDoFElwh/AVJL3Kiw=;
-        b=g/OsITrN8GiS4/6/AsEW7ZpNYkkwT8Q4f3XAPzHcfFsd24WBv+9+jkD1oOjEKYxQxw
-         fHzZaYdXyoHS0L2EpmLmGuqzpfSZu65VIxcc3HKaPBIxYHbKI3rjPxzggbs0qAL6NYT+
-         cLslLuToPp2kVbe6XQ5xL3Hxmaf2IljFuYbcFHm2QkYwtxFpoTuM9qaeY4FjMHnMZuNU
-         yb4i0yVPT3YCe5h2qEXrKqolRu0iu0v2vZBLtwPD0ZaQWYF39hPVpHY+oW5SX14J9eJK
-         +2qpCF5l5EDZDV7iHaPBoyrZjGEkJ7No1lnzPe14brspvTNadpn14EQQK8QgGnpL050O
-         eTuQ==
-X-Gm-Message-State: AFqh2kpW/S7+7YfrAxHiFf321DwO6AI8ASaqp2bPpu7cBmP6uSBPPcJ0
-        2FQWuVPQcEO3iM7Pf/vNBg8zlQ==
-X-Google-Smtp-Source: AMrXdXvq7u07iI37P8FUF14nYn9//pJL1lqSu7CaGUhQPyGUEcvHkFEpSU2KKsdmRNl6OBR/Rz2PaA==
-X-Received: by 2002:a05:6a20:a6a7:b0:b5:c751:78ac with SMTP id ba39-20020a056a20a6a700b000b5c75178acmr454349pzb.2.1673199708933;
-        Sun, 08 Jan 2023 09:41:48 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h6-20020a170902eec600b001811a197797sm3253734plb.194.2023.01.08.09.41.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Jan 2023 09:41:48 -0800 (PST)
-Message-ID: <4be0a7d0-a1ac-1cd4-ccba-77653342efdc@kernel.dk>
-Date:   Sun, 8 Jan 2023 10:41:47 -0700
+        bh=7rcvn48tUUP2FTlVeQr9AifQJvd5jYKtHm0iLNtdMWo=;
+        b=V+0CGRI28oF7kOqA7YKR5vfQFpXR3ga6s/JMhOPrPa5NBU4LPOlfhJAEUl8X1j0IFQ
+         +B4VnO5IT19zRiTCT00MJGGn+ZVhbUeiS3DNsVPDDvsCXBcdNIQbuAnjcW5qCLc01HKo
+         dWgNJqs9EKE3/mScFUPnP3r6HinK9SRRMCkosJM1J8exjHkLLOjPvMAhPPvVMsd72G0X
+         nMJzl9MgxObVtz5nY9mlnclzVmXJmMBIyql2KnGzdwciPfDC5vlUPO8JOdtg8nk5+kFJ
+         8r1/mknyNc1oTYtjvI2zStTR5R3Eg3Oc4UojxmawlBp68WW1+ADXX+RwCxldfRy5z3Dv
+         KnNQ==
+X-Gm-Message-State: AFqh2krMkMr4GrBajLuF+E+xyzcDMO1Yj3JN+YA1wdt2J6eS5vDXXu3i
+        5HVEUHZ1MudJj7cLu/RX5noIO9nzUNzkle1vOTlcYtz9M9fd
+X-Google-Smtp-Source: AMrXdXtyWF6n+SkKThTewWuMsVgJytLmOd3j80ZHF91ZEghmQIZLMZWR3G3eciaEYPpa4ngxefOi+N9m74PC8PJNSe2a8p9saJ3Y
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
+X-Received: by 2002:a5d:9655:0:b0:6df:f621:ee37 with SMTP id
+ d21-20020a5d9655000000b006dff621ee37mr5198929ios.174.1673231663100; Sun, 08
+ Jan 2023 18:34:23 -0800 (PST)
+Date:   Sun, 08 Jan 2023 18:34:23 -0800
+In-Reply-To: <4be0a7d0-a1ac-1cd4-ccba-77653342efdc@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e7f96f05f1cb9a84@google.com>
 Subject: Re: [syzbot] KASAN: wild-memory-access Read in io_wq_worker_running
-Content-Language: en-US
-To:     syzbot <syzbot+d56ec896af3637bdb7e4@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
+From:   syzbot <syzbot+d56ec896af3637bdb7e4@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000019558e05f1a86b19@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <00000000000019558e05f1a86b19@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-#syz test: git://git.kernel.dk/linux.git io_uring-6.2
+Hello,
 
--- 
-Jens Axboe
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: rcu detected stall in corrupted
+
+rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P5774 } 2664 jiffies s: 2777 root: 0x0/T
+rcu: blocking rcu_node structures (internal RCU debug):
 
 
+Tested on:
+
+commit:         e6db6f93 io_uring/io-wq: only free worker if it was al..
+git tree:       git://git.kernel.dk/linux.git io_uring-6.2
+console output: https://syzkaller.appspot.com/x/log.txt?x=116df816480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2edd87fe5cbdf43f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d56ec896af3637bdb7e4
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Note: no patches were applied.

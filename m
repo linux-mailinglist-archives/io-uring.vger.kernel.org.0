@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 657AB661CE1
-	for <lists+io-uring@lfdr.de>; Mon,  9 Jan 2023 04:49:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0109B661D0B
+	for <lists+io-uring@lfdr.de>; Mon,  9 Jan 2023 04:54:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236027AbjAIDtj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 8 Jan 2023 22:49:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45120 "EHLO
+        id S236637AbjAIDxt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 8 Jan 2023 22:53:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231410AbjAIDth (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Jan 2023 22:49:37 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28BE247
-        for <io-uring@vger.kernel.org>; Sun,  8 Jan 2023 19:49:35 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id b9-20020a17090a7ac900b00226ef160dcaso6315744pjl.2
-        for <io-uring@vger.kernel.org>; Sun, 08 Jan 2023 19:49:35 -0800 (PST)
+        with ESMTP id S236710AbjAIDxA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 8 Jan 2023 22:53:00 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A951011823
+        for <io-uring@vger.kernel.org>; Sun,  8 Jan 2023 19:51:54 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id jl4so8177621plb.8
+        for <io-uring@vger.kernel.org>; Sun, 08 Jan 2023 19:51:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KP691JFoFX0F9mveORmXODQf26CLdeHZBmwv8xyQAK4=;
-        b=NKsNbgg8wksBTkZA9izhAmGudq3SmRArU6MnD4q6AvxhNbdbEwaVAJIsqrxO+1H4Rs
-         Y3exk+A6aNMAFitufjcpUqS7scx8AUaJWK4L1JPRqro5B6yWDE23LAsby3dCacOv3CHw
-         RRsz8Jun5oxlhTeH7dNjxbGo0EGOArhSqpeC1ZXusSx0X6cpSGd3gXBjMbWS5sHK3gOq
-         X7ipV5HabAtO9ScPChsqUwls0yO6vpl1iqnoZ+eVQuo7QAHCaHHXC6rWU4qMwjmXMDD3
-         cdpABbOsWBUIJ/yd/Q2WFAe+autl8rYIabU9HCaYgMTLPeQeYmsf6fjDGF4B0uVnK1ar
-         JdPQ==
+        bh=aPLGdbD4w3KTNSXThRBpSsjS7f9R9UPFXQ4iA1FrtvI=;
+        b=nPPmYnBXei1dfYlS1rdCM2vB2N1VwVs01sjf7uRRBjye8S+HOHefmxparAACWmM1WD
+         aMAqF3SCZOzl/6oJTTay0ycDo1Ce165iGmwv5opji1Y6bgcUmowgU1bWuGmeTs7+0fC7
+         dVIm84RuDd6Qv5ScegEDxJb3PaVDGCdI8kvbcg9J86poaHNp0BG+RUkTuiSUV5bJV9CA
+         OyMoDvJL2A9BS40+lDXlmJ50fkeRkDrnadxJj6Ao0uevnhSxWcUA17SJXJUIZxeL+ATh
+         2pixxWYOSXnYEoRO56vtmDsE3RuMTL6f7SWYn/44iQ6FfkTjVHT0g9Cb1nSnJjYtS6Q6
+         ftiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KP691JFoFX0F9mveORmXODQf26CLdeHZBmwv8xyQAK4=;
-        b=2Ki9rAAYs+7ZU4n6Lxefss2Flghfx6UJC4KrFKTCdRHA0LBqyza7COkEeoXl4XpOTJ
-         OvwKzrJPETEOlB+yzMgW4TMC5B3E0FpRMQjmMY7J5Tv1jUQNZCRxA9+297fBDHv1CVkf
-         0SgfdF7tNtSFxKBnO3A4dotsaKtr5xNaIKKOklcgdnZxHkY8nbWOgjyHheGUwzH5IkJA
-         izS8b9mxV563lvLY+ghz9OQ6lAcl8bsjJWmV3aoEvOkRf26Kpy1bS4Wb+17ctbhE6QPU
-         SrVzJ6w3dHzD8C50lXHoqwBcXdThJ9jgYhnwf1pF5WGaDQI1KnRP4st1yARf5xtXMj7c
-         pI3g==
-X-Gm-Message-State: AFqh2kqvyqBW6DEYjhmM5NI2h//fPdu1dsFcKH5QAnh3yLjxPzOJSWHH
-        aEziCBWAjweMCtr4bRM55zreNw==
-X-Google-Smtp-Source: AMrXdXvyRJwqKDgZCDuZ6jAXItL4F2pZpF0BzEckjsAGNoNIPaBgXmEAP/wdvWmCLDP+ZAakP42bMw==
-X-Received: by 2002:a17:902:b08f:b0:193:2a8c:28c7 with SMTP id p15-20020a170902b08f00b001932a8c28c7mr926386plr.5.1673236175471;
-        Sun, 08 Jan 2023 19:49:35 -0800 (PST)
+        bh=aPLGdbD4w3KTNSXThRBpSsjS7f9R9UPFXQ4iA1FrtvI=;
+        b=2H4wtKr/Gn/wWVWISJq9fAlTVfU2LzEntmKIwFnJAD+2YxdNhEOznYx7IRvTEuBasR
+         AGl2yhV36pI+UdOag7KMC4g//OyMAWxws5WnL+CJmgR8agKm3azEuC80bME1e/DP19ii
+         gX3/QM5ezRIWuKrus6IpOzf4c46w5E/QBBdl44lUYlbuLzkCR0gSkAt9dLNra1eOwfqH
+         a3DCEc2JP9jyHswhUkwt2gQcSN2qwlIXhZK7NP3EW/5zOxAVzJYYBPSRHzWW/USeo67w
+         syMYBAi0sAmpGdzb59NHIu913iyTgv7oPxvgPzyO5fatiKLGYxPETrczGHY+RezxCSV0
+         wP0Q==
+X-Gm-Message-State: AFqh2kqxfHMEhE+HfXNePnf2mgTzDZnE9fIeNijw+g5uS+UYrxIMoy5f
+        N+quakxanlYC43GCr4qJfEQXpw==
+X-Google-Smtp-Source: AMrXdXsHyCuK/5tTYQ2YiGIo2OlMLfna9+NQYVqCDBdoVnrK+eAv9N2c36+OrrMuRoh4EdIDp1Zslw==
+X-Received: by 2002:a17:902:a512:b0:192:5c3e:8952 with SMTP id s18-20020a170902a51200b001925c3e8952mr14756022plq.2.1673236305856;
+        Sun, 08 Jan 2023 19:51:45 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s6-20020a170902ea0600b001913c5fc051sm4819955plg.274.2023.01.08.19.49.33
+        by smtp.gmail.com with ESMTPSA id z3-20020a6552c3000000b0049b7b1205a0sm4278560pgp.54.2023.01.08.19.51.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Jan 2023 19:49:35 -0800 (PST)
-Message-ID: <92fb9521-9ae6-d43c-71a4-cc1b2e6e8c62@kernel.dk>
-Date:   Sun, 8 Jan 2023 20:49:33 -0700
+        Sun, 08 Jan 2023 19:51:45 -0800 (PST)
+Message-ID: <f9ca2051-741b-e4bb-74c5-178778c788df@kernel.dk>
+Date:   Sun, 8 Jan 2023 20:51:43 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCHv2 02/12] io_uring: switch network send/recv to ITER_UBUF
+Subject: Re: [PATCHv2 00/12] iov_iter: replace import_single_range with ubuf
 Content-Language: en-US
 To:     Keith Busch <kbusch@meta.com>, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
@@ -71,9 +71,8 @@ Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
         linux-trace-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         netdev@vger.kernel.org, Keith Busch <kbusch@kernel.org>
 References: <20230105190741.2405013-1-kbusch@meta.com>
- <20230105190741.2405013-3-kbusch@meta.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230105190741.2405013-3-kbusch@meta.com>
+In-Reply-To: <20230105190741.2405013-1-kbusch@meta.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -86,12 +85,26 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 1/5/23 12:07 PM, Keith Busch wrote:
-> From: Jens Axboe <axboe@kernel.dk>
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> This is more efficient that iter_iov.
+> ITER_UBUF is a more efficient representation when using single vector
+> buffers, providing small optimizations over ITER_IOVEC. This series
+> introduces a helper to set these up, and replaces all applicable users
+> of import_single_range with the new helper. And since there are no
+> single range users left after this change, the helper is no longer
+> needed.
+> 
+> As noted in v1(*), there are some fundamental differences to how io_uring
+> compares to read/write/readv/writev. There are only the two affected
+> file_operations, and they already do not work with io_uring due to their
+> diverging semantics for vectored vs non-vectored read/write. Therefore,
+> this series having io_uring prefer ubuf iov_iter isn't introducing new
+> breakage.
 
-Looks like that s/that/than typo ended up in a few spots throughout
-this series... Nothing major, but figured I'd bring it up.
+Pondering how to stage this, both for later upstream but also for
+testing. Would probably make the best sense to stage 1-5 separately,
+and then just punt the remaining ones to the appropriate subsystems.
+And then 12/12 can go in when they have all been applied.
 
 -- 
 Jens Axboe

@@ -2,66 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9686658D7
-	for <lists+io-uring@lfdr.de>; Wed, 11 Jan 2023 11:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E78665E40
+	for <lists+io-uring@lfdr.de>; Wed, 11 Jan 2023 15:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231889AbjAKKU2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Jan 2023 05:20:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
+        id S231912AbjAKOqN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Jan 2023 09:46:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238079AbjAKKUG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Jan 2023 05:20:06 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59C7BCC;
-        Wed, 11 Jan 2023 02:20:05 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id y5so11049536pfe.2;
-        Wed, 11 Jan 2023 02:20:05 -0800 (PST)
+        with ESMTP id S232064AbjAKOqL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Jan 2023 09:46:11 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E868A634B
+        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 06:46:09 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id jo4so37412724ejb.7
+        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 06:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g71XtJYmKF1U64u/mKee6gqmuQMnGQrpGMXwCiQqmnM=;
-        b=o3SbFNcgwgzOvz4PAWC7qpB3Yz+gUEFvjJ5ORg1nI+7VuDs3WKd+SWQGyo0t4NbTru
-         3Q3cn9wYg37lK28hwpq6UZxB52lNRr99WB5jxTj8O+ZS3L8rCseHqtrrsJzAdjjGuktP
-         2lybFkIyQkzfsJZFTuvbhTvyceX4ENEEqX5cvukge+1MF55qQ7aSy9DGgBcl31pjJf1e
-         PhZQIAyTdcmgouKcnqufa/msLhrx7fJK+eyUwmDp4STb6hNba3feoMIv+eFwrvGN5dtg
-         OXHm4cB7p9T+U9cbLfbVvKlizDdrxtiIdhXQQKA6hWTsbUe3eChDgMAerWZR+4IIxpl4
-         Oegw==
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d5VK5KaCGPX13Iha5pZaFLsVEphZZLsA28Nqq+aJbT8=;
+        b=K1jpb8jguKA13lHwElFdw8xycFxUGVVKSkz/U7OLyqKKfDM7l2HJx1mKpIM51yaP0B
+         6ASs8vHF3I1Pq5idrBlbDZQ1EM7Kn5d45ya2Y7F6j2va5ZrGNG/JqzSOCWx9UFbdKdGg
+         QOVZTirg9V9WOZj7nqrdIGXUKPdu1SWtpZu/FFiZTiH8ZrGLRHuCgphpBbI2C5f6rrKr
+         T/tJqfgq8hKztOzvp4zUcqzB0HvI6Quu0Dmw7y73B8LJ4wzNBG4c0oSvcAvXB/D/wX5y
+         DYnvcpPT8ffIxxBxIUx3jJuftFHDyu9ATF14Cu9IuDByJM7bcgZrF0VVLj5rfKsPmOMa
+         mlGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g71XtJYmKF1U64u/mKee6gqmuQMnGQrpGMXwCiQqmnM=;
-        b=c2Up8iwwPRQlc7XsY3zl6LjhWeiUGAwHThughhUSadfKoEiagFEwu6+sca40tQrAC/
-         30CueplhrUD5J+8aolt+cjdQ68paqVW6zqEHwF/nGemrM6wREJyVmeD8pkzP+OIMn/Bj
-         2Zo6EpP3RiFAr79fRaYZZjlZD5o+Bp0SZ3VwS2YHM/JwUgslA99ZT4zL5TRgKcT7ZSL9
-         b8xJQcCQtZP82AT5M09lF2pMic4K8So0TvgbXR2c8GLv7vzK0IE5xfj5DTY8xHn3mg02
-         hB36YZHSAZFcagw6vPX9dzGCoNlBDsqj96aY3tweTkjynh/qlTzZw7/o0RJW2GlDOM/o
-         l2hQ==
-X-Gm-Message-State: AFqh2krhYhi/JCxf2RgMsv2HtRcUu0N9ulz18ORKYnbDyVvlFlauecOX
-        gVkXrRhVLYlnEREDjmchWTE=
-X-Google-Smtp-Source: AMrXdXuAeggcFUWLCbqFQzqew6nbFoUotRMWKRYNGjGp1nc4LjZe8ld3NRx79nB7XYz5xW97uEikOw==
-X-Received: by 2002:a62:1c4e:0:b0:587:e40c:59e with SMTP id c75-20020a621c4e000000b00587e40c059emr1740065pfc.18.1673432405307;
-        Wed, 11 Jan 2023 02:20:05 -0800 (PST)
-Received: from oslab.tsinghua.edu.cn ([166.111.139.142])
-        by smtp.gmail.com with ESMTPSA id u190-20020a6260c7000000b00575caf80d08sm9663761pfb.31.2023.01.11.02.20.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 02:20:04 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     axboe@kernel.dk, asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        TOTE Robot <oslab@tsinghua.edu.cn>
-Subject: [PATCH] io_uring: Add NULL checks for current->io_uring
-Date:   Wed, 11 Jan 2023 18:19:07 +0800
-Message-Id: <20230111101907.600820-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d5VK5KaCGPX13Iha5pZaFLsVEphZZLsA28Nqq+aJbT8=;
+        b=O+99ILb2O+BHEeuQuY+9iWFBy95r6fulEhFQply/xxcJU9F93nPBczIklWMrPXs+Bh
+         j9oappZh1rDCNSWH5hf79OIZzUUc+o2QNuUByZOlDJbckfabxEYawC90TOa1oR4eAH+C
+         2tzfrHkqMvfGhoyYcKdAy5QUvnRW4uFi3IQ2l8zV7BuBidE7ZphrtVfNSotDi433JCQM
+         2K5Hp4/vPoQcNXSZC9G4rxZ00sqarhitewMp4OFndh+jMOzMlSj5FUUw6kjKPFwdTvH/
+         hTB8xP71LICbAquk0GD5Z8ckEp13WEYJ6t5yo9Psj1ATLwxnRp3nEO0ONDdhIUaubCSv
+         Wqmg==
+X-Gm-Message-State: AFqh2ko6h0bnbIyxO5XODozodjxtux0R1ac6DShKSTLHrqJsjmZ7OKB4
+        J07yP3C5FgywlPe6ZdO9gmxPcL/i/pQ=
+X-Google-Smtp-Source: AMrXdXs7QiKWJl9dZid99ouJKJIuI2onGHsgVXqzyP7M+rp1fVSxQdRAJuMmowmdvrn0+o8S8EWWTA==
+X-Received: by 2002:a17:907:7f8a:b0:7c0:e4b7:517e with SMTP id qk10-20020a1709077f8a00b007c0e4b7517emr86373177ejc.16.1673448368345;
+        Wed, 11 Jan 2023 06:46:08 -0800 (PST)
+Received: from [192.168.8.100] (188.31.114.68.threembb.co.uk. [188.31.114.68])
+        by smtp.gmail.com with ESMTPSA id v27-20020a17090606db00b0081d2d9a0b45sm6218072ejb.186.2023.01.11.06.46.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jan 2023 06:46:07 -0800 (PST)
+Message-ID: <16fc0544-5f1c-a246-61be-da8b5aa7375d@gmail.com>
+Date:   Wed, 11 Jan 2023 14:44:44 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2] io_uring: fix CQ waiting timeout handling
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+References: <f7bffddd71b08f28a877d44d37ac953ddb01590d.1672915663.git.asml.silence@gmail.com>
+ <3ed001f3-a33c-cc69-be47-d5318de5ddcd@linux.alibaba.com>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <3ed001f3-a33c-cc69-be47-d5318de5ddcd@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,82 +75,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-As described in a previous commit 998b30c3948e, current->io_uring could
-be NULL, and thus a NULL check is required for this variable.
+On 1/11/23 06:39, Xiaoguang Wang wrote:
+> hello,
+> 
+>>   	/*
+>> @@ -2564,7 +2564,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>>   		}
+>>   		prepare_to_wait_exclusive(&ctx->cq_wait, &iowq.wq,
+>>   						TASK_INTERRUPTIBLE);
+>> -		ret = io_cqring_wait_schedule(ctx, &iowq, timeout);
+>> +		ret = io_cqring_wait_schedule(ctx, &iowq, &timeout);
+>>   		if (__io_cqring_events_user(ctx) >= min_events)
+>>   			break;
+>>   		cond_resched();
+> Does this bug result in any real issues?
+> io_cqring_wait_schedule() calls schedule_hrtimeout(), but seems that
+> schedule_hrtimeout() and its child functions don't modify timeout or expires
+> at all, so I wonder how this patch works. Thanks.
 
-In the same way, other functions that access current->io_uring also
-require NULL checks of this variable.
+Looked it up, you're right, I guess passing a pointer and one example
+using it this way convinced me that it should be the case. Even more
+interesting that as there is only HRTIMER_MODE_ABS and no relative
+modes as before (IIRC) it wasn't a bug in the first place. Thanks
+for taking a look
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
----
- io_uring/io_uring.c | 3 ++-
- io_uring/io_uring.h | 3 +++
- io_uring/tctx.c     | 9 ++++++++-
- 3 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 2ac1cd8d23ea..8075c0880c7a 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2406,7 +2406,8 @@ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 		/* try again if it submitted nothing and can't allocate a req */
- 		if (!ret && io_req_cache_empty(ctx))
- 			ret = -EAGAIN;
--		current->io_uring->cached_refs += left;
-+		if (likely(current->io_uring))
-+			current->io_uring->cached_refs += left;
- 	}
- 
- 	io_submit_state_end(ctx);
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index ab4b2a1c3b7e..398c7c2ba22b 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -362,6 +362,9 @@ static inline void io_get_task_refs(int nr)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 
-+	if (unlikely(!tctx))
-+		return;
-+
- 	tctx->cached_refs -= nr;
- 	if (unlikely(tctx->cached_refs < 0))
- 		io_task_refs_refill(tctx);
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index 4324b1cf1f6a..6574bbe82b5d 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -145,7 +145,8 @@ int __io_uring_add_tctx_node_from_submit(struct io_ring_ctx *ctx)
- 	if (ret)
- 		return ret;
- 
--	current->io_uring->last = ctx;
-+	if (likely(current->io_uring))
-+		current->io_uring->last = ctx;
- 	return 0;
- }
- 
-@@ -200,6 +201,9 @@ void io_uring_unreg_ringfd(void)
- 	struct io_uring_task *tctx = current->io_uring;
- 	int i;
- 
-+	if (unlikely(!tctx))
-+		return;
-+
- 	for (i = 0; i < IO_RINGFD_REG_MAX; i++) {
- 		if (tctx->registered_rings[i]) {
- 			fput(tctx->registered_rings[i]);
-@@ -259,6 +263,9 @@ int io_ringfd_register(struct io_ring_ctx *ctx, void __user *__arg,
- 		return ret;
- 
- 	tctx = current->io_uring;
-+	if (unlikely(!tctx))
-+		return -EINVAL;
-+
- 	for (i = 0; i < nr_args; i++) {
- 		int start, end;
- 
 -- 
-2.34.1
-
+Pavel Begunkov

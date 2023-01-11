@@ -2,113 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B612666263
-	for <lists+io-uring@lfdr.de>; Wed, 11 Jan 2023 19:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42A626662EF
+	for <lists+io-uring@lfdr.de>; Wed, 11 Jan 2023 19:43:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbjAKSAY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Jan 2023 13:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48868 "EHLO
+        id S229578AbjAKSnC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Jan 2023 13:43:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232923AbjAKSAX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Jan 2023 13:00:23 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D086214038
-        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 10:00:21 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id 17so17634871pll.0
-        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 10:00:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LTmq/ajXOScrb67c0ergqi3fHReWHTMsouiD7Lp1Ww4=;
-        b=L6TOnhnyM5Ey44vkG0KrlKzkgCQfKNPrILTOaUn2e0jqwiZngwWpLOuV+pszHb+slL
-         GHXDu8LEa4dGg5SyJ/WnbqBLH+b5wAwiWUj3sG235KjKQJ5UKmqmqPCUa5kAiauk3rxs
-         Rg3F1r305BtTL5UhTiVLsHmjxWiFie7GGHfqamFtHKkkSsSuFuu3p453ZuhHmi9RkPw0
-         Tb/H1bjHLmSG9ohYhVqAyfURjg6ZlTFf6K3tTeukQ1Mx7GgmN/9ihuyH8TV125vADDsh
-         uuLYzm1l/yV1VcGK/etz8J5HI4iGRye71nqatbxDo7U2B/illkVT196rdXnFLswUy6nq
-         0cWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LTmq/ajXOScrb67c0ergqi3fHReWHTMsouiD7Lp1Ww4=;
-        b=SAF8kx7EFrlGxRJLN1IxmCnBHect3BKYGGWGDk8bzKQreJVSN6pFffi1EsBGhd5d/i
-         mSV62op3vH2R4fI8gXEyk2TFJt7PrLGilJtg9qmhjPPiSvSyVVoXvg0fZHRubfEv43fb
-         HoEzfBOtKS7bQRNQ3bprgkVS79P0pq9Z/5Y8eOM8cEbC79z51YHfQaMy9cGCChDNEdv/
-         I5JHya48e0e38UMaLlfOI7laQFyqA8qumfZ0LXONwGAqjUiUhc6NyMlLGFjs8EuZZPha
-         2P9C7fAjgJZp8/Fgq5S6KeLMUpxwdor6FUDFRIgHp0b/cucwIx/vPV9KmuubcOy7+6sK
-         ZB5g==
-X-Gm-Message-State: AFqh2kqjv7pkDaLNGmKPmXu17VCAdvG5rnSa/FuFXjxz2mNRCBuMv+RD
-        3dRYmiHqZtTqrwHdAoV2bEZZBtzZqCWduyxN
-X-Google-Smtp-Source: AMrXdXvW10jowKOfwFKe3t8MGGSD0uydxQ7bGRjfKqCX1eVSkqQnH0onIATcSdeFQNkITXazA0HYcg==
-X-Received: by 2002:a17:902:eb4d:b0:194:4c4f:e965 with SMTP id i13-20020a170902eb4d00b001944c4fe965mr666330pli.0.1673460021300;
-        Wed, 11 Jan 2023 10:00:21 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u11-20020a170902e80b00b00174c0dd29f0sm10517842plg.144.2023.01.11.10.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 10:00:20 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1673274244.git.asml.silence@gmail.com>
-References: <cover.1673274244.git.asml.silence@gmail.com>
-Subject: Re: [PATCH v3 00/11] CQ waiting / task_work optimisations
-Message-Id: <167346002056.137564.9207330077149864406.b4-ty@kernel.dk>
-Date:   Wed, 11 Jan 2023 11:00:20 -0700
+        with ESMTP id S235350AbjAKSnA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Jan 2023 13:43:00 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AD911AA1C
+        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 10:42:59 -0800 (PST)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30BGIknL032656
+        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 10:42:59 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=7p+BnnT0sLmST7e3EtxXjdtABFJPi38m9osctzdzx6Y=;
+ b=E/jA8tZ/GwlYC0kDZeKfYaJIjXgL8ah8PiXYCsiHJSsTYsnRoeFwyXJDJ9A5tkl2Jl8p
+ bVwvxoInuG5eFQIvfOsnEoFyQZAowekYsWVZt+knoMpi1wZsB59OicpDrG4nbdw+r9gp
+ 2nTmmqEjI54GAYDsefz4hkJoSRHcUX4Ch4lpdzpe/WV6y+vJ4hJ0rvbqPtT55ioCfhRx
+ 1OT/Ul9ZMLRAjE1iMxjzaNGrZEWXlaCtvM4ue2QwZywKVdJa9X8akrlbBqV0cVNtgYJy
+ 4q3GdoZYvxAXcAxloo7gKHfW0FeFcG5CrqeClzQmXg6Lgdcz3ouAVE7ak8M20ubTIhaE qg== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3n1k51wb2g-8
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 10:42:58 -0800
+Received: from twshared25383.14.frc2.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Wed, 11 Jan 2023 10:42:54 -0800
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id 1F7C4EBD9505; Wed, 11 Jan 2023 10:42:46 -0800 (PST)
+From:   Keith Busch <kbusch@meta.com>
+To:     <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <axboe@kernel.dk>, <io-uring@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH] caif: don't assume iov_iter type
+Date:   Wed, 11 Jan 2023 10:42:45 -0800
+Message-ID: <20230111184245.3784393-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-42927
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: XlQbCDVdsYRgIKElfeISLrAPU9vFsOEQ
+X-Proofpoint-GUID: XlQbCDVdsYRgIKElfeISLrAPU9vFsOEQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2023-01-11_08,2023-01-11_02,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+From: Keith Busch <kbusch@kernel.org>
 
-On Mon, 09 Jan 2023 14:46:02 +0000, Pavel Begunkov wrote:
-> For DEFER_TASKRUN rings replace CQ waitqueues with a custom implementation
-> based on the fact that only one task may be waiting for completions. Also,
-> improve deferred task running by removing one atomic in patch 11
-> 
-> Benchmarking QD1 with simulated tw arrival right after we start waiting:
-> 7.5 MIOPS -> 9.3 (+23%), where half of CPU cycles goes to syscall overhead.
-> 
-> [...]
+The details of the iov_iter types are appropriately abstracted, so
+there's no need to check for specific type fields. Just let the
+abstractions handle it.
 
-Applied, thanks!
+This is preparing for io_uring/net's io_send to utilize the more
+efficient ITER_UBUF.
 
-[01/11] io_uring: move submitter_task out of cold cacheline
-        commit: 8516c8b514839600b7e63090f2dce5b4d658fd68
-[02/11] io_uring: refactor io_wake_function
-        commit: 291f31bf963c0018a2b84a94388a0e7b535c3dae
-[03/11] io_uring: don't set TASK_RUNNING in local tw runner
-        commit: 5eb30c28823aed63946c9d2a222bf1158a3aecae
-[04/11] io_uring: mark io_run_local_work static
-        commit: 88d14c077c1a04555978c499acd12f5f55de51da
-[05/11] io_uring: move io_run_local_work_locked
-        commit: 78c37b460a63c866050d3e05d6d4bfddf654075e
-[06/11] io_uring: separate wq for ring polling
-        commit: 6b40f3c9a37b97e629a99a92d2c392d77ae20f60
-[07/11] io_uring: add lazy poll_wq activation
-        commit: e05f6f47bf8aed0e97d9ba1d52e2a10ea542609c
-[08/11] io_uring: wake up optimisations
-        commit: ef3ddc6ac629fc829ed6e08418e1c070332dde63
-[09/11] io_uring: waitqueue-less cq waiting
-        commit: 65ca9dd8ce5e3de42b100f0e7d2ae360e9b8d14e
-[10/11] io_uring: add io_req_local_work_add wake fast path
-        commit: 6cd16656e2ddc63ee7aae7c7f27edcab933a0e09
-[11/11] io_uring: optimise deferred tw execution
-        commit: 607947314b4c9f8c979f79c095da9156b41c82b8
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+---
+ net/caif/caif_socket.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Best regards,
--- 
-Jens Axboe
-
-
+diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
+index 748be72532485..1f2c1d7b90e23 100644
+--- a/net/caif/caif_socket.c
++++ b/net/caif/caif_socket.c
+@@ -533,10 +533,6 @@ static int caif_seqpkt_sendmsg(struct socket *sock, =
+struct msghdr *msg,
+ 	if (msg->msg_namelen)
+ 		goto err;
+=20
+-	ret =3D -EINVAL;
+-	if (unlikely(msg->msg_iter.nr_segs =3D=3D 0) ||
+-	    unlikely(msg->msg_iter.iov->iov_base =3D=3D NULL))
+-		goto err;
+ 	noblock =3D msg->msg_flags & MSG_DONTWAIT;
+=20
+ 	timeo =3D sock_sndtimeo(sk, noblock);
+--=20
+2.30.2
 

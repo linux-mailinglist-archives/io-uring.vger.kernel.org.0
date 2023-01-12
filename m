@@ -2,866 +2,191 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 839CF66785E
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 15:58:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6F466795E
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 16:34:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240082AbjALO6l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Jan 2023 09:58:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
+        id S240412AbjALPel (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Jan 2023 10:34:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232564AbjALO6F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 09:58:05 -0500
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42815631BF;
-        Thu, 12 Jan 2023 06:44:34 -0800 (PST)
-Received: by mail-ej1-f50.google.com with SMTP id qk9so45323314ejc.3;
-        Thu, 12 Jan 2023 06:44:34 -0800 (PST)
+        with ESMTP id S232135AbjALPeJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 10:34:09 -0500
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDBA5F91B
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 07:24:58 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id x8-20020a056e021ca800b0030c075dc55dso13531846ill.7
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 07:24:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hgo5uu2APij7YO5lNSrXX/Q5O7LXn9huyjdHNDdm8QU=;
-        b=aWE8xL7QuitK/cbs8WUL2vWtMY/Hp6A5LkjpZF1J+2/e8KZ7mqXFKeP04BAmxuzBi8
-         TOFyYAwqvSbFqNREtY5X1XcbORlHnYu9A/POy4tWVWPIsvm6R3tnknfYHXr3nOuV2f+5
-         rfh+68P4YCdVOVxXDOQeAu09qz622bE1s0GL/8M6KpYDHf8R4/6ySca/zaSIxgPfyLqR
-         RT4o7rUZdJ+rzJAj2ELGyNqx39i1H6AGC0FlvK1s3r+agm8OwcTdK57iYxdJwCiGsY/U
-         uvZ/CALSshY2eZr8RTzb7vcU144owuqLpxZc4TcxxLBzAXvxS4I36EZxZJaaPwxTAAI7
-         CwhQ==
-X-Gm-Message-State: AFqh2koZG4fsnqVjjkSSO8L72GTW+y8rLXZiSvkDMz387RcxXFC6dubF
-        1VNAd2zAiJrVAQz5RVFYqXY=
-X-Google-Smtp-Source: AMrXdXuIMDUmIL2kJ2PAsjcDg4B/JMxpTDE0Q6BQbPx+qFejx6d2PKOZBX02d4xj9hoJV+UBFRdynw==
-X-Received: by 2002:a17:907:c78e:b0:7c1:23f7:623a with SMTP id tz14-20020a170907c78e00b007c123f7623amr63912823ejc.66.1673534672621;
-        Thu, 12 Jan 2023 06:44:32 -0800 (PST)
-Received: from localhost (fwdproxy-cln-022.fbsv.net. [2a03:2880:31ff:16::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 17-20020a170906329100b007c0bb571da5sm7416961ejw.41.2023.01.12.06.44.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 06:44:32 -0800 (PST)
-From:   Breno Leitao <leitao@debian.org>
-To:     asml.silence@gmail.com, dylany@meta.com, axboe@kernel.dk,
-        io-uring@vger.kernel.org
-Cc:     leitao@debian.org, leit@fb.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: Split io_issue_def struct
-Date:   Thu, 12 Jan 2023 06:44:11 -0800
-Message-Id: <20230112144411.2624698-2-leitao@debian.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230112144411.2624698-1-leitao@debian.org>
-References: <20230112144411.2624698-1-leitao@debian.org>
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9Zf/miwcHLHdjuwhn1tof/VbQJRtjvI28zo155yc28=;
+        b=M6sOKqvj8PYloyOUjMxxr/1tQhzY9JjxjJf/09AM9spb3EmVd7LaQpplVhHftF9c5D
+         vMr8rdxdRk2Wyhq0cDX49tQbU47OKlfs+N6dkUyR8FR7DktH5TpYqeXrC1qBDqZjC/ih
+         t+kfGmljuQvlToyoEzLr0VcXjL4+PqpIMxhyE9tqSUpZpaZWtRR5+dNFB28rgtPwYiLM
+         CnZlfcEWSz1SiQjUcO+vfxHDfqLJp7sVyu6zzz/7ja8ca5V9kjlB7FjOGZ3W8C58tA2x
+         4Vmf/9SciiM/3rjQ4Zo4MtlslkXnXxmwlQOTJzARAZ/PZ5DoIH4UMLxjOYq5nsO1AH+l
+         5Ujg==
+X-Gm-Message-State: AFqh2kosmuS85uqHPyow5Cy912Ryo8fYHLxycH8qRltqmr7nmcqF+zqd
+        99q1V1hW4/R6hyx8HHd+3oMNX/O/RcFe1zYtaqAh0LftpOhd
+X-Google-Smtp-Source: AMrXdXvZIBuEaFR7oann2faAz8VUASMdahw9GjGzkbCCFishkCIGtnavZ9GmV+2JY+aVXtUysGrNK03D+VVUoSsaEoF36B95mHki
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Received: by 2002:a6b:cd45:0:b0:6e2:ca58:69c with SMTP id
+ d66-20020a6bcd45000000b006e2ca58069cmr6772959iog.42.1673537083294; Thu, 12
+ Jan 2023 07:24:43 -0800 (PST)
+Date:   Thu, 12 Jan 2023 07:24:43 -0800
+In-Reply-To: <000000000000cf0f4905f20e504c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005e4ea205f212b7ac@google.com>
+Subject: Re: [syzbot] KASAN: use-after-free Read in io_fallback_req_func
+From:   syzbot <syzbot+bc022c162e3b001bf607@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This patch removes some "cold" fields from `struct io_issue_def`.
+syzbot has found a reproducer for the following issue on:
 
-The plan is to keep only highly used fields into `struct io_issue_def`, so,
-it may be hot in the cache. The hot fields are basically all the bitfields
-and the callback functions for .issue and .prep.
+HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=176167ba480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc022c162e3b001bf607
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d58fbe480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151b0316480000
 
-The other less frequently used fields are now located in a secondary and
-cold struct, called `io_cold_def`.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8111a570d6cb/disk-0a093b28.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ecc135b7fc9a/vmlinux-0a093b28.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ca8d73b446ea/bzImage-0a093b28.xz
 
-This is the size for the structs:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bc022c162e3b001bf607@syzkaller.appspotmail.com
 
-Before: io_issue_def = 56 bytes
-After: io_issue_def = 24 bytes; io_cold_def = 40 bytes
+==================================================================
+BUG: KASAN: use-after-free in io_fallback_req_func+0xc7/0x204 io_uring/io_uring.c:251
+Read of size 8 at addr ffff8880793aa948 by task kworker/0:3/4401
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- io_uring/io_uring.c |  15 +-
- io_uring/opdef.c    | 327 ++++++++++++++++++++++++++++++--------------
- io_uring/opdef.h    |   9 +-
- io_uring/rw.c       |   2 +-
- 4 files changed, 238 insertions(+), 115 deletions(-)
+CPU: 0 PID: 4401 Comm: kworker/0:3 Not tainted 6.2.0-rc3-next-20230112-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Workqueue: events io_fallback_req_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd1/0x138 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:306 [inline]
+ print_report+0x15e/0x45d mm/kasan/report.c:417
+ kasan_report+0xc0/0xf0 mm/kasan/report.c:517
+ io_fallback_req_func+0xc7/0x204 io_uring/io_uring.c:251
+ process_one_work+0x9bf/0x1750 kernel/workqueue.c:2293
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2440
+ kthread+0x2e8/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index ac7868ec9be2..0be66b026a7f 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -980,7 +980,7 @@ void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- void io_req_defer_failed(struct io_kiocb *req, s32 res)
- 	__must_hold(&ctx->uring_lock)
- {
--	const struct io_issue_def *def = &io_issue_defs[req->opcode];
-+	const struct io_cold_def *def = &io_cold_defs[req->opcode];
- 
- 	lockdep_assert_held(&req->ctx->uring_lock);
- 
-@@ -1708,8 +1708,8 @@ unsigned int io_file_get_flags(struct file *file)
- 
- bool io_alloc_async_data(struct io_kiocb *req)
- {
--	WARN_ON_ONCE(!io_issue_defs[req->opcode].async_size);
--	req->async_data = kmalloc(io_issue_defs[req->opcode].async_size, GFP_KERNEL);
-+	WARN_ON_ONCE(!io_cold_defs[req->opcode].async_size);
-+	req->async_data = kmalloc(io_cold_defs[req->opcode].async_size, GFP_KERNEL);
- 	if (req->async_data) {
- 		req->flags |= REQ_F_ASYNC_DATA;
- 		return false;
-@@ -1719,20 +1719,21 @@ bool io_alloc_async_data(struct io_kiocb *req)
- 
- int io_req_prep_async(struct io_kiocb *req)
- {
-+	const struct io_cold_def *cdef = &io_cold_defs[req->opcode];
- 	const struct io_issue_def *def = &io_issue_defs[req->opcode];
- 
- 	/* assign early for deferred execution for non-fixed file */
- 	if (def->needs_file && !(req->flags & REQ_F_FIXED_FILE))
- 		req->file = io_file_get_normal(req, req->cqe.fd);
--	if (!def->prep_async)
-+	if (!cdef->prep_async)
- 		return 0;
- 	if (WARN_ON_ONCE(req_has_async_data(req)))
- 		return -EFAULT;
--	if (!io_issue_defs[req->opcode].manual_alloc) {
-+	if (!def->manual_alloc) {
- 		if (io_alloc_async_data(req))
- 			return -EAGAIN;
- 	}
--	return def->prep_async(req);
-+	return cdef->prep_async(req);
- }
- 
- static u32 io_get_sequence(struct io_kiocb *req)
-@@ -1801,7 +1802,7 @@ static void io_clean_op(struct io_kiocb *req)
- 	}
- 
- 	if (req->flags & REQ_F_NEED_CLEANUP) {
--		const struct io_issue_def *def = &io_issue_defs[req->opcode];
-+		const struct io_cold_def *def = &io_cold_defs[req->opcode];
- 
- 		if (def->cleanup)
- 			def->cleanup(req);
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 3c95e70a625e..5238ecd7af6a 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -50,7 +50,6 @@ const struct io_issue_def io_issue_defs[] = {
- 	[IORING_OP_NOP] = {
- 		.audit_skip		= 1,
- 		.iopoll			= 1,
--		.name			= "NOP",
- 		.prep			= io_nop_prep,
- 		.issue			= io_nop,
- 	},
-@@ -64,13 +63,8 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= sizeof(struct io_async_rw),
--		.name			= "READV",
- 		.prep			= io_prep_rw,
- 		.issue			= io_read,
--		.prep_async		= io_readv_prep_async,
--		.cleanup		= io_readv_writev_cleanup,
--		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_WRITEV] = {
- 		.needs_file		= 1,
-@@ -82,18 +76,12 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= sizeof(struct io_async_rw),
--		.name			= "WRITEV",
- 		.prep			= io_prep_rw,
- 		.issue			= io_write,
--		.prep_async		= io_writev_prep_async,
--		.cleanup		= io_readv_writev_cleanup,
--		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_FSYNC] = {
- 		.needs_file		= 1,
- 		.audit_skip		= 1,
--		.name			= "FSYNC",
- 		.prep			= io_fsync_prep,
- 		.issue			= io_fsync,
- 	},
-@@ -106,11 +94,8 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= sizeof(struct io_async_rw),
--		.name			= "READ_FIXED",
- 		.prep			= io_prep_rw,
- 		.issue			= io_read,
--		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_WRITE_FIXED] = {
- 		.needs_file		= 1,
-@@ -122,30 +107,24 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= sizeof(struct io_async_rw),
--		.name			= "WRITE_FIXED",
- 		.prep			= io_prep_rw,
- 		.issue			= io_write,
--		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_POLL_ADD] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.audit_skip		= 1,
--		.name			= "POLL_ADD",
- 		.prep			= io_poll_add_prep,
- 		.issue			= io_poll_add,
- 	},
- 	[IORING_OP_POLL_REMOVE] = {
- 		.audit_skip		= 1,
--		.name			= "POLL_REMOVE",
- 		.prep			= io_poll_remove_prep,
- 		.issue			= io_poll_remove,
- 	},
- 	[IORING_OP_SYNC_FILE_RANGE] = {
- 		.needs_file		= 1,
- 		.audit_skip		= 1,
--		.name			= "SYNC_FILE_RANGE",
- 		.prep			= io_sfr_prep,
- 		.issue			= io_sync_file_range,
- 	},
-@@ -155,14 +134,9 @@ const struct io_issue_def io_issue_defs[] = {
- 		.pollout		= 1,
- 		.ioprio			= 1,
- 		.manual_alloc		= 1,
--		.name			= "SENDMSG",
- #if defined(CONFIG_NET)
--		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep			= io_sendmsg_prep,
- 		.issue			= io_sendmsg,
--		.prep_async		= io_sendmsg_prep_async,
--		.cleanup		= io_sendmsg_recvmsg_cleanup,
--		.fail			= io_sendrecv_fail,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
-@@ -174,29 +148,21 @@ const struct io_issue_def io_issue_defs[] = {
- 		.buffer_select		= 1,
- 		.ioprio			= 1,
- 		.manual_alloc		= 1,
--		.name			= "RECVMSG",
- #if defined(CONFIG_NET)
--		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep			= io_recvmsg_prep,
- 		.issue			= io_recvmsg,
--		.prep_async		= io_recvmsg_prep_async,
--		.cleanup		= io_sendmsg_recvmsg_cleanup,
--		.fail			= io_sendrecv_fail,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- 	[IORING_OP_TIMEOUT] = {
- 		.audit_skip		= 1,
--		.async_size		= sizeof(struct io_timeout_data),
--		.name			= "TIMEOUT",
- 		.prep			= io_timeout_prep,
- 		.issue			= io_timeout,
- 	},
- 	[IORING_OP_TIMEOUT_REMOVE] = {
- 		/* used by timeout updates' prep() */
- 		.audit_skip		= 1,
--		.name			= "TIMEOUT_REMOVE",
- 		.prep			= io_timeout_remove_prep,
- 		.issue			= io_timeout_remove,
- 	},
-@@ -206,7 +172,6 @@ const struct io_issue_def io_issue_defs[] = {
- 		.pollin			= 1,
- 		.poll_exclusive		= 1,
- 		.ioprio			= 1,	/* used for flags */
--		.name			= "ACCEPT",
- #if defined(CONFIG_NET)
- 		.prep			= io_accept_prep,
- 		.issue			= io_accept,
-@@ -216,14 +181,11 @@ const struct io_issue_def io_issue_defs[] = {
- 	},
- 	[IORING_OP_ASYNC_CANCEL] = {
- 		.audit_skip		= 1,
--		.name			= "ASYNC_CANCEL",
- 		.prep			= io_async_cancel_prep,
- 		.issue			= io_async_cancel,
- 	},
- 	[IORING_OP_LINK_TIMEOUT] = {
- 		.audit_skip		= 1,
--		.async_size		= sizeof(struct io_timeout_data),
--		.name			= "LINK_TIMEOUT",
- 		.prep			= io_link_timeout_prep,
- 		.issue			= io_no_issue,
- 	},
-@@ -231,46 +193,36 @@ const struct io_issue_def io_issue_defs[] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
--		.name			= "CONNECT",
- #if defined(CONFIG_NET)
--		.async_size		= sizeof(struct io_async_connect),
- 		.prep			= io_connect_prep,
- 		.issue			= io_connect,
--		.prep_async		= io_connect_prep_async,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- 	[IORING_OP_FALLOCATE] = {
- 		.needs_file		= 1,
--		.name			= "FALLOCATE",
- 		.prep			= io_fallocate_prep,
- 		.issue			= io_fallocate,
- 	},
- 	[IORING_OP_OPENAT] = {
--		.name			= "OPENAT",
- 		.prep			= io_openat_prep,
- 		.issue			= io_openat,
--		.cleanup		= io_open_cleanup,
- 	},
- 	[IORING_OP_CLOSE] = {
--		.name			= "CLOSE",
- 		.prep			= io_close_prep,
- 		.issue			= io_close,
- 	},
- 	[IORING_OP_FILES_UPDATE] = {
- 		.audit_skip		= 1,
- 		.iopoll			= 1,
--		.name			= "FILES_UPDATE",
- 		.prep			= io_files_update_prep,
- 		.issue			= io_files_update,
- 	},
- 	[IORING_OP_STATX] = {
- 		.audit_skip		= 1,
--		.name			= "STATX",
- 		.prep			= io_statx_prep,
- 		.issue			= io_statx,
--		.cleanup		= io_statx_cleanup,
- 	},
- 	[IORING_OP_READ] = {
- 		.needs_file		= 1,
-@@ -282,11 +234,8 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= sizeof(struct io_async_rw),
--		.name			= "READ",
- 		.prep			= io_prep_rw,
- 		.issue			= io_read,
--		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_WRITE] = {
- 		.needs_file		= 1,
-@@ -298,21 +247,16 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= sizeof(struct io_async_rw),
--		.name			= "WRITE",
- 		.prep			= io_prep_rw,
- 		.issue			= io_write,
--		.fail			= io_rw_fail,
- 	},
- 	[IORING_OP_FADVISE] = {
- 		.needs_file		= 1,
- 		.audit_skip		= 1,
--		.name			= "FADVISE",
- 		.prep			= io_fadvise_prep,
- 		.issue			= io_fadvise,
- 	},
- 	[IORING_OP_MADVISE] = {
--		.name			= "MADVISE",
- 		.prep			= io_madvise_prep,
- 		.issue			= io_madvise,
- 	},
-@@ -323,13 +267,9 @@ const struct io_issue_def io_issue_defs[] = {
- 		.audit_skip		= 1,
- 		.ioprio			= 1,
- 		.manual_alloc		= 1,
--		.name			= "SEND",
- #if defined(CONFIG_NET)
--		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep			= io_sendmsg_prep,
- 		.issue			= io_send,
--		.fail			= io_sendrecv_fail,
--		.prep_async		= io_send_prep_async,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
-@@ -341,25 +281,20 @@ const struct io_issue_def io_issue_defs[] = {
- 		.buffer_select		= 1,
- 		.audit_skip		= 1,
- 		.ioprio			= 1,
--		.name			= "RECV",
- #if defined(CONFIG_NET)
- 		.prep			= io_recvmsg_prep,
- 		.issue			= io_recv,
--		.fail			= io_sendrecv_fail,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- 	[IORING_OP_OPENAT2] = {
--		.name			= "OPENAT2",
- 		.prep			= io_openat2_prep,
- 		.issue			= io_openat2,
--		.cleanup		= io_open_cleanup,
- 	},
- 	[IORING_OP_EPOLL_CTL] = {
- 		.unbound_nonreg_file	= 1,
- 		.audit_skip		= 1,
--		.name			= "EPOLL",
- #if defined(CONFIG_EPOLL)
- 		.prep			= io_epoll_ctl_prep,
- 		.issue			= io_epoll_ctl,
-@@ -372,21 +307,18 @@ const struct io_issue_def io_issue_defs[] = {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.audit_skip		= 1,
--		.name			= "SPLICE",
- 		.prep			= io_splice_prep,
- 		.issue			= io_splice,
- 	},
- 	[IORING_OP_PROVIDE_BUFFERS] = {
- 		.audit_skip		= 1,
- 		.iopoll			= 1,
--		.name			= "PROVIDE_BUFFERS",
- 		.prep			= io_provide_buffers_prep,
- 		.issue			= io_provide_buffers,
- 	},
- 	[IORING_OP_REMOVE_BUFFERS] = {
- 		.audit_skip		= 1,
- 		.iopoll			= 1,
--		.name			= "REMOVE_BUFFERS",
- 		.prep			= io_remove_buffers_prep,
- 		.issue			= io_remove_buffers,
- 	},
-@@ -395,13 +327,11 @@ const struct io_issue_def io_issue_defs[] = {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.audit_skip		= 1,
--		.name			= "TEE",
- 		.prep			= io_tee_prep,
- 		.issue			= io_tee,
- 	},
- 	[IORING_OP_SHUTDOWN] = {
- 		.needs_file		= 1,
--		.name			= "SHUTDOWN",
- #if defined(CONFIG_NET)
- 		.prep			= io_shutdown_prep,
- 		.issue			= io_shutdown,
-@@ -410,72 +340,51 @@ const struct io_issue_def io_issue_defs[] = {
- #endif
- 	},
- 	[IORING_OP_RENAMEAT] = {
--		.name			= "RENAMEAT",
- 		.prep			= io_renameat_prep,
- 		.issue			= io_renameat,
--		.cleanup		= io_renameat_cleanup,
- 	},
- 	[IORING_OP_UNLINKAT] = {
--		.name			= "UNLINKAT",
- 		.prep			= io_unlinkat_prep,
- 		.issue			= io_unlinkat,
--		.cleanup		= io_unlinkat_cleanup,
- 	},
- 	[IORING_OP_MKDIRAT] = {
--		.name			= "MKDIRAT",
- 		.prep			= io_mkdirat_prep,
- 		.issue			= io_mkdirat,
--		.cleanup		= io_mkdirat_cleanup,
- 	},
- 	[IORING_OP_SYMLINKAT] = {
--		.name			= "SYMLINKAT",
- 		.prep			= io_symlinkat_prep,
- 		.issue			= io_symlinkat,
--		.cleanup		= io_link_cleanup,
- 	},
- 	[IORING_OP_LINKAT] = {
--		.name			= "LINKAT",
- 		.prep			= io_linkat_prep,
- 		.issue			= io_linkat,
--		.cleanup		= io_link_cleanup,
- 	},
- 	[IORING_OP_MSG_RING] = {
- 		.needs_file		= 1,
- 		.iopoll			= 1,
--		.name			= "MSG_RING",
- 		.prep			= io_msg_ring_prep,
- 		.issue			= io_msg_ring,
--		.cleanup		= io_msg_ring_cleanup,
- 	},
- 	[IORING_OP_FSETXATTR] = {
- 		.needs_file = 1,
--		.name			= "FSETXATTR",
- 		.prep			= io_fsetxattr_prep,
- 		.issue			= io_fsetxattr,
--		.cleanup		= io_xattr_cleanup,
- 	},
- 	[IORING_OP_SETXATTR] = {
--		.name			= "SETXATTR",
- 		.prep			= io_setxattr_prep,
- 		.issue			= io_setxattr,
--		.cleanup		= io_xattr_cleanup,
- 	},
- 	[IORING_OP_FGETXATTR] = {
- 		.needs_file = 1,
--		.name			= "FGETXATTR",
- 		.prep			= io_fgetxattr_prep,
- 		.issue			= io_fgetxattr,
--		.cleanup		= io_xattr_cleanup,
- 	},
- 	[IORING_OP_GETXATTR] = {
--		.name			= "GETXATTR",
- 		.prep			= io_getxattr_prep,
- 		.issue			= io_getxattr,
--		.cleanup		= io_xattr_cleanup,
- 	},
- 	[IORING_OP_SOCKET] = {
- 		.audit_skip		= 1,
--		.name			= "SOCKET",
- #if defined(CONFIG_NET)
- 		.prep			= io_socket_prep,
- 		.issue			= io_socket,
-@@ -486,16 +395,12 @@ const struct io_issue_def io_issue_defs[] = {
- 	[IORING_OP_URING_CMD] = {
- 		.needs_file		= 1,
- 		.plug			= 1,
--		.name			= "URING_CMD",
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
--		.async_size		= uring_cmd_pdu_size(1),
- 		.prep			= io_uring_cmd_prep,
- 		.issue			= io_uring_cmd,
--		.prep_async		= io_uring_cmd_prep_async,
- 	},
- 	[IORING_OP_SEND_ZC] = {
--		.name			= "SEND_ZC",
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-@@ -503,32 +408,243 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.manual_alloc		= 1,
- #if defined(CONFIG_NET)
--		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep			= io_send_zc_prep,
- 		.issue			= io_send_zc,
--		.prep_async		= io_send_prep_async,
--		.cleanup		= io_send_zc_cleanup,
--		.fail			= io_sendrecv_fail,
- #else
- 		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- 	[IORING_OP_SENDMSG_ZC] = {
--		.name			= "SENDMSG_ZC",
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
- 		.ioprio			= 1,
- 		.manual_alloc		= 1,
- #if defined(CONFIG_NET)
--		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep			= io_send_zc_prep,
- 		.issue			= io_sendmsg_zc,
-+#else
-+		.prep			= io_eopnotsupp_prep,
-+#endif
-+	},
-+};
-+
-+
-+const struct io_cold_def io_cold_defs[] = {
-+	[IORING_OP_NOP] = {
-+		.name			= "NOP",
-+	},
-+	[IORING_OP_READV] = {
-+		.async_size		= sizeof(struct io_async_rw),
-+		.name			= "READV",
-+		.prep_async		= io_readv_prep_async,
-+		.cleanup		= io_readv_writev_cleanup,
-+		.fail			= io_rw_fail,
-+	},
-+	[IORING_OP_WRITEV] = {
-+		.async_size		= sizeof(struct io_async_rw),
-+		.name			= "WRITEV",
-+		.prep_async		= io_writev_prep_async,
-+		.cleanup		= io_readv_writev_cleanup,
-+		.fail			= io_rw_fail,
-+	},
-+	[IORING_OP_FSYNC] = {
-+		.name			= "FSYNC",
-+	},
-+	[IORING_OP_READ_FIXED] = {
-+		.async_size		= sizeof(struct io_async_rw),
-+		.name			= "READ_FIXED",
-+		.fail			= io_rw_fail,
-+	},
-+	[IORING_OP_WRITE_FIXED] = {
-+		.async_size		= sizeof(struct io_async_rw),
-+		.name			= "WRITE_FIXED",
-+		.fail			= io_rw_fail,
-+	},
-+	[IORING_OP_POLL_ADD] = {
-+		.name			= "POLL_ADD",
-+	},
-+	[IORING_OP_POLL_REMOVE] = {
-+		.name			= "POLL_REMOVE",
-+	},
-+	[IORING_OP_SYNC_FILE_RANGE] = {
-+		.name			= "SYNC_FILE_RANGE",
-+	},
-+	[IORING_OP_SENDMSG] = {
-+		.name			= "SENDMSG",
-+#if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_msghdr),
-+		.prep_async		= io_sendmsg_prep_async,
-+		.cleanup		= io_sendmsg_recvmsg_cleanup,
-+		.fail			= io_sendrecv_fail,
-+#endif
-+	},
-+	[IORING_OP_RECVMSG] = {
-+		.name			= "RECVMSG",
-+#if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_msghdr),
-+		.prep_async		= io_recvmsg_prep_async,
-+		.cleanup		= io_sendmsg_recvmsg_cleanup,
-+		.fail			= io_sendrecv_fail,
-+#endif
-+	},
-+	[IORING_OP_TIMEOUT] = {
-+		.async_size		= sizeof(struct io_timeout_data),
-+		.name			= "TIMEOUT",
-+	},
-+	[IORING_OP_TIMEOUT_REMOVE] = {
-+		.name			= "TIMEOUT_REMOVE",
-+	},
-+	[IORING_OP_ACCEPT] = {
-+		.name			= "ACCEPT",
-+	},
-+	[IORING_OP_ASYNC_CANCEL] = {
-+		.name			= "ASYNC_CANCEL",
-+	},
-+	[IORING_OP_LINK_TIMEOUT] = {
-+		.async_size		= sizeof(struct io_timeout_data),
-+		.name			= "LINK_TIMEOUT",
-+	},
-+	[IORING_OP_CONNECT] = {
-+		.name			= "CONNECT",
-+#if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_connect),
-+		.prep_async		= io_connect_prep_async,
-+#endif
-+	},
-+	[IORING_OP_FALLOCATE] = {
-+		.name			= "FALLOCATE",
-+	},
-+	[IORING_OP_OPENAT] = {
-+		.name			= "OPENAT",
-+		.cleanup		= io_open_cleanup,
-+	},
-+	[IORING_OP_CLOSE] = {
-+		.name			= "CLOSE",
-+	},
-+	[IORING_OP_FILES_UPDATE] = {
-+		.name			= "FILES_UPDATE",
-+	},
-+	[IORING_OP_STATX] = {
-+		.name			= "STATX",
-+		.cleanup		= io_statx_cleanup,
-+	},
-+	[IORING_OP_READ] = {
-+		.async_size		= sizeof(struct io_async_rw),
-+		.name			= "READ",
-+		.fail			= io_rw_fail,
-+	},
-+	[IORING_OP_WRITE] = {
-+		.async_size		= sizeof(struct io_async_rw),
-+		.name			= "WRITE",
-+		.fail			= io_rw_fail,
-+	},
-+	[IORING_OP_FADVISE] = {
-+		.name			= "FADVISE",
-+	},
-+	[IORING_OP_MADVISE] = {
-+		.name			= "MADVISE",
-+	},
-+	[IORING_OP_SEND] = {
-+		.name			= "SEND",
-+#if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_msghdr),
-+		.fail			= io_sendrecv_fail,
-+		.prep_async		= io_send_prep_async,
-+#endif
-+	},
-+	[IORING_OP_RECV] = {
-+		.name			= "RECV",
-+#if defined(CONFIG_NET)
-+		.fail			= io_sendrecv_fail,
-+#endif
-+	},
-+	[IORING_OP_OPENAT2] = {
-+		.name			= "OPENAT2",
-+		.cleanup		= io_open_cleanup,
-+	},
-+	[IORING_OP_EPOLL_CTL] = {
-+		.name			= "EPOLL",
-+	},
-+	[IORING_OP_SPLICE] = {
-+		.name			= "SPLICE",
-+	},
-+	[IORING_OP_PROVIDE_BUFFERS] = {
-+		.name			= "PROVIDE_BUFFERS",
-+	},
-+	[IORING_OP_REMOVE_BUFFERS] = {
-+		.name			= "REMOVE_BUFFERS",
-+	},
-+	[IORING_OP_TEE] = {
-+		.name			= "TEE",
-+	},
-+	[IORING_OP_SHUTDOWN] = {
-+		.name			= "SHUTDOWN",
-+	},
-+	[IORING_OP_RENAMEAT] = {
-+		.name			= "RENAMEAT",
-+		.cleanup		= io_renameat_cleanup,
-+	},
-+	[IORING_OP_UNLINKAT] = {
-+		.name			= "UNLINKAT",
-+		.cleanup		= io_unlinkat_cleanup,
-+	},
-+	[IORING_OP_MKDIRAT] = {
-+		.name			= "MKDIRAT",
-+		.cleanup		= io_mkdirat_cleanup,
-+	},
-+	[IORING_OP_SYMLINKAT] = {
-+		.name			= "SYMLINKAT",
-+		.cleanup		= io_link_cleanup,
-+	},
-+	[IORING_OP_LINKAT] = {
-+		.name			= "LINKAT",
-+		.cleanup		= io_link_cleanup,
-+	},
-+	[IORING_OP_MSG_RING] = {
-+		.name			= "MSG_RING",
-+		.cleanup		= io_msg_ring_cleanup,
-+	},
-+	[IORING_OP_FSETXATTR] = {
-+		.name			= "FSETXATTR",
-+		.cleanup		= io_xattr_cleanup,
-+	},
-+	[IORING_OP_SETXATTR] = {
-+		.name			= "SETXATTR",
-+		.cleanup		= io_xattr_cleanup,
-+	},
-+	[IORING_OP_FGETXATTR] = {
-+		.name			= "FGETXATTR",
-+		.cleanup		= io_xattr_cleanup,
-+	},
-+	[IORING_OP_GETXATTR] = {
-+		.name			= "GETXATTR",
-+		.cleanup		= io_xattr_cleanup,
-+	},
-+	[IORING_OP_SOCKET] = {
-+		.name			= "SOCKET",
-+	},
-+	[IORING_OP_URING_CMD] = {
-+		.name			= "URING_CMD",
-+		.async_size		= uring_cmd_pdu_size(1),
-+		.prep_async		= io_uring_cmd_prep_async,
-+	},
-+	[IORING_OP_SEND_ZC] = {
-+		.name			= "SEND_ZC",
-+#if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_msghdr),
-+		.prep_async		= io_send_prep_async,
-+		.cleanup		= io_send_zc_cleanup,
-+		.fail			= io_sendrecv_fail,
-+#endif
-+	},
-+	[IORING_OP_SENDMSG_ZC] = {
-+		.name			= "SENDMSG_ZC",
-+#if defined(CONFIG_NET)
-+		.async_size		= sizeof(struct io_async_msghdr),
- 		.prep_async		= io_sendmsg_prep_async,
- 		.cleanup		= io_send_zc_cleanup,
- 		.fail			= io_sendrecv_fail,
--#else
--		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- };
-@@ -536,7 +652,7 @@ const struct io_issue_def io_issue_defs[] = {
- const char *io_uring_get_opcode(u8 opcode)
- {
- 	if (opcode < IORING_OP_LAST)
--		return io_issue_defs[opcode].name;
-+		return io_cold_defs[opcode].name;
- 	return "INVALID";
- }
- 
-@@ -544,12 +660,13 @@ void __init io_uring_optable_init(void)
- {
- 	int i;
- 
-+	BUILD_BUG_ON(ARRAY_SIZE(io_cold_defs) != IORING_OP_LAST);
- 	BUILD_BUG_ON(ARRAY_SIZE(io_issue_defs) != IORING_OP_LAST);
- 
- 	for (i = 0; i < ARRAY_SIZE(io_issue_defs); i++) {
- 		BUG_ON(!io_issue_defs[i].prep);
- 		if (io_issue_defs[i].prep != io_eopnotsupp_prep)
- 			BUG_ON(!io_issue_defs[i].issue);
--		WARN_ON_ONCE(!io_issue_defs[i].name);
-+		WARN_ON_ONCE(!io_cold_defs[i].name);
- 	}
- }
-diff --git a/io_uring/opdef.h b/io_uring/opdef.h
-index d718e2ab1ff7..c22c8696e749 100644
---- a/io_uring/opdef.h
-+++ b/io_uring/opdef.h
-@@ -29,19 +29,24 @@ struct io_issue_def {
- 	unsigned		iopoll_queue : 1;
- 	/* opcode specific path will handle ->async_data allocation if needed */
- 	unsigned		manual_alloc : 1;
-+
-+	int (*issue)(struct io_kiocb *, unsigned int);
-+	int (*prep)(struct io_kiocb *, const struct io_uring_sqe *);
-+};
-+
-+struct io_cold_def {
- 	/* size of async data needed, if any */
- 	unsigned short		async_size;
- 
- 	const char		*name;
- 
--	int (*prep)(struct io_kiocb *, const struct io_uring_sqe *);
--	int (*issue)(struct io_kiocb *, unsigned int);
- 	int (*prep_async)(struct io_kiocb *);
- 	void (*cleanup)(struct io_kiocb *);
- 	void (*fail)(struct io_kiocb *);
- };
- 
- extern const struct io_issue_def io_issue_defs[];
-+extern const struct io_cold_def io_cold_defs[];
- 
- void io_uring_optable_init(void);
- #endif
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 54b44b9b736c..a8a2eb7ee27a 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -516,7 +516,7 @@ static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
- static int io_setup_async_rw(struct io_kiocb *req, const struct iovec *iovec,
- 			     struct io_rw_state *s, bool force)
- {
--	if (!force && !io_issue_defs[req->opcode].prep_async)
-+	if (!force && !io_cold_defs[req->opcode].prep_async)
- 		return 0;
- 	if (!req_has_async_data(req)) {
- 		struct io_async_rw *iorw;
--- 
-2.30.2
+Allocated by task 5077:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:325
+ kasan_slab_alloc include/linux/kasan.h:186 [inline]
+ slab_post_alloc_hook mm/slab.h:769 [inline]
+ kmem_cache_alloc_bulk+0x3aa/0x730 mm/slub.c:4033
+ __io_alloc_req_refill+0xcc/0x40b io_uring/io_uring.c:1062
+ io_alloc_req_refill io_uring/io_uring.h:348 [inline]
+ io_submit_sqes.cold+0x7c/0xc2 io_uring/io_uring.c:2407
+ __do_sys_io_uring_enter+0x9e4/0x2c10 io_uring/io_uring.c:3429
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 31:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ kasan_save_free_info+0x2e/0x40 mm/kasan/generic.c:518
+ ____kasan_slab_free mm/kasan/common.c:236 [inline]
+ ____kasan_slab_free+0x160/0x1c0 mm/kasan/common.c:200
+ kasan_slab_free include/linux/kasan.h:162 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1807
+ slab_free mm/slub.c:3787 [inline]
+ kmem_cache_free+0xec/0x4e0 mm/slub.c:3809
+ io_req_caches_free+0x1a9/0x1e6 io_uring/io_uring.c:2737
+ io_ring_exit_work+0x2e7/0xc80 io_uring/io_uring.c:2967
+ process_one_work+0x9bf/0x1750 kernel/workqueue.c:2293
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2440
+ kthread+0x2e8/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+
+The buggy address belongs to the object at ffff8880793aa8c0
+ which belongs to the cache io_kiocb of size 216
+The buggy address is located 136 bytes inside of
+ 216-byte region [ffff8880793aa8c0, ffff8880793aa998)
+
+The buggy address belongs to the physical page:
+page:ffffea0001e4ea80 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x793aa
+flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000200 ffff88814610fc80 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 5077, tgid 5077 (syz-executor134), ts 60034717602, free_ts 59988620363
+ prep_new_page mm/page_alloc.c:2549 [inline]
+ get_page_from_freelist+0x11bb/0x2d50 mm/page_alloc.c:4324
+ __alloc_pages+0x1cb/0x5c0 mm/page_alloc.c:5590
+ alloc_pages+0x1aa/0x270 mm/mempolicy.c:2281
+ alloc_slab_page mm/slub.c:1851 [inline]
+ allocate_slab+0x25f/0x350 mm/slub.c:1998
+ new_slab mm/slub.c:2051 [inline]
+ ___slab_alloc+0xa91/0x1400 mm/slub.c:3193
+ __kmem_cache_alloc_bulk mm/slub.c:3951 [inline]
+ kmem_cache_alloc_bulk+0x23d/0x730 mm/slub.c:4026
+ __io_alloc_req_refill+0xcc/0x40b io_uring/io_uring.c:1062
+ io_alloc_req_refill io_uring/io_uring.h:348 [inline]
+ io_submit_sqes.cold+0x7c/0xc2 io_uring/io_uring.c:2407
+ __do_sys_io_uring_enter+0x9e4/0x2c10 io_uring/io_uring.c:3429
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1451 [inline]
+ free_pcp_prepare+0x4d0/0x910 mm/page_alloc.c:1501
+ free_unref_page_prepare mm/page_alloc.c:3387 [inline]
+ free_unref_page_list+0x176/0xcd0 mm/page_alloc.c:3528
+ release_pages+0xcb1/0x1330 mm/swap.c:1072
+ tlb_batch_pages_flush+0xa8/0x1a0 mm/mmu_gather.c:97
+ tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
+ tlb_flush_mmu mm/mmu_gather.c:299 [inline]
+ tlb_finish_mmu+0x14b/0x7e0 mm/mmu_gather.c:391
+ exit_mmap+0x202/0x7c0 mm/mmap.c:3100
+ __mmput+0x128/0x4c0 kernel/fork.c:1212
+ mmput+0x60/0x70 kernel/fork.c:1234
+ exit_mm kernel/exit.c:563 [inline]
+ do_exit+0x9ac/0x2a90 kernel/exit.c:854
+ do_group_exit+0xd4/0x2a0 kernel/exit.c:1012
+ get_signal+0x225f/0x24f0 kernel/signal.c:2859
+ arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
+ exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
+ exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
+ irqentry_exit_to_user_mode+0x9/0x40 kernel/entry/common.c:310
+ exc_page_fault+0xc0/0x170 arch/x86/mm/fault.c:1557
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+
+Memory state around the buggy address:
+ ffff8880793aa800: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+ ffff8880793aa880: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+>ffff8880793aa900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                              ^
+ ffff8880793aa980: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880793aaa00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 

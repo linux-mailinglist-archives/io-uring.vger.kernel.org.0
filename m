@@ -2,104 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D70B66668F5
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 03:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F173066699D
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 04:29:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231803AbjALCh7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Jan 2023 21:37:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45336 "EHLO
+        id S235771AbjALD3A (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 11 Jan 2023 22:29:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbjALCh6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Jan 2023 21:37:58 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F30ED40871
-        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 18:37:57 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id d3so18785219plr.10
-        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 18:37:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+xNIzBPTtTRx2kuPODk3rAgC3nOVwzXC63nsQ3n3Zy0=;
-        b=P8DZemtB5yYpewZqD7SRrdG6XBZ8xBDTHFzZ03Eo7eX5nu6iFg9rkJUc6OQ1aBw86v
-         78BYK1TxZLvQHCpCTpwGoxkWp7mDtt10JqqbPtC8IzhqQLYMzgd+ZAqS4+a5Y4EUZBzO
-         RnAGEjEiIKCSIHauu6Sc6IP7G8DSyLdfDmmLR/pw5vQAfQWZ25koGExzqDlhbIOCHikG
-         OQJgyl3Wgt3zJ9rjgF2fa5BsXnaDljrtKa4Wnyo2rTao3HeAtrXKxBWHbRyx4BWWmkYl
-         FOKLxv27/TopFzzCLp7kZwREmHOSsvzMfMw8K1/2Tfg8OOTnEpTNEzx/iKcHcjXU0mCT
-         1WEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xNIzBPTtTRx2kuPODk3rAgC3nOVwzXC63nsQ3n3Zy0=;
-        b=0XitQRyDcbxXAF4G8K2P/+15ks3fKKvopN57V4yf/eip1l5gWO3kxWP4/5IHdXhfEI
-         CffDOExdNglgZ+a2ohKFLrRF0nl+HxPpkOR1+BFkcoQLE4EbU4yPcvzJYPp6gIfjo351
-         w2l1vFz6prJvHgnrwKS99sFAzvCwUSDzh7sAzGXdikTw5Fn14EB6MA8d81kLL0e7i75g
-         HcMYoZoZUxvPmnlW2GKYmSFPQGaTDnvo/rUxuRdR2WDCV7olg8DWGY5tpSLKQHXWuKV5
-         0yxz16GfviHhanDynRCKN0/RPa6xj3gngHzdeZ/V6djqk+qhTuCSD4rfGoydUqZPAnAb
-         8cxA==
-X-Gm-Message-State: AFqh2krJtjYE8plrCQirAUdfM0eK3asTvxNX2UPsieADXWU3EHSd5wqV
-        q/0QhSxSbS2vusoNkKjwefDwGw==
-X-Google-Smtp-Source: AMrXdXsUpZ7y8YaSgT5qCgYTFjwHKNNGRlg6WzrgVx9MxHH54c947yP/WZpRfcpeclE7Cwzb9nOFdQ==
-X-Received: by 2002:a05:6a20:54a1:b0:a5:170:9acf with SMTP id i33-20020a056a2054a100b000a501709acfmr26441538pzk.3.1673491077430;
-        Wed, 11 Jan 2023 18:37:57 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t16-20020a170902b21000b0018996404dd5sm10900316plr.109.2023.01.11.18.37.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 18:37:56 -0800 (PST)
-Message-ID: <ce641595-afb7-e134-5721-ffb4730ea4aa@kernel.dk>
-Date:   Wed, 11 Jan 2023 19:37:55 -0700
+        with ESMTP id S230269AbjALD3A (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Jan 2023 22:29:00 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F7EF58C
+        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 19:28:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673494093;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZqATCBylmzIm5uA7MHR7B6YsmXFJ81vSn/K1fYPQxmI=;
+        b=Qu+Q6iJ8POUCiWBDskSRktFYthWxpZIVmnUep5z2DTghS7wqEMKhVnfd65K7QCGXi93HKs
+        gS89qcLg0a4PXcNt7TL0AoFJA4GFYBSoq6NNltNMcvsfA6AidPtFgWtYygkoRNeMyFgMiF
+        i8MjH8V8nEJbbdsf72ZA2KqqDglTdsU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-568-wAt01hg5MEuTSViogdhs9Q-1; Wed, 11 Jan 2023 22:28:09 -0500
+X-MC-Unique: wAt01hg5MEuTSViogdhs9Q-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6080485A588;
+        Thu, 12 Jan 2023 03:28:09 +0000 (UTC)
+Received: from T590 (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7989F492B00;
+        Thu, 12 Jan 2023 03:28:04 +0000 (UTC)
+Date:   Thu, 12 Jan 2023 11:27:59 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@gmail.com>,
+        ming.lei@redhat.com
+Subject: Re: IOSQE_IO_LINK vs. short send of SOCK_STREAM
+Message-ID: <Y79+P4EyU1O0bJPh@T590>
+References: <Y77VIB1s6LurAvBd@T590>
+ <b8011ec8-8d43-9b9b-4dcc-53b6cb272354@samba.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] io_uring: Add NULL checks for current->io_uring
-Content-Language: en-US
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        TOTE Robot <oslab@tsinghua.edu.cn>
-References: <20230111101907.600820-1-baijiaju1990@gmail.com>
- <63d8e95e-894c-4268-648e-35e504ea80b6@kernel.dk>
- <a2d622dc-a28e-acf7-2863-a2a0310c8697@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <a2d622dc-a28e-acf7-2863-a2a0310c8697@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8011ec8-8d43-9b9b-4dcc-53b6cb272354@samba.org>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/11/23 7:10 PM, Jia-Ju Bai wrote:
-> 
-> 
-> On 2023/1/11 22:49, Jens Axboe wrote:
->> On 1/11/23 3:19 AM, Jia-Ju Bai wrote:
->>> As described in a previous commit 998b30c3948e, current->io_uring could
->>> be NULL, and thus a NULL check is required for this variable.
->>>
->>> In the same way, other functions that access current->io_uring also
->>> require NULL checks of this variable.
->> This seems odd. Have you actually seen traces of this, or is it just
->> based on "guess it can be NULL sometimes, check it in all spots"?
->>
-> 
-> Thanks for the reply!
-> I checked the previous commit and inferred that there may be some problems.
-> I am not quite sure of this, and thus want to listen to your opinions :)
+Hi Stefan and Jens,
 
-I'd invite you to look over each of them separately, and see if that path
-could potentially lead to current->io_uring == NULL and thus being an
-issue. I think that'd be a useful exercise, and you never know that you
-might find :-)
+Thanks for the help.
 
--- 
-Jens Axboe
+BTW, the issue is observed when I write ublk-nbd:
 
+https://github.com/ming1/ubdsrv/commits/nbd
+
+and it isn't completed yet(multiple send sqe chains not serialized
+yet), the issue is triggered when writing big chunk data to ublk-nbd.
+
+On Wed, Jan 11, 2023 at 05:32:00PM +0100, Stefan Metzmacher wrote:
+> Hi Ming,
+> 
+> > Per my understanding, a short send on SOCK_STREAM should terminate the
+> > remainder of the SQE chain built by IOSQE_IO_LINK.
+> > 
+> > But from my observation, this point isn't true when using io_sendmsg or
+> > io_sendmsg_zc on TCP socket, and the other remainder of the chain still
+> > can be completed after one short send is found. MSG_WAITALL is off.
+> 
+> This is due to legacy reasons, you need pass MSG_WAITALL explicitly
+> in order to a retry or an error on a short write...
+> It should work for send, sendmsg, sendmsg_zc, recv and recvmsg.
+
+Turns out there is another application bug in which recv sqe may cut in the
+send sqe chain.
+
+After the issue is fixed, if MSG_WAITALL is set, short send can't be
+observed any more. But if MSG_WAITALL isn't set, short send can be
+observed and the send io chain still won't be terminated.
+
+So if MSG_WAITALL is set, will io_uring be responsible for retry in case
+of short send, and application needn't to take care of it?
+
+> 
+> For recv and recvmsg MSG_WAITALL also fails the link for MSG_TRUNC and MSG_CTRUNC.
+
+OK, thanks for the sharing of recvmsg MSG_WAITALL.
+
+
+Thanks,
+Ming
 

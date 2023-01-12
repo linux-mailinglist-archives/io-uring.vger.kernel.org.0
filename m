@@ -2,80 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01887667DA5
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 19:14:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A40667DA8
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 19:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240262AbjALSOd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+io-uring@lfdr.de>); Thu, 12 Jan 2023 13:14:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55736 "EHLO
+        id S240332AbjALSOt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Jan 2023 13:14:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240579AbjALSN7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 13:13:59 -0500
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20093DEB
-        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 09:43:35 -0800 (PST)
-Received: by mail-il1-f198.google.com with SMTP id y5-20020a056e021be500b0030bc4f23f0aso13946748ilv.3
-        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 09:43:35 -0800 (PST)
+        with ESMTP id S240600AbjALSOE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 13:14:04 -0500
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A28F66383
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 09:43:55 -0800 (PST)
+Received: by mail-il1-x12f.google.com with SMTP id m15so9716006ilq.2
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 09:43:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rzqVGx+RTtSS9GRNBgNTR4BsLR3daQR6tFe62fjHtgc=;
+        b=fV+5chRigo5Wu3gApESBg0WazdgspK7whWO/QDK4LRFQ59MkvDTe/NfHxiGHHjkuOj
+         JxVvvOnIGhDQDeTrIx39lyeigKHRoLjd2xJ6L4yZWAn+Ee9qVBHRdBVdoUApmsryf5Xk
+         GcOIJe5sD32IJ7RX3sVlWfei+j8Y0PnM7AoWGi9NUWA1a218GF9rrL9DtgOEqCwUDPcr
+         3guR2I1BiGesH5fXQ4pOz0HEzjQiW80X1ibK9ZY2idy1E2uYiFVRI+4ZCtYwLFX07L3z
+         x2IadbtK0+ZBUzWj+g8FlINDK5sOduTODM+WPm6WcP+FGb8WdY8RRIak+/HNEpfiwsi4
+         9msg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D6euKgqaz5CvSSFLuJHiJJPEhh3V6W0U8Nog8Z76wv4=;
-        b=NfAnns5ZnmvAfLR5Hnnb5UzH/+q0L+oe7kGuOA6Dw9uWCtaGEn+OFMONcIJp9u3vZc
-         xhwaZrnTkOnTK5C72DeaKOC52bGvYSs3/3bf64PnU88kxAD1za1qaXxR4TOJCzFHDTy/
-         jrmmfcXfuB9+TmvC1okjXFE4BitbrD1DGgqmeElYeEy9zKDgJDDlg+LP3G0OraDU4Pn1
-         CRBnBNuNBRzOnByJMtb1AlR8kAvwEzSCxKE/CmwS9Im0rqTv1TDkOMgj8g3nu5xR3+Fx
-         VCL/hfMB+oS2pvaNzKrAQdH0MrIMXHuHvgqqDy2cWnXQ++SWOIgm26sMRuEb0mL7u+hT
-         wf2A==
-X-Gm-Message-State: AFqh2kr8/npDOR72PqvyJCTlXz+IW6Ybh45ORzKGm9bH7xixGj2NmacM
-        qb9VlSq5/dT0kc63+g1gHzwY92pCpFU1nFw0F1rbXZMiDFgU
-X-Google-Smtp-Source: AMrXdXt6RzWE0Rl0t6eyTbbNXTZXuwLItT296DHWjPJukooX4Stc7BSVoGxsFFhp3pGnXT+5J2Cx/373k8qd81Qu76FPg84d3ac8
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rzqVGx+RTtSS9GRNBgNTR4BsLR3daQR6tFe62fjHtgc=;
+        b=Q7PTg7hpTTUupDIrtodVn2eBRiu9KQ3ohuIBU+nhZpQOoh/At1OdkKcI2fi1zCc2Pe
+         VqWFyMLPJ+mPJw2UBlyq2o92aSGKpotNGcxLNSS2JOgS8qJIqEfiOoXWErc2FAUd9T4c
+         giHaOXTw9wsW3/m9X/FeEgGbvZhYxx4IXTlCWL/olx+vH9NPftMOZv7TYLO+giw0hbeC
+         9dCcyqelJdiA8ftawILf1NcteIynDXYEKDiF73W2wzb+O9qbuDEozjqHyHbtjBNMleYj
+         2Z6IdTDSO/QjKwu6gxiyT72liIDie5mHIQNGQ4BvN6VxgI8qCXgq4WrVpypt5tcVUyj/
+         wrAw==
+X-Gm-Message-State: AFqh2kq98Gb25oBHk7uoOcy/BZj1f5ptyWNeQJjHFVJdFjEJppVmzBBD
+        ecsYVpvpJLiROs9CvK6KO9Pn/g==
+X-Google-Smtp-Source: AMrXdXtyeEtntZ/kY6MQX3mlMceExdQ7NKGz34dYswJWOBvc9ZlDGSABXHnMYCdYchYcbY0sJ3DStw==
+X-Received: by 2002:a92:cda4:0:b0:30d:95cd:c5f2 with SMTP id g4-20020a92cda4000000b0030d95cdc5f2mr4116009ild.0.1673545434927;
+        Thu, 12 Jan 2023 09:43:54 -0800 (PST)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id o20-20020a02a1d4000000b0038a87954f81sm5434977jah.31.2023.01.12.09.43.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jan 2023 09:43:54 -0800 (PST)
+Message-ID: <a6225d05-3e75-5a0c-1998-c34e7db6950c@kernel.dk>
+Date:   Thu, 12 Jan 2023 10:43:53 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a02:bb08:0:b0:39e:829f:b60b with SMTP id
- y8-20020a02bb08000000b0039e829fb60bmr2523546jan.83.1673545414457; Thu, 12 Jan
- 2023 09:43:34 -0800 (PST)
-Date:   Thu, 12 Jan 2023 09:43:34 -0800
-In-Reply-To: <3c64a290-5134-2030-a2da-9ec2b1efc0c5@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f1c14e05f214a763@google.com>
-Subject: Re: [syzbot] KASAN: use-after-free Read in io_req_caches_free
-From:   syzbot <syzbot+131f71f381afff1eaa35@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk
-Cc:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [syzbot] KASAN: use-after-free Read in __io_req_task_work_add
+Content-Language: en-US
+To:     syzbot <syzbot+01db4d8aed628ede44b1@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <000000000000044bca05f20e8e16@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <000000000000044bca05f20e8e16@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> On 1/12/23 3:26 AM, syzbot wrote:
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1605ee86480000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
->> dashboard link: https://syzkaller.appspot.com/bug?extid=131f71f381afff1eaa35
->> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
->> 
->> Unfortunately, I don't have any reproducer for this issue yet.
->
-> #syz test: git://git.kernel.dk/linux.git for-next
+On 1/12/23 3:26 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=111a5a86480000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=01db4d8aed628ede44b1
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-This crash does not have a reproducer. I cannot test it.
+#syz test: git://git.kernel.dk/linux.git for-next
 
->
-> -- 
-> Jens Axboe
->
->
+-- 
+Jens Axboe
+
+

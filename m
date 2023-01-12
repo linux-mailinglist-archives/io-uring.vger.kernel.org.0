@@ -2,44 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DDB5666F29
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 11:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A195666F3A
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 11:15:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237195AbjALKMA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Jan 2023 05:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
+        id S231432AbjALKPa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Jan 2023 05:15:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237511AbjALKLJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 05:11:09 -0500
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B14F0D
-        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:09:43 -0800 (PST)
-Received: by mail-io1-f71.google.com with SMTP id t15-20020a5d81cf000000b006f95aa9ba6eso10934198iol.16
-        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:09:43 -0800 (PST)
+        with ESMTP id S230505AbjALKN5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 05:13:57 -0500
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF2D38AFB
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:12:40 -0800 (PST)
+Received: by mail-il1-f198.google.com with SMTP id z8-20020a056e02088800b0030c247efc7dso12994353ils.15
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:12:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kL4dCH663Y91IgXPc1uA9oWX+JA++Dgb92FuGb43z24=;
-        b=RtFdYZwguZrwthwPepn1C6/g8Y7AL0l2oQ9OOVad4oytYAU8+0xDmF20GKD4UjZRcv
-         sGDPozGedRK9lm4rpzhlvbsKbZeT5/MPz4yosdiJWBa6SaNYDfi1+4bhHOpuKWswAg/g
-         pywi2/ww1kCt28fdGAagPDk/NnfW0R16oyzSwLz51aVwR83AyJUjJWsIrBwaBZXfaCAy
-         331OuAoC9oIyHD2ucuGNNSTw7cn/YETfNa8Xwc0JZ/8sCM3XwM6paVkgOecyU6AxVQId
-         fQ4i7BqeHWeYsOGotgmfUD/pTXm18mu+u9qNSi6dcAzK5SHhG5/y/aEuemR/82gtpr4k
-         K/9A==
-X-Gm-Message-State: AFqh2krmCNTs2CJp/GHNYoRRKwn/cpsDZ7K3h2+CMqjC7MPQ6CO+CYY1
-        7L/KGWPf3gBJ69Ic42F8R0PRjKToOpdHdGk1eEn32xcwpzUq
-X-Google-Smtp-Source: AMrXdXtreEYcVZ19eYluopR11N/j8aA4DoDBJxDwX/BolqT4nB30Bua9C/p6nZhe2J3tg1V4Eu3lzh50i4IZmozi/qBGmeZ8atoF
+        bh=i/8l/JXn3u4Tqj0MQAD1bTOojpDOufJmts7RTy277Rs=;
+        b=QcA27HQBK4yAXKi7k6NoARSPRpShen8mrnp6lCE1ci4KUj8vFW7EBLfBhLwk+6f9Ky
+         3DFQMyoqMAechhgjtMdBGexF1EB+rS/djzUB1ouiMiMDjL3ePOF6EM/c/MRpgemRHEBE
+         bQVoOxSp1OtOrlXX7+BH9RAntm6f7dHhpfpvay11VrzuwHRlvo950timIje0iVy+stxX
+         BE+WWPwMu94caN465ctAswhKhSz6a/M+IJZUdAESNQnKV1BZdAPOLWzM3uAb52spkduY
+         MmX4H+qj093tqbMMSInAsEtysceVXvyBHQmdvLwq9VMMdv7B5yX/Wo7r+xEz76bRcZaD
+         t/rg==
+X-Gm-Message-State: AFqh2ko5UxxDqloBnxqlo1muEqLjHsPtHUOOZzTDys49N5OzgAR41g9f
+        FKykeAPbUm8GqOCWPWyifc2J0bfyP2GTaKnix3S4cN9tO9gL
+X-Google-Smtp-Source: AMrXdXs9YeGC78qQw5ZLIcsXQ4UGaiYWVFyh6TntwEQ0G4nAWgCCCnfHqEO+gCMnDqWiXfKPeU39EjY2nJ3An46xyH6jkiSlKwvx
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4101:b0:39e:5302:38c0 with SMTP id
- ay1-20020a056638410100b0039e530238c0mr2890396jab.128.1673518182762; Thu, 12
- Jan 2023 02:09:42 -0800 (PST)
-Date:   Thu, 12 Jan 2023 02:09:42 -0800
+X-Received: by 2002:a02:63cc:0:b0:3a0:599f:27e2 with SMTP id
+ j195-20020a0263cc000000b003a0599f27e2mr342804jac.62.1673518360226; Thu, 12
+ Jan 2023 02:12:40 -0800 (PST)
+Date:   Thu, 12 Jan 2023 02:12:40 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cf0f4905f20e504c@google.com>
-Subject: [syzbot] KASAN: use-after-free Read in io_fallback_req_func
-From:   syzbot <syzbot+bc022c162e3b001bf607@syzkaller.appspotmail.com>
+Message-ID: <00000000000062f20e05f20e5b9e@google.com>
+Subject: [syzbot] KASAN: use-after-free Read in io_fallback_tw
+From:   syzbot <syzbot+ebcc33c1e81093c9224f@syzkaller.appspotmail.com>
 To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -58,9 +58,9 @@ syzbot found the following issue on:
 
 HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=103269ce480000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11419c5e480000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
-dashboard link: https://syzkaller.appspot.com/bug?extid=bc022c162e3b001bf607
+dashboard link: https://syzkaller.appspot.com/bug?extid=ebcc33c1e81093c9224f
 compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
 Unfortunately, I don't have any reproducer for this issue yet.
@@ -71,15 +71,14 @@ vmlinux: https://storage.googleapis.com/syzbot-assets/ecc135b7fc9a/vmlinux-0a093
 kernel image: https://storage.googleapis.com/syzbot-assets/ca8d73b446ea/bzImage-0a093b28.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bc022c162e3b001bf607@syzkaller.appspotmail.com
+Reported-by: syzbot+ebcc33c1e81093c9224f@syzkaller.appspotmail.com
 
 ==================================================================
-BUG: KASAN: use-after-free in io_fallback_req_func+0xc7/0x204 io_uring/io_uring.c:251
-Read of size 8 at addr ffff888070ac2e48 by task kworker/0:0/7
+BUG: KASAN: use-after-free in io_fallback_tw+0x6d/0x119 io_uring/io_uring.c:1249
+Read of size 8 at addr ffff88804ae3f088 by task syz-executor.0/9602
 
-CPU: 0 PID: 7 Comm: kworker/0:0 Not tainted 6.2.0-rc3-next-20230112-syzkaller #0
+CPU: 0 PID: 9602 Comm: syz-executor.0 Not tainted 6.2.0-rc3-next-20230112-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events io_fallback_req_func
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
@@ -87,14 +86,31 @@ Call Trace:
  print_address_description mm/kasan/report.c:306 [inline]
  print_report+0x15e/0x45d mm/kasan/report.c:417
  kasan_report+0xc0/0xf0 mm/kasan/report.c:517
- io_fallback_req_func+0xc7/0x204 io_uring/io_uring.c:251
- process_one_work+0x9bf/0x1750 kernel/workqueue.c:2293
- worker_thread+0x669/0x1090 kernel/workqueue.c:2440
- kthread+0x2e8/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ io_fallback_tw+0x6d/0x119 io_uring/io_uring.c:1249
+ tctx_task_work.cold+0xf/0x2c io_uring/io_uring.c:1219
+ task_work_run+0x16f/0x270 kernel/task_work.c:179
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xb17/0x2a90 kernel/exit.c:867
+ do_group_exit+0xd4/0x2a0 kernel/exit.c:1012
+ get_signal+0x225f/0x24f0 kernel/signal.c:2859
+ arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
+ exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
+ exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+ syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
+ do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd3d3a8c0c9
+Code: Unable to access opcode bytes at 0x7fd3d3a8c09f.
+RSP: 002b:00007fd3d47c8218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007fd3d3babf88 RCX: 00007fd3d3a8c0c9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fd3d3babf88
+RBP: 00007fd3d3babf80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fd3d3babf8c
+R13: 00007fffea21180f R14: 00007fd3d47c8300 R15: 0000000000022000
  </TASK>
 
-Allocated by task 7766:
+Allocated by task 9602:
  kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
  kasan_set_track+0x25/0x30 mm/kasan/common.c:52
  __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:325
@@ -109,7 +125,7 @@ Allocated by task 7766:
  do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Freed by task 5179:
+Freed by task 9123:
  kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
  kasan_set_track+0x25/0x30 mm/kasan/common.c:52
  kasan_save_free_info+0x2e/0x40 mm/kasan/generic.c:518
@@ -127,20 +143,20 @@ Freed by task 5179:
  kthread+0x2e8/0x3a0 kernel/kthread.c:376
  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
 
-The buggy address belongs to the object at ffff888070ac2dc0
+The buggy address belongs to the object at ffff88804ae3f000
  which belongs to the cache io_kiocb of size 216
 The buggy address is located 136 bytes inside of
- 216-byte region [ffff888070ac2dc0, ffff888070ac2e98)
+ 216-byte region [ffff88804ae3f000, ffff88804ae3f0d8)
 
 The buggy address belongs to the physical page:
-page:ffffea0001c2b080 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x70ac2
-memcg:ffff88802a81d181
+page:ffffea00012b8fc0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4ae3f
+memcg:ffff88807dd24601
 flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000200 ffff8881461d1780 dead000000000122 0000000000000000
-raw: 0000000000000000 00000000800c000c 00000001ffffffff ffff88802a81d181
+raw: 00fff00000000200 ffff88801c182b40 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000800c000c 00000001ffffffff ffff88807dd24601
 page dumped because: kasan: bad access detected
 page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x112cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY), pid 5547, tgid 5545 (syz-executor.4), ts 182131630120, free_ts 181898498774
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x112cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY), pid 8866, tgid 8865 (syz-executor.2), ts 589707217229, free_ts 589630456902
  prep_new_page mm/page_alloc.c:2549 [inline]
  get_page_from_freelist+0x11bb/0x2d50 mm/page_alloc.c:4324
  __alloc_pages+0x1cb/0x5c0 mm/page_alloc.c:5590
@@ -163,38 +179,32 @@ page last free stack trace:
  free_pages_prepare mm/page_alloc.c:1451 [inline]
  free_pcp_prepare+0x4d0/0x910 mm/page_alloc.c:1501
  free_unref_page_prepare mm/page_alloc.c:3387 [inline]
- free_unref_page+0x1d/0x490 mm/page_alloc.c:3482
- qlink_free mm/kasan/quarantine.c:168 [inline]
- qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
- kasan_quarantine_reduce+0x192/0x220 mm/kasan/quarantine.c:294
- __kasan_slab_alloc+0x63/0x90 mm/kasan/common.c:302
- kasan_slab_alloc include/linux/kasan.h:186 [inline]
- slab_post_alloc_hook mm/slab.h:769 [inline]
- slab_alloc_node mm/slub.c:3452 [inline]
- slab_alloc mm/slub.c:3460 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3467 [inline]
- kmem_cache_alloc+0x175/0x320 mm/slub.c:3476
- kmem_cache_zalloc include/linux/slab.h:710 [inline]
- taskstats_tgid_alloc kernel/taskstats.c:583 [inline]
- taskstats_exit+0x5f3/0xb80 kernel/taskstats.c:622
- do_exit+0x822/0x2a90 kernel/exit.c:852
+ free_unref_page_list+0x176/0xcd0 mm/page_alloc.c:3528
+ release_pages+0xcb1/0x1330 mm/swap.c:1072
+ tlb_batch_pages_flush+0xa8/0x1a0 mm/mmu_gather.c:97
+ tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
+ tlb_flush_mmu mm/mmu_gather.c:299 [inline]
+ tlb_finish_mmu+0x14b/0x7e0 mm/mmu_gather.c:391
+ exit_mmap+0x202/0x7c0 mm/mmap.c:3100
+ __mmput+0x128/0x4c0 kernel/fork.c:1212
+ mmput+0x60/0x70 kernel/fork.c:1234
+ exit_mm kernel/exit.c:563 [inline]
+ do_exit+0x9ac/0x2a90 kernel/exit.c:854
  do_group_exit+0xd4/0x2a0 kernel/exit.c:1012
- get_signal+0x225f/0x24f0 kernel/signal.c:2859
- arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
- exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
- exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
- do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
+ __do_sys_exit_group kernel/exit.c:1023 [inline]
+ __se_sys_exit_group kernel/exit.c:1021 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1021
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
 Memory state around the buggy address:
- ffff888070ac2d00: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
- ffff888070ac2d80: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
->ffff888070ac2e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                              ^
- ffff888070ac2e80: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888070ac2f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88804ae3ef80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88804ae3f000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88804ae3f080: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+                      ^
+ ffff88804ae3f100: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+ ffff88804ae3f180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 ==================================================================
 
 

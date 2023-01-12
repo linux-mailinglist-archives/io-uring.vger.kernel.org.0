@@ -2,116 +2,206 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D278666BAB
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 08:36:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DDB5666F29
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 11:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236097AbjALHgM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Jan 2023 02:36:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57840 "EHLO
+        id S237195AbjALKMA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Jan 2023 05:12:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235489AbjALHgL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 02:36:11 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156ACB89
-        for <io-uring@vger.kernel.org>; Wed, 11 Jan 2023 23:36:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=Z6vUM3uGQnC35OZDmMXhZ+yMxnfkJ5FsJw+rGd+S94M=; b=KH6Zl/3yGJ2hAksvBxOOcYermN
-        4vGO/iTf2N9SR3vBUzzOrickg7NtefRV68esi1zdLDpVxV6TGunbon+MEVK/6MK5+UV6Jj7GBCBof
-        fWgw0Q0NDrp2RHOfhJTuczpg8NvifePIV9Oxf6OUeMxxBBdakF06EjtU0Z4xxCP2ZuZ/iOHlPWtOh
-        Z0LQ8DAXvVsDJUIOlfrQeT0tRAzpSAY3pSVgNYmvBCVGuhDEH72knqB7P/W9lXkxzCOda6TBaKuoF
-        GZEQY0L0XXoFRHcH07QM3kr4gxE765vzdy8hdN+3ZWCHsMaeqdZSdLg3SvLBx6CLBZPHN7DmJTaRE
-        tLCFBQCcFOgWQpfyaO/T3ElBJi5ShEs6z/7Cr3M7R45mXHlPcKeasuKXBzRqIpN28O9xP5V6J5/Wz
-        yg1znBde42tHdALrUKwwp08Ah2ItpcLV1Ump1ufVPkUbBqokrNA2nYGHoPHEF0DkBrToYak4P+s+2
-        q+E1Bu6ggbzzVnq0VxTO3TY+;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1pFs84-007rd9-Aw; Thu, 12 Jan 2023 07:36:06 +0000
-Message-ID: <9eca9d42-e8ab-3e2b-888a-cd41722cce7a@samba.org>
-Date:   Thu, 12 Jan 2023 08:35:36 +0100
+        with ESMTP id S237511AbjALKLJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 05:11:09 -0500
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B14F0D
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:09:43 -0800 (PST)
+Received: by mail-io1-f71.google.com with SMTP id t15-20020a5d81cf000000b006f95aa9ba6eso10934198iol.16
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:09:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kL4dCH663Y91IgXPc1uA9oWX+JA++Dgb92FuGb43z24=;
+        b=RtFdYZwguZrwthwPepn1C6/g8Y7AL0l2oQ9OOVad4oytYAU8+0xDmF20GKD4UjZRcv
+         sGDPozGedRK9lm4rpzhlvbsKbZeT5/MPz4yosdiJWBa6SaNYDfi1+4bhHOpuKWswAg/g
+         pywi2/ww1kCt28fdGAagPDk/NnfW0R16oyzSwLz51aVwR83AyJUjJWsIrBwaBZXfaCAy
+         331OuAoC9oIyHD2ucuGNNSTw7cn/YETfNa8Xwc0JZ/8sCM3XwM6paVkgOecyU6AxVQId
+         fQ4i7BqeHWeYsOGotgmfUD/pTXm18mu+u9qNSi6dcAzK5SHhG5/y/aEuemR/82gtpr4k
+         K/9A==
+X-Gm-Message-State: AFqh2krmCNTs2CJp/GHNYoRRKwn/cpsDZ7K3h2+CMqjC7MPQ6CO+CYY1
+        7L/KGWPf3gBJ69Ic42F8R0PRjKToOpdHdGk1eEn32xcwpzUq
+X-Google-Smtp-Source: AMrXdXtreEYcVZ19eYluopR11N/j8aA4DoDBJxDwX/BolqT4nB30Bua9C/p6nZhe2J3tg1V4Eu3lzh50i4IZmozi/qBGmeZ8atoF
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: IOSQE_IO_LINK vs. short send of SOCK_STREAM
-To:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
-Cc:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        David Ahern <dsahern@gmail.com>
-References: <Y77VIB1s6LurAvBd@T590>
- <b8011ec8-8d43-9b9b-4dcc-53b6cb272354@samba.org> <Y79+P4EyU1O0bJPh@T590>
- <24a5eb97-92be-2441-13a2-9ebf098caf55@kernel.dk>
-Content-Language: en-US
-From:   Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <24a5eb97-92be-2441-13a2-9ebf098caf55@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:4101:b0:39e:5302:38c0 with SMTP id
+ ay1-20020a056638410100b0039e530238c0mr2890396jab.128.1673518182762; Thu, 12
+ Jan 2023 02:09:42 -0800 (PST)
+Date:   Thu, 12 Jan 2023 02:09:42 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cf0f4905f20e504c@google.com>
+Subject: [syzbot] KASAN: use-after-free Read in io_fallback_req_func
+From:   syzbot <syzbot+bc022c162e3b001bf607@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Am 12.01.23 um 04:40 schrieb Jens Axboe:
-> On 1/11/23 8:27?PM, Ming Lei wrote:
->> Hi Stefan and Jens,
->>
->> Thanks for the help.
->>
->> BTW, the issue is observed when I write ublk-nbd:
->>
->> https://github.com/ming1/ubdsrv/commits/nbd
->>
->> and it isn't completed yet(multiple send sqe chains not serialized
->> yet), the issue is triggered when writing big chunk data to ublk-nbd.
-> 
-> Gotcha
-> 
->> On Wed, Jan 11, 2023 at 05:32:00PM +0100, Stefan Metzmacher wrote:
->>> Hi Ming,
->>>
->>>> Per my understanding, a short send on SOCK_STREAM should terminate the
->>>> remainder of the SQE chain built by IOSQE_IO_LINK.
->>>>
->>>> But from my observation, this point isn't true when using io_sendmsg or
->>>> io_sendmsg_zc on TCP socket, and the other remainder of the chain still
->>>> can be completed after one short send is found. MSG_WAITALL is off.
->>>
->>> This is due to legacy reasons, you need pass MSG_WAITALL explicitly
->>> in order to a retry or an error on a short write...
->>> It should work for send, sendmsg, sendmsg_zc, recv and recvmsg.
->>
->> Turns out there is another application bug in which recv sqe may cut in the
->> send sqe chain.
->>
->> After the issue is fixed, if MSG_WAITALL is set, short send can't be
->> observed any more. But if MSG_WAITALL isn't set, short send can be
->> observed and the send io chain still won't be terminated.
-> 
-> Right, if MSG_WAITALL is set, then the whole thing will be written. If
-> we get a short send, it's retried appropriately. Unless an error occurs,
-> it should send the whole thing.
- >
->> So if MSG_WAITALL is set, will io_uring be responsible for retry in case
->> of short send, and application needn't to take care of it?
+Hello,
 
-With new kernels yes, but the application should be prepared to have retry
-logic in order to be compatible with older kernels.
+syzbot found the following issue on:
 
-It was added for recv* in 5.18 and send* in 5.19.
+HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=103269ce480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc022c162e3b001bf607
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-The MSG_WAITALL logic for failing links was added with 5.12.
-(It was backported to v5.10.28)
-As the 5.15 code was backported to v5.10.162, it's safe to assume
-it's available with IORING_FEAT_NATIVE_WORKERS.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> Correct. I did add a note about that in the liburing man pages after
-> your email earlier:
-> 
-> https://git.kernel.dk/cgit/liburing/commit/?id=8d056db7c0e58f45f7c474a6627f83270bb8f00e
-> 
-> since that wasn't documented as far as I can tell.
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8111a570d6cb/disk-0a093b28.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ecc135b7fc9a/vmlinux-0a093b28.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ca8d73b446ea/bzImage-0a093b28.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bc022c162e3b001bf607@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in io_fallback_req_func+0xc7/0x204 io_uring/io_uring.c:251
+Read of size 8 at addr ffff888070ac2e48 by task kworker/0:0/7
+
+CPU: 0 PID: 7 Comm: kworker/0:0 Not tainted 6.2.0-rc3-next-20230112-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Workqueue: events io_fallback_req_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd1/0x138 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:306 [inline]
+ print_report+0x15e/0x45d mm/kasan/report.c:417
+ kasan_report+0xc0/0xf0 mm/kasan/report.c:517
+ io_fallback_req_func+0xc7/0x204 io_uring/io_uring.c:251
+ process_one_work+0x9bf/0x1750 kernel/workqueue.c:2293
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2440
+ kthread+0x2e8/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+
+Allocated by task 7766:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:325
+ kasan_slab_alloc include/linux/kasan.h:186 [inline]
+ slab_post_alloc_hook mm/slab.h:769 [inline]
+ kmem_cache_alloc_bulk+0x3aa/0x730 mm/slub.c:4033
+ __io_alloc_req_refill+0xcc/0x40b io_uring/io_uring.c:1062
+ io_alloc_req_refill io_uring/io_uring.h:348 [inline]
+ io_submit_sqes.cold+0x7c/0xc2 io_uring/io_uring.c:2407
+ __do_sys_io_uring_enter+0x9e4/0x2c10 io_uring/io_uring.c:3429
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 5179:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ kasan_save_free_info+0x2e/0x40 mm/kasan/generic.c:518
+ ____kasan_slab_free mm/kasan/common.c:236 [inline]
+ ____kasan_slab_free+0x160/0x1c0 mm/kasan/common.c:200
+ kasan_slab_free include/linux/kasan.h:162 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1807
+ slab_free mm/slub.c:3787 [inline]
+ kmem_cache_free+0xec/0x4e0 mm/slub.c:3809
+ io_req_caches_free+0x1a9/0x1e6 io_uring/io_uring.c:2737
+ io_ring_exit_work+0x2e7/0xc80 io_uring/io_uring.c:2967
+ process_one_work+0x9bf/0x1750 kernel/workqueue.c:2293
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2440
+ kthread+0x2e8/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+
+The buggy address belongs to the object at ffff888070ac2dc0
+ which belongs to the cache io_kiocb of size 216
+The buggy address is located 136 bytes inside of
+ 216-byte region [ffff888070ac2dc0, ffff888070ac2e98)
+
+The buggy address belongs to the physical page:
+page:ffffea0001c2b080 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x70ac2
+memcg:ffff88802a81d181
+flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000200 ffff8881461d1780 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000800c000c 00000001ffffffff ffff88802a81d181
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x112cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY), pid 5547, tgid 5545 (syz-executor.4), ts 182131630120, free_ts 181898498774
+ prep_new_page mm/page_alloc.c:2549 [inline]
+ get_page_from_freelist+0x11bb/0x2d50 mm/page_alloc.c:4324
+ __alloc_pages+0x1cb/0x5c0 mm/page_alloc.c:5590
+ alloc_pages+0x1aa/0x270 mm/mempolicy.c:2281
+ alloc_slab_page mm/slub.c:1851 [inline]
+ allocate_slab+0x25f/0x350 mm/slub.c:1998
+ new_slab mm/slub.c:2051 [inline]
+ ___slab_alloc+0xa91/0x1400 mm/slub.c:3193
+ __kmem_cache_alloc_bulk mm/slub.c:3951 [inline]
+ kmem_cache_alloc_bulk+0x23d/0x730 mm/slub.c:4026
+ __io_alloc_req_refill+0xcc/0x40b io_uring/io_uring.c:1062
+ io_alloc_req_refill io_uring/io_uring.h:348 [inline]
+ io_submit_sqes.cold+0x7c/0xc2 io_uring/io_uring.c:2407
+ __do_sys_io_uring_enter+0x9e4/0x2c10 io_uring/io_uring.c:3429
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1451 [inline]
+ free_pcp_prepare+0x4d0/0x910 mm/page_alloc.c:1501
+ free_unref_page_prepare mm/page_alloc.c:3387 [inline]
+ free_unref_page+0x1d/0x490 mm/page_alloc.c:3482
+ qlink_free mm/kasan/quarantine.c:168 [inline]
+ qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
+ kasan_quarantine_reduce+0x192/0x220 mm/kasan/quarantine.c:294
+ __kasan_slab_alloc+0x63/0x90 mm/kasan/common.c:302
+ kasan_slab_alloc include/linux/kasan.h:186 [inline]
+ slab_post_alloc_hook mm/slab.h:769 [inline]
+ slab_alloc_node mm/slub.c:3452 [inline]
+ slab_alloc mm/slub.c:3460 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3467 [inline]
+ kmem_cache_alloc+0x175/0x320 mm/slub.c:3476
+ kmem_cache_zalloc include/linux/slab.h:710 [inline]
+ taskstats_tgid_alloc kernel/taskstats.c:583 [inline]
+ taskstats_exit+0x5f3/0xb80 kernel/taskstats.c:622
+ do_exit+0x822/0x2a90 kernel/exit.c:852
+ do_group_exit+0xd4/0x2a0 kernel/exit.c:1012
+ get_signal+0x225f/0x24f0 kernel/signal.c:2859
+ arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
+ exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
+ exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+ syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
+ do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Memory state around the buggy address:
+ ffff888070ac2d00: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+ ffff888070ac2d80: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+>ffff888070ac2e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                              ^
+ ffff888070ac2e80: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888070ac2f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.

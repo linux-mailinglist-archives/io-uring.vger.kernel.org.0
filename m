@@ -2,44 +2,44 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E96C666F8D
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 11:26:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47541666FA2
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 11:30:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbjALK0o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Jan 2023 05:26:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
+        id S232271AbjALKaP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Jan 2023 05:30:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235699AbjALKZv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 05:25:51 -0500
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD43B392C3
-        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:20:41 -0800 (PST)
-Received: by mail-io1-f72.google.com with SMTP id e15-20020a056602158f00b006e01d8fa493so10926891iow.3
-        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:20:41 -0800 (PST)
+        with ESMTP id S236265AbjALK30 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 05:29:26 -0500
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473CA2BC3
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:26:50 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id i14-20020a056e020d8e00b003034b93bd07so13056602ilj.14
+        for <io-uring@vger.kernel.org>; Thu, 12 Jan 2023 02:26:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uh0tJmz4qRfDpKq6RIuvzDNwWyz6o8vq7R6bAsps51U=;
-        b=xaESYcJnOZbtzc2oChl6yiTtgRB+KEvDZ66s2z1tR4T3RUQ/MWsBfnKHIEbuwDcPbq
-         bAtx71IT6uBh5cAdh6b3c9HawGkNS4xY/aHw3FR9m6NZrnmzTMD31wCiweKkwR3RhNXf
-         PX71IfSXb833FiWoASuhM3CPo3nJq6kokLkdihYa0IsYhLJh9P7dZB/RrtzY5EhjggaJ
-         ujNshOFR8BoyrL6LdEU255HiMuwDeT3+mQKPnv4NjbpH+Vhi7bY1jP67XBbCvAjYRpVX
-         knLohDx6mHYrw1xWqcgphiMMQ16HENSZzfffFVM1Y7MJuE+YBTFHdI9c5PphzU8vDduU
-         AVmA==
-X-Gm-Message-State: AFqh2kqJqTZdGv3os4olBnpBSB6J9dfwM3BQ9r7GWD2PH51nyWrsSwz1
-        7DektjyLLu+uHZEybYBEK8okiM8oQpm31rd2J9O86bXxYgBy
-X-Google-Smtp-Source: AMrXdXvTUQ5qCcIanITNVlK7Hqa2zVNf0yt9/qZzgSm0B/hNhub9Q/3DHcncYApgNh702VSEwFbHBuhwTAX/QPTT7IyKCOc8Kkoe
+        bh=ODnPLG0v7ynTFtyJV/A9n2rGTO7qvfzZOsZ9+IJTkSs=;
+        b=1sS85c4knvaUOdaFJglw4tE2R37ne/s3Lrd8u3KbAB19xiOkaue69S2f2DkvV6Pa+F
+         auY0HqPHGcA6nLbnN6ZdXvjnR+57ZqF+3B93Ui3rBn2wz03pEruUFPIIWemT/n2zadMQ
+         GbFTIMynwSJX09+zGUS+3rZ7LDRONx8EtULsU1nPCODifocT+kYQtqoN2DxhIufxGcBv
+         eyr0HHhC7ll6J9sZrN+lLlNSAJpqVjbjdGgIq8kn1feLF61fF8mbtJFIRBZ+g4vb7t2r
+         QIpQWPtTWQrkP81I+P7uKAA/tUuzqCyw2EOs7vAiUmJA7YMpB0sGD9yAgQBKhCh/wXXw
+         iS5Q==
+X-Gm-Message-State: AFqh2kr8V2+qfvIgiE5b0ffMTjI8hIjOqS1MN0MzhpnbfKDEqsY6QRSq
+        eX9EHrkOOXbGVFDPjWbpsgnBeqqXNDWWmrsgRQ0Dj8I8Mp+Q
+X-Google-Smtp-Source: AMrXdXsgRIgGweu5f7ioaEKoEOl5w0XGjNlw+fgdPXlSQS397Lq84hH9NACF+0BQ8hZHVuu8tNm9U+qmBkK9HwNDhYhTdp9RjGDT
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1b:b0:30d:97cf:858 with SMTP id
- i27-20020a056e021d1b00b0030d97cf0858mr2378148ila.233.1673518841056; Thu, 12
- Jan 2023 02:20:41 -0800 (PST)
-Date:   Thu, 12 Jan 2023 02:20:41 -0800
+X-Received: by 2002:a05:6e02:13cb:b0:30d:a755:aa63 with SMTP id
+ v11-20020a056e0213cb00b0030da755aa63mr2392915ilj.323.1673519209661; Thu, 12
+ Jan 2023 02:26:49 -0800 (PST)
+Date:   Thu, 12 Jan 2023 02:26:49 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000bd60905f20e785a@google.com>
-Subject: [syzbot] WARNING in io_cqring_event_overflow
-From:   syzbot <syzbot+6805087452d72929404e@syzkaller.appspotmail.com>
+Message-ID: <000000000000044bca05f20e8e16@google.com>
+Subject: [syzbot] KASAN: use-after-free Read in __io_req_task_work_add
+From:   syzbot <syzbot+01db4d8aed628ede44b1@syzkaller.appspotmail.com>
 To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -56,1380 +56,185 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    358a161a6a9e Merge branch 'for-next/fixes' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14247bbe480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2573056c6a11f00d
-dashboard link: https://syzkaller.appspot.com/bug?extid=6805087452d72929404e
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1045e181480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13769f1c480000
+HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=111a5a86480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
+dashboard link: https://syzkaller.appspot.com/bug?extid=01db4d8aed628ede44b1
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/99d14e0f4c19/disk-358a161a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/23275b612976/vmlinux-358a161a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ed79195fac61/Image-358a161a.gz.xz
+disk image: https://storage.googleapis.com/syzbot-assets/8111a570d6cb/disk-0a093b28.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ecc135b7fc9a/vmlinux-0a093b28.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ca8d73b446ea/bzImage-0a093b28.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6805087452d72929404e@syzkaller.appspotmail.com
+Reported-by: syzbot+01db4d8aed628ede44b1@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Not tainted 6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
+==================================================================
+BUG: KASAN: use-after-free in __io_req_task_work_add+0x6b4/0x760 io_uring/io_uring.c:1287
+Read of size 8 at addr ffff888027236018 by task syz-executor.3/11047
+
+CPU: 0 PID: 11047 Comm: syz-executor.3 Not tainted 6.2.0-rc3-next-20230112-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c3b3e578 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c4d2c000 x18: 00000000000000c0
-x17: ffff80000df48158 x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 620806
-hardirqs last  enabled at (620805): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (620805): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (620806): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (620784): [<ffff80000b2f555c>] neigh_managed_work+0xf8/0x118 net/core/neighbour.c:1626
-softirqs last disabled at (620780): [<ffff80000b2f5498>] neigh_managed_work+0x34/0x118 net/core/neighbour.c:1621
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd1/0x138 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:306 [inline]
+ print_report+0x15e/0x45d mm/kasan/report.c:417
+ kasan_report+0xc0/0xf0 mm/kasan/report.c:517
+ __io_req_task_work_add+0x6b4/0x760 io_uring/io_uring.c:1287
+ io_req_task_work_add io_uring/io_uring.h:95 [inline]
+ __io_poll_execute io_uring/poll.c:366 [inline]
+ io_poll_execute.constprop.0+0x15b/0x190 io_uring/poll.c:372
+ io_poll_cancel_req io_uring/poll.c:379 [inline]
+ io_poll_remove_all_table+0x26d/0x2bd io_uring/poll.c:741
+ io_poll_remove_all+0x2e/0x4b io_uring/poll.c:759
+ io_ring_ctx_wait_and_kill+0x1a0/0x340 io_uring/io_uring.c:3017
+ io_uring_release+0x46/0x4a io_uring/io_uring.c:3042
+ __fput+0x27c/0xa90 fs/file_table.c:321
+ task_work_run+0x16f/0x270 kernel/task_work.c:179
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xb17/0x2a90 kernel/exit.c:867
+ do_group_exit+0xd4/0x2a0 kernel/exit.c:1012
+ __do_sys_exit_group kernel/exit.c:1023 [inline]
+ __se_sys_exit_group kernel/exit.c:1021 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1021
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd01608c0c9
+Code: Unable to access opcode bytes at 0x7fd01608c09f.
+RSP: 002b:00007ffe4aaf8e78 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 000000000000001e RCX: 00007fd01608c0c9
+RDX: 00007fd01603df7b RSI: ffffffffffffffb8 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000023b38e02 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000001 R15: 00007ffe4aaf8f60
+ </TASK>
+
+Allocated by task 11047:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:325
+ kasan_slab_alloc include/linux/kasan.h:186 [inline]
+ slab_post_alloc_hook mm/slab.h:769 [inline]
+ slab_alloc_node mm/slub.c:3452 [inline]
+ kmem_cache_alloc_node+0x183/0x350 mm/slub.c:3497
+ alloc_task_struct_node kernel/fork.c:171 [inline]
+ dup_task_struct kernel/fork.c:979 [inline]
+ copy_process+0x3aa/0x7740 kernel/fork.c:2103
+ kernel_clone+0xeb/0x9a0 kernel/fork.c:2687
+ __do_sys_clone+0xba/0x100 kernel/fork.c:2828
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 15:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ kasan_save_free_info+0x2e/0x40 mm/kasan/generic.c:518
+ ____kasan_slab_free mm/kasan/common.c:236 [inline]
+ ____kasan_slab_free+0x160/0x1c0 mm/kasan/common.c:200
+ kasan_slab_free include/linux/kasan.h:162 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1807
+ slab_free mm/slub.c:3787 [inline]
+ kmem_cache_free+0xec/0x4e0 mm/slub.c:3809
+ put_task_struct include/linux/sched/task.h:119 [inline]
+ delayed_put_task_struct+0x26e/0x3f0 kernel/exit.c:225
+ rcu_do_batch kernel/rcu/tree.c:2113 [inline]
+ rcu_core+0x821/0x1920 kernel/rcu/tree.c:2373
+ __do_softirq+0x1fb/0xaf6 kernel/softirq.c:571
+
+Last potentially related work creation:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ __kasan_record_aux_stack+0xbc/0xd0 mm/kasan/generic.c:488
+ __call_rcu_common.constprop.0+0x99/0x780 kernel/rcu/tree.c:2622
+ put_task_struct_rcu_user+0x83/0xc0 kernel/exit.c:231
+ context_switch kernel/sched/core.c:5304 [inline]
+ __schedule+0x25d8/0x5a70 kernel/sched/core.c:6619
+ preempt_schedule_common+0x45/0xc0 kernel/sched/core.c:6788
+ preempt_schedule_thunk+0x1a/0x20 arch/x86/entry/thunk_64.S:34
+ __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
+ _raw_spin_unlock_irq+0x40/0x50 kernel/locking/spinlock.c:202
+ spin_unlock_irq include/linux/spinlock.h:400 [inline]
+ do_group_exit+0x1c5/0x2a0 kernel/exit.c:1009
+ __do_sys_exit_group kernel/exit.c:1023 [inline]
+ __se_sys_exit_group kernel/exit.c:1021 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1021
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Second to last potentially related work creation:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ __kasan_record_aux_stack+0xbc/0xd0 mm/kasan/generic.c:488
+ __call_rcu_common.constprop.0+0x99/0x780 kernel/rcu/tree.c:2622
+ put_task_struct_rcu_user+0x83/0xc0 kernel/exit.c:231
+ release_task+0xcc8/0x1870 kernel/exit.c:281
+ wait_task_zombie kernel/exit.c:1198 [inline]
+ wait_consider_task+0x306d/0x3ce0 kernel/exit.c:1425
+ do_wait_thread kernel/exit.c:1488 [inline]
+ do_wait+0x7cd/0xd90 kernel/exit.c:1605
+ kernel_wait4+0x150/0x260 kernel/exit.c:1768
+ __do_sys_wait4+0x13f/0x150 kernel/exit.c:1796
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff8880272357c0
+ which belongs to the cache task_struct of size 7232
+The buggy address is located 2136 bytes inside of
+ 7232-byte region [ffff8880272357c0, ffff888027237400)
+
+The buggy address belongs to the physical page:
+page:ffffea00009c8c00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x27230
+head:ffffea00009c8c00 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff8880219a5c01
+ksm flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000010200 ffff8880125ec500 ffffea0000ab3800 dead000000000003
+raw: 0000000000000000 0000000000040004 00000001ffffffff ffff8880219a5c01
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 56, tgid 56 (kworker/u4:4), ts 11164250893, free_ts 0
+ prep_new_page mm/page_alloc.c:2549 [inline]
+ get_page_from_freelist+0x11bb/0x2d50 mm/page_alloc.c:4324
+ __alloc_pages+0x1cb/0x5c0 mm/page_alloc.c:5590
+ alloc_pages+0x1aa/0x270 mm/mempolicy.c:2281
+ alloc_slab_page mm/slub.c:1851 [inline]
+ allocate_slab+0x25f/0x350 mm/slub.c:1998
+ new_slab mm/slub.c:2051 [inline]
+ ___slab_alloc+0xa91/0x1400 mm/slub.c:3193
+ __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3292
+ __slab_alloc_node mm/slub.c:3345 [inline]
+ slab_alloc_node mm/slub.c:3442 [inline]
+ kmem_cache_alloc_node+0x136/0x350 mm/slub.c:3497
+ alloc_task_struct_node kernel/fork.c:171 [inline]
+ dup_task_struct kernel/fork.c:979 [inline]
+ copy_process+0x3aa/0x7740 kernel/fork.c:2103
+ kernel_clone+0xeb/0x9a0 kernel/fork.c:2687
+ user_mode_thread+0xb1/0xf0 kernel/fork.c:2763
+ call_usermodehelper_exec_work kernel/umh.c:175 [inline]
+ call_usermodehelper_exec_work+0xd0/0x180 kernel/umh.c:161
+ process_one_work+0x9bf/0x1750 kernel/workqueue.c:2293
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2440
+ kthread+0x2e8/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888027235f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888027235f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888027236000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff888027236080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888027236100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c4f2f678
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c4d2c000
- x18: 00000000000003de
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 622216
-hardirqs last  enabled at (622215): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (622215): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (622216): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (621028): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (621028): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (621026): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (621026): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c4f2fb78 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c4d2f000 x18: 000000000000031e
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 623616
-hardirqs last  enabled at (623615): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (623615): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (623616): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (622446): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (622446): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (622444): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (622444): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c4404378
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93ee000
- x18: 00000000000002ce
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 624992
-hardirqs last  enabled at (624991): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (624991): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (624992): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (623820): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (623820): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (623818): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (623818): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c995f778
- x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c93ef000 x18: 00000000000003d1
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 626290
-hardirqs last  enabled at (626289): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (626289): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (626290): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (625116): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (625116): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (625114): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (625114): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c995f878
- x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c93ef000 x18: 000000000000011c
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 627616
-hardirqs last  enabled at (627615): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (627615): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (627616): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (626440): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (626440): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (626438): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (626438): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c4f2f278 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c4d2f000 x18: 00000000000000c7
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 629014
-hardirqs last  enabled at (629013): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (629013): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (629014): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (627834): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (627834): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (627832): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (627832): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c995fb78 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c93ee000 x18: 00000000000003c2
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 630328
-hardirqs last  enabled at (630327): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (630327): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (630328): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (629918): [<ffff8000080102e4>] _stext+0x2e4/0x37c
-softirqs last disabled at (629893): [<ffff800008017c90>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:80
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c0d47d78
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93ee000
- x18: 00000000000003fd
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 631624
-hardirqs last  enabled at (631623): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (631623): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (631624): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (630450): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (630450): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (630448): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (630448): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c4f2f978
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93ee000
- x18: 0000000000000106
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 633024
-hardirqs last  enabled at (633023): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (633023): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (633024): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (631846): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (631846): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (631844): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (631844): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c4404978
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93ec000
- x18: 0000000000000061
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 634358
-hardirqs last  enabled at (634357): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (634357): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (634358): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (633180): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (633180): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (633178): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (633178): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c9688978
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93eb000
- x18: 0000000000000398
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 635652
-hardirqs last  enabled at (635651): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (635651): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (635652): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (634476): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (634476): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (634474): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (634474): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c995f678 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c4d28000 x18: 000000000000012e
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 636950
-hardirqs last  enabled at (636949): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (636949): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (636950): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (635774): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (635774): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (635772): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (635772): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c4f2f178
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c4d28000
- x18: ffff80001912b5f0
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 638316
-hardirqs last  enabled at (638315): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (638315): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (638316): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (637136): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (637136): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (637134): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (637134): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c995fc78 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c93ef000 x18: 000000000000017e
-x17: 0000000000000000 x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 639638
-hardirqs last  enabled at (639637): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (639637): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (639638): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (638456): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (638456): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (638454): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (638454): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c995f878
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c4d2c000
- x18: 0000000000000380
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 641034
-hardirqs last  enabled at (641033): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (641033): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (641034): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (639852): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (639852): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (639850): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (639850): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c4404978 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c93ef000 x18: 0000000000000228
-x17: ffff0001feff7268 x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 642368
-hardirqs last  enabled at (642367): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (642367): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (642368): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (641192): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (641192): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (641190): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (641190): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c4f2f978
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93ef000
- x18: ffff800014643720
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 643668
-hardirqs last  enabled at (643667): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (643667): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (643668): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (642486): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (642486): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (642484): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (642484): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c649e878
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c4d28000 x18: 0000000000000065
-x17: 000000000000b67e
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000 x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000 x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 644976
-hardirqs last  enabled at (644975): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (644975): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (644976): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (643798): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (643798): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (643796): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (643796): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c995f078 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c4d2a000 x18: 00000000000003c7
-x17: 0000000000000000 x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 646330
-hardirqs last  enabled at (646329): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (646329): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (646330): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (645158): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (645158): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (645156): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (645156): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c4f2f278 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c4d2f000 x18: 00000000000002d7
-x17: ffff80000c15d8bc x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 647682
-hardirqs last  enabled at (647681): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (647681): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (647682): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (646506): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (646506): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (646504): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (646504): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0 x28: ffff0000c995fc78 x27: ffff80000d49b000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff0000c93ec000 x18: 00000000000003e1
-x17: 0000000000000000 x16: ffff80000dd86118 x15: ffff0000c0cf8000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c0cf8000
-x11: ff80800009594dec x10: 0000000000000000 x9 : ffff800009594dec
-x8 : ffff0000c0cf8000 x7 : ffff80000c109860 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 649060
-hardirqs last  enabled at (649059): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (649059): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (649060): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (647884): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (647884): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (647882): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (647882): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c9688278
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c4d28000
- x18: 0000000000000291
-
-x17: 0000000000000000
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 650446
-hardirqs last  enabled at (650445): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (650445): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (650446): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (649612): [<ffff8000080102e4>] _stext+0x2e4/0x37c
-softirqs last disabled at (649587): [<ffff800008017c90>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:80
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in:
-CPU: 1 PID: 28 Comm: kworker/u4:1 Tainted: G        W          6.2.0-rc3-syzkaller-16369-g358a161a6a9e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: events_unbound io_ring_exit_work
-
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-lr : io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-sp : ffff80000f7dbad0
-x29: ffff80000f7dbad0
- x28: ffff0000c995f678
- x27: ffff80000d49b000
-
-x26: 0000000000000000
- x25: 0000000000000000
- x24: 0000000000000000
-
-x23: 0000000000000000
- x22: 0000000000000000
- x21: 0000000000000000
-
-x20: 0000000000000000
- x19: ffff0000c93ee000
- x18: ffff80001912b5f0
-
-x17: ffff80000c15d8bc
- x16: ffff80000dd86118
- x15: ffff0000c0cf8000
-
-x14: 00000000000000b8
- x13: 00000000ffffffff
- x12: ffff0000c0cf8000
-
-x11: ff80800009594dec
- x10: 0000000000000000
- x9 : ffff800009594dec
-
-x8 : ffff0000c0cf8000
- x7 : ffff80000c109860
- x6 : 0000000000000000
-
-x5 : 0000000000000000
- x4 : 0000000000000000
- x3 : 0000000000000000
-
-x2 : 0000000000000000
- x1 : 0000000000000000
- x0 : 0000000000000000
-
-Call trace:
- io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
- io_req_cqe_overflow+0x5c/0x70 io_uring/io_uring.c:773
- io_fill_cqe_req io_uring/io_uring.h:168 [inline]
- io_do_iopoll+0x474/0x62c io_uring/rw.c:1065
- io_iopoll_try_reap_events+0x6c/0x108 io_uring/io_uring.c:1513
- io_uring_try_cancel_requests+0x13c/0x258 io_uring/io_uring.c:3056
- io_ring_exit_work+0xec/0x390 io_uring/io_uring.c:2869
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-irq event stamp: 651724
-hardirqs last  enabled at (651723): [<ffff80000c124078>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (651723): [<ffff80000c124078>] _raw_spin_unlock_irq+0x3c/0x70 kernel/locking/spinlock.c:202
-hardirqs last disabled at (651724): [<ffff80000c110db0>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (650546): [<ffff80000b811778>] sock_orphan include/net/sock.h:2098 [inline]
-softirqs last  enabled at (650546): [<ffff80000b811778>] unix_release_sock+0x15c/0x544 net/unix/af_unix.c:604
-softirqs last disabled at (650544): [<ffff80000b81175c>] sock_orphan include/net/sock.h:2094 [inline]
-softirqs last disabled at (650544): [<ffff80000b81175c>] unix_release_sock+0x140/0x544 net/unix/af_unix.c:604
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 28 at io_uring/io_uring.c:734 io_cqring_event_overflow+0x1c0/0x230 io_uring/io_uring.c:734
-Modules linked in
 
 ---
 This report is generated by a bot. It may contain errors.
@@ -1438,5 +243,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches

@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52022667A4F
-	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 17:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A3D667A50
+	for <lists+io-uring@lfdr.de>; Thu, 12 Jan 2023 17:06:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232632AbjALQGY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Jan 2023 11:06:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
+        id S231906AbjALQG0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Jan 2023 11:06:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232105AbjALQGA (ORCPT
+        with ESMTP id S232596AbjALQGA (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 12 Jan 2023 11:06:00 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F308255A0;
-        Thu, 12 Jan 2023 07:57:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CC560C0;
+        Thu, 12 Jan 2023 07:57:33 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.184])
-        by gnuweeb.org (Postfix) with ESMTPSA id 828207E73D;
-        Thu, 12 Jan 2023 15:57:26 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 3ABB57E74D;
+        Thu, 12 Jan 2023 15:57:29 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1673539049;
-        bh=yBIS9FwtQ5Dko+wK3qpwtAbxSv3Mr7MwLjxCXmCrwJU=;
+        s=default; t=1673539053;
+        bh=rH47GSDKKNn4IUUqXJmB8n2oZPbSj4OOp9WUqqpcbh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VRhTJJtT7xipuhKIcbDWNpa3bZwFbtObAXw6wF+Dl+VcaCdXtCRJDpaQjyXtKcP1L
-         9MUhrW916qnhV41VTKo5o3gNvwdJpeJjB5nDF709zKVO66FWKM43sw6/diSDuWMNMt
-         kCPR9m2ypRGV41EdZBzkv5dxdl4h71twSrN2QYx6ZKkHsGI9kvTXO95OmCRvn2IuJ+
-         WkaEVZNrIzH1D8EOgV/FcMMwZTMpV38+FSDnLYFmtOi+NP4Ap4tRRj8pUSYHDqhLKV
-         mkpFfCm20bcqHPVUKmRyP9ipUMp/rwCGCUmK+bCFnEaPRO+kaGYkAikF63mlJ/lOsE
-         BLAEZ/DRiV/iQ==
+        b=nxvkGyjNUSjXd+lzOaZ4g9MRsycP+OfBHdwmVdPKMl1n+VWlEZdzKXk5V5smNWzyM
+         AkeVdWcijkmoasznjtf/79Ke2SAXtVV8O5agAVVP5Q6iMvFvRYxxxIaIGDGKSGDGu2
+         toBr5Xra526B60HRmVfd3bb+4csF84dSkiLPRJOG6H2OvR5mliIwZBrWPJbQUDXKK1
+         O/LTV6P1zi1bTINjXGWcw6mFug5K1Xz+pwaKY0in6LW8CDx6f9m/3H2hU11JTTcYot
+         KHtdqmPGtAddaMn0XHzGcJJKtPVcu5hiTZzijsgrbKcskT6y8OxDMMeSl/6dKbtPWw
+         XvE679r7y4xLg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -39,9 +39,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v1 3/4] liburing.h: 's/is adjust/is adjusted/' and fix indentation
-Date:   Thu, 12 Jan 2023 22:57:08 +0700
-Message-Id: <20230112155709.303615-4-ammar.faizi@intel.com>
+Subject: [PATCH liburing v1 4/4] man/io_uring_prep_splice.3: Explain more about io_uring_prep_splice()
+Date:   Thu, 12 Jan 2023 22:57:09 +0700
+Message-Id: <20230112155709.303615-5-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230112155709.303615-1-ammar.faizi@intel.com>
 References: <20230112155709.303615-1-ammar.faizi@intel.com>
@@ -58,30 +58,94 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-  - Fix a typo: 's/is adjust/is adjusted/'.
+I have found two people confused about the io_uring_prep_splice()
+function, especially on the offset part. The current manpage for
+io_uring_prep_splice() doesn't tell about the rules of the offset
+arguments.
 
-  - Fix indentation.
+Despite these rules are already noted in "man 2 io_uring_enter",
+people who want to know about this prep function will prefer to read
+"man 3 io_uring_prep_splice".
+
+Let's explain it there!
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- src/include/liburing.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/src/include/liburing.h b/src/include/liburing.h
-index cc3677e..c7139ef 100644
---- a/src/include/liburing.h
-+++ b/src/include/liburing.h
-@@ -388,8 +388,8 @@ IOURINGINLINE void io_uring_prep_rw(int op, struct io_uring_sqe *sqe, int fd,
-  * @param off_in If fd_in refers to a pipe, off_in must be (int64_t) -1;
-  *		 If fd_in does not refer to a pipe and off_in is (int64_t) -1,
-  *		 then bytes are read from fd_in starting from the file offset
-- *		 and it is adjust appropriately;
-- *               If fd_in does not refer to a pipe and off_in is not
-+ *		 and it is adjusted appropriately;
-+ *		 If fd_in does not refer to a pipe and off_in is not
-  *		 (int64_t) -1, then the  starting offset of fd_in will be
-  *		 off_in.
-  * @param off_out The description of off_in also applied to off_out.
+Stolen from liburing comment (with some modifications):
+
+  If `fd_in` refers to a pipe, `off_in` must be -1.
+
+  If `fd_in` does not refer to a pipe and `off_in` is -1, then bytes are
+  read from `fd_in` starting from the file offset and it is adjusted
+  appropriately.
+
+  If `fd_in` does not refer to a pipe and `off_in` is not -1, then the
+  starting offset of `fd_in` will be `off_in`.
+
+  The same rules apply to `fd_out` and `off_out`.
+
+  Note that even if `fd_in` or `fd_out` refers to a pipe, the splice
+  operation can still failed with `EINVAL` if one of the fd doesn't
+  explicitly support splice operation, e.g. reading from terminal is
+  unsupported from kernel 5.7 to 5.11.
+
+ man/io_uring_prep_splice.3 | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/man/io_uring_prep_splice.3 b/man/io_uring_prep_splice.3
+index cb82ad0..a177bc6 100644
+--- a/man/io_uring_prep_splice.3
++++ b/man/io_uring_prep_splice.3
+@@ -52,6 +52,34 @@ and
+ .I fd_in
+ given as a registered file descriptor offset.
+ 
++If
++.I fd_in
++refers to a pipe,
++.IR off_in
++must be -1.
++
++If
++.I fd_in
++does not refer to a pipe and
++.I off_in
++is -1, then bytes are read from
++.I fd_in
++starting from the file offset and it is adjusted appropriately.
++
++If
++.I fd_in
++does not refer to a pipe and
++.I off_in
++is not -1, then the starting offset of
++.I fd_in
++will be
++.IR off_in .
++
++The same rules apply to
++.I fd_out
++and
++.IR off_out .
++
+ This function prepares an async
+ .BR splice (2)
+ request. See that man page for details.
+@@ -78,3 +106,13 @@ field.
+ .BR io_uring_submit (3),
+ .BR io_uring_register (2),
+ .BR splice (2)
++
++.SH NOTES
++Note that even if
++.I fd_in
++or
++.I fd_out
++refers to a pipe, the splice operation can still failed with
++.B EINVAL
++if one of the fd doesn't explicitly support splice operation, e.g. reading from
++terminal is unsupported from kernel 5.7 to 5.11.
 -- 
 Ammar Faizi
 

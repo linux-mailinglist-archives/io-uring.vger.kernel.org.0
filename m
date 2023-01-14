@@ -2,101 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78AB866A909
-	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 04:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4D866A94F
+	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 06:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbjAND5t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Jan 2023 22:57:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42758 "EHLO
+        id S229453AbjANFAV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 Jan 2023 00:00:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbjAND5t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Jan 2023 22:57:49 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728411145E
-        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 19:57:48 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id q23-20020a17090a065700b002290913a521so6596499pje.5
-        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 19:57:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jdNN+dobdIRHeQn5R/3Kx3xiG0jdhFycvsS2DJTk/XE=;
-        b=h4sQ6DJza58g1wD4N+3H2xJha/CdktmXuby34dRRda2IwdQuCyg6ZJ+ob6yUvyy5Y1
-         J7OWre8YIPhdN8Eonat+YWIJPnPjfO5ov4jFzl3fKIP+RR8FrOltesZ2AQ8+RVCj804D
-         eVhrjD87RF4xZvyx454Iw5nk0sgP1fx9Qn8JovMlWT6wXFbC/qxPrRLd1YRYKNFPWy3T
-         ZyCGBKk52/Rxj1u3ZpnGYuYoiIojlOz9Wk4lWuMK0HajB3aKrclrLfpsDdQ37UF3JbzE
-         SgT4GcZBC7GF7RKGnBIoMtTqOuTezVG0XP6VDb7T9vSMJONlW7I4XQCRNGIfvC0FLa+w
-         N/KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jdNN+dobdIRHeQn5R/3Kx3xiG0jdhFycvsS2DJTk/XE=;
-        b=oM1DPr2TzQiyZrHF7sY7v2lqEuWVtyve3ecoA/wTxSwNAMoGJeAYth9utJV8/dgNTM
-         tqLV6qxvkmmmphe+D9nCnE74ThZyK29UHb/gXaYD4mjKu77xKZRYIFmK256v3TFygXVs
-         0I1oAHEF6uWyQhaOaFigE/dZ0+XYnC/g0OJ+VpuDwZagz9vcSgTf29uJgJvzSgGQ5gCW
-         nIvhqV1PzzN3zPBfF/zGOg1EK3r+4Fl7kAuIniw5pBfjVIs96IaeuLnf6L8YKZlTbGQO
-         6jRuwrEER3GEPtZDm8eFOfQ1cJyzvyDXBeyxnbTXnIbIJcwQ7vXjE6CIXh1e204y8cK2
-         6Dbw==
-X-Gm-Message-State: AFqh2koz38zUiE8Emn/j0mpx7IpFadTS7PgL9QCx43pSK7sEtdizIxaA
-        /iz2hw7x93tYh+uyNeDu7YmR3g==
-X-Google-Smtp-Source: AMrXdXt/C/LEFBMnXTyr/zLqZjjFoy8rtByIhu6f9zzeqnbCRqeRIbDGiah9zC8CCx7tPiAavdKlDA==
-X-Received: by 2002:a05:6a20:54a1:b0:a5:170:9acf with SMTP id i33-20020a056a2054a100b000a501709acfmr28919444pzk.3.1673668667915;
-        Fri, 13 Jan 2023 19:57:47 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h9-20020a63f909000000b00439c6a4e1ccsm12116913pgi.62.2023.01.13.19.57.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 19:57:47 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Gilang Fachrezy <gilang4321@gmail.com>,
-        "io-uring Mailing List" <io-uring@vger.kernel.org>,
-        VNLX Kernel Department <kernel@vnlx.org>,
-        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
-        Dylan Yudaken <dylany@meta.com>,
-        Stefano Garzarella <sgarzare@redhat.com>
-In-Reply-To: <20230114035405.429608-1-ammar.faizi@intel.com>
-References: <20230114035405.429608-1-ammar.faizi@intel.com>
-Subject: Re: [PATCH liburing v1] liburing.map: Export
- `io_uring_{enable_rings,register_restrictions}`
-Message-Id: <167366866699.6195.12346503736898169528.b4-ty@kernel.dk>
-Date:   Fri, 13 Jan 2023 20:57:46 -0700
-MIME-Version: 1.0
+        with ESMTP id S229470AbjANFAS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Jan 2023 00:00:18 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4334A35AA;
+        Fri, 13 Jan 2023 21:00:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D3DCB60AE8;
+        Sat, 14 Jan 2023 05:00:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 37A1DC43398;
+        Sat, 14 Jan 2023 05:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673672417;
+        bh=CIXvaaw3EogcoKoOEINq0liejivgaLYQl6eFZWwZcSE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=JUuFd98WTy68many7KxkyzijHlBG351pD3jqcnAaxNrXQNadSDC8GsBcQoSdgmJIX
+         pCMnabqNnHYGnGqtbzkxbF23rXAEe6o7tid8Frv/bBGznxR6DThbgCUg0tO7bGgNZu
+         U6MflI7a70vcLOYsqDO3lcMYVtTkK0LTwQoYaPy5qKJstMGIJo8CGw28mI2csw0NZ4
+         XfswQ3m8nvWeCBC3SG7vw4Gd+rWMMYXNFUDoSKRdxE2QU9VnkyfwS5MpdGsH8qaQ7r
+         qqzISFof1qMyZhjsbSC95m/mZTYA8nvP/Skl00aYhgTstqwCgJ6WVfE06KKSB2tqhA
+         ZR58RIddBYzlA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 20A3BC395CA;
+        Sat, 14 Jan 2023 05:00:17 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-78c63
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] caif: don't assume iov_iter type
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167367241712.28163.12154259620888863155.git-patchwork-notify@kernel.org>
+Date:   Sat, 14 Jan 2023 05:00:17 +0000
+References: <20230111184245.3784393-1-kbusch@meta.com>
+In-Reply-To: <20230111184245.3784393-1-kbusch@meta.com>
+To:     Keith Busch <kbusch@meta.com>
+Cc:     netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kbusch@kernel.org
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hello:
 
-On Sat, 14 Jan 2023 10:54:05 +0700, Ammar Faizi wrote:
-> When adding these two functions, Stefano didn't add
-> io_uring_enable_rings() and io_uring_register_restrictions() to
-> liburing.map. It causes a linking problem. Add them to liburing.map.
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 11 Jan 2023 10:42:45 -0800 you wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> This issue hits liburing 2.0 to 2.3.
+> The details of the iov_iter types are appropriately abstracted, so
+> there's no need to check for specific type fields. Just let the
+> abstractions handle it.
 > 
+> This is preparing for io_uring/net's io_send to utilize the more
+> efficient ITER_UBUF.
 > 
 > [...]
 
-Applied, thanks!
+Here is the summary with links:
+  - caif: don't assume iov_iter type
+    https://git.kernel.org/netdev/net-next/c/c19175141079
 
-[1/1] liburing.map: Export `io_uring_{enable_rings,register_restrictions}`
-      commit: 19424b0baa5999918701e1972b901b0937331581
-
-Best regards,
+You are awesome, thank you!
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 

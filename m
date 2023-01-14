@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A09A66AACB
-	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 10:56:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF0A66AACC
+	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 10:56:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbjANJ4J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Jan 2023 04:56:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41648 "EHLO
+        id S230097AbjANJ4L (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 14 Jan 2023 04:56:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbjANJ4H (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Jan 2023 04:56:07 -0500
+        with ESMTP id S230205AbjANJ4K (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Jan 2023 04:56:10 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0952D7686
-        for <io-uring@vger.kernel.org>; Sat, 14 Jan 2023 01:56:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14E5B44AF
+        for <io-uring@vger.kernel.org>; Sat, 14 Jan 2023 01:56:06 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.184])
-        by gnuweeb.org (Postfix) with ESMTPSA id 49F0E7E7B8;
-        Sat, 14 Jan 2023 09:56:00 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 5811F7E79B;
+        Sat, 14 Jan 2023 09:56:03 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1673690162;
-        bh=JBGTKQWhtc2dTDwON2iUSuzr3M9sqfmCkJxXeSeA+pA=;
+        s=default; t=1673690165;
+        bh=5kyulY7GexKHkOTPwRkKp/KyQxLOQ9Ay4VoKnidx66E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k04U7pw3xJexkOPKeIV7doQNShuauHEzoSgEK8Z6pbjSNMKqUDVZYUY5e3jUkTwOy
-         t6yDB2X+VaxGPoWuC0rql8FAhaQBd8G3J0yGHoooCbJELBSqviDp0lfQ+isHS6sl//
-         Bds4E7ZoNMiv2Dq0WeHUT/WQ96Ew4TmkCTWIDpJdIF2FW5TDJTAMj16dt3Zjk+SWeT
-         F4lcui3I81RpWuqcIuwaquSkJdNPC4RZTe5MOclTg5NBrzCVZsw3br79zM1nOWTVXF
-         4VYLbrn+Du4P94pXJNIYcdMl9HoJA8WYBKzV3S2kQ3BGyHAb8EGVb8elHwnQ4VLTKO
-         LWYY6cwDdaFOQ==
+        b=ohRoCgDIlzLWQGXTcsdrcAJOucGl4GAnUo8WHLAT5jKr0zwH+dlDHus0xmhCtdHEk
+         kcgNG0ih8dvvNVISD9Xgs93G8mSJqhfLxLn0PJa47x/4nEFrfCHTi/OIs6vrKiLmG/
+         2mZR/WyLzJBgfSD0h+FExnuCRNIkswAommpDpCuwV7cvFjXRY9COPjX8g8RQ9Gp/rq
+         /WU8rZsagOQASyao3Ot4IdjG1EUKniP8/lCa6y0CYvydnUO8VfCrP9Vfs/Wq7RAtJ2
+         fRJAn2/qcwIznnYLRauxlFGNyV6F7PNlorxQphmc3Ap4ruwINT7pbrS+j9tPj6AVEh
+         s+I+LmSVGSxzQ==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -37,9 +37,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         VNLX Kernel Department <kernel@vnlx.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [RFC PATCH v1 liburing 1/2] README: Explain how to build liburing
-Date:   Sat, 14 Jan 2023 16:55:22 +0700
-Message-Id: <20230114095523.460879-2-ammar.faizi@intel.com>
+Subject: [RFC PATCH v1 liburing 2/2] README: Explain about FFI support
+Date:   Sat, 14 Jan 2023 16:55:23 +0700
+Message-Id: <20230114095523.460879-3-ammar.faizi@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230114095523.460879-1-ammar.faizi@intel.com>
 References: <20230114095523.460879-1-ammar.faizi@intel.com>
@@ -56,43 +56,39 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-Tell people how to build liburing.
+Tell people that they should use the FFI variants when they can't use
+'static inline' functions defined in liburing.h.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- README | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ README | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/README b/README
-index 80d2b3d..4dd59f6 100644
+index 4dd59f6..7babb3b 100644
 --- a/README
 +++ b/README
-@@ -47,6 +47,30 @@ the kernel io_uring support. Please note that this suite isn't expected to
- pass on older kernels, and may even crash or hang older kernels!
+@@ -71,6 +71,25 @@ Building liburing
+ See './configure --help' for more information about build config options.
  
  
-+Building liburing
-+-----------------
++FFI support
++-----------
 +
-+    #
-+    # Prepare build config (optional).
-+    #
-+    #  --cc  specifies the C   compiler.
-+    #  --cxx speficies the C++ compiler.
-+    #
-+    ./configure --cc=gcc --cxx=g++;
++By default, the build results in 4 lib files:
 +
-+    #
-+    # Build liburing.
-+    #
-+    make -j$(nproc);
++    2 shared libs:
 +
-+    #
-+    # Install liburing (headers, shared/static libs, and manpage).
-+    #
-+    sudo make install;
++        liburing.so
++        liburing-ffi.so
 +
-+See './configure --help' for more information about build config options.
++    2 static libs:
++
++        liburing.a
++        liburing-ffi.a
++
++For languages and applications that can't use 'static inline' functions in
++liburing.h should use the FFI variants.
 +
 +
  License

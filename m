@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6387966A867
-	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 02:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94BC266A88E
+	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 03:13:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbjANBkM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Jan 2023 20:40:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36890 "EHLO
+        id S229570AbjANCNl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Jan 2023 21:13:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230252AbjANBkK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Jan 2023 20:40:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F054B1101
-        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 17:39:25 -0800 (PST)
+        with ESMTP id S229911AbjANCNk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Jan 2023 21:13:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDA62AD1
+        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 18:12:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673660365;
+        s=mimecast20190719; t=1673662372;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OVk6yr0/whsSh2GoSvUcbh+RJxv3TjGaI2mDAGxfAWo=;
-        b=X7R1kmg3tnX+sT6W6YMWGwgRhiWqh2nvMLpHZrl+y2hPKRxzNRa07JSPLKyUN+rVR8sZDs
-        xd4os6X8yP9AlS0gT/pphFGht9xaYGd3YyYVhnEnEuL9xJN+xEIFJTqhHQbL3pYFhUGac1
-        BhuUThZoK+bZlKixrjVtvkW0czd7+IQ=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=fPnBoJAOXIrReVx5DI+CirPd9rWMkesE+A2YpTS5xvU=;
+        b=Gf//ME5LAV0tviBW3SAQOfcvROngLY0L44Y4PNL9X53V1l1ZApg3k9R6iOA4VIk0IFGZcL
+        L3SPHh4Obu4H8nOHsUykC0OheUd21JCRtPmWkSEvqOba9DLaByvZu3XiJk+L0Tcn+m/nc3
+        qf9s+1i64JGqX9mjUVgExcf/jqVQlRY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-440-Se8Xw31kOlKc9m6CpPAKBw-1; Fri, 13 Jan 2023 20:39:20 -0500
-X-MC-Unique: Se8Xw31kOlKc9m6CpPAKBw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+ us-mta-327-ZemMLeN2PUu5211StdrwqQ-1; Fri, 13 Jan 2023 21:12:49 -0500
+X-MC-Unique: ZemMLeN2PUu5211StdrwqQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A56B829AA38F;
-        Sat, 14 Jan 2023 01:39:19 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A6920185A78B;
+        Sat, 14 Jan 2023 02:12:48 +0000 (UTC)
 Received: from T590 (ovpn-8-19.pek2.redhat.com [10.72.8.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BC92C2166B26;
-        Sat, 14 Jan 2023 01:39:15 +0000 (UTC)
-Date:   Sat, 14 Jan 2023 09:39:10 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E7DFB1121314;
+        Sat, 14 Jan 2023 02:12:44 +0000 (UTC)
+Date:   Sat, 14 Jan 2023 10:12:39 +0800
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
         Pavel Begunkov <asml.silence@gmail.com>,
         David Ahern <dsahern@gmail.com>
 Subject: Re: IOSQE_IO_LINK vs. short send of SOCK_STREAM
-Message-ID: <Y8IHvou+JKDJGdyE@T590>
+Message-ID: <Y8IPl3PsdAlAfvkq@T590>
 References: <Y77VIB1s6LurAvBd@T590>
  <b8011ec8-8d43-9b9b-4dcc-53b6cb272354@samba.org>
  <Y79+P4EyU1O0bJPh@T590>
@@ -59,7 +59,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <Y8H2+RaejnVtiMQY@T590>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -176,13 +176,16 @@ On Sat, Jan 14, 2023 at 08:27:37AM +0800, Ming Lei wrote:
 > 
 > https://github.com/ming1/ubdsrv/commit/175ffd14ae2f8fa562134edfd4ac949f8050c108
 
-Turns out the two are different issues, it is understandable that the
-above commit fixes io hang.
+Figured out, it is still one userspace issue.
 
-But just checked syslog, the short send warning is still logged, will
-investigate further.
+For nbd request sent to server, the cqe could come after the
+ublk io request is completed which is triggered by nbd reply
+from server, then if new ublk io req is submitted to same slot, the
+new data length and op code could be read in nbd_send_req_done(),
+and the warning is triggered.
 
 
-thanks,
+
+Thanks,
 Ming
 

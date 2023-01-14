@@ -2,91 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFE966A908
-	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 04:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78AB866A909
+	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 04:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230174AbjANDy2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Jan 2023 22:54:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42566 "EHLO
+        id S229968AbjAND5t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Jan 2023 22:57:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbjANDy0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Jan 2023 22:54:26 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FDC3AB35
-        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 19:54:24 -0800 (PST)
-Received: from localhost.localdomain (unknown [182.253.183.184])
-        by gnuweeb.org (Postfix) with ESMTPSA id 927AF7E799;
-        Sat, 14 Jan 2023 03:54:21 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1673668464;
-        bh=7CaOxh+S96wsVYtqquOG9shNDujwpa5ymKx65ZNpgqk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=B5QfsRp5dyH6KT1ycmWpIXd8hP8HFNtKShcl6KYL27XWgoyzB23lHdKbudSBbNsT8
-         /XAp1Xe5ZH6+mD0p9h3DjAMqnXcudzlr6qqhoHrHXfnFXBiMS0a1i1cKqYapjs6cN6
-         kHEgXDwZooOGL9iKEq1BvifLXEms88QgfzMYyL1Yyll1XRruyqfh21sD9LXMCCjhkV
-         1K4hxYWGRRshK+c/b0j2qFcBExG6geyMHyUkVWsyAL31nUcxmsCTCepJDzaaCgekPY
-         BkrjLXOqhnMCyKhAguBnb47mYuLpiCtRaci31sOTOJA2crnvn9frfBcH3rfWU3oN3Q
-         mRvHKp+W/uA+g==
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
+        with ESMTP id S229914AbjAND5t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Jan 2023 22:57:49 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728411145E
+        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 19:57:48 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id q23-20020a17090a065700b002290913a521so6596499pje.5
+        for <io-uring@vger.kernel.org>; Fri, 13 Jan 2023 19:57:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jdNN+dobdIRHeQn5R/3Kx3xiG0jdhFycvsS2DJTk/XE=;
+        b=h4sQ6DJza58g1wD4N+3H2xJha/CdktmXuby34dRRda2IwdQuCyg6ZJ+ob6yUvyy5Y1
+         J7OWre8YIPhdN8Eonat+YWIJPnPjfO5ov4jFzl3fKIP+RR8FrOltesZ2AQ8+RVCj804D
+         eVhrjD87RF4xZvyx454Iw5nk0sgP1fx9Qn8JovMlWT6wXFbC/qxPrRLd1YRYKNFPWy3T
+         ZyCGBKk52/Rxj1u3ZpnGYuYoiIojlOz9Wk4lWuMK0HajB3aKrclrLfpsDdQ37UF3JbzE
+         SgT4GcZBC7GF7RKGnBIoMtTqOuTezVG0XP6VDb7T9vSMJONlW7I4XQCRNGIfvC0FLa+w
+         N/KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jdNN+dobdIRHeQn5R/3Kx3xiG0jdhFycvsS2DJTk/XE=;
+        b=oM1DPr2TzQiyZrHF7sY7v2lqEuWVtyve3ecoA/wTxSwNAMoGJeAYth9utJV8/dgNTM
+         tqLV6qxvkmmmphe+D9nCnE74ThZyK29UHb/gXaYD4mjKu77xKZRYIFmK256v3TFygXVs
+         0I1oAHEF6uWyQhaOaFigE/dZ0+XYnC/g0OJ+VpuDwZagz9vcSgTf29uJgJvzSgGQ5gCW
+         nIvhqV1PzzN3zPBfF/zGOg1EK3r+4Fl7kAuIniw5pBfjVIs96IaeuLnf6L8YKZlTbGQO
+         6jRuwrEER3GEPtZDm8eFOfQ1cJyzvyDXBeyxnbTXnIbIJcwQ7vXjE6CIXh1e204y8cK2
+         6Dbw==
+X-Gm-Message-State: AFqh2koz38zUiE8Emn/j0mpx7IpFadTS7PgL9QCx43pSK7sEtdizIxaA
+        /iz2hw7x93tYh+uyNeDu7YmR3g==
+X-Google-Smtp-Source: AMrXdXt/C/LEFBMnXTyr/zLqZjjFoy8rtByIhu6f9zzeqnbCRqeRIbDGiah9zC8CCx7tPiAavdKlDA==
+X-Received: by 2002:a05:6a20:54a1:b0:a5:170:9acf with SMTP id i33-20020a056a2054a100b000a501709acfmr28919444pzk.3.1673668667915;
+        Fri, 13 Jan 2023 19:57:47 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id h9-20020a63f909000000b00439c6a4e1ccsm12116913pgi.62.2023.01.13.19.57.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jan 2023 19:57:47 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Gilang Fachrezy <gilang4321@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
+        "io-uring Mailing List" <io-uring@vger.kernel.org>,
         VNLX Kernel Department <kernel@vnlx.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
         Dylan Yudaken <dylany@meta.com>,
         Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH liburing v1] liburing.map: Export `io_uring_{enable_rings,register_restrictions}`
-Date:   Sat, 14 Jan 2023 10:54:05 +0700
-Message-Id: <20230114035405.429608-1-ammar.faizi@intel.com>
-X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230114035405.429608-1-ammar.faizi@intel.com>
+References: <20230114035405.429608-1-ammar.faizi@intel.com>
+Subject: Re: [PATCH liburing v1] liburing.map: Export
+ `io_uring_{enable_rings,register_restrictions}`
+Message-Id: <167366866699.6195.12346503736898169528.b4-ty@kernel.dk>
+Date:   Fri, 13 Jan 2023 20:57:46 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-78c63
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-When adding these two functions, Stefano didn't add
-io_uring_enable_rings() and io_uring_register_restrictions() to
-liburing.map. It causes a linking problem. Add them to liburing.map.
+On Sat, 14 Jan 2023 10:54:05 +0700, Ammar Faizi wrote:
+> When adding these two functions, Stefano didn't add
+> io_uring_enable_rings() and io_uring_register_restrictions() to
+> liburing.map. It causes a linking problem. Add them to liburing.map.
+> 
+> This issue hits liburing 2.0 to 2.3.
+> 
+> 
+> [...]
 
-This issue hits liburing 2.0 to 2.3.
+Applied, thanks!
 
-Closes: https://github.com/axboe/liburing/pull/774
-Fixes: https://github.com/axboe/liburing/issues/773
-Fixes: https://github.com/facebook/folly/issues/1908
-Fixes: d2654b1ac886 ("Add helper to enable rings")
-Fixes: 25cf9b968a27 ("Add helper to register restrictions")
-Cc: Dylan Yudaken <dylany@meta.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- src/liburing.map | 3 +++
- 1 file changed, 3 insertions(+)
+[1/1] liburing.map: Export `io_uring_{enable_rings,register_restrictions}`
+      commit: 19424b0baa5999918701e1972b901b0937331581
 
-diff --git a/src/liburing.map b/src/liburing.map
-index 67aebae..1dbe765 100644
---- a/src/liburing.map
-+++ b/src/liburing.map
-@@ -73,4 +73,7 @@ LIBURING_2.4 {
- 		io_uring_major_version;
- 		io_uring_minor_version;
- 		io_uring_check_version;
-+
-+		io_uring_enable_rings;
-+		io_uring_register_restrictions;
- } LIBURING_2.3;
-
-base-commit: 0df8a379e929641699c2ab1f42de1efd2515b908
+Best regards,
 -- 
-Ammar Faizi
+Jens Axboe
+
+
 

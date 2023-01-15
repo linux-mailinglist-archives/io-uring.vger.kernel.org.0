@@ -2,132 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C30366AF96
-	for <lists+io-uring@lfdr.de>; Sun, 15 Jan 2023 08:16:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02ACF66B224
+	for <lists+io-uring@lfdr.de>; Sun, 15 Jan 2023 16:37:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjAOHQJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 15 Jan 2023 02:16:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+        id S231214AbjAOPhB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Jan 2023 10:37:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbjAOHQI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Jan 2023 02:16:08 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736859EE5;
-        Sat, 14 Jan 2023 23:16:06 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id b9-20020a17090a7ac900b00226ef160dcaso26568873pjl.2;
-        Sat, 14 Jan 2023 23:16:06 -0800 (PST)
+        with ESMTP id S231179AbjAOPg7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Jan 2023 10:36:59 -0500
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1206A59D6
+        for <io-uring@vger.kernel.org>; Sun, 15 Jan 2023 07:36:58 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id a184so19324093pfa.9
+        for <io-uring@vger.kernel.org>; Sun, 15 Jan 2023 07:36:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6n+gq7LHdcgfMZrSmQ/cw2Pqom8CQ/6NIY/tLMQxok=;
-        b=SQz1CJcsRlrq+vyEIHG9rB/D1qeDti90VS39XNanIsz++MeK2oF8ybsyRWKTsVJtLc
-         zabxpj/Z/j5e0fmnDC/cvaGvOXSwuagWLfxtqdjcaPFoGXAXZWVI503ePQ/lD8e4KxlS
-         0JE9Kkswk5QG+9R4UWNS3yTxRiIDa4/dMnfukocfVUrls8XfpHs1R2WOmsQKiFGDJrPY
-         gyhk6deG2LAV0l2Ebrb3Qg/rBjIOM3UWI75m3loQ1xWwO6uwy6kyAMVEHKfp2gENZh9M
-         UMgC0j7WqW4amsBR7+lOOpJqx1SDN5okuVMI+Tuj7ngYlsiDff66nATi8T96zy8R9EdI
-         lCTQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hSeDyeso2x3KnbABBN+qliwkXZgHdFO+9/OlByRvPcY=;
+        b=lg+xV8niy3GaeMcaouAyFfuf/lHxhns1lf+BXAG3xAGrrlICJYj+1yyu1uztOtdMTB
+         Kze4nx60HpjeWolvQDkT8+pIwVKTEqKH6PIqQjcnkfdw8fQPwz7r8J4AFzd7vCoxsI80
+         ThuLoLbo6bIi1cx0lzp8j4pHQO3FD69436ep0xf5X0h8P6I2M6iSGtx8Z6VsE/BhVfBh
+         ypHQGUpp5IvUp2cXxdodr35eLV1rnvCq1cdL8OqtUmuL44Osno3u8VEurg6EjtW60y9J
+         Qih0z/AZ4MD2rOJV+8QOAif3JsLtd7LZCiTEXw3/Mq9Y8mbPjZ32VGg4GSfNxvMjI+RS
+         aHgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p6n+gq7LHdcgfMZrSmQ/cw2Pqom8CQ/6NIY/tLMQxok=;
-        b=CfEus8pDMU75NM1DXHnHWfyibYM569TRDGqKdATeYs2I2BB0cgv29+dReHQHTvudvy
-         Opi59rLfTsLEF8Rqd719e1iWaTUyAHPHgFIE8nc/TCbSp1n1eofFwHZ79ykpOOL+wsm9
-         osRqI32z/dwQQQxuxSoAvPCGx7TShksga405o3G1sKeKcGZXRd/BxovQO3wUp7qhv25i
-         n65X2wEzbaDv/27eozxmA4NS56n7EH9eiw42XnhoPJtc9XTZY+WkwUZrC69oj9P7cPoU
-         toYxFTsEQtjJcXqt89q/eTYW2rTvANQVS1k7fX3S3Nnv43UG9YTJk1TzE0RNDIbCnl8B
-         HQ0g==
-X-Gm-Message-State: AFqh2krbK/zavWCwC6TZud+DmZTFVu8Kq/bTH2oA6J3zrNNtaXfG03t+
-        sco0ARheGRwbf6DU9YBbn7A=
-X-Google-Smtp-Source: AMrXdXvNFt66g0ILoxDQdqMR1deTa6z2xRRS6f0OuoqzmNeq3GxacDhKxSSDVYgZfEJlk35atds/KQ==
-X-Received: by 2002:a17:903:2341:b0:192:5e53:15f3 with SMTP id c1-20020a170903234100b001925e5315f3mr113551988plh.48.1673766965979;
-        Sat, 14 Jan 2023 23:16:05 -0800 (PST)
-Received: from localhost.localdomain ([43.132.141.3])
-        by smtp.gmail.com with ESMTPSA id z6-20020a1709027e8600b0019445b8ef29sm9284718pla.61.2023.01.14.23.16.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Jan 2023 23:16:05 -0800 (PST)
-From:   Quanfa Fu <quanfafu@gmail.com>
-To:     axboe@kernel.dk, asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Quanfa Fu <quanfafu@gmail.com>
-Subject: [PATCH] io_uring: make io_sqpoll_wait_sq return void
-Date:   Sun, 15 Jan 2023 15:15:19 +0800
-Message-Id: <20230115071519.554282-1-quanfafu@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hSeDyeso2x3KnbABBN+qliwkXZgHdFO+9/OlByRvPcY=;
+        b=U2zzAx2U0/GmdnnZWBqfKTZf37Hd3Mns9sEnPSbj3ilJ6psGSQXtlAwfYhrE+uwk0/
+         /ydaDxIR67RgkmBM218kbIbhtsGZudML6DARiVsLiltHKF22R4wxSAlerlp96pHE+U8w
+         ZOsxAz+yY2gQQ+y8LDSx/FVCXtNUMsbIMCAH+IYRGuHae2dPrFFub0J1AhCPduBR85JU
+         s+WIB31AtbVOQhYqDZz6Wn51ELfuz2KTdXFM6m8A2ZK1EzKZOpy9X+HEBhrZdCRQkCtI
+         eWSiCTrZye/HKXAn6NEEq7kfnqX2rpQIfkOkAI7qGKybDVuK+U6PBchPLO5BPdoqxG7I
+         ByWg==
+X-Gm-Message-State: AFqh2krOuRqXZ+iEZWjqyxRQbDj3woeTE45SrqRqio0WLoBZOu2KAVFC
+        1+a6LHHbkK0MB9Q3nrDMp99U7ZcUQMCHm5H9
+X-Google-Smtp-Source: AMrXdXsVLLjgQMwplIN6DALg7AI63AFE0mm8VXb4b56vw56ulnGJlFeHzfFWswYgwNt5hG+qH6ibGw==
+X-Received: by 2002:a62:1996:0:b0:582:d97d:debc with SMTP id 144-20020a621996000000b00582d97ddebcmr9398511pfz.3.1673797017468;
+        Sun, 15 Jan 2023 07:36:57 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id i6-20020aa796e6000000b005884d68d54fsm13012850pfq.1.2023.01.15.07.36.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Jan 2023 07:36:56 -0800 (PST)
+Message-ID: <ecfa3acb-44d7-e0a5-903e-0607ca134c3d@kernel.dk>
+Date:   Sun, 15 Jan 2023 08:36:55 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [Report] Use-After-Free in io_wq_worker_running
+Content-Language: en-US
+To:     Homin Rhee <hominlab@gmail.com>, io-uring@vger.kernel.org
+References: <CAA2QpBfokQQ=eX=Ek4f4-cft25cRkqALZZB6B=VYYmfUKk5Mzg@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAA2QpBfokQQ=eX=Ek4f4-cft25cRkqALZZB6B=VYYmfUKk5Mzg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Change the return type to void since it always return 0, and no need
-to do the checking in syscall io_uring_enter.
+On 1/15/23 6:19 AM, Homin Rhee wrote:
+> Hello,
+> I'm iCAROS7 and my syzkaller hit follow KASAN bug via UAF.
+> 
+> Target kernel commit: 0bf913e07b37
+> Target arch: amd64
+> Host syzkaller version: 96166539c4c242fccd41c7316b7080377dca428b
+> Host CPU: Intel i7 12700K
+> Host OS: Kubuntu 22.04.1 LTS (5.18.19-051819-generic)
 
-Signed-off-by: Quanfa Fu <quanfafu@gmail.com>
----
- io_uring/io_uring.c | 8 +++-----
- io_uring/sqpoll.c   | 3 +--
- io_uring/sqpoll.h   | 2 +-
- 3 files changed, 5 insertions(+), 8 deletions(-)
+This is a duplicate, see the mailing list. But in any case, it's
+fixed as of:
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 2ac1cd8d23ea..7305c9e34566 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3330,11 +3330,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		}
- 		if (flags & IORING_ENTER_SQ_WAKEUP)
- 			wake_up(&ctx->sq_data->wait);
--		if (flags & IORING_ENTER_SQ_WAIT) {
--			ret = io_sqpoll_wait_sq(ctx);
--			if (ret)
--				goto out;
--		}
-+		if (flags & IORING_ENTER_SQ_WAIT)
-+			io_sqpoll_wait_sq(ctx);
-+
- 		ret = to_submit;
- 	} else if (to_submit) {
- 		ret = io_uring_add_tctx_node(ctx);
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 559652380672..0119d3f1a556 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -312,7 +312,7 @@ static int io_sq_thread(void *data)
- 	do_exit(0);
- }
- 
--int io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
-+void io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
- {
- 	DEFINE_WAIT(wait);
- 
-@@ -327,7 +327,6 @@ int io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
- 	} while (!signal_pending(current));
- 
- 	finish_wait(&ctx->sqo_sq_wait, &wait);
--	return 0;
- }
- 
- __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
-diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
-index 0c3fbcd1f583..e1b8d508d22d 100644
---- a/io_uring/sqpoll.h
-+++ b/io_uring/sqpoll.h
-@@ -26,4 +26,4 @@ void io_sq_thread_stop(struct io_sq_data *sqd);
- void io_sq_thread_park(struct io_sq_data *sqd);
- void io_sq_thread_unpark(struct io_sq_data *sqd);
- void io_put_sq_data(struct io_sq_data *sqd);
--int io_sqpoll_wait_sq(struct io_ring_ctx *ctx);
-+void io_sqpoll_wait_sq(struct io_ring_ctx *ctx);
+commit e6db6f9398dadcbc06318a133d4c44a2d3844e61
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Sun Jan 8 10:39:17 2023 -0700
+
+    io_uring/io-wq: only free worker if it was allocated for creation
+
+caused by a buggy commit that went into 6.2-rc3.
+
 -- 
-2.31.1
+Jens Axboe
+
 

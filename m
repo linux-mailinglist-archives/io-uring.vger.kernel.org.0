@@ -2,126 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03CB266AD04
-	for <lists+io-uring@lfdr.de>; Sat, 14 Jan 2023 18:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C30366AF96
+	for <lists+io-uring@lfdr.de>; Sun, 15 Jan 2023 08:16:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbjANRTn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 14 Jan 2023 12:19:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41072 "EHLO
+        id S229635AbjAOHQJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 15 Jan 2023 02:16:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjANRTm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 14 Jan 2023 12:19:42 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7939CB762
-        for <io-uring@vger.kernel.org>; Sat, 14 Jan 2023 09:19:41 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id jn22so26395105plb.13
-        for <io-uring@vger.kernel.org>; Sat, 14 Jan 2023 09:19:41 -0800 (PST)
+        with ESMTP id S229791AbjAOHQI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 15 Jan 2023 02:16:08 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736859EE5;
+        Sat, 14 Jan 2023 23:16:06 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id b9-20020a17090a7ac900b00226ef160dcaso26568873pjl.2;
+        Sat, 14 Jan 2023 23:16:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VZKcqO8CvgbPzTQjXVpYsBM4EltM1ofB3aaqH1uEd20=;
-        b=x0KXbUfPpTZzsja58Z6eQjfj4T/mPx+r9H6P1TKXeMf1NvVFdVkR7Q0kJUQRmqxcUr
-         m9XY2WT2dMLxJcsoiddpViiGQ5f3mbHkBuWIbyFAx+260eYvIN8EPTZDh09Ls+Jg1DHI
-         OqTafaP60mS0FBnYVT10JMzLsSzmlV8AgbOkVVsnuj/iq0UfXzBkF9oEAfShiyBWd3ZI
-         DESCX/9ADGTcCyqPBk7Yd2GPf6QDYQGroXeQGITU0ovicMZDXl1B27AMaTpxlRCwtq6f
-         7FS3GabEjS2hhnTd89B8vStgXC38rIGaeSfT0huwlZIvXOly44xZ4QC/IsJs9OBPqRSL
-         Whcw==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p6n+gq7LHdcgfMZrSmQ/cw2Pqom8CQ/6NIY/tLMQxok=;
+        b=SQz1CJcsRlrq+vyEIHG9rB/D1qeDti90VS39XNanIsz++MeK2oF8ybsyRWKTsVJtLc
+         zabxpj/Z/j5e0fmnDC/cvaGvOXSwuagWLfxtqdjcaPFoGXAXZWVI503ePQ/lD8e4KxlS
+         0JE9Kkswk5QG+9R4UWNS3yTxRiIDa4/dMnfukocfVUrls8XfpHs1R2WOmsQKiFGDJrPY
+         gyhk6deG2LAV0l2Ebrb3Qg/rBjIOM3UWI75m3loQ1xWwO6uwy6kyAMVEHKfp2gENZh9M
+         UMgC0j7WqW4amsBR7+lOOpJqx1SDN5okuVMI+Tuj7ngYlsiDff66nATi8T96zy8R9EdI
+         lCTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VZKcqO8CvgbPzTQjXVpYsBM4EltM1ofB3aaqH1uEd20=;
-        b=2dyZ2YCZDLFMu2V+C91hBSbcYYq0JYrHN8IPQIRr4KJjUIJdnoe86QC2Ipn/1eH6Yn
-         7nQb+i4uDH9z/6nirnAkagAvZPrcEiYnW5NfppnSaAkPQMjB9oVcEqDzqHV/Hv35WdMb
-         hDSeowQnZCEWlZyhAlJMnJ8x5njodxwXU1cnbJJ6cIRZiusY3ino0JwlV62LKfWAtzN1
-         HtYyyvtITf8Uw7AiPZl5VcGjPUK5fS5tlfTDdHWzUX6JsfIu2tkv/7LwWKG1G2X1df48
-         YGwlhAgJqK0J5TUuAZhRKkA6R1FRJprKiMU2Zz4rgNN+Dt1+6AD5Fbd5eacsmm26Aktw
-         jYHA==
-X-Gm-Message-State: AFqh2kpi40Sf61wzvW3yTBmdJ+KfkIUy2dCX69+Ld9GcP/ioj40RbVXz
-        omA/tzcHYJD1t+1IrcUsN+0bVQ==
-X-Google-Smtp-Source: AMrXdXt+BKv411JDYZmI+AygtBO2vkbQpV/+UgQEXqO9ZVhnHz5ZRni1zdObP2U0fPgj+eP3uzwsIQ==
-X-Received: by 2002:a17:902:704a:b0:193:2d46:abe0 with SMTP id h10-20020a170902704a00b001932d46abe0mr907094plt.6.1673716780857;
-        Sat, 14 Jan 2023 09:19:40 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e6-20020a17090301c600b00192dda430ddsm16130291plh.123.2023.01.14.09.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Jan 2023 09:19:40 -0800 (PST)
-Message-ID: <3d217e11-2732-2b85-39c5-1a3e2e3bb50b@kernel.dk>
-Date:   Sat, 14 Jan 2023 10:19:39 -0700
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p6n+gq7LHdcgfMZrSmQ/cw2Pqom8CQ/6NIY/tLMQxok=;
+        b=CfEus8pDMU75NM1DXHnHWfyibYM569TRDGqKdATeYs2I2BB0cgv29+dReHQHTvudvy
+         Opi59rLfTsLEF8Rqd719e1iWaTUyAHPHgFIE8nc/TCbSp1n1eofFwHZ79ykpOOL+wsm9
+         osRqI32z/dwQQQxuxSoAvPCGx7TShksga405o3G1sKeKcGZXRd/BxovQO3wUp7qhv25i
+         n65X2wEzbaDv/27eozxmA4NS56n7EH9eiw42XnhoPJtc9XTZY+WkwUZrC69oj9P7cPoU
+         toYxFTsEQtjJcXqt89q/eTYW2rTvANQVS1k7fX3S3Nnv43UG9YTJk1TzE0RNDIbCnl8B
+         HQ0g==
+X-Gm-Message-State: AFqh2krbK/zavWCwC6TZud+DmZTFVu8Kq/bTH2oA6J3zrNNtaXfG03t+
+        sco0ARheGRwbf6DU9YBbn7A=
+X-Google-Smtp-Source: AMrXdXvNFt66g0ILoxDQdqMR1deTa6z2xRRS6f0OuoqzmNeq3GxacDhKxSSDVYgZfEJlk35atds/KQ==
+X-Received: by 2002:a17:903:2341:b0:192:5e53:15f3 with SMTP id c1-20020a170903234100b001925e5315f3mr113551988plh.48.1673766965979;
+        Sat, 14 Jan 2023 23:16:05 -0800 (PST)
+Received: from localhost.localdomain ([43.132.141.3])
+        by smtp.gmail.com with ESMTPSA id z6-20020a1709027e8600b0019445b8ef29sm9284718pla.61.2023.01.14.23.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Jan 2023 23:16:05 -0800 (PST)
+From:   Quanfa Fu <quanfafu@gmail.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Quanfa Fu <quanfafu@gmail.com>
+Subject: [PATCH] io_uring: make io_sqpoll_wait_sq return void
+Date:   Sun, 15 Jan 2023 15:15:19 +0800
+Message-Id: <20230115071519.554282-1-quanfafu@gmail.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [RFC PATCH v1 liburing 2/2] README: Explain about FFI support
-Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Mazakas <christian.mazakas@gmail.com>,
-        Gilang Fachrezy <gilang4321@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        VNLX Kernel Department <kernel@vnlx.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-References: <20230114095523.460879-1-ammar.faizi@intel.com>
- <20230114095523.460879-3-ammar.faizi@intel.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230114095523.460879-3-ammar.faizi@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/14/23 2:55?AM, Ammar Faizi wrote:
-> From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> 
-> Tell people that they should use the FFI variants when they can't use
-> 'static inline' functions defined in liburing.h.
-> 
-> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> ---
->  README | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/README b/README
-> index 4dd59f6..7babb3b 100644
-> --- a/README
-> +++ b/README
-> @@ -71,6 +71,25 @@ Building liburing
->  See './configure --help' for more information about build config options.
->  
->  
-> +FFI support
-> +-----------
-> +
-> +By default, the build results in 4 lib files:
-> +
-> +    2 shared libs:
-> +
-> +        liburing.so
-> +        liburing-ffi.so
-> +
-> +    2 static libs:
-> +
-> +        liburing.a
-> +        liburing-ffi.a
-> +
-> +For languages and applications that can't use 'static inline' functions in
-> +liburing.h should use the FFI variants.
+Change the return type to void since it always return 0, and no need
+to do the checking in syscall io_uring_enter.
 
-Maybe include something on why they can't use them? And that sentence would
-be better as:
+Signed-off-by: Quanfa Fu <quanfafu@gmail.com>
+---
+ io_uring/io_uring.c | 8 +++-----
+ io_uring/sqpoll.c   | 3 +--
+ io_uring/sqpoll.h   | 2 +-
+ 3 files changed, 5 insertions(+), 8 deletions(-)
 
-Languages and applications that can't use 'static inline' functions in
-liburing.h should use the FFI variants.
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 2ac1cd8d23ea..7305c9e34566 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3330,11 +3330,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		}
+ 		if (flags & IORING_ENTER_SQ_WAKEUP)
+ 			wake_up(&ctx->sq_data->wait);
+-		if (flags & IORING_ENTER_SQ_WAIT) {
+-			ret = io_sqpoll_wait_sq(ctx);
+-			if (ret)
+-				goto out;
+-		}
++		if (flags & IORING_ENTER_SQ_WAIT)
++			io_sqpoll_wait_sq(ctx);
++
+ 		ret = to_submit;
+ 	} else if (to_submit) {
+ 		ret = io_uring_add_tctx_node(ctx);
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 559652380672..0119d3f1a556 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -312,7 +312,7 @@ static int io_sq_thread(void *data)
+ 	do_exit(0);
+ }
+ 
+-int io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
++void io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
+ {
+ 	DEFINE_WAIT(wait);
+ 
+@@ -327,7 +327,6 @@ int io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
+ 	} while (!signal_pending(current));
+ 
+ 	finish_wait(&ctx->sqo_sq_wait, &wait);
+-	return 0;
+ }
+ 
+ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
+index 0c3fbcd1f583..e1b8d508d22d 100644
+--- a/io_uring/sqpoll.h
++++ b/io_uring/sqpoll.h
+@@ -26,4 +26,4 @@ void io_sq_thread_stop(struct io_sq_data *sqd);
+ void io_sq_thread_park(struct io_sq_data *sqd);
+ void io_sq_thread_unpark(struct io_sq_data *sqd);
+ void io_put_sq_data(struct io_sq_data *sqd);
+-int io_sqpoll_wait_sq(struct io_ring_ctx *ctx);
++void io_sqpoll_wait_sq(struct io_ring_ctx *ctx);
 -- 
-Jens Axboe
+2.31.1
 

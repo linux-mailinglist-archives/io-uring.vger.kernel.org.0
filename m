@@ -2,69 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F0C66C063
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jan 2023 14:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 862C266C065
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jan 2023 14:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231350AbjAPN5q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S231478AbjAPN5q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Mon, 16 Jan 2023 08:57:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbjAPN51 (ORCPT
+        with ESMTP id S231437AbjAPN51 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Mon, 16 Jan 2023 08:57:27 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483692365E
-        for <io-uring@vger.kernel.org>; Mon, 16 Jan 2023 05:54:17 -0800 (PST)
-Received: from biznet-home.integral.gnuweeb.org (unknown [182.253.183.184])
-        by gnuweeb.org (Postfix) with ESMTPSA id 4FA518186B;
-        Mon, 16 Jan 2023 13:54:14 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1673877256;
-        bh=pzLpp+nXLI3iUDDyYN0QmNfgXUH3B3XL2cx4MfFu90Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LuDPQ94tnXw3FhkzRg1FQ/kWaWuMJ/f8rwfkQfDVKSvpDH4qkJTn7n2bXivPGfCmK
-         4r6Le1gnWucfFQQZ3NhsCxuihDyaQ/Hd6wtHFMFITeSXasIReGpHFCxZv+ricueb00
-         M4+H4y7bcXVFmV3myKrfxAYHCK7Kb56sew4nPTXjzQFcplOMHv7ZMgKWn4bcp7VlNg
-         r32LJ/IIoj0cCUBRcffieS3s/hw1MBaoUI0814+fkTFbEmdZkBH+xGm70RB3GcSMb2
-         +OPbqXroCUDSadqS73dmDV0AtEz4nCOKQp/mnXbCwK7IPiJ0nabwdnzFTC8iOZaaLA
-         AzAT757JNLqVA==
-Date:   Mon, 16 Jan 2023 20:54:10 +0700
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christian Mazakas <christian.mazakas@gmail.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Gilang Fachrezy <gilang4321@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        VNLX Kernel Department <kernel@vnlx.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: Re: [RFC PATCH v1 liburing 2/2] README: Explain about FFI support
-Message-ID: <Y8VXAtctb3ISCj8+@biznet-home.integral.gnuweeb.org>
-References: <20230114095523.460879-1-ammar.faizi@intel.com>
- <20230114095523.460879-3-ammar.faizi@intel.com>
- <3d217e11-2732-2b85-39c5-1a3e2e3bb50b@kernel.dk>
- <CAHf7xWs1hWvqb61tpBq63CLFvSk=kfAn_nq_2t2gf7O8V9qZ6A@mail.gmail.com>
- <34a2449a-8500-4081-dc60-e6e45ecb1680@kernel.dk>
- <CAHf7xWuX+c1uhPEsq47u9CyqztoGqG4BLwXSen-i15zM1ZFasQ@mail.gmail.com>
- <61b6a406-a657-28b7-3da7-a2ea817befc6@kernel.dk>
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B2423665;
+        Mon, 16 Jan 2023 05:54:18 -0800 (PST)
+Received: from [2a02:8108:963f:de38:4bc7:2566:28bd:b73c]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1pHPwH-0000xz-5w; Mon, 16 Jan 2023 14:54:17 +0100
+Message-ID: <6d075006-7f32-7d39-6d96-4a94d4dbdf40@leemhuis.info>
+Date:   Mon, 16 Jan 2023 14:54:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <61b6a406-a657-28b7-3da7-a2ea817befc6@kernel.dk>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: =?UTF-8?Q?Re=3a_=5bregression=5d_Bug=c2=a0216932_-_io=5furing_with_?=
+ =?UTF-8?Q?libvirt_cause_kernel_NULL_pointer_dereference_since_6=2e1=2e5?=
+Content-Language: en-US, de-DE
+To:     Jens Axboe <axboe@kernel.dk>,
+        Linux regressions mailing list <regressions@lists.linux.dev>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "Sergey V." <truesmb@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <74347fe1-ac68-2661-500d-b87fab6994f7@leemhuis.info>
+ <c5632908-1b0f-af1f-4754-bf1d0027a6dc@kernel.dk>
+From:   "Linux kernel regression tracking (#update)" 
+        <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <c5632908-1b0f-af1f-4754-bf1d0027a6dc@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1673877258;57d8771a;
+X-HE-SMSGID: 1pHPwH-0000xz-5w
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 06:44:40AM -0700, Jens Axboe wrote:
-> This is great - Ammar, can you incorporate that when you respin the
-> patchset?
+On 16.01.23 14:42, Jens Axboe wrote:
+> On 1/16/23 6:17?AM, Linux kernel regression tracking (Thorsten Leemhuis) wrote:
+>> Hi, this is your Linux kernel regression tracker.
+>>
+>> I noticed a regression report in bugzilla.kernel.org. As many (most?)
+>> kernel developer don't keep an eye on it, I decided to forward it by
+>> mail. Quoting from https://bugzilla.kernel.org/show_bug.cgi?id=216932 :
+> 
+> Looks like:
+> 
+> commit 6d47e0f6a535701134d950db65eb8fe1edf0b575
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed Jan 4 08:52:06 2023 -0700
+> 
+>     block: don't allow splitting of a REQ_NOWAIT bio
+> 
+> got picked up by stable, but not the required prep patch:
+> 
+> 
+> commit 613b14884b8595e20b9fac4126bf627313827fbe
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed Jan 4 08:51:19 2023 -0700
+> 
+>     block: handle bio_split_to_limits() NULL return
+> 
+> Greg/team, can you pick the latter too? It'll pick cleanly for
+> 6.1-stable, not sure how far back the other patch has gone yet.
 
-Roger that. Will respin the patchset with that incorporated.
+Jens, many thx for looking so quickly into this!
 
--- 
-Ammar Faizi
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
+
+#regzbot fix: block: handle bio_split_to_limits() NULL return
+#regzbot ignore-activity
+
+
 

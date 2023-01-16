@@ -2,73 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D85D66D0A8
-	for <lists+io-uring@lfdr.de>; Mon, 16 Jan 2023 22:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 164E666D0B8
+	for <lists+io-uring@lfdr.de>; Mon, 16 Jan 2023 22:09:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231765AbjAPVEM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Jan 2023 16:04:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        id S231719AbjAPVJM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Jan 2023 16:09:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231268AbjAPVEL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Jan 2023 16:04:11 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D0021BADD
-        for <io-uring@vger.kernel.org>; Mon, 16 Jan 2023 13:04:10 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id v3so20485520pgh.4
-        for <io-uring@vger.kernel.org>; Mon, 16 Jan 2023 13:04:10 -0800 (PST)
+        with ESMTP id S233233AbjAPVJL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Jan 2023 16:09:11 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B0423858
+        for <io-uring@vger.kernel.org>; Mon, 16 Jan 2023 13:09:11 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id 36so20477911pgp.10
+        for <io-uring@vger.kernel.org>; Mon, 16 Jan 2023 13:09:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aGK1V5gIC+NujhvS/gu0KGXV3fRO1vgMFkpNG8cQa0g=;
-        b=BREqZarjdjYwOpOuuEg9JHsAe4JiObe+oqMxyqGfMECxoGiPEOGUIGYjAY1REEcotc
-         8sNpNzJiGxOx7ewfXJ2rlNSomEgnT/i5ddPDuuK/DxgOd1Xzp6/YZ/SgrYY5mS3v6zyW
-         pgublYqtz+TNxazSNHi7N3jTLUKu/5XJJlp/LlJ38yxcEAtkmWS2GNuurg+mKQaeOxJg
-         iF9Z0dQh3/GbIg+ndvwqfv9LN8iFu+lyQdITBPyqu0a8n30FETFWpJ4kiCr+31IL4NwR
-         kdOxrSbI4urtLKyuhP1wsZPWpq4n6z5nXVMjjTnHJAyRoZhgTnuyI63ND/QDiuWaNMGd
-         8wCA==
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iaJciH/Wsecu5l9TebEyhmGPN9puTClZTuf7xJs3pXE=;
+        b=WLLuRcO6Ls+zOXa4M31JZlqwDxk2bQOdHCwnUkqrmXzt+518dCyDUW4g7fHK/IlQc5
+         Pj/3nfysFBKX/Ysc9g4FuUxSyNPOpYORo2qCiQTx58CY7+QN+bghUXAJ0o9W6U7+utFg
+         HGGLZcakMNOT/9VOfXz6+eYyyVdVryMHj+NcEiOn1OAtp8eW/mHihSYCThRZXXd7jaxu
+         bn53DAg87xc5PTtrziZ3A2PEDCYNIqxA2x0O9vnHmh1wMHNPlMGP9NkxPzExL9mxBHEY
+         lojhrYH5Lf0GnUITVslIKPg416Bd7K09wv0S9ZUg9zE2rg+VZHGcGZwdM7Wr2S2BIgqp
+         XyYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aGK1V5gIC+NujhvS/gu0KGXV3fRO1vgMFkpNG8cQa0g=;
-        b=jkriH6PUhMBE2bfb+pUfHt7+n+CDFhegsF7HuOaWoN3IrVhUSX/2LSpJu5cGmvs5yn
-         wKHe//Gh+nPmg7yIDqOzCWHpiDdtOjLpNTX/ALUlDFTlTvG35qmBEYCWPr2Ldk07LrIV
-         NhrpsrXowhmNAb14QDRuBHYpQwYsOuS2v+cS93QyWA8wGBss0+65D9Ke4yHclN0moULb
-         EWLmaZ1tU+lUyp/rMpsLMm7KH2UEtSNhnA0SZdHjZBIVzymsuCFU7X8ATbDfGGIPyQuV
-         mMaPcth/2IUEyDF06ZG2fkiSI60F6xUHjPonW/4lyE5yDDdihyhOWYy8SR+2Fzwqihmc
-         VosQ==
-X-Gm-Message-State: AFqh2kpkzhY4d5/7mcbOA3CgbQpgoxkkh2Tzz9GkrAZoUSfKysWnPii6
-        6wd3vZGuzsghMBrvYHSyum6379wnDQLHfZHl
-X-Google-Smtp-Source: AMrXdXvaFBMth1mL2QeLXp8ekTq5Tj2r7JG0WBmXNBamxJISSkA9PUGyedVHQVoFoqdn3f77uRx79A==
-X-Received: by 2002:aa7:96bb:0:b0:58d:a90d:b245 with SMTP id g27-20020aa796bb000000b0058da90db245mr234986pfk.1.1673903049801;
-        Mon, 16 Jan 2023 13:04:09 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x10-20020aa79aca000000b0058a0e61136asm12714600pfp.66.2023.01.16.13.04.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jan 2023 13:04:09 -0800 (PST)
-Message-ID: <427936d0-f62b-3840-6a59-70138d278cb8@kernel.dk>
-Date:   Mon, 16 Jan 2023 14:04:08 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH for-next 1/5] io_uring: return back links tw run
- optimisation
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1673887636.git.asml.silence@gmail.com>
- <6328acdbb5e60efc762b18003382de077e6e1367.1673887636.git.asml.silence@gmail.com>
- <3b01c5b6-9b4c-0f7e-0fdf-67eb7c320bf0@kernel.dk>
- <92413c12-5cd1-7b3b-b926-0529c92a927a@gmail.com>
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iaJciH/Wsecu5l9TebEyhmGPN9puTClZTuf7xJs3pXE=;
+        b=pu10AqdmmtGnkmG7VvNkhKMxPK3OgFAES1bXm6L6LNh5Y+39/VYXxU0mZG/wRh2MRX
+         Sp372iuJ2UTXpWnP7c62sM0pR2mWN7Mt/PdYUkyHCp9s8AMKy5h12e5Xo/c8DDktLJXO
+         zCwY16W9X3KWh7w4pfHhFyXbJ3H3Y+BVk5dOfkgtS/Nw8kfWFDlSZOV2s3OrvYWDRhVs
+         f9okoFtuNHMTE+tkYpt9tfZ3H4hkg1heGVm/MGBStWlcwG6OcyZTdpq6N7qEE5RaXEZt
+         bCFloDycKQP7fjX/JkM9MyB0WmGlRrsbyQnyKZrUtYMAbMoKw9RIEiRjxGz412vRbaV7
+         sQsA==
+X-Gm-Message-State: AFqh2kqQwh1jJmRp4ySvfgpRXjvuXRoPX0S2OOk8mg+tFf5Xtf36Yyjj
+        lBiJlTcCpc9j6EX6hjiGpAYoHqN7enEnL+f4
+X-Google-Smtp-Source: AMrXdXvFEV6XH1XKDq0123EwMl4JhqmIozMsW9ihazdj1L/zq+s34WXAS/TFaJ5UIQJXIFJdM/BUhQ==
+X-Received: by 2002:a62:e919:0:b0:58d:be61:7d9e with SMTP id j25-20020a62e919000000b0058dbe617d9emr249383pfh.0.1673903350301;
+        Mon, 16 Jan 2023 13:09:10 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id i5-20020a626d05000000b0058bca3b8f76sm4322494pfc.78.2023.01.16.13.09.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 13:09:09 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <92413c12-5cd1-7b3b-b926-0529c92a927a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1673887636.git.asml.silence@gmail.com>
+References: <cover.1673887636.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-next 0/5] random for-next patches
+Message-Id: <167390334964.348119.1839379323147508599.b4-ty@kernel.dk>
+Date:   Mon, 16 Jan 2023 14:09:09 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-78c63
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,29 +70,36 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/16/23 12:47 PM, Pavel Begunkov wrote:
-> On 1/16/23 18:43, Jens Axboe wrote:
->> On 1/16/23 9:48 AM, Pavel Begunkov wrote:
->>> io_submit_flush_completions() may queue new requests for tw execution,
->>> especially true for linked requests. Recheck the tw list for emptiness
->>> after flushing completions.
->>
->> Did you check when it got lost? Would be nice to add a Fixes link?
+
+On Mon, 16 Jan 2023 16:48:56 +0000, Pavel Begunkov wrote:
+> 1/5 returns back an old lost optimisation
+> Others are small cleanups
 > 
-> fwiw, not fan of putting a "Fixes" tag on sth that is not a fix.
+> Pavel Begunkov (5):
+>   io_uring: return back links tw run optimisation
+>   io_uring: don't export io_put_task()
+>   io_uring: simplify fallback execution
+>   io_uring: optimise ctx flags layout
+>   io_uring: refactor __io_req_complete_post
+> 
+> [...]
 
-I'm not either as it isn't fully descriptive, but it is better than
-not having that reference imho.
+Applied, thanks!
 
-> Looks like the optimisation was there for normal task_work, then
-> disappeared in f88262e60bb9c ("io_uring: lockless task list").
-> DEFERRED_TASKRUN came later and this patch handles exclusively
-> deferred tw. I probably need to send a patch for normal tw as well.
+[1/5] io_uring: return back links tw run optimisation
+      commit: b48f4ef033089cf03c28bb09ae054dbfdf11635a
+[2/5] io_uring: don't export io_put_task()
+      commit: 41cc377f69cc1702d989c33eccbacd845d463c72
+[3/5] io_uring: simplify fallback execution
+      commit: ae96a39a7537ab49b9fb497e7c5e860ffc6fde72
+[4/5] io_uring: optimise ctx flags layout
+      commit: 4a26869e3c95ee20d03b178e413a619928a84d26
+[5/5] io_uring: refactor __io_req_complete_post
+      commit: 2c5c148670c650381bce849e164757ab6a2729be
 
-So maybe just use that commit? I can make a note in the message on
-how it relates.
-
+Best regards,
 -- 
 Jens Axboe
+
 
 

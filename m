@@ -2,66 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 651E1674067
-	for <lists+io-uring@lfdr.de>; Thu, 19 Jan 2023 18:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF67674073
+	for <lists+io-uring@lfdr.de>; Thu, 19 Jan 2023 19:02:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjASR65 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Jan 2023 12:58:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
+        id S229614AbjASSCg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Jan 2023 13:02:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230132AbjASR64 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Jan 2023 12:58:56 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F19F8F7F4
-        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 09:58:43 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id m15so1567241ilq.2
-        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 09:58:43 -0800 (PST)
+        with ESMTP id S229654AbjASSCe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Jan 2023 13:02:34 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F233C90860
+        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 10:02:28 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id b127so1327148iof.8
+        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 10:02:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6EIcP0Sb4lKpIBY56Dm25GSOSg8HaED3u/YYyAbTFqQ=;
-        b=6xWoDCMIsEtZzBE8ZbiWT50jAFIt9LZVJZxzFP0rrbF6SEatkbgSTaAblXwq01ChNW
-         qjfzAs+dSATvY3rh9+zpOfd4o1ouJb6mmWXyUZYBt7QY3TN8WwVjibhxRL8qkqechZou
-         MqGxQoF5lYGvMonD4T6Gatad3hNwyMrZgKpyS2YprAGQNOsh6XTxMySw3Pq8Gpms9nOk
-         etZ2bjTj2lQXOQpQpDDpul2HAoimpFnDRLaecxZ3BCBF16HIwWEpcJiswkVyGkThRuPn
-         HJu5PmrlUKDzR7R2XF4jUmGoOzfZvWcjB8e4b2Ut9CW80/HLVTpIIjJkV+4bKM0vo3n9
-         dmCA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvlyFxk0cNA+UMCcOxvJcY/Gh8e9hsVwV5Z0I7XRXkM=;
+        b=ejQmnUWe7xXiFtLiriDcGIonVJrZK0PoV0GjfgfOhQnpoJh6LiMrqDO3yYeK2qR+xE
+         HxLSlXscb9XJugw9krMVCfcP4Uy5Yb9FkZnC0fsbp8nqA2wktODgasX9wGvFGdrx9Cph
+         uVqGJsnUFHgD8oJ3Y89paq1XotT4JLqtMJn4s85tnM1VBuZPMCZzPyUPsn4n4Fceqocq
+         4Yo7Z7XxgQ5T2HyP/VskUgDDbwApgrCp9WwPJetTvh7k7/FknezXAGj4Y+4Tbcg3nRyg
+         v1PFFDZkEP9mQapi5E2naAruURGS1/fYaoJ3T2B5MzptVPhi2LX2ciek1IZFb6ABowmm
+         A/KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6EIcP0Sb4lKpIBY56Dm25GSOSg8HaED3u/YYyAbTFqQ=;
-        b=Zn4JluZ/EuaLuHrRTJWtnkS2jwcVmW8SqlAPvEoMYvepCFZiaAMCsOtq4t5/d9WcqI
-         KcDCp7V4jEnUwzlSoRcsBWn0v/TW/3uofm5ZKnu6/DgpHi3dHSUxqTpNlWOawpOmZNCJ
-         tlNRPcT5pqUK1nso7Fs9iIC+wuG45S4eTCqGBp1xAhfl0jc7ZsVMLD5G3/NSbQPMOc3C
-         6e0CLT6blxStwvoteUXA3X5TALSv5ChS3EYE8vel67XkyklGsyhcT4QDroByqrEakDiH
-         UiLns33ERyKXwx3nXMDrDTU6BH6iPIRXFwKP/wJIHwYMqiTu56CCHu3oveQmLOVcsKsl
-         8pPA==
-X-Gm-Message-State: AFqh2krII75f7npOvliJBWroZVfUsnjgnlUfOKC+ooaaJsVE5SnWVr4K
-        6R1oN6SF3E+yrKkHUBa0EAatCw8b+4xd9/nb
-X-Google-Smtp-Source: AMrXdXuC+1FiV+rdQ5uWDMUQIEogbiKCzq2FBedR4XKgUZIgfLgNNnazAARQQ7Ru9aTCAAIOFSvCXA==
-X-Received: by 2002:a92:9501:0:b0:30e:f03e:a76e with SMTP id y1-20020a929501000000b0030ef03ea76emr1490645ilh.2.1674151122180;
-        Thu, 19 Jan 2023 09:58:42 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a6-20020a056e020e0600b0030edd1501a0sm5741005ilk.74.2023.01.19.09.58.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 09:58:41 -0800 (PST)
-Message-ID: <1fb25d24-0def-9511-5d6d-06aa6de0166e@kernel.dk>
-Date:   Thu, 19 Jan 2023 10:58:41 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IvlyFxk0cNA+UMCcOxvJcY/Gh8e9hsVwV5Z0I7XRXkM=;
+        b=AcAJMM4XxOJQzPnlzDyVAvYvxdhMswW4qZdO2pXgzSoVjolkv1/l32Lnxbu1rg9hS6
+         q/yDtjl/kNVK5nPgpt8geapePEWDsc8mrl8TMjtk3CaVvBOcrkKcKkvcTJXHKSFBo34a
+         tklIWwTjEDJMPIZs3Sn+aTELY5GGs0SxxdPh1m5s8Ti8rCJfT0Dr520jXtT0ZFNCZIdL
+         4As9Wpzir1LgSK4+QtYJX1akz7bNY1gyg0zqyIQU82lTL/mriHOrCmWZwvJG6RHWZ3zn
+         Hz2ltK5ImByLJu0O5c0c4EwNHJfj6dIhJDU9DW4LFGTjCQokYZQAvcOqC2rvcNdrGY8H
+         l9AQ==
+X-Gm-Message-State: AFqh2kqQDKz4Qj52ACTABbeCMfekTDtMKSEa0pNeJ2LA7PEE99nohNgf
+        i9cTAN9+tTBmXJEoThFNen9BA7PTt2AGhmG6
+X-Google-Smtp-Source: AMrXdXukVu5/PwHhqzqCs/2i7SXVTZBM7NRltCJeAuVDEdEDrh0n+LonqUrnCb5p76NUucNXrruJ7A==
+X-Received: by 2002:a6b:8fcd:0:b0:704:d16d:4a59 with SMTP id r196-20020a6b8fcd000000b00704d16d4a59mr1541620iod.2.1674151347868;
+        Thu, 19 Jan 2023 10:02:27 -0800 (PST)
+Received: from m1max.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id d3-20020a0566022be300b00704d1d8faecsm2354914ioy.48.2023.01.19.10.02.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 10:02:27 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH for-next] io_uring/msg-ring: ensure flags passing works for
- task_work completions
-Cc:     Breno Leitao <leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCH 0/2] Fix locking for MSG_RING and IOPOLL targets
+Date:   Thu, 19 Jan 2023 11:02:23 -0700
+Message-Id: <20230119180225.466835-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
@@ -71,37 +66,12 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the target ring is using IORING_SETUP_SINGLE_ISSUER and we're posting
-a message from a different thread, then we need to ensure that the
-fallback task_work that posts the CQE knwos about the flags passing as
-well. If not we'll always be posting 0 as the flags.
+Hi,
 
-Fixes: 5ffd63f2b73e ("io_uring/msg_ring: Pass custom flags to the cqe")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index dc233f72a541..5d052d2f3d93 100644
---- a/io_uring/msg_ring.c
-+++ b/io_uring/msg_ring.c
-@@ -49,11 +49,15 @@ static void io_msg_tw_complete(struct callback_head *head)
- 	struct io_msg *msg = container_of(head, struct io_msg, tw);
- 	struct io_kiocb *req = cmd_to_io_kiocb(msg);
- 	struct io_ring_ctx *target_ctx = req->file->private_data;
-+	u32 flags = 0;
- 	int ret = 0;
- 
-+	if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
-+		flags = msg->cqe_flags;
-+
- 	if (current->flags & PF_EXITING)
- 		ret = -EOWNERDEAD;
--	else if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, 0))
-+	else if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, flags))
- 		ret = -EOVERFLOW;
- 
- 	if (ret < 0)
+First patch is just a prep patch, patch two adds conditional locking
+for posting CQEs to an IOPOLL based target.
 
 -- 
 Jens Axboe
+
+

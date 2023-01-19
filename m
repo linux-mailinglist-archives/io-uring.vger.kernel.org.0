@@ -2,134 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EAA567224F
-	for <lists+io-uring@lfdr.de>; Wed, 18 Jan 2023 17:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F45B673714
+	for <lists+io-uring@lfdr.de>; Thu, 19 Jan 2023 12:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbjARQBc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Jan 2023 11:01:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
+        id S230490AbjASLj3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Jan 2023 06:39:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231256AbjARP7y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Jan 2023 10:59:54 -0500
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C9054B07;
-        Wed, 18 Jan 2023 07:56:42 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id ud5so84375683ejc.4;
-        Wed, 18 Jan 2023 07:56:42 -0800 (PST)
+        with ESMTP id S230495AbjASLi6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Jan 2023 06:38:58 -0500
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D1221A38
+        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 03:38:01 -0800 (PST)
+Received: by mail-qt1-x843.google.com with SMTP id s4so1298086qtx.6
+        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 03:38:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IsOTMR428w4RjWmHxlEXCsbcjyACGgotOAMBnayucPs=;
+        b=qGSrr5OHBbmzHi/AxTaJIUJgw1E3DKA+4bfabwMjpDIMqoVL409SuehqQ8quaA1KTk
+         avetb8LVLTw05Y93vL7g3iMWwkWiJFjqobQ25CcvsXUoMe2T++/XpEil3h450XozH0bu
+         qB/bVKsRYScJp9GVQ3NF/kFvHwqpnofAjiQnolax0NZWHHMHKjw5jF8R9wkL8V8bCtgU
+         FEEDOEImCUBhEppmnT/NWfL2saTlV6NmG5uiRf49MlIUXsxYYXp0/0ppnMyPEJ3WoldE
+         B9q7C9xmgXeY4vhCHdt6MKoU8Jg4Dz+Y1l+QuLBGU1KtR34B6XpJ8NhSz9bre10+HMeJ
+         OXoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kpirYHngnT4pnfeId8PwGYCJd6AYwIUHThaVH7Hubp4=;
-        b=7T8YUUT4iRiPOjpbmsSSqfUMovJ41quEMrCAEwyFYNoZWH9nF4Ql3dD3b4vFhpB6Yw
-         vrnct3W+QU9Cucdx34rP8VdsfiWwjJs0+oVNIDSPVVhXBPDjpB+HxEkPDx1FPOqL6iSG
-         mulwwYFhXDYqZauKSb5UpvGCvL9bqqwmrd9b0pebgEJtPlE5W0FnFFQR9zPqFOgmq0Mi
-         1DgxRGWiFuktg3X6sD0HAWELM9hCIvP3mWI49PsjE6QrePLYweIHBERIyef/VCjJtXLV
-         z77ZXZtHSgySwCaOVnrqoMe6HXVNDzVruAumUxCCuZKHO/yPwe7yHiBTwfsonhf4NweK
-         d2ZA==
-X-Gm-Message-State: AFqh2kqChRMN0ZK8rcJ45UUJwaAAW7vSQMb410493XEYxXYHYqgn4qWA
-        yOIS0dk73Zqz4T/8wmTagio=
-X-Google-Smtp-Source: AMrXdXtr40LzqXP8+RQaUuAxxO44Xk05rql9rcrJEQ3/EUo+edYvelcfQ5ygO11ZQgMVz99c2FljdA==
-X-Received: by 2002:a17:907:c388:b0:86e:65c8:6fe3 with SMTP id tm8-20020a170907c38800b0086e65c86fe3mr8253919ejc.7.1674057401112;
-        Wed, 18 Jan 2023 07:56:41 -0800 (PST)
-Received: from localhost (fwdproxy-cln-120.fbsv.net. [2a03:2880:31ff:78::face:b00c])
-        by smtp.gmail.com with ESMTPSA id gw21-20020a170906f15500b0086dc9e05685sm5621406ejb.222.2023.01.18.07.56.40
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsOTMR428w4RjWmHxlEXCsbcjyACGgotOAMBnayucPs=;
+        b=P/WDenjrKaJLzY4r3BkVpIa/0p+LCkGZb9ID/9Dg0F1RQX+ei9O4tTMnqMlxlherzE
+         hjfVFcYnDdmjb91fv2M6HaLLmhxxKtHdztQWjzUki5KyrakYYVg8AlFXQDSB/E2r9b7M
+         RuVHanAm8dBJmBBqu+154/2f94aEAFERCn8sTQ4fb0bFFdW+tZ+r1hOZ4sEWc9ZkL5h4
+         pjoR9fvzPiBpHublVvOfG1uW7qdBaWu1smMwSNcAmX6aWmHnUde/JPGPNl8W+/X8prck
+         GvwKcpXQTJidCGUa7orXpdDB9fK0x5+ufvkN2xAJ92BQ1eEQ+H88xE3SZ5GFvRTwhsV4
+         OXRQ==
+X-Gm-Message-State: AFqh2kqaEb6qgFeKM1OyLPUkqZ9iHqY4VKrhZp6z5fx2e0WBGHgX/kyW
+        l63JRzqGK994YGi+FMwmFWo=
+X-Google-Smtp-Source: AMrXdXsAJRyHjNU7OCpY68h4eIQ5XjvDAmITlWj0cbu38jbfvbRv8ZaQZ3GNqBq9zn75hxIP3ekX1g==
+X-Received: by 2002:ac8:5642:0:b0:3a8:11ab:c537 with SMTP id 2-20020ac85642000000b003a811abc537mr13010858qtt.63.1674128280080;
+        Thu, 19 Jan 2023 03:38:00 -0800 (PST)
+Received: from ip-172-31-85-199.ec2.internal (ec2-44-201-124-83.compute-1.amazonaws.com. [44.201.124.83])
+        by smtp.gmail.com with ESMTPSA id o24-20020ac85558000000b003b646a99aa6sm2545783qtr.77.2023.01.19.03.37.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 07:56:40 -0800 (PST)
-From:   Breno Leitao <leitao@debian.org>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org
-Cc:     kasan-dev@googlegroups.com, leitao@debian.org, leit@fb.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: Enable KASAN for request cache
-Date:   Wed, 18 Jan 2023 07:56:30 -0800
-Message-Id: <20230118155630.2762921-1-leitao@debian.org>
-X-Mailer: git-send-email 2.30.2
+        Thu, 19 Jan 2023 03:37:59 -0800 (PST)
+Date:   Thu, 19 Jan 2023 19:37:57 +0800
+From:   Xingyuan Mo <hdthky0@gmail.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com
+Cc:     syzkaller@googlegroups.com, io-uring@vger.kernel.org
+Subject: WARNING in io_fill_cqe_aux
+Message-ID: <Y8krlYa52/0YGqkg@ip-172-31-85-199.ec2.internal>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Every io_uring request is represented by struct io_kiocb, which is
-cached locally by io_uring (not SLAB/SLUB) in the list called
-submit_state.freelist. This patch simply enabled KASAN for this free
-list.
+Hello,
 
-This list is initially created by KMEM_CACHE, but later, managed by
-io_uring. This patch basically poisons the objects that are not used
-(i.e., they are the free list), and unpoisons it when the object is
-allocated/removed from the list.
+Recently, when using our tool to fuzz kernel, the following bug was
+triggered.
 
-Touching these poisoned objects while in the freelist will cause a KASAN
-warning.
+HEAD commit: 5dc4c995db9e Linux 6.2-rc4
+git tree: mainline
+compiler: gcc (Ubuntu 10.3.0-1ubuntu1~20.04) 10.3.0
+kernel config: https://drive.google.com/file/d/1anGeZxcTgSKNZX4oywvsSfLqw1tcZSTp/view?usp=share_link
+C reproducer: https://drive.google.com/file/d/1DxYuWGnFSBhqve-jjXloYhwKpyUm8nDt/view?usp=share_link
 
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- io_uring/io_uring.c |  3 ++-
- io_uring/io_uring.h | 11 ++++++++---
- 2 files changed, 10 insertions(+), 4 deletions(-)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: Xingyuan Mo <hdthky0@gmail.com>
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 2ac1cd8d23ea..8cc0f12034d1 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -151,7 +151,7 @@ static void io_move_task_work_from_local(struct io_ring_ctx *ctx);
- static void __io_submit_flush_completions(struct io_ring_ctx *ctx);
- static __cold void io_fallback_tw(struct io_uring_task *tctx);
- 
--static struct kmem_cache *req_cachep;
-+struct kmem_cache *req_cachep;
- 
- struct sock *io_uring_get_socket(struct file *file)
- {
-@@ -230,6 +230,7 @@ static inline void req_fail_link_node(struct io_kiocb *req, int res)
- static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx *ctx)
- {
- 	wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
-+	kasan_poison_object_data(req_cachep, req);
- }
- 
- static __cold void io_ring_ctx_ref_free(struct percpu_ref *ref)
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index ab4b2a1c3b7e..0ccf62a19b65 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -3,6 +3,7 @@
- 
- #include <linux/errno.h>
- #include <linux/lockdep.h>
-+#include <linux/kasan.h>
- #include <linux/io_uring_types.h>
- #include <uapi/linux/eventpoll.h>
- #include "io-wq.h"
-@@ -379,12 +380,16 @@ static inline bool io_alloc_req_refill(struct io_ring_ctx *ctx)
- 	return true;
- }
- 
-+extern struct kmem_cache *req_cachep;
-+
- static inline struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
- {
--	struct io_wq_work_node *node;
-+	struct io_kiocb *req;
- 
--	node = wq_stack_extract(&ctx->submit_state.free_list);
--	return container_of(node, struct io_kiocb, comp_list);
-+	req = container_of(ctx->submit_state.free_list.next, struct io_kiocb, comp_list);
-+	kasan_unpoison_object_data(req_cachep, req);
-+	wq_stack_extract(&ctx->submit_state.free_list);
-+	return req;
- }
- 
- static inline bool io_allowed_run_tw(struct io_ring_ctx *ctx)
--- 
-2.30.2
-
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 36200 at io_uring/io_uring.h:108 io_get_cqe_overflow root/linux-6.2-rc4/io_uring/io_uring.h:108 [inline]
+WARNING: CPU: 1 PID: 36200 at io_uring/io_uring.h:108 io_get_cqe root/linux-6.2-rc4/io_uring/io_uring.h:125 [inline]
+WARNING: CPU: 1 PID: 36200 at io_uring/io_uring.h:108 io_fill_cqe_aux+0x69b/0x840 root/linux-6.2-rc4/io_uring/io_uring.c:832
+Modules linked in:
+CPU: 1 PID: 36200 Comm: syz-executor.0 Not tainted 6.2.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:io_get_cqe_overflow root/linux-6.2-rc4/io_uring/io_uring.h:108 [inline]
+RIP: 0010:io_get_cqe root/linux-6.2-rc4/io_uring/io_uring.h:125 [inline]
+RIP: 0010:io_fill_cqe_aux+0x69b/0x840 root/linux-6.2-rc4/io_uring/io_uring.c:832
+Code: fd 48 8d bb a8 00 00 00 be ff ff ff ff e8 dd 1b 02 06 31 ff 89 c5 89 c6 e8 c2 76 7e fd 85 ed 0f 85 44 fa ff ff e8 05 7a 7e fd <0f> 0b e9 38 fa ff ff e8 f9 79 7e fd 31 ff 89 ee e8 a0 76 7e fd 85
+RSP: 0018:ffffc90015747b68 EFLAGS: 00010212
+RAX: 000000000000016e RBX: ffff8881245b6000 RCX: ffffc90013881000
+RDX: 0000000000040000 RSI: ffffffff8401f31b RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8881245b6018
+FS:  00007fcf02ab4700(0000) GS:ffff888135c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e024000 CR3: 00000001054e6000 CR4: 0000000000752ee0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ __io_post_aux_cqe root/linux-6.2-rc4/io_uring/io_uring.c:880 [inline]
+ io_post_aux_cqe+0x3b/0x90 root/linux-6.2-rc4/io_uring/io_uring.c:890
+ io_msg_ring_data root/linux-6.2-rc4/io_uring/msg_ring.c:74 [inline]
+ io_msg_ring+0x5b9/0xb70 root/linux-6.2-rc4/io_uring/msg_ring.c:227
+ io_issue_sqe+0x6c2/0x1210 root/linux-6.2-rc4/io_uring/io_uring.c:1856
+ io_queue_sqe root/linux-6.2-rc4/io_uring/io_uring.c:2028 [inline]
+ io_submit_sqe root/linux-6.2-rc4/io_uring/io_uring.c:2286 [inline]
+ io_submit_sqes+0x96c/0x1e10 root/linux-6.2-rc4/io_uring/io_uring.c:2397
+ __do_sys_io_uring_enter+0xc20/0x2540 root/linux-6.2-rc4/io_uring/io_uring.c:3345
+ do_syscall_x64 root/linux-6.2-rc4/arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 root/linux-6.2-rc4/arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fcf01c8f6cd
+Code: c3 e8 17 32 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fcf02ab3bf8 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00007fcf01dbbf80 RCX: 00007fcf01c8f6cd
+RDX: 0000000000000000 RSI: 0000000000007b84 RDI: 0000000000000004
+RBP: 00007fcf01cfcb05 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fcf01edfb2f R14: 00007fcf01edfcd0 R15: 00007fcf02ab3d80
+ </TASK>

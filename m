@@ -2,72 +2,113 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DFD8675F30
-	for <lists+io-uring@lfdr.de>; Fri, 20 Jan 2023 21:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D483675FFF
+	for <lists+io-uring@lfdr.de>; Fri, 20 Jan 2023 23:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjATU73 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Jan 2023 15:59:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53282 "EHLO
+        id S230003AbjATWNW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Jan 2023 17:13:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbjATU73 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Jan 2023 15:59:29 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7561486ED7
-        for <io-uring@vger.kernel.org>; Fri, 20 Jan 2023 12:59:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 10B4362096
-        for <io-uring@vger.kernel.org>; Fri, 20 Jan 2023 20:59:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 74894C433D2;
-        Fri, 20 Jan 2023 20:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674248367;
-        bh=0QWccGTeGEUckSI7C4C800RC1zFGeZFnsRUQMjTd0yI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=LEbyarKmzsmCcn9+KN0crzzrYsCIKFy03whLKiGlJrEj1ru3OB1Z8u9fZK8QDmRxA
-         Px3klZhYZlxge9cHEM4t0Ak29/hTdLf71uhjIyNqvbRAfl55ZXQAzfJAo5Gb8GhCrO
-         lFvF+bzqvm/pM2RJyFhLqVNcB0wc4iFCM8wThs/D3ieLGKRuSOz9Li1Oqrach28PAF
-         Z1jtAkM7Q2IsRBHJ/DYxZ21gxvZy/RZZPzwZYsbKqtOAFKhRpzCKc3LobyylLsDWy+
-         J91L/bwLXQRxJdNxud6PlU9Bdoj8Y8HgRz6dV6wv1qFlMadQBInudMK+obASw1bPvQ
-         zbuoUK4nSbixQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6220EE54D2B;
-        Fri, 20 Jan 2023 20:59:27 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.2-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <0fc64186-588b-76b8-0683-b03df9be9ee5@kernel.dk>
-References: <0fc64186-588b-76b8-0683-b03df9be9ee5@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <0fc64186-588b-76b8-0683-b03df9be9ee5@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.2-2023-01-20
-X-PR-Tracked-Commit-Id: 8579538c89e33ce78be2feb41e07489c8cbf8f31
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9c38747f0cdb20516de3d708f39720762786750a
-Message-Id: <167424836739.22595.13006442371448687914.pr-tracker-bot@kernel.org>
-Date:   Fri, 20 Jan 2023 20:59:27 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S229667AbjATWNO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Jan 2023 17:13:14 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E929E126E5
+        for <io-uring@vger.kernel.org>; Fri, 20 Jan 2023 14:12:52 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id b17so6518079pld.7
+        for <io-uring@vger.kernel.org>; Fri, 20 Jan 2023 14:12:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PJ/ZYAejmsuy9NlBD0RKS+QYNnPj5RYNWx9hYBN0Vq4=;
+        b=ukw3zmekzqlySaSOIkL8ADqnCtSlRYmtadyArvdL2FHtwSUK2ZWWjMescA4fMPcd3c
+         2x2nXEvlo/UTjLMYFW3yDeMpt+sPsvn58wwTicXg0+o+V9fLBEd+jROisQdsMSxiQo5I
+         I4bQEtwCdoNOZMmfYbJvHmJDx7nXIrJECgR+gY+tepPCqUGjRsu0nS0tuPU2cvFyd2jP
+         s8/pVdbyY9beJKnDBqvCyKoUMFiJV4nzG9y/8b4PQARNl29wVcETzN+4SDBvbkPBMhFl
+         kYM16KGqG7cX8AHwz+ZhcTVdDTfGRjP+drn4alpj0brtrmvPEvnvxpwQ+giUnSa83g4P
+         bI2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PJ/ZYAejmsuy9NlBD0RKS+QYNnPj5RYNWx9hYBN0Vq4=;
+        b=h6jYOQYnmxVlnzc2wrSb7DxLlYbkD4+ADrtmE4V4p5unNfx0g2QMbFjb9KYai9jwyt
+         SycbfCf11biZbrj2GJFQQxHEBeAZEA+cGHwrVdccrdmLEHM2bXzCPpqdt20ZE3unOFCj
+         AKieFeK5f5Jc642bfXTqkXMP07Ii12tsYrYKtJezoPaFN3hk7xmhOlfTVTjbG1xVTuD9
+         TZIy+9T9Qu90TZzqbSEG0aD7myTkzl8L2xIYzOjJT9NIWgfom9A5ZLrM0832dPlmujfr
+         Rtm4TRG/I2KVG1SQKfiBknf7WtOIfqnnmxH0MjGHNQL2OANB9mdF2G81Dm1q4Ji2gKx2
+         dj3w==
+X-Gm-Message-State: AFqh2kprli+htNxDmiiBjOTXloOWcFo7A53AUHkNz9Cv+gVtFWiN9my6
+        FjaqXTgSkntFL4RRU8yIB4fcy3hfxkp60sH0
+X-Google-Smtp-Source: AMrXdXsx43sSKGhNW1duSOOIka1gRYBe2ZbsNdmPz4kw6JbpuuESLHy8mAY1tu/yzH4HVNu1WKxAfQ==
+X-Received: by 2002:a17:902:8f85:b0:193:2a8c:28c7 with SMTP id z5-20020a1709028f8500b001932a8c28c7mr4034294plo.5.1674252771847;
+        Fri, 20 Jan 2023 14:12:51 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id h5-20020a170902b94500b001949ae8c275sm9525616pls.141.2023.01.20.14.12.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Jan 2023 14:12:51 -0800 (PST)
+Message-ID: <8997c26b-c498-166d-d130-2caca08a3abb@kernel.dk>
+Date:   Fri, 20 Jan 2023 15:12:50 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/poll: don't reissue in case of poll race on
+ multishot request
+Cc:     Olivier Langlois <olivier@trillion01.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 20 Jan 2023 13:02:04 -0700:
+A previous commit fixed a poll race that can occur, but it's only
+applicable for multishot requests. For a multishot request, we can safely
+ignore a spurious wakeup, as we never leave the waitqueue to begin with.
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.2-2023-01-20
+A blunt reissue of a multishot armed request can cause us to leak a
+buffer, if they are ring provided. While this seems like a bug in itself,
+it's not really defined behavior to reissue a multishot request directly.
+It's less efficient to do so as well, and not required to rearm anything
+like it is for singleshot poll requests.
+ 
+Cc: stable@vger.kernel.org
+Fixes: 6e5aedb9324a ("io_uring/poll: attempt request issue after racy poll wakeup")
+Reported-and-tested-by: Olivier Langlois <olivier@trillion01.com>
+Link: https://github.com/axboe/liburing/issues/778
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9c38747f0cdb20516de3d708f39720762786750a
+---
 
-Thank you!
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 32e5fc8365e6..2ac1366adbd7 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -283,8 +283,12 @@ static int io_poll_check_events(struct io_kiocb *req, bool *locked)
+ 			 * to the waitqueue, so if we get nothing back, we
+ 			 * should be safe and attempt a reissue.
+ 			 */
+-			if (unlikely(!req->cqe.res))
++			if (unlikely(!req->cqe.res)) {
++				/* Multishot armed need not reissue */
++				if (!(req->apoll_events & EPOLLONESHOT))
++					continue;
+ 				return IOU_POLL_REISSUE;
++			}
+ 		}
+ 		if (req->apoll_events & EPOLLONESHOT)
+ 			return IOU_POLL_DONE;
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+

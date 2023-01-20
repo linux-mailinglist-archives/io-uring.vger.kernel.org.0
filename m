@@ -2,133 +2,171 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D94674551
-	for <lists+io-uring@lfdr.de>; Thu, 19 Jan 2023 22:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A36F8674A7F
+	for <lists+io-uring@lfdr.de>; Fri, 20 Jan 2023 05:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbjASV5f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 19 Jan 2023 16:57:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
+        id S229611AbjATEMq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 19 Jan 2023 23:12:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbjASV4l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Jan 2023 16:56:41 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2617BC75A;
-        Thu, 19 Jan 2023 13:36:58 -0800 (PST)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30JLT7pn020883;
-        Thu, 19 Jan 2023 21:36:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2022-7-12; bh=tgi0NHzFNTC2PXd/dVfjBLhMgv4GasaIfpQj+AgfFvQ=;
- b=VuNaj5XRR9ji4hLVETEoWTdKeXHyCJ7cw4VkvHQWQ8LM5OOqsf+3J/ur/a2Fuj+UNgEH
- 4M93MXU6KUfrSMHzVLbEsdnS2VPcq5QQmNR1bqgYB5BifSEbeoVIYkdh00rJzRi2uMGL
- Jd5yY3kLI1riyKNW4V6cL5Hb/4lE4c+e9rJwg3EndmT2n7sk4rmmvHEoRsK1h/JRuBez
- 3lcMYaBX9++ht1JXM6JwOdcSsDNBRVbk2M494MYzvcKKNW9ks8qIcJq0At8oAJ7a+zFB
- NzVW5xC1Fad7LBBozDtWNWfrFxUc3S9vcUY9+T+Ihmuz7DV2l0wDPukkNh0CCPSMRnCq xw== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3n3medkfa7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jan 2023 21:36:57 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 30JLMIDA000844;
-        Thu, 19 Jan 2023 21:36:56 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3n74d1sr5k-1;
-        Thu, 19 Jan 2023 21:36:56 +0000
-From:   Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Phoronix pts fio io_uring test regression report on upstream v6.1 and v5.15
-Date:   Thu, 19 Jan 2023 13:36:55 -0800
-Message-Id: <20230119213655.2528828-1-saeed.mirzamohammadi@oracle.com>
-X-Mailer: git-send-email 2.38.1
+        with ESMTP id S229583AbjATEMp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 19 Jan 2023 23:12:45 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B902386EEF
+        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 20:12:44 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id k18so4287456pll.5
+        for <io-uring@vger.kernel.org>; Thu, 19 Jan 2023 20:12:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZBnQ7FD+GLFKN6GXmu4W2t9vwDu0xXnpxWvY6mSeA4s=;
+        b=GsnOqDuuuICAhwmSxLZkEbc4GIABzMFjiDPuIH/bQ5WMoHXo5BbbWqMazvzHnikncc
+         muE1u2CXH3woyNa48//09jrS1p9/TqHtkja+aBAwh10zUZeb+NOCOJRt3DrCDUqGN7Rw
+         FjV/QyOL6/wQJuaWdwJZbXcUA6mpIrzYAcc+v85Rv9Ji7mb3aPF5NIniOyw+Sd/YLOg2
+         gm4ZJfU2Jy0n4zFYXiSmbdQloItyFzojQ0c1guiYnDUbugXPtJcHP9BKkPXQ5/Xkd2uh
+         UsQTdDU/o6nfnLHJUTKWaYMwwJFl2d+I6xcc486TozAPPll4m7AWo8OTkcEbCNCeOzzG
+         t4JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZBnQ7FD+GLFKN6GXmu4W2t9vwDu0xXnpxWvY6mSeA4s=;
+        b=rHP4LDF/vwjJf50PwdVMrOTRPs2WGm94WtYABXNyV4lO7Jb8TuBZCucWrWKaOVwP/a
+         ylGE98vV50yF9aAa1iV/LodhLp0jOemW4wMc6Xl9uw+U+PsYeFW3S9SUH/jYlnCoeI4Q
+         GBCPZSX9DwzINU3OU15yY5dVcE2fa1dUfPFOWrX3h3UpcUvkvRN7kX2FzwtJc6hHOPUv
+         VRz6PKd21vCRilC8vrEWQOI6C83YEPTRdH2n/rI7vCkxvcGe6j8wATnX4aAWuI/Kmz9S
+         ra1gJS6TMfjgfAV/S2h+09EDQhPOAjxM+nZZK0+ythfdG5ZyGX67l9aV0AAq3KKL4gVr
+         FkZA==
+X-Gm-Message-State: AFqh2krPdcmppRG4IRmlwxBZSGtesyQ1NAYh60GAB3Qs0lJrNmg1BXGW
+        Uoiw8OFxkmje9/G68F+SRdsa+w==
+X-Google-Smtp-Source: AMrXdXvGWwocmW2GztUyCgO7sw8uqS9q9xXK8/YoSzrW+R1YNdEW6fp+dQE3czlRWd87oRr9t0SKUA==
+X-Received: by 2002:a05:6a21:6daa:b0:b8:5c45:a6dd with SMTP id wl42-20020a056a216daa00b000b85c45a6ddmr4383320pzb.3.1674187964164;
+        Thu, 19 Jan 2023 20:12:44 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id x16-20020a634a10000000b004812f798a37sm19532884pga.60.2023.01.19.20.12.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jan 2023 20:12:43 -0800 (PST)
+Message-ID: <af6f6d3d-b6ea-be46-d907-73fa4aea7b80@kernel.dk>
+Date:   Thu, 19 Jan 2023 21:12:42 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-19_14,2023-01-19_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2301190181
-X-Proofpoint-ORIG-GUID: sroxozAO160FyyCZvFR2G8tBCv8kRI6v
-X-Proofpoint-GUID: sroxozAO160FyyCZvFR2G8tBCv8kRI6v
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: Phoronix pts fio io_uring test regression report on upstream v6.1
+ and v5.15
+Content-Language: en-US
+To:     Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>,
+        io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, linux-kernel@vger.kernel.org
+References: <20230119213655.2528828-1-saeed.mirzamohammadi@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230119213655.2528828-1-saeed.mirzamohammadi@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
- 
-I'm reporting a performance regression after the commit below on phoronix pts/fio test and with the config that is added in the end of this email:
+On 1/19/23 2:36?PM, Saeed Mirzamohammadi wrote:
+> Hello,
+>  
+> I'm reporting a performance regression after the commit below on
+> phoronix pts/fio test and with the config that is added in the end of
+> this email:
+> 
+> Link: https://lore.kernel.org/all/20210913131123.597544850@linuxfoundation.org/
+> 
+> commit 7b3188e7ed54102a5dcc73d07727f41fb528f7c8
+> Author: Jens Axboe axboe@kernel.dk
+> Date:   Mon Aug 30 19:37:41 2021 -0600
+>  
+>     io_uring: IORING_OP_WRITE needs hash_reg_file set
+>  
+> We observed regression on the latest v6.1.y and v5.15.y upstream
+> kernels (Haven't tested other stable kernels). We noticed that
+> performance regression improved 45% after the revert of the commit
+> above.
+>  
+> All of the benchmarks below have experienced around ~45% regression.
+> phoronix-pts-fio-1.15.0-RandomWrite-EngineIO_uring-BufferedNo-DirectYes-BlockSize4KB-MB-s_xfs
+> phoronix-pts-fio-1.15.0-SequentialWrite-EngineIO_uring-BufferedNo-DirectYes-BlockSize4KB-MB-s_xfs
+> phoronix-pts-fio-1.15.0-SequentialWrite-EngineIO_uring-BufferedYes-DirectNo-BlockSize4KB-MB-s_xfs
+>  
+> We tend to see this regression on 4KB BlockSize tests.
+>  
+> We tried out changing force_async but that has no effect on the
+> result. Also, backported a modified version of the patch mentioned
+> here (https://lkml.org/lkml/2022/7/20/854) but that didn't affect
+> performance.
+>  
+> Do you have any suggestions on any fixes or what else we can try to
+> narrow down the issue?
 
-Link: https://lore.kernel.org/all/20210913131123.597544850@linuxfoundation.org/
+This is really mostly by design - the previous approach of not hashing
+buffered writes on regular files would cause a lot of inode lock
+contention due to lots of threads hammering on that.
 
-commit 7b3188e7ed54102a5dcc73d07727f41fb528f7c8
-Author: Jens Axboe axboe@kernel.dk
-Date:   Mon Aug 30 19:37:41 2021 -0600
+That said, for XFS, we don't need to serialize on O_DIRECT writes. Don't
+think we currently have a way to detect this as it isn't really
+advertised. Something like the below might work, with the caveat that
+this is totally untested.
+
+
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 595a5bcf46b9..85fdc6f2efa4 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1171,7 +1171,8 @@ xfs_file_open(
+ {
+ 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+ 		return -EIO;
+-	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
++	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
++			FMODE_ODIRECT_PARALLEL;
+ 	return generic_file_open(inode, file);
+ }
  
-    io_uring: IORING_OP_WRITE needs hash_reg_file set
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c1769a2c5d70..8541b9e53c2d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -166,6 +166,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File supports DIRECT IO */
+ #define	FMODE_CAN_ODIRECT	((__force fmode_t)0x400000)
  
-We observed regression on the latest v6.1.y and v5.15.y upstream kernels (Haven't tested other stable kernels). We noticed that performance regression improved 45% after the revert of the commit above.
++/* File supports parallel O_DIRECT writes */
++#define	FMODE_ODIRECT_PARALLEL	((__force fmode_t)0x800000)
++
+ /* File was opened by fanotify and shouldn't generate fanotify events */
+ #define FMODE_NONOTIFY		((__force fmode_t)0x4000000)
  
-All of the benchmarks below have experienced around ~45% regression.
-phoronix-pts-fio-1.15.0-RandomWrite-EngineIO_uring-BufferedNo-DirectYes-BlockSize4KB-MB-s_xfs
-phoronix-pts-fio-1.15.0-SequentialWrite-EngineIO_uring-BufferedNo-DirectYes-BlockSize4KB-MB-s_xfs
-phoronix-pts-fio-1.15.0-SequentialWrite-EngineIO_uring-BufferedYes-DirectNo-BlockSize4KB-MB-s_xfs
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index e680685e8a00..1409f6f69b13 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -424,7 +424,12 @@ static void io_prep_async_work(struct io_kiocb *req)
+ 		req->flags |= io_file_get_flags(req->file) << REQ_F_SUPPORT_NOWAIT_BIT;
  
-We tend to see this regression on 4KB BlockSize tests.
- 
-We tried out changing force_async but that has no effect on the result. Also, backported a modified version of the patch mentioned here (https://lkml.org/lkml/2022/7/20/854) but that didn't affect performance.
- 
-Do you have any suggestions on any fixes or what else we can try to narrow down the issue?
- 
-Thanks a bunch,
-Saeed
---------
- 
-Here is more info on the benchmark and system:
- 
-Here is the config for fio:
-[global]
-rw=randwrite
-ioengine=io_uring
-iodepth=64
-size=1g
-direct=1
-buffered=0
-startdelay=5
-force_async=4
-ramp_time=5
-runtime=20
-time_based
-disk_util=0
-clat_percentiles=0
-disable_lat=1
-disable_clat=1
-disable_slat=1
-filename=/data/fiofile
-[test]
-name=test
-bs=4k
-stonewall
- 
-df -Th output (file is on /data/):
-Filesystem                 Type      Size  Used Avail Use% Mounted on
-devtmpfs                   devtmpfs  252G     0  252G   0% /dev
-tmpfs                      tmpfs     252G     0  252G   0% /dev/shm
-tmpfs                      tmpfs     252G   18M  252G   1% /run
-tmpfs                      tmpfs     252G     0  252G   0% /sys/fs/cgroup
-/dev/mapper/ocivolume-root xfs        89G   17G   73G  19% /
-/dev/mapper/ocivolume-oled xfs        10G  143M  9.9G   2% /var/oled
-/dev/sda2                  xfs      1014M  643M  372M  64% /boot
-/dev/sda1                  vfat      100M  5.0M   95M   6% /boot/efi
-tmpfs                      tmpfs      51G     0   51G   0% /run/user/0
-tmpfs                      tmpfs      51G     0   51G   0% /run/user/987
-/dev/mapper/tank-lvm       xfs       100G  1.8G   99G   2% /data
+ 	if (req->flags & REQ_F_ISREG) {
+-		if (def->hash_reg_file || (ctx->flags & IORING_SETUP_IOPOLL))
++		bool should_hash = def->hash_reg_file;
++
++		if (should_hash && (req->file->f_flags & O_DIRECT) &&
++		    (req->file->f_mode & FMODE_ODIRECT_PARALLEL))
++			should_hash = false;
++		if (should_hash || (ctx->flags & IORING_SETUP_IOPOLL))
+ 			io_wq_hash_work(&req->work, file_inode(req->file));
+ 	} else if (!req->file || !S_ISBLK(file_inode(req->file)->i_mode)) {
+ 		if (def->unbound_nonreg_file)
+
+-- 
+Jens Axboe
+

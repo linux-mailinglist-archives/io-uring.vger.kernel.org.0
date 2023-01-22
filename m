@@ -2,153 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD5FA6770FF
-	for <lists+io-uring@lfdr.de>; Sun, 22 Jan 2023 18:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDAA5677132
+	for <lists+io-uring@lfdr.de>; Sun, 22 Jan 2023 18:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbjAVRNp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Jan 2023 12:13:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36594 "EHLO
+        id S229883AbjAVRsE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Jan 2023 12:48:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbjAVRNo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Jan 2023 12:13:44 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2502C4C26
-        for <io-uring@vger.kernel.org>; Sun, 22 Jan 2023 09:13:43 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id 5so4063016plo.3
-        for <io-uring@vger.kernel.org>; Sun, 22 Jan 2023 09:13:43 -0800 (PST)
+        with ESMTP id S229895AbjAVRsD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Jan 2023 12:48:03 -0500
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD8513509
+        for <io-uring@vger.kernel.org>; Sun, 22 Jan 2023 09:48:00 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id g23so9381896plq.12
+        for <io-uring@vger.kernel.org>; Sun, 22 Jan 2023 09:48:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R2uRjGvAuEzHVbhL6DIyceRd4fiERjP77Hn3+TUiFm8=;
-        b=jClulBSlRTdVd5gzuK/eBMUqdPCwr173/YWQGICgnyjyDW3YqQjYHYCfDFo0Stpgr5
-         gAEfS6/W8sR0wR5u/keAc3eOw/88bu+Ux8VsTYH0AIRbJhttdQ6ave5Ghb/al/U5nPWj
-         V1acRQQIPZ6miTY6v5e9Gwn19sT53FSVZt8rBUzChZE2L1aiUvB+VRHuLqrNGHkhA10j
-         SaHKMRB/S/il7xxT5zyFbI9Ym/Gu3YiHc6oZE0on4Nq0emmuKxvaMQSuH8tmC9C03l3d
-         7lWNYokT76KG9G+yJb4QzrTkdRCRtth0MA6urSdeaJQiPfmIyM2HWMYLsghuCBAxcEFH
-         fh5A==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mklioiOy2SPx/+Wl0XHLwjVP/zb0IvNHLalin7YERKQ=;
+        b=M7K0zj+abUg4/PHuIjVVaLh/6Dh6z4S40ydjuMtgh8TTGjrAJay2yDEpujiOG0iimK
+         0rkHFyi1c45orbeUtUtr0w8xWwpm7vJ2bc3oRZYmmPqCvCO7w0ZZb6a3O4ubjKkU1Q4k
+         SCNg+a7Tkgo42yykChZJ2Gk8LDIRAno/b4eTcwPcM190m4sdAYwY0eJhVLuupx0ut5lY
+         gDeWIr8QBmVgO6ttAkCQDUNFLpyZKy2SDHH9r7OVkYt4zO17r+lkt7p2+DGxli1svwo0
+         2BBf9LVSkZAoUEdmz5WJ7lddrS81CdvQkmmEeFTq8W6OCsRNLQAQwhfSc2IqssZmNDrW
+         gxKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R2uRjGvAuEzHVbhL6DIyceRd4fiERjP77Hn3+TUiFm8=;
-        b=Nw9PlkhPYx7DjfX09pvDzmcZNpGJBAx69BKftkueOoBE1DrfS+5hTUrpb7jDoueLh/
-         Ws01EsUrJmCG5OmIFLEMRP/HVsMoCfkT+nO5JlHhM8QlTs02s2zhAdeiKnXGLGTN44FL
-         g4YTlPhIupDSkYA2bjL7gjbbjXgBXLPhgsaYR/ZQdCQghwHXCp1rt/LPKMSCnAfYb+MC
-         KpLJLj51DPIzUPJ5vWUK83DuxI8i7JOn+RZ58akc478mEKkT50Xrwe8EelmpJ41lJ6V3
-         T+sz3FhVyOX/O17druOa29IQ46/v28/lwPCKNEFeZztO6Gaedb0sgTpGbsL1oa+BZxWr
-         3CKg==
-X-Gm-Message-State: AFqh2kq3LCW3eISZgwOLn+TEBpoGy4M9omcSCPgxVcycpHGp2UfHD3r3
-        rvgxAwSsF0B9+EZ3vyQK+Urfw6AGrVGasmP+
-X-Google-Smtp-Source: AMrXdXvOkWE93NboeXCSx1Bj3tEzeGgy/g80XCHPGKdbKe9oSlcMSVzt+87kJ4lDNLm42gh+fYvclQ==
-X-Received: by 2002:a05:6a20:428d:b0:b8:7b2c:1831 with SMTP id o13-20020a056a20428d00b000b87b2c1831mr6672581pzj.1.1674407622304;
-        Sun, 22 Jan 2023 09:13:42 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mklioiOy2SPx/+Wl0XHLwjVP/zb0IvNHLalin7YERKQ=;
+        b=SKjOdg98cD3EgVRGk1kOe+nu/F/g8a12Om4zQP5sbe3a1gZTxiqTbmRGGsOs3Kreyi
+         DmLCsK6en44tXpNuhOGJ/+ZWDudZLbqtnhCN9JiTl/MjLZUGQUpru3jS4hdHxLtVrnaq
+         1TigzR635lJAGuBliP3cFhZ7hNecILfApujglZqKbUP56Ifxm3BtAOfqTmBh27wAeByG
+         U9n7wPC9/16NpekGKXgwg+ggW8OAfF+6JMSDQkVrREJhd2xLa/csuF3FYhSWoiUYiMOf
+         +0uinPVdVBJWuaeKnzBajPNkGGzwTryDphJo8NRa8/DaaZsAdZGH4eFFXnPDVbwfIFIZ
+         gKJQ==
+X-Gm-Message-State: AFqh2krCkQhY+3als50PBJ86d8dyeH2oooJ1alciWow0arm4ASHHGhXc
+        vM3uuj2pujSClJKpcnjlcSPxgw==
+X-Google-Smtp-Source: AMrXdXtIsNAlL0SxiNFyN2BzVxFTaLZUMTQq4Dc994DQ4GgrymgUQhe8oFoWQrNuXqIFlcJSF1/PHQ==
+X-Received: by 2002:a17:90b:3c84:b0:22a:348:c7b5 with SMTP id pv4-20020a17090b3c8400b0022a0348c7b5mr2458138pjb.2.1674409680338;
+        Sun, 22 Jan 2023 09:48:00 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 201-20020a6303d2000000b004b4d4de54absm21436883pgd.59.2023.01.22.09.13.41
+        by smtp.gmail.com with ESMTPSA id p11-20020a17090ad30b00b00229b17bb1e8sm5125788pju.34.2023.01.22.09.47.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Jan 2023 09:13:41 -0800 (PST)
-Message-ID: <3627b18d-92b0-394e-4d39-6e0807aa417c@kernel.dk>
-Date:   Sun, 22 Jan 2023 10:13:40 -0700
+        Sun, 22 Jan 2023 09:47:59 -0800 (PST)
+Message-ID: <8fa86861-2713-ae11-99ef-14d90b2943d7@kernel.dk>
+Date:   Sun, 22 Jan 2023 10:47:58 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
+Subject: Re: FAILED: patch "[PATCH] io_uring: Clean up a false-positive
+ warning from GCC 9.3.0" failed to apply to 5.10-stable tree
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Dylan Yudaken <dylany@meta.com>
+To:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel test robot <lkp@intel.com>,
+        "Chen Rong A." <rong.a.chen@intel.com>, stable@vger.kernel.org,
+        io-uring Mailing list <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+References: <167439864617430@kroah.com>
+ <CAOG64qO=iZZO-PJjmeYO5wKHAxn3ATDyj6g=FA_tx3WNAMBvug@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/net: cache provided buffer group value for multishot
- receives
+In-Reply-To: <CAOG64qO=iZZO-PJjmeYO5wKHAxn3ATDyj6g=FA_tx3WNAMBvug@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=0.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we're using ring provided buffers with multishot receive, and we end
-up doing an io-wq based issue at some points that also needs to select
-a buffer, we'll lose the initially assigned buffer group as
-io_ring_buffer_select() correctly clears the buffer group list as the
-issue isn't serialized by the ctx uring_lock. This is fine for normal
-receives as the request puts the buffer and finishes, but for multishot,
-we will re-arm and do further receives. On the next trigger for this
-multishot receive, the receive will try and pick from a buffer group
-whose value is the same as the buffer ID of the las receive. That is
-obviously incorrect, and will result in a premature -ENOUFS error for
-the receive even if we had available buffers in the correct group.
+On 1/22/23 8:43 AM, Alviro Iskandar Setiawan wrote:
+> On Sun, Jan 22, 2023 at 9:44 PM <gregkh@linuxfoundation.org> wrote:
+>> The patch below does not apply to the 5.10-stable tree.
+>> If someone wants it applied there, or to any other stable or longterm
+>> tree, then please email the backport, including the original git commit
+>> id to <stable@vger.kernel.org>.
+> 
+> That uninitialized reading is living in 5.10.y branch now
+> https://github.com/gregkh/linux/blob/v5.10.162/io_uring/io_uring.c#L4989-L5017
+> 
+> If this:
+> 
+>    ret = import_single_range(RE AD, buf, sr->len, &iov, &msg.msg_iter);
+> 
+> fails, this one (flags & MSG_WAITALL) may read an uninitialized
+> variable because @flags is uninitialized.
+> 
+> Fortunately, if import_single_range() fails, (ret < min_ret) is always
+> true, so this:
+> 
+>     ret < min_ret || ((flags & MSG_WAITALL)
+> 
+> will always short circuit. But no one tells the compiler if @ret is
+> always less than @min_ret in that case. So it can't prove that @flags
+> is never actually read. That still falls to undefined behavior anyway,
+> the compiler may emit "ud2" or similar trap for that or behave
+> randomly. IDK...
 
-Cache the buffer group value at prep time, so we can restore it for
-future receives. This only needs doing for the above mentioned case, but
-just do it by default to keep it easier to read.
-
-Cc: stable@vger.kernel.org
-Fixes: b3fdea6ecb55 ("io_uring: multishot recv")
-Fixes: 9bb66906f23e ("io_uring: support multishot in recvmsg")
-Cc: Dylan Yudaken <dylany@meta.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/io_uring/net.c b/io_uring/net.c
-index fbc34a7c2743..07a6aa39ab6f 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -62,6 +62,7 @@ struct io_sr_msg {
- 	u16				flags;
- 	/* initialised and used only by !msg send variants */
- 	u16				addr_len;
-+	u16				buf_group;
- 	void __user			*addr;
- 	/* used only for send zerocopy */
- 	struct io_kiocb 		*notif;
-@@ -580,6 +581,15 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		if (req->opcode == IORING_OP_RECV && sr->len)
- 			return -EINVAL;
- 		req->flags |= REQ_F_APOLL_MULTISHOT;
-+		/*
-+		 * Store the buffer group for this multishot receive separately,
-+		 * as if we end up doing an io-wq based issue that selects a
-+		 * buffer, it has to be committed immediately and that will
-+		 * clear ->buf_list. This means we lose the link to the buffer
-+		 * list, and the eventual buffer put on completion then cannot
-+		 * restore it.
-+		 */
-+		sr->buf_group = req->buf_index;
- 	}
- 
- #ifdef CONFIG_COMPAT
-@@ -816,8 +826,10 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	if (kmsg->msg.msg_inq)
- 		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
- 
--	if (!io_recv_finish(req, &ret, cflags, mshot_finished, issue_flags))
-+	if (!io_recv_finish(req, &ret, cflags, mshot_finished, issue_flags)) {
-+		req->buf_index = sr->buf_group;
- 		goto retry_multishot;
-+	}
- 
- 	if (mshot_finished) {
- 		/* fast path, check for non-NULL to avoid function call */
-@@ -918,8 +930,10 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	if (msg.msg_inq)
- 		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
- 
--	if (!io_recv_finish(req, &ret, cflags, ret <= 0, issue_flags))
-+	if (!io_recv_finish(req, &ret, cflags, ret <= 0, issue_flags)) {
-+		req->buf_index = sr->buf_group;
- 		goto retry_multishot;
-+	}
- 
- 	return ret;
- }
+Now handled for both trees.
 
 -- 
 Jens Axboe
+
 

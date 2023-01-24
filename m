@@ -2,110 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF70679B12
-	for <lists+io-uring@lfdr.de>; Tue, 24 Jan 2023 15:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E61679B32
+	for <lists+io-uring@lfdr.de>; Tue, 24 Jan 2023 15:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233646AbjAXOFD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 24 Jan 2023 09:05:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42202 "EHLO
+        id S234567AbjAXOLV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 24 Jan 2023 09:11:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234836AbjAXOEw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Jan 2023 09:04:52 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A696A4859B;
-        Tue, 24 Jan 2023 06:04:21 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id bk15so39193373ejb.9;
-        Tue, 24 Jan 2023 06:04:21 -0800 (PST)
+        with ESMTP id S234450AbjAXOLT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 24 Jan 2023 09:11:19 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1A342BDF
+        for <io-uring@vger.kernel.org>; Tue, 24 Jan 2023 06:11:16 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id j5so1362915pjn.5
+        for <io-uring@vger.kernel.org>; Tue, 24 Jan 2023 06:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z7dRloswEV6O4FN2iiz6ZS4n2jKn6i71GuWTIh1+d6c=;
-        b=ZM+3T5Y+1o/Xr4JI8qDG+x0+yhUFZx7dOowdLYw01bMwVcGvO3wY1d3/SCGoOTZNOe
-         Fe0hgNCf0nVXF1VEsM6GgU0dYtbBDcUZSyScCz53HpWLmkLIiOUDtXO5sDUucZhVVmGF
-         lM9z+mu0spGpmNm9nETCXb9c3hBLMJhLAIFI97q9fUAb0ZrykXtTG4qME6CHw1BnB9iv
-         3jTliBp6JuLhQrJt2fiU2R6VZhDFzVj3hdXRjEa83po6+Hff1wPGrNU7aWxaLZePgLUr
-         W9OugBNhPTeok059hFbqFUk6erTwddYx0AAUJRsjslOG/QGcCY7enHPopecYFgHC+2+F
-         +85Q==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IYhmQqrSkgyrF9GZ22+7sL9SN/b0wagx8GLXitDyd2U=;
+        b=Jy5bfsLrbfPFQFniNs4LlQVJdkisvdUlHC6udaMPxF3KSHiPU+biXPZeUyAxrJsiP5
+         kJWLT+JcZB3pPDTh9Phye/g8l5WCQbJGlV/7zESwmslLDe1+K3urwdiJpYnrnLgtpT6f
+         StH63sfAEdSmqQAxc/wmM9KgwvktWsnpFfk9Uznm+bQh3l3vI1cxToX7Ncqp64j4Fyn0
+         Q4c4cRgl1YlRYjFgF1YebSVF7ApWtydEvJPk7Jfnq+HQubaIzaWJMVoZDr8b3pDZWIMV
+         vIZydMe0WHii/x+0f877Yfbecx/EleJAqM1Au89StBsHFKntYMNcSbVxk/NjuhymcI+w
+         MM/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7dRloswEV6O4FN2iiz6ZS4n2jKn6i71GuWTIh1+d6c=;
-        b=ORO3Cd6pyWpGnp+A4UqzVxAhMy2QshffALwtT53xM70evbst6tnxrW6AHQoQk9DN8X
-         jKzVnrjAmU7rlO4jpwKZDKsUKnkfEulFBZInW9deHbkGuulKmtEr0YHKh3NuB60EyeyF
-         vgko2+dCW2dpihbSls31ZNkJp4AkjgzekpF0ixWsn+1sJxqpENKoFdrvaQnFeSApJsz2
-         8AlPP7DGsoJS3CIjOgcWdRWv8ItNEzGhWOR6Y6l2IGqSob5MbEI5W9qFKrF8ezg49AGK
-         lEgURaJNXGhnyaOYfXGwCcQamr1Q48vBhHZzs27MtvEXNVD+K8/PI+7xZB8iuPTf/jno
-         Xvug==
-X-Gm-Message-State: AFqh2kqCuo5s2bBGddnZ/GabxUX/lJ4nm44hEcX+FyGMh3R9YIxANj0c
-        5VzRxiS1UykbRgbQlLH2gvk=
-X-Google-Smtp-Source: AMrXdXttKKi+iLAmx5d8d5yerYPKvbMZTKXClJq6rTidBrzh7/IKlMLyt82AtvsCotlbkVuV2jyhXA==
-X-Received: by 2002:a17:906:e2cd:b0:870:2aa7:6509 with SMTP id gr13-20020a170906e2cd00b008702aa76509mr30689651ejb.43.1674569059643;
-        Tue, 24 Jan 2023 06:04:19 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:310::206f? ([2620:10d:c092:600::2:74e0])
-        by smtp.gmail.com with ESMTPSA id s22-20020a170906501600b0085ca279966esm945567ejj.119.2023.01.24.06.04.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jan 2023 06:04:19 -0800 (PST)
-Message-ID: <077b10a5-5ccb-870c-3dd2-e96bc6aad5ef@gmail.com>
-Date:   Tue, 24 Jan 2023 14:01:54 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] io_uring: initialize count variable to 0
-To:     Tom Rix <trix@redhat.com>, axboe@kernel.dk, nathan@kernel.org,
-        ndesaulniers@google.com
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IYhmQqrSkgyrF9GZ22+7sL9SN/b0wagx8GLXitDyd2U=;
+        b=hPZWZV3aQ8DarvMwJOBaPX6xf6MRkjk/NvLtRlzvpqeR7Udb5alrKkVjpW9FRhdJuO
+         HbWwj5M1/CyUI6ox6SYHwwe8cIMuaP9IwFwULT9jgXvH1oGzWvO5Btf0yaI2tPvERddz
+         2fmwSRPHRkf1fsZYSO+b519ZCcS/Q9fp3Kh6MlLhj088jMNJZFmc4+EziRDnn9INand4
+         Er8eNJqlMKd2BGRLgrKCNjEnGClMf3RTLNDcxlJR10a6NBWbX3T5W8iXYRgdTjXof7tl
+         6Us5UsGOyg/t79T70Zk2ANz1wT1C9TDye0JMUKaqrFptr5dYvxwVPGOtYzy6iXY/2PIe
+         H5gQ==
+X-Gm-Message-State: AFqh2kp8v2Vis24mpZa/Ha8IODQnv34tFnDjDYiaZExTVXKZuGekxl3g
+        RJLlYL/wrtmdvbXA+m7qciv2UQ==
+X-Google-Smtp-Source: AMrXdXv+MzXrbpWVCUWz6D+hs/wVmEIUHvt1K0VvdnqXqJ0KpBn514vswhg65FyUlI8kwtX5tUs8VQ==
+X-Received: by 2002:a17:902:8209:b0:194:a374:31f3 with SMTP id x9-20020a170902820900b00194a37431f3mr7014867pln.3.1674569475625;
+        Tue, 24 Jan 2023 06:11:15 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id iw4-20020a170903044400b001960735c652sm1714100plb.169.2023.01.24.06.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jan 2023 06:11:15 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     asml.silence@gmail.com, nathan@kernel.org, ndesaulniers@google.com,
+        Tom Rix <trix@redhat.com>
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-References: <20230124125805.630359-1-trix@redhat.com>
-Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
 In-Reply-To: <20230124125805.630359-1-trix@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20230124125805.630359-1-trix@redhat.com>
+Subject: Re: [PATCH] io_uring: initialize count variable to 0
+Message-Id: <167456947444.222255.5448115416387284017.b4-ty@kernel.dk>
+Date:   Tue, 24 Jan 2023 07:11:14 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Mailer: b4 0.12.0
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/24/23 12:58, Tom Rix wrote:
+
+On Tue, 24 Jan 2023 04:58:05 -0800, Tom Rix wrote:
 > The clang build fails with
 > io_uring/io_uring.c:1240:3: error: variable 'count' is uninitialized
->    when used here [-Werror,-Wuninitialized]
->    count += handle_tw_list(node, &ctx, &uring_locked, &fake);
->    ^~~~~
+>   when used here [-Werror,-Wuninitialized]
+>   count += handle_tw_list(node, &ctx, &uring_locked, &fake);
+>   ^~~~~
 > 
 > The commit listed in the fixes: removed the initialization of count.
-
-My bad. The patch looks good, thanks
-
-
-> Fixes: b5b57128d0cd ("io_uring: refactor tctx_task_work")
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> ---
->   io_uring/io_uring.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 734d074cdd94..4cb409ae9840 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1227,7 +1227,7 @@ void tctx_task_work(struct callback_head *cb)
->   	struct llist_node fake = {};
->   	struct llist_node *node;
->   	unsigned int loops = 0;
-> -	unsigned int count;
-> +	unsigned int count = 0;
->   
->   	if (unlikely(current->flags & PF_EXITING)) {
->   		io_fallback_tw(tctx);
+> [...]
 
+Applied, thanks!
+
+[1/1] io_uring: initialize count variable to 0
+      commit: 7a9e93db01f44a8d084c93648981cbc1535a734d
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
+

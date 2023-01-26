@@ -2,117 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF3867D43D
-	for <lists+io-uring@lfdr.de>; Thu, 26 Jan 2023 19:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B77367D6E9
+	for <lists+io-uring@lfdr.de>; Thu, 26 Jan 2023 21:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbjAZSfL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 26 Jan 2023 13:35:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
+        id S231465AbjAZU53 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 26 Jan 2023 15:57:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjAZSfL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 26 Jan 2023 13:35:11 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65BB2470B3
-        for <io-uring@vger.kernel.org>; Thu, 26 Jan 2023 10:35:08 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id i1so1136277ilu.8
-        for <io-uring@vger.kernel.org>; Thu, 26 Jan 2023 10:35:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NVoChKAkzts7dgGnV/tbJ1qaKX0TQjLm2fB+YU+Y5HU=;
-        b=DJG5dahUknQalNvuXmjvquTwRb7+wND9jVEVG3eq/iAS2EZC+uNc3Djr76SbQ+cT42
-         VpkHhccHhWE3/IultPYMqq3R6iYGewvUN0+mdveKulV3UfTxE6HPVSR++SuJhNM5WPJx
-         jKz9aQufcH2Y0I4UjSk3Bdk8ElzTl+1Dy9C323tvXPydHOB5oQICKQheUDgLIWvD6CTE
-         5B6GMSGYlDNAAhcqWnYn/ZhADcXdpQe0Re7G62b+QkmW5FQ/D/pzoOroN+HYvrdGA4UL
-         j8i2RbOuxpFIek2HK0IecMjgRH/wuIYeYibvJbWmBwC0Tti/4qLPFZl5BhH/rwJWz/nI
-         5teA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVoChKAkzts7dgGnV/tbJ1qaKX0TQjLm2fB+YU+Y5HU=;
-        b=ck3sstdUsgU0qYCul+YHSm5Qma5MON2vOn9kE/EnWCCHzfpaDsIdwFB4rOZik3sQ0Y
-         ntz+nuj81LDGB13VgoNOkjzJkhra0bwBDcncKi8AtwI+VmSQ0b90mzxu1glPh+T6zcb4
-         TMR1DWE6oyIyAA6UYx0p217qmBnWdWBi+41SdSl+GNGXUbqWXyknJGaMIIcfTjxThiQs
-         L7QVSt1q9G1oSNAIrROp/ZBOJyGa6THzzG70dJ9Q9iQBdX2VHpXhDJZlMz5VIb44wIqe
-         OZAKEvs0GjEweyUadhOIMAph6K9zU0gWXWM6ZkbMccuCVEKx97YvQWlYHeNyL2001+wi
-         J7Tg==
-X-Gm-Message-State: AO0yUKWrnHHiK6oI/91Z3sfB7N5PqoCugpNQFxmivxirx+MhHY5nh3b8
-        EOHJVlAGxbKYwtV9RWf1RGMbbQ==
-X-Google-Smtp-Source: AK7set8EIWtRkNu5Auglt1Vk3LjfCsZPbg0U2A954m5RV37qEwGXvA2MeHz/UOzkRxQHkpJta2HZSA==
-X-Received: by 2002:a92:6810:0:b0:310:9adc:e1bb with SMTP id d16-20020a926810000000b003109adce1bbmr1367545ilc.0.1674758107631;
-        Thu, 26 Jan 2023 10:35:07 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id v17-20020a92c811000000b0030258f9670bsm544585iln.13.2023.01.26.10.35.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 10:35:06 -0800 (PST)
-Message-ID: <75e32a84-3a0d-d53f-af1b-b54c1036656c@kernel.dk>
-Date:   Thu, 26 Jan 2023 11:35:05 -0700
+        with ESMTP id S229730AbjAZU52 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 26 Jan 2023 15:57:28 -0500
+X-Greylist: delayed 756 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 26 Jan 2023 12:57:26 PST
+Received: from sp14.canonet.ne.jp (sp14.canonet.ne.jp [210.134.168.91])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD43E34330;
+        Thu, 26 Jan 2023 12:57:26 -0800 (PST)
+Received: from csp14.canonet.ne.jp (unknown [172.21.160.134])
+        by sp14.canonet.ne.jp (Postfix) with ESMTP id DBBD31E071E;
+        Fri, 27 Jan 2023 05:44:48 +0900 (JST)
+Received: from echeck14.canonet.ne.jp ([172.21.160.124])
+        by csp4 with ESMTP
+        id L972pIaIqVjWJL972p2hxg; Fri, 27 Jan 2023 05:44:48 +0900
+X-CNT-CMCheck-Reason: "undefined", "v=2.4 cv=WsmVjfTv c=1 sm=1 tr=0
+ ts=63d2e640 cx=g_jp:t_eml p=jICtXCb1Bd4A:10 p=QA8zHFxAwLBQ4A9MkZgA:9
+ p=WKcvGfCz9DfGexK3dBCb:22 a=puqJfqqrwnhV2n3dwg+kWg==:117
+ a=yr9NA9NbXb0B05yJHQEWeQ==:17 a=PlGk70OYzacA:10 a=kj9zAlcOel0A:10
+ a=RvmDmJFTN0MA:10 a=x7bEGLp0ZPQA:10 a=CjuIK1q_8ugA:10 a=0iaRBTTaEecA:10
+ a=xo5jKAKm-U-Zyk2_beg_:22"
+X-CNT-CMCheck-Score: 100.00
+Received: from echeck14.canonet.ne.jp (localhost [127.0.0.1])
+        by esets.canonet.ne.jp (Postfix) with ESMTP id 88A871C0246;
+        Fri, 27 Jan 2023 05:44:48 +0900 (JST)
+X-Virus-Scanner: This message was checked by ESET Mail Security
+        for Linux/BSD. For more information on ESET Mail Security,
+        please, visit our website: http://www.eset.com/.
+Received: from smtp14.canonet.ne.jp (unknown [172.21.160.104])
+        by echeck14.canonet.ne.jp (Postfix) with ESMTP id 4C9121C0257;
+        Fri, 27 Jan 2023 05:44:48 +0900 (JST)
+Received: from daime.co.jp (webmail.canonet.ne.jp [210.134.169.250])
+        by smtp14.canonet.ne.jp (Postfix) with ESMTPA id 6600215F967;
+        Fri, 27 Jan 2023 05:44:47 +0900 (JST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: Phoronix pts fio io_uring test regression report on upstream v6.1
- and v5.15
-Content-Language: en-US
-To:     Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
-Cc:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20230119213655.2528828-1-saeed.mirzamohammadi@oracle.com>
- <af6f6d3d-b6ea-be46-d907-73fa4aea7b80@kernel.dk>
- <DM5PR10MB14190335EEB0AEF2B48DF6BAF1CE9@DM5PR10MB1419.namprd10.prod.outlook.com>
- <0f7cd96e-7f89-4833-c0af-f90b2c5cf67d@kernel.dk>
- <BCEB787A-38B7-4301-A3CE-A780F3AAB45D@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <BCEB787A-38B7-4301-A3CE-A780F3AAB45D@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Message-ID: <20230126204447.00005E45.0195@daime.co.jp>
+Date:   Fri, 27 Jan 2023 05:44:47 +0900
+From:   "Mrs Alice Walton" <daime@daime.co.jp>
+To:     <INQUIRY@daime.co.jp>
+Reply-To: <alicewaltton1@gmail.com>
+Subject: INQUIRY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+ORGANIZATION: Mrs Alice Walton
+X-MAILER: Active! mail
+X-EsetResult: clean, %VIRUSNAME%
+X-ESET-AS: R=SPAM;S=100;OP=CALC;TIME=1674765888;VERSION=7944;MC=3655060679;TRN=17;CRV=0;IPC=210.134.169.250;SP=4;SIPS=1;PI=5;F=0
+X-I-ESET-AS: RN=285,624:0;RNP=alicewaltton1@gmail.com
+X-ESET-Antispam: SPAM
+X-Spam-Status: Yes, score=6.5 required=5.0 tests=BAYES_50,
+        FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        LOCALPART_IN_SUBJECT,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_MR_MRS,
+        UNRESOLVED_TEMPLATE,XPRIO_SHORT_SUBJ autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5021]
+        *  1.1 LOCALPART_IN_SUBJECT Local part of To: address appears in
+        *      Subject
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [alicewaltton1[at]gmail.com]
+        *  1.3 UNRESOLVED_TEMPLATE Headers contain an unresolved template
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 T_HK_NAME_MR_MRS No description available.
+        *  2.1 FREEMAIL_FORGED_REPLYTO Freemail in Reply-To, but not From
+        *  1.0 XPRIO_SHORT_SUBJ Has X Priority header + short subject
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/26/23 11:04 AM, Saeed Mirzamohammadi wrote:
-> Hi Jens,
-> 
->> On Jan 25, 2023, at 4:28 PM, Jens Axboe <axboe@kernel.dk> wrote:
->> 
->> On 1/25/23 5:22?PM, Saeed Mirzamohammadi wrote:
->>> Hi Jens,
->>> 
->>> I applied your patch (with a minor conflict in xfs_file_open() since FMODE_BUF_WASYNC isn't in v5.15) and did the same series of tests on the v5.15 kernel. All the io_uring benchmarks regressed 20-45% after it. I haven't tested on v6.1 yet.
->> 
->> It should basically make the behavior the same as before once you apply
->> the patch, so please pass on the patch that you applied for 5.15 so we
->> can take a closer look.
-> 
-> Attached the patch.
 
-I tested the upstream variant, and it does what it's supposed to and
-gets parallel writes on O_DIRECT. Unpatched, any dio write results in:
+Greetings,
 
-             fio-566     [000] .....   131.071108: io_uring_queue_async_work: ring 00000000706cb6c0, request 00000000b21691c4, user_data 0xaaab0e8e4c00, opcode WRITE, flags 0xe0040000, hashed queue, work 000000002c5aeb79
+I trust you are well. I sent you an email yesterday, I just want to confirm if you received it.
+Please let me know as soon as possible,
 
-and after the patch:
-
-             fio-376     [000] .....    24.590994: io_uring_queue_async_work: ring 000000007bdb650a, request 000000006b5350e0, user_data 0xaaab1b3e3c00, opcode WRITE, flags 0xe0040000, normal queue, work 00000000e3e81955
-
-where the hashed queued is serialized based on the inode, and the normal
-queue is not (eg they run in parallel).
-
-As mentioned, the fio job being used isn't representative of anything
-that should actually be run, the async flag really only exists for
-experimentation. Do you have a real workload that is seeing a regression?
-If yes, does that real workload change performance with the patch?
-
--- 
-Jens Axboe
+Regard
+Mrs Alice Walton
 
 

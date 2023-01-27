@@ -2,113 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B45A67EF16
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 21:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F15E67F130
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 23:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233268AbjA0UDv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Jan 2023 15:03:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43344 "EHLO
+        id S230368AbjA0WgK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Jan 2023 17:36:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbjA0UDU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 15:03:20 -0500
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7E3908E6
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 12:01:29 -0800 (PST)
-Received: by mail-pl1-x634.google.com with SMTP id d3so6061254plr.10
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 12:01:29 -0800 (PST)
+        with ESMTP id S229448AbjA0WgJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 17:36:09 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6404479C86
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:36:04 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id j5so5927879pjn.5
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:36:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q0qDFotLQKcvpZGv4NiLLCTNFuHzpv4aEoaONI/+Kn4=;
-        b=b5ghtGMl/Mvc5ODB/InrkPVt1xMMtshP1cUA8aCS+6aiXY+FbQfLP238Poe2teIvav
-         cBK9QrI5SKLH/hz/93+ypjMHr0uL1JQBAq1KKftq8l1UDjNzU6jg87kQBPyPG/s8bbAo
-         HGWMKJqqo7E3jU0ZV46n5K0LTxCkCEwp6BKDYGElTCO7SCHS3pVRGtA1SUYJWw1EalUf
-         BWMVaJn9a6iRJxEiQ0WnZZ+bWUhrIHPjIVpG0uAuhxmOqd1J5QyFJwoUGF/jynUgeLL1
-         uTRitVwcppDg1YP5iolC7zNr5YQw3j3GPslf5Iq1hcZcsptm8bqkn174V7GbRt1iauum
-         KBkw==
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hg9InPQN4tioHiMOdnKqvlrPm/hTugTIRh5hdEkItHk=;
+        b=IkBYUtYDZafcPWMLulxZiUJSeNAA86Kv8Xpi33/kVI4jpXr82P4LQyDIDQABFSUhas
+         17MmT36jpLUUQAtas8M7WDGmlJi9YAfYXks0Zx9284ToWbnGxty13qfnO0lfwxAWw5G+
+         XmsoPUQ++jfe8+g/sdKeTkDE3eiJNE4Yfb0OHE9yJ5Bv6krz6EFTKnbjpLvTzK7ZFLyu
+         H2cIrJ1hsKIq2/P/mfcfHdyWqV1v73KsC2h/vEJvs6GeCNhTmykcht2XBSa19lfgH8ax
+         MZ7PXY2xBsRaxyDJ+e3G/9/39QKW/VOdGZI5Igvu/s3houV1VAvscksWTGUw2lUpA9ci
+         yEfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q0qDFotLQKcvpZGv4NiLLCTNFuHzpv4aEoaONI/+Kn4=;
-        b=kT2YBu43NmYn9qxjAp1ptikmXaw/1BROAo7HJ8uQUuLDqI7eia+DLq1DdTbjOfH7DA
-         tLDz9nWCCrGG+71F11VzxbenF4Qzh1TtbPHiD+5IkP74YeYVP31vvYulGcLdPlszxojm
-         cuHjmUf2OABTsRAyyNtVSalZsTk1bcCKxIeywm+azcVJ8zmkHBazcRlUXpW7mYb99GMA
-         euWT52pE6/o9yVO0IMAzyhjs7f8nCY6cmhW6sb41dljvq5b6q0RK08VFhqIsbWJjliOR
-         0WKbYuEf7Fd1QlsjbogKsUzuF9iPuF25KUQnK791QhqvSw1BdZmvWkSGi0a0RjcfLdEz
-         aZRw==
-X-Gm-Message-State: AO0yUKXF4TR8MqvwMeHaTUMi/y3IjDX/mvKhaKHIIQek1FjG7BF3O46X
-        crdOfsk4WW7qplELN/rXmxTIENvNITacTD3S
-X-Google-Smtp-Source: AK7set8bGRStscS5j6geyodRTcrQwBEkeKEg3tsqg1wNP+uL+NBJvPJu5NnUOg9BX8fZ8nQx3SUzkg==
-X-Received: by 2002:a17:902:e88d:b0:196:b0c:f084 with SMTP id w13-20020a170902e88d00b001960b0cf084mr3899346plg.0.1674849688048;
-        Fri, 27 Jan 2023 12:01:28 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a8-20020a170902b58800b0019615a0d083sm3225621pls.210.2023.01.27.12.01.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jan 2023 12:01:27 -0800 (PST)
-Message-ID: <55d9c30b-6a67-3126-d7a3-b844e00324d6@kernel.dk>
-Date:   Fri, 27 Jan 2023 13:01:26 -0700
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hg9InPQN4tioHiMOdnKqvlrPm/hTugTIRh5hdEkItHk=;
+        b=rpxMzM6icLT6rg7jWFzl6rMU9nI+tYHl6ALuenDyw2q0MunV2YafNBbQfyuFjyIiaU
+         MgMvWmE9/9mln0TqAMv16rPubUTCBtamqo2uPVYGLJDbKI96NMfIv1PPFCClvP1tBIQA
+         PcZw8Ra+LqX/tejwu1VSrMIfXDzIrxbn5O0fdddLCzzOdGNTfgMxr5TkXm6c01JHXTft
+         lPbZfj0zPlCqf8lMMXWtJgkSD4BISCNOsTL6FHbfinNiZuAYjJG/NJgO+vhYKRHkmm/5
+         y5b17E/WqjZrr5zWSzx2vxw3uywiPFHtqo989LG0gZYQq0XFxY5FS/bkoaZKGbkd5BDn
+         mydw==
+X-Gm-Message-State: AFqh2kog1A6geNF+vW5bky2An3cbPnZ9yOEF45/GS2/6uzmenC3Fn8Jm
+        P3dFHf3YF2heJReMmdVWkTtN3ipIipdeNs8U9C+S
+X-Google-Smtp-Source: AMrXdXvzWbZmDFbaDAfHsJMk2b5d62SU6fcAEF0ZvE0if6bNDtDttm18NnlrjsNl8TDbMsKuTJp/ByVLd+bOX8i8ai4=
+X-Received: by 2002:a17:90a:5b0c:b0:223:fa07:7bfb with SMTP id
+ o12-20020a17090a5b0c00b00223fa077bfbmr5371755pji.38.1674858963877; Fri, 27
+ Jan 2023 14:36:03 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.2-rc6
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+References: <cover.1674682056.git.rgb@redhat.com> <68eb0c2dd50bca1af91203669f7f1f8312331f38.1674682056.git.rgb@redhat.com>
+In-Reply-To: <68eb0c2dd50bca1af91203669f7f1f8312331f38.1674682056.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 27 Jan 2023 17:35:52 -0500
+Message-ID: <CAHC9VhSZNGs+SQU7WCD+ObMcwv-=1ZkBts8oHn40qWsQ=n0pXA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] io_uring,audit: audit IORING_OP_FADVISE but not IORING_OP_MADVISE
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Stefan Roesch <shr@fb.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+On Fri, Jan 27, 2023 at 12:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> Since FADVISE can truncate files and MADVISE operates on memory, reverse
+> the audit_skip tags.
+>
+> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  io_uring/opdef.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+> index 3aa0d65c50e3..a2bf53b4a38a 100644
+> --- a/io_uring/opdef.c
+> +++ b/io_uring/opdef.c
+> @@ -306,12 +306,12 @@ const struct io_op_def io_op_defs[] = {
+>         },
+>         [IORING_OP_FADVISE] = {
+>                 .needs_file             = 1,
+> -               .audit_skip             = 1,
+>                 .name                   = "FADVISE",
+>                 .prep                   = io_fadvise_prep,
+>                 .issue                  = io_fadvise,
+>         },
 
-Two small fixes for this release:
+I've never used posix_fadvise() or the associated fadvise64*()
+syscalls, but from quickly reading the manpages and the
+generic_fadvise() function in the kernel I'm missing where the fadvise
+family of functions could be used to truncate a file, can you show me
+where this happens?  The closest I can see is the manipulation of the
+page cache, but that shouldn't actually modify the file ... right?
 
-- Sanitize how async prep is done for drain requests, so we ensure that
-  it always gets done (Dylan)
+>         [IORING_OP_MADVISE] = {
+> +               .audit_skip             = 1,
+>                 .name                   = "MADVISE",
+>                 .prep                   = io_madvise_prep,
+>                 .issue                  = io_madvise,
 
-- A ring provided buffer recycling fix for multishot receive (me)
-
-Please pull!
-
-
-The following changes since commit 8caa03f10bf92cb8657408a6ece6a8a73f96ce13:
-
-  io_uring/poll: don't reissue in case of poll race on multishot request (2023-01-20 15:11:54 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.2-2023-01-27
-
-for you to fetch changes up to ef5c600adb1d985513d2b612cc90403a148ff287:
-
-  io_uring: always prep_async for drain requests (2023-01-27 06:29:29 -0700)
-
-----------------------------------------------------------------
-io_uring-6.2-2023-01-27
-
-----------------------------------------------------------------
-Dylan Yudaken (1):
-      io_uring: always prep_async for drain requests
-
-Jens Axboe (1):
-      io_uring/net: cache provided buffer group value for multishot receives
-
- io_uring/io_uring.c | 18 ++++++++----------
- io_uring/net.c      | 11 +++++++++++
- 2 files changed, 19 insertions(+), 10 deletions(-)
+I *think* this should be okay, what testing/verification have you done
+on this?  One of the things I like to check is to see if any LSMs
+might perform an access check and/or generate an audit record on an
+operation, if there is a case where that could happen we should setup
+audit properly.  I did a very quick check of do_madvise() and nothing
+jumped out at me, but I would be interested in knowing what testing or
+verification you did here.
 
 -- 
-Jens Axboe
-
+paul-moore.com

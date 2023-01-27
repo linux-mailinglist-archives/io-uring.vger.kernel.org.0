@@ -2,105 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9317B67F13A
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 23:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E88D367F14B
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 23:43:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231782AbjA0WiW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Jan 2023 17:38:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34064 "EHLO
+        id S229748AbjA0WnO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Jan 2023 17:43:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231738AbjA0WiU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 17:38:20 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E82193E0
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:38:17 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id b10so5961426pjo.1
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:38:17 -0800 (PST)
+        with ESMTP id S231548AbjA0WnO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 17:43:14 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6294A1F2
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:43:13 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id m11so5991056pji.0
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:43:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wT576QX9xHllxN0lRYKR47JyczROgIwu1/PNvL2Rutc=;
-        b=N8uiweR9oBNu+LgBzfjcYD4LfOcGUNYX6AHlx0v6YVDeAc66gmMpNn3oZIayWzKsDn
-         926K9JP3uxel/Ho9K5Ois/lhxo8W+Ox4nSXlrgjlf6aSxotydEAMHwubMa2/94+Fjb9U
-         snv15PToWK5Rm3Nvw2dlDhXwHgCOEL5lpuczC71l0Pw5TLfQ70xqL8QLG/nHA0lhS1xF
-         p1RGKHlbaLtfoPufbjbyeSMNGYrUpaUHK62ieAKW9wB2SgvaUtWrnT9p6EiHTEgB9K2c
-         Zw2+2NsaN5M5EbpyDQQjjGaPDJghbSPIb6yujk23VLQ7JvnOCyKlYGH0+DnJ2J96bHSF
-         S7VA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WmZkqsaxGsxQVAXbyc3t7DBRwM/9VryKi+3Pr7qmZDM=;
+        b=EHEuRJwyc3aEnvPQ3LoS4NKvPJJkNLp5KseEGyAq2wF9rZ8ro1RFeYADPeEMdRsehS
+         bE8CKiS29ezfHzwcmtCt3DgNyhhtmPWNw+BaWyQ+q6Vl7OXhbPtMqGhbB4xCCgRoY/Fh
+         YqT+syA3CishdtD5tz8Ec3wxHW/07PLDnW2qrQPWNdeFTLa8cnRQ4nLoy7kqB/xoUvCP
+         PYXxD9nfnhArpnRu0ECP7JdSSJBsbA8f3kaxYLc0YoLrrSdXRWu9A/u+O86d6t/uikGJ
+         mG/PY80YDpxlQaB6vnXeKB/soKLVjTgo0zIBy9KJoKyEvAeID18y8fHVJYeMmMTlliYC
+         7FOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wT576QX9xHllxN0lRYKR47JyczROgIwu1/PNvL2Rutc=;
-        b=4zMxzVOFKX7lhKB6BaEo0S6wktkETbUfooCS8QLCa5wCIwXLYoqmEJenurJu+99rcj
-         7SOlekdbWF+gCs5kJWx6N11+3lfPn+91weYx4pZ5QqLORimQVYCtjOy4Qjam7kWEhUuN
-         J9ren+7yOU904GEvBP1IBKOYLY5/2UMS2uBwVAl1n5fIqWUEjDkkvgKSekO4tgyUr0/K
-         4aG5tm1D0ZN23+JHrfqrIdAR6fURf6aDE0DYIJrhyXF67oowAuKbnbHcxlTo6poi8djc
-         2FNRmRXHmMINd8rrH2CtDeQ9T7WYEOiP6PPmabz3/VcMAiodoF5FOPUw/ir2E/R/WSly
-         E0Fg==
-X-Gm-Message-State: AFqh2krkE/tlcDXGPoinFtG9f517cwvbcpS7B11ch39adWAgCTuCldOx
-        UZauJ4/UImpTWBkEQzRgvewXDDrn+UTUzwrlqqqe
-X-Google-Smtp-Source: AMrXdXunM/785t5txnw7UTNhE9KblolcGjVvpPCwHuVLwD9hj4/sdRedAvzglIcjinAMhc5wbooE+A37rMqn4q3jEpU=
-X-Received: by 2002:a17:90b:3903:b0:225:de08:b714 with SMTP id
- ob3-20020a17090b390300b00225de08b714mr5008556pjb.193.1674859097412; Fri, 27
- Jan 2023 14:38:17 -0800 (PST)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WmZkqsaxGsxQVAXbyc3t7DBRwM/9VryKi+3Pr7qmZDM=;
+        b=WxTTHEX4wvIx9xrEsJrg/wNeRq5sxf0z3R6+QoaNQzoTACGo16wwInRQJBrECvR2qq
+         np69PdE/HbjmDeppm2jjm3GEVoVAe3s2qiMLHgdBQBUDeLn9BYe8kipVMOdTuaKF/kia
+         IV4nbtVRrx2xqZtucmOnZfB+KQ1NJB+cLUBf0n4394vHFP17YjWKczwG4aM1x/VLntbR
+         8z+0cBFtTTLAYb3wT3ibTPe0jANkWGUn17kubkd3hFyCUuoFBHUsXNlIBorw3lEW2Fur
+         q1E7uD0w7N39zL3v+HGKxH7fH7Ky6+I9gPQ9x7sa9Eh/wu+12VtIKhcCxhOWAHlP21cR
+         dAjg==
+X-Gm-Message-State: AFqh2kq35yiBNSbZF1yQozteOg7iE65yyboPY7ntrm4t1doQtlvssAgT
+        RJvP7TVd1xPtJBRqVEIAy/b1V68h30mjhZZ2D7rc
+X-Google-Smtp-Source: AMrXdXustphmqNFUVCzyCLlM6K9y5ETwjauqRlKHwVZFt4XVnBeuiN5gqhYBOfGFydEDeSZxy4iglGTbZndDf10aDKs=
+X-Received: by 2002:a17:90a:5b0c:b0:223:fa07:7bfb with SMTP id
+ o12-20020a17090a5b0c00b00223fa077bfbmr5374291pji.38.1674859393131; Fri, 27
+ Jan 2023 14:43:13 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1674682056.git.rgb@redhat.com> <da695bf4-bd9b-a03d-3fbc-686724a7b602@kernel.dk>
- <CAHC9VhSRbay5bEUMJngpj+6Ss=WLeRoyJaNNMip+TyTkTJ6=Lg@mail.gmail.com> <24fbe6cb-ee80-f726-b260-09f394ead764@kernel.dk>
-In-Reply-To: <24fbe6cb-ee80-f726-b260-09f394ead764@kernel.dk>
+References: <cover.1674682056.git.rgb@redhat.com> <f602429ce0f419c2abc3ae5a0e705e1368ac5650.1674682056.git.rgb@redhat.com>
+In-Reply-To: <f602429ce0f419c2abc3ae5a0e705e1368ac5650.1674682056.git.rgb@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 Jan 2023 17:38:06 -0500
-Message-ID: <CAHC9VhRuvV9vjhmTM4eGJkWmpZmSkgVaoQ=L6g3cahej-F52tQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] two suggested iouring op audit updates
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
+Date:   Fri, 27 Jan 2023 17:43:02 -0500
+Message-ID: <CAHC9VhQiy9vP7BdQk+SXG7gQKAqOAqbYtU+c9R0_ym0h4bgG7g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] io_uring,audit: do not log IORING_OP_*GETXATTR
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>,
         Steve Grubb <sgrubb@redhat.com>, Stefan Roesch <shr@fb.com>,
         Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 2:43 PM Jens Axboe <axboe@kernel.dk> wrote:
-> On 1/27/23 12:42=E2=80=AFPM, Paul Moore wrote:
-> > On Fri, Jan 27, 2023 at 12:40 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >> On 1/27/23 10:23=E2=80=AFAM, Richard Guy Briggs wrote:
-> >>> A couple of updates to the iouring ops audit bypass selections sugges=
-ted in
-> >>> consultation with Steve Grubb.
-> >>>
-> >>> Richard Guy Briggs (2):
-> >>>   io_uring,audit: audit IORING_OP_FADVISE but not IORING_OP_MADVISE
-> >>>   io_uring,audit: do not log IORING_OP_*GETXATTR
-> >>>
-> >>>  io_uring/opdef.c | 4 +++-
-> >>>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> Look fine to me - we should probably add stable to both of them, just
-> >> to keep things consistent across releases. I can queue them up for 6.3=
-.
-> >
-> > Please hold off until I've had a chance to look them over ...
+On Fri, Jan 27, 2023 at 12:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
 >
-> I haven't taken anything yet, for things like this I always let it
-> simmer until people have had a chance to do so.
+> Getting XATTRs is not particularly interesting security-wise.
+>
+> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> Fixes: a56834e0fafe ("io_uring: add fgetxattr and getxattr support")
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  io_uring/opdef.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Thanks.  FWIW, that sounds very reasonable to me, but I've seen lots
-of different behaviors across subsystems and wanted to make sure we
-were on the same page.
+Depending on your security policy, fetching file data, including
+xattrs, can be interesting from a security perspective.  As an
+example, look at the SELinux file/getattr permission.
 
---=20
+https://github.com/SELinuxProject/selinux-notebook/blob/main/src/object_classes_permissions.md#common-file-permissions
+
+> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+> index a2bf53b4a38a..f6bfe2cf078c 100644
+> --- a/io_uring/opdef.c
+> +++ b/io_uring/opdef.c
+> @@ -462,12 +462,14 @@ const struct io_op_def io_op_defs[] = {
+>         },
+>         [IORING_OP_FGETXATTR] = {
+>                 .needs_file = 1,
+> +               .audit_skip             = 1,
+>                 .name                   = "FGETXATTR",
+>                 .prep                   = io_fgetxattr_prep,
+>                 .issue                  = io_fgetxattr,
+>                 .cleanup                = io_xattr_cleanup,
+>         },
+>         [IORING_OP_GETXATTR] = {
+> +               .audit_skip             = 1,
+>                 .name                   = "GETXATTR",
+>                 .prep                   = io_getxattr_prep,
+>                 .issue                  = io_getxattr,
+> --
+> 2.27.0
+
+-- 
 paul-moore.com

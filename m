@@ -2,119 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F15E67F130
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 23:36:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9317B67F13A
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 23:38:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbjA0WgK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Jan 2023 17:36:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
+        id S231782AbjA0WiW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Jan 2023 17:38:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjA0WgJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 17:36:09 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6404479C86
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:36:04 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id j5so5927879pjn.5
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:36:04 -0800 (PST)
+        with ESMTP id S231738AbjA0WiU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 17:38:20 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E82193E0
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:38:17 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id b10so5961426pjo.1
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 14:38:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hg9InPQN4tioHiMOdnKqvlrPm/hTugTIRh5hdEkItHk=;
-        b=IkBYUtYDZafcPWMLulxZiUJSeNAA86Kv8Xpi33/kVI4jpXr82P4LQyDIDQABFSUhas
-         17MmT36jpLUUQAtas8M7WDGmlJi9YAfYXks0Zx9284ToWbnGxty13qfnO0lfwxAWw5G+
-         XmsoPUQ++jfe8+g/sdKeTkDE3eiJNE4Yfb0OHE9yJ5Bv6krz6EFTKnbjpLvTzK7ZFLyu
-         H2cIrJ1hsKIq2/P/mfcfHdyWqV1v73KsC2h/vEJvs6GeCNhTmykcht2XBSa19lfgH8ax
-         MZ7PXY2xBsRaxyDJ+e3G/9/39QKW/VOdGZI5Igvu/s3houV1VAvscksWTGUw2lUpA9ci
-         yEfw==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wT576QX9xHllxN0lRYKR47JyczROgIwu1/PNvL2Rutc=;
+        b=N8uiweR9oBNu+LgBzfjcYD4LfOcGUNYX6AHlx0v6YVDeAc66gmMpNn3oZIayWzKsDn
+         926K9JP3uxel/Ho9K5Ois/lhxo8W+Ox4nSXlrgjlf6aSxotydEAMHwubMa2/94+Fjb9U
+         snv15PToWK5Rm3Nvw2dlDhXwHgCOEL5lpuczC71l0Pw5TLfQ70xqL8QLG/nHA0lhS1xF
+         p1RGKHlbaLtfoPufbjbyeSMNGYrUpaUHK62ieAKW9wB2SgvaUtWrnT9p6EiHTEgB9K2c
+         Zw2+2NsaN5M5EbpyDQQjjGaPDJghbSPIb6yujk23VLQ7JvnOCyKlYGH0+DnJ2J96bHSF
+         S7VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hg9InPQN4tioHiMOdnKqvlrPm/hTugTIRh5hdEkItHk=;
-        b=rpxMzM6icLT6rg7jWFzl6rMU9nI+tYHl6ALuenDyw2q0MunV2YafNBbQfyuFjyIiaU
-         MgMvWmE9/9mln0TqAMv16rPubUTCBtamqo2uPVYGLJDbKI96NMfIv1PPFCClvP1tBIQA
-         PcZw8Ra+LqX/tejwu1VSrMIfXDzIrxbn5O0fdddLCzzOdGNTfgMxr5TkXm6c01JHXTft
-         lPbZfj0zPlCqf8lMMXWtJgkSD4BISCNOsTL6FHbfinNiZuAYjJG/NJgO+vhYKRHkmm/5
-         y5b17E/WqjZrr5zWSzx2vxw3uywiPFHtqo989LG0gZYQq0XFxY5FS/bkoaZKGbkd5BDn
-         mydw==
-X-Gm-Message-State: AFqh2kog1A6geNF+vW5bky2An3cbPnZ9yOEF45/GS2/6uzmenC3Fn8Jm
-        P3dFHf3YF2heJReMmdVWkTtN3ipIipdeNs8U9C+S
-X-Google-Smtp-Source: AMrXdXvzWbZmDFbaDAfHsJMk2b5d62SU6fcAEF0ZvE0if6bNDtDttm18NnlrjsNl8TDbMsKuTJp/ByVLd+bOX8i8ai4=
-X-Received: by 2002:a17:90a:5b0c:b0:223:fa07:7bfb with SMTP id
- o12-20020a17090a5b0c00b00223fa077bfbmr5371755pji.38.1674858963877; Fri, 27
- Jan 2023 14:36:03 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wT576QX9xHllxN0lRYKR47JyczROgIwu1/PNvL2Rutc=;
+        b=4zMxzVOFKX7lhKB6BaEo0S6wktkETbUfooCS8QLCa5wCIwXLYoqmEJenurJu+99rcj
+         7SOlekdbWF+gCs5kJWx6N11+3lfPn+91weYx4pZ5QqLORimQVYCtjOy4Qjam7kWEhUuN
+         J9ren+7yOU904GEvBP1IBKOYLY5/2UMS2uBwVAl1n5fIqWUEjDkkvgKSekO4tgyUr0/K
+         4aG5tm1D0ZN23+JHrfqrIdAR6fURf6aDE0DYIJrhyXF67oowAuKbnbHcxlTo6poi8djc
+         2FNRmRXHmMINd8rrH2CtDeQ9T7WYEOiP6PPmabz3/VcMAiodoF5FOPUw/ir2E/R/WSly
+         E0Fg==
+X-Gm-Message-State: AFqh2krkE/tlcDXGPoinFtG9f517cwvbcpS7B11ch39adWAgCTuCldOx
+        UZauJ4/UImpTWBkEQzRgvewXDDrn+UTUzwrlqqqe
+X-Google-Smtp-Source: AMrXdXunM/785t5txnw7UTNhE9KblolcGjVvpPCwHuVLwD9hj4/sdRedAvzglIcjinAMhc5wbooE+A37rMqn4q3jEpU=
+X-Received: by 2002:a17:90b:3903:b0:225:de08:b714 with SMTP id
+ ob3-20020a17090b390300b00225de08b714mr5008556pjb.193.1674859097412; Fri, 27
+ Jan 2023 14:38:17 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1674682056.git.rgb@redhat.com> <68eb0c2dd50bca1af91203669f7f1f8312331f38.1674682056.git.rgb@redhat.com>
-In-Reply-To: <68eb0c2dd50bca1af91203669f7f1f8312331f38.1674682056.git.rgb@redhat.com>
+References: <cover.1674682056.git.rgb@redhat.com> <da695bf4-bd9b-a03d-3fbc-686724a7b602@kernel.dk>
+ <CAHC9VhSRbay5bEUMJngpj+6Ss=WLeRoyJaNNMip+TyTkTJ6=Lg@mail.gmail.com> <24fbe6cb-ee80-f726-b260-09f394ead764@kernel.dk>
+In-Reply-To: <24fbe6cb-ee80-f726-b260-09f394ead764@kernel.dk>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 Jan 2023 17:35:52 -0500
-Message-ID: <CAHC9VhSZNGs+SQU7WCD+ObMcwv-=1ZkBts8oHn40qWsQ=n0pXA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] io_uring,audit: audit IORING_OP_FADVISE but not IORING_OP_MADVISE
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+Date:   Fri, 27 Jan 2023 17:38:06 -0500
+Message-ID: <CAHC9VhRuvV9vjhmTM4eGJkWmpZmSkgVaoQ=L6g3cahej-F52tQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] two suggested iouring op audit updates
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>,
         Steve Grubb <sgrubb@redhat.com>, Stefan Roesch <shr@fb.com>,
         Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 12:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Fri, Jan 27, 2023 at 2:43 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 1/27/23 12:42=E2=80=AFPM, Paul Moore wrote:
+> > On Fri, Jan 27, 2023 at 12:40 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >> On 1/27/23 10:23=E2=80=AFAM, Richard Guy Briggs wrote:
+> >>> A couple of updates to the iouring ops audit bypass selections sugges=
+ted in
+> >>> consultation with Steve Grubb.
+> >>>
+> >>> Richard Guy Briggs (2):
+> >>>   io_uring,audit: audit IORING_OP_FADVISE but not IORING_OP_MADVISE
+> >>>   io_uring,audit: do not log IORING_OP_*GETXATTR
+> >>>
+> >>>  io_uring/opdef.c | 4 +++-
+> >>>  1 file changed, 3 insertions(+), 1 deletion(-)
+> >>
+> >> Look fine to me - we should probably add stable to both of them, just
+> >> to keep things consistent across releases. I can queue them up for 6.3=
+.
+> >
+> > Please hold off until I've had a chance to look them over ...
 >
-> Since FADVISE can truncate files and MADVISE operates on memory, reverse
-> the audit_skip tags.
->
-> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  io_uring/opdef.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 3aa0d65c50e3..a2bf53b4a38a 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -306,12 +306,12 @@ const struct io_op_def io_op_defs[] = {
->         },
->         [IORING_OP_FADVISE] = {
->                 .needs_file             = 1,
-> -               .audit_skip             = 1,
->                 .name                   = "FADVISE",
->                 .prep                   = io_fadvise_prep,
->                 .issue                  = io_fadvise,
->         },
+> I haven't taken anything yet, for things like this I always let it
+> simmer until people have had a chance to do so.
 
-I've never used posix_fadvise() or the associated fadvise64*()
-syscalls, but from quickly reading the manpages and the
-generic_fadvise() function in the kernel I'm missing where the fadvise
-family of functions could be used to truncate a file, can you show me
-where this happens?  The closest I can see is the manipulation of the
-page cache, but that shouldn't actually modify the file ... right?
+Thanks.  FWIW, that sounds very reasonable to me, but I've seen lots
+of different behaviors across subsystems and wanted to make sure we
+were on the same page.
 
->         [IORING_OP_MADVISE] = {
-> +               .audit_skip             = 1,
->                 .name                   = "MADVISE",
->                 .prep                   = io_madvise_prep,
->                 .issue                  = io_madvise,
-
-I *think* this should be okay, what testing/verification have you done
-on this?  One of the things I like to check is to see if any LSMs
-might perform an access check and/or generate an audit record on an
-operation, if there is a case where that could happen we should setup
-audit properly.  I did a very quick check of do_madvise() and nothing
-jumped out at me, but I would be interested in knowing what testing or
-verification you did here.
-
--- 
+--=20
 paul-moore.com

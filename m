@@ -2,42 +2,42 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84EF467F208
-	for <lists+io-uring@lfdr.de>; Sat, 28 Jan 2023 00:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A78E67F20D
+	for <lists+io-uring@lfdr.de>; Sat, 28 Jan 2023 00:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232714AbjA0XIn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Jan 2023 18:08:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56094 "EHLO
+        id S232731AbjA0XJG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Jan 2023 18:09:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232696AbjA0XIj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 18:08:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA08FF20
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 15:07:50 -0800 (PST)
+        with ESMTP id S232726AbjA0XJE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 18:09:04 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B00D8BBAF
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 15:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674860869;
+        s=mimecast20190719; t=1674860893;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ZfIXJ+yJYjJIGSWbN403aqXVs6a7C5E6asSXYzrpvgk=;
-        b=HHBZA4VPLflWMqr2QBCfgo3PHMpSYR332/2dhQ/+d6gUzHwPwKVRSwa4FAIr299X+gQ3Pd
-        tLbXljCgxpgL5E9q+R+aRpRz1sxPMpmed03HOqVZaanae5wRdZx3yXpjeutgfOnnvlVGBA
-        pJf76fRAajO/rtIY109Odd6c9efX0so=
+        bh=iP5M+Rvk3GF5mM9HY3iEHMgp/cYCRLdT0QBjJv/tYEY=;
+        b=IdjKZt+Xxjcxkd6EuiC0a/qrmJlRq2E7vGkM1geE0xLKkp0fOBIKh/pw72XKugZsohPe4y
+        /ED3cKcYK4AX9jFVHXvLwJeeVjiQ3aUndx+3ZajMkvZQg1qbHJZmu9zawv08XzfstxT7+S
+        tIdPpJ8uVn9SiephH9GYMJ4ny5SLDzM=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-479-ZQ3TuZo1MK2x2B6pEylPTw-1; Fri, 27 Jan 2023 18:07:44 -0500
-X-MC-Unique: ZQ3TuZo1MK2x2B6pEylPTw-1
+ us-mta-664-dlooKtsfMfankTnBLYHdbQ-1; Fri, 27 Jan 2023 18:08:08 -0500
+X-MC-Unique: dlooKtsfMfankTnBLYHdbQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1B13E3C0252A;
-        Fri, 27 Jan 2023 23:07:44 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 644D51C05AD5;
+        Fri, 27 Jan 2023 23:08:07 +0000 (UTC)
 Received: from madcap2.tricolour.ca (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D68A40C945A;
-        Fri, 27 Jan 2023 23:07:42 +0000 (UTC)
-Date:   Fri, 27 Jan 2023 18:07:40 -0500
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3902400F8F1;
+        Fri, 27 Jan 2023 23:08:05 +0000 (UTC)
+Date:   Fri, 27 Jan 2023 18:08:03 -0500
 From:   Richard Guy Briggs <rgb@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Paul Moore <paul@paul-moore.com>,
@@ -47,21 +47,20 @@ Cc:     Paul Moore <paul@paul-moore.com>,
         Steve Grubb <sgrubb@redhat.com>, Stefan Roesch <shr@fb.com>,
         Christian Brauner <brauner@kernel.org>,
         Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH v1 0/2] two suggested iouring op audit updates
-Message-ID: <Y9RZPFTA8UUam12R@madcap2.tricolour.ca>
+Subject: Re: [PATCH v1 1/2] io_uring,audit: audit IORING_OP_FADVISE but not
+ IORING_OP_MADVISE
+Message-ID: <Y9RZU4InKURO/yGP@madcap2.tricolour.ca>
 References: <cover.1674682056.git.rgb@redhat.com>
- <da695bf4-bd9b-a03d-3fbc-686724a7b602@kernel.dk>
- <CAHC9VhSRbay5bEUMJngpj+6Ss=WLeRoyJaNNMip+TyTkTJ6=Lg@mail.gmail.com>
- <24fbe6cb-ee80-f726-b260-09f394ead764@kernel.dk>
- <CAHC9VhRuvV9vjhmTM4eGJkWmpZmSkgVaoQ=L6g3cahej-F52tQ@mail.gmail.com>
- <d9da8035-ed81-fb28-bf3a-f98c8a1e044a@kernel.dk>
- <CAHC9VhRpu7WZDqWKcLDj18A0Z5FJdUU=eUL3wbJH1CnEBWB4GA@mail.gmail.com>
- <7904e869-f885-e406-9fe6-495a6e9790e4@kernel.dk>
+ <68eb0c2dd50bca1af91203669f7f1f8312331f38.1674682056.git.rgb@redhat.com>
+ <CAHC9VhSZNGs+SQU7WCD+ObMcwv-=1ZkBts8oHn40qWsQ=n0pXA@mail.gmail.com>
+ <6d3f76ae-9f86-a96e-d540-cfd45475e288@kernel.dk>
+ <Y9RYFHucRL5TrsDh@madcap2.tricolour.ca>
+ <68b599bb-2329-3125-1859-cf529fbeea00@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7904e869-f885-e406-9fe6-495a6e9790e4@kernel.dk>
+In-Reply-To: <68b599bb-2329-3125-1859-cf529fbeea00@kernel.dk>
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
@@ -73,51 +72,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2023-01-27 16:02, Jens Axboe wrote:
-> On 1/27/23 3:53 PM, Paul Moore wrote:
-> > On Fri, Jan 27, 2023 at 5:46 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >> On 1/27/23 3:38 PM, Paul Moore wrote:
-> >>> On Fri, Jan 27, 2023 at 2:43 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>>> On 1/27/23 12:42 PM, Paul Moore wrote:
-> >>>>> On Fri, Jan 27, 2023 at 12:40 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>>>>> On 1/27/23 10:23 AM, Richard Guy Briggs wrote:
-> >>>>>>> A couple of updates to the iouring ops audit bypass selections suggested in
-> >>>>>>> consultation with Steve Grubb.
-> >>>>>>>
-> >>>>>>> Richard Guy Briggs (2):
-> >>>>>>>   io_uring,audit: audit IORING_OP_FADVISE but not IORING_OP_MADVISE
-> >>>>>>>   io_uring,audit: do not log IORING_OP_*GETXATTR
-> >>>>>>>
-> >>>>>>>  io_uring/opdef.c | 4 +++-
-> >>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> Look fine to me - we should probably add stable to both of them, just
-> >>>>>> to keep things consistent across releases. I can queue them up for 6.3.
-> >>>>>
-> >>>>> Please hold off until I've had a chance to look them over ...
+On 2023-01-27 16:03, Jens Axboe wrote:
+> On 1/27/23 4:02 PM, Richard Guy Briggs wrote:
+> > On 2023-01-27 15:45, Jens Axboe wrote:
+> >> On 1/27/23 3:35?PM, Paul Moore wrote:
+> >>> On Fri, Jan 27, 2023 at 12:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
 > >>>>
-> >>>> I haven't taken anything yet, for things like this I always let it
-> >>>> simmer until people have had a chance to do so.
+> >>>> Since FADVISE can truncate files and MADVISE operates on memory, reverse
+> >>>> the audit_skip tags.
+> >>>>
+> >>>> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+> >>>> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> >>>> ---
+> >>>>  io_uring/opdef.c | 2 +-
+> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+> >>>> index 3aa0d65c50e3..a2bf53b4a38a 100644
+> >>>> --- a/io_uring/opdef.c
+> >>>> +++ b/io_uring/opdef.c
+> >>>> @@ -306,12 +306,12 @@ const struct io_op_def io_op_defs[] = {
+> >>>>         },
+> >>>>         [IORING_OP_FADVISE] = {
+> >>>>                 .needs_file             = 1,
+> >>>> -               .audit_skip             = 1,
+> >>>>                 .name                   = "FADVISE",
+> >>>>                 .prep                   = io_fadvise_prep,
+> >>>>                 .issue                  = io_fadvise,
+> >>>>         },
 > >>>
-> >>> Thanks.  FWIW, that sounds very reasonable to me, but I've seen lots
-> >>> of different behaviors across subsystems and wanted to make sure we
-> >>> were on the same page.
+> >>> I've never used posix_fadvise() or the associated fadvise64*()
+> >>> syscalls, but from quickly reading the manpages and the
+> >>> generic_fadvise() function in the kernel I'm missing where the fadvise
+> >>> family of functions could be used to truncate a file, can you show me
+> >>> where this happens?  The closest I can see is the manipulation of the
+> >>> page cache, but that shouldn't actually modify the file ... right?
 > >>
-> >> Sounds fair. BTW, can we stop CC'ing closed lists on patch
-> >> submissions? Getting these:
-> >>
-> >> Your message to Linux-audit awaits moderator approval
-> >>
-> >> on every reply is really annoying.
+> >> Yeah, honestly not sure where that came from. Maybe it's being mixed up
+> >> with fallocate? All fadvise (or madvise, for that matter) does is
+> >> provide hints on the caching or access pattern. On second thought, both
+> >> of these should be able to set audit_skip as far as I can tell.
 > > 
-> > We kinda need audit related stuff on the linux-audit list, that's our
-> > mailing list for audit stuff.
+> > That was one suspicion I had.  If this is the case, I'd agree both could
+> > be skipped.
 > 
-> Sure, but then it should be open. Or do separate postings or something.
-> CC'ing a closed list with open lists and sending email to people that
-> are not on that closed list is bad form.
+> I'd be surprised if Steve didn't mix them up. Once he responds, can you
+> send a v2 with the correction?
 
-I've made an inquiry.
+Gladly.
 
 > Jens Axboe
 

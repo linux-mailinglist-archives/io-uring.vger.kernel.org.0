@@ -2,76 +2,146 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A5167EBA2
-	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 17:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E98767EBA4
+	for <lists+io-uring@lfdr.de>; Fri, 27 Jan 2023 17:53:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233472AbjA0Qxx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Jan 2023 11:53:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48368 "EHLO
+        id S231382AbjA0Qxy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Jan 2023 11:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232774AbjA0Qxw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 11:53:52 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B39B1C5AA
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 08:53:37 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id r71so2146616iod.2
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 08:53:37 -0800 (PST)
+        with ESMTP id S233103AbjA0Qxx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 11:53:53 -0500
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC30301B6
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 08:53:38 -0800 (PST)
+Received: by mail-il1-x12f.google.com with SMTP id l7so647051ilf.0
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 08:53:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOH7xqvB/4Xfz5+u+39zFVrarxAxFEjWqbZdqWpGThA=;
-        b=BUJhTiNSuGT0F1K3I6YeRH3BDovwxFdAmFAq43qmsz0AW5VuAgkDwPJ+AZB98M14Ut
-         1PTy3w0iXa1uJiChKkhyDlhlkHxua/JSRHYAmlev5R4c9m9ytgHWb18XVoxqvhkq8aJB
-         7aeloj1G4iJ93cLx+bxE8EAz5cmL47NmLMAJLTjp4gc+zfg1K0ys7YkgeK3YbgMrGxns
-         +XokxiPTZVgA5nvbIAC813ZHHLRO3VebsumA3dBCUFsWgcfMEQwE5JvhXxX4Z46hWA8G
-         hNgWgBmWREGlbUDPMEA74sfbYaGM1QT01VUXSR4N/Ao3Jbo82sCyudE41ZsJJUvWIaA0
-         tdJw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nua+DsCEcokGFKgzeFqSrYyPpVGFrpP2HdUfaCzpN5s=;
+        b=ey/+ifzd6cgiY0LYKWnFKldp1yKuves9PfHyobHZBMx4h8vn7w59BG4fWB5wV5Yeq6
+         gPdtG6er92kdCCC8BSXAahnFDKepLFnfh+uLNViRga31SxDHAb/GBRtFAeJ7Qzz6NHNc
+         Iv+PAEYjExSm9H+8HgHMAYAUGAxT/SASUIvZRo8s1l8/mqQ+hUkPRdsWgBXyOZMZ8WMI
+         UQ4K8tQwZ3TDYmt59y1v7q8zUw4GiILBxq/Wp4QP0Rc1yta6a9DbA2z/6H+KiPEf6wQG
+         EjWtpwZVPgJMmFwVvEUaT1OVeoUFlZnC5Ad56As/58oKqlabzBuIWqP5WHxeG5gW5vfF
+         JU0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOH7xqvB/4Xfz5+u+39zFVrarxAxFEjWqbZdqWpGThA=;
-        b=mJeB0wsc3kQWrJQSch7FJG1P3xFS8R5rNCivhuXvM1ynUo6fqZYVrQuw0LNjZAcoTx
-         VJCJqLJ2Qq9unz3iZnRo5pWbpXg9+YusDyxjAxED2DexQ4iFJ560UjqRxZJehyyD3CAq
-         ITw32ecAZM8s0oGqQj+IxQpyYFovXQPlDB4KhwytcELkZKQmGnO/cjKelEAqgOqh8w7/
-         MLRlGHNGPkXP1zMEsT9PdYoYma/jXPeVR9BufZoURFL/POo8HaNa7LDWiwHBuZd4Bxf8
-         WUtnZdNXfvgDSnG551+XEc8nuJlkUyWpmQ1FxKoIRRPQ0f17CnQiqXh/zb6AK3zwqa+8
-         ZKhQ==
-X-Gm-Message-State: AFqh2kpnEsIG27CBy4muyUCe4s738F3I8NACJX8vpLIeeh8e3q1DkoEW
-        V9+sAezF2Kgk5dX43CnIpWTN6KiTPkQXTY7Y
-X-Google-Smtp-Source: AMrXdXvLkc0+6slGKaUR0Un7aLVoB2HQHzXqNfvNU2AORcwWQKS9/BbyFvCm+5wL6ahYtpnE5eXnYA==
-X-Received: by 2002:a6b:8fcd:0:b0:704:d16d:4a59 with SMTP id r196-20020a6b8fcd000000b00704d16d4a59mr6164040iod.2.1674838415904;
-        Fri, 27 Jan 2023 08:53:35 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nua+DsCEcokGFKgzeFqSrYyPpVGFrpP2HdUfaCzpN5s=;
+        b=AEecVGNwIKMUoER/R6Df1V/9TcMfO+5zRBNu4Zio4eDPL+7o1i4v8WBhGMTv009bki
+         Kg3ikZbKXfC76Bb0DTYi02btueLgZa/fYX6Rd5FBKbW8BmvXMFM2d5HGasUI1Xq9tGpA
+         4n4ou/rQ93dUaL+W3BQFDW9O+ppWOfFVnbU8GkjVGdi9mi9QSjf7Na4sPydIm73RCx6X
+         cVKMFewDqpvxCdBj1VSyasvrt74+xYabSkkSPV5N/nxiTUJr13SnvPAEAmN9e5/4G9bs
+         ldMDuPlHm7L3Abn9Aq+nANx4wFdHHt2R8/mGxY1LfIVQ/6SKLezTMfQJuxhd1n4S94dV
+         nVfQ==
+X-Gm-Message-State: AFqh2kraxSSkuOqKk0POynTSa/xEL3Er0DWVuPv8xxIEJ2yTYH5SUYhv
+        uIbmHdkijY4ZpPSen6mXt9pCjD+xtF1ww79v
+X-Google-Smtp-Source: AMrXdXs1Ys3f1pk5k3PuuFuKB5Gf9g8ICeDJyb1kVocbp4ZwOAD/2xN2dLhlJoaEMLeY/2/5peOsLw==
+X-Received: by 2002:a92:d3c2:0:b0:30f:4feb:50c7 with SMTP id c2-20020a92d3c2000000b0030f4feb50c7mr3666121ilh.3.1674838417668;
+        Fri, 27 Jan 2023 08:53:37 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u4-20020a02cb84000000b0039db6cffcbasm1620587jap.71.2023.01.27.08.53.34
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id u4-20020a02cb84000000b0039db6cffcbasm1620587jap.71.2023.01.27.08.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jan 2023 08:53:35 -0800 (PST)
+        Fri, 27 Jan 2023 08:53:36 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCH for-next 0/2] Fixes for CONFIG_PREEMPT_NONE
-Date:   Fri, 27 Jan 2023 09:53:30 -0700
-Message-Id: <20230127165332.71970-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org
+Subject: [PATCH 1/2] io_uring: add a conditional reschedule to the IOPOLL cancelation loop
+Date:   Fri, 27 Jan 2023 09:53:31 -0700
+Message-Id: <20230127165332.71970-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230127165332.71970-1-axboe@kernel.dk>
+References: <20230127165332.71970-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+If the kernel is configured with CONFIG_PREEMPT_NONE, we could be
+sitting in a tight loop reaping events but not giving them a chance to
+finish. This results in a trace ala:
 
-Just a few minor fixes for CONFIG_PREEMPT_NONE, where we a) either need
-to reschedule (IOPOLL), or b) should reschedule if we're looping for a
-potentially long time.
+rcu: INFO: rcu_sched self-detected stall on CPU
+rcu: 	2-...!: (5249 ticks this GP) idle=935c/1/0x4000000000000000 softirq=4265/4274 fqs=1
+	(t=5251 jiffies g=465 q=4135 ncpus=4)
+rcu: rcu_sched kthread starved for 5249 jiffies! g465 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_sched kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_sched       state:R  running task     stack:0     pid:12    ppid:2      flags:0x00000008
+Call trace:
+ __switch_to+0xb0/0xc8
+ __schedule+0x43c/0x520
+ schedule+0x4c/0x98
+ schedule_timeout+0xbc/0xdc
+ rcu_gp_fqs_loop+0x308/0x344
+ rcu_gp_kthread+0xd8/0xf0
+ kthread+0xb8/0xc8
+ ret_from_fork+0x10/0x20
+rcu: Stack dump where RCU GP kthread last ran:
+Task dump for CPU 0:
+task:kworker/u8:10   state:R  running task     stack:0     pid:89    ppid:2      flags:0x0000000a
+Workqueue: events_unbound io_ring_exit_work
+Call trace:
+ __switch_to+0xb0/0xc8
+ 0xffff0000c8fefd28
+CPU: 2 PID: 95 Comm: kworker/u8:13 Not tainted 6.2.0-rc5-00042-g40316e337c80-dirty #2759
+Hardware name: linux,dummy-virt (DT)
+Workqueue: events_unbound io_ring_exit_work
+pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : io_do_iopoll+0x344/0x360
+lr : io_do_iopoll+0xb8/0x360
+sp : ffff800009bebc60
+x29: ffff800009bebc60 x28: 0000000000000000 x27: 0000000000000000
+x26: ffff0000c0f67d48 x25: ffff0000c0f67840 x24: ffff800008950024
+x23: 0000000000000001 x22: 0000000000000000 x21: ffff0000c27d3200
+x20: ffff0000c0f67840 x19: ffff0000c0f67800 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000001 x13: 0000000000000001 x12: 0000000000000000
+x11: 0000000000000179 x10: 0000000000000870 x9 : ffff800009bebd60
+x8 : ffff0000c27d3ad0 x7 : fefefefefefefeff x6 : 0000646e756f626e
+x5 : ffff0000c0f67840 x4 : 0000000000000000 x3 : ffff0000c2398000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+ io_do_iopoll+0x344/0x360
+ io_uring_try_cancel_requests+0x21c/0x334
+ io_ring_exit_work+0x90/0x40c
+ process_one_work+0x1a4/0x254
+ worker_thread+0x1ec/0x258
+ kthread+0xb8/0xc8
+ ret_from_fork+0x10/0x20
 
+Add a cond_resched() in the cancelation IOPOLL loop to fix this.
+
+Cc: stable@vger.kernel.org # 5.10+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 80b6204769e8..bb8a532b051e 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3162,6 +3162,7 @@ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 		while (!wq_list_empty(&ctx->iopoll_list)) {
+ 			io_iopoll_try_reap_events(ctx);
+ 			ret = true;
++			cond_resched();
+ 		}
+ 	}
+ 
 -- 
-Jens Axboe
-
+2.39.0
 

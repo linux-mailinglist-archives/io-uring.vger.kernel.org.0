@@ -2,141 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07AC267F215
-	for <lists+io-uring@lfdr.de>; Sat, 28 Jan 2023 00:10:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 552FD67F2A2
+	for <lists+io-uring@lfdr.de>; Sat, 28 Jan 2023 01:07:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232295AbjA0XKn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 27 Jan 2023 18:10:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
+        id S231193AbjA1AHB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Jan 2023 19:07:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231616AbjA0XKm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 18:10:42 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C153FF20
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 15:10:41 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id nm12-20020a17090b19cc00b0022c2155cc0bso6108259pjb.4
-        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 15:10:41 -0800 (PST)
+        with ESMTP id S229575AbjA1AHA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Jan 2023 19:07:00 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C0E8B7A7
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 16:06:40 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id d9so6534354pll.9
+        for <io-uring@vger.kernel.org>; Fri, 27 Jan 2023 16:06:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EntdOLcS7rI9knFAWkzoXYdckCvZIyQDgx0uXCkNU2k=;
-        b=K6qzUedKgblRp8t8bzWpsSDeyFo4z1ieLkO7Uz+wOr1TvPS5Ni0SzHWIsk1ZCUFSK4
-         9gQIgBnws/yLr+lKzPWWW5fFPIpUiJFOS1qu/UZ5FIqjhaDMKZhddr2ccG12mCzaF8Yb
-         uLkIbWXklkMMmbFaI/w7kBt4fi4GHvlPihER3iCiZpxGmT9XXdqrTj7hGUBdcpw+nBav
-         cSIy3Q/93kI0qlez3EIBHFc3fkNo8Qg9YT5NcnIsq7vnibcDuG44vr9vdM1P1fEnP+pp
-         38uYU2gQ/EH44diSLWP4rI5mOa9ycuA9euLYRZi8L0ofDW4oT16OYO8+FPo8UuOzFXB0
-         dHrQ==
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8g/ThgcNbD2/aX07jf+/YqhhYrBFTriZoMIQ/MFUbWI=;
+        b=eqFtSh1QLj+acU2gwXnpxbAelvLB58DPeB4DQAski2quWDZzuDDp9OPNjo0x7PfRkL
+         vxvKQ6AcUSbD9BqrQCnovg4LVVxN2voFYwt2Oom/gUHLAys4N4VdIZLmWuHHo78/oQMe
+         wfZu6/kE0w2HGoJ/mmSVAeqxyk0FpRY2SMLAufOLipcWNSTWOMIhOhXBJSJ1eE86T9fY
+         DHnBL+Rvox8zzYn+VugXoB2athS7utYT0LgF2MDmBWP6LONR+IjVl0F9Qgy1yteUF8yQ
+         IvzDKeY/gy/ED2IvlSgXCYIKkbD1AYwESob6Z4B+xNPd6CgQ2CZtYFyq47G6W4jU+Vyj
+         +hnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EntdOLcS7rI9knFAWkzoXYdckCvZIyQDgx0uXCkNU2k=;
-        b=je3XdapxCeuXueBtJMzW6ukQNqCZ8gZFZIuShJYYn2K0LgFDpK3HxvuWto6uV4Ufx1
-         8QzXQ5mKLDPKZaiqXHCWvXFeM+4UGIR5niP+rRwcj2EzGLOnnIgSD/DTf/i4Wdc84RFg
-         NLoeH2ZdjHC2foplXE7MiWrkbJMHWSV2NHcRm5U9K5eGOP+K//8q4uwef+JQaUxDsXHG
-         qli3mDrP/xJka0GpI9HJyWjWselQnRbn8BpKnh3IAC0EgWilLlmEGvKeFfLPD9zAh88g
-         I+dWtiunR6i1h0L+x20fEFNHMFLw1Eb+R5uD50mL2vQiFQjeOeMsNM3y+1vREtdxuUye
-         2f0w==
-X-Gm-Message-State: AO0yUKULZdihzD34LkajL2MGuce6t2z2uZTGe7sSaFBSY5zKedJocFgn
-        J7kYhxerE7kh+b/nXG7/cmwwKA==
-X-Google-Smtp-Source: AK7set/lFgZctNO6xhXfv8SsT6QA9EH+m5gtjjoBeb2+VQKnSt0Te0W6fhWp+zsBySEKIbREpI9VaA==
-X-Received: by 2002:a17:902:e549:b0:196:6308:c9d3 with SMTP id n9-20020a170902e54900b001966308c9d3mr252076plf.0.1674861040463;
-        Fri, 27 Jan 2023 15:10:40 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g5-20020a1709026b4500b0019479636f84sm3387314plt.11.2023.01.27.15.10.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jan 2023 15:10:39 -0800 (PST)
-Message-ID: <1baacdfb-0b40-28be-3e46-049013d92bb4@kernel.dk>
-Date:   Fri, 27 Jan 2023 16:10:38 -0700
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8g/ThgcNbD2/aX07jf+/YqhhYrBFTriZoMIQ/MFUbWI=;
+        b=qcqcuyAaH01xJnkraGMf+CtKttHnWDyLFsTQtXspwHlBEeGE+LDcoh+HXWH97e5+4l
+         BivUMxq46WbVLmDb9TI562Mz8OQlP23CfuaoUaVAQarmVRiW6Ps6FRCZvoHQLZIZ4ml9
+         eG6w5wvoGDPlQvm/DMOc9XoXG1ULCOWWijycdWgLhiXCfWl4Qs/GeiQWja3OPXz8xUY0
+         JlchOduzehEnJawf1fbLlEC1oMVHcjwT4LKJDMGEsH6agUqHA3LGgD8DDksuGpdwdkjA
+         +hc+LKbd1+8k6osvzKc3YxFCF3Rar7bJ5Y3PZBbRGTSoJ/lhN9av1y1HTmYKGJeoM4LE
+         9U1w==
+X-Gm-Message-State: AFqh2krkbpsgEcDphyK8d4H8ubPMtFAZ+WJVWqel4YSdKorJkSVtAtkM
+        d7wEVXqmhtPXuk9ToErnwh1+3Z1mp7UHlj4whuAB
+X-Google-Smtp-Source: AMrXdXvd2n9LymBXSkWurnSC6yLqKTNaVZHkRdO3cpr85aGd59eC4S1pbTeWxWCVZHBbNBrCPS7QoA7JXjF/sJC/xPU=
+X-Received: by 2002:a17:90a:5b0c:b0:223:fa07:7bfb with SMTP id
+ o12-20020a17090a5b0c00b00223fa077bfbmr5401548pji.38.1674864399412; Fri, 27
+ Jan 2023 16:06:39 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v1 0/2] two suggested iouring op audit updates
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
+References: <cover.1674682056.git.rgb@redhat.com> <f602429ce0f419c2abc3ae5a0e705e1368ac5650.1674682056.git.rgb@redhat.com>
+ <CAHC9VhQiy9vP7BdQk+SXG7gQKAqOAqbYtU+c9R0_ym0h4bgG7g@mail.gmail.com> <Y9RX0QhHKfWv3TGL@madcap2.tricolour.ca>
+In-Reply-To: <Y9RX0QhHKfWv3TGL@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 27 Jan 2023 19:06:28 -0500
+Message-ID: <CAHC9VhSN+XSYGh0TBsCPftNvVNBN1JHugrrsp3gbF-in5S1PoA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] io_uring,audit: do not log IORING_OP_*GETXATTR
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>,
         Steve Grubb <sgrubb@redhat.com>, Stefan Roesch <shr@fb.com>,
         Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-References: <cover.1674682056.git.rgb@redhat.com>
- <da695bf4-bd9b-a03d-3fbc-686724a7b602@kernel.dk>
- <CAHC9VhSRbay5bEUMJngpj+6Ss=WLeRoyJaNNMip+TyTkTJ6=Lg@mail.gmail.com>
- <24fbe6cb-ee80-f726-b260-09f394ead764@kernel.dk>
- <CAHC9VhRuvV9vjhmTM4eGJkWmpZmSkgVaoQ=L6g3cahej-F52tQ@mail.gmail.com>
- <d9da8035-ed81-fb28-bf3a-f98c8a1e044a@kernel.dk>
- <CAHC9VhRpu7WZDqWKcLDj18A0Z5FJdUU=eUL3wbJH1CnEBWB4GA@mail.gmail.com>
- <7904e869-f885-e406-9fe6-495a6e9790e4@kernel.dk>
- <CAHC9VhRipXMCiaGZ-9YLycKWaq1FnV0ybC2B7G8Dua56P7bHkw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHC9VhRipXMCiaGZ-9YLycKWaq1FnV0ybC2B7G8Dua56P7bHkw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/27/23 4:08 PM, Paul Moore wrote:
-> On Fri, Jan 27, 2023 at 6:02 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 1/27/23 3:53 PM, Paul Moore wrote:
->>> On Fri, Jan 27, 2023 at 5:46 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>> On 1/27/23 3:38 PM, Paul Moore wrote:
->>>>> On Fri, Jan 27, 2023 at 2:43 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>> On 1/27/23 12:42 PM, Paul Moore wrote:
->>>>>>> On Fri, Jan 27, 2023 at 12:40 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>>> On 1/27/23 10:23 AM, Richard Guy Briggs wrote:
->>>>>>>>> A couple of updates to the iouring ops audit bypass selections suggested in
->>>>>>>>> consultation with Steve Grubb.
->>>>>>>>>
->>>>>>>>> Richard Guy Briggs (2):
->>>>>>>>>   io_uring,audit: audit IORING_OP_FADVISE but not IORING_OP_MADVISE
->>>>>>>>>   io_uring,audit: do not log IORING_OP_*GETXATTR
->>>>>>>>>
->>>>>>>>>  io_uring/opdef.c | 4 +++-
->>>>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> Look fine to me - we should probably add stable to both of them, just
->>>>>>>> to keep things consistent across releases. I can queue them up for 6.3.
->>>>>>>
->>>>>>> Please hold off until I've had a chance to look them over ...
->>>>>>
->>>>>> I haven't taken anything yet, for things like this I always let it
->>>>>> simmer until people have had a chance to do so.
->>>>>
->>>>> Thanks.  FWIW, that sounds very reasonable to me, but I've seen lots
->>>>> of different behaviors across subsystems and wanted to make sure we
->>>>> were on the same page.
->>>>
->>>> Sounds fair. BTW, can we stop CC'ing closed lists on patch
->>>> submissions? Getting these:
->>>>
->>>> Your message to Linux-audit awaits moderator approval
->>>>
->>>> on every reply is really annoying.
->>>
->>> We kinda need audit related stuff on the linux-audit list, that's our
->>> mailing list for audit stuff.
->>
->> Sure, but then it should be open. Or do separate postings or something.
->> CC'ing a closed list with open lists and sending email to people that
->> are not on that closed list is bad form.
-> 
-> Agree, that's why I said in my reply that it was crap that the
-> linux-audit list is moderated and asked Richard/Steve to open it up.
+On Fri, Jan 27, 2023 at 6:01 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2023-01-27 17:43, Paul Moore wrote:
+> > On Fri, Jan 27, 2023 at 12:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Getting XATTRs is not particularly interesting security-wise.
+> > >
+> > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> > > Fixes: a56834e0fafe ("io_uring: add fgetxattr and getxattr support")
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  io_uring/opdef.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> >
+> > Depending on your security policy, fetching file data, including
+> > xattrs, can be interesting from a security perspective.  As an
+> > example, look at the SELinux file/getattr permission.
+> >
+> > https://github.com/SELinuxProject/selinux-notebook/blob/main/src/object_classes_permissions.md#common-file-permissions
+>
+> The intent here is to lessen the impact of audit operations.  Read and
+> Write were explicitly removed from io_uring auditing due to performance
+> concerns coupled with the denial of service implications from sheer
+> volume of records making other messages harder to locate.  Those
+> operations are still possible for syscall auditing but they are strongly
+> discouraged for normal use.
 
-And thanks for that, I just skipped it in the reply as it wasn't for
-me.
+We need to balance security needs and performance needs.  You are
+correct that general read() and write() operations are not audited,
+and generally not checked from a LSM perspective as the auditing and
+access control happens at open() time instead (access to fds is
+revalidated when they are passed).  However, in the case of getxattr
+and fgetxattr, these are not normal file read operations, and do not
+go through the same code path in the kernel; there is a reason why we
+have xattr_permission() and security_inode_getxattr().
+
+We need to continue to audit IORING_OP_FGETXATTR and IORING_OP_GETXATTR.
 
 -- 
-Jens Axboe
-
-
+paul-moore.com

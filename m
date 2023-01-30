@@ -2,56 +2,56 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7EF6817F7
-	for <lists+io-uring@lfdr.de>; Mon, 30 Jan 2023 18:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F47681825
+	for <lists+io-uring@lfdr.de>; Mon, 30 Jan 2023 19:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237344AbjA3RsC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 Jan 2023 12:48:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32806 "EHLO
+        id S236798AbjA3SCZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 Jan 2023 13:02:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237237AbjA3RsA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Jan 2023 12:48:00 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D749A302A9;
-        Mon, 30 Jan 2023 09:47:57 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id k4so28601867eje.1;
-        Mon, 30 Jan 2023 09:47:57 -0800 (PST)
+        with ESMTP id S235278AbjA3SCY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Jan 2023 13:02:24 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1640F1EFF3;
+        Mon, 30 Jan 2023 10:02:22 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id gr7so9606757ejb.5;
+        Mon, 30 Jan 2023 10:02:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+UsnDYEEEOfyUbH/lXJAyb1YrNHDU89XvWY7p8gIqU=;
-        b=CpIi7U8meqUvpwwHiSGd1IdVplT9N/wEXPlMlTsFFXyhK4irJaVCltXVoisRD4OtsJ
-         Rp+GETx2zPi+LRHBbG7TedN9tCa2d44rv6ERS9LZ714bjXED6oA4tXrKaQgaZefoLEBT
-         FmxpGFZB4292Hf7PShZjUN1dUJCt8d/dMntxKh5EE3vQ2/1IMSkKRPUher8dCYs0V1yG
-         b8LfOHrulCQRh/AAOTrO0gUY89a5W9PLGsq/+xfSMRtf5+itz58cVqKOZLq6B2OfqfRh
-         /PZRDDptgKbJtfY7tCnEgNDOmTGJa40XfEUjVp6cWOKwTJy7dVnFZRZFdHwf9raQ0FKA
-         U+XQ==
+        bh=2e4q4vLnV4kvKyozPY83n3uJMaYkgSTzaraxFCK6VlE=;
+        b=QjPHN5B6CALVYF8eJzNIPsG0g1pzceiE2hsCvWmpJNAGD1vrWbJvCZeCcjQ6eADy7X
+         +rHhPzs8YzfZY27hQrxxOVws+NeMmpQzs2dZvJyF9ePDcY6pL5qFpcxv6Z3gjK7XJP8V
+         cByRrvJBuUR2bPrhmi5d/WnmANG7Y6jQK9ldIaDSqBxh3ID4IGOHEOX0TaogXKy8B68f
+         YdGt9CF227lvD+bRgHbXuA/ANtLnfNmLv2C8td08GoyJe+3J4zL8gQFKZUR4Wjx07grD
+         jmy6zNmOrRAYNi0zk7CarTBn76RGSVuzRP3TFEnE334v1V1ZIQxbXypKDzhXSbc1rITc
+         v3Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=M+UsnDYEEEOfyUbH/lXJAyb1YrNHDU89XvWY7p8gIqU=;
-        b=OZaK53lemtiDOiWhwdIYjI0r8NMzehSVhSvb706oy24V1kiNil/9JMiwxUmiv0PFRm
-         2zicxSDypaxiSBNK7knMH+jTxLN5/wm2rRJxwyv6m2WfRry5XceYax5CQmxc9Su0nl0I
-         wcjCl5FAAYL95Ceyidg/PVIcjqFbBapiNJ4f3JdzOpjJSYCsKzmqFYvu4ZlOZYjEvz5O
-         5qXAdkvPh/llF7EK55T8nr1XTPn+ScsYnDN1s4oAT32B1yriArhLhlQEuwHY8r04D2Qe
-         wWgiC5Km1iWSDckB4kHnbfWKS/DAeiLR6yvoO0zQLi06JV3y7iSy4BZy1y0fkEqK8PQO
-         ub3w==
-X-Gm-Message-State: AFqh2krra0v7gz3bn+UMoAwU1vkLbWWPl+klwaXz9tXtu/eOtxwkvo6E
-        +qOWTvAHzldg1dd7WdO4f9DeMwTUiZxXek/EyUA=
-X-Google-Smtp-Source: AMrXdXuRX3iGxgJVTohVZn9PzXrmwlAnwYJ6yU/LKWcFrxKFgKe4FiyCZtPmYi+BznmfdmjECdu7m6UwdR7AVtAfqLc=
-X-Received: by 2002:a17:906:3658:b0:872:68a:a17e with SMTP id
- r24-20020a170906365800b00872068aa17emr7392236ejb.159.1675100876297; Mon, 30
- Jan 2023 09:47:56 -0800 (PST)
+        bh=2e4q4vLnV4kvKyozPY83n3uJMaYkgSTzaraxFCK6VlE=;
+        b=GJIa4WvkGKZ88PB0p8X1zX1uWylaJLL2Bj+nscAyU5amcoy/P+WWn4d43arpjQ1doJ
+         O5Al60N4NXlvgMsfUXi5SSCRsDvP6zn+6NPfTYoP0pHaQmu8uSz8HhIliTQG+m9ldTwe
+         JVJRFgqRH0WNy0LxxwiwbwK4O1VIi5Gb2Amz2N/4eIaW54HVdI248qGAMtjYd4p6+JNm
+         4ZHUcx/vvlVXimKUL+gg/KVpPDDU1BmUqKYi7LkXyPw1JaAmB8itxbCCzoGMHeTbz1aB
+         mWhizaJgGRenKF5OWspL3cP91luTbk1vWzVJfHUkaMGnPZrhc9xFU6UARyG+6+2cJxCL
+         uDlA==
+X-Gm-Message-State: AFqh2kov34Uh6BHUvYOdgfbuBUaL2AF0DKWW2Yh2jiyxZ1NzKzCkMz6U
+        8dE0sPEEGYsZWLmVqB73y7hK05/+nUB590thxDQ=
+X-Google-Smtp-Source: AMrXdXt2v8RXnqr0n63brJW64DYfr9lJj0iX+IQ07lAj+juWDoh3rFhuQaZ3DIDSg0TjGFzZmicnL1ZkcXc8EtRtQFI=
+X-Received: by 2002:a17:906:7754:b0:86f:2cc2:7028 with SMTP id
+ o20-20020a170906775400b0086f2cc27028mr7689625ejn.133.1675101740519; Mon, 30
+ Jan 2023 10:02:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20230130092157.1759539-1-hch@lst.de> <20230130092157.1759539-9-hch@lst.de>
-In-Reply-To: <20230130092157.1759539-9-hch@lst.de>
+References: <20230130092157.1759539-1-hch@lst.de> <20230130092157.1759539-13-hch@lst.de>
+In-Reply-To: <20230130092157.1759539-13-hch@lst.de>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 30 Jan 2023 18:47:44 +0100
-Message-ID: <CAOi1vP9AAQP7yqrXNRjvahy_t_Oz4+Z-CpT=uHscngC2OMWf5g@mail.gmail.com>
-Subject: Re: [PATCH 08/23] rbd: use bvec_set_page to initialize the copy up bvec
+Date:   Mon, 30 Jan 2023 19:02:08 +0100
+Message-ID: <CAOi1vP_b77Pq=hYmFMi1zGGRMee2uNjbAbHz_gCCoByOdbRqLw@mail.gmail.com>
+Subject: Re: [PATCH 12/23] ceph: use bvec_set_page to initialize a bvec
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         "Michael S. Tsirkin" <mst@redhat.com>,
@@ -96,39 +96,43 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On Mon, Jan 30, 2023 at 10:22 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> Use the bvec_set_page helper to initialize the copy up bvec.
+> Use the bvec_set_page helper to initialize a bvec.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/block/rbd.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  fs/ceph/file.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 >
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 04453f4a319cb4..1faca7e07a4d52 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -3068,13 +3068,12 @@ static int setup_copyup_bvecs(struct rbd_obj_request *obj_req, u64 obj_overlap)
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 764598e1efd91f..6419dce7c57987 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -103,11 +103,11 @@ static ssize_t __iter_get_bvecs(struct iov_iter *iter, size_t maxsize,
+>                 size += bytes;
 >
->         for (i = 0; i < obj_req->copyup_bvec_count; i++) {
->                 unsigned int len = min(obj_overlap, (u64)PAGE_SIZE);
-> +               struct page *page = alloc_page(GFP_NOIO);
->
-> -               obj_req->copyup_bvecs[i].bv_page = alloc_page(GFP_NOIO);
-> -               if (!obj_req->copyup_bvecs[i].bv_page)
-> +               if (!page)
->                         return -ENOMEM;
->
-> -               obj_req->copyup_bvecs[i].bv_offset = 0;
-> -               obj_req->copyup_bvecs[i].bv_len = len;
-> +               bvec_set_page(&obj_req->copyup_bvecs[i], page, len, 0);
->                 obj_overlap -= len;
->         }
->
-> --
-> 2.39.0
->
+>                 for ( ; bytes; idx++, bvec_idx++) {
+> -                       struct bio_vec bv = {
+> -                               .bv_page = pages[idx],
+> -                               .bv_len = min_t(int, bytes, PAGE_SIZE - start),
+> -                               .bv_offset = start,
+> -                       };
+> +                       struct bio_vec bv;
+> +
+> +                       bvec_set_page(&bv, pages[idx],
 
-Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Hi Christoph,
+
+There is trailing whitespace on this line which git complains about
+and it made me take a second look.  I think bvec_set_page() allows to
+make this more compact:
+
+        for ( ; bytes; idx++, bvec_idx++) {
+                int len = min_t(int, bytes, PAGE_SIZE - start);
+
+                bvec_set_page(&bvecs[bvec_idx], pages[idx], len, start);
+                bytes -= len;
+                start = 0;
+        }
 
 Thanks,
 

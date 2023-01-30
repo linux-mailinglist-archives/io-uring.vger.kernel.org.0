@@ -2,80 +2,175 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F3136815D1
-	for <lists+io-uring@lfdr.de>; Mon, 30 Jan 2023 17:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 213A6681638
+	for <lists+io-uring@lfdr.de>; Mon, 30 Jan 2023 17:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235994AbjA3QAd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 Jan 2023 11:00:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
+        id S230416AbjA3QWV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 Jan 2023 11:22:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236937AbjA3QA2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Jan 2023 11:00:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44B061A4AA
-        for <io-uring@vger.kernel.org>; Mon, 30 Jan 2023 07:59:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675094367;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fl/jnHLwbhnLse2jT7+4Lzwh9labRex05wjKl7Xvb60=;
-        b=U9Pw+0EOHH6LtiRIu9FnwHnDWU7bnghDONoQRcRMq/g0AKogszUxMhDcnP2N4p6wwwRDdN
-        xahwbsjlUzm7m5tOyw9l2kgFZNOTzBaGXA9CSVWNal/qA8ilNSD+HZ13GZgehAgrzgPjUN
-        /wiMw9BNhifaTanWxG6hQmxvY1WEV2Q=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-441-0OMBsTb3NwqemUKDMrnO3w-1; Mon, 30 Jan 2023 10:59:24 -0500
-X-MC-Unique: 0OMBsTb3NwqemUKDMrnO3w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2E1F5858F09;
-        Mon, 30 Jan 2023 15:59:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 310581121314;
-        Mon, 30 Jan 2023 15:59:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230130092157.1759539-12-hch@lst.de>
-References: <20230130092157.1759539-12-hch@lst.de> <20230130092157.1759539-1-hch@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        devel@lists.orangefs.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 11/23] afs: use bvec_set_folio to initialize a bvec
+        with ESMTP id S230073AbjA3QWU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Jan 2023 11:22:20 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13044A5FF
+        for <io-uring@vger.kernel.org>; Mon, 30 Jan 2023 08:22:19 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id r2so11602379wrv.7
+        for <io-uring@vger.kernel.org>; Mon, 30 Jan 2023 08:22:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s0Y08EDicnqmMAmRyoSndpRwuih0ur6RJkd9mNNYWZY=;
+        b=I8ChCik/HQzAelBsB/Ako8PY07Y3Szs3Fip+hDKdxq+RVDfqdU5Cg1fiBfv9BxxPzi
+         tNSQe4aSqO7NOT6f37lAXrKb0u7WJ4IAG8ODuQDrSLn9y3MS4TFOSsEIA70YjmjMLSfp
+         t4CFx/fn7IIyYQU2WFuaeac4OI5LQs6JQfq1YTIxqn+rNE6BIF/jk/nkKa6CQ/NQjtPf
+         cdn6Chkb0Ws1WwSi25ZbLbGKhj7Bghlg4yLMeqtdGm4yECpJBRPkSLe/IHmDTeqvEKJl
+         SFbG4waFhwDhwY/fwdFyRu/4wU6LRpb6RuIX+Pthx/U13hUiMlEgGnYJ5bmFMk8zm2te
+         K8/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0Y08EDicnqmMAmRyoSndpRwuih0ur6RJkd9mNNYWZY=;
+        b=zOpFyUttqT4SANSRG9g44tzyxCjFTk6OUsSphndB6MB+fMscMSngHOO/7Cc4iNeLex
+         ZcdvAxEl4cymuIlcHDb+OM0gHXImWRhiWYRsNnlr6RzNKxPF+zCtPMYpco10lB9euqth
+         7D+3fKfoaQK3hf7HCOkG9z4ByzWOq26WUSdbd2OPxKtsr+Zi6V481lC//ChMEXiVZOVl
+         itAckA5xd4+80HEEGaO5PZTecg+1ZRUzfM40DDbgAm2ycETGXc3ydHjfyc5HYRhg/ow0
+         z02YcBSNapJMuI8b1fbwIVLxl8K5H8HIJLAVHicF+s1xOySDkLS38Vt+uMX5zJnhYZ1+
+         UVmw==
+X-Gm-Message-State: AO0yUKUQGsOxDOk73dt9lcgQEcxI0XlcFhiZeuXp8wJuBwApc0O/AHh+
+        0iO7Mn3mlNGIU2yK8xeJrCxkHdRce/Y=
+X-Google-Smtp-Source: AK7set+xN5x08m1J6OKvtAcpwTvkR5hrUOZmGlEfW3I16iBILcqgAi0adDJC341lxnPyUDwPC/O7JQ==
+X-Received: by 2002:adf:f10a:0:b0:2bf:b503:4e5a with SMTP id r10-20020adff10a000000b002bfb5034e5amr19370648wro.49.1675095737507;
+        Mon, 30 Jan 2023 08:22:17 -0800 (PST)
+Received: from [192.168.8.100] (94.196.83.65.threembb.co.uk. [94.196.83.65])
+        by smtp.gmail.com with ESMTPSA id v11-20020adff68b000000b002bfb8f829eesm12080020wrp.71.2023.01.30.08.22.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jan 2023 08:22:17 -0800 (PST)
+Message-ID: <f97a8aba-cf73-a8b5-faac-d704f5084290@gmail.com>
+Date:   Mon, 30 Jan 2023 16:21:21 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3499903.1675094359.1@warthog.procyon.org.uk>
-Date:   Mon, 30 Jan 2023 15:59:19 +0000
-Message-ID: <3499904.1675094359@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH for-next 1/4] io_uring: if a linked request has
+ REQ_F_FORCE_ASYNC then run it async
+To:     Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@meta.com>
+Cc:     Kernel Team <kernel-team@meta.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <20230127135227.3646353-1-dylany@meta.com>
+ <20230127135227.3646353-2-dylany@meta.com>
+ <297ad988-9537-c953-d49a-8b891204b0f0@kernel.dk>
+ <aa6c75e2-5c39-713a-e5c2-8a50a4687b11@kernel.dk>
+ <e12d8f56e8ee14b70f6f5e7b1f08ce5baf06f8ec.camel@meta.com>
+ <6cff07bb-1a3f-873f-2873-7060b0907c1c@kernel.dk>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <6cff07bb-1a3f-873f-2873-7060b0907c1c@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+On 1/30/23 15:53, Jens Axboe wrote:
+> On 1/30/23 3:45 AM, Dylan Yudaken wrote:
+>> On Sun, 2023-01-29 at 16:17 -0700, Jens Axboe wrote:
+>>> On 1/29/23 3:57 PM, Jens Axboe wrote:
+>>>> On 1/27/23 6:52?AM, Dylan Yudaken wrote:
+>>>>> REQ_F_FORCE_ASYNC was being ignored for re-queueing linked
+>>>>> requests. Instead obey that flag.
+>>>>>
+>>>>> Signed-off-by: Dylan Yudaken <dylany@meta.com>
+>>>>> ---
+>>>>>   io_uring/io_uring.c | 8 +++++---
+>>>>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>>>> index db623b3185c8..980ba4fda101 100644
+>>>>> --- a/io_uring/io_uring.c
+>>>>> +++ b/io_uring/io_uring.c
+>>>>> @@ -1365,10 +1365,12 @@ void io_req_task_submit(struct io_kiocb
+>>>>> *req, bool *locked)
+>>>>>   {
+>>>>>          io_tw_lock(req->ctx, locked);
+>>>>>          /* req->task == current here, checking PF_EXITING is safe
+>>>>> */
+>>>>> -       if (likely(!(req->task->flags & PF_EXITING)))
+>>>>> -               io_queue_sqe(req);
+>>>>> -       else
+>>>>> +       if (unlikely(req->task->flags & PF_EXITING))
+>>>>>                  io_req_defer_failed(req, -EFAULT);
+>>>>> +       else if (req->flags & REQ_F_FORCE_ASYNC)
+>>>>> +               io_queue_iowq(req, locked);
+>>>>> +       else
+>>>>> +               io_queue_sqe(req);
+>>>>>   }
+>>>>>   
+>>>>>   void io_req_task_queue_fail(struct io_kiocb *req, int ret)
+>>>>
+>>>> This one causes a failure for me with test/multicqes_drain.t, which
+>>>> doesn't quite make sense to me (just yet), but it is a reliable
+>>>> timeout.
+>>>
+>>> OK, quick look and I think this is a bad assumption in the test case.
+>>> It's assuming that a POLL_ADD already succeeded, and hence that a
+>>> subsequent POLL_REMOVE will succeed. But now it's getting ENOENT as
+>>> we can't find it just yet, which means the cancelation itself isn't
+>>> being done. So we just end up waiting for something that doesn't
+>>> happen.
+>>>
+>>> Or could be an internal race with lookup/issue. In any case, it's
+>>> definitely being exposed by this patch.
+>>>
+>>
+>> That is a bit of an unpleasasnt test.
+>> Essentially it triggers a pipe, and reads from the pipe immediately
+>> after. The test expects to see a CQE for that trigger, however if
+>> anything ran asynchronously then there is a race between the read and
+>> the poll logic running.
+>>
+>> The attached patch fixes the test, but the reason my patches trigger it
+>> is a bit weird.
+>>
+>> This occurs on the second loop of the test, after the initial drain.
+>> Essentially ctx->drain_active is still true when the second set of
+>> polls are added, since drain_active is only cleared inside the next
+>> io_drain_req. So then the first poll will have REQ_F_FORCE_ASYNC set.
+>>
+>> Previously those FORCE_ASYNC's were being ignored, but now with
+>> "io_uring: if a linked request has REQ_F_FORCE_ASYNC then run it async"
+>> they get sent to the work thread, which causes the race.
 
-> Use the bvec_set_folio helper to initialize a bvec.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+And that sounds like a userspace problem, any request might be executed
+async on an io_uring whim.
 
-Acked-by: David Howells <dhowells@redhat.com>
+>> I wonder if drain_active should actually be cleared earlier? perhaps
+>> before setting the REQ_F_FORCE_ASYNC flag?
+>> The drain logic is pretty complex though, so I am not terribly keen to
+>> start changing it if it's not generally useful.
 
+No, that won't work. As a drain request forces the ring to delay all
+future requests until all previous requests are completed we can't
+skip draining checks based on state of currently prepared request.
+
+Draining is currently out of hot paths, and I'm happy about it. There
+might be some ways, we can use a new flag instead of REQ_F_FORCE_ASYNC
+to force it into the slow path and return the request back to the normal
+path if the draining is not needed, but we don't care and really should
+not care. I'd argue even further, it's time to mark DRAIN deprecated,
+it's too slow, doesn't fit io_uring model well and has edge case
+behaviour problems.
+
+> Pavel, any input on the drain logic? I think you know that part the
+> best.
+
+-- 
+Pavel Begunkov

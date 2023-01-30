@@ -2,50 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 207EC681741
-	for <lists+io-uring@lfdr.de>; Mon, 30 Jan 2023 18:09:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7EF6817F7
+	for <lists+io-uring@lfdr.de>; Mon, 30 Jan 2023 18:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236658AbjA3RJa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 30 Jan 2023 12:09:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33842 "EHLO
+        id S237344AbjA3RsC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 30 Jan 2023 12:48:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjA3RJa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Jan 2023 12:09:30 -0500
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9B03FF2B;
-        Mon, 30 Jan 2023 09:09:29 -0800 (PST)
-Received: by mail-pl1-f181.google.com with SMTP id be8so12290652plb.7;
-        Mon, 30 Jan 2023 09:09:29 -0800 (PST)
+        with ESMTP id S237237AbjA3RsA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 30 Jan 2023 12:48:00 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D749A302A9;
+        Mon, 30 Jan 2023 09:47:57 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id k4so28601867eje.1;
+        Mon, 30 Jan 2023 09:47:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+UsnDYEEEOfyUbH/lXJAyb1YrNHDU89XvWY7p8gIqU=;
+        b=CpIi7U8meqUvpwwHiSGd1IdVplT9N/wEXPlMlTsFFXyhK4irJaVCltXVoisRD4OtsJ
+         Rp+GETx2zPi+LRHBbG7TedN9tCa2d44rv6ERS9LZ714bjXED6oA4tXrKaQgaZefoLEBT
+         FmxpGFZB4292Hf7PShZjUN1dUJCt8d/dMntxKh5EE3vQ2/1IMSkKRPUher8dCYs0V1yG
+         b8LfOHrulCQRh/AAOTrO0gUY89a5W9PLGsq/+xfSMRtf5+itz58cVqKOZLq6B2OfqfRh
+         /PZRDDptgKbJtfY7tCnEgNDOmTGJa40XfEUjVp6cWOKwTJy7dVnFZRZFdHwf9raQ0FKA
+         U+XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VcAkkG+7EQ87q1yuQfzrNQ/CVfL1BPFACyrSB5AzC9E=;
-        b=w+5Cau5Utuz+gsMlY/4IbiIdWNbKBkgQ4TrPVBcGE+SToUp0g/A05HkGbJ0FTYbWrP
-         7HMVfgUXpIW+u5zTse9SWNWDyRgonY9hrNypvej9fDylpcs9wAb9JVkG2HsklLrXdaj9
-         cl6J0eDzdmsWCJVz8RhP2TnkRWKmyRxEbZAOwrxGy/5HNpnGlLmc4IMKZg+C9KjWiF2r
-         mJ3HvAjE/Gp/1Ltkk0W7/TNlWDF36YVeMBsfa2cl6snKDRnPCJax248GlvbcFB6ygEOG
-         QZ98lgO/W1rfYmFeagoSmehxPYnKYZ2X+/DSnxrijZv46tR1n3VPe5fmZpnO6snY7Jng
-         fthg==
-X-Gm-Message-State: AFqh2kpwH6xITHx+G85I2f/DjV4Sj43aFIVFcyohQIef5YtYDf32z/pi
-        KoR4et2qMeAMRJlHNdQXWa4=
-X-Google-Smtp-Source: AMrXdXsoThEeXwb5X9zNdrMM/dBzAwAKgsQUh4DVjXEWAVyR5f6ZoR++CGV0u6k+ufH+Ks5WBdnq6g==
-X-Received: by 2002:a17:902:f646:b0:194:46e0:1b61 with SMTP id m6-20020a170902f64600b0019446e01b61mr52496709plg.63.1675098568615;
-        Mon, 30 Jan 2023 09:09:28 -0800 (PST)
-Received: from ?IPV6:2620:15c:211:201:5016:3bcd:59fe:334b? ([2620:15c:211:201:5016:3bcd:59fe:334b])
-        by smtp.gmail.com with ESMTPSA id y16-20020a170902b49000b0019602263feesm8042186plr.90.2023.01.30.09.09.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jan 2023 09:09:27 -0800 (PST)
-Message-ID: <2bab7050-dec7-3af8-b643-31b414b8c4b4@acm.org>
-Date:   Mon, 30 Jan 2023 09:09:23 -0800
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M+UsnDYEEEOfyUbH/lXJAyb1YrNHDU89XvWY7p8gIqU=;
+        b=OZaK53lemtiDOiWhwdIYjI0r8NMzehSVhSvb706oy24V1kiNil/9JMiwxUmiv0PFRm
+         2zicxSDypaxiSBNK7knMH+jTxLN5/wm2rRJxwyv6m2WfRry5XceYax5CQmxc9Su0nl0I
+         wcjCl5FAAYL95Ceyidg/PVIcjqFbBapiNJ4f3JdzOpjJSYCsKzmqFYvu4ZlOZYjEvz5O
+         5qXAdkvPh/llF7EK55T8nr1XTPn+ScsYnDN1s4oAT32B1yriArhLhlQEuwHY8r04D2Qe
+         wWgiC5Km1iWSDckB4kHnbfWKS/DAeiLR6yvoO0zQLi06JV3y7iSy4BZy1y0fkEqK8PQO
+         ub3w==
+X-Gm-Message-State: AFqh2krra0v7gz3bn+UMoAwU1vkLbWWPl+klwaXz9tXtu/eOtxwkvo6E
+        +qOWTvAHzldg1dd7WdO4f9DeMwTUiZxXek/EyUA=
+X-Google-Smtp-Source: AMrXdXuRX3iGxgJVTohVZn9PzXrmwlAnwYJ6yU/LKWcFrxKFgKe4FiyCZtPmYi+BznmfdmjECdu7m6UwdR7AVtAfqLc=
+X-Received: by 2002:a17:906:3658:b0:872:68a:a17e with SMTP id
+ r24-20020a170906365800b00872068aa17emr7392236ejb.159.1675100876297; Mon, 30
+ Jan 2023 09:47:56 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 01/23] block: factor out a bvec_set_page helper
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
+References: <20230130092157.1759539-1-hch@lst.de> <20230130092157.1759539-9-hch@lst.de>
+In-Reply-To: <20230130092157.1759539-9-hch@lst.de>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 30 Jan 2023 18:47:44 +0100
+Message-ID: <CAOi1vP9AAQP7yqrXNRjvahy_t_Oz4+Z-CpT=uHscngC2OMWf5g@mail.gmail.com>
+Subject: Re: [PATCH 08/23] rbd: use bvec_set_page to initialize the copy up bvec
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         "Michael S. Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         Minchan Kim <minchan@kernel.org>,
@@ -75,51 +83,53 @@ Cc:     Ilya Dryomov <idryomov@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         devel@lists.orangefs.org, io-uring@vger.kernel.org,
         linux-mm@kvack.org
-References: <20230130092157.1759539-1-hch@lst.de>
- <20230130092157.1759539-2-hch@lst.de>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20230130092157.1759539-2-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 1/30/23 01:21, Christoph Hellwig wrote:
-> Add a helper to initialize a bvec based of a page pointer.  This will help
-> removing various open code bvec initializations.
+On Mon, Jan 30, 2023 at 10:22 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Use the bvec_set_page helper to initialize the copy up bvec.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/block/rbd.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 04453f4a319cb4..1faca7e07a4d52 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -3068,13 +3068,12 @@ static int setup_copyup_bvecs(struct rbd_obj_request *obj_req, u64 obj_overlap)
+>
+>         for (i = 0; i < obj_req->copyup_bvec_count; i++) {
+>                 unsigned int len = min(obj_overlap, (u64)PAGE_SIZE);
+> +               struct page *page = alloc_page(GFP_NOIO);
+>
+> -               obj_req->copyup_bvecs[i].bv_page = alloc_page(GFP_NOIO);
+> -               if (!obj_req->copyup_bvecs[i].bv_page)
+> +               if (!page)
+>                         return -ENOMEM;
+>
+> -               obj_req->copyup_bvecs[i].bv_offset = 0;
+> -               obj_req->copyup_bvecs[i].bv_len = len;
+> +               bvec_set_page(&obj_req->copyup_bvecs[i], page, len, 0);
+>                 obj_overlap -= len;
+>         }
+>
+> --
+> 2.39.0
+>
 
-Why do you want to remove the open-coded bvec initializations? What is 
-wrong with open-coding bvec initialization? This patch series modifies a 
-lot of code but does not improve code readability. Anyone who encounters 
-code that uses the new function bvec_set_page() has to look up the 
-definition of that function to figure out what it does.
-
-> -	iv = bip->bip_vec + bip->bip_vcnt;
-> -
->   	if (bip->bip_vcnt &&
->   	    bvec_gap_to_prev(&bdev_get_queue(bio->bi_bdev)->limits,
->   			     &bip->bip_vec[bip->bip_vcnt - 1], offset))
->   		return 0;
->   
-> -	iv->bv_page = page;
-> -	iv->bv_len = len;
-> -	iv->bv_offset = offset;
-> +	bvec_set_page(&bip->bip_vec[bip->bip_vcnt], page, len, offset);
->   	bip->bip_vcnt++;
-
-Has it been considered to use structure assignment instead of 
-introducing bvec_set_page(), e.g. as follows?
-
-bip->bip_vec[bip->bip_vcnt] = (struct bio_vec) {
-       .bv_page = page, .bv_len = len, .bv_offset = offset };
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
 Thanks,
 
-Bart.
+                Ilya

@@ -2,149 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67818689B8B
-	for <lists+io-uring@lfdr.de>; Fri,  3 Feb 2023 15:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FE1689CE7
+	for <lists+io-uring@lfdr.de>; Fri,  3 Feb 2023 16:08:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232717AbjBCOZ6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Feb 2023 09:25:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43158 "EHLO
+        id S233820AbjBCPHh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Feb 2023 10:07:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232662AbjBCOZ5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Feb 2023 09:25:57 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF3091887
-        for <io-uring@vger.kernel.org>; Fri,  3 Feb 2023 06:25:55 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id t17so3693607pfj.0
-        for <io-uring@vger.kernel.org>; Fri, 03 Feb 2023 06:25:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YZRN1E+RhTA+olmuFS64TIGFQMQ30TCOtfaqy4X85dQ=;
-        b=tc3c4AMu9XflukzEFjyABsrEC5buoS2hZRRluzS3tbH8Rv8PjzLMm6GeivxDOS1M+L
-         FZ0jpXuT22i6VbU9SefXs4F2PJFVC3Bl20/ejzxRiBwQzuCe5qXlONPR03HInWtYlzQh
-         QNq9lBC/p/+qkLikeNDbJ2vfUuQ+1S8wvTeORJA3Fla93BtS97p+1fMEMrVf5nVL4oyH
-         RqxaRrpKYZmB4PxfUXoZG0nOtx5Dvv56eghCl+GVmqKfGF0SLqe50YUQGYkL52u0N6FE
-         wo+0FVt56Al/tXu/ls0P+SZo6BW2txPGVeUrc57A3zs6huzjE1QjKxV/RNWaiP4UW2Sc
-         EyiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YZRN1E+RhTA+olmuFS64TIGFQMQ30TCOtfaqy4X85dQ=;
-        b=ksIAeivn62Z2xdIJnMTM64KthUgYz9o5uhUoTdr4JgewU7/rlNnJdpdgl7oJwtJV3y
-         eB3xnK6y7xSrTDqrCunN1tyrhTGKZWYtUTdsRRt0p4whxDiDeArlD3qWqJ+GFvcNGHee
-         M1Y5y+clXj8hr8A/LjXMvkuC1DrQ7slWclJZ6cGKJRZRWGlDr/LHnNOf2mELV21vBJ2Q
-         YTXB7l8KFz0ecigAWgTlty9cDy0FI5T4Kby9zQax04IkZxfLNe9rAfbUB9u7td8GP83y
-         QU2AFw6weg7bpeM5DlRbjaGn1OZfF1KKQjWnKNZzA4BYbVH3dpnWWdjkXSdavpliDbre
-         EA8w==
-X-Gm-Message-State: AO0yUKUVk+KPABF8LO03wcXmPdxVPfQVHzRAZ48oz/4nmQIrhDzp1U5c
-        wpWvMzyq68T4HCC5VcbP4TVtGQ==
-X-Google-Smtp-Source: AK7set8TFabb1k5qtX5qN3lZJoL2hYCj+bBL1/B3CNd7iFfw0RUNA/X1j3sCCNs0YC9HKRdOGLauiQ==
-X-Received: by 2002:a05:6a00:1d13:b0:593:b112:5cf2 with SMTP id a19-20020a056a001d1300b00593b1125cf2mr9853214pfx.2.1675434354488;
-        Fri, 03 Feb 2023 06:25:54 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id k12-20020aa790cc000000b00592543d7363sm1798250pfk.1.2023.02.03.06.25.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Feb 2023 06:25:54 -0800 (PST)
-Message-ID: <0da4031f-6706-87ef-b888-ead7c5814193@kernel.dk>
-Date:   Fri, 3 Feb 2023 07:25:53 -0700
+        with ESMTP id S233752AbjBCPHc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Feb 2023 10:07:32 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090CDA0EA5;
+        Fri,  3 Feb 2023 07:07:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=xaXfHvtmirT//H/Mo9JZTCfopwE0ARO2STlU1q4PXIU=; b=LwFg4o7FNRjNvzeL1UIeY+PB30
+        pigk8LO6ghAV/PW8A2diZklP7ONPkf/QuZ1j8F2QHoj76RmFvj/Q8pZxLQNZCU995h2ds4C/fgoU6
+        vJrgHAy3JyTeMQU3sBiEJ2k75Q4WOqSb0agWbK9kpPxrkSUpCMcMfqkAl8xQSVnMiGJsWds5MEA0/
+        ttVela2LE/82AgMzn2QpTZPgzNm+u+iJUJj6KJXJcu0gz4sOsbBmYQNi3tJoXH33FBOPEsxVAF/p5
+        5brK/jfAn9M2GdavX3Sg69iNnol9jENDgRqr7idObKYZRPtBjJSz+TRjAv8KvwNM3XfV2T+AE+LX+
+        QYoCj3mg==;
+Received: from [2001:4bb8:19a:272a:910:bb67:7287:f956] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pNxe8-002abR-B0; Fri, 03 Feb 2023 15:06:36 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        devel@lists.orangefs.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: add bvec initialization helpers v2
+Date:   Fri,  3 Feb 2023 16:06:11 +0100
+Message-Id: <20230203150634.3199647-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: =?UTF-8?Q?Re=3a_=5bregression=5d_Bug=c2=a0216932_-_io=5furing_with_?=
- =?UTF-8?Q?libvirt_cause_kernel_NULL_pointer_dereference_since_6=2e1=2e5?=
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux regressions mailing list <regressions@lists.linux.dev>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Sergey V." <truesmb@gmail.com>
-References: <74347fe1-ac68-2661-500d-b87fab6994f7@leemhuis.info>
- <c5632908-1b0f-af1f-4754-bf1d0027a6dc@kernel.dk>
- <a862915b-66f3-9ad8-77d4-4b9ce7044037@kernel.dk> <Y8VkB6Q2xqeut5N8@kroah.com>
- <e921f92d-52ac-1dc7-7720-c270910c2a2d@kernel.dk>
- <0857ddf2-89a9-231b-89da-57cacc7342d5@kernel.dk> <Y9zRPHyAmxhJoork@kroah.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y9zRPHyAmxhJoork@kroah.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/3/23 2:17 AM, Greg Kroah-Hartman wrote:
-> On Mon, Jan 16, 2023 at 08:50:20AM -0700, Jens Axboe wrote:
->> On 1/16/23 8:44 AM, Jens Axboe wrote:
->>> On 1/16/23 7:49 AM, Greg Kroah-Hartman wrote:
->>>> On Mon, Jan 16, 2023 at 07:13:40AM -0700, Jens Axboe wrote:
->>>>> On 1/16/23 6:42 AM, Jens Axboe wrote:
->>>>>> On 1/16/23 6:17?AM, Linux kernel regression tracking (Thorsten Leemhuis) wrote:
->>>>>>> Hi, this is your Linux kernel regression tracker.
->>>>>>>
->>>>>>> I noticed a regression report in bugzilla.kernel.org. As many (most?)
->>>>>>> kernel developer don't keep an eye on it, I decided to forward it by
->>>>>>> mail. Quoting from https://bugzilla.kernel.org/show_bug.cgi?id=216932 :
->>>>>>
->>>>>> Looks like:
->>>>>>
->>>>>> commit 6d47e0f6a535701134d950db65eb8fe1edf0b575
->>>>>> Author: Jens Axboe <axboe@kernel.dk>
->>>>>> Date:   Wed Jan 4 08:52:06 2023 -0700
->>>>>>
->>>>>>     block: don't allow splitting of a REQ_NOWAIT bio
->>>>>>
->>>>>> got picked up by stable, but not the required prep patch:
->>>>>>
->>>>>>
->>>>>> commit 613b14884b8595e20b9fac4126bf627313827fbe
->>>>>> Author: Jens Axboe <axboe@kernel.dk>
->>>>>> Date:   Wed Jan 4 08:51:19 2023 -0700
->>>>>>
->>>>>>     block: handle bio_split_to_limits() NULL return
->>>>>>
->>>>>> Greg/team, can you pick the latter too? It'll pick cleanly for
->>>>>> 6.1-stable, not sure how far back the other patch has gone yet.
->>>>>
->>>>> Looked back, and 5.15 has it too, but the cherry-pick won't work
->>>>> on that kernel.
->>>>>
->>>>> Here's one for 5.15-stable that I verified crashes before this one,
->>>>> and works with it. Haven't done an allmodconfig yet...
->>>>
->>>> All now queued up, thanks!
->>>
->>> Thanks Greg! This one was my fault, as it was a set of 2 patches and
->>> I only marked 2/2 for stable. But how is that best handled? 1/2 could've
->>> been marked stable as well, but I don't think that would have prevented
->>> 2/2 applying fine and 1/2 failing and hence not getting queued up until
->>> I would've done a backport.
->>>
->>> What's the recommended way to describe the dependency that you only
->>> want 2/2 applied when 1/2 is in as well?
->>
->> What I'm asking is if we have something like Depends-on or similar
->> that would explain this dependency. Then patch 2/2 could have:
->>
->> Depends-on: 613b14884b85 ("block: handle bio_split_to_limits() NULL return")
->>
->> and then it'd be clear that either both get added, or none of them.
-> 
-> As per the documentation, you can put this on the cc: stable line in the
-> changelog text like:
->   cc: stable <stable@vger.kernel.org> # 613b14884b85
+Hi all,
 
-Gotcha, will try and remember that :-)
+this series adds the helpers to initalize a bvec.  These remove open coding of
+bvec internals and help with experimenting with other representations like
+a phys_addr_t instead of page + offset.
 
--- 
-Jens Axboe
+Changes since v1:
+ - fix a typo
+ - simplify the code in ceph's __iter_get_bvecs a little bit further
+ - fix two subject prefixes
 
-
+Diffstat:
+ block/bio-integrity.c             |    7 ------
+ block/bio.c                       |   12 +----------
+ drivers/block/rbd.c               |    7 ++----
+ drivers/block/virtio_blk.c        |    4 ---
+ drivers/block/zram/zram_drv.c     |   15 +++-----------
+ drivers/nvme/host/core.c          |    4 ---
+ drivers/nvme/target/io-cmd-file.c |   10 +--------
+ drivers/nvme/target/tcp.c         |    5 +---
+ drivers/scsi/sd.c                 |   36 ++++++++++++++++------------------
+ drivers/target/target_core_file.c |   18 +++++------------
+ drivers/vhost/vringh.c            |    5 +---
+ fs/afs/write.c                    |    8 ++-----
+ fs/ceph/file.c                    |   12 +++--------
+ fs/cifs/connect.c                 |    5 ++--
+ fs/cifs/fscache.c                 |   16 +++++----------
+ fs/cifs/misc.c                    |    5 +---
+ fs/cifs/smb2ops.c                 |    6 ++---
+ fs/coredump.c                     |    7 +-----
+ fs/nfs/fscache.c                  |   16 +++++----------
+ fs/orangefs/inode.c               |   22 ++++++--------------
+ fs/splice.c                       |    5 +---
+ include/linux/bvec.h              |   40 ++++++++++++++++++++++++++++++++++++++
+ io_uring/rsrc.c                   |    4 ---
+ mm/page_io.c                      |    8 +------
+ net/ceph/messenger_v1.c           |    7 +-----
+ net/ceph/messenger_v2.c           |   28 ++++++++++----------------
+ net/rxrpc/rxperf.c                |    8 ++-----
+ net/sunrpc/svcsock.c              |    7 +-----
+ net/sunrpc/xdr.c                  |    5 +---
+ 29 files changed, 142 insertions(+), 190 deletions(-)

@@ -2,169 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F3A568A01F
-	for <lists+io-uring@lfdr.de>; Fri,  3 Feb 2023 18:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC4F368A271
+	for <lists+io-uring@lfdr.de>; Fri,  3 Feb 2023 20:03:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbjBCRSP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Feb 2023 12:18:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
+        id S233005AbjBCTDe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Feb 2023 14:03:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232959AbjBCRSO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Feb 2023 12:18:14 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E78821A39
-        for <io-uring@vger.kernel.org>; Fri,  3 Feb 2023 09:18:12 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id d2so1990334pjd.5
-        for <io-uring@vger.kernel.org>; Fri, 03 Feb 2023 09:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K70GwBbxm76u0ZHh9QualBnSNVhMmwCaA4xLAgTOsU4=;
-        b=R00Jv7r0nGI0Ztnp5TNHhM+FfJ5zmFRR/yKaJPFf48QgjKh7tXSwGMmQnOoqu8Xid4
-         wge7CmaLgfoEKprgizb7/sm8rwZ8EQ9OCoyJKMGvTA4kiktJCR4NV/cva7qvSGWATdmE
-         /2uT8roACaKsn4YLwQl6hQkgbKX7IYcNLKQL5KVRHggoW1I8XImpl9s6MfEiMUSpHo9Y
-         S5fkZix1iQi2f9FmnThOmhtEMaBrJr9ePfucBJOf0enZnaK+aBn2RScZgWLk6sLYtLKJ
-         6yN94xDkDiQ62CShnA6PepLuiQAIJ+UkyAdk860JzMBR19PnaXvBFKHmerQBvkix95On
-         9+yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K70GwBbxm76u0ZHh9QualBnSNVhMmwCaA4xLAgTOsU4=;
-        b=6cTgKBpcHUCzisUzNgw05NgepKU2InoA9HimkpiRlFj2xuObB+RHzh3bxaN14sizBe
-         TiBCoIQZgkgJpp5GK5hGYmxjpRs1fxrncryFD/NJBxHlTjP3Dq9jQnXV7VNE8LaTMurC
-         MZiC6mOKD1DnX1XLgLj03fR5WfqyigDzsWrzw18j0C9rhq48lNMYuBj49TbnfsKOtiqy
-         xfppzzkFxKA+ulBMHYulqSKA78k/aWLD0HUjSbdXtQH3fbmdH1Vkt0KEo/yQsgIiMeqn
-         GR/cmtpfX4imZs9UoGY5XSppWZQM8ZD+THBUuAZqgK+146U2AXB6C1WYEEpkOvzPP5mb
-         L2hA==
-X-Gm-Message-State: AO0yUKX5jtnDkAZutnkJtVLpwQJYP0OHXMBmz6lldknKh6//CGCK1GBX
-        Yzo+toUWXvffFIDyWgtNSk1FiQ==
-X-Google-Smtp-Source: AK7set/8QyEeOBS5HCdwVVv3pX8pLqYaYDC09KN7ZX0YiSUh3tCWtH5sa+Lu+Eay2bGB3phfSCaeYw==
-X-Received: by 2002:a17:90a:3c83:b0:22b:afef:9228 with SMTP id g3-20020a17090a3c8300b0022bafef9228mr8980675pjc.4.1675444691816;
-        Fri, 03 Feb 2023 09:18:11 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s1-20020a17090a6e4100b0021900ba8eeesm5189271pjm.2.2023.02.03.09.18.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Feb 2023 09:18:11 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        devel@lists.orangefs.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org
-In-Reply-To: <20230203150634.3199647-1-hch@lst.de>
-References: <20230203150634.3199647-1-hch@lst.de>
-Subject: Re: add bvec initialization helpers v2
-Message-Id: <167544468926.66559.8388961280734694655.b4-ty@kernel.dk>
-Date:   Fri, 03 Feb 2023 10:18:09 -0700
+        with ESMTP id S233010AbjBCTDc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Feb 2023 14:03:32 -0500
+Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFDF1E1FF
+        for <io-uring@vger.kernel.org>; Fri,  3 Feb 2023 11:03:26 -0800 (PST)
+Received: by dev0134.prn3.facebook.com (Postfix, from userid 425415)
+        id C4AC06329941; Fri,  3 Feb 2023 11:03:12 -0800 (PST)
+From:   Stefan Roesch <shr@devkernel.io>
+To:     io-uring@vger.kernel.org, kernel-team@fb.com
+Cc:     shr@devkernel.io, axboe@kernel.dk, ammarfaizi2@gnuweeb.org
+Subject: [PATCH v6 0/4] liburing: add api for napi busy poll
+Date:   Fri,  3 Feb 2023 11:03:06 -0800
+Message-Id: <20230203190310.2900766-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
+        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+This adds two new api's to set/clear the napi busy poll settings. The two
+new functions are called:
+- io_uring_register_napi
+- io_uring_unregister_napi
 
-On Fri, 03 Feb 2023 16:06:11 +0100, Christoph Hellwig wrote:
-> this series adds the helpers to initalize a bvec.  These remove open coding of
-> bvec internals and help with experimenting with other representations like
-> a phys_addr_t instead of page + offset.
-> 
-> Changes since v1:
->  - fix a typo
->  - simplify the code in ceph's __iter_get_bvecs a little bit further
->  - fix two subject prefixes
-> 
-> [...]
+The patch series also contains the documentation for the two new function=
+s
+and two example programs. The client program is called napi-busy-poll-cli=
+ent
+and the server program napi-busy-poll-server. The client measures the
+roundtrip times of requests.
 
-Applied, thanks!
+There is also a kernel patch "io-uring: support napi busy poll" to enable
+this feature on the kernel side.
 
-[01/23] block: factor out a bvec_set_page helper
-        commit: d58cdfae6a22e5079656c487aad669597a0635c8
-[02/23] block: add a bvec_set_folio helper
-        commit: 26db5ee158510108c819aa7be6eb8c75accf85d7
-[03/23] block: add a bvec_set_virt helper
-        commit: 666e6550cb74e3a7206b5699409c9f31e123887e
-[04/23] sd: factor out a sd_set_special_bvec helper
-        commit: f1e117cbb01a38f764db2f292174b93eab7c2db2
-[05/23] target: use bvec_set_page to initialize bvecs
-        commit: 3c7ebe952fefb646c56b60f1c3e3388f3b938cc7
-[06/23] nvmet: use bvec_set_page to initialize bvecs
-        commit: fc41c97a3a7b08131e6998bc7692f95729f9d359
-[07/23] nvme: use bvec_set_virt to initialize special_vec
-        commit: 4bee16daf13225d6b109bb95d613fd691b04a757
-[08/23] rbd: use bvec_set_page to initialize the copy up bvec
-        commit: 7df2af0bb4912cf360045d065f88fe4ed2f702ca
-[09/23] virtio_blk: use bvec_set_virt to initialize special_vec
-        commit: b831f3a1031664ae2443bab63d35c416ed30c91d
-[10/23] zram: use bvec_set_page to initialize bvecs
-        commit: 13ae4db0c05107814db4e774856aa83e72e8bf04
-[11/23] afs: use bvec_set_folio to initialize a bvec
-        commit: a8173be1863e57393edb5c158860ec43a1f21ed7
-[12/23] ceph: use bvec_set_page to initialize a bvec
-        commit: 5c6542b6612f635eaa001c54af22018f1e996418
-[13/23] cifs: use bvec_set_page to initialize bvecs
-        commit: 220ae4a5c2ba10333b3b01fbf3dea0d759e77a76
-[14/23] coredump: use bvec_set_page to initialize a bvec
-        commit: cd598003206839ed1354902805b52c3a4f6ead2e
-[15/23] nfs: use bvec_set_page to initialize bvecs
-        commit: 8bb7cd842c44b299586bfed6aadde8863c48b415
-[16/23] orangefs: use bvec_set_{page,folio} to initialize bvecs
-        commit: 8ead80b2c5f8c59d6ca18cd7fb582a3ffc7ea5b7
-[17/23] splice: use bvec_set_page to initialize a bvec
-        commit: 664e40789abaad892737a696102052dae199a029
-[18/23] io_uring: use bvec_set_page to initialize a bvec
-        commit: cc342a21930f0e3862c5fd0871cd5a65c5b59e27
-[19/23] swap: use bvec_set_page to initialize bvecs
-        commit: 8976fa6d79d70502181fa16b5e023645c0f44ec4
-[20/23] rxrpc: use bvec_set_page to initialize a bvec
-        commit: efde918ac66958c568926120841e7692b1e9bd9d
-[21/23] sunrpc: use bvec_set_page to initialize bvecs
-        commit: 9088151f1bfe670ae9e28b77095f974196bb2343
-[22/23] vringh: use bvec_set_page to initialize a bvec
-        commit: 58dfe14073846e416d5b3595314a4f37e1a89c50
-[23/23] libceph: use bvec_set_page to initialize bvecs
-        commit: 1eb9cd15004fa91b6d1911af9fbaff299d8e9e45
-
-Best regards,
--- 
-Jens Axboe
+Changes:
+- V6:
+  - Check return value of unregister napi call and verify that busy poll
+    timeout and prefer busy poll return the expected values.
+- V5:
+  - Fixes to documentation.
+  - Correct opcode for unregister call
+  - Initialize napi structure in example programs
+  - Address tab issues in recordRTT()
+- V4:
+  - Modify functions to use a structure to pass the napi busy poll settin=
+gs
+    to the kernel.
+  - Return previous values when returning from the above functions.
+  - Rename the functions and remove one function (no longer needed as the
+    data is passed as a structure)
+- V3:
+  - Updated liburing.map file
+  - Moved example programs from the test directory to the example directo=
+ry.
+    The two example programs don't fit well in the test category and need=
+ to
+    be run from separate hosts.
+  - Added the io_uring_register_napi_prefer_busy_poll API.
+  - Added the call to io_uring_register_napi_prefer_busy_poll to the exam=
+ple
+    programs
+  - Updated the documentation
+- V2:
+  - Updated the liburing.map file for the two new functions.
+    (added a 2.4 section)
+  - Added a description of the new feature to the changelog file
+  - Fixed the indentation of the longopts structure
+  - Used defined exit constants
+  - Fixed encodeUserData to support 32 bit builds
 
 
+
+Stefan Roesch (4):
+  liburing: add api to set napi busy poll settings
+  liburing: add documentation for new napi busy polling
+  liburing: add example programs for napi busy poll
+  liburing: update changelog with new feature
+
+ .gitignore                       |   2 +
+ CHANGELOG                        |   1 +
+ examples/Makefile                |   2 +
+ examples/napi-busy-poll-client.c | 451 +++++++++++++++++++++++++++++++
+ examples/napi-busy-poll-server.c | 386 ++++++++++++++++++++++++++
+ man/io_uring_register_napi.3     |  40 +++
+ man/io_uring_unregister_napi.3   |  27 ++
+ src/include/liburing.h           |   3 +
+ src/include/liburing/io_uring.h  |  12 +
+ src/liburing.map                 |   3 +
+ src/register.c                   |  12 +
+ 11 files changed, 939 insertions(+)
+ create mode 100644 examples/napi-busy-poll-client.c
+ create mode 100644 examples/napi-busy-poll-server.c
+ create mode 100644 man/io_uring_register_napi.3
+ create mode 100644 man/io_uring_unregister_napi.3
+
+
+base-commit: d32d53b65377d846635387ce6c1cd2ed0d700f92
+--=20
+2.30.2
 

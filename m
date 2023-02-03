@@ -2,110 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F8DC688F79
-	for <lists+io-uring@lfdr.de>; Fri,  3 Feb 2023 07:09:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 264146890DE
+	for <lists+io-uring@lfdr.de>; Fri,  3 Feb 2023 08:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232200AbjBCGJe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 3 Feb 2023 01:09:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
+        id S229837AbjBCHbL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 3 Feb 2023 02:31:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232004AbjBCGJS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Feb 2023 01:09:18 -0500
-Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889E2728DE
-        for <io-uring@vger.kernel.org>; Thu,  2 Feb 2023 22:09:09 -0800 (PST)
-Received: by dev0134.prn3.facebook.com (Postfix, from userid 425415)
-        id AD200629679F; Thu,  2 Feb 2023 22:08:52 -0800 (PST)
-From:   Stefan Roesch <shr@devkernel.io>
-To:     kernel-team@fb.com
-Cc:     shr@devkernel.io, axboe@kernel.dk, olivier@trillion01.com,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
-        ammarfaizi2@gnuweeb.org
-Subject: [PATCH v7 3/3] io_uring: add api to set napi prefer busy poll
-Date:   Thu,  2 Feb 2023 22:08:50 -0800
-Message-Id: <20230203060850.3060238-4-shr@devkernel.io>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230203060850.3060238-1-shr@devkernel.io>
+        with ESMTP id S229602AbjBCHbL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 3 Feb 2023 02:31:11 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494F53D0A2;
+        Thu,  2 Feb 2023 23:31:06 -0800 (PST)
+Received: from biznet-home.integral.gnuweeb.org (unknown [182.253.183.234])
+        by gnuweeb.org (Postfix) with ESMTPSA id 00FFF82FD0;
+        Fri,  3 Feb 2023 07:31:02 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1675409465;
+        bh=8FQ47k12Bm+BjalIYpS9xoa2TPbONlxAeOkX09ntjZU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hNhfm1kTWNXn3olzHKt4b+AEMhM2rp3ClNz5XJq3g1CXDH/UDZ+prJNBbpUDA4nNp
+         E0Iq3N34Ge3BYl1Z1qrDDZpo6QgG8t1p9eEGAYD1DNUeYm6haAOXGzGglqaYmada9G
+         jrEqlxfjbMS+o8FeKokqSJATaO5geEIgXsF/VW31A06ADF88c7bI2fL/2hocp4EpV4
+         BbJapaPnGSk/J5aOrRuG0JtljciWF+6LlK+J/yDytYc2YnBknDrLOI0oI2/Cs4A0hx
+         6W5aADyp1xFXiSmyvbm5bvqBd13nNjSWNuWdB4CttQ2WIEQj+al8hn5v4qMtbpBVve
+         eU9VJgFecKD7w==
+Date:   Fri, 3 Feb 2023 14:30:59 +0700
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Stefan Roesch <shr@devkernel.io>,
+        Facebook Kernel Team <kernel-team@fb.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
+        Olivier Langlois <olivier@trillion01.com>,
+        netdev Mailing List <netdev@vger.kernel.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v7 2/3] io_uring: add api to set / get napi configuration.
+Message-ID: <Y9y4M2d/OsewlM/R@biznet-home.integral.gnuweeb.org>
 References: <20230203060850.3060238-1-shr@devkernel.io>
+ <20230203060850.3060238-3-shr@devkernel.io>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
-        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230203060850.3060238-3-shr@devkernel.io>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds an api to register and unregister the napi prefer busy poll
-setting from liburing. To be able to use this functionality, the
-corresponding liburing patch is needed.
+On Thu, Feb 02, 2023 at 10:08:49PM -0800, Stefan Roesch wrote:
+> This adds an api to register the busy poll timeout from liburing. To be
+> able to use this functionality, the corresponding liburing patch is needed.
+> 
+> Signed-off-by: Stefan Roesch <shr@devkernel.io>
+> Acked-by: Jakub Kicinski <kuba@kernel.org>
 
-Signed-off-by: Stefan Roesch <shr@devkernel.io>
-Acked-by: Jakub Kicinski <kuba@kernel.org>
----
- include/uapi/linux/io_uring.h | 3 ++-
- io_uring/io_uring.c           | 6 +++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Reviewed-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index fce4533c81c3..e166bbe5bad8 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -645,7 +645,8 @@ struct io_uring_buf_reg {
- /* argument for IORING_(UN)REGISTER_NAPI */
- struct io_uring_napi {
- 	__u32	busy_poll_to;
--	__u32	pad;
-+	__u8	prefer_busy_poll;
-+	__u8	pad[3];
- 	__u64	resv;
- };
-=20
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 5fe3aa9a1b57..ddf77744e002 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -4251,15 +4251,17 @@ static int io_register_napi(struct io_ring_ctx *c=
-tx, void __user *arg)
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	const struct io_uring_napi curr =3D {
- 		.busy_poll_to =3D ctx->napi_busy_poll_to,
-+		.prefer_busy_poll =3D ctx->napi_prefer_busy_poll
- 	};
- 	struct io_uring_napi napi;
-=20
- 	if (copy_from_user(&napi, arg, sizeof(napi)))
- 		return -EFAULT;
--	if (napi.pad || napi.resv)
-+	if (napi.pad[0] || napi.pad[1] || napi.pad[2] || napi.resv)
- 		return -EINVAL;
-=20
- 	WRITE_ONCE(ctx->napi_busy_poll_to, napi.busy_poll_to);
-+	WRITE_ONCE(ctx->napi_prefer_busy_poll, !!napi.prefer_busy_poll);
-=20
- 	if (copy_to_user(arg, &curr, sizeof(curr)))
- 		return -EFAULT;
-@@ -4275,6 +4277,7 @@ static int io_unregister_napi(struct io_ring_ctx *c=
-tx, void __user *arg)
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	const struct io_uring_napi curr =3D {
- 		.busy_poll_to =3D ctx->napi_busy_poll_to,
-+		.prefer_busy_poll =3D ctx->napi_prefer_busy_poll
- 	};
-=20
- 	if (arg) {
-@@ -4283,6 +4286,7 @@ static int io_unregister_napi(struct io_ring_ctx *c=
-tx, void __user *arg)
- 	}
-=20
- 	WRITE_ONCE(ctx->napi_busy_poll_to, 0);
-+	WRITE_ONCE(ctx->napi_prefer_busy_poll, false);
- 	return 0;
- #else
- 	return -EOPNOTSUPP;
---=20
-2.30.2
+-- 
+Ammar Faizi
 

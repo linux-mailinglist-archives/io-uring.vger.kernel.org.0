@@ -2,76 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3765E68DE77
-	for <lists+io-uring@lfdr.de>; Tue,  7 Feb 2023 18:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEC1268E399
+	for <lists+io-uring@lfdr.de>; Tue,  7 Feb 2023 23:50:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231734AbjBGRFo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Feb 2023 12:05:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45088 "EHLO
+        id S229878AbjBGWug (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Feb 2023 17:50:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231771AbjBGRFm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Feb 2023 12:05:42 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F0D3D939
-        for <io-uring@vger.kernel.org>; Tue,  7 Feb 2023 09:05:38 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id y2so5905269iot.4
-        for <io-uring@vger.kernel.org>; Tue, 07 Feb 2023 09:05:38 -0800 (PST)
+        with ESMTP id S229618AbjBGWuf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Feb 2023 17:50:35 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF23BEB
+        for <io-uring@vger.kernel.org>; Tue,  7 Feb 2023 14:50:33 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so373522pjq.0
+        for <io-uring@vger.kernel.org>; Tue, 07 Feb 2023 14:50:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RVqRghfkJYuM2PO4hknX+k72h52RQ4rzy+E+T+6Adgk=;
-        b=NrJ1K2UoJ7Rjni9tW6A0bOtgmmUrFQgp/gxeUvvugNQ779Tmwsvw5KYFn9fyaEzNI2
-         /5G3kPoaS3H1IpYLMjHsrXUlf/64rBtMzO6PBpX5X0DGSV02+wINR6dB4vVaXy45K41f
-         XNWxuGObC9U+oBPPi4D9GjlGrfjBdbY/vkPRO8HuBhCuU5uC8S5SDH27CWFzuysxygw7
-         RNXTxobeIhbufFscikOA/5TWQSQPVjJfvpiqfsSdwBcBNivb7pG1aclHAeZw9s/OSTFB
-         nydAWL8A6IzFP+jEPVNi8grdst9njJIFvsLR2YuL8FPMKspueF6CAze9GhUwyc6+9ZeH
-         zprQ==
+        bh=OHT2t7CmHc1BShbkXNiomXJ+rZ4JX8H7RJvJy1LCAdk=;
+        b=gJltYkvCj7+EpdWp0/S23i/RnQDHlDYxSDvY5pIP12Z/NO47lTB1SeSnxvRFcVZSfL
+         S6SW2EVvAGHPwonuCa0buyYqgukYosg7GP3EbS2fnUHkYvNoZgIGfXCKN0bflif+c32Z
+         x28sQ/HYNK5xFOYa8WSr2QFZCRzl2eQv4gLBMWDnoBGeCstVM+QzkuLfkiLSizm59ewC
+         jsHHeI8g8KFGx/mHGbsn9xIP8cXI1M4iE/7JSPmsdVVWXuyZFesG+3Qxk6jUao4lB7/C
+         m7cqgUW0oB8QOBh0Q7p1hlooAIwziMiWbfHwefiGN8QOoYJQFtoz6yYOXti0ls3+ZmpG
+         eC+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVqRghfkJYuM2PO4hknX+k72h52RQ4rzy+E+T+6Adgk=;
-        b=HjC2pcLoIn3S8BmL775G9dqT7M3r+zIOMOxv9Ui8GVcUHFILS+xQVr1DygjV/L6wjp
-         m9w746f5V23WLuZJF4cAAJkCedU+Y0mkDWsppOOmIUrLp0bw95hf14a6i9+A17qudoa4
-         FLt8Z5+x1qhHgMNiAZ2Hn/HP5aWnLQtL+HqX2TO7YRQ4Z/C3Y6nvKBiIpe/kmi07XjMn
-         D+xmvR/W7plfO92TejRkHqaSyQetTFhqIiinZA974BoKPe/u6GrCIHohCmBYmy26XDzn
-         cmuU6+cY0uXFwOzdfpRhXGXvs4wodxpyIen9w6rem0zRKx4Z1C5Z21iWn/8xAX7KstwT
-         s7bg==
-X-Gm-Message-State: AO0yUKWbT5/bcLuZGzS52VyVLTuVp3DbwfT4BAaNeG9KPVvdlDRrpKX8
-        k56IH6xz+73xeGjKC2pG2Oke+g==
-X-Google-Smtp-Source: AK7set+xmdmUOHgOUZAwmkd+Yvp0LrH9xa5eKR3kv5ts8SsjojKhLGP0LY4aV6GLlDuu29ezIkGDJA==
-X-Received: by 2002:a6b:1545:0:b0:718:2903:780f with SMTP id 66-20020a6b1545000000b007182903780fmr3019564iov.2.1675789537640;
-        Tue, 07 Feb 2023 09:05:37 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j1-20020a02cb01000000b0039e98b2fe5dsm4605239jap.179.2023.02.07.09.05.36
+        bh=OHT2t7CmHc1BShbkXNiomXJ+rZ4JX8H7RJvJy1LCAdk=;
+        b=2XlHWpErSO/NpkauCm3HsUx8qjPbtP+ifrptKOSn/isHm5pt+mDSsDiU9+/aMrJ+lU
+         QWD6UmKgfRtmu2aHHuGjVkCPNzy+UrvOdokzBOLLkzTEeMRiK4kes/3MCoS0VKZZg7CN
+         x6jyDeaW5QzXVFXbJ+kGU2/PhDk2t/IPRB81hFx4dzVR0llQ6DdJDngvMquGscTQMk8e
+         tmUUKqguFeiqpFlxgXmHSZ1bAb5HIIKrZIFSNLDCuAsUIs90CogBQYZJXP91hv27KbDc
+         VyaJ35aO3tSfaCw4j6M9Rll0hlfuZTK7hgsoVvFo14+VoH9jUpWUt3a/gRPxnrtbwxiL
+         ajtQ==
+X-Gm-Message-State: AO0yUKUmQ+ehLPt24La0in1POo8AOV2ARLSAmtoEW4KIhtJnwT0j5HwA
+        pzjmXpXMboOr1p0xHAiWwzth+Q==
+X-Google-Smtp-Source: AK7set+pFU/IFlHDvEox1zOv0bHiMl99DhW2PrN2q18Oy2kCDcbZ4zI2PcDzJ5lFxTDwMXdCPADZKw==
+X-Received: by 2002:a17:902:e5d1:b0:196:3cab:58cf with SMTP id u17-20020a170902e5d100b001963cab58cfmr4979486plf.4.1675810233198;
+        Tue, 07 Feb 2023 14:50:33 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id iy10-20020a170903130a00b0019928ce257dsm2653653plb.99.2023.02.07.14.50.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 09:05:37 -0800 (PST)
-Message-ID: <53816439-6473-1c4f-2134-02cd1c46cfe8@kernel.dk>
-Date:   Tue, 7 Feb 2023 10:05:35 -0700
+        Tue, 07 Feb 2023 14:50:32 -0800 (PST)
+Message-ID: <d66a3abd-18cf-02be-cd99-9dda1b3fd85e@kernel.dk>
+Date:   Tue, 7 Feb 2023 15:50:31 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 09/19] io_uring: convert to use vm_account
+Subject: Re: [PATCH v7 1/3] io_uring: add napi busy polling support
 Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jhubbard@nvidia.com, tjmercier@google.com, hannes@cmpxchg.org,
-        surenb@google.com, mkoutny@suse.com, daniel@ffwll.ch,
-        "Daniel P . Berrange" <berrange@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-References: <cover.c238416f0e82377b449846dbb2459ae9d7030c8e.1675669136.git-series.apopple@nvidia.com>
- <44e6ead48bc53789191b22b0e140aeb82459e75f.1675669136.git-series.apopple@nvidia.com>
- <52d41a7e-1407-e74f-9206-6dd583b7b6b5@kernel.dk> <87k00unusm.fsf@nvidia.com>
- <eff3cc48-7279-2fbf-fdbd-f35eff2124d0@kernel.dk>
- <Y+JmdMJhPEGN0Zw+@nvidia.com>
+To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
+Cc:     olivier@trillion01.com, netdev@vger.kernel.org,
+        io-uring@vger.kernel.org, kuba@kernel.org, ammarfaizi2@gnuweeb.org
+References: <20230203060850.3060238-1-shr@devkernel.io>
+ <20230203060850.3060238-2-shr@devkernel.io>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y+JmdMJhPEGN0Zw+@nvidia.com>
+In-Reply-To: <20230203060850.3060238-2-shr@devkernel.io>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -83,41 +74,295 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/7/23 7:55?AM, Jason Gunthorpe wrote:
-> On Tue, Feb 07, 2023 at 07:28:56AM -0700, Jens Axboe wrote:
-> 
->> Outside of that, we're now doubling the amount of memory associated with
->> tracking this. That isn't necessarily a showstopper, but it is not
->> ideal. I didn't take a look at the other conversions (again, because
->> they were not sent to me), but seems like the task_struct and flags
->> could just be passed in as they may very well be known to many/most
->> callers?
-> 
-> For places doing the mm accounting type it cannot use the task struct
-> as the underlying mm can be replaced and keep the task, IIRC.
-> 
-> We just had a bug in VFIO related to this..
-> 
-> If we could go back from the mm to the task (even a from a destroyed
-> mm though) that might work to reduce storage?
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index 128a67a40065..d9551790356e 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -2,6 +2,7 @@
+>  #define IO_URING_TYPES_H
+>  
+>  #include <linux/blkdev.h>
+> +#include <linux/hashtable.h>
+>  #include <linux/task_work.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/llist.h>
+> @@ -274,6 +275,15 @@ struct io_ring_ctx {
+>  	struct xarray		personalities;
+>  	u32			pers_next;
+>  
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	struct list_head	napi_list;	/* track busy poll napi_id */
+> +	DECLARE_HASHTABLE(napi_ht, 8);
+> +	spinlock_t		napi_lock;	/* napi_list lock */
+> +
+> +	unsigned int		napi_busy_poll_to; /* napi busy poll default timeout */
+> +	bool			napi_prefer_busy_poll;
+> +#endif
+Minor thing, but I wonder if we should put this in a struct and allocate
+it if NAPI gets used rather than bloat the whole thing here. This
+doubles the size of io_ring_ctx, the hash above is 2k in size!
 
-Then maybe just nest them:
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index db623b3185c8..96062036db41 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -90,6 +90,7 @@
+>  #include "rsrc.h"
+>  #include "cancel.h"
+>  #include "net.h"
+> +#include "napi.h"
+>  #include "notif.h"
+>  
+>  #include "timeout.h"
+> @@ -335,6 +336,14 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+>  	INIT_WQ_LIST(&ctx->locked_free_list);
+>  	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
+>  	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
+> +
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	INIT_LIST_HEAD(&ctx->napi_list);
+> +	spin_lock_init(&ctx->napi_lock);
+> +	ctx->napi_prefer_busy_poll = false;
+> +	ctx->napi_busy_poll_to = READ_ONCE(sysctl_net_busy_poll);
+> +#endif
 
-struct small_one {
-	struct mm_struct *mm;
-	struct user_struct *user;
-};
+I think that should go in a io_napi_init() function, so we can get rid
+of these ifdefs in the main code.
 
-struct big_one {
-	struct small_one foo;
-	struct task_struct *task;
-	enum vm_account_flags flags;
-};
+>  static inline bool io_has_work(struct io_ring_ctx *ctx)
+> @@ -2498,6 +2512,196 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+>  	return ret < 0 ? ret : 1;
+>  }
+>  
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +#define NAPI_TIMEOUT		(60 * SEC_CONVERSION)
+> +
+> +struct io_napi_ht_entry {
+> +	unsigned int		napi_id;
+> +	struct list_head	list;
+> +
+> +	/* Covered by napi lock spinlock.  */
+> +	unsigned long		timeout;
+> +	struct hlist_node	node;
+> +};
 
-and have the real helpers deal with small_one, and wrappers around that
-taking big_one that just passes in the missing bits. Then users that
-don't need the extra bits can just use the right API.
+Not strictly related to just this, but I think it'd be a good idea to
+add a napi.c file and put it all in there rather than in the core
+io_uring code. It really doesn't belong there.
+
+> +/*
+> + * io_napi_add() - Add napi id to the busy poll list
+> + * @file: file pointer for socket
+> + * @ctx:  io-uring context
+> + *
+> + * Add the napi id of the socket to the napi busy poll list and hash table.
+> + */
+> +void io_napi_add(struct file *file, struct io_ring_ctx *ctx)
+> +{
+> +	unsigned int napi_id;
+> +	struct socket *sock;
+> +	struct sock *sk;
+> +	struct io_napi_ht_entry *he;
+> +
+> +	if (!io_napi_busy_loop_on(ctx))
+> +		return;
+
+I think io_napi_add() belongs in napi.h and should look ala:
+
+static inline void io_napi_add(struct io_kiocb *req)
+{
+	struct io_ring_ctx *ctx = req->ctx;
+
+	if (!io_napi_busy_loop_on(ctx))
+		return;
+
+	__io_napi_add(ctx, req->file);
+}
+
+and put __io_napi_add() in napi.c
+
+> +static void io_napi_free_list(struct io_ring_ctx *ctx)
+> +{
+> +	unsigned int i;
+> +	struct io_napi_ht_entry *he;
+> +	LIST_HEAD(napi_list);
+> +
+> +	spin_lock(&ctx->napi_lock);
+> +	hash_for_each(ctx->napi_ht, i, he, node) {
+> +		hash_del(&he->node);
+> +	}
+> +	spin_unlock(&ctx->napi_lock);
+> +}
+
+No need for the braces here for the loop.
+
+> +static void io_napi_blocking_busy_loop(struct list_head *napi_list,
+> +				       struct io_wait_queue *iowq)
+> +{
+> +	unsigned long start_time = list_is_singular(napi_list)
+> +					? 0
+> +					: busy_loop_current_time();
+
+No ternaries please. This is so much easier to read as:
+
+	unsigned long start_time = 0;
+
+	if (!list_is_singular(napi_list))
+		start_time = busy_loop_current_time();
+
+> +	do {
+> +		if (list_is_singular(napi_list)) {
+> +			struct io_napi_ht_entry *ne =
+> +				list_first_entry(napi_list,
+> +						 struct io_napi_ht_entry, list);
+> +
+> +			napi_busy_loop(ne->napi_id, io_napi_busy_loop_end, iowq,
+> +				       iowq->napi_prefer_busy_poll, BUSY_POLL_BUDGET);
+> +			break;
+> +		}
+> +	} while (io_napi_busy_loop(napi_list, iowq->napi_prefer_busy_poll) &&
+> +		 !io_napi_busy_loop_end(iowq, start_time));
+> +}
+
+This is almost impossible to read, please rewrite that in a way so
+that it's straight forward to understand what is going on.
+
+> +void io_napi_merge_lists(struct io_ring_ctx *ctx, struct list_head *napi_list)
+> +{
+> +	spin_lock(&ctx->napi_lock);
+> +	list_splice(napi_list, &ctx->napi_list);
+> +	io_napi_remove_stale(ctx);
+> +	spin_unlock(&ctx->napi_lock);
+> +}
+
+Question on the locking - the separate lock is obviously functionally
+correct, but at least for the arming part, we generally already have the
+ctx uring_lock at that point. Did you look into if it's feasible to take
+advantage of that? I
+
+> @@ -2510,6 +2714,9 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  	struct io_rings *rings = ctx->rings;
+>  	ktime_t timeout = KTIME_MAX;
+>  	int ret;
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	LIST_HEAD(local_napi_list);
+> +#endif
+>  
+>  	if (!io_allowed_run_tw(ctx))
+>  		return -EEXIST;
+> @@ -2539,12 +2746,34 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  			return ret;
+>  	}
+>  
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	iowq.napi_busy_poll_to = 0;
+> +	iowq.napi_prefer_busy_poll = READ_ONCE(ctx->napi_prefer_busy_poll);
+> +
+> +	if (!(ctx->flags & IORING_SETUP_SQPOLL)) {
+> +		spin_lock(&ctx->napi_lock);
+> +		list_splice_init(&ctx->napi_list, &local_napi_list);
+> +		spin_unlock(&ctx->napi_lock);
+> +	}
+> +#endif
+> +
+>  	if (uts) {
+>  		struct timespec64 ts;
+>  
+>  		if (get_timespec64(&ts, uts))
+>  			return -EFAULT;
+> +
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +		if (!list_empty(&local_napi_list)) {
+> +			io_napi_adjust_busy_loop_timeout(READ_ONCE(ctx->napi_busy_poll_to),
+> +						&ts, &iowq.napi_busy_poll_to);
+> +		}
+> +#endif
+>  		timeout = ktime_add_ns(timespec64_to_ktime(ts), ktime_get_ns());
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	} else if (!list_empty(&local_napi_list)) {
+> +		iowq.napi_busy_poll_to = READ_ONCE(ctx->napi_busy_poll_to);
+> +#endif
+>  	}
+
+This is again a lot of ifdefs, please consider ways of getting rid of
+them.
+
+> @@ -2555,6 +2784,15 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
+>  
+>  	trace_io_uring_cqring_wait(ctx, min_events);
+> +
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	if (iowq.napi_busy_poll_to)
+> +		io_napi_blocking_busy_loop(&local_napi_list, &iowq);
+> +
+> +	if (!list_empty(&local_napi_list))
+> +		io_napi_merge_lists(ctx, &local_napi_list);
+> +#endif
+> +
+
+And here.
+
+>  	do {
+>  		if (test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq)) {
+>  			finish_wait(&ctx->cq_wait, &iowq.wq);
+> @@ -2754,6 +2992,9 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+>  	io_req_caches_free(ctx);
+>  	if (ctx->hash_map)
+>  		io_wq_put_hash(ctx->hash_map);
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	io_napi_free_list(ctx);
+> +#endif
+
+Put an io_napi_free_list() stub in napi.h with the actual thing in
+napi.c if CONFIG_NET_RX_BUSY_POLL is defined.
+
+> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+> index 559652380672..b9fb077de15b 100644
+> --- a/io_uring/sqpoll.c
+> +++ b/io_uring/sqpoll.c
+> @@ -15,6 +15,7 @@
+>  #include <uapi/linux/io_uring.h>
+>  
+>  #include "io_uring.h"
+> +#include "napi.h"
+>  #include "sqpoll.h"
+>  
+>  #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
+> @@ -168,6 +169,9 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
+>  {
+>  	unsigned int to_submit;
+>  	int ret = 0;
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +	LIST_HEAD(local_napi_list);
+> +#endif
+>  
+>  	to_submit = io_sqring_entries(ctx);
+>  	/* if we're handling multiple rings, cap submit size for fairness */
+> @@ -193,6 +197,19 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
+>  			ret = io_submit_sqes(ctx, to_submit);
+>  		mutex_unlock(&ctx->uring_lock);
+>  
+> +#ifdef CONFIG_NET_RX_BUSY_POLL
+> +		spin_lock(&ctx->napi_lock);
+> +		list_splice_init(&ctx->napi_list, &local_napi_list);
+> +		spin_unlock(&ctx->napi_lock);
+> +
+> +		if (!list_empty(&local_napi_list) &&
+> +		    READ_ONCE(ctx->napi_busy_poll_to) > 0 &&
+> +		    io_napi_busy_loop(&local_napi_list, ctx->napi_prefer_busy_poll)) {
+> +			io_napi_merge_lists(ctx, &local_napi_list);
+> +			++ret;
+> +		}
+> +#endif
+> +
+>  		if (to_submit && wq_has_sleeper(&ctx->sqo_sq_wait))
+>  			wake_up(&ctx->sqo_sq_wait);
+>  		if (creds)
+
+Add a helper here too please.
 
 -- 
 Jens Axboe
+
 

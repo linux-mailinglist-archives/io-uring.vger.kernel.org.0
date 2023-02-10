@@ -2,59 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F313691873
-	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 07:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C749E6918E1
+	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 07:58:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbjBJGT7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Feb 2023 01:19:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49598 "EHLO
+        id S231351AbjBJG6N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Feb 2023 01:58:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231179AbjBJGT6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Feb 2023 01:19:58 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D72725C4AF
-        for <io-uring@vger.kernel.org>; Thu,  9 Feb 2023 22:19:56 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id a8-20020a17090a6d8800b002336b48f653so2714863pjk.3
-        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 22:19:56 -0800 (PST)
+        with ESMTP id S231350AbjBJG6M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Feb 2023 01:58:12 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0794B3C15
+        for <io-uring@vger.kernel.org>; Thu,  9 Feb 2023 22:57:51 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id e10-20020a17090a630a00b0022bedd66e6dso8863352pjj.1
+        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 22:57:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kga8PlcRDisciyRqHoCQoNBu+s/kJvfPl5WAaMR4SBc=;
-        b=pmIdiQ7OrMv8cFCxYuTQKeyIxI8j04SEobb6FD43K6NQcqsXoS4EPLc/dH8GBnq/rM
-         4sHI2wTBOUpXKSVAcl38Q0sFhG/exhHIP9L97XbgXI6Moql6YdzlTP/vRrYGt929wIbF
-         VCTCqOKkhhuXVtEohIeZgqQbca+MgX+OLU6E0Zp/0/JinGuksZxYuyzniJPPt9BB2dSA
-         LuXPXn6DW1VfEIQr8Wx9K1/rZNtN8I3HpdwRpNEi/JDiS0HDdwDpx2CritrttnASR7XO
-         cX2PvY4tEPec68rIE+ba6y381Qjj3e2o4OB59Czi8Dm/l62rKq9uIhFC3VheZAsNRNla
-         gByw==
+        bh=1U8Y/0tbcD9B+rFGh6iJhmikTGHljyJ4FQw+gensxqM=;
+        b=4Z1SYdNbd8WuXmbNbPTp5CPsq+GgaHbcr8G8z8Vf2uXbpsOUdr/18311fSoj/DAvdM
+         vKD8kJ4v+dlInCvARG32DgUVW8yzfAhNkAyg4PrXHQ8xbnM6qm00vXAjizV3lv9K0Sf/
+         yhmZ9myipWzdAp3N3yBHfaKYQ0cJ0ZZ9R3JLCAc8crow8cakcI10UvY9qknPlyW1qW2Z
+         DMKFP+tHUhN2tmNEIcIcgczDV7s8cjMmG51ixCnGXX2nvFqjCTjT9YADasror/vi7CU8
+         10fPbGPPQUto5nhsZhX9kHLpIDYok04ij/5sDWe8+1g8aQUBeNpw+SaOrYegc5uSMILw
+         cGxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kga8PlcRDisciyRqHoCQoNBu+s/kJvfPl5WAaMR4SBc=;
-        b=11Yn6VlTTMtsb7Pzpr2BHOPOTzw2x5bAj1fPF7Meg4xlD6wGh/0y6+jzOPt4NM9QnU
-         h1xD6oDqfTIQFPYB7efAoyKOQzVanzC5APxzIITWYSYPhU+lGU/7ne1CpJZbytPqrKkW
-         W0tfjONl0xGaQvZmlZQ4giQJJsTI+QKsfkSjHvxIMQ4JFGydAZquHuCicq8YwN/3SrDy
-         XMP8WosEq7L5SXppb5lDsH3uIBI5ITugNpOboySu3uzer+ziZNUFc2SSyyjBHTHL0DT6
-         s+wPczxfLNgmwVe9zhlIn5SfASgfbXOHUU2JyNq0MNRe+/85hRaRKD1sK9lol06RAQVu
-         yyxg==
-X-Gm-Message-State: AO0yUKW1NEgnZomzuiEZa2FtsoU//qJ6Zu2eWlyvhhOqtOa+/gC53Xro
-        L0sCvHthxOQyepDg/c45ZdUuAg==
-X-Google-Smtp-Source: AK7set/1qKPP7YSjZyU4HyGUtRuQ9CA6VnTp9bvbI4frWqqD/KfHtUjrKdIX8t5GdJIgU6K6mSmHSA==
-X-Received: by 2002:a05:6a20:4403:b0:bf:e16:f3f with SMTP id ce3-20020a056a20440300b000bf0e160f3fmr19178860pzb.33.1676009996396;
-        Thu, 09 Feb 2023 22:19:56 -0800 (PST)
+        bh=1U8Y/0tbcD9B+rFGh6iJhmikTGHljyJ4FQw+gensxqM=;
+        b=54YSAqOvH2lLsLkeWVk/BV7w8b6TsXkL8VQPwakD1kQc+PVDzpG8LCDmFPC+mBbNrr
+         lIMeFEMyrZDg029TQ5J+bhsEZ5Rn1jpi6smBJGpmdNKFKSmYeZLQXp3TORjHTmfR/eM5
+         mXj5DhnaoiPcwLs4fE3zGvh69bNtdfxEuoY+D3FVrJ/CufW/rcgq8VfNYHLCs5K1q6cN
+         mzfDEj4FSlGBpDDNJvJqOlQrgwd9zO2akieVU9mJnrAxCw/uU9IcFmiKtGAowz2dVjeJ
+         BZW+p7FcRdSheuVimTZcOxpuNdYl9MKV/YMXEzh8Y9NJUX32AIuPuTd4HIpFk4e62jh5
+         gJnQ==
+X-Gm-Message-State: AO0yUKWIe2R7YWe4IVIUJhdUMzGUH2/ddz+Lye1abe1UPx16+k0xKKkx
+        iJmlXHLcMISIFKjnOzmsLv9bkQ==
+X-Google-Smtp-Source: AK7set9t6gqJxoHDZIn5ha1EJDlZJueE1TdlQVqKbhBYcp7XjUdmkxQUWlM78CqsSipLc15u/SU+4w==
+X-Received: by 2002:a05:6a21:3613:b0:bc:30aa:8a6d with SMTP id yg19-20020a056a21361300b000bc30aa8a6dmr11239502pzb.2.1676012270527;
+        Thu, 09 Feb 2023 22:57:50 -0800 (PST)
 Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
-        by smtp.gmail.com with ESMTPSA id e8-20020a63ae48000000b004da425922c6sm2228960pgp.74.2023.02.09.22.19.55
+        by smtp.gmail.com with ESMTPSA id i76-20020a636d4f000000b004fb171df68fsm2298927pgc.7.2023.02.09.22.57.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 22:19:56 -0800 (PST)
+        Thu, 09 Feb 2023 22:57:50 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1pQMlF-00DWjV-Gi; Fri, 10 Feb 2023 17:19:53 +1100
-Date:   Fri, 10 Feb 2023 17:19:53 +1100
+        id 1pQNLv-00DXUC-AP; Fri, 10 Feb 2023 17:57:47 +1100
+Date:   Fri, 10 Feb 2023 17:57:47 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API Mailing List <linux-api@vger.kernel.org>,
         io-uring <io-uring@vger.kernel.org>,
@@ -62,96 +64,69 @@ Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Samba Technical <samba-technical@lists.samba.org>
 Subject: Re: copy on write for splice() from file to pipe?
-Message-ID: <20230210061953.GC2825702@dread.disaster.area>
+Message-ID: <20230210065747.GD2825702@dread.disaster.area>
 References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
  <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
  <20230210021603.GA2825702@dread.disaster.area>
  <20230210040626.GB2825702@dread.disaster.area>
- <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
+ <Y+XLuYh+kC+4wTRi@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
+In-Reply-To: <Y+XLuYh+kC+4wTRi@casper.infradead.org>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Feb 09, 2023 at 08:47:07PM -0800, Linus Torvalds wrote:
-> On Thu, Feb 9, 2023 at 8:06 PM Dave Chinner <david@fromorbit.com> wrote:
-> >>
+On Fri, Feb 10, 2023 at 04:44:41AM +0000, Matthew Wilcox wrote:
+> On Fri, Feb 10, 2023 at 03:06:26PM +1100, Dave Chinner wrote:
 > > So while I was pondering the complexity of this and watching a great
 > > big shiny rocket create lots of heat, light and noise, it occurred
+> 
+> That was kind of fun
+
+:)
+
 > > to me that we already have a mechanism for preventing page cache
 > > data from being changed while the folios are under IO:
 > > SB_I_STABLE_WRITES and folio_wait_stable().
 > 
-> No, Dave. Not at all.
-> 
-> Stop and think.
+> I thought about bringing that up, but it's not quite right.  That works
+> great for writeback, but it only works for writeback.  We'd need to track
+> another per-folio counter ... it'd be like the page pinning kerfuffle,
+> only worse. 
 
-I have.
+Hmmm - I didn't think of that. It needs the counter because the
+"stable request" is per folio reference state, not per folio state,
+right? And the single flag works for writeback because we can only
+have one writeback context in progress at a time?
 
-> splice() is not some "while under IO" thing. It's *UNBOUNDED*.
+Yeah, not sure how to deal with that easily.
 
-Splice has two sides - a source where we splice to the transport
-pipe, then a destination where we splice pages from the transport
-pipe. For better or worse, time in the transport pipe is unbounded,
-but that does not mean the srouce or destination have unbound
-processing times.
+> And for such a rare thing it seems like a poor use of 32
+> bits of per-page state.
 
-However, transport times being unbound are largely irrelevant, and
-miss the fact that the application does not require pages in transit
-to be stable.
+Maybe, but zero copy file data -> network send is a pretty common
+workload. Web servers, file servers, remote backup programs, etc.
+Having files being written whilst others are reading them is not as
+common, but that does happen in a wide variety of shared file server
+environments.
 
-The application we are talking about here is file -> pipe -> network
-stack for zero copy sending of static file data and the problem is
-that the file pages are not stable whilst they are under IO in the
-network stack.
+Regardless, I just had a couple of ideas - it they don't work so be
+it.
 
-IOWs, the application does not care if the data changes whilst they
-are in transport attached to the pipe - it only cares that the
-contents are stable once they have been delivered and are now wholly
-owned by the network stack IO path so that the OTW encodings
-(checksum, encryption, whatever) done within the network IO path
-don't get compromised.
+> Not to mention that you can effectively block
+> all writes to a file for an indefinite time by splicing pages to a pipe
+> that you then never read from.
 
-i.e. the file pages only need to be stable whilst the network stack
-IO path checksums and DMAs the data to the network hardware.
-
-That's exactly the same IO context that the block device stack
-requires the page contents  to be stable - across parity/checksum
-calculations and the subsequent DMA transfers to the storage
-hardware.
-
-I'm suggesting that the page should only need to be held stable
-whilst it is under IO, whether that IO is in the network stack via
-skbs or in the block device stack via bios.  Both network and block
-IO are bounded by fixed time limits, both IO paths typically only
-need pages held stable for a few milliseconds at a time, and both
-have worst case IO times in error situations are typically bound at
-a few minutes.
-
-IOWs, splice is a complete misdirection here - it doesn't need to
-know a thing about stable data requirements at all. It's the
-destination processing that requires stable data, not the transport
-mechanism.
-
-Hence if we have a generic mechanism that the network stack can use
-to detect a file backed page and mark it needing to be stable whilst
-the network stack is doing IO on it, everything on the filesystem
-side should just work like it does for pages under IO in the block
-device stack...
-
-Indeed, I suspect that a filesystem -> pipe -> filesystem zero copy
-path via splice probably also needs stable source pages for some
-filesystems, in which case we need exactly the same mechanism as
-we need for stable pages in the network stack zero copy splice
-destiantion path....
+No, I wasn't suggesting that we make pages in transit stable - they
+only need to be stable while the network stack requires them to be
+stable....
 
 Cheers,
 

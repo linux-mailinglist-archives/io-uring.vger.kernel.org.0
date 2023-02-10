@@ -2,69 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1446924CA
-	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 18:47:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A9A36924EA
+	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 18:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232576AbjBJRrt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 10 Feb 2023 12:47:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52846 "EHLO
+        id S232646AbjBJR5g (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Feb 2023 12:57:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232362AbjBJRrs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Feb 2023 12:47:48 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB041C7CE
-        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 09:47:47 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id ud5so17947881ejc.4
-        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 09:47:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qgcGO8+97UxFzUa9otLoe9WhcHYqh4IFJols7jxOVL4=;
-        b=LPrqOkJVT4UEg85v/nAzVlpJ472gmcKMbYYeMraUOPgiYjqle9VbUDBs8e3Zm1gWBH
-         WQRxTLfEGgHGfiMMIfID24IotHRUddIaw08CZd8coY3Et2DEy+b/r/ymu4POvA/PHwNn
-         rJAnwEUqrti8kF2sB3Coh+mEuGxmaaVK+5Ue4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qgcGO8+97UxFzUa9otLoe9WhcHYqh4IFJols7jxOVL4=;
-        b=e1yqJLZEG4czLe1x7sanJdJFZsssGmx0KyZBjSi93iJCbJW5P58fRD5t5eB8266iZD
-         Flru/6p5YpJrB6LcC52KA0gNg1iKDYIMY7Rg470jxJHWzvNlhBbVTmjAQv9ETgtRafvL
-         eHf6+7j0NnKab0u4jXofW+PfjlBauaw5Py3+rjbe3/+hM/2YtlxXIjAjS1H+IpJQhKyb
-         ONEWnJEwI9sA0DSJ2Xpu7XSGaKJuRQBkqbidlofewdNOnznoS3mqSZMAs0Zwgk4L0D0Z
-         0fsEb8oPoI8uIundPpeHXsy78HI4kWZq+Co64fo0QAz4i/BMjqgbJvcmZmB3yAm6tPBY
-         7j7g==
-X-Gm-Message-State: AO0yUKXmuhkscodQg7X9ng5XtoIjZkNk4ya2lO6Av2IhOeHmjnbZflAx
-        ID9gZbpfCp4Mmy/m2I2RDTzuIvP5TOCAUY1q1jM=
-X-Google-Smtp-Source: AK7set+wd7W4+bwvMAfS3xfokk4/lc0v69BNPjWazn5NqAZRtHVhLUXj7OW9MiKHjFI09UoAmAsbHw==
-X-Received: by 2002:a17:907:1c90:b0:8aa:be1a:2d1b with SMTP id nb16-20020a1709071c9000b008aabe1a2d1bmr18093448ejc.46.1676051266054;
-        Fri, 10 Feb 2023 09:47:46 -0800 (PST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id ko3-20020a170907986300b0088b93bfa782sm2692899ejc.176.2023.02.10.09.47.45
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 09:47:45 -0800 (PST)
-Received: by mail-ej1-f45.google.com with SMTP id ud5so17947742ejc.4
-        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 09:47:45 -0800 (PST)
-X-Received: by 2002:a17:906:651:b0:88a:b6ca:7d3a with SMTP id
- t17-20020a170906065100b0088ab6ca7d3amr3101829ejb.1.1676051265120; Fri, 10 Feb
- 2023 09:47:45 -0800 (PST)
+        with ESMTP id S232422AbjBJR5f (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Feb 2023 12:57:35 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77D24F852
+        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 09:57:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4330561E7A
+        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 17:57:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3DBEC4339E
+        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 17:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676051853;
+        bh=EdNikj6ihbS6tmVVKV/Gr8GqPj/IVFRIStn6g5XxS3c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eWC0iXIEBdh8IiJfgucjHSAi41/t4CCSJLtM3N8OQXIMgm0D6a7uAgr+OPd20MJTH
+         +E7yRfL1HwGlMizxeYI4yHxetBPf/kQSz+/Dht1eVjH4fbeQ9OuvDOJVbhnFRXgEYy
+         QYy1bJy66R7Dn19bRYEhj96Et2i0xDrwZnPfW989bicZxpafG4B64re/6c1z5HRw+0
+         70yszsAyseKyHu7CdGfNjtminIlzy0mXqk4meyRPMynQFnVbAtCg804AUAQXGFr3zn
+         HQ87TQEqtdO1f2dnSw1rQuKiJaGx9TRK9Smv2mmAwq3jk7R4AnEpk01loDdz/tyjCV
+         lfUCZYnwZuoMg==
+Received: by mail-ej1-f42.google.com with SMTP id dr8so17905840ejc.12
+        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 09:57:33 -0800 (PST)
+X-Gm-Message-State: AO0yUKULUSe6gTsOgfPSkU0yg7qt7uc6wEsZUTpJap/zlg5xBqaKGNMJ
+        OZ2m21tXOIFlgpHBpFzB+msbV1MpoXrSN+2dRQpBoA==
+X-Google-Smtp-Source: AK7set9/ve8g5TsJRz3g6ZGdh+faiyXAgVkwQTS2SJlcgdVc+0p1pG34Vabiezx0GXNWG1AspwltN09G6XpRWPRXdvg=
+X-Received: by 2002:a17:906:ca04:b0:7c0:f45e:22ff with SMTP id
+ jt4-20020a170906ca0400b007c0f45e22ffmr3820111ejb.104.1676051851830; Fri, 10
+ Feb 2023 09:57:31 -0800 (PST)
 MIME-Version: 1.0
 References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
  <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
  <20230210021603.GA2825702@dread.disaster.area> <20230210040626.GB2825702@dread.disaster.area>
- <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
- <20230210061953.GC2825702@dread.disaster.area> <CAHk-=wj6jd0JWtxO0JvjYUgKfnGEj4BzPVOfY+4_=-0iiGh0tw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj6jd0JWtxO0JvjYUgKfnGEj4BzPVOfY+4_=-0iiGh0tw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 10 Feb 2023 09:47:28 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgXvRKwsHUjA9T9Tw6n5x1pCO6B+4kk0GAx+oQ5qhUyRw@mail.gmail.com>
-Message-ID: <CAHk-=wgXvRKwsHUjA9T9Tw6n5x1pCO6B+4kk0GAx+oQ5qhUyRw@mail.gmail.com>
+ <Y+XLuYh+kC+4wTRi@casper.infradead.org> <20230210065747.GD2825702@dread.disaster.area>
+ <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com> <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
+In-Reply-To: <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 10 Feb 2023 09:57:20 -0800
+X-Gmail-Original-Message-ID: <CALCETrU-9Wcb_zCsVWr24V=uCA0+c6x359UkJBOBgkbq+UHAMA@mail.gmail.com>
+Message-ID: <CALCETrU-9Wcb_zCsVWr24V=uCA0+c6x359UkJBOBgkbq+UHAMA@mail.gmail.com>
 Subject: Re: copy on write for splice() from file to pipe?
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API Mailing List <linux-api@vger.kernel.org>,
         io-uring <io-uring@vger.kernel.org>,
@@ -72,55 +64,128 @@ Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Samba Technical <samba-technical@lists.samba.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 9:23 AM Linus Torvalds
+On Fri, Feb 10, 2023 at 8:34 AM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> And when it comes to networking, in general things like TCP checksums
-> etc should be ok even with data that isn't stable.  When doing things
-> by hand, networking should always use the "copy-and-checksum"
-> functions that do the checksum while copying (so even if the source
-> data changes, the checksum is going to be the checksum for the data
-> that was copied).
+> On Fri, Feb 10, 2023 at 7:15 AM Andy Lutomirski <luto@kernel.org> wrote:
+> >
+> > Frankly, I really don't like having non-immutable data in a pipe.
 >
-> And in many (most?) smarter network cards, the card itself does the
-> checksum, again on the data as it is transferred from memory.
+> That statement is completely nonsensical.
+
+I know what splice() is.  I'm trying to make the point that it may not
+be the right API for most (all?) of its use cases, that we can maybe
+do better, and that we should maybe even consider deprecating (and
+simplifying and the cost of performance) splice in the moderately near
+future.  And I think I agree with you on most of what you're saying.
+
+> It was literally designed to be "look, we want zero-copy networking,
+> and we could do 'sendfile()' by mmap'ing the file, but mmap - and
+> particularly munmap - is too expensive, so we map things into kernel
+> buffers instead".
+
+Indeed.  mmap() + sendfile() + munmap() is extraordinarily expensive
+and is not the right solution to zero-copy  networking.
+
 >
-> So it's not like "networking needs a stable source" is some really
-> _fundamental_ requirement for things like that to work.
+> So saying "I really don't like having non-immutable data in a pipe" is
+> complete nonsense. It's syntactically correct English, but it makes no
+> conceptual sense.
 >
-> But it may well be that we have situations where some network driver
-> does the checksumming separately from then copying the data.
+> You can say "I don't like 'splice()'". That's fine. I used to think
+> splice was a really cool concept, but I kind of hate it these days.
+> Not liking splice() makes a ton of sense.
+>
+> But given splice, saying "I don't like non-immutable data" really is
+> complete nonsense.
 
-Ok, so I decided to try to take a look.
+I am saying exactly what I meant.  Obviously mutable data exists.  I'm
+saying that *putting it in a pipe* *while it's still mutable* is not
+good.  Which implies that I don't think splice() is good.  No offense.
 
-Somebody who actually does networking (and drivers in particular)
-should probably check this, but it *looks* like the IPv4 TCP case
-(just to pick the ony I looked at) gores through
-tcp_sendpage_locked(), which does
+I am *not* saying that the mere existence of mutable data is a problem.
 
-        if (!(sk->sk_route_caps & NETIF_F_SG))
-                return sock_no_sendpage_locked(sk, page, offset, size, flags);
+> That's not something specific to "splice()". It's fundamental to the
+> whole *concept* of zero-copy. If you don't want copies, and the source
+> file changes, then you see those changes.
 
-which basically says "if you can't handle fragmented socket buffers,
-do that 'no_sendpage' case".
+Of course!  A user program copying data from a file to a network
+fundamentally does this:
 
-So that will basically end up just falling back to a kernel
-'sendmsg()', which does a copy and then it's stable.
+Step 1: start the process.
+Step 2: data goes out to the actual wire or a buffer on the NIC or is
+otherwise in a place other than page cache, and the kernel reports
+completion.
 
-But for the networks that *can* handle fragmented socket buffers, it
-then calls do_tcp_sendpages() instead, which just creates a skb
-fragment of the page (with tcp_build_frag()).
+There are many ways to make this happen.  Step 1 could be starting
+read() and step 2 could be send() returning.  Step 1 could be be
+sticking something in an io_uring queue and step 2 could be reporting
+completion.  Step 1 could be splice()ing to a pipe and step 2 could be
+a splice from the pipe to a socket completing (and maybe even later
+when the data actually goes out).
 
-I wonder if that case should just require NETIF_F_HW_CSUM?
+*Obviously* any change to the file between steps 1 and 2 may change
+the data that goes out the wire.
 
-              Linus
+> So the data lifetime - even just on just one side - can _easily_ be
+> "multiple seconds" even when things are normal, and if you have actual
+> network connectivity issues we are easily talking minutes.
+
+True.
+
+But splice is extra nasty: step 1 happens potentially arbitrarily long
+before step 2, and the kernel doesn't even know which socket the data
+is destined for in step 1.  So step 1 can't usefully return
+-EWOULDBLOCK, for example.  And it's awkward for the kernel to report
+errors, because steps 1 and 2 are so disconnected.  And I'm not
+convinced there's any corresponding benefit.
+
+
+In any case, maybe io_uring gives an opportunity to do much better.
+io_uring makes it *efficient* for largish numbers of long-running
+operations to all be pending at once.  Would an API like this work
+better (very handwavy -- I make absolutely no promises that this is
+compatible with existing users -- new opcodes might be needed):
+
+Submit IORING_OP_SPLICE from a *file* to a socket: this tells the
+kernel to kindly send data from the file in question to the network.
+Writes to the file before submission will be reflected in the data
+sent.  Writes after submission may or may not be reflected.  (This is
+step 1 above.)
+
+The operation completes (and is reported in the CQ) only after the
+kernel knows that the data has been snapshotted (step 2 above).  So
+completion can be reported when the data is DMAed out or when it's
+checksummed-and-copied or if the kernel decides to copy it for any
+other reason *and* the kernel knows that it won't need to read the
+data again for possible retransmission.  As you said, this could
+easily take minutes, but that seems maybe okay to me.
+
+(And if Samba needs to make sure that future writes don't change the
+outgoing data even two seconds later when the data has been sent but
+not acked, then maybe a fancy API could be added to help, or maybe
+Samba shouldn't be using zero copy IO in the first place!)
+
+If the file is truncated or some other problem happens, the operation can fail.
+
+
+I don't know how easy or hard this is to implement, but it seems like
+it would be quite pleasant to *use* from user code, it ought to be
+even faster than splice-to-pipe-then-splice-to-socket (simply because
+there is less bookkeeping), and it doesn't seem like any file change
+tracking would be needed in the kernel.
+
+
+If this works and becomes popular enough, splice-from-file-to-pipe
+could *maybe* be replaced in the kernel with a plain copy.
+
+--Andy

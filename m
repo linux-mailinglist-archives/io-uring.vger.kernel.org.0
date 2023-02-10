@@ -2,66 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C97F6917A6
-	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 05:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F313691873
+	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 07:20:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230203AbjBJEr3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Feb 2023 23:47:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38126 "EHLO
+        id S230400AbjBJGT7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 10 Feb 2023 01:19:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbjBJEr2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Feb 2023 23:47:28 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBEDC24C98
-        for <io-uring@vger.kernel.org>; Thu,  9 Feb 2023 20:47:26 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id l12so3890331edb.0
-        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 20:47:26 -0800 (PST)
+        with ESMTP id S231179AbjBJGT6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 10 Feb 2023 01:19:58 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D72725C4AF
+        for <io-uring@vger.kernel.org>; Thu,  9 Feb 2023 22:19:56 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id a8-20020a17090a6d8800b002336b48f653so2714863pjk.3
+        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 22:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cvwfcddns9wEYGMGsoiElla/fMiugMdLW+ZU2vKhB7Q=;
-        b=M9jqvy9vqZ7GIvN6X0r0tJPRyNR5XsTBKWs09APkXPouATgMG65O1fuTD3jATxsfcO
-         Gysz8LgLqGc+GXmEgZ5girBmCfhrAfMolnWCqDSAvI42pkfVsZE28km43Yn3Tgr1ltQY
-         uAos7n6XK3oEQ5ve/fwxQ53u1Uz9Wz2cNjh+U=
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kga8PlcRDisciyRqHoCQoNBu+s/kJvfPl5WAaMR4SBc=;
+        b=pmIdiQ7OrMv8cFCxYuTQKeyIxI8j04SEobb6FD43K6NQcqsXoS4EPLc/dH8GBnq/rM
+         4sHI2wTBOUpXKSVAcl38Q0sFhG/exhHIP9L97XbgXI6Moql6YdzlTP/vRrYGt929wIbF
+         VCTCqOKkhhuXVtEohIeZgqQbca+MgX+OLU6E0Zp/0/JinGuksZxYuyzniJPPt9BB2dSA
+         LuXPXn6DW1VfEIQr8Wx9K1/rZNtN8I3HpdwRpNEi/JDiS0HDdwDpx2CritrttnASR7XO
+         cX2PvY4tEPec68rIE+ba6y381Qjj3e2o4OB59Czi8Dm/l62rKq9uIhFC3VheZAsNRNla
+         gByw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cvwfcddns9wEYGMGsoiElla/fMiugMdLW+ZU2vKhB7Q=;
-        b=PIIkkJCfXWz7b65J8W0sI5RiBzh8DmquUsd/qX2Wb6sbiFhqP5R/pQFLuzX0lsg1KZ
-         Ic4lJD6ruSxe/ouLroRIse4cHV0TNtXKBFGcRymovNh5muSJwKQbASu7hqckXVwTlMTR
-         g3PrX8BDCfSnqSbLBjQGsgcVsiU8lR5mdrlKNQtPdCAMV/5VTz4PivAyRH87DdaowVmO
-         Ii0mxfay/EoGP3nY1G9WHEy00nq204Y5jD950a6Y7J93TQuN1FBiCDDZjCRBKD2JPRpJ
-         R8msZiMkq1DLcowjHAbhchA6YMv1Wm25po35vFATp1PCFCYXiUmrodLdtom9EXdDv3HB
-         KwQQ==
-X-Gm-Message-State: AO0yUKW07w5b0xqEOQFCMD5sWOSjyZi1zwefGT5B/nWJtninpjhaMqml
-        e+0LDGp8S49VguE0jl+kvy9aphYy5/j0D36FH3I=
-X-Google-Smtp-Source: AK7set+efBSsxGJ4L8GphIKXdqDHtdmvAVjrJe/jQAiJehqF8LRB7G5bEXOsUAHCwt4KiZJsobU6DA==
-X-Received: by 2002:a50:ce13:0:b0:4a0:b7d6:57db with SMTP id y19-20020a50ce13000000b004a0b7d657dbmr15203735edi.33.1676004445203;
-        Thu, 09 Feb 2023 20:47:25 -0800 (PST)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id qq8-20020a17090720c800b0088e7fe75736sm1837946ejb.1.2023.02.09.20.47.24
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Feb 2023 20:47:24 -0800 (PST)
-Received: by mail-ed1-f53.google.com with SMTP id v13so3781392eda.11
-        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 20:47:24 -0800 (PST)
-X-Received: by 2002:a50:cc99:0:b0:4ab:66f:6de0 with SMTP id
- q25-20020a50cc99000000b004ab066f6de0mr2073831edi.5.1676004444332; Thu, 09 Feb
- 2023 20:47:24 -0800 (PST)
-MIME-Version: 1.0
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
- <20230210021603.GA2825702@dread.disaster.area> <20230210040626.GB2825702@dread.disaster.area>
-In-Reply-To: <20230210040626.GB2825702@dread.disaster.area>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 9 Feb 2023 20:47:07 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
-Message-ID: <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Dave Chinner <david@fromorbit.com>
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kga8PlcRDisciyRqHoCQoNBu+s/kJvfPl5WAaMR4SBc=;
+        b=11Yn6VlTTMtsb7Pzpr2BHOPOTzw2x5bAj1fPF7Meg4xlD6wGh/0y6+jzOPt4NM9QnU
+         h1xD6oDqfTIQFPYB7efAoyKOQzVanzC5APxzIITWYSYPhU+lGU/7ne1CpJZbytPqrKkW
+         W0tfjONl0xGaQvZmlZQ4giQJJsTI+QKsfkSjHvxIMQ4JFGydAZquHuCicq8YwN/3SrDy
+         XMP8WosEq7L5SXppb5lDsH3uIBI5ITugNpOboySu3uzer+ziZNUFc2SSyyjBHTHL0DT6
+         s+wPczxfLNgmwVe9zhlIn5SfASgfbXOHUU2JyNq0MNRe+/85hRaRKD1sK9lol06RAQVu
+         yyxg==
+X-Gm-Message-State: AO0yUKW1NEgnZomzuiEZa2FtsoU//qJ6Zu2eWlyvhhOqtOa+/gC53Xro
+        L0sCvHthxOQyepDg/c45ZdUuAg==
+X-Google-Smtp-Source: AK7set/1qKPP7YSjZyU4HyGUtRuQ9CA6VnTp9bvbI4frWqqD/KfHtUjrKdIX8t5GdJIgU6K6mSmHSA==
+X-Received: by 2002:a05:6a20:4403:b0:bf:e16:f3f with SMTP id ce3-20020a056a20440300b000bf0e160f3fmr19178860pzb.33.1676009996396;
+        Thu, 09 Feb 2023 22:19:56 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
+        by smtp.gmail.com with ESMTPSA id e8-20020a63ae48000000b004da425922c6sm2228960pgp.74.2023.02.09.22.19.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 22:19:56 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pQMlF-00DWjV-Gi; Fri, 10 Feb 2023 17:19:53 +1100
+Date:   Fri, 10 Feb 2023 17:19:53 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API Mailing List <linux-api@vger.kernel.org>,
@@ -69,90 +61,101 @@ Cc:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Samba Technical <samba-technical@lists.samba.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Subject: Re: copy on write for splice() from file to pipe?
+Message-ID: <20230210061953.GC2825702@dread.disaster.area>
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
+ <20230210021603.GA2825702@dread.disaster.area>
+ <20230210040626.GB2825702@dread.disaster.area>
+ <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Feb 9, 2023 at 8:06 PM Dave Chinner <david@fromorbit.com> wrote:
->>
-> So while I was pondering the complexity of this and watching a great
-> big shiny rocket create lots of heat, light and noise, it occurred
-> to me that we already have a mechanism for preventing page cache
-> data from being changed while the folios are under IO:
-> SB_I_STABLE_WRITES and folio_wait_stable().
+On Thu, Feb 09, 2023 at 08:47:07PM -0800, Linus Torvalds wrote:
+> On Thu, Feb 9, 2023 at 8:06 PM Dave Chinner <david@fromorbit.com> wrote:
+> >>
+> > So while I was pondering the complexity of this and watching a great
+> > big shiny rocket create lots of heat, light and noise, it occurred
+> > to me that we already have a mechanism for preventing page cache
+> > data from being changed while the folios are under IO:
+> > SB_I_STABLE_WRITES and folio_wait_stable().
+> 
+> No, Dave. Not at all.
+> 
+> Stop and think.
 
-No, Dave. Not at all.
+I have.
 
-Stop and think.
+> splice() is not some "while under IO" thing. It's *UNBOUNDED*.
 
-splice() is not some "while under IO" thing. It's *UNBOUNDED*.
+Splice has two sides - a source where we splice to the transport
+pipe, then a destination where we splice pages from the transport
+pipe. For better or worse, time in the transport pipe is unbounded,
+but that does not mean the srouce or destination have unbound
+processing times.
 
-Let me just give an example: random user A does
+However, transport times being unbound are largely irrelevant, and
+miss the fact that the application does not require pages in transit
+to be stable.
 
-   fd = open("/dev/passwd", O_RDONLY);
-   splice(fd, NULL, pipefd, NULL, ..);
-   sleep(10000);
+The application we are talking about here is file -> pipe -> network
+stack for zero copy sending of static file data and the problem is
+that the file pages are not stable whilst they are under IO in the
+network stack.
 
-and you now want to block all writes to the page in that file as long
-as it's being held on to, do you?
+IOWs, the application does not care if the data changes whilst they
+are in transport attached to the pipe - it only cares that the
+contents are stable once they have been delivered and are now wholly
+owned by the network stack IO path so that the OTW encodings
+(checksum, encryption, whatever) done within the network IO path
+don't get compromised.
 
-So no.
+i.e. the file pages only need to be stable whilst the network stack
+IO path checksums and DMAs the data to the network hardware.
 
-The above is also why something like IOMAP_F_SHARED is not relevant.
-The whole point of splice is to act as a way to communicate pages
-between *DIFFERENT* subsystems. The only thing they have in common is
-the buffer (typically a page reference, but it can be other things)
-that is getting transferred.
+That's exactly the same IO context that the block device stack
+requires the page contents  to be stable - across parity/checksum
+calculations and the subsequent DMA transfers to the storage
+hardware.
 
-A spliced page - by definition - is not in some controlled state where
-one filesystem (or one subsystem like networking) owns it, because the
-whole and only point of splice is to act as that "take data from one
-random source and feed it in to another random destination", and avoid
-the N*M complexity matrix of N sources and M destinations.
+I'm suggesting that the page should only need to be held stable
+whilst it is under IO, whether that IO is in the network stack via
+skbs or in the block device stack via bios.  Both network and block
+IO are bounded by fixed time limits, both IO paths typically only
+need pages held stable for a few milliseconds at a time, and both
+have worst case IO times in error situations are typically bound at
+a few minutes.
 
-So no. We cannot block writes, because there is no bounded time for
-them. And no, we cannot use some kind of "mark this IO as shared",
-because there is no "this IO".
+IOWs, splice is a complete misdirection here - it doesn't need to
+know a thing about stable data requirements at all. It's the
+destination processing that requires stable data, not the transport
+mechanism.
 
-It is also worth noting that the shared behavior (ie "splice acts as a
-temporary shared buffer") might even be something that people actually
-expect and depend on for semantics. I hope not, but it's not entirely
-impossible that people change the source (could be file data for the
-above "splice from file" case, but could be your own virtual memory
-image for "vmsplice()") _after_ splicing the source, and before
-splicing it to the destination.
+Hence if we have a generic mechanism that the network stack can use
+to detect a file backed page and mark it needing to be stable whilst
+the network stack is doing IO on it, everything on the filesystem
+side should just work like it does for pages under IO in the block
+device stack...
 
-(It sounds very unlikely that people would do that for file contents,
-but vmsplice() might intentionally use buffers that may be "live").
+Indeed, I suspect that a filesystem -> pipe -> filesystem zero copy
+path via splice probably also needs stable source pages for some
+filesystems, in which case we need exactly the same mechanism as
+we need for stable pages in the network stack zero copy splice
+destiantion path....
 
-Now, to be honest, I hope nobody plays games like that. In fact, I'm a
-bit sorry that I was pushing splice() in the first place. Playing
-games with zero-copy tends to cause problems, and we've had some nasty
-security issues in this area too.
+Cheers,
 
-Now, splice() is a *lot* cleaner conceptually than "sendfile()" ever
-was, exactly because it allows that whole "many different sources,
-many different destinations" model. But this is also very much an
-example of how "generic" may be something that is revered in computer
-science, but is often a *horrible* thing in reality.
-
-Because if this was just "sendfile()", and would be one operation that
-moves file contents from the page cache to the network buffers, then
-your idea of "prevent data from being changed while in transit" would
-actually be valid.
-
-Special cases are often much simpler and easier, and sometimes the
-special cases are all you actually want.
-
-Splice() is not a special case. It's sadly a very interesting and very
-generic model for sharing buffers, and that does cause very real
-problems.
-
-            Linus
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com

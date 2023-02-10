@@ -2,182 +2,137 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C82A69153A
-	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 01:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0375869153F
+	for <lists+io-uring@lfdr.de>; Fri, 10 Feb 2023 01:16:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjBJAOb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Feb 2023 19:14:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44100 "EHLO
+        id S229935AbjBJAP6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Feb 2023 19:15:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjBJAOa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Feb 2023 19:14:30 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F8E5C49F
-        for <io-uring@vger.kernel.org>; Thu,  9 Feb 2023 16:14:28 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id a5so2443523pfv.10
-        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 16:14:28 -0800 (PST)
+        with ESMTP id S229933AbjBJAP5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Feb 2023 19:15:57 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0CE5DC3F
+        for <io-uring@vger.kernel.org>; Thu,  9 Feb 2023 16:15:56 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id iz19so3426289plb.13
+        for <io-uring@vger.kernel.org>; Thu, 09 Feb 2023 16:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1675988155;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=P3AveB+mmBa5VWUNFXeyfg54SsOtbbTbogCLGT8ozDI=;
-        b=7GvIw5VwPdp/wU08Ia6ArLYs5Ipf08Kebfj4oux494bL0WjP2A3uZclCxrhRsN1+RE
-         jq1rJiIN/iP4janAfF/DNuzBCNZvKDnAEVIW2CuuH4cg7b33WtXkNf+YNnNZtXcqPfAD
-         Pi+CyPI//cyXYjOrzC9A4/sq0A6JN2t95Vlts6QlS2/qWi3fNDh+M/uOGgv4ZO2xIgEb
-         kljvhPpx3/4BaTndgzlX1oKDqGzW0mgPisoQVpMIRXp7PDnl4JmNBjutIyKCaUKl/9UM
-         HqUL5d6FkizfVz1HmHoTgiB4uOWymsiV8jW4TFBxZKz2kN7C+6TuMUzEZlkVsTIQHx3e
-         MAjg==
+        bh=tNPbNYoCct7d8eWLCTkz69o5QdTPIXkMuLL30IOxMRg=;
+        b=f/XkvHql8tA6g9Cwp0u4jf8f7Qc7FIeFETTNtvSG78+1PpDL1dUGRltWrU0WGseC2f
+         mDxL9UuS7jf0nQ5VXmX2WYUeMJX2fbUos36ISufxoZKygSb6hJZzBjnoRRV7OxXVyxyS
+         M7zeWiG1IjpRvcHqDAm4O6OD4wpBHUKty7+4YHhYQ9TeLCBGbO00pUEPxKPHnPLEq5Tj
+         5yGd2jb/pIPponyzOm4vV8cOYitmD2Fb4fV30wo+wSI1bm5PFh6GSuqtZx8L2cGpMFxk
+         qZ3MZJjgdq+ZhZsCQ5d34PmZeyi/8LfyVoIiJWWmJP2zmz8z6rvUXdqqhXhq/AGNhx/v
+         nqgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
+        d=1e100.net; s=20210112; t=1675988155;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P3AveB+mmBa5VWUNFXeyfg54SsOtbbTbogCLGT8ozDI=;
-        b=gsdSgHvLUT5zvV4Co8EAEByFIccspFu0yGHzPGY0dH4KQz++0ZnU6dpwuki1cpAaNR
-         soOjSY581X8NVMOL0zFT6X/4cV0tFctadOdonxFlDo0poVSh7Jk1qlicnexyWkiQNTH5
-         Kbn/gJhnSW8k0SPtxAczrfKFBXznVm+rDSjNn//f34yXgKO3f2LbQCggWtNt8OG5aAb9
-         xw62xvRw1qU+cX6YfiUtxNgAwmNoQOnD2UX7ECL+e1IB8d3Tbdy5Eat0MQ56j4axKblM
-         1ZPvPJ5wR+CGmBBnvbgBMJrymMWmXjnUDFXq+mgajlSI97wMKt45N/SZ/eke21OHYNUv
-         KGvQ==
-X-Gm-Message-State: AO0yUKWXHNuKTis5VRtWWmQG1TcvrJHJR5v61p+l7/J/d1GLHJ3N3zi2
-        d80U2T8IjVL0lvoBBmCPZ2awLg==
-X-Google-Smtp-Source: AK7set9NN4wcnwcbKNJGoBkmVg+AwmSHv5nldFMjTsAywzbDHfsIfGACztcjTO0SThoFvKdK6WLBXg==
-X-Received: by 2002:a62:d10f:0:b0:5a8:4675:c9a9 with SMTP id z15-20020a62d10f000000b005a84675c9a9mr6336148pfg.2.1675988068374;
-        Thu, 09 Feb 2023 16:14:28 -0800 (PST)
+        bh=tNPbNYoCct7d8eWLCTkz69o5QdTPIXkMuLL30IOxMRg=;
+        b=68+HM86JdUJcjoBAymq0N7YtTxvWcm+20woxI/aQ+ucuNy74L9rZJKLedzZsYp8MLn
+         +Dnei5lYFEVllMh7aptgfU8Ci9GfmfzObVs15ZMvJKmqs5WOcPPNG/barEzZAER1DdXE
+         rNv4AGtM1h1nX6qDGCG5mTnBPv73hk4QDBTjxDwJQZTBEBQHE+HbnRT3Lf0JxOhbi/ZM
+         FOEsvm8S8EaXwIaNX6PE4vfF+yT8wwAYlVuA7qKgyJEbcby7x0UPa9qQJbtmssHkLFs+
+         Z6pSZSPYEfucj9bwSa2XB7I90X/CwgUr3RdusC/o5YNpY4+N3W7KOYCmUvIKgtDSOfDM
+         NlBw==
+X-Gm-Message-State: AO0yUKVw5LbXagIuKesGM6oFx72EhMHRidgm7dDE7asDTK6PH+Y8awmR
+        vPMkQom55dTXG1bgexJrwL9NIA==
+X-Google-Smtp-Source: AK7set9i4GZy425eJQ60VEHt8ZyiMscBINILO96QjW9OdkxX3UWegtHHMx/XPbkaa3kfxkBKfne7wA==
+X-Received: by 2002:a17:903:32c3:b0:199:4362:93f6 with SMTP id i3-20020a17090332c300b00199436293f6mr9399565plr.4.1675988155556;
+        Thu, 09 Feb 2023 16:15:55 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n3-20020aa78a43000000b00593b72f6680sm2018611pfa.86.2023.02.09.16.14.27
+        by smtp.gmail.com with ESMTPSA id jj5-20020a170903048500b00198d5c7cafasm2109067plb.156.2023.02.09.16.15.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Feb 2023 16:14:27 -0800 (PST)
-Message-ID: <7d684001-e24d-726f-885d-597f8c3d3101@kernel.dk>
-Date:   Thu, 9 Feb 2023 17:14:26 -0700
+        Thu, 09 Feb 2023 16:15:55 -0800 (PST)
+Message-ID: <6939adfb-ce2c-1911-19ee-af32f7d9a5ca@kernel.dk>
+Date:   Thu, 9 Feb 2023 17:15:53 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH v8 5/7] io-uring: add sqpoll support for napi busy poll
+Subject: Re: [PATCH v2] io_uring,audit: don't log IORING_OP_MADVISE
 Content-Language: en-US
-To:     Stefan Roesch <shr@devkernel.io>, io-uring@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     ammarfaizi2@gnuweeb.org, Olivier Langlois <olivier@trillion01.com>
-References: <20230209230144.465620-1-shr@devkernel.io>
- <20230209230144.465620-6-shr@devkernel.io>
+To:     Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, io-uring@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Stefan Roesch <shr@fb.com>
+References: <b5dfdcd541115c86dbc774aa9dd502c964849c5f.1675282642.git.rgb@redhat.com>
+ <Y+VrSLZKZoAGikUS@madcap2.tricolour.ca>
+ <CAHC9VhTNb4gOpk9=49-ABtYs1DFKqqwXPSc-2bhJX7wcZ82o=g@mail.gmail.com>
+ <13293926.uLZWGnKmhe@x2>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230209230144.465620-6-shr@devkernel.io>
+In-Reply-To: <13293926.uLZWGnKmhe@x2>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/9/23 4:01?PM, Stefan Roesch wrote:
-> This adds the sqpoll support to the io-uring napi.
+On 2/9/23 3:54 PM, Steve Grubb wrote:
+> On Thursday, February 9, 2023 5:37:22 PM EST Paul Moore wrote:
+>> On Thu, Feb 9, 2023 at 4:53 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>>> On 2023-02-01 16:18, Paul Moore wrote:
+>>>> On Wed, Feb 1, 2023 at 3:34 PM Richard Guy Briggs <rgb@redhat.com> 
+> wrote:
+>>>>> fadvise and madvise both provide hints for caching or access pattern
+>>>>> for file and memory respectively.  Skip them.
+>>>>
+>>>> You forgot to update the first sentence in the commit description :/
+>>>
+>>> I didn't forget.  I updated that sentence to reflect the fact that the
+>>> two should be treated similarly rather than differently.
+>>
+>> Ooookay.  Can we at least agree that the commit description should be
+>> rephrased to make it clear that the patch only adjusts madvise?  Right
+>> now I read the commit description and it sounds like you are adjusting
+>> the behavior for both fadvise and madvise in this patch, which is not
+>> true.
+>>
+>>>> I'm still looking for some type of statement that you've done some
+>>>> homework on the IORING_OP_MADVISE case to ensure that it doesn't end
+>>>> up calling into the LSM, see my previous emails on this.  I need more
+>>>> than "Steve told me to do this".
+>>>>
+>>>> I basically just want to see that some care and thought has gone into
+>>>> this patch to verify it is correct and good.
+>>>
+>>> Steve suggested I look into a number of iouring ops.  I looked at the
+>>> description code and agreed that it wasn't necessary to audit madvise.
+>>> The rationale for fadvise was detemined to have been conflated with
+>>> fallocate and subsequently dropped.  Steve also suggested a number of
+>>> others and after investigation I decided that their current state was
+>>> correct.  *getxattr you've advised against, so it was dropped.  It
+>>> appears fewer modifications were necessary than originally suspected.
+>>
+>> My concern is that three of the four changes you initially proposed
+>> were rejected, which gives me pause about the fourth.  You mention
+>> that based on your reading of madvise's description you feel auditing
+>> isn't necessary - and you may be right - but based on our experience
+>> so far with this patchset I would like to hear that you have properly
+>> investigated all of the madvise code paths, and I would like that in
+>> the commit description.
+> 
+> I think you're being unnecessarily hard on this. Yes, the commit message 
+> might be touched up. But madvise is advisory in nature. It is not security 
+> relevant. And a grep through the security directory doesn't turn up any 
+> hooks.
 
-This should also have a bit more of an explanation of _why_ this
-is needed and being done.
-
-> diff --git a/io_uring/napi.c b/io_uring/napi.c
-> index c9e2afae382d..038957b46a0e 100644
-> --- a/io_uring/napi.c
-> +++ b/io_uring/napi.c
-> @@ -278,4 +278,29 @@ void io_napi_end_busy_loop(struct io_ring_ctx *ctx, struct io_wait_queue *iowq,
->  		io_napi_merge_lists(ctx, napi_list);
->  }
->  
-> +/*
-> + * io_napi_sqpoll_busy_poll() - busy poll loop for sqpoll
-> + * @ctx: pointer to io-uring context structure
-> + * @napi_list: pointer to head of napi list
-> + *
-> + * Splice of the napi list and execute the napi busy poll loop.
-> + */
-> +int io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx, struct list_head *napi_list)
-> +{
-> +	int ret = 0;
-> +
-> +	spin_lock(&ctx->napi_lock);
-> +	list_splice_init(&ctx->napi_list, napi_list);
-> +	spin_unlock(&ctx->napi_lock);
-> +
-> +	if (!list_empty(napi_list) &&
-> +	    READ_ONCE(ctx->napi_busy_poll_to) > 0 &&
-> +	    io_napi_busy_loop(napi_list, ctx->napi_prefer_busy_poll)) {
-> +		io_napi_merge_lists(ctx, napi_list);
-> +		ret = 1;
-> +	}
-> +
-> +	return ret;
-
-Should 'ret' be a bool and the return value of the function too?
-
-> diff --git a/io_uring/napi.h b/io_uring/napi.h
-> index 0672592cfb79..23a6df32805f 100644
-> --- a/io_uring/napi.h
-> +++ b/io_uring/napi.h
-> @@ -23,6 +23,7 @@ void io_napi_adjust_busy_loop_timeout(struct io_ring_ctx *ctx,
->  			struct timespec64 *ts);
->  void io_napi_end_busy_loop(struct io_ring_ctx *ctx, struct io_wait_queue *iowq,
->  			struct list_head *napi_list);
-> +int io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx, struct list_head *napi_list);
->  
->  #else
->  
-> @@ -43,6 +44,7 @@ static inline void io_napi_add(struct io_kiocb *req)
->  #define io_napi_setup_busy_loop(ctx, iowq, napi_list) do {} while (0)
->  #define io_napi_adjust_busy_loop_timeout(ctx, iowq, napi_list, ts) do {} while (0)
->  #define io_napi_end_busy_loop(ctx, iowq, napi_list) do {} while (0)
-> +#define io_napi_sqpoll_busy_poll(ctx, napi_list) (0)
-
-This should be:
-
-#define io_napi_sqpoll_busy_poll(ctx, napi_list)
-{(
-)}
-do { } while (0)
-
->  
->  #endif
->  
-> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-> index 0119d3f1a556..90fdbd87434a 100644
-> --- a/io_uring/sqpoll.c
-> +++ b/io_uring/sqpoll.c
-> @@ -15,6 +15,7 @@
->  #include <uapi/linux/io_uring.h>
->  
->  #include "io_uring.h"
-> +#include "napi.h"
->  #include "sqpoll.h"
->  
->  #define IORING_SQPOLL_CAP_ENTRIES_VALUE 8
-> @@ -168,6 +169,7 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
->  {
->  	unsigned int to_submit;
->  	int ret = 0;
-> +	NAPI_LIST_HEAD(local_napi_list);
-
-In general, keep these roughly in inverse xmas tree.
-
->  	to_submit = io_sqring_entries(ctx);
->  	/* if we're handling multiple rings, cap submit size for fairness */
-> @@ -193,6 +195,8 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
->  			ret = io_submit_sqes(ctx, to_submit);
->  		mutex_unlock(&ctx->uring_lock);
->  
-> +		ret += io_napi_sqpoll_busy_poll(ctx, &local_napi_list);
-> +
->  		if (to_submit && wq_has_sleeper(&ctx->sqo_sq_wait))
->  			wake_up(&ctx->sqo_sq_wait);
->  		if (creds)
-
-Not clear to me what this ret += ... does here? We're currently
-returning number of sqes submitted. Maybe this is fine and just means
-'we did some work', but if so, should add a comment for that.
+Agree, it's getting a bit anal... FWIW, patch looks fine to me.
 
 -- 
 Jens Axboe
+
 

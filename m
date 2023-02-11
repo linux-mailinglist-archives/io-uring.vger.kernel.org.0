@@ -2,124 +2,118 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5593C692E93
-	for <lists+io-uring@lfdr.de>; Sat, 11 Feb 2023 07:18:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA826930C8
+	for <lists+io-uring@lfdr.de>; Sat, 11 Feb 2023 13:06:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjBKGSW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Feb 2023 01:18:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34946 "EHLO
+        id S229571AbjBKMGn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Feb 2023 07:06:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjBKGSV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 01:18:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CCB7072E
-        for <io-uring@vger.kernel.org>; Fri, 10 Feb 2023 22:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676096252;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+CTwGPJ6Nc46AzE4LIyhb9Ckm0HjZ8PmHDXQrmNlV6c=;
-        b=f6xonc4uEiwf8YwvcYZGw4O2/lHFuKTwxWepAegY5KuYMk0X7dCxPA2mtTUswo5NgnqWs1
-        Lj4PC34FsIfelAgIga22t5VZ/ivmBRAoG62oEyE0LzaxkdZ7cJj7N7QmkD+k9CxDcx28UT
-        /19w0cECZ7/SsnqKOEmkL2kHoDRtk2I=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-137-mXpfP7K7MgOq65-LwG78LQ-1; Sat, 11 Feb 2023 01:17:31 -0500
-X-MC-Unique: mXpfP7K7MgOq65-LwG78LQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S229473AbjBKMGn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 07:06:43 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E282FCFF;
+        Sat, 11 Feb 2023 04:06:42 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B5FE29AA3B7;
-        Sat, 11 Feb 2023 06:17:30 +0000 (UTC)
-Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F3DD492C3F;
-        Sat, 11 Feb 2023 06:17:22 +0000 (UTC)
-Date:   Sat, 11 Feb 2023 14:17:18 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>,
-        ming.lei@redhat.com
-Subject: Re: copy on write for splice() from file to pipe?
-Message-ID: <Y+cy7tmxWM2HVnck@T590>
-References: <1dd85095-c18c-ed3e-38b7-02f4d13d9bd6@kernel.dk>
- <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
- <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
- <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
- <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk>
- <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
- <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
- <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
- <CAHk-=wjzqrD5wrfeaU390bXEEBY2JF-oKmFN4fREzgyXsbQRTQ@mail.gmail.com>
- <Y+cJDnnMuirSjO3E@T590>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B07645D511;
+        Sat, 11 Feb 2023 12:06:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1676117200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KP5yy1ZpwWkRzlaqj8fbu7lqqI4sZIjJJyvGJl92ICE=;
+        b=NJPGzvbYh3oTdV5a6oBqeiHxCosJwJPz9/mOLIfh18z09End4DbwW5SJdouu0ILz5CJV12
+        clfQzgJHB6QG0h+X0c7VwXUqKaT1FeHEcBxJjHK+m42AgkXm110NqKkNzzevLfv3zhrpi7
+        W4EwKeBQCj9rn2Dn50cTai7hGgAqgVw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1676117200;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KP5yy1ZpwWkRzlaqj8fbu7lqqI4sZIjJJyvGJl92ICE=;
+        b=U0NL6JPqPuTL8hiRN3SVVvrSEy29wDuJ6zC9OqCxAMM9pZILZX+zx0SGsplJx5RSrfyPU4
+        SiNrEqQDW86yApBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 70E3313A10;
+        Sat, 11 Feb 2023 12:06:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id HYO/GtCE52OoXAAAMHmgww
+        (envelope-from <hare@suse.de>); Sat, 11 Feb 2023 12:06:40 +0000
+Message-ID: <87bd6050-d7df-94f6-bfc1-6ddac79d6d65@suse.de>
+Date:   Sat, 11 Feb 2023 13:06:39 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+cJDnnMuirSjO3E@T590>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
+        kbusch@kernel.org, ming.lei@redhat.com
+References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
+ <20230210180033.321377-1-joshi.k@samsung.com>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20230210180033.321377-1-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 11:18:38AM +0800, Ming Lei wrote:
-> On Fri, Feb 10, 2023 at 02:08:35PM -0800, Linus Torvalds wrote:
-> > On Fri, Feb 10, 2023 at 1:51 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > >
-> > > Speaking of splice/io_uring, Ming posted this today:
-> > >
-> > > https://lore.kernel.org/io-uring/20230210153212.733006-1-ming.lei@redhat.com/
-> > 
-> > Ugh. Some of that is really ugly. Both 'ignore_sig' and
-> > 'ack_page_consuming' just look wrong. Pure random special cases.
-> > 
-> > And that 'ignore_sig' is particularly ugly, since the only thing that
-> > sets it also sets SPLICE_F_NONBLOCK.
-> > 
-> > And the *only* thing that actually then checks that field is
-> > 'splice_from_pipe_next()', where there are exactly two
-> > signal_pending() checks that it adds to, and
-> > 
-> >  (a) the first one is to protect from endless loops
-> > 
-> >  (b) the second one is irrelevant when  SPLICE_F_NONBLOCK is set
-> > 
-> > So honestly, just NAK on that series.
-> > 
-> > I think that instead of 'ignore_sig' (which shouldn't exist), that
-> > first 'signal_pending()' check in splice_from_pipe_next() should just
-> > be changed into a 'fatal_signal_pending()'.
+On 2/10/23 19:00, Kanchan Joshi wrote:
+> is getting more common than it used to be.
+> NVMe is no longer tied to block storage. Command sets in NVMe 2.0 spec
+> opened an excellent way to present non-block interfaces to the Host. ZNS
+> and KV came along with it, and some new command sets are emerging.
 > 
-> Good point, here the signal is often from task_work_add() called by
-> io_uring.
+> OTOH, Kernel IO advances historically centered around the block IO path.
+> Passthrough IO path existed, but it stayed far from all the advances, be
+> it new features or performance.
 > 
-> > 
-> > But that 'ack_page_consuming' thing looks even more disgusting, and
-> > since I'm not sure why it even exists, I don't know what it's doing
-> > wrong.
+> Current state & discussion points:
+> ---------------------------------
+> Status-quo changed in the recent past with the new passthrough path (ng
+> char interface + io_uring command). Feature parity does not exist, but
+> performance parity does.
+> Adoption draws asks. I propose a session covering a few voices and
+> finding a path-forward for some ideas too.
 > 
-> The motivation is for confirming that if the produced buffer can be used
-> for READ or WRITE. Another way could be to add PIPE_BUF_FLAG_MAY_READ[WRITE].
+> 1. Command cancellation: while NVMe mandatorily supports the abort
+> command, we do not have a way to trigger that from user-space. There
+> are ways to go about it (with or without the uring-cancel interface) but
+> not without certain tradeoffs. It will be good to discuss the choices in
+> person.
+> 
+I would love to have this discussion; that's something which has been on 
+my personal to-do list for a long time, and io_uring might finally be a 
+solution to it.
 
-BTW, I meant the added flags are source/sink private flags, which are
-not used by generic pipe/splice code, just used by the actual source and
-sink subsystem.
+Or, alternatively, looking at CDL for NVMe; that would be an alternative 
+approach.
+Maybe it's even worthwhile to schedule a separate meeting for it.
 
-thanks,
-Ming
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
 

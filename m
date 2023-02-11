@@ -2,112 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7AE6932C7
-	for <lists+io-uring@lfdr.de>; Sat, 11 Feb 2023 18:13:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F968693320
+	for <lists+io-uring@lfdr.de>; Sat, 11 Feb 2023 19:57:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbjBKRNl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Feb 2023 12:13:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
+        id S229483AbjBKS5a (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Feb 2023 13:57:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjBKRNk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 12:13:40 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C9C4200
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 09:13:39 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id a8-20020a17090a6d8800b002336b48f653so7147426pjk.3
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 09:13:39 -0800 (PST)
+        with ESMTP id S229488AbjBKS53 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 13:57:29 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A222199E1
+        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 10:57:28 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id gr7so23138771ejb.5
+        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 10:57:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676135619;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e/4oDiUV4pEpw2exK7b92/tNXC0d/VoaubyD3eCGRAw=;
-        b=CdlUsmcf9T8lc6YJCVpYkVjK+fxvTNh0AyyzxdlMuPLRc7rQR+OyPRTjPw8f9ZfVKD
-         7dJwBlTIibNnMUXo52zwVNYwEoOwmNg/k7F6SXEk3nUdL6OG8ye0BXjO77/qsbMpU90z
-         TJNN92VYCd9ADIEpMm1hfrvGbR2r0kNh94+GO0t/8VrhitFdWo+yxt53R460DfNHv5mD
-         tNjMd5XdlbmIYfvh1aOUFPLxcrbruUxvlfvh61JlMJ/2UvQGB0u4FHsfFYS9SkfLiGSg
-         /DERSnKywxV5+LnQ9kbQbyDffjt5FkizE2wcRFDXLPLmmRZgAG3LSsr+q91DdD09Rgai
-         xI7w==
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3PcKjkZEscdfAV5ya0phdN14wwNaXoRb40kNT9Dczeo=;
+        b=YHVu5kUXNJwub6fL2bFRhFub6fqpPJshyUtgnUVxZxBIopwouTR/KgSkKN4JSR5uve
+         Wkfn8LbbiLtb+QLkrXegG9Ji77YU2cy+xueHjxfB9bGAjhzAGT4k9x0ToEiwbgOMILfW
+         LyuiuxNGORWZQC9nxgiaZUsmJDUDBv4eCG8b8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676135619;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e/4oDiUV4pEpw2exK7b92/tNXC0d/VoaubyD3eCGRAw=;
-        b=eUt1s98tZR1qQzy71dMmN1baeNmxTN4HwwxfwIEIEb7P3ddW2oPvzjoE/HkIqfkZNM
-         NdnV7nb4j8YiF+TnbLVF+TOKWJeRzMVG7QepDOyOaH+IKzsczGfesw4Pg+/6T7DXvA9L
-         z3UPnIJ4MF5u4a9OydkWp7d3UGz42GH22wHC58Env0Ljixch3rb2GC+JuNPJmlYWcSxy
-         K0nVCDkebDOmom5/xiXXu3hluG5f8ECsheE3tAjvqPuV8IE4jEV9vDtC5l6L59vZvaod
-         tJE/JjQYg+edFU7M1/UTfepul4GO90j71973vyZTocRbQH/0sOxhOmDZNOrMY4zS+kLn
-         Ij2w==
-X-Gm-Message-State: AO0yUKU58Rf+wc6XOqoTuTenJ/yUPa3pmBZNGBlY5mkzbGir3GgPFVWX
-        pLT71NluIJSOo/ejADFeKKS0fA==
-X-Google-Smtp-Source: AK7set+YNTkWJk9Lmdb4OTLCXCa5YKs46dJ7jgznn/TRFbVfb0VjRKwRsgPh+pCS7DOF566PQnsgvA==
-X-Received: by 2002:a17:903:32d1:b0:19a:9269:7d1 with SMTP id i17-20020a17090332d100b0019a926907d1mr825898plr.4.1676135618935;
-        Sat, 11 Feb 2023 09:13:38 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id jn14-20020a170903050e00b00199025284b3sm5213418plb.151.2023.02.11.09.13.37
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3PcKjkZEscdfAV5ya0phdN14wwNaXoRb40kNT9Dczeo=;
+        b=TsJeX/ejSN/Zgbp1McHRy+HrXNScB7gDvb0Q/rC9hQKn6IOFTb3ZN5dZJ6bzePjCsv
+         RsCMx3QRSlg48WCQT3p3b7Pjn8vUu6a1rR78AGG9h/2Kl1rDFAz9jql0l2JIjmVwG/+c
+         4cR6tAYHkSd8CRXs49h2DYSe7WCMHl028kCRWx9sVwfOKrlSq5MeJGkGt+GvohHmT557
+         ZrJ0vYbB+v4U/AJN/ju1wnmu9K2wTETXrJkCO040ufZO+5CQDf+7197RkpC0dGyVWnqb
+         x9LrFwZyWZsl+hi3mg41WnCItDluLVSygVDWlZUo0gyc6WDD59m93zhTIHkFJNozW0wN
+         E/Bw==
+X-Gm-Message-State: AO0yUKXDc3SzS+Ke3Ku8/MF5sH54ixyerpNIYmmLGnn73OUZVkVMFfSr
+        2bSi7shydyVgNSVnkRObK1Ae7LTgHGUrwqofxhQ=
+X-Google-Smtp-Source: AK7set+CI9acTTwtWXy9/I+gMyn/5DwMHXL2nvE4uKEfenod4AlxKQldUopBQewP0DKHl3YLRpYEow==
+X-Received: by 2002:a17:906:33cf:b0:884:930:b014 with SMTP id w15-20020a17090633cf00b008840930b014mr18517725eja.6.1676141846015;
+        Sat, 11 Feb 2023 10:57:26 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id lu19-20020a170906fad300b007a9c3831409sm4151395ejb.137.2023.02.11.10.57.24
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 09:13:38 -0800 (PST)
-Message-ID: <7323fbef-4790-3975-9c43-7ba4b7809c33@kernel.dk>
-Date:   Sat, 11 Feb 2023 10:13:37 -0700
+        Sat, 11 Feb 2023 10:57:25 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id r3so8111638edq.13
+        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 10:57:24 -0800 (PST)
+X-Received: by 2002:a50:c353:0:b0:4ac:b616:4ba9 with SMTP id
+ q19-20020a50c353000000b004acb6164ba9mr1152399edb.5.1676141844693; Sat, 11 Feb
+ 2023 10:57:24 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
+References: <20230210153212.733006-1-ming.lei@redhat.com> <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590>
+In-Reply-To: <Y+e3b+Myg/30hlYk@T590>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 11 Feb 2023 10:57:08 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+Message-ID: <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Bernd Schubert <bschubert@ddn.com>,
         Nitesh Shetty <nj.shetty@samsung.com>,
         Christoph Hellwig <hch@lst.de>,
         Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230210153212.733006-4-ming.lei@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/10/23 8:32?AM, Ming Lei wrote:
-
-One more comment on this.
-
-> +static int __io_prep_rw_splice_buf(struct io_kiocb *req,
-> +				   struct io_rw_splice_buf_data *data,
-> +				   struct file *splice_f,
-> +				   size_t len,
-> +				   loff_t splice_off)
-> +{
-> +	unsigned flags = req->opcode == IORING_OP_READ_SPLICE_BUF ?
-> +			SPLICE_F_KERN_FOR_READ : SPLICE_F_KERN_FOR_WRITE;
-> +	struct splice_desc sd = {
-> +		.total_len = len,
-> +		.flags = flags | SPLICE_F_NONBLOCK | SPLICE_F_KERN_NEED_CONFIRM,
-> +		.pos = splice_off,
-> +		.u.data = data,
-> +		.ignore_sig = true,
-> +	};
+On Sat, Feb 11, 2023 at 7:42 AM Ming Lei <ming.lei@redhat.com> wrote:
+>
+> +/*
+> + * Used by source/sink end only, don't touch them in generic
+> + * splice/pipe code. Set in source side, and check in sink
+> + * side
+> + */
+> +#define PIPE_BUF_PRIV_FLAG_MAY_READ    0x1000 /* sink can read from page */
+> +#define PIPE_BUF_PRIV_FLAG_MAY_WRITE   0x2000 /* sink can write to page */
 > +
-> +	return splice_direct_to_actor(splice_f, &sd,
-> +			io_splice_buf_direct_actor);
 
-Is this safe? We end up using current->splice_pipe here, which should be
-fine as long as things are left in a sane state after every operation.
-Which they should be, just like a syscall would. Just wanted to make
-sure you've considered that part.
+So this sounds much more sane and understandable, but I have two worries:
 
--- 
-Jens Axboe
+ (a) what's the point of MAY_READ? A non-readable page sounds insane
+and wrong. All sinks expect to be able to read.
 
+ (b) what about 'tee()' which duplicates a pipe buffer that has
+MAY_WRITE? Particularly one that may already have been *partially*
+given to something that thinks it can write to it?
+
+So at a minimum I think the tee code then needs to clear that flag.
+And I think MAY_READ is nonsense.
+
+          Linus

@@ -2,142 +2,271 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F565693200
-	for <lists+io-uring@lfdr.de>; Sat, 11 Feb 2023 16:33:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A26693207
+	for <lists+io-uring@lfdr.de>; Sat, 11 Feb 2023 16:43:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbjBKPdQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Feb 2023 10:33:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37888 "EHLO
+        id S229487AbjBKPnq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Feb 2023 10:43:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjBKPdP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 10:33:15 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC322885A
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 07:33:07 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id d13-20020a17090ad3cd00b0023127b2d602so8489223pjw.2
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 07:33:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676129586;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3C/YASUIoy+dQcEYZ+F2OwnfV9uUu+22o30wDUIMzBE=;
-        b=sbVTZ6emU72abJ/43S9dRNx91cA3NySmKA+Mc39t143FMQvGNsFplK+3YIgAKHCnaO
-         4qXaLeE/xNBoI3uIwiSDhFKJkQXYTZFzaENlUPdMc3aV6I+8ZVFouQH4mHwPiQruonYw
-         tWb4Q7KwVk1FAImU1/dwnKXcTlRWyzAXk7eIOJRCP+MAo6ivePzNK0yBjdmFWlbPTlw8
-         trRQR6EbK1LlwLzCNfMtuRtX+QqmUm8Juw/PWZxxc++sIPYwOlxDM8WDxL4+3Su1gYHF
-         uoD76qwrhx95BUZyN/Isod0iE6gRTMIF4kEjzD7OS2CR3r8QHrWLYeLKk9yC8x1WPx1G
-         Dvhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676129586;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3C/YASUIoy+dQcEYZ+F2OwnfV9uUu+22o30wDUIMzBE=;
-        b=bs/DwQ7WUNQ8r3hWK7cmOUBN2h88Y/NzV+xWASd7UqcfRon0BvHJ/gIt5veTdSWnOe
-         vCQB6ZTeKRcZ20Lq1NGtuN/uH93d8MwwAgArIC3SWjI6gQP8AIn8UlnBFntcGwIaAFVR
-         ZbzhdhrDBvn+IHWRBT8aPPPmtEX9m4apGp9uhNIpGHSj41Qiqfg61NqxKHLFOaTcDwey
-         6ndAtmN9plCSO89mFDRcecJCSAUzwCnIp4srCEIPZKvZN1c1s9CoY70cQjkbefWzTSED
-         Lyx7VmxgmD995YO/NhwipWF//Oj5dPzBdVWf1GGL9rIqF8AXjqwhq0W64hp7ZC0jW9Qi
-         nObw==
-X-Gm-Message-State: AO0yUKUnR9lhcbv4kc9AlAogjllxZ+c9dhMJbiougbfH2JiTbFUHYjXP
-        yC2X6vshc6YFcYeHGg1GTFYUlg==
-X-Google-Smtp-Source: AK7set8Qp1ZJeY9F/hMzd03j0PcrfY61A4xgg3Ab4f7G8S8p7WiH3f0uEwnVqAVhQtBxa7kXTpS9CA==
-X-Received: by 2002:a17:90a:5ae2:b0:230:b356:a35b with SMTP id n89-20020a17090a5ae200b00230b356a35bmr15997262pji.4.1676129586562;
-        Sat, 11 Feb 2023 07:33:06 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id w23-20020a17090a15d700b0022bf0b0e1b7sm2962226pjd.10.2023.02.11.07.33.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 07:33:06 -0800 (PST)
-Message-ID: <787c3b62-f5d8-694d-cd2f-24b40848e39f@kernel.dk>
-Date:   Sat, 11 Feb 2023 08:33:04 -0700
+        with ESMTP id S229447AbjBKPnp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 10:43:45 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19754211F3
+        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 07:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676130177;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8U4buABgszycRdED4BVp3vwkQcDbX/tjVIxmfJwq8SM=;
+        b=U4wCQAk3cC5k6D9wRQ6gADXrQ/g10DATr5v9+yBK2XDIzCrXkmAgpqLWE8zrRfHe+5aqO7
+        CyBLM8qw5e8x4tU0j9irmGKf+qwUHCv5H7Oz+VPTwY2Lh6JG8EfHN/yjW0DWIDoptiSTwU
+        ju3shQ3TqiXXUYnQXyOasyhtTEcDt70=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-663-SfFr5-p8NTC0BsBpvpIOpQ-1; Sat, 11 Feb 2023 10:42:53 -0500
+X-MC-Unique: SfFr5-p8NTC0BsBpvpIOpQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 93CD9101A521;
+        Sat, 11 Feb 2023 15:42:52 +0000 (UTC)
+Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A8FB1121315;
+        Sat, 11 Feb 2023 15:42:44 +0000 (UTC)
+Date:   Sat, 11 Feb 2023 23:42:39 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+Message-ID: <Y+e3b+Myg/30hlYk@T590>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-2-ming.lei@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: copy on write for splice() from file to pipe?
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
- <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
- <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
- <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk>
- <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
- <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
- <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
- <CAHk-=wjzqrD5wrfeaU390bXEEBY2JF-oKmFN4fREzgyXsbQRTQ@mail.gmail.com>
- <Y+cJDnnMuirSjO3E@T590> <55eaac9e-0d77-1fa2-df27-4d64e123177e@kernel.dk>
- <Y+euv+zR5ltTELqk@T590>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y+euv+zR5ltTELqk@T590>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230210153212.733006-2-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/11/23 8:05 AM, Ming Lei wrote:
-> On Sat, Feb 11, 2023 at 07:13:44AM -0700, Jens Axboe wrote:
->> On 2/10/23 8:18?PM, Ming Lei wrote:
->>> On Fri, Feb 10, 2023 at 02:08:35PM -0800, Linus Torvalds wrote:
->>>> On Fri, Feb 10, 2023 at 1:51 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>
->>>>> Speaking of splice/io_uring, Ming posted this today:
->>>>>
->>>>> https://lore.kernel.org/io-uring/20230210153212.733006-1-ming.lei@redhat.com/
->>>>
->>>> Ugh. Some of that is really ugly. Both 'ignore_sig' and
->>>> 'ack_page_consuming' just look wrong. Pure random special cases.
->>>>
->>>> And that 'ignore_sig' is particularly ugly, since the only thing that
->>>> sets it also sets SPLICE_F_NONBLOCK.
->>>>
->>>> And the *only* thing that actually then checks that field is
->>>> 'splice_from_pipe_next()', where there are exactly two
->>>> signal_pending() checks that it adds to, and
->>>>
->>>>  (a) the first one is to protect from endless loops
->>>>
->>>>  (b) the second one is irrelevant when  SPLICE_F_NONBLOCK is set
->>>>
->>>> So honestly, just NAK on that series.
->>>>
->>>> I think that instead of 'ignore_sig' (which shouldn't exist), that
->>>> first 'signal_pending()' check in splice_from_pipe_next() should just
->>>> be changed into a 'fatal_signal_pending()'.
->>>
->>> Good point, here the signal is often from task_work_add() called by
->>> io_uring.
->>
->> Usually you'd use task_sigpending() to distinguis the two, but
->> fatal_signal_pending() as Linus suggests would also work. The only
->> concern here is that since you'll be potentially blocking on waiting for
->> the pipe to be readable - if task does indeed have task_work pending and
->> that very task_work is the one that will ensure that the pipe is now
->> readable, then you're waiting condition will never be satisfied.
+On Fri, Feb 10, 2023 at 11:32:09PM +0800, Ming Lei wrote:
+> Per-task direct pipe can transfer page between two files or one
+> file and other kernel components, especially by splice_direct_to_actor
+> and __splice_from_pipe().
 > 
-> The 2nd signal_pending() will break the loop to get task_work handled,
-> so it is safe to only change the 1st one to fatal_signal_pending().
+> This way is helpful for fuse/ublk to implement zero copy by transferring
+> pages from device to file or socket. However, when device's ->splice_read()
+> produces pages, the kernel consumer may read from or write to these pages,
+> and from device viewpoint, there could be unexpected read or write on
+> pages.
+> 
+> Enhance the limit by the following approach:
+> 
+> 1) add kernel splice flags of SPLICE_F_KERN_FOR_[READ|WRITE] which is
+>    passed to device's ->read_splice(), then device can check if this
+>    READ or WRITE is expected on pages filled to pipe together with
+>    information from ppos & len
+> 
+> 2) add kernel splice flag of SPLICE_F_KERN_NEED_CONFIRM which is passed
+>    to device's ->read_splice() for asking device to confirm if it
+>    really supports this kind of usage of feeding pages by ->read_splice().
+>    If device does support, pipe->ack_page_consuming is set. This way
+>    can avoid misuse.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  fs/splice.c               | 15 +++++++++++++++
+>  include/linux/pipe_fs_i.h | 10 ++++++++++
+>  include/linux/splice.h    | 22 ++++++++++++++++++++++
+>  3 files changed, 47 insertions(+)
+> 
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 87d9b19349de..c4770e1644cc 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -792,6 +792,14 @@ static long do_splice_to(struct file *in, loff_t *ppos,
+>  	return in->f_op->splice_read(in, ppos, pipe, len, flags);
+>  }
+>  
+> +static inline bool slice_read_acked(const struct pipe_inode_info *pipe,
+> +			       int flags)
+> +{
+> +	if (flags & SPLICE_F_KERN_NEED_CONFIRM)
+> +		return pipe->ack_page_consuming;
+> +	return true;
+> +}
+> +
+>  /**
+>   * splice_direct_to_actor - splices data directly between two non-pipes
+>   * @in:		file to splice from
+> @@ -861,10 +869,17 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+>  		size_t read_len;
+>  		loff_t pos = sd->pos, prev_pos = pos;
+>  
+> +		pipe->ack_page_consuming = false;
+>  		ret = do_splice_to(in, &pos, pipe, len, flags);
+>  		if (unlikely(ret <= 0))
+>  			goto out_release;
+>  
+> +		if (!slice_read_acked(pipe, flags)) {
+> +			bytes = 0;
+> +			ret = -EACCES;
+> +			goto out_release;
+> +		}
+> +
+>  		read_len = ret;
+>  		sd->total_len = read_len;
+>  
+> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+> index 6cb65df3e3ba..09ee1a9380ec 100644
+> --- a/include/linux/pipe_fs_i.h
+> +++ b/include/linux/pipe_fs_i.h
+> @@ -72,6 +72,7 @@ struct pipe_inode_info {
+>  	unsigned int r_counter;
+>  	unsigned int w_counter;
+>  	bool poll_usage;
+> +	bool ack_page_consuming;	/* only for direct pipe */
+>  	struct page *tmp_page;
+>  	struct fasync_struct *fasync_readers;
+>  	struct fasync_struct *fasync_writers;
+> @@ -218,6 +219,15 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
+>  		pipe_buf_release(pipe, &pipe->bufs[--pipe->head & mask]);
+>  }
+>  
+> +/*
+> + * Called in ->splice_read() for confirming the READ/WRITE page is allowed
+> + */
+> +static inline void pipe_ack_page_consume(struct pipe_inode_info *pipe)
+> +{
+> +	if (!WARN_ON_ONCE(current->splice_pipe != pipe))
+> +		pipe->ack_page_consuming = true;
+> +}
+> +
+>  /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
+>     memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
+>  #define PIPE_SIZE		PAGE_SIZE
+> diff --git a/include/linux/splice.h b/include/linux/splice.h
+> index a55179fd60fc..98c471fd918d 100644
+> --- a/include/linux/splice.h
+> +++ b/include/linux/splice.h
+> @@ -23,6 +23,28 @@
+>  
+>  #define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT)
+>  
+> +/*
+> + * Flags used for kernel internal page move from ->splice_read()
+> + * by internal direct pipe, and user pipe can't touch these
+> + * flags.
+> + *
+> + * Pages filled from ->splice_read() are usually moved/copied to
+> + * ->splice_write(). Here address fuse/ublk zero copy by transferring
+> + * page from device to file/socket for either READ or WRITE. So we
+> + * need ->splice_read() to confirm if this READ/WRITE is allowed on
+> + * pages filled in ->splice_read().
+> + */
+> +/* The page consumer is for READ from pages moved from direct pipe */
+> +#define SPLICE_F_KERN_FOR_READ	(0x100)
+> +/* The page consumer is for WRITE to pages moved from direct pipe */
+> +#define SPLICE_F_KERN_FOR_WRITE	(0x200)
+> +/*
+> + * ->splice_read() has to confirm if consumer's READ/WRITE on pages
+> + * is allow. If yes, ->splice_read() has to set pipe->ack_page_consuming,
+> + * otherwise pipe->ack_page_consuming has to be cleared.
+> + */
+> +#define SPLICE_F_KERN_NEED_CONFIRM	(0x400)
+> +
 
-OK, but then the ignore_sig change should not be needed at all, just
-changing that first bit to fatal_signal_pending() would do the trick?
+As Linus commented in another thread, this patch is really ugly.
 
+I'd suggest to change to the following one, any comment is welcome!
+
+
+From fb9340ce72a1c58c9428d2af7cb00b55fa4ba799 Mon Sep 17 00:00:00 2001
+From: Ming Lei <ming.lei@redhat.com>
+Date: Fri, 10 Feb 2023 09:16:46 +0000
+Subject: [PATCH 2/4] fs/splice: add private flags for cross-check in two ends
+
+Pages are transferred via pipe/splice between different subsystems.
+
+The source subsystem may know if spliced pages are readable or
+writable. The sink subsystem may know if spliced pages need to
+write to or read from.
+
+Add two pair of private flags, so that the source subsystem and
+sink subsystem can run cross-check about page use correctness,
+and they are supposed to be used in case of communicating over
+direct pipe only. Generic splice and pipe code is supposed to
+not touch the two pair of private flags.
+
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ include/linux/pipe_fs_i.h | 8 ++++++++
+ include/linux/splice.h    | 9 +++++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 6cb65df3e3ba..959c8b9287f4 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -14,6 +14,14 @@
+ #define PIPE_BUF_FLAG_LOSS	0x40	/* Message loss happened after this buffer */
+ #endif
+ 
++/*
++ * Used by source/sink end only, don't touch them in generic
++ * splice/pipe code. Set in source side, and check in sink
++ * side
++ */
++#define PIPE_BUF_PRIV_FLAG_MAY_READ	0x1000 /* sink can read from page */
++#define PIPE_BUF_PRIV_FLAG_MAY_WRITE	0x2000 /* sink can write to page */
++
+ /**
+  *	struct pipe_buffer - a linux kernel pipe buffer
+  *	@page: the page containing the data for the pipe buffer
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index a55179fd60fc..90d1d2b5327d 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -23,6 +23,15 @@
+ 
+ #define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT)
+ 
++/*
++ * Use for source/sink side only, don't touch them in generic splice/pipe
++ * code. Pass from sink side, and check in source side.
++ *
++ * So far, it is only for communicating over direct pipe.
++ */
++#define SPLICE_F_PRIV_FOR_READ	(0x100)	/* sink side will read from page */
++#define SPLICE_F_PRIV_FOR_WRITE	(0x200) /* sink side will write page */
++
+ /*
+  * Passed to the actors
+  */
 -- 
-Jens Axboe
+2.38.1
 
+
+
+Thanks,
+Ming
 

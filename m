@@ -2,142 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 473346935EA
-	for <lists+io-uring@lfdr.de>; Sun, 12 Feb 2023 04:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 421FD6936BE
+	for <lists+io-uring@lfdr.de>; Sun, 12 Feb 2023 10:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjBLDzb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Feb 2023 22:55:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
+        id S229493AbjBLJrZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Feb 2023 04:47:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjBLDzb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 22:55:31 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D5D811EB9
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 19:55:26 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id e10-20020a17090a630a00b0022bedd66e6dso13925695pjj.1
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 19:55:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EhWxFB4ODTurP+Bbh4zJn7gAxthxpyL6UKX+g4y+ZjQ=;
-        b=4oXWD6WwwvKtE7IE7ek3e8RvqRagQZ8C8ZrVALBgqtBxdRjm/aG7oxpBqUnFwwM4DJ
-         ek/S+kJ9IUeThE7HJuw7gpf7HnWARkN688eLl24wK0jaNeXhgDkFMWm0NfKMMJn1y6SE
-         h4EA/zeco7f8KQFXqBOXxVOPDf13kk+VjrfQQ7bZyHvYFEvs9qdQjwn1PPKGX+s5ShQ5
-         tKUPaXqT5Cu/VF3Afq8HKMWuhPcNDkMsOmtEgIMUaSFUcO5ihZ/plT4S3Rx6zU8mFNOH
-         g5Zee/a2NpptVNbnAIkNNH6nT3tQKF4AxjMi81qPNsjzLk52oa+VmL15tBMLA11JguiU
-         zNKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EhWxFB4ODTurP+Bbh4zJn7gAxthxpyL6UKX+g4y+ZjQ=;
-        b=iwyrQrMHpe2rfziV1Tj3dckfitLTgeaVWeAVVdmXOc8D2UT3K3jSckPY4TivT7Aw9r
-         MqNrlXhc77WtE+SGS77ZwGAcPSF6ODmljU5zGn/pOVLJ+gB1ywgz/mcINz9yfmYFAdpL
-         GSV1wWqTiE+eeVbCAJn+dzTkVrkonlGLnFWDzty0BMml6kCnTTreRX0LpqRojRSdKjpj
-         PHLLD2p2rw1D9XlSMGWmNrRwx0s/JwMCe2VvouFv3EiCgpCGmSgN2sHZy2qtd/M/u52/
-         QYxSwZPpkyq/M+Gdo+HFg3pK+6KTv/d4p8hisAgQ9DWQQCRQRl4lngckHzgYoNlVZk3F
-         UNtQ==
-X-Gm-Message-State: AO0yUKUEQmSJJf3QQeumsWjLHXdOcJiTsKUgQImgcPiaNW6rlFE4YZbx
-        oue/Bvfd9nyHpm9vJQXHUdO/MQ==
-X-Google-Smtp-Source: AK7set9jwghXObjJgAAtgV3PvPOahGO37nT0OGYuWJMwgbbwncNytT3Wwxr2VE0SCOTnwxETr7ru1w==
-X-Received: by 2002:a17:903:182:b0:198:a5d9:f2fd with SMTP id z2-20020a170903018200b00198a5d9f2fdmr21711336plg.6.1676174125887;
-        Sat, 11 Feb 2023 19:55:25 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a10-20020a170902ee8a00b001992e74d058sm975727pld.7.2023.02.11.19.55.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 19:55:25 -0800 (PST)
-Message-ID: <44355d28-776a-0134-b087-c11cf4e82f34@kernel.dk>
-Date:   Sat, 11 Feb 2023 20:55:23 -0700
+        with ESMTP id S229468AbjBLJrY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Feb 2023 04:47:24 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED756EC60;
+        Sun, 12 Feb 2023 01:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1676195239; bh=pYaetCeNFhD9jMHtNXjFKYku2v+SnTfT03mlMT6O1XM=;
+        h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+        b=rkm3trIofjMMTz4VgUiKJfVYFdOeP3jH1Q4nQiAh2Gx+ERChRGjWFrBBgRZ/+6Qc4
+         DnrQHtXzWCcxbwvMF24RwC+5iHDpYvvSwe6kP5NamJ7m7VI//wBx7Lom6qgK2YDJ4f
+         l0aJnEvwfFl8WC67/fUzzGwKtDh71Erd+lYkAwSWP+ZP6e8QWpuw4Cp5Ip6PO9wglO
+         CRPki2b9Kb94zbHF8V5C2inH7WxlEnKiS8hx+ggE2nqfQGucjWVCAwyb8lnOwC/V/W
+         2sizQZMP7LP9WJRgeruVIBqx/3N5bsael88SA7jc69/DwtFAa3DqjAmXouFKw5ZEn8
+         Pk0RRoNIZPVww==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([92.116.190.155]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MZktZ-1p75G53anX-00WlRh; Sun, 12
+ Feb 2023 10:47:18 +0100
+Message-ID: <216beccc-8ce7-82a2-80ba-1befa7b3bc91@gmx.de>
+Date:   Sun, 12 Feb 2023 10:47:17 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
 Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
- <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk> <Y+e+i5BXQHcqdDGo@T590>
- <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk> <Y+hbggDCm9wViPAv@T590>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y+hbggDCm9wViPAv@T590>
-Content-Type: text/plain; charset=UTF-8
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     John David Anglin <dave.anglin@bell.net>,
+        linux-parisc <linux-parisc@vger.kernel.org>
+From:   Helge Deller <deller@gmx.de>
+Subject: io_uring failure on parisc (32-bit userspace and 64-bit kernel)
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Provags-ID: V03:K1:XjftiaIWbvhqrScc2lPC+tCpEJ159g3DK+f3C+ayWmzRzbvU0Kr
+ 6petg2N3hGobIAMrGXTO85gvDidJvU/CCyIW8cAZZsnHtHf+HyJyUAd2y+HwCNbG38ul0da
+ kMc/kJh72AoZK5nG1IUTgMj8mKYZCogFBaq87AaZDOrKVQSpmFxEaykWq1OMh385yajMeEf
+ FcdpvEdpIgMt7O9xmCsIg==
+UI-OutboundReport: notjunk:1;M01:P0:uKxSYs4Sc88=;Rx8BxntJfFQq+LrJU2Gs1livdgs
+ zA6eG/xp4qyle3bRd4P87A8vG9f7sndsgujPZqei1qy8avoQNs89P1X5iajuygEgvfrmLd1wb
+ aW1Yxm/lzKzIkJAxQ+L8KZeOYhcU/sBkoKKwhFzTWca7sqDKLhzpSvrM6qMpCVVv/edc0L+pL
+ 8JWW2o1mVvEIVrm2SknjuqwamPlrVwqmxR5ifE4tQieIRBW/7dZVLjHrjAYYqy/3CvyoVq2gr
+ kjz59OnazAK+MvYNYn9O4epYJJdFkE1OpMRFWBJ0lrcPBTN4JuL8ac7AAgKyGo4wX1MMiPnBd
+ xgC7IbKluAHs5doactxB5GKmkXYGLiknXoToHh/e0yrmjhugRtlQUnxl6p+GRlrAPNAK1iMXw
+ DuMIC/K2UpFbniTTAtfTKHDWSgz4xYSWQsRzjZNpJN1QfYtbgB+qg40WZZEjnYvdOp96Xg481
+ AQIZBxBazUmfe9BRWLEbXW1alw9OUa4GVAKth5hX8QD0LqXgmqRwNwOOHxWzAR03MqJDAWk0H
+ 90mYm6jB4iRyRNdobGYSILaEDIuSdgO8ynqxLt+nxcbaxaXyqdPwrBwFF/I3hF0wZn3BtypQy
+ vXicAN2Mwzda+T/8QX+gVSBP7IvaeXenwEB+0NLGoI8X21iMy0sY9xYh3quqVKrfMVfXflh+c
+ kxWImAgqVeG3uRAqedRdFtY9MIHlcvNP/BggPpUOVoYZPtMHMMOjuuvQwbhsNkBUj+xoy2h37
+ j2pGN04mWgcbcYsb5oR8QOteAHfew0xnRJNobtEZIsGO9R1PKSQeH8kgdel0Um1j8hC/b1kU6
+ mJO2BWRecIYvANj9hrIJ2tSC4Kp6gMKo689r0UsVGzoa7ziWPiz9+OVOtW3unb5hmJVkJvEjJ
+ 22gMqYKD13RIL9zlVc74Zr2JAIVVx0cfaL3naurVS7BjhNBtqVM8Y6w4OxkC2/U+etKCtbgLP
+ CdAiJMg5o/gh8d9YYp2k+Z1Xrdk=
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/11/23 8:22?PM, Ming Lei wrote:
->>>> Also seems like this should be separately testable. We can't add new
->>>> opcodes that don't have a feature test at least, and should also have
->>>> various corner case tests. A bit of commenting outside of this below.
->>>
->>> OK, I will write/add one very simple ublk userspace to liburing for
->>> test purpose.
->>
->> Thanks!
-> 
-> Thinking of further, if we use ublk for liburing test purpose, root is
-> often needed, even though we support un-privileged mode, which needs
-> administrator to grant access, so is it still good to do so?
+Hi all,
 
-That's fine, some tests already depend on root for certain things, like
-passthrough. When I run the tests, I do a pass as both a regular user
-and as root. The important bit is just that the tests skip when they are
-not root rather than fail.
+We see io-uring failures on the parisc architecture with this testcase:
+https://github.com/axboe/liburing/blob/master/examples/io_uring-test.c
 
-> It could be easier to add ->splice_read() on /dev/zero for test
-> purpose, just allocate zeroed pages in ->splice_read(), and add
-> them to pipe like ublk->splice_read(), and sink side can read
-> from or write to these pages, but zero's read_iter_zero() won't
-> be affected. And normal splice/tee won't connect to zero too
-> because we only allow it from kernel use.
+parisc is always big-endian 32-bit userspace, with either 32- or 64-bit kernel.
 
-Arguably /dev/zero should still support splice_read() as a regression
-fix as I argued to Linus, so I'd just add that as a prep patch.
+On a 64-bit kernel (6.1.11):
+deller@parisc:~$ ./io_uring-test test.file
+ret=0, wanted 4096
+Submitted=4, completed=1, bytes=0
+-> failure
 
->>>> Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
->>>> io_file_get_normal() for the non-fixed case in case someone passed in an
->>>> io_uring fd.
->>>
->>> SPLICE_F_FD_IN_FIXED needs one extra word for holding splice flags, if
->>> we can use sqe->addr3, I think it is doable.
->>
->> I haven't checked the rest, but you can't just use ->splice_flags for
->> this?
-> 
-> ->splice_flags shares memory with rwflags, so can't be used.
-> 
-> I think it is fine to use ->addr3, given io_getxattr()/io_setxattr()/
-> io_msg_ring() has used that.
+strace shows:
+io_uring_setup(4, {flags=0, sq_thread_cpu=0, sq_thread_idle=0, sq_entries=4, cq_entries=8, features=IORING_FEAT_SINGLE_MMAP|IORING_FEAT_NODROP|IORING_FEAT_SUBMIT_STABLE|IORING_FEAT_RW_CUR_POS|IORING_FEAT_CUR_PERSONALITY|IORING_FEAT_FAST_POLL|IORING_FEAT_POLL_32BITS|0x1f80, sq_off={head=0, tail=16, ring_mask=64, ring_entries=72, flags=84, dropped=80, array=224}, cq_off={head=32, tail=48, ring_mask=68, ring_entries=76, overflow=92, cqes=96, flags=0x58 /* IORING_CQ_??? */}}) = 3
+mmap2(NULL, 240, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 3, 0) = 0xf7522000
+mmap2(NULL, 256, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 3, 0x10000000) = 0xf6922000
+openat(AT_FDCWD, "libell0-dbgsym_0.56-2_hppa.deb", O_RDONLY|O_DIRECT) = 4
+statx(4, "", AT_STATX_SYNC_AS_STAT|AT_NO_AUTOMOUNT|AT_EMPTY_PATH, STATX_BASIC_STATS, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=689308, ...}) = 0
+getrandom("\x5c\xcf\x38\x2d", 4, GRND_NONBLOCK) = 4
+brk(NULL)                               = 0x4ae000
+brk(0x4cf000)                           = 0x4cf000
+io_uring_enter(3, 4, 0, 0, NULL, 8)     = 0
 
-This is part of the confusion, as you treat it basically like a
-read/write internally, but the opcode names indicate differently. Why
-not just have a separate prep helper for these and then use a layout
-that makes more sense, surely rwflags aren't applicable for these
-anyway? I think that'd make it a lot cleaner.
 
-Yeah, addr3 could easily be used, but it's makes for a really confusing
-command structure when the command is kinda-read but also kinda-splice.
-And it arguable makes more sense to treat it as the latter, as it takes
-the two fds like splice.
+Running the same testcase on a 32-bit kernel (6.1.11) works:
+root@debian:~# ./io_uring-test test.file
+Submitted=4, completed=4, bytes=16384
+-> ok.
 
--- 
-Jens Axboe
+strace:
+io_uring_setup(4, {flags=0, sq_thread_cpu=0, sq_thread_idle=0, sq_entries=4, cq_entries=8, features=IORING_FEAT_SINGLE_MMAP|IORING_FEAT_NODROP|IORING_FEAT_SUBMIT_STABLE|IORING_FEAT_RW_CUR_POS|IORING_FEAT_CUR_PERSONALITY|IORING_FEAT_FAST_POLL|IORING_FEAT_POLL_32BITS|0x1f80, sq_off={head=0, tail=16, ring_mask=64, ring_entries=72, flags=84, dropped=80, array=224}, cq_off={head=32, tail=48, ring_mask=68, ring_entries=76, overflow=92, cqes=96, flags=0x58 /* IORING_CQ_??? */}}) = 3
+mmap2(NULL, 240, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 3, 0) = 0xf6d4c000
+mmap2(NULL, 256, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 3, 0x10000000) = 0xf694c000
+openat(AT_FDCWD, "trace.dat", O_RDONLY|O_DIRECT) = 4
+statx(4, "", AT_STATX_SYNC_AS_STAT|AT_NO_AUTOMOUNT|AT_EMPTY_PATH, STATX_BASIC_STATS, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=1855488, ...}) = 0
+getrandom("\xb2\x3f\x0c\x65", 4, GRND_NONBLOCK) = 4
+brk(NULL)                               = 0x15000
+brk(0x36000)                            = 0x36000
+io_uring_enter(3, 4, 0, 0, NULL, 8)     = 4
 
+I'm happy to test any patch if someone has an idea....
+
+Helge

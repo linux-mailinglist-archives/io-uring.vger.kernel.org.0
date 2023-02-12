@@ -2,109 +2,236 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E296E6935AA
-	for <lists+io-uring@lfdr.de>; Sun, 12 Feb 2023 03:46:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3196935D5
+	for <lists+io-uring@lfdr.de>; Sun, 12 Feb 2023 04:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjBLCqT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 11 Feb 2023 21:46:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
+        id S229461AbjBLDXv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 11 Feb 2023 22:23:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbjBLCqS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 21:46:18 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F029C11EBB
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 18:46:16 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so13894911pjq.0
-        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 18:46:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=13n7orFtfB4ykJMQSCkI+SVHhcT583fh+bxIuvlC7mY=;
-        b=ESXg7vS2YfHpVFr9OQZAHv9M3hthBxU2Row9ea0aJR9IjQ6GL15VCoTe39SuK/apcz
-         lfGM7PXnvgu0PiiAykezRpIW1FRoeZgXJJ1f5yT+0kseS0KVDaqQDpA+I+Dymcgg1zY1
-         iJGmRqnL0dCDPWM41X5z2Oh7WP3Z/XxGAGv3Avnn9/JwRFp3kolnB1oZQv8VGQXmwX3d
-         rD5u2DHcmPTZ0/x3/2kVydfAybYsxNmLWQeSV3+yI7B70FNGMxThFxKX2Pd0AYuzKaP5
-         7cdqi426YYBSMwwbt6a0/WgGTHOQHmA3ZJ65WGdgZGheeKN3uSzavEMms8FWcLknPqQx
-         PyIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=13n7orFtfB4ykJMQSCkI+SVHhcT583fh+bxIuvlC7mY=;
-        b=e8sV8WBhamYKRCtOWolsImRLa/xdrvMTHga8QDlG7x+W0fZv14ayFiKfhEVX63qZHz
-         Bl7MuS3/mN+tAI/Yo+E2gJH6sd5QG141k8CZ1LRECFW9AgIHJUWdVgMxXaKWV6yZPpSS
-         tkoOsDC0Ih+/6gY0VrMnBB/0YJgWtgh5tVyTkncqHmXnKtMgQa2W4mVEbUJOrT0f/Zlb
-         xvStrKS/BpbwMHaJmGF/gcmU2N6VU6knA9pjONpP8KB7xiPJ1mgElFo69PZWma5mMH+K
-         4ZDR2VyJBtbO/iwXZVHXHN6+fekST00vTiUlwMoD/nBaHSPNt95DZWxyjOfyFeZfk1au
-         UbXw==
-X-Gm-Message-State: AO0yUKXSq6et8kp5bYQFRhcwSA9uUqsHkPwkxko7p60uYHFg0uZZuH8h
-        A4S8g8LZ5j86TTrENOIhWbW5og==
-X-Google-Smtp-Source: AK7set8Q/Jh+L5ryxfXOAajWPMV5niu5B7Z5pm8YR78FRqb1qNpO8JtR/DWeRFI2ODz7Fg0mdVhiIg==
-X-Received: by 2002:a17:902:f685:b0:199:2ee:6248 with SMTP id l5-20020a170902f68500b0019902ee6248mr21267626plg.0.1676169976461;
-        Sat, 11 Feb 2023 18:46:16 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g13-20020a63be4d000000b00478ca052819sm4935737pgo.47.2023.02.11.18.46.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 18:46:15 -0800 (PST)
-Message-ID: <467c0abe-251f-d74b-57c8-91e02bec1c05@kernel.dk>
-Date:   Sat, 11 Feb 2023 19:46:14 -0700
+        with ESMTP id S229503AbjBLDXu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 11 Feb 2023 22:23:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5905B5BAC
+        for <io-uring@vger.kernel.org>; Sat, 11 Feb 2023 19:23:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676172183;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fGv0BjCnxc/SPhJ+j5KwOIHLZiudk5g1HAhJ7XccPw8=;
+        b=YAQ1YjzyVzwLP30bSoJeFH/6vooU4/tNJ6VTE63qLM9ehJkXGBQwtSwGmBiZAudzr8m+DS
+        zevHp1V5KJvv10Sg6mrh6y4NctvsefKAct0YPobRgnlXPGwwGAG0jvXBRa/JhoJ+avaMkZ
+        w5FHXOtCkUVFlUQEoHhByIHf8KOrrcA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-489-XOWJUzo3NVyeEu_2HQ6sYg-1; Sat, 11 Feb 2023 22:22:57 -0500
+X-MC-Unique: XOWJUzo3NVyeEu_2HQ6sYg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B94929AA2D6;
+        Sun, 12 Feb 2023 03:22:56 +0000 (UTC)
+Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 402F151FF;
+        Sun, 12 Feb 2023 03:22:48 +0000 (UTC)
+Date:   Sun, 12 Feb 2023 11:22:42 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        ming.lei@redhat.com
+Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
+Message-ID: <Y+hbggDCm9wViPAv@T590>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-4-ming.lei@redhat.com>
+ <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk>
+ <Y+e+i5BXQHcqdDGo@T590>
+ <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: copy on write for splice() from file to pipe?
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
- <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
- <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
- <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk>
- <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
- <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
- <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
- <CAHk-=wjzqrD5wrfeaU390bXEEBY2JF-oKmFN4fREzgyXsbQRTQ@mail.gmail.com>
- <Y+cJDnnMuirSjO3E@T590> <55eaac9e-0d77-1fa2-df27-4d64e123177e@kernel.dk>
- <Y+euv+zR5ltTELqk@T590> <787c3b62-f5d8-694d-cd2f-24b40848e39f@kernel.dk>
- <CAHk-=whQ_V1ZE6jhQKHDk1MKvEkjpF2Pj-OcRQRXBTMsNpA1YA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=whQ_V1ZE6jhQKHDk1MKvEkjpF2Pj-OcRQRXBTMsNpA1YA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/11/23 11:57 AM, Linus Torvalds wrote:
-> On Sat, Feb 11, 2023 at 7:33 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> OK, but then the ignore_sig change should not be needed at all, just
->> changing that first bit to fatal_signal_pending() would do the trick?
+On Sat, Feb 11, 2023 at 09:52:58AM -0700, Jens Axboe wrote:
+> On 2/11/23 9:12?AM, Ming Lei wrote:
+> > On Sat, Feb 11, 2023 at 08:45:18AM -0700, Jens Axboe wrote:
+> >> On 2/10/23 8:32?AM, Ming Lei wrote:
+> >>> IORING_OP_READ_SPLICE_BUF: read to buffer which is built from
+> >>> ->read_splice() of specified fd, so user needs to provide (splice_fd, offset, len)
+> >>> for building buffer.
+> >>>
+> >>> IORING_OP_WRITE_SPLICE_BUF: write from buffer which is built from
+> >>> ->read_splice() of specified fd, so user needs to provide (splice_fd, offset, len)
+> >>> for building buffer.
+> >>>
+> >>> The typical use case is for supporting ublk/fuse io_uring zero copy,
+> >>> and READ/WRITE OP retrieves ublk/fuse request buffer via direct pipe
+> >>> from device->read_splice(), then READ/WRITE can be done to/from this
+> >>> buffer directly.
+> >>
+> >> Main question here - would this be better not plumbed up through the rw
+> >> path? Might be cleaner, even if it either requires a bit of helper
+> >> refactoring or accepting a bit of duplication. But would still be better
+> >> than polluting the rw fast path imho.
+> > 
+> > The buffer is actually IO buffer, which has to be plumbed up in IO path,
+> > and it can't be done like the registered buffer.
+> > 
+> > The only affect on fast path is :
+> > 
+> > 		if (io_rw_splice_buf(req))	//which just check opcode
+> >               return io_prep_rw_splice_buf(req, sqe);
+> > 
+> > and the cleanup code which is only done for the two new OPs.
+> > 
+> > Or maybe I misunderstand your point? Or any detailed suggestion?
+> > 
+> > Actually the code should be factored into generic helper, since net.c
+> > need to use them too. Probably it needs to move to rsrc.c?
 > 
-> Right. That was my point. The 'ignore_sig' flag just doesn't make
-> sense. It was a hack for a case that shouldn't exist.
+> Yep, just refactoring out those bits as a prep thing. rsrc could work,
+> or perhaps a new file for that.
 
-Yep, just wanted to confirm that we'd _only_ do that first one and
-not go to sleep later on ignoring a signal as that could lead to
-issues. Your fatal signal pending suggestion is all we need.
+OK.
 
--- 
-Jens Axboe
+> 
+> >> Also seems like this should be separately testable. We can't add new
+> >> opcodes that don't have a feature test at least, and should also have
+> >> various corner case tests. A bit of commenting outside of this below.
+> > 
+> > OK, I will write/add one very simple ublk userspace to liburing for
+> > test purpose.
+> 
+> Thanks!
 
+Thinking of further, if we use ublk for liburing test purpose, root is
+often needed, even though we support un-privileged mode, which needs
+administrator to grant access, so is it still good to do so?
+
+It could be easier to add ->splice_read() on /dev/zero for test
+purpose, just allocate zeroed pages in ->splice_read(), and add
+them to pipe like ublk->splice_read(), and sink side can read
+from or write to these pages, but zero's read_iter_zero() won't
+be affected. And normal splice/tee won't connect to zero too
+because we only allow it from kernel use.
+
+> 
+> >>> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+> >>> index 5238ecd7af6a..91e8d8f96134 100644
+> >>> --- a/io_uring/opdef.c
+> >>> +++ b/io_uring/opdef.c
+> >>> @@ -427,6 +427,31 @@ const struct io_issue_def io_issue_defs[] = {
+> >>>  		.prep			= io_eopnotsupp_prep,
+> >>>  #endif
+> >>>  	},
+> >>> +	[IORING_OP_READ_SPLICE_BUF] = {
+> >>> +		.needs_file		= 1,
+> >>> +		.unbound_nonreg_file	= 1,
+> >>> +		.pollin			= 1,
+> >>> +		.plug			= 1,
+> >>> +		.audit_skip		= 1,
+> >>> +		.ioprio			= 1,
+> >>> +		.iopoll			= 1,
+> >>> +		.iopoll_queue		= 1,
+> >>> +		.prep			= io_prep_rw,
+> >>> +		.issue			= io_read,
+> >>> +	},
+> >>> +	[IORING_OP_WRITE_SPLICE_BUF] = {
+> >>> +		.needs_file		= 1,
+> >>> +		.hash_reg_file		= 1,
+> >>> +		.unbound_nonreg_file	= 1,
+> >>> +		.pollout		= 1,
+> >>> +		.plug			= 1,
+> >>> +		.audit_skip		= 1,
+> >>> +		.ioprio			= 1,
+> >>> +		.iopoll			= 1,
+> >>> +		.iopoll_queue		= 1,
+> >>> +		.prep			= io_prep_rw,
+> >>> +		.issue			= io_write,
+> >>> +	},
+> >>
+> >> Are these really safe with iopoll?
+> > 
+> > Yeah, after the buffer is built, the handling is basically
+> > same with IORING_OP_WRITE_FIXED, so I think it is safe.
+> 
+> Yeah, on a second look, as these are just using the normal read/write
+> path after that should be fine indeed.
+> 
+> >>
+> >>> +static int io_prep_rw_splice_buf(struct io_kiocb *req,
+> >>> +				 const struct io_uring_sqe *sqe)
+> >>> +{
+> >>> +	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+> >>> +	unsigned nr_pages = io_rw_splice_buf_nr_bvecs(rw->len);
+> >>> +	loff_t splice_off = READ_ONCE(sqe->splice_off_in);
+> >>> +	struct io_rw_splice_buf_data data;
+> >>> +	struct io_mapped_ubuf *imu;
+> >>> +	struct fd splice_fd;
+> >>> +	int ret;
+> >>> +
+> >>> +	splice_fd = fdget(READ_ONCE(sqe->splice_fd_in));
+> >>> +	if (!splice_fd.file)
+> >>> +		return -EBADF;
+> >>
+> >> Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
+> >> io_file_get_normal() for the non-fixed case in case someone passed in an
+> >> io_uring fd.
+> > 
+> > SPLICE_F_FD_IN_FIXED needs one extra word for holding splice flags, if
+> > we can use sqe->addr3, I think it is doable.
+> 
+> I haven't checked the rest, but you can't just use ->splice_flags for
+> this?
+
+->splice_flags shares memory with rwflags, so can't be used.
+
+I think it is fine to use ->addr3, given io_getxattr()/io_setxattr()/
+io_msg_ring() has used that.
+
+> 
+> In any case, the get path needs to look like io_tee() here, and:
+> 
+> >>> +out_put_fd:
+> >>> +	if (splice_fd.file)
+> >>> +		fdput(splice_fd);
+> 
+> this put needs to be gated on whether it's a fixed file or not.
+
+Yeah.
+
+> 
+> >> If the operation is done, clear NEED_CLEANUP and do the cleanup here?
+> >> That'll be faster.
+> > 
+> > The buffer has to be cleaned up after req is completed, since bvec
+> > table is needed for bio, and page reference need to be dropped after
+> > IO is done too.
+> 
+> I mean when you clear that flag, call the cleanup bits you otherwise
+> would've called on later cleanup.
+
+Got it.
+
+Thanks,
+Ming
 

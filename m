@@ -2,135 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6718E694E99
-	for <lists+io-uring@lfdr.de>; Mon, 13 Feb 2023 19:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D16695145
+	for <lists+io-uring@lfdr.de>; Mon, 13 Feb 2023 21:04:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbjBMSBv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Feb 2023 13:01:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45074 "EHLO
+        id S229773AbjBMUEt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Feb 2023 15:04:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230419AbjBMSBs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 13:01:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA30E20055
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 10:01:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 70D3D61218
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 18:01:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D76F1C433A1
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 18:01:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676311301;
-        bh=hUhMtFd+L7kU2UfBGgkzPSaKO2S0M+fHeGGsoULquzs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mJhto6ulcvsXEIAxzLZBgi5DE3HQnOQsI6Gk46sWL0sVxD7q5fL0cJnuqYKwEOSwH
-         QM7RwPx/lHR3+uyZ1gUqbKoMlYlXH4Q8JGioqsLnmew3IrN5fyl8Gquc8B9gwz+y0X
-         sAQ2pQWGRj8Ir0w66U53uiit6AirOHpcMDPAxpBsp+cpWDUEmcmWjWo9j42RmX7L+U
-         dq1XejB2AnDNpbQFriMv9O0m/hhta5a5/LG0l+CIw/O6jIVwa+0qCiSAKlrcv6LfA3
-         k83v2zHTBSZO//0FhTyuF7H8NpwnOMTUrCA5KTVzGQZw21Me8uigMyWLNbBGJpQErq
-         dhowz+ufACTIA==
-Received: by mail-ed1-f52.google.com with SMTP id v13so14056222eda.11
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 10:01:41 -0800 (PST)
-X-Gm-Message-State: AO0yUKWHfOhJm0GremEX7KEYQHGWSwenXrn0vZ3nH8zL7YgRY6UYPGgC
-        i1MYRBjzNegKDBb9qAatMVQFE26leNVYX7gmRw0Tkg==
-X-Google-Smtp-Source: AK7set9UjffZ8cIv9LXOfN7BXhlzgG3TlnmR1bNpfFvkCexf/s6su8bQqb/Qcrsj/09g6AsCSSy+hLqepFw/ZDipxP4=
-X-Received: by 2002:a50:ba8d:0:b0:4ab:1c64:a9ed with SMTP id
- x13-20020a50ba8d000000b004ab1c64a9edmr5213538ede.2.1676311300124; Mon, 13 Feb
- 2023 10:01:40 -0800 (PST)
+        with ESMTP id S229780AbjBMUEs (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 15:04:48 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8466B1D901
+        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 12:04:47 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id sa10so34638519ejc.9
+        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 12:04:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3VQLY//5P39OuXGOEpzf1Glp5VE7sIcldzWZWkHVBtk=;
+        b=TsAcvf6Rib9TA7nd5ff4vkYnkiTo2vkqF7CbonXHIwalzDwl0C+xPzUQngvguvBhYW
+         lfrD3pWDukUSl79bN71gu/WciycmYWabbXLrlXuPTtajVxjnp+EjdrsnaaWimERVUikg
+         BZJmYQInM/dGBkTYdpAbao9PfJ1lR4MxklY+k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3VQLY//5P39OuXGOEpzf1Glp5VE7sIcldzWZWkHVBtk=;
+        b=LSYGAZe3J7HRKdxMmMVD3N3tI6ta60NsxKCh/+taRjBpTaIn1ZogUB/cvfVlIG6cZO
+         WjaozPZib6SXpL4UGiVgADEmTNKUh9ShSi6ccNV98QMMqR1Rc5gyEJF1Tk2GWNsFRgxp
+         hk+Ck4Db3zhYBGkzbLD72nEGQ2Yg8AgPcoq6mdiQyCli1eBlCqqIzj+KBmS4J4NBm84x
+         1PUnT5lJXgnNMWDFgEYZRSAhaW1OCJxBfazarLawSw/8JWKazyzMZa/5rcXv28L042Zq
+         kIefSlXvBLR/PyBUKQB6a3SYCMARlJlO2q/aH8+O19t4dkCLl37kZe8K+ep1wH52JkEA
+         GLlg==
+X-Gm-Message-State: AO0yUKXismv9Ml3vh3U5E7c4R3HAklKVGzgjuqJOYFJ9RmRm2POzYws+
+        4S11LU6wei+uxXe6JhT7LiWXvyWNKsUC/R8uXD8=
+X-Google-Smtp-Source: AK7set/X2cAEQa9gifDo9u/cVZymyu1CwcW/rF75qcsq4LzXM/XERi9ij9zjtEsGQL5CMjhDFPmOQg==
+X-Received: by 2002:a17:906:34d9:b0:8af:2f5e:93e3 with SMTP id h25-20020a17090634d900b008af2f5e93e3mr15683218ejb.29.1676318685624;
+        Mon, 13 Feb 2023 12:04:45 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id og49-20020a1709071df100b008898c93f086sm7156174ejc.71.2023.02.13.12.04.44
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Feb 2023 12:04:44 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id sa10so34638305ejc.9
+        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 12:04:44 -0800 (PST)
+X-Received: by 2002:a17:907:366:b0:88d:ba79:4310 with SMTP id
+ rs6-20020a170907036600b0088dba794310mr5996890ejb.0.1676318684223; Mon, 13 Feb
+ 2023 12:04:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20230210061953.GC2825702@dread.disaster.area> <Y+oCBnz2nLtXrz7O@gondor.apana.org.au>
-In-Reply-To: <Y+oCBnz2nLtXrz7O@gondor.apana.org.au>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 13 Feb 2023 10:01:27 -0800
-X-Gmail-Original-Message-ID: <CALCETrXKkZw3ojpmTftur1_-dEi6BOo9Q0cems_jgabntNFYig@mail.gmail.com>
-Message-ID: <CALCETrXKkZw3ojpmTftur1_-dEi6BOo9Q0cems_jgabntNFYig@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Dave Chinner <david@fromorbit.com>, torvalds@linux-foundation.org,
-        metze@samba.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        samba-technical@lists.samba.org
+References: <20230210153212.733006-1-ming.lei@redhat.com> <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590> <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+ <Y+hDQ1vL6AMFri1E@T590>
+In-Reply-To: <Y+hDQ1vL6AMFri1E@T590>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 13 Feb 2023 12:04:27 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+Message-ID: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Feb 13, 2023 at 1:45 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+On Sat, Feb 11, 2023 at 5:39 PM Ming Lei <ming.lei@redhat.com> wrote:
 >
-> Dave Chinner <david@fromorbit.com> wrote:
 > >
-> > IOWs, the application does not care if the data changes whilst they
-> > are in transport attached to the pipe - it only cares that the
-> > contents are stable once they have been delivered and are now wholly
-> > owned by the network stack IO path so that the OTW encodings
-> > (checksum, encryption, whatever) done within the network IO path
-> > don't get compromised.
+> >  (a) what's the point of MAY_READ? A non-readable page sounds insane
+> > and wrong. All sinks expect to be able to read.
 >
-> Is this even a real problem? The network stack doesn't care at
-> all if you modify the pages while it's being processed.  All the
-> things you've mentioned (checksum, encryption, etc.) will be
-> self-consistent on the wire.
->
-> Even when actual hardware offload is involved it's hard to see how
-> things could possibly go wrong unless the hardware was going out of
-> its way to do the wrong thing by fetching from memory twice.
->
+> For example, it is one page which needs sink end to fill data, so
+> we needn't to zero it in source end every time, just for avoiding
+> leak kernel data if (unexpected)sink end simply tried to read from
+> the spliced page instead of writing data to page.
 
-There's a difference between "kernel speaks TCP (or whatever)
-correctly" and "kernel does what the application needs it to do".
-When I write programs that send data on the network, I want the kernel
-to send the data that I asked it to send.  As a silly but obvious
-example, suppose I have two threads, and all I/O is blocking
-(O_NONBLOCK is not set, etc):
+I still don't understand.
 
-char buffer[1024] = "A";
+A sink *reads* the data. It doesn't write the data.
 
-Thread A:
-send(fd, buffer, 1, 0);
+There's no point trying to deal with "if unexpectedly doing crazy
+things". If a sink writes the data, the sinkm is so unbelievably buggy
+that it's not even funny.
 
-Thread B:
-mb();
-buffer[0] = 'B';
-mb();
+And having two flags that you then say "have to be used together" is pointless.
 
+It's not two different flags if you can't use them separately!
 
-Obviously, there are three possible valid outcomes: Thread A can go
-first (send returns before B changes the buffer), and 'A' gets sent.
-Thread B can go first (the buffer is changed before send() starts),
-and 'B' gets sent.  Or both can run concurrently, in which case the
-data sent is indeterminate.
+So I think your explanations are anything *but* explaining what you
+want. They are just strange and not sensible.
 
-But it is not valid for send() to return, then the buffer to change,
-and 'B' to get sent, just like:
+Please explain to me in small words and simple sentences what it is
+you want. And no, if the explanation is "the sink wants to write to
+the buffer", then that's not an explanation, it's just insanity.
 
-char foo[] = "A";
-send(fd, foo, 1, 0);
-foo[0] = 'B';
+We *used* to have the concept of "gifting" the buffer explicitly to
+the sink, so that the sink could - instead of reading from it - decide
+to just use the whole buffer as-is long term. The idea was that tthe
+buffer woudl literally be moved from the source to the destination,
+ownership and all.
 
-must send 'A', not 'B'.
+But if that's what you want, then it's not about "sink writes". It's
+literally about the splice() wanting to move not just the data, but
+the whole ownership of the buffer.
 
-The trouble with splice() is that there is no clear point at which the
-splice is complete and the data being sent is committed.  I don't
-think user applications need the data committed particularly quickly,
-but I do think it needs to be committed "eventually* and there needs
-to be a point at which the application knows it's been committed.
-Right now, if a user program does:
+Anyway, I will NAK this as long as the explanations for what the
+semantics are and what you want to do don't make sense. Right now they
+don't.
 
-Write 'A' to a file
-splice that file to a pipe
-splice that pipe to a socket
-... wait until when? ...
-Write 'B' to a file
-
-There is nothing the user program can wait for to make sure that 'A'
-gets sent, but saying that the kernel speaks TCP correctly without
-solving this problem doesn't actually solve the problem.
+              Linus

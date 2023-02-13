@@ -2,122 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38CEE694493
-	for <lists+io-uring@lfdr.de>; Mon, 13 Feb 2023 12:32:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 809E16944E5
+	for <lists+io-uring@lfdr.de>; Mon, 13 Feb 2023 12:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbjBMLcb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Feb 2023 06:32:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42994 "EHLO
+        id S229656AbjBMLys (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Feb 2023 06:54:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjBMLca (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 06:32:30 -0500
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2042.outbound.protection.outlook.com [40.107.95.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C858C4ECF;
-        Mon, 13 Feb 2023 03:32:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yu3wReix/6wrH+G7k4LUuOs757B0YBQ86tp3NtiGMix1TUlc6iu4B37pAEWpsglOKRBN/C6bwLfQJsegtbqVo8yDR3WBhA7Bx0RRTXKu8n4XCG1Wg+AU5ncHsqJdjJ1Xr9tDyl229x9LhnPGmGWyCT2q3zVEYIXo6Tu66xU73xw4yn/ICuymA1D4Lp1qsHhGLJYgc7j/19py8X7LvIlOYPdkca5XPUtsP5U8X6LZP/e7OHXjcnRIC3uYUkMh1fFiqusyz9d1pZa9mV+MhhE0T3GXL9RMZjma12paeBdBAwjuvoBIBfqadeqAsKhqaJilrHW2QVOaPghoJAIYcrsDiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=btLVYfIKNnZxSevx6q+E+h9eoZUw7/7Y+cNxUcIKQyE=;
- b=DqKrtt5bk3wBVK5byqiJ1yVHS32UISYc2Q5GmSYeBoWO7GCE/0EybchEhQR6JpOeNvDOfo+0W/NOhVKk4FzUuhe9D2L6/F7WLa7KeZlnNUkNN+AvbGoB0t51NF5ao/AoO3bQ30yOFSIWOJg+f2ReZ00L5NUZeqi/rAt0358YgZApY42N1tabRAXCVhaRShbhoK4PcmDmGIhSEPLvSw48SBTWWW7hFJxUYnwk4IDCpFVJXRjV1P41M73jKBXtb5Vz0IsQAcH6YOu/pzlQ1TRbyoNk3m/+R3EuCGle+x+fHhsBtI6oBJkyUY2g+HLYTlE9gc7JCuOaaZuxiCrVB/fxtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=btLVYfIKNnZxSevx6q+E+h9eoZUw7/7Y+cNxUcIKQyE=;
- b=d4MJhPJ1CovhcKa/Grfh7FHWAeTHCNKWJbijzt9JOxNwbmWgqQSeLMUEm1Zs+mp/b4IbYfOqoWCMOvRE2c006u7EvbNiQyxLfKYJe4h89RoPPW9i8VvwuuaKuHbWkWm+4x0MPCYztz4Y3FpUtAswgpvt7J+OM+KkYDE5ytKHdNEssLCuVXIxhlArnEtb2kZnolBVOi1jY+0eC5LOFa6sUjSiNi7HFDtSOO6HLdxN/RPRUGgKEoq8645ILg8UM0/+T9xWT62v0gfseawejSFemieDhAgxzbyW2+zbydFhV2C7krRm6F6Pg0p+KbFcs9cyadoS7fvDN3JlzzxDVSx/4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BYAPR12MB3176.namprd12.prod.outlook.com (2603:10b6:a03:134::26)
- by IA1PR12MB7565.namprd12.prod.outlook.com (2603:10b6:208:42f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.23; Mon, 13 Feb
- 2023 11:32:26 +0000
-Received: from BYAPR12MB3176.namprd12.prod.outlook.com
- ([fe80::4bd4:de67:b676:67df]) by BYAPR12MB3176.namprd12.prod.outlook.com
- ([fe80::4bd4:de67:b676:67df%6]) with mapi id 15.20.6086.019; Mon, 13 Feb 2023
- 11:32:26 +0000
-References: <cover.c238416f0e82377b449846dbb2459ae9d7030c8e.1675669136.git-series.apopple@nvidia.com>
- <44e6ead48bc53789191b22b0e140aeb82459e75f.1675669136.git-series.apopple@nvidia.com>
- <52d41a7e-1407-e74f-9206-6dd583b7b6b5@kernel.dk>
- <87k00unusm.fsf@nvidia.com>
- <eff3cc48-7279-2fbf-fdbd-f35eff2124d0@kernel.dk>
- <Y+JmdMJhPEGN0Zw+@nvidia.com>
- <53816439-6473-1c4f-2134-02cd1c46cfe8@kernel.dk>
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Alistair Popple <apopple@nvidia.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Jason Gunthorpe <jgg@nvidia.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jhubbard@nvidia.com, tjmercier@google.com, hannes@cmpxchg.org,
-        surenb@google.com, mkoutny@suse.com, daniel@ffwll.ch,
-        "Daniel P . Berrange" <berrange@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH 09/19] io_uring: convert to use vm_account
-Date:   Mon, 13 Feb 2023 22:30:42 +1100
-In-reply-to: <53816439-6473-1c4f-2134-02cd1c46cfe8@kernel.dk>
-Message-ID: <87edqt243d.fsf@nvidia.com>
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR04CA0021.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::31) To BYAPR12MB3176.namprd12.prod.outlook.com
- (2603:10b6:a03:134::26)
+        with ESMTP id S229632AbjBMLyr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 06:54:47 -0500
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477051353E;
+        Mon, 13 Feb 2023 03:54:46 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id k3so4268881wrv.5;
+        Mon, 13 Feb 2023 03:54:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1676289285;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/CPeRKp2equzjPoiyGuI+L6sOY6qqv2wALvdLjuhPQM=;
+        b=EwFemcQDQCZlfLyVdosZqzCrGeshvRHluvCpG9ZDm4V35gQF9HnKHX/r+kahtPvCe0
+         cKJPSIXWCYOaSVmKY0qgWROGASkqFoVNM0RtKkOkzgvKPShkgdUyGix2nQlnOguzXIRu
+         YmQoTRz2mUaYjpbe/HQCzBfRdJ1jt2hRLj5IjeeoNmMfY/W6Sbm0DDsA5j7/66FbHYgx
+         eHDFxG/I2bUR8tWJTNnF8dYtyHYB87hB5MgrXjhlbRcSVWAHW/QVDn/5EZu+aMK8+ehy
+         hChYhQqXDXkqjjmFe0vEIn40NLZrmWjM1QuniMrRMGoNAwOBBcHfJvlZuGeHljmFddfr
+         aVtg==
+X-Gm-Message-State: AO0yUKUZ7PYJXFzCsf7KXswoEmW750/NhEFr42o6O155j6aBktO5hIw2
+        rqYLbdYShWQtyc5WtM4+GyQ=
+X-Google-Smtp-Source: AK7set+RjIvySbOj6M2sEO16NGkt3ThmcXKJoOTiWW3+yJEoE8M86yMRqBLAjsl4Qf9scHKo75kd8w==
+X-Received: by 2002:a5d:5151:0:b0:2c5:5b85:3b43 with SMTP id u17-20020a5d5151000000b002c55b853b43mr1001809wrt.7.1676289284693;
+        Mon, 13 Feb 2023 03:54:44 -0800 (PST)
+Received: from [192.168.64.80] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
+        by smtp.gmail.com with ESMTPSA id f5-20020adff445000000b002c53f5b13f9sm10035471wrp.0.2023.02.13.03.54.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Feb 2023 03:54:44 -0800 (PST)
+Message-ID: <79c1f876-d054-a8ed-8826-e3ad4f9903eb@grimberg.me>
+Date:   Mon, 13 Feb 2023 13:54:42 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3176:EE_|IA1PR12MB7565:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b228acf-9532-4b7f-9fc8-08db0db5fb22
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: U2ZCppw5OcGTlEAga3JDY0KU9gTL/AbFb1EOxhVz63c8cnr+4mbUCv4plM5d6wOljOFYMArOmU0cE/yKN4gZnEtA8+Kc+YfFH+PrnsCAdtdgCrk0qaWM/nRQ7h29HuoZqGwp/yEHI4c44xnKfhJJSE3kOwsL5V455hJknoje67/Gn267baoy6xhMg6RPO9kav6ebIGrRZB9Zuo4EoE9z+ZZvaZb8xPXLMvbFH7Ega1yolbR03OnUajyI+X3ALmVtgsspg8Qz1ZOeHTtn1QI6S9ZJKUMAGgUhk2yRXFdIiFIdWTlBYYqDqs43rOwTXb+M2zEpTm63BrhoaK0OUkjuYbpb0oRSDBbUNAbRy7MlxiCgWDBm1DZrdJWxuoDRSpJ40qif99sJlYHlMFg7Pp8OV16p3wU3N6bF5m80gVSvpffR0kdUkuu5xQcgAtWxpi2EW2RHgMyYTEECDTkijhkZL12dvK3N7EWnYGDyKVDO0ZPETujEanocM75cG5R4sm+LPzBkKuDWHXwvwmeWGwuCeq4A959g4C5WA6s90y5PURBEqvbwd4sTEA1M1uxSunkMoFaSM6Ews8/etrbIojzfnpeCB3aFo/lETSDyXmG5BBAAy4ZJAqAsi3V6InOf9yLuRtpniByQNsDH1GYvOIg8gA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(366004)(136003)(396003)(39860400002)(346002)(451199018)(8676002)(7416002)(8936002)(2906002)(38100700002)(2616005)(6486002)(36756003)(5660300002)(86362001)(26005)(186003)(54906003)(6506007)(6512007)(6666004)(41300700001)(478600001)(316002)(66899018)(66556008)(4326008)(6916009)(66476007)(66946007)(83380400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uULDRm+rMwtycwowVJGitE2mrRvX5Cjts2EV9FX+S1YoXxFzUSOvQwrYJMoA?=
- =?us-ascii?Q?1DOYSiiIOSETufJcr2cXzqt61gT5W+JjWuzV/Li9NfdcuSLw+HpOi1OUnXcs?=
- =?us-ascii?Q?AOZNtU4KHhPfc0MZJh99zD47HcVgjAoLSkcQfUP+SzWwtnr2UpOEbjqCMJ69?=
- =?us-ascii?Q?Mv3WQkv4Sa2z7t0OsBHrcWixDygxFFnfrCM6HSDT3YDBM9FXuuA+Dh+GFrAX?=
- =?us-ascii?Q?ufs/8P98IKhrSZQPiMkg+GTigiwacit28bb6Q/CS4UewZ2rJ3LKi0RRYPvFU?=
- =?us-ascii?Q?7BKhepBbmvtezE7Fz+vjJX4a4c4wbBcuXns/57s8AJQo0d/zPYWzZ5+Nf2kf?=
- =?us-ascii?Q?4+YD1dIppO+lYgtDd4tIeV51K1coTe2/v7NYLP/CMNjdnvF5gZgJ93YVrAgX?=
- =?us-ascii?Q?TBbPpZgB8DBjJVeCJzqxvhvR2+O9hXoLI8Ec+CKpwWCdr4W/nSDUHxcvDrwx?=
- =?us-ascii?Q?vNOrApqiF6TyX8qg5sdHKcWOYWe0N8OTalIT2skTE64kw0bML/CLyRYy+g45?=
- =?us-ascii?Q?XIuRNJW1BYF7Z0y4bg8HD36bTos9YEejruTH36/bdDLEAVIulztD0CSajLAF?=
- =?us-ascii?Q?aO0Pq1l4gwNgHM6LUqdTdEPUoWVJjOvIPK6qh9k6NX2iEr78P96hBp8D2fgu?=
- =?us-ascii?Q?0WiWhnenEgU8HnV/qKQHHVXYuBZa9vKUXJ6LLLvZTklysZTxGbiT0bwk4zrN?=
- =?us-ascii?Q?RI/HDxN/vF/oQei8wk5V0NhQt1r3YqKI0D/GGt5rlX8BKgNlp3Sw2HU2z6zs?=
- =?us-ascii?Q?VzyWZj49nPFdxLqh+bI3dxes+QkcjKUwe5vDjyMuuQ2giHr9jfSbQdtdmPZs?=
- =?us-ascii?Q?udexUdwwpvQBP1vKOl5i0pNYObznNCBk9uS/E57uNV62knrj1+9TMhBkscMM?=
- =?us-ascii?Q?XLkhgXhbzXpq6JJrT0SAv3kzNRscPeLDTzdZrFsNeCYB/uJlMzfRPWfJ1nEu?=
- =?us-ascii?Q?CzTYsw/zL6qf6n26XJre/7WYz4iqWhMZksfqHsC3ER/TrdN6xG7PYS3oz1KN?=
- =?us-ascii?Q?/jqYroajY18uWB3A6HDb9omyoyW89GfDnAzY37AioX8Qreltmrul+X50pYMe?=
- =?us-ascii?Q?+7T3JkrMCtp2cf1YP+28ntLTwMJPLhHZjN+c+pAbBrNDBVv+blU/pgV+D6qO?=
- =?us-ascii?Q?pgsP1TJzfnl5TuJncrZw7mr5KRwidaUu+dmF/vthJhYFTWxoiRpydX+24SpM?=
- =?us-ascii?Q?nr9Iuev6IXTi2+TfI6qz7+QgLuJskbZMbihJkSjbA1IwFTah3M9xvNiyjnD8?=
- =?us-ascii?Q?wUPDfUFPQAl+wGTmlyxs2fBy9UV3IuEbjcreDwFUwQIxr2W2l94gt3RykDgs?=
- =?us-ascii?Q?6CQrfuekZSStM22iuT+lZt3lrWystvjdVDajUlgSHTJL3TFHU57m01QORPJ6?=
- =?us-ascii?Q?b+mHAk2i6GHLAaiHE+dtQ/ljyoOHmqt6Cw9vTKE06SjWIYCUN+hKyhTULFF5?=
- =?us-ascii?Q?9NMjVeEu+yaazZ7deFgLKq8XDYlPLoZ7EP9X8Du5ZfnBUZdJHZV2WNOGfSBW?=
- =?us-ascii?Q?OiJhQchN83SDNyXcbVmg1TrdnV4XCo9LgG1dLDHWaay+nHykAtXB8JtnodM3?=
- =?us-ascii?Q?cnOSbHRVp5MpUxf7R5mPgYkqmD6KCiuH6HA3V38R?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b228acf-9532-4b7f-9fc8-08db0db5fb22
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2023 11:32:25.8680
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6ZrVFgFnplDZoq0jWMlqXW0dOPWSB9+JZMPqFFK9UtOCJtxZKczNyT5TcXoCv+5I+ktKiVwLrwjmjUpIL1HnFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7565
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        io-uring@vger.kernel.org, hch@lst.de, kbusch@kernel.org,
+        ming.lei@redhat.com
+References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
+ <20230210180033.321377-1-joshi.k@samsung.com>
+ <39a543d7-658c-0309-7a68-f07ffe850d0e@kernel.dk>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <39a543d7-658c-0309-7a68-f07ffe850d0e@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -125,52 +67,78 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 
-Jens Axboe <axboe@kernel.dk> writes:
 
-> On 2/7/23 7:55?AM, Jason Gunthorpe wrote:
->> On Tue, Feb 07, 2023 at 07:28:56AM -0700, Jens Axboe wrote:
->> 
->>> Outside of that, we're now doubling the amount of memory associated with
->>> tracking this. That isn't necessarily a showstopper, but it is not
->>> ideal. I didn't take a look at the other conversions (again, because
->>> they were not sent to me), but seems like the task_struct and flags
->>> could just be passed in as they may very well be known to many/most
->>> callers?
->> 
->> For places doing the mm accounting type it cannot use the task struct
->> as the underlying mm can be replaced and keep the task, IIRC.
->> 
->> We just had a bug in VFIO related to this..
->> 
->> If we could go back from the mm to the task (even a from a destroyed
->> mm though) that might work to reduce storage?
+On 2/10/23 21:53, Jens Axboe wrote:
+> On 2/10/23 11:00?AM, Kanchan Joshi wrote:
+>> is getting more common than it used to be.
+>> NVMe is no longer tied to block storage. Command sets in NVMe 2.0 spec
+>> opened an excellent way to present non-block interfaces to the Host. ZNS
+>> and KV came along with it, and some new command sets are emerging.
+>>
+>> OTOH, Kernel IO advances historically centered around the block IO path.
+>> Passthrough IO path existed, but it stayed far from all the advances, be
+>> it new features or performance.
+>>
+>> Current state & discussion points:
+>> ---------------------------------
+>> Status-quo changed in the recent past with the new passthrough path (ng
+>> char interface + io_uring command). Feature parity does not exist, but
+>> performance parity does.
+>> Adoption draws asks. I propose a session covering a few voices and
+>> finding a path-forward for some ideas too.
+>>
+>> 1. Command cancellation: while NVMe mandatorily supports the abort
+>> command, we do not have a way to trigger that from user-space. There
+>> are ways to go about it (with or without the uring-cancel interface) but
+>> not without certain tradeoffs. It will be good to discuss the choices in
+>> person.
 
-Yes, it's the going back from a destroyed mm that gets a bit murky. I
-don't think it's a showstopper as we could probably keep track of that
-when we destroy the mm but it seems like a fair amount of complexity to
-save a smallish amount of memory.
+This would require some rework of how the driver handles aborts today.
+I'm unsure what the cancellation guarantees that io_uring provides, but
+need to understand if it fits with the guarantees that nvme provides.
 
-However if we end up tacking this onto memcg instead then we could use
-that to go back to the task and move any charges when the mm moves.
+It is also unclear to me how this would work if different namespaces
+are handed to different users, and have them all submit aborts on
+the admin queue. How do you even differentiate which user sent which
+command?
 
-> Then maybe just nest them:
->
-> struct small_one {
-> 	struct mm_struct *mm;
-> 	struct user_struct *user;
-> };
->
-> struct big_one {
-> 	struct small_one foo;
-> 	struct task_struct *task;
-> 	enum vm_account_flags flags;
-> };
->
-> and have the real helpers deal with small_one, and wrappers around that
-> taking big_one that just passes in the missing bits. Then users that
-> don't need the extra bits can just use the right API.
+>>
+>> 2. Cgroups: works for only block dev at the moment. Are there outright
+>> objections to extending this to char-interface IO?
+>>
+>> 3. DMA cost: is high in presence of IOMMU. Keith posted the work[1],
+>> with block IO path, last year. I imagine plumbing to get a bit simpler
+>> with passthrough-only support. But what are the other things that must
+>> be sorted out to have progress on moving DMA cost out of the fast path?
+> 
+> Yeah, this one is still pending... Would be nice to make some progress
+> there at some point.
+> 
+>> 4. Direct NVMe queues - will there be interest in having io_uring
+>> managed NVMe queues?  Sort of a new ring, for which I/O is destaged from
+>> io_uring SQE to NVMe SQE without having to go through intermediate
+>> constructs (i.e., bio/request). Hopefully,that can further amp up the
+>> efficiency of IO.
+> 
+> This is interesting, and I've pondered something like that before too. I
+> think it's worth investigating and hacking up a prototype. I recently
+> had one user of IOPOLL assume that setting up a ring with IOPOLL would
+> automatically create a polled queue on the driver side and that is what
+> would be used for IO. And while that's not how it currently works, it
+> definitely does make sense and we could make some things faster like
+> that.
 
-Thanks for the suggestion, it should work noting that we will have to
-add a struct pins_cgroup pointer to struct small_one. It may also help
-with a similar problem I was having with one of the networking
-conversions.
+I also think it can makes sense, I'd use it if it was available.
+Though io_uring may need to abstract the fact that the device may be
+limited on the number of queues it supports, also this would need to be
+an interface needed from the driver that would need to understand how to
+coordinate controller reset/teardown in the presence of "alien" queues.
+
+  It would also potentially easier enable cancelation referenced in
+> #1 above, if it's restricted to the queue(s) that the ring "owns".
+> 
+
+That could be a potential enforcement, correlating the command with
+the dedicated queue. Still feels dangerous because if admin abort(s)
+time out the driver really needs to reset the entire controller...
+So it is not really "isolated" when it comes to aborts/cancellations.

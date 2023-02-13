@@ -2,129 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D16695145
-	for <lists+io-uring@lfdr.de>; Mon, 13 Feb 2023 21:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18D966951CD
+	for <lists+io-uring@lfdr.de>; Mon, 13 Feb 2023 21:25:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbjBMUEt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Feb 2023 15:04:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40060 "EHLO
+        id S231298AbjBMUZG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Feb 2023 15:25:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbjBMUEs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 15:04:48 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8466B1D901
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 12:04:47 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id sa10so34638519ejc.9
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 12:04:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3VQLY//5P39OuXGOEpzf1Glp5VE7sIcldzWZWkHVBtk=;
-        b=TsAcvf6Rib9TA7nd5ff4vkYnkiTo2vkqF7CbonXHIwalzDwl0C+xPzUQngvguvBhYW
-         lfrD3pWDukUSl79bN71gu/WciycmYWabbXLrlXuPTtajVxjnp+EjdrsnaaWimERVUikg
-         BZJmYQInM/dGBkTYdpAbao9PfJ1lR4MxklY+k=
+        with ESMTP id S230047AbjBMUZB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 15:25:01 -0500
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B304498;
+        Mon, 13 Feb 2023 12:24:56 -0800 (PST)
+Received: by mail-pj1-f53.google.com with SMTP id f16-20020a17090a9b1000b0023058bbd7b2so13426822pjp.0;
+        Mon, 13 Feb 2023 12:24:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3VQLY//5P39OuXGOEpzf1Glp5VE7sIcldzWZWkHVBtk=;
-        b=LSYGAZe3J7HRKdxMmMVD3N3tI6ta60NsxKCh/+taRjBpTaIn1ZogUB/cvfVlIG6cZO
-         WjaozPZib6SXpL4UGiVgADEmTNKUh9ShSi6ccNV98QMMqR1Rc5gyEJF1Tk2GWNsFRgxp
-         hk+Ck4Db3zhYBGkzbLD72nEGQ2Yg8AgPcoq6mdiQyCli1eBlCqqIzj+KBmS4J4NBm84x
-         1PUnT5lJXgnNMWDFgEYZRSAhaW1OCJxBfazarLawSw/8JWKazyzMZa/5rcXv28L042Zq
-         kIefSlXvBLR/PyBUKQB6a3SYCMARlJlO2q/aH8+O19t4dkCLl37kZe8K+ep1wH52JkEA
-         GLlg==
-X-Gm-Message-State: AO0yUKXismv9Ml3vh3U5E7c4R3HAklKVGzgjuqJOYFJ9RmRm2POzYws+
-        4S11LU6wei+uxXe6JhT7LiWXvyWNKsUC/R8uXD8=
-X-Google-Smtp-Source: AK7set/X2cAEQa9gifDo9u/cVZymyu1CwcW/rF75qcsq4LzXM/XERi9ij9zjtEsGQL5CMjhDFPmOQg==
-X-Received: by 2002:a17:906:34d9:b0:8af:2f5e:93e3 with SMTP id h25-20020a17090634d900b008af2f5e93e3mr15683218ejb.29.1676318685624;
-        Mon, 13 Feb 2023 12:04:45 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id og49-20020a1709071df100b008898c93f086sm7156174ejc.71.2023.02.13.12.04.44
-        for <io-uring@vger.kernel.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeoNHRdTi75bvN7yIK3qjR8vRNZkI9OKUG3gsroE1Cs=;
+        b=hkb8X/KKUQWDyAtgfI6n53B503K0lTcuG+H2qWInkGzWs0p5pn9seTKLSLI4ich8Ac
+         wEleidfsl0o+jsfD7TGbOaf3PHj6PekXkQgf8CCOwWCATP7mvKD1kPDGgZUiP1r4ClJF
+         9pTGdZa5kCUtgAEoGgkZDUaAYOOIFZjLlSZ4CYud74OicCGXqjpodnn0eRvX2vm0TQZM
+         hpqOYFfTO4VmWnTekv3oFtnUKP66Y5eGBKjS9YHT7/yDo6+WQ1J24T4y+/UaqDttLZGS
+         EK0r2f1UlD1maOeI1FnZvm6a+6SzDvyNG5FqgoFv+SigvnOWXVAEneu9pEMJvfnJhrfx
+         i9cw==
+X-Gm-Message-State: AO0yUKUElpQ3mWeF2cjvqhD87xe++IfneStUCDSq/SIGIkO3BSGEEE3y
+        CbX71BWXlP2kYnzrheQQJrM=
+X-Google-Smtp-Source: AK7set8spO+RK9kUMn3B8mnPoUYkvSz0i20QutEqmbE0WX0LAzgs+gTQ6F8WD1wPrvXw2DamckMIhA==
+X-Received: by 2002:a17:903:32c6:b0:19a:9686:ea87 with SMTP id i6-20020a17090332c600b0019a9686ea87mr115904plr.55.1676319895980;
+        Mon, 13 Feb 2023 12:24:55 -0800 (PST)
+Received: from ?IPV6:2620:15c:211:201:dc5c:7c61:93f2:3d3d? ([2620:15c:211:201:dc5c:7c61:93f2:3d3d])
+        by smtp.gmail.com with ESMTPSA id c3-20020a170902d48300b0018544ad1e8esm8663247plg.238.2023.02.13.12.24.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Feb 2023 12:04:44 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id sa10so34638305ejc.9
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 12:04:44 -0800 (PST)
-X-Received: by 2002:a17:907:366:b0:88d:ba79:4310 with SMTP id
- rs6-20020a170907036600b0088dba794310mr5996890ejb.0.1676318684223; Mon, 13 Feb
- 2023 12:04:44 -0800 (PST)
+        Mon, 13 Feb 2023 12:24:54 -0800 (PST)
+Message-ID: <d69f0203-2eff-e2c2-0a6c-ed341bdb1896@acm.org>
+Date:   Mon, 13 Feb 2023 12:24:53 -0800
 MIME-Version: 1.0
-References: <20230210153212.733006-1-ming.lei@redhat.com> <20230210153212.733006-2-ming.lei@redhat.com>
- <Y+e3b+Myg/30hlYk@T590> <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
- <Y+hDQ1vL6AMFri1E@T590>
-In-Reply-To: <Y+hDQ1vL6AMFri1E@T590>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 13 Feb 2023 12:04:27 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
-Message-ID: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
- pages in kernel
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, ming.lei@redhat.com
+References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
+ <20230210180033.321377-1-joshi.k@samsung.com>
+ <69443f85-5e16-e3db-23e9-caf915881c92@acm.org> <20230210193459.GA9184@green5>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20230210193459.GA9184@green5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 5:39 PM Ming Lei <ming.lei@redhat.com> wrote:
->
-> >
-> >  (a) what's the point of MAY_READ? A non-readable page sounds insane
-> > and wrong. All sinks expect to be able to read.
->
-> For example, it is one page which needs sink end to fill data, so
-> we needn't to zero it in source end every time, just for avoiding
-> leak kernel data if (unexpected)sink end simply tried to read from
-> the spliced page instead of writing data to page.
+On 2/10/23 11:34, Kanchan Joshi wrote:
+> On Fri, Feb 10, 2023 at 10:18:08AM -0800, Bart Van Assche wrote:
+>> On 2/10/23 10:00, Kanchan Joshi wrote:
+>>> 3. DMA cost: is high in presence of IOMMU. Keith posted the work[1],
+>>> with block IO path, last year. I imagine plumbing to get a bit simpler
+>>> with passthrough-only support. But what are the other things that must
+>>> be sorted out to have progress on moving DMA cost out of the fast path?
+>>
+>> Are performance numbers available?
+> 
+> Around 55% decline when I checked last (6.1-rcX kernel).
+> 512b randread IOPS with optane, on AMD ryzen 9 box -
+> when iommu is set to lazy (default config)= 3.1M
+> when iommmu is disabled or in passthrough mode = 4.9M
 
-I still don't understand.
+Hi Kanchan,
 
-A sink *reads* the data. It doesn't write the data.
+Thank you for having shared these numbers. More information would be 
+welcome, e.g. the latency impact on a QD=1 test of the IOMMU, the queue 
+depth of the test results mentioned above and also how much additional 
+CPU time is needed with the IOMMU enabled. I'm wondering whether the 
+IOMMU cost is dominated by the IOMMU hardware or by software bottlenecks 
+(e.g. spinlocks).
 
-There's no point trying to deal with "if unexpectedly doing crazy
-things". If a sink writes the data, the sinkm is so unbelievably buggy
-that it's not even funny.
+Thanks,
 
-And having two flags that you then say "have to be used together" is pointless.
+Bart.
 
-It's not two different flags if you can't use them separately!
-
-So I think your explanations are anything *but* explaining what you
-want. They are just strange and not sensible.
-
-Please explain to me in small words and simple sentences what it is
-you want. And no, if the explanation is "the sink wants to write to
-the buffer", then that's not an explanation, it's just insanity.
-
-We *used* to have the concept of "gifting" the buffer explicitly to
-the sink, so that the sink could - instead of reading from it - decide
-to just use the whole buffer as-is long term. The idea was that tthe
-buffer woudl literally be moved from the source to the destination,
-ownership and all.
-
-But if that's what you want, then it's not about "sink writes". It's
-literally about the splice() wanting to move not just the data, but
-the whole ownership of the buffer.
-
-Anyway, I will NAK this as long as the explanations for what the
-semantics are and what you want to do don't make sense. Right now they
-don't.
-
-              Linus

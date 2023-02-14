@@ -2,70 +2,183 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70CAC6956B7
-	for <lists+io-uring@lfdr.de>; Tue, 14 Feb 2023 03:36:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A2B6960D3
+	for <lists+io-uring@lfdr.de>; Tue, 14 Feb 2023 11:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbjBNCgP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 13 Feb 2023 21:36:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48332 "EHLO
+        id S232506AbjBNKeE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Feb 2023 05:34:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbjBNCgN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Feb 2023 21:36:13 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F531ADCE
-        for <io-uring@vger.kernel.org>; Mon, 13 Feb 2023 18:35:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676342135;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xFaVFPEYzdGGiP7WS0Cr03aX7f8e9+DEetu5xUs8Sz4=;
-        b=HC4YJ00fIY8Uz7E56FiWzHfKkOuAcA5EuptzN75MjKfLNPUj9ahG2fb+OPahUziiwfZUsp
-        2HtfrhNtXXGKhLxC+QqUKImpsTM8RSITXp3rp8rh/+Qmseh0Za3q4/DCAFv5UdFUUpb8FS
-        DRlIqnxDa2bnN8lVJtXGoVWt/bNGjLQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-645-PFB856VeObiBIcPP3LtAcQ-1; Mon, 13 Feb 2023 21:35:32 -0500
-X-MC-Unique: PFB856VeObiBIcPP3LtAcQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8EC2785A588;
-        Tue, 14 Feb 2023 02:35:31 +0000 (UTC)
-Received: from T590 (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E04B52166B26;
-        Tue, 14 Feb 2023 02:35:22 +0000 (UTC)
-Date:   Tue, 14 Feb 2023 10:35:16 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
- pages in kernel
-Message-ID: <Y+rzZHqNYPpYWhLN@T590>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-2-ming.lei@redhat.com>
- <Y+e3b+Myg/30hlYk@T590>
- <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
- <Y+hDQ1vL6AMFri1E@T590>
- <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
- <Y+rbR48vvhHDJlUF@T590>
+        with ESMTP id S231492AbjBNKeC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Feb 2023 05:34:02 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3048125978;
+        Tue, 14 Feb 2023 02:33:52 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31EAO1qe030270;
+        Tue, 14 Feb 2023 10:33:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2022-7-12;
+ bh=tyI5EL2sAtCE0UPmWkfZUWZXRPd+0p7K//yG5LSyn6Q=;
+ b=y05vtjSFKqdOINKFGJMQZbW1YzfMK4JSuh13ombXSR3uY5POIcjO8FDmOn6eBmRLhZfW
+ iA7CXnUtAhlqXj7rPFn1p3Ek6ojgRsUqsHvmb/wlKCN0Rab6owN2bCmfwcve45cCyHXw
+ r/acQqjQpgDGSTEYtQyKIn9op03MH0FJdWZWwgGhFd4+jrFLZ0Jud8dkDfXaJEQuuiFw
+ SmPLYGf+tLcoRX0GOZg/CuzURC1/aUC8/hVXoV+nHcILjtf4pPHQM1iPSQCmh3QYA1JT
+ 0swZB7QErgQFrSCekjez3BwKV9eRxzRH+KswwXaIDbHrkRyu2rc7dgKooOBxMN7sd0pI qg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3np2mtd12b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Feb 2023 10:33:30 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 31E88G2Y028887;
+        Tue, 14 Feb 2023 10:33:29 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2103.outbound.protection.outlook.com [104.47.58.103])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3np1f5318q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Feb 2023 10:33:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dZQw5DSkUq7Ng0Ezoi8heFiCVGrhUpgyYn8+S+TRAPoC8CJeQVLplpIY05Ox2lEHYXN3lrTCkP1NXxaZOX91OXbCnCjxym9cWc9fSBAO+dXC8CpMIs7rJCwHQY8RajO3qRVWTPf5xWWVlxCDrgEANLGQYDIboWGP2/bT4Rdx5uCsM10xVJ+xWqm34APTqIXlk2+8VcNthEDwN/xfaioBIw+8r0PBHv1WrbfDG9Q74eCW7kaZti0a4CwRk1tfSZLuLfvwS4qsfqWB+koCPlosLvihd9EUSQGFXG1ykrl7HsGXdfpWWfrFcp02QQYyPPxTIjgnN4NMP7um6ic++wUdBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tyI5EL2sAtCE0UPmWkfZUWZXRPd+0p7K//yG5LSyn6Q=;
+ b=lcxr/97HVAGmPWiaA060vapHEYqJ+kow6IviciTElXWMjfGow5Au2J8Zuk1w2B/AIRma5vu3C08EZAALcuHEccZq/8cRlZoTjsgtHahaeEQTrLzCcDZvJzbK35qXHOhvkjdXSiKFQxdQDOYs+7A6WHqImKzCwLzv/1OCB/rF7RGYFhfFq8TwdxjpJ89ocBcHHx61VvtgyPSIvXQ3d9Xa/JczZFS9QHn1RExfRZ/lF7jmK4nlFVlVxk2RAlDFcobIyDpGYRSgJP35dVlPWJGdpJXn5pw2fHvFviL4zbsXOU65y96tj0ZJn31p3ZN1L7aPHNYTfTp7yZmhG2ac4+FbbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tyI5EL2sAtCE0UPmWkfZUWZXRPd+0p7K//yG5LSyn6Q=;
+ b=fHAHOaBJu1hWGsoGc5hYP27T0IvA28xRH8LG6k6KN/fvDhmkDXIizzTStP92TyIkeA2ojkuKhtCNqY44SCVI7jA3hFO4w/ZPphTERPBedtDGRmx1CK5lQq2iovKYGlhh23hUF2HI6FGWMHcZSBFW64cQc2Gjm179hq6a2hFNxxM=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH8PR10MB6575.namprd10.prod.outlook.com (2603:10b6:510:225::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.10; Tue, 14 Feb
+ 2023 10:33:27 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::fff7:981:3ae6:92eb]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::fff7:981:3ae6:92eb%5]) with mapi id 15.20.6111.008; Tue, 14 Feb 2023
+ 10:33:27 +0000
+Message-ID: <17020c10-9f2d-29f0-15b6-2c07cf422407@oracle.com>
+Date:   Tue, 14 Feb 2023 10:33:21 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
+To:     Bart Van Assche <bvanassche@acm.org>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
+        kbusch@kernel.org, ming.lei@redhat.com
+References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
+ <20230210180033.321377-1-joshi.k@samsung.com>
+ <69443f85-5e16-e3db-23e9-caf915881c92@acm.org>
+Content-Language: en-US
+From:   John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <69443f85-5e16-e3db-23e9-caf915881c92@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:311::6) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+rbR48vvhHDJlUF@T590>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH8PR10MB6575:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98976e61-2343-4f64-1e5c-08db0e76e859
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jLShdXbRT39fXAEFqpydYMlUzT7wlWnjygy1IBcqpb7RiujwXY79qy71zkR1/OI1l32QrR0x0P1V5MlIOuCJTfispLaVWBG52ylECkIy5dZ70Os5CdsGas1+nc4r7uAMlZTuTRRuKAernVWB4krOsGm1ZUxfvwtUypk1Hn9LOL4J9W1ZxTUI0tVK/XwiCLGEWsD0g1H7j04a5QnbB9x3Slz+u9edlLlAegkyQIA60cSVGZWU2olHAQEmdjBKAk5Mg3pRrDOfJ9I7P+yKaLotMgAzNJsjd0kncvKqV6YCxwcPoLr/VJabGOfEFWTQ2XnSK4I0WbEkty+/yxM5Z2ir4GF63KGL5Wkv1UhkMZDVUIhCLrY/s6beKIXosW3O8PRiCf3otKHqyIvBayUfTmZiPwnxK5FaDuJOgHtDlZ7fkHRw59+kwAFq7wZZQuz7dppTuvqbxwevj5LBZl/T8mZpotRzDc1fFVniulV9hvT4s1VGl7ZfTUn71CSCu+JKcJz73ng+5bN0+qx4QmaH1S/0HIxD8KVUD2iH/mGorDarWZGYblqZMuoH3ZyO1al1UjtZNeTTg1MhG0vqWzZUaZQitkyny4Hcb98xCKNLdfc0wSFG5yLESVvb/kPC+Qa48o8hvSatR0kQq2sNvmqT0shQXx6UqedFR/UUN0bmSRms5uZ1+5RUW5SGZuvloYk7dTnUKeILAdOVPzgea/lh2EtJbhyNO3mkseTxEZxa0tk4M24=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(366004)(136003)(376002)(346002)(396003)(39860400002)(451199018)(478600001)(36756003)(966005)(6486002)(110136005)(66476007)(66946007)(66556008)(8676002)(8936002)(2616005)(4744005)(53546011)(86362001)(31696002)(36916002)(316002)(6666004)(38100700002)(41300700001)(6506007)(2906002)(31686004)(6512007)(186003)(26005)(5660300002)(4326008)(7416002)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aThnMjhwZXMxS1V4THFVVEFoakFGRkNMNUMxY1RnYkVFSGozQkFLdmp6SllE?=
+ =?utf-8?B?RFZXNEk1dElud2JiL0tzdnRVdkxKK01xU21TOStsWDhmeUJ5Nzd2QVlWaVZz?=
+ =?utf-8?B?Vkdnc1JwamdJZ09uZ3NIWERsL3BOY3NLY0NYTkt4dG1DV09MNm16bDNLVWlt?=
+ =?utf-8?B?ZlZaODMyZUxYOW8wMU1kMm83ZlNDaDRmN3kzMFQzS01OS01PaTUzcDl0Q0dT?=
+ =?utf-8?B?ak1qOVRKcHFFS1ZsQk9xYldWdU45S0dyY1lhVDA1SkgydFZrSXpQb0x0NUZL?=
+ =?utf-8?B?L2xXM3JDU3h3MlgxcVZMZ1c3cERoZ1BUYXRDM282dnBIUnhKMzFnMG5kRFNV?=
+ =?utf-8?B?Y1FEYkRPd2d0a0RvZGU3SXUvSGwyQmxyYThic1EwQ3lPVTg4NDc2WWl1QnM4?=
+ =?utf-8?B?c2tiVXhEamFVRFl3QWJ4a01TZGIrOGZtWUJlWFNrUjMwYkltQ3VlYTVOUzhQ?=
+ =?utf-8?B?bGN1WmxNK080V1ltL20vUFdsZzdvTXBXTzR6QXRBRDYrVFRIQlVPSlQ4MkVW?=
+ =?utf-8?B?QnlDT0FlUkI1ZlFDTWdpWTBvS1VPRDlka0FPVitsRVRnWHBzenJkNGpGV2NL?=
+ =?utf-8?B?N1U3UEtSNlNZdExNV0d1c2pyeWN4RXNBQURlWVhHdG8yRlg0QVhWMy83V1BN?=
+ =?utf-8?B?QWN0U00xUUlLbDh4N0FOVmRKbFQ5UnlFNXdvT1ZlMnFYR0w3eE15R2FFeU80?=
+ =?utf-8?B?dVVzT1pFYUJwbEhFcUsraGtQaTgzTjhWSzAwMGpLUVRoUFdhTHpWRVl1YThj?=
+ =?utf-8?B?YnRmMHM0OE16T0VnOXNrMlRYMDd6bDltL0wyZEVTQVZCVHU2MisxR1J3VTdU?=
+ =?utf-8?B?VWZ1UHhNN0tiS0I1MGh1YnRvSisrbTg3YnlyUUNEWVVZNDAvbHNzRGRKc004?=
+ =?utf-8?B?L3BtMWF1Z3pxOG5OZGN0N0hISUNnbVFQZWFReTRiTVNPVzBBd0RUTW5UOWNn?=
+ =?utf-8?B?cDlzSGhacFIrenBaUExpM3dPakgxNy9JNG8waGJLQVZHVTdWY2p6TVZCcTk2?=
+ =?utf-8?B?YmFzNm9SaGNTeVFwbzhodHR3azljODNpOHpIZ3hFV1Q5OVhVU053d1RYR2V0?=
+ =?utf-8?B?MG5YUXBPU05mL3YrQXM5dWpSbnNHVDFaT2NmY1RpcDErTkNyVlBjdXQ5UG5v?=
+ =?utf-8?B?a0I2SVlXcjBPMVhEekdyeGRjQmJYRGRUbDBrN25CcklqZjZpT2dvWDlZclhG?=
+ =?utf-8?B?Uk9BM09VcWFpNUtaKzVyZENNNTF3ZkpOOVdkWDEwR1BpREF2MkdHd1VGWGU1?=
+ =?utf-8?B?TFJtbXJLRy80WkwvWHU5WGxEM1c3Ykd6clY3Q3MxcE9sQWo2NDRTd21KTFNN?=
+ =?utf-8?B?dlhzcngrRjhoYnZjVmR2Y1U1K2pGRkRRQUlZV1NjcnJCbHF2S3lvQTkvRmw1?=
+ =?utf-8?B?ejJRaWh4MW13THhEZ3JwY0U5VmQwRjZUNGlHRlZNTEJ1alFoZVJsQXRqVms4?=
+ =?utf-8?B?RjNDQjlYYnk1OU4vZUN4Mnh1eXlTL3VHZS9jK2ZnZkNmcSt4UUM3NlZSMmxs?=
+ =?utf-8?B?blp2Wlp3aEoxbjVNajNZelhSSTVlZkFGY0pqVWw2dXk2eitvVEFLaHFVTnE1?=
+ =?utf-8?B?TUlLNlR6Mmc4NTBBNVd0UytUTTRDcmJ2T0Zlejc3Y3E2Wjd0c3Q5WmdQZVdy?=
+ =?utf-8?B?T1k1SVBkK0dnVE5OUnlneE5RMjQ4eEdiR1FZNXJOeTVVdGhoZDI3MGlTYW9X?=
+ =?utf-8?B?aHRVZGJVRndySGdqZEdhek82aEZrdGozMm0yZlpKQWlEUlFjMXpBRWY0MDdk?=
+ =?utf-8?B?V3BHTUNqMGZsV0ZTb0xnZ01lRm9ibUxHTVpFRkR1TnRZSEdUNGgrYnRTcnU0?=
+ =?utf-8?B?SW9zQkwyQzFDSzdTY3dHUEdldjdWZjBvYVFsRFVxaTY2WFlDL3Z5R0h6Uytk?=
+ =?utf-8?B?cXd3QUM5VExFRmQ3QStUbm55VG5UYTRMYlcxWXFUUlFlZWFxdmZ5TDNnV1VE?=
+ =?utf-8?B?N0RqZnZVTVp0WlFNZythOFFqSE16WllLcktBclRYc0tvMlh2SnFvZm9xL0Ex?=
+ =?utf-8?B?YXJNQ2drYzcxTFJmalQ0RE1ITkpUNEhOSmtjK2g5WXJmdlNSZ281cUh4aVhQ?=
+ =?utf-8?B?Z05LUlFrLzFVQVV0UVJKLzFYTVhaTDd0OEVOakNoQkNCSXRDY014R0ZBUXl5?=
+ =?utf-8?B?SWllaW9JUzkzSE9lUk1WQUhlMC90NzEwOHBtbFgvdEVHQ1Bua0VFNVpCNlc0?=
+ =?utf-8?B?dFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?MnlkRjBxZTVjdHJ2WWZtSXJTZ0Vpb1dtdU1VUmNrd0pEeVM5bmptdUk4QTZz?=
+ =?utf-8?B?TXJMQzZhRitYVzVPSU1reDBzUWpJWGI1RVNlWmdLRnQwekRpRU0rOHBWS0N2?=
+ =?utf-8?B?ZzRiTGpFOWdxM0syQW5MZ0w5N0Njck5kdWh6eEFmL2VhOHRsQzRCRXZVUDd5?=
+ =?utf-8?B?cXdaTHNOWjlFZXF4M3hVZnRIOUZOZmxPRm9PQWNhUVBic3FHVHJIV2lSVU1z?=
+ =?utf-8?B?amIzbUNPOEVQTzc0a05vOGg5QmxLUlFWLzhUUkJRUUlNakE4ZURRa3JVRkJ2?=
+ =?utf-8?B?TzRpanFzN3lXZkFra3VmeFQ3cjZPczFQT3RTWk1TUkZUMDNRSXJvVTJBL2NX?=
+ =?utf-8?B?a0NGbU1Dd1V4em44ajQ0N1NZdGt2WTBYeDJnSEp2Q0hUMkxxUFlwUXcxSGNN?=
+ =?utf-8?B?SU1KcnhTK2V0blVaSEFvUlNCRUllbkF3ZzNweVdtR3NrZjBmMkloRWNFR0Fp?=
+ =?utf-8?B?a2ovZ04zQmFsMW1OR3NoRjJnK2RuQmcveS9qNDg0d0k1Q05sNXRCNnd6MFN0?=
+ =?utf-8?B?OFFzelBVcDUzVnMzOGtjOGNpN203QnNpRXJJR2svWFhWejBYOTc5S2NnMENX?=
+ =?utf-8?B?eFVSanlqdmJ4YVJsRFFla1l5ZTU0T2JWSmR6UG9kcjhZVFFvaUpSV2ZhWTh5?=
+ =?utf-8?B?eE9URTk4NVROa3BJNnE0NHRmTmdkaVg5bDFMemNDL21XSjNoVG1IeS93L1RT?=
+ =?utf-8?B?ZXRGWTVrMFZMWlZFdTgyYnZzNFgzMVEwZ2NXVGdOYU1pcVhGNEhDR0xXRjhE?=
+ =?utf-8?B?OG5jMHNPQkdvZGFTaU4vWHduQU5VaXJxbEs2MGZCSzRGcVF4WUNNcmFQZFVu?=
+ =?utf-8?B?QUZHRUxaQk5JcW1BNTVVMis2QWFRYWlTc3owRm9YVS91L3IyY00rb1FFbHFn?=
+ =?utf-8?B?WDNQYTdyZjVmSFdjK0F5TnEvVUJlalgzZEJ2eDVmWU9vMkxsME9TUFpKY0xw?=
+ =?utf-8?B?SEpXTU1qbEt2WWpnNVJwOXBCNzNiZy9zT0RFRzdhZUtZQ2htTDRNemU5Tjlz?=
+ =?utf-8?B?czUwNnh3VXZtOUR3azY4WDlENjlNMit4MjRvME9QZG04c2k0a1Zpd3lTNUZa?=
+ =?utf-8?B?empkY0ZXQ0tieHg2dFdBWWczc3ZLYXJERVI0QWlRMkMxdGJQeFp5L0FBemNr?=
+ =?utf-8?B?cmdhYTIzNGZqUW1IaExNOEZ0MFFiSTF6Z1dpNFg5azlKc2k0SjI1ME55STV5?=
+ =?utf-8?B?ZGExU21ZNkdTS3RoazF4ZEpHMElUYkQwaE02ZTNTK1YzN1NReW9WOUJUWDI3?=
+ =?utf-8?B?Kyt5ZU1jVjRxMUlaUE80WFpJZkFGOU9zeTR0Q05Ddm9FVlRJYjF2STlvaW1B?=
+ =?utf-8?B?dUIvbnZDZC94YkpkVlFNbWdvU3pKZGNBUmQxZnF2a01mL3M2UEc2WVpJdUdk?=
+ =?utf-8?Q?1RfcJXvR9gQVVadKIq8MpPxuMPPbmJ/Y=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98976e61-2343-4f64-1e5c-08db0e76e859
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2023 10:33:27.2310
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x5IL6IELBk8vWjFkp6gyJTW6cV0owM5PU8UBZDOOF21EOaIIZpONc8nBs4p7Ff+pRxfrn45n1Bklr8jlEtzUgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6575
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-14_06,2023-02-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=919 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302140090
+X-Proofpoint-GUID: Ko1DnCkifV9HSOoXWWmsnMydB1x9UqKm
+X-Proofpoint-ORIG-GUID: Ko1DnCkifV9HSOoXWWmsnMydB1x9UqKm
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,73 +186,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 08:52:23AM +0800, Ming Lei wrote:
-> On Mon, Feb 13, 2023 at 12:04:27PM -0800, Linus Torvalds wrote:
-> > On Sat, Feb 11, 2023 at 5:39 PM Ming Lei <ming.lei@redhat.com> wrote:
-> > >
-> > > >
-> > > >  (a) what's the point of MAY_READ? A non-readable page sounds insane
-> > > > and wrong. All sinks expect to be able to read.
-> > >
-> > > For example, it is one page which needs sink end to fill data, so
-> > > we needn't to zero it in source end every time, just for avoiding
-> > > leak kernel data if (unexpected)sink end simply tried to read from
-> > > the spliced page instead of writing data to page.
-> > 
-> > I still don't understand.
-> > 
-> > A sink *reads* the data. It doesn't write the data.
-> > 
-> > There's no point trying to deal with "if unexpectedly doing crazy
-> > things". If a sink writes the data, the sinkm is so unbelievably buggy
-> > that it's not even funny.
-> > 
-> > And having two flags that you then say "have to be used together" is pointless.
+On 10/02/2023 18:18, Bart Van Assche wrote:
+> On 2/10/23 10:00, Kanchan Joshi wrote:
+>> 3. DMA cost: is high in presence of IOMMU. Keith posted the work[1],
+>> with block IO path, last year. I imagine plumbing to get a bit simpler
+>> with passthrough-only support. But what are the other things that must
+>> be sorted out to have progress on moving DMA cost out of the fast path?
 > 
-> Actually I think it is fine to use the pipe buffer flags separately,
-> if MAY_READ/MAY_WRITE is set in source end, the sink side need to respect
-> it. All current in-tree source end actually implies both MAY_READ & MAY_WRITE.
+> Are performance numbers available?
 > 
-> > It's not two different flags if you can't use them separately!
-> > 
-> > So I think your explanations are anything *but* explaining what you
-> > want. They are just strange and not sensible.
-> > 
-> > Please explain to me in small words and simple sentences what it is
-> > you want. And no, if the explanation is "the sink wants to write to
-> > the buffer", then that's not an explanation, it's just insanity.
-> > 
-> > We *used* to have the concept of "gifting" the buffer explicitly to
-> > the sink, so that the sink could - instead of reading from it - decide
-> > to just use the whole buffer as-is long term. The idea was that tthe
-> > buffer woudl literally be moved from the source to the destination,
-> > ownership and all.
-> > 
-> > But if that's what you want, then it's not about "sink writes". It's
-> > literally about the splice() wanting to move not just the data, but
-> > the whole ownership of the buffer.
-> 
-> Yeah, it is actually transferring the buffer ownership, and looks
-> SPLICE_F_GIFT is exactly the case, but the driver side needs to set
-> QUEUE_FLAG_STABLE_WRITES for avoiding writeback to touch these pages.
-> 
-> Follows the idea:
-> 
-> file(devices(such as, fuse, ublk), produce pipe buffer) -> direct pipe -> file(consume the pipe buffer)
-> 
-> The 'consume' could be READ or WRITE.
-> 
-> So once SPLICE_F_GIFT is set from source side, the two buffer flags
-> aren't needed any more, right?
+> Isn't IOMMU cost something that has already been solved? From 
+> https://www.usenix.org/system/files/conference/atc15/atc15-paper-peleg.pdf: "Evaluation of our designs under Linux shows that (1)
+> they achieve 88.5%–100% of the performance obtained
+> without an IOMMU".
 
-Sorry, I meant PIPE_BUF_FLAG_GIFT actually.
+That paper is ~8 years old now. Some recommendations are already 
+supported in the kernel since then, like per-CPU IOVA caching and 
+per-IOMMU domain IOTLB flushing with per-CPU queues (which is relevant 
+to lazy mode only).
 
-> 
-> Please see the detailed explanation & use case in following link:
-> 
-> https://lore.kernel.org/linux-block/409656a0-7db5-d87c-3bb2-c05ff7af89af@kernel.dk/T/#m237e5973571b3d85df9fa519cf2c9762440009ba
-> 
-
-Thanks, 
-Ming
-
+Thanks,
+John

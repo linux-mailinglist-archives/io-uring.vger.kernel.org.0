@@ -2,74 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98A87698778
-	for <lists+io-uring@lfdr.de>; Wed, 15 Feb 2023 22:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E98A6987AB
+	for <lists+io-uring@lfdr.de>; Wed, 15 Feb 2023 23:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbjBOVkg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Feb 2023 16:40:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38198 "EHLO
+        id S229646AbjBOWKT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Feb 2023 17:10:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjBOVkf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Feb 2023 16:40:35 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0024D2B0BA
-        for <io-uring@vger.kernel.org>; Wed, 15 Feb 2023 13:40:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1676497227; i=deller@gmx.de;
-        bh=Xp6ApsCgs+9C7q/qmnyCkM0AmU92HcZ/RIaroGIOeog=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=k0q9G/lkGtsY0fS9EurUo6WnPw79yLF55AeBZOE7N2/NY5XWfleXMcedfUGEfrEmZ
-         yWiFmQqOaxRcmAxyo+aK1hxbQnfhWvTExQJnTlzWdoewVImrv57hPcMU2uTTicz6jn
-         jITCpH4Ke9pcE7hyfmF+3Gafy7wJHPRtlUVGolCHt9i8DI8rmgVQwosSPGq7fA3185
-         pNsmIpvKXNF9cRsMD3GAvkHoCgNLSImn3F7Yfy3t3mht122WzO26vEZbJttgN6lLui
-         J2YFwXrgj1NPkMqsUk8cGe2sbbzQ49ar1zPwdZbpGV9IGAlJTPNEr35+ETJzemQCaf
-         LFjbVWkgxVDBA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from p100 ([92.116.136.89]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Md6Mj-1otcvQ0eah-00aGaR; Wed, 15
- Feb 2023 22:40:27 +0100
-Date:   Wed, 15 Feb 2023 22:40:25 +0100
-From:   Helge Deller <deller@gmx.de>
-To:     Jens Axboe <axboe@kernel.dk>,
-        John David Anglin <dave.anglin@bell.net>
-Cc:     io-uring@vger.kernel.org
+        with ESMTP id S229487AbjBOWKS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Feb 2023 17:10:18 -0500
+Received: from cmx-torrgo001.bell.net (mta-tor-003.bell.net [209.71.212.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF9A42DFA;
+        Wed, 15 Feb 2023 14:10:16 -0800 (PST)
+X-RG-CM-BuS: 0
+X-RG-CM-SC: 0
+X-RG-CM: Clean
+X-Originating-IP: [174.88.80.151]
+X-RG-Env-Sender: dave.anglin@bell.net
+X-RG-Rigid: 63EA076D004C1B48
+X-CM-Envelope: MS4xfMOVgNfIS14IIhx+PMGUAUkRXZ5OAtItDJ/4tbDbEX20uhtWLlJjMRvYWbMQXfAwM3IwM2Xj831q6DLHZ9nQgRPT5zggmQ17rEf7dhN/2vpquAABUuhL
+ ruzqM9HFgkiXG8ZIioiff3nnewycNcW5j/DEGJnIda48UVEE9yQ5gUpRnLatMEuALda41zPEKsAPGZZk1x5wOWFQryJZGFF1e7difr7yg4TssTpVPEnvGSjG
+ pHhEXN8csduIszjlXUApL8qWheGdzPV5lLH0Tk0FJtSSFqtrAWcl5lN49aO1DMcWZueY7DXl3NkNZQ51nsvPSHaIO2IwWTemSh2up56l70b64Sckv/Dq0re3
+ XvSP1pazu8GmfqT8+r8ENho29DrAWpVoN10uQAFnXDC6IrDVPQc=
+X-CM-Analysis: v=2.4 cv=M8Iulw8s c=1 sm=1 tr=0 ts=63ed5842
+ a=6Iw0JHgwQEnu+SgMJEJdFQ==:117 a=6Iw0JHgwQEnu+SgMJEJdFQ==:17
+ a=IkcTkHD0fZMA:10 a=FBHGMhGWAAAA:8 a=XzT94glyh8IH5fLVOosA:9 a=QEXdDO2ut3YA:10
+ a=9gvnlMMaQFpL9xblJ6ne:22
+Received: from [192.168.2.49] (174.88.80.151) by cmx-torrgo001.bell.net (5.8.814) (authenticated as dave.anglin@bell.net)
+        id 63EA076D004C1B48; Wed, 15 Feb 2023 17:10:10 -0500
+Message-ID: <c100a264-d897-1b9e-0483-22272bccd802@bell.net>
+Date:   Wed, 15 Feb 2023 17:10:11 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
 Subject: Re: io_uring failure on parisc with VIPT caches
-Message-ID: <Y+1RSYoZqZvqH/cb@p100>
+Content-Language: en-US
+From:   John David Anglin <dave.anglin@bell.net>
+To:     Jens Axboe <axboe@kernel.dk>, Helge Deller <deller@gmx.de>,
+        io-uring@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
 References: <Y+wUwVxeN87gqN6o@p100>
  <006e8db4-336f-6717-ecb0-d01a0e9bc483@kernel.dk>
  <626cee6f-f542-b7eb-16ca-1cf4e3808ca6@bell.net>
  <5f02fa8b-7fd8-d98f-4876-f1a89024b888@kernel.dk>
  <2b89f252-c430-1c44-7b30-02d927d2c7cb@gmx.de>
  <f7c3ef57-f16c-7fe3-30b7-8ca6a9ef00ee@kernel.dk>
- <1e77c848-5f8d-9300-8496-6c13a625a15c@gmx.de>
- <759bc2f7-5f9e-2a62-aa37-361dea902af5@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <759bc2f7-5f9e-2a62-aa37-361dea902af5@kernel.dk>
-X-Provags-ID: V03:K1:/FMh14jA55/sGrUyEWwDOjppb9pY446JzaWaK7IadbytDEoKH1T
- s4ppkpFLYtn6NnfIcX9wuR+521urNWRHwmrMjJ3o/ok0T6UiI4ruKwyd39UM6tYj/RvL4sw
- BxL8krmZxyjx8WKpefC+qksCTraK+C7nPk666ts12FnoIt0YGnWD/wvupRTMcvsnoXBAzIo
- yyVL2aML3PReZjRu+TYgw==
-UI-OutboundReport: notjunk:1;M01:P0:m+NyuWDF3VM=;OwHliZAh5sGjCiaePurAdvYznQ8
- iKAJg5X2xRHCOSAXCAzrA430Q6DsO+gyhvXTH1vKcjk2KX/Sssn/8XlmoRxNe6KITGppdEGpB
- YjKsaHP3ujy1yxoPqPtSSWDpegbJupajwQdXmfmIBxLQ3NplKiXXZDz0yxxo0QFmxgZ0VageB
- rw0hfw10hd+gcyEWY8Y9cEKetCNBH+z3GiDnSgsrnoWQE/Iry1bQg0RANbSkZ/7BziLbGpQIn
- gfS3G8Fh1T+y/mGzFnCPWbORkSlZUnv+ZPYzggSZPLknFtnQcKam6iI7N/XgRSkfgty2hf2EY
- 9sXVuE7CoLk6eztLOFbVZ53lLl9YwWj3C4jYkZ//McjbabUCEIy5//EY4ycmnLVhTQv348Ye+
- wehakLLKlWYwcvfmXoWB3/bM6mMMLBLpR4VFbUzpXGwEkbXzPgZULjO3d3sZaRpd2e3OMBXoB
- G1xak3obT4wVZ/h3JXl0IBbxeEj6s3MalSyR7SZPGwqUGpXP4Cx+FNv9uza3CIWv8jgOCk4iO
- +6FKVo8TvQzYNviUa8fnV4HbvM2KiA6CK/tFiCeee6SjiuLYT22ipl5RXUAe/HGxIT1OD5o9k
- T/yanW7/BIbAWXRz2BNAI1pvu1PCGKEaJFiL8/hqQpvrCM2oIDYtaFW7PPJflLJD05qFeBoU2
- OtEW3p4u9/v+55bRElQ8aTGbzudLkWWvJbB7BVv8DmKKhA54IaMnaLr4afKc01QceN0S1Aphz
- 3wQ5+tVEa08bcx/TW/v0r3Vrx1sZ4Ic/OA3Xkwj40BGLuxdV+oagKVkkYXfBlz+AXleVb/7Om
- lNcYWbfqHCPr44/W6BBHiJd1A8uMeFsyuCdOCtuzyq3BSsgR7pILy4NkbdzTRKYokq+vrC/W8
- pnTfhCVD2Sc4E2x/lHujgoRvZheyth4sfNH/dqrOL0oV5MN6yO3EAR1cScdYX4qDcXhXhlucG
- /1/p6mB3yXS71kISQ+bjXmIiIak=
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
+ <0bfe6cdb-2749-c08d-a1b2-ef46fed1ded3@bell.net>
+ <a03d75b9-a9b8-b950-c53d-6df85fe8adc4@kernel.dk>
+ <07810314-94f6-0e9a-984b-0a286cbb59d3@kernel.dk>
+ <4f4f9048-b382-fa0e-8b51-5a0f0bb08402@kernel.dk>
+ <99a41070-f334-f3cb-47cd-8855c938d71f@bell.net>
+ <d8dc9156-c001-8181-a946-e9fdfe13f165@kernel.dk>
+ <c7725c80-ba8c-1182-7adc-bc107f4f5b75@bell.net>
+ <5e72c1fc-1a7b-a4ed-4097-96816b802e6d@bell.net>
+In-Reply-To: <5e72c1fc-1a7b-a4ed-4097-96816b802e6d@bell.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,105 +67,368 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Here is an updated patch which
-- should support other platforms which needs aliasing
-- allows users to pass in an address in mmap(). This is checked
-  and returned -EINVAL if it does not fullfill the aliasing.
-  (this part is untested up to now!)
+On 2023-02-15 4:39 p.m., John David Anglin wrote:
+> On 2023-02-15 4:06 p.m., John David Anglin wrote:
+>> On 2023-02-15 3:37 p.m., Jens Axboe wrote:
+>>>> System crashes running test buf-ring.t.
+>>> Huh, what's the crash?
+>> Not much info.  System log indicates an HPMC occurred. Unfortunately, recovery code doesn't work.
+> The following occurred running buf-ring.t under gdb:
+>
+> INFO: task kworker/u64:9:18319 blocked for more than 123 seconds.
+>       Not tainted 6.1.12+ #4
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/u64:9   state:D stack:0     pid:18319 ppid:2 flags:0x00000000
+> Workqueue: events_unbound io_ring_exit_work
+> Backtrace:
+>  [<0000000040b5c210>] __schedule+0x2e8/0x7f0
+>  [<0000000040b5c7d0>] schedule+0xb8/0x1d0
+>  [<0000000040b66534>] schedule_timeout+0x11c/0x1b0
+>  [<0000000040b5d71c>] __wait_for_common+0x194/0x2e8
+>  [<0000000040b5d8ac>] wait_for_completion+0x3c/0x50
+>  [<0000000040b46508>] io_ring_exit_work+0x3d8/0x4d0
+>  [<0000000040268da8>] process_one_work+0x238/0x520
+>  [<00000000402692a4>] worker_thread+0x214/0x778
+>  [<0000000040276f94>] kthread+0x24c/0x258
+>  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
+>
+> INFO: task kworker/u64:10:18320 blocked for more than 123 seconds.
+>       Not tainted 6.1.12+ #4
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/u64:10  state:D stack:0     pid:18320 ppid:2 flags:0x00000000
+> Workqueue: events_unbound io_ring_exit_work
+> Backtrace:
+>  [<0000000040b5c210>] __schedule+0x2e8/0x7f0
+>  [<0000000040b5c7d0>] schedule+0xb8/0x1d0
+>  [<0000000040b66534>] schedule_timeout+0x11c/0x1b0
+>  [<0000000040b5d71c>] __wait_for_common+0x194/0x2e8
+>  [<0000000040b5d8ac>] wait_for_completion+0x3c/0x50
+>  [<0000000040b46508>] io_ring_exit_work+0x3d8/0x4d0
+>  [<0000000040268da8>] process_one_work+0x238/0x520
+>  [<00000000402692a4>] worker_thread+0x214/0x778
+>  [<0000000040276f94>] kthread+0x24c/0x258
+>  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
+>
+> gdb was sitting at a break at line 328.
+With Helge's latest patch, we get a software lockup:
 
+TCP: request_sock_TCP: Possible SYN flooding on port 31309. Sending cookies.  Check SNMP counters.
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/u64:13:14621]
+Modules linked in: binfmt_misc ext4 crc16 jbd2 ext2 mbcache sg ipmi_watchdog ipmi_si ipmi_poweroff ipmi_devintf ipmi_msghandler fuse nfsd 
+ip_tables x_tables ipv6 autofs4 xfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c 
+crc32c_generic raid1 raid0 multipath linear md_mod sd_mod t10_pi ses enclosure scsi_transport_sas crc64_rocksoft crc64 sr_mod uas usb_storage 
+cdrom ohci_pci ehci_pci ohci_hcd pata_cmd64x ehci_hcd sym53c8xx libata scsi_transport_spi usbcore tg3 scsi_mod scsi_common usb_common
+CPU: 0 PID: 14621 Comm: kworker/u64:13 Not tainted 6.1.12+ #5
+Hardware name: 9000/800/rp3440
+Workqueue: events_unbound io_ring_exit_work
 
-Jens, I think you need to add the "_FILE_OFFSET_BITS=3D64" define
-when compiling your testsuite, e.g. for lfs-openat.t and lfs-openat-write.=
-t
+      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+PSW: 00001000001011001111111100001111 Not tainted
+r00-03  000000ff082cff0f 00000000670cc880 00000000406e64f0 00000000670cc990
+r04-07  0000000040c099c0 00000000629d1158 0000000000000000 000000006a406800
+r08-11  00000000629d10e0 00000000629d1d98 0000000000000003 00000000670cc888
+r12-15  00000000670cc960 000000000000002e 0000000040c709c0 0000000000000000
+r16-19  0000000040c709c0 0000000040c709c0 0000000059dc6d60 0000000000000000
+r20-23  0000000000000001 0000000000000001 0000000000000000 0000000064252110
+r24-27  0000000000000003 00000000670cc888 0000000000000000 0000000040c099c0
+r28-31  0000000059dc6d60 00000000670cc960 00000000670cca10 0000000000000001
+sr00-03  000000000116c400 000000000116c400 0000000000000000 000000000116c400
+sr04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
 
-Helge
+IASQ: 0000000000000000 0000000000000000 IAOQ: 0000000040683df0 0000000040683e38
+  IIR: 0f5010df    ISR: 0000000000000000  IOR: 00000000670ccbc0
+  CPU:        0   CR30: 0000000059dc6d60 CR31: ffffffffffffefff
+  ORIG_R28: 0000000040203070
+  IAOQ[0]: iocb_bio_iopoll+0x30/0x80
+  IAOQ[1]: iocb_bio_iopoll+0x78/0x80
+  RP(r2): io_do_iopoll+0xa8/0x4b0
+Backtrace:
+  [<00000000406e64f0>] io_do_iopoll+0xa8/0x4b0
+  [<0000000040b45d88>] io_uring_try_cancel_requests+0x2a0/0x6a8
+  [<0000000040b4628c>] io_ring_exit_work+0xfc/0x4d0
+  [<0000000040268da8>] process_one_work+0x238/0x520
+  [<00000000402692a4>] worker_thread+0x214/0x778
+  [<0000000040276f94>] kthread+0x24c/0x258
+  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
 
+watchdog: BUG: soft lockup - CPU#0 stuck for 49s! [kworker/u64:13:14621]
+Modules linked in: binfmt_misc ext4 crc16 jbd2 ext2 mbcache sg ipmi_watchdog ipmi_si ipmi_poweroff ipmi_devintf ipmi_msghandler fuse nfsd 
+ip_tables x_tables ipv6 autofs4 xfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c 
+crc32c_generic raid1 raid0 multipath linear md_mod sd_mod t10_pi ses enclosure scsi_transport_sas crc64_rocksoft crc64 sr_mod uas usb_storage 
+cdrom ohci_pci ehci_pci ohci_hcd pata_cmd64x ehci_hcd sym53c8xx libata scsi_transport_spi usbcore tg3 scsi_mod scsi_common usb_common
+CPU: 0 PID: 14621 Comm: kworker/u64:13 Tainted: G             L 6.1.12+ #5
+Hardware name: 9000/800/rp3440
+Workqueue: events_unbound io_ring_exit_work
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 862e05e6691d..d89fe16878dc 100644
-=2D-- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -72,6 +72,7 @@
- #include <linux/io_uring.h>
- #include <linux/audit.h>
- #include <linux/security.h>
-+#include <asm/shmparam.h>
+      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+PSW: 00001000000001001111111100001111 Tainted: G             L
+r00-03  000000ff0804ff0f 00000000670cc880 00000000406e64f0 00000000670cc880
+r04-07  0000000040c099c0 00000000629d1f58 0000000000000000 000000006a406800
+r08-11  00000000629d1b60 00000000629d1bd8 0000000000000003 00000000670cc888
+r12-15  00000000670cc960 000000000000002e 0000000040c709c0 0000000000000000
+r16-19  0000000040c709c0 0000000040c709c0 0000000059dc6d60 0000000000000000
+r20-23  0000000000000001 0000000000000001 0000000000000000 0000000064252110
+r24-27  0000000000000003 00000000670cc888 00000000670cc888 0000000040c099c0
+r28-31  00000000629d1f58 00000000670cc960 00000000670cc990 0000000059dc6d60
+sr00-03  000000000116c400 000000000116c400 0000000000000000 000000000116c400
+sr04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -3059,6 +3060,63 @@ static __cold int io_uring_mmap(struct file *file, =
-struct vm_area_struct *vma)
- 	return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
- }
+IASQ: 0000000000000000 0000000000000000 IAOQ: 00000000406e6528 00000000406e652c
+  IIR: 50bf3f11    ISR: 000000000116c400  IOR: 0000000000000000
+  CPU:        0   CR30: 0000000059dc6d60 CR31: ffffffffffffefff
+  ORIG_R28: 0000000000000000
+  IAOQ[0]: io_do_iopoll+0xe0/0x4b0
+  IAOQ[1]: io_do_iopoll+0xe4/0x4b0
+  RP(r2): io_do_iopoll+0xa8/0x4b0
+Backtrace:
+  [<0000000040b45d88>] io_uring_try_cancel_requests+0x2a0/0x6a8
+  [<0000000040b4628c>] io_ring_exit_work+0xfc/0x4d0
+  [<0000000040268da8>] process_one_work+0x238/0x520
+  [<00000000402692a4>] worker_thread+0x214/0x778
+  [<0000000040276f94>] kthread+0x24c/0x258
+  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
 
-+static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
-+			unsigned long addr0, unsigned long len,
-+			unsigned long pgoff, unsigned long flags)
-+{
-+	const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, flags);
-+	struct vm_unmapped_area_info info;
-+	unsigned long addr;
-+	void *ptr;
-+
-+	ptr =3D io_uring_validate_mmap_request(filp, pgoff, len);
-+	if (IS_ERR(ptr))
-+		return -ENOMEM;
-+
-+	info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
-+	info.length =3D len;
-+	info.low_limit =3D max(PAGE_SIZE, mmap_min_addr);
-+	info.high_limit =3D arch_get_mmap_base(addr, current->mm->mmap_base);
-+#ifdef SHM_COLOUR
-+	info.align_mask =3D PAGE_MASK & (SHM_COLOUR - 1UL);;
-+#else
-+	info.align_mask =3D PAGE_MASK & (SHMLBA - 1UL);
-+#endif
-+	info.align_offset =3D (unsigned long) ptr;
-+
-+	if (addr0) {
-+		/* check page alignment and shm aliasing */
-+		if ((addr0 & (PAGE_SIZE - 1UL) ||
-+		    ((addr0 & info.align_mask) !=3D
-+			(info.align_offset & info.align_mask))))
-+			return -EINVAL;
-+		info.low_limit =3D max(addr0, info.low_limit);
-+		info.high_limit =3D min(addr0 + len, info.high_limit);
-+	}
-+
-+	/*
-+	 * A failed mmap() very likely causes application failure,
-+	 * so fall back to the bottom-up function here. This scenario
-+	 * can happen with large stack limits and large mmap()
-+	 * allocations.
-+	 */
-+	addr =3D vm_unmapped_area(&info);
-+
-+	/* if address was given, check against found address */
-+	if (addr0 && addr !=3D addr0)
-+		return -EINVAL;
-+
-+	if (offset_in_page(addr)) {
-+		VM_BUG_ON(addr !=3D -ENOMEM);
-+		info.flags =3D 0;
-+		info.low_limit =3D TASK_UNMAPPED_BASE;
-+		info.high_limit =3D mmap_end;
-+		addr =3D vm_unmapped_area(&info);
-+	}
-+
-+	return addr;
-+}
-+
- #else /* !CONFIG_MMU */
+rcu: INFO: rcu_sched self-detected stall on CPU
+rcu:    0-....: (5979 ticks this GP) idle=b23c/1/0x4000000000000002 softirq=36165/36165 fqs=2989
+         (t=6000 jiffies g=69677 q=1954 ncpus=4)
+CPU: 0 PID: 14621 Comm: kworker/u64:13 Tainted: G             L 6.1.12+ #5
+Hardware name: 9000/800/rp3440
+Workqueue: events_unbound io_ring_exit_work
 
- static int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
-@@ -3273,6 +3331,8 @@ static const struct file_operations io_uring_fops =
-=3D {
- #ifndef CONFIG_MMU
- 	.get_unmapped_area =3D io_uring_nommu_get_unmapped_area,
- 	.mmap_capabilities =3D io_uring_nommu_mmap_capabilities,
-+#else
-+	.get_unmapped_area =3D io_uring_mmu_get_unmapped_area,
- #endif
- 	.poll		=3D io_uring_poll,
- #ifdef CONFIG_PROC_FS
+      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+PSW: 00001000000001001111111100001111 Tainted: G             L
+r00-03  000000ff0804ff0f 00000000670cc880 00000000406e64f0 00000000670cc990
+r04-07  0000000040c099c0 0000000069aa6d98 0000000000000000 000000006a406800
+r08-11  0000000069aa6d20 00000000629d1f58 0000000000000003 00000000670cc888
+r12-15  00000000670cc960 000000000000002e 0000000040c709c0 0000000000000000
+r16-19  0000000040c709c0 0000000040c709c0 0000000059dc6d60 0000000000000000
+r20-23  0000000000000001 0000000000000001 0000000000000000 0000000064252110
+r24-27  0000000000000003 00000000670cc888 0000000000000000 0000000040c099c0
+r28-31  0000000000000000 00000000670cc960 00000000670cca10 0000000059dc6d60
+sr00-03  000000000116c400 000000000116c400 0000000000000000 000000000116c400
+sr04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+
+IASQ: 0000000000000000 0000000000000000 IAOQ: 0000000040683e24 0000000040683e28
+  IIR: 0c6110c2    ISR: 00000000670cc850  IOR: 00000000670ccbc0
+  CPU:        0   CR30: 0000000059dc6d60 CR31: ffffffffffffefff
+  ORIG_R28: 0000000040c709c0
+  IAOQ[0]: iocb_bio_iopoll+0x64/0x80
+  IAOQ[1]: iocb_bio_iopoll+0x68/0x80
+  RP(r2): io_do_iopoll+0xa8/0x4b0
+Backtrace:
+  [<00000000406e64f0>] io_do_iopoll+0xa8/0x4b0
+  [<0000000040b45d88>] io_uring_try_cancel_requests+0x2a0/0x6a8
+  [<0000000040b4628c>] io_ring_exit_work+0xfc/0x4d0
+  [<0000000040268da8>] process_one_work+0x238/0x520
+  [<00000000402692a4>] worker_thread+0x214/0x778
+  [<0000000040276f94>] kthread+0x24c/0x258
+  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 82s! [kworker/u64:13:14621]
+Modules linked in: binfmt_misc ext4 crc16 jbd2 ext2 mbcache sg ipmi_watchdog ipmi_si ipmi_poweroff ipmi_devintf ipmi_msghandler fuse nfsd 
+ip_tables x_tables ipv6 autofs4 xfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c 
+crc32c_generic raid1 raid0 multipath linear md_mod sd_mod t10_pi ses enclosure scsi_transport_sas crc64_rocksoft crc64 sr_mod uas usb_storage 
+cdrom ohci_pci ehci_pci ohci_hcd pata_cmd64x ehci_hcd sym53c8xx libata scsi_transport_spi usbcore tg3 scsi_mod scsi_common usb_common
+CPU: 0 PID: 14621 Comm: kworker/u64:13 Tainted: G             L 6.1.12+ #5
+Hardware name: 9000/800/rp3440
+Workqueue: events_unbound io_ring_exit_work
+
+      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+PSW: 00001000000001001111111100001111 Tainted: G             L
+r00-03  000000ff0804ff0f 00000000670cc880 00000000406e64f0 00000000670cc880
+r04-07  0000000040c099c0 00000000629d1078 0000000000000000 000000006a406800
+r08-11  00000000629d1000 00000000629d1158 0000000000000003 00000000670cc888
+r12-15  00000000670cc960 000000000000002e 0000000040c709c0 0000000000000000
+r16-19  0000000040c709c0 0000000040c709c0 0000000059dc6d60 0000000000000000
+r20-23  0000000000000001 0000000000000001 0000000000000000 0000000064252110
+r24-27  0000000000000003 00000000670cc888 00000000629d1000 0000000040c099c0
+r28-31  0000000040ba7940 00000000670cc960 00000000670cc990 0000000000000002
+sr00-03  000000000116c400 000000000116c400 0000000000000000 000000000116c400
+sr04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+
+IASQ: 0000000000000000 0000000000000000 IAOQ: 00000000406e64e4 00000000406e64e8
+  IIR: 53820020    ISR: 000000000116c400  IOR: 0000000000000000
+  CPU:        0   CR30: 0000000059dc6d60 CR31: ffffffffffffefff
+  ORIG_R28: 0000000000000000
+  IAOQ[0]: io_do_iopoll+0x9c/0x4b0
+  IAOQ[1]: io_do_iopoll+0xa0/0x4b0
+  RP(r2): io_do_iopoll+0xa8/0x4b0
+Backtrace:
+  [<0000000040b45d88>] io_uring_try_cancel_requests+0x2a0/0x6a8
+  [<0000000040b4628c>] io_ring_exit_work+0xfc/0x4d0
+  [<0000000040268da8>] process_one_work+0x238/0x520
+  [<00000000402692a4>] worker_thread+0x214/0x778
+  [<0000000040276f94>] kthread+0x24c/0x258
+  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 108s! [kworker/u64:13:14621]
+Modules linked in: binfmt_misc ext4 crc16 jbd2 ext2 mbcache sg ipmi_watchdog ipmi_si ipmi_poweroff ipmi_devintf ipmi_msghandler fuse nfsd 
+ip_tables x_tables ipv6 autofs4 xfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c 
+crc32c_generic raid1 raid0 multipath linear md_mod sd_mod t10_pi ses enclosure scsi_transport_sas crc64_rocksoft crc64 sr_mod uas usb_storage 
+cdrom ohci_pci ehci_pci ohci_hcd pata_cmd64x ehci_hcd sym53c8xx libata scsi_transport_spi usbcore tg3 scsi_mod scsi_common usb_common
+CPU: 0 PID: 14621 Comm: kworker/u64:13 Tainted: G             L 6.1.12+ #5
+Hardware name: 9000/800/rp3440
+Workqueue: events_unbound io_ring_exit_work
+
+      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+PSW: 00001000001011001111111100001111 Tainted: G             L
+r00-03  000000ff082cff0f 00000000670cc880 00000000406e64f0 00000000670cc990
+r04-07  0000000040c099c0 0000000069aa63f8 0000000000000000 000000006a406800
+r08-11  0000000069aa6380 0000000069aa6d98 0000000000000003 00000000670cc888
+r12-15  00000000670cc960 000000000000002e 0000000040c709c0 0000000000000000
+r16-19  0000000040c709c0 0000000040c709c0 0000000059dc6d60 0000000000000000
+r20-23  0000000000000001 0000000000000001 0000000000000000 0000000064252110
+r24-27  0000000000000003 00000000670cc888 0000000000000000 0000000040c099c0
+r28-31  0000000059dc6d60 00000000670cc960 00000000670cca10 0000000000000001
+sr00-03  000000000116c400 000000000116c400 0000000000000000 000000000116c400
+sr04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+
+IASQ: 0000000000000000 0000000000000000 IAOQ: 0000000040683df0 0000000040683e38
+  IIR: 0f5010df    ISR: 00000000670cc850  IOR: 0000000000000001
+  CPU:        0   CR30: 0000000059dc6d60 CR31: ffffffffffffefff
+  ORIG_R28: 0000000040c709c0
+  IAOQ[0]: iocb_bio_iopoll+0x30/0x80
+  IAOQ[1]: iocb_bio_iopoll+0x78/0x80
+  RP(r2): io_do_iopoll+0xa8/0x4b0
+Backtrace:
+  [<00000000406e64f0>] io_do_iopoll+0xa8/0x4b0
+  [<0000000040b45d88>] io_uring_try_cancel_requests+0x2a0/0x6a8
+  [<0000000040b4628c>] io_ring_exit_work+0xfc/0x4d0
+  [<0000000040268da8>] process_one_work+0x238/0x520
+  [<00000000402692a4>] worker_thread+0x214/0x778
+  [<0000000040276f94>] kthread+0x24c/0x258
+  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 134s! [kworker/u64:13:14621]
+Modules linked in: binfmt_misc ext4 crc16 jbd2 ext2 mbcache sg ipmi_watchdog ipmi_si ipmi_poweroff ipmi_devintf ipmi_msghandler fuse nfsd 
+ip_tables x_tables ipv6 autofs4 xfs raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c 
+crc32c_generic raid1 raid0 multipath linear md_mod sd_mod t10_pi ses enclosure scsi_transport_sas crc64_rocksoft crc64 sr_mod uas usb_storage 
+cdrom ohci_pci ehci_pci ohci_hcd pata_cmd64x ehci_hcd sym53c8xx libata scsi_transport_spi usbcore tg3 scsi_mod scsi_common usb_common
+CPU: 0 PID: 14621 Comm: kworker/u64:13 Tainted: G             L 6.1.12+ #5
+Hardware name: 9000/800/rp3440
+Workqueue: events_unbound io_ring_exit_work
+
+      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+PSW: 00001000001011001111111100001111 Tainted: G             L
+r00-03  000000ff082cff0f 00000000670cc880 00000000406e64f0 00000000670cc990
+r04-07  0000000040c099c0 00000000629d1e78 0000000000000000 000000006a406800
+r08-11  00000000629d1e00 00000000629d1938 0000000000000003 00000000670cc888
+r12-15  00000000670cc960 000000000000002e 0000000040c709c0 0000000000000000
+r16-19  0000000040c709c0 0000000040c709c0 0000000059dc6d60 0000000000000000
+r20-23  0000000000000001 0000000000000001 0000000000000000 0000000064252110
+r24-27  0000000000000003 00000000670cc888 0000000000000000 0000000040c099c0
+r28-31  0000000059dc6d60 00000000670cc960 00000000670cca10 0000000000000001
+sr00-03  000000000116c400 000000000116c400 0000000000000000 000000000116c400
+sr04-07  0000000000000000 0000000000000000 0000000000000000 0000000000000000
+
+IASQ: 0000000000000000 0000000000000000 IAOQ: 0000000040683df0 0000000040683e38
+  IIR: 0f5010df    ISR: 0000000000000000  IOR: 0000000040c709c0
+  CPU:        0   CR30: 0000000059dc6d60 CR31: ffffffffffffefff
+  ORIG_R28: 0000000040203070
+  IAOQ[0]: iocb_bio_iopoll+0x30/0x80
+  IAOQ[1]: iocb_bio_iopoll+0x78/0x80
+  RP(r2): io_do_iopoll+0xa8/0x4b0
+Backtrace:
+  [<00000000406e64f0>] io_do_iopoll+0xa8/0x4b0
+  [<0000000040b45d88>] io_uring_try_cancel_requests+0x2a0/0x6a8
+  [<0000000040b4628c>] io_ring_exit_work+0xfc/0x4d0
+  [<0000000040268da8>] process_one_work+0x238/0x520
+  [<00000000402692a4>] worker_thread+0x214/0x778
+  [<0000000040276f94>] kthread+0x24c/0x258
+  [<0000000040202020>] ret_from_kernel_thread+0x20/0x28
+
+Running test 232c93d07b74.t 4 sec [5]
+Running test 35fa71a030ca.t 5 sec [5]
+Running test 500f9fbadef8.t 25 sec [25]
+Running test 7ad0e4b2f83c.t 1 sec [1]
+Running test 8a9973408177.t 0 sec [1]
+Running test 917257daa0fe.t 0 sec [0]
+Running test a0908ae19763.t 0 sec [0]
+Running test a4c0b3decb33.t Test a4c0b3decb33.t timed out (may not be a failure)
+Running test accept.t 2 sec [1]
+Running test accept-link.t 0 sec [1]
+Running test accept-reuse.t 0 sec [0]
+Running test accept-test.t 0 sec [0]
+Running test across-fork.t 0 sec [0]
+Running test b19062a56726.t 0 sec [0]
+Running test b5837bd5311d.t 0 sec [0]
+Running test buf-ring.t bad run 0/0 = -233
+test_running(1) failed
+Test buf-ring.t failed with ret 1
+Running test ce593a6c480a.t 1 sec [1]
+Running test close-opath.t 0 sec [0]
+Running test connect.t 0 sec [0]
+Running test cq-full.t 0 sec [0]
+Running test cq-overflow.t 11 sec [12]
+Running test cq-peek-batch.t 0 sec [0]
+Running test cq-ready.t 1 sec [0]
+Running test cq-size.t 0 sec [0]
+Running test d4ae271dfaae.t 0 sec [0]
+Running test d77a67ed5f27.t 0 sec [0]
+Running test defer.t 3 sec [4]
+Running test defer-taskrun.t 1 sec [0]
+Running test double-poll-crash.t Skipped
+Running test drop-submit.t 0 sec [0]
+Running test eeed8b54e0df.t 0 sec [0]
+Running test empty-eownerdead.t 0 sec [0]
+Running test eploop.t 0 sec [0]
+Running test eventfd.t 0 sec [0]
+Running test eventfd-disable.t 0 sec [0]
+Running test eventfd-reg.t 0 sec [0]
+Running test eventfd-ring.t 0 sec [1]
+Running test evloop.t 0 sec [0]
+Running test exec-target.t 0 sec [0]
+Running test exit-no-cleanup.t 1 sec [0]
+Running test fadvise.t 0 sec [0]
+Running test fallocate.t 0 sec [0]
+Running test fc2a85cb02ef.t Test needs failslab/fail_futex/fail_page_alloc enabled, skipped
+Skipped
+Running test fd-pass.t 0 sec [0]
+Running test file-register.t 3 sec [4]
+Running test files-exit-hang-poll.t 1 sec [1]
+Running test files-exit-hang-timeout.t 1 sec [1]
+Running test file-update.t 0 sec [0]
+Running test file-verify.t Found 2784, wanted 527072
+Buffered novec reg test failed
+Test file-verify.t failed with ret 1
+Running test fixed-buf-iter.t 0 sec [0]
+Running test fixed-link.t 0 sec [0]
+Running test fixed-reuse.t 0 sec [0]
+Running test fpos.t 1 sec [0]
+Running test fsnotify.t Skipped
+Running test fsync.t 0 sec [0]
+Running test hardlink.t 0 sec [0]
+Running test io-cancel.t 3 sec [3]
+Running test iopoll.t 7 sec [2]
+Running test iopoll-leak.t 0 sec [0]
+Running test iopoll-overflow.t 1 sec [1]
+Running test io_uring_enter.t 1 sec [0]
+Running test io_uring_passthrough.t Skipped
+Running test io_uring_register.t Unable to map a huge page.  Try increasing /proc/sys/vm/nr_hugepages by at least 1.
+Skipping the hugepage test
+
+Message from syslogd@mx3210 at Feb 15 22:04:15 ...
+  kernel:watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/u64:13:14621]
+
+Message from syslogd@mx3210 at Feb 15 22:04:43 ...
+  kernel:watchdog: BUG: soft lockup - CPU#0 stuck for 49s! [kworker/u64:13:14621]
+Test io_uring_register.t timed out (may not be a failure)
+Running test io_uring_setup.t 0 sec [0]
+Running test lfs-openat.t 0 sec [0]
+Running test lfs-openat-write.t 0 sec [0]
+Running test link.t 0 sec [0]
+Running test link_drain.t 3 sec [3]
+Running test link-timeout.t 1 sec [1]
+Running test madvise.t
+Message from syslogd@mx3210 at Feb 15 22:05:19 ...
+  kernel:watchdog: BUG: soft lockup - CPU#0 stuck for 82s! [kworker/u64:13:14621]
+
+Message from syslogd@mx3210 at Feb 15 22:05:47 ...
+  kernel:watchdog: BUG: soft lockup - CPU#0 stuck for 108s! [kworker/u64:13:14621]
+^C^C^C^C^C^C^C^C
+Message from syslogd@mx3210 at Feb 15 22:06:15 ...
+  kernel:watchdog: BUG: soft lockup - CPU#0 stuck for 134s! [kworker/u64:13:14621]
+
+-- 
+John David Anglin  dave.anglin@bell.net
 

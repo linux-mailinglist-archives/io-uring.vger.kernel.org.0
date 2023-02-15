@@ -2,133 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3FC6971D2
-	for <lists+io-uring@lfdr.de>; Wed, 15 Feb 2023 00:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C9A69728A
+	for <lists+io-uring@lfdr.de>; Wed, 15 Feb 2023 01:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbjBNX3V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Feb 2023 18:29:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52710 "EHLO
+        id S229519AbjBOAMO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Feb 2023 19:12:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjBNX3V (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Feb 2023 18:29:21 -0500
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F72F2FCF1
-        for <io-uring@vger.kernel.org>; Tue, 14 Feb 2023 15:29:19 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id v6so1978380ilc.10
-        for <io-uring@vger.kernel.org>; Tue, 14 Feb 2023 15:29:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o/GTsZZk/gy+jZewA997GqDtmR9sPVGVZWqtxnpgnBE=;
-        b=1skAcVCWjvseMTvykq6aAR4G+enRcu+vmQfr7Et/TPPGnPCw21H2aYvHhYrMDeD8+h
-         XVbbw0r/g9BbW3ZyoiwhicGQZOxglzTsBNWOJ7dEozFlUw2RUlh/wPvVngMBYprmKP5K
-         SSdKhpeVCymyZBwhEJG6Ej7dO2qmKirb8bNr8i749yUOfBGG7KOTscAR5lnL/67q2r3p
-         Zp4szBV2qFdwVPS9e+zT8DRmr6dZvkJxI8q+z4CBGHXZ7stpIvnKLjZepPtSjpk5lmF0
-         yQ5Mb8mSzMmUuxwdiSYihvEogvtAATazNQb6QGYWt1IOAzhH2i9eWonOZksnoELXe8C7
-         Mj8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/GTsZZk/gy+jZewA997GqDtmR9sPVGVZWqtxnpgnBE=;
-        b=gd5sKF42acy+6revD3Ns1Pgvagp/v1gzexs2g1aGKEyufc3yog+BlbKVVTPmmIcEdP
-         NDy4D1DaIC0P0tgxNVR0X3i4cKJFagtiZs1khAFYQP/dV1nfhx9E4ehKKlsZanvvjGaz
-         myRlNV+V4/zc8mzIalDRNMPXY9E7QfDAYio0GKfRng32dY/DLLl1cPkHmNM1pp+wTkpN
-         MoBXIGjpEVAiY/Npd6Q/t0joJdvBnxSZ7PauJf3uSrYkYIPWxDXHpVp36HQ8NjcuxAcR
-         tWnobeaP65YY74KApdY5odjXUW++HCdtT4lSpwjlvKNjS0K2ILj6AVLmyOjWdqA89VMs
-         qc/Q==
-X-Gm-Message-State: AO0yUKXepFUXxQok5z4SZ5feX+3WCALrLbJnr8QrvOvA660jdjs8cNn2
-        +qB8GY0ZLbf0jZfGXVtZ1NAIbg==
-X-Google-Smtp-Source: AK7set/ATWikzrj10Dyz6gVEz97iN47YCBbsx1dGvj88aJ+LAnDoFRMvld1zQstDpymjToQyOsnoow==
-X-Received: by 2002:a05:6e02:d4c:b0:315:5436:a632 with SMTP id h12-20020a056e020d4c00b003155436a632mr259105ilj.2.1676417358934;
-        Tue, 14 Feb 2023 15:29:18 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id r2-20020a927602000000b003127b668eafsm1119482ilc.19.2023.02.14.15.29.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 15:29:18 -0800 (PST)
-Message-ID: <006e8db4-336f-6717-ecb0-d01a0e9bc483@kernel.dk>
-Date:   Tue, 14 Feb 2023 16:29:15 -0700
+        with ESMTP id S229526AbjBOAMN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Feb 2023 19:12:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D2F72FCE9
+        for <io-uring@vger.kernel.org>; Tue, 14 Feb 2023 16:11:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676419883;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=k37hKnr7FAR3AoepA4iTJhmjAlSP4APBHTl0oHVqVs4=;
+        b=jTEflOEFPAnGtgRE0NNRJjdXXuqLDftxGpoKwNBBkvW2O+BSNIERqq7EPANQW+IJ+kU9dD
+        MToBj32M+zMKo9DGgNH/If9tbz4N0ANP146q5FRvGIEc48GScReppe9leSPqDcvPzeyBjT
+        XhT9TVMenS+ZJ3gRM397kP4UBrlCvLM=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-127-9poEkWqlOpK_nbH3DRHwcg-1; Tue, 14 Feb 2023 19:11:20 -0500
+X-MC-Unique: 9poEkWqlOpK_nbH3DRHwcg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AF5BF1C0418E;
+        Wed, 15 Feb 2023 00:11:19 +0000 (UTC)
+Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C1DBC15BAD;
+        Wed, 15 Feb 2023 00:11:10 +0000 (UTC)
+Date:   Wed, 15 Feb 2023 08:11:05 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        ming.lei@redhat.com
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+Message-ID: <Y+wjGZO6rVw5W35T@T590>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590>
+ <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+ <Y+hDQ1vL6AMFri1E@T590>
+ <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+ <CAJfpegtOetw46DvR1PeuX5L9-fe7Qk75mq5L4tGwpS_wuEz=1g@mail.gmail.com>
+ <Y+ucLFG/ap8uqwPG@T590>
+ <CAJfpeguGayE2fS2m9U7=Up4Eqa_89oTeR4xW-WbcfjJBRaYqHA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: io_uring failure on parisc with VIPT caches
-Content-Language: en-US
-To:     Helge Deller <deller@gmx.de>, io-uring@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        John David Anglin <dave.anglin@bell.net>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-References: <Y+wUwVxeN87gqN6o@p100>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y+wUwVxeN87gqN6o@p100>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguGayE2fS2m9U7=Up4Eqa_89oTeR4xW-WbcfjJBRaYqHA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/14/23 4:09 PM, Helge Deller wrote:
-> * John David Anglin <dave.anglin@bell.net>:
->> On 2023-02-13 5:05 p.m., Helge Deller wrote:
->>> On 2/13/23 22:05, Jens Axboe wrote:
->>>> On 2/13/23 1:59?PM, Helge Deller wrote:
->>>>>> Yep sounds like it. What's the caching architecture of parisc?
->>>>>
->>>>> parisc is Virtually Indexed, Physically Tagged (VIPT).
->>>>
->>>> That's what I assumed, so virtual aliasing is what we're dealing with
->>>> here.
->>>>
->>>>> Thanks for the patch!
->>>>> Sadly it doesn't fix the problem, as the kernel still sees
->>>>> ctx->rings->sq.tail as being 0.
->>>>> Interestingly it worked once (not reproduceable) directly after bootup,
->>>>> which indicates that we at least look at the right address from kernel side.
->>>>>
->>>>> So, still needs more debugging/testing.
->>>>
->>>> It's not like this is untested stuff, so yeah it'll generally be
->>>> correct, it just seems that parisc is a bit odd in that the virtual
->>>> aliasing occurs between the kernel and userspace addresses too. At least
->>>> that's what it seems like.
->>>
->>> True.
->>>
->>>> But I wonder if what needs flushing is the user side, not the kernel
->>>> side? Either that, or my patch is not flushing the right thing on the
->>>> kernel side.
+On Tue, Feb 14, 2023 at 04:39:01PM +0100, Miklos Szeredi wrote:
+> On Tue, 14 Feb 2023 at 15:35, Ming Lei <ming.lei@redhat.com> wrote:
 > 
+> > I understand it isn't one issue from block device driver viewpoint at
+> > least, since the WRITE to buffer in sink end can be thought as DMA
+> > to buffer from device, and it is the upper layer(FS)'s responsibility
+> > for updating page flag. And block driver needn't to handle page
+> > status update.
 > 
-> The patch below seems to fix the issue.
-> 
-> I've successfuly tested it with the io_uring-test testcase on
-> physical parisc machines with 32- and 64-bit 6.1.11 kernels.
-> 
-> The idea is similiar on how a file is mmapped shared by two
-> userspace processes by keeping the lower bits of the virtual address
-> the same.
-> 
-> Cache flushes from userspace don't seem to be needed.
+> The block device still needs to know when the DMA is finished, right?
 
-Are they from the kernel side, if the lower bits mean we end up
-with the same coloring? Because I think this is a bit of a big
-hammer, in terms of overhead for flushing. As an example, on arm64
-that is perfectly fine with the existing code, it's about a 20-25%
-performance hit.
+Yeah, for normal in-kernel device driver, the completion is triggered by
+interrupt or io polling.
 
-Other little complaints too in terms of which pages to flush, eg
-it's only the first page that is flushed but the ring may be
-larger than that. But those are mostly moot if we can just guarantee
-the lowest bits fixes the aliasing.
+For ublk, io handling is done by userspace, here we use io_uring to
+handle the IO in aio style. When the aio is completed, the userspace
+gets notified of the completion.
 
--- 
-Jens Axboe
+Here the way is basically same with loop dio mode(losetup --direct-io=on),
+it is still zero copy, pages from loop block driver are passed to FS(backing file)
+directly for handling the original IO.
 
+
+Thanks, 
+Ming
 

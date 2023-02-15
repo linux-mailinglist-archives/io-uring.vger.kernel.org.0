@@ -2,233 +2,292 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BD976972C0
-	for <lists+io-uring@lfdr.de>; Wed, 15 Feb 2023 01:41:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B46186972BE
+	for <lists+io-uring@lfdr.de>; Wed, 15 Feb 2023 01:41:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232579AbjBOAlc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Feb 2023 19:41:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37368 "EHLO
+        id S232531AbjBOAlb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Feb 2023 19:41:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232429AbjBOAl2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Feb 2023 19:41:28 -0500
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE7430E91;
+        with ESMTP id S232464AbjBOAl3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Feb 2023 19:41:29 -0500
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA8EA311E6;
         Tue, 14 Feb 2023 16:41:26 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VbhQb3h_1676421683;
-Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VbhQb3h_1676421683)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VbhPXlx_1676421684;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VbhPXlx_1676421684)
           by smtp.aliyun-inc.com;
-          Wed, 15 Feb 2023 08:41:23 +0800
+          Wed, 15 Feb 2023 08:41:24 +0800
 From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 To:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
         bpf@vger.kernel.org
 Cc:     ming.lei@redhat.com, axboe@kernel.dk, asml.silence@gmail.com,
         ZiyangZhang@linux.alibaba.com
-Subject: [RFC 1/3] bpf: add UBLK program type
-Date:   Wed, 15 Feb 2023 08:41:20 +0800
-Message-Id: <20230215004122.28917-2-xiaoguang.wang@linux.alibaba.com>
+Subject: [RFC 2/3] io_uring: enable io_uring to submit sqes located in kernel
+Date:   Wed, 15 Feb 2023 08:41:21 +0800
+Message-Id: <20230215004122.28917-3-xiaoguang.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230215004122.28917-1-xiaoguang.wang@linux.alibaba.com>
 References: <20230215004122.28917-1-xiaoguang.wang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add a new program type BPF_PROG_TYPE_UBLK for ublk, which is a generic
-framework for implementing block device logic from userspace. Typical
-userspace block device impementations need to copy data between kernel
-block layer's io requests and userspace block device's userspace daemon,
-which will consume cpu resources, especially for large io.
-
-There are methods trying to reduce these cpu overheads, then userspace
-block device's io performance will be improved further. These methods
-contain: 1) use special hardware to do memory copy, but seems not all
-architectures have these special hardware; 2) sofeware methods, such as
-mmap kernel block layer's io requests's data to userspace daemon [1],
-but it has page table's map/unmap, tlb flush overhead, etc, which maybe
-only friendly to large io.
-
-To solve this problem, I'd propose a new method which will use io_uring
-to submit userspace daemon's io requests in kernel and use kernel block
-device io requests's pages. Further, userspace block devices may have
-different userspace logic about how to complete kernel io requests, here
-we can use ebpf to implement various userspace log in kernel. In the
-example of ublk loop target, we can easily implement such below logic in
-ebpf prog:
-  1. userspace daemon registers this ebpf prog and passes two backend file
-fd in ebpf map structure。
-  2. For kernel io requests against the first half of userspace device,
-ebpf prog prepares an io_uring sqe, which will submit io against the first
-backend file fd and sqe's buffer comes from kernel io reqeusts. Kernel
-io requests against second half of userspace device has similar logic,
-only sqe's fd will be the second backend file fd.
-  3. When ublk driver blk-mq queue_rq() is called, this ebpf prog will
-be executed and completes kernel io requests.
-
-From above expample, we can see that this method has 3 advantages at least:
-  1. Remove memory copy between kernel block layer and userspace daemon
-completely.
-  2. Save memory. Userspace daemon doesn't need to maintain memory to
-issue and complete io requests, and use kernel block layer io requests
-memory directly.
-  2. We may reduce the numberr of  round trips between kernel and userspace
-daemon.
-
-Currently for this patchset, I just make ublk ebpf prog submit io requests
-using io_uring in kernel, cqe event still needs to be handled in userspace
-daemon. Once later we succeed in make io_uring handle cqe in kernel, ublk
-ebpf prog can implement io in kernel.
-
-[1] https://lore.kernel.org/all/20220318095531.15479-1-xiaoguang.wang@linux.alibaba.com/
+Currently this feature can be used by userspace block device to reduce
+kernel & userspace memory copy overhead. With this feature, userspace
+block device driver can submit and complete io requests using kernel
+block layer io requests's memory data, and further, by using ebpf, we
+can customize how sqe is initialized, how io is submitted and completed.
 
 Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 ---
- drivers/block/ublk_drv.c       | 23 +++++++++++++++++++++++
- include/linux/bpf_types.h      |  2 ++
- include/uapi/linux/bpf.h       |  1 +
- kernel/bpf/syscall.c           |  1 +
- kernel/bpf/verifier.c          |  9 +++++++--
- tools/include/uapi/linux/bpf.h |  1 +
- tools/lib/bpf/libbpf.c         |  2 ++
- 7 files changed, 37 insertions(+), 2 deletions(-)
+ include/linux/io_uring.h       | 13 ++++++++
+ include/linux/io_uring_types.h |  8 ++++-
+ io_uring/io_uring.c            | 59 ++++++++++++++++++++++++++++++++--
+ io_uring/rsrc.c                | 15 +++++++++
+ io_uring/rsrc.h                |  3 ++
+ io_uring/rw.c                  |  7 ++++
+ 6 files changed, 101 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 6368b56eacf1..b628e9eaefa6 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -43,6 +43,8 @@
- #include <asm/page.h>
- #include <linux/task_work.h>
- #include <uapi/linux/ublk_cmd.h>
-+#include <linux/filter.h>
-+#include <linux/bpf.h>
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 934e5dd4ccc0..d69882c98608 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -36,6 +36,12 @@ struct io_uring_cmd {
+ 	u8		pdu[32]; /* available inline for free use */
+ };
  
- #define UBLK_MINORS		(1U << MINORBITS)
- 
-@@ -187,6 +189,27 @@ static DEFINE_MUTEX(ublk_ctl_mutex);
- 
- static struct miscdevice ublk_misc;
- 
-+static const struct bpf_func_proto *
-+ublk_bpf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-+{
-+	return bpf_base_func_proto(func_id);
-+}
-+
-+static bool ublk_bpf_is_valid_access(int off, int size,
-+			enum bpf_access_type type,
-+			const struct bpf_prog *prog,
-+			struct bpf_insn_access_aux *info)
-+{
-+	return false;
-+}
-+
-+const struct bpf_prog_ops bpf_ublk_prog_ops = {};
-+
-+const struct bpf_verifier_ops bpf_ublk_verifier_ops = {
-+	.get_func_proto		= ublk_bpf_func_proto,
-+	.is_valid_access	= ublk_bpf_is_valid_access,
++struct io_mapped_kbuf {
++	size_t count;
++	unsigned int nr_bvecs;
++	struct bio_vec *bvec;
 +};
 +
- static void ublk_dev_param_basic_apply(struct ublk_device *ub)
+ #if defined(CONFIG_IO_URING)
+ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter, void *ioucmd);
+@@ -65,6 +71,8 @@ static inline void io_uring_free(struct task_struct *tsk)
+ 	if (tsk->io_uring)
+ 		__io_uring_free(tsk);
+ }
++int io_uring_submit_sqe(int fd, const struct io_uring_sqe *sqe, u32 sqe_len,
++			struct io_mapped_kbuf *kbuf);
+ #else
+ static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter, void *ioucmd)
+@@ -96,6 +104,11 @@ static inline const char *io_uring_get_opcode(u8 opcode)
  {
- 	struct request_queue *q = ub->ub_disk->queue;
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index d4ee3ccd3753..4ef0bc0251b7 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -79,6 +79,8 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
+ 	return "";
+ }
++int io_uring_submit_sqe(int fd, const struct io_uring_sqe *sqe, u32 sqe_len,
++			struct io_mapped_kbuf *kbuf)
++{
++	return 0;
++}
  #endif
- BPF_PROG_TYPE(BPF_PROG_TYPE_SYSCALL, bpf_syscall,
- 	      void *, void *)
-+BPF_PROG_TYPE(BPF_PROG_TYPE_UBLK, bpf_ublk,
-+	      void *, void *)
  
- BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
- BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 464ca3f01fe7..515b7b995b3a 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -986,6 +986,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_LSM,
- 	BPF_PROG_TYPE_SK_LOOKUP,
- 	BPF_PROG_TYPE_SYSCALL, /* a program that can execute syscalls */
-+	BPF_PROG_TYPE_UBLK,
+ #endif
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 128a67a40065..260f8365c802 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -398,6 +398,7 @@ enum {
+ 	/* keep async read/write and isreg together and in order */
+ 	REQ_F_SUPPORT_NOWAIT_BIT,
+ 	REQ_F_ISREG_BIT,
++	REQ_F_KBUF_BIT,
+ 
+ 	/* not a real bit, just to check we're not overflowing the space */
+ 	__REQ_F_LAST_BIT,
+@@ -467,6 +468,8 @@ enum {
+ 	REQ_F_CLEAR_POLLIN	= BIT(REQ_F_CLEAR_POLLIN_BIT),
+ 	/* hashed into ->cancel_hash_locked, protected by ->uring_lock */
+ 	REQ_F_HASH_LOCKED	= BIT(REQ_F_HASH_LOCKED_BIT),
++	/* buffer comes from kernel */
++	REQ_F_KBUF		= BIT(REQ_F_KBUF_BIT),
  };
  
- enum bpf_attach_type {
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index ecca9366c7a6..eb1752243f4f 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2432,6 +2432,7 @@ static bool is_net_admin_prog_type(enum bpf_prog_type prog_type)
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
- 	case BPF_PROG_TYPE_SOCK_OPS:
-+	case BPF_PROG_TYPE_UBLK:
- 	case BPF_PROG_TYPE_EXT: /* extends any prog */
- 		return true;
- 	case BPF_PROG_TYPE_CGROUP_SKB:
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 7ee218827259..1e5bc89aea36 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -12235,6 +12235,10 @@ static int check_return_code(struct bpf_verifier_env *env)
- 		}
- 		break;
+ typedef void (*io_req_tw_func_t)(struct io_kiocb *req, bool *locked);
+@@ -527,7 +530,7 @@ struct io_kiocb {
+ 	 * and after selection it points to the buffer ID itself.
+ 	 */
+ 	u16				buf_index;
+-	unsigned int			flags;
++	u64				flags;
  
-+	case BPF_PROG_TYPE_UBLK:
-+		range = tnum_const(0);
-+		break;
+ 	struct io_cqe			cqe;
+ 
+@@ -540,6 +543,9 @@ struct io_kiocb {
+ 		/* store used ubuf, so we can prevent reloading */
+ 		struct io_mapped_ubuf	*imu;
+ 
++		/* store used kbuf */
++		struct io_mapped_kbuf	*imk;
 +
- 	case BPF_PROG_TYPE_EXT:
- 		/* freplace program can return anything as its return value
- 		 * depends on the to-be-replaced kernel func or bpf program.
-@@ -16770,8 +16774,9 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
+ 		/* stores selected buf, valid IFF REQ_F_BUFFER_SELECTED is set */
+ 		struct io_buffer	*kbuf;
+ 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index db623b3185c8..a174365470fb 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2232,7 +2232,8 @@ static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
+ }
+ 
+ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+-			 const struct io_uring_sqe *sqe)
++			 const struct io_uring_sqe *sqe,
++			 struct io_mapped_kbuf *kbuf)
+ 	__must_hold(&ctx->uring_lock)
+ {
+ 	struct io_submit_link *link = &ctx->submit_state.link;
+@@ -2241,6 +2242,10 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	ret = io_init_req(ctx, req, sqe);
+ 	if (unlikely(ret))
+ 		return io_submit_fail_init(sqe, req, ret);
++	if (unlikely(kbuf)) {
++		req->imk = kbuf;
++		req->flags |= REQ_F_KBUF;
++	}
+ 
+ 	/* don't need @sqe from now on */
+ 	trace_io_uring_submit_sqe(req, true);
+@@ -2392,7 +2397,7 @@ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+ 		 * Continue submitting even for sqe failure if the
+ 		 * ring was setup with IORING_SETUP_SUBMIT_ALL
+ 		 */
+-		if (unlikely(io_submit_sqe(ctx, req, sqe)) &&
++		if (unlikely(io_submit_sqe(ctx, req, sqe, NULL)) &&
+ 		    !(ctx->flags & IORING_SETUP_SUBMIT_ALL)) {
+ 			left--;
+ 			break;
+@@ -3272,6 +3277,54 @@ static int io_get_ext_arg(unsigned flags, const void __user *argp, size_t *argsz
+ 	return 0;
+ }
+ 
++int io_uring_submit_sqe(int fd, const struct io_uring_sqe *sqe, u32 sqe_len,
++			struct io_mapped_kbuf *kbuf)
++{
++	struct io_kiocb *req;
++	struct fd f;
++	int ret;
++	struct io_ring_ctx *ctx;
++
++	f = fdget(fd);
++	if (unlikely(!f.file))
++		return -EBADF;
++
++	ret = -EOPNOTSUPP;
++	if (unlikely(!io_is_uring_fops(f.file))) {
++		ret = -EBADF;
++		goto out;
++	}
++	ctx = f.file->private_data;
++
++	mutex_lock(&ctx->uring_lock);
++	if (unlikely(!io_alloc_req_refill(ctx)))
++		goto out;
++	req = io_alloc_req(ctx);
++	if (unlikely(!req)) {
++		ret = -ENOMEM;
++		goto out;
++	}
++	if (!percpu_ref_tryget_many(&ctx->refs, 1)) {
++		kmem_cache_free(req_cachep, req);
++		ret = -EAGAIN;
++		goto out;
++	}
++	percpu_counter_add(&current->io_uring->inflight, 1);
++	refcount_add(1, &current->usage);
++
++	/* returns number of submitted SQEs or an error */
++	ret = !io_submit_sqe(ctx, req, sqe, kbuf);
++	mutex_unlock(&ctx->uring_lock);
++	fdput(f);
++	return ret;
++
++out:
++	mutex_unlock(&ctx->uring_lock);
++	fdput(f);
++	return ret;
++}
++EXPORT_SYMBOL(io_uring_submit_sqe);
++
+ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		u32, min_complete, u32, flags, const void __user *, argp,
+ 		size_t, argsz)
+@@ -4270,7 +4323,7 @@ static int __init io_uring_init(void)
+ 	BUILD_BUG_ON(SQE_COMMON_FLAGS >= (1 << 8));
+ 	BUILD_BUG_ON((SQE_VALID_FLAGS | SQE_COMMON_FLAGS) != SQE_VALID_FLAGS);
+ 
+-	BUILD_BUG_ON(__REQ_F_LAST_BIT > 8 * sizeof(int));
++	BUILD_BUG_ON(__REQ_F_LAST_BIT > 8 * sizeof(u64));
+ 
+ 	BUILD_BUG_ON(sizeof(atomic_t) != sizeof(u32));
+ 
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 18de10c68a15..51861f01185f 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1380,3 +1380,18 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 
+ 	return 0;
+ }
++
++int io_import_fixed_kbuf(int ddir, struct iov_iter *iter,
++			 struct io_mapped_kbuf *kbuf,
++			u64 offset, size_t len)
++{
++	if (WARN_ON_ONCE(!kbuf))
++		return -EFAULT;
++	if (offset >= kbuf->count)
++		return -EFAULT;
++
++	iov_iter_bvec(iter, ddir, kbuf->bvec, kbuf->nr_bvecs, offset + len);
++	iov_iter_advance(iter, offset);
++	return 0;
++}
++
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 2b8743645efc..c6897d218bb9 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -69,6 +69,9 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 			   struct io_mapped_ubuf *imu,
+ 			   u64 buf_addr, size_t len);
+ 
++int io_import_fixed_kbuf(int ddir, struct iov_iter *iter,
++		struct io_mapped_kbuf *kbuf, u64 buf_addr, size_t len);
++
+ void __io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 9c3ddd46a1ad..bdf4c4f0661f 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -378,6 +378,13 @@ static struct iovec *__io_import_iovec(int ddir, struct io_kiocb *req,
+ 		return NULL;
  	}
  
- 	if (prog->aux->sleepable && prog->type != BPF_PROG_TYPE_TRACING &&
--	    prog->type != BPF_PROG_TYPE_LSM && prog->type != BPF_PROG_TYPE_KPROBE) {
--		verbose(env, "Only fentry/fexit/fmod_ret, lsm, and kprobe/uprobe programs can be sleepable\n");
-+	    prog->type != BPF_PROG_TYPE_LSM && prog->type != BPF_PROG_TYPE_KPROBE &&
-+	    prog->type != BPF_PROG_TYPE_UBLK) {
-+		verbose(env, "Only fentry/fexit/fmod_ret, lsm, and kprobe/uprobe, ublk programs can be sleepable\n");
- 		return -EINVAL;
- 	}
++	if (unlikely(req->flags & REQ_F_KBUF)) {
++		ret = io_import_fixed_kbuf(ddir, iter, req->imk, rw->addr, rw->len);
++		if (ret)
++			return ERR_PTR(ret);
++		return NULL;
++	}
++
+ 	buf = u64_to_user_ptr(rw->addr);
+ 	sqe_len = rw->len;
  
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 464ca3f01fe7..515b7b995b3a 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -986,6 +986,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_LSM,
- 	BPF_PROG_TYPE_SK_LOOKUP,
- 	BPF_PROG_TYPE_SYSCALL, /* a program that can execute syscalls */
-+	BPF_PROG_TYPE_UBLK,
- };
- 
- enum bpf_attach_type {
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 2a82f49ce16f..6fe77f9a2cc8 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -8606,6 +8606,8 @@ static const struct bpf_sec_def section_defs[] = {
- 	SEC_DEF("cgroup/dev",		CGROUP_DEVICE, BPF_CGROUP_DEVICE, SEC_ATTACHABLE_OPT),
- 	SEC_DEF("struct_ops+",		STRUCT_OPS, 0, SEC_NONE),
- 	SEC_DEF("sk_lookup",		SK_LOOKUP, BPF_SK_LOOKUP, SEC_ATTACHABLE),
-+	SEC_DEF("ublk/",		UBLK, 0, SEC_SLEEPABLE),
-+	SEC_DEF("ublk.s/",		UBLK, 0, SEC_SLEEPABLE),
- };
- 
- static size_t custom_sec_def_cnt;
 -- 
 2.31.1
 

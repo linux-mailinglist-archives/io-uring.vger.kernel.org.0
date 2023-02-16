@@ -2,69 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C4847698B25
-	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 04:24:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FAED698E4E
+	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 09:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjBPDYd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Feb 2023 22:24:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39706 "EHLO
+        id S229770AbjBPIJr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Feb 2023 03:09:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjBPDYc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Feb 2023 22:24:32 -0500
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F6D5C7
-        for <io-uring@vger.kernel.org>; Wed, 15 Feb 2023 19:24:31 -0800 (PST)
-Received: by mail-pf1-x432.google.com with SMTP id 16so606506pfo.8
-        for <io-uring@vger.kernel.org>; Wed, 15 Feb 2023 19:24:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676517871;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1CxXVwJvCGxbjVLdA6DHb6xyckHUyCHSVSgGkRQjt50=;
-        b=N1C4S8OUx3gL48Sj22kdzKzqy0JlUSEyWkZ0wJxR86y2BOMoEiNuED9/wIqYl6EafK
-         UCpBXcIsvZycdO+9oxLFg1mhbiWfDBuCjlB8kD0m/5/vFAvpzxwIza1+ZeG4KQTUFaVU
-         Jzynds2ptMKi0PrMqw89enoLR+pjpgl20IyOJ92NvrWhuw/NvTuSUPwcoT4S6upG20YV
-         o2VrWzWzfphHfQGCsabLrbYRLjKHmfew99RjxOiRV6JglhcLG6URl3Ccw2CQ8+GFg/jx
-         NczQt+PC0oZDNRAwYzkqGDVaJM1APtTnXub6vKWalMgiDCsCi/9IyOv5qmzRCYaw/bSe
-         JHAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676517871;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1CxXVwJvCGxbjVLdA6DHb6xyckHUyCHSVSgGkRQjt50=;
-        b=tRDL/+wQRnizImdpcAZJ2ueKB9GaandmmzLdWB/TRfzMGm46jQoZfwJ/wQ+rcn6Jru
-         aQxj6GofopJaY+PqZMxRh13O6WltonVwb70tz+gnBp3/mkrN3Ifew4itC7jmYVviRXfH
-         dGO97WuMfRS6M4Hq0EMq2c9ywrdrXMAqEywJLzzT76Q01ueskyS8boGum2ME7EpBGuO9
-         IaTORoWRiFiZD4mKCWXvWMKCneuIdL7YgUlS0flNwI4DM89wer1jDiIIoyzp2AUbAYlT
-         ZYyOia8oj/iXbMwL9H08iNyjvkuxI37VNdfhCXxSb1eLW7fcyhmTNotf0F+V44nMWWhq
-         QbXw==
-X-Gm-Message-State: AO0yUKWpemAUGaWJO3IAnUwySV7HHGwwrMK0knsDwaSV5yBjlXtu9sgv
-        yQhxGQxucvcz7AcdtxcpUTUUlw==
-X-Google-Smtp-Source: AK7set9iGY1Slp6qvesKRBrqY77wNZOHJDRfriucWC07srPWSrUoHNZe7WZvzaiVlzXi52QGYIk/QA==
-X-Received: by 2002:a62:d104:0:b0:5a8:bbd7:d7aa with SMTP id z4-20020a62d104000000b005a8bbd7d7aamr3596157pfg.1.1676517870626;
-        Wed, 15 Feb 2023 19:24:30 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a13-20020a62e20d000000b005906dbf5f80sm85300pfi.163.2023.02.15.19.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 19:24:30 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <f2396369e638284586b069dbddffb8c992afba95.1676419314.git.josh@joshtriplett.org>
-References: <f2396369e638284586b069dbddffb8c992afba95.1676419314.git.josh@joshtriplett.org>
-Subject: Re: [PATCHv2] io_uring: Support calling io_uring_register with a
- registered ring fd
-Message-Id: <167651786995.206662.11602698726754502938.b4-ty@kernel.dk>
-Date:   Wed, 15 Feb 2023 20:24:29 -0700
+        with ESMTP id S229492AbjBPIJq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 03:09:46 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12C32366B;
+        Thu, 16 Feb 2023 00:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1676534980; i=deller@gmx.de;
+        bh=VXuq6M/jcXpKTzmIaMHBMtYSC4LLAn7eTneX1IbXWDY=;
+        h=X-UI-Sender-Class:Date:From:To:Subject;
+        b=Yz95HRk+ZJZ9hi0NSGqYol2pFtS/iaT4BjnzH0bJ0MgxYHgQwxxAUU/O/WMuWXwEY
+         8AGncPYIG+qOUNkdV66jnU1DEbz686ZNZlop/puOgl8MfYMY2awMEA4xxftYlHoyLx
+         eQl4/OF3lfjwLIsVwDc5L2MMQhlripKONd6ZuQr2WskOaYBU+GxJtquWerUL7zMVBg
+         7LFyD1hQh0KYxpf5pO832veJ3Pgt7Mz7l/SH2vjlN1H4fnApB+ViTDfrTfOs1j8bzI
+         l1zVBjIfhz35JFNq7H1o/jYk4t8U/4dfL1O6OTADVyCLq0/2LhMEshmUii73XlwjQk
+         zxz/tQ5XGSkXA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from p100 ([92.116.164.173]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MgNcz-1oudIZ2f8R-00hzM5; Thu, 16
+ Feb 2023 09:09:40 +0100
+Date:   Thu, 16 Feb 2023 09:09:38 +0100
+From:   Helge Deller <deller@gmx.de>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-parisc@vger.kernel.org,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [PATCH v2] io_uring: Adjust mapping wrt architecture aliasing
+ requirements
+Message-ID: <Y+3kwh8BokobVl6o@p100>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Provags-ID: V03:K1:HuRly+6I2ZVZxgRB37kwF/0rTbMdOwk6HjZWbTNF149OfHHIval
+ Mo9d9hOV7pHzUGr7xqtMFR9GsaDJmCpO0jkSlSuBDMet7cPzQYb+P9teF7T5vt01qfZDtW4
+ FRZwAmaOlc4KmVRa8trkZE8uJY24QWbHTJMiBlRDIS0AwBxgreR2Z+v84jITd9Wrhz92eNh
+ osdDMQ/Na+tYliy32EYKg==
+UI-OutboundReport: notjunk:1;M01:P0:053D7Zbs3vc=;bMk1zaqtbqyi0IgUECRK20p6NsX
+ Z/8se2PEPQlKVmehP1xDTJunM90D139EQrhgbW7r1EaIwxpeCpcSmbYuGuHAm/EnxZpUayAp7
+ qtRkNpg+2a4V9eQsTKysk3B36HrqV9jNm/5MQH+Uk9dDGvLC2+TPrZByACPvDrD8eWK5Uy1lx
+ 9/XX5Ee1zDHm5FLTO4LHARlBrq8euIw+eoYwcnZrYDRb5ybuNT3zcBCwpcGRHvr6CK8ACwIAd
+ Vx59npCR843qFEHsnQHOde/FP0ePx7eoG1pq6sy5lmJKwtzfXNGhkNKrHnoCiv8F8+oo7UZUW
+ q+NjxRwYd4hLLr/g8oG06H2SpbdnpXatDxOCQd0AEVOe3wxI0azcopnM75uZDzPEiJxXmeQVz
+ vOjg+P9J76ByziDoexIegfeFeY3A71trY5bjkmLH5mEoPvCYz7FNPzKuFKbKwcLQmlfcYIWyE
+ TWvaVjG4hf3lxDp2XVqbo21oMNJ9918v0lqDmJVm4onxxySQC9WYa84QJe2bkRuvFC3mfa0cq
+ 2VfNg3LzkhLDWnYzcpjbQmo6HZymQMvyxvs6F8QUYE6zaJF+bIjNX78BF7OTExy3YMJhj/JWf
+ fW0XLExTAjd+wfOXsaPV++rcidQgzZua4/50TbdPJrRCfO5Wipb/9j5rmHDL50eLez7ZDV+Mt
+ wUCUqcABYUeKxNg8TfDnl1vSEJpeOnLY6vsUX3YpDjHEGsGUPsmG1Dvnz58jFX1ve338JfGjj
+ 3+zhKD4koPx+PrYlReqf2NCi+c3CAJeQvx8F4tIO8H1fkHIHWZCesrf94qXMb83SneyqJw1f/
+ tpnNS5NJ+9SielPdvyor4VrFU96g92mmWLXa19V89oi3JeFxf/rocitr1rifOIMvqj9md8nOg
+ UYiYtyEIP7BP/ElVPkBUcMlYExJnP9iQcjcHObMYbaThiI39A1cW1vODiCPDrZFXoB+j6UtDP
+ 071xgQ==
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,26 +69,92 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Some architectures have memory cache aliasing requirements (e.g. parisc)
+if memory is shared between userspace and kernel. This patch fixes the
+kernel to return an aliased address when asked by userspace via mmap().
 
-On Tue, 14 Feb 2023 16:42:22 -0800, Josh Triplett wrote:
-> Add a new flag IORING_REGISTER_USE_REGISTERED_RING (set via the high bit
-> of the opcode) to treat the fd as a registered index rather than a file
-> descriptor.
-> 
-> This makes it possible for a library to open an io_uring, register the
-> ring fd, close the ring fd, and subsequently use the ring entirely via
-> registered index.
-> 
-> [...]
+Signed-off-by: Helge Deller <deller@gmx.de>
+=2D--
+v2: Do not allow to map to a user-provided addresss. This forces
+programs to write portable code, as usually on x86 mapping to any
+address will succeed, while it will fail for most provided address if
+used on stricter architectures.
 
-Applied, thanks!
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 862e05e6691d..01fe7437a071 100644
+=2D-- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -72,6 +72,7 @@
+ #include <linux/io_uring.h>
+ #include <linux/audit.h>
+ #include <linux/security.h>
++#include <asm/shmparam.h>
 
-[1/1] io_uring: Support calling io_uring_register with a registered ring fd
-      commit: 04eb372cac91a4f70c9b921c1b86758f5553d311
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/io_uring.h>
+@@ -3059,6 +3060,54 @@ static __cold int io_uring_mmap(struct file *file, =
+struct vm_area_struct *vma)
+ 	return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
+ }
 
-Best regards,
--- 
-Jens Axboe
++static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
++			unsigned long addr, unsigned long len,
++			unsigned long pgoff, unsigned long flags)
++{
++	const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, flags);
++	struct vm_unmapped_area_info info;
++	void *ptr;
++
++	/*
++	 * Do not allow to map to user-provided address to avoid breaking the
++	 * aliasing rules. Userspace is not able to guess the offset address of
++	 * kernel kmalloc()ed memory area.
++	 */
++	if (addr)
++		return -EINVAL;
++
++	ptr =3D io_uring_validate_mmap_request(filp, pgoff, len);
++	if (IS_ERR(ptr))
++		return -ENOMEM;
++
++	info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
++	info.length =3D len;
++	info.low_limit =3D max(PAGE_SIZE, mmap_min_addr);
++	info.high_limit =3D arch_get_mmap_base(addr, current->mm->mmap_base);
++#ifdef SHM_COLOUR
++	info.align_mask =3D PAGE_MASK & (SHM_COLOUR - 1UL);
++#else
++	info.align_mask =3D PAGE_MASK & (SHMLBA - 1UL);
++#endif
++	info.align_offset =3D (unsigned long) ptr;
++
++	/*
++	 * A failed mmap() very likely causes application failure,
++	 * so fall back to the bottom-up function here. This scenario
++	 * can happen with large stack limits and large mmap()
++	 * allocations.
++	 */
++	addr =3D vm_unmapped_area(&info);
++	if (offset_in_page(addr)) {
++		info.flags =3D 0;
++		info.low_limit =3D TASK_UNMAPPED_BASE;
++		info.high_limit =3D mmap_end;
++		addr =3D vm_unmapped_area(&info);
++	}
++
++	return addr;
++}
++
+ #else /* !CONFIG_MMU */
 
-
-
+ static int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -3273,6 +3322,8 @@ static const struct file_operations io_uring_fops =
+=3D {
+ #ifndef CONFIG_MMU
+ 	.get_unmapped_area =3D io_uring_nommu_get_unmapped_area,
+ 	.mmap_capabilities =3D io_uring_nommu_mmap_capabilities,
++#else
++	.get_unmapped_area =3D io_uring_mmu_get_unmapped_area,
+ #endif
+ 	.poll		=3D io_uring_poll,
+ #ifdef CONFIG_PROC_FS

@@ -2,469 +2,180 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C023698F83
-	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 10:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0715698FE5
+	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 10:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjBPJRV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Feb 2023 04:17:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59578 "EHLO
+        id S229836AbjBPJfu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Feb 2023 04:35:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjBPJRU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 04:17:20 -0500
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A7A13D61;
-        Thu, 16 Feb 2023 01:17:17 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Vbnt2n2_1676539034;
-Received: from 30.221.150.53(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Vbnt2n2_1676539034)
-          by smtp.aliyun-inc.com;
-          Thu, 16 Feb 2023 17:17:15 +0800
-Message-ID: <3af6e401-5b18-ceff-d603-bd16d70ceef4@linux.alibaba.com>
-Date:   Thu, 16 Feb 2023 17:17:13 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [UBLKSRV] Add ebpf support.
+        with ESMTP id S229554AbjBPJft (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 04:35:49 -0500
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 322C830B35;
+        Thu, 16 Feb 2023 01:35:48 -0800 (PST)
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31G8Iqe1002114;
+        Thu, 16 Feb 2023 01:35:48 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=s2048-2021-q4;
+ bh=SL/T2E9zoHvblX+NvmN0qtWInTjNQ2z4u5TCpooVc6Y=;
+ b=mfzTXiU1EePuXgBhtm3YoiY8zNk2bfwTzTOwezNVkqQ/xLZaLv/nO9mfS/zC3NWG1n4h
+ NUD4wm+MITKY4auKJpqEwBhaj7uee4Iwun8AKCDcJ+jTQPvKIuIdVUNF4E0qPk2NJ3/2
+ Bjz6WqDWQPY3CjsIrdLWSe3AmBrGAdXScsdVqY8eiM35NNTmpkbq+WeLfPoM4/Qi9ryh
+ C+eSXCbQqIgc5UhcEGghWxXLMyXl/JvSq1g64F75aCCT3EmGr+XcMqRlYK6MS0gJLRQC
+ R/ZojfGE1nLVlt4M+ZFWxZXcoQlY7HddIXg4fhW37LkD3e5D/ANRwcqglhsWmH0Cc5J7 Ag== 
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2175.outbound.protection.outlook.com [104.47.55.175])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3nrwhgf68x-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Feb 2023 01:35:47 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TnjKAwENRP7ph+RDkCkiSMKfSg40P5hYk47EHw0Pq9rML7FnnC74++kLM5lBWaNstQxMZhFi7toxzrn3tih3UmU9EGiIIdgTwMXUon8f6qilKd4aAwrcp1PPkv4OwLufvn9u7hM5z5ikreaIK9V7Of/kQ9PxKoDJTZIcIqgKXj2gBWF8k4hrUhih1XNxRP2xfZwUozo+YWu+yVo0Bi4eiry4Eo4o3+LWXUJ7tnJcWhBCbBmIngL5yJhHxu1qeJee/fkoKN6SOKV6eHOY70K8tvSQOYiVolYP3WaDkurqgxYVEqzCVz6vJBOQnFAe0rPF9i9VBIA++ReA4Wm6GwiAAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SL/T2E9zoHvblX+NvmN0qtWInTjNQ2z4u5TCpooVc6Y=;
+ b=kWWe1LX5Fd69fcR2EkFnzqRP01PbxE8oWwSUE7vTPxCM0FH9o//e3Xz6PWe68Lq6QvdThcrjjf8gy9HWRIGGYAwiLXsTOo8cepmdo5LaXNMwbp+XsJx9olBt5U7pypUeIcqcP0DljMFKCra8osihIKQDEUlLdpGSv2kjttptf2oULJfiV9QQ/CKKb9nmsSeRZCvJy3fY8jrgGgNPz1xz2K1QUkPkC/71H99Hwz1c3wIoFqrdmDrzcFfWv3mcT4RE/qFlpiHvC16qEI3aC8j6hNDlAhLy1g0Hw66dVxwD8aqPCCdRZefwlMQHOhPm7AXElEz/Krk/jelTw0p4UfmFng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SA1PR15MB4854.namprd15.prod.outlook.com (2603:10b6:806:1e1::19)
+ by MW4PR15MB4665.namprd15.prod.outlook.com (2603:10b6:303:10a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.26; Thu, 16 Feb
+ 2023 09:35:44 +0000
+Received: from SA1PR15MB4854.namprd15.prod.outlook.com
+ ([fe80::fb33:6145:8feb:8054]) by SA1PR15MB4854.namprd15.prod.outlook.com
+ ([fe80::fb33:6145:8feb:8054%2]) with mapi id 15.20.6111.013; Thu, 16 Feb 2023
+ 09:35:44 +0000
+From:   Dylan Yudaken <dylany@meta.com>
+To:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Re: [PATCHv2] io_uring: Support calling io_uring_register with a
+ registered ring fd
+Thread-Topic: [PATCHv2] io_uring: Support calling io_uring_register with a
+ registered ring fd
+Thread-Index: AQHZQNZlbGg7EnGO+k6Pl64fuX2v6q7RUlaA
+Date:   Thu, 16 Feb 2023 09:35:44 +0000
+Message-ID: <be9f297f68ee3149f67f781fd291b657cfe4166b.camel@meta.com>
+References: <f2396369e638284586b069dbddffb8c992afba95.1676419314.git.josh@joshtriplett.org>
+In-Reply-To: <f2396369e638284586b069dbddffb8c992afba95.1676419314.git.josh@joshtriplett.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        bpf@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        ZiyangZhang@linux.alibaba.com
-References: <20230215004122.28917-1-xiaoguang.wang@linux.alibaba.com>
- <20230215004618.35503-1-xiaoguang.wang@linux.alibaba.com>
- <Y+3pR991R9nrdg5Y@T590>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-In-Reply-To: <Y+3pR991R9nrdg5Y@T590>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.2 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB4854:EE_|MW4PR15MB4665:EE_
+x-ms-office365-filtering-correlation-id: a4867bb4-ffae-43f4-2a69-08db10012d4b
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: AwC5iu9XcdJG+zTTGoqHi03e5ya1P8PQRRfwnngcKDXulND8L8TPL9Q45rgP8bO73T5UEdb/PwZk6uQCf+eKXrwK/flxA+q6FI1geakOFMQ79RFjYKige1JVDzJ6ROX0vwc4lv0IKvW2d/iCXKOOEQZ/BZ7VMs7101JpOgCdectMNdyl3+iSj+Cw5lcfYVeq5V54QifcK7U9a228/L+9HoXHZedjbNXnnucVNmKH1Afn1wQ6/KAPhp4nTxQx0iBIYjNTczmzd7LzLnpFQXXunpcHtutckH8DJGRt9JD84JBYW5MBBHNHt1J23Z1d/uQpd08Bh6nO4mfYJiljgbEzgT2cJSXHP/18xF9gVJGJfZVYMZEP0stCkiZEh9wvkzr047ljCmmZGLf3KrsuYknRUD6Fmxw1aR1CLX9ySKtmOaRybjFIO9xHJdFVCHlYZ/5MOQyA7qSYW6ZOx9m4n2b2yNC48g2C4wpNbVLcSm0ob4fiQ9nu34NcZjn/Gy0JU9ZmwuFl8ik4GKl2n3cbUJ7guDULdeJ5Cd1mTXToSfBgOY4avunM0JdaUgwmVQ9L+SLYs1/mfZ6AZIyzZw44/datBwgNqEdJSN+3XqFKzBFSLBLlFKT2HkA6Ry+XdpMz3Xi/ZMeCRd3r89W5LWag/96d15fkzwHC3/sMIzKkmD85XIK00CkZGYasNZojNAgogyj9tz4gtBjsndBLiP6D3lxReQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB4854.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(396003)(366004)(39860400002)(346002)(136003)(376002)(451199018)(86362001)(38070700005)(122000001)(38100700002)(6486002)(36756003)(478600001)(71200400001)(6512007)(2616005)(186003)(6506007)(66476007)(64756008)(8676002)(66446008)(66946007)(4326008)(76116006)(2906002)(91956017)(5660300002)(8936002)(66556008)(41300700001)(316002)(54906003)(110136005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dWxuTTEyY2ZzU29rekRjcUFkR3FRd0QzendRN3JUQlRNOUxaWG1weklXSWdB?=
+ =?utf-8?B?dzBTd0djNEhVZXFIWjE1SWZpenoxQmlnUEZ1RmgvQS9pVGVYQk5xbXZrVHRL?=
+ =?utf-8?B?bng2RE15cGExbmxXcnZMZkZ3KzRvSVlQdEsyb0FSQ3BBMXhUaVVQSkQ1QXBR?=
+ =?utf-8?B?UTB1YkVMd1NiWkxOeUdyY2QvOWdYRTlTZllFL1JjZ3c1WXFRbDQyUWVBSnUy?=
+ =?utf-8?B?MUtjaTJkWGpWbkpKN1poNzhaMUtpVnJJZ0dFbVJpaXdxbEZ3TmdMV1liaVhz?=
+ =?utf-8?B?bmVxTnNrUysyaG52aUlKN2tGVHRIVUNvT2ppbkNDNnV6S3A2STBxcGo4ak55?=
+ =?utf-8?B?c2ZWOHFiOUp4T2pzNi9MS25YbngxZWJjUkRXRzkxMm9mUDR3UGRSVlB1TlRX?=
+ =?utf-8?B?ano0ZGh3SmhkLzZLSTVYYU1rUzlYMW9pZllVMDgwNkpibmJ6WWpQR0prZUJJ?=
+ =?utf-8?B?aWwrSnl3MloycTVpUEU5OU92bkZwbzBjNnltenYzTzdiaU9jN0NFUXAvQmN3?=
+ =?utf-8?B?TUFnZlU3eHVxcHBiVHRrT0VseE0rRXhRbUV3WDA1VUowN05XTHE2c1dNdTFu?=
+ =?utf-8?B?M3RiMDIxQWNWZGJYemoxZVhUb0dxOEF2KzhabUVJdVFjQm5NOG5ySEdpZUdZ?=
+ =?utf-8?B?RVFQNEtvMk9jV1NaemZRKzkzMThyZW1BbUhCaFptNkFzQWFSN2RUUWhoVkNs?=
+ =?utf-8?B?YTBjeE5ZeDIrVTlEWkJCbnNPUGRaQUdYVEtjdGV2NmJIWmhlOWMvMUp1TS9v?=
+ =?utf-8?B?V1JzaXEwb1FFa0dJZ2FidEFRSnhBV2ZYdnN6enArUmVvRTU3aUUrMTErRW9u?=
+ =?utf-8?B?U3ZaME8xOWQxK0ZzYUttdEgrWkhKL1ZoWndzek9nMlAvOVo3VzdaVHk4NGJL?=
+ =?utf-8?B?aHpYa2VLVVcwQldYTzNYc1FlSWRucU5WcDBCVkpMYmsvS3JhNy9ZZUdmOXpW?=
+ =?utf-8?B?YWdpazdJdjNzQVZYNVlGMGNJQ0daQWFBZjM3YWp2YVFmRUdUWEhBZFhTUjNX?=
+ =?utf-8?B?S3BjRk9iYmhZOEwxNDlLVkdHTXRYWTJKWWhQNHpmVENpSldJODI3K2M3aWNt?=
+ =?utf-8?B?Q3lUTkZrbm5mUDZsZWR1M0diSU5Qd0tXckdBSkxlQW52UkdkZDArOWswM0Vs?=
+ =?utf-8?B?RUw0Y2wzZkZRdzFIV3FwdHNPYlA1NVpFeFo1S1lkeGVJcmhPVC9ZNUJFa0JL?=
+ =?utf-8?B?Qy9BMUg5NW9RampwZVlzNVhLcUdQU2svbXBWeHJ4dUhXTmJKcDVVbTBtb2lj?=
+ =?utf-8?B?dkJlT3U3d2Z4VjFsWmtEdFZxSit3Sk95K3FhYTRBMlE2S1ZSWTluZU1oZS9V?=
+ =?utf-8?B?Y1pRUkg1cklySWpUNVpvd2xDQWlLVDBlY3VmYmthQ1N4Z2dRTjhpRjFZY3la?=
+ =?utf-8?B?TEZ1VEtyNzJwdXJLR29QR0djNEhMRFpOZ09aWE5DZGlZLzdyYmdSS09IRmxH?=
+ =?utf-8?B?TFduMUFiUi92a0JoZlRlb0o5TUhVQWhiZ2I4bGN2RXRLNGc2ck9OTGpGVjZT?=
+ =?utf-8?B?TEFjTktsLytORjZRdm42SmRSSFFvRnVVZm1RMWRZWjdscGVyWkt0cjFzVkF6?=
+ =?utf-8?B?Ry9DMjZ3SzM4aUtCUnYzdTRSWG0veU0wU3QxeHhNOThoUnYzMWxvZGpHeHFv?=
+ =?utf-8?B?TXA3N3lwUU9zeVpkQjNVZkpvOGVOVU52UjU2K2JzWVNQNzZMVnhLb0lMQ2ZG?=
+ =?utf-8?B?blFkYnBtQUNFK1ZRVGZmQUMzdXlMSmRGaDJCS1VJRVBIbGVLQnQ5MlJ2V3RP?=
+ =?utf-8?B?K2lHcUpGdUxlTnV3L2ZkRGNJQVprZTFEZWM1T2pvOUtCTEZ5RzV3R0lodFBX?=
+ =?utf-8?B?dkhXZmk5R3l1bXhsT0VDK0FycXp6QW8wTENPdnNsRUNEa3NpaWZaZTIwT2Fa?=
+ =?utf-8?B?RlBCNkd0Titic1ZJVS9aaHI4UDlhL1lReFgrWUJtKzNCUW1oS3JWQithMGxw?=
+ =?utf-8?B?QVd5S3pCeTZlY2ZSSWo2d3F2cTd4eTFEWSs3M2RVckFmRExYdVBpWHJGemxl?=
+ =?utf-8?B?enZ4RmlDZnVQdjZXaEFKRmp0ejdyVGdYcjNieHUwd2V5a0NnNWJFWHRadWJE?=
+ =?utf-8?B?MVlaTmZETmZsdjdCZm95TUcrV0ZXT3BaN1dEbWhmV2hRUEtzZWxWT1lGaWhi?=
+ =?utf-8?B?Qis4TVRweW5jSzlhaml1UTg2S283NWFaZVorcnU0dDVpQVkxSVZ3RC91YTFQ?=
+ =?utf-8?Q?954f91bLdySAog6dIRV2fps=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A6E056DDF56BE44192BE56280A3429D4@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB4854.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4867bb4-ffae-43f4-2a69-08db10012d4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Feb 2023 09:35:44.3657
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aLXOECtEjr2u+C0rsZtiLSDvG9G0DM/DJzshW25omYUgIVlS+F5/hGh4M2W2AjQK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR15MB4665
+X-Proofpoint-GUID: SdcF-IdIdVlzuduJSexSNWEjDYt_9nCL
+X-Proofpoint-ORIG-GUID: SdcF-IdIdVlzuduJSexSNWEjDYt_9nCL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-16_07,2023-02-15_01,2023-02-09_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hello,
-
-> On Wed, Feb 15, 2023 at 08:46:18AM +0800, Xiaoguang Wang wrote:
->> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
->> ---
->>  bpf/ublk.bpf.c         | 168 +++++++++++++++++++++++++++++++++++++++++
->>  include/ublk_cmd.h     |   2 +
->>  include/ublksrv.h      |   8 ++
->>  include/ublksrv_priv.h |   1 +
->>  include/ublksrv_tgt.h  |   1 +
->>  lib/ublksrv.c          |   4 +
->>  lib/ublksrv_cmd.c      |  21 ++++++
->>  tgt_loop.cpp           |  31 +++++++-
->>  ublksrv_tgt.cpp        |  33 ++++++++
->>  9 files changed, 268 insertions(+), 1 deletion(-)
->>  create mode 100644 bpf/ublk.bpf.c
->>
->> diff --git a/bpf/ublk.bpf.c b/bpf/ublk.bpf.c
->> new file mode 100644
->> index 0000000..80e79de
->> --- /dev/null
->> +++ b/bpf/ublk.bpf.c
->> @@ -0,0 +1,168 @@
->> +#include "vmlinux.h"
-> Where is vmlinux.h?
-Sorry, I forgot to attach Makefile in this commit, which will
-show how to generate vmlinux.h and how to compile ebpf
-prog object. I'll prepare v2 patch set to fix this issue soon.
-Thanks for review.
-
-Regards,
-Xiaoguang Wang
-
->
->> +#include <bpf/bpf_helpers.h>
->> +#include <bpf/bpf_core_read.h>
->> +
->> +
->> +static long (*bpf_ublk_queue_sqe)(void *ctx, struct io_uring_sqe *sqe,
->> +		u32 sqe_len, u32 fd) = (void *) 212;
->> +
->> +int target_fd = -1;
->> +
->> +struct sqe_key {
->> +	u16 q_id;
->> +	u16 tag;
->> +	u32 res;
->> +	u64 offset;
->> +};
->> +
->> +struct sqe_data {
->> +	char data[128];
->> +};
->> +
->> +struct {
->> +	__uint(type, BPF_MAP_TYPE_HASH);
->> +	__uint(max_entries, 8192);
->> +	__type(key, struct sqe_key);
->> +	__type(value, struct sqe_data);
->> +} sqes_map SEC(".maps");
->> +
->> +struct {
->> +	__uint(type, BPF_MAP_TYPE_ARRAY);
->> +	__uint(max_entries, 128);
->> +	__type(key, int);
->> +	__type(value, int);
->> +} uring_fd_map SEC(".maps");
->> +
->> +static inline void io_uring_prep_rw(__u8 op, struct io_uring_sqe *sqe, int fd,
->> +				    const void *addr, unsigned len,
->> +				    __u64 offset)
->> +{
->> +	sqe->opcode = op;
->> +	sqe->flags = 0;
->> +	sqe->ioprio = 0;
->> +	sqe->fd = fd;
->> +	sqe->off = offset;
->> +	sqe->addr = (unsigned long) addr;
->> +	sqe->len = len;
->> +	sqe->fsync_flags = 0;
->> +	sqe->buf_index = 0;
->> +	sqe->personality = 0;
->> +	sqe->splice_fd_in = 0;
->> +	sqe->addr3 = 0;
->> +	sqe->__pad2[0] = 0;
->> +}
->> +
->> +static inline void io_uring_prep_nop(struct io_uring_sqe *sqe)
->> +{
->> +	io_uring_prep_rw(IORING_OP_NOP, sqe, -1, 0, 0, 0);
->> +}
->> +
->> +static inline void io_uring_prep_read(struct io_uring_sqe *sqe, int fd,
->> +			void *buf, unsigned nbytes, off_t offset)
->> +{
->> +	io_uring_prep_rw(IORING_OP_READ, sqe, fd, buf, nbytes, offset);
->> +}
->> +
->> +static inline void io_uring_prep_write(struct io_uring_sqe *sqe, int fd,
->> +	const void *buf, unsigned nbytes, off_t offset)
->> +{
->> +	io_uring_prep_rw(IORING_OP_WRITE, sqe, fd, buf, nbytes, offset);
->> +}
->> +
->> +/*
->> +static u64 submit_sqe(struct bpf_map *map, void *key, void *value, void *data)
->> +{
->> +	struct io_uring_sqe *sqe = (struct io_uring_sqe *)value;
->> +	struct ublk_bpf_ctx *ctx = ((struct callback_ctx *)data)->ctx;
->> +	struct sqe_key *skey = (struct sqe_key *)key;
->> +	char fmt[] ="submit sqe for req[qid:%u tag:%u]\n";
->> +	char fmt2[] ="submit sqe test prep\n";
->> +	u16 qid, tag;
->> +	int q_id = skey->q_id, *ring_fd;
->> +
->> +	bpf_trace_printk(fmt2, sizeof(fmt2));
->> +	ring_fd = bpf_map_lookup_elem(&uring_fd_map, &q_id);
->> +	if (ring_fd) {
->> +		bpf_trace_printk(fmt, sizeof(fmt), qid, skey->tag);
->> +		bpf_ublk_queue_sqe(ctx, sqe, 128, *ring_fd);
->> +		bpf_map_delete_elem(map, key);
->> +	}
->> +	return 0;
->> +}
->> +*/
->> +
->> +static inline __u64 build_user_data(unsigned tag, unsigned op,
->> +			unsigned tgt_data, unsigned is_target_io,
->> +			unsigned is_bpf_io)
->> +{
->> +	return tag | (op << 16) | (tgt_data << 24) | (__u64)is_target_io << 63 |
->> +		(__u64)is_bpf_io << 60;
->> +}
->> +
->> +SEC("ublk.s/")
->> +int ublk_io_prep_prog(struct ublk_bpf_ctx *ctx)
->> +{
->> +	struct io_uring_sqe *sqe;
->> +	struct sqe_data sd = {0};
->> +	struct sqe_key key;
->> +	u16 q_id = ctx->q_id;
->> +	u8 op; // = ctx->op;
->> +	u32 nr_sectors = ctx->nr_sectors;
->> +	u64 start_sector = ctx->start_sector;
->> +	char fmt_1[] ="ublk_io_prep_prog %d %d\n";
->> +
->> +	key.q_id = ctx->q_id;
->> +	key.tag = ctx->tag;
->> +	key.offset = 0;
->> +	key.res = 0;
->> +
->> +	bpf_probe_read_kernel(&op, 1, &ctx->op);
->> +	bpf_trace_printk(fmt_1, sizeof(fmt_1), q_id, op);
->> +	sqe = (struct io_uring_sqe *)&sd;
->> +	if (op == REQ_OP_READ) {
->> +		char fmt[] ="add read sae\n";
->> +
->> +		bpf_trace_printk(fmt, sizeof(fmt));
->> +		io_uring_prep_read(sqe, target_fd, 0, nr_sectors << 9,
->> +				   start_sector << 9);
->> +		sqe->user_data = build_user_data(ctx->tag, op, 0, 1, 1);
->> +		bpf_map_update_elem(&sqes_map, &key, &sd, BPF_NOEXIST);
->> +	} else if (op == REQ_OP_WRITE) {
->> +		char fmt[] ="add write sae\n";
->> +
->> +		bpf_trace_printk(fmt, sizeof(fmt));
->> +
->> +		io_uring_prep_write(sqe, target_fd, 0, nr_sectors << 9,
->> +				    start_sector << 9);
->> +		sqe->user_data = build_user_data(ctx->tag, op, 0, 1, 1);
->> +		bpf_map_update_elem(&sqes_map, &key, &sd, BPF_NOEXIST);
->> +	} else {
->> +		;
->> +	}
->> +	return 0;
->> +}
->> +
->> +SEC("ublk.s/")
->> +int ublk_io_submit_prog(struct ublk_bpf_ctx *ctx)
->> +{
->> +	struct io_uring_sqe *sqe;
->> +	char fmt[] ="submit sqe for req[qid:%u tag:%u]\n";
->> +	int q_id = ctx->q_id, *ring_fd;
->> +	struct sqe_key key;
->> +
->> +	key.q_id = ctx->q_id;
->> +	key.tag = ctx->tag;
->> +	key.offset = 0;
->> +	key.res = 0;
->> +
->> +	sqe = bpf_map_lookup_elem(&sqes_map, &key);
->> +	ring_fd = bpf_map_lookup_elem(&uring_fd_map, &q_id);
->> +	if (ring_fd) {
->> +		bpf_trace_printk(fmt, sizeof(fmt), key.q_id, key.tag);
->> +		bpf_ublk_queue_sqe(ctx, sqe, 128, *ring_fd);
->> +		bpf_map_delete_elem(&sqes_map, &key);
->> +	}
->> +	return 0;
->> +}
->> +
->> +char LICENSE[] SEC("license") = "GPL";
->> diff --git a/include/ublk_cmd.h b/include/ublk_cmd.h
->> index f6238cc..893ba8c 100644
->> --- a/include/ublk_cmd.h
->> +++ b/include/ublk_cmd.h
->> @@ -17,6 +17,8 @@
->>  #define	UBLK_CMD_STOP_DEV	0x07
->>  #define	UBLK_CMD_SET_PARAMS	0x08
->>  #define	UBLK_CMD_GET_PARAMS	0x09
->> +#define UBLK_CMD_REG_BPF_PROG		0x0a
->> +#define UBLK_CMD_UNREG_BPF_PROG		0x0b
->>  #define	UBLK_CMD_START_USER_RECOVERY	0x10
->>  #define	UBLK_CMD_END_USER_RECOVERY	0x11
->>  #define	UBLK_CMD_GET_DEV_INFO2		0x12
->> diff --git a/include/ublksrv.h b/include/ublksrv.h
->> index d38bd46..f5deddb 100644
->> --- a/include/ublksrv.h
->> +++ b/include/ublksrv.h
->> @@ -106,6 +106,7 @@ struct ublksrv_tgt_info {
->>  	unsigned int nr_fds;
->>  	int fds[UBLKSRV_TGT_MAX_FDS];
->>  	void *tgt_data;
->> +	void *tgt_bpf_obj;
->>  
->>  	/*
->>  	 * Extra IO slots for each queue, target code can reserve some
->> @@ -263,6 +264,8 @@ struct ublksrv_tgt_type {
->>  	int (*init_queue)(const struct ublksrv_queue *, void **queue_data_ptr);
->>  	void (*deinit_queue)(const struct ublksrv_queue *);
->>  
->> +	int (*init_queue_bpf)(const struct ublksrv_dev *dev, const struct ublksrv_queue *q);
->> +
->>  	unsigned long reserved[5];
->>  };
->>  
->> @@ -318,6 +321,11 @@ extern void ublksrv_ctrl_prep_recovery(struct ublksrv_ctrl_dev *dev,
->>  		const char *recovery_jbuf);
->>  extern const char *ublksrv_ctrl_get_recovery_jbuf(const struct ublksrv_ctrl_dev *dev);
->>  
->> +extern void ublksrv_ctrl_set_bpf_obj_info(struct ublksrv_ctrl_dev *dev,
->> +					  void *obj);
->> +extern int ublksrv_ctrl_reg_bpf_prog(struct ublksrv_ctrl_dev *dev,
->> +				     int io_prep_fd, int io_submit_fd);
->> +
->>  /* ublksrv device ("/dev/ublkcN") level APIs */
->>  extern const struct ublksrv_dev *ublksrv_dev_init(const struct ublksrv_ctrl_dev *
->>  		ctrl_dev);
->> diff --git a/include/ublksrv_priv.h b/include/ublksrv_priv.h
->> index 2996baa..8da8866 100644
->> --- a/include/ublksrv_priv.h
->> +++ b/include/ublksrv_priv.h
->> @@ -42,6 +42,7 @@ struct ublksrv_ctrl_dev {
->>  
->>  	const char *tgt_type;
->>  	const struct ublksrv_tgt_type *tgt_ops;
->> +	void *bpf_obj;
->>  
->>  	/*
->>  	 * default is UBLKSRV_RUN_DIR but can be specified via command line,
->> diff --git a/include/ublksrv_tgt.h b/include/ublksrv_tgt.h
->> index 234d31e..e0db7d9 100644
->> --- a/include/ublksrv_tgt.h
->> +++ b/include/ublksrv_tgt.h
->> @@ -9,6 +9,7 @@
->>  #include <getopt.h>
->>  #include <string.h>
->>  #include <stdarg.h>
->> +#include <limits.h>
->>  #include <sys/types.h>
->>  #include <sys/stat.h>
->>  #include <sys/ioctl.h>
->> diff --git a/lib/ublksrv.c b/lib/ublksrv.c
->> index 96bed95..110ccb3 100644
->> --- a/lib/ublksrv.c
->> +++ b/lib/ublksrv.c
->> @@ -603,6 +603,9 @@ skip_alloc_buf:
->>  		goto fail;
->>  	}
->>  
->> +	if (dev->tgt.ops->init_queue_bpf)
->> +		dev->tgt.ops->init_queue_bpf(tdev, local_to_tq(q));
->> +
->>  	ublksrv_dev_init_io_cmds(dev, q);
->>  
->>  	/*
->> @@ -723,6 +726,7 @@ const struct ublksrv_dev *ublksrv_dev_init(const struct ublksrv_ctrl_dev *ctrl_d
->>  	}
->>  
->>  	tgt->fds[0] = dev->cdev_fd;
->> +	tgt->tgt_bpf_obj = ctrl_dev->bpf_obj;
->>  
->>  	ret = ublksrv_tgt_init(dev, ctrl_dev->tgt_type, ctrl_dev->tgt_ops,
->>  			ctrl_dev->tgt_argc, ctrl_dev->tgt_argv);
->> diff --git a/lib/ublksrv_cmd.c b/lib/ublksrv_cmd.c
->> index 0d7265d..0101cb9 100644
->> --- a/lib/ublksrv_cmd.c
->> +++ b/lib/ublksrv_cmd.c
->> @@ -502,6 +502,27 @@ int ublksrv_ctrl_end_recovery(struct ublksrv_ctrl_dev *dev, int daemon_pid)
->>  	return ret;
->>  }
->>  
->> +int ublksrv_ctrl_reg_bpf_prog(struct ublksrv_ctrl_dev *dev,
->> +			      int io_prep_fd, int io_submit_fd)
->> +{
->> +	struct ublksrv_ctrl_cmd_data data = {
->> +		.cmd_op = UBLK_CMD_REG_BPF_PROG,
->> +		.flags = CTRL_CMD_HAS_DATA,
->> +	};
->> +	int ret;
->> +
->> +	data.data[0] = io_prep_fd;
->> +	data.data[1] = io_submit_fd;
->> +
->> +	ret = __ublksrv_ctrl_cmd(dev, &data);
->> +	return ret;
->> +}
->> +
->> +void ublksrv_ctrl_set_bpf_obj_info(struct ublksrv_ctrl_dev *dev,  void *obj)
->> +{
->> +	dev->bpf_obj = obj;
->> +}
->> +
->>  const struct ublksrv_ctrl_dev_info *ublksrv_ctrl_get_dev_info(
->>  		const struct ublksrv_ctrl_dev *dev)
->>  {
->> diff --git a/tgt_loop.cpp b/tgt_loop.cpp
->> index 79a65d3..b1568fe 100644
->> --- a/tgt_loop.cpp
->> +++ b/tgt_loop.cpp
->> @@ -4,7 +4,11 @@
->>  
->>  #include <poll.h>
->>  #include <sys/epoll.h>
->> +#include <linux/bpf.h>
->> +#include <bpf/bpf.h>
->> +#include <bpf/libbpf.h>
->>  #include "ublksrv_tgt.h"
->> +#include "bpf/.tmp/ublk.skel.h"
-> Where is bpf/.tmp/ublk.skel.h?
->
->>  
->>  static bool backing_supports_discard(char *name)
->>  {
->> @@ -88,6 +92,20 @@ static int loop_recovery_tgt(struct ublksrv_dev *dev, int type)
->>  	return 0;
->>  }
->>  
->> +static int loop_init_queue_bpf(const struct ublksrv_dev *dev,
->> +			       const struct ublksrv_queue *q)
->> +{
->> +	int ret, q_id, ring_fd;
->> +	const struct ublksrv_tgt_info *tgt = &dev->tgt;
->> +	struct ublk_bpf *obj = (struct ublk_bpf*)tgt->tgt_bpf_obj;
->> +
->> +	q_id = q->q_id;
->> +	ring_fd = q->ring_ptr->ring_fd;
->> +	ret = bpf_map_update_elem(bpf_map__fd(obj->maps.uring_fd_map), &q_id,
->> +				  &ring_fd,  0);
->> +	return ret;
->> +}
->> +
->>  static int loop_init_tgt(struct ublksrv_dev *dev, int type, int argc, char
->>  		*argv[])
->>  {
->> @@ -125,6 +143,7 @@ static int loop_init_tgt(struct ublksrv_dev *dev, int type, int argc, char
->>  		},
->>  	};
->>  	bool can_discard = false;
->> +	struct ublk_bpf *bpf_obj;
->>  
->>  	strcpy(tgt_json.name, "loop");
->>  
->> @@ -218,6 +237,10 @@ static int loop_init_tgt(struct ublksrv_dev *dev, int type, int argc, char
->>  			jbuf = ublksrv_tgt_realloc_json_buf(dev, &jbuf_size);
->>  	} while (ret < 0);
->>  
->> +	if (tgt->tgt_bpf_obj) {
->> +		bpf_obj = (struct ublk_bpf *)tgt->tgt_bpf_obj;
->> +		bpf_obj->data->target_fd = tgt->fds[1];
->> +	}
->>  	return 0;
->>  }
->>  
->> @@ -252,9 +275,14 @@ static int loop_queue_tgt_io(const struct ublksrv_queue *q,
->>  		const struct ublk_io_data *data, int tag)
->>  {
->>  	const struct ublksrv_io_desc *iod = data->iod;
->> -	struct io_uring_sqe *sqe = io_uring_get_sqe(q->ring_ptr);
->> +	struct io_uring_sqe *sqe;
->>  	unsigned ublk_op = ublksrv_get_op(iod);
->>  
->> +	/* ebpf prog wil handle read/write requests. */
->> +	if ((ublk_op == UBLK_IO_OP_READ) || (ublk_op == UBLK_IO_OP_WRITE))
->> +		return 1;
->> +
->> +	sqe = io_uring_get_sqe(q->ring_ptr);
->>  	if (!sqe)
->>  		return 0;
->>  
->> @@ -374,6 +402,7 @@ struct ublksrv_tgt_type  loop_tgt_type = {
->>  	.type	= UBLKSRV_TGT_TYPE_LOOP,
->>  	.name	=  "loop",
->>  	.recovery_tgt = loop_recovery_tgt,
->> +	.init_queue_bpf = loop_init_queue_bpf,
->>  };
->>  
->>  static void tgt_loop_init() __attribute__((constructor));
->> diff --git a/ublksrv_tgt.cpp b/ublksrv_tgt.cpp
->> index 5ed328d..d3796cf 100644
->> --- a/ublksrv_tgt.cpp
->> +++ b/ublksrv_tgt.cpp
->> @@ -2,6 +2,7 @@
->>  
->>  #include "config.h"
->>  #include "ublksrv_tgt.h"
->> +#include "bpf/.tmp/ublk.skel.h"
-> Same with above
->
->
-> Thanks, 
-> Ming
-
+T24gVHVlLCAyMDIzLTAyLTE0IGF0IDE2OjQyIC0wODAwLCBKb3NoIFRyaXBsZXR0IHdyb3RlOgo+
+IEBAIC00MTc3LDE3ICs0MTc3LDM3IEBAIFNZU0NBTExfREVGSU5FNChpb191cmluZ19yZWdpc3Rl
+ciwgdW5zaWduZWQKPiBpbnQsIGZkLCB1bnNpZ25lZCBpbnQsIG9wY29kZSwKPiDCoMKgwqDCoMKg
+wqDCoMKgc3RydWN0IGlvX3JpbmdfY3R4ICpjdHg7Cj4gwqDCoMKgwqDCoMKgwqDCoGxvbmcgcmV0
+ID0gLUVCQURGOwo+IMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZmQgZjsKPiArwqDCoMKgwqDCoMKg
+wqBib29sIHVzZV9yZWdpc3RlcmVkX3Jpbmc7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHVzZV9yZWdp
+c3RlcmVkX3JpbmcgPSAhIShvcGNvZGUgJgo+IElPUklOR19SRUdJU1RFUl9VU0VfUkVHSVNURVJF
+RF9SSU5HKTsKPiArwqDCoMKgwqDCoMKgwqBvcGNvZGUgJj0gfklPUklOR19SRUdJU1RFUl9VU0Vf
+UkVHSVNURVJFRF9SSU5HOwo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoGlmIChvcGNvZGUgPj0gSU9S
+SU5HX1JFR0lTVEVSX0xBU1QpCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1
+cm4gLUVJTlZBTDsKPiDCoAo+IC3CoMKgwqDCoMKgwqDCoGYgPSBmZGdldChmZCk7Cj4gLcKgwqDC
+oMKgwqDCoMKgaWYgKCFmLmZpbGUpCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJl
+dHVybiAtRUJBREY7Cj4gK8KgwqDCoMKgwqDCoMKgaWYgKHVzZV9yZWdpc3RlcmVkX3JpbmcpIHsK
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyoKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgICogUmluZyBmZCBoYXMgYmVlbiByZWdpc3RlcmVkIHZpYQo+IElPUklOR19S
+RUdJU1RFUl9SSU5HX0ZEUywgd2UKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICog
+bmVlZCBvbmx5IGRlcmVmZXJlbmNlIG91ciB0YXNrIHByaXZhdGUgYXJyYXkgdG8KPiBmaW5kIGl0
+Lgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKi8KPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgc3RydWN0IGlvX3VyaW5nX3Rhc2sgKnRjdHggPSBjdXJyZW50LT5pb191
+cmluZzsKPiDCoAo+IC3CoMKgwqDCoMKgwqDCoHJldCA9IC1FT1BOT1RTVVBQOwo+IC3CoMKgwqDC
+oMKgwqDCoGlmICghaW9faXNfdXJpbmdfZm9wcyhmLmZpbGUpKQo+IC3CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBnb3RvIG91dF9mcHV0Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqBpZiAodW5saWtlbHkoIXRjdHggfHwgZmQgPj0gSU9fUklOR0ZEX1JFR19NQVgpKQo+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIC1FSU5W
+QUw7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZkID0gYXJyYXlfaW5kZXhfbm9z
+cGVjKGZkLCBJT19SSU5HRkRfUkVHX01BWCk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoGYuZmlsZSA9IHRjdHgtPnJlZ2lzdGVyZWRfcmluZ3NbZmRdOwo+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqBmLmZsYWdzID0gMDsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgaWYgKHVubGlrZWx5KCFmLmZpbGUpKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIC1FQkFERjsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgb3Bjb2RlICY9IH5JT1JJTkdfUkVHSVNURVJfVVNFX1JFR0lTVEVSRURfUklO
+RzsKCl4gdGhpcyBsaW5lIGxvb2tzIGR1cGxpY2F0ZWQgYXQgdGhlIHRvcCBvZiB0aGUgZnVuY3Rp
+b24/CgoKQWxzbyAtIGlzIHRoZXJlIGEgbGlidXJpbmcgcmVncmVzc2lvbiB0ZXN0IGZvciB0aGlz
+Pwo=

@@ -2,192 +2,477 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE79D698EA0
-	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 09:24:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB823698EAE
+	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 09:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbjBPIY2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Feb 2023 03:24:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51182 "EHLO
+        id S229646AbjBPIaD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Feb 2023 03:30:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjBPIY1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 03:24:27 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D68A3C25;
-        Thu, 16 Feb 2023 00:24:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1676535862; i=deller@gmx.de;
-        bh=6Pdh1R+6n0Ck2b9ZjAmZILJrULyIMji4BrDAVbJsV84=;
-        h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
-        b=fhUcBday27i4FgeAEcNSoMohUsrhRXpsLZVNlvLslT5MvPiznP8fP8AvJWyJtWezl
-         s3nj2xp1swSPyCYlcZDvhG+Ti0smq3k7gJwD+9WsrYCj7qGlgxSZcXQUlmk08I12nB
-         UZZOpy32xyVn0wBD8V72mU+Hx9ptoQZbMREipxfCYgzM6XDj6ClXGn0RlnoUANaT39
-         Cq2CVZiUoOTc54yvYdemkaGJO1DdO8U1HZ0o6RukgzoYNpiMC4fqzfk1HqmKFRvw4j
-         BJtdlnBrE65AzJXiAfmh915pGXCeugULZnruLwq6PFt5Hd1nlrf5ML5e8v+OjZ4DGM
-         /wvj8oUMNNJ3g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([92.116.164.173]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MZTqW-1p5wcy2A9m-00WTEa; Thu, 16
- Feb 2023 09:24:22 +0100
-Message-ID: <c70ef9b0-4100-fbc2-237d-5830e32bd519@gmx.de>
-Date:   Thu, 16 Feb 2023 09:24:21 +0100
+        with ESMTP id S229462AbjBPIaC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 03:30:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E657A2CC76
+        for <io-uring@vger.kernel.org>; Thu, 16 Feb 2023 00:29:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676536154;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yWe59C3zukH1hXHPi3xSqXe+d3YhK+Sr2LV3xpxp7IE=;
+        b=Ie8Mj0s98gNhjOVOJ4aW+PRTrkNGyOd4uWKLkQnmsqk3Glo3T6NDY86FcfaijktuyvuCm9
+        KOnx2SbjK9r6vCZC91vFXHOTpsMTrcZ1kFVk5VyZzHMF8Q7MuOccGfyKHiS6NSHBcLfrsL
+        4wqFz4vceab2XeNCAPClCrg6S6yQ4KM=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-599-DIT4l3xaOwSOJBH_dl76lQ-1; Thu, 16 Feb 2023 03:29:08 -0500
+X-MC-Unique: DIT4l3xaOwSOJBH_dl76lQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 22D833C10EDA;
+        Thu, 16 Feb 2023 08:29:08 +0000 (UTC)
+Received: from T590 (ovpn-8-29.pek2.redhat.com [10.72.8.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9988D40CF8E4;
+        Thu, 16 Feb 2023 08:29:01 +0000 (UTC)
+Date:   Thu, 16 Feb 2023 16:28:55 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        bpf@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
+        ZiyangZhang@linux.alibaba.com, ming.lei@redhat.com
+Subject: Re: [UBLKSRV] Add ebpf support.
+Message-ID: <Y+3pR991R9nrdg5Y@T590>
+References: <20230215004122.28917-1-xiaoguang.wang@linux.alibaba.com>
+ <20230215004618.35503-1-xiaoguang.wang@linux.alibaba.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: io_uring failure on parisc with VIPT caches
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>,
-        John David Anglin <dave.anglin@bell.net>,
-        io-uring@vger.kernel.org, linux-parisc@vger.kernel.org
-References: <Y+wUwVxeN87gqN6o@p100>
- <006e8db4-336f-6717-ecb0-d01a0e9bc483@kernel.dk>
- <626cee6f-f542-b7eb-16ca-1cf4e3808ca6@bell.net>
- <5f02fa8b-7fd8-d98f-4876-f1a89024b888@kernel.dk>
- <2b89f252-c430-1c44-7b30-02d927d2c7cb@gmx.de>
- <f7c3ef57-f16c-7fe3-30b7-8ca6a9ef00ee@kernel.dk>
- <0bfe6cdb-2749-c08d-a1b2-ef46fed1ded3@bell.net>
- <a03d75b9-a9b8-b950-c53d-6df85fe8adc4@kernel.dk>
- <07810314-94f6-0e9a-984b-0a286cbb59d3@kernel.dk>
- <4f4f9048-b382-fa0e-8b51-5a0f0bb08402@kernel.dk>
- <99a41070-f334-f3cb-47cd-8855c938d71f@bell.net>
- <d8dc9156-c001-8181-a946-e9fdfe13f165@kernel.dk>
- <c7725c80-ba8c-1182-7adc-bc107f4f5b75@bell.net>
- <5e72c1fc-1a7b-a4ed-4097-96816b802e6d@bell.net>
- <c100a264-d897-1b9e-0483-22272bccd802@bell.net>
- <73566dc4-317b-5808-a5a5-78dc195ebd77@kernel.dk>
- <1237dc53-2495-a145-37bf-47366ca75e71@bell.net>
- <3a7e342c-844e-8071-7dde-86b88bbb2dc4@kernel.dk>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <3a7e342c-844e-8071-7dde-86b88bbb2dc4@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lQlJ1c8kr0QsydlJGjnitht49qTArEi+vo2bbsjD25dg0l3+9Li
- szY+s3qv99Xp6nheTAnWVnk41HN/fsMlTiSz3Zsh0QKlerNmQtUz1kMWI15+SkKO1ouRRwT
- TZPZwikTk2R6gbImV4lGb75d3fXf+pwmztwjPyVCSvB1FzDRxCUfS4+WhT2viUM/+qGsDaS
- 2XGA2HoYpn9BDUS5OQjXg==
-UI-OutboundReport: notjunk:1;M01:P0:m1m4Va7wlOE=;mdypW8HSr5wX5cNwxaexy57NHOs
- gqWG6cbvhIRgY5C3zJXdnPZAW9aC7lwkrTDtckIeDBkzZLoPbhOqOyIoPxA0uHdxZUsyQvGN1
- GXgIYH7EKktFknlOFt0S9UmggtP/YBgQjAjTwk6he4Ojcwo6xs5shSDpW854j8grmUKzmOLgm
- 0GHvxdcqfeccRnZXeloB1Z+cRjB5xl5KnLsMTSHAT+VZ3Y4mTOMu/suYwLjoYYFr6OXcJoGIc
- Jd8NpIA1fWGmXQpbZpGBkX/TsCQA9Wdm9drTmSRqS9f/E389rWrX/SwQfiL/aTdj0qJe6E3aG
- ytxsCHU+sxDfgKh+VvLNQaAEaSvrfBEVzYib2SIECFqtR4icAwc5f3DzZknckZ5etaU7xAzKV
- BgAqB068L8XwfcXC1p2PBqql430zyLCtMKpY1vglnKxmYPcQIqdlWb4Soi78tRrBu2ujfq6oj
- J2hqQpMWbvPnD/fJMrmKTfFvxVL92wob2/mafUq2ZMhIgbyLVvL3XLQWzujFzHDE078fTSzgb
- gVeqVrgaWdHbQik978jgCRhdhYntkXJ95Dyby70IiMDO73kb/qUdQTUOm4oyAvWEjkgE2dxdh
- xgZsAbNazuyydI+x1j8jx9WiG2DVkV+PwsmH/UNe1z5ICbM/fcrcUW1X+4O82ttuRCc0S+feU
- StlaRLzxTYdhqZKjBr0aVG1Yu1hCT9X21Cz0OEjjLxBRFLa9Xv5ra4/YLwsWMNQsT0P22yULw
- O2XExnPS5BoIih1jdsTDqvQEFJ2bGm1Kl5+kmQUsTOlBZk3NgtOM9S/3xHsgyEyqQzlceJ9a8
- t+v2BCVt5ArTBEXC8GQ9HPX7szz6DrTPNwLQAklT2D/A4HbN7g61rtETyxueegHUkI5yI5/R0
- 1tQ9NPLqGQfBzMG+WGbBz0T9Kgg1iHDpwx2gXZ2oOYkrF5XaHet4+h6xJ8X43oXF0rL3TWnSw
- TLdQPZHA+Vea0ogZZXftIVfIkCc=
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230215004618.35503-1-xiaoguang.wang@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/16/23 03:50, Jens Axboe wrote:
-> On 2/15/23 7:40=E2=80=AFPM, John David Anglin wrote:
->> On 2023-02-15 6:02 p.m., Jens Axboe wrote:
->>> This is not related to Helge's patch, 6.1-stable is just still missing=
-:
->>>
->>> commit fcc926bb857949dbfa51a7d95f3f5ebc657f198c
->>> Author: Jens Axboe<axboe@kernel.dk>
->>> Date:=C2=A0=C2=A0 Fri Jan 27 09:28:13 2023 -0700
->>>
->>>  =C2=A0=C2=A0=C2=A0=C2=A0 io_uring: add a conditional reschedule to th=
-e IOPOLL cancelation loop
->>>
->>> and I'm guessing you're running without preempt.
->> With 6.2.0-rc8+, I had a different crash running poll-race-mshot.t:
->>
->> Backtrace:
->>
->>
->> Kernel Fault: Code=3D15 (Data TLB miss fault) at addr 0000000000000000
->> CPU: 0 PID: 18265 Comm: poll-race-mshot Not tainted 6.2.0-rc8+ #1
->> Hardware name: 9000/800/rp3440
->>
->>  =C2=A0=C2=A0=C2=A0=C2=A0 YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
->> PSW: 00010000001001001001000111110000 Not tainted
->> r00-03=C2=A0 00000000102491f0 ffffffffffffffff 000000004020307c fffffff=
-fffffffff
->> r04-07=C2=A0 ffffffffffffffff ffffffffffffffff ffffffffffffffff fffffff=
-fffffffff
->> r08-11=C2=A0 ffffffffffffffff 000000000407ef28 000000000407f838 8400000=
-000800000
->> r12-15=C2=A0 0000000000000000 0000000040c424e0 0000000040c424e0 0000000=
-040c424e0
->> r16-19=C2=A0 000000000407fd68 0000000063f08648 0000000040c424e0 0000000=
-00a085000
->> r20-23=C2=A0 00000000000d6b44 000000002faf0800 00000000000000ff 0000000=
-000000002
->> r24-27=C2=A0 000000000407fa30 000000000407fd68 0000000000000000 0000000=
-040c1e4e0
->> r28-31=C2=A0 400000000000de84 0000000000000000 0000000000000000 0000000=
-000000002
->> sr00-03=C2=A0 0000000004081000 0000000000000000 0000000000000000 000000=
-0004081de0
->> sr04-07=C2=A0 0000000004081000 0000000000000000 0000000000000000 000000=
-00040815a8
->>
->> IASQ: 0000000004081000 0000000000000000 IAOQ: 0000000000000000 00000000=
-04081590
->>  =C2=A0IIR: 00000000=C2=A0=C2=A0=C2=A0 ISR: 0000000000000000=C2=A0 IOR:=
- 0000000000000000
->>  =C2=A0CPU:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0 CR3=
-0: 000000004daf5700 CR31: ffffffffffffefff
->>  =C2=A0ORIG_R28: 0000000000000000
->>  =C2=A0IAOQ[0]: 0x0
->>  =C2=A0IAOQ[1]: linear_quiesce+0x0/0x18 [linear]
->>  =C2=A0RP(r2): intr_check_sig+0x0/0x3c
->> Backtrace:
->>
->> Kernel panic - not syncing: Kernel Fault
->
-> This means very little to me, is it a NULL pointer deref? And where's
-> the backtrace?
+On Wed, Feb 15, 2023 at 08:46:18AM +0800, Xiaoguang Wang wrote:
+> Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+> ---
+>  bpf/ublk.bpf.c         | 168 +++++++++++++++++++++++++++++++++++++++++
+>  include/ublk_cmd.h     |   2 +
+>  include/ublksrv.h      |   8 ++
+>  include/ublksrv_priv.h |   1 +
+>  include/ublksrv_tgt.h  |   1 +
+>  lib/ublksrv.c          |   4 +
+>  lib/ublksrv_cmd.c      |  21 ++++++
+>  tgt_loop.cpp           |  31 +++++++-
+>  ublksrv_tgt.cpp        |  33 ++++++++
+>  9 files changed, 268 insertions(+), 1 deletion(-)
+>  create mode 100644 bpf/ublk.bpf.c
+> 
+> diff --git a/bpf/ublk.bpf.c b/bpf/ublk.bpf.c
+> new file mode 100644
+> index 0000000..80e79de
+> --- /dev/null
+> +++ b/bpf/ublk.bpf.c
+> @@ -0,0 +1,168 @@
+> +#include "vmlinux.h"
 
-I see iopoll.t triggering the kernel to hang on 32-bit kernel.
-System gets unresponsive, bug with sysrq-l I get:
+Where is vmlinux.h?
 
-[  880.020641] sysrq: Show backtrace of all active CPUs
-[  880.024123] sysrq: CPU0:
-[  880.024123] CPU: 0 PID: 7549 Comm: kworker/u32:7 Not tainted 6.1.12-32b=
-it+ #1595
-[  880.024123] Hardware name: 9000/785/C3700
-[  880.024123] Workqueue: events_unbound io_ring_exit_work
-[  880.024123]
-[  880.024123]      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
-[  880.024123] PSW: 00000000000011001111111100001111 Not tainted
-[  880.024123] r00-03  000cff0f 19610540 104f7b70 19610540
-[  880.024123] r04-07  1921a278 00000000 192c8400 1921b508
-[  880.024123] r08-11  00000003 0000002e 195fd050 00000004
-[  880.024123] r12-15  192c8710 10a77000 00000000 00002000
-[  880.024123] r16-19  1921a210 1240c000 1240c060 1924aff0
-[  880.024123] r20-23  00000002 00000000 104b4384 00000020
-[  880.024123] r24-27  00000003 19610548 1921a210 10aba968
-[  880.024123] r28-31  1094f5c0 0000000e 196105c0 104f7b70
-[  880.024123] sr00-03  00000000 00001695 00000000 00001695
-[  880.024123] sr04-07  00000000 00000000 00000000 00000000
-[  880.024123]
-[  880.024123] IASQ: 00000000 00000000 IAOQ: 104f7b6c 104b4384
-[  880.024123]  IIR: 081f0242    ISR: 00002000  IOR: 00000000
-[  880.024123]  CPU:        0   CR30: 195fd050 CR31: d237ffff
-[  880.024123]  ORIG_R28: 00000000
-[  880.024123]  IAOQ[0]: io_do_iopoll+0xb4/0x3a4
-[  880.024123]  IAOQ[1]: iocb_bio_iopoll+0x0/0x50
-[  880.024123]  RP(r2): io_do_iopoll+0xb8/0x3a4
-[  880.024123] Backtrace:
-[  880.024123]  [<1092a2b0>] io_uring_try_cancel_requests+0x184/0x3b0
-[  880.024123]  [<1092a57c>] io_ring_exit_work+0xa0/0x4c4
-[  880.024123]  [<101cb448>] process_one_work+0x1c4/0x3cc
-[  880.024123]  [<101cb7d8>] worker_thread+0x188/0x4b4
-[  880.024123]  [<101d5910>] kthread+0xec/0xf4
-[  880.024123]  [<1018801c>] ret_from_kernel_thread+0x1c/0x24
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_core_read.h>
+> +
+> +
+> +static long (*bpf_ublk_queue_sqe)(void *ctx, struct io_uring_sqe *sqe,
+> +		u32 sqe_len, u32 fd) = (void *) 212;
+> +
+> +int target_fd = -1;
+> +
+> +struct sqe_key {
+> +	u16 q_id;
+> +	u16 tag;
+> +	u32 res;
+> +	u64 offset;
+> +};
+> +
+> +struct sqe_data {
+> +	char data[128];
+> +};
+> +
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_HASH);
+> +	__uint(max_entries, 8192);
+> +	__type(key, struct sqe_key);
+> +	__type(value, struct sqe_data);
+> +} sqes_map SEC(".maps");
+> +
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_ARRAY);
+> +	__uint(max_entries, 128);
+> +	__type(key, int);
+> +	__type(value, int);
+> +} uring_fd_map SEC(".maps");
+> +
+> +static inline void io_uring_prep_rw(__u8 op, struct io_uring_sqe *sqe, int fd,
+> +				    const void *addr, unsigned len,
+> +				    __u64 offset)
+> +{
+> +	sqe->opcode = op;
+> +	sqe->flags = 0;
+> +	sqe->ioprio = 0;
+> +	sqe->fd = fd;
+> +	sqe->off = offset;
+> +	sqe->addr = (unsigned long) addr;
+> +	sqe->len = len;
+> +	sqe->fsync_flags = 0;
+> +	sqe->buf_index = 0;
+> +	sqe->personality = 0;
+> +	sqe->splice_fd_in = 0;
+> +	sqe->addr3 = 0;
+> +	sqe->__pad2[0] = 0;
+> +}
+> +
+> +static inline void io_uring_prep_nop(struct io_uring_sqe *sqe)
+> +{
+> +	io_uring_prep_rw(IORING_OP_NOP, sqe, -1, 0, 0, 0);
+> +}
+> +
+> +static inline void io_uring_prep_read(struct io_uring_sqe *sqe, int fd,
+> +			void *buf, unsigned nbytes, off_t offset)
+> +{
+> +	io_uring_prep_rw(IORING_OP_READ, sqe, fd, buf, nbytes, offset);
+> +}
+> +
+> +static inline void io_uring_prep_write(struct io_uring_sqe *sqe, int fd,
+> +	const void *buf, unsigned nbytes, off_t offset)
+> +{
+> +	io_uring_prep_rw(IORING_OP_WRITE, sqe, fd, buf, nbytes, offset);
+> +}
+> +
+> +/*
+> +static u64 submit_sqe(struct bpf_map *map, void *key, void *value, void *data)
+> +{
+> +	struct io_uring_sqe *sqe = (struct io_uring_sqe *)value;
+> +	struct ublk_bpf_ctx *ctx = ((struct callback_ctx *)data)->ctx;
+> +	struct sqe_key *skey = (struct sqe_key *)key;
+> +	char fmt[] ="submit sqe for req[qid:%u tag:%u]\n";
+> +	char fmt2[] ="submit sqe test prep\n";
+> +	u16 qid, tag;
+> +	int q_id = skey->q_id, *ring_fd;
+> +
+> +	bpf_trace_printk(fmt2, sizeof(fmt2));
+> +	ring_fd = bpf_map_lookup_elem(&uring_fd_map, &q_id);
+> +	if (ring_fd) {
+> +		bpf_trace_printk(fmt, sizeof(fmt), qid, skey->tag);
+> +		bpf_ublk_queue_sqe(ctx, sqe, 128, *ring_fd);
+> +		bpf_map_delete_elem(map, key);
+> +	}
+> +	return 0;
+> +}
+> +*/
+> +
+> +static inline __u64 build_user_data(unsigned tag, unsigned op,
+> +			unsigned tgt_data, unsigned is_target_io,
+> +			unsigned is_bpf_io)
+> +{
+> +	return tag | (op << 16) | (tgt_data << 24) | (__u64)is_target_io << 63 |
+> +		(__u64)is_bpf_io << 60;
+> +}
+> +
+> +SEC("ublk.s/")
+> +int ublk_io_prep_prog(struct ublk_bpf_ctx *ctx)
+> +{
+> +	struct io_uring_sqe *sqe;
+> +	struct sqe_data sd = {0};
+> +	struct sqe_key key;
+> +	u16 q_id = ctx->q_id;
+> +	u8 op; // = ctx->op;
+> +	u32 nr_sectors = ctx->nr_sectors;
+> +	u64 start_sector = ctx->start_sector;
+> +	char fmt_1[] ="ublk_io_prep_prog %d %d\n";
+> +
+> +	key.q_id = ctx->q_id;
+> +	key.tag = ctx->tag;
+> +	key.offset = 0;
+> +	key.res = 0;
+> +
+> +	bpf_probe_read_kernel(&op, 1, &ctx->op);
+> +	bpf_trace_printk(fmt_1, sizeof(fmt_1), q_id, op);
+> +	sqe = (struct io_uring_sqe *)&sd;
+> +	if (op == REQ_OP_READ) {
+> +		char fmt[] ="add read sae\n";
+> +
+> +		bpf_trace_printk(fmt, sizeof(fmt));
+> +		io_uring_prep_read(sqe, target_fd, 0, nr_sectors << 9,
+> +				   start_sector << 9);
+> +		sqe->user_data = build_user_data(ctx->tag, op, 0, 1, 1);
+> +		bpf_map_update_elem(&sqes_map, &key, &sd, BPF_NOEXIST);
+> +	} else if (op == REQ_OP_WRITE) {
+> +		char fmt[] ="add write sae\n";
+> +
+> +		bpf_trace_printk(fmt, sizeof(fmt));
+> +
+> +		io_uring_prep_write(sqe, target_fd, 0, nr_sectors << 9,
+> +				    start_sector << 9);
+> +		sqe->user_data = build_user_data(ctx->tag, op, 0, 1, 1);
+> +		bpf_map_update_elem(&sqes_map, &key, &sd, BPF_NOEXIST);
+> +	} else {
+> +		;
+> +	}
+> +	return 0;
+> +}
+> +
+> +SEC("ublk.s/")
+> +int ublk_io_submit_prog(struct ublk_bpf_ctx *ctx)
+> +{
+> +	struct io_uring_sqe *sqe;
+> +	char fmt[] ="submit sqe for req[qid:%u tag:%u]\n";
+> +	int q_id = ctx->q_id, *ring_fd;
+> +	struct sqe_key key;
+> +
+> +	key.q_id = ctx->q_id;
+> +	key.tag = ctx->tag;
+> +	key.offset = 0;
+> +	key.res = 0;
+> +
+> +	sqe = bpf_map_lookup_elem(&sqes_map, &key);
+> +	ring_fd = bpf_map_lookup_elem(&uring_fd_map, &q_id);
+> +	if (ring_fd) {
+> +		bpf_trace_printk(fmt, sizeof(fmt), key.q_id, key.tag);
+> +		bpf_ublk_queue_sqe(ctx, sqe, 128, *ring_fd);
+> +		bpf_map_delete_elem(&sqes_map, &key);
+> +	}
+> +	return 0;
+> +}
+> +
+> +char LICENSE[] SEC("license") = "GPL";
+> diff --git a/include/ublk_cmd.h b/include/ublk_cmd.h
+> index f6238cc..893ba8c 100644
+> --- a/include/ublk_cmd.h
+> +++ b/include/ublk_cmd.h
+> @@ -17,6 +17,8 @@
+>  #define	UBLK_CMD_STOP_DEV	0x07
+>  #define	UBLK_CMD_SET_PARAMS	0x08
+>  #define	UBLK_CMD_GET_PARAMS	0x09
+> +#define UBLK_CMD_REG_BPF_PROG		0x0a
+> +#define UBLK_CMD_UNREG_BPF_PROG		0x0b
+>  #define	UBLK_CMD_START_USER_RECOVERY	0x10
+>  #define	UBLK_CMD_END_USER_RECOVERY	0x11
+>  #define	UBLK_CMD_GET_DEV_INFO2		0x12
+> diff --git a/include/ublksrv.h b/include/ublksrv.h
+> index d38bd46..f5deddb 100644
+> --- a/include/ublksrv.h
+> +++ b/include/ublksrv.h
+> @@ -106,6 +106,7 @@ struct ublksrv_tgt_info {
+>  	unsigned int nr_fds;
+>  	int fds[UBLKSRV_TGT_MAX_FDS];
+>  	void *tgt_data;
+> +	void *tgt_bpf_obj;
+>  
+>  	/*
+>  	 * Extra IO slots for each queue, target code can reserve some
+> @@ -263,6 +264,8 @@ struct ublksrv_tgt_type {
+>  	int (*init_queue)(const struct ublksrv_queue *, void **queue_data_ptr);
+>  	void (*deinit_queue)(const struct ublksrv_queue *);
+>  
+> +	int (*init_queue_bpf)(const struct ublksrv_dev *dev, const struct ublksrv_queue *q);
+> +
+>  	unsigned long reserved[5];
+>  };
+>  
+> @@ -318,6 +321,11 @@ extern void ublksrv_ctrl_prep_recovery(struct ublksrv_ctrl_dev *dev,
+>  		const char *recovery_jbuf);
+>  extern const char *ublksrv_ctrl_get_recovery_jbuf(const struct ublksrv_ctrl_dev *dev);
+>  
+> +extern void ublksrv_ctrl_set_bpf_obj_info(struct ublksrv_ctrl_dev *dev,
+> +					  void *obj);
+> +extern int ublksrv_ctrl_reg_bpf_prog(struct ublksrv_ctrl_dev *dev,
+> +				     int io_prep_fd, int io_submit_fd);
+> +
+>  /* ublksrv device ("/dev/ublkcN") level APIs */
+>  extern const struct ublksrv_dev *ublksrv_dev_init(const struct ublksrv_ctrl_dev *
+>  		ctrl_dev);
+> diff --git a/include/ublksrv_priv.h b/include/ublksrv_priv.h
+> index 2996baa..8da8866 100644
+> --- a/include/ublksrv_priv.h
+> +++ b/include/ublksrv_priv.h
+> @@ -42,6 +42,7 @@ struct ublksrv_ctrl_dev {
+>  
+>  	const char *tgt_type;
+>  	const struct ublksrv_tgt_type *tgt_ops;
+> +	void *bpf_obj;
+>  
+>  	/*
+>  	 * default is UBLKSRV_RUN_DIR but can be specified via command line,
+> diff --git a/include/ublksrv_tgt.h b/include/ublksrv_tgt.h
+> index 234d31e..e0db7d9 100644
+> --- a/include/ublksrv_tgt.h
+> +++ b/include/ublksrv_tgt.h
+> @@ -9,6 +9,7 @@
+>  #include <getopt.h>
+>  #include <string.h>
+>  #include <stdarg.h>
+> +#include <limits.h>
+>  #include <sys/types.h>
+>  #include <sys/stat.h>
+>  #include <sys/ioctl.h>
+> diff --git a/lib/ublksrv.c b/lib/ublksrv.c
+> index 96bed95..110ccb3 100644
+> --- a/lib/ublksrv.c
+> +++ b/lib/ublksrv.c
+> @@ -603,6 +603,9 @@ skip_alloc_buf:
+>  		goto fail;
+>  	}
+>  
+> +	if (dev->tgt.ops->init_queue_bpf)
+> +		dev->tgt.ops->init_queue_bpf(tdev, local_to_tq(q));
+> +
+>  	ublksrv_dev_init_io_cmds(dev, q);
+>  
+>  	/*
+> @@ -723,6 +726,7 @@ const struct ublksrv_dev *ublksrv_dev_init(const struct ublksrv_ctrl_dev *ctrl_d
+>  	}
+>  
+>  	tgt->fds[0] = dev->cdev_fd;
+> +	tgt->tgt_bpf_obj = ctrl_dev->bpf_obj;
+>  
+>  	ret = ublksrv_tgt_init(dev, ctrl_dev->tgt_type, ctrl_dev->tgt_ops,
+>  			ctrl_dev->tgt_argc, ctrl_dev->tgt_argv);
+> diff --git a/lib/ublksrv_cmd.c b/lib/ublksrv_cmd.c
+> index 0d7265d..0101cb9 100644
+> --- a/lib/ublksrv_cmd.c
+> +++ b/lib/ublksrv_cmd.c
+> @@ -502,6 +502,27 @@ int ublksrv_ctrl_end_recovery(struct ublksrv_ctrl_dev *dev, int daemon_pid)
+>  	return ret;
+>  }
+>  
+> +int ublksrv_ctrl_reg_bpf_prog(struct ublksrv_ctrl_dev *dev,
+> +			      int io_prep_fd, int io_submit_fd)
+> +{
+> +	struct ublksrv_ctrl_cmd_data data = {
+> +		.cmd_op = UBLK_CMD_REG_BPF_PROG,
+> +		.flags = CTRL_CMD_HAS_DATA,
+> +	};
+> +	int ret;
+> +
+> +	data.data[0] = io_prep_fd;
+> +	data.data[1] = io_submit_fd;
+> +
+> +	ret = __ublksrv_ctrl_cmd(dev, &data);
+> +	return ret;
+> +}
+> +
+> +void ublksrv_ctrl_set_bpf_obj_info(struct ublksrv_ctrl_dev *dev,  void *obj)
+> +{
+> +	dev->bpf_obj = obj;
+> +}
+> +
+>  const struct ublksrv_ctrl_dev_info *ublksrv_ctrl_get_dev_info(
+>  		const struct ublksrv_ctrl_dev *dev)
+>  {
+> diff --git a/tgt_loop.cpp b/tgt_loop.cpp
+> index 79a65d3..b1568fe 100644
+> --- a/tgt_loop.cpp
+> +++ b/tgt_loop.cpp
+> @@ -4,7 +4,11 @@
+>  
+>  #include <poll.h>
+>  #include <sys/epoll.h>
+> +#include <linux/bpf.h>
+> +#include <bpf/bpf.h>
+> +#include <bpf/libbpf.h>
+>  #include "ublksrv_tgt.h"
+> +#include "bpf/.tmp/ublk.skel.h"
 
-Helge
+Where is bpf/.tmp/ublk.skel.h?
+
+>  
+>  static bool backing_supports_discard(char *name)
+>  {
+> @@ -88,6 +92,20 @@ static int loop_recovery_tgt(struct ublksrv_dev *dev, int type)
+>  	return 0;
+>  }
+>  
+> +static int loop_init_queue_bpf(const struct ublksrv_dev *dev,
+> +			       const struct ublksrv_queue *q)
+> +{
+> +	int ret, q_id, ring_fd;
+> +	const struct ublksrv_tgt_info *tgt = &dev->tgt;
+> +	struct ublk_bpf *obj = (struct ublk_bpf*)tgt->tgt_bpf_obj;
+> +
+> +	q_id = q->q_id;
+> +	ring_fd = q->ring_ptr->ring_fd;
+> +	ret = bpf_map_update_elem(bpf_map__fd(obj->maps.uring_fd_map), &q_id,
+> +				  &ring_fd,  0);
+> +	return ret;
+> +}
+> +
+>  static int loop_init_tgt(struct ublksrv_dev *dev, int type, int argc, char
+>  		*argv[])
+>  {
+> @@ -125,6 +143,7 @@ static int loop_init_tgt(struct ublksrv_dev *dev, int type, int argc, char
+>  		},
+>  	};
+>  	bool can_discard = false;
+> +	struct ublk_bpf *bpf_obj;
+>  
+>  	strcpy(tgt_json.name, "loop");
+>  
+> @@ -218,6 +237,10 @@ static int loop_init_tgt(struct ublksrv_dev *dev, int type, int argc, char
+>  			jbuf = ublksrv_tgt_realloc_json_buf(dev, &jbuf_size);
+>  	} while (ret < 0);
+>  
+> +	if (tgt->tgt_bpf_obj) {
+> +		bpf_obj = (struct ublk_bpf *)tgt->tgt_bpf_obj;
+> +		bpf_obj->data->target_fd = tgt->fds[1];
+> +	}
+>  	return 0;
+>  }
+>  
+> @@ -252,9 +275,14 @@ static int loop_queue_tgt_io(const struct ublksrv_queue *q,
+>  		const struct ublk_io_data *data, int tag)
+>  {
+>  	const struct ublksrv_io_desc *iod = data->iod;
+> -	struct io_uring_sqe *sqe = io_uring_get_sqe(q->ring_ptr);
+> +	struct io_uring_sqe *sqe;
+>  	unsigned ublk_op = ublksrv_get_op(iod);
+>  
+> +	/* ebpf prog wil handle read/write requests. */
+> +	if ((ublk_op == UBLK_IO_OP_READ) || (ublk_op == UBLK_IO_OP_WRITE))
+> +		return 1;
+> +
+> +	sqe = io_uring_get_sqe(q->ring_ptr);
+>  	if (!sqe)
+>  		return 0;
+>  
+> @@ -374,6 +402,7 @@ struct ublksrv_tgt_type  loop_tgt_type = {
+>  	.type	= UBLKSRV_TGT_TYPE_LOOP,
+>  	.name	=  "loop",
+>  	.recovery_tgt = loop_recovery_tgt,
+> +	.init_queue_bpf = loop_init_queue_bpf,
+>  };
+>  
+>  static void tgt_loop_init() __attribute__((constructor));
+> diff --git a/ublksrv_tgt.cpp b/ublksrv_tgt.cpp
+> index 5ed328d..d3796cf 100644
+> --- a/ublksrv_tgt.cpp
+> +++ b/ublksrv_tgt.cpp
+> @@ -2,6 +2,7 @@
+>  
+>  #include "config.h"
+>  #include "ublksrv_tgt.h"
+> +#include "bpf/.tmp/ublk.skel.h"
+
+Same with above
+
+
+Thanks, 
+Ming
+

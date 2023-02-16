@@ -2,116 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5A0E69A220
-	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 00:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1F7169A25B
+	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 00:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229475AbjBPXMg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Feb 2023 18:12:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
+        id S230082AbjBPX1h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Feb 2023 18:27:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjBPXMg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 18:12:36 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB9273800F
-        for <io-uring@vger.kernel.org>; Thu, 16 Feb 2023 15:12:34 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id oa11-20020a17090b1bcb00b002341a2656e5so3759145pjb.1
-        for <io-uring@vger.kernel.org>; Thu, 16 Feb 2023 15:12:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RQVsR5wfSfmPeu0aiFlFL5s3L4ugIg7Vo1U0GPGQX2M=;
-        b=2zSrzVeMh47E8uM3umq3sVAnEOdiuO2hZhyGc8zNEVV65xEvQAvZzgl5A501uaSJNY
-         FMWmH8zpVFZ3pwli8YL2qeBzwLDRpeDWxCItHCAAZp5S+tmtQkk0d4WhbHvkY4M212i3
-         TUCHJuB/OWzlZoEyxFfeQ5Pz7MYQKG4tAjsqLu7/vbNAvi+j45rXMCHaTaF7e27H31DA
-         bE0k3nvZjtFENDvPN+xXftC0Ez5XH/xM7rHplN6Q+JwHBH6TMdD/itz2xWkww6e7z/fN
-         g+t1qBjMKUVdd+w9y7SJ1ilOUEzI58Vr5uRmhjYBPGNaeXZ9u/xTTEz+BF/9eN61OJvK
-         nZWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RQVsR5wfSfmPeu0aiFlFL5s3L4ugIg7Vo1U0GPGQX2M=;
-        b=4fXBfISCrgySwyGbWAJHm4u4RZKE75++fhsXvjV+YNa5/Z1ywD9DsbbrJW10ZDHRtK
-         f06kDmmlF56y9mYYDuhuRME42/FzPhO43fLotkMyiXTx2ADzciYU2m5kPFFYlsbpoSS+
-         ZkObPafMi33b6RPIhMGBBz7IoK3TrDxMCvW0NoPDaARRmsbVu1Pej/Cf96iQtyBtvevL
-         7sUFhL29L8A8etp2UFJ7ej7TDJrbSP+wwU34BwHPS7jZDodOYEQlcr81nYHQcyqSSGFV
-         JqqPM6EYAX8Bv8IJPYIH4iO/E6/WXrTavJ7JeoNwLay6EYX3dpDKjcTtG61UeZ+kU+vW
-         335Q==
-X-Gm-Message-State: AO0yUKUqELr1nN4YkQJia7ozfbYmiSX1LL8Vn+tDLTYTfhZnAdsN4SSY
-        ctzUdWZCC4v7L4TRqyJ/Sw9lyg==
-X-Google-Smtp-Source: AK7set8PC379KeihRNO+/iuFVVM6Wz0qaUdeqSEgGRJu3uVOWQWByH4nBO44F4DlBmpsbyk8QYH1Hg==
-X-Received: by 2002:a17:903:41cc:b0:199:3f82:ef62 with SMTP id u12-20020a17090341cc00b001993f82ef62mr8509983ple.5.1676589154195;
-        Thu, 16 Feb 2023 15:12:34 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q7-20020a170902a3c700b0019324fbec59sm1821813plb.41.2023.02.16.15.12.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 15:12:33 -0800 (PST)
-Message-ID: <c198a68c-c80e-e554-c33e-f4448e89764a@kernel.dk>
-Date:   Thu, 16 Feb 2023 16:12:32 -0700
+        with ESMTP id S230024AbjBPX1h (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 18:27:37 -0500
+Received: from cmx-mtlrgo002.bell.net (mta-mtl-002.bell.net [209.71.208.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6794F442FB;
+        Thu, 16 Feb 2023 15:27:01 -0800 (PST)
+X-RG-CM-BuS: 0
+X-RG-CM-SC: 0
+X-RG-CM: Clean
+X-Originating-IP: [174.88.80.151]
+X-RG-Env-Sender: dave.anglin@bell.net
+X-RG-Rigid: 63E35FA800E27984
+X-CM-Envelope: MS4xfEGcSmsPWjYj3DiQ7wLctWxEFfn8EuUVC/2L3fgslKmf3vlq81Ppfrnv3lA7j7tybSbtyCxUsqCqXFRlyp28L4lak8b42px98T/WYmYbUgHQ4l6yrZMN
+ CVsD6HOy4Kidors7idsuiV5WEtsoSNjXqMhuDL6PcTnJCikcPnnV0TV/ARX+8T7J4X5WWab5HLq3x543dd8ahgf5UqQ096GngcnJ3w+6u6klQfsckQ3lO1GR
+ ypuJIGxxILDjy7bGRIyltkqXGLvQJgmnMJ6e9CaPrfkxJq9Qoj/24qxkgxJ9T/7W+qzRrl0TRKcK19fE7dVANLAn7h9st/Y/FkhGlmQPJDo=
+X-CM-Analysis: v=2.4 cv=GcB0ISbL c=1 sm=1 tr=0 ts=63eebbb6
+ a=6Iw0JHgwQEnu+SgMJEJdFQ==:117 a=6Iw0JHgwQEnu+SgMJEJdFQ==:17
+ a=IkcTkHD0fZMA:10 a=FBHGMhGWAAAA:8 a=rN6HpA5cvidPB5kG5SoA:9 a=QEXdDO2ut3YA:10
+ a=9gvnlMMaQFpL9xblJ6ne:22
+Received: from [192.168.2.49] (174.88.80.151) by cmx-mtlrgo002.bell.net (5.8.814) (authenticated as dave.anglin@bell.net)
+        id 63E35FA800E27984; Thu, 16 Feb 2023 18:26:46 -0500
+Message-ID: <b0ad2098-979e-f256-a553-401bad9921e0@bell.net>
+Date:   Thu, 16 Feb 2023 18:26:46 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
 Subject: Re: liburing test results on hppa
-To:     John David Anglin <dave.anglin@bell.net>,
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>,
         linux-parisc <linux-parisc@vger.kernel.org>
 Cc:     io-uring@vger.kernel.org, Helge Deller <deller@gmx.de>
 References: <64ff4872-cc6f-1e6a-46e5-573c7e64e4c9@bell.net>
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <64ff4872-cc6f-1e6a-46e5-573c7e64e4c9@bell.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+ <c198a68c-c80e-e554-c33e-f4448e89764a@kernel.dk>
+From:   John David Anglin <dave.anglin@bell.net>
+In-Reply-To: <c198a68c-c80e-e554-c33e-f4448e89764a@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/16/23 4:00?PM, John David Anglin wrote:
-> Running test buf-ring.t bad run 0/0 = -233
-> test_running(1) failed
-> Test buf-ring.t failed with ret 1
-
-As mentioned previously, this one and the other -233 I suspect are due
-to the same coloring issue as was fixed by Helge's patch for the ring
-mmaps, as the provided buffer rings work kinda the same way. The
-application allocates some aligned memory, and registers it and the
-kernel then maps it.
-
-I wonder if these would work properly if the address was aligned to
-0x400000? Should be easy to verify, just modify the alignment for the
-posix_memalign() calls in test/buf-ring.c.
-
-> Running test file-verify.t Found 98528, wanted 622816
-> Buffered novec reg test failed
-> Test file-verify.t failed with ret 1
-
-Unsure what this is.
-
-> Tests timed out (2): <a4c0b3decb33.t> <send-zerocopy.t>
-
-I suspect the box is just too slow to run these before the script
-decides they have timed out.
-
-> I modified poll-race-mshot.t to skip on hppa.  Added handle_tw_list
-> and io_uring_try_cancel_requests fixes. This appears to have fixed
-> stalls.
-
-poll-race-mshot is the most interesting one, but I'll need som actual
-info on that one to make guesses as to what is going on. A raw hex trace
-doesn't really help me very much...
-
-But I don't think we'll make much progress here unless someone dives in
-and takes a closer look. So while I appreciate the test report, we need
-to dig a bit deeper to figure out poll-race-mshot and file-verify. qemu
-may be useful for some things, but it's not of much help here.
+On 2023-02-16 6:12 p.m., Jens Axboe wrote:
+> On 2/16/23 4:00?PM, John David Anglin wrote:
+>> Running test buf-ring.t bad run 0/0 = -233
+>> test_running(1) failed
+>> Test buf-ring.t failed with ret 1
+> As mentioned previously, this one and the other -233 I suspect are due
+> to the same coloring issue as was fixed by Helge's patch for the ring
+> mmaps, as the provided buffer rings work kinda the same way. The
+> application allocates some aligned memory, and registers it and the
+> kernel then maps it.
+>
+> I wonder if these would work properly if the address was aligned to
+> 0x400000? Should be easy to verify, just modify the alignment for the
+> posix_memalign() calls in test/buf-ring.c.
+Doesn't help.  Same error.  Can you point to where the kernel maps it?
 
 -- 
-Jens Axboe
+John David Anglin  dave.anglin@bell.net
 

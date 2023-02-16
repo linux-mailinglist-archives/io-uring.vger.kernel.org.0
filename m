@@ -2,157 +2,178 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1D7699A6D
-	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 17:46:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B77C699B95
+	for <lists+io-uring@lfdr.de>; Thu, 16 Feb 2023 18:52:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbjBPQqJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Feb 2023 11:46:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43726 "EHLO
+        id S229478AbjBPRwa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Feb 2023 12:52:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjBPQqJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 11:46:09 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022CC4CC99
-        for <io-uring@vger.kernel.org>; Thu, 16 Feb 2023 08:46:07 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id g14so952928ild.8
-        for <io-uring@vger.kernel.org>; Thu, 16 Feb 2023 08:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676565966;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zkqq0kCHR7TLOPcF42SNKUHsMTVAzfnKBHgrT7KkIMY=;
-        b=VmztVjh0l7QjgXqb/q/X1db7v7pASw1vKUA4OHR5yOFkw5Bodx6ufKNexDfZwnJ39u
-         adFdtMwcgwdzlAqoq3N2+YpGrIfzl0UFW9QXdEDXXeeLzA/hg6yli8lQQhKfMoyTWSv6
-         jC6xb3ZepOPEdp1A0pzgNHVh1PlH94AbwcFCCgMAH0vsnfYwCm5Q5WDj0a/qLncotMRy
-         ifMIz2LeM4XynkmjQGhnydrI/4KD1qiZjUaEfVUWOxh0bX/obT73ljxfJ7WDTnuzSzz5
-         MaRMFS5TUA7AGiXCi7+cE+D0SZth5P37RN6vcVlJqBUSXEUBbdEKzb+ou/YoBv1Bwb84
-         Kkmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676565966;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zkqq0kCHR7TLOPcF42SNKUHsMTVAzfnKBHgrT7KkIMY=;
-        b=uKvQ+knz9Rc8v2TTfOPG3FSBeqJevEojhYpl38J0xdjZNdaW+utuupEu49v3AeTnPg
-         yhj2HxL3rhWCh3iUhFa26k/4Cn2XoYETzDeuWxk7x/lgYA8xQ9hdZ5x1Aki87tr/xjCo
-         ADNch0vdRr2/y7+h0pqtv+nG8gDqZ/yBiJmAV2EzeHbJsqizYsFQ2c7StAba6IxG3Nku
-         sA1aC86YJrTbmt+cStkaEK4c6fSNlVi/LVFzOlgcZTQ6LxQI2HjLe0PZ8KSyulgdurNT
-         wgCG48VmkD0SUS7mKQSLnseUYB8QHBBn04O765QwUS/KfWfxmVeCvKu6L7kEO1amYBfZ
-         aFLg==
-X-Gm-Message-State: AO0yUKXhdOlVOL1qRe6kMegFC7IzNeAXY9rZIzESHgAeefmHVN3PJHQn
-        9Rjoz3ck8ZZ6W+DXOGBJp6stHg==
-X-Google-Smtp-Source: AK7set9o3dg0ac3Cui6QVqR4E1cPVOiBmS2fcjEdbBLZWZ5cW+6dzPEo/ePLpyB5Ns92LIUr3wuI9A==
-X-Received: by 2002:a92:1910:0:b0:315:8bf9:53d8 with SMTP id 16-20020a921910000000b003158bf953d8mr1085602ilz.2.1676565966268;
-        Thu, 16 Feb 2023 08:46:06 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y8-20020a056e021be800b00315766ef15csm577786ilv.35.2023.02.16.08.46.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 08:46:05 -0800 (PST)
-Message-ID: <a5442e37-77a8-d4b3-c486-d2078cad4158@kernel.dk>
-Date:   Thu, 16 Feb 2023 09:46:04 -0700
+        with ESMTP id S229537AbjBPRw3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Feb 2023 12:52:29 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B834CC83;
+        Thu, 16 Feb 2023 09:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1676569944; i=deller@gmx.de;
+        bh=JCfFgDwZbHk5YLZcVVpnSBtBcS1HfnM8A4EQTmJ4AMI=;
+        h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
+        b=M1ZgmOLbotf/mjvOfIYOKlsvBA+5VhapA0wjLg4U/ze4KqTuRrBP0MJJ5NNi5ZSeg
+         VSkCsPHRlkf8ptMt/pzE1u7rZBnj11ylcdTs7kHQlx19rj5U4SzkCIMaRwbN6Zg+xy
+         0xDyQLlHS8dtXWtAd+aBeEU4KbD3qOXy4qtnUgUOueM1dOKkYdhaITKzfd223lBGGE
+         a8wKd1dRfDbm94qnTFUWoEyII1ed5DPDRj/pjXye5QGSKJIpyZe01VULf854W9mgrt
+         +jYsZzL77PJRA/ypZwyNyp7bv7EcfXo3krlaN9seXfYyVMVgcJw8cbv5/aPgOy9Xrw
+         QzDx5vQ4uRxCw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([92.116.164.173]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MqJqD-1ooxtz2lKl-00nUlc; Thu, 16
+ Feb 2023 18:52:24 +0100
+Message-ID: <8bb3882a-9d88-5436-68ba-029335f11694@gmx.de>
+Date:   Thu, 16 Feb 2023 18:52:23 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
 Subject: Re: [PATCH v2] io_uring: Adjust mapping wrt architecture aliasing
  requirements
 Content-Language: en-US
-To:     Helge Deller <deller@gmx.de>, io-uring@vger.kernel.org,
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-parisc@vger.kernel.org,
         John David Anglin <dave.anglin@bell.net>
 References: <Y+3kwh8BokobVl6o@p100>
  <47f1f4f3-36c8-a1f0-2d07-3f03454dfb35@kernel.dk>
  <2cafe988-f436-e21f-4ec2-8bcca4d3d7e4@gmx.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <2cafe988-f436-e21f-4ec2-8bcca4d3d7e4@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+ <a5442e37-77a8-d4b3-c486-d2078cad4158@kernel.dk>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <a5442e37-77a8-d4b3-c486-d2078cad4158@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:z6eonLs4sK4UAXFYczIzgx9yuuB4QXKR/FK6ZJIx/zMX2TJ1Fi1
+ VJscK7npOnleoZFd6rXA0FQ87BwFrMxDmFxzatn3vEcnSrRJbO3e5PVCey4P+E5zX/Fe+h2
+ +JMc7PEZHG9WmmoxyBdvookwzfBo/J2jwz8l+lasVCCzjU4I9D92ggFw8C9kdeQtjj8vDiY
+ 99lUv4FPZjtO7QUR4QN+w==
+UI-OutboundReport: notjunk:1;M01:P0:H4/mw2Zo7Fg=;aD4g8DFZ7ef8jktDcpZst5mXIcF
+ DHFQzqMt4CCGVuL9IZqmK3HBWyfF1zvz7sxVwCeV3vi6xI8xxeA/1dQehJFWiPeR71MYlUCX/
+ NjCuVtGWYLiw8clRMqhHGZk16NR9jGpLsjm9e4epgbWd8KXapoIAU3b9qsRe2i+napWJsEtvS
+ lR51xEYUcy1wsLPp5GTDD687dBdxCFV5MUf7HI3T4LXiZ9LLdZkJPbURT50oRS0yExIHaYe/Q
+ aHtqCLCl9BdxvVuV0o7TKpt4NJzROw6+Tt/SWXPoj6fTZ9VHi3cmooBX2VtDq7FuDj4/wxI3n
+ Z5nPIZI2QBvyUGNorI/GHlkQ+BhQHoqpa4QhdJ7Nexl840E8J8Nem6WAOVVwssqH9mzzUwHQJ
+ jWxoczLTK7R2FVpppZ1B/VRdxX64cx95ZbjPh9wwxrfuF0sVBDwFLm46ORLzq/TVJdRmucxpf
+ 6hirNaZ7W1S0rQgSsghgH8JeIFcsmuM/UbVhgFlgAewSVq81iHcs5dqoswyYu5to6YY5OPcm2
+ 1gPFbc+UU6ewnEZtmg88yVtUPXliNEBmUPuJ2rGN2rnia8CJfzbYDAJzD7laphR6T4yMltMBh
+ B0NmAFHPaEvY8SBjfYqWVGXGH5g+mwJAYfQBOUicNIylpeBBKgZCh0iTBG9YlcWPKBj1hDObK
+ Hp9JTkElFLBcOLfjgqpm5U1h48jaPE7GrctdntsRcpt2izhElu4L8dZks1W36yogO3nZUX6Jx
+ LwJwDGdP6lgwoOiRjpEnoWpm4P6KCPD2AQCWjk3qr0BdnW9SnL2Hzkzq93FwAs0PBuVkJcdyO
+ F+4u9wbPliOYlqC9Je0WuzQLWPusvbl5BYaPBUr0zLVGTfk+m4WGLuONWYjGyWDDlZPEzKFH/
+ Oy03sevuxEJ9GPF7ZvYMubMIkx7mXhR6MjwObIU2chreopqlymSZTzMJfUGkwPKh5rZaXcvVl
+ OZBGzMppw30og+Ta2Fsm0tYdahA=
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/16/23 9:33?AM, Helge Deller wrote:
-> On 2/16/23 17:11, Jens Axboe wrote:
->> On 2/16/23 1:09?AM, Helge Deller wrote:
->>> Some architectures have memory cache aliasing requirements (e.g. parisc)
->>> if memory is shared between userspace and kernel. This patch fixes the
->>> kernel to return an aliased address when asked by userspace via mmap().
+On 2/16/23 17:46, Jens Axboe wrote:
+> On 2/16/23 9:33?AM, Helge Deller wrote:
+>> On 2/16/23 17:11, Jens Axboe wrote:
+>>> On 2/16/23 1:09?AM, Helge Deller wrote:
+>>>> Some architectures have memory cache aliasing requirements (e.g. pari=
+sc)
+>>>> if memory is shared between userspace and kernel. This patch fixes th=
+e
+>>>> kernel to return an aliased address when asked by userspace via mmap(=
+).
+>>>>
+>>>> Signed-off-by: Helge Deller <deller@gmx.de>
+>>>> ---
+>>>> v2: Do not allow to map to a user-provided addresss. This forces
+>>>> programs to write portable code, as usually on x86 mapping to any
+>>>> address will succeed, while it will fail for most provided address if
+>>>> used on stricter architectures.
+>>>>
+>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>>> index 862e05e6691d..01fe7437a071 100644
+>>>> --- a/io_uring/io_uring.c
+>>>> +++ b/io_uring/io_uring.c
+>>>> @@ -72,6 +72,7 @@
+>>>>    #include <linux/io_uring.h>
+>>>>    #include <linux/audit.h>
+>>>>    #include <linux/security.h>
+>>>> +#include <asm/shmparam.h>
+>>>>
+>>>>    #define CREATE_TRACE_POINTS
+>>>>    #include <trace/events/io_uring.h>
+>>>> @@ -3059,6 +3060,54 @@ static __cold int io_uring_mmap(struct file *f=
+ile, struct vm_area_struct *vma)
+>>>>        return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_pa=
+ge_prot);
+>>>>    }
+>>>>
+>>>> +static unsigned long io_uring_mmu_get_unmapped_area(struct file *fil=
+p,
+>>>> +            unsigned long addr, unsigned long len,
+>>>> +            unsigned long pgoff, unsigned long flags)
+>>>> +{
+>>>> +    const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fl=
+ags);
+>>>> +    struct vm_unmapped_area_info info;
+>>>> +    void *ptr;
+>>>> +
+>>>> +    /*
+>>>> +     * Do not allow to map to user-provided address to avoid breakin=
+g the
+>>>> +     * aliasing rules. Userspace is not able to guess the offset add=
+ress of
+>>>> +     * kernel kmalloc()ed memory area.
+>>>> +     */
+>>>> +    if (addr)
+>>>> +        return -EINVAL;
 >>>
->>> Signed-off-by: Helge Deller <deller@gmx.de>
->>> ---
->>> v2: Do not allow to map to a user-provided addresss. This forces
->>> programs to write portable code, as usually on x86 mapping to any
->>> address will succeed, while it will fail for most provided address if
->>> used on stricter architectures.
->>>
->>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>> index 862e05e6691d..01fe7437a071 100644
->>> --- a/io_uring/io_uring.c
->>> +++ b/io_uring/io_uring.c
->>> @@ -72,6 +72,7 @@
->>>   #include <linux/io_uring.h>
->>>   #include <linux/audit.h>
->>>   #include <linux/security.h>
->>> +#include <asm/shmparam.h>
->>>
->>>   #define CREATE_TRACE_POINTS
->>>   #include <trace/events/io_uring.h>
->>> @@ -3059,6 +3060,54 @@ static __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
->>>       return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
->>>   }
->>>
->>> +static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
->>> +            unsigned long addr, unsigned long len,
->>> +            unsigned long pgoff, unsigned long flags)
->>> +{
->>> +    const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
->>> +    struct vm_unmapped_area_info info;
->>> +    void *ptr;
->>> +
->>> +    /*
->>> +     * Do not allow to map to user-provided address to avoid breaking the
->>> +     * aliasing rules. Userspace is not able to guess the offset address of
->>> +     * kernel kmalloc()ed memory area.
->>> +     */
->>> +    if (addr)
->>> +        return -EINVAL;
+>>> Can we relax this so that if the address is correctly aligned, it will
+>>> allow it?
 >>
->> Can we relax this so that if the address is correctly aligned, it will
->> allow it?
-> 
-> My previous patch had it relaxed, but after some more thoughts I removed
-> it in this v2-version again.
-> 
-> The idea behind it is good, but I see a huge disadvantage in allowing
-> correctly aligned addresses: People develop their code usually on x86
-> which has no such alignment requirements, as it just needs to be PAGE_SIZE aligned.
-> So their code will always work fine on x86, but as soon as the same code
-> is built on other platforms it will break. As you know, on parisc it's pure luck
-> if the program chooses an address which is correctly aligned.
-> I'm one of the debian maintainers for parisc, and I've seen similiar
-> mmap-issues in other programs as well. Everytime I've found it to be wrong,
-> you have to explain to the developers what's wrong and sometimes it's
-> not easy to fix it.
-> So, if we can educate people from assuming their code to be correct, I think
-> we can save a lot of additional work afterwards.
-> That said, I think it's better to be strict now, unless someone comes
-> up with a really good reason why it needs to be less strict.
+>> My previous patch had it relaxed, but after some more thoughts I remove=
+d
+>> it in this v2-version again.
+>>
+>> The idea behind it is good, but I see a huge disadvantage in allowing
+>> correctly aligned addresses: People develop their code usually on x86
+>> which has no such alignment requirements, as it just needs to be PAGE_S=
+IZE aligned.
+>> So their code will always work fine on x86, but as soon as the same cod=
+e
+>> is built on other platforms it will break. As you know, on parisc it's =
+pure luck
+>> if the program chooses an address which is correctly aligned.
+>> I'm one of the debian maintainers for parisc, and I've seen similiar
+>> mmap-issues in other programs as well. Everytime I've found it to be wr=
+ong,
+>> you have to explain to the developers what's wrong and sometimes it's
+>> not easy to fix it.
+>> So, if we can educate people from assuming their code to be correct, I =
+think
+>> we can save a lot of additional work afterwards.
+>> That said, I think it's better to be strict now, unless someone comes
+>> up with a really good reason why it needs to be less strict.
+>
+> I don't disagree with the reasoning at all, but the problem is that it
+> may introduce breakage if someone IS doing the right thing. Is it
+> guaranteed to be true? No, certainly not. But someone could very well be
+> writing perfectly portable code and mapping a ring into a specific
+> address, and this will now break.
 
-I don't disagree with the reasoning at all, but the problem is that it
-may introduce breakage if someone IS doing the right thing. Is it
-guaranteed to be true? No, certainly not. But someone could very well be
-writing perfectly portable code and mapping a ring into a specific
-address, and this will now break.
+We will find out if there are such users if we keep it strict now and
+open it up if it's really necessary.
+If you open it up now, you won't be able to turn it stricter later.
 
-AFAICT, this is actually the case with the syzbot case. In fact, with
-the patch applied, it'll obviously start crashing on all archs as the
-mmaps will now return -EINVAL rather than work.
+> AFAICT, this is actually the case with the syzbot case. In fact, with
+> the patch applied, it'll obviously start crashing on all archs as the
+> mmaps will now return -EINVAL rather than work.
 
--- 
-Jens Axboe
+Yes, but it's not a real user and just a (invalid) testcase.
+For that I think it's OK to just disable it.
 
+Helge

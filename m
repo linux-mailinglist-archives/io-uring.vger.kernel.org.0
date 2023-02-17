@@ -2,61 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D535D69A96B
-	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 11:54:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B8C69AFEE
+	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 16:56:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbjBQKyC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Feb 2023 05:54:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
+        id S229701AbjBQP4j (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Feb 2023 10:56:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjBQKyC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 05:54:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41605383B
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 02:53:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676631198;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nwUbTMbbHG2T6u8qpzssOLb6gYft08svkJ0HnI5nE1g=;
-        b=PQTf9vRm+tu8OouV55KDZ0syrVSgjYqEYFF3ZVXCaygHCkeJd5p2DQumJT/BTmStVnLleI
-        WabTyfmV8VrHFHdwGzTlc7IshDzQeQ0polfQMB9VBkISrok8H+wzxHc75ApMKBCFLp72qC
-        y9P2hkSv3bcSVHC8+fCxSRUVlFLtX48=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-655-yG6cCmpsM6qrrdZ_Vy_vUg-1; Fri, 17 Feb 2023 05:47:11 -0500
-X-MC-Unique: yG6cCmpsM6qrrdZ_Vy_vUg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 32EEA3C0DDA6;
-        Fri, 17 Feb 2023 10:47:11 +0000 (UTC)
-Received: from T590 (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 49188C15BA0;
-        Fri, 17 Feb 2023 10:47:00 +0000 (UTC)
-Date:   Fri, 17 Feb 2023 18:46:55 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        bpf@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        ZiyangZhang@linux.alibaba.com, ming.lei@redhat.com
-Subject: Re: [RFC 3/3] ublk_drv: add ebpf support
-Message-ID: <Y+9bH9QXe2HPAJrZ@T590>
-References: <20230215004122.28917-1-xiaoguang.wang@linux.alibaba.com>
- <20230215004122.28917-4-xiaoguang.wang@linux.alibaba.com>
- <Y+3lOn04pdFtdGbr@T590>
- <54043113-e524-6ca2-ce77-08d45099aff2@linux.alibaba.com>
- <Y+7uNpw7QBpJ4GHA@T590>
+        with ESMTP id S229633AbjBQP4i (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 10:56:38 -0500
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB584711B9
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:07 -0800 (PST)
+Received: by mail-io1-xd34.google.com with SMTP id s10so557996iop.4
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sE08O1tjyA/vVPffiHUkuc/f1TYte2T8Pb3AfAFhvSU=;
+        b=AVJ4GPkdHgISnSkiSqs9446juNp47p+JoplGCGmw/7MNXBpUuohZCzCWPLlyOj8g2b
+         MfePjAyvU/o+ub2r5+u9cNRVF3ZrnKhzgAv7+sCEV8/DTMonlo7eBTSkUmvb1BOV8OTb
+         GnJyjG61ygkGBaASf7j4GeXPWe9Kq1+lY9AO3tMsuUJiLHcsKUu14Y47vUnfFkVzGsb0
+         0l4gg1+hi0ARcBBdvK1ZrxetwxqJDQKj4Ma7IHTCK7+4DnVpQ4ud5pMm7rZilGyfi9kb
+         XErthlp0el5utoj+H0Amy9kJ6pQDK00AmWtDTKMxe6CCSI4l+HkskBnDTp5uUBstZvHS
+         wMnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sE08O1tjyA/vVPffiHUkuc/f1TYte2T8Pb3AfAFhvSU=;
+        b=r79dQn95Vr8ZIHaslScqt7P7tCY/yW1uiftH2yd0VKV2Ot8ikf9FqM5aNgC2JmRHXK
+         OQS+1CjlhPtRzzQVHCaaVBs5H+ByNsCh5Ca7PKdk7Nsw3IH3svJz865eTOpfue1QBUTu
+         skrLEvPLz8zaeCeITwkQOtbY892wGrCMLcsztLg5MZAxXLXbqRlLs8BM2gmOXP90zc00
+         JdqDZB5jrA0GYTiU6nxCxlzmzEqJg9EZ70FAdEwmtMxLJvE4dkS9Ff3w+OE+EV8qcNHa
+         1UhHIIaQ6+JFgl6OqaCZsYZaK3vgutu3yqJ8Bl+XaHhdRf4S7lPMJrT77ocA7CrFqKgM
+         6Omg==
+X-Gm-Message-State: AO0yUKWoYyxP7jp18gC9cZtpNZW5f9bFWmuLYFLXjPs4Y8NRjAlRyf8B
+        DO66YNPMMV87BtrHDkgx0eCTcizkkuHmaJyu
+X-Google-Smtp-Source: AK7set+TGAzMbK759R65vnAOGmcDcshG8wKoorKua/Y7eZ8QCgZvUoUCH44iEC7SdiHYXc459RLJdw==
+X-Received: by 2002:a6b:d111:0:b0:707:d0c0:1bd6 with SMTP id l17-20020a6bd111000000b00707d0c01bd6mr1079344iob.1.1676649365402;
+        Fri, 17 Feb 2023 07:56:05 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id d22-20020a0566022d5600b007046e9e138esm1551156iow.22.2023.02.17.07.56.04
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Feb 2023 07:56:04 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Subject: [PATCH 0/4] Cache tctx cancelation state in the ctx
+Date:   Fri, 17 Feb 2023 08:55:56 -0700
+Message-Id: <20230217155600.157041-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+7uNpw7QBpJ4GHA@T590>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,35 +65,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 17, 2023 at 11:02:14AM +0800, Ming Lei wrote:
-> On Thu, Feb 16, 2023 at 08:12:18PM +0800, Xiaoguang Wang wrote:
-> > hello,
+Hi,
 
-...
+One of the more expensive parts of io_req_local_work_add() is that it
+has to pull in the remote task tctx to check for the very unlikely event
+that we are in a cancelation state.
 
-> > io_prep_prog is called when ublk_queue_rq() is called, this bpf
-> > prog will initialize one or more sqes according to user logic, and
-> > io_prep_prog will put these sqes in an ebpf map structure, then
-> > execute a task_work_add() to notify ubq_daemon to execute
-> > io_submit_prog. Note, we can not call io_uring_submit_sqe()
-> > in task context that calls ublk_queue_rq(), that context does not
-> > have io_uring instance owned by ubq_daemon.
-> > Later ubq_daemon will call io_submit_prog to submit sqes.
-> 
-> Submitting sqe from kernel looks interesting, but I guess
-> performance may be hurt, given plugging(batching) can't be applied
-> any more, which is supposed to affect io perf a lot.
+Cache the cancelation state in each ctx instead. This makes the marking
+of cancelation (and clearing) a bit more expensive, but those are very
+slow path operations. The upside is that io_req_local_work_add()
+becomes a lot cheaper, which is what we care about.
 
-If submitting SQE in kernel is really doable, maybe we can add another
-command, such as, UBLK_IO_SUBMIT_SQE(just like UBLK_IO_NEED_GET_DATA),
-and pass the built SQE(which represents part of user logic result) as
-io_uring command payload, and ask ublk driver to build buffer for this
-SQE, then submit this SQE in kernel.
+-- 
+Jens Axboe
 
-But there is SQE order problem, net usually requires SQEs to be linked
-and submitted in order, with this way, it becomes not easy to maintain
-SQEs order(some linked in user, and some in kernel).
-
-Thanks,
-Ming
 

@@ -2,94 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C5569AFF4
-	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 16:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE1A769B659
+	for <lists+io-uring@lfdr.de>; Sat, 18 Feb 2023 00:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbjBQP4m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Feb 2023 10:56:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51766 "EHLO
+        id S229963AbjBQXO4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Feb 2023 18:14:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjBQP4l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 10:56:41 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BA06F7C1
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:10 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id b66so111988iof.2
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676649369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yJ8iarjaNKbxX0mbZBKtffuMN4fx+meND3InwUU04/A=;
-        b=NqGg3TxjD792JhYBPZ8J3mb/EFpnzOzr+TejD7GiN6bratSS+psC42OmGSZ1GDskcf
-         jvpUB7wVSoN8e6Ia7Xba3YXFS6PbqXWVIAX2uOHxfLXkRPmPr1FbVq1CQPYbNzxt0qKG
-         CXcevYMqv8FqT1FnjJcFCi7PFmiqVhhtPlzx9z1shAP7cFZJ9RkkjbXWTanoyagp4yd8
-         Lo1mAcha7R2V0mhsiA0w8KrUO2XJK/hENpGl8pZtN5nvkF3XRA36ZxZ5K/lPuLjUjRhp
-         AsEJZAaHeC12CgDm2Gn1t60u8uVzqRoYHiXOZyiSxIxU50OubQERzxlK7AHdF0Jgss55
-         Wb3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676649369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yJ8iarjaNKbxX0mbZBKtffuMN4fx+meND3InwUU04/A=;
-        b=dsnDqupEnWXDyJDAwMSi+EDgAkQLiEO/xG6v50jbtLAc8S2tLpjkJOOUrzzBrPB90F
-         KSvvm9FV3ZuBs3EZxREtEAPdtR6QzP7eVhaL0thlnGv3AjPt3GRkSJHZ9Jd4K17W61YC
-         EcFXT2xnoO3sQ4WVzd39qHzDN5hHbUmIaBtcOhV+X1CGLnzC/BJwnqb5yAVQUAqZdsGD
-         rWqDR3QbbxYtdUT4V+x4vELbb8p5bE8X5vN25YWYTOHLd234Aq7y3MXaWKuS1vmvB5hc
-         eV/JuhmqKdEfOtPnTunKxXqBgFtb4tVZRZNuVg4q9NO31gNE7hqOvtYxQpBvYgAS+0Yg
-         jiSw==
-X-Gm-Message-State: AO0yUKVjoEFFpsj5+/wfg0d99vwvrh2cuXFg9+fX6vxMJZpAsQhBaT+4
-        O7kSeVxINJ1qNrZQIGH/MjN0OTsv97AhWdO6
-X-Google-Smtp-Source: AK7set8nRLQNjBEvhaXT68DlFIb8LJQAOyrTt8J4QYyCWp2V1zXBfZKIkWBLY4ouApw+Sov3qmzjBQ==
-X-Received: by 2002:a05:6602:2a43:b0:746:190a:138f with SMTP id k3-20020a0566022a4300b00746190a138fmr1682690iov.2.1676649369680;
-        Fri, 17 Feb 2023 07:56:09 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id d22-20020a0566022d5600b007046e9e138esm1551156iow.22.2023.02.17.07.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 07:56:09 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] io_uring: use local ctx cancelation state for io_req_local_work_add()
-Date:   Fri, 17 Feb 2023 08:56:00 -0700
-Message-Id: <20230217155600.157041-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230217155600.157041-1-axboe@kernel.dk>
-References: <20230217155600.157041-1-axboe@kernel.dk>
+        with ESMTP id S230005AbjBQXOy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 18:14:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5DC68E67
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 15:14:28 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 490D962081
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 23:13:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6A9C433AC
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 23:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676675608;
+        bh=007Ju5hmo469I+GLbhKmQyFOblRRKqP7+IKJhGVg3Bc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FVQuLHu9su+8MtuqreGX0M6eUP2draqAXJj4M0+8pCp7wP3cq/lR7ACHIf24dTWkq
+         b+prnybkvEZUYcirmWUlld+/8oqr6Nlbu01GGr+WwVByKApBo1afHnsziIFQI2erWf
+         EGwGBTF+S6LSfMq241TKKmHuZRPX6qF35zA6vNp9ovpCBLGLSuQb95HK4Pn/rKOk+N
+         Q29erYenPL3+a3yt35AFu9AbVpoMWykSXPezSdlvTG0r5dcYRXTe3mPJC9QqOkNZ6+
+         ArzBr6bVo48aEYAhQoN4OGqbh5dK+dGwwlaEtAELclY4hqR6CWmZhFUEuGC2Xr7W+S
+         OAFm4QbGrDmsw==
+Received: by mail-ed1-f48.google.com with SMTP id i28so9466067eda.8
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 15:13:28 -0800 (PST)
+X-Gm-Message-State: AO0yUKWWGPmTR/+M5nkiMeE0K1Z66gTajUdXedfiZpKup76s1EMCXZ9A
+        X8lFOWk/ouMcKSNoAE70mNMjTCPzaspFgfjVOa/fgw==
+X-Google-Smtp-Source: AK7set8/bNsrYafbYm0zAE3nFVOlai7VLZ8imlSdGrFod1cdz9z2k4ibd74H3rjwb0A7aOD2eNsBGzV5MLYpkJRFYLE=
+X-Received: by 2002:a17:907:6c14:b0:8ae:cb48:3c80 with SMTP id
+ rl20-20020a1709076c1400b008aecb483c80mr5175474ejc.7.1676675606807; Fri, 17
+ Feb 2023 15:13:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230210061953.GC2825702@dread.disaster.area> <Y+oCBnz2nLtXrz7O@gondor.apana.org.au>
+ <CALCETrXKkZw3ojpmTftur1_-dEi6BOo9Q0cems_jgabntNFYig@mail.gmail.com> <Y+riPviz0em9L9BQ@gondor.apana.org.au>
+In-Reply-To: <Y+riPviz0em9L9BQ@gondor.apana.org.au>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 17 Feb 2023 15:13:14 -0800
+X-Gmail-Original-Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
+Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
+Subject: Re: copy on write for splice() from file to pipe?
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        torvalds@linux-foundation.org, metze@samba.org, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, samba-technical@lists.samba.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Rather than look into the remote task state and multiple layers of
-memory dereferencing, just use the local state instead.
+> On Feb 13, 2023, at 5:22 PM, Herbert Xu <herbert@gondor.apana.org.au> wro=
+te:
+>
+> =EF=BB=BFOn Mon, Feb 13, 2023 at 10:01:27AM -0800, Andy Lutomirski wrote:
+>>
+>> There's a difference between "kernel speaks TCP (or whatever)
+>> correctly" and "kernel does what the application needs it to do".
+>
+> Sure I get where you are coming from.  It's just that the other
+> participants in the discussion were thinking of stability for the
+> sake of TCP (or TLS or some other protocol the kernel implements)
+> and that simply is a non-issue.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I can certainly imagine TLS or similar protocols breaking if data
+changes if the implementation is too clever and retransmission
+happens.  Suppose 2000 bytes are sent via splice using in-kernel TLS,
+and it goes out on the wire as two TCP segments.  The first segment is
+dropped but the second is received.  The kernel resends the first
+segment using different data.  This really ought to cause an integrity
+check at the far end to fail.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 0fcb532db1fc..792ab44393c2 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1291,7 +1291,7 @@ static void io_req_local_work_add(struct io_kiocb *req)
- 	/* needed for the following wake up */
- 	smp_mb__after_atomic();
- 
--	if (unlikely(atomic_read(&req->task->io_uring->in_cancel))) {
-+	if (unlikely(test_bit(0, &ctx->in_cancel))) {
- 		io_move_task_work_from_local(ctx);
- 		goto put_ref;
- 	}
--- 
-2.39.1
+I don't know if any existing kTLS is clever enough to regenerate
+outgoing data when it needs to retransmit a segment, but it would be
+an interesting optimization for serving static content over TLS.
 
+
+
+>
+> Having a better way to communicate completion to the user would be
+> nice.  The only way to do it right now seems to be polling with
+> SIOCOUTQ.
+>
+>

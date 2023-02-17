@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 115A569AFF0
-	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 16:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B59169AFF1
+	for <lists+io-uring@lfdr.de>; Fri, 17 Feb 2023 16:56:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbjBQP4k (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Feb 2023 10:56:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
+        id S230136AbjBQP4m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Feb 2023 10:56:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjBQP4j (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 10:56:39 -0500
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C14711BB
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:09 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id n13so581006ioz.11
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:09 -0800 (PST)
+        with ESMTP id S229736AbjBQP4k (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 10:56:40 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5334271480
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:10 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id f11so371828ioz.3
+        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 07:56:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676649369;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=decFKkAFL8wXX2ojuQ7Ywldi5Z7b4l79OF1al9tr1EQ=;
-        b=jk0TA2tb+c3GXBeucrT6eBWINvHa2E9SHfd+BCuVI4cchKmphbxw9UrViT9931Lhql
-         a0XwIVCnZSDHNT/8kdVVvVxyxJ8hcniQy/46rxuE9KwsyQypivplsiks3+zGYs8MPz11
-         AEiuLWTX00G30NhjPHJ56mjtNWEfRwihYqAtKu1vxfy6L9fFa4TQEGqtlmd9X/HSQ9sb
-         xPzVqIns7ThxXEtYZWxz9Tu36c4MyE9v8F18WozZDRLpO/ZsqSwisSSTWe16hZTUNH1B
-         gvgWos4QBx9uKzJopYVpu0YMxuEywrBNXl56cMVaySQln+IOZYFdGueK28yBtw32QF3N
-         3vzw==
+        bh=dxEL1/q2EaMAGy2jb8nUV7Ltni048cKqSOvvDVCI/cI=;
+        b=U5Jm9FZepPr4NbBiRTI0eNo/vqmMqo3ewNSAS++5cct9FrcwNcONsk92EpvHcXC3MK
+         /g4+nvBbKC79U/1nL1nuAbp9g3hwH0lXEP5wg7gM81lG9jUg/UJMpoEA4yGApXb4WWNy
+         9GpC34WlnIbgCvcF/kUnSCcr+LKkyqJ04vuxCVBfgT6VMT6K6aOu7P1C0nhehsWhxzPn
+         7NBPAZywLm8HQpOnbMU6GSBj/B4LONjfroxoGR8u0xPgjwCY666lchzIwUjpMdK7DyKR
+         KOJo42GXTZ8q0xVIT8JWtMqxD5ojojp8pohiSWdwgZPsQj67dupyv4HS6jmBI3HUv93+
+         b5kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
+        d=1e100.net; s=20210112; t=1676649369;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=decFKkAFL8wXX2ojuQ7Ywldi5Z7b4l79OF1al9tr1EQ=;
-        b=ApfD47d9N2LDxNSvv2D8Mr8r50WCaoB4sH54gbGA6vgrIEUZTsrFI6lhO6d5mrG2Nr
-         jaOpzgA4+ErO4r2PYWVaNeTza98VryM+is10S+urR8JkDt7H54XqageLP9oe9MU8GA22
-         YCRKCIgj9s/60aZUoBO6UivKXIeTqavrA1XevbYdCou+XcX0Im9wsjmtdfvarjqkz8aG
-         dyq8EFcxFwHzENvK+/v8/o05g0XmST1KED7s0Su1bLKpX3D0swbec+/H+b7W41ZMHOn0
-         PLLQ0MCFQTtEzclQDl3agOyWD0B//8yvsQ3fjmJeQu/oB1KPNgQ5cr7xBatPNT5G4hyU
-         rvXQ==
-X-Gm-Message-State: AO0yUKU98fkbghwSwG6RCOzxXASn/hEcWw7G0pQAy9eJ09LUTDVrQxC2
-        03oVpM5mJ644dfkqg7iyM08sH6eFQK+g96Wy
-X-Google-Smtp-Source: AK7set8PFfiezxWGCt1yswSWregiukuNBFdHmMoOALur53cEciPqn0HN6eNOmLTYzNzOEhzgR1H5nA==
-X-Received: by 2002:a6b:da07:0:b0:740:7d21:d96f with SMTP id x7-20020a6bda07000000b007407d21d96fmr1305665iob.1.1676649367731;
-        Fri, 17 Feb 2023 07:56:07 -0800 (PST)
+        bh=dxEL1/q2EaMAGy2jb8nUV7Ltni048cKqSOvvDVCI/cI=;
+        b=mwTtXF1/o0bq5HU5OLRuInfyCcn/cwryk0ynVpaYo7JmmlUWT5Eh0wgAN/l+AyOM7L
+         m95n92woqm2gzxPsDGn9zLv08vw/nSCX6cOKdn01m5tmAa4Hk/38qzbo+/RZFsnItoTA
+         1HAV2GjIJirKwi2olHQUzEIWYtIp6q35c8sxzfCMjXDVX1i4IhRgHg8qsw1d7lU5GBXB
+         lWvrMP629czLBKlHraU+W2PsvBIWmdxtdWHppGAS6KbzSS6lWHHD/MU1WSpuoL8m4dsP
+         ZiNNq9gP4VsUfliX473j7jTvdzGT+RmI3U/m2++rRqQX6vEeJEdFUrfckx92AWq1t6yq
+         l7LA==
+X-Gm-Message-State: AO0yUKWGzAXl74HiOgX4RqkqQ6hjYLbr1W35dhM5Q5OFoca+OFx+eEye
+        ps+9EBmQjXCgOVtTsj6nKeRN9QQNeGEW0Yj9
+X-Google-Smtp-Source: AK7set8PzalkbK9Dm7G9uluqqaDdCgzv3GE3Ru/F3WZcXM+9S3ZMhuVJQ1aqIjqTW7pEz6n8/s4EtA==
+X-Received: by 2002:a05:6602:2e13:b0:73a:397b:e311 with SMTP id o19-20020a0566022e1300b0073a397be311mr1633033iow.0.1676649368730;
+        Fri, 17 Feb 2023 07:56:08 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id d22-20020a0566022d5600b007046e9e138esm1551156iow.22.2023.02.17.07.56.06
+        by smtp.gmail.com with ESMTPSA id d22-20020a0566022d5600b007046e9e138esm1551156iow.22.2023.02.17.07.56.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 07:56:06 -0800 (PST)
+        Fri, 17 Feb 2023 07:56:08 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/4] io_uring: rename 'in_idle' to 'in_cancel'
-Date:   Fri, 17 Feb 2023 08:55:58 -0700
-Message-Id: <20230217155600.157041-3-axboe@kernel.dk>
+Subject: [PATCH 3/4] io_uring: cache task cancelation state in the ctx
+Date:   Fri, 17 Feb 2023 08:55:59 -0700
+Message-Id: <20230217155600.157041-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230217155600.157041-1-axboe@kernel.dk>
 References: <20230217155600.157041-1-axboe@kernel.dk>
@@ -69,111 +69,102 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This better describes what it does - it's incremented when the task is
-currently undergoing a cancelation operation, due to exiting or exec'ing.
+It can be quite expensive for the fast paths to deference
+req->task->io_uring->in_cancel for the (very) unlikely scenario that
+we're currently undergoing cancelations.
+
+Add a ctx bit to indicate if we're currently canceling or not, so that
+the hot path may check this rather than dip into the remote task
+state.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/io_uring_types.h |  2 +-
- io_uring/io_uring.c            | 18 +++++++++---------
- io_uring/tctx.c                |  2 +-
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ include/linux/io_uring_types.h |  2 ++
+ io_uring/io_uring.c            | 44 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 44 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 0efe4d784358..00689c12f6ab 100644
+index 00689c12f6ab..42d704adb9c6 100644
 --- a/include/linux/io_uring_types.h
 +++ b/include/linux/io_uring_types.h
-@@ -58,7 +58,7 @@ struct io_uring_task {
- 
- 	struct xarray			xa;
- 	struct wait_queue_head		wait;
--	atomic_t			in_idle;
-+	atomic_t			in_cancel;
- 	atomic_t			inflight_tracked;
- 	struct percpu_counter		inflight;
+@@ -211,6 +211,8 @@ struct io_ring_ctx {
+ 		enum task_work_notify_mode	notify_method;
+ 		struct io_rings			*rings;
+ 		struct task_struct		*submitter_task;
++		/* local ctx cache of task cancel state */
++		unsigned long			in_cancel;
+ 		struct percpu_ref		refs;
+ 	} ____cacheline_aligned_in_smp;
  
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index cbe06deb84ff..64e07df034d1 100644
+index 64e07df034d1..0fcb532db1fc 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -719,7 +719,7 @@ static void io_put_task_remote(struct task_struct *task, int nr)
- 	struct io_uring_task *tctx = task->io_uring;
- 
- 	percpu_counter_sub(&tctx->inflight, nr);
--	if (unlikely(atomic_read(&tctx->in_idle)))
-+	if (unlikely(atomic_read(&tctx->in_cancel)))
- 		wake_up(&tctx->wait);
- 	put_task_struct_many(task, nr);
+@@ -3192,6 +3192,46 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
+ 	return percpu_counter_sum(&tctx->inflight);
  }
-@@ -1258,8 +1258,8 @@ void tctx_task_work(struct callback_head *cb)
  
- 	ctx_flush_and_put(ctx, &uring_locked);
- 
--	/* relaxed read is enough as only the task itself sets ->in_idle */
--	if (unlikely(atomic_read(&tctx->in_idle)))
-+	/* relaxed read is enough as only the task itself sets ->in_cancel */
-+	if (unlikely(atomic_read(&tctx->in_cancel)))
- 		io_uring_drop_tctx_refs(current);
- 
- 	trace_io_uring_task_work_run(tctx, count, loops);
-@@ -1291,7 +1291,7 @@ static void io_req_local_work_add(struct io_kiocb *req)
- 	/* needed for the following wake up */
- 	smp_mb__after_atomic();
- 
--	if (unlikely(atomic_read(&req->task->io_uring->in_idle))) {
-+	if (unlikely(atomic_read(&req->task->io_uring->in_cancel))) {
- 		io_move_task_work_from_local(ctx);
- 		goto put_ref;
- 	}
-@@ -2937,12 +2937,12 @@ static __cold void io_tctx_exit_cb(struct callback_head *cb)
- 
- 	work = container_of(cb, struct io_tctx_exit, task_work);
- 	/*
--	 * When @in_idle, we're in cancellation and it's racy to remove the
-+	 * When @in_cancel, we're in cancellation and it's racy to remove the
- 	 * node. It'll be removed by the end of cancellation, just ignore it.
- 	 * tctx can be NULL if the queueing of this task_work raced with
- 	 * work cancelation off the exec path.
- 	 */
--	if (tctx && !atomic_read(&tctx->in_idle))
-+	if (tctx && !atomic_read(&tctx->in_cancel))
- 		io_uring_del_tctx_node((unsigned long)work->ctx);
- 	complete(&work->completion);
- }
-@@ -3210,7 +3210,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
++static __cold void io_uring_dec_cancel(struct io_uring_task *tctx,
++				       struct io_sq_data *sqd)
++{
++	if (!atomic_dec_return(&tctx->in_cancel))
++		return;
++
++	if (!sqd) {
++		struct io_tctx_node *node;
++		unsigned long index;
++
++		xa_for_each(&tctx->xa, index, node)
++			clear_bit(0, &node->ctx->in_cancel);
++	} else {
++		struct io_ring_ctx *ctx;
++
++		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
++			clear_bit(0, &ctx->in_cancel);
++	}
++}
++
++static __cold void io_uring_inc_cancel(struct io_uring_task *tctx,
++				       struct io_sq_data *sqd)
++{
++	if (atomic_inc_return(&tctx->in_cancel) != 1)
++		return;
++
++	if (!sqd) {
++		struct io_tctx_node *node;
++		unsigned long index;
++
++		xa_for_each(&tctx->xa, index, node)
++			set_bit(0, &node->ctx->in_cancel);
++	} else {
++		struct io_ring_ctx *ctx;
++
++		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
++			set_bit(0, &ctx->in_cancel);
++	}
++}
++
+ /*
+  * Find any io_uring ctx that this task has registered or done IO on, and cancel
+  * requests. @sqd should be not-null IFF it's an SQPOLL thread cancellation.
+@@ -3210,7 +3250,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
  	if (tctx->io_wq)
  		io_wq_exit_start(tctx->io_wq);
  
--	atomic_inc(&tctx->in_idle);
-+	atomic_inc(&tctx->in_cancel);
+-	atomic_inc(&tctx->in_cancel);
++	io_uring_inc_cancel(tctx, sqd);
  	do {
  		bool loop = false;
  
-@@ -3261,9 +3261,9 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- 	if (cancel_all) {
- 		/*
+@@ -3263,7 +3303,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
  		 * We shouldn't run task_works after cancel, so just leave
--		 * ->in_idle set for normal exit.
-+		 * ->in_cancel set for normal exit.
+ 		 * ->in_cancel set for normal exit.
  		 */
--		atomic_dec(&tctx->in_idle);
-+		atomic_dec(&tctx->in_cancel);
+-		atomic_dec(&tctx->in_cancel);
++		io_uring_dec_cancel(tctx, sqd);
  		/* for exec all current's requests should be gone, kill tctx */
  		__io_uring_free(current);
  	}
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index 4324b1cf1f6a..3a8d1dd97e1b 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -83,7 +83,7 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
- 
- 	xa_init(&tctx->xa);
- 	init_waitqueue_head(&tctx->wait);
--	atomic_set(&tctx->in_idle, 0);
-+	atomic_set(&tctx->in_cancel, 0);
- 	atomic_set(&tctx->inflight_tracked, 0);
- 	task->io_uring = tctx;
- 	init_llist_head(&tctx->task_list);
 -- 
 2.39.1
 

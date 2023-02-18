@@ -2,58 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0B4969BB72
-	for <lists+io-uring@lfdr.de>; Sat, 18 Feb 2023 19:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD8269BB73
+	for <lists+io-uring@lfdr.de>; Sat, 18 Feb 2023 19:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbjBRSnX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 18 Feb 2023 13:43:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43190 "EHLO
+        id S229516AbjBRSrL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Feb 2023 13:47:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjBRSnW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Feb 2023 13:43:22 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C780D12BED
-        for <io-uring@vger.kernel.org>; Sat, 18 Feb 2023 10:43:20 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id j27so930203wms.3
-        for <io-uring@vger.kernel.org>; Sat, 18 Feb 2023 10:43:20 -0800 (PST)
+        with ESMTP id S229472AbjBRSrK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Feb 2023 13:47:10 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4117D12F2B
+        for <io-uring@vger.kernel.org>; Sat, 18 Feb 2023 10:47:09 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id m6so900202wmq.2
+        for <io-uring@vger.kernel.org>; Sat, 18 Feb 2023 10:47:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Voh8YMSTHtZzfOucrW8qz+qWP9TlfoNalWbkuhtbr8c=;
-        b=VjOLSZrAoYQ/sFOPXUNBQQSTFAbbDk33+ivhj6A2du1n+IT1Q2wTv15KnqAmTsAHFw
-         s94Ln1VrxC/5RjqAZPnSaxzotiQVMr5CUEUcXPFmyvWHtn3OqpVvErE2U/dA2ylzn6/e
-         cFjax771TJibc4CUxLBKwMoku8JiNubVcz39olFDXVhJMOO/Dkj8AwHnJJYJXtVFDtxf
-         UEJLOA6uD3l3hom5aHgqUXTDD0qqN58l7pnrubz0hW+jA9OGgyyZRjdrnNsu4azrqtma
-         OADOaBVO+zKFfY0BTi/0Hnw7RJrsx8wkTVGJLFwJz6P/LKux+pwSEW3UbYQ7O2QNrDxg
-         07Mg==
+        bh=t/nLfYiq63DAjj3bL3juIeKOW9KFjTA4xqZ/Gu32Kac=;
+        b=RqAA2ltKB3jG1fB9x20QVilJycbRLWfkZhj3ZJeIgLwHRt6RDrMNPuMX0e3ng1ahdj
+         RH2M8Uw3bLes/hHA/v37jFtj0J9eHIx4R5vDv8x8HbubrUJMRij7ci9EcOTg5BORVwL/
+         ErVJpHoR1MyuFxjTqOWaff2HK2msVMDoovU7Xm2kAf3Z5rytQA8UfhfFHHA68xdEDHSh
+         B1fc90RByvdQAZa4dDmWo89CCMfjVhffAfujoyNmjQTtZoERwL27Msqzwxw1tFI++Arm
+         /iaGGepJgKqbUdKaGRhRnLx/WxPqFSrpCeVSSftFyJcK0ctBC6UIGZRuJPqWwDZTeI0Z
+         jjbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Voh8YMSTHtZzfOucrW8qz+qWP9TlfoNalWbkuhtbr8c=;
-        b=B5I1aqvjCzxLdYagzq/528iaA7q+k29jhwEiO9Lq1UccDMyHBM54kVXJaQIl0R3gNv
-         hTtaKW37PtjaYM/WUDPeaI+4U8g1Gcyuu8yuEilzDcmNn2RCra/bb680u/YgclIoc3A5
-         skdlV2fV4JqjkRLYuoGDq1AZOePE1CdDCw0IXWIS4kFvKJQvwFPsmHTK6lajPYPg7PRF
-         PkawSYc9HMa9HBRDLAraA87J3p4Gmq3zTnoGSinx1Rk8RWJ3WlaEH6IobX+nBTsAhdHm
-         6xuxY8OJtTKooIUhnU2Tl2x3oI45+vwrjOZlLV0zYsySkaSfWGp2qDCmZZ05mHKrWkb7
-         hl1Q==
-X-Gm-Message-State: AO0yUKWHymbcMnIG25ri3fLGuMbxAU+wGIuR+vA0chGr4RRcOD0Z93cO
-        H7r6cOohP0GDF7GWNZP3YuY=
-X-Google-Smtp-Source: AK7set9D6FlFVkEu+5jhNESv/MNJCEnSAmxlF6J5f26XXrSoIjH4rf+41URCtAFEVYF17DWLCPrBaQ==
-X-Received: by 2002:a05:600c:708:b0:3e0:98c:dd93 with SMTP id i8-20020a05600c070800b003e0098cdd93mr3361131wmn.29.1676745798894;
-        Sat, 18 Feb 2023 10:43:18 -0800 (PST)
+        bh=t/nLfYiq63DAjj3bL3juIeKOW9KFjTA4xqZ/Gu32Kac=;
+        b=gE/22JVvyM83/G6kAkDkj9RknbXAn4qkWayLMd9xTNwwaAXz6uMacce17N2edI2R5u
+         NrywKO8jH79AMJyTvXHtne7Xk3iqYQvLB2dgZdKG0kVwfUu+xZFleALDpskQHkvJpU+H
+         /3dD+MRuhmw/GT+1ixpyPovlKgb8NNgWygEiVGWYWIBcTOIKeWp8L+MBBZpXW+44EABZ
+         ZvJmzIlUw4y7loBp5bWndK9iuWTxLALGKDkRyje6ou4058t1oukSJAs9tAxYCmSe5K10
+         XltSz2fvO3pUwpQ0if7rE8D83e2WxJcZCK6yldkSmbmchIQqMbaeF/EyTo+PazNRMzxP
+         nzyg==
+X-Gm-Message-State: AO0yUKUzsKJc7s5KnTvQN//1jWX59IuUBd0zuRrUigged541Fbc1Xjqk
+        y3rdkJjPitqP0eIPf65vMD0=
+X-Google-Smtp-Source: AK7set8AGdD2iYNEzgzRhbqLPqjWdnKH6Rk4Wg2ZF6TldCAtwgBFv8emP0CR7KkI4jiPPsTXzgsZhQ==
+X-Received: by 2002:a05:600c:44c9:b0:3e2:185d:7d1e with SMTP id f9-20020a05600c44c900b003e2185d7d1emr6211718wmo.11.1676746027629;
+        Sat, 18 Feb 2023 10:47:07 -0800 (PST)
 Received: from localhost.localdomain ([152.37.82.41])
-        by smtp.gmail.com with ESMTPSA id p7-20020a05600c1d8700b003dc522dd25esm9478943wms.30.2023.02.18.10.43.18
+        by smtp.gmail.com with ESMTPSA id e23-20020a7bc2f7000000b003e215a796fasm9123628wmk.34.2023.02.18.10.47.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Feb 2023 10:43:18 -0800 (PST)
+        Sat, 18 Feb 2023 10:47:07 -0800 (PST)
 From:   Wojciech Lukowicz <wlukowicz01@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Wojciech Lukowicz <wlukowicz01@gmail.com>
-Subject: [PATCH] io_uring: fix size calculation when registering buf ring
-Date:   Sat, 18 Feb 2023 18:41:41 +0000
-Message-Id: <20230218184141.70891-1-wlukowicz01@gmail.com>
+Subject: [PATCH liburing] test/buf-ring: add test for buf ring occupying exactly one page
+Date:   Sat, 18 Feb 2023 18:46:18 +0000
+Message-Id: <20230218184618.70966-1-wlukowicz01@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,41 +67,115 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Using struct_size() to calculate the size of io_uring_buf_ring will sum
-the size of the struct and of the bufs array. However, the struct's fields
-are overlaid with the array making the calculated size larger than it
-should be.
+This shows an issue with how the kernel calculates buffer ring sizes
+during their registration.
 
-When registering a ring with N * PAGE_SIZE / sizeof(struct io_uring_buf)
-entries, i.e. with fully filled pages, the calculated size will span one
-more page than it should and io_uring will try to pin the following page.
-Depending on how the application allocated the ring, it might succeed
-using an unrelated page or fail returning EFAULT.
+Allocate two pages, register a buf ring fully occupying the first one,
+while protecting the second one to make sure it's not used. The
+registration should succeed.
 
-The size of the ring should be the product of ring_entries and the size
-of io_uring_buf, i.e. the size of the bufs array only.
+mmapping a single page would be a more practical example, but wouldn't
+guarantee the issue gets triggered in case the following page happens
+to be accessible.
 
-Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
 Signed-off-by: Wojciech Lukowicz <wlukowicz01@gmail.com>
 ---
-I'll send a liburing test shortly.
+This is a failing test, needs the patch I sent earlier.
 
- io_uring/kbuf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ test/buf-ring.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 4a6401080c1f..3002dc827195 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -505,7 +505,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+diff --git a/test/buf-ring.c b/test/buf-ring.c
+index 9d507ac21e32..7615ddad56a9 100644
+--- a/test/buf-ring.c
++++ b/test/buf-ring.c
+@@ -9,11 +9,13 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <fcntl.h>
++#include <sys/mman.h>
+ 
+ #include "liburing.h"
+ #include "helpers.h"
+ 
+ static int no_buf_ring;
++static int pagesize;
+ 
+ /* test trying to register classic group when ring group exists */
+ static int test_mixed_reg2(int bgid)
+@@ -230,6 +232,50 @@ static int test_bad_reg(int bgid)
+ 	return !ret;
+ }
+ 
++static int test_full_page_reg(int bgid)
++{
++	struct io_uring ring;
++	int ret;
++	void *ptr;
++	struct io_uring_buf_reg reg = { };
++	int entries = pagesize / sizeof(struct io_uring_buf);
++
++	ret = io_uring_queue_init(1, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "queue init failed %d\n", ret);
++		return 1;
++	}
++
++	ret = posix_memalign(&ptr, pagesize, pagesize * 2);
++	if (ret) {
++		fprintf(stderr, "posix_memalign failed %d\n", ret);
++		goto err;
++	}
++
++	ret = mprotect(ptr + pagesize, pagesize, PROT_NONE);
++	if (ret) {
++		fprintf(stderr, "mprotect failed %d\n", errno);
++		goto err1;
++	}
++
++	reg.ring_addr = (unsigned long) ptr;
++	reg.ring_entries = entries;
++	reg.bgid = bgid;
++
++	ret = io_uring_register_buf_ring(&ring, &reg, 0);
++	if (ret)
++		fprintf(stderr, "register buf ring failed %d\n", ret);
++
++	if (mprotect(ptr + pagesize, pagesize, PROT_READ | PROT_WRITE))
++		fprintf(stderr, "reverting mprotect failed %d\n", errno);
++
++err1:
++	free(ptr);
++err:
++	io_uring_queue_exit(&ring);
++	return ret;
++}
++
+ static int test_one_read(int fd, int bgid, struct io_uring *ring)
+ {
+ 	int ret;
+@@ -374,6 +420,8 @@ int main(int argc, char *argv[])
+ 	if (argc > 1)
+ 		return T_EXIT_SKIP;
+ 
++	pagesize = getpagesize();
++
+ 	for (i = 0; bgids[i] != -1; i++) {
+ 		ret = test_reg_unreg(bgids[i]);
+ 		if (ret) {
+@@ -406,6 +454,12 @@ int main(int argc, char *argv[])
+ 			fprintf(stderr, "test_mixed_reg2 failed\n");
+ 			return T_EXIT_FAIL;
+ 		}
++
++		ret = test_full_page_reg(bgids[i]);
++		if (ret) {
++			fprintf(stderr, "test_full_page_reg failed\n");
++			return T_EXIT_FAIL;
++		}
  	}
  
- 	pages = io_pin_pages(reg.ring_addr,
--			     struct_size(br, bufs, reg.ring_entries),
-+			     flex_array_size(br, bufs, reg.ring_entries),
- 			     &nr_pages);
- 	if (IS_ERR(pages)) {
- 		kfree(free_bl);
+ 	for (i = 0; !no_buf_ring && entries[i] != -1; i++) {
 -- 
 2.30.2
 

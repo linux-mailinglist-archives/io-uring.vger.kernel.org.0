@@ -2,100 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1A769B659
-	for <lists+io-uring@lfdr.de>; Sat, 18 Feb 2023 00:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B4969BB72
+	for <lists+io-uring@lfdr.de>; Sat, 18 Feb 2023 19:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbjBQXO4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Feb 2023 18:14:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35130 "EHLO
+        id S229507AbjBRSnX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Feb 2023 13:43:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjBQXOy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Feb 2023 18:14:54 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5DC68E67
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 15:14:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 490D962081
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 23:13:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6A9C433AC
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 23:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676675608;
-        bh=007Ju5hmo469I+GLbhKmQyFOblRRKqP7+IKJhGVg3Bc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FVQuLHu9su+8MtuqreGX0M6eUP2draqAXJj4M0+8pCp7wP3cq/lR7ACHIf24dTWkq
-         b+prnybkvEZUYcirmWUlld+/8oqr6Nlbu01GGr+WwVByKApBo1afHnsziIFQI2erWf
-         EGwGBTF+S6LSfMq241TKKmHuZRPX6qF35zA6vNp9ovpCBLGLSuQb95HK4Pn/rKOk+N
-         Q29erYenPL3+a3yt35AFu9AbVpoMWykSXPezSdlvTG0r5dcYRXTe3mPJC9QqOkNZ6+
-         ArzBr6bVo48aEYAhQoN4OGqbh5dK+dGwwlaEtAELclY4hqR6CWmZhFUEuGC2Xr7W+S
-         OAFm4QbGrDmsw==
-Received: by mail-ed1-f48.google.com with SMTP id i28so9466067eda.8
-        for <io-uring@vger.kernel.org>; Fri, 17 Feb 2023 15:13:28 -0800 (PST)
-X-Gm-Message-State: AO0yUKWWGPmTR/+M5nkiMeE0K1Z66gTajUdXedfiZpKup76s1EMCXZ9A
-        X8lFOWk/ouMcKSNoAE70mNMjTCPzaspFgfjVOa/fgw==
-X-Google-Smtp-Source: AK7set8/bNsrYafbYm0zAE3nFVOlai7VLZ8imlSdGrFod1cdz9z2k4ibd74H3rjwb0A7aOD2eNsBGzV5MLYpkJRFYLE=
-X-Received: by 2002:a17:907:6c14:b0:8ae:cb48:3c80 with SMTP id
- rl20-20020a1709076c1400b008aecb483c80mr5175474ejc.7.1676675606807; Fri, 17
- Feb 2023 15:13:26 -0800 (PST)
+        with ESMTP id S229472AbjBRSnW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Feb 2023 13:43:22 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C780D12BED
+        for <io-uring@vger.kernel.org>; Sat, 18 Feb 2023 10:43:20 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id j27so930203wms.3
+        for <io-uring@vger.kernel.org>; Sat, 18 Feb 2023 10:43:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Voh8YMSTHtZzfOucrW8qz+qWP9TlfoNalWbkuhtbr8c=;
+        b=VjOLSZrAoYQ/sFOPXUNBQQSTFAbbDk33+ivhj6A2du1n+IT1Q2wTv15KnqAmTsAHFw
+         s94Ln1VrxC/5RjqAZPnSaxzotiQVMr5CUEUcXPFmyvWHtn3OqpVvErE2U/dA2ylzn6/e
+         cFjax771TJibc4CUxLBKwMoku8JiNubVcz39olFDXVhJMOO/Dkj8AwHnJJYJXtVFDtxf
+         UEJLOA6uD3l3hom5aHgqUXTDD0qqN58l7pnrubz0hW+jA9OGgyyZRjdrnNsu4azrqtma
+         OADOaBVO+zKFfY0BTi/0Hnw7RJrsx8wkTVGJLFwJz6P/LKux+pwSEW3UbYQ7O2QNrDxg
+         07Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Voh8YMSTHtZzfOucrW8qz+qWP9TlfoNalWbkuhtbr8c=;
+        b=B5I1aqvjCzxLdYagzq/528iaA7q+k29jhwEiO9Lq1UccDMyHBM54kVXJaQIl0R3gNv
+         hTtaKW37PtjaYM/WUDPeaI+4U8g1Gcyuu8yuEilzDcmNn2RCra/bb680u/YgclIoc3A5
+         skdlV2fV4JqjkRLYuoGDq1AZOePE1CdDCw0IXWIS4kFvKJQvwFPsmHTK6lajPYPg7PRF
+         PkawSYc9HMa9HBRDLAraA87J3p4Gmq3zTnoGSinx1Rk8RWJ3WlaEH6IobX+nBTsAhdHm
+         6xuxY8OJtTKooIUhnU2Tl2x3oI45+vwrjOZlLV0zYsySkaSfWGp2qDCmZZ05mHKrWkb7
+         hl1Q==
+X-Gm-Message-State: AO0yUKWHymbcMnIG25ri3fLGuMbxAU+wGIuR+vA0chGr4RRcOD0Z93cO
+        H7r6cOohP0GDF7GWNZP3YuY=
+X-Google-Smtp-Source: AK7set9D6FlFVkEu+5jhNESv/MNJCEnSAmxlF6J5f26XXrSoIjH4rf+41URCtAFEVYF17DWLCPrBaQ==
+X-Received: by 2002:a05:600c:708:b0:3e0:98c:dd93 with SMTP id i8-20020a05600c070800b003e0098cdd93mr3361131wmn.29.1676745798894;
+        Sat, 18 Feb 2023 10:43:18 -0800 (PST)
+Received: from localhost.localdomain ([152.37.82.41])
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c1d8700b003dc522dd25esm9478943wms.30.2023.02.18.10.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Feb 2023 10:43:18 -0800 (PST)
+From:   Wojciech Lukowicz <wlukowicz01@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, Wojciech Lukowicz <wlukowicz01@gmail.com>
+Subject: [PATCH] io_uring: fix size calculation when registering buf ring
+Date:   Sat, 18 Feb 2023 18:41:41 +0000
+Message-Id: <20230218184141.70891-1-wlukowicz01@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20230210061953.GC2825702@dread.disaster.area> <Y+oCBnz2nLtXrz7O@gondor.apana.org.au>
- <CALCETrXKkZw3ojpmTftur1_-dEi6BOo9Q0cems_jgabntNFYig@mail.gmail.com> <Y+riPviz0em9L9BQ@gondor.apana.org.au>
-In-Reply-To: <Y+riPviz0em9L9BQ@gondor.apana.org.au>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 17 Feb 2023 15:13:14 -0800
-X-Gmail-Original-Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
-Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        torvalds@linux-foundation.org, metze@samba.org, axboe@kernel.dk,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, samba-technical@lists.samba.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-> On Feb 13, 2023, at 5:22 PM, Herbert Xu <herbert@gondor.apana.org.au> wro=
-te:
->
-> =EF=BB=BFOn Mon, Feb 13, 2023 at 10:01:27AM -0800, Andy Lutomirski wrote:
->>
->> There's a difference between "kernel speaks TCP (or whatever)
->> correctly" and "kernel does what the application needs it to do".
->
-> Sure I get where you are coming from.  It's just that the other
-> participants in the discussion were thinking of stability for the
-> sake of TCP (or TLS or some other protocol the kernel implements)
-> and that simply is a non-issue.
+Using struct_size() to calculate the size of io_uring_buf_ring will sum
+the size of the struct and of the bufs array. However, the struct's fields
+are overlaid with the array making the calculated size larger than it
+should be.
 
-I can certainly imagine TLS or similar protocols breaking if data
-changes if the implementation is too clever and retransmission
-happens.  Suppose 2000 bytes are sent via splice using in-kernel TLS,
-and it goes out on the wire as two TCP segments.  The first segment is
-dropped but the second is received.  The kernel resends the first
-segment using different data.  This really ought to cause an integrity
-check at the far end to fail.
+When registering a ring with N * PAGE_SIZE / sizeof(struct io_uring_buf)
+entries, i.e. with fully filled pages, the calculated size will span one
+more page than it should and io_uring will try to pin the following page.
+Depending on how the application allocated the ring, it might succeed
+using an unrelated page or fail returning EFAULT.
 
-I don't know if any existing kTLS is clever enough to regenerate
-outgoing data when it needs to retransmit a segment, but it would be
-an interesting optimization for serving static content over TLS.
+The size of the ring should be the product of ring_entries and the size
+of io_uring_buf, i.e. the size of the bufs array only.
 
+Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
+Signed-off-by: Wojciech Lukowicz <wlukowicz01@gmail.com>
+---
+I'll send a liburing test shortly.
 
+ io_uring/kbuf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Having a better way to communicate completion to the user would be
-> nice.  The only way to do it right now seems to be polling with
-> SIOCOUTQ.
->
->
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 4a6401080c1f..3002dc827195 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -505,7 +505,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 	}
+ 
+ 	pages = io_pin_pages(reg.ring_addr,
+-			     struct_size(br, bufs, reg.ring_entries),
++			     flex_array_size(br, bufs, reg.ring_entries),
+ 			     &nr_pages);
+ 	if (IS_ERR(pages)) {
+ 		kfree(free_bl);
+-- 
+2.30.2
+

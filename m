@@ -2,72 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A53A69D6E4
-	for <lists+io-uring@lfdr.de>; Tue, 21 Feb 2023 00:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1471269D7DC
+	for <lists+io-uring@lfdr.de>; Tue, 21 Feb 2023 02:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232795AbjBTXA0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Feb 2023 18:00:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34104 "EHLO
+        id S232637AbjBUBHF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Feb 2023 20:07:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232875AbjBTXAX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Feb 2023 18:00:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09859227AA
-        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 15:00:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E0A7D60F59
-        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 23:00:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AE360C433A8;
-        Mon, 20 Feb 2023 23:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676934018;
-        bh=0wY5VXLaR/6dIZeyRkbcV3FCalfxreMaMymmsS4iBmc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=JVTgWAW5yBDRulKAISQ0dOY3VtVaYeD3PIzn9bN4TdmnEMNLa4aUMuOpxfPnN7I0R
-         O4eJXXGJd9CJamXYJTouXndefn7FbLA4vUF1WfP5dAFuMVEakLtMzp96OpyDJ8QhCc
-         yBucTbx8yuZ6GOWtRMZLuCjUv1efxMJabpVx4uEu1LdkcgyqqPHwxSaBLZx/WV1cKq
-         Lc1SPX2SYhDUpCTyo7EVZC0YtFOjukIQHd+TUpIWROixJkHCLD3XQVouLiH/0VI7Br
-         AyJepAEBtym1AF1wpuStQ0qmyhsBg/BRELAGux1GYvCa3sMqEyym32jjiaOx+fD/SN
-         bOGBcwGe4061A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 98F0DC43161;
-        Mon, 20 Feb 2023 23:00:18 +0000 (UTC)
-Subject: Re: [GIT PULL for-6.3] Switch io_uring to ITER_UBUF
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <7ec9c3d0-1028-4d58-8ef1-0cce3083696c@kernel.dk>
-References: <7ec9c3d0-1028-4d58-8ef1-0cce3083696c@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <7ec9c3d0-1028-4d58-8ef1-0cce3083696c@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/for-6.3/iter-ubuf-2023-02-16
-X-PR-Tracked-Commit-Id: d46aa786fa53cbc92593089374e49c94fd9063ae
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c1ef5003079531b5aae12467a350379496752334
-Message-Id: <167693401862.6080.4100971499432581904.pr-tracker-bot@kernel.org>
-Date:   Mon, 20 Feb 2023 23:00:18 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S229560AbjBUBHE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Feb 2023 20:07:04 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449C0212AF
+        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 17:07:02 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id o4-20020a05600c4fc400b003e1f5f2a29cso2340071wmq.4
+        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 17:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IXMIUxTggbogi3NVSQqkW9SWj3hnOHyL+10HvGQfZgQ=;
+        b=GISWzpLCHl81n+gH2BSD0XhKyrO0hWgDoRXfDo5caQtn8wMauw59MN6yll0aCEw5ug
+         +BOe4imQzioHZlla/mUxAebis1M4ro4lsaVyPHzqTlAuHiffNIPRaKdOolH8MAwaFj7K
+         VAHNyphijCySWJ+xW4NFfb5adodLLw6Ujwfx0wFZmnmT3IKRAPqVL5AaKPFVkDLn1S5/
+         pD1fEmoUVoVlPiihtgHo77ek9MJlnzNBWr9nstlDfH7kUfJfnDv+YHn+1VOXeUgGKp3t
+         MbtODvHi1k089+yaDDaFOxoJhSb3MDWfNeYTrOhzmZ/t1BLbhpU2s9WT6It9V56IXDvm
+         zPnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IXMIUxTggbogi3NVSQqkW9SWj3hnOHyL+10HvGQfZgQ=;
+        b=Px639FXoPjtN2XKh40AN6DZLLZ51eYv5aTM6CdzrXa3poKPkVQHjLpIW5p0E7FFMu4
+         JLndev8Rv7Y5yqAHi91UksAkjkI3Vnz89DNtO7/XErNqs9d/CdAdCoJywJft6E6y1FcO
+         i1ZoCQpCUmspriMfCPwPaAPvSwY36MmdeSYIYULTNjs1qcUwMDpKpbWQduDZAQXOCuq3
+         9Ncw+9EgeWtn+lze/lirJGL5DnWV5uoCFxbp7wD7VRPJD9cJFvKkHG+2DteBt4Kybzxn
+         hqNNxKlRyMzocWgcOOUoPu8AhBvYztqxYIAwa7UxoUze4XTlRpk/b3vyY+g6P+JZAibX
+         pcdg==
+X-Gm-Message-State: AO0yUKUWdaCFB3LFVT/CESPyYMkc71ZfADjCdvHvWjHm4tgyZoBSfBTj
+        Dzrs3Q0+RYCxQEOZdV8/XDOYuhgdIAU=
+X-Google-Smtp-Source: AK7set/C2FTWEDRBTTXdjqlR3XZ/JlgfkabDLT4TgGJgtpJCDsDMPDcUo7Rn1kOIuPW49Q0/3xgLxQ==
+X-Received: by 2002:a05:600c:4a90:b0:3dc:45a7:2b8a with SMTP id b16-20020a05600c4a9000b003dc45a72b8amr8058134wmp.10.1676941620465;
+        Mon, 20 Feb 2023 17:07:00 -0800 (PST)
+Received: from 127.0.0.1localhost (94.196.95.64.threembb.co.uk. [94.196.95.64])
+        by smtp.gmail.com with ESMTPSA id k17-20020a7bc411000000b003dfee43863fsm2092469wmi.26.2023.02.20.17.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Feb 2023 17:07:00 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH liburing 0/7] test sends with huge pages
+Date:   Tue, 21 Feb 2023 01:05:51 +0000
+Message-Id: <cover.1676941370.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.39.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Thu, 16 Feb 2023 19:54:20 -0700:
+Add huge pages support for zc send benchmark and huge pages
+tests in send-zerocopy.c.
 
-> git://git.kernel.dk/linux.git tags/for-6.3/iter-ubuf-2023-02-16
+Pavel Begunkov (7):
+  tests/send: don't use a constant for page size
+  send: improve buffer iteration
+  send: test send with hugetlb
+  examples/zc: add a hugetlb option
+  test/send: don't use SO_ZEROCOPY if not available
+  tests/send: improve error reporting
+  tests/send: sends with offsets
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c1ef5003079531b5aae12467a350379496752334
-
-Thank you!
+ examples/send-zerocopy.c |  24 ++++++-
+ test/send-zerocopy.c     | 133 +++++++++++++++++++++++++++------------
+ 2 files changed, 114 insertions(+), 43 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.1
+

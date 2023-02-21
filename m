@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F192B69D7E2
-	for <lists+io-uring@lfdr.de>; Tue, 21 Feb 2023 02:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 843A769D7E3
+	for <lists+io-uring@lfdr.de>; Tue, 21 Feb 2023 02:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232965AbjBUBHL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S232967AbjBUBHL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Mon, 20 Feb 2023 20:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47364 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232967AbjBUBHJ (ORCPT
+        with ESMTP id S232969AbjBUBHJ (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Mon, 20 Feb 2023 20:07:09 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFFF121969
-        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 17:07:05 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id p3-20020a05600c358300b003e206711347so2026506wmq.0
-        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 17:07:05 -0800 (PST)
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94AAC22DF7
+        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 17:07:06 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id bg28so2097229wmb.0
+        for <io-uring@vger.kernel.org>; Mon, 20 Feb 2023 17:07:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9q6Z2EIeHPOpA/P1M1xO/wwloJ7HKSJ8ogHi9NQ5BT8=;
-        b=eWLvjE7S5OdY0JFG5uE0YeAB0QfSUPesUe6LEGfvvTjioruI6EMTP763jquErzjAPT
-         nsKUTViWwZt0ZOxm1J1V8NwR/tBWrjMi2glaXuViprieF285OeV/iTUB/bpIYZtO5xo8
-         2Tr5VXuVQLWSWTVAqXsOkgZlmqeiyd/efoaCvB0Ituuk74iSWMwUWBwEhmDE2I+S+K2x
-         3VI+m54MEzM5vt/AWpvAn0dCqUDLz12KUYNZ6lS+SsvcuoaCd1SRPbMgrBSpY4UPqX3D
-         S29gGQI2yhMoj7R6brnKINBi4+d9d09nt7ieWwq0Fy7eyC7xrOvor1sU8rgpD6TKrWVh
-         cSgQ==
+        bh=LmPGyA48xExHwZbJfO8OmSdVoAQXWZWG73WGeqnX5w4=;
+        b=DV0jJcG76WMAAIoX4Zk98aR7ha2BrVbs36SMEyw/5Vzw2tR9ncN389DIiCiFWNq5m4
+         OZVwMZs7pu4Gz4rpdGgqSS4y6Rn4bpvnj/lhH60MatHdodyFe8k0BVNvyOHxJvav1gjZ
+         b/3Ka3ksplhWnSkqRgsXcSixJz9t1aNb/7iAT9PFxfcReUxxaaxG2fkadKjxEZ6ZWbRI
+         jAswlH+VoVSprKtAok/b4sVmxkSs5Bg+VLktTrY3l90sOjOCvyMwhq/t3un/yrLTwFQ/
+         YrtOFR04vjMywuVS6K5inmtrXzkpZ2M6HCsEdPGuEtzN581QZpVRBZZXkIT1BaWfBZ1p
+         gr7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9q6Z2EIeHPOpA/P1M1xO/wwloJ7HKSJ8ogHi9NQ5BT8=;
-        b=70jfK/zvdUnCyMJo6tbRW8OHrJygyjDHtqGwSGRY4i3YQ1nUVhfbfQRAzudegcGy5s
-         TJmh1aFKpC8qDubxvu7twpmc6o3cVMA4G14RlznzOGTZ7F6aOAKQ2B9Rk2n4FncjEnLi
-         n9EiyH4q00jNYoIMYTZlf6ACdaR1miBJBabod6bZeck6Vy19/Xb/pI57QTF52gH3WFSt
-         9qXwFQXQN+vjhqjmnu2CjVdpvU87TTxy0I0LhxmORaM/aHxcMivDzFLi3TW1AVv7n6DB
-         u4O58IOOl1HTCaaqaRIpHXWRzVZ6Rqw0Pb1xs7nJXBu7Q4/+xP7plOo0JUkb9z1TItt1
-         3SiQ==
-X-Gm-Message-State: AO0yUKUgAXSyZ+FZxqq2v/JKKdUTzmUXyBdYD1iAIvEWA8FQp2C3WUk6
-        0XC2REeucdfRP/br2cM0rmlhhFkLQZ0=
-X-Google-Smtp-Source: AK7set+mtdMSb2VU1Y6Wpz2pC+qY/G8SlY/TtFVcAPd4zII1nBzMapYy99IozeGk/XfvlVEm1W/Bjw==
-X-Received: by 2002:a05:600c:1d16:b0:3df:f860:3089 with SMTP id l22-20020a05600c1d1600b003dff8603089mr2536896wms.32.1676941624400;
-        Mon, 20 Feb 2023 17:07:04 -0800 (PST)
+        bh=LmPGyA48xExHwZbJfO8OmSdVoAQXWZWG73WGeqnX5w4=;
+        b=x5Xw3Os7IiJvW0gbDCXrGOP6BOvrtZGRI65Kqy7wCUUMqaxPZqIXu/rNgUy+0k3z2g
+         75HrzFFHThXfdlrPo1DXAsuYVeiZ4xJ3MrB1ETdP0IrRZ+cQncKJwnElP0RQ3Z6eJVnb
+         IS5A7+29KsTLU7UECue7YJi3MRt5MR1AMjVXB8ptpceTWlkih+bOTc/i51ZBWtDxLgBS
+         dgjzrdAU5jYzmiUj9H/fns4/ixkNpGQo0QzStk2Jp8FWhMyHi+8ssm75svZQLcsztum/
+         KmO/SrDHpRXKFgrBezlRwnDwHz37KUhX3bArMCl2d0rvXELWIgWFS2oiVQoiH1M3mTZ7
+         Lg7A==
+X-Gm-Message-State: AO0yUKXhpcgCEzlZeT43qfoRZHjvacuFcv8Zvhd9A6nAvBjnCPgW3MRI
+        nhn/7mmtDyJeNU6WeoUiH9cGLqhvDqg=
+X-Google-Smtp-Source: AK7set+ro4NYaatFkJz02dy6lk9E6S/tOZpSjXb2axACoo16pVI/GyDlEEXMctm71F6m2iUGUNmbpA==
+X-Received: by 2002:a05:600c:3d8c:b0:3e0:c5e:ad78 with SMTP id bi12-20020a05600c3d8c00b003e00c5ead78mr1898394wmb.7.1676941625045;
+        Mon, 20 Feb 2023 17:07:05 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.95.64.threembb.co.uk. [94.196.95.64])
-        by smtp.gmail.com with ESMTPSA id k17-20020a7bc411000000b003dfee43863fsm2092469wmi.26.2023.02.20.17.07.03
+        by smtp.gmail.com with ESMTPSA id k17-20020a7bc411000000b003dfee43863fsm2092469wmi.26.2023.02.20.17.07.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 20 Feb 2023 17:07:04 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 5/7] test/send: don't use SO_ZEROCOPY if not available
-Date:   Tue, 21 Feb 2023 01:05:56 +0000
-Message-Id: <ecc68eb72d8aff9bd3b16a0f5a3ea005b25126c3.1676941370.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 6/7] tests/send: improve error reporting
+Date:   Tue, 21 Feb 2023 01:05:57 +0000
+Message-Id: <077207aff1e31d30bdcdacbb6b0379d24798cea9.1676941370.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <cover.1676941370.git.asml.silence@gmail.com>
 References: <cover.1676941370.git.asml.silence@gmail.com>
@@ -72,58 +72,23 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ test/send-zerocopy.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index f1277fa..481aa28 100644
+index 481aa28..8ddec39 100644
 --- a/test/send-zerocopy.c
 +++ b/test/send-zerocopy.c
-@@ -197,11 +197,9 @@ static int create_socketpair_ip(struct sockaddr_storage *addr,
- 				bool ipv6, bool client_connect,
- 				bool msg_zc, bool tcp)
- {
--	int family;
- 	socklen_t addr_size;
--	int ret, val;
--	int listen_sock = -1;
--	int sock;
-+	int family, sock, listen_sock = -1;
-+	int ret;
- 
- 	memset(addr, 0, sizeof(*addr));
- 	if (ipv6) {
-@@ -278,11 +276,17 @@ static int create_socketpair_ip(struct sockaddr_storage *addr,
+@@ -447,7 +447,8 @@ static int do_test_inet_send(struct io_uring *ring, int sock_client, int sock_se
  		}
- 	}
- 	if (msg_zc) {
--		val = 1;
-+#ifdef SO_ZEROCOPY
-+		int val = 1;
-+
- 		if (setsockopt(*sock_client, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
- 			perror("setsockopt zc");
- 			return 1;
- 		}
-+#else
-+		fprintf(stderr, "no SO_ZEROCOPY\n");
-+		return 1;
-+#endif
- 	}
- 	if (tcp) {
- 		*sock_server = accept(listen_sock, NULL, NULL);
-@@ -502,7 +506,10 @@ static int test_inet_send(struct io_uring *ring)
- 			continue;
- 		if (swap_sockets && !tcp)
- 			continue;
--
-+#ifndef SO_ZEROCOPY
-+		if (msg_zc_set)
-+			continue;
-+#endif
- 		ret = create_socketpair_ip(&addr, &sock_client, &sock_server, ipv6,
- 				 client_connect, msg_zc_set, tcp);
- 		if (ret) {
+ 		if (cqe->user_data == RX_TAG) {
+ 			if (cqe->res != send_size) {
+-				fprintf(stderr, "rx failed %i\n", cqe->res);
++				fprintf(stderr, "rx failed res: %i, expected %i\n",
++						cqe->res, (int)send_size);
+ 				return 1;
+ 			}
+ 			io_uring_cqe_seen(ring, cqe);
 -- 
 2.39.1
 

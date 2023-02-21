@@ -2,119 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB1469E4AA
-	for <lists+io-uring@lfdr.de>; Tue, 21 Feb 2023 17:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F5169E4FD
+	for <lists+io-uring@lfdr.de>; Tue, 21 Feb 2023 17:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjBUQ3z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Feb 2023 11:29:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
+        id S234317AbjBUQoL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 21 Feb 2023 11:44:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234398AbjBUQ3w (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Feb 2023 11:29:52 -0500
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 427274EF0
-        for <io-uring@vger.kernel.org>; Tue, 21 Feb 2023 08:29:23 -0800 (PST)
-Received: by mail-io1-xd32.google.com with SMTP id d11so1940957iow.0
-        for <io-uring@vger.kernel.org>; Tue, 21 Feb 2023 08:29:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676996961;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g4gt62ZakaEtDRbRpviyBIm1h2Twkttyr2jkmuzLS+k=;
-        b=aVwzamuB+6Xy6Nhj2Vuf405YqfUQP8lkjSIImPHpF1mTALYKWuA+So7FjS4LF+R+ps
-         cTzmlNqddFhylNHA8RR59c+08nfzHiG7aDGgJueRlfbcfNxpMz8lzDyMbjTTE1+skABx
-         Y+wNfnoazNDEQVq65dPqQfxBnAlO/aI9sR55AMv3fi9BFdn8YEG+61Iup/HB6lekr6qo
-         qFf0xRuab/SEqaK4pRae3jR6mH6e1nT3X1kvvAnRKHtUA6TLkJPbpTDFPSefNM5UbbTf
-         q3UA1uVb2z3M+M+rMIb5WQsARvyyi1AtsNBLAA7wQUfvkMJGGNGjOAXgRz5OJ+npNaZ9
-         6vnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676996961;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4gt62ZakaEtDRbRpviyBIm1h2Twkttyr2jkmuzLS+k=;
-        b=rn2jWLCWBob+dpMyiHigJYeH6QJwpV6y2C28j8knhzHPm0yKjRdq23KyALoSBjv7KS
-         eyUf93XqME1l7X+Eg6v41LsP+IlMZq5LQvUCUI0En1kR5QGBmwHYD1NqZzh1DLuCAowq
-         fVHr8kEuPlOYc/Ximc3JpU5Bhq/KUUqJ7Scq5C3tNP0k/8gAfTdAH9qTG3stfLONsEdW
-         7lsM+pIOVvOoFT+Akar/AG0kj7x0TvPgVG998bM4Jmx1s7GUMqPFlMYjop1pJUiuYUzF
-         VstuFkbQUmngYAGtLQ8TYK+aU+hkRROKFGndZWNU7RAKP/MmTPy7xyj8oD/ygX5nUzPv
-         9N2A==
-X-Gm-Message-State: AO0yUKXNl9m2gbSF9FLujSpTRFUzeCbh9w36rTDcHFQkJ9ZzzfyYvLHL
-        T1KErcrFpCIqJ786nqY/CtK25g==
-X-Google-Smtp-Source: AK7set/LAeneKzIhqIGzvEYiJMHEIgVXLoD1VjhjzNh9mvHJ+dqlYDYLS3fDwyzqBl5VZvEKfFBb8g==
-X-Received: by 2002:a5d:9d81:0:b0:719:6a2:99d8 with SMTP id ay1-20020a5d9d81000000b0071906a299d8mr4396532iob.0.1676996961011;
-        Tue, 21 Feb 2023 08:29:21 -0800 (PST)
-Received: from [10.80.1.8] (h184-60-188-235.stgrut.dedicated.static.tds.net. [184.60.188.235])
-        by smtp.gmail.com with ESMTPSA id t6-20020a02c906000000b003a7cbe1d235sm1194900jao.12.2023.02.21.08.29.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Feb 2023 08:29:20 -0800 (PST)
-Message-ID: <f15b5f08-ba79-9d73-8967-74cf69930f86@kernel.dk>
-Date:   Tue, 21 Feb 2023 09:29:19 -0700
+        with ESMTP id S234122AbjBUQoL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Feb 2023 11:44:11 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6702A6FE;
+        Tue, 21 Feb 2023 08:43:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1676997816; x=1708533816;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GEqS54iOqnAwTwLmO/BPPAys2FtJiNPO2POhdEFOgNM=;
+  b=AxDXen8nKZf+I5Av5//a+oAcrOVh4MxOoHoCrKKO99ljfuWnycO2rrPq
+   9XsjegMZ0IPOdrxkmwVvvQIbly52ZkkKevtGghbM1Udt5H+dbBr0jlwZe
+   U5nPX4nuNFoMR7RgfG4M9mwufJKD+Rl4Ww+6IXoJbeRjyz5/pZd1jykm7
+   acR2q/3J5gK1YA273pXhKhoIwRvCo8zA+/XaWKVnAq4z2xh/BhfOjOPUI
+   +kK3V2nwSC+je+M6xbArAsSGhNbR/p286FdIVu2/SHkuDX+9EO4GRrg2A
+   nO2iYLZ/Raj2HMuqIrH1RPaCPZHuCmYR8cTApKe3zOf5KWKkOe1KTPpe9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10628"; a="334877889"
+X-IronPort-AV: E=Sophos;i="5.97,315,1669104000"; 
+   d="scan'208";a="334877889"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2023 08:39:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10628"; a="814564772"
+X-IronPort-AV: E=Sophos;i="5.97,315,1669104000"; 
+   d="scan'208";a="814564772"
+Received: from lkp-server01.sh.intel.com (HELO eac18b5d7d93) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Feb 2023 08:39:28 -0800
+Received: from kbuild by eac18b5d7d93 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pUVfr-00002h-1W;
+        Tue, 21 Feb 2023 16:39:27 +0000
+Date:   Wed, 22 Feb 2023 00:39:12 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Breno Leitao <leitao@debian.org>, axboe@kernel.dk,
+        asml.silence@gmail.com, io-uring@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+        gustavold@meta.com, leit@meta.com
+Subject: Re: [PATCH 2/2] io_uring: Add KASAN support for alloc_caches
+Message-ID: <202302220015.B4dQkwgA-lkp@intel.com>
+References: <20230221135721.3230763-2-leitao@debian.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH for-next v2 1/1] io_uring/rsrc: disallow multi-source reg
- buffers
-Content-Language: en-US
-To:     Gabriel Krisman Bertazi <krisman@suse.de>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org
-References: <6d973a629a321aa73c286f2d64d5375327d5c02a.1676902832.git.asml.silence@gmail.com>
- <87y1oscrsj.fsf@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87y1oscrsj.fsf@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230221135721.3230763-2-leitao@debian.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/20/23 7:53 AM, Gabriel Krisman Bertazi wrote:
-> Pavel Begunkov <asml.silence@gmail.com> writes:
-> 
->> If two or more mappings go back to back to each other they can be passed
->> into io_uring to be registered as a single registered buffer. That would
->> even work if mappings came from different sources, e.g. it's possible to
->> mix in this way anon pages and pages from shmem or hugetlb. That is not
->> a problem but it'd rather be less prone if we forbid such mixing.
->>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> ---
->>  io_uring/rsrc.c | 15 ++++++++-------
->>  1 file changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->> index a59fc02de598..70d7f94670f9 100644
->> --- a/io_uring/rsrc.c
->> +++ b/io_uring/rsrc.c
->> @@ -1162,18 +1162,19 @@ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
->>  	pret = pin_user_pages(ubuf, nr_pages, FOLL_WRITE | FOLL_LONGTERM,
->>  			      pages, vmas);
->>  	if (pret == nr_pages) {
->> +		struct file *file = vmas[0]->vm_file;
->> +
->>  		/* don't support file backed memory */
->>  		for (i = 0; i < nr_pages; i++) {
->> -			struct vm_area_struct *vma = vmas[i];
->> -
->> -			if (vma_is_shmem(vma))
->> +			if (vmas[i]->vm_file != file)
->> +				break;
-> 
-> Perhaps, return -EINVAL instead of -EOPNOTSUPP
+Hi Breno,
 
-Agree, -EOPNOTSUPP is OK for an unsupported case, but I think
--EINVAL makes more sense for the weird case of mixed sources
-as it's unlikely to ever make sense to support that.
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.2 next-20230221]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/io_uring-Add-KASAN-support-for-alloc_caches/20230221-220039
+patch link:    https://lore.kernel.org/r/20230221135721.3230763-2-leitao%40debian.org
+patch subject: [PATCH 2/2] io_uring: Add KASAN support for alloc_caches
+config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20230222/202302220015.B4dQkwgA-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/d909e43a1659897df77bc1373d3c24cc0d9129cf
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Breno-Leitao/io_uring-Add-KASAN-support-for-alloc_caches/20230221-220039
+        git checkout d909e43a1659897df77bc1373d3c24cc0d9129cf
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202302220015.B4dQkwgA-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   io_uring/io_uring.c: In function '__io_submit_flush_completions':
+   io_uring/io_uring.c:1502:40: warning: variable 'prev' set but not used [-Wunused-but-set-variable]
+    1502 |         struct io_wq_work_node *node, *prev;
+         |                                        ^~~~
+   io_uring/io_uring.c: In function 'io_uring_acache_free':
+>> io_uring/io_uring.c:2781:36: error: invalid application of 'sizeof' to incomplete type 'struct io_async_msghdr'
+    2781 |                             sizeof(struct io_async_msghdr));
+         |                                    ^~~~~~
+
+
+vim +2781 io_uring/io_uring.c
+
+  2777	
+  2778		io_alloc_cache_free(&ctx->apoll_cache, io_apoll_cache_free,
+  2779				    sizeof(struct async_poll));
+  2780		io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free,
+> 2781				    sizeof(struct io_async_msghdr));
+  2782	}
+  2783	
 
 -- 
-Jens Axboe
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

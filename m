@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9006469F6BB
+	by mail.lfdr.de (Postfix) with ESMTP id EC3CC69F6BC
 	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 15:39:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231939AbjBVOjX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Feb 2023 09:39:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47548 "EHLO
+        id S231916AbjBVOjY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Feb 2023 09:39:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbjBVOjV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 09:39:21 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CE838030;
-        Wed, 22 Feb 2023 06:39:20 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id t15so8067841wrz.7;
-        Wed, 22 Feb 2023 06:39:20 -0800 (PST)
+        with ESMTP id S231600AbjBVOjW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 09:39:22 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C8183803E;
+        Wed, 22 Feb 2023 06:39:21 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id r7so7797051wrz.6;
+        Wed, 22 Feb 2023 06:39:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M22oHJnuucBcT6iKB9lxW+hMSBsBNFHqZcHQOuzIIKc=;
-        b=ZykuQEKlBFq6ujC0ObdSGHbCSm/snEq4aV9KxuboP9EFXzEeY1U79ozyKgjFHHthmf
-         0hFMSfi6beUjiDTigg8SpQXuJDjkABt+JdL4wJEEh9eQIHVkcc7S47IJNmsM7P+Pg4n4
-         QDnxFwrpNzwPIKIEdFmw2BPWED5431FYF9tnIKllCgamReeOon8C+8hqImeyB5Of9dGK
-         dM2Fu67Wb6NRVJGP3dLaWscF+0tEdqS0eebfY2uHxLgEdUahj9V19t+7P759MWEYrAqs
-         ApjBt7YA37iJGalEGm2OI25QtjLMrC/rDcSSANiRzXnR4ku0lCFODiqWfW+u+udurx8+
-         GjAA==
+        bh=Yqisb0p/1TgnFfChFg4hQVIMzPMIgaeBy+4V1ZQduJ4=;
+        b=Fg0LA5G3eErF0j0+tGhZ9F2ZwjIou9MWYHnsZZbtNv/lNRl+rkgFrA2Tc9infoD9e5
+         +15HKDFakYlv9lZiQCsj1qmClc8lWeS/HkiT5ZaWJnpgBN/HqJyC2j3WAi5d5EA4oVrc
+         sAMI1q/GZVfTdR5YXHfHqkz7V1q5gfwU4mxUKz/mUa3GQvQlm9Pwjs2FMXDtvE2Pp4p+
+         L0IXcCLFNCFa2sAEx1Mr5ig9Q+JXxDYbj03y2FfRDfKUKLN/vjvnRWFeBfbQOT9ePSKt
+         o80GCrstl32fZhtCKotgPXlldos+JaKLyEHqAlTiUfmLXIh3QNhNzcS6bi8Tyxop7CtO
+         9now==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M22oHJnuucBcT6iKB9lxW+hMSBsBNFHqZcHQOuzIIKc=;
-        b=x56e1uctdnxWxLNmlu4ChzRbT/OugZLTyiXrVvPHGK8gF8Y1SDUPGi0/qY7ZYIEyoQ
-         IPaLwIoCHDGqlsvbF4I/Xe+Gpg5jfeJ+Qz3LPXLAgX0b13KThzWhkD2w5jf3UUqJCaPl
-         zj6GsXa7jcYUiQ+E8K4bs0Og1wVMJYj6EkYIKJJp2H4JSZVfuDUBCMMC/WgB0Im+M28r
-         Q1fGn6sv5UVM4oTARBV6NavGKrwFCQvL/x3Xt+sCG+RwKfbIkW/gpJWNw+2XVISXGYxM
-         i4mqwYOOf/YXVeTyxqzB0lrizKJLckB6yfc/vgpT8epetSAPNUkQ0ia5Xd4+QBei8ppP
-         RBaw==
-X-Gm-Message-State: AO0yUKUiJTOlVz/4T4C5c6keldw5IkhWuXavLzC9yy3IWJN8Y5JSqC8c
-        OD+yLskNd4GFmoU+QDtJ3F4Ip9bQkSI=
-X-Google-Smtp-Source: AK7set+k5mgTDKfGeD1kAvandRiZgXbSjsP+KNmZB3LcQrQ94qDCi9l/6JGlG12oiZ0mFXG/9F8sxQ==
-X-Received: by 2002:a5d:45cb:0:b0:2c5:4f04:c50d with SMTP id b11-20020a5d45cb000000b002c54f04c50dmr7554750wrs.48.1677076758850;
-        Wed, 22 Feb 2023 06:39:18 -0800 (PST)
+        bh=Yqisb0p/1TgnFfChFg4hQVIMzPMIgaeBy+4V1ZQduJ4=;
+        b=htMdd9gq2chFCkHcTkv9trMK/jX8D+wOaazY1Pn2VSz6CLUiqZ+5XZ7YEIw4Ke/O3J
+         hn2aK8uw4XNt0W/2rT/0SyNLRjhjsjulXQeSHgKDmokdnT8/OghMdEjhctqzwHc/2Bq9
+         NEEMxVv0Tm9HLb7JclJjtK7ajCzOpGfkJBbbmnvN6zJdgAdjRli43JRwAe0UEur5YaQz
+         PLyPlzwT2qKCZtlTp9ACx7C9gr3SQMbUWQOCzsn5XeAZAZsmjLE0YGZolxe5clhmgQai
+         ApXKsaUF0tJ3DO1l4dvAR2ShckizUy3Kx0l0UbDbfUGuDwNt4YoUzsF2PXwbjOeQU/ON
+         6xMQ==
+X-Gm-Message-State: AO0yUKXwlkaU/JPomul/h6MnlFGR8RNe+UFMYEHLdPP4kBLnh8cCXJCY
+        Hd+byopJi6AlAlMowFFflYoa7UE1CQo=
+X-Google-Smtp-Source: AK7set/y6zFHJXaafEe6jphQJOgrhJdwRhp4l4WKN2gjsCRmWRGW28GWxZPNkzLOY3euHphGIKQYkQ==
+X-Received: by 2002:a5d:6190:0:b0:2c7:a0b:e8d2 with SMTP id j16-20020a5d6190000000b002c70a0be8d2mr2569920wru.19.1677076759581;
+        Wed, 22 Feb 2023 06:39:19 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.95.64.threembb.co.uk. [94.196.95.64])
         by smtp.gmail.com with ESMTPSA id o2-20020a5d4742000000b002c59c6abc10sm8151735wrs.115.2023.02.22.06.39.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 06:39:18 -0800 (PST)
+        Wed, 22 Feb 2023 06:39:19 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH for-next 3/4] io_uring/rsrc: optimise single entry advance
-Date:   Wed, 22 Feb 2023 14:36:50 +0000
-Message-Id: <aca3d68af0a5e1e463c95ceb2d98202b3eb57025.1677041932.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 4/4] io_uring/rsrc: optimise registered huge pages
+Date:   Wed, 22 Feb 2023 14:36:51 +0000
+Message-Id: <757a0c399774f23df5dbfe2e0cc79f7ea432b04c.1677041932.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <cover.1677041932.git.asml.silence@gmail.com>
 References: <cover.1677041932.git.asml.silence@gmail.com>
@@ -71,31 +71,93 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Iterating within the first bvec entry should be essentially free, but we
-use iov_iter_advance() for that, which shows up in benchmark profiles
-taking up to 0.5% of CPU. Replace it with a hand coded version.
+When registering huge pages, internally io_uring will split them into
+many PAGE_SIZE bvec entries. That's bad for performance as drivers need
+to eventually dma-map the data and will do it individually for each bvec
+entry. Coalesce huge pages into one large bvec.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rsrc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ io_uring/rsrc.c | 38 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 32 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 53845e496881..ebbd2cea7582 100644
+index ebbd2cea7582..aab1bc6883e9 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -1364,7 +1364,10 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+@@ -1210,6 +1210,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 	unsigned long off;
+ 	size_t size;
+ 	int ret, nr_pages, i;
++	struct folio *folio;
+ 
+ 	*pimu = ctx->dummy_ubuf;
+ 	if (!iov->iov_base)
+@@ -1224,6 +1225,21 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 		goto done;
+ 	}
+ 
++	/* If it's a huge page, try to coalesce them into a single bvec entry */
++	if (nr_pages > 1) {
++		folio = page_folio(pages[0]);
++		for (i = 1; i < nr_pages; i++) {
++			if (page_folio(pages[i]) != folio) {
++				folio = NULL;
++				break;
++			}
++		}
++		if (folio) {
++			folio_put_refs(folio, nr_pages - 1);
++			nr_pages = 1;
++		}
++	}
++
+ 	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
+ 	if (!imu)
+ 		goto done;
+@@ -1236,6 +1252,17 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 
+ 	off = (unsigned long) iov->iov_base & ~PAGE_MASK;
+ 	size = iov->iov_len;
++	/* store original address for later verification */
++	imu->ubuf = (unsigned long) iov->iov_base;
++	imu->ubuf_end = imu->ubuf + iov->iov_len;
++	imu->nr_bvecs = nr_pages;
++	*pimu = imu;
++	ret = 0;
++
++	if (folio) {
++		bvec_set_page(&imu->bvec[0], pages[0], size, off);
++		goto done;
++	}
+ 	for (i = 0; i < nr_pages; i++) {
+ 		size_t vec_len;
+ 
+@@ -1244,12 +1271,6 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 		off = 0;
+ 		size -= vec_len;
+ 	}
+-	/* store original address for later verification */
+-	imu->ubuf = (unsigned long) iov->iov_base;
+-	imu->ubuf_end = imu->ubuf + iov->iov_len;
+-	imu->nr_bvecs = nr_pages;
+-	*pimu = imu;
+-	ret = 0;
+ done:
+ 	if (ret)
+ 		kvfree(imu);
+@@ -1364,6 +1385,11 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
  		const struct bio_vec *bvec = imu->bvec;
  
  		if (offset <= bvec->bv_len) {
--			iov_iter_advance(iter, offset);
-+			iter->bvec = bvec;
-+			iter->nr_segs = bvec->bv_len;
-+			iter->count -= offset;
-+			iter->iov_offset = offset;
- 		} else {
- 			unsigned long seg_skip;
- 
++			/*
++			 * Note, huge pages buffers consists of one large
++			 * bvec entry and should always go this way. The other
++			 * branch doesn't expect non PAGE_SIZE'd chunks.
++			 */
+ 			iter->bvec = bvec;
+ 			iter->nr_segs = bvec->bv_len;
+ 			iter->count -= offset;
 -- 
 2.39.1
 

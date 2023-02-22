@@ -2,97 +2,167 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BAA69EB82
-	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 00:54:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9F969F546
+	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 14:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjBUXyX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 21 Feb 2023 18:54:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38978 "EHLO
+        id S229673AbjBVN0N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Feb 2023 08:26:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjBUXyW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 21 Feb 2023 18:54:22 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E99022780
-        for <io-uring@vger.kernel.org>; Tue, 21 Feb 2023 15:53:53 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id bh1so6888479plb.11
-        for <io-uring@vger.kernel.org>; Tue, 21 Feb 2023 15:53:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HEXjybMjDo4AHQ34Ueszqup9k/yKbxkg1qfk1m5R0ZE=;
-        b=rvTtsJ8XsmBJcjdS8IDwz/ZbLtpkNnsYJ1zafYCdvQ7jU3B+G5wSX/q1U/42zP3Spm
-         nfiq9MS6PGB6ohcZP9bfR7GC4u3VT3K7cJaqSA0Vn816SmCH/JXhz8SJmp+dH3l2IDoY
-         TIHzT58wN+zOAMN25VtOYs9RFXF6F1e5L0op84eI68CpPHR/Ge8ABK/mZ5WkYI/SOmHO
-         S4OQJdOT6ze6DmhQ2rCnGUG5hC/8LzEYji/tf0d45ZA0FwxfrUD5zfKXtJ5WiiYPS+FZ
-         TioeOFjHCPMqBLN5jfsKb0f0QwS61Fhm64nHpp5ormjcZbznAwsdUn7T0BObBflMRYLF
-         V2zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HEXjybMjDo4AHQ34Ueszqup9k/yKbxkg1qfk1m5R0ZE=;
-        b=CpD2G+GKx3GblSLaFbHKh7E4DR++C92uR3b3X8THXKVDkxxXPMh0F2wFlNhpyECUrz
-         YH7kMubrbiYg3MHfw/BSxNHTBfG7VaMeNDuVwv8bXqtGWUQwtTcsvaLbs1VagwWEAm1A
-         ya+cuaYLPq+8q+vBarPdScxhVo2MhHrAZ6cIwrb95k1Kf0aYxmENrRS7V59/glsJH8yy
-         vOSeFB14QUDVF2OWGc8pLrWUn2xUEHKmnKjlIm2qV0qsBOS5mK0BKOpMNgZLZAv8d7+f
-         0qaFLr/8+nesulcriDAMG65OfLItf88xGcXYk75ZQ6jMbHUVTZObAzWnXAID3u3D4jJa
-         GOhA==
-X-Gm-Message-State: AO0yUKW/yB17xTW9Pt911kU1u6a3Y9mHPiGR0Ygfg/YfrsWktmFulJxi
-        pS7nZl+jIaJAk7gxL9S2AVatLnY7R6bjo4Kt
-X-Google-Smtp-Source: AK7set/T8MwrPRALxKN3YfGPwYAnNZN5efM/qjRCG3W2M8o7zPFH1cnfxv/naJ/bkjRqcbrgU+kbQw==
-X-Received: by 2002:a17:903:2291:b0:19a:8202:2dad with SMTP id b17-20020a170903229100b0019a82022dadmr7107391plh.2.1677023632953;
-        Tue, 21 Feb 2023 15:53:52 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ix12-20020a170902f80c00b001990028c0c9sm647885plb.68.2023.02.21.15.53.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Feb 2023 15:53:52 -0800 (PST)
-Message-ID: <15f4a519-cc2b-1cad-571a-a36e67d6101f@kernel.dk>
-Date:   Tue, 21 Feb 2023 16:53:27 -0700
+        with ESMTP id S231185AbjBVN0M (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 08:26:12 -0500
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1238D3B64F;
+        Wed, 22 Feb 2023 05:25:41 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VcH3mW5_1677072334;
+Received: from localhost(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VcH3mW5_1677072334)
+          by smtp.aliyun-inc.com;
+          Wed, 22 Feb 2023 21:25:34 +0800
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     ming.lei@redhat.com, axboe@kernel.dk, asml.silence@gmail.com,
+        ZiyangZhang@linux.alibaba.com
+Subject: [RFC v2 0/4] Add io_uring & ebpf based methods to implement zero-copy for ublk
+Date:   Wed, 22 Feb 2023 21:25:30 +0800
+Message-Id: <20230222132534.114574-1-xiaoguang.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 1/2] io_uring: Move from hlist to io_wq_work_node
-Content-Language: en-US
-To:     Breno Leitao <leitao@debian.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     leit@meta.com, linux-kernel@vger.kernel.org, gustavold@meta.com
-References: <20230221135721.3230763-1-leitao@debian.org>
- <782b4b43-790c-6e89-ea74-aac1fd4ff1e2@gmail.com>
- <b04b7d5d-582f-1b45-efa3-6e951dfc3cbf@debian.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b04b7d5d-582f-1b45-efa3-6e951dfc3cbf@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/21/23 11:38?AM, Breno Leitao wrote:
-> Sure. I will remove the assignents in "if" part and maybe replicate what
-> we have
-> in io_alloc_cache_get(). Something as:
->        if (cache->list.next) {
->                node = cache->list.next;
-> 
-> Thanks for the review!
+Normally, userspace block device implementations need to copy data between
+kernel block layer's io requests and userspace block device's userspace
+daemon. For example, ublk and tcmu both have similar logic, but this
+operation will consume cpu resources obviously, especially for large io.
 
-Pavel is right in that we generally discourage assignments in if
-statements etc. For the above, the usual approach would be:
+There are methods trying to reduce these cpu overheads, then userspace
+block device's io performance will be improved further. These methods
+contain: 1) use special hardware to do memory copy, but seems not all
+architectures have these special hardware; 2) software methods, such as
+mmap kernel block layer's io requests's data to userspace daemon [1],
+but it has page table's map/unmap, tlb flush overhead, security issue,
+etc, and it maybe only friendly to large io.
 
-node = cache->list.next;
-if (node) {
-	...
-}
+To solve this problem, I'd propose a new method, which will combine the
+respective advantages of io_uring and ebpf. Add a new program type
+BPF_PROG_TYPE_UBLK for ublk, userspace block device daemon process will
+register ebpf progs, which will use bpf helper offered by ublk bpf prog
+type to submit io requests on behalf of daemon process in kernel, note
+io requests will use kernel block layer io reqeusts's pages to do io,
+then the memory copy overhead will be gone.
+
+Currently only one helper has beed added:
+    u64 bpf_ublk_queue_sqe(struct ublk_io_bpf_ctx *bpf_ctx,
+                struct io_uring_sqe *sqe, u32 sqe_len, u32, fd)
+
+This helper will use io_uring to submit io requests, so we need to make
+io_uring be able to submit a sqe located in kernel(Some codes idea comes
+from Pavel's patchset [2], but pavel's patch needs sqe->buf comes from
+userspace addr). Bpf prog will initialize sqes, but does not need to
+initializes sqes' buf field, sqe->buf will come from kernel block layer
+io requests in some form. See patch 2 for more.
+
+By using ebpf, we can implement various userspace io logic in kernel,
+and the ultimate goal is to support users to build an in-kernel io
+agent for userspace daemon, userspace block device's daemon justs
+registers an ebpf at startup, though which I think there'll be a long
+way to go. There'll be advantages at least:
+  1. Remove memory copy between kernel block layer and userspace daemon
+completely.
+  2. Save memory. Userspace daemon doesn't need to maintain memory to
+issue and complete io requests, and use kernel block layer io requests
+memory directly.
+  2. We may reduce the number of round trips between kernel and userspace
+daemon, so may reduce kernel & userspace context switch overheads.
+
+HOW to test:
+  git clone https://github.com/ming1/ubdsrv
+  cd ubdsrv
+  git am -3 0001-Add-ebpf-support.patch
+  # replace "/root/ublk/" with your own linux build directory
+  cd bpf; make; cd ..;
+  ./build_with_liburing_src
+  ./ublk add -t loop -q 1 -d 128 -f loop.file
+
+fio job file:
+  [global]
+  direct=1
+  filename=/dev/ublkb0
+  time_based
+  runtime=60
+  numjobs=1
+  cpus_allowed=1
+
+  [rand-read-4k]
+  bs=2048K
+  iodepth=16
+  ioengine=libaio
+  rw=randwrite
+  stonewall
+
+Without this patch:
+  READ: bw=373MiB/s (392MB/s), 373MiB/s-373MiB/s (392MB/s-392MB/s), io=21.9GiB (23.5GB), run=60042-60042msec
+  WRITE: bw=371MiB/s (389MB/s), 371MiB/s-371MiB/s (389MB/s-389MB/s), io=21.8GiB (23.4GB), run=60042-60042msec
+  ublk daemon's cpu utilization is about 12.5%, showed by top tool.
+
+With this patch:
+  READ: bw=373MiB/s (392MB/s), 373MiB/s-373MiB/s (392MB/s-392MB/s), io=21.9GiB (23.5GB), run=60043-60043msec
+  WRITE: bw=371MiB/s (389MB/s), 371MiB/s-371MiB/s (389MB/s-389MB/s), io=21.8GiB (23.4GB), run=60043-60043msec
+ublk daemon's cpu utilization is about 1%, showed by top tool.
+
+From above tests, this method can reduce cpu copy overhead obviously.
+
+TODO:
+I must say this patchset is still just a RFC for design.
+
+1. Currently for this patchset, I just make ublk ebpf prog submit io requests
+using io_uring in kernel, cqe event still needs to be handled in userspace
+daemon. Once later we succeed in make io_uring handle cqe in kernel, ublk
+ebpf prog can implement io in kernel.
+
+2. I have not done much tests yet, will run liburing/ublk/blktests later.
+
+3. Try to build complicated ebpf prog.
+
+Any review and suggestions are welcome, thanks.
+
+[1] https://lore.kernel.org/all/20220318095531.15479-1-xiaoguang.wang@linux.alibaba.com/
+[2] https://lore.kernel.org/all/cover.1621424513.git.asml.silence@gmail.com/
+
+Xiaoguang Wang (4):
+  bpf: add UBLK program type
+  io_uring: enable io_uring to submit sqes located in kernel
+  io_uring: introduce IORING_URING_CMD_UNLOCK flag
+  ublk_drv: add ebpf support
+
+ drivers/block/ublk_drv.c       | 284 +++++++++++++++++++++++++++++++--
+ include/linux/bpf_types.h      |   2 +
+ include/linux/io_uring.h       |  12 ++
+ include/linux/io_uring_types.h |   8 +-
+ include/uapi/linux/bpf.h       |   2 +
+ include/uapi/linux/io_uring.h  |   5 +
+ include/uapi/linux/ublk_cmd.h  |  18 +++
+ io_uring/io_uring.c            |  59 ++++++-
+ io_uring/rsrc.c                |  18 +++
+ io_uring/rsrc.h                |   4 +
+ io_uring/rw.c                  |   7 +
+ io_uring/uring_cmd.c           |   6 +-
+ kernel/bpf/syscall.c           |   1 +
+ kernel/bpf/verifier.c          |  10 +-
+ scripts/bpf_doc.py             |   4 +
+ tools/include/uapi/linux/bpf.h |  10 ++
+ tools/lib/bpf/libbpf.c         |   1 +
+ 17 files changed, 434 insertions(+), 17 deletions(-)
 
 -- 
-Jens Axboe
+2.31.1
 

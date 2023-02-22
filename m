@@ -2,45 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0F9569F630
-	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 15:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87EDE69F6A4
+	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 15:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231236AbjBVONe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Feb 2023 09:13:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55914 "EHLO
+        id S229749AbjBVOfD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Feb 2023 09:35:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbjBVONd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 09:13:33 -0500
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FB7303F8;
-        Wed, 22 Feb 2023 06:13:30 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R831e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VcHE1wA_1677075207;
-Received: from 30.221.149.207(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VcHE1wA_1677075207)
-          by smtp.aliyun-inc.com;
-          Wed, 22 Feb 2023 22:13:27 +0800
-Message-ID: <fb36c119-87ec-a265-314c-bf6fc2f7964f@linux.alibaba.com>
-Date:   Wed, 22 Feb 2023 22:13:26 +0800
+        with ESMTP id S229673AbjBVOfB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 09:35:01 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6E1639CD3
+        for <io-uring@vger.kernel.org>; Wed, 22 Feb 2023 06:35:00 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id o4-20020a05600c4fc400b003e1f5f2a29cso6550951wmq.4
+        for <io-uring@vger.kernel.org>; Wed, 22 Feb 2023 06:35:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f3HiHBL+y+RgdCTvyi/fYxznhYJXTO+AV3o9Tm22wDw=;
+        b=Y+gI5JDjcCth7jm2hsxm0ZU9tN+GWw1gEMPAOvp95+ImUCK7OVvdcYrAfhYNRPA1wk
+         VxjJtz+t1Vd4Q7/3EYxejs90lXWmenoIMTS1ib0M+k3pOzbbYk68BxmoKTq5puAAgZaE
+         wOsBIcnUsdn0dQ9h5yUdB5OLvmHrGUMK+2taaBdxqUj/Fu2E+Mmrkmh8AaXvzMsAAIJ6
+         +ypWlKy5RlwqXEpPiOdPyj5unhHNuqfr6XUYE+d6f2Zmf6ulXYwMNyhrPWHH+q4KuMJA
+         vSKi8aRc+4v3Kt1aw+FC7jHyJuSjFuVGP1t3gtbEcryj6iP6Gb6t+inK5TgAdLqV9xwH
+         /niw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f3HiHBL+y+RgdCTvyi/fYxznhYJXTO+AV3o9Tm22wDw=;
+        b=A0JfRJLommnr3Zwk/xdCHbnlWii4eC/bvSqHWJXcVZdHZ5iT/v7SYpQJ8x6leb0MyP
+         Z3bFlVwUL8wma5jlvU3uvL24D5f0MF80MXxvtYCSZWkwJJ4Ry9EsTghMU2JyPvaq22Iu
+         aTEmXtauQWtMKyCU0I1NV0Vd36uhD/MrVzZJYHe5N2cWyBDHxYoHRfEYDvKxgOJOkvcQ
+         FdhBR3zaqfk4SV2ZyKeQyjGeEGbvPq3n7NXU6rU+luTfZhWwvAigqN5UylrhKJ+WBUjM
+         3LC3YPulP4Ps2iZC6GH8ElDxc7RS4H92e9E/ia4+j248wLemtgyyWuaLbXWEiwGVr7DD
+         6+5w==
+X-Gm-Message-State: AO0yUKUTQdXtHIyhNVmwI+BZnoBVpEa2TL+y7fJDkFU/U+c7lMhj7Y2x
+        5nZHyqKblBnGxBEiSQNXOqNiMIPoxK0=
+X-Google-Smtp-Source: AK7set+XiY0enm9zK4moSTDTvxNDTRCPp2uOFirwiD2rc+fYq587lbwNx4qaS9aBhVY2SLkJi0I80A==
+X-Received: by 2002:a05:600c:16c8:b0:3dc:5950:b358 with SMTP id l8-20020a05600c16c800b003dc5950b358mr311690wmn.14.1677076499165;
+        Wed, 22 Feb 2023 06:34:59 -0800 (PST)
+Received: from 127.0.0.1localhost (94.196.95.64.threembb.co.uk. [94.196.95.64])
+        by smtp.gmail.com with ESMTPSA id y24-20020a1c4b18000000b003e22508a343sm8565282wma.12.2023.02.22.06.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Feb 2023 06:34:58 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH for-next] io_uring: remove unused wq_list_merge
+Date:   Wed, 22 Feb 2023 14:32:43 +0000
+Message-Id: <5f9ad0301949213230ad9000a8359d591aae615a.1677002255.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [RFC 3/3] ublk_drv: add ebpf support
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        bpf@vger.kernel.org, axboe@kernel.dk, asml.silence@gmail.com,
-        ZiyangZhang@linux.alibaba.com
-References: <20230215004122.28917-1-xiaoguang.wang@linux.alibaba.com>
- <20230215004122.28917-4-xiaoguang.wang@linux.alibaba.com>
- <Y+3lOn04pdFtdGbr@T590>
- <54043113-e524-6ca2-ce77-08d45099aff2@linux.alibaba.com>
- <Y+7uNpw7QBpJ4GHA@T590>
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-In-Reply-To: <Y+7uNpw7QBpJ4GHA@T590>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,50 +67,46 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-hi,
+There are no users of wq_list_merge, kill it.
 
-I spent some time to write v2, especially think about how to work
-around task_work_add is not exported, so sorry for late response.
->
->>> The above is for setting up target io parameter, which is supposed
->>> to be from userspace, cause it is result of user space logic. If
->>> these parameters are from kernel, the whole logic has to be done
->>> in io_prep_prog.
->> Yeah, it's designed that io_prep_prog implements user space
->> io logic.
-> That could be the biggest weakness of this approach, because people
-> really want to implement complicated logic in userspace, which should
-> be the biggest value of ublk, but now seems you move kernel C
-> programming into ebpf userspace programming, I don't think ebpf
-> is good at handling complicated userspace logic.
-Absolutely agree with you, ebpf has strict programming rules,
-I spent more time than I had thought at startup for support loop
-target ebpf prog(ublk.bpf.c). Later I'll try to collaborate with my
-colleagues, to see whether we can program their userspace logic
-into ebpf prog or partially.
- 
->> io_prep_prog is called when ublk_queue_rq() is called, this bpf
->> prog will initialize one or more sqes according to user logic, and
->> io_prep_prog will put these sqes in an ebpf map structure, then
->> execute a task_work_add() to notify ubq_daemon to execute
->> io_submit_prog. Note, we can not call io_uring_submit_sqe()
->> in task context that calls ublk_queue_rq(), that context does not
->> have io_uring instance owned by ubq_daemon.
->> Later ubq_daemon will call io_submit_prog to submit sqes.
-> Submitting sqe from kernel looks interesting, but I guess
-> performance may be hurt, given plugging(batching) can't be applied
-> any more, which is supposed to affect io perf a lot.
-Yes, agree, but I didn't have much time to improve this yet.
-Currently, I mainly try to use this feature on large ios, to
-reduce memory copy overhead, which consumes much
-cpu resource, our clients really hope we can reduce it.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/slist.h | 22 ----------------------
+ 1 file changed, 22 deletions(-)
 
-Regards,
-Xiaoguang Wang
-
->
->
->
-> Thanks,
-> Ming
+diff --git a/io_uring/slist.h b/io_uring/slist.h
+index f27601fa4660..7c198a40d5f1 100644
+--- a/io_uring/slist.h
++++ b/io_uring/slist.h
+@@ -27,28 +27,6 @@ static inline void wq_list_add_after(struct io_wq_work_node *node,
+ 		list->last = node;
+ }
+ 
+-/**
+- * wq_list_merge - merge the second list to the first one.
+- * @list0: the first list
+- * @list1: the second list
+- * Return the first node after mergence.
+- */
+-static inline struct io_wq_work_node *wq_list_merge(struct io_wq_work_list *list0,
+-						    struct io_wq_work_list *list1)
+-{
+-	struct io_wq_work_node *ret;
+-
+-	if (!list0->first) {
+-		ret = list1->first;
+-	} else {
+-		ret = list0->first;
+-		list0->last->next = list1->first;
+-	}
+-	INIT_WQ_LIST(list0);
+-	INIT_WQ_LIST(list1);
+-	return ret;
+-}
+-
+ static inline void wq_list_add_tail(struct io_wq_work_node *node,
+ 				    struct io_wq_work_list *list)
+ {
+-- 
+2.39.1
 

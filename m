@@ -2,192 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E36EE69FAA8
-	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 19:00:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 978A069FB00
+	for <lists+io-uring@lfdr.de>; Wed, 22 Feb 2023 19:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232165AbjBVSAo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Feb 2023 13:00:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39818 "EHLO
+        id S232093AbjBVSaW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 22 Feb 2023 13:30:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232145AbjBVSAn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 13:00:43 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D0838B6D;
-        Wed, 22 Feb 2023 10:00:41 -0800 (PST)
-Received: by mail-wm1-f46.google.com with SMTP id l2-20020a05600c1d0200b003e1f6dff952so7120033wms.1;
-        Wed, 22 Feb 2023 10:00:41 -0800 (PST)
+        with ESMTP id S232365AbjBVSaV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 13:30:21 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D09839CC5
+        for <io-uring@vger.kernel.org>; Wed, 22 Feb 2023 10:30:17 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id r4so1033018ila.2
+        for <io-uring@vger.kernel.org>; Wed, 22 Feb 2023 10:30:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1677090617;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/OiGxXdhMijif1OrnbqcE7MLbFzI92LPmx4R6TbKMMc=;
+        b=W+vuxZLUd+mJ/F8W+ZcBVKYcXbuIEKmpD5s5pnEKXDFW9CLflCZRp6TF47PIZwBAmJ
+         M7nTySzgGanAsSVnGZB8jiSW2AEN4oUhGQjCRv53nW/KD/nWIC42gQQ/ZxhS2GBfrG+R
+         7kJZgPoe1A4PbbXRTV0oFKciryCmH7ZYVewL6Pw5CUAlZ3QSLkbiUf7HMejD2sgD/BtY
+         47MPGZF7R9msLMlSO64M4zFyu1OQrZ18kkE8b9v3kXhGVrEMvhOWXMPtEHw4v6d6LNSq
+         i5oW6858mcF3gSuOInrQ4cfPx69Z9WkQeJaWV67zjxPR6xjzRJQtCOWRpo0U4BHVSpvl
+         PgTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xNEnafHq9H7B13AnAe5txqBr7aKjs9xFRkNpLXSLW18=;
-        b=rYesFRYSeEwu7aVyceL6VPAdNSkdlVRydPxAhVeCv9wSn4Zpr8DCobYYNXt8fTA3k/
-         GqdUT+Wa7hJjbDv5ZnU+TDibA8/YTX3jTccMBYbMra//pvVyMUop6xGt8S80Hf+T5vwG
-         p2WKGZJnoVn62FPNEF6KuuEkkKx/KqXyQ49PlToCGN/4P3U/SM589j3Z0J7IBTzHx2XS
-         Tgf0KUfGL1TnuEA+Up5ivpVWn/x18V7NfXiZvYjIiso7kpm/v70mxjAdakqwZLfP+sEo
-         c1/fxd1CX84JKp6egiqTq1h2b5N75x5zCMHcucwXZ0sWggmds4ZA9zvQzQ8EqwpvrEsB
-         lAGg==
-X-Gm-Message-State: AO0yUKV9vCmSdJ0es/yxSJXLaRJpQkuEJKqu3ecMMxWjvebyOC3TqIAp
-        yPMbj7msdGlIXZshoZTKbfA=
-X-Google-Smtp-Source: AK7set8rfsohKcf7wPp02rpSUpY/f0i6Yf0vmQu2AEMjQgrWYu+GIzB/oMWGqoZwV8IapTdF9GMkeQ==
-X-Received: by 2002:a05:600c:4e41:b0:3e1:feb9:5a2f with SMTP id e1-20020a05600c4e4100b003e1feb95a2fmr7846372wmq.2.1677088840397;
-        Wed, 22 Feb 2023 10:00:40 -0800 (PST)
-Received: from localhost (fwdproxy-cln-023.fbsv.net. [2a03:2880:31ff:17::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 1-20020a05600c274100b003dfe549da4fsm9179448wmw.18.2023.02.22.10.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 10:00:40 -0800 (PST)
-From:   Breno Leitao <leitao@debian.org>
-To:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
+        d=1e100.net; s=20210112; t=1677090617;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/OiGxXdhMijif1OrnbqcE7MLbFzI92LPmx4R6TbKMMc=;
+        b=4gLN1sO7sJ23lp5yUTk+P2BvBOGOFJ9BMSBALaE9p2jdT/U9MHk3YM83h0i/ubVNxQ
+         CXCizyIMek1/OWBg1QOh9qaRCRa5wx4PT/xQBruTegJFizHThQwL0vKQ0nqMSC7yMPFJ
+         eITY6QbLd2rtg/Ld/WNIV5iUgdgLJmAkjg28Vr7ACgpW6oTl8JFEAwCDv3Sg7NYVT+P4
+         /uh2zikjQtUrO8kaGTXYwcI8Koi2gSmwYAkimotk/ljxsXH+0+Xs9jEj4DH0hQ5HEGFR
+         /M39UQvikOo7Q7rFELQJfZHkQRTXkRzZZZdpLKDK7WXj2mZiZpiNd0aQGS5Nqf8kXAR7
+         yWEQ==
+X-Gm-Message-State: AO0yUKVx+Qvhlvc2r2XECKgX+tPe++t0l66Q8L2KmeqxvXT5pHAhUOEd
+        +TJnoTM9VIJdZIFmhgnE+3F3MQ==
+X-Google-Smtp-Source: AK7set/e1iwBIhPd5GBJKzX/zo+fr7RQssIJpTzPLRJTrJallE9NEohMFmQMhtKpGONDG2YzmQu8nw==
+X-Received: by 2002:a05:6e02:d08:b0:316:e2ee:3a15 with SMTP id g8-20020a056e020d0800b00316e2ee3a15mr2621798ilj.1.1677090617221;
+        Wed, 22 Feb 2023 10:30:17 -0800 (PST)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id g14-20020a056e021a2e00b00313d86cd988sm2579889ile.49.2023.02.22.10.30.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Feb 2023 10:30:16 -0800 (PST)
+Message-ID: <b0c82199-fb96-08a2-6158-cb1655b6ba3d@kernel.dk>
+Date:   Wed, 22 Feb 2023 11:30:15 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v2 2/2] io_uring: Add KASAN support for alloc_caches
+Content-Language: en-US
+To:     Breno Leitao <leitao@debian.org>, asml.silence@gmail.com,
+        io-uring@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, gustavold@meta.com, leit@meta.com,
         kasan-dev@googlegroups.com, Breno Leitao <leit@fb.com>
-Subject: [PATCH v2 2/2] io_uring: Add KASAN support for alloc_caches
-Date:   Wed, 22 Feb 2023 10:00:35 -0800
-Message-Id: <20230222180035.3226075-3-leitao@debian.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230222180035.3226075-1-leitao@debian.org>
 References: <20230222180035.3226075-1-leitao@debian.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+ <20230222180035.3226075-3-leitao@debian.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230222180035.3226075-3-leitao@debian.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Breno Leitao <leit@fb.com>
+On 2/22/23 11:00?AM, Breno Leitao wrote:
+> -static inline struct io_cache_entry *io_alloc_cache_get(struct io_alloc_cache *cache)
+> +static inline struct io_cache_entry *io_alloc_cache_get(struct io_alloc_cache *cache,
+> +							size_t size)
+>  {
+>  	if (cache->list.next) {
+>  		struct io_cache_entry *entry;
+>  		entry = container_of(cache->list.next, struct io_cache_entry, node);
+> +		kasan_unpoison_range(entry, size);
+>  		cache->list.next = cache->list.next->next;
+>  		return entry;
+>  	}
 
-Add support for KASAN in the alloc_caches (apoll and netmsg_cache).
-Thus, if something touches the unused caches, it will raise a KASAN
-warning/exception.
+Does this generate the same code if KASAN isn't enabled? Since there's a
+4-byte hole in struct io_alloc_cache(), might be cleaner to simply add
+the 'size' argument to io_alloc_cache_init() and store it in the cache.
+Then the above just becomes:
 
-It poisons the object when the object is put to the cache, and unpoisons
-it when the object is gotten or freed.
+	kasan_unpoison_range(entry, cache->elem_size);
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- io_uring/alloc_cache.h | 11 ++++++++---
- io_uring/io_uring.c    | 14 ++++++++++++--
- io_uring/net.c         |  2 +-
- io_uring/net.h         |  4 ----
- io_uring/poll.c        |  2 +-
- 5 files changed, 22 insertions(+), 11 deletions(-)
+instead and that'd definitely generate the same code as before if KASAN
+isn't enabled.
 
-diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
-index ae61eb383cae..6c6bdde6306b 100644
---- a/io_uring/alloc_cache.h
-+++ b/io_uring/alloc_cache.h
-@@ -16,16 +16,20 @@ static inline bool io_alloc_cache_put(struct io_alloc_cache *cache,
- 	if (cache->nr_cached < IO_ALLOC_CACHE_MAX) {
- 		cache->nr_cached++;
- 		wq_stack_add_head(&entry->node, &cache->list);
-+		/* KASAN poisons object */
-+		kasan_slab_free_mempool(entry);
- 		return true;
- 	}
- 	return false;
- }
- 
--static inline struct io_cache_entry *io_alloc_cache_get(struct io_alloc_cache *cache)
-+static inline struct io_cache_entry *io_alloc_cache_get(struct io_alloc_cache *cache,
-+							size_t size)
- {
- 	if (cache->list.next) {
- 		struct io_cache_entry *entry;
- 		entry = container_of(cache->list.next, struct io_cache_entry, node);
-+		kasan_unpoison_range(entry, size);
- 		cache->list.next = cache->list.next->next;
- 		return entry;
- 	}
-@@ -40,10 +44,11 @@ static inline void io_alloc_cache_init(struct io_alloc_cache *cache)
- }
- 
- static inline void io_alloc_cache_free(struct io_alloc_cache *cache,
--					void (*free)(struct io_cache_entry *))
-+					void (*free)(struct io_cache_entry *),
-+					size_t size)
- {
- 	while (1) {
--		struct io_cache_entry *entry = io_alloc_cache_get(cache);
-+		struct io_cache_entry *entry = io_alloc_cache_get(cache, size);
- 		if (!entry)
- 			break;
- 		free(entry);
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 80b6204769e8..01367145689b 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2766,6 +2766,17 @@ static void io_req_caches_free(struct io_ring_ctx *ctx)
- 	mutex_unlock(&ctx->uring_lock);
- }
- 
-+static __cold void io_uring_acache_free(struct io_ring_ctx *ctx)
-+{
-+
-+	io_alloc_cache_free(&ctx->apoll_cache, io_apoll_cache_free,
-+			    sizeof(struct async_poll));
-+#ifdef CONFIG_NET
-+	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free,
-+			    sizeof(struct io_async_msghdr));
-+#endif
-+}
-+
- static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- {
- 	io_sq_thread_finish(ctx);
-@@ -2781,8 +2792,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 		__io_sqe_files_unregister(ctx);
- 	io_cqring_overflow_kill(ctx);
- 	io_eventfd_unregister(ctx);
--	io_alloc_cache_free(&ctx->apoll_cache, io_apoll_cache_free);
--	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
-+	io_uring_acache_free(ctx);
- 	mutex_unlock(&ctx->uring_lock);
- 	io_destroy_buffers(ctx);
- 	if (ctx->sq_creds)
-diff --git a/io_uring/net.c b/io_uring/net.c
-index fbc34a7c2743..8dc67b23b030 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -139,7 +139,7 @@ static struct io_async_msghdr *io_msg_alloc_async(struct io_kiocb *req,
- 	struct io_async_msghdr *hdr;
- 
- 	if (!(issue_flags & IO_URING_F_UNLOCKED)) {
--		entry = io_alloc_cache_get(&ctx->netmsg_cache);
-+		entry = io_alloc_cache_get(&ctx->netmsg_cache, sizeof(struct io_async_msghdr));
- 		if (entry) {
- 			hdr = container_of(entry, struct io_async_msghdr, cache);
- 			hdr->free_iov = NULL;
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 5ffa11bf5d2e..d8359de84996 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -62,8 +62,4 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- void io_send_zc_cleanup(struct io_kiocb *req);
- 
- void io_netmsg_cache_free(struct io_cache_entry *entry);
--#else
--static inline void io_netmsg_cache_free(struct io_cache_entry *entry)
--{
--}
- #endif
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 8339a92b4510..295d59875f00 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -661,7 +661,7 @@ static struct async_poll *io_req_alloc_apoll(struct io_kiocb *req,
- 		apoll = req->apoll;
- 		kfree(apoll->double_poll);
- 	} else if (!(issue_flags & IO_URING_F_UNLOCKED)) {
--		entry = io_alloc_cache_get(&ctx->apoll_cache);
-+		entry = io_alloc_cache_get(&ctx->apoll_cache, sizeof(struct async_poll));
- 		if (entry == NULL)
- 			goto alloc_apoll;
- 		apoll = container_of(entry, struct async_poll, cache);
 -- 
-2.30.2
+Jens Axboe
 

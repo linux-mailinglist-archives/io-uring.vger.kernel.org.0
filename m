@@ -2,96 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B58A06A0197
-	for <lists+io-uring@lfdr.de>; Thu, 23 Feb 2023 04:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC996A0B69
+	for <lists+io-uring@lfdr.de>; Thu, 23 Feb 2023 15:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231962AbjBWDqI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 22 Feb 2023 22:46:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42680 "EHLO
+        id S233771AbjBWOB3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 23 Feb 2023 09:01:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjBWDqH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 22 Feb 2023 22:46:07 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883A1457D7
-        for <io-uring@vger.kernel.org>; Wed, 22 Feb 2023 19:46:06 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id e5so12392488plg.8
-        for <io-uring@vger.kernel.org>; Wed, 22 Feb 2023 19:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LsgXVTuZ5gs8wY39tz46RZqNBvlD333pgaPRJ3xqlZg=;
-        b=qlC+p2Rdq3pYGwEVGIAMHRp3nzx64w5WuzpwaQfLOLpRkoPzRCOYdyfUOq6/I7DelG
-         2OuJexCcdH0gupdMgYyxe02V8tzeasqGpUoHSps+8ooCW85Lu3iF+wEt0x6Yn6N5R3Lb
-         Tyk/Y8zHBqggc76GNRIQ8ayKorAX90lzJbRARYXqT88JsLBYqVFgIt5+cbQeYy8MvKs7
-         B6XF4nMVJnysxWOznRoobyoOL+Lr1iJaS2B3n82mQ3s/eF2biuwWorDk0cBG0Kv1my+O
-         JknoUcI947WvqidBV04HOwEIwUYkmqIUdyywmEiv9PrJ+2mi7Zn+rz76exdAJIscEvfi
-         Gl8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsgXVTuZ5gs8wY39tz46RZqNBvlD333pgaPRJ3xqlZg=;
-        b=dzMWfk6yIOlModyvHQGdPP0nOKGWnj9lqbJL2d/1el5sgFKu8KPVXf9NowIXAn2r+7
-         YmTGzVmc7PFNJq6BSr0o4VofqaUJJ/9mYPNOM2mKBqBtQgDRgMGF0ga35NDDr+5QB2ss
-         gWZLUGqFLT7XRSB8EDnqpVYdwIwCPGJSc8N1ZNZf/LgbGLKYJ3I7mWnIZk9MSPU6BMXv
-         jgf/QwdMpe5BCjlLwjc5aLdvLlRNUAIhsBNy5rDzsre1OzfQNiT2gQDseXC+ru1VDZWD
-         IwXYZ5h0i/dTrQ9kNSO0poN8Jzkth3+DnggG4Wmm8m43bIBTuAcyeb2xsQ0DSr9sCru9
-         bhvA==
-X-Gm-Message-State: AO0yUKXnEmJ+R0usis9BpkikTxEr9WqoVn30miTedN4cJyanxxdtEUm/
-        Odu7Wj/BM1CtNNeuqF8zr50LOw==
-X-Google-Smtp-Source: AK7set9ok2v/n765ixz4FIIK/4MnZhyIh/0UbCdNki1gtDZ8OHx9TQFlgU2Nztf+yyJzSfLGf8Lb2w==
-X-Received: by 2002:a05:6a21:3399:b0:c7:6a98:5bd9 with SMTP id yy25-20020a056a21339900b000c76a985bd9mr13844647pzb.3.1677123965911;
-        Wed, 22 Feb 2023 19:46:05 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x24-20020a63db58000000b004fb71d96d78sm5558269pgi.2.2023.02.22.19.46.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Feb 2023 19:46:05 -0800 (PST)
-Message-ID: <55a01e39-c28c-dde0-172c-feee378c2f74@kernel.dk>
-Date:   Wed, 22 Feb 2023 20:46:04 -0700
+        with ESMTP id S232906AbjBWOB2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 23 Feb 2023 09:01:28 -0500
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C94F5678A;
+        Thu, 23 Feb 2023 06:01:25 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VcKjgr3_1677160881;
+Received: from 30.221.149.207(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VcKjgr3_1677160881)
+          by smtp.aliyun-inc.com;
+          Thu, 23 Feb 2023 22:01:22 +0800
+Message-ID: <39303cc0-23d9-c769-94c0-25d3e51ed20f@linux.alibaba.com>
+Date:   Thu, 23 Feb 2023 22:01:21 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH tools/io_uring] tools/io_uring: correctly set "ret" for
- sq_poll case
-To:     Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
-        asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230221073736.628851-1-ZiyangZhang@linux.alibaba.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.8.0
+Subject: Re: [RFC v2 4/4] ublk_drv: add ebpf support
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        bpf <bpf@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        ZiyangZhang@linux.alibaba.com
+References: <20230222132534.114574-1-xiaoguang.wang@linux.alibaba.com>
+ <20230222132534.114574-5-xiaoguang.wang@linux.alibaba.com>
+ <CAADnVQ+tqakZWm8P9dLSLKxBJJanxVY3rVbbkzwhSgM2N-S2ow@mail.gmail.com>
 Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230221073736.628851-1-ZiyangZhang@linux.alibaba.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <CAADnVQ+tqakZWm8P9dLSLKxBJJanxVY3rVbbkzwhSgM2N-S2ow@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/21/23 12:37?AM, Ziyang Zhang wrote:
-> For sq_poll case, "ret" is not initialized or cleared/set. In this way,
-> output of this test program is incorrect and we can not even stop this
-> program by pressing CTRL-C.
-> 
-> Reset "ret" to zero in each submission/completion round, and assign
-> "ret" to "this_reap".
+hi,
 
-Can you check if this issue also exists in the fio copy of this, which
-is t/io_uring.c in:
+> On Wed, Feb 22, 2023 at 5:29 AM Xiaoguang Wang
+> <xiaoguang.wang@linux.alibaba.com> wrote:
+>> Currenly only one bpf_ublk_queue_sqe() ebpf is added, ublksrv target
+>> can use this helper to write ebpf prog to support ublk kernel & usersapce
+>> zero copy, please see ublksrv test codes for more info.
+>>
+>>
+>> +const struct bpf_func_proto ublk_bpf_queue_sqe_proto = {
+>> +       .func = bpf_ublk_queue_sqe,
+>> +       .gpl_only = false,
+>> +       .ret_type = RET_INTEGER,
+>> +       .arg1_type = ARG_ANYTHING,
+>> +       .arg2_type = ARG_ANYTHING,
+>> +       .arg3_type = ARG_ANYTHING,
+>> +       .arg4_type = ARG_ANYTHING,
+>> +};
+> You know that the above is unsafe, right?
+Yes, I know it's not safe, will improve it in next version.
 
-git://git.kernel.dk/fio
+>
+>> +
+>>  static const struct bpf_func_proto *
+>>  ublk_bpf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>>  {
+>> -       return bpf_base_func_proto(func_id);
+>> +       switch (func_id) {
+>> +       case BPF_FUNC_ublk_queue_sqe:
+>> +               return &ublk_bpf_queue_sqe_proto;
+>> +       default:
+>> +               return bpf_base_func_proto(func_id);
+>> +       }
+>>  }
+>>
+>>  static bool ublk_bpf_is_valid_access(int off, int size,
+>> @@ -200,6 +252,23 @@ static bool ublk_bpf_is_valid_access(int off, int size,
+>>                         const struct bpf_prog *prog,
+>>                         struct bpf_insn_access_aux *info)
+>>  {
+>> +       if (off < 0 || off >= sizeof(struct ublk_bpf_ctx))
+>> +               return false;
+>> +       if (off % size != 0)
+>> +               return false;
+>> +
+>> +       switch (off) {
+>> +       case offsetof(struct ublk_bpf_ctx, q_id):
+>> +               return size == sizeof_field(struct ublk_bpf_ctx, q_id);
+>> +       case offsetof(struct ublk_bpf_ctx, tag):
+>> +               return size == sizeof_field(struct ublk_bpf_ctx, tag);
+>> +       case offsetof(struct ublk_bpf_ctx, op):
+>> +               return size == sizeof_field(struct ublk_bpf_ctx, op);
+>> +       case offsetof(struct ublk_bpf_ctx, nr_sectors):
+>> +               return size == sizeof_field(struct ublk_bpf_ctx, nr_sectors);
+>> +       case offsetof(struct ublk_bpf_ctx, start_sector):
+>> +               return size == sizeof_field(struct ublk_bpf_ctx, start_sector);
+>> +       }
+>>         return false;
+> We don't introduce stable 'ctx' anymore.
+> Please see how hid-bpf is doing things.
+ok, will learn it, thanks.
 
-The copy in the kernel is pretty outdated at this point, and should
-probably get removed. But if the bug is in the above main version, then
-we should fix it there and then ponder if we want to remove the one in
-the kernel or just get it updated to match the upstream version.
-
--- 
-Jens Axboe
+Regards,
+Xiaoguang Wang
 

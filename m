@@ -2,207 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 765266A2100
-	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 18:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D96EA6A218B
+	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 19:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbjBXR7K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Feb 2023 12:59:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54942 "EHLO
+        id S229533AbjBXSc5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Feb 2023 13:32:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjBXR7J (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 12:59:09 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824261ACF5;
-        Fri, 24 Feb 2023 09:59:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677261545; x=1708797545;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=apZELO6Sezh5CYb3WbLafO6vH9pyOT7fMc2jMjwjHdw=;
-  b=Z8en2PvXMCKp19Md6WjU+zc3Q0XksbSfTPcTsPhQPU0tEzHdRbxIFMZz
-   KeB68+Z3cazcECUYEX0INGS1bFetyJSBXvFxTiLcL9ubOdebd40fjOruV
-   ybOsiegXnK7r5IC/NQFMZHfck0+dRl+lqt2Y1BzTg1aThHAdJsoQuXcDy
-   MEaK+oaRVS/guQ9GmdgMWlph8yQxYpIgjoGtlQqFbc+MclKH3BYcUQK51
-   wYzbXyu2WBV9qeVvg5+l76nG+f4ZLGLUC2c1gH6yk0Gh/7jX57Trgn58k
-   5yJYplsKwR1hXC4LO9yQdZgf4BHwS9fBP19WMuGFKx+O//OUlYw397nyz
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10631"; a="321739952"
-X-IronPort-AV: E=Sophos;i="5.97,325,1669104000"; 
-   d="scan'208";a="321739952"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2023 09:59:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10631"; a="622794916"
-X-IronPort-AV: E=Sophos;i="5.97,325,1669104000"; 
-   d="scan'208";a="622794916"
-Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 24 Feb 2023 09:59:00 -0800
-Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pVcLU-0002aV-05;
-        Fri, 24 Feb 2023 17:59:00 +0000
-Date:   Sat, 25 Feb 2023 01:58:00 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arch@vger.kernel.org, io-uring@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 4d6d7ce9baaf9e67a85a53afc69a36af716f7670
-Message-ID: <63f8faa8.OL9Dhyo2Tte6mwTc%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229872AbjBXSc4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 13:32:56 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B9762D7E;
+        Fri, 24 Feb 2023 10:32:51 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 375DC38947;
+        Fri, 24 Feb 2023 18:32:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1677263570; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IwljiIh1fS+2NOwzceHLVqy8Ve5Q5t96iwJ4JuzYLq0=;
+        b=RwI0RqcNlUU0utIdjpsaTVCw+iniqt0jauvlB7csQiGHZibjHcYsgDlO9DgUOkS+irS/fd
+        W1H3e+qve5djSRAnDYFdlUYBx3USSXHrJCj0w1mB4JZBbJOFRNFF2EwLG6ATk30qC9p4F3
+        mF67v1sPeZDapmaKWqADNrpYlk2p2us=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1677263570;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IwljiIh1fS+2NOwzceHLVqy8Ve5Q5t96iwJ4JuzYLq0=;
+        b=4CqLLgv8o49Zz8tQN1NCxV7j5ZXyYT4fOH6aEQcT0stUQ7fRDz9YcN+4cioS+xbYQOy+yh
+        6PaKtGYaklgm7CDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BBA0413246;
+        Fri, 24 Feb 2023 18:32:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id p64CIdEC+WNvbAAAMHmgww
+        (envelope-from <krisman@suse.de>); Fri, 24 Feb 2023 18:32:49 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Breno Leitao <leitao@debian.org>, asml.silence@gmail.com,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gustavold@meta.com, leit@meta.com, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v3 1/2] io_uring: Move from hlist to io_wq_work_node
+References: <20230223164353.2839177-1-leitao@debian.org>
+        <20230223164353.2839177-2-leitao@debian.org> <87wn48ryri.fsf@suse.de>
+        <8404f520-2ef7-b556-08f6-5829a2225647@kernel.dk>
+Date:   Fri, 24 Feb 2023 15:32:47 -0300
+In-Reply-To: <8404f520-2ef7-b556-08f6-5829a2225647@kernel.dk> (Jens Axboe's
+        message of "Thu, 23 Feb 2023 12:39:25 -0700")
+Message-ID: <87mt52syls.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 4d6d7ce9baaf9e67a85a53afc69a36af716f7670  Add linux-next specific files for 20230224
+Jens Axboe <axboe@kernel.dk> writes:
 
-Error/Warning reports:
+> On 2/23/23 12:02?PM, Gabriel Krisman Bertazi wrote:
+>> Breno Leitao <leitao@debian.org> writes:
+>> 
+>>> Having cache entries linked using the hlist format brings no benefit, and
+>>> also requires an unnecessary extra pointer address per cache entry.
+>>>
+>>> Use the internal io_wq_work_node single-linked list for the internal
+>>> alloc caches (async_msghdr and async_poll)
+>>>
+>>> This is required to be able to use KASAN on cache entries, since we do
+>>> not need to touch unused (and poisoned) cache entries when adding more
+>>> entries to the list.
+>>>
+>> 
+>> Looking at this patch, I wonder if it could go in the opposite direction
+>> instead, and drop io_wq_work_node entirely in favor of list_head. :)
+>> 
+>> Do we gain anything other than avoiding the backpointer with a custom
+>> linked implementation, instead of using the interface available in
+>> list.h, that developers know how to use and has other features like
+>> poisoning and extra debug checks?
+>
+> list_head is twice as big, that's the main motivation. This impacts
+> memory usage (obviously), but also caches when adding/removing
+> entries.
 
-https://lore.kernel.org/oe-kbuild-all/202302111601.jtY4lKrA-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202302112104.g75cGHZd-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202302210350.lynWcL4t-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202302242257.4W4myB9z-lkp@intel.com
+Right. But this is true all around the kernel.  Many (Most?)  places
+that use list_head don't even need to touch list_head->prev.  And
+list_head is usually embedded in larger structures where the cost of
+the extra pointer is insignificant.  I suspect the memory
+footprint shouldn't really be the problem.
 
-Error/Warning: (recently discovered and may have been fixed)
+This specific patch is extending io_wq_work_node to io_cache_entry,
+where the increased size will not matter.  In fact, for the cached
+structures, the cache layout and memory footprint don't even seem to
+change, as io_cache_entry is already in a union larger than itself, that
+is not crossing cachelines, (io_async_msghdr, async_poll).
 
-FAILED: load BTF from vmlinux: No data available
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn30/dcn30_optc.c:294:6: warning: no previous prototype for 'optc3_wait_drr_doublebuffer_pending_clear' [-Wmissing-prototypes]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/protocols/link_dp_capability.c:1292:32: warning: variable 'result_write_min_hblank' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/protocols/link_dp_training.c:1586:38: warning: variable 'result' set but not used [-Wunused-but-set-variable]
-include/asm-generic/div64.h:238:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+The other structures currently embedding struct io_work_node are
+io_kiocb (216 bytes long, per request) and io_ring_ctx (1472 bytes long,
+per ring). so it is not like we are saving a lot of memory with a single
+linked list. A more compact cache line still makes sense, though, but I
+think the only case (if any) where there might be any gain is io_kiocb?
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
-
-drivers/thermal/qcom/tsens-v0_1.c:106:40: sparse: sparse: symbol 'tsens_9607_nvmem' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v0_1.c:26:40: sparse: sparse: symbol 'tsens_8916_nvmem' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v0_1.c:42:40: sparse: sparse: symbol 'tsens_8939_nvmem' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v0_1.c:62:40: sparse: sparse: symbol 'tsens_8974_nvmem' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v0_1.c:84:40: sparse: sparse: symbol 'tsens_8974_backup_nvmem' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v1.c:24:40: sparse: sparse: symbol 'tsens_qcs404_nvmem' was not declared. Should it be static?
-drivers/thermal/qcom/tsens-v1.c:45:40: sparse: sparse: symbol 'tsens_8976_nvmem' was not declared. Should it be static?
-drivers/usb/gadget/composite.c:2082:33: sparse: sparse: restricted __le16 degrades to integer
-io_uring/rsrc.c:1262 io_sqe_buffer_register() error: uninitialized symbol 'folio'.
-
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
-|-- arc-randconfig-c031-20230222
-|   `-- FAILED:load-BTF-from-vmlinux:No-data-available
-|-- arm-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
-|-- arm-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
-|-- arm64-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- i386-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- i386-randconfig-s001
-|   |-- drivers-gpu-drm-i915-gem-i915_gem_ttm.c:sparse:sparse:incorrect-type-in-assignment-(different-base-types)-expected-restricted-vm_fault_t-assigned-usertype-ret-got-int
-|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
-|-- i386-randconfig-s002
-|   `-- drivers-gpu-drm-i915-gem-i915_gem_ttm.c:sparse:sparse:incorrect-type-in-assignment-(different-base-types)-expected-restricted-vm_fault_t-assigned-usertype-ret-got-int
-|-- i386-randconfig-s003
-|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
-|-- ia64-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- loongarch-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- loongarch-defconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|-- mips-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- mips-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
-|-- mips-randconfig-s042-20230222
-|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
-|-- powerpc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
-clang_recent_errors
-`-- powerpc-ppa8548_defconfig
-    `-- error:unknown-target-CPU
-
-elapsed time: 736m
-
-configs tested: 43
-configs skipped: 4
-
-tested configs:
-alpha                               defconfig   gcc  
-arc                                 defconfig   gcc  
-arm                       aspeed_g5_defconfig   gcc  
-arm                                 defconfig   gcc  
-arm                             pxa_defconfig   gcc  
-arm64                               defconfig   gcc  
-csky                                defconfig   gcc  
-i386                                defconfig   gcc  
-ia64                                defconfig   gcc  
-loongarch                           defconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                       m5249evb_defconfig   gcc  
-mips                       bmips_be_defconfig   gcc  
-mips                           ip32_defconfig   gcc  
-mips                           jazz_defconfig   gcc  
-mips                     loongson2k_defconfig   clang
-mips                        maltaup_defconfig   clang
-nios2                               defconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                    klondike_defconfig   gcc  
-powerpc                     kmeter1_defconfig   clang
-powerpc                 mpc8315_rdb_defconfig   clang
-powerpc                     tqm5200_defconfig   clang
-powerpc                     tqm8548_defconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                          rv32_defconfig   gcc  
-s390                                defconfig   gcc  
-sh                         ap325rxa_defconfig   gcc  
-sh                        apsh4ad0a_defconfig   gcc  
-sh                ecovec24-romimage_defconfig   gcc  
-sh                         ecovec24_defconfig   gcc  
-sh                        edosk7760_defconfig   gcc  
-sh                          lboxre2_defconfig   gcc  
-sh                         microdev_defconfig   gcc  
-sh                          r7780mp_defconfig   gcc  
-sh                              ul2_defconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                       sparc32_defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                              defconfig   gcc  
-xtensa                  nommu_kc705_defconfig   gcc  
+I don't severely oppose this patch, of course. But I think it'd be worth
+killing io_uring/slist.h entirely in the future instead of adding more
+users.  I intend to give that approach a try, if there's a way to keep
+the size of io_kiocb.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Gabriel Krisman Bertazi

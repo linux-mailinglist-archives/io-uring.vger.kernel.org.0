@@ -2,94 +2,207 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 313AF6A201F
-	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 17:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 765266A2100
+	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 18:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229751AbjBXQ5z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Feb 2023 11:57:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
+        id S229714AbjBXR7K (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Feb 2023 12:59:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229700AbjBXQ5y (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 11:57:54 -0500
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B2E7F96F
-        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 08:57:53 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id t129so3588620iof.12
-        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 08:57:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1677257873;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=slueeSYiZdgbjCUPnuYo5q4gpjFzE5kriR0L1eHw7eM=;
-        b=kyi+NPLShO9LBrifcnFc+ngpsT+Z2JfKILH5OgXbQV1b9xHYfuQgLFMJvChuJ1O2al
-         WU9fNRRd8M/rxN2M8y0isn+WXOshwcmhQREvvTptOkkJwoHwNAoNP0e4pguuzw9MmGTj
-         N9qyzD8yOuD318d+cZtoW7gno2m6yX4Kgy8D/octJvbVO3fHInLyX3osiQj6ORDEO9Iv
-         nXFQmmW8wsH+JDYiDjXNfsm0qPyVrLW0+WrBKWMrZ4jO+RFdAXY2a9KsZ2NOuzqGW7At
-         MAs+oA6RB/65FrVJpBRUwvfzFcpyIqBa5Asim9md8jQb5NJzw6iM6LbXuIBrVntZFXoZ
-         jKBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677257873;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=slueeSYiZdgbjCUPnuYo5q4gpjFzE5kriR0L1eHw7eM=;
-        b=ocSkx9iaG0A/WQG2fQPqJ7mgbOtmPcn6OGm5M+FUSADqx0CHfI77j1QqTbDQ664nIB
-         /MlcXN8lkISqhuDODOAXiHzW6y5SjYOjgubgte4z3V4Vz8MKBe4Jg9injU9foV5YlwgE
-         QFcsNKwvw60+dtFj9JFF/Fans21T/Z0bthD3Q85inZcCu8TyFIS4ucqmyOTMj6h9vZS4
-         G4kE61u+zYuA13eyLpN8OXXvKYj1+gWcHBHgJ6mvb7nMGUP72oHaO+5Mq/Y1psPpsb2n
-         ojQ0VDTh2vZ87Hxumj1/W6mjZoqpnMB3WCCi1KqEZ0Bgl1Kf69a6i4/ykPYIoTijo0CE
-         TJug==
-X-Gm-Message-State: AO0yUKXDAIeU/RuAW6bnAa6QB5yK4IVa4CaZ6v14BLm0q5fVztwfpeeG
-        ZLdwzUgpEc19bEoo1RXhwZDC0FxnFQfVQUYm
-X-Google-Smtp-Source: AK7set+yJXLS2ub9sLmbZNlND14wd/5VdkWW27rt0wqcT/+/6Il7BOfk/8Eil/hEs2pLGG4DcmGOFg==
-X-Received: by 2002:a6b:8d45:0:b0:746:190a:138f with SMTP id p66-20020a6b8d45000000b00746190a138fmr8815603iod.2.1677257872594;
-        Fri, 24 Feb 2023 08:57:52 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id t18-20020a92d152000000b003170014ee5bsm1422805ilg.21.2023.02.24.08.57.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Feb 2023 08:57:51 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, David Lamparter <equinox@diac24.net>
-Cc:     netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-In-Reply-To: <20230224150123.128346-1-equinox@diac24.net>
-References: <CANn89iJE6SpB2bfXEc=73km6B2xtBSWHj==WsYFnH089WPKtSA@mail.gmail.com>
- <20230224150123.128346-1-equinox@diac24.net>
-Subject: Re: [PATCH] io_uring: remove MSG_NOSIGNAL from recvmsg
-Message-Id: <167725787156.174023.16695847419277127749.b4-ty@kernel.dk>
-Date:   Fri, 24 Feb 2023 09:57:51 -0700
+        with ESMTP id S229593AbjBXR7J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 12:59:09 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824261ACF5;
+        Fri, 24 Feb 2023 09:59:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677261545; x=1708797545;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=apZELO6Sezh5CYb3WbLafO6vH9pyOT7fMc2jMjwjHdw=;
+  b=Z8en2PvXMCKp19Md6WjU+zc3Q0XksbSfTPcTsPhQPU0tEzHdRbxIFMZz
+   KeB68+Z3cazcECUYEX0INGS1bFetyJSBXvFxTiLcL9ubOdebd40fjOruV
+   ybOsiegXnK7r5IC/NQFMZHfck0+dRl+lqt2Y1BzTg1aThHAdJsoQuXcDy
+   MEaK+oaRVS/guQ9GmdgMWlph8yQxYpIgjoGtlQqFbc+MclKH3BYcUQK51
+   wYzbXyu2WBV9qeVvg5+l76nG+f4ZLGLUC2c1gH6yk0Gh/7jX57Trgn58k
+   5yJYplsKwR1hXC4LO9yQdZgf4BHwS9fBP19WMuGFKx+O//OUlYw397nyz
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10631"; a="321739952"
+X-IronPort-AV: E=Sophos;i="5.97,325,1669104000"; 
+   d="scan'208";a="321739952"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2023 09:59:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10631"; a="622794916"
+X-IronPort-AV: E=Sophos;i="5.97,325,1669104000"; 
+   d="scan'208";a="622794916"
+Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 24 Feb 2023 09:59:00 -0800
+Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pVcLU-0002aV-05;
+        Fri, 24 Feb 2023 17:59:00 +0000
+Date:   Sat, 25 Feb 2023 01:58:00 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arch@vger.kernel.org, io-uring@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 4d6d7ce9baaf9e67a85a53afc69a36af716f7670
+Message-ID: <63f8faa8.OL9Dhyo2Tte6mwTc%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-ada30
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 4d6d7ce9baaf9e67a85a53afc69a36af716f7670  Add linux-next specific files for 20230224
 
-On Fri, 24 Feb 2023 16:01:24 +0100, David Lamparter wrote:
-> MSG_NOSIGNAL is not applicable for the receiving side, SIGPIPE is
-> generated when trying to write to a "broken pipe".  AF_PACKET's
-> packet_recvmsg() does enforce this, giving back EINVAL when MSG_NOSIGNAL
-> is set - making it unuseable in io_uring's recvmsg.
-> 
-> Remove MSG_NOSIGNAL from io_recvmsg_prep().
-> 
-> [...]
+Error/Warning reports:
 
-Applied, thanks!
+https://lore.kernel.org/oe-kbuild-all/202302111601.jtY4lKrA-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202302112104.g75cGHZd-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202302210350.lynWcL4t-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202302242257.4W4myB9z-lkp@intel.com
 
-[1/1] io_uring: remove MSG_NOSIGNAL from recvmsg
-      commit: 4492575406d8592b623987cb36b8234d285cfa17
+Error/Warning: (recently discovered and may have been fixed)
 
-Best regards,
+FAILED: load BTF from vmlinux: No data available
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn30/dcn30_optc.c:294:6: warning: no previous prototype for 'optc3_wait_drr_doublebuffer_pending_clear' [-Wmissing-prototypes]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/protocols/link_dp_capability.c:1292:32: warning: variable 'result_write_min_hblank' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/protocols/link_dp_training.c:1586:38: warning: variable 'result' set but not used [-Wunused-but-set-variable]
+include/asm-generic/div64.h:238:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+drivers/thermal/qcom/tsens-v0_1.c:106:40: sparse: sparse: symbol 'tsens_9607_nvmem' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v0_1.c:26:40: sparse: sparse: symbol 'tsens_8916_nvmem' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v0_1.c:42:40: sparse: sparse: symbol 'tsens_8939_nvmem' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v0_1.c:62:40: sparse: sparse: symbol 'tsens_8974_nvmem' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v0_1.c:84:40: sparse: sparse: symbol 'tsens_8974_backup_nvmem' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v1.c:24:40: sparse: sparse: symbol 'tsens_qcs404_nvmem' was not declared. Should it be static?
+drivers/thermal/qcom/tsens-v1.c:45:40: sparse: sparse: symbol 'tsens_8976_nvmem' was not declared. Should it be static?
+drivers/usb/gadget/composite.c:2082:33: sparse: sparse: restricted __le16 degrades to integer
+io_uring/rsrc.c:1262 io_sqe_buffer_register() error: uninitialized symbol 'folio'.
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- arc-randconfig-c031-20230222
+|   `-- FAILED:load-BTF-from-vmlinux:No-data-available
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- i386-randconfig-s001
+|   |-- drivers-gpu-drm-i915-gem-i915_gem_ttm.c:sparse:sparse:incorrect-type-in-assignment-(different-base-types)-expected-restricted-vm_fault_t-assigned-usertype-ret-got-int
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- i386-randconfig-s002
+|   `-- drivers-gpu-drm-i915-gem-i915_gem_ttm.c:sparse:sparse:incorrect-type-in-assignment-(different-base-types)-expected-restricted-vm_fault_t-assigned-usertype-ret-got-int
+|-- i386-randconfig-s003
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- loongarch-defconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_training.c:warning:variable-result-set-but-not-used
+|-- mips-randconfig-s042-20230222
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:variable-result_write_min_hblank-set-but-not-used
+clang_recent_errors
+`-- powerpc-ppa8548_defconfig
+    `-- error:unknown-target-CPU
+
+elapsed time: 736m
+
+configs tested: 43
+configs skipped: 4
+
+tested configs:
+alpha                               defconfig   gcc  
+arc                                 defconfig   gcc  
+arm                       aspeed_g5_defconfig   gcc  
+arm                                 defconfig   gcc  
+arm                             pxa_defconfig   gcc  
+arm64                               defconfig   gcc  
+csky                                defconfig   gcc  
+i386                                defconfig   gcc  
+ia64                                defconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                       m5249evb_defconfig   gcc  
+mips                       bmips_be_defconfig   gcc  
+mips                           ip32_defconfig   gcc  
+mips                           jazz_defconfig   gcc  
+mips                     loongson2k_defconfig   clang
+mips                        maltaup_defconfig   clang
+nios2                               defconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                    klondike_defconfig   gcc  
+powerpc                     kmeter1_defconfig   clang
+powerpc                 mpc8315_rdb_defconfig   clang
+powerpc                     tqm5200_defconfig   clang
+powerpc                     tqm8548_defconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                                defconfig   gcc  
+sh                         ap325rxa_defconfig   gcc  
+sh                        apsh4ad0a_defconfig   gcc  
+sh                ecovec24-romimage_defconfig   gcc  
+sh                         ecovec24_defconfig   gcc  
+sh                        edosk7760_defconfig   gcc  
+sh                          lboxre2_defconfig   gcc  
+sh                         microdev_defconfig   gcc  
+sh                          r7780mp_defconfig   gcc  
+sh                              ul2_defconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                       sparc32_defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                              defconfig   gcc  
+xtensa                  nommu_kc705_defconfig   gcc  
+
 -- 
-Jens Axboe
-
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

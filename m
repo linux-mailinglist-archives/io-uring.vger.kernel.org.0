@@ -2,94 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 518FB6A1F6A
-	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 17:15:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 313AF6A201F
+	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 17:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbjBXQPB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Feb 2023 11:15:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42080 "EHLO
+        id S229751AbjBXQ5z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Feb 2023 11:57:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbjBXQPA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 11:15:00 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E96211FD
-        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 08:14:59 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id p8so14588323wrt.12
-        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 08:14:59 -0800 (PST)
+        with ESMTP id S229700AbjBXQ5y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 11:57:54 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B2E7F96F
+        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 08:57:53 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id t129so3588620iof.12
+        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 08:57:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1677257873;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wqctOt0Z9Z4oI79oBbfnBf5nVakOpUKrrJaXQvs3lDA=;
-        b=eMn43wEeRu6kCrDb8soTKv4oBUddYu2GcC/dmfld+GvMJeR/DByh+FI0jgjFEU9XMC
-         trxHOZJ+z3CX1Ys7kFb+M7ZHtbJVmpBxKJ0u0PZj5kzJzQOGh4DcOzezEAgGazLd/zte
-         j+JXLR6KJ8EEubKU0clja+9LWSGRXdGosCRM1bY7xtRPnZNpnkGhP/mjDlQIDR/m3KDz
-         oPhYuPTRoeITEpzHyFMMdkZrud8Z7rSAG7Ymsp6qonm4CKkr7DKufYdqFm2R/l3zWq5R
-         tVeBb0U6Dn+b13kxn7lJsdTn8yw9cmdjMgRQjzsHp59OyusIXXsbAoBLo1ToOu3nBoCP
-         w1yA==
+        bh=slueeSYiZdgbjCUPnuYo5q4gpjFzE5kriR0L1eHw7eM=;
+        b=kyi+NPLShO9LBrifcnFc+ngpsT+Z2JfKILH5OgXbQV1b9xHYfuQgLFMJvChuJ1O2al
+         WU9fNRRd8M/rxN2M8y0isn+WXOshwcmhQREvvTptOkkJwoHwNAoNP0e4pguuzw9MmGTj
+         N9qyzD8yOuD318d+cZtoW7gno2m6yX4Kgy8D/octJvbVO3fHInLyX3osiQj6ORDEO9Iv
+         nXFQmmW8wsH+JDYiDjXNfsm0qPyVrLW0+WrBKWMrZ4jO+RFdAXY2a9KsZ2NOuzqGW7At
+         MAs+oA6RB/65FrVJpBRUwvfzFcpyIqBa5Asim9md8jQb5NJzw6iM6LbXuIBrVntZFXoZ
+         jKBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1677257873;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wqctOt0Z9Z4oI79oBbfnBf5nVakOpUKrrJaXQvs3lDA=;
-        b=ZdkXNnm46stWtoyRLlsr4yBjUbj7/+SF4ONj5wNDOGGbgSxT/gVP+QIGxVGcQpzMWV
-         TIC7AQBLwgHMf1juBvGFwkIXAaTyzS++tR2YlidyhLLAvNUxdljTrteJexMdCuLtp3C+
-         c0PAkqYtPKD17q/aXA3TOcYDmRxkNe/bGlpBqITll4yMXelp7/wMLo1sztU1kqS9DUkv
-         i6VwG6mrAahdvlpRicSXddgeBgFK487a2PdCSp2xuQiuQhPv6MEMimheoCoteUHa3lFH
-         q8jMvzfHapMLfPtN4K4bd8t3cpDhBr24eiTFkHspGF3R+VhpM9gLRfp5KIiUh0AbTUYv
-         Q0UA==
-X-Gm-Message-State: AO0yUKVtBe8xSNX7N/Ovc5xP6fiRk5A0BiCaYh2EixYaDZZpOwjb+mBE
-        jzENLelIpzMApet2oj2dNTrW2Vw4u/mreuK0vtBiQHmKG57t5LBE
-X-Google-Smtp-Source: AK7set9tn8+uVIVmP/VkpI+R+yeCwNyOdPrjXWzx2RWUr3qkYE62TTdIkuPoaSVWdp34H5M7jW4uJ0GdeA3U7TaqghM=
-X-Received: by 2002:a5d:49cd:0:b0:2c3:be6a:d7d4 with SMTP id
- t13-20020a5d49cd000000b002c3be6ad7d4mr1070400wrs.11.1677255297637; Fri, 24
- Feb 2023 08:14:57 -0800 (PST)
-MIME-Version: 1.0
+        bh=slueeSYiZdgbjCUPnuYo5q4gpjFzE5kriR0L1eHw7eM=;
+        b=ocSkx9iaG0A/WQG2fQPqJ7mgbOtmPcn6OGm5M+FUSADqx0CHfI77j1QqTbDQ664nIB
+         /MlcXN8lkISqhuDODOAXiHzW6y5SjYOjgubgte4z3V4Vz8MKBe4Jg9injU9foV5YlwgE
+         QFcsNKwvw60+dtFj9JFF/Fans21T/Z0bthD3Q85inZcCu8TyFIS4ucqmyOTMj6h9vZS4
+         G4kE61u+zYuA13eyLpN8OXXvKYj1+gWcHBHgJ6mvb7nMGUP72oHaO+5Mq/Y1psPpsb2n
+         ojQ0VDTh2vZ87Hxumj1/W6mjZoqpnMB3WCCi1KqEZ0Bgl1Kf69a6i4/ykPYIoTijo0CE
+         TJug==
+X-Gm-Message-State: AO0yUKXDAIeU/RuAW6bnAa6QB5yK4IVa4CaZ6v14BLm0q5fVztwfpeeG
+        ZLdwzUgpEc19bEoo1RXhwZDC0FxnFQfVQUYm
+X-Google-Smtp-Source: AK7set+yJXLS2ub9sLmbZNlND14wd/5VdkWW27rt0wqcT/+/6Il7BOfk/8Eil/hEs2pLGG4DcmGOFg==
+X-Received: by 2002:a6b:8d45:0:b0:746:190a:138f with SMTP id p66-20020a6b8d45000000b00746190a138fmr8815603iod.2.1677257872594;
+        Fri, 24 Feb 2023 08:57:52 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t18-20020a92d152000000b003170014ee5bsm1422805ilg.21.2023.02.24.08.57.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Feb 2023 08:57:51 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, David Lamparter <equinox@diac24.net>
+Cc:     netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>
+In-Reply-To: <20230224150123.128346-1-equinox@diac24.net>
 References: <CANn89iJE6SpB2bfXEc=73km6B2xtBSWHj==WsYFnH089WPKtSA@mail.gmail.com>
  <20230224150123.128346-1-equinox@diac24.net>
-In-Reply-To: <20230224150123.128346-1-equinox@diac24.net>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 24 Feb 2023 17:14:45 +0100
-Message-ID: <CANn89iL1q6vs5MVt9SUNJ6uzPwg738vKKOFvyXQD3K3m7BAd8g@mail.gmail.com>
 Subject: Re: [PATCH] io_uring: remove MSG_NOSIGNAL from recvmsg
-To:     David Lamparter <equinox@diac24.net>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Message-Id: <167725787156.174023.16695847419277127749.b4-ty@kernel.dk>
+Date:   Fri, 24 Feb 2023 09:57:51 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-ada30
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Feb 24, 2023 at 4:04=E2=80=AFPM David Lamparter <equinox@diac24.net=
-> wrote:
->
+
+On Fri, 24 Feb 2023 16:01:24 +0100, David Lamparter wrote:
 > MSG_NOSIGNAL is not applicable for the receiving side, SIGPIPE is
 > generated when trying to write to a "broken pipe".  AF_PACKET's
 > packet_recvmsg() does enforce this, giving back EINVAL when MSG_NOSIGNAL
 > is set - making it unuseable in io_uring's recvmsg.
->
+> 
 > Remove MSG_NOSIGNAL from io_recvmsg_prep().
->
-> Signed-off-by: David Lamparter <equinox@diac24.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> ---
->
-> > Sure, or perhaps David wanted to take care of this.
->
-> Here you go.  But maybe give me a few hours to test/confirm...
->
+> 
+> [...]
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Applied, thanks!
 
-Thanks !
+[1/1] io_uring: remove MSG_NOSIGNAL from recvmsg
+      commit: 4492575406d8592b623987cb36b8234d285cfa17
+
+Best regards,
+-- 
+Jens Axboe
+
+
+

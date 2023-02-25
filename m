@@ -2,153 +2,194 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3B86A2274
-	for <lists+io-uring@lfdr.de>; Fri, 24 Feb 2023 20:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 662D46A2B05
+	for <lists+io-uring@lfdr.de>; Sat, 25 Feb 2023 18:11:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjBXTm1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Feb 2023 14:42:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
+        id S229607AbjBYRLo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 25 Feb 2023 12:11:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjBXTmZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Feb 2023 14:42:25 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E376BF67
-        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 11:42:00 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id y10so85260pfi.8
-        for <io-uring@vger.kernel.org>; Fri, 24 Feb 2023 11:42:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ijgekmVB2QKb1HH14nlyibdFD+y7KoE1WivpnqCwi0o=;
-        b=8W3znN4bYEVoTCQAc/uMRjujf4tKqTj3EiBKNI+wfWaRm5qjLPlR0oMqeMdxW6vJZ8
-         YPM2RYXqduJdfmV7SdABPZI34jixxdMHFaqyVMNSEUkI0/vrgtZdPKEfG82rna1g/yXI
-         /tuAKri4OjZbgUNMadfZBFB8MF1SZIJkhXXa4KaReZ+4KHcSHotIgTj4zor+TmQttfCE
-         PTbi+mTrVJ2b7pSXNeFQ8AugjzDv5N4KzlC+COpe4qpZp4WtLsxLS/LlyqlZNREVuAzM
-         2UdkYAmvNFlC6eu0Z5kyIVrP7meUvQGCNJabd3Ruu78/h3EoDTiL5KFd81W3ChA0Cv0M
-         BFOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ijgekmVB2QKb1HH14nlyibdFD+y7KoE1WivpnqCwi0o=;
-        b=0nrVbwMGSibE0eh0MqzPOPbZi3uqIkdwenIEPrcrW0XKRJrt6ly97wJ/l49lYbNkOv
-         w5pzYKTGL4Pvi+v57kh9JXVVGIEEc8m8WJWA9x5VKkQ2Ic7xE14ZtvF+skI3wzokE4Oa
-         lHpQQ+CSYw2dws3/TIZfrdZov991oiWQ+Zhey2ZsPxyw1VjUrKP/dK6zF1qjt7DoOX/t
-         S1pnAMvSW96DzOi979FNUV/H6ykjoH5CVmnGISgR70rz6dVpQF+oiyen0N8Jt+LHuaOv
-         giwDBRBB19LqhyDVr4uph6w2ImEkCEQ01K1G6D3t8hqCXNWdH5dcahN44ChtIycCI7Oj
-         x0Cw==
-X-Gm-Message-State: AO0yUKWoBuaam7zDPQr2hVIhNIxCJOgwKaht8H3NGdjhNv4dfHb9eJwk
-        RcXYN1lnjZ7ZVidZRdb7H0emTQ==
-X-Google-Smtp-Source: AK7set9SRI3aeT+VUPA2REv2kUyLXrOxdOlZ0hD6wdvvODIaDy0UKOPSOUXEdhe1KeSRw51fnxcjmw==
-X-Received: by 2002:aa7:9841:0:b0:5e2:3086:f977 with SMTP id n1-20020aa79841000000b005e23086f977mr3868360pfq.2.1677267720030;
-        Fri, 24 Feb 2023 11:42:00 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id k10-20020aa7820a000000b005d791692727sm5044111pfi.191.2023.02.24.11.41.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Feb 2023 11:41:59 -0800 (PST)
-Message-ID: <6673f9e6-fa00-b929-02c1-5e0f293dfa0a@kernel.dk>
-Date:   Fri, 24 Feb 2023 12:41:58 -0700
+        with ESMTP id S229488AbjBYRLn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Feb 2023 12:11:43 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D5551042E;
+        Sat, 25 Feb 2023 09:11:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677345102; x=1708881102;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/wmzhNxDeMcFcsLck+WoGXoesP55t1mLA577Oo+iWV8=;
+  b=Zqi74QDS720c77fRW5MRilYBviP9dNeN7+dfD9QSVgvYcpe+TMBj2DmO
+   2G0ZNMQldVj981zyneHEwmbd/Y1mah3hHUAZ8kMbLrtuiqrLgl3NWqEGU
+   sXLlsp7/x/Q8dTCGj5wQ8M7SIvHaC7sP/q5ecyYO/lCn2RCWjJeQUnLTm
+   lhP+xsGztWi8iAKTetB1kU+16q86eQV+LPk/OkRYw+DdqVQB5QQUixrDo
+   abWbP7H7tgl3eT3Zpi+vr9XmFNk+AVyRcJWZzd1emYTL84g6/cC/vwT1s
+   ZnfduqCUswBSAhj0bUFG4KFC/CVYDFuUYYChcAlPbrTX9K6ihgnd/q+kG
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10631"; a="332369633"
+X-IronPort-AV: E=Sophos;i="5.97,328,1669104000"; 
+   d="scan'208";a="332369633"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2023 09:11:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10631"; a="673233092"
+X-IronPort-AV: E=Sophos;i="5.97,328,1669104000"; 
+   d="scan'208";a="673233092"
+Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 25 Feb 2023 09:11:39 -0800
+Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pVy5C-0003KB-0e;
+        Sat, 25 Feb 2023 17:11:38 +0000
+Date:   Sun, 26 Feb 2023 01:10:55 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-mm@kvack.org,
+        linux-bluetooth@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+        io-uring@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 8232539f864ca60474e38eb42d451f5c26415856
+Message-ID: <63fa411f.ZvVOisJt5OlLzGYF%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH v3 1/2] io_uring: Move from hlist to io_wq_work_node
-Content-Language: en-US
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     Breno Leitao <leitao@debian.org>, asml.silence@gmail.com,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gustavold@meta.com, leit@meta.com, kasan-dev@googlegroups.com
-References: <20230223164353.2839177-1-leitao@debian.org>
- <20230223164353.2839177-2-leitao@debian.org> <87wn48ryri.fsf@suse.de>
- <8404f520-2ef7-b556-08f6-5829a2225647@kernel.dk> <87mt52syls.fsf@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87mt52syls.fsf@suse.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/24/23 11:32?AM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> On 2/23/23 12:02?PM, Gabriel Krisman Bertazi wrote:
->>> Breno Leitao <leitao@debian.org> writes:
->>>
->>>> Having cache entries linked using the hlist format brings no benefit, and
->>>> also requires an unnecessary extra pointer address per cache entry.
->>>>
->>>> Use the internal io_wq_work_node single-linked list for the internal
->>>> alloc caches (async_msghdr and async_poll)
->>>>
->>>> This is required to be able to use KASAN on cache entries, since we do
->>>> not need to touch unused (and poisoned) cache entries when adding more
->>>> entries to the list.
->>>>
->>>
->>> Looking at this patch, I wonder if it could go in the opposite direction
->>> instead, and drop io_wq_work_node entirely in favor of list_head. :)
->>>
->>> Do we gain anything other than avoiding the backpointer with a custom
->>> linked implementation, instead of using the interface available in
->>> list.h, that developers know how to use and has other features like
->>> poisoning and extra debug checks?
->>
->> list_head is twice as big, that's the main motivation. This impacts
->> memory usage (obviously), but also caches when adding/removing
->> entries.
-> 
-> Right. But this is true all around the kernel.  Many (Most?)  places
-> that use list_head don't even need to touch list_head->prev.  And
-> list_head is usually embedded in larger structures where the cost of
-> the extra pointer is insignificant.  I suspect the memory
-> footprint shouldn't really be the problem.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 8232539f864ca60474e38eb42d451f5c26415856  Add linux-next specific files for 20230225
 
-I may be in the minority here in caring deeply about even little details
-in terms of memory foot print and how many cachelines we touch... Eg if
-we can embed 8 bytes rather than 16, then why not? Particularly for
-cases where we may have a lot of these structures.
+Error/Warning reports:
 
-But it's of course always a tradeoff.
+https://lore.kernel.org/oe-kbuild-all/202302040652.zkUBTjyo-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202302111601.jtY4lKrA-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202302112104.g75cGHZd-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202302210350.lynWcL4t-lkp@intel.com
 
-> This specific patch is extending io_wq_work_node to io_cache_entry,
-> where the increased size will not matter.  In fact, for the cached
-> structures, the cache layout and memory footprint don't even seem to
-> change, as io_cache_entry is already in a union larger than itself, that
-> is not crossing cachelines, (io_async_msghdr, async_poll).
+Error/Warning: (recently discovered and may have been fixed)
 
-True, for the caching case, the member size doesn't matter. At least
-immediately. Sometimes things are shuffled around and optimized further,
-and then you may need to find 8 bytes to avoid bloating the struct.
+FAILED: load BTF from vmlinux: No data available
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn30/dcn30_optc.c:294:6: warning: no previous prototype for 'optc3_wait_drr_doublebuffer_pending_clear' [-Wmissing-prototypes]
+drivers/pcmcia/pxa2xx_sharpsl.c:206:5: warning: no previous prototype for function 'pcmcia_collie_init' [-Wmissing-prototypes]
+include/asm-generic/div64.h:238:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
 
-> The other structures currently embedding struct io_work_node are
-> io_kiocb (216 bytes long, per request) and io_ring_ctx (1472 bytes long,
-> per ring). so it is not like we are saving a lot of memory with a single
-> linked list. A more compact cache line still makes sense, though, but I
-> think the only case (if any) where there might be any gain is io_kiocb?
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-Yeah, the ring is already pretty big. It is still handled in cachelines
-for the bits that matter, so nice to keep them as small for the
-sections. Maybe bumping it will waste an extra cacheline. Or, more
-commonly, later additions now end up bumping into the next cacheline
-rather than still fitting.
+drivers/usb/gadget/composite.c:2082:33: sparse: sparse: restricted __le16 degrades to integer
+io_uring/rsrc.c:1262 io_sqe_buffer_register() error: uninitialized symbol 'folio'.
+mm/page_alloc.c:257:1: sparse: sparse: symbol 'check_pages_enabled' was not declared. Should it be static?
+net/bluetooth/hci_sync.c:2403 hci_pause_addr_resolution() warn: missing error code? 'err'
 
-> I don't severely oppose this patch, of course. But I think it'd be worth
-> killing io_uring/slist.h entirely in the future instead of adding more
-> users.  I intend to give that approach a try, if there's a way to keep
-> the size of io_kiocb.
+Error/Warning ids grouped by kconfigs:
 
-At least it's consistent within io_uring, which also means something.
-I'd be fine with taking a look at such a patch, but let's please keep it
-outside the scope of this change.
+gcc_recent_errors
+|-- alpha-randconfig-s041-20230222
+|   `-- mm-page_alloc.c:sparse:sparse:symbol-check_pages_enabled-was-not-declared.-Should-it-be-static
+|-- arc-allyesconfig
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- arm-allmodconfig
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- arm-allyesconfig
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- arm-randconfig-s051-20230222
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- arm64-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|-- i386-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|-- i386-randconfig-s001
+|   |-- drivers-gpu-drm-i915-gem-i915_gem_ttm.c:sparse:sparse:incorrect-type-in-assignment-(different-base-types)-expected-restricted-vm_fault_t-assigned-usertype-ret-got-int
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- i386-randconfig-s002
+|   `-- drivers-gpu-drm-i915-gem-i915_gem_ttm.c:sparse:sparse:incorrect-type-in-assignment-(different-base-types)-expected-restricted-vm_fault_t-assigned-usertype-ret-got-int
+|-- i386-randconfig-s003
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- loongarch-randconfig-m041-20230225
+|   `-- io_uring-rsrc.c-io_sqe_buffer_register()-error:uninitialized-symbol-folio-.
+|-- openrisc-randconfig-r014-20230225
+|   `-- FAILED:load-BTF-from-vmlinux:No-data-available
+|-- openrisc-randconfig-s052-20230222
+|   `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+|-- parisc-randconfig-m031-20230223
+|   `-- net-bluetooth-hci_sync.c-hci_pause_addr_resolution()-warn:missing-error-code-err
+|-- powerpc-allmodconfig
+|   `-- include-asm-generic-div64.h:error:passing-argument-of-__div64_32-from-incompatible-pointer-type
+|-- x86_64-allnoconfig
+|   `-- Warning:Documentation-devicetree-bindings-usb-rockchip-dwc3.yaml-references-a-file-that-doesn-t-exist:Documentation-devicetree-bindings-phy-phy-rockchip-inno-usb2.yaml
+|-- x86_64-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|-- x86_64-randconfig-m001
+|   `-- io_uring-rsrc.c-io_sqe_buffer_register()-error:uninitialized-symbol-folio-.
+`-- x86_64-randconfig-s021
+    `-- drivers-usb-gadget-composite.c:sparse:sparse:restricted-__le16-degrades-to-integer
+clang_recent_errors
+`-- arm-collie_defconfig
+    `-- drivers-pcmcia-pxa2xx_sharpsl.c:warning:no-previous-prototype-for-function-pcmcia_collie_init
+
+elapsed time: 730m
+
+configs tested: 46
+configs skipped: 5
+
+tested configs:
+alpha                               defconfig   gcc  
+arc                          axs103_defconfig   gcc  
+arc                                 defconfig   gcc  
+arm                          collie_defconfig   clang
+arm                                 defconfig   gcc  
+arm                      jornada720_defconfig   gcc  
+arm64                               defconfig   gcc  
+csky                                defconfig   gcc  
+i386                                defconfig   gcc  
+ia64                                defconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                         amcore_defconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                        bcm47xx_defconfig   gcc  
+mips                       lemote2f_defconfig   clang
+mips                     loongson1c_defconfig   clang
+mips                     loongson2k_defconfig   clang
+mips                           mtx1_defconfig   clang
+mips                      pic32mzda_defconfig   clang
+mips                        qi_lb60_defconfig   clang
+mips                          rm200_defconfig   clang
+nios2                               defconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                    klondike_defconfig   gcc  
+powerpc                  mpc885_ads_defconfig   clang
+powerpc                      pasemi_defconfig   gcc  
+powerpc                     skiroot_defconfig   clang
+riscv                               defconfig   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                                defconfig   gcc  
+sh                         apsh4a3a_defconfig   gcc  
+sh                        dreamcast_defconfig   gcc  
+sh                          landisk_defconfig   gcc  
+sh                          polaris_defconfig   gcc  
+sh                           se7343_defconfig   gcc  
+sparc                            alldefconfig   gcc  
+sparc                               defconfig   gcc  
+um                                  defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                              defconfig   gcc  
+xtensa                  cadence_csp_defconfig   gcc  
+xtensa                       common_defconfig   gcc  
+xtensa                generic_kc705_defconfig   gcc  
 
 -- 
-Jens Axboe
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

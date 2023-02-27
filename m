@@ -2,79 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C77316A2BC9
-	for <lists+io-uring@lfdr.de>; Sat, 25 Feb 2023 22:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5178D6A35F0
+	for <lists+io-uring@lfdr.de>; Mon, 27 Feb 2023 01:28:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbjBYVCp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 25 Feb 2023 16:02:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58392 "EHLO
+        id S229665AbjB0A24 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 26 Feb 2023 19:28:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjBYVCp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 25 Feb 2023 16:02:45 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336AE14E90;
-        Sat, 25 Feb 2023 13:02:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8C253B80B32;
-        Sat, 25 Feb 2023 21:02:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E37C433D2;
-        Sat, 25 Feb 2023 21:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1677358961;
-        bh=dAdczosGMLE3reQ+yfqGchmgVwzqD0s258AHR5QDBk8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=alNPgnU7am/djLnV5nPooemcTFnojh9BxoSgHaOyQ1zVw/FmC9FHnkLEdsZbYmyo1
-         myAxBpFmRRNHwYDF/RDFqVU53010sqZCOx0YG4deO0d5f7R/9zChC/0WdjTHh8h6rS
-         9ad9+j7MEIPfQW8G40OfvZyJ7mjkjFPib3GnbAUc=
-Date:   Sat, 25 Feb 2023 13:02:39 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     kernel test robot <lkp@intel.com>
-Cc:     linux-usb@vger.kernel.org, linux-mm@kvack.org,
-        linux-bluetooth@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        io-uring@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 8232539f864ca60474e38eb42d451f5c26415856
-Message-Id: <20230225130239.d25f657955d3c4462c80d128@linux-foundation.org>
-In-Reply-To: <63fa411f.ZvVOisJt5OlLzGYF%lkp@intel.com>
-References: <63fa411f.ZvVOisJt5OlLzGYF%lkp@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S229732AbjB0A2z (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Feb 2023 19:28:55 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8714CA24A
+        for <io-uring@vger.kernel.org>; Sun, 26 Feb 2023 16:28:53 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id k37so3265994wms.0
+        for <io-uring@vger.kernel.org>; Sun, 26 Feb 2023 16:28:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xQnJvz9r//i40Q6M6D7Mlr1MIPxNoULnq+BRFHU1d6A=;
+        b=lNQRkBW3mXT698WKQQNDF5hVpWndz/ftRGGYzsDf9qNReqb1dAN6SKRYCTS9TtQ756
+         SCNUgp/WM2VfqWE94S0ov+2fQsu8+snNvvIOwqB9bn06NkpchnFUvxTRQlQ8HugrUgaq
+         o4jk0z+ftZpyqct7b82D1lVunGvO6PiS7GlNH1FPS0n/To6u/bSNm3IBiwc/2B7HKt8m
+         NoLn1NCMB9LLhwm6HvmPOzJorMWfgLtiCIPpg3rxHdEvFEZ1sU4X+eJox4SHhX5jgstG
+         6juJlG3KeK/Ypj+a9xla5KaU8/lAu1SWTliS7/YyVUTwfIgAJkTM14ObfN6fBYZFkwi7
+         9C8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xQnJvz9r//i40Q6M6D7Mlr1MIPxNoULnq+BRFHU1d6A=;
+        b=Pit/rEOlXCW+3KiIeA3+6VFHJGQr4y3G557OUZc1f/4ms4ytg0WoY1ecKYmL2ZmB4T
+         YE+eqNp2DQsleHaQKtR31vN6kPTABsKdiBm/lSrn+CA48nVbcfLZN/mQI6sJZoDAf5sw
+         +Wui2rwB4OdDBstUONzlCNYfkVp0Gf2KIpdiwDTeO35saes7sjBf8lChaixCRdNe/oAG
+         ZJcfbY3df0SJKq09I7jW7ODl4RX9Q1opq357Rj09uaTUHMUr9Ay0d1n6Z+Ki9Pt0zXit
+         WRdMwwP8rHRRcvlGta5um0dDNnWmtCSnt81rJEl3ECAY4ud45NuP1j48j/Tc00tTiBgf
+         q35g==
+X-Gm-Message-State: AO0yUKVvtO1h77vgmd8ndTX6cxweI3dYycHlJztOeRo1zJpVNiFZQIds
+        nT2Zln4lenW/5xxw5YzjXPUVVuAdmIr09ngqMWI=
+X-Google-Smtp-Source: AK7set9qfdmeSrd19nfTWM1cr3oKrPd+bMT1RRiC4G6nqiqI1AL6Rt8aouUNDZYDZZ7g83kYmA1mSZhrTbACKJY0Mpk=
+X-Received: by 2002:a05:600c:34d2:b0:3df:d8c9:ca84 with SMTP id
+ d18-20020a05600c34d200b003dfd8c9ca84mr3196336wmq.1.1677457731758; Sun, 26 Feb
+ 2023 16:28:51 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:adf:d1ce:0:0:0:0:0 with HTTP; Sun, 26 Feb 2023 16:28:50
+ -0800 (PST)
+From:   Raymond Dafter <raymonddafter4992@gmail.com>
+Date:   Sun, 26 Feb 2023 16:28:50 -0800
+Message-ID: <CAN3-JYnVJi_56NhjLMkaBzFr5O1K6FfdsKnMbyDE=PypPU6G0g@mail.gmail.com>
+Subject: We finance viable projects only
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, 26 Feb 2023 01:10:55 +0800 kernel test robot <lkp@intel.com> wrote:
+Attention: Sir
 
-> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> branch HEAD: 8232539f864ca60474e38eb42d451f5c26415856  Add linux-next specific files for 20230225
-> 
-> Error/Warning reports:
-> 
-> mm/page_alloc.c:257:1: sparse: sparse: symbol 'check_pages_enabled' was not declared. Should it be static?
+We are interested in discussing with you, Entrepreneurs, Corporations
+and Investors (start-up Owners included) with projects that require
+financing also in helping you grow your network and offering you Loan
+funds to complete and fund your existing Projects.
 
-It should!
+We finance viable projects only. The board will need to review the
+detailed Business plan and executive summary of the project then
+negotiate on the terms and conditions if the project is deemed viable.
 
---- a/mm/page_alloc.c~mm-page_alloc-reduce-page-alloc-free-sanity-checks-fix
-+++ b/mm/page_alloc.c
-@@ -254,7 +254,7 @@ DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_FREE_DEFAULT_ON, init_on_free);
- EXPORT_SYMBOL(init_on_free);
- 
- /* perform sanity checks on struct pages being allocated or freed */
--DEFINE_STATIC_KEY_MAYBE(CONFIG_DEBUG_VM, check_pages_enabled);
-+static DEFINE_STATIC_KEY_MAYBE(CONFIG_DEBUG_VM, check_pages_enabled);
- 
- static bool _init_on_alloc_enabled_early __read_mostly
- 				= IS_ENABLED(CONFIG_INIT_ON_ALLOC_DEFAULT_ON);
-_
+If we can partner with you or your clients, We can send you our
+Company Terms and Condition after review of your project plan and
+executive summary of your project, if you are serious and Interested
+contact us for further Information:
 
+Thanks and best regards
+
+Raymond Dafter

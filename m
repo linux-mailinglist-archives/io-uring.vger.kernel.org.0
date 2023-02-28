@@ -2,98 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 447B86A599A
-	for <lists+io-uring@lfdr.de>; Tue, 28 Feb 2023 13:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E5E6A5CBF
+	for <lists+io-uring@lfdr.de>; Tue, 28 Feb 2023 17:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231400AbjB1M7f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Feb 2023 07:59:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39472 "EHLO
+        id S229527AbjB1QF6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Feb 2023 11:05:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbjB1M7e (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Feb 2023 07:59:34 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7637B1B300
-        for <io-uring@vger.kernel.org>; Tue, 28 Feb 2023 04:59:33 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id m3-20020a17090ade0300b00229eec90a7fso1599498pjv.0
-        for <io-uring@vger.kernel.org>; Tue, 28 Feb 2023 04:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1677589172;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KXJtA17sEPdxzjGQRqo5/JFvtFde4VQEEjSMt1+MlDY=;
-        b=mDyvWPGkbF3bJHaDb6URbCMeqSru6ugFNy/bIXh2NNi/ioO3zW+ma+AR2j2IwC3keR
-         UoLtO2v1uvVynGfnjuYmbACZ4C4Uhv8Vmo/e7s4m8DazX56/y3yVJynMx8mD/W0mxqCK
-         NzBY54eZADgur4Rkn0MoQR1vXrgH3RGUBiOoFknvp+uxjZaXYhxTYtZP8z8loYtrsZ1X
-         YxTgT0KDf2+Qxo9j8WUArhqNLOhYUYSbLQZsIPgbaja4UfRavwt8/YAU8Qk66iWIoY5o
-         zvyUZcHnZZdZdrPROyDNovpgFjNyZ/SQUXn8i15WFP4TafbtslEV7XyhcSCKR34oY1Ip
-         YIaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677589172;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KXJtA17sEPdxzjGQRqo5/JFvtFde4VQEEjSMt1+MlDY=;
-        b=E9DyTS0hdDrOiE3wgFcY0j1Yi1HfwI14JgXcJHLXxyU0Or2DfT0KiaBNo7DrmCydhl
-         IOGHau+soO70SCWQ8IwsQ6sTPAoMC6bNqijj+70DSM5XCUyoXZ13skve8uTXf/JO+Hzl
-         PxLZWee4dstTzZus4NHfDCS1/eEDDutJ09VQIB52SOR8SDSrZ1S+hlLRyVfNB9aFebUX
-         5rRRP2BZViI9l1k6aJNPJCHONs3hZk99Xu7wXpjpx2U+VqYDvrBd5Ik0sz73lIMlrM+5
-         gudCUhX9zz5DMlkBFTYx92r4bxGI+MZpVaiaQK/CkL2/Q/hmLJ1jwdqs8TJ55Ub4AYjB
-         nZ3A==
-X-Gm-Message-State: AO0yUKUC6etefBzsw7k6HnoPiGBZqQxyUYwMFCtp4jymBed8fIYHvCis
-        Naf6CAdST/dnthrupcM1gPdEGXg52MW8bwVa
-X-Google-Smtp-Source: AK7set+Wesvq4ADKotBrhahVOK590hMee6o5LDqTctqAO+LO8D8tJEOkzucm4oPjIFohMcBEa+MLfQ==
-X-Received: by 2002:a17:902:e543:b0:19a:9269:7d1 with SMTP id n3-20020a170902e54300b0019a926907d1mr2964175plf.4.1677589172564;
-        Tue, 28 Feb 2023 04:59:32 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id l6-20020a170902d34600b0019cb8ffd209sm6506983plk.229.2023.02.28.04.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Feb 2023 04:59:32 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc:     io-uring@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        Heming Zhao <heming.zhao@suse.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-In-Reply-To: <20230228045459.13524-1-joseph.qi@linux.alibaba.com>
-References: <20230228045459.13524-1-joseph.qi@linux.alibaba.com>
-Subject: Re: [PATCH] io_uring: fix fget leak when fs don't support nowait
- buffered read
-Message-Id: <167758917178.12826.13481934362166793957.b4-ty@kernel.dk>
-Date:   Tue, 28 Feb 2023 05:59:31 -0700
+        with ESMTP id S230193AbjB1QF5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Feb 2023 11:05:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55861E5F3
+        for <io-uring@vger.kernel.org>; Tue, 28 Feb 2023 08:05:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677600312;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=D/FPL9KWoan+aGF0+Fj8Ts+VkGVEiVbizSsqsZXIaWA=;
+        b=ZoqHiD6BJcOzbHyW4QJ9D3luDeCHEn7RAuZeXzkpkTH0RJUwpTvo8mVKdttHHGIHDQSDxW
+        eRZu4UX7AUv0NubzIMiWfe/ykGVSAs13FAR96Eq2ilmZQ7X3XY9JNkZ5N+ApOvB880m3cx
+        I+OcXjppWBqn0dhj3I6o9JWFvCzov3I=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-564-pqYcYWV1O6iGT5cUqPJIAw-1; Tue, 28 Feb 2023 11:05:09 -0500
+X-MC-Unique: pqYcYWV1O6iGT5cUqPJIAw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 527A22817220;
+        Tue, 28 Feb 2023 16:05:08 +0000 (UTC)
+Received: from [10.22.8.29] (unknown [10.22.8.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 84188492B0F;
+        Tue, 28 Feb 2023 16:05:07 +0000 (UTC)
+Message-ID: <d72e3ef4-f607-9a63-9f6d-b03084a8edf6@redhat.com>
+Date:   Tue, 28 Feb 2023 11:05:07 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
+        kbusch@kernel.org, ming.lei@redhat.com
+References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
+ <20230210180033.321377-1-joshi.k@samsung.com>
+From:   John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <20230210180033.321377-1-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-ebd05
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On 2/10/23 13:00, Kanchan Joshi wrote:
+> 1. Command cancellation: while NVMe mandatorily supports the abort
+> command, we do not have a way to trigger that from user-space. There
+> are ways to go about it (with or without the uring-cancel interface) but
+> not without certain tradeoffs. It will be good to discuss the choices in
+> person.
 
-On Tue, 28 Feb 2023 12:54:59 +0800, Joseph Qi wrote:
-> Heming reported a BUG when using io_uring doing link-cp on ocfs2. [1]
-> 
-> Do the following steps can reproduce this BUG:
-> mount -t ocfs2 /dev/vdc /mnt/ocfs2
-> cp testfile /mnt/ocfs2/
-> ./link-cp /mnt/ocfs2/testfile /mnt/ocfs2/testfile.1
-> umount /mnt/ocfs2
-> 
-> [...]
+As one of the principle authors of TP4097a and the author of the one NVMe controller implementation that supports the NVMe 
+Cancel command I would like to attend LSF/MM this year and talk about this.
 
-Applied, thanks!
+See my SDC presentation where I describe all of the problems with the NVMe Abort command and demonstrates a Linux host sending 
+NVMe Abort and Cancel command to an IO controller:
 
-[1/1] io_uring: fix fget leak when fs don't support nowait buffered read
-      commit: 54aa7f2330b82884f4a1afce0220add6e8312f8b
-
-Best regards,
--- 
-Jens Axboe
+https://www.youtube.com/watch?v=vRrAD1U0IRw
 
 
+/John
 

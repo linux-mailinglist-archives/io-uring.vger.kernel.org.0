@@ -2,86 +2,146 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E5E6A5CBF
-	for <lists+io-uring@lfdr.de>; Tue, 28 Feb 2023 17:05:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AFDA6A6DDB
+	for <lists+io-uring@lfdr.de>; Wed,  1 Mar 2023 15:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbjB1QF6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Feb 2023 11:05:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59104 "EHLO
+        id S229900AbjCAOI0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 1 Mar 2023 09:08:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjB1QF5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Feb 2023 11:05:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55861E5F3
-        for <io-uring@vger.kernel.org>; Tue, 28 Feb 2023 08:05:13 -0800 (PST)
+        with ESMTP id S229470AbjCAOIZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 1 Mar 2023 09:08:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6304D2A6F3
+        for <io-uring@vger.kernel.org>; Wed,  1 Mar 2023 06:07:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677600312;
+        s=mimecast20190719; t=1677679666;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=D/FPL9KWoan+aGF0+Fj8Ts+VkGVEiVbizSsqsZXIaWA=;
-        b=ZoqHiD6BJcOzbHyW4QJ9D3luDeCHEn7RAuZeXzkpkTH0RJUwpTvo8mVKdttHHGIHDQSDxW
-        eRZu4UX7AUv0NubzIMiWfe/ykGVSAs13FAR96Eq2ilmZQ7X3XY9JNkZ5N+ApOvB880m3cx
-        I+OcXjppWBqn0dhj3I6o9JWFvCzov3I=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=utGXQWkLu0b7Z5wyTAim3ydtWqCkLOZ4Jgg2eOkulrU=;
+        b=Njjg7dhAd4OnjEAOrMks9ycjhh0hfhGSDBxdJqo4hK9X2bdxc91MD3Wf/xBRi7jlc6WyMa
+        Llvi1Vjx+8XzvmZwf9UmeWx58B+Gm6B1yFqyMYe7VxbjA4qSO6pZeFq9gs/kUDLUGxMPf/
+        dJtpYo2hKlosP4ENX/625bU3y0e8gEo=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-564-pqYcYWV1O6iGT5cUqPJIAw-1; Tue, 28 Feb 2023 11:05:09 -0500
-X-MC-Unique: pqYcYWV1O6iGT5cUqPJIAw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ us-mta-161-GkOoL6nHP6WvT3Oxgxqf8w-1; Wed, 01 Mar 2023 09:07:37 -0500
+X-MC-Unique: GkOoL6nHP6WvT3Oxgxqf8w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 527A22817220;
-        Tue, 28 Feb 2023 16:05:08 +0000 (UTC)
-Received: from [10.22.8.29] (unknown [10.22.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 84188492B0F;
-        Tue, 28 Feb 2023 16:05:07 +0000 (UTC)
-Message-ID: <d72e3ef4-f607-9a63-9f6d-b03084a8edf6@redhat.com>
-Date:   Tue, 28 Feb 2023 11:05:07 -0500
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 698333853422;
+        Wed,  1 Mar 2023 14:06:24 +0000 (UTC)
+Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BB622026D2A;
+        Wed,  1 Mar 2023 14:06:23 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [RFC PATCH 00/12] io_uring: add IORING_OP_FUSED_CMD
+Date:   Wed,  1 Mar 2023 22:05:59 +0800
+Message-Id: <20230301140611.163055-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
-Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>,
-        lsf-pc@lists.linux-foundation.org
-Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-        kbusch@kernel.org, ming.lei@redhat.com
-References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
- <20230210180033.321377-1-joshi.k@samsung.com>
-From:   John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <20230210180033.321377-1-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2/10/23 13:00, Kanchan Joshi wrote:
-> 1. Command cancellation: while NVMe mandatorily supports the abort
-> command, we do not have a way to trigger that from user-space. There
-> are ways to go about it (with or without the uring-cancel interface) but
-> not without certain tradeoffs. It will be good to discuss the choices in
-> person.
+Hello,
 
-As one of the principle authors of TP4097a and the author of the one NVMe controller implementation that supports the NVMe 
-Cancel command I would like to attend LSF/MM this year and talk about this.
+Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
+be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
+64byte SQE(slave) is another normal 64byte OP. For any OP which needs
+to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
+and its ->issue() can retrieve/import buffer from master request's
+fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
+this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
+submits slave OP just like normal OP issued from userspace, that said,
+SQE order is kept, and batching handling is done too.
 
-See my SDC presentation where I describe all of the problems with the NVMe Abort command and demonstrates a Linux host sending 
-NVMe Abort and Cancel command to an IO controller:
+Please see detailed design in commit log of the 7th patch, and one big
+point is how to handle buffer ownership.
 
-https://www.youtube.com/watch?v=vRrAD1U0IRw
+With this way, it is easy to support zero copy for ublk/fuse device.
+
+Basically userspace can specify any sub-buffer of the ublk block request
+buffer from the fused command just by setting 'offset/len'
+in the slave SQE for running slave OP. This way is flexible to implement
+io mapping: mirror, stripped, ...
+
+The 8th & 9th patches enable fused slave support for the following OPs:
+
+	OP_READ/OP_WRITE
+	OP_SEND/OP_RECV/OP_SEND_ZC
+
+The last 3 patches implement fused command support for ublk driver.
+
+Follows userspace code:
+
+https://github.com/ming1/ubdsrv/tree/fused-cmd-zc
+
+Both loop and nbd ublk targets have supported zero copy by passing:
+
+	ublk add -t [loop|nbd] -z .... 
+
+Basic fs mount/kernel building and builtin test are done.
+
+Performance improvement is obvious on memory bandwidth
+related workloads, such as, 1~2X improvement on 64K/512K BS
+IO test on loop with ramfs backing file.
+
+Any comments are welcome!
 
 
-/John
+Ming Lei (12):
+  io_uring: increase io_kiocb->flags into 64bit
+  io_uring: define io_mapped_ubuf->acct_pages as unsigned integer
+  io_uring: extend io_mapped_ubuf to cover external bvec table
+  io_uring: rename io_mapped_ubuf as io_mapped_buf
+  io_uring: export 'struct io_mapped_buf' for fused cmd buffer
+  io_uring: add IO_URING_F_FUSED and prepare for supporting OP_FUSED_CMD
+  io_uring: add IORING_OP_FUSED_CMD
+  io_uring: support OP_READ/OP_WRITE for fused slave request
+  io_uring: support OP_SEND_ZC/OP_RECV for fused slave request
+  block: ublk_drv: mark device as LIVE before adding disk
+  block: ublk_drv: add common exit handling
+  block: ublk_drv: apply io_uring FUSED_CMD for supporting zero copy
+
+ drivers/block/ublk_drv.c       | 189 ++++++++++++++++++++++++--
+ drivers/char/mem.c             |   4 +
+ drivers/nvme/host/ioctl.c      |   9 ++
+ include/linux/io_uring.h       |  65 ++++++++-
+ include/linux/io_uring_types.h |  26 +++-
+ include/uapi/linux/io_uring.h  |   1 +
+ include/uapi/linux/ublk_cmd.h  |   1 +
+ io_uring/Makefile              |   2 +-
+ io_uring/fdinfo.c              |   6 +-
+ io_uring/fused_cmd.c           | 233 +++++++++++++++++++++++++++++++++
+ io_uring/fused_cmd.h           |  11 ++
+ io_uring/io_uring.c            |  24 +++-
+ io_uring/io_uring.h            |   3 +
+ io_uring/net.c                 |  23 +++-
+ io_uring/opdef.c               |  17 +++
+ io_uring/opdef.h               |   2 +
+ io_uring/rsrc.c                |  31 ++---
+ io_uring/rsrc.h                |  12 +-
+ io_uring/rw.c                  |  20 +++
+ 19 files changed, 623 insertions(+), 56 deletions(-)
+ create mode 100644 io_uring/fused_cmd.c
+ create mode 100644 io_uring/fused_cmd.h
+
+-- 
+2.31.1
 

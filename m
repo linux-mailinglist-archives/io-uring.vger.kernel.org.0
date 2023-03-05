@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E886AAE43
+	by mail.lfdr.de (Postfix) with ESMTP id CB63A6AAE44
 	for <lists+io-uring@lfdr.de>; Sun,  5 Mar 2023 06:14:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjCEFOT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 5 Mar 2023 00:14:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
+        id S229566AbjCEFOU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 5 Mar 2023 00:14:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjCEFOS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Mar 2023 00:14:18 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEF87BDE3
-        for <io-uring@vger.kernel.org>; Sat,  4 Mar 2023 21:14:16 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id f11so5775926wrv.8
-        for <io-uring@vger.kernel.org>; Sat, 04 Mar 2023 21:14:16 -0800 (PST)
+        with ESMTP id S229564AbjCEFOT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Mar 2023 00:14:19 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72637C175
+        for <io-uring@vger.kernel.org>; Sat,  4 Mar 2023 21:14:17 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id bx12so5759130wrb.11
+        for <io-uring@vger.kernel.org>; Sat, 04 Mar 2023 21:14:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=47e0uDe5zg00iu3JDIRt440rjWoEC6R3P4KvRu4wJ5Y=;
-        b=Rzdr5V+pwjDZipo1G+sXsVAJhYmbtmJ6UGQ62Hdvo+UL4StLRqAs1rNcOoR8axkSmv
-         6D23kVptfERbzCWheVoUf3Px3gkt0cg7DIi78BPvZC7uoEUoOq2sfmtH8dwjIRVOubFL
-         hXR4hinHWYUa1G3Xg7YIef0xg422PyB5rZiiI1Qn+n67sdlWM/rCfkN78CMscDAj1Iwm
-         PMHCL/aD5e60M/GqxPhmm4T0MlQclBesdPYxVVo70qjSZPAv6YEYJzt9KHcVckAS2OX6
-         R7YABSc2BuiMI977wzx3fLHyYZFnnAldw96fwHpk/XzGUw5jhsDPtLB0wNO1AVsK0Lk3
-         0CXg==
+        bh=IPKU78BEH9btRUN+ftOf80HhUjKqgHsnteqpHUeZfQM=;
+        b=JXl6zqhiQaL8w//s08ECTh7YXB5m8xhn1y3grYwvBAi9yPvDQzQ9MOa3+EJdGcF6af
+         v4Sn1Ro4XGeHS9LNBkCgjb5Zz7so92W09SQ6iBAQb9d8c7J31VzFkvNmcpWXFjb/7p4f
+         ZZcbxsBsSb6k9U/7ItlL82krfNV0LMwRHT/kADcfX6zCrigglw2oy2lbBIphdkbarJsI
+         Cod8+QWNNnvk3cURNfqb6soDCHsk+vZXZoxBio+T64TnYYrGsbTjNb+g3XQpyUKw//HB
+         NrGQVNO4anOx8SWu1GZhCwSznnXckbi/CScPL46jqrInYzVtUoJJx8/JIXkkdL2Mb9D1
+         uX+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=47e0uDe5zg00iu3JDIRt440rjWoEC6R3P4KvRu4wJ5Y=;
-        b=hjHjx0mSlpM26KgLPfKlAJcilrQK/Up0TwOLzVuutqMcJE4xdjFPFITN3dWbXt4fmb
-         bon4qRItQhRU1rNbwJoS1xGxHrZ/2dO+Mr2gACYnMjjK46PgOetwfrACJR1B+3ut2m0W
-         wooZvaxOCU7e3PbBbBUtCi+N+n6wFyZr5t0VJ9oj2p36hmecBI9fxddqhGI8chMCRJy3
-         WE+tXAF02UgSywoNOCgY7c+LM9ZLOzsLHzaDmYRKD+/RkEOrDJN1mTunczan00iPwyXC
-         Z8peRwqeGvRQjU3kQ7zo8p3gBNahisOfPQAYXj63WG2gQLkd36XpZEsng7ZcTQqBi+fn
-         0Vxg==
-X-Gm-Message-State: AO0yUKU6MksgN+Zaf5YZO+T+WAQi9EnSOc8xiNcNoT5ZHjhufS+ePOEq
-        rMz/P2qGhOwNwQsbNuP8OGkNoqEiY2Q=
-X-Google-Smtp-Source: AK7set9LlIQ2wd09IXThCArOllVJbFseI8YBqfXucwlHmXuc9nCQP3oyfka5PuElObmqMGhISVY4Ug==
-X-Received: by 2002:adf:f584:0:b0:2c9:b3a9:b080 with SMTP id f4-20020adff584000000b002c9b3a9b080mr4944837wro.16.1677993254992;
-        Sat, 04 Mar 2023 21:14:14 -0800 (PST)
+        bh=IPKU78BEH9btRUN+ftOf80HhUjKqgHsnteqpHUeZfQM=;
+        b=KAxPMcJMvs/67LbnrfojjZV1R13TayqbCnekq5Fq2SiNGxJheWO/GwaIyQtnI8NfVT
+         RIhZk0rfIhPxtgD0YpWmIQE23H9tah9jDJxgp+1gAMgclAFP5vIR/agyEj70S9Fz09eh
+         922qQ1gSJ0+6U0t4vCNcjtMt84RkIeyboRSgTRla1X4eotqiMLCt7zHSBXFmfkh/vKes
+         mPneI9cLAd9dgu9ctFGf2FbSKHI7QuUng96W8VX99+Gawc4s2DgI93qFTtcmhrEP7vEz
+         dnxGFHVrWV3wUdfvkQYhOI1KSKRRYQDh16EwjrxhmhKcGAJ56HakcuO+fgx+BQQGfaFv
+         oQGA==
+X-Gm-Message-State: AO0yUKVNkcBAbx1pBsn+SXhRUB9ASjnze1/D0BaP8rI1ub9J3chl0n3L
+        nWMS7n3v1cX+K6CffjvtG+3oIdqmIiY=
+X-Google-Smtp-Source: AK7set85FBRV0Yt36KZOisIPBtj05doZxM4fw4JwcGmUhTdr6vrXVOakoT7WGEdWDcdvF7xmON4MOg==
+X-Received: by 2002:adf:f78e:0:b0:2c8:bf89:39be with SMTP id q14-20020adff78e000000b002c8bf8939bemr5224040wrp.7.1677993255781;
+        Sat, 04 Mar 2023 21:14:15 -0800 (PST)
 Received: from 127.0.0.1localhost (94.196.92.184.threembb.co.uk. [94.196.92.184])
-        by smtp.gmail.com with ESMTPSA id j4-20020adfff84000000b002cda9aa1dc1sm6524348wrr.111.2023.03.04.21.14.14
+        by smtp.gmail.com with ESMTPSA id j4-20020adfff84000000b002cda9aa1dc1sm6524348wrr.111.2023.03.04.21.14.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Mar 2023 21:14:14 -0800 (PST)
+        Sat, 04 Mar 2023 21:14:15 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing v2 3/5] examples/send-zc: add multithreading
-Date:   Sun,  5 Mar 2023 05:13:06 +0000
-Message-Id: <d5077c17a54e7f92be28ef499c83d99f4d3eb175.1677993039.git.asml.silence@gmail.com>
+Subject: [PATCH liburing v2 4/5] examples/send-zc: add the receive part
+Date:   Sun,  5 Mar 2023 05:13:07 +0000
+Message-Id: <05beb317f14f7903f8edf7be981d17ad1dd46770.1677993039.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <cover.1677993039.git.asml.silence@gmail.com>
 References: <cover.1677993039.git.asml.silence@gmail.com>
@@ -70,292 +70,238 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-'-T <nr_threads>' will create the specified number of threads to test in
-parallel. Each thread will have its own connection.
+'-R' will switch the benchmark into the server mode accepting data. For
+TCP the number of threads should match the number of threads of the
+client. For UDP just one thread/connection should be enough.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- examples/Makefile        |   3 +
- examples/send-zerocopy.c | 116 ++++++++++++++++++++++++++-------------
- 2 files changed, 81 insertions(+), 38 deletions(-)
+ examples/send-zerocopy.c | 148 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 144 insertions(+), 4 deletions(-)
 
-diff --git a/examples/Makefile b/examples/Makefile
-index ef79e42..ce33af9 100644
---- a/examples/Makefile
-+++ b/examples/Makefile
-@@ -10,6 +10,9 @@ ifneq ($(MAKECMDGOALS),clean)
- include ../config-host.mak
- endif
- 
-+LDFLAGS ?=
-+override LDFLAGS += -L../src/ -luring -lpthread
-+
- example_srcs := \
- 	io_uring-close-test.c \
- 	io_uring-cp.c \
 diff --git a/examples/send-zerocopy.c b/examples/send-zerocopy.c
-index baa2bdf..683a965 100644
+index 683a965..8e1242e 100644
 --- a/examples/send-zerocopy.c
 +++ b/examples/send-zerocopy.c
-@@ -11,6 +11,7 @@
- #include <stdbool.h>
- #include <stdarg.h>
+@@ -13,6 +13,7 @@
  #include <string.h>
-+#include <pthread.h>
+ #include <pthread.h>
  
++#include <poll.h>
  #include <sched.h>
  #include <arpa/inet.h>
-@@ -42,6 +43,16 @@
- 
- #define ZC_TAG 0xfffffffULL
- #define MAX_SUBMIT_NR 512
-+#define MAX_THREADS 100
-+
-+struct thread_data {
-+	pthread_t thread;
-+	void *ret;
-+	int idx;
-+	unsigned long long packets;
-+	unsigned long long bytes;
-+	struct sockaddr_storage dst_addr;
-+};
+ #include <linux/if_packet.h>
+@@ -52,6 +53,7 @@ struct thread_data {
+ 	unsigned long long packets;
+ 	unsigned long long bytes;
+ 	struct sockaddr_storage dst_addr;
++	int fd;
+ };
  
  static bool cfg_reg_ringfd = true;
- static bool cfg_fixed_files = 1;
-@@ -51,17 +62,21 @@ static bool cfg_fixed_buf = 1;
+@@ -62,6 +64,7 @@ static bool cfg_fixed_buf = 1;
  static bool cfg_hugetlb = 0;
  static bool cfg_defer_taskrun = 0;
  static int  cfg_cpu = -1;
-+static unsigned  cfg_nr_threads = 1;
++static bool cfg_rx = 0;
+ static unsigned  cfg_nr_threads = 1;
  
  static int  cfg_family		= PF_UNSPEC;
-+static int  cfg_type		= 0;
- static int  cfg_payload_len;
- static int  cfg_port		= 8000;
- static int  cfg_runtime_ms	= 4200;
- 
- static socklen_t cfg_alen;
--static struct sockaddr_storage cfg_dst_addr;
-+static char *str_addr = NULL;
- 
- static char payload_buf[IP_MAXPACKET] __attribute__((aligned(4096)));
- static char *payload;
-+static struct thread_data threads[MAX_THREADS];
-+static pthread_barrier_t barrier;
- 
- /*
-  * Implementation of error(3), prints an error message and exits.
-@@ -125,12 +140,13 @@ static void setup_sockaddr(int domain, const char *str_addr,
- {
- 	struct sockaddr_in6 *addr6 = (void *) sockaddr;
- 	struct sockaddr_in *addr4 = (void *) sockaddr;
-+	int port = cfg_port;
- 
- 	switch (domain) {
- 	case PF_INET:
- 		memset(addr4, 0, sizeof(*addr4));
- 		addr4->sin_family = AF_INET;
--		addr4->sin_port = htons(cfg_port);
-+		addr4->sin_port = htons(port);
- 		if (str_addr &&
- 		    inet_pton(AF_INET, str_addr, &(addr4->sin_addr)) != 1)
- 			t_error(1, 0, "ipv4 parse error: %s", str_addr);
-@@ -138,7 +154,7 @@ static void setup_sockaddr(int domain, const char *str_addr,
- 	case PF_INET6:
- 		memset(addr6, 0, sizeof(*addr6));
- 		addr6->sin6_family = AF_INET6;
--		addr6->sin6_port = htons(cfg_port);
-+		addr6->sin6_port = htons(port);
- 		if (str_addr &&
- 		    inet_pton(AF_INET6, str_addr, &(addr6->sin6_addr)) != 1)
- 			t_error(1, 0, "ipv6 parse error: %s", str_addr);
-@@ -148,21 +164,6 @@ static void setup_sockaddr(int domain, const char *str_addr,
+@@ -164,6 +167,135 @@ static void setup_sockaddr(int domain, const char *str_addr,
  	}
  }
  
--static int do_setup_tx(int domain, int type, int protocol)
--{
--	int fd;
--
--	fd = socket(domain, type, protocol);
--	if (fd == -1)
--		t_error(1, errno, "socket t");
--
--	do_setsockopt(fd, SOL_SOCKET, SO_SNDBUF, 1 << 21);
--
--	if (connect(fd, (void *) &cfg_dst_addr, cfg_alen))
--		t_error(1, errno, "connect");
--	return fd;
--}
--
++static int do_poll(int fd, int events)
++{
++	struct pollfd pfd;
++	int ret;
++
++	pfd.events = events;
++	pfd.revents = 0;
++	pfd.fd = fd;
++
++	ret = poll(&pfd, 1, -1);
++	if (ret == -1)
++		t_error(1, errno, "poll");
++
++	return ret && (pfd.revents & events);
++}
++
++/* Flush all outstanding bytes for the tcp receive queue */
++static int do_flush_tcp(struct thread_data *td, int fd)
++{
++	int ret;
++
++	/* MSG_TRUNC flushes up to len bytes */
++	ret = recv(fd, NULL, 1 << 21, MSG_TRUNC | MSG_DONTWAIT);
++	if (ret == -1 && errno == EAGAIN)
++		return 0;
++	if (ret == -1)
++		t_error(1, errno, "flush");
++	if (!ret)
++		return 1;
++
++	td->packets++;
++	td->bytes += ret;
++	return 0;
++}
++
++/* Flush all outstanding datagrams. Verify first few bytes of each. */
++static int do_flush_datagram(struct thread_data *td, int fd, int type)
++{
++	int ret, off = 0;
++	char buf[64];
++
++	/* MSG_TRUNC will return full datagram length */
++	ret = recv(fd, buf, sizeof(buf), MSG_DONTWAIT | MSG_TRUNC);
++	if (ret == -1 && errno == EAGAIN)
++		return 0;
++
++	if (ret == -1)
++		t_error(1, errno, "recv");
++	if (ret != cfg_payload_len)
++		t_error(1, 0, "recv: ret=%u != %u", ret, cfg_payload_len);
++	if (ret > sizeof(buf) - off)
++		ret = sizeof(buf) - off;
++	if (memcmp(buf + off, payload, ret))
++		t_error(1, 0, "recv: data mismatch");
++
++	td->packets++;
++	td->bytes += cfg_payload_len;
++	return 0;
++}
++
++static void do_setup_rx(int domain, int type, int protocol)
++{
++	struct sockaddr_storage addr = {};
++	struct thread_data *td;
++	int listen_fd, fd, i;
++
++	fd = socket(domain, type, protocol);
++	if (fd == -1)
++		t_error(1, errno, "socket r");
++
++	do_setsockopt(fd, SOL_SOCKET, SO_RCVBUF, 1 << 21);
++	do_setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT, 1 << 16);
++	do_setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, 1);
++
++	setup_sockaddr(cfg_family, str_addr, &addr);
++
++	if (bind(fd, (void *)&addr, cfg_alen))
++		t_error(1, errno, "bind");
++
++	if (type != SOCK_STREAM) {
++		if (cfg_nr_threads != 1)
++			t_error(1, 0, "udp rx cant multithread");
++		threads[0].fd = fd;
++		return;
++	}
++
++	listen_fd = fd;
++	if (listen(listen_fd, cfg_nr_threads))
++		t_error(1, errno, "listen");
++
++	for (i = 0; i < cfg_nr_threads; i++) {
++		td = &threads[i];
++
++		fd = accept(listen_fd, NULL, NULL);
++		if (fd == -1)
++			t_error(1, errno, "accept");
++		td->fd = fd;
++	}
++
++	if (close(listen_fd))
++		t_error(1, errno, "close listen sock");
++}
++
++static void *do_rx(void *arg)
++{
++	struct thread_data *td = arg;
++	const int cfg_receiver_wait_ms = 400;
++	uint64_t tstop;
++	int ret, fd = td->fd;
++
++	tstop = gettimeofday_ms() + cfg_runtime_ms + cfg_receiver_wait_ms;
++	do {
++		if (cfg_type == SOCK_STREAM)
++			ret = do_flush_tcp(td, fd);
++		else
++			ret = do_flush_datagram(td, fd, cfg_type);
++
++		if (ret)
++			break;
++
++		do_poll(fd, POLLIN);
++	} while (gettimeofday_ms() < tstop);
++
++	if (close(fd))
++		t_error(1, errno, "close");
++	pthread_exit(&td->ret);
++	return NULL;
++}
++
  static inline struct io_uring_cqe *wait_cqe_fast(struct io_uring *ring)
  {
  	struct io_uring_cqe *cqe;
-@@ -178,11 +179,9 @@ static inline struct io_uring_cqe *wait_cqe_fast(struct io_uring *ring)
- 	return cqe;
- }
- 
--static void do_tx(int domain, int type, int protocol)
-+static void do_tx(struct thread_data *td, int domain, int type, int protocol)
- {
- 	const int notif_slack = 128;
--	unsigned long packets = 0;
--	unsigned long bytes = 0;
- 	struct io_uring ring;
- 	struct iovec iov;
- 	uint64_t tstop;
-@@ -193,7 +192,14 @@ static void do_tx(int domain, int type, int protocol)
- 	if (cfg_defer_taskrun)
- 		ring_flags |= IORING_SETUP_DEFER_TASKRUN;
- 
--	fd = do_setup_tx(domain, type, protocol);
-+	fd = socket(domain, type, protocol);
-+	if (fd == -1)
-+		t_error(1, errno, "socket t");
-+
-+	do_setsockopt(fd, SOL_SOCKET, SO_SNDBUF, 1 << 21);
-+
-+	if (connect(fd, (void *)&td->dst_addr, cfg_alen))
-+		t_error(1, errno, "connect, idx %i", td->idx);
- 
- 	ret = io_uring_queue_init(512, &ring, ring_flags);
- 	if (ret)
-@@ -220,6 +226,8 @@ static void do_tx(int domain, int type, int protocol)
- 	if (ret)
- 		t_error(1, ret, "io_uring: buffer registration");
- 
-+	pthread_barrier_wait(&barrier);
-+
- 	tstop = gettimeofday_ms() + cfg_runtime_ms;
- 	do {
- 		struct io_uring_sqe *sqe;
-@@ -271,8 +279,8 @@ static void do_tx(int domain, int type, int protocol)
- 				compl_cqes++;
- 
- 			if (cqe->res >= 0) {
--				packets++;
--				bytes += cqe->res;
-+				td->packets++;
-+				td->bytes += cqe->res;
+@@ -283,7 +415,7 @@ static void do_tx(struct thread_data *td, int domain, int type, int protocol)
+ 				td->bytes += cqe->res;
  			} else if (cqe->res == -ECONNREFUSED || cqe->res == -EPIPE ||
  				   cqe->res == -ECONNRESET) {
- 				fprintf(stderr, "Connection failure");
-@@ -289,11 +297,6 @@ out_fail:
- 	if (close(fd))
- 		t_error(1, errno, "close");
+-				fprintf(stderr, "Connection failure");
++				fprintf(stderr, "Connection failure\n");
+ 				goto out_fail;
+ 			} else if (cqe->res != -EAGAIN) {
+ 				t_error(1, cqe->res, "send failed");
+@@ -316,6 +448,7 @@ static void *do_test(void *arg)
  
--	fprintf(stderr, "tx=%lu (MB=%lu), tx/s=%lu (MB/s=%lu)\n",
--			packets, bytes >> 20,
--			packets / (cfg_runtime_ms / 1000),
--			(bytes >> 20) / (cfg_runtime_ms / 1000));
--
- 	while (compl_cqes) {
- 		struct io_uring_cqe *cqe = wait_cqe_fast(&ring);
- 
-@@ -303,14 +306,16 @@ out_fail:
- 	io_uring_queue_exit(&ring);
- }
- 
--static void do_test(int domain, int type, int protocol)
-+
-+static void *do_test(void *arg)
- {
--	int i;
-+	struct thread_data *td = arg;
-+	int protocol = 0;
- 
--	for (i = 0; i < IP_MAXPACKET; i++)
--		payload[i] = 'a' + (i % 26);
-+	setup_sockaddr(cfg_family, str_addr, &td->dst_addr);
- 
--	do_tx(domain, type, protocol);
-+	do_tx(td, cfg_family, cfg_type, protocol);
-+	pthread_exit(&td->ret);
+ 	do_tx(td, cfg_family, cfg_type, protocol);
+ 	pthread_exit(&td->ret);
++	return NULL;
  }
  
  static void usage(const char *filepath)
-@@ -333,7 +338,7 @@ static void parse_opts(int argc, char **argv)
+@@ -338,7 +471,7 @@ static void parse_opts(int argc, char **argv)
  
  	cfg_payload_len = max_payload_len;
  
--	while ((c = getopt(argc, argv, "46D:p:s:t:n:z:b:l:dC:")) != -1) {
-+	while ((c = getopt(argc, argv, "46D:p:s:t:n:z:b:l:dC:T:")) != -1) {
+-	while ((c = getopt(argc, argv, "46D:p:s:t:n:z:b:l:dC:T:")) != -1) {
++	while ((c = getopt(argc, argv, "46D:p:s:t:n:z:b:l:dC:T:R")) != -1) {
  		switch (c) {
  		case '4':
  			if (cfg_family != PF_UNSPEC)
-@@ -377,6 +382,11 @@ static void parse_opts(int argc, char **argv)
- 		case 'C':
- 			cfg_cpu = strtol(optarg, NULL, 0);
+@@ -387,6 +520,9 @@ static void parse_opts(int argc, char **argv)
+ 			if (cfg_nr_threads > MAX_THREADS)
+ 				t_error(1, 0, "too many threads\n");
  			break;
-+		case 'T':
-+			cfg_nr_threads = strtol(optarg, NULL, 0);
-+			if (cfg_nr_threads > MAX_THREADS)
-+				t_error(1, 0, "too many threads\n");
++		case 'R':
++			cfg_rx = 1;
 +			break;
  		}
  	}
  
-@@ -385,7 +395,7 @@ static void parse_opts(int argc, char **argv)
- 	if (cfg_payload_len > max_payload_len)
- 		t_error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
+@@ -441,8 +577,12 @@ int main(int argc, char **argv)
+ 		td->idx = i;
+ 	}
  
--	setup_sockaddr(cfg_family, daddr, &cfg_dst_addr);
-+	str_addr = daddr;
++	if (cfg_rx)
++		do_setup_rx(cfg_family, cfg_type, 0);
++
+ 	for (i = 0; i < cfg_nr_threads; i++)
+-		pthread_create(&threads[i].thread, NULL, do_test, td);
++		pthread_create(&threads[i].thread, NULL,
++				!cfg_rx ? do_test : do_rx, &threads[i]);
  
- 	if (optind != argc - 1)
- 		usage(argv[0]);
-@@ -393,7 +403,11 @@ static void parse_opts(int argc, char **argv)
+ 	for (i = 0; i < cfg_nr_threads; i++) {
+ 		td = &threads[i];
+@@ -451,7 +591,7 @@ int main(int argc, char **argv)
+ 		bytes += td->bytes;
+ 	}
  
- int main(int argc, char **argv)
- {
-+	unsigned long long packets = 0, bytes = 0;
-+	struct thread_data *td;
- 	const char *cfg_test;
-+	void *res;
-+	int i;
- 
- 	parse_opts(argc, argv);
- 	set_cpu_affinity();
-@@ -411,11 +425,37 @@ int main(int argc, char **argv)
- 
- 	cfg_test = argv[argc - 1];
- 	if (!strcmp(cfg_test, "tcp"))
--		do_test(cfg_family, SOCK_STREAM, 0);
-+		cfg_type = SOCK_STREAM;
- 	else if (!strcmp(cfg_test, "udp"))
--		do_test(cfg_family, SOCK_DGRAM, 0);
-+		cfg_type = SOCK_DGRAM;
- 	else
- 		t_error(1, 0, "unknown cfg_test %s", cfg_test);
- 
-+	pthread_barrier_init(&barrier, NULL, cfg_nr_threads);
-+
-+	for (i = 0; i < IP_MAXPACKET; i++)
-+		payload[i] = 'a' + (i % 26);
-+
-+	for (i = 0; i < cfg_nr_threads; i++) {
-+		td = &threads[i];
-+		td->idx = i;
-+	}
-+
-+	for (i = 0; i < cfg_nr_threads; i++)
-+		pthread_create(&threads[i].thread, NULL, do_test, td);
-+
-+	for (i = 0; i < cfg_nr_threads; i++) {
-+		td = &threads[i];
-+		pthread_join(td->thread, &res);
-+		packets += td->packets;
-+		bytes += td->bytes;
-+	}
-+
-+	fprintf(stderr, "tx=%llu (MB=%llu), tx/s=%llu (MB/s=%llu)\n",
-+		packets, bytes >> 20,
-+		packets / (cfg_runtime_ms / 1000),
-+		(bytes >> 20) / (cfg_runtime_ms / 1000));
-+
-+	pthread_barrier_destroy(&barrier);
- 	return 0;
- }
+-	fprintf(stderr, "tx=%llu (MB=%llu), tx/s=%llu (MB/s=%llu)\n",
++	fprintf(stderr, "packets=%llu (MB=%llu), rps=%llu (MB/s=%llu)\n",
+ 		packets, bytes >> 20,
+ 		packets / (cfg_runtime_ms / 1000),
+ 		(bytes >> 20) / (cfg_runtime_ms / 1000));
 -- 
 2.39.1
 

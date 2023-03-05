@@ -2,64 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA5646AAE47
-	for <lists+io-uring@lfdr.de>; Sun,  5 Mar 2023 06:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 966DF6AB110
+	for <lists+io-uring@lfdr.de>; Sun,  5 Mar 2023 15:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbjCEFSI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 5 Mar 2023 00:18:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36172 "EHLO
+        id S229491AbjCEOff (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 5 Mar 2023 09:35:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjCEFSH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Mar 2023 00:18:07 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97665A5F7
-        for <io-uring@vger.kernel.org>; Sat,  4 Mar 2023 21:18:06 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id d41-20020a05600c4c2900b003e9e066550fso3376514wmp.4
-        for <io-uring@vger.kernel.org>; Sat, 04 Mar 2023 21:18:06 -0800 (PST)
+        with ESMTP id S229650AbjCEOfd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Mar 2023 09:35:33 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8543BE04B
+        for <io-uring@vger.kernel.org>; Sun,  5 Mar 2023 06:35:32 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id u3-20020a17090a450300b00239db6d7d47so6558450pjg.4
+        for <io-uring@vger.kernel.org>; Sun, 05 Mar 2023 06:35:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fA7/K+Vze4hmrlBZHBIX5f/ICsXE8EjaToWL73cOBGc=;
-        b=RM9dnAbOKgYbHNcn0HFeLlsrikZ9/sHzotvXzyZs6ZMYEFCuyzF4hbnRYgU8EztnZA
-         PGi0jFEfkx3gyhrMyMNcoF5NSlRD0HEEcfuuOf4NTFhf/xs1uGNYMRUNDU2k38aJhCEb
-         prrsRN0lDJvx/zzXg7nDaFifEBj35LfBI38LZi5iOnaVrfzMA32sMCzbmvV0AQwEyPIa
-         1FQBkEQ1H9mAFMYccT/4QSX/u4LSsee+aPhaEmBPtBAuDloBXgggXONKLJoTbv06zcu1
-         v/noQOHimXJFlRrBS/2g4fHfI1RSnzm6V2/21YQlilhl0R2aGoGiWIHu3BXnec40OYjb
-         Le5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678026931;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fA7/K+Vze4hmrlBZHBIX5f/ICsXE8EjaToWL73cOBGc=;
-        b=RmOC/nuRM4Ye6dTM+p04CGfKeaGn/gd+2ktR9K+IpdXFiasFjcwAxvtQOpzpF/a0Sw
-         y+pZn4yl2nIHyrmV4ALS+lNyLmmmRSKK4XsF48cDqYKbKEziR0BkT7CsBifZAUlZ/T3b
-         WOB87YsuBaecKca3cERzN5LN51RHlPRUsMkakbE0gSohh2u1i7xfS7gwjHtBq3ckDCR4
-         k6fnqqc50n9UPQ/JWoBF1qGPgTNVsVidqM9jAOM4aMwMJQ+4+P6w5qNu976XNVxYt6ou
-         NfSlAq7MiRlFl5hs0HkydtSlHDbjquNhy/+7iK4H4uoSyxeRIbvuUmt5m6CsS9svePxQ
-         Uz6A==
-X-Gm-Message-State: AO0yUKV4fqGCtVwFQgF7wNON7JltJwLZRU3WP7tm8JoKzuxJ/YXosYcU
-        0bZbbU9Pa+xKMo54esoAp9d7Q/4vJ4M=
-X-Google-Smtp-Source: AK7set93Lngab46Qes95eVazQXJovQgHLdQ0X0l1YqVUd7XMt/pN7zMw0B2lVDOiGhKClTQdMEFhVQ==
-X-Received: by 2002:a05:600c:a06:b0:3ea:ed4d:38f6 with SMTP id z6-20020a05600c0a0600b003eaed4d38f6mr6065469wmp.4.1677993483960;
-        Sat, 04 Mar 2023 21:18:03 -0800 (PST)
-Received: from 127.0.0.1localhost (94.196.92.184.threembb.co.uk. [94.196.92.184])
-        by smtp.gmail.com with ESMTPSA id c40-20020a05600c4a2800b003eb20d4d4a8sm6606120wmp.44.2023.03.04.21.18.03
+        bh=I3if718PaFrkTynw1+ags3uyau+4BaA/REwSlIFf2Qo=;
+        b=ChLbwyPsmGyRZQBoF+EVhYZmT/4edZKskh6N+rWyhaLG1AY+81PEspuohkyjuEG2Bd
+         XD3aiCXYYVZsABJ+nB4WeW9pren6ZdEVl5KXMI4vhR7T+IWLag+RAn49rp5fQyWWOD87
+         kxG+2geF4cj6kiYirsiOtaQjn+qS64hb8skgE64up881tR5KaT2LM2oDlfOAr6HEUqcz
+         CNZEmvRJnzmEBb+gtuT2XNPbX5PdM6Brtl9ClNgDfef9sPUypAoz3TC1V/xYEzpDxGwL
+         OeGRsvCtVGAXdrvobZH1pOno8S3C4fvncfj04xA6Dn7By0tQuiF7z6Gxo6p14Z+cQCA6
+         i8OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678026931;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I3if718PaFrkTynw1+ags3uyau+4BaA/REwSlIFf2Qo=;
+        b=ycd98WgztqoYebiWWWQkhOjQHiPzzfzuAHebsGpPyZaX6NWxvEniFxUiJGzseYWXBn
+         gu31OKE7liNQD+sm5xYLtsS964/25JuZRbJuiEnD3L+Tvi1Ye2saG7bvjQ2TXY+1RQ4c
+         WKponhwXs4+3F6iPLZ7sPZ6nbHVGjVJ5DTUpN/8CyHiO731TlYydlqUA8vhQ2cfTLhn6
+         PPUpPKNDha0SqBqTkZRzaAEcLTP3ALmIMkD+yIhBDBhLu033W5PjoyEXZQpB3myLT9Ii
+         jcYgAjsQq7CB04GKe8l1rbj98v4cXmA1ZYehDKkwt3yvhbU0AhPHQy01lakil4JTVBrW
+         PFVw==
+X-Gm-Message-State: AO0yUKWO/+EYaX295Dxvk7LzWXGoGxXNpZDSXWDv91zEvfPn8KSWqfcS
+        cFjpO0Fz+83rmemxNDRPk9Vo7kNVJnJHxTEyx2o=
+X-Google-Smtp-Source: AK7set+pUkSABzNWTtb9d6EWM6Mvtfa0IgJ9P0yx8u/Gx4wiObdQ5JCFgG4+vILGWekmh/noeLIIhg==
+X-Received: by 2002:a17:902:e743:b0:19e:b5d3:170d with SMTP id p3-20020a170902e74300b0019eb5d3170dmr3454826plf.0.1678026931370;
+        Sun, 05 Mar 2023 06:35:31 -0800 (PST)
+Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id kf15-20020a17090305cf00b00196251ca124sm4862683plb.75.2023.03.05.06.35.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Mar 2023 21:18:03 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH liburing 1/1] tests/fd-pass: close rings
-Date:   Sun,  5 Mar 2023 05:16:57 +0000
-Message-Id: <2514ac14bffdffe0a78fd51c41698deb20d54cc4.1677993404.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.39.1
+        Sun, 05 Mar 2023 06:35:30 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <2514ac14bffdffe0a78fd51c41698deb20d54cc4.1677993404.git.asml.silence@gmail.com>
+References: <2514ac14bffdffe0a78fd51c41698deb20d54cc4.1677993404.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing 1/1] tests/fd-pass: close rings
+Message-Id: <167802693059.46805.5440720987736674735.b4-ty@kernel.dk>
+Date:   Sun, 05 Mar 2023 07:35:30 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-ebd05
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,27 +69,21 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't leak rings from test(), we call it several times and have a good
-number of open rings lingering during the test for no good reason.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/fd-pass.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Sun, 05 Mar 2023 05:16:57 +0000, Pavel Begunkov wrote:
+> Don't leak rings from test(), we call it several times and have a good
+> number of open rings lingering during the test for no good reason.
+> 
+> 
 
-diff --git a/test/fd-pass.c b/test/fd-pass.c
-index 245495c..f3ede77 100644
---- a/test/fd-pass.c
-+++ b/test/fd-pass.c
-@@ -161,6 +161,8 @@ static int test(const char *filename, int source_fd, int target_fd)
- 	if (verify_fixed_read(&dring, target_fd, 0))
- 		return T_EXIT_FAIL;
- 
-+	io_uring_queue_exit(&sring);
-+	io_uring_queue_exit(&dring);
- 	return T_EXIT_PASS;
- }
- 
+Applied, thanks!
+
+[1/1] tests/fd-pass: close rings
+      commit: 3533273acbacdc5b120dce12d3aab5c8e56e6186
+
+Best regards,
 -- 
-2.39.1
+Jens Axboe
+
+
 

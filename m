@@ -2,100 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2026AB10F
-	for <lists+io-uring@lfdr.de>; Sun,  5 Mar 2023 15:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 931936AB87D
+	for <lists+io-uring@lfdr.de>; Mon,  6 Mar 2023 09:39:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjCEOfe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 5 Mar 2023 09:35:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60638 "EHLO
+        id S229587AbjCFIjL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 6 Mar 2023 03:39:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjCEOfd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 5 Mar 2023 09:35:33 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B98E052
-        for <io-uring@vger.kernel.org>; Sun,  5 Mar 2023 06:35:32 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id h8so7472900plf.10
-        for <io-uring@vger.kernel.org>; Sun, 05 Mar 2023 06:35:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678026932;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2vIqCYAxR2zQq0YziMj32J5h9YavIWU44m24rPPARlE=;
-        b=C+/zDuxhJI5sq4aG0gV71SZbrLsmEwLu44vPYC3FjX5d2/vyrVdVuATCF0gYxpmUtk
-         1zLA4L6W66XKcrqUri9kKX4mQKzzSx5h6mb0YE3F9OQI8dbu+9CrLRXmcNQVF3F2j+zf
-         5LX1IFfPs0GAW6UXsIRQs1AnTaIem0GEuVvSAgmknoqRHkGRaJeoxmyZGKqESwZELo1n
-         ZfsSRijz3BxbvVgGVbX61z+vQxE6FDruBpdfIiRXdXjDy4GbLFS2Kx20i/xVI98RdOoA
-         h4HJqbEcy13l1snNBkOYJAw0HEu7Yl/ewa1V5qotZ8K21oyvqvi+hr4ZzlV7WOzp9PVO
-         J8TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678026932;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2vIqCYAxR2zQq0YziMj32J5h9YavIWU44m24rPPARlE=;
-        b=HOTWmgbOPHA4WOtyNe/CtzhszV97H643ZZ3uwt2mjz9c/S/G400PZEzMb/DOyadscN
-         2xo4HveoGREBq+9p5yP1H+xYIYF9reP0fBliu7EDm/n2iyhaxflXU1qLDScgE8nVlTDJ
-         7qJUGewZqMabMhfqBRsIxvxMHqTukYouOH5146cgeoKugxEEaDuaY5juGH9EZ+xaDYHJ
-         7cg89Dq21IWP0dyfLvHvJ7kFzBscajNL01IC9ATwAd2nKTss8cSjnrjDuNA8m8LeQeCE
-         ep67jIEuzAfwTlikOO1zxCmcLJpKWrHVXJHQoJvu36gn/MJptlvRY47FEAYUxfnak+kr
-         IgeQ==
-X-Gm-Message-State: AO0yUKXwkoxDrUBSqywdTv9QnkZ9jkg3RZIC+Zxzy05ApJXU5UB+nr1t
-        k5Nx+UF40EfdtCBucEsRFL6sz0wsGUPlF2V7ZU4=
-X-Google-Smtp-Source: AK7set8HqlJIJgWmRug2h81tCJ1nJBCIBUcrxgLAOA50H78ynKS0cjt7XynwY9/Vkwkjh2ARYT+fvw==
-X-Received: by 2002:a17:902:d4c2:b0:19a:9269:7d1 with SMTP id o2-20020a170902d4c200b0019a926907d1mr10055140plg.4.1678026932078;
-        Sun, 05 Mar 2023 06:35:32 -0800 (PST)
-Received: from [127.0.0.1] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id kf15-20020a17090305cf00b00196251ca124sm4862683plb.75.2023.03.05.06.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Mar 2023 06:35:31 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1677993039.git.asml.silence@gmail.com>
-References: <cover.1677993039.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing v2 0/5] sendzc test improvements
-Message-Id: <167802693150.46805.10327189149215717857.b4-ty@kernel.dk>
-Date:   Sun, 05 Mar 2023 07:35:31 -0700
+        with ESMTP id S229457AbjCFIjK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 6 Mar 2023 03:39:10 -0500
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F23F1CF41
+        for <io-uring@vger.kernel.org>; Mon,  6 Mar 2023 00:39:08 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0VdDPTSs_1678091945;
+Received: from 30.82.254.66(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0VdDPTSs_1678091945)
+          by smtp.aliyun-inc.com;
+          Mon, 06 Mar 2023 16:39:06 +0800
+Message-ID: <cd73d991-8c0b-847a-5d3d-42f21ec7b073@linux.alibaba.com>
+Date:   Mon, 6 Mar 2023 16:39:04 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.8.0
+Subject: Re: [RFC v2 2/3] io_uring: add fixed poll support
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+References: <20211028122850.13025-1-xiaoguang.wang@linux.alibaba.com>
+ <20211028122850.13025-2-xiaoguang.wang@linux.alibaba.com>
+ <0ca484de-0af1-b506-5ded-fa125bee1bcb@kernel.dk>
+Content-Language: en-US
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <0ca484de-0af1-b506-5ded-fa125bee1bcb@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-ebd05
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+hi,
 
-On Sun, 05 Mar 2023 05:13:03 +0000, Pavel Begunkov wrote:
-> Add affinity, multithreading and the server, and also fix TPC
-> performance issues
-> 
-> v2: rebase
->     add defer support (patch 1/5)
->     fix rx tcp problems (patch 5/5)
-> 
-> [...]
+> On 10/28/21 6:28?AM, Xiaoguang Wang wrote:
+>> Recently I spend time to research io_uring's fast-poll and multi-shot's
+>> performance using network echo-server model. Previously I always thought
+>> fast-poll is better than multi-shot and will give better performance,
+>> but indeed multi-shot is almost always better than fast-poll in real
+>> test, which is very interesting. I use ebpf to have some measurements,
+>> it shows that whether fast-poll is excellent or not depends entirely on
+>> that the first nowait try in io_issue_sqe() succeeds or fails. Take
+>> io_recv operation as example(recv buffer is 16 bytes):
+>>   1) the first nowait succeeds, a simple io_recv() is enough.
+>> In my test machine, successful io_recv() consumes 1110ns averagely.
+>>
+>>   2) the first nowait fails, then we'll have some expensive work, which
+>> contains failed io_revc(), apoll allocations, vfs_poll(), miscellaneous
+>> initializations anc check in __io_arm_poll_handler() and a final
+>> successful io_recv(). Among then:
+>>     failed io_revc() consumes 620ns averagely.
+>>     vfs_poll() consumes 550ns averagely.
+>> I don't measure other overhead yet, but we can see if the first nowait
+>> try fails, we'll need at least 2290ns(620 + 550 + 1110) to complete it.
+>> In my echo server tests, 40% of first nowait io_recv() operations fails.
+>>
+>> From above measurements, it can explain why mulit-shot is better than
+>> multi-shot, mulit-shot can ensure the first nowait try succeed.
+>>
+>> Based on above measurements, I try to improve fast-poll a bit:
+>> Introduce fix poll support, currently it only works in file registered
+>> mode. With this feature, we can get rid of various repeated operations
+>> in io_arm_poll_handler(), contains apoll allocations, and miscellaneous
+>> initializations anc check.
+> I was toying with an idea on how to do persistent poll support,
+> basically moving the wait_queue_entry out of io_poll and hence detaching
+> it from the io_kiocb. That would allow a per-file (and type) poll entry
+> to remain persistent in the kernel rather than needing to do this
+> expensive work repeatedly. Pavel kindly reminded me of your work, which
+> unfortunately I had totally forgotten.
+>
+> Did you end up taking this further? My idea was to make it work
+> independently of fixed files, but I also don't want to reinvent the
+> wheel if you ended up with something like this.
+I haven't continued to work on this work since last patch set and
+currently I don't have time for myself to continue working on this
+job, sorry. It'll be great if we can add similar fixed poll for fast-poll
+feature, or if we can eliminate the possible failed first no-wait submit
+overhead. Recently, aone of our clients also wants to use asio(with
+io_uring enabled), seems that asio(use io_uring fast-poll) does not
+perform better than asio(epoll), I need to figure that out firstly.
 
-Applied, thanks!
-
-[1/5] examples/send-zc: add defer taskrun support
-      commit: 209fb0e9b6a8f813276262790066c162e13975ac
-[2/5] examples/send-zc: add affinity / CPU pinning
-      commit: bacbc4ca724c12d303395fb55a03e8d7a40c036b
-[3/5] examples/send-zc: add multithreading
-      commit: d0e68bc1132c52867649889570e86ae620604833
-[4/5] examples/send-zc: add the receive part
-      commit: f1af5ff51a3320a8971c611368c693c1dec560c5
-[5/5] examples/send-zc: kill sock bufs configuration
-      commit: 38d357b73791a31912c3ef13b42b74e568e71dbb
-
-Best regards,
--- 
-Jens Axboe
+asio: https://github.com/chriskohlhoff/asio.git
 
 
+Regards,
+Xiaoguang Wang
+>
 

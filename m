@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A47A6AE992
-	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 18:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 574566AE996
+	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 18:25:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231572AbjCGRZm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Mar 2023 12:25:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50642 "EHLO
+        id S231422AbjCGRZq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Mar 2023 12:25:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231409AbjCGRZU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 12:25:20 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F79EA2F1F
-        for <io-uring@vger.kernel.org>; Tue,  7 Mar 2023 09:20:23 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id y2so13918073pjg.3
-        for <io-uring@vger.kernel.org>; Tue, 07 Mar 2023 09:20:23 -0800 (PST)
+        with ESMTP id S231469AbjCGRZV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 12:25:21 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B9D97FFB
+        for <io-uring@vger.kernel.org>; Tue,  7 Mar 2023 09:20:24 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id m8-20020a17090a4d8800b002377bced051so17296935pjh.0
+        for <io-uring@vger.kernel.org>; Tue, 07 Mar 2023 09:20:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678209622;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678209624;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yMHYMzVL0afntOwSVQWwB4+0IP333F5DvcjTZ4/a2XM=;
-        b=yJVjYAryiTa8EK/3CH4axq335dSxgMP6o7ujp89+TxXpwBISoY5D7UB0+1VHXq0oZW
-         A5ao3/rXy0O6AN35/4h9Bw8idgOibBP+QsS6JgC1YC0sEfnTujCYg+10CoP1cC2eLlGH
-         gOHvYRedPE/veTwNS1q1iz5s71qiAtAjy+jQxj4Mu4y6nox7tYdpNFsohcsn/CGeg4/R
-         GJLD7ML7q8L36yidkmRRfhpi2vTIHeoLwSLUqIUmTbafPxGArOpfUcYycwFMfr7efjQ4
-         /ZHvVi6+WJhYnCwkdEV1hVclqhBGhHYpflEaBbR14OW+z47+KlORKstYvfJwilD4Gql6
-         amDA==
+        bh=QGzn8Jh8ZKEAR+XabpvsJcqmOPwNEpOpb9eL39TjD2s=;
+        b=1eyM8I2j7WCg36Foo4+Sc4CeRGDLUDGUnMpyF0UHm72mQxc9kfH5fw6ttfD/K+QHd9
+         h3eWq0JPdOhMjwMXDPsIbow0slc2h5ls9s1vUuFSIYTjxvxZyRccZrT3E1ShYIlNDFB6
+         g3Fghio8gD0sp07Pc/8uU6Z/ieb0E9t8rO35xhbkzpF6NlEqcvgLx1GTP+FUAtloSqA2
+         QtCz9pvFzkX17VUJhs9AhXIWA/nO3FxZmX6Kkf36Tct4+tPQDxb8z2YynfrOR9qBNaGb
+         l0FTaW0myw0bMaxU0sXWOGq4RyGUkF25IPN04mrn8Dds2qV0wdODxinb9v1PcC9+YL+/
+         Yd5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678209622;
+        d=1e100.net; s=20210112; t=1678209624;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yMHYMzVL0afntOwSVQWwB4+0IP333F5DvcjTZ4/a2XM=;
-        b=GH+/WFy6Gh78aGZLI5cBJuBb3KMWvmjDI6pZ3RW3/7OyJ2B4CWct7yW/gXLK1A5yEK
-         7EZHg9azgXqr/aA7ru5U+pMvdZCcChellsHwYAMoMCg4Opfx+2OdpiNai8iMl8Jwx9Qq
-         ss7mBtNT5l1kg7H7rbMcA74R0rewhBA0OqnTnyzMh0CFK7n7Vzq5NfdDGXBKgYmBu3HK
-         zuFOKjUsh4Y3t1oLFB9bDurmq0cm1+VLtnct8BoHYewtp2xWAp8ayPr37pbTPu2epSdj
-         DMuEzXy+klFrdYVND31UeSZi0EYTh0R55qYKZWAJWXdn+PSnBUnAnYJLwmMaV0gEcw4b
-         gsNA==
-X-Gm-Message-State: AO0yUKUBCVPwZC/pqGZ5WsVRHSSIMoERYkS0ysaxsy8iA95jyOFy/BSw
-        sOPuDeDnin9vFcwpo8P1hcNRa2TYCWw6HqIGAk4=
-X-Google-Smtp-Source: AK7set8d3oHKR00RyvwWxKk6w6VSMkT+XovE08j4rCfKnN71CqMcdkO4uduXF6p3T/xU2mM2+T/iJA==
-X-Received: by 2002:a17:902:e5d0:b0:196:3f5a:b4f9 with SMTP id u16-20020a170902e5d000b001963f5ab4f9mr17754824plf.1.1678209622397;
-        Tue, 07 Mar 2023 09:20:22 -0800 (PST)
+        bh=QGzn8Jh8ZKEAR+XabpvsJcqmOPwNEpOpb9eL39TjD2s=;
+        b=m21OZO9zajvjj1ZdrnAaOWgHs1VaPBf5EtTgZ0G3d1L8je/K9gHB9k1Hd4Ap53UIt6
+         vgRkSNYxEzEn/EvlY+GTGw8Ze7mfZgi7QU5l/gg0ja4e2ROdsUDcy/TPC0AYXoE464sp
+         dSYb5GkJqeIVzhfB56g4AVsPNmoz3pftqgKZn1q5hKvW5ZP6Z7wT06x2RmKSaZCzTW86
+         6fGG/Req6dSY655lk+ViRscDOyX+LRof3PDMQXiXo3PR5UEcs5FdmoTP+gehjEOWmqqF
+         mpuywfLINBMTdWY4ddmMpAb44/+jxx7GFBBj3IqZWcyy+KAvnOTwMzGJFm+LXbiG/u/+
+         aHUw==
+X-Gm-Message-State: AO0yUKXj1Wl0BU2TCI8+cqyxjlCUwK6EVBpD4SMOMIVQp3lckHt8qqAf
+        T0wsOKrDqDn7g2HgV9ZDdXg9pT22v3T0G8/LJHw=
+X-Google-Smtp-Source: AK7set+yJzNNfb3gCkbf0SKS9XnejUmfExgD0rV7zoPrtcvqqHLIbcOfeAPkLbbCmPVNcx079Pp+yQ==
+X-Received: by 2002:a17:902:ecc7:b0:19e:b5d3:1710 with SMTP id a7-20020a170902ecc700b0019eb5d31710mr9904245plh.2.1678209623665;
+        Tue, 07 Mar 2023 09:20:23 -0800 (PST)
 Received: from localhost.localdomain ([50.233.106.125])
-        by smtp.gmail.com with ESMTPSA id c17-20020a170903235100b0019e76a99cdbsm8651390plh.243.2023.03.07.09.20.21
+        by smtp.gmail.com with ESMTPSA id c17-20020a170903235100b0019e76a99cdbsm8651390plh.243.2023.03.07.09.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 09:20:21 -0800 (PST)
+        Tue, 07 Mar 2023 09:20:23 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
-Date:   Tue,  7 Mar 2023 10:20:14 -0700
-Message-Id: <20230307172015.54911-2-axboe@kernel.dk>
+Subject: [PATCH 2/2] io_uring: avoid hashing O_DIRECT writes if the filesystem doesn't need it
+Date:   Tue,  7 Mar 2023 10:20:15 -0700
+Message-Id: <20230307172015.54911-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230307172015.54911-1-axboe@kernel.dk>
 References: <20230307172015.54911-1-axboe@kernel.dk>
@@ -70,63 +70,44 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Some filesystems support multiple threads writing to the same file with
-O_DIRECT without requiring exclusive access to it. io_uring can use this
-hint to avoid serializing dio writes to this inode, instead allowing them
-to run in parallel.
+io_uring hashes writes to a given file/inode so that it can serialize
+them. This is useful if the file system needs exclusive access to the
+file to perform the write, as otherwise we end up with a ton of io-wq
+threads trying to lock the inode at the same time. This can cause
+excessive system time.
 
-XFS and ext4 both fall into this category, so set the flag for both of
-them.
+But if the file system has flagged that it supports parallel O_DIRECT
+writes, then there's no need to serialize the writes. Check for that
+through FMODE_DIO_PARALLEL_WRITE and don't hash it if we don't need to.
+
+In a basic test of 8 threads writing to a file on XFS on a gen2 Optane,
+with each thread writing in 4k chunks, it improves performance from
+~1350K IOPS (or ~5290MiB/sec) to ~1410K IOPS (or ~5500MiB/sec).
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/ext4/file.c     | 3 ++-
- fs/xfs/xfs_file.c  | 3 ++-
- include/linux/fs.h | 3 +++
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ io_uring/io_uring.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 0b8b4499e5ca..d101b3b0c7da 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -899,7 +899,8 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
- 			return ret;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index fd9ba840c4a2..93cc1ff5e9cd 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -429,7 +429,13 @@ static void io_prep_async_work(struct io_kiocb *req)
  	}
  
--	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
-+	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC |
-+			FMODE_DIO_PARALLEL_WRITE;
- 	return dquot_file_open(inode, filp);
- }
- 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 705250f9f90a..863289aaa441 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1171,7 +1171,8 @@ xfs_file_open(
- {
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
--	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
-+	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
-+			FMODE_DIO_PARALLEL_WRITE;
- 	return generic_file_open(inode, file);
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c85916e9f7db..475d88640d3d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -168,6 +168,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- 
- #define	FMODE_NOREUSE		((__force fmode_t)0x800000)
- 
-+/* File supports non-exclusive O_DIRECT writes from multiple threads */
-+#define FMODE_DIO_PARALLEL_WRITE	((__force fmode_t)0x1000000)
+ 	if (req->flags & REQ_F_ISREG) {
+-		if (def->hash_reg_file || (ctx->flags & IORING_SETUP_IOPOLL))
++		bool should_hash = def->hash_reg_file;
 +
- /* File was opened by fanotify and shouldn't generate fanotify events */
- #define FMODE_NONOTIFY		((__force fmode_t)0x4000000)
- 
++		/* don't serialize this request if the fs doesn't need it */
++		if (should_hash && (req->file->f_flags & O_DIRECT) &&
++		    (req->file->f_mode & FMODE_DIO_PARALLEL_WRITE))
++			should_hash = false;
++		if (should_hash || (ctx->flags & IORING_SETUP_IOPOLL))
+ 			io_wq_hash_work(&req->work, file_inode(req->file));
+ 	} else if (!req->file || !S_ISBLK(file_inode(req->file)->i_mode)) {
+ 		if (def->unbound_nonreg_file)
 -- 
 2.39.2
 

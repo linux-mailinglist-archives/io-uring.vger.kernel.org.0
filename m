@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45FEB6AEBF3
-	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 18:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E946F6AF148
+	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 19:42:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232249AbjCGRul (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Mar 2023 12:50:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36342 "EHLO
+        id S233158AbjCGSmB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Mar 2023 13:42:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232252AbjCGRuR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 12:50:17 -0500
+        with ESMTP id S230001AbjCGSli (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 13:41:38 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9893D9CFFD;
-        Tue,  7 Mar 2023 09:45:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06D6EC2237;
+        Tue,  7 Mar 2023 10:32:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3E3DAB819BF;
-        Tue,  7 Mar 2023 17:45:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6FF0C433EF;
-        Tue,  7 Mar 2023 17:45:06 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 034D0B819FC;
+        Tue,  7 Mar 2023 18:31:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 607BEC433EF;
+        Tue,  7 Mar 2023 18:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678211107;
-        bh=a30CykW6YykybRzJUgVbj82sbmewX3xLsAzMmIApp0s=;
+        s=korg; t=1678213905;
+        bh=LPvGUOx4vbuVPSChpeYRsdIAvq8Y0LaeGGQd+K6MXfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lnq6eexuC/1lYjbrbFBGgU5ET9slJNY1aVY0jqSFvtpw9sZaI4078N+G5m0o2icxM
-         QoxxB6CXwEgJcPb98RvC5SJJf6J5AUH2yq1KbG7pguZ6WcHJlmDPw7zwFhiJ1h3+Fk
-         xiHDipz0uYWszdbTvqCDxWJfU84A2v4A/MPXjLYg=
+        b=A5nqBJiPfzsf4eLK9PK5LgeIk3gFaM7iDGFKCRoMDMH6LWJ2n7GQLXjh5fSAE175s
+         VN9rV9fhG7Ie8Zfc4Xp3ezmZUgPZkdcNz/dn7QqxaNcmTU79yFp9tzUT5FS1F1zYbi
+         V7R3Ygtg1pjV9hB/FH9nORYJ/amBRAb9chC2PqhU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,12 +35,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         "Gustavo A. R. Silva" <gustavoars@kernel.org>,
         io-uring@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: [PATCH 6.2 0754/1001] io_uring: Replace 0-length array with flexible array
-Date:   Tue,  7 Mar 2023 17:58:46 +0100
-Message-Id: <20230307170054.429075050@linuxfoundation.org>
+Subject: [PATCH 6.1 657/885] io_uring: Replace 0-length array with flexible array
+Date:   Tue,  7 Mar 2023 17:59:51 +0100
+Message-Id: <20230307170030.702826839@linuxfoundation.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230307170022.094103862@linuxfoundation.org>
-References: <20230307170022.094103862@linuxfoundation.org>
+In-Reply-To: <20230307170001.594919529@linuxfoundation.org>
+References: <20230307170001.594919529@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -93,7 +93,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/include/uapi/linux/io_uring.h
 +++ b/include/uapi/linux/io_uring.h
-@@ -625,7 +625,7 @@ struct io_uring_buf_ring {
+@@ -617,7 +617,7 @@ struct io_uring_buf_ring {
  			__u16	resv3;
  			__u16	tail;
  		};

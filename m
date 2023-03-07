@@ -2,42 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D76256AF6CE
-	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 21:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BCCD6AF6D1
+	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 21:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbjCGUjF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Mar 2023 15:39:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59814 "EHLO
+        id S229577AbjCGUjK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Mar 2023 15:39:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbjCGUjE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 15:39:04 -0500
+        with ESMTP id S230110AbjCGUjI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 15:39:08 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C13D92F3B;
-        Tue,  7 Mar 2023 12:39:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC52D97FD4;
+        Tue,  7 Mar 2023 12:39:06 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.169])
-        by gnuweeb.org (Postfix) with ESMTPSA id 34B667E3B6;
-        Tue,  7 Mar 2023 20:39:00 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 0E7467E3C0;
+        Tue,  7 Mar 2023 20:39:03 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1678221543;
-        bh=HuOXsRa6OOAdvmzzWqWh41PN9s754FgA8d/ossCWLuc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=N9+GPfhV6BAnvN4mKn9EliZXLR5LiGiD4stsTL1seNVhVMpyXw2H0gKTnKtjhofKY
-         csKTEZAc6kVAJrUULYW+BfiwvCOb180UgtOOpKIlVtYOiudUu/oJrSw0fmdDExGNvg
-         bLnLKu5dMCK2CbOlGRcu5gT2AZWycglE6UVVe5J4KblN2Ue2nBtUlUFWOn+BaLGizt
-         1yffJm5Vhf+N7X0HF98I1B3nHQJz1Im9FTzwjZ8RDEuexwaQ8WzSmCze2pEqOnT+0c
-         LVg2bFYmuhQYO2wVobZ0SZHsDHLe/aIc9RfB7T77LSmSfWu7AYFgv06sJ7iVAE4tvG
-         tHJ9kC/jsHb9w==
+        s=default; t=1678221546;
+        bh=Mp/rhC8HIg+j7inL/6xYeQll6B81fY9c8V1MheagYO0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Q3+HBuyqNpRf7N/ZrB56nQ1bmLN/VsgZ6aPzZHMukxR3xjgEHB9cDMcDBZagHCDGD
+         klH41erNqp0897Ja5Kz94Ib/Vk7YIX7jlURUcxNARHdDjvXUF9D4as5DDebu5olOAM
+         YE+MnCAMxZQEaGT2Mm7V2wzt7u8jVw7n9aqWkKXZR4n8pUBQ+jD25bjlkR3i2epe/V
+         qnJx7BOhMjzZgO0TUFX90M09J5l95MRqdOwymOr1408RLKK0jgaHXMsyLXM9xq3Kta
+         u8D0F2em8kQe9Ac8qDC4GtVxhOBduBGnk0JvXgp33rRxFn8LHdiT13xFmimymLxzvS
+         nex/jJS57MSEg==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: [PATCH liburing v1 0/3] Small fixes and CI update
-Date:   Wed,  8 Mar 2023 03:38:27 +0700
-Message-Id: <20230307203830.612939-1-ammarfaizi2@gnuweeb.org>
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: [PATCH liburing v1 1/3] io_uring-udp: Fix the wrong `inet_ntop()` argument
+Date:   Wed,  8 Mar 2023 03:38:28 +0700
+Message-Id: <20230307203830.612939-2-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230307203830.612939-1-ammarfaizi2@gnuweeb.org>
+References: <20230307203830.612939-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -49,28 +52,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Just a boring patchset.
+The verbose output shows the wrong IP address. The second argument of
+inet_ntop() should be a pointer to the binary representation of the IP
+address. Fix it.
 
-- Address the recent io_uring-udp bug report on GitHub.
-- No more sign-compare warnings on the GitHub build bot.
-- Kill trailing whitespaces (manpage).
-
+Reported-by: @mczka # A GitHub user
+Cc: Dylan Yudaken <dylany@fb.com>
+Closes: https://github.com/axboe/liburing/pull/815
+Fixes: https://github.com/axboe/liburing/issues/814
+Fixes: 61d472b51e761e61c ("add an example for a UDP server")
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
+ examples/io_uring-udp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ammar Faizi (3):
-  io_uring-udp: Fix the wrong `inet_ntop()` argument
-  github: Append `-Wno-sign-compare` to the GitHub build bot CFLAGS
-  man/io_uring_register_{buffers,files}: Kill trailing whitespaces
-
- .github/workflows/build.yml     |  2 +-
- examples/io_uring-udp.c         |  2 +-
- man/io_uring_register_buffers.3 | 10 +++++-----
- man/io_uring_register_files.3   | 22 +++++++++++-----------
- 4 files changed, 18 insertions(+), 18 deletions(-)
-
-
-base-commit: 0dd82f0c63d468c5b3d9510af642968ce6e8ee21
+diff --git a/examples/io_uring-udp.c b/examples/io_uring-udp.c
+index a07c3e2a6f20cd17..b81a5e7c47afd9c8 100644
+--- a/examples/io_uring-udp.c
++++ b/examples/io_uring-udp.c
+@@ -275,7 +275,7 @@ static int process_cqe_recv(struct ctx *ctx, struct io_uring_cqe *cqe,
+ 		const char *name;
+ 		struct sockaddr_in *addr = io_uring_recvmsg_name(o);
+ 
+-		name = inet_ntop(ctx->af, addr, buff, sizeof(buff));
++		name = inet_ntop(ctx->af, &addr->sin_addr, buff, sizeof(buff));
+ 		if (!name)
+ 			name = "<INVALID>";
+ 		fprintf(stderr, "received %u bytes %d from %s:%d\n",
 -- 
 Ammar Faizi
 

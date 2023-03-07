@@ -2,59 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6194D6AE229
-	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 15:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 969A76AE4FF
+	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 16:39:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjCGOXX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Mar 2023 09:23:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41526 "EHLO
+        id S229535AbjCGPjO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Mar 2023 10:39:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230232AbjCGOXB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 09:23:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347DB8C51D
-        for <io-uring@vger.kernel.org>; Tue,  7 Mar 2023 06:17:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678198600;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rR3N9HDXhTp/+TmtUn2Sb3UyI3jiBvNThv67wJ5S54I=;
-        b=HPMrLjQmqg1/rcfs8IQCEjjAUs78oavbNvF4XWfnF2aoUTVb76mmLNY6NBZhVSWLmj0XCi
-        jk0UxqeswEWkesz4BLf6piqyLEcB8eUrNLYcO6pBQ6FRKn4fkfMsgXhM/2zpIjkQvX/n9L
-        fe1UrY+1VO7PEr3oIvw8pu1lLhY5HLM=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-271-qslzO9efM4iA1b7u1ket0Q-1; Tue, 07 Mar 2023 09:16:36 -0500
-X-MC-Unique: qslzO9efM4iA1b7u1ket0Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A75DA3C0E445;
-        Tue,  7 Mar 2023 14:16:35 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC0592026D4B;
-        Tue,  7 Mar 2023 14:16:34 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+        with ESMTP id S229486AbjCGPjN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 10:39:13 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298426A61;
+        Tue,  7 Mar 2023 07:38:28 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id s11so53920143edy.8;
+        Tue, 07 Mar 2023 07:38:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678203500;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tFbwCEdKuqYepuAAhuwT0WTQVbDTWUfJ9hO2iOl1AaE=;
+        b=gW/ebMhW6w70Qahj+bae0bYJ+mKqZR/6SWy1gHZ0St3OCNhgo8KGeazlDfBbcMCqy8
+         b7AyZXOkN93ILjw1ryZsgqAPu5hM82woEn7rOENcNrnzdPv1nYgn0WuJKrIhCaYP5UTg
+         T6HUt4Dg6ZApIfYSWa8ibjPCvAeAsVjZnVpxZGnT4n0xlzaUe4batZoVHqwf5XdBo/6u
+         OuGf83MP6khCq/lN3mAAo47WvwBz+1uebWN2zAFcumcONesN7YzcWMmxks4i1uMZcMJL
+         C+6GENUxpzB7pE4Ah2FnAhPzBMwBivYg10fOq9n+Y/dcIaiwtEEi/fomlVfleqe5iiyk
+         A/nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678203500;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFbwCEdKuqYepuAAhuwT0WTQVbDTWUfJ9hO2iOl1AaE=;
+        b=4jmyIBq6FUIWpNy6VGhW8uxOFSlL87XdlJFGPCPgv7HCgxqYapNOcv6YraXcQVFN3u
+         NtgRS1qUzY/1N+aIfdG3PiYLanRg3dyXlmPUpY2Zz+nL43PBF9cPJCiYlDWnbjoMYIux
+         qmXN+n2y0xzv1lKqsjuGs0hi7h8Q7mbWqrHar70kWcZHDUKdzt8pAGAY2czul1afsd9i
+         5LCBbG9DKVmDyrVmxWbycwwrom7AyUEC1ua/nOMbOF7qlq9J+LL7fO2mo7pYzCuJgpTt
+         qeN2HYDVPMkRAD8CXhC0j33fnNHlGgYnR13BDsqlqYxu7f3lO56v2e79oCiivjnz2TMb
+         a7Bg==
+X-Gm-Message-State: AO0yUKUHP4e4k/71xAbe27F4Nb7KsWcxISUCTU7zVknhwauSrTGnN9ai
+        v+Sm13dS4Kg7cDsL1Qg1qVw=
+X-Google-Smtp-Source: AK7set/VRlSHux3kb6r3+JPz9w6c9sVGRUF9mgQpBH+4GPUys8nT30YO+O5v5VG+oSsot3VFGYjWyw==
+X-Received: by 2002:a17:906:aadb:b0:905:a46b:a725 with SMTP id kt27-20020a170906aadb00b00905a46ba725mr17227816ejb.16.1678203500192;
+        Tue, 07 Mar 2023 07:38:20 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:d2b4])
+        by smtp.gmail.com with ESMTPSA id hy26-20020a1709068a7a00b008d92897cc29sm6245615ejc.37.2023.03.07.07.38.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Mar 2023 07:38:20 -0800 (PST)
+Message-ID: <7e05882f-9695-895d-5e83-61006e54c4b2@gmail.com>
+Date:   Tue, 7 Mar 2023 15:37:21 +0000
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 00/17] io_uring/ublk: add IORING_OP_FUSED_CMD
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
         ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2 17/17] block: ublk_drv: apply io_uring FUSED_CMD for supporting zero copy
-Date:   Tue,  7 Mar 2023 22:15:20 +0800
-Message-Id: <20230307141520.793891-18-ming.lei@redhat.com>
-In-Reply-To: <20230307141520.793891-1-ming.lei@redhat.com>
+        Bernd Schubert <bschubert@ddn.com>
 References: <20230307141520.793891-1-ming.lei@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20230307141520.793891-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,350 +77,117 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Apply io_uring fused command for supporting zero copy:
+On 3/7/23 14:15, Ming Lei wrote:
+> Hello,
+> 
+> Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
+> be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
+> 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
+> to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
+> and its ->issue() can retrieve/import buffer from master request's
+> fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
+> this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
+> submits slave OP just like normal OP issued from userspace, that said,
+> SQE order is kept, and batching handling is done too.
 
-1) init the fused cmd buffer(io_mapped_buf) in ublk_map_io(),
-and deinit it in ublk_unmap_io(), and this buffer is immutable,
-so it is just fine to retrieve it from concurrent fused command.
+ From a quick look through patches it all looks a bit complicated
+and intrusive, all over generic hot paths. I think instead we
+should be able to use registered buffer table as intermediary and
+reuse splicing. Let me try it out
 
-1) add sub-command opcode of UBLK_IO_FUSED_SUBMIT_IO for retrieving
-this fused cmd(zero copy) buffer
 
-2) call io_fused_cmd_provide_kbuf() to provide buffer to slave
-request; meantime setup complete callback via this API, once
-slave request is completed, the complete callback is called
-for freeing the buffer and completing the uring fused command
+> Please see detailed design in commit log of the 3th patch, and one big
+> point is how to handle buffer ownership.
+> 
+> With this way, it is easy to support zero copy for ublk/fuse device.
+> 
+> Basically userspace can specify any sub-buffer of the ublk block request
+> buffer from the fused command just by setting 'offset/len'
+> in the slave SQE for running slave OP. This way is flexible to implement
+> io mapping: mirror, stripped, ...
+> 
+> The 4th & 5th patches enable fused slave support for the following OPs:
+> 
+> 	OP_READ/OP_WRITE
+> 	OP_SEND/OP_RECV/OP_SEND_ZC
+> 
+> The other ublk patches cleans ublk driver and implement fused command
+> for supporting zero copy.
+> 
+> Follows userspace code:
+> 
+> https://github.com/ming1/ubdsrv/tree/fused-cmd-zc-v2
+> 
+> All three(loop, nbd and qcow2) ublk targets have supported zero copy by passing:
+> 
+> 	ublk add -t [loop|nbd|qcow2] -z ....
+> 
+> Basic fs mount/kernel building and builtin test are done.
+> 
+> Also add liburing test case for covering fused command based on miniublk
+> of blktest:
+> 
+> https://github.com/ming1/liburing/commits/fused_cmd_miniublk
+> 
+> Performance improvement is obvious on memory bandwidth
+> related workloads, such as, 1~2X improvement on 64K/512K BS
+> IO test on loop with ramfs backing file.
+> 
+> Any comments are welcome!
+> 
+> V2:
+> 	- don't resue io_mapped_ubuf (io_uring)
+> 	- remove REQ_F_FUSED_MASTER_BIT (io_uring)
+> 	- fix compile warning (io_uring)
+> 	- rebase on v6.3-rc1 (io_uring)
+> 	- grabbing io request reference when handling fused command
+> 	- simplify ublk_copy_user_pages() by iov iterator
+> 	- add read()/write() for userspace to read/write ublk io buffer, so
+> 	that some corner cases(read zero, passthrough request(report zones)) can
+> 	be handled easily in case of zero copy; this way also helps to switch to
+> 	zero copy completely
+> 	- misc cleanup
+> 
+> Ming Lei (17):
+>    io_uring: add IO_URING_F_FUSED and prepare for supporting OP_FUSED_CMD
+>    io_uring: increase io_kiocb->flags into 64bit
+>    io_uring: add IORING_OP_FUSED_CMD
+>    io_uring: support OP_READ/OP_WRITE for fused slave request
+>    io_uring: support OP_SEND_ZC/OP_RECV for fused slave request
+>    block: ublk_drv: mark device as LIVE before adding disk
+>    block: ublk_drv: add common exit handling
+>    block: ublk_drv: don't consider flush request in map/unmap io
+>    block: ublk_drv: add two helpers to clean up map/unmap request
+>    block: ublk_drv: clean up several helpers
+>    block: ublk_drv: cleanup 'struct ublk_map_data'
+>    block: ublk_drv: cleanup ublk_copy_user_pages
+>    block: ublk_drv: grab request reference when the request is handled by
+>      userspace
+>    block: ublk_drv: support to copy any part of request pages
+>    block: ublk_drv: add read()/write() support for ublk char device
+>    block: ublk_drv: don't check buffer in case of zero copy
+>    block: ublk_drv: apply io_uring FUSED_CMD for supporting zero copy
+> 
+>   drivers/block/ublk_drv.c       | 605 ++++++++++++++++++++++++++-------
+>   drivers/char/mem.c             |   4 +
+>   drivers/nvme/host/ioctl.c      |   9 +
+>   include/linux/io_uring.h       |  49 ++-
+>   include/linux/io_uring_types.h |  18 +-
+>   include/uapi/linux/io_uring.h  |   1 +
+>   include/uapi/linux/ublk_cmd.h  |  37 +-
+>   io_uring/Makefile              |   2 +-
+>   io_uring/fused_cmd.c           | 232 +++++++++++++
+>   io_uring/fused_cmd.h           |  11 +
+>   io_uring/io_uring.c            |  22 +-
+>   io_uring/io_uring.h            |   3 +
+>   io_uring/net.c                 |  23 +-
+>   io_uring/opdef.c               |  17 +
+>   io_uring/opdef.h               |   2 +
+>   io_uring/rw.c                  |  20 ++
+>   16 files changed, 926 insertions(+), 129 deletions(-)
+>   create mode 100644 io_uring/fused_cmd.c
+>   create mode 100644 io_uring/fused_cmd.h
+> 
 
-Also request reference is held during fused command lifetime, and
-this way guarantees that request buffer won't be freed until
-fused commands are done.
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/block/ublk_drv.c      | 190 ++++++++++++++++++++++++++++++++--
- include/uapi/linux/ublk_cmd.h |   6 +-
- 2 files changed, 183 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 2385cc3f8566..466a8cfd2b2a 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -74,10 +74,15 @@ struct ublk_rq_data {
- 	 *   successfully
- 	 */
- 	struct kref ref;
-+	bool allocated_bvec;
-+	struct io_uring_bvec_buf buf[0];
- };
- 
- struct ublk_uring_cmd_pdu {
--	struct ublk_queue *ubq;
-+	union {
-+		struct ublk_queue *ubq;
-+		struct request *req;
-+	};
- };
- 
- /*
-@@ -566,6 +571,69 @@ static size_t ublk_copy_user_pages(const struct request *req,
- 	return done;
- }
- 
-+/*
-+ * The built command buffer is immutable, so it is fine to feed it to
-+ * concurrent io_uring fused commands
-+ */
-+static int ublk_init_zero_copy_buffer(struct request *rq)
-+{
-+	struct ublk_rq_data *data = blk_mq_rq_to_pdu(rq);
-+	struct io_uring_bvec_buf *imu = data->buf;
-+	struct req_iterator rq_iter;
-+	unsigned int nr_bvecs = 0;
-+	struct bio_vec *bvec;
-+	unsigned int offset;
-+	struct bio_vec bv;
-+
-+	if (!ublk_rq_has_data(rq))
-+		goto exit;
-+
-+	rq_for_each_bvec(bv, rq, rq_iter)
-+		nr_bvecs++;
-+
-+	if (!nr_bvecs)
-+		goto exit;
-+
-+	if (rq->bio != rq->biotail) {
-+		int idx = 0;
-+
-+		bvec = kvmalloc_array(sizeof(struct bio_vec), nr_bvecs,
-+				GFP_NOIO);
-+		if (!bvec)
-+			return -ENOMEM;
-+
-+		offset = 0;
-+		rq_for_each_bvec(bv, rq, rq_iter)
-+			bvec[idx++] = bv;
-+		data->allocated_bvec = true;
-+	} else {
-+		struct bio *bio = rq->bio;
-+
-+		offset = bio->bi_iter.bi_bvec_done;
-+		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
-+	}
-+	imu->bvec = bvec;
-+	imu->nr_bvecs = nr_bvecs;
-+	imu->offset = offset;
-+	imu->len = blk_rq_bytes(rq);
-+
-+	return 0;
-+exit:
-+	imu->bvec = NULL;
-+	return 0;
-+}
-+
-+static void ublk_deinit_zero_copy_buffer(struct request *rq)
-+{
-+	struct ublk_rq_data *data = blk_mq_rq_to_pdu(rq);
-+	struct io_uring_bvec_buf *imu = data->buf;
-+
-+	if (data->allocated_bvec) {
-+		kvfree(imu->bvec);
-+		data->allocated_bvec = false;
-+	}
-+}
-+
- static inline bool ublk_need_map_req(const struct request *req)
- {
- 	return ublk_rq_has_data(req) && req_op(req) == REQ_OP_WRITE;
-@@ -576,11 +644,23 @@ static inline bool ublk_need_unmap_req(const struct request *req)
- 	return ublk_rq_has_data(req) && req_op(req) == REQ_OP_READ;
- }
- 
--static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
-+static int ublk_map_io(const struct ublk_queue *ubq, struct request *req,
- 		struct ublk_io *io)
- {
- 	const unsigned int rq_bytes = blk_rq_bytes(req);
- 
-+	if (ublk_support_zc(ubq)) {
-+		int ret = ublk_init_zero_copy_buffer(req);
-+
-+		/*
-+		 * The only failure is -ENOMEM for allocating fused cmd
-+		 * buffer, return zero so that we can requeue this req.
-+		 */
-+		if (unlikely(ret))
-+			return 0;
-+		return rq_bytes;
-+	}
-+
- 	/*
- 	 * no zero copy, we delay copy WRITE request data into ublksrv
- 	 * context and the big benefit is that pinning pages in current
-@@ -600,11 +680,17 @@ static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
- }
- 
- static int ublk_unmap_io(const struct ublk_queue *ubq,
--		const struct request *req,
-+		struct request *req,
- 		struct ublk_io *io)
- {
- 	const unsigned int rq_bytes = blk_rq_bytes(req);
- 
-+	if (ublk_support_zc(ubq)) {
-+		ublk_deinit_zero_copy_buffer(req);
-+
-+		return rq_bytes;
-+	}
-+
- 	if (ublk_need_unmap_req(req)) {
- 		struct iov_iter iter;
- 		struct iovec iov;
-@@ -688,6 +774,12 @@ static inline struct ublk_uring_cmd_pdu *ublk_get_uring_cmd_pdu(
- 	return (struct ublk_uring_cmd_pdu *)&ioucmd->pdu;
- }
- 
-+static inline struct ublk_uring_cmd_pdu *ublk_get_uring_fused_cmd_pdu(
-+		struct io_uring_cmd *ioucmd)
-+{
-+	return (struct ublk_uring_cmd_pdu *)&ioucmd->fused.pdu;
-+}
-+
- static inline bool ubq_daemon_is_dying(struct ublk_queue *ubq)
- {
- 	return ubq->ubq_daemon->flags & PF_EXITING;
-@@ -743,6 +835,7 @@ static inline void __ublk_complete_rq(struct request *req)
- 
- 	return;
- exit:
-+	ublk_deinit_zero_copy_buffer(req);
- 	blk_mq_end_request(req, res);
- }
- 
-@@ -1348,6 +1441,67 @@ static inline struct request *__ublk_check_and_get_req(struct ublk_device *ub,
- 	return NULL;
- }
- 
-+static void ublk_fused_cmd_done_cb(struct io_uring_cmd *cmd)
-+{
-+	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_fused_cmd_pdu(cmd);
-+	struct request *req = pdu->req;
-+	struct ublk_queue *ubq = req->mq_hctx->driver_data;
-+
-+	ublk_put_req_ref(ubq, req);
-+	io_uring_cmd_done(cmd, cmd->fused.data.slave_res, 0);
-+}
-+
-+static inline bool ublk_check_fused_buf_dir(const struct request *req,
-+		unsigned int flags)
-+{
-+	flags &= IO_URING_F_FUSED;
-+
-+	if (req_op(req) == REQ_OP_READ && flags == IO_URING_F_FUSED_WRITE)
-+		return true;
-+
-+	if (req_op(req) == REQ_OP_WRITE && flags == IO_URING_F_FUSED_READ)
-+		return true;
-+
-+	return false;
-+}
-+
-+static int ublk_handle_fused_cmd(struct io_uring_cmd *cmd,
-+		struct ublk_queue *ubq, int tag, unsigned int issue_flags)
-+{
-+	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_fused_cmd_pdu(cmd);
-+	struct ublk_device *ub = cmd->file->private_data;
-+	struct ublk_rq_data *data;
-+	struct request *req;
-+
-+	if (!ub)
-+		return -EPERM;
-+
-+	if (!(issue_flags & IO_URING_F_FUSED))
-+		goto exit;
-+
-+	req = __ublk_check_and_get_req(ub, ubq, tag, 0);
-+	if (!req)
-+		goto exit;
-+
-+	pr_devel("%s: qid %d tag %u request bytes %u, issue flags %x\n",
-+			__func__, tag, ubq->q_id, blk_rq_bytes(req),
-+			issue_flags);
-+
-+	if (!ublk_check_fused_buf_dir(req, issue_flags))
-+		goto exit_put_ref;
-+
-+	pdu->req = req;
-+	data = blk_mq_rq_to_pdu(req);
-+	io_fused_cmd_provide_kbuf(cmd, !(issue_flags & IO_URING_F_UNLOCKED),
-+			data->buf, ublk_fused_cmd_done_cb);
-+	return -EIOCBQUEUED;
-+
-+exit_put_ref:
-+	ublk_put_req_ref(ubq, req);
-+exit:
-+	return -EINVAL;
-+}
-+
- static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- {
- 	struct ublksrv_io_cmd *ub_cmd = (struct ublksrv_io_cmd *)cmd->cmd;
-@@ -1363,7 +1517,8 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 			__func__, cmd->cmd_op, ub_cmd->q_id, tag,
- 			ub_cmd->result);
- 
--	if (issue_flags & IO_URING_F_FUSED)
-+	if ((issue_flags & IO_URING_F_FUSED) &&
-+			cmd_op != UBLK_IO_FUSED_SUBMIT_IO)
- 		return -EOPNOTSUPP;
- 
- 	if (ub_cmd->q_id >= ub->dev_info.nr_hw_queues)
-@@ -1373,7 +1528,12 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 	if (!ubq || ub_cmd->q_id != ubq->q_id)
- 		goto out;
- 
--	if (ubq->ubq_daemon && ubq->ubq_daemon != current)
-+	/*
-+	 * The fused command reads the io buffer data structure only, so it
-+	 * is fine to be issued from other context.
-+	 */
-+	if ((ubq->ubq_daemon && ubq->ubq_daemon != current) &&
-+			(cmd_op != UBLK_IO_FUSED_SUBMIT_IO))
- 		goto out;
- 
- 	if (tag >= ubq->q_depth)
-@@ -1396,6 +1556,9 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 		goto out;
- 
- 	switch (cmd_op) {
-+	case UBLK_IO_FUSED_SUBMIT_IO:
-+		return ublk_handle_fused_cmd(cmd, ubq, tag, issue_flags);
-+
- 	case UBLK_IO_FETCH_REQ:
- 		/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
- 		if (ublk_queue_ready(ubq)) {
-@@ -1725,11 +1888,14 @@ static void ublk_align_max_io_size(struct ublk_device *ub)
- 
- static int ublk_add_tag_set(struct ublk_device *ub)
- {
-+	int zc = !!(ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY);
-+	struct ublk_rq_data *data;
-+
- 	ub->tag_set.ops = &ublk_mq_ops;
- 	ub->tag_set.nr_hw_queues = ub->dev_info.nr_hw_queues;
- 	ub->tag_set.queue_depth = ub->dev_info.queue_depth;
- 	ub->tag_set.numa_node = NUMA_NO_NODE;
--	ub->tag_set.cmd_size = sizeof(struct ublk_rq_data);
-+	ub->tag_set.cmd_size = struct_size(data, buf, zc);
- 	ub->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	ub->tag_set.driver_data = ub;
- 	return blk_mq_alloc_tag_set(&ub->tag_set);
-@@ -1945,12 +2111,18 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *cmd)
- 	 */
- 	ub->dev_info.flags &= UBLK_F_ALL;
- 
-+	/*
-+	 * NEED_GET_DATA doesn't make sense any more in case that
-+	 * ZERO_COPY is requested. Another reason is that userspace
-+	 * can read/write io request buffer by pread()/pwrite() with
-+	 * each io buffer's position.
-+	 */
-+	if (ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY)
-+		ub->dev_info.flags &= ~UBLK_F_NEED_GET_DATA;
-+
- 	if (!IS_BUILTIN(CONFIG_BLK_DEV_UBLK))
- 		ub->dev_info.flags |= UBLK_F_URING_CMD_COMP_IN_TASK;
- 
--	/* We are not ready to support zero copy */
--	ub->dev_info.flags &= ~UBLK_F_SUPPORT_ZERO_COPY;
--
- 	ub->dev_info.nr_hw_queues = min_t(unsigned int,
- 			ub->dev_info.nr_hw_queues, nr_cpu_ids);
- 	ublk_align_max_io_size(ub);
-diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
-index d1a6b3dc0327..c4f3465399cf 100644
---- a/include/uapi/linux/ublk_cmd.h
-+++ b/include/uapi/linux/ublk_cmd.h
-@@ -44,6 +44,7 @@
- #define	UBLK_IO_FETCH_REQ		0x20
- #define	UBLK_IO_COMMIT_AND_FETCH_REQ	0x21
- #define	UBLK_IO_NEED_GET_DATA	0x22
-+#define	UBLK_IO_FUSED_SUBMIT_IO	0x23
- 
- /* only ABORT means that no re-fetch */
- #define UBLK_IO_RES_OK			0
-@@ -85,10 +86,7 @@ static inline __u64 ublk_pos(__u16 q_id, __u16 tag, __u32 offset)
- 		((((__u64)tag) << UBLK_BUF_SIZE_BITS) + offset);
- }
- 
--/*
-- * zero copy requires 4k block size, and can remap ublk driver's io
-- * request into ublksrv's vm space
-- */
-+/* io_uring fused command based zero copy */
- #define UBLK_F_SUPPORT_ZERO_COPY	(1ULL << 0)
- 
- /*
 -- 
-2.39.2
-
+Pavel Begunkov

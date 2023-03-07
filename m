@@ -2,99 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F046AF6FD
-	for <lists+io-uring@lfdr.de>; Tue,  7 Mar 2023 21:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C7DC6AFACF
+	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 00:58:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbjCGUzV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Mar 2023 15:55:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
+        id S229614AbjCGX6e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Mar 2023 18:58:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230493AbjCGUzU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 15:55:20 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E289A729C
-        for <io-uring@vger.kernel.org>; Tue,  7 Mar 2023 12:55:17 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id cp7-20020a17090afb8700b0023756229427so17839808pjb.1
-        for <io-uring@vger.kernel.org>; Tue, 07 Mar 2023 12:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678222516;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uf09mUG+R3cX/yzWF7w4T1H/8lFUsiESqp6B01wlKC8=;
-        b=aHvC+b+6LJcqH1ok2yKhUrDZ1Yx9qpIO/b4P0cUVs4B8W6FrjowSN5WgFQtiMi/xXa
-         wmtbfquGHBNAjthpWIfXuw7k3opw0KXUr1WXdfASSmJHNJx1svgDoLIBV7JaFyRiExre
-         8pXbT4BXM9NRrDoOjtJAcd/ekgqeWU6srZAGEWfW5oJx9gpyqHdAKU7uH9+QQrmX/dwT
-         lZGTXXa9WboJOtEP7H8naXs3MhvbC7SIF0YwcruLtLVMxvmyXHz1XqXGXlnBW6pp9p6Z
-         l7z0/yDcJbW/6RVkbT4jAnowPXKGfWuG7bi9p5ZW7msycELEZj55TliYBf2whAVCCZoZ
-         kn3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678222516;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uf09mUG+R3cX/yzWF7w4T1H/8lFUsiESqp6B01wlKC8=;
-        b=QIA8RPq52Kq5Y2NmoOSIalOYm5TUzXp+nKvB//IrjEnYWuEVHjk0JCcpbYXqfK48s8
-         v7pj1ETwWc/qFH3zfensVnKiukD12U+C0WZ076F3FIZdkey/GdNy8Ztl3ITjrMPLfL7q
-         /pgPeTbdhdqnuHnEjcB+V5Fe6fsWUaD3oVOYCjapvOo69MCqBAc1KO4wvpFlljsX6DO6
-         4RKNM6XSzdqF2oPZurLqvgfwYTETAB4veDCUfQVUIkHe1ouMW/tJ5+/li3RFgAMPwaE8
-         zE9vm1p7jleaIuNKNEh3uD9z4wxPi5B84YQZfGSh47SZmh3X5x8pevjk7f5q1jRAJbX/
-         mH0A==
-X-Gm-Message-State: AO0yUKU6H3YcbKDSDiO8CI8Uaxbj5/wqnJgvtDsRRdJ7R3rCSzoZIUn1
-        DxmfO52Eq9drMve6WAZyDm+BM7i9Tsn6b6roDu4=
-X-Google-Smtp-Source: AK7set+x6oKhZIRPFyjR0qdrSFzoS0J8zZnOQwnnlSVQzz8XBnphl/qXZjv/mfwoOC5I7GgxRBJ2LA==
-X-Received: by 2002:a17:902:e5cb:b0:19c:13d2:44c5 with SMTP id u11-20020a170902e5cb00b0019c13d244c5mr17394823plf.3.1678222516484;
-        Tue, 07 Mar 2023 12:55:16 -0800 (PST)
-Received: from [127.0.0.1] ([50.233.106.125])
-        by smtp.gmail.com with ESMTPSA id d19-20020a170902aa9300b001932a9e4f2csm8775494plr.255.2023.03.07.12.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 12:55:15 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <20230307203830.612939-1-ammarfaizi2@gnuweeb.org>
-References: <20230307203830.612939-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v1 0/3] Small fixes and CI update
-Message-Id: <167822251537.5425.8684184793523517350.b4-ty@kernel.dk>
-Date:   Tue, 07 Mar 2023 13:55:15 -0700
+        with ESMTP id S229497AbjCGX6c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 18:58:32 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4393A674F;
+        Tue,  7 Mar 2023 15:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678233510; x=1709769510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U1r11wGTdNUd/e243gWXbHVrx+jIyFT1yWtGKx/A41A=;
+  b=WYoIspkTKmMW3z80kjSyYerf6z1j4BDxVQ3LfMP7ODumsOQkYuU/7MqB
+   5Iy1ZSV6p4VNGqXO2ayWXqylcn1ob93YSjfWJxPTPzbwZRxMIZk+ZViT1
+   k5Q2Hbvy1xdTIMabL1fpkbhyCmPB3ShOTR2qO24PeqP/LwfQi1kaj4zn0
+   HoASu5MjclL2dnPu6hA0vulga0PvzZDxCPvl81tuB/66V9YaeaGx9/wCR
+   8cH1HrZdarI96NstFm5B7tgtPFTEbXwy6oYjTqhKZU42XDyVlFNBEs4+G
+   32RvTVAWzigfIaM31QcwI7hy+wMrn0fvNJXnQYF+iblsK3/4cduilm5JW
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="334723924"
+X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
+   d="scan'208";a="334723924"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 15:58:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="800544382"
+X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
+   d="scan'208";a="800544382"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 07 Mar 2023 15:58:27 -0800
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pZhCM-0001hT-2L;
+        Tue, 07 Mar 2023 23:58:26 +0000
+Date:   Wed, 8 Mar 2023 07:57:51 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH V2 12/17] block: ublk_drv: cleanup ublk_copy_user_pages
+Message-ID: <202303080731.bXLTXesK-lkp@intel.com>
+References: <20230307141520.793891-13-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-ebd05
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230307141520.793891-13-ming.lei@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi Ming,
 
-On Wed, 08 Mar 2023 03:38:27 +0700, Ammar Faizi wrote:
-> Just a boring patchset.
-> 
-> - Address the recent io_uring-udp bug report on GitHub.
-> - No more sign-compare warnings on the GitHub build bot.
-> - Kill trailing whitespaces (manpage).
-> 
-> 
-> [...]
+I love your patch! Perhaps something to improve:
 
-Applied, thanks!
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on linus/master v6.3-rc1 next-20230307]
+[cannot apply to char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1/3] io_uring-udp: Fix the wrong `inet_ntop()` argument
-      commit: 4f1b8850dc1f18c0160917669c64eda879093304
-[2/3] github: Append `-Wno-sign-compare` to the GitHub build bot CFLAGS
-      commit: fe4d0be3a96e33aef265bfe8509b088846736fe7
-[3/3] man/io_uring_register_{buffers,files}: Kill trailing whitespaces
-      commit: 9e4190aed43f25b2986155a2f6019fc2fc89920f
+url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Lei/io_uring-add-IO_URING_F_FUSED-and-prepare-for-supporting-OP_FUSED_CMD/20230307-222928
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20230307141520.793891-13-ming.lei%40redhat.com
+patch subject: [PATCH V2 12/17] block: ublk_drv: cleanup ublk_copy_user_pages
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230308/202303080731.bXLTXesK-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/c375364124e3c63211e7edd23bb74d22a86d5194
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Ming-Lei/io_uring-add-IO_URING_F_FUSED-and-prepare-for-supporting-OP_FUSED_CMD/20230307-222928
+        git checkout c375364124e3c63211e7edd23bb74d22a86d5194
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/block/
 
-Best regards,
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303080731.bXLTXesK-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/block/ublk_drv.c: In function 'ublk_map_io':
+>> drivers/block/ublk_drv.c:532:42: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     532 |                 import_single_range(dir, (void __user *)io->addr,
+         |                                          ^
+   drivers/block/ublk_drv.c: In function 'ublk_unmap_io':
+   drivers/block/ublk_drv.c:553:42: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     553 |                 import_single_range(dir, (void __user *)io->addr,
+         |                                          ^
+
+
+vim +532 drivers/block/ublk_drv.c
+
+   516	
+   517	static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
+   518			struct ublk_io *io)
+   519	{
+   520		const unsigned int rq_bytes = blk_rq_bytes(req);
+   521	
+   522		/*
+   523		 * no zero copy, we delay copy WRITE request data into ublksrv
+   524		 * context and the big benefit is that pinning pages in current
+   525		 * context is pretty fast, see ublk_pin_user_pages
+   526		 */
+   527		if (ublk_need_map_req(req)) {
+   528			struct iov_iter iter;
+   529			struct iovec iov;
+   530			const int dir = ITER_DEST;
+   531	
+ > 532			import_single_range(dir, (void __user *)io->addr,
+   533					rq_bytes, &iov, &iter);
+   534	
+   535			return ublk_copy_user_pages(req, &iter, dir);
+   536		}
+   537		return rq_bytes;
+   538	}
+   539	
+
 -- 
-Jens Axboe
-
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

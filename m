@@ -2,142 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC9586B0B23
-	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 15:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 547096B0B33
+	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 15:30:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbjCHO25 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Mar 2023 09:28:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59356 "EHLO
+        id S231286AbjCHOat (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Mar 2023 09:30:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbjCHO2l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Mar 2023 09:28:41 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01508231E4
-        for <io-uring@vger.kernel.org>; Wed,  8 Mar 2023 06:28:02 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id m8-20020a17090a4d8800b002377bced051so2556347pjh.0
-        for <io-uring@vger.kernel.org>; Wed, 08 Mar 2023 06:28:02 -0800 (PST)
+        with ESMTP id S232013AbjCHOac (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Mar 2023 09:30:32 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB104ECE8
+        for <io-uring@vger.kernel.org>; Wed,  8 Mar 2023 06:30:06 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id i10so17801752plr.9
+        for <io-uring@vger.kernel.org>; Wed, 08 Mar 2023 06:30:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678285671;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qdTcUtO9YdJ502BWWJ304B8x/esaHYegipQ+3wcllh8=;
-        b=rhe9FgTCNWQY79XM8WDAYF3FM60RFR/v1pK4Ol/zR/4u6rTMr0DzUe4mIQKOHkk5zZ
-         PLvd6ys3g2BzIMWd8SQ7tQO9OiAIbRXPhbjQSzwRV7KcB2NBbVAWVmeNDxIYqIu8NQHw
-         krZRnWD82bIfNJo7hLPAxhJFk4HAxO1EQefaoetULcCGxRJCSvpE2CLDDLbmFHNsn/Dz
-         Bk7rlKo/SqRRsLfSb+0fRYvnuwyASlqboKaK7bVJXoGqgKGoaEjxMVifcjeEZZmHsH8C
-         2LyPXGyEYH/68Q8wRdIOJIRyvF0WsbeNObZwVUyABFqbowscrlT47WuScTix49WZX5uk
-         dHQQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678285804;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yY7u9xj2PP/RlF/ssszj6uSRq/HUki12YAm8rAPgEVA=;
+        b=XGPxnLkzi6lfNhxwIqeZg0us113ORKSRsubmUVLcB8i5an6xePO9CewN3Jczuj2EJN
+         G7ccnPSyJbUU+NLVPTCfVYlaWvTkLPNV/kC5p+ZUAbrX6GYVbpa/g/rNX2rpCynw/9rk
+         HqLIyeQhyFRDxydlS1RDiS7cjSLLgBZ2KawThD1lIanE+DkESY1vRiHhVXyHxqLf2KQj
+         7dgxeYfTPiI85oUSqi6ffG0lsrJBzl9OfovrInqjRx1LCIkJBPaABjXeAHR9RoytTbV4
+         4Az0cVrc5L4ziIvQuZsYWiq/O7ORPYgzr3IhGUWlh1D/idJhs+bXlq5Fyn2tLUuc29Lb
+         O5Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678285671;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qdTcUtO9YdJ502BWWJ304B8x/esaHYegipQ+3wcllh8=;
-        b=QBs2O3ulYR0Ac0it2Xo25PPJAiawkaxkKCsiPrr/qdIQVrBDT/5/ncRtiMU2/uuOFd
-         KcIrImwFSjkDQF+PdS7OOj44Gbpxaq7Mr8N3Jp8ork8dTriN4WNwK+lK9C3lRkBl0LeQ
-         f2JqR8E42LR6ojPQ7ESo92teEDuXm5p2vrgdL71SKNSOfFXcwX0iQF+E9FeLm/cqhRQB
-         IoE/5R1rULehAiNC/M8wQzfoXl0ZJw14KDtyX7G8+TFWQq6suLEdNcFnaoWscaHlJ6Cr
-         3WCMH9QnLU2AvIMzkxwfBtKyg7QIr6/ZS8I+diaPSqD37wn9Djt9mqLIDT3M8uCHoa5F
-         cL6Q==
-X-Gm-Message-State: AO0yUKU5lekKdDLe8PlDul8NHIfOnqq2RVO3b74lBQMR8sdt3grtSGra
-        L99zwMbD9hmC5eg5ov+T5agr/U/SKZ2+8ii3b7Y=
-X-Google-Smtp-Source: AK7set+Jx6SE+YfwASEE69N/9PYI1trTqv52eXJUOrZPuj8bdzQJx0ILZLeNmeqMZBi2B5YlzAf4kQ==
-X-Received: by 2002:a05:6a20:7d88:b0:cd:345e:5b10 with SMTP id v8-20020a056a207d8800b000cd345e5b10mr3001837pzj.5.1678285670954;
-        Wed, 08 Mar 2023 06:27:50 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678285804;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yY7u9xj2PP/RlF/ssszj6uSRq/HUki12YAm8rAPgEVA=;
+        b=KqtosXUge9kL12LM1W+VUoAq4EsQUUpcEaaey4P2ATybR+fy0SiwpJa28itSv1DB3w
+         YFcZQ5ccBq7ZHPbaDY1AHs/N4bfWJc0zBs+4THcHXo/ceSTo/TwEOdHWSn/dW/kPurHG
+         U4n9aEg0YP2TsM1rMMqyEIO5DyoRa89EDFiVtA7j/BpHuh7goNU0mdNjWKJJr1DPxaDI
+         o4WW8NsmSQv9V81hYzM77QyYbB+W3yTsiwGqxWDBUXkeWiIoL46jqHLW23AHqjbKskw0
+         7dnPV60brSH6lB4yyTuWGErfBRkpJmrJVAxPLlqzd9wq8eQdNddVx2pHtSI8BBim/29H
+         dT2w==
+X-Gm-Message-State: AO0yUKX1pKu+gf7c/BLNl1h/8zPkZ5J+xsSb6yNjH5FeEKcL25ctHSrW
+        b07uyivzE8JjkVjjpdlC/PpACQ==
+X-Google-Smtp-Source: AK7set/UsDw/FvstUhPh/rIRtP6oPNGen0KsfV3cFq3Suu/T6JgGzrb+0yTS7CgN3pO4XYpAoPtOjQ==
+X-Received: by 2002:a17:902:cecc:b0:19a:7217:32af with SMTP id d12-20020a170902cecc00b0019a721732afmr21008038plg.5.1678285804282;
+        Wed, 08 Mar 2023 06:30:04 -0800 (PST)
 Received: from [172.20.4.229] ([50.233.106.125])
-        by smtp.gmail.com with ESMTPSA id p6-20020a631e46000000b00502ecb91940sm9265198pgm.55.2023.03.08.06.27.50
+        by smtp.gmail.com with ESMTPSA id ke13-20020a170903340d00b0019cb131b8a5sm9947040plb.32.2023.03.08.06.30.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 06:27:50 -0800 (PST)
-Message-ID: <0f0e791b-8eb8-fbb2-ea94-837645037fae@kernel.dk>
-Date:   Wed, 8 Mar 2023 07:27:50 -0700
+        Wed, 08 Mar 2023 06:30:03 -0800 (PST)
+Message-ID: <1c4b5923-6560-0eea-4970-de7e77999b1e@kernel.dk>
+Date:   Wed, 8 Mar 2023 07:30:02 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
+Subject: Re: [PATCHSET for-next 0/3] Add FMODE_NOWAIT support to pipes
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Daniel Dao <dqminh@cloudflare.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230308031033.155717-1-axboe@kernel.dk>
+ <30edf51c-792e-05b9-9045-2feab70ec427@kernel.dk>
+ <20230308064648.GT2825702@dread.disaster.area>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/io-wq: stop setting PF_NO_SETAFFINITY on io-wq
- workers
+In-Reply-To: <20230308064648.GT2825702@dread.disaster.area>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Every now and then reports come in that are puzzled on why changing
-affinity on the io-wq workers fails with EINVAL. This happens because they
-set PF_NO_SETAFFINITY as part of their creation, as io-wq organizes
-workers into groups based on what CPU they are running on.
+On 3/7/23 11:46?PM, Dave Chinner wrote:
+> On Tue, Mar 07, 2023 at 08:33:24PM -0700, Jens Axboe wrote:
+>> On 3/7/23 8:10?PM, Jens Axboe wrote:
+>>> Curious on how big of a difference this makes, I wrote a small benchmark
+>>> that simply opens 128 pipes and then does 256 rounds of reading and
+>>> writing to them. This was run 10 times, discarding the first run as it's
+>>> always a bit slower. Before the patch:
+>>>
+>>> Avg:	262.52 msec
+>>> Stdev:	  2.12 msec
+>>> Min:	261.07 msec
+>>> Max	267.91 msec
+>>>
+>>> and after the patch:
+>>>
+>>> Avg:	24.14 msec
+>>> Stdev:	 9.61 msec
+>>> Min:	17.84 msec
+>>> Max:	43.75 msec
+>>>
+>>> or about a 10x improvement in performance (and efficiency).
+>>
+>> The above test was for a pipe being empty when the read is issued, if
+>> the test is changed to have data when, then it looks even better:
+>>
+>> Before:
+>>
+>> Avg:	249.24 msec
+>> Stdev:	  0.20 msec
+>> Min:	248.96 msec
+>> Max:	249.53 msec
+>>
+>> After:
+>>
+>> Avg:	 10.86 msec
+>> Stdev:	  0.91 msec
+>> Min:	 10.02 msec
+>> Max:	 12.67 msec
+>>
+>> or about a 23x improvement.
+> 
+> Nice!
+> 
+> Code looks OK, maybe consider s/nonblock/nowait/, but I'm not a pipe
+> expert so I'll leave nitty gritty details to Al, et al.
 
-However, this is purely an optimization and not a functional requirement.
-We can allow setting affinity, and just lazily update our worker to wqe
-mappings. If a given io-wq thread times out, it normally exits if there's
-no more work to do. The exception is if it's the last worker available.
-For the timeout case, check the affinity of the worker against group mask
-and exit even if it's the last worker. New workers should be created with
-the right mask and in the right location.
+We seem to use both somewhat interchangably throughout the kernel. Don't
+feel strongly about that one, so I'll let the majority speak on what
+they prefer.
 
-Reported-by:Daniel Dao <dqminh@cloudflare.com>
-Link: https://lore.kernel.org/io-uring/CA+wXwBQwgxB3_UphSny-yAP5b26meeOu1W4TwYVcD_+5gOhvPw@mail.gmail.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Acked-by: Dave Chinner <dchinner@redhat.com>
 
----
-
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 411bb2d1acd4..f81c0a7136a5 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -616,7 +616,7 @@ static int io_wqe_worker(void *data)
- 	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wq *wq = wqe->wq;
--	bool last_timeout = false;
-+	bool exit_mask = false, last_timeout = false;
- 	char buf[TASK_COMM_LEN];
- 
- 	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
-@@ -632,8 +632,11 @@ static int io_wqe_worker(void *data)
- 			io_worker_handle_work(worker);
- 
- 		raw_spin_lock(&wqe->lock);
--		/* timed out, exit unless we're the last worker */
--		if (last_timeout && acct->nr_workers > 1) {
-+		/*
-+		 * Last sleep timed out. Exit if we're not the last worker,
-+		 * or if someone modified our affinity.
-+		 */
-+		if (last_timeout && (exit_mask || acct->nr_workers > 1)) {
- 			acct->nr_workers--;
- 			raw_spin_unlock(&wqe->lock);
- 			__set_current_state(TASK_RUNNING);
-@@ -652,7 +655,11 @@ static int io_wqe_worker(void *data)
- 				continue;
- 			break;
- 		}
--		last_timeout = !ret;
-+		if (!ret) {
-+			last_timeout = true;
-+			exit_mask = !cpumask_test_cpu(raw_smp_processor_id(),
-+							wqe->cpu_mask);
-+		}
- 	}
- 
- 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state))
-@@ -704,7 +711,6 @@ static void io_init_new_worker(struct io_wqe *wqe, struct io_worker *worker,
- 	tsk->worker_private = worker;
- 	worker->task = tsk;
- 	set_cpus_allowed_ptr(tsk, wqe->cpu_mask);
--	tsk->flags |= PF_NO_SETAFFINITY;
- 
- 	raw_spin_lock(&wqe->lock);
- 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wqe->free_list);
+Thanks, added.
 
 -- 
 Jens Axboe

@@ -2,67 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6695C6B0ECA
-	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 17:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF336B0F76
+	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 17:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjCHQbB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Mar 2023 11:31:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        id S229973AbjCHQ6d (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Mar 2023 11:58:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbjCHQbA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Mar 2023 11:31:00 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8BC4C17
-        for <io-uring@vger.kernel.org>; Wed,  8 Mar 2023 08:30:59 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id x20-20020a17090a8a9400b00233ba727724so3831799pjn.1
-        for <io-uring@vger.kernel.org>; Wed, 08 Mar 2023 08:30:59 -0800 (PST)
+        with ESMTP id S230031AbjCHQ6G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Mar 2023 11:58:06 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B509D5151;
+        Wed,  8 Mar 2023 08:56:30 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso1801730wmb.0;
+        Wed, 08 Mar 2023 08:56:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678293058;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gn3atpUmiXm3KxY464V5YB2rz0e75eJUtWFJL2KJEbY=;
-        b=SPk6D1sPYtu+A1n8I+ykLmy/KyccrYDJpGLxOK4wywvrje5eyq1W1Lqpp6X7MiJr2N
-         aW+Urjq8W1DExfz4nE6LvjT2S35rU+LA0WVrIh2vvribf4ZplaNLxOtdYrFarKkSUQrx
-         6ifsFqwZh/iiMEC5XjmVsULk66GMq2u5gdub2Htuueurep1eBM1qvv6vbJfWXuqDX0+W
-         saQDNwGVVsByMcAuSezLpF56N28Zuiavl/6O1oQPgg7RK2W0iolMcf24w+LXLhAU4GT9
-         8eO9Ivw6+xu9GV2t/NRlaV4XPl4VWXLhUUdh07Xrm3Tl+G2P6xHzTb8VorcXPVHRDRLs
-         kXjw==
+        d=gmail.com; s=20210112; t=1678294582;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8aawLgdTyGrR288varEmmF/Y/ULImrZS2HNqkf0hRec=;
+        b=cFS174NQxecQ+yipN6X2+qQG/mwkHvlgxmN/aW93fcFjdTPsi0ZzG+FBRfYAMhLPY/
+         o4MHIzwIstBqbZ+HZdnHhQ7Dsvsx1fPWdipMzoU3V8HDnDSjnXqo3oYVstxej7r7/WKK
+         kOuOsyiJZdgBYn3uAUgME8TS+IXKQ2/tbJmiDYqTHDa0LLG97lOBNFckR5qVWEkdAYLt
+         ppjpma8uSMAaMZUvMb/SpjlIjPrWyeXCfWZCRIIPJ8UHun+TOGEAB+V4mYAdAscL7kU8
+         DskIlFSFHG1QtMiJd7z6itgdNKf+uc/7VD7GJ2Q+J6lqhHn9UfaR0ewFS026bQAP2LTm
+         cj2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678293058;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gn3atpUmiXm3KxY464V5YB2rz0e75eJUtWFJL2KJEbY=;
-        b=NlQyBCs1GKvdMsOvQBcduMJ5ih/zJVIQIO0Yi7J/PoswbHkpE7BRlL4QZYfR3tPIUT
-         Rx2/q9pM8nS8OCcF3Bdl3zjj08Os+56ksioCLjS2xCZVzfOysaCWqU4s3EW5n+64mY1E
-         TG0puuRLNI6/C3dZpWnFH1YLjy8EA5ZYUPCjf4w1RKQXfKTkRp7xxfLXtzeVbNdMFP7q
-         iKC1IRMl9hoR0QXGISVN5F5avbSeVWBc4lk4vbNtt7CoHnjJjvG2c66E3Jv9enb/6j/D
-         UKJhCqiXTkQKoLTVDyDpEmi5yGbkpwZ3mXNxhfxL08gAB3JekhvRWHicrH4grhLNHlTE
-         hiNg==
-X-Gm-Message-State: AO0yUKXUpJcNfzgyuIHJBGPgTEFBuL39BaohbkElwn15dk6so6Fzm0pc
-        XbK3Q5za7IIkZCrCt0GFuR/w6LHR45qHWLZaQj8=
-X-Google-Smtp-Source: AK7set8g1NTDC1ztAzEO+WxIdG65SRN/NYpeuedN3kf1+crN2/X0iqtG6qtyIqzphDmr1qcAyU636Q==
-X-Received: by 2002:a17:90a:9401:b0:237:47b0:30d3 with SMTP id r1-20020a17090a940100b0023747b030d3mr12872051pjo.4.1678293058199;
-        Wed, 08 Mar 2023 08:30:58 -0800 (PST)
-Received: from [172.20.4.229] ([50.233.106.125])
-        by smtp.gmail.com with ESMTPSA id h6-20020a17090aa88600b0022c326ad011sm9056029pjq.46.2023.03.08.08.30.57
+        d=1e100.net; s=20210112; t=1678294582;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8aawLgdTyGrR288varEmmF/Y/ULImrZS2HNqkf0hRec=;
+        b=06NRPKj1LCX5xrlDNX3r+jiMM+6bAW1cUcFrwl3wSyy/DmojUATzb69P5FCq30BHVv
+         5gYePMPs15EyhY0tkQTDnh1aujjeRcWIu0/ofz8Nr3K5DLP5s1kUO4Jv7/TLDintGGAN
+         q4tv5dmss6S6ODEdKsj6TCnM3s4qL5M75cohN0AmryDMcJx4+7m9d0b1ZP194N4wq6Cp
+         tGDLkQ8f2qdAAWp17yBaEtHc858MCp1Wc03PMSILXr6Ru/bRH8nxqbMn1hLgg9wOn1G9
+         16+sr5trDZC9v/p9+vfMBa9r92TYgGNpwZMrOsZvSzAsZJ5FPBidyV1+bjpG+TxQ6AiD
+         JuyA==
+X-Gm-Message-State: AO0yUKWtPOiqVznO+vH1qsC89IoXZyutp9W/QwhwgBdoO+BPOxwXGz68
+        J7JPoJaKZAR1rkHshbzDsZusxOcLj8w=
+X-Google-Smtp-Source: AK7set/VEIDpJXbnE4Qp5h8mXE/hLGy1cRJIa97Rn5tsxcpFdocolLh3rlzllJ4qmjsmq+whyjWY9w==
+X-Received: by 2002:a05:600c:1c9c:b0:3ea:4af0:3475 with SMTP id k28-20020a05600c1c9c00b003ea4af03475mr16761043wms.1.1678294582145;
+        Wed, 08 Mar 2023 08:56:22 -0800 (PST)
+Received: from [192.168.8.100] (188.28.103.91.threembb.co.uk. [188.28.103.91])
+        by smtp.gmail.com with ESMTPSA id p7-20020a5d48c7000000b002c71d206329sm15645709wrs.55.2023.03.08.08.56.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 08:30:57 -0800 (PST)
-Message-ID: <2349df76-0acb-0a56-bda1-2cb05aa55151@kernel.dk>
-Date:   Wed, 8 Mar 2023 09:30:56 -0700
+        Wed, 08 Mar 2023 08:56:21 -0800 (PST)
+Message-ID: <9f08445c-1f1e-a8e8-be93-4a97ec631d32@gmail.com>
+Date:   Wed, 8 Mar 2023 16:54:45 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 00/17] io_uring/ublk: add IORING_OP_FUSED_CMD
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/uring_cmd: ensure that device supports IOPOLL
-Cc:     Kanchan Joshi <joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>
+References: <20230307141520.793891-1-ming.lei@redhat.com>
+ <7e05882f-9695-895d-5e83-61006e54c4b2@gmail.com>
+ <ce96f7e7-1315-7154-f540-1a3ff0215674@gmail.com>
+ <ZAfurtfY4lXa8sxX@ovpn-8-16.pek2.redhat.com>
+ <effb2361-b66e-2678-ef86-5f9565c4ad9a@gmail.com>
+ <ZAi1GKgHfLcDL2jM@ovpn-8-17.pek2.redhat.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ZAi1GKgHfLcDL2jM@ovpn-8-17.pek2.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,50 +82,172 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It's possible for a file type to support uring commands, but not
-pollable ones. Hence before issuing one of those, we should check
-that it is supported and error out upfront if it isn't.
+On 3/8/23 16:17, Ming Lei wrote:
+> On Wed, Mar 08, 2023 at 02:46:48PM +0000, Pavel Begunkov wrote:
+>> On 3/8/23 02:10, Ming Lei wrote:
+>>> On Tue, Mar 07, 2023 at 05:17:04PM +0000, Pavel Begunkov wrote:
+>>>> On 3/7/23 15:37, Pavel Begunkov wrote:
+>>>>> On 3/7/23 14:15, Ming Lei wrote:
+>>>>>> Hello,
+>>>>>>
+>>>>>> Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
+>>>>>> be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
+>>>>>> 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
+>>>>>> to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
+>>>>>> and its ->issue() can retrieve/import buffer from master request's
+>>>>>> fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
+>>>>>> this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
+>>>>>> submits slave OP just like normal OP issued from userspace, that said,
+>>>>>> SQE order is kept, and batching handling is done too.
+>>>>>
+>>>>>    From a quick look through patches it all looks a bit complicated
+>>>>> and intrusive, all over generic hot paths. I think instead we
+>>>>> should be able to use registered buffer table as intermediary and
+>>>>> reuse splicing. Let me try it out
+>>>>
+>>>> Here we go, isolated in a new opcode, and in the end should work
+>>>> with any file supporting splice. It's a quick prototype, it's lacking
+>>>> and there are many obvious fatal bugs. It also needs some optimisations,
+>>>> improvements on how executed by io_uring and extra stuff like
+>>>> memcpy ops and fixed buf recv/send. I'll clean it up.
+>>>>
+>>>> I used a test below, it essentially does zc recv.
+>>>>
+>>>> https://github.com/isilence/liburing/commit/81fe705739af7d9b77266f9aa901c1ada870739d
+>>>>
+>> [...]
+>>>> +int io_splice_from(struct io_kiocb *req, unsigned int issue_flags)
+>>>> +{
+>>>> +	struct io_splice_from *sp = io_kiocb_to_cmd(req, struct io_splice_from);
+>>>> +	loff_t *ppos = (sp->off == -1) ? NULL : &sp->off;
+>>>> +	struct io_mapped_ubuf *imu;
+>>>> +	struct pipe_inode_info *pi;
+>>>> +	struct io_ring_ctx *ctx;
+>>>> +	unsigned int pipe_tail;
+>>>> +	int ret, i, nr_pages;
+>>>> +	u16 index;
+>>>> +
+>>>> +	if (!sp->file->f_op->splice_read)
+>>>> +		return -ENOTSUPP;
+>>>> +
+>>>> +	pi = alloc_pipe_info();
+>>>
+>>> The above should be replaced with direct pipe, otherwise every time
+>>> allocating one pipe inode really hurts performance.
+>>
+>> We don't even need to alloc it dynanically, could be just
+>> on stack. There is a long list of TODOs I can add, e.g.
+>> polling support, retries, nowait, caching imu and so on.
+>>
+>> [...]
+>>> Your patch looks like transferring pages ownership to io_uring fixed
+>>> buffer, but unfortunately it can't be done in this way. splice is
+>>> supposed for moving data, not transfer buffer ownership.
+>>
+>> Borrowing rather than transferring. It's not obvious since it's
+>> not implemented in the patch, but the buffer should be eventually
+>> returned using the splice's ->release callback.
+> 
+> What is the splice's ->release() callback? Is pipe buffer's
+> release()? If yes, there is at least the following two problems:
 
-Cc: stable@vger.kernel.org
-Fixes: 5756a3a7e713 ("io_uring: add iopoll infrastructure for io_uring_cmd")
-Link: https://github.com/axboe/liburing/issues/816
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Right
 
----
+> 1) it requires the buffer to be saved(for calling its callback and use its private
+> data to return back the whole buffer) in the pipe until it is consumed, which becomes
+> one sync interface like splice syscall, and can't cross multiple io_uring OPs or
+> per-buffer pipe inode is needed
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 446a189b78b0..e3413f131887 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -101,6 +101,18 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
-+static bool io_uring_cmd_supported(struct io_ring_ctx *ctx, struct file *file)
-+{
-+	/* no issue method, fail */
-+	if (!file->f_op->uring_cmd)
-+		return false;
-+	/* IOPOLL enabled and no poll method, fail */
-+	if (ctx->flags & IORING_SETUP_IOPOLL && !file->f_op->uring_cmd_iopoll)
-+		return false;
-+
-+	return true;
-+}
-+
- int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-@@ -108,7 +120,7 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
- 	struct file *file = req->file;
- 	int ret;
- 
--	if (!req->file->f_op->uring_cmd)
-+	if (!io_uring_cmd_supported(ctx, file))
- 		return -EOPNOTSUPP;
- 
- 	ret = security_uring_cmd(ioucmd);
+We don't mix data from different sources, it's reasonable to expect
+that all buffers will have the same callback, then it'll be saved
+in struct io_mapped_ubuf. That's sth should definitely be checked and
+rejected if happens.
+
+> 2) pipe buffer's get()/release() works on per-buffer/page level, but
+> we need to borrow the whole buffer, and the whole buffer could be used
+
+Surely that can be improved.
+
+> by arbitrary number of OPs, such as one IO buffer needs to be used for
+> handling mirror or stripped targets, so when we know the buffer can be released?
+
+There is a separate efficient lifetime semantic for io_uring's registered
+buffers, which don't involve any get/put. It'll be freed according to it,
+i.e. when the userspace asks it to be removed and there are no more
+inflight requests.
+
+> And basically it can't be known by kernel, and only application knows
+> when to release it.
+> 
+> Anyway, please post the whole patch, otherwise it is hard to see
+> the whole picture, and devil is always in details, especially Linus
+> mentioned splice can't be used in this way.
+
+Sure
+
+> 
+>>
+>>> https://lore.kernel.org/linux-block/CAJfpeguQ3xn2-6svkkVXJ88tiVfcDd-eKi1evzzfvu305fMoyw@mail.gmail.com/
+>>>
+>>> 1) pages are actually owned by device side(ublk, here: sp->file), but we want to
+>>> loan them to io_uring normal OPs.
+>>>
+>>> 2) after these pages are used by io_uring normal OPs, these pages have
+>>> been returned back to sp->file, and the notification has to be done
+>>> explicitly, because page is owned by sp->file of splice_read().
+>>
+>> Right, see above, they're going to be returned back via ->release.
+> 
+> How?
+
+I admit, I shouldn't have skipped it even for a quick POC. It'll save
+->release() in struct io_mapped_ubuf and call it when the buffer is
+freed from io_uring perspective, that is there are no more requests
+using it and the user requested it to be removed.
+
+>>> 3) pages RW direction has to limited strictly, and in case of ublk/fuse,
+>>> device pages can only be read or write which depends on user io request
+>>> direction.
+>>
+>> Yes, I know, and directions will be needed anyway for DMA mappings and
+>> different p2p cases in the future, but again a bunch of things is
+>> omitted here.
+> 
+> Please don't omitted it and it is one fundamental security problem.
+
+That's not interesting for a design concept with a huge warning.
+io_import_fixed() already takes a dir argument, we just need to check
+it against the buffer's one.
+
+
+>>> Also IMO it isn't good to add one buffer to ctx->user_bufs[] oneshot and
+>>> retrieve it oneshot, and it can be set via req->imu simply in one fused
+>>> command.
+>>
+>> That's one of the points though. It's nice if not necessary (for a generic
+>> feature) to be able to do multiple ops on the data. For instance, if we
+>> have a memcpy request, we can link it to this splice / zc recv, memcpy
+>> necessary headers to the userspace and let it decide how to proceed with
+>> data.
+> 
+> I feel it could be one big problem for buffer borrowing to cross more than one
+> OPs, and when can the buffer be returned back?
+
+Described above
+
+> memory copy can be done simply by device's read/write interface, please see
+> patch 15.
+
+I don't think I understand how it looks in the userspace, maybe it's
+only applicable to ublk? but it seems that the concept of having one op
+producing a buffer and another consuming it don't go well with multi
+use in general case, especially stretched in time.
+
+E.g. you recv data, some of which is an application protocol header
+that should be looked at by the user and the rest is data that might
+be sent out somewhere else.
+
+Am I wrong?
 
 -- 
-Jens Axboe
-
+Pavel Begunkov

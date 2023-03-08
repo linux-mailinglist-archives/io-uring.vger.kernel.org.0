@@ -2,97 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDAA6AFB25
-	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 01:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7086AFBC8
+	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 02:09:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbjCHAcD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 7 Mar 2023 19:32:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
+        id S229772AbjCHBJQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 7 Mar 2023 20:09:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbjCHAcD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 19:32:03 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C669B0482
-        for <io-uring@vger.kernel.org>; Tue,  7 Mar 2023 16:32:01 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id n6so16102834plf.5
-        for <io-uring@vger.kernel.org>; Tue, 07 Mar 2023 16:32:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678235520;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AEsMgalcatpSKQO/pDZVaHweQJaXK1mWCaEr5mhyepU=;
-        b=rsB/B7Cfuk4rjsdAczPw02m2FmRN7MTInKl6zemXOO/ZVFzkZxDPS5d5xhOyIDQ/Hd
-         ZK2q2GnZTtIV6Nk7c0t/DDi8KxzCRxez1BYexvIg83Ej3aP3uajkmYgLOGUpIbr7EkCM
-         GNKbLv2KS5YHDn+6upoHFKB8kkpH5KlEjZRoRHpgjZuvo6mR6kA6BtVadtffi7J2tIWo
-         Drx7NBxkEpA4O5i7Pg2en9NpzoYA7EiDQ91bUB42eFTZeP5aW5UQQNZ68EoL2Ob/aCGy
-         Y6WSyavGa1xw7S13urK+pb47RIMgZze8a/w56PdQ+itvU1g4xhO/SxHCmDLdCtGq0jbl
-         1kXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678235520;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEsMgalcatpSKQO/pDZVaHweQJaXK1mWCaEr5mhyepU=;
-        b=t6ZZ3O45btQ+o07MRIDJ/BPEtDs8Cq/39sKZRk1dM3msVrqoybE6Yy+uZms8qzHl8h
-         R/s6OjMbcLT+Cic4O1PbMbpUHyNx75rHOopIztPmepXVhVCE2f0zOxHXnBWsiSKx4o3P
-         L/KbuUeYykfFfwx5C0K7/BB4yVMROtqAhUFOaNCp0keG/hnsXKsducCwpc+UbUMkNV+v
-         YEpYch57yb6/Ztx/YkXq6JGiF1+iqMOCZYoJb1O6ou6KqjeP6ORMVi4FWHpL2jkyYO2d
-         /aFgVqsKGI/WCVkKqRhJ5gIrE4QoEgekwhPf6QzZEkBghJ9RT1bUXPPSJZhErmYsdjIo
-         bLTA==
-X-Gm-Message-State: AO0yUKWsDhexcrBaNfm2+MTMYQ3THgekKD1d+0p9fRK1ZbCq4DADd5WE
-        bicKVBJLkW1R+aVm1iFkn5qlAuE7JJSwlY1C0mw=
-X-Google-Smtp-Source: AK7set8N6zVADkbhO5WhiG2LAuOBDL7zqJZxE8JWVESIY4R+IXttseHYc/os4nAEUMpP6zFtvSz2Aw==
-X-Received: by 2002:a17:902:e5d0:b0:196:3f5a:b4f9 with SMTP id u16-20020a170902e5d000b001963f5ab4f9mr18941514plf.1.1678235520461;
-        Tue, 07 Mar 2023 16:32:00 -0800 (PST)
-Received: from [172.20.4.229] ([50.233.106.125])
-        by smtp.gmail.com with ESMTPSA id a16-20020a170902b59000b00195f242d0a0sm8872788pls.194.2023.03.07.16.31.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Mar 2023 16:32:00 -0800 (PST)
-Message-ID: <2cd7c118-5a6a-0a21-5e08-58ece4fe56c2@kernel.dk>
-Date:   Tue, 7 Mar 2023 17:31:59 -0700
+        with ESMTP id S229610AbjCHBJP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 7 Mar 2023 20:09:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B69A226F
+        for <io-uring@vger.kernel.org>; Tue,  7 Mar 2023 17:08:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678237699;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dYDAMHZIsmMwagaEDhVssXFOJ/xumgqcigzIaKITBKw=;
+        b=c7sBBmMbRvp+px6Z7ZEwHWEMOhAAUXrVEMe/nQfv8+7lo3qhoJQzTf0zOQ6ds+Fh8xN537
+        vAkDyuR2TOIGKrz0kqzxnnLqroOiJYkEwof1O38d2HVqkBtTrVu57wnAluZuYsJUjZsmFq
+        J+6+DT33+9q0FNfj0wJWPt/cktVXPuo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-361-qPPHIJrrNG2baLDLN2RsjA-1; Tue, 07 Mar 2023 20:08:16 -0500
+X-MC-Unique: qPPHIJrrNG2baLDLN2RsjA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2B3E1185A794;
+        Wed,  8 Mar 2023 01:08:16 +0000 (UTC)
+Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 37F9E2026D4B;
+        Wed,  8 Mar 2023 01:08:10 +0000 (UTC)
+Date:   Wed, 8 Mar 2023 09:08:06 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>, ming.lei@redhat.com
+Subject: Re: [PATCH V2 00/17] io_uring/ublk: add IORING_OP_FUSED_CMD
+Message-ID: <ZAff9usDuyXxIPt9@ovpn-8-16.pek2.redhat.com>
+References: <20230307141520.793891-1-ming.lei@redhat.com>
+ <7e05882f-9695-895d-5e83-61006e54c4b2@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCHSET for-next 0/2] Make pipe honor IOCB_NOWAIT
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        brauner@kernel.org
-References: <20230307154533.11164-1-axboe@kernel.dk>
- <20230308001929.GS2825702@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230308001929.GS2825702@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e05882f-9695-895d-5e83-61006e54c4b2@gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/7/23 5:19 PM, Dave Chinner wrote:
-> On Tue, Mar 07, 2023 at 08:45:31AM -0700, Jens Axboe wrote:
->> Hi,
->>
->> File types that implement read_iter/write_iter should check for
->> IOCB_NOWAIT
+On Tue, Mar 07, 2023 at 03:37:21PM +0000, Pavel Begunkov wrote:
+> On 3/7/23 14:15, Ming Lei wrote:
+> > Hello,
+> > 
+> > Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
+> > be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
+> > 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
+> > to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
+> > and its ->issue() can retrieve/import buffer from master request's
+> > fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
+> > this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
+> > submits slave OP just like normal OP issued from userspace, that said,
+> > SQE order is kept, and batching handling is done too.
 > 
-> Since when? If so, what's the point of setting FMODE_NOWAIT when the
-> struct file is opened to indicate the file has comprehensive
-> IOCB_NOWAIT support in the underlying IO path?
+> From a quick look through patches it all looks a bit complicated
+> and intrusive, all over generic hot paths. I think instead we
 
-Guess I missed that FMODE_NOWAIT is supposed to be added for that,
-my naive assumption was that the iter based one should check. Which
-is a bad sad, but at least there's a flag for it.
+Really? The main change to generic hot paths are adding one 'true/false'
+parameter to io_init_req(). For others, the change is just check on
+req->flags or issue_flags, which is basically zero cost.
 
-But the good news is that I can drop the io_uring patch, just need
-to revise the pipe patch. I'll send a v2.
+> should be able to use registered buffer table as intermediary and
+> reuse splicing. Let me try it out
 
--- 
-Jens Axboe
+I will take a look at you patch, but last time, Linus has pointed out that
+splice isn't one good way, in which buffer ownership transferring is one big
+issue for writing data to page retrieved from pipe.
 
+https://lore.kernel.org/linux-block/CAJfpeguQ3xn2-6svkkVXJ88tiVfcDd-eKi1evzzfvu305fMoyw@mail.gmail.com/
+
+
+Thanks, 
+Ming
 

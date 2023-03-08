@@ -2,76 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A1A66B0E8D
-	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 17:23:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6695C6B0ECA
+	for <lists+io-uring@lfdr.de>; Wed,  8 Mar 2023 17:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbjCHQXz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 8 Mar 2023 11:23:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35314 "EHLO
+        id S229525AbjCHQbB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 8 Mar 2023 11:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbjCHQXu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Mar 2023 11:23:50 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35170B8579;
-        Wed,  8 Mar 2023 08:23:49 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id o38-20020a05600c512600b003e8320d1c11so2286085wms.1;
-        Wed, 08 Mar 2023 08:23:49 -0800 (PST)
+        with ESMTP id S229651AbjCHQbA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 8 Mar 2023 11:31:00 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8BC4C17
+        for <io-uring@vger.kernel.org>; Wed,  8 Mar 2023 08:30:59 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id x20-20020a17090a8a9400b00233ba727724so3831799pjn.1
+        for <io-uring@vger.kernel.org>; Wed, 08 Mar 2023 08:30:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678292627;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y4IZ92EpBEKYcl2ZJKg5u1/HykSPMLGytpx3Q6cANxw=;
-        b=KXeejlC+4XVExK3kgXB+euBTRMQEj40ANiAPfPW+XYr+wRhSgvqApNVIjjHpJGF0L+
-         bbso+oH9rZGiInEKaP+TezjfMPqwSIZqy1Llp1GQMQ5AtDutB6TVvDjZc0pt+DXzhx4K
-         eqbJ7zSNsyX6gvU1htknTH7LJdMCJzfnTju34WT3C+TkrIsoPf0kuGMe3Gai+4Ng1GAw
-         LPAkOiIuJamrMoLxnlhb2OMCTDpyDjgAJk+n6+EXbjkFq2EnAEs4BaoxZbPj/P8/55Eu
-         I3LHOwSX21UdYcHn/vA65H62F6o62ltFmRzIVHXnT3+maGDjfPM9ZQXk9AGkypVMcqPS
-         iL0A==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678293058;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gn3atpUmiXm3KxY464V5YB2rz0e75eJUtWFJL2KJEbY=;
+        b=SPk6D1sPYtu+A1n8I+ykLmy/KyccrYDJpGLxOK4wywvrje5eyq1W1Lqpp6X7MiJr2N
+         aW+Urjq8W1DExfz4nE6LvjT2S35rU+LA0WVrIh2vvribf4ZplaNLxOtdYrFarKkSUQrx
+         6ifsFqwZh/iiMEC5XjmVsULk66GMq2u5gdub2Htuueurep1eBM1qvv6vbJfWXuqDX0+W
+         saQDNwGVVsByMcAuSezLpF56N28Zuiavl/6O1oQPgg7RK2W0iolMcf24w+LXLhAU4GT9
+         8eO9Ivw6+xu9GV2t/NRlaV4XPl4VWXLhUUdh07Xrm3Tl+G2P6xHzTb8VorcXPVHRDRLs
+         kXjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678292627;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y4IZ92EpBEKYcl2ZJKg5u1/HykSPMLGytpx3Q6cANxw=;
-        b=2IITwvrJY6vFjypdSw2TQAJgcE3L+VTMcMh1Z5iUPaAxxLKpzhu5tqTwtJHdwxy+0O
-         M8wm2AWyT1UaZAFBY3smuONjbiP7CEAKpXJu2vR5KabqhfOjQzpox4F5S7Gigeqme7Gl
-         UEzTJhhLBf51VSPLm0dI6NWDFlyty5ezVyxyF/WFeq+9MfvgMwKM6TqOdeZWGWxdqMdJ
-         BgfAxn69cHp8Do9DTWk8klgQxKgBl9WLQA2CE2E1uGYDGwJ3aKHqhb9gYpLNwbH8FuQS
-         AEP2FnsZ5WKjEH7oms8xSXHZj9kty2TWh/0p+E8vB8wUICQAflf4J0afpZFtU9ehTNvx
-         y6wA==
-X-Gm-Message-State: AO0yUKW3VR7rTlkxM7rtwH25lPBsLmQIpCaLfzBiCLWpmDcQ6ltQfFQ+
-        4lq9YfcMprstRSZ3f8CfhMgAy+U3mAE=
-X-Google-Smtp-Source: AK7set9rIk17PWmTxE+WV4EzbQdNDEsZpNTjws7HY60vQ/y94IIfjoh2KD1fUbA5J632E/xYAXub9w==
-X-Received: by 2002:a05:600c:4e8b:b0:3d2:392e:905f with SMTP id f11-20020a05600c4e8b00b003d2392e905fmr16807225wmq.24.1678292627409;
-        Wed, 08 Mar 2023 08:23:47 -0800 (PST)
-Received: from [192.168.8.100] (188.30.85.94.threembb.co.uk. [188.30.85.94])
-        by smtp.gmail.com with ESMTPSA id l10-20020a7bc44a000000b003e21dcccf9fsm19880128wmi.16.2023.03.08.08.23.46
+        d=1e100.net; s=20210112; t=1678293058;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gn3atpUmiXm3KxY464V5YB2rz0e75eJUtWFJL2KJEbY=;
+        b=NlQyBCs1GKvdMsOvQBcduMJ5ih/zJVIQIO0Yi7J/PoswbHkpE7BRlL4QZYfR3tPIUT
+         Rx2/q9pM8nS8OCcF3Bdl3zjj08Os+56ksioCLjS2xCZVzfOysaCWqU4s3EW5n+64mY1E
+         TG0puuRLNI6/C3dZpWnFH1YLjy8EA5ZYUPCjf4w1RKQXfKTkRp7xxfLXtzeVbNdMFP7q
+         iKC1IRMl9hoR0QXGISVN5F5avbSeVWBc4lk4vbNtt7CoHnjJjvG2c66E3Jv9enb/6j/D
+         UKJhCqiXTkQKoLTVDyDpEmi5yGbkpwZ3mXNxhfxL08gAB3JekhvRWHicrH4grhLNHlTE
+         hiNg==
+X-Gm-Message-State: AO0yUKXUpJcNfzgyuIHJBGPgTEFBuL39BaohbkElwn15dk6so6Fzm0pc
+        XbK3Q5za7IIkZCrCt0GFuR/w6LHR45qHWLZaQj8=
+X-Google-Smtp-Source: AK7set8g1NTDC1ztAzEO+WxIdG65SRN/NYpeuedN3kf1+crN2/X0iqtG6qtyIqzphDmr1qcAyU636Q==
+X-Received: by 2002:a17:90a:9401:b0:237:47b0:30d3 with SMTP id r1-20020a17090a940100b0023747b030d3mr12872051pjo.4.1678293058199;
+        Wed, 08 Mar 2023 08:30:58 -0800 (PST)
+Received: from [172.20.4.229] ([50.233.106.125])
+        by smtp.gmail.com with ESMTPSA id h6-20020a17090aa88600b0022c326ad011sm9056029pjq.46.2023.03.08.08.30.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 08:23:47 -0800 (PST)
-Message-ID: <7cdea685-98d3-e24d-8282-87cb44ae6174@gmail.com>
-Date:   Wed, 8 Mar 2023 16:22:15 +0000
+        Wed, 08 Mar 2023 08:30:57 -0800 (PST)
+Message-ID: <2349df76-0acb-0a56-bda1-2cb05aa55151@kernel.dk>
+Date:   Wed, 8 Mar 2023 09:30:56 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH V2 00/17] io_uring/ublk: add IORING_OP_FUSED_CMD
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Bernd Schubert <bschubert@ddn.com>
-References: <20230307141520.793891-1-ming.lei@redhat.com>
- <7e05882f-9695-895d-5e83-61006e54c4b2@gmail.com>
- <ZAff9usDuyXxIPt9@ovpn-8-16.pek2.redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
 Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZAff9usDuyXxIPt9@ovpn-8-16.pek2.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/uring_cmd: ensure that device supports IOPOLL
+Cc:     Kanchan Joshi <joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,54 +70,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/8/23 01:08, Ming Lei wrote:
-> On Tue, Mar 07, 2023 at 03:37:21PM +0000, Pavel Begunkov wrote:
->> On 3/7/23 14:15, Ming Lei wrote:
->>> Hello,
->>>
->>> Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
->>> be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
->>> 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
->>> to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
->>> and its ->issue() can retrieve/import buffer from master request's
->>> fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
->>> this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
->>> submits slave OP just like normal OP issued from userspace, that said,
->>> SQE order is kept, and batching handling is done too.
->>
->>  From a quick look through patches it all looks a bit complicated
->> and intrusive, all over generic hot paths. I think instead we
-> 
-> Really? The main change to generic hot paths are adding one 'true/false'
-> parameter to io_init_req(). For others, the change is just check on
-> req->flags or issue_flags, which is basically zero cost.
+It's possible for a file type to support uring commands, but not
+pollable ones. Hence before issuing one of those, we should check
+that it is supported and error out upfront if it isn't.
 
-Extra flag in io_init_req() but also exporting it, which is an
-internal function, to non-core code. Additionally it un-inlines it
-and even looks recurse calls it (max depth 2). From a quick look,
-there is some hand coded ->cached_refs manipulations, it takes extra
-space in generic sections of io_kiocb. It makes all cmd users to
-check for IO_URING_F_FUSED. There is also a two-way dependency b/w
-requests, which never plays out well, e.g. I still hate how linked
-timeouts stick out in generic paths.
+Cc: stable@vger.kernel.org
+Fixes: 5756a3a7e713 ("io_uring: add iopoll infrastructure for io_uring_cmd")
+Link: https://github.com/axboe/liburing/issues/816
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Depending on SQE128 also doesn't seem right, though it can be dealt
-with, e.g. sth like how it's done with links requests.
+---
 
->> should be able to use registered buffer table as intermediary and
->> reuse splicing. Let me try it out
-> 
-> I will take a look at you patch, but last time, Linus has pointed out that
-> splice isn't one good way, in which buffer ownership transferring is one big
-> issue for writing data to page retrieved from pipe.
-
-There are no real pipes, better to say io_uring replaces a pipe,
-and splice bits are used to get pages from a file. Though, there
-will be some common problems. Thanks for the link, I'll need to
-get through it first, thanks for the link
-
-
-> https://lore.kernel.org/linux-block/CAJfpeguQ3xn2-6svkkVXJ88tiVfcDd-eKi1evzzfvu305fMoyw@mail.gmail.com/
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 446a189b78b0..e3413f131887 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -101,6 +101,18 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return 0;
+ }
+ 
++static bool io_uring_cmd_supported(struct io_ring_ctx *ctx, struct file *file)
++{
++	/* no issue method, fail */
++	if (!file->f_op->uring_cmd)
++		return false;
++	/* IOPOLL enabled and no poll method, fail */
++	if (ctx->flags & IORING_SETUP_IOPOLL && !file->f_op->uring_cmd_iopoll)
++		return false;
++
++	return true;
++}
++
+ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+@@ -108,7 +120,7 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct file *file = req->file;
+ 	int ret;
+ 
+-	if (!req->file->f_op->uring_cmd)
++	if (!io_uring_cmd_supported(ctx, file))
+ 		return -EOPNOTSUPP;
+ 
+ 	ret = security_uring_cmd(ioucmd);
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

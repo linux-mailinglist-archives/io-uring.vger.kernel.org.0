@@ -2,212 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 32E036B1CE5
-	for <lists+io-uring@lfdr.de>; Thu,  9 Mar 2023 08:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 955BC6B1FFA
+	for <lists+io-uring@lfdr.de>; Thu,  9 Mar 2023 10:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbjCIHuM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Mar 2023 02:50:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45544 "EHLO
+        id S229705AbjCIJ2U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Mar 2023 04:28:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230400AbjCIHtz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Mar 2023 02:49:55 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFC31B57E;
-        Wed,  8 Mar 2023 23:48:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678348087; x=1709884087;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qeq63lYyfAfHhk1xOZ63kvMHWyrmYCAuvEirxhJBR10=;
-  b=aHbMw2sJC+pcbNjD3bNWzCfc/TKAzBmRJ3ISsKlEfMqJXIcgMgTcZeSV
-   0htCjOaT8ezP5SrqT27VybUOOezQwi6QrJCGn/90K0d30l1cR1A/VirwQ
-   JlwhEiCP+POUP5RaqudXLVNJjqd+e8zf3NCq2Xb+kOpNPfr1LCdwQC95E
-   HBAulC4YnFI+oSXfrBrZEwHBlGTUnU2e1iEoBDHUDSkm4WUIKhJy2sAC7
-   xKYiHsqKaRfqbdo29feFbyiUnbUcuZ9PZXyuJ5rrx/vvVY5vrrGaEsnKu
-   fxT70C5POExKAT02ggRaTm/wK3Z0IpQuHEtAkpECVZJTFNbRPTUp2+bb4
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="401216047"
-X-IronPort-AV: E=Sophos;i="5.98,245,1673942400"; 
-   d="scan'208";a="401216047"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2023 23:47:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="766333568"
-X-IronPort-AV: E=Sophos;i="5.98,245,1673942400"; 
-   d="scan'208";a="766333568"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Mar 2023 23:47:14 -0800
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1paAza-0002ko-0I;
-        Thu, 09 Mar 2023 07:47:14 +0000
-Date:   Thu, 9 Mar 2023 15:46:49 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: [PATCH V2 05/17] io_uring: support OP_SEND_ZC/OP_RECV for fused
- slave request
-Message-ID: <202303091544.WIDavyIo-lkp@intel.com>
-References: <20230307141520.793891-6-ming.lei@redhat.com>
+        with ESMTP id S229843AbjCIJ2S (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Mar 2023 04:28:18 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA4D422DCD
+        for <io-uring@vger.kernel.org>; Thu,  9 Mar 2023 01:28:13 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230309092811epoutp011ba5996d97c25587bfa3788b2f75dc2a~KtidVR4Gu1750117501epoutp01j
+        for <io-uring@vger.kernel.org>; Thu,  9 Mar 2023 09:28:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230309092811epoutp011ba5996d97c25587bfa3788b2f75dc2a~KtidVR4Gu1750117501epoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1678354091;
+        bh=4cX7o1PwKJ0Kt0T/F93C++vPRlszy1wa4yf7usQy2GA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jIIm4sKRMNUsNKq3Dv9lJEjytL+rWdxHpy/B276DLbKN3Fhy0IHFkwgmSg54BUQXh
+         +DX4YNEBd0RKFvSqYKAzffRp1h5pJzAtPZ5A0L0IhdZypQ1+hZ/IH2VIDbrxKcnYMa
+         oBaFSd1cLJ93Y+wLMII7u1z7YDZgtwKDU2h//Jro=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20230309092810epcas5p1921fce2872ad664b35627a418e29177d~KtidF9ECd1920219202epcas5p1z;
+        Thu,  9 Mar 2023 09:28:10 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PXP494WC2z4x9Q1; Thu,  9 Mar
+        2023 09:28:09 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AE.5C.55678.8A6A9046; Thu,  9 Mar 2023 18:28:08 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230309092808epcas5p498d0c428279b1f03bfddf233eb80bf0f~Ktiar9g5q1940819408epcas5p4L;
+        Thu,  9 Mar 2023 09:28:08 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230309092808epsmtrp2a4f319e7ba575c02ef3a1317ada0c9f0~KtiarX_Wf2920729207epsmtrp2Q;
+        Thu,  9 Mar 2023 09:28:08 +0000 (GMT)
+X-AuditID: b6c32a4a-6a3ff7000000d97e-26-6409a6a81750
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        20.95.31821.8A6A9046; Thu,  9 Mar 2023 18:28:08 +0900 (KST)
+Received: from green5 (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230309092807epsmtip13855262b8588314412641c814ce2a373~KtiaI1N5T0351003510epsmtip1-;
+        Thu,  9 Mar 2023 09:28:07 +0000 (GMT)
+Date:   Thu, 9 Mar 2023 14:57:32 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH] io_uring/uring_cmd: ensure that device supports IOPOLL
+Message-ID: <20230309092732.GA14977@green5>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230307141520.793891-6-ming.lei@redhat.com>
+In-Reply-To: <2349df76-0acb-0a56-bda1-2cb05aa55151@kernel.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCKsWRmVeSWpSXmKPExsWy7bCmpu6KZZwpBrNmWlusvtvPZvGu9RyL
+        A5PH5bOlHp83yQUwRWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoq
+        ufgE6Lpl5gBNV1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevl
+        pZZYGRoYGJkCFSZkZ3zs/cxYsJS14ujyi0wNjKdZuhg5OCQETCSOfS/rYuTiEBLYzSjR8fsi
+        C4TziVHiwqMZjBDOZ0aJDR0b2boYOcE6Ph+Zzg5iCwnsYpRYe48VougJo8TR7R+ZQRIsAioS
+        SybvYgNZwSagKXFhcilIWERAQaLn90qwOcwC6hK3pxwFs4UFvCXenbgGZvMKaEt8nf8FyhaU
+        ODnzCQuIzSlgK/Hzy05WEFtUQFniwLbjTCB7JQT2sUss3j+bFeI4F4nNHy9CHSos8er4FnYI
+        W0ri87u9UPFkiUszzzFB2CUSj/cchLLtJVpP9TNDHJchcfjKDnYIm0+i9/cTJkhw8Up0tAlB
+        lCtK3Jv0FGqtuMTDGUugbA+JW8s3Q8NkAqPE4cftbBMY5WYh+WcWkhUQtpVE54cm1llAK5gF
+        pCWW/+OAMDUl1u/SX8DIuopRMrWgODc9tdi0wCgvtRwexcn5uZsYwclNy2sH48MHH/QOMTJx
+        MB5ilOBgVhLh/S7FkSLEm5JYWZValB9fVJqTWnyI0RQYPROZpUST84HpNa8k3tDE0sDEzMzM
+        xNLYzFBJnFfd9mSykEB6YklqdmpqQWoRTB8TB6dUA1NMVq7gjVl7zle97XS0XHfl989ktcsB
+        84MdN5We1et5GTxr3rpGsw2z79dyHZT1MWo0OfO8dce7faKKUtM8n8VMjRMSbXb9ypv2jf2i
+        ndkssY9Levd9CwtPCsqr26vOpc6UUzl5lsUMkbDictmDpmtXXL16TtDVNOmDO6tProDOMdOn
+        hS1uQfEKVTnm+8U9pt27/6Ml4VPVGaPlWvftp6u+1Pq+Inxu6uPLez84SnSZxrFe6XDkfJqX
+        PuVKhF7UB49Lgqk/mlavPXbQZv5foYcdZnMypnPJrv8Q+Fh64ozWS7kvhbKnLknvjpyo/OlQ
+        1u6sHWsWmtqoJRV8eVGl8+hPl4qrzOYFhnFhwW0t65VYijMSDbWYi4oTARN67tn3AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsWy7bCSnO6KZZwpBlMX8VusvtvPZvGu9RyL
+        A5PH5bOlHp83yQUwRXHZpKTmZJalFunbJXBlvL72n73gOlPFz1XdjA2M05m6GDk5JARMJD4f
+        mc7excjFISSwg1FiyZFXrBAJcYnmaz/YIWxhiZX/nkMVPWKUWPCgEyzBIqAisWTyLrYuRg4O
+        NgFNiQuTS0HCIgIKEj2/V7KB2MwC6hK3pxwFs4UFvCXenbgGZvMKaEt8nf+FDWLmBEaJ/x+f
+        QiUEJU7OfMIC0WwmMW/zQ2aQ+cwC0hLL/3GAhDkFbCV+ftkJdqeogLLEgW3HmSYwCs5C0j0L
+        SfcshO4FjMyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCA1ZLawfjnlUf9A4xMnEw
+        HmKU4GBWEuH9LsWRIsSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgs
+        EwenVAPT1mviE6f/OWD655XLCvOETWxhTmdd/y7sVHX56HyEeYodv33fTBkx7rUzGJn7bBe1
+        b3x16HOzc+IfQZtanVU2pVtyvp28VT5/9/O+v3oqy3cFZaxcw9O/N9pnntDWLaoum5v9lph8
+        dGFLf3hc3qIy6PtlE6+P695yz2DY//vZujfV33M2VwdMW2UUYhrt0nDNZ5Vg+H4fZr3HHdGN
+        yu8y5ku/agvc52V+936Wb2924Ey2N9yPjzcFmPa156oxrz78dCZjmQVrnoMEE2vmCZUcTSnG
+        GFYV7Uc+xa+nfbk0gT/soPu5u8W3XnfPXWs4TXpturCmi9CPO5v1/AOb1zv475BhTsr+pF9R
+        yT2b47wSS3FGoqEWc1FxIgCrEVN7xwIAAA==
+X-CMS-MailID: 20230309092808epcas5p498d0c428279b1f03bfddf233eb80bf0f
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----3NzO0p8.1sh3-RRiYuI9FQqPO8oRjrHoddadEkfGMyLJmz0h=_c43bb_"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230308163102epcas5p45cc9c1b5b2ab0bcd772c5ff8d72acd93
+References: <CGME20230308163102epcas5p45cc9c1b5b2ab0bcd772c5ff8d72acd93@epcas5p4.samsung.com>
+        <2349df76-0acb-0a56-bda1-2cb05aa55151@kernel.dk>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Ming,
+------3NzO0p8.1sh3-RRiYuI9FQqPO8oRjrHoddadEkfGMyLJmz0h=_c43bb_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-I love your patch! Perhaps something to improve:
+On Wed, Mar 08, 2023 at 09:30:56AM -0700, Jens Axboe wrote:
+>It's possible for a file type to support uring commands, but not
+>pollable ones. Hence before issuing one of those, we should check
+>that it is supported and error out upfront if it isn't.
 
-[auto build test WARNING on axboe-block/for-next]
-[also build test WARNING on linus/master v6.3-rc1 next-20230309]
-[cannot apply to char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Indeed, I missed that altogether.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Lei/io_uring-add-IO_URING_F_FUSED-and-prepare-for-supporting-OP_FUSED_CMD/20230307-222928
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20230307141520.793891-6-ming.lei%40redhat.com
-patch subject: [PATCH V2 05/17] io_uring: support OP_SEND_ZC/OP_RECV for fused slave request
-config: i386-randconfig-a003 (https://download.01.org/0day-ci/archive/20230309/202303091544.WIDavyIo-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/0a921da27026b3ba08aeceb432dd983480281344
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Ming-Lei/io_uring-add-IO_URING_F_FUSED-and-prepare-for-supporting-OP_FUSED_CMD/20230307-222928
-        git checkout 0a921da27026b3ba08aeceb432dd983480281344
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 olddefconfig
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303091544.WIDavyIo-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/bits.h:6,
-                    from include/linux/bitops.h:6,
-                    from include/linux/kernel.h:22,
-                    from io_uring/net.c:2:
-   include/vdso/bits.h:7:40: warning: left shift count >= width of type [-Wshift-count-overflow]
-       7 | #define BIT(nr)                 (UL(1) << (nr))
-         |                                        ^~
-   include/linux/io_uring_types.h:475:35: note: in expansion of macro 'BIT'
-     475 |         REQ_F_FUSED_SLAVE       = BIT(REQ_F_FUSED_SLAVE_BIT),
-         |                                   ^~~
-   io_uring/net.c: In function 'io_send':
->> io_uring/net.c:385:48: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-     385 |                 ret = io_import_kbuf_for_slave((u64)sr->buf, sr->len,
-         |                                                ^
-   io_uring/net.c: In function 'io_recv':
-   io_uring/net.c:880:48: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-     880 |                 ret = io_import_kbuf_for_slave((u64)sr->buf, sr->len, ITER_DEST,
-         |                                                ^
-   io_uring/net.c: In function 'io_send_zc':
-   io_uring/net.c:1135:48: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-    1135 |                 ret = io_import_kbuf_for_slave((u64)zc->buf, zc->len,
-         |                                                ^
+------3NzO0p8.1sh3-RRiYuI9FQqPO8oRjrHoddadEkfGMyLJmz0h=_c43bb_
+Content-Type: text/plain; charset="utf-8"
 
 
-vim +385 io_uring/net.c
-
-   343	
-   344	int io_send(struct io_kiocb *req, unsigned int issue_flags)
-   345	{
-   346		struct sockaddr_storage __address;
-   347		struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-   348		struct msghdr msg;
-   349		struct socket *sock;
-   350		unsigned flags;
-   351		int min_ret = 0;
-   352		int ret;
-   353	
-   354		msg.msg_name = NULL;
-   355		msg.msg_control = NULL;
-   356		msg.msg_controllen = 0;
-   357		msg.msg_namelen = 0;
-   358		msg.msg_ubuf = NULL;
-   359	
-   360		if (sr->addr) {
-   361			if (req_has_async_data(req)) {
-   362				struct io_async_msghdr *io = req->async_data;
-   363	
-   364				msg.msg_name = &io->addr;
-   365			} else {
-   366				ret = move_addr_to_kernel(sr->addr, sr->addr_len, &__address);
-   367				if (unlikely(ret < 0))
-   368					return ret;
-   369				msg.msg_name = (struct sockaddr *)&__address;
-   370			}
-   371			msg.msg_namelen = sr->addr_len;
-   372		}
-   373	
-   374		if (!(req->flags & REQ_F_POLLED) &&
-   375		    (sr->flags & IORING_RECVSEND_POLL_FIRST))
-   376			return io_setup_async_addr(req, &__address, issue_flags);
-   377	
-   378		sock = sock_from_file(req->file);
-   379		if (unlikely(!sock))
-   380			return -ENOTSOCK;
-   381	
-   382		if (!(req->flags & REQ_F_FUSED_SLAVE))
-   383			ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &msg.msg_iter);
-   384		else
- > 385			ret = io_import_kbuf_for_slave((u64)sr->buf, sr->len,
-   386					ITER_SOURCE, &msg.msg_iter, req);
-   387		if (unlikely(ret))
-   388			return ret;
-   389	
-   390		flags = sr->msg_flags;
-   391		if (issue_flags & IO_URING_F_NONBLOCK)
-   392			flags |= MSG_DONTWAIT;
-   393		if (flags & MSG_WAITALL)
-   394			min_ret = iov_iter_count(&msg.msg_iter);
-   395	
-   396		msg.msg_flags = flags;
-   397		ret = sock_sendmsg(sock, &msg);
-   398		if (ret < min_ret) {
-   399			if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
-   400				return io_setup_async_addr(req, &__address, issue_flags);
-   401	
-   402			if (ret > 0 && io_net_retry(sock, flags)) {
-   403				sr->len -= ret;
-   404				sr->buf += ret;
-   405				sr->done_io += ret;
-   406				req->flags |= REQ_F_PARTIAL_IO;
-   407				return io_setup_async_addr(req, &__address, issue_flags);
-   408			}
-   409			if (ret == -ERESTARTSYS)
-   410				ret = -EINTR;
-   411			req_set_fail(req);
-   412		}
-   413		if (ret >= 0)
-   414			ret += sr->done_io;
-   415		else if (sr->done_io)
-   416			ret = sr->done_io;
-   417		io_req_set_res(req, ret, 0);
-   418		return IOU_OK;
-   419	}
-   420	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+------3NzO0p8.1sh3-RRiYuI9FQqPO8oRjrHoddadEkfGMyLJmz0h=_c43bb_--

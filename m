@@ -2,62 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C36BF6B24CA
-	for <lists+io-uring@lfdr.de>; Thu,  9 Mar 2023 14:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DA46B24D2
+	for <lists+io-uring@lfdr.de>; Thu,  9 Mar 2023 14:02:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbjCINAc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 9 Mar 2023 08:00:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
+        id S231311AbjCINCF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 9 Mar 2023 08:02:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbjCINAM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Mar 2023 08:00:12 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9256FF2C33
-        for <io-uring@vger.kernel.org>; Thu,  9 Mar 2023 04:59:10 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id u9so6667512edd.2
-        for <io-uring@vger.kernel.org>; Thu, 09 Mar 2023 04:59:10 -0800 (PST)
+        with ESMTP id S231315AbjCINBi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 9 Mar 2023 08:01:38 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F64E166E1
+        for <io-uring@vger.kernel.org>; Thu,  9 Mar 2023 05:00:29 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id i34so6605372eda.7
+        for <io-uring@vger.kernel.org>; Thu, 09 Mar 2023 05:00:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678366747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ytRkAHqL4omXCmjY6VAm9K/7VLTY0ym5LJK/BIxXHw=;
-        b=nxw6TLHAh3yJCFURyrCbk1iiVvLkKlbMKz5SXgS4PXCq2BHMPO/vEiYNRsYKazdQlU
-         E+Dn3JSXzszgjuauCwVQHubBhnfZCXxSty06Wn3bIMtsp+u2o2kgTxN8iPP2la2bC07s
-         tF3vxX49w+dTIgEqIfObjnNPuQ8Oy6op+1/uY45cPt2Qiez72YLxwktz9fGsEhz5OPRq
-         MzoJt0sYcnQPClXjLu5xR549Sq/eqOKROkkltNggt3WWTFHP3y9I18qFUWuulTYmT6Nw
-         tjZsRJSTxOiOcj5KnXfgWDlzbapHP7Tn+qCZdXiIS0G1mzsB2J3Y9lvbBVxUbaLPLtTp
-         Esqg==
+        d=gmail.com; s=20210112; t=1678366828;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u5aYy6zEOXXcfZThmM4brDwceB8RifC5tRBobqHx5FU=;
+        b=GnkhaRGOFOr+Gj1X9pXA3zspUS7I9RStrU+2p5bCH/1EYgDhBbH90wUkvxN23jBzir
+         V9hlmt+EJtXblQTHrxXk6jmR8qi6L3RSysKbZwF6RHvqVlthMp2315a6MXXDuXMqRrwg
+         tP1EYIC2WvXc+r7aUu6xxA1rauqp8vqPkC4IGdNi3JMQC0Cn2jfw6z8xf6aDGoqTPsl2
+         PZrxd6u+HB4xM6st3VOs5KwXi5EfdMR0zgjSMcYYcu93/U20VrLVBKA5uwv9FWsSorFX
+         PNdqiSvUlvEU7ku2BfdWWllNaSfK5kjAVx3T0N46u1Kx/kTYuNg24bGeqtTDat68CypQ
+         xA4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678366747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ytRkAHqL4omXCmjY6VAm9K/7VLTY0ym5LJK/BIxXHw=;
-        b=BiFWAfGTgRoVRdqz6g1x1MKxJO31oiq9PHdVl3uysooXGkaCHYfdX18Bfvoq3cvbdw
-         bRTKyU89PkoDQU7GRNFGLwh9x/zqwH7u7SNpMLaj9ce0p2sBsKfdnsGxg7vS9J3fnUXS
-         bTGxG9RYfbIuQUauRD41EuP2YVj76fk4tLMUStCR1xLgxjLpIQl0ZvWwB/36Tqvg35vh
-         Atap8qNfOVVPf0FwWAJokLTKcFfCxYJBP732d1FejlKZgNg6WHbE6F1iZ0n4g38KDUv8
-         j3dNkisrSm0SDr+c21UliRNGwwCHsqhgCruRu51OUUwbCI5hpxVwmUnZhaj/NqWg6/Gy
-         O6Xg==
-X-Gm-Message-State: AO0yUKW+rjFfZI29iIhwdPfFynLtyHr5EfoZHha3Mt8SXIhLB+SJhunq
-        y9Fupq8z+D6MCp1VHle4uS23lZJtdWuBug==
-X-Google-Smtp-Source: AK7set/s7Xh/Ahw6x1wHvQa+5VWnKwPPLb7mx7ueqKx/xdlbYryZdow0RdAV9UFPOM42xVGkrNQi6Q==
-X-Received: by 2002:a05:6402:8d1:b0:4af:60c1:1961 with SMTP id d17-20020a05640208d100b004af60c11961mr21036533edz.23.1678366747148;
-        Thu, 09 Mar 2023 04:59:07 -0800 (PST)
-Received: from localhost.localdomain ([2001:b07:5d37:537d:5e25:9ef5:7977:d60c])
-        by smtp.gmail.com with ESMTPSA id z15-20020a5096cf000000b004f0de6d52fcsm3297147eda.74.2023.03.09.04.59.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 04:59:06 -0800 (PST)
-From:   Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
-Subject: [PATCH v2] io_uring: suppress an unused warning
-Date:   Thu,  9 Mar 2023 13:59:03 +0100
-Message-Id: <20230309125903.170857-1-vincenzopalazzodev@gmail.com>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
+        d=1e100.net; s=20210112; t=1678366828;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=u5aYy6zEOXXcfZThmM4brDwceB8RifC5tRBobqHx5FU=;
+        b=Ro99+WI7jryrxqXuKm1bk235nlH8wG9hDlWnOEiICZlM39n3nwmrauD0lBwBwZw8Km
+         FEfOpHJccnBlEVCv0UWH1FsWfLW/ErvmJPK8xOZUvznDtPUWfphGACiSAju5SnVZWsrQ
+         iJLOzB19TMMrHFPNZBt/giHK787JHBM+mt6f0lNsioPyeALeknODLIov2Xgd4TeqOYvN
+         u+YYxJb7/KssznMlnaNQQP+KTv629p0aNy3n02kWSSZvsEL45ch/alnm9i1JwGwlMxDU
+         nRvUyZcZwLiCDk1zzBQk+zX8iGdha2sDjwtQo84s7i89XNfc0wFyBev85CoA6EwOeSss
+         gnKw==
+X-Gm-Message-State: AO0yUKUKT4JW0BMO/DjncgzPS+JBg07kviv/JmGvCxg54Ew3d5NmWPXB
+        uv0Mn3X0C4C1swyk0DJvI4I=
+X-Google-Smtp-Source: AK7set8EGXdOty5wnAxmkKCvsO7fuhuTitUF1GRid1PcGCLd9mEhNaTsS0RoIBG3ZhLffuHrqYRQfw==
+X-Received: by 2002:a17:906:6ad1:b0:8eb:27de:240e with SMTP id q17-20020a1709066ad100b008eb27de240emr21862897ejs.13.1678366827812;
+        Thu, 09 Mar 2023 05:00:27 -0800 (PST)
+Received: from localhost ([2001:b07:5d37:537d:5e25:9ef5:7977:d60c])
+        by smtp.gmail.com with ESMTPSA id fw20-20020a170907501400b00914fec9f40esm4417641ejc.71.2023.03.09.05.00.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Mar 2023 05:00:27 -0800 (PST)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date:   Thu, 09 Mar 2023 14:00:26 +0100
+Message-Id: <CR1VDVQPMRQ7.3GGCJ11TF4621@vincent-arch>
+Cc:     <axboe@kernel.dk>
+Subject: Re: [PATCH v1] io_uring: suppress an unused warning
+From:   "Vincenzo Palazzo" <vincenzopalazzodev@gmail.com>
+To:     "Vincenzo Palazzo" <vincenzopalazzodev@gmail.com>,
+        <io-uring@vger.kernel.org>
+X-Mailer: aerc 0.14.0
+References: <20230309124758.158474-1-vincenzopalazzodev@gmail.com>
+In-Reply-To: <20230309124758.158474-1-vincenzopalazzodev@gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -68,33 +72,24 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-suppress unused warnings and fix the error that there is
-with the W=1 enabled.
+On Thu Mar 9, 2023 at 1:47 PM CET, Vincenzo Palazzo wrote:
+> suppress unused warnings and fix the error that there is
+> with the W=3D1 enabled.
+>
+> Warning generated
+>
+> io_uring/io_uring.c: In function =E2=80=98__io_submit_flush_completions=
+=E2=80=99:
+> io_uring/io_uring.c:1502:40: error: variable =E2=80=98prev=E2=80=99 set b=
+ut not used [-Werror=3Dunused-but-set-variable]
+>  1502 |         struct io_wq_work_node *node, *prev;
+>
+> Signed-off-by: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
+Please ignore this patch I just send the wrong v1.
 
-Warning generated
+I fixed the mistake in the v2
 
-io_uring/io_uring.c: In function ‘__io_submit_flush_completions’:
-io_uring/io_uring.c:1502:40: error: variable ‘prev’ set but not used [-Werror=unused-but-set-variable]
- 1502 |         struct io_wq_work_node *node, *prev;
+Cheers!
 
-Signed-off-by: Vincenzo Palazzo <vincenzopalazzodev@gmail.com>
----
- io_uring/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index fd1cc35a1c00..bd38e45522da 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1499,7 +1499,7 @@ void io_free_batch_list(struct io_ring_ctx *ctx, struct io_wq_work_node *node)
- static void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 	__must_hold(&ctx->uring_lock)
- {
--	struct io_wq_work_node *node, *prev;
-+	struct io_wq_work_node *node, *prev __maybe_unused;
- 	struct io_submit_state *state = &ctx->submit_state;
- 
- 	__io_cq_lock(ctx);
--- 
-2.39.2
+Vincent.
 

@@ -2,101 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A439A6B63DB
-	for <lists+io-uring@lfdr.de>; Sun, 12 Mar 2023 09:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE456B677F
+	for <lists+io-uring@lfdr.de>; Sun, 12 Mar 2023 16:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbjCLIbK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Mar 2023 04:31:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
+        id S229700AbjCLPaH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 12 Mar 2023 11:30:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjCLIbJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Mar 2023 04:31:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29AB4FA9C
-        for <io-uring@vger.kernel.org>; Sun, 12 Mar 2023 00:30:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678609820;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cTJUAFMiKw9YXPlS9lywYBNgOfv1YiKLGXLNoVp00UQ=;
-        b=bgDzcsI60TIDbJ0Y3Gbw4FyR17xVSmXjgOn7F61iA5kI2GlF0OYPWdp0W8IS52oj9r+9vs
-        loP7ttvl+B3xfm1kHo4FlByPFOhNVC/A+HFW6Snzv/7+eji/Va+eLRXgcXagOWxCQSPiem
-        WiuaaQCrMEUFLhJlL+qECdyPtSAo0uI=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-141-7mK9F0loNqGNc7dbD3uYCQ-1; Sun, 12 Mar 2023 04:30:18 -0400
-X-MC-Unique: 7mK9F0loNqGNc7dbD3uYCQ-1
-Received: by mail-ua1-f69.google.com with SMTP id p18-20020ab02a52000000b0073dfce6f0edso2307887uar.16
-        for <io-uring@vger.kernel.org>; Sun, 12 Mar 2023 00:30:18 -0800 (PST)
+        with ESMTP id S229568AbjCLPaG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Mar 2023 11:30:06 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610A63D90B
+        for <io-uring@vger.kernel.org>; Sun, 12 Mar 2023 08:30:03 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id h17-20020a17090aea9100b0023739b10792so9380659pjz.1
+        for <io-uring@vger.kernel.org>; Sun, 12 Mar 2023 08:30:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678635003;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6GnfTEBx0Nlfa/chTK4qukddUAosUQzWsROtATVXXDc=;
+        b=VCgg6sd0Af2V2tqmG/8MwXSJ/KNRxdpwmgw7dxAGrUPc0k6nPXRajWOwKOYsyAIyhj
+         EwA4/TLF8YKxHU+oumzvsx5upeDF12HW9wrgC16u1fhAsbh4Dg541d28m5OYPLmZkShg
+         fdjlT3I3N0EccgZcLyHvCNRIonObMgp3xN290Yy+RoiZ5DwO2/lHUSx2mSD4X6oRVrpy
+         tpskSTAelpJzYCTWz0L9rksXpB7ZaXi/lMHeuA7j0WYmPK6PuVCsg4/H22HeweRodahQ
+         FMIt03qVf8HTs3VWwslDel86ubwLYRC9Z/N6x9iKslAcuYyq14QF90pjV4wfTAHIuti4
+         RVjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678609818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cTJUAFMiKw9YXPlS9lywYBNgOfv1YiKLGXLNoVp00UQ=;
-        b=nj8Aeh9lehYInFoEiRwTQJZI2seCozIx9M5un4WXL7m6+FT4/gkNkA0HX0FVaS7SHb
-         fOgXsppBozW7K6LwdXVpGleaSd1qjHqJCbYK4cuf2aGOPQbX6xmYrCoHhwr4rMBHxDaR
-         29Twsr8zZKtsvfGiHfeHKhtEjtdao+49El6O/fS03PdyxpCsdM/gl46Gv/fiCrnAgI3u
-         I6/xZgdGqgV8lzwJpDephGohwHlWnxRAs9FoF+AwCMWq6eHnlZwLNcjY24E2aKvwFkcv
-         QoUPKp/o3Cq4A62mwluT23/iV4cqEIpO+b/fyJKatNQ9CiSv0IVrYyhacdxIGiRuRQT3
-         CMAw==
-X-Gm-Message-State: AO0yUKUPygzU8EynVuNIy3627ci8aFJHzQuGckcdIPpOEMu3tsjOCOg/
-        EqIDXUdcIVSu5uJNIg50zxjAK7JBnFYX+YDM9AVh7uLgK9eSoitCz1i49h7hUUTvWdiCoO7qdC7
-        xIfh1gyZXbTze2TNaknCSFWTubfWAFUHyV/Y=
-X-Received: by 2002:a1f:5081:0:b0:418:4529:a308 with SMTP id e123-20020a1f5081000000b004184529a308mr18819943vkb.3.1678609818161;
-        Sun, 12 Mar 2023 00:30:18 -0800 (PST)
-X-Google-Smtp-Source: AK7set/XxiUHqj7uZm7+uQmpQQmAFDztF4XwTwbAWzfBXxoaAKYWNuNGHKx1WneKNKQ2hYsmxYfu0s630gn5HA+5VLg=
-X-Received: by 2002:a1f:5081:0:b0:418:4529:a308 with SMTP id
- e123-20020a1f5081000000b004184529a308mr18819935vkb.3.1678609817771; Sun, 12
- Mar 2023 00:30:17 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678635003;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GnfTEBx0Nlfa/chTK4qukddUAosUQzWsROtATVXXDc=;
+        b=nHk/74M/m88oc5vkEclouTy2t1Jma6L1FODlcckupStE9os6XKg2ejf5pgaZKeud+Q
+         6br010xxfNyB+tTtSU5D7IpTDHjvVp28VXaScWMsngkyya031dwkm9okU+hy7stkZVro
+         ywOmMp1jb0hZbNeVPVHENibFSgYhPDPc7jKoq3GFy/mlYxU4eDVWopPXImBShwvmPIH8
+         OMtcFQmJqYYvaaVZ7UAa0vaN2+oeRtGrLTJVt/ywrtHWzuStfM+V8eXSNxYb/OpmTsov
+         TlkTxbC0RDjTB5XF8r4NfvzOjVfloeMViJD75k7lHEqZ1W85ziYdBVbDFoWuIYcvBxN9
+         +DhQ==
+X-Gm-Message-State: AO0yUKXCnc6fnodjwwYhrGN955w+UDddFEBYdThssAu5Hjklrpy0knMy
+        ziYTUo/QU//l3gTFJjTSJ8bLUQ==
+X-Google-Smtp-Source: AK7set9/WeDJMqach+3/EpgfQ0WRXp4GQITTAByqxtX5NWKvITk/16WI7vbBgkNI1qmmswy+KNUtow==
+X-Received: by 2002:a17:90a:ab06:b0:230:9ae4:b5e2 with SMTP id m6-20020a17090aab0600b002309ae4b5e2mr7515656pjq.0.1678635002676;
+        Sun, 12 Mar 2023 08:30:02 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id x7-20020a1709029a4700b0019adfb96084sm3022093plv.36.2023.03.12.08.30.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Mar 2023 08:30:02 -0700 (PDT)
+Message-ID: <9322c9ab-6bf5-b717-9f25-f5e55954db7b@kernel.dk>
+Date:   Sun, 12 Mar 2023 09:30:01 -0600
 MIME-Version: 1.0
-References: <Y8lSYBU9q5fjs7jS@T590> <ZAyAdwWdw0I034IZ@pc220518.home.grep.be>
-In-Reply-To: <ZAyAdwWdw0I034IZ@pc220518.home.grep.be>
-From:   Ming Lei <ming.lei@redhat.com>
-Date:   Sun, 12 Mar 2023 16:30:06 +0800
-Message-ID: <CAFj5m9KM1xbwPobvEYBmgotrU8s2jBQGcSQafJVJM+iQMS0pjA@mail.gmail.com>
-Subject: Re: ublk-nbd: ublk-nbd is avaialbe
-To:     Wouter Verhelst <w@uter.be>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [RFC 0/2] optimise local-tw task resheduling
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <cover.1678474375.git.asml.silence@gmail.com>
+ <9250606d-4998-96f6-aeaf-a5904d7027e3@kernel.dk>
+ <ee962f58-1074-0480-333b-67b360ea8b87@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ee962f58-1074-0480-333b-67b360ea8b87@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Mar 11, 2023 at 9:58=E2=80=AFPM Wouter Verhelst <w@uter.be> wrote:
->
-> Hi,
->
-> On Thu, Jan 19, 2023 at 10:23:28PM +0800, Ming Lei wrote:
-> > The handshake implementation is borrowed from nbd project[2], so
-> > basically ublk-nbd just adds new code for implementing transmission
-> > phase, and it can be thought as moving linux block nbd driver into
-> > userspace.
-> [...]
-> > Any comments are welcome!
->
-> I see you copied nbd-client.c and modified it, but removed all the
-> author information from it (including mine).
->
-> Please don't do that. nbd-client is not public domain, it is GPLv2,
-> which means you need to keep copyright statements around somewhere. You
-> can move them into an AUTHORS file or some such if you prefer, but you
-> can't just remove them blindly.
+On 3/11/23 1:45?PM, Pavel Begunkov wrote:
+> On 3/11/23 17:24, Jens Axboe wrote:
+>> On 3/10/23 12:04?PM, Pavel Begunkov wrote:
+>>> io_uring extensively uses task_work, but when a task is waiting
+>>> for multiple CQEs it causes lots of rescheduling. This series
+>>> is an attempt to optimise it and be a base for future improvements.
+>>>
+>>> For some zc network tests eventually waiting for a portion of
+>>> buffers I've got 10x descrease in the number of context switches,
+>>> which reduced the CPU consumption more than twice (17% -> 8%).
+>>> It also helps storage cases, while running fio/t/io_uring against
+>>> a low performant drive it got 2x descrease of the number of context
+>>> switches for QD8 and ~4 times for QD32.
+>>>
+>>> Not for inclusion yet, I want to add an optimisation for when
+>>> waiting for 1 CQE.
+>>
+>> Ran this on the usual peak benchmark, using IRQ. IOPS is around ~70M for
+>> that, and I see context rates of around 8.1-8.3M/sec with the current
+>> kernel.
+>>
+>> Applied the two patches, but didn't see much of a change? Performance is
+>> about the same, and cx rate ditto. Confused... As you probably know,
+>> this test waits for 32 ios at the time.
+> 
+> If I'd to guess it already has perfect batching, for which case
+> the patch does nothing. Maybe it's due to SSD coalescing +
+> small ro I/O + consistency and small latencies of Optanes,
+> or might be on the scheduling and the kernel side to be slow
+> to react.
+> 
+> I was looking at trace_io_uring_local_work_run() while testing,
+> It's always should be @loop=QD (i.e. 32) for the patch, but
+> the guess is it's also 32 with that setup but without patches.
 
-Thanks for finding it, and it must be one accident, and I will add the
-author info
-back soon.
+It very well could be that it's just loaded enough that we get perfect
+batching anyway. I'd need to reuse some of your tracing to know for
+sure.
 
-thanks,
+>> Didn't take a closer look just yet, but I grok the concept. One
+>> immediate thing I'd want to change is the FACILE part of it. Let's call
+>> it something a bit more straightforward, perhaps LIGHT? Or LIGHTWEIGHT?
+> 
+> I don't really care, will change, but let me also ask why?
+> They're more or less synonyms, though facile is much less
+> popular. Is that your reasoning?
+
+Yep, it's not very common and the name should be self-explanatory
+immediately for most people.
+
+-- 
+Jens Axboe
 

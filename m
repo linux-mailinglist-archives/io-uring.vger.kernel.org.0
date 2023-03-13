@@ -2,119 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 699816B6E41
-	for <lists+io-uring@lfdr.de>; Mon, 13 Mar 2023 04:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8206B7A22
+	for <lists+io-uring@lfdr.de>; Mon, 13 Mar 2023 15:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229568AbjCMD5n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 12 Mar 2023 23:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51422 "EHLO
+        id S230301AbjCMORG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 13 Mar 2023 10:17:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjCMD5n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 12 Mar 2023 23:57:43 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45AD38651;
-        Sun, 12 Mar 2023 20:57:41 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id y4so13920760edo.2;
-        Sun, 12 Mar 2023 20:57:41 -0700 (PDT)
+        with ESMTP id S230372AbjCMORF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 13 Mar 2023 10:17:05 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B925339BAB
+        for <io-uring@vger.kernel.org>; Mon, 13 Mar 2023 07:16:53 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id x10so6988921ill.12
+        for <io-uring@vger.kernel.org>; Mon, 13 Mar 2023 07:16:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678679860;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678717013;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5q5lViZbu74yR6PQvQXCvRyrsQgiPFLDkCuO1oF3rFE=;
-        b=nsE5lYqnLgZ4uTOC16jGRqHBvsY5AOjYOHuuYizpwszu+CwehYDZOTBtmX97fpsnZk
-         cR6c2rUtAlbwRgMYs/X1sHlOsiNudk1f3WNGGczrbqI2jzaU/1AhjUdCFxA+jtw1HP2V
-         goCGFDIJO4VMg9y4KRkyTg30SjlSAP/tRsaBpYjGFbD1/tFtfBTfUiCtw/vmaLQgULEI
-         IP8GfxK5dehOdKuctBMtuNSvaWedJWRLuYdyEiUPTjAsLSHTHJL+KMXTtmpp21/4IOxh
-         caaUVqY6U5i90Cme33nTZKvFzBeT2qI1/Yd/VtW+Dovx/xO9bmGzCTw1AFUp7Ux+2eg/
-         19AQ==
+        bh=XNEL4l0swnCTQCDn63hdWZ9w/KZETPh/ZiDh0JjJWl4=;
+        b=dujQrmUscRtPXqCMzGkLrUJflRptzP3oZ4l9Jy9IFEpstO+QcbjbTR1kTWKoMYQmOL
+         fkDdUxWSvBpQ34Hy+PYuiRZIQg6R2KjV9EpJynnZWO3D1rJcJA7s1hRpS+J6aF78lAoZ
+         XVTmHIPZXdWI6hIVdCSQBo6qHgDItcpVugi3IoMpy3aMnSQbehS3soa0bgxRjT+oFSPj
+         s1O3tks45MbPI2KMJgjkqF7rREolk9iY3ZFYUj9bSf8ixVl4qamWZ0s2Ru9OEt/ltF3i
+         wfEI/yWSn++lUrMKBpQtXQYYxUz0TIcYk6efoCex95f7Tg6LIZ1VRynR00CJrw0l2L6W
+         lduQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678679860;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1678717013;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5q5lViZbu74yR6PQvQXCvRyrsQgiPFLDkCuO1oF3rFE=;
-        b=S0fPXIuhYLv1xcylc68tIcLiK4E3K7jmSZM+2xjXvfIp3uF3uX4ynaHRKF5VPvqVpT
-         W5YSsZXFn4421uZB+ux+uL3utnAIwz4SY/8dKVFJ+bkbVZj48QJ+KeEK1vvslxmCnMHW
-         Ec10POo8uXHp8FqR90xTopdZ3oI4XxXHHOTWj86GiyJvMh+1ZctbgqSTfUtKrGs0Kyfp
-         uXRy26jtM9vviLvUi3gxt8qOGgfqI9gEYb7rRu731bTkmF2IKLM6cZ2C4Lf/3MIMAKWy
-         3eCQjeM5rtFCrhYYfKMU5vIuUlhI5HQU9fIbWAWUg22Hz5C6sMTCuHR9Wt4MN65QIM54
-         UkUA==
-X-Gm-Message-State: AO0yUKXyeKPRyvdrS3ptC1A9y2loh6EzXFwmbchV01d8nhGKFxYMx2Nj
-        2yPgAyXYK4FiTdC9nwyJzspuMgER2To=
-X-Google-Smtp-Source: AK7set+mTbSgV7CwY55amnx9+eqX5svGOqh4IRwJBsGoaLq9TIpwEsUl2yEz6Les/2Y+6pOWtGVw4w==
-X-Received: by 2002:a05:6402:3445:b0:4fa:bee3:d16c with SMTP id l5-20020a056402344500b004fabee3d16cmr5773926edc.17.1678679860040;
-        Sun, 12 Mar 2023 20:57:40 -0700 (PDT)
-Received: from [192.168.8.100] (188.30.129.33.threembb.co.uk. [188.30.129.33])
-        by smtp.gmail.com with ESMTPSA id a30-20020a509ea1000000b004aef147add6sm2711966edf.47.2023.03.12.20.57.39
+        bh=XNEL4l0swnCTQCDn63hdWZ9w/KZETPh/ZiDh0JjJWl4=;
+        b=WaBjGeO24oUME4XvuW47vKNePDwxC3Wx9DqrIqEMXwC59HWEqM1mn0z73zt/ja3xqq
+         ieLVAI5L0A0BYhmIOV2ApqqGUjAFvaIPjFNLINuWBwohsY33fOqEbtNFrR8ilmqvlz21
+         qxJznm/fSpG+HihpBAKfdo1wEFw4U5kCdcfUCuobTmp1Q0Ou/8HmuWzUZBgdDsBb439O
+         /6rg03eLS5FJE3Z5J8PYciQc+4IBrLz3I4xw8/DMCVKp+FCzUKtmiwc9UlijSUhLez/V
+         DQ91cKurVczxkGWw+QRcz9T0YLVP77rk26iio5y/aZlSKeodff0C5ZyJYIjiFMW7wU/G
+         tUfQ==
+X-Gm-Message-State: AO0yUKXrreMtOQQiDeyzPOu1Qx7YkfbttuU1OMIK0SlQBAQObW4JE82B
+        F75aO4l1vUVLdGxke661cdbAK+YbDaCUNbeo4ZCGZg==
+X-Google-Smtp-Source: AK7set9OkGE0IqOxTpWpX3T6cDY1p5xgwzk9FvMsrJTtaOFh25r+LM3UfsbnfS3L6sKZb6XO6FdNSA==
+X-Received: by 2002:a92:d186:0:b0:323:504:cff6 with SMTP id z6-20020a92d186000000b003230504cff6mr2137669ilz.3.1678717013026;
+        Mon, 13 Mar 2023 07:16:53 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id b21-20020a029a15000000b003f1929b34f2sm2515143jal.68.2023.03.13.07.16.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Mar 2023 20:57:39 -0700 (PDT)
-Message-ID: <a722515b-1311-2abc-c5ab-420609e7131b@gmail.com>
-Date:   Mon, 13 Mar 2023 03:56:41 +0000
+        Mon, 13 Mar 2023 07:16:52 -0700 (PDT)
+Message-ID: <c433f8cf-57dc-52c9-9959-f6a21297d1b0@kernel.dk>
+Date:   Mon, 13 Mar 2023 08:16:51 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH] io_uring: One wqe per wq
-To:     Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
-        io-uring@vger.kernel.org
-Cc:     leit@fb.com, linux-kernel@vger.kernel.org
-References: <20230310201107.4020580-1-leitao@debian.org>
- <ac6a2da7-aa88-b119-6a44-01d2f2ec9b6d@kernel.dk>
- <94795ed1-f7ac-3d1c-9bd6-fcaaaf5f1fd4@gmail.com>
- <3dd54b5c-aad2-0d1c-2f6a-0af4673a7d00@kernel.dk>
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [RFC 0/2] optimise local-tw task resheduling
 Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <3dd54b5c-aad2-0d1c-2f6a-0af4673a7d00@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <cover.1678474375.git.asml.silence@gmail.com>
+ <9250606d-4998-96f6-aeaf-a5904d7027e3@kernel.dk>
+ <ee962f58-1074-0480-333b-67b360ea8b87@gmail.com>
+ <9322c9ab-6bf5-b717-9f25-f5e55954db7b@kernel.dk>
+ <4ed9ee1e-db0f-b164-4558-f3afa279dd4f@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <4ed9ee1e-db0f-b164-4558-f3afa279dd4f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/11/23 22:13, Jens Axboe wrote:
-> On 3/11/23 1:56 PM, Pavel Begunkov wrote:
->> On 3/10/23 20:38, Jens Axboe wrote:
->>> On 3/10/23 1:11 PM, Breno Leitao wrote:
->>>> Right now io_wq allocates one io_wqe per NUMA node.  As io_wq is now
->>>> bound to a task, the task basically uses only the NUMA local io_wqe, and
->>>> almost never changes NUMA nodes, thus, the other wqes are mostly
->>>> unused.
+On 3/12/23 9:45?PM, Pavel Begunkov wrote:
+>>>> Didn't take a closer look just yet, but I grok the concept. One
+>>>> immediate thing I'd want to change is the FACILE part of it. Let's call
+>>>> it something a bit more straightforward, perhaps LIGHT? Or LIGHTWEIGHT?
 >>>
->>> What if the task gets migrated to a different node? Unless the task
->>> is pinned to a node/cpumask that is local to that node, it will move
->>> around freely.
+>>> I don't really care, will change, but let me also ask why?
+>>> They're more or less synonyms, though facile is much less
+>>> popular. Is that your reasoning?
 >>
->> In which case we're screwed anyway and not only for the slow io-wq
->> path but also with the hot path as rings and all io_uring ctx and
->> requests won't be migrated locally.
+>> Yep, it's not very common and the name should be self-explanatory
+>> immediately for most people.
 > 
-> Oh agree, not saying it's ideal, but it can happen.
-> 
-> What if you deliberately use io-wq to offload work and you set it
-> to another mask? That one I supposed we could handle by allocating
-> based on the set mask. Two nodes might be more difficult...
-> 
-> For most things this won't really matter as io-wq is a slow path
-> for that, but there might very well be cases that deliberately
-> offload.
+> That's exactly the problem. Someone will think that it's
+> like normal tw but "better" and blindly apply it. Same happened
+> before with priority tw lists.
 
-It's not created for that, there is no fine control by the user.
-If the user set affinity solely to another node, then it will
-be quite bad for perf, if the mask covers multiple nodes, it'll
-go to the current node. Do you have plans on io-wq across
-numa nodes?
-
-
->> It's also curious whether io-wq workers will get migrated
->> automatically as they are a part of the thread group.
-> 
-> They certainly will, unless affinitized otherwise.
+But the way to fix that is not through obscure naming, it's through
+better and more frequent review. Naming is hard, but naming should be
+basically self-explanatory in terms of why it differs from not setting
+that flag. LIGHTWEIGHT and friends isn't great either, maybe it should
+just be explicit in that this task_work just posts a CQE and hence it's
+pointless to wake the task to run it unless it'll then meet the criteria
+of having that task exit its wait loop as it now has enough CQEs
+available. IO_UF_TWQ_CQE_POST or something like that. Then if it at some
+point gets modified to also encompass different types of task_work that
+should not cause wakes, then it can change again. Just tossing
+suggestions out there...
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

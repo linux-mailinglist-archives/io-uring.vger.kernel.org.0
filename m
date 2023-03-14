@@ -2,122 +2,166 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BD76B9C0E
-	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 17:48:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35F156B9CCE
+	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 18:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230084AbjCNQs3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Mar 2023 12:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
+        id S230420AbjCNRRB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Mar 2023 13:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229932AbjCNQs2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 12:48:28 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444D65DCBE
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 09:48:26 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id b5so6685248iow.0
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 09:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678812505; x=1681404505;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KRCCNgT6mDknip32bvmWUWGEG4KETFKEmttZaBdi8MM=;
-        b=LOz7NxUwKuACzrD2UXTSI8Mzf5QqdSfHNMdwwSLOSzlC9IA9PtDjKjeu2jKfd78rot
-         o/H6ZLTH0Nln2ah+mphMnNsNavYccAvh99KvwoTXg1+cWVtvasdDvngXIfZ4TX8j4PX2
-         P+NDwSDsssRMsUFynbewyf8U4JSaGXUO+AiJwGQEP1+gFtszFc6vYaWtjknUAwW3mcPC
-         qXtReGZl5/0TbuPsG1QBlgC1qJrWSN9nsaWWYBqLsxVdMGNCkCAhKA5n7kkNGfj3crFt
-         AA1jA+qfy8kZEbgGDWgBOyt+8+F4P/trUuSxbKD7QqJL9pPiax0M1/9URLM5OGFguFhQ
-         C9sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678812505; x=1681404505;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRCCNgT6mDknip32bvmWUWGEG4KETFKEmttZaBdi8MM=;
-        b=1Q3k0nrGKoUCCh3oohHbx/76dipZj+bGLJw7zj0tl5Tet3CcxMYJcF5b/HzLFU/SEZ
-         0Lww5PEC4bRuDuOEIqFIVXbgZpmIc7IHAXUFhaUL6lYZANs1NvauD1bf2jRo0pZ+C8xf
-         TwpSS8HQActKA2fxiieRgb/SNGSQ1otINqFB24AJ+KLG/ivjz+xlahi/26A1vLNvmmge
-         phLUoeeVAbvgO0AJWHupogOn9H8SCMFXA9nf9R/HW373Sj0DLDQeEtz+n5wJkOlc9TB5
-         R4J+OVvJLVYoKAKG5JfZF8vmbchR4e+WCHk7ecArLNyKuzid7T0KC5/ndG44ie7PpG6q
-         f4Og==
-X-Gm-Message-State: AO0yUKXNaMHAN3E2Gv4Ilgbq/BOlxmamqD4dRcT9WQmCmsmbNFfLmNSi
-        qEil2Gwg7sCPCTokX5Ybh1t66A==
-X-Google-Smtp-Source: AK7set9beToQbxS4aa5XSB2OKLCl8bhYD4qyx4NXePLR1Y2TaRa6Z8AiObpi0dpOlThyy93mlZ/6LA==
-X-Received: by 2002:a6b:5d10:0:b0:752:dcbc:9f12 with SMTP id r16-20020a6b5d10000000b00752dcbc9f12mr809375iob.2.1678812505480;
-        Tue, 14 Mar 2023 09:48:25 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id z12-20020a056638000c00b003a2d93487easm911483jao.38.2023.03.14.09.48.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 09:48:25 -0700 (PDT)
-Message-ID: <bd6e61c2-dd84-d2b1-9f8c-45965e4e9b9d@kernel.dk>
-Date:   Tue, 14 Mar 2023 10:48:24 -0600
+        with ESMTP id S230356AbjCNRQ5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 13:16:57 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E198A400A;
+        Tue, 14 Mar 2023 10:16:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678814208; x=1710350208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zWgLG6xZP3tF/SUfhq70iU9Mn541eOYzqSxbrqH2r00=;
+  b=AvArblcXCXZ9bOvqf9PXYoPhRMXE2P5zWEQQTlsUmyPGuOGWAs/Ntu7o
+   pSZSfQJeP0cvx+Lwi/5ZxXHQAgNZjzlQ74gTzQh0R56b/aIC/0gx4/kFP
+   zJVimcgciaAegyVy1v73MFZDVuVmS/QIps4ZzqWT3mnKS6pbXn/RmnPYA
+   7LAa0UVvFyYFM7aOOPQqEKS+5YRnt8gaA/C/UBDJM98buR/89ccOiBZZ1
+   hzfymDQ1jJ5FXXHQlsoQOr7Z1h0pRwMU3GBu0botIBZ/BbQ9g4D4BhgHI
+   QYPuwOYHmgk1Cc52nQKvRFZlRXhOGzYBaJ+pDRjLBBMJA/Rt6ZhLwilZs
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="365161713"
+X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
+   d="scan'208";a="365161713"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2023 10:16:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="925007348"
+X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
+   d="scan'208";a="925007348"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Mar 2023 10:16:45 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pc8GT-00073g-0J;
+        Tue, 14 Mar 2023 17:16:45 +0000
+Date:   Wed, 15 Mar 2023 01:15:59 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH V2 07/17] block: ublk_drv: add common exit handling
+Message-ID: <202303150036.BLkTgToJ-lkp@intel.com>
+References: <20230307141520.793891-8-ming.lei@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] io_uring/io-wq: stop setting PF_NO_SETAFFINITY on io-wq
- workers
-Content-Language: en-US
-To:     =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        Daniel Dao <dqminh@cloudflare.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org
-References: <0f0e791b-8eb8-fbb2-ea94-837645037fae@kernel.dk>
- <CA+wXwBRGzfZB9tjKy5C2_pW1Z4yH2gNGxx79Fk-p3UsOWKGdqA@mail.gmail.com>
- <20230314162559.pnyxdllzgw7jozgx@blackpad>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230314162559.pnyxdllzgw7jozgx@blackpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230307141520.793891-8-ming.lei@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/14/23 10:25 AM, Michal Koutný wrote:
-> Hello.
-> 
-> On Tue, Mar 14, 2023 at 10:07:40AM +0000, Daniel Dao <dqminh@cloudflare.com> wrote:
->> IMO this violated the principle of cpuset and can be confusing for end users.
->> I think I prefer Waiman's suggestion of allowing an implicit move to cpuset
->> when enabling cpuset with subtree_control but not explicit moves such as when
->> setting cpuset.cpus or writing the pids into cgroup.procs. It's easier to reason
->> about and make the failure mode more explicit.
->>
->> What do you think ?
-> 
-> I think cpuset should top IO worker's affinity (like sched_setaffinity(2)).
-> Thus:
-> - modifying cpuset.cpus	                update task's affinity, for sure
-> - implicit migration (enabling cpuset)  update task's affinity, effective nop
-> - explicit migration (meh)              update task's affinity, ¯\_(ツ)_/¯
-> 
-> My understanding of PF_NO_SETAFFINITY is that's for kernel threads that
-> do work that's functionally needed on a given CPU and thus they cannot
-> be migrated [1]. As said previously for io_uring workers, affinity is
-> for performance only.
-> 
-> Hence, I'd also suggest on top of 01e68ce08a30 ("io_uring/io-wq: stop
-> setting PF_NO_SETAFFINITY on io-wq workers"):
-> 
-> --- a/io_uring/sqpoll.c
-> +++ b/io_uring/sqpoll.c
-> @@ -233,7 +233,6 @@ static int io_sq_thread(void *data)
->                 set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
->         else
->                 set_cpus_allowed_ptr(current, cpu_online_mask);
-> -       current->flags |= PF_NO_SETAFFINITY;
-> 
->         mutex_lock(&sqd->lock);
->         while (1) {
+Hi Ming,
 
-Ah yes, let's get that done as well in the same release. Do you want
-to send a patch for this?
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.3-rc2 next-20230314]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Lei/io_uring-add-IO_URING_F_FUSED-and-prepare-for-supporting-OP_FUSED_CMD/20230307-222928
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20230307141520.793891-8-ming.lei%40redhat.com
+patch subject: [PATCH V2 07/17] block: ublk_drv: add common exit handling
+config: microblaze-randconfig-s033-20230308 (https://download.01.org/0day-ci/archive/20230315/202303150036.BLkTgToJ-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 12.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-39-gce1a6720-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/53855edaeebdbd21c916cbb864ac45cb64def9cd
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Ming-Lei/io_uring-add-IO_URING_F_FUSED-and-prepare-for-supporting-OP_FUSED_CMD/20230307-222928
+        git checkout 53855edaeebdbd21c916cbb864ac45cb64def9cd
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=microblaze olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=microblaze SHELL=/bin/bash drivers/block/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303150036.BLkTgToJ-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/block/ublk_drv.c:665:21: sparse: sparse: incorrect type in assignment (different base types) @@     expected int res @@     got restricted blk_status_t @@
+   drivers/block/ublk_drv.c:665:21: sparse:     expected int res
+   drivers/block/ublk_drv.c:665:21: sparse:     got restricted blk_status_t
+>> drivers/block/ublk_drv.c:696:33: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted blk_status_t [usertype] error @@     got int res @@
+   drivers/block/ublk_drv.c:696:33: sparse:     expected restricted blk_status_t [usertype] error
+   drivers/block/ublk_drv.c:696:33: sparse:     got int res
+
+vim +665 drivers/block/ublk_drv.c
+
+   651	
+   652	/* todo: handle partial completion */
+   653	static void ublk_complete_rq(struct request *req)
+   654	{
+   655		struct ublk_queue *ubq = req->mq_hctx->driver_data;
+   656		struct ublk_io *io = &ubq->ios[req->tag];
+   657		unsigned int unmapped_bytes;
+   658		int res = BLK_STS_OK;
+   659	
+   660		/* failed read IO if nothing is read */
+   661		if (!io->res && req_op(req) == REQ_OP_READ)
+   662			io->res = -EIO;
+   663	
+   664		if (io->res < 0) {
+ > 665			res = errno_to_blk_status(io->res);
+   666			goto exit;
+   667		}
+   668	
+   669		/*
+   670		 * FLUSH, DISCARD or WRITE_ZEROES usually won't return bytes returned, so end them
+   671		 * directly.
+   672		 *
+   673		 * Both the two needn't unmap.
+   674		 */
+   675		if (req_op(req) != REQ_OP_READ && req_op(req) != REQ_OP_WRITE)
+   676			goto exit;
+   677	
+   678		/* for READ request, writing data in iod->addr to rq buffers */
+   679		unmapped_bytes = ublk_unmap_io(ubq, req, io);
+   680	
+   681		/*
+   682		 * Extremely impossible since we got data filled in just before
+   683		 *
+   684		 * Re-read simply for this unlikely case.
+   685		 */
+   686		if (unlikely(unmapped_bytes < io->res))
+   687			io->res = unmapped_bytes;
+   688	
+   689		if (blk_update_request(req, BLK_STS_OK, io->res))
+   690			blk_mq_requeue_request(req, true);
+   691		else
+   692			__blk_mq_end_request(req, BLK_STS_OK);
+   693	
+   694		return;
+   695	exit:
+ > 696		blk_mq_end_request(req, res);
+   697	}
+   698	
 
 -- 
-Jens Axboe
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

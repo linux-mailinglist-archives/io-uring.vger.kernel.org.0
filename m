@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC2D16B9CD6
-	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 18:17:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4926B9CD7
+	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 18:17:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbjCNRRa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Mar 2023 13:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51682 "EHLO
+        id S230186AbjCNRRc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Mar 2023 13:17:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230186AbjCNRR2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 13:17:28 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F489B1B38
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:08 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id h5so4957525ile.13
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:08 -0700 (PDT)
+        with ESMTP id S230272AbjCNRRa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 13:17:30 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A61FABAFF
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:09 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id bp11so3589732ilb.3
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678814227;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678814228;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aGSYOM59UIr0TC/H6luGZyzBbwkeaeSpqlzrTARpmW0=;
-        b=wGupW5nCeouf8RxFS7vjGxWrqwjy+7BUHNbQejh/zmGKQReyy3smWjItdNMogN3zhQ
-         Qx+3SV4+ipihO+E0dlVCt6VJw3sHCpJtd16mic7FoWY8v772YRf4uUew0Yw8tlCGGvPd
-         o7LdAXubDwODWIqq5mtkZz6iCDIyaVT4IjFv/TnNroovygBjn74MaZjHF0ZBe9uUOwt3
-         4a1ux7mvyRhIFQLKAkWZcEqbqzpEjjeHkVNZUDo9Zy/CxYWzZLiV68ooilZA0OrOQ+H+
-         2YMRe6wFK3MrhuxqQDsuENqhhc1IBKO5wcc/cYQ7pN6D0g5lR6n/dzvaaAZvP51tA8Vu
-         P3FQ==
+        bh=W9y1AOW+wzzyKm4hOaf7aPymFqkoUpTPYFIIeeYcziY=;
+        b=RVpN5cpEH+PxOjzyqQ8D13Ph+D6dTyOaVQFleYFPnYaRK2Myh8WdajoUIRqoiYj/eF
+         7E1DZA1AL0zoecxp0W1qczlgwC27U3vuCOp8GWHCFNa8PFbURM49mYTq3k+XYHMaRBxV
+         rRVSV/7p+iWBi+0WXGE3PBjF/akHGmdFUU0/1OmrgpBUQjmA5LPk/g0JsWN2rCL7eI1f
+         83ou7vNtZf30mn3Gn4MbVdv4MnheFsnGjqsZZiztQuAJO4JwknRYPo+JJPoRW2SIUHkK
+         xJ6I4rJcyRoNp1u7dVN43hTAxhSwR1okZchBC6OPIHVuNSBPBlg4QlcdnMMRvCm07VEs
+         bM2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678814227;
+        d=1e100.net; s=20210112; t=1678814228;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aGSYOM59UIr0TC/H6luGZyzBbwkeaeSpqlzrTARpmW0=;
-        b=7ERVlmnfFWiUVPRp8qPYf1adaC3oHkE9pW5gZJ+ZVZGeFE7ocreMq4j0GhkA5FHxaP
-         PkChbMOogVLF0OKKmud4joZKBqhNVA7YwJ0XgZ7pQsJl2QKDwFDL5zT1GmdzYZE7IbaH
-         sTeDYUhtpDNcSj4Lv0gqV+YkTAKb5N81L24un1hQTQZ6TlxdNH0Yuf4CAC0dT9C4JtAi
-         TbxAUhcpCI5AmgWwlQShflOwOgdeNUFjw5Fpc/clRRBsbHfRnB8g6ik+taH+0d1tOMxI
-         R05HINZvz2imGhHUBJqvq8/jbWBi3vt9nMkAw+Gp/OZE8EBhNgF1mgO8YhhEBYvR2Xqm
-         MJ4g==
-X-Gm-Message-State: AO0yUKXpDDP+gWVmNdPYG8+FODyStFe05duF0RrBdtws83rGjTDzhd2v
-        5d6xDwEmkRRpoU6tGvGQB2tl3k/BDlDbGcKUp9JB3A==
-X-Google-Smtp-Source: AK7set+1HnapotWvjI4yUJo0CiCylbQDp+FFwriokQv22BNQ+5f3HYbicAwoKB58roBSgpzAyr/uhA==
-X-Received: by 2002:a05:6e02:1d16:b0:316:ef1e:5e1f with SMTP id i22-20020a056e021d1600b00316ef1e5e1fmr10774947ila.1.1678814227150;
-        Tue, 14 Mar 2023 10:17:07 -0700 (PDT)
+        bh=W9y1AOW+wzzyKm4hOaf7aPymFqkoUpTPYFIIeeYcziY=;
+        b=HgPZjAk2ju6xyhkKqqbeMKyLQ6SG1hOp2HGLB7hkvOB2F2+C2BzRSXyPE+6Z6/d9BN
+         TFIHmxpiHSYdhT+X6fR3gWrMMqFwqYzAxbCafUGAK8JbseCSN5GLNiujAfmGxvTxDMks
+         JoIxzNBWJaZTW66iryK1OIO6ccrWiy5KBjLc3X6pUasDoaZ3JnWrbUC1YqnwE9JZsCxu
+         1YlOHsdqK4GCxOHneSIZdHXfTWxXnfF0xZF+ddhtoxwn9SFN1EODipZxe7/Drqw4ruK7
+         VYk2Iz/7X58VfRpkqQJJ/eppmJxAJD78gCb9Rq2lQin14SpQzF7bthzAJPC86l21fVXf
+         gIPg==
+X-Gm-Message-State: AO0yUKVnGXUM9ZwQSHRNCKV/ZwgET99894Q6pmzWa/1dpt3n3WyGA+oG
+        3Cf+fXx07suw4vKoCLAAaQ1zUxufK/vtPBwEyvny1Q==
+X-Google-Smtp-Source: AK7set9am81GP+KSG0DF/oeQiPpNldOJdrN+vxl+I1TatGokDo6V0TjE6G8N/SlKOLhSaB7FR1+VvA==
+X-Received: by 2002:a05:6e02:5cb:b0:31f:9b6e:2f52 with SMTP id l11-20020a056e0205cb00b0031f9b6e2f52mr8376653ils.0.1678814228049;
+        Tue, 14 Mar 2023 10:17:08 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id o12-20020a056e02068c00b003179b81610csm948950ils.17.2023.03.14.10.17.06
+        by smtp.gmail.com with ESMTPSA id o12-20020a056e02068c00b003179b81610csm948950ils.17.2023.03.14.10.17.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 10:17:06 -0700 (PDT)
+        Tue, 14 Mar 2023 10:17:07 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     deller@gmx.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] io_uring/kbuf: add buffer_list->is_mapped member
-Date:   Tue, 14 Mar 2023 11:16:40 -0600
-Message-Id: <20230314171641.10542-4-axboe@kernel.dk>
+Subject: [PATCH 4/5] io_uring/kbuf: rename struct io_uring_buf_reg 'pad' to'flags'
+Date:   Tue, 14 Mar 2023 11:16:41 -0600
+Message-Id: <20230314171641.10542-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230314171641.10542-1-axboe@kernel.dk>
 References: <20230314171641.10542-1-axboe@kernel.dk>
@@ -69,104 +69,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Rather than rely on checking buffer_list->buf_pages or ->buf_nr_pages,
-add a separate member that tracks if this is a ring mapped provided
-buffer list or not.
+In preparation for allowing flags to be set for registration, rename
+the padding and use it for that.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/kbuf.c | 14 ++++++++------
- io_uring/kbuf.h |  3 +++
- 2 files changed, 11 insertions(+), 6 deletions(-)
+ include/uapi/linux/io_uring.h | 2 +-
+ io_uring/kbuf.c               | 8 ++++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 3adc08f90e41..db5f189267b7 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -179,7 +179,7 @@ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
- 
- 	bl = io_buffer_get_list(ctx, req->buf_index);
- 	if (likely(bl)) {
--		if (bl->buf_nr_pages)
-+		if (bl->is_mapped)
- 			ret = io_ring_buffer_select(req, len, bl, issue_flags);
- 		else
- 			ret = io_provided_buffer_select(req, len, bl);
-@@ -214,7 +214,7 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
- 	if (!nbufs)
- 		return 0;
- 
--	if (bl->buf_nr_pages) {
-+	if (bl->is_mapped && bl->buf_nr_pages) {
- 		int j;
- 
- 		i = bl->buf_ring->tail - bl->head;
-@@ -225,6 +225,7 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
- 		bl->buf_nr_pages = 0;
- 		/* make sure it's seen as empty */
- 		INIT_LIST_HEAD(&bl->buf_list);
-+		bl->is_mapped = 0;
- 		return i;
- 	}
- 
-@@ -303,7 +304,7 @@ int io_remove_buffers(struct io_kiocb *req, unsigned int issue_flags)
- 	if (bl) {
- 		ret = -EINVAL;
- 		/* can't use provide/remove buffers command on mapped buffers */
--		if (!bl->buf_nr_pages)
-+		if (!bl->is_mapped)
- 			ret = __io_remove_buffers(ctx, bl, p->nbufs);
- 	}
- 	io_ring_submit_unlock(ctx, issue_flags);
-@@ -448,7 +449,7 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 	}
- 	/* can't add buffers via this command for a mapped buffer ring */
--	if (bl->buf_nr_pages) {
-+	if (bl->is_mapped) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -480,6 +481,7 @@ static int io_pin_pbuf_ring(struct io_uring_buf_reg *reg,
- 	bl->buf_pages = pages;
- 	bl->buf_nr_pages = nr_pages;
- 	bl->buf_ring = br;
-+	bl->is_mapped = 1;
- 	return 0;
- }
- 
-@@ -514,7 +516,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	bl = io_buffer_get_list(ctx, reg.bgid);
- 	if (bl) {
- 		/* if mapped buffer ring OR classic exists, don't allow */
--		if (bl->buf_nr_pages || !list_empty(&bl->buf_list))
-+		if (bl->is_mapped || !list_empty(&bl->buf_list))
- 			return -EEXIST;
- 	} else {
- 		free_bl = bl = kzalloc(sizeof(*bl), GFP_KERNEL);
-@@ -548,7 +550,7 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	bl = io_buffer_get_list(ctx, reg.bgid);
- 	if (!bl)
- 		return -ENOENT;
--	if (!bl->buf_nr_pages)
-+	if (!bl->is_mapped)
- 		return -EINVAL;
- 
- 	__io_remove_buffers(ctx, bl, -1U);
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index c23e15d7d3ca..61b9c7dade9d 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -23,6 +23,9 @@ struct io_buffer_list {
- 	__u16 nr_entries;
- 	__u16 head;
- 	__u16 mask;
-+
-+	/* ring mapped provided buffers */
-+	__u8 is_mapped;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 709de6d4feb2..c3f3ea997f3a 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -640,7 +640,7 @@ struct io_uring_buf_reg {
+ 	__u64	ring_addr;
+ 	__u32	ring_entries;
+ 	__u16	bgid;
+-	__u16	pad;
++	__u16	flags;
+ 	__u64	resv[3];
  };
  
- struct io_buffer {
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index db5f189267b7..4b2f4a0ee962 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -494,7 +494,9 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 	if (copy_from_user(&reg, arg, sizeof(reg)))
+ 		return -EFAULT;
+ 
+-	if (reg.pad || reg.resv[0] || reg.resv[1] || reg.resv[2])
++	if (reg.resv[0] || reg.resv[1] || reg.resv[2])
++		return -EINVAL;
++	if (reg.flags)
+ 		return -EINVAL;
+ 	if (!reg.ring_addr)
+ 		return -EFAULT;
+@@ -544,7 +546,9 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 
+ 	if (copy_from_user(&reg, arg, sizeof(reg)))
+ 		return -EFAULT;
+-	if (reg.pad || reg.resv[0] || reg.resv[1] || reg.resv[2])
++	if (reg.resv[0] || reg.resv[1] || reg.resv[2])
++		return -EINVAL;
++	if (reg.flags)
+ 		return -EINVAL;
+ 
+ 	bl = io_buffer_get_list(ctx, reg.bgid);
 -- 
 2.39.2
 

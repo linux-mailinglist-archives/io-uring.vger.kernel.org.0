@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2C46B9A15
-	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 16:43:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF8056B9A13
+	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 16:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbjCNPnh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Mar 2023 11:43:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33276 "EHLO
+        id S230227AbjCNPng (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Mar 2023 11:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230223AbjCNPnc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 11:43:32 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A536E62853
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:52 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id s7so1233029ilv.12
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:52 -0700 (PDT)
+        with ESMTP id S230107AbjCNPnd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 11:43:33 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8503FA0B2A
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:54 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id o14so1030640ioa.3
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678808530;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678808531; x=1681400531;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E3FVhcqNffmfR5JCmg47xgwx5RA3GsCizvE3AY6V6/M=;
-        b=yb1EKM8V8tRfeCVAglluf4yfTQXoJ0BfzotzgCGLkbQX6VDsv+dZk7QpnAJ8Fe9W5Z
-         oFLXjyDH+LpMxZScMml4HKXC4K9AOlrCeukAi35l9D1pv0RwroIJRsIFeN5+jk0TowL7
-         FFOKezYGSJeS+9jhnygOFqDIJS+Y3ljwwGsLkQxYfKcfqypMswDAQ3rWlztGcHFnUG/9
-         dzrBURRCGOg/ClXofbHC9pvFanZ587E/zgforYw6stuQRbJxjqKPVRqeIEAHxx3MaW8k
-         vXP8sf5Zzr+DWRMQOmsikydnDF+4LKtYZE+8OM6pMIDMYWAJ2Hd8r/8jsME5KkuLEEnT
-         2jbA==
+        bh=ZHz2nZLJ4+lOFDzcTjzzzwSr1D9I38tSW7UFA8xP/Wc=;
+        b=iViwvskyUrD//4VJS4EeDiJQJ9+jLVfuS3UhjpR6NN4jYjmy5SnVln807bJL41/L9H
+         ig7FPnvJfEC5Ax0q72Ynsq3b+XGieUKQ0sHtUF/YR8BMQu6wzRMFcPWxX3BJ3jXXt3zo
+         YplZGA+P/iff7aZfIPQHHFv8P8juSPLAvqcXkW2NAOVOj27gQ8GbJoHIrb89mjxX/pSx
+         xfS3gpLDhOMQHYhmeH/L1/rdVt5NeIka91iZomNgoxEahN4YvBWJPxfWhivVmo9hIeGV
+         N/hSJMh9iBRfPT7BedXGhdhbWc5oXGi1Sz/+k/LNPHjYeDEmuYuvH2HozT5B4CN8h83x
+         CO5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678808530;
+        d=1e100.net; s=20210112; t=1678808531; x=1681400531;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E3FVhcqNffmfR5JCmg47xgwx5RA3GsCizvE3AY6V6/M=;
-        b=WWOWmonVRx//r9Gqf2mt90XdO7xyIhR04qyLyIrj0sEZrYp5EZTy4k51Jm9h72BeWE
-         YSL7n5WhLwVKw7LtCnyGdAYgoHFHaQ+peNsy+AbXT0A4pqpNr24qHZvQJdkDmXJa80X4
-         A217oFP2lp2uA71EsPYsOa8T6UEXkNfprkYt9vQffZHQEZnyxygCK16pWVREDIy7Ow3l
-         LT+vuKe73G9rgwwCQBCWtL+LWCN3oWaOSeQevEsTggSy5rzUzyo5ZUUL7HMWhXUzaG3N
-         zHMnSgFpFAsmAZg+0OPO36Nwn74efAGB1fdtz4lmx41fa6jYyK1OJ7+jaE0c1Vow9SkL
-         pPlw==
-X-Gm-Message-State: AO0yUKUketeAB4ocjo2RUCGaA0Aq9qoXk/VQx6DzU5JVg68g4Twi7UIJ
-        EQT4Q75p+qcz7DILI+pItzXhziAroHZFAjXf7teW7Q==
-X-Google-Smtp-Source: AK7set9P4LeTrGDzUavLg5g2GgFP6N6RZonNdfvCtsjldCGyDmcHY8Zk5oGt3RhETk3T8MiPhhbjQQ==
-X-Received: by 2002:a92:b10d:0:b0:319:9153:3750 with SMTP id t13-20020a92b10d000000b0031991533750mr9874768ilh.1.1678808530072;
-        Tue, 14 Mar 2023 08:42:10 -0700 (PDT)
+        bh=ZHz2nZLJ4+lOFDzcTjzzzwSr1D9I38tSW7UFA8xP/Wc=;
+        b=Im/pSfodpWC7KK8D34INWsNDwASEo/TddPyoRHGCyJtAUcihjMRCCTaexQJXYBFJuN
+         lHHURXC00LJayGUMDcSyeUPIzWExGYGYrJwQ7V6HZGqpyydvOVEKpb/+YFOfqAEFLPHD
+         RRAedMpQQkPBXtfKc2ZwoDxPwE++K7PbCVfz2xTAmtqPQB2VK5VjFRz/ow+0Lsoh0Jx9
+         CZUqJGNRjGmhCdGNky31iFPY4Mdh+iHC0nmrAzhLTFc1hVfIH6Bc0fXPTeqz3WpB6ajT
+         j4ppnGynGmN9vcUbEnGRUeWBPoXGKuAYWJteV2oc074nI6AMzFKPmsur+tXnDVYDH0Y9
+         9BAA==
+X-Gm-Message-State: AO0yUKU37RZlVg0elL1iNceDDx/QzF5xG19AuS0Su10MK8iq4Ruukjar
+        7JBL+ONBGs9PBDB6ET5BoCw8bY5oQtI6DBplPcRKGA==
+X-Google-Smtp-Source: AK7set8g0uVZ/TbXbVx1cBaqfSdKLbgSZ8iRV9KZ/U2mVbIm19U5+LVCfYmZY9YcN8rUxjj93Z9RoQ==
+X-Received: by 2002:a6b:6e08:0:b0:74e:8718:a174 with SMTP id d8-20020a6b6e08000000b0074e8718a174mr13396ioh.1.1678808531079;
+        Tue, 14 Mar 2023 08:42:11 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u9-20020a02cb89000000b003b0692eb199sm867929jap.20.2023.03.14.08.42.09
+        by smtp.gmail.com with ESMTPSA id u9-20020a02cb89000000b003b0692eb199sm867929jap.20.2023.03.14.08.42.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 08:42:09 -0700 (PDT)
+        Tue, 14 Mar 2023 08:42:10 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     brauner@kernel.org, Jens Axboe <axboe@kernel.dk>,
         Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
-Date:   Tue, 14 Mar 2023 09:42:02 -0600
-Message-Id: <20230314154203.181070-3-axboe@kernel.dk>
+Subject: [PATCH 3/3] pipe: set FMODE_NOWAIT on pipes
+Date:   Tue, 14 Mar 2023 09:42:03 -0600
+Message-Id: <20230314154203.181070-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230314154203.181070-1-axboe@kernel.dk>
 References: <20230314154203.181070-1-axboe@kernel.dk>
@@ -70,128 +70,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
-and write path handle it correctly. This includes the pipe locking,
-page allocation for writes, and confirming pipe buffers.
+The read/write path is now prepared to deal with IOCB_NOWAIT, hence
+enable support for that via setting FMODE_NOWAIT on new pipes.
 
 Acked-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/pipe.c | 39 +++++++++++++++++++++++++++++++--------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+ fs/pipe.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/fs/pipe.c b/fs/pipe.c
-index 340f253913a2..dc00b20e56c8 100644
+index dc00b20e56c8..b7e380952fca 100644
 --- a/fs/pipe.c
 +++ b/fs/pipe.c
-@@ -108,6 +108,16 @@ static inline void __pipe_unlock(struct pipe_inode_info *pipe)
- 	mutex_unlock(&pipe->mutex);
- }
+@@ -999,6 +999,9 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
+ 	audit_fd_pair(fdr, fdw);
+ 	fd[0] = fdr;
+ 	fd[1] = fdw;
++	/* pipe groks IOCB_NOWAIT */
++	files[0]->f_mode |= FMODE_NOWAIT;
++	files[1]->f_mode |= FMODE_NOWAIT;
+ 	return 0;
  
-+static inline bool __pipe_trylock(struct pipe_inode_info *pipe, bool nonblock)
-+{
-+	if (!nonblock) {
-+		__pipe_lock(pipe);
-+		return true;
-+	}
-+
-+	return mutex_trylock(&pipe->mutex);
-+}
-+
- void pipe_double_lock(struct pipe_inode_info *pipe1,
- 		      struct pipe_inode_info *pipe2)
- {
-@@ -234,6 +244,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	struct file *filp = iocb->ki_filp;
- 	struct pipe_inode_info *pipe = filp->private_data;
- 	bool was_full, wake_next_reader = false;
-+	const bool nonblock = iocb->ki_flags & IOCB_NOWAIT;
- 	ssize_t ret;
- 
- 	/* Null read succeeds. */
-@@ -241,7 +252,8 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		return 0;
- 
- 	ret = 0;
--	__pipe_lock(pipe);
-+	if (!__pipe_trylock(pipe, nonblock))
-+		return -EAGAIN;
- 
- 	/*
- 	 * We only wake up writers if the pipe was full when we started
-@@ -297,7 +309,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 				chars = total_len;
- 			}
- 
--			error = pipe_buf_confirm(pipe, buf, false);
-+			error = pipe_buf_confirm(pipe, buf, nonblock);
- 			if (error) {
- 				if (!ret)
- 					ret = error;
-@@ -342,7 +354,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 			break;
- 		if (ret)
- 			break;
--		if (filp->f_flags & O_NONBLOCK) {
-+		if (filp->f_flags & O_NONBLOCK || nonblock) {
- 			ret = -EAGAIN;
- 			break;
- 		}
-@@ -423,12 +435,14 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t chars;
- 	bool was_empty = false;
- 	bool wake_next_writer = false;
-+	const bool nonblock = iocb->ki_flags & IOCB_NOWAIT;
- 
- 	/* Null write succeeds. */
- 	if (unlikely(total_len == 0))
- 		return 0;
- 
--	__pipe_lock(pipe);
-+	if (!__pipe_trylock(pipe, nonblock))
-+		return -EAGAIN;
- 
- 	if (!pipe->readers) {
- 		send_sig(SIGPIPE, current, 0);
-@@ -461,7 +475,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 		if ((buf->flags & PIPE_BUF_FLAG_CAN_MERGE) &&
- 		    offset + chars <= PAGE_SIZE) {
--			ret = pipe_buf_confirm(pipe, buf, false);
-+			ret = pipe_buf_confirm(pipe, buf, nonblock);
- 			if (ret)
- 				goto out;
- 
-@@ -493,9 +507,18 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			int copied;
- 
- 			if (!page) {
--				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-+				gfp_t gfp = __GFP_HIGHMEM | __GFP_ACCOUNT |
-+					    __GFP_HARDWALL;
-+				int this_ret = -EAGAIN;
-+
-+				if (!nonblock) {
-+					this_ret = -ENOMEM;
-+					gfp |= GFP_USER;
-+				}
-+				page = alloc_page(gfp);
- 				if (unlikely(!page)) {
--					ret = ret ? : -ENOMEM;
-+					if (!ret)
-+						ret = this_ret;
- 					break;
- 				}
- 				pipe->tmp_page = page;
-@@ -547,7 +570,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			continue;
- 
- 		/* Wait for buffer space to become available. */
--		if (filp->f_flags & O_NONBLOCK) {
-+		if (filp->f_flags & O_NONBLOCK || nonblock) {
- 			if (!ret)
- 				ret = -EAGAIN;
- 			break;
+  err_fdr:
 -- 
 2.39.2
 

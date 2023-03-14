@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C596B9A12
-	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 16:43:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2C46B9A15
+	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 16:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjCNPne (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Mar 2023 11:43:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33358 "EHLO
+        id S230450AbjCNPnh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Mar 2023 11:43:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjCNPn1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 11:43:27 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C30ABAD5
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:51 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id b5so6594286iow.0
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:51 -0700 (PDT)
+        with ESMTP id S230223AbjCNPnc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 11:43:32 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A536E62853
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:52 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id s7so1233029ilv.12
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 08:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678808529; x=1681400529;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678808530;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=liEFlhj9atWxP2u7wDB3eK25KtuisU4QO9XIRpFBzUc=;
-        b=aUk4rMr3O34KcutFdLv2Z4dSVeYNire/xwDMd+7M4e/YT0lB1swSwGg5tvQHH3I1Rl
-         hHbtMGlhGrqPiyMgIWt/+LwGHsgjPwBHd78vswIR9N3TKxAg8zvURRj6XrDBzNgzucrG
-         3v3MSL3PmWkDnVlj5tnRsQGcCTpjO3koQ8PLFGDjj0xLru6tscK2NemnoRuCCcfR6px8
-         DLDulZeQDqlY484OstVTzmhQlI4T2TZMpUxqDFvHLbw4WPuuG41DegBKO3K5sFVVSySl
-         Hx4E1X+JZFTXDPNrsqzDCrGSUquLg+y+jWvPyC/fTUyJ1Ldghbl60XJ0NXf1XIlUmhhz
-         vnGA==
+        bh=E3FVhcqNffmfR5JCmg47xgwx5RA3GsCizvE3AY6V6/M=;
+        b=yb1EKM8V8tRfeCVAglluf4yfTQXoJ0BfzotzgCGLkbQX6VDsv+dZk7QpnAJ8Fe9W5Z
+         oFLXjyDH+LpMxZScMml4HKXC4K9AOlrCeukAi35l9D1pv0RwroIJRsIFeN5+jk0TowL7
+         FFOKezYGSJeS+9jhnygOFqDIJS+Y3ljwwGsLkQxYfKcfqypMswDAQ3rWlztGcHFnUG/9
+         dzrBURRCGOg/ClXofbHC9pvFanZ587E/zgforYw6stuQRbJxjqKPVRqeIEAHxx3MaW8k
+         vXP8sf5Zzr+DWRMQOmsikydnDF+4LKtYZE+8OM6pMIDMYWAJ2Hd8r/8jsME5KkuLEEnT
+         2jbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678808529; x=1681400529;
+        d=1e100.net; s=20210112; t=1678808530;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=liEFlhj9atWxP2u7wDB3eK25KtuisU4QO9XIRpFBzUc=;
-        b=Nz1H1riKW/+c6rnWD4KR5LWSw+n+ci5p71hhCk6dxohPyDizm6PkncK3hr2kE/WapH
-         q5V+ZLIoRAPaV19RP9gvnPBca8H3kfSAE9AHRzYX4ube8mDDTZ8XxtNrs6HqSKwfUUlH
-         DXk3FnEnOEq6PViOcSwxHatHolj1b1pCGvgbLCWFYwzoHs8TY7mVatBjRbnc2mVVmk2x
-         eVYeEpXfuLGOce41KCn3WN4xqT1Rc3Imu/R1Nfl9rlhOsuhrjYUMlEC4KLNLHeKMmoMs
-         gZ0x9aqaUrxiWUbmZHZpzQEn0U2vVruOsOVt4kcWLLWvmo7YJNcEoAlJV7jQWMEIRJBV
-         7FpA==
-X-Gm-Message-State: AO0yUKVXBnSaWzYWFOUr55KMA+JJxDUlNFJc6I0vIo/NnDAM16SLRU/H
-        iQE+wmIqmniUwQyujuZaLw6dKk2/TW62g3yjyzObqQ==
-X-Google-Smtp-Source: AK7set8frZ4yBNFKjne/psikbHfSc8IFowJLBufPfBna7UvIK53NeKtZa98q/eYiR+l6QH/nz0uv2A==
-X-Received: by 2002:a6b:5d10:0:b0:752:dcbc:9f12 with SMTP id r16-20020a6b5d10000000b00752dcbc9f12mr662265iob.2.1678808528945;
-        Tue, 14 Mar 2023 08:42:08 -0700 (PDT)
+        bh=E3FVhcqNffmfR5JCmg47xgwx5RA3GsCizvE3AY6V6/M=;
+        b=WWOWmonVRx//r9Gqf2mt90XdO7xyIhR04qyLyIrj0sEZrYp5EZTy4k51Jm9h72BeWE
+         YSL7n5WhLwVKw7LtCnyGdAYgoHFHaQ+peNsy+AbXT0A4pqpNr24qHZvQJdkDmXJa80X4
+         A217oFP2lp2uA71EsPYsOa8T6UEXkNfprkYt9vQffZHQEZnyxygCK16pWVREDIy7Ow3l
+         LT+vuKe73G9rgwwCQBCWtL+LWCN3oWaOSeQevEsTggSy5rzUzyo5ZUUL7HMWhXUzaG3N
+         zHMnSgFpFAsmAZg+0OPO36Nwn74efAGB1fdtz4lmx41fa6jYyK1OJ7+jaE0c1Vow9SkL
+         pPlw==
+X-Gm-Message-State: AO0yUKUketeAB4ocjo2RUCGaA0Aq9qoXk/VQx6DzU5JVg68g4Twi7UIJ
+        EQT4Q75p+qcz7DILI+pItzXhziAroHZFAjXf7teW7Q==
+X-Google-Smtp-Source: AK7set9P4LeTrGDzUavLg5g2GgFP6N6RZonNdfvCtsjldCGyDmcHY8Zk5oGt3RhETk3T8MiPhhbjQQ==
+X-Received: by 2002:a92:b10d:0:b0:319:9153:3750 with SMTP id t13-20020a92b10d000000b0031991533750mr9874768ilh.1.1678808530072;
+        Tue, 14 Mar 2023 08:42:10 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u9-20020a02cb89000000b003b0692eb199sm867929jap.20.2023.03.14.08.42.07
+        by smtp.gmail.com with ESMTPSA id u9-20020a02cb89000000b003b0692eb199sm867929jap.20.2023.03.14.08.42.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 08:42:08 -0700 (PDT)
+        Tue, 14 Mar 2023 08:42:09 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     brauner@kernel.org, Jens Axboe <axboe@kernel.dk>,
         Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH 1/3] fs: add 'nonblock' parameter to pipe_buf_confirm() and fops method
-Date:   Tue, 14 Mar 2023 09:42:01 -0600
-Message-Id: <20230314154203.181070-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
+Date:   Tue, 14 Mar 2023 09:42:02 -0600
+Message-Id: <20230314154203.181070-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230314154203.181070-1-axboe@kernel.dk>
 References: <20230314154203.181070-1-axboe@kernel.dk>
@@ -70,137 +70,128 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In preparation for being able to do a nonblocking confirm attempt of a
-pipe buffer, plumb a parameter through the stack to indicate if this is
-a nonblocking attempt or not.
-
-Each caller is passing down 'false' right now, but the only confirm
-method in the tree, page_cache_pipe_buf_confirm(), is converted to do a
-trylock_page() if nonblock == true.
+In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
+and write path handle it correctly. This includes the pipe locking,
+page allocation for writes, and confirming pipe buffers.
 
 Acked-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/fuse/dev.c             |  4 ++--
- fs/pipe.c                 |  4 ++--
- fs/splice.c               | 11 +++++++----
- include/linux/pipe_fs_i.h |  7 ++++---
- 4 files changed, 15 insertions(+), 11 deletions(-)
+ fs/pipe.c | 39 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 31 insertions(+), 8 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index eb4f88e3dc97..0bd1b0870f2d 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -700,7 +700,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
- 		struct pipe_buffer *buf = cs->pipebufs;
- 
- 		if (!cs->write) {
--			err = pipe_buf_confirm(cs->pipe, buf);
-+			err = pipe_buf_confirm(cs->pipe, buf, false);
- 			if (err)
- 				return err;
- 
-@@ -800,7 +800,7 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
- 
- 	fuse_copy_finish(cs);
- 
--	err = pipe_buf_confirm(cs->pipe, buf);
-+	err = pipe_buf_confirm(cs->pipe, buf, false);
- 	if (err)
- 		goto out_put_old;
- 
 diff --git a/fs/pipe.c b/fs/pipe.c
-index 42c7ff41c2db..340f253913a2 100644
+index 340f253913a2..dc00b20e56c8 100644
 --- a/fs/pipe.c
 +++ b/fs/pipe.c
-@@ -297,7 +297,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+@@ -108,6 +108,16 @@ static inline void __pipe_unlock(struct pipe_inode_info *pipe)
+ 	mutex_unlock(&pipe->mutex);
+ }
+ 
++static inline bool __pipe_trylock(struct pipe_inode_info *pipe, bool nonblock)
++{
++	if (!nonblock) {
++		__pipe_lock(pipe);
++		return true;
++	}
++
++	return mutex_trylock(&pipe->mutex);
++}
++
+ void pipe_double_lock(struct pipe_inode_info *pipe1,
+ 		      struct pipe_inode_info *pipe2)
+ {
+@@ -234,6 +244,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 	struct file *filp = iocb->ki_filp;
+ 	struct pipe_inode_info *pipe = filp->private_data;
+ 	bool was_full, wake_next_reader = false;
++	const bool nonblock = iocb->ki_flags & IOCB_NOWAIT;
+ 	ssize_t ret;
+ 
+ 	/* Null read succeeds. */
+@@ -241,7 +252,8 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 		return 0;
+ 
+ 	ret = 0;
+-	__pipe_lock(pipe);
++	if (!__pipe_trylock(pipe, nonblock))
++		return -EAGAIN;
+ 
+ 	/*
+ 	 * We only wake up writers if the pipe was full when we started
+@@ -297,7 +309,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
  				chars = total_len;
  			}
  
--			error = pipe_buf_confirm(pipe, buf);
-+			error = pipe_buf_confirm(pipe, buf, false);
+-			error = pipe_buf_confirm(pipe, buf, false);
++			error = pipe_buf_confirm(pipe, buf, nonblock);
  			if (error) {
  				if (!ret)
  					ret = error;
-@@ -461,7 +461,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+@@ -342,7 +354,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 			break;
+ 		if (ret)
+ 			break;
+-		if (filp->f_flags & O_NONBLOCK) {
++		if (filp->f_flags & O_NONBLOCK || nonblock) {
+ 			ret = -EAGAIN;
+ 			break;
+ 		}
+@@ -423,12 +435,14 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 	ssize_t chars;
+ 	bool was_empty = false;
+ 	bool wake_next_writer = false;
++	const bool nonblock = iocb->ki_flags & IOCB_NOWAIT;
+ 
+ 	/* Null write succeeds. */
+ 	if (unlikely(total_len == 0))
+ 		return 0;
+ 
+-	__pipe_lock(pipe);
++	if (!__pipe_trylock(pipe, nonblock))
++		return -EAGAIN;
+ 
+ 	if (!pipe->readers) {
+ 		send_sig(SIGPIPE, current, 0);
+@@ -461,7 +475,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
  
  		if ((buf->flags & PIPE_BUF_FLAG_CAN_MERGE) &&
  		    offset + chars <= PAGE_SIZE) {
--			ret = pipe_buf_confirm(pipe, buf);
-+			ret = pipe_buf_confirm(pipe, buf, false);
+-			ret = pipe_buf_confirm(pipe, buf, false);
++			ret = pipe_buf_confirm(pipe, buf, nonblock);
  			if (ret)
  				goto out;
  
-diff --git a/fs/splice.c b/fs/splice.c
-index 2c3dec2b6dfa..130ee1052588 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -100,13 +100,16 @@ static void page_cache_pipe_buf_release(struct pipe_inode_info *pipe,
-  * is a page cache page, IO may be in flight.
-  */
- static int page_cache_pipe_buf_confirm(struct pipe_inode_info *pipe,
--				       struct pipe_buffer *buf)
-+				       struct pipe_buffer *buf, bool nonblock)
- {
- 	struct page *page = buf->page;
- 	int err;
+@@ -493,9 +507,18 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 			int copied;
  
- 	if (!PageUptodate(page)) {
--		lock_page(page);
-+		if (nonblock && !trylock_page(page))
-+			return -EAGAIN;
-+		else
-+			lock_page(page);
+ 			if (!page) {
+-				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
++				gfp_t gfp = __GFP_HIGHMEM | __GFP_ACCOUNT |
++					    __GFP_HARDWALL;
++				int this_ret = -EAGAIN;
++
++				if (!nonblock) {
++					this_ret = -ENOMEM;
++					gfp |= GFP_USER;
++				}
++				page = alloc_page(gfp);
+ 				if (unlikely(!page)) {
+-					ret = ret ? : -ENOMEM;
++					if (!ret)
++						ret = this_ret;
+ 					break;
+ 				}
+ 				pipe->tmp_page = page;
+@@ -547,7 +570,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 			continue;
  
- 		/*
- 		 * Page got truncated/unhashed. This will cause a 0-byte
-@@ -498,7 +501,7 @@ static int splice_from_pipe_feed(struct pipe_inode_info *pipe, struct splice_des
- 		if (sd->len > sd->total_len)
- 			sd->len = sd->total_len;
- 
--		ret = pipe_buf_confirm(pipe, buf);
-+		ret = pipe_buf_confirm(pipe, buf, false);
- 		if (unlikely(ret)) {
- 			if (ret == -ENODATA)
- 				ret = 0;
-@@ -761,7 +764,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 				continue;
- 			this_len = min(this_len, left);
- 
--			ret = pipe_buf_confirm(pipe, buf);
-+			ret = pipe_buf_confirm(pipe, buf, false);
- 			if (unlikely(ret)) {
- 				if (ret == -ENODATA)
- 					ret = 0;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index d2c3f16cf6b1..d63278bb0797 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -100,7 +100,8 @@ struct pipe_buf_operations {
- 	 * hook. Returns 0 for good, or a negative error value in case of
- 	 * error.  If not present all pages are considered good.
- 	 */
--	int (*confirm)(struct pipe_inode_info *, struct pipe_buffer *);
-+	int (*confirm)(struct pipe_inode_info *, struct pipe_buffer *,
-+			bool nonblock);
- 
- 	/*
- 	 * When the contents of this pipe buffer has been completely
-@@ -209,11 +210,11 @@ static inline void pipe_buf_release(struct pipe_inode_info *pipe,
-  * @buf:	the buffer to confirm
-  */
- static inline int pipe_buf_confirm(struct pipe_inode_info *pipe,
--				   struct pipe_buffer *buf)
-+				   struct pipe_buffer *buf, bool nonblock)
- {
- 	if (!buf->ops->confirm)
- 		return 0;
--	return buf->ops->confirm(pipe, buf);
-+	return buf->ops->confirm(pipe, buf, nonblock);
- }
- 
- /**
+ 		/* Wait for buffer space to become available. */
+-		if (filp->f_flags & O_NONBLOCK) {
++		if (filp->f_flags & O_NONBLOCK || nonblock) {
+ 			if (!ret)
+ 				ret = -EAGAIN;
+ 			break;
 -- 
 2.39.2
 

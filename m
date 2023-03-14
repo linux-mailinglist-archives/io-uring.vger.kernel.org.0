@@ -2,111 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5E16B8F3E
-	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 11:08:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BA76B9291
+	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 13:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbjCNKH6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Mar 2023 06:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51452 "EHLO
+        id S229743AbjCNMFM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Mar 2023 08:05:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbjCNKHy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 06:07:54 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 013378DCFF
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 03:07:52 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id fd5so25789779edb.7
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 03:07:52 -0700 (PDT)
+        with ESMTP id S231800AbjCNMFA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 08:05:00 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65CCE9FBD5
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 05:04:16 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id h12so653083pfh.5
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 05:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google; t=1678788471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ok3cioucmJfuqToGWB847OqBj7qCzxyQQ0EoG5bYZE4=;
-        b=R37fmEuO0gMfIx7lcApi2XBVNccL81RrFPvxi9zi6GkpXFewb3tSL2AJQCIlrc7PWa
-         Vbh6TX70ujrEhyBXTGjbJKDwjK2t/cpGPCyKWORm9vs2Y+t5HYGzsIJiWiUWjjXHah5i
-         T4ZotFNP5ZbdIju97rz4G3JZlCrQJG9hHV87s=
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678795407;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K40F4TjvJGHxKPB21JsMu7hGeZYzNOvc1IUh37/5wq8=;
+        b=U9xxjuDlcKOtKaSV4pbRn7UTM8s6IBziOZ4Ie6zrx01/eN06Y6oAvjL6cGwGym8OPr
+         r7KHeTKdhYbr0bVlkq1ke5mdR5w19RmLfF0juZUFH8IcTaYFkQCe28LzZVPmX+6OQUfk
+         sS3kJ5s3HLetqXFNQSmJ5SX48cN9dhIZplLrqfVr/6X1W+SjqdozWZyrCFTDJlCTgSUc
+         IInVOTAVcv9MPEQYepDNAILW46LQD7rayx4UrjD8WCdDbpNf/giz/muYugthavngr7u5
+         Y2FLzqbxSKzmSI5M4bH4TdZSlrq/0jxx7vZWGZRf3qmdboFzkDMe//LbQmyNra39ulkQ
+         CU7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678788471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ok3cioucmJfuqToGWB847OqBj7qCzxyQQ0EoG5bYZE4=;
-        b=tJ3ehSciI6joT/Wp+2W8fHD25u6uvFn6tgOlyrXhbjgepb6i3LiA/JztOhhhRvSfzm
-         77y8D9cho5cA3mJf3Pwp65kEcuUn53gl0PwaZCdGjdTTkZSd0h1MRcKv6DKpuLGxmZMk
-         ico304HZhJL7ENwebdu3DYQ48L4cV7+4ZSVZRZ1zuXyRvJ0oyvqmSRb6wgfrtE0BrccR
-         DBaCjUp+jpMbRUJPVmFSN75hAeXEIeIL4q0vOIIwbsV0/QelAQ7DsHpq8ziEjXKMGoy2
-         R03UUXmBOXc6FrceSl2UWEncwZI5X6p54sIbsWZHwgiXSKd/TcaVy59yNW2/cq4gBL+c
-         hslg==
-X-Gm-Message-State: AO0yUKUr0OtyMkMG0g/socmQW7sxU217iQ1toEKPyFSJbTxrverdJ2kY
-        Gr1vPQ1xcY12JEk02V0DAygdAgeNV59h1jgxQjEmlA==
-X-Google-Smtp-Source: AK7set8NBHpNwg/0sOtBAbQGsX7I7F++lq6EwVRoz4lFkncOOKR4q+N8tV36Y55C0pzyxWd+1ICHRmlaGamuMoT7JHI=
-X-Received: by 2002:a50:9314:0:b0:4fb:71d0:6aa8 with SMTP id
- m20-20020a509314000000b004fb71d06aa8mr4035898eda.0.1678788471328; Tue, 14 Mar
- 2023 03:07:51 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1678795407;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K40F4TjvJGHxKPB21JsMu7hGeZYzNOvc1IUh37/5wq8=;
+        b=M04SLMaitCz4U0j4yVt2hZ5AG6y065+c/1rntqn2DkdeRVTc84Q3IwTs3JOJWE/FuN
+         LS7YgGs6K1mxnTvPFRGLtMTmkK4qVJ7XfcGHSghnpzuKJPy97rrRNtROZYs1LMX+/z43
+         gMIRGPPm/3qfQqc02iOX4oggnIDa1e8yEdERzEakL3EzK56yBHxY5MxLukVruPYIWlAu
+         luDg+07Z6qGQFIBv67vJeXRUuxwd3AnKJF7tx3LaXO+uZzQGyxhrZdF2lE1pbLv3FU2m
+         e5CBWeyTfyOQZcq96avRsnexiJFkCrXjB1zKJ2uAdoWFLQVq6o4qefxt+MdgNKsZbPp3
+         EuQQ==
+X-Gm-Message-State: AO0yUKVTTwKLBPjFmExfF0u2fb3RV/gfRxHn6oycbwcSGwQqlervbqeJ
+        l5K37ClN7mELG2IzNvXhV/neRg==
+X-Google-Smtp-Source: AK7set9yqbEOlYOnt0yiH9Y5YrBfM/otgedDGLnL9/eLM8JHF5Z2G7s694xdJQaD/RX7tDTGBSJpQg==
+X-Received: by 2002:a05:6a00:418f:b0:5e2:3086:f977 with SMTP id ca15-20020a056a00418f00b005e23086f977mr14960911pfb.2.1678795407433;
+        Tue, 14 Mar 2023 05:03:27 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id a19-20020a62e213000000b005a8a9950363sm1464261pfi.105.2023.03.14.05.03.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Mar 2023 05:03:26 -0700 (PDT)
+Message-ID: <609a0997-5c1d-9322-f20e-1d514b54761b@kernel.dk>
+Date:   Tue, 14 Mar 2023 06:03:25 -0600
 MIME-Version: 1.0
-References: <0f0e791b-8eb8-fbb2-ea94-837645037fae@kernel.dk>
-In-Reply-To: <0f0e791b-8eb8-fbb2-ea94-837645037fae@kernel.dk>
-From:   Daniel Dao <dqminh@cloudflare.com>
-Date:   Tue, 14 Mar 2023 10:07:40 +0000
-Message-ID: <CA+wXwBRGzfZB9tjKy5C2_pW1Z4yH2gNGxx79Fk-p3UsOWKGdqA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring/io-wq: stop setting PF_NO_SETAFFINITY on io-wq workers
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230308031033.155717-1-axboe@kernel.dk>
+ <20230308031033.155717-3-axboe@kernel.dk>
+ <20230314092605.odhpxvlalqgb27gv@wittgenstein>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230314092605.odhpxvlalqgb27gv@wittgenstein>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Mar 8, 2023 at 2:27=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> Every now and then reports come in that are puzzled on why changing
-> affinity on the io-wq workers fails with EINVAL. This happens because the=
-y
-> set PF_NO_SETAFFINITY as part of their creation, as io-wq organizes
-> workers into groups based on what CPU they are running on.
->
-> However, this is purely an optimization and not a functional requirement.
-> We can allow setting affinity, and just lazily update our worker to wqe
-> mappings. If a given io-wq thread times out, it normally exits if there's
-> no more work to do. The exception is if it's the last worker available.
-> For the timeout case, check the affinity of the worker against group mask
-> and exit even if it's the last worker. New workers should be created with
-> the right mask and in the right location.
+On 3/14/23 3:26?AM, Christian Brauner wrote:
+> On Tue, Mar 07, 2023 at 08:10:32PM -0700, Jens Axboe wrote:
+>> @@ -493,9 +507,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>>  			int copied;
+>>  
+>>  			if (!page) {
+>> -				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
+>> +				gfp_t gfp = __GFP_HIGHMEM | __GFP_ACCOUNT;
+>> +
+>> +				if (!nonblock)
+>> +					gfp |= GFP_USER;
+> 
+> Just for my education: Does this encode the assumpation that the
+> non-blocking code can only be reached from io_uring and thus GFP_USER
+> can be dropped for that case? IOW, if there's other code that could in
+> the future reach the non blocking condition would this still be correct?
 
-The patch resolved the bug around enabling cpuset for subtree_control for m=
-e.
-However, it also doesn't prevent user from setting cpuset value that
-is incompatible
-with iou threads. For example, on a 2-numa 4-cpu node, new iou-wrks are bou=
-nd to
-2-3 while we can set cpuset.cpus to 1-2 successfully. The end result
-is a mix of cpu
-distribution such as:
+You can already reach that if you do preadv2(..., RWF_NOWAIT). There
+should be no assumptions here on the user of it, semantics should be the
+same. The gfp mask is just split so we avoid __GFP_WAIT for the
+nonblocking case.
 
-  pid 533's current affinity list: 1,2 # process
-  pid 720's current affinity list: 1,2 # iou-wrk-533
-  pid 5236's current affinity list: 2,3 # iou-wrk-533, running outside of c=
-puset
+> 
+>> +				page = alloc_page(gfp);
+>>  				if (unlikely(!page)) {
+>> -					ret = ret ? : -ENOMEM;
+>> +					ret = ret ? : nonblock ? -EAGAIN : -ENOMEM;
+> 
+> Hm, could we try and avoid the nested "?:?:" please. Imho, that's easy
+> to misparse. Idk, doesn't need to be exactly that code but sm like:
+> 
+>    				if (!nonblock) {
+>    					gfp |= GFP_USER;
+> 					ret = -EAGAIN;
+> 				} else {
+> 					ret = -ENOMEM;
+> 				}
+> 
+>    				page = alloc_page(gfp);
+>    				if (unlikely(!page))
+> 					break;
+> 				else
+> 					ret = 0;
+>    				pipe->tmp_page = page;
+> 
+> or sm else.
 
+Yeah this is much better, I think I was a bit too lazy here, not really
+a fan of ternaries myself... I'll fix that up. Thanks!
 
-IMO this violated the principle of cpuset and can be confusing for end user=
-s.
-I think I prefer Waiman's suggestion of allowing an implicit move to cpuset
-when enabling cpuset with subtree_control but not explicit moves such as wh=
-en
-setting cpuset.cpus or writing the pids into cgroup.procs. It's easier to r=
-eason
-about and make the failure mode more explicit.
+-- 
+Jens Axboe
 
-What do you think ?
-
-Cheers,
-Daniel.

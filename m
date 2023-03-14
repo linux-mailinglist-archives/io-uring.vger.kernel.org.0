@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 730D86B9CD4
+	by mail.lfdr.de (Postfix) with ESMTP id ECC456B9CD5
 	for <lists+io-uring@lfdr.de>; Tue, 14 Mar 2023 18:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjCNRR0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 14 Mar 2023 13:17:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
+        id S229656AbjCNRR1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 14 Mar 2023 13:17:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjCNRRY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 13:17:24 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EEFACE03
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:06 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id l9so5889305iln.1
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:06 -0700 (PDT)
+        with ESMTP id S230186AbjCNRR0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 14 Mar 2023 13:17:26 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E9AA4B09
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:07 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id j6so4530433ilr.7
+        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 10:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678814225; x=1681406225;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678814226; x=1681406226;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+qwZGpQsRUQQpglMl71LgfSE4H69vr4wHZy+TpuOCFA=;
-        b=zMaJk3+DVZns+NBGtgLoeWmXuDSTZwD7h7bSfRbfvjy0OIW8YX27cniVkEuGmNX9Ge
-         lHSsOvANhWi9aAmstcgOz/KpproTMSijIWmhVLr12Huf0dmSC0XRP2c6qLt27+VtNIZU
-         kx2tbfINOHIpFBuKGUkP7JDDQpDIjMcS1c5LJAvCp5BwpQtf8TtvwG2AFUQPbe+CVK2D
-         3Vh4zkSKEN9PVOaRwykt2Rl0RdNhu8gyXoYI7cSPY4qgzRcpT1wMuJhg4ZdrSEjVMipQ
-         LDbePcMfNRpk7Z4NTuw54URTsfR2A4QyX7WuxLSV3RcLan9XuDO4yF23tmyZwvgiCF/J
-         33EQ==
+        bh=8b3Wq6Txe1YruSA3HHjIHWRJfY4HdWbf9Sp/tXnbhks=;
+        b=CA1UGgnmq6QYZ7QCUCN2ZH2MN4mxCLtX0qm2lcEnYe8QL1wE0xRSlKfAIroi8dooSf
+         XOGTPqseCq9Em5WeuBBMiSxTsr3x2HBtGHNHqeoj3zt3YOHtGkRJoTIl1in+P5WPpk5Z
+         6FA6rJq83JStDDSSWDvFpyzcY+j+7yl33mLMg6QV0Righl1SAwOkQ/Ji+rTfJ6KCZHlA
+         GCgQYuI7ljFyEF6KWi5DJ34tEKPUi5IFI2RuNkW3dzzqpEiUkOAjRr6WIBgcRgbEpf3+
+         uim6veHdulhq+XZc9BL9FaWC/EupEKy+tqhBfwyQPQ18dHHKaRXabJ7ncUpA+ufh1EwD
+         jcRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678814225; x=1681406225;
+        d=1e100.net; s=20210112; t=1678814226; x=1681406226;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+qwZGpQsRUQQpglMl71LgfSE4H69vr4wHZy+TpuOCFA=;
-        b=Qw/NDUuh6tf44r026YuuGgntc9LQn6QB52zIpn2pd2OaFDddpZsVwFRa9Bf5L3y5kQ
-         B+PNNHa6VirRcG8ruTCcmDqcXwj9IL58DGwJdrOEzZRraWF1DSxtJNrHGw9PD2Xb7Dvq
-         1lBpyx8CJW0y4MqcgDkceXr8e8HOaQxKEQqmF6OzoYFEhlkIfl2TgnMIVf8jwBB3vyes
-         6RGz8hM+l9l8En80k6Laa4vAXO4UlJY1TKR81+5GDiHRI4t37Y2wxh4edRCvNvVhJGHl
-         sVApTaZMEP/Smvdo58K40D0VtlHyJ4vy+amcAU3IvymKLukDMBw2vWUbhh2qEE1HBF/Q
-         1mqw==
-X-Gm-Message-State: AO0yUKUJ1/hW1/wJSq5Itpuup+g1u0PIZqesHu8G0GNDQ5dYygcp6Txv
-        cSftgap7Rl/TYkTXb9MiFKHuAg4mkqWTafuTjCEcdA==
-X-Google-Smtp-Source: AK7set/YiwOJLppmyM/dwU1LYGWLO9YymDJCWqgxEWlTJwBACHPtOYawGfDaPDyhinUfAfT3FbfZbw==
-X-Received: by 2002:a92:d64c:0:b0:319:5431:5d5b with SMTP id x12-20020a92d64c000000b0031954315d5bmr8598080ilp.1.1678814225074;
-        Tue, 14 Mar 2023 10:17:05 -0700 (PDT)
+        bh=8b3Wq6Txe1YruSA3HHjIHWRJfY4HdWbf9Sp/tXnbhks=;
+        b=oL8ElwQ1SLwHky5E932YJicnPL9c9gCcmldf4wjqSf3dGH2Pw3giRaETUWoC1IA34e
+         ba5bNviAxDiKuHUBgBwh3Mj4hMJK0InSZWi/cVyRG4Iq3jfzgyPNxOVQjOuDCbVzYDF0
+         VOqZt4P2A4MzE9PPFirdFT04rBs6+gFC2kguFkYSb1BMHhUD3FmkzzTZUplBlHPiqg7Q
+         cxawWiKx+FFUcxhMGLmTWT06odzcGcTGT0lsK/fo5D/tZnXI6/PR3zVVUV2fiUAhX4uy
+         BNyFAtuKyDA+0BfsTzDr/COamvfmUUpOTv6CaRXESyadDBQFggEhapZ18cGfKKtn2vfN
+         EJmQ==
+X-Gm-Message-State: AO0yUKVtWrio19J+GqtMtuH5lNCq/bTbQll3dZxZh4TzSqMt4HKd9Lj5
+        mZc9dLt78dyKtRzsGowByyGpo+WFEM7wWJtvCf5OoQ==
+X-Google-Smtp-Source: AK7set8zKtnCVZPMWQDWhohtW9UoO8fsp5tk3VKbnLxInT4wPm6ximciB7KNLQgWG+8LW8X4RYhK+w==
+X-Received: by 2002:a92:b11:0:b0:317:94ad:a724 with SMTP id b17-20020a920b11000000b0031794ada724mr306547ilf.2.1678814226192;
+        Tue, 14 Mar 2023 10:17:06 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id o12-20020a056e02068c00b003179b81610csm948950ils.17.2023.03.14.10.17.04
+        by smtp.gmail.com with ESMTPSA id o12-20020a056e02068c00b003179b81610csm948950ils.17.2023.03.14.10.17.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 10:17:04 -0700 (PDT)
+        Tue, 14 Mar 2023 10:17:05 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     deller@gmx.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/5] io_uring: Adjust mapping wrt architecture aliasing requirements
-Date:   Tue, 14 Mar 2023 11:16:38 -0600
-Message-Id: <20230314171641.10542-2-axboe@kernel.dk>
+Subject: [PATCH 2/5] io_uring/kbuf: move pinning of provided buffer ring into helper
+Date:   Tue, 14 Mar 2023 11:16:39 -0600
+Message-Id: <20230314171641.10542-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230314171641.10542-1-axboe@kernel.dk>
 References: <20230314171641.10542-1-axboe@kernel.dk>
@@ -69,94 +69,82 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+In preparation for allowing the kernel to allocate the provided buffer
+rings and have the application mmap it instead, abstract out the
+current method of pinning and mapping the user allocated ring.
 
-Some architectures have memory cache aliasing requirements (e.g. parisc)
-if memory is shared between userspace and kernel. This patch fixes the
-kernel to return an aliased address when asked by userspace via mmap().
+No functional changes intended in this patch.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 51 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ io_uring/kbuf.c | 37 +++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 722624b6d0dc..3adecebbac71 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -72,6 +72,7 @@
- #include <linux/io_uring.h>
- #include <linux/audit.h>
- #include <linux/security.h>
-+#include <asm/shmparam.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -3317,6 +3318,54 @@ static __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
- 	return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 3002dc827195..3adc08f90e41 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -463,14 +463,32 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags)
+ 	return IOU_OK;
  }
  
-+static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
-+			unsigned long addr, unsigned long len,
-+			unsigned long pgoff, unsigned long flags)
-+{
-+	const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
-+	struct vm_unmapped_area_info info;
-+	void *ptr;
+-int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
++static int io_pin_pbuf_ring(struct io_uring_buf_reg *reg,
++			    struct io_buffer_list *bl)
+ {
+ 	struct io_uring_buf_ring *br;
+-	struct io_uring_buf_reg reg;
+-	struct io_buffer_list *bl, *free_bl = NULL;
+ 	struct page **pages;
+ 	int nr_pages;
+ 
++	pages = io_pin_pages(reg->ring_addr,
++			     flex_array_size(br, bufs, reg->ring_entries),
++			     &nr_pages);
++	if (IS_ERR(pages))
++		return PTR_ERR(pages);
 +
-+	/*
-+	 * Do not allow to map to user-provided address to avoid breaking the
-+	 * aliasing rules. Userspace is not able to guess the offset address of
-+	 * kernel kmalloc()ed memory area.
-+	 */
-+	if (addr)
-+		return -EINVAL;
-+
-+	ptr = io_uring_validate_mmap_request(filp, pgoff, len);
-+	if (IS_ERR(ptr))
-+		return -ENOMEM;
-+
-+	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
-+	info.length = len;
-+	info.low_limit = max(PAGE_SIZE, mmap_min_addr);
-+	info.high_limit = arch_get_mmap_base(addr, current->mm->mmap_base);
-+#ifdef SHM_COLOUR
-+	info.align_mask = PAGE_MASK & (SHM_COLOUR - 1UL);
-+#else
-+	info.align_mask = PAGE_MASK & (SHMLBA - 1UL);
-+#endif
-+	info.align_offset = (unsigned long) ptr;
-+
-+	/*
-+	 * A failed mmap() very likely causes application failure,
-+	 * so fall back to the bottom-up function here. This scenario
-+	 * can happen with large stack limits and large mmap()
-+	 * allocations.
-+	 */
-+	addr = vm_unmapped_area(&info);
-+	if (offset_in_page(addr)) {
-+		info.flags = 0;
-+		info.low_limit = TASK_UNMAPPED_BASE;
-+		info.high_limit = mmap_end;
-+		addr = vm_unmapped_area(&info);
-+	}
-+
-+	return addr;
++	br = page_address(pages[0]);
++	bl->buf_pages = pages;
++	bl->buf_nr_pages = nr_pages;
++	bl->buf_ring = br;
++	return 0;
 +}
 +
- #else /* !CONFIG_MMU */
++int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
++{
++	struct io_uring_buf_reg reg;
++	struct io_buffer_list *bl, *free_bl = NULL;
++	int ret;
++
+ 	if (copy_from_user(&reg, arg, sizeof(reg)))
+ 		return -EFAULT;
  
- static int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
-@@ -3529,6 +3578,8 @@ static const struct file_operations io_uring_fops = {
- #ifndef CONFIG_MMU
- 	.get_unmapped_area = io_uring_nommu_get_unmapped_area,
- 	.mmap_capabilities = io_uring_nommu_mmap_capabilities,
-+#else
-+	.get_unmapped_area = io_uring_mmu_get_unmapped_area,
- #endif
- 	.poll		= io_uring_poll,
- #ifdef CONFIG_PROC_FS
+@@ -504,20 +522,15 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 			return -ENOMEM;
+ 	}
+ 
+-	pages = io_pin_pages(reg.ring_addr,
+-			     flex_array_size(br, bufs, reg.ring_entries),
+-			     &nr_pages);
+-	if (IS_ERR(pages)) {
++	ret = io_pin_pbuf_ring(&reg, bl);
++	if (ret) {
+ 		kfree(free_bl);
+-		return PTR_ERR(pages);
++		return ret;
+ 	}
+ 
+-	br = page_address(pages[0]);
+-	bl->buf_pages = pages;
+-	bl->buf_nr_pages = nr_pages;
+ 	bl->nr_entries = reg.ring_entries;
+-	bl->buf_ring = br;
+ 	bl->mask = reg.ring_entries - 1;
++
+ 	io_buffer_add_list(ctx, bl, reg.bgid);
+ 	return 0;
+ }
 -- 
 2.39.2
 

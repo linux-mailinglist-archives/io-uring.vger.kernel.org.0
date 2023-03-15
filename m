@@ -2,96 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D79F6BB5BD
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 15:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C5F6BB5E1
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 15:23:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbjCOOQ5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 10:16:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50082 "EHLO
+        id S233130AbjCOOX0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 10:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232625AbjCOOQm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 10:16:42 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3A625B87
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 07:16:22 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id o14so2321570ioa.3
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 07:16:22 -0700 (PDT)
+        with ESMTP id S233155AbjCOOXR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 10:23:17 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C81D8235E
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 07:23:09 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5445009c26bso145964587b3.8
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 07:23:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678889781;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LUr6Z/8eVKfwqMAALi/Nq7GM0PMlYZHl9znx9hFSWjM=;
-        b=NJuoGSTtVhz9FRn0ds9YLYb/zkKXmMoHej1HFmJ68Vj4DHe/UrwzfhHGh19RBbgsLv
-         p9G1Hzs6uJpf3WW42yECxFCi/WFFnICxpL0iYZc1ExEppbUlTD3Nrlr/M8aBspZWgOHs
-         YZIpOmEmO5rIAx3pt3qx4504XOE5tNpowqNF/eYpnjBHBVIwRL7hSSe1SKotUQvnr5HK
-         sH702rXQb/mh1MAuax4Rx2hLEjjGejcWFPyfm/a6AKmqUMQ+3DAEm/SeUAKEkd0Aeva1
-         w5JY40XOZr3xCUEKTyvPuC8YpvXRe5MyqGznnMCrlVGHJTRsLXBPd5NoU5oQ7s03c1Eu
-         zJ6w==
+        d=happiedata-com.20210112.gappssmtp.com; s=20210112; t=1678890188;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GxGRmg4EZZMQMXhR0+a0sEgTawsgLaMnKjOgJ+RVkw=;
+        b=wrNr0moG9LE4zVWTPsDW8pq31zjdIO9cICDatA/iTgKTaoWLdxf5GXZVrjE4gDbm9T
+         wbmxi1mv3kmualupheZ1ePsijjdWImFIQEq/3YJ8g2c2+GR0MrBrwBqzPLbB8/jRqA99
+         HK1Lt3rqjWK7p4pWFHYxU4jM9VPw5Cu2sqtdIUT4Ekk1c6VEpcIQPM6ssafczx3P5A0g
+         hxLRJGUgoEEUhAqFH0vOmOJSmG5+VNN2GSgA8nOiaR53J8zCu9T0lU/RDs8zHl1pLQgp
+         OrxUhZ/9nfwh410q+aLNcfebadN6Avl26rw6wi7o7cNfNpVxVGwVw98+4l2+HqBe5sF9
+         1JoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678889781;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUr6Z/8eVKfwqMAALi/Nq7GM0PMlYZHl9znx9hFSWjM=;
-        b=bldPYclbmRq0CQfcHbqOZ8qkZP7UbGrswQNgtUhaxpJCIdXqCwFYIHfh/AB6DuJt7U
-         JUr0zzmeoXQ3hwDd0OGuFikohn8HOO3r7jBdi8lbYiTMnl5GWZ+a1Yyig9e7BoQquObG
-         vEk7D3nU3kQfHEGe54YrW2QiKSC+NHbfH2BwqaEjqawgErd4jlxlV6BmgBAuHd/XN0hM
-         350yBAqKR99kzrEQaifFrOyuNuMhdfkDgDIAm7qvAuhbTZQtVb2fMiuZIYBu0QjrOOId
-         FcHBM51m0x7T+1DO+nsvagb5Ggx2tXUfZ7c81sDYXbnWubUgmwRU8sYh3sIk0xfTaKKg
-         57iw==
-X-Gm-Message-State: AO0yUKV6Uij5roDYDkB6CvS9mgLTFpwG7/Hp41GfG5osFaw9nWFizXHe
-        5dRBGnkirZ7tBQJZWc3tC87eeX32vXflXl0AW5UcXg==
-X-Google-Smtp-Source: AK7set8ksOR6hwFFHfW/ngnN7iiN0RpsWWGboYgCAZHSy6wmeciNhN5f05fOmv9Dr5fx41KCZse6KA==
-X-Received: by 2002:a05:6602:368a:b0:74c:de17:fa3 with SMTP id bf10-20020a056602368a00b0074cde170fa3mr9760617iob.0.1678889781515;
-        Wed, 15 Mar 2023 07:16:21 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id g21-20020a02bb95000000b004051a7ef7f3sm1655405jan.71.2023.03.15.07.16.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Mar 2023 07:16:20 -0700 (PDT)
-Message-ID: <38781e4c-29b7-2fbc-44a9-f365189f5381@kernel.dk>
-Date:   Wed, 15 Mar 2023 08:16:19 -0600
+        d=1e100.net; s=20210112; t=1678890188;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+GxGRmg4EZZMQMXhR0+a0sEgTawsgLaMnKjOgJ+RVkw=;
+        b=A6inWF3GBapqaJsk5WGEhrsNiKX5V/WFlX8ogslU9Hk/Y+NFHSo5EhrSzcWzWxEyT5
+         PjAFWhhLG0jlprgo6Oj2Kr/i/1HJ0K3khvxFn25JZgoVB4IPWwQ3wIOodg21XgBdeqkK
+         aUp8eQENVRJ/G3vB9nySM5bZC4514yARmi01HlRBY7669+NlBcaQI/flPmA5Wn/lpWOA
+         fYdJ6wN3sRpeq3qlirei/TlU/WiLGi85tC3QM6SBNHy3IIHFG0rqtLnBArlTF2E6eJsf
+         2stsERTobABpHDtImyoCDcS2QzVFp4g3KXk+9rTbC8pgme08RcxDmyaQVcHT5hdCUs7Z
+         saVA==
+X-Gm-Message-State: AO0yUKWi8+ddlfagYCHdY+BASlbYXef4IMAIEN8EhcYMbtm87l8PMHh1
+        k5ucfbjgRkAFfllWtoYi8hR/gX86SZsTVxKAncwWqQ==
+X-Google-Smtp-Source: AK7set/a/Gx6LiJTvmBq+TBlnXE4YnV2KmOKcs7lZYSmVpMr280pR4rKMG1oG+lE0JX8xSVyWAs2ix3o+emVCDu3zlY=
+X-Received: by 2002:a81:a7c2:0:b0:541:a0ab:bd28 with SMTP id
+ e185-20020a81a7c2000000b00541a0abbd28mr30525ywh.4.1678890188561; Wed, 15 Mar
+ 2023 07:23:08 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-References: <20230314154203.181070-1-axboe@kernel.dk>
- <20230314154203.181070-3-axboe@kernel.dk>
- <20230315082321.47mw5essznhejv7z@wittgenstein>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230315082321.47mw5essznhejv7z@wittgenstein>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+From:   Andres Chico <andres@happiedata.com>
+Date:   Wed, 15 Mar 2023 09:22:55 -0500
+Message-ID: <CAFx-5XZsLyXOEy4QK_v6BMjV01AT-s_vdwhLvE7T=RSCfEcTHQ@mail.gmail.com>
+Subject: RE: HIMSS Attendees Email List-2023
+To:     Andres Chico <andres@happiedata.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=2.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,FILL_THIS_FORM,FILL_THIS_FORM_LONG,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/15/23 2:23 AM, Christian Brauner wrote:
-> On Tue, Mar 14, 2023 at 09:42:02AM -0600, Jens Axboe wrote:
->> In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
->> and write path handle it correctly. This includes the pipe locking,
->> page allocation for writes, and confirming pipe buffers.
->>
->> Acked-by: Dave Chinner <dchinner@redhat.com>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
-> 
-> Looks good,
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+Hi,
 
-Thanks for the review, I'll add that. Are you OK with me carrying
-these patches, or do you want to stage them for 6.4?
+Hope you are doing well !
 
--- 
-Jens Axboe
+Would you be interested in acquiring Healthcare Information and
+Management Systems Society Attendees Email List-2023?
 
+List Includes: Company Name, First Name, Last Name, Full Name, Contact
+Job Title, Verified Email Address, Website URL, Mailing address, Phone
+number, Industry and many more=E2=80=A6
 
+Number of Contacts :-45,328 Verified Contacts.
+Cost :-$1,957
+
+Kindly let me know your thoughts, so that we could discuss further details.
+
+Kind Regards,
+Andres Chico
+Marketing Coordinators

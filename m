@@ -2,71 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED6DD6BB754
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 16:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6ABF6BB76A
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 16:18:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232455AbjCOPQO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 11:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
+        id S232069AbjCOPS1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 11:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232115AbjCOPQN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 11:16:13 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A3AEFAA
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 08:16:12 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id r4so10540012ila.2
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 08:16:12 -0700 (PDT)
+        with ESMTP id S232130AbjCOPSZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 11:18:25 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926EAA26D
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 08:18:24 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id y12so6308259ilq.4
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 08:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678893372;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678893504;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OqTD8SXreFBDfGk9Towq94DfzLHb+0jZ+UAuwsdvyrs=;
-        b=DbiyGXz9qNPL9QXHwATP3nJqJD2SOEpz+3WaNAmXAdDOSa+6PxebjQKSFjdsDoeRE+
-         EIzlkSKsmmR4+tGB/OC3K3yeg5CwKJVfpy0abETQ4j6ia7JV/YFHjz9fkVwjVVT01+gA
-         7hoTqPwikzgMhBd/IbtsFOtMFDRt2iakGIh7tF/Hp36/nEeqS3td0uU7ijfWTNGe3lQf
-         mO/JICzYF/5eaBS6SyIKhBxE09oXgH9dGuorB80FRmWmsNxCDXLXMHnN3HjXwVPS92vD
-         xmBgUmXZM0FRqioXTgQ/Xi/HnDcga3X6gKhnw5onh2R+vWCwNGZHnZ3sNJ0wB+9/X8Dk
-         VEhA==
+        bh=u7XncQ9/sIoMiOOEGX+PprU8+JUGDG7Lt2ET/LQl0Nc=;
+        b=tcmygfkVvHJ9SzrtivAdapon0DVzVM/QCeSQx/MbeOyUH4g/3NmEvo08z7g9H+BGO+
+         z8AL+mx35ogsrpMySGJB8VfCySQrg/8YAC6tGBCK/OGpMDG6CA5f664AxIMb5mF1QUCq
+         11HbBfP4DpNZ40O5DOVCpkJXLQkDu7WOcDRDs4fDKJFFKwRx3EYzq83x07R1yASHnIiO
+         XppWmAI/6zg+RS91NwUPuwLkn9kTEf5gLvYOH/lclAlNqO7H/ikszQzp7kBT4M3Z2OW/
+         Vf00FhTxx4yEPJxekUkE+SkJyz2enN/bEMtV0EiTEVYhplOy84ycrlikJXPOEmH5tM1K
+         E6LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678893372;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        d=1e100.net; s=20210112; t=1678893504;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OqTD8SXreFBDfGk9Towq94DfzLHb+0jZ+UAuwsdvyrs=;
-        b=iuYAaTMOeiMdth6KSgxYbb48lDkc3nndWmSgcpDQKgYlMe8sgnEtkZCOyMCppx0rKH
-         6RQXQa8yBgHAYb5VqKKo5Mw9LceGTaOk7c4w52njR6R+6jWFioDSm95PgYMNwstla7e+
-         MRKlMklkzeVclQTBbrHAFKtDE+Jv5Qtlx8jlvmdR3Y2tbQBx/rUNdu+AQeO9cdStRHPT
-         enUKg2Cz9P7I2DY4ih9+7IagRTuYt+q2W+4q57lPSkE0QfDGz4sVOjLg75rEBr+3ffCL
-         +BrvbtbizgGZ8nEYiYHZzg2U2apwBR/2EGTzyb1up6x4E0bI3I5T+T9GhaVCGtvf/oGw
-         Itrw==
-X-Gm-Message-State: AO0yUKVhDy/QttgV69ysiG9npG97zT0gVFvFxu3YzBL8AOKsTShU26tW
-        qo7b8ox4jZMGglTg7K/Fug5c+g==
-X-Google-Smtp-Source: AK7set9D+WVhXnH07DQJu8SFuTg0UgCSR7HRh/a4BCorTjYCvv5e7XLeWp1lkbRIw8v0oOj0MKiCfA==
-X-Received: by 2002:a92:7406:0:b0:322:fad5:5d8f with SMTP id p6-20020a927406000000b00322fad55d8fmr7964989ilc.2.1678893372045;
-        Wed, 15 Mar 2023 08:16:12 -0700 (PDT)
+        bh=u7XncQ9/sIoMiOOEGX+PprU8+JUGDG7Lt2ET/LQl0Nc=;
+        b=GGlRkju7tbj94SCaUTgXDR1PD7oMuT1u42dCUBIC9Rcw/68qkG+8aCmAGRY3z4vrK2
+         YdDzIq8/WYfa0ZUuaGpV7zApX3vPOS1kryFJ/XIEc5XF7srPMvfTGv3TTP7h8ce3Zy3o
+         eIId6iYkTPNR17dXEIx3uRG5/CL51wtr6dDxIKkZePEOMEbnP657dKFVD0hIG/YCqIrU
+         LHdIpGnnHO/JHZiwxfhS979N26DTlLhCfeO9D91FefS0ZfpvjSNklPFZQ76XpL8Hh2Bk
+         LxZxkcYQmcik0hE2j2vgeNL1Q4sBgIn8Hamm+5vX8AsEzd1yLAOHGl+0+EE700DhbaMl
+         8vLw==
+X-Gm-Message-State: AO0yUKWGRri4tYSFBohDmSDbP56lotxkmgghgs8TaqrSmLEdIq5/4K9c
+        eq1ttdHIwYSNHMysja8H+mw2sQ==
+X-Google-Smtp-Source: AK7set9sFpTEy2f6zuAyOXjezk2McNh3h8eU9r3sPCx5IIkRdcvFUC0d7JW9a6tM/A9ROfdHA6VxQA==
+X-Received: by 2002:a92:874a:0:b0:317:9d16:e6c7 with SMTP id d10-20020a92874a000000b003179d16e6c7mr10952501ilm.3.1678893503878;
+        Wed, 15 Mar 2023 08:18:23 -0700 (PDT)
 Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y17-20020a056e02119100b0031798b87a14sm1696387ili.19.2023.03.15.08.16.11
+        by smtp.gmail.com with ESMTPSA id u11-20020a02cb8b000000b004061ba59f18sm475427jap.120.2023.03.15.08.18.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Mar 2023 08:16:11 -0700 (PDT)
-Message-ID: <5e740404-0890-cf34-94fd-7b929a048f6d@kernel.dk>
-Date:   Wed, 15 Mar 2023 09:16:10 -0600
+        Wed, 15 Mar 2023 08:18:23 -0700 (PDT)
+Message-ID: <a9ccda55-418b-4a32-616e-82893d2eacc1@kernel.dk>
+Date:   Wed, 15 Mar 2023 09:18:22 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
+Subject: Re: Resizing io_uring SQ/CQ?
 Content-Language: en-US
+To:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>
+Cc:     io-uring@vger.kernel.org
+References: <20230309134808.GA374376@fedora>
+ <ZAqKDen5HtSGSXzd@ovpn-8-16.pek2.redhat.com>
+ <2f928d56-a2ff-39ef-f7ae-b6cc1da4fc42@kernel.dk>
+ <20230310134400.GB464073@fedora> <ZAtJPG3NDCbhAvZ7@ovpn-8-16.pek2.redhat.com>
+ <20230310165628.GA491749@fedora>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-References: <20230314154203.181070-1-axboe@kernel.dk>
- <20230314154203.181070-3-axboe@kernel.dk>
- <20230315082321.47mw5essznhejv7z@wittgenstein>
- <38781e4c-29b7-2fbc-44a9-f365189f5381@kernel.dk>
- <20230315150237.iwhoj7a3nb4vwazd@wittgenstein>
- <f93b4292-9507-5a11-be47-0e0e99a5fe27@kernel.dk>
-In-Reply-To: <f93b4292-9507-5a11-be47-0e0e99a5fe27@kernel.dk>
+In-Reply-To: <20230310165628.GA491749@fedora>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -78,34 +77,23 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/15/23 9:12 AM, Jens Axboe wrote:
-> On 3/15/23 9:02 AM, Christian Brauner wrote:
->> On Wed, Mar 15, 2023 at 08:16:19AM -0600, Jens Axboe wrote:
->>> On 3/15/23 2:23 AM, Christian Brauner wrote:
->>>> On Tue, Mar 14, 2023 at 09:42:02AM -0600, Jens Axboe wrote:
->>>>> In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
->>>>> and write path handle it correctly. This includes the pipe locking,
->>>>> page allocation for writes, and confirming pipe buffers.
->>>>>
->>>>> Acked-by: Dave Chinner <dchinner@redhat.com>
->>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>> ---
->>>>
->>>> Looks good,
->>>> Reviewed-by: Christian Brauner <brauner@kernel.org>
->>>
->>> Thanks for the review, I'll add that. Are you OK with me carrying
->>> these patches, or do you want to stage them for 6.4?
->>
->> I'n not fuzzed. Since it's fs only I would lean towards carrying it. I
->> can pick it up now and see if Al has any strong opinions on this one.
+On 3/10/23 9:56 AM, Stefan Hajnoczi wrote:
+> On Fri, Mar 10, 2023 at 11:14:04PM +0800, Ming Lei wrote:
 > 
-> Either way is fine with me - let me know if you pick it up, and
-> I can drop it from my tree.
+> Hi Ming,
+> Another question about this:
+> 
+> Does the io worker thread pool have limits so that eventually work
+> queues up and new work is not able to execute until in-flight work
+> completes?
 
-Oh and if you do, I should probably send out a v3. Was missing a
-kerneldoc in patch 1, corrected that in my tree but it's not in v2.
-Outside of that one-liner doc change, same patches in my tree.
+It's effectively limited by how many processes you are allowed to
+create. If you exceed that limit, then yes you would have work
+sitting behind other work, and that new work won't get to run
+before _something_ completes.
+
+But no ring sizing will save that, you've effectively exhausted
+any resources in the system, at least for you.
 
 -- 
 Jens Axboe

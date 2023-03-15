@@ -2,76 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73E616BA72E
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 06:35:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 527186BA8B0
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 08:06:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbjCOFfn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 01:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56566 "EHLO
+        id S231538AbjCOHGJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 03:06:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231360AbjCOFfm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 01:35:42 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3B422A168
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 22:35:27 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id k13-20020a056e021a8d00b0031bae68b383so9370618ilv.18
-        for <io-uring@vger.kernel.org>; Tue, 14 Mar 2023 22:35:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678858526;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ezVTqICDSiSn/372m2AODlES/x6h4w7Vq4yCunazgY=;
-        b=bGAH1W5Vh8Dy43Bqb8pjge4FV+2ijYLdap5ZISnAKhaGXRBVKufpDaLmTR2IYBwuyk
-         nWPHhcH0HSMOFlRn3Uv6AMnNMsE0NlQyTYSil6t265RjyvnI0AeqUgWK/jkufoKGxM4Z
-         swCC+5pehHhDePaUXC2+TtH0konWFrGZV4Wjlwp2JlkfkxQFVDA3gUPAfvXc0B1qLQ0q
-         ihEug6FtS7kONhZdCssU8Nr+yaxk1JmxqQQDgf+Hg8cSQz1pJEqZOkQl4gX8y1ZaU/1l
-         lhDGGVGKdtrushm+s/+EObK4I5wAoJ9/TzFKPmTqxfXIAUxwljSLB8rHfV2tx7so/2eX
-         FRpw==
-X-Gm-Message-State: AO0yUKWwUgsJ9fU08rpqPvo5WlXl/JTeFailaGpgI/imD7P3bIoZqprn
-        UqAv0P+Tm2sP3t+ilVXVmvmP63Twv3JWLE5pjBJ+s8rNtTJS
-X-Google-Smtp-Source: AK7set+wuIJ21um9TSx52TdARHKOJQSeOjSvpUyJnZA7zidHuYslsh2kkedusXN9WdodJqH7DwtgLiy5GIKP5+DNpxLHiIWFE1Da
+        with ESMTP id S230176AbjCOHGC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 03:06:02 -0400
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCBA06A2FF;
+        Wed, 15 Mar 2023 00:05:33 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=ziyangzhang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Vdv8ykU_1678863929;
+Received: from 30.97.56.196(mailfrom:ZiyangZhang@linux.alibaba.com fp:SMTPD_---0Vdv8ykU_1678863929)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Mar 2023 15:05:29 +0800
+Message-ID: <056d1725-b204-e922-a9f5-3f5b49e2cc9b@linux.alibaba.com>
+Date:   Wed, 15 Mar 2023 15:05:28 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a6b:6a11:0:b0:745:68ef:e410 with SMTP id
- x17-20020a6b6a11000000b0074568efe410mr18224694iog.0.1678858526167; Tue, 14
- Mar 2023 22:35:26 -0700 (PDT)
-Date:   Tue, 14 Mar 2023 22:35:26 -0700
-In-Reply-To: <00000000000097fc2305f1ce87d9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001497d605f6e9b6e6@google.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: use-after-free Read in io_worker_get
-From:   syzbot <syzbot+55cc59267340fad29512@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.8.0
+Subject: Re: [PATCH V2 12/17] block: ublk_drv: cleanup ublk_copy_user_pages
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>
+References: <20230307141520.793891-1-ming.lei@redhat.com>
+ <20230307141520.793891-13-ming.lei@redhat.com>
+From:   Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+In-Reply-To: <20230307141520.793891-13-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On 2023/3/7 22:15, Ming Lei wrote:
+> Clean up ublk_copy_user_pages() by using iov iter, and code
+> gets simplified a lot and becomes much more readable than before.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
 
-commit e6db6f9398dadcbc06318a133d4c44a2d3844e61
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sun Jan 8 17:39:17 2023 +0000
-
-    io_uring/io-wq: only free worker if it was allocated for creation
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108bc2e2c80000
-start commit:   a689b938df39 Merge tag 'block-2023-01-06' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=33ad6720950f996d
-dashboard link: https://syzkaller.appspot.com/bug?extid=55cc59267340fad29512
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1532ef72480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b43f3a480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: io_uring/io-wq: only free worker if it was allocated for creation
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Reviewed-by: Ziyang Zhang <ZiyangZhang@linux.alibaba.com>

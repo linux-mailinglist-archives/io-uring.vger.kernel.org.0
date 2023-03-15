@@ -2,98 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 839A36BB39A
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 13:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D79F6BB5BD
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 15:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230317AbjCOMvP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 08:51:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
+        id S232670AbjCOOQ5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 10:16:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231993AbjCOMvO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 08:51:14 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034428B303
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 05:51:13 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id rj10so8125695pjb.4
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 05:51:12 -0700 (PDT)
+        with ESMTP id S232625AbjCOOQm (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 10:16:42 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3A625B87
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 07:16:22 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id o14so2321570ioa.3
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 07:16:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678884672; x=1681476672;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cZkbtoWja85fMLAbjXK98n41T/e7K5OhmawF7QD5eFY=;
-        b=bF+iZZkg40UqrsVEUQ/fdqKax2RZLHQVGPSVjvFW4QDzwVaPa6RrvqjDS5UEoX/wpi
-         o/VnZDCP288oppcit1QsMrBMIM4BVDfcEt4JgypAr/JIjyCqVFtah0iWYN2xhnPir9Cz
-         sKtw8Qf5K0UgbzktJxeq1B0bG4oqgGtU58K3kWkTBhhEGeq4grRGDga3ocWxvwnRxrvk
-         pEPQR0v2cxDvyz/HZqTEDr4AvjQj/BhyZm5M+ZDfps6IT1xaz1DeFBUAL1u5eivcP16q
-         /jGik346ZKOzg3ufG7iUiSaRLzNfgMZQi6VoehmHoPZ16b2RGSdLZjJA0Tu58Bo5IF3A
-         GP/A==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678889781;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LUr6Z/8eVKfwqMAALi/Nq7GM0PMlYZHl9znx9hFSWjM=;
+        b=NJuoGSTtVhz9FRn0ds9YLYb/zkKXmMoHej1HFmJ68Vj4DHe/UrwzfhHGh19RBbgsLv
+         p9G1Hzs6uJpf3WW42yECxFCi/WFFnICxpL0iYZc1ExEppbUlTD3Nrlr/M8aBspZWgOHs
+         YZIpOmEmO5rIAx3pt3qx4504XOE5tNpowqNF/eYpnjBHBVIwRL7hSSe1SKotUQvnr5HK
+         sH702rXQb/mh1MAuax4Rx2hLEjjGejcWFPyfm/a6AKmqUMQ+3DAEm/SeUAKEkd0Aeva1
+         w5JY40XOZr3xCUEKTyvPuC8YpvXRe5MyqGznnMCrlVGHJTRsLXBPd5NoU5oQ7s03c1Eu
+         zJ6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678884672; x=1681476672;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cZkbtoWja85fMLAbjXK98n41T/e7K5OhmawF7QD5eFY=;
-        b=dyaindjbfk0x9zK9jHe376GRkOtZ0qCQ0U4wTSjsEkVqoZXgFKGeuETApUXlaax1Cu
-         D84ysmATDZ3CTU+pIlEwFpKAfIbdya2SNyxSO5EhDw1Py89zyb9Ei9u44c+E2g8FlDht
-         mWXDEdhzN5A+QQJ3RTxw/evwao0L+7z4Snazi9oU9FRZDar1dTAYDuVLVjFii7jYwMbX
-         OnQx7DeKl0MNsjzn+MN83KU+AqZYMatZmV74kc0Du2Pt+P7YZsjng0HBNufBOZeSdMCf
-         6BGZ9GLVIXsXppSbgpsT2cwWmGE+PONVRa8Kb1vsqE85j+vBnMQKIbyP4Pr0a8td4AOX
-         MaWQ==
-X-Gm-Message-State: AO0yUKUopykYle0TrpE6X1vAvrZ0iRxOIEx+qonlIVIZygfXslzokFEh
-        aAWldYgbqdUJXWGE14yhmL0Edg==
-X-Google-Smtp-Source: AK7set8mvMQnqXHAGVcsRNhmtQR25abfMXdfnIlu0KcIHFJ9oK72G+0n3KhChD9cmn8b8rdohn+sbQ==
-X-Received: by 2002:a17:902:b713:b0:19a:7439:3e98 with SMTP id d19-20020a170902b71300b0019a74393e98mr2565786pls.4.1678884672475;
-        Wed, 15 Mar 2023 05:51:12 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id kx15-20020a170902f94f00b0019f387f2dc3sm3618298plb.24.2023.03.15.05.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 05:51:12 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org,
-        =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Daniel Dao <dqminh@cloudflare.com>,
-        Waiman Long <longman@redhat.com>
-In-Reply-To: <20230314183332.25834-1-mkoutny@suse.com>
-References: <20230314183332.25834-1-mkoutny@suse.com>
-Subject: Re: [PATCH] io_uring/sqpoll: Do not set PF_NO_SETAFFINITY on
- sqpoll threads
-Message-Id: <167888467141.25248.3419360093103116663.b4-ty@kernel.dk>
-Date:   Wed, 15 Mar 2023 06:51:11 -0600
+        d=1e100.net; s=20210112; t=1678889781;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LUr6Z/8eVKfwqMAALi/Nq7GM0PMlYZHl9znx9hFSWjM=;
+        b=bldPYclbmRq0CQfcHbqOZ8qkZP7UbGrswQNgtUhaxpJCIdXqCwFYIHfh/AB6DuJt7U
+         JUr0zzmeoXQ3hwDd0OGuFikohn8HOO3r7jBdi8lbYiTMnl5GWZ+a1Yyig9e7BoQquObG
+         vEk7D3nU3kQfHEGe54YrW2QiKSC+NHbfH2BwqaEjqawgErd4jlxlV6BmgBAuHd/XN0hM
+         350yBAqKR99kzrEQaifFrOyuNuMhdfkDgDIAm7qvAuhbTZQtVb2fMiuZIYBu0QjrOOId
+         FcHBM51m0x7T+1DO+nsvagb5Ggx2tXUfZ7c81sDYXbnWubUgmwRU8sYh3sIk0xfTaKKg
+         57iw==
+X-Gm-Message-State: AO0yUKV6Uij5roDYDkB6CvS9mgLTFpwG7/Hp41GfG5osFaw9nWFizXHe
+        5dRBGnkirZ7tBQJZWc3tC87eeX32vXflXl0AW5UcXg==
+X-Google-Smtp-Source: AK7set8ksOR6hwFFHfW/ngnN7iiN0RpsWWGboYgCAZHSy6wmeciNhN5f05fOmv9Dr5fx41KCZse6KA==
+X-Received: by 2002:a05:6602:368a:b0:74c:de17:fa3 with SMTP id bf10-20020a056602368a00b0074cde170fa3mr9760617iob.0.1678889781515;
+        Wed, 15 Mar 2023 07:16:21 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id g21-20020a02bb95000000b004051a7ef7f3sm1655405jan.71.2023.03.15.07.16.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Mar 2023 07:16:20 -0700 (PDT)
+Message-ID: <38781e4c-29b7-2fbc-44a9-f365189f5381@kernel.dk>
+Date:   Wed, 15 Mar 2023 08:16:19 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+References: <20230314154203.181070-1-axboe@kernel.dk>
+ <20230314154203.181070-3-axboe@kernel.dk>
+ <20230315082321.47mw5essznhejv7z@wittgenstein>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230315082321.47mw5essznhejv7z@wittgenstein>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13-dev-2eb1a
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-On Tue, 14 Mar 2023 19:33:32 +0100, Michal Koutný wrote:
-> Users may specify a CPU where the sqpoll thread would run. This may
-> conflict with cpuset operations because of strict PF_NO_SETAFFINITY
-> requirement. That flag is unnecessary for polling "kernel" threads, see
-> the reasoning in commit 01e68ce08a30 ("io_uring/io-wq: stop setting
-> PF_NO_SETAFFINITY on io-wq workers"). Drop the flag on poll threads too.
+On 3/15/23 2:23 AM, Christian Brauner wrote:
+> On Tue, Mar 14, 2023 at 09:42:02AM -0600, Jens Axboe wrote:
+>> In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
+>> and write path handle it correctly. This includes the pipe locking,
+>> page allocation for writes, and confirming pipe buffers.
+>>
+>> Acked-by: Dave Chinner <dchinner@redhat.com>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
 > 
-> 
-> [...]
+> Looks good,
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-Applied, thanks!
+Thanks for the review, I'll add that. Are you OK with me carrying
+these patches, or do you want to stage them for 6.4?
 
-[1/1] io_uring/sqpoll: Do not set PF_NO_SETAFFINITY on sqpoll threads
-      commit: a5fc1441af7719e93dc7a638a960befb694ade89
-
-Best regards,
 -- 
 Jens Axboe
-
 
 

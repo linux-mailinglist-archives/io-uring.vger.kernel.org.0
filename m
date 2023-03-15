@@ -2,118 +2,91 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E46A6BBA51
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 17:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B844B6BBB11
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 18:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232267AbjCOQ4m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 12:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46548 "EHLO
+        id S231508AbjCORkH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 13:40:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232238AbjCOQ4i (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 12:56:38 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537BB1E9C4;
-        Wed, 15 Mar 2023 09:56:36 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id h8so34326753ede.8;
-        Wed, 15 Mar 2023 09:56:36 -0700 (PDT)
+        with ESMTP id S231967AbjCORkG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 13:40:06 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EECA4FA93
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 10:40:04 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id l9so7658800iln.1
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 10:40:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678899395;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678902003; x=1681494003;
+        h=content-transfer-encoding:in-reply-to:references:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9TQxcK9OaPYsertMuppkBMhe3ksHgbNWBHBNJuD/3SM=;
-        b=bf++em/WSxTAwx8Jt2VK4uGWuaZuyXvqcOVhTxis3lSgx7N5+fkXw9aYA85T5G/g6X
-         IaRhtYqMS5V29bctv8MUwIyDFms+yIOwvicMa6Xu3cUBmsLFDGOgT445O1I9KAg7tQ6w
-         LW7aPN2n0Ig4nt6ecB0pyx7QhcxJMMyjPeRIaNxTwzldk/Gu0RsuBK3jFMrVW+jXp7rH
-         H0x4yEkFvfZYOso0rpDbu2qqVUdS21oyMgYdAVa4hLmkyCDlu2Plzj+g+uPPThHSxQJt
-         Vk5jzt/UdIbS7tAa4OOaGKx42DEath5a9JUmzLWavHBVyCG8o45tsbgl9FT4XML7wuep
-         8GKQ==
+        bh=/5df0VVcQalC1bXRcr/ZzFE9DW4g6pmup34uWUxk2BE=;
+        b=zwxQprHXlzq84Q96JdMBQaXVvSCHCBcJxqwLAdS2/M6P2PZf8X+QBMdh444n639VR4
+         9WawyHfreN9zeFpPIMhQsN7v7r0TWD5dW79rcxlqjdiRYD9CKeuHkVzP5OWvsI8S+cvb
+         GDC4tEZKH/QFkrr8nDLOkHeZriSUz/RbHofPkaXRLz6fCHLG90K7wPEWbwpuibh0EhcR
+         33COVEz8u5PDhku1P4VHqFjFgejAw7CwBqNz45vHuiNQSzxFc3uFKrVQz8nlcFD8nJwq
+         dMtxuCBUyahbswuu6YxFGozBwSWkHygIp6T2Q+IOaD+QgWYfWWa0Sr2JJEOOVVm6dXWr
+         6wqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678899395;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20210112; t=1678902003; x=1681494003;
+        h=content-transfer-encoding:in-reply-to:references:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9TQxcK9OaPYsertMuppkBMhe3ksHgbNWBHBNJuD/3SM=;
-        b=VtutT1pJUiiN4lukpSQa/tzNrhgvQP/Crd/uRzzkuEA8urSxeWdf6chLfplkhjzmDw
-         KE+IKX9QtTiCDtdquPfPpG/q//L5ckV5PY31zooZNM+BOWXgykCx3hW4EO6AOvKOfuLy
-         gxPrmyKxxUwuCLe8w2TfWFi6v3RPx5uneq/bXQaxCij5lZgIYWUVCExzc17DgCht6fI5
-         H3dZXpmS0SQZFfTTzr7mfkJ8zYE8Gbj306hbhG8l9otKlAd/83hPgtydHQCnRrUXjeyO
-         3Xdb9N6yCM9bGoD3quR0+CSN/LZhKVymh3yX/QKl9IO3E29kzrtiip1VkXxAK5YBeUCY
-         aooQ==
-X-Gm-Message-State: AO0yUKXHqDj3i2EIHKh9Rd7uzB22yaZd263hVXo4D6a2Uyvsd7af6zXj
-        k9Hp7bHSP2mfINpp9gKDhVd6ZcP7Tmw=
-X-Google-Smtp-Source: AK7set/pn6NtBkwziMZ2k+MPhC4lRt2y2JTW+VqQug37QPJA/AWaL0QGO1soOyI/zun5Tooo0/dchg==
-X-Received: by 2002:a17:907:20f1:b0:924:943d:7181 with SMTP id rh17-20020a17090720f100b00924943d7181mr6198534ejb.51.1678899394771;
-        Wed, 15 Mar 2023 09:56:34 -0700 (PDT)
-Received: from [192.168.8.100] (94.196.116.3.threembb.co.uk. [94.196.116.3])
-        by smtp.gmail.com with ESMTPSA id u21-20020a170906409500b00928de86245fsm2729586ejj.135.2023.03.15.09.56.34
+        bh=/5df0VVcQalC1bXRcr/ZzFE9DW4g6pmup34uWUxk2BE=;
+        b=Cg/xL4idB9p6kLpGp48vV/uuCpOdMDOPL7DubdX1C5wqfEml2Qfp9LnIX/IZcqFRdr
+         h7mThdz4SqWp+9+/CKxO71LWVnyy+KGfnw9baxXVYHFzY5qZ2MSkkZb9k6aoH8HXYhA2
+         S4cQasDf2Of/pHkknZlE1QUHY39SbhQajWoUq28vdDSMdGsqsIqajwNv35WzVGB25oFF
+         2/o6I3VdXhVYe+xV1CWvvshKiPcQKTrcn7D3xCZhOMhIu6CkkHs2mlpgiHYKU6fwirbA
+         SRE7BZ/W0qxrSwnLJnyzdX7iypGmAMbcRfPdbtnaV1WzsaCioOsg+TZAuz8Mjwa8KpJ3
+         5QEg==
+X-Gm-Message-State: AO0yUKXnzhFR9lesKa9taz8OEe+e9AD7hho930o4Ii6XXkK3UsRHgzWN
+        Z5JUDvfqnyRpwz8+goaExrNjKfE1iGdCsZpfqndqLQ==
+X-Google-Smtp-Source: AK7set8OzK+A6f5D0yNLMn24/3DUQDhPAXFB5nnrO48ARbTVMVcy3wWxXjFNd9A785kMM5Plifl11g==
+X-Received: by 2002:a05:6e02:dd3:b0:317:2f8d:528f with SMTP id l19-20020a056e020dd300b003172f8d528fmr62272ilj.2.1678902003223;
+        Wed, 15 Mar 2023 10:40:03 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id y17-20020a056e02119100b0031798b87a14sm1786576ili.19.2023.03.15.10.40.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Mar 2023 09:56:34 -0700 (PDT)
-Message-ID: <f3d1faef-dc0e-48e2-ab08-3ac1c7e7bcbb@gmail.com>
-Date:   Wed, 15 Mar 2023 16:53:09 +0000
+        Wed, 15 Mar 2023 10:40:02 -0700 (PDT)
+Message-ID: <b11d27d5-8e83-7144-cdc8-3966abf42db5@kernel.dk>
+Date:   Wed, 15 Mar 2023 11:40:02 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [RFC 0/2] optimise local-tw task resheduling
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCHSET for-next 0/2] Flag file systems as supporting parallel
+ dio writes
 Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-References: <cover.1678474375.git.asml.silence@gmail.com>
- <ZBEvD04sH/JzN7MJ@ovpn-8-22.pek2.redhat.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZBEvD04sH/JzN7MJ@ovpn-8-22.pek2.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
+References: <20230307172015.54911-1-axboe@kernel.dk>
+In-Reply-To: <20230307172015.54911-1-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/15/23 02:35, Ming Lei wrote:
-> Hi Pavel
+On 3/7/23 10:20 AM, Jens Axboe wrote:
+> Hi,
 > 
-> On Fri, Mar 10, 2023 at 07:04:14PM +0000, Pavel Begunkov wrote:
->> io_uring extensively uses task_work, but when a task is waiting
->> for multiple CQEs it causes lots of rescheduling. This series
->> is an attempt to optimise it and be a base for future improvements.
->>
->> For some zc network tests eventually waiting for a portion of
->> buffers I've got 10x descrease in the number of context switches,
->> which reduced the CPU consumption more than twice (17% -> 8%).
->> It also helps storage cases, while running fio/t/io_uring against
->> a low performant drive it got 2x descrease of the number of context
->> switches for QD8 and ~4 times for QD32.
-> 
-> ublk uses io_uring_cmd_complete_in_task()(io_req_task_work_add())
-> heavily. So I tried this patchset, looks not see obvious change
-> on both IOPS and context switches when running 't/io_uring /dev/ublkb0',
-> and it is one null ublk target(ublk add -t null -z -u 1 -q 2), IOPS
-> is ~2.8M.
+> This has been on my TODO list for a while, and now that ext4 supports
+> parallel dio writes as well, time to dust it off and send it out... This
+> adds an FMODE flag to inform users that a given file supports parallel
+> dio writes. io_uring can use this to avoid serializing dio writes
+> upfront, in case it isn't needed. A few details in patch #2, patch 1 does
+> nothing by itself.
 
-Hi Ming,
-
-It's enabled for rw requests and send-zc notifications, but
-io_uring_cmd_complete_in_task() is not covered. I'll be enabling
-it for more cases, including pass through.
-
-> But ublk applies batch schedule similar with io_uring before calling
-> io_uring_cmd_complete_in_task().
-
-The feature doesn't tolerate tw that produce multiple CQEs, so
-it can't be applied to this batching and the task would stuck
-waiting.
-
-btw, from a quick look it appeared that ublk batching is there
-to keep requests together but not to improve batching. And if so,
-I think we can get rid of it, rely on io_uring batching and
-let ublk to gather its requests from tw list, which sounds
-cleaner. I'll elaborate on that later
+I'm assuming silence is consent here and folks are fine with this
+change?
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
+

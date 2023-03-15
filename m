@@ -2,81 +2,82 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 918766BBDC4
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 21:07:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E1BF6BBDC9
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 21:11:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232880AbjCOUHp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 16:07:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51596 "EHLO
+        id S232122AbjCOUL2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 16:11:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232916AbjCOUHn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 16:07:43 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD39C62860;
-        Wed, 15 Mar 2023 13:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1678910859; i=deller@gmx.de;
-        bh=GWOjALxUs5xbHgtwa/uqgPgJ2Y//Nh1FvMv2pyJyH1Y=;
-        h=X-UI-Sender-Class:Date:Subject:From:To:References:In-Reply-To;
-        b=qug4Ml7kOP+tPl65AYKIo57NqWluei2TP81GrfK+dJIGfvHdAop+zc3iksBLCCtxX
-         i2b46EWtqB+i00f7n5p5v2N6K+op32NBgNxOBGohkhSIbcSX/eVQjOajtdh1lHxtLk
-         jQIL28jlvR6EgXlbX8faQeZT9M/uf3ZI/moa5B6VsdiCpzIJ0mv/s8M8J0ZEg5/4Gt
-         xL0dNTXezRz1tPVqwcnNp/GWldFeeTJ9/yxNiaxlefZObcDKKUvn2lM0Sc2gxLHd93
-         djCQTgw1CY1clAa5xNlCgOKrHJCRF+Nouo+pvUlre4aI+LCdinx1kK4q2Wwxfvf2uO
-         MoYp2vcKmoXSg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.153.118]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3DJv-1pg7F80YIf-003ZtV; Wed, 15
- Mar 2023 21:07:39 +0100
-Message-ID: <3dcf3e0c-d393-cb95-86ab-00b4d8cf3c75@gmx.de>
-Date:   Wed, 15 Mar 2023 21:07:38 +0100
+        with ESMTP id S231964AbjCOUL2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 16:11:28 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE09B91B68
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 13:11:26 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id o14so2806549ioa.3
+        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 13:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678911086;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5l0cyX/Gw7AtJo7OxPEpznBkhuByFrSvGNbuSt8X2fk=;
+        b=V6SCptthzkM9GmpP575SL5NtVf5gGWBwZJtUMB+xix7JcwSarj7PZHG2JWB+h5L964
+         tfECqIaRvzXCjRgkCCW5onOJn2wiWf6t4mE4+y3kFtEbd3IjpPwO1edJGwdKlFis4or9
+         yrX+hr5/bzfygUFqWm3ELeSUGMwnwjH1pwVC0rx31bY8+kwK2H6xSEitzQjaHvfhrbPt
+         10+bK6RtxBfZzN2cEiLJu5agfVZDGaISah+w5hpT2mkGTN+4Uzj0fct/mo8txdid8vVr
+         02OowgvCPY/NU1GbQOsu0KGnHVsCc+ozg38KNHIZ2cVLoT5FhmYEbuysaPrAD8mggs9J
+         EC8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678911086;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5l0cyX/Gw7AtJo7OxPEpznBkhuByFrSvGNbuSt8X2fk=;
+        b=6VZ9W37grvhSdt8PYter48DqLN7OLKOLmcUA8ZIs5cCVemP7VZUtwo4Bp0aV9tGbgN
+         87Rpg5piFmVIURSe4SmVxxMjgHgcXml+d/x67iTEq1cHu4f4LXzGb7S4ys5shXau9p3W
+         3XQlXRtK7wjLK+idhxlSebJLmVw2hMUDkBwLa65bBZid8BY65VtInwYTqvDkkEVpWEeJ
+         +VjJKCARZnK+Y0wqArPlsTLPf3j67BuH4K6TJoTJEr4hRVKJp9RDfYJwy9EhP1nOYGL2
+         NQQKz3y3rA057bT+VVJHzkk7ELk1AxoNKydJ/KV8p8mz5oDjti0agOdP2dwQWDKQn/Ns
+         Dh2A==
+X-Gm-Message-State: AO0yUKVg1wmShmY29W6POyYqeoXaTq3g9DpIKq2vXDRX1O8GvHaYSNp2
+        tycGkGb9t11ZIrkUyAHbe8t9Bw==
+X-Google-Smtp-Source: AK7set/ooASY46ngQZIqdqDmsT4zeskwYnW6DOXwkkf4CjVsoUvMXiJoahLD8pki2f/tnuzHRRoCMw==
+X-Received: by 2002:a05:6602:2c07:b0:74e:5fba:d5df with SMTP id w7-20020a0566022c0700b0074e5fbad5dfmr445454iov.0.1678911086172;
+        Wed, 15 Mar 2023 13:11:26 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id l14-20020a02cd8e000000b0038a06a14b37sm1916958jap.103.2023.03.15.13.11.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Mar 2023 13:11:25 -0700 (PDT)
+Message-ID: <2e561381-29ef-e7eb-97c6-06ef2d2c9c7f@kernel.dk>
+Date:   Wed, 15 Mar 2023 14:11:25 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
 Subject: Re: [PATCHSET 0/5] User mapped provided buffer rings
 Content-Language: en-US
-From:   Helge Deller <deller@gmx.de>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+To:     Helge Deller <deller@gmx.de>, io-uring@vger.kernel.org,
         linux-parisc <linux-parisc@vger.kernel.org>
 References: <20230314171641.10542-1-axboe@kernel.dk>
  <0eeed691-9ea1-9516-c403-5ba22554f8e7@gmx.de>
+From:   Jens Axboe <axboe@kernel.dk>
 In-Reply-To: <0eeed691-9ea1-9516-c403-5ba22554f8e7@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kcx1w+KZhs9zgHCPgJunIAE6+xP4+XOwx+5qnetZ5meBbQdOxI3
- NZgsTFA6IE9sE6kAlFI/4/bB8Mfdafql8OwEBgxT2drZXHVXaPKm9zRFjyFzMW+K/MEqGAY
- Wd2Do99rcOT2x6julhbj6q1QrV2wG20aZ2kyAbzQwvF8UdwxXDV0CmghkJ24SblE/ozf+Da
- mQlp+WTxx4GjR41NP9PEQ==
-UI-OutboundReport: notjunk:1;M01:P0:wq+buM5C7q8=;uaUFAnLriwrLDwoRFoSkfYvGiF6
- qpizYH1P3JFAjfG7FCLeTHePXoVfk/9Lr5EscUjWSjC3aAF5folEHDI181qLTx/sBpch2GIfQ
- TV3Xxo/xY3WUZnfqOrOTNOeHrbXA3XgeIa2SJHrXtH5GUP6a5kHf45rfb8OI22w9W23BhxR4P
- WUA5pY61n2RThyvEJFbHFc+gnD1VUA9438EgYS/7YEfMdu4SeF7mdpon9MFyY79p+QPGSDB31
- 00uV6N3AcXGaz9uvGb0NfbcXUX502BKuncbtu0BvOCtNUy9qwZi73aDT3j3SQAGzj09iWxSt9
- LhARprQx4gWfZJOrmrT6xGm5cFgRDtjRraAgv623MJurCxCAPiOAEcPi3B2jUFrsw3oHexCSL
- NOYaePbTT5N5bQYoERAieK0ocZsMUIYhJn3UlMXcKFGFkgUUy+GqAUgwirjGIiv85lgKZbqBk
- ENvgpc4H1RebCJVIa5kRpzK9MaOB+7GMpSl41Kl+q8YwNcgzJR3uPLQpn0ufCDlRWK/Ke2x3t
- jckL/QHj0cwKIhB4TJgOfdcTJ3B56YJ3NxTqKOBMlL2m4FBy35Z4qeO5KTGl+oM7aGPWxmRx6
- TFs96W9fNC6OLfXb07fYvYA6vCFYL1TtB2A159vOyNmrxkINlg0mv/kG6h5ygGgsbGz2Z3Cq2
- 9EXq2jSl7VEENKlF+2tJ17LjDmX0GUh6NRIINiPwbI29p9hBp4I0VZR5B9rGTwJLDrac9zTP4
- PqajBBcMxwrF4cpU6tm9rmyKrqgjJNvDYU8ZdXNCGDuoZA+KnvLEij3/FtWnVqgst2MUqfyl3
- BPwX3beYifRt6Bgxi7ou8m+d6H9uM76zzFlzbfqKGT3GRP39qO29/9VfkXrFWWLTv2ueq9G5I
- EpPFLwld5tRmVavgSc0pCDN7pvJviIK/6YtUdp0oO6TxOCrtB3mRiGDm7dvAodtyDi7CHteYL
- wV/KMamjsMbNSSlb3IU7g2XPZR0=
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/15/23 21:03, Helge Deller wrote:
+On 3/15/23 2:03?PM, Helge Deller wrote:
 > Hi Jens,
->
+> 
 > Thanks for doing those fixes!
->
+> 
 > On 3/14/23 18:16, Jens Axboe wrote:
 >> One issue that became apparent when running io_uring code on parisc is
 >> that for data shared between the application and the kernel, we must
@@ -95,17 +96,18 @@ On 3/15/23 21:03, Helge Deller wrote:
 >> I'm not fully sure if this ONLY impacts archs that set SHM_COLOUR,
 >> of which there is only parisc, or if SHMLBA setting archs (of which
 >> there are others) are impact to any degree as well...
->
+> 
 > It would be interesting to find out. I'd assume that other arches,
 > e.g. sparc, might have similiar issues.
 > Have you tested your patches on other arches as well?
 
-By the way, I've now tested this series on current git head on an
-older parisc box (with PA8700 / PCX-W2 CPU).
+I don't have any sparc boxes, unfortunately.. But yes, would be
+interesting to test on sparc for sure.
 
-Results of liburing testsuite:
-Tests timed out (1): <send-zerocopy.t> - (may not be a failure)
-Tests failed (5): <buf-ring.t> <file-verify.t> <poll-race-mshot.t> <ringbu=
-f-read.t> <send_recvmsg.t>
+I do all my testing on aarch64 and x86-64, and I know that powerpc/s390
+has been tested too. But in terms of coverage and regular testing, it's
+just the former two.
 
-Helge
+-- 
+Jens Axboe
+

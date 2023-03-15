@@ -2,103 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 672AF6BBCFC
-	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 20:10:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 609496BBDBE
+	for <lists+io-uring@lfdr.de>; Wed, 15 Mar 2023 21:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232625AbjCOTKe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 15 Mar 2023 15:10:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50864 "EHLO
+        id S232684AbjCOUD3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 15 Mar 2023 16:03:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232237AbjCOTKd (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 15:10:33 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0060B570B7
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 12:10:28 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id l9so7802386iln.1
-        for <io-uring@vger.kernel.org>; Wed, 15 Mar 2023 12:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678907428; x=1681499428;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FqIUWL49gOnBQOdYINMYdbzx0C9jJ4cqoE/J1/KRSUw=;
-        b=oYYwwldYHC7TBk82xDbOuoDVKGbkRqnhpnQuu8n+RMNqKKKSp08E2HPGYf/yOWHMYq
-         MkKlgIvtv5608qyQDds4vvisg0YCh1Bfn+LSZ3uGQ1DVBl9mtgT4Ka3cR4XdaywOeR8f
-         YRMf0KBAamjwkOM2rVu2CFKdR4tp2qjkJYraqMT5uYg2kO9dt0ydv792YMY8fPKCraAG
-         NfmGVk/lyjAa3xGkGw4ELAXHQF28nvpPj8vnOKmWIBMgqugUPgy6Mg55UP/1zIV4UcCc
-         0zlMnhMl9laH6+X+fTJ1DcH0ZRszzJlR13u8gNknffRYpGi2Xs/GoDXdR2lfOQRA0dfl
-         N0SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678907428; x=1681499428;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FqIUWL49gOnBQOdYINMYdbzx0C9jJ4cqoE/J1/KRSUw=;
-        b=PtDu6iNj+pQ4nrkK+j/tIEkRx1MPR7RifCfAAVm8Cu0L6rYcbhq2sIbu2OsR9XZA2C
-         oPv45yICcIFVBHg8sD/M3fcD3yzotzFz30pOkMcfCjtnCq8dywIOdMnG/am+yJSj69a9
-         Th0EnLHAC1xzn5Kb5+klLEDhw1R86tam7pOPmKJ3VxffnSw9B33YHAUxlZVHRr6eEb4w
-         oV8MK992OucOfF02oeubul1q+3n2jipap+E6YFUy/Wu1x2hohyzqGNyJE4wCzgJkk4QJ
-         R+D+9LNKaqkwYQPspH43e81FmD6mGaNmvvx9TxwHUquGfn5DPksKkL97Pi4gTkQGCu1K
-         pkxw==
-X-Gm-Message-State: AO0yUKVlwmb+ohOCUQ0CZWZgiIWrgHNwZM5jHTfP5DLp3zSLLWHtkSIQ
-        2jX9ZoH1POVIK4cbjnS3q2Frrg==
-X-Google-Smtp-Source: AK7set8J26niHNh/3V/fslXVnCiDAuLHDWPShiSCV4pJIh9snXib4NM+TeRPcJUNZRJ4X0aDKEosoA==
-X-Received: by 2002:a05:6e02:1a88:b0:316:67be:1b99 with SMTP id k8-20020a056e021a8800b0031667be1b99mr2730516ilv.0.1678907428255;
-        Wed, 15 Mar 2023 12:10:28 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id v5-20020a02b905000000b003f8765183cesm1892370jan.87.2023.03.15.12.10.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Mar 2023 12:10:27 -0700 (PDT)
-Message-ID: <ef3eb817-0851-caa2-785f-1dfe17081841@kernel.dk>
-Date:   Wed, 15 Mar 2023 13:10:26 -0600
+        with ESMTP id S232424AbjCOUD2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 15 Mar 2023 16:03:28 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6321922C98;
+        Wed, 15 Mar 2023 13:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1678910604; i=deller@gmx.de;
+        bh=0gcAbjmoyUbTQFJIEHFPteSYbSNFp6PGgOBqOPCyuqI=;
+        h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
+        b=crQ5xO5rNAdWNO+vBxviSIip3I50yh5li2znP/m07P4lxsZ9LDIQFpW2mMHJ4x1dx
+         fFRevLXHgu/XZCtueQXmHabf3WdQnmiHx+sTbNidIa5ohxs7R3ckYaz6nuK02q79DE
+         SwAYOczFfZN8hDd0InjFACVEYCJ+W4rzrqpZOmJlEy1TL02o5YTQ0JI2BgcRkxQxUn
+         5+jH9BAagLFNW8JQJfMdUsSgi87M48ZBeyZijAHmO+yrvXbKyIFejAp341Zw9A4uCH
+         rU2Pat6OB2hdWZWXh1yDKlcQ+QEJr7F1wXbk05qyEgXa2RDRvjWv4gTdO/CEAJOmLJ
+         wfvG/ctMrQgmg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([94.134.153.118]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MS3mz-1q4uGW3oa3-00TV9K; Wed, 15
+ Mar 2023 21:03:23 +0100
+Message-ID: <0eeed691-9ea1-9516-c403-5ba22554f8e7@gmx.de>
+Date:   Wed, 15 Mar 2023 21:03:23 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: Resizing io_uring SQ/CQ?
+Subject: Re: [PATCHSET 0/5] User mapped provided buffer rings
 Content-Language: en-US
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org
-References: <20230309134808.GA374376@fedora>
- <ZAqKDen5HtSGSXzd@ovpn-8-16.pek2.redhat.com>
- <2f928d56-a2ff-39ef-f7ae-b6cc1da4fc42@kernel.dk>
- <20230310134400.GB464073@fedora> <ZAtJPG3NDCbhAvZ7@ovpn-8-16.pek2.redhat.com>
- <20230315151524.GA14895@fedora>
- <bc332b16-2ef6-80ea-40c4-27547c3b2ea0@kernel.dk>
- <20230315190147.GA7517@fedora>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230315190147.GA7517@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-parisc <linux-parisc@vger.kernel.org>
+References: <20230314171641.10542-1-axboe@kernel.dk>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20230314171641.10542-1-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0aPUBC3XrylE4s79uGQLu+Vri39SuKubLLwM51ajyxY1kr27X2D
+ IZhk8B9cU0tGCSSjD/pzOpGfIZ6jVFmYywiqe9F8AI0nLJuD0y/nxlQsrECYowLRp7m4ok/
+ HAQbBVRVCysV8rn8ry7ykM2ED4u2HKc7x0dn07pORfRHBTg3ChxYDshop59LD1oI+LJUmqB
+ Vs4Z22IA5LxaEvdN88JQA==
+UI-OutboundReport: notjunk:1;M01:P0:FjCZ0ZcymU8=;MjBU6p/KsHTFt+mqWWmkcauz3dT
+ nKUoHHa7Gk93Y4e1aECRLFbvlx2IRGjVHN/kNNqFr7GbdvFgSJjokpmyOjVOuNOtimBMEvKmA
+ APKuL+1HRKUi94x/I5oPJc2qPtTZlkpGq72AZqiMpC/nP73Atajo/mX3xMuDmXw4UoAbTYNXG
+ Ki/88/bpjCgG7ZIlBLgpyLooFN0oJoQD7w6Djhgq4ssrlE7DvoCoe84/cIyYO/AN6uqOpkXjz
+ 1yPx89WGDwGAgdIE9oyv+3VRvW7OlToQ6xu0PXcWDi6hPsjTpYO40PIiHf3X4jkDqdF/YmjtM
+ 4IeX2rfpWdKLA3lSR53zl+a11GIwGJsOBQctgCV3OEjy7ZltM2DDAeYKDDH36FBU/FQrQkstg
+ C75sAILiH4l886chl7rsLW2gAH28J2h/fAMHik+Khx7TKPFb73txAa9KAY1zNt6It5b5mOTBL
+ qkuEP4ykdgY6jOE3UWXmgNrnzT0sto2atistxRFz+rL/Uq5jEmOjhuiJ+NaqVMHQrn+/qDRc+
+ vb17tSP1zI5FKl7jHGiWihx1jkWgjZTajffxvdikVbJIC9BVmblSaO0qbDNbwGMWIxtabDfU9
+ PndpVPpVoODmlwcTHcHJZOm+eWC8q31QFdRB+cvIHkclL0G1g+dRronL/JC6HepiFHUzWUIEM
+ HqXtxKQNX1mNX0iCydUGCBN+MgczxTIBNCbYvHdXQkimcHfyNixtgIysjFP6kLL0sejheVvkq
+ lK9idItHxvUM8S/mbWYum0/T05l0ND1LHSM9NPAPBLk5JKpEk4E3wqbJBlxV6huYRlyw1WA3m
+ iFju5ajqXLod/q44/2I4ujqPCrdPFKv93yuXyUOVsgfL2OThh6ozAskiC8/SAvyd+qVL28Yut
+ bkgUxsYuVjiUymCTlMaFjR1nYK3ESz6jAhS8sMIBtnRG23LmsgYU0lbWQOsO1e6TPFqCHN09Z
+ XK7297dL7G5gMmsKIDjIw0wxj+8=
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/15/23 1:01?PM, Stefan Hajnoczi wrote:
-> On Wed, Mar 15, 2023 at 09:19:39AM -0600, Jens Axboe wrote:
->> On 3/15/23 9:15?AM, Stefan Hajnoczi wrote:
->>> Hi Ming and Jens,
->>> It would be great if you have time to clarify whether deadlocks can
->>> occur or not. If you have any questions about the scenario I was
->>> describing, please let me know.
->>
->> I don't believe there is. In anything not ancient, you are always
->> allowed to submit and the documentation should be updated to
->> describe that correctly. We don't return -EBUSY for submits with
->> overflow pending.
-> 
-> Thank you both for the discussion! It has helped.
+Hi Jens,
 
-Would like to add that while I don't think ring resizing is necessary
-because of any potential deadlocks, I do think CQ ring resizing would be
-a useful addition to avoid networked applications using giant CQ ring
-sizes by default... If we had that, you could start smaller and make it
-larger if you ran into overflows.
+Thanks for doing those fixes!
 
--- 
-Jens Axboe
+On 3/14/23 18:16, Jens Axboe wrote:
+> One issue that became apparent when running io_uring code on parisc is
+> that for data shared between the application and the kernel, we must
+> ensure that it's placed correctly to avoid aliasing issues that render
+> it useless.
+>
+> The first patch in this series is from Helge, and ensures that the
+> SQ/CQ rings are mapped appropriately. This makes io_uring actually work
+> there.
+>
+> Patches 2..4 are prep patches for patch 5, which adds a variant of
+> ring mapped provided buffers that have the kernel allocate the memory
+> for them and the application mmap() it. This brings these mapped
+> buffers in line with how the SQ/CQ rings are managed too.
+>
+> I'm not fully sure if this ONLY impacts archs that set SHM_COLOUR,
+> of which there is only parisc, or if SHMLBA setting archs (of which
+> there are others) are impact to any degree as well...
 
+It would be interesting to find out. I'd assume that other arches,
+e.g. sparc, might have similiar issues.
+Have you tested your patches on other arches as well?
+
+Helge

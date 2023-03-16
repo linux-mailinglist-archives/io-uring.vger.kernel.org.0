@@ -2,62 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A6186BD098
-	for <lists+io-uring@lfdr.de>; Thu, 16 Mar 2023 14:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F3C6BD09A
+	for <lists+io-uring@lfdr.de>; Thu, 16 Mar 2023 14:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjCPNRv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 16 Mar 2023 09:17:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
+        id S230133AbjCPNRw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 16 Mar 2023 09:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbjCPNRp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Mar 2023 09:17:45 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42291CC334
-        for <io-uring@vger.kernel.org>; Thu, 16 Mar 2023 06:17:15 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id o6-20020a17090a9f8600b0023f32869993so1420634pjp.1
-        for <io-uring@vger.kernel.org>; Thu, 16 Mar 2023 06:17:15 -0700 (PDT)
+        with ESMTP id S230167AbjCPNRq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 16 Mar 2023 09:17:46 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B982CC319
+        for <io-uring@vger.kernel.org>; Thu, 16 Mar 2023 06:17:16 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id qe8-20020a17090b4f8800b0023f07253a2cso1549176pjb.3
+        for <io-uring@vger.kernel.org>; Thu, 16 Mar 2023 06:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678972634; x=1681564634;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678972635; x=1681564635;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pezwyd0vG7hsp540g7EcpBHXx5rGXUfKuMnF2JXzgn0=;
-        b=7LI9ZrcjEBJ7Dpe1Dzd1B0GhrxafrAL0WykRXyy+cuE0d4ls/g0MjMa+TzfxyAPjma
-         RsDui0lKGQM/z7YphJaI7xtJ2iRraoYDBSYu9w56HVQTO7QPR2+uFfxRB4eUoum9UCnC
-         fNtrCktJc8k7+iPqdFTUykj0kZFC/PhLLh2tHgyc4oCf/m5xg0HUqsgqhwemxSBjTpbT
-         8vUbuS53RS9mIqsL9gs0YoCncsQhaPFk7hx0jm8x20T8ThX1FMK1JG8xP+n8UtKx4w6b
-         mEvEAhyhQ9sI6yphrpz2Iukg4KlBvZ7b/Sor83C/jDpBo32FAQVpk4KOAbqRR61Dls9o
-         PrkQ==
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VQrpQiiY9osW3DGUy6xD/lIDxf6jaTU5f3nsLOSXF7E=;
+        b=dbARJCooJZ+TG3Rg4ulMWNIOrdWRrp7wnfCQ8/AIIinIFuc4pCXfhsPcE4VNMuj/w7
+         fWbFKXkVjDfK7AORqsr9AqETVkmzEkWFKtW9nSgVHgWvswzV+msE4vaAzI1RmkUJHIMZ
+         D35iU0Q7/IHJbVWlokVhAWTtOJgR7OdSV9eqAW0LooOsoTThmm0m+qxeNoxArRZRrUoL
+         MdjyEunbw/6SjoqxtDSveDSgH98CMsrr+I3zlF1nIc7OkMFw3f8M7wEhT+uatXY61/V2
+         1q3mLPXuMUhNM8zJhLuTMaZpF07Y6Ti9sXS5o2BUylOcNJNdJSFWAfSdsaM2oRwiNP9e
+         qV4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678972634; x=1681564634;
+        d=1e100.net; s=20210112; t=1678972635; x=1681564635;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Pezwyd0vG7hsp540g7EcpBHXx5rGXUfKuMnF2JXzgn0=;
-        b=KtucgHf8hNzkmDbXPahItZ4E4jeDXaIPlJwoeRBptNJsVmhK1TxcwWBDH/YVCEtSzw
-         Gm+VpBXcKe0HeuKA1M1PyWuIrR9P/jsbDBUZqtnZ24MlnLxuUuSHnKbMCRou55yvJ8hH
-         f3vgRNSWiwlujilUbKDX3o6Bg6+oS1rKI3vNmr/2C4VuvZmvX7rWfwEuPALnvOMMCf/w
-         xjPRn4+6RRujzE4rckn4nXEChuzNtTR/JbZNm9PE1HkslAlKsfMGRqwYJmcada2tL2e9
-         2zHrxbsEQR+buj4+Ks9xjWTGhgFy6EpXb4YlVJkHIz6Xb4OFgXcj6CAtlTnOC5NOOLbW
-         aC0g==
-X-Gm-Message-State: AO0yUKX8oHA6lqrXTuza3eOvNvId2T1V637FnHSK0kBHnArMyi8yfCGI
-        ZYV5zjuVliXAOsZGshap/+Ibpg==
-X-Google-Smtp-Source: AK7set8wFP0FQmVwFthXtW8wW12GYUG1LiO5prgOre7P4z+VfiGC49CCZ55ul61g9R0AxGtDsRiMqA==
-X-Received: by 2002:a05:6a20:7fa3:b0:cd:345e:5b10 with SMTP id d35-20020a056a207fa300b000cd345e5b10mr7745142pzj.5.1678972634488;
-        Thu, 16 Mar 2023 06:17:14 -0700 (PDT)
+        bh=VQrpQiiY9osW3DGUy6xD/lIDxf6jaTU5f3nsLOSXF7E=;
+        b=5zBjM4rxeYpwAkkPo3fTkb9kwtLyHNILBqi65SpXufWSaiAx5d3vH63afeKqqKrXtW
+         eYQf+Jnkgqes0C39K+8vLRqXt44dgoog/54q/G/09I9vMINP67bgreBUwgWvndzciGJi
+         /JHykb9KIjiceM8ckVMcWzIbhJ5KrA7LOxM1YBBzvneePp+POnEWihs/EA2aZpDP3CqQ
+         GahHymzCIQxLQfXvzh1CU5rIegDC9l12unAvQaUNW38TJWHtJ05dx1a6FpHYK++PxbgP
+         1DLi1Ff5DCq11Vg6k7batLC/PffzoS/ujn273J5cEEo0eG7rQtUn7MVDOZ+TbO2vioKM
+         CnNg==
+X-Gm-Message-State: AO0yUKXo8xRhyh65nDJQc/ZVBOUYyIv9Z2lQ+HrEXKVGzw4PMmXyyjP6
+        UWxsIPl+5lQTejlAllsEC2ZwtoqJG+pK7q/aCroNXg==
+X-Google-Smtp-Source: AK7set/FXcvD6GJBcSLhFuVTZ10XHs2G6HgfCd4blhFaqm+OnnK4qlz2dF4obPG9yPBTF2odHs3tcQ==
+X-Received: by 2002:a05:6a20:441f:b0:d4:faa7:be92 with SMTP id ce31-20020a056a20441f00b000d4faa7be92mr8200885pzb.6.1678972635153;
+        Thu, 16 Mar 2023 06:17:15 -0700 (PDT)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id j9-20020aa78dc9000000b00571f66721aesm5456108pfr.42.2023.03.16.06.17.13
+        by smtp.gmail.com with ESMTPSA id j9-20020aa78dc9000000b00571f66721aesm5456108pfr.42.2023.03.16.06.17.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 16 Mar 2023 06:17:14 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, Li zeming <zeming@nfschina.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230317182538.3027-1-zeming@nfschina.com>
-References: <20230317182538.3027-1-zeming@nfschina.com>
-Subject: Re: [v2 PATCH] io_uring: rsrc: Optimize return value variable
- 'ret'
-Message-Id: <167897263379.230509.14067894771761277084.b4-ty@kernel.dk>
-Date:   Thu, 16 Mar 2023 07:17:13 -0600
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <4a5ba7d8d439f1942118f93b9be5c05d6a46f2cd.1678937992.git.asml.silence@gmail.com>
+References: <4a5ba7d8d439f1942118f93b9be5c05d6a46f2cd.1678937992.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring/msg_ring: let target know allocated index
+Message-Id: <167897263453.230509.16555040754256867497.b4-ty@kernel.dk>
+Date:   Thu, 16 Mar 2023 07:17:14 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -72,16 +70,21 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 
-On Sat, 18 Mar 2023 02:25:38 +0800, Li zeming wrote:
-> The initialization assignment of the variable ret is changed to 0, only
-> in 'goto fail;' Use the ret variable as the function return value.
+On Thu, 16 Mar 2023 12:11:42 +0000, Pavel Begunkov wrote:
+> msg_ring requests transferring files support auto index selection via
+> IORING_FILE_INDEX_ALLOC, however they don't return the selected index
+> to the target ring and there is no other good way for the userspace to
+> know where is the receieved file.
 > 
+> Return the index for allocated slots and 0 otherwise, which is
+> consistent with other fixed file installing requests.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] io_uring: rsrc: Optimize return value variable 'ret'
-      commit: 6acd352dfee558194643adbed7e849fe80fd1b93
+[1/1] io_uring/msg_ring: let target know allocated index
+      commit: 5da28edd7bd5518f97175ecea77615bb729a7a28
 
 Best regards,
 -- 

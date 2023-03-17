@@ -2,124 +2,124 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C079E6BEEBD
-	for <lists+io-uring@lfdr.de>; Fri, 17 Mar 2023 17:46:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90DE86BEEDA
+	for <lists+io-uring@lfdr.de>; Fri, 17 Mar 2023 17:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbjCQQqT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Mar 2023 12:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
+        id S229697AbjCQQwL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Mar 2023 12:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjCQQqS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Mar 2023 12:46:18 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83B509AFE9
-        for <io-uring@vger.kernel.org>; Fri, 17 Mar 2023 09:46:10 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id q6so2560637iot.2
-        for <io-uring@vger.kernel.org>; Fri, 17 Mar 2023 09:46:10 -0700 (PDT)
+        with ESMTP id S229533AbjCQQwK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Mar 2023 12:52:10 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633BAB1EE5
+        for <io-uring@vger.kernel.org>; Fri, 17 Mar 2023 09:52:08 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id j13so5851556pjd.1
+        for <io-uring@vger.kernel.org>; Fri, 17 Mar 2023 09:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679071569; x=1681663569;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679071928; x=1681663928;
         h=content-transfer-encoding:subject:from:cc:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IyaC0gSghSXSHopVWioj4e7BuaxL3fWGZcfJjEgbnGU=;
-        b=4nhrTbmVaHYU9Ad1xFbVgwSsrRevhMWmCdtBqSOMESYpOig44QLUBTIL/mlRv/SZm0
-         XfxdY0asiy4D48Q6+ambAXdOsMrSIcK7fDd+zuiLDTzTC95mb1J9O957pCOjcUpCgWbt
-         ki/l/Uujvzsy2ssMhPFN+2i15di5DyOzbtrH863KhXeHz6rau2WEfaF2B0/cDfNgqjfe
-         6Oo0nb77b7Z13W0+aOi0pOKmEBq7AUxMAHdRkXQquuFzYiCjDaM2J0GZaZ31e+Pb/v6R
-         HB8aBGTl0xLFnbGyWkJCNz2tJfJMOyTQRtM5PpKgXa7IKfdQ0BR/aJMUa9eb4oLzb8nV
-         RYUg==
+        bh=Q043sfeNA0KZ9TfF0fn+1Bi2hO41fh/LXDUG6Df4uzw=;
+        b=JpdSZ5T5iEYVdjkN9jv0BZwZMIt6SjVwZcHB2QBiiIsRz6CWUFTY9sscCYVrCQaIDL
+         x/yMJLIx3rQWl0AP76YWqAd+BJ6xvc3WKaFO6XTZykMeIkPUYp/Ubyx6OALSbsL4FQbo
+         wZQ47YfWCHaIpm53QvqdvKpYdGPhkbr2fY+X6iF8W/hHokXNkiSqMAJ5PD2SaoqLGEfc
+         w4B8TD4JCCIpFyd3ox42aHvC4ZHD25QE562yR7qnR+U6eunnXOOHXvK1KzjIvUKArhXH
+         cG5qWbnELKJe3JQSjiW9SQTN43nTcDq6gl8zO12Hb63/9sdz9WZw9S0eEkrTxm505xK+
+         zfCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679071569; x=1681663569;
+        d=1e100.net; s=20210112; t=1679071928; x=1681663928;
         h=content-transfer-encoding:subject:from:cc:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=IyaC0gSghSXSHopVWioj4e7BuaxL3fWGZcfJjEgbnGU=;
-        b=o6UaGqqEMwdaYQnUvbZxHcYiVeYLav9a/pSpUi/kSrHOGg2xnab73/5BX5fxR/Wsvh
-         aDst9zM1ps/uCEN/2PhgYfYzmOLH6Tg1IKL5D3noYENbcvF4wNAQoahD/rNY+QbZwKDe
-         ZpIaLPewJAtBKV/rJBmH/3xFtFjOPAzx1RLyDmeQnGMrcufaJoQ3tMCLJtdeD8w/Lq/I
-         dMJtEyDGdZZulKl/I+gl4ksYLaulNOMNxdzXvS8Z6Zw2PORx657SGn2TUmpi2VAE4B+x
-         e4txvm/+2+iL4AZqXiwZby/0MN645BXsC/XKEu5jvInMFpf9Sf4glOCzyAUGlj7dtX5T
-         o/FA==
-X-Gm-Message-State: AO0yUKXib7ETK6O8waku9KJD5m12iYOtfHwwgKsRvliBNMEzUuSI5Don
-        KwyIn9VeOsOSvUc3ayS8vQY3pbVKKBMC8AB7ASL13Q==
-X-Google-Smtp-Source: AK7set+RNv20CGeg8qJ/z5ri0vR5zBJoDCXiu+Rfd+k+x3WtBTyVvxvLbiaDJW/YB/9CZzFkP6FZeg==
-X-Received: by 2002:a6b:6e08:0:b0:74e:8718:a174 with SMTP id d8-20020a6b6e08000000b0074e8718a174mr5968188ioh.1.1679071569332;
-        Fri, 17 Mar 2023 09:46:09 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e34-20020a026d62000000b003c50d458389sm830323jaf.69.2023.03.17.09.46.08
+        bh=Q043sfeNA0KZ9TfF0fn+1Bi2hO41fh/LXDUG6Df4uzw=;
+        b=0d3YYZsoFXzCDnvA/0JYHIH6ZCv4ZI6o0ZGuIcgxz3GOQtfmIaqIV798ZQ1+IoE6PX
+         8Ml4sWOjlLi/POVj8s6QWxK36Ok4+P7QNu7FqiX0vzlK76Yhsu/oq3KMSbvP3GC+pLud
+         jlBGgNS3ZlDaILBMOQ4NCmHT10vNzOU+vYd0BcQE8rUoEOzAp5tFCnXX9NXEzDhZbT7O
+         nZZ8+NcZURHynQvpQMnTOUEOda6Z4Ryz7jd7dgLE7EeJFd8IL3JUd4vobMT05HZeArUD
+         P0Kv6DJtkM+hFo7CFaLLPWE+nok2gmEp7PI92rhjUax9ox6zlqD3G0D5/T1NGntvowFI
+         5tPg==
+X-Gm-Message-State: AO0yUKXs10nTtG+n0HE9GLowFdRDlyyzGn2EoFvXoWEgrotaB3u2ZChZ
+        Ba5outkdfRAxHH9oyiWxeFkgqGyq9ioJKJ4n7echAA==
+X-Google-Smtp-Source: AK7set/VwD3Qch5BkON9lYX5u+aMM7uWf4lYhzl0ZouwUy8a2bA3nLJJx9gQRt/n005gfvv0WeMdvg==
+X-Received: by 2002:a05:6a20:841c:b0:d3:a13a:4c06 with SMTP id c28-20020a056a20841c00b000d3a13a4c06mr12402891pzd.2.1679071927538;
+        Fri, 17 Mar 2023 09:52:07 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21cf::1749? ([2620:10d:c090:400::5:1473])
+        by smtp.gmail.com with ESMTPSA id n3-20020a62e503000000b005b6f63c6cf4sm1798296pff.30.2023.03.17.09.52.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Mar 2023 09:46:09 -0700 (PDT)
-Message-ID: <a0c3e328-badc-3f54-f7ff-b468a316a9d3@kernel.dk>
-Date:   Fri, 17 Mar 2023 10:46:08 -0600
+        Fri, 17 Mar 2023 09:52:07 -0700 (PDT)
+Message-ID: <2be663d0-1b55-5c4d-a66e-a612c1177b69@kernel.dk>
+Date:   Fri, 17 Mar 2023 10:52:05 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
 Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     Helge Deller <deller@gmx.de>,
-        John David Anglin <dave.anglin@bell.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH for-next] io_uring/kbuf: disallow mapping a badly aligned
- provided ring buffer
+Subject: [GIT PULL] io_uring fixes for 6.3-rc3
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On at least parisc, we have strict requirements on how we virtually map
-an address that is shared between the application and the kernel. On
-these platforms, IOU_PBUF_RING_MMAP should be used when setting up a
-shared ring buffer for provided buffers. If the application is mapping
-these pages and asking the kernel to pin+map them as well, then we have
-no control over what virtual address we get in the kernel.
+Hi Linus,
 
-For that case, do a sanity check if SHM_COLOUR is defined, and disallow
-the mapping request. The application must fall back to using
-IOU_PBUF_RING_MMAP for this case, and liburing will do that transparently
-with the set of helpers that it has.
+Set of fixes for io_uring that should go into the 6.3-rc3 release:
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/kbuf.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+- When PF_NO_SETAFFINITY was removed for io-wq threads, we kind of
+  forgot about the SQPOLL thread. Remove it there as well, there's even
+  less of a reason to set it there (Michal)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index cd1d9dddf58e..79c25459e8de 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -491,6 +491,24 @@ static int io_pin_pbuf_ring(struct io_uring_buf_reg *reg,
- 		return PTR_ERR(pages);
- 
- 	br = page_address(pages[0]);
-+#ifdef SHM_COLOUR
-+	/*
-+	 * On platforms that have specific aliasing requirements, SHM_COLOUR
-+	 * is set and we must guarantee that the kernel and user side align
-+	 * nicely. We cannot do that if IOU_PBUF_RING_MMAP isn't set and
-+	 * the application mmap's the provided ring buffer. Fail the request
-+	 * if we, by chance, don't end up with aligned addresses. The app
-+	 * should use IOU_PBUF_RING_MMAP instead, and liburing will handle
-+	 * this transparently.
-+	 */
-+	if ((reg->ring_addr | (unsigned long) br) & (SHM_COLOUR - 1)) {
-+		int i;
-+
-+		for (i = 0; i < nr_pages; i++)
-+			unpin_user_page(pages[i]);
-+		return -EINVAL;
-+	}
-+#endif
- 	bl->buf_pages = pages;
- 	bl->buf_nr_pages = nr_pages;
- 	bl->buf_ring = br;
--- 
-2.39.2
+- Fixup a confusing 'ret' setting (Li)
+
+- When MSG_RING is used to send a direct descriptor to another ring,
+  it's possible to have it allocate it on the target ring rather than
+  provide a specific index for it. If this is done, return the chosen
+  value in the CQE, like we would've done locally (Pavel)
+
+- Fix a regression in this series on huge page bvec collapsing (Pavel)
+
+Please pull!
+
+
+The following changes since commit fa780334a8c392d959ae05eb19f2410b3a1e6cb0:
+
+  io_uring: silence variable ‘prev’ set but not used warning (2023-03-09 10:10:58 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.3-2023-03-16
+
+for you to fetch changes up to d2acf789088bb562cea342b6a24e646df4d47839:
+
+  io_uring/rsrc: fix folio accounting (2023-03-16 09:32:18 -0600)
+
+----------------------------------------------------------------
+io_uring-6.3-2023-03-16
+
+----------------------------------------------------------------
+Li zeming (1):
+      io_uring: rsrc: Optimize return value variable 'ret'
+
+Michal Koutný (1):
+      io_uring/sqpoll: Do not set PF_NO_SETAFFINITY on sqpoll threads
+
+Pavel Begunkov (2):
+      io_uring/msg_ring: let target know allocated index
+      io_uring/rsrc: fix folio accounting
+
+ io_uring/msg_ring.c |  4 +++-
+ io_uring/rsrc.c     | 10 ++++++++--
+ io_uring/sqpoll.c   |  1 -
+ 3 files changed, 11 insertions(+), 4 deletions(-)
 
 -- 
 Jens Axboe

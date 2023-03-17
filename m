@@ -2,42 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAA836BEDD3
-	for <lists+io-uring@lfdr.de>; Fri, 17 Mar 2023 17:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF9BF6BEE75
+	for <lists+io-uring@lfdr.de>; Fri, 17 Mar 2023 17:37:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbjCQQPZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 17 Mar 2023 12:15:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51488 "EHLO
+        id S229604AbjCQQhL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 17 Mar 2023 12:37:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjCQQPW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Mar 2023 12:15:22 -0400
-Received: from cmx-mtlrgo001.bell.net (mta-mtl-001.bell.net [209.71.208.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30BA231BD2;
-        Fri, 17 Mar 2023 09:15:16 -0700 (PDT)
-X-RG-CM-BuS: 0
-X-RG-CM-SC: 0
-X-RG-CM: Clean
-X-Originating-IP: [209.226.249.40]
-X-RG-Env-Sender: dave.anglin@bell.net
-X-RG-Rigid: 63F65B42026D8687
-X-CM-Envelope: MS4xfOOxCu+JpTsOeY0x++eWBh/dF5BB539NUG7HNaEptS+e4V9JljLHQ5xgZ9NBTAomQ9elQSBjdolORydwFP8mrePPLaBEKx9qxgWbLQ6JdbQLKy21KRUe
- tC15PVEOeQtpps9t/XxSYzzSe8Z4e/SkgsTwSjc9n8TU3OEnLwWZkt2QsDgolyXneW7zeUCKW9IRS6PCuV9ejSxRvwQwjfwZi0Yr3OiIHEFDPnkfwVilOtBo
- Auz2Qqxt5TN5gyrDdPTk2IfuRLuSIBBly0gDGqLvocBHhJEsZaIfSSxrY8fu26mbmSb23gtGbDTnivK5YB+pTibpo3BrgFmMiyuMSpRv3Q4=
-X-CM-Analysis: v=2.4 cv=AuWNYMxP c=1 sm=1 tr=0 ts=6414920d
- a=qOHgmCO8ryfXM3F4aXJsSA==:117 a=qOHgmCO8ryfXM3F4aXJsSA==:17
- a=IkcTkHD0fZMA:10 a=FBHGMhGWAAAA:8 a=1gPPIBU9JOwuX4kq5LkA:9 a=QEXdDO2ut3YA:10
- a=imerMtPIIHEA:10 a=9gvnlMMaQFpL9xblJ6ne:22
-Received: from [192.168.2.49] (209.226.249.40) by cmx-mtlrgo001.bell.net (5.8.814) (authenticated as dave.anglin@bell.net)
-        id 63F65B42026D8687; Fri, 17 Mar 2023 12:15:09 -0400
-Message-ID: <e8c78c0f-b94a-2ac8-b827-e7938182347f@bell.net>
-Date:   Fri, 17 Mar 2023 12:15:10 -0400
+        with ESMTP id S230131AbjCQQhJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 17 Mar 2023 12:37:09 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9FBC8322
+        for <io-uring@vger.kernel.org>; Fri, 17 Mar 2023 09:37:04 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id j6so3034988ilr.7
+        for <io-uring@vger.kernel.org>; Fri, 17 Mar 2023 09:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679071023;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ck4UkbcbSKRT/h9bH3q7bC2hDj8qbJmCL92Ho9zXzgI=;
+        b=vA2YAfZu+fw8yEhjwC2mRTWT49y/GEBnGHBPu9EF9VF35eBGg8+FXqSsedGkh9DkVK
+         OHR4Y+mmh3Q09IafvyedBCwVuoG5qdMlhL1S6//NtxOVjFTTyfZlP/LTCmxMNSYzwcce
+         6XJ3vutzpvIIoKu9JbMMHXpeB6zluxGTuZsOj+4ewP9enr6lzxGOKTIxB2+VQ/bkT5XQ
+         +AMN3jt6rj9l7NT13BeNUX76gaM7108Lk0tDk4XoEjv04/M62Lx5k836id3dinVnkckK
+         Mjdf1LPex0AQ0SwAqGF3nnXwLqGObSoIU+rGm/vrRUiHhHLUpwR2Fj6HBKYekwcIVLuT
+         jUOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679071023;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ck4UkbcbSKRT/h9bH3q7bC2hDj8qbJmCL92Ho9zXzgI=;
+        b=paaqOYvyyyOkwUdENFBAiCPvkjIaB965S+YKOQF0a0GLKX+3/tcJV/nKA/L3VbXPIH
+         YNFuNqpevhJ9VjnT/pSkTGkQ72EsUSC8Kpdbdx9+4+hEi/bImO3wiLrFteMIesVIr/ce
+         LcmYO1zOQzgnbCKrrHqalZJL2rKHluQo/IFV0TOl3nx2qhv2UMG3bPko5KrZzIGxO3/e
+         lR4YGiP8kjs+VgeOEuIGPQEc5tVS9na2fjTY+f5YoAEHp9g+/+L85mNoHPQHR+1BTcip
+         d+t4e1jnSAqJM1s0Dsj5xhI/Pt2Y7mY+dlOr0u4JV73pSiOfE8uSDloLzXdOxrLKEgW/
+         oXNw==
+X-Gm-Message-State: AO0yUKVQOThI+0Pa9CUYkptobzkOHRyUMwSsnIWH7AoerW/OyD/W0/Wh
+        8S/u9Yg37qmdL+3MCvHqK3OXaw==
+X-Google-Smtp-Source: AK7set98Q+Kzn7LR1/ozMKj14f5trLGOGsFmA3+iOCpLbf7y0RYz973o+QikmtV+p4tb9ktmec1NoQ==
+X-Received: by 2002:a05:6e02:1190:b0:323:504:cff6 with SMTP id y16-20020a056e02119000b003230504cff6mr3372592ili.3.1679071023033;
+        Fri, 17 Mar 2023 09:37:03 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id r17-20020a92ac11000000b00312f2936087sm688257ilh.63.2023.03.17.09.37.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Mar 2023 09:37:02 -0700 (PDT)
+Message-ID: <869f0bb9-dea2-a739-e1ea-213955eb638a@kernel.dk>
+Date:   Fri, 17 Mar 2023 10:37:01 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
 Subject: Re: [PATCHSET 0/5] User mapped provided buffer rings
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, Helge Deller <deller@gmx.de>,
-        io-uring@vger.kernel.org,
+To:     John David Anglin <dave.anglin@bell.net>,
+        Helge Deller <deller@gmx.de>, io-uring@vger.kernel.org,
         linux-parisc <linux-parisc@vger.kernel.org>
 References: <20230314171641.10542-1-axboe@kernel.dk>
  <0eeed691-9ea1-9516-c403-5ba22554f8e7@gmx.de>
@@ -50,36 +70,47 @@ References: <20230314171641.10542-1-axboe@kernel.dk>
  <827b725a-c142-03b9-bbb3-f59ed41b3fba@kernel.dk>
  <31e9595d-691b-c87c-e38a-b369143fc946@bell.net>
  <f4da7453-49ef-73fb-7feb-fcca543bd37e@kernel.dk>
-From:   John David Anglin <dave.anglin@bell.net>
-In-Reply-To: <f4da7453-49ef-73fb-7feb-fcca543bd37e@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+ <e8c78c0f-b94a-2ac8-b827-e7938182347f@bell.net>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <e8c78c0f-b94a-2ac8-b827-e7938182347f@bell.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2023-03-17 11:57 a.m., Jens Axboe wrote:
->> Running test buf-ring.t register buf ring failed -22
->> test_full_page_reg failed
->> Test buf-ring.t failed with ret 1
-> The buf-ring failure with the patch from my previous message is because
-> it manually tries to set up a ring with an address that won't work. The
-> test case itself never uses the ring, it's just a basic
-> register/unregister test. So would just need updating if that patch goes
-> in to pass on hppa, there's nothing inherently wrong here.
->
-I would suggest it.  From page F-7 of the PA-RISC 2.0 Architecture:
+On 3/17/23 10:15?AM, John David Anglin wrote:
+> On 2023-03-17 11:57 a.m., Jens Axboe wrote:
+>>> Running test buf-ring.t register buf ring failed -22
+>>> test_full_page_reg failed
+>>> Test buf-ring.t failed with ret 1
+>> The buf-ring failure with the patch from my previous message is because
+>> it manually tries to set up a ring with an address that won't work. The
+>> test case itself never uses the ring, it's just a basic
+>> register/unregister test. So would just need updating if that patch goes
+>> in to pass on hppa, there's nothing inherently wrong here.
+>>
+> I would suggest it.  From page F-7 of the PA-RISC 2.0 Architecture:
+> 
+>    All other uses of non-equivalent aliasing (including simultaneously
+>    enabling multiple non-equivalently aliased translations where one
+>    or more allow for write access) are prohibited, and can cause
+>    machine checks or silent data corruption, including data corruption
+>    of unrelated memory on unrelated pages.
 
-    All other uses of non-equivalent aliasing (including simultaneously enabling multiple non-equivalently
-    aliased translations where one or more allow for write access) are prohibited, and can cause machine
-    checks or silent data corruption, including data corruption of unrelated memory on unrelated pages.
+I did add a patch to skip that sub-test on hppa, as there's just no way
+to make that one work as it relies on manually aligning memory to
+trigger an issue in an older kernel. So the test should pass now in the
+liburing master branch.
 
-Dave
+I'll send out the alignment check patch and we can queue that up for
+6.4.
 
 -- 
-John David Anglin  dave.anglin@bell.net
+Jens Axboe
 

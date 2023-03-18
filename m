@@ -2,198 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F926BFA46
-	for <lists+io-uring@lfdr.de>; Sat, 18 Mar 2023 14:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F08286BFAE1
+	for <lists+io-uring@lfdr.de>; Sat, 18 Mar 2023 15:31:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjCRNhB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 18 Mar 2023 09:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57384 "EHLO
+        id S229628AbjCRObx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 18 Mar 2023 10:31:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjCRNhA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Mar 2023 09:37:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6122A15E
-        for <io-uring@vger.kernel.org>; Sat, 18 Mar 2023 06:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679146568;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0Enm9xWTZwNoCZXXvKI2hug/jDF+wXEvJz1xmDl9Tj4=;
-        b=OIcWqecRphIA258MZRVHgc5FmeoyloUonfdw4iiSdLDR176sI0MtHqI56BY2Qoz1bn7wcB
-        3/JtdTFiB0m96uPPfWDLF3NgU7je6nBkFETSVgLM+7jkr1MJ6X2lsp/s1KsaA9bBIo+Iof
-        Tl9lhN2LfKjACLGqfi0Mto9tgvfnYpY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-637-4n6vxw6WNvycoCupm7sO7A-1; Sat, 18 Mar 2023 09:36:07 -0400
-X-MC-Unique: 4n6vxw6WNvycoCupm7sO7A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B0A2885C064;
-        Sat, 18 Mar 2023 13:36:06 +0000 (UTC)
-Received: from ovpn-8-18.pek2.redhat.com (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D3A02027047;
-        Sat, 18 Mar 2023 13:36:00 +0000 (UTC)
-Date:   Sat, 18 Mar 2023 21:35:56 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        with ESMTP id S229648AbjCRObw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 18 Mar 2023 10:31:52 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9926838457
+        for <io-uring@vger.kernel.org>; Sat, 18 Mar 2023 07:31:46 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id cn6so8055468pjb.2
+        for <io-uring@vger.kernel.org>; Sat, 18 Mar 2023 07:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679149906; x=1681741906;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2CcTCSKyoFSR4JaDnvBESywdYcTmjXT52y248CjSjOE=;
+        b=e+6lmIPaiRX0CqIUttFJBrndWQYiZ0ZxwNhH4+ucCoV89Z3i1NjHIfUb0bYL95xv+w
+         GhK8KVI/xxrqtPDMv0TvYy3jMsJfBZjchEtJCrAtthjeqvej6tDcmFVTDXk9n7/Dyf3C
+         yvNVYaxV/bpiDKmDbdro76BjAuB34d8nN/ePhj32dKBU3JwtdxDzoxN8fSuyKHijQXyP
+         zcUVET2SuKvBdn1MKwc3bMwGX20LUJIZU4YKa1HOiAQ/ehshWaCGgr3/s91bJBvLEVhN
+         eNi5o7QWOWvC2l8m4HohiZkY1qkfwTSTchjyvR3TMLrCjplQCtD+9ZyR8BzzEWJCXidr
+         Vdrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679149906; x=1681741906;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2CcTCSKyoFSR4JaDnvBESywdYcTmjXT52y248CjSjOE=;
+        b=kvgsJoWw+id3P0sgLn26oYTR2wPbxQgmKV11O7OzCdgQqHefH3EmmMnj/MgJqJS2VC
+         y7Mn6ocm8Vfzli0TTjnwLNu4J4gvjQk+qcOnc0TdMOQ630p9xXEEgUnApVcF9e42Wa1t
+         3CGcQd3/hkisfZOz46ALRUvJIsUJLpfBrnUowYRa+5M+8BSdbRwxmREyVqv39JQ6Np3S
+         hRqgUCbnOyD3bZTftLaw/394v4sjaHdUsK1emC0K4rARCcMsbEra3DgJGHOeOPnyL0y9
+         EKjYtwBnl8WXRBq/GYjr7YW0scoBZiotEilszYnXb1YCTg2El/nVO5nCB4DPpqx/UH5Z
+         gp6w==
+X-Gm-Message-State: AO0yUKVKftCe1+wCRYlrNSepGKRiJK6lfUgHbAwU+4vN5/taZFRLWiTK
+        o7nEBcvD/+Ua2JM+q5Nk6oiRq37lQiI72Iy966IoYQ==
+X-Google-Smtp-Source: AK7set8ytrG+LBNVevvm4pzwJdQiHhcnJ+fWa3hzo1NRtfYikvYqTjsTD7cMsWTGyBv56961LKmzDg==
+X-Received: by 2002:a17:902:ef8d:b0:19d:1e21:7f59 with SMTP id iz13-20020a170902ef8d00b0019d1e217f59mr13557969plb.0.1679149905984;
+        Sat, 18 Mar 2023 07:31:45 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id jw20-20020a170903279400b001a0428bd8c4sm3358198plb.289.2023.03.18.07.31.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Mar 2023 07:31:45 -0700 (PDT)
+Message-ID: <e92b121c-553a-b699-11ca-746ff2522d7e@kernel.dk>
+Date:   Sat, 18 Mar 2023 08:31:44 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH V3 02/16] io_uring: add IORING_OP_FUSED_CMD
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         Bernd Schubert <bschubert@ddn.com>,
-        Pavel Begunkov <asml.silence@gmail.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V3 00/16] io_uring/ublk: add IORING_OP_FUSED_CMD
-Message-ID: <ZBW+PCaeNmCR/k0M@ovpn-8-18.pek2.redhat.com>
+        Pavel Begunkov <asml.silence@gmail.com>
 References: <20230314125727.1731233-1-ming.lei@redhat.com>
- <ZBQhSzIhvZL+83nM@ovpn-8-18.pek2.redhat.com>
- <3971d43f-601f-635f-5a30-df7e647f6659@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3971d43f-601f-635f-5a30-df7e647f6659@kernel.dk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+ <20230314125727.1731233-3-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230314125727.1731233-3-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+On 3/14/23 6:57?AM, Ming Lei wrote:
+> Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
+> be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
+> 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
+> to support slave OP, io_issue_defs[op].fused_slave has to be set as 1,
+> and its ->issue() needs to retrieve buffer from master request's
+> fused_cmd_kbuf.
 
-Thanks for the response!
+Since we'd be introducing this as a new concept, probably makes sense to
+name it something other than master/slave. What about primary and
+secondary? Producer/consumer?
 
-On Sat, Mar 18, 2023 at 06:59:41AM -0600, Jens Axboe wrote:
-> On 3/17/23 2:14?AM, Ming Lei wrote:
-> > On Tue, Mar 14, 2023 at 08:57:11PM +0800, Ming Lei wrote:
-> >> Hello,
-> >>
-> >> Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
-> >> be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
-> >> 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
-> >> to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
-> >> and its ->issue() can retrieve/import buffer from master request's
-> >> fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
-> >> this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
-> >> submits slave OP just like normal OP issued from userspace, that said,
-> >> SQE order is kept, and batching handling is done too.
-> >>
-> >> Please see detailed design in commit log of the 2th patch, and one big
-> >> point is how to handle buffer ownership.
-> >>
-> >> With this way, it is easy to support zero copy for ublk/fuse device.
-> >>
-> >> Basically userspace can specify any sub-buffer of the ublk block request
-> >> buffer from the fused command just by setting 'offset/len'
-> >> in the slave SQE for running slave OP. This way is flexible to implement
-> >> io mapping: mirror, stripped, ...
-> >>
-> >> The 3th & 4th patches enable fused slave support for the following OPs:
-> >>
-> >> 	OP_READ/OP_WRITE
-> >> 	OP_SEND/OP_RECV/OP_SEND_ZC
-> >>
-> >> The other ublk patches cleans ublk driver and implement fused command
-> >> for supporting zero copy.
-> >>
-> >> Follows userspace code:
-> >>
-> >> https://github.com/ming1/ubdsrv/tree/fused-cmd-zc-v2
-> >>
-> >> All three(loop, nbd and qcow2) ublk targets have supported zero copy by passing:
-> >>
-> >> 	ublk add -t [loop|nbd|qcow2] -z .... 
-> >>
-> >> Basic fs mount/kernel building and builtin test are done, and also not
-> >> observe regression on xfstest test over ublk-loop with zero copy.
-> >>
-> >> Also add liburing test case for covering fused command based on miniublk
-> >> of blktest:
-> >>
-> >> https://github.com/ming1/liburing/commits/fused_cmd_miniublk
-> >>
-> >> Performance improvement is obvious on memory bandwidth
-> >> related workloads, such as, 1~2X improvement on 64K/512K BS
-> >> IO test on loop with ramfs backing file.
-> >>
-> >> Any comments are welcome!
-> >>
-> >> V3:
-> >> 	- fix build warning reported by kernel test robot
-> >> 	- drop patch for checking fused flags on existed drivers with
-> >> 	  ->uring_command(), which isn't necessary, since we do not do that
-> >>       when adding new ioctl or uring command
-> >>     - inline io_init_rq() for core code, so just export io_init_slave_req
-> >> 	- return result of failed slave request unconditionally since REQ_F_CQE_SKIP
-> >> 	will be cleared
-> >> 	- pass xfstest over ublk-loop
-> > 
-> > Hello Jens and Guys,
-> > 
-> > I have been working on io_uring zero copy support for ublk/fuse for a while, and
-> > I appreciate you may share any thoughts on this patchset or approach?
-> 
-> I'm a bit split on this one, as I really like (and want) the feature.
-> ublk has become popular pretty quickly, and it makes a LOT of sense to
-> support zero copy for it. At the same time, I'm not really a huge fan of
-> the fused commands... They seem too specialized to be useful for other
-> things, and it'd be a shame to do something like that only for it later
-> to be replaced by a generic solution. And then we're stuck with
-> supporting fused commands forever, not sure I like that prospect.
-> 
-> Both Pavel and Xiaoguang voiced similar concerns, and I think it may be
-> worth spending a bit more time on figuring out if splice can help us
-> here. David Howells currently has a lot going on in that area too.
+> +static inline bool io_fused_slave_write_to_buf(u8 op)
+> +{
+> +	switch (op) {
+> +	case IORING_OP_READ:
+> +	case IORING_OP_READV:
+> +	case IORING_OP_READ_FIXED:
+> +	case IORING_OP_RECVMSG:
+> +	case IORING_OP_RECV:
+> +		return 1;
+> +	default:
+> +		return 0;
+> +	}
+> +}
 
-IMO, splice(->splice_read()) can help much less in this use case, and
-I can't see improvement David Howells has done in this area:
+Maybe add a data direction bit to the hot opdef part? Any command that
+has fused support should ensure that it is set correctly.
 
-1) we need to pass reference of the whole buffer from driver to io_uring,
-which is missed in splice, which just deals with page reference; for
-passing whole buffer reference, we have to apply per buffer pipe to
-solve the problem, and this way is expensive since the pipe can't
-be freed until all buffers are consumed.
+> +int io_import_kbuf_for_slave(unsigned long buf_off, unsigned int len, int dir,
+> +		struct iov_iter *iter, struct io_kiocb *slave)
+> +{
 
-2) reference can't outlive the whole buffer, and splice still misses
-mechanism to provide such guarantee; splice can just make sure that
-page won't be gone if page reference is grabbed, but here we care
-more the whole buffer & its (shared)references lifetime
+The kbuf naming should probably also change, as it kind of overlaps with
+the kbufs we already have and which are not really related.
 
-3) current ->splice_read() misses capability to provide writeable
-reference to spliced page[2]; either we have to pass new flags
-to ->splice_read() or passing back new pipe buf flags, unfortunately
-Linus thought it isn't good to extend pipe/splice for such purpose,
-and now I agree with Linus now.
-
-I believe that Pavel has realized this point[3] too, and here the only
-of value of using pipe is to reuse ->splice_read(), however, the above
-points show that ->splice_read() isn't good at this purpose.
-
-
-[1] https://lore.kernel.org/linux-block/ZAk5%2FHfwc+NBwlbI@ovpn-8-17.pek2.redhat.com/
-[2] https://lore.kernel.org/linux-block/CAJfpeguQ3xn2-6svkkVXJ88tiVfcDd-eKi1evzzfvu305fMoyw@mail.gmail.com/
-[3] https://lore.kernel.org/linux-block/7cdea685-98d3-e24d-8282-87cb44ae6174@gmail.com/
-
-> 
-> So while I'd love to see this feature get queued up right now, I also
-> don't want to prematurely do so. Can we split out the fixes from this
-> series into a separate series that we can queue up now? That would also
-> help shrink the patchset, which is always a win for review.
-
-There is only one fix(patch 5), and the real part is actually the 1st 4
-patches.
-
-I will separate patch 5 from the whole patchset and send out soon, and will
-post out this patchset v4 by improving document for explaining how fused
-command solves this problem in one safe & efficient way.
-
-
-thanks,
-Ming
+-- 
+Jens Axboe
 

@@ -2,142 +2,141 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5E76C1F35
-	for <lists+io-uring@lfdr.de>; Mon, 20 Mar 2023 19:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7203A6C21E1
+	for <lists+io-uring@lfdr.de>; Mon, 20 Mar 2023 20:48:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230513AbjCTSMj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Mar 2023 14:12:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51534 "EHLO
+        id S230201AbjCTTsS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Mar 2023 15:48:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbjCTSMU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Mar 2023 14:12:20 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B3662330F
-        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 11:06:31 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id r4so6894562ilt.8
-        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 11:06:31 -0700 (PDT)
+        with ESMTP id S230193AbjCTTr7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Mar 2023 15:47:59 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D003186BB
+        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 12:46:18 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id h7so7074710ila.5
+        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 12:46:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679335581;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hy28s5e+5lLiy2thJ07AzA3cwAB50tsazdDOU9OI66A=;
-        b=SglhudkIB0K/hSFVwxZDbRJKXH10PYJwuv4gcNXIm+ATMecwe1ww0uCGfISQeMS1Xn
-         8Pn/d8vLVyDmSHst2cdAbdJRtMGTNwPgEA0raNPQ52vLpiCWAvPKFWMC6HJ8a21Xy1ak
-         RJfdnGXbz30Qby1rTeC1Hz6XqxbiMAsKoj8zbYpkRzsazr6CKZzG1V3aATXu9GjwtjQ7
-         nhD5qx+IT/QNDTRHm0p3rplgaBL3giiXlZtjXTpl8ycCQiMUCyMARR7NK1YG6r6RstCe
-         R3B4dsfJFh7uiRFESoLG4jD8J4o6KUNSpzQ3zHSHgR9q6DUi63ryhjNhUEnAqH6ncH61
-         5XSg==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679341578; x=1681933578;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUn52EW11J3zoV0tM8bRDEf4UDjiTecjwfVChm2ZUBE=;
+        b=cSkYj+CH4+stOzM8QOGij7HCYee+O59ZiYYZab19LKp60jjFkhNayDgSE8cLgN0IEV
+         cQtqWX/MQloEn28GV/kfY47+v8YV2ckX0YSyFpuEOtscny0MJTl6YoAxeVJ59QAMSqvg
+         /VOb18wi8Xapvi4Q3gqXYJlFMnQi6r73kMZOtAgbQGjBQ7kZO8VTD1Q+5kWJYmWo0Lyc
+         kycTMGDSALzoAShpSuLyyplx/DdSQuKAVhE/hhh4veNQK5RFbWvnlsk87kjkBsTsLT8r
+         OlSsvY4jq1EMIj9Tcl9QgTmuLBr0ZBjjJPoi8iN+uGmQlfThX8kekuxXOvyPbHBey8dQ
+         ujtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679335581;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hy28s5e+5lLiy2thJ07AzA3cwAB50tsazdDOU9OI66A=;
-        b=rJ/LDfyt6DA2DEKPlBZB7SbLCr7ESfdOuZMcqM8L2m7dwggso9AEM7yvEpnAU/pQy1
-         eIPOWBtrIRI/iXQOc6Hi9P8AAAm4RSxhTn3j5nJRKKxIxEfDM+zxvbq2bZ2fPfalXDMK
-         fdkn8vQTme8Oo+eqSeSX/tn1VMiK1yJiXCglYXAX7nKSPzW9ytRLQf+IBxWQZB0+u4Ia
-         ctw4qE0OSwEoU14jAH0CttdtuvFjm9RjUrRLx7bJlu4wjlmn16nTH+mOwFQD4LLM0lGs
-         mGg8m0/XkCHPonxx2l6g2KcXo6eC48pIUgamDYsh0pGBpm234S0TIplPTOraup1Zeln9
-         CyRQ==
-X-Gm-Message-State: AO0yUKX5NTUFMl7bQKkqiQhKMxFXXG5PXJQMheiDNqPjXFi4bJPX4T+x
-        h8aJI8V1VM4ZHZiuvTEoHvv4Qg==
-X-Google-Smtp-Source: AK7set8st1P0Fd3ZXsNQ7qFyRBh7YiyDddSEAmZOHavCvKCPFKLQ1QRef5Sli41k/ZRCzI+wXyvnNQ==
-X-Received: by 2002:a05:6e02:16cd:b0:317:9d16:e6c7 with SMTP id 13-20020a056e0216cd00b003179d16e6c7mr263705ilx.3.1679335580914;
-        Mon, 20 Mar 2023 11:06:20 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679341578; x=1681933578;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AUn52EW11J3zoV0tM8bRDEf4UDjiTecjwfVChm2ZUBE=;
+        b=TWzyocImF24RFuboQcBnuavB2d5tDX7jVaoG+dU2/WYryYni4HW73SpZC64I0Igcko
+         Zbn77pbgdM26Pa+t/G3TOSn8eCDeFzDUnFkFrzfigOSgYKsYITFHZH9orSsY90kgzXbf
+         lBjU9cMSeDDN7ktqcLQwcl89eqbIYfPjLJjRssgKgXBNWaFXlIusoNEGymo4bYPSlRsA
+         //veapC492Uh2zJxhwzB2VEBdHinu73SBQV+TCSLUwHS02n8T228KBqTVh2UQq5usMaM
+         nC8Z8L3QVNqyhPP5de4qsjtHizrk+pasO3pHPH1w9jkozba1peMr99/Z9BsKczsyw2io
+         k5QA==
+X-Gm-Message-State: AO0yUKVaAMxkKXglwkxk60dBfimaFoxLdx2FWtwkoXQTzEQ3SNv6CXRX
+        1MCERH5KjxZ7YADsPt4dxArI2MrC+aGUXr2A1NnZxQ==
+X-Google-Smtp-Source: AK7set9XJzP/2nMhk+yTsaS4AWcuE8k707K4m7cHlmYDgnyOaRWWNpoyhr05kahQ6k0Nyb5BQulnMQ==
+X-Received: by 2002:a05:6e02:12c8:b0:317:2f8d:528f with SMTP id i8-20020a056e0212c800b003172f8d528fmr491009ilm.2.1679341577805;
+        Mon, 20 Mar 2023 12:46:17 -0700 (PDT)
 Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id b4-20020a923404000000b0030ef8f16056sm2898753ila.72.2023.03.20.11.06.20
+        by smtp.gmail.com with ESMTPSA id e28-20020a0566380cdc00b0040634c51861sm3375259jak.132.2023.03.20.12.46.17
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 11:06:20 -0700 (PDT)
-Message-ID: <6e37c8a6-9280-5c1f-b73e-df204242a2b7@kernel.dk>
-Date:   Mon, 20 Mar 2023 12:06:19 -0600
+        Mon, 20 Mar 2023 12:46:17 -0700 (PDT)
+Message-ID: <e1760236-2005-6970-75bc-948dd960ae53@kernel.dk>
+Date:   Mon, 20 Mar 2023 13:46:16 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH] blk-mq: remove hybrid polling
 Content-Language: en-US
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-References: <20230320161205.1714865-1-kbusch@meta.com>
- <5aecde5b-c709-c8b3-28cd-5a361bd492b9@kernel.dk>
- <ZBiddGnl0tEbhg43@kbusch-mbp.dhcp.thefacebook.com>
+To:     io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZBiddGnl0tEbhg43@kbusch-mbp.dhcp.thefacebook.com>
+Subject: [PATCH] io_uring/net: avoid sending -ECONNABORTED on repeated
+ connection requests
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/20/23 11:52?AM, Keith Busch wrote:
-> On Mon, Mar 20, 2023 at 11:16:40AM -0600, Jens Axboe wrote:
->>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->>> index f1fce1c7fa44b..c6c231f3d0f10 100644
->>> --- a/block/blk-sysfs.c
->>> +++ b/block/blk-sysfs.c
->>> @@ -408,36 +408,7 @@ queue_rq_affinity_store(struct request_queue *q, const char *page, size_t count)
->>>  
->>>  static ssize_t queue_poll_delay_show(struct request_queue *q, char *page)
->>>  {
->>> -	int val;
->>> -
->>> -	if (q->poll_nsec == BLK_MQ_POLL_CLASSIC)
->>> -		val = BLK_MQ_POLL_CLASSIC;
->>> -	else
->>> -		val = q->poll_nsec / 1000;
->>> -
->>> -	return sprintf(page, "%d\n", val);
->>> -}
->>> -
->>> -static ssize_t queue_poll_delay_store(struct request_queue *q, const char *page,
->>> -				size_t count)
->>> -{
->>> -	int err, val;
->>> -
->>> -	if (!q->mq_ops || !q->mq_ops->poll)
->>> -		return -EINVAL;
->>> -
->>> -	err = kstrtoint(page, 10, &val);
->>> -	if (err < 0)
->>> -		return err;
->>> -
->>> -	if (val == BLK_MQ_POLL_CLASSIC)
->>> -		q->poll_nsec = BLK_MQ_POLL_CLASSIC;
->>> -	else if (val >= 0)
->>> -		q->poll_nsec = val * 1000;
->>> -	else
->>> -		return -EINVAL;
->>> -
->>> -	return count;
->>> +	return sprintf(page, "%d\n", -1);
->>>  }
->>
->> Do we want to retain the _store setting here to avoid breaking anything?
-> 
-> I was thinking users would want to know the kernel isn't going to
-> honor the requested value. Errors can already happen if you're using a
-> stacked device, so I assmued removing '_store' wouldn't break anyone
-> using this interface.
-> 
-> But I can see it both ways though, so whichever you prefer. At the
-> very least, though, I need to update Documentation's sysfs-block, so
-> I'll do that in the v2.
+Since io_uring does nonblocking connect requests, if we do two repeated
+ones without having a listener, the second will get -ECONNABORTED rather
+than the expected -ECONNREFUSED. Treat -ECONNABORTED like a normal retry
+condition if we're nonblocking, if we haven't already seen it.
 
-Users knowing == things breaking. Because it isn't a person looking at
-that thing, it's some script or application. So I do think it's better
-to just pretend we did something, and just not do anything. Because it
-won't change anything in terms of the application working. If you did
-you use hybrid polling, it'll still work fine with classic.
+Cc: stable@vger.kernel.org
+Fixes: 3fb1bd688172 ("io_uring/net: handle -EINPROGRESS correct for IORING_OP_CONNECT")
+Link: https://github.com/axboe/liburing/issues/828
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Arguably not a high risk thing, but I'd prefer decoupling the two
-changes and then we can yank the store method at some later point in
-time.
+---
+
+diff --git a/io_uring/net.c b/io_uring/net.c
+index b7f190ca528e..4040cf093318 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -47,6 +47,7 @@ struct io_connect {
+ 	struct sockaddr __user		*addr;
+ 	int				addr_len;
+ 	bool				in_progress;
++	bool				seen_econnaborted;
+ };
+ 
+ struct io_sr_msg {
+@@ -1424,7 +1425,7 @@ int io_connect_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	conn->addr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	conn->addr_len =  READ_ONCE(sqe->addr2);
+-	conn->in_progress = false;
++	conn->in_progress = conn->seen_econnaborted = false;
+ 	return 0;
+ }
+ 
+@@ -1461,18 +1462,24 @@ int io_connect(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	ret = __sys_connect_file(req->file, &io->address,
+ 					connect->addr_len, file_flags);
+-	if ((ret == -EAGAIN || ret == -EINPROGRESS) && force_nonblock) {
++	if ((ret == -EAGAIN || ret == -EINPROGRESS || ret == -ECONNABORTED)
++	    && force_nonblock) {
+ 		if (ret == -EINPROGRESS) {
+ 			connect->in_progress = true;
+-		} else {
+-			if (req_has_async_data(req))
+-				return -EAGAIN;
+-			if (io_alloc_async_data(req)) {
+-				ret = -ENOMEM;
++			return -EAGAIN;
++		}
++		if (ret == -ECONNABORTED) {
++			if (connect->seen_econnaborted)
+ 				goto out;
+-			}
+-			memcpy(req->async_data, &__io, sizeof(__io));
++			connect->seen_econnaborted = true;
++		}
++		if (req_has_async_data(req))
++			return -EAGAIN;
++		if (io_alloc_async_data(req)) {
++			ret = -ENOMEM;
++			goto out;
+ 		}
++		memcpy(req->async_data, &__io, sizeof(__io));
+ 		return -EAGAIN;
+ 	}
+ 	if (ret == -ERESTARTSYS)
 
 -- 
 Jens Axboe

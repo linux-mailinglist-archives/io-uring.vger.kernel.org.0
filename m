@@ -2,576 +2,345 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D26026C1B34
-	for <lists+io-uring@lfdr.de>; Mon, 20 Mar 2023 17:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E97016C1D69
+	for <lists+io-uring@lfdr.de>; Mon, 20 Mar 2023 18:12:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231977AbjCTQVD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 20 Mar 2023 12:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52968 "EHLO
+        id S233421AbjCTRL6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 20 Mar 2023 13:11:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232022AbjCTQUi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Mar 2023 12:20:38 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFECDBDFC
-        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 09:12:18 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32K97VxD004745
-        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 09:12:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=s2048-2021-q4;
- bh=hP2ugGUfXZWB7bKpwBhxX4WMaPOtLeBAzvbfIhFoCrs=;
- b=DexflX2SavfCjvFTytG4J7fS6jt/ilzeP5NXKX7m68mRaijocRuWyyHwQLJLXc4Db70O
- EQvLtVAuRfdpkCn5ft7d9LTa4/3vQvhMSaWh9e2gLKYH5xm9KNKnwSn30gYFQ1IWSRfK
- rF4Gptj6j0xi7MyuMThOq54rcPxs62WhmIIgAtwHtwM0z6SLLuFB5mYqrLf410upsL8v
- ezmL4qC2fDgbwkjCbye7qO5R4Na4mnwEeZw8A0BQNvv+CQ1/NS/5Ya6Ty7fWiQ4wl1tn
- wWhm9Ahf6GCHyIajDUXQmUSJRaHts4jhpG3loDXV+TE8zsZcDfL/rPKoSVg8GYa+1pBb bg== 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3pd8mrtenu-5
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 20 Mar 2023 09:12:18 -0700
-Received: from twshared4419.04.ash8.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.17; Mon, 20 Mar 2023 09:12:13 -0700
-Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 439AF13FD65A1; Mon, 20 Mar 2023 09:12:06 -0700 (PDT)
-From:   Keith Busch <kbusch@meta.com>
-To:     <linux-block@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        <io-uring@vger.kernel.org>
-CC:     Pavel Begunkov <asml.silence@gmail.com>,
-        Keith Busch <kbusch@kernel.org>
-Subject: [PATCH] blk-mq: remove hybrid polling
-Date:   Mon, 20 Mar 2023 09:12:05 -0700
-Message-ID: <20230320161205.1714865-1-kbusch@meta.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S233413AbjCTRLh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 20 Mar 2023 13:11:37 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934A5A276;
+        Mon, 20 Mar 2023 10:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679332059; x=1710868059;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nMpguQBfxSul1dNNY2Z2RHUaVPhMvz/6HPsmceIZJxk=;
+  b=Fmb4UArSKfZB/MnSXgWeeRE9p0fslu1RIQxy4KRue+A2ulyiftoz4PIU
+   s5jYsRiDISYSaYA2+yo/Bbyy2Ypfz2eYddCiwF55ySXmuKAfpT0bBl9C+
+   wFFDLGkUbQukYZ/uTbVYrz/WvpZ0eoPZEkPHJnctAKMdLGs3hSf30M3RX
+   X65nj4aOuENJOXnbF3n5QhosvuIAtADOlcAdLmkHN80OxYZ5opHkvQQ5j
+   ij8xxY3HIUUH7V10J+YfGRn+B783XeBm7fV38W2I0EsJFcuus1P+26LM9
+   Phuv8KyOc6Mi+rrtk1gRDfGCOybNcPvZc+iAEc4H3MUGmUfiJtjCHwd+D
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="318370791"
+X-IronPort-AV: E=Sophos;i="5.98,276,1673942400"; 
+   d="scan'208";a="318370791"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2023 10:05:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="711426322"
+X-IronPort-AV: E=Sophos;i="5.98,276,1673942400"; 
+   d="scan'208";a="711426322"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 20 Mar 2023 10:05:50 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1peIxB-000BAv-1B;
+        Mon, 20 Mar 2023 17:05:49 +0000
+Date:   Tue, 21 Mar 2023 01:05:19 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     rcu@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-wireless@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-mm@kvack.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, io-uring@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 73f2c2a7e1d2b31fdd5faa6dfa151c437a6c0a5a
+Message-ID: <6418924f.3FGLqXsUadcfPipX%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: u603LKdJmpmKeyXBm_bnVsT-Wj00BTtu
-X-Proofpoint-ORIG-GUID: u603LKdJmpmKeyXBm_bnVsT-Wj00BTtu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-20_13,2023-03-20_02,2023-02-09_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 73f2c2a7e1d2b31fdd5faa6dfa151c437a6c0a5a  Add linux-next specific files for 20230320
 
-io_uring provides the only way user space can poll completions, and that
-always sets BLK_POLL_NOSLEEP. This effectively makes hybrid polling dead
-code, so remove it and everything supporting it.
+Error/Warning reports:
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- block/blk-core.c       |   6 --
- block/blk-mq-debugfs.c |  26 ------
- block/blk-mq.c         | 205 ++---------------------------------------
- block/blk-stat.c       |  18 ----
- block/blk-sysfs.c      |  33 +------
- include/linux/blk-mq.h |   2 -
- include/linux/blkdev.h |  12 ---
- io_uring/rw.c          |   2 +-
- 8 files changed, 9 insertions(+), 295 deletions(-)
+https://lore.kernel.org/oe-kbuild-all/202303081807.lBLWKmpX-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303151409.por0SBf7-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303161404.OrmfCy09-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303171300.g6uEM0X9-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303171506.Af2gNUDA-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303190142.TjYYpbba-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303201615.Qfu18nWV-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303202113.O9pAgJGQ-lkp@intel.com
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 9e5e0277a4d95..269765d16cfd9 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -263,13 +263,7 @@ static void blk_free_queue_rcu(struct rcu_head *rcu_=
-head)
-=20
- static void blk_free_queue(struct request_queue *q)
- {
--	if (q->poll_stat)
--		blk_stat_remove_callback(q, q->poll_cb);
--	blk_stat_free_callback(q->poll_cb);
--
- 	blk_free_queue_stats(q->stats);
--	kfree(q->poll_stat);
--
- 	if (queue_is_mq(q))
- 		blk_mq_release(q);
-=20
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index b01818f8e216e..212a7f301e730 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -15,33 +15,8 @@
- #include "blk-mq-tag.h"
- #include "blk-rq-qos.h"
-=20
--static void print_stat(struct seq_file *m, struct blk_rq_stat *stat)
--{
--	if (stat->nr_samples) {
--		seq_printf(m, "samples=3D%d, mean=3D%llu, min=3D%llu, max=3D%llu",
--			   stat->nr_samples, stat->mean, stat->min, stat->max);
--	} else {
--		seq_puts(m, "samples=3D0");
--	}
--}
--
- static int queue_poll_stat_show(void *data, struct seq_file *m)
- {
--	struct request_queue *q =3D data;
--	int bucket;
--
--	if (!q->poll_stat)
--		return 0;
--
--	for (bucket =3D 0; bucket < (BLK_MQ_POLL_STATS_BKTS / 2); bucket++) {
--		seq_printf(m, "read  (%d Bytes): ", 1 << (9 + bucket));
--		print_stat(m, &q->poll_stat[2 * bucket]);
--		seq_puts(m, "\n");
--
--		seq_printf(m, "write (%d Bytes): ",  1 << (9 + bucket));
--		print_stat(m, &q->poll_stat[2 * bucket + 1]);
--		seq_puts(m, "\n");
--	}
- 	return 0;
- }
-=20
-@@ -282,7 +257,6 @@ static const char *const rqf_name[] =3D {
- 	RQF_NAME(STATS),
- 	RQF_NAME(SPECIAL_PAYLOAD),
- 	RQF_NAME(ZONE_WRITE_LOCKED),
--	RQF_NAME(MQ_POLL_SLEPT),
- 	RQF_NAME(TIMED_OUT),
- 	RQF_NAME(ELV),
- 	RQF_NAME(RESV),
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index a875b1cdff9b5..4e30459df8151 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -46,51 +46,15 @@
-=20
- static DEFINE_PER_CPU(struct llist_head, blk_cpu_done);
-=20
--static void blk_mq_poll_stats_start(struct request_queue *q);
--static void blk_mq_poll_stats_fn(struct blk_stat_callback *cb);
--
--static int blk_mq_poll_stats_bkt(const struct request *rq)
--{
--	int ddir, sectors, bucket;
--
--	ddir =3D rq_data_dir(rq);
--	sectors =3D blk_rq_stats_sectors(rq);
--
--	bucket =3D ddir + 2 * ilog2(sectors);
--
--	if (bucket < 0)
--		return -1;
--	else if (bucket >=3D BLK_MQ_POLL_STATS_BKTS)
--		return ddir + BLK_MQ_POLL_STATS_BKTS - 2;
--
--	return bucket;
--}
--
--#define BLK_QC_T_SHIFT		16
--#define BLK_QC_T_INTERNAL	(1U << 31)
--
- static inline struct blk_mq_hw_ctx *blk_qc_to_hctx(struct request_queue =
-*q,
- 		blk_qc_t qc)
- {
--	return xa_load(&q->hctx_table,
--			(qc & ~BLK_QC_T_INTERNAL) >> BLK_QC_T_SHIFT);
--}
--
--static inline struct request *blk_qc_to_rq(struct blk_mq_hw_ctx *hctx,
--		blk_qc_t qc)
--{
--	unsigned int tag =3D qc & ((1U << BLK_QC_T_SHIFT) - 1);
--
--	if (qc & BLK_QC_T_INTERNAL)
--		return blk_mq_tag_to_rq(hctx->sched_tags, tag);
--	return blk_mq_tag_to_rq(hctx->tags, tag);
-+	return xa_load(&q->hctx_table, qc);
- }
-=20
- static inline blk_qc_t blk_rq_to_qc(struct request *rq)
- {
--	return (rq->mq_hctx->queue_num << BLK_QC_T_SHIFT) |
--		(rq->tag !=3D -1 ?
--		 rq->tag : (rq->internal_tag | BLK_QC_T_INTERNAL));
-+	return rq->mq_hctx->queue_num;
- }
-=20
- /*
-@@ -1038,10 +1002,8 @@ static inline void blk_account_io_start(struct req=
-uest *req)
-=20
- static inline void __blk_mq_end_request_acct(struct request *rq, u64 now=
-)
- {
--	if (rq->rq_flags & RQF_STATS) {
--		blk_mq_poll_stats_start(rq->q);
-+	if (rq->rq_flags & RQF_STATS)
- 		blk_stat_add(rq, now);
--	}
-=20
- 	blk_mq_sched_completed_request(rq, now);
- 	blk_account_io_done(rq, now);
-@@ -4222,14 +4184,8 @@ int blk_mq_init_allocated_queue(struct blk_mq_tag_=
-set *set,
- 	/* mark the queue as mq asap */
- 	q->mq_ops =3D set->ops;
-=20
--	q->poll_cb =3D blk_stat_alloc_callback(blk_mq_poll_stats_fn,
--					     blk_mq_poll_stats_bkt,
--					     BLK_MQ_POLL_STATS_BKTS, q);
--	if (!q->poll_cb)
--		goto err_exit;
--
- 	if (blk_mq_alloc_ctxs(q))
--		goto err_poll;
-+		goto err_exit;
-=20
- 	/* init q->mq_kobj and sw queues' kobjects */
- 	blk_mq_sysfs_init(q);
-@@ -4257,11 +4213,6 @@ int blk_mq_init_allocated_queue(struct blk_mq_tag_=
-set *set,
-=20
- 	q->nr_requests =3D set->queue_depth;
-=20
--	/*
--	 * Default to classic polling
--	 */
--	q->poll_nsec =3D BLK_MQ_POLL_CLASSIC;
--
- 	blk_mq_init_cpu_queues(q, set->nr_hw_queues);
- 	blk_mq_add_queue_tag_set(set, q);
- 	blk_mq_map_swqueue(q);
-@@ -4269,9 +4220,6 @@ int blk_mq_init_allocated_queue(struct blk_mq_tag_s=
-et *set,
-=20
- err_hctxs:
- 	blk_mq_release(q);
--err_poll:
--	blk_stat_free_callback(q->poll_cb);
--	q->poll_cb =3D NULL;
- err_exit:
- 	q->mq_ops =3D NULL;
- 	return -ENOMEM;
-@@ -4768,138 +4716,8 @@ void blk_mq_update_nr_hw_queues(struct blk_mq_tag=
-_set *set, int nr_hw_queues)
- }
- EXPORT_SYMBOL_GPL(blk_mq_update_nr_hw_queues);
-=20
--/* Enable polling stats and return whether they were already enabled. */
--static bool blk_poll_stats_enable(struct request_queue *q)
--{
--	if (q->poll_stat)
--		return true;
--
--	return blk_stats_alloc_enable(q);
--}
--
--static void blk_mq_poll_stats_start(struct request_queue *q)
--{
--	/*
--	 * We don't arm the callback if polling stats are not enabled or the
--	 * callback is already active.
--	 */
--	if (!q->poll_stat || blk_stat_is_active(q->poll_cb))
--		return;
--
--	blk_stat_activate_msecs(q->poll_cb, 100);
--}
--
--static void blk_mq_poll_stats_fn(struct blk_stat_callback *cb)
--{
--	struct request_queue *q =3D cb->data;
--	int bucket;
--
--	for (bucket =3D 0; bucket < BLK_MQ_POLL_STATS_BKTS; bucket++) {
--		if (cb->stat[bucket].nr_samples)
--			q->poll_stat[bucket] =3D cb->stat[bucket];
--	}
--}
--
--static unsigned long blk_mq_poll_nsecs(struct request_queue *q,
--				       struct request *rq)
--{
--	unsigned long ret =3D 0;
--	int bucket;
--
--	/*
--	 * If stats collection isn't on, don't sleep but turn it on for
--	 * future users
--	 */
--	if (!blk_poll_stats_enable(q))
--		return 0;
--
--	/*
--	 * As an optimistic guess, use half of the mean service time
--	 * for this type of request. We can (and should) make this smarter.
--	 * For instance, if the completion latencies are tight, we can
--	 * get closer than just half the mean. This is especially
--	 * important on devices where the completion latencies are longer
--	 * than ~10 usec. We do use the stats for the relevant IO size
--	 * if available which does lead to better estimates.
--	 */
--	bucket =3D blk_mq_poll_stats_bkt(rq);
--	if (bucket < 0)
--		return ret;
--
--	if (q->poll_stat[bucket].nr_samples)
--		ret =3D (q->poll_stat[bucket].mean + 1) / 2;
--
--	return ret;
--}
--
--static bool blk_mq_poll_hybrid(struct request_queue *q, blk_qc_t qc)
--{
--	struct blk_mq_hw_ctx *hctx =3D blk_qc_to_hctx(q, qc);
--	struct request *rq =3D blk_qc_to_rq(hctx, qc);
--	struct hrtimer_sleeper hs;
--	enum hrtimer_mode mode;
--	unsigned int nsecs;
--	ktime_t kt;
--
--	/*
--	 * If a request has completed on queue that uses an I/O scheduler, we
--	 * won't get back a request from blk_qc_to_rq.
--	 */
--	if (!rq || (rq->rq_flags & RQF_MQ_POLL_SLEPT))
--		return false;
--
--	/*
--	 * If we get here, hybrid polling is enabled. Hence poll_nsec can be:
--	 *
--	 *  0:	use half of prev avg
--	 * >0:	use this specific value
--	 */
--	if (q->poll_nsec > 0)
--		nsecs =3D q->poll_nsec;
--	else
--		nsecs =3D blk_mq_poll_nsecs(q, rq);
--
--	if (!nsecs)
--		return false;
--
--	rq->rq_flags |=3D RQF_MQ_POLL_SLEPT;
--
--	/*
--	 * This will be replaced with the stats tracking code, using
--	 * 'avg_completion_time / 2' as the pre-sleep target.
--	 */
--	kt =3D nsecs;
--
--	mode =3D HRTIMER_MODE_REL;
--	hrtimer_init_sleeper_on_stack(&hs, CLOCK_MONOTONIC, mode);
--	hrtimer_set_expires(&hs.timer, kt);
--
--	do {
--		if (blk_mq_rq_state(rq) =3D=3D MQ_RQ_COMPLETE)
--			break;
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		hrtimer_sleeper_start_expires(&hs, mode);
--		if (hs.task)
--			io_schedule();
--		hrtimer_cancel(&hs.timer);
--		mode =3D HRTIMER_MODE_ABS;
--	} while (hs.task && !signal_pending(current));
--
--	__set_current_state(TASK_RUNNING);
--	destroy_hrtimer_on_stack(&hs.timer);
--
--	/*
--	 * If we sleep, have the caller restart the poll loop to reset the
--	 * state.  Like for the other success return cases, the caller is
--	 * responsible for checking if the IO completed.  If the IO isn't
--	 * complete, we'll get called again and will go straight to the busy
--	 * poll loop.
--	 */
--	return true;
--}
--
--static int blk_mq_poll_classic(struct request_queue *q, blk_qc_t cookie,
--			       struct io_comp_batch *iob, unsigned int flags)
-+int blk_mq_poll(struct request_queue *q, blk_qc_t cookie, struct io_comp=
-_batch *iob,
-+		unsigned int flags)
- {
- 	struct blk_mq_hw_ctx *hctx =3D blk_qc_to_hctx(q, cookie);
- 	long state =3D get_current_state();
-@@ -4926,17 +4744,6 @@ static int blk_mq_poll_classic(struct request_queu=
-e *q, blk_qc_t cookie,
- 	return 0;
- }
-=20
--int blk_mq_poll(struct request_queue *q, blk_qc_t cookie, struct io_comp=
-_batch *iob,
--		unsigned int flags)
--{
--	if (!(flags & BLK_POLL_NOSLEEP) &&
--	    q->poll_nsec !=3D BLK_MQ_POLL_CLASSIC) {
--		if (blk_mq_poll_hybrid(q, cookie))
--			return 1;
--	}
--	return blk_mq_poll_classic(q, cookie, iob, flags);
--}
--
- unsigned int blk_mq_rq_cpu(struct request *rq)
- {
- 	return rq->mq_ctx->cpu;
-diff --git a/block/blk-stat.c b/block/blk-stat.c
-index c6ca16abf911e..74a1a8c32d86f 100644
---- a/block/blk-stat.c
-+++ b/block/blk-stat.c
-@@ -231,21 +231,3 @@ void blk_free_queue_stats(struct blk_queue_stats *st=
-ats)
-=20
- 	kfree(stats);
- }
--
--bool blk_stats_alloc_enable(struct request_queue *q)
--{
--	struct blk_rq_stat *poll_stat;
--
--	poll_stat =3D kcalloc(BLK_MQ_POLL_STATS_BKTS, sizeof(*poll_stat),
--				GFP_ATOMIC);
--	if (!poll_stat)
--		return false;
--
--	if (cmpxchg(&q->poll_stat, NULL, poll_stat) !=3D NULL) {
--		kfree(poll_stat);
--		return true;
--	}
--
--	blk_stat_add_callback(q, q->poll_cb);
--	return false;
--}
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index f1fce1c7fa44b..c6c231f3d0f10 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -408,36 +408,7 @@ queue_rq_affinity_store(struct request_queue *q, con=
-st char *page, size_t count)
-=20
- static ssize_t queue_poll_delay_show(struct request_queue *q, char *page=
-)
- {
--	int val;
--
--	if (q->poll_nsec =3D=3D BLK_MQ_POLL_CLASSIC)
--		val =3D BLK_MQ_POLL_CLASSIC;
--	else
--		val =3D q->poll_nsec / 1000;
--
--	return sprintf(page, "%d\n", val);
--}
--
--static ssize_t queue_poll_delay_store(struct request_queue *q, const cha=
-r *page,
--				size_t count)
--{
--	int err, val;
--
--	if (!q->mq_ops || !q->mq_ops->poll)
--		return -EINVAL;
--
--	err =3D kstrtoint(page, 10, &val);
--	if (err < 0)
--		return err;
--
--	if (val =3D=3D BLK_MQ_POLL_CLASSIC)
--		q->poll_nsec =3D BLK_MQ_POLL_CLASSIC;
--	else if (val >=3D 0)
--		q->poll_nsec =3D val * 1000;
--	else
--		return -EINVAL;
--
--	return count;
-+	return sprintf(page, "%d\n", -1);
- }
-=20
- static ssize_t queue_poll_show(struct request_queue *q, char *page)
-@@ -617,7 +588,7 @@ QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zo=
-nes");
- QUEUE_RW_ENTRY(queue_nomerges, "nomerges");
- QUEUE_RW_ENTRY(queue_rq_affinity, "rq_affinity");
- QUEUE_RW_ENTRY(queue_poll, "io_poll");
--QUEUE_RW_ENTRY(queue_poll_delay, "io_poll_delay");
-+QUEUE_RO_ENTRY(queue_poll_delay, "io_poll_delay");
- QUEUE_RW_ENTRY(queue_wc, "write_cache");
- QUEUE_RO_ENTRY(queue_fua, "fua");
- QUEUE_RO_ENTRY(queue_dax, "dax");
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index dd5ce1137f04a..1dacb2c81fdda 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -57,8 +57,6 @@ typedef __u32 __bitwise req_flags_t;
- #define RQF_SPECIAL_PAYLOAD	((__force req_flags_t)(1 << 18))
- /* The per-zone write lock is held for this request */
- #define RQF_ZONE_WRITE_LOCKED	((__force req_flags_t)(1 << 19))
--/* already slept for hybrid poll */
--#define RQF_MQ_POLL_SLEPT	((__force req_flags_t)(1 << 20))
- /* ->timeout has been called, don't expire again */
- #define RQF_TIMED_OUT		((__force req_flags_t)(1 << 21))
- /* queue has elevator attached */
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index d1aee08f8c181..6ede578dfbc64 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -44,12 +44,6 @@ extern const struct device_type disk_type;
- extern struct device_type part_type;
- extern struct class block_class;
-=20
--/* Must be consistent with blk_mq_poll_stats_bkt() */
--#define BLK_MQ_POLL_STATS_BKTS 16
--
--/* Doing classic polling */
--#define BLK_MQ_POLL_CLASSIC -1
--
- /*
-  * Maximum number of blkcg policies allowed to be registered concurrentl=
-y.
-  * Defined here to simplify include dependency.
-@@ -468,10 +462,6 @@ struct request_queue {
- #endif
-=20
- 	unsigned int		rq_timeout;
--	int			poll_nsec;
--
--	struct blk_stat_callback	*poll_cb;
--	struct blk_rq_stat	*poll_stat;
-=20
- 	struct timer_list	timeout;
- 	struct work_struct	timeout_work;
-@@ -870,8 +860,6 @@ blk_status_t errno_to_blk_status(int errno);
-=20
- /* only poll the hardware once, don't continue until a completion was fo=
-und */
- #define BLK_POLL_ONESHOT		(1 << 0)
--/* do not sleep to wait for the expected completion time */
--#define BLK_POLL_NOSLEEP		(1 << 1)
- int bio_poll(struct bio *bio, struct io_comp_batch *iob, unsigned int fl=
-ags);
- int iocb_bio_iopoll(struct kiocb *kiocb, struct io_comp_batch *iob,
- 			unsigned int flags);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 4c233910e2009..a099dc0543d95 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -1002,7 +1002,7 @@ void io_rw_fail(struct io_kiocb *req)
- int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- {
- 	struct io_wq_work_node *pos, *start, *prev;
--	unsigned int poll_flags =3D BLK_POLL_NOSLEEP;
-+	unsigned int poll_flags =3D 0;
- 	DEFINE_IO_COMP_BATCH(iob);
- 	int nr_events =3D 0;
-=20
---=20
-2.34.1
+Error/Warning: (recently discovered and may have been fixed)
 
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:211:6: warning: no previous prototype for 'is_synaptics_cascaded_panamera' [-Wmissing-prototypes]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:258:10: warning: no previous prototype for 'link_timing_bandwidth_kbps' [-Wmissing-prototypes]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/protocols/link_dp_capability.c:2184: warning: expecting prototype for Check if there is a native DP or passive DP(). Prototype was for dp_is_sink_present() instead
+drivers/gpu/drm/imx/lcdc/imx-lcdc.c:411:11: error: call to undeclared function 'devm_drm_of_get_bridge'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+drivers/gpu/drm/imx/lcdc/imx-lcdc.c:411:9: error: incompatible integer to pointer conversion assigning to 'struct drm_bridge *' from 'int' [-Wint-conversion]
+drivers/gpu/drm/imx/lcdc/imx-lcdc.c:449:61: error: use of undeclared identifier 'DRM_BRIDGE_ATTACH_NO_CONNECTOR'
+drivers/gpu/drm/imx/lcdc/imx-lcdc.c:449:8: error: call to undeclared function 'drm_bridge_attach'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+include/linux/compiler_types.h:338:27: error: expression in static assertion is not an integer
+include/linux/compiler_types.h:340:27: error: expression in static assertion is not an integer
+include/linux/container_of.h:20:54: error: invalid use of undefined type 'struct module'
+include/linux/mmzone.h:1749:2: error: #error Allocator MAX_ORDER exceeds SECTION_SIZE
+include/linux/rculist.h:392:21: error: invalid use of undefined type 'struct module'
+include/linux/stddef.h:16:33: error: invalid use of undefined type 'struct module'
+kernel/bpf/../module/internal.h:205:2: error: assigning to 'struct module *' from incompatible type 'void'
+kernel/bpf/../module/internal.h:205:2: error: incomplete definition of type 'struct module'
+kernel/bpf/../module/internal.h:205:2: error: offsetof of incomplete type 'typeof (*mod)' (aka 'struct module')
+kernel/bpf/../module/internal.h:205:2: error: operand of type 'void' where arithmetic or pointer type is required
+kernel/bpf/../module/internal.h:212:2: error: assigning to 'struct module *' from incompatible type 'void'
+kernel/bpf/../module/internal.h:212:2: error: incomplete definition of type 'struct module'
+kernel/bpf/../module/internal.h:212:2: error: offsetof of incomplete type 'typeof (*mod)' (aka 'struct module')
+kernel/bpf/../module/internal.h:212:2: error: operand of type 'void' where arithmetic or pointer type is required
+loongarch64-linux-ld: clk-mt8173-apmixedsys.c:(.text+0x104): undefined reference to `mtk_clk_register_pllfhs'
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+drivers/soc/fsl/qe/tsa.c:140:26: sparse: sparse: incorrect type in argument 2 (different address spaces)
+drivers/soc/fsl/qe/tsa.c:150:27: sparse: sparse: incorrect type in argument 1 (different address spaces)
+drivers/soc/fsl/qe/tsa.c:189:26: sparse: sparse: dereference of noderef expression
+drivers/soc/fsl/qe/tsa.c:663:22: sparse: sparse: incorrect type in assignment (different address spaces)
+drivers/soc/fsl/qe/tsa.c:673:21: sparse: sparse: incorrect type in assignment (different address spaces)
+include/linux/gpio/consumer.h: linux/err.h is included more than once.
+include/linux/gpio/driver.h: asm/bug.h is included more than once.
+io_uring/io_uring.c:432 io_prep_async_work() error: we previously assumed 'req->file' could be null (see line 425)
+io_uring/kbuf.c:221 __io_remove_buffers() warn: variable dereferenced before check 'bl->buf_ring' (see line 219)
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- alpha-buildonly-randconfig-r001-20230319
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- alpha-buildonly-randconfig-r004-20230319
+|   |-- include-linux-compiler_types.h:error:expression-in-static-assertion-is-not-an-integer
+|   |-- include-linux-container_of.h:error:invalid-use-of-undefined-type-struct-module
+|   |-- include-linux-rculist.h:error:invalid-use-of-undefined-type-struct-module
+|   `-- include-linux-stddef.h:error:invalid-use-of-undefined-type-struct-module
+|-- alpha-buildonly-randconfig-r005-20230320
+|   |-- include-linux-compiler_types.h:error:expression-in-static-assertion-is-not-an-integer
+|   |-- include-linux-container_of.h:error:invalid-use-of-undefined-type-struct-module
+|   |-- include-linux-rculist.h:error:invalid-use-of-undefined-type-struct-module
+|   `-- include-linux-stddef.h:error:invalid-use-of-undefined-type-struct-module
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arc-randconfig-r043-20230319
+|   |-- include-linux-compiler_types.h:error:expression-in-static-assertion-is-not-an-integer
+|   |-- include-linux-container_of.h:error:invalid-use-of-undefined-type-struct-module
+|   |-- include-linux-rculist.h:error:invalid-use-of-undefined-type-struct-module
+|   `-- include-linux-stddef.h:error:invalid-use-of-undefined-type-struct-module
+|-- arc-randconfig-r043-20230320
+|   |-- include-linux-compiler_types.h:error:expression-in-static-assertion-is-not-an-integer
+|   |-- include-linux-container_of.h:error:invalid-use-of-undefined-type-struct-module
+|   |-- include-linux-rculist.h:error:invalid-use-of-undefined-type-struct-module
+|   `-- include-linux-stddef.h:error:invalid-use-of-undefined-type-struct-module
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm-randconfig-r046-20230319
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm_mst_types.c:warning:no-previous-prototype-for-is_synaptics_cascaded_panamera
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:no-previous-prototype-for-link_timing_bandwidth_kbps
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- csky-randconfig-r026-20230319
+clang_recent_errors
+|-- arm-randconfig-r046-20230320
+|   |-- kernel-bpf-..-module-internal.h:error:assigning-to-struct-module-from-incompatible-type-void
+|   |-- kernel-bpf-..-module-internal.h:error:incomplete-definition-of-type-struct-module
+|   |-- kernel-bpf-..-module-internal.h:error:offsetof-of-incomplete-type-typeof-(-mod)-(aka-struct-module-)
+|   `-- kernel-bpf-..-module-internal.h:error:operand-of-type-void-where-arithmetic-or-pointer-type-is-required
+|-- hexagon-buildonly-randconfig-r006-20230319
+|   |-- kernel-bpf-..-module-internal.h:error:assigning-to-struct-module-from-incompatible-type-void
+|   |-- kernel-bpf-..-module-internal.h:error:incomplete-definition-of-type-struct-module
+|   |-- kernel-bpf-..-module-internal.h:error:offsetof-of-incomplete-type-typeof-(-mod)-(aka-struct-module-)
+|   `-- kernel-bpf-..-module-internal.h:error:operand-of-type-void-where-arithmetic-or-pointer-type-is-required
+|-- hexagon-randconfig-r022-20230319
+|   |-- kernel-bpf-..-module-internal.h:error:assigning-to-struct-module-from-incompatible-type-void
+|   |-- kernel-bpf-..-module-internal.h:error:incomplete-definition-of-type-struct-module
+|   |-- kernel-bpf-..-module-internal.h:error:offsetof-of-incomplete-type-typeof-(-mod)-(aka-struct-module-)
+|   `-- kernel-bpf-..-module-internal.h:error:operand-of-type-void-where-arithmetic-or-pointer-type-is-required
+|-- hexagon-randconfig-r041-20230320
+|   |-- kernel-bpf-..-module-internal.h:error:assigning-to-struct-module-from-incompatible-type-void
+|   |-- kernel-bpf-..-module-internal.h:error:incomplete-definition-of-type-struct-module
+|   |-- kernel-bpf-..-module-internal.h:error:offsetof-of-incomplete-type-typeof-(-mod)-(aka-struct-module-)
+|   `-- kernel-bpf-..-module-internal.h:error:operand-of-type-void-where-arithmetic-or-pointer-type-is-required
+|-- hexagon-randconfig-r045-20230320
+|   |-- kernel-bpf-..-module-internal.h:error:assigning-to-struct-module-from-incompatible-type-void
+|   |-- kernel-bpf-..-module-internal.h:error:incomplete-definition-of-type-struct-module
+|   |-- kernel-bpf-..-module-internal.h:error:offsetof-of-incomplete-type-typeof-(-mod)-(aka-struct-module-)
+|   `-- kernel-bpf-..-module-internal.h:error:operand-of-type-void-where-arithmetic-or-pointer-type-is-required
+|-- mips-buildonly-randconfig-r002-20230319
+|   `-- kernel-bpf-..-module-internal.h:error:assigning-to-struct-module-from-incompatible-type-void
+|-- mips-randconfig-r001-20230319
+|   |-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:call-to-undeclared-function-devm_drm_of_get_bridge-ISO-C99-and-later-do-not-support-implicit-function-declarations
+|   |-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:call-to-undeclared-function-drm_bridge_attach-ISO-C99-and-later-do-not-support-implicit-function-declarations
+|   |-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:incompatible-integer-to-pointer-conversion-assigning-to-struct-drm_bridge-from-int
+|   `-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:use-of-undeclared-identifier-DRM_BRIDGE_ATTACH_NO_CONNECTOR
+`-- s390-randconfig-r044-20230319
+    |-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:call-to-undeclared-function-devm_drm_of_get_bridge-ISO-C99-and-later-do-not-support-implicit-function-declarations
+    |-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:call-to-undeclared-function-drm_bridge_attach-ISO-C99-and-later-do-not-support-implicit-function-declarations
+    |-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:incompatible-integer-to-pointer-conversion-assigning-to-struct-drm_bridge-from-int
+    `-- drivers-gpu-drm-imx-lcdc-imx-lcdc.c:error:use-of-undeclared-identifier-DRM_BRIDGE_ATTACH_NO_CONNECTOR
+
+elapsed time: 730m
+
+configs tested: 122
+configs skipped: 8
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r001-20230319   gcc  
+alpha        buildonly-randconfig-r002-20230319   gcc  
+alpha        buildonly-randconfig-r004-20230319   gcc  
+alpha        buildonly-randconfig-r005-20230320   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r024-20230320   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r012-20230319   gcc  
+arc                  randconfig-r016-20230319   gcc  
+arc                  randconfig-r043-20230319   gcc  
+arc                  randconfig-r043-20230320   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r046-20230319   gcc  
+arm                  randconfig-r046-20230320   clang
+arm64                            allyesconfig   gcc  
+arm64        buildonly-randconfig-r005-20230319   gcc  
+arm64                               defconfig   gcc  
+csky                                defconfig   gcc  
+csky                 randconfig-r006-20230319   gcc  
+csky                 randconfig-r026-20230319   gcc  
+hexagon      buildonly-randconfig-r006-20230319   clang
+hexagon              randconfig-r041-20230319   clang
+hexagon              randconfig-r041-20230320   clang
+hexagon              randconfig-r045-20230319   clang
+hexagon              randconfig-r045-20230320   clang
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-r003-20230320   clang
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230320   clang
+i386                 randconfig-a002-20230320   clang
+i386                 randconfig-a003-20230320   clang
+i386                 randconfig-a004-20230320   clang
+i386                 randconfig-a005-20230320   clang
+i386                 randconfig-a006-20230320   clang
+i386                          randconfig-a011   clang
+i386                          randconfig-a012   gcc  
+i386                          randconfig-a013   clang
+i386                          randconfig-a014   gcc  
+i386                          randconfig-a015   clang
+i386                          randconfig-a016   gcc  
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r011-20230320   gcc  
+ia64                 randconfig-r024-20230319   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r002-20230320   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r021-20230320   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze   buildonly-randconfig-r003-20230319   gcc  
+microblaze           randconfig-r032-20230319   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips         buildonly-randconfig-r001-20230320   gcc  
+mips         buildonly-randconfig-r004-20230320   gcc  
+mips                 randconfig-r001-20230319   clang
+mips                 randconfig-r036-20230319   clang
+nios2                               defconfig   gcc  
+nios2                randconfig-r012-20230320   gcc  
+nios2                randconfig-r014-20230319   gcc  
+nios2                randconfig-r025-20230319   gcc  
+nios2                randconfig-r031-20230319   gcc  
+nios2                randconfig-r034-20230319   gcc  
+openrisc             randconfig-r016-20230320   gcc  
+openrisc             randconfig-r035-20230319   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r022-20230319   gcc  
+parisc               randconfig-r025-20230320   gcc  
+parisc               randconfig-r033-20230319   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r002-20230319   gcc  
+powerpc              randconfig-r013-20230320   gcc  
+powerpc              randconfig-r015-20230320   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r005-20230319   gcc  
+riscv                randconfig-r042-20230319   clang
+riscv                randconfig-r042-20230320   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r044-20230319   clang
+s390                 randconfig-r044-20230320   gcc  
+sh                               allmodconfig   gcc  
+sh                   randconfig-r013-20230319   gcc  
+sh                   randconfig-r014-20230320   gcc  
+sh                   randconfig-r023-20230319   gcc  
+sparc                               defconfig   gcc  
+sparc64              randconfig-r015-20230319   gcc  
+sparc64              randconfig-r026-20230320   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230320   clang
+x86_64               randconfig-a002-20230320   clang
+x86_64               randconfig-a003-20230320   clang
+x86_64               randconfig-a004-20230320   clang
+x86_64               randconfig-a005-20230320   clang
+x86_64               randconfig-a006-20230320   clang
+x86_64                        randconfig-a011   gcc  
+x86_64                        randconfig-a012   clang
+x86_64                        randconfig-a013   gcc  
+x86_64                        randconfig-a014   clang
+x86_64                        randconfig-a015   gcc  
+x86_64                        randconfig-a016   clang
+x86_64               randconfig-r023-20230320   gcc  
+x86_64                               rhel-8.3   gcc  
+xtensa       buildonly-randconfig-r006-20230320   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

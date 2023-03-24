@@ -2,183 +2,130 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3625D6C89B4
-	for <lists+io-uring@lfdr.de>; Sat, 25 Mar 2023 01:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 935836C88FC
+	for <lists+io-uring@lfdr.de>; Sat, 25 Mar 2023 00:06:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbjCYAou (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 24 Mar 2023 20:44:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40412 "EHLO
+        id S231417AbjCXXGM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 24 Mar 2023 19:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjCYAot (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Mar 2023 20:44:49 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93D312B;
-        Fri, 24 Mar 2023 17:44:48 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id f6-20020a17090ac28600b0023b9bf9eb63so3189159pjt.5;
-        Fri, 24 Mar 2023 17:44:48 -0700 (PDT)
+        with ESMTP id S229522AbjCXXGL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Mar 2023 19:06:11 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4191C31B
+        for <io-uring@vger.kernel.org>; Fri, 24 Mar 2023 16:06:02 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id l9-20020a17090a3f0900b0023d32684e7fso6490712pjc.1
+        for <io-uring@vger.kernel.org>; Fri, 24 Mar 2023 16:06:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679705088;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gGri5zgrpwBNQccX2+WkAia7t3Mp6NEARVbrGgzBR38=;
-        b=qvjtVlA1JomFexRyZAphQnfjJBoWJXtxI2qUFCU/BSgLRCCotn6ZPGvyUQOH/CqsmS
-         g7bZHhqDPvTr1VYUzmMojTvQCtwbh0aFbJMGofl79xcvos7cARW6Ay7dNVBAYDUZPdli
-         9CRbjXVmN1YKuv229yEdQ8cmG9x/aIkLJEXmFFrbGD3+B8KKfr3id8fIafBhscyvzYM6
-         Qfz1HdPhRdT35NBkpOuJ1uipaJ72Puc3943GhebYINHoVBxfVPR8XkSVZJyty42p1rhM
-         +G4hgMhQI+dL3kQ3F7Fbl3fVA6ngL3G0PfTk/BVWHNiHWZnv/e6Q7Gkh6Mxk7S889c9W
-         qimw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679699162; x=1682291162;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0R2Qo/DevL3S7I07sZXxzUcEeTRDJWKIO1fp4rnwmMc=;
+        b=xGEScFLFKDrqmP64ablG0Mu1PzbxP/P9VePi2vdNTpr4ldLpdwx3BWB6786hJMLOlY
+         SYMdFyeHfJSQcXA5nztoZ3LafsZUBIjDkSkSi/YzDKaCkK//slEFf3VTvqOLJwBRYAzV
+         BEX+dnmRu9pUBAPwihNdHpBXwAtbNIjB4gRa/6fhs2BlroYWZ1nZN0uYBx2bsQIy53TQ
+         Ipno8v5ZQlcl0Td8Gdw1E6TSZgUqgju9NgK1fERp3TE0vO9c2MQZbZIYue7t98ARv4Zz
+         Ow+2QITe4xKSdyoNv9GohHEsLz790670STsOZfR8MBWomZnNaM9oI5dQIi2Q7w8GgyOi
+         ZV5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679705088;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20210112; t=1679699162; x=1682291162;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gGri5zgrpwBNQccX2+WkAia7t3Mp6NEARVbrGgzBR38=;
-        b=oDcva3BfQEEaatSrIihJW9chRSyMI8eOT32tvbaGlxVmqzpVdSlEfY3/NVi9/c+ijd
-         fF+ev/zelMNNhtuJKZd4ofHDTvKM31+HWu4stSs690/ewIvg94rQzZp3WjfnZFK+G5Dm
-         oUWNbTMmOCI1id/rpX/oKpqLEj12H8nPfBv9qJJ3BLuDMBZ2i4Bx5zkHibBqEnK3/Zp8
-         SDf53ybSNqssXLN1mtnT7XM5bbwgCb0bei6lGh3d98n6QZAKNDPxuh851+lwiJnwZcPt
-         snOinQPDrDRW6ka4eI2emiWT/gvGGTw5M37uqC3WD239n7XjMw2MPUWhkcPDtUQ6Xw/p
-         GXrQ==
-X-Gm-Message-State: AAQBX9cwelrmiVaZ4fIA4MI4qFtbXi8RTSyiHethdqfmGrv+uamhfPuj
-        kOEz+QKD4lI7PNyATXJ4cb2JX9hBxtfLM06u
-X-Google-Smtp-Source: AKy350YWt+yEd85LHuiaoONJDjSIB5/4b2nw6M9WRVg4rD9lE3/1YSyYOvYWxAy33c/kgH1GlMu7Yg==
-X-Received: by 2002:a17:902:e30b:b0:1a1:7c2b:4aea with SMTP id q11-20020a170902e30b00b001a17c2b4aeamr3593928plc.0.1679705088042;
-        Fri, 24 Mar 2023 17:44:48 -0700 (PDT)
-Received: from localhost (ec2-54-67-115-33.us-west-1.compute.amazonaws.com. [54.67.115.33])
-        by smtp.gmail.com with ESMTPSA id m6-20020a1709026bc600b001a049441fc8sm3584749plt.193.2023.03.24.17.44.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Mar 2023 17:44:47 -0700 (PDT)
-Date:   Sat, 18 Mar 2023 00:32:39 +0000
-From:   Bobby Eshleman <bobbyeshleman@gmail.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Bobby Eshleman <bobby.eshleman@bytedance.com>,
-        Bobby Eshleman <bobby.eshleman@gmail.com>,
-        syzbot <syzbot+0bc015ebddc291a97116@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, davem@davemloft.net, edumazet@google.com,
-        io-uring@vger.kernel.org, kuba@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pabeni@redhat.com, stefanha@redhat.com,
-        syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org,
-        Krasnov Arseniy <oxffffaa@gmail.com>,
-        Krasnov Arseniy Vladimirovich <AVKrasnov@sberdevices.ru>
-Subject: Re: [syzbot] [net?] [virt?] [io-uring?] [kvm?] BUG: soft lockup in
- vsock_connect
-Message-ID: <ZBUGp5bvNuE3sK5g@bullseye>
-References: <00000000000075bebb05f79acfde@google.com>
- <CAGxU2F4jxdzK8Y-jaoKRaX_bDhoMtomOT6TyMek+un-Bp8RX3g@mail.gmail.com>
+        bh=0R2Qo/DevL3S7I07sZXxzUcEeTRDJWKIO1fp4rnwmMc=;
+        b=bXIDKqebGAV0wm2iZgRILnVv1/L6uvVYpEQuHekiFKi8DmdM5Xm/HRCF4AKRbIDKlC
+         BkA8HKa9TkYrcLeBgU7+0gavrqhfpjrSkmmIRbCt6hCauC6Z9xVKB5EGrqGa8AYG4QRT
+         aAplHfygHX45p2gqwtANDbtMwuMASmJ0Yqzwf8R8xJJn5O2jyDGo2EYfPw4l63EgSMWt
+         LTcEFcn+zRk9tkilFTkRZOcTldbgxjp7vnGLWiWJ29l7OgAaEa2C+1jwBV4ihm7sZE+z
+         C0CP54GyeNRaKOKmbJ+Na/HszFTR5TK2D42dJl/HDE2RfH29tZepgR8GgeLm66j5QF55
+         XJjQ==
+X-Gm-Message-State: AO0yUKXlCEJoxxKKGpDcloTfP0uXTgWQZIH/g2VKiCwM6iq9KrY9i42/
+        ePsGNpND/rUgq4EU2fYAZ2D0EwvX1te6x9HLOgZ0fg==
+X-Google-Smtp-Source: AK7set+aox7CHNUq1XODPth3ZPY674jFuwufbcjAt3NPnlOMXKCJZgsc3iV7JOPyAPoWVZ2iux3ZYQ==
+X-Received: by 2002:a05:6a20:748c:b0:cd:fc47:dd73 with SMTP id p12-20020a056a20748c00b000cdfc47dd73mr4856089pzd.2.1679699161647;
+        Fri, 24 Mar 2023 16:06:01 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id f62-20020a17090a704400b00234afca2498sm380080pjk.28.2023.03.24.16.06.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Mar 2023 16:06:01 -0700 (PDT)
+Message-ID: <9c3473b7-8063-4d14-1f8b-7a0e67979cf4@kernel.dk>
+Date:   Fri, 24 Mar 2023 17:06:00 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGxU2F4jxdzK8Y-jaoKRaX_bDhoMtomOT6TyMek+un-Bp8RX3g@mail.gmail.com>
-X-Spam-Status: No, score=1.9 required=5.0 tests=DATE_IN_PAST_96_XX,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: *
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] io_uring/rw: transform single vector readv/writev into
+ ubuf
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <43cb1fb7-b30b-8df1-bba6-e50797d680c6@kernel.dk>
+ <ZB4nJStBSrPR9SYk@ovpn-8-20.pek2.redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZB4nJStBSrPR9SYk@ovpn-8-20.pek2.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 09:38:38AM +0100, Stefano Garzarella wrote:
-> Hi Bobby,
-> FYI we have also this one, but it seems related to
-> syzbot+befff0a9536049e7902e@syzkaller.appspotmail.com
+On 3/24/23 4:41?PM, Ming Lei wrote:
+> On Fri, Mar 24, 2023 at 08:35:38AM -0600, Jens Axboe wrote:
+>> It's very common to have applications that use vectored reads or writes,
+>> even if they only pass in a single segment. Obviously they should be
+>> using read/write at that point, but...
 > 
-> Thanks,
-> Stefano
-> 
+> Yeah, it is like fixing application issue in kernel side, :-)
 
-Got it, I'll look into it.
+It totally is, the same thing happens all of the time for readv as well.
+No amount of informing or documenting will ever fix that...
 
-Best,
-Bobby
+Also see:
 
+https://lore.kernel.org/linux-fsdevel/20230324204443.45950-1-axboe@kernel.dk/
+
+with which I think I'll change this one to just be:
+
+	if (iter->iter_type == ITER_UBUF) {
+		rw->addr = iter->ubuf;
+		rw->len = iter->count;
+	/* readv -> read distance is the same as writev -> write */
+	BUILD_BUG_ON((IORING_OP_READ - IORING_OP_READV) !=
+			(IORING_OP_WRITE - IORING_OP_WRITEV));
+		req->opcode += (IORING_OP_READ - IORING_OP_READV);
+	}
+
+instead.
+
+We could also just skip it completely and just have liburing do the
+right thing if io_uring_prep_readv/writev is called with nr_segs == 1.
+Just turn it into a READ/WRITE at that point. If we do that, and with
+the above generic change, it's probably Good Enough. If you use
+READV/WRITEV and you're using the raw interface, then you're on your
+own.
+
+>> +	rw->addr = (unsigned long) iter->iov[0].iov_base;
+>> +	rw->len = iter->iov[0].iov_len;
+>> +	iov_iter_ubuf(iter, ddir, iter->iov[0].iov_base, rw->len);
+>> +	/* readv -> read distance is the same as writev -> write */
+>> +	BUILD_BUG_ON((IORING_OP_READ - IORING_OP_READV) !=
+>> +			(IORING_OP_WRITE - IORING_OP_WRITEV));
+>> +	req->opcode += (IORING_OP_READ - IORING_OP_READV);
 > 
-> On Fri, Mar 24, 2023 at 1:52 AM syzbot
-> <syzbot+0bc015ebddc291a97116@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    fe15c26ee26e Linux 6.3-rc1
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1577c97ec80000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7573cbcd881a88c9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0bc015ebddc291a97116
-> > compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1077c996c80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e38929c80000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/89d41abd07bd/disk-fe15c26e.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/fa75f5030ade/vmlinux-fe15c26e.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/590d0f5903ee/Image-fe15c26e.gz.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+0bc015ebddc291a97116@syzkaller.appspotmail.com
-> >
-> > watchdog: BUG: soft lockup - CPU#0 stuck for 27s! [syz-executor244:6747]
-> > Modules linked in:
-> > irq event stamp: 6033
-> > hardirqs last  enabled at (6032): [<ffff8000124604ac>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:84 [inline]
-> > hardirqs last  enabled at (6032): [<ffff8000124604ac>] exit_to_kernel_mode+0xe8/0x118 arch/arm64/kernel/entry-common.c:94
-> > hardirqs last disabled at (6033): [<ffff80001245e188>] __el1_irq arch/arm64/kernel/entry-common.c:468 [inline]
-> > hardirqs last disabled at (6033): [<ffff80001245e188>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:486
-> > softirqs last  enabled at (616): [<ffff80001066ca80>] spin_unlock_bh include/linux/spinlock.h:395 [inline]
-> > softirqs last  enabled at (616): [<ffff80001066ca80>] lock_sock_nested+0xe8/0x138 net/core/sock.c:3480
-> > softirqs last disabled at (618): [<ffff8000122dbcfc>] spin_lock_bh include/linux/spinlock.h:355 [inline]
-> > softirqs last disabled at (618): [<ffff8000122dbcfc>] virtio_transport_purge_skbs+0x11c/0x500 net/vmw_vsock/virtio_transport_common.c:1372
-> > CPU: 0 PID: 6747 Comm: syz-executor244 Not tainted 6.3.0-rc1-syzkaller-gfe15c26ee26e #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-> > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > pc : __sanitizer_cov_trace_pc+0xc/0x8c kernel/kcov.c:203
-> > lr : virtio_transport_purge_skbs+0x19c/0x500 net/vmw_vsock/virtio_transport_common.c:1374
-> > sp : ffff80001e787890
-> > x29: ffff80001e7879e0 x28: 1ffff00003cf0f2a x27: ffff80001a487a60
-> > x26: ffff80001e787950 x25: ffff0000ce2d3b80 x24: ffff80001a487a78
-> > x23: 1ffff00003490f4c x22: ffff80001a29c1a8 x21: dfff800000000000
-> > x20: ffff80001a487a60 x19: ffff80001e787940 x18: 1fffe000368951b6
-> > x17: ffff800015cdd000 x16: ffff8000085110b0 x15: 0000000000000000
-> > x14: 1ffff00002b9c0b2 x13: dfff800000000000 x12: ffff700003cf0efc
-> > x11: ff808000122dbee8 x10: 0000000000000000 x9 : ffff8000122dbee8
-> > x8 : ffff0000ce511b40 x7 : ffff8000122dbcfc x6 : 0000000000000000
-> > x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80000832d758
-> > x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-> > Call trace:
-> >  get_current arch/arm64/include/asm/current.h:19 [inline]
-> >  __sanitizer_cov_trace_pc+0xc/0x8c kernel/kcov.c:206
-> >  vsock_loopback_cancel_pkt+0x28/0x3c net/vmw_vsock/vsock_loopback.c:48
-> >  vsock_transport_cancel_pkt net/vmw_vsock/af_vsock.c:1284 [inline]
-> >  vsock_connect+0x6b8/0xaec net/vmw_vsock/af_vsock.c:1426
-> >  __sys_connect_file net/socket.c:2004 [inline]
-> >  __sys_connect+0x268/0x290 net/socket.c:2021
-> >  __do_sys_connect net/socket.c:2031 [inline]
-> >  __se_sys_connect net/socket.c:2028 [inline]
-> >  __arm64_sys_connect+0x7c/0x94 net/socket.c:2028
-> >  __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-> >  invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-> >  el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
-> >  do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
-> >  el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
-> >  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
-> >  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > syzbot can test patches for this issue, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> >
+> It is a bit fragile to change ->opcode, which may need matched
+> callbacks for the two OPs, also cause inconsistent opcode in traces.
 > 
+> I am wondering why not play the magic in io_prep_rw() from beginning?
+
+It has to be done when importing the vec, we cannot really do it in
+prep... Well we could, but that'd be adding a bunch more code and
+duplicating part of the vec import.
+
+-- 
+Jens Axboe
+

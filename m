@@ -2,41 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B55486C7F62
-	for <lists+io-uring@lfdr.de>; Fri, 24 Mar 2023 15:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 018E86C7F66
+	for <lists+io-uring@lfdr.de>; Fri, 24 Mar 2023 15:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232183AbjCXOBC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S231871AbjCXOBC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 24 Mar 2023 10:01:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52364 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232062AbjCXOA1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Mar 2023 10:00:27 -0400
+        with ESMTP id S232120AbjCXOA2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 24 Mar 2023 10:00:28 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A30681BAEB
-        for <io-uring@vger.kernel.org>; Fri, 24 Mar 2023 06:59:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3CF51CADD
+        for <io-uring@vger.kernel.org>; Fri, 24 Mar 2023 06:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679666353;
+        s=mimecast20190719; t=1679666360;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uuQC+m3nWXpEvAHBrpKpd923ngOUWFuBZCOxaTw0mf8=;
-        b=fepTpdr5Sqa8jBQTd1s687kXFAx1wY2Gy9tjCzP7Uz/QxZdAmnyy7FWaAzIq2XrP5Mpza2
-        bipOR2VWTcXkwKnbPl2ulD33TppY0rRsjPU55sbx8ZI1E0dDjo0yq6ZPE/63rjvp8YQSH9
-        BHbzGi2PFJmS++1taPLu9mKz/Z6vwX4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=UtTkIiWab0XMlZOmjKpa8MKYPjT9l5NSYtOz0X+FN4U=;
+        b=NGvqhu8Ge5SrwpGsgqF9HzNhu7BuwyADejy9KkZQcauIECCOCMXnbzfPVdfl/k3c7+PxVD
+        txyKyTaEJE5cRfoEfbPbCPA0HL8BDsLmL1n6cCmZzIF1SLqFkjKi9IR2NL7ibdkDoCmZKO
+        yoHxDG+789tSlotimnlVGzeVAOhYWjg=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-267-OzWGU5o8N2yR7DVTUK2FWw-1; Fri, 24 Mar 2023 09:59:10 -0400
-X-MC-Unique: OzWGU5o8N2yR7DVTUK2FWw-1
+ us-mta-99-pmqtjrANN9-T7WRDlRT_Lg-1; Fri, 24 Mar 2023 09:59:14 -0400
+X-MC-Unique: pmqtjrANN9-T7WRDlRT_Lg-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 49D26185A7AC;
-        Fri, 24 Mar 2023 13:59:10 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8EE9A385556D;
+        Fri, 24 Mar 2023 13:59:13 +0000 (UTC)
 Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 811204042AC9;
-        Fri, 24 Mar 2023 13:59:09 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A326C4042AC9;
+        Fri, 24 Mar 2023 13:59:12 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-block@vger.kernel.org
@@ -47,9 +47,9 @@ Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V4 14/17] block: ublk_drv: support to copy any part of request pages
-Date:   Fri, 24 Mar 2023 21:58:05 +0800
-Message-Id: <20230324135808.855245-15-ming.lei@redhat.com>
+Subject: [PATCH V4 15/17] block: ublk_drv: add read()/write() support for ublk char device
+Date:   Fri, 24 Mar 2023 21:58:06 +0800
+Message-Id: <20230324135808.855245-16-ming.lei@redhat.com>
 In-Reply-To: <20230324135808.855245-1-ming.lei@redhat.com>
 References: <20230324135808.855245-1-ming.lei@redhat.com>
 MIME-Version: 1.0
@@ -65,78 +65,225 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Add 'offset' to 'struct ublk_map_data', so that ublk_copy_user_pages()
-can be used to copy any sub-buffer(linear mapped) of the request.
+We are going to support zero copy by fused uring command, the userspace
+can't read from or write to the io buffer any more, it becomes not
+flexible for applications:
+
+1) some targets need to zero buffer explicitly, such as when reading
+unmapped qcow2 cluster
+
+2) some targets need to support passthrough command, such as zoned
+report zones, and still need to read/write the io buffer
+
+Support pread()/pwrite() on ublk char device for reading/writing request
+io buffer, so ublk server can handle the above cases easily.
+
+This also can help to make zero copy becoming the primary option, and
+non-zero-copy will become legacy code path since the added read()/write()
+can cover non-zero-copy feature.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/block/ublk_drv.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+ drivers/block/ublk_drv.c      | 131 ++++++++++++++++++++++++++++++++++
+ include/uapi/linux/ublk_cmd.h |  31 +++++++-
+ 2 files changed, 161 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 88d5a657834d..26a14c54da1d 100644
+index 26a14c54da1d..e6b528750b3c 100644
 --- a/drivers/block/ublk_drv.c
 +++ b/drivers/block/ublk_drv.c
-@@ -511,19 +511,36 @@ static void ublk_copy_io_pages(struct ublk_io_iter *data,
- 	}
+@@ -1317,6 +1317,36 @@ static void ublk_handle_need_get_data(struct ublk_device *ub, int q_id,
+ 	ublk_queue_cmd(ubq, req);
  }
  
-+static bool ublk_advance_io_iter(const struct request *req,
-+		struct ublk_io_iter *iter, unsigned int offset)
++static inline struct request *__ublk_check_and_get_req(struct ublk_device *ub,
++		struct ublk_queue *ubq, int tag, size_t offset)
 +{
-+	struct bio *bio = req->bio;
++	struct request *req;
 +
-+	for_each_bio(bio) {
-+		if (bio->bi_iter.bi_size > offset) {
-+			iter->bio = bio;
-+			iter->iter = bio->bi_iter;
-+			bio_advance_iter(iter->bio, &iter->iter, offset);
-+			return true;
-+		}
-+		offset -= bio->bi_iter.bi_size;
-+	}
++	if (!ublk_support_zc(ubq))
++		return NULL;
++
++	req = blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], tag);
++	if (!req)
++		return NULL;
++
++	if (!ublk_get_req_ref(ubq, req))
++		return NULL;
++
++	if (unlikely(!blk_mq_request_started(req) || req->tag != tag))
++		goto fail_put;
++
++	if (!ublk_rq_has_data(req))
++		goto fail_put;
++
++	if (offset > blk_rq_bytes(req))
++		goto fail_put;
++
++	return req;
++fail_put:
++	ublk_put_req_ref(ubq, req);
++	return NULL;
++}
++
+ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ {
+ 	struct ublksrv_io_cmd *ub_cmd = (struct ublksrv_io_cmd *)cmd->cmd;
+@@ -1418,11 +1448,112 @@ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 	return -EIOCBQUEUED;
+ }
+ 
++static inline bool ublk_check_ubuf_dir(const struct request *req,
++		int ubuf_dir)
++{
++	/* copy ubuf to request pages */
++	if (req_op(req) == REQ_OP_READ && ubuf_dir == ITER_SOURCE)
++		return true;
++
++	/* copy request pages to ubuf */
++	if (req_op(req) == REQ_OP_WRITE && ubuf_dir == ITER_DEST)
++		return true;
++
 +	return false;
 +}
 +
- /*
-  * Copy data between request pages and io_iter, and 'offset'
-  * is the start point of linear offset of request.
-  */
- static size_t ublk_copy_user_pages(const struct request *req,
--		struct iov_iter *uiter, int dir)
-+		unsigned offset, struct iov_iter *uiter, int dir)
- {
--	struct ublk_io_iter iter = {
--		.bio	= req->bio,
--		.iter	= req->bio->bi_iter,
--	};
-+	struct ublk_io_iter iter;
- 	size_t done = 0;
- 
-+	if (!ublk_advance_io_iter(req, &iter, offset))
-+		return 0;
++static struct request *ublk_check_and_get_req(struct kiocb *iocb,
++		struct iov_iter *iter, size_t *off, int dir)
++{
++	struct ublk_device *ub = iocb->ki_filp->private_data;
++	struct ublk_queue *ubq;
++	struct request *req;
++	size_t buf_off;
++	u16 tag, q_id;
 +
- 	while (iov_iter_count(uiter) && iter.bio) {
- 		unsigned nr_pages;
- 		size_t len, off;
-@@ -576,7 +593,7 @@ static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
- 		import_single_range(dir, u64_to_user_ptr(io->addr), rq_bytes,
- 				&iov, &iter);
++	if (!ub)
++		return ERR_PTR(-EACCES);
++
++	if (!user_backed_iter(iter))
++		return ERR_PTR(-EACCES);
++
++	if (ub->dev_info.state == UBLK_S_DEV_DEAD)
++		return ERR_PTR(-EACCES);
++
++	tag = ublk_pos_to_tag(iocb->ki_pos);
++	q_id = ublk_pos_to_hwq(iocb->ki_pos);
++	buf_off = ublk_pos_to_buf_offset(iocb->ki_pos);
++
++	if (q_id >= ub->dev_info.nr_hw_queues)
++		return ERR_PTR(-EINVAL);
++
++	ubq = ublk_get_queue(ub, q_id);
++	if (!ubq)
++		return ERR_PTR(-EINVAL);
++
++	if (tag >= ubq->q_depth)
++		return ERR_PTR(-EINVAL);
++
++	req = __ublk_check_and_get_req(ub, ubq, tag, buf_off);
++	if (!req)
++		return ERR_PTR(-EINVAL);
++
++	if (!req->mq_hctx || !req->mq_hctx->driver_data)
++		goto fail;
++
++	if (!ublk_check_ubuf_dir(req, dir))
++		goto fail;
++
++	*off = buf_off;
++	return req;
++fail:
++	ublk_put_req_ref(ubq, req);
++	return ERR_PTR(-EACCES);
++}
++
++static ssize_t ublk_ch_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct ublk_queue *ubq;
++	struct request *req;
++	size_t buf_off;
++	size_t ret;
++
++	req = ublk_check_and_get_req(iocb, to, &buf_off, ITER_DEST);
++	if (unlikely(IS_ERR(req)))
++		return PTR_ERR(req);
++
++	ret = ublk_copy_user_pages(req, buf_off, to, ITER_DEST);
++	ubq = req->mq_hctx->driver_data;
++	ublk_put_req_ref(ubq, req);
++
++	return ret;
++}
++
++static ssize_t ublk_ch_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct ublk_queue *ubq;
++	struct request *req;
++	size_t buf_off;
++	size_t ret;
++
++	req = ublk_check_and_get_req(iocb, from, &buf_off, ITER_SOURCE);
++	if (unlikely(IS_ERR(req)))
++		return PTR_ERR(req);
++
++	ret = ublk_copy_user_pages(req, buf_off, from, ITER_SOURCE);
++	ubq = req->mq_hctx->driver_data;
++	ublk_put_req_ref(ubq, req);
++
++	return ret;
++}
++
+ static const struct file_operations ublk_ch_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = ublk_ch_open,
+ 	.release = ublk_ch_release,
+ 	.llseek = no_llseek,
++	.read_iter = ublk_ch_read_iter,
++	.write_iter = ublk_ch_write_iter,
+ 	.uring_cmd = ublk_ch_uring_cmd,
+ 	.mmap = ublk_ch_mmap,
+ };
+diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
+index f6238ccc7800..d1a6b3dc0327 100644
+--- a/include/uapi/linux/ublk_cmd.h
++++ b/include/uapi/linux/ublk_cmd.h
+@@ -54,7 +54,36 @@
+ #define UBLKSRV_IO_BUF_OFFSET	0x80000000
  
--		return ublk_copy_user_pages(req, &iter, dir);
-+		return ublk_copy_user_pages(req, 0, &iter, dir);
- 	}
- 	return rq_bytes;
- }
-@@ -596,7 +613,7 @@ static int ublk_unmap_io(const struct ublk_queue *ubq,
+ /* tag bit is 12bit, so at most 4096 IOs for each queue */
+-#define UBLK_MAX_QUEUE_DEPTH	4096
++#define UBLK_TAG_BITS		12
++#define UBLK_MAX_QUEUE_DEPTH	(1U << UBLK_TAG_BITS)
++
++/* used for locating each io buffer for pread()/pwrite() on char device */
++#define UBLK_BUFS_SIZE_BITS	42
++#define UBLK_BUFS_SIZE_MASK    ((1ULL << UBLK_BUFS_SIZE_BITS) - 1)
++#define UBLK_BUF_SIZE_BITS     (UBLK_BUFS_SIZE_BITS - UBLK_TAG_BITS)
++#define UBLK_BUF_MAX_SIZE      (1ULL << UBLK_BUF_SIZE_BITS)
++
++static inline __u16 ublk_pos_to_hwq(__u64 pos)
++{
++	return pos >> UBLK_BUFS_SIZE_BITS;
++}
++
++static inline __u32 ublk_pos_to_buf_offset(__u64 pos)
++{
++	return (pos & UBLK_BUFS_SIZE_MASK) & (UBLK_BUF_MAX_SIZE - 1);
++}
++
++static inline __u16 ublk_pos_to_tag(__u64 pos)
++{
++	return (pos & UBLK_BUFS_SIZE_MASK) >> UBLK_BUF_SIZE_BITS;
++}
++
++/* offset of single buffer, which has to be < UBLK_BUX_MAX_SIZE */
++static inline __u64 ublk_pos(__u16 q_id, __u16 tag, __u32 offset)
++{
++	return (((__u64)q_id) << UBLK_BUFS_SIZE_BITS) |
++		((((__u64)tag) << UBLK_BUF_SIZE_BITS) + offset);
++}
  
- 		import_single_range(dir, u64_to_user_ptr(io->addr), io->res,
- 				&iov, &iter);
--		return ublk_copy_user_pages(req, &iter, dir);
-+		return ublk_copy_user_pages(req, 0, &iter, dir);
- 	}
- 	return rq_bytes;
- }
+ /*
+  * zero copy requires 4k block size, and can remap ublk driver's io
 -- 
 2.39.2
 

@@ -2,107 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8216C9EFE
-	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 11:09:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 258D06CA1F5
+	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 13:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbjC0JJU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Mar 2023 05:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47460 "EHLO
+        id S232105AbjC0LB7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Mar 2023 07:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232766AbjC0JIy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 05:08:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6651835AA
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 02:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679908086;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q/jHqPQ9labkDpwONGksLRLwMhvFcLpODPDEk10PFbM=;
-        b=MSnRWPPpAlaSdJ/xYjX2olTH3prFhPfUzmbC9Vm3dMOr5cYdxIUOmar7jWqlwPZzvLkjGi
-        k6bgGXtiRILyEPrXnb6QFKzeshzrMCMTkQf3BLGt7ZTIFlRAXsx8Cj3ZoXeNkFI2OT63tp
-        MU7vWpVsURhW+kHjacW05TSncLmJtuQ=
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
- [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-OGV9_6D-M1qtB7tpjCad6Q-1; Mon, 27 Mar 2023 05:08:05 -0400
-X-MC-Unique: OGV9_6D-M1qtB7tpjCad6Q-1
-Received: by mail-yb1-f198.google.com with SMTP id w5-20020a253005000000b00aedd4305ff2so8168852ybw.13
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 02:08:04 -0700 (PDT)
+        with ESMTP id S232206AbjC0LB6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 07:01:58 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5C32735
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 04:01:55 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id z19-20020a056e02089300b00326098d01d9so1441727ils.2
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 04:01:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679908084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q/jHqPQ9labkDpwONGksLRLwMhvFcLpODPDEk10PFbM=;
-        b=D9kdGXlz1nhbcYw+eMNYQpLY3YaHZBfnPQuj40wLTPwR+f5001LfumcHKE7evrmV64
-         GQ6byeqYHMkfYisdz+O6gIU2BEAmvTuJwepDe9j0YvAtGW/lmIY4WL3zzWaLut8DbPCX
-         jQZAcHEZP4TcgzqmmP0SjHYDx8Y2ighjXFj/c1wO2m0mwaxYABjORiz6fkJS+H9fQFkB
-         +SEbnK34W6o1RdV43eMC4wC5LIrVIYyfSpd1jXcxICwXS77f7fHxMZz/mEDOveg+G6MC
-         NLDgii6pNcwrszcrSoczHt8FZkgvveD0QXnk7rW2YTIbRr6dOmyiboQkMNOnXsVVK2yN
-         tWKQ==
-X-Gm-Message-State: AAQBX9fr2GX5FcDdHWM8DGO9zkhYUTIyhP7LDC7EAl3olz/b6rxis4yH
-        bS3Nm6VupYcC+AWn9hXpDLwIDPxcDgXmsXN3ybukjkvtLg63k6LaZbhmT57UbI7uQ3VD/dbVYre
-        xHA7TrHJd8kKXfMSmWi4qse9A92E72zTkQPk=
-X-Received: by 2002:a05:6902:168d:b0:b6d:1483:bc18 with SMTP id bx13-20020a056902168d00b00b6d1483bc18mr6595363ybb.7.1679908084552;
-        Mon, 27 Mar 2023 02:08:04 -0700 (PDT)
-X-Google-Smtp-Source: AKy350ZK4A0vkFV+Fi54XXazb/aOmFl65dPrh+4dL2oYcZ2EWPZ/YWITfHG4vrrsNYo/PRnSdXQDyk1J9i2vTaifXNI=
-X-Received: by 2002:a05:6902:168d:b0:b6d:1483:bc18 with SMTP id
- bx13-20020a056902168d00b00b6d1483bc18mr6595359ybb.7.1679908084346; Mon, 27
- Mar 2023 02:08:04 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679914914;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gBGjVn6FB49bJgbnCnfJ68CqyOHYb5wZzHIdBSRAMzY=;
+        b=y7GI88udLlzLqBegPIEzwnvR8uV0RBRWVzsY7wvwl+WnFqZ3qmHJ8BBSAYysW4DkEc
+         GE5n+tp8TA12Fc2CggxycwVwCQztxdishbcJqt5rER6/VrKFGMz3LS0JyVLqdKM8GU8Q
+         ijtxTuul1ljIs7BiD7HUE5ZB7j7aaUYZv21LvHhISApatkLvGWtssGxa0vwj4pKpdk74
+         MDnz+kuQyc3IZCPUZ0sZKIP/2loSHfdlZ5+eVbrtybE232fVXpfxvywABYDVj9MFUob1
+         gJffKF+8lw6sBA8/F94UDvMHXd7Dwmw2ke7vNdPsVV9cYbOd4AseDtGEC+MtOoQiF87j
+         VdNA==
+X-Gm-Message-State: AO0yUKV0CmMaJSV+XwnJAKExQjqOcBIlUDRSKnfAOzxNLqf3NtwnLd40
+        lz10sChUdqUWppD8Sj5jOJwc5gqiJvMw/7l0sPZGEszkdBag
+X-Google-Smtp-Source: AK7set/S1nqn/fMuGlWIpSn6d6ejn2ZN4GU3/ibEG/Mc53uNbGpnnkIN6DaM6IlJhVpwIkzUYd24lKowiDz7CYORuUo5faBKddJR
 MIME-Version: 1.0
-References: <00000000000075bebb05f79acfde@google.com> <CAGxU2F4jxdzK8Y-jaoKRaX_bDhoMtomOT6TyMek+un-Bp8RX3g@mail.gmail.com>
- <ZBUGp5bvNuE3sK5g@bullseye>
-In-Reply-To: <ZBUGp5bvNuE3sK5g@bullseye>
-From:   Stefano Garzarella <sgarzare@redhat.com>
-Date:   Mon, 27 Mar 2023 11:07:52 +0200
-Message-ID: <CAGxU2F6StMA+Dp77thrC-Tdq+GMiA802yCgxpE5atDn3RiVA1w@mail.gmail.com>
-Subject: Re: [syzbot] [net?] [virt?] [io-uring?] [kvm?] BUG: soft lockup in vsock_connect
-To:     Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc:     Bobby Eshleman <bobby.eshleman@bytedance.com>,
-        Bobby Eshleman <bobby.eshleman@gmail.com>,
-        syzbot <syzbot+0bc015ebddc291a97116@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, davem@davemloft.net, edumazet@google.com,
-        io-uring@vger.kernel.org, kuba@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pabeni@redhat.com, stefanha@redhat.com,
-        syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org,
-        Krasnov Arseniy <oxffffaa@gmail.com>,
-        Krasnov Arseniy Vladimirovich <AVKrasnov@sberdevices.ru>
+X-Received: by 2002:a02:94c5:0:b0:3b7:9d19:fec7 with SMTP id
+ x63-20020a0294c5000000b003b79d19fec7mr4237535jah.0.1679914914478; Mon, 27 Mar
+ 2023 04:01:54 -0700 (PDT)
+Date:   Mon, 27 Mar 2023 04:01:54 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bb028805f7dfab35@google.com>
+Subject: [syzbot] Monthly io-uring report
+From:   syzbot <syzbot+lista29bb0eabb2ddbae6f4a@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Mar 25, 2023 at 1:44=E2=80=AFAM Bobby Eshleman <bobbyeshleman@gmail=
-.com> wrote:
->
-> On Fri, Mar 24, 2023 at 09:38:38AM +0100, Stefano Garzarella wrote:
-> > Hi Bobby,
-> > FYI we have also this one, but it seems related to
-> > syzbot+befff0a9536049e7902e@syzkaller.appspotmail.com
-> >
-> > Thanks,
-> > Stefano
-> >
->
-> Got it, I'll look into it.
+Hello io-uring maintainers/developers,
 
-I think it is related to
-syzbot+befff0a9536049e7902e@syzkaller.appspotmail.com, so I tested the
-same patch and syzbot seems happy.
-I marked this as duplicated, but feel free to undup if it is not the case.
+This is a 30-day syzbot report for the io-uring subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/io-uring
 
-Thanks,
-Stefano
+During the period, 5 new issues were detected and 0 were fixed.
+In total, 49 issues are still open and 105 have been fixed so far.
 
+Some of the still happening issues:
+
+Crashes Repro Title
+3393    Yes   WARNING in io_ring_exit_work
+              https://syzkaller.appspot.com/bug?extid=00e15cda746c5bc70e24
+3241    Yes   general protection fault in try_to_wake_up (2)
+              https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
+1873    Yes   WARNING in split_huge_page_to_list (2)
+              https://syzkaller.appspot.com/bug?extid=07a218429c8d19b1fb25
+772     Yes   INFO: task hung in io_ring_exit_work
+              https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
+718     Yes   KASAN: use-after-free Read in io_poll_remove_entries
+              https://syzkaller.appspot.com/bug?extid=cd301bb6523ea8cc8ca2
+443     Yes   KMSAN: uninit-value in io_req_cqe_overflow
+              https://syzkaller.appspot.com/bug?extid=12dde80bf174ac8ae285
+73      Yes   INFO: task hung in io_wq_put_and_exit (3)
+              https://syzkaller.appspot.com/bug?extid=adb05ed2853417be49ce
+38      Yes   KASAN: use-after-free Read in nfc_llcp_find_local
+              https://syzkaller.appspot.com/bug?extid=e7ac69e6a5d806180b40
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.

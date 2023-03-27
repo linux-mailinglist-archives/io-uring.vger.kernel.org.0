@@ -2,86 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 258D06CA1F5
-	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 13:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B9F6CA23F
+	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 13:18:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232105AbjC0LB7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Mar 2023 07:01:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
+        id S232037AbjC0LSP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Mar 2023 07:18:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232206AbjC0LB6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 07:01:58 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5C32735
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 04:01:55 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id z19-20020a056e02089300b00326098d01d9so1441727ils.2
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 04:01:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679914914;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        with ESMTP id S229577AbjC0LSP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 07:18:15 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26AE1423A
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 04:18:10 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id ew6so34466349edb.7
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 04:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679915888;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gBGjVn6FB49bJgbnCnfJ68CqyOHYb5wZzHIdBSRAMzY=;
-        b=y7GI88udLlzLqBegPIEzwnvR8uV0RBRWVzsY7wvwl+WnFqZ3qmHJ8BBSAYysW4DkEc
-         GE5n+tp8TA12Fc2CggxycwVwCQztxdishbcJqt5rER6/VrKFGMz3LS0JyVLqdKM8GU8Q
-         ijtxTuul1ljIs7BiD7HUE5ZB7j7aaUYZv21LvHhISApatkLvGWtssGxa0vwj4pKpdk74
-         MDnz+kuQyc3IZCPUZ0sZKIP/2loSHfdlZ5+eVbrtybE232fVXpfxvywABYDVj9MFUob1
-         gJffKF+8lw6sBA8/F94UDvMHXd7Dwmw2ke7vNdPsVV9cYbOd4AseDtGEC+MtOoQiF87j
-         VdNA==
-X-Gm-Message-State: AO0yUKV0CmMaJSV+XwnJAKExQjqOcBIlUDRSKnfAOzxNLqf3NtwnLd40
-        lz10sChUdqUWppD8Sj5jOJwc5gqiJvMw/7l0sPZGEszkdBag
-X-Google-Smtp-Source: AK7set/S1nqn/fMuGlWIpSn6d6ejn2ZN4GU3/ibEG/Mc53uNbGpnnkIN6DaM6IlJhVpwIkzUYd24lKowiDz7CYORuUo5faBKddJR
+        bh=EmbcAoss3ms3vFE/IhF2YD7FkhilTOgjHyDQ5LJPtXg=;
+        b=Ke+G+qBpLlek3T8ADTuYZk99ttqc7WgURQBF/Sy6cmhijr1BhW5Chf9kt/gvF+VXub
+         dj5RYSNuqkk6OfJUZN0DDxOL+8sN/9ymgBWQrOCacwQzaPhDGZj1FSuNYvjCgBKr6ZGL
+         3y9EnsdTN/Malyzsdy8yiNN8wGXacLOZuC1xSRCxiGUOyvO2nwPaYUZzTuhV+n1Txydd
+         LCavtObVIEQ2NFViiBtWKuoSZoIQAR8X+dmg/fD8xeTNoza2jc1pJSwMupO5tEieqwyh
+         1fj9KLD0dJ5n7NmwTcOELe05bfNKoTYmR2kpyxdW+eqg4tWilIuNBqNwORKIvpZvPgga
+         f7pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679915888;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EmbcAoss3ms3vFE/IhF2YD7FkhilTOgjHyDQ5LJPtXg=;
+        b=JUH6X8G/vrjfC5DLx8aCKEyHcw0fZOOLQL9pvv/dn5SkrhRb6QwSCQ8KB6PU+znd1f
+         b+m3MQp/81Gx2pSAU4xVna+V5Y3wFgfYCG+RgSoKJbspeyy3T+KS0J9t0LBJCeLfceaC
+         Aor6/Kr0QYSuETmHeUEuFAoE1zQxJ/3sIwPGKccvXTpyyWEV/PhMpKrzsCg+s2OAkT7a
+         eSjGGlZxuX2ogqei4FYseIeGusqrNgJjOowK5zSSRwDr+UdjnW5lNo2sHn1pgh3EC7ye
+         QejJNYdeKBDtvhZ5T5z4LNB5sGxxiBOwr4UuypSJngJk7Cr/k0yoHJf8qUKay7kWYww+
+         NcnQ==
+X-Gm-Message-State: AAQBX9e1eZxB5P5DzjLIFvrhJ5VyXk571AiIkxUIy9cobcUcu45zMGna
+        SkzAZs8RVV2EUkKV6J8bll8=
+X-Google-Smtp-Source: AKy350b1d8ORC3tvEVSuLTW5L44d5OH+/Exo9UJUV1SrL4whhsVYUnio87Q4SF1cPL34gIw7RPYQBw==
+X-Received: by 2002:a17:906:36d7:b0:93d:cffb:80ba with SMTP id b23-20020a17090636d700b0093dcffb80bamr11639952ejc.66.1679915888578;
+        Mon, 27 Mar 2023 04:18:08 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:1063])
+        by smtp.gmail.com with ESMTPSA id p13-20020a1709066a8d00b00932ab7699ffsm13266445ejr.148.2023.03.27.04.18.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 04:18:08 -0700 (PDT)
+Message-ID: <bf407fd2-afd5-43f8-568e-efda1f09ae42@gmail.com>
+Date:   Mon, 27 Mar 2023 12:16:47 +0100
 MIME-Version: 1.0
-X-Received: by 2002:a02:94c5:0:b0:3b7:9d19:fec7 with SMTP id
- x63-20020a0294c5000000b003b79d19fec7mr4237535jah.0.1679914914478; Mon, 27 Mar
- 2023 04:01:54 -0700 (PDT)
-Date:   Mon, 27 Mar 2023 04:01:54 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bb028805f7dfab35@google.com>
-Subject: [syzbot] Monthly io-uring report
-From:   syzbot <syzbot+lista29bb0eabb2ddbae6f4a@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH] io_uring/uring_cmd: push IRQ based completions through
+ task_work
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        Kanchan Joshi <joshi.k@samsung.com>
+References: <4b4e3526-e6b5-73dd-c6fb-f7ddccf19f33@kernel.dk>
+ <CA+1E3rKBNhmT63GMNpe-c+EVDpzvs4voTkL-efkdbJHdNZhZ7w@mail.gmail.com>
+ <a3c007ee-f324-df9c-56ae-2356f10d76e6@kernel.dk>
+ <b488449b-3acc-35dd-1a44-ef6c8193a08d@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b488449b-3acc-35dd-1a44-ef6c8193a08d@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello io-uring maintainers/developers,
+On 3/20/23 20:42, Jens Axboe wrote:
+> On 3/20/23 2:03?PM, Jens Axboe wrote:
+>> On 3/20/23 9:06?AM, Kanchan Joshi wrote:
+>>> On Sun, Mar 19, 2023 at 8:51?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> This is similar to what we do on the non-passthrough read/write side,
+>>>> and helps take advantage of the completion batching we can do when we
+>>>> post CQEs via task_work. On top of that, this avoids a uring_lock
+>>>> grab/drop for every completion.
 
-This is a 30-day syzbot report for the io-uring subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/io-uring
+What we should do is to pass in "bool *locked" that we use for
+normal tw. I'll prep a patch converting that locked into a structure.
 
-During the period, 5 new issues were detected and 0 were fixed.
-In total, 49 issues are still open and 105 have been fixed so far.
+I'd also argue it's better to use tw from commands directly
+without a second callback. That would need a couple of helpers.
 
-Some of the still happening issues:
-
-Crashes Repro Title
-3393    Yes   WARNING in io_ring_exit_work
-              https://syzkaller.appspot.com/bug?extid=00e15cda746c5bc70e24
-3241    Yes   general protection fault in try_to_wake_up (2)
-              https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
-1873    Yes   WARNING in split_huge_page_to_list (2)
-              https://syzkaller.appspot.com/bug?extid=07a218429c8d19b1fb25
-772     Yes   INFO: task hung in io_ring_exit_work
-              https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
-718     Yes   KASAN: use-after-free Read in io_poll_remove_entries
-              https://syzkaller.appspot.com/bug?extid=cd301bb6523ea8cc8ca2
-443     Yes   KMSAN: uninit-value in io_req_cqe_overflow
-              https://syzkaller.appspot.com/bug?extid=12dde80bf174ac8ae285
-73      Yes   INFO: task hung in io_wq_put_and_exit (3)
-              https://syzkaller.appspot.com/bug?extid=adb05ed2853417be49ce
-38      Yes   KASAN: use-after-free Read in nfc_llcp_find_local
-              https://syzkaller.appspot.com/bug?extid=e7ac69e6a5d806180b40
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+Pavel Begunkov

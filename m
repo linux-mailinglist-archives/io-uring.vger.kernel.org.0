@@ -2,57 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 239FD6C9796
-	for <lists+io-uring@lfdr.de>; Sun, 26 Mar 2023 21:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A8216C9EFE
+	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 11:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjCZTUh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 26 Mar 2023 15:20:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55436 "EHLO
+        id S229610AbjC0JJU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Mar 2023 05:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjCZTUg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 26 Mar 2023 15:20:36 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FDC5263;
-        Sun, 26 Mar 2023 12:20:35 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id p203so7914285ybb.13;
-        Sun, 26 Mar 2023 12:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679858435;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oG/w6m6QtpmYcph7ogXNw2Cb+L528y4HO8hE3WHqySk=;
-        b=RuYjs/StRoPkkDWrvmwXiGOQ4iyHBLQ/oUc4LBwsJU954HQ34/la6MiLmEMMLNjbqa
-         ZiUeOh17f/1xc5lpEgOWba9hMrolYNI2qlhsq4ilNa1fsdj763IHQLcbbtmWlRouvS+U
-         dSrhFSfzFxbzx8uTZEIfCUeszCpSx4HsO84dNQebYcswk4G/8jz7sbQ3dA0ol3PQ+waP
-         iB4UqDUppIJIX1r2twnkAJr8idV7fWN8MV3e85gpPvi18qlrTsFtoHk6k71NHG36rprB
-         swGIloWRV55T8523Do1MGQ3E2dVOcCW0XtgX2jKeLiU0qmhKETcks2Xzm46REysaFt5s
-         Evhg==
+        with ESMTP id S232766AbjC0JIy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 05:08:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6651835AA
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 02:08:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679908086;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q/jHqPQ9labkDpwONGksLRLwMhvFcLpODPDEk10PFbM=;
+        b=MSnRWPPpAlaSdJ/xYjX2olTH3prFhPfUzmbC9Vm3dMOr5cYdxIUOmar7jWqlwPZzvLkjGi
+        k6bgGXtiRILyEPrXnb6QFKzeshzrMCMTkQf3BLGt7ZTIFlRAXsx8Cj3ZoXeNkFI2OT63tp
+        MU7vWpVsURhW+kHjacW05TSncLmJtuQ=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-63-OGV9_6D-M1qtB7tpjCad6Q-1; Mon, 27 Mar 2023 05:08:05 -0400
+X-MC-Unique: OGV9_6D-M1qtB7tpjCad6Q-1
+Received: by mail-yb1-f198.google.com with SMTP id w5-20020a253005000000b00aedd4305ff2so8168852ybw.13
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 02:08:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679858435;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oG/w6m6QtpmYcph7ogXNw2Cb+L528y4HO8hE3WHqySk=;
-        b=SitwAuNnrUXK5/XvvQboxos8yY8/RtcRC4khWBhH9F7onDyKDNp/P5s+X39jnTjiGn
-         ozuJW5szbo0kvgA47lHTkLk1UjETFm0xKCGziXoCwkNb8mb6u6qVcLUGvZZdBFOte2Qm
-         PtQSRMAhn2H/qxQME5aNEh4xuQp00eaVX5VSsfWpvkL+ipcT/mOwemxDHDHmso9iYpt+
-         dVqvSmLpjFkiBq/R09snLDAtYdWC1ikA8K6g29uCI3+z6sZns2h/55NciPzCtip0QpIS
-         XOzemTXUuJdpc+96y0YW7hR3v7CrPhVu7xO0xSl2D4x9uam2eXd9yox7UrsrYcFytX1i
-         lR5g==
-X-Gm-Message-State: AAQBX9fa9DgrjOKwsW8ChczYsu1WDKcIBw3TZsyXqpHQAChNUmMPMPEl
-        uqoDU7BpV4e9csMqTraWoJw=
-X-Google-Smtp-Source: AKy350ZX9Q/+0ojpsMuhWZXN3EJq3mCPftR76gOQ189+2+0EJNrC6JBFXYC2V/t/39GIYgzP3Km5zA==
-X-Received: by 2002:a25:2650:0:b0:b65:f335:2875 with SMTP id m77-20020a252650000000b00b65f3352875mr9567454ybm.37.1679858434757;
-        Sun, 26 Mar 2023 12:20:34 -0700 (PDT)
-Received: from localhost ([2600:1700:65a0:ab60:2049:9ff4:d425:1853])
-        by smtp.gmail.com with ESMTPSA id 64-20020a250643000000b00b7767ca749esm1874211ybg.59.2023.03.26.12.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Mar 2023 12:20:34 -0700 (PDT)
-Date:   Sun, 26 Mar 2023 12:20:33 -0700
-From:   Cong Wang <xiyou.wangcong@gmail.com>
+        d=1e100.net; s=20210112; t=1679908084;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q/jHqPQ9labkDpwONGksLRLwMhvFcLpODPDEk10PFbM=;
+        b=D9kdGXlz1nhbcYw+eMNYQpLY3YaHZBfnPQuj40wLTPwR+f5001LfumcHKE7evrmV64
+         GQ6byeqYHMkfYisdz+O6gIU2BEAmvTuJwepDe9j0YvAtGW/lmIY4WL3zzWaLut8DbPCX
+         jQZAcHEZP4TcgzqmmP0SjHYDx8Y2ighjXFj/c1wO2m0mwaxYABjORiz6fkJS+H9fQFkB
+         +SEbnK34W6o1RdV43eMC4wC5LIrVIYyfSpd1jXcxICwXS77f7fHxMZz/mEDOveg+G6MC
+         NLDgii6pNcwrszcrSoczHt8FZkgvveD0QXnk7rW2YTIbRr6dOmyiboQkMNOnXsVVK2yN
+         tWKQ==
+X-Gm-Message-State: AAQBX9fr2GX5FcDdHWM8DGO9zkhYUTIyhP7LDC7EAl3olz/b6rxis4yH
+        bS3Nm6VupYcC+AWn9hXpDLwIDPxcDgXmsXN3ybukjkvtLg63k6LaZbhmT57UbI7uQ3VD/dbVYre
+        xHA7TrHJd8kKXfMSmWi4qse9A92E72zTkQPk=
+X-Received: by 2002:a05:6902:168d:b0:b6d:1483:bc18 with SMTP id bx13-20020a056902168d00b00b6d1483bc18mr6595363ybb.7.1679908084552;
+        Mon, 27 Mar 2023 02:08:04 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZK4A0vkFV+Fi54XXazb/aOmFl65dPrh+4dL2oYcZ2EWPZ/YWITfHG4vrrsNYo/PRnSdXQDyk1J9i2vTaifXNI=
+X-Received: by 2002:a05:6902:168d:b0:b6d:1483:bc18 with SMTP id
+ bx13-20020a056902168d00b00b6d1483bc18mr6595359ybb.7.1679908084346; Mon, 27
+ Mar 2023 02:08:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <00000000000075bebb05f79acfde@google.com> <CAGxU2F4jxdzK8Y-jaoKRaX_bDhoMtomOT6TyMek+un-Bp8RX3g@mail.gmail.com>
+ <ZBUGp5bvNuE3sK5g@bullseye>
+In-Reply-To: <ZBUGp5bvNuE3sK5g@bullseye>
+From:   Stefano Garzarella <sgarzare@redhat.com>
+Date:   Mon, 27 Mar 2023 11:07:52 +0200
+Message-ID: <CAGxU2F6StMA+Dp77thrC-Tdq+GMiA802yCgxpE5atDn3RiVA1w@mail.gmail.com>
+Subject: Re: [syzbot] [net?] [virt?] [io-uring?] [kvm?] BUG: soft lockup in vsock_connect
 To:     Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        Bobby Eshleman <bobby.eshleman@bytedance.com>,
+Cc:     Bobby Eshleman <bobby.eshleman@bytedance.com>,
         Bobby Eshleman <bobby.eshleman@gmail.com>,
         syzbot <syzbot+0bc015ebddc291a97116@syzkaller.appspotmail.com>,
         axboe@kernel.dk, davem@davemloft.net, edumazet@google.com,
@@ -63,51 +72,37 @@ Cc:     Stefano Garzarella <sgarzare@redhat.com>,
         virtualization@lists.linux-foundation.org,
         Krasnov Arseniy <oxffffaa@gmail.com>,
         Krasnov Arseniy Vladimirovich <AVKrasnov@sberdevices.ru>
-Subject: Re: [syzbot] [net?] [virt?] [io-uring?] [kvm?] BUG: soft lockup in
- vsock_connect
-Message-ID: <ZCCbATwov4U+GBUv@pop-os.localdomain>
-References: <00000000000075bebb05f79acfde@google.com>
- <CAGxU2F4jxdzK8Y-jaoKRaX_bDhoMtomOT6TyMek+un-Bp8RX3g@mail.gmail.com>
- <ZBUGp5bvNuE3sK5g@bullseye>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZBUGp5bvNuE3sK5g@bullseye>
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sat, Mar 18, 2023 at 12:32:39AM +0000, Bobby Eshleman wrote:
+On Sat, Mar 25, 2023 at 1:44=E2=80=AFAM Bobby Eshleman <bobbyeshleman@gmail=
+.com> wrote:
+>
 > On Fri, Mar 24, 2023 at 09:38:38AM +0100, Stefano Garzarella wrote:
 > > Hi Bobby,
 > > FYI we have also this one, but it seems related to
 > > syzbot+befff0a9536049e7902e@syzkaller.appspotmail.com
-> > 
+> >
 > > Thanks,
 > > Stefano
-> > 
-> 
+> >
+>
 > Got it, I'll look into it.
-> 
 
-It seems you forgot to set skb->sk??
+I think it is related to
+syzbot+befff0a9536049e7902e@syzkaller.appspotmail.com, so I tested the
+same patch and syzbot seems happy.
+I marked this as duplicated, but feel free to undup if it is not the case.
 
-diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
-index 957cdc01c8e8..d47ad27b409d 100644
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -236,6 +236,7 @@ static int virtio_transport_send_pkt_info(struct vsock_sock *vsk,
-        }
-
-        virtio_transport_inc_tx_pkt(vvs, skb);
-+       skb_set_owner_w(skb, sk_vsock(vsk));
-
-        return t_ops->send_pkt(skb);
- }
+Thanks,
+Stefano
 

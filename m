@@ -2,117 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA90A6CAE4A
-	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 21:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A720B6CAE58
+	for <lists+io-uring@lfdr.de>; Mon, 27 Mar 2023 21:15:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232752AbjC0TMw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Mar 2023 15:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34820 "EHLO
+        id S232322AbjC0TPl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Mar 2023 15:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232692AbjC0TMc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 15:12:32 -0400
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75834469F
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 12:12:20 -0700 (PDT)
-Received: by mail-qt1-x835.google.com with SMTP id d75a77b69052e-3ddbf70d790so940911cf.1
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 12:12:20 -0700 (PDT)
+        with ESMTP id S232654AbjC0TPa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 15:15:30 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC9D8272E
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 12:15:21 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id r4so5155910ilt.8
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 12:15:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1679944339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hCIxMCtVwvJudjfZUgG2jT2uTyvf4xuZUEIz2rDKMFI=;
-        b=NwtDg0rPE+ibvY3zDSxy+0v5POp391qso4fB1BMcg/Ex+IctIn+nYEB6DEfvNSe1mc
-         NETxtSk8dJM4AxayzkpUzYWIA+BI02N5f7IyeTsdZ6+qW4aU8zHNbmHAn40YwFI54rXn
-         jTr8j8Qp4SdrhU9xAi4Nwkob1DaB6H7WlhcdHSm0z1mpuDOkVfPNPsljVcm+XE06Ffiy
-         P1CvL5gVyQV8TsoV06LTDIokTfOuy3EuuuwfBU9eRY2WRLagh9sBc46ow1gu2RTyNXCi
-         gZiBpL01x3x3e9E2luH9LssT/L10XPA5r4nhGnTP3SrRrM2X99csrWSimK+6iuAb3HmE
-         355Q==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679944521; x=1682536521;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aDuzSc9dOHOYI9rHlptD+edKjvDmV7OlrXQ/SYd3dqw=;
+        b=1ucQHfz34fx+2/YG8Z7gh16ybQLAMq7mx6Bca9xqSOa6bp9+fFwC8mdNNHbJm7tC+W
+         kB0eonn/+IGb1UeTK9gt4L/V36OveTkOLkculIIYVeNEGmq+vAXWchSDFUVGXr8e0Zwp
+         twAEpz16NMjbpeNRSG9pVQG+VdFmW6vAw4//X1I6pVDqMd+87/hzUllTJAOUGcm4VGAu
+         5H8yb4m+u5xjdnLDOUpkVHlF3vKdm6uweMK19Fq1ovqAEFMWrmS/4gvfpb0iZqed824R
+         81TFXp78JvQDVXHclS0XsiJKY1iwNVT2SkpK9Y9z0idhPCv+HgN66uMbSI0uNk+81Z0u
+         XUIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679944339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1679944521; x=1682536521;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hCIxMCtVwvJudjfZUgG2jT2uTyvf4xuZUEIz2rDKMFI=;
-        b=gN8H/2OQg36DcWZT/ueVO9dNXnKMnNW6d6H9TTiXEk12fxigV5Ksq0FnG+9Ps312k5
-         piXu6hTK/XazdE/A9OLRyfcxF9OmNUix9J6KjiLfD1tsu+G1eDpj9HF8MkbRoL5Wgojd
-         a8OeTFZxeJXliY2gtNxKlI4l9c4+H0OQtDAxtspI+6XEDsDPXp4zb862nUZcnbm8Q71u
-         ytypZdUqUbQbOJukssUF1x0C0zWbQWwrBgSzd1ngUhP+7hoSOa9jpY7g1qxKUw2K0Pyu
-         hOO51ON84Mea5OTGKwqJwAi2KgyUqneuJHLDJRCE8yaM5mM6H+u4y1r79oS71GXjDj1I
-         gySQ==
-X-Gm-Message-State: AAQBX9fgSyz4SC3zR8N+T7vBF8lSjT+e6eFxIJvgxdI1weOizCHkpTFh
-        Eh0ujz0Bu67IQgp2j+PtKgjEcXHjcW8ZbbJd8XZ99A==
-X-Google-Smtp-Source: AKy350ZKQL/fS8u5F0Tn61irzgLpRzanEqu/twC4hgamyI8WQpdRTP9uWs0zLa93gHIPpODnhX0n3WNudWnmPAUK9vg=
-X-Received: by 2002:ac8:58cb:0:b0:3bf:b62a:508b with SMTP id
- u11-20020ac858cb000000b003bfb62a508bmr59524qta.12.1679944339546; Mon, 27 Mar
- 2023 12:12:19 -0700 (PDT)
+        bh=aDuzSc9dOHOYI9rHlptD+edKjvDmV7OlrXQ/SYd3dqw=;
+        b=6RSrTPOwUOSxX6U+3yMv/PWQYKjEahTpedgsKjwfwJfX9F4sFgZQMvat96plqNlHx2
+         Es0oKuPnM/YYmV5RvLxpw//MV0WPFdwWZOH0aPIM7V3b0/Cu8PSHld1TLhlxxCpBAsXq
+         ZcwxydX9VSOsNN9X7rtAtvFu5fmi7uIZaAM4iD5/rO8telxALQpWYL9bSGspRb9O8v58
+         2ywdOdpxjXubjDmNpPjpl9B0RmruoRHde5uLiu5O1sRZ6SZVUxVYGedGn73GH7OJKtVU
+         W+JBweWweppuKGoyJ2aDyn09o2qyqb6bpG+hWIVIxoNGTONnubU28tpkaYOTGyDknz4N
+         BZpQ==
+X-Gm-Message-State: AAQBX9eKF0KHOw48KDiGbe6+4ZDQr6WLRfIMVjBs2HSWipyoSUspMqbn
+        kDteoMmHn/0NhGAx2qN/7y5ZyO0SxaiikcLQPhIFIQ==
+X-Google-Smtp-Source: AKy350b//0q+mLRAy/mB5C31jJjGEUAquzpsHXNsU1Iu33wW0agZ26ENrQ7OzFn3zNZTE22ExH7lcw==
+X-Received: by 2002:a05:6e02:d4f:b0:325:e46f:a028 with SMTP id h15-20020a056e020d4f00b00325e46fa028mr5802649ilj.3.1679944520930;
+        Mon, 27 Mar 2023 12:15:20 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id q54-20020a056638347600b003c41434babdsm9194154jav.92.2023.03.27.12.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 12:15:20 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <f05f65aebaf8b1b5bf28519a8fdb350e3e7c9ad0.1679924536.git.asml.silence@gmail.com>
+References: <f05f65aebaf8b1b5bf28519a8fdb350e3e7c9ad0.1679924536.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: kill unused notif declarations
+Message-Id: <167994452044.167981.9809537298417159318.b4-ty@kernel.dk>
+Date:   Mon, 27 Mar 2023 13:15:20 -0600
 MIME-Version: 1.0
-References: <000000000000bb028805f7dfab35@google.com> <2309ca53-a126-881f-1ffa-4f5415a32173@kernel.dk>
-In-Reply-To: <2309ca53-a126-881f-1ffa-4f5415a32173@kernel.dk>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Mon, 27 Mar 2023 21:12:06 +0200
-Message-ID: <CANp29Y66H4-+d4hat_HCJck=u8dTn9Hw5KNzm1aYifQArQNNEw@mail.gmail.com>
-Subject: Re: [syzbot] Monthly io-uring report
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     syzbot <syzbot+lista29bb0eabb2ddbae6f4a@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-20972
+X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 8:23=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 3/27/23 5:01?AM, syzbot wrote:
-> > 1873    Yes   WARNING in split_huge_page_to_list (2)
-> >               https://syzkaller.appspot.com/bug?extid=3D07a218429c8d19b=
-1fb25
-> > 38      Yes   KASAN: use-after-free Read in nfc_llcp_find_local
-> >               https://syzkaller.appspot.com/bug?extid=3De7ac69e6a5d8061=
-80b40
->
-> These two are not io_uring. Particularly for the latter, I think syzbot
-> has a tendency to guess it's io_uring if any kind of task_work is
-> involved. That means anything off fput ends up in that bucket. Can we
-> get that improved please?
 
-Sure, I'll update the rules and rerun the subsystem recognition.
+On Mon, 27 Mar 2023 16:34:48 +0100, Pavel Begunkov wrote:
+> There are two leftover structures from the notification registration
+> mechanism that has never been released, kill them.
+> 
+> 
 
-Currently syzbot sets io_uring if at least one is true
-a) The crash stack trace points to the io_uring sources (according to
-MAINTAINERS)
-b) At least one reproducer has the syz_io_uring_setup call (that's a
-helper function that's part of syzkaller).
+Applied, thanks!
 
-In general syzbot tries to minimize the reproducer, but unfortunately
-sometimes there remain some calls, which are not necessary per se. It
-definitely tried to get rid of them, but the reproducer was just not
-working with those calls cut out. Maybe they were just somehow
-affecting the global state and in the execution log there didn't exist
-any other call candidates, which could have fulfilled the purpose just
-as well.
+[1/1] io_uring: kill unused notif declarations
+      commit: e3546d2e01e9a942b2c3591f76145a1e90f9b13b
 
-I can update b) to "all reproducers have syz_io_uring_setup". Then
-those two bugs won't match the criteria.
-If it doesn't suffice and there are still too many false positives, I
-can drop b) completely.
+Best regards,
+-- 
+Jens Axboe
 
-By the way, should F: fs/io-wq.c also be added to the IO_URING's
-record in the MAINTAINERS file?
 
---
-Aleksandr
 
->
-> --
-> Jens Axboe
->

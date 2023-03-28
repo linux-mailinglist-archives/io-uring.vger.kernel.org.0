@@ -2,120 +2,199 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E74EF6CC47F
-	for <lists+io-uring@lfdr.de>; Tue, 28 Mar 2023 17:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A646A6CC643
+	for <lists+io-uring@lfdr.de>; Tue, 28 Mar 2023 17:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230396AbjC1PFg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Mar 2023 11:05:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45164 "EHLO
+        id S234022AbjC1P2f (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Mar 2023 11:28:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233845AbjC1PFf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Mar 2023 11:05:35 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA736BDF2
-        for <io-uring@vger.kernel.org>; Tue, 28 Mar 2023 08:04:17 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id v5so3915687ilj.4
-        for <io-uring@vger.kernel.org>; Tue, 28 Mar 2023 08:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680015830; x=1682607830;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ucZhZsgBspww1nPxwldrAWVTtQLudFoSvy5Lz6B5BmM=;
-        b=im4JMvggrmnWjALWqA9lBZSJmGhFrWJ02B3R4yWfJ+CPe92bmfCmtmwloI8SIQrm3W
-         SgUkKaeJKdfg6Rmkfc4mkdUNnMvRqcx0swZXw5mtG/t56ILQlINoQKSb5MpgOnhlpOvO
-         kRM0xqL1WqbVnKj23qqQMiC2eP2ymFupLqIejEoaT8aYoQ8bKmot3YckN3a01AYR7dji
-         9atjdDAeWHml87BVW6ZPvuWKfHXS8tfmrNNRRvTTYxKgyLUp5mbQV7uXqpB3quGPA78h
-         yFq4udxxW7FgBOD58efaWchJFV6hVksR/BPmEZ1GlgVIv8knpFIFVjCXohhgGnkcYCW1
-         wC0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680015830; x=1682607830;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ucZhZsgBspww1nPxwldrAWVTtQLudFoSvy5Lz6B5BmM=;
-        b=su2U/qPFZTifc6gk/0kFy/80X4ZDTfLukmP73knTcLrHO3EHth7IejgiUjr6WcRhEv
-         zoVV3mJxKYOqkv+ETT+x10QLJqNDfF4iSXtjiBEx5aFWJs5Rcz5xuiQddcPHBuhTU3gY
-         WWIKvScdyH/m0e6zhqJeXbKKY56fH1EkIIHWF+ndjaQDeG2AdUEQufUk8ZL/NwF7E2CZ
-         YpvPeH76GSB6mFjEd/TQnymECeXOGrtlNTt383D0MSb+p1NI1IzdOYlFOrl57wm2SHNZ
-         G/BB4H4QUh+xudJ7mwddHOdukAbPfqJ6jXCq89SO6fFcRTDZnn0ZUjDdQQDn+I7nrj6i
-         s/EA==
-X-Gm-Message-State: AAQBX9cYDpoOhp5SAmBCY2leTk+2eKZpAveOBSfYOZF5nbh+e36GPkKL
-        9qNEegv0p/RpnwUNpAhZ08a2zA==
-X-Google-Smtp-Source: AKy350bG+zrVVfobRItE21/Jcwrrdkehr9SHhHPqL5ZCEF74jxHgbs1w9vvjdN4XomxIKWRnIGx8Sg==
-X-Received: by 2002:a92:3652:0:b0:319:5431:5d5b with SMTP id d18-20020a923652000000b0031954315d5bmr8808784ilf.1.1680015830286;
-        Tue, 28 Mar 2023 08:03:50 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ce16-20020a0566381a9000b00404f3266fd7sm9676913jab.159.2023.03.28.08.03.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 08:03:49 -0700 (PDT)
-Message-ID: <d747cbab-5e0a-555c-6a2f-fe27bfcd35cf@kernel.dk>
-Date:   Tue, 28 Mar 2023 09:03:48 -0600
+        with ESMTP id S232440AbjC1P2R (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Mar 2023 11:28:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED94611EA3
+        for <io-uring@vger.kernel.org>; Tue, 28 Mar 2023 08:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680017119;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=pLTOFnnc1VmpWj6ZA8kv034hcnFXFgv2qtrDVUrrsM0=;
+        b=ehCDvNoztetL670WJGETNLmxV6x7Y19RmQ236J2xjfl/Nup2OUV8yx0kj16GoE2TcF/WWb
+        OpiIvXR/xW14gd8IxotI1EwkIKXAGi0SQ1qkjpPTos3CeEpLlkuQorjG4yV7YJJ4VcH5gL
+        jHXSlqRjQCTl5Mi2Hp/u3ryoR5q1O+o=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-62-ycV7bpnvMMST_p2X3cu_lw-1; Tue, 28 Mar 2023 11:11:25 -0400
+X-MC-Unique: ycV7bpnvMMST_p2X3cu_lw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EEDB8887401;
+        Tue, 28 Mar 2023 15:10:46 +0000 (UTC)
+Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E8E024020C82;
+        Tue, 28 Mar 2023 15:10:45 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V5 00/16] io_uring/ublk: add IORING_OP_FUSED_CMD
+Date:   Tue, 28 Mar 2023 23:09:42 +0800
+Message-Id: <20230328150958.1253547-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] io_uring/poll: clear single/double poll flags on poll
- arming
-Content-Language: en-US
-To:     Pengfei Xu <pengfei.xu@intel.com>
-Cc:     io-uring <io-uring@vger.kernel.org>, heng.su@intel.com
-References: <61e3fefd-0a99-5916-c049-9143d3342379@kernel.dk>
- <ZCJXK29jnRXAW6FO@xpf.sh.intel.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZCJXK29jnRXAW6FO@xpf.sh.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 3/27/23 8:55 PM, Pengfei Xu wrote:
-> Hi Jens Axboe,
-> 
-> On 2023-03-27 at 20:08:25 -0600, Jens Axboe wrote:
->> Unless we have at least one entry queued, then don't call into
->> io_poll_remove_entries(). Normally this isn't possible, but if we
->> retry poll then we can have ->nr_entries cleared again as we're
->> setting it up. If this happens for a poll retry, then we'll still have
->> at least REQ_F_SINGLE_POLL set. io_poll_remove_entries() then thinks
->> it has entries to remove.
->>
->> Clear REQ_F_SINGLE_POLL and REQ_F_DOUBLE_POLL unconditionally when
->> arming a poll request.
->>
->> Fixes: c16bda37594f ("io_uring/poll: allow some retries for poll triggering spuriously")
->> Cc: stable@vger.kernel.org
->> Reported-by: Pengfei Xu <pengfei.xu@intel.com>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> diff --git a/io_uring/poll.c b/io_uring/poll.c
->> index 795facbd0e9f..55306e801081 100644
->> --- a/io_uring/poll.c
->> +++ b/io_uring/poll.c
->> @@ -726,6 +726,7 @@ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
->>  	apoll = io_req_alloc_apoll(req, issue_flags);
->>  	if (!apoll)
->>  		return IO_APOLL_ABORTED;
->> +	req->flags &= ~(REQ_F_SINGLE_POLL | REQ_F_DOUBLE_POLL);
->>  	req->flags |= REQ_F_POLLED;
->>  	ipt.pt._qproc = io_async_queue_proc;
->>  
->   Thanks for your patch!
->   I have tested the above patch on top of v6.3-rc4 kernel.
->   This issue was fixed.
->   Reproduced code from syzkaller: https://github.com/xupengfe/syzkaller_logs/blob/main/230327_041425_io_poll_remove_entries/repro.c
->   One more info, bisect methodology comes from myself, not from syzkaller.
+Hello Jens,
 
-Great, thanks for testing!
+Add IORING_OP_FUSED_CMD, it is one special URING_CMD, the 1st SQE(primary) is
+one 64byte URING_CMD, and the 2nd 64byte SQE(secondary) is another normal
+64byte OP. The primary command provides device/file io buffer and
+submits OP represented by the secondary SQE using the provided buffer. This way
+solves ublk zero copy problem easily, since io buffer shares same lifetime with
+the primary command.
+
+The secondary OP is actually submitted from kernel, part of this idea is from
+Xiaoguang's ublk ebpf patchset, but this patchset submits secondary OP just
+like normal OP issued from userspace, that said, SQE order is kept, and
+batching handling is done too.
+
+Please see detailed design in commit log of the 2th patch, and one big
+point is how to handle buffer lifetime/ownership.
+
+With this way, it is easy to support zero copy for ublk/fuse device.
+
+Basically userspace can specify any sub-buffer of the ublk block request
+buffer from the fused command just by setting 'offset/len'
+in the secondary SQE for running secondary OP. This way is flexible to implement
+io mapping: mirror, stripped, ...
+
+The 4th & 5th patches enable fused secondary support for the following OPs:
+
+	OP_READ/OP_WRITE
+	OP_SEND/OP_RECV/OP_SEND_ZC
+
+The other ublk patches cleans ublk driver and implement fused command
+for supporting zero copy.
+
+Follows userspace code, which supports 128byte SQE fused command only:
+
+https://github.com/ming1/ubdsrv/tree/fused-cmd-zc-for-v5
+
+All three(loop, nbd and qcow2) ublk targets have supported zero copy by passing:
+
+	ublk add -t [loop|nbd|qcow2] -z .... 
+
+Basic fs mount/kernel building and builtin test are done, and also not
+observe regression on xfstest test over ublk-loop with zero copy.
+
+Also add liburing test case for covering fused command based on miniublk
+of blktest(supports 64byte normal SQE only)
+
+https://github.com/ming1/liburing/tree/fused_cmd_miniublk_for_v5
+
+Performance improvement is obvious on memory bandwidth related workloads,
+such as, 1~2X improvement on 64K/512K BS IO test on loop with ramfs backing file.
+ublk-null shows 5X IOPS improvement on big BS test when the copy is avoided.
+
+Please review and consider for v6.4.
+
+V5:
+	- rebase on for-6.4/io_uring
+	- rename to primary/secondary as suggested by Jens
+	- reserve interface for extending to support multiple secondary OPs in future,
+	which isn't a must, because it can be done by submitting multiple fused
+	commands with same primary request
+	- rename to primary/secondary in ublksrv and liburing test code
+
+V4:
+	- improve APIs naming(patch 1 ~ 4)
+	- improve documents and commit log(patch 2)
+	- add buffer direction bit to opdef, suggested by Jens(patch 2)
+	- add ublk zero copy document for cover: technical requirements(most related with
+	buffer lifetime), and explains why splice isn't good and how fused command solves it(patch 17)
+	- fix sparse warning(patch 7)
+	- supports 64byte SQE fused command(patch 3)
+
+V3:
+	- fix build warning reported by kernel test robot
+	- drop patch for checking fused flags on existed drivers with
+	  ->uring_command(), which isn't necessary, since we do not do that
+      when adding new ioctl or uring command
+    - inline io_init_rq() for core code, so just export io_init_secondary_req
+	- return result of failed secondary request unconditionally since REQ_F_CQE_SKIP
+	will be cleared
+	- pass xfstest over ublk-loop
+
+V2:
+	- don't resue io_mapped_ubuf (io_uring)
+	- remove REQ_F_FUSED_MASTER_BIT (io_uring)
+	- fix compile warning (io_uring)
+	- rebase on v6.3-rc1 (io_uring)
+	- grabbing io request reference when handling fused command 
+	- simplify ublk_copy_user_pages() by iov iterator
+	- add read()/write() for userspace to read/write ublk io buffer, so
+	that some corner cases(read zero, passthrough request(report zones)) can
+	be handled easily in case of zero copy; this way also helps to switch to
+	zero copy completely
+	- misc cleanup
+
+Ming Lei (16):
+  io_uring: increase io_kiocb->flags into 64bit
+  io_uring: add IORING_OP_FUSED_CMD
+  io_uring: support normal SQE for fused command
+  io_uring: support OP_READ/OP_WRITE for fused secondary request
+  io_uring: support OP_SEND_ZC/OP_RECV for fused secondary request
+  block: ublk_drv: add common exit handling
+  block: ublk_drv: don't consider flush request in map/unmap io
+  block: ublk_drv: add two helpers to clean up map/unmap request
+  block: ublk_drv: clean up several helpers
+  block: ublk_drv: cleanup 'struct ublk_map_data'
+  block: ublk_drv: cleanup ublk_copy_user_pages
+  block: ublk_drv: grab request reference when the request is handled by
+    userspace
+  block: ublk_drv: support to copy any part of request pages
+  block: ublk_drv: add read()/write() support for ublk char device
+  block: ublk_drv: don't check buffer in case of zero copy
+  block: ublk_drv: apply io_uring FUSED_CMD for supporting zero copy
+
+ Documentation/block/ublk.rst   | 126 ++++++-
+ drivers/block/ublk_drv.c       | 603 ++++++++++++++++++++++++++-------
+ include/linux/io_uring.h       |  50 ++-
+ include/linux/io_uring_types.h |  77 +++--
+ include/uapi/linux/io_uring.h  |  11 +-
+ include/uapi/linux/ublk_cmd.h  |  37 +-
+ io_uring/Makefile              |   2 +-
+ io_uring/fused_cmd.c           | 267 +++++++++++++++
+ io_uring/fused_cmd.h           |  11 +
+ io_uring/io_uring.c            |  51 ++-
+ io_uring/io_uring.h            |   5 +
+ io_uring/net.c                 |  30 +-
+ io_uring/opdef.c               |  22 ++
+ io_uring/opdef.h               |   7 +
+ io_uring/rw.c                  |  21 ++
+ 15 files changed, 1142 insertions(+), 178 deletions(-)
+ create mode 100644 io_uring/fused_cmd.c
+ create mode 100644 io_uring/fused_cmd.h
 
 -- 
-Jens Axboe
-
+2.39.2
 

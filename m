@@ -2,173 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08AD36CB38B
-	for <lists+io-uring@lfdr.de>; Tue, 28 Mar 2023 04:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3972E6CB394
+	for <lists+io-uring@lfdr.de>; Tue, 28 Mar 2023 04:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232278AbjC1CDt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 27 Mar 2023 22:03:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33332 "EHLO
+        id S229497AbjC1CIa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 27 Mar 2023 22:08:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232377AbjC1CDp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 22:03:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6693B2
-        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 19:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679968977;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z+FqEPJNucRwHbPqzEVTmeG1neXFruKCfqBC3cpAa3c=;
-        b=JAQx9D6A3K0jvT+xzxOd9Op8Pmij6T8QuKDAUOEXjoIdYXChwY9/u8WPZOBNg7iymr+yOy
-        rI6ZmzR7WzsRCuqh3ESISFK6pcbCRtdzpb5iIConmgSSLGXep9N9r66IYl6iTHGJjpcnJy
-        ayo7UaYOF/kuFAumhW/gPqdfl8bLvw4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-387-xNtOs8SCPH2haJiCiLiCvA-1; Mon, 27 Mar 2023 22:02:54 -0400
-X-MC-Unique: xNtOs8SCPH2haJiCiLiCvA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CA46085A588;
-        Tue, 28 Mar 2023 02:02:53 +0000 (UTC)
-Received: from ovpn-8-20.pek2.redhat.com (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C521492C3E;
-        Tue, 28 Mar 2023 02:02:46 +0000 (UTC)
-Date:   Tue, 28 Mar 2023 10:02:41 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V4 00/17] io_uring/ublk: add IORING_OP_FUSED_CMD
-Message-ID: <ZCJKwQLE3Fu2udmG@ovpn-8-20.pek2.redhat.com>
-References: <20230324135808.855245-1-ming.lei@redhat.com>
- <642236912a229_29cc2942c@dwillia2-xfh.jf.intel.com.notmuch>
- <ZCJABlFshb0UmTMv@ovpn-8-20.pek2.redhat.com>
- <6422437981a0b_21a8294d0@dwillia2-xfh.jf.intel.com.notmuch>
+        with ESMTP id S230218AbjC1CI3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 27 Mar 2023 22:08:29 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57017211E
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 19:08:27 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-6261eca70f7so501424b3a.0
+        for <io-uring@vger.kernel.org>; Mon, 27 Mar 2023 19:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679969306;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n6ZnfBksb7Z/DJpKCd1ngs8/H16KO4vYYQn/LlH3SJg=;
+        b=4MScGF/4+Al1sWWIMuhdgr45Ug9q2b/7KkWqgCpM4COrsvClFokNiiCi3UBOatBk36
+         FUZa01gIuEygTzn6Aq3aHnHIrvA/eEfQ0DmPIje11sj/P0b6oEaLdfdr4fwBO7xxLYIU
+         sIgCiz2jCBGl8u/OA4rQmkRpjHu629SzmwQiDNe/FeL/zPewHDhz6/YfOJOqUxfN7d2C
+         HnYxRAwmr7Q55l/sQST1iKngA2wZkKoGSo1qn4QHu0WWW3N1uukhfBn0gyPU8tjHax8d
+         TZsXJ+ZLcjZ3+Z4tqs/KWeej+PsvwwgbNQicdLIbUN5jMaO9M2fH/CjA//wGZyCbxO+F
+         uhYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679969306;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=n6ZnfBksb7Z/DJpKCd1ngs8/H16KO4vYYQn/LlH3SJg=;
+        b=23sN8TOPZPmxDx6F5HPSDsNuJm1t2V7v06XEPwAnnGgb3mJO3td2vz3dJ7iXGACYrk
+         e6JFtbo4e4gvnK2uprAnZWCJkkO/kuyUba28AUm+fwwfAHiHM/lfGb/1RdXWSU/RLC2U
+         nOAKYiFBw5cp/3uPO8b6PuKvEudVVgk1hrOsFCf2/p/1k4K7eaKLP51hJQEhm0hxB1ib
+         8K6TnifZaEpxXN/iLaibjjABsvKfdYHhlD4XAqoG0ACcXcBhmWiqA4m6OdTDU6HnPKBJ
+         bekTvwpTlUKa2ciQlBtvUcHkVrUv7Kq3fpa4n6qLflZ8GEp8SJImVRCCYO89heVM9UNf
+         3jhQ==
+X-Gm-Message-State: AAQBX9dwaSljtJd5S5VlR6IYpjzrmphsSEUpuirsid0yoiY0Auw6x/1+
+        +h1ChpGNdoSgbjVJzUF+kupFsNN5eNGllD7jnN9gaA==
+X-Google-Smtp-Source: AKy350ZwSa7XZ2Gq+/maB5e67BYgL/ubf4jacweKJBgOMQo0nWxa2IUAaKlrAR5Y82fQfadP4j59+A==
+X-Received: by 2002:a17:902:864b:b0:1a1:d395:e85c with SMTP id y11-20020a170902864b00b001a1d395e85cmr11465252plt.0.1679969306461;
+        Mon, 27 Mar 2023 19:08:26 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id jo18-20020a170903055200b0019aa5e0aadesm19821728plb.110.2023.03.27.19.08.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 19:08:26 -0700 (PDT)
+Message-ID: <61e3fefd-0a99-5916-c049-9143d3342379@kernel.dk>
+Date:   Mon, 27 Mar 2023 20:08:25 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6422437981a0b_21a8294d0@dwillia2-xfh.jf.intel.com.notmuch>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/poll: clear single/double poll flags on poll arming
+Cc:     Pengfei Xu <pengfei.xu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=3.6 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 06:31:37PM -0700, Dan Williams wrote:
-> Ming Lei wrote:
-> > Hi Dan,
-> > 
-> > On Mon, Mar 27, 2023 at 05:36:33PM -0700, Dan Williams wrote:
-> > > Ming Lei wrote:
-> > > > Hello Jens,
-> > > > 
-> > > > Add IORING_OP_FUSED_CMD, it is one special URING_CMD, which has to
-> > > > be SQE128. The 1st SQE(master) is one 64byte URING_CMD, and the 2nd
-> > > > 64byte SQE(slave) is another normal 64byte OP. For any OP which needs
-> > > > to support slave OP, io_issue_defs[op].fused_slave needs to be set as 1,
-> > > > and its ->issue() can retrieve/import buffer from master request's
-> > > > fused_cmd_kbuf. The slave OP is actually submitted from kernel, part of
-> > > > this idea is from Xiaoguang's ublk ebpf patchset, but this patchset
-> > > > submits slave OP just like normal OP issued from userspace, that said,
-> > > > SQE order is kept, and batching handling is done too.
-> > > 
-> > > Hi Ming,
-> > > 
-> > > io_uring and ublk are starting to be more on my radar these days. I
-> > > wanted to take a look at this series, but could not get past the
-> > > distracting "master"/"slave" terminology in this lead-in paragraph let
-> > > alone start looking at patches.
-> > > 
-> > > Frankly, the description sounds more like "head"/"tail", or even
-> > > "fuse0"/"fuse1" because, for example, who is to say you might not have
-> > 
-> > The term "master/slave" is from patches.
-> 
-> From what patches?
+Unless we have at least one entry queued, then don't call into
+io_poll_remove_entries(). Normally this isn't possible, but if we
+retry poll then we can have ->nr_entries cleared again as we're
+setting it up. If this happens for a poll retry, then we'll still have
+at least REQ_F_SINGLE_POLL set. io_poll_remove_entries() then thinks
+it has entries to remove.
 
-https://lore.kernel.org/linux-block/20230324135808.855245-3-ming.lei@redhat.com/T/#u
+Clear REQ_F_SINGLE_POLL and REQ_F_DOUBLE_POLL unconditionally when
+arming a poll request.
 
-> 
-> I did not understand this explanation either:
-> 
-> https://lore.kernel.org/all/ZBXjH5ipRUwtYIVF@ovpn-8-18.pek2.redhat.com/
+Fixes: c16bda37594f ("io_uring/poll: allow some retries for poll triggering spuriously")
+Cc: stable@vger.kernel.org
+Reported-by: Pengfei Xu <pengfei.xu@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Jens just suggested primary/secondary, which looks better, and I will
-use them in this thread and next version.
+---
 
-> 
-> > The master command not only provides buffer for slave request, but also requires
-> > slave request for serving master command, and master command is always completed
-> > after all slave request are done.
-> 
-> In terms of core kernel concepts that description aligns more with
-> idiomatic "parent"/"child" relationships where the child object holds a
-> reference on the parent.
-
-Yeah, holding reference is true for both two relationships.
-
-But "parent"/"child" relationship is often one long-time relation, but here
-both requests are short-time objects, just the secondary requests need to
-grab primary command buffer for running IO. After secondary requests IO
-is done, the relation is over. So it is sort of temporary/short-term relation,
-like contract.
-
-Also the buffer meta(bvec) data are readable for all secondary requests,
-and secondary requests have to use buffer in the primary command allowed
-direction. So the relation is very limited.
-
-> 
-> > That is why it is named as master/slave.
-> 
-> That explanation did not clarify.
-
-Hope the above words help.
-
-> 
-> > Actually Jens raised the similar concern
-> 
-> Thanks Jens!
-> 
-> > ...and I hate the name too, but it is always hard to figure out
-> > perfect name, or any other name for reflecting the relation?
-> > (head/tail, fuse0/1 can't do that, IMO)
-> 
-> Naming is hard, and master/slave is not appropriate so this needs a new
-> name. The reason I mentioned "head"/"tail" is not for ring buffer
-> purposes but more for its similarity to pages and folios where the folio
-> is not unreferenced until all tail pages are unreferenced.
-> 
-> In short there are several options that add more clarity and avoid
-> running afoul of coding-style.
-> 
-> > > larger fused ops in the future and need terminology to address
-> > > "fuse{0,1,2,3}"?
-> > 
-> > Yeah, definitely, the interface can be extended in future to support
-> > multiple "slave" requests.
-> 
-> Right, so why not just name them fuse0,1...n and specify that fuse0 is
-> the head of a fused op?
-
-fuse0, 1...n often means all these objects sharing common property, such
-as, all are objects of same class. However, here we do know primary is
-completely different with secondary.
-
-
-Thanks,
-Ming
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 795facbd0e9f..55306e801081 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -726,6 +726,7 @@ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
+ 	apoll = io_req_alloc_apoll(req, issue_flags);
+ 	if (!apoll)
+ 		return IO_APOLL_ABORTED;
++	req->flags &= ~(REQ_F_SINGLE_POLL | REQ_F_DOUBLE_POLL);
+ 	req->flags |= REQ_F_POLLED;
+ 	ipt.pt._qproc = io_async_queue_proc;
+ 
+-- 
+Jens Axboe
 

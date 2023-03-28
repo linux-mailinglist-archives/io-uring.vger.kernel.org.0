@@ -2,66 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A70F6CC953
-	for <lists+io-uring@lfdr.de>; Tue, 28 Mar 2023 19:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08DA6CCA0E
+	for <lists+io-uring@lfdr.de>; Tue, 28 Mar 2023 20:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjC1ReW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 28 Mar 2023 13:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        id S229658AbjC1SfX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 28 Mar 2023 14:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjC1ReV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Mar 2023 13:34:21 -0400
+        with ESMTP id S229436AbjC1SfW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 28 Mar 2023 14:35:22 -0400
 Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33386BBA8;
-        Tue, 28 Mar 2023 10:34:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E42F19F;
+        Tue, 28 Mar 2023 11:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680024860; x=1711560860;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WTNJQqR6j0Fv4yewPZZeEkwpR+jxknlg6+8TkBHSQ54=;
-  b=Y9gvdJXg1IKOTv7EqWiOjWp3U6JuuVIPGxQNuwRvC+2n2VEenfxxrBQ0
-   Rp6M3XJo7wMvIXfSW+eIkuYNVevE9bf88bcd22KleknmVK5de+yTfe7Ip
-   BbrSj49YNDktmp9KKDGGEaUkPszsYSUwjVetbQRRS+N6LcN/lBmLgTMXO
-   c4qGPpV44J9vxnDTh32+OnUQKVttYt4MPTSe2K9ayovHFU81UYXauSQrz
-   j3AdJTwXHdjNvAEmuCsDFaGBs9VYbMDXvoOTfkc24ZGqmh5n6ZuRxC46C
-   fOCy+dTPp3AQFay//2jrndvUJrGZWQh4OBIAIDbMG1ZBi/lpZxVhYqteq
+  t=1680028521; x=1711564521;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BeQ/zO5tBpJqenzqiAW7Jszl5ERiiqTZmgr4aBbjDak=;
+  b=cJy576AaUPg6PMzHDIsEV9cdt1nUQ0rW6h8HKA8+hJJE1u9LkPV3GbIj
+   iL/3N8YyUttTNKGvKYLXTVXG1gFXKmOwdkTVUKj8KuuHj6t7QQsoPed17
+   HuF4tpxno6aokp8G0jwFsMpZVpCoBO+3MVgwEhHoASPf3uVp3XFsswvSy
+   YdYAW9uPm/gekDpzrOHsaIaue+T+MAPNqVztBJsR/X3AKh/MUT7ZtvVyU
+   WyHyNPyiZDK4THrP/FNK9fVUperWXmgQqF7KihLQrrjBkxSNyNwTIsSMe
+   2Vy5fafcg7Htrh1R0nNDPAvhyMUVbv/ooopzsfTInuShLcM1NDpTn2BgR
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="342228785"
+X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="342247521"
 X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
-   d="scan'208";a="342228785"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2023 10:34:19 -0700
+   d="scan'208";a="342247521"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2023 11:35:20 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="677452177"
+X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="773246016"
 X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
-   d="scan'208";a="677452177"
+   d="scan'208";a="773246016"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 28 Mar 2023 10:34:15 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Mar 2023 11:35:17 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1phDD4-000IlR-1M;
-        Tue, 28 Mar 2023 17:34:14 +0000
-Date:   Wed, 29 Mar 2023 01:33:57 +0800
+        id 1phEA8-000Ior-2G;
+        Tue, 28 Mar 2023 18:35:16 +0000
+Date:   Wed, 29 Mar 2023 02:34:38 +0800
 From:   kernel test robot <lkp@intel.com>
-To:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: [PATCH V5 02/16] io_uring: add IORING_OP_FUSED_CMD
-Message-ID: <202303290112.oiF4LrMI-lkp@intel.com>
-References: <20230328150958.1253547-3-ming.lei@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-wireless@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        io-uring@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ a6faf7ea9fcb7267d06116d4188947f26e00e57e
+Message-ID: <6423333e.lGUVMQXkx2DT8H2X%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230328150958.1253547-3-ming.lei@redhat.com>
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
@@ -72,112 +66,231 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Ming,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: a6faf7ea9fcb7267d06116d4188947f26e00e57e  Add linux-next specific files for 20230328
 
-I love your patch! Perhaps something to improve:
+Error/Warning reports:
 
-[auto build test WARNING on axboe-block/for-next]
-[also build test WARNING on linus/master v6.3-rc4 next-20230328]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303281539.zzI4vpw1-lkp@intel.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Lei/io_uring-increase-io_kiocb-flags-into-64bit/20230328-232554
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20230328150958.1253547-3-ming.lei%40redhat.com
-patch subject: [PATCH V5 02/16] io_uring: add IORING_OP_FUSED_CMD
-config: x86_64-randconfig-a011-20230327 (https://download.01.org/0day-ci/archive/20230329/202303290112.oiF4LrMI-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/1cdd7d77287ea8d97834b37825e63a727e860f6c
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Ming-Lei/io_uring-increase-io_kiocb-flags-into-64bit/20230328-232554
-        git checkout 1cdd7d77287ea8d97834b37825e63a727e860f6c
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/nvme/host/
+Error/Warning: (recently discovered and may have been fixed)
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303290112.oiF4LrMI-lkp@intel.com/
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+drivers/perf/arm_pmuv3.c:44:2: error: use of undeclared identifier 'PERF_MAP_ALL_UNSUPPORTED'
+drivers/perf/arm_pmuv3.c:59:2: error: use of undeclared identifier 'PERF_CACHE_MAP_ALL_UNSUPPORTED'
+drivers/perf/arm_pmuv3.c:61:13: error: use of undeclared identifier 'OP_READ'
+drivers/perf/arm_pmuv3.c:61:25: error: use of undeclared identifier 'RESULT_ACCESS'
+drivers/perf/arm_pmuv3.c:61:3: error: call to undeclared function 'C'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+drivers/perf/arm_pmuv3.c:61:5: error: use of undeclared identifier 'L1D'
+drivers/perf/arm_pmuv3.c:62:25: error: use of undeclared identifier 'RESULT_MISS'
+drivers/perf/arm_pmuv3.c:64:5: error: use of undeclared identifier 'L1I'
+drivers/perf/arm_pmuv3.c:67:5: error: use of undeclared identifier 'DTLB'
 
-All warnings (new ones prefixed by >>):
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-   In file included from drivers/nvme/host/ioctl.c:8:
->> include/linux/io_uring.h:112:74: warning: omitting the parameter name in a function definition is a C2x extension [-Wc2x-extensions]
-   static inline void io_fused_cmd_start_secondary_req(struct io_uring_cmd *,
-                                                                            ^
-   include/linux/io_uring.h:113:57: warning: omitting the parameter name in a function definition is a C2x extension [-Wc2x-extensions]
-                   unsigned issue_flags, const struct io_uring_bvec_buf *,
-                                                                         ^
-   include/linux/io_uring.h:114:15: warning: omitting the parameter name in a function definition is a C2x extension [-Wc2x-extensions]
-                   unsigned int,
-                               ^
-   3 warnings generated.
+arch/parisc/kernel/firmware.c:1271 pdc_soft_power_button_panic() error: uninitialized symbol 'flags'.
+include/linux/gpio/consumer.h: linux/err.h is included more than once.
+include/linux/gpio/driver.h: asm/bug.h is included more than once.
+io_uring/io_uring.c:432 io_prep_async_work() error: we previously assumed 'req->file' could be null (see line 425)
+io_uring/kbuf.c:221 __io_remove_buffers() warn: variable dereferenced before check 'bl->buf_ring' (see line 219)
 
+Error/Warning ids grouped by kconfigs:
 
-vim +112 include/linux/io_uring.h
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- alpha-randconfig-r012-20230327
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-buildonly-randconfig-r001-20230326
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-defconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- parisc-randconfig-m031-20230326
+|   |-- arch-parisc-kernel-firmware.c-pdc_soft_power_button_panic()-error:uninitialized-symbol-flags-.
+|   |-- io_uring-io_uring.c-io_prep_async_work()-error:we-previously-assumed-req-file-could-be-null-(see-line-)
+|   `-- io_uring-kbuf.c-__io_remove_buffers()-warn:variable-dereferenced-before-check-bl-buf_ring-(see-line-)
+|-- parisc-randconfig-r025-20230326
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+clang_recent_errors
+`-- arm-randconfig-r024-20230326
+    |-- drivers-perf-arm_pmuv3.c:error:call-to-undeclared-function-C-ISO-C99-and-later-do-not-support-implicit-function-declarations
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-DTLB
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-L1D
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-L1I
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-OP_READ
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-PERF_CACHE_MAP_ALL_UNSUPPORTED
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-PERF_MAP_ALL_UNSUPPORTED
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-RESULT_ACCESS
+    `-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-RESULT_MISS
 
-    93	
-    94	static inline void io_uring_files_cancel(void)
-    95	{
-    96		if (current->io_uring) {
-    97			io_uring_unreg_ringfd();
-    98			__io_uring_cancel(false);
-    99		}
-   100	}
-   101	static inline void io_uring_task_cancel(void)
-   102	{
-   103		if (current->io_uring)
-   104			__io_uring_cancel(true);
-   105	}
-   106	static inline void io_uring_free(struct task_struct *tsk)
-   107	{
-   108		if (tsk->io_uring)
-   109			__io_uring_free(tsk);
-   110	}
-   111	#else
- > 112	static inline void io_fused_cmd_start_secondary_req(struct io_uring_cmd *,
-   113			unsigned issue_flags, const struct io_uring_bvec_buf *,
-   114			unsigned int,
-   115			void (*complete_tw_cb)(struct io_uring_cmd *, unsigned))
-   116	{
-   117	}
-   118	static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-   119				      struct iov_iter *iter, void *ioucmd)
-   120	{
-   121		return -EOPNOTSUPP;
-   122	}
-   123	static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
-   124			ssize_t ret2, unsigned issue_flags)
-   125	{
-   126	}
-   127	static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-   128				void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-   129	{
-   130	}
-   131	static inline struct sock *io_uring_get_socket(struct file *file)
-   132	{
-   133		return NULL;
-   134	}
-   135	static inline void io_uring_task_cancel(void)
-   136	{
-   137	}
-   138	static inline void io_uring_files_cancel(void)
-   139	{
-   140	}
-   141	static inline void io_uring_free(struct task_struct *tsk)
-   142	{
-   143	}
-   144	static inline const char *io_uring_get_opcode(u8 opcode)
-   145	{
-   146		return "";
-   147	}
-   148	#endif
-   149	
+elapsed time: 829m
+
+configs tested: 123
+configs skipped: 13
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r003-20230326   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r005-20230326   gcc  
+alpha                randconfig-r012-20230327   gcc  
+alpha                randconfig-r013-20230326   gcc  
+alpha                randconfig-r015-20230327   gcc  
+alpha                randconfig-r016-20230326   gcc  
+arc                              allyesconfig   gcc  
+arc          buildonly-randconfig-r001-20230327   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r002-20230326   gcc  
+arc                  randconfig-r043-20230326   gcc  
+arc                  randconfig-r043-20230327   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r003-20230327   clang
+arm                  randconfig-r011-20230326   clang
+arm                  randconfig-r046-20230326   clang
+arm                  randconfig-r046-20230327   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky         buildonly-randconfig-r004-20230327   gcc  
+csky                                defconfig   gcc  
+hexagon              randconfig-r015-20230326   clang
+hexagon              randconfig-r041-20230326   clang
+hexagon              randconfig-r041-20230327   clang
+hexagon              randconfig-r045-20230326   clang
+hexagon              randconfig-r045-20230327   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230327   gcc  
+i386                 randconfig-a002-20230327   gcc  
+i386                 randconfig-a003-20230327   gcc  
+i386                 randconfig-a004-20230327   gcc  
+i386                 randconfig-a005-20230327   gcc  
+i386                 randconfig-a006-20230327   gcc  
+i386                 randconfig-a011-20230327   clang
+i386                 randconfig-a012-20230327   clang
+i386                 randconfig-a013-20230327   clang
+i386                 randconfig-a014-20230327   clang
+i386                 randconfig-a015-20230327   clang
+i386                 randconfig-a016-20230327   clang
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r005-20230327   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r001-20230326   gcc  
+loongarch    buildonly-randconfig-r006-20230326   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r012-20230326   gcc  
+loongarch            randconfig-r024-20230326   gcc  
+loongarch            randconfig-r036-20230328   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r001-20230326   gcc  
+m68k                 randconfig-r016-20230327   gcc  
+microblaze   buildonly-randconfig-r004-20230326   gcc  
+microblaze           randconfig-r026-20230326   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips         buildonly-randconfig-r002-20230326   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r023-20230327   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r004-20230326   gcc  
+parisc               randconfig-r021-20230326   gcc  
+parisc               randconfig-r022-20230327   gcc  
+parisc               randconfig-r025-20230326   gcc  
+parisc               randconfig-r033-20230328   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r006-20230326   clang
+powerpc              randconfig-r031-20230328   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230326   gcc  
+riscv                randconfig-r042-20230327   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r013-20230327   clang
+s390                 randconfig-r024-20230327   clang
+s390                 randconfig-r044-20230326   gcc  
+s390                 randconfig-r044-20230327   clang
+sh                               allmodconfig   gcc  
+sh                   randconfig-r002-20230327   gcc  
+sh                   randconfig-r006-20230327   gcc  
+sh                   randconfig-r023-20230326   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r001-20230327   gcc  
+sparc                randconfig-r011-20230327   gcc  
+sparc                randconfig-r014-20230326   gcc  
+sparc                randconfig-r021-20230327   gcc  
+sparc                randconfig-r026-20230327   gcc  
+sparc64      buildonly-randconfig-r002-20230327   gcc  
+sparc64      buildonly-randconfig-r005-20230327   gcc  
+sparc64              randconfig-r003-20230326   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230327   gcc  
+x86_64               randconfig-a002-20230327   gcc  
+x86_64               randconfig-a003-20230327   gcc  
+x86_64               randconfig-a004-20230327   gcc  
+x86_64               randconfig-a005-20230327   gcc  
+x86_64               randconfig-a006-20230327   gcc  
+x86_64               randconfig-a011-20230327   clang
+x86_64               randconfig-a012-20230327   clang
+x86_64               randconfig-a013-20230327   clang
+x86_64               randconfig-a014-20230327   clang
+x86_64               randconfig-a015-20230327   clang
+x86_64               randconfig-a016-20230327   clang
+x86_64                               rhel-8.3   gcc  
 
 -- 
 0-DAY CI Kernel Test Service

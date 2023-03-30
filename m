@@ -2,89 +2,94 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CCF6CECC5
-	for <lists+io-uring@lfdr.de>; Wed, 29 Mar 2023 17:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1C36D0142
+	for <lists+io-uring@lfdr.de>; Thu, 30 Mar 2023 12:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229475AbjC2PYV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 29 Mar 2023 11:24:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35248 "EHLO
+        id S229916AbjC3Kc0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Mar 2023 06:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjC2PYU (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 29 Mar 2023 11:24:20 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C722C2D41
-        for <io-uring@vger.kernel.org>; Wed, 29 Mar 2023 08:24:19 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-752fe6c6d5fso9282939f.1
-        for <io-uring@vger.kernel.org>; Wed, 29 Mar 2023 08:24:19 -0700 (PDT)
+        with ESMTP id S230023AbjC3KcY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Mar 2023 06:32:24 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7D91992
+        for <io-uring@vger.kernel.org>; Thu, 30 Mar 2023 03:32:21 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id eh3so74457630edb.11
+        for <io-uring@vger.kernel.org>; Thu, 30 Mar 2023 03:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680103459;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qGoUSkyv865Ul//fUoRKm2C/3xjZ7aYgc9WSHE/kR/w=;
-        b=Tc0GeLsB21Ld61O/b1kan7+0h3+5fA3cKilDha+pEWIWzzm2ZuqE71YawpEHms6y4Y
-         bOb45K0mM8XHQTYZCV1qUa6audZthSPZdU9o0KxboCv2JdOyL03064jaE626vDN3PTQH
-         1W+ZPAzqFt/Asx62C9Wg1lqaydRcDWcGh0rI9RvILyI+yYYL/Lq+j4xLlzsHj6fD++/q
-         y6H+oV5xEsT60GhjOMb8pVAwjQs7ft7fSOKiaZEp05umBeQG5UBk2WhwnzlL7hVp3qPq
-         09Dj5RD2f0pXev7syaoSQy5RBvCxwxcEsw4MFoRkczuBYCAurIap7lkLx+z4pL8LZX5f
-         77pA==
+        d=gmail.com; s=20210112; t=1680172339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lcOuIaE/0CfU2XGiXqzEy2pCagEt+qFFJlvvo2AylwM=;
+        b=AjJPqG+cpCIS/pK48HJhJX1Nn/gM0GaxVmy6h7bKVZcUWW3z65FrMiemhn0oPOdvkB
+         PbvajqovdrIiS9eW0AZhaocf5rNN/Df/eiApWd12XwbKV9468karlFyqvMjfsB05I3bl
+         ymEScVxtUq0opCWkPDM93pvF3JCz8XtS8HAJPdBJCc0Nk6cIWNCIa5md9WIU+aAPxFsJ
+         rAVRpf30Q5vxw5HTP0FtNw6+Gbqx/cxQQ2EdJlSpj2AuwkO/8gLGXPq7wTK7uv1YK2Xh
+         wZzmcN+Xp/2vrkrt3atzV8fWeoTxjKiFFUugzdXLd88TE79vQlMS4M2+NVCbCiQB0jkR
+         P4rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680103459;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qGoUSkyv865Ul//fUoRKm2C/3xjZ7aYgc9WSHE/kR/w=;
-        b=iYGNp/c/hMgCH7QmL36jWikLlxFVYjWcJtQQCz/3NaKU4ZmAVic8wbG1agy92lzHka
-         tYZaYJZL4A73KUlhEPExtt/xx6USdgSX9/ZgxBbRnemHxP/3hHAQQskn5x88gD9zNoB0
-         9TobhNxMPdQ0aTKJDZMgSh3WHqpgHap655S8cFNsP01Ddx2AjaNHziyVa6kG8McC4fX5
-         EaV+Z/wmyJtrhWsUN1aVrdAeNLpKirdwXQ4zKD+pO/h7AI81HYrw0LSEMvq2mrAGZ7iK
-         5dijobmWyLhpzwOCsmxrTIgBlGagF4j03QMr01HhJeuz2bu8VF/2pGH76iohiLLob3aO
-         nG7A==
-X-Gm-Message-State: AAQBX9e9Ar59KXF43JeErvx+C8Hts+ZdbjGgeGmAJzeN6UnPgHkJcLVs
-        TWaWJ5xLz0R/vSgxXw8wIGUZM1uuEaWVYG4Os8Wddg==
-X-Google-Smtp-Source: AKy350aHbR4SgiK+sZkKqO9wdufDw/s+3HCl74o0KXUvJAFNBgh79keonVTnF5rLYMLXjk4ofQojZQ==
-X-Received: by 2002:a05:6e02:1543:b0:325:f635:26c5 with SMTP id j3-20020a056e02154300b00325f63526c5mr7231030ilu.3.1680103459133;
-        Wed, 29 Mar 2023 08:24:19 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a14-20020a921a0e000000b00322fd960361sm9238644ila.53.2023.03.29.08.24.18
+        d=1e100.net; s=20210112; t=1680172339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lcOuIaE/0CfU2XGiXqzEy2pCagEt+qFFJlvvo2AylwM=;
+        b=4Uz4VluffNsG+gfp3KYSP9vk0ELr0MgCGOcK09zlL/F64SiHTVnx/51DvD0iAyYANs
+         zambDEHb6CIH5IvNoVOUiXXhCXg/3fdpbPAnY22Je6oDFsAGyQ4UtMQ8/CmdXOW74W+g
+         qbO8F6QU9aFV+E+Vm6oE8oPLNkfKCSelv5qkCs9ifsrKFTCXJAmfkQanKTaKT8wjPnze
+         Asfi8qakxOGZJRTXHemSj2EymkCUz4ajB6YSBZkqI5lzIcbtYy7CR2TuAp1h0qv1hWtR
+         jRS8PD/yX1wQMZzHLtP9neYmspL4oSukZJqf82Tt851ozsrpSmKi5uKcAmOsfcw6ok8I
+         /y0w==
+X-Gm-Message-State: AAQBX9clXDHACBp4iaL4rcNTC6CYRDVyoamrdaGDEaFt5XgdLs91vpHC
+        60iGvNsN1YRQFbvFQDdzngtZ3c+qRPA=
+X-Google-Smtp-Source: AKy350ZTgYHg7eA9vVnajbcCcFlFTh1k9UbFRG99/v4VIJxRJn4zK1i0L4SWHxjNBTRdmFA5j+9dbg==
+X-Received: by 2002:a17:907:3e14:b0:947:3af0:66c0 with SMTP id hp20-20020a1709073e1400b009473af066c0mr3486069ejc.26.1680172338931;
+        Thu, 30 Mar 2023 03:32:18 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::2:e0e1])
+        by smtp.gmail.com with ESMTPSA id v5-20020a17090690c500b0093188e8d478sm17454256ejw.103.2023.03.30.03.32.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 08:24:18 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <1202ede2d7bb90136e3482b2b84aad9ed483e5d6.1680098433.git.asml.silence@gmail.com>
-References: <1202ede2d7bb90136e3482b2b84aad9ed483e5d6.1680098433.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/rsrc: fix rogue rsrc node grabbing
-Message-Id: <168010345823.1105147.9442526394317711065.b4-ty@kernel.dk>
-Date:   Wed, 29 Mar 2023 09:24:18 -0600
+        Thu, 30 Mar 2023 03:32:18 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: fix poll/netmsg alloc caches
+Date:   Thu, 30 Mar 2023 11:31:36 +0100
+Message-Id: <0126812afc5845096c987c1003e2ec078eefcd8a.1680172256.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-20972
-X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+We increase cache->nr_cached when we free into the cache but don't
+decrease when we take from it, so in some time we'll get an empty
+cache with cache->nr_cached larger than IO_ALLOC_CACHE_MAX, that fails
+io_alloc_cache_put() and effectively disables caching.
 
-On Wed, 29 Mar 2023 15:03:43 +0100, Pavel Begunkov wrote:
-> We should not be looking at ctx->rsrc_node and anyhow modifying the node
-> without holding uring_lock, grabbing references in such a way is not
-> safe either.
-> 
-> 
+Fixes: 9b797a37c4bd8 ("io_uring: add abstraction around apoll cache")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/alloc_cache.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks!
-
-[1/1] io_uring/rsrc: fix rogue rsrc node grabbing
-      commit: 4ff0b50de8cabba055efe50bbcb7506c41a69835
-
-Best regards,
+diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
+index 3aba7b356320..2fbecaa3a1ba 100644
+--- a/io_uring/alloc_cache.h
++++ b/io_uring/alloc_cache.h
+@@ -31,6 +31,7 @@ static inline struct io_cache_entry *io_alloc_cache_get(struct io_alloc_cache *c
+ 		entry = container_of(cache->list.next, struct io_cache_entry, node);
+ 		kasan_unpoison_range(entry, cache->elem_size);
+ 		cache->list.next = cache->list.next->next;
++		cache->nr_cached--;
+ 		return entry;
+ 	}
+ 
 -- 
-Jens Axboe
-
-
+2.39.1
 

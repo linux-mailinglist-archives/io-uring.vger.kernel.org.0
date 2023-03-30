@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A686D08C4
-	for <lists+io-uring@lfdr.de>; Thu, 30 Mar 2023 16:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC256D08C8
+	for <lists+io-uring@lfdr.de>; Thu, 30 Mar 2023 16:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232537AbjC3Oyh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Mar 2023 10:54:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33738 "EHLO
+        id S232559AbjC3Oyt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Mar 2023 10:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232508AbjC3Oyg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Mar 2023 10:54:36 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F043186;
-        Thu, 30 Mar 2023 07:54:35 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id v1so19392294wrv.1;
-        Thu, 30 Mar 2023 07:54:34 -0700 (PDT)
+        with ESMTP id S232539AbjC3Oyi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 30 Mar 2023 10:54:38 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A01BA5D8;
+        Thu, 30 Mar 2023 07:54:37 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id m6-20020a05600c3b0600b003ee6e324b19so11974552wms.1;
+        Thu, 30 Mar 2023 07:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680188074;
+        d=gmail.com; s=20210112; t=1680188075;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QZd7Q0w7/z/xq1l37RPu+7/1znEwBdl9Vpp14WIchi8=;
-        b=oF/E6TAr4lrfZC3fmGeL29xj5v2LilnNvXGMYN+gdNTEYSTobcTwHL6LMKkTnvTilM
-         guWV31Ph4qQ12vMVFlMB9ziYdjPcyyFyUsGiPQlTbFQTPIuT/h/y7KoNi5T3NvGWxZXS
-         btEX8m6FwtdOP1vj2Xk0DudDnm0Z4lJxtRd75g9EBhQIW8PmRDGrJ5M+2yv3yevg0Z0Y
-         z3EOIPlf1W67j7MJZTP7tTv5DGVjSaCwuRN4D+6umji+8us0pcx4vt1FPWIsSwP2/BBK
-         2Qj0AS1PinRa6wnfLaukPvvitAD67UH7whoWpVytPV9clOKYcEZr+Qw4xNomkHHYSsSK
-         t4hQ==
+        bh=WWAczytuFz9lGZfCu/Rbuh88s55sTzs57HoEPIGs0GU=;
+        b=ZPQgYFuWcz1SvJblTrxSJFLx5OAkM/KL/BYFd0RSfa/H2AiXu8SDOQ5j5v3iJprcop
+         Jx9t48yuY9un4JFMIBZ0Tzqb/jVGOO6oTYOOE87IYBLtZrXfvYaxbD9Fa+ErOFN9ROHZ
+         uEMnKIRmPXJoSZRA4y1uHnQeIGVXv7ebHVolEBgDmcM91gxa9mS4vxV+dLlkfDHiGEUq
+         hrmrqXUi5RXmuK+b/ctz8UsjGEg9kZ6N18KJ9wFAb3LF5mxKTohvByLBmHIrGkRq3Oq7
+         BDvCISHhLESl1mCXuFCwFrNwydXnxpXpXJZ5vvnRAl9xhNkSijs3wYq93FgJUOh+MifF
+         ecaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680188074;
+        d=1e100.net; s=20210112; t=1680188075;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QZd7Q0w7/z/xq1l37RPu+7/1znEwBdl9Vpp14WIchi8=;
-        b=riWvFsM7E8fx0B2T40iZEvXFzW74SBenDk3odP9lvs2gxuzZvqUPPyzL4GQu9XISMO
-         JhQ/lq/7zA+HPmJa751y/iHlkPgwGSPmZJQrfx5e58AlZouDBw1oSmLqHhBPru5X8yCs
-         2LJNdVwzC/NBGE1xsEii0Q3mq8QOJP+ejeQKm/nJtNrnwYTwU7/r3mKXy5lP3cOHHAN8
-         gNDU1LkBKQYe/TPig90n6G2SZf0ULitcWltKqUTYnfJditkxYPPxl8Iysd72v9pNZzEl
-         tlhF6TLvUDoof8nM2C3kLGTc5z6ngzp0XX3f/zC+irM0e6tt/p53oaU3YxcicgGrKuC4
-         9t7w==
-X-Gm-Message-State: AAQBX9chM8VXRmM6OVk5RdOJroJc5yuh3e3tNb0LKXmJclXucaTbTyaz
-        w2AhoamhpYp79ueTocEUWBAPXDlCPrw=
-X-Google-Smtp-Source: AKy350Y/uNss0dH9UJEjHVr3ULZNinKqCUYLvQ+llFtcI5K/Q44twm7N8/1LPksPqh49OQZR8Pn+Gw==
-X-Received: by 2002:a05:6000:12c3:b0:2ce:9f35:b645 with SMTP id l3-20020a05600012c300b002ce9f35b645mr19081107wrx.20.1680188074358;
-        Thu, 30 Mar 2023 07:54:34 -0700 (PDT)
+        bh=WWAczytuFz9lGZfCu/Rbuh88s55sTzs57HoEPIGs0GU=;
+        b=zBUikyicM/zeIOYvvcF0FJG1rvDA7Xk2osdcEii+KEYCigA6MaeqrJ55SP3+R/sHuS
+         JRgte4vX/mIgB4QkfZaoVwlpX2BhH7z9srWx9J0bIuoD7lkDZ/ItccSEkCA/twjw96hy
+         Nx2nCOvchcjaoA2Bi2X6GRITHdNd9DsXk8UuhDXQmOaVJ+LdbMhpA5U26Dbev3I2PA0F
+         Eo3na+FQgsM52MBQsQ2nRqtwzBrXMpsaJjLmlKhAoixN/dHhdBK5K01Y0FdFM2ELZeH4
+         LDC57UooIJ3DvKlFzYtJj0zTs5rvpFFNuaaZJW2p11lg+OePSEok2g6YQOjOyOOBboiW
+         9PvQ==
+X-Gm-Message-State: AO0yUKXOSbJ1vZxlm6P6SCWtO+UsJeOQpk0t69Gm6YqaoZyy0h7MdHwA
+        Rausc7zmykOLp+pRRrpM2z0YpAu/DBo=
+X-Google-Smtp-Source: AK7set+zedwXs+fLdMumlxG3sBZ9gDN2RVPlR6v3s6LBi48heZcC1nvjcMspRQH/8cUFA6geqyC44w==
+X-Received: by 2002:a1c:7702:0:b0:3ed:4f7d:f6ee with SMTP id t2-20020a1c7702000000b003ed4f7df6eemr18359942wmi.14.1680188075498;
+        Thu, 30 Mar 2023 07:54:35 -0700 (PDT)
 Received: from 127.0.0.1localhost (82-132-231-234.dab.02.net. [82.132.231.234])
-        by smtp.gmail.com with ESMTPSA id d7-20020adffbc7000000b002d5a8d8442asm28727962wrs.37.2023.03.30.07.54.33
+        by smtp.gmail.com with ESMTPSA id d7-20020adffbc7000000b002d5a8d8442asm28727962wrs.37.2023.03.30.07.54.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 07:54:34 -0700 (PDT)
+        Thu, 30 Mar 2023 07:54:35 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] io_uring/rsrc: keep cached refs per node
-Date:   Thu, 30 Mar 2023 15:53:20 +0100
-Message-Id: <c2cce457579b157b91c358ed0224343171be08c3.1680187408.git.asml.silence@gmail.com>
+Subject: [PATCH 03/11] io_uring: don't put nodes under spinlocks
+Date:   Thu, 30 Mar 2023 15:53:21 +0100
+Message-Id: <dd62f1c79e84f034acefaafac2a37f78ed8c0275.1680187408.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <cover.1680187408.git.asml.silence@gmail.com>
 References: <cover.1680187408.git.asml.silence@gmail.com>
@@ -71,126 +71,72 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We cache refs of the current node (i.e. ctx->rsrc_node) in
-ctx->rsrc_cached_refs. We'll be moving away from atomics, so move the
-cached refs in struct io_rsrc_node for now. It's a prep patch and
-shouldn't change anything in practise.
+io_req_put_rsrc() doesn't need any locking, so move it out of
+a spinlock section in __io_req_complete_post() and adjust helpers.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  1 -
- io_uring/rsrc.c                | 15 +++++++++------
- io_uring/rsrc.h                | 16 +++++++++-------
- 3 files changed, 18 insertions(+), 14 deletions(-)
+ io_uring/io_uring.c | 7 +++++--
+ io_uring/rsrc.h     | 6 +++---
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 561fa421c453..a0a5b5964d3a 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -240,7 +240,6 @@ struct io_ring_ctx {
- 		 * uring_lock, and updated through io_uring_register(2)
- 		 */
- 		struct io_rsrc_node	*rsrc_node;
--		int			rsrc_cached_refs;
- 		atomic_t		cancel_seq;
- 		struct io_file_table	file_table;
- 		unsigned		nr_user_files;
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index f2da9e251e3f..1e7c960737fd 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -36,9 +36,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- void io_rsrc_refs_drop(struct io_ring_ctx *ctx)
- 	__must_hold(&ctx->uring_lock)
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 536940675c67..c944833099a6 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -970,6 +970,7 @@ bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32
+ static void __io_req_complete_post(struct io_kiocb *req)
  {
--	if (ctx->rsrc_cached_refs) {
--		io_rsrc_put_node(ctx->rsrc_node, ctx->rsrc_cached_refs);
--		ctx->rsrc_cached_refs = 0;
-+	struct io_rsrc_node *node = ctx->rsrc_node;
+ 	struct io_ring_ctx *ctx = req->ctx;
++	struct io_rsrc_node *rsrc_node = NULL;
+ 
+ 	io_cq_lock(ctx);
+ 	if (!(req->flags & REQ_F_CQE_SKIP))
+@@ -990,7 +991,7 @@ static void __io_req_complete_post(struct io_kiocb *req)
+ 		}
+ 		io_put_kbuf_comp(req);
+ 		io_dismantle_req(req);
+-		io_req_put_rsrc(req);
++		rsrc_node = req->rsrc_node;
+ 		/*
+ 		 * Selected buffer deallocation in io_clean_op() assumes that
+ 		 * we don't hold ->completion_lock. Clean them here to avoid
+@@ -1001,6 +1002,8 @@ static void __io_req_complete_post(struct io_kiocb *req)
+ 		ctx->locked_free_nr++;
+ 	}
+ 	io_cq_unlock_post(ctx);
 +
-+	if (node && node->cached_refs) {
-+		io_rsrc_put_node(node, node->cached_refs);
-+		node->cached_refs = 0;
- 	}
++	io_put_rsrc_node(rsrc_node);
  }
  
-@@ -151,11 +153,11 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf **slo
- 	*slot = NULL;
- }
- 
--void io_rsrc_refs_refill(struct io_ring_ctx *ctx)
-+void io_rsrc_refs_refill(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
- 	__must_hold(&ctx->uring_lock)
+ void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+@@ -1117,7 +1120,7 @@ __cold void io_free_req(struct io_kiocb *req)
  {
--	ctx->rsrc_cached_refs += IO_RSRC_REF_BATCH;
--	refcount_add(IO_RSRC_REF_BATCH, &ctx->rsrc_node->refs);
-+	node->cached_refs += IO_RSRC_REF_BATCH;
-+	refcount_add(IO_RSRC_REF_BATCH, &node->refs);
- }
+ 	struct io_ring_ctx *ctx = req->ctx;
  
- static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
-@@ -300,6 +302,7 @@ void io_rsrc_node_switch(struct io_ring_ctx *ctx,
- 	if (!ctx->rsrc_node) {
- 		ctx->rsrc_node = ctx->rsrc_backup_node;
- 		ctx->rsrc_backup_node = NULL;
-+		ctx->rsrc_node->cached_refs = 0;
- 	}
- }
+-	io_req_put_rsrc(req);
++	io_put_rsrc_node(req->rsrc_node);
+ 	io_dismantle_req(req);
+ 	io_put_task_remote(req->task, 1);
  
 diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 1467b31843bc..950535e2b9f4 100644
+index 950535e2b9f4..8164777279ba 100644
 --- a/io_uring/rsrc.h
 +++ b/io_uring/rsrc.h
-@@ -43,6 +43,7 @@ struct io_rsrc_node {
- 	struct io_rsrc_data		*rsrc_data;
- 	struct llist_node		llist;
- 	bool				done;
-+	int				cached_refs;
- };
- 
- struct io_mapped_ubuf {
-@@ -56,7 +57,7 @@ struct io_mapped_ubuf {
- void io_rsrc_put_tw(struct callback_head *cb);
- void io_rsrc_node_ref_zero(struct io_rsrc_node *node);
- void io_rsrc_put_work(struct work_struct *work);
--void io_rsrc_refs_refill(struct io_ring_ctx *ctx);
-+void io_rsrc_refs_refill(struct io_ring_ctx *ctx, struct io_rsrc_node *node);
- void io_wait_rsrc_data(struct io_rsrc_data *data);
- void io_rsrc_node_destroy(struct io_rsrc_node *ref_node);
- void io_rsrc_refs_drop(struct io_ring_ctx *ctx);
-@@ -128,17 +129,18 @@ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
- 
- 	if (node) {
- 		if (node == ctx->rsrc_node)
--			ctx->rsrc_cached_refs++;
-+			node->cached_refs++;
- 		else
- 			io_rsrc_put_node(node, 1);
- 	}
+@@ -115,10 +115,10 @@ static inline void io_rsrc_put_node(struct io_rsrc_node *node, int nr)
+ 		io_rsrc_node_ref_zero(node);
  }
  
--static inline void io_charge_rsrc_node(struct io_ring_ctx *ctx)
-+static inline void io_charge_rsrc_node(struct io_ring_ctx *ctx,
-+				       struct io_rsrc_node *node)
+-static inline void io_req_put_rsrc(struct io_kiocb *req)
++static inline void io_put_rsrc_node(struct io_rsrc_node *node)
  {
--	ctx->rsrc_cached_refs--;
--	if (unlikely(ctx->rsrc_cached_refs < 0))
--		io_rsrc_refs_refill(ctx);
-+	node->cached_refs--;
-+	if (unlikely(node->cached_refs < 0))
-+		io_rsrc_refs_refill(ctx, node);
+-	if (req->rsrc_node)
+-		io_rsrc_put_node(req->rsrc_node, 1);
++	if (node)
++		io_rsrc_put_node(node, 1);
  }
  
- static inline void io_req_set_rsrc_node(struct io_kiocb *req,
-@@ -151,7 +153,7 @@ static inline void io_req_set_rsrc_node(struct io_kiocb *req,
- 		lockdep_assert_held(&ctx->uring_lock);
- 
- 		req->rsrc_node = ctx->rsrc_node;
--		io_charge_rsrc_node(ctx);
-+		io_charge_rsrc_node(ctx, ctx->rsrc_node);
- 		io_ring_submit_unlock(ctx, issue_flags);
- 	}
- }
+ static inline void io_req_put_rsrc_locked(struct io_kiocb *req,
 -- 
 2.39.1
 

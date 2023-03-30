@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5B96D0B60
+	by mail.lfdr.de (Postfix) with ESMTP id C7BF86D0B61
 	for <lists+io-uring@lfdr.de>; Thu, 30 Mar 2023 18:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbjC3Qd7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 30 Mar 2023 12:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40812 "EHLO
+        id S231285AbjC3QeA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 30 Mar 2023 12:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231285AbjC3Qd6 (ORCPT
+        with ESMTP id S230469AbjC3Qd6 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 30 Mar 2023 12:33:58 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03905CA1D
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2ABCCC1F
         for <io-uring@vger.kernel.org>; Thu, 30 Mar 2023 09:33:51 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id v5so7523396ilj.4
-        for <io-uring@vger.kernel.org>; Thu, 30 Mar 2023 09:33:50 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id ca18e2360f4ac-7585535bd79so11473539f.0
+        for <io-uring@vger.kernel.org>; Thu, 30 Mar 2023 09:33:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680194030;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680194031;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SjVQ/bG02tsB8OqOC7OyHQuyMXW82HwVXzlna4p/ebk=;
-        b=bZAm7OCCB4x3XZbQ8xWIQYh/10DFjxMgsEeK+t0uY4PIrKh5HjJ0hpM8DIbbOzN/V+
-         PufrnnF3sQLjnh/QeLyWNIHeN16mKddxhEue3pqXGGxgrjhz/oJnNPMO52RfokO+sabQ
-         V5N2oH2bkyAxneRBdOIq+jx4VcSARiMN/xnwao/vSbeUIga8zTpuRsGkUCrAjvBvAcgZ
-         XkCURIEFuha0xIZCtp1AUATvokJ7FHA2BZxVIF3W+Gsh9XhoEjmSY0r4MP2HdWzDs5YC
-         sEv204DGKoaOZeOXw4aOPTxuhgDr6AMahuLrJmXlgGEoohp4/O/oQR+33UqcDr76NSOA
-         ee2g==
+        bh=MHwwD4EQp3T20lnNmY/P0VesUcedWHm+7cIQwQ62HiI=;
+        b=oZGkHHDV7LexfBgSsaZMHse3m/l/4uOk7uCU/NOurFyGFZxRnZwrjN59OqrfAPEsUS
+         AYyhchod/O4lKZ0Be0jPLrhoKBx14mhteBF/HzYWpdJss18OpbpfWEcr///BbSFqEBJo
+         bVDJ3krb44p7CAvWQvINUBs912s4BJBHn/KDq3CYZItC6jmHlnq8J982YmrphviR1LoC
+         09cq/vn0TWEA/ylPSu3wrIiwN8a7RlBGIPMnjOIm4Y9JXHuhD4A/ZgyE9EIHvyUnbYSL
+         SOTRjYZyVonrm5jaS9yvYMQN1jcXGYXbbgzGxAFwAmXZZOssQQPUdR7Mr8g3VwSdOuNZ
+         pDdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680194030;
+        d=1e100.net; s=20210112; t=1680194031;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SjVQ/bG02tsB8OqOC7OyHQuyMXW82HwVXzlna4p/ebk=;
-        b=htHApZi7ljA6DmqoOKG6ZHm24W5eC86TmCAb5rVbo95WAY1+Amx1ZT7w5SyuR0o+c4
-         ko/6wElqcSF+WZ+I+Gyn9uF2J8MqmOtrwHrXXUfn3Oi1vnaeXVEMjo9w/0wyXhbVC8/f
-         tcYlZm3lW0BdSD/iGZ1vrVS3e99rSs8qhRx0+9eALI50y18bm+Uew85bjbZKzh5IN7zz
-         xVd4fsbUGxFNuebkvf3NPLO9OvFclErmTsnZ2INROZOgaD+w6n4niY4aX7sdw3uj4rCz
-         CFIiVdgBtGf65j5hPJgk2z/uIV4kpWn3uxwafIEyvJMW+RYxJsCC9AOCeAtYlzzATxPr
-         3arg==
-X-Gm-Message-State: AAQBX9dYMOnekeHztn4eV5ItVgfH8pq4azV3mvvw8Gf70RqLa3KqueUD
-        2H0x2Rv6prlk78WdqjmF9ftqS9G4xPb+mvoHrpUM9w==
-X-Google-Smtp-Source: AKy350asoztkNR6UrMijTPN7ZKGFqYig4Z19Ua2yxAGwdQttaEpacWdTWSF8X+FmizUtuHkagEzbBA==
-X-Received: by 2002:a05:6e02:156b:b0:326:218d:6c14 with SMTP id k11-20020a056e02156b00b00326218d6c14mr1809518ilu.1.1680194029866;
-        Thu, 30 Mar 2023 09:33:49 -0700 (PDT)
+        bh=MHwwD4EQp3T20lnNmY/P0VesUcedWHm+7cIQwQ62HiI=;
+        b=OMW7OKfLs1G+59CzcNb09P9pdwdC9bHvojv51/h4qVYpj3nlJZQE5J2eu6+ELAZ88P
+         YiCRUC+S02AkDtRu6uKuR4rDu5kqY3bK1crbpe53w87iODWXZwEYfqLWQijmpJCgWHIB
+         i5GCbBjSRc+ia+GLpDEGSW1WP6aYPnd4Zu/H5oRD+oQloB4EX/3zC+12C1q9usAHpNio
+         UuWHAv7tHtiqk/7a2fn6noxiIUP8Au2eTgNZeP2SMIizN8eZcZAL0g8Pf53f1/ARqOwF
+         aHhuN70pe73ZD6NCcKT0KosRgDC+/yl64OhH1D9daho2J8B+d0mOpWK2feixP9n5Qp57
+         NTuw==
+X-Gm-Message-State: AAQBX9fTQ4BMqieVMR8EcCJla8UhCEXhCqtqy+Aon3zHASKHIaKmVYb1
+        KMCbUdsLhN4FMLbZsrMH712rXciPrvyXjRw3ahSwiA==
+X-Google-Smtp-Source: AKy350byYQPmfMoA2XQSp5ARhuIZc37lDgvQ341isEsndvyOyyHlvDQcfmUBuTVlBhTKGuKlWJuLiw==
+X-Received: by 2002:a6b:b441:0:b0:758:9c9e:d6c6 with SMTP id d62-20020a6bb441000000b007589c9ed6c6mr1448632iof.2.1680194030978;
+        Thu, 30 Mar 2023 09:33:50 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
         by smtp.gmail.com with ESMTPSA id h21-20020a056638339500b003ff471861a4sm19099jav.90.2023.03.30.09.33.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 09:33:49 -0700 (PDT)
+        Thu, 30 Mar 2023 09:33:50 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] io_uring: rename trace_io_uring_submit_sqe() tracepoint
-Date:   Thu, 30 Mar 2023 10:33:45 -0600
-Message-Id: <20230330163347.1645578-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] io_uring: cap io_sqring_entries() at SQ ring size
+Date:   Thu, 30 Mar 2023 10:33:46 -0600
+Message-Id: <20230330163347.1645578-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230330163347.1645578-1-axboe@kernel.dk>
 References: <20230330163347.1645578-1-axboe@kernel.dk>
@@ -69,85 +69,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-It has nothing to do with the SQE at this point, it's a request
-submission. While in there, get rid of the 'force_nonblock' argument
-which is also dead, as we only pass in true.
+We already do this manually for the !SQPOLL case, do it in general and
+we can also dump the ugly min3() in io_submit_sqes().
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/trace/events/io_uring.h | 15 ++++++---------
- io_uring/io_uring.c             |  3 +--
- 2 files changed, 7 insertions(+), 11 deletions(-)
+ io_uring/io_uring.c | 2 +-
+ io_uring/io_uring.h | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
-index 936fd41bf147..69454f1f98b0 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -360,19 +360,18 @@ TRACE_EVENT(io_uring_complete,
- );
- 
- /**
-- * io_uring_submit_sqe - called before submitting one SQE
-+ * io_uring_submit_req - called before submitting a request
-  *
-  * @req:		pointer to a submitted request
-- * @force_nonblock:	whether a context blocking or not
-  *
-  * Allows to track SQE submitting, to understand what was the source of it, SQ
-  * thread or io_uring_enter call.
-  */
--TRACE_EVENT(io_uring_submit_sqe,
-+TRACE_EVENT(io_uring_submit_req,
- 
--	TP_PROTO(struct io_kiocb *req, bool force_nonblock),
-+	TP_PROTO(struct io_kiocb *req),
- 
--	TP_ARGS(req, force_nonblock),
-+	TP_ARGS(req),
- 
- 	TP_STRUCT__entry (
- 		__field(  void *,		ctx		)
-@@ -380,7 +379,6 @@ TRACE_EVENT(io_uring_submit_sqe,
- 		__field(  unsigned long long,	user_data	)
- 		__field(  u8,			opcode		)
- 		__field(  u32,			flags		)
--		__field(  bool,			force_nonblock	)
- 		__field(  bool,			sq_thread	)
- 
- 		__string( op_str, io_uring_get_opcode(req->opcode) )
-@@ -392,16 +390,15 @@ TRACE_EVENT(io_uring_submit_sqe,
- 		__entry->user_data	= req->cqe.user_data;
- 		__entry->opcode		= req->opcode;
- 		__entry->flags		= req->flags;
--		__entry->force_nonblock	= force_nonblock;
- 		__entry->sq_thread	= req->ctx->flags & IORING_SETUP_SQPOLL;
- 
- 		__assign_str(op_str, io_uring_get_opcode(req->opcode));
- 	),
- 
- 	TP_printk("ring %p, req %p, user_data 0x%llx, opcode %s, flags 0x%x, "
--		  "non block %d, sq_thread %d", __entry->ctx, __entry->req,
-+		  "sq_thread %d", __entry->ctx, __entry->req,
- 		  __entry->user_data, __get_str(op_str),
--		  __entry->flags, __entry->force_nonblock, __entry->sq_thread)
-+		  __entry->flags, __entry->sq_thread)
- );
- 
- /*
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 536940675c67..775b53730c2f 100644
+index 775b53730c2f..a0b64831c455 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2305,8 +2305,7 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	if (unlikely(ret))
- 		return io_submit_fail_init(sqe, req, ret);
+@@ -2434,7 +2434,7 @@ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
+ 	if (unlikely(!entries))
+ 		return 0;
+ 	/* make sure SQ entry isn't read before tail */
+-	ret = left = min3(nr, ctx->sq_entries, entries);
++	ret = left = min(nr, entries);
+ 	io_get_task_refs(left);
+ 	io_submit_state_start(&ctx->submit_state, left);
  
--	/* don't need @sqe from now on */
--	trace_io_uring_submit_sqe(req, true);
-+	trace_io_uring_submit_req(req);
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index c33f719731ac..193b2db39fe8 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -262,9 +262,11 @@ static inline bool io_sqring_full(struct io_ring_ctx *ctx)
+ static inline unsigned int io_sqring_entries(struct io_ring_ctx *ctx)
+ {
+ 	struct io_rings *rings = ctx->rings;
++	unsigned int entries;
  
- 	/*
- 	 * If we already have a head request, queue this one for async
+ 	/* make sure SQ entry isn't read before tail */
+-	return smp_load_acquire(&rings->sq.tail) - ctx->cached_sq_head;
++	entries = smp_load_acquire(&rings->sq.tail) - ctx->cached_sq_head;
++	return min(entries, ctx->sq_entries);
+ }
+ 
+ static inline int io_run_task_work(void)
 -- 
 2.39.2
 

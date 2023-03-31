@@ -2,60 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD12B6D2180
-	for <lists+io-uring@lfdr.de>; Fri, 31 Mar 2023 15:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85BA56D220F
+	for <lists+io-uring@lfdr.de>; Fri, 31 Mar 2023 16:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231775AbjCaNfO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 31 Mar 2023 09:35:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35218 "EHLO
+        id S232336AbjCaOJm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 31 Mar 2023 10:09:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232783AbjCaNfO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Mar 2023 09:35:14 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B9DB1EA23;
-        Fri, 31 Mar 2023 06:35:13 -0700 (PDT)
+        with ESMTP id S232159AbjCaOJl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 31 Mar 2023 10:09:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591B01E73F;
+        Fri, 31 Mar 2023 07:09:36 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DE3371F38C;
-        Fri, 31 Mar 2023 13:35:11 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id DEDC21FD7C;
+        Fri, 31 Mar 2023 14:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1680269711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1680271774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=WBTTw4FmgIAb/cjVvDNfUQ4cZmC0+48pwsVLVqEzmQk=;
-        b=djiMXrm6ONVzenkSncn2vz9NCUmPQaX1n+i5uNfcskIAo6tG8LAhsZ4/Rf61Xj1zteHzrn
-        jvQqtgaUCqDHzxuMFsKtrhvtPcR+Jd+Ct3VEH+QgYS5TilNm0Dmw0pUmEPxbIlN4ptfG1K
-        Nt91p8d6XJnNPu55RAyXhApzol+1b8w=
+        bh=RNZ94o/MZbKL9G0QQj9aIoZ+VfTlCGmKP5S0MBE57OA=;
+        b=EmbrFBr4HpWgMMI2YmJCxOMOaBnmJw45SOZKjPttuASA/igdkaW9Hmqp3gy7NGbdoEUDDd
+        +lCjWE2EvlrAWvUqdyqzI3+vMJtZdgdVDD+t7nzrPqiuXdpNK2ALqUBXl2hvLm7qfFRG/n
+        9b+s00dGhtfHbr1PX+YKXYDuT8MXbl0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1680269711;
+        s=susede2_ed25519; t=1680271774;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=WBTTw4FmgIAb/cjVvDNfUQ4cZmC0+48pwsVLVqEzmQk=;
-        b=2iMsWtPSnK7zOBkPNEfgmRjP5tgL4KjAwhwhOmsj8P4JsKOfCB6aGVuoExsrJ+eqgbtL1X
-        JMO1s2xo8wye3lBg==
+        bh=RNZ94o/MZbKL9G0QQj9aIoZ+VfTlCGmKP5S0MBE57OA=;
+        b=98OycAMMB7IHnPkxOLCqJH4lN66ZwBU/EBZ2fTULo+1yPYh5fkdQW/kiuLQ30MXKvDX8ak
+        X+P+as1Gi1B1H9Aw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6DD6C133B6;
-        Fri, 31 Mar 2023 13:35:11 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6F101134F7;
+        Fri, 31 Mar 2023 14:09:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id OHjiDY/hJmQ7TQAAMHmgww
-        (envelope-from <krisman@suse.de>); Fri, 31 Mar 2023 13:35:11 +0000
+        id gsqyDp7pJmQUXwAAMHmgww
+        (envelope-from <krisman@suse.de>); Fri, 31 Mar 2023 14:09:34 +0000
 From:   Gabriel Krisman Bertazi <krisman@suse.de>
 To:     Pavel Begunkov <asml.silence@gmail.com>
 Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC 00/11] optimise registered buffer/file updates
+Subject: Re: [PATCH 10/11] io_uring/rsrc: cache struct io_rsrc_node
 References: <cover.1680187408.git.asml.silence@gmail.com>
-Date:   Fri, 31 Mar 2023 10:35:09 -0300
-In-Reply-To: <cover.1680187408.git.asml.silence@gmail.com> (Pavel Begunkov's
-        message of "Thu, 30 Mar 2023 15:53:18 +0100")
-Message-ID: <87h6u111te.fsf@suse.de>
+        <7f5eb1b89e8dcf93739607c79bbf7aec1784cbbe.1680187408.git.asml.silence@gmail.com>
+Date:   Fri, 31 Mar 2023 11:09:32 -0300
+In-Reply-To: <7f5eb1b89e8dcf93739607c79bbf7aec1784cbbe.1680187408.git.asml.silence@gmail.com>
+        (Pavel Begunkov's message of "Thu, 30 Mar 2023 15:53:28 +0100")
+Message-ID: <87cz4p1083.fsf@suse.de>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -68,26 +69,171 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-Pavel,
-
 Pavel Begunkov <asml.silence@gmail.com> writes:
-> Updating registered files and buffers is a very slow operation, which
-> makes it not feasible for workloads with medium update frequencies.
-> Rework the underlying rsrc infra for greater performance and lesser
-> memory footprint.
+
+> Add allocation cache for struct io_rsrc_node, it's always allocated and
+> put under ->uring_lock, so it doesn't need any extra synchronisation
+> around caches.
+
+Hi Pavel,
+
+I'm curious if you considered using kmem_cache instead of the custom
+cache for this case?  I'm wondering if this provokes visible difference in
+performance in your benchmark.
+
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  include/linux/io_uring_types.h |  1 +
+>  io_uring/io_uring.c            | 11 +++++++++--
+>  io_uring/rsrc.c                | 23 +++++++++++++++--------
+>  io_uring/rsrc.h                |  5 ++++-
+>  4 files changed, 29 insertions(+), 11 deletions(-)
 >
-> The improvement is ~11x for a benchmark updating files in a loop
-> (1040K -> 11468K updates / sec).
-
-Nice. That's a really impressive improvement.
-
-I've been adding io_uring test cases for automated performance
-regression testing with mmtests (open source).  I'd love to take a look
-at this test case and adapt it to mmtests, so we can pick it up and run
-it frequently.
-
-is it something you can share?
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index 47496059e13a..5d772e36e7fc 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -332,6 +332,7 @@ struct io_ring_ctx {
+>  
+>  	/* protected by ->uring_lock */
+>  	struct list_head		rsrc_ref_list;
+> +	struct io_alloc_cache		rsrc_node_cache;
+>  
+>  	struct list_head		io_buffers_pages;
+>  
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 8c3886a4ca96..beedaf403284 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -310,6 +310,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+>  	INIT_LIST_HEAD(&ctx->sqd_list);
+>  	INIT_LIST_HEAD(&ctx->cq_overflow_list);
+>  	INIT_LIST_HEAD(&ctx->io_buffers_cache);
+> +	io_alloc_cache_init(&ctx->rsrc_node_cache, sizeof(struct io_rsrc_node));
+>  	io_alloc_cache_init(&ctx->apoll_cache, sizeof(struct async_poll));
+>  	io_alloc_cache_init(&ctx->netmsg_cache, sizeof(struct io_async_msghdr));
+>  	init_completion(&ctx->ref_comp);
+> @@ -2791,6 +2792,11 @@ static void io_req_caches_free(struct io_ring_ctx *ctx)
+>  	mutex_unlock(&ctx->uring_lock);
+>  }
+>  
+> +void io_rsrc_node_cache_free(struct io_cache_entry *entry)
+> +{
+> +	kfree(container_of(entry, struct io_rsrc_node, cache));
+> +}
+> +
+>  static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+>  {
+>  	io_sq_thread_finish(ctx);
+> @@ -2816,9 +2822,9 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+>  
+>  	/* there are no registered resources left, nobody uses it */
+>  	if (ctx->rsrc_node)
+> -		io_rsrc_node_destroy(ctx->rsrc_node);
+> +		io_rsrc_node_destroy(ctx, ctx->rsrc_node);
+>  	if (ctx->rsrc_backup_node)
+> -		io_rsrc_node_destroy(ctx->rsrc_backup_node);
+> +		io_rsrc_node_destroy(ctx, ctx->rsrc_backup_node);
+>  
+>  	WARN_ON_ONCE(!list_empty(&ctx->rsrc_ref_list));
+>  
+> @@ -2830,6 +2836,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+>  #endif
+>  	WARN_ON_ONCE(!list_empty(&ctx->ltimeout_list));
+>  
+> +	io_alloc_cache_free(&ctx->rsrc_node_cache, io_rsrc_node_cache_free);
+>  	if (ctx->mm_account) {
+>  		mmdrop(ctx->mm_account);
+>  		ctx->mm_account = NULL;
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 0f4e245dee1b..345631091d80 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -164,7 +164,7 @@ static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
+>  		kfree(prsrc);
+>  	}
+>  
+> -	io_rsrc_node_destroy(ref_node);
+> +	io_rsrc_node_destroy(rsrc_data->ctx, ref_node);
+>  	if (atomic_dec_and_test(&rsrc_data->refs))
+>  		complete(&rsrc_data->done);
+>  }
+> @@ -175,9 +175,10 @@ void io_wait_rsrc_data(struct io_rsrc_data *data)
+>  		wait_for_completion(&data->done);
+>  }
+>  
+> -void io_rsrc_node_destroy(struct io_rsrc_node *ref_node)
+> +void io_rsrc_node_destroy(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
+>  {
+> -	kfree(ref_node);
+> +	if (!io_alloc_cache_put(&ctx->rsrc_node_cache, &node->cache))
+> +		kfree(node);
+>  }
+>  
+>  void io_rsrc_node_ref_zero(struct io_rsrc_node *node)
+> @@ -198,13 +199,19 @@ void io_rsrc_node_ref_zero(struct io_rsrc_node *node)
+>  	}
+>  }
+>  
+> -static struct io_rsrc_node *io_rsrc_node_alloc(void)
+> +static struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
+>  {
+>  	struct io_rsrc_node *ref_node;
+> +	struct io_cache_entry *entry;
+>  
+> -	ref_node = kzalloc(sizeof(*ref_node), GFP_KERNEL);
+> -	if (!ref_node)
+> -		return NULL;
+> +	entry = io_alloc_cache_get(&ctx->rsrc_node_cache);
+> +	if (entry) {
+> +		ref_node = container_of(entry, struct io_rsrc_node, cache);
+> +	} else {
+> +		ref_node = kzalloc(sizeof(*ref_node), GFP_KERNEL);
+> +		if (!ref_node)
+> +			return NULL;
+> +	}
+>  
+>  	ref_node->refs = 1;
+>  	INIT_LIST_HEAD(&ref_node->node);
+> @@ -243,7 +250,7 @@ int io_rsrc_node_switch_start(struct io_ring_ctx *ctx)
+>  {
+>  	if (ctx->rsrc_backup_node)
+>  		return 0;
+> -	ctx->rsrc_backup_node = io_rsrc_node_alloc();
+> +	ctx->rsrc_backup_node = io_rsrc_node_alloc(ctx);
+>  	return ctx->rsrc_backup_node ? 0 : -ENOMEM;
+>  }
+>  
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+> index 17293ab90f64..d1555eaae81a 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -4,6 +4,8 @@
+>  
+>  #include <net/af_unix.h>
+>  
+> +#include "alloc_cache.h"
+> +
+>  #define IO_RSRC_TAG_TABLE_SHIFT	(PAGE_SHIFT - 3)
+>  #define IO_RSRC_TAG_TABLE_MAX	(1U << IO_RSRC_TAG_TABLE_SHIFT)
+>  #define IO_RSRC_TAG_TABLE_MASK	(IO_RSRC_TAG_TABLE_MAX - 1)
+> @@ -37,6 +39,7 @@ struct io_rsrc_data {
+>  };
+>  
+>  struct io_rsrc_node {
+> +	struct io_cache_entry		cache;
+>  	int refs;
+>  	struct list_head		node;
+>  	struct io_rsrc_data		*rsrc_data;
+> @@ -65,7 +68,7 @@ void io_rsrc_put_tw(struct callback_head *cb);
+>  void io_rsrc_node_ref_zero(struct io_rsrc_node *node);
+>  void io_rsrc_put_work(struct work_struct *work);
+>  void io_wait_rsrc_data(struct io_rsrc_data *data);
+> -void io_rsrc_node_destroy(struct io_rsrc_node *ref_node);
+> +void io_rsrc_node_destroy(struct io_ring_ctx *ctx, struct io_rsrc_node *ref_node);
+>  int io_rsrc_node_switch_start(struct io_ring_ctx *ctx);
+>  int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
+>  			  struct io_rsrc_node *node, void *rsrc);
 
 -- 
 Gabriel Krisman Bertazi

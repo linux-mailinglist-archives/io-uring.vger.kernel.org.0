@@ -2,154 +2,87 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 276B86D33A9
-	for <lists+io-uring@lfdr.de>; Sat,  1 Apr 2023 21:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E39FD6D34F9
+	for <lists+io-uring@lfdr.de>; Sun,  2 Apr 2023 01:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbjDATxk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 Apr 2023 15:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60478 "EHLO
+        id S229606AbjDAXUL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 Apr 2023 19:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjDATxj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Apr 2023 15:53:39 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709E81A963
-        for <io-uring@vger.kernel.org>; Sat,  1 Apr 2023 12:53:38 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id l27so25597971wrb.2
-        for <io-uring@vger.kernel.org>; Sat, 01 Apr 2023 12:53:38 -0700 (PDT)
+        with ESMTP id S229452AbjDAXUK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Apr 2023 19:20:10 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1CF4AD09
+        for <io-uring@vger.kernel.org>; Sat,  1 Apr 2023 16:20:09 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id le6so24794056plb.12
+        for <io-uring@vger.kernel.org>; Sat, 01 Apr 2023 16:20:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680378817;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMw1tuoSE4kOg3GZdJOFnnZh74OrKtHHIzNTbfASF4k=;
-        b=H2adczrCrO7GypWPoI/7d6xI9rc+TdKV3ELBFBWCa/8+iEXNF18ebZ59PHmu7OfyWr
-         +RZ6y4hHEz4W5h0cTbp1lBOIB9AWuj8ZQHX1d0vH8aHzGtCjixrUc4Eiw9GUR4PsD/Gt
-         4aSrHWTbg8zKDG8JDvcci8iBM1niDMZxoA/l8EDN7XuDvASxuZa8I39WGVgWS4T1cyRu
-         VrxOyg5STYVrEIT+SjniDdrZTzQ4dT5KOs+8aMcG9NU6mDbzK47ZL3pd6BqNV2zGKoKM
-         jZSkD0hvlfDNEHNJ8R6w617Iz0bdZu3pHP/pYzp1dNrK1tB+d6CevpUoG2A2WqxcG1AF
-         HARQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680391209; x=1682983209;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+PiZZyFAM1djSoWDmdc4U1VyAR4Y9fKfRL8ScC773gk=;
+        b=6b1iovh3KOYqBkipk6zphpNWkTrpPlHcaIzKJtS67OEJHdtyGVneYK+ETyGKNymM0X
+         Mbvj+47lhdTiFDe7yoy7sQHRlnTNqEn0bW0E1dJclsQXO1JDKVKce3TMumNBnngxQgMP
+         wrsmPqZr0A6vFW5d1pWIS9iwMrll0q8w78y4EGRWWJ6jtyJrHYXp4B8jhnZPo4XQpYO9
+         DcpwQntiQXWVM7k4Kd71fkkB07HhjKAET1VNEZXevGOF3vHkRZBL7fqJ8KatPCGhvVNt
+         I7Xh1LAgQ/HZ5Yp+4JsDS4Xu8fhfLNtq2GR0IJ5JPwjzObkPIpbcbOvEdnvCcxgQCUqV
+         m/ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680378817;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WMw1tuoSE4kOg3GZdJOFnnZh74OrKtHHIzNTbfASF4k=;
-        b=j02GF4PlKSSkOuz0Ks6Nek/ZHV5n3xZEAbhIt5GkaE2Mdc+AGETIuBTj9jue5pIPqs
-         EPqqj98Tcv4raPHOAjR4VzGSbaP39X9U1/OH+5iYKaA0wtKEy/1uA1O2JDaNcJdLpaEm
-         2CQjFc2OeNImAYC4I7pP2/ZHK59KCVzguOSELG4l2CzDrc37bisgTl4odTPGkCU26GVN
-         lzIesSvkta/OW4aeRz+wh0v3FRTJb4Ew6+gvlxV7f22E027aw1JRTAFr0bWQcsYBQHdG
-         K+0i9/3+weszhnwIUCizKLgj14G2siyfaI4ZK9LoiPMesbHYVdh5NFTRTRzF0SI3a1O4
-         OoNg==
-X-Gm-Message-State: AAQBX9dvhITEfvymGUsjXnbhzuSbb0GhJe6Amp98JJdAlIf/VoxtHwWa
-        6rH/zyQsMP5UoF/ofr+EIJGS5K6xc1c=
-X-Google-Smtp-Source: AKy350Z/vXmg0ny+f4J5rkOQERIDOakwt+DOplvmzwXZtOLpCXbqqwkv6yrW7Z7uiuO/gajx+83vgg==
-X-Received: by 2002:adf:df0b:0:b0:2e6:423c:b21a with SMTP id y11-20020adfdf0b000000b002e6423cb21amr4259617wrl.33.1680378816974;
-        Sat, 01 Apr 2023 12:53:36 -0700 (PDT)
-Received: from localhost.localdomain ([152.37.82.41])
-        by smtp.gmail.com with ESMTPSA id c2-20020adfe702000000b002d6f285c0a2sm5636644wrm.42.2023.04.01.12.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Apr 2023 12:53:36 -0700 (PDT)
-From:   Wojciech Lukowicz <wlukowicz01@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, Wojciech Lukowicz <wlukowicz01@gmail.com>
-Subject: [PATCH liburing] test/read-write: add test for CQE res when removing buffers
-Date:   Sat,  1 Apr 2023 20:52:59 +0100
-Message-Id: <20230401195259.404967-1-wlukowicz01@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        d=1e100.net; s=20210112; t=1680391209; x=1682983209;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+PiZZyFAM1djSoWDmdc4U1VyAR4Y9fKfRL8ScC773gk=;
+        b=Vj7jY8B9HjBGlXDEHJ6qpNxUMEUZncwOKPSAXUDqLl1jmHJgk5vU6PDZ09axvLo47o
+         8Oap5W1NnTp0MP7LVHg/pKMhcPPyqYtirXNwkdKVRrP0G2Kp/M4USxwgdZYiMapzqbCj
+         z+ZhnpoyO0G2h0LHY9NiqdpL0/n+9G+P7PKb14/GF/dWDQOhRYo/q9ZElCDcdRV03heS
+         JIAYbvfU5mKe96qt8RLWNnAhSw1oWxmcI7Tivs1x2F22+vjf5sC4USvuDhb1VwkVcs6t
+         TKfIGTeCE/KM7HFRGC5p58eha8WHTNFiqvqSl54AdEZlHz4nVOfrfJgX48+owMQEX9Aj
+         IqXg==
+X-Gm-Message-State: AO0yUKXyynpqPe9tL1zqd8qOsj0xu40er3ORMMVwK8oOJWSzu5SdfXBt
+        wykFK+VW7rnECt1d0dck+/HyydI18GEWhkkxgb+rDg==
+X-Google-Smtp-Source: AK7set/cg+fOPTWHpoud49da0csl8bSFUZdGm+mqOiNxksOlN5KJDVIQZGE78LHqjk/MtAJoyTr75A==
+X-Received: by 2002:a05:6a20:748c:b0:cd:fc47:dd73 with SMTP id p12-20020a056a20748c00b000cdfc47dd73mr37945324pzd.2.1680391209376;
+        Sat, 01 Apr 2023 16:20:09 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id b11-20020aa7810b000000b006254377ce44sm4104013pfi.43.2023.04.01.16.20.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Apr 2023 16:20:09 -0700 (PDT)
+Message-ID: <9e348f0f-0877-349c-3a58-7e4a80b9cbe5@kernel.dk>
+Date:   Sat, 1 Apr 2023 17:20:08 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 0/2] fixes for removing provided buffers
+Content-Language: en-US
+To:     Wojciech Lukowicz <wlukowicz01@gmail.com>
+Cc:     io-uring@vger.kernel.org
+References: <20230401195039.404909-1-wlukowicz01@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230401195039.404909-1-wlukowicz01@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=3.6 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When removing provided buffers, CQE res should contain the number of
-removed buffers. However, in certain kernel versions, if SQE requests
-removal of more buffers than available, then res will contain the number
-of removed buffers + 1.
+On 4/1/23 1:50 PM, Wojciech Lukowicz wrote:
+> Hi,
+> 
+> Two fixes for removing provided buffers. They are in the same area, but
+> otherwise unrelated. I'll send a liburing test for the first one
+> shortly.
 
-Signed-off-by: Wojciech Lukowicz <wlukowicz01@gmail.com>
----
-This is a failing test, needs the patch I sent earlier.
+Looks good, thanks for sending these in!
 
- test/read-write.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
-
-diff --git a/test/read-write.c b/test/read-write.c
-index 3764f6aef47e..6f24ec919de3 100644
---- a/test/read-write.c
-+++ b/test/read-write.c
-@@ -637,6 +637,53 @@ static int test_rem_buf(int batch, int sqe_flags)
- 	return ret;
- }
- 
-+static int test_rem_buf_single(int to_rem)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct io_uring ring;
-+	int ret, expected;
-+	int bgid = 1;
-+
-+	if (no_buf_select)
-+		return 0;
-+
-+	ret = io_uring_queue_init(64, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring create failed: %d\n", ret);
-+		return 1;
-+	}
-+
-+	ret = provide_buffers_iovec(&ring, bgid);
-+	if (ret)
-+		return ret;
-+
-+	expected = (to_rem > BUFFERS) ? BUFFERS : to_rem;
-+
-+	sqe = io_uring_get_sqe(&ring);
-+	io_uring_prep_remove_buffers(sqe, to_rem, bgid);
-+
-+	ret = io_uring_submit(&ring);
-+	if (ret != 1) {
-+		fprintf(stderr, "submit: %d\n", ret);
-+		return -1;
-+	}
-+
-+	ret = io_uring_wait_cqe(&ring, &cqe);
-+	if (ret) {
-+		fprintf(stderr, "wait_cqe=%d\n", ret);
-+		return 1;
-+	}
-+	if (cqe->res != expected) {
-+		fprintf(stderr, "cqe->res=%d, expected=%d\n", cqe->res, expected);
-+		return 1;
-+	}
-+	io_uring_cqe_seen(&ring, cqe);
-+
-+	io_uring_queue_exit(&ring);
-+	return ret;
-+}
-+
- static int test_io_link(const char *file)
- {
- 	const int nr_links = 100;
-@@ -950,6 +997,12 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
-+	ret = test_rem_buf_single(BUFFERS + 1);
-+	if (ret) {
-+		fprintf(stderr, "test_rem_buf_single(BUFFERS + 1) failed\n");
-+		goto err;
-+	}
-+
- 	if (fname != argv[1])
- 		unlink(fname);
- 	return 0;
 -- 
-2.30.2
+Jens Axboe
+
 

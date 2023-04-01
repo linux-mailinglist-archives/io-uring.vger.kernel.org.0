@@ -2,62 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D33186D33A5
-	for <lists+io-uring@lfdr.de>; Sat,  1 Apr 2023 21:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 276B86D33A9
+	for <lists+io-uring@lfdr.de>; Sat,  1 Apr 2023 21:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjDATvq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 Apr 2023 15:51:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
+        id S229437AbjDATxk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 Apr 2023 15:53:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjDATvq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Apr 2023 15:51:46 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035F29750
-        for <io-uring@vger.kernel.org>; Sat,  1 Apr 2023 12:51:45 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id l27so25595831wrb.2
-        for <io-uring@vger.kernel.org>; Sat, 01 Apr 2023 12:51:44 -0700 (PDT)
+        with ESMTP id S229379AbjDATxj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Apr 2023 15:53:39 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709E81A963
+        for <io-uring@vger.kernel.org>; Sat,  1 Apr 2023 12:53:38 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id l27so25597971wrb.2
+        for <io-uring@vger.kernel.org>; Sat, 01 Apr 2023 12:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680378703;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Bl66kphnyflU0aRVRYU88zgNOUTlgi1RdM9ndpSwiM=;
-        b=nSOsPgjQ0xF/+qjW+a3cxiqGq/crwB7VXbZq+TAzq/cbwYA49+dUFQUPkycEDeFV1k
-         w5JWcHa0mza23aXee8U+eiXzyv3xNboOnhjOcfZdGy3BfZW5kjegxjdvS+FYykqGWMhz
-         vvsAdJE9i1EmJKo04nFlIzmeDOakxJ+pHoZjXZXkyWTbnOa/WpDJbtcyW6A7q5d802z8
-         UnndLVaRrOkcgVgcjzM/awfvd2zarQ6fgfgNJ9+q+jz4UhCecVT3k1Ttp6YERE3q+sOw
-         NfCi/UaZDJAIV3Hzvoh4i4BDwiHLgkTyGZXEZmMR9AZM3453GvFDvSLQRB3XCm5eVuAE
-         4IZw==
+        d=gmail.com; s=20210112; t=1680378817;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WMw1tuoSE4kOg3GZdJOFnnZh74OrKtHHIzNTbfASF4k=;
+        b=H2adczrCrO7GypWPoI/7d6xI9rc+TdKV3ELBFBWCa/8+iEXNF18ebZ59PHmu7OfyWr
+         +RZ6y4hHEz4W5h0cTbp1lBOIB9AWuj8ZQHX1d0vH8aHzGtCjixrUc4Eiw9GUR4PsD/Gt
+         4aSrHWTbg8zKDG8JDvcci8iBM1niDMZxoA/l8EDN7XuDvASxuZa8I39WGVgWS4T1cyRu
+         VrxOyg5STYVrEIT+SjniDdrZTzQ4dT5KOs+8aMcG9NU6mDbzK47ZL3pd6BqNV2zGKoKM
+         jZSkD0hvlfDNEHNJ8R6w617Iz0bdZu3pHP/pYzp1dNrK1tB+d6CevpUoG2A2WqxcG1AF
+         HARQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680378703;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Bl66kphnyflU0aRVRYU88zgNOUTlgi1RdM9ndpSwiM=;
-        b=fEGh8+AKXJkRo8QMypivDB1FzAZ5qqcCcs0p8Wv3XH3lgGsHEfSo0/UQKlmWNn/3BP
-         FV7Hh/kkMeAwn7//lQlNG+HYyRSv9C7Jf/eiTXjqHGb2PAaimMe0HzwoO4QXieG6Rbqv
-         HAFs6lOf+CZgyuau39YoM+FALDMROFQwL32c0lgIO94zhsZLciCmu3oc4DL1tpycKpsC
-         kc2tMB3JWyA1pbUsSnA4K8kQqC7z8J5hp/6N9WTmf7zSBO90p+oSmBOGefrNJbX0bc8/
-         dxS7p4seXWWWyNkccv5PToyqi28P69wxJpJSlUiWAbeDyWAv1/2nWciF/93tVDVgSadW
-         8xjw==
-X-Gm-Message-State: AAQBX9fLnZzccms9j6Wf+qgr/cBpHkAkKkIzsuKYkcsr4WZC5+Fk2RPr
-        BxPAFf39lZLrOFhJF6brg7yRiGftqco=
-X-Google-Smtp-Source: AKy350ZIUijgNT2XDKo5VhVqrWoBTWJv49wB4UxKv3WuY9lylQkKUNjsahRb9pwx2QTvgR7RHxAW9g==
-X-Received: by 2002:a5d:66d1:0:b0:2cf:e8f4:d1ea with SMTP id k17-20020a5d66d1000000b002cfe8f4d1eamr22394219wrw.29.1680378703371;
-        Sat, 01 Apr 2023 12:51:43 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680378817;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WMw1tuoSE4kOg3GZdJOFnnZh74OrKtHHIzNTbfASF4k=;
+        b=j02GF4PlKSSkOuz0Ks6Nek/ZHV5n3xZEAbhIt5GkaE2Mdc+AGETIuBTj9jue5pIPqs
+         EPqqj98Tcv4raPHOAjR4VzGSbaP39X9U1/OH+5iYKaA0wtKEy/1uA1O2JDaNcJdLpaEm
+         2CQjFc2OeNImAYC4I7pP2/ZHK59KCVzguOSELG4l2CzDrc37bisgTl4odTPGkCU26GVN
+         lzIesSvkta/OW4aeRz+wh0v3FRTJb4Ew6+gvlxV7f22E027aw1JRTAFr0bWQcsYBQHdG
+         K+0i9/3+weszhnwIUCizKLgj14G2siyfaI4ZK9LoiPMesbHYVdh5NFTRTRzF0SI3a1O4
+         OoNg==
+X-Gm-Message-State: AAQBX9dvhITEfvymGUsjXnbhzuSbb0GhJe6Amp98JJdAlIf/VoxtHwWa
+        6rH/zyQsMP5UoF/ofr+EIJGS5K6xc1c=
+X-Google-Smtp-Source: AKy350Z/vXmg0ny+f4J5rkOQERIDOakwt+DOplvmzwXZtOLpCXbqqwkv6yrW7Z7uiuO/gajx+83vgg==
+X-Received: by 2002:adf:df0b:0:b0:2e6:423c:b21a with SMTP id y11-20020adfdf0b000000b002e6423cb21amr4259617wrl.33.1680378816974;
+        Sat, 01 Apr 2023 12:53:36 -0700 (PDT)
 Received: from localhost.localdomain ([152.37.82.41])
-        by smtp.gmail.com with ESMTPSA id b6-20020a5d5506000000b002e463bd49e3sm5561009wrv.66.2023.04.01.12.51.42
+        by smtp.gmail.com with ESMTPSA id c2-20020adfe702000000b002d6f285c0a2sm5636644wrm.42.2023.04.01.12.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Apr 2023 12:51:42 -0700 (PDT)
+        Sat, 01 Apr 2023 12:53:36 -0700 (PDT)
 From:   Wojciech Lukowicz <wlukowicz01@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Wojciech Lukowicz <wlukowicz01@gmail.com>
-Subject: [PATCH 2/2] io_uring: fix memory leak when removing provided buffers
-Date:   Sat,  1 Apr 2023 20:50:39 +0100
-Message-Id: <20230401195039.404909-3-wlukowicz01@gmail.com>
+Subject: [PATCH liburing] test/read-write: add test for CQE res when removing buffers
+Date:   Sat,  1 Apr 2023 20:52:59 +0100
+Message-Id: <20230401195259.404967-1-wlukowicz01@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230401195039.404909-1-wlukowicz01@gmail.com>
-References: <20230401195039.404909-1-wlukowicz01@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -70,54 +67,89 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When removing provided buffers, io_buffer structs are not being disposed
-of, leading to a memory leak. They can't be freed individually, because
-they are allocated in page-sized groups. They need to be added to some
-free list instead, such as io_buffers_cache. All callers already hold
-the lock protecting it, apart from when destroying buffers, so had to
-extend the lock there.
+When removing provided buffers, CQE res should contain the number of
+removed buffers. However, in certain kernel versions, if SQE requests
+removal of more buffers than available, then res will contain the number
+of removed buffers + 1.
 
-Fixes: cc3cec8367cb ("io_uring: speedup provided buffer handling")
 Signed-off-by: Wojciech Lukowicz <wlukowicz01@gmail.com>
 ---
- io_uring/io_uring.c | 2 +-
- io_uring/kbuf.c     | 5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+This is a failing test, needs the patch I sent earlier.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 722624b6d0dc..2a8b8c304d2a 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2789,8 +2789,8 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	io_eventfd_unregister(ctx);
- 	io_alloc_cache_free(&ctx->apoll_cache, io_apoll_cache_free);
- 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
--	mutex_unlock(&ctx->uring_lock);
- 	io_destroy_buffers(ctx);
-+	mutex_unlock(&ctx->uring_lock);
- 	if (ctx->sq_creds)
- 		put_cred(ctx->sq_creds);
- 	if (ctx->submitter_task)
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 0fdcc0adbdbc..a90c820ce99e 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -228,11 +228,14 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
- 		return i;
+ test/read-write.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+
+diff --git a/test/read-write.c b/test/read-write.c
+index 3764f6aef47e..6f24ec919de3 100644
+--- a/test/read-write.c
++++ b/test/read-write.c
+@@ -637,6 +637,53 @@ static int test_rem_buf(int batch, int sqe_flags)
+ 	return ret;
+ }
+ 
++static int test_rem_buf_single(int to_rem)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	struct io_uring ring;
++	int ret, expected;
++	int bgid = 1;
++
++	if (no_buf_select)
++		return 0;
++
++	ret = io_uring_queue_init(64, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "ring create failed: %d\n", ret);
++		return 1;
++	}
++
++	ret = provide_buffers_iovec(&ring, bgid);
++	if (ret)
++		return ret;
++
++	expected = (to_rem > BUFFERS) ? BUFFERS : to_rem;
++
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_remove_buffers(sqe, to_rem, bgid);
++
++	ret = io_uring_submit(&ring);
++	if (ret != 1) {
++		fprintf(stderr, "submit: %d\n", ret);
++		return -1;
++	}
++
++	ret = io_uring_wait_cqe(&ring, &cqe);
++	if (ret) {
++		fprintf(stderr, "wait_cqe=%d\n", ret);
++		return 1;
++	}
++	if (cqe->res != expected) {
++		fprintf(stderr, "cqe->res=%d, expected=%d\n", cqe->res, expected);
++		return 1;
++	}
++	io_uring_cqe_seen(&ring, cqe);
++
++	io_uring_queue_exit(&ring);
++	return ret;
++}
++
+ static int test_io_link(const char *file)
+ {
+ 	const int nr_links = 100;
+@@ -950,6 +997,12 @@ int main(int argc, char *argv[])
+ 		}
  	}
  
-+	/* protects io_buffers_cache */
-+	lockdep_assert_held(&ctx->uring_lock);
++	ret = test_rem_buf_single(BUFFERS + 1);
++	if (ret) {
++		fprintf(stderr, "test_rem_buf_single(BUFFERS + 1) failed\n");
++		goto err;
++	}
 +
- 	while (!list_empty(&bl->buf_list)) {
- 		struct io_buffer *nxt;
- 
- 		nxt = list_first_entry(&bl->buf_list, struct io_buffer, list);
--		list_del(&nxt->list);
-+		list_move(&nxt->list, &ctx->io_buffers_cache);
- 		if (++i == nbufs)
- 			return i;
- 		cond_resched();
+ 	if (fname != argv[1])
+ 		unlink(fname);
+ 	return 0;
 -- 
 2.30.2
 

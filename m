@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE346D33A4
-	for <lists+io-uring@lfdr.de>; Sat,  1 Apr 2023 21:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D33186D33A5
+	for <lists+io-uring@lfdr.de>; Sat,  1 Apr 2023 21:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbjDATvo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 1 Apr 2023 15:51:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59992 "EHLO
+        id S229567AbjDATvq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 1 Apr 2023 15:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjDATvn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Apr 2023 15:51:43 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6071026580
-        for <io-uring@vger.kernel.org>; Sat,  1 Apr 2023 12:51:42 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id v1so25587850wrv.1
-        for <io-uring@vger.kernel.org>; Sat, 01 Apr 2023 12:51:42 -0700 (PDT)
+        with ESMTP id S229450AbjDATvq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 1 Apr 2023 15:51:46 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035F29750
+        for <io-uring@vger.kernel.org>; Sat,  1 Apr 2023 12:51:45 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id l27so25595831wrb.2
+        for <io-uring@vger.kernel.org>; Sat, 01 Apr 2023 12:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680378701;
+        d=gmail.com; s=20210112; t=1680378703;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bI3pr0sf4QW0PzMxr51CCOrNmbtWq1+TF77A+52vbL4=;
-        b=ORLlEiffdCwH9uFnhzEqPv4dJgywgzlmSSWUHvXB2ExyCGKYume1wmjAc1uXELgxlr
-         H4ymrsTWQr0hYefG2OoSnEHeQA22MjvK8kEL7zPyKOifXWfp9MWFFWLxIj5MrtFjZdsa
-         JJlhXKEMoiOm2n+UaWDzpWWr/+aSLi+0COBI8/lANO7WrnnAfacFLSEpzHGJ2eZlUoM8
-         5+WIaW/RWBWDh8XVmjGjRYOO3YQAWToSWzCvSKHFXDMW2gbROHgTqxd63+cgiYfDU8j5
-         4cq4P4B9T0pYO1wEksM3uL6qC3sWS819luT4zyNNrh8+636tp3PJnCeEkWsVMl2ZyUVe
-         F4bw==
+        bh=1Bl66kphnyflU0aRVRYU88zgNOUTlgi1RdM9ndpSwiM=;
+        b=nSOsPgjQ0xF/+qjW+a3cxiqGq/crwB7VXbZq+TAzq/cbwYA49+dUFQUPkycEDeFV1k
+         w5JWcHa0mza23aXee8U+eiXzyv3xNboOnhjOcfZdGy3BfZW5kjegxjdvS+FYykqGWMhz
+         vvsAdJE9i1EmJKo04nFlIzmeDOakxJ+pHoZjXZXkyWTbnOa/WpDJbtcyW6A7q5d802z8
+         UnndLVaRrOkcgVgcjzM/awfvd2zarQ6fgfgNJ9+q+jz4UhCecVT3k1Ttp6YERE3q+sOw
+         NfCi/UaZDJAIV3Hzvoh4i4BDwiHLgkTyGZXEZmMR9AZM3453GvFDvSLQRB3XCm5eVuAE
+         4IZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680378701;
+        d=1e100.net; s=20210112; t=1680378703;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bI3pr0sf4QW0PzMxr51CCOrNmbtWq1+TF77A+52vbL4=;
-        b=onsUm9F/K4NDLULI8SAlCOCPdwyGkpLrwxVUDRwoIcdCfKuiVUuiCL1CVd2MMTrAx6
-         UYHYHm6yPs2jHW3F8RBHfRi28dc5Cg1duJTFmqTJC73/yzfZDyFqR1q2+EwXIvOvw332
-         6fTB2LTF5xeQzeekXvltdbcu+ytkMuGhT1pbuIYUXzEifYbyuwl5K4E6p+t/YAis7PsR
-         Fu8Yt792poRrD6VL0E7TfK/wcZi+9QN6gnMTI70BpFkhHphviZGU/q/XpR+ydYfts62D
-         hAaRdJ1qg1mgIY5CCw56kBGzzTwWxEOhJgRqYNtq3r4OYq0ydd1v5P1Nq26gH/CGWtWQ
-         0RYA==
-X-Gm-Message-State: AAQBX9fRpg9wdkXKueO8+zigiVogsbindtuMN0KddUx1k7maPCqInMRi
-        bF0rlHQPa9t+kILh3BMsEio=
-X-Google-Smtp-Source: AKy350ZXSLcyyZss61QnwVi5wU+tN+7D/tjG5rerz1FWWxlaid8HwOFC+NZ3R2l/loSbAsi7fz98Rw==
-X-Received: by 2002:a5d:4fce:0:b0:2d0:354e:dc77 with SMTP id h14-20020a5d4fce000000b002d0354edc77mr21938857wrw.66.1680378700763;
-        Sat, 01 Apr 2023 12:51:40 -0700 (PDT)
+        bh=1Bl66kphnyflU0aRVRYU88zgNOUTlgi1RdM9ndpSwiM=;
+        b=fEGh8+AKXJkRo8QMypivDB1FzAZ5qqcCcs0p8Wv3XH3lgGsHEfSo0/UQKlmWNn/3BP
+         FV7Hh/kkMeAwn7//lQlNG+HYyRSv9C7Jf/eiTXjqHGb2PAaimMe0HzwoO4QXieG6Rbqv
+         HAFs6lOf+CZgyuau39YoM+FALDMROFQwL32c0lgIO94zhsZLciCmu3oc4DL1tpycKpsC
+         kc2tMB3JWyA1pbUsSnA4K8kQqC7z8J5hp/6N9WTmf7zSBO90p+oSmBOGefrNJbX0bc8/
+         dxS7p4seXWWWyNkccv5PToyqi28P69wxJpJSlUiWAbeDyWAv1/2nWciF/93tVDVgSadW
+         8xjw==
+X-Gm-Message-State: AAQBX9fLnZzccms9j6Wf+qgr/cBpHkAkKkIzsuKYkcsr4WZC5+Fk2RPr
+        BxPAFf39lZLrOFhJF6brg7yRiGftqco=
+X-Google-Smtp-Source: AKy350ZIUijgNT2XDKo5VhVqrWoBTWJv49wB4UxKv3WuY9lylQkKUNjsahRb9pwx2QTvgR7RHxAW9g==
+X-Received: by 2002:a5d:66d1:0:b0:2cf:e8f4:d1ea with SMTP id k17-20020a5d66d1000000b002cfe8f4d1eamr22394219wrw.29.1680378703371;
+        Sat, 01 Apr 2023 12:51:43 -0700 (PDT)
 Received: from localhost.localdomain ([152.37.82.41])
-        by smtp.gmail.com with ESMTPSA id b6-20020a5d5506000000b002e463bd49e3sm5561009wrv.66.2023.04.01.12.51.40
+        by smtp.gmail.com with ESMTPSA id b6-20020a5d5506000000b002e463bd49e3sm5561009wrv.66.2023.04.01.12.51.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Apr 2023 12:51:40 -0700 (PDT)
+        Sat, 01 Apr 2023 12:51:42 -0700 (PDT)
 From:   Wojciech Lukowicz <wlukowicz01@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, Wojciech Lukowicz <wlukowicz01@gmail.com>
-Subject: [PATCH 1/2] io_uring: fix return value when removing provided buffers
-Date:   Sat,  1 Apr 2023 20:50:38 +0100
-Message-Id: <20230401195039.404909-2-wlukowicz01@gmail.com>
+Subject: [PATCH 2/2] io_uring: fix memory leak when removing provided buffers
+Date:   Sat,  1 Apr 2023 20:50:39 +0100
+Message-Id: <20230401195039.404909-3-wlukowicz01@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230401195039.404909-1-wlukowicz01@gmail.com>
 References: <20230401195039.404909-1-wlukowicz01@gmail.com>
@@ -70,41 +70,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-When a request to remove buffers is submitted, and the given number to be
-removed is larger than available in the specified buffer group, the
-resulting CQE result will be the number of removed buffers + 1, which is
-1 more than it should be.
+When removing provided buffers, io_buffer structs are not being disposed
+of, leading to a memory leak. They can't be freed individually, because
+they are allocated in page-sized groups. They need to be added to some
+free list instead, such as io_buffers_cache. All callers already hold
+the lock protecting it, apart from when destroying buffers, so had to
+extend the lock there.
 
-Previously, the head was part of the list and it got removed after the
-loop, so the increment was needed. Now, the head is not an element of
-the list, so the increment shouldn't be there anymore.
-
-Fixes: dbc7d452e7cf ("io_uring: manage provided buffers strictly ordered")
+Fixes: cc3cec8367cb ("io_uring: speedup provided buffer handling")
 Signed-off-by: Wojciech Lukowicz <wlukowicz01@gmail.com>
 ---
- io_uring/kbuf.c | 2 --
- 1 file changed, 2 deletions(-)
+ io_uring/io_uring.c | 2 +-
+ io_uring/kbuf.c     | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 722624b6d0dc..2a8b8c304d2a 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2789,8 +2789,8 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_eventfd_unregister(ctx);
+ 	io_alloc_cache_free(&ctx->apoll_cache, io_apoll_cache_free);
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+-	mutex_unlock(&ctx->uring_lock);
+ 	io_destroy_buffers(ctx);
++	mutex_unlock(&ctx->uring_lock);
+ 	if (ctx->sq_creds)
+ 		put_cred(ctx->sq_creds);
+ 	if (ctx->submitter_task)
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 3002dc827195..0fdcc0adbdbc 100644
+index 0fdcc0adbdbc..a90c820ce99e 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
-@@ -228,7 +228,6 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
+@@ -228,11 +228,14 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
  		return i;
  	}
  
--	/* the head kbuf is the list itself */
++	/* protects io_buffers_cache */
++	lockdep_assert_held(&ctx->uring_lock);
++
  	while (!list_empty(&bl->buf_list)) {
  		struct io_buffer *nxt;
  
-@@ -238,7 +237,6 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
+ 		nxt = list_first_entry(&bl->buf_list, struct io_buffer, list);
+-		list_del(&nxt->list);
++		list_move(&nxt->list, &ctx->io_buffers_cache);
+ 		if (++i == nbufs)
  			return i;
  		cond_resched();
- 	}
--	i++;
- 
- 	return i;
- }
 -- 
 2.30.2
 

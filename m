@@ -2,56 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86FC56D3B75
-	for <lists+io-uring@lfdr.de>; Mon,  3 Apr 2023 03:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17CA26D3B78
+	for <lists+io-uring@lfdr.de>; Mon,  3 Apr 2023 03:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbjDCBXy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 2 Apr 2023 21:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54710 "EHLO
+        id S231358AbjDCBYZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 2 Apr 2023 21:24:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231303AbjDCBXw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 2 Apr 2023 21:23:52 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C6BC3
-        for <io-uring@vger.kernel.org>; Sun,  2 Apr 2023 18:23:50 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id i22so19757152uat.8
-        for <io-uring@vger.kernel.org>; Sun, 02 Apr 2023 18:23:50 -0700 (PDT)
+        with ESMTP id S231364AbjDCBYW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 2 Apr 2023 21:24:22 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4589AC2
+        for <io-uring@vger.kernel.org>; Sun,  2 Apr 2023 18:24:21 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id x33so19747775uaf.12
+        for <io-uring@vger.kernel.org>; Sun, 02 Apr 2023 18:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680485029; x=1683077029;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3eQaMTk3JhKLmU3mQNWNAqby6/Tj3vZPZ/5Rj+IaqQs=;
-        b=BumskOnDnkKq7u6ZA0PYH/KqNMhTFK4AC07oe1Wvqi3oWENIIIjPskTsRIQtMiYY60
-         s+b25PN0jXHlRznPPGvFTgrlRFaXKOcldaaQX3TpX2IL51AltXa40Q0HEg5cJVHcO5xU
-         KZm+BFkuvoapEKksGLwZ3rCtUVQoll0ArXPCbfbPVjx7z3v1QbBndudYiMN0don1HFsT
-         t+H5h10begs3FdWylIjgRtylWGs4pNUAFxJc77AtGtlgCVzjiD1T9Coy7dO4xUC2savB
-         DywRxQodzlVNu9uhqbDTTQoqZCVIIg+3W3SBfdQv2XU7m6OKGFw2Z+fMJow3bVuGVliI
-         qeEw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680485060; x=1683077060;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kULG8pOF6j41wBUUG8M7GoBq42bx2nu3Fa8BgwSuDdU=;
+        b=w6QYMAq5WfJF34MdtpGxNWUC0NcVfmexz/ogm+B3xa+j/KT53oyCFtSwoAFqy75O8S
+         SLkSX7yO5hceO65ypFmlIim/+63eK270bPnUCKvIvUMYAsQZRj9cg98h9n3H15HS0JmO
+         5e6P1GFjDF9FrC16/pt4gdCwXLRpI8sCIzrUuOqi62nWV1dXY7U4xpnFlSUA6G9gzWvE
+         EvN/O48F8MC9Y8TpzJzIDNep8JmJI0vYiP6zPePW9/ZyK7kOnzewmx1ZjnINP/Dp1Br7
+         8M6lRi93gZRIC8a/NoHuWdsrC4kYI4CETrXKWAf62b7sXw8Cl6eReqYri85Vr+1fzlbo
+         6AlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680485029; x=1683077029;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3eQaMTk3JhKLmU3mQNWNAqby6/Tj3vZPZ/5Rj+IaqQs=;
-        b=DMLd8R9QWlAgGFkRnir884uIF8DRm1fNbwJpyj51f5RtATPCQH+KLsb/gbEgczeG6d
-         dhYNO5+GCMhyvgb+Lp3ehaxFPf0SxwYMVNhroIsyZW9gHI3xl4k9mjtgvdLP2DUBOt4T
-         8bOFk21zX4YBJkIVegqv4Jl/OU/eekQcXWeay0EYJGe+2V42uyREOXx02vMLb9om6LA0
-         D/r8rsyFIHY7nbJovrLYU3l/CF8PXl7/O9275RsQBEICMX3y/ojdRU0fjzZ0qdE3nkI5
-         5JeuGzVb5OQQ2USvunkwUNvO3GoL7kemBpOONlSvea+C0lkQSxG8JcBOauxtaw8Xg6tK
-         5Q4A==
-X-Gm-Message-State: AAQBX9ez6zHvEOw7lOn/s9b5IR4rz2MI1dGqN6YMuj6N4AG273RCda0O
-        59lQvIbwdJs+lvWYp7hEqIbV4w==
-X-Google-Smtp-Source: AKy350bi0WwCd/ytj18WKAd867pUSOSJxzt0P8o0rE9WIuVSw/Dw9oxFYILyJ3mD1OEz+UjHBondOA==
-X-Received: by 2002:a05:6122:169f:b0:436:1d1c:ebe6 with SMTP id 31-20020a056122169f00b004361d1cebe6mr13819705vkl.1.1680485029634;
-        Sun, 02 Apr 2023 18:23:49 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id b12-20020ab0084c000000b007612512b30fsm1644146uaf.29.2023.04.02.18.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Apr 2023 18:23:49 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Ming Lei <ming.lei@redhat.com>
+        d=1e100.net; s=20210112; t=1680485060; x=1683077060;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kULG8pOF6j41wBUUG8M7GoBq42bx2nu3Fa8BgwSuDdU=;
+        b=nqvT4CDXlXQUsH2AozdYkVy8G0B/U3wNkFhxbzZtdTefqMYzCnyEYvgrxUyrWIp9tA
+         2uonf0a3aCN6u400q2ogs5s6szJzpS+hU4cuB0zpGjisZCFKkPa0xlENamKZea/vjQoh
+         y/3RFY2UeELzYoldNh06/3SMnmyOd70J9qjow+YEh206BgVdD20Sy3qUULFOmmllyb/c
+         lw3xG/bh6PyY7HjLxPTcekyDnxgNFJPV/v8qtQRAF1423OjvtGJJ5ekjg/8/sjGMN+U+
+         aBvrjIZZOlXErlc2cybCQ/ptPmSk00hoXIKCjK5chtey6Oajmx6D5KX5eNCcObHzOVRm
+         rVRA==
+X-Gm-Message-State: AAQBX9defLGdxUVU3vWP9atju03y8Zup65+1ccaRVp5IhGjwDcCU22dG
+        dmpQUwCyses88u/A8T2YVhokPQ==
+X-Google-Smtp-Source: AKy350Y8HDkSQ9k8o6/USFC6zFiQL0UZiO5UVSROZXiQHuHAECMHgp7tYuYe5YFVf+tnoKC2scpQ0A==
+X-Received: by 2002:a05:6122:169f:b0:436:1d1c:ebe6 with SMTP id 31-20020a056122169f00b004361d1cebe6mr13820021vkl.1.1680485060276;
+        Sun, 02 Apr 2023 18:24:20 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g7-20020ab01047000000b0068e4f0409eesm1625369uab.23.2023.04.02.18.24.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Apr 2023 18:24:19 -0700 (PDT)
+Message-ID: <d696eb70-9dac-9334-7aec-1b5af62442e3@kernel.dk>
+Date:   Sun, 2 Apr 2023 19:24:17 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
         ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
         Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
@@ -59,55 +65,72 @@ Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Dan Williams <dan.j.williams@intel.com>
-In-Reply-To: <20230330113630.1388860-1-ming.lei@redhat.com>
 References: <20230330113630.1388860-1-ming.lei@redhat.com>
-Subject: Re: (subset) [PATCH V6 00/17] io_uring/ublk: add generic
- IORING_OP_FUSED_CMD
-Message-Id: <168048502809.419126.16967551210747821991.b4-ty@kernel.dk>
-Date:   Sun, 02 Apr 2023 19:23:48 -0600
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+ <ZConr0f8e/mEL0Cl@ovpn-8-18.pek2.redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZConr0f8e/mEL0Cl@ovpn-8-18.pek2.redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
-X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-On Thu, 30 Mar 2023 19:36:13 +0800, Ming Lei wrote:
-> Add generic fused command, which can include one primary command and multiple
-> secondary requests. This command provides one safe way to share resource between
-> primary command and secondary requests, and primary command is always
-> completed after all secondary requests are done, and resource lifetime
-> is bound with primary command.
+On 4/2/23 7:11?PM, Ming Lei wrote:
+> On Thu, Mar 30, 2023 at 07:36:13PM +0800, Ming Lei wrote:
+>> Hello Jens and Guys,
+>>
+>> Add generic fused command, which can include one primary command and multiple
+>> secondary requests. This command provides one safe way to share resource between
+>> primary command and secondary requests, and primary command is always
+>> completed after all secondary requests are done, and resource lifetime
+>> is bound with primary command.
+>>
+>> With this way, it is easy to support zero copy for ublk/fuse device, and
+>> there could be more potential use cases, such as offloading complicated logic
+>> into userspace, or decouple kernel subsystems.
+>>
+>> Follows ublksrv code, which implements zero copy for loop, nbd and
+>> qcow2 targets with fused command:
+>>
+>> https://github.com/ming1/ubdsrv/tree/fused-cmd-zc-for-v6
+>>
+>> All three(loop, nbd and qcow2) ublk targets have supported zero copy by passing:
+>>
+>> 	ublk add -t [loop|nbd|qcow2] -z .... 
+>>
+>> Also add liburing test case for covering fused command based on miniublk
+>> of blktest.
+>>
+>> https://github.com/ming1/liburing/tree/fused_cmd_miniublk_for_v6
+>>
+>> Performance improvement is obvious on memory bandwidth related workloads,
+>> such as, 1~2X improvement on 64K/512K BS IO test on loop with ramfs backing file.
+>> ublk-null shows 5X IOPS improvement on big BS test when the copy is avoided.
+>>
+>> Please review and consider for v6.4.
+>>
+>> V6:
+>> 	- re-design fused command, and make it more generic, moving sharing buffer
+>> 	as one plugin of fused command, so in future we can implement more plugins
+>> 	- document potential other use cases of fused command
+>> 	- drop support for builtin secondary sqe in SQE128, so all secondary
+>> 	  requests has standalone SQE
+>> 	- make fused command as one feature
+>> 	- cleanup & improve naming
 > 
-> With this way, it is easy to support zero copy for ublk/fuse device, and
-> there could be more potential use cases, such as offloading complicated logic
-> into userspace, or decouple kernel subsystems.
+> Hi Jens,
 > 
-> [...]
+> Can you apply ublk cleanup patches 7~11 on for-6.4? For others, we may
+> delay to 6.5, and I am looking at other approach too.
 
-Applied, thanks!
+Done - and yes, we're probably looking at 6.5 for the rest. But that's
+fine, I'd rather end up with the right interface than try and rush one.
 
-[07/17] block: ublk_drv: add common exit handling
-        commit: 903f8aeea9fd1b97fba4ab805ddd639f57f117f8
-[08/17] block: ublk_drv: don't consider flush request in map/unmap io
-        commit: 23ef8220f287abe5bf741ddfc278e7359742d3b1
-[09/17] block: ublk_drv: add two helpers to clean up map/unmap request
-        commit: 2f3af723447c35c16f3c6a1b4b317c61dc41d6c3
-[10/17] block: ublk_drv: clean up several helpers
-        commit: 96cf2f5404c8bc979628a2b495852d735a56c5b5
-[11/17] block: ublk_drv: cleanup 'struct ublk_map_data'
-        commit: ae9f5ccea4c268a96763e51239b32d6b5172c18c
-
-Best regards,
 -- 
 Jens Axboe
-
-
 

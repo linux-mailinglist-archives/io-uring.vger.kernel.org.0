@@ -2,307 +2,214 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F506D552E
-	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 01:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1C56D59F4
+	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 09:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233780AbjDCXWz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 3 Apr 2023 19:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52142 "EHLO
+        id S233184AbjDDHtt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Apr 2023 03:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233041AbjDCXWy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 3 Apr 2023 19:22:54 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8E3B1BC;
-        Mon,  3 Apr 2023 16:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680564172; x=1712100172;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0GMN8BMPXoRScxdXasX++WZ+3bDkfK4Q2lFPxzZv0M8=;
-  b=b18L+GmpaWgxPsfK6BJ53gdP5Og8m22mqYOjC9e595ZWKfcLOwc9w0eQ
-   PhsKHqnaFGk3+RHSFBhWrxzirndp3AdFFKF8o6PE9kfmrQCxIHy+ZWFP3
-   f1uAyDm6RBu2swmdQ2DlawOeSNxDwuynWX4/FESmAbWBRaE1btKtecX6g
-   dVF8lei0+iZPQNx8B/iRnvq5NggV7m2w2VQaDK+mePf2e+14gXXJySvOa
-   Sep0RfDxiHviMD1LXB3Tf0W5v3m3rMd049dmKcbPe2Slu/Gv7EyImW+1X
-   URAFwUZ2OFhP1rkiNZ+KyI0Px4xTpG/HlheSKqqsUFuhHZYDU/sJ65LH8
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="344604335"
-X-IronPort-AV: E=Sophos;i="5.98,315,1673942400"; 
-   d="scan'208";a="344604335"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2023 16:22:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="750684865"
-X-IronPort-AV: E=Sophos;i="5.98,315,1673942400"; 
-   d="scan'208";a="750684865"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Apr 2023 16:22:48 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pjTVf-000Ow9-1h;
-        Mon, 03 Apr 2023 23:22:47 +0000
-Date:   Tue, 04 Apr 2023 07:22:35 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     platform-driver-x86@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-wireless@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        io-uring@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 31bd35b66249699343d2416658f57e97314a433a
-Message-ID: <642b5fbb.jG7DppFs8DO3Bu12%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S232605AbjDDHtt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 03:49:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D434810FA
+        for <io-uring@vger.kernel.org>; Tue,  4 Apr 2023 00:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680594548;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Im5L/NmV1DuxZwE4hnbXnlwO/3Ionh4NNqvKa/4qFqc=;
+        b=JqLguYw9EKssbUP8FqNB0jhixRfmBzHOaqKhu9LkfxVFqi9pfEiC4Na6o2y63L9W1PAzKX
+        OiWzmeYkggrKhEJAVA5lXSuXLmzMPCJNuPPeCAeN0Qtf7quAbofEThbHaolgCp5koT7kBU
+        YwiYGpuhLk/Y0YNgH3DnnhMS7bDL+xw=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-517-jwH89YmNPK-iUr1YjTs6Bg-1; Tue, 04 Apr 2023 03:49:03 -0400
+X-MC-Unique: jwH89YmNPK-iUr1YjTs6Bg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4F2431C0A59B;
+        Tue,  4 Apr 2023 07:49:03 +0000 (UTC)
+Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 432FA440BC;
+        Tue,  4 Apr 2023 07:48:55 +0000 (UTC)
+Date:   Tue, 4 Apr 2023 15:48:50 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>, ming.lei@redhat.com
+Subject: Re: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
+Message-ID: <ZCvWYoDk0dnJbHhW@ovpn-8-16.pek2.redhat.com>
+References: <20230330113630.1388860-1-ming.lei@redhat.com>
+ <ZConr0f8e/mEL0Cl@ovpn-8-18.pek2.redhat.com>
+ <d696eb70-9dac-9334-7aec-1b5af62442e3@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Disposition: inline
+In-Reply-To: <d696eb70-9dac-9334-7aec-1b5af62442e3@kernel.dk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 31bd35b66249699343d2416658f57e97314a433a  Add linux-next specific files for 20230403
+Hello Jens and Everyone,
 
-Error/Warning reports:
+On Sun, Apr 02, 2023 at 07:24:17PM -0600, Jens Axboe wrote:
+> On 4/2/23 7:11?PM, Ming Lei wrote:
+> > On Thu, Mar 30, 2023 at 07:36:13PM +0800, Ming Lei wrote:
+> >> Hello Jens and Guys,
+> >>
+> >> Add generic fused command, which can include one primary command and multiple
+> >> secondary requests. This command provides one safe way to share resource between
+> >> primary command and secondary requests, and primary command is always
+> >> completed after all secondary requests are done, and resource lifetime
+> >> is bound with primary command.
+> >>
+> >> With this way, it is easy to support zero copy for ublk/fuse device, and
+> >> there could be more potential use cases, such as offloading complicated logic
+> >> into userspace, or decouple kernel subsystems.
+> >>
+> >> Follows ublksrv code, which implements zero copy for loop, nbd and
+> >> qcow2 targets with fused command:
+> >>
+> >> https://github.com/ming1/ubdsrv/tree/fused-cmd-zc-for-v6
+> >>
+> >> All three(loop, nbd and qcow2) ublk targets have supported zero copy by passing:
+> >>
+> >> 	ublk add -t [loop|nbd|qcow2] -z .... 
+> >>
+> >> Also add liburing test case for covering fused command based on miniublk
+> >> of blktest.
+> >>
+> >> https://github.com/ming1/liburing/tree/fused_cmd_miniublk_for_v6
+> >>
+> >> Performance improvement is obvious on memory bandwidth related workloads,
+> >> such as, 1~2X improvement on 64K/512K BS IO test on loop with ramfs backing file.
+> >> ublk-null shows 5X IOPS improvement on big BS test when the copy is avoided.
+> >>
+> >> Please review and consider for v6.4.
+> >>
+> >> V6:
+> >> 	- re-design fused command, and make it more generic, moving sharing buffer
+> >> 	as one plugin of fused command, so in future we can implement more plugins
+> >> 	- document potential other use cases of fused command
+> >> 	- drop support for builtin secondary sqe in SQE128, so all secondary
+> >> 	  requests has standalone SQE
+> >> 	- make fused command as one feature
+> >> 	- cleanup & improve naming
+> > 
+> > Hi Jens,
+> > 
+> > Can you apply ublk cleanup patches 7~11 on for-6.4? For others, we may
+> > delay to 6.5, and I am looking at other approach too.
+> 
+> Done - and yes, we're probably looking at 6.5 for the rest. But that's
 
-https://lore.kernel.org/oe-kbuild-all/202303082135.NjdX1Bij-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202304040401.IMxt7Ubi-lkp@intel.com
+Thanks!
 
-Error/Warning: (recently discovered and may have been fixed)
+> fine, I'd rather end up with the right interface than try and rush one.
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:309:17: sparse:    int
-drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:309:17: sparse:    void
-drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+Also I'd provide one summery about this work here so that it may help
+for anyone interested in this work, follows three approaches we have
+tried or proposed:
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+1) splice can't do this job[1][2]
 
-drivers/acpi/property.c:985 acpi_data_prop_read_single() error: potentially dereferencing uninitialized 'obj'.
-drivers/cdx/cdx.c:393:20: error: initialization of 'ssize_t (*)(const struct bus_type *, const char *, size_t)' {aka 'long int (*)(const struct bus_type *, const char *, long unsigned int)'} from incompatible pointer type 'ssize_t (*)(struct bus_type *, const char *, size_t)' {aka 'long int (*)(struct bus_type *, const char *, long unsigned int)'} [-Werror=incompatible-pointer-types]
-drivers/pinctrl/pinctrl-mlxbf3.c:162:20: sparse: sparse: symbol 'mlxbf3_pmx_funcs' was not declared. Should it be static?
-drivers/soc/fsl/qe/tsa.c:140:26: sparse: sparse: incorrect type in argument 2 (different address spaces)
-drivers/soc/fsl/qe/tsa.c:150:27: sparse: sparse: incorrect type in argument 1 (different address spaces)
-drivers/soc/fsl/qe/tsa.c:189:26: sparse: sparse: dereference of noderef expression
-drivers/soc/fsl/qe/tsa.c:663:22: sparse: sparse: incorrect type in assignment (different address spaces)
-drivers/soc/fsl/qe/tsa.c:673:21: sparse: sparse: incorrect type in assignment (different address spaces)
-drivers/usb/typec/ucsi/ucsi_glink.c:248:20: sparse: sparse: restricted __le32 degrades to integer
-drivers/usb/typec/ucsi/ucsi_glink.c:81:23: sparse: sparse: incorrect type in assignment (different base types)
-drivers/usb/typec/ucsi/ucsi_glink.c:82:22: sparse: sparse: incorrect type in assignment (different base types)
-drivers/usb/typec/ucsi/ucsi_glink.c:83:24: sparse: sparse: incorrect type in assignment (different base types)
-include/linux/gpio/consumer.h: linux/err.h is included more than once.
-include/linux/gpio/driver.h: asm/bug.h is included more than once.
-io_uring/io_uring.c:432 io_prep_async_work() error: we previously assumed 'req->file' could be null (see line 425)
-io_uring/kbuf.c:221 __io_remove_buffers() warn: variable dereferenced before check 'bl->buf_ring' (see line 219)
+2) fused command in this patchset
+- it is more like sendfile() or copy_file_range(), because the internal
+  buffer isn't exposed outside
 
-Error/Warning ids grouped by kconfigs:
+- v6 becomes a bit more generic, the theory is that one SQE list is submitted
+as a whole request logically; the 1st sqe is the primary command, which
+provides buffer for others, and is responsible for submitting other SQEs
+(secondary)in this list; the primary command isn't completed until all secondary
+requests are done
 
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
-|-- alpha-randconfig-s051-20230403
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:sparse:int
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:sparse:sparse:incompatible-types-in-conditional-expression-(different-base-types):
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:sparse:void
-|   `-- drivers-pinctrl-pinctrl-mlxbf3.c:sparse:sparse:symbol-mlxbf3_pmx_funcs-was-not-declared.-Should-it-be-static
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm64-allyesconfig
-|   |-- drivers-cdx-cdx.c:error:initialization-of-ssize_t-(-)(const-struct-bus_type-const-char-size_t)-aka-long-int-(-)(const-struct-bus_type-const-char-long-unsigned-int)-from-incompatible-pointer-type-ssize
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- i386-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- i386-randconfig-m021-20230403
-|   |-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
-|   |-- io_uring-io_uring.c-io_prep_async_work()-error:we-previously-assumed-req-file-could-be-null-(see-line-)
-|   `-- io_uring-kbuf.c-__io_remove_buffers()-warn:variable-dereferenced-before-check-bl-buf_ring-(see-line-)
-|-- ia64-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
-|-- ia64-randconfig-r003-20230403
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- ia64-randconfig-r025-20230402
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- ia64-randconfig-r026-20230402
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- loongarch-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- loongarch-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- loongarch-defconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+- this approach solves two problems efficiently in one simple way:
 
-elapsed time: 724m
+	a) buffer lifetime issue, and buffer lifetime is same with primary command, so
+	all secondary OPs can be submitted & completely safely
 
-configs tested: 140
-configs skipped: 9
+	b) request dependency issue, all secondary requests depend on primary command,
+	and secondary request itself could be independent, we start to allow to submit
+	secondary request in non-async style, and all secondary requests can be issued
+	concurrently
 
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r033-20230402   gcc  
-arc                              allyesconfig   gcc  
-arc          buildonly-randconfig-r006-20230402   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r011-20230402   gcc  
-arc                  randconfig-r022-20230402   gcc  
-arc                  randconfig-r034-20230403   gcc  
-arc                  randconfig-r043-20230402   gcc  
-arc                  randconfig-r043-20230403   gcc  
-arc                    vdk_hs38_smp_defconfig   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm          buildonly-randconfig-r003-20230403   clang
-arm                                 defconfig   gcc  
-arm                          exynos_defconfig   gcc  
-arm                  randconfig-r023-20230402   gcc  
-arm                  randconfig-r046-20230402   gcc  
-arm                  randconfig-r046-20230403   clang
-arm                         s5pv210_defconfig   clang
-arm                        shmobile_defconfig   gcc  
-arm                           stm32_defconfig   gcc  
-arm                        vexpress_defconfig   clang
-arm64                            allyesconfig   gcc  
-arm64        buildonly-randconfig-r002-20230403   clang
-arm64        buildonly-randconfig-r004-20230402   gcc  
-arm64                               defconfig   gcc  
-arm64                randconfig-r023-20230403   gcc  
-csky                                defconfig   gcc  
-hexagon              randconfig-r016-20230403   clang
-hexagon              randconfig-r034-20230402   clang
-hexagon              randconfig-r035-20230403   clang
-hexagon              randconfig-r041-20230403   clang
-hexagon              randconfig-r045-20230402   clang
-hexagon              randconfig-r045-20230403   clang
-i386                              allnoconfig   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a001-20230403   clang
-i386                 randconfig-a002-20230403   clang
-i386                 randconfig-a003-20230403   clang
-i386                 randconfig-a004-20230403   clang
-i386                 randconfig-a005-20230403   clang
-i386                 randconfig-a006-20230403   clang
-i386                 randconfig-a011-20230403   gcc  
-i386                 randconfig-a012-20230403   gcc  
-i386                 randconfig-a013-20230403   gcc  
-i386                 randconfig-a014-20230403   gcc  
-i386                 randconfig-a015-20230403   gcc  
-i386                 randconfig-a016-20230403   gcc  
-i386                 randconfig-r006-20230403   clang
-ia64                             allmodconfig   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r003-20230403   gcc  
-ia64                 randconfig-r025-20230402   gcc  
-ia64                 randconfig-r026-20230402   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch    buildonly-randconfig-r001-20230402   gcc  
-loongarch                           defconfig   gcc  
-loongarch            randconfig-r031-20230402   gcc  
-m68k                             allmodconfig   gcc  
-m68k                          amiga_defconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r012-20230403   gcc  
-m68k                 randconfig-r031-20230403   gcc  
-m68k                 randconfig-r032-20230403   gcc  
-microblaze   buildonly-randconfig-r002-20230402   gcc  
-microblaze           randconfig-r004-20230403   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                           gcw0_defconfig   gcc  
-nios2                         3c120_defconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r012-20230402   gcc  
-openrisc             randconfig-r006-20230403   gcc  
-openrisc             randconfig-r021-20230402   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r011-20230403   gcc  
-parisc               randconfig-r024-20230402   gcc  
-parisc               randconfig-r033-20230403   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                     asp8347_defconfig   gcc  
-powerpc      buildonly-randconfig-r006-20230403   gcc  
-powerpc                  iss476-smp_defconfig   gcc  
-powerpc              randconfig-r014-20230402   clang
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv        buildonly-randconfig-r004-20230403   gcc  
-riscv                               defconfig   gcc  
-riscv                randconfig-r035-20230402   gcc  
-riscv                randconfig-r042-20230402   clang
-riscv                randconfig-r042-20230403   gcc  
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                 randconfig-r003-20230403   clang
-s390                 randconfig-r005-20230403   clang
-s390                 randconfig-r013-20230402   clang
-s390                 randconfig-r025-20230403   gcc  
-s390                 randconfig-r044-20230403   gcc  
-sh                               allmodconfig   gcc  
-sh                   randconfig-r016-20230402   gcc  
-sh                   randconfig-r032-20230402   gcc  
-sh                          urquell_defconfig   gcc  
-sparc        buildonly-randconfig-r005-20230403   gcc  
-sparc                               defconfig   gcc  
-sparc64      buildonly-randconfig-r003-20230402   gcc  
-sparc64                             defconfig   gcc  
-sparc64              randconfig-r014-20230403   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64               randconfig-a001-20230403   clang
-x86_64               randconfig-a002-20230403   clang
-x86_64               randconfig-a003-20230403   clang
-x86_64               randconfig-a004-20230403   clang
-x86_64               randconfig-a005-20230403   clang
-x86_64               randconfig-a006-20230403   clang
-x86_64               randconfig-a011-20230403   gcc  
-x86_64               randconfig-a012-20230403   gcc  
-x86_64               randconfig-a013-20230403   gcc  
-x86_64               randconfig-a014-20230403   gcc  
-x86_64               randconfig-a015-20230403   gcc  
-x86_64               randconfig-a016-20230403   gcc  
-x86_64               randconfig-r013-20230403   gcc  
-x86_64               randconfig-r022-20230403   gcc  
-x86_64               randconfig-r036-20230403   clang
-x86_64                               rhel-8.3   gcc  
-xtensa       buildonly-randconfig-r005-20230402   gcc  
-xtensa               randconfig-r015-20230403   gcc  
-xtensa               randconfig-r024-20230403   gcc  
+- this approach is simple, because we don't expose buffer outside, and
+  buffer is just shared among these secondary requests; meantime
+  internal buffer saves us complicated OPs' dependency issue, avoid
+  contention by registering buffer anywhere between submission and
+  completion code path
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+- the drawback is that we add one new SQE usage/model of primary SQE and
+  secondary SQEs, and the whole logical request in concept, which is
+  like sendfile() or copy_file_range()
+
+3) register transient buffers for OPs[3]
+- it is more like splice(), which is flexible and could be more generic, but
+internal pipe buffer is added to pipe which is visible outside, so the
+implementation becomes complicated; and it should be more than splice(),
+because the io buffer needs to be shared among multiple OPs
+
+- inefficiently & complicated
+
+	a) buffer has to be added to one global container(suppose it is
+	io_uring context pipe) by ADD_BUF OP, and either buffer needs to be removed after
+	consumer OPs are completed, or DEL_OP is run for removing buffer explicitly, so
+	either contention on the io_uring pipe is added, or another new dependency is
+	added(DEL_OP depends on all normal OPs)
+
+	b) ADD_BUF OP is needed, and normal OPs have to depend on this new
+	OP by IOSQE_IO_LINK, then all normal OPs will be submitted in async way,
+	even worse, each normal OP has to be issued one by one, because io_uring
+	isn't capable of handling 1:N dependency issue[5]
+
+    c) if DEL_BUF OP is needed, then it is basically not possible
+	to solve 1:N dependency any more, given DEL_BUF starts to depends on the previous
+	N OPs; otherwise, contention on pipe is inevitable.
+
+	d) solving 1:N dependency issue generically
+
+- advantage
+
+Follows current io_uring SQE usage, and looks more generic/flexible,
+like splice().
+
+4) others approaches or suggestions?
+
+Any idea is welcome as usual.
+
+
+Finally from problem viewpoint, if the problem domain is just ublk/fuse zero copy
+or other similar problems[6], fused command might be the simpler & more efficient
+approach, compared with approach 3). However, are there any other problems we
+want to cover by one more generic/flexible interface? If not, would we
+like to pay the complexity & inefficiency for one kind of less generic
+problem?
+
+
+[1] https://lore.kernel.org/linux-block/ZCQnHwrXvSOQHfAC@ovpn-8-26.pek2.redhat.com/T/#m1bfa358524b6af94731bcd5be28056f9f4408ecf
+[2] https://github.com/ming1/linux/blob/my_v6.3-io_uring_fuse_cmd_v6/Documentation/block/ublk.rst#zero-copy
+[3] https://lore.kernel.org/linux-block/ZCQnHwrXvSOQHfAC@ovpn-8-26.pek2.redhat.com/T/#mbe428dfeb0417487cd1db7e6dabca7399a3c265b
+[4] https://lore.kernel.org/linux-block/ZCQnHwrXvSOQHfAC@ovpn-8-26.pek2.redhat.com/T/#md035ffa4c6b69e85de2ab145418a9849a3b33741
+[5] https://lore.kernel.org/linux-block/20230330113630.1388860-5-ming.lei@redhat.com/T/#m5e0c282ad26d9f3d8e519645168aeb3a19b5740b
+[6] https://lore.kernel.org/linux-block/20230330113630.1388860-5-ming.lei@redhat.com/T/#me5cca4db606541fae452d625780635fcedcd5c6c
+
+Thanks,
+Ming
+

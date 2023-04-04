@@ -2,159 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADFE6D6100
-	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 14:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78F306D62AA
+	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 15:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234198AbjDDMlH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Apr 2023 08:41:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60130 "EHLO
+        id S234495AbjDDNWh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Apr 2023 09:22:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234944AbjDDMlB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 08:41:01 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA941BC7;
-        Tue,  4 Apr 2023 05:40:58 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id cn12so130060658edb.4;
-        Tue, 04 Apr 2023 05:40:58 -0700 (PDT)
+        with ESMTP id S234341AbjDDNWg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 09:22:36 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934D0E71;
+        Tue,  4 Apr 2023 06:22:34 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id t10so130385798edd.12;
+        Tue, 04 Apr 2023 06:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680612058;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1CwMuzyH2dEdSI/CO0b8pg+tuSUqIX+/sHQt7TiN5ZM=;
-        b=X/J1llEltWTp4lG2E3lTY7RTuXuKmHYGHhZGxSbzgjJt2spsoc45a6S/UqZmy9U95v
-         3AJyxDDnt6hnM3wGswTBwN1w1rruCJajzH0hS0det28+p4PqaXO8No707bkfYlIH4gT4
-         Ex2bhCgpaA6oAvTi8s4cYa4nscj59hZrpo1b3ng1sk6YDj3US4/VIvvsp4VvCSLg+Ujx
-         h9EEbua/G4akmIB9ncr08dx49v8Qc70b1mVxMeD3YoySqg/Uc5IN/XwrJFru7RQb+Ybl
-         izyZWc77RLGkl1EcLvSEk2Bp2iPDemOm0BTIkg8dWFmwopEODxnBjKwkbHz2tviJFjob
-         IU8w==
+        d=gmail.com; s=20210112; t=1680614553;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DL+vsAXqBzSlNOVEu1L4Y71uBsHCeeGwqe10gSIxe3I=;
+        b=eZztO4Yo8z02kgUPSrp63a3GPxa9Qs+YevGQHZ181rGVMRRlEyNDtrGY7L9nSJG7d8
+         Elo2XaPTr8M6dWHdZY2E9E28LaF9rpZ+5Q0M3A0dqeBvJ80eKD9xToJsuhrxkrAacDCo
+         xiN6b8S5Qba+anwP+RaeQy5ozP63ByKRQXRfFhnY0eMpr24jhOXipg4eoXw9tcoLDMPX
+         v70Ro2R4JeNrNDiu6amr9e/Khj1TLsnylsU6WF6OiK5P/PBL+Tu7a4/CWCgo4b+ysCLf
+         XB4+XvYiFeNU58/9WrEv5P25LDw+81H/r6XR0BaFP86qyf4Fv+y8LRs3RtKQaRmi5Rmj
+         nwrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680612058;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1CwMuzyH2dEdSI/CO0b8pg+tuSUqIX+/sHQt7TiN5ZM=;
-        b=RORmEIuMWGFX33I16cb6QNsDJXHrR13ShHDaBgvBSPTZw50EamLC490Rc0GncfE4wv
-         7s4LmboPKH1ClcLrVM6NFGw1pveRK+udra3LEMXle55Xi3IatgYBgYFjqsFWDg3IdmCT
-         c91zEkMf2ZPHoujLaLBrZ88qOc39yYzJ+Q9j0rKBqGhyd50Bi+CS6RkzPPKX5ldIyLMx
-         I2cva+YBgZBnyA1SRsVpVKpJpDkW7eeN4/JMfK7FvVtaOl53GMbs8irKCnbEbs9Q53h7
-         Fxnvt/DuLQEeYghNBggxIEjaqnIiagmN67d96jFxms9BoRDMsPPu4gBblLICiYncnx60
-         K5aA==
-X-Gm-Message-State: AAQBX9eWMsB/9a17Mz/cGOp3xStxoDBFImnJ9V/r1fGIbbgE6OqWg8j8
-        AEjTDpEc+ADikCg72l+KVgJeBR4VWYw=
-X-Google-Smtp-Source: AKy350a8IAMbejy0JcLdVVhKR7yjVPSmMspTAxjLXFflw+wYwvMDI7z6y7yHHO3nQN94bCFvevvEjw==
-X-Received: by 2002:a17:907:8c10:b0:8f0:143d:ee34 with SMTP id ta16-20020a1709078c1000b008f0143dee34mr2624104ejc.1.1680612057944;
-        Tue, 04 Apr 2023 05:40:57 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::2:2b22])
-        by smtp.gmail.com with ESMTPSA id g8-20020a170906394800b008cafeec917dsm5978851eje.101.2023.04.04.05.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 05:40:57 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/13] io_uring/rsrc: add custom limit for node caching
-Date:   Tue,  4 Apr 2023 13:39:57 +0100
-Message-Id: <d0cd538b944dac0bf878e276fc0199f21e6bccea.1680576071.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <cover.1680576071.git.asml.silence@gmail.com>
-References: <cover.1680576071.git.asml.silence@gmail.com>
+        d=1e100.net; s=20210112; t=1680614553;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DL+vsAXqBzSlNOVEu1L4Y71uBsHCeeGwqe10gSIxe3I=;
+        b=YOD8SGcAHXNqRpRm6hlxxsPnN0r+dj0L6DhCN+ZJ2QQkz5JqRJkqJ4IMqYguZxxQ/s
+         wmczsmz3d4ahmPjeaxWkw1sh37sxN+lZ8t6IYsUdBoOM8WexQbO8/PyAEiP1QDPDGywi
+         7AOgM6fVsUgfe8xq3+26fsd1Xbo27jOC4ZDgtTNqZE8o25tS4+vfAhQplqDwj1rUdiph
+         /xygBQlLuN+5XigHbSCBUAarK0HGqr/wyF57mNT3JWCu6JtxLi576RvZJPsx5k6lX6Jn
+         ljG8M5spQo352qi5v4aFraKBUDzOqm8UlPsd/ZD9PCGejAirnPcLPrsMsAy584xgV//X
+         p1Lg==
+X-Gm-Message-State: AAQBX9eL2/2qfWAxogvpv1OFcorX4ZJXDsyUbCaRaOR5tBJ7BBhwRLT6
+        FsgEc5C5JbqCfEDBo4zebPxfH2n6v70=
+X-Google-Smtp-Source: AKy350ZFYVKk5OqfTXg+OASDJFR24FKJ5w4qZ9my0IFgLL0Io1h5UD0wDQA4t5GN3dg7IDZIIunsAA==
+X-Received: by 2002:a17:906:340d:b0:930:2e3c:c6aa with SMTP id c13-20020a170906340d00b009302e3cc6aamr2092665ejb.49.1680614553051;
+        Tue, 04 Apr 2023 06:22:33 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:2b22])
+        by smtp.gmail.com with ESMTPSA id gy15-20020a170906f24f00b0092fdb0b2e5dsm6007394ejb.93.2023.04.04.06.22.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Apr 2023 06:22:32 -0700 (PDT)
+Message-ID: <4cc86e76-46b7-09ce-65f9-cd27ffe4b26e@gmail.com>
+Date:   Tue, 4 Apr 2023 14:21:41 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 10/11] io_uring/rsrc: cache struct io_rsrc_node
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org
+References: <cover.1680187408.git.asml.silence@gmail.com>
+ <7f5eb1b89e8dcf93739607c79bbf7aec1784cbbe.1680187408.git.asml.silence@gmail.com>
+ <87cz4p1083.fsf@suse.de> <6eaadad2-d6a6-dfbb-88aa-8ae68af2f89d@gmail.com>
+ <87wn2wzcv3.fsf@suse.de>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <87wn2wzcv3.fsf@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The number of entries in the rsrc node cache is limited to 512, which
-still seems unnecessarily large. Add per cache thresholds and set to
-to 32 for the rsrc node cache.
+On 4/1/23 01:04, Gabriel Krisman Bertazi wrote:
+> Pavel Begunkov <asml.silence@gmail.com> writes:
+> 
+>> On 3/31/23 15:09, Gabriel Krisman Bertazi wrote:
+>>> Pavel Begunkov <asml.silence@gmail.com> writes:
+>>>
+>>>> Add allocation cache for struct io_rsrc_node, it's always allocated and
+>>>> put under ->uring_lock, so it doesn't need any extra synchronisation
+>>>> around caches.
+>>> Hi Pavel,
+>>> I'm curious if you considered using kmem_cache instead of the custom
+>>> cache for this case?  I'm wondering if this provokes visible difference in
+>>> performance in your benchmark.
+>>
+>> I didn't try it, but kmem_cache vs kmalloc, IIRC, doesn't bring us
+>> much, definitely doesn't spare from locking, and the overhead
+>> definitely wasn't satisfactory for requests before.
+> 
+> There is no locks in the fast path of slub, as far as I know.  it has a
+> per-cpu cache that is refilled once empty, quite similar to the fastpath
+> of this cache.  I imagine the performance hit in slub comes from the
+> barrier and atomic operations?
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/linux/io_uring_types.h | 1 +
- io_uring/alloc_cache.h         | 6 ++++--
- io_uring/io_uring.c            | 9 ++++++---
- io_uring/rsrc.h                | 2 ++
- 4 files changed, 13 insertions(+), 5 deletions(-)
+Yeah, I mean all kinds of synchronisation. And I don't think
+that's the main offender here, the test is single threaded without
+contention and the system was mostly idle.
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 5d772e36e7fc..4a6ce03a4903 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -190,6 +190,7 @@ struct io_ev_fd {
- struct io_alloc_cache {
- 	struct io_wq_work_node	list;
- 	unsigned int		nr_cached;
-+	unsigned int		max_cached;
- 	size_t			elem_size;
- };
- 
-diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
-index 2fbecaa3a1ba..851a527afb5e 100644
---- a/io_uring/alloc_cache.h
-+++ b/io_uring/alloc_cache.h
-@@ -13,7 +13,7 @@ struct io_cache_entry {
- static inline bool io_alloc_cache_put(struct io_alloc_cache *cache,
- 				      struct io_cache_entry *entry)
- {
--	if (cache->nr_cached < IO_ALLOC_CACHE_MAX) {
-+	if (cache->nr_cached < cache->max_cached) {
- 		cache->nr_cached++;
- 		wq_stack_add_head(&entry->node, &cache->list);
- 		/* KASAN poisons object */
-@@ -38,10 +38,12 @@ static inline struct io_cache_entry *io_alloc_cache_get(struct io_alloc_cache *c
- 	return NULL;
- }
- 
--static inline void io_alloc_cache_init(struct io_alloc_cache *cache, size_t size)
-+static inline void io_alloc_cache_init(struct io_alloc_cache *cache,
-+				       unsigned max_nr, size_t size)
- {
- 	cache->list.next = NULL;
- 	cache->nr_cached = 0;
-+	cache->max_cached = max_nr;
- 	cache->elem_size = size;
- }
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index da36fa1eeac9..ae90d2753e0d 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -310,9 +310,12 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_LIST_HEAD(&ctx->sqd_list);
- 	INIT_LIST_HEAD(&ctx->cq_overflow_list);
- 	INIT_LIST_HEAD(&ctx->io_buffers_cache);
--	io_alloc_cache_init(&ctx->rsrc_node_cache, sizeof(struct io_rsrc_node));
--	io_alloc_cache_init(&ctx->apoll_cache, sizeof(struct async_poll));
--	io_alloc_cache_init(&ctx->netmsg_cache, sizeof(struct io_async_msghdr));
-+	io_alloc_cache_init(&ctx->rsrc_node_cache, IO_NODE_ALLOC_CACHE_MAX,
-+			    sizeof(struct io_rsrc_node));
-+	io_alloc_cache_init(&ctx->apoll_cache, IO_ALLOC_CACHE_MAX,
-+			    sizeof(struct async_poll));
-+	io_alloc_cache_init(&ctx->netmsg_cache, IO_ALLOC_CACHE_MAX,
-+			    sizeof(struct io_async_msghdr));
- 	init_completion(&ctx->ref_comp);
- 	xa_init_flags(&ctx->personalities, XA_FLAGS_ALLOC1);
- 	mutex_init(&ctx->uring_lock);
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 7ab9b2b2e757..8729f2fee256 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -6,6 +6,8 @@
- 
- #include "alloc_cache.h"
- 
-+#define IO_NODE_ALLOC_CACHE_MAX 32
-+
- #define IO_RSRC_TAG_TABLE_SHIFT	(PAGE_SHIFT - 3)
- #define IO_RSRC_TAG_TABLE_MAX	(1U << IO_RSRC_TAG_TABLE_SHIFT)
- #define IO_RSRC_TAG_TABLE_MASK	(IO_RSRC_TAG_TABLE_MAX - 1)
+> kmem_cache works fine for most hot paths of the kernel.  I think this
+
+It doesn't for io_uring. There are caches for the net side and now
+in the block layer as well. I wouldn't say it necessarily halves
+performance but definitely takes a share of CPU.
+
+> custom cache makes sense for the request cache, where objects are
+> allocated at an incredibly high rate.  but is this level of update
+> frequency a valid use case here?
+
+I can think of some. For example it was of interest before to
+install a file for just 2-3 IO operations and also fully bypassing
+the normal file table. I rather don't see why we wouldn't use it.
+
+> If it is indeed a significant performance improvement, I guess it is
+> fine to have another user of the cache. But I'd be curious to know how
+> much of the performance improvement you mentioned in the cover letter is
+> due to this patch!
+
+It was definitely sticking out in profiles, 5-10% of cycles, maybe more
+
 -- 
-2.39.1
-
+Pavel Begunkov

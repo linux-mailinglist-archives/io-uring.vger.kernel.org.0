@@ -2,214 +2,202 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1C56D59F4
-	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 09:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4926D60EC
+	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 14:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233184AbjDDHtt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Apr 2023 03:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53138 "EHLO
+        id S234645AbjDDMjH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Apr 2023 08:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232605AbjDDHtt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 03:49:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D434810FA
-        for <io-uring@vger.kernel.org>; Tue,  4 Apr 2023 00:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680594548;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Im5L/NmV1DuxZwE4hnbXnlwO/3Ionh4NNqvKa/4qFqc=;
-        b=JqLguYw9EKssbUP8FqNB0jhixRfmBzHOaqKhu9LkfxVFqi9pfEiC4Na6o2y63L9W1PAzKX
-        OiWzmeYkggrKhEJAVA5lXSuXLmzMPCJNuPPeCAeN0Qtf7quAbofEThbHaolgCp5koT7kBU
-        YwiYGpuhLk/Y0YNgH3DnnhMS7bDL+xw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-517-jwH89YmNPK-iUr1YjTs6Bg-1; Tue, 04 Apr 2023 03:49:03 -0400
-X-MC-Unique: jwH89YmNPK-iUr1YjTs6Bg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4F2431C0A59B;
-        Tue,  4 Apr 2023 07:49:03 +0000 (UTC)
-Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 432FA440BC;
-        Tue,  4 Apr 2023 07:48:55 +0000 (UTC)
-Date:   Tue, 4 Apr 2023 15:48:50 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
-Message-ID: <ZCvWYoDk0dnJbHhW@ovpn-8-16.pek2.redhat.com>
-References: <20230330113630.1388860-1-ming.lei@redhat.com>
- <ZConr0f8e/mEL0Cl@ovpn-8-18.pek2.redhat.com>
- <d696eb70-9dac-9334-7aec-1b5af62442e3@kernel.dk>
+        with ESMTP id S234616AbjDDMjG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 08:39:06 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E92DC
+        for <io-uring@vger.kernel.org>; Tue,  4 Apr 2023 05:38:44 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id er13so89002864edb.9
+        for <io-uring@vger.kernel.org>; Tue, 04 Apr 2023 05:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680611922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SFJpT0cD7HbLgC+kUpLrWH4IrwcKoCVD5z5kMuUnJYA=;
+        b=LQFFeSevcK5KMOiWrDO9QhsM5BxsafuCnyJvst6g/jp7rFKKvsYxRzJHpOBiow+XAs
+         DaEv6kpr2m6YDQfEtpQa3c4rLBAHZBg4snA+X48OIeSQhrKuxNIoAOzzZGcNeRdUIjrz
+         cl4mU3SLI5jY7VO8T0O0hWLo8Y/jpNHqJPPMSoHH+KjAofPYWYxaukw88fL8EqD7QnZ5
+         gs6a37LSe6F5cGmHEjHE4C6GYTn4Rkgfb/iLbGgCIwPxuMicsWlFJDl7/7vvLEsbqZVn
+         N7SjlK7JNZC+s79bWU3meazBzeiP19jylzxw3gu88Q1jaiHn08CYlGUeXnCwWEqyYFTa
+         0rlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680611922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SFJpT0cD7HbLgC+kUpLrWH4IrwcKoCVD5z5kMuUnJYA=;
+        b=kicYINU1FtGUuCWjuUGnnFQElDjp7R7YASBC+uwJ/CmZs/u19fsQD4HKl6IW/GDyWk
+         FvXWBlqnXk2wJ3vAOa/ZdxcTGHuWs5qXd87g2j4zZMX7IbhL7cDYoBCINZ7sNIU/sAZ0
+         J4Qr4sPtCw/uanmIR9me4EtUcYlCoYoP3qL6JkRUDLFOA1GN7LGmT6H9lFD0MmD9k/sx
+         /ch9/d/+BGDCxvq1w8wiFRP8uYEZoJxVOofke5OWpeYtdoIaYYZMrCCCTtJnycUVUEub
+         H7CIrsrLgktQO1kawG90KIXGxZ0vUMANJYykmuOmtRGtseo5CAHoh4kFvbzkBOBkMd28
+         ccsg==
+X-Gm-Message-State: AAQBX9f0afa1c2JhoD7YIhjVyPOyaPAxoyTvHuvurCmy4qoPjKM8AMKI
+        OSCxa+5sLaXIwjPvZti6KriFD07kKxs=
+X-Google-Smtp-Source: AKy350YJfkt5FWdQy0iB/bVwk3fv3vPud7giO4BZlpHIX9c+5NP9hD81rFZYcFimSzPCJRusWqsjGQ==
+X-Received: by 2002:a17:906:488b:b0:948:a1ae:b2c4 with SMTP id v11-20020a170906488b00b00948a1aeb2c4mr2170441ejq.6.1680611922366;
+        Tue, 04 Apr 2023 05:38:42 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::2:2b22])
+        by smtp.gmail.com with ESMTPSA id pg1-20020a170907204100b0092b546b57casm5872254ejb.195.2023.04.04.05.38.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Apr 2023 05:38:42 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH liburing 1/1] examples: add rsrc update benchmark
+Date:   Tue,  4 Apr 2023 13:37:39 +0100
+Message-Id: <6914bc136c752f50fc8a818773a4cb61b5e39077.1680576220.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d696eb70-9dac-9334-7aec-1b5af62442e3@kernel.dk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello Jens and Everyone,
+Add a stupid benchmark updating files in a loop mainly for profiling
+purposes and estimating the rsrc update overhead.
 
-On Sun, Apr 02, 2023 at 07:24:17PM -0600, Jens Axboe wrote:
-> On 4/2/23 7:11?PM, Ming Lei wrote:
-> > On Thu, Mar 30, 2023 at 07:36:13PM +0800, Ming Lei wrote:
-> >> Hello Jens and Guys,
-> >>
-> >> Add generic fused command, which can include one primary command and multiple
-> >> secondary requests. This command provides one safe way to share resource between
-> >> primary command and secondary requests, and primary command is always
-> >> completed after all secondary requests are done, and resource lifetime
-> >> is bound with primary command.
-> >>
-> >> With this way, it is easy to support zero copy for ublk/fuse device, and
-> >> there could be more potential use cases, such as offloading complicated logic
-> >> into userspace, or decouple kernel subsystems.
-> >>
-> >> Follows ublksrv code, which implements zero copy for loop, nbd and
-> >> qcow2 targets with fused command:
-> >>
-> >> https://github.com/ming1/ubdsrv/tree/fused-cmd-zc-for-v6
-> >>
-> >> All three(loop, nbd and qcow2) ublk targets have supported zero copy by passing:
-> >>
-> >> 	ublk add -t [loop|nbd|qcow2] -z .... 
-> >>
-> >> Also add liburing test case for covering fused command based on miniublk
-> >> of blktest.
-> >>
-> >> https://github.com/ming1/liburing/tree/fused_cmd_miniublk_for_v6
-> >>
-> >> Performance improvement is obvious on memory bandwidth related workloads,
-> >> such as, 1~2X improvement on 64K/512K BS IO test on loop with ramfs backing file.
-> >> ublk-null shows 5X IOPS improvement on big BS test when the copy is avoided.
-> >>
-> >> Please review and consider for v6.4.
-> >>
-> >> V6:
-> >> 	- re-design fused command, and make it more generic, moving sharing buffer
-> >> 	as one plugin of fused command, so in future we can implement more plugins
-> >> 	- document potential other use cases of fused command
-> >> 	- drop support for builtin secondary sqe in SQE128, so all secondary
-> >> 	  requests has standalone SQE
-> >> 	- make fused command as one feature
-> >> 	- cleanup & improve naming
-> > 
-> > Hi Jens,
-> > 
-> > Can you apply ublk cleanup patches 7~11 on for-6.4? For others, we may
-> > delay to 6.5, and I am looking at other approach too.
-> 
-> Done - and yes, we're probably looking at 6.5 for the rest. But that's
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ examples/Makefile            |   3 +-
+ examples/rsrc-update-bench.c | 100 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+), 1 deletion(-)
+ create mode 100644 examples/rsrc-update-bench.c
 
-Thanks!
-
-> fine, I'd rather end up with the right interface than try and rush one.
-
-Also I'd provide one summery about this work here so that it may help
-for anyone interested in this work, follows three approaches we have
-tried or proposed:
-
-1) splice can't do this job[1][2]
-
-2) fused command in this patchset
-- it is more like sendfile() or copy_file_range(), because the internal
-  buffer isn't exposed outside
-
-- v6 becomes a bit more generic, the theory is that one SQE list is submitted
-as a whole request logically; the 1st sqe is the primary command, which
-provides buffer for others, and is responsible for submitting other SQEs
-(secondary)in this list; the primary command isn't completed until all secondary
-requests are done
-
-- this approach solves two problems efficiently in one simple way:
-
-	a) buffer lifetime issue, and buffer lifetime is same with primary command, so
-	all secondary OPs can be submitted & completely safely
-
-	b) request dependency issue, all secondary requests depend on primary command,
-	and secondary request itself could be independent, we start to allow to submit
-	secondary request in non-async style, and all secondary requests can be issued
-	concurrently
-
-- this approach is simple, because we don't expose buffer outside, and
-  buffer is just shared among these secondary requests; meantime
-  internal buffer saves us complicated OPs' dependency issue, avoid
-  contention by registering buffer anywhere between submission and
-  completion code path
-
-- the drawback is that we add one new SQE usage/model of primary SQE and
-  secondary SQEs, and the whole logical request in concept, which is
-  like sendfile() or copy_file_range()
-
-3) register transient buffers for OPs[3]
-- it is more like splice(), which is flexible and could be more generic, but
-internal pipe buffer is added to pipe which is visible outside, so the
-implementation becomes complicated; and it should be more than splice(),
-because the io buffer needs to be shared among multiple OPs
-
-- inefficiently & complicated
-
-	a) buffer has to be added to one global container(suppose it is
-	io_uring context pipe) by ADD_BUF OP, and either buffer needs to be removed after
-	consumer OPs are completed, or DEL_OP is run for removing buffer explicitly, so
-	either contention on the io_uring pipe is added, or another new dependency is
-	added(DEL_OP depends on all normal OPs)
-
-	b) ADD_BUF OP is needed, and normal OPs have to depend on this new
-	OP by IOSQE_IO_LINK, then all normal OPs will be submitted in async way,
-	even worse, each normal OP has to be issued one by one, because io_uring
-	isn't capable of handling 1:N dependency issue[5]
-
-    c) if DEL_BUF OP is needed, then it is basically not possible
-	to solve 1:N dependency any more, given DEL_BUF starts to depends on the previous
-	N OPs; otherwise, contention on pipe is inevitable.
-
-	d) solving 1:N dependency issue generically
-
-- advantage
-
-Follows current io_uring SQE usage, and looks more generic/flexible,
-like splice().
-
-4) others approaches or suggestions?
-
-Any idea is welcome as usual.
-
-
-Finally from problem viewpoint, if the problem domain is just ublk/fuse zero copy
-or other similar problems[6], fused command might be the simpler & more efficient
-approach, compared with approach 3). However, are there any other problems we
-want to cover by one more generic/flexible interface? If not, would we
-like to pay the complexity & inefficiency for one kind of less generic
-problem?
-
-
-[1] https://lore.kernel.org/linux-block/ZCQnHwrXvSOQHfAC@ovpn-8-26.pek2.redhat.com/T/#m1bfa358524b6af94731bcd5be28056f9f4408ecf
-[2] https://github.com/ming1/linux/blob/my_v6.3-io_uring_fuse_cmd_v6/Documentation/block/ublk.rst#zero-copy
-[3] https://lore.kernel.org/linux-block/ZCQnHwrXvSOQHfAC@ovpn-8-26.pek2.redhat.com/T/#mbe428dfeb0417487cd1db7e6dabca7399a3c265b
-[4] https://lore.kernel.org/linux-block/ZCQnHwrXvSOQHfAC@ovpn-8-26.pek2.redhat.com/T/#md035ffa4c6b69e85de2ab145418a9849a3b33741
-[5] https://lore.kernel.org/linux-block/20230330113630.1388860-5-ming.lei@redhat.com/T/#m5e0c282ad26d9f3d8e519645168aeb3a19b5740b
-[6] https://lore.kernel.org/linux-block/20230330113630.1388860-5-ming.lei@redhat.com/T/#me5cca4db606541fae452d625780635fcedcd5c6c
-
-Thanks,
-Ming
+diff --git a/examples/Makefile b/examples/Makefile
+index ce33af9..715ac4c 100644
+--- a/examples/Makefile
++++ b/examples/Makefile
+@@ -20,7 +20,8 @@ example_srcs := \
+ 	io_uring-udp.c \
+ 	link-cp.c \
+ 	poll-bench.c \
+-	send-zerocopy.c
++	send-zerocopy.c \
++	rsrc-update-bench.c
+ 
+ all_targets :=
+ 
+diff --git a/examples/rsrc-update-bench.c b/examples/rsrc-update-bench.c
+new file mode 100644
+index 0000000..5e3cd99
+--- /dev/null
++++ b/examples/rsrc-update-bench.c
+@@ -0,0 +1,100 @@
++/* SPDX-License-Identifier: MIT */
++#include <errno.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <signal.h>
++#include <poll.h>
++#include <sys/time.h>
++#include <sys/wait.h>
++
++#include "liburing.h"
++
++static unsigned long runtime_ms = 10000;
++
++static unsigned long gettimeofday_ms(void)
++{
++	struct timeval tv;
++
++	gettimeofday(&tv, NULL);
++	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
++}
++
++int main(void)
++{
++	unsigned long tstop;
++	unsigned long nr_reqs = 0;
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	struct io_uring ring;
++	int pipe1[2];
++	int ret, i, qd = 32;
++	int table_size = 128;
++
++	if (pipe(pipe1) != 0) {
++		perror("pipe");
++		return 1;
++	}
++
++	ret = io_uring_queue_init(1024, &ring, IORING_SETUP_SINGLE_ISSUER |
++					       IORING_SETUP_DEFER_TASKRUN);
++	if (ret) {
++		fprintf(stderr, "io_uring_queue_init failed: %d\n", ret);
++		return 1;
++	}
++	ret = io_uring_register_ring_fd(&ring);
++	if (ret < 0) {
++		fprintf(stderr, "io_uring_register_ring_fd failed\n");
++		return 1;
++	}
++	ret = io_uring_register_files_sparse(&ring, table_size);
++	if (ret < 0) {
++		fprintf(stderr, "io_uring_register_files_sparse failed\n");
++		return 1;
++	}
++
++	for (i = 0; i < table_size; i++) {
++		ret = io_uring_register_files_update(&ring, i, pipe1, 1);
++		if (ret < 0) {
++			fprintf(stderr, "io_uring_register_files_update failed\n");
++			return 1;
++		}
++	}
++
++	srand(time(NULL));
++
++	tstop = gettimeofday_ms() + runtime_ms;
++	do {
++		int off = rand();
++
++		for (i = 0; i < qd; i++) {
++			sqe = io_uring_get_sqe(&ring);
++			int roff = (off + i) % table_size;
++			io_uring_prep_files_update(sqe, pipe1, 1, roff);
++		}
++
++		ret = io_uring_submit(&ring);
++		if (ret != qd) {
++			fprintf(stderr, "child: sqe submit failed: %d\n", ret);
++			return 1;
++		}
++
++		for (i = 0; i < qd; i++) {
++			ret = io_uring_wait_cqe(&ring, &cqe);
++			if (ret < 0) {
++				fprintf(stderr, "child: wait completion %d\n", ret);
++				break;
++			}
++			io_uring_cqe_seen(&ring, cqe);
++			nr_reqs++;
++		}
++	} while (gettimeofday_ms() < tstop);
++
++	fprintf(stderr, "max updates/s: %lu\n", nr_reqs * 1000UL / runtime_ms);
++
++	io_uring_queue_exit(&ring);
++	close(pipe1[0]);
++	close(pipe1[1]);
++	return 0;
++}
+-- 
+2.39.1
 

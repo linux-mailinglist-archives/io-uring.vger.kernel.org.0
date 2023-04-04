@@ -2,128 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F306D62AA
-	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 15:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 627026D6753
+	for <lists+io-uring@lfdr.de>; Tue,  4 Apr 2023 17:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234495AbjDDNWh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 4 Apr 2023 09:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33224 "EHLO
+        id S234844AbjDDPad (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 4 Apr 2023 11:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234341AbjDDNWg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 09:22:36 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934D0E71;
-        Tue,  4 Apr 2023 06:22:34 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id t10so130385798edd.12;
-        Tue, 04 Apr 2023 06:22:34 -0700 (PDT)
+        with ESMTP id S235271AbjDDPab (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 4 Apr 2023 11:30:31 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA25344AE
+        for <io-uring@vger.kernel.org>; Tue,  4 Apr 2023 08:30:28 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id r19so6041594ilj.6
+        for <io-uring@vger.kernel.org>; Tue, 04 Apr 2023 08:30:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680614553;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680622228;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DL+vsAXqBzSlNOVEu1L4Y71uBsHCeeGwqe10gSIxe3I=;
-        b=eZztO4Yo8z02kgUPSrp63a3GPxa9Qs+YevGQHZ181rGVMRRlEyNDtrGY7L9nSJG7d8
-         Elo2XaPTr8M6dWHdZY2E9E28LaF9rpZ+5Q0M3A0dqeBvJ80eKD9xToJsuhrxkrAacDCo
-         xiN6b8S5Qba+anwP+RaeQy5ozP63ByKRQXRfFhnY0eMpr24jhOXipg4eoXw9tcoLDMPX
-         v70Ro2R4JeNrNDiu6amr9e/Khj1TLsnylsU6WF6OiK5P/PBL+Tu7a4/CWCgo4b+ysCLf
-         XB4+XvYiFeNU58/9WrEv5P25LDw+81H/r6XR0BaFP86qyf4Fv+y8LRs3RtKQaRmi5Rmj
-         nwrg==
+        bh=PzNSpfOpCTuck8DnK8SYlplxYem4pCgcVOgCOW7X72Q=;
+        b=HJqohBGu0ap700/lP3wszi5dAwYizLpfMBxcWnnepxoRsA0u+eULnq1QzQVgqcezQV
+         ITHRuVl0LpwlqBAHe/Y+Go4zzCoKLwQa9NwMLo10mSAeWty5mnFvNdM5RXjiG5XDXaEo
+         QjxqV45MlOZhrglZZd9AukDvb7MFaE57mvXzPd9ch2lhS2fIdqUEd3D68l2T/K3MIpvB
+         Eeu3h3mwIKZEB8Gg+wQ3/NN6YzBfD9p9un54kPT0vjA9HPGtKYgl56v7Kx+s4PneCxtG
+         KYr1gKqYn1xSH3En+RdoXbRsr4y7UFuX4d+2VVL53OCHoFedvvIuNaGjBEHnynqUtgZq
+         pqFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680614553;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1680622228;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DL+vsAXqBzSlNOVEu1L4Y71uBsHCeeGwqe10gSIxe3I=;
-        b=YOD8SGcAHXNqRpRm6hlxxsPnN0r+dj0L6DhCN+ZJ2QQkz5JqRJkqJ4IMqYguZxxQ/s
-         wmczsmz3d4ahmPjeaxWkw1sh37sxN+lZ8t6IYsUdBoOM8WexQbO8/PyAEiP1QDPDGywi
-         7AOgM6fVsUgfe8xq3+26fsd1Xbo27jOC4ZDgtTNqZE8o25tS4+vfAhQplqDwj1rUdiph
-         /xygBQlLuN+5XigHbSCBUAarK0HGqr/wyF57mNT3JWCu6JtxLi576RvZJPsx5k6lX6Jn
-         ljG8M5spQo352qi5v4aFraKBUDzOqm8UlPsd/ZD9PCGejAirnPcLPrsMsAy584xgV//X
-         p1Lg==
-X-Gm-Message-State: AAQBX9eL2/2qfWAxogvpv1OFcorX4ZJXDsyUbCaRaOR5tBJ7BBhwRLT6
-        FsgEc5C5JbqCfEDBo4zebPxfH2n6v70=
-X-Google-Smtp-Source: AKy350ZFYVKk5OqfTXg+OASDJFR24FKJ5w4qZ9my0IFgLL0Io1h5UD0wDQA4t5GN3dg7IDZIIunsAA==
-X-Received: by 2002:a17:906:340d:b0:930:2e3c:c6aa with SMTP id c13-20020a170906340d00b009302e3cc6aamr2092665ejb.49.1680614553051;
-        Tue, 04 Apr 2023 06:22:33 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:2b22])
-        by smtp.gmail.com with ESMTPSA id gy15-20020a170906f24f00b0092fdb0b2e5dsm6007394ejb.93.2023.04.04.06.22.32
+        bh=PzNSpfOpCTuck8DnK8SYlplxYem4pCgcVOgCOW7X72Q=;
+        b=3OrVr36tzlWLrlnxV4Wc7lScCeeESRuVb9sa2r6POwe42lWl9GNEBoBXq5LZmGx8fE
+         KvtFKQkBuyE4I7z9QqGU6PsK6P7HoeVBKzlreQLdBvCKwg2rqbQyyJSC1ZeH87tb7abm
+         C8evkcNLtC4UsELOJShSdWTWBnDIGxxaw/gN6o8KOuNHba6PQFRGzeX40MmsNQxbzpA0
+         sMGaBfqkgy5nlazEzL+bL/9TL16CHpO43WuiKsEokxfsWy+Sh3jEvItjHEXR8jwQO63P
+         szE9vADjKWO2gn2Swm58Y6f+C8FeudEnE4wOJpUpqOzZVLsepP3PQM/Ug+iqTQCyfv+o
+         xmtQ==
+X-Gm-Message-State: AAQBX9eYN6CJrdLD1pr0SFLZnhH/YF/V+8VjMv+qReC/gGigvkPBW1xw
+        icHo/L7VTWwl0AYswH/+rXGRfw==
+X-Google-Smtp-Source: AKy350Ynu2IICpKmSUtrwSDC1BYFYl6/1Te8mjo0+igGYoWBUBvH5gm0XsWYTG/+Haraw2xC0a+dSA==
+X-Received: by 2002:a05:6e02:2191:b0:326:1778:fae3 with SMTP id j17-20020a056e02219100b003261778fae3mr2061450ila.2.1680622228157;
+        Tue, 04 Apr 2023 08:30:28 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id c20-20020a023f54000000b003c2b67fac92sm3435429jaf.81.2023.04.04.08.30.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Apr 2023 06:22:32 -0700 (PDT)
-Message-ID: <4cc86e76-46b7-09ce-65f9-cd27ffe4b26e@gmail.com>
-Date:   Tue, 4 Apr 2023 14:21:41 +0100
+        Tue, 04 Apr 2023 08:30:27 -0700 (PDT)
+Message-ID: <d72f1acd-e0d7-6937-a263-00ebda4e3d61@kernel.dk>
+Date:   Tue, 4 Apr 2023 09:30:27 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 10/11] io_uring/rsrc: cache struct io_rsrc_node
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-References: <cover.1680187408.git.asml.silence@gmail.com>
- <7f5eb1b89e8dcf93739607c79bbf7aec1784cbbe.1680187408.git.asml.silence@gmail.com>
- <87cz4p1083.fsf@suse.de> <6eaadad2-d6a6-dfbb-88aa-8ae68af2f89d@gmail.com>
- <87wn2wzcv3.fsf@suse.de>
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v2 00/13] optimise registered buffer/file updates
 Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <87wn2wzcv3.fsf@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <cover.1680576071.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <cover.1680576071.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/1/23 01:04, Gabriel Krisman Bertazi wrote:
-> Pavel Begunkov <asml.silence@gmail.com> writes:
+On 4/4/23 6:39?AM, Pavel Begunkov wrote:
+> The patchset optimises registered files and buffers updates / removals,
+> The rsrc-update-bench test showes 11x improvement (1040K -> 11468K
+> updates / sec). It also improves latency by eliminating rcu grace
+> period waiting and bouncing it to another worker, and reduces
+> memory footprint by removing percpu refs.
 > 
->> On 3/31/23 15:09, Gabriel Krisman Bertazi wrote:
->>> Pavel Begunkov <asml.silence@gmail.com> writes:
->>>
->>>> Add allocation cache for struct io_rsrc_node, it's always allocated and
->>>> put under ->uring_lock, so it doesn't need any extra synchronisation
->>>> around caches.
->>> Hi Pavel,
->>> I'm curious if you considered using kmem_cache instead of the custom
->>> cache for this case?  I'm wondering if this provokes visible difference in
->>> performance in your benchmark.
->>
->> I didn't try it, but kmem_cache vs kmalloc, IIRC, doesn't bring us
->> much, definitely doesn't spare from locking, and the overhead
->> definitely wasn't satisfactory for requests before.
+> That's quite important for apps updating files/buffers with medium or
+> higher frequency as updates are slow and expensive, and it currently
+> takes quite a number of IO requests per update to make using fixed
+> files/buffers worthwhile.
 > 
-> There is no locks in the fast path of slub, as far as I know.  it has a
-> per-cpu cache that is refilled once empty, quite similar to the fastpath
-> of this cache.  I imagine the performance hit in slub comes from the
-> barrier and atomic operations?
+> Another upside is that it makes it simpler, patch 9 removes very
+> convoluted synchronisation via flush_delayed_work() from the quiesce
+> path.
 
-Yeah, I mean all kinds of synchronisation. And I don't think
-that's the main offender here, the test is single threaded without
-contention and the system was mostly idle.
+Ran this on the big box. Stock kernel is 6.3-rc5 + for-6.4/io_uring, and
+patched is same kernel with this patchset applied.
 
-> kmem_cache works fine for most hot paths of the kernel.  I think this
+Test				Kernel		Ops
+---------------------------------------------------------
+CPU0 rsrc-update-bench		Stock		  165670
+CPU0 rsrc-update-bench		Stock		  166412
+rsrc-update-bench		Stock		  213411
+rsrc-update-bench		Stock		  208995
 
-It doesn't for io_uring. There are caches for the net side and now
-in the block layer as well. I wouldn't say it necessarily halves
-performance but definitely takes a share of CPU.
+CPU0 rsrc-update-bench		Patched		10890297
+CPU0 rsrc-update-bench		Patched		10451699
+rsrc-update-bench		Patched		10793148
+rsrc-update-bench		Patched		10934918
 
-> custom cache makes sense for the request cache, where objects are
-> allocated at an incredibly high rate.  but is this level of update
-> frequency a valid use case here?
+which is just ridicolous. It's ~64x faster pinned, and ~51x faster not
+pinned. 
 
-I can think of some. For example it was of interest before to
-install a file for just 2-3 IO operations and also fully bypassing
-the normal file table. I rather don't see why we wouldn't use it.
-
-> If it is indeed a significant performance improvement, I guess it is
-> fine to have another user of the cache. But I'd be curious to know how
-> much of the performance improvement you mentioned in the cover letter is
-> due to this patch!
-
-It was definitely sticking out in profiles, 5-10% of cycles, maybe more
+On top of that, it's a nice cleanup too and reduction in complexity.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

@@ -2,72 +2,138 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E986DBC82
-	for <lists+io-uring@lfdr.de>; Sat,  8 Apr 2023 21:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68C16DC63A
+	for <lists+io-uring@lfdr.de>; Mon, 10 Apr 2023 13:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229448AbjDHTBT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 8 Apr 2023 15:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
+        id S229688AbjDJL0F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Apr 2023 07:26:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjDHTBR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 8 Apr 2023 15:01:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A58572B6
-        for <io-uring@vger.kernel.org>; Sat,  8 Apr 2023 12:01:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3911360A3D
-        for <io-uring@vger.kernel.org>; Sat,  8 Apr 2023 19:01:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A2639C433EF;
-        Sat,  8 Apr 2023 19:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680980475;
-        bh=OvT5pjALMvXM4pAs4Kjv5YPBj9A+GFWedF9mZ6jYPGw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=k6xzm0+FLeKpFw4lkTdYPVbdIWiYmemi+ERfx3zWpwuBf6rJFPI0ihAtwnkPs9rwi
-         Yr3g5leX+W/9q2l7Cgk3uPBuH5fU6n2wBHg+0CggaCO+y61xlFTf8rk9bpxJUx1UjI
-         NoI6jC8ADDLI4z6x2edR9o3EH0k2Fvih6RX+q2D9mqx7k70Vf3OqvKjI89Yln6XZxi
-         JDlq+0VOs7yrZdF/pBhDiYvdSetU+26CF85bEGSufYMs7kRs2bHf3K7XlKcRGMr9wx
-         atoImyqHfszKmdhp3PDovO2gkn0xGL8Eg8Cz3dnRVA1pUiJgyWbirpVDiZ6CVH1hoj
-         lCccVwulMiNRg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 907E0C4167B;
-        Sat,  8 Apr 2023 19:01:15 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.3-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <07df0b3d-4086-d2a4-efa8-0229579726fa@kernel.dk>
-References: <07df0b3d-4086-d2a4-efa8-0229579726fa@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <07df0b3d-4086-d2a4-efa8-0229579726fa@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.3-2023-04-06
-X-PR-Tracked-Commit-Id: b4a72c0589fdea6259720375426179888969d6a2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d3f05a4c428565163f26b5d34f60f02ee4ea4009
-Message-Id: <168098047558.1995.6791483529172437058.pr-tracker-bot@kernel.org>
-Date:   Sat, 08 Apr 2023 19:01:15 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
+        with ESMTP id S229649AbjDJL0E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Apr 2023 07:26:04 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A5B63AA7
+        for <io-uring@vger.kernel.org>; Mon, 10 Apr 2023 04:26:01 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230410112558epoutp0487615b93f141197c172db90d4262d77f~Ujyb-HWpv1188611886epoutp04X
+        for <io-uring@vger.kernel.org>; Mon, 10 Apr 2023 11:25:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230410112558epoutp0487615b93f141197c172db90d4262d77f~Ujyb-HWpv1188611886epoutp04X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1681125958;
+        bh=UHIxLy9rr2FhoG6rYbGSve7hP2xwzs8NruR/TyQFIMM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Vvozc/AX+2UFkrE+m2OcNf4q65qf2xw32IL3ehSFZp5VeUxoFGaKZo3Wj7G7gkL0i
+         X8sapoO/2iHGZ+1eiV5iLmfCnCnD57XWYTE4zC4Wn+SLbotCV/IKVKPdHB5f6emif3
+         NCMO0tlBX/KwiFBi08bov4U294zx5byClF4smXf8=
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230410112558epcas5p1a0b28653aae0af8be020cd6dff0fd2ef~Ujybe8Jay0835008350epcas5p1k;
+        Mon, 10 Apr 2023 11:25:58 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230410112558epsmtrp20642811a51e760e70ba63e118986d2ff~Ujybebwfu3173131731epsmtrp2Y;
+        Mon, 10 Apr 2023 11:25:58 +0000 (GMT)
+Received: from green5 (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230410112556epsmtip1c29299c2d6bd2368d392525783eafae0~UjyaK_cPT2849828498epsmtip1N;
+        Mon, 10 Apr 2023 11:25:56 +0000 (GMT)
+Date:   Mon, 10 Apr 2023 16:55:03 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Keith Busch <kbusch@meta.com>
+Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
+        sagi@grimberg.me, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv2 2/5] nvme: simplify passthrough bio cleanup
+Message-ID: <20230410112503.GA16047@green5>
+MIME-Version: 1.0
+In-Reply-To: <20230407191636.2631046-3-kbusch@meta.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-CMS-MailID: 20230410112558epcas5p1a0b28653aae0af8be020cd6dff0fd2ef
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_5835_"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20230407191711epcas5p3b9b27aa2477b12ec116b85ea3c7d54b7
+References: <20230407191636.2631046-1-kbusch@meta.com>
+        <CGME20230407191711epcas5p3b9b27aa2477b12ec116b85ea3c7d54b7@epcas5p3.samsung.com>
+        <20230407191636.2631046-3-kbusch@meta.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Fri, 7 Apr 2023 10:48:12 -0600:
+------6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_5835_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.3-2023-04-06
+On Fri, Apr 07, 2023 at 12:16:33PM -0700, Keith Busch wrote:
+>From: Keith Busch <kbusch@kernel.org>
+>
+>Set the bio's bi_end_io to handle the cleanup so that uring_cmd doesn't
+>need this complex pdu->{bio,req} switchero and restore.
+>
+>Signed-off-by: Keith Busch <kbusch@kernel.org>
+>---
+> drivers/nvme/host/ioctl.c | 26 +++++++++-----------------
+> 1 file changed, 9 insertions(+), 17 deletions(-)
+>
+>diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+>index d24ea2e051564..278c57ee0db91 100644
+>--- a/drivers/nvme/host/ioctl.c
+>+++ b/drivers/nvme/host/ioctl.c
+>@@ -159,6 +159,11 @@ static struct request *nvme_alloc_user_request(struct request_queue *q,
+> 	return req;
+> }
+>
+>+static void nvme_uring_bio_end_io(struct bio *bio)
+>+{
+>+	blk_rq_unmap_user(bio);
+>+}
+>+
+> static int nvme_map_user_request(struct request *req, u64 ubuffer,
+> 		unsigned bufflen, void __user *meta_buffer, unsigned meta_len,
+> 		u32 meta_seed, void **metap, struct io_uring_cmd *ioucmd,
+>@@ -204,6 +209,7 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+> 		*metap = meta;
+> 	}
+>
+>+	bio->bi_end_io = nvme_uring_bio_end_io;
+> 	return ret;
+>
+> out_unmap:
+>@@ -249,8 +255,6 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+> 	if (meta)
+> 		ret = nvme_finish_user_metadata(req, meta_buffer, meta,
+> 						meta_len, ret);
+>-	if (bio)
+>-		blk_rq_unmap_user(bio);
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d3f05a4c428565163f26b5d34f60f02ee4ea4009
+Is it safe to call blk_rq_unamp_user in irq context?
+Agree that current code does some complex stuff, but that's to ensure
+what the code-comment [1] says.
 
-Thank you!
+Also for polled-io, new-code will hit this warn-on [2] on calling
+bio_put_percpu_cache.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+[1] 
+623  *    A matching blk_rq_unmap_user() must be issued at the end of I/O, while
+624  *    still in process context.
+625  */
+626 int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
+627                         struct rq_map_data *map_data,
+
+
+[2]
+773         if ((bio->bi_opf & REQ_POLLED) && !WARN_ON_ONCE(in_interrupt())) {
+774                 bio->bi_next = cache->free_list;
+
+------6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_5835_
+Content-Type: text/plain; charset="utf-8"
+
+
+------6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_5835_--

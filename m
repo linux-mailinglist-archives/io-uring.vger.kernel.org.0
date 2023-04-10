@@ -2,141 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE926DC647
-	for <lists+io-uring@lfdr.de>; Mon, 10 Apr 2023 13:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C13AD6DCC86
+	for <lists+io-uring@lfdr.de>; Mon, 10 Apr 2023 23:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjDJLfu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 10 Apr 2023 07:35:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
+        id S229873AbjDJVCo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 10 Apr 2023 17:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjDJLfu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Apr 2023 07:35:50 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6F54687
-        for <io-uring@vger.kernel.org>; Mon, 10 Apr 2023 04:35:45 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230410113544epoutp02483511a1cd9acc23fb8685972dbab691~Uj69ZGb9n2444224442epoutp02Q
-        for <io-uring@vger.kernel.org>; Mon, 10 Apr 2023 11:35:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230410113544epoutp02483511a1cd9acc23fb8685972dbab691~Uj69ZGb9n2444224442epoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681126544;
-        bh=UBItbdeexys0Y7TB8aLFQIh+fR2xJJUYLw4y/6h7Atk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HWFurj2+bF9czbCSuU8S5DYPb/gBa9FLmVZbK2P89YYqq6u9rOYTK1ttssXg/n+9G
-         FOfzWChflZaRJjuqHCV3a1VKhYlr3zSRcRygrNBPuyQArJSasGD8y1Dh7fY1JeOFf6
-         LBLQsuk6r2GLL9rFKHZKlFiJ3muJ4t6F7+f1YCJY=
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230410113543epcas5p185f0673b416991f3f969dc3e19d1a058~Uj68w0Oyz0539905399epcas5p1y;
-        Mon, 10 Apr 2023 11:35:43 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230410113543epsmtrp29bd6afde8c77983730b062df021887b8~Uj68wP4lx0546705467epsmtrp2_;
-        Mon, 10 Apr 2023 11:35:43 +0000 (GMT)
-Received: from green5 (unknown [107.110.206.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230410113542epsmtip16fa219f71981e7b73d3b24faca822c9b~Uj67pzSAj0276502765epsmtip1N;
-        Mon, 10 Apr 2023 11:35:42 +0000 (GMT)
-Date:   Mon, 10 Apr 2023 17:04:58 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Keith Busch <kbusch@meta.com>
-Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-        sagi@grimberg.me, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv2 3/5] nvme: unify nvme request end_io
-Message-ID: <20230410113458.GB16047@green5>
+        with ESMTP id S229703AbjDJVCo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 10 Apr 2023 17:02:44 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17ED010F6;
+        Mon, 10 Apr 2023 14:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681160563; x=1712696563;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/iFIhWoDac+UT40gLNkBeOwuDo3E6+5ZVwgNZZpo0ak=;
+  b=cJsUjj8mqUXhTBnWzlhw91jfHbqpp/FJSKE4eikEDWUJwCTqAAE8XP+C
+   qmYuFGss5Fpy58qBxRMG2E+7FmyhXkMJDuYBbB/9LdfWABm/Rs4EIJeQU
+   tosjdc/8adimk/ekX8or8tHohC+kmSAVn+ktMfzIv+coyQ0vdqLwrU9XR
+   QdOHZNb6EBJEXT0FmJ+4COz0uvibCKWbSvrHldQ5/vZwKVwIVQuIfIyX/
+   N6mVNsMpKXPCyi2MVOQcfT4UrfHXtE+lN3NxAC9hOhAURhS4imnAsvCL0
+   GY3bOW1jeu+VwJCeoJ5m7MaGXy3oynvo5D82O9dVF1FoGZcz8GjEpnq5d
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10676"; a="345240686"
+X-IronPort-AV: E=Sophos;i="5.98,333,1673942400"; 
+   d="scan'208";a="345240686"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2023 14:02:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10676"; a="832096656"
+X-IronPort-AV: E=Sophos;i="5.98,333,1673942400"; 
+   d="scan'208";a="832096656"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 10 Apr 2023 14:02:39 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1plyes-000VfZ-2X;
+        Mon, 10 Apr 2023 21:02:38 +0000
+Date:   Tue, 11 Apr 2023 05:02:22 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de
+Cc:     oe-kbuild-all@lists.linux.dev, sagi@grimberg.me,
+        joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv2 2/5] nvme: simplify passthrough bio cleanup
+Message-ID: <202304110443.e026C3nq-lkp@intel.com>
+References: <20230407191636.2631046-3-kbusch@meta.com>
 MIME-Version: 1.0
-In-Reply-To: <20230407191636.2631046-4-kbusch@meta.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-CMS-MailID: 20230410113543epcas5p185f0673b416991f3f969dc3e19d1a058
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_5832_"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20230407191710epcas5p285a50b90f4be2d782512bb4296ef6e20
-References: <20230407191636.2631046-1-kbusch@meta.com>
-        <CGME20230407191710epcas5p285a50b90f4be2d782512bb4296ef6e20@epcas5p2.samsung.com>
-        <20230407191636.2631046-4-kbusch@meta.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230407191636.2631046-3-kbusch@meta.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-------w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_5832_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Hi Keith,
 
-On Fri, Apr 07, 2023 at 12:16:34PM -0700, Keith Busch wrote:
->From: Keith Busch <kbusch@kernel.org>
->
->We can finish the metadata copy inline with the completion. After that,
->there's really nothing else different between the meta and non-meta data
->end_io callbacks, so unify them.
->
->Signed-off-by: Keith Busch <kbusch@kernel.org>
->---
-> drivers/nvme/host/ioctl.c | 57 +++++++--------------------------------
-> 1 file changed, 9 insertions(+), 48 deletions(-)
->
->diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
->index 278c57ee0db91..a1e0a14dadedc 100644
->--- a/drivers/nvme/host/ioctl.c
->+++ b/drivers/nvme/host/ioctl.c
->@@ -465,29 +465,6 @@ static inline struct nvme_uring_cmd_pdu *nvme_uring_cmd_pdu(
-> 	return (struct nvme_uring_cmd_pdu *)&ioucmd->pdu;
-> }
->
->-static void nvme_uring_task_meta_cb(struct io_uring_cmd *ioucmd,
->-				    unsigned issue_flags)
->-{
->-	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
->-	struct request *req = pdu->req;
->-	int status;
->-	u64 result;
->-
->-	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
->-		status = -EINTR;
->-	else
->-		status = nvme_req(req)->status;
->-
->-	result = le64_to_cpu(nvme_req(req)->result.u64);
->-
->-	if (pdu->meta_len)
->-		status = nvme_finish_user_metadata(req, pdu->u.meta_buffer,
->-					pdu->u.meta, pdu->meta_len, status);
->-	blk_mq_free_request(req);
->-
->-	io_uring_cmd_done(ioucmd, status, result, issue_flags);
->-}
->-
-> static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
-> 			       unsigned issue_flags)
-> {
->@@ -502,11 +479,16 @@ static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
-> 	struct io_uring_cmd *ioucmd = req->end_io_data;
-> 	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
-> 	void *cookie = READ_ONCE(ioucmd->cookie);
->+	int status = nvme_req(req)->status;
->
-> 	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
->-		pdu->nvme_status = -EINTR;
->-	else
->-		pdu->nvme_status = nvme_req(req)->status;
->+		status = -EINTR;
->+
->+	if (pdu->meta_len)
->+		status = nvme_finish_user_metadata(req, pdu->u.meta_buffer,
->+					pdu->u.meta, pdu->meta_len, status);
+kernel test robot noticed the following build warnings:
 
-nvme_finish_user_metadata does copy_to_user.
-Here also the attempt was not to touch that memory in interrupt context.
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on next-20230406]
+[cannot apply to linus/master v6.3-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-------w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_5832_
-Content-Type: text/plain; charset="utf-8"
+url:    https://github.com/intel-lab-lkp/linux/commits/Keith-Busch/block-add-request-polling-helper/20230408-031926
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20230407191636.2631046-3-kbusch%40meta.com
+patch subject: [PATCHv2 2/5] nvme: simplify passthrough bio cleanup
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20230411/202304110443.e026C3nq-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/9a32e7ca02dd8cff559b273fe161b5347b5b5c97
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Keith-Busch/block-add-request-polling-helper/20230408-031926
+        git checkout 9a32e7ca02dd8cff559b273fe161b5347b5b5c97
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=x86_64 olddefconfig
+        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/nvme/host/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304110443.e026C3nq-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/nvme/host/ioctl.c: In function 'nvme_submit_user_cmd':
+   drivers/nvme/host/ioctl.c:232:21: warning: variable 'bio' set but not used [-Wunused-but-set-variable]
+     232 |         struct bio *bio;
+         |                     ^~~
+   drivers/nvme/host/ioctl.c: In function 'nvme_uring_cmd_end_io_meta':
+>> drivers/nvme/host/ioctl.c:528:36: warning: unused variable 'pdu' [-Wunused-variable]
+     528 |         struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+         |                                    ^~~
 
 
-------w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_5832_--
+vim +/pdu +528 drivers/nvme/host/ioctl.c
+
+c0a7ba77e81b84 Jens Axboe    2022-09-21  523  
+c0a7ba77e81b84 Jens Axboe    2022-09-21  524  static enum rq_end_io_ret nvme_uring_cmd_end_io_meta(struct request *req,
+c0a7ba77e81b84 Jens Axboe    2022-09-21  525  						     blk_status_t err)
+c0a7ba77e81b84 Jens Axboe    2022-09-21  526  {
+c0a7ba77e81b84 Jens Axboe    2022-09-21  527  	struct io_uring_cmd *ioucmd = req->end_io_data;
+c0a7ba77e81b84 Jens Axboe    2022-09-21 @528  	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+c0a7ba77e81b84 Jens Axboe    2022-09-21  529  	void *cookie = READ_ONCE(ioucmd->cookie);
+c0a7ba77e81b84 Jens Axboe    2022-09-21  530  
+c0a7ba77e81b84 Jens Axboe    2022-09-21  531  	/*
+c0a7ba77e81b84 Jens Axboe    2022-09-21  532  	 * For iopoll, complete it directly.
+c0a7ba77e81b84 Jens Axboe    2022-09-21  533  	 * Otherwise, move the completion to task work.
+c0a7ba77e81b84 Jens Axboe    2022-09-21  534  	 */
+c0a7ba77e81b84 Jens Axboe    2022-09-21  535  	if (cookie != NULL && blk_rq_is_poll(req))
+9d2789ac9d60c0 Jens Axboe    2023-03-20  536  		nvme_uring_task_meta_cb(ioucmd, IO_URING_F_UNLOCKED);
+c0a7ba77e81b84 Jens Axboe    2022-09-21  537  	else
+c0a7ba77e81b84 Jens Axboe    2022-09-21  538  		io_uring_cmd_complete_in_task(ioucmd, nvme_uring_task_meta_cb);
+c0a7ba77e81b84 Jens Axboe    2022-09-21  539  
+de671d6116b521 Jens Axboe    2022-09-21  540  	return RQ_END_IO_NONE;
+456cba386e94f2 Kanchan Joshi 2022-05-11  541  }
+456cba386e94f2 Kanchan Joshi 2022-05-11  542  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests

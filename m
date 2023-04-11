@@ -2,73 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2269A6DDB1F
-	for <lists+io-uring@lfdr.de>; Tue, 11 Apr 2023 14:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DFC6DDB89
+	for <lists+io-uring@lfdr.de>; Tue, 11 Apr 2023 15:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbjDKMqY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Apr 2023 08:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38980 "EHLO
+        id S230041AbjDKNCa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Apr 2023 09:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjDKMqX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Apr 2023 08:46:23 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317F22690;
-        Tue, 11 Apr 2023 05:46:21 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id ud9so19812100ejc.7;
-        Tue, 11 Apr 2023 05:46:21 -0700 (PDT)
+        with ESMTP id S230221AbjDKNC0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Apr 2023 09:02:26 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F195273;
+        Tue, 11 Apr 2023 06:01:58 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id ud9so19925170ejc.7;
+        Tue, 11 Apr 2023 06:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1681217179;
+        d=gmail.com; s=20210112; t=1681218079;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bWaTRf6C8YWdWPQrffxy6ZlIMtLUhDaV8mY6LY1gQgY=;
-        b=DypWss9CZJkO5B5b1OUOCh/xUD01zAu9Ehet/SEmAQmYF8yQDZDx43eN621l/XLpTl
-         R7jUoyef+zoEtkjD1V6JnXeSJ7fzimQfmOev6tk73qf4RdeAMB1fuyvFlsXtII3VDt1U
-         LOPHfVowMYHrpzlfAEAVI7tpo3RaXKQVQOkdIt3PjUFK0JuNBdr+pltbcqAFAmSOZa5Z
-         HTrLZ1x9019LbQpRzd/3C6UI2VrRHovGG+mcbaEtNY4z3Dgh1d0AbmWwXEW4wDUzdahd
-         aG2VmK83sPmVJvoVaeN7inirfGngkbl7GPnlRFoJ4jLOPoas/XUMApdUsgjbfgaXw/uK
-         g8Rw==
+        bh=gjfKHiTAelHKNBBiZ32rOlQe2iBqnhIwDJ/F7afqrdI=;
+        b=RNXfuUX/MwoaEzkPLZbxur959pNK0xSVw/gPGRsMzx6f52TyDeq92xgmqeZGW/nvtM
+         KNMoR2k9ilXJPSnVTFgSxEJgFUgkSCAd8EZzm44kQy3zfh6ohn+zXfrx1YljwsSMkmId
+         oObACbJRFfm9kWqRd8B2d4G7u9qe2xCYuLQXkBZLXEPDbfyDaVaLQGqAkESsIouqUrYM
+         8qbdI1YKDZOpImcKXHolp8tvRLZ1nXQatw6QwCb09tcc3ap+Qtd/WzWzoSNU0JyfMYKD
+         Yj3kqpuPdCtVXBBYWkRCVAXGrls1X7xPI1zoyEoYitNQ12eI2W10WgMIapg5e10ps271
+         iZLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681217179;
+        d=1e100.net; s=20210112; t=1681218079;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bWaTRf6C8YWdWPQrffxy6ZlIMtLUhDaV8mY6LY1gQgY=;
-        b=ldCLkPqnxDf0ly1xFGxBo8TmijfdpmDHtrp5N0vSLwxXlvV4g/0wA28A8lOC08T4mF
-         HiOz047sEzlB0LzyFdHz/AI1oqCsJkcEE9YchUKI2XRp9VeU9RA/+ywWRMlngV3Vlwa/
-         Qmh7UEOy/TxnvIGj6QEk/j9wLjyelFt7/cbZ7NWhn1jLSz2oweLTjBsNJI/3vxuyo/uZ
-         sO5Aj574z0DC5N2v84rFHfv4o6ZxEPGevveBn0nVk5gxk8vZ20zp01aoWFAoY1XuCsTB
-         J5y0qHEpnP77x89BemJ04hK4hDVkQn8wyrjGfMjaTYKuCwj/Jb2u4D1TXgPgztujUceI
-         PIrQ==
-X-Gm-Message-State: AAQBX9cD54x1eTbknDbfUan/0GLqBOSPDUpzNvoSfK0+4LNWUydp3ioB
-        YNPDZVBBrag2o5jvm25J2AM=
-X-Google-Smtp-Source: AKy350arumFB0mJu7EyJDwqsMue34wX4DmWd+2t2TdPJaSNbLOAjr/rDXTk4LJjLzAXi1kfinbcSCA==
-X-Received: by 2002:a17:906:9455:b0:94a:5911:b475 with SMTP id z21-20020a170906945500b0094a5911b475mr7593307ejx.52.1681217179336;
-        Tue, 11 Apr 2023 05:46:19 -0700 (PDT)
+        bh=gjfKHiTAelHKNBBiZ32rOlQe2iBqnhIwDJ/F7afqrdI=;
+        b=10YsDIhzHRkuVFaxDNaR8ncbX/KJAfVxTAt1JSU/fdIf/FRuiUZ3qVJsBZ/GgshIGK
+         JqAHHhjHenQztPkLl1vNhRmXAOXIPkuTSV3N/VrGRr7QEz8Wt8F1A3viNpk3hYXYlZHU
+         /Z7qm/mgPcnMg6DCasI/UEnHrG6gc+S5ybyopxcPEMYqmWKp1vqZ50aDerdXFKFUKWHu
+         uNVRiElAx8TaGSHswWRc+gVSpCvzeTEz7FOdRutuaCWs4F1cfGmn5pRbQ3ZnsI6d1/IV
+         uE38gsxmL0+zDzwwG8tqnAB9+kesJLW3HPcgqVzuwe8CNELdWfHWW/Uvsy9rN5SjFaE6
+         6bLg==
+X-Gm-Message-State: AAQBX9dioctkGZT+guGa0umb3sQXwL8sxAykBFU1dRe/zD7mVBjwMPFT
+        OTaduf89d3bcbeEch6wyc2w=
+X-Google-Smtp-Source: AKy350aW0nWZOzSh162Acl+sBUA3ly4jFNnSh2K8bVA/yYWF+mvJPnzOEjXTZ9+bw0enj2qBSQ+9Kw==
+X-Received: by 2002:a17:906:17c9:b0:92f:7c42:8637 with SMTP id u9-20020a17090617c900b0092f7c428637mr12650457eje.30.1681218079336;
+        Tue, 11 Apr 2023 06:01:19 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:ddc3])
-        by smtp.gmail.com with ESMTPSA id k23-20020a170906971700b0094a53055894sm3129519ejx.78.2023.04.11.05.46.18
+        by smtp.gmail.com with ESMTPSA id oz19-20020a1709077d9300b00947ae870e78sm6084005ejc.203.2023.04.11.06.01.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Apr 2023 05:46:19 -0700 (PDT)
-Message-ID: <09f51486-5c27-6fd8-d3c5-0edadef30f81@gmail.com>
-Date:   Tue, 11 Apr 2023 13:39:34 +0100
+        Tue, 11 Apr 2023 06:01:19 -0700 (PDT)
+Message-ID: <75efd3a5-dc32-eb06-ed50-8ca0688747e0@gmail.com>
+Date:   Tue, 11 Apr 2023 13:54:33 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [PATCH RFC] io_uring: Pass whole sqe to commands
+Subject: Re: [RFC PATCH 2/4] net: add uring_cmd callback to UDP
 Content-Language: en-US
-To:     Breno Leitao <leitao@debian.org>, Keith Busch <kbusch@kernel.org>
-Cc:     axboe@kernel.dk, davem@davemloft.net, dccp@vger.kernel.org,
-        dsahern@kernel.org, edumazet@google.com, io-uring@vger.kernel.org,
-        kuba@kernel.org, leit@fb.com, linux-kernel@vger.kernel.org,
-        marcelo.leitner@gmail.com, matthieu.baerts@tessares.net,
-        mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com,
-        willemdebruijn.kernel@gmail.com
+To:     Breno Leitao <leitao@debian.org>, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, kuba@kernel.org, axboe@kernel.dk
+Cc:     leit@fb.com, edumazet@google.com, pabeni@redhat.com,
+        davem@davemloft.net, dccp@vger.kernel.org, mptcp@lists.linux.dev,
+        linux-kernel@vger.kernel.org, dsahern@kernel.org,
+        willemdebruijn.kernel@gmail.com, matthieu.baerts@tessares.net,
+        marcelo.leitner@gmail.com
 References: <20230406144330.1932798-1-leitao@debian.org>
- <20230406165705.3161734-1-leitao@debian.org>
- <ZDBmQOhbyU0iLhMw@kbusch-mbp.dhcp.thefacebook.com>
- <ZDVRGoDZo1tTbmZu@gmail.com>
+ <20230406144330.1932798-3-leitao@debian.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZDVRGoDZo1tTbmZu@gmail.com>
+In-Reply-To: <20230406144330.1932798-3-leitao@debian.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -81,37 +79,100 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/11/23 13:22, Breno Leitao wrote:
-> On Fri, Apr 07, 2023 at 12:51:44PM -0600, Keith Busch wrote:
->>> @@ -63,14 +63,15 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_done);
->>>   int io_uring_cmd_prep_async(struct io_kiocb *req)
->>>   {
->>>   	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
->>> -	size_t cmd_size;
->>> +	size_t size = sizeof(struct io_uring_sqe);
->>>   
->>>   	BUILD_BUG_ON(uring_cmd_pdu_size(0) != 16);
->>>   	BUILD_BUG_ON(uring_cmd_pdu_size(1) != 80);
->>
->> One minor suggestion. The above is the only user of uring_cmd_pdu_size() now,
->> which is kind of a convoluted way to enfoce the offset of the 'cmd' field. It
->> may be more clear to replace these with:
+On 4/6/23 15:43, Breno Leitao wrote:
+> This is the implementation of uring_cmd for the udp protocol. It
+> basically encompasses SOCKET_URING_OP_SIOCOUTQ and
+> SOCKET_URING_OP_SIOCINQ, which is similar to the SIOCOUTQ and SIOCINQ
+> ioctls.
 > 
-> I agree with you here. Basically it is a bug if the payload (pdu) size is
-> is different than 16 for single SQE or != 80 for extended SQE.
+> The return value is exactly the same as the regular ioctl (udp_ioctl()).
 > 
-> So, basically it is checking for two things:
->     * the cmd offset is 48
->     * the io_uring_sqe struct is 64
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>   include/net/udp.h        |  2 ++
+>   include/uapi/linux/net.h |  5 +++++
+>   net/ipv4/udp.c           | 16 ++++++++++++++++
+>   3 files changed, 23 insertions(+)
 > 
-> Since this is a uapi, I am not confidence that they will change at all.
-> I can replace the code with your suggestion.
-> 
->> 	BUILD_BUG_ON(offsetof(struct io_uring_sqe, cmd) == 48);
-> 
-> It should be "offset(struct io_uring_sqe, cmd) != 48)", right?
+> diff --git a/include/net/udp.h b/include/net/udp.h
+> index de4b528522bb..c0e829dacc2f 100644
+> --- a/include/net/udp.h
+> +++ b/include/net/udp.h
+> @@ -283,6 +283,8 @@ void udp_flush_pending_frames(struct sock *sk);
+>   int udp_cmsg_send(struct sock *sk, struct msghdr *msg, u16 *gso_size);
+>   void udp4_hwcsum(struct sk_buff *skb, __be32 src, __be32 dst);
+>   int udp_rcv(struct sk_buff *skb);
+> +int udp_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
+> +		  unsigned int issue_flags);
+>   int udp_ioctl(struct sock *sk, int cmd, unsigned long arg);
+>   int udp_init_sock(struct sock *sk);
+>   int udp_pre_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len);
+> diff --git a/include/uapi/linux/net.h b/include/uapi/linux/net.h
+> index 4dabec6bd957..dd8e7ced7d24 100644
+> --- a/include/uapi/linux/net.h
+> +++ b/include/uapi/linux/net.h
+> @@ -55,4 +55,9 @@ typedef enum {
+>   
+>   #define __SO_ACCEPTCON	(1 << 16)	/* performed a listen		*/
+>   
+> +enum {
+> +	SOCKET_URING_OP_SIOCINQ		= 0,
+> +	SOCKET_URING_OP_SIOCOUTQ,
+> +};
+> +
+>   #endif /* _UAPI_LINUX_NET_H */
+> diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+> index c605d171eb2d..d6d60600831b 100644
+> --- a/net/ipv4/udp.c
+> +++ b/net/ipv4/udp.c
+> @@ -113,6 +113,7 @@
+>   #include <net/sock_reuseport.h>
+>   #include <net/addrconf.h>
+>   #include <net/udp_tunnel.h>
+> +#include <linux/io_uring.h>
+>   #if IS_ENABLED(CONFIG_IPV6)
+>   #include <net/ipv6_stubs.h>
+>   #endif
+> @@ -1711,6 +1712,20 @@ static int first_packet_length(struct sock *sk)
+>   	return res;
+>   }
+>   
+> +int udp_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
+> +		  unsigned int issue_flags)
+> +{
+> +	switch (cmd->sqe->cmd_op) {
 
-Which is already checked, see io_uring_init()
+Not particularly a problem of this series, but what bothers
+me is the quite unfortunate placement of cmd_op in SQE.
+
+struct io_uring_sqe {
+	...
+	union {
+		__u64	d1;
+		struct {
+			__u32	cmd_op;
+			__u32	__pad1;
+		};
+	};
+	__u64	d2;
+	__u32	d3;
+	...
+};
+
+I'd much prefer it like this:
+
+struct io_uring_sqe {
+	...
+	__u64 d1[2];
+	__u32 cmd_op;
+	...
+};
+
+
+We can't change it for NVMe, but at least new commands can have
+a better layout. It's read in the generic cmd path, i.e.
+io_uring_cmd_prep(), so will need some refactoring to make
+the placement cmd specific.
 
 -- 
 Pavel Begunkov

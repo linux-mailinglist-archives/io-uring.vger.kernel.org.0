@@ -2,63 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 752DD6DDA2C
-	for <lists+io-uring@lfdr.de>; Tue, 11 Apr 2023 14:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E69C6DDAAD
+	for <lists+io-uring@lfdr.de>; Tue, 11 Apr 2023 14:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjDKMAT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Apr 2023 08:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48272 "EHLO
+        id S229678AbjDKMW4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Apr 2023 08:22:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjDKMAS (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Apr 2023 08:00:18 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B712D4E;
-        Tue, 11 Apr 2023 05:00:14 -0700 (PDT)
-Received: by mail-wr1-f50.google.com with SMTP id q29so7133948wrc.3;
-        Tue, 11 Apr 2023 05:00:14 -0700 (PDT)
+        with ESMTP id S229477AbjDKMWz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Apr 2023 08:22:55 -0400
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F4291717;
+        Tue, 11 Apr 2023 05:22:54 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id o18so7362008wro.12;
+        Tue, 11 Apr 2023 05:22:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681214413; x=1683806413;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eCeJQ8Y5The4MUdS/4f9gKqVtO4sNeOkKJxYqWcKYY0=;
-        b=tMxpxkqvktPoJLkoMz0zK6713TGbgOk5UJMtdshGCvxcyIothDz8TkRfvoz/EedmzD
-         ayHopIOJM2TKH1mgSNh11mcflkat9ueCgPCTNFtm8hk6GpBEHuzj0J8zYo9vKNHrtD/Q
-         QC95OUa+27NqDd9Is6ro55qV2aZ9unSYK6H4HInopTkMqrEg/co8M22J7cSNJ1+L0nLa
-         34h4OBPtkcjAzJ6GlnnJqLFrJfvJsMQa/Cf7X7sPYMe627KKbfvo3QbrQQVPxknJiL5R
-         hsABQvH4cy+W4dGWLs8B3Tgr4BFFeMMxbqODhpPJ0KNo6WHFIugCPS9dtUva5AvK2xos
-         ARSg==
-X-Gm-Message-State: AAQBX9d/VCHeNEoIFxpt483ZsfYk3aXT/vE8LNWZWe32zStLB7Gr15y9
-        a6cYOunZ4F9AJCQldMhvV/w=
-X-Google-Smtp-Source: AKy350YwPnDkYtmsUiWpDHZ3kyfoMSgnHSDhVmxZzEoLgVN4UZtcjS871jnCvl0D+BQ4jZjy1R7vxQ==
-X-Received: by 2002:adf:fd81:0:b0:2ef:1088:1100 with SMTP id d1-20020adffd81000000b002ef10881100mr7411094wrr.52.1681214412737;
-        Tue, 11 Apr 2023 05:00:12 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-026.fbsv.net. [2a03:2880:31ff:1a::face:b00c])
-        by smtp.gmail.com with ESMTPSA id c5-20020a5d4cc5000000b002f2794a6ee6sm3706526wrt.112.2023.04.11.05.00.11
+        d=1e100.net; s=20210112; t=1681215773; x=1683807773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iv40Wkjx2Hf7U9sldsgemiXt0WJwZLPB7N5j/0A4xtA=;
+        b=yv4FJ7t6tme8poClQGeqViG0BYanEaNJrCPxFd4FDeaaoxmXm/xOYMJ5BxgzUzeQbN
+         9WxiTJMtsTeKAkQCSbJbO3ovTRyjKM2fx5csKwnggmr89SOKSqnjysbkG6IQAK1M5R/b
+         Des5g8hwGnWo1/d0dK7Ga5egdQBqUQIJTAFbi8JDyaISSxu3rDKuelKYThLn5QbsOaox
+         c4S9Qs3Idm1/sWqtqJczM+390EWLqDdbtUsGjgXA4ovxYxzSvQuqnm4ZYSI8kolDBTOe
+         WGidI36hhHpsFNoi0s7m4JfLanDQ9Z/cfHj5Vl2ggj+234P+vxp9EOKwCoYaTU/6UIhE
+         u1Vw==
+X-Gm-Message-State: AAQBX9fZBbec4jy4wzuXaOolPtwcKsOc/XaGC95kFGzJ/x5fRUl6OfGU
+        dojTg9rS0M0neuwov4aorJc=
+X-Google-Smtp-Source: AKy350bjxpbuRhCW8HYnxa/zj45MxirttrrnxnBmDV4LJDlUcpX+aQ5g1qb+RhpZpAg7lgYuObJ+xQ==
+X-Received: by 2002:a5d:4f83:0:b0:2e4:6197:21b3 with SMTP id d3-20020a5d4f83000000b002e4619721b3mr7751336wru.55.1681215772861;
+        Tue, 11 Apr 2023 05:22:52 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-015.fbsv.net. [2a03:2880:31ff:f::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a5-20020a5d4d45000000b002c3f81c51b6sm14480806wru.90.2023.04.11.05.22.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 05:00:12 -0700 (PDT)
-Date:   Tue, 11 Apr 2023 05:00:10 -0700
+        Tue, 11 Apr 2023 05:22:52 -0700 (PDT)
+Date:   Tue, 11 Apr 2023 05:22:50 -0700
 From:   Breno Leitao <leitao@debian.org>
-To:     David Ahern <dsahern@kernel.org>
-Cc:     Willem de Bruijn <willemb@google.com>, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, kuba@kernel.org, asml.silence@gmail.com,
-        axboe@kernel.dk, leit@fb.com, edumazet@google.com,
-        pabeni@redhat.com, davem@davemloft.net, dccp@vger.kernel.org,
-        mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
-        willemdebruijn.kernel@gmail.com, matthieu.baerts@tessares.net,
-        marcelo.leitner@gmail.com
-Subject: Re: [PATCH 0/5] add initial io_uring_cmd support for sockets
-Message-ID: <ZDVLyi1PahE0sfci@gmail.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     asml.silence@gmail.com, axboe@kernel.dk, davem@davemloft.net,
+        dccp@vger.kernel.org, dsahern@kernel.org, edumazet@google.com,
+        io-uring@vger.kernel.org, kuba@kernel.org, leit@fb.com,
+        linux-kernel@vger.kernel.org, marcelo.leitner@gmail.com,
+        matthieu.baerts@tessares.net, mptcp@lists.linux.dev,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        willemdebruijn.kernel@gmail.com
+Subject: Re: [PATCH RFC] io_uring: Pass whole sqe to commands
+Message-ID: <ZDVRGoDZo1tTbmZu@gmail.com>
 References: <20230406144330.1932798-1-leitao@debian.org>
- <CA+FuTSeKpOJVqcneCoh_4x4OuK1iE0Tr6f3rSNrQiR-OUgjWow@mail.gmail.com>
- <ZC7seVq7St6UnKjl@gmail.com>
- <CA+FuTSf9LEhzjBey_Nm_-vN0ZjvtBSQkcDWS+5uBnLmr8Qh5uA@mail.gmail.com>
- <e576f6fe-d1f3-93cd-cb94-c0ae115299d8@kernel.org>
+ <20230406165705.3161734-1-leitao@debian.org>
+ <ZDBmQOhbyU0iLhMw@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e576f6fe-d1f3-93cd-cb94-c0ae115299d8@kernel.org>
+In-Reply-To: <ZDBmQOhbyU0iLhMw@kbusch-mbp.dhcp.thefacebook.com>
 X-Spam-Status: No, score=0.5 required=5.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
         FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=no
@@ -69,111 +66,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 08:46:38PM -0600, David Ahern wrote:
-> On 4/6/23 12:16 PM, Willem de Bruijn wrote:
-> > On Thu, Apr 6, 2023 at 11:59 AM Breno Leitao <leitao@debian.org> wrote:
-> >>
-> >> On Thu, Apr 06, 2023 at 11:34:28AM -0400, Willem de Bruijn wrote:
-> >>> On Thu, Apr 6, 2023 at 10:45 AM Breno Leitao <leitao@debian.org> wrote:
-> >>>>
-> >>>> From: Breno Leitao <leit@fb.com>
-> >>>>
-> >>>> This patchset creates the initial plumbing for a io_uring command for
-> >>>> sockets.
-> >>>>
-> >>>> For now, create two uring commands for sockets, SOCKET_URING_OP_SIOCOUTQ
-> >>>> and SOCKET_URING_OP_SIOCINQ. They are similar to ioctl operations
-> >>>> SIOCOUTQ and SIOCINQ. In fact, the code on the protocol side itself is
-> >>>> heavily based on the ioctl operations.
-> >>>
-> >>> This duplicates all the existing ioctl logic of each protocol.
-> >>>
-> >>> Can this just call the existing proto_ops.ioctl internally and translate from/to
-> >>> io_uring format as needed?
-> >>
-> >> This is doable, and we have two options in this case:
-> >>
-> >> 1) Create a ioctl core function that does not call `put_user()`, and
-> >> call it from both the `udp_ioctl` and `udp_uring_cmd`, doing the proper
-> >> translations. Something as:
-> >>
-> >>         int udp_ioctl_core(struct sock *sk, int cmd, unsigned long arg)
-> >>         {
-> >>                 int amount;
-> >>                 switch (cmd) {
-> >>                 case SIOCOUTQ: {
-> >>                         amount = sk_wmem_alloc_get(sk);
-> >>                         break;
-> >>                 }
-> >>                 case SIOCINQ: {
-> >>                         amount = max_t(int, 0, first_packet_length(sk));
-> >>                         break;
-> >>                 }
-> >>                 default:
-> >>                         return -ENOIOCTLCMD;
-> >>                 }
-> >>                 return amount;
-> >>         }
-> >>
-> >>         int udp_ioctl(struct sock *sk, int cmd, unsigned long arg)
-> >>         {
-> >>                 int amount = udp_ioctl_core(sk, cmd, arg);
-> >>
-> >>                 return put_user(amount, (int __user *)arg);
-> >>         }
-> >>         EXPORT_SYMBOL(udp_ioctl);
-> >>
-> >>
-> >> 2) Create a function for each "case entry". This seems a bit silly for
-> >> UDP, but it makes more sense for other protocols. The code will look
-> >> something like:
-> >>
-> >>          int udp_ioctl(struct sock *sk, int cmd, unsigned long arg)
-> >>          {
-> >>                 switch (cmd) {
-> >>                 case SIOCOUTQ:
-> >>                 {
-> >>                         int amount = udp_ioctl_siocoutq();
-> >>                         return put_user(amount, (int __user *)arg);
-> >>                 }
-> >>                 ...
-> >>           }
-> >>
-> >> What is the best approach?
-> > 
-> > A, the issue is that sock->ops->ioctl directly call put_user.
-> > 
-> > I was thinking just having sock_uring_cmd call sock->ops->ioctl, like
-> > sock_do_ioctl.
-> > 
-> > But that would require those callbacks to return a negative error or
-> > positive integer, rather than calling put_user. And then move the
-> > put_user to sock_do_ioctl. Such a change is at least as much code
-> > change as your series. Though without the ending up with code
-> > duplication. It also works only if all ioctls only put_user of integer
-> > size. That's true for TCP, UDP and RAW, but not sure if true more
-> > broadly.
-> > 
-> > Another approach may be to pass another argument to the ioctl
-> > callbacks, whether to call put_user or return the integer and let the
-> > caller take care of the output to user. This could possibly be
-> > embedded in the a high-order bit of the cmd, so that it fails on ioctl
-> > callbacks that do not support this mode.
-> > 
-> > Of the two approaches you suggest, I find the first preferable.
+On Fri, Apr 07, 2023 at 12:51:44PM -0600, Keith Busch wrote:
+> > @@ -63,14 +63,15 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_done);
+> >  int io_uring_cmd_prep_async(struct io_kiocb *req)
+> >  {
+> >  	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+> > -	size_t cmd_size;
+> > +	size_t size = sizeof(struct io_uring_sqe);
+> >  
+> >  	BUILD_BUG_ON(uring_cmd_pdu_size(0) != 16);
+> >  	BUILD_BUG_ON(uring_cmd_pdu_size(1) != 80);
 > 
-> The first approach sounds better to me and it would be good to avoid
-> io_uring details in the networking code (ie., cmd->sqe->cmd_op).
+> One minor suggestion. The above is the only user of uring_cmd_pdu_size() now,
+> which is kind of a convoluted way to enfoce the offset of the 'cmd' field. It
+> may be more clear to replace these with:
 
-I am not sure if avoiding io_uring details in network code is possible.
+I agree with you here. Basically it is a bug if the payload (pdu) size is
+is different than 16 for single SQE or != 80 for extended SQE.
 
-The "struct proto"->uring_cmd callback implementation (tcp_uring_cmd()
-in the TCP case) could be somewhere else, such as in the io_uring/
-directory, but, I think it might be cleaner if these implementations are
-closer to function assignment (in the network subsystem).
+So, basically it is checking for two things:
+   * the cmd offset is 48
+   * the io_uring_sqe struct is 64
 
-And this function (tcp_uring_cmd() for instance) is the one that I am
-planning to map io_uring CMDs to ioctls. Such as SOCKET_URING_OP_SIOCINQ
--> SIOCINQ.
+Since this is a uapi, I am not confidence that they will change at all.
+I can replace the code with your suggestion.
 
-Please let me know if you have any other idea in mind.
+> 	BUILD_BUG_ON(offsetof(struct io_uring_sqe, cmd) == 48);
+
+It should be "offset(struct io_uring_sqe, cmd) != 48)", right?
+
+Thanks for the review!

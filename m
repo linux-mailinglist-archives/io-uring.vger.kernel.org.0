@@ -2,243 +2,210 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 067686DFED2
-	for <lists+io-uring@lfdr.de>; Wed, 12 Apr 2023 21:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 110566E01CD
+	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 00:27:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbjDLTi5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Apr 2023 15:38:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60072 "EHLO
+        id S229522AbjDLW1v (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Apr 2023 18:27:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbjDLTi4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Apr 2023 15:38:56 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344C85B88
-        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 12:38:50 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id v27so2797168wra.13
-        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 12:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681328328; x=1683920328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NRlbmkyliocD4GVskA3DiuWAI0XqHkxknca6K2fMDG4=;
-        b=FC2vTgsi9KiwnczS8qZgpD8wY6OQ+06BDgoa7t7xpkCZM/HC429cIDEUKahRi2mMf/
-         4Qh8eJVYZHfzO8hP+xCJJU0rWyVidHZHj/bH2pWo5aBkJbYRDLxAt+KzZwFPTjzEwYSb
-         xsapDfYXuyIJhXR7zTNKYl7mqea84Dn8e+UavFC+lMJnRcUi+S1Wk5ZU8qfkhCjQ1JQe
-         mfbBJXp5j4eb9rPokccJ/8d8BZuCOIopFV3lk/Nuup59qVbQ9f648VEgYwflhVj2Ckjp
-         pxFa/xDrFAEYp8uCnKTT3AaEqJivKn7ZC034aB2KsRDRD8K5KtDPPb2rfDMMJ5DRyr/q
-         HWzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681328328; x=1683920328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NRlbmkyliocD4GVskA3DiuWAI0XqHkxknca6K2fMDG4=;
-        b=XQ6PNlN1gmQsa4/D+0ZkPoAtR2a9HILmxhJmNINQFnKUol8iGZuwPTsOph5tf+Kp6C
-         LiVjowluMtgvMYLtc4DcT5pZRPzzQqbhaSp9iww3a5MeqNSXQhrwOHhfLxlF/1f+J5w0
-         KAZG/vRCyvF7k4LnrUBEHIPJUBe3GwztBHAy+vcOVLAC+PF/FcIfs92e8UcFzmOwMKzh
-         5UnG2HH4JsE+YAoiWB7Ebg186nJJpeOcuMLJUD7hcjpt9phhSS0hk68l/h8ZkUrvimWK
-         ryWSuB6B4ViT+jD0zQlzxJQVKOtBwYUxSv+xenl0bM2Itzi47JD6sXkk79fW+sEyJipw
-         cfGA==
-X-Gm-Message-State: AAQBX9d4XLdOYvoRYLTTB1TJbtEY821WduY8it0x82Pgjl6e8KT0SXBO
-        t5ZnXQ2uvT22TS6x6dCy1eLrR6n6CfDpeC0cVZGL2Q==
-X-Google-Smtp-Source: AKy350Y6um8j2mq8ZfvK9rdWdZVO8MQmfdYv8bZM5tLwmtuRUsJLAmgUe+ZEF/x32ZnRhSF+d4BA4Bww9OWEHiTsoJ0=
-X-Received: by 2002:adf:f802:0:b0:2f4:8cbe:77b2 with SMTP id
- s2-20020adff802000000b002f48cbe77b2mr662966wrp.14.1681328328437; Wed, 12 Apr
- 2023 12:38:48 -0700 (PDT)
+        with ESMTP id S229451AbjDLW1u (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Apr 2023 18:27:50 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A674228
+        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 15:27:49 -0700 (PDT)
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33CI9mtv023707
+        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 15:27:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=ffEmIXc7sElmoOeTgE5XfXkaNGpTIANyn+gYOE9PmgI=;
+ b=GHd5gpFLx3cYCPOTr2sWQsuey4/ks1Om6lCOMnA4Slegj1B0NTxMAEd4ObIxMgfjjsUU
+ s2MipHHx8UgEQC9kJOB2jio16gI7nULegm4Xunux6IUy/4FcyRjlk73LpOKYT8+Pd3SF
+ N43FXVraWks9goSsk6ahmoNpTidDt2xkDeaik+k7tLx2bteGgH0t3XVCLDh6LzU9JlNa
+ CL2z1bOQn50OdXPI5TMBHyA/Xz5pO+s35PbcXeuBDAeUAmLK7HwcING1FnbRktmPFd+V
+ E1aFgEh26DlVbXJ1i8DrkgZstGZXr/WcrpLI9pc5fOjtuEncIREvG1p56FZSFd39NlI7 2A== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3pwrt4n00g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 15:27:48 -0700
+Received: from twshared29562.14.frc2.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.17; Wed, 12 Apr 2023 15:27:47 -0700
+Received: by devbig023.atn6.facebook.com (Postfix, from userid 197530)
+        id C591F8C27072; Wed, 12 Apr 2023 15:27:38 -0700 (PDT)
+From:   David Wei <davidhwei@meta.com>
+To:     Jens Axboe <axboe@kernel.dk>
+CC:     <io-uring@vger.kernel.org>, David Wei <davidhwei@meta.com>
+Subject: [PATCH v2] io_uring: add support for multishot timeouts
+Date:   Wed, 12 Apr 2023 15:27:32 -0700
+Message-ID: <20230412222732.1623901-1-davidhwei@meta.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230308073201.3102738-1-avagin@google.com> <20230308073201.3102738-3-avagin@google.com>
- <ZDDddj50KZInqa84@chenyu5-mobl1> <CANaxB-y0eDExPB0v=LRPyoz1e-3tJ2VuuCmYJ3qkAERpnbz+aQ@mail.gmail.com>
- <CALCETrVBVTDxUdKtPuaD35KVfUWihxNbTY2Ks65oGbzf8Yfm=w@mail.gmail.com>
-In-Reply-To: <CALCETrVBVTDxUdKtPuaD35KVfUWihxNbTY2Ks65oGbzf8Yfm=w@mail.gmail.com>
-From:   Andrei Vagin <avagin@google.com>
-Date:   Wed, 12 Apr 2023 12:38:37 -0700
-Message-ID: <CAEWA0a5_eUxx9KgqdYDQALJ8cJ+_hN-xFS2VftAODOeyO-CC_g@mail.gmail.com>
-Subject: Re: [PATCH 2/6] sched: add WF_CURRENT_CPU and externise ttwu
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Andrei Vagin <avagin@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Peter Oskolkov <posk@google.com>,
-        Tycho Andersen <tycho@tycho.pizza>,
-        Will Drewry <wad@chromium.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: kycwGqbORAwM0gfT6Vc4hGQ2JTVHV3VO
+X-Proofpoint-ORIG-GUID: kycwGqbORAwM0gfT6Vc4hGQ2JTVHV3VO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-12_12,2023-04-12_01,2023-02-09_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Apr 10, 2023 at 10:27=E2=80=AFAM Andy Lutomirski <luto@kernel.org> =
-wrote:
->
-> On Sun, Apr 9, 2023 at 9:56=E2=80=AFPM Andrei Vagin <avagin@gmail.com> wr=
-ote:
-> >
-> > On Fri, Apr 7, 2023 at 8:20=E2=80=AFPM Chen Yu <yu.c.chen@intel.com> wr=
-ote:
-> > >
-> > > On 2023-03-07 at 23:31:57 -0800, Andrei Vagin wrote:
-> > > > From: Peter Oskolkov <posk@google.com>
-> > > >
-> > > > Add WF_CURRENT_CPU wake flag that advices the scheduler to
-> > > > move the wakee to the current CPU. This is useful for fast on-CPU
-> > > > context switching use cases.
-> > > >
-> > > > In addition, make ttwu external rather than static so that
-> > > > the flag could be passed to it from outside of sched/core.c.
-> > > >
-> > > > Signed-off-by: Peter Oskolkov <posk@google.com>
-> > > > Signed-off-by: Andrei Vagin <avagin@google.com>
-> > > > --- a/kernel/sched/fair.c
-> > > > +++ b/kernel/sched/fair.c
-> > > > @@ -7569,6 +7569,10 @@ select_task_rq_fair(struct task_struct *p, i=
-nt prev_cpu, int wake_flags)
-> > > >       if (wake_flags & WF_TTWU) {
-> > > >               record_wakee(p);
-> > > >
-> > > > +             if ((wake_flags & WF_CURRENT_CPU) &&
-> > > > +                 cpumask_test_cpu(cpu, p->cpus_ptr))
-> > > > +                     return cpu;
-> > > > +
-> > > I tried to reuse WF_CURRENT_CPU to mitigate the cross-cpu wakeup, how=
-ever there
-> > > are regressions when running some workloads, and these workloads want=
- to be
-> > > spreaded on idle CPUs whenever possible.
-> > > The reason for the regression is that, above change chooses current C=
-PU no matter
-> > > what the load/utilization of this CPU is. So task are stacked on 1 CP=
-U and hurts
-> > > throughput/latency. And I believe this issue would be more severe on =
-system with
-> > > smaller number of CPU within 1 LLC(when compared to Intel platforms),=
- such as AMD,
-> > > Arm64.
-> >
-> > WF_CURRENT_CPU works only in certain conditions. Maybe you saw my
-> > attempt to change how WF_SYNC works:
-> >
-> > https://www.spinics.net/lists/kernel/msg4567650.html
-> >
-> > Then we've found that this idea doesn't work well, and it is a reason
-> > why we have the separate WF_CURRENT_CPU flag.
-> >
-> > >
-> > > I know WF_CURRENT_CPU benefits seccomp, and can we make this change m=
-ore genefic
-> > > to benefit other workloads, by making the condition to trigger WF_CUR=
-RENT_CPU stricter?
-> > > Say, only current CPU has 1 runnable task, and treat current CPU as t=
-he last resort by
-> > > checking if the wakee's previous CPU is not idle. In this way, we can=
- enable WF_CURRENT_CPU flag
-> > > dynamically when some condition is met(a short task for example).
-> >
-> > We discussed all of these here and here:
-> >
-> > https://www.spinics.net/lists/kernel/msg4657545.html
-> >
-> > https://lore.kernel.org/lkml/CANaxB-yWkKzhhPMGXCQbtjntJbqZ40FL2qtM2hk7L=
-LWE-ZpbAg@mail.gmail.com/
-> >
-> > I like your idea about short-duration tasks, but I think it is a
-> > separate task and it has to be done in a separate patch set. Here, I
-> > solve the problem of optimizing synchronous switches when one task wake=
-s
-> > up another one and falls asleep immediately after that. Waking up the
-> > target task on the current CPU looks reasonable for a few reasons in
-> > this case. First, waking up a task on the current CPU is cheaper than o=
-n
-> > another one and it is much cheaper than waking on an idle cpu.  Second,
-> > when tasks want to do synchronous switches, they often exchange some
-> > data, so memory caches can play on us.
->
-> I've contemplated this on occasion for quite a few years, and I think
-> that part of our issue is that the userspace ABI part doesn't exist
-> widely.  In particular, most of the common ways that user tasks talk
-> to each other don't have a single system call that can do the
-> send-a-message-and-start-waiting part all at once.  For example, if
-> task A is running and it wants to wake task B and then sleep:
->
-> UNIX sockets (or other sockets): A calls send() or write() or
-> sendmsg() then recv() or read() or recvmsg() or epoll_wait() or poll()
-> or select().
->
-> Pipes: Same as sockets except no send/recv.
->
-> Shared memory: no wakeup or sleep mechanism at all. UMONITOR doesn't coun=
-t :)
+A multishot timeout submission will repeatedly generate completions with
+the IORING_CQE_F_MORE cflag set. Depending on the value of the `off' fiel=
+d
+in the submission, these timeouts can either repeat indefinitely until
+cancelled (`off' =3D 0) or for a fixed number of times (`off' > 0).
 
-futex-es? Here was an attempt to add FUTEX_SWAP a few years ago:
-https://www.spinics.net/lists/kernel/msg3871065.html
+Only noseq timeouts (i.e. not dependent on the number of I/O
+completions) are supported.
 
-It hasn't been merged to the upstream repo in favor of umcg:
-https://lore.kernel.org/linux-mm/20211122211327.5931-1-posk@google.com/
+An indefinite timer will be cancelled with EOVERFLOW if the CQ ever
+overflows.
 
-Both these features solve similar problems, where FUTEX_SWAP is simple
-and straightforward
-but umcg is wider and more complicated.
+Signed-off-by: David Wei <davidhwei@meta.com>
+---
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/timeout.c            | 59 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 57 insertions(+), 3 deletions(-)
 
->
-> I think io_uring can kind of do a write-and-wait operation, but I
-> doubt it's wired up for this purpose.
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
+h
+index f8d14d1c58d3..0716cb17e436 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -250,6 +250,7 @@ enum io_uring_op {
+ #define IORING_TIMEOUT_REALTIME		(1U << 3)
+ #define IORING_LINK_TIMEOUT_UPDATE	(1U << 4)
+ #define IORING_TIMEOUT_ETIME_SUCCESS	(1U << 5)
++#define IORING_TIMEOUT_MULTISHOT	(1U << 6)
+ #define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIME=
+OUT_REALTIME)
+ #define IORING_TIMEOUT_UPDATE_MASK	(IORING_TIMEOUT_UPDATE | IORING_LINK_=
+TIMEOUT_UPDATE)
+ /*
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 5c6c6f720809..61b8488565ce 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -17,6 +17,7 @@ struct io_timeout {
+ 	struct file			*file;
+ 	u32				off;
+ 	u32				target_seq;
++	u32				repeats;
+ 	struct list_head		list;
+ 	/* head of the link, used by linked timeouts only */
+ 	struct io_kiocb			*head;
+@@ -37,8 +38,9 @@ struct io_timeout_rem {
+ static inline bool io_is_timeout_noseq(struct io_kiocb *req)
+ {
+ 	struct io_timeout *timeout =3D io_kiocb_to_cmd(req, struct io_timeout);
++	struct io_timeout_data *data =3D req->async_data;
+=20
+-	return !timeout->off;
++	return !timeout->off || data->flags & IORING_TIMEOUT_MULTISHOT;
+ }
+=20
+ static inline void io_put_req(struct io_kiocb *req)
+@@ -49,6 +51,45 @@ static inline void io_put_req(struct io_kiocb *req)
+ 	}
+ }
+=20
++static inline bool io_timeout_finish(struct io_timeout *timeout,
++				     struct io_timeout_data *data)
++{
++	if (!(data->flags & IORING_TIMEOUT_MULTISHOT))
++		return true;
++
++	if (!timeout->off || (timeout->repeats && --timeout->repeats))
++		return false;
++
++	return true;
++}
++
++static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer);
++
++static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state=
+ *ts)
++{
++	struct io_timeout *timeout =3D io_kiocb_to_cmd(req, struct io_timeout);
++	struct io_timeout_data *data =3D req->async_data;
++	struct io_ring_ctx *ctx =3D req->ctx;
++
++	if (!io_timeout_finish(timeout, data)) {
++		bool filled;
++		filled =3D io_aux_cqe(ctx, false, req->cqe.user_data, -ETIME,
++				      IORING_CQE_F_MORE, false);
++		if (filled) {
++			/* re-arm timer */
++			spin_lock_irq(&ctx->timeout_lock);
++			list_add(&timeout->list, ctx->timeout_list.prev);
++			data->timer.function =3D io_timeout_fn;
++			hrtimer_start(&data->timer, timespec64_to_ktime(data->ts), data->mode=
+);
++			spin_unlock_irq(&ctx->timeout_lock);
++			return;
++		}
++		io_req_set_res(req, -EOVERFLOW, 0);
++	}
++
++	io_req_task_complete(req, ts);
++}
++
+ static bool io_kill_timeout(struct io_kiocb *req, int status)
+ 	__must_hold(&req->ctx->timeout_lock)
+ {
+@@ -212,7 +253,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrti=
+mer *timer)
+ 		req_set_fail(req);
+=20
+ 	io_req_set_res(req, -ETIME, 0);
+-	req->io_task_work.func =3D io_req_task_complete;
++	req->io_task_work.func =3D io_timeout_complete;
+ 	io_req_task_work_add(req);
+ 	return HRTIMER_NORESTART;
+ }
+@@ -470,16 +511,28 @@ static int __io_timeout_prep(struct io_kiocb *req,
+ 		return -EINVAL;
+ 	flags =3D READ_ONCE(sqe->timeout_flags);
+ 	if (flags & ~(IORING_TIMEOUT_ABS | IORING_TIMEOUT_CLOCK_MASK |
+-		      IORING_TIMEOUT_ETIME_SUCCESS))
++		      IORING_TIMEOUT_ETIME_SUCCESS |
++		      IORING_TIMEOUT_MULTISHOT)) {
+ 		return -EINVAL;
++	}
+ 	/* more than one clock specified is invalid, obviously */
+ 	if (hweight32(flags & IORING_TIMEOUT_CLOCK_MASK) > 1)
+ 		return -EINVAL;
++	/* multishot requests only make sense with rel values */
++	if (!(~flags & (IORING_TIMEOUT_MULTISHOT | IORING_TIMEOUT_ABS)))
++		return -EINVAL;
+=20
+ 	INIT_LIST_HEAD(&timeout->list);
+ 	timeout->off =3D off;
+ 	if (unlikely(off && !req->ctx->off_timeout_used))
+ 		req->ctx->off_timeout_used =3D true;
++	/*
++	 * for multishot reqs w/ fixed nr of repeats, target_seq tracks the
++	 * remaining nr
++	 */
++	timeout->repeats =3D 0;
++	if ((flags & IORING_TIMEOUT_MULTISHOT) && off > 0)
++		timeout->repeats =3D off;
+=20
+ 	if (WARN_ON_ONCE(req_has_async_data(req)))
+ 		return -EFAULT;
+--=20
+2.34.1
 
-I think it may be a good candidate where this logic can be placed.
-
->
->
-> seccomp seems like it should be able to do this straightforwardly on
-> the transition from the seccomp-sandboxed task to the monitor, but the
-> reverse direction is tricky.
->
->
->
-> Anyway, short of a massive API project, I don't see a totally
-> brilliant solution.  But maybe we could take a baby step toward a
-> general solution by deferring all the hard work of a wakeup a bit so
-> that, as we grow syscalls and other mechanisms that do wake-and-wait,
-> we can optimize them automatically.  For example, we could perhaps add
-> a pending wakeup to task_struct, kind of like:
->
-> struct task_struct *task_to_wake;
->
-> and then, the next time we sleep or return to usermode, we handle the
-> wakeup.  And if we're going to sleep, we can do it as an optimized
-> synchronous wakeup.  And if we try to wake a task while task_to_wake
-> is set, we just wake everything normally.
-
-I am not sure that I understand when it has to be set and when it will
-be in effect. For example, we want to do the pair write&read syscall. It
-means write sets task_to_wake, then the current task is resumed without wak=
-ing
-the target task and only after that task_to_wake will be in effect.
-In other words,
-it has to be in effect after the next but one returns to user-mode.
-
-Thanks,
-Andrei
-
->
-> (There are refcounting issues here, and maybe this wants to be percpu,
-> not per task.)
->
-> I think it would be really nifty if Linux could somewhat reliably do
-> this style of synchronous con
->
-> PeterZ, is this at all sensible or am I nuts?
->
-> --Andy

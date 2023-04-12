@@ -2,115 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8BE26DF7A1
-	for <lists+io-uring@lfdr.de>; Wed, 12 Apr 2023 15:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AD06DF7BC
+	for <lists+io-uring@lfdr.de>; Wed, 12 Apr 2023 15:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbjDLNsm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Apr 2023 09:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50410 "EHLO
+        id S230263AbjDLNxh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Apr 2023 09:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230325AbjDLNsm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Apr 2023 09:48:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D111469F
-        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 06:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681307275;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=N4hGK+twx2J0sna8Dlsk/TzzUeTzC124CUsz24QOgC8=;
-        b=izCjgLTaOCIx4qvZnQQ/lNqIVNAFmKHquPbEcdkhyTKLoUQBB9vsOvfY8UgbfX2U71yPfp
-        nhUIGFAylAZSlgwQtza7LriBl4s2ARP/Pt1wx0TroN4/CjLCc7yFtGJXNoARVtdKSi9ras
-        8VJRoM3NJV9CYiQsjmyQjBQyBJL1QH8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-339-jdPnAKeROzWMiaJSZ40rKg-1; Wed, 12 Apr 2023 09:47:54 -0400
-X-MC-Unique: jdPnAKeROzWMiaJSZ40rKg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 15E688996E0;
-        Wed, 12 Apr 2023 13:47:54 +0000 (UTC)
-Received: from ovpn-8-18.pek2.redhat.com (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ADEDC2027043;
-        Wed, 12 Apr 2023 13:47:46 +0000 (UTC)
-Date:   Wed, 12 Apr 2023 21:47:41 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Kanchan Joshi <joshiiitr@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        lsf-pc@lists.linux-foundation.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-        hch@lst.de, kbusch@kernel.org, ming.lei@redhat.com
-Subject: Re: [LSF/MM/BPF ATTEND][LSF/MM/BPF Topic] Non-block IO
-Message-ID: <ZDa2fUENbykgvyk8@ovpn-8-18.pek2.redhat.com>
-References: <CGME20230210180226epcas5p1bd2e1150de067f8af61de2bbf571594d@epcas5p1.samsung.com>
- <20230210180033.321377-1-joshi.k@samsung.com>
- <39a543d7-658c-0309-7a68-f07ffe850d0e@kernel.dk>
- <CA+1E3rLLu2ZzBHp30gwXBWzkCvOA4KD7PS70mLuGE8tYFpNEmA@mail.gmail.com>
- <ZDYYhE1h1qvCvVmt@ovpn-8-26.pek2.redhat.com>
- <20230412132615.GA5049@green5>
+        with ESMTP id S229769AbjDLNxh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Apr 2023 09:53:37 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A5C269D;
+        Wed, 12 Apr 2023 06:53:35 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id he13so11588055wmb.2;
+        Wed, 12 Apr 2023 06:53:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681307613; x=1683899613;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VMUJR0ziXAKL97/Fc/1XtofHlhmh4dw/ld6x3YBdDJA=;
+        b=c5MznV+FSP9GQAzDIL6X6/HEUkHgbTxoYZJJLSLa7kNIz6rQjxCusoEcnI2o4F16x0
+         pK1ouAwgtZkTGMWiEbd/iuZuC7jNucujWU95hUNkGWnIjlmmqsHCGZy/w2WGGinHkVyP
+         zWa2LL436y+y8u46Uw7UAgry6owUNKo/r1hN7mMXp/w9IiLamDP27IXESFTWin5PKcDE
+         qoh6B+gPYHk77EjioF1tMS41pxjVSIk5tggZXTmSmDFVECZsOQSjqPZPaUns9yP6/OSd
+         Pq/ZKPhP2tLmUpmMCMdV2/0YIShlgD7I20mx1ZhvXnEPZu1SSr85pVZIphIAanfPWFMk
+         rjyw==
+X-Gm-Message-State: AAQBX9cF7iP+isOo70nbHKm20K+lhRQfKHaHInTm2BbreG2iJ3naTCfl
+        BFVGgXi4xe5fh3j4TfGaPFY=
+X-Google-Smtp-Source: AKy350a7suuVGRUdrJzLxBrp2tG07AraETPQmB+GH8IgY+nxp+FZeY/RzoijoKarE9xMi9XKLFzzAw==
+X-Received: by 2002:a05:600c:3658:b0:3ef:7594:48cc with SMTP id y24-20020a05600c365800b003ef759448ccmr9450881wmq.23.1681307613395;
+        Wed, 12 Apr 2023 06:53:33 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-024.fbsv.net. [2a03:2880:31ff:18::face:b00c])
+        by smtp.gmail.com with ESMTPSA id m2-20020a05600c3b0200b003f0652084b8sm2540633wms.20.2023.04.12.06.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Apr 2023 06:53:32 -0700 (PDT)
+Date:   Wed, 12 Apr 2023 06:53:30 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Willem de Bruijn <willemb@google.com>,
+        io-uring@vger.kernel.org, netdev@vger.kernel.org, kuba@kernel.org,
+        asml.silence@gmail.com, leit@fb.com, edumazet@google.com,
+        pabeni@redhat.com, davem@davemloft.net, dccp@vger.kernel.org,
+        mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+        matthieu.baerts@tessares.net, marcelo.leitner@gmail.com
+Subject: Re: [PATCH 0/5] add initial io_uring_cmd support for sockets
+Message-ID: <ZDa32u9RNI4NQ7Ko@gmail.com>
+References: <e576f6fe-d1f3-93cd-cb94-c0ae115299d8@kernel.org>
+ <ZDVLyi1PahE0sfci@gmail.com>
+ <75e3c434-eb8b-66e5-5768-ca0f906979a1@kernel.org>
+ <67831406-8d2f-feff-f56b-d0f002a95d96@kernel.dk>
+ <643573df81e20_11117c2942@willemb.c.googlers.com.notmuch>
+ <036c80e5-4844-5c84-304c-7e553fe17a9b@kernel.dk>
+ <64357608c396d_113ebd294ba@willemb.c.googlers.com.notmuch>
+ <19c69021-dce3-1a4a-00eb-920d1f404cfc@kernel.dk>
+ <64357bb97fb19_114b22294c4@willemb.c.googlers.com.notmuch>
+ <20cb4641-c765-e5ef-41cb-252be7721ce5@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230412132615.GA5049@green5>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20cb4641-c765-e5ef-41cb-252be7721ce5@kernel.dk>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 12, 2023 at 06:56:15PM +0530, Kanchan Joshi wrote:
-> On Wed, Apr 12, 2023 at 10:33:40AM +0800, Ming Lei wrote:
-> > On Wed, Apr 12, 2023 at 04:18:16AM +0530, Kanchan Joshi wrote:
-> > > > > 4. Direct NVMe queues - will there be interest in having io_uring
-> > > > > managed NVMe queues?  Sort of a new ring, for which I/O is destaged from
-> > > > > io_uring SQE to NVMe SQE without having to go through intermediate
-> > > > > constructs (i.e., bio/request). Hopefully,that can further amp up the
-> > > > > efficiency of IO.
-> > > >
-> > > > This is interesting, and I've pondered something like that before too. I
-> > > > think it's worth investigating and hacking up a prototype. I recently
-> > > > had one user of IOPOLL assume that setting up a ring with IOPOLL would
-> > > > automatically create a polled queue on the driver side and that is what
-> > > > would be used for IO. And while that's not how it currently works, it
-> > > > definitely does make sense and we could make some things faster like
-> > > > that. It would also potentially easier enable cancelation referenced in
-> > > > #1 above, if it's restricted to the queue(s) that the ring "owns".
-> > > 
-> > > So I am looking at prototyping it, exclusively for the polled-io case.
-> > > And for that, is there already a way to ensure that there are no
-> > > concurrent submissions to this ring (set with IORING_SETUP_IOPOLL
-> > > flag)?
-> > > That will be the case generally (and submissions happen under
-> > > uring_lock mutex), but submission may still get punted to io-wq
-> > > worker(s) which do not take that mutex.
-> > > So the original task and worker may get into doing concurrent submissions.
+On Tue, Apr 11, 2023 at 09:28:29AM -0600, Jens Axboe wrote:
+> On 4/11/23 9:24?AM, Willem de Bruijn wrote:
+> > Jens Axboe wrote:
+> >> On 4/11/23 9:00?AM, Willem de Bruijn wrote:
+> >> But that doesn't work, because sock->ops->ioctl() assumes the arg is
+> >> memory in userspace. Or do you mean change all of the sock->ops->ioctl()
+> >> to pass in on-stack memory (or similar) and have it work with a kernel
+> >> address?
 > > 
-> > It seems one defect for uring command support, since io_ring_ctx and
-> > io_ring_submit_lock() can't be exported for driver.
+> > That was what I suggested indeed.
+> > 
+> > It's about as much code change as this patch series. But it avoids
+> > the code duplication.
 > 
-> Sorry, did not follow the defect part.
-> io-wq not acquring uring_lock in case of uring-cmd - is a defect? The same
-> happens for direct block-io too.
-> Or do you mean anything else here?
+> Breno, want to tackle that as a prep patch first? Should make the
+> functional changes afterwards much more straightforward, and will allow
+> support for anything really.
 
-Maybe defect isn't one accurate word here.
+Absolutely. I just want to make sure that I got the proper approach that
+we agreed here.
 
-I meant ->uring_cmd() is the only driver/fs callback in which
-issue_flags is exposed, so IO_URING_F_UNLOCKED is visible to
-driver, but io_ring_submit_lock() can't be done inside driver.
+Let me explain what I understood taking TCP as an example:
 
-No such problem for direct io since the above io_uring details
-isn't exposed to direct io code.
+1) Rename tcp_ioctl() to something as _tcp_ioctl() where the 'arg'
+argument is now just a kernel memory (located in the stack frame from the
+callee).
 
+2) Recreate "tcp_ioctl()" that will basically allocate a 'arg' in the
+stack and call _tcp_ioctl() passing that 'arg' argument. At the bottom of
+this (tcp_ioctl() function) function, call `put_user(in_kernel_arg, userspace_arg)
 
-Thanks, 
-Ming
+3) Repeat it for the 20 protocols that implement ioctl:
 
+	ag  "struct proto .* = {" -A 20 net/ | grep \.ioctl
+	net/dccp/ipv6.c 	.ioctl	= dccp_ioctl,
+	net/dccp/ipv4.c		.ioctl	= dccp_ioctl,
+	net/ieee802154/socket.c .ioctl	= dgram_ioctl,
+	net/ipv4/udplite.c	.ioctl	= udp_ioctl,
+	net/ipv4/raw.c 		.ioctl	= raw_ioctl,
+	net/ipv4/udp.c		.ioctl	= udp_ioctl,
+	net/ipv4/tcp_ipv4.c 	.ioctl	= tcp_ioctl,
+	net/ipv6/raw.c		.ioctl	= rawv6_ioctl,
+	net/ipv6/tcp_ipv6.c	.ioctl	= tcp_ioctl,
+	net/ipv6/udp.c	 	.ioctl	= udp_ioctl,
+	net/ipv6/udplite.c	.ioctl	= udp_ioctl,
+	net/l2tp/l2tp_ip6.c	.ioctl	= l2tp_ioctl,
+	net/l2tp/l2tp_ip.c	.ioctl	= l2tp_ioctl,
+	net/phonet/datagram.:	.ioctl	= pn_ioctl,
+	net/phonet/pep.c	.ioctl	= pep_ioctl,
+	net/rds/af_rds.c	.ioctl	=	rds_ioctl,
+	net/sctp/socket.c	.ioctl  =	sctp_ioctl,
+	net/sctp/socket.c	.ioctl	= sctp_ioctl,
+	net/xdp/xsk.c		.ioctl	= sock_no_ioctl,
+	net/mptcp/protocol.c	.ioctl	= mptcp_ioctl,
+
+Am I missing something?
+
+Thanks!

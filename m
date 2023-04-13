@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 964A86E1001
-	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 16:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B926E1003
+	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 16:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231524AbjDMO3F (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Apr 2023 10:29:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
+        id S231598AbjDMO3G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Apr 2023 10:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbjDMO3D (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Apr 2023 10:29:03 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5464CAD2A
-        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:00 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id s12so5902502wrb.1
-        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:00 -0700 (PDT)
+        with ESMTP id S231534AbjDMO3E (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Apr 2023 10:29:04 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AFF2A5FE
+        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:01 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id v14-20020a05600c470e00b003f06520825fso13758428wmo.0
+        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681396138; x=1683988138;
+        d=gmail.com; s=20221208; t=1681396139; x=1683988139;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XNhLZukWHJN4z1mvPxjsyOxj4OpV4VMzlRf/y/OXoMM=;
-        b=QNXWvBtWP97MB0Q1XQ3yJZqBPAtwU+wmsYjq+vP5Ri78oeAKCEtHAofZkKSRhYtkHE
-         Hesfo9J3Vc/W3v5WljhP2rmLV7pch9RWge6ju5dpinctaMhMlq/grqtR0H4ORwZldhYf
-         Hfq0rl0Zd7ZwVtDQ/8aUgUjHvM9S+15BP+O4zp3b1AJ+x8aCTpxutnfWLldRSpUagu2O
-         p836krlgtT3SvghKh0iOwAwXyZcTRVXCTc0zShMWhqJUgvp8k67AXcx2Zjq7Dgi3s1uz
-         Ulxa4qtcXBBicAUVvge0mVqn96ygLPtEgQy9mR5KVayLzsZGzKDWiLTcOECeuv1Az2y7
-         HHWA==
+        bh=cLniZvPHknjJJS9uxbnHH/hJ2WCLueA+3HT9X9D00zQ=;
+        b=s3HeHlyZscqOuVHDisW3K+R6v5Urk3fnFMZs8ePtVXyu/aKTDA4ZLKDXnV2U1AH6a+
+         6AuJ2jHfARioE+r06U/USnsmDTQyNmjvQ7kUM+CS+zlAdBHsfOD8thWIORr0Lfpxcdz6
+         RRjlj8LY8F7JDLs8bCP/IJ5Aq9/ea7Y3rMSO4K0oFGxHVghLw3umwRYbAUiVMFwULmLC
+         nC1qq5WgZLvJdkwf19bKRyIXxYy7Qf5jVc7JkPkFX7M9np8Ju9Kv5WTTYpduwD74LCS9
+         iplWUe8RHL7MNAjRAM2tQb8aH7ijTdhlDvcVxTdbQ1Zq8EiI+lx9d6DD88SXPRqHWARh
+         T0oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681396138; x=1683988138;
+        d=1e100.net; s=20221208; t=1681396139; x=1683988139;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XNhLZukWHJN4z1mvPxjsyOxj4OpV4VMzlRf/y/OXoMM=;
-        b=iI7N9EcBLI6u5DAuuYiOnQVlmvN8iO9N+g/bWpYHAO0wU2c+gPtUdAJR81BMf3X3A7
-         5jFOX+VPoCTzDXy4oyyMXrXqGgWuEo1krVW+yPAWjd4MkHD8y2vZrh4JcJd6SY0UWhqN
-         6cPilNv8LTQFMdj0zSXIZazRG5PQ6eo/u5iY2J2JxUSuVXOy5hM2oR1Yg3VlgvcyZjO+
-         bgEGytM81kPp8fEqHzM3C9zDn1CGGly61di75GvR82u9rUiHOsb9yarsxZ3GX7ZnBuZg
-         RnhFGuP39Gd3dP2r9NeBOxj4WFHI7SgjVYLlMbPJjK9PIervggmjHWQJYtFd6EZ2QMLj
-         29Qg==
-X-Gm-Message-State: AAQBX9fgLnLKYFIgGKBhofO2mFX5Ce1snK4ltZz4qxvRl5TdfXKgeoZk
-        sfQY26lM6RKgTjsiMPp3NncL5GJgeKg=
-X-Google-Smtp-Source: AKy350ZcC+rMcwKs5CF9/ujbjPKB21IVHgT8mePOHEVqjqG8rRKw8iR/Fct5bDMm0D0KyLGxt5K9cw==
-X-Received: by 2002:a05:6000:128f:b0:2f0:69c4:3900 with SMTP id f15-20020a056000128f00b002f069c43900mr1532275wrx.54.1681396138708;
-        Thu, 13 Apr 2023 07:28:58 -0700 (PDT)
+        bh=cLniZvPHknjJJS9uxbnHH/hJ2WCLueA+3HT9X9D00zQ=;
+        b=bKJlbeaRueNkN7hKWDKKAkAB/buYEgEYjsPHUvF2CwrLuqfCIddcdI4BodLwhXo2A1
+         ysXt6W7wmdpihhWeHZzuup0S4UoOBNH1mezGXshm+NCqyViOJXkmLgnwzauPYwW+aQlW
+         1ys5Y57ZIr+X89F0HcV3mVHXAU8DulzUSv+j/cTiXZKVN1mmboGd2zBdwinGpo/Fd237
+         0m0k5b4A3qHO+nrjr4y/CTnDqP9ose0toKWgbOSNpdVgIym40kUv/dxGq1QjMLUFTkWO
+         FFobCbwy1rzRfVuqvOh4Ml2zujU98dBiI91HvYRwkEA5UrCKawMgETn5uaZYb7P0hABA
+         c+0Q==
+X-Gm-Message-State: AAQBX9dU/8ZrddM3Qi1xDGx2H8xcVjKPhJQDnitC6IClKjDxmwmFd4v/
+        Uqu0Yqd+6qUSMrXIXCX+gJ/KvQbJR/E=
+X-Google-Smtp-Source: AKy350YxdDgCOgdYcRRwxSJt+8SduCXwrSkwaxFyKnP+E4UCxZPXskdvfElr62mN3Zx1ewqqfr6i9Q==
+X-Received: by 2002:a7b:cc93:0:b0:3ed:9212:b4fe with SMTP id p19-20020a7bcc93000000b003ed9212b4femr2097446wma.0.1681396139389;
+        Thu, 13 Apr 2023 07:28:59 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.196.97.186.threembb.co.uk. [94.196.97.186])
-        by smtp.gmail.com with ESMTPSA id z14-20020adff1ce000000b002f28de9f73bsm1387391wro.55.2023.04.13.07.28.57
+        by smtp.gmail.com with ESMTPSA id z14-20020adff1ce000000b002f28de9f73bsm1387391wro.55.2023.04.13.07.28.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 07:28:58 -0700 (PDT)
+        Thu, 13 Apr 2023 07:28:59 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 06/10] io_uring/rsrc: remove rsrc_data refs
-Date:   Thu, 13 Apr 2023 15:28:10 +0100
-Message-Id: <8e33fd143d83e11af3e386aea28eb6d6c6a1be10.1681395792.git.asml.silence@gmail.com>
+Subject: [PATCH 07/10] io_uring/rsrc: inline switch_start fast path
+Date:   Thu, 13 Apr 2023 15:28:11 +0100
+Message-Id: <9619c1717a0e01f22c5fce2f1ba2735f804da0f2.1681395792.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <cover.1681395792.git.asml.silence@gmail.com>
 References: <cover.1681395792.git.asml.silence@gmail.com>
@@ -70,175 +70,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Instead of waiting for rsrc_data->refs to be downed to zero, check
-whether there are rsrc nodes queued for completion, that's easier then
-maintaining references.
+Inline the part of io_rsrc_node_switch_start() that checks whether the
+cache is empty or not, as most of the times it will have some number of
+entries in there.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  1 +
- io_uring/io_uring.c            |  4 ++--
- io_uring/rsrc.c                | 32 ++++++++------------------------
- io_uring/rsrc.h                |  2 --
- 4 files changed, 11 insertions(+), 28 deletions(-)
+ io_uring/rsrc.c | 12 +++++-------
+ io_uring/rsrc.h |  9 ++++++++-
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 5c9645319770..1b2a20a42413 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -334,6 +334,7 @@ struct io_ring_ctx {
- 	struct list_head		rsrc_ref_list;
- 	struct io_alloc_cache		rsrc_node_cache;
- 	struct wait_queue_head		rsrc_quiesce_wq;
-+	unsigned			rsrc_quiesce;
- 
- 	struct list_head		io_buffers_pages;
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3c1c8c788b7b..3d43df8f1e4e 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2831,8 +2831,8 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- {
- 	io_sq_thread_finish(ctx);
- 	/* __io_rsrc_put_work() may need uring_lock to progress, wait w/o it */
--	io_wait_rsrc_data(ctx->buf_data);
--	io_wait_rsrc_data(ctx->file_data);
-+	if (WARN_ON_ONCE(!list_empty(&ctx->rsrc_ref_list)))
-+		return;
- 
- 	mutex_lock(&ctx->uring_lock);
- 	if (ctx->buf_data)
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index e634ef384724..5415a18844e0 100644
+index 5415a18844e0..bfa0b382c6c6 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -31,11 +31,6 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- #define IORING_MAX_FIXED_FILES	(1U << 20)
- #define IORING_MAX_REG_BUFFERS	(1U << 14)
- 
--static inline bool io_put_rsrc_data_ref(struct io_rsrc_data *rsrc_data)
--{
--	return !--rsrc_data->refs;
--}
--
- int __io_account_mem(struct user_struct *user, unsigned long nr_pages)
- {
- 	unsigned long page_limit, cur_pages, new_pages;
-@@ -158,7 +153,6 @@ static void io_rsrc_put_work_one(struct io_rsrc_data *rsrc_data,
- static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
- {
- 	struct io_rsrc_data *rsrc_data = ref_node->rsrc_data;
--	struct io_ring_ctx *ctx = rsrc_data->ctx;
- 	struct io_rsrc_put *prsrc, *tmp;
- 
- 	if (ref_node->inline_items)
-@@ -171,14 +165,6 @@ static void __io_rsrc_put_work(struct io_rsrc_node *ref_node)
- 	}
- 
- 	io_rsrc_node_destroy(rsrc_data->ctx, ref_node);
--	if (io_put_rsrc_data_ref(rsrc_data))
--		wake_up_all(&ctx->rsrc_quiesce_wq);
--}
--
--void io_wait_rsrc_data(struct io_rsrc_data *data)
--{
--	if (data)
--		WARN_ON_ONCE(!io_put_rsrc_data_ref(data));
+@@ -230,15 +230,13 @@ void io_rsrc_node_switch(struct io_ring_ctx *ctx,
+ 	ctx->rsrc_node = backup;
  }
  
- void io_rsrc_node_destroy(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
-@@ -201,6 +187,8 @@ void io_rsrc_node_ref_zero(struct io_rsrc_node *node)
- 		list_del(&node->node);
- 		__io_rsrc_put_work(node);
- 	}
-+	if (list_empty(&ctx->rsrc_ref_list) && unlikely(ctx->rsrc_quiesce))
-+		wake_up_all(&ctx->rsrc_quiesce_wq);
+-int io_rsrc_node_switch_start(struct io_ring_ctx *ctx)
++int __io_rsrc_node_switch_start(struct io_ring_ctx *ctx)
+ {
+-	if (io_alloc_cache_empty(&ctx->rsrc_node_cache)) {
+-		struct io_rsrc_node *node = kzalloc(sizeof(*node), GFP_KERNEL);
++	struct io_rsrc_node *node = kzalloc(sizeof(*node), GFP_KERNEL);
+ 
+-		if (!node)
+-			return -ENOMEM;
+-		io_alloc_cache_put(&ctx->rsrc_node_cache, &node->cache);
+-	}
++	if (!node)
++		return -ENOMEM;
++	io_alloc_cache_put(&ctx->rsrc_node_cache, &node->cache);
+ 	return 0;
  }
  
- struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx)
-@@ -235,7 +223,6 @@ void io_rsrc_node_switch(struct io_ring_ctx *ctx,
- 	if (WARN_ON_ONCE(!backup))
- 		return;
- 
--	data_to_kill->refs++;
- 	node->rsrc_data = data_to_kill;
- 	list_add_tail(&node->node, &ctx->rsrc_ref_list);
- 	/* put master ref */
-@@ -269,8 +256,7 @@ __cold static int io_rsrc_ref_quiesce(struct io_rsrc_data *data,
- 		return ret;
- 	io_rsrc_node_switch(ctx, data);
- 
--	/* kill initial ref */
--	if (io_put_rsrc_data_ref(data))
-+	if (list_empty(&ctx->rsrc_ref_list))
- 		return 0;
- 
- 	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
-@@ -278,6 +264,7 @@ __cold static int io_rsrc_ref_quiesce(struct io_rsrc_data *data,
- 		smp_mb();
- 	}
- 
-+	ctx->rsrc_quiesce++;
- 	data->quiesce = true;
- 	do {
- 		prepare_to_wait(&ctx->rsrc_quiesce_wq, &we, TASK_INTERRUPTIBLE);
-@@ -286,12 +273,8 @@ __cold static int io_rsrc_ref_quiesce(struct io_rsrc_data *data,
- 		ret = io_run_task_work_sig(ctx);
- 		if (ret < 0) {
- 			mutex_lock(&ctx->uring_lock);
--			if (!data->refs) {
-+			if (list_empty(&ctx->rsrc_ref_list))
- 				ret = 0;
--			} else {
--				/* restore the master reference */
--				data->refs++;
--			}
- 			break;
- 		}
- 
-@@ -299,10 +282,12 @@ __cold static int io_rsrc_ref_quiesce(struct io_rsrc_data *data,
- 		__set_current_state(TASK_RUNNING);
- 		mutex_lock(&ctx->uring_lock);
- 		ret = 0;
--	} while (data->refs);
-+	} while (!list_empty(&ctx->rsrc_ref_list));
- 
- 	finish_wait(&ctx->rsrc_quiesce_wq, &we);
- 	data->quiesce = false;
-+	ctx->rsrc_quiesce--;
-+
- 	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
- 		atomic_set(&ctx->cq_wait_nr, 0);
- 		smp_mb();
-@@ -371,7 +356,6 @@ __cold static int io_rsrc_data_alloc(struct io_ring_ctx *ctx,
- 	data->nr = nr;
- 	data->ctx = ctx;
- 	data->do_put = do_put;
--	data->refs = 1;
- 	if (utags) {
- 		ret = -EFAULT;
- 		for (i = 0; i < nr; i++) {
 diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index d93ba4e9742a..5dd2fcb28069 100644
+index 5dd2fcb28069..732496afed4c 100644
 --- a/io_uring/rsrc.h
 +++ b/io_uring/rsrc.h
-@@ -35,7 +35,6 @@ struct io_rsrc_data {
- 	u64				**tags;
- 	unsigned int			nr;
- 	rsrc_put_fn			*do_put;
--	int				refs;
- 	bool				quiesce;
- };
- 
-@@ -69,7 +68,6 @@ struct io_mapped_ubuf {
- void io_rsrc_put_tw(struct callback_head *cb);
+@@ -69,7 +69,7 @@ void io_rsrc_put_tw(struct callback_head *cb);
  void io_rsrc_node_ref_zero(struct io_rsrc_node *node);
  void io_rsrc_put_work(struct work_struct *work);
--void io_wait_rsrc_data(struct io_rsrc_data *data);
  void io_rsrc_node_destroy(struct io_ring_ctx *ctx, struct io_rsrc_node *ref_node);
- int io_rsrc_node_switch_start(struct io_ring_ctx *ctx);
+-int io_rsrc_node_switch_start(struct io_ring_ctx *ctx);
++int __io_rsrc_node_switch_start(struct io_ring_ctx *ctx);
  struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
+ int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
+ 			  struct io_rsrc_node *node, void *rsrc);
+@@ -111,6 +111,13 @@ static inline int io_scm_file_account(struct io_ring_ctx *ctx,
+ 	return __io_scm_file_account(ctx, file);
+ }
+ 
++static inline int io_rsrc_node_switch_start(struct io_ring_ctx *ctx)
++{
++	if (unlikely(io_alloc_cache_empty(&ctx->rsrc_node_cache)))
++		return __io_rsrc_node_switch_start(ctx);
++	return 0;
++}
++
+ int io_register_files_update(struct io_ring_ctx *ctx, void __user *arg,
+ 			     unsigned nr_args);
+ int io_register_rsrc_update(struct io_ring_ctx *ctx, void __user *arg,
 -- 
 2.40.0
 

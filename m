@@ -2,379 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C0C96E01D4
-	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 00:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD616E02EA
+	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 02:02:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbjDLW34 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Apr 2023 18:29:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37838 "EHLO
+        id S229482AbjDMACi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Apr 2023 20:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjDLW3z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Apr 2023 18:29:55 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4426A40
-        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 15:29:54 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33CI95JQ009480
-        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 15:29:53 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=s2048-2021-q4;
- bh=INOJHE3kpowUPtsSaHJ4xfxeFxlm6HVdib4Z7D4n1JQ=;
- b=BkS6Wg6L566c2NVsbV8PdsPDwj2oPxFJ0ftxq0UUCiDFATCuuy23z4/PQWVpOgliiVU+
- 2gk3K+b76novFeUTNHvllSsHljfKkGlL+4NCOmVgIaiu8Ri8Ec4rzTjOHtds4Tlh08iV
- GJGpuj4KZel5gAVd6/BEt08cN1tTRaLe89OMmGbafJioCfedNb5V9IkEhnUBfisSj4xQ
- wLXSXe29ZoZRS7q7BSoDtnIW5sg1ktqo215Pb+HXezPlc9MJdWLyn9yABp4PJ2KyyZR/
- 48NzXaiuIwrRnP4h2xEKJKP7ZSX7RMwhACFbt1m0tpemQi/hbsJXDvRtsnE4MtrQwk1k Bg== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3pwqws5a0p-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Wed, 12 Apr 2023 15:29:53 -0700
-Received: from twshared35445.38.frc1.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.17; Wed, 12 Apr 2023 15:29:38 -0700
-Received: by devbig023.atn6.facebook.com (Postfix, from userid 197530)
-        id 358638C274BE; Wed, 12 Apr 2023 15:29:33 -0700 (PDT)
-From:   David Wei <davidhwei@meta.com>
-To:     Jens Axboe <axboe@kernel.dk>
-CC:     <io-uring@vger.kernel.org>, David Wei <davidhwei@meta.com>
-Subject: [PATCH v2] liburing: add multishot timeout support
-Date:   Wed, 12 Apr 2023 15:29:31 -0700
-Message-ID: <20230412222931.1635706-1-davidhwei@meta.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229451AbjDMACh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Apr 2023 20:02:37 -0400
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A5F3C39;
+        Wed, 12 Apr 2023 17:02:35 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id he13so12508322wmb.2;
+        Wed, 12 Apr 2023 17:02:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681344154; x=1683936154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wnTbuQLS+s98EOJFfwv3Ba/ON2eWwogZsizkDywlsTM=;
+        b=OMwFMYP3LfY8f7wHmrhuQJi5aW3SHZc5GyBrnDvO+6BOvZUXJO0OlSExdkfBcW4xnu
+         YPzMrXVNVPWMwwmLvpecsN6nPtLUE+3udGDBTdjSoHYYmtwt5BzwCNf2jT4QdA8cNfLS
+         P/YNvyrsqDCoFvCwXu8iIATpkHdO+O5QBotAyXGHDLNMDwN/X6RRlSOVYlSZNhHZRexd
+         YBt3RfLtZtBJ/taYkARuugh4k8V7O1S3+WFV8MTCGqBpsmp6fXhm0U9pNo4kEYRXQjeQ
+         X+JOJVfBPY74Ynz1xAilMJmvis5cR0MJexG/ptnvYqku6XqRRwMzuBn5dQ5gHjQqLpRF
+         134g==
+X-Gm-Message-State: AAQBX9ddofw0oQixioxOp21XLlcRQSX8eNz6aOjoj43ET1J+d4W4sXSs
+        YFbGSylzAYsh4WNv23Zl3y3dvse6zS+CNQ==
+X-Google-Smtp-Source: AKy350bg7BOELuRvy/75oi6gDnbsLIrWQAvVymztmZ8D7/qU45W4+GLiVPq3yXBM3QmSWtXbHnGuXA==
+X-Received: by 2002:a1c:6a14:0:b0:3e1:f8af:8772 with SMTP id f20-20020a1c6a14000000b003e1f8af8772mr322031wmc.9.1681344153925;
+        Wed, 12 Apr 2023 17:02:33 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-031.fbsv.net. [2a03:2880:31ff:1f::face:b00c])
+        by smtp.gmail.com with ESMTPSA id g5-20020a7bc4c5000000b003ee10fb56ebsm323679wmk.9.2023.04.12.17.02.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Apr 2023 17:02:33 -0700 (PDT)
+Date:   Wed, 12 Apr 2023 17:02:31 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
+        Willem de Bruijn <willemb@google.com>,
+        io-uring@vger.kernel.org, netdev@vger.kernel.org, kuba@kernel.org,
+        asml.silence@gmail.com, leit@fb.com, edumazet@google.com,
+        pabeni@redhat.com, davem@davemloft.net, dccp@vger.kernel.org,
+        mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+        matthieu.baerts@tessares.net, marcelo.leitner@gmail.com
+Subject: Re: [PATCH 0/5] add initial io_uring_cmd support for sockets
+Message-ID: <ZDdGl/JGDoRDL8ja@gmail.com>
+References: <75e3c434-eb8b-66e5-5768-ca0f906979a1@kernel.org>
+ <67831406-8d2f-feff-f56b-d0f002a95d96@kernel.dk>
+ <643573df81e20_11117c2942@willemb.c.googlers.com.notmuch>
+ <036c80e5-4844-5c84-304c-7e553fe17a9b@kernel.dk>
+ <64357608c396d_113ebd294ba@willemb.c.googlers.com.notmuch>
+ <19c69021-dce3-1a4a-00eb-920d1f404cfc@kernel.dk>
+ <64357bb97fb19_114b22294c4@willemb.c.googlers.com.notmuch>
+ <20cb4641-c765-e5ef-41cb-252be7721ce5@kernel.dk>
+ <ZDa32u9RNI4NQ7Ko@gmail.com>
+ <6436c01979c9b_163b6294b4@willemb.c.googlers.com.notmuch>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: UQvL5RsdhJp2tJHmoGji2rGOVs439zHs
-X-Proofpoint-ORIG-GUID: UQvL5RsdhJp2tJHmoGji2rGOVs439zHs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-12_12,2023-04-12_01,2023-02-09_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6436c01979c9b_163b6294b4@willemb.c.googlers.com.notmuch>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Single change to sync the new IORING_TIMEOUT_MULTISHOT flag with kernel.
+On Wed, Apr 12, 2023 at 10:28:41AM -0400, Willem de Bruijn wrote:
+> Breno Leitao wrote:
+> > On Tue, Apr 11, 2023 at 09:28:29AM -0600, Jens Axboe wrote:
+> > > On 4/11/23 9:24?AM, Willem de Bruijn wrote:
+> > > > Jens Axboe wrote:
+> > > >> On 4/11/23 9:00?AM, Willem de Bruijn wrote:
+> > > >> But that doesn't work, because sock->ops->ioctl() assumes the arg is
+> > > >> memory in userspace. Or do you mean change all of the sock->ops->ioctl()
+> > > >> to pass in on-stack memory (or similar) and have it work with a kernel
+> > > >> address?
+> > > > 
+> > > > That was what I suggested indeed.
+> > > > 
+> > > > It's about as much code change as this patch series. But it avoids
+> > > > the code duplication.
+> > > 
+> > > Breno, want to tackle that as a prep patch first? Should make the
+> > > functional changes afterwards much more straightforward, and will allow
+> > > support for anything really.
+> > 
+> > Absolutely. I just want to make sure that I got the proper approach that
+> > we agreed here.
+> > 
+> > Let me explain what I understood taking TCP as an example:
+> > 
+> > 1) Rename tcp_ioctl() to something as _tcp_ioctl() where the 'arg'
+> > argument is now just a kernel memory (located in the stack frame from the
+> > callee).
+> > 
+> > 2) Recreate "tcp_ioctl()" that will basically allocate a 'arg' in the
+> > stack and call _tcp_ioctl() passing that 'arg' argument. At the bottom of
+> > this (tcp_ioctl() function) function, call `put_user(in_kernel_arg, userspace_arg)
+> > 
+> > 3) Repeat it for the 20 protocols that implement ioctl:
+> > 
+> > 	ag  "struct proto .* = {" -A 20 net/ | grep \.ioctl
+> > 	net/dccp/ipv6.c 	.ioctl	= dccp_ioctl,
+> > 	net/dccp/ipv4.c		.ioctl	= dccp_ioctl,
+> > 	net/ieee802154/socket.c .ioctl	= dgram_ioctl,
+> > 	net/ipv4/udplite.c	.ioctl	= udp_ioctl,
+> > 	net/ipv4/raw.c 		.ioctl	= raw_ioctl,
+> > 	net/ipv4/udp.c		.ioctl	= udp_ioctl,
+> > 	net/ipv4/tcp_ipv4.c 	.ioctl	= tcp_ioctl,
+> > 	net/ipv6/raw.c		.ioctl	= rawv6_ioctl,
+> > 	net/ipv6/tcp_ipv6.c	.ioctl	= tcp_ioctl,
+> > 	net/ipv6/udp.c	 	.ioctl	= udp_ioctl,
+> > 	net/ipv6/udplite.c	.ioctl	= udp_ioctl,
+> > 	net/l2tp/l2tp_ip6.c	.ioctl	= l2tp_ioctl,
+> > 	net/l2tp/l2tp_ip.c	.ioctl	= l2tp_ioctl,
+> > 	net/phonet/datagram.:	.ioctl	= pn_ioctl,
+> > 	net/phonet/pep.c	.ioctl	= pep_ioctl,
+> > 	net/rds/af_rds.c	.ioctl	=	rds_ioctl,
+> > 	net/sctp/socket.c	.ioctl  =	sctp_ioctl,
+> > 	net/sctp/socket.c	.ioctl	= sctp_ioctl,
+> > 	net/xdp/xsk.c		.ioctl	= sock_no_ioctl,
+> > 	net/mptcp/protocol.c	.ioctl	= mptcp_ioctl,
+> > 
+> > Am I missing something?
+> 
+> The suggestion is to convert all to take kernel memory and do the
+> put_cmsg in the caller of .ioctl. Rather than create a wrapper for
+> each individual instance and add a separate .iouring_cmd for each.
+> 
+> "change all of the sock->ops->ioctl() to pass in on-stack memory
+> (or similar) and have it work with a kernel address"
 
-Mostly unit tests for multishot timeouts.
+is it possible to do it for cases where we don't know what is the size
+of the buffer?
 
-Signed-off-by: David Wei <davidhwei@meta.com>
----
- src/include/liburing/io_uring.h |   1 +
- test/timeout.c                  | 266 ++++++++++++++++++++++++++++++++
- 2 files changed, 267 insertions(+)
+For instance the raw_ioctl()/rawv6_ioctl() case. The "arg" argument is
+used in different ways (one for input and one for output):
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_ur=
-ing.h
-index ec068d4..3d3a63b 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -250,6 +250,7 @@ enum io_uring_op {
- #define IORING_TIMEOUT_REALTIME		(1U << 3)
- #define IORING_LINK_TIMEOUT_UPDATE	(1U << 4)
- #define IORING_TIMEOUT_ETIME_SUCCESS	(1U << 5)
-+#define IORING_TIMEOUT_MULTISHOT	(1U << 6)
- #define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIME=
-OUT_REALTIME)
- #define IORING_TIMEOUT_UPDATE_MASK	(IORING_TIMEOUT_UPDATE | IORING_LINK_=
-TIMEOUT_UPDATE)
- /*
-diff --git a/test/timeout.c b/test/timeout.c
-index 8c43832..cd1ece8 100644
---- a/test/timeout.c
-+++ b/test/timeout.c
-@@ -1327,6 +1327,238 @@ done:
- }
-=20
-=20
-+static int test_timeout_multishot(struct io_uring *ring)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+        if (!sqe) {
-+                fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+                goto err;
-+        }
-+
-+	msec_to_ts(&ts, TIMEOUT_MSEC);
-+	io_uring_prep_timeout(sqe, &ts, 0, IORING_TIMEOUT_MULTISHOT);
-+	io_uring_sqe_set_data(sqe, (void *) 1);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret <=3D 0) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	for (int i =3D 0; i < 2; i++) {
-+		ret =3D io_uring_wait_cqe(ring, &cqe);
-+		if (ret < 0) {
-+			fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+			goto err;
-+		}
-+
-+		if (!(cqe->flags & IORING_CQE_F_MORE)) {
-+			fprintf(stderr, "%s: flag not set in cqe\n", __FUNCTION__);
-+			goto err;
-+		}
-+
-+		ret =3D cqe->res;
-+		if (ret !=3D -ETIME) {
-+			fprintf(stderr, "%s: Timeout: %s\n", __FUNCTION__, strerror(-ret));
-+			goto err;
-+		}
-+
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+        if (!sqe) {
-+                fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+                goto err;
-+        }
-+
-+	io_uring_prep_timeout_remove(sqe, 1, 0);
-+	io_uring_sqe_set_data(sqe, (void *) 2);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret <=3D 0) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D cqe->res;
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: remove failed: %s\n", __FUNCTION__, strerror(-ret=
-));
-+		goto err;
-+	}
-+
-+	io_uring_cqe_seen(ring, cqe);
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D cqe->res;
-+	if (ret !=3D -ECANCELED) {
-+		fprintf(stderr, "%s: timeout canceled: %s %llu\n", __FUNCTION__, strer=
-ror(-ret), cqe->user_data);
-+		goto err;
-+	}
-+
-+	io_uring_cqe_seen(ring, cqe);
-+	return 0;
-+err:
-+	return 1;
-+}
-+
-+
-+static int test_timeout_multishot_nr(struct io_uring *ring)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+        if (!sqe) {
-+                fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+                goto err;
-+        }
-+
-+	msec_to_ts(&ts, TIMEOUT_MSEC);
-+	io_uring_prep_timeout(sqe, &ts, 3, IORING_TIMEOUT_MULTISHOT);
-+	io_uring_sqe_set_data(sqe, (void *) 1);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret <=3D 0) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	for (int i =3D 0; i < 3; i++) {
-+		ret =3D io_uring_wait_cqe(ring, &cqe);
-+		if (ret < 0) {
-+			fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+			goto err;
-+		}
-+
-+		if (i < 2 && !(cqe->flags & IORING_CQE_F_MORE)) {
-+			fprintf(stderr, "%s: flag not set in cqe\n", __FUNCTION__);
-+			goto err;
-+		}
-+		if (i =3D=3D 3 && (cqe->flags & IORING_CQE_F_MORE)) {
-+			fprintf(stderr, "%s: flag set in cqe\n", __FUNCTION__);
-+			goto err;
-+		}
-+
-+		ret =3D cqe->res;
-+		if (ret !=3D -ETIME) {
-+			fprintf(stderr, "%s: Timeout: %s\n", __FUNCTION__, strerror(-ret));
-+			goto err;
-+		}
-+
-+		io_uring_cqe_seen(ring, cqe);
-+	}
-+
-+	msec_to_ts(&ts, 2 * TIMEOUT_MSEC);
-+	ret =3D io_uring_wait_cqe_timeout(ring, &cqe, &ts);
-+	if (ret !=3D -ETIME) {
-+		fprintf(stderr, "%s: wait completion timeout %s\n", __FUNCTION__, stre=
-rror(-ret));
-+		goto err;
-+	}
-+
-+	return 0;
-+err:
-+	return 1;
-+}
-+
-+
-+static int test_timeout_multishot_overflow(struct io_uring *ring)
-+{
-+	struct io_uring_cqe *cqe;
-+	struct io_uring_sqe *sqe;
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	sqe =3D io_uring_get_sqe(ring);
-+        if (!sqe) {
-+                fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+                goto err;
-+        }
-+
-+	msec_to_ts(&ts, 10);
-+	io_uring_prep_timeout(sqe, &ts, 0, IORING_TIMEOUT_MULTISHOT);
-+	io_uring_sqe_set_data(sqe, (void *) 1);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret <=3D 0) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D cqe->res;
-+	if (ret !=3D -ETIME) {
-+		fprintf(stderr, "%s: Timeout: %s\n", __FUNCTION__, strerror(-ret));
-+		goto err;
-+	}
-+
-+	io_uring_cqe_seen(ring, cqe);
-+	sleep(1);
-+
-+	// expect overflow
-+	// go thru all CQEs
-+
-+	if (!((*ring->sq.kflags) & IORING_SQ_CQ_OVERFLOW)) {
-+		goto err;
-+	}
-+
-+	/* multishot timer should be gone */
-+	sqe =3D io_uring_get_sqe(ring);
-+        if (!sqe) {
-+                fprintf(stderr, "%s: get sqe failed\n", __FUNCTION__);
-+                goto err;
-+        }
-+
-+	io_uring_prep_timeout_remove(sqe, 1, 0);
-+
-+	ret =3D io_uring_submit(ring);
-+	if (ret <=3D 0) {
-+		fprintf(stderr, "%s: sqe submit failed: %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D io_uring_wait_cqe(ring, &cqe);
-+	if (ret < 0) {
-+		fprintf(stderr, "%s: wait completion %d\n", __FUNCTION__, ret);
-+		goto err;
-+	}
-+
-+	ret =3D cqe->res;
-+	io_uring_cqe_seen(ring, cqe);
-+	if (ret !=3D -ETIME) {
-+		fprintf(stderr, "%s: remove failed: %d %s\n", __FUNCTION__, ret, strer=
-ror(-ret));
-+		goto err;
-+	}
-+
-+	return 0;
-+err:
-+	return 1;
-+}
-+
-+
- int main(int argc, char *argv[])
- {
- 	struct io_uring ring, sqpoll_ring;
-@@ -1419,6 +1651,40 @@ int main(int argc, char *argv[])
- 		return ret;
- 	}
-=20
-+	ret =3D test_timeout_multishot(&ring);
-+	if (ret) {
-+		fprintf(stderr, "test_timeout_multishot failed\n");
-+		return ret;
-+	}
-+
-+	ret =3D test_timeout_multishot_nr(&ring);
-+	if (ret) {
-+		fprintf(stderr, "test_timeout_multishot_nr failed\n");
-+		return ret;
-+	}
-+
-+	/* io_uring_wait_cqe_timeout() may have left a timeout, reinit ring */
-+	io_uring_queue_exit(&ring);
-+	ret =3D io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		return 1;
-+	}
-+
-+	ret =3D test_timeout_multishot_overflow(&ring);
-+	if (ret) {
-+		fprintf(stderr, "test_timeout_multishot_overflow failed\n");
-+		return ret;
-+	}
-+
-+	/* io_uring_wait_cqe_timeout() may have left a timeout, reinit ring */
-+	io_uring_queue_exit(&ring);
-+	ret =3D io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		fprintf(stderr, "ring setup failed\n");
-+		return 1;
-+	}
-+
- 	ret =3D test_single_timeout_wait(&ring, &p);
- 	if (ret) {
- 		fprintf(stderr, "test_single_timeout_wait failed\n");
---=20
-2.34.1
+  1) If cmd == SIOCOUTQ or SIOCINQ, then the return value will be
+  returned to userspace:
+  	put_user(amount, (int __user *)arg)
 
+  2) For default cmd, ipmr_ioctl() is called, which reads from the `arg`
+  parameter:
+	copy_from_user(&vr, arg, sizeof(vr)
+
+How to handle these contradictory behaviour ahead of time (at callee
+time, where the buffers will be prepared)?
+
+Thank you!

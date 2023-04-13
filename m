@@ -2,59 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A817E6E0FFA
-	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 16:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 066C66E0FFB
+	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 16:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbjDMO25 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Apr 2023 10:28:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58520 "EHLO
+        id S231152AbjDMO26 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Apr 2023 10:28:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbjDMO25 (ORCPT
+        with ESMTP id S231203AbjDMO25 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Thu, 13 Apr 2023 10:28:57 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7E61BEA
-        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:28:55 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id v6so14366240wrv.8
-        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:28:55 -0700 (PDT)
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B049740
+        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:28:56 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id e16so1100000wra.6
+        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:28:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681396134; x=1683988134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IxX8hszJSYPsySwsjdnMKoQ3gBr0T1V7Zv88RxMD03c=;
-        b=WG1NBqikfs2gCqFXcpnfS08QBHm/F6DOoGQ2ioZ99Prn7O18oezbbpnujXrH8G7P+3
-         vs44qGEZMLHsVaXCOaUXXDnN1T9/bfGBgaDOuamT9xfODv2vuE3mVSOt4RrZklz6MWa5
-         6bFxJA2zLKsWAhCclv6E5271q9GWBebwCRA4z4BHWeF8AspCGKlEvLkvwJfm18s7SCYk
-         C7ovV/o1uiNQZY/syJ5WJkZa+UdxLfAJ4y78b+D75uwVnbGRpdbSsNu/aqWlBOObs/MF
-         L5bbsyZIgJNOnnpiuAuAYvd12rEapmQQdCo73I8ntCjM4I+cg6W0IRyXT40LSq8m09bd
-         OpoA==
+        d=gmail.com; s=20221208; t=1681396135; x=1683988135;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nDHHjHbDhUeYee8/gBhjE43x0PfM6JmFgWG0GA+SmFM=;
+        b=V1zHw5gi4IzQQzwksT2aM0B6DaftIE6zn4lVJPamARwOhykbst1jgSWMMo9s4gCjKx
+         U14POX2ARYt4Y5B46gpnnkEr3OkUUmYiFH5Aoeu2EhkT1GMoOexci/Wrxfb9R3y4UhZc
+         ZzW28QhHxsdcneDY+DC7WesW4RSj14e9e5NqnAJZpRytavWkUjMY8wm8nLucMxHL+n6S
+         LVbVASMce66hL7SNZsKKyaqvgRxpfqkg4/S43Y2HqHUpwi9+R/INMiWBJ6z2asUkyrQC
+         wUicTCSp8QqMZJqfTvVKF5hHoDCyFat+Tr6MQW2PkgErGbDmZdTc23yJT3bs5ucqLG3U
+         zboQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681396134; x=1683988134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IxX8hszJSYPsySwsjdnMKoQ3gBr0T1V7Zv88RxMD03c=;
-        b=booEEKRpY+uOVqfbH4BZwoNaMvD6OO2vhM8DlvYtvar1KUCle4RhCw8qYtdvtoEbmM
-         QrBBbojjbjVkRd4Bsegsh0Zot8DGBPlnzhcjTboNKOhq0uw+bQQAt8lv5JQgDF3Ohg4P
-         XYHG/aEmHBYV8yOSVSeo/tEPrtL3v678m+7Ul6cKZsvtNZsQdhdQ9JIGvu6M2dKw0Px3
-         teW2I9HqM0M9aZDhIWiUEzKcksiHb4mISQfIZGX0NA7T+OzT+v8GBJDikrbaNyqEjvrp
-         KCPlAVRHUO3YVNslHSlxX5Dq56P+SHzjVQ07dXkNFacjKjKe1yxwNneiE/ypBGPD1ob9
-         jEDA==
-X-Gm-Message-State: AAQBX9dSNbjpaKKr1wo1vfYFbK5q+iBfNq1JFdFFDT8zIft39PvjbRSH
-        fwvNFFZIQEiaOiLU8tMT0oKFLWj5cGI=
-X-Google-Smtp-Source: AKy350Yhq6TAFLA5C7pVx2sOqy1U782kS1depWfcZDmKWnstxrJI9ncVjxBcO2IHcBaxiUyaWgDjmA==
-X-Received: by 2002:a05:6000:104a:b0:2ee:f1f0:14bb with SMTP id c10-20020a056000104a00b002eef1f014bbmr1681069wrx.49.1681396133717;
-        Thu, 13 Apr 2023 07:28:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1681396135; x=1683988135;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nDHHjHbDhUeYee8/gBhjE43x0PfM6JmFgWG0GA+SmFM=;
+        b=AmkfaFQhbl7r/LplHFmXK6y/gD5iSMTXHChRTF7hZgVGPo7PjzopCnPz65m92lO7To
+         LdM75uo0fxu7hRQA5tJzLEtdlxlfc5lwT2g8nr9q4P6mjdONdAa6M7cdY5qCY9beldWA
+         M76pTlnd0QVcMcqdWaAZSzXAz6jpmojPUPLEHDczUWqvtTdM0yNrxJ2P9ojib+Ghg5ub
+         35qXMxvDKhd5JV+wlbAxZGOBuV4Z3vWWrrcr1ROLHNgbCiZgi1yUhGqxP0p0T8KKJVyc
+         W8w7aXr0h7/KPQ9EYc+KuqalLn3jwjteNqyLv6O+qIeyifugPv4YlhHWLH6G1aX7wzXW
+         Nu9w==
+X-Gm-Message-State: AAQBX9f+C1iqDmsh5Sjh9P2G+AbYzRZUAXBD8ONNDcHE3inlgqsEHqSu
+        z1nWmK0wug+Paop4gyFM48IDhqC++iU=
+X-Google-Smtp-Source: AKy350Y3isKABC9FPT6KXyr1zvnwFPttY6l0BiXRTejl4UrKxSgZZsADcVnPWP6OlgRbD5mQcaRpkA==
+X-Received: by 2002:adf:eed0:0:b0:2d7:9206:488d with SMTP id a16-20020adfeed0000000b002d79206488dmr1668793wrp.36.1681396134758;
+        Thu, 13 Apr 2023 07:28:54 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.196.97.186.threembb.co.uk. [94.196.97.186])
         by smtp.gmail.com with ESMTPSA id z14-20020adff1ce000000b002f28de9f73bsm1387391wro.55.2023.04.13.07.28.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 07:28:53 -0700 (PDT)
+        Thu, 13 Apr 2023 07:28:54 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH for-6.4 00/10] some rsrc fixes and clean ups
-Date:   Thu, 13 Apr 2023 15:28:04 +0100
-Message-Id: <cover.1681395792.git.asml.silence@gmail.com>
+Subject: [PATCH 01/10] io_uring/rsrc: use nospec'ed indexes
+Date:   Thu, 13 Apr 2023 15:28:05 +0100
+Message-Id: <f02fafc5a9c0dd69be2b0618c38831c078232ff0.1681395792.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.40.0
+In-Reply-To: <cover.1681395792.git.asml.silence@gmail.com>
+References: <cover.1681395792.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -67,34 +70,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Patch 1 is a simple fix for using indexes w/o array_index_nospec()
-protection.
+We use array_index_nospec() for registered buffer indexes, but don't use
+it while poking into rsrc tags, fix that.
 
-Patches 2-5 are fixing a file / buffer table unregistration issue
-when the ring is configured with DEFER_TASKRUN.
+Fixes: 634d00df5e1cf ("io_uring: add full-fledged dynamic buffers support")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/rsrc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The rest are clean ups on top.
-
-
-Pavel Begunkov (10):
-  io_uring/rsrc: use nospec'ed indexes
-  io_uring/rsrc: remove io_rsrc_node::done
-  io_uring/rsrc: refactor io_rsrc_ref_quiesce
-  io_uring/rsrc: use wq for quiescing
-  io_uring/rsrc: fix DEFER_TASKRUN rsrc quiesce
-  io_uring/rsrc: remove rsrc_data refs
-  io_uring/rsrc: inline switch_start fast path
-  io_uring/rsrc: clean up __io_sqe_buffers_update()
-  io_uring/rsrc: simplify single file node switching
-  io_uring/rsrc: refactor io_queue_rsrc_removal
-
- include/linux/io_uring_types.h |  2 +
- io_uring/filetable.c           | 11 ++---
- io_uring/io_uring.c            |  5 +-
- io_uring/rsrc.c                | 90 ++++++++++++++--------------------
- io_uring/rsrc.h                | 13 +++--
- 5 files changed, 53 insertions(+), 68 deletions(-)
-
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 11058e20bdcc..3c1538b8c8f4 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -517,7 +517,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
+ 		}
+ 
+ 		ctx->user_bufs[i] = imu;
+-		*io_get_tag_slot(ctx->buf_data, offset) = tag;
++		*io_get_tag_slot(ctx->buf_data, i) = tag;
+ 	}
+ 
+ 	if (needs_switch)
 -- 
 2.40.0
 

@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 244A26E1004
+	by mail.lfdr.de (Postfix) with ESMTP id C31FE6E1005
 	for <lists+io-uring@lfdr.de>; Thu, 13 Apr 2023 16:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231571AbjDMO3H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Apr 2023 10:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
+        id S231558AbjDMO3I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Apr 2023 10:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231558AbjDMO3E (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Apr 2023 10:29:04 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F7AAD09
-        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:02 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id i8-20020a05600c354800b003ee93d2c914so9938112wmq.2
-        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:02 -0700 (PDT)
+        with ESMTP id S229638AbjDMO3F (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Apr 2023 10:29:05 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B27AD0D
+        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:03 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id v27so5165171wra.13
+        for <io-uring@vger.kernel.org>; Thu, 13 Apr 2023 07:29:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681396140; x=1683988140;
+        d=gmail.com; s=20221208; t=1681396141; x=1683988141;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XJDeBFWflXiYXndOhi/AhPK+oyloSSkv8OIb38IyP1c=;
-        b=DGEOyitcGDuQFn0SMe4jrtK2G7ZPztpYYYIIqEoGNnj6uFwd+krlBSyuf/XPAJLIxC
-         PglSBhr+8dDu0qfFGdJIUMlfLIn7TaxRNb//OEMJrFeQtBqhLTG1AwN6FcPpMYmg9kYZ
-         taibiXPLWyqhiXMMrQRQQbEeiPjDmxAgXz8U9xd1tL70FUUQ5dV2BLxBaeOh6zE8gT2v
-         3vBkXm8UDZBw+DyyQ0Fy3BLy0jKRrv4Tsw7O38vuIVJfqyMbdTMelkVR1Yyt3vclB2hk
-         tzFqZQuMwjFu4h0UfPEKe1FZlGb5s1jPXymEYsO/icUMNp9tJk2/la87eLDm6lYZ7dtD
-         2QKw==
+        bh=cO/jYwlVM1vE8zfdvxGQpMVWtu2D+phnbnHn/ydmrWg=;
+        b=c64n4E4fAWwI4LZq/DJDEoIr8CDR7nbf1kTAhRssaFyWqwBp/0hB0NhKcXaUqM7y5M
+         5MIC4dR/1XgTaduU1bJtxb59mNNQ0cXh/uOiyXa6+pPtzJOnpkseCS2pCiiGKMlWugOj
+         dAr/pOxs/8R6m/rvtwf4cTnIB33kVN39wEkd1i9Iq9NaHAvbZD/T/ONuRpSDmnwcYlqh
+         MNWRv/Gn6oEkmD7L5BvNF0TGf57H2ckwGPaRcbR/WLd3pH8QPxN/OETkqsGKl4+rQPOc
+         9WJGEfV3P+11khY8Uxn0NkQu1Ga4y++8NKnATRA5/6vsNJY1QJItqEvt97e3Rm99j4A1
+         2GuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681396140; x=1683988140;
+        d=1e100.net; s=20221208; t=1681396141; x=1683988141;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XJDeBFWflXiYXndOhi/AhPK+oyloSSkv8OIb38IyP1c=;
-        b=cr5TtpS/AxRCNVkYEVPhpD1zTa1MGHy5u7nNPdJVE3Gd9EuumS/JxVu3CD9C7nAUTS
-         hLpsFtU+VNhoGdCmFpAjUdxlPd9jzeGgij1pq/wKPoeF27KabIJ4Yk5/HBSBQ88s5Ika
-         JfzGGgvAdpoMWgcLdQI7WUtVJA1sLgwADuvXHcJkDtAQQQiENGPq4Fvn32H/BC/mzQuS
-         0EyFoZ2n46psSURfZCxPq9dBQtbZYEJWtnnlZeBijNh/8b4uli7QQ3MFeYS/mrM1yHB7
-         QMSvUj5LzYB61+S10hpGdw3JX7ydMecpEiots5rEqTdtHYuOLOLnJnh9yfzRrUgUHqEz
-         kT8g==
-X-Gm-Message-State: AAQBX9cpeyLJw/l+0sNKAd3PMghmjJLe6fWIRvMoGxLXj3lrFZpwDUzF
-        nlX8V1C4ZfsXgG6cy+YdOQUUh1w8/tA=
-X-Google-Smtp-Source: AKy350bEZmI6Cb3vL6lx1k6FVubv/GiO9tAzRiEfFkNVvTPT9iKHWCvY7jjTDp0UmB6pJe74f05gQg==
-X-Received: by 2002:a05:600c:1e11:b0:3f0:4275:395f with SMTP id ay17-20020a05600c1e1100b003f04275395fmr1559707wmb.13.1681396140773;
-        Thu, 13 Apr 2023 07:29:00 -0700 (PDT)
+        bh=cO/jYwlVM1vE8zfdvxGQpMVWtu2D+phnbnHn/ydmrWg=;
+        b=W6Tt29xSMkGbhKDrNlfrGJOXbqj6Q70YvoJRD+0WRfwmj7KzA8euTkLLDv3crvhGoM
+         3YPuxSNqJbZiKr3ULkFbW270fZj2/ArVQgKflD4jSeO6h66SQAk3l+F1mANx5KSjDINA
+         0isK8bfR+gYfIcZO+ym/FiBbyv8VkqSaqQfU3fTm0fsWve7d9DVIOORkNIVxOxtkbGeK
+         PFUoLxU6IOYkZ+uynipxyH+/O/BAs0xHOpeKdSiNbQPozw6nyOq8k56Szb285FaJ4Puf
+         H41MuxokyMjvPpQmGtGSSjiiC09rQfG42VOOXc2ENgkHS2tMEs0eU/84hWBQfc+x8D1S
+         Qoeg==
+X-Gm-Message-State: AAQBX9ewv8bAo786xgLVyroKgHsgi8eMPi/7LCoHWNhTIomBuk20Bs51
+        urYHg1+Ct67C5gqPPTUb0/+8+U5VOp0=
+X-Google-Smtp-Source: AKy350ZhuYJv2SRXihnttjllD0R4oXl7xlfIS6vzIA4DfYx8byzclqgOx81QsSdMWzMzqAhouSgoag==
+X-Received: by 2002:adf:f04d:0:b0:2f0:2dca:f914 with SMTP id t13-20020adff04d000000b002f02dcaf914mr1868737wro.52.1681396141393;
+        Thu, 13 Apr 2023 07:29:01 -0700 (PDT)
 Received: from 127.0.0.1localhost (94.196.97.186.threembb.co.uk. [94.196.97.186])
         by smtp.gmail.com with ESMTPSA id z14-20020adff1ce000000b002f28de9f73bsm1387391wro.55.2023.04.13.07.29.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 07:29:00 -0700 (PDT)
+        Thu, 13 Apr 2023 07:29:01 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 09/10] io_uring/rsrc: simplify single file node switching
-Date:   Thu, 13 Apr 2023 15:28:13 +0100
-Message-Id: <37cfb46f46160f81dced79f646e97db608994574.1681395792.git.asml.silence@gmail.com>
+Subject: [PATCH 10/10] io_uring/rsrc: refactor io_queue_rsrc_removal
+Date:   Thu, 13 Apr 2023 15:28:14 +0100
+Message-Id: <36bd708ee25c0e2e7992dc19b17db166eea9ac40.1681395792.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <cover.1681395792.git.asml.silence@gmail.com>
 References: <cover.1681395792.git.asml.silence@gmail.com>
@@ -70,56 +70,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-At maximum io_install_fixed_file() removes only one file,
-so no need to keep needs_switch state and we can call
-io_rsrc_node_switch() right after removal.
+We can queue up a rsrc into a list in io_queue_rsrc_removal()
+while allocating io_rsrc_put and so simplify the function.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/filetable.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ io_uring/rsrc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index b80614e7d605..6255fa255ae2 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -64,7 +64,6 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
- 				 u32 slot_index)
- 	__must_hold(&req->ctx->uring_lock)
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 38f0c9ce67a7..db58a51d19da 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -685,7 +685,6 @@ int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
  {
--	bool needs_switch = false;
- 	struct io_fixed_file *file_slot;
- 	int ret;
+ 	u64 *tag_slot = io_get_tag_slot(data, idx);
+ 	struct io_rsrc_put *prsrc;
+-	bool inline_item = true;
  
-@@ -83,16 +82,17 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
- 
- 		ret = io_rsrc_node_switch_start(ctx);
- 		if (ret)
--			goto err;
-+			return ret;
- 
- 		old_file = (struct file *)(file_slot->file_ptr & FFS_MASK);
- 		ret = io_queue_rsrc_removal(ctx->file_data, slot_index,
- 					    ctx->rsrc_node, old_file);
- 		if (ret)
--			goto err;
-+			return ret;
-+
- 		file_slot->file_ptr = 0;
- 		io_file_bitmap_clear(&ctx->file_table, slot_index);
--		needs_switch = true;
-+		io_rsrc_node_switch(ctx, ctx->file_data);
+ 	if (!node->inline_items) {
+ 		prsrc = &node->item;
+@@ -694,14 +693,12 @@ int io_queue_rsrc_removal(struct io_rsrc_data *data, unsigned idx,
+ 		prsrc = kzalloc(sizeof(*prsrc), GFP_KERNEL);
+ 		if (!prsrc)
+ 			return -ENOMEM;
+-		inline_item = false;
++		list_add(&prsrc->list, &node->item_list);
  	}
  
- 	ret = io_scm_file_account(ctx, file);
-@@ -101,9 +101,6 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
- 		io_fixed_file_set(file_slot, file);
- 		io_file_bitmap_set(&ctx->file_table, slot_index);
- 	}
--err:
--	if (needs_switch)
--		io_rsrc_node_switch(ctx, ctx->file_data);
- 	return ret;
+ 	prsrc->tag = *tag_slot;
+ 	*tag_slot = 0;
+ 	prsrc->rsrc = rsrc;
+-	if (!inline_item)
+-		list_add(&prsrc->list, &node->item_list);
+ 	return 0;
  }
  
 -- 

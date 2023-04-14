@@ -2,165 +2,189 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 549EB6E2505
-	for <lists+io-uring@lfdr.de>; Fri, 14 Apr 2023 16:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7745E6E2559
+	for <lists+io-uring@lfdr.de>; Fri, 14 Apr 2023 16:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbjDNOBs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Apr 2023 10:01:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
+        id S229804AbjDNOMc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Apr 2023 10:12:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbjDNOBn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Apr 2023 10:01:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4574180
-        for <io-uring@vger.kernel.org>; Fri, 14 Apr 2023 07:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681480819;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=27YyBi9hssfCHBO7/PKix6vU7A+oXZmvyq6RpUloX40=;
-        b=ad+ymqr2mVkSFT6MjwYZwRgtmKhYqMS4HECR3Nwwjs3swj1EoaqvNykpPkS7JuwzpL+k3K
-        ZdHriSr8Bd6Rgk+Jvpl4OmEQ30V3jtzqze9Kz4YwMOpozoMneU1AT8qSqLQIUQvXstfzZ3
-        aRoz9eaO6JxNZaYhBBIfd3nRXKi8Utg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-630-BcRvrHRHMtmqZL31AExtOw-1; Fri, 14 Apr 2023 10:00:14 -0400
-X-MC-Unique: BcRvrHRHMtmqZL31AExtOw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3F8F41C0691B;
-        Fri, 14 Apr 2023 14:00:13 +0000 (UTC)
-Received: from ovpn-8-21.pek2.redhat.com (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0A3E6404DC40;
-        Fri, 14 Apr 2023 14:00:02 +0000 (UTC)
-Date:   Fri, 14 Apr 2023 21:59:57 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Breno Leitao <leitao@debian.org>, axboe@kernel.dk,
-        davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
-        edumazet@google.com, io-uring@vger.kernel.org, kuba@kernel.org,
-        leit@fb.com, linux-kernel@vger.kernel.org,
-        marcelo.leitner@gmail.com, matthieu.baerts@tessares.net,
-        mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com,
-        willemdebruijn.kernel@gmail.com, ming.lei@redhat.com
-Subject: Re: [PATCH RFC] io_uring: Pass whole sqe to commands
-Message-ID: <ZDlcXd4K+a2iGbnv@ovpn-8-21.pek2.redhat.com>
-References: <20230406144330.1932798-1-leitao@debian.org>
- <20230406165705.3161734-1-leitao@debian.org>
- <ZDdvcSKLa6ZEAhRW@ovpn-8-18.pek2.redhat.com>
- <ZDgyPL6UrX/MaBR4@gmail.com>
- <ZDi2pP4jgHwCvJRm@ovpn-8-21.pek2.redhat.com>
- <44420e92-f629-f56e-f930-475be6f6a83a@gmail.com>
+        with ESMTP id S229790AbjDNOMb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Apr 2023 10:12:31 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 928E3C173
+        for <io-uring@vger.kernel.org>; Fri, 14 Apr 2023 07:11:51 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id fy21so2923507ejb.9
+        for <io-uring@vger.kernel.org>; Fri, 14 Apr 2023 07:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681481439; x=1684073439;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CQ5sEN9+fUjyEy5VHMOBHFq9LLI3lap8NulOHDqf0RA=;
+        b=gLTib1cMtvxMup00vs9h4SoXG0M1MtOnwNdKwydVowfDdhcLsDIFNpYu1yRjINQHFq
+         q4kZNM93OURDnSCjgq1kydi8Nc8kV2q1xKmorJ3t/Js49kN2mSs79WNo29J3o8u1hHsw
+         aGUiUud7TJozt5m5grJp59OUdjQ0ACCM5U1al12Hfq6Bml0Dx01lisfrGSAd2ihsohRX
+         3ZAnq9/7sKDVQCs+VVAsTPM33RjPsc+g70U5AQfjgTdwiUYU/s0sMUgScN/zjdmBeNZq
+         IfiJ37X4YFqHLjaqQ9Uqmk6vGDmTkbQILgS5ATmXS6XLZ72rZGz9fDg+1d3QKgLKw+Eq
+         9Z4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681481439; x=1684073439;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CQ5sEN9+fUjyEy5VHMOBHFq9LLI3lap8NulOHDqf0RA=;
+        b=ljAHGk93mpAir7P8pYowocpNVd03wwKiqCuaAzUSVeTsZAhX1OGbYL0hvcJOKtLkf8
+         ixk6qc2KURpm9MbcJkDheY3ed8wZiymuEtWC3FAT0RqqqXS++//QiudgzWiozTNrY9+3
+         Qob67iTG03TOee9Rgzm7ADKKCDoasZAtK68HU4ScMITvctUa17toFHlchtDE46pFClm6
+         UIg6UBTACZwLQo9hPx11H31qnj6rB/KYlC4dnoayh/226dY0PfZvk2uN0156qjOjjyHE
+         nQEK4MiojvrPAFX4LI6Eqo8JY2sCaYLoY31kAoFWnbMlqe/S+8Ku/cdOXiWprkk8WOwC
+         uDiQ==
+X-Gm-Message-State: AAQBX9cgHvA5LByBgdgWtvwIo8ndV3tBX54O6RbdXTV8j0pC6djWQggm
+        zW6l3h6fS6JKkiA2X/iE9jo=
+X-Google-Smtp-Source: AKy350ZoOGcRZn90SKOf3MWL3K/juqNa+NscOMHdo1w+6Hx/heF7e+we0S884ShZEHnIWO5PHUWcDg==
+X-Received: by 2002:a17:906:4b10:b0:94b:d57e:9d4b with SMTP id y16-20020a1709064b1000b0094bd57e9d4bmr5710782eju.2.1681481438847;
+        Fri, 14 Apr 2023 07:10:38 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:b2ce])
+        by smtp.gmail.com with ESMTPSA id f1-20020a170906560100b00947499e0e4dsm2481915ejq.146.2023.04.14.07.10.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Apr 2023 07:10:38 -0700 (PDT)
+Message-ID: <29f2da64-1dd7-0ed0-16a6-f8295de05a88@gmail.com>
+Date:   Fri, 14 Apr 2023 15:10:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44420e92-f629-f56e-f930-475be6f6a83a@gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v2] io_uring: add support for multishot timeouts
+Content-Language: en-US
+To:     David Wei <davidhwei@meta.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org
+References: <20230412222732.1623901-1-davidhwei@meta.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20230412222732.1623901-1-davidhwei@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 02:12:10PM +0100, Pavel Begunkov wrote:
-> On 4/14/23 03:12, Ming Lei wrote:
-> > On Thu, Apr 13, 2023 at 09:47:56AM -0700, Breno Leitao wrote:
-> > > Hello Ming,
-> > > 
-> > > On Thu, Apr 13, 2023 at 10:56:49AM +0800, Ming Lei wrote:
-> > > > On Thu, Apr 06, 2023 at 09:57:05AM -0700, Breno Leitao wrote:
-> > > > > Currently uring CMD operation relies on having large SQEs, but future
-> > > > > operations might want to use normal SQE.
-> > > > > 
-> > > > > The io_uring_cmd currently only saves the payload (cmd) part of the SQE,
-> > > > > but, for commands that use normal SQE size, it might be necessary to
-> > > > > access the initial SQE fields outside of the payload/cmd block.  So,
-> > > > > saves the whole SQE other than just the pdu.
-> > > > > 
-> > > > > This changes slighlty how the io_uring_cmd works, since the cmd
-> > > > > structures and callbacks are not opaque to io_uring anymore. I.e, the
-> > > > > callbacks can look at the SQE entries, not only, in the cmd structure.
-> > > > > 
-> > > > > The main advantage is that we don't need to create custom structures for
-> > > > > simple commands.
-> > > > > 
-> > > > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > > > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > > > > ---
-> > > > 
-> > > > ...
-> > > > 
-> > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > index 2e4c483075d3..9648134ccae1 100644
-> > > > > --- a/io_uring/uring_cmd.c
-> > > > > +++ b/io_uring/uring_cmd.c
-> > > > > @@ -63,14 +63,15 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_done);
-> > > > >   int io_uring_cmd_prep_async(struct io_kiocb *req)
-> > > > >   {
-> > > > >   	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-> > > > > -	size_t cmd_size;
-> > > > > +	size_t size = sizeof(struct io_uring_sqe);
-> > > > >   	BUILD_BUG_ON(uring_cmd_pdu_size(0) != 16);
-> > > > >   	BUILD_BUG_ON(uring_cmd_pdu_size(1) != 80);
-> > > > > -	cmd_size = uring_cmd_pdu_size(req->ctx->flags & IORING_SETUP_SQE128);
-> > > > > +	if (req->ctx->flags & IORING_SETUP_SQE128)
-> > > > > +		size <<= 1;
-> > > > > -	memcpy(req->async_data, ioucmd->cmd, cmd_size);
-> > > > > +	memcpy(req->async_data, ioucmd->sqe, size);
-> > > > 
-> > > > The copy will make some fields of sqe become READ TWICE, and driver may see
-> > > > different sqe field value compared with the one observed in io_init_req().
-> > > 
-> > > This copy only happens if the operation goes to the async path
-> > > (calling io_uring_cmd_prep_async()).  This only happens if
-> > > f_op->uring_cmd() returns -EAGAIN.
-> > > 
-> > >            ret = file->f_op->uring_cmd(ioucmd, issue_flags);
-> > >            if (ret == -EAGAIN) {
-> > >                    if (!req_has_async_data(req)) {
-> > >                            if (io_alloc_async_data(req))
-> > >                                    return -ENOMEM;
-> > >                            io_uring_cmd_prep_async(req);
-> > >                    }
-> > >                    return -EAGAIN;
-> > >            }
-> > > 
-> > > Are you saying that after this copy, the operation is still reading from
-> > > sqe instead of req->async_data?
-> > 
-> > I meant that the 2nd read is on the sqe copy(req->aync_data), but same
-> > fields can become different between the two READs(first is done on original
-> > SQE during io_init_req(), and second is done on sqe copy in driver).
-> > 
-> > Will this kind of inconsistency cause trouble for driver? Cause READ
-> > TWICE becomes possible with this patch.
+On 4/12/23 23:27, David Wei wrote:
+> A multishot timeout submission will repeatedly generate completions with
+> the IORING_CQE_F_MORE cflag set. Depending on the value of the `off' field
+> in the submission, these timeouts can either repeat indefinitely until
+> cancelled (`off' = 0) or for a fixed number of times (`off' > 0).
 > 
-> Right it might happen, and I was keeping that in mind, but it's not
-> specific to this patch. It won't reload core io_uring bits, and all
-
-It depends if driver reloads core bits or not, anyway the patch exports
-all fields and opens the window.
-
-> fields cmds use already have this problem.
-
-driver is supposed to load cmds field just once too, right?
-
+> Only noseq timeouts (i.e. not dependent on the number of I/O
+> completions) are supported.
 > 
-> Unless there is a better option, the direction we'll be moving in is
-> adding a preparation step that should read and stash parts of SQE
-> it cares about, which should also make full SQE copy not
-> needed / optional.
+> An indefinite timer will be cancelled with EOVERFLOW if the CQ ever
+> overflows.
 
-Sounds good.
+Seems mostly fine, two comments below
 
 
-Thanks,
-Ming
+> Signed-off-by: David Wei <davidhwei@meta.com>
+> ---
+>   include/uapi/linux/io_uring.h |  1 +
+>   io_uring/timeout.c            | 59 +++++++++++++++++++++++++++++++++--
+>   2 files changed, 57 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index f8d14d1c58d3..0716cb17e436 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -250,6 +250,7 @@ enum io_uring_op {
+>   #define IORING_TIMEOUT_REALTIME		(1U << 3)
+>   #define IORING_LINK_TIMEOUT_UPDATE	(1U << 4)
+>   #define IORING_TIMEOUT_ETIME_SUCCESS	(1U << 5)
+> +#define IORING_TIMEOUT_MULTISHOT	(1U << 6)
+>   #define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIMEOUT_REALTIME)
+>   #define IORING_TIMEOUT_UPDATE_MASK	(IORING_TIMEOUT_UPDATE | IORING_LINK_TIMEOUT_UPDATE)
+>   /*
+> diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+> index 5c6c6f720809..61b8488565ce 100644
+...
+> +static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state *ts)
+> +{
+> +	struct io_timeout *timeout = io_kiocb_to_cmd(req, struct io_timeout);
+> +	struct io_timeout_data *data = req->async_data;
+> +	struct io_ring_ctx *ctx = req->ctx;
+> +
+> +	if (!io_timeout_finish(timeout, data)) {
+> +		bool filled;
+> +		filled = io_aux_cqe(ctx, false, req->cqe.user_data, -ETIME,
+> +				      IORING_CQE_F_MORE, false);
+> +		if (filled) {
+> +			/* re-arm timer */
+> +			spin_lock_irq(&ctx->timeout_lock);
+> +			list_add(&timeout->list, ctx->timeout_list.prev);
+> +			data->timer.function = io_timeout_fn;
+> +			hrtimer_start(&data->timer, timespec64_to_ktime(data->ts), data->mode);
+> +			spin_unlock_irq(&ctx->timeout_lock);
+> +			return;
+> +		}
+> +		io_req_set_res(req, -EOVERFLOW, 0);
 
+Let's not change the return value. It's considered a normal completion
+and we don't change the code for them. And there is IORING_CQE_F_MORE
+for userspace to figure out that it has been terminated.
+
+
+> +	}
+> +
+> +	io_req_task_complete(req, ts);
+> +}
+> +
+>   static bool io_kill_timeout(struct io_kiocb *req, int status)
+>   	__must_hold(&req->ctx->timeout_lock)
+>   {
+> @@ -212,7 +253,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer)
+>   		req_set_fail(req);
+>   
+>   	io_req_set_res(req, -ETIME, 0);
+> -	req->io_task_work.func = io_req_task_complete;
+> +	req->io_task_work.func = io_timeout_complete;
+>   	io_req_task_work_add(req);
+>   	return HRTIMER_NORESTART;
+>   }
+> @@ -470,16 +511,28 @@ static int __io_timeout_prep(struct io_kiocb *req,
+>   		return -EINVAL;
+>   	flags = READ_ONCE(sqe->timeout_flags);
+>   	if (flags & ~(IORING_TIMEOUT_ABS | IORING_TIMEOUT_CLOCK_MASK |
+> -		      IORING_TIMEOUT_ETIME_SUCCESS))
+> +		      IORING_TIMEOUT_ETIME_SUCCESS |
+> +		      IORING_TIMEOUT_MULTISHOT)) {
+>   		return -EINVAL;
+> +	}
+
+Please, don't add braces, they're not needed here.
+
+>   	/* more than one clock specified is invalid, obviously */
+>   	if (hweight32(flags & IORING_TIMEOUT_CLOCK_MASK) > 1)
+>   		return -EINVAL;
+> +	/* multishot requests only make sense with rel values */
+> +	if (!(~flags & (IORING_TIMEOUT_MULTISHOT | IORING_TIMEOUT_ABS)))
+> +		return -EINVAL;
+>   
+>   	INIT_LIST_HEAD(&timeout->list);
+>   	timeout->off = off;
+>   	if (unlikely(off && !req->ctx->off_timeout_used))
+>   		req->ctx->off_timeout_used = true;
+> +	/*
+> +	 * for multishot reqs w/ fixed nr of repeats, target_seq tracks the
+> +	 * remaining nr
+> +	 */
+> +	timeout->repeats = 0;
+> +	if ((flags & IORING_TIMEOUT_MULTISHOT) && off > 0)
+> +		timeout->repeats = off;
+>   
+>   	if (WARN_ON_ONCE(req_has_async_data(req)))
+>   		return -EFAULT;
+
+-- 
+Pavel Begunkov

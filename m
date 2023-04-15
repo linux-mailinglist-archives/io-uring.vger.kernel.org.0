@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2AFE6E32A1
-	for <lists+io-uring@lfdr.de>; Sat, 15 Apr 2023 18:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B8266E32A4
+	for <lists+io-uring@lfdr.de>; Sat, 15 Apr 2023 18:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbjDOQ6m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 15 Apr 2023 12:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
+        id S229545AbjDOQ72 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 15 Apr 2023 12:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjDOQ6l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Apr 2023 12:58:41 -0400
+        with ESMTP id S229822AbjDOQ71 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Apr 2023 12:59:27 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A9849C8;
-        Sat, 15 Apr 2023 09:58:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA3B4685;
+        Sat, 15 Apr 2023 09:59:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1681577919;
-        bh=v6rcx08r6yOYiVA0eKkrbzv0NZtEnrMCKsIIQqjqoKc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=RJivG/DE2q7ND227w68cEUYjNe5ATJjNvqjRQEPzoHUPk2izwbP+gY2sQSSn4w5gT
-         Ac4rdogWKvONb+N5K6y/GyIwSZjPjG93nEOXurQVC6hvKw4rmpIa1GyURP6JB+cIIR
-         S0Kp2I++YCCQdX5EVb1dEDeHo/gubQmf5JAa9hiurZHZnkD75HImuXKtlU7+So8bIX
-         j3CQxj3iJ8/YW7BGChj+XyAZzwXhXhktZDS7RS4HOxI20UJQaKHO7VTg5QFZmMIpVf
-         zhyZDlfdNVta2L/uCHyGn7CYMejOFhBY3UyVo9r3BTIL9kUaeFcMb3/XTBhnfiBeq9
-         4w1N/P/S5RUcw==
+        s=default; t=1681577954;
+        bh=HVup6Nwi3vb9vRTlnVPxuqqQMSwEiPn9C+mF4ZjeNjI=;
+        h=From:To:Cc:Subject:Date;
+        b=rXkDBOPaP1kTlMYfClfz4dmROqTlur89vnhnh4fA24V4gBEoESSVGJvVTdXx3FY3H
+         DHEpDnwTfnw3rlXG33EKHXB6ky1yTFAxD8Bv4YEIRk8OsHayOwYEkauvl4h9Z8ZxTe
+         hGOOLoBliUW1VIUE4LU3q5Y2xtQfxm2Vy4E6Bb3qnpa/oGB1epaohmUNPIZipXiv5D
+         y/W131RKowWG+Tu9hbYjeRNhBBKwKTQCddBQUnuEisRU9Oki6qG/H5lmExVl7u5iAm
+         qJX74YTLWCFr2PTTa9CPy/phMwwdouK7VwhKJAkQ9bxhIrEUUXIT629nRRzHefjVLm
+         KE7iGBMEcsGtQ==
 Received: from localhost.localdomain (unknown [182.253.88.211])
-        by gnuweeb.org (Postfix) with ESMTPSA id 283EB2450ED;
-        Sat, 15 Apr 2023 23:58:36 +0700 (WIB)
+        by gnuweeb.org (Postfix) with ESMTPSA id 472B92450ED;
+        Sat, 15 Apr 2023 23:59:10 +0700 (WIB)
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -35,12 +35,10 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [RFC PATCH liburing v1 2/2] man: Add `io_uring_prep_sendto()`
-Date:   Sat, 15 Apr 2023 23:58:21 +0700
-Message-Id: <20230415165821.791763-3-ammarfaizi2@gnuweeb.org>
+Subject: [PATCH liburing 0/3] io_uring-udp fix, manpage fix, and hppa cross-compiler
+Date:   Sat, 15 Apr 2023 23:59:01 +0700
+Message-Id: <20230415165904.791841-1-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230415165821.791763-1-ammarfaizi2@gnuweeb.org>
-References: <20230415165821.791763-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -52,87 +50,53 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hi Jens,
+
+There are three patches in this series:
+
+1. Fix the wrong IPv6 address in io_uring-udp (me).
+
+Before:
+
+    port bound to 49567
+    received 4 bytes 28 from ::2400:6180:0:d1:0:0:47048
+    received 4 bytes 28 from ::2400:6180:0:d1:0:0:54755
+    received 4 bytes 28 from ::2400:6180:0:d1:0:0:57968
+
+(the IPv6 address is wrong)
+
+After:
+
+    port bound to 48033
+    received 4 bytes 28 from [2400:6180:0:d1::6a4:a00f]:40456
+    received 4 bytes 28 from [2400:6180:0:d1::6a4:a00f]:50306
+    received 4 bytes 28 from [2400:6180:0:d1::6a4:a00f]:52291
+
+2. io_uring_cqe_get_data() manpage fix (me).
+
+The return value of io_uring_cqe_get_data() will be undefined if the
+user_data is not set from the SQE side.
+
+3. Add hppa cross-compiler to the CI (Alviro).
+
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- CHANGELOG                  |  1 +
- man/io_uring_prep_send.3   | 31 +++++++++++++++++++++++++++++++
- man/io_uring_prep_sendto.3 |  1 +
- 3 files changed, 33 insertions(+)
- create mode 120000 man/io_uring_prep_sendto.3
 
-diff --git a/CHANGELOG b/CHANGELOG
-index 85e02a280d4a7c45..71ca3919e114d858 100644
---- a/CHANGELOG
-+++ b/CHANGELOG
-@@ -14,6 +14,7 @@ liburing-2.4 release
-   io_uring_prep_openat2_direct(), io_uring_prep_msg_ring_fd(), and
-   io_uring_prep_socket_direct() factor in being called with
-   IORING_FILE_INDEX_ALLOC for allocating a direct descriptor.
-+- Add io_uring_prep_sendto() function.
- 
- liburing-2.3 release
- 
-diff --git a/man/io_uring_prep_send.3 b/man/io_uring_prep_send.3
-index 3bdc96751ebfb230..b555ec3a8548c449 100644
---- a/man/io_uring_prep_send.3
-+++ b/man/io_uring_prep_send.3
-@@ -14,6 +14,14 @@ io_uring_prep_send \- prepare a send request
- .BI "                        const void *" buf ","
- .BI "                        size_t " len ","
- .BI "                        int " flags ");"
-+.PP
-+.BI "void io_uring_prep_sendto(struct io_uring_sqe *" sqe ","
-+.BI "                          int " sockfd ","
-+.BI "                          const void *" buf ","
-+.BI "                          size_t " len ","
-+.BI "                          int " flags ","
-+.BI "                          const struct sockaddr *" addr ","
-+.BI "                          socklen_t " addrlen ");"
- .fi
- .SH DESCRIPTION
- .PP
-@@ -43,6 +51,28 @@ This function prepares an async
- .BR send (2)
- request. See that man page for details.
- 
-+The
-+.BR io_uring_prep_sendto (3)
-+function prepares a sendto request. The submission queue entry
-+.I sqe
-+is setup to use the file descriptor
-+.I sockfd
-+to start sending the data from
-+.I buf
-+of size
-+.I len
-+bytes and with modifier flags
-+.IR flags .
-+The destination address is specified by
-+.I addr
-+and
-+.I addrlen
-+and must be a valid address for the socket type.
-+
-+This function prepares an async
-+.BR sendto (2)
-+request. See that man page for details.
-+
- .SH RETURN VALUE
- None
- .SH ERRORS
-@@ -64,3 +94,4 @@ field.
- .BR io_uring_get_sqe (3),
- .BR io_uring_submit (3),
- .BR send (2)
-+.BR sendto (2)
-diff --git a/man/io_uring_prep_sendto.3 b/man/io_uring_prep_sendto.3
-new file mode 120000
-index 0000000000000000..ba85e68453fe6dcb
---- /dev/null
-+++ b/man/io_uring_prep_sendto.3
-@@ -0,0 +1 @@
-+io_uring_prep_send.3
-\ No newline at end of file
+Alviro Iskandar Setiawan (1):
+  github: Add hppa cross compiler
+
+Ammar Faizi (2):
+  io_uring-udp: Fix the wrong IPv6 binary to string conversion
+  man/io_uring_cqe_get_data.3: Fix a misleading return value
+
+ .github/workflows/build.yml |  7 +++++++
+ examples/io_uring-udp.c     | 14 +++++++++++---
+ man/io_uring_cqe_get_data.3 |  2 +-
+ 3 files changed, 19 insertions(+), 4 deletions(-)
+
+
+base-commit: 4fed79510a189cc7997f6d04855ebf7fb66cc323
 -- 
 Ammar Faizi
 

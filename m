@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B8266E32A4
-	for <lists+io-uring@lfdr.de>; Sat, 15 Apr 2023 18:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2B076E32A5
+	for <lists+io-uring@lfdr.de>; Sat, 15 Apr 2023 18:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbjDOQ72 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 15 Apr 2023 12:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
+        id S230021AbjDOQ73 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 15 Apr 2023 12:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbjDOQ71 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Apr 2023 12:59:27 -0400
+        with ESMTP id S229989AbjDOQ72 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Apr 2023 12:59:28 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA3B4685;
-        Sat, 15 Apr 2023 09:59:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50FD3C25;
+        Sat, 15 Apr 2023 09:59:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1681577954;
-        bh=HVup6Nwi3vb9vRTlnVPxuqqQMSwEiPn9C+mF4ZjeNjI=;
-        h=From:To:Cc:Subject:Date;
-        b=rXkDBOPaP1kTlMYfClfz4dmROqTlur89vnhnh4fA24V4gBEoESSVGJvVTdXx3FY3H
-         DHEpDnwTfnw3rlXG33EKHXB6ky1yTFAxD8Bv4YEIRk8OsHayOwYEkauvl4h9Z8ZxTe
-         hGOOLoBliUW1VIUE4LU3q5Y2xtQfxm2Vy4E6Bb3qnpa/oGB1epaohmUNPIZipXiv5D
-         y/W131RKowWG+Tu9hbYjeRNhBBKwKTQCddBQUnuEisRU9Oki6qG/H5lmExVl7u5iAm
-         qJX74YTLWCFr2PTTa9CPy/phMwwdouK7VwhKJAkQ9bxhIrEUUXIT629nRRzHefjVLm
-         KE7iGBMEcsGtQ==
+        s=default; t=1681577957;
+        bh=QWY+Zl3F1B+NIqLmMETedIlIuKxQpaMYeUw+n9XJjn4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=VPmETBGuOfeU9HhDCmto5vPxpe3Q4+4tGX8NGPX1t+hlE8aGInj9W0c4RjyVnH5qf
+         6PG6z0Ln1PBof0KPRRbHYA7b9lOS5ovz6loK1t4ddKrcVXbL21VJ78gNs65fKKvu5Y
+         VAQST6SDa+Ha1oUqG6nS+NlpnCHl9a8jqD3yFKykIQJb0RzoKgSRX55ETo15KNH2Ba
+         HjyLIAqPquXL7fqEJBOalaewLLnkb0Hec+ca5K+E3ULG9NYA9EcXz6oz352GEcQhIp
+         lk+5MTMRAOzz5CoMSQrEjDtLdytmcdS+E3d/e6TTRZv8kTrs1Vbe+cXKcgBp88wXA3
+         h1UfZ8SNB52Pg==
 Received: from localhost.localdomain (unknown [182.253.88.211])
-        by gnuweeb.org (Postfix) with ESMTPSA id 472B92450ED;
-        Sat, 15 Apr 2023 23:59:10 +0700 (WIB)
+        by gnuweeb.org (Postfix) with ESMTPSA id AF4F324552A;
+        Sat, 15 Apr 2023 23:59:14 +0700 (WIB)
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -35,10 +35,12 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing 0/3] io_uring-udp fix, manpage fix, and hppa cross-compiler
-Date:   Sat, 15 Apr 2023 23:59:01 +0700
-Message-Id: <20230415165904.791841-1-ammarfaizi2@gnuweeb.org>
+Subject: [PATCH liburing 1/3] io_uring-udp: Fix the wrong IPv6 binary to string conversion
+Date:   Sat, 15 Apr 2023 23:59:02 +0700
+Message-Id: <20230415165904.791841-2-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230415165904.791841-1-ammarfaizi2@gnuweeb.org>
+References: <20230415165904.791841-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -50,13 +52,16 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+Another io_uring-udp fix. The verbose output shows the wrong address
+when using IPv6.
 
-There are three patches in this series:
+When the address family is AF_INET6, the pointer should be cast to
+'struct sockaddr_in6', not 'struct sockaddr_in'.
 
-1. Fix the wrong IPv6 address in io_uring-udp (me).
+While in there, also add a square bracket around the IP address to
+easily read the port number, especially for IPv6.
 
-Before:
+Before this patch:
 
     port bound to 49567
     received 4 bytes 28 from ::2400:6180:0:d1:0:0:47048
@@ -65,38 +70,51 @@ Before:
 
 (the IPv6 address is wrong)
 
-After:
+After this patch:
 
     port bound to 48033
     received 4 bytes 28 from [2400:6180:0:d1::6a4:a00f]:40456
     received 4 bytes 28 from [2400:6180:0:d1::6a4:a00f]:50306
     received 4 bytes 28 from [2400:6180:0:d1::6a4:a00f]:52291
 
-2. io_uring_cqe_get_data() manpage fix (me).
-
-The return value of io_uring_cqe_get_data() will be undefined if the
-user_data is not set from the SQE side.
-
-3. Add hppa cross-compiler to the CI (Alviro).
-
-Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Link: https://github.com/axboe/liburing/issues/814#issuecomment-1458862489
+Fixes: https://github.com/axboe/liburing/issues/814
+Fixes: 61d472b51e761e61c ("add an example for a UDP server")
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
+ examples/io_uring-udp.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-Alviro Iskandar Setiawan (1):
-  github: Add hppa cross compiler
-
-Ammar Faizi (2):
-  io_uring-udp: Fix the wrong IPv6 binary to string conversion
-  man/io_uring_cqe_get_data.3: Fix a misleading return value
-
- .github/workflows/build.yml |  7 +++++++
- examples/io_uring-udp.c     | 14 +++++++++++---
- man/io_uring_cqe_get_data.3 |  2 +-
- 3 files changed, 19 insertions(+), 4 deletions(-)
-
-
-base-commit: 4fed79510a189cc7997f6d04855ebf7fb66cc323
+diff --git a/examples/io_uring-udp.c b/examples/io_uring-udp.c
+index b81a5e7c47afd9c8..4697af171ba68999 100644
+--- a/examples/io_uring-udp.c
++++ b/examples/io_uring-udp.c
+@@ -271,14 +271,22 @@ static int process_cqe_recv(struct ctx *ctx, struct io_uring_cqe *cqe,
+ 	}
+ 
+ 	if (ctx->verbose) {
++		struct sockaddr_in *addr = io_uring_recvmsg_name(o);
++		struct sockaddr_in6 *addr6 = (void *)addr;
+ 		char buff[INET6_ADDRSTRLEN + 1];
+ 		const char *name;
+-		struct sockaddr_in *addr = io_uring_recvmsg_name(o);
++		void *paddr;
+ 
+-		name = inet_ntop(ctx->af, &addr->sin_addr, buff, sizeof(buff));
++		if (ctx->af == AF_INET6)
++			paddr = &addr6->sin6_addr;
++		else
++			paddr = &addr->sin_addr;
++
++		name = inet_ntop(ctx->af, paddr, buff, sizeof(buff));
+ 		if (!name)
+ 			name = "<INVALID>";
+-		fprintf(stderr, "received %u bytes %d from %s:%d\n",
++
++		fprintf(stderr, "received %u bytes %d from [%s]:%d\n",
+ 			io_uring_recvmsg_payload_length(o, cqe->res, &ctx->msg),
+ 			o->namelen, name, (int)ntohs(addr->sin_port));
+ 	}
 -- 
 Ammar Faizi
 

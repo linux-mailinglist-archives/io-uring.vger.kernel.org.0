@@ -2,103 +2,170 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6796E2ED7
-	for <lists+io-uring@lfdr.de>; Sat, 15 Apr 2023 05:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D8FE6E2FE8
+	for <lists+io-uring@lfdr.de>; Sat, 15 Apr 2023 11:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbjDODnC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Apr 2023 23:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39022 "EHLO
+        id S229841AbjDOJJJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 15 Apr 2023 05:09:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbjDODnB (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Apr 2023 23:43:01 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2E25270
-        for <io-uring@vger.kernel.org>; Fri, 14 Apr 2023 20:42:59 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-63b5312bd34so355627b3a.0
-        for <io-uring@vger.kernel.org>; Fri, 14 Apr 2023 20:42:59 -0700 (PDT)
+        with ESMTP id S230017AbjDOJIu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 15 Apr 2023 05:08:50 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79349740;
+        Sat, 15 Apr 2023 02:08:47 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id d8-20020a05600c3ac800b003ee6e324b19so10819174wms.1;
+        Sat, 15 Apr 2023 02:08:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681530179; x=1684122179;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1681549726; x=1684141726;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6HeyjJdAwFslf8Lpta8Pywj6nowlrBJdqE5SFB3Qz3s=;
-        b=EgbWg3G/uK3ld+7UAjWGYVjubCR5XDDRbKUvRVsqmWF7EXwBVvW9sfIRWTgKiAi+ol
-         inSei/KFX/ExiHUd0kQ1fDdFqOyd21I8EMxPX66aZVk1eKMAqGQ9q/tvdpmngsVwfiam
-         4c1dPhBGQpuBjYL8kfaRMzfTODt78bOXvlVe9QZdSvKVLZetq1NEcmtZ669Ul2FSnLlL
-         XQ9u/p/1gR37kEdlDMZlZEQh+UiwojOun5k+J9gU4kw/tnJhhrLr1G1nhvW0gmquzUUi
-         4t2tWn4km5JM20wBeafF2kX6ZbuFMdl7IOlagcP0fjapEHi7UqXIDGgJxhS0AkHil1q+
-         A0jA==
+        bh=8GS8ed+C9TZSDKqE7yJs3rXmG1XU+tjMZxFV1EPCP0I=;
+        b=b454/ADSubR+UtZwD/vd9/bxU7eI6S5iNJ+h+0UiN9FgDora+ApBhUaT3SSlJPj557
+         Wr3AFdfbJaL+aizieInN5iM4WcDgKnRveo/2NyepsbPQmZF74KcuE7RuIOiyD6ggtXa6
+         ALOo/15uJ0W2QbV3lcS061wfIQnR61bEBb8pnD6aBXrCXX96Kdxx2HQDKFGkGZpb7EpW
+         OmTyhghPGusO7/l9glNJkiPfr2rNIQjHZklmjuE1K1RDy4jndjREXz5eqSeEihKFhXsA
+         LyQ/OMWU+Dr0qQaxFDPpttO2bKIZFUYKcoe8bc2bHU7zWvT8dbv3t9Daba//frSBg37T
+         2SgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681530179; x=1684122179;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6HeyjJdAwFslf8Lpta8Pywj6nowlrBJdqE5SFB3Qz3s=;
-        b=BM4EIk4HgNHQFceXlsDJmgEfN4taRqMt96L09F73sdexuPeYaZM0Q1PNFiLeE9Pg26
-         EdXjFrGBDXIwFtp3owhCVyey7+PYHTa7rbVqdkMCNB+62CLcza2xijYX1/7Tp+Z/q+/B
-         6CyC2oVbnFyQBAB3DQEVU0f96G0S42XoaaIyjFCG7ZiJ2bh78c7UfGSfpsXhIwm0lcez
-         cF2t0mI67AlrXcA6Rjq9TfSf8R6V6MQJFiRayVCvDZFOYsWzEy+w5yXl0rjP5lEE8IQc
-         cyRYMzi6+vpGl76oxPIhoLJQ8fcsOqvnZvCnVfApRkwZzASZtL2rKq0kLhSoupzewzIv
-         bZig==
-X-Gm-Message-State: AAQBX9e+ZkrnjSDFZ0F1buuum/2B/OOvqMdY8mQFUTmb9Ba91rAP/ebf
-        +IpjZC+nl0Zfp6xoJt+v6aZz3ifB+KnEMK9K7E8=
-X-Google-Smtp-Source: AKy350ZtzXVSjG5mf146tPbpF5eX9jgnIDtwwx+WY0MCqyg3ks+k35AVR7OoVst8HAm6dJLUQCSH+Q==
-X-Received: by 2002:a05:6a00:1f0d:b0:5e2:3086:f977 with SMTP id be13-20020a056a001f0d00b005e23086f977mr5058652pfb.2.1681530179080;
-        Fri, 14 Apr 2023 20:42:59 -0700 (PDT)
-Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id u23-20020a62ed17000000b0062d7c0dc4f4sm3696650pfh.80.2023.04.14.20.42.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 20:42:58 -0700 (PDT)
-Message-ID: <b2b5b5dc-d849-d4ba-4f18-08d6869db9c2@kernel.dk>
-Date:   Fri, 14 Apr 2023 21:42:57 -0600
+        d=1e100.net; s=20221208; t=1681549726; x=1684141726;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8GS8ed+C9TZSDKqE7yJs3rXmG1XU+tjMZxFV1EPCP0I=;
+        b=ZNNT0Urk+3pnlWYDyFbPhIRXG1+++6I23GhbdnJ3gJ15zcXvQ74SyN43UXt6zpCAMZ
+         xnZ0UB5y24M8GFeeKqMyONthjXFQ1QqsXaPsNjeFVN3KrFKEkCuDyGsuKBxI+Ek41Scr
+         ZKQ+iIGjFkkM+wUoSwEDCIE8CqqxBjvjDMU0VulvYpOM9t01fbBjvE7V2izhiYrrDtJM
+         bu+7W75LEmdXn+ikVwDLM3Z/AU/AFeK44mA9Xv37pwrXLG79oCWCHPOeJyYP+/S52nPj
+         0zCgVJ4x263MvEqUsc2Plm9xAl0DTIn2meYiCcas6SMYnQOkWp2MZwqDiHSYOFBlddvO
+         b3Dg==
+X-Gm-Message-State: AAQBX9c9Rny72eWFHcMs7B77cvUtnBikgkUdZuMVs1FOhr2laFmZceMs
+        TJ2mHKlRF4cY8Dn0s08rFR4=
+X-Google-Smtp-Source: AKy350aou3ekqdEv1AmYmuJIzUpY9augs9/NpgSD9Hdfv4oTmMl+FDy9Ovq+2DeTaldPP79lxq+pcg==
+X-Received: by 2002:a7b:c7c8:0:b0:3ed:b094:3c93 with SMTP id z8-20020a7bc7c8000000b003edb0943c93mr5887766wmk.23.1681549725732;
+        Sat, 15 Apr 2023 02:08:45 -0700 (PDT)
+Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
+        by smtp.googlemail.com with ESMTPSA id c8-20020a05600c0a4800b003ee5fa61f45sm9990707wmq.3.2023.04.15.02.08.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Apr 2023 02:08:45 -0700 (PDT)
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [PATCH v2 5/7] io_uring: rsrc: use FOLL_SAME_FILE on pin_user_pages()
+Date:   Sat, 15 Apr 2023 10:08:42 +0100
+Message-Id: <362e96284273ef0781df0116b6491ce97b0fe073.1681547405.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <cover.1681547405.git.lstoakes@gmail.com>
+References: <cover.1681547405.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fix for 6.3-rc7
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Commit edd478269640 ("io_uring/rsrc: disallow multi-source reg buffers")
+prevents io_pin_pages() from pinning pages spanning multiple VMAs with
+permitted characteristics (anon/huge), requiring that all VMAs share the
+same vm_file.
 
-Just a small tweak to when task_work needs redirection, marked for
-stable as well. Please pull!
+The newly introduced FOLL_SAME_FILE flag permits this to be expressed as a
+GUP flag rather than having to retrieve VMAs to perform the check.
 
+We then only need to perform a VMA lookup for the first VMA to assert the
+anon/hugepage requirement as we know the rest of the VMAs will possess the
+same characteristics.
 
-The following changes since commit b4a72c0589fdea6259720375426179888969d6a2:
+Doing this eliminates the one instance of vmas being used by
+pin_user_pages().
 
-  io_uring: fix memory leak when removing provided buffers (2023-04-01 16:52:12 -0600)
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ io_uring/rsrc.c | 39 ++++++++++++++++-----------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
 
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.3-2023-04-14
-
-for you to fetch changes up to 860e1c7f8b0b43fbf91b4d689adfaa13adb89452:
-
-  io_uring: complete request via task work in case of DEFER_TASKRUN (2023-04-14 06:38:23 -0600)
-
-----------------------------------------------------------------
-io_uring-6.3-2023-04-14
-
-----------------------------------------------------------------
-Ming Lei (1):
-      io_uring: complete request via task work in case of DEFER_TASKRUN
-
- io_uring/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 7a43aed8e395..adc860bcbd4f 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1141,9 +1141,8 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
+ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
+ {
+ 	unsigned long start, end, nr_pages;
+-	struct vm_area_struct **vmas = NULL;
+ 	struct page **pages = NULL;
+-	int i, pret, ret = -ENOMEM;
++	int pret, ret = -ENOMEM;
+ 
+ 	end = (ubuf + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	start = ubuf >> PAGE_SHIFT;
+@@ -1153,31 +1152,26 @@ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
+ 	if (!pages)
+ 		goto done;
+ 
+-	vmas = kvmalloc_array(nr_pages, sizeof(struct vm_area_struct *),
+-			      GFP_KERNEL);
+-	if (!vmas)
+-		goto done;
+-
+ 	ret = 0;
+ 	mmap_read_lock(current->mm);
+-	pret = pin_user_pages(ubuf, nr_pages, FOLL_WRITE | FOLL_LONGTERM,
+-			      pages, vmas);
++
++	pret = pin_user_pages(ubuf, nr_pages,
++			      FOLL_WRITE | FOLL_LONGTERM | FOLL_SAME_FILE,
++			      pages, NULL);
+ 	if (pret == nr_pages) {
+-		struct file *file = vmas[0]->vm_file;
++		/*
++		 * lookup the first VMA, we require that all VMAs in range
++		 * maintain the same file characteristics, as enforced by
++		 * FOLL_SAME_FILE
++		 */
++		struct vm_area_struct *vma = vma_lookup(current->mm, ubuf);
++		struct file *file;
+ 
+ 		/* don't support file backed memory */
+-		for (i = 0; i < nr_pages; i++) {
+-			if (vmas[i]->vm_file != file) {
+-				ret = -EINVAL;
+-				break;
+-			}
+-			if (!file)
+-				continue;
+-			if (!vma_is_shmem(vmas[i]) && !is_file_hugepages(file)) {
+-				ret = -EOPNOTSUPP;
+-				break;
+-			}
+-		}
++		file = vma->vm_file;
++		if (file && !vma_is_shmem(vma) && !is_file_hugepages(file))
++			ret = -EOPNOTSUPP;
++
+ 		*npages = nr_pages;
+ 	} else {
+ 		ret = pret < 0 ? pret : -EFAULT;
+@@ -1194,7 +1188,6 @@ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
+ 	}
+ 	ret = 0;
+ done:
+-	kvfree(vmas);
+ 	if (ret < 0) {
+ 		kvfree(pages);
+ 		pages = ERR_PTR(ret);
 -- 
-Jens Axboe
+2.40.0
 

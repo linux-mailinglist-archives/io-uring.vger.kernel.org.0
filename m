@@ -2,73 +2,97 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 406036E3545
-	for <lists+io-uring@lfdr.de>; Sun, 16 Apr 2023 07:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 985FA6E36C8
+	for <lists+io-uring@lfdr.de>; Sun, 16 Apr 2023 11:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbjDPFyz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 16 Apr 2023 01:54:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40390 "EHLO
+        id S230284AbjDPJwZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 16 Apr 2023 05:52:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjDPFyy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Apr 2023 01:54:54 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E26D2D52;
-        Sat, 15 Apr 2023 22:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TBtcpsXHeVpbPsSte8uqDCd7VMaCKEQiVcvyKRXX7Mg=; b=j5v+Vx78d62tZwWrCr9W+wLTGy
-        ixFBl82hsUDRTvJYcHKmSVUrCIZXu4pJnyZpGCAs+aGltHNkeQjmqsI28wEXJIgjcDRkNPZsiCzLN
-        LnXDLXTDebBnKZiioBEQFGH91J6VmcwjrxW/MxOeWHjZmnXT0zZbtgjJNVBUmEspvJl2lW1hCVTUp
-        bPigqFbqljbFRaIob6Vlv5z2V64V4Qi2SulnmMxlKZhAJouRSidC6BLVTJRbuHKtWwcsecBwkaqhx
-        97UuwsuzGG8b2w4rPlA/F9IQDZttleOaGKh+YoGncGeVIarSxQNrFnATN3gNEws+Ry2vmCf7IvXKC
-        zSz3s3Zg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pnvLd-00DBwW-26;
-        Sun, 16 Apr 2023 05:54:49 +0000
-Date:   Sat, 15 Apr 2023 22:54:49 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bschubert@ddn.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        dsingh@ddn.com
-Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
-Message-ID: <ZDuNqQgpHUw+gi9G@infradead.org>
-References: <20230307172015.54911-2-axboe@kernel.dk>
- <20230412134057.381941-1-bschubert@ddn.com>
- <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
- <ZDjggMCGautPUDpW@infradead.org>
- <20230414153612.GB360881@frogsfrogsfrogs>
+        with ESMTP id S229905AbjDPJwY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Apr 2023 05:52:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1418EE62
+        for <io-uring@vger.kernel.org>; Sun, 16 Apr 2023 02:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681638696;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3rm3Tx4scnUmIq1Y7/GKTAQGQLeBUUnvNMLalbZs9d4=;
+        b=IapjlLR4ztDMDpW+rx6/AS5XEE9FtpM+74iVkFZbyimyneGzYA/SPpEzLbmFSU/eWsaEFb
+        FnG+JXq/y/cXMWe9N92eHfzZRjV/eD6EcWhbVqEFZ9Z+8KHQWee0XQ3s0lhOvkeMluKYJx
+        jGu5/91WFeguANMV3k5aUG1a2uQe8/8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-492-pFmwaZ38MRmb-VHaBeYHqg-1; Sun, 16 Apr 2023 05:51:33 -0400
+X-MC-Unique: pFmwaZ38MRmb-VHaBeYHqg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BA6AB185A78F;
+        Sun, 16 Apr 2023 09:51:32 +0000 (UTC)
+Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2053614152F6;
+        Sun, 16 Apr 2023 09:51:20 +0000 (UTC)
+Date:   Sun, 16 Apr 2023 17:51:14 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Breno Leitao <leitao@debian.org>, axboe@kernel.dk,
+        davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
+        edumazet@google.com, io-uring@vger.kernel.org, kuba@kernel.org,
+        leit@fb.com, linux-kernel@vger.kernel.org,
+        marcelo.leitner@gmail.com, matthieu.baerts@tessares.net,
+        mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com,
+        willemdebruijn.kernel@gmail.com, ming.lei@redhat.com
+Subject: Re: [PATCH RFC] io_uring: Pass whole sqe to commands
+Message-ID: <ZDvFEkRo+yor7FM+@ovpn-8-16.pek2.redhat.com>
+References: <20230406144330.1932798-1-leitao@debian.org>
+ <20230406165705.3161734-1-leitao@debian.org>
+ <ZDdvcSKLa6ZEAhRW@ovpn-8-18.pek2.redhat.com>
+ <ZDgyPL6UrX/MaBR4@gmail.com>
+ <ZDi2pP4jgHwCvJRm@ovpn-8-21.pek2.redhat.com>
+ <44420e92-f629-f56e-f930-475be6f6a83a@gmail.com>
+ <ZDlcXd4K+a2iGbnv@ovpn-8-21.pek2.redhat.com>
+ <e152d8f0-6bf9-f658-f484-f7a18055a664@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230414153612.GB360881@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <e152d8f0-6bf9-f658-f484-f7a18055a664@gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 08:36:12AM -0700, Darrick J. Wong wrote:
-> IIUC uring wants to avoid the situation where someone sends 300 writes
-> to the same file, all of which end up in background workers, and all of
-> which then contend on exclusive i_rwsem.  Hence it has some hashing
-> scheme that executes io requests serially if they hash to the same value
-> (which iirc is the inode number?) to prevent resource waste.
+On Fri, Apr 14, 2023 at 03:56:47PM +0100, Pavel Begunkov wrote:
+> On 4/14/23 14:59, Ming Lei wrote:
+> [...]
+> > > > Will this kind of inconsistency cause trouble for driver? Cause READ
+> > > > TWICE becomes possible with this patch.
+> > > 
+> > > Right it might happen, and I was keeping that in mind, but it's not
+> > > specific to this patch. It won't reload core io_uring bits, and all
+> > 
+> > It depends if driver reloads core bits or not, anyway the patch exports
+> > all fields and opens the window.
 > 
-> This flag turns off that hashing behavior on the assumption that each of
-> those 300 writes won't serialize on the other 299 writes, hence it's ok
-> to start up 300 workers.
-> 
-> (apologies for precoffee garbled response)
+> If a driver tries to reload core bits and even worse modify io_uring
+> request without proper helpers, it should be rooted out and thrown
+> into a bin. In any case cmds are expected to exercise cautiousness
+> while working with SQEs as they may change. I'd even argue that
+> hiding it as void *cmd makes it much less obvious.
 
-It might be useful if someone (Jens?) could clearly document the
-assumptions for this flag.
+Fair enough, if it is well documented, then people will know these
+problems and any change in this area can get careful review.
+
+
+Thanks, 
+Ming
+

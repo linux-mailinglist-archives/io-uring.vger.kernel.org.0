@@ -2,129 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF2D56E3C8D
-	for <lists+io-uring@lfdr.de>; Mon, 17 Apr 2023 00:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 793C86E4638
+	for <lists+io-uring@lfdr.de>; Mon, 17 Apr 2023 13:18:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbjDPWHX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 16 Apr 2023 18:07:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34708 "EHLO
+        id S229915AbjDQLS2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 17 Apr 2023 07:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjDPWHW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 16 Apr 2023 18:07:22 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D31CF2133;
-        Sun, 16 Apr 2023 15:07:19 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id E7085C01E; Mon, 17 Apr 2023 00:07:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1681682836; bh=xwB+nzBQW7d8TFoIztbHD75zt+9iiLx/9rkexbbWi80=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aR0/GeKZkEj80qvbNPgpHjKuZpudBE+0lJIURKv0KNQC+IzV9xJPxekEN/6UvlDpw
-         lsvv/AAfiJemDgUDxMC5PMG8HqpjIEasaJ5d65UDf66jkMN2U4UNxlp6cGMRxoGELE
-         fgiXyTKdDyUjoeTAabCIGWBJihvZapQtmQJ0vmJXW4TCN0ZIP42Tq0Iftm9+D6yegH
-         W8QdqZqxy2KY8FrZwNSr3rOsSOjFa3Hths41R5YPKY+jYmPje0WgWQOy251Nd0iV7m
-         QuzBM1XcNSuV2Fl2HTDaOJ94iWBOHtQSv5DrEc58nnbDV/4IYsLVVHhRFb50OwoX/c
-         sOYC7k+SdPFHg==
+        with ESMTP id S229802AbjDQLS0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 17 Apr 2023 07:18:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5A97690
+        for <io-uring@vger.kernel.org>; Mon, 17 Apr 2023 04:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681730081;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5KNRdeLRU2Xq/n1iDZzMtTXMvfraDKy7YfY/QU65aIc=;
+        b=i3oFxczaEt479I0iFXaRhrqLSx9P6FifoKisSNQvp7e9tktK5cHxJxAFqtr3/GP3+qQL9I
+        nFNrBUPeyJNPD5WLlgYOR+rD9soVZlgW5jRZCfGZG+xYH4q8JIoahT5ZvWoP57opaZ5sBw
+        6jIV08hpzQ46euOkDOabHH0mEPAqZTI=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-azUJ84cEPTK-QgClO9p76A-1; Mon, 17 Apr 2023 07:14:40 -0400
+X-MC-Unique: azUJ84cEPTK-QgClO9p76A-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-2f458b98be5so797656f8f.2
+        for <io-uring@vger.kernel.org>; Mon, 17 Apr 2023 04:14:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681730079; x=1684322079;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5KNRdeLRU2Xq/n1iDZzMtTXMvfraDKy7YfY/QU65aIc=;
+        b=aXX3NXvQ3COJy9tcuvKvQ7bUZk/77sWYDQnMbWdaktt30MsDhIZEETmv0vwN2pmLLQ
+         nX3MDuU020WcAirEh76y/c5FXMKjenYLcq8mxswfA33aHEMgnTYXvT47oocnpqI/6pdk
+         a8XwKXkeSRx9GMupHe8aFSXyjzf7fyiEVv1guqaobyGl+IEYy+v26U/YTiCjMuU+SoK2
+         FWMKUGpldJ4My5zzRj1X9hs3YDTu3KwoCqPAAWKYHqGEyRPHIJGWPGsot0bZ0+SePchw
+         Oba/kGiGhDN1vA5TzceaExcp+/8ELAVz6P/J19SkHmPmuUxArqqOlRucy0ZpbgZ0E7g5
+         CRNg==
+X-Gm-Message-State: AAQBX9fOmDooVJHgLlfjhF/XcANXtCOyBD1nxRwdodhpn8xjOPG6WMcG
+        IUoghY1D2conMj1YT4/vQVtL2ftSQKnKc8dP2jqx2RcIVpO2K5okkzlnmko0bhCNtxNCLsjJsAo
+        CB9y7lO9IQngVd7nsdoo=
+X-Received: by 2002:a5d:650c:0:b0:2f8:3225:2bc2 with SMTP id x12-20020a5d650c000000b002f832252bc2mr4681531wru.41.1681730079147;
+        Mon, 17 Apr 2023 04:14:39 -0700 (PDT)
+X-Google-Smtp-Source: AKy350bNt0CQlgSAneNNoqT/xp81/MyHZrBQz3dDdnffEdIUnbPzTF+43gFytbOZ+e3kttt+3w0ALw==
+X-Received: by 2002:a5d:650c:0:b0:2f8:3225:2bc2 with SMTP id x12-20020a5d650c000000b002f832252bc2mr4681519wru.41.1681730078827;
+        Mon, 17 Apr 2023 04:14:38 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c700:fc00:db07:68a9:6af5:ecdf? (p200300cbc700fc00db0768a96af5ecdf.dip0.t-ipconnect.de. [2003:cb:c700:fc00:db07:68a9:6af5:ecdf])
+        by smtp.gmail.com with ESMTPSA id v3-20020adfe4c3000000b002f459afc809sm10282660wrm.72.2023.04.17.04.14.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Apr 2023 04:14:38 -0700 (PDT)
+Message-ID: <eb624430-6fb5-0349-0798-3f71c39e8768@redhat.com>
+Date:   Mon, 17 Apr 2023 13:14:36 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v3 6/7] mm/gup: remove vmas parameter from
+ pin_user_pages()
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org,
+        bpf@vger.kernel.org
+References: <cover.1681558407.git.lstoakes@gmail.com>
+ <fa5487e54dfae725c84dfd7297b06567340165bd.1681558407.git.lstoakes@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <fa5487e54dfae725c84dfd7297b06567340165bd.1681558407.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id EDF64C01A;
-        Mon, 17 Apr 2023 00:07:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1681682836; bh=xwB+nzBQW7d8TFoIztbHD75zt+9iiLx/9rkexbbWi80=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aR0/GeKZkEj80qvbNPgpHjKuZpudBE+0lJIURKv0KNQC+IzV9xJPxekEN/6UvlDpw
-         lsvv/AAfiJemDgUDxMC5PMG8HqpjIEasaJ5d65UDf66jkMN2U4UNxlp6cGMRxoGELE
-         fgiXyTKdDyUjoeTAabCIGWBJihvZapQtmQJ0vmJXW4TCN0ZIP42Tq0Iftm9+D6yegH
-         W8QdqZqxy2KY8FrZwNSr3rOsSOjFa3Hths41R5YPKY+jYmPje0WgWQOy251Nd0iV7m
-         QuzBM1XcNSuV2Fl2HTDaOJ94iWBOHtQSv5DrEc58nnbDV/4IYsLVVHhRFb50OwoX/c
-         sOYC7k+SdPFHg==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 95555fd8;
-        Sun, 16 Apr 2023 22:07:09 +0000 (UTC)
-Date:   Mon, 17 Apr 2023 07:06:54 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
-Message-ID: <ZDxxfpADz6-T4-tS@codewreck.org>
-References: <20211221164004.119663-1-shr@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211221164004.119663-1-shr@fb.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Stefan Roesch wrote on Tue, Dec 21, 2021 at 08:40:01AM -0800:
-> This series adds support for getdents64 in liburing. The intent is to
-> provide a more complete I/O interface for io_uring.
+On 15.04.23 14:09, Lorenzo Stoakes wrote:
+> After the introduction of FOLL_SAME_FILE we no longer require vmas for any
+> invocation of pin_user_pages(), so eliminate this parameter from the
+> function and all callers.
+> 
+> This clears the way to removing the vmas parameter from GUP altogether.
+> 
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
 
-[reminder: This series was dropped a year ago after Al Viro rightly
-pointed out that we can't just pass an arbitrary offset to iterate_dir
-as offset validation is costly and not always possible at all]
+Ideally, we'd avoid FOLL_SAME_FILE as well
 
-I'm digging an old topic here because I was looking at trying io_uring
-on a toy project (specifically, exporting infos out of /sys/fs/cgroup
-recursively), but was partly held back by the lack of getdents or
-equivalent interface for the crawler part -- and existing bricks like
-fts or nftw predate openat interfaces and just didn't appeal to me, but
-in general just mixing in io_uring and synchronous getdents sounded a
-bit of a pain.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Given it's been over a year I guess it's not such a much needed feature,
-but when you're centering your program loop around the ring having the
-occasional getdents/readdir call is a bit cumbersome.
-
-
-This is probably a naive idea, but would it make sense discussing just
-making it fit the current getdents API:
-Given the problem seems to be revalidating the offset, since the main
-usecase is probably to just go through a directory, perhaps the file's
-offset could be updated just like the real call and offset validation be
-skipped if the parameter is equal to the file's offset?
-Giving a different offset would be equivalent to lseek + getdents and
-update the position as well, so e.g. rewinding the directory with a seek
-0 would work if an application needs to check a directory's content
-multiple times.
-
-Heck, seek to any offset other than 0 could just be refused for any sane
-usage, it just doesn't make sense to use anything else in practice;
-that'd make it a defacto "dumb getdents + rewinddir".
-The API could be made simpler to use/clear about expectations by making
-the last parameter "bool rewind_first" instead of an offset (or I guess
-a flag with just a single valid bit if we were to really implement this)
-
-
-This isn't very io_uring-like, but it'd allow for an io_uring-centric
-program to also handle some directory processing, and wouldn't expose
-anything that's not currently already possible to do (as long as each
-processed op brings in its own context, the only "race" I can see in
-iterate_dir is that file->f_pos can go back to a previously also valid
-position if some iterations are faster than others, assuming it's an
-atomic access, and that'd probably warrant a READ/WRITE_ONCE or
-something.. but that's not a new problem, user threads can already
-hammer getdents in parallel on a single fd if they want useless results)
-
-
-What do you think?
-
-
-I'm just asking with a toy in mind so it's not like I have any strong
-opinion, but I'd be happy to rework Stefan's patches if it looks like it
-might make sense.
-(And if the consensus is that this will make hell break loose I'll just
-forget about it before sinking more time in it, just catching up was fun
-enough!)
-
-Cheers,
 -- 
-Dominique Martinet | Asmadeus
+Thanks,
+
+David / dhildenb
+

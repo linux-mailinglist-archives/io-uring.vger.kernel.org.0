@@ -2,171 +2,149 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B36736E6D06
-	for <lists+io-uring@lfdr.de>; Tue, 18 Apr 2023 21:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB386E6F3A
+	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 00:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231875AbjDRTl2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Apr 2023 15:41:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48404 "EHLO
+        id S232840AbjDRWNe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Apr 2023 18:13:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231174AbjDRTl1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 15:41:27 -0400
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C34659B;
-        Tue, 18 Apr 2023 12:41:26 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id oo30so15825522qvb.12;
-        Tue, 18 Apr 2023 12:41:26 -0700 (PDT)
+        with ESMTP id S233226AbjDRWNZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 18:13:25 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 572E659E8
+        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 15:13:03 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1a516fb6523so32188665ad.3
+        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 15:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681846885; x=1684438885;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dqdkta1Zk1UqyIAXbk1/CAopdFNFnp9tf0jtsKEKX/U=;
-        b=k+BsMLjVgeY/JRtYXrnJI7vJ28yuIV8fhFcqK/kmJDiMB5YFSQbzH9svJL79M/gtvu
-         VkXtGsnxtx/EqNRIl8oeR6K/kcokITpfVeYv6D7/FX6vBT1SPZJFAjj6YSU5U1EHyLM/
-         brSazLGWCynYtMhGzcI9jBakr2lDu7uVETrKXbQat9FsDly4XNz+9FFrGEZ5B868rTpN
-         Jyb9BpH/eHjDgs7P9638iPyZAgf9P7phn0RWP4cTLoJg3WbB9XYltFDYNufzNi6l8jhJ
-         kM7LEU7ZG+svskLUAyWp8q0RtlTvZkPwFsMWHwil8kjM/j/WegL9cCFlceZl/xOq76bs
-         NLBw==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1681855983; x=1684447983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JpFm5m6tO5mx05kVIN/ttwb3Qau/R4UqBZIeKrztNYA=;
+        b=FnQjklus3REFTnQ81KALNZESVQXH2keBj2dkRkYOlAz3Dgho0s+pjDXI5TzwS5e3G8
+         3D1Csr1z7hqDvbVuINHJoxalmL3zzIL6c4crYXxGs0ENxn2GpS1xdGUfuHoevhI6OC49
+         Jcq6yKYs3UojyLTG8FQxrmka1GRY9X8yQbsZVE30fb1EVeiiK7b+XxVjdBK4cUIJILhA
+         u49PC1WOafr9HrwZ2veM/dFW3xOgn/zi8yCjfYGjk125kKAUxkTZ91ZG2h54mV+KMXOK
+         bZ+AIQ7JhIswIsa+YYq+egllYyc24SiGUt4GrEU3hejwIYIrUjupm79+uXXRFA/qp0Bm
+         NO8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681846885; x=1684438885;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Dqdkta1Zk1UqyIAXbk1/CAopdFNFnp9tf0jtsKEKX/U=;
-        b=GPLt6N4rMdAMQerU/3omvHZgVSzr8A4JzRPh9KGDckM5G5b+3FjtwtfYVCbHN4uhma
-         qa1sUDRGOFU6tPMmtfEJol3Kk00kHCXF5E054tFJFlNsX6wqA3LMVeQHK1sEiZ6+XbWO
-         ak1+tZ8iewyeqiMnX/oTkBq1vwbjHLE1QWQKd9PNvuS2mFEp1HLhf4/dDI4/8pufdZ4d
-         mTXEmudk9m/97g42nCUN9Qq1XNcpni05ev0bBUXaQO/bGlXxw36qACEno3tCKYRK3z1j
-         Bim7DTjlSZ05sAdfNqHjFq8SYNZe7pLlppDFAYS6VCPxhY2sD1uOJd/zUfeDbPlDblhp
-         xgIw==
-X-Gm-Message-State: AAQBX9cuG1nyhUXDUO3Jd5r5+xevoff4YcD33dqAFyBdtC9F3TIGYE5r
-        n0GP+SjpJY81KPUmGq3xkfo=
-X-Google-Smtp-Source: AKy350Y3WRyEQO9TtYe/YYFXZqAOBuHoJeYs1uPJYBRJu7+rvTUnFvSGRVH65/YcG6Zgt2Qr5fL+Ag==
-X-Received: by 2002:a05:6214:1c4e:b0:5e3:d150:3168 with SMTP id if14-20020a0562141c4e00b005e3d1503168mr25374707qvb.18.1681846885409;
-        Tue, 18 Apr 2023 12:41:25 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id w14-20020a0cfc4e000000b005ef6ba1f4afsm2179222qvp.134.2023.04.18.12.41.24
+        d=1e100.net; s=20221208; t=1681855983; x=1684447983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JpFm5m6tO5mx05kVIN/ttwb3Qau/R4UqBZIeKrztNYA=;
+        b=JZzNk1KUl2cs0zJAtI646h3h7h8VikPuHe2+kSJqwcokQHkVu4OfNJzKOIXBbgeSaY
+         sw/Crp7utpNzMryPzgs5NZHByRln9xuQ4RYeGZV6t+dbiRWafYgoIkKs34QA1W1+wfS4
+         Wqff7r9F9zwZIX7TWEb15WpJ2kvoshqCLHMDKcJL4y5YHf4961/EKN3o2ci1RuFY/ZJ+
+         8TB18U7fQF7a3GrndwRxSG7nG4fKJtsKsOjJua32smJ+zNheitHQdAjKD9ExUbhHPXvq
+         ZXsP/HcvSLfdey46/+bWIS1qh9YzNYzVy1fNjjvXSQUkLm/uFvCGctJotQm2WQInGkn9
+         itfw==
+X-Gm-Message-State: AAQBX9c6ZtL1UIwtkqgBk9CZh6Vfar5HJXVWYY/4v1BwiNmkHJ4dcJAV
+        I2kb7uk5B0coiYlUaLzOtm4AyQ==
+X-Google-Smtp-Source: AKy350YhJ+naK8yn0hGO1Ed15RZSTssdd0aSp9Ef+Sl9MG9f2/gT4cORtcXENiAC0RpQlOhU4anHLg==
+X-Received: by 2002:a17:903:2348:b0:1a5:2fbd:d094 with SMTP id c8-20020a170903234800b001a52fbdd094mr4139805plh.9.1681855982883;
+        Tue, 18 Apr 2023 15:13:02 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
+        by smtp.gmail.com with ESMTPSA id u1-20020a170902a60100b001a671a396efsm10093392plq.214.2023.04.18.15.13.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 12:41:24 -0700 (PDT)
-Date:   Tue, 18 Apr 2023 15:41:24 -0400
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To:     Breno Leitao <leitao@debian.org>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        kuba@kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, David Ahern <dsahern@kernel.org>,
-        Willem de Bruijn <willemb@google.com>,
-        io-uring@vger.kernel.org, netdev@vger.kernel.org, kuba@kernel.org,
-        asml.silence@gmail.com, leit@fb.com, edumazet@google.com,
-        pabeni@redhat.com, davem@davemloft.net, dccp@vger.kernel.org,
-        mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
-        matthieu.baerts@tessares.net, marcelo.leitner@gmail.com
-Message-ID: <643ef2643f3ce_352b2f2945d@willemb.c.googlers.com.notmuch>
-In-Reply-To: <ZD6Zw1GAZR28++3v@gmail.com>
-References: <643573df81e20_11117c2942@willemb.c.googlers.com.notmuch>
- <036c80e5-4844-5c84-304c-7e553fe17a9b@kernel.dk>
- <64357608c396d_113ebd294ba@willemb.c.googlers.com.notmuch>
- <19c69021-dce3-1a4a-00eb-920d1f404cfc@kernel.dk>
- <64357bb97fb19_114b22294c4@willemb.c.googlers.com.notmuch>
- <20cb4641-c765-e5ef-41cb-252be7721ce5@kernel.dk>
- <ZDa32u9RNI4NQ7Ko@gmail.com>
- <6436c01979c9b_163b6294b4@willemb.c.googlers.com.notmuch>
- <ZDdGl/JGDoRDL8ja@gmail.com>
- <6438109fe8733_13361929472@willemb.c.googlers.com.notmuch>
- <ZD6Zw1GAZR28++3v@gmail.com>
-Subject: Re: [PATCH 0/5] add initial io_uring_cmd support for sockets
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 18 Apr 2023 15:13:02 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1potZM-0051YJ-3Z; Wed, 19 Apr 2023 08:13:00 +1000
+Date:   Wed, 19 Apr 2023 08:13:00 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Dharmendra Singh <dsingh@ddn.com>
+Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
+Message-ID: <20230418221300.GT3223426@dread.disaster.area>
+References: <20230307172015.54911-2-axboe@kernel.dk>
+ <20230412134057.381941-1-bschubert@ddn.com>
+ <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
+ <ZDjggMCGautPUDpW@infradead.org>
+ <20230414153612.GB360881@frogsfrogsfrogs>
+ <cfeade24-81fc-ab73-1fd9-89f12a402486@kernel.dk>
+ <CAJfpegvv-SPJRjWrR_+JY-H=xmYq0pnTfAtj-N8kG7AnQvWd=w@mail.gmail.com>
+ <e4855cfa-3683-f12c-e865-6e5c4d0e5602@ddn.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4855cfa-3683-f12c-e865-6e5c4d0e5602@ddn.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Breno Leitao wrote:
-> On Thu, Apr 13, 2023 at 10:24:31AM -0400, Willem de Bruijn wrote:
-> > > How to handle these contradictory behaviour ahead of time (at callee
-> > > time, where the buffers will be prepared)?
+On Tue, Apr 18, 2023 at 12:55:40PM +0000, Bernd Schubert wrote:
+> On 4/18/23 14:42, Miklos Szeredi wrote:
+> > On Sat, 15 Apr 2023 at 15:15, Jens Axboe <axboe@kernel.dk> wrote:
 > > 
-> > Ah you found a counter-example to the simple pattern of put_user.
+> >> Yep, that is pretty much it. If all writes to that inode are serialized
+> >> by a lock on the fs side, then we'll get a lot of contention on that
+> >> mutex. And since, originally, nothing supported async writes, everything
+> >> would get punted to the io-wq workers. io_uring added per-inode hashing
+> >> for this, so that any punt to io-wq of a write would get serialized.
+> >>
+> >> IOW, it's an efficiency thing, not a correctness thing.
 > > 
-> > The answer perhaps depends on how many such counter-examples you
-> > encounter in the list you gave. If this is the only one, exceptions
-> > in the wrapper are reasonable. Not if there are many.
+> > We could still get a performance regression if the majority of writes
+> > still trigger the exclusive locking.  The questions are:
+> > 
+> >   - how often does that happen in real life?
 > 
-> 
-> Hello Williem,
-> 
-> I spend sometime dealing with it, and the best way for me to figure out
-> how much work this is, was implementing a PoC. You can find a basic PoC
-> in the link below. It is not 100% complete (still need to convert 4
-> simple ioctls), but, it deals with the most complicated cases. The
-> missing parts are straighforward if we are OK with this approach.
-> 
-> 	https://github.com/leitao/linux/commits/ioctl_refactor
-> 
-> Details
-> =======
-> 
-> 1)  Change the ioctl callback to use kernel memory arguments. This
-> changes a lot of files but most of them are trivial. This is the new
-> ioctl callback:
-> 
-> struct proto {
-> 
->         int                     (*ioctl)(struct sock *sk, int cmd,
-> -                                        unsigned long arg);
-> +                                        int *karg);
-> 
-> 	You can see the full changeset in the following commit (which is
-> 	the last in the tree above)
-> 	https://github.com/leitao/linux/commit/ad78da14601b078c4b6a9f63a86032467ab59bf7
-> 
-> 2) Create a wrapper (sock_skprot_ioctl()) that should be called instead
-> of sk->sk_prot->ioctl(). For every exception, calls a specific function
-> for the exception (basically ipmr_ioctl and ipmr_ioctl) (see more on 3)
-> 
-> 	This is the commit https://github.com/leitao/linux/commit/511592e549c39ef0de19efa2eb4382cac5786227
-> 
-> 3) There are two exceptions, they are ip{6}mr_ioctl() and pn_ioctl().
-> ip{6}mr is the hardest one, and I implemented the exception flow for it.
-> 
-> 	You could find ipmr changes here:
-> 	https://github.com/leitao/linux/commit/659a76dc0547ab2170023f31e20115520ebe33d9
-> 
-> Is this what you had in mind?
-> 
-> Thank you!
+> Application depending? My personal opinion is that 
+> applications/developers knowing about uring would also know that they 
+> should set the right file size first. Like MPIIO is extending files 
+> persistently and it is hard to fix with all these different MPI stacks 
+> (I can try to notify mpich and mvapich developers). So best would be to 
+> document it somewhere in the uring man page that parallel extending 
+> files might have negative side effects?
 
-Thanks for the series, Breno. Yes, this looks very much what I hoped for.
+There are relatively few applications running concurrent async
+RWF_APPEND DIO writes. IIRC SycallaDB was the first we came across a
+few years ago. Apps that use RWF_APPEND for individual DIOs expect
+that it doesn't cause performance anomolies.
 
-The series shows two cases of ioctls: getters that return an int, and
-combined getter/setters that take a struct of a certain size and
-return the exact same.
+These days XFS will run concurrent append DIO writes and it doesn't
+serialise RWF_APPEND IO against other RWF_APPEND IOs. Avoiding data
+corruption due to racing append IOs doing file extension has been
+delegated to the userspace application similar to how we delegate
+the responsibility for avoiding data corruption due to overlapping
+concurrent DIO to userspace.
 
-I would deduplicate the four ipmr/ip6mr cases that constitute the second
-type, by having a single helper for this type. sock_skprot_ioctl_struct,
-which takes an argument for the struct size to copy in/out.
+> >   - how bad the performance regression would be?
+> 
+> I can give it a try with fio and fallocate=none over fuse during the 
+> next days.
 
-Did this series cover all proto ioctls, or is this still a subset just
-for demonstration purposes -- and might there still be other types
-lurking elsewhere?
+It depends on where the lock that triggers serialisation is, and how
+bad the contention on it is. rwsems suck for write contention
+because of the "spin on owner" "optimisations" for write locking and
+long write holds that occur in the IO path. In general, it will be
+no worse than using userspace threads to issue the exact same IO
+pattern using concurrent sync IO.
 
-If this is all, this looks like a reasonable amount of code churn to me.
+> > Without first attempting to answer those questions, I'd be reluctant
+> > to add  FMODE_DIO_PARALLEL_WRITE to fuse.
 
-Three small points
+I'd tag it with this anyway - for the majority of apps that are
+doing concurrent DIO within EOF, shared locking is big win. If
+there's a corner case that apps trigger that is slow, deal with them
+when they are reported....
 
-* please keep the __user annotation. Use make C=2 when unsure to warn
-  about mismatched annotation
-* minor: special case the ipmr (type 2) ioctls in sock_skprot_ioctl
-  and treat the "return int" (type 1) ioctls as the default case.
-* introduce code in a patch together with its use-case, so no separate
-  patches for sock_skprot_ioctl and sock_skprot_ioctl_ipmr. Either one
-  patch, or two, for each type of conversion.
+Cheers,
 
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com

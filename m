@@ -2,73 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5325E6E6967
-	for <lists+io-uring@lfdr.de>; Tue, 18 Apr 2023 18:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 618B16E69A6
+	for <lists+io-uring@lfdr.de>; Tue, 18 Apr 2023 18:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbjDRQZ3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Apr 2023 12:25:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38690 "EHLO
+        id S231654AbjDRQgh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Apr 2023 12:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232529AbjDRQZX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 12:25:23 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A177DBB8A;
-        Tue, 18 Apr 2023 09:25:11 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-2f40b891420so2592006f8f.0;
-        Tue, 18 Apr 2023 09:25:11 -0700 (PDT)
+        with ESMTP id S229951AbjDRQgg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 12:36:36 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B147FAF1E;
+        Tue, 18 Apr 2023 09:36:34 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id xi5so74754602ejb.13;
+        Tue, 18 Apr 2023 09:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681835110; x=1684427110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkrQvmuaMHpjbiE++zr5BVroiXJ7ScDCYIMg0fujBHo=;
-        b=SiZWAmYo56/FBTixK5uRz3YVCkB21wCREmr1czchs+GmA+dvmsS1O2PL0ur8egLMXe
-         G3NbOGUT6dObEj1Zi33dWKNM0xdCHyo3v2mIdHaBhuHttqrYmu/Ca3V4S/WO11vJA3Zk
-         jwoJgTDOjMZtjNy1gPTK5S5ZaSYDbRznJFNiPE3Ryzw6s9A+s0pc6VWN7mhQ7NNMKeEq
-         QPqevBvbQ+huF9KOhwCkBZmZtZK/CHtbDa0ynZmKXhlRJpfVwG0XsVT8yA7Ejbn8ND1N
-         7iPi2FHFCVv9sRLnSh5+3VodoGnw2BZXUWntQUCCaqErsqVlEkdgqrENwtsk291wvN+q
-         bYtQ==
+        d=gmail.com; s=20221208; t=1681835793; x=1684427793;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=firv3UGoqvxYldJ99Jk2hJXEsEXc9axyjdwnWEFhPRU=;
+        b=UJTmwTLfK7gzjWpk59vzvefvASBiulJ0QkWTf9/qX8GjD3/AoUPvgl1CYbUl+TC4Iv
+         jAHDd7WOsIsQ8NxHPjR2p4CZJoSUw+iYbhCR7kkNe0qJ2iOp5jen5CpS0t2P3gABceHe
+         x6WFwuQNVSyFUIe7effWCKF3PQ317mgoIdSb2h22Ao2QxGIf4vH5FHyBBq7tUQuoDBil
+         KcJux8IYwGER7tKimpE0+WKeEpcJiZnBiqnRkr8tMf1G5uF6okVXObvMyJAXoVt42cmF
+         5A8DBppQvHpu4bMZ1Qm9dqkn0pEkU3Au9pu1rHjOgxgoQdCmupH9GRp2DdN/ygDJuUq7
+         xs4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681835110; x=1684427110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tkrQvmuaMHpjbiE++zr5BVroiXJ7ScDCYIMg0fujBHo=;
-        b=Rdp8ZVeoHYnis30rB7dckW1hl9o9xrsmvO/Rxoxk6J/sfDYoCK2KZ+ZEopX2AvE9AR
-         GGIOo3Bdd14XvSmbYzsV+/ZXcNkdsFiGCrlUZa10sxv6dsMj83zHr1O6wVyPCHSg6grf
-         sQFNNxCHUe+TViJsvU5ijvl3yEvnoIzfYLrZDdM+qBFggpR7JTMw82hWkrOK+PK66DuH
-         Z1FVDc5n5PsAOaiOZq/G52wDV6QuVk1wI+B65x/PnbqJ7BbhllZUCQNKlQt/SImcAyw8
-         Mlv0yj9G2Vuo80dDcCy5RnReaF780456ZzEyCu2kd47w69YW5p2VGB+Hr1HFM5tsbQ9O
-         pjwA==
-X-Gm-Message-State: AAQBX9fDuCL/pKEzrwBYpm/PLREcIFV6gT7xwNpvz9ZBlanBDABqem/f
-        /MOA50PFVMYkT5JW/WPgZ38my3h1A0mKcw==
-X-Google-Smtp-Source: AKy350Ye3wY8Ve3DZ7sGgIjHgWrlClaJ5M4kd1rL+JaDBP63tIs8tkec5hOaQONG71C1PTxydnnEig==
-X-Received: by 2002:a05:6000:3:b0:2ce:9cc8:34db with SMTP id h3-20020a056000000300b002ce9cc834dbmr2264248wrx.71.1681835109924;
-        Tue, 18 Apr 2023 09:25:09 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id o9-20020a5d62c9000000b002fa67f77c16sm5694266wrv.57.2023.04.18.09.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 09:25:08 -0700 (PDT)
-Date:   Tue, 18 Apr 2023 17:25:08 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     David Hildenbrand <david@redhat.com>
+        d=1e100.net; s=20221208; t=1681835793; x=1684427793;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=firv3UGoqvxYldJ99Jk2hJXEsEXc9axyjdwnWEFhPRU=;
+        b=A0qSgciqXTOn0JT0oQMeOZNQHo88MatMZ3uwjqfK7mxmgCWc7mlfqPB0iLdiZp2UaG
+         a0G3+qiekjszzPg7hTjqGKAJZBndnI4IIBxg3QMx6r4lAIxFkgM5/bhOM9o1+Si4Ygf4
+         Qv/lmHFEdAb85rWdD8CplmwqAmv8Txv13a1w2ZBSrml5xtG402furnt2KFFeNKjKxPnG
+         VCOPombfYV3OMVescXu6mq6uXttW/bmxk5WupRJXtmItH4fnc/rpzCwt1k5IzsMENmcS
+         trltwpWF4+J8uo8LUXT5hoxi1MI7pskQAU0K6+ecRhgDzQiscbZNWgK5tlGgQCZvb647
+         Y/IQ==
+X-Gm-Message-State: AAQBX9dYTZYehLPTAIgUjJ9qJGxe9kDTeG0Vh6vdIawMfVrgkkC/VcKk
+        /boOTL/yDJLIwgAVd/92OBVHbMGMjmg=
+X-Google-Smtp-Source: AKy350bSVkwIygyfzsyibROo0o2+stVppG2cHS69Tg/Fd9UOby1gJOwpgHPMrBPqoP43v/jaT+hzUw==
+X-Received: by 2002:a17:906:6dc4:b0:94f:ab46:77f9 with SMTP id j4-20020a1709066dc400b0094fab4677f9mr5288124ejt.15.1681835793029;
+        Tue, 18 Apr 2023 09:36:33 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:5697])
+        by smtp.gmail.com with ESMTPSA id rp26-20020a170906d97a00b0094f3132cb86sm4836485ejb.40.2023.04.18.09.36.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Apr 2023 09:36:32 -0700 (PDT)
+Message-ID: <16b33cfe-acb2-760e-7e87-8a837f84fc66@gmail.com>
+Date:   Tue, 18 Apr 2023 17:35:48 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 5/7] io_uring: rsrc: use FOLL_SAME_FILE on
+ pin_user_pages()
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] io_uring: rsrc: avoid use of vmas parameter in
- pin_user_pages()
-Message-ID: <7950398c-1993-4006-9af9-8e924ddb2dda@lucifer.local>
-References: <cover.1681831798.git.lstoakes@gmail.com>
- <956f4fc2204f23e4c00e9602ded80cb4e7b5df9b.1681831798.git.lstoakes@gmail.com>
- <7fabe6ee-ba8f-6c48-c9f7-90982e2e258c@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7fabe6ee-ba8f-6c48-c9f7-90982e2e258c@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1681508038.git.lstoakes@gmail.com>
+ <17357dec04b32593b71e4fdf3c30a346020acf98.1681508038.git.lstoakes@gmail.com>
+ <ZD1CAvXee5E5456e@nvidia.com>
+ <c19b3651-624b-f60e-3e63-fe9fadc6981f@gmail.com>
+In-Reply-To: <c19b3651-624b-f60e-3e63-fe9fadc6981f@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -77,124 +82,35 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Apr 18, 2023 at 05:55:48PM +0200, David Hildenbrand wrote:
-> On 18.04.23 17:49, Lorenzo Stoakes wrote:
-> > We are shortly to remove pin_user_pages(), and instead perform the required
-> > VMA checks ourselves. In most cases there will be a single VMA so this
-> > should caues no undue impact on an already slow path.
-> > 
-> > Doing this eliminates the one instance of vmas being used by
-> > pin_user_pages().
-> > 
-> > Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> > ---
-> >   io_uring/rsrc.c | 55 ++++++++++++++++++++++++++++---------------------
-> >   1 file changed, 31 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> > index 7a43aed8e395..3a927df9d913 100644
-> > --- a/io_uring/rsrc.c
-> > +++ b/io_uring/rsrc.c
-> > @@ -1138,12 +1138,37 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
-> >   	return ret;
-> >   }
-> > +static int check_vmas_locked(unsigned long addr, unsigned long len)
+On 4/18/23 17:25, Pavel Begunkov wrote:
+> On 4/17/23 13:56, Jason Gunthorpe wrote:
+>> On Sat, Apr 15, 2023 at 12:27:45AM +0100, Lorenzo Stoakes wrote:
+>>> Commit edd478269640 ("io_uring/rsrc: disallow multi-source reg buffers")
+>>> prevents io_pin_pages() from pinning pages spanning multiple VMAs with
+>>> permitted characteristics (anon/huge), requiring that all VMAs share the
+>>> same vm_file.
+>>
+>> That commmit doesn't really explain why io_uring is doing such a weird
+>> thing.
+>>
+>> What exactly is the problem with mixing struct pages from different
+>> files and why of all the GUP users does only io_uring need to care
+>> about this?
 > 
-> TBH, the whole "_locked" suffix is a bit confusing.
+> Simply because it doesn't seem sane to mix and register buffers of
+> different "nature" as one. It's not a huge deal for currently allowed
+> types, e.g. mixing normal and huge anon pages, but it's rather a matter
+> of time before it gets extended, and then I'll certainly become a
+> problem. We've been asked just recently to allow registering bufs
+> provided mapped by some specific driver, or there might be DMA mapped
+> memory in the future.
 > 
-> I was wondering why you'd want to check whether the VMAs are locked ...
->
+> Rejecting based on vmas might be too conservative, I agree and am all
+> for if someone can help to make it right.
 
-Yeah it's annoying partly because GUP itself is super inconsistent about
-it. Idea is to try to indicate that you need to hold mmap_lock
-obviously... let's drop _locked then since we're inconsistent with it anyway.
+For some reason I thought it was rejecting if involves more than
+one different vma. ->vm_file checks still sound fair to me, but in
+any case, open to changing it.
 
-> > +{
-> > +	struct file *file;
-> > +	VMA_ITERATOR(vmi, current->mm, addr);
-> > +	struct vm_area_struct *vma = vma_next(&vmi);
-> > +	unsigned long end = addr + len;
-> > +
-> > +	if (WARN_ON_ONCE(!vma))
-> > +		return -EINVAL;
-> > +
-> > +	file = vma->vm_file;
-> > +	if (file && !is_file_hugepages(file))
-> > +		return -EOPNOTSUPP;
-> 
-> You'd now be rejecting vma_is_shmem() here, no?
->
-
-Good spot, I guess I was confused that io_uring would actually want to do
-that... not sure who'd want to actually mapping some shmem for this
-purpose!
-
-I'll update to make it match the existing code.
-
-> 
-> -- 
-> Thanks,
-> 
-> David / dhildenb
-> 
-
-To avoid spam, here's a -fix patch for both:-
-
-----8<----
-From 62838d66ee01e631c7c8aa3848b6892d1478c5b6 Mon Sep 17 00:00:00 2001
-From: Lorenzo Stoakes <lstoakes@gmail.com>
-Date: Tue, 18 Apr 2023 17:11:01 +0100
-Subject: [PATCH] io_uring: rsrc: avoid use of vmas parameter in
- pin_user_pages()
-
-Rename function to avoid confusion and correct shmem check as suggested by
-David.
----
- io_uring/rsrc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 3a927df9d913..483b975e31b3 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1138,7 +1138,7 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
- 	return ret;
- }
-
--static int check_vmas_locked(unsigned long addr, unsigned long len)
-+static int check_vmas_compatible(unsigned long addr, unsigned long len)
- {
- 	struct file *file;
- 	VMA_ITERATOR(vmi, current->mm, addr);
-@@ -1149,15 +1149,16 @@ static int check_vmas_locked(unsigned long addr, unsigned long len)
- 		return -EINVAL;
-
- 	file = vma->vm_file;
--	if (file && !is_file_hugepages(file))
--		return -EOPNOTSUPP;
-
- 	/* don't support file backed memory */
- 	for_each_vma_range(vmi, vma, end) {
- 		if (vma->vm_file != file)
- 			return -EINVAL;
-
--		if (file && !vma_is_shmem(vma))
-+		if (!file)
-+			continue;
-+
-+		if (!vma_is_shmem(vma) && !is_file_hugepages(file))
- 			return -EOPNOTSUPP;
- 	}
-
-@@ -1185,7 +1186,7 @@ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
- 			      pages, NULL);
-
- 	if (pret == nr_pages) {
--		ret = check_vmas_locked(ubuf, len);
-+		ret = check_vmas_compatible(ubuf, len);
- 		*npages = nr_pages;
- 	} else {
- 		ret = pret < 0 ? pret : -EFAULT;
---
-2.40.0
+-- 
+Pavel Begunkov

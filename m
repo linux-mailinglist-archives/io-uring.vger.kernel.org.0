@@ -2,77 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3E206E70BE
-	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 03:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 143776E70CB
+	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 03:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231496AbjDSB3x (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Apr 2023 21:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        id S231580AbjDSBjN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Apr 2023 21:39:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjDSB3x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 21:29:53 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D75E6183
-        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 18:29:52 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-63b781c9787so1094854b3a.1
-        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 18:29:52 -0700 (PDT)
+        with ESMTP id S230377AbjDSBjM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 21:39:12 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6BB19A4
+        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 18:39:11 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-51f64817809so116494a12.1
+        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 18:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681867792; x=1684459792;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CTWQHeFJ3ejIWTMeS4au4uWFQrR7IGwBMPklLJD51kM=;
-        b=iY7gk4ydmQXDkfNyu+MZGQblceMwQfO/z23bL/cPtba2iVUF4SzsDTs/xKVDOiBpUT
-         I0ltsqqaDT7SgbUVaANpQf+201Hzyy2FIuVXbK2SlZbDSIvw6bWL3pD7zFySlNYZvzb/
-         sx3OatojqqQpZPP6EWjo16Ds6J7w/ZPNXVLhKpNPLwXMeCuw+ckAC7WMmUuO+6431lOt
-         ebBE3LEupU+uIdn9IM6MqN7eumxHmVVW6V2sr+z7+4MSFnzphBV83lVJIO+jTPSUfdsl
-         uMCzKP39dKDyV1zjX1MjQnT2BhA7LwvYhQtq0pBrHmvB6HOjJKR6guyu11o5zochPLch
-         B+fg==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681868351; x=1684460351;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iStr2CWKcIHP/EfwpfiQnvtHa3I9vc6AAzZzGrSo0Vs=;
+        b=IcaaBkxXnmhLDAVbBe3OYMHUrpqZedJ52XcIO7EfOVX3dt+bKuEuJdqakVwDsENeoH
+         1RXYjr+Tv+V2YHPSq+Lhk1pnVYgjjsVOpPwuXZL+QqWaMieSMA+bEcmy86TwrtlcMNJf
+         pIn5Zq3+LJXHLYGvobzq12F+J4QxjbUV6n4ldcNR/++tk+rtDFt1jVT15MNkGlCP7WAl
+         4YWey+VRQo6V0tnHaAqYoLhiUy070Uqt/kdfbBylrFSuEVOJFD3cvIfmZVrgicV1mIeF
+         DaWOuuJb2SevEUVDyrJ4uJ6jS6kIxd0KaHTFz2l8y/L3Fbzj65g5048gKzWXuwLSNR0v
+         fN3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681867792; x=1684459792;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTWQHeFJ3ejIWTMeS4au4uWFQrR7IGwBMPklLJD51kM=;
-        b=EY9Y0v6GrAegomiJ/VlFqGnYwgvpteIMvrTNHsP2MvO1R2ghDUjaVqDHcj3cJiKyuS
-         XzWKed4ExnbaG0M3O8ZJUv19TA4dS4eIN/4eErfAMcQ5wJcXBePAmwqyPSqTpsPuR+KO
-         NAY0oSTIJ+b2EoH2jmVtwJ/ZIJYRRU8/Mtm324HKyNOIc5yGR+SlQqEtfTxwTTQlqGCl
-         hA8fsINQfLG7tlar5h6u24cvnJcTL3Vze5ExOf9GeO2hrrPxJnlorMSNbADj9sBpggie
-         P8KyJYHW5xisYTALhLuGL6FnYQTbNlti/DDLvLh0uh8XYuM1EsEfF6K4NdIRFQlsYo4n
-         ERAw==
-X-Gm-Message-State: AAQBX9ewOJDpnp3wsh1ERoEc2dvZnnDzbqNGt5SvkzbB/ZlTcxPuC3eh
-        TVTpE+5s+VJ8W8Ymq73b1hxSl/a9Xtm4nM2FJW8=
-X-Google-Smtp-Source: AKy350YgGFc6D4OlqyGc33XUajSpTxBulscq4UQTfX2cwKFjfV1dXXkb1fTZFkeeErOvr00LW2LV5w==
-X-Received: by 2002:a05:6a21:339a:b0:cb:af96:9436 with SMTP id yy26-20020a056a21339a00b000cbaf969436mr18922152pzb.0.1681867791653;
-        Tue, 18 Apr 2023 18:29:51 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q12-20020a631f4c000000b0051b8172fa68sm6508791pgm.38.2023.04.18.18.29.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Apr 2023 18:29:51 -0700 (PDT)
-Message-ID: <74244cb8-abf5-b559-5e9f-24d39c801855@kernel.dk>
-Date:   Tue, 18 Apr 2023 19:29:50 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bschubert@ddn.com>, io-uring@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dsingh@ddn.com
-References: <20230307172015.54911-2-axboe@kernel.dk>
- <20230412134057.381941-1-bschubert@ddn.com>
- <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
- <ZDjggMCGautPUDpW@infradead.org> <20230414153612.GB360881@frogsfrogsfrogs>
- <ZDuNqQgpHUw+gi9G@infradead.org>
+        d=1e100.net; s=20221208; t=1681868351; x=1684460351;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iStr2CWKcIHP/EfwpfiQnvtHa3I9vc6AAzZzGrSo0Vs=;
+        b=kRO1yxnDILwn+bPtrZtesorQd9t3PZbXe4lSVHevHUr33X5+9eTkI0g2BjZuy/lw9B
+         5h0IpDMmZhAczQ/NCZYpQmusXRAzMUs5j/A5h4wpu9qIb1EOc3Ga++aARZTjanaQhjZ0
+         ycraqSNUwaGabx/eLiqTUmGuiSbX5a6jfeZQzsL6d7twIZ0E2dyRE0H2YTbP/wlXEed8
+         FOEp6cHBYR1R2ulceSJO8VQZlBxaftMhkxUIVL3+vo8JCvAoBA7EYyKW/P/ex/iJuuNv
+         rMO8LWaB2znlR5qbkuc8zBEG2WrS6xkM71xHs5FPtXMpNvzE/mxOnK7Mf+gs0BtwZlwH
+         8rNQ==
+X-Gm-Message-State: AAQBX9fBwIODqIT3k0/XvLNO1as9Y2d+7pc2cILsq98eKRlGbLnePMWD
+        spannHhLjBpeHG7138L6S+Ojf3H55P9HCdvDOBY=
+X-Google-Smtp-Source: AKy350Zps9ioR73Ti22EJBqS2qxGdiSbGBDxyzlIMCdTPyIAPzmYnWfC/GRbsG94SXWos+wCV9IOlQ==
+X-Received: by 2002:a17:90a:52:b0:246:fbef:790e with SMTP id 18-20020a17090a005200b00246fbef790emr14515598pjb.3.1681868351087;
+        Tue, 18 Apr 2023 18:39:11 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id b6-20020a170902d88600b001a64851087bsm10242007plz.272.2023.04.18.18.39.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 18:39:10 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZDuNqQgpHUw+gi9G@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1681822823.git.asml.silence@gmail.com>
+References: <cover.1681822823.git.asml.silence@gmail.com>
+Subject: Re: [PATCH for-next 0/8] another round of rsrc refactoring
+Message-Id: <168186835047.340981.1138610123036067847.b4-ty@kernel.dk>
+Date:   Tue, 18 Apr 2023 19:39:10 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+X-Mailer: b4 0.13-dev-00303
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,28 +69,42 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/15/23 11:54?PM, Christoph Hellwig wrote:
-> On Fri, Apr 14, 2023 at 08:36:12AM -0700, Darrick J. Wong wrote:
->> IIUC uring wants to avoid the situation where someone sends 300 writes
->> to the same file, all of which end up in background workers, and all of
->> which then contend on exclusive i_rwsem.  Hence it has some hashing
->> scheme that executes io requests serially if they hash to the same value
->> (which iirc is the inode number?) to prevent resource waste.
->>
->> This flag turns off that hashing behavior on the assumption that each of
->> those 300 writes won't serialize on the other 299 writes, hence it's ok
->> to start up 300 workers.
->>
->> (apologies for precoffee garbled response)
+
+On Tue, 18 Apr 2023 14:06:33 +0100, Pavel Begunkov wrote:
+> Further simplify rsrc infrastructure, and make it a little bit
+> faster.
 > 
-> It might be useful if someone (Jens?) could clearly document the
-> assumptions for this flag.
+> The main part is Patch 3, which establishes 1:1 relation between
+> struct io_rsrc_put and nodes, which removes io_rsrc_node_switch() /
+> io_rsrc_node_switch_start() and all the additional complexity with
+> pre allocations. Note, it doesn't change any guarantees as
+> io_queue_rsrc_removal() was doing allocations anyway and could
+> always fail.
+> 
+> [...]
 
-I guess it can be summed up as the common case should not be using
-exclusive (per file/inode) locking. If file extensions need exclusive
-locking that's less of a concern, as I don't think it's unreasonable to
-expect that to require stricter locking.
+Applied, thanks!
 
+[1/8] io_uring/rsrc: remove unused io_rsrc_node::llist
+      commit: 2e6f45ac0e640bbd49296adfa0982c84f85fa342
+[2/8] io_uring/rsrc: infer node from ctx on io_queue_rsrc_removal
+      commit: 63fea89027ff4fd4f350b471ad5b9220d373eec5
+[3/8] io_uring/rsrc: merge nodes and io_rsrc_put
+      commit: c376644fb915fbdea8c4a04f859d032a8be352fd
+[4/8] io_uring/rsrc: add empty flag in rsrc_node
+      commit: 26147da37f3e52041d9deba189d39f27ce78a84f
+[5/8] io_uring/rsrc: inline io_rsrc_put_work()
+      commit: 4130b49991d6b8ca0ea44cb256e710c4e48d7f01
+[6/8] io_uring/rsrc: pass node to io_rsrc_put_work()
+      commit: 29b26c556e7439b1370ac6a59fce83a9d1521de1
+[7/8] io_uring/rsrc: devirtualise rsrc put callbacks
+      commit: fc7f3a8d3a78503c4f3e108155fb9a233dc307a4
+[8/8] io_uring/rsrc: disassociate nodes and rsrc_data
+      commit: 2236b3905b4d4e9cd4d149ab35767858c02bb79b
+
+Best regards,
 -- 
 Jens Axboe
+
+
 

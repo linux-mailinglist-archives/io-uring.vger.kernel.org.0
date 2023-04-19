@@ -2,324 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8D96E8533
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 00:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CC96E85D5
+	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 01:22:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbjDSWsY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 18:48:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49670 "EHLO
+        id S229682AbjDSXW4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 19:22:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231678AbjDSWsO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 18:48:14 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3646B1991
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 15:48:12 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-24733b262fdso53148a91.1
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 15:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681944491; x=1684536491;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DJouhk3GtHhx4j7Gx0k/VX97WoDn1hZiBkStWsBGUsk=;
-        b=CILzMRnKPxG2P5ORSEwNtPdCR+n06cpYg4hEUCFLJG0jSCLcTGYy8KbA5PFgxvqUZP
-         qqWAbAidxpuDXE0ll6ubRai9XxgP/mhnmNWs/jeHayYBnKzqLDCWLK/mOA1AIGr4Xpg3
-         ZUObfsOm1jyvodDePOi0gn+g1fyW8lC+QLRpKehoNl16+MfADInOqtBlTK50Y5KcurpE
-         f1A+mL9raVvDrOTShoajzr7uoBZtM/cTJuNuyzNfOrJRjFasmlJ14Dq8jwKr8Mz/kqo2
-         SKdkbHdpaaNAQuLAAxgzes6gDqD6DoaA27chDGpI+b7FwmDm+dCdcrLXpX4eUNp/gf4+
-         dvlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681944491; x=1684536491;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DJouhk3GtHhx4j7Gx0k/VX97WoDn1hZiBkStWsBGUsk=;
-        b=HSRpjXAQ8tztOK7JM5FUbOGLyjsnRoz/09IBmtdWmX3JAf+qgZVBwySEwFVckkS1A/
-         aw/VGeC/6hrnwsq2iueo64WQrgLdQTLme3EBobFzHD2rg6si1K/F4vq8Pk1EOqdr/RCm
-         w51KKDOE/FKtqU1QaoDFqgdZUHSWZC3RLTD7Fp3w18qhAA5gXJp0hJRMGBtocZkz2q7p
-         6rlCZeGAFcqcJ/nR90qfe0xZQSm/aBCSb4oJLrHB4NZjj2rJYdqqjJ9yrGWPUN6ZqNJD
-         n0t2zc2WgTAWwJ/C+jSj+qo+oC5bjRFx2GaSAsppiOy2UGdafVW1pTpE3+x+ccfHLvBq
-         ZOng==
-X-Gm-Message-State: AAQBX9dGnmOL1tLDhnnAqd9mYz4t5yIO4l/B2yM/1rQt+leJk3SyAqOf
-        PuRniiOk44pSJ4rgzdN022TKXo7IXZm6BQLdKsY=
-X-Google-Smtp-Source: AKy350bLAtVy5I9uQtEzMHfuz57P6ZJ3vgScNy04PlF2de6oEj9S1yPUdamjT7mub9QObvm5dj8fRw==
-X-Received: by 2002:a17:90a:352:b0:247:b1f7:9f67 with SMTP id 18-20020a17090a035200b00247b1f79f67mr7832495pjf.4.1681944491370;
-        Wed, 19 Apr 2023 15:48:11 -0700 (PDT)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id l9-20020a17090a49c900b002353082958csm1853364pjm.10.2023.04.19.15.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 15:48:10 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] io_uring: support for user allocated memory for rings/sqes
-Date:   Wed, 19 Apr 2023 16:48:05 -0600
-Message-Id: <20230419224805.693734-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230419224805.693734-1-axboe@kernel.dk>
-References: <20230419224805.693734-1-axboe@kernel.dk>
+        with ESMTP id S231401AbjDSXWz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 19:22:55 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0061BEB;
+        Wed, 19 Apr 2023 16:22:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YuhLmzIfwDGp4icDxWzgbe6hQzPdcJ4kBBZmaHLl0l2VHQB8+IT+mUGeWQe8poth9C8GrI+BxD6t0jzthi6H2qgvzZjQw1nWVM4AXq6XLREVhZjruYJkMFK9lGyxEoXKnYKVBcdaU0Z8cqhX47FLgb0Lz6yQLUt91tkSIiSpaUigX/qpCzdNBWHyS5OKsa+Sd99F8RhdV/3Gp7aedFV6larhHpEmWJP+LR2ImnfuO90v4UgOfYdCI2U03hxuPs+JtQvv4IW9GTHEIIJD5FLSmKgYAD2G3JgGzqAD6A0j3B//cr2vJIDJTDAf9EFW/EMqH7zRP2J5UCL+a7LOCo/33g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=slZXqGzJlShmAnoEIUCE114mQvSY9X6mN2q7cAXLnKI=;
+ b=XVH4Je9Xcs7MJFBhxvpzTs4zLJZC4LFGrsXCHIO+g8FQq9H8wuz1Yrq6XNTz8jK8tGpekN7QcUlMT76NpCvO81ZDORzhbOVc3zEY7Ca6DWrCUd9sGw0fNhdwZt5haij+jJHD2P3o0bLBWrF7znVVQdlJoOpjiXTwjvfHK0iy25Zzl7RYfGMfAkzb3HSbtDcm29hrQSN01jRMskJXjFieFRW45bTMh3HXZhkyXER/cFAar6eaQXNbppN4NY9OU/ArSTdHFfC6e0LNcGvuRZi+jRt9toglvd/Wd4gTIRv38Fg/WaZuW4phg+Pi0DBgU2BR9ljdr6v+YHgPf560b/DseQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=slZXqGzJlShmAnoEIUCE114mQvSY9X6mN2q7cAXLnKI=;
+ b=iHjSAIkh+/rVXvB2ZtvG9YeRSPhJhMgeYfkzI47u4n9nPqgYtV0InI2MCETeiGhM2WAz8ug99C8nbb/0OLD1yt/Hn8fkWp+lHApncrK0t2SPNtJpWT4UFtrxBBd202fiPkZQ8k2r58Y9+T8sJkMOrkj8PMSVULbVPGOeL11HNhzp+J6IsQisjwT7nBCmourLeSDSEnRmF4znnjZPVcp1qkQzS7w03TYXJr3C/+JCTmxQ2k+TFlOiaxQnVYnt1xllzRZxD/g1Qb0akOwDxcW6AopT5ZAK7n4pTxvfH5w0tFT023vMys/c/yY3f077xAHwEAHoaKaNOkgUVkTTFErclg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by LV2PR12MB6013.namprd12.prod.outlook.com (2603:10b6:408:171::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Wed, 19 Apr
+ 2023 23:22:52 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6319.020; Wed, 19 Apr 2023
+ 23:22:52 +0000
+Date:   Wed, 19 Apr 2023 20:22:51 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] io_uring: rsrc: avoid use of vmas parameter in
+ pin_user_pages()
+Message-ID: <ZEB3y0V2GSDcUMc2@nvidia.com>
+References: <c2e22383-43ee-5cf0-9dc7-7cd05d01ecfb@kernel.dk>
+ <f82b9025-a586-44c7-9941-8140c04a4ccc@lucifer.local>
+ <69f48cc6-8fc6-0c49-5a79-6c7d248e4ad5@kernel.dk>
+ <bec03e0f-a0f9-43c3-870b-be406ca848b9@lucifer.local>
+ <8af483d2-0d3d-5ece-fb1d-a3654411752b@kernel.dk>
+ <d601ca0c-d9b8-4e5d-a047-98f2d1c65eb9@lucifer.local>
+ <ZEAxhHx/4Ql6AMt2@casper.infradead.org>
+ <ZEAx90C2lDMJIux1@nvidia.com>
+ <ZEA0dbV+qIBSD0mG@casper.infradead.org>
+ <8bf0df41-27ef-4305-b424-e43045a6d68d@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8bf0df41-27ef-4305-b424-e43045a6d68d@lucifer.local>
+X-ClientProxiedBy: BL0PR1501CA0014.namprd15.prod.outlook.com
+ (2603:10b6:207:17::27) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|LV2PR12MB6013:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8260e13-3f4c-4599-3274-08db412cff40
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Uo0AxY8Dqitxq6p450pXha2r8bOs9C5fgsxsxLQUOHyLxleB9e51l+2py1YXac5PJEsRdSH1mrAYQJxoBRAI5vAWlTnYqdXHcv3+4GMIIeXdMdpsfw4nu8CP/pp+VwfmAk/zo4MkmGSg7Ei9FnHbxZbv8JzNIoytu3mrcMu9C5DCHGvL83F8n3ScDS7PGhTIXg7FlFXzY0FotdPPRQAaJiEBwaGC50467A/yuA1ruFw/IPF+yCRrRmm30rUTliRw59dGKcWT9cF0Aw3z1BgVF8soRVUqhKcDlIcpzCjXe8lPOKzIh2RCkxYNYJj6bcfGjPPbQwM8RDYUUNx6VPfY1CxKxbpQaPSHPzz+RqPgi2EhUboXX9V+aAvP39UK5WBNfZJQrrUNv/Jkr3FY3kGoLLZcLUdnHqI8sBE0Ld03BZUh/IWMQ6iY0cKOsaVaD3xb23e8V5ajcPqykUCazGj39On7MqUtFWg3z26NGe5JjBBV9yr03z86ZDmDn1GuzOQFdtMDit0Fn2itsYc5IEQc6/Xko3srVYDCp6pY5yMkTwLQDyjypOni3sAjdsCGsvMd
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(39860400002)(376002)(366004)(136003)(451199021)(26005)(316002)(41300700001)(6916009)(54906003)(6512007)(4326008)(66946007)(66476007)(66556008)(8676002)(6486002)(478600001)(86362001)(5660300002)(8936002)(2906002)(36756003)(38100700002)(2616005)(6506007)(186003)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KVNv3jt4ov+W13oja7EPxfCLGAQoRr6BIUaWNjwHSrX83o2Oz+zVvLT6aTjV?=
+ =?us-ascii?Q?IqUNqKZCA+QkJeV8eGBw5VPLc5v981CRqa6dcvbHdQTfc2QvtlWF1yWZxO/J?=
+ =?us-ascii?Q?IsTifW/Gk5GUaqBX5ijo6NRPJSRJqrCagLkyeLx+v5+kfwr5qt1M8M20b+ZQ?=
+ =?us-ascii?Q?0FFmOEyp0xf5C4iBFVEqlRofKiUS4Zz0AA4pgIk93Jatmc0atUNndi2Kpsu3?=
+ =?us-ascii?Q?xH8siN6OGSJm1WHnbo+umTmIiYORwclkCH998natXr6fzTolSwWHSUuK8vT8?=
+ =?us-ascii?Q?Kbz8GfI7yWEM8OSFY+Ei3/Sbqhz6z6dg97rr+8Qp+aTiagnfy46JzsHcpmJV?=
+ =?us-ascii?Q?2NeNWr5hnirEE9WWkPl6WgsCc+PeRsS8KKVVTbEoovsO4Je4PHjY+mkS6yc2?=
+ =?us-ascii?Q?InDVfepw7EE0deSX75O6Q2zvHTa0nrEHxEd2qEZJMAgGOgPah/ZW7L/cwhms?=
+ =?us-ascii?Q?2a6juOmhSYeHNcxTX9OtYu43MXQpWHrimMzsMLTpQino0mumaQPs7i+fHmjX?=
+ =?us-ascii?Q?h7W2F2cj9CvAGXOn4xFNp84V02NkMHKT+kTWL9TlLB4QecnjdXDpFwdcvyd4?=
+ =?us-ascii?Q?Pi3HEMWrbvbIzaAe3QcnFUbFYFJji5uevH3Ivpd5x5GATMmJ9WQV/MtaBDTg?=
+ =?us-ascii?Q?yFBpQkB8L0BoNi2ccoyM3QCpD2AToqx0HCEnV7jffF9MlTtRCH+nqGkZbuFp?=
+ =?us-ascii?Q?bEWK9zpxoA5HjVQtTeCNHyUrt6a8DOCvKufgqLaPqzcsnHfuppnECDDaJXdP?=
+ =?us-ascii?Q?EocUajZq7xZjnVq0L8j+F9DbW+F2Xj46aW/Wn2YvdnT/suFbapdEegJ4nQ5m?=
+ =?us-ascii?Q?j9xfcyWXU7bo6dQLKMYka7/3vfXJl6yubU1dv6+6Ak/Rb2Mu/ZWkQ/xh27X+?=
+ =?us-ascii?Q?lkEhILSaIl9fpKAcjorwWzRwYGYykZsCh5t4JmvkkZIjM7Zx7NQn2WBicQoR?=
+ =?us-ascii?Q?/uRBqWl9qUUwPTNpdrUQnikpMBK0fuMiCFsxoMOOeGqUfGQN1jCfB8HUtXJs?=
+ =?us-ascii?Q?PZwf3dt655FM38RHnP0Ao3mRaSlvpnioVByoGw3TAbL+p4imLO4cmj+Tno20?=
+ =?us-ascii?Q?oOgZdnjcWgecG4FMsSWVUcnui/i1N4p3odlbeLVDNFa8FGWo6OU16bQm/Bd0?=
+ =?us-ascii?Q?XjURdDMGN33de9wibGhZSf28luanwXG3sJh4uZLqsRxQJxJKcnXKhwXzh+/c?=
+ =?us-ascii?Q?MkBTIO1WQpBw52VFCPSCn8tIve4+Lmtqm0GgAyaXiek0EkX0WcAxgLQ0m+NS?=
+ =?us-ascii?Q?sKSQ5limKmJlTTTHSmFBRcjK1lqHSL1dC2wh100vmsvCT9uFHMqhBzwwSIBD?=
+ =?us-ascii?Q?/fckz6ivgQzdaZbOUGpMnSpE7bMKvT/CwHc1P3seN3jL/ETFJV+5lYr/D9pu?=
+ =?us-ascii?Q?Yqi+kYNRUg9OrOSjO3TGNdP8qn9NTjrdn+cUejiO9M/TRZwJzpM2bZH9Ft+a?=
+ =?us-ascii?Q?gRsw6gE+KfFPoY5sDDyhrqIksxrlEvMyhIlQ+OZEOOsTMcVcDDiZJMNAuTwx?=
+ =?us-ascii?Q?z0SJJflh8bFyEX7LFOWkcYSuKogABljB+ygw9626Dd0nwzTxtaOCTT8oKGUB?=
+ =?us-ascii?Q?sCe8sDCx9u/TP3Tf5jVRZXYaYVBBfUNBYPkjmE96?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8260e13-3f4c-4599-3274-08db412cff40
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2023 23:22:52.1549
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XpuHD8UYzLJKdjeLUB3ZXKhAvoP93b1OtddJMXalqJNH+H9x58iSM6Q2B6oSrZwd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB6013
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Currently io_uring applications must call mmap(2) twice to map the rings
-themselves, and the sqes array. This works fine, but it does not support
-using huge pages to back the rings/sqes.
+On Wed, Apr 19, 2023 at 07:45:06PM +0100, Lorenzo Stoakes wrote:
 
-Provide a way for the application to pass in pre-allocated memory for
-the rings/sqes, which can then suitably be allocated from shmfs or
-via mmap to get huge page support.
+> For example, imagine if a user (yes it'd be weird) mlock'd some pages in a
+> buffer and not others, then we'd break their use case. Also (perhaps?) more
+> feasibly, a user might mix hugetlb and anon pages. So I think that'd be too
+> restrictive here.
 
-Particularly for larger rings, this reduces the TLBs needed.
+Yeah, I agree we should not add a broad single-vma restriction to
+GUP. It turns any split of a VMA into a potentially uABI breaking
+change and we just don't need that headache in the mm..
 
-If an application wishes to take advantage of that, it must pre-allocate
-the memory needed for the sq/cq ring, and the sqes. The former must
-be passed in via the io_uring_params->cq_off.user_data field, while the
-latter is passed in via the io_uring_params->sq_off.user_data field. Then
-it must set IORING_SETUP_NO_MMAP in the io_uring_params->flags field,
-and io_uring will then map the existing memory into the kernel for shared
-use. The application must not call mmap(2) to map rings as it otherwise
-would have, that will now fail with -EINVAL if this setup flag was used.
+> I do like the idea of a FOLL_SINGLE_VMA for other use cases though, the
+> majority of which want one and one page only. Perhaps worth taking the
+> helper added in this series (get_user_page_vma_remote() from [1]) and
+> replacing it with an a full GUP function which has an interface explicitly
+> for this common single page/vma case.
 
-The pages used for the rings and sqes must be contigious. The intent here
-is clearly that huge pages should be used, otherwise the normal setup
-procedure works fine as-is. The application may use one huge page for
-both the rings and sqes.
+Like I showed in another thread a function signature that can only do
+one page and also returns the VMA would force it to be used properly
+and we don't need a FOLL flag.
 
-Outside of those initialization changes, everything works like it did
-before.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h |  10 ++++
- include/uapi/linux/io_uring.h  |   9 ++-
- io_uring/io_uring.c            | 102 +++++++++++++++++++++++++++++----
- 3 files changed, 109 insertions(+), 12 deletions(-)
-
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index c54f3fb7ab1a..3489fa223586 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -211,6 +211,16 @@ struct io_ring_ctx {
- 		unsigned int		compat: 1;
- 
- 		enum task_work_notify_mode	notify_method;
-+
-+		/*
-+		 * If IORING_SETUP_NO_MMAP is used, then the below holds
-+		 * the gup'ed pages for the two rings, and the sqes.
-+		 */
-+		unsigned short		n_ring_pages;
-+		unsigned short		n_sqe_pages;
-+		struct page		**ring_pages;
-+		struct page		**sqe_pages;
-+
- 		struct io_rings			*rings;
- 		struct task_struct		*submitter_task;
- 		struct percpu_ref		refs;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index ea903a677ce9..5499f9728f9d 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -179,6 +179,11 @@ enum {
-  */
- #define IORING_SETUP_NO_OFFLOAD		(1U << 14)
- 
-+/*
-+ * Application provides the memory for the rings
-+ */
-+#define IORING_SETUP_NO_MMAP		(1U << 15)
-+
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
-@@ -412,7 +417,7 @@ struct io_sqring_offsets {
- 	__u32 dropped;
- 	__u32 array;
- 	__u32 resv1;
--	__u64 resv2;
-+	__u64 user_addr;
- };
- 
- /*
-@@ -431,7 +436,7 @@ struct io_cqring_offsets {
- 	__u32 cqes;
- 	__u32 flags;
- 	__u32 resv1;
--	__u64 resv2;
-+	__u64 user_addr;
- };
- 
- /*
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index cf570b0f82ec..d6694bd92453 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2716,12 +2716,80 @@ static void io_mem_free(void *ptr)
- 		free_compound_page(page);
- }
- 
-+static void io_pages_free(struct page ***pages, int npages)
-+{
-+	struct page **page_array;
-+	int i;
-+
-+	if (!pages)
-+		return;
-+	page_array = *pages;
-+	for (i = 0; i < npages; i++)
-+		unpin_user_page(page_array[i]);
-+	kvfree(page_array);
-+	*pages = NULL;
-+}
-+
-+static void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
-+			    unsigned long uaddr, size_t size)
-+{
-+	struct page **page_array;
-+	unsigned int nr_pages;
-+	int ret;
-+
-+	*npages = 0;
-+
-+	if (uaddr & (PAGE_SIZE - 1) || !size)
-+		return ERR_PTR(-EINVAL);
-+
-+	nr_pages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
-+	if (nr_pages > USHRT_MAX)
-+		return ERR_PTR(-EINVAL);
-+	page_array = kvmalloc_array(nr_pages, sizeof(struct page *), GFP_KERNEL);
-+	if (!page_array)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = pin_user_pages_fast(uaddr, nr_pages, FOLL_WRITE | FOLL_LONGTERM,
-+					page_array);
-+	if (ret != nr_pages) {
-+err:
-+		io_pages_free(&page_array, ret > 0 ? ret : 0);
-+		return ret < 0 ? ERR_PTR(ret) : ERR_PTR(-EFAULT);
-+	}
-+	/* pages must be contig */
-+	ret--;
-+	if (page_array[0] + ret != page_array[ret])
-+		goto err;
-+	*pages = page_array;
-+	*npages = nr_pages;
-+	return page_to_virt(page_array[0]);
-+}
-+
-+static void *io_rings_map(struct io_ring_ctx *ctx, unsigned long uaddr,
-+			  size_t size)
-+{
-+	return __io_uaddr_map(&ctx->ring_pages, &ctx->n_ring_pages, uaddr,
-+				size);
-+}
-+
-+static void *io_sqes_map(struct io_ring_ctx *ctx, unsigned long uaddr,
-+			 size_t size)
-+{
-+	return __io_uaddr_map(&ctx->sqe_pages, &ctx->n_sqe_pages, uaddr,
-+				size);
-+}
-+
- static void io_rings_free(struct io_ring_ctx *ctx)
- {
--	io_mem_free(ctx->rings);
--	io_mem_free(ctx->sq_sqes);
--	ctx->rings = NULL;
--	ctx->sq_sqes = NULL;
-+	if (!(ctx->flags & IORING_SETUP_NO_MMAP)) {
-+		io_mem_free(ctx->rings);
-+		io_mem_free(ctx->sq_sqes);
-+		ctx->rings = NULL;
-+		ctx->sq_sqes = NULL;
-+	} else {
-+		io_pages_free(&ctx->ring_pages, ctx->n_ring_pages);
-+		io_pages_free(&ctx->sqe_pages, ctx->n_sqe_pages);
-+	}
- }
- 
- static void *io_mem_alloc(size_t size)
-@@ -3366,6 +3434,10 @@ static void *io_uring_validate_mmap_request(struct file *file,
- 	struct page *page;
- 	void *ptr;
- 
-+	/* Don't allow mmap if the ring was setup without it */
-+	if (ctx->flags & IORING_SETUP_NO_MMAP)
-+		return ERR_PTR(-EINVAL);
-+
- 	switch (offset & IORING_OFF_MMAP_MASK) {
- 	case IORING_OFF_SQ_RING:
- 	case IORING_OFF_CQ_RING:
-@@ -3707,7 +3779,11 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	if (size == SIZE_MAX)
- 		return -EOVERFLOW;
- 
--	rings = io_mem_alloc(size);
-+	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
-+		rings = io_mem_alloc(size);
-+	else
-+		rings = io_rings_map(ctx, p->cq_off.user_addr, size);
-+
- 	if (IS_ERR(rings))
- 		return PTR_ERR(rings);
- 
-@@ -3727,13 +3803,17 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 		return -EOVERFLOW;
- 	}
- 
--	ptr = io_mem_alloc(size);
-+	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
-+		ptr = io_mem_alloc(size);
-+	else
-+		ptr = io_sqes_map(ctx, p->sq_off.user_addr, size);
-+
- 	if (IS_ERR(ptr)) {
- 		io_rings_free(ctx);
- 		return PTR_ERR(ptr);
- 	}
- 
--	ctx->sq_sqes = io_mem_alloc(size);
-+	ctx->sq_sqes = ptr;
- 	return 0;
- }
- 
-@@ -3919,7 +3999,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->sq_off.dropped = offsetof(struct io_rings, sq_dropped);
- 	p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
- 	p->sq_off.resv1 = 0;
--	p->sq_off.resv2 = 0;
-+	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
-+		p->sq_off.user_addr = 0;
- 
- 	p->cq_off.head = offsetof(struct io_rings, cq.head);
- 	p->cq_off.tail = offsetof(struct io_rings, cq.tail);
-@@ -3929,7 +4010,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
- 	p->cq_off.flags = offsetof(struct io_rings, cq_flags);
- 	p->cq_off.resv1 = 0;
--	p->cq_off.resv2 = 0;
-+	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
-+		p->cq_off.user_addr = 0;
- 
- 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
- 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
-@@ -3996,7 +4078,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_COOP_TASKRUN | IORING_SETUP_TASKRUN_FLAG |
- 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
- 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
--			IORING_SETUP_NO_OFFLOAD))
-+			IORING_SETUP_NO_OFFLOAD | IORING_SETUP_NO_MMAP))
- 		return -EINVAL;
- 
- 	return io_uring_create(entries, &p, params);
--- 
-2.39.2
-
+Jason

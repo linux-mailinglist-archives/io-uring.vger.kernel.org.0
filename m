@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 773EC6E8530
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 00:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED2B66E8531
+	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 00:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230480AbjDSWsM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 18:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49586 "EHLO
+        id S231877AbjDSWsP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 18:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjDSWsK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 18:48:10 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F10B1703
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 15:48:09 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-63b875d0027so98599b3a.1
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 15:48:09 -0700 (PDT)
+        with ESMTP id S231391AbjDSWsL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 18:48:11 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615FD1701
+        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 15:48:10 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-24b39cb710dso44686a91.0
+        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 15:48:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681944488; x=1684536488;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681944489; x=1684536489;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3/SELsnLsHCK0nWRVSzVqzlBrRNbSGa03JgUvF3IRuM=;
-        b=2e7I9RasgqGELyVyPoI+RRRoBqZ03HqSrcxGlz6Pff+yq3nwnL+FExxBWm5Dd65cph
-         lvY7rwaJRnLTccIj8FDM+dNfLRVZ/eP4vPtU88qbplR7RzrhpGIaQqv0lmdCN7byCimZ
-         6r1qMqdgkjhsdx9XcF27+3kxp+kWYboH70xgdz921+UVpR1gmrwzjErIMhiVM6j3IEuN
-         cqTcHH+AF2/4fz8fy8hZbUrc2J++4PCigt3pvs8JCzYij5RGedb7rhc/UUYqThs/RWCt
-         UEuwNQJTNTY3LqsbBbrZw0mEM7RfOci93GY2fpjTk6wHSN7KFNcuiruuCCnYYy6nJhWW
-         7lGQ==
+        bh=dtdhxjAc5NE0l6Xm4RKYrbJnPZddgUcv8zlUMpcItGE=;
+        b=NG4dx3grn5brYbVxoktphpIpeJfH+bBon5I8CKEuvPKhK1FoRx6AIwwErveKp0Egtc
+         Ivjq49TftfQVZw+h6tDmNhihBGO1k3BTZoPZ1xP22Yv1kaQJOPLOmxjk80Jmy5JrxZcI
+         tijes1Eb3GhBnrP5YtxtDJd94v9B62+vNF0k2O/boyKeFr8xKGHMq3LT6Q6ebV7uLysd
+         zARSRopVTvQ29aAaOMin4bbkKe/BCE72rMnINgOGCZEl+iBiRHWLx3jXUCUjdAMl3j36
+         9wtv+k8h2IjLD2wbQVYSeS1iMK+M6Vi2TkItg/++TZuQMEuQbLGfP+yCuzvbb7LnKXSA
+         +8Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681944488; x=1684536488;
+        d=1e100.net; s=20221208; t=1681944489; x=1684536489;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3/SELsnLsHCK0nWRVSzVqzlBrRNbSGa03JgUvF3IRuM=;
-        b=FWllX7BSIX2mf/10bxNGV0AzVRxlMUhCeOaZcTurMRYqSmDxwR0B4CGWC+P9JoKDh3
-         8RcHZ9HV4EtUjueAJodmX6y0c3t7ZtwDWTgmGNvfdSzVMq61jaBoPtpTWkMtcuvKPRvI
-         11/dCi01QF5nXKhuIkVdHLiN/OX4zzw+3bAuy33lDGRLZp6q9e+K8sPWZ/H9BypfpJHX
-         Wl/sMN94fSC5DJMYMEyTh54HKqSKgBOyPa/RYgfuoopUVjQXB6ewlv/7XXxKT3klBU7V
-         RU/uK/joTRGGOaEecsaxkLIUhr3FkcS+Kf/KipAK3pJG3GOXyvqtTGpIai/2aLhzcIph
-         xfIQ==
-X-Gm-Message-State: AAQBX9dR47282YzjxNHefOtqWqzzDKXiQ762oZbxPig5BYlQo8v1s9jA
-        +i0nORo0nJKZ8v0Bdr0azT1UN3AG6kkMEknvwMo=
-X-Google-Smtp-Source: AKy350aqoRThi75COXuKx0digly5jO8YYNFoDzpX7JiIHxow4UjF8wkgXXOUIkewjjT0mYNCuuCjTw==
-X-Received: by 2002:a05:6a21:33aa:b0:e4:9a37:2707 with SMTP id yy42-20020a056a2133aa00b000e49a372707mr22961680pzb.5.1681944488536;
-        Wed, 19 Apr 2023 15:48:08 -0700 (PDT)
+        bh=dtdhxjAc5NE0l6Xm4RKYrbJnPZddgUcv8zlUMpcItGE=;
+        b=HO3ku9csGum6YEn6LPAOMPdrNkvihPCdqJ+4Y7ssTFVXsE2JzaLc/j9nJVjk7XMFOv
+         kbG8UaQagnmmiP3tcknHR16d/9s1mboLLPCJrMbo25ZGsUjP0uWALeC8BeBuD1UEX6Od
+         t90GQI1RfMwpFrrXe1b9cuRhbsvs4gRSD9WYpi6MW3jdmhPzxsPBBRhRj1ZE8vKnfhvB
+         BxFi7+gJWvQvJz0JoTckP8wE4eg1eyx/mLdJNgjJQ8u8B3OsChoUHRrFbNwC9iWr8jni
+         +eZzwSWvlMxZGtuk1OrrjBUykOPci9ek02XSNJiBcPdrFj+KoT0q/As/B5AWdpxFKqdr
+         nr2g==
+X-Gm-Message-State: AAQBX9dDYufSV7D7GqPvEYRY52WJGmOFSlLMCNfnrSWudDN9Gq1VCkcE
+        ivnLW0DL+D5H6k8XwVb7/xLxNLf6sYS9+9wF0Pw=
+X-Google-Smtp-Source: AKy350bjXstxUBducg3D8WMXEwadmbG3MedYpok4UDgTfpycuwWDYZLkHh+QAwF/rb68j41MMEK//Q==
+X-Received: by 2002:a17:90a:1d5:b0:246:fa2b:91be with SMTP id 21-20020a17090a01d500b00246fa2b91bemr16882360pjd.3.1681944489513;
+        Wed, 19 Apr 2023 15:48:09 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id l9-20020a17090a49c900b002353082958csm1853364pjm.10.2023.04.19.15.48.07
+        by smtp.gmail.com with ESMTPSA id l9-20020a17090a49c900b002353082958csm1853364pjm.10.2023.04.19.15.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 19 Apr 2023 15:48:08 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/4] io_uring: remove sq/cq_off memset
-Date:   Wed, 19 Apr 2023 16:48:02 -0600
-Message-Id: <20230419224805.693734-2-axboe@kernel.dk>
+Subject: [PATCH 2/4] io_uring: return error pointer from io_mem_alloc()
+Date:   Wed, 19 Apr 2023 16:48:03 -0600
+Message-Id: <20230419224805.693734-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230419224805.693734-1-axboe@kernel.dk>
 References: <20230419224805.693734-1-axboe@kernel.dk>
@@ -69,47 +69,69 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We only have two reserved members we're not clearing, do so manually
-instead. This is in preparation for using one of these members for
-a new feature.
+In preparation for having more than one time of ring allocator, make the
+existing one return valid/error-pointer rather than just NULL.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ io_uring/io_uring.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 68684aabfbb7..7b4f3eb16a73 100644
+index 7b4f3eb16a73..13faa3115eb5 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -3900,7 +3900,6 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
+@@ -2719,8 +2719,12 @@ static void io_mem_free(void *ptr)
+ static void *io_mem_alloc(size_t size)
+ {
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN | __GFP_COMP;
++	void *ret;
  
--	memset(&p->sq_off, 0, sizeof(p->sq_off));
- 	p->sq_off.head = offsetof(struct io_rings, sq.head);
- 	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
- 	p->sq_off.ring_mask = offsetof(struct io_rings, sq_ring_mask);
-@@ -3908,8 +3907,9 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->sq_off.flags = offsetof(struct io_rings, sq_flags);
- 	p->sq_off.dropped = offsetof(struct io_rings, sq_dropped);
- 	p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
-+	p->sq_off.resv1 = 0;
-+	p->sq_off.resv2 = 0;
+-	return (void *) __get_free_pages(gfp, get_order(size));
++	ret = (void *) __get_free_pages(gfp, get_order(size));
++	if (ret)
++		return ret;
++	return ERR_PTR(-ENOMEM);
+ }
  
--	memset(&p->cq_off, 0, sizeof(p->cq_off));
- 	p->cq_off.head = offsetof(struct io_rings, cq.head);
- 	p->cq_off.tail = offsetof(struct io_rings, cq.tail);
- 	p->cq_off.ring_mask = offsetof(struct io_rings, cq_ring_mask);
-@@ -3917,6 +3917,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
- 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
- 	p->cq_off.flags = offsetof(struct io_rings, cq_flags);
-+	p->cq_off.resv1 = 0;
-+	p->cq_off.resv2 = 0;
+ static unsigned long rings_size(struct io_ring_ctx *ctx, unsigned int sq_entries,
+@@ -3686,6 +3690,7 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+ {
+ 	struct io_rings *rings;
+ 	size_t size, sq_array_offset;
++	void *ptr;
  
- 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
- 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
+ 	/* make sure these are sane, as we already accounted them */
+ 	ctx->sq_entries = p->sq_entries;
+@@ -3696,8 +3701,8 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+ 		return -EOVERFLOW;
+ 
+ 	rings = io_mem_alloc(size);
+-	if (!rings)
+-		return -ENOMEM;
++	if (IS_ERR(rings))
++		return PTR_ERR(rings);
+ 
+ 	ctx->rings = rings;
+ 	ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
+@@ -3716,13 +3721,14 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+ 		return -EOVERFLOW;
+ 	}
+ 
+-	ctx->sq_sqes = io_mem_alloc(size);
+-	if (!ctx->sq_sqes) {
++	ptr = io_mem_alloc(size);
++	if (IS_ERR(ptr)) {
+ 		io_mem_free(ctx->rings);
+ 		ctx->rings = NULL;
+-		return -ENOMEM;
++		return PTR_ERR(ptr);
+ 	}
+ 
++	ctx->sq_sqes = io_mem_alloc(size);
+ 	return 0;
+ }
+ 
 -- 
 2.39.2
 

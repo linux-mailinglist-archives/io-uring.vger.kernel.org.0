@@ -2,61 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A129A6E6FBA
-	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 00:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 190516E70BA
+	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 03:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230459AbjDRW7J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Apr 2023 18:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
+        id S231566AbjDSB2b (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Apr 2023 21:28:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbjDRW7I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 18:59:08 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15FBA7DBB
-        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 15:59:03 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33IMSiki014127
-        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 15:59:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=s2048-2021-q4;
- bh=BqGENR6EJK/EvqG9wS8tq0MAIq+wJ2fFbPUDT1U87Ig=;
- b=dFaZ4gFT9dUJJgN3FVyxwvdw/vQYrh5dmbGaXs4LLluQ0+sRHpTES6XTDvTUtX2WKszI
- RHC+nYFBj6evFDcVcvZZdjQL1rCHN/MVRUSLgPU3ggLVS+6KdcP+zXhGVr1wDp1IjmMq
- /E/gButknl/6EVBQcN3rqwea2jY7cBmJpCG8ctB5gcG0GiFQnYcffxHfyRLp1CiTNb4m
- iejwH5mz+IXfymso65uCkNn/BEawjxW94VpOwc9YEzSFRori0L+lVX+76IqT0aJvzSlX
- pY7ZqhMkxc9aKh5xqOlFw344J/swX/toNmjM1SMQ9QwcQV8bLCjoxRgFqD56OO7/T4ZX qw== 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3q195pt5mr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 15:59:02 -0700
-Received: from twshared34392.14.frc2.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Tue, 18 Apr 2023 15:59:01 -0700
-Received: by devbig023.atn6.facebook.com (Postfix, from userid 197530)
-        id 0966094262F3; Tue, 18 Apr 2023 15:58:56 -0700 (PDT)
-From:   David Wei <davidhwei@meta.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-CC:     <io-uring@vger.kernel.org>, David Wei <davidhwei@meta.com>
-Subject: [PATCH v4] io_uring: add support for multishot timeouts
-Date:   Tue, 18 Apr 2023 15:58:18 -0700
-Message-ID: <20230418225817.1905027-1-davidhwei@meta.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S231348AbjDSB2a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Apr 2023 21:28:30 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE9383D9
+        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 18:28:29 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-63b875d0027so934768b3a.1
+        for <io-uring@vger.kernel.org>; Tue, 18 Apr 2023 18:28:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681867708; x=1684459708;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fORvDtycGEYAP00Go8Gr75NbmrQRJi6legeNyHFvVc4=;
+        b=LrmAEIyGSJiRmmpboUhhQgqPcY35ao1RN/OmUVmJ2+dtZKoCNZbb8NLxueipM+G5cL
+         7Z8Nwal6Jz63ieQNUvv003Q/cAVuE98OeSDB3Ay0Doy0h7oKAWn5SO9oU40wJCf0tbCQ
+         BQ42zZnn0Cg/VQDTeWslhL7Wd8s61avskpFcinz3IKJk+gNlExkijnMyMDYHJlhUHd5M
+         8IVAzrRyL0O2Bazz7z+f5qoE6nxJXJFFSe3jLE/4Y/nctAfi6fljhWgSEFtC2xGzhK5C
+         mIW0MC0YJkbwEU94y4kb1t2bC6NCGfVeKEG9Yso2dAk27EpJOXvZk/aks8gm/9xAtK5z
+         hsig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681867708; x=1684459708;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fORvDtycGEYAP00Go8Gr75NbmrQRJi6legeNyHFvVc4=;
+        b=hZWDtN7BqJp4uwino2mE3I5WCzKYMxL4x5MaTRG0O3gHi+UX915QmIk6KKb3Es1MZp
+         iAIfgv9NNtr0bLpG6mbN39tJ6zbuuZfL2dBNj+pt2WeT/NqLMfUaUHBhoCBSYC/49iz+
+         F1vI7jhXx/xOPe2aKwssCSVs5zP45oQpwACSDtGazTab5eX1oDahfOLeOPckWGiN+qlc
+         y12d2dQYvLqbuob0ctzzdTr4699qtx8FCeBVvCn63chD8hiSnKyQ/rZrU8Rk36LXuCqE
+         TapTQkW9dS1UeCZYuTK0yVfXh+xpjO62I120wlOneXuunklP9fpswDy2KhFgD30nyZ1O
+         IIlg==
+X-Gm-Message-State: AAQBX9dluYCLk2NQXHj0o4W/HEZIyj6iQcNyAZuTPhj4QXPKjccN+zHI
+        CabBaKRev6pO388iE7fCKVqTLg==
+X-Google-Smtp-Source: AKy350ZW2i/ZFxByFt235VEJD3loFwfTTKFlgazg6SB7eTiGwpib5QWAwouBg+e5G+DCGghYaT9aug==
+X-Received: by 2002:a17:902:dad1:b0:1a1:956d:2281 with SMTP id q17-20020a170902dad100b001a1956d2281mr19890233plx.3.1681867708384;
+        Tue, 18 Apr 2023 18:28:28 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id x24-20020a1709027c1800b001a50ede5086sm10206660pll.51.2023.04.18.18.28.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Apr 2023 18:28:28 -0700 (PDT)
+Message-ID: <b09e799e-9d9f-ae22-1f09-babd6521b11d@kernel.dk>
+Date:   Tue, 18 Apr 2023 19:28:26 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: P3yKNJQLUNX7iqsP461dGla6RR_QOMOo
-X-Proofpoint-GUID: P3yKNJQLUNX7iqsP461dGla6RR_QOMOo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-18_15,2023-04-18_01,2023-02-09_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>,
+        Bernd Schubert <bschubert@ddn.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Dharmendra Singh <dsingh@ddn.com>
+References: <20230307172015.54911-2-axboe@kernel.dk>
+ <20230412134057.381941-1-bschubert@ddn.com>
+ <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
+ <ZDjggMCGautPUDpW@infradead.org> <20230414153612.GB360881@frogsfrogsfrogs>
+ <cfeade24-81fc-ab73-1fd9-89f12a402486@kernel.dk>
+ <CAJfpegvv-SPJRjWrR_+JY-H=xmYq0pnTfAtj-N8kG7AnQvWd=w@mail.gmail.com>
+ <e4855cfa-3683-f12c-e865-6e5c4d0e5602@ddn.com>
+ <20230418221300.GT3223426@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230418221300.GT3223426@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,149 +88,18 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-A multishot timeout submission will repeatedly generate completions with
-the IORING_CQE_F_MORE cflag set. Depending on the value of the `off'
-field in the submission, these timeouts can either repeat indefinitely
-until cancelled (`off' =3D 0) or for a fixed number of times (`off' > 0).
+On 4/18/23 4:13?PM, Dave Chinner wrote:
+>>> Without first attempting to answer those questions, I'd be reluctant
+>>> to add  FMODE_DIO_PARALLEL_WRITE to fuse.
+> 
+> I'd tag it with this anyway - for the majority of apps that are
+> doing concurrent DIO within EOF, shared locking is big win. If
+> there's a corner case that apps trigger that is slow, deal with them
+> when they are reported....
 
-Only noseq timeouts (i.e. not dependent on the number of I/O
-completions) are supported.
+Agree, the common/fast case will be fine, which is really the most
+important part.
 
-An indefinite timer will be cancelled if the CQ ever overflows.
-
-Signed-off-by: David Wei <davidhwei@meta.com>
----
-Changes in v4:
-  * Pass ts->locked to io_aux_cqe instead of unconditionally false
----
- include/uapi/linux/io_uring.h |  1 +
- io_uring/timeout.c            | 57 +++++++++++++++++++++++++++++++++--
- 2 files changed, 55 insertions(+), 3 deletions(-)
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index f8d14d1c58d3..0716cb17e436 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -250,6 +250,7 @@ enum io_uring_op {
- #define IORING_TIMEOUT_REALTIME		(1U << 3)
- #define IORING_LINK_TIMEOUT_UPDATE	(1U << 4)
- #define IORING_TIMEOUT_ETIME_SUCCESS	(1U << 5)
-+#define IORING_TIMEOUT_MULTISHOT	(1U << 6)
- #define IORING_TIMEOUT_CLOCK_MASK	(IORING_TIMEOUT_BOOTTIME | IORING_TIME=
-OUT_REALTIME)
- #define IORING_TIMEOUT_UPDATE_MASK	(IORING_TIMEOUT_UPDATE | IORING_LINK_=
-TIMEOUT_UPDATE)
- /*
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 5c6c6f720809..fc950177e2e1 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -17,6 +17,7 @@ struct io_timeout {
- 	struct file			*file;
- 	u32				off;
- 	u32				target_seq;
-+	u32				repeats;
- 	struct list_head		list;
- 	/* head of the link, used by linked timeouts only */
- 	struct io_kiocb			*head;
-@@ -37,8 +38,9 @@ struct io_timeout_rem {
- static inline bool io_is_timeout_noseq(struct io_kiocb *req)
- {
- 	struct io_timeout *timeout =3D io_kiocb_to_cmd(req, struct io_timeout);
-+	struct io_timeout_data *data =3D req->async_data;
-=20
--	return !timeout->off;
-+	return !timeout->off || data->flags & IORING_TIMEOUT_MULTISHOT;
- }
-=20
- static inline void io_put_req(struct io_kiocb *req)
-@@ -49,6 +51,44 @@ static inline void io_put_req(struct io_kiocb *req)
- 	}
- }
-=20
-+static inline bool io_timeout_finish(struct io_timeout *timeout,
-+				     struct io_timeout_data *data)
-+{
-+	if (!(data->flags & IORING_TIMEOUT_MULTISHOT))
-+		return true;
-+
-+	if (!timeout->off || (timeout->repeats && --timeout->repeats))
-+		return false;
-+
-+	return true;
-+}
-+
-+static enum hrtimer_restart io_timeout_fn(struct hrtimer *timer);
-+
-+static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state=
- *ts)
-+{
-+	struct io_timeout *timeout =3D io_kiocb_to_cmd(req, struct io_timeout);
-+	struct io_timeout_data *data =3D req->async_data;
-+	struct io_ring_ctx *ctx =3D req->ctx;
-+
-+	if (!io_timeout_finish(timeout, data)) {
-+		bool filled;
-+		filled =3D io_aux_cqe(ctx, ts->locked, req->cqe.user_data, -ETIME,
-+				    IORING_CQE_F_MORE, false);
-+		if (filled) {
-+			/* re-arm timer */
-+			spin_lock_irq(&ctx->timeout_lock);
-+			list_add(&timeout->list, ctx->timeout_list.prev);
-+			data->timer.function =3D io_timeout_fn;
-+			hrtimer_start(&data->timer, timespec64_to_ktime(data->ts), data->mode=
-);
-+			spin_unlock_irq(&ctx->timeout_lock);
-+			return;
-+		}
-+	}
-+
-+	io_req_task_complete(req, ts);
-+}
-+
- static bool io_kill_timeout(struct io_kiocb *req, int status)
- 	__must_hold(&req->ctx->timeout_lock)
- {
-@@ -212,7 +252,7 @@ static enum hrtimer_restart io_timeout_fn(struct hrti=
-mer *timer)
- 		req_set_fail(req);
-=20
- 	io_req_set_res(req, -ETIME, 0);
--	req->io_task_work.func =3D io_req_task_complete;
-+	req->io_task_work.func =3D io_timeout_complete;
- 	io_req_task_work_add(req);
- 	return HRTIMER_NORESTART;
- }
-@@ -470,16 +510,27 @@ static int __io_timeout_prep(struct io_kiocb *req,
- 		return -EINVAL;
- 	flags =3D READ_ONCE(sqe->timeout_flags);
- 	if (flags & ~(IORING_TIMEOUT_ABS | IORING_TIMEOUT_CLOCK_MASK |
--		      IORING_TIMEOUT_ETIME_SUCCESS))
-+		      IORING_TIMEOUT_ETIME_SUCCESS |
-+		      IORING_TIMEOUT_MULTISHOT))
- 		return -EINVAL;
- 	/* more than one clock specified is invalid, obviously */
- 	if (hweight32(flags & IORING_TIMEOUT_CLOCK_MASK) > 1)
- 		return -EINVAL;
-+	/* multishot requests only make sense with rel values */
-+	if (!(~flags & (IORING_TIMEOUT_MULTISHOT | IORING_TIMEOUT_ABS)))
-+		return -EINVAL;
-=20
- 	INIT_LIST_HEAD(&timeout->list);
- 	timeout->off =3D off;
- 	if (unlikely(off && !req->ctx->off_timeout_used))
- 		req->ctx->off_timeout_used =3D true;
-+	/*
-+	 * for multishot reqs w/ fixed nr of repeats, repeats tracks the
-+	 * remaining nr
-+	 */
-+	timeout->repeats =3D 0;
-+	if ((flags & IORING_TIMEOUT_MULTISHOT) && off > 0)
-+		timeout->repeats =3D off;
-=20
- 	if (WARN_ON_ONCE(req_has_async_data(req)))
- 		return -EFAULT;
---=20
-2.34.1
+-- 
+Jens Axboe
 

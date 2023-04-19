@@ -2,64 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7986E8120
-	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 20:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6395C6E812C
+	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 20:22:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230256AbjDSSSt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 14:18:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39106 "EHLO
+        id S229652AbjDSSW2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 14:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232321AbjDSSSb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 14:18:31 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94E255A8;
-        Wed, 19 Apr 2023 11:18:29 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id gw13so116954wmb.3;
-        Wed, 19 Apr 2023 11:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681928308; x=1684520308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7rB9pjN1wb6usUEPT4bG0wgaqNPIKNHJ/yW9CqDAlY=;
-        b=SVUAE2OFK6nbvtv127m2tipnyzEc6Y7S0RzT9pE4OJFptCBJ5Y6A7hiEIt+1leBvIc
-         32AFdahPhGxxNC50W7v+veOqDUFZHlKLJQavNiUqTR2BVdaJbbKYebmQ9OO3YuY9m1jy
-         j7l8f9U/MX9+uxAJV7tEGFAmxwF2CEQZIHtNQftg6jjw7SgP15mrHDD6CvcTvuvyrSav
-         OkW3DOHFllcoQ/6RhSju5tsc4QfNDBru18pPbUu3/TR1Z2cgSdd2XCaBkOlTPqDspXWq
-         KqdbpP5h00i084a5+6t8+o5xkM8RM5qqmPuql6o0T9lQlldd0o5PlUNqhDEIphAjulA7
-         7+rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681928308; x=1684520308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K7rB9pjN1wb6usUEPT4bG0wgaqNPIKNHJ/yW9CqDAlY=;
-        b=A7QecxpFBUFMPI5R8+DUCGeUOKhg5gki9KbGoqh9R1Z8meFq+yor4A4YvSQrW1FwYX
-         Tdv+W+1zI/ES1lqqspkpbXifrpmhtsQ4jPN5tXvHHS865qHf4ittdOG9wrVrY8vqh6Qm
-         d0F1AictWAkNMb8LBs0vE6EWwGX8pD86OOmNEKOeehdNpH6XF9Ydbyhn1mHCB+ZXDuOb
-         Mxs5qxAWSa8sga+PQ403yq0UvqiFbdZWFHtDcqwvPWH+Jnv0cPyymm3ptX4XW4jGwEKK
-         Q4afdop6P/bZA3RoK9wPG/R273smMqdR2Frr4iGfecoODTF6GuqY7U/cB6DH4hvuOdEP
-         p6fg==
-X-Gm-Message-State: AAQBX9ejvrK4oKDvKjc/T57gmbhQJlYpk5AQK/lYpV57o+kosKr+9SZk
-        pKx2FHVVJvKt5/0YkP60f4Q=
-X-Google-Smtp-Source: AKy350bWBQLn46YabJ/c+Q2TKqlCE1ezQOThoBuoeeKGXD2RFFJdL1nznp39Jdn24M2FdUwEMfi/cA==
-X-Received: by 2002:a05:600c:b59:b0:3f0:80cf:f2d5 with SMTP id k25-20020a05600c0b5900b003f080cff2d5mr2656525wmr.11.1681928308102;
-        Wed, 19 Apr 2023 11:18:28 -0700 (PDT)
-Received: from localhost ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.gmail.com with ESMTPSA id z9-20020a05600c220900b003ee1b2ab9a0sm2875831wml.11.2023.04.19.11.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 11:18:27 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 19:18:26 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        with ESMTP id S229565AbjDSSW1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 14:22:27 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5781D269E;
+        Wed, 19 Apr 2023 11:22:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UEMbFOASU8wmCJ7TtJUoVqmaCZn84NQgUKvCBkJGe47yUttAh+id4cyQ5YtSgZEwT+yqjYWkV/vrD3LAETDGzWhgEemaKsOypO3mHOaMhwV3WxmUxTIltQA8vF1xL0QOtwJ1qwCFpZZ8Zbo8zt5Q0h/EnfVUlyDRjxidlSpDn//+CLlNKpnHDClMeDerOw0XRhEFNZ+bLeUuuIR527a7hNT9sb6x8bN81nysmpxmh8xYxk3bAqbh+2vrcJ5da9Rxx+YGJe2dxqMfu4S8iMfGD4aOEgtV+ZYACvUpdcBrUIO8q/DnXQHqMyWdQv4wwsLoX6ehlSVJPJnjXdis7791aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FRucLXYD6qAwd3dt7lLiRkMUt9a9aLl1CrUGgLXFRNA=;
+ b=jlnCsLGjty5RGNCm7bFfTWbDfKBSn2qa+ChpQ0E1SL18ld7H9EKNv6nE6H5/mMu/BdmdzTGeUZKvH2Iozbbg1Od8wE6KHx0NGgWEFLDi8L93CU8RyB0BCvYLoeaROFfSYJ5fWUXp++MoRrpXq4v/sVdzFHvEzUCIhyEXPdEN/RVGrWGElBCn7cElP525z6LlnFSI0gC/GsmxvbeylJVpUicNd1hjF/ty8hfj3T0X3zZIraPYZhTjRmjT4zynR/g7wqsYu+1O8GzixLP2ieTjMFUKaZ6pXnRIsvhR1TIjU28WPWmh70gzLZ/gqzJb3KlAjQlZaAdkdsM6RAdXObhJdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FRucLXYD6qAwd3dt7lLiRkMUt9a9aLl1CrUGgLXFRNA=;
+ b=YqJC0j0bB5D8rJnDPWJhfX2N+5v3fI6+SRcFYnlBR6Xpl7K7A75E2bDuSPTjp8nd6js9yRmTQolupjKY6XpGConvubPnFM7DiFlgGOZwZyunOHyvheC7gHaiTrC3/kt8yqHCPytb9r+Au/ERSVP6G9sp8rjt6GWB3xwinsm/QXMOSXOp2KfCs7/kFPTmgjZprDzXWI8JixWI9QVOWz2UDCdnYDMkuPxi0raFXF9zaZIHAKY4eTFgSKtbKP1suoZ8eRQkSV4XGvJ5sztHd5MzfPsIwTcuLJdn+r3IQxDXeIOeBsFQJh2AH9otbQLJA5AHbH20ImkgfR2dri7A1RWbRQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by BL3PR12MB6570.namprd12.prod.outlook.com (2603:10b6:208:38d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.45; Wed, 19 Apr
+ 2023 18:22:22 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6319.020; Wed, 19 Apr 2023
+ 18:22:22 +0000
+Date:   Wed, 19 Apr 2023 15:22:19 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         David Hildenbrand <david@redhat.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+        io-uring@vger.kernel.org
 Subject: Re: [PATCH v4 4/6] io_uring: rsrc: avoid use of vmas parameter in
  pin_user_pages()
-Message-ID: <d601ca0c-d9b8-4e5d-a047-98f2d1c65eb9@lucifer.local>
+Message-ID: <ZEAxW/yR3LCNSmjT@nvidia.com>
 References: <cover.1681831798.git.lstoakes@gmail.com>
  <956f4fc2204f23e4c00e9602ded80cb4e7b5df9b.1681831798.git.lstoakes@gmail.com>
  <936e8f52-00be-6721-cb3e-42338f2ecc2f@kernel.dk>
@@ -68,164 +61,99 @@ References: <cover.1681831798.git.lstoakes@gmail.com>
  <69f48cc6-8fc6-0c49-5a79-6c7d248e4ad5@kernel.dk>
  <bec03e0f-a0f9-43c3-870b-be406ca848b9@lucifer.local>
  <8af483d2-0d3d-5ece-fb1d-a3654411752b@kernel.dk>
-MIME-Version: 1.0
+ <d601ca0c-d9b8-4e5d-a047-98f2d1c65eb9@lucifer.local>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8af483d2-0d3d-5ece-fb1d-a3654411752b@kernel.dk>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <d601ca0c-d9b8-4e5d-a047-98f2d1c65eb9@lucifer.local>
+X-ClientProxiedBy: SJ0PR05CA0143.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::28) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|BL3PR12MB6570:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33be1d26-5ff0-4e89-1af6-08db4103047e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: VZ9/05xsrjLl/MQ8drYzdpqYse6voT04LC6ZLsYVANmi4rChONTob5uJekaS4nzBATEuQoMjOFdpzRnQ3G6EjjNFdrXFM8Wuzz+NblhjUvNCHqbffbNRND6vLVjXSJeXZaX2xJfMl+DlBrkOZjH4QCv+l+EBIlsx2BjTbEeCCaVRjRMYLrvaBNZ1B/rulC/h4SkVr0ZX9JlP5UBA1BqIzQDf5ss/h1lwEWtffUSqlKTMPrB+xEIRADiJq0MO4v4rH2gfc8cwN318INin0fxJQ5PdOCydD4gVqvYqxyQ9pIQLbba3vN5iHZq3oYo/SwS5H1sTCk9XYkfayI0UtpZfWp38XCNGB9dgQ0/LvXX4MlMRO0t/4PsRkaPp3f13Lx1dsHCXeX6IUu7KWaM5BdKFroS4AJJcjr89vcsQshvKxxpy0jpJ7Atzn94sMUuTJV8QEOr8OE+wv6dr8fEsO6rS/qWSnHStD71JvxqFlMEZgMtxMIOfTYG5kJVuXeCvu9Tqo/n7jJ+BywQK87aFswg+Iokb6V4XjHPtRIMgwSN/hzIJsK2LUi0o25KIqsxfBiF8
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(366004)(346002)(39860400002)(376002)(451199021)(86362001)(6506007)(6512007)(26005)(83380400001)(36756003)(186003)(2906002)(5660300002)(6486002)(2616005)(38100700002)(6666004)(8676002)(8936002)(66476007)(478600001)(54906003)(41300700001)(316002)(66556008)(66946007)(4326008)(6916009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aKZiSGS1kA3ThruZE5gqmBnOn9gcNVxKgHE1lKlYatiyzAPpbna0fCK/jOqa?=
+ =?us-ascii?Q?Bqm3nKAwE14ihLT9riKRyB8pbNvIdoCUjg84/zgc3Hh1rXyoBryEX0WC0juh?=
+ =?us-ascii?Q?ewwR59gUbTkVUIZZzLPHAD4hvAUkkiRdYw0kKdcb1xl3XH9DtqdJcJaSwsK5?=
+ =?us-ascii?Q?gmD8+UyodoO4r2+w1kOrR8tp8QKACG7c+LdbcEaq0oN2P6yZLuhBKgafntG3?=
+ =?us-ascii?Q?JJ89GJKj/aZZ3zEEcQWaIoPieuuHJPqKWpGJr9ripVvdIOT/BrVBp/15gm70?=
+ =?us-ascii?Q?0vXNsvQPeIjfqxHQsC/eeLrJqVyNpUxdUR1YWJ2gkvc99695eMje8Aehu4g4?=
+ =?us-ascii?Q?6n50pLQpOgHSaH25avRvu4hJP0aDZO2nrGngFEllyx9fxWcEUJTi+/dKi+eS?=
+ =?us-ascii?Q?lAOpnywwuMD6BM6l77AZI0oZq7og3pkKOhp3+mZtb3Y0qx/5xGI4xwpP50l4?=
+ =?us-ascii?Q?0kzSx73JCndgLyYTZl8ePu3vBaamnBh5qrJifWWD+pTJpRrj95gRLN9ANHWn?=
+ =?us-ascii?Q?SF4EfdoT7Rz9dKD48hqh0/E0cteMVh5y6d1awz+wE76sbkXdys6UOybD2Rbk?=
+ =?us-ascii?Q?QScQqCsa3llKRNy0QwgveivYeomS+9SpKxeghQi1ZN/5W+NcPfxY8iJjrn6P?=
+ =?us-ascii?Q?0VQMmLiHyOITKFCCrsUv/eM/Ur2oUWYExaWcE9emeEoGh3aI1deeKQUoNqdj?=
+ =?us-ascii?Q?aGv1/z5pJCYCn44U5je6wgYjRl69/8pl+BVWw0pQ4BaYx6Hvoxqh4SAuGPAl?=
+ =?us-ascii?Q?bLypk9eG4caGc+F+XJ2mWOtXP0VL0nFaXoLU33k1vxvkEdzyhou3AsLY0PZN?=
+ =?us-ascii?Q?x2gIott08ar4YT+IA7Hn3Akw4mxwP128AfebBV6hPhoPOUrDNU/yY2KeiHy+?=
+ =?us-ascii?Q?UvvImH1lZdc4I32YkxZKdqPFqRyB1Q0ioiD0VZhIITgcfOcNdBJoe5qGZFJS?=
+ =?us-ascii?Q?1TvRRTvwJBCrHoeqJX52DuET7hjvBOEIwefgFvo6qHrY7G7X+X1e1kjUFoOQ?=
+ =?us-ascii?Q?nD60IWJvq45dyGZWRT/ueWE5vr/Rfmqjyt1DyITHoPqds+cvbaL5OdvrXotm?=
+ =?us-ascii?Q?FuVjHNJhbFRzcP6/W2D6WMj7jOLZdF2q7MG6XnTE+A+zrS13SsF0dTWKt/P4?=
+ =?us-ascii?Q?jU7cSeattJPD2kjqcwkc3nXUMyiJ325Ap4UYiCpoZyGhVGYplY36XjLlju9E?=
+ =?us-ascii?Q?Ui5bccRtbiLxEsHOkd59guGLJVV/DkTl3Mk3z5UzoLblpCcgPSZWyztm+4XX?=
+ =?us-ascii?Q?/LdGhbpdRz0RN/viTllxonyx+Aq9FZo7YEzQxgcsYKvyDFRUTHFYUxiKu2A+?=
+ =?us-ascii?Q?/DRx/1vb7YbAI7UGhX7/YqUpEZmD1ft2J8ZchEMhxjfTu1goBEJI52Lq/Iuq?=
+ =?us-ascii?Q?WBP+o0kP8eCxe1gbu8br7OMIGcMwvy0fwsHqvIvJnN9X6vhrBraFgFF2zFdm?=
+ =?us-ascii?Q?KeXcqPQhR4XNRrtGWR0ZRrOiX6EhOmEJVuRs1o12CtLtqR8N+OQ1oaM5qKSR?=
+ =?us-ascii?Q?+x6+yFmvCr6nBLNLgnR72sXFi5wjyAC/YEUgX6tOx0gro7miAeKy2wQM+NY8?=
+ =?us-ascii?Q?RlEX0Y/KsNXDpuwPVYanCis2ceAXsM5buxJF8xf3?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33be1d26-5ff0-4e89-1af6-08db4103047e
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2023 18:22:22.0314
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fluSD1AeNCoBZn11TE24wuh7YE3MXxmbTxTSasySLIG36yGCa2XhtAoSii41Mgfa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6570
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 11:51:29AM -0600, Jens Axboe wrote:
-> On 4/19/23 11:47?AM, Lorenzo Stoakes wrote:
-> > On Wed, Apr 19, 2023 at 11:35:58AM -0600, Jens Axboe wrote:
-> >> On 4/19/23 11:23?AM, Lorenzo Stoakes wrote:
-> >>> On Wed, Apr 19, 2023 at 10:59:27AM -0600, Jens Axboe wrote:
-> >>>> On 4/19/23 10:35?AM, Jens Axboe wrote:
-> >>>>> On 4/18/23 9:49?AM, Lorenzo Stoakes wrote:
-> >>>>>> We are shortly to remove pin_user_pages(), and instead perform the required
-> >>>>>> VMA checks ourselves. In most cases there will be a single VMA so this
-> >>>>>> should caues no undue impact on an already slow path.
-> >>>>>>
-> >>>>>> Doing this eliminates the one instance of vmas being used by
-> >>>>>> pin_user_pages().
-> >>>>>
-> >>>>> First up, please don't just send single patches from a series. It's
-> >>>>> really annoying when you are trying to get the full picture. Just CC the
-> >>>>> whole series, so reviews don't have to look it up separately.
-> >>>>>
-> >>>>> So when you're doing a respin for what I'll mention below and the issue
-> >>>>> that David found, please don't just show us patch 4+5 of the series.
-> >>>>
-> >>>> I'll reply here too rather than keep some of this conversaion
-> >>>> out-of-band.
-> >>>>
-> >>>> I don't necessarily think that making io buffer registration dumber and
-> >>>> less efficient by needing a separate vma lookup after the fact is a huge
-> >>>> deal, as I would imagine most workloads register buffers at setup time
-> >>>> and then don't change them. But if people do switch sets at runtime,
-> >>>> it's not necessarily a slow path. That said, I suspect the other bits
-> >>>> that we do in here, like the GUP, is going to dominate the overhead
-> >>>> anyway.
-> >>>
-> >>> Thanks, and indeed I expect the GUP will dominate.
-> >>
-> >> Unless you have a lot of vmas... Point is, it's _probably_ not a
-> >> problem, but it might and it's making things worse for no real gain as
-> >> far as I can tell outside of some notion of "cleaning up the code".
-> >>
-> >>>> My main question is, why don't we just have a __pin_user_pages or
-> >>>> something helper that still takes the vmas argument, and drop it from
-> >>>> pin_user_pages() only? That'd still allow the cleanup of the other users
-> >>>> that don't care about the vma at all, while retaining the bundled
-> >>>> functionality for the case/cases that do? That would avoid needing
-> >>>> explicit vma iteration in io_uring.
-> >>>>
-> >>>
-> >>> The desire here is to completely eliminate vmas as an externally available
-> >>> parameter from GUP. While we do have a newly introduced helper that returns
-> >>> a VMA, doing the lookup manually for all other vma cases (which look up a
-> >>> single page and vma), that is more so a helper that sits outside of GUP.
-> >>>
-> >>> Having a separate function that still bundled the vmas would essentially
-> >>> undermine the purpose of the series altogether which is not just to clean
-> >>> up some NULL's but rather to eliminate vmas as part of the GUP interface
-> >>> altogether.
-> >>>
-> >>> The reason for this is that by doing so we simplify the GUP interface,
-> >>> eliminate a whole class of possible future bugs with people holding onto
-> >>> pointers to vmas which may dangle and lead the way to future changes in GUP
-> >>> which might be more impactful, such as trying to find means to use the fast
-> >>> paths in more areas with an eye to gradual eradication of the use of
-> >>> mmap_lock.
-> >>>
-> >>> While we return VMAs, none of this is possible and it also makes the
-> >>> interface more confusing - without vmas GUP takes flags which define its
-> >>> behaviour and in most cases returns page objects. The odd rules about what
-> >>> can and cannot return vmas under what circumstances are not helpful for new
-> >>> users.
-> >>>
-> >>> Another point here is that Jason suggested adding a new
-> >>> FOLL_ALLOW_BROKEN_FILE_MAPPINGS flag which would, by default, not be
-> >>> set. This could assert that only shmem/hugetlb file mappings are permitted
-> >>> which would eliminate the need for you to perform this check at all.
-> >>>
-> >>> This leads into the larger point that GUP-writing file mappings is
-> >>> fundamentally broken due to e.g. GUP not honouring write notify so this
-> >>> check should at least in theory not be necessary.
-> >>>
-> >>> So it may be the case that should such a flag be added this code will
-> >>> simply be deleted at a future point :)
-> >>
-> >> Why don't we do that first then? There's nothing more permanent than a
-> >> temporary workaround/fix. Once it's in there, motivation to get rid of
-> >> it for most people is zero because they just never see it. Seems like
-> >> that'd be a much saner approach rather than the other way around, and
-> >> make this patchset simpler/cleaner too as it'd only be removing code in
-> >> all of the callers.
-> >>
-> >
-> > Because I'd then need to audit all GUP callers to see whether they in some
-> > way brokenly access files in order to know which should and should not use
-> > this new flag. It'd change this series from 'remove the vmas parameter' to
-> > something a lot more involved.
-> >
-> > I think it's much safer to do the two separately, as I feel that change
-> > would need quite a bit of scrutiny too.
-> >
-> > As for temporary, I can assure you I will be looking at introducing this
-> > flag, for what it's worth :) and Jason is certainly minded to do work in
-> > this area also.
->
-> It's either feasible or it's not, and it didn't sound too bad in terms
-> of getting it done to remove the temporary addition. Since we're now
-> days away from the merge window and any of this would need to soak in
-> for-next anyway for a bit, why not just do that other series first? It
-> really is backward. And this happens sometimes when developing
-> patchsets, at some point you realize that things would be easier/cleaner
-> with another prep series first. Nothing wrong with that, but let's not
-> be hesitant to shift direction a bit when it makes sense to do so.
->
-> I keep getting this sense of urgency for a cleanup series. Why not just
-> do it right from the get-go and make this series simpler? At that point
-> there would be no discussion on it at all, as it would be a straight
-> forward cleanup without adding an intermediate step that'd get deleted
-> later anyway.
+On Wed, Apr 19, 2023 at 07:18:26PM +0100, Lorenzo Stoakes wrote:
 
-As I said, I think it is a little more than a cleanup, or at the very least
-a cleanup that leads the way to more functional changes (and eliminates a
-class of bugs).
+> I'd also argue that we are doing things right with this patch series as-is,
+> io_uring is the only sticking point because, believe it or not, it is the
+> only place in the kernel that uses multiple vmas (it has been interesting
+> to get a view on GUP use as a whole here).
 
-I'd also argue that we are doing things right with this patch series as-is,
-io_uring is the only sticking point because, believe it or not, it is the
-only place in the kernel that uses multiple vmas (it has been interesting
-to get a view on GUP use as a whole here).
+I would say io_uring is the only place trying to open-code bug fixes
+for MM problems :\ As Jens says, these sorts of temporary work arounds become
+lingering problems that nobody wants to fix properly.
 
-But obviously if you have concerns about performance I understand (note
-that the actual first iteration of this patch set added a flag specifically
-to avoid the need for this in order to cause you less trouble :)
+> So even if I did the FOLL_ALLOW_BROKEN_FILE_MAPPING patch series first, I
+> would still need to come along and delete a bunch of your code
+> afterwards. And unfortunately Pavel's recent change which insists on not
+> having different vm_file's across VMAs for the buffer would have to be
+> reverted so I expect it might not be entirely without discussion.
 
-I would argue that you're _already_ manipulating VMAs (I do understand your
-desire not to do so obviously) the only thing that would change is how you
-get them and duplicated work (though likely less impactful).
+Yeah, that should just be reverted.
 
-So even if I did the FOLL_ALLOW_BROKEN_FILE_MAPPING patch series first, I
-would still need to come along and delete a bunch of your code
-afterwards. And unfortunately Pavel's recent change which insists on not
-having different vm_file's across VMAs for the buffer would have to be
-reverted so I expect it might not be entirely without discussion.
+> However, if you really do feel that you can't accept this change as-is, I
+> can put this series on hold and look at FOLL_ALLOW_BROKEN_FILE_MAPPING and
+> we can return to this afterwards.
 
-However, if you really do feel that you can't accept this change as-is, I
-can put this series on hold and look at FOLL_ALLOW_BROKEN_FILE_MAPPING and
-we can return to this afterwards.
+It is probably not as bad as you think, I suspect only RDMA really
+wants to set the flag. Maybe something in media too, maybe.
 
->
-> --
-> Jens Axboe
->
+Then again that stuff doesn't work so incredibly badly maybe there
+really is no user of it and we should just block it completely.
+
+Jason

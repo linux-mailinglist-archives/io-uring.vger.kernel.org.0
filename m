@@ -2,372 +2,252 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F6E6E7BF9
-	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 16:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED5C16E7E8C
+	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 17:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbjDSOMt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 10:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39474 "EHLO
+        id S233356AbjDSPmp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 11:42:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbjDSOLy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 10:11:54 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8119C1A1
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 07:11:28 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-63b621b1dabso1490834b3a.0
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 07:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681913488; x=1684505488;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0xNOxuM/Q5bpnY5wu/Mk8v5XqLEF0yXr8Lavq8xCLBI=;
-        b=dbYdMVNBZAXtFnxqi/+hd9ElkpDEHwRvEdfQXibeH2x2t5NK2N584hjAqe5g1inZ+5
-         PEdDd56nnVP/T16X8KL0i13b1v3Psrs4+XzZCyAW97Fy5v2IlzCzW8btRW7Yy9dYBs/2
-         Cj5KTUTlXsrVXOCIYzY+9DO/JNmLs1p1WLRL4vIwtDqSxSQYQ0pTucNd+L46PkXv4S/A
-         Qs3JtMfipVNLfzewQW5rr7CmtPPOVj5Xc+9qOklDtlfiQ/JAGa5kreSsoW5WoH21Cnxd
-         /efIGwHFVToHS0ARrA0WznHPMq2pOQZXazxoXPSjrjY4sXq1THhTL99G37mwYt1OvGIp
-         5u/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681913488; x=1684505488;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0xNOxuM/Q5bpnY5wu/Mk8v5XqLEF0yXr8Lavq8xCLBI=;
-        b=E7ZriiHlgr1p+FiXr8zA6uiXNonT1tXVHRpx1P7VPKrKsWm9Z3fyu7YPselemoCoS+
-         muHCETCseIBqTfYR/5vC+kJlqwP1dWOPwTMhhG7n0Xm24ABIO/xTt2LvzJ1I1+VLXVXt
-         bD5hRsxV6yaphUgqsoMRGPdBkgcEM5JTmE9dCekpD0oXWsflVqDEK2iUC7tlRnYGIktC
-         GvTZ+1zR0/KEQPISPXpB1+83Sxrszw2JG0TELiod68dfEQTaKWMCOJ8F22w+jEYP1YO4
-         nwhJA2xGd/WJX1sM+xO3iOLAiBD0mT1QqYD7JmPwplhSOGtWgM89YRlZWGCFG4PHe+s4
-         DZ3A==
-X-Gm-Message-State: AAQBX9daNWikFG7K6X8IGIuQWcK7HwgDRpRhSXGsUHfXlU/3XXtpYAJk
-        9XsMlyppMMiUk76d2PfBkOEoLuqJH+KerjMisXI=
-X-Google-Smtp-Source: AKy350bEvRYzEBCnOpnJFKmtTKDS+DUs3P7riBFSdQnQqbeIteclnAxTTIXg8E6O1obcsqPoO3aOOA==
-X-Received: by 2002:a05:6a00:4147:b0:63a:2829:7e33 with SMTP id bv7-20020a056a00414700b0063a28297e33mr20249457pfb.0.1681913487778;
-        Wed, 19 Apr 2023 07:11:27 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a29-20020a62d41d000000b0062db34242aesm1027514pfh.167.2023.04.19.07.11.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 07:11:27 -0700 (PDT)
-Message-ID: <4aa0bade-0234-9cee-4eb9-5dc86c3e7240@kernel.dk>
-Date:   Wed, 19 Apr 2023 08:11:26 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] io_uring: Optimization of buffered random write
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     luhongfei <luhongfei@vivo.com>,
+        with ESMTP id S233120AbjDSPmo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 11:42:44 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621AA83CE;
+        Wed, 19 Apr 2023 08:42:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Aaq8JsKryLVlmfv/F0Mj5x0wtcc+5oT+hjjUK5JJt5J0xn4nFLWjvBUxQDG2OOcwBRyl+jK3aawoQp1fvD/bV93uOtj8BbXGEo5i7ixYzKhDCP8Twn8uBFB+u67z0F+rB/1NHIp+NrDeFE+GQSr6mcYz6DEsFKKMQ5rS0HvhMDzynNZ52ZVLLEOcJl/+xiscDjPlNhWwmB0TDbXpFOyCe0cAXX+4aZSl78zq86UXC0hg2/FG6s6k6AorErIKFfJsMIoI0ffWQuZBarqbIVivnZY6Lit+SPW7zWELSu66aN90Lg8Q4e4CGhN7WL+4lSB9vb+W/U/8a6cT29iR6JW/Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PoulpVEsjzmJHpsxn83+oAkNzpwSic+kg/uAnHOcFpI=;
+ b=eRZPI4/ctg2ooRXjLJ+WM1d3faFP19eYXRbhqMV3MUSt9iW7zlKteIaIKfOex4v0H6i+ZcMEiLbk+q+PR9wbhEfd6kEjMZS8qiaiwUjbggSmPqcrA4ewaKvKzqIzqOo+gq4UPHLVE5P3niXfBx1UqtcsjJ0TDyc831jwuRE8Lr42mS69TCfG6Sb69gDZ4dfS4yc8fZHrpOVMX5LfFARw5uLewFL8dalW7ZNt4bJk19SBFKHWRnNKI+O+XyJlm6oTmRUIdF743eU9+/DpitSs27doIutCjbLLd86NGlhN2dpem7gtMa70KSe7Zp3kOuJpOCWvUwrH2x2hAXxOvqv0RA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PoulpVEsjzmJHpsxn83+oAkNzpwSic+kg/uAnHOcFpI=;
+ b=H1BZT2m26g9nQ8q8rFtlot2gnEqDz3sSJEFf2TU4tKkfWenPXKD8KwG6NDYF+G+jLuJCUPORLsIACPcMpd1LUDdLBbIpvEwY0fjfMm+QqTQN+sy0p3vQfF2Xv0IvAV+3OQzVuc22ZklJ8OLg1fm1UorGnBXvyvfN5rhYEnwaWTE=
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
+ by DS0PR19MB7297.namprd19.prod.outlook.com (2603:10b6:8:151::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.31; Wed, 19 Apr
+ 2023 15:42:40 +0000
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::8cb3:ef5b:f815:7d8c]) by DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::8cb3:ef5b:f815:7d8c%6]) with mapi id 15.20.6277.031; Wed, 19 Apr 2023
+ 15:42:40 +0000
+From:   Bernd Schubert <bschubert@ddn.com>
+To:     Ming Lei <ming.lei@redhat.com>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        "open list:IO_URING" <io-uring@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     opensource.kernel@vivo.com
-References: <20230419092233.56338-1-luhongfei@vivo.com>
- <30cf5639-ff99-9e73-42cd-21955088c283@kernel.dk>
-In-Reply-To: <30cf5639-ff99-9e73-42cd-21955088c283@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
+Thread-Topic: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
+Thread-Index: AQHZYvvtPs9fEeQCFke4YxV9Vaxbbq8xlJqAgABoW4CAAIeQgIAAFxAAgABJl4A=
+Date:   Wed, 19 Apr 2023 15:42:40 +0000
+Message-ID: <6ed5c6f4-6abe-3eff-5a36-b1478a830c49@ddn.com>
+References: <20230330113630.1388860-1-ming.lei@redhat.com>
+ <78fe6617-2f5e-3e8e-d853-6dc8ffb5f82c@ddn.com>
+ <ZD9JI/JlwrzXQPZ7@ovpn-8-18.pek2.redhat.com>
+ <b6188050-1b12-703c-57e8-67fd27adb85c@ddn.com>
+ <ZD/ONON4AzwvtlLB@ovpn-8-18.pek2.redhat.com>
+In-Reply-To: <ZD/ONON4AzwvtlLB@ovpn-8-18.pek2.redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM5PR1901MB2037:EE_|DS0PR19MB7297:EE_
+x-ms-office365-filtering-correlation-id: b0a29ec7-060c-485c-21db-08db40ecb55b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Diwr+frPt40Tmn1wNfSdz+qUssRSFG0ZtoD3DbVA6Ui0b45DSHxABS3ZwFZnj0krYm7xGOJ5d+P86Oak9VMyFcm8WDWEdTGG7IHGXP7l4ehLt7Hdf9CyqIJsGpbc82EY43q9O/+ZJTTavMjeMPm8z/GuuPODonVuVapT041JTAODXn22MpSI9zsYFGvt8OQBkWd7zCBGBNg9DuYiI/ilFbWPxkIE8v9QCWIUsTzR1pjvhZOFb1hLQ4OfsTot3C00Gp//eEC0w8SpKBGihs3izaE7eZZMdzI5xx8d49T2yvADHHUcID4r6+hUUaZouKqhOqL4cgvN8+a74ZrqOgsjcCX3c8GxXeGq7GvwiLyHrziluC1nidtHSQs7CEckghPaKYIqPuecqUxo+H/2KamDaSM/2i4EampxqYkIXLjawM89V9p28hB/n0LqZbg54fj6gYhfPg0+V+jfHnTMS4dAEvN4ZI6EMoTaT3xas5SskXAX3zGcL/cF6wLI2WKUQZIkoZCQmv35+jaNL2VwkHh7rm0HdxrMFLToXTSQ8b5i3+BqUJdh8x2AWnvX+ypw75x+QgE4CR0wHdlswk+kph0/jgVl9F8avS7ZYTt05zjWWWD4F5w7H/9hpKhUJk/ju/m03rk439SH4xQtmnegP71RmHFdD3evyr0nJiYbd60gLWYh6vW9lEdqs4Fnlr0W1J4P
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(396003)(346002)(39850400004)(376002)(451199021)(38100700002)(966005)(6506007)(316002)(83380400001)(186003)(6512007)(6486002)(478600001)(54906003)(45080400002)(91956017)(2616005)(71200400001)(38070700005)(5660300002)(2906002)(66946007)(6916009)(36756003)(122000001)(76116006)(86362001)(66446008)(4326008)(64756008)(41300700001)(31696002)(8936002)(66556008)(66476007)(8676002)(7416002)(53546011)(31686004)(66899021)(41533002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z1dzRUNJK1RPNm1DMUxaeFpzY0lVb29WdGRHYnpYUmZKa244ZUVnZkRKMFZW?=
+ =?utf-8?B?QUJFOFhTRHQrT1NKTmJMNmw5ZTFlNmtYdjRUZGdTUGJpOXFuSlFtVHcrSkZE?=
+ =?utf-8?B?VlovN1NUYmZZVFAxUm5HWVJWY3JEdWIzZEFmeS9tc3ZLbkRpTGw5c0NsQVlN?=
+ =?utf-8?B?MW1XS1RNR1lTUnVPVmlYM1BNNnhkL0VvSWw4ekozV3NTZnI2eldnRWpHSFlj?=
+ =?utf-8?B?UVJjVkNvUmpXL2JvSlVVU2Z4QnFTdkFvRUJsRUtRTlNGdndnYlJPZGJPSmNU?=
+ =?utf-8?B?V2ZBelFEUXlVMnB3Z0w3MzE3VU96UGVCZ3R1QVFTQWIzOThNUytJZnJnR1J3?=
+ =?utf-8?B?VFBtVFFWWkRadk80d0xuQk50SGNpTk1MYlFoY0VHa0J4UzlWS1haRnFpdXp4?=
+ =?utf-8?B?dldDeTFuRWY5d29zc0hxRGdwdGk5L2dlczFMOXVRZ21QM2FaNHl0VktIWnJy?=
+ =?utf-8?B?NzBPcDBEOUMwOE9zVGxOa0prS2p6aWVQbjV1SXorM1Q1N1RBaWcyQzhBN1g2?=
+ =?utf-8?B?U1p3UCt6QTM3Tm5RaVR4M3hGek5aWUdRV002NkFUWTVPUnpGVUxJNTdabk1o?=
+ =?utf-8?B?R0haakJmVzNOMUQ0OWJzalFuNDQ1S3hOY1o5UG1TMlZ2dElybjFWWkQ4UXdR?=
+ =?utf-8?B?U3o1cmpFdDdxdjRKYWlTQVY3aGhXUFFHMHhNWGZtMDZNVWZscytNd0piTFIy?=
+ =?utf-8?B?b3ZBTEVyZStaS2NRNWg3dkZIZFMxVDJIWVZrTUpYb291endoTWJ0Qy9qeHpu?=
+ =?utf-8?B?N2hONEtCYUl0bWtWS0JuQ3NzOVQ4Z09nKzd4ZkV2QlZoQ1VmQWdtQ3B5dHd6?=
+ =?utf-8?B?SFMraTQ1dkUxZGZ2ME1xMXR6eUVSMVBqaDJHakxyZzliRVNnNW56TVN1RWwr?=
+ =?utf-8?B?T0RqZlcvWG1leEk5ZFZTSGJ4d3NXZ29EbXhvM2pNUitJbVJ5SWh3aCt2TDFZ?=
+ =?utf-8?B?Nk9nTXg3eSsvNmlYRllUZjZ2VmtpVC9QYlVwUnZpcHJjZzd6elA0bjQ3enk0?=
+ =?utf-8?B?anFTSnhKOEd5S3JGa3RYbzUyMEhDR1p0N2FBMFVpNDNBSmtMd0IrdGFDaC9M?=
+ =?utf-8?B?MVI0a094VnB5T1NMQUdieXFxMTAyNWVrYWJWYm53djNqa3ZsVFZyYnU2bk9L?=
+ =?utf-8?B?bFJvWWkySUVZUHlBL0wrMjJ6UkNxUnpoTEgzZ1YwN2NHY3NnclJWa0NSV0Na?=
+ =?utf-8?B?QW9tbXVDQTc3a1VMR0J0YjhidGk1ZURqZk4rdTZ1THRaYTVNbTJzaTVEcXdr?=
+ =?utf-8?B?UXhyallYOVo4OS9hZVN5aHJpQUFXaVlYS3Zhbk1RaGtjS05payt0OEttVVZH?=
+ =?utf-8?B?S05XZEdCbGZ3cWJ1MW93ZDdZaUxkcTJGd2JndzFkWlhEUkxqNHBrejdkeFFw?=
+ =?utf-8?B?NyswUlM1cnB5VDdqaGZqdkswdGNCdnZYekoyaDQxZnE2MTZqcWdrZERkeXRW?=
+ =?utf-8?B?VmdMa3pydkc2QkNFS2djV2h0azMrMkJJY2c1WmJRaGlUdnF3Tk9FN1FGNlJl?=
+ =?utf-8?B?K090a0RrUWk3UkNhRDBGOXgrMjJOekdwM1g3Qm56SFRrOWZkaE5uRTZuajlD?=
+ =?utf-8?B?cE4wTG1jMGN2YjczdDZONFZUTXd5MnUxU0JPM09RdHZOUWZvN3B2UVlIV0hR?=
+ =?utf-8?B?WHd0MTlEcjFMelF6WjZJVnZKcFJMay9RczI4cHpIbkU5UzdrQVRSSXJGV1NJ?=
+ =?utf-8?B?NERib3hTTG8ySG02ekdTZkw4bWZ6Q0Z5Q0VjaWllbmhaRy9DanRsemF5ZnA3?=
+ =?utf-8?B?NU85Uk9zSHhmZDBqNHliTGVHM2RCRmY4Sm1xVGkwL2pTaS9OU21PYllPQ1JC?=
+ =?utf-8?B?OFRjT215WFNycThKbVMwZTdBQ3d6ak1jdmdLYmVOcDRSWGx1Znl1eUFtQlZp?=
+ =?utf-8?B?NkxCM0k5TmVHNndSRkp2SlRrVmdSMEtPMm9Ga25QK3ZmbDU5Rkt0MnZBcWxN?=
+ =?utf-8?B?WUVPVlRUQmthUjBPTk5kWk5xNjhkR2ludS9LRmE0UHJQd2ZZVmx1NGI0TFFl?=
+ =?utf-8?B?Tm05c3d6ZkptcXAzTHVkSWw2bVl5WjQ0MHNTSUh1UUcrVTUxZmVVR2YvTmFj?=
+ =?utf-8?B?SmkrU3E4VnN0VUZDV0lJZE5JZHlmUGNYL25KaFVMSlpUUlAwYjFIVGFFbG9z?=
+ =?utf-8?B?RlkxOU9SV1NMTHFxY0kyNnl5djVET1BLUEc5M3hBeTRGekh0NEE0d3I0V20r?=
+ =?utf-8?Q?2zuhBiQ8qlWWdZ7gTdqW/h4=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <92E2DEBD91EF2444A0CA91B6AF506A3C@namprd19.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0a29ec7-060c-485c-21db-08db40ecb55b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Apr 2023 15:42:40.1852
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5C6nOLo+XukOtDUSoBuIqZsnTCxA1ZknH4O3goYu/7E3YU3LIAd10/w8OjU7UgpbpbRJFtZ2Q8Vhn5DpPf3PRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR19MB7297
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/23 7:32?AM, Jens Axboe wrote:
-> On 4/19/23 3:22?AM, luhongfei wrote:
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 4a865f0e85d0..64bb91beb4d6
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -2075,8 +2075,23 @@ static inline void io_queue_sqe(struct io_kiocb *req)
->>  	__must_hold(&req->ctx->uring_lock)
->>  {
->>  	int ret;
->> +	bool is_write;
->>  
->> -	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
->> +	switch (req->opcode) {
->> +	case IORING_OP_WRITEV:
->> +	case IORING_OP_WRITE_FIXED:
->> +	case IORING_OP_WRITE:
->> +		is_write = true;
->> +		break;
->> +	default:
->> +		is_write = false;
->> +		break;
->> +	}
->> +
->> +	if (!is_write || (req->rw.kiocb.ki_flags & IOCB_DIRECT))
->> +		ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
->> +	else
->> +		ret = io_issue_sqe(req, 0);
->>  
->>  	/*
->>  	 * We async punt it if the file wasn't marked NOWAIT, or if the file
-> 
-> We really can't just do that, implicitly. What you are doing is making
-> any of write synchronous. What are you writing to in terms of device or
-> file? If file, what file system is being used? Curious if the target
-> supports async buffered writes, guessing it does not which is why you
-> see io-wq activity for all of them.
-> 
-> That said, I did toss out a test patch a while back that explicitly sets
-> up the ring such that we'll do blocking IO rather than do a non-blocking
-> attempt and then punt it if that fails. And I do think there's a use
-> case for that, in case you just want to use io_uring for batched
-> syscalls and don't care about if you end up blocking for some IO.
-> 
-> Let's do a primer on what happens for io_uring issue:
-> 
-> 1) Non-blocking issue is attempted for IO. If successful, we're done for
->    now.
-> 
-> 2) Case 1 failed. Now we have two options
-> 	a) We can poll the file. We arm poll, and we're done for now
-> 	   until that triggers.
-> 	b) File cannot be polled, we punt to io-wq which then does a
-> 	   blocking attempt.
-> 
-> For case 2b, this is the one where we could've just done a blocking
-> attempt initially if the ring was setup with a flag explicitly saying
-> that's what the application wants. Or io_uring_enter() had a flag passed
-> in that explicitly said this is what the applications wants. I suspect
-> we'll want both, to cover both SQPOLL and !SQPOLL.
-> 
-> I'd recommend we still retain non-blocking issue for pollable files, as
-> you could very quickly block forever otherwise. Imagine an empty pipe
-> and a read issued to it in the blocking mode.
-> 
-> A solution like that would cater to your case too, without potentially
-> breaking a lot of things like your patch could. The key here is the
-> explicit nature of it, we cannot just go and make odd assumptions about
-> a particular opcode type (writes) and ring type (SQPOLL) and say "oh
-> this one is fine for just ignoring blocking off the issue path".
-
-Something like this, totally untested. You can either setup the ring
-with IORING_SETUP_NO_OFFLOAD, or you can pass in IORING_ENTER_NO_OFFLOAD
-to achieve the same thing but on a per-invocation of io_uring_enter(2)
-basis.
-
-I suspect this would be cleaner with an io_kiocb flag for this, so we
-can make the retry paths correct as well and avoid passing 'no_offload'
-too much around. I'll probably clean it up with that and actually try
-and test it.
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 0716cb17e436..ea903a677ce9 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -173,6 +173,12 @@ enum {
-  */
- #define IORING_SETUP_DEFER_TASKRUN	(1U << 13)
- 
-+/*
-+ * Don't attempt non-blocking issue on file types that would otherwise
-+ * punt to io-wq if they cannot be completed non-blocking.
-+ */
-+#define IORING_SETUP_NO_OFFLOAD		(1U << 14)
-+
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
-@@ -443,6 +449,7 @@ struct io_cqring_offsets {
- #define IORING_ENTER_SQ_WAIT		(1U << 2)
- #define IORING_ENTER_EXT_ARG		(1U << 3)
- #define IORING_ENTER_REGISTERED_RING	(1U << 4)
-+#define IORING_ENTER_NO_OFFLOAD		(1U << 5)
- 
- /*
-  * Passed in for io_uring_setup(2). Copied back with updated info on success
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3bca7a79efda..431e41701991 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -147,7 +147,7 @@ static bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 
- static void io_dismantle_req(struct io_kiocb *req);
- static void io_clean_op(struct io_kiocb *req);
--static void io_queue_sqe(struct io_kiocb *req);
-+static void io_queue_sqe(struct io_kiocb *req, bool no_offload);
- static void io_move_task_work_from_local(struct io_ring_ctx *ctx);
- static void __io_submit_flush_completions(struct io_ring_ctx *ctx);
- static __cold void io_fallback_tw(struct io_uring_task *tctx);
-@@ -1471,7 +1471,7 @@ void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts)
- 	else if (req->flags & REQ_F_FORCE_ASYNC)
- 		io_queue_iowq(req, ts);
- 	else
--		io_queue_sqe(req);
-+		io_queue_sqe(req, false);
- }
- 
- void io_req_task_queue_fail(struct io_kiocb *req, int ret)
-@@ -1938,7 +1938,8 @@ static bool io_assign_file(struct io_kiocb *req, const struct io_issue_def *def,
- 	return !!req->file;
- }
- 
--static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
-+static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags,
-+			bool no_offload)
- {
- 	const struct io_issue_def *def = &io_issue_defs[req->opcode];
- 	const struct cred *creds = NULL;
-@@ -1947,6 +1948,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(!io_assign_file(req, def, issue_flags)))
- 		return -EBADF;
- 
-+	if (no_offload && (!req->file || !file_can_poll(req->file)))
-+		issue_flags &= ~IO_URING_F_NONBLOCK;
-+
- 	if (unlikely((req->flags & REQ_F_CREDS) && req->creds != current_cred()))
- 		creds = override_creds(req->creds);
- 
-@@ -1980,7 +1984,7 @@ int io_poll_issue(struct io_kiocb *req, struct io_tw_state *ts)
- {
- 	io_tw_lock(req->ctx, ts);
- 	return io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_MULTISHOT|
--				 IO_URING_F_COMPLETE_DEFER);
-+				 IO_URING_F_COMPLETE_DEFER, false);
- }
- 
- struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
-@@ -2029,7 +2033,7 @@ void io_wq_submit_work(struct io_wq_work *work)
- 	}
- 
- 	do {
--		ret = io_issue_sqe(req, issue_flags);
-+		ret = io_issue_sqe(req, issue_flags, false);
- 		if (ret != -EAGAIN)
- 			break;
- 		/*
-@@ -2120,12 +2124,13 @@ static void io_queue_async(struct io_kiocb *req, int ret)
- 		io_queue_linked_timeout(linked_timeout);
- }
- 
--static inline void io_queue_sqe(struct io_kiocb *req)
-+static inline void io_queue_sqe(struct io_kiocb *req, bool no_offload)
- 	__must_hold(&req->ctx->uring_lock)
- {
- 	int ret;
- 
--	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
-+	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER,
-+				no_offload);
- 
- 	/*
- 	 * We async punt it if the file wasn't marked NOWAIT, or if the file
-@@ -2337,7 +2342,7 @@ static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
- }
- 
- static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
--			 const struct io_uring_sqe *sqe)
-+			 const struct io_uring_sqe *sqe, bool no_offload)
- 	__must_hold(&ctx->uring_lock)
- {
- 	struct io_submit_link *link = &ctx->submit_state.link;
-@@ -2385,7 +2390,7 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		return 0;
- 	}
- 
--	io_queue_sqe(req);
-+	io_queue_sqe(req, no_offload);
- 	return 0;
- }
- 
-@@ -2466,7 +2471,7 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
- 	return false;
- }
- 
--int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
-+int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr, bool no_offload)
- 	__must_hold(&ctx->uring_lock)
- {
- 	unsigned int entries = io_sqring_entries(ctx);
-@@ -2495,7 +2500,7 @@ int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
- 		 * Continue submitting even for sqe failure if the
- 		 * ring was setup with IORING_SETUP_SUBMIT_ALL
- 		 */
--		if (unlikely(io_submit_sqe(ctx, req, sqe)) &&
-+		if (unlikely(io_submit_sqe(ctx, req, sqe, no_offload)) &&
- 		    !(ctx->flags & IORING_SETUP_SUBMIT_ALL)) {
- 			left--;
- 			break;
-@@ -3524,7 +3529,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 
- 	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
- 			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
--			       IORING_ENTER_REGISTERED_RING)))
-+			       IORING_ENTER_REGISTERED_RING |
-+			       IORING_ENTER_NO_OFFLOAD)))
- 		return -EINVAL;
- 
- 	/*
-@@ -3575,12 +3581,17 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 
- 		ret = to_submit;
- 	} else if (to_submit) {
-+		bool no_offload;
-+
- 		ret = io_uring_add_tctx_node(ctx);
- 		if (unlikely(ret))
- 			goto out;
- 
-+		no_offload = flags & IORING_ENTER_NO_OFFLOAD ||
-+				ctx->flags & IORING_SETUP_NO_OFFLOAD;
-+
- 		mutex_lock(&ctx->uring_lock);
--		ret = io_submit_sqes(ctx, to_submit);
-+		ret = io_submit_sqes(ctx, to_submit, no_offload);
- 		if (ret != to_submit) {
- 			mutex_unlock(&ctx->uring_lock);
- 			goto out;
-@@ -3969,7 +3980,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_R_DISABLED | IORING_SETUP_SUBMIT_ALL |
- 			IORING_SETUP_COOP_TASKRUN | IORING_SETUP_TASKRUN_FLAG |
- 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
--			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN))
-+			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
-+			IORING_SETUP_NO_OFFLOAD))
- 		return -EINVAL;
- 
- 	return io_uring_create(entries, &p, params);
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 25515d69d205..c5c0db7232c0 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -76,7 +76,7 @@ int io_uring_alloc_task_context(struct task_struct *task,
- 				struct io_ring_ctx *ctx);
- 
- int io_poll_issue(struct io_kiocb *req, struct io_tw_state *ts);
--int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr);
-+int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr, bool no_offload);
- int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin);
- void io_free_batch_list(struct io_ring_ctx *ctx, struct io_wq_work_node *node);
- int io_req_prep_async(struct io_kiocb *req);
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 9db4bc1f521a..9a9417bf9e3f 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -166,6 +166,7 @@ static inline bool io_sqd_events_pending(struct io_sq_data *sqd)
- 
- static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- {
-+	bool no_offload = ctx->flags & IORING_SETUP_NO_OFFLOAD;
- 	unsigned int to_submit;
- 	int ret = 0;
- 
-@@ -190,7 +191,7 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
- 		 */
- 		if (to_submit && likely(!percpu_ref_is_dying(&ctx->refs)) &&
- 		    !(ctx->flags & IORING_SETUP_R_DISABLED))
--			ret = io_submit_sqes(ctx, to_submit);
-+			ret = io_submit_sqes(ctx, to_submit, no_offload);
- 		mutex_unlock(&ctx->uring_lock);
- 
- 		if (to_submit && wq_has_sleeper(&ctx->sqo_sq_wait))
-
--- 
-Jens Axboe
-
+T24gNC8xOS8yMyAxMzoxOSwgTWluZyBMZWkgd3JvdGU6DQo+IE9uIFdlZCwgQXByIDE5LCAyMDIz
+IGF0IDA5OjU2OjQzQU0gKzAwMDAsIEJlcm5kIFNjaHViZXJ0IHdyb3RlOg0KPj4gT24gNC8xOS8y
+MyAwMzo1MSwgTWluZyBMZWkgd3JvdGU6DQo+Pj4gT24gVHVlLCBBcHIgMTgsIDIwMjMgYXQgMDc6
+Mzg6MDNQTSArMDAwMCwgQmVybmQgU2NodWJlcnQgd3JvdGU6DQo+Pj4+IE9uIDMvMzAvMjMgMTM6
+MzYsIE1pbmcgTGVpIHdyb3RlOg0KPj4+PiBbLi4uXQ0KPj4+Pj4gVjY6DQo+Pj4+PiAJLSByZS1k
+ZXNpZ24gZnVzZWQgY29tbWFuZCwgYW5kIG1ha2UgaXQgbW9yZSBnZW5lcmljLCBtb3Zpbmcgc2hh
+cmluZyBidWZmZXINCj4+Pj4+IAlhcyBvbmUgcGx1Z2luIG9mIGZ1c2VkIGNvbW1hbmQsIHNvIGlu
+IGZ1dHVyZSB3ZSBjYW4gaW1wbGVtZW50IG1vcmUgcGx1Z2lucw0KPj4+Pj4gCS0gZG9jdW1lbnQg
+cG90ZW50aWFsIG90aGVyIHVzZSBjYXNlcyBvZiBmdXNlZCBjb21tYW5kDQo+Pj4+PiAJLSBkcm9w
+IHN1cHBvcnQgZm9yIGJ1aWx0aW4gc2Vjb25kYXJ5IHNxZSBpbiBTUUUxMjgsIHNvIGFsbCBzZWNv
+bmRhcnkNCj4+Pj4+IAkgIHJlcXVlc3RzIGhhcyBzdGFuZGFsb25lIFNRRQ0KPj4+Pj4gCS0gbWFr
+ZSBmdXNlZCBjb21tYW5kIGFzIG9uZSBmZWF0dXJlDQo+Pj4+PiAJLSBjbGVhbnVwICYgaW1wcm92
+ZSBuYW1pbmcNCj4+Pj4NCj4+Pj4gSGkgTWluZywgZXQgYWwuLA0KPj4+Pg0KPj4+PiBJIHN0YXJ0
+ZWQgdG8gd29uZGVyIGlmIGZ1c2VkIFNRRSBjb3VsZCBiZSBleHRlbmRlZCB0byBjb21iaW5lIG11
+bHRpcGxlDQo+Pj4+IHN5c2NhbGxzLCBmb3IgZXhhbXBsZSBvcGVuL3JlYWQvY2xvc2UuICBXaGlj
+aCB3b3VsZCBiZSBhbm90aGVyIHNvbHV0aW9uDQo+Pj4+IGZvciB0aGUgcmVhZGZpbGUgc3lzY2Fs
+bCBNaWtsb3MgaGFkIHByb3Bvc2VkIHNvbWUgdGltZSBhZ28uDQo+Pj4+DQo+Pj4+IGh0dHBzOi8v
+bG9yZS5rZXJuZWwub3JnL2xrbWwvQ0FKZnBlZ3VzaThCaldGekVpMDU5MjZkNFJzRVF2UG5SVy13
+N015PWliQkhROE5nQ3V3QG1haWwuZ21haWwuY29tLw0KPj4+Pg0KPj4+PiBJZiBmdXNlZCBTUUVz
+IGNvdWxkIGJlIGV4dGVuZGVkLCBJIHRoaW5rIGl0IHdvdWxkIGJlIHF1aXRlIGhlbHBmdWwgZm9y
+DQo+Pj4+IG1hbnkgb3RoZXIgcGF0dGVybnMuIEFub3RoZXIgc2ltaWxhciBleGFtcGxlcyB3b3Vs
+ZCBvcGVuL3dyaXRlL2Nsb3NlLA0KPj4+PiBidXQgaWRlYWwgd291bGQgYmUgYWxzbyB0byBhbGxv
+dyB0byBoYXZlIGl0IG1vcmUgY29tcGxleCBsaWtlDQo+Pj4+ICJvcGVuL3dyaXRlL3N5bmNfZmls
+ZV9yYW5nZS9jbG9zZSIgLSBvcGVuL3dyaXRlL2Nsb3NlIG1pZ2h0IGJlIHRoZQ0KPj4+PiBmYXN0
+ZXN0IGFuZCBjb3VsZCBwb3NzaWJseSByZXR1cm4gYmVmb3JlIHN5bmNfZmlsZV9yYW5nZS4gVXNl
+IGNhc2UgZm9yDQo+Pj4+IHRoZSBsYXR0ZXIgd291bGQgYmUgYSBmaWxlIHNlcnZlciB0aGF0IHdh
+bnRzIHRvIGdpdmUgbm90aWZpY2F0aW9ucyB0bw0KPj4+PiBjbGllbnQgd2hlbiBwYWdlcyBoYXZl
+IGJlZW4gd3JpdHRlbiBvdXQuDQo+Pj4NCj4+PiBUaGUgYWJvdmUgcGF0dGVybiBuZWVkbid0IGZ1
+c2VkIGNvbW1hbmQsIGFuZCBpdCBjYW4gYmUgZG9uZSBieSBwbGFpbg0KPj4+IFNRRXMgY2hhaW4s
+IGZvbGxvd3MgdGhlIHVzYWdlOg0KPj4+DQo+Pj4gMSkgc3VwcG9zZSB5b3UgZ2V0IG9uZSBjb21t
+YW5kIGZyb20gL2Rldi9mdXNlLCB0aGVuIEZVU0UgZGFlbW9uDQo+Pj4gbmVlZHMgdG8gaGFuZGxl
+IHRoZSBjb21tYW5kIGFzIG9wZW4vd3JpdGUvc3luYy9jbG9zZQ0KPj4+IDIpIGdldCBzcWUxLCBw
+cmVwYXJlIGl0IGZvciBvcGVuIHN5c2NhbGwsIG1hcmsgaXQgYXMgSU9TUUVfSU9fTElOSzsNCj4+
+PiAzKSBnZXQgc3FlMiwgcHJlcGFyZSBpdCBmb3Igd3JpdGUgc3lzY2FsbCwgbWFyayBpdCBhcyBJ
+T1NRRV9JT19MSU5LOw0KPj4+IDQpIGdldCBzcWUzLCBwcmVwYXJlIGl0IGZvciBzeW5jIGZpbGUg
+cmFuZ2Ugc3lzY2FsbCwgbWFyayBpdCBhcyBJT1NRRV9JT19MSU5LOw0KPj4+IDUpIGdldCBzcWU0
+LCBwcmVwYXJlIGl0IGZvciBjbG9zZSBzeXNjYWxsDQo+Pj4gNikgaW9fdXJpbmdfZW50ZXIoKTsJ
+Ly9mb3Igc3VibWl0IGFuZCBnZXQgZXZlbnRzDQo+Pg0KPj4gT2gsIEkgd2FzIG5vdCBhd2FyZSB0
+aGF0IElPU1FFX0lPX0xJTksgY291bGQgcGFzcyB0aGUgcmVzdWx0IG9mIG9wZW4NCj4+IGRvd24g
+dG8gdGhlIG90aGVycy4gSG1tLCB0aGUgZXhhbXBsZSBJIGZpbmQgZm9yIG9wZW4gaXMNCj4+IGlv
+X3VyaW5nX3ByZXBfb3BlbmF0X2RpcmVjdCBpbiB0ZXN0X29wZW5fZml4ZWQoKS4gSXQgcHJvYmFi
+bHkgZ2V0cyBvZmYNCj4+IHRvcGljIGhlcmUsIGJ1dCBvbmUgbmVlZHMgdG8gaGF2ZSByaW5nIHBy
+ZXBhcmVkIHdpdGgNCj4+IGlvX3VyaW5nX3JlZ2lzdGVyX2ZpbGVzX3NwYXJzZSwgdGhlbiBtYW51
+YWxseSBtYW5hZ2VzIGF2YWlsYWJsZSBpbmRleGVzDQo+PiBhbmQgY2FuIHRoZW4gbGluayBjb21t
+YW5kcz8gSW50ZXJlc3RpbmchDQo+IA0KPiBZZWFoLCAgc2VlIHRlc3QvZml4ZWQtcmV1c2UuYyBv
+ZiBsaWJ1cmluZw0KPiANCj4+DQo+Pj4NCj4+PiBUaGVuIGFsbCB0aGUgZm91ciBPUHMgYXJlIGRv
+bmUgb25lIGJ5IG9uZSBieSBpb191cmluZyBpbnRlcm5hbA0KPj4+IG1hY2hpbmVyeSwgYW5kIHlv
+dSBjYW4gY2hvb3NlIHRvIGdldCBzdWNjZXNzZnVsIENRRSBmb3IgZWFjaCBPUC4NCj4+Pg0KPj4+
+IElzIHRoZSBhYm92ZSB3aGF0IHlvdSB3YW50IHRvIGRvPw0KPj4+DQo+Pj4gVGhlIGZ1c2VkIGNv
+bW1hbmQgcHJvcG9zYWwgaXMgYWN0dWFsbHkgZm9yIHplcm8gY29weShidXQgbm90IGxpbWl0ZWQg
+dG8gemMpLg0KPj4NCj4+IFllYWgsIEkgaGFkIGp1c3QgdGhvdWdodCB0aGF0IElPUklOR19PUF9G
+VVNFRF9DTUQgY291bGQgYmUgbW9kaWZpZWQgdG8NCj4+IHN1cHBvcnQgZ2VuZXJpYyBwYXNzaW5n
+LCBhcyBpdCBraW5kIG9mIGhhbmRzIGRhdGEgKGJ1ZmZlcnMpIGZyb20gb25lIHNxZQ0KPj4gdG8g
+dGhlIG90aGVyLiBJLmUuIGluc3RlYWQgb2YgYnVmZmVycyBpdCB3b3VsZCBoYXZlIHBhc3NlZCB0
+aGUgZmQsIGJ1dA0KPj4gaWYgdGhpcyBpcyBhbHJlYWR5IHBvc3NpYmxlIC0gbm8gbmVlZCB0byBt
+YWtlIElPUklOR19PUF9GVVNFRF9DTUQgbW9yZQ0KPj4gY29tcGxleC5tYW4NCj4gDQo+IFRoZSB3
+YXkgb2YgcGFzc2luZyBGRCBpbnRyb2R1Y2VzIG90aGVyIGNvc3QsIHJlYWQgb3AgcnVubmluZyBp
+bnRvIGFzeW5jLA0KPiBhbmQgYWRkaW5nIGl0IGludG8gZ2xvYmFsIHRhYmxlLCB3aGljaCBpbnRy
+b2R1Y2VzIHJ1bnRpbWUgY29zdC4NCg0KSG1tLCBxdWVzdGlvbiBmcm9tIG15IHNpZGUgaXMgd2h5
+IGl0IG5lZWRzIHRvIGJlIGluIHRoZSBnbG9iYWwgdGFibGUsIA0Kd2hlbiBpdCBjb3VsZCBiZSBq
+dXN0IHBhc3NlZCB0byB0aGUgbGlua2VkIG9yIGZ1c2VkIHNxZT8NCg0KPiANCj4gVGhhdCBpcyB0
+aGUgcmVhc29uIHdoeSBmdXNlZCBjb21tYW5kIGlzIGRlc2lnbmVkIGluIHRoZSBmb2xsb3dpbmcg
+d2F5Og0KPiANCj4gLSBsaW5rIGNhbiBiZSBhdm9pZGVkLCBzbyBPUHMgbmVlZG4ndCB0byBiZSBy
+dW4gaW4gYXN5bmMNCj4gLSBubyBuZWVkIHRvIGFkZCBidWZmZXIgaW50byBnbG9iYWwgdGFibGUN
+Cj4gDQo+IENhdXNlIGl0IGlzIHJlYWxseSBpbiBmYXN0IGlvIHBhdGguDQo+IA0KPj4NCj4+Pg0K
+Pj4+IElmIHRoZSBhYm92ZSB3cml0ZSBPUCBuZWVkIHRvIHdyaXRlIHRvIGZpbGUgd2l0aCBpbi1r
+ZXJuZWwgYnVmZmVyDQo+Pj4gb2YgL2Rldi9mdXNlIGRpcmVjdGx5LCB5b3UgY2FuIGdldCBvbmUg
+c3FlMCBhbmQgcHJlcGFyZSBpdCBmb3IgcHJpbWFyeSBjb21tYW5kDQo+Pj4gYmVmb3JlIDEpLCBh
+bmQgc2V0IHNxZTItPmFkZHIgdG8gb2ZmZXQgb2YgdGhlIGJ1ZmZlciBpbiAzKS4NCj4+Pg0KPj4+
+IEhvd2V2ZXIsIGZ1c2VkIGNvbW1hbmQgaXMgdXN1YWxseSB1c2VkIGluIHRoZSBmb2xsb3dpbmcg
+d2F5LCBzdWNoIGFzIEZVU0UgZGFlbW9uDQo+Pj4gZ2V0cyBvbmUgUkVBRCByZXF1ZXN0IGZyb20g
+L2Rldi9mdXNlLCBGVVNFIHVzZXJzcGFjZSBjYW4gaGFuZGxlIHRoZSBSRUFEIHJlcXVlc3QNCj4+
+PiBhcyBpb191cmluZyBmdXNlZCBjb21tYW5kOg0KPj4+DQo+Pj4gMSkgZ2V0IHNxZTAgYW5kIHBy
+ZXBhcmUgaXQgZm9yIHByaW1hcnkgY29tbWFuZCwgaW4gd2hpY2ggeW91IG5lZWQgdG8NCj4+PiBw
+cm92aWRlIGluZm8gZm9yIHJldHJpZXZpbmcga2VybmVsIGJ1ZmZlci9wYWdlcyBvZiB0aGlzIFJF
+QUQgcmVxdWVzdA0KPj4+DQo+Pj4gMikgc3VwcG9zZSB0aGlzIFJFQUQgcmVxdWVzdCBuZWVkcyB0
+byBiZSBoYW5kbGVkIGJ5IHRyYW5zbGF0aW5nIGl0IHRvDQo+Pj4gUkVBRHMgdG8gdHdvIGZpbGVz
+L2RldmljZXMsIGNvbnNpZGVyaW5nIGl0IGFzIG9uZSBtaXJyb3I6DQo+Pj4NCj4+PiAtIGdldCBz
+cWUxLCBwcmVwYXJlIGl0IGZvciByZWFkIGZyb20gZmlsZTEsIGFuZCBzZXQgc3FlLT5hZGRyIHRv
+IG9mZnNldA0KPj4+ICAgICBvZiB0aGUgYnVmZmVyIGluIDEpLCBzZXQgc3FlLT5sZW4gYXMgbGVu
+Z3RoIGZvciByZWFkOyB0aGlzIFJFQUQgT1ANCj4+PiAgICAgdXNlcyB0aGUga2VybmVsIGJ1ZmZl
+ciBpbiAxKSBkaXJlY3RseQ0KPj4+DQo+Pj4gLSBnZXQgc3FlMiwgcHJlcGFyZSBpdCBmb3IgcmVh
+ZCBmcm9tIGZpbGUyLCBhbmQgc2V0IHNxZS0+YWRkciB0byBvZmZzZXQNCj4+PiAgICAgb2YgYnVm
+ZmVyIGluIDEpLCBzZXQgc3FlLT5sZW4gYXMgbGVuZ3RoIGZvciByZWFkOyAgdGhpcyBSRUFEIE9Q
+DQo+Pj4gICAgIHVzZXMgdGhlIGtlcm5lbCBidWZmZXIgaW4gMSkgZGlyZWN0bHkNCj4+Pg0KPj4+
+IDMpIHN1Ym1pdCB0aGUgdGhyZWUgc3FlIGJ5IGlvX3VyaW5nX2VudGVyKCkNCj4+Pg0KPj4+IHNx
+ZTEgYW5kIHNxZTIgY2FuIGJlIHN1Ym1pdHRlZCBjb25jdXJyZW50bHkgb3IgYmUgaXNzdWVkIG9u
+ZSBieSBvbmUNCj4+PiBpbiBvcmRlciwgZnVzZWQgY29tbWFuZCBzdXBwb3J0cyBib3RoLCBhbmQg
+ZGVwZW5kcyBvbiB1c2VyIHJlcXVpcmVtZW50Lg0KPj4+IEJ1dCBpb191cmluZyBsaW5rZWQgT1Bz
+IGlzIHVzdWFsbHkgc2xvd2VyLg0KPj4+DQo+Pj4gQWxzbyBmaWxlMS9maWxlMiBuZWVkcyB0byBi
+ZSBvcGVuZWQgYmVmb3JlaGFuZCBpbiB0aGlzIGV4YW1wbGUsIGFuZCBGRCBpcw0KPj4+IHBhc3Nl
+ZCB0byBzcWUxL3NxZTIsIGFub3RoZXIgY2hvaWNlIGlzIHRvIHVzZSBmaXhlZCBGaWxlOyBBbHNv
+IHlvdSBjYW4NCj4+PiBhZGQgdGhlIG9wZW4vY2xvc2UoKSBPUHMgaW50byBhYm92ZSBzdGVwcywg
+d2hpY2ggbmVlZCB0aGVzZSBvcGVuL2Nsb3NlL1JFQUQNCj4+PiB0byBiZSBsaW5rZWQgaW4gb3Jk
+ZXIsIHVzdWFsbHkgc2xvd2VyIHRuYW4gbm9uLWxpbmtlZCBPUHMuDQo+Pg0KPj4NCj4+IFllcyB0
+aGFua3MsIEknbSBnb2luZyB0byBwcmVwYXJlIHRoaXMgaW4gYW4gYnJhbmNoLCBvdGhlcndpc2Ug
+Y3VycmVudA0KPj4gZnVzZS11cmluZyB3b3VsZCBoYXZlIGEgWkMgcmVncmVzc2lvbiAoYWx0aG91
+Z2ggbXkgdGFyZ2V0IGRkbiBwcm9qZWN0cw0KPj4gY2Fubm90IG1ha2UgdXNlIG9mIGl0LCBhcyB3
+ZSBuZWVkIGFjY2VzcyB0byB0aGUgYnVmZmVyIGZvciBjaGVja3N1bXMsIGV0YykuDQo+IA0KPiBz
+dG9yYWdlIGhhcyBzaW1pbGFyIHVzZSBjYXNlIHRvbywgc3VjaCBhcyBlbmNyeXB0LCBudm1lIHRj
+cCBkYXRhIGRpZ2VzdCwNCj4gLi4uLCBpZiB0aGUgY2hlY2tzdW0vZW5jcnlwdCBhcHByb2FjaCBp
+cyBzdGFuZGFyZCwgbWF5YmUgb25lIG5ldyBPUCBvcg0KPiBzeXNjYWxsIGNhbiBiZSBhZGRlZCBm
+b3IgZG9pbmcgdGhhdCBvbiBrZXJuZWwgYnVmZmVyIGRpcmVjdGx5Lg0KDQpJIHZlcnkgbXVjaCBz
+ZWUgdGhlIHVzZSBjYXNlIGZvciBGVVNFRF9DTUQgZm9yIG92ZXJsYXkgb3Igc2ltcGxlIG5ldHdv
+cmsgDQpzb2NrZXRzLiBOb3cgaW4gdGhlIEhQQyB3b3JsZCBvbmUgdHlwaWNhbGx5IHVzZXMgSUIg
+IFJETUEgYW5kIGlmIHRoYXQgDQpmYWlscyBmb3Igc29tZSByZWFzb25zIChsaWtlIGNvbm5lY3Rp
+b24gZG93biksIHRjcCBvciBvdGhlciBpbnRlcmZhY2VzIA0KYXMgZmFsbGJhY2suIEFuZCB0aGVy
+ZSBpcyBzZW5kaW5nIHRoZSByaWdodCBwYXJ0IG9mIHRoZSBidWZmZXIgdG8gdGhlIA0KcmlnaHQg
+c2VydmVyIGFuZCBlcmFzdXJlIGNvZGluZyBpbnZvbHZlZCAtIGl0IGdldHMgY29tcGxleCBhbmQg
+SSBkb24ndCANCnRoaW5rIHRoZXJlIGlzIGEgd2F5IGZvciB1cyB3aXRob3V0IGEgYnVmZmVyIGNv
+cHkuDQoNClRoYW5rcywNCkJlcm5kDQo=

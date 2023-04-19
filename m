@@ -2,195 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABFD66E787B
-	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 13:21:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BBB56E7AE9
+	for <lists+io-uring@lfdr.de>; Wed, 19 Apr 2023 15:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbjDSLVj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 07:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51080 "EHLO
+        id S231599AbjDSNdE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 09:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232661AbjDSLVh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 07:21:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B04613FA9
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 04:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681903175;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GgOW5sQn+ypCHeLUClWbKQUCBoyTE44G8sVc+d/AfFM=;
-        b=Z4isTUyZCMZDi4u8abor9gQ57lwdEWFR2B+uHm0AjHtWZH6Ty7POAw5k+UZl5nUb5sk4QT
-        PHTxsTNAVtuFJ+e27kVWuocikn61fC+1HEP+zYuThU+3Ti3th2tUiUdILFjkg4fGVpyhpv
-        DI96b08uQd82SoQwfIfYL7ZqDgjYt2E=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-378-4E60WAUyMYqrGp0YHZij5Q-1; Wed, 19 Apr 2023 07:19:30 -0400
-X-MC-Unique: 4E60WAUyMYqrGp0YHZij5Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EDF8C885623;
-        Wed, 19 Apr 2023 11:19:29 +0000 (UTC)
-Received: from ovpn-8-18.pek2.redhat.com (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6445C51E3;
-        Wed, 19 Apr 2023 11:19:21 +0000 (UTC)
-Date:   Wed, 19 Apr 2023 19:19:16 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
-        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Amir Goldstein <amir73il@gmail.com>, ming.lei@redhat.com
-Subject: Re: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
-Message-ID: <ZD/ONON4AzwvtlLB@ovpn-8-18.pek2.redhat.com>
-References: <20230330113630.1388860-1-ming.lei@redhat.com>
- <78fe6617-2f5e-3e8e-d853-6dc8ffb5f82c@ddn.com>
- <ZD9JI/JlwrzXQPZ7@ovpn-8-18.pek2.redhat.com>
- <b6188050-1b12-703c-57e8-67fd27adb85c@ddn.com>
+        with ESMTP id S232327AbjDSNdC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 09:33:02 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705A21560B
+        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 06:32:46 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-63b621b1dabso1480648b3a.0
+        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 06:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681911166; x=1684503166;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G/UiIqApzZCh3GruA0dkxIjE0NAc2ncybgxG1gKM3mA=;
+        b=gydVd61WyUdaiEtLuaDmWtWDu+zRfpFPlOTjvI2v5PXLk4j6ZPvDuSEzpZZv7q87Dp
+         KFwXYaG+Xl/7XVVK97DrBpdvqq3Dmsv+FDRpTmjMjNK/yulSEwrd3wS7nvQlAmKUu5jD
+         aeGrxs4JzVETidjYSHkvxO+xzB3rLibnIxWhs6fmN2to43fo5DClFUE0GhiWHJlCcgyJ
+         udnlvEoQYIQGdPUJa9/S/PwOwHtbQ+KPvspypla+dZ5nph/GsPcvpwnGngLJjGUpnan4
+         V2rkF1DZ49BU1tyobEecZpGLApUnGbOQvOsJZ/NVHa6S+cGOsQZgg6IgZyGvEiYdtlP7
+         Nhzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681911166; x=1684503166;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/UiIqApzZCh3GruA0dkxIjE0NAc2ncybgxG1gKM3mA=;
+        b=eRrBBnWQXih579MqMsxxCMX6LvhGc9sAd51nYqFMki9+0Ld7qveZwzHsxy0EkuH74N
+         JeHgDakkveCUf3zn09sCS0Lsp9SoXBD3iI+C5D2aTcLNYVzYBIjj00Tdl+OabDR1PRij
+         eDV14wbDO9adE5VzDcSYgnj77Hl8C2kb+nvY+fvjOXC33d72tRaN6TA/bxFeTF8+3IUM
+         1SpxvnxquMVA93s3P1UbyXbXZGdFS9unYkPXbP5dzkz5Sn0v92pnDsTkM6gWYJEiFNbZ
+         QC/4QXYnI24dmaEAlytDSyMuKbkSDeaOLCrTGeLYFWz82ljTaVWydeKrWCkWaeVO5PZc
+         8KQA==
+X-Gm-Message-State: AAQBX9ftXb1/lz9h44DBsTYdaii4VL3qdyANs1lhRNgOyVC/6zYh7+Sd
+        IkmZIy9GtnZsbwEuWVMOMmMbfA==
+X-Google-Smtp-Source: AKy350aai8Nuv0pYHhrB7DaxdiWCZd/shS7Q02IByHNUbb8oWjzOoDqsTF95dY1bqhmNhbAsM/44iA==
+X-Received: by 2002:a05:6a20:7f99:b0:eb:88d9:120d with SMTP id d25-20020a056a207f9900b000eb88d9120dmr20279846pzj.6.1681911165719;
+        Wed, 19 Apr 2023 06:32:45 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s26-20020a65645a000000b0051b83881682sm7530428pgv.66.2023.04.19.06.32.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 06:32:45 -0700 (PDT)
+Message-ID: <30cf5639-ff99-9e73-42cd-21955088c283@kernel.dk>
+Date:   Wed, 19 Apr 2023 07:32:44 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6188050-1b12-703c-57e8-67fd27adb85c@ddn.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] io_uring: Optimization of buffered random write
+Content-Language: en-US
+To:     luhongfei <luhongfei@vivo.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        "open list:IO_URING" <io-uring@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     opensource.kernel@vivo.com
+References: <20230419092233.56338-1-luhongfei@vivo.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230419092233.56338-1-luhongfei@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 09:56:43AM +0000, Bernd Schubert wrote:
-> On 4/19/23 03:51, Ming Lei wrote:
-> > On Tue, Apr 18, 2023 at 07:38:03PM +0000, Bernd Schubert wrote:
-> >> On 3/30/23 13:36, Ming Lei wrote:
-> >> [...]
-> >>> V6:
-> >>> 	- re-design fused command, and make it more generic, moving sharing buffer
-> >>> 	as one plugin of fused command, so in future we can implement more plugins
-> >>> 	- document potential other use cases of fused command
-> >>> 	- drop support for builtin secondary sqe in SQE128, so all secondary
-> >>> 	  requests has standalone SQE
-> >>> 	- make fused command as one feature
-> >>> 	- cleanup & improve naming
-> >>
-> >> Hi Ming, et al.,
-> >>
-> >> I started to wonder if fused SQE could be extended to combine multiple
-> >> syscalls, for example open/read/close.  Which would be another solution
-> >> for the readfile syscall Miklos had proposed some time ago.
-> >>
-> >> https://lore.kernel.org/lkml/CAJfpegusi8BjWFzEi05926d4RsEQvPnRW-w7My=ibBHQ8NgCuw@mail.gmail.com/
-> >>
-> >> If fused SQEs could be extended, I think it would be quite helpful for
-> >> many other patterns. Another similar examples would open/write/close,
-> >> but ideal would be also to allow to have it more complex like
-> >> "open/write/sync_file_range/close" - open/write/close might be the
-> >> fastest and could possibly return before sync_file_range. Use case for
-> >> the latter would be a file server that wants to give notifications to
-> >> client when pages have been written out.
-> > 
-> > The above pattern needn't fused command, and it can be done by plain
-> > SQEs chain, follows the usage:
-> > 
-> > 1) suppose you get one command from /dev/fuse, then FUSE daemon
-> > needs to handle the command as open/write/sync/close
-> > 2) get sqe1, prepare it for open syscall, mark it as IOSQE_IO_LINK;
-> > 3) get sqe2, prepare it for write syscall, mark it as IOSQE_IO_LINK;
-> > 4) get sqe3, prepare it for sync file range syscall, mark it as IOSQE_IO_LINK;
-> > 5) get sqe4, prepare it for close syscall
-> > 6) io_uring_enter();	//for submit and get events
-> 
-> Oh, I was not aware that IOSQE_IO_LINK could pass the result of open 
-> down to the others. Hmm, the example I find for open is 
-> io_uring_prep_openat_direct in test_open_fixed(). It probably gets off 
-> topic here, but one needs to have ring prepared with 
-> io_uring_register_files_sparse, then manually manages available indexes 
-> and can then link commands? Interesting!
+On 4/19/23 3:22?AM, luhongfei wrote:
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 4a865f0e85d0..64bb91beb4d6
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2075,8 +2075,23 @@ static inline void io_queue_sqe(struct io_kiocb *req)
+>  	__must_hold(&req->ctx->uring_lock)
+>  {
+>  	int ret;
+> +	bool is_write;
+>  
+> -	ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
+> +	switch (req->opcode) {
+> +	case IORING_OP_WRITEV:
+> +	case IORING_OP_WRITE_FIXED:
+> +	case IORING_OP_WRITE:
+> +		is_write = true;
+> +		break;
+> +	default:
+> +		is_write = false;
+> +		break;
+> +	}
+> +
+> +	if (!is_write || (req->rw.kiocb.ki_flags & IOCB_DIRECT))
+> +		ret = io_issue_sqe(req, IO_URING_F_NONBLOCK|IO_URING_F_COMPLETE_DEFER);
+> +	else
+> +		ret = io_issue_sqe(req, 0);
+>  
+>  	/*
+>  	 * We async punt it if the file wasn't marked NOWAIT, or if the file
 
-Yeah,  see test/fixed-reuse.c of liburing
+We really can't just do that, implicitly. What you are doing is making
+any of write synchronous. What are you writing to in terms of device or
+file? If file, what file system is being used? Curious if the target
+supports async buffered writes, guessing it does not which is why you
+see io-wq activity for all of them.
 
-> 
-> > 
-> > Then all the four OPs are done one by one by io_uring internal
-> > machinery, and you can choose to get successful CQE for each OP.
-> > 
-> > Is the above what you want to do?
-> > 
-> > The fused command proposal is actually for zero copy(but not limited to zc).
-> 
-> Yeah, I had just thought that IORING_OP_FUSED_CMD could be modified to 
-> support generic passing, as it kind of hands data (buffers) from one sqe 
-> to the other. I.e. instead of buffers it would have passed the fd, but 
-> if this is already possible - no need to make IORING_OP_FUSED_CMD more 
-> complex.man
+That said, I did toss out a test patch a while back that explicitly sets
+up the ring such that we'll do blocking IO rather than do a non-blocking
+attempt and then punt it if that fails. And I do think there's a use
+case for that, in case you just want to use io_uring for batched
+syscalls and don't care about if you end up blocking for some IO.
 
-The way of passing FD introduces other cost, read op running into async,
-and adding it into global table, which introduces runtime cost.
+Let's do a primer on what happens for io_uring issue:
 
-That is the reason why fused command is designed in the following way:
+1) Non-blocking issue is attempted for IO. If successful, we're done for
+   now.
 
-- link can be avoided, so OPs needn't to be run in async
-- no need to add buffer into global table
+2) Case 1 failed. Now we have two options
+	a) We can poll the file. We arm poll, and we're done for now
+	   until that triggers.
+	b) File cannot be polled, we punt to io-wq which then does a
+	   blocking attempt.
 
-Cause it is really in fast io path.
+For case 2b, this is the one where we could've just done a blocking
+attempt initially if the ring was setup with a flag explicitly saying
+that's what the application wants. Or io_uring_enter() had a flag passed
+in that explicitly said this is what the applications wants. I suspect
+we'll want both, to cover both SQPOLL and !SQPOLL.
 
-> 
-> > 
-> > If the above write OP need to write to file with in-kernel buffer
-> > of /dev/fuse directly, you can get one sqe0 and prepare it for primary command
-> > before 1), and set sqe2->addr to offet of the buffer in 3).
-> > 
-> > However, fused command is usually used in the following way, such as FUSE daemon
-> > gets one READ request from /dev/fuse, FUSE userspace can handle the READ request
-> > as io_uring fused command:
-> > 
-> > 1) get sqe0 and prepare it for primary command, in which you need to
-> > provide info for retrieving kernel buffer/pages of this READ request
-> > 
-> > 2) suppose this READ request needs to be handled by translating it to
-> > READs to two files/devices, considering it as one mirror:
-> > 
-> > - get sqe1, prepare it for read from file1, and set sqe->addr to offset
-> >    of the buffer in 1), set sqe->len as length for read; this READ OP
-> >    uses the kernel buffer in 1) directly
-> > 
-> > - get sqe2, prepare it for read from file2, and set sqe->addr to offset
-> >    of buffer in 1), set sqe->len as length for read;  this READ OP
-> >    uses the kernel buffer in 1) directly
-> > 
-> > 3) submit the three sqe by io_uring_enter()
-> > 
-> > sqe1 and sqe2 can be submitted concurrently or be issued one by one
-> > in order, fused command supports both, and depends on user requirement.
-> > But io_uring linked OPs is usually slower.
-> > 
-> > Also file1/file2 needs to be opened beforehand in this example, and FD is
-> > passed to sqe1/sqe2, another choice is to use fixed File; Also you can
-> > add the open/close() OPs into above steps, which need these open/close/READ
-> > to be linked in order, usually slower tnan non-linked OPs.
-> 
-> 
-> Yes thanks, I'm going to prepare this in an branch, otherwise current 
-> fuse-uring would have a ZC regression (although my target ddn projects 
-> cannot make use of it, as we need access to the buffer for checksums, etc).
+I'd recommend we still retain non-blocking issue for pollable files, as
+you could very quickly block forever otherwise. Imagine an empty pipe
+and a read issued to it in the blocking mode.
 
-storage has similar use case too, such as encrypt, nvme tcp data digest,
-..., if the checksum/encrypt approach is standard, maybe one new OP or
-syscall can be added for doing that on kernel buffer directly.
+A solution like that would cater to your case too, without potentially
+breaking a lot of things like your patch could. The key here is the
+explicit nature of it, we cannot just go and make odd assumptions about
+a particular opcode type (writes) and ring type (SQPOLL) and say "oh
+this one is fine for just ignoring blocking off the issue path".
 
-
-Thanks
-Ming
+-- 
+Jens Axboe
 

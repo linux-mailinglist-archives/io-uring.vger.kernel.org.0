@@ -2,104 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B1A6E9C25
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 20:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164356E9C35
+	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 21:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231786AbjDTS5o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Apr 2023 14:57:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
+        id S229848AbjDTTEr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Apr 2023 15:04:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbjDTS5l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Apr 2023 14:57:41 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA9FF18D
-        for <io-uring@vger.kernel.org>; Thu, 20 Apr 2023 11:57:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 84E0221986;
-        Thu, 20 Apr 2023 18:57:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1682017059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=fOJ4B7lJuAuRSMaDvfK8itejVRzdh6oeWmoacpZvDCM=;
-        b=mJDD92DOTZ5fm64T2uZO8JYKxvUq81+SV9pqI2pSlqAn39rWKds2KXZsYMN56Hkqx1lAtc
-        +uPLDRBccD08HtEbM8t8Pw7b7rDSkc/lPQli0RLD/bTEIgBA5dvVNNb6hJXDN742yrP32A
-        KF+gBO7f+U9FTD2U+aTY68e6cDBj8eI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1682017059;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=fOJ4B7lJuAuRSMaDvfK8itejVRzdh6oeWmoacpZvDCM=;
-        b=n0r/6I0bH+ELuyQ7cfgE3U7NqHrmZaH4tSd7jRFqClngxcpGoQF74vk9Hjxg6ePiwoDCxR
-        gAaPtQICuvMhcyAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4CC9713584;
-        Thu, 20 Apr 2023 18:57:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id FAkwDSOLQWRmQAAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 20 Apr 2023 18:57:39 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH] test/file-verify.t: Don't run over mlock limit when run as non-root
-Date:   Thu, 20 Apr 2023 14:57:28 -0400
-Message-Id: <20230420185728.4104-1-krisman@suse.de>
-X-Mailer: git-send-email 2.40.0
+        with ESMTP id S230228AbjDTTEq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Apr 2023 15:04:46 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4376B2108
+        for <io-uring@vger.kernel.org>; Thu, 20 Apr 2023 12:04:45 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id ca18e2360f4ac-760f040ecccso7883539f.1
+        for <io-uring@vger.kernel.org>; Thu, 20 Apr 2023 12:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682017484; x=1684609484;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jXPxpRXYt98TRHqVZ215l3PKl9165a9akVL7T1VmKTU=;
+        b=tyfFEpcLyg5grA56/oJaEdayD3CMbsS6bz6TncwNidKnmHV54lwhDT9HmAfhgAFIP1
+         W+xatcm9qJ/cloezd1bao5SpBZtrBitwmPe1XUIn+9Cc8qRqb6y+JENiSUrhIOSTB6xh
+         NCOClxFrQlBZz94Kxv+/jtV5hXldRmsmUr/9qtzdy+z2/71gRaFRZqWD+M5VM4XJJ10V
+         jdEC+bjr+4/C7k2kbUiW9GhCHabHEV41ZvwNHq1a+saIz9pLchIVQM3os3qveolRZQd2
+         LaDDiK6+n+89IJzhrXNmfYaCOZL9YvfkAE8TgTiuLj03l5R52R6qv5XojVkJ5jO0UuPD
+         eFYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682017484; x=1684609484;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jXPxpRXYt98TRHqVZ215l3PKl9165a9akVL7T1VmKTU=;
+        b=WuUJOZqEpdD7BIevUuGZxlPzHsNJqcqw8KvSvru4t6EOA69sy2jEqJMJG/g+SWHYDL
+         fgCDa/alG0/bjZLL0sJ/yl/eCZLAm1c7jf0zwDuJGefT973hbOr2oNH4y2r8nboF/XaB
+         KrctCDAksm9DAP5ykjMaTWKJ3K9DBjIhnw2j7y7pqp1MzKnjrI0bkT6oyE/8XuPinUEN
+         Y2P+xPHNlDdU8P42QhiKQRdo8chtuOuymyqHpXqX5ERiOCGy6fw+sm3MBlythsV47yos
+         1QTe0GxPfOJ3xKHwqcU5u/eoZWFovTF9eFd1xyYGg0mIkWtDF7Y5k1GGMkLu98SBQyC0
+         6KYQ==
+X-Gm-Message-State: AAQBX9fNDw3d7o1P2Jy36/8Pi/oKjTWLWS4wR2qFCJboArahxPMe+gz7
+        /uj7zjZpURKV1zmOmxZzW6d+L9ck+VMBdO29ot0=
+X-Google-Smtp-Source: AKy350ZT40LwhvIvaPUY2DjWgjrCiY1hmKEpleM/at9WY6QZ0xLpjRsKngoy4Xdx20gXAgwWw5DaTQ==
+X-Received: by 2002:a05:6602:1555:b0:763:6aab:9f3e with SMTP id h21-20020a056602155500b007636aab9f3emr2027909iow.1.1682017484591;
+        Thu, 20 Apr 2023 12:04:44 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id j3-20020a5d9d03000000b00762f8d3156asm566959ioj.14.2023.04.20.12.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Apr 2023 12:04:44 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     io-uring@vger.kernel.org
+In-Reply-To: <20230420185728.4104-1-krisman@suse.de>
+References: <20230420185728.4104-1-krisman@suse.de>
+Subject: Re: [PATCH] test/file-verify.t: Don't run over mlock limit when
+ run as non-root
+Message-Id: <168201748364.133109.2454297166789207140.b4-ty@kernel.dk>
+Date:   Thu, 20 Apr 2023 13:04:43 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-00303
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-test/file-verify tries to get 2MB of pinned memory at once, which is
-higher than the default allowed for non-root users in older
-kernels (64kb before v5.16, nowadays 8mb).  Skip the test for non-root
-users if the registration fails instead of failing the test.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- test/file-verify.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+On Thu, 20 Apr 2023 14:57:28 -0400, Gabriel Krisman Bertazi wrote:
+> test/file-verify tries to get 2MB of pinned memory at once, which is
+> higher than the default allowed for non-root users in older
+> kernels (64kb before v5.16, nowadays 8mb).  Skip the test for non-root
+> users if the registration fails instead of failing the test.
+> 
+> 
 
-diff --git a/test/file-verify.c b/test/file-verify.c
-index f33b24a..89cbb02 100644
---- a/test/file-verify.c
-+++ b/test/file-verify.c
-@@ -381,9 +381,12 @@ static int test(struct io_uring *ring, const char *fname, int buffered,
- 			v[i].iov_base = buf[i];
- 			v[i].iov_len = CHUNK_SIZE;
- 		}
--		ret = io_uring_register_buffers(ring, v, READ_BATCH);
-+		ret = t_register_buffers(ring, v, READ_BATCH);
- 		if (ret) {
--			fprintf(stderr, "Error buffer reg %d\n", ret);
-+			if (ret == T_SETUP_SKIP) {
-+				ret = 0;
-+				goto free_bufs;
-+			}
- 			goto err;
- 		}
- 	}
-@@ -477,6 +480,7 @@ static int test(struct io_uring *ring, const char *fname, int buffered,
- done:
- 	if (registered)
- 		io_uring_unregister_buffers(ring);
-+free_bufs:
- 	if (vectored) {
- 		for (j = 0; j < READ_BATCH; j++)
- 			for (i = 0; i < nr_vecs; i++)
+Applied, thanks!
+
+[1/1] test/file-verify.t: Don't run over mlock limit when run as non-root
+      commit: b7f85996a5cb290fc2ad7d2f4d7341fc54321016
+
+Best regards,
 -- 
-2.40.0
+Jens Axboe
+
+
 

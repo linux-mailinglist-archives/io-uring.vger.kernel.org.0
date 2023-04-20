@@ -2,66 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF1D6E8726
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 03:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B98C6E8761
+	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 03:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbjDTBEk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 21:04:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57800 "EHLO
+        id S232004AbjDTBV2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 21:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbjDTBEj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 21:04:39 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 689E83A91
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 18:04:38 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id iw7-20020a05600c54c700b003f16fce55b5so382525wmb.0
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 18:04:38 -0700 (PDT)
+        with ESMTP id S229998AbjDTBV1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 21:21:27 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB5049DB;
+        Wed, 19 Apr 2023 18:21:25 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f176a16c03so1773715e9.2;
+        Wed, 19 Apr 2023 18:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681952677; x=1684544677;
+        d=gmail.com; s=20221208; t=1681953684; x=1684545684;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OkccrpEKcSz1YUTNacjYR9Skb6B75oLliutlJySuo7o=;
-        b=hHH4/lO2mNHTAWTXsYkD7yp8LnIPR+ujbtzxvYExzTRSbtvxRxKVtz+yt6iMsJ1F+e
-         Xh91A1Jrb5Rtff62R+GCgbufsUJEI/G+Km2865I58LL8CS9j+2UXQvszC+NZS3bFhDOu
-         s6fGrl+t0v4DcmqEIhPmUgePUozVOxajFV4zWXk40Lwoi07pq2Cs/phy1qojr1KGsrxS
-         nWOoqKc55D4jwv1gv/Gr/rLmn5jc8MV0gzSlLZFN+SdQx9bsiiV4M1bgJSfPB/pwzbpi
-         sJhQraQliMBRVo1Qvq2uhU9kJxssKucugxm1xRvmxy5/N85pWGvQeF71IvYwMAjvv3iv
-         nWhw==
+        bh=WUN6XokhMco8R1MkndUTrZgbr76wv2mMBzKNedq/oUA=;
+        b=gRLI9Edae0hVH3FpMfbxKcw+TOYp71C846wntDG1BR89i2+nJXifud8U29umJp0wAo
+         ynWMnNNEN8VBn5goPhEDls/iVZZQ/LLmZP3CIRbOlzplfeRLADLmUfK9QWE72mRhmUwA
+         yCj5WSLneUv3HsJgjRaNnqCBOVWQM6Se1UGNEx3FEMqsf6X0iigpe1r7RCnkG3HYi/eP
+         V6WUKRWy+vQw8/scEqIFDo02NsrbAcMa3EWsYT46ycRMosKWiUu1M/u4xx22VX7Gb37T
+         9N4jaEQKKprECsLcY46Qb43Z4TgTP6eNQaXDTZdVtCrxgXqkaZ/93uuoMq+TzOCFJGu8
+         +wyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681952677; x=1684544677;
+        d=1e100.net; s=20221208; t=1681953684; x=1684545684;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OkccrpEKcSz1YUTNacjYR9Skb6B75oLliutlJySuo7o=;
-        b=gFsuUOVPwlIhteaSpof5JNnCuufbWybJE+fwc85Tb3ZZLodWS4fdz1E4q2C13cal6z
-         JlOmWsYIbxfKKnOFxy2QguCq1GeNIkfWgxihz2Jf5OZVpvNk7karfWlGGwLcxMARApr6
-         AEC8uwhhfOYXiufWM63cvyuJCsV2FpbRE6MWjjd/rE7BRYK0ggjTxVzz96QSwBXXQYDu
-         38FSQQNgUy4iaDrIy3cboEswrncMzd9vvGxw29l7sYpbYUaqMbCGMIalu20PaCCKGdCQ
-         3q2XMGFPgYQ2falaSkrPUlB93skIEiaN9Te0swZd4pmKU+qslpmBLa7kdNG1OnALvsUG
-         Kj1g==
-X-Gm-Message-State: AAQBX9cS6PTmpj9JdDK5NadbamOVKdJPJOhUYMusQaurrXn6fD3RK2qQ
-        VoY63iInKOLRmLuSNq811hs=
-X-Google-Smtp-Source: AKy350bmZAIbS2xzpxKQDfq3l61HOdOMqzj8EdvXm2b3+kMjs/Ljzuki8l2W+OAI8GQ6bewcBFl6LQ==
-X-Received: by 2002:a05:600c:22cf:b0:3ef:5940:5f45 with SMTP id 15-20020a05600c22cf00b003ef59405f45mr17000209wmg.23.1681952676830;
-        Wed, 19 Apr 2023 18:04:36 -0700 (PDT)
+        bh=WUN6XokhMco8R1MkndUTrZgbr76wv2mMBzKNedq/oUA=;
+        b=iVJ9uQbt37DUdrwQ8NvKUpyalGE+l8r3avtUj7IdBJVE+PygVzpguh+nqZhV5VG5hT
+         Yy8bKqb0HsxUWAVazzM1Q3t59Jc/FlUJ1dk4Qh2bn3Hpy/ZLOCc+wpQ7afpGzXvSRZQG
+         SF8vHfON+MuSPJOou7SgS2Q8h9b9wFFdIvgLQE1/W7/hTwHqfYGps4I9bOAE+1K6a8rn
+         hLWWCGJw1SNiP2JtCYha4dK1lB7/RqOfO1CT80LcBopC/fWRzTioIoBm90zbS6dI9sDy
+         89azi/YWABmX3X3TRBWaJ1DL1gi5umG39N5DH3OpXwuQS20BV6lQVMBB06V47wL37ova
+         rAoQ==
+X-Gm-Message-State: AAQBX9eHaB+hcUS60NloRKAFpl/qdoZJKwtgKcEuY3cm4xHDWnGJkPDT
+        O9xhM6H9OUq/nYpP6eLvvLbsjCH3zYs=
+X-Google-Smtp-Source: AKy350bH2QS1qbMRigFZRbJL3t5b1IVOINWl+BtnAr5FPwGsK2XEB2lll0gSzTZWcxIS4aIdOEV8zA==
+X-Received: by 2002:a5d:6a11:0:b0:2cb:2775:6e6 with SMTP id m17-20020a5d6a11000000b002cb277506e6mr6064123wru.45.1681953683700;
+        Wed, 19 Apr 2023 18:21:23 -0700 (PDT)
 Received: from [192.168.8.100] (188.28.97.56.threembb.co.uk. [188.28.97.56])
-        by smtp.gmail.com with ESMTPSA id v9-20020a05600c444900b003f173be2ccfsm5271576wmn.2.2023.04.19.18.04.36
+        by smtp.gmail.com with ESMTPSA id l7-20020a5d4bc7000000b002fefe2edb72sm532772wrt.17.2023.04.19.18.21.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 18:04:36 -0700 (PDT)
-Message-ID: <bf3d6256-1f98-3f31-d845-40b84be4a09f@gmail.com>
-Date:   Thu, 20 Apr 2023 02:01:41 +0100
+        Wed, 19 Apr 2023 18:21:23 -0700 (PDT)
+Message-ID: <91a8f4d6-3518-c0e0-a2c5-f9886d675249@gmail.com>
+Date:   Thu, 20 Apr 2023 02:18:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 3/6] io_uring: add support for NO_OFFLOAD
+Subject: Re: [PATCH V6 00/17] io_uring/ublk: add generic IORING_OP_FUSED_CMD
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     luhongfei@vivo.com
-References: <20230419162552.576489-1-axboe@kernel.dk>
- <20230419162552.576489-4-axboe@kernel.dk>
+To:     Bernd Schubert <bschubert@ddn.com>, Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Amir Goldstein <amir73il@gmail.com>
+References: <20230330113630.1388860-1-ming.lei@redhat.com>
+ <78fe6617-2f5e-3e8e-d853-6dc8ffb5f82c@ddn.com>
+ <ZD9JI/JlwrzXQPZ7@ovpn-8-18.pek2.redhat.com>
+ <b6188050-1b12-703c-57e8-67fd27adb85c@ddn.com>
+ <ZD/ONON4AzwvtlLB@ovpn-8-18.pek2.redhat.com>
+ <6ed5c6f4-6abe-3eff-5a36-b1478a830c49@ddn.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230419162552.576489-4-axboe@kernel.dk>
+In-Reply-To: <6ed5c6f4-6abe-3eff-5a36-b1478a830c49@ddn.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,125 +87,98 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/19/23 17:25, Jens Axboe wrote:
-> Some applications don't necessarily care about io_uring not blocking for
-> request issue, they simply want to use io_uring for batched submission
-> of IO. However, io_uring will always do non-blocking issues, and for
-> some request types, there's simply no support for doing non-blocking
-> issue and hence they get punted to io-wq unconditionally. If the
-> application doesn't care about issue potentially blocking, this causes
-> a performance slowdown as thread offload is not nearly as efficient as
-> inline issue.
+On 4/19/23 16:42, Bernd Schubert wrote:
+> On 4/19/23 13:19, Ming Lei wrote:
+>> On Wed, Apr 19, 2023 at 09:56:43AM +0000, Bernd Schubert wrote:
+>>> On 4/19/23 03:51, Ming Lei wrote:
+>>>> On Tue, Apr 18, 2023 at 07:38:03PM +0000, Bernd Schubert wrote:
+>>>>> On 3/30/23 13:36, Ming Lei wrote:
+>>>>> [...]
+>>>>>> V6:
+>>>>>> 	- re-design fused command, and make it more generic, moving sharing buffer
+>>>>>> 	as one plugin of fused command, so in future we can implement more plugins
+>>>>>> 	- document potential other use cases of fused command
+>>>>>> 	- drop support for builtin secondary sqe in SQE128, so all secondary
+>>>>>> 	  requests has standalone SQE
+>>>>>> 	- make fused command as one feature
+>>>>>> 	- cleanup & improve naming
+>>>>>
+>>>>> Hi Ming, et al.,
+>>>>>
+>>>>> I started to wonder if fused SQE could be extended to combine multiple
+>>>>> syscalls, for example open/read/close.  Which would be another solution
+>>>>> for the readfile syscall Miklos had proposed some time ago.
+>>>>>
+>>>>> https://lore.kernel.org/lkml/CAJfpegusi8BjWFzEi05926d4RsEQvPnRW-w7My=ibBHQ8NgCuw@mail.gmail.com/
+>>>>>
+>>>>> If fused SQEs could be extended, I think it would be quite helpful for
+>>>>> many other patterns. Another similar examples would open/write/close,
+>>>>> but ideal would be also to allow to have it more complex like
+>>>>> "open/write/sync_file_range/close" - open/write/close might be the
+>>>>> fastest and could possibly return before sync_file_range. Use case for
+>>>>> the latter would be a file server that wants to give notifications to
+>>>>> client when pages have been written out.
+>>>>
+>>>> The above pattern needn't fused command, and it can be done by plain
+>>>> SQEs chain, follows the usage:
+>>>>
+>>>> 1) suppose you get one command from /dev/fuse, then FUSE daemon
+>>>> needs to handle the command as open/write/sync/close
+>>>> 2) get sqe1, prepare it for open syscall, mark it as IOSQE_IO_LINK;
+>>>> 3) get sqe2, prepare it for write syscall, mark it as IOSQE_IO_LINK;
+>>>> 4) get sqe3, prepare it for sync file range syscall, mark it as IOSQE_IO_LINK;
+>>>> 5) get sqe4, prepare it for close syscall
+>>>> 6) io_uring_enter();	//for submit and get events
+>>>
+>>> Oh, I was not aware that IOSQE_IO_LINK could pass the result of open
+>>> down to the others. Hmm, the example I find for open is
+>>> io_uring_prep_openat_direct in test_open_fixed(). It probably gets off
+>>> topic here, but one needs to have ring prepared with
+>>> io_uring_register_files_sparse, then manually manages available indexes
+>>> and can then link commands? Interesting!
+>>
+>> Yeah,  see test/fixed-reuse.c of liburing
+>>
+>>>
+>>>>
+>>>> Then all the four OPs are done one by one by io_uring internal
+>>>> machinery, and you can choose to get successful CQE for each OP.
+>>>>
+>>>> Is the above what you want to do?
+>>>>
+>>>> The fused command proposal is actually for zero copy(but not limited to zc).
+>>>
+>>> Yeah, I had just thought that IORING_OP_FUSED_CMD could be modified to
+>>> support generic passing, as it kind of hands data (buffers) from one sqe
+>>> to the other. I.e. instead of buffers it would have passed the fd, but
+>>> if this is already possible - no need to make IORING_OP_FUSED_CMD more
+>>> complex.man
+>>
+>> The way of passing FD introduces other cost, read op running into async,
+>> and adding it into global table, which introduces runtime cost.
 > 
-> Add support for configuring the ring with IORING_SETUP_NO_OFFLOAD, and
-> add an IORING_ENTER_NO_OFFLOAD flag to io_uring_enter(2). If either one
-> of these is set, then io_uring will ignore the non-block issue attempt
-> for any file which we cannot poll for readiness. The simplified io_uring
-> issue model looks as follows:
-> 
-> 1) Non-blocking issue is attempted for IO. If successful, we're done for
->     now.
-> 
-> 2) Case 1 failed. Now we have two options
->    	a) We can poll the file. We arm poll, and we're done for now
-> 	   until that triggers.
->     	b) File cannot be polled, we punt to io-wq which then does a
-> 	   blocking attempt.
-> 
-> If either of the NO_OFFLOAD flags are set, we should never hit case
-> 2b. Instead, case 1 would issue the IO without the non-blocking flag
-> being set and perform an inline completion.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   include/linux/io_uring_types.h |  3 +++
->   include/uapi/linux/io_uring.h  |  7 +++++++
->   io_uring/io_uring.c            | 26 ++++++++++++++++++++------
->   io_uring/io_uring.h            |  2 +-
->   io_uring/sqpoll.c              |  3 ++-
->   5 files changed, 33 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index 4dd54d2173e1..c54f3fb7ab1a 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -403,6 +403,7 @@ enum {
->   	REQ_F_APOLL_MULTISHOT_BIT,
->   	REQ_F_CLEAR_POLLIN_BIT,
->   	REQ_F_HASH_LOCKED_BIT,
-> +	REQ_F_NO_OFFLOAD_BIT,
->   	/* keep async read/write and isreg together and in order */
->   	REQ_F_SUPPORT_NOWAIT_BIT,
->   	REQ_F_ISREG_BIT,
-> @@ -475,6 +476,8 @@ enum {
->   	REQ_F_CLEAR_POLLIN	= BIT_ULL(REQ_F_CLEAR_POLLIN_BIT),
->   	/* hashed into ->cancel_hash_locked, protected by ->uring_lock */
->   	REQ_F_HASH_LOCKED	= BIT_ULL(REQ_F_HASH_LOCKED_BIT),
-> +	/* don't offload to io-wq, issue blocking if needed */
-> +	REQ_F_NO_OFFLOAD	= BIT_ULL(REQ_F_NO_OFFLOAD_BIT),
->   };
->   
->   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 0716cb17e436..ea903a677ce9 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -173,6 +173,12 @@ enum {
->    */
->   #define IORING_SETUP_DEFER_TASKRUN	(1U << 13)
->   
-> +/*
-> + * Don't attempt non-blocking issue on file types that would otherwise
-> + * punt to io-wq if they cannot be completed non-blocking.
-> + */
-> +#define IORING_SETUP_NO_OFFLOAD		(1U << 14)
-> +
->   enum io_uring_op {
->   	IORING_OP_NOP,
->   	IORING_OP_READV,
-> @@ -443,6 +449,7 @@ struct io_cqring_offsets {
->   #define IORING_ENTER_SQ_WAIT		(1U << 2)
->   #define IORING_ENTER_EXT_ARG		(1U << 3)
->   #define IORING_ENTER_REGISTERED_RING	(1U << 4)
-> +#define IORING_ENTER_NO_OFFLOAD		(1U << 5)
->   
->   /*
->    * Passed in for io_uring_setup(2). Copied back with updated info on success
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 9568b5e4cf87..04770b06de16 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1947,6 +1947,10 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->   	if (unlikely(!io_assign_file(req, def, issue_flags)))
->   		return -EBADF;
->   
-> +	if (req->flags & REQ_F_NO_OFFLOAD &&
-> +	    (!req->file || !file_can_poll(req->file)))
-> +		issue_flags &= ~IO_URING_F_NONBLOCK;
-> +
->   	if (unlikely((req->flags & REQ_F_CREDS) && req->creds != current_cred()))
->   		creds = override_creds(req->creds);
->   
-> @@ -2337,7 +2341,7 @@ static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
->   }
->   
->   static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
-> -			 const struct io_uring_sqe *sqe)
-> +			 const struct io_uring_sqe *sqe, bool no_offload)
->   	__must_hold(&ctx->uring_lock)
->   {
->   	struct io_submit_link *link = &ctx->submit_state.link;
-> @@ -2385,6 +2389,9 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->   		return 0;
->   	}
->   
-> +	if (no_offload)
-> +		req->flags |= REQ_F_NO_OFFLOAD;
+> Hmm, question from my side is why it needs to be in the global table,
+> when it could be just passed to the linked or fused sqe?
 
-Shouldn't it be a part of the initial "in syscall" submission
-but not extended to tw? I'd say it should, otherwise it risks
-making !DEFER_TASKRUN totally unpredictable. E.g. any syscall
-can try to execute tw and get stuck waiting in there.
+Because for every such type of state you need to write custom code,
+it's not scalable, not to say that it usually can't be kept to a
+specific operation and leaks into generic paths / other requests.
 
+Some may want to pass a file or a buffer, there might be a need
+to pass a result in some specific way (e.g. nr = recv(); send(nr)),
+and the list continues...
+
+I tried adding BPF in the middle ~2y ago, but it was no
+different in perf than returning to the userspace, and gets
+worse with higher submission batching. Maybe I need to test
+it again.
+
+>> That is the reason why fused command is designed in the following way:
+>>
+>> - link can be avoided, so OPs needn't to be run in async
+>> - no need to add buffer into global table
+>>
+>> Cause it is really in fast io path.
+>>
 -- 
 Pavel Begunkov

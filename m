@@ -2,67 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F11C96E8702
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 02:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF1D6E8726
+	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 03:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbjDTAw6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Apr 2023 20:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52864 "EHLO
+        id S231153AbjDTBEk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Apr 2023 21:04:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230298AbjDTAw5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 20:52:57 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E159B10E2
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 17:52:56 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f1763eea08so2855995e9.2
-        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 17:52:56 -0700 (PDT)
+        with ESMTP id S230359AbjDTBEj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Apr 2023 21:04:39 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 689E83A91
+        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 18:04:38 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id iw7-20020a05600c54c700b003f16fce55b5so382525wmb.0
+        for <io-uring@vger.kernel.org>; Wed, 19 Apr 2023 18:04:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681951975; x=1684543975;
+        d=gmail.com; s=20221208; t=1681952677; x=1684544677;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UF1yQcCdVna269C7MW4dp10q8+KJ6vnAzpLc/7O4BOQ=;
-        b=H0IU7PWyiqzMpSxukvqABq7EaNe/Srd1D5D8OeRAKHmvLbYd9lwPvBP0zPoIL0R498
-         42Zi8Q0t/Zf7kLT1mQiNrIKYNssm41hnwB7GSXV6+vVK9xP+cYgWnQHhUwx2W3BJKx95
-         M8JC7Jan283NPrud74NsZV0JvNeY4eUJX+5U03sOtRjalJKfF3hfl0k672EsgOTPMgGl
-         BtdV83xRwoYH0bSMTrUwNVAe2vWM74T6pyQX3G7/0aYI1FS8EVQOc8ihSzb33u7c4H4Q
-         Cjobugv67t0111+gEFK8JzrVyhexCy2iJ6A6dEBoYJ8zGBYnp+LNtm83BXxNJ7dtX8Xw
-         5zYA==
+        bh=OkccrpEKcSz1YUTNacjYR9Skb6B75oLliutlJySuo7o=;
+        b=hHH4/lO2mNHTAWTXsYkD7yp8LnIPR+ujbtzxvYExzTRSbtvxRxKVtz+yt6iMsJ1F+e
+         Xh91A1Jrb5Rtff62R+GCgbufsUJEI/G+Km2865I58LL8CS9j+2UXQvszC+NZS3bFhDOu
+         s6fGrl+t0v4DcmqEIhPmUgePUozVOxajFV4zWXk40Lwoi07pq2Cs/phy1qojr1KGsrxS
+         nWOoqKc55D4jwv1gv/Gr/rLmn5jc8MV0gzSlLZFN+SdQx9bsiiV4M1bgJSfPB/pwzbpi
+         sJhQraQliMBRVo1Qvq2uhU9kJxssKucugxm1xRvmxy5/N85pWGvQeF71IvYwMAjvv3iv
+         nWhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681951975; x=1684543975;
+        d=1e100.net; s=20221208; t=1681952677; x=1684544677;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UF1yQcCdVna269C7MW4dp10q8+KJ6vnAzpLc/7O4BOQ=;
-        b=IQX+SUQcE+oU4dGGFo6sQSwq3/ojOE+DfUaJquY2oSo9KzmtK+7xySpwKXgspjVsu0
-         ZU2ofnb4s+mE/rkmxWuFkDVakz4pkz9EWu1ZmvUvoKVhv5C26oDGE+ufhr9ohGIi2Z87
-         Aj+6XyqVP3JvB63u4VlNQ/PMbQsdPzLZDREf7XUkqpMxs3ETftATldsCkkapmEU1MPgK
-         9muFhOJXHzaIJv8T8TQZ8PzOTSDHD51Ek0kes12mM6Z0ASQUbBnPI6cyoVHmId0LRGR+
-         BZqTgvaRXPaySPfMzOe34lHwsurYLXJy9UmYaNZuMfDAsfStCN7SzUn1xZ4Shsh5TL7G
-         Yj6w==
-X-Gm-Message-State: AAQBX9ce4aEqIE6BBLbQH34L1ciOmHifpst8BqQoR9fm5nOStrLrbQxW
-        ZaFn4hh7PMd3960zM7rKpQ0=
-X-Google-Smtp-Source: AKy350ZQmV1JBb2UlEYWDWR+/o7bncL7qur+YiiD4ivw223ls7uEmAxR3JtgKzWL3McRYCs5Jmrt4Q==
-X-Received: by 2002:a5d:688e:0:b0:2f8:f775:c885 with SMTP id h14-20020a5d688e000000b002f8f775c885mr5565597wru.6.1681951975306;
-        Wed, 19 Apr 2023 17:52:55 -0700 (PDT)
+        bh=OkccrpEKcSz1YUTNacjYR9Skb6B75oLliutlJySuo7o=;
+        b=gFsuUOVPwlIhteaSpof5JNnCuufbWybJE+fwc85Tb3ZZLodWS4fdz1E4q2C13cal6z
+         JlOmWsYIbxfKKnOFxy2QguCq1GeNIkfWgxihz2Jf5OZVpvNk7karfWlGGwLcxMARApr6
+         AEC8uwhhfOYXiufWM63cvyuJCsV2FpbRE6MWjjd/rE7BRYK0ggjTxVzz96QSwBXXQYDu
+         38FSQQNgUy4iaDrIy3cboEswrncMzd9vvGxw29l7sYpbYUaqMbCGMIalu20PaCCKGdCQ
+         3q2XMGFPgYQ2falaSkrPUlB93skIEiaN9Te0swZd4pmKU+qslpmBLa7kdNG1OnALvsUG
+         Kj1g==
+X-Gm-Message-State: AAQBX9cS6PTmpj9JdDK5NadbamOVKdJPJOhUYMusQaurrXn6fD3RK2qQ
+        VoY63iInKOLRmLuSNq811hs=
+X-Google-Smtp-Source: AKy350bmZAIbS2xzpxKQDfq3l61HOdOMqzj8EdvXm2b3+kMjs/Ljzuki8l2W+OAI8GQ6bewcBFl6LQ==
+X-Received: by 2002:a05:600c:22cf:b0:3ef:5940:5f45 with SMTP id 15-20020a05600c22cf00b003ef59405f45mr17000209wmg.23.1681952676830;
+        Wed, 19 Apr 2023 18:04:36 -0700 (PDT)
 Received: from [192.168.8.100] (188.28.97.56.threembb.co.uk. [188.28.97.56])
-        by smtp.gmail.com with ESMTPSA id q17-20020a1cf311000000b003eeb1d6a470sm352387wmq.13.2023.04.19.17.52.54
+        by smtp.gmail.com with ESMTPSA id v9-20020a05600c444900b003f173be2ccfsm5271576wmn.2.2023.04.19.18.04.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 17:52:55 -0700 (PDT)
-Message-ID: <8d07228f-6e18-7656-2bee-f70640f40744@gmail.com>
-Date:   Thu, 20 Apr 2023 01:50:01 +0100
+        Wed, 19 Apr 2023 18:04:36 -0700 (PDT)
+Message-ID: <bf3d6256-1f98-3f31-d845-40b84be4a09f@gmail.com>
+Date:   Thu, 20 Apr 2023 02:01:41 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 2/6] io_uring: move poll_refs up a cacheline to fill a
- hole
+Subject: Re: [PATCH 3/6] io_uring: add support for NO_OFFLOAD
 Content-Language: en-US
 To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 Cc:     luhongfei@vivo.com
 References: <20230419162552.576489-1-axboe@kernel.dk>
- <20230419162552.576489-3-axboe@kernel.dk>
+ <20230419162552.576489-4-axboe@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230419162552.576489-3-axboe@kernel.dk>
+In-Reply-To: <20230419162552.576489-4-axboe@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,51 +75,124 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 4/19/23 17:25, Jens Axboe wrote:
-> After bumping the flags to 64-bits, we now have two holes in io_kiocb.
-> The best candidate for moving is poll_refs, as not to split the task_work
-> related items.
+> Some applications don't necessarily care about io_uring not blocking for
+> request issue, they simply want to use io_uring for batched submission
+> of IO. However, io_uring will always do non-blocking issues, and for
+> some request types, there's simply no support for doing non-blocking
+> issue and hence they get punted to io-wq unconditionally. If the
+> application doesn't care about issue potentially blocking, this causes
+> a performance slowdown as thread offload is not nearly as efficient as
+> inline issue.
+> 
+> Add support for configuring the ring with IORING_SETUP_NO_OFFLOAD, and
+> add an IORING_ENTER_NO_OFFLOAD flag to io_uring_enter(2). If either one
+> of these is set, then io_uring will ignore the non-block issue attempt
+> for any file which we cannot poll for readiness. The simplified io_uring
+> issue model looks as follows:
+> 
+> 1) Non-blocking issue is attempted for IO. If successful, we're done for
+>     now.
+> 
+> 2) Case 1 failed. Now we have two options
+>    	a) We can poll the file. We arm poll, and we're done for now
+> 	   until that triggers.
+>     	b) File cannot be polled, we punt to io-wq which then does a
+> 	   blocking attempt.
+> 
+> If either of the NO_OFFLOAD flags are set, we should never hit case
+> 2b. Instead, case 1 would issue the IO without the non-blocking flag
+> being set and perform an inline completion.
 > 
 > Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
->   include/linux/io_uring_types.h | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+>   include/linux/io_uring_types.h |  3 +++
+>   include/uapi/linux/io_uring.h  |  7 +++++++
+>   io_uring/io_uring.c            | 26 ++++++++++++++++++++------
+>   io_uring/io_uring.h            |  2 +-
+>   io_uring/sqpoll.c              |  3 ++-
+>   5 files changed, 33 insertions(+), 8 deletions(-)
 > 
 > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index 84f436cc6509..4dd54d2173e1 100644
+> index 4dd54d2173e1..c54f3fb7ab1a 100644
 > --- a/include/linux/io_uring_types.h
 > +++ b/include/linux/io_uring_types.h
-> @@ -535,6 +535,9 @@ struct io_kiocb {
->   	 * and after selection it points to the buffer ID itself.
->   	 */
->   	u16				buf_index;
-> +
-> +	atomic_t			poll_refs;
-
-poll wake is often done by a random CPU, would be great to limit
-cache sharing, i.e. the 2nd cache line is never touched by
-io_poll_wake() and it'd only need the poll entry and
-the 3rd line with io_task_work().
-
-There is one place that doesn't care about it, i.e.
-clearing REQ_F_[SINGLE,DOUBLE]_POLL in poll wake, but
-it's a place to improve.
-
-
-> +
->   	u64				flags;
+> @@ -403,6 +403,7 @@ enum {
+>   	REQ_F_APOLL_MULTISHOT_BIT,
+>   	REQ_F_CLEAR_POLLIN_BIT,
+>   	REQ_F_HASH_LOCKED_BIT,
+> +	REQ_F_NO_OFFLOAD_BIT,
+>   	/* keep async read/write and isreg together and in order */
+>   	REQ_F_SUPPORT_NOWAIT_BIT,
+>   	REQ_F_ISREG_BIT,
+> @@ -475,6 +476,8 @@ enum {
+>   	REQ_F_CLEAR_POLLIN	= BIT_ULL(REQ_F_CLEAR_POLLIN_BIT),
+>   	/* hashed into ->cancel_hash_locked, protected by ->uring_lock */
+>   	REQ_F_HASH_LOCKED	= BIT_ULL(REQ_F_HASH_LOCKED_BIT),
+> +	/* don't offload to io-wq, issue blocking if needed */
+> +	REQ_F_NO_OFFLOAD	= BIT_ULL(REQ_F_NO_OFFLOAD_BIT),
+>   };
 >   
->   	struct io_cqe			cqe;
-> @@ -565,9 +568,8 @@ struct io_kiocb {
->   		__poll_t apoll_events;
->   	};
->   	atomic_t			refs;
-> -	atomic_t			poll_refs;
-> -	struct io_task_work		io_task_work;
->   	unsigned			nr_tw;
-> +	struct io_task_work		io_task_work;
->   	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
->   	union {
->   		struct hlist_node	hash_node;
+>   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 0716cb17e436..ea903a677ce9 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -173,6 +173,12 @@ enum {
+>    */
+>   #define IORING_SETUP_DEFER_TASKRUN	(1U << 13)
+>   
+> +/*
+> + * Don't attempt non-blocking issue on file types that would otherwise
+> + * punt to io-wq if they cannot be completed non-blocking.
+> + */
+> +#define IORING_SETUP_NO_OFFLOAD		(1U << 14)
+> +
+>   enum io_uring_op {
+>   	IORING_OP_NOP,
+>   	IORING_OP_READV,
+> @@ -443,6 +449,7 @@ struct io_cqring_offsets {
+>   #define IORING_ENTER_SQ_WAIT		(1U << 2)
+>   #define IORING_ENTER_EXT_ARG		(1U << 3)
+>   #define IORING_ENTER_REGISTERED_RING	(1U << 4)
+> +#define IORING_ENTER_NO_OFFLOAD		(1U << 5)
+>   
+>   /*
+>    * Passed in for io_uring_setup(2). Copied back with updated info on success
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 9568b5e4cf87..04770b06de16 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -1947,6 +1947,10 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
+>   	if (unlikely(!io_assign_file(req, def, issue_flags)))
+>   		return -EBADF;
+>   
+> +	if (req->flags & REQ_F_NO_OFFLOAD &&
+> +	    (!req->file || !file_can_poll(req->file)))
+> +		issue_flags &= ~IO_URING_F_NONBLOCK;
+> +
+>   	if (unlikely((req->flags & REQ_F_CREDS) && req->creds != current_cred()))
+>   		creds = override_creds(req->creds);
+>   
+> @@ -2337,7 +2341,7 @@ static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
+>   }
+>   
+>   static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+> -			 const struct io_uring_sqe *sqe)
+> +			 const struct io_uring_sqe *sqe, bool no_offload)
+>   	__must_hold(&ctx->uring_lock)
+>   {
+>   	struct io_submit_link *link = &ctx->submit_state.link;
+> @@ -2385,6 +2389,9 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+>   		return 0;
+>   	}
+>   
+> +	if (no_offload)
+> +		req->flags |= REQ_F_NO_OFFLOAD;
+
+Shouldn't it be a part of the initial "in syscall" submission
+but not extended to tw? I'd say it should, otherwise it risks
+making !DEFER_TASKRUN totally unpredictable. E.g. any syscall
+can try to execute tw and get stuck waiting in there.
 
 -- 
 Pavel Begunkov

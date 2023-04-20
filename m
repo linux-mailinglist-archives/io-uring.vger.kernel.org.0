@@ -2,186 +2,202 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 024716E96E3
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 16:19:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D7756E9771
+	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 16:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230464AbjDTOTu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Apr 2023 10:19:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
+        id S231792AbjDTOoK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Apr 2023 10:44:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231997AbjDTOTb (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Apr 2023 10:19:31 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7640C61B4;
-        Thu, 20 Apr 2023 07:19:05 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id bi21-20020a05600c3d9500b003f17a8eaedbso3155696wmb.1;
-        Thu, 20 Apr 2023 07:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682000343; x=1684592343;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bvHlG0/JTB7HrnkZNbj8ncjZGNIrjux5UiB5tAycP8=;
-        b=Npay1TVhojwYB+yz7Ysjw6StA9B11tmjVHgRd0PstSs12o90dEemEl7STZn4axgCAZ
-         OM0zb6TDhk4+v+TPBRFM/72qZ2pHWuV8TdrVyRVeArba9e2ZakVBE9YbrBLowET/mVkn
-         y9CfDStdJ/jAQ5UoJOgJyVl3DFq67AXzIVS5CfCyC6vA1d6xYGzIsV3OmETy/1MFXxVg
-         33rX0L2U/nL3XGXk7cTu/AfGaxVfRVwJR5zfHhLZ99DxjiSIX9Y5Lqxw0pyz9LzxX60h
-         jXpOcFDei0fF6puh5ZTK6rvSWrdUJyKyqZT3GNjyXdq2yC6PQ5e0rOr4X94x0HmeunRP
-         H/Mw==
+        with ESMTP id S232397AbjDTOoE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Apr 2023 10:44:04 -0400
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386856583;
+        Thu, 20 Apr 2023 07:44:00 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-2f87c5b4635so628976f8f.1;
+        Thu, 20 Apr 2023 07:44:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682000343; x=1684592343;
+        d=1e100.net; s=20221208; t=1682001838; x=1684593838;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5bvHlG0/JTB7HrnkZNbj8ncjZGNIrjux5UiB5tAycP8=;
-        b=ielwcZWQstvXcxNGnDpPCvGcOrnMe/MeYzLNzvpDOESE3tuVgSV8YoKVBEafklCqux
-         Fhb7c319joV8TU2NOurjSQMQK2n5ZtQzG/SvQ6t8dZfEnkLgVy1kUU+6cG0NsIxYc46o
-         JX87+Tw5aT9a1Hv+N/ldeuc5vWkUAeRIy0W6hDfP4CYN7VlV09HpcRbE/FCt4c+slCGs
-         HUQCSiYX3QbWkbzd7J+aaO6XcDTiY9g/63R87Dwcc9imb9RECoxz9Ou9+L4fE4FTe3SF
-         KkJeb9mBL3pEGuNW2NAaNHlfq/ztcqtA44s636x2ISgEQXuh3WV8TV8sdUiiraU0Xy8n
-         UBvw==
-X-Gm-Message-State: AAQBX9c9o7vDTpf3jenvW3DACC+RzYSr7N22MCe5dl5lKN8iFVXkzCA1
-        e6x76VMVMCZJk613gKEzR8w=
-X-Google-Smtp-Source: AKy350a9I8vSVf0bPmAuaDryi74y07aPweSrcw0b9L3gmiZiUJgQxGlmGkegkYK2Hc2E/A22ecBXQg==
-X-Received: by 2002:a7b:cd10:0:b0:3f0:a785:f0e0 with SMTP id f16-20020a7bcd10000000b003f0a785f0e0mr1430470wmj.40.1682000342479;
-        Thu, 20 Apr 2023 07:19:02 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id s9-20020a05600c45c900b003f092f0e0a0sm8082757wmo.3.2023.04.20.07.19.01
+        bh=QbffplO3VOZcBuvT0UOJ7mzyhsrhOlVkaEplR1sfDJk=;
+        b=U/L2i5LnbmyYOvyskATWrU2jfCVkLCIWgyah/e/W8JTnVmasYx0KHWiLjMERERLU9M
+         Pa7mml2g4v6B4HZQRqPeU6Aqi2nKJ7tbsb4wAA2yVV+35u0xepuk/Moo14bbKMefPB68
+         KBTd2/VB84IBldRJJi4STuluOcBdNdlbu7Y/CKzP5Oaf02b0WhFWvzSqI0u4ZRlMAqXz
+         TwWv6UK2DL0sLbPL+wnM5q+gCuDyfyUTamEV25Deyn/m4ALR4Z4ISJ0YydexyNuEln5P
+         ooOGXCkx+I4edw3FSTJ+NqAR9C+YxGdDul5RkWin+f3TaHrCyPnykRU2rqs9RUFVoDJB
+         yKbA==
+X-Gm-Message-State: AAQBX9f8YFjbytMDRwdFK5F3ShShSJLsqY8shZDNS1uGAJ3RW+87UoSC
+        +pBP8V1yCO/VzyA6bLc9BWo=
+X-Google-Smtp-Source: AKy350bFMAekMWmVpbReB2mEMQlH58SOps8pRO56YWnsO6OvZe+Bv8fTq/PabS3BkG4Y1rRHi/yj9Q==
+X-Received: by 2002:a05:6000:12c9:b0:2fa:ce3:9a0 with SMTP id l9-20020a05600012c900b002fa0ce309a0mr1400681wrx.36.1682001838483;
+        Thu, 20 Apr 2023 07:43:58 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-004.fbsv.net. [2a03:2880:31ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id u15-20020a5d468f000000b002f5fbc6ffb2sm2154621wrq.23.2023.04.20.07.43.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 07:19:01 -0700 (PDT)
-Date:   Thu, 20 Apr 2023 15:19:01 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] io_uring: rsrc: avoid use of vmas parameter in
- pin_user_pages()
-Message-ID: <5e4a23f1-c99e-45d6-8402-6c2df8fa06e0@lucifer.local>
-References: <c2e22383-43ee-5cf0-9dc7-7cd05d01ecfb@kernel.dk>
- <f82b9025-a586-44c7-9941-8140c04a4ccc@lucifer.local>
- <69f48cc6-8fc6-0c49-5a79-6c7d248e4ad5@kernel.dk>
- <bec03e0f-a0f9-43c3-870b-be406ca848b9@lucifer.local>
- <8af483d2-0d3d-5ece-fb1d-a3654411752b@kernel.dk>
- <d601ca0c-d9b8-4e5d-a047-98f2d1c65eb9@lucifer.local>
- <ZEAxhHx/4Ql6AMt2@casper.infradead.org>
- <ZEAx90C2lDMJIux1@nvidia.com>
- <ZEA0dbV+qIBSD0mG@casper.infradead.org>
- <c94afa59-e1b9-d7b0-a83e-6c722324e7ef@gmail.com>
+        Thu, 20 Apr 2023 07:43:58 -0700 (PDT)
+Date:   Thu, 20 Apr 2023 07:43:56 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     kuba@kernel.org, Jens Axboe <axboe@kernel.dk>,
+        David Ahern <dsahern@kernel.org>,
+        Willem de Bruijn <willemb@google.com>,
+        io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        asml.silence@gmail.com, leit@fb.com, edumazet@google.com,
+        pabeni@redhat.com, davem@davemloft.net, dccp@vger.kernel.org,
+        mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+        matthieu.baerts@tessares.net, marcelo.leitner@gmail.com
+Subject: Re: [PATCH 0/5] add initial io_uring_cmd support for sockets
+Message-ID: <ZEFPrGSuDopUwi9V@gmail.com>
+References: <64357608c396d_113ebd294ba@willemb.c.googlers.com.notmuch>
+ <19c69021-dce3-1a4a-00eb-920d1f404cfc@kernel.dk>
+ <64357bb97fb19_114b22294c4@willemb.c.googlers.com.notmuch>
+ <20cb4641-c765-e5ef-41cb-252be7721ce5@kernel.dk>
+ <ZDa32u9RNI4NQ7Ko@gmail.com>
+ <6436c01979c9b_163b6294b4@willemb.c.googlers.com.notmuch>
+ <ZDdGl/JGDoRDL8ja@gmail.com>
+ <6438109fe8733_13361929472@willemb.c.googlers.com.notmuch>
+ <ZD6Zw1GAZR28++3v@gmail.com>
+ <643ef2643f3ce_352b2f2945d@willemb.c.googlers.com.notmuch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c94afa59-e1b9-d7b0-a83e-6c722324e7ef@gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <643ef2643f3ce_352b2f2945d@willemb.c.googlers.com.notmuch>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Apr 20, 2023 at 02:36:47PM +0100, Pavel Begunkov wrote:
-> On 4/19/23 19:35, Matthew Wilcox wrote:
-> > On Wed, Apr 19, 2023 at 03:24:55PM -0300, Jason Gunthorpe wrote:
-> > > On Wed, Apr 19, 2023 at 07:23:00PM +0100, Matthew Wilcox wrote:
-> > > > On Wed, Apr 19, 2023 at 07:18:26PM +0100, Lorenzo Stoakes wrote:
-> > > > > So even if I did the FOLL_ALLOW_BROKEN_FILE_MAPPING patch series first, I
-> > > > > would still need to come along and delete a bunch of your code
-> > > > > afterwards. And unfortunately Pavel's recent change which insists on not
-> > > > > having different vm_file's across VMAs for the buffer would have to be
-> > > > > reverted so I expect it might not be entirely without discussion.
-> > > >
-> > > > I don't even understand why Pavel wanted to make this change.  The
-> > > > commit log really doesn't say.
-> > > >
-> > > > commit edd478269640
-> > > > Author: Pavel Begunkov <asml.silence@gmail.com>
-> > > > Date:   Wed Feb 22 14:36:48 2023 +0000
-> > > >
-> > > >      io_uring/rsrc: disallow multi-source reg buffers
-> > > >
-> > > >      If two or more mappings go back to back to each other they can be passed
-> > > >      into io_uring to be registered as a single registered buffer. That would
-> > > >      even work if mappings came from different sources, e.g. it's possible to
-> > > >      mix in this way anon pages and pages from shmem or hugetlb. That is not
-> > > >      a problem but it'd rather be less prone if we forbid such mixing.
-> > > >
-> > > >      Cc: <stable@vger.kernel.org>
-> > > >      Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > >      Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > > >
-> > > > It even says "That is not a problem"!  So why was this patch merged
-> > > > if it's not fixing a problem?
-> > > >
-> > > > It's now standing in the way of an actual cleanup.  So why don't we
-> > > > revert it?  There must be more to it than this ...
-> > >
-> > > https://lore.kernel.org/all/61ded378-51a8-1dcb-b631-fda1903248a9@gmail.com/
-> >
-> > So um, it's disallowed because Pavel couldn't understand why it
-> > should be allowed?  This gets less and less convincing.
+On Tue, Apr 18, 2023 at 03:41:24PM -0400, Willem de Bruijn wrote:
+> Breno Leitao wrote:
+> > On Thu, Apr 13, 2023 at 10:24:31AM -0400, Willem de Bruijn wrote:
+> > > > How to handle these contradictory behaviour ahead of time (at callee
+> > > > time, where the buffers will be prepared)?
+> > > 
+> > > Ah you found a counter-example to the simple pattern of put_user.
+> > > 
+> > > The answer perhaps depends on how many such counter-examples you
+> > > encounter in the list you gave. If this is the only one, exceptions
+> > > in the wrapper are reasonable. Not if there are many.
+> > 
+> > 
+> > Hello Williem,
+> > 
+> > I spend sometime dealing with it, and the best way for me to figure out
+> > how much work this is, was implementing a PoC. You can find a basic PoC
+> > in the link below. It is not 100% complete (still need to convert 4
+> > simple ioctls), but, it deals with the most complicated cases. The
+> > missing parts are straighforward if we are OK with this approach.
+> > 
+> > 	https://github.com/leitao/linux/commits/ioctl_refactor
+> > 
+> > Details
+> > =======
+> > 
+> > 1)  Change the ioctl callback to use kernel memory arguments. This
+> > changes a lot of files but most of them are trivial. This is the new
+> > ioctl callback:
+> > 
+> > struct proto {
+> > 
+> >         int                     (*ioctl)(struct sock *sk, int cmd,
+> > -                                        unsigned long arg);
+> > +                                        int *karg);
+> > 
+> > 	You can see the full changeset in the following commit (which is
+> > 	the last in the tree above)
+> > 	https://github.com/leitao/linux/commit/ad78da14601b078c4b6a9f63a86032467ab59bf7
+> > 
+> > 2) Create a wrapper (sock_skprot_ioctl()) that should be called instead
+> > of sk->sk_prot->ioctl(). For every exception, calls a specific function
+> > for the exception (basically ipmr_ioctl and ipmr_ioctl) (see more on 3)
+> > 
+> > 	This is the commit https://github.com/leitao/linux/commit/511592e549c39ef0de19efa2eb4382cac5786227
+> > 
+> > 3) There are two exceptions, they are ip{6}mr_ioctl() and pn_ioctl().
+> > ip{6}mr is the hardest one, and I implemented the exception flow for it.
+> > 
+> > 	You could find ipmr changes here:
+> > 	https://github.com/leitao/linux/commit/659a76dc0547ab2170023f31e20115520ebe33d9
+> > 
+> > Is this what you had in mind?
+> > 
+> > Thank you!
+> 
+> Thanks for the series, Breno. Yes, this looks very much what I hoped for.
+
+Awesome. Thanks.
+
+> The series shows two cases of ioctls: getters that return an int, and
+> combined getter/setters that take a struct of a certain size and
+> return the exact same.
 >
-> Excuse me? I'm really sorry you "couldn't understand" the explanation
-> as it has probably been too much of a "mental load", but let me try to
-> elaborate.
->
-> Because it's currently limited what can be registered, it's indeed not
-> a big deal, but that will most certainly change, and I usually and
-> apparently nonsensically prefer to tighten things up _before_ it becomes
-> a problem. And again, taking a random set of buffers created for
-> different purposes and registering it as a single entity is IMHO not a
-> sane approach.
->
-> Take p2pdma for instance, if would have been passed without intermixing
-> there might not have been is_pci_p2pdma_page()/etc. for every single page
-> in a bvec. That's why in general, it won't change for p2pdma but there
-> might be other cases in the future.
->
+> I would deduplicate the four ipmr/ip6mr cases that constitute the second
+> type, by having a single helper for this type. sock_skprot_ioctl_struct,
+> which takes an argument for the struct size to copy in/out.
 
-The proposed changes for GUP are equally intended to tighten things up both
-in advance of issues (e.g. misuse of vmas parameter), for the purposes of
-future improvements to GUP (optimising how we perform these operations) and
-most pertinently here - ensuring broken uses of GUP do not occur.
+Ok, that is a good advice. Thanks!
 
-So both are 'cleanups' in some sense :) I think it's important to point out
-that this change is not simply a desire to improve an interface but has
-practical implications going forward (which maybe aren't obvious at this
-point yet).
+> Did this series cover all proto ioctls, or is this still a subset just
+> for demonstration purposes -- and might there still be other types
+> lurking elsewhere?
 
-The new approach to this changes goes further in that we essentially
-perform the existing check here (anon/shmem/hugetlb) but for _all_
-FOLL_WRITE operations in GUP to avoid broken writes to file mappings, at
-which point we can just remove the check here altogether (I will post a
-series for this soon).
+It does not cover all the cases. I would say it cover 80% of the cases,
+and the hardest cases.  These are the missing cases, and what they do:
 
-I think that you guys should not have to be performing sanity checks here
-but rather we should handle it in GUP so you don't need to think about it
-at all. It feels like an mm failing that you have had to do so at all.
+* pn_ioctl     (getters/setter that reads/return an int)
+* l2tp_ioctl   (getters that return an int)
+* dgram_ioctl  (getters that return an int)
+* sctp_ioctl   (getters that return an int)
+* mptcp_ioctl  (getters that return an int)
+* dccp_ioctl   (getters that return an int)
+* dgram_ioctl  (getters that return an int)
+* pep_ioctl    (getters that return an int)
 
-So I guess the question is, do you feel the requirement for vm_file being
-the same should apply across _any_ GUP operation over a range or is it
-io_uring-specific?
 
-If the former then we should do it in GUP alongside the other checks (and
-you can comment accordingly on that patch series when it comes), if the
-latter then I would restate my opinion that we shouldn't be prevented from
-making improvements to GUP in for one caller that wants to iterate
-over these VMAs for custom checks + that should be done separately.
+Here is what I am using to get the full list:
+ # ag  --no-filename -A 20 "struct proto \w* = {"  | grep .ioctl | cut -d "=" -f 2 | tr -d '\n'
 
->
-> > FWIW, what I was suggesting was that we should have a FOLL_SINGLE_VMA
-> > flag, which would use our shiny new VMA lock infrastructure to look
-> > up and lock _one_ VMA instead of having the caller take the mmap_lock.
-> > Passing that flag would be a tighter restriction that Pavel implemented,
-> > but would certainly relieve some of his mental load.
-> >
-> > By the way, even if all pages are from the same VMA, they may still be a
-> > mixture of anon and file pages; think a MAP_PRIVATE of a file when
-> > only some pages have been written to.  Or an anon MAP_SHARED which is
-> > accessible by a child process.
->
-> --
-> Pavel Begunkov
+ dccp_ioctl, dccp_ioctl, dgram_ioctl, tcp_ioctl, raw_ioctl, udp_ioctl,
+ udp_ioctl, udp_ioctl, tcp_ioctl, l2tp_ioctl, rawv6_ioctl, l2tp_ioctl,
+ mptcp_ioctl, pep_ioctl, pn_ioctl, rds_ioctl, sctp_ioctl, sctp_ioctl,
+ sock_no_ioctl
+
+> If this is all, this looks like a reasonable amount of code churn to me.
+
+Should I proceed and create a final patch? I don't see a way to break up
+the last patch, which changes the API , in smaller patches. I.e., the
+last patch will be huge, right?
+
+> Three small points
+> 
+> * please keep the __user annotation. Use make C=2 when unsure to warn
+>   about mismatched annotation
+
+ack!
+
+> * minor: special case the ipmr (type 2) ioctls in sock_skprot_ioctl
+>   and treat the "return int" (type 1) ioctls as the default case.
+
+ack!
+
+> * introduce code in a patch together with its use-case, so no separate
+>   patches for sock_skprot_ioctl and sock_skprot_ioctl_ipmr. Either one
+>   patch, or two, for each type of conversion.
+
+I am not sure how to change the ABI (struct proto) without doing all the
+protocol changes in the same patch. Otherwise compilation will be broken between
+the patch that changes the "struct proto" and the patch that changes the
+_ioctl for protocol X.  I mean, is it possible to break up changing
+"struct proto" and the affected protocols?
+
+Thank you for the review and suggestions!
+
+PS: I will take some days off next week, and I am planning to send the
+final patch when I come back.

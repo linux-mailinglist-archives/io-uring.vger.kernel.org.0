@@ -2,156 +2,146 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EEE6EB09F
-	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 19:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 544D16EB472
+	for <lists+io-uring@lfdr.de>; Sat, 22 Apr 2023 00:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232070AbjDURf7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Apr 2023 13:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
+        id S233575AbjDUWJk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Apr 2023 18:09:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231282AbjDURf6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 13:35:58 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C81B59F9
-        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:35:57 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-63b9f00640eso509975b3a.0
-        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682098556; x=1684690556;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r/mJ/VjOxPO/J8QuuypwEENO9K3r8k38isr2LlmMEFg=;
-        b=XZwUt/YPv5G9da4ipP69kGI6lWga8H4QxNnwfA39J1lebC3iQywy/m+sWDP/KCZNK1
-         Dfw6a864OhwkqL0ZOdV8wTG7H/T27+18/840b6aX/vfsX1kH3zJmiRPz/isqbOiwM9+o
-         wUsyzerOHnyKjHjnop2KUX+P5KJYshXOY4l3lQl9JnLjLfXqf5DMuZ+AO8sL9yeQ/V4B
-         YiYW3WilO21S5X4bW6kHJCwZyMTeRJf6A0QQ85s3QIHhSdzTF4zPj1AfMkiCLbAib9de
-         YKCETFRB5U7VXhjflX/B5KaqtJ50do+76NyVdcixN/Q4YpJNwRhLikTkQKmJSyitD8uL
-         6oZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682098556; x=1684690556;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/mJ/VjOxPO/J8QuuypwEENO9K3r8k38isr2LlmMEFg=;
-        b=eOrxQhCBZZ/WRn9K7Igo4tll2ZiRF6rqIbZRgy3xmxpOSz87tEbaELucNhXpE5cetI
-         ohllhJfY6hGc8tl/TrqNwBJEl3qnpsOllPa3hcjjimwsMBaVA03+Rfg9sC/YwySc35TG
-         bdFyO6ZGR3wF5CP8baa0Iq/s9qO4JxRJT/2ATOlffNul9Xxy0T/HoKtm8dP3BtfBZ8T6
-         uRcloIkjX2wfskwHKR9kVS1HB8VaOfhdxE2XYQvrlCr7sh1sX05JfeNgehRV2Znr8t/k
-         MhywVxOFzE5GHj7NPXowpUI3Z//nBSvc73N520eqR316g9tYNriASAZHgCbjg4IdpXFm
-         CwZg==
-X-Gm-Message-State: AAQBX9ekua+7mfGo61EnTVZ9ag7FfhNZxv0pPH2G/RLTtsc8XEohhgwM
-        qkyaCRBLl7mGKz/4HiiXqcW/mQ==
-X-Google-Smtp-Source: AKy350YWzfrHTRavHDl7+6Rx9aw4U52JeUW8bIGUDOJ8tP+cHux9srPwBCRsSvujlVarlJJK8O9ucA==
-X-Received: by 2002:a05:6a20:5496:b0:f1:f884:f0dd with SMTP id i22-20020a056a20549600b000f1f884f0ddmr7260065pzk.2.1682098556570;
-        Fri, 21 Apr 2023 10:35:56 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e13-20020a63db0d000000b0050f7208b4bcsm2872399pgg.89.2023.04.21.10.35.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Apr 2023 10:35:56 -0700 (PDT)
-Message-ID: <d8f47d6c-8353-5aa7-a41a-14e4cc047dc9@kernel.dk>
-Date:   Fri, 21 Apr 2023 11:35:55 -0600
+        with ESMTP id S229656AbjDUWJj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 18:09:39 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2044.outbound.protection.outlook.com [40.107.95.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE601726
+        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 15:09:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZZqrd2Mnoqw61bDJjbJp+JeZtR434J5n9ZqxxnAWAL//aS7l5RVxjEsZN/yNRjlOkKwvGesvHpJgiLPmOv3zG+KURS1nUZlTaTA6NNgy+3v+KwyGHDdCDl0+EvQwd7Mkt2j655PuLNiaXLsnCOhiEWi7Eta/cjBKOoh3SBgYhcIi03YLw50BIdiqeDRDmVsJK61bNK8iymHit3P2MtRnvwy6Pxt0BgXRq1xx6RiPGuDQl/8kALA0ydL3oJ5uNDds2GGgHLKpTn8OgF18/hruacUsb4NBfHvYBuTZMP9ce2LaFOGGTT+E5Mndov0ULRuS1WaYxNQoBFVZqX7xau7w7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FT5E45HtQ5fYy8XiCbEzoBVnuKQTrtG9xz3ioYODjB4=;
+ b=RoGO/4SgNmS2mcsbSsTwVsXSS9uFbZMnoQVaGYhpQh5xiLmSkpo0sdN2vCnu6X8UX0siu0fpwwqECCWWmLCwO/mDgC+UeMbDqxBCKptmlCRXcXwEpMp+50pNfLByMVCddhJ0MuRWFZEDHfsFZDyVRAWEQf33e0NW76VAEfFCykxfNnNug+K4zelPoA42wh3z02FbmHDpheg2D6tMwk5VZU46cfWlFoavimJe3lVwDnQ+b5cqiU7ReCWRGaf605BAnu8sm4AZ9tnQxyBVlnioxIuc1Z7V8kIN98aqcMnapAFnnofvt5x3rqfxq6nCvQZmPp0B8f1d6Byjhy+2MwHozQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FT5E45HtQ5fYy8XiCbEzoBVnuKQTrtG9xz3ioYODjB4=;
+ b=xmvFEqyhAB3YqCpGdgN0hFzg3BRPYmBvkLa7JkHzbHGFam3vqUmfku6rOUpMOtp+H04eP+pwi7DnGqZjxWCJ8gvI5rSJRqxLjB3qNgFWNUkH8E7Mhhm2LAP5mKSJ0iWr9Sk2qkOQOKPgfGGiHfh72gTqdK0qn704Ao60mZ2nmP8=
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
+ by DS7PR19MB5904.namprd19.prod.outlook.com (2603:10b6:8:7f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.33; Fri, 21 Apr
+ 2023 22:09:36 +0000
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::8cb3:ef5b:f815:7d8c]) by DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::8cb3:ef5b:f815:7d8c%4]) with mapi id 15.20.6319.022; Fri, 21 Apr 2023
+ 22:09:36 +0000
+From:   Bernd Schubert <bschubert@ddn.com>
+To:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+CC:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: SQPOLL / uring_cmd_iopoll
+Thread-Topic: SQPOLL / uring_cmd_iopoll
+Thread-Index: AQHZdJ31wZsZ1L2NcUyTVFglsdUPqA==
+Date:   Fri, 21 Apr 2023 22:09:36 +0000
+Message-ID: <cbfa6c3f-11bd-84f7-bdb0-4342f8fd38f3@ddn.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM5PR1901MB2037:EE_|DS7PR19MB5904:EE_
+x-ms-office365-filtering-correlation-id: bbeb1828-5478-4e44-d64d-08db42b517e9
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ICQL580k9OguEbvFUVnOBA3xnHAlNcIix6iXB8wKgr/lvvqMAZAWUn9cKqglV+RCNLbC5OPTmHR+20DEDjePiWBBNLTAUYWdkUzwp0mn2DjsPtI7ZhBrVdwYgkIcBOU/ne0u0Lj0VCOx4mTtoXria+EMrqcE9XGVXbzMWqKY6JE1SQPlR8YL0OqCMdLiWBdetv6pRse16VceYi/fYHqNocWOzkPfn2U/wKZLqQ36QDtHhvO9sK1k6jkLJDNVLqUI/TfTweUh1tj0b5LcpMLCB9hVRbxfw8XZOQpqAhQOts1zSlAimVxKTO6AAvtscjBFjHv5KSwxLTyh6kB5XmK8Dfi0+s3Bvx7YDyho3ZEWOl5xG0mFvvD+tQuazFfiPUpnIRLUkXYtkcNbPJvXPvYJ+NzgysBhAbCS2ZcPl/ePPxdZlNXVpNpC9Sbs9t6SzWQTtfK/Ub1NmQPwCzWakjJ58oNXpOzsEFeSfmE8+SpjEsHAxEPhxKmPSYurKAi9UUfC0X2Kt80vB4ueqhYZ4o/261Q5zNkEo2/mZTijf9yQkpJbi23zNAEI+poLWJiN43VuMr1iBMMqXCmz5OlghcmCx6yrSGb+a3cOideORNBKPTn5AoZ8NrNGZF/LRzK8nGYpdHZdq7F2o6TutsGYMyt02dfvjQXSCymh6NFhvd+FVFBmwDvqQZed5TBI+K9CG7CN
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(366004)(396003)(39850400004)(136003)(451199021)(31686004)(6506007)(122000001)(31696002)(38070700005)(38100700002)(86362001)(8936002)(6512007)(5660300002)(66556008)(478600001)(41300700001)(316002)(2906002)(76116006)(186003)(66446008)(36756003)(6916009)(66476007)(64756008)(54906003)(8676002)(71200400001)(4326008)(2616005)(83380400001)(66946007)(91956017)(6486002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?akFDMFdGdGlrQkRzMmtQWWFtRnIyZkRISnh0Mk5lQ2JTNG9zZHBuVnRvVHFu?=
+ =?utf-8?B?d0Z4RlQyMXZLQ1FJZVF4eW5MQkhqTFFoNmlWanUzMFBnTzQzeHJ4bmFSNGc4?=
+ =?utf-8?B?WEQxdjJtYVlHS1dONlM1S3ZpVlMvbDB3OXp5dElGRHBGcHZOZGlUZ3AvNlA3?=
+ =?utf-8?B?UGI3ZzVOUUVaR21TU2NDNENJbmZaY1BSYUFtNHI0dExlMVhodXMxWHF6aHlB?=
+ =?utf-8?B?MmdqdTNVMU53enJBRjFrQ0hHTkt1QWdsLy9SWjhvWTArZmw1R2JDUVYwZXdE?=
+ =?utf-8?B?Um5mL1RKWVRTZktVYUdzdnpoNVhlQUlldzMrZXRBdDRHSnhIWU1JVFgxVm9z?=
+ =?utf-8?B?aVVHUEgwZzBNV1JzK1FlVVpqMkF0ZGxoVXFveUQ3WnZNRG90M2xjRkRYTS9I?=
+ =?utf-8?B?aUJ3V29HczFjWXlYeWpINzAyY0NGaVEyTU1tSzkwdnd4dlhhdDFPZ1M3TXZQ?=
+ =?utf-8?B?blhVM3RhZE1DSDA2TDgvY0NnL2JSTEhTcjRBZWJaUytseWtIYmN3OHVWNFV1?=
+ =?utf-8?B?Q0kxa0JhM29CcmxRaTFrUiswYTdkNXpBVGwvMDJLUmVVUExHbXI4emg5YThN?=
+ =?utf-8?B?L1NmbDdqWFg0di9CZ2p1RElwYStwR3dyYTVHY3JFWXdHVGxUOGpYcW5WQVNj?=
+ =?utf-8?B?MjFlUFFDUUt0bTU2RnowRHVjL25FM0pJRC90aDNUL0xjc0VBZTNKQVpvVGxF?=
+ =?utf-8?B?MmpONzh2eFZLQXhUWlFLNzhhcDRHN0pNd0RYLzI1c29QV1dPSUw3a01UZjlp?=
+ =?utf-8?B?dDZ4L0g2eFhtSVpqeGwrZXM0RFViT1BaRm1rdnZBaDZ5RWcwZnpvWTJwUTRQ?=
+ =?utf-8?B?cDdFdnQrOTN6RThCOXhRWVgrbEl4V2FrTExtYmUwSWNuZjBrQ2c1NkdNZ3Mv?=
+ =?utf-8?B?Z2xhT3BnMnI4Vm83OW5vZlBEVVdDWjh6bTlHaXFTVXloTG04V3VxSjgvdG1K?=
+ =?utf-8?B?QUgyMXFrWldUVnJBRW90OXFFcGt4NE4ycnJuK3hDamo1SGRZYnhzMTFlOWJl?=
+ =?utf-8?B?Z3pjVnFGMWZMeUJudHYzRlAvRmRuUHFvR284U054ZDVqSTcxUVd6eWFtMld2?=
+ =?utf-8?B?d0FNKzZ5alVzQU43ZzVld1o5VmkveFVIOWdkeXpKLytvUWhkM0t3UjlEWGxX?=
+ =?utf-8?B?YzRmQ0UwdGJsVUVnMmIvMWFrcFpDZk9hdEFpS2NHc3RnN0QxdVcxa3luOThu?=
+ =?utf-8?B?c2NDejBZR29LNHhSTDFmaW5BWExNM1VIREJTbnkrTkNaM3VqM2liV3pZazNN?=
+ =?utf-8?B?d0piMHQrS2t4NVZmdk1WNC9PcW8yckdlRGhtL01LVm54bFpMUjhtdThqd1E0?=
+ =?utf-8?B?SWFja1JGdk83NU91ZTZ4NzBkRkhuMkxvM2x1RVh4bXkrRHA1Y3hlZlRZU0Zt?=
+ =?utf-8?B?WVo4VjQ4VXdyRHNPdURlOWZnUkVhSWNNalRTOU45cER4UC83b1A0K1d2Z0sz?=
+ =?utf-8?B?ZFFQQlF1RDF3TlVKVkxrb2djQTBmQzdiSlR1c085SUdtRFNVa3FLVjZkUW55?=
+ =?utf-8?B?YWt2cnp1MTdqc1NpY0lHM0c4am5jeldJTmNlWnB2TmZmTzZHVUpudWFWQW9M?=
+ =?utf-8?B?TVRHN1A1YWszQ2p2d0Y3SWg5VTVZN2xuK0YxZE9QRFRjRzFybjJJNEpqblc3?=
+ =?utf-8?B?T1Bhamtoa0trdTMwSHQ3V1dPNWI2di9sMmJtczhOUEtMZ1dVVTYrUHpPalMw?=
+ =?utf-8?B?UVNIbTR6RXZRQURkZ2FubksySW4rWk9Pc1JGVFo3cWUzWE5EN0M1SUE2QmF6?=
+ =?utf-8?B?bjBpcmxndmdQNnRrSXV1azlPaDYrNUNJeTFISUxuVTZ6SGl5TWRQdURXayt1?=
+ =?utf-8?B?K0l4UVl0M250UHZhQjJiakxRNWFjS0ZRczcrM1hZRkFEaWxSUUJJVElFb21N?=
+ =?utf-8?B?MzAyMkxUNHl1enc4UFl4ZWIwbmVjVEcvTjVsUHFmSnBtUGYzeU9DcHlQdnlm?=
+ =?utf-8?B?R28wSEplL2pZWmJsSGVZWmJURjdVNU1tYnJTV2F5SG51SDltU0FUWjM0dW16?=
+ =?utf-8?B?SUJEaUxNb01Tc0NTSXBDa1RuN3I1KzhZK3B5a3A5enFYQ1YzVmh5Vm1NcS9P?=
+ =?utf-8?B?d1UraEZSa0VnZEJGdjJXeDlSWGxsRkl5WlFpaEZDaExEWDU4RDNnS1pXZWJk?=
+ =?utf-8?B?MWNMNnZWZks0ZVowNDdDY0d5MDJVby9iM0k0YkNoTHRidmN5Q3Q5Tmo1SzYy?=
+ =?utf-8?Q?1yAlOCTFaLYFKC6N60SZFKU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <18B61D3F5629EC4CBA957CC4E4004B31@namprd19.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [RFC PATCH 1/1] io_uring: honor I/O nowait flag for read/write
-Content-Language: en-US
-To:     Chaitanya Kulkarni <kch@nvidia.com>, io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com
-References: <20230421172822.8053-1-kch@nvidia.com>
- <20230421172822.8053-2-kch@nvidia.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230421172822.8053-2-kch@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbeb1828-5478-4e44-d64d-08db42b517e9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Apr 2023 22:09:36.0459
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yqPreZUOc7xGm0oig92GjtDII2WT8RCXhVXVde9sLTzEZy67v69iOhrvaTC0x9X7A/RorJ4wQlkecbQaw3Virg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB5904
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/21/23 11:28?AM, Chaitanya Kulkarni wrote:
-> When IO_URING_F_NONBLOCK is set on io_kiocb req->flag in io_write() or
-> io_read() IOCB_NOWAIT is set for kiocb when passed it to the respective
-> rw_iter callback. This sets REQ_NOWAIT for underlaying I/O. The result
-> is low level driver always sees block layer request as REQ_NOWAIT even
-> if user has submitted request with nowait = 0 e.g. fio nowait=0.
-> 
-> That is not consistent behaviour with other fio ioengine such as
-> libaio as it will issue non REQ_NOWAIT request with REQ_NOWAIT:-
-> 
-> libaio nowait = 0:-
-> null_blk: fio:null_handle_rq 1288 *NOWAIT=FALSE* REQ_OP_WRITE
-> 
-> libaio nowait = 1:-
-> null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
-> 
-> * Without this patch with fio ioengine io_uring :-
-> ---------------------------------------------------
-> 
-> iouring nowait = 0:-
-> null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
-> 
-> iouring nowait = 1:-
-> null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
-> 
-> * With this patch with fio ioengine io_uring :-
-> ---------------------------------------------------
-> 
-> iouring nowait = 0:-
-> null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=FALSE* WRITE
-> 
-> iouring nowait = 1:
-> null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=TRUE* WRITE
-> 
-> Instead of only relying on IO_URING_F_NONBLOCK blindly in io_read() and
-> io_write(), also make sure io_kiocb->io_rw->flags is set to RWF_NOWAIT
-> before we mark kiocb->ki_flags = IOCB_NOWAIT.
-> 
-> Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
-> ---
->  io_uring/rw.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index 3f118ed46e4f..4b3a2c1df5f2 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -745,7 +745,7 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
->  	}
->  	req->cqe.res = iov_iter_count(&s->iter);
->  
-> -	if (force_nonblock) {
-> +	if (force_nonblock && (rw->flags & RWF_NOWAIT)) {
->  		/* If the file doesn't support async, just async punt */
->  		if (unlikely(!io_file_supports_nowait(req))) {
->  			ret = io_setup_async_rw(req, iovec, s, true);
-> @@ -877,7 +877,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
->  	}
->  	req->cqe.res = iov_iter_count(&s->iter);
->  
-> -	if (force_nonblock) {
-> +	if (force_nonblock && (rw->flags & RWF_NOWAIT)) {
->  		/* If the file doesn't support async, just async punt */
->  		if (unlikely(!io_file_supports_nowait(req)))
->  			goto copy_iov;
-
-This is wrong. libaio doesn't care if it blocks for submission, and this
-is actually one of the complains of aio/libaio. Is it async? Maybe?
-io_uring, on the other hand, tries much harder to not block for
-submission. Because if you do block, you've now starved your issue
-pipeline. And how do you do that? By always having NOWAIT set on the
-request, unless you are in a context (io-wq) where you want to block in
-case you have to.
-
-This has _nothing_ to do with the user setting RWF_NOWAIT or not, only
-change for that is that if we did have that set, then we should
-obviously not retry from blocking context. Rather, the io should be
-complete with whatever we originally got (typically -EAGAIN).
-
--- 
-Jens Axboe
-
+SGVsbG8sDQoNCkkgd2FzIHdvbmRlcmluZyBpZiBJIGNvdWxkIHNldCB1cCBTUVBPTEwgZm9yIGZ1
+c2UvSU9SSU5HX09QX1VSSU5HX0NNRCANCmFuZCB3aGF0IHdvdWxkIGJlIHRoZSBsYXRlbmN5IHdp
+bi4gTm93IEkgZ2V0IGEgYml0IGNvbmZ1c2VkIHdoYXQgdGhlIA0KZl9vcC0+dXJpbmdfY21kX2lv
+cG9sbCgpIGZ1bmN0aW9uIGlzIHN1cHBvc2VkIHRvIGRvLg0KDQpJcyBpdCBqdXN0IHRoZXJlIHRv
+IGNoZWNrIGlmIFNRRXMgYXJlIGNhbiBiZSBjb21wbGV0ZWQgYXMgQ1FFPyBJbiBydy5jIA0KaW9f
+ZG9faW9wb2xsKCkgaXQgbG9va3MgbGlrZSB0aGlzLiBJIGRvbid0IGZvbGxvdyBhbGwgY29kZSBw
+YXRocyBpbiANCl9faW9fc3FfdGhyZWFkIHlldCwgYnV0IGl0IGxvb2tzIGEgbGlrZSBpdCBhbHJl
+YWR5IGNoZWNrcyBpZiB0aGUgcmluZyANCmhhcyBuZXcgZW50cmllcw0KDQp0b19zdWJtaXQgPSBp
+b19zcXJpbmdfZW50cmllcyhjdHgpOw0KLi4uDQpyZXQgPSBpb19zdWJtaXRfc3FlcyhjdHgsIHRv
+X3N1Ym1pdCk7DQoNCiAgIC0tPiBpdCB3aWxsIGV2ZW50dWFsbHkgY2FsbCBpbnRvIC0+dXJpbmdf
+Y21kKCkgPw0KDQpBbmQgdGhlbiBpb19kb19pb3BvbGwgLT4gIGZpbGUtPmZfb3AtPnVyaW5nX2Nt
+ZF9pb3BvbGwgaXMgc3VwcG9zZWQgdG8gDQpjaGVjayBmb3IgYXZhaWxhYmxlIGNxIGVudHJpZXMg
+YW5kIHdpbGwgc3VibWl0IHRoZXNlPyBJLmUuIEkganVzdCByZXR1cm4gDQoxIGlmIHdoZW4gdGhl
+IHJlcXVlc3QgaXMgcmVhZHk/IEFuZCBhbHNvIGVuc3VyZSB0aGF0IA0KcmVxLT5pb3BvbGxfY29t
+cGxldGVkIGlzIHNldD8NCg0KDQpJJ20gYWxzbyBub3Qgc3VyZSB3aGF0IEkgc2hvdWxkIGRvIHdp
+dGggc3RydWN0IGlvX2NvbXBfYmF0Y2ggKiAtIEkgZG9uJ3QgDQpoYXZlIHN0cnVjdCByZXF1ZXN0
+ICpyZXFfbGlzdCBhbnl3aGVyZSBpbiBteSBmdXNlLXVyaW5nIGNoYW5nZXMsIHNlZW1zIA0KdG8g
+YmUgYmxrLW1xIHNwZWNpZmljPyBTbyBJIHNob3VsZCBqdXN0IGlnbm9yZSB0aGF0IHBhcmFtZXRl
+cj8NCg0KDQpCdHcsIHRoaXMgbWlnaHQgYmUgdXNlZnVsIGZvciB1YmxrIGFzIHdlbGw/DQoNClRo
+YW5rcywNCkJlcm5kDQoNCg0K

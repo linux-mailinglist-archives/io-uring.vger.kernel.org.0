@@ -2,68 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E586EB029
-	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 19:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C813E6EB08E
+	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 19:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbjDURHG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Apr 2023 13:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49748 "EHLO
+        id S230331AbjDUR2u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Apr 2023 13:28:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232359AbjDURHE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 13:07:04 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C045611D
-        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:06:43 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-63b9f00640eso503779b3a.0
-        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682096803; x=1684688803;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K0i2kT1CCWSBt8Nt5uv/qO8O5HOGdfM9apX9ZM+3yvg=;
-        b=Kzsp541fOCwjYzlEh/BN0zGB9m+FJWe8wbMlvy7WofRvKLRjyOlrbVETA7r/0JUNj8
-         WRBONhJMC0UldREFHu/LqXOkdThUOuFg92nLhgRCH/8DlFWuVgmT/H+R8cSuEHCbT8s/
-         SS6TZlPrDeiGk1YGd5MY45UBtZ33x01s157MLk9qXCrgROIDpAE4TiEcJrg0OvC+KUPq
-         5utaxQdvSSGtlSOHDwljEpd9LGacfmN1QzJVN6qomDL6IbwnThjxhXWVHerCGWhgN1pf
-         H0wUhupa3FWsaudrC0vXhKiD0xjX4vnbHDZ9vTPcYOryB+TyiGmjQTz65CuJe3O0neEY
-         GMwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682096803; x=1684688803;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=K0i2kT1CCWSBt8Nt5uv/qO8O5HOGdfM9apX9ZM+3yvg=;
-        b=A4gEg6Gx8jxkmC8xi7hOOsHu090WgLHfLiY39Z4tEyKjKv6VvoZJay7B6q7/rnTrET
-         lNW4zkl8wP2WgcNTg/IODx3RdaOzLPCsurRiMrATMlsgKbnaqMUZRjcu8EQbG6mlaZxv
-         mDOCRTYd5EjSgajApFEMuyCHSBRKFi452Ej8Kpzo2jPO5t5icNTLBmjySTSWW79bzGx0
-         B9wjUJ3hBKd09CnsaNgxfEWI6WDwgcvi6ttVAhz/yB5mIlAyvO2gHB+jLGrortZDU1v/
-         zJ2xg+rDL92+hUbAx8mB9t6+tTM544lHdoYMh+r6DgD5Xv2bZ0ZVWSHx+nIFcNnWwyDS
-         TqdA==
-X-Gm-Message-State: AAQBX9eT9c4VctcDhxz/NA9DV2ymBGhYLGS8fLcOIyLLGn+SSxlzcafU
-        lLLpv+boV0xJGdHYT9wmJX87hu0LEpVjtqLh/Eo=
-X-Google-Smtp-Source: AKy350ae0KNAwRn1VlvHMWy7ezaYOPIeu6u3HC2kRsIZ5bEuPWYbjukgE5OUCEFzSXC9b06e2lJHyg==
-X-Received: by 2002:a05:6a20:440d:b0:dd:dfe4:f06a with SMTP id ce13-20020a056a20440d00b000dddfe4f06amr6506881pzb.3.1682096803037;
-        Fri, 21 Apr 2023 10:06:43 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g9-20020a62f949000000b006334699ee51sm3192208pfm.47.2023.04.21.10.06.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Apr 2023 10:06:42 -0700 (PDT)
-Message-ID: <c674cf90-e193-3fb7-a59f-b427ad6f3f99@kernel.dk>
-Date:   Fri, 21 Apr 2023 11:06:41 -0600
+        with ESMTP id S231398AbjDUR2t (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 13:28:49 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12hn2207.outbound.protection.outlook.com [52.100.165.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C0912C96
+        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:28:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LrvJoX1PVyxGKJgamJioEgH2NAwupCyCjhiebyxzrEX5v5oDzBDu6XSPBFQsjI1I6oIz05Q2jyO1TjOUiwPFELCdEQWZil2oPg+spGuUOM+zybtzzTNZxWUSOjmLQ7iipssHVT0uqd9uAv9a9wuL3i64afMnwuK0k47D0+hsqiFJNAQCqKppd/CCWNnb/3zCQhPTrBZ9YroK3sZgU9Gx75sH+YgLjrGVm6xBqtbmvx3b77Wo+vzStQjvPciE4aa5gIhb1Znamzb1IPfuB0RSMybJPdNtXO9Ru45Cial/rwynYqyOfaNnysavmjtIRAPo1ftnHGC37IELxnTP+Re2+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WydmrbgLt/V7s5q9zqNPyPvQvvv2NAJ7xKabZfxBehQ=;
+ b=ZRuPgL2k9zH8ZMVHQoV2UzBF2JtnuFYHit2C1dpaSnK+lD0hjBvnjKwgJ4iTYMHwcdgnnNX1/63U8oL+LcYtbW4kvWyzgMfGk87yqbj0WC47pOYGUm/N4QGqeX1XoWhKJSJDyiuA1+S2R+4UeLwwM42L5x/idMoX4IFtHfaLU7qm0JzK/FQPJ6ZnneFypzVzoz5gN3VyzVZhZEyFYCtTru4NmiIhLY14j5Wwq7pg4v+IrbfZ7Xe57RPjp/t88wrgxBYpYnObQIXqktEuYmla1ZJntjtbcayGzk7xJ5EegZlHnw7gY8+dXL3GBKcANRrres4s7oidtiB+BlFxQEROiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WydmrbgLt/V7s5q9zqNPyPvQvvv2NAJ7xKabZfxBehQ=;
+ b=PiAztDm7UOYiq/XIh+PoF5Wwlnq5IAGJmM3qACr4Xvjnqt+scQBctL4QLcCw6pg+x5OOaW03KrXbacesPb6MZn66OjM9BCPuWdgQKl/v2AaeV2tqoSWZ9XCAtXOIgxFCSkofg9zqpFS6WxYILUZ6or3I2VKycshHiUpBsgvojDgI5aHeJy/TN4uutqk7qxOLVOgXT6Ud6YGrgFcIh90xr1BtC0LPVcqAIuOg9B5pUMbb5eISFdNROFhSMQUCo5nBg6U4yhiUodlRK1qF51ekxE6bSHY/WxKah2YNhw7RsIhsq+NiF3yXXxyP571hQAQwZxSNWl3tF8dcal0Ewg68UQ==
+Received: from DM6PR13CA0018.namprd13.prod.outlook.com (2603:10b6:5:bc::31) by
+ MW4PR12MB7014.namprd12.prod.outlook.com (2603:10b6:303:218::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6319.21; Fri, 21 Apr 2023 17:28:46 +0000
+Received: from DM6NAM11FT097.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:bc:cafe::72) by DM6PR13CA0018.outlook.office365.com
+ (2603:10b6:5:bc::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.14 via Frontend
+ Transport; Fri, 21 Apr 2023 17:28:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT097.mail.protection.outlook.com (10.13.172.72) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6319.27 via Frontend Transport; Fri, 21 Apr 2023 17:28:45 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 21 Apr 2023
+ 10:28:34 -0700
+Received: from dev.nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 21 Apr
+ 2023 10:28:34 -0700
+From:   Chaitanya Kulkarni <kch@nvidia.com>
+To:     <io-uring@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Subject: [RFC PATCH 0/1] io_uring: honor I/O nowait flag for read/write
+Date:   Fri, 21 Apr 2023 10:28:21 -0700
+Message-ID: <20230421172822.8053-1-kch@nvidia.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 6.4-rc1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT097:EE_|MW4PR12MB7014:EE_
+X-MS-Office365-Filtering-Correlation-Id: f27e3af2-80f9-439a-461a-08db428ddc70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: IquX6zSPhmTXDMkRZtjO+sIDFQ9hlEXQ36ih56C8cS4UrKhLSnPzVUxXmzNBRFcsd1vtilRU2Uhm6kbAWp3n/BqyvyF+nnD85Vf9ayrWHIR12Uhfyj4GvaRwlCDuOdzbdqgNBFXRPuJ7oGue3Kb27l2rEAZl3avP7W5+tFf/Zg1va8/4ua+8Zm1q9wq7wHywd0Q+SaU0RBiLqmqtj551pzVaEe/dYRZTPCgx8V1EAcZDZBOdbziJbIVxsgo/4TuodSi3qryXTH/X5ekdCo6YQzvt3tvqTwUmcSB8QY3hbchjWgvmQm4iHalhBKJQqftrTlTOKrr/Zp4L7mmYC+faM8KeX2lX7sr1EYZByIN+NScIshWbdygE+pq3vsDeVyPA1IqauFn+g1ct6a9Ww4gVW84YHvKRLvMO0s/ynEGx8bXrROG8u+XytHIBcq6zLffz9stdh/3BdnZz9KCyu83Xgijt/0nppPEMI71P82wfJDSiaKexAnBFDyRVQt3NRLQxU36tQnl4TGUHaJiYMVT/61CpuzD8iIHjWPURr2i6ZeOhEdrtZRRXXsqRe/mcAFzsP6cnmB6ybiHDfCuJaVOx0DMiQpxAvmQZSnaFwEvuqONSePJbV0c7WNji+kss+cTjLRlZF6bj5bCzHmDMVPctaasbFNvBgXBxLVa1jVqSJlVqTfLjGXC538sUsltFX4G+sYOSvvjSOr3+hS97eDAaOIXIP2L5M2qIOeYnQGuC7CcrfQ7wSLMe0xNV3qr4cg+VEUys27FXPWv3aejc2UaKsOgUvVz+2NC+OMTsHVAPoeQJ4Ib1Z1EvIloF0Earr856
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(136003)(39860400002)(396003)(451199021)(5400799015)(46966006)(36840700001)(40470700004)(40480700001)(40460700003)(6916009)(316002)(70206006)(34020700004)(4326008)(41300700001)(2906002)(8676002)(426003)(356005)(5660300002)(70586007)(8936002)(107886003)(83380400001)(336012)(7696005)(6666004)(26005)(186003)(1076003)(2616005)(36860700001)(54906003)(47076005)(478600001)(16526019)(82310400005)(36756003)(7636003)(82740400003)(12100799030);DIR:OUT;SFP:1501;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2023 17:28:45.7818
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f27e3af2-80f9-439a-461a-08db428ddc70
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT097.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7014
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,178 +101,149 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-This is the set of io_uring updates and fixes for the 6.4 merge window.
-Nothing major in this one, details below:
+When IO_URING_F_NONBLOCK is set on io_kiocb req->flag in io_write() or
+io_read() IOCB_NOWAIT is set for kiocb when passed it to the respective
+rw_iter callback. This sets REQ_NOWAIT for underlaying I/O. The result
+is low level driver always sees block layer request as REQ_NOWAIT even
+if user has submitted request with nowait = 0 e.g. fio nowait=0.
 
-- Cleanup of the io-wq per-node mapping, notably getting rid of it so we
-  just have a single io_wq entry per ring (Breno)
+That is not consistent behaviour with other fio ioengine such as
+libaio as it will issue non REQ_NOWAIT request with REQ_NOWAIT:-
 
-- Followup to the above, move accounting to io_wq as well and completely
-  drop struct io_wqe (Gabriel)
+libaio nowait = 0:-
+null_blk: fio:null_handle_rq 1288 *NOWAIT=FALSE* REQ_OP_WRITE
 
-- Enable KASAN for the internal io_uring caches (Breno)
+libaio nowait = 1:-
+null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
 
-- Add support for multishot timeouts. Some applications use timeouts to
-  wake someone waiting on completion entries, and this makes it a bit
-  easier to just have a recurring timer rather than needing to rearm it
-  every time (David)
+* Without this patch with fio ioengine io_uring :-
+---------------------------------------------------
 
-- Support archs that have shared cache coloring between userspace and
-  the kernel, and hence have strict address requirements for mmap'ing
-  the ring into userspace. This should only be parisc/hppa. (Helge, me)
+iouring nowait = 0:-
+null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
 
-- XFS has supported O_DIRECT writes without needing to lock the inode
-  exclusively for a long time, and ext4 now supports it as well. This is
-  true for the common cases of not extending the file size. Flag the fs
-  as having that feature, and utilize that to avoid serializing those
-  writes in io_uring (me)
+iouring nowait = 1:-
+null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
 
-- Enable completion batching for uring commands (me)
+* With this patch with fio ioengine io_uring :-
+---------------------------------------------------
 
-- Revert patch adding io_uring restriction to what can be GUP mapped or
-  not. This does not belong in io_uring, as io_uring isn't really
-  special in this regard. Since this is also getting in the way of
-  cleanups and improvements to the GUP code, get rid of if (me)
+iouring nowait = 0:-
+null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=FALSE* WRITE
 
-- A few series greatly reducing the complexity of registered resources,
-  like buffers or files. Not only does this clean up the code a lot, the
-  simplified code is also a LOT more efficient (Pavel)
+iouring nowait = 1:
+null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=TRUE* WRITE
 
-- Series optimizing how we wait for events and run task_work related to
-  it (Pavel)
+Instead of only relying on IO_URING_F_NONBLOCK blindly in io_read() and
+io_write(), also make sure io_kiocb->io_rw->flags is set to RWF_NOWAIT
+before we mark kiocb->ki_flags = IOCB_NOWAIT.
 
-- Fixes for file/buffer unregistration with DEFER_TASKRUN (Pavel)
+Below is the deatailed testing log.
 
-- Misc cleanups and improvements (Pavel, me)
+-ck
 
-Please pull for 6.4-rc1!
+Chaitanya Kulkarni (1):
+  io_uring: honor I/O nowait flag for read/write
 
+ io_uring/rw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The following changes since commit 7e364e56293bb98cae1b55fd835f5991c4e96e7d:
+$ sh test-iouring-no-wait
+* Without this patch :-
+#######################
+-------------------libaio nowait = 0--------------------------
 
-  Linux 6.3-rc5 (2023-04-02 14:29:29 -0700)
+++ grep -e ioengine -e rw -e nowait fio/randwrite-libaio-nowait-0.fio
+ioengine=libaio
+rw=randwrite
+nowait=0   <-----------------------------
+overwrite=0
+++ fio fio/randwrite-libaio-nowait-0.fio --filename=/dev/nullb0
+++ grep err
+RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40835: Thu Apr 20 21:31:09 2023
+++ dmesg -c
+[17978.613789] null_blk: disk nullb0 created
+[17978.613814] null_blk: module loaded
+__________________________________________________________________________
+[17978.796560] null_blk: fio:null_handle_rq 1288 *NOWAIT=FALSE* REQ_OP_WRITE
 
-are available in the Git repository at:
+-------------------libaio nowait = 1--------------------------
 
-  git://git.kernel.dk/linux.git tags/for-6.4/io_uring-2023-04-21
+++ blkdiscard /dev/nullb0
+++ grep -e ioengine -e rw -e nowait fio/randwrite-libaio-nowait-1.fio
+ioengine=libaio
+rw=randwrite
+nowait=1   <-----------------------------
+overwrite=0
+++ fio fio/randwrite-libaio-nowait-1.fio --filename=/dev/nullb0
+++ grep err
+RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40842: Thu Apr 20 21:31:09 2023
+++ dmesg -c
+__________________________________________________________________________
+[17979.019595] null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
 
-for you to fetch changes up to 3c85cc43c8e7855d202da184baf00c7b8eeacf71:
+-------------------iouring nowait = 0--------------------------
 
-  Revert "io_uring/rsrc: disallow multi-source reg buffers" (2023-04-20 06:51:48 -0600)
+++ blkdiscard /dev/nullb0
+++ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-0.fio
+ioengine=io_uring
+rw=randwrite
+nowait=0   <-----------------------------
+overwrite=0
+++ fio fio/randwrite-iouring-nowait-0.fio --filename=/dev/nullb0
+++ grep err
+RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40849: Thu Apr 20 21:31:10 2023
+++ dmesg -c
+__________________________________________________________________________
+[17979.242849] null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
 
-----------------------------------------------------------------
-for-6.4/io_uring-2023-04-21
+-------------------iouring nowait = 1--------------------------
 
-----------------------------------------------------------------
-Breno Leitao (3):
-      io_uring: One wqe per wq
-      io_uring: Move from hlist to io_wq_work_node
-      io_uring: Add KASAN support for alloc_caches
+++ blkdiscard /dev/nullb0
+++ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-1.fio
+ioengine=io_uring
+rw=randwrite
+nowait=1   <-----------------------------
+overwrite=0
+++ fio fio/randwrite-iouring-nowait-1.fio --filename=/dev/nullb0
+++ grep err
+RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40856: Thu Apr 20 21:31:10 2023
+++ dmesg -c
+__________________________________________________________________________
+[17979.454102] null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
 
-David Wei (1):
-      io_uring: add support for multishot timeouts
+* With this patch :-
+####################
+-------------------iouring nowait = 0--------------------------
++ blkdiscard /dev/nullb0
++ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-0.fio
+ioengine=io_uring
+rw=randwrite
+nowait=0   <-----------------------------
+overwrite=0
++ fio fio/randwrite-iouring-nowait-0.fio --filename=/dev/nullb0
++ grep err
+RANDWRITE: (groupid=0, jobs=1): err= 0: pid=2788: Thu Apr 20 23:35:40 2023
++ dmesg -c
+__________________________________________________________________________
+[  164.255136] null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=FALSE* WRITE
+-------------------iouring nowait = 1--------------------------
++ blkdiscard /dev/nullb0
++ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-1.fio
+ioengine=io_uring
+rw=randwrite
+nowait=1   <-----------------------------
+overwrite=0
++ fio fio/randwrite-iouring-nowait-1.fio --filename=/dev/nullb0
++ grep err
+RANDWRITE: (groupid=0, jobs=1): err= 0: pid=2795: Thu Apr 20 23:35:41 2023
++ dmesg -c
+__________________________________________________________________________
+[  164.467420] null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=TRUE* WRITE
 
-Gabriel Krisman Bertazi (2):
-      io-wq: Move wq accounting to io_wq
-      io-wq: Drop struct io_wqe
-
-Helge Deller (1):
-      io_uring: Adjust mapping wrt architecture aliasing requirements
-
-Jens Axboe (13):
-      fs: add FMODE_DIO_PARALLEL_WRITE flag
-      io_uring: avoid hashing O_DIRECT writes if the filesystem doesn't need it
-      io_uring/kbuf: move pinning of provided buffer ring into helper
-      io_uring/kbuf: add buffer_list->is_mapped member
-      io_uring/kbuf: rename struct io_uring_buf_reg 'pad' to'flags'
-      io_uring: add support for user mapped provided buffer ring
-      io_uring/kbuf: disallow mapping a badly aligned provided ring buffer
-      io_uring/io-wq: drop outdated comment
-      io_uring: rename trace_io_uring_submit_sqe() tracepoint
-      io_uring: cap io_sqring_entries() at SQ ring size
-      io_uring/uring_cmd: assign ioucmd->cmd at async prep time
-      io_uring/uring_cmd: take advantage of completion batching
-      Revert "io_uring/rsrc: disallow multi-source reg buffers"
-
-Pavel Begunkov (51):
-      io_uring: kill unused notif declarations
-      io_uring: remove extra tw trylocks
-      io_uring: encapsulate task_work state
-      io_uring/rsrc: use non-pcpu refcounts for nodes
-      io_uring/rsrc: keep cached refs per node
-      io_uring: don't put nodes under spinlocks
-      io_uring: io_free_req() via tw
-      io_uring/rsrc: protect node refs with uring_lock
-      io_uring/rsrc: kill rsrc_ref_lock
-      io_uring/rsrc: rename rsrc_list
-      io_uring/rsrc: optimise io_rsrc_put allocation
-      io_uring/rsrc: don't offload node free
-      io_uring/rsrc: cache struct io_rsrc_node
-      io_uring/rsrc: add lockdep sanity checks
-      io_uring/rsrc: optimise io_rsrc_data refcounting
-      io_uring/rsrc: add custom limit for node caching
-      io_uring: move pinning out of io_req_local_work_add
-      io_uring: optimize local tw add ctx pinning
-      io_uring: refactor io_cqring_wake()
-      io_uring: add tw add flags
-      io_uring: inline llist_add()
-      io_uring: reduce scheduling due to tw
-      io_uring: refactor __io_cq_unlock_post_flush()
-      io_uring: optimise io_req_local_work_add
-      io_uring: shut io_prep_async_work warning
-      io_uring/kbuf: remove extra ->buf_ring null check
-      io_uring: add irq lockdep checks
-      io_uring/rsrc: add lockdep checks
-      io_uring/rsrc: consolidate node caching
-      io_uring/rsrc: zero node's rsrc data on alloc
-      io_uring/rsrc: refactor io_rsrc_node_switch
-      io_uring/rsrc: extract SCM file put helper
-      io_uring/notif: add constant for ubuf_info flags
-      io_uring/rsrc: use nospec'ed indexes
-      io_uring/rsrc: remove io_rsrc_node::done
-      io_uring/rsrc: refactor io_rsrc_ref_quiesce
-      io_uring/rsrc: use wq for quiescing
-      io_uring/rsrc: fix DEFER_TASKRUN rsrc quiesce
-      io_uring/rsrc: remove rsrc_data refs
-      io_uring/rsrc: inline switch_start fast path
-      io_uring/rsrc: clean up __io_sqe_buffers_update()
-      io_uring/rsrc: simplify single file node switching
-      io_uring/rsrc: refactor io_queue_rsrc_removal
-      io_uring/rsrc: remove unused io_rsrc_node::llist
-      io_uring/rsrc: infer node from ctx on io_queue_rsrc_removal
-      io_uring/rsrc: merge nodes and io_rsrc_put
-      io_uring/rsrc: add empty flag in rsrc_node
-      io_uring/rsrc: inline io_rsrc_put_work()
-      io_uring/rsrc: pass node to io_rsrc_put_work()
-      io_uring/rsrc: devirtualise rsrc put callbacks
-      io_uring/rsrc: disassociate nodes and rsrc_data
-
- fs/ext4/file.c                  |   3 +-
- fs/xfs/xfs_file.c               |   3 +-
- include/linux/fs.h              |   3 +
- include/linux/io_uring_types.h  |  24 +-
- include/trace/events/io_uring.h |  15 +-
- include/uapi/linux/io_uring.h   |  33 +--
- io_uring/alloc_cache.h          |  39 ++-
- io_uring/filetable.c            |  21 +-
- io_uring/io-wq.c                | 524 +++++++++++++++++-----------------------
- io_uring/io_uring.c             | 348 +++++++++++++++++---------
- io_uring/io_uring.h             |  49 ++--
- io_uring/kbuf.c                 | 160 +++++++++---
- io_uring/kbuf.h                 |   7 +
- io_uring/net.h                  |   5 +-
- io_uring/notif.c                |   8 +-
- io_uring/notif.h                |   3 +-
- io_uring/poll.c                 |  32 +--
- io_uring/rsrc.c                 | 350 +++++++++------------------
- io_uring/rsrc.h                 |  72 +++---
- io_uring/rw.c                   |   8 +-
- io_uring/timeout.c              |  71 +++++-
- io_uring/uring_cmd.c            |  18 +-
- 22 files changed, 949 insertions(+), 847 deletions(-)
 
 -- 
-Jens Axboe
+2.40.0
 

@@ -2,92 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 164356E9C35
-	for <lists+io-uring@lfdr.de>; Thu, 20 Apr 2023 21:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A12F26EA98C
+	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 13:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbjDTTEr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Apr 2023 15:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
+        id S229786AbjDULq7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Apr 2023 07:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230228AbjDTTEq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Apr 2023 15:04:46 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4376B2108
-        for <io-uring@vger.kernel.org>; Thu, 20 Apr 2023 12:04:45 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id ca18e2360f4ac-760f040ecccso7883539f.1
-        for <io-uring@vger.kernel.org>; Thu, 20 Apr 2023 12:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682017484; x=1684609484;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jXPxpRXYt98TRHqVZ215l3PKl9165a9akVL7T1VmKTU=;
-        b=tyfFEpcLyg5grA56/oJaEdayD3CMbsS6bz6TncwNidKnmHV54lwhDT9HmAfhgAFIP1
-         W+xatcm9qJ/cloezd1bao5SpBZtrBitwmPe1XUIn+9Cc8qRqb6y+JENiSUrhIOSTB6xh
-         NCOClxFrQlBZz94Kxv+/jtV5hXldRmsmUr/9qtzdy+z2/71gRaFRZqWD+M5VM4XJJ10V
-         jdEC+bjr+4/C7k2kbUiW9GhCHabHEV41ZvwNHq1a+saIz9pLchIVQM3os3qveolRZQd2
-         LaDDiK6+n+89IJzhrXNmfYaCOZL9YvfkAE8TgTiuLj03l5R52R6qv5XojVkJ5jO0UuPD
-         eFYw==
+        with ESMTP id S229657AbjDULq7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 07:46:59 -0400
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D37C3;
+        Fri, 21 Apr 2023 04:46:57 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-2f939bea9ebso1501474f8f.0;
+        Fri, 21 Apr 2023 04:46:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682017484; x=1684609484;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jXPxpRXYt98TRHqVZ215l3PKl9165a9akVL7T1VmKTU=;
-        b=WuUJOZqEpdD7BIevUuGZxlPzHsNJqcqw8KvSvru4t6EOA69sy2jEqJMJG/g+SWHYDL
-         fgCDa/alG0/bjZLL0sJ/yl/eCZLAm1c7jf0zwDuJGefT973hbOr2oNH4y2r8nboF/XaB
-         KrctCDAksm9DAP5ykjMaTWKJ3K9DBjIhnw2j7y7pqp1MzKnjrI0bkT6oyE/8XuPinUEN
-         Y2P+xPHNlDdU8P42QhiKQRdo8chtuOuymyqHpXqX5ERiOCGy6fw+sm3MBlythsV47yos
-         1QTe0GxPfOJ3xKHwqcU5u/eoZWFovTF9eFd1xyYGg0mIkWtDF7Y5k1GGMkLu98SBQyC0
-         6KYQ==
-X-Gm-Message-State: AAQBX9fNDw3d7o1P2Jy36/8Pi/oKjTWLWS4wR2qFCJboArahxPMe+gz7
-        /uj7zjZpURKV1zmOmxZzW6d+L9ck+VMBdO29ot0=
-X-Google-Smtp-Source: AKy350ZT40LwhvIvaPUY2DjWgjrCiY1hmKEpleM/at9WY6QZ0xLpjRsKngoy4Xdx20gXAgwWw5DaTQ==
-X-Received: by 2002:a05:6602:1555:b0:763:6aab:9f3e with SMTP id h21-20020a056602155500b007636aab9f3emr2027909iow.1.1682017484591;
-        Thu, 20 Apr 2023 12:04:44 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j3-20020a5d9d03000000b00762f8d3156asm566959ioj.14.2023.04.20.12.04.43
+        d=1e100.net; s=20221208; t=1682077615; x=1684669615;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=drtJY3bzG70qwaMh3FrpvU2+Y1e1A4ULSdaEvu4w4Po=;
+        b=EOJ7JbXW2POm4MAEP8Q3Dk/oMUsLe+/FZDvgiRJR2LZQX8Lw7fuGv33rsokdl6Tdlk
+         6jIz+TwxmvxlQPk6iZt7DcWx27gRU+MCBX9KVclzIgLLNMPS0zdZG0NJrg1aeO+AjeTl
+         Dl0mVL/FXkioozVBOTllzspH/LHqL9H9WIco1kOyHsufCjJe2z13CiL/LZ6Wb20in05K
+         SJ0ppVIru5vtyUAhnNyrtoi0Vu9xBmNxp66rMn0R94QxdRL38qxs99fv5zxATOmuybMt
+         68sP6fLCj1rZ01M9wBhMT3IlxDFG8gPMZWaCwydvWNZmniUHcFt6UvgGMnojnkBa7+Z5
+         V92w==
+X-Gm-Message-State: AAQBX9dUvJsq9yFg4vcCCK4ZQwflcEr13hVK8smlCq5ouKteZqvbZh96
+        9eJ21m6Sso4DA/Lxovfv+8Hp3uP8nm/2QQ==
+X-Google-Smtp-Source: AKy350Z6FaO9dagmTH/zhPsTsiWB9kCDDLYbt3lKidgLFGw1aZUHkPY05gtP2GpQhwHrfkyzdSr6OQ==
+X-Received: by 2002:a5d:5902:0:b0:2fd:1a81:6b0e with SMTP id v2-20020a5d5902000000b002fd1a816b0emr3474376wrd.33.1682077615300;
+        Fri, 21 Apr 2023 04:46:55 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-019.fbsv.net. [2a03:2880:31ff:13::face:b00c])
+        by smtp.gmail.com with ESMTPSA id s13-20020adfeb0d000000b002fb6a79dea0sm4298485wrn.7.2023.04.21.04.46.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 12:04:44 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     io-uring@vger.kernel.org
-In-Reply-To: <20230420185728.4104-1-krisman@suse.de>
-References: <20230420185728.4104-1-krisman@suse.de>
-Subject: Re: [PATCH] test/file-verify.t: Don't run over mlock limit when
- run as non-root
-Message-Id: <168201748364.133109.2454297166789207140.b4-ty@kernel.dk>
-Date:   Thu, 20 Apr 2023 13:04:43 -0600
+        Fri, 21 Apr 2023 04:46:54 -0700 (PDT)
+From:   Breno Leitao <leitao@debian.org>
+To:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        asml.silence@gmail.com, axboe@kernel.dk
+Cc:     leit@fb.com, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, sagi@grimberg.me, hch@lst.de,
+        kbusch@kernel.org, ming.lei@redhat.com
+Subject: [PATCH v2 0/3] io_uring: Pass the whole sqe to commands
+Date:   Fri, 21 Apr 2023 04:44:37 -0700
+Message-Id: <20230421114440.3343473-1-leitao@debian.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+These three patches prepare for the sock support in the io_uring cmd, as
+described in the following RFC:
 
-On Thu, 20 Apr 2023 14:57:28 -0400, Gabriel Krisman Bertazi wrote:
-> test/file-verify tries to get 2MB of pinned memory at once, which is
-> higher than the default allowed for non-root users in older
-> kernels (64kb before v5.16, nowadays 8mb).  Skip the test for non-root
-> users if the registration fails instead of failing the test.
-> 
-> 
+	https://lore.kernel.org/lkml/20230406144330.1932798-1-leitao@debian.org/
 
-Applied, thanks!
+Since the support linked above depends on other refactors, such as the sock
+ioctl() sock refactor[1], I would like to start integrating patches that have
+consensus and can bring value right now.  This will also reduce the patchset
+size later.
 
-[1/1] test/file-verify.t: Don't run over mlock limit when run as non-root
-      commit: b7f85996a5cb290fc2ad7d2f4d7341fc54321016
+Regarding to these three patches, they are simple changes that turn
+io_uring cmd subsystem more flexible (by passing the whole SQE to the
+command), and cleaning up an unnecessary compile check.
 
-Best regards,
+These patches were tested by creating a file system and mounting an NVME disk
+using ubdsrv/ublkb0.
+
+[1] ZD6Zw1GAZR28++3v@gmail.com/">https://lore.kernel.org/lkml/ZD6Zw1GAZR28++3v@gmail.com/
+
+V1 -> V2 : 
+  * Create a helper to return the size of the SQE
+
+Breno Leitao (3):
+  io_uring: Create a helper to return the SQE size
+  io_uring: Pass whole sqe to commands
+  io_uring: Remove unnecessary BUILD_BUG_ON
+
+ drivers/block/ublk_drv.c  | 24 ++++++++++++------------
+ drivers/nvme/host/ioctl.c |  2 +-
+ include/linux/io_uring.h  |  2 +-
+ io_uring/io_uring.h       |  3 +++
+ io_uring/opdef.c          |  2 +-
+ io_uring/uring_cmd.c      | 13 ++++---------
+ io_uring/uring_cmd.h      |  8 --------
+ 7 files changed, 22 insertions(+), 32 deletions(-)
+
 -- 
-Jens Axboe
-
-
+2.34.1
 

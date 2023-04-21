@@ -2,94 +2,96 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C813E6EB08E
-	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 19:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 028F56EB08F
+	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 19:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbjDUR2u (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Apr 2023 13:28:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35742 "EHLO
+        id S231705AbjDUR3B (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Apr 2023 13:29:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231398AbjDUR2t (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 13:28:49 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12hn2207.outbound.protection.outlook.com [52.100.165.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C0912C96
-        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:28:48 -0700 (PDT)
+        with ESMTP id S231398AbjDUR27 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 13:28:59 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11hn2240.outbound.protection.outlook.com [52.100.172.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 451B212C96
+        for <io-uring@vger.kernel.org>; Fri, 21 Apr 2023 10:28:58 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LrvJoX1PVyxGKJgamJioEgH2NAwupCyCjhiebyxzrEX5v5oDzBDu6XSPBFQsjI1I6oIz05Q2jyO1TjOUiwPFELCdEQWZil2oPg+spGuUOM+zybtzzTNZxWUSOjmLQ7iipssHVT0uqd9uAv9a9wuL3i64afMnwuK0k47D0+hsqiFJNAQCqKppd/CCWNnb/3zCQhPTrBZ9YroK3sZgU9Gx75sH+YgLjrGVm6xBqtbmvx3b77Wo+vzStQjvPciE4aa5gIhb1Znamzb1IPfuB0RSMybJPdNtXO9Ru45Cial/rwynYqyOfaNnysavmjtIRAPo1ftnHGC37IELxnTP+Re2+w==
+ b=ma/+6+K6EWanfJiDQ3iAF9GdVzQe96IljEUtd4ZcH8lBTme9lu7WivK3TD0mCozWnmBzCfzzT4muWC0f2ZWHJSrdDLLTsxAwTY5z9bc0P8Z7GgDaeMysNmQLiNvL4rV27/pnHFu/aHIVbykzbT5+H7DzKvFcNv0vDJ6TlSmG68krpFInp20r2DlU2JP6k5KUsE59JSVyuqMNYpQZ0ThD2dkl2fxXTdWZ+Zc5dWO2sgjWMwMmnoNVTbXD6t/Q/YvfLpRzW44bc6/UrAgdvYMDF0w86Efg3MIChSVCMwNZhQbXZWxjZtIUArrmyLJaWj8ahTHiXb7pfcU42ooUwunAIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WydmrbgLt/V7s5q9zqNPyPvQvvv2NAJ7xKabZfxBehQ=;
- b=ZRuPgL2k9zH8ZMVHQoV2UzBF2JtnuFYHit2C1dpaSnK+lD0hjBvnjKwgJ4iTYMHwcdgnnNX1/63U8oL+LcYtbW4kvWyzgMfGk87yqbj0WC47pOYGUm/N4QGqeX1XoWhKJSJDyiuA1+S2R+4UeLwwM42L5x/idMoX4IFtHfaLU7qm0JzK/FQPJ6ZnneFypzVzoz5gN3VyzVZhZEyFYCtTru4NmiIhLY14j5Wwq7pg4v+IrbfZ7Xe57RPjp/t88wrgxBYpYnObQIXqktEuYmla1ZJntjtbcayGzk7xJ5EegZlHnw7gY8+dXL3GBKcANRrres4s7oidtiB+BlFxQEROiw==
+ bh=8SCQpTpx/F5s9XjbpvvhyhUH25AOIwzSAYoqJ9tdsNs=;
+ b=nCQS/d2k9dBSQEBU4KqL1Xw4u2BoIFjk3oxt9E60n5AcT0aJ0BcWPNbmEBPq74v9aVqveEH1DhLajXwu9N04faxCgUEMWkST31YaqiZNIUfa7EMO9htxFEGd+qE0Gn4h1B/oOi45soQam8ZHMizxTG2oEy6NN4QilE7eI0tB3SJwXVwq8GGjXF/NMRUmz5i5mAkSnCqI3OwXP4C5rTpKzqttfjZeYdsZ8Zx3266jL/uKUTFNI/JXyPKxXFt8VRHGLy8To/8Shnev1yoeLfccQsNXFN5rCMhZT+IBZ/EYgXY0NV3K1EAIXcPShJ/JXnpAncsshY7NA6QjU8+3Uj8EtA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WydmrbgLt/V7s5q9zqNPyPvQvvv2NAJ7xKabZfxBehQ=;
- b=PiAztDm7UOYiq/XIh+PoF5Wwlnq5IAGJmM3qACr4Xvjnqt+scQBctL4QLcCw6pg+x5OOaW03KrXbacesPb6MZn66OjM9BCPuWdgQKl/v2AaeV2tqoSWZ9XCAtXOIgxFCSkofg9zqpFS6WxYILUZ6or3I2VKycshHiUpBsgvojDgI5aHeJy/TN4uutqk7qxOLVOgXT6Ud6YGrgFcIh90xr1BtC0LPVcqAIuOg9B5pUMbb5eISFdNROFhSMQUCo5nBg6U4yhiUodlRK1qF51ekxE6bSHY/WxKah2YNhw7RsIhsq+NiF3yXXxyP571hQAQwZxSNWl3tF8dcal0Ewg68UQ==
-Received: from DM6PR13CA0018.namprd13.prod.outlook.com (2603:10b6:5:bc::31) by
- MW4PR12MB7014.namprd12.prod.outlook.com (2603:10b6:303:218::8) with Microsoft
+ bh=8SCQpTpx/F5s9XjbpvvhyhUH25AOIwzSAYoqJ9tdsNs=;
+ b=ZwP8OyMDKtXQkRJjsNE5lK1GbdJPXm9qcqdHpWbrvMpeOlGFIGJIUo+I07lzgFUpINuwvsdXdlfp3ZTBBLfoENRlOddCthqdz9qR80uyQ+VdW4Fvmob0NyThmYTQVdi2jNMBQZD0XFOlQmaMHTfASfK4IAHlsvnxouzMdQHzqwl+rRQ1NqluxzSXj02XyhMNSEmlW+ERtQnFYVfJBJT36fPJACFpPxFHq3nQUTxhPySHozFK6nJVMmiIeD/YLj70+kjC01N+NnIlzGbpNUm70HJuIv3X0WSoTnD/ISnkrFNGOyz3hMqOZ6YEISaQViCpvMNTHgds16GDd4iDgP594A==
+Received: from BN8PR15CA0023.namprd15.prod.outlook.com (2603:10b6:408:c0::36)
+ by DS7PR12MB5814.namprd12.prod.outlook.com (2603:10b6:8:76::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6319.21; Fri, 21 Apr 2023 17:28:46 +0000
-Received: from DM6NAM11FT097.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:bc:cafe::72) by DM6PR13CA0018.outlook.office365.com
- (2603:10b6:5:bc::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.14 via Frontend
- Transport; Fri, 21 Apr 2023 17:28:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ 15.20.6319.22; Fri, 21 Apr 2023 17:28:56 +0000
+Received: from BN8NAM11FT028.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:c0:cafe::68) by BN8PR15CA0023.outlook.office365.com
+ (2603:10b6:408:c0::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.25 via Frontend
+ Transport; Fri, 21 Apr 2023 17:28:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT097.mail.protection.outlook.com (10.13.172.72) with Microsoft SMTP
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN8NAM11FT028.mail.protection.outlook.com (10.13.176.225) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6319.27 via Frontend Transport; Fri, 21 Apr 2023 17:28:45 +0000
+ 15.20.6298.31 via Frontend Transport; Fri, 21 Apr 2023 17:28:55 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 21 Apr 2023
- 10:28:34 -0700
-Received: from dev.nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ 10:28:46 -0700
+Received: from dev.nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 21 Apr
- 2023 10:28:34 -0700
+ 2023 10:28:45 -0700
 From:   Chaitanya Kulkarni <kch@nvidia.com>
 To:     <io-uring@vger.kernel.org>
 CC:     <axboe@kernel.dk>, <asml.silence@gmail.com>,
         Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [RFC PATCH 0/1] io_uring: honor I/O nowait flag for read/write
-Date:   Fri, 21 Apr 2023 10:28:21 -0700
-Message-ID: <20230421172822.8053-1-kch@nvidia.com>
+Subject: [RFC PATCH 1/1] io_uring: honor I/O nowait flag for read/write
+Date:   Fri, 21 Apr 2023 10:28:22 -0700
+Message-ID: <20230421172822.8053-2-kch@nvidia.com>
 X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230421172822.8053-1-kch@nvidia.com>
+References: <20230421172822.8053-1-kch@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.126.230.37]
+X-Originating-IP: [10.126.231.37]
 X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT097:EE_|MW4PR12MB7014:EE_
-X-MS-Office365-Filtering-Correlation-Id: f27e3af2-80f9-439a-461a-08db428ddc70
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT028:EE_|DS7PR12MB5814:EE_
+X-MS-Office365-Filtering-Correlation-Id: e474d960-d985-4235-b9db-08db428de283
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IquX6zSPhmTXDMkRZtjO+sIDFQ9hlEXQ36ih56C8cS4UrKhLSnPzVUxXmzNBRFcsd1vtilRU2Uhm6kbAWp3n/BqyvyF+nnD85Vf9ayrWHIR12Uhfyj4GvaRwlCDuOdzbdqgNBFXRPuJ7oGue3Kb27l2rEAZl3avP7W5+tFf/Zg1va8/4ua+8Zm1q9wq7wHywd0Q+SaU0RBiLqmqtj551pzVaEe/dYRZTPCgx8V1EAcZDZBOdbziJbIVxsgo/4TuodSi3qryXTH/X5ekdCo6YQzvt3tvqTwUmcSB8QY3hbchjWgvmQm4iHalhBKJQqftrTlTOKrr/Zp4L7mmYC+faM8KeX2lX7sr1EYZByIN+NScIshWbdygE+pq3vsDeVyPA1IqauFn+g1ct6a9Ww4gVW84YHvKRLvMO0s/ynEGx8bXrROG8u+XytHIBcq6zLffz9stdh/3BdnZz9KCyu83Xgijt/0nppPEMI71P82wfJDSiaKexAnBFDyRVQt3NRLQxU36tQnl4TGUHaJiYMVT/61CpuzD8iIHjWPURr2i6ZeOhEdrtZRRXXsqRe/mcAFzsP6cnmB6ybiHDfCuJaVOx0DMiQpxAvmQZSnaFwEvuqONSePJbV0c7WNji+kss+cTjLRlZF6bj5bCzHmDMVPctaasbFNvBgXBxLVa1jVqSJlVqTfLjGXC538sUsltFX4G+sYOSvvjSOr3+hS97eDAaOIXIP2L5M2qIOeYnQGuC7CcrfQ7wSLMe0xNV3qr4cg+VEUys27FXPWv3aejc2UaKsOgUvVz+2NC+OMTsHVAPoeQJ4Ib1Z1EvIloF0Earr856
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(136003)(39860400002)(396003)(451199021)(5400799015)(46966006)(36840700001)(40470700004)(40480700001)(40460700003)(6916009)(316002)(70206006)(34020700004)(4326008)(41300700001)(2906002)(8676002)(426003)(356005)(5660300002)(70586007)(8936002)(107886003)(83380400001)(336012)(7696005)(6666004)(26005)(186003)(1076003)(2616005)(36860700001)(54906003)(47076005)(478600001)(16526019)(82310400005)(36756003)(7636003)(82740400003)(12100799030);DIR:OUT;SFP:1501;
+X-Microsoft-Antispam-Message-Info: 5jIH6Y33oYXS9J50BZm3seBGlvhKKc086nMUZsdbfUzTBz6630cU/YVpKW+NOlF6hm4HFlDOv2GSPJcRYnheBi873Xg4SnwFxHy7P2XOjqrm0gW5QeXmCi3WptT7QhvZS2r1U0n/7nWT8qx9g0LgE5W16ioauHruR/XnFL4hHRqOZDwjmHqxps9tMDCpRe6Wg63Ii+zqQ+QyxbiUmhRkK2XUecSxwCNghYCFcQ2cXH/ycMS2RhsjBRV+tXtuFY5TpJvp2FAirQ4njTtw1Dqp1ON+Zo02KJ895/ZpTiK6fv/eTkG8/Ge6e/8piuKauvjuyr+sYS1mfTC5ik0idRsekehEoklJ0S9f2bTrt0nBAZBHmQ9dI5BNggX1xWfzTVYyXqy/p4/1RVgo7GSmMMSJkO5OUMYxGQmJYdo3qJbLUEfWfAXnjMyUldDB+tHnG8Q0ImzsDCZJgJ/nmg2xbGdNew7XjpcdO0KNuG/GIyu43XaL0JzwiFwd8ybsXB/A2BG7sJIsrjgUgHiI4rR/SbUyUGPkEPjzJSozdJ4kcADpti71wmmoKx6uNbaYaLjtK0+FsBrDEKb3yrBLzHkgFCsZ5yKExef7fFUHGZKC5nLTiPJrL7vqMOQg6nfEZt90EPAkPA1YorXdGDHsbtZDg06wckwXCVoEbZR2pt+mk/LepAOjOeApAfHYg0qs8G86x1plNEXbHiOIwh5b+LxtmMWhPKMr6Tbul3oz2c9KRVwjLa224XYgjUzZFjWwQV9HlHALgmZ4WueJ7M3Zb8ZjAYT2oZZFUfThtJxffFA+ZzshMdrdb59nD7W6lDOagOWE/ZQT
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(39860400002)(376002)(136003)(451199021)(5400799015)(40470700004)(36840700001)(46966006)(4326008)(70206006)(54906003)(6916009)(316002)(70586007)(478600001)(6666004)(7696005)(40480700001)(82310400005)(8936002)(41300700001)(8676002)(5660300002)(2906002)(7636003)(356005)(34020700004)(82740400003)(36756003)(2616005)(426003)(336012)(16526019)(26005)(40460700003)(1076003)(36860700001)(186003)(107886003)(47076005)(83380400001)(12100799030);DIR:OUT;SFP:1501;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2023 17:28:45.7818
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2023 17:28:55.9131
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f27e3af2-80f9-439a-461a-08db428ddc70
+X-MS-Exchange-CrossTenant-Network-Message-Id: e474d960-d985-4235-b9db-08db428de283
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT097.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT028.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7014
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5814
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -100,8 +102,6 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
-
-Hi,
 
 When IO_URING_F_NONBLOCK is set on io_kiocb req->flag in io_write() or
 io_read() IOCB_NOWAIT is set for kiocb when passed it to the respective
@@ -140,110 +140,33 @@ Instead of only relying on IO_URING_F_NONBLOCK blindly in io_read() and
 io_write(), also make sure io_kiocb->io_rw->flags is set to RWF_NOWAIT
 before we mark kiocb->ki_flags = IOCB_NOWAIT.
 
-Below is the deatailed testing log.
-
--ck
-
-Chaitanya Kulkarni (1):
-  io_uring: honor I/O nowait flag for read/write
-
+Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
+---
  io_uring/rw.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-$ sh test-iouring-no-wait
-* Without this patch :-
-#######################
--------------------libaio nowait = 0--------------------------
-
-++ grep -e ioengine -e rw -e nowait fio/randwrite-libaio-nowait-0.fio
-ioengine=libaio
-rw=randwrite
-nowait=0   <-----------------------------
-overwrite=0
-++ fio fio/randwrite-libaio-nowait-0.fio --filename=/dev/nullb0
-++ grep err
-RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40835: Thu Apr 20 21:31:09 2023
-++ dmesg -c
-[17978.613789] null_blk: disk nullb0 created
-[17978.613814] null_blk: module loaded
-__________________________________________________________________________
-[17978.796560] null_blk: fio:null_handle_rq 1288 *NOWAIT=FALSE* REQ_OP_WRITE
-
--------------------libaio nowait = 1--------------------------
-
-++ blkdiscard /dev/nullb0
-++ grep -e ioengine -e rw -e nowait fio/randwrite-libaio-nowait-1.fio
-ioengine=libaio
-rw=randwrite
-nowait=1   <-----------------------------
-overwrite=0
-++ fio fio/randwrite-libaio-nowait-1.fio --filename=/dev/nullb0
-++ grep err
-RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40842: Thu Apr 20 21:31:09 2023
-++ dmesg -c
-__________________________________________________________________________
-[17979.019595] null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
-
--------------------iouring nowait = 0--------------------------
-
-++ blkdiscard /dev/nullb0
-++ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-0.fio
-ioengine=io_uring
-rw=randwrite
-nowait=0   <-----------------------------
-overwrite=0
-++ fio fio/randwrite-iouring-nowait-0.fio --filename=/dev/nullb0
-++ grep err
-RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40849: Thu Apr 20 21:31:10 2023
-++ dmesg -c
-__________________________________________________________________________
-[17979.242849] null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
-
--------------------iouring nowait = 1--------------------------
-
-++ blkdiscard /dev/nullb0
-++ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-1.fio
-ioengine=io_uring
-rw=randwrite
-nowait=1   <-----------------------------
-overwrite=0
-++ fio fio/randwrite-iouring-nowait-1.fio --filename=/dev/nullb0
-++ grep err
-RANDWRITE: (groupid=0, jobs=1): err= 0: pid=40856: Thu Apr 20 21:31:10 2023
-++ dmesg -c
-__________________________________________________________________________
-[17979.454102] null_blk: fio:null_handle_rq 1288 *NOWAIT=TRUE* REQ_OP_WRITE
-
-* With this patch :-
-####################
--------------------iouring nowait = 0--------------------------
-+ blkdiscard /dev/nullb0
-+ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-0.fio
-ioengine=io_uring
-rw=randwrite
-nowait=0   <-----------------------------
-overwrite=0
-+ fio fio/randwrite-iouring-nowait-0.fio --filename=/dev/nullb0
-+ grep err
-RANDWRITE: (groupid=0, jobs=1): err= 0: pid=2788: Thu Apr 20 23:35:40 2023
-+ dmesg -c
-__________________________________________________________________________
-[  164.255136] null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=FALSE* WRITE
--------------------iouring nowait = 1--------------------------
-+ blkdiscard /dev/nullb0
-+ grep -e ioengine -e rw -e nowait fio/randwrite-iouring-nowait-1.fio
-ioengine=io_uring
-rw=randwrite
-nowait=1   <-----------------------------
-overwrite=0
-+ fio fio/randwrite-iouring-nowait-1.fio --filename=/dev/nullb0
-+ grep err
-RANDWRITE: (groupid=0, jobs=1): err= 0: pid=2795: Thu Apr 20 23:35:41 2023
-+ dmesg -c
-__________________________________________________________________________
-[  164.467420] null_blk: fio:null_handle_rq 1307 *REQ_NOWAIT=TRUE* WRITE
-
-
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 3f118ed46e4f..4b3a2c1df5f2 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -745,7 +745,7 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ 	req->cqe.res = iov_iter_count(&s->iter);
+ 
+-	if (force_nonblock) {
++	if (force_nonblock && (rw->flags & RWF_NOWAIT)) {
+ 		/* If the file doesn't support async, just async punt */
+ 		if (unlikely(!io_file_supports_nowait(req))) {
+ 			ret = io_setup_async_rw(req, iovec, s, true);
+@@ -877,7 +877,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ 	req->cqe.res = iov_iter_count(&s->iter);
+ 
+-	if (force_nonblock) {
++	if (force_nonblock && (rw->flags & RWF_NOWAIT)) {
+ 		/* If the file doesn't support async, just async punt */
+ 		if (unlikely(!io_file_supports_nowait(req)))
+ 			goto copy_iov;
 -- 
 2.40.0
 

@@ -2,51 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A12F26EA98C
-	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 13:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D12A6EA98E
+	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 13:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjDULq7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Apr 2023 07:46:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40144 "EHLO
+        id S231215AbjDULrA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Apr 2023 07:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjDULq7 (ORCPT
+        with ESMTP id S229682AbjDULq7 (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 07:46:59 -0400
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D37C3;
-        Fri, 21 Apr 2023 04:46:57 -0700 (PDT)
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-2f939bea9ebso1501474f8f.0;
-        Fri, 21 Apr 2023 04:46:57 -0700 (PDT)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A8D1702;
+        Fri, 21 Apr 2023 04:46:58 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-3f1763eea08so17311385e9.2;
+        Fri, 21 Apr 2023 04:46:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682077615; x=1684669615;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=drtJY3bzG70qwaMh3FrpvU2+Y1e1A4ULSdaEvu4w4Po=;
-        b=EOJ7JbXW2POm4MAEP8Q3Dk/oMUsLe+/FZDvgiRJR2LZQX8Lw7fuGv33rsokdl6Tdlk
-         6jIz+TwxmvxlQPk6iZt7DcWx27gRU+MCBX9KVclzIgLLNMPS0zdZG0NJrg1aeO+AjeTl
-         Dl0mVL/FXkioozVBOTllzspH/LHqL9H9WIco1kOyHsufCjJe2z13CiL/LZ6Wb20in05K
-         SJ0ppVIru5vtyUAhnNyrtoi0Vu9xBmNxp66rMn0R94QxdRL38qxs99fv5zxATOmuybMt
-         68sP6fLCj1rZ01M9wBhMT3IlxDFG8gPMZWaCwydvWNZmniUHcFt6UvgGMnojnkBa7+Z5
-         V92w==
-X-Gm-Message-State: AAQBX9dUvJsq9yFg4vcCCK4ZQwflcEr13hVK8smlCq5ouKteZqvbZh96
-        9eJ21m6Sso4DA/Lxovfv+8Hp3uP8nm/2QQ==
-X-Google-Smtp-Source: AKy350Z6FaO9dagmTH/zhPsTsiWB9kCDDLYbt3lKidgLFGw1aZUHkPY05gtP2GpQhwHrfkyzdSr6OQ==
-X-Received: by 2002:a5d:5902:0:b0:2fd:1a81:6b0e with SMTP id v2-20020a5d5902000000b002fd1a816b0emr3474376wrd.33.1682077615300;
-        Fri, 21 Apr 2023 04:46:55 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-019.fbsv.net. [2a03:2880:31ff:13::face:b00c])
-        by smtp.gmail.com with ESMTPSA id s13-20020adfeb0d000000b002fb6a79dea0sm4298485wrn.7.2023.04.21.04.46.54
+        d=1e100.net; s=20221208; t=1682077616; x=1684669616;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WN1a9qjYlcYgPTY0hc5IEgjly2tOgQNpSE3+CEiG+wM=;
+        b=LKK0Xfyj/8/Ap95n8wMBX6/RfC+klJVvN8ICRAkRGiGExzisHqQfxuvI8Djxnd13qP
+         aqpHCNQ/EPLd0UEDiEUA8ImCchkPXT/mnzwYLSA+Ncr7B/47PjOzrVDniBFuttvkEpZ4
+         auNQmdce1ooEK/SgxWsqcGdkQXU/5ml367lPx9PuGpqF28g3qOXjkMHUzdL4aMMHZ4dU
+         anOUNQqFs5Pce2QkElASRzKcG/QHZ+N+WuLrTOE1MH1hf9hmuhi/llQdzvc2PM3lVwLp
+         zJRD6c0KFwUycMQTcjGVKw6bHN2cC1F5mr2ms5z6DzO2tsu+zgLajjlt+AKFQxm8++sj
+         WdEQ==
+X-Gm-Message-State: AAQBX9f5cHaj2Q97+xShkdA7tQiqEL/jlkR7lwB8AI9O3SItGnp/9Dxt
+        8O2kut6JzPKOtzSGzZq9aVo4FjEjtL4RCw==
+X-Google-Smtp-Source: AKy350bj/M9uE43aCCFw0bdnZTRDagfpxVwl7LnMkodGWH5LscF60gQsvqBCCMPPMYU9UkrWC1eaJw==
+X-Received: by 2002:a05:6000:18c3:b0:2f0:2e3a:cc04 with SMTP id w3-20020a05600018c300b002f02e3acc04mr3478378wrq.8.1682077616595;
+        Fri, 21 Apr 2023 04:46:56 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-120.fbsv.net. [2a03:2880:31ff:78::face:b00c])
+        by smtp.gmail.com with ESMTPSA id o2-20020a05600c4fc200b003f1738e64c0sm8052309wmq.20.2023.04.21.04.46.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 04:46:54 -0700 (PDT)
+        Fri, 21 Apr 2023 04:46:56 -0700 (PDT)
 From:   Breno Leitao <leitao@debian.org>
 To:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         asml.silence@gmail.com, axboe@kernel.dk
 Cc:     leit@fb.com, linux-kernel@vger.kernel.org,
         linux-block@vger.kernel.org, sagi@grimberg.me, hch@lst.de,
         kbusch@kernel.org, ming.lei@redhat.com
-Subject: [PATCH v2 0/3] io_uring: Pass the whole sqe to commands
-Date:   Fri, 21 Apr 2023 04:44:37 -0700
-Message-Id: <20230421114440.3343473-1-leitao@debian.org>
+Subject: [PATCH v2 1/3] io_uring: Create a helper to return the SQE size
+Date:   Fri, 21 Apr 2023 04:44:38 -0700
+Message-Id: <20230421114440.3343473-2-leitao@debian.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230421114440.3343473-1-leitao@debian.org>
+References: <20230421114440.3343473-1-leitao@debian.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
@@ -59,42 +61,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-These three patches prepare for the sock support in the io_uring cmd, as
-described in the following RFC:
+Create a simple helper that returns the size of the SQE. The SQE could
+have two size, depending of the flags.
 
-	https://lore.kernel.org/lkml/20230406144330.1932798-1-leitao@debian.org/
+If IO_URING_SETUP_SQE128 flag is set, then return a double SQE,
+otherwise returns the sizeof of io_uring_sqe (64 bytes).
 
-Since the support linked above depends on other refactors, such as the sock
-ioctl() sock refactor[1], I would like to start integrating patches that have
-consensus and can bring value right now.  This will also reduce the patchset
-size later.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ io_uring/io_uring.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Regarding to these three patches, they are simple changes that turn
-io_uring cmd subsystem more flexible (by passing the whole SQE to the
-command), and cleaning up an unnecessary compile check.
-
-These patches were tested by creating a file system and mounting an NVME disk
-using ubdsrv/ublkb0.
-
-[1] ZD6Zw1GAZR28++3v@gmail.com/">https://lore.kernel.org/lkml/ZD6Zw1GAZR28++3v@gmail.com/
-
-V1 -> V2 : 
-  * Create a helper to return the size of the SQE
-
-Breno Leitao (3):
-  io_uring: Create a helper to return the SQE size
-  io_uring: Pass whole sqe to commands
-  io_uring: Remove unnecessary BUILD_BUG_ON
-
- drivers/block/ublk_drv.c  | 24 ++++++++++++------------
- drivers/nvme/host/ioctl.c |  2 +-
- include/linux/io_uring.h  |  2 +-
- io_uring/io_uring.h       |  3 +++
- io_uring/opdef.c          |  2 +-
- io_uring/uring_cmd.c      | 13 ++++---------
- io_uring/uring_cmd.h      |  8 --------
- 7 files changed, 22 insertions(+), 32 deletions(-)
-
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 25515d69d205..25597a771929 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -394,4 +394,7 @@ static inline void io_req_queue_tw_complete(struct io_kiocb *req, s32 res)
+ 	io_req_task_work_add(req);
+ }
+ 
++#define uring_sqe_size(ctx) \
++	((1 + !!(ctx->flags & IORING_SETUP_SQE128)) * sizeof(struct io_uring_sqe))
++
+ #endif
 -- 
 2.34.1
 

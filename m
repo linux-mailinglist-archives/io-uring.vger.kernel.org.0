@@ -2,86 +2,79 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E1C6EAA64
-	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 14:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16A456EADC9
+	for <lists+io-uring@lfdr.de>; Fri, 21 Apr 2023 17:11:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbjDUMcF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Apr 2023 08:32:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37446 "EHLO
+        id S231226AbjDUPLo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Apr 2023 11:11:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbjDUMcE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 08:32:04 -0400
-X-Greylist: delayed 313 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 21 Apr 2023 05:32:00 PDT
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0667A5E4;
-        Fri, 21 Apr 2023 05:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1682080319;
-        bh=duaV4P+X6txDoeNzJIEOXbCe/0dCS3xj0J0H4rJB7ds=;
-        h=From:To:Cc:Subject:Date;
-        b=xFnCpmD7VX4vg/TDYcIJitmIYqG2MxqartE+pe/K7GvfosqWpLze+GUIA2C8Nhg71
-         nJhi38r+9bz/us6i3cUF7hRKdwan2FtGOahdmNvoIaqKIigk+0Fdgnf8IDw3g0wpup
-         zU6qWtTPFytshWmLvw1RC/yT89oTW768Q2MJpamY=
-Received: from localhost.localdomain ([39.156.73.13])
-        by newxmesmtplogicsvrsza12-0.qq.com (NewEsmtp) with SMTP
-        id 7A78CA50; Fri, 21 Apr 2023 20:30:39 +0800
-X-QQ-mid: xmsmtpt1682080239tkwy769a8
-Message-ID: <tencent_C8F457D8D10F44760333A1E1AC9B4B0C1507@qq.com>
-X-QQ-XMAILINFO: NhUkPfKlCtQwyKVk0NWwFeOpU0M6n5+6EkfUj8WQUyqoroHTWaT4wTa8JcXiKy
-         yz/s/rottm1ASTNDUEcttMunvLJl1W0uh/AsDjzXwXB8Qzx62HEsJOJcnUMka0AdP7OQtuQo0XjQ
-         0/BCxFHd6DYta4b2uYC+CRprcHSh26UeExWDnb7+Zs/3SevpHkuVsZbZj86mjtdB+3AUFCmoHy1L
-         x9JbWVdykIhKmHpeL5CrT35FwxED03nbFwNL7fcuM9WNo0DqhJgydl3Bt58+Y4BKTCil9Tm04s6f
-         Pm9kxaPzhMFTczbzmtv1GO5CjTE7MATJ23ud8KtefepBv4MsqpTJY3B66bemx1bjyqba3Yz3IlTK
-         GsUQlFMdRNVPFTq1BgSn8/Y749b2lE5mdqrEbkVCkEwK7/ulWYK8vlG8W8yUFDLjlmnzPwzn0C8/
-         qp6x64AAxxXD91zTYbIygkrEzu7r+XUIlIXj1Yq1rJBuPKhly9uozFXa6gXxn7QyTyfIRzItxGMo
-         VKvpXckwkLCH31083f3onMx87hJiN2j3b+NZXLV5OIsyQ6DytioeJ9km6LRu95Gx7G3mfzUKt3Ub
-         n9pGW7aENmUrGmCV39B205o8lllhDAlt53qTthJiRV/EwcwvN/OzyiTOrwzJSH+XR0Z2IryUmBGI
-         gcFqzdUmB6JmyY8h3oNMe7VmTT0vmrSRERp2mCORZ+SVvt53rIo+8hL7UGV80AkhjHwxkJ7Gk77c
-         hoUheWcDe178BpKmAv27O3Wa8aqkfHufKBFO8N7crZQoE45EtvY7zh3Jc5mfoMXRbYHGqG+2JX0D
-         uBzhV0/6JWzHkJA5lzqyyOJISIaJr/vq0bZuCckxdb7yKIlEyxRx2nVHm4lPErwQugh+NWV+EEn2
-         9deZmPUUPq9negxU3kDGU3pSDKyxlCKuGep5JsI89pQjm3FFsWPnkTLPfLlW071Tgkto5T0iz5jP
-         VtpNmhkTQy2+vQK1BHB0Kkli6hL3l9v4saojYXHYQWUeeQXvk+BohXwlOdbSd0SaPrtFKWB4uK4e
-         2xvwhJcy1W7krVwXDt
-From:   Rong Tao <rtoax@foxmail.com>
-To:     axboe@kernel.dk
-Cc:     rongtao@cestc.cn, Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org (open list),
-        io-uring@vger.kernel.org (open list:IO_URING)
-Subject: [PATCH] tools/io_uring: Add .gitignore
-Date:   Fri, 21 Apr 2023 20:30:35 +0800
-X-OQ-MSGID: <20230421123036.243146-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.39.1
+        with ESMTP id S230472AbjDUPLo (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Apr 2023 11:11:44 -0400
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CD9125A9;
+        Fri, 21 Apr 2023 08:11:35 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-3f178da219bso18928115e9.1;
+        Fri, 21 Apr 2023 08:11:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682089894; x=1684681894;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/1bU+3yxMOBZJYn8hiebgLUc19mnJbyR5cgTJ3rOoE=;
+        b=JqQ0U0B62sc1MttFb74RoR1NEOA/uQT/JGtPmDFOhqZaA4BiEmvBpUn0uWZhxC60q+
+         HGbSL5T33VFVfuoQlKhbEER6d0cadcxi7ZZ6sT79sl8a8BwPBLevsFk5dmwPwbvJIJJ7
+         R3Y5vGXbBzsA/EmgvP2YUF6M8x+navM/pu0XvCBWywU8ww1CSzQ7SOxGAgC+ySvvqkTR
+         2F+XcmSqAh8FxGV7d4Bw667xL0gLjw0u4lL/PAe7R+bMVV/9M/uMQ2ewiHp3MDLtG9ag
+         FgIZ14+aG14ctdlsrHYmMtda5U5+Dwr/acJW3QRMw5i6d8Tw5bov/BLzhU5gHzSk2/EC
+         duwA==
+X-Gm-Message-State: AAQBX9dMcTZazM21+BMI2+FTi4xTWUaWrbG80layV2s8lcFjz6SGpuJV
+        nIR61M3qiKAEl87qH7xUChw=
+X-Google-Smtp-Source: AKy350YDSzZrIvT5JL0AAWk8219k6NeLFDVD+qfQEpr4w7Xa0eQOblolNTj8eRXWplZdeZgdYRBmEg==
+X-Received: by 2002:a1c:c906:0:b0:3f1:6ec5:3105 with SMTP id f6-20020a1cc906000000b003f16ec53105mr2233609wmb.20.1682089893877;
+        Fri, 21 Apr 2023 08:11:33 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-011.fbsv.net. [2a03:2880:31ff:b::face:b00c])
+        by smtp.gmail.com with ESMTPSA id c21-20020a7bc855000000b003f17300c7dcsm4990006wml.48.2023.04.21.08.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Apr 2023 08:11:33 -0700 (PDT)
+Date:   Fri, 21 Apr 2023 08:11:31 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        asml.silence@gmail.com, axboe@kernel.dk, leit@fb.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        sagi@grimberg.me, kbusch@kernel.org, ming.lei@redhat.com
+Subject: Re: [PATCH 1/2] io_uring: Pass whole sqe to commands
+Message-ID: <ZEKno++WWPauufw0@gmail.com>
+References: <20230419102930.2979231-1-leitao@debian.org>
+ <20230419102930.2979231-2-leitao@debian.org>
+ <20230420045712.GA4239@lst.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RDNS_DYNAMIC,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230420045712.GA4239@lst.de>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Rong Tao <rongtao@cestc.cn>
+On Thu, Apr 20, 2023 at 06:57:12AM +0200, Christoph Hellwig wrote:
+> On Wed, Apr 19, 2023 at 03:29:29AM -0700, Breno Leitao wrote:
+> >  	struct nvme_uring_cmd_pdu *pdu = nvme_uring_cmd_pdu(ioucmd);
+> > -	const struct nvme_uring_cmd *cmd = ioucmd->cmd;
+> > +	const struct nvme_uring_cmd *cmd = (struct nvme_uring_cmd *)ioucmd->sqe->cmd;
+> 
+> Please don't add the pointless cast.  And in general avoid the overly
+> long lines.
 
-Ignore {io_uring-bench,io_uring-cp}.
+If I don't add this cast, the compiler complains with the follow error:
 
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- tools/io_uring/.gitignore | 2 ++
- 1 file changed, 2 insertions(+)
- create mode 100644 tools/io_uring/.gitignore
-
-diff --git a/tools/io_uring/.gitignore b/tools/io_uring/.gitignore
-new file mode 100644
-index 000000000000..692123722108
---- /dev/null
-+++ b/tools/io_uring/.gitignore
-@@ -0,0 +1,2 @@
-+/io_uring-bench
-+/io_uring-cp
--- 
-2.39.1
-
+	drivers/nvme/host/ioctl.c: In function ‘nvme_uring_cmd_io’:
+	drivers/nvme/host/ioctl.c:555:37: error: initialization of ‘const struct nvme_uring_cmd *’ from incompatible pointer type ‘const __u8 *’ {aka ‘const unsigned char *’} [-Werror=incompatible-pointer-types]
+	  const struct nvme_uring_cmd *cmd = ioucmd->sqe->cmd;

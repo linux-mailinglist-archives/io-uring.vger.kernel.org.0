@@ -2,61 +2,61 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43DA46EB80B
-	for <lists+io-uring@lfdr.de>; Sat, 22 Apr 2023 10:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE676EB807
+	for <lists+io-uring@lfdr.de>; Sat, 22 Apr 2023 10:40:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229451AbjDVIk5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 22 Apr 2023 04:40:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
+        id S229683AbjDVIky (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 22 Apr 2023 04:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbjDVIkz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 22 Apr 2023 04:40:55 -0400
+        with ESMTP id S229556AbjDVIkx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 22 Apr 2023 04:40:53 -0400
 Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7F11998;
-        Sat, 22 Apr 2023 01:40:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9934419A8;
+        Sat, 22 Apr 2023 01:40:49 -0700 (PDT)
 Received: by nautica.notk.org (Postfix, from userid 108)
-        id 8A9C4C01F; Sat, 22 Apr 2023 10:40:42 +0200 (CEST)
+        id CB667C01A; Sat, 22 Apr 2023 10:40:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682152842; bh=lc2FLlya05jg7Sp4Tg62oG72PssqPEpEPxDspLUI7n8=;
-        h=From:Subject:Date:To:Cc:From;
-        b=rdmXRQAA16SWUp3ohnVzwHNDRSAmrM7cUAmXz/pxT/5sHD6oI79828+5O88tjxM6T
-         /WlNpyHdaap2trQMTn8nJJuDXI71D5M7T1vPl+ItYX/TQZks2H1MHvzW3P91HBDOtg
-         srarJGRzxOXxRvn0On0xjnfS6lhUVQH5GCUijIioiDc74e0vo1QgmEL5Y6pdWkn2al
-         bdDnj/mKApsMuga9wQJhnNTCfjfPi3p9vJ7JaSu5z06YmrEzchqTzy/XpykXWSPV19
-         GigUSK4IcXhnRDk0h6V+E84Ua+5p1S75HNEPc913SZSHaEnAJgcguTpTUOBXbHlubt
-         OfyiQZtGSt7aw==
+        t=1682152847; bh=RA6UWL31G5rZTzHkX1AYBBgu9w7TFJ4fnvpZQaj5+Mg=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=JmbiAsZSL/seMxU/J7XKeeofqV9+ITvc76e6ns1Zep0ZpfmPlEUbq456d+FRRK9ma
+         yZ1w0QeMcGCpTM3z5yK+x/3vJ8V9zU6j3vOBaFae/NNsk7ZtfZcspWLBbTI+Cm2+v8
+         jVFWL45gQhnDBB9aK0fOI0iJD5ZYXf6iDJiTFdeo+ViNTz3K13JgkeaZ96x1otjKyH
+         YK+jL2yvRDP/wMhcVfwHi/I48nXg1zCmMUa1WG4SK357UaxyOcEPuzbwG35i5OZwh6
+         JFRBbmlVKZPZg0xNqMArYFOH6B4LHoaYovl5zwpXpcN9i1ApRzaC6v7rN5qm2yaz+P
+         QquFIFMEyS/8g==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id EE732C009;
-        Sat, 22 Apr 2023 10:40:38 +0200 (CEST)
+        by nautica.notk.org (Postfix) with ESMTPS id CEDF1C009;
+        Sat, 22 Apr 2023 10:40:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682152841; bh=lc2FLlya05jg7Sp4Tg62oG72PssqPEpEPxDspLUI7n8=;
-        h=From:Subject:Date:To:Cc:From;
-        b=eW3emLSwideJRAg1STUeJ0FmwDO4frk5T3MeRtCa5kBc0YXbjSMjJamlgFU3IiTJz
-         wX45BQko4qCfRnjvdyIjDCQwNGCHJ4BVFrz96mVAScbkqQokXbbZMwwnkyPzj3FRcH
-         GwYTt9F2EH4jct5Hkw1TWwvE9bLkGiivK59xRXXZgrvAsR8UwpgfSTNF91tO0FEph+
-         z3bELwg4yBuE/Bxq9u5Qq77OgXODX1riUc8kYxCz66b12UnEQtm86d315hERa47xGG
-         xERKmDTCNPUC+nfiAtW5vOzMMIRtbwHYahPddVml8ieLT8A0SYN0sM3+iWXs0ornTm
-         hzqeLBQQMmAtg==
+        t=1682152847; bh=RA6UWL31G5rZTzHkX1AYBBgu9w7TFJ4fnvpZQaj5+Mg=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=JmbiAsZSL/seMxU/J7XKeeofqV9+ITvc76e6ns1Zep0ZpfmPlEUbq456d+FRRK9ma
+         yZ1w0QeMcGCpTM3z5yK+x/3vJ8V9zU6j3vOBaFae/NNsk7ZtfZcspWLBbTI+Cm2+v8
+         jVFWL45gQhnDBB9aK0fOI0iJD5ZYXf6iDJiTFdeo+ViNTz3K13JgkeaZ96x1otjKyH
+         YK+jL2yvRDP/wMhcVfwHi/I48nXg1zCmMUa1WG4SK357UaxyOcEPuzbwG35i5OZwh6
+         JFRBbmlVKZPZg0xNqMArYFOH6B4LHoaYovl5zwpXpcN9i1ApRzaC6v7rN5qm2yaz+P
+         QquFIFMEyS/8g==
 Received: from [127.0.0.2] (localhost [::1])
-        by odin.codewreck.org (OpenSMTPD) with ESMTP id 4892991d;
+        by odin.codewreck.org (OpenSMTPD) with ESMTP id e1be628b;
         Sat, 22 Apr 2023 08:40:36 +0000 (UTC)
 From:   Dominique Martinet <asmadeus@codewreck.org>
-Subject: [PATCH RFC 0/2] io_uring: add getdents support, take 2
-Date:   Sat, 22 Apr 2023 17:40:17 +0900
-Message-Id: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+Date:   Sat, 22 Apr 2023 17:40:18 +0900
+Subject: [PATCH RFC 1/2] fs: split off vfs_getdents function of getdents64
+ syscall
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHGdQ2QC/zWNQQrCQAwAv1JyNrDGPYhXwQd4FZFsN25ziZJtR
- Sj9u9uCx4EZZoYqrlLh1M3g8tGqL2uw33XQD2xFUHNjoECHEIlwcrWCRcYsNlYk5nSMmWJghhY
- lroLJ2fphzTb78bdX4e3y1O92vMH1cob7svwAzr6pjIYAAAA=
+Message-Id: <20230422-uring-getdents-v1-1-14c1db36e98c@codewreck.org>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+In-Reply-To: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Jens Axboe <axboe@kernel.dk>,
@@ -66,80 +66,114 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         io-uring@vger.kernel.org,
         Dominique Martinet <asmadeus@codewreck.org>
 X-Mailer: b4 0.13-dev-f371f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2622;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2445;
  i=asmadeus@codewreck.org; h=from:subject:message-id;
- bh=n3azlrwnUtWy2w+VGnEQyQWY3rWltNYuTzZU2fQE6UA=;
- b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBkQ52ENRFRnIKYqxZCjOcfeev0IkqnaU+9Ojnzp
- teVbSbX7EiJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZEOdhAAKCRCrTpvsapjm
- cDdZD/9EkpCDzkqrMOSTVVnBJXMIclnGUVFFX/JH/Co80AxQOQPfkvLsWyZSmg6Rg5TPDZUIUvA
- ZYst/Zb33FN4LlSJwaDvFeZ5I5GNv1iirqV9Gg0bkfjdc9rZwX1GHecI1nxT5DueZSM6jG1Rwnp
- rD6Aaw7lvWlEe1v/+BtJvpqjUPA7VRKixAyYA6tsuDHEOrG1KBafsTxmlDfUsivqDErGUcttOmh
- RRDJntnAWXMb5wSas0UNpvDOfTroSfKyiYQnrgDQEOywnb1a3cG/h3IUHXtXJvVcZut2GdBktqg
- PQ4gh90jQpww2XYkOxoY2T/5h0RaDhTZZvTbxg57ARAc4HS87VD1SpuyjeOBlTetSDHZdkMR1Sl
- 9vFWEZfjMkupbAorFch4cQawmBcaA76AGhqv+mlrpRnadjM1lfELb5PSZh4eLp297NgwpHjF6kR
- Q+ss5DiJGey/eYtJ1/8BSA8tLhNn8ttPDqWVZOFqWn/44kxm+s5HigujEXgnAgdcZRM0KClnJ9/
- fjDx2Oy7OW74yM3CqN0ZE4894zdQhpuIL2ek6cEzdNSMdPJ8afs4RUrxHXih1iSdkTuoxMkFZeP
- gmPswnwmlhBBuBVCLsUXvZJZkS3yXQ0iiQSqAo5nnBiHT7271M2mxsmSetBTirVetuw0tyR3YTF
- oefKPBurR4peHIQ==
+ bh=Gh7fdCatlZczIf9VabQSU+kiFAoMRFxRCv7HGXEYR3E=;
+ b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBkQ52ENkniSXAAbmVN2Twl1R208JYpAVJA4z6+I
+ RdAmroz4/OJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZEOdhAAKCRCrTpvsapjm
+ cLzeD/9lgmYuQM4qeN4s0UrUXOrMe7OnPWZtJN6Af/HJ+FnYYVKvV0rEWeMo8VUQi2cm44U4x4z
+ WqduiImPchIbbQ1FjGl5Yaxhbltxs8dmCs1AyOr4VHOOL/g7x1YzlSQthMMZLyZSeRQ8dr4WwSf
+ ww84tmrn81jkvYlo18GUznvmuwBqjLjnY+Gu5P0c9lUyNe5/6kHnG0lr3CPuACHxfkFvNxR69qK
+ zFjM4F+SBkgfKrEPjkca9JsCIYCQB2DxXnrmtKwZScLa8H4eRWia29CbxZrg1DmOJV/dq+bU/R3
+ 0ykcgIwLn8E7+inTSwibLCig6Qwx8N2MuufEewPsmorEV/31+3xY/9VyYSmDEpmzt2XcoOktfCD
+ JI4910CsUD5A3/lLIDOO7LhOoVbsls1kG6OZbUNs4hKanaizpt+nvnwFu61b6hRCP5PcIG9Gwxz
+ xNsKKFMLN2L33NSk007QOm/vIXU/Wa7OH9AoQyu2sM+q3E+Yj1XDA3kggQxkvnqGbYNZK+u/UGy
+ XNQbYm1lNAUpMH0V51BwNWAFoBSAVBKjHGV1sNdWArcABECR1sVZFE4TLHvssJB51TX7hTuUAkE
+ e0OoRkM08czBtve0WlFjoK1R7gr5CrFHVkGJHN9OQzmMYJd7UYIIBm5+S7931algbAQRGQgWG33
+ OCyjKCPoRvNX0xA==
 X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
  fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is an attempt to revive discussion after bringing it up as a reply
-to the last attempt last week.
+This splits off the vfs_getdents function from the getdents64 system
+call.
+This will allow io_uring to call the vfs_getdents function.
 
-Since the problem with the previous attempt at adding getdents to
-io_uring was that offset was problematic, we can just not add an offset
-parameter: using different offsets is rarely useful in practice (maybe
-for some cacheless userspace NFS server?) and more isn't worth the cost
-of allowing arbitrary offsets: just allow rewind as a flag instead.
-[happy to drop even that flag for what I care about, but that might be
-useful enough on its own as io_uring rightfully has no seek API]
-
-The new API does nothing that cannot be achieved with plain syscalls so
-it shouldn't be introducing any new problem, the only downside is that
-having the state in the file struct isn't very uring-ish and if a
-better solution is found later that will probably require duplicating
-some logic in a new flag... But that seems like it would likely be a
-distant future, and this version should be usable right away.
-
-To repeat the rationale for having getdents available from uring as it
-has been a while, while I believe there can be real performance
-improvements as suggested in [1], the real reason is to allow coherency
-in code: applications using io_uring usually center their event loop
-around the ring, and having the occasional synchronous getdents call in
-there is cumbersome and hard to do properly when you consider e.g. a
-slow or acting up network fs...
-[1] https://lore.kernel.org/linux-fsdevel/20210218122640.GA334506@wantstofly.org/
-(unfortunately the source is no longer available...)
-
-liburing implementation:
-https://github.com/martinetd/liburing/commits/getdents
-(will submit properly after initial discussions here)
-
-Previous discussion:
-https://lore.kernel.org/all/20211221164004.119663-1-shr@fb.com/T/#m517583f23502f32b040c819d930359313b3db00c
-
+Co-authored-by: Stefan Roesch <shr@fb.com>
 Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 ---
-Dominique Martinet (2):
-      fs: split off vfs_getdents function of getdents64 syscall
-      io_uring: add support for getdents
+ fs/internal.h |  8 ++++++++
+ fs/readdir.c  | 33 +++++++++++++++++++++++++--------
+ 2 files changed, 33 insertions(+), 8 deletions(-)
 
- fs/internal.h                 |  8 +++++++
- fs/readdir.c                  | 33 +++++++++++++++++++++-------
- include/uapi/linux/io_uring.h |  7 ++++++
- io_uring/fs.c                 | 51 +++++++++++++++++++++++++++++++++++++++++++
- io_uring/fs.h                 |  3 +++
- io_uring/opdef.c              |  8 +++++++
- 6 files changed, 102 insertions(+), 8 deletions(-)
----
-base-commit: 6a8f57ae2eb07ab39a6f0ccad60c760743051026
-change-id: 20230422-uring-getdents-2aab84d240aa
+diff --git a/fs/internal.h b/fs/internal.h
+index dc4eb91a577a..92eeaf3837d1 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -264,3 +264,11 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
+ struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
+ struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
+ void mnt_idmap_put(struct mnt_idmap *idmap);
++
++/*
++ * fs/readdir.c
++ */
++struct linux_dirent64;
++
++int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
++		 unsigned int count);
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 9c53edb60c03..1d541a6f2d55 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -351,10 +351,16 @@ static bool filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	return false;
+ }
+ 
+-SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+-		struct linux_dirent64 __user *, dirent, unsigned int, count)
++
++/**
++ * vfs_getdents - getdents without fdget
++ * @file    : pointer to file struct of directory
++ * @dirent  : pointer to user directory structure
++ * @count   : size of buffer
++ */
++int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
++		 unsigned int count)
+ {
+-	struct fd f;
+ 	struct getdents_callback64 buf = {
+ 		.ctx.actor = filldir64,
+ 		.count = count,
+@@ -362,11 +368,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 	};
+ 	int error;
+ 
+-	f = fdget_pos(fd);
+-	if (!f.file)
+-		return -EBADF;
+-
+-	error = iterate_dir(f.file, &buf.ctx);
++	error = iterate_dir(file, &buf.ctx);
+ 	if (error >= 0)
+ 		error = buf.error;
+ 	if (buf.prev_reclen) {
+@@ -379,6 +381,21 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 		else
+ 			error = count - buf.count;
+ 	}
++	return error;
++}
++
++SYSCALL_DEFINE3(getdents64, unsigned int, fd,
++		struct linux_dirent64 __user *, dirent, unsigned int, count)
++{
++	struct fd f;
++	int error;
++
++	f = fdget_pos(fd);
++	if (!f.file)
++		return -EBADF;
++
++	error = vfs_getdents(f.file, dirent, count);
++
+ 	fdput_pos(f);
+ 	return error;
+ }
 
-Best regards,
 -- 
-Dominique Martinet | Asmadeus
+2.39.2
 

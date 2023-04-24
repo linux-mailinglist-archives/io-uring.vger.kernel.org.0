@@ -2,154 +2,125 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E5756EC73C
-	for <lists+io-uring@lfdr.de>; Mon, 24 Apr 2023 09:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3F76EC7FD
+	for <lists+io-uring@lfdr.de>; Mon, 24 Apr 2023 10:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230500AbjDXHhl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Apr 2023 03:37:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56774 "EHLO
+        id S230235AbjDXIlq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Apr 2023 04:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbjDXHhk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Apr 2023 03:37:40 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB04DE5E
-        for <io-uring@vger.kernel.org>; Mon, 24 Apr 2023 00:37:38 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4efea87c578so2131e87.1
-        for <io-uring@vger.kernel.org>; Mon, 24 Apr 2023 00:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682321857; x=1684913857;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8vPDN1IVpdxIsn0EC3yloIXo6DGRLNTlpDHTNR3qIwE=;
-        b=O+uUN6Nt/f5/IC46DSvy8JpHPyZScu1zJV+qIJlrDLmEOMJTOjYSyGMkE3c3TwaEma
-         wRphiMjCvKV1Tj8HCmXWuRpElf/VxaRIWsulypBEFA9bqFfyWMvMke7/YcwT1BdYoM0U
-         FXAIKjiV/LI5rwBjGueYRbWJFF8u6kLr+/B8NdmINHjSn49qQeJBsw8QOpXpQOMPqX1M
-         TQ3xeGplBZ3VGZXa6L6zh7wAVl1IFeOzDGi0IZdvsIqzuwF+4ZdxLSNNSj23SzZpP118
-         fKvPucpSglRlSWO4nZe4aHv7s3r9Rd+aH2/igEzAp9XcguDGFyiWbRjfp/lkonoROd5f
-         IhLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682321857; x=1684913857;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8vPDN1IVpdxIsn0EC3yloIXo6DGRLNTlpDHTNR3qIwE=;
-        b=Pbwk0tOESg+TjKyskskQQ2tv4ae5pCaDEN67SzlEmypxzFBI43uLogbeLs3WUIEuk6
-         xIKVdLhy0eX0Icz2dP6NwtY2evjNttutQSVGHsR0M/dE8Tt8u+9pkd9eawXapJ/0qEfH
-         VXUCyg7kdXK+WLLkzW/Jt7mjeXi6pijG7bQHC6NigEvb8fO6dQ/fXyPqxPis0ZJogFsh
-         aFStdFIwTCIrRqm/ZirMYjPup2iY9ji/MOTT2s+AEy2tZVqifoiohWDVOL5WnceHOWcY
-         /G0wjfWf6yjNlNaDH4y8BRm/v4+Oorc+KaV/4oRhgqG7o5zZ6jj/YlmKVehdGbVA9wOm
-         zssw==
-X-Gm-Message-State: AAQBX9eS0AbI8NNUIAA4UfMKPVwqHkgVMkQZl/BbWfOF6pwIavXDXC8r
-        SMkILEUGHXaKANLrcS3I18sWekXjKbkYXFNUIXJmbA==
-X-Google-Smtp-Source: AKy350b3s1yTa7+Lmwcx2UhoZh5NZ1X+UfVTd2wT5LZJZ6DKEuGma1DWJkWhS/FE0tmnAWcK7ep6o8WUpPuJl2gqEvI=
-X-Received: by 2002:a05:6512:3e23:b0:4d0:e0ee:fc70 with SMTP id
- i35-20020a0565123e2300b004d0e0eefc70mr203824lfv.0.1682321856802; Mon, 24 Apr
- 2023 00:37:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000d7848305fa0fd413@google.com>
-In-Reply-To: <000000000000d7848305fa0fd413@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Apr 2023 09:37:23 +0200
-Message-ID: <CACT4Y+bVUkaoyp5OdzGLipof0b1+ec8xwqS+8cgvObuV0BUc5g@mail.gmail.com>
-Subject: Re: [syzbot] [io-uring?] KCSAN: data-race in __io_fill_cqe_req / io_timeout
-To:     syzbot <syzbot+cb265db2f3f3468ef436@syzkaller.appspotmail.com>
-Cc:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        with ESMTP id S229493AbjDXIlp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Apr 2023 04:41:45 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80F0E48;
+        Mon, 24 Apr 2023 01:41:42 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 46BEAC009; Mon, 24 Apr 2023 10:41:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682325701; bh=eico9CA8NETTY0+AtDEEdQCQcAv+OvlCAUKciOQojjw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tau0J9eSqnJS64en/AQgIDFGmRUWNhYd0ox3xnyQ5zVKfdIpWvC6wAssvaXBp2KzA
+         wT20elrs53lNYrduGVldUJ8xeOLBoL4HIyj41zml15QR4lXGrmeVOFGodCgC/WLmIC
+         mzWTdOoXrBzCca3USZNp7WsJngy2G2UNcLbkWgLSEBPqXLXzAMt16F2USvVMTyjlVp
+         I4s5odRmS2WWzWxSqoinJTehxAGbwQn0eOejgKcg3xXxFHJLG7Iyh/NMEC7pgjo0YX
+         wxdHtj0TMjXQ3xJ+FCwAgXF4RbGvzSIylisLWCqmSkkSWAktNoIAGVPDh/mDpOBF3l
+         Xa+HDa1PILA0g==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 59CB0C009;
+        Mon, 24 Apr 2023 10:41:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682325700; bh=eico9CA8NETTY0+AtDEEdQCQcAv+OvlCAUKciOQojjw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MN9I73+z63Qabgec65lkgNTKom6HV21MWDMdmhLxw/OiLBWNZJSr90Gw5JhA8y1gv
+         3pOzXBXBcHk4ohDcS+LbzAolsRgXYCrIG6pyVlLqY6jkeC99/gGxXBcE5kfp5N3mPs
+         Rr5kCGfk10WsRLxzANY4J4gzOJ5In03ZTPl/WuITJ0j7Ey5YwfRoNlrt5oYNbSIRdx
+         iHJpjsetlYocUMXv3U6GMRJdPtsbICOijw0PMC59rE2ZEwq3Jnf7WYsmdV5p5watE+
+         ve1Np3OCj0m645te0nHhIRRDsUFEUDu97/0wVdyxp2QA/4ayXxa2dIRrIaFJU+Zjew
+         ToAyMDVaqbUqg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 8c0edd9c;
+        Mon, 24 Apr 2023 08:41:33 +0000 (UTC)
+Date:   Mon, 24 Apr 2023 17:41:18 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Clay Harris <bugs@claycon.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <ZEZArsLzVZnSMG_o@codewreck.org>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
+ <20230424072946.uuzjvuqrch7m4zuk@ps29521.dreamhostps.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230424072946.uuzjvuqrch7m4zuk@ps29521.dreamhostps.com>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, 24 Apr 2023 at 09:19, syzbot
-<syzbot+cb265db2f3f3468ef436@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    3a93e40326c8 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1280071ec80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f7350c77b8056a38
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cb265db2f3f3468ef436
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/2122926bc9fe/disk-3a93e403.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/8392992358bc/vmlinux-3a93e403.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6398a2d19a7e/bzImage-3a93e403.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cb265db2f3f3468ef436@syzkaller.appspotmail.com
+Thanks!
 
-I did not fully grasp what happens here, but it looks suspicious.
-The comment in io_timeout() says that it computes "events that need to
-occur for this timeout event to be satisfied". But if the range is
-racing, it marks a random set of events?
+Clay Harris wrote on Mon, Apr 24, 2023 at 02:29:46AM -0500:
+> This also seems like a good place to bring up a point I made with
+> the last attempt at this code.  You're missing an optimization here.
+> getdents knows whether it is returning a buffer because the next entry
+> won't fit versus because there are no more entries.  As it doesn't
+> return that information, callers must always keep calling it back
+> until EOF.  This means a completely unnecessary call is made for
+> every open directory.  In other words, for a directory scan where
+> the buffers are large enough to not overflow, that literally twice
+> as many calls are made to getdents as necessary.  As io_uring is
+> in-kernel, it could use an internal interface to getdents which would
+> return an EOF indicator along with the (probably non-empty) buffer.
+> io_uring would then return that flag with the CQE.
+
+Sorry I didn't spot that comment in the last iteration of the patch,
+that sounds interesting.
+
+This isn't straightforward even in-kernel though: the ctx.actor callback
+(filldir64) isn't called when we're done, so we only know we couldn't
+fill in the buffer.
+We could have the callback record 'buffer full' and consider we're done
+if the buffer is full, or just single-handedly declare we are if we have
+more than `MAXNAMLEN + sizeof(struct linux_dirent64)` left over, but I
+assume a filesystem is allowed to return what it has readily available
+and expect the user to come back later?
+In which case we cannot use this as an heuristic...
+
+So if we do this, it'll require a way for filesystems to say they're
+filling in as much as they can, or go the sledgehammer way of adding an
+extra dir_context dir_context callback, either way I'm not sure I want
+to deal with all that immediately unless I'm told all filesystems will
+fill as much as possible without ever failing for any temporary reason
+in the middle of iterate/iterate_shared().
+Call me greedy but I believe such a flag in the CQE could also be added
+later on without any bad side effects (as it's optional to check on it
+to stop calling early and there's no harm in not setting it)?
 
 
-> ==================================================================
-> BUG: KCSAN: data-race in __io_fill_cqe_req / io_timeout
->
-> read-write to 0xffff888108bf8310 of 4 bytes by task 20447 on cpu 0:
->  io_get_cqe_overflow io_uring/io_uring.h:112 [inline]
->  io_get_cqe io_uring/io_uring.h:124 [inline]
->  __io_fill_cqe_req+0x6c/0x4d0 io_uring/io_uring.h:137
->  io_fill_cqe_req io_uring/io_uring.h:165 [inline]
->  __io_req_complete_post+0x67/0x790 io_uring/io_uring.c:969
->  io_req_complete_post io_uring/io_uring.c:1006 [inline]
->  io_req_task_complete+0xb9/0x110 io_uring/io_uring.c:1654
->  handle_tw_list io_uring/io_uring.c:1184 [inline]
->  tctx_task_work+0x1fe/0x4d0 io_uring/io_uring.c:1246
->  task_work_run+0x123/0x160 kernel/task_work.c:179
->  get_signal+0xe5c/0xfe0 kernel/signal.c:2635
->  arch_do_signal_or_restart+0x89/0x2b0 arch/x86/kernel/signal.c:306
->  exit_to_user_mode_loop+0x6d/0xe0 kernel/entry/common.c:168
->  exit_to_user_mode_prepare+0x6a/0xa0 kernel/entry/common.c:204
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
->  syscall_exit_to_user_mode+0x26/0x140 kernel/entry/common.c:297
->  do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->
-> read to 0xffff888108bf8310 of 4 bytes by task 20448 on cpu 1:
->  io_timeout+0x88/0x270 io_uring/timeout.c:546
->  io_issue_sqe+0x147/0x660 io_uring/io_uring.c:1907
->  io_queue_sqe io_uring/io_uring.c:2079 [inline]
->  io_submit_sqe io_uring/io_uring.c:2340 [inline]
->  io_submit_sqes+0x689/0xfe0 io_uring/io_uring.c:2450
->  __do_sys_io_uring_enter io_uring/io_uring.c:3458 [inline]
->  __se_sys_io_uring_enter+0x1e5/0x1b70 io_uring/io_uring.c:3392
->  __x64_sys_io_uring_enter+0x78/0x90 io_uring/io_uring.c:3392
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->
-> value changed: 0x00000c75 -> 0x00000c76
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 20448 Comm: syz-executor.2 Not tainted 6.3.0-rc4-syzkaller-00025-g3a93e40326c8 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000d7848305fa0fd413%40google.com.
+> (* As an aside, the only place I've ever seen a non-zero lseek on a
+> directory, is in a very resource limited environment, e.g. too small
+> open files limit.  In the case of a depth-first directory scan, it
+> must close directories before completely reading them, and reopen /
+> lseek to their previous position in order to continue.  This scenario
+> is certainly not worth bothering with for io_uring.)
+
+(I also thought of userspace NFS/9P servers are these two at least get
+requests from clients with an arbitrary offset, but I'll be glad to
+forget about them for now...)
+
+-- 
+Dominique Martinet | Asmadeus

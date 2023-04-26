@@ -2,175 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 602856EECF5
-	for <lists+io-uring@lfdr.de>; Wed, 26 Apr 2023 06:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2D66EF564
+	for <lists+io-uring@lfdr.de>; Wed, 26 Apr 2023 15:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239146AbjDZE3e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Apr 2023 00:29:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34322 "EHLO
+        id S241118AbjDZNUG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Apr 2023 09:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239378AbjDZE3d (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Apr 2023 00:29:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5AF2102
-        for <io-uring@vger.kernel.org>; Tue, 25 Apr 2023 21:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682483321;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=v3r59PprpOiziTERoyX/esV03/r8x43LcKE2QjTvcHY=;
-        b=KYxiobUEql6YJ3KIE0387W1IxX0NbqS+Lrw6n+BSS2KG1Hx7RMSOuK92WeClvs2Gya35X4
-        /kW+6WpxAtl6DO7hsu0alODUxOx0fh2RU8e7mODSnSA6LjlKmwufP12VLPaay+u+MXhLOR
-        50PolEGZCxaRBjgbulMR7gvU6Ec5E9U=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-515-SQGB3J8hOBOz-xqbJuY5MA-1; Wed, 26 Apr 2023 00:28:40 -0400
-X-MC-Unique: SQGB3J8hOBOz-xqbJuY5MA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E39162999B31;
-        Wed, 26 Apr 2023 04:28:39 +0000 (UTC)
-Received: from ovpn-8-28.pek2.redhat.com (ovpn-8-28.pek2.redhat.com [10.72.8.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF3BE2027043;
-        Wed, 26 Apr 2023 04:28:36 +0000 (UTC)
-Date:   Wed, 26 Apr 2023 12:28:31 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        ming.lei@redhat.com
-Subject: Re: [PATCH 4/4] io_uring: mark opcodes that always need io-wq punt
-Message-ID: <ZEiobzNB1fLXEqDh@ovpn-8-28.pek2.redhat.com>
-References: <ZEc3WttIofAqFy+b@ovpn-8-24.pek2.redhat.com>
- <a1c8d37f-ca21-3648-9a37-741e7519650b@kernel.dk>
- <ZEc/5Xyqvu2WkWyk@ovpn-8-24.pek2.redhat.com>
- <0e5910a9-d776-cdea-1852-edd995f93dc8@kernel.dk>
- <ZEfmzALXP9vqWkOV@ovpn-8-24.pek2.redhat.com>
- <a3225f4c-d0aa-e20e-6df3-84a996fe66dd@kernel.dk>
- <ZEfso1qH41MWKZV6@ovpn-8-24.pek2.redhat.com>
- <dd711c1b-8743-75ea-2368-a3f53316a030@kernel.dk>
- <ee5ffd39-a810-e734-1eba-fcdee9fb5cad@gmail.com>
- <ZEiZm3AbjfnKZ7/Y@ovpn-8-28.pek2.redhat.com>
+        with ESMTP id S241117AbjDZNUF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Apr 2023 09:20:05 -0400
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AFE2A2;
+        Wed, 26 Apr 2023 06:20:02 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Vh3W2.4_1682515198;
+Received: from 30.221.148.51(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Vh3W2.4_1682515198)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Apr 2023 21:19:59 +0800
+Message-ID: <24179a47-ab37-fa32-d177-1086668fbd3d@linux.alibaba.com>
+Date:   Wed, 26 Apr 2023 21:19:57 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZEiZm3AbjfnKZ7/Y@ovpn-8-28.pek2.redhat.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Content-Language: en-US
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+To:     linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Subject: another nvme pssthrough design based on nvme hardware queue file
+ abstraction
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 26, 2023 at 11:25:15AM +0800, Ming Lei wrote:
-> On Tue, Apr 25, 2023 at 04:46:03PM +0100, Pavel Begunkov wrote:
-> > On 4/25/23 16:25, Jens Axboe wrote:
-> > > On 4/25/23 9:07?AM, Ming Lei wrote:
-> > > > On Tue, Apr 25, 2023 at 08:50:33AM -0600, Jens Axboe wrote:
-> > > > > On 4/25/23 8:42?AM, Ming Lei wrote:
-> > > > > > On Tue, Apr 25, 2023 at 07:31:10AM -0600, Jens Axboe wrote:
-> > > > > > > On 4/24/23 8:50?PM, Ming Lei wrote:
-> > > > > > > > On Mon, Apr 24, 2023 at 08:18:02PM -0600, Jens Axboe wrote:
-> > > > > > > > > On 4/24/23 8:13?PM, Ming Lei wrote:
-> > > > > > > > > > On Mon, Apr 24, 2023 at 08:08:09PM -0600, Jens Axboe wrote:
-> > > > > > > > > > > On 4/24/23 6:57?PM, Ming Lei wrote:
-> > > > > > > > > > > > On Mon, Apr 24, 2023 at 09:24:33AM -0600, Jens Axboe wrote:
-> > > > > > > > > > > > > On 4/24/23 1:30?AM, Ming Lei wrote:
-> > > > > > > > > > > > > > On Thu, Apr 20, 2023 at 12:31:35PM -0600, Jens Axboe wrote:
-> > > > > > > > > > > > > > > Add an opdef bit for them, and set it for the opcodes where we always
-> > > > > > > > > > > > > > > need io-wq punt. With that done, exclude them from the file_can_poll()
-> > > > > > > > > > > > > > > check in terms of whether or not we need to punt them if any of the
-> > > > > > > > > > > > > > > NO_OFFLOAD flags are set.
-> > > > > > > > > > > > > > > 
-> > > > > > > > > > > > > > > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > > > > > > > > > > > > > > ---
-> > > > > > > > > > > > > > >   io_uring/io_uring.c |  2 +-
-> > > > > > > > > > > > > > >   io_uring/opdef.c    | 22 ++++++++++++++++++++--
-> > > > > > > > > > > > > > >   io_uring/opdef.h    |  2 ++
-> > > > > > > > > > > > > > >   3 files changed, 23 insertions(+), 3 deletions(-)
-> > > > > > > > > > > > > > > 
-> > > > > > > > > > > > > > > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > > > > > > > > > > > > > > index fee3e461e149..420cfd35ebc6 100644
-> > > > > > > > > > > > > > > --- a/io_uring/io_uring.c
-> > > > > > > > > > > > > > > +++ b/io_uring/io_uring.c
-> > > > > > > > > > > > > > > @@ -1948,7 +1948,7 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
-> > > > > > > > > > > > > > >   		return -EBADF;
-> > > > > > > > > > > > > > >   	if (issue_flags & IO_URING_F_NO_OFFLOAD &&
-> > > > > > > > > > > > > > > -	    (!req->file || !file_can_poll(req->file)))
-> > > > > > > > > > > > > > > +	    (!req->file || !file_can_poll(req->file) || def->always_iowq))
-> > > > > > > > > > > > > > >   		issue_flags &= ~IO_URING_F_NONBLOCK;
-> > > > > > > > > > > > > > 
-> > > > > > > > > > > > > > I guess the check should be !def->always_iowq?
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > How so? Nobody that takes pollable files should/is setting
-> > > > > > > > > > > > > ->always_iowq. If we can poll the file, we should not force inline
-> > > > > > > > > > > > > submission. Basically the ones setting ->always_iowq always do -EAGAIN
-> > > > > > > > > > > > > returns if nonblock == true.
-> > > > > > > > > > > > 
-> > > > > > > > > > > > I meant IO_URING_F_NONBLOCK is cleared here for  ->always_iowq, and
-> > > > > > > > > > > > these OPs won't return -EAGAIN, then run in the current task context
-> > > > > > > > > > > > directly.
-> > > > > > > > > > > 
-> > > > > > > > > > > Right, of IO_URING_F_NO_OFFLOAD is set, which is entirely the point of
-> > > > > > > > > > > it :-)
-> > > > > > > > > > 
-> > > > > > > > > > But ->always_iowq isn't actually _always_ since fallocate/fsync/... are
-> > > > > > > > > > not punted to iowq in case of IO_URING_F_NO_OFFLOAD, looks the naming of
-> > > > > > > > > > ->always_iowq is a bit confusing?
-> > > > > > > > > 
-> > > > > > > > > Yeah naming isn't that great, I can see how that's bit confusing. I'll
-> > > > > > > > > be happy to take suggestions on what would make it clearer.
-> > > > > > > > 
-> > > > > > > > Except for the naming, I am also wondering why these ->always_iowq OPs
-> > > > > > > > aren't punted to iowq in case of IO_URING_F_NO_OFFLOAD, given it
-> > > > > > > > shouldn't improve performance by doing so because these OPs are supposed
-> > > > > > > > to be slow and always slept, not like others(buffered writes, ...),
-> > > > > > > > can you provide one hint about not offloading these OPs? Or is it just that
-> > > > > > > > NO_OFFLOAD needs to not offload every OPs?
-> > > > > > > 
-> > > > > > > The whole point of NO_OFFLOAD is that items that would normally be
-> > > > > > > passed to io-wq are just run inline. This provides a way to reap the
-> > > > > > > benefits of batched submissions and syscall reductions. Some opcodes
-> > > > > > > will just never be async, and io-wq offloads are not very fast. Some of
-> > > > > > 
-> > > > > > Yeah, seems io-wq is much slower than inline issue, maybe it needs
-> > > > > > to be looked into, and it is easy to run into io-wq for IOSQE_IO_LINK.
-> > > > > 
-> > > > > Indeed, depending on what is being linked, you may see io-wq activity
-> > > > > which is not ideal.
-> > > > 
-> > > > That is why I prefer to fused command for ublk zero copy, because the
-> > > > registering buffer approach suggested by Pavel and Ziyang has to link
-> > > > register buffer OP with the actual IO OP, and it is observed that
-> > > > IOPS drops to 1/2 in 4k random io test with registered buffer approach.
-> > > 
-> > > It'd be worth looking into if we can avoid io-wq for link execution, as
-> > > that'd be a nice win overall too. IIRC, there's no reason why it can't
-> > > be done like initial issue rather than just a lazy punt to io-wq.
-> > 
-> > I might've missed a part of the discussion, but links are _usually_
-> > executed by task_work, e.g.
-> > 
-> > io_submit_flush_completions() -> io_queue_next() -> io_req_task_queue()
-> 
-> Good catch, just figured out that /dev/ublkcN & backing file isn't opened by
-> O_NONBLOCK.
-> 
-> But -EAGAIN is still returned from io_write() even though the regular
-> file is opened with O_DIRECT, at least on btrfs & xfs, so io wq is still
-> scheduled. Not look into the exact reason yet, and not see such issue for
-> block device. Anyway, it isn't related with io wq.
+hi all,
 
-It is because -EAGAIN is returned from call_write_iter() in case of IOCB_NOWAIT,
-so it is exactly what Jens's patchset is addressing.
+Recently we start to test nvme passthrough feature, which is based on io_uring. Originally we
+thought its performance would be much better than normal polled nvme test, but test results
+show that it's not:
+$ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O0 -n1  -u1 /dev/ng1n1
+IOPS=891.49K, BW=435MiB/s, IOS/call=32/31
+IOPS=891.07K, BW=435MiB/s, IOS/call=31/31
 
+$ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O1 -n1 /dev/nvme1n1
+IOPS=807.81K, BW=394MiB/s, IOS/call=32/31
+IOPS=808.13K, BW=394MiB/s, IOS/call=32/32
 
-Thanks,
-Ming
+about 10% iops improvement, I'm not saying its not good, just had thought it should
+perform much better. After reading codes, I finds that this nvme passthrough feature
+is still based on blk-mq, use perf tool to analyse and there are some block layer
+overheads that seems somewhat big:
+1. 2.48%  io_uring  [kernel.vmlinux]  [k] blk_stat_add
+In our kernel config, no active ﻿q->stats->callbacks, but still has this overhead.
 
+2. 0.97%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg_from_css
+    0.85%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg
+    0.74%  io_uring  [kernel.vmlinux]  [k] blkg_lookup_create
+For nvme passthrough feature, it tries to dispatch nvme commands to nvme
+controller directly, so should get rid of these overheads.
+
+3. 3.19%  io_uring  [kernel.vmlinux]  [k] __rcu_read_unlock
+    2.65%  io_uring  [kernel.vmlinux]  [k] __rcu_read_lock
+Frequent rcu_read_lock/unlcok overheads, not sure whether we can improve a bit.
+
+4. 7.90%  io_uring  [nvme]            [k] nvme_poll
+    3.59%  io_uring  [nvme_core]       [k] nvme_ns_chr_uring_cmd_iopoll
+    2.63%  io_uring  [kernel.vmlinux]  [k] blk_mq_poll_classic
+    1.88%  io_uring  [nvme]            [k] nvme_poll_cq
+    1.74%  io_uring  [kernel.vmlinux]  [k] bio_poll
+    1.89%  io_uring  [kernel.vmlinux]  [k] xas_load
+    0.86%  io_uring  [kernel.vmlinux]  [k] xas_start
+    0.80%  io_uring  [kernel.vmlinux]  [k] xas_start
+Seems that the block poll operation call chain is somewhat deep, also
+not sure whether we can improve it a bit, and the xas overheads also
+looks big, it's introduced by https://lore.kernel.org/all/20220307064401.30056-7-ming.lei@redhat.com/
+which fixed one use-after-free bug.
+
+5. other blocker overhead I don't spend time to look into.
+
+Some of our clients are interested in nvme passthrough feature, they visit
+nvme devices by open(2) and read(2)/write(2) nvme device files directly, bypass
+filesystem, so they'd like to try nvme passthrough feature, to gain bigger iops, but
+currenty performance seems not that good. And they don't want to use spdk yet,
+still try to build fast storage based on linux kernel io stack for various reasons  :)
+
+So I'd like to propose a new nvme passthrough design here, which may improve
+performance a lot. Here are just rough design ideas here, not start to code yet.
+  1. There are three types of nvme hardware queues, "default", "write" and "poll",
+currently all these queues are visible to block layer, blk-mq will map these queues
+properly.  Here this new design will add two new nvme hardware queues, name them
+"user_irq" and "user_poll" queues, which will need to add two nvme module parameters,
+similar to current "write_queues" and "poll_queues".
+  2. "user_irq" and "user_poll" queues will not be visible to block layer, and will create
+corresponding char device file for them,  that means nvme hardware queues will be
+abstracted as linux file, not sure whether to support read_iter or write_iter, but
+uring_cmd() interface will be supported firstly. user_irq queue will still have irq, user_poll
+queue will support poll.
+  3. Finally the data flow will look like below in example of user_irq queue:
+io issue: io_uring  uring_cmd >> prep nvme command in its char device's uring_cmd() >> submit to nvme.
+io reap: find io_uring request by nvme command id, and call uring_cmd_done for it.
+Yeah, need to build association between io_uring request and nvme command id.
+
+Possible advantages:
+1. Bypass block layer thoroughly.
+2. Since now we have file abstraction, it can support mmap operation, we can mmap
+nvme hardware queue's cqes to user space, then we can implement a much efficient
+poll. We may run nvme_cqe_pending()'s logic in user space, only it shows there are nvme
+requests completed, can we enter kernel to reap them. As I said before, current
+kernel poll chain looks deep, with this method, we can eliminate much useless iopoll
+operation. In my t/io_uring tests, below bpftrace script shows that half of iopoll operations
+are useless:
+BEGIN
+{
+    @a = 0;
+    @b = 0;
+}
+
+kretprobe:nvme_poll
+{
+    if (retval == 0) {
+        @a++;
+    } else{
+        @b++;
+    }
+}
+
+3. With file based hardware queue abstraction, we may implement various qos
+strategy in user space based queue depth control, or more flexible control, user
+space apps can map cpu to hardware queue arbitrarily, not like current blk-mq,
+which has fixed map strategy.
+
+Finally, as I said before, current it's just rough ideas, and there will definitely be
+overlapping functionality with blk-mq, at least this new char device file needs
+to map user space add to pages, then nvme sgls or prps could be set properly.
+
+Any feedback are welcome, thanks.
+
+Regards,
+Xiaoguang Wang

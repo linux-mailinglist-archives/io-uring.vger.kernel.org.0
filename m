@@ -2,145 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B8CF6EF60B
-	for <lists+io-uring@lfdr.de>; Wed, 26 Apr 2023 16:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0096EFB8A
+	for <lists+io-uring@lfdr.de>; Wed, 26 Apr 2023 22:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240801AbjDZOMi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Apr 2023 10:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52610 "EHLO
+        id S239350AbjDZUJ7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Apr 2023 16:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbjDZOMh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Apr 2023 10:12:37 -0400
+        with ESMTP id S239359AbjDZUJ7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Apr 2023 16:09:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 507E76A79;
-        Wed, 26 Apr 2023 07:12:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DE1B186
+        for <io-uring@vger.kernel.org>; Wed, 26 Apr 2023 13:09:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C0A5863671;
-        Wed, 26 Apr 2023 14:12:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66D5C433D2;
-        Wed, 26 Apr 2023 14:12:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A33363012
+        for <io-uring@vger.kernel.org>; Wed, 26 Apr 2023 20:09:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6E375C433EF;
+        Wed, 26 Apr 2023 20:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682518355;
-        bh=7OXT3YuCJUY3llu7VSfiw6P+rLFiJggThGRt+RH+Zw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zf+AvvTjpI2OLx+aN1CbMkHsD/dskLxeqlmtQQM7iySMvxqhQjMKUMYSXRXWCmR1u
-         3d1lTuYDBKo+ePjmqlSgbz917/mFHozi8UiwG4oEIasNLLXUbnSM+sLAubzOqoEI98
-         ih6xVNKfdGnyFuiEnH92tG1vgMF8ze1l0IjYCw5jRpizo3VJQydcbQ1w62cOJ/J94X
-         xG3zSu46LZoZ7xJNf/iHGi02awn0T44rKQ9ghJ3hE2ypnGG+O3eCnvwB7/vV2uIbF4
-         wtPoKHGqzc3PimryM1QNdoUuykokHHCFSt4qkAW4pUd/1VtMP0LDcbpUhAhylVglrY
-         XGnKp2Ua7YF9A==
-Date:   Wed, 26 Apr 2023 08:12:32 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: another nvme pssthrough design based on nvme hardware queue file
- abstraction
-Message-ID: <ZEkxUG4AUcBQKfdr@kbusch-mbp.dhcp.thefacebook.com>
-References: <24179a47-ab37-fa32-d177-1086668fbd3d@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <24179a47-ab37-fa32-d177-1086668fbd3d@linux.alibaba.com>
+        s=k20201202; t=1682539797;
+        bh=sF4Ra/EG6wlWOsqAuHQvIXS5ZEqeLXFQioyQX1abBrQ=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Tt8xj//flvvEX98qApQeBpWOT870CXKEk5Cbxh276/JlIQLYfA3KepXOKWBx1/sec
+         OCprtvUsawhb8/XRD6HzlkYzoyUaRF6jztNxR9Akd7GZmbMyUXe32ZtF4TtR8+Xacw
+         s4cckniisG0LSv+WOophoqZJk+UbUkaPw688wsMTLNvqdibSj9vLYeeHd2yja0CmEm
+         xNz4W5t7UaFAbt/4T9y6NOxdrNwwcRXCCcbdxGWU32QxaS4NqdadHJnqS1kiKvbFV9
+         gXTC0imwFoBUJgVJ6shchv1KNCt1CPyUVonvOyzzNP1LIVrwZK6sVtwDQaSrCd3uct
+         8dc98z4zOCnfA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5B33BC43158;
+        Wed, 26 Apr 2023 20:09:57 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring updates for 6.4-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <c674cf90-e193-3fb7-a59f-b427ad6f3f99@kernel.dk>
+References: <c674cf90-e193-3fb7-a59f-b427ad6f3f99@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <c674cf90-e193-3fb7-a59f-b427ad6f3f99@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/for-6.4/io_uring-2023-04-21
+X-PR-Tracked-Commit-Id: 3c85cc43c8e7855d202da184baf00c7b8eeacf71
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5b9a7bb72fddbc5247f56ede55d485fab7abdf92
+Message-Id: <168253979736.23673.12369653342058648154.pr-tracker-bot@kernel.org>
+Date:   Wed, 26 Apr 2023 20:09:57 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
 X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Apr 26, 2023 at 09:19:57PM +0800, Xiaoguang Wang wrote:
-> hi all,
-> 
-> Recently we start to test nvme passthrough feature, which is based on io_uring. Originally we
-> thought its performance would be much better than normal polled nvme test, but test results
-> show that it's not:
-> $ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O0 -n1  -u1 /dev/ng1n1
-> IOPS=891.49K, BW=435MiB/s, IOS/call=32/31
-> IOPS=891.07K, BW=435MiB/s, IOS/call=31/31
-> 
-> $ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O1 -n1 /dev/nvme1n1
-> IOPS=807.81K, BW=394MiB/s, IOS/call=32/31
-> IOPS=808.13K, BW=394MiB/s, IOS/call=32/32
-> 
-> about 10% iops improvement, I'm not saying its not good, just had thought it should
-> perform much better.
+The pull request you sent on Fri, 21 Apr 2023 11:06:41 -0600:
 
-What did you think it should be? What is the maximum 512b read IOPs your device
-is capable of producing?
+> git://git.kernel.dk/linux.git tags/for-6.4/io_uring-2023-04-21
 
-> After reading codes, I finds that this nvme passthrough feature
-> is still based on blk-mq, use perf tool to analyse and there are some block layer
-> overheads that seems somewhat big:
-> 1. 2.48%  io_uring  [kernel.vmlinux]  [k] blk_stat_add
-> In our kernel config, no active ﻿q->stats->callbacks, but still has this overhead.
-> 
-> 2. 0.97%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg_from_css
->     0.85%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg
->     0.74%  io_uring  [kernel.vmlinux]  [k] blkg_lookup_create
-> For nvme passthrough feature, it tries to dispatch nvme commands to nvme
-> controller directly, so should get rid of these overheads.
-> 
-> 3. 3.19%  io_uring  [kernel.vmlinux]  [k] __rcu_read_unlock
->     2.65%  io_uring  [kernel.vmlinux]  [k] __rcu_read_lock
-> Frequent rcu_read_lock/unlcok overheads, not sure whether we can improve a bit.
-> 
-> 4. 7.90%  io_uring  [nvme]            [k] nvme_poll
->     3.59%  io_uring  [nvme_core]       [k] nvme_ns_chr_uring_cmd_iopoll
->     2.63%  io_uring  [kernel.vmlinux]  [k] blk_mq_poll_classic
->     1.88%  io_uring  [nvme]            [k] nvme_poll_cq
->     1.74%  io_uring  [kernel.vmlinux]  [k] bio_poll
->     1.89%  io_uring  [kernel.vmlinux]  [k] xas_load
->     0.86%  io_uring  [kernel.vmlinux]  [k] xas_start
->     0.80%  io_uring  [kernel.vmlinux]  [k] xas_start
-> Seems that the block poll operation call chain is somewhat deep, also
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5b9a7bb72fddbc5247f56ede55d485fab7abdf92
 
-It's not really that deep, though the xarray lookups are unfortunate.
+Thank you!
 
-And if you were to remove block layer, it looks like you'd end up just shifting
-the CPU utilization to a different polling function without increasing IOPs.
-Your hardware doesn't look fast enough for this software overhead to be a
-concern.
-
-> not sure whether we can improve it a bit, and the xas overheads also
-> looks big, it's introduced by https://lore.kernel.org/all/20220307064401.30056-7-ming.lei@redhat.com/
-> which fixed one use-after-free bug.
-> 
-> 5. other blocker overhead I don't spend time to look into.
-> 
-> Some of our clients are interested in nvme passthrough feature, they visit
-> nvme devices by open(2) and read(2)/write(2) nvme device files directly, bypass
-> filesystem, so they'd like to try nvme passthrough feature, to gain bigger iops, but
-> currenty performance seems not that good. And they don't want to use spdk yet,
-> still try to build fast storage based on linux kernel io stack for various reasons  :)
-> 
-> So I'd like to propose a new nvme passthrough design here, which may improve
-> performance a lot. Here are just rough design ideas here, not start to code yet.
->   1. There are three types of nvme hardware queues, "default", "write" and "poll",
-> currently all these queues are visible to block layer, blk-mq will map these queues
-> properly.  Here this new design will add two new nvme hardware queues, name them
-> "user_irq" and "user_poll" queues, which will need to add two nvme module parameters,
-> similar to current "write_queues" and "poll_queues".
->   2. "user_irq" and "user_poll" queues will not be visible to block layer, and will create
-> corresponding char device file for them,  that means nvme hardware queues will be
-> abstracted as linux file, not sure whether to support read_iter or write_iter, but
-> uring_cmd() interface will be supported firstly. user_irq queue will still have irq, user_poll
-> queue will support poll.
->   3. Finally the data flow will look like below in example of user_irq queue:
-> io issue: io_uring  uring_cmd >> prep nvme command in its char device's uring_cmd() >> submit to nvme.
-> io reap: find io_uring request by nvme command id, and call uring_cmd_done for it.
-> Yeah, need to build association between io_uring request and nvme command id.
-> 
-> Possible advantages:
-> 1. Bypass block layer thoroughly.
-
-blk-mq has common solutions that we don't want to duplicate in driver. It
-provides safe access to shared tags across multiple processes, ensures queue
-live-ness during a controller reset, tracks commands for timeouts, among other
-things.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

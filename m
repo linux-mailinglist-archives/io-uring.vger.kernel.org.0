@@ -2,55 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7298F6EFF0A
-	for <lists+io-uring@lfdr.de>; Thu, 27 Apr 2023 03:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0ECE6EFF0C
+	for <lists+io-uring@lfdr.de>; Thu, 27 Apr 2023 03:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239395AbjD0Bq0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Apr 2023 21:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51774 "EHLO
+        id S236396AbjD0Buq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Apr 2023 21:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232094AbjD0BqZ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Apr 2023 21:46:25 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66DA30CA
-        for <io-uring@vger.kernel.org>; Wed, 26 Apr 2023 18:46:24 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-51f64817809so1065449a12.1
-        for <io-uring@vger.kernel.org>; Wed, 26 Apr 2023 18:46:24 -0700 (PDT)
+        with ESMTP id S240499AbjD0Buq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Apr 2023 21:50:46 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A380A35AD
+        for <io-uring@vger.kernel.org>; Wed, 26 Apr 2023 18:50:41 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-63f167e4be1so1757868b3a.1
+        for <io-uring@vger.kernel.org>; Wed, 26 Apr 2023 18:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682559984; x=1685151984;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682560241; x=1685152241;
         h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0v4OeJot28bu/MHrXsD/kE63oy2vC0+DarDmhHxvj6A=;
-        b=LFZnmF3kwht9f+r6DhPo09KY2HOezowVaovw/lDp5uAQim6y0D//fsqpDjAt8r+Fua
-         yknVBod2dBHA7EG418Wqs9YLD0EymB/4SmqS6074Vy3FvSARR3u/pVCKYFgn4Gcsr0px
-         9UWvsDNY/8xCf+imIuU/5RuIG7A+VPGghLJCwEXFOWBb7xx5A6k1f/+LhT0+yl1rCSy9
-         Lc++YI4h6I013kfAXqDbMt019WIsP/ZI6q5bgEbOlc4JzsuJ1/9h9C9g8Fh73kP9NXwh
-         uxWPkwioQNgnKnuJhpCO7cwEQhNLrhDdq3/MD8FnFrALMvYYoRV0QokcUkYU5m2oc3DU
-         JoxQ==
+        bh=luxzbqqI8t8rakpBG4JFf01AxugJUCsU9ehdqyS/B8Y=;
+        b=1cj7R0oLr+inUYmNbrrJ2i34L1CQ80jP3tNPCEBVhajPPw7DuT7vKAM7co9ysZmHKu
+         oS2yCnQUS7B0gu5oaGRmZmN9FD3p+PR7M9R7N6L8/1+lfyNQw+D2PILixeiBifunzb6P
+         SkMR/X7oKJrsZFqsCG8kpdAKl5xuu9WHbdq9EZHuDKeWoEsAek3Zx47ylYLMsp/ruce3
+         qFDOXorK5vgDRvtkQRlDRMB2YkaJ6W/izgTQCd4xqnpd94jPQPZ/l4EsX1jxGu9ht/l6
+         VOaG6oAeYVBTc8pLzXz0aV2bz0muJIDH1tMt+VkbRSDj/aWULYF+4hY8nm7g8Bxdfvna
+         CCSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682559984; x=1685151984;
+        d=1e100.net; s=20221208; t=1682560241; x=1685152241;
         h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0v4OeJot28bu/MHrXsD/kE63oy2vC0+DarDmhHxvj6A=;
-        b=Z1y8wCrcFqvjh9XAQ/ZE6N/82n27UqxI18RqSiqt7xy9Ui2x9Bj8e5tCdauKaMs27Q
-         LwnUDFD8Awu01Rydn9DoamgK6sSqZcmv8Je1tacs+sz9Rle0H9U3dDfowy+zyRJVEsvW
-         rQB77fN81PkdkJ5yVaE5BkMZqZK8GeKDZDi8bENRqyD4RSm+RD/psmZyo1s5Ah06RIop
-         xxydAONt+6EcYtCSWPQD1EcGHAymK1b6qzIEgCNwanQ9HTg7qA91aDn4cW84t4sPmEQ9
-         Ij4B/fqAUtfSIKk5XObnb5eE6SuHNmdczJNb16PjS/DdYF+OvevpA5lLkm7KRZwiU8Pw
-         LcYg==
-X-Gm-Message-State: AC+VfDz0k0J36UCttObY526BautCGHOe2eO04r517Pck5g4lP/X3IUgp
-        JrV0h26SwzgtCi16XIZgHUoptQ==
-X-Google-Smtp-Source: ACHHUZ6fK+yLTQr6EPP24p6bCM1Mtw7gmyvwN6OAgSVvTPOh11zVumK5VUhFDp7l1slUBpXtCpCMFQ==
-X-Received: by 2002:a17:902:ea0a:b0:1a9:83c8:f7f2 with SMTP id s10-20020a170902ea0a00b001a983c8f7f2mr955011plg.2.1682559984222;
-        Wed, 26 Apr 2023 18:46:24 -0700 (PDT)
+        bh=luxzbqqI8t8rakpBG4JFf01AxugJUCsU9ehdqyS/B8Y=;
+        b=VdVqJi8U3iEYMwCCtVqWhmV2PuvirESzDdkSM7O94uHKz/W8bes7ZKuXk7uUKYsGqc
+         vBM39hP/COz3cCV5hJIHMMSIw82il0VSkoOCM92Qgm8KsckrJAsXkfdD7kNaBl+bp3mh
+         jNmNbaO+TXwx6rwos/KSl4dEUbS+hed0EVrNYYKKDma8oEhlpmhk4dQukgtNnfcyqfGc
+         G+/oSNDZ40ZZgPv3IgIXnnmEAs1KLwzn/3DgVI56/ms52iFJuV8Ov+O5hPjDSk0O57DF
+         Ox9XntUWnOzgK151a4VBhG1VsO+QkiNVz2HCxBCB5+UBLaZBIr+8F262sUD9YqomDARe
+         0PFA==
+X-Gm-Message-State: AC+VfDyQ/41rdGIH1ZW88up6j8eP9KpE3kaJVV4wr2nsI+tt/5qp8/kZ
+        m0BHTrgZJDLGVUsXqlyzS15i5A==
+X-Google-Smtp-Source: ACHHUZ5nMumo0VM/w90vMe7LoLxMxLrFAvJKEkMwPDRfnQDtreNZIiivAQL2QZw/McLEVe63W/T+ag==
+X-Received: by 2002:a05:6a20:4421:b0:f6:d60d:dbfc with SMTP id ce33-20020a056a20442100b000f6d60ddbfcmr6323888pzb.5.1682560241107;
+        Wed, 26 Apr 2023 18:50:41 -0700 (PDT)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id jj2-20020a170903048200b001a6d08dc847sm10484202plb.173.2023.04.26.18.46.23
+        by smtp.gmail.com with ESMTPSA id n10-20020a63ee4a000000b0051b0e564963sm10492752pgk.49.2023.04.26.18.50.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Apr 2023 18:46:23 -0700 (PDT)
-Message-ID: <64a48f3b-b231-7b9e-441b-6022693377f3@kernel.dk>
-Date:   Wed, 26 Apr 2023 19:46:22 -0600
+        Wed, 26 Apr 2023 18:50:40 -0700 (PDT)
+Message-ID: <dbf750fb-5a7b-8d10-d71b-4def3441e821@kernel.dk>
+Date:   Wed, 26 Apr 2023 19:50:39 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
@@ -78,32 +78,50 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 On 4/26/23 7:41?PM, Jens Axboe wrote:
+>> +static void io_napi_multi_busy_loop(struct list_head *napi_list,
+>> +		struct io_wait_queue *iowq)
+>> +{
+>> +	unsigned long start_time = busy_loop_current_time();
+>> +
+>> +	do {
+>> +		if (list_is_singular(napi_list))
+>> +			break;
+>> +		if (!__io_napi_busy_loop(napi_list, iowq->napi_prefer_busy_poll))
+>> +			break;
+>> +	} while (!io_napi_busy_loop_should_end(iowq, start_time));
+>> +}
+> 
+> Do we need to check for an empty list here?
+> 
+>> +static void io_napi_blocking_busy_loop(struct list_head *napi_list,
+>> +		struct io_wait_queue *iowq)
+>> +{
+>> +	if (!list_is_singular(napi_list))
+>> +		io_napi_multi_busy_loop(napi_list, iowq);
+>> +
+>> +	if (list_is_singular(napi_list)) {
+>> +		struct io_napi_ht_entry *ne;
+>> +
+>> +		ne = list_first_entry(napi_list, struct io_napi_ht_entry, list);
+>> +		napi_busy_loop(ne->napi_id, io_napi_busy_loop_should_end, iowq,
+>> +			iowq->napi_prefer_busy_poll, BUSY_POLL_BUDGET);
+>> +	}
+>> +}
+> 
+> Presumably io_napi_multi_busy_loop() can change the state of the list,
+> which is why we have if (cond) and then if (!cond) here? Would probably
+> warrant a comment as it looks a bit confusing.
 
-I'd probably also do this:
+Doesn't look like that's the case? We just call into
+io_napi_multi_busy_loop() -> napi_busy_loop() which doesn't touch it. So
+the state should be the same?
 
+We also check if the list isn't singular before we call it, and then
+io_napi_multi_busy_loop() breaks out of the loop if it is. And we know
+it's not singular when calling, and I don't see what changes it.
 
-diff --git a/io_uring/napi.c b/io_uring/napi.c
-index ca12ff5f5611..35a29fd9afbc 100644
---- a/io_uring/napi.c
-+++ b/io_uring/napi.c
-@@ -95,12 +95,17 @@ static bool io_napi_busy_loop_should_end(void *p, unsigned long start_time)
- {
- 	struct io_wait_queue *iowq = p;
- 
--	return signal_pending(current) ||
--	       io_should_wake(iowq) ||
--	       io_napi_busy_loop_timeout(start_time, iowq->napi_busy_poll_to);
-+	if (signal_pending(current))
-+		return true;
-+	if (io_should_wake(iowq))
-+		return true;
-+	if (io_napi_busy_loop_timeout(start_time, iowq->napi_busy_poll_to))
-+		return true;
-+	return false;
- }
- 
-as that is easier to read.
-
+Unless I'm missing something, which is quite possible, this looks overly
+convoluted and has extra pointless checks?
 
 -- 
 Jens Axboe

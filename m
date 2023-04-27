@@ -2,142 +2,169 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50A476F04D5
-	for <lists+io-uring@lfdr.de>; Thu, 27 Apr 2023 13:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D33DD6F059D
+	for <lists+io-uring@lfdr.de>; Thu, 27 Apr 2023 14:18:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243316AbjD0LQX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Apr 2023 07:16:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58986 "EHLO
+        id S243760AbjD0MRj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Apr 2023 08:17:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243242AbjD0LQV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Apr 2023 07:16:21 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A99749CF
-        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 04:16:20 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-63b8b927f62so1761412b3a.0
-        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 04:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682594180; x=1685186180;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JiC+s/orvW3dVeyfwQLgv3/7FyfXfIWmoWuOjheJ6Hw=;
-        b=BYMDaRnZrvJi7cWxv7DXpL/Rfp7/74r2BuUwc0IClGmDqpdaflHJiNIyuapAAQvfZ+
-         9NGVHar8cs3vrCtNEf9iGBfQsL7yWr8gWv2hETAUM2qT7XIHL57M4kjLMaeq9DUc2Kjx
-         Nyzs4uFNBtFY+CHhpATJQ+4vazvm+dQqU9IRSXA+nHWMz7eZ+yIFL1jYC/xLB9h5cyM9
-         iQpQvlKGWcs/eC5SpcGRBgaMfNSEXA91V66bOshPSX10QHwh/C/81h1NYvmRKkZ2vRSB
-         7ZcfSbEylrfsGSmTcL0SqDzi4m+X/TTcwkBpvyA7SFFmlrtOD09gzHVXSD4bxZKkd+U4
-         4dAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682594180; x=1685186180;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JiC+s/orvW3dVeyfwQLgv3/7FyfXfIWmoWuOjheJ6Hw=;
-        b=GkGlr+47Zu8CMBdNEMAAs/19aU3xTzCNRvaThAvgw9IZDh41knukPuwxjDHGFVRfYN
-         r751bakNBlWapFILwmG2ZkIwhK3mfZEEEVtCQt4roctVw3aaJhuu1obrvXPNhO51Ywm3
-         k5ZP1dR9a/pNbzFQCXhXsjHuj5dCIORxI9wjZLwBpinCyJwkZJ4xrG1QZ9u2vVNL/Tu9
-         iJfWjniel87CYm0iMc1qyx2fiXVyNUZPYlLV9IJCoxEKK5dJ40ilMk//YaoZSnZFt5aO
-         1IDM4hqWG897zZW15auYcFyqn6Lia0C+PZEAAJ3hhiYjGl/HOfbkNVWcr+EDwmWoWhdy
-         L9UA==
-X-Gm-Message-State: AC+VfDwxiW1/Hq/BZ+exu+cly8hHPF6GBFaZy4htL+9WcK8CYFDs9Ksr
-        TtRoNIZJQlWzWx50UO6t8ZcKlw==
-X-Google-Smtp-Source: ACHHUZ6JSyPG0a67pHmPcxf08RH8YfjMG/gXeEdvVAD7+wh62r2nCd4dNt0x3BlJ9AhFkt2LRi+EwQ==
-X-Received: by 2002:a05:6a21:9991:b0:f6:7bb8:c8d5 with SMTP id ve17-20020a056a21999100b000f67bb8c8d5mr1530425pzb.4.1682594179861;
-        Thu, 27 Apr 2023 04:16:19 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ei23-20020a056a0080d700b006410f4f3ecdsm1770115pfb.83.2023.04.27.04.16.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 04:16:19 -0700 (PDT)
-Message-ID: <afbc5377-f424-e34a-6987-7569a342daf6@kernel.dk>
-Date:   Thu, 27 Apr 2023 05:16:18 -0600
+        with ESMTP id S243885AbjD0MRg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Apr 2023 08:17:36 -0400
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CED3E4F;
+        Thu, 27 Apr 2023 05:17:34 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Vh7USU._1682597850;
+Received: from 30.221.148.223(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Vh7USU._1682597850)
+          by smtp.aliyun-inc.com;
+          Thu, 27 Apr 2023 20:17:31 +0800
+Message-ID: <3e04dbdc-335a-8cc1-f1e2-72e395700da6@linux.alibaba.com>
+Date:   Thu, 27 Apr 2023 20:17:30 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v10 2/5] io-uring: add napi busy poll support
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: another nvme pssthrough design based on nvme hardware queue file
+ abstraction
 Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Stefan Roesch <shr@devkernel.io>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        Facebook Kernel Team <kernel-team@fb.com>,
-        Olivier Langlois <olivier@trillion01.com>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20230425181845.2813854-1-shr@devkernel.io>
- <20230425181845.2813854-3-shr@devkernel.io>
- <ZEnkUMF/p19Ub0MQ@biznet-home.integral.gnuweeb.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZEnkUMF/p19Ub0MQ@biznet-home.integral.gnuweeb.org>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+References: <24179a47-ab37-fa32-d177-1086668fbd3d@linux.alibaba.com>
+ <ZEkxUG4AUcBQKfdr@kbusch-mbp.dhcp.thefacebook.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <ZEkxUG4AUcBQKfdr@kbusch-mbp.dhcp.thefacebook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-11.3 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/26/23 8:56?PM, Ammar Faizi wrote:
-> On Tue, Apr 25, 2023 at 11:18:42AM -0700, Stefan Roesch wrote:
->> +void __io_napi_add(struct io_ring_ctx *ctx, struct file *file)
->> +{
->> +	unsigned int napi_id;
->> +	struct socket *sock;
->> +	struct sock *sk;
->> +	struct io_napi_ht_entry *he;
->> +
->> +	sock = sock_from_file(file);
->> +	if (!sock)
->> +		return;
->> +
->> +	sk = sock->sk;
->> +	if (!sk)
->> +		return;
->> +
->> +	napi_id = READ_ONCE(sk->sk_napi_id);
->> +
->> +	/* Non-NAPI IDs can be rejected. */
->> +	if (napi_id < MIN_NAPI_ID)
->> +		return;
->> +
->> +	spin_lock(&ctx->napi_lock);
->> +	hash_for_each_possible(ctx->napi_ht, he, node, napi_id) {
->> +		if (he->napi_id == napi_id) {
->> +			he->timeout = jiffies + NAPI_TIMEOUT;
->> +			goto out;
->> +		}
->> +	}
->> +
->> +	he = kmalloc(sizeof(*he), GFP_NOWAIT);
->> +	if (!he)
->> +		goto out;
->> +
->> +	he->napi_id = napi_id;
->> +	he->timeout = jiffies + NAPI_TIMEOUT;
->> +	hash_add(ctx->napi_ht, &he->node, napi_id);
->> +
->> +	list_add_tail(&he->list, &ctx->napi_list);
->> +
->> +out:
->> +	spin_unlock(&ctx->napi_lock);
->> +}
-> 
-> What about using GFP_KERNEL to allocate 'he' outside the spin lock, then
-> kfree() it in the (he->napi_id == napi_id) path after unlock?
+hi,
 
-We actually discussed this in previous versions of this, it kind of
-optimizes for the wrong thing. Only the first trip through here should
-allocate a 'he' unit, the rest will find it on the hash. That means that
-now the common case will alloc+free an extra one, pointlessly.
+> On Wed, Apr 26, 2023 at 09:19:57PM +0800, Xiaoguang Wang wrote:
+>> hi all,
+>>
+>> Recently we start to test nvme passthrough feature, which is based on io_uring. Originally we
+>> thought its performance would be much better than normal polled nvme test, but test results
+>> show that it's not:
+>> $ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O0 -n1  -u1 /dev/ng1n1
+>> IOPS=891.49K, BW=435MiB/s, IOS/call=32/31
+>> IOPS=891.07K, BW=435MiB/s, IOS/call=31/31
+>>
+>> $ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O1 -n1 /dev/nvme1n1
+>> IOPS=807.81K, BW=394MiB/s, IOS/call=32/31
+>> IOPS=808.13K, BW=394MiB/s, IOS/call=32/32
+>>
+>> about 10% iops improvement, I'm not saying its not good, just had thought it should
+>> perform much better.
+> What did you think it should be? What is the maximum 512b read IOPs your device
+> is capable of producing?
+From the naming of this feature, I thought it would bypass blocker thoroughly, hence
+would gain much higher performance, for myself, if this feature can improves 25% higher
+or more, that would be much more attractive, and users would like to try it. Again, I'm
+not saying this feature is not good, just thought it would perform much better for small io.
 
-> That would make the critical section shorter. Also, GFP_NOWAIT is likely
-> to fail under memory pressure.
+My test environment has one intel p4510 nvme ssd and one intel p4800x nvme ssd.
+According to spec, p4510 's rand read iops is about 640000, and p4800x is 550000.
+To maximizing device performance, I'll do one discard before test, that is
+sudo blkdiscard /dev/nvme0n1 or /dev/nvme1n1.
 
-If a ~48 byte allocation fails, then I suspect we have more serious
-issues at hand rather than ignoring NAPI for this socket!
+In 6.3.0-rc2, taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O0 -n1  -u1 /dev/ng1n1
+shows 890k iops. I modified codes a bit to get rid of blkcg overhead, iops will increase 920k.
+And if I benchmark /dev/ng0n1 and /dev/ng1n1 at the same time, total iops would be
+about 1150k, cannot utilize the maximum capacity of these two devices.
 
--- 
-Jens Axboe
+>
+>> After reading codes, I finds that this nvme passthrough feature
+>> is still based on blk-mq, use perf tool to analyse and there are some block layer
+>> overheads that seems somewhat big:
+>> 1. 2.48%  io_uring  [kernel.vmlinux]  [k] blk_stat_add
+>> In our kernel config, no active ﻿q->stats->callbacks, but still has this overhead.
+>>
+>> 2. 0.97%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg_from_css
+>>     0.85%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg
+>>     0.74%  io_uring  [kernel.vmlinux]  [k] blkg_lookup_create
+>> For nvme passthrough feature, it tries to dispatch nvme commands to nvme
+>> controller directly, so should get rid of these overheads.
+>>
+>> 3. 3.19%  io_uring  [kernel.vmlinux]  [k] __rcu_read_unlock
+>>     2.65%  io_uring  [kernel.vmlinux]  [k] __rcu_read_lock
+>> Frequent rcu_read_lock/unlcok overheads, not sure whether we can improve a bit.
+>>
+>> 4. 7.90%  io_uring  [nvme]            [k] nvme_poll
+>>     3.59%  io_uring  [nvme_core]       [k] nvme_ns_chr_uring_cmd_iopoll
+>>     2.63%  io_uring  [kernel.vmlinux]  [k] blk_mq_poll_classic
+>>     1.88%  io_uring  [nvme]            [k] nvme_poll_cq
+>>     1.74%  io_uring  [kernel.vmlinux]  [k] bio_poll
+>>     1.89%  io_uring  [kernel.vmlinux]  [k] xas_load
+>>     0.86%  io_uring  [kernel.vmlinux]  [k] xas_start
+>>     0.80%  io_uring  [kernel.vmlinux]  [k] xas_start
+>> Seems that the block poll operation call chain is somewhat deep, also
+> It's not really that deep, though the xarray lookups are unfortunate.
+>
+> And if you were to remove block layer, it looks like you'd end up just shifting
+> the CPU utilization to a different polling function without increasing IOPs.
+> Your hardware doesn't look fast enough for this software overhead to be a
+> concern.
+No, I may not agree with you here, sorry. Real products(not like t/io_uring tools,
+which just polls block layer when ios are issued) will have many other work
+to run, such as network work. If we can cut the nvme passthrough overhead more,
+saved cpu will use to do other useful work.
+
+For example, some produces would poll storage and network, if we can reduce
+poll storage quicker, we can poll network earlier, which may reduce network
+latency. As I said in below section, If we can map nvme cqes to user space, we
+may check whether io has been completed in user space, only do kernel block iopoll
+necessary.
+
+>
+>> not sure whether we can improve it a bit, and the xas overheads also
+>> looks big, it's introduced by https://lore.kernel.org/all/20220307064401.30056-7-ming.lei@redhat.com/
+>> which fixed one use-after-free bug.
+>>
+>> 5. other blocker overhead I don't spend time to look into.
+>>
+>> Some of our clients are interested in nvme passthrough feature, they visit
+>> nvme devices by open(2) and read(2)/write(2) nvme device files directly, bypass
+>> filesystem, so they'd like to try nvme passthrough feature, to gain bigger iops, but
+>> currenty performance seems not that good. And they don't want to use spdk yet,
+>> still try to build fast storage based on linux kernel io stack for various reasons  :)
+>>
+>> So I'd like to propose a new nvme passthrough design here, which may improve
+>> performance a lot. Here are just rough design ideas here, not start to code yet.
+>>   1. There are three types of nvme hardware queues, "default", "write" and "poll",
+>> currently all these queues are visible to block layer, blk-mq will map these queues
+>> properly.  Here this new design will add two new nvme hardware queues, name them
+>> "user_irq" and "user_poll" queues, which will need to add two nvme module parameters,
+>> similar to current "write_queues" and "poll_queues".
+>>   2. "user_irq" and "user_poll" queues will not be visible to block layer, and will create
+>> corresponding char device file for them,  that means nvme hardware queues will be
+>> abstracted as linux file, not sure whether to support read_iter or write_iter, but
+>> uring_cmd() interface will be supported firstly. user_irq queue will still have irq, user_poll
+>> queue will support poll.
+>>   3. Finally the data flow will look like below in example of user_irq queue:
+>> io issue: io_uring  uring_cmd >> prep nvme command in its char device's uring_cmd() >> submit to nvme.
+>> io reap: find io_uring request by nvme command id, and call uring_cmd_done for it.
+>> Yeah, need to build association between io_uring request and nvme command id.
+>>
+>> Possible advantages:
+>> 1. Bypass block layer thoroughly.
+> blk-mq has common solutions that we don't want to duplicate in driver. It
+> provides safe access to shared tags across multiple processes, ensures queue
+> live-ness during a controller reset, tracks commands for timeouts, among other
+> things.
+Yeah, I agree there will be some duplicate functionality with blk-mq,
+not start to do detailed design yet(will do later), but I think there maybe
+not much. I'd like to implement prototype firstly for you to review, to see
+what performance we can get. If performance data is really impressive, I
+think it maybe deserve the duplicate.
+
+Regards,
+Xiaoguang Wang
 

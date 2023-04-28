@@ -2,97 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E186F0FE3
-	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 03:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 685696F107B
+	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 04:42:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344285AbjD1BJF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Apr 2023 21:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
+        id S229902AbjD1Cmj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Apr 2023 22:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbjD1BJE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Apr 2023 21:09:04 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04997268E
-        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 18:09:03 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1a66e6160easo12564615ad.1
-        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 18:09:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682644142; x=1685236142;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tyGALp/u2CSO1u+d88PyfpvACmbFLcynyU8qPGUMzUU=;
-        b=lU/7idJ521ibZpQiH6z16ClfGovDOGIcTcXZZs4mUK80BkgjHm47/mPqb7kcHHDNGC
-         8SIKYD8Bq1eAtQrShbt2++dQJdpDjCrMOvmXmJyb+TAcEJdCh41pYdq1EOa5oq/fo4cd
-         GLVkJ226KXNR79GrpLZ8bEvgsADmy4Cuuf5p/OsDivde+bMBTg8JZbU9Xfp/JCq+cZM3
-         lchkqdOXEeS+QOa+BXzMeEnw/YtL/amwpxoPMi3bVobfVVb9uIrxcPuM/u8hXn9yR/eK
-         2zqWJuMMKks8M0KPSkgVQ84tsWp7M2xmX2Ch958DeNSF33anchGCizc4AH9j5UG1nxra
-         iiog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682644142; x=1685236142;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tyGALp/u2CSO1u+d88PyfpvACmbFLcynyU8qPGUMzUU=;
-        b=TbNkSRpEl6BHWcQfJ4feuTfhxkCuw74YEmzeqYCh489GdUiqq7z5od7HQ40ya1XFeM
-         mgig89F9GMGZ0cK0fs76usN8n6Dy0KIvXtsS7lmzq95lSIkhaiN9Rl+J4uwbnwtoktOL
-         U6nLtYAudohTwISprVBjj+ey+ucRLDsGAnsQ8iWkjjU+IRW1rwsHR5FMVlnYq9E8IL+Q
-         UhAbNsUoJ6Q7Jvx+iBWDAn4M/pZRZTCyJnqpBLoZufo5zqB1LJUSJGsX94x/UIMuvspD
-         P2sHGZ15sQFjncbNKSY84eY8BDrLUMHqKIVbxthR88oZDXi7rkYdtcykXLg9qWO92g80
-         wf0A==
-X-Gm-Message-State: AC+VfDzmuKaGaXIApA5d3eAbkKmiECCMl3rJ5iDozxoqsdNeqix9dNGl
-        sqqo/1Jz0UmfLTCAIqumWZ9qdwbH6Q1kWid8cLQ=
-X-Google-Smtp-Source: ACHHUZ4NBv2PibcpkVnJp6h7NCrgVlK6QGaZzYFRwDjGhVU9TjCHOJlYfLfqTcujFYxeVZ6RcI9ntQ==
-X-Received: by 2002:a17:902:ce89:b0:1a4:f4e6:b68 with SMTP id f9-20020a170902ce8900b001a4f4e60b68mr4191616plg.3.1682644142448;
-        Thu, 27 Apr 2023 18:09:02 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id m8-20020a170902768800b001a80ad9c599sm12123301pll.294.2023.04.27.18.09.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 18:09:01 -0700 (PDT)
-Message-ID: <80e208ba-be78-f3d0-9fa9-f3e9ec214e4f@kernel.dk>
-Date:   Thu, 27 Apr 2023 19:09:00 -0600
+        with ESMTP id S229666AbjD1Cmi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Apr 2023 22:42:38 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3795F26A6;
+        Thu, 27 Apr 2023 19:42:36 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Vh9QPcX_1682649752;
+Received: from 30.221.147.121(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0Vh9QPcX_1682649752)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Apr 2023 10:42:33 +0800
+Message-ID: <4ab4b11f-d775-1c75-127a-c62535de897b@linux.alibaba.com>
+Date:   Fri, 28 Apr 2023 10:42:32 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v10 2/5] io-uring: add napi busy poll support
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: another nvme pssthrough design based on nvme hardware queue file
+ abstraction
 Content-Language: en-US
-To:     Stefan Roesch <shr@devkernel.io>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com,
-        ammarfaizi2@gnuweeb.org, Olivier Langlois <olivier@trillion01.com>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20230425181845.2813854-1-shr@devkernel.io>
- <20230425181845.2813854-3-shr@devkernel.io>
- <ddb2704e-f3a2-c430-0e76-2642580ad1b5@kernel.dk>
- <qvqw354lb5bl.fsf@devbig1114.prn1.facebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <qvqw354lb5bl.fsf@devbig1114.prn1.facebook.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+References: <24179a47-ab37-fa32-d177-1086668fbd3d@linux.alibaba.com>
+ <ZEkxUG4AUcBQKfdr@kbusch-mbp.dhcp.thefacebook.com>
+ <3e04dbdc-335a-8cc1-f1e2-72e395700da6@linux.alibaba.com>
+ <ZEqOy6oFp7tc06dH@kbusch-mbp.dhcp.thefacebook.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+In-Reply-To: <ZEqOy6oFp7tc06dH@kbusch-mbp.dhcp.thefacebook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-11.3 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/27/23 10:27?AM, Stefan Roesch wrote:
->>> +	if (timespec64_compare(ts, &pollto) > 0) {
->>> +		*ts = timespec64_sub(*ts, pollto);
->>> +		*new_poll_to = poll_to;
->>> +	} else {
->>> +		u64 to = timespec64_to_ns(ts);
->>> +
->>> +		do_div(to, 1000);
->>
->> Is this going to complain on 32-bit?
->>
-> 
-> My understanding is this should work on 32-bit.
+hi,
 
-Yeah seems fine, I ended up double checking it too.
+> On Thu, Apr 27, 2023 at 08:17:30PM +0800, Xiaoguang Wang wrote:
+>>> On Wed, Apr 26, 2023 at 09:19:57PM +0800, Xiaoguang Wang wrote:
+>>>> hi all,
+>>>>
+>>>> Recently we start to test nvme passthrough feature, which is based on io_uring. Originally we
+>>>> thought its performance would be much better than normal polled nvme test, but test results
+>>>> show that it's not:
+>>>> $ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O0 -n1  -u1 /dev/ng1n1
+>>>> IOPS=891.49K, BW=435MiB/s, IOS/call=32/31
+>>>> IOPS=891.07K, BW=435MiB/s, IOS/call=31/31
+>>>>
+>>>> $ sudo taskset -c 1 /home/feiman.wxg/fio/t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -O1 -n1 /dev/nvme1n1
+>>>> IOPS=807.81K, BW=394MiB/s, IOS/call=32/31
+>>>> IOPS=808.13K, BW=394MiB/s, IOS/call=32/32
+>>>>
+>>>> about 10% iops improvement, I'm not saying its not good, just had thought it should
+>>>> perform much better.
+>>> What did you think it should be? What is the maximum 512b read IOPs your device
+>>> is capable of producing?
+>> From the naming of this feature, I thought it would bypass blocker thoroughly, hence
+>> would gain much higher performance, for myself, if this feature can improves 25% higher
+>> or more, that would be much more attractive, and users would like to try it. Again, I'm
+>> not saying this feature is not good, just thought it would perform much better for small io.
+> It does bypass the block layer. The driver just uses library functions provided
+> by the block layer for things it doesn't want to duplicate. Reimplementing that
+> functionality in driver isn't going to improve anything.
+>
+>>>> In our kernel config, no active ﻿q->stats->callbacks, but still has this overhead.
+>>>>
+>>>> 2. 0.97%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg_from_css
+>>>>     0.85%  io_uring  [kernel.vmlinux]  [k] bio_associate_blkg
+>>>>     0.74%  io_uring  [kernel.vmlinux]  [k] blkg_lookup_create
+>>>> For nvme passthrough feature, it tries to dispatch nvme commands to nvme
+>>>> controller directly, so should get rid of these overheads.
+>>>>
+>>>> 3. 3.19%  io_uring  [kernel.vmlinux]  [k] __rcu_read_unlock
+>>>>     2.65%  io_uring  [kernel.vmlinux]  [k] __rcu_read_lock
+>>>> Frequent rcu_read_lock/unlcok overheads, not sure whether we can improve a bit.
+>>>>
+>>>> 4. 7.90%  io_uring  [nvme]            [k] nvme_poll
+>>>>     3.59%  io_uring  [nvme_core]       [k] nvme_ns_chr_uring_cmd_iopoll
+>>>>     2.63%  io_uring  [kernel.vmlinux]  [k] blk_mq_poll_classic
+>>>>     1.88%  io_uring  [nvme]            [k] nvme_poll_cq
+>>>>     1.74%  io_uring  [kernel.vmlinux]  [k] bio_poll
+>>>>     1.89%  io_uring  [kernel.vmlinux]  [k] xas_load
+>>>>     0.86%  io_uring  [kernel.vmlinux]  [k] xas_start
+>>>>     0.80%  io_uring  [kernel.vmlinux]  [k] xas_start
+>>>> Seems that the block poll operation call chain is somewhat deep, also
+>>> It's not really that deep, though the xarray lookups are unfortunate.
+>>>
+>>> And if you were to remove block layer, it looks like you'd end up just shifting
+>>> the CPU utilization to a different polling function without increasing IOPs.
+>>> Your hardware doesn't look fast enough for this software overhead to be a
+>>> concern.
+>> No, I may not agree with you here, sorry. Real products(not like t/io_uring tools,
+>> which just polls block layer when ios are issued) will have many other work
+>> to run, such as network work. If we can cut the nvme passthrough overhead more,
+>> saved cpu will use to do other useful work.
+> You initiated this thread with supposed underwhelming IOPs improvements from
+> the io engine, but now you've shifted your criteria.
+Sorry, but how did you come to this conclusion that I have shifted my criteria...
+I'm not a native english speaker, may not express my thoughts clearly. And
+I forgot to mention that indeed in real products, they may manage more than
+one nvme ssd with one cpu(software is taskseted to corresponding cpu), so
+I think software overhead would be a concern.
 
--- 
-Jens Axboe
+No offense at all, I initiated this thread just to discuss whether we can improve
+nvme passthrough performance more. For myself, also need to understand
+nvme codes more.
+>
+> You can always turn off the kernel's stats and cgroups if you don't find them
+> useful.
+In example of cgroups, do you mean disable CONFIG_BLK_CGROUP?
+I'm not sure it will work, a physical machine may have many disk drives,
+others drives may need blkcg.
+
+Regards,
+Xiaoguang Wang
+
 

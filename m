@@ -2,94 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2C26F1570
-	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 12:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CAF26F1692
+	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 13:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345476AbjD1K3o (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Apr 2023 06:29:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60066 "EHLO
+        id S240110AbjD1L2Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Apr 2023 07:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230302AbjD1K3n (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 06:29:43 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 95C601FCA;
-        Fri, 28 Apr 2023 03:29:42 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42338C14;
-        Fri, 28 Apr 2023 03:30:26 -0700 (PDT)
-Received: from [10.57.57.22] (unknown [10.57.57.22])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CDB23F64C;
-        Fri, 28 Apr 2023 03:29:41 -0700 (PDT)
-Message-ID: <002c3a2a-df57-1997-1739-9675a6c8dd46@arm.com>
-Date:   Fri, 28 Apr 2023 11:29:40 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] io_uring/kbuf: Fix size for shared buffer ring
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, kevin.brodsky@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20230427143142.3013020-1-tudor.cretu@arm.com>
- <03b13c8f-0f4c-0692-b2f0-e90d7877e327@kernel.dk>
-Content-Language: en-US
-From:   Tudor Cretu <tudor.cretu@arm.com>
-In-Reply-To: <03b13c8f-0f4c-0692-b2f0-e90d7877e327@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S234872AbjD1L2X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 07:28:23 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C552F4ECD;
+        Fri, 28 Apr 2023 04:28:19 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 545A9C01C; Fri, 28 Apr 2023 13:28:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682681296; bh=OxVs+X25hHVqwJowVcFwN1ACu7t2ri8zooDOLSkhFz0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cGbIet42WfZdwF6rAWTpbheaM4GWpIHLI5Brfm0TQjZBJxbbSVYMpEQYi1v2EgLKO
+         xKjYTLGr3azJjRlRP1IemMMTXFBP97lAuB8xktn3TNJYFT3oiFbxqrQtJZ9yZo7OF4
+         1gZNjuKoc2BDrHhwbjw/o10IIqbQ1Ojoro4JfuCDqm+yjLJQlBWh8DfeMuGA/va6Fj
+         a1yK69WCVybtJg+uRV3ASt7maKkFg8KAPsL4eCA7SgqrWR1WQ6cTKoayz7rofnQusG
+         LGzJLnQ0UVh1Uq2e1RGP4TqH4PrbRqskGTse10F6DdJF1eda7TCsTr/reg2dS/N/2g
+         lrAZLbulOU1GA==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 95F15C009;
+        Fri, 28 Apr 2023 13:28:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682681295; bh=OxVs+X25hHVqwJowVcFwN1ACu7t2ri8zooDOLSkhFz0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LoGUL+lMPl+njrYxiE4BVjc2glW8XPsIAxixyUyHoLtelHM4UD7+JyyBfifrC6XOu
+         pMAa4iuX0/8mqvqwESCj5wTkbUPmbCn2vqgPU2lKQUgefQY2UiiS0pAcpjrTdm3Pe7
+         fFCQeLsWYHaAXKNv7GGgy0jbnaXoOVwcx5Ly8BWRoIjEC7mzMWjrZcHRR/Kk8HSWX9
+         254Xhdg15GEzB3RhDz+t1cW1T7J24O4mYkPYtS3NWGJiWeyAbidQtWXSPbJ2NZFE9l
+         qXVHgxC9IsqhBU+k63cuTmrGpmTydqqPSJcPLN20oKrNHhSFMiZz8N9FVtPABXSt2H
+         18SLq4YHA7Ztw==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 549ff8b9;
+        Fri, 28 Apr 2023 11:28:08 +0000 (UTC)
+Date:   Fri, 28 Apr 2023 20:27:53 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <ZEutuerMIcKpWAfP@codewreck.org>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
+ <20230428050640.GA1969623@dread.disaster.area>
+ <ZEtkXJ1vMsFR3tkN@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZEtkXJ1vMsFR3tkN@codewreck.org>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-
-On 27-04-2023 19:42, Jens Axboe wrote:
-> On 4/27/23 8:31 AM, Tudor Cretu wrote:
->> The size of the ring is the product of ring_entries and the size of
->> struct io_uring_buf. Using struct_size is equivalent to
->>    (ring_entries + 1) * sizeof(struct io_uring_buf)
->> and generates an off-by-one error. Fix it by using size_mul directly.
->>
->> Signed-off-by: Tudor Cretu <tudor.cretu@arm.com>
->> ---
->>   io_uring/kbuf.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
->> index 4a6401080c1f..9770757c89a0 100644
->> --- a/io_uring/kbuf.c
->> +++ b/io_uring/kbuf.c
->> @@ -505,7 +505,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
->>   	}
->>   
->>   	pages = io_pin_pages(reg.ring_addr,
->> -			     struct_size(br, bufs, reg.ring_entries),
->> +			     size_mul(sizeof(struct io_uring_buf), reg.ring_entries),
->>   			     &nr_pages);
->>   	if (IS_ERR(pages)) {
->>   		kfree(free_bl);
+Dominique Martinet wrote on Fri, Apr 28, 2023 at 03:14:52PM +0900:
+> > We already pass a struct dir_context to ->iterate_shared(), so we
+> > have a simple way to add context specific flags down the filesystem
+> > from iterate_dir(). This is similar to the iocb for file data IO
+> > that contains the flags field that holds the IOCB_NOWAIT context for
+> > io_uring based IO. So the infrastructure to plumb it all the way
+> > down the fs implementation of ->iterate_shared is already there.
 > 
-> Looking into this again, and some bells ringing in the back of my head,
-> we do have:
-> 
-> commit 48ba08374e779421ca34bd14b4834aae19fc3e6a
-> Author: Wojciech Lukowicz <wlukowicz01@gmail.com>
-> Date:   Sat Feb 18 18:41:41 2023 +0000
-> 
->      io_uring: fix size calculation when registering buf ring
-> 
-> which should have fixed that issue. What kernel version are you looking at?
+> Sure, that sounds like a good approach that isn't breaking the API (not
+> breaking iterate/iterate_shared implementations that don't look at the
+> flags and allowing the fs that want to look at it to do so)
 
-Hi Jens,
+Hmm actually I said that, but io_getdents() needs to know if the flag
+will be honored or not (if it will be honored, we can call this when
+issue_flags & IO_URING_F_NONBLOCK but if we're not sure the fs handles
+it then we risk blocking)
 
-Thank you for your message. Indeed I was looking at a slightly older 
-version of the kernel. Apologies for the noise!
+I'm not familiar with this part of the VFS, but I do not see any kind of
+flags for the filesystem to signal if it'll handle it or not -- this is
+actually similar to iterate vs. iterate_shared so that'll mean adding
+iterate_shared_hasnonblock or something, which is getting silly.
 
-Kind regards,
-Tudor
+I'm sure you understand this better than me and I'm missing something
+obvious here, but I don't think I'll be able to make something I'm happy
+with here (in a reasonable timeframe anyway).
 
-> 
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus

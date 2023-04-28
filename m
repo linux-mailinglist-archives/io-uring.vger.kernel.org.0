@@ -2,101 +2,155 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC6D6F1D6A
-	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 19:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9253D6F1DD5
+	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 20:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346309AbjD1R2V (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Apr 2023 13:28:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
+        id S229617AbjD1SNK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Apr 2023 14:13:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346172AbjD1R2S (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 13:28:18 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D142F2735
-        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 10:28:16 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id e9e14a558f8ab-32b625939d4so3845675ab.1
-        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 10:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682702896; x=1685294896;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mx+u+e8F3tpe9jME3ZkNhf/uGT2LdeSIrgmUdMOCoHA=;
-        b=StkHpsTFpc04mYRpir23kIUT3IfSMOjigxosKHgX+gCeWel7dyhRfqGvXbHUZwOaj5
-         cOmpDi3mLtJz1AcA9iR3BmwiuJ2G29nre1arFQstFKx8fo7wCREJHYvPPagMXM5Pv67v
-         CGQc9H89+myfRH8sV3i5udBtHw1LMoZj4bEJmm6XkLju7wGfcsTSRbQ25G/Yrxq8HNdo
-         9k8pTj0NfwdNMyUF7oBvrqgu8uj5CNNJZ0sAJn+Y3KlOC8s4abk9wsZHUojThtZnGUao
-         1BI5+xbPnnEDtyZ+OziPsSMtxIFr83qa5KTVmeR23CRHek3oKvSC5oJq2elYhPFhVF5j
-         Uxjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682702896; x=1685294896;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mx+u+e8F3tpe9jME3ZkNhf/uGT2LdeSIrgmUdMOCoHA=;
-        b=G0FAd6MW3MVPutas74fYAkaXsI3HOohLKzCqfwNxFFFGIXRJm9sIIARK0htGfq5U25
-         VhKNqk4BQ4MdwaFNCAn46tWcnplcGucRP2UQJpFCkW8idXXo8nyq09PCHJqCpQAmGavH
-         RU6qxvAHrNLBat9lNDtkC8H1Chvq4/gnHx80nWoxfPHXcFoA9R9IwlI6ySndG7UR+Sbl
-         qZDpd/p1MzRY6NAl+fF2QtKaq38hd7LYEWlwFbhcZyL2MY/OYnCVNSMAx5tGnvvpNbu7
-         9qI39tmpkH/XUWichuSIwnyguBmsSHUzVDg3rStVWvFlaJnaCFiv8KrKlQo59B3TJ0Zo
-         bcag==
-X-Gm-Message-State: AC+VfDxsBldZE/mJufiEYjq1e2nhv5CHQuvFDPBEHFobJzgKnzc5tulO
-        zOD8V2kOIRlFYcErVKaCNa4Jtw==
-X-Google-Smtp-Source: ACHHUZ6VVhmsMluENvVdOeusjeeWlsYRSHQORwLpr/F9aC6roaNxN8srB7J+NWD6SEU5RENT5xw02Q==
-X-Received: by 2002:a05:6602:1696:b0:760:dfd3:208d with SMTP id s22-20020a056602169600b00760dfd3208dmr4267661iow.0.1682702896169;
-        Fri, 28 Apr 2023 10:28:16 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id d123-20020a026281000000b00405f36ed05asm6225655jac.55.2023.04.28.10.28.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Apr 2023 10:28:15 -0700 (PDT)
-Message-ID: <678232fa-fd02-37b7-3048-a124c4ffdc71@kernel.dk>
-Date:   Fri, 28 Apr 2023 11:28:14 -0600
+        with ESMTP id S1345943AbjD1SNJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 14:13:09 -0400
+Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343F94ECD
+        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 11:13:08 -0700 (PDT)
+Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
+        id A6ED347FCF42; Fri, 28 Apr 2023 11:12:54 -0700 (PDT)
+From:   Stefan Roesch <shr@devkernel.io>
+To:     io-uring@vger.kernel.org, kernel-team@fb.com
+Cc:     shr@devkernel.io, axboe@kernel.dk, ammarfaizi2@gnuweeb.org
+Subject: [PATCH v11 0/5] io_uring: add napi busy polling support 
+Date:   Fri, 28 Apr 2023 11:12:43 -0700
+Message-Id: <20230428181248.610605-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 0/3] io_uring: Pass the whole sqe to commands
-Content-Language: en-US
-To:     Breno Leitao <leitao@debian.org>, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, asml.silence@gmail.com
-Cc:     leit@fb.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, sagi@grimberg.me, hch@lst.de,
-        kbusch@kernel.org, ming.lei@redhat.com
-References: <20230421114440.3343473-1-leitao@debian.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230421114440.3343473-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
+        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/21/23 5:44?AM, Breno Leitao wrote:
-> These three patches prepare for the sock support in the io_uring cmd, as
-> described in the following RFC:
-> 
-> 	https://lore.kernel.org/lkml/20230406144330.1932798-1-leitao@debian.org/
-> 
-> Since the support linked above depends on other refactors, such as the sock
-> ioctl() sock refactor[1], I would like to start integrating patches that have
-> consensus and can bring value right now.  This will also reduce the patchset
-> size later.
-> 
-> Regarding to these three patches, they are simple changes that turn
-> io_uring cmd subsystem more flexible (by passing the whole SQE to the
-> command), and cleaning up an unnecessary compile check.
-> 
-> These patches were tested by creating a file system and mounting an NVME disk
-> using ubdsrv/ublkb0.
+This adds the napi busy polling support in io_uring.c. It adds a new
+napi_list to the io_ring_ctx structure. This list contains the list of
+napi_id's that are currently enabled for busy polling. This list is
+used to determine which napi id's enabled busy polling. For faster
+access it also adds a hash table.
 
-Looks mostly good to me, do agree with Christoph's comments on the two
-patches. Can you spin a v3? Would be annoying to miss 6.4 with this, as
-other things will be built on top of it.
+When a new napi id is added, the hash table is used to locate if
+the napi id has already been added. When processing the busy poll
+loop the list is used to process the individual elements.
 
--- 
-Jens Axboe
+io-uring allows specifying two parameters:
+- busy poll timeout and
+- prefer busy poll to call of io_napi_busy_loop()
+This sets the above parameters for the ring. The settings are passed
+with a new structure io_uring_napi.
+
+There is also a corresponding liburing patch series, which enables this
+feature. The name of the series is "liburing: add add api for napi busy
+poll timeout". It also contains two programs to test the this.
+
+Testing has shown that the round-trip times are reduced to 38us from
+55us by enabling napi busy polling with a busy poll timeout of 100us.
+More detailled results are part of the commit message of the first
+patch.
+
+Changes:
+- V11:
+  - Fixed long comment lines and whitespace issues
+  - Refactor new code io_cqring_wait()
+  - Refactor io_napi_adjust_timeout() and remove adjust_timeout
+  - Rename io_napi_adjust_timeout to __io_napi_adjust_timeout
+  - Add new function io_napi_adjust_timeout
+  - Cleanup calls to list_is_singular() in io_napi_multi_busy_loop()
+    and io_napi_blocking_busy_loop()
+  - Cleanup io_napi_busy_loop_should_end()
+  - Rename __io_napi_busy_loop to __io_napi_do_busy_loop()=20
+- V10:
+  - Refreshed to io-uring/for-6.4
+  - Repeated performance measurements for 6.4 (same/similar results)
+- V9:
+  - refreshed to io-uring/for-6.3
+  - folded patch 2 and 3 into patch 4
+  - fixed commit description for last 2 patches
+  - fixed some whitespace issues
+  - removed io_napi_busy_loop_on helper
+  - removed io_napi_setup_busy helper
+  - renamed io_napi_end_busy_loop to io_napi_busy_loop
+  - removed NAPI_LIST_HEAD macro
+  - split io_napi_blocking_busy_loop into two functions
+  - added io_napi function
+  - comment for sqpoll check
+- V8:
+  - added new file napi.c and add napi functions to this file
+  - added NAPI_LIST_HEAD function so no ifdef is necessary
+  - added io_napi_init and io_napi_free function
+  - added io_napi_setup_busy loop helper function
+  - added io_napi_adjust_busy_loop helper function
+  - added io_napi_end_busy_loop helper function
+  - added io_napi_sqpoll_busy_poll helper function
+  - some of the definitions in napi.h are macros to avoid ifdef
+    definitions in io_uring.c, poll.c and sqpoll.c
+  - changed signature of io_napi_add function
+  - changed size of hashtable to 16. The number of entries is limited
+    by the number of nic queues.
+  - Removed ternary in io_napi_blocking_busy_loop
+  - Rewrote io_napi_blocking_busy_loop to make it more readable
+  - Split off 3 more patches
+- V7:
+  - allow unregister with NULL value for arg parameter
+  - return -EOPNOTSUPP if CONFIG_NET_RX_BUSY_POLL is not enabled
+- V6:
+  - Add a hash table on top of the list for faster access during the
+    add operation. The linked list and the hash table use the same
+    data structure
+- V5:
+  - Refreshed to 6.1-rc6
+  - Use copy_from_user instead of memdup/kfree
+  - Removed the moving of napi_busy_poll_to
+  - Return -EINVAL if any of the reserved or padded fields are not 0.
+- V4:
+  - Pass structure for napi config, instead of individual parameters
+- V3:
+  - Refreshed to 6.1-rc5
+  - Added a new io-uring api for the prefer napi busy poll api and wire
+    it to io_napi_busy_loop().
+  - Removed the unregister (implemented as register)
+  - Added more performance results to the first commit message.
+- V2:
+  - Add missing defines if CONFIG_NET_RX_BUSY_POLL is not defined
+  - Changes signature of function io_napi_add_list to static inline
+    if CONFIG_NET_RX_BUSY_POLL is not defined
+  - define some functions as static
+
+
+
+Stefan Roesch (5):
+  io-uring: move io_wait_queue definition to header file
+  io-uring: add napi busy poll support
+  io-uring: add sqpoll support for napi busy poll
+  io_uring: add register/unregister napi function
+  io_uring: add prefer busy poll to register and unregister napi api
+
+ include/linux/io_uring_types.h |  11 ++
+ include/uapi/linux/io_uring.h  |  12 ++
+ io_uring/Makefile              |   1 +
+ io_uring/io_uring.c            |  38 ++--
+ io_uring/io_uring.h            |  26 +++
+ io_uring/napi.c                | 315 +++++++++++++++++++++++++++++++++
+ io_uring/napi.h                |  98 ++++++++++
+ io_uring/poll.c                |   2 +
+ io_uring/sqpoll.c              |   4 +
+ 9 files changed, 486 insertions(+), 21 deletions(-)
+ create mode 100644 io_uring/napi.c
+ create mode 100644 io_uring/napi.h
+
+
+base-commit: 3c85cc43c8e7855d202da184baf00c7b8eeacf71
+--=20
+2.39.1
 

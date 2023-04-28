@@ -2,68 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F846F0C13
-	for <lists+io-uring@lfdr.de>; Thu, 27 Apr 2023 20:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E186F0FE3
+	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 03:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244592AbjD0Sms (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Apr 2023 14:42:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55668 "EHLO
+        id S1344285AbjD1BJF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Apr 2023 21:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244295AbjD0Smr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Apr 2023 14:42:47 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E89082712
-        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 11:42:45 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id e9e14a558f8ab-32e74139877so2829945ab.0
-        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 11:42:45 -0700 (PDT)
+        with ESMTP id S229965AbjD1BJE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Apr 2023 21:09:04 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04997268E
+        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 18:09:03 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1a66e6160easo12564615ad.1
+        for <io-uring@vger.kernel.org>; Thu, 27 Apr 2023 18:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682620965; x=1685212965;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682644142; x=1685236142;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wJCwkrf5r8TPiK35wSY7bI8DqSRmPjjoER5hWO2H+6s=;
-        b=DqgVR8IPVWj9lvO/p2TNEArUnq1yO5NFejZlOVdhX+ao0Hqy5ABUMByGvNVIlS22Qo
-         osfHeZFyepnY9W3RHsCwySw+vxMjk1GEYx0zLFiwtyDQpDRGcWctechvNegEBmraH9Ck
-         OzpYztJeWCEODpkBl5IW7N65u50mUlf4W3Z+rEHNiT20oU/5I1RONWZeY4S1/e7WKLne
-         30vHvV5TdXcPgQCX43p+EgBQ338I8RgGr2QDlh6GbUcpRqaNNiwQNQZyJxu8xOjNhIdr
-         8oxE5Cfg4cyBzVDJFvzyGtsSDUGXZCMWBQyRnmYu4nOJAuDHYnodDRnEQW55f06luc1a
-         Tpyg==
+        bh=tyGALp/u2CSO1u+d88PyfpvACmbFLcynyU8qPGUMzUU=;
+        b=lU/7idJ521ibZpQiH6z16ClfGovDOGIcTcXZZs4mUK80BkgjHm47/mPqb7kcHHDNGC
+         8SIKYD8Bq1eAtQrShbt2++dQJdpDjCrMOvmXmJyb+TAcEJdCh41pYdq1EOa5oq/fo4cd
+         GLVkJ226KXNR79GrpLZ8bEvgsADmy4Cuuf5p/OsDivde+bMBTg8JZbU9Xfp/JCq+cZM3
+         lchkqdOXEeS+QOa+BXzMeEnw/YtL/amwpxoPMi3bVobfVVb9uIrxcPuM/u8hXn9yR/eK
+         2zqWJuMMKks8M0KPSkgVQ84tsWp7M2xmX2Ch958DeNSF33anchGCizc4AH9j5UG1nxra
+         iiog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682620965; x=1685212965;
+        d=1e100.net; s=20221208; t=1682644142; x=1685236142;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJCwkrf5r8TPiK35wSY7bI8DqSRmPjjoER5hWO2H+6s=;
-        b=l/gi4Jr6IlsgFAgh4rHWyMOnY5IekZWE1zfqOTvgtXt+fjFtZOC56MpCGTaLtzEFKt
-         X0kQtGdKAgrjN+Hu6gBDEysa8HcABbRApaNlgDfT59jJSy0APWz50lOrN/WMnt2lnHy3
-         045kXnvbIbcC/i87jVSoPrLjRqS4TfD+SCX5DlCD8xvOgzOeJoS32jKBcuiVrefWN6nU
-         4CmUTkfztCjNRSjypZ4dajYZkh7KyFfOXEk5CEv7DoXgEYA8IP3pRbH5uSBkW1HwcKSh
-         IT8WbRdcUOpQ6wZ9mEQ0bhtvL/+PTdgPomHAb8/UXWyYsfJE95akDSuojiK01KC76r8O
-         np9g==
-X-Gm-Message-State: AC+VfDyYVWCYFSjRPk4BCVilrT3AjlkxtMjiy/PegFv7X7CmbPZp/FeH
-        Nwe9cIo7+hPnehXXUA/8OgEDvA==
-X-Google-Smtp-Source: ACHHUZ4zxeGfPnfv3QOVzrw6mbz3lM/UzfZPvCqhkbRxPCApcS6H+1aigffvASwmtKWo6oK/CxpXsw==
-X-Received: by 2002:a05:6e02:972:b0:32a:eacb:c5d4 with SMTP id q18-20020a056e02097200b0032aeacbc5d4mr1256068ilt.0.1682620965246;
-        Thu, 27 Apr 2023 11:42:45 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id cl5-20020a0566383d0500b0040bb600eb81sm5766664jab.149.2023.04.27.11.42.44
+        bh=tyGALp/u2CSO1u+d88PyfpvACmbFLcynyU8qPGUMzUU=;
+        b=TbNkSRpEl6BHWcQfJ4feuTfhxkCuw74YEmzeqYCh489GdUiqq7z5od7HQ40ya1XFeM
+         mgig89F9GMGZ0cK0fs76usN8n6Dy0KIvXtsS7lmzq95lSIkhaiN9Rl+J4uwbnwtoktOL
+         U6nLtYAudohTwISprVBjj+ey+ucRLDsGAnsQ8iWkjjU+IRW1rwsHR5FMVlnYq9E8IL+Q
+         UhAbNsUoJ6Q7Jvx+iBWDAn4M/pZRZTCyJnqpBLoZufo5zqB1LJUSJGsX94x/UIMuvspD
+         P2sHGZ15sQFjncbNKSY84eY8BDrLUMHqKIVbxthR88oZDXi7rkYdtcykXLg9qWO92g80
+         wf0A==
+X-Gm-Message-State: AC+VfDzmuKaGaXIApA5d3eAbkKmiECCMl3rJ5iDozxoqsdNeqix9dNGl
+        sqqo/1Jz0UmfLTCAIqumWZ9qdwbH6Q1kWid8cLQ=
+X-Google-Smtp-Source: ACHHUZ4NBv2PibcpkVnJp6h7NCrgVlK6QGaZzYFRwDjGhVU9TjCHOJlYfLfqTcujFYxeVZ6RcI9ntQ==
+X-Received: by 2002:a17:902:ce89:b0:1a4:f4e6:b68 with SMTP id f9-20020a170902ce8900b001a4f4e60b68mr4191616plg.3.1682644142448;
+        Thu, 27 Apr 2023 18:09:02 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id m8-20020a170902768800b001a80ad9c599sm12123301pll.294.2023.04.27.18.09.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 11:42:44 -0700 (PDT)
-Message-ID: <03b13c8f-0f4c-0692-b2f0-e90d7877e327@kernel.dk>
-Date:   Thu, 27 Apr 2023 12:42:43 -0600
+        Thu, 27 Apr 2023 18:09:01 -0700 (PDT)
+Message-ID: <80e208ba-be78-f3d0-9fa9-f3e9ec214e4f@kernel.dk>
+Date:   Thu, 27 Apr 2023 19:09:00 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH] io_uring/kbuf: Fix size for shared buffer ring
+Subject: Re: [PATCH v10 2/5] io-uring: add napi busy poll support
 Content-Language: en-US
-To:     Tudor Cretu <tudor.cretu@arm.com>, io-uring@vger.kernel.org
-Cc:     =axboe@kernel.dk, asml.silence@gmail.com, kevin.brodsky@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20230427143142.3013020-1-tudor.cretu@arm.com>
+To:     Stefan Roesch <shr@devkernel.io>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com,
+        ammarfaizi2@gnuweeb.org, Olivier Langlois <olivier@trillion01.com>,
+        Jakub Kicinski <kuba@kernel.org>
+References: <20230425181845.2813854-1-shr@devkernel.io>
+ <20230425181845.2813854-3-shr@devkernel.io>
+ <ddb2704e-f3a2-c430-0e76-2642580ad1b5@kernel.dk>
+ <qvqw354lb5bl.fsf@devbig1114.prn1.facebook.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230427143142.3013020-1-tudor.cretu@arm.com>
+In-Reply-To: <qvqw354lb5bl.fsf@devbig1114.prn1.facebook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -73,43 +77,22 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/27/23 8:31 AM, Tudor Cretu wrote:
-> The size of the ring is the product of ring_entries and the size of
-> struct io_uring_buf. Using struct_size is equivalent to
->   (ring_entries + 1) * sizeof(struct io_uring_buf)
-> and generates an off-by-one error. Fix it by using size_mul directly.
+On 4/27/23 10:27?AM, Stefan Roesch wrote:
+>>> +	if (timespec64_compare(ts, &pollto) > 0) {
+>>> +		*ts = timespec64_sub(*ts, pollto);
+>>> +		*new_poll_to = poll_to;
+>>> +	} else {
+>>> +		u64 to = timespec64_to_ns(ts);
+>>> +
+>>> +		do_div(to, 1000);
+>>
+>> Is this going to complain on 32-bit?
+>>
 > 
-> Signed-off-by: Tudor Cretu <tudor.cretu@arm.com>
-> ---
->  io_uring/kbuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 4a6401080c1f..9770757c89a0 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -505,7 +505,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
->  	}
->  
->  	pages = io_pin_pages(reg.ring_addr,
-> -			     struct_size(br, bufs, reg.ring_entries),
-> +			     size_mul(sizeof(struct io_uring_buf), reg.ring_entries),
->  			     &nr_pages);
->  	if (IS_ERR(pages)) {
->  		kfree(free_bl);
+> My understanding is this should work on 32-bit.
 
-Looking into this again, and some bells ringing in the back of my head,
-we do have:
-
-commit 48ba08374e779421ca34bd14b4834aae19fc3e6a
-Author: Wojciech Lukowicz <wlukowicz01@gmail.com>
-Date:   Sat Feb 18 18:41:41 2023 +0000
-
-    io_uring: fix size calculation when registering buf ring
-
-which should have fixed that issue. What kernel version are you looking at?
+Yeah seems fine, I ended up double checking it too.
 
 -- 
 Jens Axboe
-
 

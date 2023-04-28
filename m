@@ -2,18 +2,18 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 915486F1DD7
-	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 20:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F3C6F1DDD
+	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 20:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346048AbjD1SNM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Apr 2023 14:13:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46358 "EHLO
+        id S229697AbjD1SP1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Apr 2023 14:15:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346106AbjD1SNL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 14:13:11 -0400
-Received: from 66-220-144-179.mail-mxout.facebook.com (66-220-144-179.mail-mxout.facebook.com [66.220.144.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E214ECD
-        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 11:13:10 -0700 (PDT)
+        with ESMTP id S229614AbjD1SP0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 14:15:26 -0400
+Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF654EFE
+        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 11:15:25 -0700 (PDT)
 Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
         id C855947FCF49; Fri, 28 Apr 2023 11:12:54 -0700 (PDT)
 From:   Stefan Roesch <shr@devkernel.io>

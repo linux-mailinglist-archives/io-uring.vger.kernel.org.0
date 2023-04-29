@@ -2,417 +2,236 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8DD6F2402
-	for <lists+io-uring@lfdr.de>; Sat, 29 Apr 2023 11:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E10536F256B
+	for <lists+io-uring@lfdr.de>; Sat, 29 Apr 2023 19:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231130AbjD2JnV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Apr 2023 05:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
+        id S229441AbjD2RRQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 29 Apr 2023 13:17:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231126AbjD2JnT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Apr 2023 05:43:19 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A06213C
-        for <io-uring@vger.kernel.org>; Sat, 29 Apr 2023 02:43:06 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230429094304epoutp04c18878018024ee925cfc4ca07d65a2c6~aXpBLpvQE0828308283epoutp04u
-        for <io-uring@vger.kernel.org>; Sat, 29 Apr 2023 09:43:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230429094304epoutp04c18878018024ee925cfc4ca07d65a2c6~aXpBLpvQE0828308283epoutp04u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1682761384;
-        bh=d3noo7PR5uc2q/xqQsl9I4ZjiH2gFhIOu9fepDFlxqI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dkH0+yGiDtaZmPDeXGOk9vErTxtNuuTRLA/3adNvrX1pwAAr+fhme4BQEMpEvwFu0
-         xToDq/bKFePIkshLbPL5TzlPuD9MSGlN4M4aKyYky8nRPVQyTzKl8ujujWlYYI42EE
-         AMGgrA/Ax1Px75K0tadVfNIdhrE7o/Snhx9EO/lM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20230429094303epcas5p2381f3f7bb217f5befbe78921fac9b3df~aXpAMKyhw2905329053epcas5p2N;
-        Sat, 29 Apr 2023 09:43:03 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Q7kzp23nFz4x9Pt; Sat, 29 Apr
-        2023 09:43:02 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        77.60.55646.6A6EC446; Sat, 29 Apr 2023 18:43:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230429094301epcas5p48cf45da2f83d9ca8140ee777c7446d11~aXo_k5l0I1668816688epcas5p4_;
-        Sat, 29 Apr 2023 09:43:01 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230429094301epsmtrp2cf3e99dba583ba2eff31e2746ba61602~aXo_j9YsY3077530775epsmtrp2g;
-        Sat, 29 Apr 2023 09:43:01 +0000 (GMT)
-X-AuditID: b6c32a4b-b71fa7000001d95e-03-644ce6a66daa
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B7.29.28392.5A6EC446; Sat, 29 Apr 2023 18:43:01 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.99.41.245]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230429094259epsmtip2b406d2d3e0d312d53ec8b113ae791d71~aXo8eZn4W0575905759epsmtip2V;
-        Sat, 29 Apr 2023 09:42:59 +0000 (GMT)
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org
+        with ESMTP id S229517AbjD2RRP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Apr 2023 13:17:15 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 277621B3
+        for <io-uring@vger.kernel.org>; Sat, 29 Apr 2023 10:17:14 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-63b781c9787so340535b3a.1
+        for <io-uring@vger.kernel.org>; Sat, 29 Apr 2023 10:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682788633; x=1685380633;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3wh2tecoG/SOIbjAoMjLEYWI38jcVC09Ourwewcg6so=;
+        b=YpoXu+moBQbpcnqsk6XGOoIw5aS5BkwpHweeXrkcSiB+L9dHUaG+yr6JLYxsT4Spwh
+         LUtuHC0D5pH1zsn3TBfLqNqKw5bAJWmJUyruC955+vY7ww/c8GeB7IWaKxuX2AbIrga+
+         fRlujMOmTKssnyRCIQIIDHgPl85N1EVkcc1ro+UeHbt21vVnJc3OmtGFSw6LeA2JkhNM
+         rdWzI2qm05ChrujER28FUKGDGwQ2R7S2evkOax+ZFlgkztSKhc+ygp1oFJnoOPu9x0Uz
+         Ka5sAL8ZaII0VDNJdYaLTI8osss5OAp6PGbXjkk2qCChA1XDXO2kg9eXZqzbVuDdontG
+         qeCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682788633; x=1685380633;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wh2tecoG/SOIbjAoMjLEYWI38jcVC09Ourwewcg6so=;
+        b=iYGYv8+kvBsuYjo5M/oEIu3qs+MMZMx5Rc4UlKnKNv8yrt9YZgTqXpY093fou9u1vK
+         3UnrcAMgfw4rSqn+XF+jL086+Y5+V7V078DdOpO1RTicSlh/7Pm6jJzNUXwxXwNHsJnC
+         xv2tOkAxe07A+Hx0CB9UW2Kp605DzwUGGB8RmP88XDwm9uVCmiHZ43pAGVedcMncC8FB
+         Sh68Y84QmWctC9EhoeOAejYOXyH2LzUE+5GWglcUfotXr944xU1/xy9DwH7Axp8aQP/E
+         3hIOzEtF3UJ112YAq6pKZWaqL3t3YXPHTlV4sJd110wW1XKNvsL4CTaINRC6zN3ydlqp
+         nLCA==
+X-Gm-Message-State: AC+VfDxrP/h6/Qt4asi3+JvRLnvpJDzYL/QVOAucmJcUbIBUg7wUYv6n
+        G9ejW4zYDg7xqsS2P8qw6UQGDA==
+X-Google-Smtp-Source: ACHHUZ6Oe9piteGShm01mlinvU7oEyq/rqc3PozEXDwTdw7U3tqcXri396GJLN9wlpv3LLd6BwAOyw==
+X-Received: by 2002:a05:6a20:8e19:b0:f6:9492:93b8 with SMTP id y25-20020a056a208e1900b000f6949293b8mr9795411pzj.3.1682788633495;
+        Sat, 29 Apr 2023 10:17:13 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y22-20020a17090abd1600b00246b7b8b43asm3268939pjr.49.2023.04.29.10.17.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Apr 2023 10:17:12 -0700 (PDT)
+Message-ID: <d7e9e68d-64b2-ab30-3c93-13dbeda27bce@kernel.dk>
+Date:   Sat, 29 Apr 2023 11:17:11 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [RFC PATCH 00/12] io_uring attached nvme queue
+Content-Language: en-US
+To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de, sagi@grimberg.me,
+        kbusch@kernel.org
 Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, gost.dev@samsung.com,
-        anuj1072538@gmail.com, xiaoguang.wang@linux.alibaba.com,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>
-Subject: [RFC PATCH 12/12] pci: implement submission/completion for rawq
- commands
-Date:   Sat, 29 Apr 2023 15:09:25 +0530
-Message-Id: <20230429093925.133327-13-joshi.k@samsung.com>
-X-Mailer: git-send-email 2.25.1
+        anuj1072538@gmail.com, xiaoguang.wang@linux.alibaba.com
+References: <CGME20230429094228epcas5p4a80d8ed77433989fa804ecf449f83b0b@epcas5p4.samsung.com>
+ <20230429093925.133327-1-joshi.k@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
 In-Reply-To: <20230429093925.133327-1-joshi.k@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmlu6yZz4pBo+X8Fp8/PqbxaJpwl9m
-        i9V3+9ksbh7YyWSxcvVRJot3redYLI7+f8tmMenQNUaLvbe0LeYve8puse71exaLTX9PMjnw
-        eOycdZfd4/y9jSwel8+Wemxa1cnmsfOhpcfmJfUeu282sHn0bVnF6PF5k1wAZ1S2TUZqYkpq
-        kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
-        YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IzWj8+YCy64
-        V5zbcZKpgfGCVRcjJ4eEgInEn5/rGLsYuTiEBHYzSlzqW88E4XxilDjRfokZwvnMKHG86zET
-        TMuRLZ9ZIRK7GCUO7DrMAlc1ddMGoGEcHGwCmhIXJpeCNIgIuEg0rZ3KBlLDLPCNUWLR63es
-        IDXCAsES7XeiQGpYBFQldky/zA5i8wpYSXxbNJkVYpm8xMxL38HinEDx7zN2M0PUCEqcnPmE
-        BcRmBqpp3job7FIJgaUcEq+7pkA1u0i8+3yfGcIWlnh1fAs7hC0l8fndXjYIO1ni0sxzUJ+V
-        SDzecxDKtpdoPdXPDHInM9Av63fpQ+zik+j9/YQJJCwhwCvR0SYEUa0ocW/SU6it4hIPZyyB
-        sj0k+vcuBjtTSKCXUeLRl9wJjPKzkHwwC8kHsxCWLWBkXsUomVpQnJueWmxaYJyXWg6P1+T8
-        3E2M4FSr5b2D8dGDD3qHGJk4GA8xSnAwK4nw8la6pwjxpiRWVqUW5ccXleakFh9iNAUG8URm
-        KdHkfGCyzyuJNzSxNDAxMzMzsTQ2M1QS51W3PZksJJCeWJKanZpakFoE08fEwSnVwOSZm/3g
-        xdFbJZrMokKd0hO8Ngj+FPyw2WbDjsv1/1L7k+xdhKYdvX7mzFrlwkl/Liuf3ahSutH9cO89
-        vjdit7+kXVOr4ZxX1roo+3nX58YN61wcXS9P36J91niLrlPyRZ33z328txxaoPkgLcNzi2BX
-        ELP68UbWW3I3ZC9rzFs00bJsj6LijlyNFTZ/iwVYdl/1bslrOPH9qAPThXcP1jm2cK5eMPng
-        B2Gh14py+8IaTtcYvU3LMfl67HiP77u1No3zF3y0DPN4l/H/b2LLOabvpcaKB5YGmc9Yksp8
-        cN2ymFVRATlGhfMWXknXZzrjOSHvhxXj8d7Vh2Sle2TvPxblmLglUK2dXTRl2jZuzUIlluKM
-        REMt5qLiRAB2hJK0PgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsWy7bCSvO7SZz4pBttnaVh8/PqbxaJpwl9m
-        i9V3+9ksbh7YyWSxcvVRJot3redYLI7+f8tmMenQNUaLvbe0LeYve8puse71exaLTX9PMjnw
-        eOycdZfd4/y9jSwel8+Wemxa1cnmsfOhpcfmJfUeu282sHn0bVnF6PF5k1wAZxSXTUpqTmZZ
-        apG+XQJXRuvHZ8wFF9wrzu04ydTAeMGqi5GTQ0LAROLIls+sILaQwA5GicuzSiDi4hLN136w
-        Q9jCEiv/PQeyuYBqPjJKnO/sYe5i5OBgE9CUuDC5FKRGRMBLov3tLDaQGmaBf4wSD963sYEk
-        hAUCJTq3rWEBsVkEVCV2TL8MNpRXwEri26LJrBAL5CVmXvoOFucEin+fsRtsvpCApUTjgniI
-        ckGJkzOfgI1hBipv3jqbeQKjwCwkqVlIUgsYmVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl
-        5+duYgRHiZbWDsY9qz7oHWJk4mA8xCjBwawkwstb6Z4ixJuSWFmVWpQfX1Sak1p8iFGag0VJ
-        nPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA5P14kcvMw23CDEmxEfYfjZa9m3fvM4Fx/4LsT/t
-        KrJJkPuzIOji6/0folzrbteYltiU/btml+B2r5/L8YS57P+E681zg7rEGrenXjkqeFlnocer
-        iibV80VZBzVOPirRklxcqVT5UXJmOPdLieV8BdY3udrz/C85FiqVPzXo+PhgzeSyzMDDMxM6
-        wlpyJ+cqqHuVe3VLr+MskjV4+/akZoBdNVfj6Ucb9SM+3bicwNqbMZv5lsKb21symoMvL/JN
-        8t39+73fk8NFeREH3Ofervn38r+DT9GrniViLyce1Jz8bvb7sJ+iOxdNlToQb2zrPaXrzuvp
-        4TN0912TlHgf8WB27vUfqz60ultt/mv/ebUSS3FGoqEWc1FxIgC7JmW2AQMAAA==
-X-CMS-MailID: 20230429094301epcas5p48cf45da2f83d9ca8140ee777c7446d11
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230429094301epcas5p48cf45da2f83d9ca8140ee777c7446d11
-References: <20230429093925.133327-1-joshi.k@samsung.com>
-        <CGME20230429094301epcas5p48cf45da2f83d9ca8140ee777c7446d11@epcas5p4.samsung.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Implement ->queue_uring_cmd and ->poll_uring_cmd for leaner submission
-and completion. Both operate on "struct io_uring_cmd" directly, without
-having to take hoops involving request and bio.
+On 4/29/23 3:39?AM, Kanchan Joshi wrote:
+> This series shows one way to do what the title says.
+> This puts up a more direct/lean path that enables
+>  - submission from io_uring SQE to NVMe SQE
+>  - completion from NVMe CQE to io_uring CQE
+> Essentially cutting the hoops (involving request/bio) for nvme io path.
+> 
+> Also, io_uring ring is not to be shared among application threads.
+> Application is responsible for building the sharing (if it feels the
+> need). This means ring-associated exclusive queue can do away with some
+> synchronization costs that occur for shared queue.
+> 
+> Primary objective is to amp up of efficiency of kernel io path further
+> (towards PCIe gen N, N+1 hardware).
+> And we are seeing some asks too [1].
+> 
+> Building-blocks
+> ===============
+> At high level, series can be divided into following parts -
+> 
+> 1. nvme driver starts exposing some queue-pairs (SQ+CQ) that can
+> be attached to other in-kernel user (not just to block-layer, which is
+> the case at the moment) on demand.
+> 
+> Example:
+> insmod nvme.ko poll_queus=1 raw_queues=2
+> 
+> nvme0: 24/0/1/2 default/read/poll queues/raw queues
+> 
+> While driver registers other queues with block-layer, raw-queues are
+> rather reserved for exclusive attachment with other in-kernel users.
+> At this point, each raw-queue is interrupt-disabled (similar to
+> poll_queues). Maybe we need a better name for these (e.g. app/user queues).
+> [Refer: patch 2]
+> 
+> 2. register/unregister queue interface
+> (a) one for io_uring application to ask for device-queue and register
+> with the ring. [Refer: patch 4]
+> (b) another at nvme so that other in-kernel users (io_uring for now) can
+> ask for a raw-queue. [Refer: patch 3, 5, 6]
+> 
+> The latter returns a qid, that io_uring stores internally (not exposed
+> to user-space) in the ring ctx. At max one queue per ring is enabled.
+> Ring has no other special properties except the fact that it stores a
+> qid that it can use exclusively. So application can very well use the
+> ring to do other things than nvme io.
+> 
+> 3. user-interface to send commands down this way
+> (a) uring-cmd is extended to support a new flag "IORING_URING_CMD_DIRECT"
+> that application passes in the SQE. That is all.
+> (b) the flag goes down to provider of ->uring_cmd which may choose to do
+>   things differently based on it (or ignore it).
+> [Refer: patch 7]
+> 
+> 4. nvme uring-cmd understands the above flag. It submits the command
+> into the known pre-registered queue, and completes (polled-completion)
+> from it. Transformation from "struct io_uring_cmd" to "nvme command" is
+> done directly without building other intermediate constructs.
+> [Refer: patch 8, 10, 12]
+> 
+> Testing and Performance
+> =======================
+> fio and t/io_uring is modified to exercise this path.
+> - fio: new "registerqueues" option
+> - t/io_uring: new "k" option
+> 
+> Good part:
+> 2.96M -> 5.02M
+> 
+> nvme io (without this):
+> # t/io_uring -b512 -d64 -c2 -s2 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k0 /dev/ng0n1
+> submitter=0, tid=2922, file=/dev/ng0n1, node=-1
+> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=0 QD=64
+> Engine=io_uring, sq_ring=64, cq_ring=64
+> IOPS=2.89M, BW=1412MiB/s, IOS/call=2/1
+> IOPS=2.92M, BW=1426MiB/s, IOS/call=2/2
+> IOPS=2.96M, BW=1444MiB/s, IOS/call=2/1
+> Exiting on timeout
+> Maximum IOPS=2.96M
+> 
+> nvme io (with this):
+> # t/io_uring -b512 -d64 -c2 -s2 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng0n1
+> submitter=0, tid=2927, file=/dev/ng0n1, node=-1
+> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=1 QD=64
+> Engine=io_uring, sq_ring=64, cq_ring=64
+> IOPS=4.99M, BW=2.43GiB/s, IOS/call=2/1
+> IOPS=5.02M, BW=2.45GiB/s, IOS/call=2/1
+> IOPS=5.02M, BW=2.45GiB/s, IOS/call=2/1
+> Exiting on timeout
+> Maximum IOPS=5.02M
+> 
+> Not so good part:
+> While single IO is fast this way, we do not have batching abilities for
+> multi-io scenario. Plugging, submission and completion batching are tied to
+> block-layer constructs. Things should look better if we could do something
+> about that.
+> Particularly something is off with the completion-batching.
+> 
+> With -s32 and -c32, the numbers decline:
+> 
+> # t/io_uring -b512 -d64 -c32 -s32 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng0n1
+> submitter=0, tid=3674, file=/dev/ng0n1, node=-1
+> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=1 QD=64
+> Engine=io_uring, sq_ring=64, cq_ring=64
+> IOPS=3.70M, BW=1806MiB/s, IOS/call=32/31
+> IOPS=3.71M, BW=1812MiB/s, IOS/call=32/31
+> IOPS=3.71M, BW=1812MiB/s, IOS/call=32/32
+> Exiting on timeout
+> Maximum IOPS=3.71M
+> 
+> And perf gets restored if we go back to -c2
+> 
+> # t/io_uring -b512 -d64 -c2 -s32 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng0n1
+> submitter=0, tid=3677, file=/dev/ng0n1, node=-1
+> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=1 QD=64
+> Engine=io_uring, sq_ring=64, cq_ring=64
+> IOPS=4.99M, BW=2.44GiB/s, IOS/call=5/5
+> IOPS=5.02M, BW=2.45GiB/s, IOS/call=5/5
+> IOPS=5.02M, BW=2.45GiB/s, IOS/call=5/5
+> Exiting on timeout
+> Maximum IOPS=5.02M
+> 
+> Source
+> ======
+> Kernel: https://github.com/OpenMPDK/linux/tree/feat/directq-v1
+> fio: https://github.com/OpenMPDK/fio/commits/feat/rawq-v2
+> 
+> Please take a look.
 
-This is currently enabled for small (single segement length), premapped
-(fixedbufs) IOs.
+This looks like a great starting point! Unfortunately I won't be at
+LSFMM this year to discuss it in person, but I'll be taking a closer
+look at this. Some quick initial reactions:
 
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
----
- drivers/nvme/host/pci.c | 194 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 192 insertions(+), 2 deletions(-)
+- I'd call them "user" queues rather than raw or whatever, I think that
+  more accurately describes what they are for.
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 30d7a1a6eaab..ca0580c4e977 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -28,6 +28,8 @@
- #include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/sed-opal.h>
- #include <linux/pci-p2pdma.h>
-+#include <linux/nvme_ioctl.h>
-+#include <linux/io_uring.h>
+- I guess there's no way around needing to pre-allocate these user
+  queues, just like we do for polled_queues right now? In terms of user
+  API, it'd be nicer if you could just do IORING_REGISTER_QUEUE (insert
+  right name here...) and it'd allocate and return you an ID.
+
+- Need to take a look at the uring_cmd stuff again, but would be nice if
+  we did not have to add more stuff to fops for this. Maybe we can set
+  aside a range of "ioctl" type commands through uring_cmd for this
+  instead, and go that way for registering/unregistering queues.
+
+We do have some users that are CPU constrained, and while my testing
+easily maxes out a gen2 optane (actually 2 or 3) with the generic IO
+path, that's also with all the fat that adds overhead removed. Most
+people don't have this luxury, necessarily, or actually need some of
+this fat for their monitoring, for example. This would provide a nice
+way to have pretty consistent and efficient performance across distro
+type configs, which would be great, while still retaining the fattier
+bits for "normal" IO.
  
- #include "trace.h"
- #include "nvme.h"
-@@ -210,6 +212,7 @@ struct nvme_queue {
- 	unsigned long *cmdid_bmp;
- 	spinlock_t cmdid_lock;
- 	struct nvme_iod *iod;
-+	u8	reg_id;
- 	 /* only used for poll queues: */
- 	spinlock_t cq_poll_lock ____cacheline_aligned_in_smp;
- 	struct nvme_completion *cqes;
-@@ -249,7 +252,11 @@ union nvme_descriptor {
-  * to the actual struct scatterlist.
-  */
- struct nvme_iod {
--	struct nvme_request req;
-+	union {
-+		struct nvme_request req;
-+		/* for raw-queue */
-+		struct io_uring_cmd *ioucmd;
-+	};
- 	struct nvme_command cmd;
- 	bool aborted;
- 	s8 nr_allocations;	/* PRP list pool allocations. 0 means small
-@@ -1025,6 +1032,13 @@ static inline void nvme_ring_cq_doorbell(struct nvme_queue *nvmeq)
- 		writel(head, nvmeq->q_db + nvmeq->dev->db_stride);
- }
- 
-+static void nvme_pci_put_cmdid(struct nvme_queue *nvmeq, int id)
-+{
-+	spin_lock(&nvmeq->cmdid_lock);
-+	clear_bit(id, nvmeq->cmdid_bmp);
-+	spin_unlock(&nvmeq->cmdid_lock);
-+}
-+
- static inline struct blk_mq_tags *nvme_queue_tagset(struct nvme_queue *nvmeq)
- {
- 	if (!nvmeq->qid)
-@@ -1032,6 +1046,37 @@ static inline struct blk_mq_tags *nvme_queue_tagset(struct nvme_queue *nvmeq)
- 	return nvmeq->dev->tagset.tags[nvmeq->qid - 1];
- }
- 
-+static inline struct nvme_uring_direct_pdu *nvme_uring_cmd_direct_pdu(
-+		struct io_uring_cmd *ioucmd)
-+{
-+	return (struct nvme_uring_direct_pdu *)&ioucmd->pdu;
-+}
-+
-+static inline void nvme_handle_cqe_rawq(struct nvme_queue *nvmeq,
-+					struct nvme_completion *cqe,
-+					__u16 command_id)
-+{
-+	struct nvme_dev *dev = nvmeq->dev;
-+	u32 status = le16_to_cpu(cqe->status) >> 1;
-+	u64 result = cqe->result.u64;
-+	struct nvme_iod *iod;
-+	int id, reg_id;
-+
-+	reg_id = nvme_genctr_from_cid(command_id);
-+	/* we should not encounter completions from past registration*/
-+	WARN_ON_ONCE(nvmeq->reg_id != reg_id);
-+
-+	id = nvme_tag_from_cid(command_id);
-+	iod = &nvmeq->iod[id];
-+
-+	if (iod->dma_len)
-+		dma_unmap_page(dev->dev, iod->first_dma, iod->dma_len,
-+		nvme_is_write(&iod->cmd) ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
-+
-+	nvme_pci_put_cmdid(nvmeq, id);
-+	io_uring_cmd_done(iod->ioucmd, status, result, IO_URING_F_UNLOCKED);
-+}
-+
- static inline void nvme_handle_cqe(struct nvme_queue *nvmeq,
- 				   struct io_comp_batch *iob, u16 idx)
- {
-@@ -1039,6 +1084,9 @@ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq,
- 	__u16 command_id = READ_ONCE(cqe->command_id);
- 	struct request *req;
- 
-+	if (test_bit(NVMEQ_RAW, &nvmeq->flags))
-+		return nvme_handle_cqe_rawq(nvmeq, cqe, command_id);
-+
- 	/*
- 	 * AEN requests are special as they don't time out and can
- 	 * survive any kind of queue freeze and often don't respond to
-@@ -1151,6 +1199,25 @@ static int nvme_poll(struct blk_mq_hw_ctx *hctx, struct io_comp_batch *iob)
- 	return found;
- }
- 
-+static int nvme_poll_uring_cmd(struct io_uring_cmd *ioucmd, int qid,
-+			       struct io_comp_batch *iob)
-+
-+{
-+	struct nvme_uring_direct_pdu *pdu = nvme_uring_cmd_direct_pdu(ioucmd);
-+	struct nvme_dev *dev = to_nvme_dev(pdu->ns->ctrl);
-+	struct nvme_queue *nvmeq = &dev->queues[qid];
-+	bool found;
-+
-+	if (!nvme_cqe_pending(nvmeq))
-+		return 0;
-+
-+	spin_lock(&nvmeq->cq_poll_lock);
-+	found = nvme_poll_cq(nvmeq, iob);
-+	spin_unlock(&nvmeq->cq_poll_lock);
-+
-+	return found;
-+}
-+
- static void nvme_pci_submit_async_event(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_dev *dev = to_nvme_dev(ctrl);
-@@ -1762,6 +1829,22 @@ static int nvme_pci_alloc_cmdid_bmp(struct nvme_queue *nvmeq)
- 	return 0;
- }
- 
-+static int nvme_pci_get_cmdid(struct nvme_queue *nvmeq)
-+{
-+	int id = 0, size = nvmeq->q_depth - 1;
-+
-+	spin_lock(&nvmeq->cmdid_lock);
-+	id = find_first_zero_bit(nvmeq->cmdid_bmp, size);
-+	if (id >= size) {
-+		id = -EBUSY;
-+		goto unlock;
-+	}
-+	set_bit(id, nvmeq->cmdid_bmp);
-+unlock:
-+	spin_unlock(&nvmeq->cmdid_lock);
-+	return id;
-+}
-+
- static int nvme_pci_alloc_iod_array(struct nvme_queue *nvmeq)
- {
- 	if (!test_bit(NVMEQ_RAW, &nvmeq->flags))
-@@ -1793,13 +1876,17 @@ static int nvme_pci_register_queue(void *data)
- 	struct nvme_ns *ns = (struct nvme_ns *) data;
- 	struct nvme_dev *dev = to_nvme_dev(ns->ctrl);
- 	int qid, ret;
-+	struct nvme_queue *nvmeq;
- 
- 	qid = nvme_pci_get_rawq(dev);
- 	if (qid > 0) {
- 		/* setup command-id bitmap and iod array */
--		ret = nvme_pci_setup_rawq(&dev->queues[qid]);
-+		nvmeq = &dev->queues[qid];
-+		ret = nvme_pci_setup_rawq(nvmeq);
- 		if (ret < 0)
- 			qid = ret;
-+		else
-+			nvmeq->reg_id++;
- 	}
- 	return qid;
- }
-@@ -1812,6 +1899,107 @@ static int nvme_pci_unregister_queue(void *data, int qid)
- 	return nvme_pci_put_rawq(dev, qid);
- }
- 
-+static int nvme_map_io_fb(struct request_queue *q, struct io_uring_cmd *ioucmd,
-+			struct nvme_dev *dev, struct nvme_iod *iod,
-+			unsigned long addr, unsigned int buf_len)
-+{
-+	struct nvme_command *cmnd = &iod->cmd;
-+	int ret, rw = nvme_is_write(cmnd);
-+	struct iov_iter iter;
-+	size_t nr_iter, nr_segs;
-+	struct bio_vec *bv;
-+
-+	if (!(ioucmd->flags & IORING_URING_CMD_FIXED))
-+		return -EINVAL;
-+
-+	ret = io_uring_cmd_import_fixed(addr, buf_len, rw, &iter, ioucmd);
-+	if (ret < 0)
-+		return ret;
-+	nr_iter = iov_iter_count(&iter);
-+	nr_segs = iter.nr_segs;
-+
-+	/* device will do these checks anyway, so why do duplicate work? */
-+	if (!nr_iter || (nr_iter >> SECTOR_SHIFT) > queue_max_hw_sectors(q))
-+		goto err;
-+	if (nr_segs > queue_max_segments(q))
-+		goto err;
-+	/* this will be attempted from regular path instead */
-+	if (nr_segs > 1)
-+		goto err;
-+
-+	bv = (struct bio_vec *)&iter.bvec[0];
-+	if (bv->bv_offset + bv->bv_len <= NVME_CTRL_PAGE_SIZE * 2)
-+		return nvme_setup_prp_simple(dev, iod,
-+				(struct nvme_rw_command *)cmnd,
-+				bv, rw ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
-+err:
-+	return -EINVAL;
-+}
-+
-+static int nvme_alloc_cmd_from_q(struct nvme_queue *nvmeq, int *cmdid,
-+				struct nvme_iod **iod)
-+{
-+	int id;
-+
-+	id = nvme_pci_get_cmdid(nvmeq);
-+	if (id < 0)
-+		return id;
-+	*cmdid = id | nvme_cid_install_genctr(nvmeq->reg_id);
-+	*iod = &nvmeq->iod[id];
-+	return 0;
-+}
-+
-+static int nvme_pci_queue_ucmd(struct io_uring_cmd *ioucmd, int qid)
-+{
-+	struct nvme_uring_direct_pdu *pdu = nvme_uring_cmd_direct_pdu(ioucmd);
-+	struct nvme_ns *ns = pdu->ns;
-+	struct nvme_ctrl *ctrl = ns->ctrl;
-+	struct nvme_dev *dev = to_nvme_dev(ctrl);
-+	struct nvme_command *nvme_cmd;
-+	struct nvme_uring_data d;
-+	int ret, cmdid;
-+	struct nvme_iod *iod;
-+	struct nvme_queue *nvmeq = &dev->queues[qid];
-+
-+	ret = nvme_alloc_cmd_from_q(nvmeq, &cmdid, &iod);
-+	if (ret)
-+		return ret;
-+
-+	iod->ioucmd = ioucmd;
-+	nvme_cmd = &iod->cmd;
-+	ret = nvme_prep_cmd_from_ioucmd(ctrl, ns, ioucmd, nvme_cmd, &d);
-+	if (ret)
-+		goto out;
-+
-+	nvme_cmd->common.command_id = cmdid;
-+	iod->aborted = false;
-+	iod->nr_allocations = -1;
-+	iod->sgt.nents = 0;
-+	ret = nvme_map_io_fb(ns->queue, ioucmd, dev, iod, d.addr, d.data_len);
-+	if  (ret)
-+		goto out;
-+
-+	/*
-+	 * since this nvmeq is exclusive to single submitter (io_uring
-+	 * follows one-thread-per-ring model), we do not need the lock
-+	 * ideally. But we have lifetime difference between io_uring
-+	 * and nvme sqe. io_uring SQE can be reused just after submission
-+	 * but for nvme we have to wait until completion.
-+	 * So if we run out of space, submission will be deferred to
-+	 * io_uring worker. So we can't skip the lock.
-+	 * But not all is lost! Due to one-thread-per-ring model and
-+	 * polled-completion, contention is not common in most cases.
-+	 */
-+	spin_lock(&nvmeq->sq_lock);
-+	nvme_sq_copy_cmd(nvmeq, &iod->cmd);
-+	nvme_write_sq_db(nvmeq, true);
-+	spin_unlock(&nvmeq->sq_lock);
-+	return -EIOCBQUEUED;
-+out:
-+	nvme_pci_put_cmdid(nvmeq, cmdid);
-+	return ret;
-+}
-+
- static const struct blk_mq_ops nvme_mq_admin_ops = {
- 	.queue_rq	= nvme_queue_rq,
- 	.complete	= nvme_pci_complete_rq,
-@@ -1832,6 +2020,8 @@ static const struct blk_mq_ops nvme_mq_ops = {
- 	.poll		= nvme_poll,
- 	.register_queue	= nvme_pci_register_queue,
- 	.unregister_queue =  nvme_pci_unregister_queue,
-+	.queue_uring_cmd = nvme_pci_queue_ucmd,
-+	.poll_uring_cmd	= nvme_poll_uring_cmd,
- };
- 
- static void nvme_dev_remove_admin(struct nvme_dev *dev)
+
 -- 
-2.25.1
+Jens Axboe
 

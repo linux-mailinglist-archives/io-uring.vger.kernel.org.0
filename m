@@ -2,149 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 281306F1E17
-	for <lists+io-uring@lfdr.de>; Fri, 28 Apr 2023 20:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E31176F2260
+	for <lists+io-uring@lfdr.de>; Sat, 29 Apr 2023 04:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346446AbjD1ScS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Apr 2023 14:32:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
+        id S1347136AbjD2CUA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 28 Apr 2023 22:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232076AbjD1ScR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 14:32:17 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1F6E5
-        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 11:32:15 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id ca18e2360f4ac-76656f3568cso525039f.1
-        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 11:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682706735; x=1685298735;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UnIyrlX+Tui17CSXyzwD21EblbBQZxZQxBDROZgCXbY=;
-        b=chlKHPqX9MGyUfnQUBSJM0/mabW5u5pUtgT2Ma8BV3omqFC6bFSX2qWC4LCKB6JP+2
-         CePr7Lgt1c9gBJD98vXpDUNFJnt9BJc9FtXHlboFpnxSLOXaSeqmycKtHPyfPau7zv0p
-         q8VCxzOOwIdQtrPF+jXG5uUU9r2hZeoluC1fyeGrO8hWWVMnL9cpKZBKM6DwITUBnsk6
-         ms83uDRxsEw+cCqtn40JMCqOPBcKr7Zjz8BMXqeCQcy6eT2ruhIBCmsDhnGYMo74hivc
-         ftc9aXjdpdlVp/s5DnmqWmdjJiMZumoBiNlgFndbTjHfrUbnYPfr1m+aiLjiMBkBpJGE
-         stkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682706735; x=1685298735;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UnIyrlX+Tui17CSXyzwD21EblbBQZxZQxBDROZgCXbY=;
-        b=I+uGtwSkXh6x5eVcYnciC8IdZtwPMN0vdx8HFF6B49HOuU8IFOum+zQFvbIHgGF5eR
-         jI/14jRFrw/tVDNGqVFQUtFDpvrG9rmWYHTN9cJ0TzUncrqecyCcEcxhgsWaV5lz0OxG
-         AGbmhOCGt1MPwfgVE47PgqtzZ4zjVyrvSgrpE9xDg1iAVuS+de7fb3Bn1OiMkDJY2xw/
-         7fV9D7oQbmiNQKsrnrGhtRRwA3e4ZjGbWY6IbXIwfrKXoTyMShG1Zi+XUbjUZ+ambGaO
-         33bm4MGmfYMJevKDrnBjtP/ythY9zUHbmJpt17x4SgdmnslwzuGEwcsqTNv5N9alq2mm
-         ghkg==
-X-Gm-Message-State: AC+VfDwNObE8S24B65pZYGbMFoFHkJxkQKE7AjMZC4GrlGzhFoa1mxq5
-        qOZRqDCdnOWgDgMPJ/W+R8ZihTbyUYDq+JnBd1g=
-X-Google-Smtp-Source: ACHHUZ56Im9yZViz9ECON1PAbcDeJEZ5HKB+D5koKt9nle/cypVJDdTFDjDvmTfdw6IiXLhzgmj+8g==
-X-Received: by 2002:a05:6e02:3499:b0:32b:4518:d122 with SMTP id bp25-20020a056e02349900b0032b4518d122mr3052892ilb.3.1682706735168;
-        Fri, 28 Apr 2023 11:32:15 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id g36-20020a022724000000b0040fa80f3981sm6124350jaa.6.2023.04.28.11.32.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Apr 2023 11:32:14 -0700 (PDT)
-Message-ID: <89ef84bf-48c2-594c-cc9c-f796adcab5e8@kernel.dk>
-Date:   Fri, 28 Apr 2023 12:32:13 -0600
+        with ESMTP id S230249AbjD2CT7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Apr 2023 22:19:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE66212B
+        for <io-uring@vger.kernel.org>; Fri, 28 Apr 2023 19:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1682734743;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=bMurEh3aXJmDffGcx2DdPyzoHd2PXqMBG8UnbQY3qTE=;
+        b=LB+jy++xBEGsPy9KMNjGyaNUHqOzXS12XKE1140wbaUCyvYnfwF/B6qsXIVO3/jFG5+clS
+        u8d4l5aLuDd/Ke23DllZYLg3ylkaHie4cSKBPQFJPUsYkPRd+D8LM6uQDuFRTi5Kn0L86n
+        jr/Z47sPnW75wMscXqYamU3eZxOonvA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-322-zp_TC5w7P_2No_7sSNkuxA-1; Fri, 28 Apr 2023 22:18:59 -0400
+X-MC-Unique: zp_TC5w7P_2No_7sSNkuxA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 07970185A790;
+        Sat, 29 Apr 2023 02:18:59 +0000 (UTC)
+Received: from ovpn-8-24.pek2.redhat.com (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BB5AB440BC;
+        Sat, 29 Apr 2023 02:18:52 +0000 (UTC)
+Date:   Sat, 29 Apr 2023 10:18:47 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Cc:     ming.lei@redhat.com, lsf-pc@lists.linux-foundation.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [LSF/MM/BPF TOPIC] ublk & io_uring: ublk zero copy support
+Message-ID: <ZEx+h/iFf46XiWG1@ovpn-8-24.pek2.redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v11 2/5] io-uring: add napi busy poll support
-Content-Language: en-US
-To:     Stefan Roesch <shr@devkernel.io>, io-uring@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     ammarfaizi2@gnuweeb.org, Olivier Langlois <olivier@trillion01.com>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20230428181248.610605-1-shr@devkernel.io>
- <20230428181248.610605-3-shr@devkernel.io>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230428181248.610605-3-shr@devkernel.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This looks much better now! One question and a minor comment:
+Hello,
 
-> @@ -2619,9 +2622,13 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  
->  		if (get_timespec64(&ts, uts))
->  			return -EFAULT;
-> +
->  		iowq.timeout = ktime_add_ns(timespec64_to_ktime(ts), ktime_get_ns());
+ublk zero copy is observed to improve big chunk(64KB+) sequential IO performance a
+lot, such as, IOPS of ublk-loop over tmpfs is increased by 1~2X[1], Jens also observed
+that IOPS of ublk-qcow2 can be increased by ~1X[2]. Meantime it saves memory bandwidth.
 
-Probably want to kill that extra added line, not worth respinning for
-obviously.
+So this is one important performance improvement.
 
-> diff --git a/io_uring/napi.c b/io_uring/napi.c
-> new file mode 100644
-> index 000000000000..a085122cae8b
-> --- /dev/null
-> +++ b/io_uring/napi.c
-> +void __io_napi_add(struct io_ring_ctx *ctx, struct file *file)
-> +{
-> +	unsigned int napi_id;
-> +	struct socket *sock;
-> +	struct sock *sk;
-> +	struct io_napi_ht_entry *he;
-> +
-> +	sock = sock_from_file(file);
-> +	if (!sock)
-> +		return;
-> +
-> +	sk = sock->sk;
-> +	if (!sk)
-> +		return;
-> +
-> +	napi_id = READ_ONCE(sk->sk_napi_id);
-> +
-> +	/* Non-NAPI IDs can be rejected. */
-> +	if (napi_id < MIN_NAPI_ID)
-> +		return;
-> +
-> +	spin_lock(&ctx->napi_lock);
-> +	hash_for_each_possible(ctx->napi_ht, he, node, napi_id) {
-> +		if (he->napi_id == napi_id) {
-> +			he->timeout = jiffies + NAPI_TIMEOUT;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	he = kmalloc(sizeof(*he), GFP_NOWAIT);
-> +	if (!he)
-> +		goto out;
-> +
-> +	he->napi_id = napi_id;
-> +	he->timeout = jiffies + NAPI_TIMEOUT;
-> +	hash_add(ctx->napi_ht, &he->node, napi_id);
-> +
-> +	list_add_tail(&he->list, &ctx->napi_list);
-> +
-> +out:
-> +	spin_unlock(&ctx->napi_lock);
-> +}
+So far there are three proposal:
 
-Didn't look into the details here just yet, but one thing occurred to me
-- would it be possible to rcu_read_lock() protect the hash for lookup? I
-would imagine that the ratio of successful lookups to "nope nothing
-found, need to alloc and insert" is quite high, and we could avoid the
-napi_lock for that case when just iterating the hash.
+1) splice based
 
-Would obviously need rcu freeing of 'he' as well, and so forth. And some
-way to detect if 'he' is going away or not. But seems like it'd be
-doable without too much trouble?
+- spliced page from ->splice_read() can't be written
 
--- 
-Jens Axboe
+ublk READ request can't be handled because spliced page can't be written
+to, and extending splice for ublk zero copy isn't one good solution[3]
+
+- it is very hard to meet above requirements  wrt. request buffer lifetime
+
+splice/pipe focuses on page reference lifetime, but ublk zero copy pays more
+attention to ublk request buffer lifetime. If is very inefficient to respect
+request buffer lifetime by using all pipe buffer's ->release() which requires
+all pipe buffers and pipe to be kept when ublk server handles IO. That means
+one single dedicated ``pipe_inode_info`` has to be allocated runtime for each
+provided buffer, and the pipe needs to be populated with pages in ublk request
+buffer.
+
+IMO, it isn't one good way to take splice from both correctness and performance
+viewpoint.
+
+2) io_uring register buffer based
+
+- the main idea is to register one runtime buffer in fast io path, and
+  unregister it after the buffer is used by the following OPs
+
+- the main problem is that bad performance caused by io_uring link model
+
+registering buffer has to be one OP, same with unregistering buffer; the
+following normal OPs(such as FS IO) have to depend on the registering
+buffer OP, then io_uring link has to be used.
+
+It is normal to see more than one normal OPs which depend on the registering
+buffer OP, so all these OPs(registering buffer, normal (FS IO) OPs and
+unregistering buffer) have to be linked together, then normal(FS IO) OPs
+have to be submitted one by one, and this way is slow, because there is
+often no dependency among all these normal FS OPs. Basically io_uring
+link model does not support this kind of 1:N dependency.
+
+No one posted code for showing this approach yet.
+
+3) io_uring fused command[1]
+
+- fused command extend current io_uring usage by allowing submitting following
+FS OPs(called secondary OPs) after the primary command provides buffer, and
+primary command won't be completed until all secondary OPs are done.
+
+This way solves the problem in 2), and meantime avoids the buffer register cost in
+both submission and completion IO fast code path because the primary command won't
+be completed until all secondary OPs are done, so no need to write/read the
+buffer into per-context global data structure.
+
+Meantime buffer lifetime problem is addressed simply, so correctness gets guaranteed,
+and performance is pretty good, and even IOPS of 4k IO gets a little
+improved in some workloads, or at least no perf regression is observed
+for small size IO.
+
+fused command can be thought as one single request logically, just it has more
+than one SQE(all share same link flag), that is why is named as fused command.
+
+- the only concern is that fused command starts one use usage of io_uring, but
+still not see comments wrt. what/why is bad with this kind of new usage/interface.
+
+I propose this topic and want to discuss about how to move on with this
+feature.
+
+
+[1] https://lore.kernel.org/linux-block/20230330113630.1388860-1-ming.lei@redhat.com/
+[2] https://lore.kernel.org/linux-block/b3fc9991-4c53-9218-a8cc-5b4dd3952108@kernel.dk/
+[3] https://lore.kernel.org/linux-block/CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com/
+
+
+Thanks,
+Ming
 

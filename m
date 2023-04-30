@@ -2,169 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB696F2914
-	for <lists+io-uring@lfdr.de>; Sun, 30 Apr 2023 15:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594E96F2939
+	for <lists+io-uring@lfdr.de>; Sun, 30 Apr 2023 16:36:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229513AbjD3Nnv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 30 Apr 2023 09:43:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37712 "EHLO
+        id S229909AbjD3OgI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 30 Apr 2023 10:36:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjD3Nnu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 30 Apr 2023 09:43:50 -0400
-X-Greylist: delayed 569 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 30 Apr 2023 06:43:47 PDT
-Received: from out-18.mta0.migadu.com (out-18.mta0.migadu.com [IPv6:2001:41d0:1004:224b::12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C577030D7
-        for <io-uring@vger.kernel.org>; Sun, 30 Apr 2023 06:43:47 -0700 (PDT)
-Message-ID: <68892634-ceae-6d98-7474-49f85423838a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1682861655;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oUEqL7j6hpOXLWfRmzPGo5BwYy2GvS8bMoMVSa/W9RQ=;
-        b=HUMIdAU57stB0k8VgGY8NGscTPtzatAsikIY59xQRSW40yHFDpwe/f4oa2AmLdJB8PgWa1
-        Q4wSKl0QorH2iEJmCXk6BLaymoRvzufrBagMC+2WmNsHmEVimkUHyN1bPGYzMuBWuQwOwb
-        tYxFrAQHhiSqINW/yQAdkuWge715FWY=
-Date:   Sun, 30 Apr 2023 21:34:00 +0800
+        with ESMTP id S230167AbjD3OgI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 30 Apr 2023 10:36:08 -0400
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BA1211D;
+        Sun, 30 Apr 2023 07:36:06 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-3f19afc4fd8so8602275e9.2;
+        Sun, 30 Apr 2023 07:36:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682865365; x=1685457365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FDvF+4jn75c0U/4/y4sFW3z5VmXzCZCBCvnk0YKahgs=;
+        b=jTHdELDZkKDM9s61nVMjGr+erzCuq8+Tvaazs/25XZbQ3OG5C2iB/7LFdn4Tngvthd
+         k6hsdgi9PyplKZsa9gordQ+Q5EAS7LXGsMeK7nFwx3JI4eyGTTpKNeAiG5Nk2YGB+NFR
+         tpgURyYERwnUs4INvqD2KvoGjDmEWWofCoH9a0LxgyjYuosmH+2CymXGBBpeNzT1aVnM
+         wWCgt2rwgziXVNRX0tm+FV+GCvckJ+xRBfDlEG5WAuB5s6LpTk9y17Eh6DOORLuSSTwy
+         96KYSQ8uOJUm5LA+ZCFhlubjcw4G9Lq7qjlPqnujAm11AQF0jTf8taXp0eY4llkojxyL
+         MymA==
+X-Gm-Message-State: AC+VfDwgQ6Gd5ApEt9Cbve9vRZpuPoWMs40Il6ba6ytWb6mHWg+DV18D
+        eMaYnB7Ojy335YBYn1kSeIH6Yhj2nww=
+X-Google-Smtp-Source: ACHHUZ6U+r3db8m41a6zCKCOVuqsc8/ZfYMBGuFIxgonr34g47cljfqoJluo9jKELqhg+WCaxYAT3A==
+X-Received: by 2002:a5d:6e83:0:b0:2f7:e3aa:677a with SMTP id k3-20020a5d6e83000000b002f7e3aa677amr7785255wrz.46.1682865364669;
+        Sun, 30 Apr 2023 07:36:04 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-018.fbsv.net. [2a03:2880:31ff:12::face:b00c])
+        by smtp.gmail.com with ESMTPSA id z18-20020adfe552000000b002f3e1122c1asm26079134wrm.15.2023.04.30.07.36.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Apr 2023 07:36:03 -0700 (PDT)
+From:   Breno Leitao <leitao@debian.org>
+To:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        asml.silence@gmail.com, axboe@kernel.dk, ming.lei@redhat.com
+Cc:     leit@fb.com, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, sagi@grimberg.me, joshi.k@samsung.com,
+        hch@lst.de, kbusch@kernel.org
+Subject: [PATCH v3 0/4] io_uring: Pass the whole sqe to commands
+Date:   Sun, 30 Apr 2023 07:35:28 -0700
+Message-Id: <20230430143532.605367-1-leitao@debian.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Subject: Re: [PATCH 4/4] io_uring: mark opcodes that always need io-wq punt
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-References: <20230420183135.119618-1-axboe@kernel.dk>
- <20230420183135.119618-5-axboe@kernel.dk>
- <ZEYwAkk7aXKfQKKr@ovpn-8-16.pek2.redhat.com>
- <b5e48439-0427-98a8-3288-99426ae36b45@kernel.dk>
- <ZEclhYPobt94OndL@ovpn-8-24.pek2.redhat.com>
- <478df0f7-c167-76f3-3fd8-9d5771a44048@kernel.dk>
- <ZEc3WttIofAqFy+b@ovpn-8-24.pek2.redhat.com>
- <a1c8d37f-ca21-3648-9a37-741e7519650b@kernel.dk>
- <ZEc/5Xyqvu2WkWyk@ovpn-8-24.pek2.redhat.com>
- <0e5910a9-d776-cdea-1852-edd995f93dc8@kernel.dk>
- <ZEfmzALXP9vqWkOV@ovpn-8-24.pek2.redhat.com>
- <414392f2-3980-71fa-fa90-294085f156ee@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <414392f2-3980-71fa-fa90-294085f156ee@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+These three patches prepare for the sock support in the io_uring cmd, as
+described in the following RFC:
 
-On 4/25/23 23:28, Pavel Begunkov wrote:
-> On 4/25/23 15:42, Ming Lei wrote:
->> On Tue, Apr 25, 2023 at 07:31:10AM -0600, Jens Axboe wrote:
->>> On 4/24/23 8:50?PM, Ming Lei wrote:
->>>> On Mon, Apr 24, 2023 at 08:18:02PM -0600, Jens Axboe wrote:
->>>>> On 4/24/23 8:13?PM, Ming Lei wrote:
->>>>>> On Mon, Apr 24, 2023 at 08:08:09PM -0600, Jens Axboe wrote:
->>>>>>> On 4/24/23 6:57?PM, Ming Lei wrote:
->>>>>>>> On Mon, Apr 24, 2023 at 09:24:33AM -0600, Jens Axboe wrote:
->>>>>>>>> On 4/24/23 1:30?AM, Ming Lei wrote:
->>>>>>>>>> On Thu, Apr 20, 2023 at 12:31:35PM -0600, Jens Axboe wrote:
->>>>>>>>>>> Add an opdef bit for them, and set it for the opcodes where 
->>>>>>>>>>> we always
->>>>>>>>>>> need io-wq punt. With that done, exclude them from the 
->>>>>>>>>>> file_can_poll()
->>>>>>>>>>> check in terms of whether or not we need to punt them if any 
->>>>>>>>>>> of the
->>>>>>>>>>> NO_OFFLOAD flags are set.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>>>>>>>> ---
->>>>>>>>>>>   io_uring/io_uring.c |  2 +-
->>>>>>>>>>>   io_uring/opdef.c    | 22 ++++++++++++++++++++--
->>>>>>>>>>>   io_uring/opdef.h    |  2 ++
->>>>>>>>>>>   3 files changed, 23 insertions(+), 3 deletions(-)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>>>>>>>>>> index fee3e461e149..420cfd35ebc6 100644
->>>>>>>>>>> --- a/io_uring/io_uring.c
->>>>>>>>>>> +++ b/io_uring/io_uring.c
->>>>>>>>>>> @@ -1948,7 +1948,7 @@ static int io_issue_sqe(struct 
->>>>>>>>>>> io_kiocb *req, unsigned int issue_flags)
->>>>>>>>>>>           return -EBADF;
->>>>>>>>>>>         if (issue_flags & IO_URING_F_NO_OFFLOAD &&
->>>>>>>>>>> -        (!req->file || !file_can_poll(req->file)))
->>>>>>>>>>> +        (!req->file || !file_can_poll(req->file) || 
->>>>>>>>>>> def->always_iowq))
->>>>>>>>>>>           issue_flags &= ~IO_URING_F_NONBLOCK;
->>>>>>>>>>
->>>>>>>>>> I guess the check should be !def->always_iowq?
->>>>>>>>>
->>>>>>>>> How so? Nobody that takes pollable files should/is setting
->>>>>>>>> ->always_iowq. If we can poll the file, we should not force 
->>>>>>>>> inline
->>>>>>>>> submission. Basically the ones setting ->always_iowq always do 
->>>>>>>>> -EAGAIN
->>>>>>>>> returns if nonblock == true.
->>>>>>>>
->>>>>>>> I meant IO_URING_F_NONBLOCK is cleared here for ->always_iowq, and
->>>>>>>> these OPs won't return -EAGAIN, then run in the current task 
->>>>>>>> context
->>>>>>>> directly.
->>>>>>>
->>>>>>> Right, of IO_URING_F_NO_OFFLOAD is set, which is entirely the 
->>>>>>> point of
->>>>>>> it :-)
->>>>>>
->>>>>> But ->always_iowq isn't actually _always_ since 
->>>>>> fallocate/fsync/... are
->>>>>> not punted to iowq in case of IO_URING_F_NO_OFFLOAD, looks the 
->>>>>> naming of
->>>>>> ->always_iowq is a bit confusing?
->>>>>
->>>>> Yeah naming isn't that great, I can see how that's bit confusing. 
->>>>> I'll
->>>>> be happy to take suggestions on what would make it clearer.
->>>>
->>>> Except for the naming, I am also wondering why these ->always_iowq OPs
->>>> aren't punted to iowq in case of IO_URING_F_NO_OFFLOAD, given it
->>>> shouldn't improve performance by doing so because these OPs are 
->>>> supposed
->>>> to be slow and always slept, not like others(buffered writes, ...),
->>>> can you provide one hint about not offloading these OPs? Or is it 
->>>> just that
->>>> NO_OFFLOAD needs to not offload every OPs?
->>>
->>> The whole point of NO_OFFLOAD is that items that would normally be
->>> passed to io-wq are just run inline. This provides a way to reap the
->>> benefits of batched submissions and syscall reductions. Some opcodes
->>> will just never be async, and io-wq offloads are not very fast. Some of
->>
->> Yeah, seems io-wq is much slower than inline issue, maybe it needs
->> to be looked into, and it is easy to run into io-wq for IOSQE_IO_LINK.
->
-> There were attempts like this one from Hao (CC'ed)
->
-> https://lore.kernel.org/io-uring/20220627133541.15223-5-hao.xu@linux.dev/t/ 
->
->
-> Not sure why it got stalled, but maybe Hao would be willing
-> to pick it up again.
+	https://lore.kernel.org/lkml/20230406144330.1932798-1-leitao@debian.org/
 
+Since the support linked above depends on other refactors, such as the sock
+ioctl() sock refactor[1], I would like to start integrating patches that have
+consensus and can bring value right now.  This will also reduce the patchset
+size later.
 
-Hi folks, I'd like to pick it up again, but I just didn't get any reply 
-at that time after sending
+Regarding to these three patches, they are simple changes that turn
+io_uring cmd subsystem more flexible (by passing the whole SQE to the
+command), and cleaning up an unnecessary compile check.
 
-several versions of it...so before I restart that series, I'd like to 
-ask Jens to comment the idea
+These patches were tested by creating a file system and mounting an NVME disk
+using ubdsrv/ublkb0.
 
-of that patchset (fixed worker).
+[1] ZD6Zw1GAZR28++3v@gmail.com/">https://lore.kernel.org/lkml/ZD6Zw1GAZR28++3v@gmail.com/
 
+Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
 
-Thanks,
+V1 -> V2 :
+  * Create a helper to return the size of the SQE
+V2 -> V3:
+  * Transformed uring_sqe_size() into a proper function
+  * Fixed some commit messages
+  * Created a helper function for nvme/host to avoid casting
+  * Added a fourth patch to avoid ublk_drv's casts by using a proper helper
 
-Hao
+Breno Leitao (4):
+  io_uring: Create a helper to return the SQE size
+  io_uring: Pass whole sqe to commands
+  io_uring: Remove unnecessary BUILD_BUG_ON
+  block: ublk_drv: Add a helper instead of casting
 
+ drivers/block/ublk_drv.c  | 36 ++++++++++++++++++++++++------------
+ drivers/nvme/host/ioctl.c |  8 +++++++-
+ include/linux/io_uring.h  |  2 +-
+ io_uring/io_uring.h       | 10 ++++++++++
+ io_uring/opdef.c          |  2 +-
+ io_uring/uring_cmd.c      | 13 ++++---------
+ io_uring/uring_cmd.h      |  8 --------
+ 7 files changed, 47 insertions(+), 32 deletions(-)
+
+-- 
+2.34.1
 

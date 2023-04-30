@@ -2,50 +2,50 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 256736F293E
-	for <lists+io-uring@lfdr.de>; Sun, 30 Apr 2023 16:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 785636F2940
+	for <lists+io-uring@lfdr.de>; Sun, 30 Apr 2023 16:36:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231163AbjD3OgN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 30 Apr 2023 10:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45272 "EHLO
+        id S230445AbjD3OgO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 30 Apr 2023 10:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231132AbjD3OgM (ORCPT
+        with ESMTP id S231131AbjD3OgM (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Sun, 30 Apr 2023 10:36:12 -0400
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDCF30D7;
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA7E1BFF;
         Sun, 30 Apr 2023 07:36:10 -0700 (PDT)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-3f178da21afso9172355e9.1;
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-3f19afc4fd8so8602545e9.2;
         Sun, 30 Apr 2023 07:36:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682865369; x=1685457369;
+        d=1e100.net; s=20221208; t=1682865370; x=1685457370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xYztlqpoEVeIHrKJhvcjUMJ8ItqPkXoCxbhVy1uECD8=;
-        b=FQI35MwBpoaVia+4InoU7iFGH9MbjnMNh19HXUIUbjQgPTNdh+/PCigiQnJytUH7Z+
-         JwOLkQHS+9EDDRBX/65+5ikKxwSW5ZN0MnT5UjG/LBJJGRrnMbzokVM7iH9B1Cgl5dkj
-         69uYXqNfkgJgSgPyN9UnOsVf/tEpQBTGGjT6u8HjhSYynIlh1t5Fucj6feb9gbDOhmd0
-         sBLo6UuU/6X4oi7LEBpaXKRAPV25G0fmAlugb20ZIBqhMlDIiw79Po2XxE2wSf5aglcE
-         9mN19nCqWSoDh1phrCcqbMJBKIHO4R7MxAs8z9PSvH1llCaFGsBu80qTAMx5U2GaAsUI
-         OEuQ==
-X-Gm-Message-State: AC+VfDzngnDd7RM/Kjwbo7mYWppmKC9R3l47+DtVW0T5AKQTPZF9KOYb
-        uOcyu8xoOPzxw76TS3xyB/kRrzrK3369nA==
-X-Google-Smtp-Source: ACHHUZ5664eOiLW3ZPACCqiNPyzg5aNNsS92B900veDjENR7znnwEFn7Tk4ea/zKV8HHvuHnyLT7PQ==
-X-Received: by 2002:a05:600c:3797:b0:3f2:5a60:a03e with SMTP id o23-20020a05600c379700b003f25a60a03emr8721130wmr.14.1682865368556;
-        Sun, 30 Apr 2023 07:36:08 -0700 (PDT)
+        bh=k23ex7RimvLu0p4j9qUercROahTdeSFRLj0ExynF2G0=;
+        b=XpCXJF1wUuad2iXbhWFEd8lr/hsLupBTiKoDTsim2EgvazHBJz0DSysIRRutuD+O1m
+         RflXVe+nwxtN8+qYk9j61QjCIpmLCdlg9WVIE2A22CT/HwFw3koENXj3V+Y67R4rI7sz
+         xxBNv+hPGE4IJJ+XzMc/mXgG9ZnP9ui9Akpd1sj8UapNOzNXA3+icb0TuS9WeU8Ceba3
+         1AG+drjIl9U9pYE5MiF+I8gYEfpjXxtXtRKsPlX3+3fLcetNsV3iyWM19mtu2TGCyHjC
+         Bg3p9XkkTY/NbDMJcOcSCuGosFTEVkR1xotpKuQ3owCLPpVPR3Mifg5eOyRQ9ZdYIkC9
+         lluA==
+X-Gm-Message-State: AC+VfDxl9+Tur18Di2slaMoIHUAdVIhs0NoR8rE2RdkApSUBw256oAKD
+        Mx1trtSVtiUxuX4AGZWafu8ULo50S++k/w==
+X-Google-Smtp-Source: ACHHUZ6NgjI8hY5U0kWNOftPpVXFnZaxTEqy883QrKbYdbf0y3frSWyb1AyUSwVJtyIG0msFLmmX8g==
+X-Received: by 2002:a7b:c047:0:b0:3f1:7a44:317c with SMTP id u7-20020a7bc047000000b003f17a44317cmr8613355wmc.24.1682865369774;
+        Sun, 30 Apr 2023 07:36:09 -0700 (PDT)
 Received: from localhost (fwdproxy-cln-026.fbsv.net. [2a03:2880:31ff:1a::face:b00c])
-        by smtp.gmail.com with ESMTPSA id g10-20020a7bc4ca000000b003f171234a08sm29747037wmk.20.2023.04.30.07.36.07
+        by smtp.gmail.com with ESMTPSA id r3-20020adfda43000000b003047ae72b14sm17707286wrl.82.2023.04.30.07.36.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Apr 2023 07:36:07 -0700 (PDT)
+        Sun, 30 Apr 2023 07:36:09 -0700 (PDT)
 From:   Breno Leitao <leitao@debian.org>
 To:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
         asml.silence@gmail.com, axboe@kernel.dk, ming.lei@redhat.com
 Cc:     leit@fb.com, linux-kernel@vger.kernel.org,
         linux-block@vger.kernel.org, sagi@grimberg.me, joshi.k@samsung.com,
         hch@lst.de, kbusch@kernel.org
-Subject: [PATCH v3 3/4] io_uring: Remove unnecessary BUILD_BUG_ON
-Date:   Sun, 30 Apr 2023 07:35:31 -0700
-Message-Id: <20230430143532.605367-4-leitao@debian.org>
+Subject: [PATCH v3 4/4] block: ublk_drv: Add a helper instead of casting
+Date:   Sun, 30 Apr 2023 07:35:32 -0700
+Message-Id: <20230430143532.605367-5-leitao@debian.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230430143532.605367-1-leitao@debian.org>
 References: <20230430143532.605367-1-leitao@debian.org>
@@ -61,57 +61,142 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-In the io_uring_cmd_prep_async() there is an unnecessary compilation time
-check to check if cmd is correctly placed at field 48 of the SQE.
+ublk driver is using casts to get private data from uring cmd struct.
+Let's use a proper helper, as an interface that requires casts in all
+callers is one asking for bugs.
 
-This is unnecessary, since this check is already in place at
-io_uring_init():
-
-          BUILD_BUG_SQE_ELEM(48, __u64,  addr3);
-
-Remove it and the uring_cmd_pdu_size() function, which is not used
-anymore.
-
-Keith started a discussion about this topic in the following thread:
-Link: https://lore.kernel.org/lkml/ZDBmQOhbyU0iLhMw@kbusch-mbp.dhcp.thefacebook.com/
-
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- io_uring/uring_cmd.c | 3 ---
- io_uring/uring_cmd.h | 8 --------
- 2 files changed, 11 deletions(-)
+ drivers/block/ublk_drv.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index a1be746cd009..743d1496431b 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -71,9 +71,6 @@ int io_uring_cmd_prep_async(struct io_kiocb *req)
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 	size_t size = uring_sqe_size(req->ctx);
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index ec23a3c9fac8..1fa6a4d54d6d 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -1261,9 +1261,21 @@ static void ublk_handle_need_get_data(struct ublk_device *ub, int q_id,
+ 	ublk_queue_cmd(ubq, req);
+ }
  
--	BUILD_BUG_ON(uring_cmd_pdu_size(0) != 16);
--	BUILD_BUG_ON(uring_cmd_pdu_size(1) != 80);
--
- 	memcpy(req->async_data, ioucmd->sqe, size);
- 	ioucmd->sqe = req->async_data;
- 	return 0;
-diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-index 7c6697d13cb2..8117684ec3ca 100644
---- a/io_uring/uring_cmd.h
-+++ b/io_uring/uring_cmd.h
-@@ -3,11 +3,3 @@
- int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags);
- int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_uring_cmd_prep_async(struct io_kiocb *req);
--
--/*
-- * The URING_CMD payload starts at 'cmd' in the first sqe, and continues into
-- * the following sqe if SQE128 is used.
-- */
--#define uring_cmd_pdu_size(is_sqe128)				\
--	((1 + !!(is_sqe128)) * sizeof(struct io_uring_sqe) -	\
--		offsetof(struct io_uring_sqe, cmd))
++static inline struct ublksrv_ctrl_cmd *ublk_uring_ctrl_cmd(
++		struct io_uring_cmd *cmd)
++{
++	return (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++}
++
++static inline struct ublksrv_io_cmd *ublk_uring_io_cmd(
++		struct io_uring_cmd *cmd)
++{
++	return (struct ublksrv_io_cmd *)cmd->sqe->cmd;
++}
++
+ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ {
+-	struct ublksrv_io_cmd *ub_cmd = (struct ublksrv_io_cmd *)cmd->sqe->cmd;
++	struct ublksrv_io_cmd *ub_cmd = ublk_uring_io_cmd(cmd);
+ 	struct ublk_device *ub = cmd->file->private_data;
+ 	struct ublk_queue *ubq;
+ 	struct ublk_io *io;
+@@ -1567,7 +1579,7 @@ static struct ublk_device *ublk_get_device_from_id(int idx)
+ 
+ static int ublk_ctrl_start_dev(struct ublk_device *ub, struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	int ublksrv_pid = (int)header->data[0];
+ 	struct gendisk *disk;
+ 	int ret = -EINVAL;
+@@ -1630,7 +1642,7 @@ static int ublk_ctrl_start_dev(struct ublk_device *ub, struct io_uring_cmd *cmd)
+ static int ublk_ctrl_get_queue_affinity(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	void __user *argp = (void __user *)(unsigned long)header->addr;
+ 	cpumask_var_t cpumask;
+ 	unsigned long queue;
+@@ -1681,7 +1693,7 @@ static inline void ublk_dump_dev_info(struct ublksrv_ctrl_dev_info *info)
+ 
+ static int ublk_ctrl_add_dev(struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	void __user *argp = (void __user *)(unsigned long)header->addr;
+ 	struct ublksrv_ctrl_dev_info info;
+ 	struct ublk_device *ub;
+@@ -1844,7 +1856,7 @@ static int ublk_ctrl_del_dev(struct ublk_device **p_ub)
+ 
+ static inline void ublk_ctrl_cmd_dump(struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 
+ 	pr_devel("%s: cmd_op %x, dev id %d qid %d data %llx buf %llx len %u\n",
+ 			__func__, cmd->cmd_op, header->dev_id, header->queue_id,
+@@ -1863,7 +1875,7 @@ static int ublk_ctrl_stop_dev(struct ublk_device *ub)
+ static int ublk_ctrl_get_dev_info(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	void __user *argp = (void __user *)(unsigned long)header->addr;
+ 
+ 	if (header->len < sizeof(struct ublksrv_ctrl_dev_info) || !header->addr)
+@@ -1894,7 +1906,7 @@ static void ublk_ctrl_fill_params_devt(struct ublk_device *ub)
+ static int ublk_ctrl_get_params(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	void __user *argp = (void __user *)(unsigned long)header->addr;
+ 	struct ublk_params_header ph;
+ 	int ret;
+@@ -1925,7 +1937,7 @@ static int ublk_ctrl_get_params(struct ublk_device *ub,
+ static int ublk_ctrl_set_params(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	void __user *argp = (void __user *)(unsigned long)header->addr;
+ 	struct ublk_params_header ph;
+ 	int ret = -EFAULT;
+@@ -1983,7 +1995,7 @@ static void ublk_queue_reinit(struct ublk_device *ub, struct ublk_queue *ubq)
+ static int ublk_ctrl_start_recovery(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	int ret = -EINVAL;
+ 	int i;
+ 
+@@ -2025,7 +2037,7 @@ static int ublk_ctrl_start_recovery(struct ublk_device *ub,
+ static int ublk_ctrl_end_recovery(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	int ublksrv_pid = (int)header->data[0];
+ 	int ret = -EINVAL;
+ 
+@@ -2092,7 +2104,7 @@ static int ublk_char_dev_permission(struct ublk_device *ub,
+ static int ublk_ctrl_uring_cmd_permission(struct ublk_device *ub,
+ 		struct io_uring_cmd *cmd)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	bool unprivileged = ub->dev_info.flags & UBLK_F_UNPRIVILEGED_DEV;
+ 	void __user *argp = (void __user *)(unsigned long)header->addr;
+ 	char *dev_path = NULL;
+@@ -2171,7 +2183,7 @@ static int ublk_ctrl_uring_cmd_permission(struct ublk_device *ub,
+ static int ublk_ctrl_uring_cmd(struct io_uring_cmd *cmd,
+ 		unsigned int issue_flags)
+ {
+-	struct ublksrv_ctrl_cmd *header = (struct ublksrv_ctrl_cmd *)cmd->sqe->cmd;
++	struct ublksrv_ctrl_cmd *header = ublk_uring_ctrl_cmd(cmd);
+ 	struct ublk_device *ub = NULL;
+ 	int ret = -EINVAL;
+ 
 -- 
 2.34.1
 

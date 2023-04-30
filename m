@@ -2,236 +2,159 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E10536F256B
-	for <lists+io-uring@lfdr.de>; Sat, 29 Apr 2023 19:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44BB76F2855
+	for <lists+io-uring@lfdr.de>; Sun, 30 Apr 2023 11:37:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbjD2RRQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 29 Apr 2023 13:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33844 "EHLO
+        id S230154AbjD3Jhk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 30 Apr 2023 05:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjD2RRP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 29 Apr 2023 13:17:15 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 277621B3
-        for <io-uring@vger.kernel.org>; Sat, 29 Apr 2023 10:17:14 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-63b781c9787so340535b3a.1
-        for <io-uring@vger.kernel.org>; Sat, 29 Apr 2023 10:17:14 -0700 (PDT)
+        with ESMTP id S229596AbjD3Jhi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 30 Apr 2023 05:37:38 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32AFC10E7
+        for <io-uring@vger.kernel.org>; Sun, 30 Apr 2023 02:37:37 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f315735514so104062875e9.1
+        for <io-uring@vger.kernel.org>; Sun, 30 Apr 2023 02:37:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682788633; x=1685380633;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3wh2tecoG/SOIbjAoMjLEYWI38jcVC09Ourwewcg6so=;
-        b=YpoXu+moBQbpcnqsk6XGOoIw5aS5BkwpHweeXrkcSiB+L9dHUaG+yr6JLYxsT4Spwh
-         LUtuHC0D5pH1zsn3TBfLqNqKw5bAJWmJUyruC955+vY7ww/c8GeB7IWaKxuX2AbIrga+
-         fRlujMOmTKssnyRCIQIIDHgPl85N1EVkcc1ro+UeHbt21vVnJc3OmtGFSw6LeA2JkhNM
-         rdWzI2qm05ChrujER28FUKGDGwQ2R7S2evkOax+ZFlgkztSKhc+ygp1oFJnoOPu9x0Uz
-         Ka5sAL8ZaII0VDNJdYaLTI8osss5OAp6PGbXjkk2qCChA1XDXO2kg9eXZqzbVuDdontG
-         qeCw==
+        d=gmail.com; s=20221208; t=1682847455; x=1685439455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pgw7SAEgZCYi0/kvNLII9HWX7GWjqzemguADE1p49wc=;
+        b=QwIAidmOgbxrzXBC/YYYWdXXyMdqgUU2ml5IVchYqH/U+zCccsh3kxRXGZCn0E3BaU
+         8lwi5WUB/5qgNrKZmHLKlBbHjKdy7GbEQNVBTqIQOV2bhzANTOyZQbRSV5te1CwfPCw4
+         t+rCTLDKkaQTSSP/geHerkpy23QbrVlPOyJN3txLf0F8kHgLuApH+vZnaz2oeZbTs1+h
+         Z/J44FNR7h+Tk8z7stsbr49y98m5aOKvShJAqCslpQUBouYnngG3tZmLrz5GTxSP65sc
+         3NQV5xVvnGGOgggl/in+TWKx2Pug7jQ4ZpLsznZNq/njdB2mT9x8+47Tocb/3lHjeX0w
+         TKgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682788633; x=1685380633;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3wh2tecoG/SOIbjAoMjLEYWI38jcVC09Ourwewcg6so=;
-        b=iYGYv8+kvBsuYjo5M/oEIu3qs+MMZMx5Rc4UlKnKNv8yrt9YZgTqXpY093fou9u1vK
-         3UnrcAMgfw4rSqn+XF+jL086+Y5+V7V078DdOpO1RTicSlh/7Pm6jJzNUXwxXwNHsJnC
-         xv2tOkAxe07A+Hx0CB9UW2Kp605DzwUGGB8RmP88XDwm9uVCmiHZ43pAGVedcMncC8FB
-         Sh68Y84QmWctC9EhoeOAejYOXyH2LzUE+5GWglcUfotXr944xU1/xy9DwH7Axp8aQP/E
-         3hIOzEtF3UJ112YAq6pKZWaqL3t3YXPHTlV4sJd110wW1XKNvsL4CTaINRC6zN3ydlqp
-         nLCA==
-X-Gm-Message-State: AC+VfDxrP/h6/Qt4asi3+JvRLnvpJDzYL/QVOAucmJcUbIBUg7wUYv6n
-        G9ejW4zYDg7xqsS2P8qw6UQGDA==
-X-Google-Smtp-Source: ACHHUZ6Oe9piteGShm01mlinvU7oEyq/rqc3PozEXDwTdw7U3tqcXri396GJLN9wlpv3LLd6BwAOyw==
-X-Received: by 2002:a05:6a20:8e19:b0:f6:9492:93b8 with SMTP id y25-20020a056a208e1900b000f6949293b8mr9795411pzj.3.1682788633495;
-        Sat, 29 Apr 2023 10:17:13 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y22-20020a17090abd1600b00246b7b8b43asm3268939pjr.49.2023.04.29.10.17.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Apr 2023 10:17:12 -0700 (PDT)
-Message-ID: <d7e9e68d-64b2-ab30-3c93-13dbeda27bce@kernel.dk>
-Date:   Sat, 29 Apr 2023 11:17:11 -0600
+        d=1e100.net; s=20221208; t=1682847455; x=1685439455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pgw7SAEgZCYi0/kvNLII9HWX7GWjqzemguADE1p49wc=;
+        b=hqqs1/kQbgdhSKxq2C9TNAVo1d1ThC0vB+ts6OlneTdgL4FlxJh/xcbOsMIVD3cbyl
+         DKajA7FD/oMqfjF4G9UP40kc60+gu6+FwDIsvAi5Uixn1UJ+9tj08kidP6yfuSqu9Adf
+         IbQ0soNHadhhxpKlp909/KuL6Ayj8mzPGORnG7Emjuzi4ItbllUBVH2gbKY+VQpEa4Jk
+         Im0AFUSHAu1ffEK8ENiegthpLVFhdexcj8CfgI0T6wMHmrFnO7M49iCtqD4K9kvbiqOn
+         l3DzcUTnwFZLyAu5RBiC2Uwwe3yV3tcqm7dqCMa+ynSN2riOHBHB5955XVV7qoRfjXiU
+         j/SQ==
+X-Gm-Message-State: AC+VfDz7lmGu75kLvnQ7kqvbe5YiK3JVdKcbd4n/QnmKTJCiuH+8vYYv
+        BFivFBogQ354DFWMtolYRBZ1IDQgDCU=
+X-Google-Smtp-Source: ACHHUZ53QYkFXkHndswnWKLzZPceMigYPFMAMwLiW35MWtzD4zhkVYJ/bTSmfFwCCTd6l3AHa34fNQ==
+X-Received: by 2002:adf:e347:0:b0:2ef:84c:a4bc with SMTP id n7-20020adfe347000000b002ef084ca4bcmr11163352wrj.19.1682847455119;
+        Sun, 30 Apr 2023 02:37:35 -0700 (PDT)
+Received: from 127.0.0.1localhost (188.31.116.198.threembb.co.uk. [188.31.116.198])
+        by smtp.gmail.com with ESMTPSA id u19-20020a05600c00d300b003f17eaae2c9sm29473170wmm.1.2023.04.30.02.37.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Apr 2023 02:37:34 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, ming.lei@redhat.com
+Subject: [RFC 0/7] Rethinking splice
+Date:   Sun, 30 Apr 2023 10:35:22 +0100
+Message-Id: <cover.1682701588.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 00/12] io_uring attached nvme queue
-Content-Language: en-US
-To:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de, sagi@grimberg.me,
-        kbusch@kernel.org
-Cc:     io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        anuj1072538@gmail.com, xiaoguang.wang@linux.alibaba.com
-References: <CGME20230429094228epcas5p4a80d8ed77433989fa804ecf449f83b0b@epcas5p4.samsung.com>
- <20230429093925.133327-1-joshi.k@samsung.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230429093925.133327-1-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 4/29/23 3:39?AM, Kanchan Joshi wrote:
-> This series shows one way to do what the title says.
-> This puts up a more direct/lean path that enables
->  - submission from io_uring SQE to NVMe SQE
->  - completion from NVMe CQE to io_uring CQE
-> Essentially cutting the hoops (involving request/bio) for nvme io path.
-> 
-> Also, io_uring ring is not to be shared among application threads.
-> Application is responsible for building the sharing (if it feels the
-> need). This means ring-associated exclusive queue can do away with some
-> synchronization costs that occur for shared queue.
-> 
-> Primary objective is to amp up of efficiency of kernel io path further
-> (towards PCIe gen N, N+1 hardware).
-> And we are seeing some asks too [1].
-> 
-> Building-blocks
-> ===============
-> At high level, series can be divided into following parts -
-> 
-> 1. nvme driver starts exposing some queue-pairs (SQ+CQ) that can
-> be attached to other in-kernel user (not just to block-layer, which is
-> the case at the moment) on demand.
-> 
-> Example:
-> insmod nvme.ko poll_queus=1 raw_queues=2
-> 
-> nvme0: 24/0/1/2 default/read/poll queues/raw queues
-> 
-> While driver registers other queues with block-layer, raw-queues are
-> rather reserved for exclusive attachment with other in-kernel users.
-> At this point, each raw-queue is interrupt-disabled (similar to
-> poll_queues). Maybe we need a better name for these (e.g. app/user queues).
-> [Refer: patch 2]
-> 
-> 2. register/unregister queue interface
-> (a) one for io_uring application to ask for device-queue and register
-> with the ring. [Refer: patch 4]
-> (b) another at nvme so that other in-kernel users (io_uring for now) can
-> ask for a raw-queue. [Refer: patch 3, 5, 6]
-> 
-> The latter returns a qid, that io_uring stores internally (not exposed
-> to user-space) in the ring ctx. At max one queue per ring is enabled.
-> Ring has no other special properties except the fact that it stores a
-> qid that it can use exclusively. So application can very well use the
-> ring to do other things than nvme io.
-> 
-> 3. user-interface to send commands down this way
-> (a) uring-cmd is extended to support a new flag "IORING_URING_CMD_DIRECT"
-> that application passes in the SQE. That is all.
-> (b) the flag goes down to provider of ->uring_cmd which may choose to do
->   things differently based on it (or ignore it).
-> [Refer: patch 7]
-> 
-> 4. nvme uring-cmd understands the above flag. It submits the command
-> into the known pre-registered queue, and completes (polled-completion)
-> from it. Transformation from "struct io_uring_cmd" to "nvme command" is
-> done directly without building other intermediate constructs.
-> [Refer: patch 8, 10, 12]
-> 
-> Testing and Performance
-> =======================
-> fio and t/io_uring is modified to exercise this path.
-> - fio: new "registerqueues" option
-> - t/io_uring: new "k" option
-> 
-> Good part:
-> 2.96M -> 5.02M
-> 
-> nvme io (without this):
-> # t/io_uring -b512 -d64 -c2 -s2 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k0 /dev/ng0n1
-> submitter=0, tid=2922, file=/dev/ng0n1, node=-1
-> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=0 QD=64
-> Engine=io_uring, sq_ring=64, cq_ring=64
-> IOPS=2.89M, BW=1412MiB/s, IOS/call=2/1
-> IOPS=2.92M, BW=1426MiB/s, IOS/call=2/2
-> IOPS=2.96M, BW=1444MiB/s, IOS/call=2/1
-> Exiting on timeout
-> Maximum IOPS=2.96M
-> 
-> nvme io (with this):
-> # t/io_uring -b512 -d64 -c2 -s2 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng0n1
-> submitter=0, tid=2927, file=/dev/ng0n1, node=-1
-> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=1 QD=64
-> Engine=io_uring, sq_ring=64, cq_ring=64
-> IOPS=4.99M, BW=2.43GiB/s, IOS/call=2/1
-> IOPS=5.02M, BW=2.45GiB/s, IOS/call=2/1
-> IOPS=5.02M, BW=2.45GiB/s, IOS/call=2/1
-> Exiting on timeout
-> Maximum IOPS=5.02M
-> 
-> Not so good part:
-> While single IO is fast this way, we do not have batching abilities for
-> multi-io scenario. Plugging, submission and completion batching are tied to
-> block-layer constructs. Things should look better if we could do something
-> about that.
-> Particularly something is off with the completion-batching.
-> 
-> With -s32 and -c32, the numbers decline:
-> 
-> # t/io_uring -b512 -d64 -c32 -s32 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng0n1
-> submitter=0, tid=3674, file=/dev/ng0n1, node=-1
-> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=1 QD=64
-> Engine=io_uring, sq_ring=64, cq_ring=64
-> IOPS=3.70M, BW=1806MiB/s, IOS/call=32/31
-> IOPS=3.71M, BW=1812MiB/s, IOS/call=32/31
-> IOPS=3.71M, BW=1812MiB/s, IOS/call=32/32
-> Exiting on timeout
-> Maximum IOPS=3.71M
-> 
-> And perf gets restored if we go back to -c2
-> 
-> # t/io_uring -b512 -d64 -c2 -s32 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng0n1
-> submitter=0, tid=3677, file=/dev/ng0n1, node=-1
-> polled=1, fixedbufs=1/0, register_files=1, buffered=1, register_queues=1 QD=64
-> Engine=io_uring, sq_ring=64, cq_ring=64
-> IOPS=4.99M, BW=2.44GiB/s, IOS/call=5/5
-> IOPS=5.02M, BW=2.45GiB/s, IOS/call=5/5
-> IOPS=5.02M, BW=2.45GiB/s, IOS/call=5/5
-> Exiting on timeout
-> Maximum IOPS=5.02M
-> 
-> Source
-> ======
-> Kernel: https://github.com/OpenMPDK/linux/tree/feat/directq-v1
-> fio: https://github.com/OpenMPDK/fio/commits/feat/rawq-v2
-> 
-> Please take a look.
+IORING_OP_SPLICE has problems, many of them are fundamental and rooted
+in the uapi design, see the patch 8 description. This patchset introduces
+a different approach, which came from discussions about splices
+and fused commands and absorbed ideas from both of them. We remove
+reliance onto pipes and registering "spliced" buffers with data as an
+io_uring's registered buffer. Then the user can use it as a usual
+registered buffer, e.g. pass it to IORING_OP_WRITE_FIXED.
 
-This looks like a great starting point! Unfortunately I won't be at
-LSFMM this year to discuss it in person, but I'll be taking a closer
-look at this. Some quick initial reactions:
+Once a buffer is released, it'll be returned back to the file it
+originated from via a callback. It's carried on on the level of the
+enitre buffer rather than on per-page basis as with splice, which,
+as noted by Ming, will allow more optimisations.
 
-- I'd call them "user" queues rather than raw or whatever, I think that
-  more accurately describes what they are for.
+The communication with the target file is done by a new fops callback,
+however the end mean of getting a buffer might change. It also peels
+layers of code compared to splice requests, which helps it to be more
+flexible and support more cases. For instance, Ming has a case where
+it's beneficial for the target file to provide a buffer to be filled
+with read/recv/etc. requests and then returned back to the file.
 
-- I guess there's no way around needing to pre-allocate these user
-  queues, just like we do for polled_queues right now? In terms of user
-  API, it'd be nicer if you could just do IORING_REGISTER_QUEUE (insert
-  right name here...) and it'd allocate and return you an ID.
+Testing:
 
-- Need to take a look at the uring_cmd stuff again, but would be nice if
-  we did not have to add more stuff to fops for this. Maybe we can set
-  aside a range of "ioctl" type commands through uring_cmd for this
-  instead, and go that way for registering/unregistering queues.
+I was benchmarking using liburing/examples/splice-bench.t [1], which
+also needs additional test kernel patches [2]. It implements get-buf
+for /dev/null, and the test grabs one page from it and then feeds it
+back without any actual IO, then repeats.
 
-We do have some users that are CPU constrained, and while my testing
-easily maxes out a gen2 optane (actually 2 or 3) with the generic IO
-path, that's also with all the fat that adds overhead removed. Most
-people don't have this luxury, necessarily, or actually need some of
-this fat for their monitoring, for example. This would provide a nice
-way to have pretty consistent and efficient performance across distro
-type configs, which would be great, while still retaining the fattier
-bits for "normal" IO.
- 
+fairness:
+IORING_OP_SPLICE performs very poorly not even reaching 450K qps, so one
+of the patches enables inline execution of it to make it more
+interesting but is only fine for testing.
+
+Buffer removal is done by OP_GET_BUF without issuing a separate op
+for that. "GET_BUF + nop" emulates the overhead by additional additional
+nop requests.
+
+Another aspect is that OP_GET_BUF issues OP_WRITE_FIXED, which, as
+profiles show, are quite expensive, which is not exactly a problem of
+GET_BUF but skews results. E.g. io_get_buf() - 10.7, io_write() - 24.3%
+
+The last bit is that the buffer removal, if done by a separate request,
+might and likely will be batched with other requests, so "GET_BUF + nop"
+is rather the worst case.
+
+The numbers below are "requests / s".
+
+QD  | splice2() | OP_SPLICE | OP_GET_BUF | GET_BUF, link | GET_BUF + nop
+1   | 5009035   | 3697020   | 3886356    | 4616123       | 2886171
+2   | 4859523   | 5205564   | 5309510    | 5591521       | 4139125
+4   | 4908353   | 6265771   | 6415036    | 6331249       | 5198505
+8   | 4955003   | 7141326   | 7243434    | 6850088       | 5984588
+16  | 4959496   | 7640409   | 7794564    | 7208221       | 6587212
+32  | 4937463   | 7868501   | 8103406    | 7385890       | 6844390
+
+The test is obviously not exhausting and it should further be tried
+and with more complicated cases. E.g. need quantify performance with
+sockets, where apoll feature will be involved, and it'll need to get
+internal partial IO retry support.
+
+[1] https://github.com/isilence/liburing.git io_uring/get-buf-op
+[2] https://github.com/isilence/linux.git io_uring/get-buf-op
+
+Links for convenience:
+https://github.com/isilence/liburing/tree/io_uring/get-buf-op
+https://github.com/isilence/linux/tree/io_uring/get-buf-op
+
+Pavel Begunkov (7):
+  io_uring: add io_mapped_ubuf caches
+  io_uring: add reg-buffer data directions
+  io_uring: fail loop_rw_iter with pure bvec bufs
+  io_uring/rsrc: introduce struct iou_buf_desc
+  io_uring/rsrc: add buffer release callbacks
+  io_uring/rsrc: introduce helper installing one buffer
+  io_uring,fs: introduce IORING_OP_GET_BUF
+
+ include/linux/fs.h             |  2 +
+ include/linux/io_uring.h       | 19 +++++++
+ include/linux/io_uring_types.h |  2 +
+ include/uapi/linux/io_uring.h  |  1 +
+ io_uring/io_uring.c            |  9 ++++
+ io_uring/opdef.c               | 11 +++++
+ io_uring/rsrc.c                | 80 ++++++++++++++++++++++++++----
+ io_uring/rsrc.h                | 24 +++++++--
+ io_uring/rw.c                  |  7 +++
+ io_uring/splice.c              | 90 ++++++++++++++++++++++++++++++++++
+ io_uring/splice.h              |  4 ++
+ 11 files changed, 235 insertions(+), 14 deletions(-)
 
 -- 
-Jens Axboe
+2.40.0
 

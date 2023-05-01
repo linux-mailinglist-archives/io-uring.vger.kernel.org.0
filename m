@@ -2,517 +2,268 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED9E56F2F0D
-	for <lists+io-uring@lfdr.de>; Mon,  1 May 2023 09:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A24C6F3086
+	for <lists+io-uring@lfdr.de>; Mon,  1 May 2023 13:36:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232190AbjEAHQM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 1 May 2023 03:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32848 "EHLO
+        id S231779AbjEALg4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 1 May 2023 07:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232131AbjEAHQL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 1 May 2023 03:16:11 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A461EE79
-        for <io-uring@vger.kernel.org>; Mon,  1 May 2023 00:16:08 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-63b5c4c76aaso1507595b3a.2
-        for <io-uring@vger.kernel.org>; Mon, 01 May 2023 00:16:08 -0700 (PDT)
+        with ESMTP id S229556AbjEALgz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 1 May 2023 07:36:55 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205B39C;
+        Mon,  1 May 2023 04:36:50 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f192c23fffso13056705e9.3;
+        Mon, 01 May 2023 04:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682925368; x=1685517368;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Bo+TuW79a2MAd9lHX9ZeRTSgsQeGMfP8roInaACgXs=;
-        b=dIRI2GxpukSjnWR8uN8DOYVda99Re6+g/Q4/oZWO3H7PqRQ8PQIS845K6Y/C4IgXN6
-         h07qBUFBTkagwE04CZYTObdwSjgDPP8JfZd+Cf8Cf/K5CikburiZUPM06DRDTrbUmhNf
-         JIgtLAT4QFGsAmvHXV39ZDJqOEzAxoiNRLQkn2Lj1dVc4r8XE0D2/VR2VFr4DxsdDaQ5
-         j6KTT1yejGktLDk46gpPVb6jzSztNGcUDD5wQRc/lsEi/Tx55n60ad1GwzSkad4H/ZPF
-         EYPkVi9WnvLqghf29HIJDZURJnskIiPj1fAWB54oREXE+1GU8VyRgkKXCbith8TZqveL
-         ubLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682925368; x=1685517368;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1682941008; x=1685533008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Bo+TuW79a2MAd9lHX9ZeRTSgsQeGMfP8roInaACgXs=;
-        b=XUt7Acj3On8WcbR7SEsnpz50AERe7bzoD7ofqkkCp2ytdGcxOpo5j9hc8WW74VsARu
-         M9AB45WB2vre9bbXA94ALeJDVtzUhkIz7JCgOH17In/xmbJUuFoOayXoJhMYUJ/UUTYb
-         7oIR519KJdI/1MCL25t/or/Ap7Mvhn0dVraa9lNc0rY+NCrFBQWjiK1f6x6dbXFZi+dN
-         h5+/7u8L6XhZyg0Z0k16YXTmqYX5c2pXT6iNkzN6L3cigDr7ka0WQxCRNqhMeJTPQgvZ
-         k9MJKVVUSchhxAXlRlxSZV4gmMalbOh9OSvlu7wh54ZWhWt6Mw8BPXBct8Mc7vxN2RAp
-         kpMg==
-X-Gm-Message-State: AC+VfDzWqygWwSGYw1BW0rV6P7Iaw8N5nA13yAMYOk6+esNqIBMgy8xe
-        QF/Qmm1HWJumUTh0UkplJqE5hw==
-X-Google-Smtp-Source: ACHHUZ6NPS85lZJzOCW/a5W/4mgMCQCFokTuSdLnIvCeTStnVjFXAGOlFE5zyfG5A5rRI56F4Lz2aA==
-X-Received: by 2002:a05:6a20:8e08:b0:f8:1101:c06d with SMTP id y8-20020a056a208e0800b000f81101c06dmr17397460pzj.48.1682925368031;
-        Mon, 01 May 2023 00:16:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id ls17-20020a17090b351100b0023a9564763bsm18603000pjb.29.2023.05.01.00.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 May 2023 00:16:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ptNlT-009yHM-Nk; Mon, 01 May 2023 17:16:03 +1000
-Date:   Mon, 1 May 2023 17:16:03 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
-Message-ID: <20230501071603.GE2155823@dread.disaster.area>
-References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
- <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
- <20230423224045.GS447837@dread.disaster.area>
- <ZEXChAJfCRPv9vbs@codewreck.org>
- <20230428050640.GA1969623@dread.disaster.area>
- <ZEtkXJ1vMsFR3tkN@codewreck.org>
- <ZEzQRLUnlix1GvbA@codewreck.org>
- <20230430233241.GC2155823@dread.disaster.area>
- <ZE8Mm-9PikpFSjLp@codewreck.org>
+        bh=Vjlw7ZIPO5BHNu1EUtvol8aUBJhxAExd/+yf0BW2Rjg=;
+        b=iMWx4trNR6AYTXhXDKvyM54jBSXWB2aOKpDY2s6D+Oa+17D5tMPqfT/LGBSlpHyJdv
+         ESRx8AQqBjLvH3IZNIvie9OhrZ6KrEdPpJ2kDtFlDshQN3eO11Q+T/4imDbagVt5JERs
+         Q2cEpyHZkePAyEP3e8C5lUPP3y7BQyX0sKMZhf+JmJ7cskenA7cNVC7bTPLtXoglCFrb
+         bNAUh6latUHR9aumpur6yHepLw7H4mdhjx6iSYyoSfPY/cmQSaRM1ewyUsm9OifPSr63
+         o737gbCZ0+1w066hxj00OyMnu3uj2MgbnkLt14O7wt1NoRR2hX8aczoRfkgTh15dvcMK
+         Q3Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682941008; x=1685533008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vjlw7ZIPO5BHNu1EUtvol8aUBJhxAExd/+yf0BW2Rjg=;
+        b=dXPk43n3LjePfeBM85Kp/Od7ruWVkm4lwob61ce7XtJN2UhHlC7f0qj8XHGWXaowBQ
+         2j5VNWq19BWvghy2BBskS6Znm7RQMSZ0y7v3nzES14Yx8DaP8Rdds08J05mo9LnuJo3e
+         n3nbXB/tKfyeCalSMIlwVxn/RkUTVK0Lu3CSVur+hizi5G1cxYAAGqw3IDU49Wc+FDOr
+         EdhPMQaUSZCCJ/uw3oGHljDkFE0teTcdtvu0EZimX5sqeaY2MtliFdOCWSAdQuWHyH9n
+         +FqRmMSVqqmRdec3K9s1Y7Equm/EvUZLnjkPQ7qNW0V77aH0QwOeCDFQoFfOJQCGXEdx
+         nclA==
+X-Gm-Message-State: AC+VfDzAWjmjjc9I0eF2PxCgK1pJjUJII435m6snrqXniJsjJebfHXhJ
+        ILWVCsztchY2hPLsXLYWoEb3QbYE5M4xc/+ZyH0=
+X-Google-Smtp-Source: ACHHUZ7A/S7sJNr6YsfCAgmiMeExl6VXG2ORa76JLyYaLdDYdkrM/oOD6xttWsVNCbRmeMmboSyNIIknMV7D5UhJ0QA=
+X-Received: by 2002:a5d:5691:0:b0:306:2c47:9736 with SMTP id
+ f17-20020a5d5691000000b003062c479736mr2613621wrv.15.1682941007855; Mon, 01
+ May 2023 04:36:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZE8Mm-9PikpFSjLp@codewreck.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <CGME20230429094228epcas5p4a80d8ed77433989fa804ecf449f83b0b@epcas5p4.samsung.com>
+ <20230429093925.133327-1-joshi.k@samsung.com> <d7e9e68d-64b2-ab30-3c93-13dbeda27bce@kernel.dk>
+In-Reply-To: <d7e9e68d-64b2-ab30-3c93-13dbeda27bce@kernel.dk>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Mon, 1 May 2023 17:06:24 +0530
+Message-ID: <CA+1E3r+J5pAywR8p9h=seJ+b=ckY27qsnrG0O_9iU2F+LwDnqA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/12] io_uring attached nvme queue
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, hch@lst.de, sagi@grimberg.me,
+        kbusch@kernel.org, io-uring@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        gost.dev@samsung.com, anuj1072538@gmail.com,
+        xiaoguang.wang@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, May 01, 2023 at 09:49:31AM +0900, Dominique Martinet wrote:
-> Dave Chinner wrote on Mon, May 01, 2023 at 09:32:41AM +1000:
-> > > I've had a second look and I still don't see anything obvious though;
-> > > I'd rather avoid adding a new variant of iterate()/iterate_shared() --
-> > > we could use that as a chance to add a flag to struct file_operation
-> > > instead? e.g., something like mmap_supported_flags:
-> > 
-> > I don't think that makes sense - the eventual goal is to make
-> > ->iterate() go away entirely and all filesystems use
-> > ->iterate_shared(). Hence I think adding flags to select iterate vs
-> > iterate_shared and the locking that is needed is the wrong place to
-> > start from here.
-> 
-> (The flag could just go away when all filesystems not supporting it are
-> gone, and it could be made the other way around (e.g. explicit
-> NOT_SHARED to encourage migrations), so I don't really see the problem
-> with this but next point makes this moot anyway)
-> 
-> > Whether the filesystem supports non-blocking ->iterate_shared() or
-> > not is a filesystem implementation option and io_uring needs that
-> > information to be held on the struct file for efficient
-> > determination of whether it should use non-blocking operations or
-> > not.
-> 
-> Right, sorry. I was thinking that since it's fs/op dependant it made
-> more sense to keep next to the iterate operation, but that'd be a
-> layering violation to look directly at the file_operation vector
-> directly from the uring code... So having it in the struct file is
-> better from that point of view.
-> 
-> > We already set per-filesystem file modes via the ->open method,
-> > that's how we already tell io_uring that it can do NOWAIT IO, as
-> > well as async read/write IO for regular files. And now we also use
-> > it for FMODE_DIO_PARALLEL_WRITE, too.
-> > 
-> > See __io_file_supports_nowait()....
-> > 
-> > Essentially, io_uring already cwhas the mechanism available to it
-> > to determine if it should use NOWAIT semantics for getdents
-> > operations; we just need to set FMODE_NOWAIT correctly for directory
-> > files via ->open() on the filesystems that support it...
-> 
-> Great, I wasn't aware of FMODE_NOWAIT; things are starting to fall in
-> place.
-> I'll send a v2 around Wed or Thurs (yay national holidays)
-> 
-> > [ Hmmmm - we probably need to be more careful in XFS about what
-> > types of files we set those flags on.... ]
-> 
-> Yes, FMODE_NOWAIT will be set on directories as xfs_dir_open calls
-> xfs_file_open which sets it inconditionally... So I got to check other
-> filesystems don't do something similar as a bonus, but it looks like
-> none that set FMODE_NOWAIT on regular files share the file open path,
-> so at least that shouldn't be too bad.
-> Happy to also fold the xfs fix as a prerequisite patch of this series or
-> to let you do it, just tell me.
+On Sat, Apr 29, 2023 at 10:55=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+> On 4/29/23 3:39?AM, Kanchan Joshi wrote:
+> > This series shows one way to do what the title says.
+> > This puts up a more direct/lean path that enables
+> >  - submission from io_uring SQE to NVMe SQE
+> >  - completion from NVMe CQE to io_uring CQE
+> > Essentially cutting the hoops (involving request/bio) for nvme io path.
+> >
+> > Also, io_uring ring is not to be shared among application threads.
+> > Application is responsible for building the sharing (if it feels the
+> > need). This means ring-associated exclusive queue can do away with some
+> > synchronization costs that occur for shared queue.
+> >
+> > Primary objective is to amp up of efficiency of kernel io path further
+> > (towards PCIe gen N, N+1 hardware).
+> > And we are seeing some asks too [1].
+> >
+> > Building-blocks
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > At high level, series can be divided into following parts -
+> >
+> > 1. nvme driver starts exposing some queue-pairs (SQ+CQ) that can
+> > be attached to other in-kernel user (not just to block-layer, which is
+> > the case at the moment) on demand.
+> >
+> > Example:
+> > insmod nvme.ko poll_queus=3D1 raw_queues=3D2
+> >
+> > nvme0: 24/0/1/2 default/read/poll queues/raw queues
+> >
+> > While driver registers other queues with block-layer, raw-queues are
+> > rather reserved for exclusive attachment with other in-kernel users.
+> > At this point, each raw-queue is interrupt-disabled (similar to
+> > poll_queues). Maybe we need a better name for these (e.g. app/user queu=
+es).
+> > [Refer: patch 2]
+> >
+> > 2. register/unregister queue interface
+> > (a) one for io_uring application to ask for device-queue and register
+> > with the ring. [Refer: patch 4]
+> > (b) another at nvme so that other in-kernel users (io_uring for now) ca=
+n
+> > ask for a raw-queue. [Refer: patch 3, 5, 6]
+> >
+> > The latter returns a qid, that io_uring stores internally (not exposed
+> > to user-space) in the ring ctx. At max one queue per ring is enabled.
+> > Ring has no other special properties except the fact that it stores a
+> > qid that it can use exclusively. So application can very well use the
+> > ring to do other things than nvme io.
+> >
+> > 3. user-interface to send commands down this way
+> > (a) uring-cmd is extended to support a new flag "IORING_URING_CMD_DIREC=
+T"
+> > that application passes in the SQE. That is all.
+> > (b) the flag goes down to provider of ->uring_cmd which may choose to d=
+o
+> >   things differently based on it (or ignore it).
+> > [Refer: patch 7]
+> >
+> > 4. nvme uring-cmd understands the above flag. It submits the command
+> > into the known pre-registered queue, and completes (polled-completion)
+> > from it. Transformation from "struct io_uring_cmd" to "nvme command" is
+> > done directly without building other intermediate constructs.
+> > [Refer: patch 8, 10, 12]
+> >
+> > Testing and Performance
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > fio and t/io_uring is modified to exercise this path.
+> > - fio: new "registerqueues" option
+> > - t/io_uring: new "k" option
+> >
+> > Good part:
+> > 2.96M -> 5.02M
+> >
+> > nvme io (without this):
+> > # t/io_uring -b512 -d64 -c2 -s2 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k0 /dev/ng=
+0n1
+> > submitter=3D0, tid=3D2922, file=3D/dev/ng0n1, node=3D-1
+> > polled=3D1, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, register=
+_queues=3D0 QD=3D64
+> > Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
+> > IOPS=3D2.89M, BW=3D1412MiB/s, IOS/call=3D2/1
+> > IOPS=3D2.92M, BW=3D1426MiB/s, IOS/call=3D2/2
+> > IOPS=3D2.96M, BW=3D1444MiB/s, IOS/call=3D2/1
+> > Exiting on timeout
+> > Maximum IOPS=3D2.96M
+> >
+> > nvme io (with this):
+> > # t/io_uring -b512 -d64 -c2 -s2 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/ng=
+0n1
+> > submitter=3D0, tid=3D2927, file=3D/dev/ng0n1, node=3D-1
+> > polled=3D1, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, register=
+_queues=3D1 QD=3D64
+> > Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
+> > IOPS=3D4.99M, BW=3D2.43GiB/s, IOS/call=3D2/1
+> > IOPS=3D5.02M, BW=3D2.45GiB/s, IOS/call=3D2/1
+> > IOPS=3D5.02M, BW=3D2.45GiB/s, IOS/call=3D2/1
+> > Exiting on timeout
+> > Maximum IOPS=3D5.02M
+> >
+> > Not so good part:
+> > While single IO is fast this way, we do not have batching abilities for
+> > multi-io scenario. Plugging, submission and completion batching are tie=
+d to
+> > block-layer constructs. Things should look better if we could do someth=
+ing
+> > about that.
+> > Particularly something is off with the completion-batching.
+> >
+> > With -s32 and -c32, the numbers decline:
+> >
+> > # t/io_uring -b512 -d64 -c32 -s32 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/=
+ng0n1
+> > submitter=3D0, tid=3D3674, file=3D/dev/ng0n1, node=3D-1
+> > polled=3D1, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, register=
+_queues=3D1 QD=3D64
+> > Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
+> > IOPS=3D3.70M, BW=3D1806MiB/s, IOS/call=3D32/31
+> > IOPS=3D3.71M, BW=3D1812MiB/s, IOS/call=3D32/31
+> > IOPS=3D3.71M, BW=3D1812MiB/s, IOS/call=3D32/32
+> > Exiting on timeout
+> > Maximum IOPS=3D3.71M
+> >
+> > And perf gets restored if we go back to -c2
+> >
+> > # t/io_uring -b512 -d64 -c2 -s32 -p1 -F1 -B1 -O0 -n1 -u1 -r4 -k1 /dev/n=
+g0n1
+> > submitter=3D0, tid=3D3677, file=3D/dev/ng0n1, node=3D-1
+> > polled=3D1, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, register=
+_queues=3D1 QD=3D64
+> > Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
+> > IOPS=3D4.99M, BW=3D2.44GiB/s, IOS/call=3D5/5
+> > IOPS=3D5.02M, BW=3D2.45GiB/s, IOS/call=3D5/5
+> > IOPS=3D5.02M, BW=3D2.45GiB/s, IOS/call=3D5/5
+> > Exiting on timeout
+> > Maximum IOPS=3D5.02M
+> >
+> > Source
+> > =3D=3D=3D=3D=3D=3D
+> > Kernel: https://github.com/OpenMPDK/linux/tree/feat/directq-v1
+> > fio: https://github.com/OpenMPDK/fio/commits/feat/rawq-v2
+> >
+> > Please take a look.
+>
+> This looks like a great starting point! Unfortunately I won't be at
+> LSFMM this year to discuss it in person, but I'll be taking a closer
+> look at this.
 
-Yeah, we need to audit all the ->open() calls to ensure they do the
-right thing - I think what XFS does is a harmless oversight at this
-point, we can simple split xfs_file_open() and xfs_dir_open() as
-appropriate.
+That will help, thanks.
 
-Also, the nowait enabled ->iterate_shared() method for XFS will look
-something like the patch below. It's not tested in any way, I just
-wrote it quickly to demonstrate the relative simplicity of
-converting all the locking and IO interfaces in the xfs_readdir()
-for NOWAIT operation. Making it asynchronous (equivalent of
-FMODE_BUF_RASYNC) is a lot more work, but I'm not sure that is
-necessary given the async readahead that gets issued...
+> Some quick initial reactions:
+>
+> - I'd call them "user" queues rather than raw or whatever, I think that
+>   more accurately describes what they are for.
 
-Cheers,
+Right, that is better.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> - I guess there's no way around needing to pre-allocate these user
+>   queues, just like we do for polled_queues right now?
 
-xfs: NOWAIT semantics for readdir
+Right, we would need to allocate nvme sq/cq in the outset.
+Changing the count at run-time is a bit murky. I will have another look tho=
+ugh.
 
-From: Dave Chinner <dchinner@redhat.com>
+>In terms of user
+>   API, it'd be nicer if you could just do IORING_REGISTER_QUEUE (insert
+>   right name here...) and it'd allocate and return you an ID.
 
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/libxfs/xfs_da_btree.c   | 16 +++++++++++++
- fs/xfs/libxfs/xfs_da_btree.h   |  1 +
- fs/xfs/libxfs/xfs_dir2_block.c |  7 +++---
- fs/xfs/libxfs/xfs_dir2_priv.h  |  2 +-
- fs/xfs/scrub/dir.c             |  2 +-
- fs/xfs/scrub/readdir.c         |  2 +-
- fs/xfs/xfs_dir2_readdir.c      | 54 ++++++++++++++++++++++++++++++++++--------
- fs/xfs/xfs_inode.c             | 17 +++++++++++++
- fs/xfs/xfs_inode.h             | 15 ++++++------
- include/linux/fs.h             |  1 +
- 10 files changed, 94 insertions(+), 23 deletions(-)
+But this is the implemented API (new register code in io_uring) in the
+patchset at the moment.
+So it seems I am missing your point?
 
-diff --git a/fs/xfs/libxfs/xfs_da_btree.c b/fs/xfs/libxfs/xfs_da_btree.c
-index e576560b46e9..7a1a0af24197 100644
---- a/fs/xfs/libxfs/xfs_da_btree.c
-+++ b/fs/xfs/libxfs/xfs_da_btree.c
-@@ -2643,16 +2643,32 @@ xfs_da_read_buf(
- 	struct xfs_buf_map	map, *mapp = &map;
- 	int			nmap = 1;
- 	int			error;
-+	int			buf_flags = 0;
- 
- 	*bpp = NULL;
- 	error = xfs_dabuf_map(dp, bno, flags, whichfork, &mapp, &nmap);
- 	if (error || !nmap)
- 		goto out_free;
- 
-+	/*
-+	 * NOWAIT semantics mean we don't wait on the buffer lock nor do we
-+	 * issue IO for this buffer if it is not already in memory. Caller will
-+	 * retry. This will return -EAGAIN if the buffer is in memory and cannot
-+	 * be locked, and no buffer and no error if it isn't in memory.  We
-+	 * translate both of those into a return state of -EAGAIN and *bpp =
-+	 * NULL.
-+	 */
-+	if (flags & XFS_DABUF_NOWAIT)
-+		buf_flags |= XBF_TRYLOCK | XBF_INCORE;
- 	error = xfs_trans_read_buf_map(mp, tp, mp->m_ddev_targp, mapp, nmap, 0,
- 			&bp, ops);
- 	if (error)
- 		goto out_free;
-+	if (!bp) {
-+		ASSERT(flags & XFS_DABUF_NOWAIT);
-+		error = -EAGAIN;
-+		goto out_free;
-+	}
- 
- 	if (whichfork == XFS_ATTR_FORK)
- 		xfs_buf_set_ref(bp, XFS_ATTR_BTREE_REF);
-diff --git a/fs/xfs/libxfs/xfs_da_btree.h b/fs/xfs/libxfs/xfs_da_btree.h
-index ffa3df5b2893..32e7b1cca402 100644
---- a/fs/xfs/libxfs/xfs_da_btree.h
-+++ b/fs/xfs/libxfs/xfs_da_btree.h
-@@ -205,6 +205,7 @@ int	xfs_da3_node_read_mapped(struct xfs_trans *tp, struct xfs_inode *dp,
-  */
- 
- #define XFS_DABUF_MAP_HOLE_OK	(1u << 0)
-+#define XFS_DABUF_NOWAIT	(1u << 1)
- 
- int	xfs_da_grow_inode(xfs_da_args_t *args, xfs_dablk_t *new_blkno);
- int	xfs_da_grow_inode_int(struct xfs_da_args *args, xfs_fileoff_t *bno,
-diff --git a/fs/xfs/libxfs/xfs_dir2_block.c b/fs/xfs/libxfs/xfs_dir2_block.c
-index 00f960a703b2..59b24a594add 100644
---- a/fs/xfs/libxfs/xfs_dir2_block.c
-+++ b/fs/xfs/libxfs/xfs_dir2_block.c
-@@ -135,13 +135,14 @@ int
- xfs_dir3_block_read(
- 	struct xfs_trans	*tp,
- 	struct xfs_inode	*dp,
-+	unsigned int		flags,
- 	struct xfs_buf		**bpp)
- {
- 	struct xfs_mount	*mp = dp->i_mount;
- 	xfs_failaddr_t		fa;
- 	int			err;
- 
--	err = xfs_da_read_buf(tp, dp, mp->m_dir_geo->datablk, 0, bpp,
-+	err = xfs_da_read_buf(tp, dp, mp->m_dir_geo->datablk, flags, bpp,
- 				XFS_DATA_FORK, &xfs_dir3_block_buf_ops);
- 	if (err || !*bpp)
- 		return err;
-@@ -380,7 +381,7 @@ xfs_dir2_block_addname(
- 	tp = args->trans;
- 
- 	/* Read the (one and only) directory block into bp. */
--	error = xfs_dir3_block_read(tp, dp, &bp);
-+	error = xfs_dir3_block_read(tp, dp, 0, &bp);
- 	if (error)
- 		return error;
- 
-@@ -695,7 +696,7 @@ xfs_dir2_block_lookup_int(
- 	dp = args->dp;
- 	tp = args->trans;
- 
--	error = xfs_dir3_block_read(tp, dp, &bp);
-+	error = xfs_dir3_block_read(tp, dp, 0, &bp);
- 	if (error)
- 		return error;
- 
-diff --git a/fs/xfs/libxfs/xfs_dir2_priv.h b/fs/xfs/libxfs/xfs_dir2_priv.h
-index 7404a9ff1a92..7d4cf8a0f15b 100644
---- a/fs/xfs/libxfs/xfs_dir2_priv.h
-+++ b/fs/xfs/libxfs/xfs_dir2_priv.h
-@@ -51,7 +51,7 @@ extern int xfs_dir_cilookup_result(struct xfs_da_args *args,
- 
- /* xfs_dir2_block.c */
- extern int xfs_dir3_block_read(struct xfs_trans *tp, struct xfs_inode *dp,
--			       struct xfs_buf **bpp);
-+			       unsigned int flags, struct xfs_buf **bpp);
- extern int xfs_dir2_block_addname(struct xfs_da_args *args);
- extern int xfs_dir2_block_lookup(struct xfs_da_args *args);
- extern int xfs_dir2_block_removename(struct xfs_da_args *args);
-diff --git a/fs/xfs/scrub/dir.c b/fs/xfs/scrub/dir.c
-index 0b491784b759..5cc51f201bd7 100644
---- a/fs/xfs/scrub/dir.c
-+++ b/fs/xfs/scrub/dir.c
-@@ -313,7 +313,7 @@ xchk_directory_data_bestfree(
- 		/* dir block format */
- 		if (lblk != XFS_B_TO_FSBT(mp, XFS_DIR2_DATA_OFFSET))
- 			xchk_fblock_set_corrupt(sc, XFS_DATA_FORK, lblk);
--		error = xfs_dir3_block_read(sc->tp, sc->ip, &bp);
-+		error = xfs_dir3_block_read(sc->tp, sc->ip, 0, &bp);
- 	} else {
- 		/* dir data format */
- 		error = xfs_dir3_data_read(sc->tp, sc->ip, lblk, 0, &bp);
-diff --git a/fs/xfs/scrub/readdir.c b/fs/xfs/scrub/readdir.c
-index e51c1544be63..f0a727311632 100644
---- a/fs/xfs/scrub/readdir.c
-+++ b/fs/xfs/scrub/readdir.c
-@@ -101,7 +101,7 @@ xchk_dir_walk_block(
- 	unsigned int		off, next_off, end;
- 	int			error;
- 
--	error = xfs_dir3_block_read(sc->tp, dp, &bp);
-+	error = xfs_dir3_block_read(sc->tp, dp, 0, &bp);
- 	if (error)
- 		return error;
- 
-diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
-index 9f3ceb461515..e5fcd3786599 100644
---- a/fs/xfs/xfs_dir2_readdir.c
-+++ b/fs/xfs/xfs_dir2_readdir.c
-@@ -149,6 +149,7 @@ xfs_dir2_block_getdents(
- 	struct xfs_da_geometry	*geo = args->geo;
- 	unsigned int		offset, next_offset;
- 	unsigned int		end;
-+	unsigned int		flags = 0;
- 
- 	/*
- 	 * If the block number in the offset is out of range, we're done.
-@@ -156,7 +157,9 @@ xfs_dir2_block_getdents(
- 	if (xfs_dir2_dataptr_to_db(geo, ctx->pos) > geo->datablk)
- 		return 0;
- 
--	error = xfs_dir3_block_read(args->trans, dp, &bp);
-+	if (ctx->nowait)
-+		flags |= XFS_DABUF_NOWAIT;
-+	error = xfs_dir3_block_read(args->trans, dp, flags, &bp);
- 	if (error)
- 		return error;
- 
-@@ -240,6 +243,7 @@ xfs_dir2_block_getdents(
- STATIC int
- xfs_dir2_leaf_readbuf(
- 	struct xfs_da_args	*args,
-+	struct dir_context	*ctx,
- 	size_t			bufsize,
- 	xfs_dir2_off_t		*cur_off,
- 	xfs_dablk_t		*ra_blk,
-@@ -258,10 +262,15 @@ xfs_dir2_leaf_readbuf(
- 	struct xfs_iext_cursor	icur;
- 	int			ra_want;
- 	int			error = 0;
-+	unsigned int		flags = 0;
- 
--	error = xfs_iread_extents(args->trans, dp, XFS_DATA_FORK);
--	if (error)
--		goto out;
-+	if (ctx->nowait) {
-+		flags |= XFS_DABUF_NOWAIT;
-+	} else {
-+		error = xfs_iread_extents(args->trans, dp, XFS_DATA_FORK);
-+		if (error)
-+			goto out;
-+	}
- 
- 	/*
- 	 * Look for mapped directory blocks at or above the current offset.
-@@ -280,7 +289,7 @@ xfs_dir2_leaf_readbuf(
- 	new_off = xfs_dir2_da_to_byte(geo, map.br_startoff);
- 	if (new_off > *cur_off)
- 		*cur_off = new_off;
--	error = xfs_dir3_data_read(args->trans, dp, map.br_startoff, 0, &bp);
-+	error = xfs_dir3_data_read(args->trans, dp, map.br_startoff, flags, &bp);
- 	if (error)
- 		goto out;
- 
-@@ -337,6 +346,16 @@ xfs_dir2_leaf_readbuf(
- 	goto out;
- }
- 
-+static inline int
-+xfs_ilock_for_readdir(
-+	struct xfs_inode	*dp,
-+	bool			nowait)
-+{
-+	if (nowait)
-+		return xfs_ilock_data_map_shared_nowait(dp);
-+	return xfs_ilock_data_map_shared(dp);
-+}
-+
- /*
-  * Getdents (readdir) for leaf and node directories.
-  * This reads the data blocks only, so is the same for both forms.
-@@ -360,6 +379,7 @@ xfs_dir2_leaf_getdents(
- 	int			byteoff;	/* offset in current block */
- 	unsigned int		offset = 0;
- 	int			error = 0;	/* error return value */
-+	int			written = 0;
- 
- 	/*
- 	 * If the offset is at or past the largest allowed value,
-@@ -391,10 +411,16 @@ xfs_dir2_leaf_getdents(
- 				bp = NULL;
- 			}
- 
--			if (*lock_mode == 0)
--				*lock_mode = xfs_ilock_data_map_shared(dp);
--			error = xfs_dir2_leaf_readbuf(args, bufsize, &curoff,
--					&rablk, &bp);
-+			if (*lock_mode == 0) {
-+				*lock_mode = xfs_ilock_for_readdir(dp,
-+						ctx->nowait);
-+				if (!*lock_mode) {
-+					error = -EAGAIN;
-+					break;
-+				}
-+			}
-+			error = xfs_dir2_leaf_readbuf(args, ctx, bufsize,
-+					&curoff, &rablk, &bp);
- 			if (error || !bp)
- 				break;
- 
-@@ -479,6 +505,7 @@ xfs_dir2_leaf_getdents(
- 		 */
- 		offset += length;
- 		curoff += length;
-+		written += length;
- 		/* bufsize may have just been a guess; don't go negative */
- 		bufsize = bufsize > length ? bufsize - length : 0;
- 	}
-@@ -492,6 +519,8 @@ xfs_dir2_leaf_getdents(
- 		ctx->pos = xfs_dir2_byte_to_dataptr(curoff) & 0x7fffffff;
- 	if (bp)
- 		xfs_trans_brelse(args->trans, bp);
-+	if (error == -EAGAIN && written > 0)
-+		error = 0;
- 	return error;
- }
- 
-@@ -528,10 +557,13 @@ xfs_readdir(
- 	args.geo = dp->i_mount->m_dir_geo;
- 	args.trans = tp;
- 
-+	lock_mode = xfs_ilock_for_readdir(dp, ctx->nowait);
-+	if (!lock_mode)
-+		return -EAGAIN;
-+
- 	if (dp->i_df.if_format == XFS_DINODE_FMT_LOCAL)
- 		return xfs_dir2_sf_getdents(&args, ctx);
- 
--	lock_mode = xfs_ilock_data_map_shared(dp);
- 	error = xfs_dir2_isblock(&args, &isblock);
- 	if (error)
- 		goto out_unlock;
-@@ -546,5 +578,7 @@ xfs_readdir(
- out_unlock:
- 	if (lock_mode)
- 		xfs_iunlock(dp, lock_mode);
-+	if (error == -EAGAIN)
-+		ASSERT(ctx->nowait);
- 	return error;
- }
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 5808abab786c..c0d5f3f06270 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -120,6 +120,23 @@ xfs_ilock_data_map_shared(
- 	return lock_mode;
- }
- 
-+/*
-+ * Similar to xfs_ilock_data_map_shared(), except that it will only try to lock
-+ * the inode in shared mode if the extents are already in memory. If it fails to
-+ * get the lock or has to do IO to read the extent list, fail the operation by
-+ * returning 0 as the lock mode.
-+ */
-+uint
-+xfs_ilock_data_map_shared_nowait(
-+	struct xfs_inode	*ip)
-+{
-+	if (xfs_need_iread_extents(&ip->i_df))
-+		return 0;
-+	if (!xfs_ilock_nowait(ip, XFS_ILOCK_SHARED))
-+		return 0;
-+	return XFS_ILOCK_SHARED;
-+}
-+
- uint
- xfs_ilock_attr_map_shared(
- 	struct xfs_inode	*ip)
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 69d21e42c10a..f766e1a41d90 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -490,13 +490,14 @@ int		xfs_rename(struct mnt_idmap *idmap,
- 			   struct xfs_name *target_name,
- 			   struct xfs_inode *target_ip, unsigned int flags);
- 
--void		xfs_ilock(xfs_inode_t *, uint);
--int		xfs_ilock_nowait(xfs_inode_t *, uint);
--void		xfs_iunlock(xfs_inode_t *, uint);
--void		xfs_ilock_demote(xfs_inode_t *, uint);
--bool		xfs_isilocked(struct xfs_inode *, uint);
--uint		xfs_ilock_data_map_shared(struct xfs_inode *);
--uint		xfs_ilock_attr_map_shared(struct xfs_inode *);
-+void		xfs_ilock(struct xfs_inode *ip, uint lockmode);
-+int		xfs_ilock_nowait(struct xfs_inode *ip, uint lockmode);
-+void		xfs_iunlock(struct xfs_inode *ip, uint lockmode);
-+void		xfs_ilock_demote(struct xfs_inode *ip, uint lockmode);
-+bool		xfs_isilocked(struct xfs_inode *ip, uint lockmode);
-+uint		xfs_ilock_data_map_shared(struct xfs_inode *ip);
-+uint		xfs_ilock_data_map_shared_nowait(struct xfs_inode *ip);
-+uint		xfs_ilock_attr_map_shared(struct xfs_inode *ip);
- 
- uint		xfs_ip2xflags(struct xfs_inode *);
- int		xfs_ifree(struct xfs_trans *, struct xfs_inode *);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 67495ef79bb2..26c91812ca48 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1702,6 +1702,7 @@ typedef bool (*filldir_t)(struct dir_context *, const char *, int, loff_t, u64,
- struct dir_context {
- 	filldir_t actor;
- 	loff_t pos;
-+	bool nowait;
- };
- 
- /*
+> - Need to take a look at the uring_cmd stuff again, but would be nice if
+>   we did not have to add more stuff to fops for this. Maybe we can set
+>   aside a range of "ioctl" type commands through uring_cmd for this
+>   instead, and go that way for registering/unregistering queues.
+
+Yes, I see your point in not having to add new fops.
+But, a new uring_cmd opcode is only at the nvme-level.
+It is a good way to allocate/deallocate a nvme queue, but it cannot
+attach that with the io_uring's ring.
+Or do you have a different view? Seems this is connected to the previous po=
+int.
+
+> We do have some users that are CPU constrained, and while my testing
+> easily maxes out a gen2 optane (actually 2 or 3) with the generic IO
+> path, that's also with all the fat that adds overhead removed. Most
+> people don't have this luxury, necessarily, or actually need some of
+> this fat for their monitoring, for example. This would provide a nice
+> way to have pretty consistent and efficient performance across distro
+> type configs, which would be great, while still retaining the fattier
+> bits for "normal" IO.
+Makes total sense.

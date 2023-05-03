@@ -2,145 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FFA6F5914
-	for <lists+io-uring@lfdr.de>; Wed,  3 May 2023 15:27:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A7406F5934
+	for <lists+io-uring@lfdr.de>; Wed,  3 May 2023 15:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230083AbjECN1y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 3 May 2023 09:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48624 "EHLO
+        id S230192AbjECNmk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 May 2023 09:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbjECN1x (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 3 May 2023 09:27:53 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3C93E65
-        for <io-uring@vger.kernel.org>; Wed,  3 May 2023 06:27:48 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-272-JMRr_rtRNKmaWdX7u8fSMw-1; Wed, 03 May 2023 14:27:46 +0100
-X-MC-Unique: JMRr_rtRNKmaWdX7u8fSMw-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 3 May
- 2023 14:27:44 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 3 May 2023 14:27:44 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Adrien Delorme' <delorme.ade@outlook.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "dccp@vger.kernel.org" <dccp@vger.kernel.org>,
-        "dsahern@kernel.org" <dsahern@kernel.org>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "kuba@kernel.org" <kuba@kernel.org>, "leit@fb.com" <leit@fb.com>,
-        "leitao@debian.org" <leitao@debian.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marcelo.leitner@gmail.com" <marcelo.leitner@gmail.com>,
-        "matthieu.baerts@tessares.net" <matthieu.baerts@tessares.net>,
-        "mptcp@lists.linux.dev" <mptcp@lists.linux.dev>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "willemb@google.com" <willemb@google.com>,
-        "willemdebruijn.kernel@gmail.com" <willemdebruijn.kernel@gmail.com>
-Subject: RE: [PATCH 0/5] add initial io_uring_cmd support for sockets
-Thread-Topic: [PATCH 0/5] add initial io_uring_cmd support for sockets
-Thread-Index: AQHZfPcbeWikE8uGs0CEhT1cqCE61a9Ido9ggAASYTA=
-Date:   Wed, 3 May 2023 13:27:44 +0000
-Message-ID: <9233101ff5794556a0873832ebad4445@AcuMS.aculab.com>
-References: <GV1P193MB200533CC9A694C4066F4807CEA6F9@GV1P193MB2005.EURP193.PROD.OUTLOOK.COM>
- <49866ae2-db19-083c-6498-e7d9d62e8267@gmail.com>
- <GV1P193MB2005214F383309B8466C6361EA6C9@GV1P193MB2005.EURP193.PROD.OUTLOOK.COM>
-In-Reply-To: <GV1P193MB2005214F383309B8466C6361EA6C9@GV1P193MB2005.EURP193.PROD.OUTLOOK.COM>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S229688AbjECNmj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 May 2023 09:42:39 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DEDF1A5
+        for <io-uring@vger.kernel.org>; Wed,  3 May 2023 06:42:36 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id ca18e2360f4ac-763af6790a3so26200039f.0
+        for <io-uring@vger.kernel.org>; Wed, 03 May 2023 06:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683121355; x=1685713355;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hcLmmMif3sOuecLZlf6NnpSEQcU3rZ1MNkuv5pCaQJY=;
+        b=dHbJTl3YD/NIy7enf+zltjOMeLIS9LIlkoCH9P/Bg9g/vvtv+R+heSnNjBuU6duBq7
+         wQRva97KAhRWqjYCtNMCgo25HDAxU8yMeJg4NaRFpzRbltYShqlKMzQhRR+nubm9KP8b
+         8vAr8YYwtH2VS0iWFfyg1syGkbnjhCMmaWrzHWFtsZ7D4IZmDPZXT6fMoUcpnqoFAu4Z
+         wzRNkzX7tT6BxBeFAceNif7ERlirNWk4lM0OMSjZWaf59/ks1EatXI0OyRfInDOcTQSq
+         gu2KibegWLB8+r9xOiIBNSnHxyDI40mb79digKzvufwmxyPAwRblG2yaMpmy7VUqXdg0
+         VPYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683121355; x=1685713355;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcLmmMif3sOuecLZlf6NnpSEQcU3rZ1MNkuv5pCaQJY=;
+        b=hgf3Vza+x5BI334361WW9yEuk8TkcYLvtsmJmiVzWLnva6PN7JveLjOkSKXIE36pP7
+         XdPD9XOs7C+ELlzpLj5zqQi+dhOugE3jyMAlcFMCoTdWt/A7v7yp5KLdz9U80VB09+Wz
+         WiH6arILi0ZdK9pqxedDyxftjizbkwqgCxO9yIaAflloLRspG2fs0+5QHakolX5MPpHy
+         eZ+xjRFBzWdUclbgRLQBcXOH4Rf0Pzf/N+SXoXOrLxeQZ/f2UlQ8A3dvEYn2Y3EYuNks
+         /641/3FJZDiLGKEtbgyI7iFzWCevxekzEDA7McoRm3Oex4/ZMCap6oDEFxoP5ZC+E7N+
+         OjYQ==
+X-Gm-Message-State: AC+VfDzXN7fE8iCcBCYuO+JFGgNf3yb0VrcCDkk70efTbz8j1PgZZR/h
+        HCopGwCd5xD+yEHOssywUlKREMb5u4Kvbs+w++U=
+X-Google-Smtp-Source: ACHHUZ6Y1GjqSprHYmK/fD1ANL/cILRSMgKgusepjgHHTIPUIunW/UMLmxi9nwrBG//9mqE7oFekRw==
+X-Received: by 2002:a05:6e02:1be4:b0:32a:a8d7:f099 with SMTP id y4-20020a056e021be400b0032aa8d7f099mr10386877ilv.3.1683121355451;
+        Wed, 03 May 2023 06:42:35 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id h18-20020a056638339200b0040fcd31af1csm9890853jav.65.2023.05.03.06.42.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 May 2023 06:42:34 -0700 (PDT)
+Message-ID: <ab3f3494-9c5f-8bfb-8b56-b078bc6d67d4@kernel.dk>
+Date:   Wed, 3 May 2023 07:42:34 -0600
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] io_uring: undeprecate epoll_ctl support
 Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Ben Noordhuis <info@bnoordhuis.nl>
+Cc:     io-uring@vger.kernel.org
+References: <20230501185240.352642-1-info@bnoordhuis.nl>
+ <b6cca1a6-304c-ae72-c45f-7ee3b43cf00c@gmail.com>
+ <CAHQurc9L-noiMjvFsXghaBoVEBs7KJ5-a4t-eRvRim0=5HuW8w@mail.gmail.com>
+ <dcd3d63e-c8ce-935e-3b43-5b6ca5c84eb8@kernel.dk>
+ <73b4fc31-9832-adbb-4537-87ca76079f86@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <73b4fc31-9832-adbb-4537-87ca76079f86@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-RnJvbTogQWRyaWVuIERlbG9ybWUNCj4gU2VudDogMDMgTWF5IDIwMjMgMTQ6MTENCj4gDQo+IEZy
-b20gQWRyaWVuIERlbG9ybWUNCj4gPiBGcm9twqA6IFBhdmVsIEJlZ3Vua292DQo+ID4gU2VudCA6
-IDIgTWF5IDIwMjMgMTU6MDQNCj4gPiBPbiA1LzIvMjMgMTA6MjEsIEFkcmllbiBEZWxvcm1lIHdy
-b3RlOg0KPiA+ID4gIEZyb20gQWRyaWVuIERlbG9ybWUNCj4gPiA+DQo+ID4gPj4gRnJvbTogRGF2
-aWQgQWhlcm4NCj4gPiA+PiBTZW50OiAxMiBBcHJpbCAyMDIzIDc6MzkNCj4gPiA+Pj4gU2VudDog
-MTEgQXByaWwgMjAyMyAxNjoyOA0KPiA+ID4+IC4uLi4NCj4gPiA+PiBPbmUgcHJvYmxlbSBpcyB0
-aGF0IG5vdCBhbGwgc29ja29wdCBjYWxscyBwYXNzIHRoZSBjb3JyZWN0IGxlbmd0aC4NCj4gPiA+
-PiBBbmQgc29tZSBvZiB0aGVtIGNhbiBoYXZlIHZlcnkgbG9uZyBidWZmZXJzLg0KPiA+ID4+IE5v
-dCB0byBtZW50aW9uIHRoZSBvbmVzIHRoYXQgYXJlIHJlYWQtbW9kaWZ5LXdyaXRlLg0KPiA+ID4+
-DQo+ID4gPj4gQSBwbGF1c2libGUgc29sdXRpb24gaXMgdG8gcGFzcyBhICdmYXQgcG9pbnRlcicg
-dGhhdCBjb250YWlucyBzb21lLA0KPiA+ID4+IG9yIGFsbCwgb2Y6DQo+ID4gPj4gICAgICAgIC0g
-QSB1c2Vyc3BhY2UgYnVmZmVyIHBvaW50ZXIuDQo+ID4gPj4gICAgICAgIC0gQSBrZXJuZWwgYnVm
-ZmVyIHBvaW50ZXIuDQo+ID4gPj4gICAgICAgIC0gVGhlIGxlbmd0aCBzdXBwbGllZCBieSB0aGUg
-dXNlci4NCj4gPiA+PiAgICAgICAgLSBUaGUgbGVuZ3RoIG9mIHRoZSBrZXJuZWwgYnVmZmVyLg0K
-PiA+ID4+ICAgICAgICA9IFRoZSBudW1iZXIgb2YgYnl0ZXMgdG8gY29weSBvbiBjb21wbGV0aW9u
-Lg0KPiA+ID4+IEZvciBzaW1wbGUgdXNlciByZXF1ZXN0cyB0aGUgc3lzY2FsbCBlbnRyeS9leGl0
-IGNvZGUgd291bGQgY29weSB0aGUNCj4gPiA+PiBkYXRhIHRvIGEgc2hvcnQgb24tc3RhY2sgYnVm
-ZmVyLg0KPiA+ID4+IEtlcm5lbCB1c2VycyBqdXN0IHBhc3MgdGhlIGtlcm5lbCBhZGRyZXNzLg0K
-PiA+ID4+IE9kZCByZXF1ZXN0cyBjYW4ganVzdCB1c2UgdGhlIHVzZXIgcG9pbnRlci4NCj4gPiA+
-Pg0KPiA+ID4+IFByb2JhYmx5IG5lZWRzIGFjY2Vzc29ycyB0aGF0IGFkZCBpbiBhbiBvZmZzZXQu
-DQo+ID4gPj4NCj4gPiA+PiBJdCBtaWdodCBhbHNvIGJlIHRoYXQgc29tZSBvZiB0aGUgcHJvYmxl
-bWF0aWMgc29ja29wdCB3ZXJlIGluIGRlY25ldA0KPiA+ID4+IC0gbm93IHJlbW92ZWQuDQo+ID4g
-Pg0KPiA+ID4gSGVsbG8gZXZlcnlvbmUsDQo+ID4gPg0KPiA+ID4gSSdtIGN1cnJlbnRseSB3b3Jr
-aW5nIG9uIGFuIGltcGxlbWVudGF0aW9uIG9mIHtnZXQsc2V0fSBzb2Nrb3B0Lg0KPiA+ID4gU2lu
-Y2UgdGhpcyB0aHJlYWQgaXMgYWxyZWFkeSB0YWxraW5nIGFib3V0IGl0LCBJIGhvcGUgdGhhdCBJ
-IHJlcGx5aW5nIGF0IHRoZQ0KPiA+IGNvcnJlY3QgcGxhY2UuDQo+ID4NCj4gPiBIaSBBZHJpZW4s
-IEkgYmVsaWV2ZSBCcmVubyBpcyB3b3JraW5nIG9uIHNldC9nZXRzb2Nrb3B0IGFzIHdlbGwgYW5k
-IGhhZA0KPiA+IHNpbWlsYXIgcGF0Y2hlcyBmb3IgYXdoaWxlLCBidXQgdGhhdCB3b3VsZCBuZWVk
-IGZvciBzb21lIHByb2JsZW1zIHRvIGJlDQo+ID4gc29sdmVkIGZpcnN0LCBlLmcuIHRyeSBhbmQg
-ZGVjaWRlIHdoZXRoZXIgaXQgY29waWVzIHRvIGEgcHRyIGFzIHRoZSBzeXNjYWxsDQo+ID4gdmVy
-c2lvbnMgb3Igd291bGQgZ2V0L3JldHVybiBvcHR2YWwgZGlyZWN0bHkgaW4gc3FlL2NxZS4gQW5k
-IGFsc28gd2hlcmUgdG8NCj4gPiBzdG9yZSBiaXRzIHRoYXQgeW91IHBhc3MgaW4gc3RydWN0IGFy
-Z3Nfc2V0c29ja29wdF91cmluZywgYW5kIHdoZXRoZXIgdG8gcmVseQ0KPiA+IG9uIFNRRTEyOCBv
-ciBub3QuDQo+ID4NCj4gDQo+IEhlbGxvIFBhdmVsLA0KPiBUaGF0IGlzIGdvb2QgdG8gaGVhci4g
-SWYgcG9zc2libGUgSSB3b3VsZCBsaWtlIHRvIHByb3ZpZGUgc29tZSBoZWxwLg0KPiBJIGxvb2tl
-ZCBhdCB0aGUgZ2V0c29ja29wdCBpbXBsZW1lbnRhdGlvbi4gRnJvbSB3aGF0IEknbSBzZWVpbmcs
-IEkgYmVsaWV2ZSB0aGF0IGl0IHdvdWxkIGJlIGVhc2llciB0bw0KPiBjb3BpZXMgdG8gYSBwdHIg
-YXMgdGhlIHN5c2NhbGwuDQo+IFRoZSBsZW5ndGggb2YgdGhlIG91dHB1dCBpcyB1c3VhbGx5IDQg
-Ynl0ZXMgKHNvbWV0aW1lcyBsZXNzKSBidXQgaW4gYSBsb3Qgb2YgY2FzZXMsIHRoaXMgbGVuZ3Ro
-IGlzDQo+IHZhcmlhYmxlLiBTb21ldGltZSBpdCBjYW4gZXZlbiBiZSBiaWdnZXIgdGhhdCB0aGUg
-U1FFMTI4IHJpbmcuDQo+IA0KPiBIZXJlIGlzIGEgbm9uLWV4aGF1c3RpdmUgbGlzdCBvZiB0aG9z
-ZSBjYXNlcyA6DQo+IC9uZXQvaXB2NC90Y3AuYyA6IGludCBkb190Y3BfZ2V0c29ja29wdCguLi4p
-DQo+ICAgLSBUQ1BfSU5GTyA6IHVwIHRvIDI0MCBieXRlcw0KPiAgIC0gVENQX0NDX0lORk8gYW5k
-IFRDUF9SRVBBSVJfV0lORE9XIDogdXAgdG8gMjAgYnl0ZXMNCj4gICAtIFRDUF9DT05HRVNUSU9O
-IGFuZCBUQ1BfVUxQIDogdXAgdG8gMTYgYnl0ZXMNCj4gICAtIFRDUF9aRVJPQ1BPWV9SRUNFSVZF
-IDogdXAgdG8gNjQgYnl0ZXMNCj4gL25ldC9hdG0vY29tbXVuLmMgOiBpbnQgdmNjX2dldHNvY2tv
-cHQoLi4uKQ0KPiAgIC0gU09fQVRNUU9TIDogdXAgdG8gODggYnl0ZXMNCj4gICAtIFNPX0FUTVBW
-QyA6IHVwIHRvIDE2IGJ5dGVzDQo+IC9uZXQvaXB2NC9pb19zb2NrZ2x1ZS5jIDogaW50IGRvX2lw
-X2dldHNvY2tvcHQoLi4uKQ0KPiAgIC0gTUNBU1RfTVNGSUxURVIgOiB1cCB0byAxNDQgYnl0ZXMN
-Cj4gICAtIElQX01TRklMVEVSIDogMTYgYnl0ZXMgbWluaW11bQ0KPiANCj4gSSB3aWxsIGxvb2sg
-aW50byBzZXRzb2Nrb3B0IGJ1dCBJIGJlbGlldmUgaXQgbWlnaHQgYmUgdGhlIHNhbWUuDQo+IElm
-IG5lZWRlZCBJIGNhbiBhbHNvIGNvbXBsZXRlIHRoaXMgbGlzdC4NCj4gSG93ZXZlciB0aGVyZSBh
-cmUgc29tZSBjYXNlcyB3aGVyZSBpdCBpcyBoYXJkIHRvIGRldGVybWluYXRlIGEgbWF4aW11bSBh
-bW91bnQgb2YgYnl0ZXMgaW4gYWR2YW5jZS4NCg0KQWxzbyBsb29rIGF0IFNDVFAgLSBpdCBoYXMg
-c29tZSB2ZXJ5IGxvbmcgYnVmZmVycy4NCkFsbW9zdCBhbnkgY29kZSB0aGF0IHVzZXMgU0NUUCBu
-ZWVkcyB0byB1c2UgdGhlIFNDVFBfU1RBVFVTDQpyZXF1ZXN0IHRvIGdldCB0aGUgbmVnb3RpYXRl
-ZCBudW1iZXIgb2YgZGF0YSBzdHJlYW1zDQoodGhhdCBvbmUgaXMgcmVsYXRpdmVseSBzaG9ydCku
-DQpJSVJDIHRoZXJlIGFyZSBhbHNvIGdldHNvY2tvcHQoKSB0aGF0IGFyZSByZWFkL21vZGlmeS93
-cml0ZSENCg0KVGhlcmUgd2lsbCBhbHNvIGJlIHVzZXIgY29kZSB0aGF0IHN1cHBsaWVzIGEgdmVy
-eSBsb25nIGJ1ZmZlcg0KKHRvbyBsb25nIHRvIGFsbG9jYXRlIGluIGtlcm5lbCkgZm9yIHNvbWUg
-dmFyaWFibGUgbGVuZ3RoIHJlcXVlc3RzLg0KDQpTbyB0aGUgZ2VuZXJpYyBzeXN0ZW0gY2FsbCBj
-b2RlIGNhbiBhbGxvY2F0ZSBhIHNob3J0IChlZyBvbi1zdGFjaykNCmJ1ZmZlciBmb3Igc2hvcnQg
-cmVxdWVzdHMgYW5kIHRoZW4gcGFzcyBib3RoIHRoZSB1c2VyIGFuZCBrZXJuZWwNCmFkZHJlc3Nl
-cyAoYW5kIGxlbmd0aHMpIHRocm91Z2ggdG8gdGhlIHByb3RvY29sIGZ1bmN0aW9ucy4NCkFueXRo
-aW5nIHRoYXQgbmVlZHMgYSBiaWcgYnVmZmVyIGNhbiBkaXJlY3RseSBjb3B5IHRvL2Zyb20NCmFu
-ZCB1c2VyIGJ1ZmZlcnMsIGtlcm5lbCBjYWxsZXJzIHdvdWxkIG5lZWQgdG8gcGFzcyBhIGJpZyBl
-bm91Z2gNCmJ1ZmZlci4NCg0KQnV0IHRoZSBjb2RlIGZvciBzbWFsbCBidWZmZXJzIHdvdWxkIGJl
-IG11Y2ggc2ltcGxpZmllZCBmb3INCmJvdGgga2VybmVsIGFuZCB1c2VyIGFjY2Vzcy4NCg0KCURh
-dmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3Vu
-dCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3
-Mzg2IChXYWxlcykNCg==
+On 5/3/23 7:21?AM, Pavel Begunkov wrote:
+> On 5/3/23 13:49, Jens Axboe wrote:
+>> On 5/3/23 2:58?AM, Ben Noordhuis wrote:
+>>> On Tue, May 2, 2023 at 2:51?PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>
+>>>> On 5/1/23 19:52, Ben Noordhuis wrote:
+>>>>> Libuv recently started using it so there is at least one consumer now.
+>>>>
+>>>> It was rather deprecated because io_uring controlling epoll is a bad
+>>>> idea and should never be used. One reason is that it means libuv still
+>>>> uses epoll but not io_uring, and so the use of io_uring wouldn't seem
+>>>> to make much sense. You're welcome to prove me wrong on that, why libuv
+>>>> decided to use a deprecated API in the first place?
+>>>> Sorry, but the warning is going to stay and libuv should revert the use
+>>>> of epol_ctl requests.
+>>>
+>>> Why use a deprecated API? Because it was only recently deprecated.
+>>> Distro kernels don't warn about it yet. I only found out because of
+>>> kernel source code spelunking.
+>>>
+>>> Why combine io_uring and epoll? Libuv uses level-triggered I/O for
+>>> reasons (I can go into detail but they're not material) so it's very
+>>> profitable to batch epoll_ctl syscalls; it's the epoll_ctlv() syscall
+>>> people have been asking for since practically forever.
+>>>
+>>> Why not switch to io_uring wholesale? Libuv can't drop support for
+>>> epoll because of old kernels, and io_uring isn't always clearly faster
+>>> than epoll in the first place.
+>>>
+>>> As to the warning: according to the commit that introduced it, it was
+>>> added because no one was using IORING_OP_EPOLL_CTL. Well, now someone
+>>> is using it. Saying it's a bad API feels like post-hoc
+>>> rationalization. I kindly ask you merge this patch. I'd be happy to
+>>> keep an eye on io_uring/epoll.c if you're worried about maintenance
+>>> burden.
+>>
+>> This is obviously mostly our fault, as the deprecation patch should've
+>> obviously been backported to stable. Just adding it to the current
+>> kernel defeated the purpose, as it added a long period where older
+>> kernels quite happily accepted epoll use cases.
+>>
+>> So I do agree, the only sane course of action here is to un-deprecate
+>> it.
+> 
+> nack, keeping piling rubbish is not a great course of action at all.
+> 
+> Has libuv already released it? Because it seems the patches were
+> just merged.
+
+This is not a NAK situation. Fact is that the code is out there, and
+libuv isn't the first to discover this by accident. We messed up not
+getting this to stable, but I think it's a reasonable assumption that
+there are likely others there as most folks run distro and/or stable
+kernels and are not on the bleeding edge.
+
+The deprecation patch was in 6.0, so anyone running kernels before that
+could be using the epoll support and have no idea that it would be going
+away. Outside of that, it's also quite easy to miss a single dmesg blurp
+on this unless you're actively looking for it or just happen to come
+across it.
+
+Unless there are reasons beyond "I'd love to remove this code", then it
+will be reinstated. We don't get to make up special rules for io_uring
+code that are counter to what the kernel generally guarantees, most
+notable that you cannot remove an API that is out there and in use. This
+isn't really about libuv in particular, as the io_uring support there is
+rather new and they could change course. It's more about other projects
+out there that already have it in production.
+
+-- 
+Jens Axboe
 

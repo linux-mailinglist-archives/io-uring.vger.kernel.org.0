@@ -2,111 +2,100 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AACA6F48A9
-	for <lists+io-uring@lfdr.de>; Tue,  2 May 2023 18:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 469B26F53E0
+	for <lists+io-uring@lfdr.de>; Wed,  3 May 2023 10:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233923AbjEBQyM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 2 May 2023 12:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40226 "EHLO
+        id S229541AbjECI7J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 3 May 2023 04:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234100AbjEBQyI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 2 May 2023 12:54:08 -0400
-Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65BF273A
-        for <io-uring@vger.kernel.org>; Tue,  2 May 2023 09:53:59 -0700 (PDT)
-Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
-        id 3F6994CF6CC9; Tue,  2 May 2023 09:53:47 -0700 (PDT)
-From:   Stefan Roesch <shr@devkernel.io>
-To:     io-uring@vger.kernel.org, kernel-team@fb.com
-Cc:     shr@devkernel.io, axboe@kernel.dk, ammarfaizi2@gnuweeb.org,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH v12 5/5] io_uring: add prefer busy poll to register and unregister napi api
-Date:   Tue,  2 May 2023 09:53:32 -0700
-Message-Id: <20230502165332.2075091-6-shr@devkernel.io>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230502165332.2075091-1-shr@devkernel.io>
-References: <20230502165332.2075091-1-shr@devkernel.io>
+        with ESMTP id S229481AbjECI7J (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 3 May 2023 04:59:09 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5BB10D9
+        for <io-uring@vger.kernel.org>; Wed,  3 May 2023 01:59:07 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50bd37ca954so4500570a12.0
+        for <io-uring@vger.kernel.org>; Wed, 03 May 2023 01:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bnoordhuis-nl.20221208.gappssmtp.com; s=20221208; t=1683104346; x=1685696346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ux34pWCAB0lVotTQYmI1d2chc29FjfJJACAo02VwJXM=;
+        b=yfGle77zGo7C91j7NWMxAZdU2bqM5x/NTZ2zAcJE7ud+r86UdGt7fUVAtYz5qQPtsT
+         S/CPbReUFFE8uptgXI7BKZHWaGf9Atj47UXPURsQHGqtfSd09MavfhJlgxHFbNuiXjgQ
+         YHpzY8WV+oHQBRRVYvOXNquuHcWzfP2WeIvHHp/yLru6J+1m3RAXWemPiI9b1/KjTQzl
+         mrKc3oXVXwMEWDa84vGSZpDXgAFTUVdadg4TumbBphKdmMlrjnLXCzxztoIPuDW+a1bx
+         p3RJ1Hu7W1uBI/SfSXYsLHm8NC+wE1NxV3jU9fjLEVG00WCxpSGltmy1917sxhdL+eCj
+         jEOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683104346; x=1685696346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ux34pWCAB0lVotTQYmI1d2chc29FjfJJACAo02VwJXM=;
+        b=bSCfdrXQESW5OsPSLW9d0EiNBMltBRpSgPlAHby3RevvzfncoKp/q/3RXpjTwIToPY
+         m8RYql5A9ZA+Rh/ocLiGt+6Styc9mpkmK9R+l/YzhxDxyY9qcLEyuaIvpX9AD1lJhjTe
+         YYWToqKafn91XrNmMYUIeGxf8hx4zl6r6h3Qvb0v6xA6GngE4AQJEbr3kBoSvl+x+KAy
+         UpRKRepqOjO1tCzweF2coZ6BP8pKKZQRicjzqis3rR/jbTU3dmVWqUnJ4pXLtcCOVuSm
+         HJAoTnMTVP8pJs6skYkWg5yAsxmaLwbdnpem5vV9fPYnLeU1j5mWjpZTFYKCQQSN4Kid
+         4Y8A==
+X-Gm-Message-State: AC+VfDz7fjqm0jNlWnjN5pH3phlhmaC0WceK98ZbMszjpOlhdRFJZGNb
+        lq8ddF1g3HL0/+ndvVjls20GuDvniV5lKOi5qB8XL9ZmqPKX5jWh
+X-Google-Smtp-Source: ACHHUZ5LjwlhHbiftEh5ej8y7d5gGMLjktBGPRzTwlUQA/NEqFx2H81o5aM8r3r8583J/WwRFTU1175xYNkSUV39ONM=
+X-Received: by 2002:a17:906:fe47:b0:94f:2916:7d7 with SMTP id
+ wz7-20020a170906fe4700b0094f291607d7mr1022541ejb.19.1683104345820; Wed, 03
+ May 2023 01:59:05 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230501185240.352642-1-info@bnoordhuis.nl> <b6cca1a6-304c-ae72-c45f-7ee3b43cf00c@gmail.com>
+In-Reply-To: <b6cca1a6-304c-ae72-c45f-7ee3b43cf00c@gmail.com>
+From:   Ben Noordhuis <info@bnoordhuis.nl>
+Date:   Wed, 3 May 2023 10:58:54 +0200
+Message-ID: <CAHQurc9L-noiMjvFsXghaBoVEBs7KJ5-a4t-eRvRim0=5HuW8w@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: undeprecate epoll_ctl support
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
-        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This adds the napi prefer busy poll setting to the register and
-unregister napi api. When napi is unregistered and arg is specified,
-both napi settings: busy poll timeout and the prefer busy poll setting
-are copied into the user structure.
+On Tue, May 2, 2023 at 2:51=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.c=
+om> wrote:
+>
+> On 5/1/23 19:52, Ben Noordhuis wrote:
+> > Libuv recently started using it so there is at least one consumer now.
+>
+> It was rather deprecated because io_uring controlling epoll is a bad
+> idea and should never be used. One reason is that it means libuv still
+> uses epoll but not io_uring, and so the use of io_uring wouldn't seem
+> to make much sense. You're welcome to prove me wrong on that, why libuv
+> decided to use a deprecated API in the first place?
+> Sorry, but the warning is going to stay and libuv should revert the use
+> of epol_ctl requests.
 
-Signed-off-by: Stefan Roesch <shr@devkernel.io>
-Acked-by: Jakub Kicinski <kuba@kernel.org>
----
- include/uapi/linux/io_uring.h |  3 ++-
- io_uring/napi.c               | 10 +++++++---
- 2 files changed, 9 insertions(+), 4 deletions(-)
+Why use a deprecated API? Because it was only recently deprecated.
+Distro kernels don't warn about it yet. I only found out because of
+kernel source code spelunking.
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index 278c1a9de78c..16d17d6ab7f7 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -656,7 +656,8 @@ struct io_uring_buf_reg {
- /* argument for IORING_(UN)REGISTER_NAPI */
- struct io_uring_napi {
- 	__u32	busy_poll_to;
--	__u32	pad;
-+	__u8	prefer_busy_poll;
-+	__u8	pad[3];
- 	__u64	resv;
- };
-=20
-diff --git a/io_uring/napi.c b/io_uring/napi.c
-index fa531949fc6f..8b5df89fbb2c 100644
---- a/io_uring/napi.c
-+++ b/io_uring/napi.c
-@@ -222,16 +222,18 @@ void io_napi_free(struct io_ring_ctx *ctx)
- int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
- {
- 	const struct io_uring_napi curr =3D {
--		.busy_poll_to =3D ctx->napi_busy_poll_to,
-+		.busy_poll_to 	  =3D ctx->napi_busy_poll_to,
-+		.prefer_busy_poll =3D ctx->napi_prefer_busy_poll
- 	};
- 	struct io_uring_napi napi;
-=20
- 	if (copy_from_user(&napi, arg, sizeof(napi)))
- 		return -EFAULT;
--	if (napi.pad || napi.resv)
-+	if (napi.pad[0] || napi.pad[1] || napi.pad[2] || napi.resv)
- 		return -EINVAL;
-=20
- 	WRITE_ONCE(ctx->napi_busy_poll_to, napi.busy_poll_to);
-+	WRITE_ONCE(ctx->napi_prefer_busy_poll, !!napi.prefer_busy_poll);
-=20
- 	if (copy_to_user(arg, &curr, sizeof(curr)))
- 		return -EFAULT;
-@@ -250,13 +252,15 @@ int io_register_napi(struct io_ring_ctx *ctx, void =
-__user *arg)
- int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
- {
- 	const struct io_uring_napi curr =3D {
--		.busy_poll_to =3D ctx->napi_busy_poll_to,
-+		.busy_poll_to 	  =3D ctx->napi_busy_poll_to,
-+		.prefer_busy_poll =3D ctx->napi_prefer_busy_poll
- 	};
-=20
- 	if (arg && copy_to_user(arg, &curr, sizeof(curr)))
- 		return -EFAULT;
-=20
- 	WRITE_ONCE(ctx->napi_busy_poll_to, 0);
-+	WRITE_ONCE(ctx->napi_prefer_busy_poll, false);
- 	return 0;
- }
-=20
---=20
-2.39.1
+Why combine io_uring and epoll? Libuv uses level-triggered I/O for
+reasons (I can go into detail but they're not material) so it's very
+profitable to batch epoll_ctl syscalls; it's the epoll_ctlv() syscall
+people have been asking for since practically forever.
 
+Why not switch to io_uring wholesale? Libuv can't drop support for
+epoll because of old kernels, and io_uring isn't always clearly faster
+than epoll in the first place.
+
+As to the warning: according to the commit that introduced it, it was
+added because no one was using IORING_OP_EPOLL_CTL. Well, now someone
+is using it. Saying it's a bad API feels like post-hoc
+rationalization. I kindly ask you merge this patch. I'd be happy to
+keep an eye on io_uring/epoll.c if you're worried about maintenance
+burden.

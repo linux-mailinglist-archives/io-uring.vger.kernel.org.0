@@ -2,102 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A2B6F718E
-	for <lists+io-uring@lfdr.de>; Thu,  4 May 2023 19:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C0A76F719F
+	for <lists+io-uring@lfdr.de>; Thu,  4 May 2023 19:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229721AbjEDRvu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 4 May 2023 13:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
+        id S229482AbjEDRy0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 4 May 2023 13:54:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbjEDRvt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 4 May 2023 13:51:49 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C70C59FF
-        for <io-uring@vger.kernel.org>; Thu,  4 May 2023 10:51:48 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-763af6790a3so5119139f.0
-        for <io-uring@vger.kernel.org>; Thu, 04 May 2023 10:51:48 -0700 (PDT)
+        with ESMTP id S229449AbjEDRyZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 4 May 2023 13:54:25 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2E6E72
+        for <io-uring@vger.kernel.org>; Thu,  4 May 2023 10:54:24 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id e9e14a558f8ab-32ea67ffec0so75835ab.0
+        for <io-uring@vger.kernel.org>; Thu, 04 May 2023 10:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683222707; x=1685814707;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bmsEyvQWQLhz8Wo2w2vPqihJ7gBJNKHrPhp6n9tMN2E=;
-        b=twe8mnAMI1n1ZENXvEQiP/IWTAqjuK9bihn8ytCraFymd2ek0d/gXO7PK92qlGXZJy
-         K7Q0TjoPjJHO6ynWmw8JqDe1SDr7pwdV5FZgK4E9Vx6r0ad8uWNRoPU4WrHpBDvxP1ev
-         cDhVRBXHZDfxtDyrtiIHlNXfxa2baPuYjTWcQ/ENtccBcuzW0Oq+jSwWU/iyQLqrzwaR
-         2ZsZVKzFnAPiGkOpmvbCjnEOR8RtEAmSoQDGMSrDQgfB+c6kUXF9+Ce3s/Vw1ovmj9Lt
-         CGcKP+fnizUQN1OZFqyz3MwwGGCe72Pwm8tm57h8HK20EMkUefQBHiXyZLIqEabhpBnZ
-         qaug==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683222863; x=1685814863;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zqOzZ62E2Qjo++r0s7JK7yU4Z1ely6sqVTI0j9/wojY=;
+        b=TJIBlHGhzmsm+jECCtT+pRaxYCCUWGx2EufOK614sxzJm66vDLdyvkyy1/RWzqG9IS
+         y2DHKHt0QcixGi13AJ2vhFTL8br7FLSHukt9A9TOmYQOCaxWUWiorhicqEiMuFpvXLpZ
+         hjoCgP3eKtAbFBhaSAcvAfHHOBXWyP3onV2f7saP3EK6R2n5YkDpkM9xuApvDFfJIylK
+         gZDBxG4Vbnh1r2FELguKEDjmucXQpFMAVSurjcMgsLXlymElTAPHGHBtZGO8rANyRhu/
+         Iv4GZONuPZjLB2YFbqoqbg6L3zsvwOPI4JK/UnrCZoyuVO6H0XbVph7rM1vMui5aDfIK
+         ZtBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683222707; x=1685814707;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bmsEyvQWQLhz8Wo2w2vPqihJ7gBJNKHrPhp6n9tMN2E=;
-        b=CKUEPVeJJaFBax8MlIHsxn4nbZzoA1kXcgRf0meGDsVJczzOxaUz598eVv5LzAA8Iv
-         JO0rUlYOL6OYw/4daPK4PQA3R0OjjPaqq/Eg0APUpLR62ZSqLkH+7eoi2ZzgKdhaZpkW
-         Kg2Ot3xKTAMQdTMqvKTEXLUTx3Ci/d7+3JePiZO0WDTQVE4oZHxS3dwq/ZPTpagfnkvJ
-         HjfbnyXtQfeU2grftSu11AhDdvW8/X8efIuxv4WN//nM7LNPDoYVqUCSIp2p5DemFc17
-         BRDjKtcUqQ0v2uuKqqNAu52O6bcDZPTmZm6ztMrIdV62ZxqQZE7JQJqFoq+tJYMjw5yA
-         zxjQ==
-X-Gm-Message-State: AC+VfDwqe8SXPUDhyYSahQQuSv6s6rCoCe+cbOz81sBbnjLtZCBOTjHf
-        rszmv5PXHW+OxIxbZK3SkZOTHtlW8+4Rdu2UM14=
-X-Google-Smtp-Source: ACHHUZ7A56eBv7M/lXClJyQTCjp11K7TI6GQUUHhOUm5qb0Uiv+T2alaqH2egBBXju3lGMhMD2yWBw==
-X-Received: by 2002:a6b:4115:0:b0:769:8d14:7d15 with SMTP id n21-20020a6b4115000000b007698d147d15mr4982579ioa.0.1683222707633;
-        Thu, 04 May 2023 10:51:47 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id x20-20020a6bda14000000b007635e44126bsm9822062iob.53.2023.05.04.10.51.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 May 2023 10:51:47 -0700 (PDT)
-Message-ID: <0a50fae3-1cf4-475e-48ae-25f41967842f@kernel.dk>
-Date:   Thu, 4 May 2023 11:51:46 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4 0/3] io_uring: Pass the whole sqe to commands
-Content-Language: en-US
-To:     Breno Leitao <leitao@debian.org>, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, asml.silence@gmail.com, hch@lst.de,
-        ming.lei@redhat.com
-Cc:     leit@fb.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, sagi@grimberg.me, joshi.k@samsung.com,
-        kbusch@kernel.org
-References: <20230504121856.904491-1-leitao@debian.org>
+        d=1e100.net; s=20221208; t=1683222863; x=1685814863;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zqOzZ62E2Qjo++r0s7JK7yU4Z1ely6sqVTI0j9/wojY=;
+        b=JnaYDcKyE6k+dXHFuU2tmNbzTKjhkJDgAKnlT+O4DosZcQ/GTFjgIyoBYgG635Xx4p
+         USyimoeHUAuZ2qN6TRovJTvuXckl4pRH301FX54H09SPGDCzLehNZTavLMp2hz7X6IHh
+         5RBtBKS3iJpqtdh93IfsRbLe28l6uUCBhyuedWexjITDl367S6DLWYZco+TkEkvFJyae
+         GXwqu9zg2jOYpn1KIjdEuouWZ8X0/HVPM4F6+1jIfclX+mDNWRgxA4La02B2p/48WIUS
+         e+DOonCzvw2+HcVGQb/HvNTBqgVzjmr7DKApVsOLyUSkyQrLeS7ivEzOGNfO+nX6ILI3
+         3SeQ==
+X-Gm-Message-State: AC+VfDxjqSIN8ml8C4fLW2v6smAGEHbcUosGH9+Ru/0Akk0gDEbiRbz6
+        a4wruOj6quIvLrr8ARKBSSx5F8CrK6x4p8gupG8=
+X-Google-Smtp-Source: ACHHUZ7GC+Mqmkl3jY4sZHxf3IUbQsPq6G7P8+5aUPISN8aDhXJVJKsBXlgA0WTz5lvrc8uFvIgm8g==
+X-Received: by 2002:a05:6e02:1be4:b0:32a:a8d7:f099 with SMTP id y4-20020a056e021be400b0032aa8d7f099mr13258992ilv.3.1683222863508;
+        Thu, 04 May 2023 10:54:23 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id a192-20020a0216c9000000b0040fa63bfbf1sm10627398jaa.117.2023.05.04.10.54.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 10:54:22 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230504121856.904491-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+To:     io-uring@vger.kernel.org, Haiyue Wang <haiyue.wang@intel.com>
+In-Reply-To: <20230504053835.118208-1-haiyue.wang@intel.com>
+References: <20230504053835.118208-1-haiyue.wang@intel.com>
+Subject: Re: [PATCH liburing v1] .gitignore: Add
+ `examples/rsrc-update-bench`
+Message-Id: <168322286200.1397172.4251072122192015033.b4-ty@kernel.dk>
+Date:   Thu, 04 May 2023 11:54:22 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-00303
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/4/23 6:18 AM, Breno Leitao wrote:
-> These three patches prepare for the sock support in the io_uring cmd, as
-> described in the following RFC:
-> 
-> Link: https://lore.kernel.org/lkml/20230406144330.1932798-1-leitao@debian.org/
-> 
-> Since the support linked above depends on other refactors, such as the sock
-> ioctl() sock refactor, I would like to start integrating patches that have
-> consensus and can bring value right now.  This will also reduce the
-> patchset size later.
-> 
-> Regarding to these three patches, they are simple changes that turn
-> io_uring cmd subsystem more flexible (by passing the whole SQE to the
-> command), and cleaning up an unnecessary compile check.
-> 
-> These patches were tested by creating a file system and mounting an NVME disk
-> using ubdsrv/ublkb0.
 
-Thanks Breno, applied!
+On Thu, 04 May 2023 13:38:35 +0800, Haiyue Wang wrote:
+> The commit c0940508607f ("examples: add rsrc update benchmark") didn't
+> add the built example binary into `.gitignore` file.
+> 
+> 
 
+Applied, thanks!
+
+[1/1] .gitignore: Add `examples/rsrc-update-bench`
+      commit: 9b56e492fca8465a45676c598509e8ae0a5dc56e
+
+Best regards,
 -- 
 Jens Axboe
+
 
 

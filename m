@@ -2,62 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C2DE6FCA16
-	for <lists+io-uring@lfdr.de>; Tue,  9 May 2023 17:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A8ED6FCA19
+	for <lists+io-uring@lfdr.de>; Tue,  9 May 2023 17:19:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235188AbjEIPTR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 May 2023 11:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
+        id S235732AbjEIPTT (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 May 2023 11:19:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjEIPTQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 May 2023 11:19:16 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B534A40CE
-        for <io-uring@vger.kernel.org>; Tue,  9 May 2023 08:19:15 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id ca18e2360f4ac-760dff4b701so37603639f.0
-        for <io-uring@vger.kernel.org>; Tue, 09 May 2023 08:19:15 -0700 (PDT)
+        with ESMTP id S235638AbjEIPTS (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 May 2023 11:19:18 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C6640CE
+        for <io-uring@vger.kernel.org>; Tue,  9 May 2023 08:19:17 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id ca18e2360f4ac-760b6765f36so21049939f.0
+        for <io-uring@vger.kernel.org>; Tue, 09 May 2023 08:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683645555; x=1686237555;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683645556; x=1686237556;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5dgWRc5/LSrLk2Jc/BvYuBNSBxWtzvDa1580QK6qMmU=;
-        b=4xi4UZAsDeZFH2vLjBFdwNzUsZtprOD9/RBP6wxtqxg2m2X0Pjlt0wGUNsQsC4YjDC
-         prvSHWRI031SawHeC7XDrXt2NCWtp22mGMWbkt4ze/0RNLPQZ96qCJP54CPLe/oYA2V4
-         +OeMBSOhB88waZ+p2FXolrirI5HHe0yBzxhV3nwWRR9lo8gOqDc9LXXC0VxS5WNACLTz
-         bu7Ig3MeIqOObDGvZn85n+CTT6M86yMgbNblAoLWF1IceccPHnwapfS4y+tUKqP1tNHB
-         HDP9nG7JtLG26waYqnPKg6JByAGiL2yYvHdkKCBOhLxXog21b0CvwGVgPq6EfL586PT1
-         m/vQ==
+        bh=r/jkxiCP4JthB71tD2UnyEZpZa4CleF0O3E0hHUUj2s=;
+        b=J6MxwIbuqm1FKPUVMo9wqx01RiXxThePQKhHVy9j81JKUdegB1fL4DBWREmXRH+rZ4
+         qZv7P7RINWlFaZ9Cz2qLfTP+9QGOotFhAcP7QnL/KU4QbjumB5po5OqR0GoygqKGuKwI
+         RoKETRjpu8bcVE3sGs+IFxNkdLn7MCCl0Tr8Nvhdl+zLaxgboAdYFeozzfYSosKLTwd+
+         /3rbddUSD0rRtgtrW9G+Rzh1nKJOIgE3BVmWzJnTXWrrNtj2Na2rkwJhm3kYupLgJWyB
+         5RdTqpFXpXCg0swOFL0t3sOa7xXLTcFEUV/F43oTl/uTDNmqYjL8NLdBl4re/AS8bXL9
+         vR1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683645555; x=1686237555;
+        d=1e100.net; s=20221208; t=1683645556; x=1686237556;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5dgWRc5/LSrLk2Jc/BvYuBNSBxWtzvDa1580QK6qMmU=;
-        b=RBY6WTdK1XuuMC/sNL3kh5taflHYJHFqdOFShdnBsY/4aDx2TTCYBcfzO3WIhWkMOO
-         CR/MMC54KK289qEbm0w6fAGj+RvMFk3RWAgxYP5MxjSY+RotCLRLtHmx5J7ppPWFqvbr
-         /8qGPNMvoLs1OKO3JbF79/6DE2ZMK+bXds/v3ACK8/uHtQ7s/ZiRKHcEh8YvlOsS4OZm
-         mFvtDxV2iBMBQSxvxNfjp+ImUbj6KBUhVLJSKKA+Nq1B8Ze5CGigKooeFjm33gPxY7AX
-         ME2nkuGVk5xF3iO1PMgsTZKnIhWEZ/EP3HhcqGTPPCGICDiu91PPA/73PVdb0CqFSsxL
-         yZgw==
-X-Gm-Message-State: AC+VfDxpSDtIBQiWEDr+KNx4TQZfoEP1m0sindxqyBleMi/GaXO3UWZc
-        HjxXSi5hA4jrqk0nXTIPj17AtN0hiCksLmaE3+g=
-X-Google-Smtp-Source: ACHHUZ5Dj4Z1JapNi5FTM3anXVp9Zd6k/R11Xiek3v5eBUYl2hIPAtlM36jdfz24NtBjXzjui/oOSw==
-X-Received: by 2002:a05:6602:2d51:b0:763:6aab:9f3e with SMTP id d17-20020a0566022d5100b007636aab9f3emr11367715iow.1.1683645554843;
-        Tue, 09 May 2023 08:19:14 -0700 (PDT)
+        bh=r/jkxiCP4JthB71tD2UnyEZpZa4CleF0O3E0hHUUj2s=;
+        b=bfkwW9dLnVWDdDqMyqd58AcXN6M7V9Ubh53I/A9RMmce1Ibf5CzodhiaSAu0rrk+45
+         QsXpMHG5fslYdn8h1LF980RuIeD5j8p6RwTbonjmqMndmmq0MZODPDCayyNz85mTBbIP
+         V7b5qnLPO84FCtI4XxQb7ZDpejYfhKdWPhuQG1bqawu8N2CsZREtDGmrAHCK6VMQN3jH
+         O+wTv+OBl8XpXWPuo6NMlHCVo31bbGokdRcOynt0ZrYK6J3lUdVcIORM5qeEpb9GAmcq
+         xBPvKBo/hLm2l3iEtajdRoMEYN87TROA5nvzw8yhVrE2cC7qzeI2NDHQD71QQOqheIGl
+         MnLQ==
+X-Gm-Message-State: AC+VfDxn+YEaA6J4VJD6uyQaRqBej5HjNFdgmpDuqGU/mKWv8bO10JPp
+        7iboAMYjI4cTrCt6El9E3fsTeNBso1EujDsK4Xg=
+X-Google-Smtp-Source: ACHHUZ42L5EZpZexHnQ9E+vXfaofOXLtZIeIku+36oDtyPUueapg5a63UVr1ieq5fEbsZx2fBD0DhQ==
+X-Received: by 2002:a6b:5f09:0:b0:760:f7e4:7941 with SMTP id t9-20020a6b5f09000000b00760f7e47941mr6891056iob.0.1683645556246;
+        Tue, 09 May 2023 08:19:16 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id z1-20020a056638240100b0041659b1e2afsm677390jat.14.2023.05.09.08.19.13
+        by smtp.gmail.com with ESMTPSA id z1-20020a056638240100b0041659b1e2afsm677390jat.14.2023.05.09.08.19.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 08:19:14 -0700 (PDT)
+        Tue, 09 May 2023 08:19:15 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, Jens Axboe <axboe@kernel.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH 1/3] net: set FMODE_NOWAIT for sockets
-Date:   Tue,  9 May 2023 09:19:08 -0600
-Message-Id: <20230509151910.183637-2-axboe@kernel.dk>
+        linux-block@vger.kernel.org
+Subject: [PATCH 2/3] block: mark bdev files as FMODE_NOWAIT if underlying device supports it
+Date:   Tue,  9 May 2023 09:19:09 -0600
+Message-Id: <20230509151910.183637-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230509151910.183637-1-axboe@kernel.dk>
 References: <20230509151910.183637-1-axboe@kernel.dk>
@@ -73,33 +71,38 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The socket read/write functions deal with O_NONBLOCK and IOCB_NOWAIT
-just fine, so we can flag them as being FMODE_NOWAIT compliant. With
-this, we can remove socket special casing in io_uring when checking
-if a file type is sane for nonblocking IO, and it's also the defined
-way to flag file types as such in the kernel.
+We set this unconditionally, but it really should be dependent on if
+the underlying device is nowait compliant.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org
+Cc: linux-block@vger.kernel.org
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- net/socket.c | 1 +
- 1 file changed, 1 insertion(+)
+ block/fops.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/socket.c b/net/socket.c
-index a7b4b37d86df..6861dbbfadb6 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -471,6 +471,7 @@ struct file *sock_alloc_file(struct socket *sock, int flags, const char *dname)
- 		return file;
- 	}
+diff --git a/block/fops.c b/block/fops.c
+index d2e6be4e3d1c..ab750e8a040f 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -481,7 +481,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+ 	 * during an unstable branch.
+ 	 */
+ 	filp->f_flags |= O_LARGEFILE;
+-	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
++	filp->f_mode |= FMODE_BUF_RASYNC;
  
-+	file->f_mode |= FMODE_NOWAIT;
- 	sock->file = file;
- 	file->private_data = sock;
- 	stream_open(SOCK_INODE(sock), file);
+ 	if (filp->f_flags & O_NDELAY)
+ 		filp->f_mode |= FMODE_NDELAY;
+@@ -494,6 +494,9 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+ 	if (IS_ERR(bdev))
+ 		return PTR_ERR(bdev);
+ 
++	if (bdev_nowait(bdev))
++		filp->f_mode |= FMODE_NOWAIT;
++
+ 	filp->private_data = bdev;
+ 	filp->f_mapping = bdev->bd_inode->i_mapping;
+ 	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
 -- 
 2.39.2
 

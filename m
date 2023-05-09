@@ -2,75 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B28F36FCBDD
-	for <lists+io-uring@lfdr.de>; Tue,  9 May 2023 18:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F9E6FCF33
+	for <lists+io-uring@lfdr.de>; Tue,  9 May 2023 22:12:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232747AbjEIQ4C (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 May 2023 12:56:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
+        id S229534AbjEIUMV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 May 2023 16:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234146AbjEIQz5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 May 2023 12:55:57 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B405592
-        for <io-uring@vger.kernel.org>; Tue,  9 May 2023 09:55:37 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-3357ea1681fso493815ab.1
-        for <io-uring@vger.kernel.org>; Tue, 09 May 2023 09:55:37 -0700 (PDT)
+        with ESMTP id S229489AbjEIUMU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 May 2023 16:12:20 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA7BE72
+        for <io-uring@vger.kernel.org>; Tue,  9 May 2023 13:12:19 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id 41be03b00d2f7-51f6461af24so4469902a12.2
+        for <io-uring@vger.kernel.org>; Tue, 09 May 2023 13:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683651336; x=1686243336;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M99v2oSk5Zw/R5pw6TMXoO8HTOcL3iX6x+QANsvXHn0=;
-        b=nw42TFhjvS20Sm1KQRHjcqztVks5L+rL5PfFA4DM+VLRlkicZy/SMjm/+P35agvpJ6
-         0fy9drliNrmfdxiK3ZETRU0VyppcgqItDAZnUWtT4ocuouF9HzIzERLOg1Rj4povaH5z
-         b4TeGFHBVg9+tpZO3wG5XzPLEQ2eHrzPXAkl3P8jszyq6OATNNUf5bzKfJUo+Z1ve6Mn
-         S6BqPUuM2UIKRW/Q2eUAboxUMrVObPGRAeOq7i6mzOODsH4CWgk7pWnvmNkzitcT6NAP
-         HEdu6jB8crZpEEfwWYe5ifjMoNGd2vb/nPO530kpFXkllsmRdRjgn/IIwwImULoBVo4y
-         gs4Q==
+        d=fortunewebnetworks-com.20221208.gappssmtp.com; s=20221208; t=1683663139; x=1686255139;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0Xk3oovvr3Klt1rhOUMIOFbX01YIU8sJau/FWt0ndEI=;
+        b=tuvyap7GgQF/RbCy2JvttYTynvBRY2SQo4Uv4v0IhWvqUGTlvjAtX9MeUx9Y22UuS8
+         1l+lGNFrx48Z1msZRmabYsNS1kk8TvYIT81p64mtPRS1gnl4MyMX0oIB6n98WQ98LxIj
+         JLDo/hZxtSDIesJlfaofgKLzWKg48Y/lNjlUgNvQP6YvDpC7vzSc4qUwAQq8YHmUfJeh
+         fVeEzBHNI1kW7YCjpvYY6YRCbIbJfbxTeUL6ZVmuTKuk6EZqkuAK9MXxSItk9KxAGAD9
+         3BBwwjQH86z7rvZwhmCjYkmn+doXKcpljd7D4KLjXco3P1LqjOqmOsgwjuRFjfi9MZZ8
+         1RXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683651336; x=1686243336;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M99v2oSk5Zw/R5pw6TMXoO8HTOcL3iX6x+QANsvXHn0=;
-        b=FzlpvcYAQ6F+MdHuBGdGVuOk7VY23QCxv8bKkfku3ZD+5ggEA8Xix1zAb7BZ6Fkb0h
-         KDwGkpTHRowrv1VFRCGkePkqEDK+vJtkEfeja0WAXhWivBoOYyUiMMsFOZU+6snpxua+
-         Bw3x+XC5VlujjvyxPuZVOvUTXYuYQmovb9gwUT0WKEe2nr0xOU6Ip4xWowznJG6Zpn1C
-         bvEDJCaeRtZUQ3fsCLHBM/7ZU0lpZTgcjCiwGRw4Ys5fJmuYPygVMtSo58UUxedy+mBR
-         w/x7J22hTAW8Gaqm25Fks4DRXk9hE2WPL7ROiX7jdzs0OYVcR1TV+CPoiiwyPmpQ30P1
-         tyaQ==
-X-Gm-Message-State: AC+VfDzsHAsSPiSNPFqw94fddt2zy0pNBfIfdudGZJ+b1y1As04u7CWm
-        HV8fXkk1eHxlH5Si9tVDUSHtUQ==
-X-Google-Smtp-Source: ACHHUZ45ERK48eSf4fRmxV6a4A56X4dx/bmDEP2oJ4KQZazCYhPAVEsq1amsvvs3C6mbOkKpuT8JLw==
-X-Received: by 2002:a05:6e02:1d05:b0:331:1129:b8a9 with SMTP id i5-20020a056e021d0500b003311129b8a9mr7806137ila.1.1683651336617;
-        Tue, 09 May 2023 09:55:36 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y19-20020a056638229300b004166c24e30dsm2148946jas.32.2023.05.09.09.55.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 09:55:35 -0700 (PDT)
-Message-ID: <f3c4fce2-657c-2743-6d05-9af29b35fcbe@kernel.dk>
-Date:   Tue, 9 May 2023 10:55:34 -0600
+        d=1e100.net; s=20221208; t=1683663139; x=1686255139;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0Xk3oovvr3Klt1rhOUMIOFbX01YIU8sJau/FWt0ndEI=;
+        b=FvIfv2tjSYAzMTvHlYFvLxV4RdhlrBVEXxgNybjKaQhyDFpA7ohQ90g8DY/YAPBA5J
+         HtlRIZwKaM2KisCNY3+01CW+exa8Qcu0zyHBBzE4vtDm6swEMxxZbcVMyVJnff2/3UHa
+         NvSFV1+W0Hf4qiZ7egCocdUdQ8P+CqV9pSjhmSZ/C4+Kfu0cL6j7ShtHCJqqK/RKQNJt
+         H7sZL6IIf0mXmj4wNNOZnpGzqRmWJPBQAiIAp42xD+Y351tSoEq2ScWKbe3JANCHWb7/
+         EXsezZFe4wrh0Zjhx1TWscgo1Sj0lTFz7idJhO+l7FO3SLh4iypd4XaA56d+CTsohgMG
+         ti8w==
+X-Gm-Message-State: AC+VfDxdxD//9pBPXiu2mXAE+QMJnApTgc/LIdRloX3wpZeQAEq84lvS
+        vcDy9F+AstCv1jv+9VN4vGizXS9C+NRfI3/GKDIafw==
+X-Google-Smtp-Source: ACHHUZ6SqWzJ7RyKODkDwtJ95lSFm7K2dW1cZjIcRP8g0y4ScSIGusXAT7mszvYwzOFQ2QVWdZnYzVzcqOwnWos6/G4=
+X-Received: by 2002:a17:90a:eac2:b0:246:8497:37c5 with SMTP id
+ ev2-20020a17090aeac200b00246849737c5mr14514751pjb.46.1683663139505; Tue, 09
+ May 2023 13:12:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [GIT PULL] Final io_uring updates for 6.4-rc1
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        io-uring <io-uring@vger.kernel.org>, linux-kernel@vger.kernel.org
-References: <9b2e791d-aeba-a2c7-1877-797ff5c680a3@kernel.dk>
- <20230508031852.GA4029098@google.com>
- <fb84f054-517c-77d4-eb11-d3df61f53701@kernel.dk>
- <CAGXv+5GpeJ8hWt2Sc6L+4GB-ghA4vESobEaFGpo1_ZyPhOvW0g@mail.gmail.com>
- <6d6a494b-3c1a-2bf6-79e3-0ccc81166a67@kernel.dk>
- <CAHk-=wjspoBCSrwL2s=qof3GFnZ4BmMzFbCcEx3VpVP81zXwrg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wjspoBCSrwL2s=qof3GFnZ4BmMzFbCcEx3VpVP81zXwrg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+From:   Jack Lee <jack@fortunewebnetworks.com>
+Date:   Tue, 9 May 2023 15:12:08 -0500
+Message-ID: <CABNDBtDrm_Q01nOcJu2ShV-qL5WgWnhyPgDWA1kk1X2uDcgNEA@mail.gmail.com>
+Subject: RE: Verified HIMSS Attendees Data List-2023
+To:     Jack Lee <jack@fortunewebnetworks.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-0.5 required=5.0 tests=BAYES_05,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,20 +60,17 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/9/23 10:52?AM, Linus Torvalds wrote:
-> On Tue, May 9, 2023 at 6:59?AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Oops yes, thanks for noticing. I'll correct that and add your tested-by.
-> 
-> .. this build problem isn't caught by Guenter's build testing, but can
-> we please make sure that it's fixed in my tree by -rc2?
-> 
-> It would be lovely to have a release that doesn't end up having silly
-> build problems pending for too long. Even if they might be unusual
-> configs.
+Hi,
 
-It's in my tree, it'll go your way before -rc2 for sure.
+Have a Blessed Day!
 
--- 
-Jens Axboe
+Would you be interested in acquiring the HIMSS Attendees Data
+List-2023? Which Includes Complete Contact Details And Verified Email
+Address.
 
+Number of Contacts :-50,365
+Cost :- USD-2,289
+
+Kind Regards,
+Jack Lee
+Marketing Coordinator

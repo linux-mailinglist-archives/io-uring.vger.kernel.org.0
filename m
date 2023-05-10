@@ -2,64 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D296FDE8D
-	for <lists+io-uring@lfdr.de>; Wed, 10 May 2023 15:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 700C76FE085
+	for <lists+io-uring@lfdr.de>; Wed, 10 May 2023 16:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237031AbjEJNaF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 May 2023 09:30:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37740 "EHLO
+        id S237528AbjEJOkV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 May 2023 10:40:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237120AbjEJNaD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 May 2023 09:30:03 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2504AA243;
-        Wed, 10 May 2023 06:30:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ig/btAIsBVJtBIcmizBBDUlSxVq17P4ydBb2TqMNRjo=; b=yQn4t+7GJgoKCj6/lFmHrQOrfu
-        HhgN8UgRjJ+EjxZUPt45zyLX6SGz1wL/GuDRxENVAtmP7QJJ52WG739cfun2bLu43bz/eKe262eEn
-        rPFejqY1OJKRw6jB03zlAW8ZVQSF4cwJ2Sbz/XULXIjWtGfPmkF7BcfQDpEfX239ohD7I1t/5uUp+
-        3JMn8XVaYQZfoa+TOmUQEWKRor+JPLGqc76hIRsZQCeCAJ9YWk6e+SFYX/86s2QLUjicYh1QdGyCS
-        SI0aRNDp8VyRIWE8FkcqmG14UI38kBzcCRSMS9AIjm1qEaHCN3efSthtKOsj07nQpvSv6ZOPeGElr
-        5aPPEsjg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pwjtJ-006Ea4-0v;
-        Wed, 10 May 2023 13:30:01 +0000
-Date:   Wed, 10 May 2023 06:30:01 -0700
-From:   Christoph Hellwig <hch@infradead.org>
+        with ESMTP id S237486AbjEJOkQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 May 2023 10:40:16 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EACEEAD27;
+        Wed, 10 May 2023 07:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1683729610;
+        bh=6R/GOaUO5DOD37ZaNkx3J3tRaIamM2Esvxxoksqfu6I=;
+        h=From:To:Cc:Subject:Date;
+        b=WHei+S+Lfmkf9bfkpsuV8oEqW2JkMXQ6HbFnNGe5FvnUI+gGZ9NfxwJ2wMMvYo/Ri
+         2T7KHmK98Y47VGFZOf7ctun6hCiNeTaB2Hwobwlh3o28vrluOZydEbo09OFabljR4F
+         EQZPzfqiN6lvcx4Xleod/NGkKisg5KthaKTlyZQr0HRLET8sa9LGIs9wY7O2H+Vynv
+         JZRV3ShqfuTTARkl8anYGpdK+Sr3au5JhhG1P9tYmu4RivCa1DQ0fPPcO7dV1daQKN
+         ob7+pkebBvGsZFPFuI/ANdGiAjNXDKkwcr8o/XPHLTTLIib186l0h65E7rdvPEVo/S
+         6fZjEk+6v1zvA==
+Received: from integral2.. (unknown [101.128.114.135])
+        by gnuweeb.org (Postfix) with ESMTPSA id DAC1D245CF0;
+        Wed, 10 May 2023 21:40:07 +0700 (WIB)
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/3] block: mark bdev files as FMODE_NOWAIT if underlying
- device supports it
-Message-ID: <ZFucWYxUtBvvRJpR@infradead.org>
-References: <20230509151910.183637-1-axboe@kernel.dk>
- <20230509151910.183637-3-axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        =?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <pobrn@protonmail.com>,
+        Michael William Jonathan <moe@gnuweeb.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Subject: [PATCH liburing v1 0/2] 2 fixes for recv-msgall.c
+Date:   Wed, 10 May 2023 21:39:25 +0700
+Message-Id: <20230510143927.123170-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509151910.183637-3-axboe@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, May 09, 2023 at 09:19:09AM -0600, Jens Axboe wrote:
-> We set this unconditionally, but it really should be dependent on if
-> the underlying device is nowait compliant.
+Hi Jens,
 
-Somehow I only see patch 2 of 3 of whatever series this is supposed to
-be in my linux-block mbox, something is broken with your patch sending
-script.
+This is the follow up patchset for the recent issue found in
+recv-msgall.c. There are two patches in this series.
 
-The change itself looks fine even standalone, though:
+1. Fix undefined behavior in `recv_prep()`.
+The lifetime of `struct msghdr msg;` must be long enough until the CQE
+is generated because the recvmsg operation will write to that storage. I
+found this test segfault when compiling with -O0 optimization. This is
+undefined behavior and may behave randomly. Fix this by making the
+lifetime of `struct msghdr msg;` long enough.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+2. Fix invalid mutex usage.
+Calling pthread_mutex_lock() twice with the same mutex in the same
+thread without unlocking it first is invalid. The intention behind this
+pattern was to wait for the recv_fn() thread to be ready. Use the
+pthread barrier instead. It is more straightforward and correct.
+
+Please apply!
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+--- 
+
+Ammar Faizi (2):
+  recv-msgall: Fix undefined behavior in `recv_prep()`
+  recv-msgall: Fix invalid mutex usage
+
+ test/recv-msgall.c | 44 +++++++++++++++++++++-----------------------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
+
+
+base-commit: 4961ac480052089a94978e9f771d513551aff61b
+-- 
+Ammar Faizi
+

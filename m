@@ -2,103 +2,98 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9AEE6FE169
-	for <lists+io-uring@lfdr.de>; Wed, 10 May 2023 17:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B0A6FE198
+	for <lists+io-uring@lfdr.de>; Wed, 10 May 2023 17:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237238AbjEJPR5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 10 May 2023 11:17:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44970 "EHLO
+        id S237583AbjEJPc5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 10 May 2023 11:32:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237074AbjEJPR4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 10 May 2023 11:17:56 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D6A10C1
-        for <io-uring@vger.kernel.org>; Wed, 10 May 2023 08:17:54 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-33110a36153so1647575ab.0
-        for <io-uring@vger.kernel.org>; Wed, 10 May 2023 08:17:54 -0700 (PDT)
+        with ESMTP id S237521AbjEJPc4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 10 May 2023 11:32:56 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DBE330CD
+        for <io-uring@vger.kernel.org>; Wed, 10 May 2023 08:32:55 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id e9e14a558f8ab-3357fc32a31so886085ab.1
+        for <io-uring@vger.kernel.org>; Wed, 10 May 2023 08:32:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683731874; x=1686323874;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lN7tbsnewymx3Hha9SErMkfjnHX+bufyhRuLjrWne0Q=;
-        b=kedPAOWw1SnhirRMkBOdCYfWJOhBtIQddzc6tVfVtEhapV90gOFqq0WkqycAGdytwZ
-         1481+dK/0lz2B5/haB7EY2dgOlc2Itn+JrhyNfKFBr+s+zAWBJxctx1lvleSUFOiFeSQ
-         ZRmRkuO2MonNEdoAz+T6u866p9FFjB+RDM4DFDzFywJXuytT5ZD6xnSifKdF1UGXnfif
-         7oTgr7KRUR5+hqjiYwMC9Ba6kTiUsHZK6srDAhWWCUuTxe5YCYfIXPUdjJr+Sp+Wn9Ax
-         0LG+IaC+v9nVr/Q1kfnASsRat0WhMGqjx6xV6gwHMnX8dzOkSStS2bkqRsKU8oXA12aC
-         wN+Q==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683732775; x=1686324775;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V/WMn8cfCQ3m89e3gG7QAkSL02x/LJuxioYEZNyvj90=;
+        b=qagL4xKE41ovWAGNXOs0lFKx2IQn0GbLiqyQlXQjqVqLjWfhZwr/0zEKCHy0F1u5Th
+         vX1YMkFlnLXs3Wus2MQRxU/oiwJn0IrFafkQ0ouvvICRjcrmRTnvWuZ/67WLNJZlfVQ8
+         uwfxTRe+fDKtTqlXHuHjNJoC6cbSOwqaThVobiGs7UOJ/eI0GhmD+mQNfB0TUaxuj7M+
+         Svo9FJa/ZAXvFK1YRXnulJ1mJf3g+wlSzlWp6VDEi6C61f7MQrwCdH8/3z31w5z26DnO
+         s3s46YzNfgWDEynwjmDuebifC3WNdg51vzzxW8VUGrM/BoNOphgPb1K2hKbhV5kUw1KE
+         p+Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683731874; x=1686323874;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lN7tbsnewymx3Hha9SErMkfjnHX+bufyhRuLjrWne0Q=;
-        b=FMIW+HJVfzClNm2r89PVq2GjNSIdAbXDT8++1XAAQNK3nhoDEsIO75t5aNnjiCoBLB
-         WoGfCsYii85O30Oxu6U/R2+/gq/DHl3rjic9/uPuOHBXlD5BfBzlQaulf8s59cro3gqV
-         dPOzd/Qy9c/QMNHWgW7R6yS44bW4+9iyiHtvLSRawk5BAn9EP4fy5xGN0+KdNuakB/Ne
-         o2Cb4COCthL1zYXOQ79FSHKWEww0Lvl8uDQ4WtcVghzfpCRbGjQi+8V3OBRUyHOaX1Ul
-         zQkhlkmS36N3LQUxyuQe+B72EkgUw/RXaddzBP1PCkl1IDPGhq/1BcCeuoyYeJGoRkZX
-         7p6Q==
-X-Gm-Message-State: AC+VfDzkyTObnwEdvAq5RO9Pt6xvUZav2BtbChnsqm3VCTR/OupQRL1U
-        BZsGJJYwmOVgefrwutwapNkdSD+UIu9hM9El570=
-X-Google-Smtp-Source: ACHHUZ7idZS3nGS0DkQmkhqX2ZSUVTjY3GYuAVz9kd+gohWAtXgNwQpsNjx1FQLF1cyTr6TteIlIZw==
-X-Received: by 2002:a05:6e02:1d9b:b0:32b:51df:26a0 with SMTP id h27-20020a056e021d9b00b0032b51df26a0mr10042992ila.2.1683731873752;
-        Wed, 10 May 2023 08:17:53 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id t12-20020a92c90c000000b003248469e5easm2399300ilp.43.2023.05.10.08.17.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 May 2023 08:17:52 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     =?utf-8?q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>,
-        Michael William Jonathan <moe@gnuweeb.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-In-Reply-To: <20230510143927.123170-1-ammarfaizi2@gnuweeb.org>
-References: <20230510143927.123170-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v1 0/2] 2 fixes for recv-msgall.c
-Message-Id: <168373187265.405534.8990004306948050012.b4-ty@kernel.dk>
-Date:   Wed, 10 May 2023 09:17:52 -0600
+        d=1e100.net; s=20221208; t=1683732775; x=1686324775;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V/WMn8cfCQ3m89e3gG7QAkSL02x/LJuxioYEZNyvj90=;
+        b=OpDh+cnZBPDDIWp+pBcpOq/l/mZFxVU8jHGrexLC/eDcTgzYHbEP/Zycjv6+pp7sRk
+         JkkIj+fP6VZJmEv7CwhCdz1B0ng92GhrUjujqdhjEe2vj0HP7BW//Xhng68tOSrlA1bf
+         JC+ynbM5ThRSXyQTBBtOFa6yR6LUXAcr1E9X9Vwmlzr0Akqgc1IG4f1wr9ElxLapHO87
+         rjPl2gal7+fmZqUha9++ZsvU+tveCW6k6Bo3AHpvzDw+k/LlDBZKLNLoZpMhJHvAdEXL
+         rGSUKblzzVMxI6i93sC1ddmuHBdUpK12vJ0vH4TB4TZR8q25YWdWOch4ukO253sWGdVJ
+         P2xA==
+X-Gm-Message-State: AC+VfDwq+JCfiCT5Qi+2wuEPzlEUuCqNAu8fEKOlSHq8D2yl35gEGPQy
+        ++Zr+dtcQGir3FYzWETOrjqDJP7traC0yHvOL5k=
+X-Google-Smtp-Source: ACHHUZ7sU3WhyVt4kIc6cni16GTfAXEM1cYEusRN3oj9l67bolxqQu1gULzWVhgDoJ4A2Njr9vgFkw==
+X-Received: by 2002:a05:6e02:1d9b:b0:32b:51df:26a0 with SMTP id h27-20020a056e021d9b00b0032b51df26a0mr10065590ila.2.1683732774746;
+        Wed, 10 May 2023 08:32:54 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t12-20020a056e02060c00b00331833da1dasm3813307ils.35.2023.05.10.08.32.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 May 2023 08:32:53 -0700 (PDT)
+Message-ID: <8d5daf0d-c623-5918-d40e-ab3ad1c508ad@kernel.dk>
+Date:   Wed, 10 May 2023 09:32:53 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 2/3] block: mark bdev files as FMODE_NOWAIT if underlying
+ device supports it
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     io-uring@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-block@vger.kernel.org
+References: <20230509151910.183637-1-axboe@kernel.dk>
+ <20230509151910.183637-3-axboe@kernel.dk> <ZFucWYxUtBvvRJpR@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZFucWYxUtBvvRJpR@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-On Wed, 10 May 2023 21:39:25 +0700, Ammar Faizi wrote:
-> This is the follow up patchset for the recent issue found in
-> recv-msgall.c. There are two patches in this series.
+On 5/10/23 7:30 AM, Christoph Hellwig wrote:
+> On Tue, May 09, 2023 at 09:19:09AM -0600, Jens Axboe wrote:
+>> We set this unconditionally, but it really should be dependent on if
+>> the underlying device is nowait compliant.
 > 
-> 1. Fix undefined behavior in `recv_prep()`.
-> The lifetime of `struct msghdr msg;` must be long enough until the CQE
-> is generated because the recvmsg operation will write to that storage. I
-> found this test segfault when compiling with -O0 optimization. This is
-> undefined behavior and may behave randomly. Fix this by making the
-> lifetime of `struct msghdr msg;` long enough.
+> Somehow I only see patch 2 of 3 of whatever series this is supposed to
+> be in my linux-block mbox, something is broken with your patch sending
+> script.
 > 
-> [...]
+> The change itself looks fine even standalone, though:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Applied, thanks!
+Thanks - the 2/3 only is on purpose, 1/3 is a networking ditto and
+3/3 is just io_uring now being able to delete some code. So this one
+was supposed to be able to stand on its own, should've had the cover
+letter for everyone obviously though.
 
-[1/2] recv-msgall: Fix undefined behavior in `recv_prep()`
-      commit: 05c6317367cab6fd4b8cf38c68cea1563bf31c5f
-[2/2] recv-msgall: Fix invalid mutex usage
-      commit: 09c3661278bebb8431fbc10ed213e42181e7cac7
-
-Best regards,
 -- 
 Jens Axboe
-
 
 

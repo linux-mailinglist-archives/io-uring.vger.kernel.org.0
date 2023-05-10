@@ -2,113 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF156FD3CA
-	for <lists+io-uring@lfdr.de>; Wed, 10 May 2023 04:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F3A96FD43A
+	for <lists+io-uring@lfdr.de>; Wed, 10 May 2023 05:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230199AbjEJCR5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 9 May 2023 22:17:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40408 "EHLO
+        id S235732AbjEJDWv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 9 May 2023 23:22:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbjEJCR4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 9 May 2023 22:17:56 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F205BF
-        for <io-uring@vger.kernel.org>; Tue,  9 May 2023 19:17:55 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1ab0595fc69so10979985ad.0
-        for <io-uring@vger.kernel.org>; Tue, 09 May 2023 19:17:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683685075; x=1686277075;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wMJx/u/pBYVd7Zt4eeqFR3I/fhY0U5ZXB++bJG0vXno=;
-        b=SZEUJlGBuDB3sRwE0D/8GD4meNu7D2ZykHyEdRQA1nG96faLOaQgdSi1FM2VUR0ol5
-         YPn5q3KPXEgKzUTYl273YA6Q1D/unrkk6BLetzJwChr9/rmC30chg7a+zcGj7Lry5fKR
-         MYGt+7K9yLWgCeqqhDTRIG7MBhVtRHY3NdA0dWRvK23W4vsoADNG6KcoLDp/vaW0cW/t
-         zFYd5hSRNZqG666tV13mzwZlMiK0f0lAAn8UgkwN26oN+mKNXsHpcrAm2rMnK460oA4i
-         R66nv95do3v/+lvUQu2FZu3WcxBTdyE42eNvTy/uue2e6pO18KhV1WY2IlreC+Agj89d
-         NnjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683685075; x=1686277075;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMJx/u/pBYVd7Zt4eeqFR3I/fhY0U5ZXB++bJG0vXno=;
-        b=CZ1T27kVhG0OUQJ/u4kZkllEq3e0XH8/2G2bGEjoDScmKoVFQvfZrOeP0+4weZcLdd
-         DSp4HZZUHojOMegwl7otSKAy1MG5ozTtrbOdpvwHHS/xhAHMQaLudqd//0enFUzv4L79
-         9DRkFPvF0eIkuYkRa3YqXuNXRQbzDQKB+7dYEpVvkPA+ERT9FCJtoJQZFt57KG09USzv
-         393nonAheRBz7u+4YYrEw1aI5V9LNfeSq4RoeT+pexyCyTJKQCj5HYnYQyc/DSyRTwHH
-         91/WA650zXseKpjuYbr67w3RJKbZEQhpVMSaBUkZdN0drPkK7+jQXfrAAbayVWDhvShR
-         LG2g==
-X-Gm-Message-State: AC+VfDzs5+cwl6QPm8lyYvoN/asZk5OJQsCIVweSbS5T41WPmFvgFTWN
-        0gx7T2mTU1mD1/+IVk+AUV3lqg==
-X-Google-Smtp-Source: ACHHUZ63SBLSE29exYA5LPsG2pRkV8oXtGxZr/XXJIPvu7KlYtPUBOSp7qEDUVJiCI/bIb/nd/mjUg==
-X-Received: by 2002:a17:902:cec7:b0:1ac:6153:50b3 with SMTP id d7-20020a170902cec700b001ac615350b3mr15056493plg.5.1683685074847;
-        Tue, 09 May 2023 19:17:54 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id bb5-20020a170902bc8500b001ab05aaae2fsm2361211plb.107.2023.05.09.19.17.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 19:17:54 -0700 (PDT)
-Message-ID: <1155743b-2073-b778-1ec5-906300e0570a@kernel.dk>
-Date:   Tue, 9 May 2023 20:17:53 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
+        with ESMTP id S235502AbjEJDWB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 9 May 2023 23:22:01 -0400
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C672B3C27;
+        Tue,  9 May 2023 20:20:53 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.169])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4QGKzh2xb6z4f3jMc;
+        Wed, 10 May 2023 11:20:48 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+        by APP3 (Coremail) with SMTP id _Ch0CgBH9CGODVtkcqmYIQ--.28977S3;
+        Wed, 10 May 2023 11:20:48 +0800 (CST)
 Subject: Re: [bug report] BUG: kernel NULL pointer dereference, address:
  0000000000000048
-Content-Language: en-US
-To:     Yu Kuai <yukuai1@huaweicloud.com>,
+To:     Jens Axboe <axboe@kernel.dk>, Yu Kuai <yukuai1@huaweicloud.com>,
         Guangwu Zhang <guazhang@redhat.com>,
         linux-block@vger.kernel.org, io-uring@vger.kernel.org,
         Jeff Moyer <jmoyer@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Paolo Valente <paolo.valente@linaro.org>,
         "yukuai (C)" <yukuai3@huawei.com>
 References: <CAGS2=YosaYaUTEMU3uaf+y=8MqSrhL7sYsJn8EwbaM=76p_4Qg@mail.gmail.com>
  <ecb54b0d-a90e-a2c9-dfe5-f5cec70be928@huaweicloud.com>
  <cde5d326-4dcb-5b9c-9d58-fb1ef4b7f7a8@huaweicloud.com>
  <007af59f-4f4c-f779-a1b6-aaa81ff640b3@huaweicloud.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <007af59f-4f4c-f779-a1b6-aaa81ff640b3@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+ <1155743b-2073-b778-1ec5-906300e0570a@kernel.dk>
+From:   Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7def2fca-c854-f88e-3a77-98a999f7b120@huaweicloud.com>
+Date:   Wed, 10 May 2023 11:20:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <1155743b-2073-b778-1ec5-906300e0570a@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: _Ch0CgBH9CGODVtkcqmYIQ--.28977S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrury8WFWDGr4UWr48tryrWFg_yoW8Jryxpr
+        Z29a9xKrs5Jr18tw18Kw1UZw1FvrZ8uF1agr1UJ34UZr95trnFv3s3XanF9rZrKw40kF4j
+        kw45tFZ3t34kA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+        CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+        W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+        0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+        kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+        67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+        CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+        3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+        sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
+        MAY_BE_FORGED,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/9/23 8:00?PM, Yu Kuai wrote:
-> Hi,
-> 
-> ? 2023/05/10 9:49, Yu Kuai ??:
+Hi, Jens
+
+在 2023/05/10 10:17, Jens Axboe 写道:
+> On 5/9/23 8:00?PM, Yu Kuai wrote:
 >> Hi,
 >>
->> ? 2023/05/10 9:29, Yu Kuai ??:
+>> ? 2023/05/10 9:49, Yu Kuai ??:
 >>> Hi,
 >>>
->>> ? 2023/05/10 8:49, Guangwu Zhang ??:
+>>> ? 2023/05/10 9:29, Yu Kuai ??:
 >>>> Hi,
 >>>>
->>>> We found this kernel NULL pointer issue with latest
->>>> linux-block/for-next, please check it.
->>>>
->>>> Kernel repo: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
->>>>
->>>>
->>>> [  112.483804] BUG: kernel NULL pointer dereference, address: 0000000000000048
->>
->> Base on this offset, 0x48 match bio->bi_blkg, so I guess this is because
->> bio is NULL, so the problem is that passthrough request insert into
->> elevator.
->>
-> Sorry that attached patch has some problem, please try this one.
+>>>> ? 2023/05/10 8:49, Guangwu Zhang ??:
+>>>>> Hi,
+>>>>>
+>>>>> We found this kernel NULL pointer issue with latest
+>>>>> linux-block/for-next, please check it.
+>>>>>
+>>>>> Kernel repo: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+>>>>>
+>>>>>
+>>>>> [  112.483804] BUG: kernel NULL pointer dereference, address: 0000000000000048
+>>>
+>>> Base on this offset, 0x48 match bio->bi_blkg, so I guess this is because
+>>> bio is NULL, so the problem is that passthrough request insert into
+>>> elevator.
+>>>
+>> Sorry that attached patch has some problem, please try this one.
+> 
+> Let's please fix this in bfq, this isn't a core issue and it's not a
+> good idea to work around it there.
+> 
 
-Let's please fix this in bfq, this isn't a core issue and it's not a
-good idea to work around it there.
+I can do that, but I'm not sure because it seems passthrough rq is not
+supposed to insert into elevator.
 
--- 
-Jens Axboe
+Bfq always expect that bio is not NULL, and before this commit
+a327c341dc65 ("blk-mq: fix passthrough plugging"), passthrough rq can
+never insert into plug, and therefor passthrough rq can never insert
+into elevator.
+
+Thanks,
+Kuai
+
 

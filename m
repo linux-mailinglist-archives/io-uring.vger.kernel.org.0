@@ -2,131 +2,162 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C964D6FEFF4
-	for <lists+io-uring@lfdr.de>; Thu, 11 May 2023 12:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B19F6FF041
+	for <lists+io-uring@lfdr.de>; Thu, 11 May 2023 12:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237671AbjEKKbn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 11 May 2023 06:31:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33274 "EHLO
+        id S237633AbjEKK4Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 11 May 2023 06:56:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237872AbjEKKbR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 11 May 2023 06:31:17 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB139ECF
-        for <io-uring@vger.kernel.org>; Thu, 11 May 2023 03:30:55 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f24d4900bbso5878947e87.3
-        for <io-uring@vger.kernel.org>; Thu, 11 May 2023 03:30:55 -0700 (PDT)
+        with ESMTP id S237751AbjEKK4X (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 11 May 2023 06:56:23 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A5859C6
+        for <io-uring@vger.kernel.org>; Thu, 11 May 2023 03:56:19 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f435658d23so24080325e9.3
+        for <io-uring@vger.kernel.org>; Thu, 11 May 2023 03:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683801054; x=1686393054;
-        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ea5EsVfSPs6miZODjcYZrrG1DH5IFW4cy6+9nRxfFgM=;
-        b=kagn/b+0ltByB1NvWh++ENyYIuzc0n+q7KGZhsNOhcoTWa9aeSlv0KNIXYnnH0o9Fs
-         zU3+WRr3H89N5b1+a/E2odDxbs8CusUSDJCFmiZkPSfsa3ZXSp7eGM9EYwKyEtrayKp3
-         1jtzu9M8XHk7a1xciFlBNrf9rB6S9Ddc19nlDQRHYjGHbks27p0qgiDOdPH+lF4O8G3u
-         Qal8wHUkV8rotjNeMUt06LLJ7PdM9a1p/dyf9DCd935oL5TWn8MAUEP+7SrcolbtB3po
-         l+FktkHkuSiv+06TJjW/K76HWpsrZQKeGyjmxaol+38KCoU+bEWbRqGpi0gdUmCPt3SH
-         AErQ==
+        d=linaro.org; s=google; t=1683802578; x=1686394578;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8UsFW/OKFLWzrfCHWAMRNvjMDP4f9tp8Nm34IOcM96Q=;
+        b=Fna4hgvy4ayNdl2Mw7PgG9YfGLMggJPpJVbidjfaUama/51qz00nOGttQcvAWaDqwB
+         u9TL2r8S9+R9piJxfwOCKdDBo4I0rl+Ed5PdQOtkqP6FxMxJU4kbkFqREqyQZff2cUrL
+         NV5IEszFMo+s12cAjxzLlIRk2YUAF7UObDdWykNUzVMk//jNKVw1rEvGJapVQy9L6pJE
+         IwzUs9NhPh6si5MlYEr+ftyW9jwY5vBqU0aNJ4vRsEEROKpIybncvu/FPLDQ8IYxHp7i
+         9kmw03xUvVfIuqGHL9tBm4LEU84SBmrla8GdQ+wyDwvwhRcCZ6GWuP5v0CSlquPlI+Bl
+         FP/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683801054; x=1686393054;
-        h=to:subject:message-id:date:from:sender:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ea5EsVfSPs6miZODjcYZrrG1DH5IFW4cy6+9nRxfFgM=;
-        b=G6AqYIEZm0zL2TPVGYnAXtYv3fzKJLMuMdp31pGd9wJnx/QlanDYjeUqELXW9KyYnx
-         QAyuHSxg0FmMHsMeGapNhv/6Uz7wxXMMud6FvSTkuDFzOTXGztd6nwnteqND7kZ1td04
-         Z1oKWDMldDSSJjCwwaFsYZbaAGmE9uPKZTT7jZsyqhLNmVAhbPvlxCzpxfsaehQL2TSA
-         PngrVQ6qkZbayXz6anOUshBLsAR/YtzHsatQe6JZmxWoJ1JTXh2CgBxJHo3jDNs728Kz
-         MLdcPuVDM6onNJzbX63ONB5B3Z9cfXhT9TAK2X2z0HDIWNT9mlhrNxR9ih6rK/c+LOSN
-         JWAA==
-X-Gm-Message-State: AC+VfDz3U3Vi+exmltJr5HHv0ZIbUQkyEZYlGGeH3MBFpqxJwvLT+rKN
-        8toAzN2gOZf7FHexuuh+hUkeut4AHOzCIOnQINo=
-X-Google-Smtp-Source: ACHHUZ5FrdmEg+aUOVERX4xM0Wr60fyUtHkQXnKpKhroVBE6ZOePC0MeUlkDRWOfzCsoYv0BZpad50U+UXi3AFBzupQ=
-X-Received: by 2002:ac2:529b:0:b0:4f1:4996:7e84 with SMTP id
- q27-20020ac2529b000000b004f149967e84mr2567736lfm.34.1683801053824; Thu, 11
- May 2023 03:30:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683802578; x=1686394578;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8UsFW/OKFLWzrfCHWAMRNvjMDP4f9tp8Nm34IOcM96Q=;
+        b=Z6wUghrk9nlCzjOUk5n+JGwST00ZdGX3JLy+oxiWckPkvrJyK6/it5oZHALZ+BdyZW
+         XAtJHXqHXGeGxTz84bX10qn2mLnmEUmRmmN/SWO9Wim9m7Seqwb+Fe5rOjRfSpr1Y2Ld
+         b3i3eevz+tsuRkycXU+KfPk9GAfLQaECWV0Ve0348rGmXSonL55wQNEiK4QUcRlauETY
+         UZlQJuChDwZHozveIGv78EzToUmbeq/D3VPGplUgZnrZ4vLJUDKEWT091VkszENHorsP
+         eOniqAIjkjfjNiYba7otOrwYFmQcCsjRWrduZyviPX8CZ/UeVtUKM+SyzLvOJ0zWAmx0
+         /Qqw==
+X-Gm-Message-State: AC+VfDwZlL9WZmA3sGBk69ZvDlakSB1eGixi5J/AJpp9N5HpOUHE+8SR
+        GS6JJMWB2sO3yARoH8sDPHpR3A==
+X-Google-Smtp-Source: ACHHUZ5Qb4Owy3olfvWB+XIkZ9U0CNEoY63lEPKXoLzpv/B9Aw7XlwLxfHWcozMz880g73eeikEk7w==
+X-Received: by 2002:a05:600c:2047:b0:3f4:2452:9675 with SMTP id p7-20020a05600c204700b003f424529675mr9666596wmg.0.1683802577815;
+        Thu, 11 May 2023 03:56:17 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f5-20020adff985000000b002fda1b12a0bsm20319280wrr.2.2023.05.11.03.55.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 May 2023 03:56:15 -0700 (PDT)
+Date:   Thu, 11 May 2023 13:55:57 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     oe-kbuild@lists.linux.dev,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>
+Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+        Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>
+Subject: Re: [PATCH v2 4/6] kernfs: implement readdir FMODE_NOWAIT
+Message-ID: <4e88ec58-be22-4b0c-968d-fa9a52764c98@kili.mountain>
 MIME-Version: 1.0
-Sender: larruben995@gmail.com
-Received: by 2002:ab3:6886:0:b0:224:22e9:91ee with HTTP; Thu, 11 May 2023
- 03:30:53 -0700 (PDT)
-From:   Sophia Erick <sdltdkggl3455@gmail.com>
-Date:   Thu, 11 May 2023 12:30:53 +0200
-X-Google-Sender-Auth: LzjrLjoU2lxJDy42yXVFSKIwfo8
-Message-ID: <CAPoE+8PP4UN0jkafdiL4f4TPKOat_A53m2PATzMw2rRZZ=n5KA@mail.gmail.com>
-Subject: HELLO
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=7.3 required=5.0 tests=ADVANCE_FEE_5_NEW_MONEY,
-        BAYES_50,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-        HK_RANDOM_FROM,LOTS_OF_MONEY,MONEY_FRAUD_8,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_MONEY_PERCENT,T_SCC_BODY_TEXT_LINE,
-        UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:129 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.5 FROM_LOCAL_NOVOWEL From: localpart has series of non-vowel
-        *      letters
-        *  0.0 HK_RANDOM_FROM From username looks random
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [larruben995[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [larruben995[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  0.0 T_MONEY_PERCENT X% of a lot of money for you
-        *  0.0 MONEY_FRAUD_8 Lots of money and very many fraud phrases
-        *  3.0 ADVANCE_FEE_5_NEW_MONEY Advance Fee fraud and lots of money
-        *  2.9 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: *******
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230422-uring-getdents-v2-4-2db1e37dc55e@codewreck.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-With tears in my eyes and grief in my heart, I am writing this email
-to you, my name is Mrs.Sophia Erick, I am from Tunisia, I am
-contacting you in a hospital in
-Burkina Faso, I want to tell you this because I have no choice but to
-tell you, because I am moved to open my heart to you, I am married to
-Mr. Sofia, who in 2011 He worked with the Tunisian ambassador to
-Burkina Faso for nine years before his death in 2009. We have been
-married for eleven years and have no children.
-He died after a brief illness that lasted only five days. Since his
-death I decided not to remarry, my late husband was alive. He
-deposited the sum of  ( Eleven Million Dollars) in a bank in
-Ouagadougou, the capital of Burkina Faso, West Africa. The money is
-still in the bank. He used the money to export gold from the mining
-industry in Burkina Faso. Recently, my doctor told me that I couldn't
-last seven months because of cancer and a stroke. What bothered me the
-most was my stroke. Knowing my situation, I have decided to hand over
-this money to you to take care of the vulnerable and you will use it
-in the manner I will instruct here.
-I want you to take out 30% of the total amount for your personal use
-And 70% of the money you will use to build an orphanage in my name to
-help the poor on the street. I grew up as an orphan without anyone as
-my family, just to maintain God's family I do this so that God will
-forgive my sins and accept my soul in heaven, because this disease has
-caused me a lot
+Hi Dominique,
 
-As soon as I hear back from you I will give you the contact details of
-the Bank of Burkina Faso and I will also instruct the bank manager to
-send you a power of attorney certifying that you are the current
-beneficiary of the money in the bank if you said Yes please assure me
-that you will act in the manner I declare here.
+kernel test robot noticed the following build warnings:
 
-Mrs. Sophia Erick.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dominique-Martinet/fs-split-off-vfs_getdents-function-of-getdents64-syscall/20230510-185542
+base:   58390c8ce1bddb6c623f62e7ed36383e7fa5c02f
+patch link:    https://lore.kernel.org/r/20230422-uring-getdents-v2-4-2db1e37dc55e%40codewreck.org
+patch subject: [PATCH v2 4/6] kernfs: implement readdir FMODE_NOWAIT
+config: i386-randconfig-m021 (https://download.01.org/0day-ci/archive/20230511/202305110647.eSnSEulg-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <error27@gmail.com>
+| Link: https://lore.kernel.org/r/202305110647.eSnSEulg-lkp@intel.com/
+
+smatch warnings:
+fs/kernfs/dir.c:1863 kernfs_fop_readdir() warn: inconsistent returns '&root->kernfs_rwsem'.
+
+vim +1863 fs/kernfs/dir.c
+
+c637b8acbe079e Tejun Heo          2013-12-11  1815  static int kernfs_fop_readdir(struct file *file, struct dir_context *ctx)
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1816  {
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1817  	struct dentry *dentry = file->f_path.dentry;
+319ba91d352a74 Shaohua Li         2017-07-12  1818  	struct kernfs_node *parent = kernfs_dentry_node(dentry);
+324a56e16e44ba Tejun Heo          2013-12-11  1819  	struct kernfs_node *pos = file->private_data;
+393c3714081a53 Minchan Kim        2021-11-18  1820  	struct kernfs_root *root;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1821  	const void *ns = NULL;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1822  
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1823  	if (!dir_emit_dots(file, ctx))
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1824  		return 0;
+393c3714081a53 Minchan Kim        2021-11-18  1825  
+393c3714081a53 Minchan Kim        2021-11-18  1826  	root = kernfs_root(parent);
+a551138c4b3b9f Dominique Martinet 2023-05-10  1827  	if (ctx->flags & DIR_CONTEXT_F_NOWAIT) {
+a551138c4b3b9f Dominique Martinet 2023-05-10  1828  		if (!down_read_trylock(&root->kernfs_rwsem))
+a551138c4b3b9f Dominique Martinet 2023-05-10  1829  			return -EAGAIN;
+a551138c4b3b9f Dominique Martinet 2023-05-10  1830  	} else {
+393c3714081a53 Minchan Kim        2021-11-18  1831  		down_read(&root->kernfs_rwsem);
+a551138c4b3b9f Dominique Martinet 2023-05-10  1832  	}
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1833  
+324a56e16e44ba Tejun Heo          2013-12-11  1834  	if (kernfs_ns_enabled(parent))
+c525aaddc366df Tejun Heo          2013-12-11  1835  		ns = kernfs_info(dentry->d_sb)->ns;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1836  
+c637b8acbe079e Tejun Heo          2013-12-11  1837  	for (pos = kernfs_dir_pos(ns, parent, ctx->pos, pos);
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1838  	     pos;
+c637b8acbe079e Tejun Heo          2013-12-11  1839  	     pos = kernfs_dir_next_pos(ns, parent, ctx->pos, pos)) {
+adc5e8b58f4886 Tejun Heo          2013-12-11  1840  		const char *name = pos->name;
+364595a6851bf6 Jeff Layton        2023-03-30  1841  		unsigned int type = fs_umode_to_dtype(pos->mode);
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1842  		int len = strlen(name);
+67c0496e87d193 Tejun Heo          2019-11-04  1843  		ino_t ino = kernfs_ino(pos);
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1844  
+adc5e8b58f4886 Tejun Heo          2013-12-11  1845  		ctx->pos = pos->hash;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1846  		file->private_data = pos;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1847  		kernfs_get(pos);
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1848  
+393c3714081a53 Minchan Kim        2021-11-18  1849  		up_read(&root->kernfs_rwsem);
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1850  		if (!dir_emit(ctx, name, len, ino, type))
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1851  			return 0;
+393c3714081a53 Minchan Kim        2021-11-18  1852  		down_read(&root->kernfs_rwsem);
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Needs to be deleted.
+
+a551138c4b3b9f Dominique Martinet 2023-05-10  1853  		if (ctx->flags & DIR_CONTEXT_F_NOWAIT) {
+a551138c4b3b9f Dominique Martinet 2023-05-10  1854  			if (!down_read_trylock(&root->kernfs_rwsem))
+a551138c4b3b9f Dominique Martinet 2023-05-10  1855  				return 0;
+
+It's a bit strange the this doesn't return -EAGAIN;
+
+a551138c4b3b9f Dominique Martinet 2023-05-10  1856  		} else {
+a551138c4b3b9f Dominique Martinet 2023-05-10  1857  			down_read(&root->kernfs_rwsem);
+a551138c4b3b9f Dominique Martinet 2023-05-10  1858  		}
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1859  	}
+393c3714081a53 Minchan Kim        2021-11-18  1860  	up_read(&root->kernfs_rwsem);
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1861  	file->private_data = NULL;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1862  	ctx->pos = INT_MAX;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28 @1863  	return 0;
+fd7b9f7b9776b1 Tejun Heo          2013-11-28  1864  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
+

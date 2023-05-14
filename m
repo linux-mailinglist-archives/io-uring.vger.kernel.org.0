@@ -2,150 +2,157 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 977DC701B45
-	for <lists+io-uring@lfdr.de>; Sun, 14 May 2023 04:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F23BC701FC4
+	for <lists+io-uring@lfdr.de>; Sun, 14 May 2023 23:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229485AbjENC7J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 13 May 2023 22:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42458 "EHLO
+        id S237910AbjENV1J (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 14 May 2023 17:27:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjENC7I (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 13 May 2023 22:59:08 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D045213E
-        for <io-uring@vger.kernel.org>; Sat, 13 May 2023 19:59:07 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1aaf0bc8a07so22203735ad.0
-        for <io-uring@vger.kernel.org>; Sat, 13 May 2023 19:59:07 -0700 (PDT)
+        with ESMTP id S237913AbjENV1G (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 14 May 2023 17:27:06 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0B910EA;
+        Sun, 14 May 2023 14:26:59 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3063afa2372so11214825f8f.0;
+        Sun, 14 May 2023 14:26:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1684033147; x=1686625147;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bEz/GDZryWPwdLiBye9UG8FSH96Dq5ETY+tUulxp6TM=;
-        b=3BFaA4VFKi0KwSM7jC+CaKAqVgO+ejoqKAIRgUaDXWvOtpa15Fqixxisy46Te0EImO
-         JCNj3pNFMeyZYY+CuNzEwuqf6Y4o40ZLrWRWrRe4TxqEJt54jOMnHFbpdLiXAkj2dsEz
-         g6ZqiMibYa1EiyS5SpmoP5BXwPr61N4rwxyC3GCQS1uNGQjxUsh3Hk9woFSu+is0Ex3f
-         dhCLWCAD24k4CJW6mTIXnzPGmpz1zPRoVCsRkkX+prgFN9GpwjZsTwjj8+2NC9wtral3
-         l2V+ddcKe4T23JkmURSHREPvUJjErY5PNEeSm22yQPOW1uE+Y7uauRNpQ3Y4AJHYx9aS
-         lSHw==
+        d=gmail.com; s=20221208; t=1684099618; x=1686691618;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6lZfZiVFWsAlcMWN5PRi30FiuIH4ExiR/doISXVhpnA=;
+        b=S/k6Ea9S7jTXAkegHdRNsYFunFJtyA0tD50ThbnkZoegODRr5kBExok5WQkHItiThy
+         9Eqit3HhgZkuqZV4o6mY1FgL3cOhKarBAgLlvy7XoFrsUNHYKuSScvJHno7LbQGZCSJL
+         cBrDEg28rcrgcSohO93qC0JLzI4nT0W5ZizqecvOSJm1aw/HNhkd0n9haUp4X7OXZDhf
+         pIn9jvFlyWIMW7YfXnnzqDAaYDey1Eeyv7BGnybQ19c2uJvcxJKmXwtrK2ijBLkqrwE2
+         OcSjIqGlL2tu6YE+rNveIHct+bjthi0raPd9ShK3wa4GpPLymWffn7c+Fva20QTttk3D
+         mJgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684033147; x=1686625147;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bEz/GDZryWPwdLiBye9UG8FSH96Dq5ETY+tUulxp6TM=;
-        b=F3VErREI4ae3R8DlSPJPH36Fffnbo2YfMmfkPbjfGFPfCrm8O52+Ag+bMPY9BB0Sya
-         Y431Rm5fRuobZv0gUDX4E/lGYKpl8rzYN2j1yR6EGMYNbqpRsz1pF9ki3zf5rmWrYWl1
-         zURo9tSVfky4y3TvzwoJWIQPIUJcX+ATtlQlSu8KWiJ/S1fKnGBRzByX0rPdli3X/6th
-         f5nzMUFC2MBGvMnmEa3gEwXa7spKjpaMGJ87GgCFzhr8CaHcf57rx1arQYErUbHO0sCe
-         ef/jPw68MFLxXB/wKcfk7gDRqUkZebZS1gxDdakrW3cIgz6qmw2nKVMt4AhvZirCHomE
-         giHA==
-X-Gm-Message-State: AC+VfDz2PFuXR4PbnLfBFxt5EIXNqHGNPZ11wTd+ByyPS89s9xPnm9oH
-        vI2Tpdc8hTAxUykR9UyyhFtst1+dlOn8V8YhX0c=
-X-Google-Smtp-Source: ACHHUZ6TI6FvXrlKwGPmqlIAtfZks5LUU1Y0J6j6cwzSrR1kmq0Ydwtr5xF5j8rBrLY/7WZhBeh5eQ==
-X-Received: by 2002:a17:902:c950:b0:1ac:775b:3e0a with SMTP id i16-20020a170902c95000b001ac775b3e0amr26452335pla.5.1684033146808;
-        Sat, 13 May 2023 19:59:06 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id je6-20020a170903264600b001aaf2e7b06csm10544436plb.132.2023.05.13.19.59.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 May 2023 19:59:06 -0700 (PDT)
-Message-ID: <9a3ccab4-f173-ec53-7730-ebace868793d@kernel.dk>
-Date:   Sat, 13 May 2023 20:59:05 -0600
+        d=1e100.net; s=20221208; t=1684099618; x=1686691618;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6lZfZiVFWsAlcMWN5PRi30FiuIH4ExiR/doISXVhpnA=;
+        b=BUm3r1r7+UHsjhdnSvDaTtDx9VbXCeXcPuplSkP7jx9BUPQgw4Ew3KRNHxT0kDgVQq
+         7hScQvLvWNXHZ4W10WiGRpR+4OwaPYVKVLA1w1JnRa2P1o8wj/A0NHl45Js1DkcDue4Z
+         05BbMArx7Wc5Uvl5dtaaezQAhPes0G3Zc3P4rcSsMuFjZATqteuFHPhAetlJTSI80loY
+         a1kfEfLsVwPcRQFUJBpWLpm0Xbso0HptqRZqT60uQfYLyldfCb0ZiJrJ8Zxa8Qb9EP0C
+         3S3LRHF8XcsfKgqe1AF49BppJBBefLf8i92Hj1lBglYFZEYf3YAck+WqfOdiDr8sGIMg
+         D89A==
+X-Gm-Message-State: AC+VfDzle/oP0gXOfc13049VByGJqp21WJkcO2RYTOA8W+c9sFo9ekz7
+        MX5t9o2QmHb8uwGJwc52+xs=
+X-Google-Smtp-Source: ACHHUZ7xbzYrHEIBsBEOTfbuU9xONp4amC/jy4CMWdSN4lsoxtCis8o8qIA1MVHQab6pCBBaxEceNw==
+X-Received: by 2002:adf:f142:0:b0:306:36b5:8ada with SMTP id y2-20020adff142000000b0030636b58adamr24687541wro.29.1684099618096;
+        Sun, 14 May 2023 14:26:58 -0700 (PDT)
+Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
+        by smtp.googlemail.com with ESMTPSA id z8-20020adfec88000000b003062675d4c9sm30253398wrn.39.2023.05.14.14.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 May 2023 14:26:57 -0700 (PDT)
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [PATCH v5 4/6] io_uring: rsrc: delegate VMA file-backed check to GUP
+Date:   Sun, 14 May 2023 22:26:55 +0100
+Message-Id: <642128d50f5423b3331e3108f8faf6b8ac0d957e.1684097002.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <cover.1684097001.git.lstoakes@gmail.com>
+References: <cover.1684097001.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 2/4] io_uring: return error pointer from io_mem_alloc()
-Content-Language: en-US
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     io-uring@vger.kernel.org
-References: <20230513141643.1037620-1-axboe@kernel.dk>
- <20230513141643.1037620-3-axboe@kernel.dk>
- <CAOKbgA5U_o2igDLfsbmd7NSCSxtNXA=GV+1k3H-F5VF2szb-uQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAOKbgA5U_o2igDLfsbmd7NSCSxtNXA=GV+1k3H-F5VF2szb-uQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/13/23 8:54?PM, Dmitry Kadashev wrote:
-> Hi Jens,
-> 
-> On Sat, May 13, 2023 at 9:19?PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> In preparation for having more than one time of ring allocator, make the
->> existing one return valid/error-pointer rather than just NULL.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  io_uring/io_uring.c | 18 ++++++++++++------
->>  1 file changed, 12 insertions(+), 6 deletions(-)
->>
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 3695c5e6fbf0..6266a870c89f 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -2712,8 +2712,12 @@ static void io_mem_free(void *ptr)
->>  static void *io_mem_alloc(size_t size)
->>  {
->>         gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN | __GFP_COMP;
->> +       void *ret;
->>
->> -       return (void *) __get_free_pages(gfp, get_order(size));
->> +       ret = (void *) __get_free_pages(gfp, get_order(size));
->> +       if (ret)
->> +               return ret;
->> +       return ERR_PTR(-ENOMEM);
->>  }
->>
->>  static unsigned long rings_size(struct io_ring_ctx *ctx, unsigned int sq_entries,
->> @@ -3673,6 +3677,7 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
->>  {
->>         struct io_rings *rings;
->>         size_t size, sq_array_offset;
->> +       void *ptr;
->>
->>         /* make sure these are sane, as we already accounted them */
->>         ctx->sq_entries = p->sq_entries;
->> @@ -3683,8 +3688,8 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
->>                 return -EOVERFLOW;
->>
->>         rings = io_mem_alloc(size);
->> -       if (!rings)
->> -               return -ENOMEM;
->> +       if (IS_ERR(rings))
->> +               return PTR_ERR(rings);
->>
->>         ctx->rings = rings;
->>         ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
->> @@ -3703,13 +3708,14 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
->>                 return -EOVERFLOW;
->>         }
->>
->> -       ctx->sq_sqes = io_mem_alloc(size);
->> -       if (!ctx->sq_sqes) {
->> +       ptr = io_mem_alloc(size);
->> +       if (IS_ERR(ptr)) {
->>                 io_mem_free(ctx->rings);
->>                 ctx->rings = NULL;
->> -               return -ENOMEM;
->> +               return PTR_ERR(ptr);
->>         }
->>
->> +       ctx->sq_sqes = io_mem_alloc(size);
-> 
-> Should be 'ptr' rather than 'io_mem_alloc(size)' here.
+Now that the GUP explicitly checks FOLL_LONGTERM pin_user_pages() for
+broken file-backed mappings in "mm/gup: disallow FOLL_LONGTERM GUP-nonfast
+writing to file-backed mappings", there is no need to explicitly check VMAs
+for this condition, so simply remove this logic from io_uring altogether.
 
-Indeed, good catch. Patch 4 does correct that so the final result is
-correct, must've happened during a split rebase a while back. I'll fix
-up patch 2 and 4 so that it's correct after patch 2 as well.
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+---
+ io_uring/rsrc.c | 34 ++++++----------------------------
+ 1 file changed, 6 insertions(+), 28 deletions(-)
 
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index d46f72a5ef73..b6451f8bc5d5 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1030,9 +1030,8 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
+ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
+ {
+ 	unsigned long start, end, nr_pages;
+-	struct vm_area_struct **vmas = NULL;
+ 	struct page **pages = NULL;
+-	int i, pret, ret = -ENOMEM;
++	int pret, ret = -ENOMEM;
+ 
+ 	end = (ubuf + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	start = ubuf >> PAGE_SHIFT;
+@@ -1042,45 +1041,24 @@ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages)
+ 	if (!pages)
+ 		goto done;
+ 
+-	vmas = kvmalloc_array(nr_pages, sizeof(struct vm_area_struct *),
+-			      GFP_KERNEL);
+-	if (!vmas)
+-		goto done;
+-
+ 	ret = 0;
+ 	mmap_read_lock(current->mm);
+ 	pret = pin_user_pages(ubuf, nr_pages, FOLL_WRITE | FOLL_LONGTERM,
+-			      pages, vmas);
+-	if (pret == nr_pages) {
+-		/* don't support file backed memory */
+-		for (i = 0; i < nr_pages; i++) {
+-			struct vm_area_struct *vma = vmas[i];
+-
+-			if (vma_is_shmem(vma))
+-				continue;
+-			if (vma->vm_file &&
+-			    !is_file_hugepages(vma->vm_file)) {
+-				ret = -EOPNOTSUPP;
+-				break;
+-			}
+-		}
++			      pages, NULL);
++	if (pret == nr_pages)
+ 		*npages = nr_pages;
+-	} else {
++	else
+ 		ret = pret < 0 ? pret : -EFAULT;
+-	}
++
+ 	mmap_read_unlock(current->mm);
+ 	if (ret) {
+-		/*
+-		 * if we did partial map, or found file backed vmas,
+-		 * release any pages we did get
+-		 */
++		/* if we did partial map, release any pages we did get */
+ 		if (pret > 0)
+ 			unpin_user_pages(pages, pret);
+ 		goto done;
+ 	}
+ 	ret = 0;
+ done:
+-	kvfree(vmas);
+ 	if (ret < 0) {
+ 		kvfree(pages);
+ 		pages = ERR_PTR(ret);
 -- 
-Jens Axboe
+2.40.1
 

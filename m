@@ -2,61 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F9D703254
-	for <lists+io-uring@lfdr.de>; Mon, 15 May 2023 18:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 144D9703256
+	for <lists+io-uring@lfdr.de>; Mon, 15 May 2023 18:08:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242242AbjEOQIr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 15 May 2023 12:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41712 "EHLO
+        id S242272AbjEOQIs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 15 May 2023 12:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242272AbjEOQIo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 15 May 2023 12:08:44 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE861987;
+        with ESMTP id S242479AbjEOQIp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 15 May 2023 12:08:45 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859AE19BA;
         Mon, 15 May 2023 09:08:26 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-96aadfb19d7so695574566b.2;
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9661047f8b8so1997767766b.0;
         Mon, 15 May 2023 09:08:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684166870; x=1686758870;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+/KgeGTvYD4VU83ivrKJR5CVNGs2S8SquG6Hadg/og=;
-        b=Wzoz++pGy8QtqPwGINL9MTm22bUrl5iQ3dcCvRt9Na/2JcGIbmlL1APBME/r7PqsHw
-         439/32CwXE9aBEN7lYst1prB/HQU+onlAhhkPG/L4456/5vXjWNyaMS5l3Y9Pk6il8x+
-         2XYs7SbfD6tu2jgkn4SDpJFzqgpSYv8FNwsPQWqF6vxgX0JD/5DJJV7RD6mU08L83JSh
-         5i6yWY5TdVDcRVkRUltie9HdFXODPTIDjS5aAzKt82ZvnObkbIwT38B9F/df4n7fFKw8
-         zvWoJ7YCS5yLyS+/ixcaYeQpyUbgt9hY07dfFJGraeUyGT0u6LxPfC72/0eTvtd0H9Uh
-         8GtQ==
+        d=gmail.com; s=20221208; t=1684166871; x=1686758871;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7q0UcurCQuSrsWYVJZvWTx8sSO/ocIRDuJSAioMoYTw=;
+        b=qOKqb9XUz1rLU2EfTRI1MtKc0o+FKAJHpve7/wAB3hskLZtEpFqbxbHNkHUgvjKKPv
+         +m+cZP/KmqtlozpvtJ6QIu2yDtECEJ1VgqPAu42qs7WxNSfc9sym5HWA9lXqwPwTPU5l
+         vs5Y17MT3CAiqdqOwRs4Kv8YRKtnxfVrajfgdzJDntV2BMNuw92KqYbhRMKAGfbflaOG
+         kt03jlWvUoIfUUexgGMBMkD2uWuH88E0XKCzpiH/s3EVs3Yd81xhG3ZkugAu/qsJEQcW
+         Z/rC0cfD8AqQRlTtyqpZxewULPtIY3mYGi1I4vTBM7xGUMum6ZvdjWNNTLLe1eWyZ4GK
+         /l6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684166870; x=1686758870;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p+/KgeGTvYD4VU83ivrKJR5CVNGs2S8SquG6Hadg/og=;
-        b=itAYb7eO3t9e5bt7HeUWvwyakvt4CvPUyjqTuqp6WaEbYUDLtH36kXK/HmqaAmALjR
-         nnLUGFMN0LBlq+2ct8tyI0a+e8uxjNKIP1aiOrSPm6vEJ77TMoOPrYmSd9K+8/oi/Kef
-         nKw5F0oEeXvxPOaCe1KLmfvrP6nGW8d6rgLGUVimuTlumxJqDo7kiV/BygqpxsMo3x8I
-         q5s/N9qtlDuUsFla8G26hQJ5N//R5lYku37KpvQmZgWd/uuw81pA/rwQZr0fYjNV36xs
-         f1lRlWDyESELF0QXXjLpTq0NUX/q/xlRc9SdyZlK9WycWhYsOUWcUSjccDk2Hz6/jVcA
-         MUjQ==
-X-Gm-Message-State: AC+VfDzHXl01K1o7MLil5v+2Bs3UrthwPF8AiykAP4pfeXdWfEZLEwos
-        gPxrtLLKBhPbBkrrYMPwqr1pKFMWwwU=
-X-Google-Smtp-Source: ACHHUZ60/UKpwLhdDOryw+hJysiWn2x7FkdlX8wrj2XmC21BXFu/hTtdwYUk37YHqBkXQS99sTdlAg==
-X-Received: by 2002:a17:907:26c7:b0:966:5bc0:bfe6 with SMTP id bp7-20020a17090726c700b009665bc0bfe6mr27042525ejc.2.1684166870002;
+        d=1e100.net; s=20221208; t=1684166871; x=1686758871;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7q0UcurCQuSrsWYVJZvWTx8sSO/ocIRDuJSAioMoYTw=;
+        b=SEyYSpkLTTLHx+k61pAecfrMSahNrSTj+Doc4sVy3QKO0ZDagaVHqU6/9gj3YH//5D
+         vThJWidyjxHf4EGEd0H0Zr5x1rUIfpiYdj03qWitM+bEMr56eeD+C0Ll4mcpNyJzoPAF
+         TzCQ4cMoLwFcv2XfEzCCGzM4jE0CgpbU/6pUsXRRhSBozcQM9Y32jfIfBrNVoAg8CwCH
+         Y0HU6ZyfttUjTso/lHHL0j9YFBWJPL/MnhbQcuIFUQYoQnZ6kUC1+M9R0DEl2SypRwot
+         5LJTLylBBAzeyTDzfu02zxi94F758PZk8Hd5/NalDRGbEVVHTQvv5CSrNB9YXz6uEmlk
+         V5vg==
+X-Gm-Message-State: AC+VfDzYaNNWjtsTZu3dFu+ci3mhSL6eJ+62y3JTRbXgg0YYhSCZAy04
+        s5ltUmPIUn/IS+flE1XV1ri6LhJn+yE=
+X-Google-Smtp-Source: ACHHUZ4dKldiscJ3eDa7mSfcvyHAbvYnBZX+b77H3OOBD/Pi9h9+DZndXF4SRAL9NzeGtm16L0K5EQ==
+X-Received: by 2002:a17:906:99c4:b0:94e:4c8f:758 with SMTP id s4-20020a17090699c400b0094e4c8f0758mr30748732ejn.76.1684166870543;
         Mon, 15 May 2023 09:07:50 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::2:6366])
-        by smtp.gmail.com with ESMTPSA id z25-20020a17090674d900b0096ac3e01a35sm4407085ejl.130.2023.05.15.09.07.49
+        by smtp.gmail.com with ESMTPSA id z25-20020a17090674d900b0096ac3e01a35sm4407085ejl.130.2023.05.15.09.07.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 09:07:49 -0700 (PDT)
+        Mon, 15 May 2023 09:07:50 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
         edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
         kuba@kernel.org, pabeni@redhat.com
 Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH net-next 0/2] minor tcp io_uring zc optimisations
-Date:   Mon, 15 May 2023 17:06:35 +0100
-Message-Id: <cover.1684166247.git.asml.silence@gmail.com>
+Subject: [PATCH net-next 1/2] net/tcp: don't peek at tail for io_uring zc
+Date:   Mon, 15 May 2023 17:06:36 +0100
+Message-Id: <d49262a8a39c995cd55f89d1f6fd39cd4346f528.1684166247.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.40.0
+In-Reply-To: <cover.1684166247.git.asml.silence@gmail.com>
+References: <cover.1684166247.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -69,17 +72,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Patch 1 is a simple cleanup, patch 2 gives removes 2 atomics from the
-io_uring zc TCP submission path, which yielded extra 0.5% for my
-throughput CPU bound tests based on liburing/examples/send-zerocopy.c
+Move tcp_write_queue_tail() to SOCK_ZEROCOPY specific flag as zerocopy
+setup for msghdr->ubuf_info doesn't need to peek into the last request.
 
-Pavel Begunkov (2):
-  net/tcp: don't peek at tail for io_uring zc
-  net/tcp: optimise io_uring zc ubuf refcounting
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ net/ipv4/tcp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- net/ipv4/tcp.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 4d6392c16b7a..40f591f7fce1 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1229,13 +1229,12 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+ 	flags = msg->msg_flags;
+ 
+ 	if ((flags & MSG_ZEROCOPY) && size) {
+-		skb = tcp_write_queue_tail(sk);
+-
+ 		if (msg->msg_ubuf) {
+ 			uarg = msg->msg_ubuf;
+ 			net_zcopy_get(uarg);
+ 			zc = sk->sk_route_caps & NETIF_F_SG;
+ 		} else if (sock_flag(sk, SOCK_ZEROCOPY)) {
++			skb = tcp_write_queue_tail(sk);
+ 			uarg = msg_zerocopy_realloc(sk, size, skb_zcopy(skb));
+ 			if (!uarg) {
+ 				err = -ENOBUFS;
 -- 
 2.40.0
 

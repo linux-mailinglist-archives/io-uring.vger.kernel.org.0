@@ -2,109 +2,222 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96DB47047CB
-	for <lists+io-uring@lfdr.de>; Tue, 16 May 2023 10:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 355FD7049F9
+	for <lists+io-uring@lfdr.de>; Tue, 16 May 2023 12:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231483AbjEPI3G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 May 2023 04:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
+        id S231710AbjEPKDh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 May 2023 06:03:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231329AbjEPI3F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 May 2023 04:29:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA461BFD
-        for <io-uring@vger.kernel.org>; Tue, 16 May 2023 01:28:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684225701;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4LrwsQpkNzKQ73ySEswNaQqCDWSvOkZL+SFTwTYbhpM=;
-        b=hZGB0nKM+nPJYQBGiPMkbQUBSioYbOV6vXt18f1TCmRGl8QlFQoK1XDgtaMPgcPHC7TNuY
-        ItV3Lang8ZTcjXRbwbY9rNLDx69Xj78ZWl4tJ1i2VfKOo8Hf/CKB2U/mhZGRvV4GeCBRUH
-        XCjhmJORbB//UQO+iKlcD1NC2mBDYUY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-j1W2nwcQMCawr09NGdkuwA-1; Tue, 16 May 2023 04:28:19 -0400
-X-MC-Unique: j1W2nwcQMCawr09NGdkuwA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3f4ef4bf00dso29549005e9.1
-        for <io-uring@vger.kernel.org>; Tue, 16 May 2023 01:28:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684225698; x=1686817698;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4LrwsQpkNzKQ73ySEswNaQqCDWSvOkZL+SFTwTYbhpM=;
-        b=kFkq1OPWSKjrxsHYHo0PQcgZ+4+OjNeXxVIhfwHazEITAAhxpSXLAIB4eQ2Uz32o8B
-         3RJIaoY2GCEq2w4xuXu+iGf2fbF/LPhybdO+O1MHLUwyZhmh6g0wxkJK6jWj4Brdh+ns
-         TqxDf2j0zeZJyRRlTv7EKQQq6FWv/61WMmkrZ8MYLRG7heDjo63ud7xu7bVY2cvzaelm
-         tKmjpqnPQN34TmSDhkQs5g19HIaN9uquE5S9cYzUmBoyBgoT+uzk5IPYsanNufyvqLYQ
-         FeBem4Hh61ACQfCnbh5pLM+ZClokF09BgExcPV/NIND6k5lKUHlv1UvZRfOtBrAtz+P9
-         9m7A==
-X-Gm-Message-State: AC+VfDxu6OT9cdJJ9X2v5kJTrkO63z5qA8L/PlBD9znqPUgJGtBZ0bmg
-        PyJnWuMQVxu5Nsk1AqZLFkF3Mk9gLRfxhjyC6Ilf0KH+YD19fDyNiwK9QWvd+eOE625wl5D51/2
-        1dCc6etY79IaDBhwfUm3bDeCP+yA=
-X-Received: by 2002:a7b:cb97:0:b0:3f4:2c71:b9ad with SMTP id m23-20020a7bcb97000000b003f42c71b9admr19670884wmi.30.1684225698387;
-        Tue, 16 May 2023 01:28:18 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5u32JaX9DoCvDoS+J6br6qwyFtkIX97b4yVh+uAVQvAOm++RWuF2owUBJbfmhSh0S5nzEg/g==
-X-Received: by 2002:a7b:cb97:0:b0:3f4:2c71:b9ad with SMTP id m23-20020a7bcb97000000b003f42c71b9admr19670863wmi.30.1684225697971;
-        Tue, 16 May 2023 01:28:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c74f:2500:1e3a:9ee0:5180:cc13? (p200300cbc74f25001e3a9ee05180cc13.dip0.t-ipconnect.de. [2003:cb:c74f:2500:1e3a:9ee0:5180:cc13])
-        by smtp.gmail.com with ESMTPSA id v10-20020a05600c214a00b003f50e88ffb5sm1494416wml.24.2023.05.16.01.28.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 May 2023 01:28:17 -0700 (PDT)
-Message-ID: <184c0b11-4f97-5872-5b25-ffd99eb6185d@redhat.com>
-Date:   Tue, 16 May 2023 10:28:16 +0200
+        with ESMTP id S232019AbjEPKDg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 May 2023 06:03:36 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8307C1986
+        for <io-uring@vger.kernel.org>; Tue, 16 May 2023 03:03:19 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230516100316epoutp0307a8db0d58661bd0cbdb73a363377d3d~fl4g4zNBE0766307663epoutp03n
+        for <io-uring@vger.kernel.org>; Tue, 16 May 2023 10:03:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230516100316epoutp0307a8db0d58661bd0cbdb73a363377d3d~fl4g4zNBE0766307663epoutp03n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1684231397;
+        bh=OKhd9yhd0Kzyd/2edlBmu79oNc0LJJaxjWsUcWASZWQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fDGu8NqRoW3JEaP9XBCtEWzO+us4zwPo4gl+CtcLjDnFPVuR7k8jJ3imxuKbniDKS
+         LCBw1oCgY+++kLqvzsJLglrI5AII3FjrgWq3EInkOt0trvFS+jwmZmIoDceTXN+Dqn
+         ruWKmF6Zc2UxV0wxLRU+TDo31LLlH88OhaHg7Zc8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20230516100315epcas5p40cffefaf5d5210380d7553ddffb6a46f~fl4f9gLQ10916609166epcas5p4-;
+        Tue, 16 May 2023 10:03:15 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4QLBdG5RX2z4x9Pt; Tue, 16 May
+        2023 10:03:14 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1F.18.57769.1E453646; Tue, 16 May 2023 19:03:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230516100312epcas5p15a8ff75ad757f14f327efb816e92adb4~fl4cpkpYZ1510915109epcas5p1x;
+        Tue, 16 May 2023 10:03:12 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230516100312epsmtrp2d9382f57c861cf88d3af9ce6e402a2aa~fl4co2wwt0326403264epsmtrp2Y;
+        Tue, 16 May 2023 10:03:12 +0000 (GMT)
+X-AuditID: b6c32a4a-f3bfd7000001e1a9-a1-646354e15cd5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AE.80.27706.0E453646; Tue, 16 May 2023 19:03:12 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230516100311epsmtip28c9dca6cafca342d700265ce9b52b519~fl4bYJKao3194931949epsmtip2d;
+        Tue, 16 May 2023 10:03:10 +0000 (GMT)
+Date:   Tue, 16 May 2023 15:30:11 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, axboe@kernel.dk, kbusch@kernel.org,
+        hch@lst.de, sagi@grimberg.me
+Subject: Re: [PATCH for-next 1/2] io_uring/cmd: add cmd lazy tw wake helper
+Message-ID: <20230516100000.GA26860@green245>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v5 4/6] io_uring: rsrc: delegate VMA file-backed check to
- GUP
-Content-Language: en-US
-To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>
-References: <cover.1684097001.git.lstoakes@gmail.com>
- <642128d50f5423b3331e3108f8faf6b8ac0d957e.1684097002.git.lstoakes@gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <642128d50f5423b3331e3108f8faf6b8ac0d957e.1684097002.git.lstoakes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <5b9f6716006df7e817f18bd555aee2f8f9c8b0c3.1684154817.git.asml.silence@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBJsWRmVeSWpSXmKPExsWy7bCmlu7DkOQUg9PfNC3mrNrGaLH6bj+b
+        xcrVR5ks3rWeY7GYdOgao8XeW9oW85c9ZbdY9/o9iwOHx85Zd9k9zt/byOJx+Wypx6ZVnWwe
+        m5fUe+y+2cDm8XmTXAB7VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJu
+        qq2Si0+ArltmDtBJSgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCkwK94sTc4tK8
+        dL281BIrQwMDI1OgwoTsjAtHHzIWPFGqeLL5JWMDY6NcFyMnh4SAicSB2zdYQGwhgd2MEo8a
+        /LoYuYDsT4wSLVvWMkE43xglpt6fwQrT8bZlKRtEYi+jxKIHE6HanzFKnH5VCWKzCKhKXJn3
+        AqiIg4NNQFPiwuRSkLCIgLbE6+uH2EFsZoH5QOWPuUFsYQFviUeXXzCD2LwCuhL792xihLAF
+        JU7OfAI2nlMgVuLatx9gvaICyhIHth0HO05CYCqHxO4129ggjnORWDh7BTuELSzx6vgWKFtK
+        4vO7vVA1yRKXZp5jgrBLJB7vOQhl20u0nupnhjguQ2LbjT2MEDafRO/vJ0wgv0gI8Ep0tAlB
+        lCtK3Jv0FBom4hIPZyxhhSjxkNi1kg8SPA8YJVov3GGfwCg3C8k7s5BsgLCtJDo/NLHOAmpn
+        FpCWWP6PA8LUlFi/S38BI+sqRsnUguLc9NRi0wKjvNRyeAwn5+duYgQnUS2vHYwPH3zQO8TI
+        xMF4iFGCg1lJhLd9ZnyKEG9KYmVValF+fFFpTmrxIUZTYOxMZJYSTc4HpvG8knhDE0sDEzMz
+        MxNLYzNDJXFedduTyUIC6YklqdmpqQWpRTB9TBycUg1MsRe62z/8qwpX17JPlfQ5psrW8HFG
+        7gIugxjT85tNQydvnld0S908yHitvph2xuQfq2LWbhNyOHTZ7+SCMBNbkdu1hjt37bh13bhF
+        73yPtZ212vKvMfVJjwSU1h02WdwpL1ObIKPwMLlsTaH8ZzPLU4ps3zslcqyUkzj2JIR55Kt5
+        h5tuS9ljdyUt0Dq9NP7UBXb+9u+LzDlzr5w+pukS1PrQKEFoi++Snyk9LHGlxoHxKtlNvpcd
+        v2m462ZdVgm5vfjn8nWNR4/Fvo3ybM1dKrn61sLeE6XnrTZsstu3fWaG/U7l9WcmruIJmKPf
+        cXDutHiXJPcPutZTXuZ01letdbgezbvm3Mn0mWc+XVJiKc5INNRiLipOBAC8r5w3KwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSvO6DkOQUg5OfxCzmrNrGaLH6bj+b
+        xcrVR5ks3rWeY7GYdOgao8XeW9oW85c9ZbdY9/o9iwOHx85Zd9k9zt/byOJx+Wypx6ZVnWwe
+        m5fUe+y+2cDm8XmTXAB7FJdNSmpOZllqkb5dAlfGxRuLWAqmKVRM6HnA3sB4VrqLkZNDQsBE
+        4m3LUrYuRi4OIYHdjBLXWjcyQyTEJZqv/WCHsIUlVv57zg5R9IRRYsb9f4wgCRYBVYkr814A
+        dXNwsAloSlyYXAoSFhHQlnh9/RBYPbPAfEaJl19us4IkhAW8JR5dfgG2gFdAV2L/nk1gc4QE
+        HjBKnPkgDREXlDg58wkLiM0sYCYxb/NDZpD5zALSEsv/cYCEOQViJa59g7hNVEBZ4sC240wT
+        GAVnIemehaR7FkL3AkbmVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwbGhpbmDcfuq
+        D3qHGJk4GA8xSnAwK4nwts+MTxHiTUmsrEotyo8vKs1JLT7EKM3BoiTOe6HrZLyQQHpiSWp2
+        ampBahFMlomDU6qBKalu7q1tvFKHn384IHPaKud4nUvE+3OmPTIBD7d2X838FjBz+cZlc2ob
+        Vv++FOrb/su0Ian0rfBh5qaNTf+3CXY9X8U992zmv4D79mZ6+dZMIbkRb9quffL//uJByelX
+        hWETt1XeMBNe6nEsr3zR84cqzFnMW6OC7/v9eJSZuXmF8ILkHf90pPhTZV4/Wy/rr2a1qq76
+        568LH5k+J0dkXDBbcWjznP9Tf/xq2vn8+ZbUj4ZTagMyUrzeV4ZvrKjk/F/uqrds380pptsW
+        /TC3e3bugMLpKy5zty+6H/SnxzuNQ5lLlH/dJtWu43PONRSycMUlvKy7FKmzIPxbAZdylPZH
+        oS8fj5v8Y9pr/bRTvUGJpTgj0VCLuag4EQAb3Iu7/AIAAA==
+X-CMS-MailID: 20230516100312epcas5p15a8ff75ad757f14f327efb816e92adb4
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_96701_"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230515125841epcas5p3e3cba6545755e95739e1561222b00b4a
+References: <cover.1684154817.git.asml.silence@gmail.com>
+        <CGME20230515125841epcas5p3e3cba6545755e95739e1561222b00b4a@epcas5p3.samsung.com>
+        <5b9f6716006df7e817f18bd555aee2f8f9c8b0c3.1684154817.git.asml.silence@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 14.05.23 23:26, Lorenzo Stoakes wrote:
-> Now that the GUP explicitly checks FOLL_LONGTERM pin_user_pages() for
-> broken file-backed mappings in "mm/gup: disallow FOLL_LONGTERM GUP-nonfast
-> writing to file-backed mappings", there is no need to explicitly check VMAs
-> for this condition, so simply remove this logic from io_uring altogether.
-> 
+------w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_96701_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Worth adding "Note that this change will make iouring fixed buffers work 
-on MAP_PRIVATE file mappings."
+On Mon, May 15, 2023 at 01:54:42PM +0100, Pavel Begunkov wrote:
+>We want to use IOU_F_TWQ_LAZY_WAKE in commands. First, introduce a new
+>cmd tw helper accepting TWQ flags, and then add
+>io_uring_cmd_do_in_task_laz() that will pass IOU_F_TWQ_LAZY_WAKE and
+>imply the "lazy" semantics, i.e. it posts no more than 1 CQE and
+>delaying execution of this tw should not prevent forward progress.
+>
+>Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>---
+> include/linux/io_uring.h | 18 ++++++++++++++++--
+> io_uring/uring_cmd.c     | 16 ++++++++++++----
+> 2 files changed, 28 insertions(+), 6 deletions(-)
+>
+>diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+>index 7fe31b2cd02f..bb9c666bd584 100644
+>--- a/include/linux/io_uring.h
+>+++ b/include/linux/io_uring.h
+>@@ -46,13 +46,23 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+> 			      struct iov_iter *iter, void *ioucmd);
+> void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2,
+> 			unsigned issue_flags);
+>-void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+>-			void (*task_work_cb)(struct io_uring_cmd *, unsigned));
+> struct sock *io_uring_get_socket(struct file *file);
+> void __io_uring_cancel(bool cancel_all);
+> void __io_uring_free(struct task_struct *tsk);
+> void io_uring_unreg_ringfd(void);
+> const char *io_uring_get_opcode(u8 opcode);
+>+void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+>+			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
+>+			    unsigned flags);
+>+/* users should follow semantics of IOU_F_TWQ_LAZY_WAKE */
 
-I'll run my test cases with this series and expect no surprises :)
+Should this also translate to some warn_on anywhere?
+>+void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+>+			void (*task_work_cb)(struct io_uring_cmd *, unsigned));
+>+
+>+static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+>+			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
+>+{
+>+	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
+>+}
+>
+> static inline void io_uring_files_cancel(void)
+> {
+>@@ -85,6 +95,10 @@ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+> 			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
+> {
+> }
+>+static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+>+			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
+>+{
+>+}
+> static inline struct sock *io_uring_get_socket(struct file *file)
+> {
+> 	return NULL;
+>diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+>index 5e32db48696d..476c7877ce58 100644
+>--- a/io_uring/uring_cmd.c
+>+++ b/io_uring/uring_cmd.c
+>@@ -20,16 +20,24 @@ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
+> 	ioucmd->task_work_cb(ioucmd, issue_flags);
+> }
+>
+>-void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+>-			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
+>+void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+>+			void (*task_work_cb)(struct io_uring_cmd *, unsigned),
+>+			unsigned flags)
+> {
+> 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+>
+> 	ioucmd->task_work_cb = task_work_cb;
+> 	req->io_task_work.func = io_uring_cmd_work;
+>-	io_req_task_work_add(req);
+>+	__io_req_task_work_add(req, flags);
+>+}
+>+EXPORT_SYMBOL_GPL(__io_uring_cmd_do_in_task);
+
+Any reason to export this? No one is using this at the moment.
+>+void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+>+			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
+>+{
+>+	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
+> }
+>-EXPORT_SYMBOL_GPL(io_uring_cmd_complete_in_task);
+>+EXPORT_SYMBOL_GPL(io_uring_cmd_do_in_task_lazy);
+
+Seems you did not want callers to pass the the new flag (LAZY_WAKE) and
+therefore this helper.
+And if you did not want callers to know about this flag (internal
+details of io_uring), it would be better to have two exported helpers
+io_uring_cmd_do_in_task_lazy() and io_uring_cmd_complete_in_task().
+Both will use the internal helper __io_uring_cmd_do_in_task with
+different flag.
+
+------w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_96701_
+Content-Type: text/plain; charset="utf-8"
 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
--- 
-Thanks,
-
-David / dhildenb
-
+------w2jaHPLYrpKrCfQkcJ8LedpAWTKxgBVMFdZj2Hgt3-WHfK.r=_96701_--

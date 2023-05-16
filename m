@@ -2,155 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C1386704C90
-	for <lists+io-uring@lfdr.de>; Tue, 16 May 2023 13:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D1D704E88
+	for <lists+io-uring@lfdr.de>; Tue, 16 May 2023 15:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbjEPLmt (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 16 May 2023 07:42:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37898 "EHLO
+        id S233426AbjEPNB4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 16 May 2023 09:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232415AbjEPLms (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 16 May 2023 07:42:48 -0400
-Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2FF14C34;
-        Tue, 16 May 2023 04:42:46 -0700 (PDT)
-Received: by mail-vk1-xa2a.google.com with SMTP id 71dfb90a1353d-4501ac903d6so7577656e0c.1;
-        Tue, 16 May 2023 04:42:46 -0700 (PDT)
+        with ESMTP id S233404AbjEPNBw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 16 May 2023 09:01:52 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A504B59DB;
+        Tue, 16 May 2023 06:01:36 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3093a6311dcso255684f8f.1;
+        Tue, 16 May 2023 06:01:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684237366; x=1686829366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KVawbQRzJyzIOZpz7W6tsAHPXn8J+K2I2Vy2kuKD+TY=;
-        b=GE+1XfGpRhmsxgdP9CBWijSHCOfxDy+doCCPTlEKkqVSE4W7e7ym5oHwAm0T6+TULn
-         K5jRZLV7LOArn+gRtVVmdJWK2YL9k3XEclQRTezVCI2efKXmF9NIWdXTjgKW8x7hXwBq
-         DQHUPDq+dqRMMhc7WzHqV9kr4RNzn0b8YHcnUceeaN6XLg+O/q8/1kTKfh7SKjFzJV0l
-         lsp0QrhezU1FNPHoCydO8vrKir1LbISk2SGyZ59fNUNtAySYrM3NCqKIvwv+z6bYO59U
-         1THPcm9pMKgjzcJadSpbFwR55/xvACyfVS874ZtDShqA3avbmusDCGaV5U/CDzUglI8i
-         1zKg==
+        d=gmail.com; s=20221208; t=1684242095; x=1686834095;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4jkk9Ab256FKvAvzem14Z/0IMSkDuOPSlqpomQirp8Y=;
+        b=PIPnW4K915+KUQ+GLXLMVFR13n+tTnehDgyNrIpWd3A9o4Of2gB0oSaV6mvk2EBXMp
+         gbjeujC1t2ygNSiwBzczwOi02JdK7eWWmQLk/sCnQ147zA2QVynfTRvntT/LlJ+oLR3q
+         Sf4OdeNK07w+cHfPimVH6/3gffrUWSiDD1Z2i/SN7y/TlwHcMuXNi4pbt7ShEW42x+RQ
+         U5v4e/9Unm0zo7TObixjhxwyxnsiAZ5cSNqR9VBSowHTncyNQNyqUboosLQYVLquV4MA
+         vYVTbYCz1kjuHsFzQWpmlv6/hiM9psi9RkdO9lhlVwvZCtyB/YXQ6uM9kc+jLjW0ePHO
+         yFpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684237366; x=1686829366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KVawbQRzJyzIOZpz7W6tsAHPXn8J+K2I2Vy2kuKD+TY=;
-        b=CCjcl5bqDhGdDS3l4hNkmXZClxzRN1pYvu0rDd9fyybHW6O1XwTh09KOTnQmVyNSlw
-         cJAj0nOtllzESDbMv3VcqCssFQyWT6gLrrOhLSSJ1SBK1F6Z+LIPOO+gkxjdYS3Aq+sV
-         fBPEAYMTGs2SLSczTNMobWDDZ4mn4vevd9N05XyDzmX3zk3mVyX4xVTQAKv7ow7wH30F
-         ehQ14EvkKd2hkEOUtJBhtCx4KWUYqbWNyzql68OPSqXiUBITym76a2psd02d2ZsAzj9N
-         RAzWyAIwSr8WPh4PUmQQSMmsxHc5tTZmMoWVYYoKv3DYYQwnQ2D10pn/e8pRBNRB3eLg
-         Aalw==
-X-Gm-Message-State: AC+VfDzfUA47UatQdqdWlQigilnDeMZlbdmA7CP63HxmMbxhl40JxOWa
-        l7s3ja6nxAD4J6hK88njtM1UW2FMRs5yg4ph2w==
-X-Google-Smtp-Source: ACHHUZ5kGng/vXSFDLNoSG/RfpGoOQuOl75CpGICyD3XF5aV6Lo94+7eB9YCkzKQYcog+GOpakZ5PSHUdlxMbtIng6Y=
-X-Received: by 2002:a1f:54c1:0:b0:456:5823:92c1 with SMTP id
- i184-20020a1f54c1000000b00456582392c1mr3304272vkb.9.1684237365669; Tue, 16
- May 2023 04:42:45 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684242095; x=1686834095;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jkk9Ab256FKvAvzem14Z/0IMSkDuOPSlqpomQirp8Y=;
+        b=SyTlEyQJlrfKeK24y/KzsA7LN6m98bux05y7yQa2mleSax7RS6QfzvRHw49TLB2Clb
+         YTbpiiqqB8O9MQO/xlpL7PS6BkEXH39ZMkiRB46V67H29I2GnsL9IFNXDRqKFHD0u/eM
+         DGc5RhW3O9G/3CJBzGhW+YHx+BHUs503DLAHSXFPftrfJTBOyEpeGHdhqMcDkFBIUpC5
+         WoWdqbOCDSa/v51pLZwpbZZFtttM6puJRR2SqmQTLQhiZzryyHwnGgoJZ5rviLZF4Rer
+         A+TvO9DQ/YWh7OnJrWwpsPlEIv1jHzjy6oqbbg+JiN6roP/CCgKh4o2cORK2du9Twsrc
+         BvIw==
+X-Gm-Message-State: AC+VfDyr9YIrh9vhgu+S+KPPWabhaS4w7cJYtkyWq+JnVuaEGC9CVNRc
+        fQfQ4qgF4B3DxCB74tiYmUxBnFZ+0S8=
+X-Google-Smtp-Source: ACHHUZ4SLX8BumFp5hDSOThV+7EuX130cI9sE46zRY0lROopnYjpJH65lHDl30SFJCQ9vZa2/fYNnw==
+X-Received: by 2002:a5d:698b:0:b0:309:268c:73de with SMTP id g11-20020a5d698b000000b00309268c73demr4087532wru.0.1684242094687;
+        Tue, 16 May 2023 06:01:34 -0700 (PDT)
+Received: from [192.168.8.100] ([85.255.233.10])
+        by smtp.gmail.com with ESMTPSA id t1-20020a5d5341000000b002ff2c39d072sm2560504wrv.104.2023.05.16.06.01.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 May 2023 06:01:34 -0700 (PDT)
+Message-ID: <ee609e87-0515-c1f8-8b27-78572c81b1b4@gmail.com>
+Date:   Tue, 16 May 2023 13:59:11 +0100
 MIME-Version: 1.0
-References: <cover.1684154817.git.asml.silence@gmail.com>
-In-Reply-To: <cover.1684154817.git.asml.silence@gmail.com>
-From:   Anuj gupta <anuj1072538@gmail.com>
-Date:   Tue, 16 May 2023 17:12:08 +0530
-Message-ID: <CACzX3Av9yOkAK16QRJ7npQUVAiTjA-nqLR2Doob9p6nYYYkyOg@mail.gmail.com>
-Subject: Re: [PATCH for-next 0/2] Enable IOU_F_TWQ_LAZY_WAKE for passthrough
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, axboe@kernel.dk, kbusch@kernel.org,
-        hch@lst.de, sagi@grimberg.me, joshi.k@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH net-next 2/2] net/tcp: optimise io_uring zc ubuf
+ refcounting
+Content-Language: en-US
+To:     David Ahern <dsahern@kernel.org>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
+References: <cover.1684166247.git.asml.silence@gmail.com>
+ <bdbbff06f20c100c00e59932ffecbd18ad699f57.1684166247.git.asml.silence@gmail.com>
+ <99faed2d-8ea6-fc85-7f21-e15b24d041f1@kernel.org>
+ <CANn89i+Bb7g9uDPVmomNDJivK7CZBYD1UXryxq2VEU77sajqEg@mail.gmail.com>
+ <d7edb614-3758-1df6-91b8-a0cb601137a4@kernel.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <d7edb614-3758-1df6-91b8-a0cb601137a4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, May 15, 2023 at 6:29=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> Let cmds to use IOU_F_TWQ_LAZY_WAKE and enable it for nvme passthrough.
->
-> The result should be same as in test to the original IOU_F_TWQ_LAZY_WAKE =
-[1]
-> patchset, but for a quick test I took fio/t/io_uring with 4 threads each
-> reading their own drive and all pinned to the same CPU to make it CPU
-> bound and got +10% throughput improvement.
->
-> [1] https://lore.kernel.org/all/cover.1680782016.git.asml.silence@gmail.c=
-om/
->
-> Pavel Begunkov (2):
->   io_uring/cmd: add cmd lazy tw wake helper
->   nvme: optimise io_uring passthrough completion
->
->  drivers/nvme/host/ioctl.c |  4 ++--
->  include/linux/io_uring.h  | 18 ++++++++++++++++--
->  io_uring/uring_cmd.c      | 16 ++++++++++++----
->  3 files changed, 30 insertions(+), 8 deletions(-)
->
->
-> base-commit: 9a48d604672220545d209e9996c2a1edbb5637f6
-> --
-> 2.40.0
->
+On 5/15/23 19:40, David Ahern wrote:
+> On 5/15/23 12:14 PM, Eric Dumazet wrote:
+>> On Mon, May 15, 2023 at 7:29 PM David Ahern <dsahern@kernel.org> wrote:
+>>>
+>>> On 5/15/23 10:06 AM, Pavel Begunkov wrote:
+>>>> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+>>>> index 40f591f7fce1..3d18e295bb2f 100644
+>>>> --- a/net/ipv4/tcp.c
+>>>> +++ b/net/ipv4/tcp.c
+>>>> @@ -1231,7 +1231,6 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>>>>        if ((flags & MSG_ZEROCOPY) && size) {
+>>>>                if (msg->msg_ubuf) {
+>>>>                        uarg = msg->msg_ubuf;
+>>>> -                     net_zcopy_get(uarg);
+>>>>                        zc = sk->sk_route_caps & NETIF_F_SG;
+>>>>                } else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+>>>>                        skb = tcp_write_queue_tail(sk);
+>>>> @@ -1458,7 +1457,9 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>>>>                tcp_push(sk, flags, mss_now, tp->nonagle, size_goal);
+>>>>        }
+>>>>   out_nopush:
+>>>> -     net_zcopy_put(uarg);
+>>>> +     /* msg->msg_ubuf is pinned by the caller so we don't take extra refs */
+>>>> +     if (uarg && !msg->msg_ubuf)
+>>>> +             net_zcopy_put(uarg);
+>>>>        return copied + copied_syn;
+>>>>
+>>>>   do_error:
+>>>> @@ -1467,7 +1468,9 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>>>>        if (copied + copied_syn)
+>>>>                goto out;
+>>>>   out_err:
+>>>> -     net_zcopy_put_abort(uarg, true);
+>>>> +     /* msg->msg_ubuf is pinned by the caller so we don't take extra refs */
+>>>> +     if (uarg && !msg->msg_ubuf)
+>>>> +             net_zcopy_put_abort(uarg, true);
+>>>>        err = sk_stream_error(sk, flags, err);
+>>>>        /* make sure we wake any epoll edge trigger waiter */
+>>>>        if (unlikely(tcp_rtx_and_write_queues_empty(sk) && err == -EAGAIN)) {
+>>>
+>>> Both net_zcopy_put_abort and net_zcopy_put have an `if (uarg)` check.
+>>
+>> Right, but here this might avoid a read of msg->msg_ubuf, which might
+>> be more expensive to fetch.
+> 
+> agreed.
 
-I tried to run a few workloads on my setup with your patches applied. Howev=
-er, I
-couldn't see any difference in io passthrough performance. I might have mis=
-sed
-something. Can you share the workload that you ran which gave you the perf
-improvement. Here is the workload that I ran -
+I put it there to avoid one extra check in the non-zerocopy path.
+msg->msg_ubuf is null there, the conditional will pass and it'll
+still have to test uarg.
 
-Without your patches applied -
 
-# taskset -c 0 t/io_uring -r4 -b512 -d64 -c16 -s16 -p0 -F1 -B1 -P0 -O0
--u1 -n1 /dev/ng0n1
-submitter=3D0, tid=3D2049, file=3D/dev/ng0n1, node=3D-1
-polled=3D0, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, QD=3D64
-Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
-IOPS=3D2.83M, BW=3D1382MiB/s, IOS/call=3D16/15
-IOPS=3D2.82M, BW=3D1379MiB/s, IOS/call=3D16/16
-IOPS=3D2.84M, BW=3D1388MiB/s, IOS/call=3D16/15
-Exiting on timeout
-Maximum IOPS=3D2.84M
+>> Compiler will probably remove the second test (uarg) from net_zcopy_put()
+>>
+>> Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-# taskset -c 0,3 t/io_uring -r4 -b512 -d64 -c16 -s16 -p0 -F1 -B1 -P0
--O0 -u1 -n2 /dev/ng0n1 /dev/ng1n1
-submitter=3D0, tid=3D2046, file=3D/dev/ng0n1, node=3D-1
-submitter=3D1, tid=3D2047, file=3D/dev/ng1n1, node=3D-1
-polled=3D0, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, QD=3D64
-Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
-IOPS=3D5.72M, BW=3D2.79GiB/s, IOS/call=3D16/15
-IOPS=3D5.71M, BW=3D2.79GiB/s, IOS/call=3D16/16
-IOPS=3D5.70M, BW=3D2.78GiB/s, IOS/call=3D16/15
-Exiting on timeout Maximum IOPS=3D5.72M
+Thank you for reviews!
 
-With your patches applied -
 
-# taskset -c 0 t/io_uring -r4 -b512 -d64 -c16 -s16 -p0 -F1 -B1 -P0 -O0
--u1 -n1 /dev/ng0n1
-submitter=3D0, tid=3D2032, file=3D/dev/ng0n1, node=3D-1
-polled=3D0, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, QD=3D64
-Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
-IOPS=3D2.83M, BW=3D1381MiB/s, IOS/call=3D16/15
-IOPS=3D2.83M, BW=3D1379MiB/s, IOS/call=3D16/15
-IOPS=3D2.83M, BW=3D1383MiB/s, IOS/call=3D15/15
-Exiting on timeout Maximum IOPS=3D2.83M
+> The one in net_zcopy_put can be removed with the above change. It's
+> other caller is net_zcopy_put_abort which has already checked uarg is set.
 
-# taskset -c 0,3 t/io_uring -r4 -b512 -d64 -c16 -s16 -p0 -F1 -B1 -P0
--O0 -u1 -n2 /dev/ng0n1 /dev/ng1n1
-submitter=3D1, tid=3D2037, file=3D/dev/ng1n1, node=3D-1
-submitter=3D0, tid=3D2036, file=3D/dev/ng0n1, node=3D-1
-polled=3D0, fixedbufs=3D1/0, register_files=3D1, buffered=3D1, QD=3D64
-Engine=3Dio_uring, sq_ring=3D64, cq_ring=3D64
-IOPS=3D5.64M, BW=3D2.75GiB/s, IOS/call=3D15/15
-IOPS=3D5.62M, BW=3D2.75GiB/s, IOS/call=3D16/16
-IOPS=3D5.62M, BW=3D2.74GiB/s, IOS/call=3D16/16
-Exiting on timeout Maximum IOPS=3D5.64M
+Ah yes, do you want me to fold it in?
 
---
-Anuj Gupta
+-- 
+Pavel Begunkov

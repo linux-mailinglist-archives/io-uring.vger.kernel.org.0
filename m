@@ -2,124 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8DC7068D7
-	for <lists+io-uring@lfdr.de>; Wed, 17 May 2023 15:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 413167069FD
+	for <lists+io-uring@lfdr.de>; Wed, 17 May 2023 15:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231548AbjEQNER (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 May 2023 09:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43472 "EHLO
+        id S231637AbjEQNfX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 May 2023 09:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231215AbjEQNEQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 May 2023 09:04:16 -0400
-Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AFD110D4;
-        Wed, 17 May 2023 06:04:14 -0700 (PDT)
-Received: from hillosipuli.retiisi.eu (82-181-192-243.bb.dnainternet.fi [82.181.192.243])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sailus)
-        by meesny.iki.fi (Postfix) with ESMTPSA id 4QLtbV1QG8zyVk;
-        Wed, 17 May 2023 16:04:05 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-        t=1684328652;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qroAO/01zVC5BeUS1oPJjvMgFXQbPQ5wLZQknG7YiBc=;
-        b=KI5xLqxAreFfTVONtxIvWUWwB6MTDQj7RtmKmQdExNpcu0TTzvVSri6CgDzfn/Cvel5yIF
-        peJPQn6GiZwvSCe1d9YgeARR10JKXstw9T0rA85J5gW4iNziKdRCMcnWXYP0+H6llDqTu+
-        dlJg7YsYYMHPUazplrk3fr+MLlrvNQ8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-        s=meesny; t=1684328652;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qroAO/01zVC5BeUS1oPJjvMgFXQbPQ5wLZQknG7YiBc=;
-        b=tq4IDVw8v8U/8GsVfhSpzk5/qRBC75wFpFFUJgfBv9u3M7Nh/LDCouHEa/Yf2TAbdyN9RL
-        s9DHY+YDHwdk5UhlkrhBxeP2H2uUN2GWxD/ThDKmfJpRrOdCf8iI3cZweO5gCffPclWh3T
-        72d3B2jMq4cIupzPEIlKtqOR6tjzSWQ=
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1684328652; a=rsa-sha256; cv=none;
-        b=NhylTHQjTF5WnCPKZ7JS9gpIQVkp7jw/Go3W19TSMVVJzM3XuHh1EGsfnax0pohXqM0PST
-        9D9wqdiwjRp9aDijZ5JN+bmSBC6eMjAtZznB5usfmHDH3gVQKs7r3mGmGqix5OK1JPosO8
-        b8VJFUZikNPWWHwmwu7R15M7dw0pr0I=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 4BC90634C94;
-        Wed, 17 May 2023 16:04:05 +0300 (EEST)
-Date:   Wed, 17 May 2023 16:04:05 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org,
-        bpf@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v5 5/6] mm/gup: remove vmas parameter from
- pin_user_pages()
-Message-ID: <ZGTQxbiFnTADjLgv@valkosipuli.retiisi.eu>
-References: <cover.1684097001.git.lstoakes@gmail.com>
- <acd4a8c735c9bc1c736e1a52a9a036db5cc7d462.1684097002.git.lstoakes@gmail.com>
+        with ESMTP id S232050AbjEQNfV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 May 2023 09:35:21 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4779F7AA2;
+        Wed, 17 May 2023 06:34:51 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-50bcb00a4c2so1159922a12.1;
+        Wed, 17 May 2023 06:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684330489; x=1686922489;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nrtmfxt4yfxLY2UVAqI6rteBQZPnotIboHiGgYaz1iU=;
+        b=dsLRMtC7bgsZ9K1/TGjOhMOvRp4l/usk0IYXRgra68RoVwo4q6Kas1pEZQBYoHuxYS
+         1tJ+GUSs8vXwv6xvFD4JzT6hMQVKmE92CoWIeLsvuAJaL4D/Elvz7gKpy6d/jkVuhtGG
+         LRnteuAfth65jcDVcCwxJkGAs27CxmI0TPJbpazDdkz5Y8rn2JrDttpPucpZATAxj/92
+         rccfRGcgA5+L/RQB3UZ6aVNJ/xo0vjoyZ6rOZ+gKpPpT620vv62HaFpQQiNbOBkzy9aP
+         YBUGOzPuV01tLvrco0NhNhiLjO45RyMBLU4iqkmFD0Cbb4UU0BnVOXMkSIEoFYbt8imc
+         NeJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684330489; x=1686922489;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nrtmfxt4yfxLY2UVAqI6rteBQZPnotIboHiGgYaz1iU=;
+        b=U6KP5drT+/AA7wFP7SzAL932rATrgk1+ZPyZxQ1tqa28gFCO/7XPIgl+q8wxMjVC9o
+         rZ3Dp1sPwQ6s/rwVOJU+IRH0MFHESHTUaGuBT9BN0nzXOzx7+dPJsEUipd5z4ckO5+Ls
+         cg5PEneZnTAxZMs6I6zckSKTNFHduRURRKd5XUBVxOXQOf/1OQM7w+Yty6FrYI5e68dj
+         MiL2S64o7kYzXYBnUITAsvmnitF5ASK4B9WBgt+/wdt0jCcIjtiLFn+Ss3ooNYYyo7aQ
+         Qa19aZA9migRcEs3jQJ50kKFEqcXGSZC77B1QMBefea6kPuBIgN2w81E9Il1HFYElK2h
+         GhsA==
+X-Gm-Message-State: AC+VfDzD1iA6o4Y886I4HTQ+9oRynX1JfxEZUj22SKmHm4rStB9w6K2K
+        /SSoCRV1+z/aIck87iFEUjI=
+X-Google-Smtp-Source: ACHHUZ7R/6MPttfoUfKR851xnOzMlb10IKMLwWJUo9hUtBqu6sCpegg1ztBOfMzusmeC76ySqq66Wg==
+X-Received: by 2002:a17:907:a412:b0:96a:863c:46a9 with SMTP id sg18-20020a170907a41200b0096a863c46a9mr19383357ejc.71.1684330488633;
+        Wed, 17 May 2023 06:34:48 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:46a1])
+        by smtp.gmail.com with ESMTPSA id jz24-20020a17090775f800b0096347ef816dsm12405450ejc.64.2023.05.17.06.34.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 May 2023 06:34:48 -0700 (PDT)
+Message-ID: <61787b53-3c16-8cdb-eaad-6c724315435b@gmail.com>
+Date:   Wed, 17 May 2023 14:30:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acd4a8c735c9bc1c736e1a52a9a036db5cc7d462.1684097002.git.lstoakes@gmail.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH for-next 2/2] nvme: optimise io_uring passthrough
+ completion
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, axboe@kernel.dk, kbusch@kernel.org,
+        sagi@grimberg.me, joshi.k@samsung.com
+References: <cover.1684154817.git.asml.silence@gmail.com>
+ <ecdfacd0967a22d88b7779e2efd09e040825d0f8.1684154817.git.asml.silence@gmail.com>
+ <20230517072314.GC27026@lst.de>
+ <9367cc09-c8b4-a56c-a61a-d2c776c05a1c@gmail.com>
+ <20230517123921.GA19835@lst.de>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20230517123921.GA19835@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, May 14, 2023 at 10:26:58PM +0100, Lorenzo Stoakes wrote:
-> We are now in a position where no caller of pin_user_pages() requires the
-> vmas parameter at all, so eliminate this parameter from the function and
-> all callers.
+On 5/17/23 13:39, Christoph Hellwig wrote:
+> On Wed, May 17, 2023 at 01:32:53PM +0100, Pavel Begunkov wrote:
+>> 1) ublk does secondary batching and so may produce multiple cqes,
+>> that's not supported. I believe Ming sent patches removing it,
+>> but I'd rather not deal with conflicts for now.
+>>
+>> 2) Some users may have dependencies b/w requests, i.e. a request
+>> will only complete when another request's task_work is executed.
+>>
+>> 3) There might be use cases when you don't wont it to be delayed,
+>> IO retries would be a good example. I wouldn't also use it for
+>> control paths like ublk_ctrl_uring_cmd.
 > 
-> This clears the way to removing the vmas parameter from GUP altogether.
+> You speak a lot of some users and some cases when the only users
+> are ublk and nvme, both of which would obviously benefit.
 > 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com> (for qib)
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> If you don't want conflicts wait for Ming to finish his work
+> and then we can do this cleanly and without leaving dead code
+> around.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com> # drivers/media
+Aside that you decided to ignore the third point, that's a
+generic interface, not nvme specific, there are patches for
+net cmds, someone even tried to use it for drm. How do you
+think new users are supposed to appear if the only helper
+doing the job can hang the userspace for their use case?
+Well, then maybe it'll remain nvme/ublk specific with such
+an approach.
+
+It is clean, and it's not dead code, and we should not
+remove the simpler and more straightforward helper.
 
 -- 
-Sakari Ailus
+Pavel Begunkov

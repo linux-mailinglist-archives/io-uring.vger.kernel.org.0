@@ -2,167 +2,181 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE02E70821A
-	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 15:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C971E708A3F
+	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 23:18:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231148AbjERNI3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 May 2023 09:08:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
+        id S229893AbjERVSK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 May 2023 17:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbjERNI1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 May 2023 09:08:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CB31716
-        for <io-uring@vger.kernel.org>; Thu, 18 May 2023 06:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684415260;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zo53+MxtcExCaAvP1E3d2cbKIX8PzAGUnvJuN4UlUmE=;
-        b=fgYijiPJzL1PAt9hhLgjTmeH5REJkwRVHn5+EZKTNTcQoI9+EX0FasaUMgsbLEic2POr2Q
-        6HW3F7w7A6Xi225PuBYr5BXYRWwwvqBqkVGq/wzqNkJXRdu4TNw+eshgOLxvABJLVwqiyd
-        jRlyvrXy1TC1A+B8kBzS878G2KmVgvI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-209-DwdtkeJQPymicpdEc0OY1w-1; Thu, 18 May 2023 09:07:24 -0400
-X-MC-Unique: DwdtkeJQPymicpdEc0OY1w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 673338026E8;
-        Thu, 18 May 2023 13:07:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 73135C15BA0;
-        Thu, 18 May 2023 13:07:20 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Willem de Bruijn <willemb@google.com>,
-        io-uring@vger.kernel.org
-Subject: [PATCH net-next v9 01/16] net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
-Date:   Thu, 18 May 2023 14:06:58 +0100
-Message-Id: <20230518130713.1515729-2-dhowells@redhat.com>
-In-Reply-To: <20230518130713.1515729-1-dhowells@redhat.com>
-References: <20230518130713.1515729-1-dhowells@redhat.com>
+        with ESMTP id S229557AbjERVSJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 May 2023 17:18:09 -0400
+Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A626E45
+        for <io-uring@vger.kernel.org>; Thu, 18 May 2023 14:18:07 -0700 (PDT)
+Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
+        id CE04F5B1A658; Thu, 18 May 2023 14:17:53 -0700 (PDT)
+From:   Stefan Roesch <shr@devkernel.io>
+To:     io-uring@vger.kernel.org, kernel-team@fb.com
+Cc:     shr@devkernel.io, axboe@kernel.dk, ammarfaizi2@gnuweeb.org,
+        netdev@vger.kernel.org, kuba@kernel.org, olivier@trillion01.com
+Subject: [PATCH v13 0/7] io_uring: add napi busy polling support 
+Date:   Thu, 18 May 2023 14:17:44 -0700
+Message-Id: <20230518211751.3492982-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
+        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Declare MSG_SPLICE_PAGES, an internal sendmsg() flag, that hints to a
-network protocol that it should splice pages from the source iterator
-rather than copying the data if it can.  This flag is added to a list that
-is cleared by sendmsg syscalls on entry.
+This adds the napi busy polling support in io_uring.c. It adds a new
+napi_list to the io_ring_ctx structure. This list contains the list of
+napi_id's that are currently enabled for busy polling. This list is
+used to determine which napi id's enabled busy polling. For faster
+access it also adds a hash table.
 
-This is intended as a replacement for the ->sendpage() op, allowing a way
-to splice in several multipage folios in one go.
+When a new napi id is added, the hash table is used to locate if
+the napi id has already been added. When processing the busy poll
+loop the list is used to process the individual elements.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: io-uring@vger.kernel.org
-cc: netdev@vger.kernel.org
----
+io-uring allows specifying two parameters:
+- busy poll timeout and
+- prefer busy poll to call of io_napi_busy_loop()
+This sets the above parameters for the ring. The settings are passed
+with a new structure io_uring_napi.
 
-Notes:
-    ver #7)
-     - In ____sys_sendmsg(), clear internal flags before setting msg_flags.
-     - Clear internal flags in uring io_send{,_zc}().
+There is also a corresponding liburing patch series, which enables this
+feature. The name of the series is "liburing: add add api for napi busy
+poll timeout". It also contains two programs to test the this.
 
- include/linux/socket.h | 3 +++
- io_uring/net.c         | 2 ++
- net/socket.c           | 2 ++
- 3 files changed, 7 insertions(+)
+Testing has shown that the round-trip times are reduced to 38us from
+55us by enabling napi busy polling with a busy poll timeout of 100us.
+More detailled results are part of the commit message of the first
+patch.
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 13c3a237b9c9..bd1cc3238851 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -327,6 +327,7 @@ struct ucred {
- 					  */
- 
- #define MSG_ZEROCOPY	0x4000000	/* Use user data in kernel path */
-+#define MSG_SPLICE_PAGES 0x8000000	/* Splice the pages from the iterator in sendmsg() */
- #define MSG_FASTOPEN	0x20000000	/* Send data in TCP SYN */
- #define MSG_CMSG_CLOEXEC 0x40000000	/* Set close_on_exec for file
- 					   descriptor received through
-@@ -337,6 +338,8 @@ struct ucred {
- #define MSG_CMSG_COMPAT	0		/* We never have 32 bit fixups */
- #endif
- 
-+/* Flags to be cleared on entry by sendmsg and sendmmsg syscalls */
-+#define MSG_INTERNAL_SENDMSG_FLAGS (MSG_SPLICE_PAGES)
- 
- /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
- #define SOL_IP		0
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 89e839013837..f7cbb3c7a575 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -389,6 +389,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	if (flags & MSG_WAITALL)
- 		min_ret = iov_iter_count(&msg.msg_iter);
- 
-+	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	msg.msg_flags = flags;
- 	ret = sock_sendmsg(sock, &msg);
- 	if (ret < min_ret) {
-@@ -1136,6 +1137,7 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- 		msg_flags |= MSG_DONTWAIT;
- 	if (msg_flags & MSG_WAITALL)
- 		min_ret = iov_iter_count(&msg.msg_iter);
-+	msg_flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 
- 	msg.msg_flags = msg_flags;
- 	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
-diff --git a/net/socket.c b/net/socket.c
-index b7e01d0fe082..3df96e9ba4e2 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2138,6 +2138,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- 		msg.msg_name = (struct sockaddr *)&address;
- 		msg.msg_namelen = addr_len;
- 	}
-+	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	if (sock->file->f_flags & O_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
- 	msg.msg_flags = flags;
-@@ -2483,6 +2484,7 @@ static int ____sys_sendmsg(struct socket *sock, struct msghdr *msg_sys,
- 		msg_sys->msg_control = ctl_buf;
- 		msg_sys->msg_control_is_user = false;
- 	}
-+	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	msg_sys->msg_flags = flags;
- 
- 	if (sock->file->f_flags & O_NONBLOCK)
+Changes:
+- V13:
+  - split off __napi_busy_loop() from napi_busy_loop()
+  - introduce napi_busy_loop_no_lock()
+  - use napi_busy_loop_no_lock in io_napi_blocking_busy_loop
+- V12:
+  - introduce io_napi_hash_find()
+  - use rcu for changes to the hash table
+  - use rcu for searching if a napi id is in the napi hash table
+  - use rcu hlist functions for adding and removing items from the hash
+    table
+  - add stale entry detection in __io_napi_do_busy_loop and remove stale
+    entries in io_napi_blocking_busy_loop() and io_napi_sqpoll_busy_loop(=
+)
+  - create io_napi_remove_stale() and __io_napi_remove_stale()
+  - __io_napi_do_busy_loop() takes additional loop_end_arg and does stale
+    entry detection
+  - io_napi_multi_busy_loop is removed. Logic is moved to
+    io_napi_blocking_busy_loop()
+  - io_napi_free uses rcu function to free
+  - io_napi_busy_loop no longer splices
+  - io_napi_sqpoll_busy_poll uses rcu
+- V11:
+  - Fixed long comment lines and whitespace issues
+  - Refactor new code io_cqring_wait()
+  - Refactor io_napi_adjust_timeout() and remove adjust_timeout
+  - Rename io_napi_adjust_timeout to __io_napi_adjust_timeout
+  - Add new function io_napi_adjust_timeout
+  - Cleanup calls to list_is_singular() in io_napi_multi_busy_loop()
+    and io_napi_blocking_busy_loop()
+  - Cleanup io_napi_busy_loop_should_end()
+  - Rename __io_napi_busy_loop to __io_napi_do_busy_loop()=20
+- V10:
+  - Refreshed to io-uring/for-6.4
+  - Repeated performance measurements for 6.4 (same/similar results)
+- V9:
+  - refreshed to io-uring/for-6.3
+  - folded patch 2 and 3 into patch 4
+  - fixed commit description for last 2 patches
+  - fixed some whitespace issues
+  - removed io_napi_busy_loop_on helper
+  - removed io_napi_setup_busy helper
+  - renamed io_napi_end_busy_loop to io_napi_busy_loop
+  - removed NAPI_LIST_HEAD macro
+  - split io_napi_blocking_busy_loop into two functions
+  - added io_napi function
+  - comment for sqpoll check
+- V8:
+  - added new file napi.c and add napi functions to this file
+  - added NAPI_LIST_HEAD function so no ifdef is necessary
+  - added io_napi_init and io_napi_free function
+  - added io_napi_setup_busy loop helper function
+  - added io_napi_adjust_busy_loop helper function
+  - added io_napi_end_busy_loop helper function
+  - added io_napi_sqpoll_busy_poll helper function
+  - some of the definitions in napi.h are macros to avoid ifdef
+    definitions in io_uring.c, poll.c and sqpoll.c
+  - changed signature of io_napi_add function
+  - changed size of hashtable to 16. The number of entries is limited
+    by the number of nic queues.
+  - Removed ternary in io_napi_blocking_busy_loop
+  - Rewrote io_napi_blocking_busy_loop to make it more readable
+  - Split off 3 more patches
+- V7:
+  - allow unregister with NULL value for arg parameter
+  - return -EOPNOTSUPP if CONFIG_NET_RX_BUSY_POLL is not enabled
+- V6:
+  - Add a hash table on top of the list for faster access during the
+    add operation. The linked list and the hash table use the same
+    data structure
+- V5:
+  - Refreshed to 6.1-rc6
+  - Use copy_from_user instead of memdup/kfree
+  - Removed the moving of napi_busy_poll_to
+  - Return -EINVAL if any of the reserved or padded fields are not 0.
+- V4:
+  - Pass structure for napi config, instead of individual parameters
+- V3:
+  - Refreshed to 6.1-rc5
+  - Added a new io-uring api for the prefer napi busy poll api and wire
+    it to io_napi_busy_loop().
+  - Removed the unregister (implemented as register)
+  - Added more performance results to the first commit message.
+- V2:
+  - Add missing defines if CONFIG_NET_RX_BUSY_POLL is not defined
+  - Changes signature of function io_napi_add_list to static inline
+    if CONFIG_NET_RX_BUSY_POLL is not defined
+  - define some functions as static
+
+
+
+Stefan Roesch (7):
+  net: split off __napi_busy_poll from napi_busy_poll
+  net: introduce napi_busy_loop_rcu()
+  io-uring: move io_wait_queue definition to header file
+  io-uring: add napi busy poll support
+  io-uring: add sqpoll support for napi busy poll
+  io_uring: add register/unregister napi function
+  io_uring: add prefer busy poll to register and unregister napi api
+
+ include/linux/io_uring_types.h |  11 ++
+ include/net/busy_poll.h        |   4 +
+ include/uapi/linux/io_uring.h  |  12 ++
+ io_uring/Makefile              |   1 +
+ io_uring/io_uring.c            |  38 ++--
+ io_uring/io_uring.h            |  26 +++
+ io_uring/napi.c                | 336 +++++++++++++++++++++++++++++++++
+ io_uring/napi.h                |  98 ++++++++++
+ io_uring/poll.c                |   2 +
+ io_uring/sqpoll.c              |   4 +
+ net/core/dev.c                 | 137 +++++++++-----
+ 11 files changed, 605 insertions(+), 64 deletions(-)
+ create mode 100644 io_uring/napi.c
+ create mode 100644 io_uring/napi.h
+
+
+base-commit: d2b7fa6174bc4260e496cbf84375c73636914641
+--=20
+2.39.1
 

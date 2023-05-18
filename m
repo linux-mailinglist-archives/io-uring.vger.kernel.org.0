@@ -2,79 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28EDA7072D5
-	for <lists+io-uring@lfdr.de>; Wed, 17 May 2023 22:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 045517077ED
+	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 04:16:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbjEQUQd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 May 2023 16:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49102 "EHLO
+        id S229559AbjERCQq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 17 May 2023 22:16:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjEQUQc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 May 2023 16:16:32 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743C62D55;
-        Wed, 17 May 2023 13:16:31 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3063433fa66so805269f8f.3;
-        Wed, 17 May 2023 13:16:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684354590; x=1686946590;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c86qGK32nsVnfDBPzlK095zL52GuJJiCp8X2BQjYCGc=;
-        b=oqWa+B8kyAPsW4QlrTWMBcnQ6qkKfyZxb5J3HvGcGebHHd+vNY2EihBHc4ILA6LgDu
-         0ArlwQwQLtzk0wpNADCyH+akhsJqxocIQ0Agr6IgmSGMql2O9O6/gbK2eRqs2hIDy+Nr
-         NXHS8rM1Z4TUlhIPw4456fbpBwDnjjak0XYrlwioSBnQmL6/i2/ECjf/Imqfa+mbRkDD
-         Wa2518d6D5x885Dy3INmBmHpi4pUmwjxIOrU0XAO+alj4JNf/kEUROiFadVsaJQo1Y7a
-         NRs5Sf0Zao8aNFwS21uCHcSWYVNVpvhGwuR6zzjzCdDNlUhot9fz+0ij3fxJ4/2ZszJp
-         9vkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684354590; x=1686946590;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c86qGK32nsVnfDBPzlK095zL52GuJJiCp8X2BQjYCGc=;
-        b=hw/UN6XRyWdpNq1F9dXZeq8UG5BrwZkhiLsfwYj6MOstEOog20jx0NtHtOSNbQpMLd
-         Bq4EyljpzljDdWkZXaPjXGoA1ED+LTZdPg/PjY/XP+p/mH34b/VWr9AUieJbppvvol/3
-         o6BQe93geS758UcDzBqrLzA7k+FLyR6ratr8UcZsW7FofyiTO/9SMgJ5AdS16x91g1aY
-         c8gD3OPFWjgG7SR1gKdLPI+Qzb/4MwYm/WZbQFKnZjstxg/IRiUREG631EYm1FDDx0rr
-         8pT0qW+d4L9CzdlFW2qAVQO27xJzn5py1RhC01mKPIQPTJOuzIWkU5xO58GxvudzCp8U
-         xvUA==
-X-Gm-Message-State: AC+VfDybyzHeU8K8bpjwxvKsTqGLkyaRPAV30B5oJuOfUXdME4uP4W+n
-        Ur6TYW/KE4BMDTOQVHENS58=
-X-Google-Smtp-Source: ACHHUZ4KIAlW/zpvww/YX9ZRyQer1/jw0BjA72Duf6MXqTA5icpc5wNDFZ2Dj7eyKkkedJ9UQ0itRA==
-X-Received: by 2002:adf:db4e:0:b0:309:4123:4968 with SMTP id f14-20020adfdb4e000000b0030941234968mr1415027wrj.13.1684354589699;
-        Wed, 17 May 2023 13:16:29 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.236.195])
-        by smtp.gmail.com with ESMTPSA id h14-20020adffd4e000000b00304aba2cfcbsm3762683wrs.7.2023.05.17.13.16.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 13:16:29 -0700 (PDT)
-Message-ID: <b28c60cb-a923-967c-887a-71a6590363f1@gmail.com>
-Date:   Wed, 17 May 2023 21:11:55 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
+        with ESMTP id S229445AbjERCQp (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 17 May 2023 22:16:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EB92112
+        for <io-uring@vger.kernel.org>; Wed, 17 May 2023 19:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684376158;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=K4DhnB/Mb2qNxRJ3dsE4nmeKE6kddWJ9OIHGaovDSrY=;
+        b=bECWHKc7YTJqE+AVF19f0j5CA0bjz1WAlSlrMmxKDs6+K9+KCdoAIbV1oIisKUBcjTZJGF
+        bTDRXJOgN1I7OY/McQU6+K1jqQjK3YkskFqth2MUTUOQHeOVo9qp59qeNcGbwU/sz6Qjyi
+        MfPcTQgGkG+PmONOkF5lAU17w2/hNdk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-260-iKt4YJhNO2qHogQuhPRxig-1; Wed, 17 May 2023 22:15:54 -0400
+X-MC-Unique: iKt4YJhNO2qHogQuhPRxig-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D2D2E185A79C;
+        Thu, 18 May 2023 02:15:53 +0000 (UTC)
+Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1EDDEC16024;
+        Thu, 18 May 2023 02:15:47 +0000 (UTC)
+Date:   Thu, 18 May 2023 10:15:42 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        kbusch@kernel.org, sagi@grimberg.me, joshi.k@samsung.com,
+        ming.lei@redhat.com
 Subject: Re: [PATCH for-next 2/2] nvme: optimise io_uring passthrough
  completion
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, axboe@kernel.dk, kbusch@kernel.org,
-        sagi@grimberg.me, joshi.k@samsung.com
+Message-ID: <ZGWKTpRLIJ0NBPIt@ovpn-8-16.pek2.redhat.com>
 References: <cover.1684154817.git.asml.silence@gmail.com>
  <ecdfacd0967a22d88b7779e2efd09e040825d0f8.1684154817.git.asml.silence@gmail.com>
  <20230517072314.GC27026@lst.de>
  <9367cc09-c8b4-a56c-a61a-d2c776c05a1c@gmail.com>
- <20230517123921.GA19835@lst.de>
- <61787b53-3c16-8cdb-eaad-6c724315435b@gmail.com>
- <20230517135344.GA26147@lst.de>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230517135344.GA26147@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+ <84e1ce69-d6d5-5509-4665-2d153e294fc8@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <84e1ce69-d6d5-5509-4665-2d153e294fc8@kernel.dk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,28 +69,48 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/17/23 14:53, Christoph Hellwig wrote:
-> On Wed, May 17, 2023 at 02:30:47PM +0100, Pavel Begunkov wrote:
->> Aside that you decided to ignore the third point, that's a
->> generic interface, not nvme specific, there are patches for
->> net cmds, someone even tried to use it for drm. How do you
->> think new users are supposed to appear if the only helper
->> doing the job can hang the userspace for their use case?
->> Well, then maybe it'll remain nvme/ublk specific with such
->> an approach.
+On Wed, May 17, 2023 at 01:31:00PM -0600, Jens Axboe wrote:
+> On 5/17/23 6:32 AM, Pavel Begunkov wrote:
+> > On 5/17/23 08:23, Christoph Hellwig wrote:
+> >> On Mon, May 15, 2023 at 01:54:43PM +0100, Pavel Begunkov wrote:
+> >>> Use IOU_F_TWQ_LAZY_WAKE via iou_cmd_exec_in_task_lazy() for passthrough
+> >>> commands completion. It further delays the execution of task_work for
+> >>> DEFER_TASKRUN until there are enough of task_work items queued to meet
+> >>> the waiting criteria, which reduces the number of wake ups we issue.
+> >>
+> >> Why wouldn't you just do that unconditionally for
+> >> io_uring_cmd_complete_in_task?
+> > 
+> > 1) ublk does secondary batching and so may produce multiple cqes,
+> > that's not supported. I believe Ming sent patches removing it,
+> > but I'd rather not deal with conflicts for now.
 > 
-> New users can add new code when it's actualy needed.  We don't
-> bloat the kernel for maybe in the future crap as a policy.
+> Ming, what's the status of those patches? Looks like we'll end up
+> with a dependency regardless of the ordering of these. Since these
+> patches are here now, sanest approach seems to move forward with
+> this series and defer the conflict resolving to the ublk side.
 
-Let me put it for you this way, it's an absolutely horrendous
-idea to leave the old innocently looking name, i.e.
-io_uring_cmd_complete_in_task(), and add there a bunch of
-restrictions no new user would care about, that's called
-shooting yourself in the leg.
+I didn't send patch to remove the batch in ublk, such as, the following
+line code:
 
-So, we need to rename the function, which, again, for absolutely
-no reason adds dependency on ublk. Why doing that instead of
-waiting until ublk is converted? That's a big mystery.
+ublk_queue_cmd():
+	...
+	if (!llist_add(&data->node, &ubq->io_cmds))
+		return;
+	...
 
--- 
-Pavel Begunkov
+But I did want to kill it given __io_req_task_work_add() can do batching
+process, but we have to re-order request in this list, so can't remove it
+now simply, see commit:
+
+	7d4a93176e01 ("ublk_drv: don't forward io commands in reserve order")
+
+Pavel must have misunderstood the following one as the batch removal:
+
+https://lore.kernel.org/linux-block/20230427124414.319945-2-ming.lei@redhat.com/
+
+	
+
+thanks,
+Ming
+

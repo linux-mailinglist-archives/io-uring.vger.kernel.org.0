@@ -2,63 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 045517077ED
-	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 04:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF02707F79
+	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 13:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbjERCQq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 17 May 2023 22:16:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55638 "EHLO
+        id S231292AbjERLf6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 May 2023 07:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjERCQp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 17 May 2023 22:16:45 -0400
+        with ESMTP id S231295AbjERLf5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 May 2023 07:35:57 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EB92112
-        for <io-uring@vger.kernel.org>; Wed, 17 May 2023 19:15:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 613C310C6
+        for <io-uring@vger.kernel.org>; Thu, 18 May 2023 04:35:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684376158;
+        s=mimecast20190719; t=1684409704;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=K4DhnB/Mb2qNxRJ3dsE4nmeKE6kddWJ9OIHGaovDSrY=;
-        b=bECWHKc7YTJqE+AVF19f0j5CA0bjz1WAlSlrMmxKDs6+K9+KCdoAIbV1oIisKUBcjTZJGF
-        bTDRXJOgN1I7OY/McQU6+K1jqQjK3YkskFqth2MUTUOQHeOVo9qp59qeNcGbwU/sz6Qjyi
-        MfPcTQgGkG+PmONOkF5lAU17w2/hNdk=
+        bh=zo53+MxtcExCaAvP1E3d2cbKIX8PzAGUnvJuN4UlUmE=;
+        b=ZsWJsT0hO90zi0gOTzPpnzayzbEkFIB7lzcZ9rxLm06OYZLD7vnS3sXoN5FMZ8F2VKMYJq
+        eh1k7pZFbu+DHmG+02BD1cdDnHiJ1j/bcujX1QwwMblFRa91paja/wj6RBIaSL5FzhP7D7
+        DTiipNylFIdbmlvcB2crqOQup+hGcKc=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-260-iKt4YJhNO2qHogQuhPRxig-1; Wed, 17 May 2023 22:15:54 -0400
-X-MC-Unique: iKt4YJhNO2qHogQuhPRxig-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ us-mta-122-Q1oqsoVdOXek48f82BcBpA-1; Thu, 18 May 2023 07:35:03 -0400
+X-MC-Unique: Q1oqsoVdOXek48f82BcBpA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D2D2E185A79C;
-        Thu, 18 May 2023 02:15:53 +0000 (UTC)
-Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1EDDEC16024;
-        Thu, 18 May 2023 02:15:47 +0000 (UTC)
-Date:   Thu, 18 May 2023 10:15:42 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        kbusch@kernel.org, sagi@grimberg.me, joshi.k@samsung.com,
-        ming.lei@redhat.com
-Subject: Re: [PATCH for-next 2/2] nvme: optimise io_uring passthrough
- completion
-Message-ID: <ZGWKTpRLIJ0NBPIt@ovpn-8-16.pek2.redhat.com>
-References: <cover.1684154817.git.asml.silence@gmail.com>
- <ecdfacd0967a22d88b7779e2efd09e040825d0f8.1684154817.git.asml.silence@gmail.com>
- <20230517072314.GC27026@lst.de>
- <9367cc09-c8b4-a56c-a61a-d2c776c05a1c@gmail.com>
- <84e1ce69-d6d5-5509-4665-2d153e294fc8@kernel.dk>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0B82786C60A;
+        Thu, 18 May 2023 11:35:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3A93492B01;
+        Thu, 18 May 2023 11:34:58 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Willem de Bruijn <willemb@google.com>,
+        io-uring@vger.kernel.org
+Subject: [PATCH net-next v8 01/16] net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
+Date:   Thu, 18 May 2023 12:34:38 +0100
+Message-Id: <20230518113453.1350757-2-dhowells@redhat.com>
+In-Reply-To: <20230518113453.1350757-1-dhowells@redhat.com>
+References: <20230518113453.1350757-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <84e1ce69-d6d5-5509-4665-2d153e294fc8@kernel.dk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -69,48 +74,95 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 17, 2023 at 01:31:00PM -0600, Jens Axboe wrote:
-> On 5/17/23 6:32 AM, Pavel Begunkov wrote:
-> > On 5/17/23 08:23, Christoph Hellwig wrote:
-> >> On Mon, May 15, 2023 at 01:54:43PM +0100, Pavel Begunkov wrote:
-> >>> Use IOU_F_TWQ_LAZY_WAKE via iou_cmd_exec_in_task_lazy() for passthrough
-> >>> commands completion. It further delays the execution of task_work for
-> >>> DEFER_TASKRUN until there are enough of task_work items queued to meet
-> >>> the waiting criteria, which reduces the number of wake ups we issue.
-> >>
-> >> Why wouldn't you just do that unconditionally for
-> >> io_uring_cmd_complete_in_task?
-> > 
-> > 1) ublk does secondary batching and so may produce multiple cqes,
-> > that's not supported. I believe Ming sent patches removing it,
-> > but I'd rather not deal with conflicts for now.
-> 
-> Ming, what's the status of those patches? Looks like we'll end up
-> with a dependency regardless of the ordering of these. Since these
-> patches are here now, sanest approach seems to move forward with
-> this series and defer the conflict resolving to the ublk side.
+Declare MSG_SPLICE_PAGES, an internal sendmsg() flag, that hints to a
+network protocol that it should splice pages from the source iterator
+rather than copying the data if it can.  This flag is added to a list that
+is cleared by sendmsg syscalls on entry.
 
-I didn't send patch to remove the batch in ublk, such as, the following
-line code:
+This is intended as a replacement for the ->sendpage() op, allowing a way
+to splice in several multipage folios in one go.
 
-ublk_queue_cmd():
-	...
-	if (!llist_add(&data->node, &ubq->io_cmds))
-		return;
-	...
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: io-uring@vger.kernel.org
+cc: netdev@vger.kernel.org
+---
 
-But I did want to kill it given __io_req_task_work_add() can do batching
-process, but we have to re-order request in this list, so can't remove it
-now simply, see commit:
+Notes:
+    ver #7)
+     - In ____sys_sendmsg(), clear internal flags before setting msg_flags.
+     - Clear internal flags in uring io_send{,_zc}().
 
-	7d4a93176e01 ("ublk_drv: don't forward io commands in reserve order")
+ include/linux/socket.h | 3 +++
+ io_uring/net.c         | 2 ++
+ net/socket.c           | 2 ++
+ 3 files changed, 7 insertions(+)
 
-Pavel must have misunderstood the following one as the batch removal:
-
-https://lore.kernel.org/linux-block/20230427124414.319945-2-ming.lei@redhat.com/
-
-	
-
-thanks,
-Ming
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 13c3a237b9c9..bd1cc3238851 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -327,6 +327,7 @@ struct ucred {
+ 					  */
+ 
+ #define MSG_ZEROCOPY	0x4000000	/* Use user data in kernel path */
++#define MSG_SPLICE_PAGES 0x8000000	/* Splice the pages from the iterator in sendmsg() */
+ #define MSG_FASTOPEN	0x20000000	/* Send data in TCP SYN */
+ #define MSG_CMSG_CLOEXEC 0x40000000	/* Set close_on_exec for file
+ 					   descriptor received through
+@@ -337,6 +338,8 @@ struct ucred {
+ #define MSG_CMSG_COMPAT	0		/* We never have 32 bit fixups */
+ #endif
+ 
++/* Flags to be cleared on entry by sendmsg and sendmmsg syscalls */
++#define MSG_INTERNAL_SENDMSG_FLAGS (MSG_SPLICE_PAGES)
+ 
+ /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
+ #define SOL_IP		0
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 89e839013837..f7cbb3c7a575 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -389,6 +389,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (flags & MSG_WAITALL)
+ 		min_ret = iov_iter_count(&msg.msg_iter);
+ 
++	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
+ 	msg.msg_flags = flags;
+ 	ret = sock_sendmsg(sock, &msg);
+ 	if (ret < min_ret) {
+@@ -1136,6 +1137,7 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 		msg_flags |= MSG_DONTWAIT;
+ 	if (msg_flags & MSG_WAITALL)
+ 		min_ret = iov_iter_count(&msg.msg_iter);
++	msg_flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
+ 
+ 	msg.msg_flags = msg_flags;
+ 	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
+diff --git a/net/socket.c b/net/socket.c
+index b7e01d0fe082..3df96e9ba4e2 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2138,6 +2138,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
+ 		msg.msg_name = (struct sockaddr *)&address;
+ 		msg.msg_namelen = addr_len;
+ 	}
++	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
+ 	if (sock->file->f_flags & O_NONBLOCK)
+ 		flags |= MSG_DONTWAIT;
+ 	msg.msg_flags = flags;
+@@ -2483,6 +2484,7 @@ static int ____sys_sendmsg(struct socket *sock, struct msghdr *msg_sys,
+ 		msg_sys->msg_control = ctl_buf;
+ 		msg_sys->msg_control_is_user = false;
+ 	}
++	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
+ 	msg_sys->msg_flags = flags;
+ 
+ 	if (sock->file->f_flags & O_NONBLOCK)
 

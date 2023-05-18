@@ -2,41 +2,41 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DF02707F79
-	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 13:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE02E70821A
+	for <lists+io-uring@lfdr.de>; Thu, 18 May 2023 15:08:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbjERLf6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 18 May 2023 07:35:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59452 "EHLO
+        id S231148AbjERNI3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 18 May 2023 09:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbjERLf5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 18 May 2023 07:35:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 613C310C6
-        for <io-uring@vger.kernel.org>; Thu, 18 May 2023 04:35:05 -0700 (PDT)
+        with ESMTP id S230491AbjERNI1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 18 May 2023 09:08:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88CB31716
+        for <io-uring@vger.kernel.org>; Thu, 18 May 2023 06:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684409704;
+        s=mimecast20190719; t=1684415260;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
         bh=zo53+MxtcExCaAvP1E3d2cbKIX8PzAGUnvJuN4UlUmE=;
-        b=ZsWJsT0hO90zi0gOTzPpnzayzbEkFIB7lzcZ9rxLm06OYZLD7vnS3sXoN5FMZ8F2VKMYJq
-        eh1k7pZFbu+DHmG+02BD1cdDnHiJ1j/bcujX1QwwMblFRa91paja/wj6RBIaSL5FzhP7D7
-        DTiipNylFIdbmlvcB2crqOQup+hGcKc=
+        b=fgYijiPJzL1PAt9hhLgjTmeH5REJkwRVHn5+EZKTNTcQoI9+EX0FasaUMgsbLEic2POr2Q
+        6HW3F7w7A6Xi225PuBYr5BXYRWwwvqBqkVGq/wzqNkJXRdu4TNw+eshgOLxvABJLVwqiyd
+        jRlyvrXy1TC1A+B8kBzS878G2KmVgvI=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-122-Q1oqsoVdOXek48f82BcBpA-1; Thu, 18 May 2023 07:35:03 -0400
-X-MC-Unique: Q1oqsoVdOXek48f82BcBpA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ us-mta-209-DwdtkeJQPymicpdEc0OY1w-1; Thu, 18 May 2023 09:07:24 -0400
+X-MC-Unique: DwdtkeJQPymicpdEc0OY1w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0B82786C60A;
-        Thu, 18 May 2023 11:35:02 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 673338026E8;
+        Thu, 18 May 2023 13:07:23 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A3A93492B01;
-        Thu, 18 May 2023 11:34:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73135C15BA0;
+        Thu, 18 May 2023 13:07:20 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
@@ -56,18 +56,18 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Willem de Bruijn <willemb@google.com>,
         io-uring@vger.kernel.org
-Subject: [PATCH net-next v8 01/16] net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
-Date:   Thu, 18 May 2023 12:34:38 +0100
-Message-Id: <20230518113453.1350757-2-dhowells@redhat.com>
-In-Reply-To: <20230518113453.1350757-1-dhowells@redhat.com>
-References: <20230518113453.1350757-1-dhowells@redhat.com>
+Subject: [PATCH net-next v9 01/16] net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
+Date:   Thu, 18 May 2023 14:06:58 +0100
+Message-Id: <20230518130713.1515729-2-dhowells@redhat.com>
+In-Reply-To: <20230518130713.1515729-1-dhowells@redhat.com>
+References: <20230518130713.1515729-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk

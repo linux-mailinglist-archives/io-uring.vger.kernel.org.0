@@ -2,86 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF1870A35A
-	for <lists+io-uring@lfdr.de>; Sat, 20 May 2023 01:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E745170A474
+	for <lists+io-uring@lfdr.de>; Sat, 20 May 2023 03:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbjESXac (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 19 May 2023 19:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45296 "EHLO
+        id S231716AbjETB52 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 19 May 2023 21:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjESXab (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 19 May 2023 19:30:31 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5482EA;
-        Fri, 19 May 2023 16:30:28 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 3324F32009A3;
-        Fri, 19 May 2023 19:30:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 19 May 2023 19:30:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1684539024; x=1684625424; bh=Sb
-        Mc2wwNhEFGcrl49hIbTYTKfZHyZrwWYHBZy9WFZfQ=; b=rtPvSaOu2mLg9P1nIC
-        dBW+PqHiWHzd7pHhe2NF09nhFbm7b4qIQ+u7ZhsNtvUq3ex6mPULCxN1t+hIXOyV
-        +vThIB31h4HPCcSDSiRK/AzWQXq0lEBCN1VvMQ6Xztb/p/vxLba8wzswwYIQWiuX
-        i2McRVRceVCrs3ng6fxr0obvHAoUVKnTV3Nj3LYR2w3ILw7Ez/uJrGZLYkuIWZXj
-        hPyisyWiHfrP7wumTvfNkEEHJL/AP4a8OdIQY0uFyimNll7GWUN/oW922V5b3i+U
-        ivA0l+rrh1qTA+sZLeaKKlNptyDlXDm68ttGvi3ybHG3GC75Ae3X/AbhZiRbp552
-        ZfbA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1684539024; x=1684625424; bh=SbMc2wwNhEFGc
-        rl49hIbTYTKfZHyZrwWYHBZy9WFZfQ=; b=TdMQ1lDAVeNLPWtDBqDO3FaSAUuHM
-        w9qswn9+kAqQnbOoCi35EooMNmrKz2W5UaDAXPyrbVguL3jLN5//rpgzcoqvXGKr
-        qgpW2/AwJ2zdWEWvDyDoXl40aiDIiNNMr5KYqxGS9+l+7IghOpHgBcn55Vvzo/1a
-        DWYF/U278WyheAV6U95/noQV4rxCyesmF4W+GUa5rVpkoTJOiCaj2x5iq2rQAGzU
-        3eL64iia1FD+FfObSfLG1CqjwaKPYq9IMTNz8223/6tJqg4Ye970L0QKpVsrCdHd
-        +lS7UeaGACxBgSyh+kKNyrfYLdDesRV35/oczc/Q09V4+fjkuQB2NpPFA==
-X-ME-Sender: <xms:kAZoZIpnJxuDiDh65ndWcAzK8rTxsOKYC8TQ5VRTIb1GowLwrWiEtA>
-    <xme:kAZoZOot-11VHUsm-J6eooA43br3GfKWmthomudHwpMf3kqh9bBth_nUvl4WskGwu
-    C4FAB5PgRGoHK7B4qc>
-X-ME-Received: <xmr:kAZoZNMgS-Zlyyzg1vWFTo4vsJolM5bOkVRHwKnaK2P2IASyJwP5fzttFawMCuOzHDLnzhsh9XE28B55Nsg5E0SdRqgTBWOK7MRSeyVhbhg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeiiedgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfhgfhffvvefuffgjkfggtgesthdtredttdertdenucfhrhhomhepufhtvghf
-    rghnucftohgvshgthhcuoehshhhrseguvghvkhgvrhhnvghlrdhioheqnecuggftrfgrth
-    htvghrnhepvdeuieekudefjeejueeifeduuedvvddvjefhkeeivdeghfeivdeffeegffev
-    geeinecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhgih
-    hthhhusghushgvrhgtohhnthgvnhhtrdgtohhmnecuvehluhhsthgvrhfuihiivgeptden
-    ucfrrghrrghmpehmrghilhhfrhhomhepshhhrhesuggvvhhkvghrnhgvlhdrihho
-X-ME-Proxy: <xmx:kAZoZP734Q77khPEEI-7RAyNWO_3u7fuYeHQ0cg2vZM79TEaUlaqtQ>
-    <xmx:kAZoZH6PcHmd3HUj7FyTK7pggGJKgx8V3OuyC-T0GK30S_q8gMi3CA>
-    <xmx:kAZoZPjo5uJ7mjdQ5rexclK9C8VpfNGIA5Sx4parvnvU2CL82_nPag>
-    <xmx:kAZoZKYGlFPaA9n2CgJcXOn15fyfKtU6TAfZL8UzyXWJjOlBhSxbDQ>
-Feedback-ID: i84614614:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 May 2023 19:30:23 -0400 (EDT)
-References: <20230518211751.3492982-6-shr@devkernel.io>
- <202305190745.UK8QQ6fw-lkp@intel.com>
- <cf82830e-91fb-3a50-86c4-b57f7f761a80@kernel.dk>
-User-agent: mu4e 1.10.1; emacs 28.2.50
-From:   Stefan Roesch <shr@devkernel.io>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     kernel test robot <lkp@intel.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, oe-kbuild-all@lists.linux.dev,
-        ammarfaizi2@gnuweeb.org, netdev@vger.kernel.org, kuba@kernel.org,
-        olivier@trillion01.com
-Subject: Re: [PATCH v13 5/7] io-uring: add sqpoll support for napi busy poll
-Date:   Fri, 19 May 2023 16:29:59 -0700
-In-reply-to: <cf82830e-91fb-3a50-86c4-b57f7f761a80@kernel.dk>
-Message-ID: <qvqwilcnx5kh.fsf@devbig1114.prn1.facebook.com>
+        with ESMTP id S231712AbjETB51 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 19 May 2023 21:57:27 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD48F128
+        for <io-uring@vger.kernel.org>; Fri, 19 May 2023 18:57:26 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-64d132c6014so655337b3a.0
+        for <io-uring@vger.kernel.org>; Fri, 19 May 2023 18:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1684547846; x=1687139846;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VyRqEzv7fzTySxs5AZ4jzXnSv36taWja29wajwP6wes=;
+        b=FE9r61Owjx/13VLQrugLyJJaZujC5jAU75t3/yHxyQ/GyS0dIFKNvk4doPloRF5/83
+         vDxuqnEjWuweehaqkhnFWAZktGxg5R1vZxmBQTkGxgJiKiwCVlpKKap/Umg2SqwI2ykL
+         ydoOXE2d+E8bM5da3c3dWo6KDm9jEJeIqK31ZjHUWlBagEtegwZ49C2DV9FfdlX4hL23
+         ga8bguGuH3Y5eLQDG8GSVLOgbkNnwJmwO7Jt69dyfYsjV6lzUwlaJKzMSDjL04YvDUUQ
+         JvXewK0PFbJfsTM1AZQ+Iypv30E6ArJ2752ATkS8LQLE0oqZZuisg8DRW1odetO+fFtu
+         Pi8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684547846; x=1687139846;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VyRqEzv7fzTySxs5AZ4jzXnSv36taWja29wajwP6wes=;
+        b=HRchoyLg7GTI0nTjX3WJ64kGbPwJ/c2UaUIgtjTiWGjQy5JTdFAIhtqdnAhq4zny3H
+         fRKhtWybSvKfTjS7JeHKMg3gczUp1SaGR4HRpH32GJzJUZe3h9/6sYu4zWhS4amX3PuN
+         tb4N430dvRfG/+OGl7Snl9G4MqwZP9v7SnYS924og2YJddx691GHy1GLfHTQWgxjBehI
+         IAR+2HXvevCIofdq4x6/D8pJPPo19L179Vzfoc0X+2CW8eqYa2JTwH7LnYszIyJgNAc2
+         pAO0OH/Ln26W0W3oY+zk+0a7sqndOVs4lWenXgg2I/Qkov2cwsfl9sLFoE4oABdT1GnN
+         OtsQ==
+X-Gm-Message-State: AC+VfDx0ta5KLd+Bu32btrWNErHViTC+cWI+4YzYcm0w5SoC/4JYrppW
+        uDVuG2J9QMaNHmzr8e523aRIDkbkObchOqQkLkw=
+X-Google-Smtp-Source: ACHHUZ5kp89lqutVKgb1fWzfYCh0hHaYQa6+m5ijqV0a9cUNXM3fUSHsgr2aO0zxPEwXevgg20F0Bw==
+X-Received: by 2002:a05:6a00:348d:b0:643:6b4c:2f74 with SMTP id cp13-20020a056a00348d00b006436b4c2f74mr3973186pfb.3.1684547846111;
+        Fri, 19 May 2023 18:57:26 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id t30-20020a63225e000000b0051afa49e07asm348421pgm.50.2023.05.19.18.57.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 May 2023 18:57:25 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc:     yang lan <lanyang0908@gmail.com>
+In-Reply-To: <3e79156a106e8b5b3646672656f738ba157957ef.1684505086.git.asml.silence@gmail.com>
+References: <3e79156a106e8b5b3646672656f738ba157957ef.1684505086.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: more graceful request alloc OOM
+Message-Id: <168454784506.383343.5044474028086679581.b4-ty@kernel.dk>
+Date:   Fri, 19 May 2023 19:57:25 -0600
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-00303
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -89,111 +71,21 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 
-Jens Axboe <axboe@kernel.dk> writes:
+On Fri, 19 May 2023 15:05:14 +0100, Pavel Begunkov wrote:
+> It's ok for io_uring request allocation to fail, however there are
+> reports that it starts killing tasks instead of just returning back
+> to the userspace. Add __GFP_NORETRY, so it doesn't trigger OOM killer.
+> 
+> 
 
-> On 5/18/23 6:11?PM, kernel test robot wrote:
->> Hi Stefan,
->>
->> kernel test robot noticed the following build errors:
->>
->> [auto build test ERROR on d2b7fa6174bc4260e496cbf84375c73636914641]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Roesch/net-split-off-__napi_busy_poll-from-napi_busy_poll/20230519-054117
->> base:   d2b7fa6174bc4260e496cbf84375c73636914641
->> patch link:    https://lore.kernel.org/r/20230518211751.3492982-6-shr%40devkernel.io
->> patch subject: [PATCH v13 5/7] io-uring: add sqpoll support for napi busy poll
->> config: powerpc-allnoconfig
->> compiler: powerpc-linux-gcc (GCC) 12.1.0
->> reproduce (this is a W=1 build):
->>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # https://github.com/intel-lab-lkp/linux/commit/8d324fedc325505406b6ea808d5d7a7cacb321a5
->>         git remote add linux-review https://github.com/intel-lab-lkp/linux
->>         git fetch --no-tags linux-review Stefan-Roesch/net-split-off-__napi_busy_poll-from-napi_busy_poll/20230519-054117
->>         git checkout 8d324fedc325505406b6ea808d5d7a7cacb321a5
->>         # save the config file
->>         mkdir build_dir && cp config build_dir/.config
->>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
->>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash
->>
->> If you fix the issue, kindly add following tag where applicable
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202305190745.UK8QQ6fw-lkp@intel.com/
->>
->> All errors (new ones prefixed by >>):
->>
->>    In file included from io_uring/sqpoll.c:18:
->>    io_uring/sqpoll.c: In function '__io_sq_thread':
->>>> io_uring/napi.h:81:39: error: expected expression before 'do'
->>       81 | #define io_napi_sqpoll_busy_poll(ctx) do {} while (0)
->>          |                                       ^~
->>    io_uring/sqpoll.c:198:32: note: in expansion of macro 'io_napi_sqpoll_busy_poll'
->>      198 |                         ret += io_napi_sqpoll_busy_poll(ctx);
->>          |                                ^~~~~~~~~~~~~~~~~~~~~~~~
->>
->
-> That's my fault, didn't look closely enough. But let's fold this one into
-> patch 3, to get proper types for !CONFIG_NET_RX_BUSY_POLL.
->
->
-> diff --git a/io_uring/napi.h b/io_uring/napi.h
-> index 69c1970cbecc..64d07317866b 100644
-> --- a/io_uring/napi.h
-> +++ b/io_uring/napi.h
-> @@ -60,39 +60,43 @@ static inline void io_napi_add(struct io_kiocb *req)
->  	__io_napi_add(ctx, req->file);
->  }
->
-> -#else
-> +#else /* CONFIG_NET_RX_BUSY_POLL */
->
->  static inline void io_napi_init(struct io_ring_ctx *ctx)
->  {
->  }
-> -
->  static inline void io_napi_free(struct io_ring_ctx *ctx)
->  {
->  }
-> -
->  static inline int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
->  {
->  	return -EOPNOTSUPP;
->  }
-> -
->  static inline int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
->  {
->  	return -EOPNOTSUPP;
->  }
-> -
->  static inline bool io_napi(struct io_ring_ctx *ctx)
->  {
->  	return false;
->  }
-> -
->  static inline void io_napi_add(struct io_kiocb *req)
->  {
->  }
-> +static inline void io_napi_adjust_timeout(struct io_ring_ctx *ctx,
-> +					  struct io_wait_queue *iowq,
-> +					  struct timespec64 *ts)
-> +{
-> +}
-> +static inline void io_napi_busy_loop(struct io_ring_ctx *ctx,
-> +				     struct io_wait_queue *iowq)
-> +{
-> +}
-> +static inline int io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx)
-> +{
-> +	return 0;
-> +}
->
-> -#define io_napi_adjust_timeout(ctx, iowq, ts) do {} while (0)
-> -#define io_napi_busy_loop(ctx, iowq) do {} while (0)
-> -#define io_napi_sqpoll_busy_poll(ctx) do {} while (0)
-> -
-> -#endif
-> +#endif /* CONFIG_NET_RX_BUSY_POLL */
->
->  #endif
+Applied, thanks!
 
-I'll make the above fix in the next version.
+[1/1] io_uring: more graceful request alloc OOM
+      (no commit info)
+
+Best regards,
+-- 
+Jens Axboe
+
+
+

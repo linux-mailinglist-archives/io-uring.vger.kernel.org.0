@@ -2,167 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 817A070BD08
-	for <lists+io-uring@lfdr.de>; Mon, 22 May 2023 14:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B10F870D25D
+	for <lists+io-uring@lfdr.de>; Tue, 23 May 2023 05:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233371AbjEVMM2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 22 May 2023 08:12:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46364 "EHLO
+        id S232284AbjEWD3E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 22 May 2023 23:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233208AbjEVMM0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 22 May 2023 08:12:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58512AA
-        for <io-uring@vger.kernel.org>; Mon, 22 May 2023 05:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684757498;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zo53+MxtcExCaAvP1E3d2cbKIX8PzAGUnvJuN4UlUmE=;
-        b=cWm5s77XtGqo27sxpLyTWLrmOe4XoB/2V4fNOHcaK88hwCs3P045plsHGayumDdi6rMFMr
-        cZznylM5QtQzsF2moq6qoH3cuJsjobEvUpwGvNaKTNuIibK4fxFIcXk6YeKr2GAMYAOYaM
-        u4f35MpHR/CH7A17OQ4q8R24JsBdgV0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-645-LAZUC1NYOiyGQR7ae9mZ2Q-1; Mon, 22 May 2023 08:11:34 -0400
-X-MC-Unique: LAZUC1NYOiyGQR7ae9mZ2Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6FA7E185A78F;
-        Mon, 22 May 2023 12:11:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A54FE140E95D;
-        Mon, 22 May 2023 12:11:30 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Willem de Bruijn <willemb@google.com>,
-        io-uring@vger.kernel.org
-Subject: [PATCH net-next v10 01/16] net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
-Date:   Mon, 22 May 2023 13:11:10 +0100
-Message-Id: <20230522121125.2595254-2-dhowells@redhat.com>
-In-Reply-To: <20230522121125.2595254-1-dhowells@redhat.com>
-References: <20230522121125.2595254-1-dhowells@redhat.com>
+        with ESMTP id S229587AbjEWD3C (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 22 May 2023 23:29:02 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E7291
+        for <io-uring@vger.kernel.org>; Mon, 22 May 2023 20:29:01 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id 98e67ed59e1d1-2554696544cso1839072a91.2
+        for <io-uring@vger.kernel.org>; Mon, 22 May 2023 20:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684812540; x=1687404540;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AgCtPFr8n9i3Zze+8pX+ddqZf2OAxGCL4K2iyt2qKuE=;
+        b=eUJTm+wPcDSWoFM20Kr8C8NEVAp98fujr3CkvZvHZ/80icfKvJMHW31BlbHgHKyPN7
+         vSaztiVPbFARHNGlDy7PaLSmFarNcOdZrfVk56vt14ZQ1E7HeEA3e/4fddBgS1w7LHS8
+         3xZrCESHPv22YiDVy0BpKdXWDhZpBg6V5Vl7ij1OutDJiDfnnXwUdLlBd7ujQ1sVWIfv
+         mfy0Jb+Lop8pdB3ftSV9jy3R4uhDWILGGGTnHqNu+jGQkc9K6dAkXQ6MQnE3KiJW0b+5
+         X4mjTX1ZHZXvdpoUzYeqRBqvAsDGB08iZo7uW3txtnSjUyBsVu0/AFRvegF3uP545Hxv
+         NtkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684812540; x=1687404540;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AgCtPFr8n9i3Zze+8pX+ddqZf2OAxGCL4K2iyt2qKuE=;
+        b=cYCC+RXqXMWEkwhXwGx5uRpRGkPk8PVgxSa0r0ZFVRJFDzZHdVUNUsY+ECI79h+Z50
+         KVnPl6EwYsF2a/ot2pKn2O3m9dUvD9XiZTDKT8U6/60yqQKtYh4GTE9ccQrzyF3TxVXQ
+         yrk/bQbodHJicsFOa6ITg7ASH0XpA5t1paKVFbVswiz8b9o+lF85U+V8ewAX6v/hS4t1
+         vQLhIEgpbeIO/a27gKjyRA0fiCLT3WdiAubkgVex5uJsUekyP5PxpsbqSHfyPsaY50MO
+         95+jpXh+dBXSNRoOSlgJX9g+r16KHDoBWVZyr2JtWbWXJ98je2C3X0tlDTL8F4lmEYMF
+         D4YA==
+X-Gm-Message-State: AC+VfDwnN280+fsZoumREu4qvb9nt7NdXlXecaQzmFShFK4T2fiwAGxO
+        +EC4wHIbX0y3THu61DBeT+Xaiak4x3VzteLK+rFjFwl5vJs=
+X-Google-Smtp-Source: ACHHUZ4M8TVG4oCMUvxRiCMyyz0kcO5svzaxo0/yCCAxVEsrkZIPq13GANDXbmKfp5I5WAtGhV68miYMhuZNfQJ87Cw=
+X-Received: by 2002:a17:90a:f289:b0:255:5d2f:26e8 with SMTP id
+ fs9-20020a17090af28900b002555d2f26e8mr5040585pjb.30.1684812540555; Mon, 22
+ May 2023 20:29:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+From:   Peter Veentjer <alarmnummer@gmail.com>
+Date:   Tue, 23 May 2023 06:28:49 +0300
+Message-ID: <CAGuAWdAZLYdzby8n=9-Au8sLQrkL-26HfqtzMqMcEdKiSXihEQ@mail.gmail.com>
+Subject: Socket IORING_OP_WRITEV fails spuriously with EAGAIN.
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Declare MSG_SPLICE_PAGES, an internal sendmsg() flag, that hints to a
-network protocol that it should splice pages from the source iterator
-rather than copying the data if it can.  This flag is added to a list that
-is cleared by sendmsg syscalls on entry.
+Hi,
 
-This is intended as a replacement for the ->sendpage() op, allowing a way
-to splice in several multipage folios in one go.
+I'm working on an io_uring binding for Java and one of my integration
+tests is failing. In this test, I'm writing large payloads
+(up to 10x1MB) to the same non-blocking socket using IORING_OP_WRITE
+to simulate congestion.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: io-uring@vger.kernel.org
-cc: netdev@vger.kernel.org
----
+The strange thing is that the cqe, indicates the request failed with an
+EAGAIN on Fedora 38 (Linux 5.16.12-200.fc35.x86_64). But on On Arch
+Linux (linux 6.3.2.arch1-1) the test runs perfectly fine.
 
-Notes:
-    ver #7)
-     - In ____sys_sendmsg(), clear internal flags before setting msg_flags.
-     - Clear internal flags in uring io_send{,_zc}().
+When I reduce the size of the payloads or the number of payloads,
+the test passes on Fedora.
 
- include/linux/socket.h | 3 +++
- io_uring/net.c         | 2 ++
- net/socket.c           | 2 ++
- 3 files changed, 7 insertions(+)
+My questions are:
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 13c3a237b9c9..bd1cc3238851 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -327,6 +327,7 @@ struct ucred {
- 					  */
- 
- #define MSG_ZEROCOPY	0x4000000	/* Use user data in kernel path */
-+#define MSG_SPLICE_PAGES 0x8000000	/* Splice the pages from the iterator in sendmsg() */
- #define MSG_FASTOPEN	0x20000000	/* Send data in TCP SYN */
- #define MSG_CMSG_CLOEXEC 0x40000000	/* Set close_on_exec for file
- 					   descriptor received through
-@@ -337,6 +338,8 @@ struct ucred {
- #define MSG_CMSG_COMPAT	0		/* We never have 32 bit fixups */
- #endif
- 
-+/* Flags to be cleared on entry by sendmsg and sendmmsg syscalls */
-+#define MSG_INTERNAL_SENDMSG_FLAGS (MSG_SPLICE_PAGES)
- 
- /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
- #define SOL_IP		0
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 89e839013837..f7cbb3c7a575 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -389,6 +389,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	if (flags & MSG_WAITALL)
- 		min_ret = iov_iter_count(&msg.msg_iter);
- 
-+	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	msg.msg_flags = flags;
- 	ret = sock_sendmsg(sock, &msg);
- 	if (ret < min_ret) {
-@@ -1136,6 +1137,7 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- 		msg_flags |= MSG_DONTWAIT;
- 	if (msg_flags & MSG_WAITALL)
- 		min_ret = iov_iter_count(&msg.msg_iter);
-+	msg_flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 
- 	msg.msg_flags = msg_flags;
- 	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
-diff --git a/net/socket.c b/net/socket.c
-index b7e01d0fe082..3df96e9ba4e2 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2138,6 +2138,7 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
- 		msg.msg_name = (struct sockaddr *)&address;
- 		msg.msg_namelen = addr_len;
- 	}
-+	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	if (sock->file->f_flags & O_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
- 	msg.msg_flags = flags;
-@@ -2483,6 +2484,7 @@ static int ____sys_sendmsg(struct socket *sock, struct msghdr *msg_sys,
- 		msg_sys->msg_control = ctl_buf;
- 		msg_sys->msg_control_is_user = false;
- 	}
-+	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	msg_sys->msg_flags = flags;
- 
- 	if (sock->file->f_flags & O_NONBLOCK)
+1) under which condition can an IORING_OP_WRITEV fail with an EAGAIN?
+I have gone with a comb through the documentation and I do not see any
+obvious causes.
 
+2) what is the recommended approach to resolve the problem?
+Resubmitting the task solves the problem, but I'm worried it leads to
+spinning behavior.
+
+3) When an IORING_OP_WRITEV fails with EAGAIN, is it guaranteed that
+nothing got written?
+
+Regards,
+
+Peter

@@ -2,73 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5803A70DC37
-	for <lists+io-uring@lfdr.de>; Tue, 23 May 2023 14:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E8B70DF36
+	for <lists+io-uring@lfdr.de>; Tue, 23 May 2023 16:30:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231621AbjEWMQJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 May 2023 08:16:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46192 "EHLO
+        id S237135AbjEWOa2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 May 2023 10:30:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236650AbjEWMQI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 May 2023 08:16:08 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7268D11F
-        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 05:15:59 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-510db954476so1268818a12.0
-        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 05:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684844157; x=1687436157;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F5VQyfQcjo+qJ/UNL/j819CII+/oodYitiAxe+wrpM0=;
-        b=KEMm52mot/hrGt6fP7ATITRLd4VF8ERe4V5WEwxfjEXCxOClBeqPeqqGNCeJfuptCn
-         OjYychHReW47hdH3WddfLHmVo7XaS4dhN37linkSgDlMXHOVt3l95jb9NK6l6Bvip/jw
-         OMYQ38v8OiNBLKQRr9+CzW9+oXHVmndLCgYck1EEoI9dxCpRZ8j4Iw8vWI/N37N9TyMQ
-         3wPBmTC+5ZCsEiP0z1iyfOuao/o+Na7vveCpGTt+rRFLeCrZoagSpII3HkrAzjjDSbxq
-         6z917cRt3dlNsYyyUTAPFn3j+QM1rdgeQ8Ekdex419PTnPIzR12Wyr9p/5sUIDwW+WIZ
-         1YXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684844157; x=1687436157;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F5VQyfQcjo+qJ/UNL/j819CII+/oodYitiAxe+wrpM0=;
-        b=Kb2FJLf57LL+tlOiyPjFyUKfPzkdEt24xJ4jU30xbW8HDN1xlrrvYcptPClFi1WhXL
-         3XaVSH+oUs9v6Fx+R8sBvMAB/sKowkW3w5ONv7KA6X+cY4Hfd8FVizG146fAosrx+w6b
-         +F71nf8TAzlbYK2vLVCRlwO/rvAFas30pmE6PwpWpB9EN7gTnocGrL4T0zKEPHtEmepa
-         iWLvfSssmyWOoCwVyxG4UEjbW7PS1kIcZ/01UNVlRUmmj8APQVIsjTZcE+6XRIUVVMy/
-         WDRp3XxX69AVe59ele3o7TnvaM6iTbkNe92qLiycQpq5rnqaM9zveJl/eMyAWrnbLHSh
-         hpWA==
-X-Gm-Message-State: AC+VfDwq8BKPjig+kcNCDDnV1U5tFRwntQPsq9AxGtBPZi2mpi90b8TD
-        mHkYtrpD04ng0iMmn9tU5OcGvn/UXjU=
-X-Google-Smtp-Source: ACHHUZ5OkPul6VEP81xCXFnFUo/+knFqCqXyhdw7DahZ6T4Uz2i04otTeRCR4CNmB/uUX5YaeBP5jg==
-X-Received: by 2002:a05:6402:2d5:b0:510:f6e0:7d9f with SMTP id b21-20020a05640202d500b00510f6e07d9fmr12268501edx.13.1684844157257;
-        Tue, 23 May 2023 05:15:57 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:c5cf])
-        by smtp.gmail.com with ESMTPSA id q5-20020aa7d445000000b00513f680d2a9sm1328958edr.28.2023.05.23.05.15.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 May 2023 05:15:57 -0700 (PDT)
-Message-ID: <700f61ec-dc97-4572-d05c-9cbddf3addc8@gmail.com>
-Date:   Tue, 23 May 2023 13:08:12 +0100
+        with ESMTP id S237282AbjEWOaY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 May 2023 10:30:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B15E45;
+        Tue, 23 May 2023 07:30:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A305960A1F;
+        Tue, 23 May 2023 14:30:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A540EC433EF;
+        Tue, 23 May 2023 14:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684852220;
+        bh=JqtvVA7Pl8+PRWvxhWl3Sdfq48DmCwvLP1zfr4KFyas=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hX3fnIDbw0+aoIDNbMOl1VErOSlFHL/qxktowc0yeP+oB4ED4lCL4oCNfRgzrC/Vc
+         oRl/pBLD4voKBjZs5MgpHkrhJkh675XdYVcX3QjMoWK+uPSyCxmiwE4UU+BRwMrWd3
+         ANFVd7iTQrPTP+lLZxvjgH1FPM/VmxWUEuLttjTftMwIBpgNg31S6Ai9mVX4JiPJih
+         PNZOk0vGXRnh75Zi9jC05PWQAGXHxeBmmwb3h4umk5DJbBHUYkVPHEMrfK2h6FuArz
+         Pvr8j1EjEIqpJKBGt0Xb/nOKMawS9jnn80JXeRcef2atzruJv7wFz7fZdAItN2shuB
+         Khk+m0lBxWdJA==
+Date:   Tue, 23 May 2023 16:30:14 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] RFC: io_uring getdents: test returning an EOF
+ flag in CQE
+Message-ID: <20230523-abgleichen-rotieren-37fdb6fb9ef3@brauner>
+References: <20230422-uring-getdents-v2-0-2db1e37dc55e@codewreck.org>
+ <20230422-uring-getdents-v2-6-2db1e37dc55e@codewreck.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 1/1] io_uring: more graceful request alloc OOM
-To:     yang lan <lanyang0908@gmail.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-References: <3e79156a106e8b5b3646672656f738ba157957ef.1684505086.git.asml.silence@gmail.com>
- <CAAehj2nmnN98ZYzcFMR0DsKXqEM7L8DH8SM4NusPqzoHu_VNPw@mail.gmail.com>
- <4ec09942-2855-8be4-3f51-d1fedea8d2f3@gmail.com>
- <CAAehj2kOScdWU6_N+gs-Zo+yCx2Q2_x5vdX3U=Cc8R2=ruJb9Q@mail.gmail.com>
-Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAAehj2kOScdWU6_N+gs-Zo+yCx2Q2_x5vdX3U=Cc8R2=ruJb9Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230422-uring-getdents-v2-6-2db1e37dc55e@codewreck.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,WEIRD_QUOTING
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,65 +60,179 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 5/22/23 08:55, yang lan wrote:
-> Hi,
+On Wed, May 10, 2023 at 07:52:54PM +0900, Dominique Martinet wrote:
+> This turns out to be very slightly faster than an extra call to
+> getdents, but in practice it doesn't seem to be such an improvement as
+> the trailing getdents will return almost immediately be absorbed by the
+> scheduling noise in a find-like context (my ""server"" is too noisy to
+> get proper benchmarks out, but results look slightly better with this in
+> async mode, and almost identical in the NOWAIT path)
 > 
-> Thanks. I'm also analyzing the root cause of this bug.
+> If the user is waiting the end of a single directory though it might be
+> worth it, so including the patch for comments.
+> (in particular I'm not really happy that the flag has become in-out for
+> vfs_getdents, especially when the getdents64 syscall does not use it,
+> but I don't see much other way around it)
+> 
+> If this approach is acceptable/wanted then this patch will be split down
+> further (at least dir_context/vfs_getdents, kernfs, libfs, uring in four
+> separate commits)
+> 
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> ---
+>  fs/internal.h                 |  2 +-
+>  fs/kernfs/dir.c               |  1 +
+>  fs/libfs.c                    |  9 ++++++---
+>  fs/readdir.c                  | 10 ++++++----
+>  include/linux/fs.h            |  2 ++
+>  include/uapi/linux/io_uring.h |  2 ++
+>  io_uring/fs.c                 |  8 ++++++--
+>  7 files changed, 24 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 0264b001d99a..0b1552c7a870 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -267,4 +267,4 @@ void mnt_idmap_put(struct mnt_idmap *idmap);
+>  struct linux_dirent64;
+>  
+>  int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+> -		 unsigned int count, unsigned long flags);
+> +		 unsigned int count, unsigned long *flags);
+> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> index 5a5b3e7881bf..53a6b4804c34 100644
+> --- a/fs/kernfs/dir.c
+> +++ b/fs/kernfs/dir.c
+> @@ -1860,6 +1860,7 @@ static int kernfs_fop_readdir(struct file *file, struct dir_context *ctx)
+>  	up_read(&root->kernfs_rwsem);
+>  	file->private_data = NULL;
+>  	ctx->pos = INT_MAX;
+> +	ctx->flags |= DIR_CONTEXT_F_EOD;
+>  	return 0;
+>  }
+>  
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index a3c7e42d90a7..b2a95dadffbd 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -208,10 +208,12 @@ int dcache_readdir(struct file *file, struct dir_context *ctx)
+>  		p = &next->d_child;
+>  	}
+>  	spin_lock(&dentry->d_lock);
+> -	if (next)
+> +	if (next) {
+>  		list_move_tail(&cursor->d_child, &next->d_child);
+> -	else
+> +	} else {
+>  		list_del_init(&cursor->d_child);
+> +		ctx->flags |= DIR_CONTEXT_F_EOD;
+> +	}
+>  	spin_unlock(&dentry->d_lock);
+>  	dput(next);
+>  
+> @@ -1347,7 +1349,8 @@ static loff_t empty_dir_llseek(struct file *file, loff_t offset, int whence)
+>  
+>  static int empty_dir_readdir(struct file *file, struct dir_context *ctx)
+>  {
+> -	dir_emit_dots(file, ctx);
+> +	if (dir_emit_dots(file, ctx))
+> +		ctx->flags |= DIR_CONTEXT_F_EOD;
+>  	return 0;
+>  }
+>  
+> diff --git a/fs/readdir.c b/fs/readdir.c
+> index 1311b89d75e1..be75a2154b4f 100644
+> --- a/fs/readdir.c
+> +++ b/fs/readdir.c
+> @@ -358,14 +358,14 @@ static bool filldir64(struct dir_context *ctx, const char *name, int namlen,
+>   * @file    : pointer to file struct of directory
+>   * @dirent  : pointer to user directory structure
+>   * @count   : size of buffer
+> - * @flags   : additional dir_context flags
+> + * @flags   : pointer to additional dir_context flags
+>   */
+>  int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+> -		 unsigned int count, unsigned long flags)
+> +		 unsigned int count, unsigned long *flags)
+>  {
+>  	struct getdents_callback64 buf = {
+>  		.ctx.actor = filldir64,
+> -		.ctx.flags = flags,
+> +		.ctx.flags = flags ? *flags : 0,
+>  		.count = count,
+>  		.current_dir = dirent
+>  	};
+> @@ -384,6 +384,8 @@ int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+>  		else
+>  			error = count - buf.count;
+>  	}
+> +	if (flags)
+> +		*flags = buf.ctx.flags;
+>  	return error;
+>  }
+>  
+> @@ -397,7 +399,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+>  	if (!f.file)
+>  		return -EBADF;
+>  
+> -	error = vfs_getdents(f.file, dirent, count, 0);
+> +	error = vfs_getdents(f.file, dirent, count, NULL);
+>  
+>  	fdput_pos(f);
+>  	return error;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index f7de2b5ca38e..d1e31bccfb4f 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1723,8 +1723,10 @@ struct dir_context {
+>   * flags for dir_context flags
+>   * DIR_CONTEXT_F_NOWAIT: Request non-blocking iterate
+>   *                       (requires file->f_mode & FMODE_NOWAIT)
+> + * DIR_CONTEXT_F_EOD: Signal directory has been fully iterated, set by the fs
+>   */
+>  #define DIR_CONTEXT_F_NOWAIT	0x1
+> +#define DIR_CONTEXT_F_EOD	0x2
+>  
+>  /*
+>   * These flags let !MMU mmap() govern direct device mapping vs immediate
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 35d0de18d893..35877132027e 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -381,11 +381,13 @@ struct io_uring_cqe {
+>   * IORING_CQE_F_SOCK_NONEMPTY	If set, more data to read after socket recv
+>   * IORING_CQE_F_NOTIF	Set for notification CQEs. Can be used to distinct
+>   * 			them from sends.
+> + * IORING_CQE_F_EOF     If set, file or directory has reached end of file.
+>   */
+>  #define IORING_CQE_F_BUFFER		(1U << 0)
+>  #define IORING_CQE_F_MORE		(1U << 1)
+>  #define IORING_CQE_F_SOCK_NONEMPTY	(1U << 2)
+>  #define IORING_CQE_F_NOTIF		(1U << 3)
+> +#define IORING_CQE_F_EOF		(1U << 4)
+>  
+>  enum {
+>  	IORING_CQE_BUFFER_SHIFT		= 16,
+> diff --git a/io_uring/fs.c b/io_uring/fs.c
+> index b15ec81c1ed2..f6222b0148ef 100644
+> --- a/io_uring/fs.c
+> +++ b/io_uring/fs.c
+> @@ -322,6 +322,7 @@ int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+>  {
+>  	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+>  	unsigned long getdents_flags = 0;
+> +	u32 cqe_flags = 0;
+>  	int ret;
+>  
+>  	if (issue_flags & IO_URING_F_NONBLOCK) {
+> @@ -338,13 +339,16 @@ int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+>  			goto out;
+>  	}
+>  
+> -	ret = vfs_getdents(req->file, gd->dirent, gd->count, getdents_flags);
+> +	ret = vfs_getdents(req->file, gd->dirent, gd->count, &getdents_flags);
 
-The repro indeed triggers, this time in another place. Though
-when I patch all of them it would fail somewhere else, like in
-ext4 on a pagefault.
-
-We can add a couple more those "don't oom but fail" and some
-niceness around, but I think it's fine as it is as allocations
-are under cgroup. If admin cares about collision b/w users there
-should be cgroups, so allocations of one don't affect another. And
-if a user pushes it to the limit and oom's itself and gets OOM,
-that should be fine.
-
-> By the way, can I apply for a CVE? And should I submit a request to
-> some official organizations, such as Openwall, etc?
-
-Sorry, but we cannot help you here. We don't deal with CVEs.
-
-That aside, I'm not even sure it's CVE'able because it shouldn't
-be exploitable in a configured environment (unless it is). But
-I'm not an expert in that so might be wrong.
-
-
-
-> Pavel Begunkov <asml.silence@gmail.com> 于2023年5月22日周一 08:45写道：
->>
->> On 5/20/23 10:38, yang lan wrote:
->>> Hi,
->>>
->>> Thanks for your response.
->>>
->>> But I applied this patch to LTS kernel 5.10.180, it can still trigger this bug.
->>>
->>> --- io_uring/io_uring.c.back    2023-05-20 17:11:25.870550438 +0800
->>> +++ io_uring/io_uring.c 2023-05-20 16:35:24.265846283 +0800
->>> @@ -1970,7 +1970,7 @@
->>> static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
->>>           __must_hold(&ctx->uring_lock)
->>>    {
->>>           struct io_submit_state *state = &ctx->submit_state;
->>> -       gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
->>> +       gfp_t gfp = GFP_KERNEL | __GFP_NOWARN | __GFP_NORETRY;
->>>           int ret, i;
->>>
->>>           BUILD_BUG_ON(ARRAY_SIZE(state->reqs) < IO_REQ_ALLOC_BATCH);
->>>
->>> The io_uring.c.back is the original file.
->>> Do I apply this patch wrong?
->>
->> The patch looks fine. I run a self-written test before
->> sending with 6.4, worked as expected. I need to run the syz
->> test, maybe it shifted to another spot, e.g. in provided
->> buffers.
->>
->> --
->> Pavel Begunkov
-
--- 
-Pavel Begunkov
+I don't understand how synchronization and updating of f_pos works here.
+For example, what happens if a concurrent seek happens on the fd while
+io_uring is using vfs_getdents which calls into iterate_dir() and
+updates f_pos?

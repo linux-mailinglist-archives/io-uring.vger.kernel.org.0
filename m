@@ -2,115 +2,78 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C7D70E733
-	for <lists+io-uring@lfdr.de>; Tue, 23 May 2023 23:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD13570EB84
+	for <lists+io-uring@lfdr.de>; Wed, 24 May 2023 04:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233285AbjEWVOX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 May 2023 17:14:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55092 "EHLO
+        id S231585AbjEXCsz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 23 May 2023 22:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230214AbjEWVOV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 May 2023 17:14:21 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C84BBBB;
-        Tue, 23 May 2023 14:14:20 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 59AE9C01D; Tue, 23 May 2023 23:14:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1684876458; bh=d4s2m+nbJHAqCaA6dUpYb+/BNv9KUfRLhvVNcs9u5Yg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xBzYWVZ6raAGtNotKAvv1yd2+9E3TVUjIU/xZzApSvgcOzMRbYdul81JfqhJdE7AR
-         hNHg53A41dJwGdhglZKbaPxQkzYUX+EjO9wQDRU0PeVRFLbJ6q0L5gjBVK9EM7HrrQ
-         qKCZDOGGbSZbIFNJj8k9kwqShGlgdRZ7HtEPCeNbhTqGf4FpSFTBUNmzf2+hSQHRTb
-         ks8ab4X26L+gFlROJOChbGSjo19CHMiIFb+EvJYdxSYiDucO/iRr3KMmW3Hi2StRxS
-         0cVtu7E0V5JAFAYJf8mnVMHHd4IyOWYv86YTtcfv7ejMJCYSHgIrxe+4D9G2khu8Qe
-         fgcoV6e57Pgew==
+        with ESMTP id S237460AbjEXCsz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 23 May 2023 22:48:55 -0400
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B992E9
+        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 19:48:54 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id 006d021491bc7-55554c33bf3so371934eaf.2
+        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 19:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1684896533; x=1687488533;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=69sYZJTuX6Lrw84qrKaU0dB7F2owPKoGTgGGIqmtYQs=;
+        b=jDCjQAKbSpwe/INlt7A5QFlLmWFVMYJq4wpRUwv3agKFahg3Gig4WVlgnDdnA0YAc+
+         d0YecH/EcGiAdutZfeJWVN2I2szw//LRef75qUnt9UMQllX1Lps7PhFafD8z2QslDpnf
+         sEbhSFhJ/pNhjXO+dhZtG8JiAj2y4EK1H0xks=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684896533; x=1687488533;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=69sYZJTuX6Lrw84qrKaU0dB7F2owPKoGTgGGIqmtYQs=;
+        b=VYIJmr8GLpRBxKjxgt8pwot+T8z0jkj6Q4PKMLAPuh0UVH3Ve5PSY5SA2YbEaASKOF
+         GX08TuIia9OxewDXfOzWuog6XEYbEDuFdeoV+yCJJcdOgOwO18nXq8sNSoFMEQcFIGJ3
+         4oLLbQS+0yqmcm2QMu+fFPOovU/+uFhz0tOKi9dxL8jbnLMrShbtPXYiRdckFD40PVM3
+         UYU5pqHLotEPIj8Nbr+XClkh2IPlqcetKIFHCrTyE6AMVWG4ifnuVYhret/MReq3018o
+         a9FP+iaO+Yqtu5rJ8VCSTBriEauqWQOvRMfEL0+C9AvQlsTz76JP3m6iaJLtZQ6yJ7TO
+         fhdw==
+X-Gm-Message-State: AC+VfDyhtUC1gupe8HP6pPDZebhQ8Yn0XNzhYAwwx9SsOZE2Kz9aaehT
+        jlSB/RLHnpumhqCGfu+/nwD6EzdzpuwzBC5dpESsddYlenUhzDzpygE=
+X-Google-Smtp-Source: ACHHUZ5ttPf3DgljPdYl6Rhy5wSKCOnDdWRh4IDTy99SayqZOMn7xKlfKwCC2aoE57YvbykqRcLEyWtMBIc/yTHsIzk=
+X-Received: by 2002:a4a:9cd2:0:b0:54f:8511:b1a with SMTP id
+ d18-20020a4a9cd2000000b0054f85110b1amr6389674ook.0.1684896533247; Tue, 23 May
+ 2023 19:48:53 -0700 (PDT)
+MIME-Version: 1.0
+From:   Jeff Xu <jeffxu@chromium.org>
+Date:   Tue, 23 May 2023 19:48:41 -0700
+Message-ID: <CABi2SkUp45HEt7eQ6a47Z7b3LzW=4m3xAakG35os7puCO2dkng@mail.gmail.com>
+Subject: Protection key in io uring kthread
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id D2E85C009;
-        Tue, 23 May 2023 23:14:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1684876457; bh=d4s2m+nbJHAqCaA6dUpYb+/BNv9KUfRLhvVNcs9u5Yg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UTgAaSyZSylhrf3SxgeRNSeU9GQ3Yc/UEC/h3WDhVCn/8Ya1odxoHOJgNj3U38otg
-         8TgidFduj5M8lwlcTzAUTdXqOnKLQf8IXBXTP06D4G6VU6A2mg8RCCas2QN5DsU90t
-         vZJ/ZPBgeLmz0Rm78iDHZfR7wp+TNvOtUaSxl48eSqQFapb5DhqU6Ss02Nx9gdmfq/
-         4972kaL9+jaWNRVfulawiGUX9vY5tVSHA71rrLDHiDKorA6DMNMM1udznRshl+wONQ
-         DsDKUjPLywKDnxprU0GJ8vjLchGRn3bcHmp9kI/LckphzeUy4Gx/XMpCNDBBoOokUP
-         GFXaUzT0lEe9Q==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id b4ec0871;
-        Tue, 23 May 2023 21:14:12 +0000 (UTC)
-Date:   Wed, 24 May 2023 06:13:57 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] fs: split off vfs_getdents function of getdents64
- syscall
-Message-ID: <ZG0slV2BhSZkRL_y@codewreck.org>
-References: <20230422-uring-getdents-v2-0-2db1e37dc55e@codewreck.org>
- <20230422-uring-getdents-v2-1-2db1e37dc55e@codewreck.org>
- <20230523-entzug-komodowaran-96d003250f70@brauner>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230523-entzug-komodowaran-96d003250f70@brauner>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Christian Brauner wrote on Tue, May 23, 2023 at 05:39:08PM +0200:
-> > @@ -362,11 +369,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
-> >  	};
-> >  	int error;
-> >  
-> > -	f = fdget_pos(fd);
-> > -	if (!f.file)
-> > -		return -EBADF;
-> > -
-> > -	error = iterate_dir(f.file, &buf.ctx);
-> > +	error = iterate_dir(file, &buf.ctx);
-> 
-> So afaict this isn't enough.
-> If you look into iterate_shared() you should see that it uses and
-> updates f_pos. But that can't work for io_uring and also isn't how
-> io_uring handles read and write. You probably need to use a local pos
-> similar to what io_uring does in rw.c for rw->kiocb.ki_pos. But in
-> contrast simply disallow any offsets for getdents completely. Thus not
-> relying on f_pos anywhere at all.
+Hi
+I have a question on the protection key in io_uring. Today, when a
+user thread enters the kernel through syscall, PKRU is preserved, and
+the kernel  will respect the PKEY protection of memory.
 
-Using a private offset from the sqe was the previous implementation
-discussed around here[1], and Al Viro pointed out that the iterate
-filesystem implementations don't validate the offset makes sense as it's
-either costly or for some filesystems downright impossible, so I went
-into a don't let users modify it approach.
+For example:
+sys_mprotect_pkey((void *)ptr, size, PROT_READ | PROT_WRITE, pkey);
+pkey_write_deny(pkey); <-- disable write access to pkey for this thread.
+ret = read(fd, ptr, 1); <-- this will fail in the kernel.
 
-[1] https://lore.kernel.org/all/20211221164004.119663-1-shr@fb.com/T/#m517583f23502f32b040c819d930359313b3db00c
+I wonder what is the case for io_uring, since read is now async, will
+kthread have the user thread's PKUR ?
 
+In theory, it is possible, i.e. from io_uring_enter syscall. But I
+don't know the implementation details of io_uring, hence asking the
+expert in this list.
 
-I agree it's not how io_uring usually works -- it dislikes global
-states -- but it works perfectly well as long as you don't have multiple
-users on the same file, which the application can take care of.
-
-Not having any offsets would work for small directories but make reading
-large directories impossible so some sort of continuation is required,
-which means we need to keep the offset around; I also suggested keeping
-the offset in argument as the previous version but only allowing the
-last known offset (... so ultimately still updating f_pos anyway as we
-don't have anywhere else to store it) or 0, but if we're going to do
-that it looks much simpler to me to expose the same API as getdents.
-
--- 
-Dominique Martinet | Asmadeus
+Thanks!
+-Jeff

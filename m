@@ -2,201 +2,139 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D12F70F80D
-	for <lists+io-uring@lfdr.de>; Wed, 24 May 2023 15:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A454B70F855
+	for <lists+io-uring@lfdr.de>; Wed, 24 May 2023 16:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235495AbjEXNwy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 May 2023 09:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41860 "EHLO
+        id S230491AbjEXOIm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 May 2023 10:08:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbjEXNwx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 May 2023 09:52:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E2DA7;
-        Wed, 24 May 2023 06:52:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B0DC663385;
-        Wed, 24 May 2023 13:52:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7AF8C433EF;
-        Wed, 24 May 2023 13:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684936371;
-        bh=Q6Piz/VYzHrVX6KEUi2cQWK5oS2GYT39oeGN9zrZYuM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=BS93/9GdjzUFLYqJKTBKB4Q60Y2QqSwxN1LkQ1zb6RmTO5OxcdpEI1jB3ameL1bg4
-         pxHKM+BXeo3i0vmD0gDS2DvsE9khq063ATGHxT5Z3AwpF34cgJHDKRMehLr0eyrFX0
-         6tbvjr04UIQOLrz6aqihuaaE/d3xjX8CN3Uisq9PZBc1Q5aXeBmvHvN5XgQKSGcYYL
-         l2AUoiPuroDgKx3+fjbWWvBxIn/baYdmg3dP71TqHuKnLHO6qi2SgCBW8NQuB3hi/e
-         HB6tgNlH+wZbF5XGf9Z8c0OAmmrjXs9n03sOlPuslapaTN/2q62Ox1vPCsnpZWMjeZ
-         C9TygU/Psx9EQ==
-Date:   Wed, 24 May 2023 15:52:45 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] fs: split off vfs_getdents function of getdents64
- syscall
-Message-ID: <20230524-monolog-punkband-4ed95d8ea852@brauner>
+        with ESMTP id S235163AbjEXOIl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 May 2023 10:08:41 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7DA6119
+        for <io-uring@vger.kernel.org>; Wed, 24 May 2023 07:08:35 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-760dff4b701so7729239f.0
+        for <io-uring@vger.kernel.org>; Wed, 24 May 2023 07:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1684937315; x=1687529315;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n5fOiDkeWWk5vKlwhdYrusenR1JzKh6BZcppzLudC4Q=;
+        b=GOMQL5mJ6vNNYqG81bydG0+S1dULiipdVhWhIuOcg9sNmkcBZy+gkMeNZUjQ0tQ9Rb
+         n4xR2lNBf8TGZ1Sd4kC9rKTlGyyYsJgr8+iQU2Z/toQ438aipj/5IMhV/djoboK8hpcS
+         /jbCG+D0+G2tG66Ne/qRoJWbWMui203EFhVHQGPT1vTp2ZmU1L4td6O1BOHjCKuRa67P
+         1+3K1fvhnwtCC7DXzAgo0hBIKg/CzA/ZwhVxIb44dCeOA1Zy9YpURkWDEzfl1IKH9N/R
+         pDFcbM63g2XtOFBmPYy/9s0SLlP2wWFaxUSX0y1tpP7bVmQyoQxhmbjYJ4VQRzCmkpV5
+         QVPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684937315; x=1687529315;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n5fOiDkeWWk5vKlwhdYrusenR1JzKh6BZcppzLudC4Q=;
+        b=XG8GKxcfOlk24R8xEJcxvgYR4vOgfyLOZQY0VWAt/UEGYBrU0JC7AKDRzjUJSuxYR5
+         /TE2skRbKRJLm9ahgYaG4x9uHuMC2wAWMozw/HaFlKudugqPi67ppMv9eTkVrfBa/UCS
+         TKh0wXUu9Mi8ptU7J7ZQEEVWK5t99ZuozHEZIDKveRho6MEOQ6ineplVxtwn48y+DvoW
+         cfS9tezgFH64+/Xess86NpuW5NEsAJW2nNY4h9MF2mULPlJ+PR6XCvoWWNw/YOSS35BT
+         UDDjkRE+EmpUcFNMHL7PlBIAST+V36SshH/XT+Uxi9lhJefptaM+Nc6HbqxSsvGcZQYf
+         En6g==
+X-Gm-Message-State: AC+VfDyQHW9SyLRO9xuPXopNdhkVcPuGBee/WxH+TDL9Sjelt2Bz0qwi
+        eQvFSmNrChhz+/EVCEcX1BSsGD0BppXKJpgMD3w=
+X-Google-Smtp-Source: ACHHUZ7Ht8fXR2b6+VTIv+VVwVKUoMGL9ugSkLemdNIfp9ud8qylxRdq9BAYZsrxGpsxbfzgFBxBwA==
+X-Received: by 2002:a05:6602:3420:b0:774:8571:a6dd with SMTP id n32-20020a056602342000b007748571a6ddmr3575182ioz.2.1684937315040;
+        Wed, 24 May 2023 07:08:35 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id c16-20020a5ea910000000b00760ad468988sm3398095iod.24.2023.05.24.07.08.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 May 2023 07:08:34 -0700 (PDT)
+Message-ID: <c9b340b8-feba-21a1-de30-36da27c6dffe@kernel.dk>
+Date:   Wed, 24 May 2023 08:08:33 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZG0slV2BhSZkRL_y@codewreck.org>
- <ZG0qgniV1DzIbbzi@codewreck.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] io_uring: unlock sqd->lock before sq thread release CPU
+Content-Language: en-US
+To:     Wenwen Chen <wenwen.chen@samsung.com>, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <CGME20230524052154epcas5p313d92a9cbf0fa7e9555f8dd00125539e@epcas5p3.samsung.com>
+ <20230524052801.369798-1-wenwen.chen@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230524052801.369798-1-wenwen.chen@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, May 24, 2023 at 06:13:57AM +0900, Dominique Martinet wrote:
-> Christian Brauner wrote on Tue, May 23, 2023 at 05:39:08PM +0200:
-> > > @@ -362,11 +369,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
-> > >  	};
-> > >  	int error;
-> > >  
-> > > -	f = fdget_pos(fd);
-> > > -	if (!f.file)
-> > > -		return -EBADF;
-> > > -
-> > > -	error = iterate_dir(f.file, &buf.ctx);
-> > > +	error = iterate_dir(file, &buf.ctx);
-> > 
-> > So afaict this isn't enough.
-> > If you look into iterate_shared() you should see that it uses and
-> > updates f_pos. But that can't work for io_uring and also isn't how
-> > io_uring handles read and write. You probably need to use a local pos
-> > similar to what io_uring does in rw.c for rw->kiocb.ki_pos. But in
-> > contrast simply disallow any offsets for getdents completely. Thus not
-> > relying on f_pos anywhere at all.
+On 5/23/23 11:28?PM, Wenwen Chen wrote:
+> The sq thread actively releases CPU resources by calling the 
+> cond_resched() and schedule() interfaces when it is idle. Therefore,
+> more resources are available for other threads to run.
 > 
-> Using a private offset from the sqe was the previous implementation
-> discussed around here[1], and Al Viro pointed out that the iterate
-> filesystem implementations don't validate the offset makes sense as it's
-> either costly or for some filesystems downright impossible, so I went
-> into a don't let users modify it approach.
+> There exists a problem in sq thread: it does not unlock sqd->lock before
+> releasing CPU resources every time. This makes other threads pending on
+> sqd->lock for a long time. For example, the following interfaces all 
+> require sqd->lock: io_sq_offload_create(), io_register_iowq_max_workers()
+> and io_ring_exit_work().
+>        
+> Before the sq thread releases CPU resources, unlocking sqd->lock will 
+> provide the user a better experience because it can respond quickly to
+> user requests.
 > 
-> [1] https://lore.kernel.org/all/20211221164004.119663-1-shr@fb.com/T/#m517583f23502f32b040c819d930359313b3db00c
+> Signed-off-by: Kanchan Joshi<joshi.k@samsung.com>
+> Signed-off-by: Wenwen Chen<wenwen.chen@samsung.com>
+> ---
+>  io_uring/sqpoll.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> 
-> I agree it's not how io_uring usually works -- it dislikes global
-> states -- but it works perfectly well as long as you don't have multiple
-> users on the same file, which the application can take care of.
-> 
-> Not having any offsets would work for small directories but make reading
-> large directories impossible so some sort of continuation is required,
-> which means we need to keep the offset around; I also suggested keeping
-> the offset in argument as the previous version but only allowing the
-> last known offset (... so ultimately still updating f_pos anyway as we
-> don't have anywhere else to store it) or 0, but if we're going to do
-> that it looks much simpler to me to expose the same API as getdents.
-> 
-> -- 
-> Dominique Martinet | Asmadeus
+> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+> index 9db4bc1f521a..759c80fb4afa 100644
+> --- a/io_uring/sqpoll.c
+> +++ b/io_uring/sqpoll.c
+> @@ -255,7 +255,9 @@ static int io_sq_thread(void *data)
+>  			sqt_spin = true;
+>  
+>  		if (sqt_spin || !time_after(jiffies, timeout)) {
+> +			mutex_unlock(&sqd->lock);
+>  			cond_resched();
+> +			mutex_lock(&sqd->lock);
+>  			if (sqt_spin)
+>  				timeout = jiffies + sqd->sq_thread_idle;
+>  			continue;
 
-On Wed, May 24, 2023 at 06:05:06AM +0900, Dominique Martinet wrote:
-> Christian Brauner wrote on Tue, May 23, 2023 at 04:30:14PM +0200:
-> > > index b15ec81c1ed2..f6222b0148ef 100644
-> > > --- a/io_uring/fs.c
-> > > +++ b/io_uring/fs.c
-> > > @@ -322,6 +322,7 @@ int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> > >  {
-> > >  	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-> > >  	unsigned long getdents_flags = 0;
-> > > +	u32 cqe_flags = 0;
-> > >  	int ret;
-> > >  
-> > >  	if (issue_flags & IO_URING_F_NONBLOCK) {
-> > > @@ -338,13 +339,16 @@ int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> > >  			goto out;
-> > >  	}
-> > >  
-> > > -	ret = vfs_getdents(req->file, gd->dirent, gd->count, getdents_flags);
-> > > +	ret = vfs_getdents(req->file, gd->dirent, gd->count, &getdents_flags);
-> > 
-> > I don't understand how synchronization and updating of f_pos works here.
-> > For example, what happens if a concurrent seek happens on the fd while
-> > io_uring is using vfs_getdents which calls into iterate_dir() and
-> > updates f_pos?
-> 
-> I don't see how different that is from a user spawning two threads and
-> calling getdents64 + lseek or two getdents64 in parallel?
-> (or any two other users of iterate_dir)
-> 
-> As far as I understand you'll either get the old or new pos as
-> obtained/updated by iterate_dir()?
-> 
-> That iterate_dir probably ought to be using READ_ONCE/WRITE_ONCE or some
-> atomic read/update wrappers as the shared case only has a read lock
-> around these, but that's not a new problem; and for all I care
-> about I'm happy to let users shoot themselves in the foot.
-> (although I guess that with filesystems not validating the offset as
-> was pointed out in a previous version comment having non-atomic update
-> might be a security issue at some point on architectures that don't
-> guarantee atomic 64bit updates, but if someone manages to abuse it
-> it's already possible to abuse it with the good old syscalls, so I'd
-> rather leave that up to someone who understand how atomicity in the
-> kernel works better than me...)
+Since this is the spin case, and we expect (by far) most of these
+to NOT need a reschedule, I think we should do:
 
-There's multiple issues here.
+	if (need_resched()) {
+		mutex_unlock(&sqd->lock);
+		cond_resched();
+		mutex_lock(&sqd->lock);
+	}
 
-The main objection in [1] was to allow specifying an arbitrary offset
-from userspace. What [3] did was to implement a pread() variant for
-directories, i.e., pgetdents(). That can't work in principle/is
-prohibitively complex. Which is what your series avoids by not allowing
-any offsets to be specified.
+to make that lock shuffle dependent on the need to reschedule. And
+since we're marking the timeout at that point, timeout should be
+assigned first as far as I can tell. So in total:
 
-However, there's still a problem here. Updates to f_pos happen under an
-approriate lock to guarantee consistency of the position between calls
-that move the cursor position. In the normal read-write path io_uring
-doesn't concern itself with f_pos as it keeps local state in
-kiocb->ki_pos.
+	if (sqt_spin || !time_after(jiffies, timeout)) {
+		if (sqt_spin)
+ 			timeout = jiffies + sqd->sq_thread_idle;
+ 		if (unlikely(need_resched())) {
+			mutex_unlock(&sqd->lock);
+			cond_resched();
+			mutex_lock(&sqd->lock);
+		}
+		continue;
+	}
 
-But then it still does end up running into f_pos consistency problems
-for read-write because it does allow operating on the current f_pos if
-the offset if struct io_rw is set to -1.
+would probably be the better fix.
 
-In that case it does retrieve and update f_pos which should take
-f_pos_lock and a patchset for this was posted but it didn't go anywhere.
-It should probably hold that lock. See Jann's comments in the other
-thread how that currently can lead to issues.
+-- 
+Jens Axboe
 
-For getdents() not protecting f_pos is equally bad or worse. The patch
-doesn't hold f_pos_lock and just updates f_pos prior _and_ post
-iterate_dir() arguing that this race is fine. But again, f_version and
-f_pos are consistent after each system call invocation.
-
-But without that you can have a concurrent seek running and can end up
-with an inconsistent f_pos position within the same system call. IOW,
-you're breaking f_pos being in a well-known state. And you're not doing
-that just for io_uring you're doing it for the regular system call
-interface as well as both can be used on the same fd simultaneously.
-So that's a no go imho.
-
-> I don't see how different that is from a user spawning two threads and
-> calling getdents64 + lseek or two getdents64 in parallel?
-> (or any two other users of iterate_dir)
-
-The difference is that in both cases f_pos_lock for both getdents and
-lseek is held. So f_pos is in a good known state. You're not taking any
-locks so now we're risking inconsistency within the same system call if
-getdents and lseek run concurrently. Jens also mentioned that you could
-even have this problem from within io_uring itself.
-
-So tl;dr, there's no good reason to declare this an acceptable race
-afaict. So either this is fixed properly or we're not doing it as far as
-I'm concerned.
-
-[1] https://lore.kernel.org/all/20211221164004.119663-1-shr@fb.com/T/#m517583f23502f32b040c819d930359313b3db00c
-[2] https://lore.kernel.org/io-uring/20211221164004.119663-4-shr@fb.com
-[3] https://lore.kernel.org/io-uring/20211221164004.119663-1-shr@fb.com

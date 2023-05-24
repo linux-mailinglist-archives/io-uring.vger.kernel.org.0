@@ -2,67 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C0C770EBCC
-	for <lists+io-uring@lfdr.de>; Wed, 24 May 2023 05:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C86470ED67
+	for <lists+io-uring@lfdr.de>; Wed, 24 May 2023 07:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239284AbjEXDRk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 23 May 2023 23:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44582 "EHLO
+        id S239371AbjEXFzI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 24 May 2023 01:55:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232367AbjEXDRD (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 23 May 2023 23:17:03 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F5110E3
-        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 20:15:23 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-3381a0cae92so2845895ab.0
-        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 20:15:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684898123; x=1687490123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5K82624dp/INLh8L6r9QVknrsFryPWSF3j8ZLvRKTiE=;
-        b=e/4OJHPkTyx00JQOTEW9U4E27IXL8VKFC1f1GgfxVXoLRPDtyytfWlXv7eD/QpgqZa
-         124UFeTO21kf+f/gXYyshYpQOxYZBgWgD0UqpB4JUwWpcf2sht2Ujk+HdDOWptso1R/D
-         3N44mdapRS/+EE0wirElSRFe6ghVqtDEfCiMyt5aFlcuBDZ5Uh4PVoxpWzWf8KQl1LpB
-         vpP+RToKn9YBCiOvH9Hy2NhIJ5MOzPjRRclENgWvMvffYTDFMNl+Vb14M3ygC9GAAYAH
-         lJj75T5y/GeKEQ/WuL63uuK3U9gasggTMXqkMeniYu4adZxP5WCF/Z7PoFcUCWPi5rh3
-         l2Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684898123; x=1687490123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5K82624dp/INLh8L6r9QVknrsFryPWSF3j8ZLvRKTiE=;
-        b=F9S0RmDski4YqiaZwad4QKQ92GPDHf3hlpohZSFeJ/C3MlN975yw+iUCcA48ixxaKY
-         0vckueRn7Sw/U2cxB7361RXPWXd2SxxV2JKyae5lbEOO1sBoA+P4tgS1tCMPN0TXjOSy
-         QWv8fBRs+kLyhwwFYIS8Rox9azKnXvtEkAi+fx355Dy6LW3vSyu3LmzOHQJo+aceR638
-         hmIXnzKwvy42DcbkjM/HoChX+rbJrJ+VqNKUH6kerDUqVsSqjQnl5diibOI3rtc6m6Nq
-         zTyQeSoOGQ24dGkSgSRK5DZU7XvL1XyzKrGnbmF6X636fzug+mMfrMavNIhtsYDXCoOB
-         IIxw==
-X-Gm-Message-State: AC+VfDwxLyewGnWprJYiUYcBMoHjayRmFlv62HfRqAhE6K9t3zYKaofB
-        znmZdf4paJo9b7Hzdt6aXRzs55DzPCSm+/amlsM=
-X-Google-Smtp-Source: ACHHUZ50kU8JOY3ukdMLD1DqyUpH6PupTgg8j+mU/P+m8eyJV7pr/LD+69bJWPPiKEa2w+lSyAIr5tROM6oRi4pfvo8=
-X-Received: by 2002:a92:cf4c:0:b0:331:5aec:5a34 with SMTP id
- c12-20020a92cf4c000000b003315aec5a34mr11278888ilr.0.1684898122945; Tue, 23
- May 2023 20:15:22 -0700 (PDT)
+        with ESMTP id S239354AbjEXFzG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 24 May 2023 01:55:06 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6C1189
+        for <io-uring@vger.kernel.org>; Tue, 23 May 2023 22:55:02 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230524055500epoutp017a7ddcec585a5a623449a139efb9c4ca~h-qBTsFCo0756907569epoutp01n
+        for <io-uring@vger.kernel.org>; Wed, 24 May 2023 05:55:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230524055500epoutp017a7ddcec585a5a623449a139efb9c4ca~h-qBTsFCo0756907569epoutp01n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1684907700;
+        bh=J4+LQ/UAKS8+jVjqkeJWuZbYOOgodEqPFkZK+cZDsWU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=LTvVvqURnqmE9bgBhwWbvqGSWvlKleZ3WTp1HrIBYl+WFQONhZ6H9Kw4fhfXIzCEJ
+         9EG0zYGw80bXOhYhue7P6dfN+YtKvNm3hxgjqYfKP6i0cTE5WsL4pJEQMSJ3O+C/n4
+         wzzU8CyLH2ZW3AguZ8qSMrvJSFdWdPyfz3eDvH/I=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20230524055459epcas5p4a1b415e4d38e355cf83a50d8b4c6d382~h-qA9Fp_L1898118981epcas5p4F;
+        Wed, 24 May 2023 05:54:59 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4QR0l64vVmz4x9Pt; Wed, 24 May
+        2023 05:54:58 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        22.5A.16380.1B6AD646; Wed, 24 May 2023 14:54:57 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230524052154epcas5p313d92a9cbf0fa7e9555f8dd00125539e~h-NIFeian0102801028epcas5p3S;
+        Wed, 24 May 2023 05:21:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230524052154epsmtrp21e1757f7590fa453964b96bce8dd896c~h-NIEvmUy1813918139epsmtrp2I;
+        Wed, 24 May 2023 05:21:54 +0000 (GMT)
+X-AuditID: b6c32a4b-7dffd70000013ffc-2f-646da6b1e5ec
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7B.E6.27706.2FE9D646; Wed, 24 May 2023 14:21:54 +0900 (KST)
+Received: from localhost.localdomain (unknown [109.105.118.125]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230524052153epsmtip19bcad476527030e698c9ff7f23a9be08~h-NHTCb0h0438204382epsmtip1b;
+        Wed, 24 May 2023 05:21:53 +0000 (GMT)
+From:   Wenwen Chen <wenwen.chen@samsung.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, Wenwen Chen <wenwen.chen@samsung.com>,
+        Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH] io_uring: unlock sqd->lock before sq thread release CPU
+Date:   Wed, 24 May 2023 13:28:01 +0800
+Message-Id: <20230524052801.369798-1-wenwen.chen@samsung.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <3e79156a106e8b5b3646672656f738ba157957ef.1684505086.git.asml.silence@gmail.com>
- <CAAehj2nmnN98ZYzcFMR0DsKXqEM7L8DH8SM4NusPqzoHu_VNPw@mail.gmail.com>
- <4ec09942-2855-8be4-3f51-d1fedea8d2f3@gmail.com> <CAAehj2kOScdWU6_N+gs-Zo+yCx2Q2_x5vdX3U=Cc8R2=ruJb9Q@mail.gmail.com>
- <700f61ec-dc97-4572-d05c-9cbddf3addc8@gmail.com>
-In-Reply-To: <700f61ec-dc97-4572-d05c-9cbddf3addc8@gmail.com>
-From:   yang lan <lanyang0908@gmail.com>
-Date:   Wed, 24 May 2023 11:15:12 +0800
-Message-ID: <CAAehj2nPSJzZer_jhd0=VvTDjTD2uaCtdidKqeFK=js75YA_+g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: more graceful request alloc OOM
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDKsWRmVeSWpSXmKPExsWy7bCmhu7GZbkpBl2H5CzmrNrGaLH6bj+b
+        xbvWcywWR/+/ZbP41X2X0eLshA+sFlO37GByYPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
+        mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
+        KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtjwcqN
+        TAW9XBWPv1s1MC7n6GLk4JAQMJE43xLaxcjFISSwm1Gi/fELdgjnE6PEzC1NUM43RomuDSuB
+        HE6wjoVrrrBAJPYySvztvgzlfGWUOLHpKFgVm4C2xPu1LYwgtgiQ/frxVBYQm1kgS+LS229g
+        NcICHhLrtk5gA7FZBFQlWubeAKvhFbCVWLwaoldCQF5i4uy7jBBxQYmTM59AzZGXaN46mxmi
+        5hi7xJ+nHBC2i8TuvuNsELawxKvjW6CulpL4/G4vVLxYYuLBL2CvSQg0MEocv/iVBSJhLfHv
+        yh4WUMAwC2hKrN+lDxGWlZh6ah0TxF4+id7fT5gg4rwSO+bB2KoSZ5+fY4WwpSVa5jRAxT0k
+        Jpy/DHaDkECsxL4N+9gnMMrPQvLOLCTvzELYvICReRWjZGpBcW56arFpgXFeajk8XpPzczcx
+        gpOhlvcOxkcPPugdYmTiYDzEKMHBrCTCe6I8O0WINyWxsiq1KD++qDQntfgQoykwjCcyS4km
+        5wPTcV5JvKGJpYGJmZmZiaWxmaGSOK+67clkIYH0xJLU7NTUgtQimD4mDk6pBia9ObHywusz
+        30+pylYtdz5zhn/9NV4W849Gye5HdzmzWNt087M3fmxW2pK+7dusW1Hhpw7ceM7otrCY9fZX
+        q+vLn3DNOxEYfHqpk8DbA6HLnVb6MJSJpYR2bLbdMElsKguP57Fcts/a0m5mN8O6N9RJRJpU
+        nltpWSJ8uZN5w27x71PLVzxbznwlyMnMMJN7p+OVDXkMi/UEPUPm+ayYIjY3y2e2YYzxD4Yt
+        7bbmPe1yDVV5fxxf7JY9ms2ze0e4x1Hlu64CH69OePWMpWPBfsf8t5Es1VYC/jMrA3PPT+Sd
+        Vq7gFJdXd4LXa3qmOX/Xx+Mz225ob83Sv6Orof3URKGToyD1oNCPNO9P+2oXKLEUZyQaajEX
+        FScCAMHsXTMPBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsWy7bCSnO6nebkpBh/WyVrMWbWN0WL13X42
+        i3et51gsjv5/y2bxq/suo8XZCR9YLaZu2cHkwO6xc9Zddo/LZ0s9+rasYvT4vEkugCWKyyYl
+        NSezLLVI3y6BK2PByo1MBb1cFY+/WzUwLufoYuTkkBAwkVi45gpLFyMXh5DAbkaJBe82MkEk
+        pCUOXfvMCmELS6z895wdougzo8SR45PAitgEtCXer21h7GLk4BAR0JVovKsAEmYWyJG4ee09
+        C4gtLOAhsW7rBDYQm0VAVaJl7g2wOK+ArcTi1SCtIPPlJSbOvssIEReUODnzCQvEHHmJ5q2z
+        mScw8s1CkpqFJLWAkWkVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZwWGpp7mDcvuqD
+        3iFGJg7GQ4wSHMxKIrwnyrNThHhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2a
+        WpBaBJNl4uCUamBi3O8YZisYxR1vd6zr8e/eeecLzv7VUbPyd7o810V+Yvvp3oSyJQrn01R+
+        3zK/yx666OYJxgWfVhtt8vPy3W+z8ueZZQyvv5TtadvvdkZ8FpfMmTXhvYcjEj9+nxKge6ji
+        D7vyb9G6x0s99mRtWeeRxRu2h8s/Xdtp6Znchq2KX0y6bnjOlfXk5TULCf7x48I25bOW4RvT
+        /no+nPrRtna6QdrG8sJkGbWVvf8Ohmh+W7X65uLGluZEzXCWcu4pv5ac7ykPn2RdJ7phg7Dv
+        45y5+RdlHvK0nf2+sCjV4OK5c8V7osPNUt+d432TlXv4oUtV4QOPskmbvl99wf0jTIk19Pq6
+        x5d/uG1ZlXHT5MsPJZbijERDLeai4kQA0A8k0boCAAA=
+X-CMS-MailID: 20230524052154epcas5p313d92a9cbf0fa7e9555f8dd00125539e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230524052154epcas5p313d92a9cbf0fa7e9555f8dd00125539e
+References: <CGME20230524052154epcas5p313d92a9cbf0fa7e9555f8dd00125539e@epcas5p3.samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,78 +111,37 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+The sq thread actively releases CPU resources by calling the 
+cond_resched() and schedule() interfaces when it is idle. Therefore,
+more resources are available for other threads to run.
 
-Thanks.
+There exists a problem in sq thread: it does not unlock sqd->lock before
+releasing CPU resources every time. This makes other threads pending on
+sqd->lock for a long time. For example, the following interfaces all 
+require sqd->lock: io_sq_offload_create(), io_register_iowq_max_workers()
+and io_ring_exit_work().
+       
+Before the sq thread releases CPU resources, unlocking sqd->lock will 
+provide the user a better experience because it can respond quickly to
+user requests.
 
-Regards,
+Signed-off-by: Kanchan Joshi<joshi.k@samsung.com>
+Signed-off-by: Wenwen Chen<wenwen.chen@samsung.com>
+---
+ io_uring/sqpoll.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Yang
-
-Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2023=E5=B9=B45=E6=9C=8823=
-=E6=97=A5=E5=91=A8=E4=BA=8C 20:15=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 5/22/23 08:55, yang lan wrote:
-> > Hi,
-> >
-> > Thanks. I'm also analyzing the root cause of this bug.
->
-> The repro indeed triggers, this time in another place. Though
-> when I patch all of them it would fail somewhere else, like in
-> ext4 on a pagefault.
->
-> We can add a couple more those "don't oom but fail" and some
-> niceness around, but I think it's fine as it is as allocations
-> are under cgroup. If admin cares about collision b/w users there
-> should be cgroups, so allocations of one don't affect another. And
-> if a user pushes it to the limit and oom's itself and gets OOM,
-> that should be fine.
->
-> > By the way, can I apply for a CVE? And should I submit a request to
-> > some official organizations, such as Openwall, etc?
->
-> Sorry, but we cannot help you here. We don't deal with CVEs.
->
-> That aside, I'm not even sure it's CVE'able because it shouldn't
-> be exploitable in a configured environment (unless it is). But
-> I'm not an expert in that so might be wrong.
->
->
->
-> > Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2023=E5=B9=B45=E6=9C=
-=8822=E6=97=A5=E5=91=A8=E4=B8=80 08:45=E5=86=99=E9=81=93=EF=BC=9A
-> >>
-> >> On 5/20/23 10:38, yang lan wrote:
-> >>> Hi,
-> >>>
-> >>> Thanks for your response.
-> >>>
-> >>> But I applied this patch to LTS kernel 5.10.180, it can still trigger=
- this bug.
-> >>>
-> >>> --- io_uring/io_uring.c.back    2023-05-20 17:11:25.870550438 +0800
-> >>> +++ io_uring/io_uring.c 2023-05-20 16:35:24.265846283 +0800
-> >>> @@ -1970,7 +1970,7 @@
-> >>> static struct io_kiocb *io_alloc_req(struct io_ring_ctx *ctx)
-> >>>           __must_hold(&ctx->uring_lock)
-> >>>    {
-> >>>           struct io_submit_state *state =3D &ctx->submit_state;
-> >>> -       gfp_t gfp =3D GFP_KERNEL | __GFP_NOWARN;
-> >>> +       gfp_t gfp =3D GFP_KERNEL | __GFP_NOWARN | __GFP_NORETRY;
-> >>>           int ret, i;
-> >>>
-> >>>           BUILD_BUG_ON(ARRAY_SIZE(state->reqs) < IO_REQ_ALLOC_BATCH);
-> >>>
-> >>> The io_uring.c.back is the original file.
-> >>> Do I apply this patch wrong?
-> >>
-> >> The patch looks fine. I run a self-written test before
-> >> sending with 6.4, worked as expected. I need to run the syz
-> >> test, maybe it shifted to another spot, e.g. in provided
-> >> buffers.
-> >>
-> >> --
-> >> Pavel Begunkov
->
-> --
-> Pavel Begunkov
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 9db4bc1f521a..759c80fb4afa 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -255,7 +255,9 @@ static int io_sq_thread(void *data)
+ 			sqt_spin = true;
+ 
+ 		if (sqt_spin || !time_after(jiffies, timeout)) {
++			mutex_unlock(&sqd->lock);
+ 			cond_resched();
++			mutex_lock(&sqd->lock);
+ 			if (sqt_spin)
+ 				timeout = jiffies + sqd->sq_thread_idle;
+ 			continue;

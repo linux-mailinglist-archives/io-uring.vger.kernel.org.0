@@ -2,152 +2,156 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E0F2710019
-	for <lists+io-uring@lfdr.de>; Wed, 24 May 2023 23:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95027107EF
+	for <lists+io-uring@lfdr.de>; Thu, 25 May 2023 10:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235996AbjEXVgv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 24 May 2023 17:36:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
+        id S233700AbjEYIxz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 25 May 2023 04:53:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235702AbjEXVgo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 24 May 2023 17:36:44 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24302FC;
-        Wed, 24 May 2023 14:36:42 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 82F68C021; Wed, 24 May 2023 23:36:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1684964200; bh=yrpXMUqAGp5oyUvzDl3QkfpAYUk5X23ovRaf0BC/DY0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q8c8AFZuTz+kvioFyFxziJpfPFV1ZxhngrealEWWTvTmybbhje/mnZqid6WR4dgms
-         qA8dNB8MszRwHTMnqfEZC2vYEJCUlc8iw1hOaltviXNAjzK5SnC+XbCP3FJGs83STA
-         f8Eu65q21KnrRVRa1NB0xoHTCswWy4gX59+7RZB2OY55lTXBtNNlI544SHqQpzaLI5
-         ACdc5fMzzEI4eRWGAaLjcg+kqia2ArDk8HduFYi3MY9yN6bSUIK8o4kwF4Di5oqn8U
-         3J56rwNT/zfVJwZrly7KkRwd4OpKNbsFmU3usnBTwp/eqYmhxWAUoiD1+VKa3mANV0
-         EolySEU28Tb4w==
+        with ESMTP id S233181AbjEYIxy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 25 May 2023 04:53:54 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91D318D
+        for <io-uring@vger.kernel.org>; Thu, 25 May 2023 01:53:51 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230525085348epoutp047f8a680288b5ffda7f5136ce4351929f~iVvbJeQ032193521935epoutp04c
+        for <io-uring@vger.kernel.org>; Thu, 25 May 2023 08:53:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230525085348epoutp047f8a680288b5ffda7f5136ce4351929f~iVvbJeQ032193521935epoutp04c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1685004828;
+        bh=6rZXhuqUwEUyJ1n9SgGz3Cpuoe0L6XNpZFiNtajnt6A=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=dQXZ/n5i4z//JHAUXSZSIozGKZeW1Cz4ZLKGAWyRFvUb5DBceBUDTzaeetGGKU098
+         W+x/qnJZsb1OoTPkA/ydZkmqcfaeS3QHm3uuklUmhgdihktEL3DzvlhZRjA4MVD/35
+         EhIJO7400IwpfQeuDeoNeDXfDiqCP+WblY8QlteQ=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20230525085348epcas5p32f06fa0b3ba2495a215e4d57bf0dd1dc~iVvarsfRr0230102301epcas5p3f;
+        Thu, 25 May 2023 08:53:48 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4QRhfx6HSgz4x9Q5; Thu, 25 May
+        2023 08:53:45 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E5.EB.44881.5122F646; Thu, 25 May 2023 17:53:41 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230525082004epcas5p1d05da68508feff3f9dd82646a0b40aff~iVR_cNBga1722317223epcas5p1Z;
+        Thu, 25 May 2023 08:20:04 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230525082004epsmtrp20a42dc5a7d130185a806134c361fc753~iVR_bk-ee0256602566epsmtrp2k;
+        Thu, 25 May 2023 08:20:04 +0000 (GMT)
+X-AuditID: b6c32a4a-c47ff7000001af51-62-646f2215aebf
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.90.27706.43A1F646; Thu, 25 May 2023 17:20:04 +0900 (KST)
+Received: from localhost.localdomain (unknown [109.105.118.125]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230525082003epsmtip1a3d73cb074325a19dd202ef614a92cd3~iVR9iFYoL1097610976epsmtip1O;
+        Thu, 25 May 2023 08:20:03 +0000 (GMT)
+From:   Wenwen Chen <wenwen.chen@samsung.com>
+To:     axboe@kernel.dk, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, Wenwen Chen <wenwen.chen@samsung.com>,
+        Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH v2] io_uring: unlock sqd->lock before sq thread release CPU
+Date:   Thu, 25 May 2023 16:26:26 +0800
+Message-Id: <20230525082626.577862-1-wenwen.chen@samsung.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmuq6oUn6KwbUmK4s5q7YxWqy+289m
+        8a71HIvF0f9v2Sx+dd9ltDg74QOrxdQtO5gc2D12zrrL7nH5bKlH35ZVjB6fN8kFsERl22Sk
+        JqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAHaCkUJaYUwoU
+        CkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM74vGYb
+        a8FO7ooPD5YyNzCu4uxi5OSQEDCRaJo1h7GLkYtDSGA3o0TL8UYo5xOjxKmtm5khnG+MEp8u
+        NTDDtNzZt5YNIrEXqKqpB8r5yijRt2EzG0gVm4C2xPu1LYwgtgiQ/frxVBYQm1kgS+LS22/s
+        ILawgLfEhT2fweIsAqoS65c8BIvzCthK3Di8kw1im7zExNl3GSHighInZz6BmiMv0bx1Nth5
+        EgLH2CVOft4DdZ6LxISzx9ghbGGJV8e3QNlSEp/f7YUaWiwx8eAXdojmBkaJ4xe/skAkrCX+
+        XdkDZHMAbdCUWL9LHyIsKzH11DomiMV8Er2/nzBBxHkldsyDsVUlzj4/xwphS0u0zGmAintI
+        NPztB7tBSCBWoqNhHcsERvlZSP6ZheSfWQibFzAyr2KUTC0ozk1PLTYtMMpLLYdHbXJ+7iZG
+        cErU8trB+PDBB71DjEwcjIcYJTiYlUR4T5RnpwjxpiRWVqUW5ccXleakFh9iNAUG8kRmKdHk
+        fGBSziuJNzSxNDAxMzMzsTQ2M1QS51W3PZksJJCeWJKanZpakFoE08fEwSnVwLSk/QWLY/pv
+        jqNHC3ds8cgo9zgptfL0V97JmU/7egX9DVkcLk1fa+VQ6PUzcrrukRU2rNU1CretVz8wOhp6
+        evFyOZ+0Xc0x5mtUFP9/nhP3TqzSvNF1qbuufqth47fr+9XVMsReptXGa2jclE0+uaAsua3o
+        zlG9eX3/1pZszeS6qM2W8igoatWlv4sqSuMOsn27PK/1xk+l0+89vU9IWX6379Kf9MMiQpuH
+        XSLgZ73WX363Npu58+d9lZ8n7+7ruFFMYKmzwpRfJ9q2z9+UW7vH83lyFfedO+qrqqO9M9r9
+        fKc3Ll0e715WcDP1yaT5B1lntmw59vNdwySZpU88HrTf2vWwy/bcCkHRhUtCViuxFGckGmox
+        FxUnAgCbTUXREgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnK6JVH6KwY/ZOhZzVm1jtFh9t5/N
+        4l3rORaLo//fsln86r7LaHF2wgdWi6lbdjA5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInisklJ
+        zcksSy3St0vgyvi8ZhtrwU7uig8PljI3MK7i7GLk5JAQMJG4s28tWxcjF4eQwG5GiQuHlzNC
+        JKQlDl37zAphC0us/PecHaLoM6PE+x13WEASbALaEu/XtgA1cHCICOhKNN5VAAkzC+RI3Lz2
+        HqxEWMBb4sKez2A2i4CqxPolD9lBbF4BW4kbh3eyQcyXl5g4+y4jRFxQ4uTMJywQc+QlmrfO
+        Zp7AyDcLSWoWktQCRqZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjBgamluYNx+6oP
+        eocYmTgYDzFKcDArifCeKM9OEeJNSaysSi3Kjy8qzUktPsQozcGiJM57oetkvJBAemJJanZq
+        akFqEUyWiYNTqoHptHvSekH1NXE88lefRDC8yJ6U53vrrae1q9XWpfsyz+fsu+918I/lOoP3
+        Bu8Ov/tw9ctRBa8p5nmfAj4u/asnJud+75kuz5nVLLveH+gJ+PWlvaz+pneYytfeVewuJ3iX
+        n+RfxF3u/1/mpU/8gv83d/2a2GQh7NTEyJO9r0vprZbTmRs/Qm4q3VuY2f9s5QJfu5kr9kSr
+        fnin+YZn7ZqFzay75KZ/CnjP+UFj72EmtVbOgPQHEfNYTs7UmvwyTXj+ArGZPc2vZb5kfZlx
+        g/tNu3nCZU1L4x/PpzOE8M9/cnRnikXIjO+bul9wbeO/oNE28WTRkwimUz9q9cVcFv6zLp+h
+        HH5mYXDKTPdtVfaVkkosxRmJhlrMRcWJADsCy6S7AgAA
+X-CMS-MailID: 20230525082004epcas5p1d05da68508feff3f9dd82646a0b40aff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230525082004epcas5p1d05da68508feff3f9dd82646a0b40aff
+References: <CGME20230525082004epcas5p1d05da68508feff3f9dd82646a0b40aff@epcas5p1.samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 76195C009;
-        Wed, 24 May 2023 23:36:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1684964198; bh=yrpXMUqAGp5oyUvzDl3QkfpAYUk5X23ovRaf0BC/DY0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zhZEAhayVDmsW4Tz0Sh9flNnfBzGkRuV4XRVAiMhfrC7O3ljD1T9WGGwhZ/P8G8JS
-         2K3pWt6Q/5Ar9ESDxVzq9wNyYXHopA7WIau76JTHDspNoW9RePb7tBya6AlKD1kHq8
-         e75Jc58nRsNTQBpVk5X2NMvDa/wjQCnt+47qOm3zNDVbMX52UNfcv4J2HOfxD2Yk9H
-         Qqb3r5QXAKF9eQlUjfNfL6qdlE4OW3295JntKQRuUdpOHLmVYWxJetPzUlVqZGNAYT
-         tcibgTyEXrmw+4/eQtEYEcHsE5q5Yu6DKA6c0ODguzlz1aRqFm5I6iNFR2djGoDFSA
-         1Ziwk97KZMEKg==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id ec1cb997;
-        Wed, 24 May 2023 21:36:32 +0000 (UTC)
-Date:   Thu, 25 May 2023 06:36:17 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] fs: split off vfs_getdents function of getdents64
- syscall
-Message-ID: <ZG6DUfdbTHS-e5P7@codewreck.org>
-References: <ZG0slV2BhSZkRL_y@codewreck.org>
- <ZG0qgniV1DzIbbzi@codewreck.org>
- <20230524-monolog-punkband-4ed95d8ea852@brauner>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230524-monolog-punkband-4ed95d8ea852@brauner>
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Christian Brauner wrote on Wed, May 24, 2023 at 03:52:45PM +0200:
-> The main objection in [1] was to allow specifying an arbitrary offset
-> from userspace. What [3] did was to implement a pread() variant for
-> directories, i.e., pgetdents(). That can't work in principle/is
-> prohibitively complex. Which is what your series avoids by not allowing
-> any offsets to be specified.
+The sq thread actively releases CPU resources by calling the
+cond_resched() and schedule() interfaces when it is idle. Therefore,
+more resources are available for other threads to run.
 
-Yes.
+There exists a problem in sq thread: it does not unlock sqd->lock before
+releasing CPU resources every time. This makes other threads pending on
+sqd->lock for a long time. For example, the following interfaces all
+require sqd->lock: io_sq_offload_create(), io_register_iowq_max_workers()
+and io_ring_exit_work().
 
-> However, there's still a problem here. Updates to f_pos happen under an
-> approriate lock to guarantee consistency of the position between calls
-> that move the cursor position. In the normal read-write path io_uring
-> doesn't concern itself with f_pos as it keeps local state in
-> kiocb->ki_pos.
-> 
-> But then it still does end up running into f_pos consistency problems
-> for read-write because it does allow operating on the current f_pos if
-> the offset if struct io_rw is set to -1.
-> 
-> In that case it does retrieve and update f_pos which should take
-> f_pos_lock and a patchset for this was posted but it didn't go anywhere.
-> It should probably hold that lock. See Jann's comments in the other
-> thread how that currently can lead to issues.
+Before the sq thread releases CPU resources, unlocking sqd->lock will
+provide the user a better experience because it can respond quickly to
+user requests.
 
-Assuming that is this mail:
-https://lore.kernel.org/io-uring/CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com/
+Signed-off-by: Kanchan Joshi<joshi.k@samsung.com>
+Signed-off-by: Wenwen Chen<wenwen.chen@samsung.com>
+---
+ V1 -> V2: Make sqd lock shuffle dependent on the need to reschedule
+ io_uring/sqpoll.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-So, ok, I didn't realize fdget_pos() actually acted as a lock on the
-file's f_pos_lock (apparently only if FMODE_ATMOIC_POS is set? but it
-looks set on most if not all directories through finish_open(), that
-looks called consistently enough)
-
-What was confusing is that default_llseek updates f_pos under the
-inode_lock (write), and getdents also takes that lock (for read only in
-shared implem), so I assumed getdents also was just protected by this
-read lock, but I guess that was a bad assumption (as I kept pointing
-out, a shared read lock isn't good enough, we definitely agree there)
-
-
-In practice, in the non-registered file case io_uring is also calling
-fdget, so the lock is held exactly the same as the syscall and I wasn't
-so far off -- but we need to figure something for the registered file
-case.
-openat variants don't allow working with the registered variant at all
-on the parent fd, so as far as I'm concerned I'd be happy setting the
-same limitation for getdents: just say it acts on fd and not files, and
-call it a day...
-It'd also be possible to check if REQ_F_FIXED_FILE flag was set and
-manually take the lock somehow but we don't have any primitive that
-takes f_pos_lock from a file (the only place that takes it is fdget
-which requires a fd), so I'd rather not add such a new exception.
-I assume the other patch you mentioned about adding that lock was this
-one:
-https://lore.kernel.org/all/20220222105504.3331010-1-dylany@fb.com/T/#m3609dc8057d0bc8e41ceab643e4d630f7b91bde6
-and it just atkes the lock, but __fdget_pos also checks for
-FMODE_ATOMIC_OPS and file_count and I'm not sure I understand how it
-sets (f.flags & FDPUT_POS_UNLOCK) (for fdput_pos) so I'd rather not add
-such a code path at this point..
-
-
-So, ok, what do you think about just forbidding registered files?
-I can't see where that wouldn't suffice but I might be missing something
-else.
-
-> For getdents() not protecting f_pos is equally bad or worse. The patch
-> doesn't hold f_pos_lock and just updates f_pos prior _and_ post
-> iterate_dir() arguing that this race is fine. But again, f_version and
-> f_pos are consistent after each system call invocation.
-> 
-> But without that you can have a concurrent seek running and can end up
-> with an inconsistent f_pos position within the same system call. IOW,
-> you're breaking f_pos being in a well-known state. And you're not doing
-> that just for io_uring you're doing it for the regular system call
-> interface as well as both can be used on the same fd simultaneously.
-> So that's a no go imho.
-
-(so seek is fine, but I agree two concurrent getdents on registered
-files won't have the required lock)
-
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 9db4bc1f521a..5e329e3cd470 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -255,9 +255,13 @@ static int io_sq_thread(void *data)
+ 			sqt_spin = true;
+ 
+ 		if (sqt_spin || !time_after(jiffies, timeout)) {
+-			cond_resched();
+ 			if (sqt_spin)
+ 				timeout = jiffies + sqd->sq_thread_idle;
++			if (unlikely(need_resched())) {
++				mutex_unlock(&sqd->lock);
++				cond_resched();
++				mutex_lock(&sqd->lock);
++			}
+ 			continue;
+ 		}
+ 
 -- 
-Dominique Martinet | Asmadeus
+2.27.0
+

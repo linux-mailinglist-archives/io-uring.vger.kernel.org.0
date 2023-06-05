@@ -2,68 +2,66 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4BB723316
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jun 2023 00:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F8A723379
+	for <lists+io-uring@lfdr.de>; Tue,  6 Jun 2023 01:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjFEWVl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 5 Jun 2023 18:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33360 "EHLO
+        id S232055AbjFEXDh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 5 Jun 2023 19:03:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbjFEWVl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Jun 2023 18:21:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE0BAF
-        for <io-uring@vger.kernel.org>; Mon,  5 Jun 2023 15:21:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E807626A4
-        for <io-uring@vger.kernel.org>; Mon,  5 Jun 2023 22:21:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B98AC433D2;
-        Mon,  5 Jun 2023 22:21:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686003699;
-        bh=dCL+k3F63GFuMKYpU11gd3w+RnYFIFLaP63gLGgRE90=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QSwHoX9DlN9xlKIDBfLDen+kWaFdczHr7IxcySA/0oLmLp6JrRiN/uPEYqwRTZ6cF
-         jIWIKxrJdU951c1VeP8HgmLfPg7uUy8OxyUrGAu0U/0/GwtbM3k4G/tbkSKpQfJWQO
-         saSzxsp2WjAgpliO0f81Z9OTU6byPUto10pDDHVBKZcZJiEvRIw8bXKNRpcv4fP+Zg
-         Vts1dpfEjfVwRs9jpMuGE+Nrg1RtT3TYsw1tFssgsGViPf40tZWhhXDDzjN9TQKqYl
-         uv0Z8cl1f+BlSVkJoVy0yddaNh7QzOq0CEa3BfsC59XgK6qdTw/5lycOhHdDjRG/bV
-         uf+weP3EG6Hrg==
-Date:   Mon, 5 Jun 2023 15:21:38 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Stefan Roesch <shr@devkernel.io>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, axboe@kernel.dk,
-        ammarfaizi2@gnuweeb.org, netdev@vger.kernel.org,
-        olivier@trillion01.com
-Subject: Re: [PATCH v14 3/8] net: split off _napi_busy_loop()
-Message-ID: <20230605152138.1c93a261@kernel.org>
-In-Reply-To: <20230605212009.1992313-4-shr@devkernel.io>
-References: <20230605212009.1992313-1-shr@devkernel.io>
-        <20230605212009.1992313-4-shr@devkernel.io>
+        with ESMTP id S229873AbjFEXDg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 5 Jun 2023 19:03:36 -0400
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E46998;
+        Mon,  5 Jun 2023 16:03:35 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-4f4453b607eso804926e87.1;
+        Mon, 05 Jun 2023 16:03:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686006214; x=1688598214;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+        b=ieEdtxLcPOoa41BNpRUY8SWKdsD1hUkVRoQ/3GpvxOIqVR3ofSl+M390lyt6qNRzcb
+         8+NSjdjIOCRfNZY+hDB4iUQKWMBinX0q/dvuXlz1VlwJv/Fk4OwG4Q5d6rXYdIiaCjbm
+         2dVTcyPn3POpfxUVBa60D3apg6dEEi6KP3NJHLme9JIhCnss5ZwejOykonTiOo3VbyKS
+         e+cmzrL7/yWFE64PeXdXBsyAgEyaOnVMz2U1nXBLGyfFULO09kCHkF+GszEqpUokjrBf
+         1EAd6OWewT+d5vuM/5BXWiM4RtPELjdtMZB35cddA0rTNyoicLMgjnxo7SQdzweLNm8j
+         9xBQ==
+X-Gm-Message-State: AC+VfDxcv0Lwq/s5A/yMhkZwEWV0bkjf1StUN4MkBhR2QI5VpA9/6kBE
+        UxblUbzV30DsnxTEiSm/3GI=
+X-Google-Smtp-Source: ACHHUZ5heC6RO5iwssXv/7QicJFpzgXr4CeRZuzfl4n1vcrP+cd/jbhE/6OmnSPD42SmqB7HS//AxQ==
+X-Received: by 2002:a05:651c:381:b0:2b1:c077:8d9 with SMTP id e1-20020a05651c038100b002b1c07708d9mr227353ljp.4.1686006213574;
+        Mon, 05 Jun 2023 16:03:33 -0700 (PDT)
+Received: from [10.100.102.14] (46-117-190-200.bb.netvision.net.il. [46.117.190.200])
+        by smtp.gmail.com with ESMTPSA id w13-20020a2e300d000000b002af25598f07sm1610684ljw.78.2023.06.05.16.03.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Jun 2023 16:03:33 -0700 (PDT)
+Message-ID: <3c78324e-0c00-8fe9-9827-a278e7b1ecad@grimberg.me>
+Date:   Tue, 6 Jun 2023 02:03:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/2] block: add request polling helper
+Content-Language: en-US
+To:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+        hch@lst.de, axboe@kernel.dk
+Cc:     joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+References: <20230530172343.3250958-1-kbusch@meta.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20230530172343.3250958-1-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon,  5 Jun 2023 14:20:04 -0700 Stefan Roesch wrote:
-> +static void _napi_busy_loop(unsigned int napi_id,
-
-IDK how much of an official kernel coding style this rule is but 
-I think that double underscore is more idiomatic..
-
->  		    bool (*loop_end)(void *, unsigned long),
-> -		    void *loop_end_arg, bool prefer_busy_poll, u16 budget)
-> +		    void *loop_end_arg, bool prefer_busy_poll, u16 budget,
-> +		    bool rcu)
--- 
-pw-bot: cr
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>

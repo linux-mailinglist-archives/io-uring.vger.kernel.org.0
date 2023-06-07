@@ -2,112 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36124723EFC
-	for <lists+io-uring@lfdr.de>; Tue,  6 Jun 2023 12:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC54726DA3
+	for <lists+io-uring@lfdr.de>; Wed,  7 Jun 2023 22:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233015AbjFFKLF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 6 Jun 2023 06:11:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40734 "EHLO
+        id S234639AbjFGUoP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 7 Jun 2023 16:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbjFFKLF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 6 Jun 2023 06:11:05 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2124.outbound.protection.outlook.com [40.107.220.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 491E51BD;
-        Tue,  6 Jun 2023 03:11:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YcHDz5zsRywJHW+pYM7kfiI6mxtvEBvpTtc8tsCyUdLPVu6KYmeKBxozcRlykQy90OZRB940erKagh2fMpaqvXOmXA7W6ifvfevP+qArFiBJx4rTYbZcEOOyAmjIkooXyBeiurZRWwvHP3uwA7ipCw3JDpduky5jpVLOF/ihL7Ih6TSgWlbLwuAjHmx4l4aEhmaN7RRnMGEj3jbplx6MvxoPghVB4oUHod87UE2fh58+L6l7X6M0gEu0dXfnLwwsngeOY9NpiFdhLC9RxDQc0jqHwJjPRf2Ae2TgY6Q0nw6tQoPoZo8q7Y26pKu/Myg2/Tqg2rYEapYI7wGiPkTGSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MW0SF987boLgutvROQ9gDml0gd8Xfn2dg/ki2laBB0Q=;
- b=FIg2cTUgqd9FI+7xy7NPTR/RKHTRSZF1lPqrPwhIVXZwAnZczB6xa9WMdPMoL9jNACnyvFEsd8p6/6P77l7iGhSXlsDse+gxE/QFwvJYuDbovyqhWyx0WjdV4YlLjHB6wrlxpoucYwDcw6lQ1fSKFjOirczu+wj/VNccOsEnqr4zBRJoR5Sx3g3RdcuwxAoTSQL2bvh/Ge0Yw+wfwECh6KqPEiQEXf/3TNVrijCpWWbM5rMoPwyd3/hs5ralt+/93ff0bNP07FlICQINCV67SpRFJHHRx4kz7Lem9ZWLiFk/KmxG55Zgwhv1Qm4dVkMy3bCPzKiqx/NkOCkwt74MDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
+        with ESMTP id S234629AbjFGUoO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 7 Jun 2023 16:44:14 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4111FE2
+        for <io-uring@vger.kernel.org>; Wed,  7 Jun 2023 13:43:52 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id 98e67ed59e1d1-25655c1fcf7so1505358a91.0
+        for <io-uring@vger.kernel.org>; Wed, 07 Jun 2023 13:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MW0SF987boLgutvROQ9gDml0gd8Xfn2dg/ki2laBB0Q=;
- b=Yg0om9D0I1/+g+Zun0ErEo1t851k3Dq2xjjzhOa0LUc4Re94hiBKrmlHb4/3NaLQbujTARq3jdEVYxnoEfuEldBBlhrlGf+6B6GE/6tBFzT67FZEIswRAfySGTm6DfyTja+B9rpnPF23OIRMAnGbp/Z0M7Fe64k5K3bI3AkGP+E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by SJ0PR13MB5896.namprd13.prod.outlook.com (2603:10b6:a03:43a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33; Tue, 6 Jun
- 2023 10:10:57 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::eb8f:e482:76e0:fe6e]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::eb8f:e482:76e0:fe6e%4]) with mapi id 15.20.6455.030; Tue, 6 Jun 2023
- 10:10:57 +0000
-Date:   Tue, 6 Jun 2023 12:10:51 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Stefan Roesch <shr@devkernel.io>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, axboe@kernel.dk,
-        ammarfaizi2@gnuweeb.org, netdev@vger.kernel.org, kuba@kernel.org,
-        olivier@trillion01.com
-Subject: Re: [PATCH v14 2/8] net: introduce napi_busy_loop_rcu()
-Message-ID: <ZH8GK0SIMEnAzUzc@corigine.com>
-References: <20230605212009.1992313-1-shr@devkernel.io>
- <20230605212009.1992313-3-shr@devkernel.io>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230605212009.1992313-3-shr@devkernel.io>
-X-ClientProxiedBy: AM0PR02CA0156.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::23) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686170625; x=1688762625;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kjTht/v7mE9h36bv8RH6aPgD/5g1NaAxrcV+B4S+BDo=;
+        b=S8ploq0Jv/oumixpFcY4E4dew/f+poC3RUxhYsmjfkTO1DVZN6J4fNp+B4+mRCt/ro
+         GbXFtP7z7TZonWMpVPPqIaFB9r7Ur+a3t8NvaVNWSvllfgfh2X+f3zMY3R6bJ65nuF0j
+         vg3YXeuRg2l8HZtw2Y8Y6/mQubyvT6EaFXIEWA2dzrggAv+zI0sC8SMm6BihnF++EqJH
+         LCAQI6MI/omVB2Qa/bLEYNby+JZqsYF4RFEZgLBY6LjGT20LgjORXFnjIqgMoZg9GWEK
+         gLyGVrwHLQCcU6jF5DrQoWjBf/oFyx4moOOZ62tdqYnZ94pNHOoEwJTjY5o6vsrGCn7D
+         FWEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686170625; x=1688762625;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kjTht/v7mE9h36bv8RH6aPgD/5g1NaAxrcV+B4S+BDo=;
+        b=cKS7vpI5bX/l6mzB4WfGMSsNVt03GABDLUSpcb8RaVI9GJRzyltXbF4e1pg3jvp6AO
+         TE5jDOfhddZH8+6vWpGa2E/mJXQ98+DfYSgC/kW6aS9pHpvu0LW6fQgqtMxscliBHi03
+         E/NiKvNnf4yx/aidGOC930Q4mUekNSbE+IxMdUUg83E9NkiXXd6xI978APYAdkIleQes
+         N4QEwHyADZU/jCWnZpMQ/4VxGFahBjrdVffALIx1aUKYIoAq05FXnRpJKmyazPNpVqSx
+         RlB1b6R1SbjfquJ+Slo/vt+PrdEPlvCNbCph5n5VaadptYxX1Mgs/6GoUBgW27ervnO/
+         0pCw==
+X-Gm-Message-State: AC+VfDzwrkv/79kKCcslE+U2CXGJckB1wB0MsAIewb8kEe8xXYniuKG3
+        TnHTfa+dTYiAfZucDzDIimLtmUtYPmeX2e6jdaw=
+X-Google-Smtp-Source: ACHHUZ57c128m1qa4jVi5PPS6r0DTUqOmNX+xHFCkBZMSmIb9dslk31c1rNZdJIHZCRTkCR11N3thg==
+X-Received: by 2002:a17:90b:38c2:b0:259:c00a:8830 with SMTP id nn2-20020a17090b38c200b00259c00a8830mr3647487pjb.4.1686170624952;
+        Wed, 07 Jun 2023 13:43:44 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:122::1:6343? ([2620:10d:c090:600::2:9b70])
+        by smtp.gmail.com with ESMTPSA id bk17-20020a17090b081100b00256b9d26a2bsm1740154pjb.44.2023.06.07.13.43.43
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 13:43:43 -0700 (PDT)
+Message-ID: <e47ea2e6-8920-9ecb-b0a8-434e48f6aa90@kernel.dk>
+Date:   Wed, 7 Jun 2023 14:43:42 -0600
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|SJ0PR13MB5896:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45ed2c2f-6c1d-4ec2-4c9a-08db6676520f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bVyPPRh82OjUtUaLNW+2qA7OIjSgcT9qXscs6u8U5XQBAUVEonlRXASm3l7tCWjZt9uO/1yE3/tIMiuCSGyE98n4mDNpg2sGJZoDDX/FG3LEOp7KdMITxZD+6vcj+DeO//UPsWQhKjQS2inX69fIElw9xvRSxYRp1AMVeQF3WYJE+Z9PSylhKT/I4ymkUX5bEFeHi8gZkGXpiVjnWkK5gl7yyiLSkYL9f9bn4qOsPPXvIcf296HonBDBeEDemmnfniwG71d2PaLe0ob2cPhTGh2/ldFw9JZ30joaNvd2ZvlMduUqXUb7BGYw1dnLLMA0MBSlcSsOM9ureQjT6jCSUAC7yADjs6zg/KF90vZqixspVtPgXF3MKxraU5M5vr4B4GNj6WK3OLYz9NADSxpNEL0mB0zLi+Px3UMjQDGaqAHVYa5pb4mWhL3OMMOaqtdoRo8MOd1nV5Me0hlBB+DPPyKyQ7jWCpHEVO5WFjyfd24idwr4kT5HHy4bwBUCbPrObQfO9ekhybDa9IPNxH9tKTv5lTxjVxQZ+nC2WkIG8CsLsC5SVbgvZV/2SIQb9QXH8B/aBVTdO69hHC1ITWA/2/nY8I6VtGuBSWB7aSwGzyY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39840400004)(346002)(136003)(396003)(366004)(376002)(451199021)(66556008)(66476007)(66946007)(41300700001)(2906002)(6666004)(2616005)(316002)(36756003)(86362001)(83380400001)(5660300002)(44832011)(6486002)(8676002)(8936002)(38100700002)(6916009)(4326008)(6512007)(6506007)(478600001)(186003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ebrpvl/x7QKDMeuR6tl5e5pCYCiwxHi9DGubMAJsG4L83nmsXuIzMGYlvqev?=
- =?us-ascii?Q?+XMmCQk01TPqXe5O2uhQRwcdAshcvVGTa78Mp+n6pBkHnb4ZAdiJI/S4oKEH?=
- =?us-ascii?Q?ePSGLaxp8EWXStZxohoohq13sbu+NiD10SgIID+dhU33uWheuH3jv5GkTdDX?=
- =?us-ascii?Q?LlwCp2HHPDdF7mYAsQPHTqRA1pWnmPJYE0UthHw39q2HFKEClmd6uD+lBXny?=
- =?us-ascii?Q?rjdcfJOnH0QyYzujblF5UuYuOwvY03wwEmbZ8/5cftr/tLYsgE98AjZr0ncR?=
- =?us-ascii?Q?yS/4ZgfA5CVHxiFKWGhnyXP2nCSYzd1vAMS7LFlGyzP7FKDKp0/4LHrtF701?=
- =?us-ascii?Q?xdkiHs0IY0la9oCuVKFmEFgQpvqrXEXIq2GFPVP0guNcLm2QIt+XnvWXxnxW?=
- =?us-ascii?Q?7ox/V97ABdPztWjuh+DwYZeBqBi7CKrx2ysRJAdbKTdf9pc5Od0mKgNQCzU+?=
- =?us-ascii?Q?LPTOOB7RfmUfniXuGxTtpbe81BURD2aLBxroBEHDpH014vR1ccYXWd18dD2m?=
- =?us-ascii?Q?XhGZRol0paPjcRjGVYgx9mpWsKJEkxiWV7VLRDytO99neQsF4UcAu3zTCbPO?=
- =?us-ascii?Q?V5nba7PC7nillD7NGgSHcZtpjdjhLYcQ+9SEl+El43TO1HdlPeYqRuTyGVEq?=
- =?us-ascii?Q?eNlXxom/YXFE2kDBeetTWbwVThmXjFP+ZeMu3Jv4hI/29X6WhVPH+SraO5Ix?=
- =?us-ascii?Q?ZahypwEdsI9ANuQQLOIQ472trCQIdjHFHgRZnjuDIJ0zfuUnBqROa28hNpn6?=
- =?us-ascii?Q?ZD6G1XDrbssZLH1ICQg4J3W+DNwo2Z1UNTgv0leMD3qaZjI+XG5lhC6bFIY+?=
- =?us-ascii?Q?eihKmiBfC+FIxV3TF2e4JODKZRtraqmzMjUrPZOtEXrv9W7gJbqZpowvN98e?=
- =?us-ascii?Q?aNUUB69+Yql8bFtYzQRwN9nyDa6rtpzmhOr/coaqrwOE8RMwDT2gSorY7y2H?=
- =?us-ascii?Q?c36VNgSY1oO9re8OfLsWdWGKhQFRz5hYGXZBOmwL08/iVh1LuadmiaEj6SQp?=
- =?us-ascii?Q?lJKW9pxHfpWvXiYl1YldNKPL4x0vlTRBZK1MguIPnGyAryS3MKhH05g1eJrA?=
- =?us-ascii?Q?Y9nQ57oXYIkegqSNHydTyPms4kaIGJCBVIWfGGWovXOA570EdI82hr2rI3Fh?=
- =?us-ascii?Q?Y6m0wM0Vmjc4bpOQoFPlvTQ3TrDyXfbbLHHP1gp4HqMiRU/UEQ/yHSJ8kO9f?=
- =?us-ascii?Q?m58QCyr+Elkl0eAPdGgMTc7b3N64oxWqVKg4UzodfgqH08LSpRAuKIqrneAX?=
- =?us-ascii?Q?q/xuK08EF5sLRsjCzsKWnWoSUZ5U90wL6pYcJCRcTSFpNBqKtiihYTnVeGw2?=
- =?us-ascii?Q?6rf3oHDBZAwsBfXUu3i9TeyxTFbDGS1U//7+Pqus6ADvjIk9XIDYh97kkFtm?=
- =?us-ascii?Q?qUcJUtqKFSzajdsAi7M3v+LkcYA+XGpOotmpJRXvfN+QlgXbq5cOw3jw0taM?=
- =?us-ascii?Q?troQEvj9+qiKKIJKwcX+zsn0o1nYlqS2e/yygdSnn+Kszf3iDP3/LNnDRW7A?=
- =?us-ascii?Q?uilgh+1LgwXTArYJGYAKAfafWuG8FiQe5TF1vMOHEgFKycfs+je/YR5ZehFD?=
- =?us-ascii?Q?dVQGJKKExzKBROkmG7PH1w+ZgSRwwyt5QYRhISonx4C2WjjpS82hz88CtNQh?=
- =?us-ascii?Q?cRyf4nMVgIwvIoln8p4NjDZFWhc57E3xKKoqvJHvfVhElZz6bmAs3HgJssqW?=
- =?us-ascii?Q?P/7EPw=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45ed2c2f-6c1d-4ec2-4c9a-08db6676520f
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2023 10:10:57.3322
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QyMuCB9gFA9AzVzhs0ikLnw6RlkaPcIWbQK9KNGpAMEbYTgMUAYGuyFcRXNFhyABPjtLAY+GhCAAvb4wzTHAGi/jA+0PH86ozfLWSM1YJnQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR13MB5896
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: cleanup io_aux_cqe() API
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -115,61 +70,118 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jun 05, 2023 at 02:20:03PM -0700, Stefan Roesch wrote:
-> This introduces the napi_busy_loop_rcu() function. If the caller of
-> napi_busy_loop() function is also taking the rcu read lock, it is possible
-> that napi_busy_loop() is releasing the read lock if it invokes schedule.
-> However the caller is expecting that the rcu read lock is not released
-> until the function completes. This new function avoids that problem. It
-> expects that the caller MUST hold the rcu_read_lock while calling this
-> function.
-> 
-> Signed-off-by: Stefan Roesch <shr@devkernel.io>
+Everybody is passing in the request, so get rid of the io_ring_ctx and
+explicit user_data pass-in. Both the ctx and user_data can be deduced
+from the request at hand.
 
-Hi Stefan,
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-some minor nits from my side, which you may
-want to consider if you need to spin a v15 for some reason.
+---
 
-...
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index fc511cb6761d..12bcab382e5f 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -935,9 +935,11 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
+ 	return __io_post_aux_cqe(ctx, user_data, res, cflags, true);
+ }
+ 
+-bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32 cflags,
++bool io_aux_cqe(struct io_kiocb *req, bool defer, s32 res, u32 cflags,
+ 		bool allow_overflow)
+ {
++	struct io_ring_ctx *ctx = req->ctx;
++	u64 user_data = req->cqe.user_data;
+ 	struct io_uring_cqe *cqe;
+ 	unsigned int length;
+ 
+@@ -963,7 +965,7 @@ bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32
+ 		return false;
+ 
+ 	cqe = &ctx->submit_state.cqes[ctx->submit_state.cqes_count++];
+-	cqe->user_data = user_data;
++	cqe->user_data = req->cqe.user_data;
+ 	cqe->res = res;
+ 	cqe->flags = cflags;
+ 	return true;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 9b8dfb3bb2b4..316f524ec8ae 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -47,7 +47,7 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx);
+ void io_req_defer_failed(struct io_kiocb *req, s32 res);
+ void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags);
+ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
+-bool io_aux_cqe(struct io_ring_ctx *ctx, bool defer, u64 user_data, s32 res, u32 cflags,
++bool io_aux_cqe(struct io_kiocb *req, bool defer, s32 res, u32 cflags,
+ 		bool allow_overflow);
+ void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
+ 
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 0795f3783013..369167e45fa8 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -632,8 +632,8 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 	}
+ 
+ 	if (!mshot_finished) {
+-		if (io_aux_cqe(req->ctx, issue_flags & IO_URING_F_COMPLETE_DEFER,
+-			       req->cqe.user_data, *ret, cflags | IORING_CQE_F_MORE, true)) {
++		if (io_aux_cqe(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
++			       *ret, cflags | IORING_CQE_F_MORE, true)) {
+ 			io_recv_prep_retry(req);
+ 			/* Known not-empty or unknown state, retry */
+ 			if (cflags & IORING_CQE_F_SOCK_NONEMPTY ||
+@@ -1304,7 +1304,6 @@ int io_accept_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ {
+-	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_accept *accept = io_kiocb_to_cmd(req, struct io_accept);
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 	unsigned int file_flags = force_nonblock ? O_NONBLOCK : 0;
+@@ -1354,8 +1353,8 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (ret < 0)
+ 		return ret;
+-	if (io_aux_cqe(ctx, issue_flags & IO_URING_F_COMPLETE_DEFER,
+-		       req->cqe.user_data, ret, IORING_CQE_F_MORE, true))
++	if (io_aux_cqe(req, issue_flags & IO_URING_F_COMPLETE_DEFER, ret,
++		       IORING_CQE_F_MORE, true))
+ 		goto retry;
+ 
+ 	return -ECANCELED;
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 9689806d3c16..6b9179e8228e 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -300,8 +300,8 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
+ 			__poll_t mask = mangle_poll(req->cqe.res &
+ 						    req->apoll_events);
+ 
+-			if (!io_aux_cqe(req->ctx, ts->locked, req->cqe.user_data,
+-					mask, IORING_CQE_F_MORE, false)) {
++			if (!io_aux_cqe(req, ts->locked, mask,
++					IORING_CQE_F_MORE, false)) {
+ 				io_req_set_res(req, mask, 0);
+ 				return IOU_POLL_REMOVE_POLL_USE_RES;
+ 			}
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 350eb830b485..fb0547b35dcd 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -73,8 +73,8 @@ static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state *ts)
+ 
+ 	if (!io_timeout_finish(timeout, data)) {
+ 		bool filled;
+-		filled = io_aux_cqe(ctx, ts->locked, req->cqe.user_data, -ETIME,
+-				    IORING_CQE_F_MORE, false);
++		filled = io_aux_cqe(req, ts->locked, -ETIME, IORING_CQE_F_MORE,
++				    false);
+ 		if (filled) {
+ 			/* re-arm timer */
+ 			spin_lock_irq(&ctx->timeout_lock);
 
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index f4677aa20f84..fcd4a6a70646 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -6213,6 +6213,37 @@ static inline void __napi_busy_poll(struct napi_busy_poll_ctx *ctx,
->  				LINUX_MIB_BUSYPOLLRXPACKETS, work);
->  	local_bh_enable();
->  }
-> +
-> +/*
-> + * Warning: can exit without calling need_resched().
-> + */
+-- 
+Jens Axboe
 
-For historical reasons, multi-line comments in Networking code are like
-this.
-
-/* Something
- * more
- */
-
-Though I notice that dev.c doesn't follow this too closely,
-perhaps for other historical reasons.
-
-Anyway, in this case I'd suggest a single like comment.
-Unless there is something more to say.
-
-/* Warning: can exit without calling need_resched(). */
-
-> +void napi_busy_loop_rcu(unsigned int napi_id,
-> +		    bool (*loop_end)(void *, unsigned long),
-> +		    void *loop_end_arg, bool prefer_busy_poll, u16 budget)
-
-The indentation of the above two likes should align with the inside
-of the opening parentheses.
-
-void napi_busy_loop_rcu(unsigned int napi_id,
-			bool (*loop_end)(void *, unsigned long),
-			void *loop_end_arg, bool prefer_busy_poll, u16 budget)
-
-...

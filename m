@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5426E729B0F
-	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 15:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF1B0729C0A
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 15:55:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbjFINH4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Jun 2023 09:07:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35052 "EHLO
+        id S231266AbjFINzF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Jun 2023 09:55:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231377AbjFINHz (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Jun 2023 09:07:55 -0400
+        with ESMTP id S240418AbjFINzE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Jun 2023 09:55:04 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 153FC2D74;
-        Fri,  9 Jun 2023 06:07:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7260F210D;
+        Fri,  9 Jun 2023 06:55:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1686316073;
-        bh=0ul0obtGOxYV6/odr4pTROAjF+3eU0MKJl2ER52zhBI=;
+        s=default; t=1686318901;
+        bh=UngRapVyTmTrX3eSqSfnf/EGS5RqE7Xw+jcoVn2rgQE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=k1KZokw74XoTtKFKdTSdKU48rp4Q0axJc5YwUhCYQDsC+B585daNmDoaTS4X0/q+M
-         /lYKeUbYnkiXt4aylEeddT+ZLxawc9rp2QOWWNtcy/vAEfk2D2a4cl3DnOAX5D5Icp
-         q6YLTc7EPnmdBAZ3e5Nz2yXQ8BrGlFknnjt8ClqgkVQupQY6jPi5yGVi2BtDQhP+n4
-         +IyIPesNKrPaViQdlfILYDpB6K4+VkllRGsaYKj961ELSEwhlbHSl4XuzRe2aTryxa
-         kyeC+QcgIS5C6J1LF4hB5bUyc0p7+GzoO6zWILna5/giq4qzgoCsLjC+2BTuYxOpS2
-         qAq1wWJbnqfEQ==
+        b=hYeH2pUQ+XlCSm3fEpl39n/LTqeW8ZvA+FmCNaW4D8ywPDT5ilReQ2x9A/B+R7oYy
+         ZJ67SQAPnCVv8fI1RXIv2wPNXp0G9BEvjm3SLiuQcmnaPQiukyE8CWXQgbIFlPmrbX
+         2yS7iAPre7xm+gaCANAbR3VhEkcE7MUPbZDBXFlBW6ExZXONOiiwbzSX8HsNo0I25l
+         Pa6Ka9mQHqTxXToDWlLCkH4kReOWK3MVenfYL5/BNS3V4JWG5797XKae1yHhoS+REY
+         mx2tox3xprSPXGWEHY2942jdpk/wbOauTYfT42WBolTowxRc1/XYQmaEFs00N13Afp
+         YZOjZC0Xv0Jwg==
 Received: from biznet-home.integral.gnuweeb.org (unknown [103.74.5.63])
-        by gnuweeb.org (Postfix) with ESMTPSA id C05FF23EC43;
-        Fri,  9 Jun 2023 20:07:51 +0700 (WIB)
-Date:   Fri, 9 Jun 2023 20:07:38 +0700
+        by gnuweeb.org (Postfix) with ESMTPSA id 03C0823EC4C;
+        Fri,  9 Jun 2023 20:54:59 +0700 (WIB)
+Date:   Fri, 9 Jun 2023 20:54:50 +0700
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Hao Xu <hao.xu@linux.dev>
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -36,7 +36,7 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>
 Subject: Re: [PATCH 07/11] io_uring: add new api to register fixed workers
-Message-ID: <ZIMkGh3kI0tfoxxp@biznet-home.integral.gnuweeb.org>
+Message-ID: <ZIMvKkZZzAfVLGbj@biznet-home.integral.gnuweeb.org>
 References: <20230609122031.183730-1-hao.xu@linux.dev>
  <20230609122031.183730-8-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -54,41 +54,38 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jun 09, 2023 at 08:20:27PM +0800, Hao Xu wrote:
-> +	rcu_read_lock();
+On Fri, Jun 09, 2023 at 08:20:27PM +0800, Hao Xu wrote:  
+> +static __cold int io_register_iowq_fixed_workers(struct io_ring_ctx *ctx,
+> +					       void __user *arg, int nr_args)
+> +	__must_hold(&ctx->uring_lock)
+> +{
+> +	struct io_uring_task *tctx = NULL;
+> +	struct io_sq_data *sqd = NULL;
+> +	struct io_uring_fixed_worker_arg *res;
+> +	size_t size;
+> +	int i, ret;
+> +	bool zero = true;
 > +
-> +	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-> +		unsigned int nr = count[i].nr_workers;
+> +	size = array_size(nr_args, sizeof(*res));
+> +	if (size == SIZE_MAX)
+> +		return -EOVERFLOW;
 > +
-> +		acct = &wq->acct[i];
-> +		acct->fixed_nr = nr;
-> +		acct->fixed_workers = kcalloc(nr, sizeof(struct io_worker *),
-> +					      GFP_KERNEL);
-> +		if (!acct->fixed_workers) {
-> +			ret = -ENOMEM;
+> +	res = memdup_user(arg, size);
+> +	if (IS_ERR(res))
+> +		return PTR_ERR(res);
+> +
+> +	for (i = 0; i < nr_args; i++) {
+> +		if (res[i].nr_workers) {
+> +			zero = false;
 > +			break;
 > +		}
-> +
-> +		for (j = 0; j < nr; j++) {
-> +			struct io_worker *worker =
-> +				io_wq_create_worker(wq, acct, true);
-> +			if (IS_ERR(worker)) {
-> +				ret = PTR_ERR(worker);
-> +				break;
-> +			}
-> +			acct->fixed_workers[j] = worker;
-> +		}
-> +		if (j < nr)
-> +			break;
 > +	}
-> +	rcu_read_unlock();
+> +
+> +	if (zero)
+> +		return 0;
 
-This looks wrong. kcalloc() with GFP_KERNEL may sleep. Note that you're
-not allowed to sleep inside the RCU read lock critical section.
-
-Using GFP_KERNEL implies GFP_RECLAIM, which means that direct reclaim
-may be triggered under memory pressure; the calling context must be
-allowed to sleep.
+You have a memory leak bug here. The memdup_user() needs clean up.
+kfree(res);
 
 -- 
 Ammar Faizi

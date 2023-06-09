@@ -2,100 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1D7728E3D
-	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 05:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFFDB729A1A
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 14:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237891AbjFIDCV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Jun 2023 23:02:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51676 "EHLO
+        id S239998AbjFIMeG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Jun 2023 08:34:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237142AbjFIDCT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jun 2023 23:02:19 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C49930F1
-        for <io-uring@vger.kernel.org>; Thu,  8 Jun 2023 20:02:17 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-2565c66f73fso213745a91.0
-        for <io-uring@vger.kernel.org>; Thu, 08 Jun 2023 20:02:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686279736; x=1688871736;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EE3DCAhezkDxz5vIdXbfcFIbXdDrZcSNl8SsaCm92RM=;
-        b=JbXYANjlm9TVIqjkjB0E1B2F4ITp4Ry0RYZfFmm/xNpsjReVVd5NTrdx32LQdnLbxw
-         BXznJMtAhTUfcW4zNLga6oOd6Tn3s61MceiKMniH+WdWG9mwdgtYkeKciLw5tCSos0ua
-         lvwCiKmNQZz9w+Mbsv/0sxVdvY8+J/Z3umoz8YukD4A2Sp/w1vni/iG1/ZBZp8LtzQF5
-         sX68mGw7w9YOVU77hXLdgAK1+seHWwKnUq/fYOTdQX4s/O9pcXr0ROxaPTdxWwHyOein
-         cd6k9WAHJBdIMKb3AHkGyO2fTCTcSB6ao1V+Oi82ZA1QOYXis2cgvTM0SJ8sDY2IacO2
-         g/oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686279736; x=1688871736;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EE3DCAhezkDxz5vIdXbfcFIbXdDrZcSNl8SsaCm92RM=;
-        b=bZ07XEiMWOG/G0oMh6pTK22EffKOVGby38B/wvSnPeDg4G7YbLmTWALu2f4/pKPKJl
-         N1oqgRUKAeH0EzhElA8A+bzTWl2NIWU633OVKmsZfWuJsLekfzDDj9V3p93KT5joRCU9
-         7G+/H2YmXG6/cb5REixVRaqQywB0KbdXTBOYXWtYt5hAWrjG8D0Z5LQd/PFG7tghT/Q9
-         BHMY0xeFIbup08x2rV7yVh2CxZk9wkb3jqmLPFBNKP1YnHG+MWLI9BU3+42a3cyZfwoj
-         J3VWCGtH7La8pk58dKvOEj4mZJ1G6YuNus+UMt34tmZQNQymnSqE81VfMo3nw3nr1L1g
-         XCIA==
-X-Gm-Message-State: AC+VfDyeuMXU76vc7ovL/TRAjHkIglnJcDJgLhG535AYlLMpETqIWGkr
-        urmr3S+hDR4cgF/pZx3W/wR3ugWj+s/NEDljXVM=
-X-Google-Smtp-Source: ACHHUZ5lZx2YCvaNmBBfnEToX7VOG1Agyyp37Lb2WnJQZY/tIT4W0txlkLU5n5DbL2v/DIlZAl4Kxw==
-X-Received: by 2002:a17:902:e807:b0:1ae:8595:14b with SMTP id u7-20020a170902e80700b001ae8595014bmr242592plg.6.1686279736459;
-        Thu, 08 Jun 2023 20:02:16 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u7-20020a17090282c700b001ac5b0a959bsm2088769plz.24.2023.06.08.20.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 20:02:15 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        with ESMTP id S231172AbjFIMeF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Jun 2023 08:34:05 -0400
+Received: from out-20.mta0.migadu.com (out-20.mta0.migadu.com [IPv6:2001:41d0:1004:224b::14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 666F930FD
+        for <io-uring@vger.kernel.org>; Fri,  9 Jun 2023 05:33:34 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1686313238;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=4QUpu+B3zyPMmOmmHqxZyuzGpgT2iJe7tXWq73uhRWg=;
+        b=Hzxzp/yre4ogNKk2/gJ79rAj/jUHAM+xJ//6o5K+47BNRYc2nmULwFHcNxCR34iXCMOF0n
+        /vIRFzwOnzpsDkxH9SVr32svxE/4lLj2mtmGgtBCYnC6rYiJ+9b4UJn7B9WSDM6Twn5rLT
+        wPmI+kTbRLUtk4K7DXiu17GA132nvUA=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <20230609015403.3523811-1-ammarfaizi2@gnuweeb.org>
-References: <20230609015403.3523811-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v1 0/2] Fixes for io_uring_for_each_cqe
-Message-Id: <168627973530.474576.3838052998706625567.b4-ty@kernel.dk>
-Date:   Thu, 08 Jun 2023 21:02:15 -0600
+        Wanpeng Li <wanpengli@tencent.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 00/11] fixed worker
+Date:   Fri,  9 Jun 2023 20:20:20 +0800
+Message-Id: <20230609122031.183730-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-c6835
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+From: Hao Xu <howeyxu@tencent.com>
 
-On Fri, 09 Jun 2023 08:54:01 +0700, Ammar Faizi wrote:
-> Please consider taking these last-minute fixes for liburing-2.4
-> release. There are two patches in this series:
-> 
-> ## 1. man/io_uring_for_each_cqe: Fix return value, title, and typo
-> 
->   - Fix the return value. io_uring_for_each_cqe() doesn't return an int.
-> 
-> [...]
+The initial feature request by users is here:
+https://github.com/axboe/liburing/issues/296
 
-Applied, thanks!
+Fixed worker provide a way for users to control the io-wq threads. A
+fixed worker is worker thread which exists no matter there are works
+to do or not. We provide a new register api to register fixed workers,
+and a register api to unregister them as well. The parameter of the
+register api is the number of fixed workers users want.
 
-[1/2] man/io_uring_for_each_cqe: Fix return value, title, and typo
-      commit: c8d06ed9bcbf2ae294242f9caacecfa01bf138b2
-[2/2] man/io_uring_for_each_cqe: Explicitly tell it's a macro and add an example
-      commit: 298c083d75ecde5a8833366167b3b6abff0c8d39
+For example:
 
-Best regards,
+```c
+io_uring_register_iowq_fixed_workers(&ring, { .nr_workers = 5 })
+do I/O works
+io_uring_unregister_iowq_fixed_workers(&ring)
+
+```
+
+After registration, there will be 5 fixed workers. User can setup their
+affinity, priority etc. freely, without adding any new register api to
+set up attributions. These workers won't be destroyed until users call
+unregister api.
+
+Note, registering some fixed workers doesn't mean no creating normal
+workers. When there is no free workers, new normal workers can be
+created when works come. So a work may be picked up by fixed workers or
+normal workers.
+
+If users want to offload works only to fixed workers, they can specify
+a flag FIXED_ONLY when registering fixed workers.
+
+```c
+io_uring_register_iowq_fixed_workers(&ring, { .nr_workers = 5, .flags |=
+FIXED_ONLY })
+
+```
+
+In above case, no normal workers will be created before calling
+io_uring_register_iowq_fixed_workers().
+
+Note:
+ - When registering fixed workers, those fixed workers are per io-wq.
+   So if an io_uring instance is shared by multiple tasks, and you want
+   all tasks to use fixed workers, all tasks have to call the regitser
+   api.
+ - if specifying FIXED_ONLY when registering fixed workers, that is per
+   io_uring instance. all works in this instance are handled by fixed
+   workers.
+
+Therefore, if an io_uring instance is shared by two tasks, and you want
+all requests in this instance to be handled only by fixed workers, you
+have to call the register api in these two tasks and specify FIXED_ONLY
+at least once when calling register api.
+
+
+Hao Xu (11):
+  io-wq: fix worker counting after worker received exit signal
+  io-wq: add a new worker flag to indicate worker exit
+  io-wq: add a new type io-wq worker
+  io-wq: add fixed worker members in io_wq_acct
+  io-wq: add a new parameter for creating a new fixed worker
+  io-wq: return io_worker after successful inline worker creation
+  io_uring: add new api to register fixed workers
+  io_uring: add function to unregister fixed workers
+  io-wq: add strutures to allow to wait fixed workers exit
+  io-wq: distinguish fixed worker by its name
+  io_uring: add IORING_SETUP_FIXED_WORKER_ONLY and its friend
+
+ include/uapi/linux/io_uring.h |  20 +++
+ io_uring/io-wq.c              | 275 ++++++++++++++++++++++++++++++----
+ io_uring/io-wq.h              |   3 +
+ io_uring/io_uring.c           | 132 +++++++++++++++-
+ 4 files changed, 397 insertions(+), 33 deletions(-)
+
 -- 
-Jens Axboe
-
-
+2.25.1
 

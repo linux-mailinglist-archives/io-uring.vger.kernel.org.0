@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDBC728D51
-	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 03:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FC62728D58
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 03:55:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231181AbjFIBy1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Jun 2023 21:54:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54250 "EHLO
+        id S237539AbjFIBy3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Jun 2023 21:54:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233412AbjFIBy0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jun 2023 21:54:26 -0400
+        with ESMTP id S238035AbjFIBy2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jun 2023 21:54:28 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3021FDF;
-        Thu,  8 Jun 2023 18:54:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D284D1BF0;
+        Thu,  8 Jun 2023 18:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1686275664;
-        bh=3ljPQmDJI0BubglR2nNAPuUiDuj6mXsBY7G7L13axWQ=;
-        h=From:To:Cc:Subject:Date;
-        b=k0rB+eXaRxv/qWV1WhvGuUtKePrcHtirv0eQHpz//N/X52kMMrezwwttrR2jaqzpv
-         MAkm2thVRyvt57K6kexhZy5m1dNpPnIlX46YXfpvHhnJMFFMNSGd0EyCEd3kin/dwi
-         O/tP9UK7InqbZGPNPvOcJvDSq1Aa852Kyz8NmuJ3J3rosxjJwBsv3Lx3ySTaV9m1C4
-         MuwCNHTZ0AbNlvQncnrPG1n+SORYfZnCIn753qYOooCbHJYvZUL0nWy2EiD64zC/2r
-         BTvFlyXCZAr20evYhJFyTT/B8iNMpnYdGkaoJG8Nub+unTbU7F9QmUFdpxo1bgOW47
-         +DGSl6cmCiPYw==
+        s=default; t=1686275667;
+        bh=sksGjcHbUtVAbJQuVuREhJLXzDbRGZ5kK9wdFhq2cJo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=iwFZhFuSsy2B9leLI/NctNdQevFkEYFmAW2l53XOOaicXcMFQdoAdyKGg1BRoxHa1
+         4CXfdKc27ZObc+pBtWdLwvMLIVCtvjL+5wONo6MreUHKL7KvDvVNDLHn7EmHw4lPpC
+         yUJUHYQFaQdGcDuozB5VjCK0h7ctXUBv+Iq6YqLdk+y0euk82eo3orf5aPamgDIHGG
+         besDLKYS9PKlV2BZ/BDIUEdpqN6NsXD14c6D6FbDOKOjvdy7uk2Wj7HSwSvPn2iZK4
+         OJSjq4Uw/XTk241wbq2nZoKT8jFLRESankiwnaAm4CLMwWYC8e6B4Ho36vB8joDpFc
+         AwsZhjKMNcxHA==
 Received: from integral2.. (unknown [103.74.5.63])
-        by gnuweeb.org (Postfix) with ESMTPSA id 86A3A23EC0A;
-        Fri,  9 Jun 2023 08:54:22 +0700 (WIB)
+        by gnuweeb.org (Postfix) with ESMTPSA id 507ED23EC0F;
+        Fri,  9 Jun 2023 08:54:25 +0700 (WIB)
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
@@ -35,10 +35,12 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH liburing v1 0/2] Fixes for io_uring_for_each_cqe
-Date:   Fri,  9 Jun 2023 08:54:01 +0700
-Message-Id: <20230609015403.3523811-1-ammarfaizi2@gnuweeb.org>
+Subject: [PATCH liburing v1 1/2] man/io_uring_for_each_cqe: Fix return value, title, and typo
+Date:   Fri,  9 Jun 2023 08:54:02 +0700
+Message-Id: <20230609015403.3523811-2-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230609015403.3523811-1-ammarfaizi2@gnuweeb.org>
+References: <20230609015403.3523811-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -51,37 +53,45 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+1) Fix the return value. io_uring_for_each_cqe() doesn't return an int.
 
-Please consider taking these last-minute fixes for liburing-2.4
-release. There are two patches in this series:
+2) Fix the title, it was io_uring_wait_cqes(), it should be
+   io_uring_for_each_cqe().
 
-## 1. man/io_uring_for_each_cqe: Fix return value, title, and typo
+3) Fix typo: s/io_uring_for_each_cqes/io_uring_for_each_cqe/
 
-  - Fix the return value. io_uring_for_each_cqe() doesn't return an int.
-
-  - Fix the title, it was io_uring_wait_cqes(), it should be
-    io_uring_for_each_cqe().
-
-  - Fix typo: s/io_uring_for_each_cqes/io_uring_for_each_cqe/.
-
-## 2. Explicitly tell it's a macro and add an example
-
-Let the reader directly know that it's not a function, but a macro.
-Also, give a simple example of its usage.
-
-Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Fixes: 16d74b1c76043e6 ("man: add man page for io_uring_for_each_cqe()")
+Reported-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
+ man/io_uring_for_each_cqe.3 | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Ammar Faizi (2):
-  man/io_uring_for_each_cqe: Fix return value, title, and typo
-  man/io_uring_for_each_cqe: Explicitly tell it's a macro and add an example
-
- man/io_uring_for_each_cqe.3 | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
-
-base-commit: b4ee3108b93f7e4602430246236d14978abad085
+diff --git a/man/io_uring_for_each_cqe.3 b/man/io_uring_for_each_cqe.3
+index 9230d147515c78fb..8445fd605d0b02a6 100644
+--- a/man/io_uring_for_each_cqe.3
++++ b/man/io_uring_for_each_cqe.3
+@@ -2,16 +2,16 @@
+ .\"
+ .\" SPDX-License-Identifier: LGPL-2.0-or-later
+ .\"
+-.TH io_uring_wait_cqes 3 "June 04, 2023" "liburing-2.4" "liburing Manual"
++.TH io_uring_for_each_cqe 3 "June 04, 2023" "liburing-2.4" "liburing Manual"
+ .SH NAME
+ io_uring_for_each_cqe \- iterate pending completion events
+ .SH SYNOPSIS
+ .nf
+ .B #include <liburing.h>
+ .PP
+-.BI "int io_uring_for_each_cqes(struct io_uring *" ring ","
+-.BI "                           unsigned " head ","
+-.BI "                           struct io_uring_cqe *" cqe ");
++.BI "io_uring_for_each_cqe(struct io_uring *" ring ","
++.BI "                      unsigned " head ","
++.BI "                      struct io_uring_cqe *" cqe ") { }
+ .fi
+ .SH DESCRIPTION
+ .PP
 -- 
 Ammar Faizi
 

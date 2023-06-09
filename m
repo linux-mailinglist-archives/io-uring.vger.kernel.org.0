@@ -2,191 +2,86 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46BCC72889D
-	for <lists+io-uring@lfdr.de>; Thu,  8 Jun 2023 21:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CDBC728D51
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 03:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbjFHTdr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 8 Jun 2023 15:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47490 "EHLO
+        id S231181AbjFIBy1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 8 Jun 2023 21:54:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230125AbjFHTdq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jun 2023 15:33:46 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 773FC18C;
-        Thu,  8 Jun 2023 12:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686252825; x=1717788825;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F+OxDi++6B6OT7qYKbXPAOLDtvQSIYmKdr7y1Cz75FI=;
-  b=Nq9TDjJQNtCinP5XbULtlGexzuZMXiuZ+rmE2lfeLAffNoHDgTzjmyus
-   psg8JdCF9XUpV1mOG/fn0ezt2IhhOl6lhyGYxfkq7s7xkFL9q4GdLL8LE
-   MxOMw4CufvzguLExcVwJE8Eb9DoFUja8NnTCQvVXvJuWKykx6HslkFY5Z
-   hr72UOGA4K2Us9uXazY3J8Jtd2dKNP0uAsKP0pL7I06hepSgqmCqIToOC
-   US3TIcfFYjQZDl4ThbQg0ZTehLNS/LThijbc9HuZpManNBHmCNKfS7hXC
-   uBS0V+pONJOnZ5zzYj+Vm1Wj9ggB5/ze4yhoqIFalp1g2PXNDKe4Cyhwz
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10735"; a="420998008"
-X-IronPort-AV: E=Sophos;i="6.00,227,1681196400"; 
-   d="scan'208";a="420998008"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2023 12:33:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10735"; a="854468968"
-X-IronPort-AV: E=Sophos;i="6.00,227,1681196400"; 
-   d="scan'208";a="854468968"
-Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Jun 2023 12:33:42 -0700
-Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q7LO9-0008CA-1w;
-        Thu, 08 Jun 2023 19:33:41 +0000
-Date:   Fri, 9 Jun 2023 03:33:04 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Roesch <shr@devkernel.io>, io-uring@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     oe-kbuild-all@lists.linux.dev, shr@devkernel.io, axboe@kernel.dk,
-        ammarfaizi2@gnuweeb.org, netdev@vger.kernel.org, kuba@kernel.org,
-        olivier@trillion01.com
-Subject: Re: [PATCH v15 1/7] net: split off __napi_busy_poll from
- napi_busy_poll
-Message-ID: <202306090341.ShxjwRn1-lkp@intel.com>
-References: <20230608163839.2891748-2-shr@devkernel.io>
+        with ESMTP id S233412AbjFIBy0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 8 Jun 2023 21:54:26 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3021FDF;
+        Thu,  8 Jun 2023 18:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1686275664;
+        bh=3ljPQmDJI0BubglR2nNAPuUiDuj6mXsBY7G7L13axWQ=;
+        h=From:To:Cc:Subject:Date;
+        b=k0rB+eXaRxv/qWV1WhvGuUtKePrcHtirv0eQHpz//N/X52kMMrezwwttrR2jaqzpv
+         MAkm2thVRyvt57K6kexhZy5m1dNpPnIlX46YXfpvHhnJMFFMNSGd0EyCEd3kin/dwi
+         O/tP9UK7InqbZGPNPvOcJvDSq1Aa852Kyz8NmuJ3J3rosxjJwBsv3Lx3ySTaV9m1C4
+         MuwCNHTZ0AbNlvQncnrPG1n+SORYfZnCIn753qYOooCbHJYvZUL0nWy2EiD64zC/2r
+         BTvFlyXCZAr20evYhJFyTT/B8iNMpnYdGkaoJG8Nub+unTbU7F9QmUFdpxo1bgOW47
+         +DGSl6cmCiPYw==
+Received: from integral2.. (unknown [103.74.5.63])
+        by gnuweeb.org (Postfix) with ESMTPSA id 86A3A23EC0A;
+        Fri,  9 Jun 2023 08:54:22 +0700 (WIB)
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH liburing v1 0/2] Fixes for io_uring_for_each_cqe
+Date:   Fri,  9 Jun 2023 08:54:01 +0700
+Message-Id: <20230609015403.3523811-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230608163839.2891748-2-shr@devkernel.io>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Stefan,
+Hi Jens,
 
-kernel test robot noticed the following build warnings:
+Please consider taking these last-minute fixes for liburing-2.4
+release. There are two patches in this series:
 
-[auto build test WARNING on f026be0e1e881e3395c3d5418ffc8c2a2203c3f3]
+## 1. man/io_uring_for_each_cqe: Fix return value, title, and typo
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Roesch/net-split-off-__napi_busy_poll-from-napi_busy_poll/20230609-010104
-base:   f026be0e1e881e3395c3d5418ffc8c2a2203c3f3
-patch link:    https://lore.kernel.org/r/20230608163839.2891748-2-shr%40devkernel.io
-patch subject: [PATCH v15 1/7] net: split off __napi_busy_poll from napi_busy_poll
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20230609/202306090341.ShxjwRn1-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout f026be0e1e881e3395c3d5418ffc8c2a2203c3f3
-        b4 shazam https://lore.kernel.org/r/20230608163839.2891748-2-shr@devkernel.io
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=alpha olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=alpha SHELL=/bin/bash net/core/
+  - Fix the return value. io_uring_for_each_cqe() doesn't return an int.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306090341.ShxjwRn1-lkp@intel.com/
+  - Fix the title, it was io_uring_wait_cqes(), it should be
+    io_uring_for_each_cqe().
 
-All warnings (new ones prefixed by >>):
+  - Fix typo: s/io_uring_for_each_cqes/io_uring_for_each_cqe/.
 
->> net/core/dev.c:6182:6: warning: no previous prototype for '__napi_busy_loop' [-Wmissing-prototypes]
-    6182 | void __napi_busy_loop(unsigned int napi_id,
-         |      ^~~~~~~~~~~~~~~~
+## 2. Explicitly tell it's a macro and add an example
 
+Let the reader directly know that it's not a function, but a macro.
+Also, give a simple example of its usage.
 
-vim +/__napi_busy_loop +6182 net/core/dev.c
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
 
-  6181	
-> 6182	void __napi_busy_loop(unsigned int napi_id,
-  6183			      bool (*loop_end)(void *, unsigned long),
-  6184			      void *loop_end_arg, bool prefer_busy_poll, u16 budget,
-  6185			      bool rcu)
-  6186	{
-  6187		unsigned long start_time = loop_end ? busy_loop_current_time() : 0;
-  6188		int (*napi_poll)(struct napi_struct *napi, int budget);
-  6189		void *have_poll_lock = NULL;
-  6190		struct napi_struct *napi;
-  6191	
-  6192	restart:
-  6193		napi_poll = NULL;
-  6194	
-  6195		if (!rcu)
-  6196			rcu_read_lock();
-  6197	
-  6198		napi = napi_by_id(napi_id);
-  6199		if (!napi)
-  6200			goto out;
-  6201	
-  6202		preempt_disable();
-  6203		for (;;) {
-  6204			int work = 0;
-  6205	
-  6206			local_bh_disable();
-  6207			if (!napi_poll) {
-  6208				unsigned long val = READ_ONCE(napi->state);
-  6209	
-  6210				/* If multiple threads are competing for this napi,
-  6211				 * we avoid dirtying napi->state as much as we can.
-  6212				 */
-  6213				if (val & (NAPIF_STATE_DISABLE | NAPIF_STATE_SCHED |
-  6214					   NAPIF_STATE_IN_BUSY_POLL)) {
-  6215					if (prefer_busy_poll)
-  6216						set_bit(NAPI_STATE_PREFER_BUSY_POLL, &napi->state);
-  6217					goto count;
-  6218				}
-  6219				if (cmpxchg(&napi->state, val,
-  6220					    val | NAPIF_STATE_IN_BUSY_POLL |
-  6221						  NAPIF_STATE_SCHED) != val) {
-  6222					if (prefer_busy_poll)
-  6223						set_bit(NAPI_STATE_PREFER_BUSY_POLL, &napi->state);
-  6224					goto count;
-  6225				}
-  6226				have_poll_lock = netpoll_poll_lock(napi);
-  6227				napi_poll = napi->poll;
-  6228			}
-  6229			work = napi_poll(napi, budget);
-  6230			trace_napi_poll(napi, work, budget);
-  6231			gro_normal_list(napi);
-  6232	count:
-  6233			if (work > 0)
-  6234				__NET_ADD_STATS(dev_net(napi->dev),
-  6235						LINUX_MIB_BUSYPOLLRXPACKETS, work);
-  6236			local_bh_enable();
-  6237	
-  6238			if (!loop_end || loop_end(loop_end_arg, start_time))
-  6239				break;
-  6240	
-  6241			if (unlikely(need_resched())) {
-  6242				if (rcu)
-  6243					break;
-  6244				if (napi_poll)
-  6245					busy_poll_stop(napi, have_poll_lock, prefer_busy_poll, budget);
-  6246				preempt_enable();
-  6247				rcu_read_unlock();
-  6248				cond_resched();
-  6249				if (loop_end(loop_end_arg, start_time))
-  6250					return;
-  6251				goto restart;
-  6252			}
-  6253			cpu_relax();
-  6254		}
-  6255		if (napi_poll)
-  6256			busy_poll_stop(napi, have_poll_lock, prefer_busy_poll, budget);
-  6257		preempt_enable();
-  6258	out:
-  6259		if (!rcu)
-  6260			rcu_read_unlock();
-  6261	}
-  6262	
+Ammar Faizi (2):
+  man/io_uring_for_each_cqe: Fix return value, title, and typo
+  man/io_uring_for_each_cqe: Explicitly tell it's a macro and add an example
 
+ man/io_uring_for_each_cqe.3 | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+
+base-commit: b4ee3108b93f7e4602430246236d14978abad085
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ammar Faizi
+

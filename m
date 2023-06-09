@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2175372A240
-	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 20:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4487672A243
+	for <lists+io-uring@lfdr.de>; Fri,  9 Jun 2023 20:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbjFISbj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 9 Jun 2023 14:31:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44716 "EHLO
+        id S229616AbjFISbp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 9 Jun 2023 14:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbjFISbi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Jun 2023 14:31:38 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1F83A81
-        for <io-uring@vger.kernel.org>; Fri,  9 Jun 2023 11:31:34 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-7748ca56133so19063139f.0
-        for <io-uring@vger.kernel.org>; Fri, 09 Jun 2023 11:31:34 -0700 (PDT)
+        with ESMTP id S230283AbjFISbn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 9 Jun 2023 14:31:43 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874323A84
+        for <io-uring@vger.kernel.org>; Fri,  9 Jun 2023 11:31:36 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id e9e14a558f8ab-33d0c740498so911505ab.0
+        for <io-uring@vger.kernel.org>; Fri, 09 Jun 2023 11:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686335493; x=1688927493;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686335495; x=1688927495;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=58rvLYLUk8/S4pLP2TEKpTK3rfvG+0uSTMDF12Jv7EE=;
-        b=V2QKKykZPPVpCqP6Tp+YZ3SHnKkz4Y9H3rEGXl9Ktf9gXRaOWgqD44erKTwbs5ACbE
-         YixYWeybo8NvNoFHs8gy9hfvShmazIr/epu7G4w+eANKaclmioyZWp8QZ21TEuLroud+
-         cIXm1o02Dpm3Ra63sgANhSn8kK3WPUmjnXUsD/ggGswAt0h4c9Upjc1sPBJqsdvogCgd
-         f0I3Cj3uvS/PWDHWe/zr0+XQXlfmp6AysD+hf2kk5DeBXPnYEUwzQFaO2lIeVWJGtwD8
-         MR8vTLY1FF5eohByBIgeNqaiq/96TeHtECIsOOnbwRQxXvRBdWbhzJ1BH9BKN7XDKhls
-         CTQQ==
+        bh=pRFuYQO+GGntnur6QkOmgAEvI9IAoRPXEikEtEaQgPY=;
+        b=xCeg8Ros7YbjjJT626pLIvGcaxRdub/hwwYnfOoLo0mpbMOEty68oWAs1pFX0BUIn5
+         acIx8gPhaTut01q6OmTK1casdw9FSlxU05loZN+zDS0rTvKBo1N7XVHat+FfsH16v1XN
+         O+1M18A9TIPKb4XA3aovBujsWskltYqYcMjD39CcTsJNHk7gSxwWurAf5gXo3R020A/N
+         vmaWHMgUa7D6JVIfRl0e/0llXUESOha1CQBK5RgwW6FlcygREQeYKrRttDndEAcEc3Aw
+         IL1G3Ram44rHERNryKZrF6y7544YoPhX+VBcbN49xF2n7T1kYZewD1usvhZ+IzL52Ubb
+         MF2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686335493; x=1688927493;
+        d=1e100.net; s=20221208; t=1686335495; x=1688927495;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=58rvLYLUk8/S4pLP2TEKpTK3rfvG+0uSTMDF12Jv7EE=;
-        b=M5JrCgltzUWCM+9QSJjvJI3o360ZLdpTgvoDV3Ed4ggJmH9m6kXmfv2FvNuZp3LI/H
-         GTGxC4Yiz7qIUZiCqQwp29M9v1DLM1NM9ddk94ltAMJYcX5j3ZZPYJQxO4gQTlbkFeo3
-         kre/Rx/6kVmoHQi39zdAL2riIoaJJzLCaYwS+ZUH4djhnJfEXhEk6vzvDc4ZoxZPPN+L
-         X0oMPMFmVuT5URoXHeFxDOztH7gPIwAPBIOTK05sJB7gZkii2nNgT4YJeBMGF3j6Zq1G
-         iSZdMKnr1xKeANY34ys+wo1FAVOgEYstQS2LorvJ/1cc7PoKBAr9/3rGG7RF/McIBcIj
-         y91A==
-X-Gm-Message-State: AC+VfDyQibWx3zd27gwlOuBXGMsGQee6voZJXhGF6UzsdmSK+Icawgc7
-        kcQvujTgcvkQCepcG/LX71/A/q/YJhAUuUr59RM=
-X-Google-Smtp-Source: ACHHUZ62X5wmEsLFwnn8/vPAqNcIZVDyUcrTecrKXLRAgcCSPCCgUKrvNqo/wmDqMJqVdiWjJgADeA==
-X-Received: by 2002:a05:6602:408b:b0:777:a5a4:c6cb with SMTP id bl11-20020a056602408b00b00777a5a4c6cbmr1919989iob.1.1686335493619;
-        Fri, 09 Jun 2023 11:31:33 -0700 (PDT)
+        bh=pRFuYQO+GGntnur6QkOmgAEvI9IAoRPXEikEtEaQgPY=;
+        b=PXoCTGSYpQMspgCaAVMiI/gXRue/MaXBNs062ruowOjyhYzNn9sGylkpQr6jxjtVTv
+         u/6VntzfmBHt+HmEUa56qnTlNi1VnyBkCrmtyNCKjgHII3yY5KOYAslrtJ/xxdqf2QXO
+         rtCO0OVwjpqvC3lWM49NuAHtxFpmex02Ab+WtzaWZuckV8AYf2wHuXkos7B/iKct4F7f
+         7fV08e8TJDF4RSCSaPgWSzGvjYKKPES7KSbQHV21BTv4uRwlFp5SgKe+loKqJ/gGRNDo
+         CX5ehSRosWS2Uhpsmcpkdm394+wIw8b/k0srWnVeubtDhV9S8kS6eGs7rTjpic/W6tnt
+         te5Q==
+X-Gm-Message-State: AC+VfDxNtt4UA1oQyiiOeBUVI24baYf+uJ9DLwVKkmMnGzltosivFnqW
+        KOLdWMLP+4vp1K0QkmwmxZUpL3xRoArHzMsTxXw=
+X-Google-Smtp-Source: ACHHUZ6K/g6dGq+RJ+YZKMDYTxy0K6ukZh5B9fgKwuF2awPZul2oN7ecfz3jO8pgZ0bvsRXHyataug==
+X-Received: by 2002:a05:6e02:188a:b0:33b:583d:1273 with SMTP id o10-20020a056e02188a00b0033b583d1273mr1968012ilu.1.1686335494951;
+        Fri, 09 Jun 2023 11:31:34 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j4-20020a02a684000000b0040fb2ba7357sm1103124jam.4.2023.06.09.11.31.32
+        by smtp.gmail.com with ESMTPSA id j4-20020a02a684000000b0040fb2ba7357sm1103124jam.4.2023.06.09.11.31.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 11:31:32 -0700 (PDT)
+        Fri, 09 Jun 2023 11:31:34 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/6] futex: assign default futex_q->wait_data at insertion time
-Date:   Fri,  9 Jun 2023 12:31:22 -0600
-Message-Id: <20230609183125.673140-4-axboe@kernel.dk>
+Subject: [PATCH 4/6] futex: add futex wait variant that takes a futex_q directly
+Date:   Fri,  9 Jun 2023 12:31:23 -0600
+Message-Id: <20230609183125.673140-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230609183125.673140-1-axboe@kernel.dk>
 References: <20230609183125.673140-1-axboe@kernel.dk>
@@ -69,41 +69,54 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Rather than do it in the lower level queueing helper, move it to the
-upper level one. This enables use of that helper with the caller setting
-the wake handler data prior to calling it, rather than assume that
-futex_wake_mark() is the handler for this futex_q.
+For async trigger of the wait, we need to be able to pass in a futex_q
+that is already setup. Add that helper.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- kernel/futex/core.c  | 1 -
- kernel/futex/futex.h | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ kernel/futex/futex.h    |  3 +++
+ kernel/futex/waitwake.c | 17 +++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 6223cce3d876..b9d8619c06fc 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -556,7 +556,6 @@ void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
- 
- 	plist_node_init(&q->list, prio);
- 	plist_add(&q->list, &hb->chain);
--	q->wake_data = current;
- }
- 
- /**
 diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index 1b7dd5266dd2..8c12cef83d38 100644
+index 8c12cef83d38..29bf78a1f475 100644
 --- a/kernel/futex/futex.h
 +++ b/kernel/futex/futex.h
-@@ -171,6 +171,7 @@ extern int futex_unqueue(struct futex_q *q);
- static inline void futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
- 	__releases(&hb->lock)
- {
-+	q->wake_data = current;
- 	__futex_queue(q, hb);
- 	spin_unlock(&hb->lock);
+@@ -156,6 +156,9 @@ extern void __futex_unqueue(struct futex_q *q);
+ extern void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb);
+ extern int futex_unqueue(struct futex_q *q);
+ 
++extern int futex_queue_wait(struct futex_q *q, u32 __user *uaddr,
++			    unsigned int flags, u32 val);
++
+ /**
+  * futex_queue() - Enqueue the futex_q on the futex_hash_bucket
+  * @q:	The futex_q to enqueue
+diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
+index 5151c83e2db8..442dafdfa22a 100644
+--- a/kernel/futex/waitwake.c
++++ b/kernel/futex/waitwake.c
+@@ -706,3 +706,20 @@ static long futex_wait_restart(struct restart_block *restart)
+ 				restart->futex.val, tp, restart->futex.bitset);
  }
+ 
++int futex_queue_wait(struct futex_q *q, u32 __user *uaddr, unsigned int flags,
++		     u32 val)
++{
++	struct futex_hash_bucket *hb;
++	int ret;
++
++	if (!q->bitset)
++		return -EINVAL;
++
++	ret = futex_wait_setup(uaddr, val, flags, q, &hb);
++	if (ret)
++		return ret;
++
++	__futex_queue(q, hb);
++	spin_unlock(&hb->lock);
++	return 0;
++}
 -- 
 2.39.2
 

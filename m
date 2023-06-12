@@ -2,290 +2,124 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E0AD72CEEF
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 21:04:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C2D972CFE3
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 21:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237701AbjFLTEE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Jun 2023 15:04:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41158 "EHLO
+        id S229974AbjFLT4e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jun 2023 15:56:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237707AbjFLTEC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jun 2023 15:04:02 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727E210D4
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 12:04:00 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35CG99Ad020659
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 12:04:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=yk/4kOW+1au1JCuvMoFmqdxb/rxmmIIdIi1gshRX62w=;
- b=Zv6I49YLTpF8cEnz48V8YybvoJaJMuKI0Pb0QIZjBfoq+CkqlKOXTg4kgxsC5QpjY0QI
- HGyvXid2A2bAemFuInikX3y7YHBv4rWfdQLHe5d/XsD3z68r1LyTL3qPFj2KRt9zo5+O
- qATSimYScCJgXrxRa4vjfFmzxkObGLm26i8IEl0x4VJAOV/nRRqAvGCpGCDMPKJcgcPM
- k8CzEqWAWKIWZ5xKQV0u0qkw3wAe5S0f9FV2HRhrbR9VXVkKMTY0a3CIKyEBnyLhPEpT
- QH6EGEPtRT0EE6TrHYVjtMK52Zk8fh97ESW3y4UeX9uXG1hH4hzJGLkt+Uk2nQGbttij 6Q== 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3r5xhxmaaa-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 12:03:59 -0700
-Received: from twshared6352.02.ash9.facebook.com (2620:10d:c0a8:1c::11) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 12 Jun 2023 12:03:56 -0700
-Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id B236119FA77A7; Mon, 12 Jun 2023 12:03:46 -0700 (PDT)
-From:   Keith Busch <kbusch@meta.com>
-To:     <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>, <hch@lst.de>, <axboe@kernel.dk>
-CC:     <sagi@grimberg.me>, <joshi.k@samsung.com>,
-        Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv3 2/2] nvme: improved uring polling
-Date:   Mon, 12 Jun 2023 12:03:43 -0700
-Message-ID: <20230612190343.2087040-3-kbusch@meta.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230612190343.2087040-1-kbusch@meta.com>
-References: <20230612190343.2087040-1-kbusch@meta.com>
+        with ESMTP id S229836AbjFLT4b (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jun 2023 15:56:31 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0D9102
+        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 12:56:30 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-7747cc8bea0so39432839f.1
+        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 12:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686599789; x=1689191789;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r9ofeHvqvAt6ShY55oFXmS+4m8FlIbTOy+uS+/xJl7E=;
+        b=XgCoNy0eO2koQDx8zhHoFRk3HC9C8URPs39CipKnvYYSoySg8gvZ97I3+qizzJFdIs
+         fQLz0c+KDG74QMw176Pj4ef9awpMdFnZSyNJ68A1Kmx0epmtGCpkw5H1sV5LZTm3J443
+         U9KQc7bZgRaDfuazLrp4qGFMJ9cKRJ5PJphSF1bd2qAY/vxChxMFzeFchis55vmKmTDM
+         loGodc2ZJ23hzWS+oGgd2i7xolFZLph4sraTym8Pj4x71aw9JVbvCiIL4EMp+P+q6PMS
+         8o7GjtJUafFra8PBxd35+U0aMImWPjCMJXlN4O/XrQKuINgnr1RDaKUCm2kUfBgshYe/
+         54ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686599789; x=1689191789;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=r9ofeHvqvAt6ShY55oFXmS+4m8FlIbTOy+uS+/xJl7E=;
+        b=O7WTwYmek8N8QsjHPc1HxKUXAEtPy27AeO7TmlZ8ODTdCDN7O6DC2+XUPXKj0Y6U0Q
+         am4m4z0f8qoMD3P3DL2v3RWY/8j49wQ8CkNLF+IQxEt2084RpqXBTxu7C8+dySgFSs7u
+         sDOF2tlt5cu8bIxoQNlHfuh5ZyDVftRcHxLGF0xywrKcuzcRDeHEIVrZuWq9HkIlyG21
+         Pq5cAVhMMcCdQzhdUVG8Ot2x5fGbQv+Vq33i6ZJE8ebtj3jIxsM/CRliXxQWv/jBQUgp
+         eyl/p/bqYJab/1xnhWUBAVdBHMw3C5efoKKden2fONOKtuEKjNALXIbliS43w/3KqI1m
+         S0PQ==
+X-Gm-Message-State: AC+VfDzuCbBv0dXy4E2W6dfAjoGYrXHEfA7d+QR+ZQYTVWGX1kwcyRhV
+        BYWPzSnKKc3OD9CrEuT4Boe+wv11JdbSw0HQrYY=
+X-Google-Smtp-Source: ACHHUZ4hZENqvHX6Y3KFejDSwHfY8TjG7pWH5/cE1QElektrLU5D0gxBRWbFZM3+allGWyAyCZCDcQ==
+X-Received: by 2002:a6b:690a:0:b0:77a:ee79:652 with SMTP id e10-20020a6b690a000000b0077aee790652mr5019559ioc.1.1686599789344;
+        Mon, 12 Jun 2023 12:56:29 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id o14-20020a02cc2e000000b0041f6957b290sm2941505jap.93.2023.06.12.12.56.28
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 12:56:28 -0700 (PDT)
+Message-ID: <0b0d4411-c8fd-4272-770b-e030af6919a0@kernel.dk>
+Date:   Mon, 12 Jun 2023 13:56:27 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: pnUwr-1UJQPc9c92fRwrsK4-5vsMBsIs
-X-Proofpoint-ORIG-GUID: pnUwr-1UJQPc9c92fRwrsK4-5vsMBsIs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-12_14,2023-06-12_02,2023-05-22_02
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/net: save msghdr->msg_control for retries
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
+If the application sets ->msg_control and we have to later retry this
+command, or if it got queued with IOSQE_ASYNC to begin with, then we
+need to retain the original msg_control value. This is due to the net
+stack overwriting this field with an in-kernel pointer, to copy it
+in. Hitting that path for the second time will now fail the copy from
+user, as it's attempting to copy from a non-user address.
 
-Drivers can poll requests directly, so use that. We just need to ensure
-the driver's request was allocated from a polled hctx, so a special
-driver flag is added to struct io_uring_cmd.
+Link: https://github.com/axboe/liburing/issues/880
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-The allows unshared and multipath namespaces to use the same polling
-callback, and multipath is guaranteed to get the same queue as the
-command was submitted on. Previously multipath polling might check a
-different path and poll the wrong info.
-
-The other bonus is we don't need a bio payload in order to poll,
-allowing commands like 'flush' and 'write zeroes' to be submitted on the
-same high priority queue as read and write commands.
-
-Finally, using the request based polling skips the unnecessary bio
-overhead.
-
-Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- drivers/nvme/host/ioctl.c     | 70 ++++++++++-------------------------
- drivers/nvme/host/multipath.c |  2 +-
- drivers/nvme/host/nvme.h      |  2 -
- include/uapi/linux/io_uring.h |  2 +
- 4 files changed, 22 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 52ed1094ccbb2..dd7603efed799 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -505,7 +505,6 @@ static enum rq_end_io_ret nvme_uring_cmd_end_io(struc=
-t request *req,
- {
- 	struct io_uring_cmd *ioucmd =3D req->end_io_data;
- 	struct nvme_uring_cmd_pdu *pdu =3D nvme_uring_cmd_pdu(ioucmd);
--	void *cookie =3D READ_ONCE(ioucmd->cookie);
-=20
- 	req->bio =3D pdu->bio;
- 	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
-@@ -518,10 +517,12 @@ static enum rq_end_io_ret nvme_uring_cmd_end_io(str=
-uct request *req,
- 	 * For iopoll, complete it directly.
- 	 * Otherwise, move the completion to task work.
- 	 */
--	if (cookie !=3D NULL && blk_rq_is_poll(req))
-+	if (blk_rq_is_poll(req)) {
-+		WRITE_ONCE(ioucmd->cookie, NULL);
- 		nvme_uring_task_cb(ioucmd, IO_URING_F_UNLOCKED);
--	else
-+	} else {
- 		io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
-+	}
-=20
- 	return RQ_END_IO_FREE;
- }
-@@ -531,7 +532,6 @@ static enum rq_end_io_ret nvme_uring_cmd_end_io_meta(=
-struct request *req,
- {
- 	struct io_uring_cmd *ioucmd =3D req->end_io_data;
- 	struct nvme_uring_cmd_pdu *pdu =3D nvme_uring_cmd_pdu(ioucmd);
--	void *cookie =3D READ_ONCE(ioucmd->cookie);
-=20
- 	req->bio =3D pdu->bio;
- 	pdu->req =3D req;
-@@ -540,10 +540,12 @@ static enum rq_end_io_ret nvme_uring_cmd_end_io_met=
-a(struct request *req,
- 	 * For iopoll, complete it directly.
- 	 * Otherwise, move the completion to task work.
- 	 */
--	if (cookie !=3D NULL && blk_rq_is_poll(req))
-+	if (blk_rq_is_poll(req)) {
-+		WRITE_ONCE(ioucmd->cookie, NULL);
- 		nvme_uring_task_meta_cb(ioucmd, IO_URING_F_UNLOCKED);
--	else
-+	} else {
- 		io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_meta_cb);
-+	}
-=20
- 	return RQ_END_IO_NONE;
- }
-@@ -599,7 +601,6 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, =
-struct nvme_ns *ns,
- 	if (issue_flags & IO_URING_F_IOPOLL)
- 		rq_flags |=3D REQ_POLLED;
-=20
--retry:
- 	req =3D nvme_alloc_user_request(q, &c, rq_flags, blk_flags);
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
-@@ -613,17 +614,11 @@ static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl=
-, struct nvme_ns *ns,
- 			return ret;
- 	}
-=20
--	if (issue_flags & IO_URING_F_IOPOLL && rq_flags & REQ_POLLED) {
--		if (unlikely(!req->bio)) {
--			/* we can't poll this, so alloc regular req instead */
--			blk_mq_free_request(req);
--			rq_flags &=3D ~REQ_POLLED;
--			goto retry;
--		} else {
--			WRITE_ONCE(ioucmd->cookie, req->bio);
--			req->bio->bi_opf |=3D REQ_POLLED;
--		}
-+	if (blk_rq_is_poll(req)) {
-+		ioucmd->flags |=3D IORING_URING_CMD_POLLED;
-+		WRITE_ONCE(ioucmd->cookie, req);
- 	}
-+
- 	/* to free bio on completion, as req->bio will be null at that time */
- 	pdu->bio =3D req->bio;
- 	pdu->meta_len =3D d.metadata_len;
-@@ -782,18 +777,16 @@ int nvme_ns_chr_uring_cmd_iopoll(struct io_uring_cm=
-d *ioucmd,
- 				 struct io_comp_batch *iob,
- 				 unsigned int poll_flags)
- {
--	struct bio *bio;
-+	struct request *req;
- 	int ret =3D 0;
--	struct nvme_ns *ns;
--	struct request_queue *q;
-+
-+	if (!(ioucmd->flags & IORING_URING_CMD_POLLED))
-+		return 0;
-=20
- 	rcu_read_lock();
--	bio =3D READ_ONCE(ioucmd->cookie);
--	ns =3D container_of(file_inode(ioucmd->file)->i_cdev,
--			struct nvme_ns, cdev);
--	q =3D ns->queue;
--	if (test_bit(QUEUE_FLAG_POLL, &q->queue_flags) && bio && bio->bi_bdev)
--		ret =3D bio_poll(bio, iob, poll_flags);
-+	req =3D READ_ONCE(ioucmd->cookie);
-+	if (req && blk_rq_is_poll(req))
-+		ret =3D blk_rq_poll(req, iob, poll_flags);
- 	rcu_read_unlock();
- 	return ret;
- }
-@@ -885,31 +878,6 @@ int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *=
-ioucmd,
- 	srcu_read_unlock(&head->srcu, srcu_idx);
- 	return ret;
- }
--
--int nvme_ns_head_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
--				      struct io_comp_batch *iob,
--				      unsigned int poll_flags)
--{
--	struct cdev *cdev =3D file_inode(ioucmd->file)->i_cdev;
--	struct nvme_ns_head *head =3D container_of(cdev, struct nvme_ns_head, c=
-dev);
--	int srcu_idx =3D srcu_read_lock(&head->srcu);
--	struct nvme_ns *ns =3D nvme_find_path(head);
--	struct bio *bio;
--	int ret =3D 0;
--	struct request_queue *q;
--
--	if (ns) {
--		rcu_read_lock();
--		bio =3D READ_ONCE(ioucmd->cookie);
--		q =3D ns->queue;
--		if (test_bit(QUEUE_FLAG_POLL, &q->queue_flags) && bio
--				&& bio->bi_bdev)
--			ret =3D bio_poll(bio, iob, poll_flags);
--		rcu_read_unlock();
--	}
--	srcu_read_unlock(&head->srcu, srcu_idx);
--	return ret;
--}
- #endif /* CONFIG_NVME_MULTIPATH */
-=20
- int nvme_dev_uring_cmd(struct io_uring_cmd *ioucmd, unsigned int issue_f=
-lags)
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.=
-c
-index 2bc159a318ff0..61130b4976b04 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -470,7 +470,7 @@ static const struct file_operations nvme_ns_head_chr_=
-fops =3D {
- 	.unlocked_ioctl	=3D nvme_ns_head_chr_ioctl,
- 	.compat_ioctl	=3D compat_ptr_ioctl,
- 	.uring_cmd	=3D nvme_ns_head_chr_uring_cmd,
--	.uring_cmd_iopoll =3D nvme_ns_head_chr_uring_cmd_iopoll,
-+	.uring_cmd_iopoll =3D nvme_ns_chr_uring_cmd_iopoll,
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 89e839013837..51b0f7fbb4f5 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -65,6 +65,7 @@ struct io_sr_msg {
+ 	u16				addr_len;
+ 	u16				buf_group;
+ 	void __user			*addr;
++	void __user			*msg_control;
+ 	/* used only for send zerocopy */
+ 	struct io_kiocb 		*notif;
  };
-=20
- static int nvme_add_ns_head_cdev(struct nvme_ns_head *head)
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index a2d4f59e0535a..84aecf53870ae 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -852,8 +852,6 @@ long nvme_dev_ioctl(struct file *file, unsigned int c=
-md,
- 		unsigned long arg);
- int nvme_ns_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
- 		struct io_comp_batch *iob, unsigned int poll_flags);
--int nvme_ns_head_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
--		struct io_comp_batch *iob, unsigned int poll_flags);
- int nvme_ns_chr_uring_cmd(struct io_uring_cmd *ioucmd,
- 		unsigned int issue_flags);
- int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
-h
-index f222d263bc555..08720c7bd92f8 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -244,8 +244,10 @@ enum io_uring_op {
-  * sqe->uring_cmd_flags
-  * IORING_URING_CMD_FIXED	use registered buffer; pass this flag
-  *				along with setting sqe->buf_index.
-+ * IORING_URING_CMD_POLLED	driver use only
-  */
- #define IORING_URING_CMD_FIXED	(1U << 0)
-+#define IORING_URING_CMD_POLLED	(1U << 31)
-=20
-=20
- /*
---=20
-2.34.1
+@@ -195,11 +196,15 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+ 			       struct io_async_msghdr *iomsg)
+ {
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
++	int ret;
+ 
+ 	iomsg->msg.msg_name = &iomsg->addr;
+ 	iomsg->free_iov = iomsg->fast_iov;
+-	return sendmsg_copy_msghdr(&iomsg->msg, sr->umsg, sr->msg_flags,
++	ret = sendmsg_copy_msghdr(&iomsg->msg, sr->umsg, sr->msg_flags,
+ 					&iomsg->free_iov);
++	/* save msg_control as sys_sendmsg() overwrites it */
++	sr->msg_control = iomsg->msg.msg_control;
++	return ret;
+ }
+ 
+ int io_send_prep_async(struct io_kiocb *req)
+@@ -297,6 +302,7 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (req_has_async_data(req)) {
+ 		kmsg = req->async_data;
++		kmsg->msg.msg_control = sr->msg_control;
+ 	} else {
+ 		ret = io_sendmsg_copy_hdr(req, &iomsg);
+ 		if (ret)
+
+-- 
+Jens Axboe
 

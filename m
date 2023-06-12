@@ -2,113 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B9672C6A5
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 15:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D355172CAFC
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 18:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237196AbjFLN4Z (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Jun 2023 09:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43338 "EHLO
+        id S230295AbjFLQGn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jun 2023 12:06:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237198AbjFLNzx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jun 2023 09:55:53 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A7C1709
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 06:55:26 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id e9e14a558f8ab-33bcc8f0d21so2628315ab.1
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 06:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686578126; x=1689170126;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9io9darqmbRHo/P6FExDlp/8V30dLZsxSAomt60Wi7I=;
-        b=mG76mbdhc8rP1C83xkDvxyNsd31zL2j0OU+qQLmYOpzl+Qf6TABD7kdjQt28sqZrMf
-         +CXBLHqt6nbjZy8mC66aAKCzDg2pJ9ikF3rFlW0GEKzioSCZUwqLeXBWZEJn+/8hN54T
-         8uklUPE8u+snYwIynMflK4G9k/4jSZD1SfhRtt9WtCrfyj8UGGqNP5dFwfxVyxW1/c2R
-         XTh/waNy1Nfexd5qzgQaFmbYC/58/TI6KaP0ovJswlVdc9OGDeZmxEPop5G3ObH9+aQS
-         McWM48lYsU+Kvry41rvHTJ1uq7kGy1o73coz4sKUCHnKOsQwpLGxS13AOhg8FEJmUpmC
-         zSDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686578126; x=1689170126;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9io9darqmbRHo/P6FExDlp/8V30dLZsxSAomt60Wi7I=;
-        b=ABo8+l2k87DLX8CYwnOd40GecigELklgYAqOg0aCo6YooApNeMv4HWIMODGsegVVec
-         /EAQ4h91rAtXlVVCYXvYPBxT4LO9RHHdegaTPBp+a8mpSOch43gfInKJ76pWSm0Fl98g
-         cS+TMYqWUgpRihm8TD+pugTwHu325SK2kXaITJ5TfF/TcpxXmi3/iaVXXRsLLhXAKUpY
-         5cjDY8GlJyvbui8QSCwCdhPqlivyZKbFlYKr0HqgKEjmCzX0xZfvd3ROsYAQOXHekgcq
-         nG62bbLF2s1Aj2ExGO5MOK/0vxtB2jznSJVd8emLQg+EJ4MbpoXqCsB3d0VKNXtiavmg
-         xXmw==
-X-Gm-Message-State: AC+VfDxtvVFTwUyvLacuti6OiyfRhFWR9Q4EbNjNuewi1POR3Bbux0Yh
-        dBphWDYXcolNscOo3lC6B4QJn4IxO7rDlCAB6/I=
-X-Google-Smtp-Source: ACHHUZ62UQ8Z08W7pcgi3qm95i27ceAcosanqbXr8aMJU/jFnnpIt3UaiX3aahxNmQNK0d3HtXhFYA==
-X-Received: by 2002:a6b:8d4b:0:b0:777:b6a9:64ba with SMTP id p72-20020a6b8d4b000000b00777b6a964bamr6134971iod.2.1686578125886;
-        Mon, 12 Jun 2023 06:55:25 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id k24-20020a02c658000000b0041f4bd6f285sm2686753jan.37.2023.06.12.06.55.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 06:55:25 -0700 (PDT)
-Message-ID: <13375640-fe67-24f4-d0b2-e46725d0ef4f@kernel.dk>
-Date:   Mon, 12 Jun 2023 07:55:24 -0600
+        with ESMTP id S229877AbjFLQGn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jun 2023 12:06:43 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 099B4BB
+        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 09:06:42 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B19422281C;
+        Mon, 12 Jun 2023 16:06:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686586000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lW61fzkuIUGwTcNAoSwdAucD4HP0C4z1xBiSc7NSL+Y=;
+        b=oA0fAef7SVpYzcDb1Wlqo8plfPhvVqGDrxJXPsQ2I8rzKo7h+1krkIWKb8NMA6ZamEz+R8
+        z/wZM1WbMtSxXcb7YYhywk06H//i25vP8NdrYE3ZKPA8NgotCKF97jDhLhn6hUQX4DfqEP
+        mYmr7PXYkNvDO2UQStek6C4biuQUAmg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686586000;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lW61fzkuIUGwTcNAoSwdAucD4HP0C4z1xBiSc7NSL+Y=;
+        b=zqYnR5J/ZxSZlBWGuiAVC6Nfs5qyt+wabeggvB/QQygBa+58HeWLF5a04W3v/8JTdw4LPh
+        rrYWuJmYgHS4OYDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7A8351357F;
+        Mon, 12 Jun 2023 16:06:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id g8s0GJBCh2Q6TAAAMHmgww
+        (envelope-from <krisman@suse.de>); Mon, 12 Jun 2023 16:06:40 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, andres@anarazel.de
+Subject: Re: [PATCH 5/6] io_uring: add support for futex wake and wait
+References: <20230609183125.673140-1-axboe@kernel.dk>
+        <20230609183125.673140-6-axboe@kernel.dk>
+Date:   Mon, 12 Jun 2023 12:06:39 -0400
+In-Reply-To: <20230609183125.673140-6-axboe@kernel.dk> (Jens Axboe's message
+        of "Fri, 9 Jun 2023 12:31:24 -0600")
+Message-ID: <87352w3bsg.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: Callbacks in io_uring submission queue
-Content-Language: en-US
-To:     Thomas Marsh <tmarsh.dyan@gmail.com>, io-uring@vger.kernel.org
-References: <CAL66sUjTkm5fTaLwupGe1F2br+LjYgzBqh+uYu0qA=j2rLmABQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAL66sUjTkm5fTaLwupGe1F2br+LjYgzBqh+uYu0qA=j2rLmABQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/11/23 9:43?PM, Thomas Marsh wrote:
-> Hello. Recently I was busy making a coroutine executor. It was going
-> smoothly until the point where I needed to read from stdin. It turns
-> out that the default way to do it blocks the thread that executes the
-> read. This is not an acceptable situation for the worker thread which
-> should execute as many pieces of work as possible. I tried to find how
-> to do asynchronous io in Linux, but among the variety of things I came
-> across on the web, the io_uring appeared as an appropriate solution at
-> first sight. Sadly, soon after going deeper into the io_uring's
-> interface, I discovered that the only way to know about the completion
-> of submitted work is through polling. This appeared quite counter to
-> the premise of asynchronous io, which is to eliminate waiting on
-> things.
+Jens Axboe <axboe@kernel.dk> writes:
 
-Not sure how you came to that last completion? You can certainly poll on
-the ring fd itself to get notified when there are completions, but you
-can also just check the completion ring. That's the common approach.
+> Add support for FUTEX_WAKE/WAIT primitives.
 
-> Dissatisfied with my findings I tried to see if any other os provided
-> a better interface, and I found one conceptually interesting
-> approach... in Apple's Metal. In that graphics framework, it is
-> possible to ask the system for a command buffer and then put in it a
-> user-provided callback, which the system will execute when it
-> processes that buffer.
-> 
-> Is it possible to put a callback in io_uring which the system will
-> execute without polling the thing?
+This is great.  I was so sure io_uring had this support already for some
+reason.  I might have dreamed it.
 
-io_uring is a kernel side implementation, having callbacks there into
-userspace would not make sense. You could of course wrap your completion
-reaping in something that processes them via calling a callback, eg
-->user_data could be set to a struct that has a data and callback
-element and that's how you'd process them.
+The semantics are tricky, though. You might want to CC peterZ and tglx
+directly.
 
-But it sound to me like you're mixing things up a bit. And there's some
-confusion on polling being a requirement as well, which is not the case
-at all.
+> IORING_OP_FUTEX_WAKE is mix of FUTEX_WAKE and FUTEX_WAKE_BITSET, as
+> it does support passing in a bitset.
+
+As far as I know, the _BITSET variant are not commonly used in the
+current interface.  I haven't seen any code that really benefits from
+it.
+
+> Similary, IORING_OP_FUTEX_WAIT is a mix of FUTEX_WAIT and
+> FUTEX_WAIT_BITSET.
+
+But it is definitely safe to have a single one, basically with the
+_BITSET semantics.
+
+> FUTEX_WAKE is straight forward, as we can always just do those inline.
+> FUTEX_WAIT will queue the futex with an appropriate callback, and
+> that callback will in turn post a CQE when it has triggered.
+
+Even with an asynchronous model, it might make sense to halt execution
+of further queued operations until futex completes.  I think
+IOSQE_IO_DRAIN is a barrier only against the submission part, so it
+wouldn't hep.  Is there a way to ensure this ordering?
+
+I know, it goes against the asynchronous nature of io_uring, but I think
+it might be a valid use case. Say we extend FUTEX_WAIT with a way to
+acquire the futex in kernel space.  Then, when the CQE returns, we know
+the lock is acquired.  if we can queue dependencies on that (stronger
+than the link semantics), we could queue operations to be executed once
+the lock is taken. Makes sense?
+
+> Cancelations are supported, both from the application point-of-view,
+> but also to be able to cancel pending waits if the ring exits before
+> all events have occurred.
+>
+> This is just the barebones wait/wake support. Features to be added
+> later:
+
+One item high on my wishlist would be the futexv semantics (wait on any
+of a set of futexes).  It cannot be implemented by issuing several
+FUTEX_WAIT.
 
 -- 
-Jens Axboe
-
+Gabriel Krisman Bertazi

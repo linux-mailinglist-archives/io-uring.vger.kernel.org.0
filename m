@@ -2,156 +2,138 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 42CC172D0B0
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 22:38:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371DD72D4BA
+	for <lists+io-uring@lfdr.de>; Tue, 13 Jun 2023 01:00:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbjFLUic (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 12 Jun 2023 16:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
+        id S233202AbjFLXAk (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 12 Jun 2023 19:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbjFLUia (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jun 2023 16:38:30 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3279E19BC
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 13:38:03 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1a35f67d8efso1296493fac.1
-        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 13:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686602273; x=1689194273;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=57fPrHaXnPslzcK7ssGudSjuBFv2dfCgiktDOByKzOA=;
-        b=R3PmPJPoPb+T/Flf7xX3JMyilN+j1ZPTty0jOw4FvLrCM7rAX54i6LZTrKwNiTyiBI
-         7/tyyyu+fiKYSOlQ+D14xHFmZLu07EsDRpfDcQJYg4mPVQUmyXSuibz2RppVAuphrkDS
-         +52940hX3TrSxpTbmT2yNDY4TgBX6Shd4bUCy4GiTPwvGzQHBzho7PCDwJnVioDRTltO
-         /GkE2yy0S7S512tWQj6dFHWaAPnNRf0EUtnQqd9cK/XjtCdh45kpKKxwlQc8Wy8xAsty
-         EsnxSETLRgAb0uFh49IKsgg/dtKCWResXItq+jyn4wyI++/ndInRoCPukePrgRwCNQ5j
-         rq+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686602273; x=1689194273;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=57fPrHaXnPslzcK7ssGudSjuBFv2dfCgiktDOByKzOA=;
-        b=VKZClrD80De2SNMb8mLjh+Tv//xw3w+BRP8gH9RS4fBLAOj2l49ZXx3vgpT1IcJAmG
-         EzKKmcWcbHk0ymtasaqFthvnH7ZkE+xGrp+3xpkfyqyMBknUKDmGU4o6Bso/Xnzrczok
-         Oz/sGSGTXxZAlW8Tk0ad+IGmI+ix2eqAY1e08qrbYANv5PKbRnja3Zny7KFvFwrA7cks
-         AgfoBywXsJWjQc3SwOBwJJoZr1fTjrQlbDlfn2P1fpENoW0Cl9k0+mblYFIfOkp6Wxyo
-         oJVIEreB3D35MrTGzvwQWQGzOATgn2v+aX+nS/dHSVkWmLyZq0TUkrBTGhhtwwSfzQm5
-         EEPg==
-X-Gm-Message-State: AC+VfDy3VTDELB/lwWXn2/ldg3VxX7RBCkZ8DgfGgaCyyn3ZX3RI8QsU
-        6Ei3/DT2j7bAHi6zoVEMkFoWadWsVHd2XYmEiws=
-X-Google-Smtp-Source: ACHHUZ7szPdq8nAsjtrbbCjnUMfzTqkxB5OaQ1LAhGSR15ynqvE3hgFa2flarU6EkugfhtWHpq8Tuw==
-X-Received: by 2002:a05:6870:f591:b0:192:5423:10f0 with SMTP id eh17-20020a056870f59100b00192542310f0mr6609823oab.5.1686602273221;
-        Mon, 12 Jun 2023 13:37:53 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id o27-20020a02c6bb000000b004186badba5esm2903485jan.36.2023.06.12.13.37.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 13:37:52 -0700 (PDT)
-Message-ID: <dc043733-b892-3abd-6e3b-4104bec3de2e@kernel.dk>
-Date:   Mon, 12 Jun 2023 14:37:51 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 5/6] io_uring: add support for futex wake and wait
-Content-Language: en-US
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
+        with ESMTP id S229583AbjFLXAi (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 12 Jun 2023 19:00:38 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A1D13E
+        for <io-uring@vger.kernel.org>; Mon, 12 Jun 2023 16:00:37 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 115CB22619;
+        Mon, 12 Jun 2023 23:00:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686610836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wP10jaevsTpD7U56FJbNc+g/Cc5qkHBBtSI4J0GzeFQ=;
+        b=wYjbGDN0iiwl7DifNVVpqQD42BtpIsgwkS3wB5KefebuJINGA5oJ9xye/CKI0xF3Mea/p3
+        izYghFhjWz+/o4LD2WqPU39Kh4maswjZbYInav469peRifn9PTizf1ZLL96nqe37qU8CzC
+        d0XabDjfJQdXdCewwdpMkxaTjR22O8o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686610836;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wP10jaevsTpD7U56FJbNc+g/Cc5qkHBBtSI4J0GzeFQ=;
+        b=dirqKJFt1MCWJt6YAMp0H77ysK/O/0MTxeHFtiPdQ9wcCt9ieKPz9yq4ovfCEgdJ+U8UQg
+        Qk5A7ws6+wO6W3DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CDF531357F;
+        Mon, 12 Jun 2023 23:00:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id eLanLJOjh2RyZQAAMHmgww
+        (envelope-from <krisman@suse.de>); Mon, 12 Jun 2023 23:00:35 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, andres@anarazel.de
+Subject: Re: [PATCH 5/6] io_uring: add support for futex wake and wait
+Organization: SUSE
 References: <20230609183125.673140-1-axboe@kernel.dk>
- <20230609183125.673140-6-axboe@kernel.dk> <87352w3bsg.fsf@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87352w3bsg.fsf@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        <20230609183125.673140-6-axboe@kernel.dk> <87352w3bsg.fsf@suse.de>
+        <dc043733-b892-3abd-6e3b-4104bec3de2e@kernel.dk>
+Date:   Mon, 12 Jun 2023 19:00:34 -0400
+In-Reply-To: <dc043733-b892-3abd-6e3b-4104bec3de2e@kernel.dk> (Jens Axboe's
+        message of "Mon, 12 Jun 2023 14:37:51 -0600")
+Message-ID: <87r0qg1e25.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/12/23 10:06?AM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> Add support for FUTEX_WAKE/WAIT primitives.
-> 
-> This is great.  I was so sure io_uring had this support already for some
-> reason.  I might have dreamed it.
+Jens Axboe <axboe@kernel.dk> writes:
 
-I think you did :-)
+> On 6/12/23 10:06?AM, Gabriel Krisman Bertazi wrote:
+>> Jens Axboe <axboe@kernel.dk> writes:
+>> 
+>>> Add support for FUTEX_WAKE/WAIT primitives.
+>> 
+>> This is great.  I was so sure io_uring had this support already for some
+>> reason.  I might have dreamed it.
+>
+> I think you did :-)
 
-> The semantics are tricky, though. You might want to CC peterZ and tglx
-> directly.
+Premonitory!  Still, there should be better things to dream about than
+with the kernel code.
 
-For sure, I'll take it wider soon enough. Just wanted to iron out
-io_uring details first.
+>> Even with an asynchronous model, it might make sense to halt execution
+>> of further queued operations until futex completes.  I think
+>> IOSQE_IO_DRAIN is a barrier only against the submission part, so it
+>> wouldn't hep.  Is there a way to ensure this ordering?
+>
+> You'd use link for that - link whatever depends on the wake to the futex
+> wait. Or just queue it up once you reap the wait completion, when that
+> is posted because we got woken.
 
->> IORING_OP_FUTEX_WAKE is mix of FUTEX_WAKE and FUTEX_WAKE_BITSET, as
->> it does support passing in a bitset.
-> 
-> As far as I know, the _BITSET variant are not commonly used in the
-> current interface.  I haven't seen any code that really benefits from
-> it.
+The challenge of linked requests, in my opinion, is that once a link
+chain starts, everything needs to be link together, and a single error
+fails everything, which is ok when operations are related, but
+not so much when doing IO to different files from the same ring.
 
-Since FUTEX_WAKE is a strict subset of FUTEX_WAKE_BITSET, makes little
-sense to not just support both imho.
+>>> Cancelations are supported, both from the application point-of-view,
+>>> but also to be able to cancel pending waits if the ring exits before
+>>> all events have occurred.
+>>>
+>>> This is just the barebones wait/wake support. Features to be added
+>>> later:
+>> 
+>> One item high on my wishlist would be the futexv semantics (wait on any
+>> of a set of futexes).  It cannot be implemented by issuing several
+>> FUTEX_WAIT.
+>
+> Yep, I do think that one is interesting enough to consider upfront.
+>Unfortunately the internal implementation of that does not look that
+>great, though I'm sure we can make that work.  ?  But would likely
+>require some futexv refactoring to make it work. I can take a look at
+>it.
 
->> Similary, IORING_OP_FUTEX_WAIT is a mix of FUTEX_WAIT and
->> FUTEX_WAIT_BITSET.
-> 
-> But it is definitely safe to have a single one, basically with the
-> _BITSET semantics.
+No disagreement here.  To be fair, the main challenge was making the new
+interface compatible with a futex being waited on/waked the original
+interface. At some point, we had a really nice design for a single
+object, but we spent two years bikesheding over the interface and ended
+up merging something pretty much similar to the proposal from two years
+prior.
 
-Yep I think so.
+> You could obviously do futexv with this patchset, just posting N futex
+> waits and canceling N-1 when you get woken by one. Though that's of
+> course not very pretty or nice to use, but design wise it would totally
+> work as you don't actually block on these with io_uring.
 
->> FUTEX_WAKE is straight forward, as we can always just do those inline.
->> FUTEX_WAIT will queue the futex with an appropriate callback, and
->> that callback will in turn post a CQE when it has triggered.
-> 
-> Even with an asynchronous model, it might make sense to halt execution
-> of further queued operations until futex completes.  I think
-> IOSQE_IO_DRAIN is a barrier only against the submission part, so it
-> wouldn't hep.  Is there a way to ensure this ordering?
+Yes, but at that point, i guess it'd make more sense to implement the
+same semantics by polling over a set of eventfds or having a single
+futex and doing dispatch in userspace.
 
-You'd use link for that - link whatever depends on the wake to the futex
-wait. Or just queue it up once you reap the wait completion, when that
-is posted because we got woken.
-
-> I know, it goes against the asynchronous nature of io_uring, but I think
-> it might be a valid use case. Say we extend FUTEX_WAIT with a way to
-> acquire the futex in kernel space.  Then, when the CQE returns, we know
-> the lock is acquired.  if we can queue dependencies on that (stronger
-> than the link semantics), we could queue operations to be executed once
-> the lock is taken. Makes sense?
-
-It does, and acquiring it _may_ make sense indeed. But I'd rather punt
-that to a later thing, and focus on getting the standard (and smaller)
-primitives done first.
-
->> Cancelations are supported, both from the application point-of-view,
->> but also to be able to cancel pending waits if the ring exits before
->> all events have occurred.
->>
->> This is just the barebones wait/wake support. Features to be added
->> later:
-> 
-> One item high on my wishlist would be the futexv semantics (wait on any
-> of a set of futexes).  It cannot be implemented by issuing several
-> FUTEX_WAIT.
-
-Yep, I do think that one is interesting enough to consider upfront.
-Unfortunately the internal implementation of that does not look that
-great, though I'm sure we can make that work. But would likely require
-some futexv refactoring to make it work. I can take a look at it.
-
-You could obviously do futexv with this patchset, just posting N futex
-waits and canceling N-1 when you get woken by one. Though that's of
-course not very pretty or nice to use, but design wise it would totally
-work as you don't actually block on these with io_uring.
+thanks,
 
 -- 
-Jens Axboe
-
+Gabriel Krisman Bertazi

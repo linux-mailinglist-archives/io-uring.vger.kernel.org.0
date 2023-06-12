@@ -2,139 +2,83 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9823C72B5CB
-	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 05:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F2672B62D
+	for <lists+io-uring@lfdr.de>; Mon, 12 Jun 2023 05:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjFLDOP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 11 Jun 2023 23:14:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49014 "EHLO
+        id S233223AbjFLDne (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 11 Jun 2023 23:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233235AbjFLDOO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 11 Jun 2023 23:14:14 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E50ABB
-        for <io-uring@vger.kernel.org>; Sun, 11 Jun 2023 20:14:12 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-53f567979baso479131a12.0
-        for <io-uring@vger.kernel.org>; Sun, 11 Jun 2023 20:14:12 -0700 (PDT)
+        with ESMTP id S229464AbjFLDnd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 11 Jun 2023 23:43:33 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA97BC
+        for <io-uring@vger.kernel.org>; Sun, 11 Jun 2023 20:43:33 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id 5614622812f47-39ce0ab782fso144857b6e.2
+        for <io-uring@vger.kernel.org>; Sun, 11 Jun 2023 20:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686539651; x=1689131651;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNcNFxNzXBwvVIy5+C+ygu2yj6aUUudAjVRfi7pJQK8=;
-        b=IENDW/xsdhGkLeA5Io+kvnL78fMYy2PPy9cF/zLHc/9Bq/2Glykz+X7U77ObaQyXam
-         HwDcrCOW4lpsZg2tr/7qkbJk8J+shE/9lSPd94SvM8+qK3qlauIMrFKr7sUEQt17POzo
-         WQGdBTM1hGHgJZd7HeyK4Q+hYNkKttz4PCy7p3bIpqaxqTohwXSFHfbMgWZeMAg1ThW5
-         6qbvCaYD4BrI1U5M1o2EFO+tfyJs0Yu0by2Xs3MMu81zCFiiOqTvoRUDApdHKs9h6DZB
-         1AdEH7WZEtyGRalbkVBXijsnz1fqpZb9nfbA+Hkj6fpSdXJzB+T2tPJBtTcq4l8QYjhP
-         pzQg==
+        d=gmail.com; s=20221208; t=1686541411; x=1689133411;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5TVVO4LwS3Ms7mjKaB4FDCiXylD07t4fJORxIFRT36w=;
+        b=dsJoSDGALCN2UFyYYFvRJH5+tOlHYbXyHjvEy5THQN6YKZ8Rf8evxzn1LGqM0p//Li
+         k1djZUIgRAWCJkU6XVUsPeya4xdvopbFHNrgwYKh+zptDSmkM0y6Mht4xeY2yo92pC79
+         rwBekfAmWF2RONibdyYAMjWG7tbAO4jLfPALxboscHUD+xYBTBkZwD6d6Mrx4L03anU2
+         tye6ynbN5qaU7d3s9ng0p4F0Wk3cfeZgBvEvYIdzydNpjQkdt4Cw56jMV9CK6/CdWz10
+         ViuSiOLtMAJTogMvjt/iN6yWrLZwjnzqFiO1qGK2wIzSfrWow+yJVyfWEAfvdT/+rnZn
+         QhyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686539651; x=1689131651;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UNcNFxNzXBwvVIy5+C+ygu2yj6aUUudAjVRfi7pJQK8=;
-        b=VFm7eVNRIrJpnhzAXB5eOxx4UVCxjv/qMjjqbHt8XOclYurGjk9zbgIuSk+TmXZfS2
-         j9Aaly/y5Wa+G12/Q5kL7gYVLSHpseSKQyUef6PNBLTW/vaPE2huOtg3Z3Dmv3aaeCgH
-         GhFFT4bXPJv5McObbHiL7l8cCtuzQ3HAoN3GRs11f+9ufoVdL3W/D7ozbKB79aFxC9A/
-         HrWo2cqlGdaO+TYmX8fBDRLNP3hCYGLiVuJ687vUteekLjiGMkW+FI0nARLiiYZeXTF9
-         BE5gYEzbxuNQ9Xre+aQYNHsn/V7CgFbPAHJe2O+nLdRhy0sWaRR59ngky5r7AHSFT6Si
-         5QvA==
-X-Gm-Message-State: AC+VfDwTLv+CssPiWIPBYKNBs2n2pKmihLVV9HVfGxmCG/Bq8bbsDDym
-        iwOXzSkr3jqey8/OUzo7oNV3MMeA1QLwnTKcMHw=
-X-Google-Smtp-Source: ACHHUZ7uBtN8VQTUU5e6ee5wU31F78K8Qqirws+pOdSiGFBgLq139e7EeJ4KlzzMLhNvK4ESZCjEWQ==
-X-Received: by 2002:a05:6a00:14c9:b0:662:a9c3:7b84 with SMTP id w9-20020a056a0014c900b00662a9c37b84mr8637487pfu.2.1686539651299;
-        Sun, 11 Jun 2023 20:14:11 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id f26-20020aa78b1a000000b00662c4ca18ebsm4487530pfd.128.2023.06.11.20.14.10
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Jun 2023 20:14:10 -0700 (PDT)
-Message-ID: <b0e4aaef-7088-56ce-244c-976edeac0e66@kernel.dk>
-Date:   Sun, 11 Jun 2023 21:14:09 -0600
+        d=1e100.net; s=20221208; t=1686541411; x=1689133411;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5TVVO4LwS3Ms7mjKaB4FDCiXylD07t4fJORxIFRT36w=;
+        b=FrcLx8d0M4Ze4Wj3b8WoerLsMeOVuKVkHBztVm/sOA2Jy4puwxxcADOadLZxnGMB3J
+         6MXC4Qivh+VhNGVNLj6hqUFqf46tlwyPTvZKPgytqLqgvRdXSWACvGK0IZdyGAkWN04r
+         TAk/Y0eTZsLex4Kcarol+1MJnS6rrpHjGmiX9yA+iv7AwkTesNyvFdr7MV4nXgC/dAN5
+         VXrj4/4YzpJYyHmEaxZnTwTXkCBzNuekWmuVOU7iZIIMGIl9qo0USTMXvAOpRP/3+nki
+         MPiaoyIsRmQ64mAns8cIWBD1ytmdGnuV08J6wl9mUHpAOeJhMBwCZ10EYZOfa3sJJRpi
+         BOxg==
+X-Gm-Message-State: AC+VfDyffquoFnHN1Lih/gSO5F9uZfxcGjJHtbuRk34aCfIceZXvDwPi
+        pVITRv/Tpkv9Iw5Hr8iZdH73TE/2h6WR/sefSSY4cqWFGdnxeA==
+X-Google-Smtp-Source: ACHHUZ7BNHpgezKbcz5lLcWq0RBHN4yLtXGC4W/ZgRoWfymz4jaa22gLyb4sBIK0iNjqPGrMzVQbNnnqKCxxnn+XYtw=
+X-Received: by 2002:a05:6808:2a6e:b0:39a:b787:1aca with SMTP id
+ fu14-20020a0568082a6e00b0039ab7871acamr3221982oib.49.1686541411663; Sun, 11
+ Jun 2023 20:43:31 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: wait interruptibly for request completions on exit
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+From:   Thomas Marsh <tmarsh.dyan@gmail.com>
+Date:   Mon, 12 Jun 2023 09:43:19 +0600
+Message-ID: <CAL66sUjTkm5fTaLwupGe1F2br+LjYgzBqh+uYu0qA=j2rLmABQ@mail.gmail.com>
+Subject: Callbacks in io_uring submission queue
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-WHen the ring exits, cleanup is done and the final cancelation and
-waiting on completions is done by io_ring_exit_work. That function is
-invoked by kworker, which doesn't take any signals. Because of that, it
-doesn't really matter if we wait for completions in TASK_INTERRUPTIBLE
-or TASK_UNINTERRUPTIBLE state. However, it does matter to the hung task
-detection checker!
+Hello. Recently I was busy making a coroutine executor. It was going
+smoothly until the point where I needed to read from stdin. It turns
+out that the default way to do it blocks the thread that executes the
+read. This is not an acceptable situation for the worker thread which
+should execute as many pieces of work as possible. I tried to find how
+to do asynchronous io in Linux, but among the variety of things I came
+across on the web, the io_uring appeared as an appropriate solution at
+first sight. Sadly, soon after going deeper into the io_uring's
+interface, I discovered that the only way to know about the completion
+of submitted work is through polling. This appeared quite counter to
+the premise of asynchronous io, which is to eliminate waiting on
+things.
+Dissatisfied with my findings I tried to see if any other os provided
+a better interface, and I found one conceptually interesting
+approach... in Apple's Metal. In that graphics framework, it is
+possible to ask the system for a command buffer and then put in it a
+user-provided callback, which the system will execute when it
+processes that buffer.
 
-Normally we expect cancelations and completions to happen rather
-quickly. Some test cases, however, will exit the ring and park the
-owning task stopped (eg via SIGSTOP). If the owning task needs to run
-task_work to complete requests, then io_ring_exit_work won't make any
-progress until the task is runnable again. Hence io_ring_exit_work can
-trigger the hung task detection, which is particularly problematic if
-panic-on-hung-task is enabled.
-
-As the ring exit doesn't take signals to begin with, have it wait
-interruptibly rather than uninterruptibly. io_uring has a separate
-stuck-exit warning that triggers independently anyway, so we're not
-really missing anything by making this switch.
-
-Cc: stable@vger.kernel.org # 5.10+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index a467064da1af..f181876e415b 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3121,7 +3121,18 @@ static __cold void io_ring_exit_work(struct work_struct *work)
- 			/* there is little hope left, don't run it too often */
- 			interval = HZ * 60;
- 		}
--	} while (!wait_for_completion_timeout(&ctx->ref_comp, interval));
-+		/*
-+		 * This is really an uninterruptible wait, as it has to be
-+		 * complete. But it's also run from a kworker, which doesn't
-+		 * take signals, so it's fine to make it interruptible. This
-+		 * avoids scenarios where we knowingly can wait much longer
-+		 * on completions, for example if someone does a SIGSTOP on
-+		 * a task that needs to finish task_work to make this loop
-+		 * complete. That's a synthetic situation that should not
-+		 * cause a stuck task backtrace, and hence a potential panic
-+		 * on stuck tasks if that is enabled.
-+		 */
-+	} while (!wait_for_completion_interruptible_timeout(&ctx->ref_comp, interval));
- 
- 	init_completion(&exit.completion);
- 	init_task_work(&exit.task_work, io_tctx_exit_cb);
-@@ -3145,7 +3156,12 @@ static __cold void io_ring_exit_work(struct work_struct *work)
- 			continue;
- 
- 		mutex_unlock(&ctx->uring_lock);
--		wait_for_completion(&exit.completion);
-+		/*
-+		 * See comment above for
-+		 * wait_for_completion_interruptible_timeout() on why this
-+		 * wait is marked as interruptible.
-+		 */
-+		wait_for_completion_interruptible(&exit.completion);
- 		mutex_lock(&ctx->uring_lock);
- 	}
- 	mutex_unlock(&ctx->uring_lock);
-
--- 
-Jens Axboe
-
+Is it possible to put a callback in io_uring which the system will
+execute without polling the thing?

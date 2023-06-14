@@ -2,142 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9BB372FC08
-	for <lists+io-uring@lfdr.de>; Wed, 14 Jun 2023 13:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B90673014D
+	for <lists+io-uring@lfdr.de>; Wed, 14 Jun 2023 16:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243554AbjFNLKx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 14 Jun 2023 07:10:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34860 "EHLO
+        id S245427AbjFNOKV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 14 Jun 2023 10:10:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243558AbjFNLKa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Jun 2023 07:10:30 -0400
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1F91BF8;
-        Wed, 14 Jun 2023 04:10:29 -0700 (PDT)
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-3f7368126a6so4440265e9.0;
-        Wed, 14 Jun 2023 04:10:29 -0700 (PDT)
+        with ESMTP id S245504AbjFNOKB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 14 Jun 2023 10:10:01 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5CD213F
+        for <io-uring@vger.kernel.org>; Wed, 14 Jun 2023 07:09:50 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51493ec65d8so11631707a12.2
+        for <io-uring@vger.kernel.org>; Wed, 14 Jun 2023 07:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google; t=1686751788; x=1689343788;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UUOrTL2Xu9y7kRjcCaEz+8n16xewr2Pdx9KRbYMspYM=;
+        b=ezFw3Ms7IXQRQzZ/496ULHL94L2YWhqiRcL8vgy2vhkdeD4lZ9YAdfDlLMdtdVDkLx
+         JCkL5siQvJlI6UqVZaSptsSujq4awBwPx57L5Yi9DM+Y+bfQ+nH/XmkthuPMfhEKt3KH
+         RWPNhnvFVCVt/+1I6ZGP7oJKwFRZRu9TY0xYE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686741027; x=1689333027;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yc88muMtZ5aM3IzShu9BL/RZOvuDqFEnp6zrvGSRn1A=;
-        b=lCGDgBpjVoHWjtVL+jFcdLuj6zQq44H9cEy/NwrKQEew8Okc5Z6Fcod9wDJpHkrlAQ
-         06SPd67KDa0PirISrBgFnPFCFlZtCrEQ2pKpAN8cl5isSedqJlEtlCFFXUZmFAHSigcr
-         8uSMIcaxyaAab2XbwmgEnLjOxgvCJ9CkWg9bJ6yd/eOVwM0BDOHDAx00o3GXAEQT+0Ii
-         1IsMqRtcV8KuSrZ4g4uTzgyDsYwozl0348bg83wsj/HkfhWE19pmfYrx1oPcWhS793T2
-         N/aWo8WZJGXZtgqHnX1gzCmkgbgTw95m9LsHvKgStRAgq5MisHs0RPm6kp5q36oxumaj
-         1Faw==
-X-Gm-Message-State: AC+VfDzIF7HQK1EIitcpL/zadnjCPRHnfu3IjiSrHdSFX96sFgkSYL0i
-        IzKhpz0DZzhWomasRp0qm7BbajfjPt4W8w==
-X-Google-Smtp-Source: ACHHUZ4k4bNVhAwwh4cWI5s0XnVNt2ZSgMEAItWI6KF3CDfDaNTq6g3yXmyXIxm5Jr2zHNeQlfIsMg==
-X-Received: by 2002:a05:600c:364f:b0:3f6:d09:5d46 with SMTP id y15-20020a05600c364f00b003f60d095d46mr9656122wmq.20.1686741027064;
-        Wed, 14 Jun 2023 04:10:27 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-020.fbsv.net. [2a03:2880:31ff:14::face:b00c])
-        by smtp.gmail.com with ESMTPSA id i10-20020a05600c290a00b003f819dfa0ddsm9941676wmd.28.2023.06.14.04.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 04:10:26 -0700 (PDT)
-From:   Breno Leitao <leitao@debian.org>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        David Ahern <dsahern@kernel.org>
-Cc:     leit@fb.com, asml.silence@gmail.com, matthieu.baerts@tessares.net,
-        martineau@kernel.org, marcelo.leitner@gmail.com,
-        lucien.xin@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dccp@vger.kernel.org,
-        mptcp@lists.linux.dev, linux-sctp@vger.kernel.org, ast@kernel.org,
-        kuniyu@amazon.com, martin.lau@kernel.org
-Subject: [RFC PATCH v2 4/4] net: add uring_cmd callback to raw "protocol"
-Date:   Wed, 14 Jun 2023 04:07:57 -0700
-Message-Id: <20230614110757.3689731-5-leitao@debian.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230614110757.3689731-1-leitao@debian.org>
-References: <20230614110757.3689731-1-leitao@debian.org>
+        d=1e100.net; s=20221208; t=1686751788; x=1689343788;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UUOrTL2Xu9y7kRjcCaEz+8n16xewr2Pdx9KRbYMspYM=;
+        b=OHOSAvPSuYlCl/09Z/b9/SphMKrV+o/vj3pKUebcNjy/l3TW0Hiw3q80ZMrXcBX+Ia
+         +mg4ipxiQV1gFyLVkV8LXLCb3HjO3bMW1hDzHqBMl15Op6Pn1AuSTB9ncdyfiAQmtn8g
+         Jxz8cVcxhSvFBFsds0yZdIH8gRyjrnGYDRGupuDfddYa1upWNONmML5qHjkVdYoQnZ0Q
+         d6T9azeIDySHmLPXLUqm33IGjFNDrgj6eaba+N+c56z/S5p4e9mDFzfetgdRzhlAf0F2
+         NbNRqw2edtCMrqbZrjuQKo/IbXv9N6djEFIIOCszREOuyiSHffaxcnuIBRhA5ZcTl4dj
+         eNsw==
+X-Gm-Message-State: AC+VfDyZAzohiPh45xox+aJCo3hxbqEZrdHteHtMT2qQTj+GZMzLorrb
+        vpe4k1YwYfTc38SqYretp0e8v3jOoHbmDUROzwjsA0UQYfGPBVEXasM=
+X-Google-Smtp-Source: ACHHUZ7AczZGYjJEHEWJ80aUfYUhHzOz4yaM6EiqIpoX/p/EFIJsXcViiFvXZy9S0pTDmUInx3991nudr18Y6rN38f4=
+X-Received: by 2002:aa7:d319:0:b0:515:4066:2acf with SMTP id
+ p25-20020aa7d319000000b0051540662acfmr8771936edq.8.1686751787658; Wed, 14 Jun
+ 2023 07:09:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+From:   Marek Majkowski <marek@cloudflare.com>
+Date:   Wed, 14 Jun 2023 16:09:35 +0200
+Message-ID: <CAJPywTLDhb5MkYS7PTi7=sXwm=5r9AbPKz3fDq4XGbqKvA-g=A@mail.gmail.com>
+Subject: io-wrk threads on socket vs non-socket
+To:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is the implementation of uring_cmd for the raw "protocol". It
-basically encompasses SOCKET_URING_OP_SIOCOUTQ and
-SOCKET_URING_OP_SIOCINQ, which call raw_ioctl with SIOCOUTQ and SIOCINQ.
+Hi!
 
-These two commands (SIOCOUTQ and SIOCINQ), are the only two commands
-that are handled by raw_ioctl().
+I'm playing with io-uring, and I found the io-wrk thread situation confusin=
+g.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- include/net/raw.h |  3 +++
- net/ipv4/raw.c    | 23 +++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+(A) In one case, I have a SOCK_DGRAM socket (blocking), over which I
+do IORING_OP_RECVMSG. This works well, and unless I mark the sqe as
+IOSQE_ASYNC, it doesn't seem to start an io-wrk kernel thread.
 
-diff --git a/include/net/raw.h b/include/net/raw.h
-index 32a61481a253..5d5ec63274a8 100644
---- a/include/net/raw.h
-+++ b/include/net/raw.h
-@@ -96,4 +96,7 @@ static inline bool raw_sk_bound_dev_eq(struct net *net, int bound_dev_if,
- #endif
- }
- 
-+int raw_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
-+		  unsigned int issue_flags);
-+
- #endif	/* _RAW_H */
-diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
-index 7782ff5e6539..31c3f9c41354 100644
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -75,6 +75,7 @@
- #include <linux/netfilter_ipv4.h>
- #include <linux/compat.h>
- #include <linux/uio.h>
-+#include <linux/io_uring.h>
- 
- struct raw_frag_vec {
- 	struct msghdr *msg;
-@@ -885,6 +886,27 @@ static int raw_ioctl(struct sock *sk, int cmd, int *karg)
- 	}
- }
- 
-+int raw_uring_cmd(struct sock *sk, struct io_uring_cmd *cmd,
-+		  unsigned int issue_flags)
-+{
-+	int ret;
-+
-+	switch (cmd->sqe->cmd_op) {
-+	case SOCKET_URING_OP_SIOCINQ: {
-+		if (raw_ioctl(sk, SIOCINQ, &ret))
-+			return -EFAULT;
-+		return ret;
-+	}
-+	case SOCKET_URING_OP_SIOCOUTQ:
-+		if (raw_ioctl(sk, SIOCOUTQ, &ret))
-+			return -EFAULT;
-+		return ret;
-+	default:
-+		return -ENOIOCTLCMD;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(raw_uring_cmd);
-+
- #ifdef CONFIG_COMPAT
- static int compat_raw_ioctl(struct sock *sk, unsigned int cmd, unsigned long arg)
- {
-@@ -924,6 +946,7 @@ struct proto raw_prot = {
- 	.connect	   = ip4_datagram_connect,
- 	.disconnect	   = __udp_disconnect,
- 	.ioctl		   = raw_ioctl,
-+	.uring_cmd	   = raw_uring_cmd,
- 	.init		   = raw_sk_init,
- 	.setsockopt	   = raw_setsockopt,
- 	.getsockopt	   = raw_getsockopt,
--- 
-2.34.1
+(B) However, the same can't be said of another situation. In the
+second case I have a tap file descriptor (blocking), which doesn't
+support "Socket operations on non-socket", so I must do
+IORING_OP_READV. This however seems to start a new io-wrk for each
+readv request:
 
+$ pstree -pt `pidof tapuring`
+tapuring(44932)=E2=94=80=E2=94=AC=E2=94=80{iou-wrk-44932}(44937)
+                =E2=94=9C=E2=94=80{iou-wrk-44932}(44938)
+                =E2=94=9C=E2=94=80{iou-wrk-44932}(44939)
+                =E2=94=9C=E2=94=80{iou-wrk-44932}(44940)
+                =E2=94=9C=E2=94=80{iou-wrk-44932}(44941)
+                =E2=94=9C=E2=94=80{iou-wrk-44932}(44942)
+
+I would expect both situations to behave the same way.
+
+The manpage for IOSQE_ASYNC:
+
+       IOSQE_ASYNC
+              Normal operation for io_uring is to try and issue an sqe
+              as non-blocking first, and if that fails, execute it in an
+              async manner. To support more efficient overlapped
+              operation of requests that the application knows/assumes
+              will always (or most of the time) block, the application
+              can ask for an sqe to be issued async from the start. Note
+              that this flag immediately causes the SQE to be offloaded
+              to an async helper thread with no initial non-blocking
+              attempt.  This may be less efficient and should not be
+              used liberally or without understanding the performance
+              and efficiency tradeoffs.
+
+This seems to cover the tap file descriptor case. It tries to readv
+and when that fails a new io-wrk is spawned. Fine. However, as I
+described it seems this is not true for sockets, as without
+IOSQE_ASYNC the io-wrk thread is _not_ spawned there?
+
+Is the behaviour different due to socket vs non-socket or readv vs recvmsg?
+
+Please advise.
+
+Marek

@@ -2,97 +2,150 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4A7731A33
-	for <lists+io-uring@lfdr.de>; Thu, 15 Jun 2023 15:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8414732D15
+	for <lists+io-uring@lfdr.de>; Fri, 16 Jun 2023 12:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344462AbjFONkX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 15 Jun 2023 09:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
+        id S245465AbjFPKJG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 16 Jun 2023 06:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344229AbjFONji (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 15 Jun 2023 09:39:38 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 107523C35
-        for <io-uring@vger.kernel.org>; Thu, 15 Jun 2023 06:38:20 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-6584553892cso1906560b3a.0
-        for <io-uring@vger.kernel.org>; Thu, 15 Jun 2023 06:38:20 -0700 (PDT)
+        with ESMTP id S245519AbjFPKIb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 16 Jun 2023 06:08:31 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D33D12D6B
+        for <io-uring@vger.kernel.org>; Fri, 16 Jun 2023 03:07:40 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-62ff6cf5af0so5784126d6.0
+        for <io-uring@vger.kernel.org>; Fri, 16 Jun 2023 03:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686836258; x=1689428258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gNUKvq1f2fPVIon6l0YzXfgd6FlRDBSHq7wAWbzvj2I=;
-        b=flAMMBYgJBeFy66IwkkmQLyeg9wKcLCDWR6DRCXb57F1RoUVhVdHGJqgmtxczRH57R
-         my6oKxp2XoRguD94TcFKU9RuWK/jweawjfMyeTj49OwhiO/xoaUe8A9S7PNunJXrtfyt
-         Az22NNINYuV1WHu08ktHIWdwKFKZ8/0Ek87pqPR3HjrX6novVillhpT8dL0KMEyMygiH
-         qP9RkhE3ALnILFlSh7hxfb0jjJv5fwSbEt0vTwlFjRKHn8K6fpycRRIgeS22PrqBzDjQ
-         ntS6uuDGIf/dyf+Vf3HaCypsXrvcGrU193xROQqhSNz13cmKBmFSe/jKMmFqBrLuEbOr
-         fsQQ==
+        d=cloudflare.com; s=google; t=1686910060; x=1689502060;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rX1gvzyEya/uOPcDeC+15t9Pczr3MTyuuFUiLbYTj08=;
+        b=hWxs9abze3s9dxRv2LaxkefzxFqlUwsHLpdgLpft5lK+fM+oK4gCZC+jOZyyyGugIF
+         x2IyzzI3A1DBRnJ4bh4AWnAHl7vuAYB9CFxLndn+EdnFNsV7cVe+twrl5GisdSPjmVqI
+         LHAticZm2O9PhH8B/o11MBo2RkXpacQMHnkR8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686836258; x=1689428258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gNUKvq1f2fPVIon6l0YzXfgd6FlRDBSHq7wAWbzvj2I=;
-        b=KC5KKh/6YB814G5zi0fS8NH50cwlZB857BZiKORTCa3WuJWBINRgJFDYpKCT2ro3gW
-         xJrtmplJ+Gec5cRAAmWyTimONrVMNjp5m63mVXOMs+PFj7nMFHBB51h00GB7crR0uQYd
-         3X0t2JLhARP6a5C21OdYm2piwkvPngfWKH3kTNgsq5Ft6+OTyuOmqSvFtcBMKscloQCd
-         WA5UL7z8zm8Vs/KaGNa5rvcDP0bUIHsb+4CcS2eUffIUudSxsbGKw9uHHIP1k030jf+q
-         vnIErYnshn6aNPDbsa772Xp2aTaItsXmgt+P/OymnPu9RutX1wiPIV65u1Y79w5NAELy
-         HgDg==
-X-Gm-Message-State: AC+VfDyNJOC95KaW7nSrnDl4okDG7L7nLUvpT+ZQucaU9lslJvRh6aA+
-        dt+gMXRqJEKUIie9gQ1fK17ZGw==
-X-Google-Smtp-Source: ACHHUZ4opAqcTtMFCaB8V993Ma17+PA1z1Sbk4Kq2cSpgeQuBmBHlS1XK5+Dd7Mie0TbM1nvegdYyg==
-X-Received: by 2002:a05:6a20:42a5:b0:116:696f:1dd1 with SMTP id o37-20020a056a2042a500b00116696f1dd1mr23464104pzj.4.1686836258489;
-        Thu, 15 Jun 2023 06:37:38 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t13-20020a62ea0d000000b00660d80087a8sm12009948pfh.187.2023.06.15.06.37.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jun 2023 06:37:37 -0700 (PDT)
-Message-ID: <763cc719-f62d-529c-a1fd-75cb2554a84b@kernel.dk>
-Date:   Thu, 15 Jun 2023 07:37:36 -0600
+        d=1e100.net; s=20221208; t=1686910060; x=1689502060;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rX1gvzyEya/uOPcDeC+15t9Pczr3MTyuuFUiLbYTj08=;
+        b=Z+iOWVeOqcD15X8reHDTJCLDNojPpsOKJr/p5PsKms6lP0c0L/fjAQjm3QDSQ3w3IL
+         uLvDxLk9OQ5zYahd2yJXDAIzfdwtnET1pm4ube3yHioB1quTj2IBqSbx+WJnBej7YqXW
+         kakQwW3B47VdkghoI2k/nmD+AYPk9EdfpYKGQ8/ZwR7Ez935Llo9kvrmd7m5S345f/TF
+         Xzgi/SJKeKJAVH32Wo04L6GTiq3dwecV1qepuMFwoDMf387muU65ZXoO7KRnT4y+f5I9
+         BDUb+HJVxz3zHCU1koQvIU0SGzTRddsiiHsGstFcE3ZB1Q8z72x82UDmqyBFi/ziaIF3
+         SgRg==
+X-Gm-Message-State: AC+VfDwAbzeWNBhr5FS9CRG9Q4rtGHerUt0xNEhqkFm+O2ZDaoywgeud
+        awvbS7YTT6zD6kC9i1r90/jLGj8NWEG4/j/5Idi/vg==
+X-Google-Smtp-Source: ACHHUZ5YuQe4oAP1+oLSzDEVeAoZLTzwIC0lcbbmELcqZR2kp1drTxRYh7feqi1uDvd2UBBm2L7/h6jCahVgv+HbS7g=
+X-Received: by 2002:a05:6214:e8a:b0:621:331b:f55d with SMTP id
+ hf10-20020a0562140e8a00b00621331bf55dmr2129088qvb.19.1686910059929; Fri, 16
+ Jun 2023 03:07:39 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] tools/io uring: Fix missing check for return value of
- malloc()
-Content-Language: en-US
-To:     cymi20 <cymi20@fudan.edu.cn>
-Cc:     "ammarfaizi2@gnuweeb.org" <ammarfaizi2@gnuweeb.org>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20230615125045.125172-1-cymi20@fudan.edu.cn>
- <34898926-681e-1790-4303-e2b54e793a62@gnuweeb.org>
- <ec762677-f8d4-94ab-e7b3-adee45a052a1@kernel.dk>
- <F5DC6786-D8E5-435F-8FDE-ABD4DD692367@fudan.edu.cn>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <F5DC6786-D8E5-435F-8FDE-ABD4DD692367@fudan.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <CAJPywTLDhb5MkYS7PTi7=sXwm=5r9AbPKz3fDq4XGbqKvA-g=A@mail.gmail.com>
+ <fee91f15-ad08-1687-3f3e-43a91ec45d40@kernel.dk>
+In-Reply-To: <fee91f15-ad08-1687-3f3e-43a91ec45d40@kernel.dk>
+From:   Marek Majkowski <marek@cloudflare.com>
+Date:   Fri, 16 Jun 2023 12:07:29 +0200
+Message-ID: <CAJPywTKxfVo2x6X6DQr5prdE=3TpVwz_cB8pcDGKaJGNU5orNQ@mail.gmail.com>
+Subject: Re: io-wrk threads on socket vs non-socket
+To:     Jens Axboe <axboe@kernel.dk>,
+        kernel-team <kernel-team@cloudflare.com>
+Cc:     io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/15/23 7:26?AM, cymi20 wrote:
-> Actually this checker is driven by inconsistency, it find almost all
-> callsite of malloc() in this module has Null check, except this
-> callsite.
+On Wed, Jun 14, 2023 at 6:03=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 6/14/23 8:09?AM, Marek Majkowski wrote:
+> > Hi!
+> >
+> > I'm playing with io-uring, and I found the io-wrk thread situation conf=
+using.
+> >
+> > (A) In one case, I have a SOCK_DGRAM socket (blocking), over which I
+> > do IORING_OP_RECVMSG. This works well, and unless I mark the sqe as
+> > IOSQE_ASYNC, it doesn't seem to start an io-wrk kernel thread.
+> >
+> > (B) However, the same can't be said of another situation. In the
+> > second case I have a tap file descriptor (blocking), which doesn't
+> > support "Socket operations on non-socket", so I must do
+> > IORING_OP_READV. This however seems to start a new io-wrk for each
+> > readv request:
+> >
+> > $ pstree -pt `pidof tapuring`
+> > tapuring(44932)???{iou-wrk-44932}(44937)
+> >                 ??{iou-wrk-44932}(44938)
+> >                 ??{iou-wrk-44932}(44939)
+> >                 ??{iou-wrk-44932}(44940)
+> >                 ??{iou-wrk-44932}(44941)
+> >                 ??{iou-wrk-44932}(44942)
+> >
+> > I would expect both situations to behave the same way.
+> >
+> > The manpage for IOSQE_ASYNC:
+> >
+> >        IOSQE_ASYNC
+> >               Normal operation for io_uring is to try and issue an sqe
+> >               as non-blocking first, and if that fails, execute it in a=
+n
+> >               async manner. To support more efficient overlapped
+> >               operation of requests that the application knows/assumes
+> >               will always (or most of the time) block, the application
+> >               can ask for an sqe to be issued async from the start. Not=
+e
+> >               that this flag immediately causes the SQE to be offloaded
+> >               to an async helper thread with no initial non-blocking
+> >               attempt.  This may be less efficient and should not be
+> >               used liberally or without understanding the performance
+> >               and efficiency tradeoffs.
+> >
+> > This seems to cover the tap file descriptor case. It tries to readv
+> > and when that fails a new io-wrk is spawned. Fine. However, as I
+> > described it seems this is not true for sockets, as without
+> > IOSQE_ASYNC the io-wrk thread is _not_ spawned there?
+> >
+> > Is the behaviour different due to socket vs non-socket or readv vs
+> > recvmsg?
+>
+> What kernel are you using? tap just recently got FMODE_NOWAIT support,
+> which should trigger poll instead of needing to spawn an io worker.
+>
+> Also, as usual, a test case would be appreciated. Particularly if this
+> is on a current kernel where we would not expect to see io-wq activity
+> for a read of tap.
 
-1) don't top post
-2) don't send html emails
 
-But more importantly, actually check the code before making wrong
-statements like that.
+After two days I think I finally have some repro. Let's track this
+particular tap io-wrk issue under
+https://github.com/axboe/liburing/issues/886
 
-The patch is pointless.
+I can confirm that indeed (apart form the mentioned bug) tap is going
+into poll mode, and doesn't launch io-wrk.
 
--- 
-Jens Axboe
+However, I still miss a piece of the puzzle about io-wrk polling.
 
+Let's assume a different situation, let's say I have a dozen of
+sockets, and do a recvmsg on each of them, with IOSQE_ASYNC flag set.
+
+I would expect to see a dozen of io-wrk threads, however I'm not fully
+understanding what will they do. Will each do a full poll() over all
+the sockets? If a packet arrives to one socket, will all the io-wrk
+threads wakeup? What if there is a limit of 2 io-wrk threads and there
+are more sockets?
+
+I think I'm asking about the relationship between SQE's / sockets and
+io-wrk poller.
+
+Marek

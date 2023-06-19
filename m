@@ -2,51 +2,75 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC667351F2
-	for <lists+io-uring@lfdr.de>; Mon, 19 Jun 2023 12:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0E073559D
+	for <lists+io-uring@lfdr.de>; Mon, 19 Jun 2023 13:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjFSKZ0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Jun 2023 06:25:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35970 "EHLO
+        id S230316AbjFSLUp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Jun 2023 07:20:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbjFSKZQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Jun 2023 06:25:16 -0400
-X-Greylist: delayed 1720 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 19 Jun 2023 03:25:14 PDT
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC88FCA
-        for <io-uring@vger.kernel.org>; Mon, 19 Jun 2023 03:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=Cc:From:To:Date:Message-ID;
-        bh=friqWOpJxkXdOfLddmroCxD9YaWLCI5fRrruRvQyMuE=; b=ERNJ1DMWfAEjo7LFO8Cb4wrEka
-        j32BxyG8/fs74nMwSjYQru35ayef9ZYAuqgkCh7XbjV73vkDU9spst66LZbAzxfavou+rHGxwBjr/
-        Ln5g19bc93XW1wEUEa00uhIE9ZqtB4cuYKDvk/GtYqLtmu9oux8H9SVWv+q8nltiUmWVaBEx+Gulq
-        XVA49gvYc/uEsbSbkFmZLayH9jSXB4QfPpvJ4iv4G0SEGrxyi3KeKn3zkqEkP6VoL5TKVf8Kp+rwW
-        mpaxxJf0NyNOsE5LygZZQqnAauALsBB584vD/2P7OR/vZIBYGOBvXvHZc08uKEp87g8CWRxRuv0ov
-        2QGqOsjW7Z3TeyX76kyIH5BgVJqqso67Roog1V+XBDCynNcgFrLcb0Q9VxorKhwfpve5IkR4VKnJs
-        deiDBqklcFc5UYtwDF6YvopY+Hrc8VKL1LGQLg6xt+1b6L40P5rI9J6uKZFoxhkDvVVvRE80rV/WH
-        O5CJJ8IjSpXyojOsrSAcMNZ6;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1qBBcd-00306E-2G;
-        Mon, 19 Jun 2023 09:56:31 +0000
-Message-ID: <b104c37a-a605-e3c8-67ab-45f27e158e21@samba.org>
-Date:   Mon, 19 Jun 2023 11:57:01 +0200
+        with ESMTP id S230347AbjFSLUn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Jun 2023 07:20:43 -0400
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B6510D;
+        Mon, 19 Jun 2023 04:20:40 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-3f9b4a71623so1072165e9.1;
+        Mon, 19 Jun 2023 04:20:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687173638; x=1689765638;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Va7bmTpXEF7kF/mIDW6B8d70UteckeUeSftDVahsY0I=;
+        b=cazi9S/tVmHDQsWEwbgbA9z2pkNZmAPnCFSY5wfQkZ+A/u0bmOdsdRFfFNFqXuPnm8
+         zOqP39fkeA3z/5K3gckhCJi785IthdrYlFVY7xxVLczifQlEfuYyrh7mQm77KK9o2Ts1
+         Kl7lJ1RYeC53ei3WiaJ4g0csF5aUm75pFGmQtB+h2c9lIY+0cvwvnJTf7g2vKZbnTTHs
+         7LoHC44eYPayDaUDuZMu5hvIRkSM3jE+/3YFOZBSWFzYEGfNfDuYaQmwbmELaQQhw4lx
+         eRDM77fHqDLVotthbsKGdm67pHwk+QOalABNMpNExoNFM6c4gH0lBpuJYluaKWx5xRTN
+         tB+g==
+X-Gm-Message-State: AC+VfDx14IyL9RmgH5dBOIMbatLM3pWS5ujX7Ome5a2A9OQGUdNfk6YL
+        C5mnIftFk+GQMYWj9NqaVWQ=
+X-Google-Smtp-Source: ACHHUZ6hdDYUpXeGyIWG6UjBJm7SOFcN3Rivf6hlZLxAWGgGCDsK4MN5FPswBCDiYPPxKQdP0rbWSQ==
+X-Received: by 2002:a7b:ce92:0:b0:3f9:acc:bd16 with SMTP id q18-20020a7bce92000000b003f90accbd16mr2750261wmj.7.1687173638191;
+        Mon, 19 Jun 2023 04:20:38 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-007.fbsv.net. [2a03:2880:31ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id i17-20020a5d6311000000b0030fae360f14sm25790141wru.68.2023.06.19.04.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jun 2023 04:20:37 -0700 (PDT)
+Date:   Mon, 19 Jun 2023 04:20:35 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     axboe@kernel.dk, dsahern@kernel.org, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org, axboe@kernel.dk, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>, leit@fb.com,
+        asml.silence@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dccp@vger.kernel.org,
+        mptcp@lists.linux.dev, linux-sctp@vger.kernel.org, ast@kernel.org,
+        kuniyu@amazon.com, martin.lau@kernel.org,
+        Jason Xing <kernelxing@tencent.com>,
+        Joanne Koong <joannelkoong@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        Andrea Righi <andrea.righi@canonical.com>
+Subject: Re: [RFC PATCH v2 1/4] net: wire up support for
+ file_operations->uring_cmd()
+Message-ID: <ZJA6AwbRWtSiJ5pL@gmail.com>
+References: <20230614110757.3689731-1-leitao@debian.org>
+ <20230614110757.3689731-2-leitao@debian.org>
+ <6b5e5988-3dc7-f5d6-e447-397696c0d533@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] io_uring/net: save msghdr->msg_control for retries
-To:     Jens Axboe <axboe@kernel.dk>
-References: <0b0d4411-c8fd-4272-770b-e030af6919a0@kernel.dk>
-Content-Language: en-US
-From:   Stefan Metzmacher <metze@samba.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
-In-Reply-To: <0b0d4411-c8fd-4272-770b-e030af6919a0@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b5e5988-3dc7-f5d6-e447-397696c0d533@kernel.org>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,24 +78,142 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+On Wed, Jun 14, 2023 at 08:15:10AM -0700, David Ahern wrote:
+> On 6/14/23 5:07 AM, Breno Leitao wrote:
+> io_uring is just another in-kernel user of sockets. There is no reason
+> for io_uring references to be in core net code. It should be using
+> exposed in-kernel APIs and doing any translation of its op codes in
+> io_uring/  code.
 
-> If the application sets ->msg_control and we have to later retry this
-> command, or if it got queued with IOSQE_ASYNC to begin with, then we
-> need to retain the original msg_control value. This is due to the net
-> stack overwriting this field with an in-kernel pointer, to copy it
-> in. Hitting that path for the second time will now fail the copy from
-> user, as it's attempting to copy from a non-user address.
+Thanks for the feedback. If we want to keep the network subsystem
+untouched, then I we can do it using an approach similar to the
+following. Is this a better approach moving forward?
 
-I'm not 100% sure about the impact of this change.
+--
 
-But I think the logic we need is that only the
-first __sys_sendmsg_sock() that returns > 0 should
-see msg_control. A retry because of MSG_WAITALL should
-clear msg_control[len] for a follow up __sys_sendmsg_sock().
-And I fear the patch below would not clear it...
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 19 Jun 2023 03:37:40 -0700
+Subject: [RFC PATCH v2] io_uring: add initial io_uring_cmd support for sockets
 
-Otherwise the receiver/socket-layer will get the same msg_control twice,
-which is unexpected.
+Enable io_uring command operations on sockets. Create two
+SOCKET_URING_OP commands that will operate on sockets.
 
-metze
+For that, use the file_operations->uring_cmd callback, and map it to a
+uring socket callback, which handles the SOCKET_URING_OP accordingly.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ include/linux/io_uring.h      |  6 ++++++
+ include/uapi/linux/io_uring.h |  8 ++++++++
+ io_uring/uring_cmd.c          | 27 +++++++++++++++++++++++++++
+ net/socket.c                  |  2 ++
+ 4 files changed, 43 insertions(+)
+
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 7fe31b2cd02f..d1b20e2a9fb0 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -71,6 +71,7 @@ static inline void io_uring_free(struct task_struct *tsk)
+ 	if (tsk->io_uring)
+ 		__io_uring_free(tsk);
+ }
++int uring_sock_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags);
+ #else
+ static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter, void *ioucmd)
+@@ -102,6 +103,11 @@ static inline const char *io_uring_get_opcode(u8 opcode)
+ {
+ 	return "";
+ }
++static inline int uring_sock_cmd(struct io_uring_cmd *cmd,
++				 unsigned int issue_flags)
++{
++	return -EOPNOTSUPP;
++}
+ #endif
+ 
+ #endif
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 0716cb17e436..d93a5ee7d984 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -703,6 +703,14 @@ struct io_uring_recvmsg_out {
+ 	__u32 flags;
+ };
+ 
++/*
++ * Argument for IORING_OP_URING_CMD when file is a socket
++ */
++enum {
++	SOCKET_URING_OP_SIOCINQ         = 0,
++	SOCKET_URING_OP_SIOCOUTQ,
++};
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 5e32db48696d..dcbe6493b03f 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -7,6 +7,7 @@
+ #include <linux/nospec.h>
+ 
+ #include <uapi/linux/io_uring.h>
++#include <uapi/asm-generic/ioctls.h>
+ 
+ #include "io_uring.h"
+ #include "rsrc.h"
+@@ -156,3 +157,29 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 	return io_import_fixed(rw, iter, req->imu, ubuf, len);
+ }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
++
++int uring_sock_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
++{
++	struct socket *sock = cmd->file->private_data;
++	struct sock *sk = sock->sk;
++	int ret, arg = 0;
++
++	if (!sk->sk_prot || !sk->sk_prot->ioctl)
++		return -EOPNOTSUPP;
++
++	switch (cmd->sqe->cmd_op) {
++	case SOCKET_URING_OP_SIOCINQ:
++		ret = sk->sk_prot->ioctl(sk, SIOCINQ, &arg);
++		if (ret)
++			return ret;
++		return arg;
++	case SOCKET_URING_OP_SIOCOUTQ:
++		ret = sk->sk_prot->ioctl(sk, SIOCOUTQ, &arg);
++		if (ret)
++			return ret;
++		return arg;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++EXPORT_SYMBOL_GPL(uring_sock_cmd);
+diff --git a/net/socket.c b/net/socket.c
+index b778fc03c6e0..db11e94d2259 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -88,6 +88,7 @@
+ #include <linux/xattr.h>
+ #include <linux/nospec.h>
+ #include <linux/indirect_call_wrapper.h>
++#include <linux/io_uring.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+@@ -159,6 +160,7 @@ static const struct file_operations socket_file_ops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = compat_sock_ioctl,
+ #endif
++	.uring_cmd =    uring_sock_cmd,
+ 	.mmap =		sock_mmap,
+ 	.release =	sock_close,
+ 	.fasync =	sock_fasync,
+-- 
+2.34.1
+

@@ -2,53 +2,53 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C11735BF6
-	for <lists+io-uring@lfdr.de>; Mon, 19 Jun 2023 18:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CDC736161
+	for <lists+io-uring@lfdr.de>; Tue, 20 Jun 2023 04:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230333AbjFSQNB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Jun 2023 12:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33046 "EHLO
+        id S229706AbjFTCJb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 19 Jun 2023 22:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbjFSQNA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Jun 2023 12:13:00 -0400
+        with ESMTP id S229453AbjFTCJa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Jun 2023 22:09:30 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E975A2;
-        Mon, 19 Jun 2023 09:12:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B066910E;
+        Mon, 19 Jun 2023 19:09:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AE5DD60D30;
-        Mon, 19 Jun 2023 16:12:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC27CC433C0;
-        Mon, 19 Jun 2023 16:12:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DE3060EA5;
+        Tue, 20 Jun 2023 02:09:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910E7C433C8;
+        Tue, 20 Jun 2023 02:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687191178;
-        bh=/H6FT3FrmV0NJ8VWtFxL0MtU2bSU6n73mHMPI4XRQBE=;
+        s=k20201202; t=1687226968;
+        bh=TBAuPDZ4ZIJJqnKHAAtmN9rFin/Sn5+rIr+zk1Fviiw=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AMT5ndmgubCl23aIo/nslz/83VJoyve6t1E7pDI6/gvbGLCGEeffTuifbdDruLHnw
-         /ZavuMYavxaQvsrl4Z7lJ3hIVyzoV/Yija9MfeosJqe2JJb5Fpk7jUW+jheAw193/f
-         a+zX4Q8als5VJohEMnSGRu96dNhsX47Ow+96ej/XH6EAgw/Jom+Wnhf4j6e3eDHh43
-         kyomnYLtcLz4LCgssPyWNZe0DELwCVJ6iKrbUTGu7BD4hCybUfag8OcQSWN50eczp7
-         qq7lFI+Absa8n68blhi7JegCSxKbT9bBkVMdXbTvXqtH/zp7BtzAMlojViKcSVYZz0
-         9vD/P0wNcndWw==
-Message-ID: <f9a85fcc-33e3-b47b-9c32-1d680edadcf8@kernel.org>
-Date:   Mon, 19 Jun 2023 09:12:55 -0700
+        b=VhAGSw+8AxIJS0XH/VyoJz0CgNamR62jHZV6R4jjyHJyClJtOi+P4yF+QgKT4x6ql
+         kQSHnfpqYY7mz/meatf5sNYRl9JWyf3A4O86rHtssihIwi/Xdg5ZIT8B2JxrjH1FeJ
+         YPrkB6q2NFjt0ZNTfEY86/X6CBLDgQ2V/12YNyY6FkWCzuLA3wZmUqMeU0ZIezvLXH
+         we75IHXE78D5FHaZyBBwWxwf8dcmdg1qXOdNr7yzdWYKtVcBvWY2yPnLNWexoDQvZs
+         82+yLU6Pm7s4XD10AZCFdStwWu2lMwwtrMktRwYCPwAxSKkOGAk7+I3CpWi+NAzv1J
+         ZEcdY7ufoVlTA==
+Message-ID: <d289ab2c-dd5a-fd35-2a2a-7ccdfb947873@kernel.org>
+Date:   Mon, 19 Jun 2023 19:09:27 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.11.2
 Subject: Re: [RFC PATCH v2 1/4] net: wire up support for
  file_operations->uring_cmd()
 Content-Language: en-US
-To:     Breno Leitao <leitao@debian.org>, axboe@kernel.dk,
-        asml.silence@gmail.com
-Cc:     io-uring@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Breno Leitao <leitao@debian.org>, io-uring@vger.kernel.org,
+        axboe@kernel.dk, davem@davemloft.net, edumazet@google.com,
         kuba@kernel.org, pabeni@redhat.com,
         Matthieu Baerts <matthieu.baerts@tessares.net>,
         Mat Martineau <martineau@kernel.org>,
         Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>, leit@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xin Long <lucien.xin@gmail.com>
+Cc:     leit@fb.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         dccp@vger.kernel.org, mptcp@lists.linux.dev,
         linux-sctp@vger.kernel.org, ast@kernel.org, kuniyu@amazon.com,
         martin.lau@kernel.org, Jason Xing <kernelxing@tencent.com>,
@@ -61,9 +61,9 @@ Cc:     io-uring@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
 References: <20230614110757.3689731-1-leitao@debian.org>
  <20230614110757.3689731-2-leitao@debian.org>
  <6b5e5988-3dc7-f5d6-e447-397696c0d533@kernel.org>
- <ZJA6AwbRWtSiJ5pL@gmail.com>
+ <d9c9bd5f-b17e-fbd8-5646-4f51b927cc6b@gmail.com>
 From:   David Ahern <dsahern@kernel.org>
-In-Reply-To: <ZJA6AwbRWtSiJ5pL@gmail.com>
+In-Reply-To: <d9c9bd5f-b17e-fbd8-5646-4f51b927cc6b@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -76,17 +76,20 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/19/23 4:20 AM, Breno Leitao wrote:
-> On Wed, Jun 14, 2023 at 08:15:10AM -0700, David Ahern wrote:
->> On 6/14/23 5:07 AM, Breno Leitao wrote:
->> io_uring is just another in-kernel user of sockets. There is no reason
->> for io_uring references to be in core net code. It should be using
->> exposed in-kernel APIs and doing any translation of its op codes in
->> io_uring/  code.
-> Thanks for the feedback. If we want to keep the network subsystem
-> untouched, then I we can do it using an approach similar to the
-> following. Is this a better approach moving forward?
+On 6/19/23 2:28 AM, Pavel Begunkov wrote:
+> That callback is all about file dependent operations, just like ioctl.
+> And as the patch in question is doing socket specific stuff, I think
+> architecturally it fits well. I also believe Breno wants to extend it
+> later to support more operations.
+> 
+> Sockets are a large chunk of use cases, it can be implemented as a
+> separate io_uring request type if nothing else works, but in general
+> that might not be as scalable.
 
-yes. It keeps the translation from io_uring commands to networking APIs
-in one place and does not need to propagate that translation through the
-networking code.
+The io_uring commands are wrappers to existing networking APIs - doing
+via io_uring what userspace apps can do via system calls. As such, the
+translations should be done in io_uring code and then invoking in-kernel
+APIs.
+
+Same comment applies to sockopts when those come around and any other
+future extensions.

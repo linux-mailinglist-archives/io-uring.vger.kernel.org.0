@@ -2,75 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85DA3736F4C
-	for <lists+io-uring@lfdr.de>; Tue, 20 Jun 2023 16:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BED673709C
+	for <lists+io-uring@lfdr.de>; Tue, 20 Jun 2023 17:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbjFTO4M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 20 Jun 2023 10:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58930 "EHLO
+        id S232040AbjFTPhA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Jun 2023 11:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232845AbjFTO4L (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jun 2023 10:56:11 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D58170C
-        for <io-uring@vger.kernel.org>; Tue, 20 Jun 2023 07:56:10 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-77e01b90542so52430039f.0
-        for <io-uring@vger.kernel.org>; Tue, 20 Jun 2023 07:56:10 -0700 (PDT)
+        with ESMTP id S232030AbjFTPg7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jun 2023 11:36:59 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E7B6A6
+        for <io-uring@vger.kernel.org>; Tue, 20 Jun 2023 08:36:57 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id ca18e2360f4ac-77dcff76e35so56360139f.1
+        for <io-uring@vger.kernel.org>; Tue, 20 Jun 2023 08:36:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687272969; x=1689864969;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gBTGnP1tMNeZ2bBTWd78SpmQMz2nsFLvJUwCiLFmeqE=;
-        b=gPCMY7GK1J14+rOzq1sFeUzGX2GvjFbq5gWouVtXmJlxA0z1QT89lNcJRcKBflk0T3
-         NdVidbKoh0EwUKVevlsSgOqHLQPROVj/68tCWSvMaBOnSJcW+mZhg7Kt9MjkhokD8trn
-         YWt5VEuN/HgLV9+foIAhMJXFs3p/uRCoIfcim3kVtE0vOYmiv3ruND+NGIen/BgRZ+2w
-         eSBoPAi3WU+IZtmpcfd9fuirOmIz4nG3lcECXxFbEUNPK32TU3oTbGlkt0Lem3IhRnkH
-         s5pwJ4axqnZ8umeHnS4x+kgqPzcPjEdOFDUwh5PABkRlY0jvzW2jmxxa0ECEoNYE0xJA
-         Rlmg==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687275416; x=1689867416;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WkJ04svJmJ8pxzbIDuGNECwuq0g1ybawL1RA2w0s7ho=;
+        b=L6KFE89e7+zgirjCUZWW36UIgrZ5LNw74uFBxzLF4m9bbDI24visjfPzaLIRFrEqNf
+         MC6XzGIZZ4TI5t7wrCsljqXHJGV/iaQxiYswl2yOSWSIHUS4WQuSRRlv8TA84WgbWAQP
+         2oANx9hZ5EicAKuOBF7NbQHxr9HYmEQg/UkClsXWK+ONmjvxGd9ps6+W98U3AACzhwo/
+         l/+tbf1MhG+fE3pE/Ac28IUBPOU4RuM+bB7n7LA+cA6pcugio71a/E+0ttY7v1ImDSxS
+         zl/2jcRyfZ5kOv8WN3v0s8CkLJfYG+DOWSEf9rpwl1CQeCvc1e2m2OgbeZEv9BmBgo5m
+         PYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687272969; x=1689864969;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gBTGnP1tMNeZ2bBTWd78SpmQMz2nsFLvJUwCiLFmeqE=;
-        b=X8ZJ03fZYhTcR+/HxxntZIgiRZVeST/ogjCr90c9NFr6LbuSmkbgvXT264G4i/ddn4
-         udct3FMX4yueixCX+QPnJlxqfaFIebU1Gv18YifriA7DTzbJP0rAilQxYytrecDYF/yA
-         6vx9UH/YJ4KEsnYe6J50bmvcESiQ8zm4Fy33vlgUjcFgM9/hMTTkhBzkGQ7Cisja9xCt
-         lIpBAEeYeU+EWJMkJ2FjxBCiHPOgs1Oonhx9e6smlg/wBFmHgJMa5CJHbhMjBZz1iLvg
-         XWtTBsIaD0zeVUtytst4oeghdyC0t6fdUbP88LYgX+LGfrupko5x8ceYdQILbH5SHs98
-         yJzg==
-X-Gm-Message-State: AC+VfDzvvzaXNHDVWGgXdOvuj0qt8PYNOVpIzPuMKUtAyuGfuwsQDWnF
-        4XanfVdzQZSz3BhONPXPz9fel3ZCOzGPIzVbWps=
-X-Google-Smtp-Source: ACHHUZ4p3kn2ROc8tmUhoaWt7ZtkpMZc9vqxKJfYNnZOjURuEKXPZj75PLiZ13Q6zTYTnIJBlghJJQ==
-X-Received: by 2002:a05:6e02:1a8c:b0:330:a1eb:c5a4 with SMTP id k12-20020a056e021a8c00b00330a1ebc5a4mr12977726ilv.1.1687272969224;
-        Tue, 20 Jun 2023 07:56:09 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id q9-20020a920509000000b0032afe23820bsm652157ile.17.2023.06.20.07.56.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Jun 2023 07:56:08 -0700 (PDT)
-Message-ID: <0eb6721d-2502-4970-bc55-5d809c8113aa@kernel.dk>
-Date:   Tue, 20 Jun 2023 08:56:07 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] block: mark bdev files as FMODE_NOWAIT if underlying
- device supports it
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org
-References: <20230509151910.183637-1-axboe@kernel.dk>
- <20230509151910.183637-3-axboe@kernel.dk> <ZFucWYxUtBvvRJpR@infradead.org>
- <8d5daf0d-c623-5918-d40e-ab3ad1c508ad@kernel.dk>
- <ZJFEz2FKuvIf8aCL@infradead.org>
- <a7a1dcc3-5aaf-53bc-7527-ba62292c44cd@kernel.dk>
- <ZJGpv4WjadjdBTmN@infradead.org>
+        d=1e100.net; s=20221208; t=1687275416; x=1689867416;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WkJ04svJmJ8pxzbIDuGNECwuq0g1ybawL1RA2w0s7ho=;
+        b=UuKJxt2R+3KPfj199myKp9IB7XiHgKuYOVdCGaz8R9uxx5Ig4+WsynAh1AKc8u9THs
+         X90nrNM7kBf6KCl7884cRdMdBKj636fuJAe7ZZN5WyzqpwH7FxwEN6XmyQQNRRj4VoCr
+         L8xGkTLJcuxujRZ3EAUUWFqf1rpnZwnuZst15ALdimfSAav+cbvE4HlyUF9Uj7LcnzZH
+         W/SHwv8HRILOjpEePwRjhZcAE7LvAGnh1y3Zjl+S4ox9HZXz4iewKk39/8BD7DJ2dn8k
+         13KOt5EPo5qV9juVkvU8guFXnQHvFSInhi5TiaZGYSH0bLYEDKFnA81GE0D0U+n/zQKb
+         3ziw==
+X-Gm-Message-State: AC+VfDxC8EnJEruimeEA7ts4ptqDWlAR++0c/tNxfuLPUDyYTMV9bpit
+        /nZaMXMh0/KLaJK8jMesNUrb1wRH5UuZi2Hi6KU=
+X-Google-Smtp-Source: ACHHUZ6E2+IPKqBgYjxavevRje0PDwum0fvMcHa5DWgwSlN6eHtoIUelTC16mhPmxgJ7ueZWPUmz9A==
+X-Received: by 2002:a6b:c9c1:0:b0:77d:c323:b52 with SMTP id z184-20020a6bc9c1000000b0077dc3230b52mr9793672iof.2.1687275416531;
+        Tue, 20 Jun 2023 08:36:56 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id k15-20020a02a70f000000b0041672c963b3sm712894jam.50.2023.06.20.08.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jun 2023 08:36:56 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZJGpv4WjadjdBTmN@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+In-Reply-To: <20230620113235.920399-1-hch@lst.de>
+References: <20230620113235.920399-1-hch@lst.de>
+Subject: Re: io_uring req flags cleanups
+Message-Id: <168727541583.3665205.11063729024991422548.b4-ty@kernel.dk>
+Date:   Tue, 20 Jun 2023 09:36:55 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+X-Mailer: b4 0.13-dev-c6835
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,26 +70,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/20/23 7:29?AM, Christoph Hellwig wrote:
-> On Tue, Jun 20, 2023 at 07:24:56AM -0600, Jens Axboe wrote:
->> I think we need stronger justification than that, it's much nicer to
->> have it in the open path than doing the same check over and over for
->> each IO.
->>
->> With your new proposed scheme, why can't the check and FMODE_NOWAIT set
->> still be in open?
+
+On Tue, 20 Jun 2023 13:32:27 +0200, Christoph Hellwig wrote:
+> while looking at the NOWAIT flag handling I found various bits of code
+> related to it pretty convoluted and confusing.  This series tries to
+> clean them up, let me know what you think.
 > 
-> Because I want to move the by now huge number of static flags out of
-> file->f_mode and into file->f_op.flags.  It's just that with this patch
-> this one flag isn't static anymore for block devices.  We could also
-> do two sets of file operations assuming we never allow run-time changes
-> for QUEUE_FLAG_NOWAIT.  If we care about optimizing fo async I/O on the
-> few drivers not supporting QUEUE_FLAG_NOWAIT that's probably the next
-> best thing.
+> Diffstat:
+>  cancel.c    |    5 +----
+>  filetable.c |   11 ++++-------
+>  filetable.h |   28 +++++++++++++++++-----------
+>  io_uring.c  |   41 ++++++++++-------------------------------
+>  io_uring.h  |    5 -----
+>  msg_ring.c  |    4 +---
+>  rsrc.c      |    8 ++++----
+>  rw.c        |    4 ++--
+>  8 files changed, 39 insertions(+), 67 deletions(-)
+> 
+> [...]
 
-Doing two sets of fops makes sense to me, and then hopefully down the
-line we can shave it down to 1 again once everything sets FMODE_NOWAIT.
+Applied, thanks!
 
+[1/8] io_uring: remove __io_file_supports_nowait
+      commit: b9a6c9459a5aec7bfd9b763554d15148367f1806
+[2/8] io_uring: remove the mode variable in io_file_get_flags
+      commit: 53cfd5cea7f36bac7f3d45de4fea77e0c8d57aee
+[3/8] io_uring: remove a confusing comment above io_file_get_flags
+      commit: b57c7cd1c17616ae9db5614525ba703f384afd05
+[4/8] io_uring: remove io_req_ffs_set
+      commit: 3beed235d1a1d0a4ab093ab67ea6b2841e9d4fa2
+[5/8] io_uring: return REQ_F_ flags from io_file_get_flags
+      commit: 8487f083c6ff6e02b2ec14f22ef2b0079a1b6425
+[6/8] io_uring: use io_file_from_index in __io_sync_cancel
+      commit: 60a666f097a8d722a3907925d21e363add289c8c
+[7/8] io_uring: use io_file_from_index in io_msg_grab_file
+      commit: f432c8c8c12b84c5465b1ffddb6feb7d6b19c1ca
+[8/8] io_uring: add helpers to decode the fixed file file_ptr
+      commit: 4bfb0c9af832a182a54e549123a634e0070c8d4f
+
+Best regards,
 -- 
 Jens Axboe
+
+
 

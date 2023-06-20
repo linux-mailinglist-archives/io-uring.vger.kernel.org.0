@@ -2,94 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58CDC736161
-	for <lists+io-uring@lfdr.de>; Tue, 20 Jun 2023 04:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E6473637F
+	for <lists+io-uring@lfdr.de>; Tue, 20 Jun 2023 08:18:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229706AbjFTCJb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 19 Jun 2023 22:09:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36892 "EHLO
+        id S229998AbjFTGS6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 20 Jun 2023 02:18:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjFTCJa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 19 Jun 2023 22:09:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B066910E;
-        Mon, 19 Jun 2023 19:09:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DE3060EA5;
-        Tue, 20 Jun 2023 02:09:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910E7C433C8;
-        Tue, 20 Jun 2023 02:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687226968;
-        bh=TBAuPDZ4ZIJJqnKHAAtmN9rFin/Sn5+rIr+zk1Fviiw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VhAGSw+8AxIJS0XH/VyoJz0CgNamR62jHZV6R4jjyHJyClJtOi+P4yF+QgKT4x6ql
-         kQSHnfpqYY7mz/meatf5sNYRl9JWyf3A4O86rHtssihIwi/Xdg5ZIT8B2JxrjH1FeJ
-         YPrkB6q2NFjt0ZNTfEY86/X6CBLDgQ2V/12YNyY6FkWCzuLA3wZmUqMeU0ZIezvLXH
-         we75IHXE78D5FHaZyBBwWxwf8dcmdg1qXOdNr7yzdWYKtVcBvWY2yPnLNWexoDQvZs
-         82+yLU6Pm7s4XD10AZCFdStwWu2lMwwtrMktRwYCPwAxSKkOGAk7+I3CpWi+NAzv1J
-         ZEcdY7ufoVlTA==
-Message-ID: <d289ab2c-dd5a-fd35-2a2a-7ccdfb947873@kernel.org>
-Date:   Mon, 19 Jun 2023 19:09:27 -0700
+        with ESMTP id S229519AbjFTGS5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 20 Jun 2023 02:18:57 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC4010DD;
+        Mon, 19 Jun 2023 23:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=3i6MMHT2wfzCoDzGYDuUu3+8TyK3uxMMdf1RSnNDHQI=; b=vbdCSE3zP6ZIaL6vPGpUCeSU43
+        NY9kswIKvbx4N0gZfxIUNEOzS5MVIXy9PtWlV/3L4DughvrO2t03r0kDpTUCxbcpJg51B0QzKyslI
+        EcTd9MtTXBPTiGuQnsd9GOIIoylLjrcqkyZ4aI2PYsLkXI+lOiCE8zylW+0NrlUpjdst3KO3LASg1
+        pzenbLFn26DmouZsdoJeDDkmmn9SK0Vbw80yzFC94iDXn8Blh0Oo+cXUs1vFL111cjJbKl31ocYGK
+        Kc/qoPrSaVsFPtt0wYFHQAw2de5x3qvej7BAqTaFF0Os/Db+bWddF2/Wm7HKz7BJF14aFABrTxNyo
+        d2zMID4g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qBUhb-00AGAn-2z;
+        Tue, 20 Jun 2023 06:18:55 +0000
+Date:   Mon, 19 Jun 2023 23:18:55 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH 2/3] block: mark bdev files as FMODE_NOWAIT if underlying
+ device supports it
+Message-ID: <ZJFEz2FKuvIf8aCL@infradead.org>
+References: <20230509151910.183637-1-axboe@kernel.dk>
+ <20230509151910.183637-3-axboe@kernel.dk>
+ <ZFucWYxUtBvvRJpR@infradead.org>
+ <8d5daf0d-c623-5918-d40e-ab3ad1c508ad@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.11.2
-Subject: Re: [RFC PATCH v2 1/4] net: wire up support for
- file_operations->uring_cmd()
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Breno Leitao <leitao@debian.org>, io-uring@vger.kernel.org,
-        axboe@kernel.dk, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>
-Cc:     leit@fb.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dccp@vger.kernel.org, mptcp@lists.linux.dev,
-        linux-sctp@vger.kernel.org, ast@kernel.org, kuniyu@amazon.com,
-        martin.lau@kernel.org, Jason Xing <kernelxing@tencent.com>,
-        Joanne Koong <joannelkoong@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Guillaume Nault <gnault@redhat.com>,
-        Andrea Righi <andrea.righi@canonical.com>
-References: <20230614110757.3689731-1-leitao@debian.org>
- <20230614110757.3689731-2-leitao@debian.org>
- <6b5e5988-3dc7-f5d6-e447-397696c0d533@kernel.org>
- <d9c9bd5f-b17e-fbd8-5646-4f51b927cc6b@gmail.com>
-From:   David Ahern <dsahern@kernel.org>
-In-Reply-To: <d9c9bd5f-b17e-fbd8-5646-4f51b927cc6b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d5daf0d-c623-5918-d40e-ab3ad1c508ad@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 6/19/23 2:28 AM, Pavel Begunkov wrote:
-> That callback is all about file dependent operations, just like ioctl.
-> And as the patch in question is doing socket specific stuff, I think
-> architecturally it fits well. I also believe Breno wants to extend it
-> later to support more operations.
-> 
-> Sockets are a large chunk of use cases, it can be implemented as a
-> separate io_uring request type if nothing else works, but in general
-> that might not be as scalable.
+So it turns out this gets into the way of my planned cleanup to move
+all the tatic FMODE_ flags out of this basically full field into a new
+static one in file_operations.  Do you think it is ok to go back to
+always claiming FMODE_NOWAIT for block devices and then just punt for
+the drivers that don't support it like the patch below?
 
-The io_uring commands are wrappers to existing networking APIs - doing
-via io_uring what userspace apps can do via system calls. As such, the
-translations should be done in io_uring code and then invoking in-kernel
-APIs.
+---
+From 05a591ac066d9d2d57c4967bbd49c8bc63b04abf Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Tue, 20 Jun 2023 07:53:13 +0200
+Subject: block: always set FMODE_NOWAIT
 
-Same comment applies to sockopts when those come around and any other
-future extensions.
+Block devices are the only file_operation that do not set FMODE_NOWAIT
+unconditionall in ->open and thus get in the way of a planned cleanup to
+move this flags into a static field in file_operations.   Switch to
+always set FMODE_NOWAIT and just return -EAGAIN if it isn't actually
+supported.  This just affects minor ->submit_bio based drivers as all
+blk-mq drivers and the important remappers (dm, md, nvme-multipath)
+support nowait I/O.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/fops.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/block/fops.c b/block/fops.c
+index 555b1b9ecd2cb9..8068d0c85ae75b 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -505,7 +505,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+ 	 * during an unstable branch.
+ 	 */
+ 	filp->f_flags |= O_LARGEFILE;
+-	filp->f_mode |= FMODE_BUF_RASYNC;
++	filp->f_mode |= FMODE_BUF_RASYNC | FMODE_NOWAIT;
+ 
+ 	/*
+ 	 * Use the file private data to store the holder for exclusive openes.
+@@ -519,9 +519,6 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+ 	if (IS_ERR(bdev))
+ 		return PTR_ERR(bdev);
+ 
+-	if (bdev_nowait(bdev))
+-		filp->f_mode |= FMODE_NOWAIT;
+-
+ 	filp->f_mapping = bdev->bd_inode->i_mapping;
+ 	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
+ 	return 0;
+@@ -563,6 +560,9 @@ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
+ 		return -EOPNOTSUPP;
+ 
++	if (!bdev_nowait(bdev))
++		return -EAGAIN;
++
+ 	size -= iocb->ki_pos;
+ 	if (iov_iter_count(from) > size) {
+ 		shorted = iov_iter_count(from) - size;
+@@ -585,6 +585,9 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	ssize_t ret = 0;
+ 	size_t count;
+ 
++	if (!bdev_nowait(bdev))
++		return -EAGAIN;
++
+ 	if (unlikely(pos + iov_iter_count(to) > size)) {
+ 		if (pos >= size)
+ 			return 0;
+-- 
+2.39.2
+

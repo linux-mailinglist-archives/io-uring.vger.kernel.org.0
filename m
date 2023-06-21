@@ -2,111 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6AF07383B6
-	for <lists+io-uring@lfdr.de>; Wed, 21 Jun 2023 14:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 679F373847A
+	for <lists+io-uring@lfdr.de>; Wed, 21 Jun 2023 15:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbjFUM0t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 21 Jun 2023 08:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49844 "EHLO
+        id S232187AbjFUNJy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 21 Jun 2023 09:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231878AbjFUM0r (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Jun 2023 08:26:47 -0400
-X-Greylist: delayed 2080 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 21 Jun 2023 05:26:44 PDT
-Received: from pulsar.hadrons.org (2.152.192.238.dyn.user.ono.com [2.152.192.238])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2BE129
-        for <io-uring@vger.kernel.org>; Wed, 21 Jun 2023 05:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
-        ; s=201908; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:From:Reply-To:Subject:Content-Transfer-Encoding:
-        Content-ID:Content-Description:X-Debbugs-Cc;
-        bh=7jACDv7Gm569Nyo9vX3owsXsVZyraqAYr4+Pv0P/Fkw=; b=tNUX901QBRmSNHD9dSukAByFRv
-        D0A+3pCrzznN2Ci6bkiSyjB7w9FIZOQ5qhHpOr0aKir+azCgsAxP1Wpz6i4R0HX08tbaA8hsNwh1l
-        n6piGt8aDXVe3pq0XfC1itYR/pVl3eowWIhTzG6/f6eSOIdFoaNDO8wmZNGVns53eSGCMyKcLlU5f
-        43EhL5L2y6TgUPqjCBjWB4YzwWCNoa31rfCPir8CDCZeeXVu55kr9Qr8FZwr+tGj1oF4Vz8EhpORC
-        6cqb1tEB2AmLUfsI/DEJNVKxMUGxkQ7xViLY577iBJsrHXKWvcJ9U/jcSPfNSeGfA1CyRBEjCuTOl
-        nZoBSqYw==;
-Received: from guillem by pulsar.hadrons.org with local (Exim 4.96)
-        (envelope-from <guillem@hadrons.org>)
-        id 1qBwNQ-0002Z6-27;
-        Wed, 21 Jun 2023 13:51:56 +0200
-Date:   Wed, 21 Jun 2023 13:51:56 +0200
-From:   Guillem Jover <guillem@hadrons.org>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>, io-uring@vger.kernel.org,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Subject: Re: False positives in nolibc check
-Message-ID: <ZJLkXC7QffsoCnpu@thunder.hadrons.org>
-Mail-Followup-To: Guillem Jover <guillem@hadrons.org>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        Stefan Hajnoczi <stefanha@redhat.com>, io-uring@vger.kernel.org,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-References: <20230620133152.GA2615339@fedora>
- <ZJHKdAf2tPe+6BS6@biznet-home.integral.gnuweeb.org>
- <20230621100447.GD2667602@fedora>
- <ZJLOpuoI5X5IGAdk@biznet-home.integral.gnuweeb.org>
+        with ESMTP id S232310AbjFUNJj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 21 Jun 2023 09:09:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BBD19BD
+        for <io-uring@vger.kernel.org>; Wed, 21 Jun 2023 06:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687352929;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1JgrEcS0Br0aefCiXM+emWG3xNpewBxr3AH6tu5AYTo=;
+        b=P6GKTzQ/7ej5iO8lKnI2zd7rPTb1sjOIEDkV4mjaV/xZAOLr4v99dSx8fC4GMEf2IfMTEG
+        5tu7BdY/fMcuyqGU//t4g2+kbUrNwQrpP7A64S0UyYS/sZxh1IbCYzz6rfyhdGLvfFeDC4
+        uOrV++X5ShjYiiwKvgxOBwrTJy/jq7I=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-383-K8hnjCZmPfeWHQqffw8J8A-1; Wed, 21 Jun 2023 09:08:45 -0400
+X-MC-Unique: K8hnjCZmPfeWHQqffw8J8A-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C1B003C108DA;
+        Wed, 21 Jun 2023 13:08:44 +0000 (UTC)
+Received: from ovpn-8-23.pek2.redhat.com (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6AFC12166B32;
+        Wed, 21 Jun 2023 13:08:41 +0000 (UTC)
+Date:   Wed, 21 Jun 2023 21:08:36 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Guangwu Zhang <guazhang@redhat.com>
+Cc:     linux-block@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        io-uring@vger.kernel.org, John Meneghini <jmeneghi@redhat.com>
+Subject: Re: [bug report] system will hung up when cpu hot plug
+Message-ID: <ZJL2VCYcmUxpkXte@ovpn-8-23.pek2.redhat.com>
+References: <CAGS2=YoVrLmiFADaLJJCerGdyRZJk2qKXhQL1qpH61YpCMqJFw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZJLOpuoI5X5IGAdk@biznet-home.integral.gnuweeb.org>
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
-        RCVD_IN_SORBS_DUL,RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+In-Reply-To: <CAGS2=YoVrLmiFADaLJJCerGdyRZJk2qKXhQL1qpH61YpCMqJFw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi!
-
-On Wed, 2023-06-21 at 17:19:18 +0700, Ammar Faizi wrote:
-> On Wed, Jun 21, 2023 at 12:04:47PM +0200, Stefan Hajnoczi wrote:
-> > I don't know which features require the toolchain and libc to cooperate.
-> > I guess Thread Local Storage won't work and helper functions that
-> > compilers emit (like the memset example that Alviro gave).
+On Wed, Jun 21, 2023 at 12:11:24PM +0800, Guangwu Zhang wrote:
+> Hello
 > 
-> Yeah, thread local storage won't work. But the point of my question is
-> about liburing. So I expect the answer that's relevant to liburing.
+> We found this kernel issue with latest linux-block/for-next, let me
+> know if you need more info/testing, thanks
 > 
-> I mean, you can still use libc and TLS in your app even though the
-> liburing.so and liburing.a are nolibc.
-
-> > Disabling hardening because it requires work to support it in a nolibc
-> > world seems dubious to me. I don't think it's a good idea for io_uring
-> > to lower security because that hurts its image and reduces adoption.
-> > Especially right now, when the security of io_uring is being scrutinized
-> > (https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html).
-> > 
-> > While I'm sharing these opinions with you, I understand that some people
-> > want nolibc and are fine with disabling the stack protector. The main
-> > thing I would like is for liburing to compile or fail with a clear error
-> > message instead of breaking somewhere during the build.
+> kernel repo:
+>     Merge branch 'for-6.5/block' into for-next
+>     * for-6.5/block:
+>       reiserfs: fix blkdev_put() warning from release_journal_dev()
 > 
-> Right, my mistake. I think it's fixed in upstream by commit:
+> test steps:
+> 1. run cpu online/offline in background
+> 2. run fio with ioengine=io_uring_cmd
 > 
->    319f4be8bd049055c333185928758d0fb445fc43 ("build: Disable stack protector unconditionally")
 
-While I sent that to make it build again, I have to say when I was
-preparing the new liburing upload for Debian I hesitated to simply
-disable nolibc support for all arches there. Went for now with this
-because it is what is supported upstream and seemed like the smaller
-delta for now, and going through all functions it seemed "safe", but
-I might revisit this TBH.
+Hi Guangwu,
 
-We have been through this already with libaio, where going through the
-nolibc model also caused problems, see:
+I have looked at dmesg log and it happens in case of io scheduler & pt request.
 
-  https://pagure.io/libaio/c/672eaebd131c789a528e3a9cd089b4b69a82012b
+Please try the following patch, and the issue should be introduced from
+d97217e7f024 ("blk-mq: don't queue plugged passthrough requests into scheduler").
 
-So, I also think I'd appreciate a --use-libc mode (or similar) which I'd
-probably consider enabling for Debian. OTOH, I've no idea how much impact
-that would cause to performance? Do any of you have numbers?
 
-Thanks,
-Guillem
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 4c02c28b4835..0433fb43223b 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2750,7 +2750,12 @@ static void blk_mq_dispatch_plug_list(struct blk_plug *plug, bool from_sched)
+
+        percpu_ref_get(&this_hctx->queue->q_usage_counter);
+        /* passthrough requests should never be issued to the I/O scheduler */
+-       if (this_hctx->queue->elevator && !is_passthrough) {
++       if (is_passthrough) {
++               spin_lock(&this_hctx->lock);
++               list_splice_tail_init(&list, &this_hctx->dispatch);
++               spin_unlock(&this_hctx->lock);
++               blk_mq_run_hw_queue(this_hctx, from_sched);
++       } if (this_hctx->queue->elevator) {
+                this_hctx->queue->elevator->type->ops.insert_requests(this_hctx,
+                                &list, 0);
+                blk_mq_run_hw_queue(this_hctx, from_sched);
+
+
+Thanks, 
+Ming
+

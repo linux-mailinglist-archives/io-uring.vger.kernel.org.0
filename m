@@ -2,101 +2,199 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CA973A8B8
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jun 2023 21:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D7C73ABF8
+	for <lists+io-uring@lfdr.de>; Thu, 22 Jun 2023 23:59:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbjFVTBu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Jun 2023 15:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44104 "EHLO
+        id S230138AbjFVV7l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Jun 2023 17:59:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbjFVTBt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 15:01:49 -0400
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4659B;
-        Thu, 22 Jun 2023 12:01:48 -0700 (PDT)
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-31121494630so8626255f8f.3;
-        Thu, 22 Jun 2023 12:01:48 -0700 (PDT)
+        with ESMTP id S230116AbjFVV7l (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 17:59:41 -0400
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92921739;
+        Thu, 22 Jun 2023 14:59:38 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-3fa7512e5efso502755e9.2;
+        Thu, 22 Jun 2023 14:59:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687460506; x=1690052506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JQKzGLLngarWVhVTw2URKzbQiX5Xh0ThcGjikbK/29A=;
-        b=UDaogkxedFUKrLBbokO3Ju1XWzQsshU4NzizhE111YxjVL/KNgAdifnWs3aZVyEqnh
-         vZLqxNQG2p5Z41RNyZ2k1HYP7KJToFUID1byUceENvRpFn2nmR/Fk/3WzleWGvlOzZBg
-         cbtsILSaBxvPwgt6bsmd3HEx6TR2HX3bnAuRa0OHGTEDRRUKAYhbmcvyN+XtUXdS/smy
-         TqIuucLOcep/obdp00dn2uafwYJ/S4an7+fCBuCNKM4VQh2n7V5rQ5kAexgk9ST+XZnL
-         BsB9yEtdUnp3AvAw+5NPltZEX4Znv66aHgXRugSSkasJa4s8vfAHsOaoVqBv/jNSCYWT
-         wHaw==
-X-Gm-Message-State: AC+VfDzUGonVeZqp2rk4tW0X5cz5cCvSnqP0udUDlT/eVoGBUMoR85aJ
-        NuctXn7FZLyWZHinSTcAZt0=
-X-Google-Smtp-Source: ACHHUZ4Fm507H6gAfhlPKOCV3A52LQqvUW+RMQ+AjS6G760+nRpx0UGIk5+/UcW36fRpV4dsuqghUA==
-X-Received: by 2002:a5d:67cd:0:b0:2ef:b052:1296 with SMTP id n13-20020a5d67cd000000b002efb0521296mr17148852wrw.22.1687460506529;
-        Thu, 22 Jun 2023 12:01:46 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-004.fbsv.net. [2a03:2880:31ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id j11-20020a5d604b000000b003078681a1e8sm7680789wrt.54.2023.06.22.12.01.45
+        d=1e100.net; s=20221208; t=1687471177; x=1690063177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y7xfVnKi0DP1NtittcvkACNIGuIXZxKZkDplBO6fS4M=;
+        b=bVmsxVcpsjj+glJlJOyj/g1+RHTlaMMaVIkEmgNEBO3klmQTM/S/B7u82sIlsEjmz7
+         lZ/uTyV3uDY7k7QWZnvGHtKK1bN8n5EAznsylam3845C37f7JxWpGZ09Q087lnFxGgxc
+         ZgMk94I2HgMcubLJVRp5aHPpIds1sKBoJ4w0DJcSBEwDi22kBcmyi+ZX/PGE/4zFvnTt
+         7KoeLfyzsMt2mDFSOjc6NDHrjJhJExIS1/ETNRm9x/5MG77EQJT9PVskCr9O6pJ2oAjA
+         70hQgeFiehjm70B3Xy/h63yYXCXQMA46e1I0v43LYjJ5YUPdUD3hpG+YBEaESZycfjUU
+         RIDw==
+X-Gm-Message-State: AC+VfDxlU55LVuDJYmKnzAw6Oh0efMuvAiwcFkVRNDIIz2e0Vz1Yf0ei
+        ORSCOH7WxFzXijiME2TqIYq35hPeXX0Wjw==
+X-Google-Smtp-Source: ACHHUZ6iZEQYDBr5SMoG1sHSwnJvbRZ7ITDmy6q/mQpoMIhzYBRmjUBzUIWxn1ZVEcWk37P0LJzbaQ==
+X-Received: by 2002:a7b:c8c2:0:b0:3f7:5d:49ff with SMTP id f2-20020a7bc8c2000000b003f7005d49ffmr20473599wml.1.1687471176826;
+        Thu, 22 Jun 2023 14:59:36 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-012.fbsv.net. [2a03:2880:31ff:c::face:b00c])
+        by smtp.gmail.com with ESMTPSA id c25-20020a7bc019000000b003fa52928fcbsm561126wmb.19.2023.06.22.14.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 12:01:46 -0700 (PDT)
-Date:   Thu, 22 Jun 2023 12:01:44 -0700
+        Thu, 22 Jun 2023 14:59:36 -0700 (PDT)
 From:   Breno Leitao <leitao@debian.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+To:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, leit@meta.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steve French <stfrench@microsoft.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Simon Ser <contact@emersion.fr>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:IO_URING" <io-uring@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH] io_uring: Add io_uring command support for sockets
-Message-ID: <ZJSamAduIRJ3b/TX@gmail.com>
-References: <20230621232129.3776944-1-leitao@debian.org>
- <2023062231-tasting-stranger-8882@gregkh>
- <ZJRijTDv5lUsVo+j@gmail.com>
- <2023062208-animosity-squabble-c1ba@gregkh>
- <ZJR49xji1zmISlTs@gmail.com>
- <2023062228-cloak-wish-ec12@gregkh>
- <20230622103948.33cbb0dd@kernel.org>
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     gregkh@linuxfoundation.org,
+        io-uring@vger.kernel.org (open list:IO_URING),
+        linux-kernel@vger.kernel.org (open list),
+        netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
+Subject: [PATCH v3] io_uring: Add io_uring command support for sockets
+Date:   Thu, 22 Jun 2023 14:59:14 -0700
+Message-Id: <20230622215915.2565207-1-leitao@debian.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230622103948.33cbb0dd@kernel.org>
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 10:39:48AM -0700, Jakub Kicinski wrote:
-> On Thu, 22 Jun 2023 19:03:04 +0200 Greg Kroah-Hartman wrote:
-> > > Correct. For now we are just using 0xa0 and 0xa1, and eventually we
-> > > might need more ioctls numbers.
-> > > 
-> > > I got these numbers finding a unused block and having some room for
-> > > expansion, as suggested by Documentation/userspace-api/ioctl/ioctl-number.rst,
-> > > that says:
-> > > 
-> > > 	If you are writing a driver for a new device and need a letter, pick an
-> > > 	unused block with enough room for expansion: 32 to 256 ioctl commands.  
-> > 
-> > So is this the first io_uring ioctl?  If so, why is this an ioctl and
-> > not just a "normal" io_uring call?
-> 
-> +1, the mixing with classic ioctl seems confusing and I'm not sure 
-> if it buys us anything.
+Enable io_uring commands on network sockets. Create two new
+SOCKET_URING_OP commands that will operate on sockets.
 
-Sure, let me remove the dependency on ioctl()s then.
+In order to call ioctl on sockets, use the file_operations->io_uring_cmd
+callbacks, and map it to a uring socket function, which handles the
+SOCKET_URING_OP accordingly, and calls socket ioctls.
+
+This patches was tested by creating a new test case in liburing.
+Link: https://github.com/leitao/liburing/tree/io_uring_cmd
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+V1 -> V2:
+	* Keep uring code outside of network core subsystem
+	* Uses ioctl to define uring operation
+	* Use a generic ioctl function, instead of copying it over
+V2 -> V3:
+	* Do not use ioctl() helpers to create uring operations
+	* Rename uring_sock_cmd to io_uring_cmd_sock
+---
+ include/linux/io_uring.h      |  6 ++++++
+ include/uapi/linux/io_uring.h |  8 ++++++++
+ io_uring/uring_cmd.c          | 27 +++++++++++++++++++++++++++
+ net/socket.c                  |  2 ++
+ 4 files changed, 43 insertions(+)
+
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 7fe31b2cd02f..f00baf2929ff 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -71,6 +71,7 @@ static inline void io_uring_free(struct task_struct *tsk)
+ 	if (tsk->io_uring)
+ 		__io_uring_free(tsk);
+ }
++int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
+ #else
+ static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter, void *ioucmd)
+@@ -102,6 +103,11 @@ static inline const char *io_uring_get_opcode(u8 opcode)
+ {
+ 	return "";
+ }
++static inline int io_uring_cmd_sock(struct io_uring_cmd *cmd,
++				    unsigned int issue_flags)
++{
++	return -EOPNOTSUPP;
++}
+ #endif
+ 
+ #endif
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 0716cb17e436..5c25f8c98aa8 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -703,6 +703,14 @@ struct io_uring_recvmsg_out {
+ 	__u32 flags;
+ };
+ 
++/*
++ * Argument for IORING_OP_URING_CMD when file is a socket
++ */
++enum {
++	SOCKET_URING_OP_SIOCINQ		= 0,
++	SOCKET_URING_OP_SIOCOUTQ,
++};
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 5e32db48696d..31ce59567295 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -7,6 +7,7 @@
+ #include <linux/nospec.h>
+ 
+ #include <uapi/linux/io_uring.h>
++#include <uapi/asm-generic/ioctls.h>
+ 
+ #include "io_uring.h"
+ #include "rsrc.h"
+@@ -156,3 +157,29 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 	return io_import_fixed(rw, iter, req->imu, ubuf, len);
+ }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
++
++int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
++{
++	struct socket *sock = cmd->file->private_data;
++	struct sock *sk = sock->sk;
++	int ret, arg = 0;
++
++	if (!sk->sk_prot || !sk->sk_prot->ioctl)
++		return -EOPNOTSUPP;
++
++	switch (cmd->sqe->cmd_op) {
++	case SOCKET_URING_OP_SIOCINQ:
++		ret = sk->sk_prot->ioctl(sk, SIOCINQ, &arg);
++		if (ret)
++			return ret;
++		return arg;
++	case SOCKET_URING_OP_SIOCOUTQ:
++		ret = sk->sk_prot->ioctl(sk, SIOCOUTQ, &arg);
++		if (ret)
++			return ret;
++		return arg;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
+diff --git a/net/socket.c b/net/socket.c
+index b778fc03c6e0..09b105d00445 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -88,6 +88,7 @@
+ #include <linux/xattr.h>
+ #include <linux/nospec.h>
+ #include <linux/indirect_call_wrapper.h>
++#include <linux/io_uring.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+@@ -159,6 +160,7 @@ static const struct file_operations socket_file_ops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = compat_sock_ioctl,
+ #endif
++	.uring_cmd =    io_uring_cmd_sock,
+ 	.mmap =		sock_mmap,
+ 	.release =	sock_close,
+ 	.fasync =	sock_fasync,
+-- 
+2.34.1
+

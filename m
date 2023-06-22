@@ -2,93 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AADEE73A76B
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jun 2023 19:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A370473A7D4
+	for <lists+io-uring@lfdr.de>; Thu, 22 Jun 2023 19:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231285AbjFVRj7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Jun 2023 13:39:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35368 "EHLO
+        id S229960AbjFVR5p (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Jun 2023 13:57:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbjFVRjy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 13:39:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CCD31FD2;
-        Thu, 22 Jun 2023 10:39:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C65C618CA;
-        Thu, 22 Jun 2023 17:39:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52726C433C8;
-        Thu, 22 Jun 2023 17:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687455589;
-        bh=6Mcce3nF6YdsClruQbW80qlgIDWGMFESghPF7l7JYTM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=c/wGJVyyFBHOwRk677FOXLxKHfOpmo7aYhn8TXoCyysBSD9UN0HRCi/VIEy4fVtc3
-         d1Gtwc4Tlz0ZMOG6N2t6zeJCnCq0Ac3UfKvnIvE5ZZRksc5XHdNUCO3ys3TEVyYqB9
-         O5aTb6ejHzcie2Y3dxe6TFO3Tx54mwjqIDfllxxT2yeNQkcittmTYy4ty+rg7d5x/5
-         gYUetO9mpIHBZhBPcQIevv1XEy0sHwQScl/zfyoUZDduBaQ4FV+wexEVRBjKC+uN3K
-         nVASNPf6jJeZE8DcXCk8LoxzJA9L3gYZjf9cqV9w6ceYkEMCGPZirph5X8Wsb8TCwX
-         wosPPNlFHhh3g==
-Date:   Thu, 22 Jun 2023 10:39:48 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Breno Leitao <leitao@debian.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, leit@meta.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steve French <stfrench@microsoft.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Simon Ser <contact@emersion.fr>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:IO_URING" <io-uring@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH] io_uring: Add io_uring command support for sockets
-Message-ID: <20230622103948.33cbb0dd@kernel.org>
-In-Reply-To: <2023062228-cloak-wish-ec12@gregkh>
-References: <20230621232129.3776944-1-leitao@debian.org>
-        <2023062231-tasting-stranger-8882@gregkh>
-        <ZJRijTDv5lUsVo+j@gmail.com>
-        <2023062208-animosity-squabble-c1ba@gregkh>
-        <ZJR49xji1zmISlTs@gmail.com>
-        <2023062228-cloak-wish-ec12@gregkh>
+        with ESMTP id S230149AbjFVR5o (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 13:57:44 -0400
+Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3261FE7;
+        Thu, 22 Jun 2023 10:57:42 -0700 (PDT)
+Date:   Thu, 22 Jun 2023 19:57:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+        t=1687456660; bh=Lh5/dT2/13B9EXy2EOf+33Uc0+KDF5N223sZ8gY2ghQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a0jIRN6uorF/F9EBzVqYUuTtrds07ROblRlgUxndZHn9hogyVPkXLdTvXTO2UkIEg
+         5NJ6D7H4aayk10KSXeDefsxm80Krs5ulztsuXcgyyX6455EaAatxYTI5PLJNKY5J2x
+         EGDjVFq8DyAUrAUEtt9JtfNlCLmTtT9m6jZYNpmo=
+From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Guillem Jover <guillem@hadrons.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Michael William Jonathan <moe@gnuweeb.org>,
+        Matthew Patrick <ThePhoenix576@gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Subject: Re: [RFC PATCH liburing v1 3/3] src/Makefile: Allow using stack
+ protector with libc
+Message-ID: <6734a933-6e61-45b1-969c-1767f1aad43b@t-8ch.de>
+References: <20230622172029.726710-1-ammarfaizi2@gnuweeb.org>
+ <20230622172029.726710-4-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230622172029.726710-4-ammarfaizi2@gnuweeb.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 22 Jun 2023 19:03:04 +0200 Greg Kroah-Hartman wrote:
-> > Correct. For now we are just using 0xa0 and 0xa1, and eventually we
-> > might need more ioctls numbers.
-> > 
-> > I got these numbers finding a unused block and having some room for
-> > expansion, as suggested by Documentation/userspace-api/ioctl/ioctl-number.rst,
-> > that says:
-> > 
-> > 	If you are writing a driver for a new device and need a letter, pick an
-> > 	unused block with enough room for expansion: 32 to 256 ioctl commands.  
+On 2023-06-23 00:20:29+0700, Ammar Faizi wrote:
+> Currently, the stack protector is forcefully disabled. Let's allow using
+> the stack protector feature only if libc is used.
 > 
-> So is this the first io_uring ioctl?  If so, why is this an ioctl and
-> not just a "normal" io_uring call?
+> The stack protector will remain disabled by default if no custom CFLAGS
+> are provided. This ensures the default behavior doesn't change while
+> still offering the option to enable the stack protector.
 
-+1, the mixing with classic ioctl seems confusing and I'm not sure 
-if it buys us anything.
--- 
-pw-bot: cr
+FYI
+
+There are patches in the pipeline that enable stackprotector support for
+nolibc [0]. They should land in 6.5.
+
+It only supports "global" mode and not per-thread-data.
+But as nolibc does not support threads anyways that should not matter.
+A compiler flag has to be passed though, but that can be automated [1].
+
+So the -fno-stack-protector can probably be removed completely.
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/tree/tools/include/nolibc/stackprotector.h?h=dev.2023.06.16a
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/tree/tools/testing/selftests/nolibc/Makefile?h=dev.2023.06.16a#n81
+
+> Cc: Stefan Hajnoczi <stefanha@redhat.com>
+> Cc: Guillem Jover <guillem@hadrons.org>
+> Co-authored-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+> Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> ---
+>  src/Makefile | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/src/Makefile b/src/Makefile
+> index 951c48fc6797be75..c4c28cbe87c7a8de 100644
+> --- a/src/Makefile
+> +++ b/src/Makefile
+> @@ -10,9 +10,8 @@ CPPFLAGS ?=
+>  override CPPFLAGS += -D_GNU_SOURCE \
+>  	-Iinclude/ -include ../config-host.h \
+>  	-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+> -CFLAGS ?= -g -O3 -Wall -Wextra
+> +CFLAGS ?= -g -O3 -Wall -Wextra -fno-stack-protector
+>  override CFLAGS += -Wno-unused-parameter \
+> -	-fno-stack-protector \
+>  	-DLIBURING_INTERNAL \
+>  	$(LIBURING_CFLAGS)
+>  SO_CFLAGS=-fPIC $(CFLAGS)
+> @@ -46,8 +45,8 @@ liburing_srcs := setup.c queue.c register.c syscall.c version.c
+>  
+>  ifeq ($(CONFIG_NOLIBC),y)
+>  	liburing_srcs += nolibc.c
+> -	override CFLAGS += -nostdlib -nodefaultlibs -ffreestanding -fno-builtin
+> -	override CPPFLAGS += -nostdlib -nodefaultlibs -ffreestanding -fno-builtin
+> +	override CFLAGS += -nostdlib -nodefaultlibs -ffreestanding -fno-builtin -fno-stack-protector
+> +	override CPPFLAGS += -nostdlib -nodefaultlibs -ffreestanding -fno-builtin -fno-stack-protector
+>  	override LINK_FLAGS += -nostdlib -nodefaultlibs
+>  endif
+>  
+> -- 
+> Ammar Faizi
+> 

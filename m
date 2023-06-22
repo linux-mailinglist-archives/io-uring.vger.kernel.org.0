@@ -2,199 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D7C73ABF8
-	for <lists+io-uring@lfdr.de>; Thu, 22 Jun 2023 23:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6211373ACAF
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 00:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjFVV7l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Jun 2023 17:59:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45300 "EHLO
+        id S231244AbjFVWuA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Jun 2023 18:50:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbjFVV7l (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 17:59:41 -0400
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92921739;
-        Thu, 22 Jun 2023 14:59:38 -0700 (PDT)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-3fa7512e5efso502755e9.2;
-        Thu, 22 Jun 2023 14:59:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687471177; x=1690063177;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y7xfVnKi0DP1NtittcvkACNIGuIXZxKZkDplBO6fS4M=;
-        b=bVmsxVcpsjj+glJlJOyj/g1+RHTlaMMaVIkEmgNEBO3klmQTM/S/B7u82sIlsEjmz7
-         lZ/uTyV3uDY7k7QWZnvGHtKK1bN8n5EAznsylam3845C37f7JxWpGZ09Q087lnFxGgxc
-         ZgMk94I2HgMcubLJVRp5aHPpIds1sKBoJ4w0DJcSBEwDi22kBcmyi+ZX/PGE/4zFvnTt
-         7KoeLfyzsMt2mDFSOjc6NDHrjJhJExIS1/ETNRm9x/5MG77EQJT9PVskCr9O6pJ2oAjA
-         70hQgeFiehjm70B3Xy/h63yYXCXQMA46e1I0v43LYjJ5YUPdUD3hpG+YBEaESZycfjUU
-         RIDw==
-X-Gm-Message-State: AC+VfDxlU55LVuDJYmKnzAw6Oh0efMuvAiwcFkVRNDIIz2e0Vz1Yf0ei
-        ORSCOH7WxFzXijiME2TqIYq35hPeXX0Wjw==
-X-Google-Smtp-Source: ACHHUZ6iZEQYDBr5SMoG1sHSwnJvbRZ7ITDmy6q/mQpoMIhzYBRmjUBzUIWxn1ZVEcWk37P0LJzbaQ==
-X-Received: by 2002:a7b:c8c2:0:b0:3f7:5d:49ff with SMTP id f2-20020a7bc8c2000000b003f7005d49ffmr20473599wml.1.1687471176826;
-        Thu, 22 Jun 2023 14:59:36 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-012.fbsv.net. [2a03:2880:31ff:c::face:b00c])
-        by smtp.gmail.com with ESMTPSA id c25-20020a7bc019000000b003fa52928fcbsm561126wmb.19.2023.06.22.14.59.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 14:59:36 -0700 (PDT)
-From:   Breno Leitao <leitao@debian.org>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     gregkh@linuxfoundation.org,
-        io-uring@vger.kernel.org (open list:IO_URING),
-        linux-kernel@vger.kernel.org (open list),
-        netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
-Subject: [PATCH v3] io_uring: Add io_uring command support for sockets
-Date:   Thu, 22 Jun 2023 14:59:14 -0700
-Message-Id: <20230622215915.2565207-1-leitao@debian.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229747AbjFVWt7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 18:49:59 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFE21BD3;
+        Thu, 22 Jun 2023 15:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1687474197;
+        bh=GaDQ9JqTnH4ql7tm/PH+lPX5ScztcQCWp8V1WHR2uL4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=ZO4RrMe6kl/hDCx8MMxQ7//zvdnLJpOzDQq8vZsmjue1MW+sbMoLlIiZZiHASO1b1
+         dLPLYUQ0bqMjGQ7k6jzP15G2OQU6iaflTELX18eco/6C8/KBUk+dVW8K+WyzEhA1mt
+         yvnmK1IMI13vOSXOsbQ5qoTcRY0h16v4fXV9wWr/EmiTvp0pFGDptZNEhoxjJnXpjX
+         MnQQzC0Ab1idFQqeCChslOcleE8jbwX5sKkvxqsdjpTRifnnTfRulgNB2ddu1vCvGE
+         Ee1zYcEO0t0X2LAdDG0yVp7YXjBN35rrQz3L6Sbln5e+ArsWxT8gFNb639OtYVKmFa
+         PXQK6+e7SKDTg==
+Received: from biznet-home.integral.gnuweeb.org (unknown [68.183.184.174])
+        by gnuweeb.org (Postfix) with ESMTPSA id B119B249DA7;
+        Fri, 23 Jun 2023 05:49:53 +0700 (WIB)
+Date:   Fri, 23 Jun 2023 05:49:49 +0700
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+        Guillem Jover <guillem@hadrons.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Michael William Jonathan <moe@gnuweeb.org>,
+        Matthew Patrick <ThePhoenix576@gnuweeb.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Subject: Re: [RFC PATCH liburing v1 3/3] src/Makefile: Allow using stack
+ protector with libc
+Message-ID: <ZJTQDaAsN/e7irCa@biznet-home.integral.gnuweeb.org>
+References: <20230622172029.726710-1-ammarfaizi2@gnuweeb.org>
+ <20230622172029.726710-4-ammarfaizi2@gnuweeb.org>
+ <6734a933-6e61-45b1-969c-1767f1aad43b@t-8ch.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <6734a933-6e61-45b1-969c-1767f1aad43b@t-8ch.de>
+X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLACK autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Enable io_uring commands on network sockets. Create two new
-SOCKET_URING_OP commands that will operate on sockets.
+On Thu, Jun 22, 2023 at 07:57:38PM +0200, Thomas Weißschuh wrote:
+> There are patches in the pipeline that enable stackprotector support for
+> nolibc [0]. They should land in 6.5.
 
-In order to call ioctl on sockets, use the file_operations->io_uring_cmd
-callbacks, and map it to a uring socket function, which handles the
-SOCKET_URING_OP accordingly, and calls socket ioctls.
+That's interesting. I haven't been following Willy's tree for a while.
+Hope 6.4 stable goes well by the end of this week.
 
-This patches was tested by creating a new test case in liburing.
-Link: https://github.com/leitao/liburing/tree/io_uring_cmd
+> It only supports "global" mode and not per-thread-data.
+> But as nolibc does not support threads anyways that should not matter.
+> A compiler flag has to be passed though, but that can be automated [1].
+> 
+> So the -fno-stack-protector can probably be removed completely.
+> 
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/tree/tools/include/nolibc/stackprotector.h?h=dev.2023.06.16a
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/tree/tools/testing/selftests/nolibc/Makefile?h=dev.2023.06.16a#n81
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-V1 -> V2:
-	* Keep uring code outside of network core subsystem
-	* Uses ioctl to define uring operation
-	* Use a generic ioctl function, instead of copying it over
-V2 -> V3:
-	* Do not use ioctl() helpers to create uring operations
-	* Rename uring_sock_cmd to io_uring_cmd_sock
----
- include/linux/io_uring.h      |  6 ++++++
- include/uapi/linux/io_uring.h |  8 ++++++++
- io_uring/uring_cmd.c          | 27 +++++++++++++++++++++++++++
- net/socket.c                  |  2 ++
- 4 files changed, 43 insertions(+)
+This is a bit problematic because liburing.so and liburing.a must also
+be compatible with apps that use libc. Note that liburing nolibc is also
+used by apps that use libc.
 
-diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-index 7fe31b2cd02f..f00baf2929ff 100644
---- a/include/linux/io_uring.h
-+++ b/include/linux/io_uring.h
-@@ -71,6 +71,7 @@ static inline void io_uring_free(struct task_struct *tsk)
- 	if (tsk->io_uring)
- 		__io_uring_free(tsk);
- }
-+int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
- #else
- static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
- 			      struct iov_iter *iter, void *ioucmd)
-@@ -102,6 +103,11 @@ static inline const char *io_uring_get_opcode(u8 opcode)
- {
- 	return "";
- }
-+static inline int io_uring_cmd_sock(struct io_uring_cmd *cmd,
-+				    unsigned int issue_flags)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif
- 
- #endif
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 0716cb17e436..5c25f8c98aa8 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -703,6 +703,14 @@ struct io_uring_recvmsg_out {
- 	__u32 flags;
- };
- 
-+/*
-+ * Argument for IORING_OP_URING_CMD when file is a socket
-+ */
-+enum {
-+	SOCKET_URING_OP_SIOCINQ		= 0,
-+	SOCKET_URING_OP_SIOCOUTQ,
-+};
-+
- #ifdef __cplusplus
- }
- #endif
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 5e32db48696d..31ce59567295 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -7,6 +7,7 @@
- #include <linux/nospec.h>
- 
- #include <uapi/linux/io_uring.h>
-+#include <uapi/asm-generic/ioctls.h>
- 
- #include "io_uring.h"
- #include "rsrc.h"
-@@ -156,3 +157,29 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
- 	return io_import_fixed(rw, iter, req->imu, ubuf, len);
- }
- EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
-+
-+int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-+{
-+	struct socket *sock = cmd->file->private_data;
-+	struct sock *sk = sock->sk;
-+	int ret, arg = 0;
-+
-+	if (!sk->sk_prot || !sk->sk_prot->ioctl)
-+		return -EOPNOTSUPP;
-+
-+	switch (cmd->sqe->cmd_op) {
-+	case SOCKET_URING_OP_SIOCINQ:
-+		ret = sk->sk_prot->ioctl(sk, SIOCINQ, &arg);
-+		if (ret)
-+			return ret;
-+		return arg;
-+	case SOCKET_URING_OP_SIOCOUTQ:
-+		ret = sk->sk_prot->ioctl(sk, SIOCOUTQ, &arg);
-+		if (ret)
-+			return ret;
-+		return arg;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
-diff --git a/net/socket.c b/net/socket.c
-index b778fc03c6e0..09b105d00445 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -88,6 +88,7 @@
- #include <linux/xattr.h>
- #include <linux/nospec.h>
- #include <linux/indirect_call_wrapper.h>
-+#include <linux/io_uring.h>
- 
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
-@@ -159,6 +160,7 @@ static const struct file_operations socket_file_ops = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = compat_sock_ioctl,
- #endif
-+	.uring_cmd =    io_uring_cmd_sock,
- 	.mmap =		sock_mmap,
- 	.release =	sock_close,
- 	.fasync =	sock_fasync,
+The problem when an app uses libc.so and liburing.a:
+
+Stack-protector functions from liburing nolibc will override the
+stack-protector functions from libc because statically linked functions
+will take precedence. The end result, the app will always use the
+"global" mode stack protector even if it's multithreaded. There may be a
+way to make those functions private to liburing only, but I don't know.
+
+We had a similar problem with memset() in liburing:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/liburing.git/commit/?id=db5403e58083bef48d72656d7dea53a9f7affef4
+
+Also, the app has to be compiled with those specific flags, which is out
+of our control. Plus, I wonder if there is a chance to call
+__stack_chk_init() from a static library point of view where we don't
+control the entry point (__start).
+
+Therefore, I won't implement the stack protector for liburing under
+CONFIG_NOLIBC enabled. So far, I see that using the stack protector for
+liburing nolibc is more trouble than it's worth.
+
+But anyway, it's nice to see your stack protector work.
+
+Regards,
 -- 
-2.34.1
+Ammar Faizi
 

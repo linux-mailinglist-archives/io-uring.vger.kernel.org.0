@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2553373A716
+	by mail.lfdr.de (Postfix) with ESMTP id 6D50873A717
 	for <lists+io-uring@lfdr.de>; Thu, 22 Jun 2023 19:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230494AbjFVRUq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 22 Jun 2023 13:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
+        id S230517AbjFVRUr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 22 Jun 2023 13:20:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbjFVRUi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 13:20:38 -0400
+        with ESMTP id S230449AbjFVRUq (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 22 Jun 2023 13:20:46 -0400
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555FF19A9;
-        Thu, 22 Jun 2023 10:20:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AEBB1FF6;
+        Thu, 22 Jun 2023 10:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1687454436;
-        bh=kqY+PXK/BHeCUujDvP0OTwyGNYeTRsgl8KnpZQ6sEx0=;
-        h=From:To:Cc:Subject:Date;
-        b=nRRA0/7QC0abjoTuDRJ3wJvKcqpQqPpJLhfTPZyGR93TzsXFmQgRB8+H/IEiwlYGa
-         nGjWIpSoAnvynqkwqNO0ZrlXPYQb+TSBftuBGQlYe/dCKev8yv8uV/CWzWeNlKen89
-         22JbFidcg7W/z0lBZGKFlPv0t9gl+6eg5U/dQmgoEKaQWwg9OK+ZrtNLvDVZa05e6l
-         vIgIck4ZXGjLHTTAUXFEb0Mm8gVzqG40dyYvk2BgwU0F04aw4ep+Gg0jg/GQu9OjKH
-         GheqIu4tYckPUphce4DHErsP6rthZW5NS0pSouXZSP+RKgZen/g7iqhAWyXj34CIVL
-         wvPGt1o0j4R4w==
+        s=default; t=1687454439;
+        bh=+/aNz4y+AbrUpY8/J4QV4+dsn+DjkqAo9OG0y4IXBZg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=YripPpPCn2et5Ls8aO59zAzUGY3GNlUgfimz8udbjwCD+bP9BKvW7LSjfuGyXpiSw
+         1czeUWM5O79iYygjEJ4Hg/qAw4g99tsohoPaynvTODErOK6FqzY92qXUNGq7XjBOEP
+         dcU36S1cpctrpKY6ILFmO0DyWHW+4VM6awvPb+KXkiqOhBw/Q3l+9fiv85WT19efyY
+         0zfm5lgJe5HFnO/0LgR537lEEs6ZGYT8t1qgaE+9h9cIPxHibVpKwxLh7mxqJO0AAf
+         SmVGH/Py0J/WBtKTzdg1i/B9xXLpTrFtMvKT3PCBArm7/9+33K29rKmvWuYT4Zsz3T
+         6WG9226yCfK0w==
 Received: from integral2.. (unknown [68.183.184.174])
-        by gnuweeb.org (Postfix) with ESMTPSA id 44E9C249D74;
-        Fri, 23 Jun 2023 00:20:33 +0700 (WIB)
+        by gnuweeb.org (Postfix) with ESMTPSA id DA9DC249D78;
+        Fri, 23 Jun 2023 00:20:36 +0700 (WIB)
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
@@ -38,10 +38,12 @@ Cc:     Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
         io-uring Mailing List <io-uring@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [RFC PATCH liburing v1 0/3] Introduce '--use-libc' option
-Date:   Fri, 23 Jun 2023 00:20:26 +0700
-Message-Id: <20230622172029.726710-1-ammarfaizi2@gnuweeb.org>
+Subject: [RFC PATCH liburing v1 1/3] configure: Remove --nolibc option
+Date:   Fri, 23 Jun 2023 00:20:27 +0700
+Message-Id: <20230622172029.726710-2-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230622172029.726710-1-ammarfaizi2@gnuweeb.org>
+References: <20230622172029.726710-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -53,57 +55,59 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
-Hi Stefan and Guillem,
+This option was deprecated and planned to be removed. Now remove it.
 
-This is an RFC patch series to introduce the '--use-libc' option to the
-configure script.
-
-Currently, when compiling liburing on x86, x86-64, and aarch64
-architectures, the resulting binary lacks the linkage with the standard
-C library (libc).
-
-To address the concerns raised by Linux distribution package maintainers
-regarding security, it is necessary to enable the linkage of libc to
-liburing. Especially right now, when the security of io_uring is being
-scrutinized. By incorporating the '--use-libc' option, developers can
-now enhance the overall hardening of liburing by utilizing compiler
-features such as the stack protector and address sanitizer.
-
-See the following links for viewing the discussion:
-Link: https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html
-Link: https://lore.kernel.org/io-uring/20230621100447.GD2667602@fedora
-Link: https://lore.kernel.org/io-uring/ZJLkXC7QffsoCnpu@thunder.hadrons.org
-
-There are three patches in this series.
-
-  - The first patch removes the '--nolibc' option from the configure
-    script as it is no longer needed. The default build on x86, x86-64,
-    and aarch64 architectures is still not using libc.
-
-  - The second patch introduces the '--use-libc' option to the configure
-    script. This option enables the linkage of libc to liburing.
-
-  - The third patch allows the use of the stack protector when building
-    liburing with libc.
-
-Please review. Thank you.
-
+Co-authored-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
+ configure | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-Ammar Faizi (3):
-  configure: Remove --nolibc option
-  configure: Introduce '--use-libc' option
-  src/Makefile: Allow using stack protector with libc
-
- configure    | 40 +++++++++++++++-------------------------
- src/Makefile |  7 +++----
- 2 files changed, 18 insertions(+), 29 deletions(-)
-
-
-base-commit: 49fa118c58422bad38cb96fea0f10af60691baa9
+diff --git a/configure b/configure
+index 28f3eb0aee24f9ea..a16ffca83d678364 100755
+--- a/configure
++++ b/configure
+@@ -5,22 +5,6 @@ set -e
+ cc=${CC:-gcc}
+ cxx=${CXX:-g++}
+ 
+-#
+-# TODO(ammarfaizi2): Remove this notice and `--nolibc` option.
+-#
+-nolibc_deprecated() {
+-  echo "";
+-  echo "=================================================================";
+-  echo "";
+-  echo "  --nolibc option is deprecated and has no effect.";
+-  echo "  It will be removed in a future liburing release.";
+-  echo "";
+-  echo "  liburing on x86-64, x86 (32-bit) and aarch64 always use CONFIG_NOLIBC.";
+-  echo "";
+-  echo "=================================================================";
+-  echo "";
+-}
+-
+ for opt do
+   optarg=$(expr "x$opt" : 'x[^=]*=\(.*\)' || true)
+   case "$opt" in
+@@ -42,8 +26,6 @@ for opt do
+   ;;
+   --cxx=*) cxx="$optarg"
+   ;;
+-  --nolibc) nolibc_deprecated
+-  ;;
+   *)
+     echo "ERROR: unknown option $opt"
+     echo "Try '$0 --help' for more information"
+@@ -91,7 +73,6 @@ Options: [defaults in brackets after descriptions]
+   --datadir=PATH           install shared data in PATH [$datadir]
+   --cc=CMD                 use CMD as the C compiler
+   --cxx=CMD                use CMD as the C++ compiler
+-  --nolibc                 build liburing without libc
+ EOF
+ exit 0
+ fi
 -- 
 Ammar Faizi
 

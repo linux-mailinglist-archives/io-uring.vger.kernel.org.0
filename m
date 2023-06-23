@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EADCE73BD15
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A91E73BD1B
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232569AbjFWQsb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jun 2023 12:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S232342AbjFWQtF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Jun 2023 12:49:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232442AbjFWQsT (ORCPT
+        with ESMTP id S232489AbjFWQsT (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:19 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FC2C2738
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:14 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-66a2a04de58so179974b3a.1
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:14 -0700 (PDT)
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C47CA2972
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:15 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b5585e84b4so1310955ad.0
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538893; x=1690130893;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538895; x=1690130895;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g83UyOYA3HEZssvEWqLCOxWbPN+8YNXFzia9GMHc0No=;
-        b=0Hz0e5I0O7YFkss7bQEcXXSKSxi3+2i6XaupVTqoMMcKP0b+gpz+xAZE9nF4G86klD
-         ICAJVyITodyB+MwYsBf6ytSGYhTaHhd7C/ioyK1KmAOJQD49CGqx8zJhCOeueo7ymj89
-         N7n4DT13slHfSAlcb/NaLnuvQwzhOWTc1K9AtxUPfdrP13mBmCjrDfhBrUKd3z1PSHcQ
-         S5wyFuKQcjVWrbQ+oe+zirzYk6YL5SptaCq2ptkR6S9RqjDXv044nrkvVMMes4NkS2Eb
-         MJc1CCpUKvVEBfbbvZYvzI/GDyrvSl14/NQiTYBwj0Z1/PPI4YunLHevASsgcWYwPcEm
-         YSfw==
+        bh=rSZQtoqAzhDTY0MUEMcJJxwF6F54WysrdBrpUmOaDJo=;
+        b=hQSbsO4fStWXkomuzoa6x01KVK6sycjVgyfrluGqVKrP5MxD63ENDWEGjq9vvJ4O0C
+         9YE9UGjY2/+KEveNTAHkTasxPIT0URnCX4u00IC+Ppbhgc8nlS55yXg6q3SUVC+6R9qP
+         yyh6wTZUF4u2kmf3oZwdYwrFcv6/SblUXUGoak8nKXdWuoeiu0pgqiWSdVusMwaj+GkL
+         97YZfYrVkrRIR5lk3ti6onv5He9tZAgOiLO5V1UwNFz5VGVTUF8BdU+jvyk1cLbhIQlb
+         IZu+6I/k/MpE+qOTcHylGMu8Vss1zRFTdGITIEz7niKH57t09VfYD0gl+X+zKjIfKbi9
+         Y94A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687538893; x=1690130893;
+        d=1e100.net; s=20221208; t=1687538895; x=1690130895;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g83UyOYA3HEZssvEWqLCOxWbPN+8YNXFzia9GMHc0No=;
-        b=BKoOKYDjL6obAVR6ddE1N87gslFHMFto2JXuPXpvJ9fKUe7PfO9zTJmuuD5LwTUzHG
-         mkNy4ZdJdbwECl62+g5UK7Pme1lwK5KVYH35DOItVMd2r3LiOsepIfPLzJR69cy+noRI
-         rHAEb6ySgPoMzu5tT54Ku3UvPG/bMWSQdDqokk1zRAlCAu0eyqe1fOE6uZZMwdKRRa9q
-         bmJMhjj4DKptspEhzKOQNdImmkuE5EN705DpSvYoksyldWC8c8rP0b+JoUxvvTC8FTiA
-         NdQ6xFm7sY1NgXs5rLu4H182dMZmcxATPsPTt6dIiP9AxdV5WCoduQzVUrRL5kTyq52B
-         YQig==
-X-Gm-Message-State: AC+VfDwZSj8z25/SMCZDlGZEzRuIFLy+pUtrjYugUWJeZ8lm+0Y2z0kV
-        b/kug+6gnVfFmF87eSgJV9VDyVWJQFl2kWn90dA=
-X-Google-Smtp-Source: ACHHUZ5c5cKZc9bwxAJ7RWjc/xh6maOe3AHLjEsLq1y27RRgtROLFCSmRutyoXnT19EQlIZbDrkzwA==
-X-Received: by 2002:a05:6a20:430c:b0:10b:e7d2:9066 with SMTP id h12-20020a056a20430c00b0010be7d29066mr27066062pzk.2.1687538893258;
-        Fri, 23 Jun 2023 09:48:13 -0700 (PDT)
+        bh=rSZQtoqAzhDTY0MUEMcJJxwF6F54WysrdBrpUmOaDJo=;
+        b=FgyJlpINwo8SPzHNePUHR9KMghkFcIFJYXnxIPbGTLZvarS71nGAZpeAzcnXCq6xrz
+         xIniGie41Yt5dECzh0G972S4qCWUxoBk85d1Xb7GPDJNIgN/ijHg0XfZVYzXzU/tcWbA
+         F+1KJJkhofP/WW2iqVPDZpo8PHjXJ+6lH9ft+DUhRHAS/099kBawaZed1CSYHfJ0n0d6
+         j1lbzQYLJulkxCD8kEgfviXAf6mY1HoYzv39vgomZyS7qtUzTTb8Ak3PPnNmOgKXCG+l
+         xmnOM/bwv1D4K48LVDdBuajnb5u64eXMvETQekFNF1pmDxjtVPh34d7Lq9ctN5d7BbIu
+         +yCQ==
+X-Gm-Message-State: AC+VfDyGpKOQVEX3phFV20SYsUDj8IeibPNEktQ5AqujuwSsC+1Oqay1
+        gNlf49ea6HFSxYYSydNdpv6O9WIkyLIsIXmrV4M=
+X-Google-Smtp-Source: ACHHUZ4zl8PHQ4wqc+LcjD9S1KHOK+u6gHQaUAAWxfATJycX3RLZiVgLpDNeo2kwaMFhw92d+vQJPA==
+X-Received: by 2002:a17:902:d509:b0:1af:a349:3f31 with SMTP id b9-20020a170902d50900b001afa3493f31mr26823977plg.3.1687538894743;
+        Fri, 23 Jun 2023 09:48:14 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.11
+        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 09:48:12 -0700 (PDT)
+        Fri, 23 Jun 2023 09:48:14 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/8] io_uring/cancel: abstract out request match helper
-Date:   Fri, 23 Jun 2023 10:47:59 -0600
-Message-Id: <20230623164804.610910-4-axboe@kernel.dk>
+Subject: [PATCH 4/8] io_uring/cancel: fix sequence matching for IORING_ASYNC_CANCEL_ANY
+Date:   Fri, 23 Jun 2023 10:48:00 -0600
+Message-Id: <20230623164804.610910-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230623164804.610910-1-axboe@kernel.dk>
 References: <20230623164804.610910-1-axboe@kernel.dk>
@@ -69,64 +69,39 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We have different match code in a variety of spots. Start the cleanup of
-this by abstracting out a helper that can be used to check if a given
-request matches the cancelation criteria outlined in io_cancel_data.
+We always need to check/update the cancel sequence if
+IORING_ASYNC_CANCEL_ALL is set. Also kill the redundant check for
+IORING_ASYNC_CANCEL_ANY at the end, if we get here we know it's
+not set as we would've matched it higher up.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/cancel.c | 17 +++++++++++++----
- io_uring/cancel.h |  1 +
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ io_uring/cancel.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index 58c46c852bdd..8527ec3cc11f 100644
+index 8527ec3cc11f..bf44563d687d 100644
 --- a/io_uring/cancel.c
 +++ b/io_uring/cancel.c
-@@ -27,11 +27,11 @@ struct io_cancel {
- #define CANCEL_FLAGS	(IORING_ASYNC_CANCEL_ALL | IORING_ASYNC_CANCEL_FD | \
- 			 IORING_ASYNC_CANCEL_ANY | IORING_ASYNC_CANCEL_FD_FIXED)
- 
--static bool io_cancel_cb(struct io_wq_work *work, void *data)
-+/*
-+ * Returns true if the request matches the criteria outlined by 'cd'.
-+ */
-+bool io_cancel_req_match(struct io_kiocb *req, struct io_cancel_data *cd)
- {
--	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
--	struct io_cancel_data *cd = data;
--
+@@ -35,7 +35,7 @@ bool io_cancel_req_match(struct io_kiocb *req, struct io_cancel_data *cd)
  	if (req->ctx != cd->ctx)
  		return false;
  	if (cd->flags & IORING_ASYNC_CANCEL_ANY) {
-@@ -48,9 +48,18 @@ static bool io_cancel_cb(struct io_wq_work *work, void *data)
+-		;
++		goto check_seq;
+ 	} else if (cd->flags & IORING_ASYNC_CANCEL_FD) {
+ 		if (req->file != cd->file)
+ 			return false;
+@@ -43,7 +43,8 @@ bool io_cancel_req_match(struct io_kiocb *req, struct io_cancel_data *cd)
+ 		if (req->cqe.user_data != cd->data)
+ 			return false;
+ 	}
+-	if (cd->flags & (IORING_ASYNC_CANCEL_ALL|IORING_ASYNC_CANCEL_ANY)) {
++	if (cd->flags & IORING_ASYNC_CANCEL_ALL) {
++check_seq:
+ 		if (cd->seq == req->work.cancel_seq)
  			return false;
  		req->work.cancel_seq = cd->seq;
- 	}
-+
- 	return true;
- }
- 
-+static bool io_cancel_cb(struct io_wq_work *work, void *data)
-+{
-+	struct io_kiocb *req = container_of(work, struct io_kiocb, work);
-+	struct io_cancel_data *cd = data;
-+
-+	return io_cancel_req_match(req, cd);
-+}
-+
- static int io_async_cancel_one(struct io_uring_task *tctx,
- 			       struct io_cancel_data *cd)
- {
-diff --git a/io_uring/cancel.h b/io_uring/cancel.h
-index 6a59ee484d0c..496ce4dac78e 100644
---- a/io_uring/cancel.h
-+++ b/io_uring/cancel.h
-@@ -21,3 +21,4 @@ int io_try_cancel(struct io_uring_task *tctx, struct io_cancel_data *cd,
- void init_hash_table(struct io_hash_table *table, unsigned size);
- 
- int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg);
-+bool io_cancel_req_match(struct io_kiocb *req, struct io_cancel_data *cd);
 -- 
 2.40.1
 

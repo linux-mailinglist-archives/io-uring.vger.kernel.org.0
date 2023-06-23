@@ -2,145 +2,209 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69B7173BEE8
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 21:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5443873BEEC
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 21:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbjFWTel (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jun 2023 15:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34166 "EHLO
+        id S231742AbjFWTgI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Jun 2023 15:36:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231742AbjFWTek (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 15:34:40 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41173270B
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 12:34:36 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id A572D5C00B2;
-        Fri, 23 Jun 2023 15:34:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 23 Jun 2023 15:34:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1687548875; x=1687635275; bh=CO
-        Chp9i0NPTL4RUnoYWVNtj++GiOWxNhg/Xoihpks0Q=; b=ZVCTe5d8bBkczkj2DR
-        yX46hhdnmWXPIsnEezG9KwjSFgtwOFbD/GF+ojDUnYywW+YWnYf9TmKMtVhKTPvh
-        j1DTVwzfDnpWPiXSFzKVWMUsWlTQUvlvswwCulnS2J8c91LJU4ox0LAxHREUsiqd
-        Mu/NlPO6sV545MGMoAwr5ybC//4YzYP3LC3XI0436/O9l+9M3h9O9F3LcTM9cH68
-        Xa2SMgcvfV4/q/g311WWMgiq4jLsEJGIqvr3/0GuIm1dkRYw6yskZCkK8jb51SMX
-        Ww3hhlYjGhOxLyJcWyeqJ2HI5ngUQoZ889HPe2hmqnBDyvaFxC0eCXneP2WsNLPS
-        w64Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1687548875; x=1687635275; bh=COChp9i0NPTL4
-        RUnoYWVNtj++GiOWxNhg/Xoihpks0Q=; b=p3kQL7x/G81NZhXWS15EJ8Dr9A+B5
-        CyHFr6dBYci19Bpx2NMud60kQYCzsan8xrCcXWgsUhm/6y1hzhusAwXctys4TvG/
-        DKsbd9kRx8bLcPJ7PpdfPweJ7xAhPRnRLrFeIiaZ1FHxAj9z8X4PLx85PPTyEXU9
-        N02ZEA0dD1IiJ2KwMLgLXUXYH2ppciReA+VHc1PQ5FxvY5Z4Zs+XWw3pzRExOnEE
-        McNOlLCZSbwmdYdxbmK4Vsaw1Nb57qO+9kkpfFqiIx7nGoaeFI4dZUNg+ch7xAwH
-        nvAseEhz/BrYEK9/dF1iNuaEzrmKlaYVzj3uxb3ste3Au+JJhPVtXjClg==
-X-ME-Sender: <xms:y_OVZEwqcmHTdX7SO3b22TK3DY5K3CbfjKQwuBG16dSsdEe_v_sv4g>
-    <xme:y_OVZIRmoj2_7CwAdgays0nNby-8UWNLArIhMaCOPuOaVHSazi3an1tRQU1eMNGoG
-    BDJC0LSy4kvzm7sOQ>
-X-ME-Received: <xmr:y_OVZGWWUBftv6by8yeRqYJScrpmgu9GZi3tM9XF8hc6InYNE0zpaqBLMk1JxbTyAVxwywkWluVwcysAm4uGRW96VZJoz6hlGvfQH0enjofenWjdqj--KumXnadl>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeggedgudefjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgu
-    rhgvshcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtf
-    frrghtthgvrhhnpedvffefvefhteevffegieetfefhtddvffejvefhueetgeeludehteev
-    udeitedtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegrnhgurhgvshesrghnrghrrgiivghlrdguvg
-X-ME-Proxy: <xmx:y_OVZCgzbtSt_E-2udGEu-cLD0P1zccku-1-4UYJ75prYPwN4_bxzA>
-    <xmx:y_OVZGB8BYo1WDVuZmak65FzDAbd6FIp84MUVTEtkXwL_xkZoXtMvw>
-    <xmx:y_OVZDLRehvnZ-g-tywTqPTI6mKAnac-GxlSEx-Ky5QNF-hTW49Hbg>
-    <xmx:y_OVZBo7sq5wF44BXaHIuKaU2cSA8pBnDL3UJN1AboAUrfjZlYUWXQ>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 23 Jun 2023 15:34:35 -0400 (EDT)
-Date:   Fri, 23 Jun 2023 12:34:33 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org
-Subject: Re: [PATCH 5/6] io_uring: add support for futex wake and wait
-Message-ID: <20230623193433.bf5mnwfrm2x7ykep@awork3.anarazel.de>
-References: <20230609183125.673140-1-axboe@kernel.dk>
- <20230609183125.673140-6-axboe@kernel.dk>
- <20230623190418.zx2x536uy7q5mtag@awork3.anarazel.de>
- <93ab1214-2415-1059-633e-b95b299287a3@kernel.dk>
+        with ESMTP id S229972AbjFWTgI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 15:36:08 -0400
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F6892701;
+        Fri, 23 Jun 2023 12:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1687548966; x=1719084966;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=dNuGXLt0we9p+hFppdMGSMyPfBu4liJLrmYKjCSYNz8=;
+  b=cMe5GvGw7kk89ZjxYNC5nfJ0mIf65rdhw/f35LSzU4vPuId325tKY4W3
+   u8+K+eXewNOZ3iR+fpWJIyWLXOZv+gl7HCeP8M4QXPDItKAbSt66luzap
+   PEqf4cZjnITqOaDWq0PUWsiBeafvju2Fa954JVisl3z+EF56YkokNUuZr
+   o=;
+X-IronPort-AV: E=Sophos;i="6.01,152,1684800000"; 
+   d="scan'208";a="138824582"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-pdx-2c-m6i4x-e7094f15.us-west-2.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 19:36:05 +0000
+Received: from EX19MTAUWB002.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-pdx-2c-m6i4x-e7094f15.us-west-2.amazon.com (Postfix) with ESMTPS id B9F1240DB4;
+        Fri, 23 Jun 2023 19:35:59 +0000 (UTC)
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 23 Jun 2023 19:35:44 +0000
+Received: from 88665a182662.ant.amazon.com.com (10.187.171.23) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1118.26;
+ Fri, 23 Jun 2023 19:35:41 +0000
+From:   Kuniyuki Iwashima <kuniyu@amazon.com>
+To:     <leitao@debian.org>
+CC:     <asml.silence@gmail.com>, <axboe@kernel.dk>, <davem@davemloft.net>,
+        <edumazet@google.com>, <gregkh@linuxfoundation.org>,
+        <io-uring@vger.kernel.org>, <kuba@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <pabeni@redhat.com>, <kuniyu@amazon.com>
+Subject: [PATCH v3] io_uring: Add io_uring command support for sockets
+Date:   Fri, 23 Jun 2023 12:35:32 -0700
+Message-ID: <20230623193532.88760-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230622215915.2565207-1-leitao@debian.org>
+References: <20230622215915.2565207-1-leitao@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93ab1214-2415-1059-633e-b95b299287a3@kernel.dk>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.187.171.23]
+X-ClientProxiedBy: EX19D045UWC003.ant.amazon.com (10.13.139.198) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE,T_SPF_PERMERROR
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 22 Jun 2023 14:59:14 -0700
+> Enable io_uring commands on network sockets. Create two new
+> SOCKET_URING_OP commands that will operate on sockets.
+> 
+> In order to call ioctl on sockets, use the file_operations->io_uring_cmd
+> callbacks, and map it to a uring socket function, which handles the
+> SOCKET_URING_OP accordingly, and calls socket ioctls.
+> 
+> This patches was tested by creating a new test case in liburing.
+> Link: https://github.com/leitao/liburing/tree/io_uring_cmd
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+> V1 -> V2:
+> 	* Keep uring code outside of network core subsystem
+> 	* Uses ioctl to define uring operation
+> 	* Use a generic ioctl function, instead of copying it over
+> V2 -> V3:
+> 	* Do not use ioctl() helpers to create uring operations
+> 	* Rename uring_sock_cmd to io_uring_cmd_sock
+> ---
+>  include/linux/io_uring.h      |  6 ++++++
+>  include/uapi/linux/io_uring.h |  8 ++++++++
+>  io_uring/uring_cmd.c          | 27 +++++++++++++++++++++++++++
+>  net/socket.c                  |  2 ++
+>  4 files changed, 43 insertions(+)
+> 
+> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+> index 7fe31b2cd02f..f00baf2929ff 100644
+> --- a/include/linux/io_uring.h
+> +++ b/include/linux/io_uring.h
+> @@ -71,6 +71,7 @@ static inline void io_uring_free(struct task_struct *tsk)
+>  	if (tsk->io_uring)
+>  		__io_uring_free(tsk);
+>  }
+> +int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
+>  #else
+>  static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+>  			      struct iov_iter *iter, void *ioucmd)
+> @@ -102,6 +103,11 @@ static inline const char *io_uring_get_opcode(u8 opcode)
+>  {
+>  	return "";
+>  }
+> +static inline int io_uring_cmd_sock(struct io_uring_cmd *cmd,
+> +				    unsigned int issue_flags)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>  #endif
+>  
+>  #endif
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 0716cb17e436..5c25f8c98aa8 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -703,6 +703,14 @@ struct io_uring_recvmsg_out {
+>  	__u32 flags;
+>  };
+>  
+> +/*
+> + * Argument for IORING_OP_URING_CMD when file is a socket
+> + */
+> +enum {
+> +	SOCKET_URING_OP_SIOCINQ		= 0,
+> +	SOCKET_URING_OP_SIOCOUTQ,
+> +};
+> +
+>  #ifdef __cplusplus
+>  }
+>  #endif
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 5e32db48696d..31ce59567295 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/nospec.h>
+>  
+>  #include <uapi/linux/io_uring.h>
+> +#include <uapi/asm-generic/ioctls.h>
+>  
+>  #include "io_uring.h"
+>  #include "rsrc.h"
+> @@ -156,3 +157,29 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+>  	return io_import_fixed(rw, iter, req->imu, ubuf, len);
+>  }
+>  EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
+> +
+> +int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+> +{
+> +	struct socket *sock = cmd->file->private_data;
+> +	struct sock *sk = sock->sk;
+> +	int ret, arg = 0;
 
-On 2023-06-23 13:07:12 -0600, Jens Axboe wrote:
-> On 6/23/23 1:04?PM, Andres Freund wrote:
-> > Hi,
-> >
-> > I'd been chatting with Jens about this, so obviously I'm interested in the
-> > feature...
-> >
-> > On 2023-06-09 12:31:24 -0600, Jens Axboe wrote:
-> >> Add support for FUTEX_WAKE/WAIT primitives.
-> >>
-> >> IORING_OP_FUTEX_WAKE is mix of FUTEX_WAKE and FUTEX_WAKE_BITSET, as
-> >> it does support passing in a bitset.
-> >>
-> >> Similary, IORING_OP_FUTEX_WAIT is a mix of FUTEX_WAIT and
-> >> FUTEX_WAIT_BITSET.
-> >
-> > One thing I was wondering about is what happens when there are multiple
-> > OP_FUTEX_WAITs queued for the same futex, and that futex gets woken up. I
-> > don't really have an opinion about what would be best, just that it'd be
-> > helpful to specify the behaviour.
->
-> Not sure I follow the question, can you elaborate?
->
-> If you have N futex waits on the same futex and someone does a wait
-> (with wakenum >= N), then they'd all wake and post a CQE. If less are
-> woken because the caller asked for less than N, than that number should
-> be woken.
->
-> IOW, should have the same semantics as "normal" futex waits.
+Please cache READ_ONCE(sk->sk_prot) here and reuse it.
 
-With a normal futex wait you can't wait multiple times on the same futex in
-one thread. But with the proposed io_uring interface, one can.
+Thanks.
 
-Basically, what is the defined behaviour for:
-
-   sqe = io_uring_get_sqe(ring);
-   io_uring_prep_futex_wait(sqe, futex, 0, FUTEX_BITSET_MATCH_ANY);
-
-   sqe = io_uring_get_sqe(ring);
-   io_uring_prep_futex_wait(sqe, futex, 0, FUTEX_BITSET_MATCH_ANY);
-
-   io_uring_submit(ring)
-
-when someone does:
-   futex(FUTEX_WAKE, futex, 1, 0, 0, 0);
-   or
-   futex(FUTEX_WAKE, futex, INT_MAX, 0, 0, 0);
-
-or the equivalent io_uring operation.
-
-Is it an error? Will there always be two cqes queued? Will it depend on the
-number of wakeups specified by the waker?  I'd assume the latter, but it'd be
-good to specify that.
-
-Greetings,
-
-Andres Freund
+> +
+> +	if (!sk->sk_prot || !sk->sk_prot->ioctl)
+> +		return -EOPNOTSUPP;
+> +
+> +	switch (cmd->sqe->cmd_op) {
+> +	case SOCKET_URING_OP_SIOCINQ:
+> +		ret = sk->sk_prot->ioctl(sk, SIOCINQ, &arg);
+> +		if (ret)
+> +			return ret;
+> +		return arg;
+> +	case SOCKET_URING_OP_SIOCOUTQ:
+> +		ret = sk->sk_prot->ioctl(sk, SIOCOUTQ, &arg);
+> +		if (ret)
+> +			return ret;
+> +		return arg;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
+> diff --git a/net/socket.c b/net/socket.c
+> index b778fc03c6e0..09b105d00445 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -88,6 +88,7 @@
+>  #include <linux/xattr.h>
+>  #include <linux/nospec.h>
+>  #include <linux/indirect_call_wrapper.h>
+> +#include <linux/io_uring.h>
+>  
+>  #include <linux/uaccess.h>
+>  #include <asm/unistd.h>
+> @@ -159,6 +160,7 @@ static const struct file_operations socket_file_ops = {
+>  #ifdef CONFIG_COMPAT
+>  	.compat_ioctl = compat_sock_ioctl,
+>  #endif
+> +	.uring_cmd =    io_uring_cmd_sock,
+>  	.mmap =		sock_mmap,
+>  	.release =	sock_close,
+>  	.fasync =	sock_fasync,
+> -- 
+> 2.34.1

@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6348973BD1C
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911C073BD1D
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232260AbjFWQtN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jun 2023 12:49:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55892 "EHLO
+        id S232617AbjFWQtQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Jun 2023 12:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232499AbjFWQsX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:23 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26FF02941
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:17 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-668842bc50dso142745b3a.1
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:17 -0700 (PDT)
+        with ESMTP id S232508AbjFWQs1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:27 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A7BF294E
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:18 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-51f64817809so79192a12.1
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538896; x=1690130896;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538897; x=1690130897;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FfegOzu4tZpSz4Tx9eDD3X8u1MA2kW3UGo/SKYKWbW0=;
-        b=0OKXdeZ1q5Tcf8mnhbI/HtvF9pdbEQEifCwFHLjNRm9B9m9HjTBPV8A8TOwWWs1PzK
-         5C2tkBPbVZ40OlrgVBCiZc5xg3tCmNUipL8OKBou6V/T8ZgAnTH/eVU6gCzN/6pRpALm
-         MTsWdnwlZCOYf2KtF9B1adG7vyrfvT0LqBp/al5UWkh73iCyZ6CUtisLxxShvoreqiQ5
-         yRdPudJcJo363KqeqKsSBuptfhspyj4S2g4ib8Hi6PNURCjIXMHAOShg+jJp3Ca8SF3I
-         F39nG/iJoQvzqWbVnCBN51di027oE+NNm+1XQar4m7oNab1dJWli0YLzeanVEBAJ0mMy
-         VDRA==
+        bh=O6FRdfzJJ3IE7HGRCoH2KJs1eNi5bWS6uTcalNvOlHo=;
+        b=JPeKt05L98dx42eDLG5Vv349LtnqlOWFBN9fTLOCcg85Rzeeu2PMgqI9kC9UOkrAtS
+         7hOwLz8dDqE42pcWvvTDhb5Y97V+t5hL3C5n1FGYqIhcx1K42R8/p1fP+7EmSKaMGFqJ
+         ItPpNVwuNkdrIbzY/cp/HaUJVAQjPeBUoSWjwdLEFik3RWZfbyPS9ZUwkoacq5pdY+uL
+         Pp8ZcBPPYMiQz3u/5jLT6rxrmYZbNsSaK4OsWBl7KI77YFszYpSedR8E/cZup2Oj5ogF
+         eEITKt61Df5sFyIley9S9VWeNkyThuoVbd9vDrRfnqEYB+0pK+6ZMGXWdR1hA/eBnGu8
+         HGxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687538896; x=1690130896;
+        d=1e100.net; s=20221208; t=1687538897; x=1690130897;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FfegOzu4tZpSz4Tx9eDD3X8u1MA2kW3UGo/SKYKWbW0=;
-        b=lUzCEcth366k2747HuTK5yun/JUOZu/2ZxQd47U2XiBPiNEw0FRcMPVVNriXnIpgUu
-         V5ooDTTbWwUJ8ZGG/KkUwVqSwUFjcyCVb8jn2qDjDrYuBKYDzrN0WR9RmMti4EdAlVfG
-         rWR1mfJc2Jpm4kP9rCzcNpAvyX4t/XmiFq9JhwAkfOrFWuibCVswlhvzIOAKO15UNQ1C
-         /NIN6j8idZqrLbi/jleY/P55kcXDGSzeqn0QXH45lVNDW0dtC8teDvv6pruVDohmYztj
-         1JkWY/VeEr8cjcEh+UHO2dQ0tmBKR4h0EFZApBP56NMvaJ7cnqBdvIVKs/k3NuCLGbx9
-         0qOw==
-X-Gm-Message-State: AC+VfDzKLxfh8Uccr/xwYxiRpTCBxC+d7fgxFw4AePDzPTzGHSSkO2aN
-        ElUNXOP459MgIVKNCyxozakZ4iO76jff93szUEc=
-X-Google-Smtp-Source: ACHHUZ5CyR4CYZkC4YazfVRWb4Zot+a3hPMb9qRSs45mzU1xkveHVitp9mi+vHJ4Q1MUKVlD3BA4kw==
-X-Received: by 2002:a05:6a20:8f04:b0:121:d102:248c with SMTP id b4-20020a056a208f0400b00121d102248cmr16511421pzk.6.1687538896033;
-        Fri, 23 Jun 2023 09:48:16 -0700 (PDT)
+        bh=O6FRdfzJJ3IE7HGRCoH2KJs1eNi5bWS6uTcalNvOlHo=;
+        b=jdCiPe5M7JRjfsipedqjlk68KNh3kNHrGemITKAtluylO7JimCiHdWai4lfls8jdyL
+         Iq5JKusSJ7vNuMnaJpsfte7ZyzQ6ZhnvDtrEFNjbITkOxGw8A3kOV3kaZ0In1xjmMJdV
+         kkM5ckvo6MMoW6tkSsNMa2WYKSjY6ogQKWSRYsIiShATGOMwhLSOIFPVYaSruowE26AO
+         KVKfd4DqcXtNmpww9OdgcWWJwxHm/AKpLm7tkUTAsbTYU6bwwY+mJ9+Fet+aVDjMaTR3
+         WLBC+zX+z5TOaHPh361nlUtT8xezEaZISRXxlhdu2ePl3qennxHPSzZQnKDM/NL7BJ5m
+         OAlA==
+X-Gm-Message-State: AC+VfDwMMkDit+rD1UYn+4qAXqzbWvYoghvkSfJMyhcz2kSsMM0msF/1
+        +4pCEpf0Gdqh49ELaincLCkgzVzjkP4Ox9H2Prk=
+X-Google-Smtp-Source: ACHHUZ7lTe4YFuu3KCZxRvCWJQ7UGhP5PBcYCU0m50HpHVQOYSXhNsuFTiPCNDsgYAWRA52zG4dyDQ==
+X-Received: by 2002:a17:903:32c4:b0:1b3:e352:6d88 with SMTP id i4-20020a17090332c400b001b3e3526d88mr26730004plr.6.1687538897416;
+        Fri, 23 Jun 2023 09:48:17 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.14
+        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 09:48:15 -0700 (PDT)
+        Fri, 23 Jun 2023 09:48:16 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/8] io_uring: use cancelation match helper for poll and timeout requests
-Date:   Fri, 23 Jun 2023 10:48:01 -0600
-Message-Id: <20230623164804.610910-6-axboe@kernel.dk>
+Subject: [PATCH 6/8] io_uring/cancel: add IORING_ASYNC_CANCEL_USERDATA
+Date:   Fri, 23 Jun 2023 10:48:02 -0600
+Message-Id: <20230623164804.610910-7-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230623164804.610910-1-axboe@kernel.dk>
 References: <20230623164804.610910-1-axboe@kernel.dk>
@@ -69,62 +69,76 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Get rid of the request vs io_cancel_data checking and just use the
-exported helper for this.
+Add a flag to explicitly match on user_data in the request for
+cancelation purposes. This is the default behavior if none of the
+other match flags are set, but if we ALSO want to match on user_data,
+then this flag can be set.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/poll.c    | 12 ++++--------
- io_uring/timeout.c | 12 +++---------
- 2 files changed, 7 insertions(+), 17 deletions(-)
+ include/uapi/linux/io_uring.h |  2 ++
+ io_uring/cancel.c             | 18 ++++++++++++------
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index c7bb292c9046..dc1219f606e5 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -824,14 +824,10 @@ static struct io_kiocb *io_poll_file_find(struct io_ring_ctx *ctx,
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index f222d263bc55..e8bf70610568 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -297,11 +297,13 @@ enum io_uring_op {
+  *				request 'user_data'
+  * IORING_ASYNC_CANCEL_ANY	Match any request
+  * IORING_ASYNC_CANCEL_FD_FIXED	'fd' passed in is a fixed descriptor
++ * IORING_ASYNC_CANCEL_USERDATA	Match on user_data, default for no other key
+  */
+ #define IORING_ASYNC_CANCEL_ALL	(1U << 0)
+ #define IORING_ASYNC_CANCEL_FD	(1U << 1)
+ #define IORING_ASYNC_CANCEL_ANY	(1U << 2)
+ #define IORING_ASYNC_CANCEL_FD_FIXED	(1U << 3)
++#define IORING_ASYNC_CANCEL_USERDATA	(1U << 4)
  
- 		spin_lock(&hb->lock);
- 		hlist_for_each_entry(req, &hb->list, hash_node) {
--			if (!(cd->flags & IORING_ASYNC_CANCEL_ANY) &&
--			    req->file != cd->file)
--				continue;
--			if (cd->seq == req->work.cancel_seq)
--				continue;
--			req->work.cancel_seq = cd->seq;
--			*out_bucket = hb;
--			return req;
-+			if (io_cancel_req_match(req, cd)) {
-+				*out_bucket = hb;
-+				return req;
-+			}
- 		}
- 		spin_unlock(&hb->lock);
- 	}
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 4200099ad96e..6242130e73c6 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -268,16 +268,10 @@ static struct io_kiocb *io_timeout_extract(struct io_ring_ctx *ctx,
- 	list_for_each_entry(timeout, &ctx->timeout_list, list) {
- 		struct io_kiocb *tmp = cmd_to_io_kiocb(timeout);
+ /*
+  * send/sendmsg and recv/recvmsg flags (sqe->ioprio)
+diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+index bf44563d687d..20612e93a354 100644
+--- a/io_uring/cancel.c
++++ b/io_uring/cancel.c
+@@ -25,24 +25,30 @@ struct io_cancel {
+ };
  
--		if (!(cd->flags & IORING_ASYNC_CANCEL_ANY) &&
--		    cd->data != tmp->cqe.user_data)
--			continue;
--		if (cd->flags & (IORING_ASYNC_CANCEL_ALL|IORING_ASYNC_CANCEL_ANY)) {
--			if (cd->seq == tmp->work.cancel_seq)
--				continue;
--			tmp->work.cancel_seq = cd->seq;
-+		if (io_cancel_req_match(tmp, cd)) {
-+			req = tmp;
-+			break;
- 		}
--		req = tmp;
--		break;
+ #define CANCEL_FLAGS	(IORING_ASYNC_CANCEL_ALL | IORING_ASYNC_CANCEL_FD | \
+-			 IORING_ASYNC_CANCEL_ANY | IORING_ASYNC_CANCEL_FD_FIXED)
++			 IORING_ASYNC_CANCEL_ANY | IORING_ASYNC_CANCEL_FD_FIXED | \
++			 IORING_ASYNC_CANCEL_USERDATA)
+ 
+ /*
+  * Returns true if the request matches the criteria outlined by 'cd'.
+  */
+ bool io_cancel_req_match(struct io_kiocb *req, struct io_cancel_data *cd)
+ {
++	bool match_user_data = cd->flags & IORING_ASYNC_CANCEL_USERDATA;
++
+ 	if (req->ctx != cd->ctx)
+ 		return false;
+-	if (cd->flags & IORING_ASYNC_CANCEL_ANY) {
++
++	if (!(cd->flags & (IORING_ASYNC_CANCEL_FD)))
++		match_user_data = true;
++
++	if (cd->flags & IORING_ASYNC_CANCEL_ANY)
+ 		goto check_seq;
+-	} else if (cd->flags & IORING_ASYNC_CANCEL_FD) {
++	if (cd->flags & IORING_ASYNC_CANCEL_FD) {
+ 		if (req->file != cd->file)
+ 			return false;
+-	} else {
+-		if (req->cqe.user_data != cd->data)
+-			return false;
  	}
- 	if (!req)
- 		return ERR_PTR(-ENOENT);
++	if (match_user_data && req->cqe.user_data != cd->data)
++		return false;
+ 	if (cd->flags & IORING_ASYNC_CANCEL_ALL) {
+ check_seq:
+ 		if (cd->seq == req->work.cancel_seq)
 -- 
 2.40.1
 

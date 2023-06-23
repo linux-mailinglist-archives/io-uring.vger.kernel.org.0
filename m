@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F9373BD06
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:48:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E73573BD0D
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232476AbjFWQsU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jun 2023 12:48:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
+        id S232482AbjFWQsX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Jun 2023 12:48:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232475AbjFWQsO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:14 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7619E2733
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:11 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1b5079b8cb3so1764075ad.1
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:11 -0700 (PDT)
+        with ESMTP id S232484AbjFWQsP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:15 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD710295E
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:12 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1b3ecb17721so1212345ad.0
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538890; x=1690130890;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538892; x=1690130892;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UAC7drXqvR4smhcm9JEWe7VO3fT7fkffLKfKJ9HzOJw=;
-        b=ly+JwbnYLHTgdZuKmE+TyZjJZ2K0XgYNj8SPS+d+ZOtfwoN0lhTkheOqgAKk20+uC+
-         ZiwNbDQsE1c8WWhP5ViKJOfBG/OSGkpnRnPWtVTeM4VIM9psmuyUB1BuXG0LWQL9+50A
-         UAoguXH02Dt9CJdDPO1G2dMxShBr53EFFXNXgXoFbPG4VybZWwUXmQAyrytgZg9psTkO
-         WS80jlmiHrsTznYffGKV5jzVFba3X0LcXPExwtR8uPBKXt+jMmUqdjRDMDSURHwXo+cF
-         vn7ApeHU42klyXep6NF9t65J+yCC77A8RoSjZ+1GmPo9FGCPODGSbhWx98ZQgFMtgRf7
-         xY5w==
+        bh=dd/IY/rhGZi+33z0aLAZgR+jpqqduQJQDHihiNUSDnY=;
+        b=MIXBrkFJykHaU5BsR4IZHs+AYkCdYBzKWaUnQaEVGwwwW4a7anD843JxbUxACrpdhg
+         k5FYebv6WVeRgENNp2PxnBkINUR2uAoib1F98W6pj10aHWN4A4ZK5ocD5rmrKMJP9Aqv
+         kzbCMkB4Zm/EE+X7l8dHFBcbi07rAAxq/5wnEZjBdylFhGLdqVkgOatDuNYdyBcpEkya
+         hmFF0im3P96RKNVT0CCoE0UR79dQFTWefVydMCwvVVXjbvK3FcOC06qJLcD/EyPNdIZB
+         D2nx7O+96JNOtxwBgTzXlbl2HSZR/ZTLSfHdvke9TyzgaGtIrEpmWHarbZ2M7/JP7rt+
+         QPFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687538890; x=1690130890;
+        d=1e100.net; s=20221208; t=1687538892; x=1690130892;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UAC7drXqvR4smhcm9JEWe7VO3fT7fkffLKfKJ9HzOJw=;
-        b=BpR1PwcSlnQKQz2mRmW3QBsKHpjFpUBuaFMUfRSzAZyHcRys864Ab+dxsQoV++k+Yp
-         KwgU42WNil0r/f8liBNRCgcLjQgWRVvJ8tbKG8NlxrYC0lN1hIcZjOvMOI4M41mifvF0
-         /IfcPsPhH2M+TwFjjpeym1qE1npoQbp+UNlZuvhCYxl+vAUshDx2+e7LSyCXn1IGGnd9
-         WONzUGg5/2U7aSXBNgRM30WIFnOfiUnH7nX+olfjO1yOhIWUP3I+PeFhdej3EavPbpod
-         Td3vrS8BMYfW54/fjACm9TV7uT+zb7l1ekonTxglqrT7ahjNFsZLfVRvTBLqBjOdw1cq
-         r51Q==
-X-Gm-Message-State: AC+VfDyDMtPd02+BpARGTzL5Rqpop68taVSu3oR0R7GUtub16nAKBMTV
-        ebub8Tf1EiuGGOmGGRHgXNgFZS/p4FP+XlqW3FY=
-X-Google-Smtp-Source: ACHHUZ6qwlLwyW2oY9nKPyNIfLgSxd8UmSsXp6cMhdg5AHLLwDLqS5zQnDWw0z4GIrIKQWe4NAhL3g==
-X-Received: by 2002:a17:902:dac6:b0:1ac:656f:a68d with SMTP id q6-20020a170902dac600b001ac656fa68dmr26265509plx.4.1687538890441;
-        Fri, 23 Jun 2023 09:48:10 -0700 (PDT)
+        bh=dd/IY/rhGZi+33z0aLAZgR+jpqqduQJQDHihiNUSDnY=;
+        b=FOnxs1q6A6x/BgLd6DC/MnnorGIp9sIi0DVd1RbxFe6agfr+cKEsoV70+7h9drg7/O
+         zQ6Tt/uJYwM3hqovpYBd72oHdsyaXut7HTYha4eCH3xsRS2/6A+dwHMdfQIAbwuNYpls
+         twGXyab7Wp/rDRS9ujEfrYAimZpxKx2zcBI5q8ZcQtxosPB3+TTyHh3ytbv2UYJu1Srq
+         tYQo0CY0qnK3kpk1V0cbcAet4nW3aJLsAE5k5De6HVNY94n9GIW1Qfl3I9aKgEsEJUXL
+         lGPQ5eE7gAa8y7ALf4swMLli3eBlID+DHFXraY7qsfVhJKAguvtJYNfdq4JVWNUGzhxn
+         +gaQ==
+X-Gm-Message-State: AC+VfDy1IX7nHd/rwKORztl87NpTojYNE1+KgMyGlyPR1eql4rV9N17N
+        +qHtX247pcjLLMcZ2wSTzifyOc4NmtReZWfgQ7o=
+X-Google-Smtp-Source: ACHHUZ4Tv/X4BvtZaOoVdX1rYYZ3M/Pf7qEV4Y/SlABn2yEwTzvH0yeZtHofWpZuGzIlfclnmSo6GQ==
+X-Received: by 2002:a17:902:da91:b0:1b0:3d54:358f with SMTP id j17-20020a170902da9100b001b03d54358fmr25386195plx.0.1687538891750;
+        Fri, 23 Jun 2023 09:48:11 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.09
+        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 09:48:09 -0700 (PDT)
+        Fri, 23 Jun 2023 09:48:10 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/8] io_uring/poll: always set 'ctx' in io_cancel_data
-Date:   Fri, 23 Jun 2023 10:47:57 -0600
-Message-Id: <20230623164804.610910-2-axboe@kernel.dk>
+Subject: [PATCH 2/8] io_uring/timeout: always set 'ctx' in io_cancel_data
+Date:   Fri, 23 Jun 2023 10:47:58 -0600
+Message-Id: <20230623164804.610910-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230623164804.610910-1-axboe@kernel.dk>
 References: <20230623164804.610910-1-axboe@kernel.dk>
@@ -69,29 +69,38 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This isn't strictly necessary for this callsite, as it uses it's
-internal lookup for this cancelation purpose. But let's be consistent
-with how it's used in general and set ctx as well.
+In preparation for using a generic handler to match requests for
+cancelation purposes, ensure that ctx is set in io_cancel_data. The
+timeout handlers don't check for this as it'll always match, but we'll
+need it set going forward.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/poll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/timeout.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index d4597efe14a7..c7bb292c9046 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -972,8 +972,8 @@ int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
- int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags)
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index fb0547b35dcd..4200099ad96e 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -409,7 +409,7 @@ static int io_timeout_update(struct io_ring_ctx *ctx, __u64 user_data,
+ 			     struct timespec64 *ts, enum hrtimer_mode mode)
+ 	__must_hold(&ctx->timeout_lock)
  {
- 	struct io_poll_update *poll_update = io_kiocb_to_cmd(req, struct io_poll_update);
--	struct io_cancel_data cd = { .data = poll_update->old_user_data, };
- 	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_cancel_data cd = { .ctx = ctx, .data = poll_update->old_user_data, };
- 	struct io_hash_bucket *bucket;
- 	struct io_kiocb *preq;
- 	int ret2, ret = 0;
+-	struct io_cancel_data cd = { .data = user_data, };
++	struct io_cancel_data cd = { .ctx = ctx, .data = user_data, };
+ 	struct io_kiocb *req = io_timeout_extract(ctx, &cd);
+ 	struct io_timeout *timeout = io_kiocb_to_cmd(req, struct io_timeout);
+ 	struct io_timeout_data *data;
+@@ -473,7 +473,7 @@ int io_timeout_remove(struct io_kiocb *req, unsigned int issue_flags)
+ 	int ret;
+ 
+ 	if (!(tr->flags & IORING_TIMEOUT_UPDATE)) {
+-		struct io_cancel_data cd = { .data = tr->addr, };
++		struct io_cancel_data cd = { .ctx = ctx, .data = tr->addr, };
+ 
+ 		spin_lock(&ctx->completion_lock);
+ 		ret = io_timeout_cancel(ctx, &cd);
 -- 
 2.40.1
 

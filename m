@@ -2,58 +2,62 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8318973BD05
-	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F9373BD06
+	for <lists+io-uring@lfdr.de>; Fri, 23 Jun 2023 18:48:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbjFWQsS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 23 Jun 2023 12:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55512 "EHLO
+        id S232476AbjFWQsU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 23 Jun 2023 12:48:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232355AbjFWQsL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:11 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16A282720
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:10 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b5079b8cb3so1764025ad.1
-        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:10 -0700 (PDT)
+        with ESMTP id S232475AbjFWQsO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 23 Jun 2023 12:48:14 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7619E2733
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:11 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1b5079b8cb3so1764075ad.1
+        for <io-uring@vger.kernel.org>; Fri, 23 Jun 2023 09:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538889; x=1690130889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KEleUU+j2wuxiicRZulGjfSldtO2buMUZsi/z4ziK+E=;
-        b=lUwhhOHGNXliIYqMP4M9AS8F32+KfVJrqqYAerk19ta9MGYNgQ4htk1CzO2v7JeCGh
-         I3keGrbVqpX6cw2VZJQ9mL/K6XoM34Su7DaHj7lsrt1t2K8TIkUSUkyPh1b0YKoHBVCX
-         gWfoTNheO8WLET3hsMyo577h9hTLBu0N8VmH2dMQLR5e8RNilvmW1AzipECVa1xGsdCY
-         /UBHqjwsCZAgZfUTwez/O5ETuqd06wnVuEGfSMhcKkWxOLoh2F4vEBgWqZg+EMN9ODzL
-         zwzAUotjp3imBg3GjACylOrP5VswfAKtC3/6rRJCDMNUsBTOjfyh9z22RHku4lBZeAMq
-         u3Tw==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687538890; x=1690130890;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UAC7drXqvR4smhcm9JEWe7VO3fT7fkffLKfKJ9HzOJw=;
+        b=ly+JwbnYLHTgdZuKmE+TyZjJZ2K0XgYNj8SPS+d+ZOtfwoN0lhTkheOqgAKk20+uC+
+         ZiwNbDQsE1c8WWhP5ViKJOfBG/OSGkpnRnPWtVTeM4VIM9psmuyUB1BuXG0LWQL9+50A
+         UAoguXH02Dt9CJdDPO1G2dMxShBr53EFFXNXgXoFbPG4VybZWwUXmQAyrytgZg9psTkO
+         WS80jlmiHrsTznYffGKV5jzVFba3X0LcXPExwtR8uPBKXt+jMmUqdjRDMDSURHwXo+cF
+         vn7ApeHU42klyXep6NF9t65J+yCC77A8RoSjZ+1GmPo9FGCPODGSbhWx98ZQgFMtgRf7
+         xY5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687538889; x=1690130889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KEleUU+j2wuxiicRZulGjfSldtO2buMUZsi/z4ziK+E=;
-        b=lHZ1Xz5EXZGvmLSqKk4VV06wE7Y5hFQaPpRrVvW8sN/B87yyqxtoJ1XPgT7qCxruGF
-         CphIHAS/0hXkiilacgLkTtGYPOtotnu9l8KkW9QJPuwSB5QlSVcnuGGoGicUv+s+TOZn
-         D2Ldv+zxWeG4r5hLjXFfdUZB9+T8QEwUQHmy0aLymLEhFBtwuW9zh2xpUXCXYbtn1ko8
-         ERLzVKYpRbyftTvyoLs9q/PrXv0A0hjrhMOleIDe4JchizqAyVNJygpdpSN5mhEFroYK
-         3tZE/Mj/K61jrp1Ui/04qe32uAaUHEDzthT7/J1MpGe/WqlenMTrODHATVokd040wf8f
-         hUfg==
-X-Gm-Message-State: AC+VfDw/PYLMOG7WFml9JE9n0ePwT5t1sQzueKR076cwZxCReLaNI7pp
-        P+98pvkmj1CUyNjR59HY+X+jIUu3T+ZX1p3q00g=
-X-Google-Smtp-Source: ACHHUZ5etVBpcsLnDO217tueI6QPI71UVFz1G/ZevFM9X3eseHSzrSJysbzm5lL8NgkgyLDR9A3GZQ==
-X-Received: by 2002:a17:903:1ca:b0:1b5:32ec:df97 with SMTP id e10-20020a17090301ca00b001b532ecdf97mr25620452plh.5.1687538889057;
-        Fri, 23 Jun 2023 09:48:09 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687538890; x=1690130890;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UAC7drXqvR4smhcm9JEWe7VO3fT7fkffLKfKJ9HzOJw=;
+        b=BpR1PwcSlnQKQz2mRmW3QBsKHpjFpUBuaFMUfRSzAZyHcRys864Ab+dxsQoV++k+Yp
+         KwgU42WNil0r/f8liBNRCgcLjQgWRVvJ8tbKG8NlxrYC0lN1hIcZjOvMOI4M41mifvF0
+         /IfcPsPhH2M+TwFjjpeym1qE1npoQbp+UNlZuvhCYxl+vAUshDx2+e7LSyCXn1IGGnd9
+         WONzUGg5/2U7aSXBNgRM30WIFnOfiUnH7nX+olfjO1yOhIWUP3I+PeFhdej3EavPbpod
+         Td3vrS8BMYfW54/fjACm9TV7uT+zb7l1ekonTxglqrT7ahjNFsZLfVRvTBLqBjOdw1cq
+         r51Q==
+X-Gm-Message-State: AC+VfDyDMtPd02+BpARGTzL5Rqpop68taVSu3oR0R7GUtub16nAKBMTV
+        ebub8Tf1EiuGGOmGGRHgXNgFZS/p4FP+XlqW3FY=
+X-Google-Smtp-Source: ACHHUZ6qwlLwyW2oY9nKPyNIfLgSxd8UmSsXp6cMhdg5AHLLwDLqS5zQnDWw0z4GIrIKQWe4NAhL3g==
+X-Received: by 2002:a17:902:dac6:b0:1ac:656f:a68d with SMTP id q6-20020a170902dac600b001ac656fa68dmr26265509plx.4.1687538890441;
+        Fri, 23 Jun 2023 09:48:10 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.07
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b001b55c0548dfsm7454411plh.97.2023.06.23.09.48.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 09:48:08 -0700 (PDT)
+        Fri, 23 Jun 2023 09:48:09 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Subject: [PATCHSET 0/8] Add support for IORING_ASYNC_CANCEL_OP
-Date:   Fri, 23 Jun 2023 10:47:56 -0600
-Message-Id: <20230623164804.610910-1-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/8] io_uring/poll: always set 'ctx' in io_cancel_data
+Date:   Fri, 23 Jun 2023 10:47:57 -0600
+Message-Id: <20230623164804.610910-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230623164804.610910-1-axboe@kernel.dk>
+References: <20230623164804.610910-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -65,28 +69,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+This isn't strictly necessary for this callsite, as it uses it's
+internal lookup for this cancelation purpose. But let's be consistent
+with how it's used in general and set ctx as well.
 
-We currently support matching on user_data OR file descriptor, in
-conjunction with the ANY/ALL matches we also have.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/poll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series starts by cleaning up the cancelation support a bit,
-most notably using a common match handler to avoid duplicating the
-matching code in a few different spots.
-
-Then it adds IORING_ASYNC_CANCEL_USERDATA, to explicitly ask for
-matching on user_data. This was the only original way to match, but
-we since added FD matching. To retain backwards compatability, we
-will always match on user_data IFF none of the other key matches are
-set (eg FD and OP).
-
-This now allows matching on any set of criteria that the application
-wants. It can match on user_data AND fd, for example.
-
-Finally we add support for IORING_ASYNC_CANCEL_OP, which allows
-applications to match on the original request opcode as well.
-
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index d4597efe14a7..c7bb292c9046 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -972,8 +972,8 @@ int io_poll_add(struct io_kiocb *req, unsigned int issue_flags)
+ int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_poll_update *poll_update = io_kiocb_to_cmd(req, struct io_poll_update);
+-	struct io_cancel_data cd = { .data = poll_update->old_user_data, };
+ 	struct io_ring_ctx *ctx = req->ctx;
++	struct io_cancel_data cd = { .ctx = ctx, .data = poll_update->old_user_data, };
+ 	struct io_hash_bucket *bucket;
+ 	struct io_kiocb *preq;
+ 	int ret2, ret = 0;
 -- 
-Jens Axboe
-
+2.40.1
 

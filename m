@@ -2,162 +2,187 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7362873D138
-	for <lists+io-uring@lfdr.de>; Sun, 25 Jun 2023 15:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E5473D5F1
+	for <lists+io-uring@lfdr.de>; Mon, 26 Jun 2023 04:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjFYNyq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 25 Jun 2023 09:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42654 "EHLO
+        id S230079AbjFZCjS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 25 Jun 2023 22:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjFYNyp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Jun 2023 09:54:45 -0400
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4171B1
-        for <io-uring@vger.kernel.org>; Sun, 25 Jun 2023 06:54:44 -0700 (PDT)
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3406eef1dbeso11991035ab.2
-        for <io-uring@vger.kernel.org>; Sun, 25 Jun 2023 06:54:44 -0700 (PDT)
+        with ESMTP id S229835AbjFZCjQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Jun 2023 22:39:16 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 532C8E53
+        for <io-uring@vger.kernel.org>; Sun, 25 Jun 2023 19:39:05 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1b5466bc5f8so4085745ad.1
+        for <io-uring@vger.kernel.org>; Sun, 25 Jun 2023 19:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687747145; x=1690339145;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oWklRiY05pMRDsYNTO6Caf0XUDTokTD68J/5QVxtFt0=;
+        b=sfhSgI+j3yG+MbzBraHp+WYjucvTJbgJGVs8PdnX0mNiFWukypJxtGGSmXCGkWWu2b
+         AtSof/nATHTlL3fOw2TS5VnnhG/ejIlLc07zMAiYC32GIOWURzOtI0foUwLR9+ZmhfWj
+         eKGo+W3C8rrf1lWuac7sF2C9MPGjmgu6CKZX42hrykuV+dfja9KQ5MjAsBGk0WtMM3a3
+         Na6GelvcQBSQ6AKsfuv2xWBRnTuTUWe0e5qMNO0EKoxpv2FtZnRx3NVY4i/l3e6aAXRQ
+         kG1UEKac/IbWchNT6Q5mSj5XGMNOjvRG6FR1NGwRcA4ztqKvu9p01zau98mCHi5W38Ub
+         VYKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687701284; x=1690293284;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7EB8O7sLYUOVuoHUWCU4zAQCN50LsLRkmxPMuikieyU=;
-        b=d3+BmQY3eE6dbDHD8QDR1ZjttlLN4EocOc8ekoAYJEFLeJeMuzSffeugAwC0bSvNvZ
-         QTOX+RQldh3eRfALP1ULW+jPItJ12YfXVCXmoZxLGn9M6e/+xCeHJ+Jn+pF9coP4aa3h
-         Gpdq0u6bBkIMEFDQJZ6DBUu5qB62KBP3niwVx+/reSr1/WzI8rD/+Mcd3OeaMQ00VYCa
-         k3b3y5ZPDD1zjLg5xyJ5Eg9q5cS3BzOdJj+ix7zKqof8GFzKnDB+3ljc4qvvzMhAXLtF
-         QrAo8sNqUhAOkuEzazhQ+YwLzFZEJVo+Si7SjoMkAo1Eiwr1TaLAARMmulmIYulHO2q0
-         V23A==
-X-Gm-Message-State: AC+VfDzd933GR8Pj1AbJn1mVtdNpo/fcTiLHsuR7OddwErx9rZ3ckA+I
-        gEmCtk8c1s13PLmyBjxlh4+10euzePVUOlczPQo1Hj5zOTLl
-X-Google-Smtp-Source: ACHHUZ6c3tdgfLKzqI+XozinXUatVqA+ZZ2LTbdvuId1RrrMTwZA5S1qPlTqcM6g3WV5w7rl0WbcggvgxzeEzzT7BOkU3UafZoPq
+        d=1e100.net; s=20221208; t=1687747145; x=1690339145;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oWklRiY05pMRDsYNTO6Caf0XUDTokTD68J/5QVxtFt0=;
+        b=B3uYrfge3r/RrF/NlQupJV6LvtYy7DOblLgtY6sc//wWBcnAfw4TZd1q0hde9nO9Hf
+         9Mot48oVTag9bDcedU4VTrJUfIvt4uNndCQ4tc/Cc6sElXbIMBvBVie2VV1gRwizVqmp
+         DMiUDhK7a0wVAUpFn68oTVTN5sHx59nNTqYomu2983eFdibO1BLS1vJW5AqjO0X+xWAd
+         zLOyBPL84OBgcf42WhF4YTCCMcTZNh2OKBEuumhGiJ1WoUiTGOGl0v1XTrVPnNY8R4fw
+         wC5rZcHMaKtllgVPCq+z7TPGncugMnZjC/I3YdobaHtA+kfaRrjSo6blqIa0V6skd5vu
+         U0cw==
+X-Gm-Message-State: AC+VfDxNHwDM7KEcrw6FQLYQuSvbijDH30kBpZZvMY1W9xVBmJdK1Irw
+        2hzUtOVU+23Y4tMPXnC3avkJgEKYJGztZ/5OWIw=
+X-Google-Smtp-Source: ACHHUZ67DoUpLO/roY+MpmPq1MMRJ3v4w4pUj/wv+Hh3FM3Actm5YAlJsnFSCYSJRFBeZeUeSTV+yg==
+X-Received: by 2002:a17:902:f691:b0:1b3:d4bb:3515 with SMTP id l17-20020a170902f69100b001b3d4bb3515mr34706779plg.0.1687747144775;
+        Sun, 25 Jun 2023 19:39:04 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id f24-20020a170902ab9800b001a6f7744a27sm3007104plr.87.2023.06.25.19.39.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Jun 2023 19:39:04 -0700 (PDT)
+Message-ID: <6e13b6a5-aa10-75f8-973d-023b7aa7f440@kernel.dk>
+Date:   Sun, 25 Jun 2023 20:39:02 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a92:ce8b:0:b0:345:9269:3425 with SMTP id
- r11-20020a92ce8b000000b0034592693425mr889110ilo.6.1687701284070; Sun, 25 Jun
- 2023 06:54:44 -0700 (PDT)
-Date:   Sun, 25 Jun 2023 06:54:44 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000862c5a05fef4935d@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in worker_thread (2)
-From:   syzbot <syzbot+8aebf783fcc04684a047@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, boqun.feng@gmail.com, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, longman@redhat.com, mingo@redhat.com,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring updates for 6.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Hi Linus,
 
-syzbot found the following issue on:
+Nothing major in this release, just a bunch of cleanups and some
+optimizations around networking mostly.
 
-HEAD commit:    e660abd551f1 Merge tag 'acpi-6.4-rc8' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e5a5b7280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
-dashboard link: https://syzkaller.appspot.com/bug?extid=8aebf783fcc04684a047
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f0094b280000
+Will throw a minor conflict in io_uring/net.c due to the late fixes in
+mainline, you'll want to keep the kmsg->msg.msg_inq = -1U; assignment
+there.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-e660abd5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6157b122cedf/vmlinux-e660abd5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ca86f1fadbf/bzImage-e660abd5.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8aebf783fcc04684a047@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 3 PID: 5205 Comm: kworker/2:4 Not tainted 6.4.0-rc7-syzkaller-00041-ge660abd551f1 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-RIP: 0010:__lock_acquire+0xe01/0x5f30 kernel/locking/lockdep.c:4956
-Code: 00 00 3b 05 a1 ce 59 0f 0f 87 7a 09 00 00 41 be 01 00 00 00 e9 84 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 9e 33 00 00 49 81 3c 24 20 78 15 90 0f 84 cd f2
-RSP: 0018:ffffc90003d27be0 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 1ffff920007a4fad RCX: 0000000000000000
-RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000018
-RBP: ffff88802f9fd6c0 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000018
-R13: 0000000000000000 R14: 0000000000000018 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88806b900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f896259d440 CR3: 00000000293e8000 CR4: 0000000000350ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire kernel/locking/lockdep.c:5705 [inline]
- lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5670
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
- worker_thread+0x16d/0x10c0 kernel/workqueue.c:2502
- kthread+0x344/0x440 kernel/kthread.c:379
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0xe01/0x5f30 kernel/locking/lockdep.c:4956
-Code: 00 00 3b 05 a1 ce 59 0f 0f 87 7a 09 00 00 41 be 01 00 00 00 e9 84 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 9e 33 00 00 49 81 3c 24 20 78 15 90 0f 84 cd f2
-RSP: 0018:ffffc90003d27be0 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 1ffff920007a4fad RCX: 0000000000000000
-RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000018
-RBP: ffff88802f9fd6c0 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000018
-R13: 0000000000000000 R14: 0000000000000018 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88806b900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f896259d440 CR3: 00000000293e8000 CR4: 0000000000350ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	3b 05 a1 ce 59 0f    	cmp    0xf59cea1(%rip),%eax        # 0xf59cea9
-   8:	0f 87 7a 09 00 00    	ja     0x988
-   e:	41 be 01 00 00 00    	mov    $0x1,%r14d
-  14:	e9 84 00 00 00       	jmpq   0x9d
-  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  20:	fc ff df
-  23:	4c 89 e2             	mov    %r12,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 9e 33 00 00    	jne    0x33d2
-  34:	49 81 3c 24 20 78 15 	cmpq   $0xffffffff90157820,(%r12)
-  3b:	90
-  3c:	0f                   	.byte 0xf
-  3d:	84 cd                	test   %cl,%ch
-  3f:	f2                   	repnz
+Please pull!
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+- Series cleaning up file request flags handling (Christoph)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+- Series cleaning up request freeing and CQ locking (Pavel)
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+- Support for using pre-registering the io_uring fd at setup time (Josh)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+- Add support for user allocated ring memory, rather than having the
+  kernel allocate it. Mostly for packing rings into a huge page (me)
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+- Series avoiding an unnecessary double retry on receive (me)
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+- Maintain ordering for task_work, which also improves performance (me)
 
-If you want to undo deduplication, reply with:
-#syz undup
+- Misc cleanups/fixes (Pavel, me)
+
+The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
+
+  Linux 6.4-rc2 (2023-05-14 12:51:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.5/io_uring-2023-06-23
+
+for you to fetch changes up to c98c81a4ac37b651be7eb9d16f562fc4acc5f867:
+
+  io_uring: merge conditional unlock flush helpers (2023-06-23 08:19:40 -0600)
+
+----------------------------------------------------------------
+for-6.5/io_uring-2023-06-23
+
+----------------------------------------------------------------
+Christoph Hellwig (8):
+      io_uring: remove __io_file_supports_nowait
+      io_uring: remove the mode variable in io_file_get_flags
+      io_uring: remove a confusing comment above io_file_get_flags
+      io_uring: remove io_req_ffs_set
+      io_uring: return REQ_F_ flags from io_file_get_flags
+      io_uring: use io_file_from_index in __io_sync_cancel
+      io_uring: use io_file_from_index in io_msg_grab_file
+      io_uring: add helpers to decode the fixed file file_ptr
+
+Jens Axboe (16):
+      net: set FMODE_NOWAIT for sockets
+      block: mark bdev files as FMODE_NOWAIT if underlying device supports it
+      io_uring: rely solely on FMODE_NOWAIT
+      io_uring: remove sq/cq_off memset
+      io_uring: return error pointer from io_mem_alloc()
+      io_uring: add ring freeing helper
+      io_uring: support for user allocated memory for rings/sqes
+      io_uring/net: initialize struct msghdr more sanely for io_recv()
+      io_uring/net: initalize msghdr->msg_inq to known value
+      io_uring/net: push IORING_CQE_F_SOCK_NONEMPTY into io_recv_finish()
+      io_uring/net: don't retry recvmsg() unnecessarily
+      io_uring: maintain ordering for DEFER_TASKRUN tw list
+      io_uring: avoid indirect function calls for the hottest task_work
+      io_uring: cleanup io_aux_cqe() API
+      io_uring: get rid of unnecessary 'length' variable
+      io_uring: wait interruptibly for request completions on exit
+
+Josh Triplett (1):
+      io_uring: Add io_uring_setup flag to pre-register ring fd and never install it
+
+Pavel Begunkov (14):
+      io_uring: annotate offset timeout races
+      io_uring/cmd: add cmd lazy tw wake helper
+      nvme: optimise io_uring passthrough completion
+      io_uring: open code io_put_req_find_next
+      io_uring: remove io_free_req_tw
+      io_uring: inline io_dismantle_req()
+      io_uring: move io_clean_op()
+      io_uring: don't batch task put on reqs free
+      io_uring: remove IOU_F_TWQ_FORCE_NORMAL
+      io_uring: kill io_cq_unlock()
+      io_uring: fix acquire/release annotations
+      io_uring: inline __io_cq_unlock
+      io_uring: make io_cq_unlock_post static
+      io_uring: merge conditional unlock flush helpers
+
+ block/fops.c                   |   5 +-
+ drivers/nvme/host/ioctl.c      |   4 +-
+ include/linux/io_uring.h       |  18 +-
+ include/linux/io_uring_types.h |  10 +
+ include/uapi/linux/io_uring.h  |  16 +-
+ io_uring/cancel.c              |   5 +-
+ io_uring/filetable.c           |  11 +-
+ io_uring/filetable.h           |  28 ++-
+ io_uring/io_uring.c            | 497 ++++++++++++++++++++++-------------------
+ io_uring/io_uring.h            |  17 +-
+ io_uring/msg_ring.c            |   4 +-
+ io_uring/net.c                 |  58 ++---
+ io_uring/poll.c                |   6 +-
+ io_uring/poll.h                |   2 +
+ io_uring/rsrc.c                |   8 +-
+ io_uring/rw.c                  |   6 +-
+ io_uring/rw.h                  |   1 +
+ io_uring/tctx.c                |  31 ++-
+ io_uring/timeout.c             |   6 +-
+ io_uring/uring_cmd.c           |  16 +-
+ net/socket.c                   |   1 +
+ 21 files changed, 416 insertions(+), 334 deletions(-)
+
+-- 
+Jens Axboe
+

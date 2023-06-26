@@ -2,187 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E5473D5F1
-	for <lists+io-uring@lfdr.de>; Mon, 26 Jun 2023 04:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C73C173DAE3
+	for <lists+io-uring@lfdr.de>; Mon, 26 Jun 2023 11:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230079AbjFZCjS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 25 Jun 2023 22:39:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
+        id S229983AbjFZJM0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 26 Jun 2023 05:12:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjFZCjQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 25 Jun 2023 22:39:16 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 532C8E53
-        for <io-uring@vger.kernel.org>; Sun, 25 Jun 2023 19:39:05 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1b5466bc5f8so4085745ad.1
-        for <io-uring@vger.kernel.org>; Sun, 25 Jun 2023 19:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687747145; x=1690339145;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oWklRiY05pMRDsYNTO6Caf0XUDTokTD68J/5QVxtFt0=;
-        b=sfhSgI+j3yG+MbzBraHp+WYjucvTJbgJGVs8PdnX0mNiFWukypJxtGGSmXCGkWWu2b
-         AtSof/nATHTlL3fOw2TS5VnnhG/ejIlLc07zMAiYC32GIOWURzOtI0foUwLR9+ZmhfWj
-         eKGo+W3C8rrf1lWuac7sF2C9MPGjmgu6CKZX42hrykuV+dfja9KQ5MjAsBGk0WtMM3a3
-         Na6GelvcQBSQ6AKsfuv2xWBRnTuTUWe0e5qMNO0EKoxpv2FtZnRx3NVY4i/l3e6aAXRQ
-         kG1UEKac/IbWchNT6Q5mSj5XGMNOjvRG6FR1NGwRcA4ztqKvu9p01zau98mCHi5W38Ub
-         VYKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687747145; x=1690339145;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oWklRiY05pMRDsYNTO6Caf0XUDTokTD68J/5QVxtFt0=;
-        b=B3uYrfge3r/RrF/NlQupJV6LvtYy7DOblLgtY6sc//wWBcnAfw4TZd1q0hde9nO9Hf
-         9Mot48oVTag9bDcedU4VTrJUfIvt4uNndCQ4tc/Cc6sElXbIMBvBVie2VV1gRwizVqmp
-         DMiUDhK7a0wVAUpFn68oTVTN5sHx59nNTqYomu2983eFdibO1BLS1vJW5AqjO0X+xWAd
-         zLOyBPL84OBgcf42WhF4YTCCMcTZNh2OKBEuumhGiJ1WoUiTGOGl0v1XTrVPnNY8R4fw
-         wC5rZcHMaKtllgVPCq+z7TPGncugMnZjC/I3YdobaHtA+kfaRrjSo6blqIa0V6skd5vu
-         U0cw==
-X-Gm-Message-State: AC+VfDxNHwDM7KEcrw6FQLYQuSvbijDH30kBpZZvMY1W9xVBmJdK1Irw
-        2hzUtOVU+23Y4tMPXnC3avkJgEKYJGztZ/5OWIw=
-X-Google-Smtp-Source: ACHHUZ67DoUpLO/roY+MpmPq1MMRJ3v4w4pUj/wv+Hh3FM3Actm5YAlJsnFSCYSJRFBeZeUeSTV+yg==
-X-Received: by 2002:a17:902:f691:b0:1b3:d4bb:3515 with SMTP id l17-20020a170902f69100b001b3d4bb3515mr34706779plg.0.1687747144775;
-        Sun, 25 Jun 2023 19:39:04 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id f24-20020a170902ab9800b001a6f7744a27sm3007104plr.87.2023.06.25.19.39.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Jun 2023 19:39:04 -0700 (PDT)
-Message-ID: <6e13b6a5-aa10-75f8-973d-023b7aa7f440@kernel.dk>
-Date:   Sun, 25 Jun 2023 20:39:02 -0600
+        with ESMTP id S229984AbjFZJLz (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 26 Jun 2023 05:11:55 -0400
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2649A270D;
+        Mon, 26 Jun 2023 02:10:04 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=mengferry@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VlzLk7o_1687770601;
+Received: from 30.221.129.54(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0VlzLk7o_1687770601)
+          by smtp.aliyun-inc.com;
+          Mon, 26 Jun 2023 17:10:02 +0800
+Message-ID: <34696152-3ae8-138a-d426-aa4fdde4e7ab@linux.alibaba.com>
+Date:   Mon, 26 Jun 2023 17:09:59 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 6.5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+To:     io-uring@vger.kernel.org, axboe@kernel.dk
+Cc:     joseph.qi@linux.alibaba.com, linux-block@vger.kernel.org
+From:   Ferry Meng <mengferry@linux.alibaba.com>
+Subject: [bug report] nvme passthrough: request failed when blocksize
+ exceeding max_hw_sectors
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Linus,
+Hello:
 
-Nothing major in this release, just a bunch of cleanups and some
-optimizations around networking mostly.
+I'm testing the io-uring nvme passthrough via fio. But I have 
+encountered the following issue:
+When I specify 'blocksize' exceeding 128KB (actually the maximum size 
+per request can send 'max_sectors_kb'), the creation of request failed 
+and directly returned -22 (-EINVAL).
 
-Will throw a minor conflict in io_uring/net.c due to the late fixes in
-mainline, you'll want to keep the kmsg->msg.msg_inq = -1U; assignment
-there.
+For example:
 
-Please pull!
+# cat fio.job
 
+     [global]
+     ioengine=io_uring_cmd
+     thread=1
+     time_based
+     numjobs=1
+     iodepth=1
+     runtime=120
+     rw=randwrite
+     cmd_type=nvme
+     hipri=1
 
-- Series cleaning up file request flags handling (Christoph)
+     [randwrite]
+     bs=132k
+     filename=/dev/ng1n1
 
-- Series cleaning up request freeing and CQ locking (Pavel)
+# fio fio.job
+randwrite: (g=0): rw=randwrite, bs=(R) 132KiB-132KiB, (W) 132KiB-132KiB, 
+(T) 132KiB-132KiB, ioengine=io_uring_cmd, iodepth=1
+fio-3.34-10-g2fa0-dirty
+Starting 1 thread
+fio: io_u error on file /dev/ng1n1: Invalid argument: write 
+offset=231584956416, buflen=135168
+fio: pid=148989, err=22/file:io_u.c:1889, func=io_u error, error=Invalid 
+argument
 
-- Support for using pre-registering the io_uring fd at setup time (Josh)
+I tracked the position that returns the error val in kernel and dumped 
+calltrace.
 
-- Add support for user allocated ring memory, rather than having the
-  kernel allocate it. Mostly for packing rings into a huge page (me)
+[   83.352715] nvme nvme1: 15/0/1 default/read/poll queues
+[   83.363273] nvme nvme1: Ignoring bogus Namespace Identifiers
+[   91.578457] CPU: 14 PID: 3993 Comm: fio Not tainted 
+6.4.0-rc7-00014-g692b7dc87ca6-dirty #2
+[   91.578462] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS 
+2221b89 04/01/2014
+[   91.578463] Call Trace:
+[   91.578476]  <TASK>
+[   91.578478]  dump_stack_lvl+0x36/0x50
+[   91.578484]  ll_back_merge_fn+0x20d/0x320
+[   91.578490]  blk_rq_append_bio+0x6d/0xc0
+[   91.578492]  bio_map_user_iov+0x24a/0x3d0
+[   91.578494]  blk_rq_map_user_iov+0x292/0x680
+[   91.578496]  ? blk_mq_get_tag+0x249/0x280
+[   91.578500]  blk_rq_map_user+0x56/0x80
+[   91.578503]  nvme_map_user_request.isra.15+0x90/0x1e0 [nvme_core]
+[   91.578515]  nvme_uring_cmd_io+0x29d/0x2f0 [nvme_core]
+[   91.578522]  io_uring_cmd+0x89/0x110
+[   91.578526]  ? __pfx_io_uring_cmd+0x10/0x10
+[   91.578528]  io_issue_sqe+0x1e0/0x2d0
+[   91.578530]  io_submit_sqes+0x1e3/0x650
+[   91.578532]  __x64_sys_io_uring_enter+0x2da/0x450
+[   91.578534]  do_syscall_64+0x3b/0x90
+[   91.578537]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
 
-- Series avoiding an unnecessary double retry on receive (me)
+Here in bio_map_user_iov()->blk_rq_append_bio(), I found the error val 
+-EINVAL:
 
-- Maintain ordering for task_work, which also improves performance (me)
+blk_rq_append_bio:
+     ...
+     if (!ll_back_merge_fn(rq, bio, nr_segs))
+         return -EINVAL;
+     rq->biotail->bi_next = bio;
+     ...
 
-- Misc cleanups/fixes (Pavel, me)
+And in ll_back_merge_fn(), returns 0 if merge can't happen. It checks 
+the request size:
+ll_back_merge_fn:
+     if (blk_rq_sectors(req) + bio_sectors(bio) >
+         blk_rq_get_max_sectors(req, blk_rq_pos(req))) {
+             req_set_nomerge(req->q, req);
+             return 0;
+     }
 
-The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
+The ROOT cause is: In blk_rq_get_max_sectors, it returns 
+'max_hw_sectors' directly(in my device ,it's 256 sector, which means 
+128KB), causing the above inequality to hold true.
+blk_rq_get_max_sectors:
+     ...
+     if (blk_rq_is_passthrough(rq)){
+         return q->limits.max_hw_sectors;
+     }
+     ...
 
-  Linux 6.4-rc2 (2023-05-14 12:51:40 -0700)
+I checked my disk's specs(cat 
+/sys/block/<mydisk>/queue/max_hw_sectors_kb 
+/sys/block/<mydisk>/queue/max_sectors_kb), both are 128KB.So I think 
+this arg causing the issue.
 
-are available in the Git repository at:
+I'm not sure if this is a designed restriction. Or should I have to take 
+care of it in application?
 
-  git://git.kernel.dk/linux.git tags/for-6.5/io_uring-2023-06-23
-
-for you to fetch changes up to c98c81a4ac37b651be7eb9d16f562fc4acc5f867:
-
-  io_uring: merge conditional unlock flush helpers (2023-06-23 08:19:40 -0600)
-
-----------------------------------------------------------------
-for-6.5/io_uring-2023-06-23
-
-----------------------------------------------------------------
-Christoph Hellwig (8):
-      io_uring: remove __io_file_supports_nowait
-      io_uring: remove the mode variable in io_file_get_flags
-      io_uring: remove a confusing comment above io_file_get_flags
-      io_uring: remove io_req_ffs_set
-      io_uring: return REQ_F_ flags from io_file_get_flags
-      io_uring: use io_file_from_index in __io_sync_cancel
-      io_uring: use io_file_from_index in io_msg_grab_file
-      io_uring: add helpers to decode the fixed file file_ptr
-
-Jens Axboe (16):
-      net: set FMODE_NOWAIT for sockets
-      block: mark bdev files as FMODE_NOWAIT if underlying device supports it
-      io_uring: rely solely on FMODE_NOWAIT
-      io_uring: remove sq/cq_off memset
-      io_uring: return error pointer from io_mem_alloc()
-      io_uring: add ring freeing helper
-      io_uring: support for user allocated memory for rings/sqes
-      io_uring/net: initialize struct msghdr more sanely for io_recv()
-      io_uring/net: initalize msghdr->msg_inq to known value
-      io_uring/net: push IORING_CQE_F_SOCK_NONEMPTY into io_recv_finish()
-      io_uring/net: don't retry recvmsg() unnecessarily
-      io_uring: maintain ordering for DEFER_TASKRUN tw list
-      io_uring: avoid indirect function calls for the hottest task_work
-      io_uring: cleanup io_aux_cqe() API
-      io_uring: get rid of unnecessary 'length' variable
-      io_uring: wait interruptibly for request completions on exit
-
-Josh Triplett (1):
-      io_uring: Add io_uring_setup flag to pre-register ring fd and never install it
-
-Pavel Begunkov (14):
-      io_uring: annotate offset timeout races
-      io_uring/cmd: add cmd lazy tw wake helper
-      nvme: optimise io_uring passthrough completion
-      io_uring: open code io_put_req_find_next
-      io_uring: remove io_free_req_tw
-      io_uring: inline io_dismantle_req()
-      io_uring: move io_clean_op()
-      io_uring: don't batch task put on reqs free
-      io_uring: remove IOU_F_TWQ_FORCE_NORMAL
-      io_uring: kill io_cq_unlock()
-      io_uring: fix acquire/release annotations
-      io_uring: inline __io_cq_unlock
-      io_uring: make io_cq_unlock_post static
-      io_uring: merge conditional unlock flush helpers
-
- block/fops.c                   |   5 +-
- drivers/nvme/host/ioctl.c      |   4 +-
- include/linux/io_uring.h       |  18 +-
- include/linux/io_uring_types.h |  10 +
- include/uapi/linux/io_uring.h  |  16 +-
- io_uring/cancel.c              |   5 +-
- io_uring/filetable.c           |  11 +-
- io_uring/filetable.h           |  28 ++-
- io_uring/io_uring.c            | 497 ++++++++++++++++++++++-------------------
- io_uring/io_uring.h            |  17 +-
- io_uring/msg_ring.c            |   4 +-
- io_uring/net.c                 |  58 ++---
- io_uring/poll.c                |   6 +-
- io_uring/poll.h                |   2 +
- io_uring/rsrc.c                |   8 +-
- io_uring/rw.c                  |   6 +-
- io_uring/rw.h                  |   1 +
- io_uring/tctx.c                |  31 ++-
- io_uring/timeout.c             |   6 +-
- io_uring/uring_cmd.c           |  16 +-
- net/socket.c                   |   1 +
- 21 files changed, 416 insertions(+), 334 deletions(-)
-
--- 
-Jens Axboe
+Thanks,
+Ferry Meng
 

@@ -2,191 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5173F73FD8F
-	for <lists+io-uring@lfdr.de>; Tue, 27 Jun 2023 16:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE1B7400D5
+	for <lists+io-uring@lfdr.de>; Tue, 27 Jun 2023 18:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjF0OOs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 27 Jun 2023 10:14:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56464 "EHLO
+        id S231878AbjF0QYD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 27 Jun 2023 12:24:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjF0OOs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Jun 2023 10:14:48 -0400
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2ABDD;
-        Tue, 27 Jun 2023 07:14:46 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-51d946d2634so3168810a12.3;
-        Tue, 27 Jun 2023 07:14:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687875285; x=1690467285;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=an7J0hwuqPQSAn7P2uZk1B4J/zfKMTy4fTuFeR6jrO8=;
-        b=jWdapPdkyDv54UpwYS/d0/fCYLLOm+EomoAzDnh9WETwUBfeTs1ZFO9xqcG6J/UXSb
-         nNErSSpNTKuWsad85fuhcUoxmpyLmSPSDBNWm/O3d9Jw/AZUix4G2ueJEpOsc+ARlWba
-         aaoGUqQ4r5RlBnAFdX+rwsvGYa7pmhYrBO6MWTqVeP3xCDL4HeMYFZatUUb5atKpYME7
-         TZJKTvF2t9KOshanSnixZ0qQ+HyFyJ50bb5ipYMNwJe/+TNbAXoEHqGQut/r39oommLV
-         e5s+iu6c7B40UId4fYizU+2QdEaIB/WC/nrous6U/XdcCLHGdkqCWbv5dT4c6w8BVFhM
-         uioQ==
-X-Gm-Message-State: AC+VfDz7Au9Tay5vK6BQOAXAhEV42N6DHcZhkk0A5WVGN0924KQLmISa
-        NksNzfGW5oJWFsvi3DyOF0A=
-X-Google-Smtp-Source: ACHHUZ7VXrLgUhwrWzk6/KfueRoIfZhcZ+Y/vW+FFPyDljzDvtAYuZQLU6Poa4kBj4QT8TElotMPcg==
-X-Received: by 2002:aa7:de9a:0:b0:51b:dcb4:a9b3 with SMTP id j26-20020aa7de9a000000b0051bdcb4a9b3mr13713612edv.24.1687875284962;
-        Tue, 27 Jun 2023 07:14:44 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:59? ([2a0b:e7c0:0:107::aaaa:59])
-        by smtp.gmail.com with ESMTPSA id e2-20020a50ec82000000b0051dac65fa3csm628527edr.93.2023.06.27.07.14.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 07:14:44 -0700 (PDT)
-Message-ID: <818c95bc-50f8-4b2e-d5ca-2511310de47c@kernel.org>
-Date:   Tue, 27 Jun 2023 16:14:43 +0200
+        with ESMTP id S231723AbjF0QX6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 27 Jun 2023 12:23:58 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32EF430EC;
+        Tue, 27 Jun 2023 09:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=/4TlpfcV9w6VY9Wp7NMoSSjTCcDuCDvKDEUtb/e8aoY=; b=TSd0mxAFGlDcWEi9yXYnWluOUs
+        NldrvE0DKu1dHstL1JbzHINhrsfGcxz5LnCr5JS37ath2Ad9iVy/m5muvX4guNZ16jtoNWrtqGOvm
+        eZNQ0U5lHgWJEqRiExXBRaN4r4JqxAgc4fz4GxJRRzhYMANh4SKueIOWGtsUCxKZ9LZZvGMIH7UaU
+        rJrK4a/x13v4sAa1AzeEEaVg/JpWQiw2vMqt1bfX8/oVxivdyPzX8FJqYXFvybb301UzLa5hZ+dvi
+        Wx85YNW9fxLnRzdLddyCmbgWFNF237gROBrD6jAGbmmz0Yu7TyVXiD+HESVQMEO8JVpoTZ1i33uTj
+        U6IqmO6g==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qEBTt-00DdCA-01;
+        Tue, 27 Jun 2023 16:23:53 +0000
+Message-ID: <0d8f8e2b-166b-14bc-6879-a2521ea5b23d@infradead.org>
+Date:   Tue, 27 Jun 2023 09:23:51 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2] io_uring: Adjust mapping wrt architecture aliasing
- requirements
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 1/1] Add a new sysctl to disable io_uring system-wide
 Content-Language: en-US
-To:     Helge Deller <deller@gmx.de>, io-uring@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-parisc@vger.kernel.org,
-        John David Anglin <dave.anglin@bell.net>
-References: <Y+3kwh8BokobVl6o@p100>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <Y+3kwh8BokobVl6o@p100>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Matteo Rizzo <matteorizzo@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     jordyzomer@google.com, evn@google.com, poprdi@google.com,
+        corbet@lwn.net, axboe@kernel.dk, asml.silence@gmail.com,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        rostedt@goodmis.org, dave.hansen@linux.intel.com,
+        ribalda@chromium.org, chenhuacai@kernel.org, steve@sk2.org,
+        gpiccoli@igalia.com, ldufour@linux.ibm.com
+References: <20230627120058.2214509-1-matteorizzo@google.com>
+ <20230627120058.2214509-2-matteorizzo@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230627120058.2214509-2-matteorizzo@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 16. 02. 23, 9:09, Helge Deller wrote:
-> Some architectures have memory cache aliasing requirements (e.g. parisc)
-> if memory is shared between userspace and kernel. This patch fixes the
-> kernel to return an aliased address when asked by userspace via mmap().
-> 
-> Signed-off-by: Helge Deller <deller@gmx.de>
-> ---
-> v2: Do not allow to map to a user-provided addresss. This forces
-> programs to write portable code, as usually on x86 mapping to any
-> address will succeed, while it will fail for most provided address if
-> used on stricter architectures.
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 862e05e6691d..01fe7437a071 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -72,6 +72,7 @@
->   #include <linux/io_uring.h>
->   #include <linux/audit.h>
->   #include <linux/security.h>
-> +#include <asm/shmparam.h>
-> 
->   #define CREATE_TRACE_POINTS
->   #include <trace/events/io_uring.h>
-> @@ -3059,6 +3060,54 @@ static __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
->   	return remap_pfn_range(vma, vma->vm_start, pfn, sz, vma->vm_page_prot);
->   }
-> 
-> +static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
-> +			unsigned long addr, unsigned long len,
-> +			unsigned long pgoff, unsigned long flags)
-> +{
-> +	const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
-> +	struct vm_unmapped_area_info info;
-> +	void *ptr;
+Hi--
+
+On 6/27/23 05:00, Matteo Rizzo wrote:
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index d85d90f5d000..3c53a238332a 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -450,6 +450,20 @@ this allows system administrators to override the
+>  ``IA64_THREAD_UAC_NOPRINT`` ``prctl`` and avoid logs being flooded.
+>  
+>  
+> +io_uring_disabled
+> +=========================
 > +
-> +	/*
-> +	 * Do not allow to map to user-provided address to avoid breaking the
-> +	 * aliasing rules. Userspace is not able to guess the offset address of
-> +	 * kernel kmalloc()ed memory area.
-> +	 */
-> +	if (addr)
-> +		return -EINVAL;
+> +Prevents all processes from creating new io_uring instances. Enabling this
+> +shrinks the kernel's attack surface.
 > +
-> +	ptr = io_uring_validate_mmap_request(filp, pgoff, len);
-> +	if (IS_ERR(ptr))
-> +		return -ENOMEM;
-> +
-> +	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
-> +	info.length = len;
-> +	info.low_limit = max(PAGE_SIZE, mmap_min_addr);
-> +	info.high_limit = arch_get_mmap_base(addr, current->mm->mmap_base);
+> += =============================================================
+> +0 All processes can create io_uring instances as normal. This is the default
+> +  setting.
+> +1 io_uring is disabled. io_uring_setup always fails with -EPERM. Existing
+> +  io_uring instances can still be used.
+> += =============================================================
 
-Hi,
+These table lines should be extended at least as far as the text that they
+enclose. I.e., the top and bottom lines should be like:
 
-this breaks compat (x86_32) on x86_64 in 6.4. When you run most liburing 
-tests, you'll get ENOMEM, as this high_limit is something in 64-bit space...
+> += ==========================================================================
 
-> +#ifdef SHM_COLOUR
-> +	info.align_mask = PAGE_MASK & (SHM_COLOUR - 1UL);
-> +#else
-> +	info.align_mask = PAGE_MASK & (SHMLBA - 1UL);
-> +#endif
-> +	info.align_offset = (unsigned long) ptr;
-> +
-> +	/*
-> +	 * A failed mmap() very likely causes application failure,
-> +	 * so fall back to the bottom-up function here. This scenario
-> +	 * can happen with large stack limits and large mmap()
-> +	 * allocations.
-> +	 */
-> +	addr = vm_unmapped_area(&info);
-
-So the found addr here is > TASK_SIZE - len for 32-bit bins. And 
-get_unmapped_area() returns ENOMEM.
-
-> +	if (offset_in_page(addr)) {
-> +		info.flags = 0;
-> +		info.low_limit = TASK_UNMAPPED_BASE;
-> +		info.high_limit = mmap_end;
-> +		addr = vm_unmapped_area(&info);
-> +	}
-> +
-> +	return addr;
-> +}
-
-Reverting the whole commit helps of course. Even this completely 
-incorrect hack helps:
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3398,7 +3398,7 @@ static unsigned long 
-io_uring_mmu_get_unmapped_area(struct file *filp,
-                         unsigned long addr, unsigned long len,
-                         unsigned long pgoff, unsigned long flags)
-  {
--       const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
-+       const unsigned long mmap_end = in_32bit_syscall() ? 
-task_size_32bit() : arch_get_mmap_end(addr, len, flags);
-         struct vm_unmapped_area_info info;
-         void *ptr;
-
-@@ -3417,7 +3417,7 @@ static unsigned long 
-io_uring_mmu_get_unmapped_area(struct file *filp,
-         info.flags = VM_UNMAPPED_AREA_TOPDOWN;
-         info.length = len;
-         info.low_limit = max(PAGE_SIZE, mmap_min_addr);
--       info.high_limit = arch_get_mmap_base(addr, current->mm->mmap_base);
-+       info.high_limit = in_32bit_syscall() ? task_size_32bit() : 
-arch_get_mmap_base(addr, current->mm->mmap_base);
-  #ifdef SHM_COLOUR
-         info.align_mask = PAGE_MASK & (SHM_COLOUR - 1UL);
-  #else
-
-
-Any ideas? Note that the compat mmap apparently uses bottomup expansion. 
-See:
-         if (!in_32bit_syscall() && (flags & MAP_32BIT))
-                 goto bottomup;
-
-in arch_get_unmapped_area_topdown().
-
-thanks,
+thanks.
 -- 
-js
-suse labs
-
+~Randy

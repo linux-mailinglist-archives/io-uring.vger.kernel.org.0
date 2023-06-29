@@ -2,101 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3885741BA9
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jun 2023 00:13:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E73597422B1
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jun 2023 10:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbjF1WNS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 28 Jun 2023 18:13:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43018 "EHLO
+        id S231634AbjF2IyG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Jun 2023 04:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230168AbjF1WNR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 28 Jun 2023 18:13:17 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85602110
-        for <io-uring@vger.kernel.org>; Wed, 28 Jun 2023 15:13:15 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b3ecb17721so100435ad.0
-        for <io-uring@vger.kernel.org>; Wed, 28 Jun 2023 15:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687990395; x=1690582395;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IJY+GqcezBlL+xi5ObEwKu7LQjgnACic+SnpzDRi3ls=;
-        b=Bi6Dt05+MROdVg1CZIMxtAh3dNSQKtQtRZuiynlR82bus1SAnyCL8l8t0Iw3hT+vm4
-         BxLZVyZCjNPDATS+TUyvQz+0cE8H5JEfIE0Lumk4Bn9PJA2TwQ0sdEJo63mdNBZJjpfO
-         WPe7Vb+jCDjxiy/fLHymQjy7GhslWmf2wsK0kw9KELgRzGyvwACXqI+0AQCdExRDVVdQ
-         JLeQqtCw3F/3mCswHjZGlzBXK68DU1KNAyq9Y3QDXHTtpvXr61En/fyUWcyPFc7d3nTC
-         0J6TKV0obQW/I2ZgCN6ayTGmTQJstz08OpgfYQ2N8Z9zSzmfaz0GBIXfMttTq5lQyWO3
-         s52g==
+        with ESMTP id S231285AbjF2IyE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jun 2023 04:54:04 -0400
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DE610F
+        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 01:54:02 -0700 (PDT)
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-560ce5f7646so513883eaf.3
+        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 01:54:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687990395; x=1690582395;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IJY+GqcezBlL+xi5ObEwKu7LQjgnACic+SnpzDRi3ls=;
-        b=UvGPUuehqp7rSvSDXZ8zuaYcOV3UONsebQPtqePVu+ExfpKqCmLdOh7S8CNsIa+8NF
-         BINs1NdbtK8nJ5+sKSS+cQBXTqIJHBcWRT7C3zRRlENzIlSboaZiT5BNuLB/KQ4VBnOZ
-         CCn7cWWDcuvflKMzrYyk4RXA+Fee4mNDGhwliNS+MKRsQknksohEdXen0i1nXFQ5KEvs
-         R1uRPMvnSQu+UYpGhfiylHsmYaGjMvbfyq2lzLIwHIbqNMxV3vItLqH6s2hjfW+s5EPd
-         hVN2r1/Iy9FEsSp8ynFIDKHySXBD8lcC66byx1rWiBhab0NbN18Y92ADZgSf6SJo7sgy
-         zJqQ==
-X-Gm-Message-State: AC+VfDyQmZragwCzZnySSOkwG9eQPsf7sj7hMGIA4bAdJfpyMUS6nrrY
-        SXsnweyNFrDGnjy39sFZtUdq1A==
-X-Google-Smtp-Source: ACHHUZ7NDR0qNVF1yJ9FJ8h+ENri3Td2Iilzp/MG2qHL5P2KnxsfotwxKccN6VVV7K6RlCazgm8WBA==
-X-Received: by 2002:a17:90b:3583:b0:263:2312:60c2 with SMTP id mm3-20020a17090b358300b00263231260c2mr5381891pjb.3.1687990395183;
-        Wed, 28 Jun 2023 15:13:15 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q14-20020a17090a1b0e00b0025e9519f9e7sm9036351pjq.15.2023.06.28.15.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 15:13:14 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, hch@lst.de,
-        Keith Busch <kbusch@meta.com>
-Cc:     sagi@grimberg.me, joshi.k@samsung.com,
-        Keith Busch <kbusch@kernel.org>
-In-Reply-To: <20230612190343.2087040-1-kbusch@meta.com>
-References: <20230612190343.2087040-1-kbusch@meta.com>
-Subject: Re: [PATCHv3 0/2] enhanced nvme uring command polling
-Message-Id: <168799039388.1023490.11718140494575260778.b4-ty@kernel.dk>
-Date:   Wed, 28 Jun 2023 16:13:13 -0600
+        d=1e100.net; s=20221208; t=1688028842; x=1690620842;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GX3vRTbClPfBmgGXgB8ajJN24HN9WYATRnqKtH7eX2Y=;
+        b=QHUlw68mCTL4IO0fUnCp+IV7v2KvDrQjJBYWjr5tU3P0kbjZ3vkh7Mk2mvzpLGJ0iz
+         aUmqRN2oC7vS7pQBFerSzS8xBrpRwCRiar+nPGCHUitaE55omHPsAL8pY40qLKSAwM++
+         JXu7r7wPoznUtvq3aIn8jztIKGuafXKOOTMbRWTSuS49Sfidf8Jzeoh4hzXhTJ1ROwFM
+         0I5NVtYe56FY35Z3Cl1pAQXEGjnQzYRQSEMmvS4+5I1NdwKntf+XN8Oe8H7M/aXrFGzF
+         bHmJTqI8BgF0P/moz271In5bWdmLF2OUQzCVnyJLUPk69kjvVtFqgnm+MPk+0PUpaSsm
+         fcYQ==
+X-Gm-Message-State: AC+VfDy/HRfDhUq6AJcY8rNuYloUK0zGjcwRutMYFAKzKTs53t/Wd67r
+        jgKUEQzpGUxL8Z2C0hU1vmSjxSG46f4ivYNJaLzZAYUOL4XU
+X-Google-Smtp-Source: ACHHUZ6cjdAwiK/QhwjonG0Os31anLewl1065RP7MTj3T2ZSn5UmA1vC7fNePBrTQLuDOYJVp4f7Oaz6HyHiqP1LGBTJH3X+QGj4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:5cce:b0:1b0:4efb:6d7b with SMTP id
+ et14-20020a0568705cce00b001b04efb6d7bmr6169291oab.1.1688028841962; Thu, 29
+ Jun 2023 01:54:01 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 01:54:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007ef36905ff40d7de@google.com>
+Subject: [syzbot] Monthly io-uring report (Jun 2023)
+From:   syzbot <syzbot+listc8ede3733d68d38fe848@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+Hello io-uring maintainers/developers,
 
-On Mon, 12 Jun 2023 12:03:41 -0700, Keith Busch wrote:
-> Changes from previous version:
-> 
->   Fixex botched merge compiler bug (kernel test robot)
-> 
->   Added reviews
-> 
-> Keith Busch (2):
->   block: add request polling helper
->   nvme: improved uring polling
-> 
-> [...]
+This is a 31-day syzbot report for the io-uring subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/io-uring
 
-Applied, thanks!
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 12 issues are still open and 88 have been fixed so far.
 
-[1/2] block: add request polling helper
-      commit: f6c80cffcd47a2d41943e3a41fbe9034d9f6d7b0
-[2/2] nvme: improved uring polling
-      commit: 9408d8a37e6cce8803681ab816383450a056c3a9
+Some of the still happening issues:
 
-Best regards,
--- 
-Jens Axboe
+Ref Crashes Repro Title
+<1> 3370    Yes   general protection fault in try_to_wake_up (2)
+                  https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
+<2> 815     Yes   INFO: task hung in io_ring_exit_work
+                  https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
+<3> 1       Yes   general protection fault in worker_thread (2)
+                  https://syzkaller.appspot.com/bug?extid=8aebf783fcc04684a047
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.

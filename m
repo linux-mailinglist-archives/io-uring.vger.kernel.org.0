@@ -2,85 +2,105 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E73597422B1
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jun 2023 10:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE5C74275D
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jun 2023 15:27:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231634AbjF2IyG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Jun 2023 04:54:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        id S231937AbjF2N1m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Jun 2023 09:27:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231285AbjF2IyE (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jun 2023 04:54:04 -0400
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DE610F
-        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 01:54:02 -0700 (PDT)
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-560ce5f7646so513883eaf.3
-        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 01:54:02 -0700 (PDT)
+        with ESMTP id S231557AbjF2N1k (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jun 2023 09:27:40 -0400
+Received: from mail-ed1-x54a.google.com (mail-ed1-x54a.google.com [IPv6:2a00:1450:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C7610FB
+        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 06:27:39 -0700 (PDT)
+Received: by mail-ed1-x54a.google.com with SMTP id 4fb4d7f45d1cf-51d95a84480so449994a12.2
+        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 06:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688045258; x=1690637258;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RBX/ZfKOmZybnCy+TJCC1Khkdf0JaxSO6nOHYL3602s=;
+        b=74Ac2Po/8YOM/O803qScwIOjP8gYg8G4wgHxyw5rZCTNWIAlHSyGb9SzNo9Xnf5sQE
+         qzan4SM0hGh4dAHfg8JrtmpEF/sZ2DHeotQDS3yXSGNuwTKxqCLJUy2FBE/GS6RJ0JBj
+         lMH/r5u8eQ5j8+xaJAqcCaNWpwxYsUaf0VJkMFMj0Xztjh9h3z0me4Pm2E75CiDzgW1O
+         gopD6LcMIvae2qAnyV0jf4iFCXfxK2l2GJApT0fhEWXmyerE3Ghhmezd6x5eVhW/VGEJ
+         /xStz4RtSKlO3l1WpCXgOc910qGmb1vb7ex4f23C/e4mVgmMeZfJ67s5z/MxghQ6zRUA
+         gsgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688028842; x=1690620842;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20221208; t=1688045258; x=1690637258;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GX3vRTbClPfBmgGXgB8ajJN24HN9WYATRnqKtH7eX2Y=;
-        b=QHUlw68mCTL4IO0fUnCp+IV7v2KvDrQjJBYWjr5tU3P0kbjZ3vkh7Mk2mvzpLGJ0iz
-         aUmqRN2oC7vS7pQBFerSzS8xBrpRwCRiar+nPGCHUitaE55omHPsAL8pY40qLKSAwM++
-         JXu7r7wPoznUtvq3aIn8jztIKGuafXKOOTMbRWTSuS49Sfidf8Jzeoh4hzXhTJ1ROwFM
-         0I5NVtYe56FY35Z3Cl1pAQXEGjnQzYRQSEMmvS4+5I1NdwKntf+XN8Oe8H7M/aXrFGzF
-         bHmJTqI8BgF0P/moz271In5bWdmLF2OUQzCVnyJLUPk69kjvVtFqgnm+MPk+0PUpaSsm
-         fcYQ==
-X-Gm-Message-State: AC+VfDy/HRfDhUq6AJcY8rNuYloUK0zGjcwRutMYFAKzKTs53t/Wd67r
-        jgKUEQzpGUxL8Z2C0hU1vmSjxSG46f4ivYNJaLzZAYUOL4XU
-X-Google-Smtp-Source: ACHHUZ6cjdAwiK/QhwjonG0Os31anLewl1065RP7MTj3T2ZSn5UmA1vC7fNePBrTQLuDOYJVp4f7Oaz6HyHiqP1LGBTJH3X+QGj4
-MIME-Version: 1.0
-X-Received: by 2002:a05:6870:5cce:b0:1b0:4efb:6d7b with SMTP id
- et14-20020a0568705cce00b001b04efb6d7bmr6169291oab.1.1688028841962; Thu, 29
- Jun 2023 01:54:01 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 01:54:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007ef36905ff40d7de@google.com>
-Subject: [syzbot] Monthly io-uring report (Jun 2023)
-From:   syzbot <syzbot+listc8ede3733d68d38fe848@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+        bh=RBX/ZfKOmZybnCy+TJCC1Khkdf0JaxSO6nOHYL3602s=;
+        b=Z+9cLGnDH/MsDlsvbwlZS2iuyyZj4SyVb5acFWBRqldFX+YhTaAtG5pZCT+w7NF9gP
+         ZVZG00WjhcNWATHGwwZIEanAH6N2kye91kgliNvChfRHg0Eg69jKmqu4PklFmj+uoAyi
+         BBlr1tyoHhe1ZRaT0VU35pir6MncVIml0TnRoYHJ09TXPjlsuj8KNSPhv/wifsTyxwzC
+         qEsZYf2LYyYvWHtHXjYnyUHIyLUGyCUR9Y7mTyLRxpTQIKrJqvcZOZuK7pVgzq2737k/
+         wyKitOGb9iA8k1KUMqonXmKsNHu8TRTmCRaDAwmwgGpRyIKKTBM2zGXlIIbcGXkhZQR7
+         CgpQ==
+X-Gm-Message-State: AC+VfDywInWj2pLva3ebaazaZ9HopbCeQ4n10dtt87QDExDZ/Uy9dJsi
+        aFr7XPyJ85g14tGv+KbIOgZ+UlxOlQxu/etqMQ==
+X-Google-Smtp-Source: ACHHUZ68x22hc/u7loDafI2EMqho0Kd4jMofvcMTzF5nV3k/Nt4gqftj8nkSDifh1eoZn4ve45CvYUjPmmUUfNKVFw==
+X-Received: from mr-cloudtop2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:fb5])
+ (user=matteorizzo job=sendgmr) by 2002:a50:cdc8:0:b0:51d:7d61:a833 with SMTP
+ id h8-20020a50cdc8000000b0051d7d61a833mr1674482edj.0.1688045258087; Thu, 29
+ Jun 2023 06:27:38 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 13:27:10 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
+Message-ID: <20230629132711.1712536-1-matteorizzo@google.com>
+Subject: [PATCH v2 0/1] Add a sysctl to disable io_uring system-wide
+From:   Matteo Rizzo <matteorizzo@google.com>
+To:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Cc:     matteorizzo@google.com, jordyzomer@google.com, evn@google.com,
+        poprdi@google.com, corbet@lwn.net, axboe@kernel.dk,
+        asml.silence@gmail.com, akpm@linux-foundation.org,
+        keescook@chromium.org, rostedt@goodmis.org,
+        dave.hansen@linux.intel.com, ribalda@chromium.org,
+        chenhuacai@kernel.org, steve@sk2.org, gpiccoli@igalia.com,
+        ldufour@linux.ibm.com, bhe@redhat.com, oleksandr@natalenko.name
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello io-uring maintainers/developers,
+Over the last few years we've seen many critical vulnerabilities in
+io_uring[1] which could be exploited by an unprivileged process to gain
+control over the kernel. This patch introduces a new sysctl which disables
+the creation of new io_uring instances system-wide.
 
-This is a 31-day syzbot report for the io-uring subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/io-uring
+The goal of this patch is to give distros, system admins, and cloud
+providers a way to reduce the risk of privilege escalation through io_uring
+where disabling it with seccomp or at compile time is not practical. For
+example a distro or cloud provider might want to disable io_uring by
+default and have users enable it again if they need to run a program that
+requires it. The new sysctl is designed to let a user with root on the
+machine enable and disable io_uring systemwide at runtime without requiring
+a kernel recompilation or a reboot.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 12 issues are still open and 88 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 3370    Yes   general protection fault in try_to_wake_up (2)
-                  https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
-<2> 815     Yes   INFO: task hung in io_ring_exit_work
-                  https://syzkaller.appspot.com/bug?extid=93f72b3885406bb09e0d
-<3> 1       Yes   general protection fault in worker_thread (2)
-                  https://syzkaller.appspot.com/bug?extid=8aebf783fcc04684a047
+[1] Link: https://goo.gle/limit-iouring
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v2:
+	* Documentation style fixes
+	* Add a third level that only disables io_uring for unprivileged
+	  processes
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Matteo Rizzo (1):
+  Add a new sysctl to disable io_uring system-wide
 
-You may send multiple commands in a single email message.
+ Documentation/admin-guide/sysctl/kernel.rst | 19 +++++++++++++
+ io_uring/io_uring.c                         | 30 +++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+
+-- 
+2.41.0.162.gfafddb0af9-goog
+

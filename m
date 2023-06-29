@@ -2,58 +2,42 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D9B47429A8
-	for <lists+io-uring@lfdr.de>; Thu, 29 Jun 2023 17:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C12742A5B
+	for <lists+io-uring@lfdr.de>; Thu, 29 Jun 2023 18:12:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232212AbjF2P3O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 29 Jun 2023 11:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54148 "EHLO
+        id S231794AbjF2QM0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 29 Jun 2023 12:12:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231838AbjF2P3N (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jun 2023 11:29:13 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2529BAA
-        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 08:29:01 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-51de9c2bc77so251909a12.3
-        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 08:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688052539; x=1690644539;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx+4npIK6ggBgqg5Ikl2o+KTDuvkPqB2u/Qe38+I6NE=;
-        b=UQpGkCL9YJMy/UxnCWGkbYSo26IJe8fB3U1ktSJh4v7wU4gpys4x7S7HS3Bt0qNSkR
-         8VhE/MZA4H/OItizG+6x8ZEm7qrqxtvNk3eUZzbYSdagQAnZMZYN4iipupCFl763YTK6
-         cSF9lcu+lpL1lFDBd+DGKaXsY1ptwFsXNhfzTftFMDOfdR2G0xo8owDMs4bbaE29DxAX
-         CFgh1OzTalgyAB5ztyfoaj2xzkqs3h+MmbuvQ7Wbd9QcWH4mcHN1/3inlIMSXCgDtiix
-         ZhCH/Dyi2TIAZW7BFOScweCd1c8B5WrQP+W9zYaSJH8l/35h++oP+7qEkE1Uis0gfC6b
-         HdVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688052539; x=1690644539;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wx+4npIK6ggBgqg5Ikl2o+KTDuvkPqB2u/Qe38+I6NE=;
-        b=RTFGD0fcpu6G1+8aOkWf0qkO+0927NPc2kDnySsJ1f6tnK8ltghPsAXWrncMvv5k6G
-         sPShKLIGCNRV2kD9mb0fapljH6kdiMoeF9bIZLoxCghwF6nfiU0brxLexIOVflY56lee
-         Z1iiBnERpmLstDe8hKAZ0AGAKidhWKT1j88JWfdAT5Ty9PxTp0ioFlB7qUWTQWFuHmxQ
-         bWdfHPr1IVf/FPwcfqvAxUigcgitKtVjpLghwj3ilfaNbD1owTHRYKBybYi6kC/dNnV0
-         MScKCkjrMQZJdVJPXMeIDy+0oJ9P/6GTqm+n1NxzaTt/Kml1kNcdktoiXI5Ech0/JUAg
-         3tuw==
-X-Gm-Message-State: AC+VfDyv40g/wypBBDxqq4VLo8Y1dJkJUAS03a+fMa+XCtweqn698a59
-        DD2aUNGy9GVn5p7CMV1bYAboW6QxfWifO4n59pURJg==
-X-Google-Smtp-Source: ACHHUZ7Kr52/aPyBqXhipnCviex3Yi6PzBfiMQbTr8pydMywJDNM9uEvS6ZGzqlBViBHQ+2sIfdMbQH2vP5eOa/+THc=
-X-Received: by 2002:a17:907:97d6:b0:988:57b4:2853 with SMTP id
- js22-20020a17090797d600b0098857b42853mr29800648ejc.25.1688052539500; Thu, 29
- Jun 2023 08:28:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230629132711.1712536-1-matteorizzo@google.com>
- <20230629132711.1712536-2-matteorizzo@google.com> <a0c8d74a-dcfe-78a7-74bd-4447ed6944dc@acm.org>
-In-Reply-To: <a0c8d74a-dcfe-78a7-74bd-4447ed6944dc@acm.org>
-From:   Matteo Rizzo <matteorizzo@google.com>
-Date:   Thu, 29 Jun 2023 17:28:47 +0200
-Message-ID: <CAHKB1wKbSoK+=ceM_WLgBConNaua=0UPQv9ZmDp6LNXh3QNr=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] Add a new sysctl to disable io_uring system-wide
-To:     Bart Van Assche <bvanassche@acm.org>
+        with ESMTP id S231663AbjF2QMZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 29 Jun 2023 12:12:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852FB3595
+        for <io-uring@vger.kernel.org>; Thu, 29 Jun 2023 09:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688055097;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hXzn/T+eskwyoHAIYDRxcHdpwP2+My4amFKoi/35Pwg=;
+        b=NfHnsDuY+2s4kzk9soFGpcBfZwELZ1aqvSagZu63oa2b7Y1WuZgtUPmCe+hc7xJrNM0XgY
+        ZW3GWOdFB6W440BvSCkd7lCdstQPO9OtBuYF8yFWBYO4eOmIRqhRuwx77qvGVXT6UWjdkr
+        5KXJn7a2nUB8A44MWGGsxhu8nuLOUm0=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-569-Wpeqv30fOWmfcZrSHaZ9ug-1; Thu, 29 Jun 2023 12:11:32 -0400
+X-MC-Unique: Wpeqv30fOWmfcZrSHaZ9ug-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BF2C81C31C4B;
+        Thu, 29 Jun 2023 16:11:30 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05AF2492B02;
+        Thu, 29 Jun 2023 16:11:29 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Matteo Rizzo <matteorizzo@google.com>
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         io-uring@vger.kernel.org, jordyzomer@google.com, evn@google.com,
         poprdi@google.com, corbet@lwn.net, axboe@kernel.dk,
@@ -62,32 +46,137 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         dave.hansen@linux.intel.com, ribalda@chromium.org,
         chenhuacai@kernel.org, steve@sk2.org, gpiccoli@igalia.com,
         ldufour@linux.ibm.com, bhe@redhat.com, oleksandr@natalenko.name
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [PATCH v2 1/1] Add a new sysctl to disable io_uring system-wide
+References: <20230629132711.1712536-1-matteorizzo@google.com>
+        <20230629132711.1712536-2-matteorizzo@google.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 29 Jun 2023 12:17:20 -0400
+In-Reply-To: <20230629132711.1712536-2-matteorizzo@google.com> (Matteo Rizzo's
+        message of "Thu, 29 Jun 2023 13:27:11 +0000")
+Message-ID: <x49mt0i5jlb.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, 29 Jun 2023 at 17:16, Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On 6/29/23 06:27, Matteo Rizzo wrote:
-> > +static int __read_mostly sysctl_io_uring_disabled;
->
-> Shouldn't this be a static key instead of an int in order to minimize the
-> performance impact on the io_uring_setup() system call? See also
-> Documentation/staging/static-keys.rst.
->
-> Thanks,
->
-> Bart.
+Matteo Rizzo <matteorizzo@google.com> writes:
 
-Is io_uring_setup in any hot path? io_uring_create is marked as __cold.
+> Introduce a new sysctl (io_uring_disabled) which can be either 0, 1,
+> or 2. When 0 (the default), all processes are allowed to create io_uring
+> instances, which is the current behavior. When 1, all calls to
+> io_uring_setup fail with -EPERM unless the calling process has
+> CAP_SYS_ADMIN. When 2, calls to io_uring_setup fail with -EPERM
+> regardless of privilege.
+>
+> Signed-off-by: Matteo Rizzo <matteorizzo@google.com>
 
---
-Matteo
+This looks good to me.  You may also consider updating the
+io_uring_setup(2) man page (part of liburing) to reflect this new
+meaning for -EPERM.
+
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+
+> ---
+>  Documentation/admin-guide/sysctl/kernel.rst | 19 +++++++++++++
+>  io_uring/io_uring.c                         | 30 +++++++++++++++++++++
+>  2 files changed, 49 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index 3800fab1619b..ee65f7aeb0cf 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -450,6 +450,25 @@ this allows system administrators to override the
+>  ``IA64_THREAD_UAC_NOPRINT`` ``prctl`` and avoid logs being flooded.
+>  
+>  
+> +io_uring_disabled
+> +=================
+> +
+> +Prevents all processes from creating new io_uring instances. Enabling this
+> +shrinks the kernel's attack surface.
+> +
+> += ==================================================================
+> +0 All processes can create io_uring instances as normal. This is the
+> +  default setting.
+> +1 io_uring creation is disabled for unprivileged processes.
+> +  io_uring_setup fails with -EPERM unless the calling process is
+> +  privileged (CAP_SYS_ADMIN). Existing io_uring instances can
+> +  still be used.
+> +2 io_uring creation is disabled for all processes. io_uring_setup
+> +  always fails with -EPERM. Existing io_uring instances can still be
+> +  used.
+> += ==================================================================
+> +
+> +
+>  kexec_load_disabled
+>  ===================
+>  
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 1b53a2ab0a27..2343ae518546 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -153,6 +153,22 @@ static __cold void io_fallback_tw(struct io_uring_task *tctx);
+>  
+>  struct kmem_cache *req_cachep;
+>  
+> +static int __read_mostly sysctl_io_uring_disabled;
+> +#ifdef CONFIG_SYSCTL
+> +static struct ctl_table kernel_io_uring_disabled_table[] = {
+> +	{
+> +		.procname	= "io_uring_disabled",
+> +		.data		= &sysctl_io_uring_disabled,
+> +		.maxlen		= sizeof(sysctl_io_uring_disabled),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_TWO,
+> +	},
+> +	{},
+> +};
+> +#endif
+> +
+>  struct sock *io_uring_get_socket(struct file *file)
+>  {
+>  #if defined(CONFIG_UNIX)
+> @@ -4000,9 +4016,18 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+>  	return io_uring_create(entries, &p, params);
+>  }
+>  
+> +static inline bool io_uring_allowed(void)
+> +{
+> +	return sysctl_io_uring_disabled == 0 ||
+> +		(sysctl_io_uring_disabled == 1 && capable(CAP_SYS_ADMIN));
+> +}
+> +
+>  SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+>  		struct io_uring_params __user *, params)
+>  {
+> +	if (!io_uring_allowed())
+> +		return -EPERM;
+> +
+>  	return io_uring_setup(entries, params);
+>  }
+>  
+> @@ -4577,6 +4602,11 @@ static int __init io_uring_init(void)
+>  
+>  	req_cachep = KMEM_CACHE(io_kiocb, SLAB_HWCACHE_ALIGN | SLAB_PANIC |
+>  				SLAB_ACCOUNT | SLAB_TYPESAFE_BY_RCU);
+> +
+> +#ifdef CONFIG_SYSCTL
+> +	register_sysctl_init("kernel", kernel_io_uring_disabled_table);
+> +#endif
+> +
+>  	return 0;
+>  };
+>  __initcall(io_uring_init);
+

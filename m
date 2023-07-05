@@ -2,68 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F29627484A7
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jul 2023 15:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DCD17484B6
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jul 2023 15:14:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231521AbjGENIv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Jul 2023 09:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60300 "EHLO
+        id S231481AbjGENOZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Jul 2023 09:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230196AbjGENIv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jul 2023 09:08:51 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821371713;
-        Wed,  5 Jul 2023 06:08:49 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-51d9695ec29so6596156a12.1;
-        Wed, 05 Jul 2023 06:08:49 -0700 (PDT)
+        with ESMTP id S229576AbjGENOY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jul 2023 09:14:24 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF521700;
+        Wed,  5 Jul 2023 06:14:23 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51e285ac32eso609444a12.2;
+        Wed, 05 Jul 2023 06:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688562528; x=1691154528;
+        d=gmail.com; s=20221208; t=1688562862; x=1691154862;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OFf4C+pKolIfJ3FTnbxpNOuHewbB0HMsfKxPwpEYr2w=;
-        b=LKSmiGUebgHvxwYc552nKdqelZCg0UjkxblXHZR9PEtd6EsNCgr6OYXx1/oe2QSI8Z
-         QYQcHVZEslaY4kfyRC12+LIePC8O35KA0dPNo8sLm9vpybkMfDXXiMkI+F/XlmezwWRa
-         Xb8kqbVx/zTtV6mEsu45D5a/aEpn0nPlJyjyHmQjfoNmrndmjTuHUYALeAOCUWU7Xx6m
-         kbJaWvGJiYqgrxeKc08ynXB3zZ5PzSZPZeWpT1oANAaVaIX5KMKeRaUywudSn8AEwPij
-         DZEpFt5dzaipnQsmjvhpiD4uCKt4pSdFkW6496Jh1nxeJdb+k94pnOCI81R4Eb9TtUbK
-         qCSQ==
+        bh=XFnYBZo50so0HQ676SxjQCTp9AZisqWkhoJS2IYjYTw=;
+        b=l4rqA1eYjEKzdn2h96nngISv6A4sjkZ1gb3S95Mm/1D2Ep/I5edyyzYMfOH4njcXEp
+         5KglOIrUjbxrLMPy2WIPs+XzvNmPIHQZCIXy+USmMI2GCwG9Z9FzA61/7bMGjK4Zb3SM
+         SrQE8O3rSIiIKeKgiWSP1hB7F1nVIrHmuVfE+jOn044pB0flmaq7wH9XjkjC+lXwaGkf
+         cm9buyaKRRdOL3kuxXiu3ACe2ouWNgXPyWD1oz2A6489VlDCgSZVkXwT8A/yb8uFojUg
+         HTIjhU1sgWq8vHLAI6mdRNNlAXYyp8/QiIAxSjTg4RTZGLuYLJ7pv698VBG4/bQ2mSl/
+         WWyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688562528; x=1691154528;
+        d=1e100.net; s=20221208; t=1688562862; x=1691154862;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OFf4C+pKolIfJ3FTnbxpNOuHewbB0HMsfKxPwpEYr2w=;
-        b=ECiZyOMUWyFg9RkQQMCchAa9cZR9ZzrsrfCk1tDwW7BobGh/7UkRC877dI3wyKieSF
-         rB9aLNW8w3Aha+8/fv/iL+xe7HC+6JOVhzfjbCRd2nLsyxrYKnKhb/fcZR6DkfVMorOq
-         ORGQ0jgvTMRDEHUC2iTPLPkbHbPNxTo9jE80Z/mB25RwPSLpT0jeJ+syV0PMD4/tQM7S
-         EbUIHOlpVV0gtM9/eSv+e9GqGNcasREJBRp3qoe9MwcLfymS67sBCXZclVSjG9bg7Il9
-         nuBMfqFEJPl0ne/k658wLongEObDEz8WyuwoJUij/YT93u32x+3e2ajjiyr5wS1Enq9m
-         85Tw==
-X-Gm-Message-State: ABy/qLZvzbZxOGu9VH2/VQH9g4gDg0wHl+b32MAs1Wwg2ns4tH9s9qKk
-        2k9R62ET/FReZNJzteYLXce2z4zpuLA=
-X-Google-Smtp-Source: APBJJlHeoWFYA2n5XwlT1gLj4iQXr07MQCK+quxyrzmDrHquH+8vbnMur+SwUvXshCvw19WiuM0JGg==
-X-Received: by 2002:a17:906:abd2:b0:991:fd87:169e with SMTP id kq18-20020a170906abd200b00991fd87169emr10261988ejb.8.1688562527809;
-        Wed, 05 Jul 2023 06:08:47 -0700 (PDT)
+        bh=XFnYBZo50so0HQ676SxjQCTp9AZisqWkhoJS2IYjYTw=;
+        b=XMgxB+FB/IbxFHWZfmioVnF4kM9mYrzkdbyQHWQLOOYAYD9GzI1DM8J7bKg5xjctP6
+         QrBln4SM5KVzqfgfy0N5U2SL6VJOC31e71JGo0EkoDG9UfADICMUAYUbEHxciNSjH7Zu
+         CstmK3SQwAGP/tXfW1PDIgM+UcqLiELGB4JWMHKYNIvJipp2iOL4OIQmbr9r3YvYYEly
+         sPipGMaiXbjgM537D3DOSsAvEWcb12RvxmtVeBlpbA4ji5bPRhSBNlKl4KBx0XIOhK1r
+         uyQf+DYI+sV/cnWonbW4CLazjKOSrHct6XhFhjz3zRIaEMWHDD+fxRpxRKeYGjNqBGlh
+         QgQg==
+X-Gm-Message-State: ABy/qLY4uVEDX5VN0PAN4nLRDxQdwfgq9uLJtB3wHsC5QjQZOH3NeHgw
+        45hmDOdG5fgnqCYu5F1/8ps=
+X-Google-Smtp-Source: APBJJlEOcdmdChoVzz2eCE9KYFG7XIfKIG8ua2jnSO4s0/472yPlq4otyAmaYTN4yHv1cgv9ixxyhQ==
+X-Received: by 2002:a50:ee05:0:b0:51d:d4dd:a0e1 with SMTP id g5-20020a50ee05000000b0051dd4dda0e1mr8720700eds.15.1688562861791;
+        Wed, 05 Jul 2023 06:14:21 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:4b35])
-        by smtp.gmail.com with ESMTPSA id e14-20020a17090681ce00b009937dbabbd5sm3127426ejx.220.2023.07.05.06.08.47
+        by smtp.gmail.com with ESMTPSA id f6-20020aa7d846000000b0051df5eefa20sm6641553eds.76.2023.07.05.06.14.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 06:08:47 -0700 (PDT)
-Message-ID: <249ca970-23e9-7b72-722e-bce4aa644dfb@gmail.com>
-Date:   Wed, 5 Jul 2023 14:05:19 +0100
+        Wed, 05 Jul 2023 06:14:21 -0700 (PDT)
+Message-ID: <d005decd-8d89-fe3f-9d27-ec471eda999f@gmail.com>
+Date:   Wed, 5 Jul 2023 14:10:52 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 06/11] io-wq: return io_worker after successful inline
- worker creation
+Subject: Re: [PATCH 07/11] io_uring: add new api to register fixed workers
 Content-Language: en-US
 To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Wanpeng Li <wanpengli@tencent.com>,
         linux-fsdevel@vger.kernel.org
 References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-7-hao.xu@linux.dev>
+ <20230609122031.183730-8-hao.xu@linux.dev>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230609122031.183730-7-hao.xu@linux.dev>
+In-Reply-To: <20230609122031.183730-8-hao.xu@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -79,98 +78,77 @@ X-Mailing-List: io-uring@vger.kernel.org
 On 6/9/23 13:20, Hao Xu wrote:
 > From: Hao Xu <howeyxu@tencent.com>
 > 
-> After creating a io worker inline successfully, return the io_worker
-> structure. This is used by fixed worker.
+> Add a new api to register fixed workers. The api is designed to register
+> fixed workers for the current task. For simplicity, it doesn't allow
+> worker number update. We have a separate unregister api to uninstall all
+> the fixed workers. And then we can register different number of fixed
+> workers again.
 > 
 > Signed-off-by: Hao Xu <howeyxu@tencent.com>
 > ---
->   io_uring/io-wq.c | 20 ++++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
+>   include/uapi/linux/io_uring.h |  9 ++++
+>   io_uring/io-wq.c              | 85 +++++++++++++++++++++++++++++++++++
+>   io_uring/io-wq.h              |  1 +
+>   io_uring/io_uring.c           | 71 +++++++++++++++++++++++++++++
+>   4 files changed, 166 insertions(+)
 > 
-> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-> index 048856eef4d4..4338e5b23b07 100644
-> --- a/io_uring/io-wq.c
-> +++ b/io_uring/io-wq.c
-> @@ -137,7 +137,7 @@ struct io_cb_cancel_data {
->   	bool cancel_all;
->   };
->   
-> -static bool create_io_worker(struct io_wq *wq, int index, bool fixed);
-> +static struct io_worker *create_io_worker(struct io_wq *wq, int index, bool fixed);
->   static void io_wq_dec_running(struct io_worker *worker);
->   static bool io_acct_cancel_pending_work(struct io_wq *wq,
->   					struct io_wq_acct *acct,
-> @@ -284,8 +284,8 @@ static bool io_wq_activate_free_worker(struct io_wq *wq,
->    * We need a worker. If we find a free one, we're good. If not, and we're
->    * below the max number of workers, create one.
->    */
-> -static bool io_wq_create_worker(struct io_wq *wq, struct io_wq_acct *acct,
-> -				bool fixed)
-> +static struct io_worker *io_wq_create_worker(struct io_wq *wq,
-> +					     struct io_wq_acct *acct, bool fixed)
->   {
->   	/*
->   	 * Most likely an attempt to queue unbounded work on an io_wq that
-> @@ -297,7 +297,7 @@ static bool io_wq_create_worker(struct io_wq *wq, struct io_wq_acct *acct,
->   	raw_spin_lock(&wq->lock);
->   	if (acct->nr_workers >= acct->max_workers) {
->   		raw_spin_unlock(&wq->lock);
-> -		return true;
-> +		return NULL;
-
-Something is not right here. The function could succeed even if it didn't
-create a new worker. Now it's a failure.
-
->   	}
->   	acct->nr_workers++;
->   	raw_spin_unlock(&wq->lock);
-> @@ -809,11 +809,11 @@ static void io_workqueue_create(struct work_struct *work)
->   		kfree(worker);
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index f222d263bc55..6dc43be5009d 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+[...]
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index c99a7a0c3f21..bb8342b4a2c6 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -4351,6 +4351,71 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+>   	return ret;
 >   }
 >   
-> -static bool create_io_worker(struct io_wq *wq, int index, bool fixed)
-> +static struct io_worker *create_io_worker(struct io_wq *wq, int index, bool fixed)
->   {
->   	struct io_wq_acct *acct = &wq->acct[index];
->   	struct io_worker *worker;
-> -	struct task_struct *tsk;
-> +	struct task_struct *tsk = NULL;
->   
->   	__set_current_state(TASK_RUNNING);
->   
-> @@ -825,7 +825,7 @@ static bool create_io_worker(struct io_wq *wq, int index, bool fixed)
->   		acct->nr_workers--;
->   		raw_spin_unlock(&wq->lock);
->   		io_worker_ref_put(wq);
-> -		return false;
-> +		return tsk ? (struct io_worker *)tsk : ERR_PTR(-ENOMEM);
+> +/*
+> + * note: this function sets fixed workers for a single task, so every
+> + * task which wants to set the fixed workers has to call this function
+> + */
+> +static __cold int io_register_iowq_fixed_workers(struct io_ring_ctx *ctx,
+> +					       void __user *arg, int nr_args)
+> +	__must_hold(&ctx->uring_lock)
+> +{
+> +	struct io_uring_task *tctx = NULL;
+> +	struct io_sq_data *sqd = NULL;
+> +	struct io_uring_fixed_worker_arg *res;
+> +	size_t size;
+> +	int i, ret;
+> +	bool zero = true;
+> +
+> +	size = array_size(nr_args, sizeof(*res));
+> +	if (size == SIZE_MAX)
+> +		return -EOVERFLOW;
 
-How it this conversion valid? I don't remember us overlaying struct
-io_worker onto task_struct
+I don't think the number of accounting classes is going to
+change, just move nr_args check from below here and have
+on-stack array of size 2.
 
->   	}
->   
->   	refcount_set(&worker->ref, 1);
-> @@ -841,8 +841,8 @@ static bool create_io_worker(struct io_wq *wq, int index, bool fixed)
->   
->   	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
->   	if (!IS_ERR(tsk)) {
-> -		if (!fixed)
-> -			io_init_new_worker(wq, worker, tsk);
-> +		io_init_new_worker(wq, worker, tsk);
-> +		return worker;
->   	} else if (fixed || !io_should_retry_thread(PTR_ERR(tsk))) {
->   		kfree(worker);
->   		goto fail;
-> @@ -851,7 +851,7 @@ static bool create_io_worker(struct io_wq *wq, int index, bool fixed)
->   		schedule_work(&worker->work);
->   	}
->   
-> -	return true;
-> +	return (struct io_worker *)tsk;
->   }
->   
->   /*
+
+struct io_uring_fixed_worker_arg res[IO_WQ_ACCT_NR];
+
+if (nr_args != IO_WQ_ACCT_NR)
+	return -EINVAL;
+
+...
+
+
+> +
+> +	res = memdup_user(arg, size);
+> +	if (IS_ERR(res))
+> +		return PTR_ERR(res);
+> +
+> +	for (i = 0; i < nr_args; i++) {
+> +		if (res[i].nr_workers) {
+> +			zero = false;
+> +			break;
+> +		}
+> +	}
+> +
 
 -- 
 Pavel Begunkov

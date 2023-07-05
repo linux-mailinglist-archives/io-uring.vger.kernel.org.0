@@ -2,67 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7687174842A
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jul 2023 14:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4BF174847E
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jul 2023 14:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbjGEM3m (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Jul 2023 08:29:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44152 "EHLO
+        id S231842AbjGEM6Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Jul 2023 08:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbjGEM3m (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jul 2023 08:29:42 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C312B0;
-        Wed,  5 Jul 2023 05:29:40 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-98e011f45ffso653728866b.3;
-        Wed, 05 Jul 2023 05:29:40 -0700 (PDT)
+        with ESMTP id S231154AbjGEM6P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jul 2023 08:58:15 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CD5DA;
+        Wed,  5 Jul 2023 05:58:14 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9891c73e0fbso136081866b.1;
+        Wed, 05 Jul 2023 05:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688560179; x=1691152179;
+        d=gmail.com; s=20221208; t=1688561893; x=1691153893;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dc8VA3wsbqCNo86QVviqL+IZiWA8s57MBU3O/pEOqYc=;
-        b=POHujdyZhsLMjuYlHANrc0WYJ8GCyvdYXGsPZF8KAUPSpAyiikd+RnticqdQ87/6FO
-         g/tYCs7NE7/9reOxfRvSWL2A5DkTVKcfBH7SY9QkvyAeAFO0b0so/lw+SR23njpXNP+u
-         /3887f4cUANoAxJXuaQI+BJXiRQCMB0SQeoUb05NLqOGFXJ+kwsxo6CnaLDIDPmrfIqz
-         5Qgp7V0wI/e6UKkZfzRoHYgJ05zK2ywExt55Ux+XDOsiRuLszZbBWSncVWrquLFxvrJU
-         3Dabt9v0dsBBnzJq6FHcSqeez4GtRjj8UEXX3bcQaNLEGpdVmUQP95qox+ph1XevqTG9
-         G4bw==
+        bh=AIZp05Hfv426kPlGeCqZ2clQ1popvUqLEfsP9qoz2zI=;
+        b=k4M/511uYJVvxigA5YCnJi4vyFeiSxMqW4xu4SrPU6dScT0xgpCs5O4MXL7flQJKkQ
+         2lpR4hyawqVt2tmBPEW6wh6Js/p0dgRMwwckljelkaC/4Lvoyg3XWQsebzs6dDaaP8yk
+         KoyeP96rgPpPCLiaAwmWWoeiiKTD5S9BtdIrH7fhP/CzXi/4hDA/2rCKPMW0A0TKUztG
+         o9UvaFkFzR4N7LpXll85yvIwLex2G88SBUEV1gNq15g3dKZLnHo2ATMrLD7zfFFsyK0a
+         RhZlw7Hs5YzqXpTPZ6gUXf//P4G1wOWR+oOihBfZYUlf0vHHivaKTh53TMWKBDCrXDlR
+         j/YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688560179; x=1691152179;
+        d=1e100.net; s=20221208; t=1688561893; x=1691153893;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dc8VA3wsbqCNo86QVviqL+IZiWA8s57MBU3O/pEOqYc=;
-        b=BB+/vOq+ucniJAnih8RbzLeR40PssW+m+ki7noPig59crY+YKTykZkELPVwzsJqfjx
-         vtC+hUl/+SLEf57S9hCsHVi1Q6TjqFksOLIRp4Qihf5rg1T8OTnd2bqW0qQ7Us7YJGpa
-         PrXRkgd7Hff7mKrw6OWbxhraq/lX26SvfJzkuKsRiHUavje//fbEMQ8FXmgDR3UHPFHQ
-         /ngv5LBzplwlYvDcwgnYmmt0clNJscil+VMx30eX2RH4Ht5JXa9nejpZED6dDVuT7B+/
-         XXye/2INOZ3c6IyAVZNGW23RBRHaft7ssZP8d5RXZNIhp/gtZeLvdkcB0qsb1jfkftxZ
-         lybg==
-X-Gm-Message-State: ABy/qLZ9q5YD2Id0jjjlKsMX3LvcqFYcGoJqRJOIzFUpTGucO11avmQ3
-        hDA3Z5fGHC3PNamJ41d9m8Y=
-X-Google-Smtp-Source: APBJJlG+fgpUrk2ZFcfYJKTSk7YfIEe9CmxG85SOYUV/WI7+4riMRR4ADT0kGXvR62LVbenJ7dpm1A==
-X-Received: by 2002:a17:906:f2da:b0:967:21:5887 with SMTP id gz26-20020a170906f2da00b0096700215887mr10359723ejb.40.1688560178939;
-        Wed, 05 Jul 2023 05:29:38 -0700 (PDT)
+        bh=AIZp05Hfv426kPlGeCqZ2clQ1popvUqLEfsP9qoz2zI=;
+        b=UfnkPxkzimUeKstGxJ4Qt5GyI5LlH7uJ2rIKlheC0Jlk9SZHd9YgQsLGmnFKSMH252
+         oBTaJ+rqC7t1qNACdJnYOX/zBwlGRNQHRDJwgz3KsxncE43ercqu5a7zF7X7bofB9EN2
+         /sqTXIn+Yb8Xumc/QxL9uPBatsiZh19cECk5kutfY6uhbvfVHhvq2mXdfOZjFQe3DH0L
+         sbB2Iplr42FHcrP9m1K6FzEP1unmWHls2IxqJLR7unAoIr4VurDvTkR/Z1V2EKMpIGch
+         vM30dkzLtNGbDX6uN9tMdANtRvGptKFTKQsPlM2SVfmfRxkA4IksRgi2qZ/IcGjSq1+o
+         uPcw==
+X-Gm-Message-State: ABy/qLachvv9LbyL5oeti04jTBlSVLum4L2UmeQBKnGevYr6bu+PT3YE
+        VuLas5pYegbgGKspEbLv7sa7wfD3rhU=
+X-Google-Smtp-Source: APBJJlHwuP22vcLedYqB+E8cnSscA65/HpTnO32PrKLIdBul80aHWTPG/4KX1zsk/o5wBhTOM3cfUw==
+X-Received: by 2002:a17:906:151:b0:989:1a52:72a1 with SMTP id 17-20020a170906015100b009891a5272a1mr1832966ejh.28.1688561892992;
+        Wed, 05 Jul 2023 05:58:12 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:4b35])
-        by smtp.gmail.com with ESMTPSA id ec10-20020a170906b6ca00b009893650453fsm14765183ejb.173.2023.07.05.05.29.38
+        by smtp.gmail.com with ESMTPSA id f5-20020a1709064dc500b0099342c87775sm5236548ejw.20.2023.07.05.05.58.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 05:29:38 -0700 (PDT)
-Message-ID: <4433fbc1-2b11-0aa0-f895-4a1d55832a75@gmail.com>
-Date:   Wed, 5 Jul 2023 13:26:14 +0100
+        Wed, 05 Jul 2023 05:58:12 -0700 (PDT)
+Message-ID: <18d85f67-2952-3649-7716-eaf947f99123@gmail.com>
+Date:   Wed, 5 Jul 2023 13:54:45 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 03/11] io-wq: add a new type io-wq worker
+Subject: Re: [PATCH 05/11] io-wq: add a new parameter for creating a new fixed
+ worker
 Content-Language: en-US
 To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Wanpeng Li <wanpengli@tencent.com>,
         linux-fsdevel@vger.kernel.org
 References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-4-hao.xu@linux.dev>
+ <20230609122031.183730-6-hao.xu@linux.dev>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230609122031.183730-4-hao.xu@linux.dev>
+In-Reply-To: <20230609122031.183730-6-hao.xu@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -78,66 +79,99 @@ X-Mailing-List: io-uring@vger.kernel.org
 On 6/9/23 13:20, Hao Xu wrote:
 > From: Hao Xu <howeyxu@tencent.com>
 > 
-> Add a new type io-wq worker IO_WORKER_F_FIXED, this type of worker
-> exists during the whole io-wq lifecycle.
+> Add a new parameter when creating new workers to indicate if users
+> want a normal or fixed worker.
 > 
 > Signed-off-by: Hao Xu <howeyxu@tencent.com>
 > ---
->   io_uring/io-wq.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
+>   io_uring/io-wq.c | 33 ++++++++++++++++++++-------------
+>   1 file changed, 20 insertions(+), 13 deletions(-)
 > 
 > diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-> index 1717f1465613..7326fef58ca7 100644
+> index bf9e9af8d9ca..048856eef4d4 100644
 > --- a/io_uring/io-wq.c
 > +++ b/io_uring/io-wq.c
-> @@ -30,6 +30,7 @@ enum {
->   	IO_WORKER_F_FREE	= 4,	/* worker on free list */
->   	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
->   	IO_WORKER_F_EXIT	= 16,	/* worker is exiting */
-> +	IO_WORKER_F_FIXED	= 32,	/* is a fixed worker */
->   };
->   
->   enum {
-> @@ -598,6 +599,11 @@ static bool is_worker_exiting(struct io_worker *worker)
->   	return worker->flags & IO_WORKER_F_EXIT;
->   }
+[...]
 >   
 > +static bool is_fixed_worker(struct io_worker *worker)
 > +{
 > +	return worker->flags & IO_WORKER_F_FIXED;
-> +}
+> +} 
 
-You move it up in Patch 5/11, I suggest to move it to the top of the
-file here.
+That's what I mentioned in the other comment.
 
-
->   static int io_wq_worker(void *data)
+> +
+>   static void create_worker_cb(struct callback_head *cb)
 >   {
->   	struct io_worker *worker = data;
-> @@ -622,8 +628,13 @@ static int io_wq_worker(void *data)
->   		/*
->   		 * Last sleep timed out. Exit if we're not the last worker,
->   		 * or if someone modified our affinity.
-> +		 * Note: fixed worker always have same lifecycle as io-wq
-> +		 * itself, and cpu affinity setting doesn't work well for
-> +		 * fixed worker, they can be manually reset to cpu other than
-> +		 * the cpuset indicated by io_wq_worker_affinity()
->   		 */
-> -		if (last_timeout && (exit_mask || acct->nr_workers > 1)) {
-> +		if (!is_fixed_worker(worker) && last_timeout &&
-> +		    (exit_mask || acct->nr_workers > 1)) {
->   			acct->nr_workers--;
->   			raw_spin_unlock(&wq->lock);
->   			__set_current_state(TASK_RUNNING);
+>   	struct io_worker *worker;
+> @@ -331,7 +337,7 @@ static void create_worker_cb(struct callback_head *cb)
+>   	}
+>   	raw_spin_unlock(&wq->lock);
+>   	if (do_create) {
+> -		create_io_worker(wq, worker->create_index);
+> +		create_io_worker(wq, worker->create_index, is_fixed_worker(worker));
+>   	} else {
+>   		atomic_dec(&acct->nr_running);
+>   		io_worker_ref_put(wq);
+> @@ -398,6 +404,8 @@ static void io_wq_dec_running(struct io_worker *worker)
+>   		return;
+>   	if (!io_acct_run_queue(acct))
+>   		return;
+> +	if (is_fixed_worker(worker))
+> +		return;
 
-If there is no work it'll continue to loop every
-WORKER_IDLE_TIMEOUT (5 * HZ), which sounds troublesome with many
-workers in the system.
+Aha, it's here. I was thinking about it a little bit more.
+Is it even correct? If you have a mixed fixed/non-fixed setup
+you presumably want non-fixed workers to kick in such situations.
+I don't remember this creation voodoo well, maybe Jens does have
+an idea.
 
-tm = is_fixed_worker(worker) ? MAX_SCHEDULE_TIMEOUT :  WORKER_IDLE_TIMEOUT;
-schedule_timeout(tm);
+>   
+>   	atomic_inc(&acct->nr_running);
+>   	atomic_inc(&wq->worker_refs);
+> @@ -601,11 +609,6 @@ static bool is_worker_exiting(struct io_worker *worker)
+>   	return worker->flags & IO_WORKER_F_EXIT;
+>   }
+[...]
+> -static bool create_io_worker(struct io_wq *wq, int index)
+> +static bool create_io_worker(struct io_wq *wq, int index, bool fixed)
+>   {
+>   	struct io_wq_acct *acct = &wq->acct[index];
+>   	struct io_worker *worker;
+> @@ -833,10 +836,14 @@ static bool create_io_worker(struct io_wq *wq, int index)
+>   	if (index == IO_WQ_ACCT_BOUND)
+>   		worker->flags |= IO_WORKER_F_BOUND;
+>   
+> +	if (fixed)
+> +		worker->flags |= IO_WORKER_F_FIXED;
+> +
+>   	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
+>   	if (!IS_ERR(tsk)) {
+> -		io_init_new_worker(wq, worker, tsk);
+> -	} else if (!io_should_retry_thread(PTR_ERR(tsk))) {
+> +		if (!fixed)
+> +			io_init_new_worker(wq, worker, tsk);
 
-Maybe?
+Why do we skip io_init_new_worker()? I assume you putting it
+into lists, but what about the rest? I.e.
+
+	tsk->worker_private = worker;
+	worker->task = tsk;
+	set_cpus_allowed_ptr(tsk, wq->cpu_mask);
+
+
+> +	} else if (fixed || !io_should_retry_thread(PTR_ERR(tsk))) {
+>   		kfree(worker);
+>   		goto fail;
+>   	} else {
+> @@ -947,7 +954,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+>   	    !atomic_read(&acct->nr_running))) {
+>   		bool did_create;
+>   
+> -		did_create = io_wq_create_worker(wq, acct);
+> +		did_create = io_wq_create_worker(wq, acct, false);
+>   		if (likely(did_create))
+>   			return;
 
 -- 
 Pavel Begunkov

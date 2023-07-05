@@ -2,67 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCD17484B6
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jul 2023 15:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 564FE7484BF
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jul 2023 15:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbjGENOZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 5 Jul 2023 09:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
+        id S232190AbjGENQm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 5 Jul 2023 09:16:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbjGENOY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jul 2023 09:14:24 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF521700;
-        Wed,  5 Jul 2023 06:14:23 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51e285ac32eso609444a12.2;
-        Wed, 05 Jul 2023 06:14:23 -0700 (PDT)
+        with ESMTP id S232198AbjGENQk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 5 Jul 2023 09:16:40 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FF5171A;
+        Wed,  5 Jul 2023 06:16:35 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-992ca792065so716104766b.2;
+        Wed, 05 Jul 2023 06:16:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688562862; x=1691154862;
+        d=gmail.com; s=20221208; t=1688562993; x=1691154993;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XFnYBZo50so0HQ676SxjQCTp9AZisqWkhoJS2IYjYTw=;
-        b=l4rqA1eYjEKzdn2h96nngISv6A4sjkZ1gb3S95Mm/1D2Ep/I5edyyzYMfOH4njcXEp
-         5KglOIrUjbxrLMPy2WIPs+XzvNmPIHQZCIXy+USmMI2GCwG9Z9FzA61/7bMGjK4Zb3SM
-         SrQE8O3rSIiIKeKgiWSP1hB7F1nVIrHmuVfE+jOn044pB0flmaq7wH9XjkjC+lXwaGkf
-         cm9buyaKRRdOL3kuxXiu3ACe2ouWNgXPyWD1oz2A6489VlDCgSZVkXwT8A/yb8uFojUg
-         HTIjhU1sgWq8vHLAI6mdRNNlAXYyp8/QiIAxSjTg4RTZGLuYLJ7pv698VBG4/bQ2mSl/
-         WWyQ==
+        bh=ky2bacl+8cb9+h1iNfSacu7+r2tigkvvezKA98Z6r80=;
+        b=Yug/YH6yIbgbFD8TQRxdDuV7hjAcm2fJdWqB9qCXHpmhtn/cSWbWdw/uYAfBA5ILHm
+         /GiYDADsUCyHUU0s+uCNkzcoNGGsC0kR+tGsmqsel8omJgoxYLzikdoa2hm3WvVge03d
+         7DivqXx4oEJg0AxI3e7yaNDTUmARYrHEPu8RlwSZAE0rOwSLZDLRGIpAC9jGTaoY1dc+
+         5GPalW7VxeA55kBHcdcLELj1pDyMSh9c7JJOvIKpWdwXLORUOATfBEHWvNAXhvoLGVhP
+         ucVxBwbfzYXOpFCYbgWO1VLwnU88bU/wkyaHL1Su42vtwawE+CmDsOxSiY3VzGYD6MpQ
+         9Zhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688562862; x=1691154862;
+        d=1e100.net; s=20221208; t=1688562993; x=1691154993;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XFnYBZo50so0HQ676SxjQCTp9AZisqWkhoJS2IYjYTw=;
-        b=XMgxB+FB/IbxFHWZfmioVnF4kM9mYrzkdbyQHWQLOOYAYD9GzI1DM8J7bKg5xjctP6
-         QrBln4SM5KVzqfgfy0N5U2SL6VJOC31e71JGo0EkoDG9UfADICMUAYUbEHxciNSjH7Zu
-         CstmK3SQwAGP/tXfW1PDIgM+UcqLiELGB4JWMHKYNIvJipp2iOL4OIQmbr9r3YvYYEly
-         sPipGMaiXbjgM537D3DOSsAvEWcb12RvxmtVeBlpbA4ji5bPRhSBNlKl4KBx0XIOhK1r
-         uyQf+DYI+sV/cnWonbW4CLazjKOSrHct6XhFhjz3zRIaEMWHDD+fxRpxRKeYGjNqBGlh
-         QgQg==
-X-Gm-Message-State: ABy/qLY4uVEDX5VN0PAN4nLRDxQdwfgq9uLJtB3wHsC5QjQZOH3NeHgw
-        45hmDOdG5fgnqCYu5F1/8ps=
-X-Google-Smtp-Source: APBJJlEOcdmdChoVzz2eCE9KYFG7XIfKIG8ua2jnSO4s0/472yPlq4otyAmaYTN4yHv1cgv9ixxyhQ==
-X-Received: by 2002:a50:ee05:0:b0:51d:d4dd:a0e1 with SMTP id g5-20020a50ee05000000b0051dd4dda0e1mr8720700eds.15.1688562861791;
-        Wed, 05 Jul 2023 06:14:21 -0700 (PDT)
+        bh=ky2bacl+8cb9+h1iNfSacu7+r2tigkvvezKA98Z6r80=;
+        b=UGNlcAThOqLj0pLm+Qopu2qtEMmwfOHnOK7b0YOuIvxuXPneD9DvbACeQYyPBdy22E
+         PvfdjbK1dR6a8/SqnvXyXnmXkEZB8gGcVWJc+pz7wI1LwGuM4cSXvC4VfJ6kIntgHJ40
+         2qj6UoKw/qhlTpjzQcg2cdFWulJrqXjPuxR3Ukog/nsx3/3Kg8I5jokKnqTD48KA6wn2
+         L4snb/Yy7nX2lTA14GFpTIuQkWrFRimE81hwY20m5CEsb7RM4Bc2Sg7CSEsuuJCPQ4nj
+         KG4lSJ0NRq0ZayhxuNCmkh+08QHLPYPtwtkQhJTsafFMYNIFSGuPzff6eCZY51DmrFTP
+         gf6g==
+X-Gm-Message-State: ABy/qLb6POeGPZbd9TB5Hk7U36dxsNIKOoOHyR9F7BUWhs6SIDx/yFRG
+        fOXHcQnQ5FG3TNyamdNOq2YuLWumdRU=
+X-Google-Smtp-Source: APBJJlFakP97cPdcR8kQ+HsNs4RVg1WB+3eIzlytJVz3++ouiVppK4Q4amYL0PtxCskZ94j8eyHBeQ==
+X-Received: by 2002:a17:906:edd2:b0:993:16b4:d5a5 with SMTP id sb18-20020a170906edd200b0099316b4d5a5mr10835595ejb.16.1688562993624;
+        Wed, 05 Jul 2023 06:16:33 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:4b35])
-        by smtp.gmail.com with ESMTPSA id f6-20020aa7d846000000b0051df5eefa20sm6641553eds.76.2023.07.05.06.14.21
+        by smtp.gmail.com with ESMTPSA id s17-20020a170906bc5100b009920a690cd9sm11038165ejv.59.2023.07.05.06.16.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 06:14:21 -0700 (PDT)
-Message-ID: <d005decd-8d89-fe3f-9d27-ec471eda999f@gmail.com>
-Date:   Wed, 5 Jul 2023 14:10:52 +0100
+        Wed, 05 Jul 2023 06:16:33 -0700 (PDT)
+Message-ID: <0205607a-d909-069a-301a-d4479d535f17@gmail.com>
+Date:   Wed, 5 Jul 2023 14:13:04 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 07/11] io_uring: add new api to register fixed workers
+Subject: Re: [PATCH 08/11] io_uring: add function to unregister fixed workers
 Content-Language: en-US
 To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Wanpeng Li <wanpengli@tencent.com>,
         linux-fsdevel@vger.kernel.org
 References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-8-hao.xu@linux.dev>
+ <20230609122031.183730-9-hao.xu@linux.dev>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230609122031.183730-8-hao.xu@linux.dev>
+In-Reply-To: <20230609122031.183730-9-hao.xu@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -78,77 +78,35 @@ X-Mailing-List: io-uring@vger.kernel.org
 On 6/9/23 13:20, Hao Xu wrote:
 > From: Hao Xu <howeyxu@tencent.com>
 > 
-> Add a new api to register fixed workers. The api is designed to register
-> fixed workers for the current task. For simplicity, it doesn't allow
-> worker number update. We have a separate unregister api to uninstall all
-> the fixed workers. And then we can register different number of fixed
-> workers again.
+> Add a new register api to unregister fixed workers.
 > 
 > Signed-off-by: Hao Xu <howeyxu@tencent.com>
 > ---
->   include/uapi/linux/io_uring.h |  9 ++++
->   io_uring/io-wq.c              | 85 +++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/io_uring.h |  3 +++
+>   io_uring/io-wq.c              | 50 ++++++++++++++++++++++++++++++++++-
 >   io_uring/io-wq.h              |  1 +
->   io_uring/io_uring.c           | 71 +++++++++++++++++++++++++++++
->   4 files changed, 166 insertions(+)
+>   io_uring/io_uring.c           | 45 +++++++++++++++++++++++++++++++
+>   4 files changed, 98 insertions(+), 1 deletion(-)
 > 
 > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index f222d263bc55..6dc43be5009d 100644
+> index 6dc43be5009d..b0a6e3106b42 100644
 > --- a/include/uapi/linux/io_uring.h
 > +++ b/include/uapi/linux/io_uring.h
-[...]
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index c99a7a0c3f21..bb8342b4a2c6 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -4351,6 +4351,71 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
->   	return ret;
->   }
+> @@ -538,6 +538,9 @@ enum {
+>   	/* set/get number of fixed workers */
+>   	IORING_REGISTER_IOWQ_FIXED_WORKERS      = 26,
 >   
-> +/*
-> + * note: this function sets fixed workers for a single task, so every
-> + * task which wants to set the fixed workers has to call this function
-> + */
-> +static __cold int io_register_iowq_fixed_workers(struct io_ring_ctx *ctx,
-> +					       void __user *arg, int nr_args)
-> +	__must_hold(&ctx->uring_lock)
-> +{
-> +	struct io_uring_task *tctx = NULL;
-> +	struct io_sq_data *sqd = NULL;
-> +	struct io_uring_fixed_worker_arg *res;
-> +	size_t size;
-> +	int i, ret;
-> +	bool zero = true;
-> +
-> +	size = array_size(nr_args, sizeof(*res));
-> +	if (size == SIZE_MAX)
-> +		return -EOVERFLOW;
+> +	/* destroy fixed workers */
+> +	IORING_UNREGISTER_IOWQ_FIXED_WORKERS      = 27,
 
-I don't think the number of accounting classes is going to
-change, just move nr_args check from below here and have
-on-stack array of size 2.
+Do we need a new code? I think it's cleaner if we use
+IORING_REGISTER_IOWQ_FIXED_WORKERS and do sth like
 
+struct io_uring_fixed_worker_arg arg;
 
-struct io_uring_fixed_worker_arg res[IO_WQ_ACCT_NR];
-
-if (nr_args != IO_WQ_ACCT_NR)
-	return -EINVAL;
-
+if (arg.nr_workers)
+	do_unregister_fixed_workers();
 ...
-
-
-> +
-> +	res = memdup_user(arg, size);
-> +	if (IS_ERR(res))
-> +		return PTR_ERR(res);
-> +
-> +	for (i = 0; i < nr_args; i++) {
-> +		if (res[i].nr_workers) {
-> +			zero = false;
-> +			break;
-> +		}
-> +	}
-> +
 
 -- 
 Pavel Begunkov

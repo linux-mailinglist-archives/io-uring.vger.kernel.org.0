@@ -2,156 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DCE474B50D
-	for <lists+io-uring@lfdr.de>; Fri,  7 Jul 2023 18:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B26074B590
+	for <lists+io-uring@lfdr.de>; Fri,  7 Jul 2023 19:11:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232327AbjGGQUO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 7 Jul 2023 12:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50312 "EHLO
+        id S229787AbjGGRL6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 7 Jul 2023 13:11:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjGGQUN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jul 2023 12:20:13 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D21B1BEE;
-        Fri,  7 Jul 2023 09:20:11 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id B4A845C0151;
-        Fri,  7 Jul 2023 12:20:10 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 07 Jul 2023 12:20:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1688746810; x=1688833210; bh=RM0mgP8xGV
-        Q+Nh9DbRaHnprRjsG173RHiqAP1dmkn7c=; b=fzU62APvTW8+dgJYTmIYymrU/c
-        LY+HivEwSTRkIC1LW8y8xnrkCKUtGQVsiZ0UUPwcQrqoJcpYgoBBoNziWePuvUPD
-        1qlMr+gHSSz921QIi+sjfN5F4kT6MT5YhfxP/uyjcPoutAHfYoGdyBtO9iOXz3bO
-        fZ6Y+ihOnPZm0qiCpgYm/eAGKzCtYTQTgx0kyOuD+QJbpm1IyXAWpKxIsYFLXOdY
-        l1+NsKwHMBNv3bWlLjpPsk/U3GWcWnhZFD4gzqXuhxMUjWh9AwdmkIaLBdRpRfgC
-        mTGGCYVTRGSVyV+N/4HhqNijVR++uWeeFInYkQ4ihKox1xqWEpkLruCEum6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1688746810; x=1688833210; bh=RM0mgP8xGVQ+N
-        h9DbRaHnprRjsG173RHiqAP1dmkn7c=; b=ky5qLHzlOrBhd0QJ3x3ae+U2fCDEZ
-        aWHzMKZYV+I39bYLCuZxu7dSH4JbWROejltB48WB0GmaVu+d/oRJHuMSp3/e8szu
-        CJ+lqMxh8JpG9r7xTh/1+nH4tlwOC9Leq/x0gwWWR+hzFM8BxqQs6LnM7G4Adt1W
-        gEbm87TREA3IjLtHjJ23hLoznXDkcB5tYP+8Jw55Jc5s8W2utj8KD3xq8z5zz5QV
-        ftDU+D/PtMUEBMThl5xjE3H38CpUTXxHxabS60k5isXtTX0w/YcNQxTGCcskQtWf
-        V1zJU/sxyzCZ+f7irAB7FTywjdiRvBX/7qi4e0/NdsdjL0SRoLT081Fng==
-X-ME-Sender: <xms:OjuoZDbIKpEXC4P-YbU1j06D9MtE8eNGJVKmcXkvx9LptqygOLEbtw>
-    <xme:OjuoZCbf1exYuY-qw-B5rTko61-JXnai9lDklcDMynue4lW2oUhoHaBbNq-b-VX6T
-    KXz_CLGUOLTWQpGSA>
-X-ME-Received: <xmr:OjuoZF9_9J8YDOfaykxPJgzC0W0lE8y4t_lxChiv3iBoSos-6fuRrixNVYgEppdHCswtutg-h9_pS4SgJRDS5OhnBKYwYwU56XyIIxAeviegDmB3aLP7TvqoFN6h>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrvddugdellecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgurhgvshcu
-    hfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrghtth
-    gvrhhnpeekieeigeekleeggfeugfehudeigeejfeehvefhleetgeeujeffvdegueefgedt
-    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnh
-    gurhgvshesrghnrghrrgiivghlrdguvg
-X-ME-Proxy: <xmx:OjuoZJoBAdiUyIpBUZ2BD56SEsvmY-7FHyBvGnDqltL1E3jt5ZGBJA>
-    <xmx:OjuoZOrOGSLkyuyj0Ar8dh0XUmuHDPx0XlqIEaB1iV96vGZwCRswuQ>
-    <xmx:OjuoZPTxgeEmDQ02kI6z-09PrYxObfVwgqPlp06E9SwrpuLE1ZLM-Q>
-    <xmx:OjuoZF0PdGem4KOLQqVXukXgoyI6x9yQ9bWD7nM0f6jlU70qo3m7xA>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Jul 2023 12:20:10 -0400 (EDT)
-From:   Andres Freund <andres@anarazel.de>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        with ESMTP id S229757AbjGGRL4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 7 Jul 2023 13:11:56 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96EE22696
+        for <io-uring@vger.kernel.org>; Fri,  7 Jul 2023 10:11:44 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id ca18e2360f4ac-7835bbeb6a0so25434039f.0
+        for <io-uring@vger.kernel.org>; Fri, 07 Jul 2023 10:11:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1688749904; x=1691341904;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8XwB6FRaSvRVVWlB+iPBaDfSHgTIJ2rhFuwDkZZcuAc=;
+        b=y+Rbar6UyJ3sB2i3EiQDFvPEZlD1XwwM5qGJIYmAebRX8uW17ML4xn/N5HnQWt+FAu
+         ISMMcTmMYwQYOpjx+Jkq3tKob3NqTQCGC4+XZnR3m70DKUp/6EHt3BK2BzhmCKi1aVOB
+         Yeeq+Lx582WcqYKvKth4egDVFkTTKkLDsyjYQuMyePXiUayjZ7GjjxnVceDFC2+LUqT8
+         tn6o3iW+b99cLFJBcPaRU0SQp3ynj7srFT13mqPWa5ehk3MfDMbAMbkExjXSfVAKRNox
+         Sop+OykcQOeWb9SRVc3YmQv5FtqkZTz6fHpxCPCnZ0zLnpSROjcMHU2XYWxZxuG6x4fQ
+         VrMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688749904; x=1691341904;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8XwB6FRaSvRVVWlB+iPBaDfSHgTIJ2rhFuwDkZZcuAc=;
+        b=i6yWBdZKGd+tPqx/3rsSVxUL+mAHFG/4TBwg0/h9W6fdhcVtBtHOBLK1/eZoBWQV52
+         PKmoELn/L87NaFbQIVbGysKM2k2qwsTKc0zEeDaFE98YpEeRKRxK4ZU9q46HLpVZwJsE
+         k4/yW9nsJ5UewH9cTGTkIQjJ1gOxl8jTV1XE5vHGsU9vCQbq6NTuzs7KbjtpFln0jFTd
+         yJytg7RxgrUwUoNj9XPdkt6nSRzAdwAo7mJbkAyRlTjgJrBCeXhZbdzxGeGMCcg+IRWD
+         FsDwUp0IBeEJIRqkekIFJH0FwCnp8df6gimbLEDd5Q7dwHr94pCUWdeujRK09mfxASUN
+         iJRw==
+X-Gm-Message-State: ABy/qLZWDPFSBzuNVULIaN5rx0wCIjCjQeXfS5P2k1gj2/zZz5nutltS
+        AxIRTIGMm+PmWot5Y02BNvRMrg==
+X-Google-Smtp-Source: APBJJlECUNSI/mC1/FFJOdkTSyrb9fFsYRyAPjKS5E/ERQJwe8dWC/ZAF4N/QNTZgPmd/TaDi2S5cA==
+X-Received: by 2002:a05:6602:1493:b0:783:6e76:6bc7 with SMTP id a19-20020a056602149300b007836e766bc7mr10257902iow.2.1688749903918;
+        Fri, 07 Jul 2023 10:11:43 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e1-20020a05660222c100b00783634b9eafsm1433746ioe.50.2023.07.07.10.11.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jul 2023 10:11:42 -0700 (PDT)
+Message-ID: <968801df-0973-4411-9092-95f272142a81@kernel.dk>
+Date:   Fri, 7 Jul 2023 11:11:41 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v1] io_uring: Use io_schedule* in cqring wait
+Content-Language: en-US
+To:     Andres Freund <andres@anarazel.de>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v1] io_uring: Use io_schedule* in cqring wait
-Date:   Fri,  7 Jul 2023 09:20:07 -0700
-Message-Id: <20230707162007.194068-1-andres@anarazel.de>
-X-Mailer: git-send-email 2.38.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230707162007.194068-1-andres@anarazel.de>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230707162007.194068-1-andres@anarazel.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-I observed poor performance of io_uring compared to synchronous IO. That
-turns out to be caused by deeper CPU idle states entered with io_uring,
-due to io_uring using plain schedule(), whereas synchronous IO uses
-io_schedule().
+On 7/7/23 10:20?AM, Andres Freund wrote:
+> I observed poor performance of io_uring compared to synchronous IO. That
+> turns out to be caused by deeper CPU idle states entered with io_uring,
+> due to io_uring using plain schedule(), whereas synchronous IO uses
+> io_schedule().
+> 
+> The losses due to this are substantial. On my cascade lake workstation,
+> t/io_uring from the fio repository e.g. yields regressions between 20%
+> and 40% with the following command:
+> ./t/io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S$use_sync -R 0 /mnt/t2/fio/write.0.0
+> 
+> This is repeatable with different filesystems, using raw block devices
+> and using different block devices.
+> 
+> Use io_schedule_prepare() / io_schedule_finish() in
+> io_cqring_wait_schedule() to address the difference.
+> 
+> After that using io_uring is on par or surpassing synchronous IO (using
+> registered files etc makes it reliably win, but arguably is a less fair
+> comparison).
+> 
+> There are other calls to schedule() in io_uring/, but none immediately
+> jump out to be similarly situated, so I did not touch them. Similarly,
+> it's possible that mutex_lock_io() should be used, but it's not clear if
+> there are cases where that matters.
 
-The losses due to this are substantial. On my cascade lake workstation,
-t/io_uring from the fio repository e.g. yields regressions between 20%
-and 40% with the following command:
-./t/io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S$use_sync -R 0 /mnt/t2/fio/write.0.0
+This looks good to me, and I also separately tested a similar patch and
+it showed good results for me even with a heavily performance oriented
+setup:
 
-This is repeatable with different filesystems, using raw block devices
-and using different block devices.
+	pread2		io_uring	io_uring w/io_sched
+QD1	185K		170K		186K
+QD2	NA		304K		327K
+QD4	NA		630K		640K
+QD8	NA		891K		892K
 
-Use io_schedule_prepare() / io_schedule_finish() in
-io_cqring_wait_schedule() to address the difference.
+I'll add this, with just one small minor cosmetic edit:
 
-After that using io_uring is on par or surpassing synchronous IO (using
-registered files etc makes it reliably win, but arguably is a less fair
-comparison).
+> @@ -2575,6 +2575,9 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx)
+>  static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+>  					  struct io_wait_queue *iowq)
+>  {
+> +	int ret;
+> +	int token;
 
-There are other calls to schedule() in io_uring/, but none immediately
-jump out to be similarly situated, so I did not touch them. Similarly,
-it's possible that mutex_lock_io() should be used, but it's not clear if
-there are cases where that matters.
+Should just be a single line.
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andres Freund <andres@anarazel.de>
----
- io_uring/io_uring.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+And I'll mark this for stable as well. Thanks!
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3bca7a79efda..4661a39de716 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2575,6 +2575,9 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx)
- static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 					  struct io_wait_queue *iowq)
- {
-+	int ret;
-+	int token;
-+
- 	if (unlikely(READ_ONCE(ctx->check_cq)))
- 		return 1;
- 	if (unlikely(!llist_empty(&ctx->work_llist)))
-@@ -2585,11 +2588,20 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 		return -EINTR;
- 	if (unlikely(io_should_wake(iowq)))
- 		return 0;
-+
-+	/*
-+	 * Use io_schedule_prepare/finish, so cpufreq can take into account
-+	 * that the task is waiting for IO - turns out to be important for low
-+	 * QD IO.
-+	 */
-+	token = io_schedule_prepare();
-+	ret = 0;
- 	if (iowq->timeout == KTIME_MAX)
- 		schedule();
- 	else if (!schedule_hrtimeout(&iowq->timeout, HRTIMER_MODE_ABS))
--		return -ETIME;
--	return 0;
-+		ret = -ETIME;
-+	io_schedule_finish(token);
-+	return ret;
- }
- 
- /*
 -- 
-2.38.0
+Jens Axboe
 

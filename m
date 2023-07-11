@@ -2,113 +2,133 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 715AF74F91C
-	for <lists+io-uring@lfdr.de>; Tue, 11 Jul 2023 22:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74A8B74F91F
+	for <lists+io-uring@lfdr.de>; Tue, 11 Jul 2023 22:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbjGKUde (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Jul 2023 16:33:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44804 "EHLO
+        id S229782AbjGKUdg (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Jul 2023 16:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbjGKUdd (ORCPT
+        with ESMTP id S229884AbjGKUdd (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 11 Jul 2023 16:33:33 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A987910E3
-        for <io-uring@vger.kernel.org>; Tue, 11 Jul 2023 13:33:31 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-6831a5caf75so125389b3a.0
-        for <io-uring@vger.kernel.org>; Tue, 11 Jul 2023 13:33:31 -0700 (PDT)
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 216DB170B
+        for <io-uring@vger.kernel.org>; Tue, 11 Jul 2023 13:33:33 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-66d6a9851f3so979242b3a.0
+        for <io-uring@vger.kernel.org>; Tue, 11 Jul 2023 13:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689107610; x=1689712410;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fB1PyYCxgU5LJD718Rda1NmZRnJIbaAlvaPfM1WjEFU=;
-        b=2W+4k/Mbz+/Ejli+Sh2T8GoOlhS8dBQUz+RHgtmGTQbho6bnbjLYPtxHh9A04HEM64
-         151wLDTklrE8zIC5U1R7P5FJRYaCGbaUHwpkpueZHDbz3KNUIWTVfuD4uB7TPOF/q57p
-         OYfNqBo1/DO+2A3HsKsHEMNdpgbtjuC6Bm2qFNwsjpGDSWDMIeQSA09ANhwqhxiXgs0g
-         sI1qGSkqxKSMaX/NdTnKsI6rYrmF9TkrJmjNLHkXtX0hz1BbnIk1BTMUaCXZLR7ppmgD
-         44NFdknLm41AodSkZlSfkvxCE4gKlFKgvxXyF1IlHiU+bvmfoaOSMB3IZWF0ORn1gzY6
-         gmxA==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689107612; x=1691699612;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7v97jP75G3VwqqaqjV+oC6sPS3RZEc8vaRf0s3+D/gs=;
+        b=SKxCWLIvvazG4YGBjUsfWOM8s8h5mAXiIzp6mRiKRMhTC6fy9lP6a1x476z0fc7I5X
+         UEaKtqJQ68ELCM+hVDG8qJ0ZEDJ2OlZbndwUqP1HAIdvVams6QKYWAxGEe9sv80jeA6s
+         oejF779Hu5OCp8JwTGHcDPfwo4i2WwmP4uO+4vIKRq//FW0K8s8KpKrVRmeNIqjwLpae
+         08zF967BVdEjjxkMZ2PCDdkhVcEpMNgRqAQWF2VA5iyT6Ywr0dQKB9/dinCBoTewq71w
+         zzTKP9YW89BeeYJZRA7EixUds8407oiM7ysM8turbt5nckBTywDVguV3XiM3ujNdAAEB
+         MeoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689107610; x=1689712410;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fB1PyYCxgU5LJD718Rda1NmZRnJIbaAlvaPfM1WjEFU=;
-        b=W7H44YAtIsFj++CrXixiKMV2ZoQ+BEwrsUihqgSUsw3/5BiQMoudvDtN2mo6MdNt32
-         XAhQR+h4kdyHke2/dOUXf69rGTyKEzyvmbkwxv5ZmPFpWF0ZPuuOoSTq4ouwuFR1lBfQ
-         7/dOwT2Rb6u3aSek78uhmlRztJjQ3v3hw9QLqhn2pMMAgRBD7/FYp/3BUsCIFslxhF1o
-         PlKgYkVLyTyZJSznjlR9zHcOjwQ1L9+d71TcboNJjYgqOvjs41wrS46mWmTyEgMEmQZz
-         CmXeOTbxTGFFWxPOrVfSiqGMfGuxvBDN+PMSXTFNF/Z6W3QHaXGhCON39NgSQSCroBoo
-         fuCw==
-X-Gm-Message-State: ABy/qLYTvQMnV7QxD3bO93xLvbKI+D2ZeTH/LIuW/Bh0ECoTEud+Ym23
-        liO8GakL+/QHyIHPxKO8771VijwIN+waB6LOE94=
-X-Google-Smtp-Source: APBJJlGYJHT1bV9rcREpfHmzdKKia792LdurTQPJZfomC7WrG2OLVvmGmz/KByIj+IZeHildskNm2Q==
-X-Received: by 2002:a05:6a00:1ca0:b0:681:9fe0:b543 with SMTP id y32-20020a056a001ca000b006819fe0b543mr17672996pfw.2.1689107610440;
-        Tue, 11 Jul 2023 13:33:30 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689107612; x=1691699612;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7v97jP75G3VwqqaqjV+oC6sPS3RZEc8vaRf0s3+D/gs=;
+        b=Bk0wTAwCEN5f7noxmj2CcOlV31W6i4WeK3UkBBcCc6aljG87G2dX98PIqGAeOR3cnm
+         J+T3/zJY5JrSMRS9WpjTKhBS7TcQGyuhFfTCCpH6vAj0N67uoSTZp54AHPz20JlWlpEV
+         2cH9n9b+XIEfuKKMDjqBgjCHD+7rXNFOAqs8/sBokckUOYFilfw2C6H91Ac/Oq4G0Ina
+         LIj1fyLMFctWgGuuYJvvFzWoxZ9e+QMCSycrRVM8bc87ffNDsXrTqwa6CvmPhbfd/bzK
+         apwxu0BamKrVB6Wh8fpxJxo0Etvs0/i+SKv1apDj8pinaQiSdo31pFay2FPFsF4mlp4q
+         sNEg==
+X-Gm-Message-State: ABy/qLbcNgDLFG69IqtEtqHooV0pEY1JH6AzxLj2tBHQOXTHztrBXfaH
+        FvhSUkjyv6EkPthy9NsIrOq1IOrjPBnHedJSnLM=
+X-Google-Smtp-Source: APBJJlEICKTVTh1X1fQ6strVzMxv0XkAE3MjS2/04VOWMiSDEOodeDA0AM2Bgry1eJUu7HHw1QYL9g==
+X-Received: by 2002:a05:6a00:3387:b0:675:8627:a291 with SMTP id cm7-20020a056a00338700b006758627a291mr16779088pfb.3.1689107612080;
+        Tue, 11 Jul 2023 13:33:32 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id fk13-20020a056a003a8d00b0067903510abbsm2108081pfb.163.2023.07.11.13.33.29
+        by smtp.gmail.com with ESMTPSA id fk13-20020a056a003a8d00b0067903510abbsm2108081pfb.163.2023.07.11.13.33.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 13:33:29 -0700 (PDT)
+        Tue, 11 Jul 2023 13:33:31 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org
-Cc:     hch@lst.de, andres@anarazel.de
-Subject: [PATCHSET 0/5] Improve async iomap DIO performance
-Date:   Tue, 11 Jul 2023 14:33:20 -0600
-Message-Id: <20230711203325.208957-1-axboe@kernel.dk>
+Cc:     hch@lst.de, andres@anarazel.de, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/5] iomap: complete polled writes inline
+Date:   Tue, 11 Jul 2023 14:33:21 -0600
+Message-Id: <20230711203325.208957-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230711203325.208957-1-axboe@kernel.dk>
+References: <20230711203325.208957-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Polled IO is always reaped in the context of the process itself, so it
+does not need to be punted to a workqueue for the completion. This is
+different than IRQ driven IO, where iomap_dio_bio_end_io() will be
+invoked from hard/soft IRQ context. For those cases we currently need
+to punt to a workqueue for further processing. For the polled case,
+since it's the task itself reaping completions, we're already in task
+context. That makes it identical to the sync completion case.
 
-iomap always punts async dio completions to a workqueue, which has a
-cost in terms of efficiency (now you need an unrelated worker to process
-it) and latency (now you're bouncing a completion through an async
-worker, which is a classic slowdown scenario).
+Testing a basic QD 1..8 dio random write with polled IO with the
+following fio job:
 
-This patchset intends to improve that situation. For polled IO, we
-always have a task reaping completions. Those do, by definition, not
-need to be punted through a workqueue. This is patch 1, and is good
-for up to an 11% improvement in my testing. Details in that patch
-commit message.
+fio --name=polled-dio-write --filename=/data1/file --time_based=1 \
+--runtime=10 --bs=4096 --rw=randwrite --norandommap --buffered=0 \
+--cpus_allowed=4 --ioengine=io_uring --iodepth=$depth --hipri=1
 
-For IRQ driven IO, it's a bit more tricky. The iomap dio completion
-will happen in hard/soft irq context, and we need a saner context to
-process these completions. IOCB_DIO_DEFER is added, which can be set
-in a struct kiocb->ki_flags by the issuer. If the completion side of
-the iocb handling understands this flag, it can choose to set a
-kiocb->dio_complete() handler and just call ki_complete from IRQ
-context. The issuer must then ensure that this callback is processed
-from a task. io_uring punts IRQ completions to task_work already, so
-it's trivial wire it up to run more of the completion before posting
-a CQE. Patches 2 and 3 add the necessary flag and io_uring support,
-and patches 4 and 5 add iomap support for it. This is good for up
-to a 37% improvement in throughput/latency for low queue depth IO,
-patch 5 has the details.
+yields:
 
-This work came about when Andres tested low queue depth dio writes
-for postgres and compared it to doing sync dio writes, showing that the
-async processing slows us down a lot.
+	Stock	Patched		Diff
+=======================================
+QD1	180K	201K		+11%
+QD2	356K	394K		+10%
+QD4	608K	650K		+7%
+QD8	827K	831K		+0.5%
 
- fs/iomap/direct-io.c | 39 +++++++++++++++++++++++++++++++++------
- include/linux/fs.h   | 30 ++++++++++++++++++++++++++++--
- io_uring/rw.c        | 24 ++++++++++++++++++++----
- 3 files changed, 81 insertions(+), 12 deletions(-)
+which shows a nice win, particularly for lower queue depth writes.
+This is expected, as higher queue depths will be busy polling
+completions while the offloaded workqueue completions can happen in
+parallel.
 
-Can also be found in a git branch here:
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/iomap/direct-io.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-https://git.kernel.dk/cgit/linux/log/?h=xfs-async-dio
-
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index ea3b868c8355..343bde5d50d3 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -161,15 +161,16 @@ void iomap_dio_bio_end_io(struct bio *bio)
+ 			struct task_struct *waiter = dio->submit.waiter;
+ 			WRITE_ONCE(dio->submit.waiter, NULL);
+ 			blk_wake_io_task(waiter);
+-		} else if (dio->flags & IOMAP_DIO_WRITE) {
++		} else if ((bio->bi_opf & REQ_POLLED) ||
++			   !(dio->flags & IOMAP_DIO_WRITE)) {
++			WRITE_ONCE(dio->iocb->private, NULL);
++			iomap_dio_complete_work(&dio->aio.work);
++		} else {
+ 			struct inode *inode = file_inode(dio->iocb->ki_filp);
+ 
+ 			WRITE_ONCE(dio->iocb->private, NULL);
+ 			INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
+ 			queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
+-		} else {
+-			WRITE_ONCE(dio->iocb->private, NULL);
+-			iomap_dio_complete_work(&dio->aio.work);
+ 		}
+ 	}
+ 
 -- 
-Jens Axboe
-
-
+2.40.1
 

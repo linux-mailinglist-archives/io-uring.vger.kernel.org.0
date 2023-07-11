@@ -2,82 +2,73 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BD674F998
-	for <lists+io-uring@lfdr.de>; Tue, 11 Jul 2023 23:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6F174F9AE
+	for <lists+io-uring@lfdr.de>; Tue, 11 Jul 2023 23:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231394AbjGKVLh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 11 Jul 2023 17:11:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60558 "EHLO
+        id S229468AbjGKVW2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 11 Jul 2023 17:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjGKVLg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Jul 2023 17:11:36 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5012410E3;
-        Tue, 11 Jul 2023 14:11:32 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id A0F8B5C00A9;
-        Tue, 11 Jul 2023 17:11:31 -0400 (EDT)
-Received: from imap50 ([10.202.2.100])
-  by compute6.internal (MEProxy); Tue, 11 Jul 2023 17:11:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1689109891; x=1689196291; bh=R7
-        QkEbjro+BOdZOzehiTZUtwj8qIEEFGxlQad+UdsRc=; b=AeXBfOWMHoSufDunrY
-        xFkFWeqkE6SShYIlFuxjP2N+mFpzXhvhP5BuXTHVimUH1XEvNJSLzuHaDen9ccDC
-        qCx03+IMyTfXozlMPJaPc6YWPcFnoByULrH44f+KkrlfrxHs2R9r9uL5zNGMSkwP
-        vpAVgGYLp19Uk5YX31QuJSvrL4ueNyePVYfiPXZM344Sf+0tRfC6aBmGwpIa9wRK
-        0T9/n4wnyKr8TPK2JKKHDER4Cb5p/J1t+4Cad8/e2yo7lSGZXv1KJsXAzdHHr/3Z
-        95IY2Gbni4+PQA/RY7pNgAjQmKWPnjL/omPjBtWbFJJuANDdPImb50Xa5Tt8za1i
-        1MKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1689109891; x=1689196291; bh=R7QkEbjro+BOd
-        ZOzehiTZUtwj8qIEEFGxlQad+UdsRc=; b=qlZYKm1kwWb+tL6szJZmeN/9buV+q
-        rPHJQhCQUT9pswQpPQnuQgzkLGMO1ojmay7Mdo37uIoqRRaVIEakZp5pGYX0KIfU
-        bS7VLl0g3QbKSjmcusAplusmA4H3B+fiP7QosZPaHQhctVgUlIsljBs7N2OXzzT9
-        C3H3iR1w4BxeJdO4YKTSmCTop/FjYZuVWF6foxXsrdNZ2U72cxibmXF/goXhjqJC
-        sosu2IoDV/EOXjgokYyhKo4pPY+PdYIAVGkkQKSpEzL9SVAbuE17Gynxqbz+Qhh1
-        HJbWu7QsJE3YoqHGXX0O1kgxP6fL8M4AxoyO3Vec0NXsssOi8pl735zRQ==
-X-ME-Sender: <xms:g8WtZDUYD6Zf6H0ihLk03fQ12kFmYkR19KMh1BQlxFFfhyij7MYBVA>
-    <xme:g8WtZLkI_9JX-Rd9wseBLQo34K4O_xc2eMgEFZxGSjraNnc0oPXKK-hkPTK07cYps
-    ZTmE5M4mAN7Si3xQcY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrfedtgdduheelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:g8WtZPZEWWgtF7wazbW14K5YyxJeXjNXxPzrAsgOh8Wt2h8y3OHgZA>
-    <xmx:g8WtZOXMos2jkM4pxOVPr3ua3B_gTd70vIrBO8sGsTaPTpSpsqv3KA>
-    <xmx:g8WtZNm_xodOqcQN2OfO6zOwk69ym8sqxhBo1S3NK83NnLcl7VuuwA>
-    <xmx:g8WtZNuvrpJrUPfEbozFbG2wzPcaEZMM1yuK3eCvGtPbEgFBqxbKgw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 2890D1700090; Tue, 11 Jul 2023 17:11:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-531-gfdfa13a06d-fm-20230703.001-gfdfa13a0
-Mime-Version: 1.0
-Message-Id: <8431d207-5e52-4f8c-a12d-276836174bad@app.fastmail.com>
-In-Reply-To: <20230711204352.214086-6-axboe@kernel.dk>
+        with ESMTP id S230305AbjGKVWX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 11 Jul 2023 17:22:23 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BE3173D
+        for <io-uring@vger.kernel.org>; Tue, 11 Jul 2023 14:22:10 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-682ae5d4184so1341864b3a.1
+        for <io-uring@vger.kernel.org>; Tue, 11 Jul 2023 14:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689110530; x=1691702530;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gA3l1yhuKOFSCNrc4pLJH2sIkbUZixeTWwlssXNtbNw=;
+        b=a51Yb+l2+T+BEYpdjBPQAGmZ4P1Os4bcoMbvwS1VflIi9CZ+pw9FXCG+hhUUui8yYr
+         rE7BGgLFALSet+fLPFVwOeuLXGOg0qW5Jl1cwQUwBcyCtk8qb1teTuP9ebjgonBl7zvV
+         +XRxxunDFNk/GMI5ry1KGp3srr+8TvTvTHLcpSHRN8Jf7gKUougtGZe8Kdel982ymZ1k
+         F/2Yw4To9rP+1CwK1ouNjPsNyGrNhZloSyj0p6w3F17Y/cCTSQzLUzzEzE5oVfdEQc3l
+         cNAN+zk08fFQBEm+MW361Nn6ydH4TGYb2R7a1EmGvxwdJ1XDnIJEAthXjpBj7yC3llc+
+         1daQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689110530; x=1691702530;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gA3l1yhuKOFSCNrc4pLJH2sIkbUZixeTWwlssXNtbNw=;
+        b=Yl1auC4yj0rxwh9zBJ66mV6Y5r8T7Ikf+9AQBM6+cFywd/VHLDypKzknIfVsFD0crA
+         WwbMPb6n/5tzRawIILh3v5GJ2w0WTHGvsGjQA2ZsUXQ9ZpqKP7mZ/p3XMSYJAPk0dR3q
+         nxUnVd0eohbndudnZSbxlv7jae30AsXb4cHjfF4lHzGkjlJEh6nOKwEWVaeTJs0Ht1Eu
+         Ab3uoXn3cGYdS652qMhbKp92+NfHSgjOY0rbFntSPtsqx+3J27MOtG2LyhUaJbgd3RHv
+         49kpZqqTSyy9gTM2Du1CxLqIpPZNJQIpGEXz466psrZGU1AAW+K6IlfulWQQuP0I+pNo
+         kAAQ==
+X-Gm-Message-State: ABy/qLZAETtJYDdvoampNLnDKs1isN5PH1Imyq8OyMSrgJ2etaHZRJ6R
+        h+ieQbENFiHZIcjHVscyNT/blg==
+X-Google-Smtp-Source: APBJJlFVfxfkuXNd5u2rO+Y6efYLXZMTgIkaHOTtf3/LXtk9M0ngHOLb+o3MMkbyvcpHedshSbiJOw==
+X-Received: by 2002:a05:6a21:32a3:b0:132:4913:b651 with SMTP id yt35-20020a056a2132a300b001324913b651mr4312798pzb.3.1689110530093;
+        Tue, 11 Jul 2023 14:22:10 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id n18-20020a638f12000000b00548d361c137sm2015321pgd.61.2023.07.11.14.22.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jul 2023 14:22:09 -0700 (PDT)
+Message-ID: <048cfbce-5238-2580-2d53-2ca740e72d79@kernel.dk>
+Date:   Tue, 11 Jul 2023 15:22:08 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 5/5] io_uring: add IORING_OP_WAITID support
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christian Brauner <brauner@kernel.org>
 References: <20230711204352.214086-1-axboe@kernel.dk>
  <20230711204352.214086-6-axboe@kernel.dk>
-Date:   Tue, 11 Jul 2023 23:11:09 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Jens Axboe" <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Christian Brauner" <brauner@kernel.org>
-Subject: Re: [PATCH 5/5] io_uring: add IORING_OP_WAITID support
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+ <8431d207-5e52-4f8c-a12d-276836174bad@app.fastmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8431d207-5e52-4f8c-a12d-276836174bad@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,33 +76,40 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 11, 2023, at 22:43, Jens Axboe wrote:
-> This adds support for an async version of waitid(2), in a fully async
-> version. If an event isn't immediately available, wait for a callback
-> to trigger a retry.
->
-> The format of the sqe is as follows:
->
-> sqe->len		The 'which', the idtype being queried/waited for.
-> sqe->fd			The 'pid' (or id) being waited for.
-> sqe->file_index		The 'options' being set.
-> sqe->addr2		A pointer to siginfo_t, if any, being filled in.
->
-> buf_index, add3, and waitid_flags are reserved/unused for now.
-> waitid_flags will be used for options for this request type. One
-> interesting use case may be to add multi-shot support, so that the
-> request stays armed and posts a notification every time a monitored
-> process state change occurs.
->
-> Note that this does not support rusage, on Arnd's recommendation.
->
-> See the waitid(2) man page for details on the arguments.
->
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On 7/11/23 3:11?PM, Arnd Bergmann wrote:
+> On Tue, Jul 11, 2023, at 22:43, Jens Axboe wrote:
+>> This adds support for an async version of waitid(2), in a fully async
+>> version. If an event isn't immediately available, wait for a callback
+>> to trigger a retry.
+>>
+>> The format of the sqe is as follows:
+>>
+>> sqe->len		The 'which', the idtype being queried/waited for.
+>> sqe->fd			The 'pid' (or id) being waited for.
+>> sqe->file_index		The 'options' being set.
+>> sqe->addr2		A pointer to siginfo_t, if any, being filled in.
+>>
+>> buf_index, add3, and waitid_flags are reserved/unused for now.
+>> waitid_flags will be used for options for this request type. One
+>> interesting use case may be to add multi-shot support, so that the
+>> request stays armed and posts a notification every time a monitored
+>> process state change occurs.
+>>
+>> Note that this does not support rusage, on Arnd's recommendation.
+>>
+>> See the waitid(2) man page for details on the arguments.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Does this require argument conversion for compat tasks?
+> 
+> Even without the rusage argument, I think the siginfo
+> remains incompatible with 32-bit tasks, unfortunately.
 
-Does this require argument conversion for compat tasks?
+Hmm yes good point, if compat_siginfo and siginfo are different, then it
+does need handling for that. Would be a trivial addition, I'll make that
+change. Thanks Arnd!
 
-Even without the rusage argument, I think the siginfo
-remains incompatible with 32-bit tasks, unfortunately.
+-- 
+Jens Axboe
 
-     Arnd

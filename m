@@ -2,128 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21AD5750BA3
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 17:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD28750BAE
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 17:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232358AbjGLPBh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Jul 2023 11:01:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49786 "EHLO
+        id S232937AbjGLPDF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Jul 2023 11:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232483AbjGLPBg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 11:01:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6951BD5
-        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689174048;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1ZIW1KwvmIaxIuMhQXrJgeC1DduNF7JkhT3ti1B2t+w=;
-        b=Ch7CoyFe7B+4cSdcdFqRkRqNg5ajhdj/E1U3d36rWJRAtP1dW3U/fgr4Zj6WXPHPdasc1k
-        kyyLJw/pTpqxMgybaT04l/epRoEdxMWptD00bCCYOEigl1zD3z4hc8Yi/AaBj2/AT0jMyn
-        wBEXv/JiAUZDlv/0dPtiK8isE139fUs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-449-oTZ0gMzAMY2ZXr5-9R4uVQ-1; Wed, 12 Jul 2023 11:00:44 -0400
-X-MC-Unique: oTZ0gMzAMY2ZXr5-9R4uVQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1918A1064BF8;
-        Wed, 12 Jul 2023 15:00:42 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21E2240C206F;
-        Wed, 12 Jul 2023 15:00:40 +0000 (UTC)
-Date:   Wed, 12 Jul 2023 11:00:39 -0400
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     io-uring@vger.kernel.org,
-        Ammar Faizi <ammar.faizi@students.amikom.ac.id>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-        Guillem Jover <guillem@hadrons.org>
-Subject: Re: False positives in nolibc check
-Message-ID: <20230712150039.GA222963@fedora>
-References: <20230620133152.GA2615339@fedora>
- <ZJHKdAf2tPe+6BS6@biznet-home.integral.gnuweeb.org>
- <20230621100447.GD2667602@fedora>
- <ZJLOpuoI5X5IGAdk@biznet-home.integral.gnuweeb.org>
+        with ESMTP id S233056AbjGLPC5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 11:02:57 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A881BE3
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:02:54 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id ca18e2360f4ac-780c89d1998so64418539f.1
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:02:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689174174; x=1689778974;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TLQm5bobYRpvRd6WmBwN9aG08JplzkH4U4TwT6lX9AA=;
+        b=EkT4ReaRuKGlEkv2BvV/PQcOWBlBRYoID8Jgux9TIRlY0ZdGLEmNA3+mAdZNEkD/r6
+         bD8+IRyRk6623ZjBwTpDxIwG6+0yRoCFap6pYBSjNHZ/baJGi2LQ16r+18+xDxi9Ljve
+         6o1UXRxoe/mgm0ESbrVQdDgkXl3NjRnjUtZIlnO6klraBP0YPwgtWP7eP1HidIchDXEB
+         nB85A+CjnBZuelW5n7W02UPgKXBa8G/4gwaJ/jQPdwUgiOhkwV7FN+jLu/0ARV/gc+6H
+         P8rhufl3S1CqM9QMjpbZ1HApJnxemUn97vFlYuj8OPq2FaFVwxD2mMxPA5Kcf1QhM76o
+         UnJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689174174; x=1689778974;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLQm5bobYRpvRd6WmBwN9aG08JplzkH4U4TwT6lX9AA=;
+        b=Gr+e+JIGV1N85/PNnG0yqx046WALVmDfnHEdxy9L3DDs3ZDpInaL7jx9NJOl4ocj8T
+         86Tq9ElTKhXmls4FvQv/EKh5cP5vGVZOC4DyPfePZO6DsKpdt619MpvwxQhJ/U0hqhHR
+         GGgZCsl+inevnXc5iZV3n9RLtcoctxCaUM/JnCX6kH4I9yrYEySC6lS3PK0AOXlcfyA4
+         TGHkpMk1VDrhzcxRG+neqzkKCUlcHOCPjgnYqdNK3k+Eb8YyZSGiuyLEug8syzb7lDLO
+         qtfCbRdvS/GaYTmz5t3FmmvvKS5ttNOKyHTnLZNEwFK0BG4bV97g2MKEJk+PWj4HYmqu
+         qijw==
+X-Gm-Message-State: ABy/qLbXzCFXsJqyD1N7Ea2lVd7+ju0rzHU8a6evgE37rX3xKOz9vBBN
+        Lm9D33ST2pfxBsOhN9X4IBO9IyK4Qdl+SrCKkBw=
+X-Google-Smtp-Source: APBJJlFoiUJhUSnTet5H0/b2xbd/nDOd7gz6e1zOW/UFPsD8hfAydY/3/iufmlmQ1GqL5+pdCKtZjg==
+X-Received: by 2002:a05:6602:1493:b0:783:6e76:6bc7 with SMTP id a19-20020a056602149300b007836e766bc7mr24743458iow.2.1689174174097;
+        Wed, 12 Jul 2023 08:02:54 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id a13-20020a6b660d000000b00786fe5039b8sm1361190ioc.46.2023.07.12.08.02.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jul 2023 08:02:53 -0700 (PDT)
+Message-ID: <3e2ba7d7-0431-7558-2ece-89ce266f7792@kernel.dk>
+Date:   Wed, 12 Jul 2023 09:02:52 -0600
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="blgJMPHa9ceW7C0S"
-Content-Disposition: inline
-In-Reply-To: <ZJLOpuoI5X5IGAdk@biznet-home.integral.gnuweeb.org>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 2/7] futex: factor out the futex wake handling
+Content-Language: en-US
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com
+References: <20230712004705.316157-1-axboe@kernel.dk>
+ <20230712004705.316157-3-axboe@kernel.dk>
+ <20230712085803.GD3100107@hirez.programming.kicks-ass.net>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230712085803.GD3100107@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On 7/12/23 2:58?AM, Peter Zijlstra wrote:
+> On Tue, Jul 11, 2023 at 06:47:00PM -0600, Jens Axboe wrote:
+>> In preparation for having another waker that isn't futex_wake_mark(),
+>> add a wake handler in futex_q. No extra data is associated with the
+>> handler outside of struct futex_q itself. futex_wake_mark() is defined as
+>> the standard wakeup helper, now set through futex_q_init like other
+>> defaults.
+> 
+> Urgh... so if I understand things right, you're going to replace this
+> with a custom wake function that does *NOT* put the task on the wake_q.
+> 
+> The wake_q will thus be empty and the task does not get woken up. I'm
+> presuming someone gets a notification instead somewhere somehow.
 
---blgJMPHa9ceW7C0S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right. The custom wake function is responsible for waking the task, if
+that is what needs to happen. On the io_uring side, the callback would
+queue work for the original task to post a completion event, which would
+then also wake it up obviously.
 
-On Wed, Jun 21, 2023 at 05:19:18PM +0700, Ammar Faizi wrote:
-> On Wed, Jun 21, 2023 at 12:04:47PM +0200, Stefan Hajnoczi wrote:
-> > I don't know which features require the toolchain and libc to cooperate.
-> > I guess Thread Local Storage won't work and helper functions that
-> > compilers emit (like the memset example that Alviro gave).
->=20
-> Yeah, thread local storage won't work. But the point of my question is
-> about liburing. So I expect the answer that's relevant to liburing.
->=20
-> I mean, you can still use libc and TLS in your app even though the
-> liburing.so and liburing.a are nolibc.
->=20
-> > Disabling hardening because it requires work to support it in a nolibc
-> > world seems dubious to me. I don't think it's a good idea for io_uring
-> > to lower security because that hurts its image and reduces adoption.
-> > Especially right now, when the security of io_uring is being scrutinized
-> > (https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-li=
-nux.html).
-> >=20
-> > While I'm sharing these opinions with you, I understand that some people
-> > want nolibc and are fine with disabling the stack protector. The main
-> > thing I would like is for liburing to compile or fail with a clear error
-> > message instead of breaking somewhere during the build.
->=20
-> Right, my mistake. I think it's fixed in upstream by commit:
->=20
->    319f4be8bd049055c333185928758d0fb445fc43 ("build: Disable stack protec=
-tor unconditionally")
->=20
-> Please give it a whirl. I apologize for breaking the Fedora build.
+> I might've been nice to mention some of this somewhere ...
 
-No need to apologize! Thanks for taking a look.
+I'll expand the commit message a bit, it is a bit light.
 
-I ran an rpmbuild with liburing.git/master and it succeeds now.
-
-Stefan
-
---blgJMPHa9ceW7C0S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmSuwBcACgkQnKSrs4Gr
-c8gF2Af/RmrbAcd0u3gFhgVT4alzfylxdT5QgLuCouF2IM8ZOftMrT2VnOmaYwWr
-vnYLQw/hOEioSnARQqvFWQnlRbMbAe3NPwqa6mw6LQNV9hd3WeGHSrn1NK2oboWR
-Y2G+ZhGm5nU3agsA2cgVXeQImXb87iv4b40DK+hphiy3nynr4naMaAMQ908Ayi2j
-/ppHoyXZnoWpw2JxyxF1jlvVTBo0tyOIQP/yXiyllDCS03vt3CGrIhGKgrH30zdM
-3bP0pK72h8yswwPGqzllWTszHxSewqdDFeDxlWCvnqKZf3Ew6jkFbHDBxmuq0Ok3
-Cz7PrNtRP3cJNS7Ufz8T9mCOWhM/VA==
-=LLKO
------END PGP SIGNATURE-----
-
---blgJMPHa9ceW7C0S--
+-- 
+Jens Axboe
 

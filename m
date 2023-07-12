@@ -2,30 +2,30 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 357B3750074
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 09:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E28687500A4
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 10:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbjGLHxh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Jul 2023 03:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
+        id S230047AbjGLIDI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Jul 2023 04:03:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231797AbjGLHxg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 03:53:36 -0400
-Received: from out-24.mta0.migadu.com (out-24.mta0.migadu.com [91.218.175.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4073DE77
-        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 00:53:35 -0700 (PDT)
-Message-ID: <858c3f16-ffb3-217e-b5d6-fcc63ef9c401@linux.dev>
+        with ESMTP id S232011AbjGLICU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 04:02:20 -0400
+Received: from out-59.mta0.migadu.com (out-59.mta0.migadu.com [IPv6:2001:41d0:1004:224b::3b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CAA1FC7
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 01:01:17 -0700 (PDT)
+Message-ID: <95e2b151-ac0e-b0f6-567f-9bc9a802e0da@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689148413;
+        t=1689148867;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FC42AF7xix5hDLWrq2t7lf71x97Aeew4iatdDcbvI/k=;
-        b=kuZPChWNeKsG/KDgvuhXuMbYLYihVnXzPB1re2KFiq9BTKXFiU/NkrZtGW/8seNtjL1CDD
-        bpbeaocDtE/qkypWN5rDO6eFejmZpHE7E/ZvaogBBDqQesB0ESGD0FwEKfFWx4Hsa3CYEQ
-        pjhJd/86jh13krreotIQnwrkS5ndPmo=
-Date:   Wed, 12 Jul 2023 15:53:24 +0800
+        bh=6yj6XybnIwDjNgThNnuY+kBs95bcm6g2Kc+E77PmFOY=;
+        b=Y9y/MEH6IoMOYMAlPSeWdpieOMU1x+VwYG4N3g+CfS1IvMxlZEKvxBzK0pLTZyygyh88OP
+        acLZ4OqH/4zTqF34Cbw10Q3sGAnkYii7geNQy19bg7zxtS80KM6yKW5ty6LEgrN/ARgB6U
+        zxgxGrNVYIAzyLwIWwg/dCd5l8X1N3Q=
+Date:   Wed, 12 Jul 2023 16:01:00 +0800
 MIME-Version: 1.0
 Subject: Re: [PATCH 3/3] io_uring: add support for getdents
 Content-Language: en-US
@@ -48,7 +48,7 @@ X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -100,6 +100,12 @@ On 7/11/23 20:15, Dominique Martinet wrote:
 > 
 > If file is NULL here things will just blow up in vfs_getdents anyway,
 > let's remove the useless check
+
+Sorry, forgot this one. Actually I think the file NULL check is not 
+necessary here since it has been done in general code path in 
+io_assign_file()
+
+
 > 
 >> +		if (file_count(file) > 1)
 > 
@@ -113,11 +119,6 @@ On 7/11/23 20:15, Dominique Martinet wrote:
 > waiting and both would process getdents or seek or whatever in
 > parallel.
 > 
-
-Hi Dominique,
-
-This file_count(file) is atomic_read, so I believe no race condition here.
-
 > 
 > That aside I don't see any obvious problem with this.
 > 

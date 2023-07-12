@@ -2,68 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD28750BAE
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 17:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5F3750BC0
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 17:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232937AbjGLPDF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Jul 2023 11:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51800 "EHLO
+        id S233098AbjGLPFb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Jul 2023 11:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233056AbjGLPC5 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 11:02:57 -0400
+        with ESMTP id S232869AbjGLPF2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 11:05:28 -0400
 Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A881BE3
-        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:02:54 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id ca18e2360f4ac-780c89d1998so64418539f.1
-        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:02:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665C11BFE
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:05:22 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id ca18e2360f4ac-78706966220so31807339f.1
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 08:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689174174; x=1689778974;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689174321; x=1691766321;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TLQm5bobYRpvRd6WmBwN9aG08JplzkH4U4TwT6lX9AA=;
-        b=EkT4ReaRuKGlEkv2BvV/PQcOWBlBRYoID8Jgux9TIRlY0ZdGLEmNA3+mAdZNEkD/r6
-         bD8+IRyRk6623ZjBwTpDxIwG6+0yRoCFap6pYBSjNHZ/baJGi2LQ16r+18+xDxi9Ljve
-         6o1UXRxoe/mgm0ESbrVQdDgkXl3NjRnjUtZIlnO6klraBP0YPwgtWP7eP1HidIchDXEB
-         nB85A+CjnBZuelW5n7W02UPgKXBa8G/4gwaJ/jQPdwUgiOhkwV7FN+jLu/0ARV/gc+6H
-         P8rhufl3S1CqM9QMjpbZ1HApJnxemUn97vFlYuj8OPq2FaFVwxD2mMxPA5Kcf1QhM76o
-         UnJg==
+        bh=yobxh9isPU2AKgTKMngGO2IWKlW9bT21S+wyBx0/pKg=;
+        b=an0UQ4eOCAgJGJKOHjZ4mmJt/OXKetlsBfMnGqzi1MGxb/rgOZE6vzDPX4qPYV5qEk
+         yPxI68SJySr05VBgeTgWb62CJE7rOUm+oyH64QXu3obrFZQyzrq/CxkbGDWMVXcoH0QG
+         nYw4D/LdVCwA2dcUxv9eSornWBmZc3cTpWNZwRjbg3HCnYSB2PBXjgpMIK+4GnPetPgS
+         UbPrSvaAjZPSa995AMqRdyR38E2tkFewKqUIOTtZDBEoUIMLwKPa9A45hFFkcOgg5HVD
+         eV9eDVQWfQtYyGI5VvYU7v2DGLepa6zt5Nj5VPSutt5xdNPRVKnXvGmAkohugceXQGBR
+         HXLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689174174; x=1689778974;
+        d=1e100.net; s=20221208; t=1689174321; x=1691766321;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLQm5bobYRpvRd6WmBwN9aG08JplzkH4U4TwT6lX9AA=;
-        b=Gr+e+JIGV1N85/PNnG0yqx046WALVmDfnHEdxy9L3DDs3ZDpInaL7jx9NJOl4ocj8T
-         86Tq9ElTKhXmls4FvQv/EKh5cP5vGVZOC4DyPfePZO6DsKpdt619MpvwxQhJ/U0hqhHR
-         GGgZCsl+inevnXc5iZV3n9RLtcoctxCaUM/JnCX6kH4I9yrYEySC6lS3PK0AOXlcfyA4
-         TGHkpMk1VDrhzcxRG+neqzkKCUlcHOCPjgnYqdNK3k+Eb8YyZSGiuyLEug8syzb7lDLO
-         qtfCbRdvS/GaYTmz5t3FmmvvKS5ttNOKyHTnLZNEwFK0BG4bV97g2MKEJk+PWj4HYmqu
-         qijw==
-X-Gm-Message-State: ABy/qLbXzCFXsJqyD1N7Ea2lVd7+ju0rzHU8a6evgE37rX3xKOz9vBBN
-        Lm9D33ST2pfxBsOhN9X4IBO9IyK4Qdl+SrCKkBw=
-X-Google-Smtp-Source: APBJJlFoiUJhUSnTet5H0/b2xbd/nDOd7gz6e1zOW/UFPsD8hfAydY/3/iufmlmQ1GqL5+pdCKtZjg==
-X-Received: by 2002:a05:6602:1493:b0:783:6e76:6bc7 with SMTP id a19-20020a056602149300b007836e766bc7mr24743458iow.2.1689174174097;
-        Wed, 12 Jul 2023 08:02:54 -0700 (PDT)
+        bh=yobxh9isPU2AKgTKMngGO2IWKlW9bT21S+wyBx0/pKg=;
+        b=ET+ADjfZaLRaeY5iUsITcXq7F9/Ka15JjMU4fayFalET9ST+cTdFb52uFRcYRm8QHB
+         BlXIDSYBzLxXHF/6VFKgutgbyY/WEnm0MGiI4SwbKYHJBArxlz8LeQwfSWodCFUMsIoT
+         rNEkfkPOG6ZFQjLDjj2e//IPOJA29SZDCSW5Yhz1tivC9XYSAbGyEiDGMyStiOFalGfv
+         D50s6hui+ytEucHfptX3Cp9jj6QvzeaNKEmnKgHFDeiFHyDQvJBE3s2gK/9Aw9W5nVis
+         Spsor8swunCT0Q/dFpsDDHltsR01Y1eA3wbU5SIlIwq/mVAc9e+RLtxYjRgV0ZvXDJ6V
+         0Zkg==
+X-Gm-Message-State: ABy/qLbIdSpsSJXtte+Mrr4wyJwNpyZwPzgX7ow6Zv6W8DjIGMBm7r5v
+        bGet6/x70TcplcJdmuHsoPpcZmy3XDb+RG3k+Pk=
+X-Google-Smtp-Source: APBJJlEVZ7U9ranaRQbfulGOm4aZwd9aUzqgCzwekTQSKPCFu7pBNX7e1cnSRGyab/561dCcwQWZ/Q==
+X-Received: by 2002:a92:c688:0:b0:346:3173:2374 with SMTP id o8-20020a92c688000000b0034631732374mr18214874ilg.0.1689174321548;
+        Wed, 12 Jul 2023 08:05:21 -0700 (PDT)
 Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a13-20020a6b660d000000b00786fe5039b8sm1361190ioc.46.2023.07.12.08.02.52
+        by smtp.gmail.com with ESMTPSA id e16-20020a92d750000000b003459d60aaeasm1346425ilq.45.2023.07.12.08.05.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jul 2023 08:02:53 -0700 (PDT)
-Message-ID: <3e2ba7d7-0431-7558-2ece-89ce266f7792@kernel.dk>
-Date:   Wed, 12 Jul 2023 09:02:52 -0600
+        Wed, 12 Jul 2023 08:05:20 -0700 (PDT)
+Message-ID: <85be94ca-3ecd-a054-1b6c-a7561bde93ba@kernel.dk>
+Date:   Wed, 12 Jul 2023 09:05:20 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 2/7] futex: factor out the futex wake handling
+Subject: Re: [PATCH 3/7] io_uring: add support for futex wake and wait
 Content-Language: en-US
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@redhat.com
 References: <20230712004705.316157-1-axboe@kernel.dk>
- <20230712004705.316157-3-axboe@kernel.dk>
- <20230712085803.GD3100107@hirez.programming.kicks-ass.net>
+ <20230712004705.316157-4-axboe@kernel.dk>
+ <20230712085116.GC3100107@hirez.programming.kicks-ass.net>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230712085803.GD3100107@hirez.programming.kicks-ass.net>
+In-Reply-To: <20230712085116.GC3100107@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,28 +76,67 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/12/23 2:58?AM, Peter Zijlstra wrote:
-> On Tue, Jul 11, 2023 at 06:47:00PM -0600, Jens Axboe wrote:
->> In preparation for having another waker that isn't futex_wake_mark(),
->> add a wake handler in futex_q. No extra data is associated with the
->> handler outside of struct futex_q itself. futex_wake_mark() is defined as
->> the standard wakeup helper, now set through futex_q_init like other
->> defaults.
+On 7/12/23 2:51?AM, Peter Zijlstra wrote:
+> On Tue, Jul 11, 2023 at 06:47:01PM -0600, Jens Axboe wrote:
+>> Add support for FUTEX_WAKE/WAIT primitives.
+>>
+>> IORING_OP_FUTEX_WAKE is mix of FUTEX_WAKE and FUTEX_WAKE_BITSET, as
+>> it does support passing in a bitset.
+>>
+>> Similary, IORING_OP_FUTEX_WAIT is a mix of FUTEX_WAIT and
+>> FUTEX_WAIT_BITSET.
+>>
+>> FUTEX_WAKE is straight forward, as we can always just do those inline.
+>> FUTEX_WAIT will queue the futex with an appropriate callback, and
+>> that callback will in turn post a CQE when it has triggered.
+>>
+>> Cancelations are supported, both from the application point-of-view,
+>> but also to be able to cancel pending waits if the ring exits before
+>> all events have occurred.
+>>
+>> This is just the barebones wait/wake support. PI or REQUEUE support is
+>> not added at this point, unclear if we might look into that later.
+>>
+>> Likewise, explicit timeouts are not supported either. It is expected
+>> that users that need timeouts would do so via the usual io_uring
+>> mechanism to do that using linked timeouts.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > 
-> Urgh... so if I understand things right, you're going to replace this
-> with a custom wake function that does *NOT* put the task on the wake_q.
+> I'm not sure I'm qualified to review this :/ I really don't know
+> anything about how io-uring works. And the above doesn't really begin to
+> explain things.
+
+It's definitely catered to someone who knows how that works already, I
+feel like it'd be a bit beyond the scope of a commit message like that
+to explain io_uring internals. Then we'd have to do that every time we
+add a new request type.
+
+But I can certainly expand it a bit and hopefully make it a bit clearer.
+I'll do that.
+
+>> +static void io_futex_wake_fn(struct wake_q_head *wake_q, struct futex_q *q)
+>> +{
+>> +	struct io_futex_data *ifd = container_of(q, struct io_futex_data, q);
+>> +	struct io_kiocb *req = ifd->req;
+>> +
+>> +	__futex_unqueue(q);
+>> +	smp_store_release(&q->lock_ptr, NULL);
+>> +
+>> +	io_req_set_res(req, 0, 0);
+>> +	req->io_task_work.func = io_futex_complete;
+>> +	io_req_task_work_add(req);
+>> +}
 > 
-> The wake_q will thus be empty and the task does not get woken up. I'm
-> presuming someone gets a notification instead somewhere somehow.
+> I'm noting the WARN from futex_wake_mark() went walk-about.
 
-Right. The custom wake function is responsible for waking the task, if
-that is what needs to happen. On the io_uring side, the callback would
-queue work for the original task to post a completion event, which would
-then also wake it up obviously.
+True.
 
-> I might've been nice to mention some of this somewhere ...
+> Perhaps something like so?
 
-I'll expand the commit message a bit, it is a bit light.
+I like that, sharing more code is always better. Should be a separate
+patch though I think, or folded into patch 2. Which would you prefer?
+I'll do a separate patch for now.
 
 -- 
 Jens Axboe

@@ -2,287 +2,122 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D9E1750FAA
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 19:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D602751075
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jul 2023 20:26:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232879AbjGLR3G (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 12 Jul 2023 13:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39090 "EHLO
+        id S232356AbjGLSZ6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 12 Jul 2023 14:25:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233133AbjGLR3F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 13:29:05 -0400
-Received: from matoro.tk (unknown [IPv6:2600:1700:4b10:9d80::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C3F510C7;
-        Wed, 12 Jul 2023 10:28:49 -0700 (PDT)
-DKIM-Signature: a=rsa-sha256; bh=v/CrIgqYsKINm/wBSxhw3SfPio2VzDPLrtQmtYz80D0=;
- c=relaxed/relaxed; d=matoro.tk;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@matoro.tk; s=20230516; t=1689182925; v=1; x=1689614925;
- b=xC2ONklKe9lAiVa/YACe+T8Tx+uKnW6fdxxayyMkFkblhnLGwocffs8E1V75OPrMqsOfHS7t
- GohyDcx8WaSsk9isA86Tyu0MtioCao3T3YVNfctlZyemeVj8O1nOTdNb1Ks7hUT0TyxA59vGhIv
- v9XUFMmbYPDIsSY9qZk+f8uUrYaf7PcayrTdlXY/W4MytBUQ0eU+jZRNtsjQ9+3mfbx3IIDhxXs
- KGVsOhaITct6SI2rKNVWStrEsQA7Da8mzG2+EAQjtZaUR34A/G4qQDo1yvsEwVD+ecAayV0w9Xq
- LhcZLrGhnwn1h74IpLr4RxzwK58yTPwMBgewSGSadIx5ZZRk9seqkHH9MJOXM9GWv2Wd8Pg96b5
- OBvEX/Ubg1o98zVuCZHOz4q928In7POsY3VdOYJnEzspO9yChkl6UzJ/BHYvXRTP5xzDMNhiamG
- Nejg9YKnN5d7zH3TYVL4F3llt8lLCp407pUwQdLzQjIPJ5M4GZNxFOnbStvXqSVo8aRNdo1f0E8
- QPM86mWAcF5Lnn8jMdFQmbj+m4264F0qeajaWrz1kG4NjnCHcdIAVICeJJjZ/c/PnyH6zPXtHJc
- fFvgV0wVH5oRUty2gcQbnHRIuf7Y9DC47+Da74h/z6TwTgnufDHBi7TShnk8U+RbXJ8JhSJU81B
- 0Ay5XOIMxjU=
-Received: by matoro.tk (envelope-sender
- <matoro_mailinglist_kernel@matoro.tk>) with ESMTPS id 55dcdc0f; Wed, 12 Jul
- 2023 13:28:45 -0400
+        with ESMTP id S229584AbjGLSZ5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 12 Jul 2023 14:25:57 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C03F19A7
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 11:25:54 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4fb77f21c63so11879401e87.2
+        for <io-uring@vger.kernel.org>; Wed, 12 Jul 2023 11:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689186353; x=1691778353;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QH+MToNGXzmVAKM8WJ91Hd8fEko8qaEQox1dyEX70Ps=;
+        b=n7dLrlbbn+WXcB/6iNCiFWpExRDsxhZyOLdeNioNJh/wdfrtNzGGtltpf9rpm+J51L
+         tPISjbpInp9/7W0h80DSNfXdu4q4HDhUWEFcr06a5A9V0QtMVSsasU8hvCMZSyYTiGsj
+         vZKRx8/k84t4fzrmgSTTflBk2kG3MMvbZIq3PsES+HpILlITvz8m3S6zSCK/a7bAXI3N
+         ww+HmGsogkO9iJw+2jQY0PKsSw6sfx1TffVdTA3h6eC0C9815YKCyVtyhFPoLg2Ik8wz
+         c1DZU9LgIcYZiSnpSyLO6rqK8itj+rW8u0MWjF6AhQR0xInpm9bLcsxMRrimzmJFXmoh
+         mIoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689186353; x=1691778353;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QH+MToNGXzmVAKM8WJ91Hd8fEko8qaEQox1dyEX70Ps=;
+        b=ba9a1TGx0/+6fX/Z/jl2FvmEylcqZIF5cFBvINM3ZgE12xZsVTbpXrAl1EGBh3K65X
+         Et4TgOYyajfoaj12W76wqWjDgwS6KvvaLHlxuLczURDSB65XadfbMziwfilm5aUX3g02
+         Ts8gaxt8vDZqdgLrQlW+9iUgTk8xevbGi+/YCgXknTesyFcDRNi4RxoRtJTK7EQrQ6Ah
+         j4npPHhGltKTsQe3Izh0E3D9Ozfrfj0ifg7s2g3Qg8VjFNhx3QmvZqTJUIYI6nGlIpy7
+         t/r3EMURSDTd5phkvfMNm6P/4S5nDutZGFAtO992WjpGbp8Wk+Kktwm2dwSK3/NWRy4q
+         +0kQ==
+X-Gm-Message-State: ABy/qLbgrnpG/reLXaOljdYHjRCfqB6u07Mor7Iv/sTySuIBmn74IeCH
+        X1nc+t3YHpGIZKw8/eVJ2m3URu/aAg==
+X-Google-Smtp-Source: APBJJlFZ/DIfdWvyMiJE4Yr2A0wkXIA5BH7qVIlGdPiXCVXPT2I9j3GnMOI4nZRMLLyi8sCsMMXF4Q==
+X-Received: by 2002:ac2:5f52:0:b0:4f9:567b:c35d with SMTP id 18-20020ac25f52000000b004f9567bc35dmr14889517lfz.55.1689186352558;
+        Wed, 12 Jul 2023 11:25:52 -0700 (PDT)
+Received: from [192.168.100.16] ([81.26.145.66])
+        by smtp.gmail.com with ESMTPSA id j14-20020ac2550e000000b004f9fdb0ed8esm806334lfk.304.2023.07.12.11.25.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jul 2023 11:25:52 -0700 (PDT)
+Message-ID: <c5626637-e85b-a567-46e9-45c01ce87852@gmail.com>
+Date:   Wed, 12 Jul 2023 21:25:51 +0300
 MIME-Version: 1.0
-Date:   Wed, 12 Jul 2023 13:28:45 -0400
-From:   matoro <matoro_mailinglist_kernel@matoro.tk>
-To:     Helge Deller <deller@gmx.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Linux Ia64 <linux-ia64@vger.kernel.org>,
-        glaubitz@physik.fu-berlin.de, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH 1/5] io_uring: Adjust mapping wrt architecture aliasing
- requirements
-In-Reply-To: <ZK7TrdVXc0O6HMpQ@ls3530>
-References: <20230314171641.10542-1-axboe@kernel.dk>
- <20230314171641.10542-2-axboe@kernel.dk>
- <1d5f8f99f39e2769b9c76fbc24e2cf50@matoro.tk> <ZK7TrdVXc0O6HMpQ@ls3530>
-Message-ID: <f1bed3cc3c43083cfd86768a91402f6b@matoro.tk>
-X-Sender: matoro_mailinglist_kernel@matoro.tk
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: Allow IORING_OP_ASYNC_CANCEL to cancel requests on other rings
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <62f84473-f398-fb00-84c0-711c59bd9961@gmail.com>
+ <225f5595-bd8a-aeb9-049a-d8879d619a1d@kernel.dk>
+Content-Language: ru-RU, en-US
+From:   Artyom Pavlov <newpavlov@gmail.com>
+In-Reply-To: <225f5595-bd8a-aeb9-049a-d8879d619a1d@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RDNS_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2023-07-12 12:24, Helge Deller wrote:
-> Hi Matoro,
-> 
-> * matoro <matoro_mailinglist_kernel@matoro.tk>:
->> On 2023-03-14 13:16, Jens Axboe wrote:
->> > From: Helge Deller <deller@gmx.de>
->> >
->> > Some architectures have memory cache aliasing requirements (e.g. parisc)
->> > if memory is shared between userspace and kernel. This patch fixes the
->> > kernel to return an aliased address when asked by userspace via mmap().
->> >
->> > Signed-off-by: Helge Deller <deller@gmx.de>
->> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> > ---
->> >  io_uring/io_uring.c | 51 +++++++++++++++++++++++++++++++++++++++++++++
->> >  1 file changed, 51 insertions(+)
->> >
->> > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> > index 722624b6d0dc..3adecebbac71 100644
->> > --- a/io_uring/io_uring.c
->> > +++ b/io_uring/io_uring.c
->> > @@ -72,6 +72,7 @@
->> >  #include <linux/io_uring.h>
->> >  #include <linux/audit.h>
->> >  #include <linux/security.h>
->> > +#include <asm/shmparam.h>
->> >
->> >  #define CREATE_TRACE_POINTS
->> >  #include <trace/events/io_uring.h>
->> > @@ -3317,6 +3318,54 @@ static __cold int io_uring_mmap(struct file
->> > *file, struct vm_area_struct *vma)
->> >  	return remap_pfn_range(vma, vma->vm_start, pfn, sz,
->> > vma->vm_page_prot);
->> >  }
->> >
->> > +static unsigned long io_uring_mmu_get_unmapped_area(struct file *filp,
->> > +			unsigned long addr, unsigned long len,
->> > +			unsigned long pgoff, unsigned long flags)
->> > +{
->> > +	const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
->> > +	struct vm_unmapped_area_info info;
->> > +	void *ptr;
->> > +
->> > +	/*
->> > +	 * Do not allow to map to user-provided address to avoid breaking the
->> > +	 * aliasing rules. Userspace is not able to guess the offset address
->> > of
->> > +	 * kernel kmalloc()ed memory area.
->> > +	 */
->> > +	if (addr)
->> > +		return -EINVAL;
->> > +
->> > +	ptr = io_uring_validate_mmap_request(filp, pgoff, len);
->> > +	if (IS_ERR(ptr))
->> > +		return -ENOMEM;
->> > +
->> > +	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
->> > +	info.length = len;
->> > +	info.low_limit = max(PAGE_SIZE, mmap_min_addr);
->> > +	info.high_limit = arch_get_mmap_base(addr, current->mm->mmap_base);
->> > +#ifdef SHM_COLOUR
->> > +	info.align_mask = PAGE_MASK & (SHM_COLOUR - 1UL);
->> > +#else
->> > +	info.align_mask = PAGE_MASK & (SHMLBA - 1UL);
->> > +#endif
->> > +	info.align_offset = (unsigned long) ptr;
->> > +
->> > +	/*
->> > +	 * A failed mmap() very likely causes application failure,
->> > +	 * so fall back to the bottom-up function here. This scenario
->> > +	 * can happen with large stack limits and large mmap()
->> > +	 * allocations.
->> > +	 */
->> > +	addr = vm_unmapped_area(&info);
->> > +	if (offset_in_page(addr)) {
->> > +		info.flags = 0;
->> > +		info.low_limit = TASK_UNMAPPED_BASE;
->> > +		info.high_limit = mmap_end;
->> > +		addr = vm_unmapped_area(&info);
->> > +	}
->> > +
->> > +	return addr;
->> > +}
->> > +
->> >  #else /* !CONFIG_MMU */
->> >
->> >  static int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
->> > @@ -3529,6 +3578,8 @@ static const struct file_operations io_uring_fops
->> > = {
->> >  #ifndef CONFIG_MMU
->> >  	.get_unmapped_area = io_uring_nommu_get_unmapped_area,
->> >  	.mmap_capabilities = io_uring_nommu_mmap_capabilities,
->> > +#else
->> > +	.get_unmapped_area = io_uring_mmu_get_unmapped_area,
->> >  #endif
->> >  	.poll		= io_uring_poll,
->> >  #ifdef CONFIG_PROC_FS
->> 
->> Hi Jens, Helge - I've bisected a regression with io_uring on ia64 to 
->> this
->> patch in 6.4.  Unfortunately this breaks userspace programs using 
->> io_uring,
->> the easiest one to test is cmake with an io_uring enabled libuv (i.e., 
->> libuv
->> >= 1.45.0) which will hang.
->> 
->> I am aware that ia64 is in a vulnerable place right now which I why I 
->> am
->> keeping this spread limited.  Since this clearly involves
->> architecture-specific changes for parisc,
-> 
-> it isn't so much architecture-specific... (just one ifdef)
-> 
->> is there any chance of looking at
->> what is required to do the same for ia64?  I looked at
->> 0ef36bd2b37815719e31a72d2beecc28ca8ecd26 ("parisc: change value of 
->> SHMLBA
->> from 0x00400000 to PAGE_SIZE") and tried to replicate the SHMLBA ->
->> SHM_COLOUR change, but it made no difference.
->> 
->> If hardware is necessary for testing, I can provide it, including 
->> remote BMC
->> access for restarts/kernel debugging.  Any takers?
-> 
-> I won't have time to test myself, but maybe you could test?
-> 
-> Basically we should try to find out why 
-> io_uring_mmu_get_unmapped_area()
-> doesn't return valid addresses, while arch_get_unmapped_area()
-> [in arch/ia64/kernel/sys_ia64.c] does.
-> 
-> You could apply this patch first:
-> It introduces a memory leak (as it requests memory twice), but maybe we
-> get an idea?
-> The ia64 arch_get_unmapped_area() searches for memory from bottom
-> (flags=0), while io_uring function tries top-down first. Maybe that's
-> the problem. And I don't understand the offset_in_page() check right
-> now.
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 3bca7a79efda..93b1964d2bbb 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -3431,13 +3431,17 @@ static unsigned long 
-> io_uring_mmu_get_unmapped_area(struct file *filp,
->  	 * can happen with large stack limits and large mmap()
->  	 * allocations.
->  	 */
-> +/* compare to arch_get_unmapped_area() in arch/ia64/kernel/sys_ia64.c 
-> */
->  	addr = vm_unmapped_area(&info);
-> -	if (offset_in_page(addr)) {
-> +printk("io_uring_mmu_get_unmapped_area() address 1 is: %px\n", addr);
-> +	addr = NULL;
-> +	if (!addr) {
->  		info.flags = 0;
->  		info.low_limit = TASK_UNMAPPED_BASE;
->  		info.high_limit = mmap_end;
->  		addr = vm_unmapped_area(&info);
->  	}
-> +printk("io_uring_mmu_get_unmapped_area() returns address %px\n", 
-> addr);
-> 
->  	return addr;
->  }
-> 
-> 
-> Another option is to disable the call to 
-> io_uring_nommu_get_unmapped_area())
-> with the next patch. Maybe you could add printks() to ia64's 
-> arch_get_unmapped_area()
-> and check what it returns there?
-> 
-> @@ -3654,6 +3658,8 @@ static const struct file_operations io_uring_fops 
-> = {
->  #ifndef CONFIG_MMU
->  	.get_unmapped_area = io_uring_nommu_get_unmapped_area,
->  	.mmap_capabilities = io_uring_nommu_mmap_capabilities,
-> +#elif 0    /* IS_ENABLED(CONFIG_IA64) */
-> +	.get_unmapped_area = NULL,
->  #else
->  	.get_unmapped_area = io_uring_mmu_get_unmapped_area,
->  #endif
-> 
-> Helge
+05.07.2023 21:32, Jens Axboe wrote:
+> On 7/5/23 10:44?AM, Artyom Pavlov wrote:
+>> Greetings!
+>>
+>> Right now when I want to cancel request which runs on a different ring
+>> I have to use IORING_OP_MSG_RING with a special len value. CQEs with
+>> res equal to this special value get intercepted by my code and
+>> IORING_OP_ASYNC_CANCEL SQE gets created in the receiver ring with
+>> user_data taken from the received message. This approach kind of
+>> works, but not efficient (it requires additional round trip through
+>> the ring) and somewhat fragile (it relies on lack of collisions
+>> between the special value and potential error codes).
+>>
+>> I think it should be possible to add support for cancelling requests
+>> on other rings to IORING_OP_ASYNC_CANCEL by introducing a new flag. If
+>> the flag is enabled, then the fd field would be interpreted as fd of
+>> another ring to which cancellation request should be sent. Using the
+>> fd field would mean that the new flag would conflict with
+>> IORING_ASYNC_CANCEL_FD, so it could be worth to use a different field
+>> for receiver ring fd.
+> This could certainly work, though I think it'd be a good idea to use a
+> reserved field for the "other ring fd". As of right now, the
+> 'splice_fd_in' descriptor field is not applicable to cancel requests, so
+> that'd probably be the right place to put it.
+>
+> Some complications around locking here, as we'd need to grab the other
+> ring lock. If ring A and ring B both cancel requests for each other,
+> then there would be ordering concerns. But nothing that can't be worked
+> around.
+>
+> Let me take a quick look at that.
+Hi!
 
-Thanks Helge.  Sample output from that first patch:
+Any news?
 
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() address 1 
-is: 1ffffffffff40000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() returns 
-address 2000000001e40000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() address 1 
-is: 1ffffffffff20000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() returns 
-address 2000000001f20000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() address 1 
-is: 1ffffffffff30000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() returns 
-address 2000000001f30000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() address 1 
-is: 1ffffffffff90000
-[Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area() returns 
-address 2000000001f90000
+ >If ring A and ring B both cancel requests for each other, then there 
+would be ordering concerns.
 
-This pattern seems to be pretty stable, I tried instead just directly 
-returning the result of a call to arch_get_unmapped_area() at the end of 
-the function and it seems similar:
+I am not sure I understand the concern. Do you mean that task1 on ring1 
+attempts to cancel task2 on ring2, while task2 attempts to cancel task1? 
+I don't see how it's different when both tasks are on the same ring. 
+Task2 may run when ring2 receives the cancellation request, but it looks 
+similar to CQE for waking up task2 being already in competition ring. In 
+both cases you would simply get -ENOENT in response to such SQE.
 
-[Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area() would return 
-address 1ffffffffffd0000
-[Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would return 
-address 2000000001f00000
-[Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area() would return 
-address 1ffffffffff00000
-[Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would return 
-address 1ffffffffff00000
-[Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area() would return 
-address 1fffffffffe20000
-[Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would return 
-address 2000000002000000
-[Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area() would return 
-address 1fffffffffe30000
-[Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would return 
-address 2000000002100000
+Best regards,
+Artyom Pavlov.
 
-Is that enough of a clue to go on?

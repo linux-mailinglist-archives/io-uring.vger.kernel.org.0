@@ -2,318 +2,202 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A3D2752662
-	for <lists+io-uring@lfdr.de>; Thu, 13 Jul 2023 17:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5EF75283B
+	for <lists+io-uring@lfdr.de>; Thu, 13 Jul 2023 18:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232592AbjGMPPB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Jul 2023 11:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
+        id S232253AbjGMQZX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Jul 2023 12:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232618AbjGMPPA (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Jul 2023 11:15:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE4AC1;
-        Thu, 13 Jul 2023 08:14:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C146F6169A;
-        Thu, 13 Jul 2023 15:14:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D42BCC433C8;
-        Thu, 13 Jul 2023 15:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689261298;
-        bh=cuphCuKw9YA4JZPmXVooU1lbc4+mnudUODRU3BSMBMA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UtpR9POBdAYRSnYKPl/Fp2tSHRA/2T/A5hw9q/4wIg09jEf5+KoRsaKSa8R6mKxSo
-         j2gx6T3Ur+PGlZkvgCTdF0C2FPQkQP5eB6XaNEvmCKmPTmCSKnFU17Kv+Cx1aOOBGb
-         jQ5RY3DRLF1FUotERqo73tKM9nE7TD3EqJcC9Jo36OpESKPdcipEKbYcqTxqNLT/bp
-         iOowRwxWQaIsgB0det7IbX+vAmOiMlgJRseJZ0oTgp0ve7f5WQyxD4yu1KwR81ASS7
-         F4/DfPwMyIvL46dlO7mO281PLfmPVPpSo+/OvhugrB+a+oXME7QHr0ws1uLyVgBbI0
-         5gO8s15zQECEA==
-Date:   Thu, 13 Jul 2023 17:14:53 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 3/3] io_uring: add support for getdents
-Message-ID: <20230713-verglast-pfuschen-50197f8be98b@brauner>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-4-hao.xu@linux.dev>
- <20230712-alltag-abberufen-67a615152bee@brauner>
- <bb2aa872-c3fb-93f0-c0da-3a897f39347d@linux.dev>
- <20230713-sitzt-zudem-67bc5d860cb4@brauner>
- <da88054b-c972-f4d1-fbdc-c6e10a9c559b@linux.dev>
+        with ESMTP id S230444AbjGMQZX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Jul 2023 12:25:23 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825E0E65
+        for <io-uring@vger.kernel.org>; Thu, 13 Jul 2023 09:25:21 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-7835bbeb6a0so9247039f.0
+        for <io-uring@vger.kernel.org>; Thu, 13 Jul 2023 09:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689265521; x=1689870321;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s0dG2H2xZvUK9eAr8EXN8mj7U0nJs7wY+tkeLzgPXkM=;
+        b=32VlmzFpdfx3czU0/sS6H2Q1IepA9YnCExGVhgPRRTcN8Z1Ojq61LmUdzH21+xdDy8
+         TbBwAZALZwc80QoTq5biUM6oqTH3jyFGld7ZADkH8e17QGbK0ZmXK5e7CXA4CngQTXeh
+         oswHbDHgYJqJkP1SNsQe7GScBtnzl73YxrlFTyi902tOauPrD4ocnPDO4x3qHNtuiLyg
+         fPqZjbYdr/6ra8YFHdHMtRmEuaKrd59Fkr+UzYgAnd8KQ/EBjdtaSLJYNYrT6/gETEzD
+         coGcWioKyiemnq5Bd9RsCcScAesgPg6vJuAPDSmbvmi98zzROpxvoh+GEsSzfcZANTxf
+         FY3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689265521; x=1689870321;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0dG2H2xZvUK9eAr8EXN8mj7U0nJs7wY+tkeLzgPXkM=;
+        b=R+ZS5r/rjCoGFwBlG9vlBtU7QZyNgiNe6gUc7Fveh1pUqbM6EmQTOpU3gX4UvuI6cQ
+         z8jbCZNA552pWJOEfY3O6B1cHUkBsOMy6ZEeXhd9hhAYK2y8b8wl+Ec8PRDVzJjSAc23
+         qVWK0i25zkekpNHDHl64UnefMKDHk/Rp+Nq7cqglPpNCxhHZQJIhBBCLWRib83VrXXm+
+         FIEhM+6Pnza2AcMo7Oq1QQaOWGO2ubo4a4IuyRnJ6UyGH15hvL53GRc0F4RO3f/h5uw+
+         Hoa1Xo1SomZVy1i6oSnaGUGFNN+bM3Bu5hnOr5AEj0GUa317L5Srz2VeoVsOLBMO/W55
+         ApDg==
+X-Gm-Message-State: ABy/qLalY5nzIH6vv14r4JygXqUV4XO3/7/gl93kmHptKVmJ+h450iZW
+        lX08wQF7P4MYlLBaYNa+a9/bux4WUkS+FpzOR4E=
+X-Google-Smtp-Source: APBJJlHk/JPQdHlGkunnVUkE9IBFVBOBw5KMbzJVTmNlbHGry09SLOSB7Cu7a5Q4MOLgWr/9kQqbfw==
+X-Received: by 2002:a05:6602:3ce:b0:780:c6bb:ad8d with SMTP id g14-20020a05660203ce00b00780c6bbad8dmr2464784iov.0.1689265520844;
+        Thu, 13 Jul 2023 09:25:20 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id j20-20020a02a694000000b0042b2d9fbbecsm1894706jam.119.2023.07.13.09.25.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jul 2023 09:25:20 -0700 (PDT)
+Message-ID: <517d0c94-5f08-6f9f-2119-6374a7d7c4b8@kernel.dk>
+Date:   Thu, 13 Jul 2023 10:25:19 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <da88054b-c972-f4d1-fbdc-c6e10a9c559b@linux.dev>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 4/8] io_uring: add support for futex wake and wait
+Content-Language: en-US
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, andres@anarazel.de
+References: <20230712162017.391843-1-axboe@kernel.dk>
+ <20230712162017.391843-5-axboe@kernel.dk>
+ <20230713111513.GH3138667@hirez.programming.kicks-ass.net>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230713111513.GH3138667@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 05:06:32PM +0800, Hao Xu wrote:
-> Hi Christian,
+On 7/13/23 5:15?AM, Peter Zijlstra wrote:
+> On Wed, Jul 12, 2023 at 10:20:13AM -0600, Jens Axboe wrote:
 > 
-> On 7/13/23 15:10, Christian Brauner wrote:
-> > On Thu, Jul 13, 2023 at 12:35:07PM +0800, Hao Xu wrote:
-> > > On 7/12/23 23:27, Christian Brauner wrote:
-> > > > On Tue, Jul 11, 2023 at 07:40:27PM +0800, Hao Xu wrote:
-> > > > > From: Hao Xu <howeyxu@tencent.com>
-> > > > > 
-> > > > > This add support for getdents64 to io_uring, acting exactly like the
-> > > > > syscall: the directory is iterated from it's current's position as
-> > > > > stored in the file struct, and the file's position is updated exactly as
-> > > > > if getdents64 had been called.
-> > > > > 
-> > > > > For filesystems that support NOWAIT in iterate_shared(), try to use it
-> > > > > first; if a user already knows the filesystem they use do not support
-> > > > > nowait they can force async through IOSQE_ASYNC in the sqe flags,
-> > > > > avoiding the need to bounce back through a useless EAGAIN return.
-> > > > > 
-> > > > > Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
-> > > > > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> > > > > Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> > > > > ---
-> > > > >    include/uapi/linux/io_uring.h |  7 ++++
-> > > > >    io_uring/fs.c                 | 60 +++++++++++++++++++++++++++++++++++
-> > > > >    io_uring/fs.h                 |  3 ++
-> > > > >    io_uring/opdef.c              |  8 +++++
-> > > > >    4 files changed, 78 insertions(+)
-> > > > > 
-> > > > > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > > > > index 08720c7bd92f..6c0d521135a6 100644
-> > > > > --- a/include/uapi/linux/io_uring.h
-> > > > > +++ b/include/uapi/linux/io_uring.h
-> > > > > @@ -65,6 +65,7 @@ struct io_uring_sqe {
-> > > > >    		__u32		xattr_flags;
-> > > > >    		__u32		msg_ring_flags;
-> > > > >    		__u32		uring_cmd_flags;
-> > > > > +		__u32		getdents_flags;
-> > > > >    	};
-> > > > >    	__u64	user_data;	/* data to be passed back at completion time */
-> > > > >    	/* pack this to avoid bogus arm OABI complaints */
-> > > > > @@ -235,6 +236,7 @@ enum io_uring_op {
-> > > > >    	IORING_OP_URING_CMD,
-> > > > >    	IORING_OP_SEND_ZC,
-> > > > >    	IORING_OP_SENDMSG_ZC,
-> > > > > +	IORING_OP_GETDENTS,
-> > > > >    	/* this goes last, obviously */
-> > > > >    	IORING_OP_LAST,
-> > > > > @@ -273,6 +275,11 @@ enum io_uring_op {
-> > > > >     */
-> > > > >    #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
-> > > > > +/*
-> > > > > + * sqe->getdents_flags
-> > > > > + */
-> > > > > +#define IORING_GETDENTS_REWIND	(1U << 0)
-> > > > > +
-> > > > >    /*
-> > > > >     * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
-> > > > >     * command flags for POLL_ADD are stored in sqe->len.
-> > > > > diff --git a/io_uring/fs.c b/io_uring/fs.c
-> > > > > index f6a69a549fd4..77f00577e09c 100644
-> > > > > --- a/io_uring/fs.c
-> > > > > +++ b/io_uring/fs.c
-> > > > > @@ -47,6 +47,13 @@ struct io_link {
-> > > > >    	int				flags;
-> > > > >    };
-> > > > > +struct io_getdents {
-> > > > > +	struct file			*file;
-> > > > > +	struct linux_dirent64 __user	*dirent;
-> > > > > +	unsigned int			count;
-> > > > > +	int				flags;
-> > > > > +};
-> > > > > +
-> > > > >    int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > > > >    {
-> > > > >    	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
-> > > > > @@ -291,3 +298,56 @@ void io_link_cleanup(struct io_kiocb *req)
-> > > > >    	putname(sl->oldpath);
-> > > > >    	putname(sl->newpath);
-> > > > >    }
-> > > > > +
-> > > > > +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > > > > +{
-> > > > > +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-> > > > > +
-> > > > > +	if (READ_ONCE(sqe->off) != 0)
-> > > > > +		return -EINVAL;
-> > > > > +
-> > > > > +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> > > > > +	gd->count = READ_ONCE(sqe->len);
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> > > > > +{
-> > > > > +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-> > > > > +	struct file *file;
-> > > > > +	unsigned long getdents_flags = 0;
-> > > > > +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
-> > > > > +	bool should_lock = false;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	if (force_nonblock) {
-> > > > > +		if (!(req->file->f_mode & FMODE_NOWAIT))
-> > > > > +			return -EAGAIN;
-> > > > > +
-> > > > > +		getdents_flags = DIR_CONTEXT_F_NOWAIT;
-> > > > 
-> > > > I mentioned this on the other patch but it seems really pointless to
-> > > > have that extra flag. I would really like to hear a good reason for
-> > > > this.
-> > > > 
-> > > > > +	}
-> > > > > +
-> > > > > +	file = req->file;
-> > > > > +	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
-> > > > > +		if (file_count(file) > 1)
-> > > > 
-> > > > Assume we have a regular non-threaded process that just opens an fd to a
-> > > > file. The process registers an async readdir request via that fd for the
-> > > > file with io_uring and goes to do other stuff while waiting for the
-> > > > result.
-> > > > 
-> > > > Some time later, io_uring gets to io_getdents() and the task is still
-> > > > single threaded and the file hasn't been shared in the meantime. So
-> > > > io_getdents() doesn't take the lock and starts the readdir() call.
-> > > > 
-> > > > Concurrently, the process that registered the io_uring request was free
-> > > > to do other stuff and issued a synchronous readdir() system call which
-> > > > calls fdget_pos(). Since the fdtable still isn't shared it doesn't
-> > > > increment f_count and doesn't acquire the mutex. Now there's another
-> > > > concurrent readdir() going on.
-> > > > 
-> > > > (Similar thing can happen if the process creates a thread for example.)
-> > > > 
-> > > > Two readdir() requests now proceed concurrently which is not intended.
-> > > > Now to verify that this race can't happen with io_uring:
-> > > > 
-> > > > * regular fds:
-> > > >     It seems that io_uring calls fget() on each regular file descriptor
-> > > >     when an async request is registered. So that means that io_uring
-> > > >     always hold its own explicit reference here.
-> > > >     So as long as the original task is alive or another thread is alive
-> > > >     f_count is guaranteed to be > 1 and so the mutex would always be
-> > > >     acquired.
-> > > > 
-> > > >     If the registering process dies right before io_uring gets to the
-> > > >     io_getdents() request no other process can steal the fd anymore and in
-> > > >     that case the readdir call would not lock. But that's fine.
-> > > > 
-> > > > * fixed fds:
-> > > >     I don't know the reference counting rules here. io_uring would need to
-> > > >     ensure that it's impossible for two async readdir requests via a fixed
-> > > >     fd to race because f_count is == 1.
-> > > > 
-> > > >     Iiuc, if a process registers a file it opened as a fixed file and
-> > > >     immediately closes the fd afterwards - without anyone else holding a
-> > > >     reference to that file - and only uses the fixed fd going forward, the
-> > > >     f_count of that file in io_uring's fixed file table is always 1.
-> > > > 
-> > > >     So one could issue any number of concurrent readdir requests with no
-> > > >     mutual exclusion. So for fixed files there definitely is a race, no?
-> > > 
-> > > Hi Christian,
-> > > The ref logic for fixed file is that it does fdget() when registering
-> > 
-> > It absolutely can't be the case that io_uring uses fdget()/fdput() for
-> > long-term file references. fdget() internally use __fget_light() which
-> > avoids taking a reference on the file if the file table isn't shared. So
-> > should that file be stashed anywhere for async work its a UAF waiting to
-> > happen.
-> > 
+>> +int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>> +{
+>> +	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
+>> +
+>> +	if (unlikely(sqe->addr2 || sqe->buf_index || sqe->addr3))
+>> +		return -EINVAL;
+>> +
+>> +	iof->futex_op = READ_ONCE(sqe->fd);
+>> +	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+>> +	iof->futex_val = READ_ONCE(sqe->len);
+>> +	iof->futex_mask = READ_ONCE(sqe->file_index);
+>> +	iof->futex_flags = READ_ONCE(sqe->futex_flags);
+>> +	if (iof->futex_flags & FUTEX_CMD_MASK)
+>> +		return -EINVAL;
+>> +
+>> +	return 0;
+>> +}
 > 
-> Yes, I typed the wrong name, should be fget() not fdget().
+> I'm a little confused on the purpose of iof->futex_op, it doesn't appear
+> to be used. Instead iof->futex_flags is used as the ~FUTEX_CMD_MASK part
+> of ops.
 > 
-> > > the file, and fdput() when unregistering it. So the ref in between is
-> > > always > 1. The fixed file feature is to reduce frequent fdget/fdput,
-> > > but it does call them at the register/unregister time.
-> > 
-> > So consider:
-> > 
-> > // Caller opens some file.
-> > fd_register = open("/some/file", ...); // f_count == 1
-> > 
-> > // Caller registers that file as a fixed file
-> > IORING_REGISTER_FILES
-> > -> io_sqe_files_register()
-> >     -> fget(fd_register) // f_count == 2
-> >     -> io_fixed_file_set()
-> > 
-> > // Caller trades regular fd reference for fixed file reference completely.
-> > close(fd_register);
-> > -> close_fd(fd_register)
-> >     -> file = pick_file()
-> >     -> filp_close(file)
-> >        -> fput(file)    // f_count == 1
-> > 
-> > 
-> > // Caller spawns a second thread. Both treads issue async getdents via
-> > // fixed file.
-> > T1                                              T2
-> > IORING_OP_GETDENTS                              IORING_OP_GETDENTS
-> > 
-> > // At some point io_assign_file() must be called which has:
-> > 
-> >            if (req->flags & REQ_F_FIXED_FILE)
-> >                    req->file = io_file_get_fixed(req, req->cqe.fd, issue_flags);
-> >            else
-> >                    req->file = io_file_get_normal(req, req->cqe.fd);
-> > 
-> > // Since this is REQ_F_FIXED_FILE f_count == 1
-> > 
-> > if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
-> >          if (file_count(file) > 1)
-> > 
-> > // No lock is taken; T1 and T2 issue getdents concurrently without any
-> > // locking. -> race on f_pos
-> > 
-> > I'm happy to be convinced that this is safe, but please someone explain
-> > in detail why this can't happen and where that extra f_count reference
-> > for fixed files that this code wants to rely on is coming from.
-> > 
-> > Afaik, the whole point is that fixed files don't ever call fget()/fput()
-> > after having been registered anymore. Consequently, f_count should be 1
-> > once io_uring has taken full ownership of the file and the file can only
-> > be addressed via a fixed file reference.
-> 
-> Thanks for explanation, I now realize it's an issue, even for non-fixed
-> files when io_uring takes full ownership. for example:
-> 
-> io_uring submit a getdents          --> f_count == 2, get the lock
-> nowait submission fails             --> f_count == 2, release the lock
-> punt it to io-wq thread and return to userspace
-> close(fd)                           --> f_count == 1
-> call sync getdents64                --> doing getdents without lock
-> the io-wq thread begins to run      --> f_count == 1, doing getdents
->                                         without lock.
-> 
-> Though this looks like a silly use case but users can do that anyway.
-> 
-> How about remove this f_count > 1 small optimization in io_uring and always
-> get the lock, looks like it makes big trouble for async
-> situation. and there may often be parallel io_uring getdents in the
-> same time for a file [1], it may be not very meaningful to do this
-> file count optimization.
-> 
-> [1] I believe users will issue multiple async getdents at same time rather
-> than issue them one by one to get better performance.
+> The latter actually makes sense since you encode the actual op in the
+> IOURING_OP_ space.
 
-Could someone with perf experience try and remove that f_count == 1
-optimization from __fdget_pos() completely and make it always acquire
-the mutex? I wonder what the performance impact of that is.
+Yep, I think this is also a leftover from when I had it multiplexed a
+bit more. The liburing side got fixed for that, but neglected this bit.
+Good catch. I'll fold the below in.
+
+> 
+>> +int io_futex_wait(struct io_kiocb *req, unsigned int issue_flags)
+>> +{
+>> +	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
+>> +	struct io_ring_ctx *ctx = req->ctx;
+>> +	struct io_futex_data *ifd = NULL;
+>> +	struct futex_hash_bucket *hb;
+>> +	unsigned int flags;
+>> +	int ret;
+>> +
+>> +	if (!iof->futex_mask) {
+>> +		ret = -EINVAL;
+>> +		goto done;
+>> +	}
+>> +	if (!futex_op_to_flags(FUTEX_WAIT, iof->futex_flags, &flags)) {
+> 
+> A little confusing since you then implement FUTEX_WAIT_BITSET, but using
+> FUTEX_WAIT ensures this goes -ENOSYS when setting FUTEX_CLOCK_REALTIME,
+> since you handle timeouts through the iouring thing.
+> 
+> Perhaps a comment?
+
+OK, will add a comment on that.
+
+>> +		ret = -ENOSYS;
+>> +		goto done;
+>> +	}
+>> +
+>> +	io_ring_submit_lock(ctx, issue_flags);
+>> +	ifd = io_alloc_ifd(ctx);
+>> +	if (!ifd) {
+>> +		ret = -ENOMEM;
+>> +		goto done_unlock;
+>> +	}
+>> +
+>> +	req->async_data = ifd;
+>> +	ifd->q = futex_q_init;
+>> +	ifd->q.bitset = iof->futex_mask;
+>> +	ifd->q.wake = io_futex_wake_fn;
+>> +	ifd->req = req;
+>> +
+>> +	ret = futex_wait_setup(iof->uaddr, iof->futex_val, flags, &ifd->q, &hb);
+>> +	if (!ret) {
+>> +		hlist_add_head(&req->hash_node, &ctx->futex_list);
+>> +		io_ring_submit_unlock(ctx, issue_flags);
+>> +
+>> +		futex_queue(&ifd->q, hb);
+>> +		return IOU_ISSUE_SKIP_COMPLETE;
+>> +	}
+>> +
+>> +done_unlock:
+>> +	io_ring_submit_unlock(ctx, issue_flags);
+>> +done:
+>> +	if (ret < 0)
+>> +		req_set_fail(req);
+>> +	io_req_set_res(req, ret, 0);
+>> +	kfree(ifd);
+>> +	return IOU_OK;
+>> +}
+> 
+> Other than that, I think these things are indeed transparant wrt the
+> existing futex interface. If we add a flag this shouldn't care.
+
+Not sure I follow, what kind of flag do you want/need?
+
+
+diff --git a/io_uring/futex.c b/io_uring/futex.c
+index df65b8f3593f..bced11c87896 100644
+--- a/io_uring/futex.c
++++ b/io_uring/futex.c
+@@ -18,7 +18,6 @@ struct io_futex {
+ 		u32 __user			*uaddr;
+ 		struct futex_waitv __user	*uwaitv;
+ 	};
+-	int		futex_op;
+ 	unsigned int	futex_val;
+ 	unsigned int	futex_flags;
+ 	unsigned int	futex_mask;
+@@ -173,10 +172,9 @@ int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
+ 
+-	if (unlikely(sqe->buf_index || sqe->addr3))
++	if (unlikely(sqe->fd || sqe->buf_index || sqe->addr3))
+ 		return -EINVAL;
+ 
+-	iof->futex_op = READ_ONCE(sqe->fd);
+ 	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	iof->futex_val = READ_ONCE(sqe->len);
+ 	iof->futex_mask = READ_ONCE(sqe->file_index);
+
+-- 
+Jens Axboe
+

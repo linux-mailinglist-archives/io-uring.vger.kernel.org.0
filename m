@@ -2,314 +2,459 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFC4751961
-	for <lists+io-uring@lfdr.de>; Thu, 13 Jul 2023 09:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 289377519EB
+	for <lists+io-uring@lfdr.de>; Thu, 13 Jul 2023 09:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231555AbjGMHKJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 13 Jul 2023 03:10:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36212 "EHLO
+        id S233880AbjGMH2P (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 13 Jul 2023 03:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbjGMHKI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Jul 2023 03:10:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF8D119;
-        Thu, 13 Jul 2023 00:10:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A44861A32;
-        Thu, 13 Jul 2023 07:10:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80AB0C433C7;
-        Thu, 13 Jul 2023 07:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689232205;
-        bh=RdIQiT2khPXP/ZV8I8C1KhIFPpD6kEkdeGs7E9vow6M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AlkISGn4AVDhzQEbV/iMmIX1OWP82xTmrRzfje2dEKwnbm7RGHbUCcNtl0f08mPZk
-         bjBPNITTikVDboOkAnaOL6/Dauvun9Of6D+48ECFH6q32PVJeXjrj9EVBn2HeF+/Nw
-         KUEvKwpMAnTIi0zY0hXUXY4SwTv5IFIwb//8J/sy3ki0cRlxaAu6b7xZWJjuZjbzj7
-         SSLHLCSlFH1Jbz6XFHbKLUTDIhVKf3anDoNNr8COuKaXzt6oboQyiNq6b7p+tYJXO9
-         xIWU52KB8NsKZV5AZfjU5RVgky/xPz5xTzivSUEPkwQ0winHzRZGUHQBeelSIGmmcq
-         UtZGnp74bvs5w==
-Date:   Thu, 13 Jul 2023 09:10:00 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 3/3] io_uring: add support for getdents
-Message-ID: <20230713-sitzt-zudem-67bc5d860cb4@brauner>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-4-hao.xu@linux.dev>
- <20230712-alltag-abberufen-67a615152bee@brauner>
- <bb2aa872-c3fb-93f0-c0da-3a897f39347d@linux.dev>
+        with ESMTP id S234324AbjGMH2H (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 13 Jul 2023 03:28:07 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC34C2;
+        Thu, 13 Jul 2023 00:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
+ s=s31663417; t=1689233250; x=1689838050; i=deller@gmx.de;
+ bh=BzvXTHYc41zcqbAAV/+hJvg0vIxuqHt7OiQPT6yMRv4=;
+ h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=mCj6Ir2NfRHrbtDot5VggBJSvAlw4rjHKa8bVZGC8CCe2ZWehPcE0fZnpwr6qiRQMFm9yBE
+ dB7cjOcjdxuPCTKdYUayAlczB8UfuzCFFjirzG/HGrTaTTSuNnG8mMNRJS15pqRkRK3pP98RH
+ ClvOT4zp9T+eqXR3lZdZuJ6QQaFGRdjJaVf8PYm0BLCpS7SdPxY5cfJ/wqTOCe4ahp9B/pSwY
+ ibewls/yKTYKiNUAjJAbdXLbycN/trIJlhzHnDVEsNjrWzI1wNtSA9kuIn8Rj63nSonryZr0A
+ W+5n2YksuQPSzc5ye5yvvSh1tI1dHevb76PEJYvTMVMuLMQBRZbg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from ls3530 ([94.134.155.32]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mt75H-1pziO32gTh-00tTB1; Thu, 13
+ Jul 2023 09:27:30 +0200
+Date:   Thu, 13 Jul 2023 09:27:28 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     matoro <matoro_mailinglist_kernel@matoro.tk>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Linux Ia64 <linux-ia64@vger.kernel.org>,
+        glaubitz@physik.fu-berlin.de, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH 1/5] io_uring: Adjust mapping wrt architecture aliasing
+ requirements
+Message-ID: <ZK+nYIxe6zf2vYwH@ls3530>
+References: <20230314171641.10542-1-axboe@kernel.dk>
+ <20230314171641.10542-2-axboe@kernel.dk>
+ <1d5f8f99f39e2769b9c76fbc24e2cf50@matoro.tk>
+ <ZK7TrdVXc0O6HMpQ@ls3530>
+ <f1bed3cc3c43083cfd86768a91402f6b@matoro.tk>
+ <a3ae1656-be97-ccc2-8962-1cb70ebc67fa@gmx.de>
+ <802b84f7-94f4-638b-3742-26bca00b262d@gmx.de>
+ <8bb091fb5fd00072842fe92b03abac9b@matoro.tk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <bb2aa872-c3fb-93f0-c0da-3a897f39347d@linux.dev>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8bb091fb5fd00072842fe92b03abac9b@matoro.tk>
+X-Provags-ID: V03:K1:CRK/0yceaE+RM8qCVi8DTMn7X4b2jwsKLj1C+Pyw+i1t5+ZkfYk
+ FC0hp3TkZ3zitbxkiON4ywV9wO5UlWu/9wGRtSmUkNcp5TOuPMZmdlftsA776ijqXLBu5Su
+ Ftv6LijGXo17SSprFpmVY/Pc0fyQ4uWgreiuajs74dNc+Ak3OfGgBj+pclCTh+hW0FYGjOH
+ v0RxA6DEt3FE7LAJ2zYmw==
+UI-OutboundReport: notjunk:1;M01:P0:W9jM8zDF1r0=;1QzWzZezLhiTJF6/DBgQKPm/ecT
+ M3WjeFP1n0xURgoODlssgpMZxGal3n+6uVf3VD0bGdCnZyQW9a6EdfLDEPXfBWAJrNiF+n1sB
+ HPMdVdtLHnGhxAg6h0Cbpi1/Xc4kDm3cv9twkydZImFSJuPKOoG46xQu6ne2z275NEh3sbDXz
+ Rfcgnzi9jTWfG9qg4lnm+F6zzaBVFVhs9rDLNcAzrOwgJG93vQso2miKrwdP76eQZs+GBBcVb
+ AwtTsfQQGztD7po9Cdkd4QbSurmHCrxJZDjO+aVA+/8BhDvktqYTkpU4UBcMMzGI8MqNmiwhW
+ JywYja5FV2StZP0L/ZGbda//ADtShpADxQH3lxnUdHy0WoTyBwdog6rMagmyB2WV2clM8ZXm3
+ 5jQnlS8U4lrdufT79Sl5G+A1/QIfiCfMF9WxljeKP8IkrN1OOv3uxSM65L/XT3IsEhAEaoQ7P
+ E/O6GdwC+otslGe+eQj5ITALwKGLKn+hjL8NwFBx77BrvccJkWDzK/aIUb8/V8znD0hJ4x8VI
+ tz29aZZiz1kxQ5F7AqfGxmIbyfBwrMyFapDy53IUJTDglIoHixkpovWA0pqFGzvxkSZgwUtXT
+ j9IVqc0E127VDn/m83r9q/Oun5amfU/JAQ6dZLaPgKblfaiIxqoQDL7XUqjWgKH7tghCqiIPa
+ gci5GK1qyUZoOlHwPZS5pm5m2wZ+3tXrzPemYfY21EwZj46QIGvv+dCheE7I0z75FnydEdbdg
+ vb4kBn58fNuhCAJD3VwYDWPEfyj/xTDXilEr3OgaiGlVC0SGqHVY9mqLIszVxjj6sCBAkDYvD
+ lAfJ2GknG4MbkTNp7DccposIiCTW0ep/0cDaZ+gGR3Sv2u63WA1a5rhbL9+Xj4fzTuGkvAZAF
+ iskzdJuHMnZU3CWzDmzB0dr7LQZvHIPNVaNJcbApMEee3IbTY+VWL6Kxk08ISo8OsJHeanRgO
+ KCNff1EvXBAnUVToBOTpQr49H3s=
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 12:35:07PM +0800, Hao Xu wrote:
-> On 7/12/23 23:27, Christian Brauner wrote:
-> > On Tue, Jul 11, 2023 at 07:40:27PM +0800, Hao Xu wrote:
-> > > From: Hao Xu <howeyxu@tencent.com>
-> > > 
-> > > This add support for getdents64 to io_uring, acting exactly like the
-> > > syscall: the directory is iterated from it's current's position as
-> > > stored in the file struct, and the file's position is updated exactly as
-> > > if getdents64 had been called.
-> > > 
-> > > For filesystems that support NOWAIT in iterate_shared(), try to use it
-> > > first; if a user already knows the filesystem they use do not support
-> > > nowait they can force async through IOSQE_ASYNC in the sqe flags,
-> > > avoiding the need to bounce back through a useless EAGAIN return.
-> > > 
-> > > Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
-> > > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> > > Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> > > ---
-> > >   include/uapi/linux/io_uring.h |  7 ++++
-> > >   io_uring/fs.c                 | 60 +++++++++++++++++++++++++++++++++++
-> > >   io_uring/fs.h                 |  3 ++
-> > >   io_uring/opdef.c              |  8 +++++
-> > >   4 files changed, 78 insertions(+)
-> > > 
-> > > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > > index 08720c7bd92f..6c0d521135a6 100644
-> > > --- a/include/uapi/linux/io_uring.h
-> > > +++ b/include/uapi/linux/io_uring.h
-> > > @@ -65,6 +65,7 @@ struct io_uring_sqe {
-> > >   		__u32		xattr_flags;
-> > >   		__u32		msg_ring_flags;
-> > >   		__u32		uring_cmd_flags;
-> > > +		__u32		getdents_flags;
-> > >   	};
-> > >   	__u64	user_data;	/* data to be passed back at completion time */
-> > >   	/* pack this to avoid bogus arm OABI complaints */
-> > > @@ -235,6 +236,7 @@ enum io_uring_op {
-> > >   	IORING_OP_URING_CMD,
-> > >   	IORING_OP_SEND_ZC,
-> > >   	IORING_OP_SENDMSG_ZC,
-> > > +	IORING_OP_GETDENTS,
-> > >   	/* this goes last, obviously */
-> > >   	IORING_OP_LAST,
-> > > @@ -273,6 +275,11 @@ enum io_uring_op {
-> > >    */
-> > >   #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
-> > > +/*
-> > > + * sqe->getdents_flags
-> > > + */
-> > > +#define IORING_GETDENTS_REWIND	(1U << 0)
-> > > +
-> > >   /*
-> > >    * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
-> > >    * command flags for POLL_ADD are stored in sqe->len.
-> > > diff --git a/io_uring/fs.c b/io_uring/fs.c
-> > > index f6a69a549fd4..77f00577e09c 100644
-> > > --- a/io_uring/fs.c
-> > > +++ b/io_uring/fs.c
-> > > @@ -47,6 +47,13 @@ struct io_link {
-> > >   	int				flags;
-> > >   };
-> > > +struct io_getdents {
-> > > +	struct file			*file;
-> > > +	struct linux_dirent64 __user	*dirent;
-> > > +	unsigned int			count;
-> > > +	int				flags;
-> > > +};
-> > > +
-> > >   int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > >   {
-> > >   	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
-> > > @@ -291,3 +298,56 @@ void io_link_cleanup(struct io_kiocb *req)
-> > >   	putname(sl->oldpath);
-> > >   	putname(sl->newpath);
-> > >   }
-> > > +
-> > > +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > > +{
-> > > +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-> > > +
-> > > +	if (READ_ONCE(sqe->off) != 0)
-> > > +		return -EINVAL;
-> > > +
-> > > +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> > > +	gd->count = READ_ONCE(sqe->len);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> > > +{
-> > > +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-> > > +	struct file *file;
-> > > +	unsigned long getdents_flags = 0;
-> > > +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
-> > > +	bool should_lock = false;
-> > > +	int ret;
-> > > +
-> > > +	if (force_nonblock) {
-> > > +		if (!(req->file->f_mode & FMODE_NOWAIT))
-> > > +			return -EAGAIN;
-> > > +
-> > > +		getdents_flags = DIR_CONTEXT_F_NOWAIT;
-> > 
-> > I mentioned this on the other patch but it seems really pointless to
-> > have that extra flag. I would really like to hear a good reason for
-> > this.
-> > 
-> > > +	}
-> > > +
-> > > +	file = req->file;
-> > > +	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
-> > > +		if (file_count(file) > 1)
-> > 
-> > Assume we have a regular non-threaded process that just opens an fd to a
-> > file. The process registers an async readdir request via that fd for the
-> > file with io_uring and goes to do other stuff while waiting for the
-> > result.
-> > 
-> > Some time later, io_uring gets to io_getdents() and the task is still
-> > single threaded and the file hasn't been shared in the meantime. So
-> > io_getdents() doesn't take the lock and starts the readdir() call.
-> > 
-> > Concurrently, the process that registered the io_uring request was free
-> > to do other stuff and issued a synchronous readdir() system call which
-> > calls fdget_pos(). Since the fdtable still isn't shared it doesn't
-> > increment f_count and doesn't acquire the mutex. Now there's another
-> > concurrent readdir() going on.
-> > 
-> > (Similar thing can happen if the process creates a thread for example.)
-> > 
-> > Two readdir() requests now proceed concurrently which is not intended.
-> > Now to verify that this race can't happen with io_uring:
-> > 
-> > * regular fds:
-> >    It seems that io_uring calls fget() on each regular file descriptor
-> >    when an async request is registered. So that means that io_uring
-> >    always hold its own explicit reference here.
-> >    So as long as the original task is alive or another thread is alive
-> >    f_count is guaranteed to be > 1 and so the mutex would always be
-> >    acquired.
-> > 
-> >    If the registering process dies right before io_uring gets to the
-> >    io_getdents() request no other process can steal the fd anymore and in
-> >    that case the readdir call would not lock. But that's fine.
-> > 
-> > * fixed fds:
-> >    I don't know the reference counting rules here. io_uring would need to
-> >    ensure that it's impossible for two async readdir requests via a fixed
-> >    fd to race because f_count is == 1.
-> > 
-> >    Iiuc, if a process registers a file it opened as a fixed file and
-> >    immediately closes the fd afterwards - without anyone else holding a
-> >    reference to that file - and only uses the fixed fd going forward, the
-> >    f_count of that file in io_uring's fixed file table is always 1.
-> > 
-> >    So one could issue any number of concurrent readdir requests with no
-> >    mutual exclusion. So for fixed files there definitely is a race, no?
-> 
-> Hi Christian,
-> The ref logic for fixed file is that it does fdget() when registering
+* matoro <matoro_mailinglist_kernel@matoro.tk>:
+> On 2023-07-12 16:30, Helge Deller wrote:
+> > On 7/12/23 21:05, Helge Deller wrote:
+> > > On 7/12/23 19:28, matoro wrote:
+> > > > On 2023-07-12 12:24, Helge Deller wrote:
+> > > > > Hi Matoro,
+> > > > >
+> > > > > * matoro <matoro_mailinglist_kernel@matoro.tk>:
+> > > > > > On 2023-03-14 13:16, Jens Axboe wrote:
+> > > > > > > From: Helge Deller <deller@gmx.de>
+> > > > > > >
+> > > > > > > Some architectures have memory cache aliasing requirements (=
+e.g. parisc)
+> > > > > > > if memory is shared between userspace and kernel. This patch=
+ fixes the
+> > > > > > > kernel to return an aliased address when asked by userspace =
+via mmap().
+> > > > > > >
+> > > > > > > Signed-off-by: Helge Deller <deller@gmx.de>
+> > > > > > > Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > > > > > > ---
+> > > > > > >=A0 io_uring/io_uring.c | 51 ++++++++++++++++++++++++++++++++=
++++++++++++++
+> > > > > > >=A0 1 file changed, 51 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> > > > > > > index 722624b6d0dc..3adecebbac71 100644
+> > > > > > > --- a/io_uring/io_uring.c
+> > > > > > > +++ b/io_uring/io_uring.c
+> > > > > > > @@ -72,6 +72,7 @@
+> > > > > > >=A0 #include <linux/io_uring.h>
+> > > > > > >=A0 #include <linux/audit.h>
+> > > > > > >=A0 #include <linux/security.h>
+> > > > > > > +#include <asm/shmparam.h>
+> > > > > > >
+> > > > > > >=A0 #define CREATE_TRACE_POINTS
+> > > > > > >=A0 #include <trace/events/io_uring.h>
+> > > > > > > @@ -3317,6 +3318,54 @@ static __cold int io_uring_mmap(struc=
+t file
+> > > > > > > *file, struct vm_area_struct *vma)
+> > > > > > >=A0=A0=A0=A0=A0 return remap_pfn_range(vma, vma->vm_start, pf=
+n, sz,
+> > > > > > > vma->vm_page_prot);
+> > > > > > >=A0 }
+> > > > > > >
+> > > > > > > +static unsigned long io_uring_mmu_get_unmapped_area(struct =
+file *filp,
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 unsigned long addr, unsig=
+ned long len,
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 unsigned long pgoff, unsi=
+gned long flags)
+> > > > > > > +{
+> > > > > > > +=A0=A0=A0 const unsigned long mmap_end =3D arch_get_mmap_en=
+d(addr, len, flags);
+> > > > > > > +=A0=A0=A0 struct vm_unmapped_area_info info;
+> > > > > > > +=A0=A0=A0 void *ptr;
+> > > > > > > +
+> > > > > > > +=A0=A0=A0 /*
+> > > > > > > +=A0=A0=A0=A0 * Do not allow to map to user-provided address=
+ to avoid breaking the
+> > > > > > > +=A0=A0=A0=A0 * aliasing rules. Userspace is not able to gue=
+ss the offset address
+> > > > > > > of
+> > > > > > > +=A0=A0=A0=A0 * kernel kmalloc()ed memory area.
+> > > > > > > +=A0=A0=A0=A0 */
+> > > > > > > +=A0=A0=A0 if (addr)
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0 return -EINVAL;
+> > > > > > > +
+> > > > > > > +=A0=A0=A0 ptr =3D io_uring_validate_mmap_request(filp, pgof=
+f, len);
+> > > > > > > +=A0=A0=A0 if (IS_ERR(ptr))
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0 return -ENOMEM;
+> > > > > > > +
+> > > > > > > +=A0=A0=A0 info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
+> > > > > > > +=A0=A0=A0 info.length =3D len;
+> > > > > > > +=A0=A0=A0 info.low_limit =3D max(PAGE_SIZE, mmap_min_addr);
+> > > > > > > +=A0=A0=A0 info.high_limit =3D arch_get_mmap_base(addr, curr=
+ent->mm->mmap_base);
+> > > > > > > +#ifdef SHM_COLOUR
+> > > > > > > +=A0=A0=A0 info.align_mask =3D PAGE_MASK & (SHM_COLOUR - 1UL=
+);
+> > > > > > > +#else
+> > > > > > > +=A0=A0=A0 info.align_mask =3D PAGE_MASK & (SHMLBA - 1UL);
+> > > > > > > +#endif
+> > > > > > > +=A0=A0=A0 info.align_offset =3D (unsigned long) ptr;
+> > > > > > > +
+> > > > > > > +=A0=A0=A0 /*
+> > > > > > > +=A0=A0=A0=A0 * A failed mmap() very likely causes applicati=
+on failure,
+> > > > > > > +=A0=A0=A0=A0 * so fall back to the bottom-up function here.=
+ This scenario
+> > > > > > > +=A0=A0=A0=A0 * can happen with large stack limits and large=
+ mmap()
+> > > > > > > +=A0=A0=A0=A0 * allocations.
+> > > > > > > +=A0=A0=A0=A0 */
+> > > > > > > +=A0=A0=A0 addr =3D vm_unmapped_area(&info);
+> > > > > > > +=A0=A0=A0 if (offset_in_page(addr)) {
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0 info.flags =3D 0;
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0 info.low_limit =3D TASK_UNMAPPED_BASE=
+;
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0 info.high_limit =3D mmap_end;
+> > > > > > > +=A0=A0=A0=A0=A0=A0=A0 addr =3D vm_unmapped_area(&info);
+> > > > > > > +=A0=A0=A0 }
+> > > > > > > +
+> > > > > > > +=A0=A0=A0 return addr;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > >=A0 #else /* !CONFIG_MMU */
+> > > > > > >
+> > > > > > >=A0 static int io_uring_mmap(struct file *file, struct vm_are=
+a_struct *vma)
+> > > > > > > @@ -3529,6 +3578,8 @@ static const struct file_operations io=
+_uring_fops
+> > > > > > > =3D {
+> > > > > > >=A0 #ifndef CONFIG_MMU
+> > > > > > >=A0=A0=A0=A0=A0 .get_unmapped_area =3D io_uring_nommu_get_unm=
+apped_area,
+> > > > > > >=A0=A0=A0=A0=A0 .mmap_capabilities =3D io_uring_nommu_mmap_ca=
+pabilities,
+> > > > > > > +#else
+> > > > > > > +=A0=A0=A0 .get_unmapped_area =3D io_uring_mmu_get_unmapped_=
+area,
+> > > > > > >=A0 #endif
+> > > > > > >=A0=A0=A0=A0=A0 .poll=A0=A0=A0=A0=A0=A0=A0 =3D io_uring_poll,
+> > > > > > >=A0 #ifdef CONFIG_PROC_FS
+> > > > > >
+> > > > > > Hi Jens, Helge - I've bisected a regression with
+> > > > > > io_uring on ia64 to this
+> > > > > > patch in 6.4.=A0 Unfortunately this breaks userspace
+> > > > > > programs using io_uring,
+> > > > > > the easiest one to test is cmake with an io_uring
+> > > > > > enabled libuv (i.e., libuv
+> > > > > > >=3D 1.45.0) which will hang.
+> > > > > >
+> > > > > > I am aware that ia64 is in a vulnerable place right now
+> > > > > > which I why I am
+> > > > > > keeping this spread limited.=A0 Since this clearly involves
+> > > > > > architecture-specific changes for parisc,
+> > > > >
+> > > > > it isn't so much architecture-specific... (just one ifdef)
+> > > > >
+> > > > > > is there any chance of looking at
+> > > > > > what is required to do the same for ia64?=A0 I looked at
+> > > > > > 0ef36bd2b37815719e31a72d2beecc28ca8ecd26 ("parisc:
+> > > > > > change value of SHMLBA
+> > > > > > from 0x00400000 to PAGE_SIZE") and tried to replicate the SHML=
+BA ->
+> > > > > > SHM_COLOUR change, but it made no difference.
+> > > > > >
+> > > > > > If hardware is necessary for testing, I can provide it,
+> > > > > > including remote BMC
+> > > > > > access for restarts/kernel debugging.=A0 Any takers?
+> > > > >
+> > > > > I won't have time to test myself, but maybe you could test?
+> > > > >
+> > > > > Basically we should try to find out why
+> > > > > io_uring_mmu_get_unmapped_area()
+> > > > > doesn't return valid addresses, while arch_get_unmapped_area()
+> > > > > [in arch/ia64/kernel/sys_ia64.c] does.
+> > > > >
+> > > > > You could apply this patch first:
+> > > > > It introduces a memory leak (as it requests memory twice),
+> > > > > but maybe we
+> > > > > get an idea?
+> > > > > The ia64 arch_get_unmapped_area() searches for memory from botto=
+m
+> > > > > (flags=3D0), while io_uring function tries top-down first.
+> > > > > Maybe that's
+> > > > > the problem. And I don't understand the offset_in_page() check r=
+ight
+> > > > > now.
+> > > > >
+> > > > > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> > > > > index 3bca7a79efda..93b1964d2bbb 100644
+> > > > > --- a/io_uring/io_uring.c
+> > > > > +++ b/io_uring/io_uring.c
+> > > > > @@ -3431,13 +3431,17 @@ static unsigned long
+> > > > > io_uring_mmu_get_unmapped_area(struct file *filp,
+> > > > > =A0=A0=A0=A0=A0 * can happen with large stack limits and large m=
+map()
+> > > > > =A0=A0=A0=A0=A0 * allocations.
+> > > > > =A0=A0=A0=A0=A0 */
+> > > > > +/* compare to arch_get_unmapped_area() in
+> > > > > arch/ia64/kernel/sys_ia64.c */
+> > > > > =A0=A0=A0=A0 addr =3D vm_unmapped_area(&info);
+> > > > > -=A0=A0=A0 if (offset_in_page(addr)) {
+> > > > > +printk("io_uring_mmu_get_unmapped_area() address 1 is:
+> > > > > %px\n", addr);
+> > > > > +=A0=A0=A0 addr =3D NULL;
+> > > > > +=A0=A0=A0 if (!addr) {
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0 info.flags =3D 0;
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0 info.low_limit =3D TASK_UNMAPPED_BASE;
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0 info.high_limit =3D mmap_end;
+> > > > > =A0=A0=A0=A0=A0=A0=A0=A0 addr =3D vm_unmapped_area(&info);
+> > > > > =A0=A0=A0=A0 }
+> > > > > +printk("io_uring_mmu_get_unmapped_area() returns address
+> > > > > %px\n", addr);
+> > > > >
+> > > > > =A0=A0=A0=A0 return addr;
+> > > > > =A0}
+> > > > >
+> > > > >
+> > > > > Another option is to disable the call to
+> > > > > io_uring_nommu_get_unmapped_area())
+> > > > > with the next patch. Maybe you could add printks() to ia64's
+> > > > > arch_get_unmapped_area()
+> > > > > and check what it returns there?
+> > > > >
+> > > > > @@ -3654,6 +3658,8 @@ static const struct file_operations
+> > > > > io_uring_fops =3D {
+> > > > > =A0#ifndef CONFIG_MMU
+> > > > > =A0=A0=A0=A0 .get_unmapped_area =3D io_uring_nommu_get_unmapped_=
+area,
+> > > > > =A0=A0=A0=A0 .mmap_capabilities =3D io_uring_nommu_mmap_capabili=
+ties,
+> > > > > +#elif 0=A0=A0=A0 /* IS_ENABLED(CONFIG_IA64) */
+> > > > > +=A0=A0=A0 .get_unmapped_area =3D NULL,
+> > > > > =A0#else
+> > > > > =A0=A0=A0=A0 .get_unmapped_area =3D io_uring_mmu_get_unmapped_ar=
+ea,
+> > > > > =A0#endif
+> > > > >
+> > > > > Helge
+> > > >
+> > > > Thanks Helge.=A0 Sample output from that first patch:
+> > > >
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > address 1 is: 1ffffffffff40000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > returns address 2000000001e40000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > address 1 is: 1ffffffffff20000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > returns address 2000000001f20000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > address 1 is: 1ffffffffff30000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > returns address 2000000001f30000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > address 1 is: 1ffffffffff90000
+> > > > [Wed Jul 12 13:09:50 2023] io_uring_mmu_get_unmapped_area()
+> > > > returns address 2000000001f90000
+> > > >
+> > > > This pattern seems to be pretty stable, I tried instead just
+> > > > directly returning the result of a call to
+> > > > arch_get_unmapped_area() at the end of the function and it seems
+> > > > similar:
+> > > >
+> > > > [Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area()
+> > > > would return address 1ffffffffffd0000
+> > > > [Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would
+> > > > return address 2000000001f00000
+> > > > [Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area()
+> > > > would return address 1ffffffffff00000
+> > > > [Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would
+> > > > return address 1ffffffffff00000
+> > > > [Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area()
+> > > > would return address 1fffffffffe20000
+> > > > [Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would
+> > > > return address 2000000002000000
+> > > > [Wed Jul 12 13:27:07 2023] io_uring_mmu_get_unmapped_area()
+> > > > would return address 1fffffffffe30000
+> > > > [Wed Jul 12 13:27:07 2023] but arch_get_unmapped_area() would
+> > > > return address 2000000002100000
+> > > >
+> > > > Is that enough of a clue to go on?
+> > >
+> > > SHMLBA on ia64 is 0x100000:
+> > > arch/ia64/include/asm/shmparam.h:#define=A0=A0=A0=A0=A0=A0=A0 SHMLBA=
+=A0 (1024*1024)
+> > > but the values returned by io_uring_mmu_get_unmapped_area() does not
+> > > fullfill this.
+> > >
+> > > So, probably ia64's SHMLBA isn't pulled in correctly in
+> > > io_uring/io_uring.c.
+> > > Check value of this line:
+> > >  =A0=A0=A0=A0info.align_mask =3D PAGE_MASK & (SHMLBA - 1UL);
+> > >
+> > > You could also add
+> > > #define SHM_COLOUR=A0 0x100000
+> > > in front of the
+> > >  =A0=A0=A0=A0#ifdef SHM_COLOUR
+> > > (define SHM_COLOUR in io_uring/kbuf.c too).
+> >
+> > What is the value of PAGE_SIZE and "ptr" on your machine?
+> > For 4k page size I get:
+> > SHMLBA -1   ->        FFFFF
+> > PAGE_MASK   -> FFFFFFFFF000
+> > so,
+> > info.align_mask =3D PAGE_MASK & (SHMLBA - 1UL) =3D 0xFF000;
+> > You could try to set nfo.align_mask =3D 0xfffff;
+> >
+> > Helge
+>
+> Using 64KiB (65536) PAGE_SIZE here.  64-bit pointers.
+>
+> Tried both #define SHM_COLOUR 0x100000, as well and info.align_mask =3D
+> 0xFFFFF, but both of them made the problem change from 100% reproducible=
+, to
+> intermittent.
+>
+> After inspecting the ouput I observed that it hangs only when the first
+> allocation returns an address below 0x2000000000000000, and the second
+> returns an address above it.  When both addresses are above it, it does =
+not
+> hang.  Examples:
+>
+> When it works:
+> $ cmake --version
+> cmake version 3.26.4
+>
+> CMake suite maintained and supported by Kitware (kitware.com/cmake).
+> $ dmesg --color=3Dalways -T | tail -n 4
+> [Wed Jul 12 20:32:37 2023] io_uring_mmu_get_unmapped_area() would return
+> address 1fffffffffe20000
+> [Wed Jul 12 20:32:37 2023] but arch_get_unmapped_area() would return add=
+ress
+> 2000000002000000
+> [Wed Jul 12 20:32:37 2023] io_uring_mmu_get_unmapped_area() would return
+> address 1fffffffffe50000
+> [Wed Jul 12 20:32:37 2023] but arch_get_unmapped_area() would return add=
+ress
+> 2000000002100000
+>
+>
+> When it hangs:
+> $ cmake --version
+> cmake version 3.26.4
+>
+> CMake suite maintained and supported by Kitware (kitware.com/cmake).
+> ^C
+> $ dmesg --color=3Dalways -T | tail -n 4
+> [Wed Jul 12 20:33:12 2023] io_uring_mmu_get_unmapped_area() would return
+> address 1ffffffffff00000
+> [Wed Jul 12 20:33:12 2023] but arch_get_unmapped_area() would return add=
+ress
+> 1ffffffffff00000
+> [Wed Jul 12 20:33:12 2023] io_uring_mmu_get_unmapped_area() would return
+> address 1fffffffffe60000
+> [Wed Jul 12 20:33:12 2023] but arch_get_unmapped_area() would return add=
+ress
+> 2000000001f00000
+>
+> Is io_uring_mmu_get_unmapped_area supported to always return addresses a=
+bove
+> 0x2000000000000000?
 
-It absolutely can't be the case that io_uring uses fdget()/fdput() for
-long-term file references. fdget() internally use __fget_light() which
-avoids taking a reference on the file if the file table isn't shared. So
-should that file be stashed anywhere for async work its a UAF waiting to
-happen.
+Yes, with the patch below.
 
-> the file, and fdput() when unregistering it. So the ref in between is
-> always > 1. The fixed file feature is to reduce frequent fdget/fdput,
-> but it does call them at the register/unregister time.
+> Any reason why it is not doing so sometimes?
 
-So consider:
+It depends on the parameters for vm_unmapped_area(). Specifically
+info.flags=3D0.
 
-// Caller opens some file.
-fd_register = open("/some/file", ...); // f_count == 1
+Try this patch:
 
-// Caller registers that file as a fixed file
-IORING_REGISTER_FILES
--> io_sqe_files_register()
-   -> fget(fd_register) // f_count == 2
-   -> io_fixed_file_set()
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 3bca7a79efda..b259794ab53b 100644
+=2D-- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3429,10 +3429,13 @@ static unsigned long io_uring_mmu_get_unmapped_are=
+a(struct file *filp,
+ 	 * A failed mmap() very likely causes application failure,
+ 	 * so fall back to the bottom-up function here. This scenario
+ 	 * can happen with large stack limits and large mmap()
+-	 * allocations.
++	 * allocations. Use bottom-up on IA64 for correct aliasing.
+ 	 */
+-	addr =3D vm_unmapped_area(&info);
+-	if (offset_in_page(addr)) {
++	if (IS_ENABLED(CONFIG_IA64))
++		addr =3D NULL;
++	else
++		addr =3D vm_unmapped_area(&info);
++	if (!addr) {
+ 		info.flags =3D 0;
+ 		info.low_limit =3D TASK_UNMAPPED_BASE;
+ 		info.high_limit =3D mmap_end;
 
-// Caller trades regular fd reference for fixed file reference completely.
-close(fd_register);
--> close_fd(fd_register)
-   -> file = pick_file()
-   -> filp_close(file)
-      -> fput(file)    // f_count == 1
-
-
-// Caller spawns a second thread. Both treads issue async getdents via
-// fixed file.
-T1                                              T2
-IORING_OP_GETDENTS                              IORING_OP_GETDENTS
-
-// At some point io_assign_file() must be called which has:
-
-          if (req->flags & REQ_F_FIXED_FILE)
-                  req->file = io_file_get_fixed(req, req->cqe.fd, issue_flags);
-          else
-                  req->file = io_file_get_normal(req, req->cqe.fd);
-
-// Since this is REQ_F_FIXED_FILE f_count == 1
-
-if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
-        if (file_count(file) > 1)
-
-// No lock is taken; T1 and T2 issue getdents concurrently without any
-// locking. -> race on f_pos
-
-I'm happy to be convinced that this is safe, but please someone explain
-in detail why this can't happen and where that extra f_count reference
-for fixed files that this code wants to rely on is coming from.
-
-Afaik, the whole point is that fixed files don't ever call fget()/fput()
-after having been registered anymore. Consequently, f_count should be 1
-once io_uring has taken full ownership of the file and the file can only
-be addressed via a fixed file reference.
-
-> 
-> 
-> > 
-> > All of that could ofc be simplified if we could just always acquire the
-> > mutex in fdget_pos() and other places and drop that file_count(file) > 1
-> > optimization everywhere. But I have no idea if the optimization for not
-> > acquiring the mutex if f_count == 1 is worth it?
-> > 
-> > I hope I didn't confuse myself here.
-> > 
-> > Jens, do yo have any input here?
-> > 
-> > > +			should_lock = true;
-> > > +	}
-> > > +	if (should_lock) {
-> > > +		if (!force_nonblock)
-> > > +			mutex_lock(&file->f_pos_lock);
-> > > +		else if (!mutex_trylock(&file->f_pos_lock))
-> > > +			return -EAGAIN;
-> > > +	}
-> > 
-> > Open-coding this seems extremely brittle with an invitation for subtle
-> > bugs.
-> 
-> Could you elaborate on this, I'm not sure that I understand it quite
-> well. Sorry for my poor English.
-
-No need to apologize. I'm wondering whether this should be moved into a
-tiny helper and actually be exposed via a vfs header if we go this
-route is all.
+Helge

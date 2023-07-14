@@ -2,106 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09E4D753E7A
-	for <lists+io-uring@lfdr.de>; Fri, 14 Jul 2023 17:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA20753EBA
+	for <lists+io-uring@lfdr.de>; Fri, 14 Jul 2023 17:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235488AbjGNPK3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Jul 2023 11:10:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42136 "EHLO
+        id S236166AbjGNPYv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Jul 2023 11:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235858AbjGNPK1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Jul 2023 11:10:27 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A613A8C
-        for <io-uring@vger.kernel.org>; Fri, 14 Jul 2023 08:10:18 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id e9e14a558f8ab-3463955e8c6so1397315ab.1
-        for <io-uring@vger.kernel.org>; Fri, 14 Jul 2023 08:10:18 -0700 (PDT)
+        with ESMTP id S235713AbjGNPYu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Jul 2023 11:24:50 -0400
+Received: from mail-oo1-xc2d.google.com (mail-oo1-xc2d.google.com [IPv6:2607:f8b0:4864:20::c2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 270EB269F
+        for <io-uring@vger.kernel.org>; Fri, 14 Jul 2023 08:24:48 -0700 (PDT)
+Received: by mail-oo1-xc2d.google.com with SMTP id 006d021491bc7-55e04a83465so1373267eaf.3
+        for <io-uring@vger.kernel.org>; Fri, 14 Jul 2023 08:24:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689347418; x=1691939418;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N+0bo1A0pIC0yWkAcCX4SV3mNtEnYae4fbz/HivthS8=;
-        b=eGm+mzbwakWAjbMb6AVzDzyUMqQn4SGbnF6iGH1ZX6e+lbROw0F8RcpwHPdk6as8bZ
-         gCy8E7KLnDvkETEvEtKFVySKfdfuVA0gDdq/ggQ2M332XKv5o4J8ZJSQpTzO4IGuh5kK
-         Pq/qJJWyn8QRXR3q83pFs0DcsLzxAJVUOz1t1YGns6mtth7Rw3IihGDZSLcl0Jynyseo
-         glSHhZlEub32Ks5AKK9g0PQwlRKT0oKB9LGtweRQRvwj0PUNk5U7dikzwOf9cB/lxKPG
-         LluUvzH/8cmB0OAX2/9+WeVO7lRZJvPB2rUuc8Ed9HIsb2AzegI1LsFYTgUiV699+EKU
-         90cg==
+        d=ziepe.ca; s=google; t=1689348287; x=1691940287;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKCPDDjyadziwl2/AK/7bwW5AQLCnpdzpQfQJ+yWANU=;
+        b=VkfHth5MNAZHQQpEhdDGh0pq0hoDNb/IkCyvJyfZlohZ7FEqc/tc2UlGQlp5P+ls2k
+         LP4Az77bQs/0UVX1KSsNiwTlKtw8ZJErPfpgp4NpbjjW9RxzvWKdoj5q9JZGtbqYKyMw
+         IkbeE1z0uT48kd4G5uv3BxnFhNNELaU6M+7XHRszPJ3LTmAtfce0FwO0kiq6qtWbZVLj
+         +GaUqzfPkfSAQcQuVfYKAUHYwjH4iU0nqNSXmWkPMWsXsceycWdUU7PI1Bdr+PTPu7X6
+         X/OpA3sg1LJmtBpK2xUftGMYHz3Z91vTuIVh4aBU1pURrsic+RJAvN3CFStnNYgOJO/U
+         rXPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689347418; x=1691939418;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N+0bo1A0pIC0yWkAcCX4SV3mNtEnYae4fbz/HivthS8=;
-        b=agxqyNFhO4VYH3sFLOQd1iYN3r9VKR+3/YrM1VJ31Rzq44/fBiCYocjXVHtXOEX15A
-         a7XxwUGhg1/I23Oz3bhTMmLjvjhEmmPy1SfmvOSDXrTpQm/1FqVPFzw11CSicyd2HmpP
-         Lsqq5fntrMAn2fZVhzgT8JzeqGZ4oPLocPxnh3syKmpptY6cbZfOxUtp/gfGWiVsw1Qr
-         +OEAb3EcQNIfpvm/oai+AvtipjvC+/bEMRpI8UrvXOlK0eEx/XpOIAzVHuGmv8bHAcvz
-         vQ6ABpq9EB7MtusRp0Nhtrd4ZdGfbIOqo5ZMfHHjsaJ/8MIqY71SIHxptfVG5QR1FoGK
-         MaTQ==
-X-Gm-Message-State: ABy/qLYLBxFZnnMCk7nPjWrLe4Z+8MxxSeQQEKhWvfJnnGTwn1TSPNOp
-        3Y3z4gVfTtaA7qdFXfGUgAJO8A==
-X-Google-Smtp-Source: APBJJlH7efkmR/mKOGDyLyVFmiiKisdxFqSupgj0fXefQZnTyYXQLYk53140cugOtM0hgMwG5iPdtA==
-X-Received: by 2002:a92:a80a:0:b0:345:e438:7381 with SMTP id o10-20020a92a80a000000b00345e4387381mr3474119ilh.2.1689347417863;
-        Fri, 14 Jul 2023 08:10:17 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id k9-20020a92c9c9000000b00345babb873csm2790571ilq.64.2023.07.14.08.10.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jul 2023 08:10:17 -0700 (PDT)
-Message-ID: <4d9e696f-f4d7-9e20-4361-2a97460b37ba@kernel.dk>
-Date:   Fri, 14 Jul 2023 09:10:16 -0600
+        d=1e100.net; s=20221208; t=1689348287; x=1691940287;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KKCPDDjyadziwl2/AK/7bwW5AQLCnpdzpQfQJ+yWANU=;
+        b=IjzAGH5dOu87YA7JinXFNNqIuYkRtj0dX6pj+jThaGOdBBqHOMp9SUxiVlAg4NduYb
+         Dz8/irnozvh1ZIoJtPLTLHMq9rQb3mS+hNyXI7eL+bTHIlnZk/U8eQlRgy4WXE5/CI7o
+         tZIQgL0hyVW54EZmB+jlwN9zhOzNKmTQxp1HC2cSsEE2l2TheUT13H11qiU2d/9Lr6hF
+         MJZdLKZqw7BddL24ek8wR55UYBfqgtlsyoymogF3BjUTVFE3VaBr6+Yq3c3qr9rg3LrN
+         rXLgtxAx6OljkB+JFesK5SaPftEqlPuNVD8zLYrXHg0rkLW8kDOS1mgactUsdv++VdHY
+         laDA==
+X-Gm-Message-State: ABy/qLZX7rETuPMOFYpBnhU1rLzGjeSMhVepTS/eIxWLKD3shhSkZVIX
+        CE4AJlssGevVSWe8ibUVE5pLiQ==
+X-Google-Smtp-Source: APBJJlH+MwWcaUVg/7akbj8keBMvf8gq7EKuq9vDRBoNFYJ4+ezTmB048XjMLkW7GX8JAT8v1K03Sg==
+X-Received: by 2002:a05:6808:2226:b0:3a3:eceb:7bbc with SMTP id bd38-20020a056808222600b003a3eceb7bbcmr7147567oib.54.1689348287397;
+        Fri, 14 Jul 2023 08:24:47 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
+        by smtp.gmail.com with ESMTPSA id x19-20020a17090aa39300b00263154aab24sm1230248pjp.57.2023.07.14.08.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jul 2023 08:24:46 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1qKKez-0017NL-5i;
+        Fri, 14 Jul 2023 12:24:45 -0300
+Date:   Fri, 14 Jul 2023 12:24:45 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-usb@vger.kernel.org, Matthew Rosato <mjrosato@linux.ibm.com>,
+        Paul Durrant <paul@xen.org>, Tom Rix <trix@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        dri-devel@lists.freedesktop.org, Michal Hocko <mhocko@kernel.org>,
+        linux-mm@kvack.org, Kirti Wankhede <kwankhede@nvidia.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Fei Li <fei1.li@intel.com>, x86@kernel.org,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-gfx@lists.freedesktop.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-fpga@vger.kernel.org, Zhi Wang <zhi.a.wang@intel.com>,
+        Wu Hao <hao.wu@intel.com>, Jason Herne <jjherne@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-s390@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linuxppc-dev@lists.ozlabs.org, Eric Auger <eric.auger@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, cgroups@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        intel-gvt-dev@lists.freedesktop.org, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Xu Yilun <yilun.xu@intel.com>, jaz@semihalf.com
+Subject: Re: [PATCH 0/2] eventfd: simplify signal helpers
+Message-ID: <ZLFovYocElAD7gJ0@ziepe.ca>
+References: <20230630155936.3015595-1-jaz@semihalf.com>
+ <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 4/8] io_uring: add support for futex wake and wait
-Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, andres@anarazel.de
-References: <20230712162017.391843-1-axboe@kernel.dk>
- <20230712162017.391843-5-axboe@kernel.dk>
- <20230713111513.GH3138667@hirez.programming.kicks-ass.net>
- <20230713172455.GA3191007@hirez.programming.kicks-ass.net>
- <bcf174d8-607b-e61a-2091-eccd3ffe0dfe@kernel.dk>
- <20230714150850.GB3261758@hirez.programming.kicks-ass.net>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230714150850.GB3261758@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/14/23 9:08?AM, Peter Zijlstra wrote:
-> On Fri, Jul 14, 2023 at 08:52:40AM -0600, Jens Axboe wrote:
->> Saw your series - I'll take a look. In terms of staging when we get
->> there, would it be possible to split your flags series into the bare
->> minimum and trivial, and then have that as a dependency for this series
->> and the rest of your series?
-> 
-> I think you only really need the first three patches, and I hope those
-> are the least controversial of the lot.
+On Fri, Jul 14, 2023 at 09:05:21AM +0200, Christian Brauner wrote:
 
-That's what it looks like to me, and yes those look trivial and risk
-free :-)
+> I have no skin in the game aside from having to drop this conversion
+> which I'm fine to do if there are actually users for this btu really,
+> that looks a lot like abusing an api that really wasn't designed for
+> this.
 
-I'll just put those at the base of my series for now, and once they are
-stamped, would be great if you could then stuff them in a stable branch
-that I could pull in.
+Yeah, I think so too. The ACPI thing should use its own FD if it wants
+to feed actual data..
 
-> After those, I can implement the extra flags independently of the
-> io_uring thing and all interfaces should just have it work.
-> 
-> So yes :-)
-
-That's the plan then!
-
--- 
-Jens Axboe
+Jason
 

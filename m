@@ -2,87 +2,67 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44395754298
-	for <lists+io-uring@lfdr.de>; Fri, 14 Jul 2023 20:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22589754350
+	for <lists+io-uring@lfdr.de>; Fri, 14 Jul 2023 21:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236563AbjGNSdh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 14 Jul 2023 14:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45582 "EHLO
+        id S236284AbjGNTje (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 14 Jul 2023 15:39:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235910AbjGNSdg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Jul 2023 14:33:36 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB5BEC6;
-        Fri, 14 Jul 2023 11:33:35 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id A6B2F5C00DA;
-        Fri, 14 Jul 2023 14:33:32 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 14 Jul 2023 14:33:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1689359612; x=1689446012; bh=1QsNfDDyhcBoTHL2dhcRk5OXIDoFbkHDAQj
-        OIzYIvug=; b=nvl1TKklNGn9d8aPp5gyt2KCexkoc9wZ3VO7E4qCeR0v52F88b4
-        3tg3vSFNCgrCqxyHtn6aX+pxTSutexgGcBP2ZLzTULh3Fg2nrZygqkYe8zTRRPOD
-        dcMMcvvSknxos/3Ueq+KOk2BdtGDFTc8zhymdHAtxBvCK6jaeuk7K7IMvQDzHxu7
-        +1bXzSDx1h+dGZJR3zM+t9mRCqSr4KFTOimFjAh9CybR7dOQDvOQt8bpzeXBc6IO
-        JOaKusyY1Xb5IBnoTkXtD05bsR9C90wcuxPps+tyHzSS2Yp/jVTKNIYMEj2G7i7i
-        X33ZAcbhQga0ym+QlljbS0ETtcjsGl0DA0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1689359612; x=1689446012; bh=1QsNfDDyhcBoTHL2dhcRk5OXIDoFbkHDAQj
-        OIzYIvug=; b=qaCVZnIp/sXHFtC0VUzp+tuz45buonTg8aft7r8VSvROka3Mbfc
-        oxwzmkAv1mmrj1XElnv8rpsZPf//gm+XSa9ddcMXvDtDo2/7wYMGhmsWmWUMDdqn
-        pxzItwOMbFrNs0EUA1cypOPrsfsNOnc8YLs9hz4UUJzLduW7UGnt2EU6VqBwRJjN
-        oedwslK0D0KEIeWpFc+vOYi0Iv4WUFkCozkDMljx0Mwb3Il/eaRkNTXylxWMOzGe
-        fb4PpvxktNJBUU4rA85whmkHUvHMU7Uvlx5FdNqJpfn65CdB1XCv1TTVwB6CFDVw
-        N4qBCzdCewqbw/zc1e1CfFOz0vh65t8JE2g==
-X-ME-Sender: <xms:_JSxZLy2se-eG09L2CeD6QC3DrmGxNdQv7jpGe1D9lUZjf2rq93VuA>
-    <xme:_JSxZDTSHX6cZKrkqjEFHuYtBDCOmXdTjakZgtG4SXVaafmeBoWR8v0dpy7IwqFky
-    5JPv63rPrvXS2EDOs0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrfeeigdduvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeduudehudeukeegkeduieeghfdvvdeiudegueehvdfgheekgedugfdujeeu
-    feefjeenucffohhmrghinhepkhgvrhhnvghlrdgukhenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:_JSxZFWQ3VTsm3n6YM3b8kCFcme3dz7YuxW6SGsHL7h4iO12RqmzEg>
-    <xmx:_JSxZFg-QjvWSZlJuCagPueA6tUqNYm2RTeANU97KUfehXjMRcFkoQ>
-    <xmx:_JSxZNBfm8SSnnEf_Vw6kIDaMAvEm1sTPDkPIL3WGaoIVQJg7dfy0g>
-    <xmx:_JSxZK68UY7Edv6vG5HHJopR6NA15grfqP3p5yFZqZb54kyhRNRQrg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 377BEB60086; Fri, 14 Jul 2023 14:33:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-531-gfdfa13a06d-fm-20230703.001-gfdfa13a0
-Mime-Version: 1.0
-Message-Id: <d53ed71a-3f57-4c5e-9117-82535aae7855@app.fastmail.com>
-In-Reply-To: <20230714-grummeln-sitzgelegenheit-1157c2feac71@brauner>
-References: <20230711204352.214086-1-axboe@kernel.dk>
- <20230711204352.214086-6-axboe@kernel.dk>
- <8431d207-5e52-4f8c-a12d-276836174bad@app.fastmail.com>
- <048cfbce-5238-2580-2d53-2ca740e72d79@kernel.dk>
- <bbc5f3cf-99f8-0695-1367-979301c64ecb@kernel.dk>
- <20230714-grummeln-sitzgelegenheit-1157c2feac71@brauner>
-Date:   Fri, 14 Jul 2023 20:33:11 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Christian Brauner" <brauner@kernel.org>,
-        "Jens Axboe" <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] io_uring: add IORING_OP_WAITID support
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        with ESMTP id S235931AbjGNTje (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 14 Jul 2023 15:39:34 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B097A2119
+        for <io-uring@vger.kernel.org>; Fri, 14 Jul 2023 12:39:28 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-7748ca56133so20804839f.0
+        for <io-uring@vger.kernel.org>; Fri, 14 Jul 2023 12:39:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689363568; x=1691955568;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MWzhG8+GY4hViPukWPiWZRq+N25+GfMzWl3VIaEsAt0=;
+        b=2fEN0uiFjeFOX9ee5hjmmS3TBSfaEoNjYNen1+aXJRZ+jRFqj8TOTQC6pXe8WZNvhM
+         6xwb5yvV0oUnYJDzDWStIdELRNmfZtFhqtRTIle++wpN3WBKWVRgNz2DLuK0tzljPxMv
+         aRFiUsTIyzBR9ZtKmpMySkC9QB0WIZb+9sWPrOGmh4M0NrI+lRIGbT2CERRm4NYd9wwM
+         +0wRZpss9vG8NL+zDRelgVlIQBe/G9GozWd07YdEtx9sSeGuVIgIYvrilZ3kYJx/rKMT
+         HvabqA1BN0zw6ET074VlfhVbuN3SRwhbi5Z3YaRHGZeNmdI7Yhk6eMXT1DPmGkI+p7U9
+         lLkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689363568; x=1691955568;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MWzhG8+GY4hViPukWPiWZRq+N25+GfMzWl3VIaEsAt0=;
+        b=ktVRYzNOmdwRXBdg73bZoA8yMoVcZF37HlYYp+a6VPhye0SZFBGU8z3KGDlo4eY8Xf
+         qFh1gyKHq4XoXgU2vXqmFba1kSatfTcHMyIEdUzxliHFP4I6MIFY0FoVNsG0GyxtqGOO
+         sD4SPLJFYIMqzDxWXjYbvn5QefRJjhs9Sy0+uVczFuzWL8trz7nhW8R/u17YYspGu6q3
+         Nn/4WzLuPhaFX+/3bvwJ9qZyaZWZNAiDBGtYB++olcQs78J57DcCkxuHS+8TJO1r4MYL
+         p4f+dfQgHQTH8AnAVLhGk+8ndigUqtdZpaTRfiuXv5vah1eHyVrf+i0J+2GGbH/0in20
+         isaQ==
+X-Gm-Message-State: ABy/qLYTU3pUfD27xTHYnz631/B/2+BKhCDmwtcTktfsgPyFFe3KQG9n
+        C6DQ9czj0IwokD8vVDU9E4g2TyrGNdjaRyHBVkw=
+X-Google-Smtp-Source: APBJJlGqzj+aSTYR5IZ2cZ3j9JzWff6pd2R1cDMrU5rCtJ76Z1014JHJeh27I6dB8ibeThw0r6Jq4w==
+X-Received: by 2002:a05:6602:4a07:b0:780:cde6:3e22 with SMTP id eh7-20020a0566024a0700b00780cde63e22mr147032iob.0.1689363568073;
+        Fri, 14 Jul 2023 12:39:28 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id p5-20020a0566380e8500b0042b068d921esm2803609jas.16.2023.07.14.12.39.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jul 2023 12:39:27 -0700 (PDT)
+Message-ID: <b4ba0b17-cf57-58b8-14c1-fda1b209c2bd@kernel.dk>
+Date:   Fri, 14 Jul 2023 13:39:26 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 6.5-rc2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -91,41 +71,33 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 14, 2023, at 17:47, Christian Brauner wrote:
-> On Tue, Jul 11, 2023 at 04:18:13PM -0600, Jens Axboe wrote:
->> On 7/11/23 3:22=E2=80=AFPM, Jens Axboe wrote:
->> > On 7/11/23 3:11?PM, Arnd Bergmann wrote:
+Hi Linus,
 
->> >> Does this require argument conversion for compat tasks?
->> >>
->> >> Even without the rusage argument, I think the siginfo
->> >> remains incompatible with 32-bit tasks, unfortunately.
->> >=20
->> > Hmm yes good point, if compat_siginfo and siginfo are different, th=
-en it
->> > does need handling for that. Would be a trivial addition, I'll make=
- that
->> > change. Thanks Arnd!
->>=20
->> Should be fixed in the current version:
->>=20
->> https://git.kernel.dk/cgit/linux/commit/?h=3Dio_uring-waitid&id=3D08f=
-3dc9b7cedbd20c0f215f25c9a7814c6c601cc
->
-> In kernel/signal.c in pidfd_send_signal() we have
-> copy_siginfo_from_user_any() it seems that a similar version
-> copy_siginfo_to_user_any() might be something to consider. We do have
-> copy_siginfo_to_user32() and copy_siginfo_to_user(). But I may lack
-> context why this wouldn't work here.
+Just a single tweak for the wait logic in io_uring. Please pull!
 
-We could add a copy_siginfo_to_user_any(), but I think open-coding
-it is easier here, since the in_compat_syscall() check does not
-work inside of the io_uring kernel thread, it has to be
-"if (req->ctx->compat)" in order to match the wordsize of the task
-that started the request.
 
-Using copy_siginfo_to_user32() and copy_siginfo_to_user() is
-probably a good idea though, it's often faster and less
-error-prone than writing each member separately.
+The following changes since commit dfbe5561ae9339516a3742a3fbd678609ad59fd0:
 
-      Arnd
+  io_uring: flush offloaded and delayed task_work on exit (2023-06-28 11:06:05 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.5-2023-07-14
+
+for you to fetch changes up to 8a796565cec3601071cbbd27d6304e202019d014:
+
+  io_uring: Use io_schedule* in cqring wait (2023-07-07 11:24:29 -0600)
+
+----------------------------------------------------------------
+io_uring-6.5-2023-07-14
+
+----------------------------------------------------------------
+Andres Freund (1):
+      io_uring: Use io_schedule* in cqring wait
+
+ io_uring/io_uring.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+-- 
+Jens Axboe
+

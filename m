@@ -2,72 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C416C7588C7
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 00:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 937487589C2
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 01:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbjGRW4T (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Jul 2023 18:56:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33936 "EHLO
+        id S230436AbjGRXzp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Jul 2023 19:55:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGRW4T (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 18:56:19 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE43A1
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 15:56:17 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id 98e67ed59e1d1-262c42d3fafso153256a91.0
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 15:56:17 -0700 (PDT)
+        with ESMTP id S230408AbjGRXzc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 19:55:32 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 757FB2D59
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:52:18 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-666e64e97e2so4272795b3a.1
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1689720977; x=1692312977;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1689724260; x=1692316260;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldfZ6lOKERdJNpkH9/Fwa0WYhwOT+qCrSUEcI/k8P5M=;
-        b=cq5tD8GHeHgz8KfZoA8FCEw3xL9g7hwH7WkD4/bOCdavBVBakfd80i+P5gvmZSm/Ai
-         FEYRBWlcb8qjO12GLj+2s87FkJUsPhqwqrA5EpFEd+r+eUcxX7xaHQUe8ryXgxBeC+xk
-         7BtD9Qhdh67zbcWk4Fomyow656yPnlkRweBhsVDwHZkjI3CotxvBt5KjFydAjerGn0xX
-         jGiGASSe9wOErxeuoQilk9Wag3bFH0kpTAktRrODGau4wbqv3H5pORdbgHSiCDFeh8H5
-         GhXQ+rY0QWVGyWS3F1GBMzMVZ+e/afbckG0uTiVVpppDWX09G2eZ+jRnGY7vKgkltVfi
-         KTWA==
+        bh=+Ez9intjtxjYak8uRtr3zqkB1irxR9pxxyDUK+M4QLY=;
+        b=PsZG4b3OmO9q/q7apB+Tp0HI6XN1xRghQb57aIiw7zBABxqaUczq1kESDUdIxjMos5
+         kf0MV4/m0EsGtxCF6WoaOY/iDx1bihMOco4FXOtstix6zfQLQlm0OHCcSr8EWJSYLAWH
+         GRWbQiOg4DdL2VtfWy4DPv4ARs3banH6B81xc5X90ZIcvSZE6h1H3ZUOGGOE6diNMquP
+         Mxsne5HQgxKIySeEDytTNPWK/MWIyF4+NcmEBEb3Xq0DAULLYrWGif3EawT2uHoRrerN
+         R/XGb+DffyhoRe3MrDNZQlwGqJO0U4fx9aRScT0oLSFSwINroIls+ZMhd93pOya9EWRK
+         nZmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689720977; x=1692312977;
+        d=1e100.net; s=20221208; t=1689724260; x=1692316260;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ldfZ6lOKERdJNpkH9/Fwa0WYhwOT+qCrSUEcI/k8P5M=;
-        b=OND8KMD64vZsf7A0GtP0Q2DcLDrzDZ5qEF8lm5Wu5Chbx9bzCQM0wY5q2YN0bvmiYr
-         //BzlNwjWU5bPsSIiNrQ8GOQ1Kn/GKWaNYxXUGrn5ZYReqPkWZ4J7tyj/qpKoquMuAV7
-         XCUOpFLO92gS/0LKZMUbtTMF4gUzZxXHy6zHhju2oIoih0LAYrBVeIbznciUJfGUXhJK
-         VxlVjbNeLn7gh708tD/gZx5x6nynUbW6Wj2j5QsXYBtJ4lFapBD86ZIDNCls7oiuj62G
-         OL1MKsBP3AHM6EYkqr6ShTDt4aFfh6wPYReOr52qxjzPzrO3AB1PrLCJNZbuNCVrTSCl
-         I8lA==
-X-Gm-Message-State: ABy/qLYM8F+8Q0toI0ARU+gpNZFdWdPeOkfqjB+sQ3LCtqwDkIJhpxRH
-        VMKdo0OUQpt8pJyBnYW337FRvQ==
-X-Google-Smtp-Source: APBJJlG2vp50w8Tx86+ab2QE7UkhEW2kMRnEbpWTZ8QP6Scw8E1ddFUjtGGjfesKWtqoz99uTGWJ3w==
-X-Received: by 2002:a17:90a:17ab:b0:265:d7ac:55b1 with SMTP id q40-20020a17090a17ab00b00265d7ac55b1mr618906pja.4.1689720976911;
-        Tue, 18 Jul 2023 15:56:16 -0700 (PDT)
+        bh=+Ez9intjtxjYak8uRtr3zqkB1irxR9pxxyDUK+M4QLY=;
+        b=js+oojf+KoTG8yIrIsa+SI+PcW/FlROSWU6Umspk575IPTCkWqUsotC0OkCh8OTlhF
+         VF7bxs24Dpt9IB9UkKi/AMr1gPPLcIxmEMJUR8PTg1iBmSlHBmZ4uTLblXKiZZm2Vzgk
+         DU6TUP3HFbtv+eSfVyBTcteXzSXVctz/F8KN+8D+K4tPchCXrwlyK3BUyXC8j628V5B5
+         +IMZs8MRdGXKA12bS3WbEBtrA3MT/LHqDflwluObqJvG8S5/dmAeXh6U5zH1ULOWm9O6
+         3JfCY3JJkRMczyHAWFdqTkJJipJBbi7OgA7zhw/1rs2br59PGwbVO1yfEOVX6ai80UzC
+         AP+w==
+X-Gm-Message-State: ABy/qLbglh22haAtytIwGzFkC3xUOATzqlnv6SfVSqlTq/aAZpR6Djl8
+        q2VoZS4fcubaGT/Wsl7oP15Nww==
+X-Google-Smtp-Source: APBJJlECq9GlTxsV46/p2vnTpGyTFZuVAAUfVd16o5DBIb4/f4V8qy3kJrvlQNrkP65Yh9jaRNeHkA==
+X-Received: by 2002:a05:6a20:430f:b0:134:3013:cdb5 with SMTP id h15-20020a056a20430f00b001343013cdb5mr760622pzk.35.1689724260282;
+        Tue, 18 Jul 2023 16:51:00 -0700 (PDT)
 Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
-        by smtp.gmail.com with ESMTPSA id u63-20020a17090a51c500b00256a4d59bfasm92243pjh.23.2023.07.18.15.56.16
+        by smtp.gmail.com with ESMTPSA id c24-20020aa78818000000b00662c4ca18ebsm2038064pfo.128.2023.07.18.16.50.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 15:56:16 -0700 (PDT)
+        Tue, 18 Jul 2023 16:50:59 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
         (envelope-from <david@fromorbit.com>)
-        id 1qLtc5-007jn1-0w;
-        Wed, 19 Jul 2023 08:56:13 +1000
-Date:   Wed, 19 Jul 2023 08:56:13 +1000
+        id 1qLuT3-007kcs-0p;
+        Wed, 19 Jul 2023 09:50:57 +1000
+Date:   Wed, 19 Jul 2023 09:50:57 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
         andres@anarazel.de
-Subject: Re: [PATCH 1/5] iomap: simplify logic for when a dio can get
- completed inline
-Message-ID: <ZLcYjW6vJhEXy7hU@dread.disaster.area>
+Subject: Re: [PATCH 5/5] iomap: support IOCB_DIO_DEFER
+Message-ID: <ZLclYR9AtKQXcGFJ@dread.disaster.area>
 References: <20230718194920.1472184-1-axboe@kernel.dk>
- <20230718194920.1472184-3-axboe@kernel.dk>
+ <20230718194920.1472184-7-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230718194920.1472184-3-axboe@kernel.dk>
+In-Reply-To: <20230718194920.1472184-7-axboe@kernel.dk>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,144 +74,160 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 01:49:16PM -0600, Jens Axboe wrote:
-> Currently iomap gates this on !IOMAP_DIO_WRITE, but this isn't entirely
-> accurate. Some writes can complete just fine inline. One such example is
-> polled IO, where the completion always happens in task context.
+On Tue, Jul 18, 2023 at 01:49:20PM -0600, Jens Axboe wrote:
+> If IOCB_DIO_DEFER is set, utilize that to set kiocb->dio_complete handler
+> and data for that callback. Rather than punt the completion to a
+> workqueue, we pass back the handler and data to the issuer and will get a
+> callback from a safe task context.
 > 
-> Add IOMAP_DIO_INLINE_COMP which tells the completion side if we can
-> complete this dio inline, or if it needs punting to a workqueue. We set
-> this flag by default for any dio, and turn it off for unwritten extents
-> or blocks that require a sync at completion time.
+> Using the following fio job to randomly dio write 4k blocks at
+> queue depths of 1..16:
+> 
+> fio --name=dio-write --filename=/data1/file --time_based=1 \
+> --runtime=10 --bs=4096 --rw=randwrite --norandommap --buffered=0 \
+> --cpus_allowed=4 --ioengine=io_uring --iodepth=16
+> 
+> shows the following results before and after this patch:
+> 
+> 	Stock	Patched		Diff
+> =======================================
+> QD1	155K	162K		+ 4.5%
+> QD2	290K	313K		+ 7.9%
+> QD4	533K	597K		+12.0%
+> QD8	604K	827K		+36.9%
+> QD16	615K	845K		+37.4%
 
-Ignoring the O_DSYNC case (I'll get to that at the end), this is
-still wrong - it misses extending writes that need to change file
-size at IO completion. For some filesystems, file extension at IO
-completion has the same constraints as unwritten extent conversion
-(i.e. requires locking and transactions), but the iomap
-infrastructure has no idea whether the filesystem performing the IO
-requires this or not.
+Nice.
 
-i.e. if iomap always punts unwritten extent IO to a workqueue, we
-also have to punt extending writes to a workqueue.  Fundamentally,
-the iomap code itself cannot make a correct determination of whether
-IO completion of any specific write IO requires completion in task
-context.
-
-Only the filesystem knows that,
-
-However, the filesystem knows if the IO is going to need IO
-completion processing at submission time. It tells iomap that it
-needs completion processing via the IOMAP_F_DIRTY flag. This allows
-filesystems to determine what IOs iomap can consider as "writes that
-don't need filesystem completion processing".
-
-With this flag, iomap can optimise the IO appropriately. We can use
-REQ_FUA for O_DSYNC writes if IOMAP_F_DIRTY is not set. We can do
-inline completion if IOMAP_F_DIRTY is not set. But if IOMAP_F_DIRTY
-is set, the filesystem needs to run it's own completion processing,
-and so iomap cannot run that write with an inline completion.
-
-> Gate the inline completion on whether we're in a task or not as well.
-> This will always be true for polled IO, but for IRQ driven IO, the
-> completion context may not allow for inline completions.
-
-Again, context does not matter for pure overwrites - we can complete
-them inline regardless of completion context. The task context only
-matters when the filesystem needs to do completion work, and we've
-already established that we are not doing inline completion
-for polled IO for unwritten, O_DSYNC or extending file writes.
-
-IOWs, we already avoid polled completions for all the situations
-where IOMAP_F_DIRTY is set by the filesystem to indicate the
-operation is not a pure overwrite....
-
-
+> which shows nice wins all around. If we factored in per-IOP efficiency,
+> the wins look even nicer. This becomes apparent as queue depth rises,
+> as the offloaded workqueue completions runs out of steam.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
->  fs/iomap/direct-io.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+>  fs/iomap/direct-io.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
 > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index ea3b868c8355..6fa77094cf0a 100644
+> index 92b9b9db8b67..ed615177e1f6 100644
 > --- a/fs/iomap/direct-io.c
 > +++ b/fs/iomap/direct-io.c
-> @@ -20,6 +20,7 @@
->   * Private flags for iomap_dio, must not overlap with the public ones in
->   * iomap.h:
->   */
-> +#define IOMAP_DIO_INLINE_COMP	(1 << 27)
->  #define IOMAP_DIO_WRITE_FUA	(1 << 28)
->  #define IOMAP_DIO_NEED_SYNC	(1 << 29)
->  #define IOMAP_DIO_WRITE		(1 << 30)
-> @@ -161,15 +162,15 @@ void iomap_dio_bio_end_io(struct bio *bio)
->  			struct task_struct *waiter = dio->submit.waiter;
->  			WRITE_ONCE(dio->submit.waiter, NULL);
->  			blk_wake_io_task(waiter);
-> -		} else if (dio->flags & IOMAP_DIO_WRITE) {
-> +		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) && in_task()) {
-
-Regardless of whether the code is correct or not, this needs a
-comment explaining what problem the in_task() check is working
-around...
-
-> +			WRITE_ONCE(dio->iocb->private, NULL);
-> +			iomap_dio_complete_work(&dio->aio.work);
-> +		} else {
->  			struct inode *inode = file_inode(dio->iocb->ki_filp);
+> @@ -131,6 +131,11 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_dio_complete);
 >  
+> +static ssize_t iomap_dio_deferred_complete(void *data)
+> +{
+> +	return iomap_dio_complete(data);
+> +}
+> +
+>  static void iomap_dio_complete_work(struct work_struct *work)
+>  {
+>  	struct iomap_dio *dio = container_of(work, struct iomap_dio, aio.work);
+> @@ -167,6 +172,25 @@ void iomap_dio_bio_end_io(struct bio *bio)
+>  		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) && in_task()) {
 >  			WRITE_ONCE(dio->iocb->private, NULL);
->  			INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
->  			queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
-> -		} else {
-> -			WRITE_ONCE(dio->iocb->private, NULL);
-> -			iomap_dio_complete_work(&dio->aio.work);
->  		}
->  	}
+>  			iomap_dio_complete_work(&dio->aio.work);
+> +		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) &&
+> +			   (iocb->ki_flags & IOCB_DIO_DEFER)) {
+> +			/* only polled IO cares about private cleared */
+> +			iocb->private = dio;
+> +			iocb->dio_complete = iomap_dio_deferred_complete;
+> +			/*
+> +			 * Invoke ->ki_complete() directly. We've assigned
+> +			 * out dio_complete callback handler, and since the
+> +			 * issuer set IOCB_DIO_DEFER, we know their
+> +			 * ki_complete handler will notice ->dio_complete
+> +			 * being set and will defer calling that handler
+> +			 * until it can be done from a safe task context.
+> +			 *
+> +			 * Note that the 'res' being passed in here is
+> +			 * not important for this case. The actual completion
+> +			 * value of the request will be gotten from dio_complete
+> +			 * when that is run by the issuer.
+> +			 */
+> +			iocb->ki_complete(iocb, 0);
+>  		} else {
+>  			struct inode *inode = file_inode(iocb->ki_filp);
 >  
-> @@ -244,6 +245,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  
->  	if (iomap->type == IOMAP_UNWRITTEN) {
->  		dio->flags |= IOMAP_DIO_UNWRITTEN;
-> +		dio->flags &= ~IOMAP_DIO_INLINE_COMP;
->  		need_zeroout = true;
->  	}
->  
-> @@ -500,7 +502,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	dio->i_size = i_size_read(inode);
->  	dio->dops = dops;
->  	dio->error = 0;
-> -	dio->flags = 0;
-> +	/* default to inline completion, turned off when not supported */
-> +	dio->flags = IOMAP_DIO_INLINE_COMP;
->  	dio->done_before = done_before;
 
-I think this is poorly coded. If we get the clearing logic
-wrong (as is the case in this patch) then bad things will
-happen when we run inline completion in an irq context when
-the filesystem needs to run a transaction. e.g. file extension.
+Hmmm. No problems with the change, but all the special cases is
+making the completion function a bit of a mess.
 
-It looks to me like you hacked around this "default is wrong" case
-with the "in_task()" check in completion, but given that check is
-completely undocumented....
+Given that all read DIOs use inline completions, we can largely
+simplify the completion down to just looking at
+dio->wait_for_completion and IOMAP_DIO_COMPLETE_INLINE, and not
+caring about what type of IO is being completed at all.
 
->  	dio->submit.iter = iter;
-> @@ -535,6 +538,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		/* for data sync or sync, we need sync completion processing */
->  		if (iocb_is_dsync(iocb)) {
->  			dio->flags |= IOMAP_DIO_NEED_SYNC;
-> +			dio->flags &= ~IOMAP_DIO_INLINE_COMP;
+Hence I think that at the end of this series, the completion
+function should look something like this:
 
-This is looks wrong, too. We set IOMAP_DIO_WRITE_FUA ca couple of
-lines later, and during bio submission we check if REQ_FUA can be
-used if IOMAP_F_DIRTY is not set. If all the bios we submit use
-REQ_FUA, then we clear IOMAP_DIO_NEED_SYNC before we drop the dio
-submission reference.
+void iomap_dio_bio_end_io(struct bio *bio)
+{
+	struct iomap_dio *dio = bio->bi_private;
+	struct kiocb *iocb = dio->iocb;
+	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
+	ssize_t result = 0;
 
-For such a REQ_FUA bio chains, we can now safely do inline
-completion because we don't run generic_write_sync() in IO
-completion now. The filesystem does not need to perform blocking or
-IO operations in completion, either, so these IOs can be completed
-in line like any other pure overwrite DIO....
+	if (bio->bi_status)
+		iomap_dio_set_error(dio, blk_status_to_errno(bio->bi_status));
+
+	if (!atomic_dec_and_test(&dio->ref))
+		goto release_bio;
+
+	/* Synchronous IO completion. */
+	if (dio->wait_for_completion) {
+		struct task_struct *waiter = dio->submit.waiter;
+		WRITE_ONCE(dio->submit.waiter, NULL);
+		blk_wake_io_task(waiter);
+		goto release_bio;
+	}
+
+	/*
+	 * Async DIO completion that requires filesystem level
+	 * completion work gets punted to a work queue to complete
+	 * as the operation may require more IO to be issued to
+	 * finalise filesystem metadata changes or guarantee data
+	 * integrity.
+	 */
+	if (!(dio->flags & IOMAP_DIO_COMPLETE_INLINE)) {
+		struct inode *inode = file_inode(iocb->ki_filp);
+
+		WRITE_ONCE(iocb->private, NULL);
+		INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
+		queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
+		goto release_bio;
+	}
+
+	/*
+	 * Inline completion for async DIO.
+	 *
+	 * If the IO submitter is running DIO completions directly
+	 * itself, set up the callback it needs. The value we pass
+	 * to .ki_complete in this case does not matter, the defered
+	 * completion will pull the result from the completion
+	 * callback we provide.
+	 *
+	 * Otherwise, run the dio completion directly, then pass the
+	 * result to the iocb completion function to finish the IO.
+	 */
+	if (iocb->ki_flags & IOCB_DEFER_DIO) {
+		WRITE_ONCE(iocb->private, dio);
+		iocb->dio_complete = iomap_dio_deferred_complete;
+	} else {
+		WRITE_ONCE(dio->iocb->private, NULL);
+		result = iomap_dio_complete(dio);
+	}
+	iocb->ki_complete(iocb, result);
+
+release_bio:
+	if (should_dirty) {
+		bio_check_pages_dirty(bio);
+	} else {
+		bio_release_pages(bio, false);
+		bio_put(bio);
+	}
+}
 
 -Dave.
 -- 

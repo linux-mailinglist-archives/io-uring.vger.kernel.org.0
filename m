@@ -2,119 +2,111 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B564D7574B3
-	for <lists+io-uring@lfdr.de>; Tue, 18 Jul 2023 08:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AC14757B03
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jul 2023 13:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbjGRGzo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Jul 2023 02:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53842 "EHLO
+        id S232020AbjGRL46 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Jul 2023 07:56:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjGRGzn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 02:55:43 -0400
-Received: from out-62.mta1.migadu.com (out-62.mta1.migadu.com [95.215.58.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D501A6
-        for <io-uring@vger.kernel.org>; Mon, 17 Jul 2023 23:55:42 -0700 (PDT)
-Message-ID: <fd136d07-0da3-ce9c-9d49-6ab9a0e056bd@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689663340;
+        with ESMTP id S229862AbjGRL45 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 07:56:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65331A5
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 04:56:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689681373;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=byzEJ8KQDir+xTs9pfgOhNsoeOFRsWikoU7YhfIE5oo=;
-        b=oTO3y2PcfO14EfDH2drouQqLTF1iu3gLCOv6ePkBHxmqKsNQKDALb2Gm48b0kfCT0Fqvem
-        ZZfpZoHgRBP2VLe3sS+9qcsX0Esxc0UPmsVdAXc/9fEt5PXD6mTs5Gz01gCuXUTzt7gnHO
-        s+ExkqXjjdjv9I5wi6X4ch8QYtebr7U=
-Date:   Tue, 18 Jul 2023 14:55:03 +0800
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=HzrRHf2xvIEmTHm/Gu7FM0e+zDruuUgopzejA6ZU6c0=;
+        b=Yq/sFEiNRNYByqLavf8cx4keJxTRgAgZHGYolhrClBZvx5w/u0vFsIMU7UUnWY1y+vryLU
+        tPTJFbQ1OvkLmueg2W6/ehFWFgsJFTfv+2CEnHJNYIMoZLQ4L3qeOW1twOPUN1Mgn9no0K
+        A3gK0s1VmiliaEhFZeKY6ZkGITfN1+g=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-637-HBSx1vR3MLC21vdoOTPruQ-1; Tue, 18 Jul 2023 07:56:11 -0400
+X-MC-Unique: HBSx1vR3MLC21vdoOTPruQ-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-635e664d2f8so46689726d6.3
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 04:56:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689681371; x=1692273371;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HzrRHf2xvIEmTHm/Gu7FM0e+zDruuUgopzejA6ZU6c0=;
+        b=FFV0VDo+MGKqf5lM9qpk9SLoNH3/Vm/FMiR5u6QuikKA21W/OARlRDPW2zGY5//dsH
+         8lRgqnbijXkp6I4aG1wRdSuLUaRjB3kcLd+EEErRilkBtrytIokA0wjBoBLrVdEPQL6j
+         N1moO2UZJ9VP+kcrQR3GUn5jG17KADownCmwA2VF/Xqsy3tBem1flnZPYn1uAVpxB4tt
+         4aA3GbRfiXZHknCXNr0HlLxgxwMnEtINXuYnHL0fISQoWwkmbxkeTVqawlHwnuO6k2qq
+         gTVdX8X5YDBZnckmWvDDcY/LD5XSUjqMCxQzmSydU2/yj/4pFOu6eBxLUdyrUOd7Ny6w
+         Hciw==
+X-Gm-Message-State: ABy/qLaLUHQTA3VKRbaLEqYYwL5YY13fXgEGGxBgYY34hViM0i8tN7Fo
+        ZSUoiKH3/IjE6QxStNTopHoEe1YZCGuNLutCUVZhZ2Devx2zuDmTaA5akje+qfPXFKZZGGvv/z4
+        6eH1WTUhd2ESayog5RJR8T+m6q03mRQ==
+X-Received: by 2002:a0c:e283:0:b0:623:9ac1:a4be with SMTP id r3-20020a0ce283000000b006239ac1a4bemr2032992qvl.12.1689681371132;
+        Tue, 18 Jul 2023 04:56:11 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlHSJUN7slcgvMgDdDG5JP24NhEZr3/218cgdV5hvCjvLFTCVdt9XTG4M2tXJraV2xCUUP3dVw==
+X-Received: by 2002:a0c:e283:0:b0:623:9ac1:a4be with SMTP id r3-20020a0ce283000000b006239ac1a4bemr2032986qvl.12.1689681370899;
+        Tue, 18 Jul 2023 04:56:10 -0700 (PDT)
+Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id i4-20020a0c9c84000000b0063612e03433sm657864qvf.101.2023.07.18.04.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 04:56:10 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: don't audit the capability check in io_uring_create()
+Date:   Tue, 18 Jul 2023 13:56:07 +0200
+Message-ID: <20230718115607.65652-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] io_uring: add support for getdents
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-4-hao.xu@linux.dev>
- <20230712-alltag-abberufen-67a615152bee@brauner>
- <bb2aa872-c3fb-93f0-c0da-3a897f39347d@linux.dev>
- <20230713-sitzt-zudem-67bc5d860cb4@brauner>
- <da88054b-c972-f4d1-fbdc-c6e10a9c559b@linux.dev>
- <20230713-verglast-pfuschen-50197f8be98b@brauner>
- <e76f0ab9-768e-2f8c-24f0-95a0dd375c98@linux.dev>
-In-Reply-To: <e76f0ab9-768e-2f8c-24f0-95a0dd375c98@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/16/23 19:57, Hao Xu wrote:
-> On 7/13/23 23:14, Christian Brauner wrote:
-> 
->> Could someone with perf experience try and remove that f_count == 1
->> optimization from __fdget_pos() completely and make it always acquire
->> the mutex? I wonder what the performance impact of that is.
-> 
-> Hi Christian,
-> For your reference, I did a simple test: writed a c program that open a
-> directory which has 1000 empty files, then call sync getdents64 on it
-> repeatedly until we get all the entries. I run this program 10 times for
-> "with f_count==1
-> optimization" and "always do the lock" version.
-> Got below data:
-> with f_count==1:
-> 
-> time cost: 0.000379
-> time cost: 0.000116
-> time cost: 0.000090
-> time cost: 0.000101
-> time cost: 0.000095
-> time cost: 0.000092
-> time cost: 0.000092
-> time cost: 0.000095
-> time cost: 0.000092
-> time cost: 0.000121
-> time cost: 0.000092
-> 
-> time cost avg: 0.00009859999999999998
-> 
-> always do the lock:
-> time cost: 0.000095
-> time cost: 0.000099
-> time cost: 0.000123
-> time cost: 0.000124
-> time cost: 0.000092
-> time cost: 0.000099
-> time cost: 0.000092
-> time cost: 0.000092
-> time cost: 0.000093
-> time cost: 0.000094
->              time cost avg: 0.00010029999999999997
-> 
-> So about 1.724% increment
-> 
-> [1] the first run is not showed here since that try does real IO
->      and diff a lot.
-> [2] the time cost calculation is by gettimeofday()
-> [3] run it in a VM which has 2 CPUs and 1GB memory.
-> 
-> Regards,
-> Hao
+The check being unconditional may lead to unwanted denials reported by
+LSMs when a process has the capability granted by DAC, but denied by an
+LSM. In the case of SELinux such denials are a problem, since they can't
+be effectively filtered out via the policy and when not silenced, they
+produce noise that may hide a true problem or an attack.
 
-Did another similar test for more times(100 rounds), about 1.4%
-increment. How about:
-if CONFIG_IO_URING: remove the f_count==1 logic
-else: do the old logic.
+Since not having the capability merely means that the created io_uring
+context will be accounted against the current user's RLIMIT_MEMLOCK
+limit, we can disable auditing of denials for this check by using
+ns_capable_noaudit() instead of capable().
+
+Fixes: 2b188cc1bb85 ("Add io_uring IO interface")
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=2193317
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ io_uring/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 7505de2428e03..a9923676d16d6 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3870,7 +3870,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 		ctx->syscall_iopoll = 1;
+ 
+ 	ctx->compat = in_compat_syscall();
+-	if (!capable(CAP_IPC_LOCK))
++	if (!ns_capable_noaudit(&init_user_ns, CAP_IPC_LOCK))
+ 		ctx->user = get_uid(current_user());
+ 
+ 	/*
+-- 
+2.41.0
+

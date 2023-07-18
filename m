@@ -2,20 +2,20 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 937487589C2
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 01:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 877577589C7
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 01:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbjGRXzp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Jul 2023 19:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54528 "EHLO
+        id S231712AbjGRX4n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Jul 2023 19:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230408AbjGRXzc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 19:55:32 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 757FB2D59
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:52:18 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-666e64e97e2so4272795b3a.1
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:52:18 -0700 (PDT)
+        with ESMTP id S231476AbjGRX4a (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 19:56:30 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6635253
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:53:40 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b89600a37fso39203455ad.2
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1689724260; x=1692316260;
         h=in-reply-to:content-disposition:mime-version:references:message-id
@@ -66,8 +66,9 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20230718194920.1472184-7-axboe@kernel.dk>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk

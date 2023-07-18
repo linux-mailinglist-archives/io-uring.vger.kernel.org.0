@@ -2,64 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE1B7585C0
-	for <lists+io-uring@lfdr.de>; Tue, 18 Jul 2023 21:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 424587585C3
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jul 2023 21:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjGRTt0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Jul 2023 15:49:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34810 "EHLO
+        id S230322AbjGRTt2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Jul 2023 15:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGRTt0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 15:49:26 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13712198E
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 12:49:25 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-345d2b936c2so5294215ab.0
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 12:49:25 -0700 (PDT)
+        with ESMTP id S230232AbjGRTt1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 15:49:27 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493349D
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 12:49:26 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id ca18e2360f4ac-760dff4b701so56223039f.0
+        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 12:49:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689709764; x=1690314564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCluVD14LcdKKQ0S/mQnMo1rq4wRSzAnLZOVOcyS9i4=;
-        b=H3RX9PSotNQjhcLzOxCLjhjoJLTbqCr3+d9uDxO6B8vPXHCKaYccg47cnJxFiMVpqp
-         rIsODMqD85G2WqcmfogcNrGxHFb9+yS+wAHG8XHIRT8euNCz4AexIwA/b2wBhYOAYL0V
-         DWG3PQZv6VRfpZXe2nJBHxUtpdCDeiFENki82jynONtL1I3Q/hxzxlrOO44YNRJJigdu
-         9U2W3aRLU//3UA2uWwikHLbqr0nMnkXBJetW6m/RxDOneTIlwj2Wo4pijcBygiVuE7Qy
-         GA1LmSBnjRwIyPCZ7YtGkU3AYsWFT6SaZTyRiV4E8EdJ6CFse6cVUP1lXjxzC0vqEi5P
-         W7Eg==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689709765; x=1692301765;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UGcQDjq/o6t2ObZfo2BKw3K7TL3Ez2D+npEQSf00g+U=;
+        b=GYMNTAwW+OS0zoZ8XObYelbr9fY9Yib+JrDAtJHHTiuw70qayYxL/ylwZIh40Ucbq7
+         wDFwyQL0jEAe+MS1C+4QETQ1v++JeT+9s17I7YZ6S/Q+rboxZhtSRkJNvuKr4aPSLq7+
+         BvLVr5TulVNpo2Qp+Ylvcv4lcGRN9SuHA+WjUAVLIVtMz0PSeK9uPWrjDg2RkJC5xM9+
+         G/0BfnERVgn1kXLDH/Awb7m0ysfkRLp9faGnz44SHdJGk+r/E6kIdw4oEKUz6Dc71nli
+         wRK2gTR1Ber0dZiMsKLR6rz1Fg8n2DaZehZ5P1DK8J2DfuiZLnH4g0AX+Q1tswMls1j5
+         UeZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689709764; x=1690314564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TCluVD14LcdKKQ0S/mQnMo1rq4wRSzAnLZOVOcyS9i4=;
-        b=KwfBxJJ9k8/yL0WEh2h/8mCK4/7omWB0KSCajS6ZOAeVg89OJgVkb6rdxkd1vQUHyk
-         WUbUcpVL7h6IB1dPZEp7HpM49X54JH6anStFeJdWyR2ZMFAN9q0ojr6xQNNixD8b+VkP
-         HQdBSsWoOKfEuG97biqZtHYEGd1R4CYvTKSD3pnWQ1cUbCNCJFYSXDL8g0Cmm3lLFk9Z
-         srSDeae1fDgnrPa+5JwG1wTqQfEerofuNVeKIvfcbJle7bNjyRJEqFXnYpGzVYXfCjGE
-         hNyIEYUzNm3cZla0/75XTc77Rm1SdW8kuyQnWaf5yZJ0okYpnpKexms0WLybfkfxVIDp
-         jb+A==
-X-Gm-Message-State: ABy/qLZ2Oj2GtCHfcUoPxijwOrJ4cLnrJTKy02sB0ZjCwVGWuN3ptLKv
-        Kx/SQ925/5bH1SEgfelbViLbFluneEZrjYbvpPI=
-X-Google-Smtp-Source: APBJJlF9laWC6p2BMCWMuaPf6kUdGIA2pm2eISS4VPQlbXAl1m7VMtjYAjN/zpfns84mLJQCy5gRHw==
-X-Received: by 2002:a05:6e02:17c8:b0:346:4eb9:9081 with SMTP id z8-20020a056e0217c800b003464eb99081mr7449789ilu.3.1689709764046;
-        Tue, 18 Jul 2023 12:49:24 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689709765; x=1692301765;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UGcQDjq/o6t2ObZfo2BKw3K7TL3Ez2D+npEQSf00g+U=;
+        b=IIzzq2p+/Uf6WUH7DCCkwzpeFNuTGMGcb9ixB09EODwlDLQKn+aTZw35/oo72Vezy+
+         wTsZgUAEkbd+o+bSORLV0jJGrxqeFdEp6nrnEQ4zsxhoNiJAOA/+bo17F3UP93/k/wt4
+         BuEhnUxzve8ByPYvtn+ve2uA6sjbMwXwb8b61b8smUTvLtPjk83VF1KZl782ZhLIa1t2
+         2dPBrf2cvJ1K4tXELg37MGjstF6j/z/DYtmNSpExMSD5vhOl/NizShZj/WaqJDQ5oJ0S
+         flnOkdp5X6jmXxtWSkwMK7Bh/yfKE4smtjLoZU9EK3HjRY8/J6pt9GsVbxc3NNkjgNIx
+         rtOA==
+X-Gm-Message-State: ABy/qLZiWHKH5eA3Ge/nRu8+5SxtVpXxRhY8L3CUJXakDJVeF2kvJB/i
+        g0W2il70FnQcnVhWv4aoEffCjeelSfOkAYiKiPw=
+X-Google-Smtp-Source: APBJJlFIO3UOGhj4Q8FZLu786jEuJAwxrtkB8KVTPudnVyvyxdmg+TKa5o8O1UPQHVeMc+GdYyACUg==
+X-Received: by 2002:a92:1901:0:b0:345:e438:7381 with SMTP id 1-20020a921901000000b00345e4387381mr2341960ilz.2.1689709765277;
+        Tue, 18 Jul 2023 12:49:25 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id v18-20020a92d252000000b00345e3a04f2dsm897463ilg.62.2023.07.18.12.49.22
+        by smtp.gmail.com with ESMTPSA id v18-20020a92d252000000b00345e3a04f2dsm897463ilg.62.2023.07.18.12.49.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 12:49:23 -0700 (PDT)
+        Tue, 18 Jul 2023 12:49:24 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org
-Cc:     hch@lst.de, andres@anarazel.de, david@fromorbit.com
-Subject: [PATCHSET v2 0/5] Improve async iomap DIO performance
-Date:   Tue, 18 Jul 2023 13:49:14 -0600
-Message-Id: <20230718194920.1472184-1-axboe@kernel.dk>
+Cc:     hch@lst.de, andres@anarazel.de, david@fromorbit.com,
+        stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: Use io_schedule* in cqring wait
+Date:   Tue, 18 Jul 2023 13:49:15 -0600
+Message-Id: <20230718194920.1472184-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230718194920.1472184-1-axboe@kernel.dk>
+References: <20230718194920.1472184-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,55 +72,81 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+From: Andres Freund <andres@anarazel.de>
 
-iomap always punts async dio write completions to a workqueue, which has
-a cost in terms of efficiency (now you need an unrelated worker to
-process it) and latency (now you're bouncing a completion through an
-async worker, which is a classic slowdown scenario).
+I observed poor performance of io_uring compared to synchronous IO. That
+turns out to be caused by deeper CPU idle states entered with io_uring,
+due to io_uring using plain schedule(), whereas synchronous IO uses
+io_schedule().
 
-This patchset intends to improve that situation. For polled IO, we
-always have a task reaping completions. Those do, by definition, not
-need to be punted through a workqueue. This is patch 1, and it adds an
-IOMAP_DIO_INLINE_COMP flag that tells the completion side that we can
-handle this dio completion without punting to a workqueue, if we're
-called from the appropriate (task) context. This is good for up to an
-11% improvement in my testing. Details in that patch commit message.
+The losses due to this are substantial. On my cascade lake workstation,
+t/io_uring from the fio repository e.g. yields regressions between 20%
+and 40% with the following command:
+./t/io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S$use_sync -R 0 /mnt/t2/fio/write.0.0
 
-For IRQ driven IO, it's a bit more tricky. The iomap dio completion
-will happen in hard/soft irq context, and we need a saner context to
-process these completions. IOCB_DIO_DEFER is added, which can be set
-in a struct kiocb->ki_flags by the issuer. If the completion side of
-the iocb handling understands this flag, it can choose to set a
-kiocb->dio_complete() handler and just call ki_complete from IRQ
-context. The issuer must then ensure that this callback is processed
-from a task. io_uring punts IRQ completions to task_work already, so
-it's trivial wire it up to run more of the completion before posting
-a CQE. Patches 2 and 3 add the necessary flag and io_uring support,
-and patches 4 and 5 add iomap support for it. This is good for up
-to a 37% improvement in throughput/latency for low queue depth IO,
-patch 5 has the details.
+This is repeatable with different filesystems, using raw block devices
+and using different block devices.
 
-This work came about when Andres tested low queue depth dio writes
-for postgres and compared it to doing sync dio writes, showing that the
-async processing slows us down a lot.
+Use io_schedule_prepare() / io_schedule_finish() in
+io_cqring_wait_schedule() to address the difference.
 
- fs/iomap/direct-io.c | 44 +++++++++++++++++++++++++++++++++++++-------
- include/linux/fs.h   | 30 ++++++++++++++++++++++++++++--
- io_uring/rw.c        | 24 ++++++++++++++++++++----
- 3 files changed, 85 insertions(+), 13 deletions(-)
+After that using io_uring is on par or surpassing synchronous IO (using
+registered files etc makes it reliably win, but arguably is a less fair
+comparison).
 
-Can also be found in a git branch here:
+There are other calls to schedule() in io_uring/, but none immediately
+jump out to be similarly situated, so I did not touch them. Similarly,
+it's possible that mutex_lock_io() should be used, but it's not clear if
+there are cases where that matters.
 
-https://git.kernel.dk/cgit/linux/log/?h=xfs-async-dio.2
+Cc: stable@vger.kernel.org # 5.10+
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Andres Freund <andres@anarazel.de>
+Link: https://lore.kernel.org/r/20230707162007.194068-1-andres@anarazel.de
+[axboe: minor style fixup]
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/io_uring.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Changelog:
-- Rewrite patch 1 to add an explicit flag to manage when dio completions
-  can be done inline. This drops any write related checks. We set this
-  flag by default for both reads and writes, and clear it for the latter
-  if we need zero out or O_DSYNC handling.
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index e8096d502a7c..7505de2428e0 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2489,6 +2489,8 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx)
+ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 					  struct io_wait_queue *iowq)
+ {
++	int token, ret;
++
+ 	if (unlikely(READ_ONCE(ctx->check_cq)))
+ 		return 1;
+ 	if (unlikely(!llist_empty(&ctx->work_llist)))
+@@ -2499,11 +2501,20 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 		return -EINTR;
+ 	if (unlikely(io_should_wake(iowq)))
+ 		return 0;
++
++	/*
++	 * Use io_schedule_prepare/finish, so cpufreq can take into account
++	 * that the task is waiting for IO - turns out to be important for low
++	 * QD IO.
++	 */
++	token = io_schedule_prepare();
++	ret = 0;
+ 	if (iowq->timeout == KTIME_MAX)
+ 		schedule();
+ 	else if (!schedule_hrtimeout(&iowq->timeout, HRTIMER_MODE_ABS))
+-		return -ETIME;
+-	return 0;
++		ret = -ETIME;
++	io_schedule_finish(token);
++	return ret;
+ }
+ 
+ /*
 -- 
-Jens Axboe
-
+2.40.1
 

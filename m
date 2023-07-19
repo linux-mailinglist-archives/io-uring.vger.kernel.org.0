@@ -2,122 +2,214 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FBC759F13
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 21:55:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 392AA75A07E
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 23:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbjGSTzm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 19 Jul 2023 15:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41824 "EHLO
+        id S229796AbjGSVVF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 19 Jul 2023 17:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbjGSTzm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Jul 2023 15:55:42 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADDD92
-        for <io-uring@vger.kernel.org>; Wed, 19 Jul 2023 12:55:40 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id e9e14a558f8ab-346317895e7so168595ab.1
-        for <io-uring@vger.kernel.org>; Wed, 19 Jul 2023 12:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689796540; x=1690401340;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0xJ++Hb17rNjv9dvXPfJimTgTmben16sA+ZmZQox3a0=;
-        b=pGrhJy6ZSv9oUxtfOFJg90L2vM1tOVBBYCEIDbtoIfD3mnbK5fUjWePc36zK3LCCuU
-         5+s9q/59NJB7mQ0UfhxptliuKbdGkkfCRvb5sD3oD/x6WQHvDlq24cH6jKbKh7eWUTHq
-         w9Fwu5nc1g1Z8EKizlOP3jvfSI2MHriVGXDfxfduglcPEoxIplB3nrY7vabo9BqjRjH6
-         tjouf2FAar1AeQ3leVclJINaqO0kFH+Ad3OV6mEbZalbY0lIamS99NZf6ezGCYZvTxpq
-         W0XBuZRSAaJz3rP1+YiXROqKXwWMF4pa1BJABXGGbJiYZErXEj0B1TfnWm3bZPLZxB0k
-         /dJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689796540; x=1690401340;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0xJ++Hb17rNjv9dvXPfJimTgTmben16sA+ZmZQox3a0=;
-        b=daYaiCkLfUj8Fy88DHIZB4mMjkBHYqYXuY4jZe80yXFVn5QAXT7KiGYaXdaDhDi/Nj
-         3lIXMdcARRGc3QsTtgaqevW9em7zlmDUHs9IPfIZkLe1jd3NedXkFGyROLiQG7D3Zi/G
-         IeqcTGeOGg0otdFRGj7zKoJFw4xY9Knbe+dPeT7wFJhY2ZQxkrd6Fae6ZEGOCvt1QDBb
-         HoscsurmnO35Zs/UEOA6Etdiqd6O/8ZPeLyeHeRiVdnvVOlfY6MKwikyg9bw0D4euBty
-         AF75jKZ1WuG2+yu6n00FfEanvnfQm9WtEJMoSDh4ztg0pokWaqpdMSjDjadb45yKO75D
-         2pJw==
-X-Gm-Message-State: ABy/qLad3XXk+qZa9fTKmvy4g/7Qb/Kjpt5lryczZOeKTSlQMJ5lD+jn
-        jAJe4MYkLLtrzETNl6yo0Y1AdgwymS4aQSa0PR0=
-X-Google-Smtp-Source: APBJJlG4Ep/6aY60WGL5EGHx0EfBFLVaDFt8OQRMNaIWAy2/GLHbXFjxgEGyTM4Gx/HbDoQUUlq9bA==
-X-Received: by 2002:a92:da83:0:b0:33b:d741:5888 with SMTP id u3-20020a92da83000000b0033bd7415888mr752717iln.0.1689796539877;
-        Wed, 19 Jul 2023 12:55:39 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id m7-20020a924b07000000b00345d2845c42sm1615114ilg.57.2023.07.19.12.55.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 12:55:39 -0700 (PDT)
-Message-ID: <0a7a1a39-8904-bebc-289e-c80f9d76d938@kernel.dk>
-Date:   Wed, 19 Jul 2023 13:55:38 -0600
+        with ESMTP id S229536AbjGSVVE (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 19 Jul 2023 17:21:04 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3271FC0;
+        Wed, 19 Jul 2023 14:21:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
+ s=s31663417; t=1689801660; x=1690406460; i=deller@gmx.de;
+ bh=gNkbRbptmMouxYMIBFLEub9MbsRJyCdJnwvjYwKt+kU=;
+ h=X-UI-Sender-Class:Date:From:To:Subject;
+ b=Cujk2OH2LDXNzPGE88He9x833krzOqBsMRotgg5OHAEJW+u8Bs/+dC1hVR7KHjf7EdFztLn
+ 1qx5z6XXiQ4B6PpOpij9mC2gO5ZtPH0ZwtGQFBbgcL/mX0RcAptRaIUKc/2IxthjzknY7YMlZ
+ CPgO+paD+3JnqJJcTsf8gcxkHAvFTtqKhd0BlkcqEyMrEswFfCUfLok0DqKXJQwr16CgNRqHW
+ eNSv7d9GrJL+R/IzRmUBzEpd28GNDSEjrl2Mn66qPi+4whNurA/Z6+V7qRfz0VkHaPih1qd72
+ 8NrVY1Su430yhNqEIOeZ80S2e5OwBD9cvHGIyTESPo3sPTFzT+AQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from p100 ([94.134.145.157]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M7K3Y-1qGjLz3gAW-007hY2; Wed, 19
+ Jul 2023 23:20:59 +0200
+Date:   Wed, 19 Jul 2023 23:20:57 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-ia64@vger.kernel.org, matoro_mailinglist_kernel@matoro.tk,
+        linux-parisc@vger.kernel.org
+Subject: [PATCH][RFC] io_uring: Fix io_uring_mmu_get_unmapped_area() for IA-64
+Message-ID: <ZLhTuTPecx2fGuH1@p100>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 5/5] iomap: support IOCB_DIO_DEFER
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
-        andres@anarazel.de
-References: <20230718194920.1472184-1-axboe@kernel.dk>
- <20230718194920.1472184-7-axboe@kernel.dk>
- <ZLclYR9AtKQXcGFJ@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZLclYR9AtKQXcGFJ@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Provags-ID: V03:K1:EwY2RzLk9RKgvSpx5rlHVgjNLlt7RV/3gvc85Mr6EmpWekmzvpv
+ M9WWJLWaZNY7J/u8aOu5V39D03C3UedRelbsbJGM4Piz49BZyBMjJktaWYoxvKyqLco56mu
+ RW6mnStg0fAEDl/ScAllKzdodxc8vqJRGTL1TVJp81pxb2UZQtLNNHqQA7ZU5JWUU3DggkV
+ OTa7HCLztuxNCE9xljziQ==
+UI-OutboundReport: notjunk:1;M01:P0:m8fqtvCpf3o=;wIWVYZmPIFx3gkDbiuR17VT4Ky6
+ 1xDCK1Oldi5pYRJk2uNfwSRzAmcfdQNHrLseqIPv0NqOHHwSIqAsRfmlVxCkrigVT6biL13Jh
+ M4/8LEovok4ewliGRKm9DUweI4wywTmvYK8kx48ak5f5NOgQ6/gkJWEuwbojacUJuEzYwOSjA
+ kSsgNjJHmXUuazQtqxawBmRbfE0fXQEYHFl8MFgcBHov3YrDhQSPtmknwFboWRSg1KW0zqr2w
+ R3tGfDlytdy5ZTQlFNFzmvSajh+iPcG6VyJLUom0cmb5vcUYPpOwGT8JtmOskcBm2YsRwqUMM
+ FNNJm10zRtTrBAWXY6ZAp3MxsbG5MyHdcJqCamZiMtyJkH08jzwr8ltlP2jroF3z5Nl1OkUX8
+ Xi2rdI1wVmArqM9czGa2329ShU70Dcf1J65Kapi2cj8Igo1RRpyTgsPl72VjGD+OuaL8HU+Py
+ qI6Xr+tFMXOkr3/DWHQircJgl0kfNDUCAmsis5zoG9JqLZPIY1Wm2SNjwbMrTJSD4JV0lFgYr
+ fH2bO/uterkKRKgGSblGinWDwJFxpq1T77kbkJhO3DyBioIVafsS753mmJYlaPUMMw++AOHR+
+ 0BiEz7RSawk1Dt2NMs2rY6gQUkTe5oWOBBnHKfIE/Gx0Wtvde6LSbKe5kuQVHOV0Rk4qXFWeO
+ W0Je8oT0PBgSoWp5KKvhp8sd5Psr2dhM/m6Dj9Jas8hbzzyt0SAPIF2ch45njtMmiT9jLz8TG
+ xfX23ZmCw4CQEJP5FiiSxtbJTdIdWkb7S70skkzqLMZdHtGTeTdw+gEfaW7w2ndJfY56me5ir
+ Xa0m38kCUslDZHBaeTleDIZbzESrzj8svoULdbHfX9RO093f6DK4Gn/cwt1TOeFwFog8Uafvp
+ 1lJ6h3foytqvuv6OC23VyyD//h9q6KISWhv/qDkkpFhUn6bE9tZh9LT9oQda43x8NxrJBvAiM
+ wAsOA8pP7JvIW3djT3f4uJ0mUio=
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/18/23 5:50?PM, Dave Chinner wrote:
->> @@ -167,6 +172,25 @@ void iomap_dio_bio_end_io(struct bio *bio)
->>  		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) && in_task()) {
->>  			WRITE_ONCE(dio->iocb->private, NULL);
->>  			iomap_dio_complete_work(&dio->aio.work);
->> +		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) &&
->> +			   (iocb->ki_flags & IOCB_DIO_DEFER)) {
->> +			/* only polled IO cares about private cleared */
->> +			iocb->private = dio;
->> +			iocb->dio_complete = iomap_dio_deferred_complete;
->> +			/*
->> +			 * Invoke ->ki_complete() directly. We've assigned
->> +			 * out dio_complete callback handler, and since the
->> +			 * issuer set IOCB_DIO_DEFER, we know their
->> +			 * ki_complete handler will notice ->dio_complete
->> +			 * being set and will defer calling that handler
->> +			 * until it can be done from a safe task context.
->> +			 *
->> +			 * Note that the 'res' being passed in here is
->> +			 * not important for this case. The actual completion
->> +			 * value of the request will be gotten from dio_complete
->> +			 * when that is run by the issuer.
->> +			 */
->> +			iocb->ki_complete(iocb, 0);
->>  		} else {
->>  			struct inode *inode = file_inode(iocb->ki_filp);
->>  
-> 
-> Hmmm. No problems with the change, but all the special cases is
-> making the completion function a bit of a mess.
-> 
-> Given that all read DIOs use inline completions, we can largely
-> simplify the completion down to just looking at
-> dio->wait_for_completion and IOMAP_DIO_COMPLETE_INLINE, and not
-> caring about what type of IO is being completed at all.
-> 
-> Hence I think that at the end of this series, the completion
-> function should look something like this:
+The io_uring testcase is broken on IA-64 since commit d808459b2e31
+("io_uring: Adjust mapping wrt architecture aliasing requirements").
 
-I took inspiration from this as I think it's a good idea, and did a few
-cleanups and introduced things like the above as we go. It's in v3 I
-just posted.
+The reason is, that this commit introduced an own architecture
+independend get_unmapped_area() search algorithm which doesn't suite the
+memory region requirements for IA-64.
 
--- 
-Jens Axboe
+To avoid similar problems in the future it's better to switch back to
+the architecture-provided get_unmapped_area() function and adjust the
+needed input parameters before the call.  Additionally
+io_uring_mmu_get_unmapped_area() will now become easier to understand
+and maintain.
 
+This patch has been tested on physical IA-64 and PA-RISC machines,
+without any failures in the io_uring testcases. On PA-RISC the
+LTP mmmap testcases did not report any regressions either.
+
+I don't expect issues for other architectures, but it would be nice if
+this patch could be tested on other machines too.
+
+Reported-by: matoro <matoro_mailinglist_kernel@matoro.tk>
+Fixes: d808459b2e31 ("io_uring: Adjust mapping wrt architecture aliasing r=
+equirements")
+Signed-off-by: Helge Deller <deller@gmx.de>
+
+diff --git a/arch/ia64/kernel/sys_ia64.c b/arch/ia64/kernel/sys_ia64.c
+index 6e948d015332..eb561cc93632 100644
+=2D-- a/arch/ia64/kernel/sys_ia64.c
++++ b/arch/ia64/kernel/sys_ia64.c
+@@ -63,7 +63,7 @@ arch_get_unmapped_area (struct file *filp, unsigned long=
+ addr, unsigned long len
+ 	info.low_limit =3D addr;
+ 	info.high_limit =3D TASK_SIZE;
+ 	info.align_mask =3D align_mask;
+-	info.align_offset =3D 0;
++	info.align_offset =3D pgoff << PAGE_SHIFT;
+ 	return vm_unmapped_area(&info);
+ }
+
+diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_pari=
+sc.c
+index 39acccabf2ed..465b7cb9d44f 100644
+=2D-- a/arch/parisc/kernel/sys_parisc.c
++++ b/arch/parisc/kernel/sys_parisc.c
+@@ -26,12 +26,17 @@
+ #include <linux/compat.h>
+
+ /*
+- * Construct an artificial page offset for the mapping based on the physi=
+cal
++ * Construct an artificial page offset for the mapping based on the virtu=
+al
+  * address of the kernel file mapping variable.
++ * If filp is zero the calculated pgoff value aliases the memory of the g=
+iven
++ * address. This is useful for io_uring where the mapping shall alias a k=
+ernel
++ * address and a userspace adress where both the kernel and the userspace
++ * access the same memory region.
+  */
+-#define GET_FILP_PGOFF(filp)		\
+-	(filp ? (((unsigned long) filp->f_mapping) >> 8)	\
+-		 & ((SHM_COLOUR-1) >> PAGE_SHIFT) : 0UL)
++#define GET_FILP_PGOFF(filp, addr)		\
++	((filp ? (((unsigned long) filp->f_mapping) >> 8)	\
++		 & ((SHM_COLOUR-1) >> PAGE_SHIFT) : 0UL)	\
++	  + (addr >> PAGE_SHIFT))
+
+ static unsigned long shared_align_offset(unsigned long filp_pgoff,
+ 					 unsigned long pgoff)
+@@ -111,7 +116,7 @@ static unsigned long arch_get_unmapped_area_common(str=
+uct file *filp,
+ 	do_color_align =3D 0;
+ 	if (filp || (flags & MAP_SHARED))
+ 		do_color_align =3D 1;
+-	filp_pgoff =3D GET_FILP_PGOFF(filp);
++	filp_pgoff =3D GET_FILP_PGOFF(filp, addr);
+
+ 	if (flags & MAP_FIXED) {
+ 		/* Even MAP_FIXED mappings must reside within TASK_SIZE */
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f1b79959d1c1..70eb01faf15f 100644
+=2D-- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3425,8 +3425,6 @@ static unsigned long io_uring_mmu_get_unmapped_area(=
+struct file *filp,
+ 			unsigned long addr, unsigned long len,
+ 			unsigned long pgoff, unsigned long flags)
+ {
+-	const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, flags);
+-	struct vm_unmapped_area_info info;
+ 	void *ptr;
+
+ 	/*
+@@ -3441,32 +3439,26 @@ static unsigned long io_uring_mmu_get_unmapped_are=
+a(struct file *filp,
+ 	if (IS_ERR(ptr))
+ 		return -ENOMEM;
+
+-	info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
+-	info.length =3D len;
+-	info.low_limit =3D max(PAGE_SIZE, mmap_min_addr);
+-	info.high_limit =3D arch_get_mmap_base(addr, current->mm->mmap_base);
++	/*
++	 * Some architectures have strong cache aliasing requirements.
++	 * For such architectures we need a coherent mapping which aliases
++	 * kernel memory *and* userspace memory. To achieve that:
++	 * - use a NULL file pointer to reference physical memory, and
++	 * - use the kernel virtual address of the shared io_uring context
++	 *   (instead of the userspace-provided address, which has to be 0UL
++	 *   anyway).
++	 * For architectures without such aliasing requirements, the
++	 * architecture will return any suitable mapping because addr is 0.
++	 */
++	filp =3D NULL;
++	flags |=3D MAP_SHARED;
++	pgoff =3D 0;	/* has been translated to ptr above */
+ #ifdef SHM_COLOUR
+-	info.align_mask =3D PAGE_MASK & (SHM_COLOUR - 1UL);
++	addr =3D (uintptr_t) ptr;
+ #else
+-	info.align_mask =3D PAGE_MASK & (SHMLBA - 1UL);
++	addr =3D 0UL;
+ #endif
+-	info.align_offset =3D (unsigned long) ptr;
+-
+-	/*
+-	 * A failed mmap() very likely causes application failure,
+-	 * so fall back to the bottom-up function here. This scenario
+-	 * can happen with large stack limits and large mmap()
+-	 * allocations.
+-	 */
+-	addr =3D vm_unmapped_area(&info);
+-	if (offset_in_page(addr)) {
+-		info.flags =3D 0;
+-		info.low_limit =3D TASK_UNMAPPED_BASE;
+-		info.high_limit =3D mmap_end;
+-		addr =3D vm_unmapped_area(&info);
+-	}
+-
+-	return addr;
++	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
+ }
+
+ #else /* !CONFIG_MMU */

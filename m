@@ -2,72 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 877577589C7
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 01:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AF9C758B6A
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jul 2023 04:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231712AbjGRX4n (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 18 Jul 2023 19:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54582 "EHLO
+        id S229714AbjGSCff (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 18 Jul 2023 22:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbjGRX4a (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 19:56:30 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6635253
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:53:40 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b89600a37fso39203455ad.2
-        for <io-uring@vger.kernel.org>; Tue, 18 Jul 2023 16:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1689724260; x=1692316260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Ez9intjtxjYak8uRtr3zqkB1irxR9pxxyDUK+M4QLY=;
-        b=PsZG4b3OmO9q/q7apB+Tp0HI6XN1xRghQb57aIiw7zBABxqaUczq1kESDUdIxjMos5
-         kf0MV4/m0EsGtxCF6WoaOY/iDx1bihMOco4FXOtstix6zfQLQlm0OHCcSr8EWJSYLAWH
-         GRWbQiOg4DdL2VtfWy4DPv4ARs3banH6B81xc5X90ZIcvSZE6h1H3ZUOGGOE6diNMquP
-         Mxsne5HQgxKIySeEDytTNPWK/MWIyF4+NcmEBEb3Xq0DAULLYrWGif3EawT2uHoRrerN
-         R/XGb+DffyhoRe3MrDNZQlwGqJO0U4fx9aRScT0oLSFSwINroIls+ZMhd93pOya9EWRK
-         nZmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689724260; x=1692316260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Ez9intjtxjYak8uRtr3zqkB1irxR9pxxyDUK+M4QLY=;
-        b=js+oojf+KoTG8yIrIsa+SI+PcW/FlROSWU6Umspk575IPTCkWqUsotC0OkCh8OTlhF
-         VF7bxs24Dpt9IB9UkKi/AMr1gPPLcIxmEMJUR8PTg1iBmSlHBmZ4uTLblXKiZZm2Vzgk
-         DU6TUP3HFbtv+eSfVyBTcteXzSXVctz/F8KN+8D+K4tPchCXrwlyK3BUyXC8j628V5B5
-         +IMZs8MRdGXKA12bS3WbEBtrA3MT/LHqDflwluObqJvG8S5/dmAeXh6U5zH1ULOWm9O6
-         3JfCY3JJkRMczyHAWFdqTkJJipJBbi7OgA7zhw/1rs2br59PGwbVO1yfEOVX6ai80UzC
-         AP+w==
-X-Gm-Message-State: ABy/qLbglh22haAtytIwGzFkC3xUOATzqlnv6SfVSqlTq/aAZpR6Djl8
-        q2VoZS4fcubaGT/Wsl7oP15Nww==
-X-Google-Smtp-Source: APBJJlECq9GlTxsV46/p2vnTpGyTFZuVAAUfVd16o5DBIb4/f4V8qy3kJrvlQNrkP65Yh9jaRNeHkA==
-X-Received: by 2002:a05:6a20:430f:b0:134:3013:cdb5 with SMTP id h15-20020a056a20430f00b001343013cdb5mr760622pzk.35.1689724260282;
-        Tue, 18 Jul 2023 16:51:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
-        by smtp.gmail.com with ESMTPSA id c24-20020aa78818000000b00662c4ca18ebsm2038064pfo.128.2023.07.18.16.50.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 16:50:59 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qLuT3-007kcs-0p;
-        Wed, 19 Jul 2023 09:50:57 +1000
-Date:   Wed, 19 Jul 2023 09:50:57 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
-        andres@anarazel.de
-Subject: Re: [PATCH 5/5] iomap: support IOCB_DIO_DEFER
-Message-ID: <ZLclYR9AtKQXcGFJ@dread.disaster.area>
-References: <20230718194920.1472184-1-axboe@kernel.dk>
- <20230718194920.1472184-7-axboe@kernel.dk>
+        with ESMTP id S229952AbjGSCfe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 18 Jul 2023 22:35:34 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF341FC0;
+        Tue, 18 Jul 2023 19:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689734130; x=1721270130;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MDteXjRKx7NmerjEa3yZjR1TrOfJzj9AzQhufP0RH3c=;
+  b=XCSsxxw1TEDQ5ssQk+3kMPoyVw4mdzz3MUGy3LtuEFmW2wmFmtPy985m
+   ME/rfI8+M88qoJKRkF1IzJUa/X2YGZ62LKPrwxj04klbHthSFqeiBKW5t
+   AtJKvamGsqj3b4hOPbd/8Jbcqbwbr+hAeUM4+Ue82eCZfEnA7wv20kaY0
+   JOFMqjRe8IPd+ahZi4BKtkPk0VBKNHk4t3Vq6m9WyGHWaBdfVGJzjC+oX
+   4k55zY67t4xYU3kPUYviUrSGA872ke2dVH8PtrLWDUAoZDh5inDBS6IXk
+   B/qyTTI2PmD1rywCEe1ZnmE89bW6Rh4xlJ827eq6A2YYCeOj0nu0UhXoq
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="452734658"
+X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
+   d="scan'208";a="452734658"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 19:35:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="717831095"
+X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
+   d="scan'208";a="717831095"
+Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
+  by orsmga007.jf.intel.com with ESMTP; 18 Jul 2023 19:35:26 -0700
+Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qLx2C-00044R-31;
+        Wed, 19 Jul 2023 02:35:24 +0000
+Date:   Wed, 19 Jul 2023 10:35:07 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 4/5] xfs: add NOWAIT semantics for readdir
+Message-ID: <202307191021.L6wiZiE6-lkp@intel.com>
+References: <20230718132112.461218-5-hao.xu@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230718194920.1472184-7-axboe@kernel.dk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <20230718132112.461218-5-hao.xu@linux.dev>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,162 +72,98 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 01:49:20PM -0600, Jens Axboe wrote:
-> If IOCB_DIO_DEFER is set, utilize that to set kiocb->dio_complete handler
-> and data for that callback. Rather than punt the completion to a
-> workqueue, we pass back the handler and data to the issuer and will get a
-> callback from a safe task context.
-> 
-> Using the following fio job to randomly dio write 4k blocks at
-> queue depths of 1..16:
-> 
-> fio --name=dio-write --filename=/data1/file --time_based=1 \
-> --runtime=10 --bs=4096 --rw=randwrite --norandommap --buffered=0 \
-> --cpus_allowed=4 --ioengine=io_uring --iodepth=16
-> 
-> shows the following results before and after this patch:
-> 
-> 	Stock	Patched		Diff
-> =======================================
-> QD1	155K	162K		+ 4.5%
-> QD2	290K	313K		+ 7.9%
-> QD4	533K	597K		+12.0%
-> QD8	604K	827K		+36.9%
-> QD16	615K	845K		+37.4%
+Hi Hao,
 
-Nice.
+kernel test robot noticed the following build warnings:
 
-> which shows nice wins all around. If we factored in per-IOP efficiency,
-> the wins look even nicer. This becomes apparent as queue depth rises,
-> as the offloaded workqueue completions runs out of steam.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/iomap/direct-io.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 92b9b9db8b67..ed615177e1f6 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -131,6 +131,11 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
->  }
->  EXPORT_SYMBOL_GPL(iomap_dio_complete);
->  
-> +static ssize_t iomap_dio_deferred_complete(void *data)
-> +{
-> +	return iomap_dio_complete(data);
-> +}
-> +
->  static void iomap_dio_complete_work(struct work_struct *work)
->  {
->  	struct iomap_dio *dio = container_of(work, struct iomap_dio, aio.work);
-> @@ -167,6 +172,25 @@ void iomap_dio_bio_end_io(struct bio *bio)
->  		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) && in_task()) {
->  			WRITE_ONCE(dio->iocb->private, NULL);
->  			iomap_dio_complete_work(&dio->aio.work);
-> +		} else if ((dio->flags & IOMAP_DIO_INLINE_COMP) &&
-> +			   (iocb->ki_flags & IOCB_DIO_DEFER)) {
-> +			/* only polled IO cares about private cleared */
-> +			iocb->private = dio;
-> +			iocb->dio_complete = iomap_dio_deferred_complete;
-> +			/*
-> +			 * Invoke ->ki_complete() directly. We've assigned
-> +			 * out dio_complete callback handler, and since the
-> +			 * issuer set IOCB_DIO_DEFER, we know their
-> +			 * ki_complete handler will notice ->dio_complete
-> +			 * being set and will defer calling that handler
-> +			 * until it can be done from a safe task context.
-> +			 *
-> +			 * Note that the 'res' being passed in here is
-> +			 * not important for this case. The actual completion
-> +			 * value of the request will be gotten from dio_complete
-> +			 * when that is run by the issuer.
-> +			 */
-> +			iocb->ki_complete(iocb, 0);
->  		} else {
->  			struct inode *inode = file_inode(iocb->ki_filp);
->  
+[auto build test WARNING on xfs-linux/for-next]
+[also build test WARNING on linus/master v6.5-rc2 next-20230718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Hmmm. No problems with the change, but all the special cases is
-making the completion function a bit of a mess.
+url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/fs-split-off-vfs_getdents-function-of-getdents64-syscall/20230718-212529
+base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
+patch link:    https://lore.kernel.org/r/20230718132112.461218-5-hao.xu%40linux.dev
+patch subject: [PATCH 4/5] xfs: add NOWAIT semantics for readdir
+config: x86_64-randconfig-r012-20230718 (https://download.01.org/0day-ci/archive/20230719/202307191021.L6wiZiE6-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce: (https://download.01.org/0day-ci/archive/20230719/202307191021.L6wiZiE6-lkp@intel.com/reproduce)
 
-Given that all read DIOs use inline completions, we can largely
-simplify the completion down to just looking at
-dio->wait_for_completion and IOMAP_DIO_COMPLETE_INLINE, and not
-caring about what type of IO is being completed at all.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202307191021.L6wiZiE6-lkp@intel.com/
 
-Hence I think that at the end of this series, the completion
-function should look something like this:
+All warnings (new ones prefixed by >>):
 
-void iomap_dio_bio_end_io(struct bio *bio)
-{
-	struct iomap_dio *dio = bio->bi_private;
-	struct kiocb *iocb = dio->iocb;
-	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
-	ssize_t result = 0;
+>> fs/xfs/libxfs/xfs_da_btree.c:2646:8: warning: variable 'buf_flags' set but not used [-Wunused-but-set-variable]
+           int                     buf_flags = 0;
+                                   ^
+   1 warning generated.
 
-	if (bio->bi_status)
-		iomap_dio_set_error(dio, blk_status_to_errno(bio->bi_status));
 
-	if (!atomic_dec_and_test(&dio->ref))
-		goto release_bio;
+vim +/buf_flags +2646 fs/xfs/libxfs/xfs_da_btree.c
 
-	/* Synchronous IO completion. */
-	if (dio->wait_for_completion) {
-		struct task_struct *waiter = dio->submit.waiter;
-		WRITE_ONCE(dio->submit.waiter, NULL);
-		blk_wake_io_task(waiter);
-		goto release_bio;
-	}
+  2627	
+  2628	/*
+  2629	 * Get a buffer for the dir/attr block, fill in the contents.
+  2630	 */
+  2631	int
+  2632	xfs_da_read_buf(
+  2633		struct xfs_trans	*tp,
+  2634		struct xfs_inode	*dp,
+  2635		xfs_dablk_t		bno,
+  2636		unsigned int		flags,
+  2637		struct xfs_buf		**bpp,
+  2638		int			whichfork,
+  2639		const struct xfs_buf_ops *ops)
+  2640	{
+  2641		struct xfs_mount	*mp = dp->i_mount;
+  2642		struct xfs_buf		*bp;
+  2643		struct xfs_buf_map	map, *mapp = &map;
+  2644		int			nmap = 1;
+  2645		int			error;
+> 2646		int			buf_flags = 0;
+  2647	
+  2648		*bpp = NULL;
+  2649		error = xfs_dabuf_map(dp, bno, flags, whichfork, &mapp, &nmap);
+  2650		if (error || !nmap)
+  2651			goto out_free;
+  2652	
+  2653		/*
+  2654		 * NOWAIT semantics mean we don't wait on the buffer lock nor do we
+  2655		 * issue IO for this buffer if it is not already in memory. Caller will
+  2656		 * retry. This will return -EAGAIN if the buffer is in memory and cannot
+  2657		 * be locked, and no buffer and no error if it isn't in memory.  We
+  2658		 * translate both of those into a return state of -EAGAIN and *bpp =
+  2659		 * NULL.
+  2660		 */
+  2661		if (flags & XFS_DABUF_NOWAIT)
+  2662			buf_flags |= XBF_TRYLOCK | XBF_INCORE;
+  2663		error = xfs_trans_read_buf_map(mp, tp, mp->m_ddev_targp, mapp, nmap, 0,
+  2664				&bp, ops);
+  2665		if (error)
+  2666			goto out_free;
+  2667		if (!bp) {
+  2668			ASSERT(flags & XFS_DABUF_NOWAIT);
+  2669			error = -EAGAIN;
+  2670			goto out_free;
+  2671		}
+  2672	
+  2673		if (whichfork == XFS_ATTR_FORK)
+  2674			xfs_buf_set_ref(bp, XFS_ATTR_BTREE_REF);
+  2675		else
+  2676			xfs_buf_set_ref(bp, XFS_DIR_BTREE_REF);
+  2677		*bpp = bp;
+  2678	out_free:
+  2679		if (mapp != &map)
+  2680			kmem_free(mapp);
+  2681	
+  2682		return error;
+  2683	}
+  2684	
 
-	/*
-	 * Async DIO completion that requires filesystem level
-	 * completion work gets punted to a work queue to complete
-	 * as the operation may require more IO to be issued to
-	 * finalise filesystem metadata changes or guarantee data
-	 * integrity.
-	 */
-	if (!(dio->flags & IOMAP_DIO_COMPLETE_INLINE)) {
-		struct inode *inode = file_inode(iocb->ki_filp);
-
-		WRITE_ONCE(iocb->private, NULL);
-		INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
-		queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
-		goto release_bio;
-	}
-
-	/*
-	 * Inline completion for async DIO.
-	 *
-	 * If the IO submitter is running DIO completions directly
-	 * itself, set up the callback it needs. The value we pass
-	 * to .ki_complete in this case does not matter, the defered
-	 * completion will pull the result from the completion
-	 * callback we provide.
-	 *
-	 * Otherwise, run the dio completion directly, then pass the
-	 * result to the iocb completion function to finish the IO.
-	 */
-	if (iocb->ki_flags & IOCB_DEFER_DIO) {
-		WRITE_ONCE(iocb->private, dio);
-		iocb->dio_complete = iomap_dio_deferred_complete;
-	} else {
-		WRITE_ONCE(dio->iocb->private, NULL);
-		result = iomap_dio_complete(dio);
-	}
-	iocb->ki_complete(iocb, result);
-
-release_bio:
-	if (should_dirty) {
-		bio_check_pages_dirty(bio);
-	} else {
-		bio_release_pages(bio, false);
-		bio_put(bio);
-	}
-}
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki

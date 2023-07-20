@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A1175B645
-	for <lists+io-uring@lfdr.de>; Thu, 20 Jul 2023 20:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2862075B646
+	for <lists+io-uring@lfdr.de>; Thu, 20 Jul 2023 20:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbjGTSNZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Jul 2023 14:13:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53118 "EHLO
+        id S231249AbjGTSN1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Jul 2023 14:13:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231248AbjGTSNY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 14:13:24 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB45FC
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 11:13:23 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id e9e14a558f8ab-345d2b936c2so1189935ab.0
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 11:13:23 -0700 (PDT)
+        with ESMTP id S231248AbjGTSN0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 14:13:26 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016842712
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 11:13:24 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id e9e14a558f8ab-34637e55d9dso1179245ab.1
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 11:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689876802; x=1690481602;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689876803; x=1690481603;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HmtTYMUzX/gcmI/rcwUW5tKXEH+MB6XY0myuWWxnltA=;
-        b=TtTnh3nOJsWhUQESiS/FdDhWMNHmejaFgXrPFWlYvd6yTCAia2mamY37n36yDYp3j+
-         IeV5CSyHNb6G7GRmuPgRn+mj/NElj3ufZYICp8wLgErFN5wEpXv94F4Xv2RqT12/3k6A
-         Ps6WuR84Yki74moAFBoJYdiS7aJFQzWBgAyouYP72gRA1uzaPLhnb9SuSWuSizi6U40F
-         xdXSJRE6o/dlrwmzFWkMB/tk52ZhumqRg3v3g6wGI6YyOkutH5gqEEl3SCcnYvahPcLL
-         cBV2a/V0OzTjOyusEYhuH3iFyZ7osj9/KL5y2+7FXqivBqsbEXS9MxFnUzYiqAVorrs1
-         LRzQ==
+        bh=2Rz0NMHvZQNALkINTruLCMRwh4c7Tji4y7FPdIx8g4g=;
+        b=pC3mUm4RVW6tBqU5UJQyCuZiTop8FqYLfUfiOaIDZ920FVRqxCGgm6MU8r0yEoguGw
+         dywBShB6sVkhWu7D9pHri/wY+jOZ7w+m0tEAymA35MnsiaYYQ+bl6hDigGzUFnKFBuSN
+         wtocR8b6OzHEgeb3Gbs3Qaj5C1yutuCYZUTB4hORCsdq1wdovSOhXHt9U8kmnVPpe5WG
+         kvOhXLYFrlz+oAomG+rQX+RqBZMjDJSVMkpmi4ZaVelzk/t08XsS4yG+BuJi/6oVbGQS
+         CTqPyL67wiFK3FHgDUP2m0umwWyMpW0N54FGolmXK5t+C38uKHjkAfV/7N68q3RvyZBw
+         u1Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689876802; x=1690481602;
+        d=1e100.net; s=20221208; t=1689876803; x=1690481603;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HmtTYMUzX/gcmI/rcwUW5tKXEH+MB6XY0myuWWxnltA=;
-        b=Hlo/sx7FLtIdVZmeO2u8gOL0sJQCfm+cBY1NAZnsb6yJ6Bu5oPMt9B7DfnIz80crCV
-         u2aoScqqGQT735lqTlofEd+t1Z71PwLZKSHzhz3zHSgUScVptq+X5RX8mIwKOhF96N/n
-         VFKqB8LNpfpJfLnGSz3ZLqKDCmXPDyBAm64bvHYTmZ3NsfoUSqacKHCj6JDaqwFWM/vR
-         dljYtnVvu42CmwKLisy+L4uzZeNTCWm1+rn1pqufAc5xnmxEyNPlzZJrjjUBrcTfbD00
-         rkp2bYWspL5UDuEsUkUi4S6BvnrX1RQqL05Bk3sqtt1NJqT99xubhGYXa2BBqBY0Unc6
-         eBhA==
-X-Gm-Message-State: ABy/qLY06H1AceG5bOEh2dqC5U0VENthv9FIraNLPVbM7zObE9iXpmvf
-        Z7ZARbQ2/MXLjb6D2MXFVpva1IhQVcNB4vKTR64=
-X-Google-Smtp-Source: APBJJlFouanhb4sgzuIro+mo0I/bEw0edbEnho2DR1D4kosEOE48J+ytS48l5Qf9uyCbXX2iGR+/VA==
-X-Received: by 2002:a05:6e02:17c8:b0:346:4eb9:9081 with SMTP id z8-20020a056e0217c800b003464eb99081mr12451833ilu.3.1689876802463;
-        Thu, 20 Jul 2023 11:13:22 -0700 (PDT)
+        bh=2Rz0NMHvZQNALkINTruLCMRwh4c7Tji4y7FPdIx8g4g=;
+        b=YOfFbBBGTFTxKjkb7XZZEezYzwZfJtJmR89vZU89p3RRVOR4d/zysuVcTYsKToaIs5
+         1l53gUr/3WBahApMy932x6PaG8XSIHPqM2cybjp0TljUhiCobzUfDFez80i2O8KIblMs
+         rD6OPG95YLj3tEyfVXfd13+PKF9fYzXCi49eg2kaZCM81cHq8fJJ86mKti87GGgfOEj/
+         Hvt5mZITeMeyFUGf+dTZg8yl1MjVKBQmuM1+LCKRZUCWa/S86y17Y4BCQS93BHK4LyS0
+         ofxlCg8LkPd/5P93Pze5ctuMHN/lDKK3oCDQb+pDNc8x6afcq7RNSMQm+k4ufJkHCv1L
+         eE4w==
+X-Gm-Message-State: ABy/qLbCiY80GkVdsdGRkrJmHJBrJAjMI3SUsJPCiyNQrUVFuC76UMbQ
+        3WBWhXBep+Khr1tSdjqV0ZINAd5EVqm5+KMkH+g=
+X-Google-Smtp-Source: APBJJlG3tfXHp5O7/DHLO/fhFJiSIsSJYxb7x8KI1mhJgfwWdkVNGtjtcnQdJxiX2OOGG55ww6XAkw==
+X-Received: by 2002:a05:6e02:17c8:b0:346:4eb9:9081 with SMTP id z8-20020a056e0217c800b003464eb99081mr12451859ilu.3.1689876803715;
+        Thu, 20 Jul 2023 11:13:23 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id v6-20020a92c6c6000000b003457e1daba8sm419171ilm.8.2023.07.20.11.13.21
+        by smtp.gmail.com with ESMTPSA id v6-20020a92c6c6000000b003457e1daba8sm419171ilm.8.2023.07.20.11.13.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 11:13:21 -0700 (PDT)
+        Thu, 20 Jul 2023 11:13:22 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org
 Cc:     hch@lst.de, andres@anarazel.de, david@fromorbit.com,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/8] fs: add IOCB flags related to passing back dio completions
-Date:   Thu, 20 Jul 2023 12:13:08 -0600
-Message-Id: <20230720181310.71589-7-axboe@kernel.dk>
+Subject: [PATCH 7/8] io_uring/rw: add write support for IOCB_DIO_DEFER
+Date:   Thu, 20 Jul 2023 12:13:09 -0600
+Message-Id: <20230720181310.71589-8-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230720181310.71589-1-axboe@kernel.dk>
 References: <20230720181310.71589-1-axboe@kernel.dk>
@@ -71,84 +71,77 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Async dio completions generally happen from hard/soft IRQ context, which
-means that users like iomap may need to defer some of the completion
-handling to a workqueue. This is less efficient than having the original
-issuer handle it, like we do for sync IO, and it adds latency to the
-completions.
+If the filesystem dio handler understands IOCB_DIO_DEFER, we'll get
+a kiocb->ki_complete() callback with kiocb->dio_complete set. In that
+case, rather than complete the IO directly through task_work, queue
+up an intermediate task_work handler that first processes this
+callback and then immediately completes the request.
 
-Add IOCB_DIO_DEFER, which the issuer can set if it is able to safely
-punt these completions to a safe context. If the dio handler is aware
-of this flag, assign a callback handler in kiocb->dio_complete and
-associated data io kiocb->private. The issuer will then call this handler
-with that data from task context.
+For XFS, this avoids a punt through a workqueue, which is a lot less
+efficient and adds latency to lower queue depth (or sync) O_DIRECT
+writes.
 
-No functional changes in this patch.
+Only do this for non-polled IO, as polled IO doesn't need this kind
+of deferral as it always completes within the task itself. This then
+avoids a check for deferral in the polled IO completion handler.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h | 34 ++++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+ io_uring/rw.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6867512907d6..2c589418a078 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -338,6 +338,20 @@ enum rw_hint {
- #define IOCB_NOIO		(1 << 20)
- /* can use bio alloc cache */
- #define IOCB_ALLOC_CACHE	(1 << 21)
-+/*
-+ * IOCB_DIO_DEFER can be set by the iocb owner, to indicate that the
-+ * iocb completion can be passed back to the owner for execution from a safe
-+ * context rather than needing to be punted through a workqueue. If this
-+ * flag is set, the completion handling may set iocb->dio_complete to a
-+ * handler, which the issuer will then call from task context to complete
-+ * the processing of the iocb. iocb->private should then also be set to
-+ * the argument being passed to this handler. Note that while this provides
-+ * a task context for the dio_complete() callback, it should only be used
-+ * on the completion side for non-IO generating completions. It's fine to
-+ * call blocking functions from this callback, but they should not wait for
-+ * unrelated IO (like cache flushing, new IO generation, etc).
-+ */
-+#define IOCB_DIO_DEFER		(1 << 22)
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 1bce2208b65c..f4f700383b4e 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -285,6 +285,14 @@ static inline int io_fixup_rw_res(struct io_kiocb *req, long res)
  
- /* for use in trace events */
- #define TRACE_IOCB_STRINGS \
-@@ -351,7 +365,8 @@ enum rw_hint {
- 	{ IOCB_WRITE,		"WRITE" }, \
- 	{ IOCB_WAITQ,		"WAITQ" }, \
- 	{ IOCB_NOIO,		"NOIO" }, \
--	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }
-+	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }, \
-+	{ IOCB_DIO_DEFER,	"DIO_DEFER" }
+ void io_req_rw_complete(struct io_kiocb *req, struct io_tw_state *ts)
+ {
++	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++
++	if (rw->kiocb.dio_complete) {
++		long res = rw->kiocb.dio_complete(rw->kiocb.private);
++
++		io_req_set_res(req, io_fixup_rw_res(req, res), 0);
++	}
++
+ 	io_req_io_end(req);
  
- struct kiocb {
- 	struct file		*ki_filp;
-@@ -360,7 +375,22 @@ struct kiocb {
- 	void			*private;
- 	int			ki_flags;
- 	u16			ki_ioprio; /* See linux/ioprio.h */
--	struct wait_page_queue	*ki_waitq; /* for async buffered IO */
-+	union {
-+		/*
-+		 * Only used for async buffered reads, where it denotes the
-+		 * page waitqueue associated with completing the read. Valid
-+		 * IFF IOCB_WAITQ is set.
-+		 */
-+		struct wait_page_queue	*ki_waitq;
-+		/*
-+		 * Can be used for O_DIRECT IO, where the completion handling
-+		 * is punted back to the issuer of the IO. May only be set
-+		 * if IOCB_DIO_DEFER is set by the issuer, and the issuer must
-+		 * then check for presence of this handler when ki_complete is
-+		 * invoked.
-+		 */
-+		ssize_t (*dio_complete)(void *data);
-+	};
- };
+ 	if (req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING)) {
+@@ -300,9 +308,11 @@ static void io_complete_rw(struct kiocb *kiocb, long res)
+ 	struct io_rw *rw = container_of(kiocb, struct io_rw, kiocb);
+ 	struct io_kiocb *req = cmd_to_io_kiocb(rw);
  
- static inline bool is_sync_kiocb(struct kiocb *kiocb)
+-	if (__io_complete_rw_common(req, res))
+-		return;
+-	io_req_set_res(req, io_fixup_rw_res(req, res), 0);
++	if (!rw->kiocb.dio_complete) {
++		if (__io_complete_rw_common(req, res))
++			return;
++		io_req_set_res(req, io_fixup_rw_res(req, res), 0);
++	}
+ 	req->io_task_work.func = io_req_rw_complete;
+ 	__io_req_task_work_add(req, IOU_F_TWQ_LAZY_WAKE);
+ }
+@@ -916,6 +926,17 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ 	kiocb->ki_flags |= IOCB_WRITE;
+ 
++	/*
++	 * For non-polled IO, set IOCB_DIO_DEFER, stating that our handler
++	 * groks deferring the completion to task context. This isn't
++	 * necessary and useful for polled IO as that can always complete
++	 * directly.
++	 */
++	if (!(kiocb->ki_flags & IOCB_HIPRI)) {
++		kiocb->ki_flags |= IOCB_DIO_DEFER;
++		kiocb->dio_complete = NULL;
++	}
++
+ 	if (likely(req->file->f_op->write_iter))
+ 		ret2 = call_write_iter(req->file, kiocb, &s->iter);
+ 	else if (req->file->f_op->write)
 -- 
 2.40.1
 

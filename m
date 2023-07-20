@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D75B675BA68
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F23A075BA6B
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbjGTWTN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Jul 2023 18:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46550 "EHLO
+        id S230040AbjGTWTU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Jul 2023 18:19:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjGTWTM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:19:12 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213C5110
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:12 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-682a5465e9eso264736b3a.1
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:12 -0700 (PDT)
+        with ESMTP id S229883AbjGTWTO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:19:14 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86508110
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:13 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id ca18e2360f4ac-785ccd731a7so17736639f.0
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689891551; x=1690496351;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689891552; x=1690496352;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=42VaD870OeDvxzIrHEo8+GOUntGBOgUhMszqKfQUcYA=;
-        b=aRp2lyGJ9rCt8dC0Zs9t7I6/p/fey50e1NP4ZRNKHfd7HYSRv7PedoR4ShT2zbBLHF
-         HgXnL1Q0MyE4L5xI6izlKFnypZThHMdOZUBw8g+8q/z4GKvqUP2Bc+ETo8L/mmnuGPCA
-         NOyuA7NMBtD9hPDx8k+aGTerFKPerF0nDG9tnyaJeY3xxJl8rWyZHdePIXirLQdCSfb7
-         IGkyla4MxeaihKNq19CPpXMhMAFTBuYhSVdO39tTJKw4tt1CSoWCJKi1QsNoZfv+0PaH
-         E6EXS6iS/5tw0sJ5N3ZIS49DR/yfjO2BHA3bBJ6+jcAfnptBLh95h0WnBXNR1I8R7ONy
-         kkMA==
+        bh=LX64aRTXZn1J2+kMH6li2nZLGVOvJMDcauw8tqpt/jw=;
+        b=NTDIBKuaQrU+oK6NuHlx5B81IFDJTKS6nFNJR8IjnDWuQ3CbrlsC37Y6uNykBch951
+         y1cDhu4g3Vm2zDmH7LT6Yah04Cwmm6E2kIo17kCmYQbPD5TRzI97KDs7voVTmSRh05LO
+         8gsjss/ICP3PEbbXnwbSxmi8W/ocu+WKm86dXJiAYuRtoqTXZoKFjXyL0Hshgo/1biL0
+         T+iW3lltXneCyqwUYeGEKgvExOsAlS8cH3LZZ3hVIg0XXWmevD2sPCeK2RxFJ/K5qkCP
+         AZ2o+gTFfDFuBUnqI4SGYJc+HtbaktxCa1lDXW8JRp0yfO0Y51ti9hPn0nw8I7VS/wFG
+         Befg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689891551; x=1690496351;
+        d=1e100.net; s=20221208; t=1689891552; x=1690496352;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=42VaD870OeDvxzIrHEo8+GOUntGBOgUhMszqKfQUcYA=;
-        b=DHORJBtepj4upjttOvdWInin2I0pbxK8gJUYYUooAxGHLS9Sv2HW29EEgBon67uF7T
-         PFmTrO1pl4Yz5mSoqqo3WheA6sbdoiXjeZc1R3sfthFKGKCMiPQKFW6GtzRGqHb6CM+N
-         xiOfSLuehdAeDoIrTXOm7Kzb4WKpyhZjjq596828v+TrTVHhZyws8HGhe8+Tw7tvnmLG
-         fx2RgovMb5Z/uBkRYyWabjOn+3tTYBaFwie2TK0LJnNK1hmWuXJmfwqLKukDiD9HOUC7
-         LpbZMKExExWk0p7wlvan8Raf9tLBlCyCL4PWfa/WYMT6IV4wWuLNuCtawPFLU5D/+tQa
-         +NvQ==
-X-Gm-Message-State: ABy/qLY4a2MR3PCvr3YiIlM3TaHXCUxR5a3bFFKiyhBz2+8IZOIBs5D4
-        xE9qdgw3M6QxawCm7i3rQaPvihvu0Ww/8bEeoOQ=
-X-Google-Smtp-Source: APBJJlGQbbA44tc8PP7+BeAbRXR4aaPtZk5MRld32V9dcrd1UaPCyDgN6xO+L62ThkCbhvkZCTnNXA==
-X-Received: by 2002:a05:6a20:42a8:b0:123:3ec2:360d with SMTP id o40-20020a056a2042a800b001233ec2360dmr205014pzj.5.1689891550897;
-        Thu, 20 Jul 2023 15:19:10 -0700 (PDT)
+        bh=LX64aRTXZn1J2+kMH6li2nZLGVOvJMDcauw8tqpt/jw=;
+        b=ERpS0/VXXSuvdIaCNIjknD8s188Ppo/OHZtJtKD7HrNRcwVzML+UKliXRDq/YUJh6R
+         3Pn6GjM8LNR8lmOaaneFhv4GZ418eO8FSGcv+M1v3Hp+FcMYgZNBPHEegmdkHFYghYdM
+         3s3grnLmI3udxEiLnIcA2MLl5pB4Xb7tv6kIo+vdhR0huGb2gyX1knW6g576WWs2Mokt
+         s90NsCN3yvS6fIPfBtJxrK05bvOv6o+Z1xzuS9+3+92ng7CGsZ1NFif2jnM9KyVwp8bd
+         rjNibbideLnn/xB//zI5A15epH0WJrnHXAHVDwz0RpFtHRW7rudbRxopOlgbxSFhnkCx
+         uJ8A==
+X-Gm-Message-State: ABy/qLbnGNzfTW6eEOXJu3+05np6WpvfDcG1tYgmktfAT9mwDlAa7qBa
+        2F31S6VKcdLCvOdZIygCaDDDnCOUVOyax3P1Yn4=
+X-Google-Smtp-Source: APBJJlGdh4Bq+l7mgjDWnewJLZLry41UbONLt+MZXKwA45zuA39xOQx8MtZhX6YAzouH+wfUFT71Pg==
+X-Received: by 2002:a92:c9c3:0:b0:33b:d741:5888 with SMTP id k3-20020a92c9c3000000b0033bd7415888mr347950ilq.0.1689891552434;
+        Thu, 20 Jul 2023 15:19:12 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q1-20020a63bc01000000b0055b3af821d5sm1762454pge.25.2023.07.20.15.19.09
+        by smtp.gmail.com with ESMTPSA id q1-20020a63bc01000000b0055b3af821d5sm1762454pge.25.2023.07.20.15.19.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 15:19:09 -0700 (PDT)
+        Thu, 20 Jul 2023 15:19:11 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, andres@anarazel.de,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 03/10] futex: Flag conversion
-Date:   Thu, 20 Jul 2023 16:18:51 -0600
-Message-Id: <20230720221858.135240-4-axboe@kernel.dk>
+Subject: [PATCH 04/10] futex: factor out the futex wake handling
+Date:   Thu, 20 Jul 2023 16:18:52 -0600
+Message-Id: <20230720221858.135240-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230720221858.135240-1-axboe@kernel.dk>
 References: <20230720221858.135240-1-axboe@kernel.dk>
@@ -71,158 +71,101 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+In preparation for having another waker that isn't futex_wake_mark(),
+add a wake handler in futex_q. No extra data is associated with the
+handler outside of struct futex_q itself. futex_wake_mark() is defined as
+the standard wakeup helper, now set through futex_q_init like other
+defaults.
 
-Futex has 3 sets of flags:
+Normal sync futex waiting relies on wake_q holding tasks that should
+be woken up. This is what futex_wake_mark() does, it'll unqueue the
+futex and add the associated task to the wake queue. For async usage of
+futex waiting, rather than having tasks sleeping on the futex, we'll
+need to deal with a futex wake differently. For the planned io_uring
+case, that means posting a completion event for the task in question.
+Having a definable wake handler can help support that use case.
 
- - legacy futex op bits
- - futex2 flags
- - internal flags
-
-Add a few helpers to convert from the API flags into the internal
-flags.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- kernel/futex/futex.h    | 48 ++++++++++++++++++++++++++++++++++++++---
- kernel/futex/syscalls.c | 21 +++++++++++-------
- kernel/futex/waitwake.c |  4 ++--
- 3 files changed, 60 insertions(+), 13 deletions(-)
+ kernel/futex/futex.h    | 4 ++++
+ kernel/futex/requeue.c  | 3 ++-
+ kernel/futex/waitwake.c | 6 +++---
+ 3 files changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index b5379c0e6d6d..54f4470b7db8 100644
+index 54f4470b7db8..2b18eb889cce 100644
 --- a/kernel/futex/futex.h
 +++ b/kernel/futex/futex.h
-@@ -16,8 +16,15 @@
-  * Futex flags used to encode options to functions and preserve them across
-  * restarts.
-  */
-+#define FLAGS_SIZE_8		0x00
-+#define FLAGS_SIZE_16		0x01
-+#define FLAGS_SIZE_32		0x02
-+#define FLAGS_SIZE_64		0x03
-+
-+#define FLAGS_SIZE_MASK		0x03
-+
- #ifdef CONFIG_MMU
--# define FLAGS_SHARED		0x01
-+# define FLAGS_SHARED		0x10
- #else
- /*
-  * NOMMU does not have per process address space. Let the compiler optimize
-@@ -25,8 +32,43 @@
-  */
- # define FLAGS_SHARED		0x00
- #endif
--#define FLAGS_CLOCKRT		0x02
--#define FLAGS_HAS_TIMEOUT	0x04
-+#define FLAGS_CLOCKRT		0x20
-+#define FLAGS_HAS_TIMEOUT	0x40
-+#define FLAGS_NUMA		0x80
-+
-+/* FUTEX_ to FLAGS_ */
-+static inline unsigned int futex_to_flags(unsigned int op)
-+{
-+	unsigned int flags = FLAGS_SIZE_32;
-+
-+	if (!(op & FUTEX_PRIVATE_FLAG))
-+		flags |= FLAGS_SHARED;
-+
-+	if (op & FUTEX_CLOCK_REALTIME)
-+		flags |= FLAGS_CLOCKRT;
-+
-+	return flags;
-+}
-+
-+/* FUTEX2_ to FLAGS_ */
-+static inline unsigned int futex2_to_flags(unsigned int flags2)
-+{
-+	unsigned int flags = flags2 & FUTEX2_64;
-+
-+	if (!(flags2 & FUTEX2_PRIVATE))
-+		flags |= FLAGS_SHARED;
-+
-+	if (flags2 & FUTEX2_NUMA)
-+		flags |= FLAGS_NUMA;
-+
-+	return flags;
-+}
-+
-+static inline unsigned int futex_size(unsigned int flags)
-+{
-+	unsigned int size = flags & FLAGS_SIZE_MASK;
-+	return 1 << size; /* {0,1,2,3} -> {1,2,4,8} */
-+}
+@@ -111,6 +111,9 @@ struct futex_pi_state {
+ 	union futex_key key;
+ } __randomize_layout;
  
- #ifdef CONFIG_FAIL_FUTEX
- extern bool should_fail_futex(bool fshared);
-diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
-index d5bb6dad22fe..7234538a490d 100644
---- a/kernel/futex/syscalls.c
-+++ b/kernel/futex/syscalls.c
-@@ -85,15 +85,12 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
- 		u32 __user *uaddr2, u32 val2, u32 val3)
- {
-+	unsigned int flags = futex_to_flags(op);
- 	int cmd = op & FUTEX_CMD_MASK;
--	unsigned int flags = 0;
- 
--	if (!(op & FUTEX_PRIVATE_FLAG))
--		flags |= FLAGS_SHARED;
--
--	if (op & FUTEX_CLOCK_REALTIME) {
--		flags |= FLAGS_CLOCKRT;
--		if (cmd != FUTEX_WAIT_BITSET && cmd != FUTEX_WAIT_REQUEUE_PI &&
-+	if (flags & FLAGS_CLOCKRT) {
-+		if (cmd != FUTEX_WAIT_BITSET &&
-+		    cmd != FUTEX_WAIT_REQUEUE_PI &&
- 		    cmd != FUTEX_LOCK_PI2)
- 			return -ENOSYS;
- 	}
-@@ -201,6 +198,8 @@ static int futex_parse_waitv(struct futex_vector *futexv,
- 	unsigned int i;
- 
- 	for (i = 0; i < nr_futexes; i++) {
-+		unsigned int bits, flags;
++struct futex_q;
++typedef void (futex_wake_fn)(struct wake_q_head *wake_q, struct futex_q *q);
 +
- 		if (copy_from_user(&aux, &uwaitv[i], sizeof(aux)))
- 			return -EFAULT;
+ /**
+  * struct futex_q - The hashed futex queue entry, one per waiting task
+  * @list:		priority-sorted list of tasks waiting on this futex
+@@ -140,6 +143,7 @@ struct futex_q {
  
-@@ -210,7 +209,13 @@ static int futex_parse_waitv(struct futex_vector *futexv,
- 		if ((aux.flags & FUTEX2_64) != FUTEX2_32)
- 			return -EINVAL;
+ 	struct task_struct *task;
+ 	spinlock_t *lock_ptr;
++	futex_wake_fn *wake;
+ 	union futex_key key;
+ 	struct futex_pi_state *pi_state;
+ 	struct rt_mutex_waiter *rt_waiter;
+diff --git a/kernel/futex/requeue.c b/kernel/futex/requeue.c
+index cba8b1a6a4cc..e892bc6c41d8 100644
+--- a/kernel/futex/requeue.c
++++ b/kernel/futex/requeue.c
+@@ -58,6 +58,7 @@ enum {
  
--		futexv[i].w.flags = aux.flags;
-+		flags = futex2_to_flags(aux.flags);
-+		bits = 8 * futex_size(flags);
-+
-+		if (bits < 64 && aux.val >> bits)
-+			return -EINVAL;
-+
-+		futexv[i].w.flags = flags;
- 		futexv[i].w.val = aux.val;
- 		futexv[i].w.uaddr = aux.uaddr;
- 		futexv[i].q = futex_q_init;
+ const struct futex_q futex_q_init = {
+ 	/* list gets initialized in futex_queue()*/
++	.wake		= futex_wake_mark,
+ 	.key		= FUTEX_KEY_INIT,
+ 	.bitset		= FUTEX_BITSET_MATCH_ANY,
+ 	.requeue_state	= ATOMIC_INIT(Q_REQUEUE_PI_NONE),
+@@ -591,7 +592,7 @@ int futex_requeue(u32 __user *uaddr1, unsigned int flags, u32 __user *uaddr2,
+ 		/* Plain futexes just wake or requeue and are done */
+ 		if (!requeue_pi) {
+ 			if (++task_count <= nr_wake)
+-				futex_wake_mark(&wake_q, this);
++				this->wake(&wake_q, this);
+ 			else
+ 				requeue_futex(this, hb1, hb2, &key2);
+ 			continue;
 diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
-index ba01b9408203..fa9757766103 100644
+index fa9757766103..0272b8c3b132 100644
 --- a/kernel/futex/waitwake.c
 +++ b/kernel/futex/waitwake.c
-@@ -419,11 +419,11 @@ static int futex_wait_multiple_setup(struct futex_vector *vs, int count, int *wo
- 	 */
- retry:
- 	for (i = 0; i < count; i++) {
--		if ((vs[i].w.flags & FUTEX_PRIVATE_FLAG) && retry)
-+		if (!(vs[i].w.flags & FLAGS_SHARED) && retry)
- 			continue;
+@@ -174,7 +174,7 @@ int futex_wake(u32 __user *uaddr, unsigned int flags, int nr_wake, u32 bitset)
+ 			if (!(this->bitset & bitset))
+ 				continue;
  
- 		ret = get_futex_key(u64_to_user_ptr(vs[i].w.uaddr),
--				    !(vs[i].w.flags & FUTEX_PRIVATE_FLAG),
-+				    vs[i].w.flags & FLAGS_SHARED,
- 				    &vs[i].q.key, FUTEX_READ);
- 
- 		if (unlikely(ret))
+-			futex_wake_mark(&wake_q, this);
++			this->wake(&wake_q, this);
+ 			if (++ret >= nr_wake)
+ 				break;
+ 		}
+@@ -289,7 +289,7 @@ int futex_wake_op(u32 __user *uaddr1, unsigned int flags, u32 __user *uaddr2,
+ 				ret = -EINVAL;
+ 				goto out_unlock;
+ 			}
+-			futex_wake_mark(&wake_q, this);
++			this->wake(&wake_q, this);
+ 			if (++ret >= nr_wake)
+ 				break;
+ 		}
+@@ -303,7 +303,7 @@ int futex_wake_op(u32 __user *uaddr1, unsigned int flags, u32 __user *uaddr2,
+ 					ret = -EINVAL;
+ 					goto out_unlock;
+ 				}
+-				futex_wake_mark(&wake_q, this);
++				this->wake(&wake_q, this);
+ 				if (++op_ret >= nr_wake2)
+ 					break;
+ 			}
 -- 
 2.40.1
 

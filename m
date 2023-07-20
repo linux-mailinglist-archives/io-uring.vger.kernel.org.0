@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FDD875BA65
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 406DC75BA66
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjGTWTL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Jul 2023 18:19:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46518 "EHLO
+        id S229823AbjGTWTM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Jul 2023 18:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229711AbjGTWTK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:19:10 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150BE196
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:09 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-682a5465e9eso264721b3a.1
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:09 -0700 (PDT)
+        with ESMTP id S229727AbjGTWTL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:19:11 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8B7196
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:10 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-66d6a9851f3so268789b3a.0
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689891548; x=1690496348;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689891549; x=1690496349;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qfXIoWZOPMTUuZ51sHKPtDeshXixERaT1oNJnhO0ex0=;
-        b=WOL067osaUVD2WGIgkXdT50lTOWUWIgvc4AEqkDscXJLFPBMT0ONp5BBak35zLctZZ
-         AMZnsNVfpx8/08fVLo9HjESlx+fL3eg5vh135rKOTWXQyoqVRxwQag9lzCve0IJR+XFl
-         CjPCfU3Bly9kThOZi5HS+8criRD6s8AlmuoTpjK+BT/BgDgU+WFx66UXFOob1Lebb7Gi
-         K75u9i9VpneJ0NC6/5n4gD4z84Kpu0FHcaY+56XRjjmCE2bYfqVG2RuYXd3m9QA47+oj
-         mGBGlTqOKvANBl6jQBINEwv53cFjn14pfgR5YxoEQ0T9KKKTelIe/ggkoaoFs1qS0iD2
-         inOA==
+        bh=mj8xxKFWXxw8N/3XRbYC3t5/jp7h6u5L88bvfUimjEA=;
+        b=t49oUdZQpzZOWC6YASaylQyj1E+7dckMY+ViXFRmwuXlsxfKJ1UL7l/xy1/Gz6hBqf
+         sCD6tUbYwBMpOBab9sksENGyPQy10Gmc1a/j+Une2Yv6YWAgVbW4b7wkmTDM6vxswKRA
+         d4rvpIkfcplm/ubVbOfgv9cBS+AC0B+X51hH7LLRSa2RsL+VrV2KyMT+2o4FxcwjCDXP
+         J4plY1AD93F9nSP2wROZpGvvIr5tU79MAHRic4MbRFfQolPIfKStbIoGzeNyoHaOf64T
+         58xjsqNLG1yOR7ELrj6/pJ9O09YHy9PzdLGt/VYO62LIlLPGcXAxfeZzTQLBncPDf+y8
+         OCWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689891548; x=1690496348;
+        d=1e100.net; s=20221208; t=1689891549; x=1690496349;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qfXIoWZOPMTUuZ51sHKPtDeshXixERaT1oNJnhO0ex0=;
-        b=Of16SwP+rorqMxRlcsvsHImcirjU421f+y6+8+SLoW5HsSAigi2DM8ygpq6l2WlhHg
-         ZaFWeszp7phraiKsKejkvPCton/Rc+NlLPevWEdjscarr9ieRLJzzV8KDvFyvQI+6B6T
-         sRVg5V7hI2trxX7e7Q2MhPnF61pJQ5uDYk+JCEpOJaMSz7VVXm1G+o0Ug7F3iLjlrANr
-         +x+Z3cVNjn931wO+dKCojEcOVDp6cucFxEs6uGJSBeyJYKD+s6VVGT0HvQ9PNrtKkLVX
-         x8aQPXHY+HwbHq8Mm4Yih/3oZz/DL/+Tr8q1EbDI+iTy5Mj5zKkpEmEY0HKBe6doTRhv
-         7CNw==
-X-Gm-Message-State: ABy/qLaWhzEekkl3slZQsWa5olJyQn41FmU7zkl9b+CFTnW4zBO/XvHL
-        jGD9mdoQF6Qa8usmDB3oeIVmR6Uwx8//XgH6vro=
-X-Google-Smtp-Source: APBJJlHNoXWkTaeiFsQJURdZN83WfpPtpj9P4/mBIuHx8U5G8nUY5PwY02lmoCqavwUbnSiNbkA2Lw==
-X-Received: by 2002:a05:6a20:42a8:b0:123:3ec2:360d with SMTP id o40-20020a056a2042a800b001233ec2360dmr204903pzj.5.1689891548133;
-        Thu, 20 Jul 2023 15:19:08 -0700 (PDT)
+        bh=mj8xxKFWXxw8N/3XRbYC3t5/jp7h6u5L88bvfUimjEA=;
+        b=lSUfDsXYelrMnaHTINRouoBGzbYLHieJZ39+XiJml46JF5W+8pRlMYbeq/aMywPlwR
+         MZiMIXwlXD8KI1cazIdQowPTTZb+RmnsbeAZRMXXzuV6e/RwbX57+4cqIod+tEfrUxzr
+         uJIjJUlBffT/KKQW6AdMabvdomGSWi4Te9TRyjUfxtnySnp4PhBb7bdeDj6+cF7NrAUv
+         j7jlclClRIJnp+7vDTh7LD/9L/xlUDNNHrEG2LCq4F1zUNk2AvdEBdKXh9CkCJ8Fd3nn
+         wSwD0a70uKJDr9TmLu14ZX0w+Gtxs4DE4WlO+kl7tkqONFf4EaPHWSTakaIKVwW8ti6S
+         niZQ==
+X-Gm-Message-State: ABy/qLYibTQWnUFO+XBTe5fYmS9/ugOdtzVDZD7CbHONJNp6bpHQ0cZ8
+        Emljm1l0X4z0KpjGTVf1SFGx+wVyV6Pd/WP2Ev0=
+X-Google-Smtp-Source: APBJJlHH/Ok6khMThnLocbLVqHQORlSG746cDoy+APeVjbFC2xpZMlWAhQX/1As3PXTSZgKRXu4/zA==
+X-Received: by 2002:a05:6a00:1807:b0:67f:ff0a:1bbb with SMTP id y7-20020a056a00180700b0067fff0a1bbbmr191762pfa.1.1689891549357;
+        Thu, 20 Jul 2023 15:19:09 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q1-20020a63bc01000000b0055b3af821d5sm1762454pge.25.2023.07.20.15.19.06
+        by smtp.gmail.com with ESMTPSA id q1-20020a63bc01000000b0055b3af821d5sm1762454pge.25.2023.07.20.15.19.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 15:19:07 -0700 (PDT)
+        Thu, 20 Jul 2023 15:19:08 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, andres@anarazel.de,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 01/10] futex: Clarify FUTEX2 flags
-Date:   Thu, 20 Jul 2023 16:18:49 -0600
-Message-Id: <20230720221858.135240-2-axboe@kernel.dk>
+Subject: [PATCH 02/10] futex: Extend the FUTEX2 flags
+Date:   Thu, 20 Jul 2023 16:18:50 -0600
+Message-Id: <20230720221858.135240-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230720221858.135240-1-axboe@kernel.dk>
 References: <20230720221858.135240-1-axboe@kernel.dk>
@@ -63,7 +63,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -72,75 +73,54 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-sys_futex_waitv() is part of the futex2 series (the first and only so
-far) of syscalls and has a flags field per futex (as opposed to flags
-being encoded in the futex op).
-
-This new flags field has a new namespace, which unfortunately isn't
-super explicit. Notably it currently takes FUTEX_32 and
-FUTEX_PRIVATE_FLAG.
-
-Introduce the FUTEX2 namespace to clarify this
+Add the definition for the missing but always intended extra sizes,
+and add a NUMA flag for the planned numa extention.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/uapi/linux/futex.h | 16 +++++++++++++---
- kernel/futex/syscalls.c    |  7 +++----
- 2 files changed, 16 insertions(+), 7 deletions(-)
+ include/uapi/linux/futex.h | 7 ++++---
+ kernel/futex/syscalls.c    | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
-index 71a5df8d2689..0c5abb6aa8f8 100644
+index 0c5abb6aa8f8..0ed021acc1d9 100644
 --- a/include/uapi/linux/futex.h
 +++ b/include/uapi/linux/futex.h
-@@ -44,10 +44,20 @@
- 					 FUTEX_PRIVATE_FLAG)
- 
+@@ -46,10 +46,11 @@
  /*
-- * Flags to specify the bit length of the futex word for futex2 syscalls.
-- * Currently, only 32 is supported.
-+ * Flags for futex2 syscalls.
+  * Flags for futex2 syscalls.
   */
--#define FUTEX_32		2
-+			/*	0x00 */
-+			/*	0x01 */
-+#define FUTEX2_32		0x02
-+			/*	0x04 */
-+			/*	0x08 */
-+			/*	0x10 */
-+			/*	0x20 */
-+			/*	0x40 */
-+#define FUTEX2_PRIVATE		FUTEX_PRIVATE_FLAG
-+
-+/* do not use */
-+#define FUTEX_32		FUTEX2_32 /* historical accident :-( */
- 
- /*
-  * Max numbers of elements in a futex_waitv array
+-			/*	0x00 */
+-			/*	0x01 */
++#define FUTEX2_8		0x00
++#define FUTEX2_16		0x01
+ #define FUTEX2_32		0x02
+-			/*	0x04 */
++#define FUTEX2_64		0x03
++#define FUTEX2_NUMA		0x04
+ 			/*	0x08 */
+ 			/*	0x10 */
+ 			/*	0x20 */
 diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
-index a8074079b09e..42b6c2fac7db 100644
+index 42b6c2fac7db..d5bb6dad22fe 100644
 --- a/kernel/futex/syscalls.c
 +++ b/kernel/futex/syscalls.c
-@@ -183,8 +183,7 @@ SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
+@@ -183,7 +183,7 @@ SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
  	return do_futex(uaddr, op, val, tp, uaddr2, (unsigned long)utime, val3);
  }
  
--/* Mask of available flags for each futex in futex_waitv list */
--#define FUTEXV_WAITER_MASK (FUTEX_32 | FUTEX_PRIVATE_FLAG)
-+#define FUTEX2_MASK (FUTEX2_32 | FUTEX2_PRIVATE)
+-#define FUTEX2_MASK (FUTEX2_32 | FUTEX2_PRIVATE)
++#define FUTEX2_MASK (FUTEX2_64 | FUTEX2_PRIVATE)
  
  /**
   * futex_parse_waitv - Parse a waitv array from userspace
-@@ -205,10 +204,10 @@ static int futex_parse_waitv(struct futex_vector *futexv,
- 		if (copy_from_user(&aux, &uwaitv[i], sizeof(aux)))
- 			return -EFAULT;
- 
--		if ((aux.flags & ~FUTEXV_WAITER_MASK) || aux.__reserved)
-+		if ((aux.flags & ~FUTEX2_MASK) || aux.__reserved)
+@@ -207,7 +207,7 @@ static int futex_parse_waitv(struct futex_vector *futexv,
+ 		if ((aux.flags & ~FUTEX2_MASK) || aux.__reserved)
  			return -EINVAL;
  
--		if (!(aux.flags & FUTEX_32))
-+		if (!(aux.flags & FUTEX2_32))
+-		if (!(aux.flags & FUTEX2_32))
++		if ((aux.flags & FUTEX2_64) != FUTEX2_32)
  			return -EINVAL;
  
  		futexv[i].w.flags = aux.flags;

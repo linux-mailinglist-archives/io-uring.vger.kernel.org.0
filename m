@@ -2,55 +2,74 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD00475BABB
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39E9175BABE
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjGTWjx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Jul 2023 18:39:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57914 "EHLO
+        id S229868AbjGTWnc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Jul 2023 18:43:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjGTWjw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:39:52 -0400
-Received: from matoro.tk (unknown [IPv6:2600:1700:4b10:9d80::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A7EB4E65;
-        Thu, 20 Jul 2023 15:39:50 -0700 (PDT)
-DKIM-Signature: a=rsa-sha256; bh=VRCOnIUN33GD4S/kz99MMHBca1UpjYhSJAE2NXKYHMQ=;
- c=relaxed/relaxed; d=matoro.tk;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@matoro.tk; s=20230715; t=1689892786; v=1; x=1690324786;
- b=Pvbsz7/iDEPJKzRlTeHB3Q4Uq7oLO+zwY69mdzii4Enz24QFsFM1q8XXS+gTfmpnOVpwI+b/
- mIUgqUvxB4i7RHFgNcRhydwjlIm3FLFqboBf74RR7Iy9Uuo5LcLj/twaIjDw7ApwCSOfGcO2F7J
- D2Ql9Qn7vQAhsOO7DpZv3ZqgGM2E/t+KhF8M/fqxEm3RmRh6U0SdmO2MHAgIX7CI034C6MGFR8S
- Gh7s27YyVx6b3eKkuqmnDiLT8gDmhC9lI3dGQFxI2R9jFMyp953QpKmwL0kimfScCd8Y96NNtnS
- soFKgfuo7cdwgu9pEmvaIvLujvHIcKoS6dSRPR6k4dJeGcfXDq5m5txVunXZn5xjCriRSDNWhhe
- 2Fl9xoeihEb3QTGTRCMkevKcnLhswOj/ah69w5mF0kqRhbIIVMkadgxNi7JT8jWdcsrmXTHc1cw
- 6nYiOQzdZ5gBgaVEpl1i27g1pRfIAwElRK93YtYsstbOqEDB4MfcpS/zL/KH1pCKNhkLBsBdy8A
- EFDBHbFUopZgK/Va0trgYsbbLEpx2foSWYhzo3H24eag8FI1wasG8c82LnqEDREEQSEYlZ7KtS0
- SpKy9yajSuiWL9T1c9MbAaq/4lC3j0S9M620F8keCBXU+jlSexNlROjbPI+hQ1nq4ne72xx/ACQ
- 0UKrDgmGEB8=
-Received: by matoro.tk (envelope-sender
- <matoro_mailinglist_kernel@matoro.tk>) with ESMTPS id 3babdaa9; Thu, 20 Jul
- 2023 18:39:46 -0400
+        with ESMTP id S229555AbjGTWnc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:43:32 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 873641998
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:43:30 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-263315da33cso180971a91.0
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689893010; x=1690497810;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pGDsx9JUlDCLhDdZVbcopj8CjB6LG6IiIotvewVMl9o=;
+        b=FA/fj/kUmMI9qnrGjP/AyevZ7wIzc5Y6HId4Ujq6YwcwupRy9r/G1acmv7og8ek7b0
+         RzxJa0mlxtfOyb+FllaztuHM2a0ZpRSaBazNsVbe+X96RwqgexFT9Na5/h8TFYKl0q99
+         Qqp2WM6FXs47FRw/2P28o99leNG5K35kJjDmmo8U6MXUug4fP5A5UNUnGxkD3YUhSBWh
+         wXffgooM+Ip6x+9yyv3two16hFYCqyju9fkU1/0Y9lZbK8VRQ8eCz5YsqyaV/27MUG3f
+         hFeqOQngK/N/BQYEsIT9KTpdQ6F9HCv3pYQ/qT3/f3nQtSm3GCUX36AixJFxD9Olq2lo
+         bEuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689893010; x=1690497810;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pGDsx9JUlDCLhDdZVbcopj8CjB6LG6IiIotvewVMl9o=;
+        b=B4dxR5hBS47Jb4Jqkw5dozGgEvP1fsHOxzoxC6ODJUVlex8gLjFKILkHkEsFmugJJ1
+         5nRVf+E/P2MIZHAtr+GoiVYAxLEXogLPb2oDPjiktXv29CPpDpwCz5IqETvmzXF4uLWL
+         1QZ3xIe3HC7AzQ2LytNCMpsOFOI7W6qQl1z3M+60fdrwaG18hG/IWsymn/Bp+zRAcnnt
+         JF2auzpePOzide2VoBFVYnTqA1/zCqIOx0mOZy5Wd7kzApK3lQEzeQR5b+TH+tsFD0vM
+         IGz4mv8ZByRqqOCU1OehZlrbc/Ouoeq699Q8tcPmC1wMvjrW/tPMWamg/1fIyxgAAx39
+         GGxw==
+X-Gm-Message-State: ABy/qLYMIAccVIPS4ffU+UY4mM90t5OZ8tbNFpucLCcx/ArXJURh0IBz
+        69YRwMH3pI8T242BI2xDBBRvogPX0FDl7ISqncM=
+X-Google-Smtp-Source: APBJJlHoa8ec9HN3ykeoK8eiQFOEhc3oipMxGFdCEH3M1e2J0t1+R/BHkks1oFQUCaFHKB3bxGOsKA==
+X-Received: by 2002:a17:90a:4fe1:b0:263:f36e:d610 with SMTP id q88-20020a17090a4fe100b00263f36ed610mr103844pjh.0.1689893009991;
+        Thu, 20 Jul 2023 15:43:29 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 5-20020a17090a190500b0025bfda134ccsm1538673pjg.16.2023.07.20.15.43.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jul 2023 15:43:29 -0700 (PDT)
+Message-ID: <6dfbaa5b-5894-bfc9-f9a9-09d019c335d9@kernel.dk>
+Date:   Thu, 20 Jul 2023 16:43:28 -0600
 MIME-Version: 1.0
-Date:   Thu, 20 Jul 2023 18:39:46 -0400
-From:   matoro <matoro_mailinglist_kernel@matoro.tk>
-To:     Helge Deller <deller@gmx.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
 Subject: Re: [PATCH][RFC] io_uring: Fix io_uring_mmu_get_unmapped_area() for
  IA-64
-In-Reply-To: <be208704-b312-f04d-4548-90853a638752@gmx.de>
+Content-Language: en-US
+To:     Helge Deller <deller@gmx.de>, io-uring@vger.kernel.org,
+        linux-ia64@vger.kernel.org, matoro_mailinglist_kernel@matoro.tk,
+        linux-parisc@vger.kernel.org
 References: <ZLhTuTPecx2fGuH1@p100>
  <0a242157-6dd6-77fd-b218-52e3ba06e450@kernel.dk>
  <be208704-b312-f04d-4548-90853a638752@gmx.de>
-Message-ID: <ab42ee876fbab9cf10d6c1dde3164945@matoro.tk>
-X-Sender: matoro_mailinglist_kernel@matoro.tk
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <be208704-b312-f04d-4548-90853a638752@gmx.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RDNS_NONE,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,31 +77,29 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2023-07-20 18:38, Helge Deller wrote:
+On 7/20/23 4:38?PM, Helge Deller wrote:
 > On 7/21/23 00:30, Jens Axboe wrote:
 >> On 7/19/23 3:20?PM, Helge Deller wrote:
 >>> The io_uring testcase is broken on IA-64 since commit d808459b2e31
 >>> ("io_uring: Adjust mapping wrt architecture aliasing requirements").
->>> 
+>>>
 >>> The reason is, that this commit introduced an own architecture
->>> independend get_unmapped_area() search algorithm which doesn't suite 
->>> the
+>>> independend get_unmapped_area() search algorithm which doesn't suite the
 >>> memory region requirements for IA-64.
->>> 
+>>>
 >>> To avoid similar problems in the future it's better to switch back to
 >>> the architecture-provided get_unmapped_area() function and adjust the
 >>> needed input parameters before the call.  Additionally
 >>> io_uring_mmu_get_unmapped_area() will now become easier to understand
 >>> and maintain.
->>> 
+>>>
 >>> This patch has been tested on physical IA-64 and PA-RISC machines,
 >>> without any failures in the io_uring testcases. On PA-RISC the
 >>> LTP mmmap testcases did not report any regressions either.
->>> 
->>> I don't expect issues for other architectures, but it would be nice 
->>> if
+>>>
+>>> I don't expect issues for other architectures, but it would be nice if
 >>> this patch could be tested on other machines too.
->> 
+>>
 >> Any comments from the IA64 folks?
 > 
 > matoro tested it on ia64 at least...
@@ -90,18 +107,23 @@ On 2023-07-20 18:38, Helge Deller wrote:
 >> Helge, should this be split into three patches? One for hppa, one for
 >> ia64, and then the io_uring one?
 > 
-> If we split up, I would prefer to split it into 2 patches:
-> One for io_uring together with the hppa patch, since they should go in 
+> If we split up, I would prefer to split it into 2 patches: One for
+> io_uring together with the hppa patch, since they should go in
 > together.
-> 
-> The ia64 patch is probably unrelated, and can go seperately. But
-> there doesn't seem to be any ia64 maintainer...?
-> 
-> Do you have a chance to test this patch on the other io_uring 
-> platforms,
-> without applying it into your tree? I think some testing would be good.
-> 
-> Helge
 
-I tested this on ppc64le last night just to be sure, still had 100% pass 
-on test suite.
+OK, that makes sense. Want to spin a new version done like that?
+
+> The ia64 patch is probably unrelated, and can go seperately. But there
+> doesn't seem to be any ia64 maintainer...?
+
+Yeah, not too worried about IA64, and matoro having tested it is great.
+
+> Do you have a chance to test this patch on the other io_uring
+> platforms, without applying it into your tree? I think some testing
+> would be good.
+
+Yep, I can run it on arm64 and x86-64 pretty easily. Will do so.
+
+-- 
+Jens Axboe
+

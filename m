@@ -2,59 +2,63 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED9D575BA64
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FDD875BA65
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 00:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbjGTWTK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 20 Jul 2023 18:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46512 "EHLO
+        id S229674AbjGTWTL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 20 Jul 2023 18:19:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbjGTWTJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:19:09 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2ADD10D2
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:07 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-682a5465e9eso264718b3a.1
-        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:07 -0700 (PDT)
+        with ESMTP id S229711AbjGTWTK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 20 Jul 2023 18:19:10 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150BE196
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:09 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-682a5465e9eso264721b3a.1
+        for <io-uring@vger.kernel.org>; Thu, 20 Jul 2023 15:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689891547; x=1690496347;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sVlmD6Cai8xXy17J6HGSSxnEYFsK5TVR9Bij+nhELSU=;
-        b=pNFvIZNJ/OuFuPT10N5T/mocD8A11gY/PpEHIx816IC3XkWam1P85Yvn9F3Adaftrc
-         opViTWT/iuQyIHW2VHMRAjPr+XAFSy3MTPYdr8YRcoddzbrdYNQrQ/pLnAeWWd5vB067
-         7PT/m23rpRxRJ9hk9U5zkbtmMXErlJo+r9DgPllJ55Q7AVmCkxS7lk/RbiPa2YvisgTs
-         Mjq3JJX62SslZ2FSQ9XYcY9iz7fJL8Q6Qcj9Xt4KVd3rN13GYp72vldPuSQpGtie85+Z
-         9zKvCHRsBf6MY8hyMWp5DAkEGM59+hHBXot+YFbhF5mAdWWYlfRhaP6CimCYf6RwNhLd
-         ua5Q==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689891548; x=1690496348;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qfXIoWZOPMTUuZ51sHKPtDeshXixERaT1oNJnhO0ex0=;
+        b=WOL067osaUVD2WGIgkXdT50lTOWUWIgvc4AEqkDscXJLFPBMT0ONp5BBak35zLctZZ
+         AMZnsNVfpx8/08fVLo9HjESlx+fL3eg5vh135rKOTWXQyoqVRxwQag9lzCve0IJR+XFl
+         CjPCfU3Bly9kThOZi5HS+8criRD6s8AlmuoTpjK+BT/BgDgU+WFx66UXFOob1Lebb7Gi
+         K75u9i9VpneJ0NC6/5n4gD4z84Kpu0FHcaY+56XRjjmCE2bYfqVG2RuYXd3m9QA47+oj
+         mGBGlTqOKvANBl6jQBINEwv53cFjn14pfgR5YxoEQ0T9KKKTelIe/ggkoaoFs1qS0iD2
+         inOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689891547; x=1690496347;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sVlmD6Cai8xXy17J6HGSSxnEYFsK5TVR9Bij+nhELSU=;
-        b=OKalGTf3irE7JIN+CY8vBALrN/lKrJ9Fzghf3oPuZy2V+3jEzHyhXDR9Uq4WPSdnlf
-         HwL4K3NtZsZrrPE0v/RQKZWeCUnrkTFjnIfopjOWTz4dJ9RZoUKOengvOIcoGiRBW1nW
-         gfyuMvRsM/Fz6fvlYCnFhZcA443x8npe/7SE+HI/117qu+u4S+mGHOpkdXK/FwY7+Ciq
-         beCOmRaTzZVwzqh1HhExfy5VGpr8FOQdGURY12sqxaOSN/TOW2oFxyPfuJ76eVfPU6q/
-         MlpLWZnFYufpihjEocdo6UrpU4tq29q0WauluK6ZAAJiABlCvZxOFD5zhWtOn2T0ymDg
-         b2Eg==
-X-Gm-Message-State: ABy/qLZPC16ZVKD/Mo3feyx1hE4X4APi3Wrc6iMWfsT5Yl+85dJkPU2e
-        AkTBnV18QSbdddyD2H217QVFW1P2Qvx2QU6Rsbo=
-X-Google-Smtp-Source: APBJJlHqQfcorMZnQT72lvQSVFT9t0airkDf7aV143YsSWf4j0Ke590qicZfl3jXtZgvsg5vFzurjA==
-X-Received: by 2002:a05:6a20:42a8:b0:123:3ec2:360d with SMTP id o40-20020a056a2042a800b001233ec2360dmr204852pzj.5.1689891546782;
-        Thu, 20 Jul 2023 15:19:06 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689891548; x=1690496348;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qfXIoWZOPMTUuZ51sHKPtDeshXixERaT1oNJnhO0ex0=;
+        b=Of16SwP+rorqMxRlcsvsHImcirjU421f+y6+8+SLoW5HsSAigi2DM8ygpq6l2WlhHg
+         ZaFWeszp7phraiKsKejkvPCton/Rc+NlLPevWEdjscarr9ieRLJzzV8KDvFyvQI+6B6T
+         sRVg5V7hI2trxX7e7Q2MhPnF61pJQ5uDYk+JCEpOJaMSz7VVXm1G+o0Ug7F3iLjlrANr
+         +x+Z3cVNjn931wO+dKCojEcOVDp6cucFxEs6uGJSBeyJYKD+s6VVGT0HvQ9PNrtKkLVX
+         x8aQPXHY+HwbHq8Mm4Yih/3oZz/DL/+Tr8q1EbDI+iTy5Mj5zKkpEmEY0HKBe6doTRhv
+         7CNw==
+X-Gm-Message-State: ABy/qLaWhzEekkl3slZQsWa5olJyQn41FmU7zkl9b+CFTnW4zBO/XvHL
+        jGD9mdoQF6Qa8usmDB3oeIVmR6Uwx8//XgH6vro=
+X-Google-Smtp-Source: APBJJlHNoXWkTaeiFsQJURdZN83WfpPtpj9P4/mBIuHx8U5G8nUY5PwY02lmoCqavwUbnSiNbkA2Lw==
+X-Received: by 2002:a05:6a20:42a8:b0:123:3ec2:360d with SMTP id o40-20020a056a2042a800b001233ec2360dmr204903pzj.5.1689891548133;
+        Thu, 20 Jul 2023 15:19:08 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q1-20020a63bc01000000b0055b3af821d5sm1762454pge.25.2023.07.20.15.19.05
+        by smtp.gmail.com with ESMTPSA id q1-20020a63bc01000000b0055b3af821d5sm1762454pge.25.2023.07.20.15.19.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 15:19:06 -0700 (PDT)
+        Thu, 20 Jul 2023 15:19:07 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, andres@anarazel.de
-Subject: [PATCHSET v3 0/10] Add io_uring futex/futexv support
-Date:   Thu, 20 Jul 2023 16:18:48 -0600
-Message-Id: <20230720221858.135240-1-axboe@kernel.dk>
+Cc:     peterz@infradead.org, andres@anarazel.de,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 01/10] futex: Clarify FUTEX2 flags
+Date:   Thu, 20 Jul 2023 16:18:49 -0600
+Message-Id: <20230720221858.135240-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230720221858.135240-1-axboe@kernel.dk>
+References: <20230720221858.135240-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -66,92 +70,80 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+From: Peter Zijlstra <peterz@infradead.org>
 
-This patchset adds support for first futex wake and wait, and then
-futexv.
+sys_futex_waitv() is part of the futex2 series (the first and only so
+far) of syscalls and has a flags field per futex (as opposed to flags
+being encoded in the futex op).
 
-For both wait/wake/waitv, we support the bitset variant, as the
-"normal" variants can be easily implemented on top of that.
+This new flags field has a new namespace, which unfortunately isn't
+super explicit. Notably it currently takes FUTEX_32 and
+FUTEX_PRIVATE_FLAG.
 
-PI and requeue are not supported through io_uring, just the above
-mentioned parts. This may change in the future, but in the spirit
-of keeping this small (and based on what people have been asking for),
-this is what we currently have.
+Introduce the FUTEX2 namespace to clarify this
 
-When I did these patches, I forgot that Pavel had previously posted a
-futex variant for io_uring. The major thing that had been holding me
-back from people asking about futexes and io_uring, is that I wanted
-to do this what I consider the right way - no usage of io-wq or thread
-offload, an actually async implementation that is efficient to use
-and don't rely on a blocking thread for futex wait/waitv. This is what
-this patchset attempts to do, while being minimally invasive on the
-futex side. I believe the diffstat reflects that.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ include/uapi/linux/futex.h | 16 +++++++++++++---
+ kernel/futex/syscalls.c    |  7 +++----
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-As far as I can recall, the first request for futex support with
-io_uring came from Andres Freund, working on postgres. His aio rework
-of postgres was one of the early adopters of io_uring, and futex
-support was a natural extension for that. This is relevant from both
-a usability point of view, as well as for effiency and performance.
-In Andres's words, for the former:
-
-"Futex wait support in io_uring makes it a lot easier to avoid deadlocks
-in concurrent programs that have their own buffer pool: Obviously pages in
-the application buffer pool have to be locked during IO. If the initiator
-of IO A needs to wait for a held lock B, the holder of lock B might wait
-for the IO A to complete.  The ability to wait for a lock and IO
-completions at the same time provides an efficient way to avoid such
-deadlocks."
-
-and in terms of effiency, even without unlocking the full potential yet,
-Andres says:
-
-"Futex wake support in io_uring is useful because it allows for more
-efficient directed wakeups.  For some "locks" postgres has queues
-implemented in userspace, with wakeup logic that cannot easily be
-implemented with FUTEX_WAKE_BITSET on a single "futex word" (imagine
-waiting for journal flushes to have completed up to a certain point). Thus
-a "lock release" sometimes need to wake up many processes in a row.  A
-quick-and-dirty conversion to doing these wakeups via io_uring lead to a
-3% throughput increase, with 12% fewer context switches, albeit in a
-fairly extreme workload."
-
-Some basic io_uring futex support and test cases are available in the
-liburing 'futex' branch:
-
-https://git.kernel.dk/cgit/liburing/log/?h=futex
-
-testing all of the variants. I originally wrote this code about a
-month ago and Andres has been using it with postgres, and I'm not
-aware of any bugs in it. That's not to say it's perfect, obviously,
-and I welcome some feedback so we can move this forward and hash out
-any potential issues.
-
- include/linux/io_uring_types.h |   3 +
- include/uapi/linux/futex.h     |  17 +-
- include/uapi/linux/io_uring.h  |   4 +
- io_uring/Makefile              |   4 +-
- io_uring/cancel.c              |   5 +
- io_uring/cancel.h              |   4 +
- io_uring/futex.c               | 364 +++++++++++++++++++++++++++++++++
- io_uring/futex.h               |  36 ++++
- io_uring/io_uring.c            |   5 +
- io_uring/opdef.c               |  35 +++-
- kernel/futex/futex.h           |  64 +++++-
- kernel/futex/requeue.c         |   3 +-
- kernel/futex/syscalls.c        |  42 ++--
- kernel/futex/waitwake.c        |  53 +++--
- 14 files changed, 593 insertions(+), 46 deletions(-)
-
-You can also find the code here:
-
-https://git.kernel.dk/cgit/linux/log/?h=io_uring-futex
-
-V3:
-- Rebase on top of Peter's futex flag patches
-- Move to using FUTEX2 flags
-
+diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
+index 71a5df8d2689..0c5abb6aa8f8 100644
+--- a/include/uapi/linux/futex.h
++++ b/include/uapi/linux/futex.h
+@@ -44,10 +44,20 @@
+ 					 FUTEX_PRIVATE_FLAG)
+ 
+ /*
+- * Flags to specify the bit length of the futex word for futex2 syscalls.
+- * Currently, only 32 is supported.
++ * Flags for futex2 syscalls.
+  */
+-#define FUTEX_32		2
++			/*	0x00 */
++			/*	0x01 */
++#define FUTEX2_32		0x02
++			/*	0x04 */
++			/*	0x08 */
++			/*	0x10 */
++			/*	0x20 */
++			/*	0x40 */
++#define FUTEX2_PRIVATE		FUTEX_PRIVATE_FLAG
++
++/* do not use */
++#define FUTEX_32		FUTEX2_32 /* historical accident :-( */
+ 
+ /*
+  * Max numbers of elements in a futex_waitv array
+diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
+index a8074079b09e..42b6c2fac7db 100644
+--- a/kernel/futex/syscalls.c
++++ b/kernel/futex/syscalls.c
+@@ -183,8 +183,7 @@ SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
+ 	return do_futex(uaddr, op, val, tp, uaddr2, (unsigned long)utime, val3);
+ }
+ 
+-/* Mask of available flags for each futex in futex_waitv list */
+-#define FUTEXV_WAITER_MASK (FUTEX_32 | FUTEX_PRIVATE_FLAG)
++#define FUTEX2_MASK (FUTEX2_32 | FUTEX2_PRIVATE)
+ 
+ /**
+  * futex_parse_waitv - Parse a waitv array from userspace
+@@ -205,10 +204,10 @@ static int futex_parse_waitv(struct futex_vector *futexv,
+ 		if (copy_from_user(&aux, &uwaitv[i], sizeof(aux)))
+ 			return -EFAULT;
+ 
+-		if ((aux.flags & ~FUTEXV_WAITER_MASK) || aux.__reserved)
++		if ((aux.flags & ~FUTEX2_MASK) || aux.__reserved)
+ 			return -EINVAL;
+ 
+-		if (!(aux.flags & FUTEX_32))
++		if (!(aux.flags & FUTEX2_32))
+ 			return -EINVAL;
+ 
+ 		futexv[i].w.flags = aux.flags;
 -- 
-Jens Axboe
-
+2.40.1
 

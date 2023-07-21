@@ -2,184 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E26BB75CBB6
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 17:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D8E675CBD7
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 17:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231968AbjGUP3W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Jul 2023 11:29:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34960 "EHLO
+        id S232017AbjGUPfS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Jul 2023 11:35:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231947AbjGUP3V (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jul 2023 11:29:21 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5178E3580
-        for <io-uring@vger.kernel.org>; Fri, 21 Jul 2023 08:29:17 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id ca18e2360f4ac-77dcff76e35so29657439f.1
-        for <io-uring@vger.kernel.org>; Fri, 21 Jul 2023 08:29:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689953356; x=1690558156;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+Jtor7wVKKNS5MffYiRyHgMXWkSZohtdTTdgJNdmVDU=;
-        b=xEAHe0ukghvZo0tCv+eVYjjDykaj3iRP+0jpRYElUjWwhDUsDI6IHCM+UGflw+0KdF
-         MHHNsYgi2cSvcZmvLeY1Nyrgj0KzN5l+2lp87/TLA5HYBhQ3kGnnugU6r7P2Iayw5UwM
-         3jh9AWURrmJ/YVbWOLsM6GJgxsIKcSt+mvagtSxiSt7cDNFF1BpwDDMcDO8vGvrNA+hf
-         mCbbu6v2PSO4TTENBgtLo3SzA7KjZSirF+ueXCYvHYHUkPB4eKdSOylvY1Ve7varVnDt
-         etyltBVKEDzP2tXHXh0AVjho4k5G6uv0u8RmzWExzAqDTYlXCFpUtLI8PfHvQYr4DAq2
-         Otlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689953356; x=1690558156;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Jtor7wVKKNS5MffYiRyHgMXWkSZohtdTTdgJNdmVDU=;
-        b=hOXUztPA50FMQjwlytgxhyM03u542oH/cYfn7NUaQSSPK1ZV8yV1p9OkQdlHHOh1l7
-         gpckgYC7CFAzcJvHs1ooXxOIZvN7tCil5vYX6FsYLxwr1ljqjx32S6TBa5ozvALKCn2U
-         WI6YUPCdU/mnOqLNnQ0QEJuoQqZ3dBuP7Ea0bW56ABWZ2w6g2b23qbGbYR91nOycMhrK
-         Qf5M+Ve518etfLx+KKEOgJlYfa0T3yiDrXu7sPvf4dYbBybWdliXrT3mueze5+qF8cVD
-         7pxLQyd1GDWX+ZwCzQLk3D65P5ps8iROvm1vEk7UVMHQ+aVbr2TQdxegqdm73/dub9sD
-         m00Q==
-X-Gm-Message-State: ABy/qLaRzrzaEpwMr/0FwzPq/PT5j7KPV5xrgufAfPXww9+o8bWDbVBV
-        pGnC7MfiIaN4hvJXLFCDNwWtdaBiGBqfBQa3jvY=
-X-Google-Smtp-Source: APBJJlEVGaNCKFR7+1cfV39/HjnyQ+uTcb2cHxXEki5jpiThdtmm0KnESMDy5qbAo0yDTUuiCnyBjQ==
-X-Received: by 2002:a05:6602:3e87:b0:780:cb36:6f24 with SMTP id el7-20020a0566023e8700b00780cb366f24mr2123148iob.2.1689953356527;
-        Fri, 21 Jul 2023 08:29:16 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id t18-20020a6b0912000000b00787496dad4bsm1123827ioi.49.2023.07.21.08.29.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jul 2023 08:29:15 -0700 (PDT)
-Message-ID: <94b8fcc4-12b5-8d8c-3eb3-fe1e73a25456@kernel.dk>
-Date:   Fri, 21 Jul 2023 09:29:14 -0600
+        with ESMTP id S229801AbjGUPfR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jul 2023 11:35:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A9730DD;
+        Fri, 21 Jul 2023 08:35:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5844461D06;
+        Fri, 21 Jul 2023 15:35:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1666C433C7;
+        Fri, 21 Jul 2023 15:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689953715;
+        bh=XK+rZDy092BG0paL9xtt7YLxixe+rSDeXeuTZ7XKhCY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a+8Pv0oof2/kxjFqbMJvgjlKz36HWezvYQMr9Ly9aNbSyN+03RX4HUaqmeevdYCnM
+         OChr/cxIIPxOpZzNQ/XlavEgX98+nXTesdzueF8SEZcAwYp/r5xBBqHoZwmWUeI2s3
+         D3dNCIckdLwg/jOO/fqlcsQwhi331TCRCo0wPGxonvqAqFPQP+IQYF5o5M8A84CoHZ
+         L2jMeMOFMLghQWRuGua7/30Gypux6pbSs7GUIYd+4SyPTghUaMHs9ETz68/MtDYTeM
+         1D2WmpzflssMEXL6gpO0dVTTBmF/wNfU+fSVFTJ306fhRs+EdxQ2ymKn/87I0VI0ne
+         IJLruKbauGkOg==
+Date:   Fri, 21 Jul 2023 08:35:15 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
+        andres@anarazel.de, david@fromorbit.com
+Subject: Re: [PATCH 5/8] iomap: only set iocb->private for polled bio
+Message-ID: <20230721153515.GN11352@frogsfrogsfrogs>
+References: <20230720181310.71589-1-axboe@kernel.dk>
+ <20230720181310.71589-6-axboe@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 06/10] io_uring: add support for futex wake and wait
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andres@anarazel.de
-References: <20230720221858.135240-1-axboe@kernel.dk>
- <20230720221858.135240-7-axboe@kernel.dk>
- <20230721113031.GG3630545@hirez.programming.kicks-ass.net>
- <20230721113718.GA3638458@hirez.programming.kicks-ass.net>
- <d95bfb98-8d76-f0fd-6283-efc01d0cc015@kernel.dk>
-In-Reply-To: <d95bfb98-8d76-f0fd-6283-efc01d0cc015@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230720181310.71589-6-axboe@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/21/23 8:43?AM, Jens Axboe wrote:
-> On 7/21/23 5:37?AM, Peter Zijlstra wrote:
->> On Fri, Jul 21, 2023 at 01:30:31PM +0200, Peter Zijlstra wrote:
->>
->> Sorry, I was too quick..
->>
->> 	iof->uaddr = sqe->addr;
->> 	iof->val   = sqe->futex_val;
->> 	iof->mask  = sqe->futex_mask;
->> 	flags      = sqe->futex_flags;
->>
->> 	if (flags & ~FUTEX2_MASK)
->> 		return -EINVAL;
->>
->> 	iof->flags = futex2_to_flags(flags);
->> 	if (!futex_flags_valid(iof->flags))
->> 		return -EINVAL;
->>
->> 	if (!futex_validate_input(iof->flags, iof->val) ||
->> 	    !futex_validate_input(iof->flags, iof->mask))
->> 		return -EINVAL
+On Thu, Jul 20, 2023 at 12:13:07PM -0600, Jens Axboe wrote:
+> iocb->private is only used for polled IO, where the completer will
+> find the bio to poll through that field.
 > 
-> Something like that should work, with some variable names fixed up. I
-> just went with 'addr' for the futex address, addr2 for the value, and
-> addr3 for the mask.
+> Assign it when we're submitting a polled bio, and get rid of the
+> dio->poll_bio indirection.
+
+IIRC, the only time iomap actually honors HIPRI requests from the iocb
+is if the entire write can be satisfied with a single bio -- no zeroing
+around, no dirty file metadata, no writes past EOF, no unwritten blocks,
+etc.  Right?
+
+There was only ever going to be one assign to dio->submit.poll_bio,
+which means the WRITE_ONCE isn't going to overwrite some non-NULL value.
+Correct?
+
+All this does is remove the indirection like you said.
+
+If the answers are {yes, yes} then I understand the HIPRI mechanism
+enough to say
+
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/iomap/direct-io.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
 > 
-> Rebased on top of your first 4 updated patches, and added a single patch
-> that moves FUTEX2_MASK, will run some testing to validate it's all still
-> sane.
-
-FWIW, here's the io_uring incremental after that rebase. Update the
-liburing futex branch as well, updating the prep helpers to take 64 bit
-values for mask/val and also add the flags argument that was missing as
-well. Only other addition was adding those 4 new patches instead of the
-old 3 ones, and adding single patch that just moves FUTEX2_MASK to
-futex.h.
-
-All checks out fine, tests pass and it works.
-
-
-diff --git a/io_uring/futex.c b/io_uring/futex.c
-index 93df54dffaa0..4c9f2c841b98 100644
---- a/io_uring/futex.c
-+++ b/io_uring/futex.c
-@@ -18,11 +18,11 @@ struct io_futex {
- 		u32 __user			*uaddr;
- 		struct futex_waitv __user	*uwaitv;
- 	};
--	unsigned int	futex_val;
--	unsigned int	futex_flags;
--	unsigned int	futex_mask;
--	unsigned int	futex_nr;
-+	unsigned long	futex_val;
-+	unsigned long	futex_mask;
- 	unsigned long	futexv_owned;
-+	u32		futex_flags;
-+	unsigned int	futex_nr;
- };
- 
- struct io_futex_data {
-@@ -171,15 +171,28 @@ bool io_futex_remove_all(struct io_ring_ctx *ctx, struct task_struct *task,
- int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
-+	u32 flags;
- 
--	if (unlikely(sqe->fd || sqe->buf_index || sqe->addr3))
-+	if (unlikely(sqe->fd || sqe->buf_index || sqe->file_index))
- 		return -EINVAL;
- 
- 	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
--	iof->futex_val = READ_ONCE(sqe->len);
--	iof->futex_mask = READ_ONCE(sqe->file_index);
--	iof->futex_flags = READ_ONCE(sqe->futex_flags);
--	if (iof->futex_flags & FUTEX_CMD_MASK)
-+	iof->futex_val = READ_ONCE(sqe->addr2);
-+	iof->futex_mask = READ_ONCE(sqe->addr3);
-+	iof->futex_nr = READ_ONCE(sqe->len);
-+	if (iof->futex_nr && req->opcode != IORING_OP_FUTEX_WAITV)
-+		return -EINVAL;
-+
-+	flags = READ_ONCE(sqe->futex_flags);
-+	if (flags & ~FUTEX2_MASK)
-+		return -EINVAL;
-+
-+	iof->futex_flags = futex2_to_flags(flags);
-+	if (!futex_flags_valid(iof->futex_flags))
-+		return -EINVAL;
-+
-+	if (!futex_validate_input(iof->futex_flags, iof->futex_val) ||
-+	    !futex_validate_input(iof->futex_flags, iof->futex_mask))
- 		return -EINVAL;
- 
- 	iof->futexv_owned = 0;
-@@ -211,7 +224,6 @@ int io_futexv_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (ret)
- 		return ret;
- 
--	iof->futex_nr = READ_ONCE(sqe->off);
- 	if (!iof->futex_nr || iof->futex_nr > FUTEX_WAITV_MAX)
- 		return -EINVAL;
- 
-
--- 
-Jens Axboe
-
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index c3ea1839628f..cce9af019705 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -42,7 +42,6 @@ struct iomap_dio {
+>  		struct {
+>  			struct iov_iter		*iter;
+>  			struct task_struct	*waiter;
+> -			struct bio		*poll_bio;
+>  		} submit;
+>  
+>  		/* used for aio completion: */
+> @@ -64,12 +63,14 @@ static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
+>  static void iomap_dio_submit_bio(const struct iomap_iter *iter,
+>  		struct iomap_dio *dio, struct bio *bio, loff_t pos)
+>  {
+> +	struct kiocb *iocb = dio->iocb;
+> +
+>  	atomic_inc(&dio->ref);
+>  
+>  	/* Sync dio can't be polled reliably */
+> -	if ((dio->iocb->ki_flags & IOCB_HIPRI) && !is_sync_kiocb(dio->iocb)) {
+> -		bio_set_polled(bio, dio->iocb);
+> -		dio->submit.poll_bio = bio;
+> +	if ((iocb->ki_flags & IOCB_HIPRI) && !is_sync_kiocb(iocb)) {
+> +		bio_set_polled(bio, iocb);
+> +		WRITE_ONCE(iocb->private, bio);
+>  	}
+>  
+>  	if (dio->dops && dio->dops->submit_io)
+> @@ -197,7 +198,6 @@ void iomap_dio_bio_end_io(struct bio *bio)
+>  	 * more IO to be issued to finalise filesystem metadata changes or
+>  	 * guarantee data integrity.
+>  	 */
+> -	WRITE_ONCE(iocb->private, NULL);
+>  	INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
+>  	queue_work(file_inode(iocb->ki_filp)->i_sb->s_dio_done_wq,
+>  			&dio->aio.work);
+> @@ -536,7 +536,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  
+>  	dio->submit.iter = iter;
+>  	dio->submit.waiter = current;
+> -	dio->submit.poll_bio = NULL;
+>  
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+> @@ -648,8 +647,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (dio->flags & IOMAP_DIO_STABLE_WRITE)
+>  		dio->flags &= ~IOMAP_DIO_NEED_SYNC;
+>  
+> -	WRITE_ONCE(iocb->private, dio->submit.poll_bio);
+> -
+>  	/*
+>  	 * We are about to drop our additional submission reference, which
+>  	 * might be the last reference to the dio.  There are three different
+> -- 
+> 2.40.1
+> 

@@ -2,103 +2,184 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A08AA75CB9D
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 17:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E26BB75CBB6
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jul 2023 17:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbjGUPYr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 21 Jul 2023 11:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58438 "EHLO
+        id S231968AbjGUP3W (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 21 Jul 2023 11:29:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbjGUPYn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jul 2023 11:24:43 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8086D30DB;
-        Fri, 21 Jul 2023 08:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1689953074; x=1690557874; i=deller@gmx.de;
- bh=A7WxgBjz3zo2CGF0QZzRQfzfUsKrkF2oGa6/wHukdFM=;
- h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
- b=Ko2qdlYuXReozta8VnE/apNE4ymC4iZTiFxjjaTrWqbv3JfCPN118kMJWChmEnhlS24yB3N
- 1t8V9dVHuKJxQQIEvdgeGzMphReVYqX3QZ3C0WvhfnYS7SKhc+sRPYJPIDHvStB1RxMlMfEOH
- ZcaBANg+jJmd6S1FLrcpEWyjCN2bIl7Sa+2i4ikkkomVs4U8C7szAvfiUxuihA+dxplk7o8F0
- Y0REMm9pz92bAWA+1qBDiEOTGAFQQtAqo7HwZS8KR2NL1ikeglPK9IQVkCywUGfYaP3VqPE6g
- vXgGkF28uQawUqqWZaqnzBFXmUajHZUGJuguXvdQ1THzu2ef6ODg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from p100.fritz.box ([94.134.144.189]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MplXp-1pZVPD1kfV-00q8gd; Fri, 21
- Jul 2023 17:24:34 +0200
-From:   Helge Deller <deller@gmx.de>
-To:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-ia64@vger.kernel.org,
-        Jiri Slaby <jirislaby@kernel.org>, linux-parisc@vger.kernel.org
-Cc:     Helge Deller <deller@gmx.de>,
-        matoro <matoro_mailinglist_kernel@matoro.tk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/2] ia64: mmap: Consider pgoff when searching for free mapping
-Date:   Fri, 21 Jul 2023 17:24:32 +0200
-Message-ID: <20230721152432.196382-3-deller@gmx.de>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230721152432.196382-1-deller@gmx.de>
-References: <20230721152432.196382-1-deller@gmx.de>
+        with ESMTP id S231947AbjGUP3V (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 21 Jul 2023 11:29:21 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5178E3580
+        for <io-uring@vger.kernel.org>; Fri, 21 Jul 2023 08:29:17 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id ca18e2360f4ac-77dcff76e35so29657439f.1
+        for <io-uring@vger.kernel.org>; Fri, 21 Jul 2023 08:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1689953356; x=1690558156;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Jtor7wVKKNS5MffYiRyHgMXWkSZohtdTTdgJNdmVDU=;
+        b=xEAHe0ukghvZo0tCv+eVYjjDykaj3iRP+0jpRYElUjWwhDUsDI6IHCM+UGflw+0KdF
+         MHHNsYgi2cSvcZmvLeY1Nyrgj0KzN5l+2lp87/TLA5HYBhQ3kGnnugU6r7P2Iayw5UwM
+         3jh9AWURrmJ/YVbWOLsM6GJgxsIKcSt+mvagtSxiSt7cDNFF1BpwDDMcDO8vGvrNA+hf
+         mCbbu6v2PSO4TTENBgtLo3SzA7KjZSirF+ueXCYvHYHUkPB4eKdSOylvY1Ve7varVnDt
+         etyltBVKEDzP2tXHXh0AVjho4k5G6uv0u8RmzWExzAqDTYlXCFpUtLI8PfHvQYr4DAq2
+         Otlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689953356; x=1690558156;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Jtor7wVKKNS5MffYiRyHgMXWkSZohtdTTdgJNdmVDU=;
+        b=hOXUztPA50FMQjwlytgxhyM03u542oH/cYfn7NUaQSSPK1ZV8yV1p9OkQdlHHOh1l7
+         gpckgYC7CFAzcJvHs1ooXxOIZvN7tCil5vYX6FsYLxwr1ljqjx32S6TBa5ozvALKCn2U
+         WI6YUPCdU/mnOqLNnQ0QEJuoQqZ3dBuP7Ea0bW56ABWZ2w6g2b23qbGbYR91nOycMhrK
+         Qf5M+Ve518etfLx+KKEOgJlYfa0T3yiDrXu7sPvf4dYbBybWdliXrT3mueze5+qF8cVD
+         7pxLQyd1GDWX+ZwCzQLk3D65P5ps8iROvm1vEk7UVMHQ+aVbr2TQdxegqdm73/dub9sD
+         m00Q==
+X-Gm-Message-State: ABy/qLaRzrzaEpwMr/0FwzPq/PT5j7KPV5xrgufAfPXww9+o8bWDbVBV
+        pGnC7MfiIaN4hvJXLFCDNwWtdaBiGBqfBQa3jvY=
+X-Google-Smtp-Source: APBJJlEVGaNCKFR7+1cfV39/HjnyQ+uTcb2cHxXEki5jpiThdtmm0KnESMDy5qbAo0yDTUuiCnyBjQ==
+X-Received: by 2002:a05:6602:3e87:b0:780:cb36:6f24 with SMTP id el7-20020a0566023e8700b00780cb366f24mr2123148iob.2.1689953356527;
+        Fri, 21 Jul 2023 08:29:16 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t18-20020a6b0912000000b00787496dad4bsm1123827ioi.49.2023.07.21.08.29.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jul 2023 08:29:15 -0700 (PDT)
+Message-ID: <94b8fcc4-12b5-8d8c-3eb3-fe1e73a25456@kernel.dk>
+Date:   Fri, 21 Jul 2023 09:29:14 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BplPTINVd0OdLsIUOtIgdkny/5qsRkSo0WcblPhJqu+oYHGcw71
- bySZIEIKmJcNLmjhb0oyHAQr7vH8bDvcfn3G9AiBlVHH66N8vx2stCFdAQ0FpCCx/6LRvup
- fNkM5mAgT11aCqfJH9ZXj7iiqcRE/77E62bTUUtTpZBy0aU9iR2eMAqkVpwUxqNvjTwas5V
- MOOSvn7rsNQyWiClPxdEw==
-UI-OutboundReport: notjunk:1;M01:P0:AYbJDJWuZLQ=;AAsXgFhQ1l5zYV5mMqehdTP+Z69
- OK5Ws0ozn2VQuyZl3r6VhNTq190tOl0PsnFHiQo8EMfGxNF14Jeqq/NlM3oZsmJiWTmIiAtQM
- Cq4tK1VwMSsfTJGepWQgKeZqbMD98AaA30FoUvoLeyUe0APn0mykrO5eeWc3f58pcrNA/xbaA
- F6RN8Mn70+QFHMzOgqmNb3yzwpBNgjrGdkJm5fx6lnn1oPJUX9Uy2YJv8DqNxyvMJhGYrV4Xy
- fudinA+6wZ5BNMnyJuxoR+MLjfpkI1+HW76LGjPr1AC1VjmypYN0BigTDnCAr/nqbTSVaIOzV
- j6j4G5qmoISfY/fvPZr4tuca24UvOwBY0IrL0wRSnA+OrfOkAvkxNxjrmIpFOM63ZJi++mYuS
- 0MYgIeCMpkH2XvKGY+WWxlkflD6i87susUQp19Lwi4PB165Ap7MNokr63eE/n2DwiIsc0x7Ey
- KOx9dRGzUkRINyL/FNtUSBV/646Pb9Lql5aQa2XaY0HcVs/wcDgLwx/uMTjQjHcR3eC+sd/6R
- /KTmSIACgxjHYdStmASVhBa42RdXxOF6daYUCimJ5iZD4bMrtG/nTPCx/cd67JZUSr2ah+BCE
- wo1j9j4IQ+5nO61nhzC9aN0Pfu6WAIFqLrI4rCA4SvIpIQl3cSVlm0eLKPZ2Q95RRMepx+WX4
- nW2jVZ9PIaLD3am2rpQKWd0lHxpPTlFQHy2pvwRmcBoi7K2XuH/XBONRZF7gFLnxZV0ifoA+Q
- 2qmv6oSRNmXrTrMhlR4j8xCn+h4HwCBwPRAZBIMc/V1WMhPWlT6CpKU4ErjOWuUs5BfNEYUZ9
- ikmLLPIHkkWL55i93IKTiv9jkXTQrIq5mh19XnKVJpYNxAv71KYuJYcV312/IPpepC4CW8rsj
- kArwN2qAlQbBDUS9K7k+XvtCdiMv0W2nNDaizDkXthmsD1au7asBxLX/LAUxtNieo/moaxEIv
- SA90T0opNeszWvzo9N6wrK7IIh4=
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 06/10] io_uring: add support for futex wake and wait
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andres@anarazel.de
+References: <20230720221858.135240-1-axboe@kernel.dk>
+ <20230720221858.135240-7-axboe@kernel.dk>
+ <20230721113031.GG3630545@hirez.programming.kicks-ass.net>
+ <20230721113718.GA3638458@hirez.programming.kicks-ass.net>
+ <d95bfb98-8d76-f0fd-6283-efc01d0cc015@kernel.dk>
+In-Reply-To: <d95bfb98-8d76-f0fd-6283-efc01d0cc015@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-IA64 is the only architecture which does not consider the pgoff value when
-searching for a possible free memory region with vm_unmapped_area().
-Adding this seems to have no negative side effect on IA64, so add it now
-to make IA64 consistent with all other architectures.
+On 7/21/23 8:43?AM, Jens Axboe wrote:
+> On 7/21/23 5:37?AM, Peter Zijlstra wrote:
+>> On Fri, Jul 21, 2023 at 01:30:31PM +0200, Peter Zijlstra wrote:
+>>
+>> Sorry, I was too quick..
+>>
+>> 	iof->uaddr = sqe->addr;
+>> 	iof->val   = sqe->futex_val;
+>> 	iof->mask  = sqe->futex_mask;
+>> 	flags      = sqe->futex_flags;
+>>
+>> 	if (flags & ~FUTEX2_MASK)
+>> 		return -EINVAL;
+>>
+>> 	iof->flags = futex2_to_flags(flags);
+>> 	if (!futex_flags_valid(iof->flags))
+>> 		return -EINVAL;
+>>
+>> 	if (!futex_validate_input(iof->flags, iof->val) ||
+>> 	    !futex_validate_input(iof->flags, iof->mask))
+>> 		return -EINVAL
+> 
+> Something like that should work, with some variable names fixed up. I
+> just went with 'addr' for the futex address, addr2 for the value, and
+> addr3 for the mask.
+> 
+> Rebased on top of your first 4 updated patches, and added a single patch
+> that moves FUTEX2_MASK, will run some testing to validate it's all still
+> sane.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-Tested-by: matoro <matoro_mailinglist_kernel@matoro.tk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-ia64@vger.kernel.org
-=2D--
- arch/ia64/kernel/sys_ia64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FWIW, here's the io_uring incremental after that rebase. Update the
+liburing futex branch as well, updating the prep helpers to take 64 bit
+values for mask/val and also add the flags argument that was missing as
+well. Only other addition was adding those 4 new patches instead of the
+old 3 ones, and adding single patch that just moves FUTEX2_MASK to
+futex.h.
 
-diff --git a/arch/ia64/kernel/sys_ia64.c b/arch/ia64/kernel/sys_ia64.c
-index 6e948d015332..eb561cc93632 100644
-=2D-- a/arch/ia64/kernel/sys_ia64.c
-+++ b/arch/ia64/kernel/sys_ia64.c
-@@ -63,7 +63,7 @@ arch_get_unmapped_area (struct file *filp, unsigned long=
- addr, unsigned long len
- 	info.low_limit =3D addr;
- 	info.high_limit =3D TASK_SIZE;
- 	info.align_mask =3D align_mask;
--	info.align_offset =3D 0;
-+	info.align_offset =3D pgoff << PAGE_SHIFT;
- 	return vm_unmapped_area(&info);
- }
+All checks out fine, tests pass and it works.
 
-=2D-
-2.41.0
+
+diff --git a/io_uring/futex.c b/io_uring/futex.c
+index 93df54dffaa0..4c9f2c841b98 100644
+--- a/io_uring/futex.c
++++ b/io_uring/futex.c
+@@ -18,11 +18,11 @@ struct io_futex {
+ 		u32 __user			*uaddr;
+ 		struct futex_waitv __user	*uwaitv;
+ 	};
+-	unsigned int	futex_val;
+-	unsigned int	futex_flags;
+-	unsigned int	futex_mask;
+-	unsigned int	futex_nr;
++	unsigned long	futex_val;
++	unsigned long	futex_mask;
+ 	unsigned long	futexv_owned;
++	u32		futex_flags;
++	unsigned int	futex_nr;
+ };
+ 
+ struct io_futex_data {
+@@ -171,15 +171,28 @@ bool io_futex_remove_all(struct io_ring_ctx *ctx, struct task_struct *task,
+ int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
++	u32 flags;
+ 
+-	if (unlikely(sqe->fd || sqe->buf_index || sqe->addr3))
++	if (unlikely(sqe->fd || sqe->buf_index || sqe->file_index))
+ 		return -EINVAL;
+ 
+ 	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+-	iof->futex_val = READ_ONCE(sqe->len);
+-	iof->futex_mask = READ_ONCE(sqe->file_index);
+-	iof->futex_flags = READ_ONCE(sqe->futex_flags);
+-	if (iof->futex_flags & FUTEX_CMD_MASK)
++	iof->futex_val = READ_ONCE(sqe->addr2);
++	iof->futex_mask = READ_ONCE(sqe->addr3);
++	iof->futex_nr = READ_ONCE(sqe->len);
++	if (iof->futex_nr && req->opcode != IORING_OP_FUTEX_WAITV)
++		return -EINVAL;
++
++	flags = READ_ONCE(sqe->futex_flags);
++	if (flags & ~FUTEX2_MASK)
++		return -EINVAL;
++
++	iof->futex_flags = futex2_to_flags(flags);
++	if (!futex_flags_valid(iof->futex_flags))
++		return -EINVAL;
++
++	if (!futex_validate_input(iof->futex_flags, iof->futex_val) ||
++	    !futex_validate_input(iof->futex_flags, iof->futex_mask))
+ 		return -EINVAL;
+ 
+ 	iof->futexv_owned = 0;
+@@ -211,7 +224,6 @@ int io_futexv_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (ret)
+ 		return ret;
+ 
+-	iof->futex_nr = READ_ONCE(sqe->off);
+ 	if (!iof->futex_nr || iof->futex_nr > FUTEX_WAITV_MAX)
+ 		return -EINVAL;
+ 
+
+-- 
+Jens Axboe
 

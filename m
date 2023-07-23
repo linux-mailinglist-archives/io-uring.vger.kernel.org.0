@@ -2,202 +2,190 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D70575DF3A
-	for <lists+io-uring@lfdr.de>; Sun, 23 Jul 2023 01:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9995875E10A
+	for <lists+io-uring@lfdr.de>; Sun, 23 Jul 2023 11:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjGVXFZ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 22 Jul 2023 19:05:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55852 "EHLO
+        id S229843AbjGWJti (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 Jul 2023 05:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjGVXFY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 22 Jul 2023 19:05:24 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F18E0
-        for <io-uring@vger.kernel.org>; Sat, 22 Jul 2023 16:05:23 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-666ecb21f86so2923594b3a.3
-        for <io-uring@vger.kernel.org>; Sat, 22 Jul 2023 16:05:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690067123; x=1690671923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYcKh3CigA2XfZupwu14HyozmnMVJFZ6G2nMtPKtxjw=;
-        b=djEAUymjYKHpEKgrOXZcC+jbQ7pyoe1ePPxcY1MjOggXdsn8QIIRONV39+Pl5fr64y
-         HDZvnRSyJxknmGY0Iu5H4RihgydDbFCN+Rf0beKgVt4xqbo73O3+gYa3rdJesNZvdXZg
-         mqWHeyOE4xEPZZCR2bWjH/D1aanLxLYoTKqMjJbPq5uGcr6k8CN9mg7JlRlpg8t3GRPu
-         1+8Ka2fkv0Qa5FZzbCddoyhXASYKr+1v4ngOfLphfw1iB8cFowkOy4xdJ0an/hwnHeWu
-         q4GpHN8WYsaO8ikhMDGbGO1IZ1xJOdT67Huo+2FZiRhRi2t57az9putaFbyhI7ikKCEc
-         ZDjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690067123; x=1690671923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BYcKh3CigA2XfZupwu14HyozmnMVJFZ6G2nMtPKtxjw=;
-        b=eJpZPfuP1Af/QWWW7vNHuxBR3dWe2sB1CpKgl6hi93hE3cl/x1xCPaBk/JxbreAvUn
-         w//GD3HvdqCFbArk5kTanjSyJ3uMRT08ywXdfbfpyHKuOb4uSEaOwtGGqSu6bqPxMWrO
-         1IXWUTXwQGFJ9WcVLOfBpeDvoHdenLLUYQaBqJ6UilRmlIWNGow7N+RyAbYVKTqJGV2V
-         BPSL43dN/OxkeTPpBe0pNDDZnjxQDDrTGNfin/AVpApCNx9dTpFT0NRw7vdpaE1xk64D
-         kP0gFIfmdZxodfiHP+fUGHufhQhvB3Gb2shleaTda6PKiXooWNKIKahpAangm0MkeT2o
-         +n8w==
-X-Gm-Message-State: ABy/qLZBPJn4xx7gLgw4/uuO3ds9Vt4DR4uRiI3cJBMRqrYmr1AWEv8I
-        UDvmAnP3LdgQIhz6jOPvyvAiV6FCy2mGawZ8mDk=
-X-Google-Smtp-Source: APBJJlEsh+0pA9YO+xx3v86k6qSY5+YHQKqY3elqdQGTvg7SEo+jtLOxETYyaiAVCXsdH5W6arMp+g==
-X-Received: by 2002:a17:903:22c4:b0:1b6:797d:33fb with SMTP id y4-20020a17090322c400b001b6797d33fbmr7774537plg.64.1690067122646;
-        Sat, 22 Jul 2023 16:05:22 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
-        by smtp.gmail.com with ESMTPSA id t14-20020a170902b20e00b001b9da7b6bc3sm5860800plr.184.2023.07.22.16.05.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jul 2023 16:05:21 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qNLf4-009KlO-2j;
-        Sun, 23 Jul 2023 09:05:18 +1000
-Date:   Sun, 23 Jul 2023 09:05:18 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
-        andres@anarazel.de
-Subject: Re: [PATCH 4/8] iomap: completed polled IO inline
-Message-ID: <ZLxgrnvsVPJYBJ1L@dread.disaster.area>
-References: <20230720181310.71589-1-axboe@kernel.dk>
- <20230720181310.71589-5-axboe@kernel.dk>
- <ZLr8D60gYqDrHl21@dread.disaster.area>
- <fe2754d6-04d0-ce69-d7b2-6e6af7cfb140@kernel.dk>
+        with ESMTP id S229917AbjGWJth (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Jul 2023 05:49:37 -0400
+X-Greylist: delayed 568 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 23 Jul 2023 02:49:31 PDT
+Received: from vulcan.natalenko.name (vulcan.natalenko.name [IPv6:2001:19f0:6c00:8846:5400:ff:fe0c:dfa0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D3210D9;
+        Sun, 23 Jul 2023 02:49:31 -0700 (PDT)
+Received: from spock.localnet (unknown [94.142.239.106])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id B9F9314697E4;
+        Sun, 23 Jul 2023 11:39:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1690105196;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dJFwaE+Wp4xXknQEEGSTLenwUzVW0tD9EFuQKBQb2hA=;
+        b=tDbhV6Iu6EzvMO9d9hGrN/M3BZJ+vwKqaMkNJvSNvJ1zEQxPbrw701hdYG7+R83ep5k1Ec
+        jxCDL+I/uD/rpi0aMzO3KvZPWa6YKD1lnA6aJEIHJ44RMSJ53VfmxLh35NhgEHUjNoaOCl
+        CZwsX4/QoEA7uCMpCKzKRrhHidHKEmI=
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andres Freund <andres@anarazel.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 6.4 800/800] io_uring: Use io_schedule* in cqring wait
+Date:   Sun, 23 Jul 2023 11:39:42 +0200
+Message-ID: <12251678.O9o76ZdvQC@natalenko.name>
+In-Reply-To: <20230716195007.731909670@linuxfoundation.org>
+References: <20230716194949.099592437@linuxfoundation.org>
+ <20230716195007.731909670@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe2754d6-04d0-ce69-d7b2-6e6af7cfb140@kernel.dk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; boundary="nextPart5695128.DvuYhMxLoT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 09:10:57PM -0600, Jens Axboe wrote:
-> On 7/21/23 3:43?PM, Dave Chinner wrote:
-> > On Thu, Jul 20, 2023 at 12:13:06PM -0600, Jens Axboe wrote:
-> >> Polled IO is only allowed for conditions where task completion is safe
-> >> anyway, so we can always complete it inline. This cannot easily be
-> >> checked with a submission side flag, as the block layer may clear the
-> >> polled flag and turn it into a regular IO instead. Hence we need to
-> >> check this at completion time. If REQ_POLLED is still set, then we know
-> >> that this IO was successfully polled, and is completing in task context.
-> >>
-> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >> ---
-> >>  fs/iomap/direct-io.c | 14 ++++++++++++--
-> >>  1 file changed, 12 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> >> index 9f97d0d03724..c3ea1839628f 100644
-> >> --- a/fs/iomap/direct-io.c
-> >> +++ b/fs/iomap/direct-io.c
-> >> @@ -173,9 +173,19 @@ void iomap_dio_bio_end_io(struct bio *bio)
-> >>  	}
-> >>  
-> >>  	/*
-> >> -	 * Flagged with IOMAP_DIO_INLINE_COMP, we can complete it inline
-> >> +	 * Flagged with IOMAP_DIO_INLINE_COMP, we can complete it inline.
-> >> +	 * Ditto for polled requests - if the flag is still at completion
-> >> +	 * time, then we know the request was actually polled and completion
-> >> +	 * is called from the task itself. This is why we need to check it
-> >> +	 * here rather than flag it at issue time.
-> >>  	 */
-> >> -	if (dio->flags & IOMAP_DIO_INLINE_COMP) {
-> >> +	if ((dio->flags & IOMAP_DIO_INLINE_COMP) || (bio->bi_opf & REQ_POLLED)) {
-> > 
-> > This still smells wrong to me. Let me see if I can work out why...
-> > 
-> > <spelunk!>
-> > 
-> > When we set up the IO in iomap_dio_bio_iter(), we do this:
-> > 
-> >         /*
-> >          * We can only poll for single bio I/Os.
-> >          */
-> >         if (need_zeroout ||
-> >             ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
-> >                 dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> > 
-> > The "need_zeroout" covers writes into unwritten regions that require
-> > conversion at IO completion, and the latter check is for writes
-> > extending EOF. i.e. this covers the cases where we have dirty
-> > metadata for this specific write and so may need transactions or
-> > journal/metadata IO during IO completion.
-> > 
-> > The only case it doesn't cover is clearing IOCB_HIPRI for O_DSYNC IO
-> > that may require a call to generic_write_sync() in completion. That
-> > is, if we aren't using FUA, will not have IOMAP_DIO_INLINE_COMP set,
-> > but still do polled IO.
-> > 
-> > I think this is a bug. We don't want to be issuing more IO in
-> > REQ_POLLED task context during IO completion, and O_DSYNC IO
-> > completion for non-FUA IO requires a journal flush and that can
-> > issue lots of journal IO and wait on it in completion process.
-> > 
-> > Hence I think we should only be setting REQ_POLLED in the cases
-> > where IOCB_HIPRI and IOMAP_DIO_INLINE_COMP are both set.  If
-> > IOMAP_DIO_INLINE_COMP is set on the dio, then it doesn't matter what
-> > context we are in at completion time or whether REQ_POLLED was set
-> > or cleared during the IO....
-> > 
-> > That means the above check should be:
-> > 
-> >         /*
-> >          * We can only poll for single bio I/Os that can run inline
-> > 	 * completion.
-> >          */
-> >         if (need_zeroout ||
-> > 	    (iocb_is_dsync(dio->iocb) && !use_fua) ||
-> >             ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
-> >                 dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> 
-> Looks like you are right, it would not be a great idea to handle that
-> off polled IO completion. It'd work just fine, but anything generating
-> more IO should go to a helper. I'll make that change.
-> 
-> > or if we change the logic such that calculate IOMAP_DIO_INLINE_COMP
-> > first:
-> > 
-> > 	if (!(dio->flags & IOMAP_DIO_INLINE_COMP))
-> > 		dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> > 
-> > Then we don't need to care about polled IO on the completion side at
-> > all at the iomap layer because it doesn't change the completion
-> > requirements at all...
-> 
-> That still isn't true, because you can still happily issue as polled IO
-> and get it cleared and now have an IRQ based completion. This would work
-> for most cases, but eg xfs dio end_io handler will grab:
-> 
-> spin_lock(&ip->i_flags_lock);
-> 
-> if the inode got truncated. Maybe that can't happen because we did
-> inode_dio_begin() higher up?
+--nextPart5695128.DvuYhMxLoT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: stable@vger.kernel.org
+Date: Sun, 23 Jul 2023 11:39:42 +0200
+Message-ID: <12251678.O9o76ZdvQC@natalenko.name>
+In-Reply-To: <20230716195007.731909670@linuxfoundation.org>
+MIME-Version: 1.0
 
-Yes, truncate, hole punch, etc block on inode_dio_wait() with the
-i_rwsem held which means it blocks new DIO submissions and waits
-until all in-flight DIO before the truncate operation starts.
-inode_dio_complete() does not get called until after the filesystem
-->endio completion has run, so there's no possibility of
-truncate-like operations actually racing with DIO completion at
-all...
+Hello.
 
-> Still seems saner to check for the polled
-> flag at completion to me...
+On ned=C4=9Ble 16. =C4=8Dervence 2023 21:50:53 CEST Greg Kroah-Hartman wrot=
+e:
+> From: Andres Freund <andres@anarazel.de>
+>=20
+> commit 8a796565cec3601071cbbd27d6304e202019d014 upstream.
+>=20
+> I observed poor performance of io_uring compared to synchronous IO. That
+> turns out to be caused by deeper CPU idle states entered with io_uring,
+> due to io_uring using plain schedule(), whereas synchronous IO uses
+> io_schedule().
+>=20
+> The losses due to this are substantial. On my cascade lake workstation,
+> t/io_uring from the fio repository e.g. yields regressions between 20%
+> and 40% with the following command:
+> ./t/io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S$use_sync -R 0 /mnt/t2/fio/wr=
+ite.0.0
+>=20
+> This is repeatable with different filesystems, using raw block devices
+> and using different block devices.
+>=20
+> Use io_schedule_prepare() / io_schedule_finish() in
+> io_cqring_wait_schedule() to address the difference.
+>=20
+> After that using io_uring is on par or surpassing synchronous IO (using
+> registered files etc makes it reliably win, but arguably is a less fair
+> comparison).
+>=20
+> There are other calls to schedule() in io_uring/, but none immediately
+> jump out to be similarly situated, so I did not touch them. Similarly,
+> it's possible that mutex_lock_io() should be used, but it's not clear if
+> there are cases where that matters.
+>=20
+> Cc: stable@vger.kernel.org # 5.10+
+> Cc: Pavel Begunkov <asml.silence@gmail.com>
+> Cc: io-uring@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Andres Freund <andres@anarazel.de>
+> Link: https://lore.kernel.org/r/20230707162007.194068-1-andres@anarazel.de
+> [axboe: minor style fixup]
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  io_uring/io_uring.c |   15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+>=20
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2575,6 +2575,8 @@ int io_run_task_work_sig(struct io_ring_
+>  static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+>  					  struct io_wait_queue *iowq)
+>  {
+> +	int token, ret;
+> +
+>  	if (unlikely(READ_ONCE(ctx->check_cq)))
+>  		return 1;
+>  	if (unlikely(!llist_empty(&ctx->work_llist)))
+> @@ -2585,11 +2587,20 @@ static inline int io_cqring_wait_schedul
+>  		return -EINTR;
+>  	if (unlikely(io_should_wake(iowq)))
+>  		return 0;
+> +
+> +	/*
+> +	 * Use io_schedule_prepare/finish, so cpufreq can take into account
+> +	 * that the task is waiting for IO - turns out to be important for low
+> +	 * QD IO.
+> +	 */
+> +	token =3D io_schedule_prepare();
+> +	ret =3D 0;
+>  	if (iowq->timeout =3D=3D KTIME_MAX)
+>  		schedule();
+>  	else if (!schedule_hrtimeout(&iowq->timeout, HRTIMER_MODE_ABS))
+> -		return -ETIME;
+> -	return 0;
+> +		ret =3D -ETIME;
+> +	io_schedule_finish(token);
+> +	return ret;
+>  }
+> =20
+>  /*
 
-I disagree. If truncate (or anything that removes extents or reduces
-inode size) is running whilst DIO to that range is still in
-progress, we have a use-after-free situation that will cause data
-and/or filesystem corruption. It's just not a safe thing to allow,
-so we prevent it from occurring at a high level in the filesystem
-and the result is that low level IO code just doesn't need to
-care about races with layout/size changing operations...
+Reportedly, this caused a regression as reported in [1] [2] [3]. Not only v=
+6.4.4 is affected, v6.1.39 is affected too.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reverting this commit fixes the issue.
+
+Please check.
+
+Thanks.
+
+[1] https://bbs.archlinux.org/viewtopic.php?id=3D287343
+[2] https://bugzilla.kernel.org/show_bug.cgi?id=3D217700
+[3] https://bugzilla.kernel.org/show_bug.cgi?id=3D217699
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart5695128.DvuYhMxLoT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmS89V4ACgkQil/iNcg8
+M0vYLA//Rm/Cq4E6nAwj8QoHK0QmrWbP6Fv1g26ZBjR6cFS9rU7wHylkgdfQoEcV
+hVx7G8nkWrJfnPwD6j4X2kJE2dZmBLc8x/zWhbaM7Fhzvz/lGIQqc2LxdeWphVEO
+tLGEzrF7MUTYacH0NF6uzgdPXSz5ulKIQrKrJzhVOkSmTaJJvaWL+JAYWjcSCYNr
+x270YN705uQj5x8cWsb/vz68IPzMDzcQIv4v5ZBCCGVL1n++DG9MxhOzd8wFbfv0
+CW4z03dEu0OEmBmHBldvJWqNsa/Oc3DPfakBUe3T0kJxRCColZop9PQGgTebK4qz
+0Q5I49z8HXIuSZ48leAcGatwCPv5hBLpxvHAnRDn/GxYd/7XVgbwxHj6gyWyxeEe
+EhCcMTWo14ZKLMR8rqjXcagbaAQiRNNCJRuaZlZQjqR0BWKRC4oSlb9HhEqpXrJe
+rl9GXx03Hav2ACGnF1U7yatGEUdz3MPkMkBSRaKeY/S6DQKhfAVmhTy/I3lmi8n+
+pca+EFglQNyF0foIR51F2ERtQVpILM0JzHg1dvImn1Z09PRfiT5PwbgUOuVmT3NH
+gIlFxmdbTA/oxtIqWuxL7+ipC2zgq2H0Ggh9T45E8kUwbVAE/ZxO+/dTyFOo4pV1
+UM29CR2RJ8O0AcHKQKrM9D8+mnjwaYpIGWo+IL9XJ9GggFop6Qc=
+=H98+
+-----END PGP SIGNATURE-----
+
+--nextPart5695128.DvuYhMxLoT--
+
+
+

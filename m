@@ -2,149 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7945675E17A
-	for <lists+io-uring@lfdr.de>; Sun, 23 Jul 2023 12:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 806F075E190
+	for <lists+io-uring@lfdr.de>; Sun, 23 Jul 2023 13:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbjGWKuj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Jul 2023 06:50:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
+        id S229534AbjGWLFf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 23 Jul 2023 07:05:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbjGWKui (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Jul 2023 06:50:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE8AE64;
-        Sun, 23 Jul 2023 03:50:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S229491AbjGWLFe (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Jul 2023 07:05:34 -0400
+X-Greylist: delayed 581 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 23 Jul 2023 04:05:31 PDT
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2504D10D1;
+        Sun, 23 Jul 2023 04:05:31 -0700 (PDT)
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.prv.sapience.com (srv8.prv.sapience.com [x.x.x.x])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D1F460BFF;
-        Sun, 23 Jul 2023 10:50:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750E7C433CA;
-        Sun, 23 Jul 2023 10:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1690109433;
-        bh=rpf1pzEGimfS+pD7lRpXpbhbCeda9Jos1hrb2yJB+3o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AgDxLM3+DwaT9S0gw6BQrgBgnyNIKBC/96qyekEg37ek2YIII/yUKhNVehnNayAkw
-         iGkanKS4hAJRD7NHnXSxf+6P18dlJy+xDjbVhEXKYmA0PwiYnVN7cyhMZCNHyq8Vq0
-         dqkXmgTF2tqJarZJLppEQJTJbkRkWgakaUSI4Wis=
-Date:   Sun, 23 Jul 2023 12:50:30 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>
+        by s1.sapience.com (Postfix) with ESMTPS id 897AF480A2C;
+        Sun, 23 Jul 2023 06:55:49 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1690109749;
+ h=message-id : date : mime-version : subject : to : cc : references :
+ from : in-reply-to : content-type : content-transfer-encoding : from;
+ bh=lr/rmxq8EwVEr8RixWBy+Sg5CImzrHwG+MAvhFEdjrY=;
+ b=5xq7ImbbNDtqxgLyR74YtRbUPMj7JgZq6+4t+9YxzN6WyMRoiV2aWM0RWau4syANOCqra
+ T05v5YPcYK35M/GDQ==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1690109749;
+        cv=none; b=InRQ2iCFm9Ckw6g7VGsf+8b6tDblLqbx9m33kc3oxcxf4nRgoFrPw07j0THgoUNZYpqfsAjMG6PdgBMjKh9B4lOV4pxi326W+SFCoRpY+nJgl82VBxZebQu/+jLRePEVz01jTVoHx11LXMFO8IUPypSdTFMfwZariA0iDtl10DgQHu23ooLUConcRoITayOlXyChmnQtuHcTGuqDWz3H2PwBC5ipQsN+QrD7j/zZuDL+snhJ99Rbhr6Iu7/dlSVh3CVYtJAXDFIIzHdTEC48V0zbxRPVM+lqlNdxItCn4PMwhTicYE01LqQc7m+dPsgCbCqFDRu5BBaBZi+I3Uou+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+        t=1690109749; c=relaxed/simple;
+        bh=GLmMY0POgZIVkTblze2QbmkCf2EJW164BJIcQRZnmc8=;
+        h=DKIM-Signature:DKIM-Signature:Message-ID:Date:MIME-Version:
+         User-Agent:Subject:To:Cc:References:Content-Language:From:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding; b=BBn2gTVC3/aM1tWPCpEsYQIOU5/I3myjX+roKKs39ISfPXmDwpHg03NsoPjNiJ63xvavbuv/rvGPU56C/SO3D1BZ7snc1ptl4BGylIiHaW48gXcoQx+GGljjJ40NjDr+LL4k5PPs0QcSjDtnvEnk9zOFl6k61xnvBPtYMi8ZVpSnW/H9YgRwUYH9dE3E2joQvTGmXHKcWyRSI0eACyjK1GDcKCj4g8SLZhcCCAWLWuPAVN5KAgW/TVGjhWt3PiS2QFHlGVI2CUElt2wCApzVwrT4nhYQqLuy4cq77V35CXtoDCrWszEFSKE94/7IYCzjVscXmInWYB39CPZ71GH/Rg==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1690109749;
+ h=message-id : date : mime-version : subject : to : cc : references :
+ from : in-reply-to : content-type : content-transfer-encoding : from;
+ bh=lr/rmxq8EwVEr8RixWBy+Sg5CImzrHwG+MAvhFEdjrY=;
+ b=SVpSLp5s5ZSniJoLH1bOMkeWMuAULB1/RmtfCIDsU8gWVlY3b2LTZNX7eoMSkKCQaGoQU
+ YjYGAPaUHReZJecXPpJI2oq5RLvDW/6UUwIitjtSiGReOjUXCkzy4O0Fi1rbkLIk3PVTni4
+ jyRn7WQIaaVvxU2JzZInuj8fi1vMfJynK3wZG/ywFPfTdZu7EaGiv1He76Cx/MpGlJsy7bj
+ xB31hQuxPkwzDoj7F+xPRMlwZhS3e+JXzEhH8QaGsAiW07krkrsZJxsX28omVzIambUgbaC
+ veFDKheLm01sBYZEh0xG1u8lhUZ+j1gB8aZKK8KsJ9UarBX8NK3QS3kLFJ5A==
+Message-ID: <e7e4cf5c-c09d-7747-b466-cef6673f2f10@sapience.com>
+Date:   Sun, 23 Jul 2023 06:55:49 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.4 800/800] io_uring: Use io_schedule* in cqring wait
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
 Cc:     stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
         io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andres Freund <andres@anarazel.de>,
         Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 6.4 800/800] io_uring: Use io_schedule* in cqring wait
-Message-ID: <2023072310-superman-frosted-7321@gregkh>
 References: <20230716194949.099592437@linuxfoundation.org>
  <20230716195007.731909670@linuxfoundation.org>
  <12251678.O9o76ZdvQC@natalenko.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+ <2023072310-superman-frosted-7321@gregkh>
+Content-Language: en-US
+From:   Genes Lists <lists@sapience.com>
+In-Reply-To: <2023072310-superman-frosted-7321@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <12251678.O9o76ZdvQC@natalenko.name>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Jul 23, 2023 at 11:39:42AM +0200, Oleksandr Natalenko wrote:
-> Hello.
+On 7/23/23 06:50, Greg Kroah-Hartman wrote:
+> On Sun, Jul 23, 2023 at 11:39:42AM +0200, Oleksandr Natalenko wrote:
+>> Hello.
+>>
+>> On neděle 16. července 2023 21:50:53 CEST Greg Kroah-Hartman wrote:
+>>> From: Andres Freund <andres@anarazel.de>
+>>>
+>>> commit 8a796565cec3601071cbbd27d6304e202019d014 upstream.
+>>>
+>>> I observed poor performance of io_uring compared to synchronous IO. That
+...
+>>
+>> Reportedly, this caused a regression as reported in [1] [2] [3]. Not only v6.4.4 is affected, v6.1.39 is affected too.
+>>
+>> Reverting this commit fixes the issue.
+>>
+>> Please check.
 > 
-> On neděle 16. července 2023 21:50:53 CEST Greg Kroah-Hartman wrote:
-> > From: Andres Freund <andres@anarazel.de>
-> > 
-> > commit 8a796565cec3601071cbbd27d6304e202019d014 upstream.
-> > 
-> > I observed poor performance of io_uring compared to synchronous IO. That
-> > turns out to be caused by deeper CPU idle states entered with io_uring,
-> > due to io_uring using plain schedule(), whereas synchronous IO uses
-> > io_schedule().
-> > 
-> > The losses due to this are substantial. On my cascade lake workstation,
-> > t/io_uring from the fio repository e.g. yields regressions between 20%
-> > and 40% with the following command:
-> > ./t/io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S$use_sync -R 0 /mnt/t2/fio/write.0.0
-> > 
-> > This is repeatable with different filesystems, using raw block devices
-> > and using different block devices.
-> > 
-> > Use io_schedule_prepare() / io_schedule_finish() in
-> > io_cqring_wait_schedule() to address the difference.
-> > 
-> > After that using io_uring is on par or surpassing synchronous IO (using
-> > registered files etc makes it reliably win, but arguably is a less fair
-> > comparison).
-> > 
-> > There are other calls to schedule() in io_uring/, but none immediately
-> > jump out to be similarly situated, so I did not touch them. Similarly,
-> > it's possible that mutex_lock_io() should be used, but it's not clear if
-> > there are cases where that matters.
-> > 
-> > Cc: stable@vger.kernel.org # 5.10+
-> > Cc: Pavel Begunkov <asml.silence@gmail.com>
-> > Cc: io-uring@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Andres Freund <andres@anarazel.de>
-> > Link: https://lore.kernel.org/r/20230707162007.194068-1-andres@anarazel.de
-> > [axboe: minor style fixup]
-> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  io_uring/io_uring.c |   15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > --- a/io_uring/io_uring.c
-> > +++ b/io_uring/io_uring.c
-> > @@ -2575,6 +2575,8 @@ int io_run_task_work_sig(struct io_ring_
-> >  static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
-> >  					  struct io_wait_queue *iowq)
-> >  {
-> > +	int token, ret;
-> > +
-> >  	if (unlikely(READ_ONCE(ctx->check_cq)))
-> >  		return 1;
-> >  	if (unlikely(!llist_empty(&ctx->work_llist)))
-> > @@ -2585,11 +2587,20 @@ static inline int io_cqring_wait_schedul
-> >  		return -EINTR;
-> >  	if (unlikely(io_should_wake(iowq)))
-> >  		return 0;
-> > +
-> > +	/*
-> > +	 * Use io_schedule_prepare/finish, so cpufreq can take into account
-> > +	 * that the task is waiting for IO - turns out to be important for low
-> > +	 * QD IO.
-> > +	 */
-> > +	token = io_schedule_prepare();
-> > +	ret = 0;
-> >  	if (iowq->timeout == KTIME_MAX)
-> >  		schedule();
-> >  	else if (!schedule_hrtimeout(&iowq->timeout, HRTIMER_MODE_ABS))
-> > -		return -ETIME;
-> > -	return 0;
-> > +		ret = -ETIME;
-> > +	io_schedule_finish(token);
-> > +	return ret;
-> >  }
-> >  
-> >  /*
+> Is this also an issue in 6.5-rc2?
 > 
-> Reportedly, this caused a regression as reported in [1] [2] [3]. Not only v6.4.4 is affected, v6.1.39 is affected too.
+> thanks,
 > 
-> Reverting this commit fixes the issue.
-> 
-> Please check.
+> greg k-h
 
-Is this also an issue in 6.5-rc2?
+Yes - I can confirm this issue is in 6.5-rc2 and with Linus' commit 
+c2782531397f5cb19ca3f8f9c17727f1cdf5bee8.
 
-thanks,
 
-greg k-h
+gene
+

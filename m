@@ -2,95 +2,99 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1268675E495
-	for <lists+io-uring@lfdr.de>; Sun, 23 Jul 2023 21:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6655C75ECA1
+	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 09:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbjGWTob (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 23 Jul 2023 15:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55678 "EHLO
+        id S230231AbjGXHjO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Jul 2023 03:39:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjGWToa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 23 Jul 2023 15:44:30 -0400
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C74C9;
-        Sun, 23 Jul 2023 12:44:29 -0700 (PDT)
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.prv.sapience.com (srv8.prv.sapience.com [x.x.x.x])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-        (No client certificate requested)
-        by s1.sapience.com (Postfix) with ESMTPS id E36F6480A2C;
-        Sun, 23 Jul 2023 15:44:28 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1690141468;
- h=message-id : date : mime-version : subject : to : cc : references :
- from : in-reply-to : content-type : content-transfer-encoding : from;
- bh=RrAe0WNGCR1n2zOvU84i5qWzyH6QFsoG7N30U7+nsCA=;
- b=vTg+32a4erq+w35WlA3VOP1jwHVfO4iHZDcROFEqP6ak8RNXohNvR0GyB5O2AMkze6Yjf
- QsKxR6VHvKJw6NwAg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1690141468;
-        cv=none; b=O2myukFkkH6nhHwCL0cHnoxaiNoh/j/S/3kZfazli6K4qPtbVsP6I5rA7y7a0ujBlvliIQv4oce4S2Ly+3YCNODySO8Y1JnkuMQS8MLQe4g+XWMGzYiQro5bLvPViaxEkelVd2CyB4Bn734/NzypVg4DfA6Wckw98ZY8aJoaY/ZFBInV0SCoBJnxs+gdTHWthbMLGqad0iQAmGN3g0PTPNkqok4ADgWOPFZJrMdXlzZuC2JvinI5WzgTIpsCQaP5o2uS7WIdIqp1hGP983w8KtKiCJfDqbfIESYnJaS+SNCJE4c5ojnfUhAu7MIBB+Dgyo4jBqrpFl75WdHJtMUBFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-        t=1690141468; c=relaxed/simple;
-        bh=aWQms/qjTalw5kN5DpevHM+wl9NgSm+xYtEpK/8acSU=;
-        h=DKIM-Signature:DKIM-Signature:Message-ID:Date:MIME-Version:
-         User-Agent:Subject:Content-Language:To:Cc:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding; b=KC2xLMpU+/gnQ7Ga7rMcF2DCUJgy69c0IUMJTXpS8Z69WG/F4gZPtHjBZmBAw124unlgyqKx1wS9uzl1/0S8sKdPD/7juKWEj4gaJgm6qeNZOHJRJhqSMWPbigecEW/5jOXzoh+obAxnahM33q+rt36DFh/k5htcrZQ8U4sYxuDxKxEKHARzZsVECto9HQ2ryonuxLpATEXpOX0X+j4XY4q1dvyqY6NAHrMuQPqYa0qY6m2tLTw3NF/LkrSXl2XqTJyRRiFKGdzSHCHytDLjNqL1ROtueGc6HjqLQvCsjjt7lHXHv0zlEJM/47Qki1Ont2kQzjOorSVnmllE8P58zQ==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1690141468;
- h=message-id : date : mime-version : subject : to : cc : references :
- from : in-reply-to : content-type : content-transfer-encoding : from;
- bh=RrAe0WNGCR1n2zOvU84i5qWzyH6QFsoG7N30U7+nsCA=;
- b=mu6pH6DHjupUvBEy6+RvY8govRY3JZyJyZfS9tThRk3GxI0i7igzpTDqzOoBkN9WfA672
- L6g2jluey2mQ4sNK/rbGWHJbbnqjvTRhOTsa3mdmdKTnFNMmw5s4ZkcPWaxuLjtUerW1QzP
- maEv5uJWBN/zTfu32fZW3B4XLYJWmXWcjZYW39Z2EIlblg5hnpZ6xagn9FBEy3D8krn8tT5
- xQaEbT/ziGFihcL334F3bxh3IHvh1cmOODNXhFA4TEtc1GzINAX4CkhmVeX7eTs84GpOuGR
- 4nteZpKS9R98j9irCnxxtNg6+4nzgQmoy82nYlqYI/M1g9U9H95cBatHmPUQ==
-Message-ID: <0b738504-07af-4e81-2a9f-2b6f3754a2f0@sapience.com>
-Date:   Sun, 23 Jul 2023 15:44:28 -0400
+        with ESMTP id S229499AbjGXHjN (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 03:39:13 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647E9180;
+        Mon, 24 Jul 2023 00:39:10 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3163eb69487so3145192f8f.1;
+        Mon, 24 Jul 2023 00:39:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690184349; x=1690789149;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3c21fZlC0KRnz3kLqOIBEGeprFwWXQT2AytBpy+S6I=;
+        b=MDiGT45Jia46d6K2KpnrPiUmazseorqGszvr7897suhMdjh717FcYZKoibKuEOwRSU
+         WvECIP+C+ogPc3ygH5VzZcO3LsNsnYWnFOSG3+vFfOtDjxqeFbAE15Bc1iclFK+q1HRf
+         TLquOVunDTav8mz1Rfupc2E0vb2+PzOf2Vp6JtZYLWm0l+Ba6wOCRRHMRc5GIaA4Up5i
+         UVAavWPEAVG1Ot2pXPb6xnkpeiYvlGCpXnXZIPREzqjEKvxZr4a52sLBsgFYYEbhfLSq
+         /NoTtKjoUcZRR9Wc6neK2M5yMhFSGPQt+RKO3Kr4uBXkOSalOi1xb3GK1sSCJJMTivSD
+         qz8g==
+X-Gm-Message-State: ABy/qLar+LZ6/55TWzc67qKdF8Zf2OrMHlEyWZMeb2gFDyx65/4gTql1
+        CvMG6+kabsUwNgZ9XG8BgGLNOv/zkALXpw==
+X-Google-Smtp-Source: APBJJlFc+I0Ove3B+q7CdMlUexJdLMe/NJNkJeHcnmrXtpPsJgnPW2/z3WAEKsY02B7RJKRdXQMhBg==
+X-Received: by 2002:adf:eec2:0:b0:317:417e:a467 with SMTP id a2-20020adfeec2000000b00317417ea467mr5085884wrp.6.1690184348831;
+        Mon, 24 Jul 2023 00:39:08 -0700 (PDT)
+Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id w2-20020a5d4b42000000b0030ae53550f5sm11918440wrs.51.2023.07.24.00.39.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jul 2023 00:39:08 -0700 (PDT)
+Message-ID: <047346f8-9ac4-4990-2885-8bfac47b83a3@kernel.org>
+Date:   Mon, 24 Jul 2023 09:39:07 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.4 800/800] io_uring: Use io_schedule* in cqring wait
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 1/2] io_uring: Fix io_uring mmap() by using
+ architecture-provided get_unmapped_area()
 Content-Language: en-US
-To:     Andres Freund <andres@anarazel.de>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc:     Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230716194949.099592437@linuxfoundation.org>
- <538065ee-4130-6a00-dcc8-f69fbc7d7ba0@kernel.dk>
- <70e5349a-87af-a2ea-f871-95270f57c6e3@sapience.com>
- <2691683.mvXUDI8C0e@natalenko.name>
- <20230723185856.h6vjipo4rguf6emt@awork3.anarazel.de>
-From:   Genes Lists <lists@sapience.com>
-In-Reply-To: <20230723185856.h6vjipo4rguf6emt@awork3.anarazel.de>
+To:     Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org
+Cc:     matoro <matoro_mailinglist_kernel@matoro.tk>
+References: <20230721152432.196382-1-deller@gmx.de>
+ <20230721152432.196382-2-deller@gmx.de>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20230721152432.196382-2-deller@gmx.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/23/23 14:58, Andres Freund wrote:
+On 21. 07. 23, 17:24, Helge Deller wrote:
+> The io_uring testcase is broken on IA-64 since commit d808459b2e31
+> ("io_uring: Adjust mapping wrt architecture aliasing requirements").
+> 
+> The reason is, that this commit introduced an own architecture
+> independend get_unmapped_area() search algorithm which finds on IA-64 a
+> memory region which is outside of the regular memory region used for
+> shared userspace mappings and which can't be used on that platform
+> due to aliasing.
+> 
+> To avoid similar problems on IA-64 and other platforms in the future,
+> it's better to switch back to the architecture-provided
+> get_unmapped_area() function and adjust the needed input parameters
+> before the call. Beside fixing the issue, the function now becomes
+> easier to understand and maintain.
+> 
+> This patch has been successfully tested with the io_uring testcase on
+> physical x86-64, ppc64le, IA-64 and PA-RISC machines. On PA-RISC the LTP
+> mmmap testcases did not report any regressions.
+> 
+> Signed-off-by: Helge Deller <deller@gmx.de>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Reported-by: matoro <matoro_mailinglist_kernel@matoro.tk>
+> Fixes: d808459b2e31 ("io_uring: Adjust mapping wrt architecture aliasing requirements")
 
-> Just to confirm I understand: Your concern is how it looks in mpstat, not
-> performance or anything like that?
+Tested-by: Jiri Slaby <jirislaby@kernel.org>
 
-Right - there is no performance issue or any other issue to my knowledge 
-and cores are idle.
+thanks,
+-- 
+js
+suse labs
 
-So, as you said, its just a small reporting item - which is now quite clear.
-
-thank you.
-
-gene

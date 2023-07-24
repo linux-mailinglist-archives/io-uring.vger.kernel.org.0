@@ -2,94 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8F075FC89
-	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 18:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7479D75FD81
+	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 19:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbjGXQtE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Jul 2023 12:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41336 "EHLO
+        id S231217AbjGXRYp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Jul 2023 13:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbjGXQsw (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 12:48:52 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18A810E0
-        for <io-uring@vger.kernel.org>; Mon, 24 Jul 2023 09:48:47 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d13e0bfbbcfso1011991276.0
-        for <io-uring@vger.kernel.org>; Mon, 24 Jul 2023 09:48:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1690217327; x=1690822127;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uw+XohLghVtCiGSKeyi68igmJFzrXC/ki8Vbiy7Xrtc=;
-        b=BBex3Ly5/YN6q1aKSFxsy5pI6vMtkyehlBzSB6vAtLDKU1sJXbQfspIWohjXvRwuNE
-         Qp2UFjzxprgfAgJIZ3HzieJpFAxvylorM4IOmEb6goaVtkbrT61FVO/mgf/JsCsFVQ8A
-         O9RsLphxN0IfGAyKZIH9dPxoapCeM8Yd/2NtOeqkdtiRBWjMHpk6VBYKhUsAarSvfpME
-         UwEoFlUXyA3pArnmlvRn2ZzMEhLONBBwS8udbD+BMRFDdpvtGyN6Huuc1fY/6XKDggB2
-         trIS4+nB2QmQaTR5scBWjue2/6+xMjvE5zuFBgTVnOY0OEN6lTcv4zizOg8J36CsQNeB
-         exgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690217327; x=1690822127;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uw+XohLghVtCiGSKeyi68igmJFzrXC/ki8Vbiy7Xrtc=;
-        b=dNDD4uzpEGcpUDlGcUDqChbbmr6EUR/Z1SunpBEFMUDmNqYjiLjW5Z9Tf98tZy98Hd
-         ScJCGmO/zfMnbKNhTrgldqFAx5l1XvlOBjYRWZZH+QydYY0P3PfXBgESAOQDX4h5oa4D
-         I8KvIE0UMkDN+iV7HP5UQXR/uYj3qwssQemCzc0jbK2b4yGeaKqCB7b67LiT11Z9zh+R
-         TZEod9NExMtQpCqP+kExY7Vl3wvFvg+clmMtqRoxGHbcE7LwU2AlMciDN8gCW+KJUta/
-         CA/oqE0WeisOmQfEbatuLptkZOMIlsBnH2ZmEB+P/b/BGe9AfTRKL8VXi5+z/FwsG4X/
-         F+bw==
-X-Gm-Message-State: ABy/qLb6tLM4ryy2veXHdnKDjluRU3tCN/WgnGGPAWCZlWUWuXSj1qqj
-        gBBcVubgcIdgxsfHL2cr2rHs1Vihnl6Ul2I375kQbg==
-X-Google-Smtp-Source: APBJJlHrHEP3Xu8xMLETOrLzToY6wrT3LbLCWDMMaL1wSC3hhrhC48r6ZgL8n3iw0rRt98ZnZSS0iNTinWr1GQiWfTs=
-X-Received: by 2002:a25:5507:0:b0:d01:a2e6:a3be with SMTP id
- j7-20020a255507000000b00d01a2e6a3bemr7232107ybb.5.1690217326963; Mon, 24 Jul
- 2023 09:48:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAMEGJJ2RxopfNQ7GNLhr7X9=bHXKo+G5OOe0LUq=+UgLXsv1Xg@mail.gmail.com>
- <2023072438-aftermath-fracture-3dff@gregkh> <140065e3-0368-0b5d-8a0d-afe49b741ad2@kernel.dk>
- <ecb821a2-e90a-fec1-d2ca-b355c16b7515@kernel.dk> <CAMEGJJ3SjWdJFwzB+sz79ojWqAAMULa2CFAas0tv+JJLJMwoGQ@mail.gmail.com>
- <0ae07b66-956a-bb62-e4e8-85fa5f72362f@kernel.dk>
-In-Reply-To: <0ae07b66-956a-bb62-e4e8-85fa5f72362f@kernel.dk>
-From:   Phil Elwell <phil@raspberrypi.com>
-Date:   Mon, 24 Jul 2023 17:48:36 +0100
-Message-ID: <CAMEGJJ0oNGBg=9jRogsstcYCBUVnDGpuijwXVZZQEJr=2awaqA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: Use io_schedule* in cqring wait
+        with ESMTP id S231223AbjGXRYj (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 13:24:39 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2302A10FF;
+        Mon, 24 Jul 2023 10:24:36 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 65DD4320092B;
+        Mon, 24 Jul 2023 13:24:34 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 24 Jul 2023 13:24:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1690219473; x=1690305873; bh=30
+        d8X/GI+G1ANrMbLmCjOU7CaE2R2Mm48/9tj9s2I8A=; b=C6ZNKY39Fw2fwKdmp7
+        61uj3cvlHl3zte9Tb4CHQ7+wlLZnd+mpisveVfsON8lOU16q5M/rdjssjmOirM/T
+        gz0d1vFbHHM81KtWT404B6oKJRB+5f8MmEmMLP8u8tJuIPpSKcWOqKIKLTd+c942
+        VKqWvFG2v8NACch5r6uzvNVmeoDgt9+CodKvlSMXXeKrx+Vr4XiruSdHRI6Bwfyg
+        iczBpKKf/+VfVRsiP25SxChF2tRyrN8tjfPJdfip9EqW1qD5FprAhzIOgJ/YfPbI
+        /E7oLWeQwGx9sN03pKtaqMGKpbL+h+mTPGMFIdmseoWBLrWg/hUDGJXx66p+tfHB
+        vEaw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1690219473; x=1690305873; bh=30d8X/GI+G1AN
+        rMbLmCjOU7CaE2R2Mm48/9tj9s2I8A=; b=Mh0kJmgCBxwX4CMM6yDPlNASUNrFV
+        rf8y397rWesi44R6Dv8ha22GliUxMPZDBP/mrdV4FSA0d/e9XtQlz7exBnksVklY
+        vpNSqVR5ANGebLLKJn5TQh48oVqVH4apyaAxvpB/r0mhaX15GsFKoptAmL319f5z
+        bWzZnt+Wv4B8FEiwm9BkDU0hK3hoNS3w4XjwbUka6azVGm2seM1+yXHfM0rH3wbO
+        qohYUN0BtwV0S44tnLRfNFAElwiuxKWODqsZ/vc1MJ+VXjtabq4MennrrAS2w3ru
+        db6yRapeeT8fcR12Wg/zjjv/1y5RMB1YF7cJGYwwY7D1bhg0hqBih6UVA==
+X-ME-Sender: <xms:0bO-ZBbvGzTGZQ3fhfirj8XeBjdLV2Bf5Q2xu8ynddlmKTxhDbT_Gg>
+    <xme:0bO-ZIas8AxvRa8AcbS7ROakpprdMcmlZpf_1lKKIjTsI3q41Sz7PKqq2q4EBneja
+    PydZjmLBjRZ5Ng83Q>
+X-ME-Received: <xmr:0bO-ZD8xYvToLzRDO4XtFTS6NSlFW9q9noR3UPav5Mr9BTt0O4gULuySHjsW5u93tj6uHlNSK-sGaOBqKcu-SUkoee0qYk5aDWkGtSorTBaSyWduaXiIbJEEzcRU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrheekgdduudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughr
+    vghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrf
+    grthhtvghrnhepvdfffeevhfetveffgeeiteefhfdtvdffjeevhfeuteegleduheetvedu
+    ieettddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnughrvghssegrnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:0bO-ZPr9BJPAC2vIu-QuK06pYzU8JDYri9V2IJ978q-hHbU20-iu1Q>
+    <xmx:0bO-ZMqDCkCsq-Ieel64Gawbkyo6QbVr3b8EkffmKaAfzeWYPu27lQ>
+    <xmx:0bO-ZFQ1AOJEKCyiN2aVWLycW0VhgZql6-EtB5qfqaevnfmePSnCQg>
+    <xmx:0bO-ZEJklolShpLKKGoiWuVH8FEIb_b-SpRAPyaEW2IBMnDgVm0yvg>
+Feedback-ID: id4a34324:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Jul 2023 13:24:33 -0400 (EDT)
+Date:   Mon, 24 Jul 2023 10:24:32 -0700
+From:   Andres Freund <andres@anarazel.de>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, andres@anarazel.de,
-        asml.silence@gmail.com, david@fromorbit.com, hch@lst.de,
-        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Cc:     Phil Elwell <phil@raspberrypi.com>, asml.silence@gmail.com,
+        david@fromorbit.com, hch@lst.de, io-uring@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] io_uring: Use io_schedule* in cqring wait
+Message-ID: <20230724172432.mcua7vewxrs5cvlg@awork3.anarazel.de>
+References: <CAMEGJJ2RxopfNQ7GNLhr7X9=bHXKo+G5OOe0LUq=+UgLXsv1Xg@mail.gmail.com>
+ <3d97ae14-dd8d-7f82-395a-ccc17c6156be@kernel.dk>
+ <20230724161654.cjh7pd63uas5grmz@awork3.anarazel.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230724161654.cjh7pd63uas5grmz@awork3.anarazel.de>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Jens,
+Hi,
 
-On Mon, 24 Jul 2023 at 17:08, Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/24/23 10:07?AM, Phil Elwell wrote:
-> >> Even though I don't think this is an actual problem, it is a bit
-> >> confusing that you get 100% iowait while waiting without having IO
-> >> pending. So I do think the suggested patch is probably worthwhile
-> >> pursuing. I'll post it and hopefully have Andres test it too, if he's
-> >> available.
-> >
-> > If you CC me I'll happily test it for you.
->
-> Here it is.
+On 2023-07-24 09:16:56 -0700, Andres Freund wrote:
+> Building a kernel to test with the patch applied, will reboot into it once the
+> call I am on has finished. Unfortunately the performance difference didn't
+> reproduce nicely in VM...
 
-< snip >
+Performance is good with the patch applied. Results are slightly better even,
+but I think that's likely just noise.
 
-Thanks, that works for me on top of 6.5-rc3. Going to 6.1 is a
-non-trivial (for me) back-port - the switch from "ret = 0" in 6.5 to
-"ret = 1" in 6.1 is surprising.
+Greetings,
 
-Phil
+Andres Freund

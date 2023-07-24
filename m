@@ -2,153 +2,140 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD9375FFC3
-	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 21:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF3976006B
+	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 22:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjGXTXu (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Jul 2023 15:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38134 "EHLO
+        id S229692AbjGXUW5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Jul 2023 16:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjGXTXt (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 15:23:49 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09DD610F0;
-        Mon, 24 Jul 2023 12:23:48 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-52229f084beso2559371a12.2;
-        Mon, 24 Jul 2023 12:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690226626; x=1690831426;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cWo4sIKyvyIpPAwWLeOJz8L9JuZtA+G/0dxZszCh6vo=;
-        b=latCLXtw9bkLnLi+GLz0mDfQySuJCccWsImdGir5RMfkHE5vZl+IIi4uL+keuRwu9t
-         60BrwZbclALe81Fmmch9iK+eeXTACpiUYg5lqLsAIrkxyJZkCnTIFBjZjqXa6gi2kisY
-         rmVUL8HEqXdXtzqarHvCsirm7SK6hcJulzBHcyeHxt1Qapo1jSQLjNA4MDVedjg2Pvnj
-         xPP28DoqOBqMFzMKbj4qh+BICTLz0fN6wVksJQFAKOdXsqLqmbVosQ6gxFoIKLStt8gR
-         nRDmJ68TT7H4nfQ4/RciVdwnC2kJPLmV0t44hV5vMEGiSARqdDgWmEuEztVMzGfej8Ch
-         uQEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690226626; x=1690831426;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWo4sIKyvyIpPAwWLeOJz8L9JuZtA+G/0dxZszCh6vo=;
-        b=jLmKBi/nYImE3YPjz/1DR5L0KuC49OGrXiRFlup0yLbQZUlknhd11KgPnqolLEQ7GU
-         /Yucm/VksRpY152b5KD2i7Dy0ocDxoZozZk413BcTJ4z+iBxuqIXpNAN1CwIjZOS7ywa
-         xNzYMSHVJrJl7wzqtrzZdIv12I6ydDNtKv8yREsfPHWAi7e9CGrCcRh/fbWy9v0RFTh7
-         bktT3OZXON5zU1rK781SYVxrUGCKIDLLSSpzoUSD2bCAXA1VtXsBRv/1sgJsbDC24Q76
-         HEaQB1E/9xW1zI/2SXoy/4DCDUG4lJJpEa0t8Oj3vzje1Ouo7U4IfxAXp3CNijL2ruwa
-         8weQ==
-X-Gm-Message-State: ABy/qLbKJCvEgUnl2FdVQwVt+k8gPDlNABhpO+qh0TnyR8vQRLBh7fzo
-        8aiTdcw9DzIa+rgK2CoBHHY=
-X-Google-Smtp-Source: APBJJlFLrOqXJwk2/ZogigT9lz5sDvbwFGJVMGIOCEC/jeoYe69weJzVeSfX0lbNF+PHSciKnQdVNw==
-X-Received: by 2002:a17:907:b11:b0:992:7e1f:8419 with SMTP id h17-20020a1709070b1100b009927e1f8419mr10392698ejl.2.1690226626234;
-        Mon, 24 Jul 2023 12:23:46 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:c92])
-        by smtp.gmail.com with ESMTPSA id h23-20020a170906829700b0098d486d2bdfsm7242644ejx.177.2023.07.24.12.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jul 2023 12:23:46 -0700 (PDT)
-Message-ID: <0f63b072-840c-db5d-13cd-7faa554975d3@gmail.com>
-Date:   Mon, 24 Jul 2023 20:22:28 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+        with ESMTP id S229506AbjGXUW5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 16:22:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC076E4F
+        for <io-uring@vger.kernel.org>; Mon, 24 Jul 2023 13:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690230130;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ShKXd85SOx0saxITqxIawBxKdACPZs/8Qk1lelqQbIY=;
+        b=Bytd3qrrv5/dtdBgI7cinP4U6g9kjt8472TQlRv7OfNWDs1+an3WTLtUv9i3uH6KcK9Yak
+        Hbmi/H+KLxcEHeDSLqjbz3YhuPlDxKakpsalCH4pECWw1FBLkcz3UHYdZTYJRMnU9FY9LE
+        Tn1RMxFsQCkcBSgD6/CsRm23x9FEqlo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-543-7eNZMO9ONJuqpUPYsJfYuw-1; Mon, 24 Jul 2023 16:22:05 -0400
+X-MC-Unique: 7eNZMO9ONJuqpUPYsJfYuw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B2B56802666;
+        Mon, 24 Jul 2023 20:22:04 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B701492CA6;
+        Mon, 24 Jul 2023 20:22:04 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Greg KH <gregkh@linuxfoundation.org>,
+        Phil Elwell <phil@raspberrypi.com>, andres@anarazel.de,
+        david@fromorbit.com, hch@lst.de, io-uring@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        stable <stable@vger.kernel.org>, riel@surriel.com
 Subject: Re: [PATCH] io_uring: Use io_schedule* in cqring wait
-To:     Jens Axboe <axboe@kernel.dk>, Greg KH <gregkh@linuxfoundation.org>,
-        Phil Elwell <phil@raspberrypi.com>
-Cc:     andres@anarazel.de, david@fromorbit.com, hch@lst.de,
-        io-uring@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, stable <stable@vger.kernel.org>
 References: <CAMEGJJ2RxopfNQ7GNLhr7X9=bHXKo+G5OOe0LUq=+UgLXsv1Xg@mail.gmail.com>
- <2023072438-aftermath-fracture-3dff@gregkh>
- <140065e3-0368-0b5d-8a0d-afe49b741ad2@kernel.dk>
- <ecb821a2-e90a-fec1-d2ca-b355c16b7515@kernel.dk>
-Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ecb821a2-e90a-fec1-d2ca-b355c16b7515@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        <2023072438-aftermath-fracture-3dff@gregkh>
+        <140065e3-0368-0b5d-8a0d-afe49b741ad2@kernel.dk>
+        <ecb821a2-e90a-fec1-d2ca-b355c16b7515@kernel.dk>
+        <0f63b072-840c-db5d-13cd-7faa554975d3@gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 24 Jul 2023 16:27:53 -0400
+In-Reply-To: <0f63b072-840c-db5d-13cd-7faa554975d3@gmail.com> (Pavel
+        Begunkov's message of "Mon, 24 Jul 2023 20:22:28 +0100")
+Message-ID: <x49cz0hxdfa.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/24/23 16:58, Jens Axboe wrote:
-> On 7/24/23 9:50?AM, Jens Axboe wrote:
->> On 7/24/23 9:48?AM, Greg KH wrote:
->>> On Mon, Jul 24, 2023 at 04:35:43PM +0100, Phil Elwell wrote:
->>>> Hi Andres,
->>>>
->>>> With this commit applied to the 6.1 and later kernels (others not
->>>> tested) the iowait time ("wa" field in top) in an ARM64 build running
->>>> on a 4 core CPU (a Raspberry Pi 4 B) increases to 25%, as if one core
->>>> is permanently blocked on I/O. The change can be observed after
->>>> installing mariadb-server (no configuration or use is required). After
->>>> reverting just this commit, "wa" drops to zero again.
->>>
->>> This has been discussed already:
->>> 	https://lore.kernel.org/r/12251678.O9o76ZdvQC@natalenko.name
->>>
->>> It's not a bug, mariadb does have pending I/O, so the report is correct,
->>> but the CPU isn't blocked at all.
->>
->> Indeed - only thing I can think of is perhaps mariadb is having a
->> separate thread waiting on the ring in perpetuity, regardless of whether
->> or not it currently has IO.
->>
->> But yes, this is very much ado about nothing...
-> 
-> Current -git and having mariadb idle:
-> 
-> Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-> Average:     all    0.00    0.00    0.04   12.47    0.04    0.00    0.00    0.00    0.00   87.44
-> Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> Average:       2    0.00    0.00    0.00    0.00    0.33    0.00    0.00    0.00    0.00   99.67
-> Average:       3    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> Average:       4    0.00    0.00    0.33    0.00    0.00    0.00    0.00    0.00    0.00   99.67
-> Average:       5    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> Average:       6    0.00    0.00    0.00  100.00    0.00    0.00    0.00    0.00    0.00    0.00
-> Average:       7    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> 
-> which is showing 100% iowait on one cpu, as mariadb has a thread waiting
-> on IO. That is obviously a valid use case, if you split submission and
-> completion into separate threads. Then you have the latter just always
-> waiting on something to process.
-> 
-> With the suggested patch, we do eliminate that case and the iowait on
-> that task is gone. Here's current -git with the patch and mariadb also
-> running:
-> 
-> 09:53:49 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-> 09:53:50 AM  all    0.00    0.00    0.00    0.00    0.00    0.75    0.00    0.00    0.00   99.25
-> 09:53:50 AM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> 09:53:50 AM    1    0.00    0.00    0.00    0.00    0.00    1.00    0.00    0.00    0.00   99.00
-> 09:53:50 AM    2    0.00    0.00    0.00    0.00    0.00    1.00    0.00    0.00    0.00   99.00
-> 09:53:50 AM    3    0.00    0.00    0.00    0.00    0.00    1.00    0.00    0.00    0.00   99.00
-> 09:53:50 AM    4    0.00    0.00    0.00    0.00    0.00    0.99    0.00    0.00    0.00   99.01
-> 09:53:50 AM    5    0.00    0.00    0.00    0.00    0.00    1.00    0.00    0.00    0.00   99.00
-> 09:53:50 AM    6    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> 09:53:50 AM    7    0.00    0.00    0.00    0.00    0.00    1.00    0.00    0.00    0.00   99.00
-> 
-> 
-> Even though I don't think this is an actual problem, it is a bit
-> confusing that you get 100% iowait while waiting without having IO
-> pending. So I do think the suggested patch is probably worthwhile
-> pursuing. I'll post it and hopefully have Andres test it too, if he's
-> available.
+Pavel Begunkov <asml.silence@gmail.com> writes:
 
-Emmm, what's the definition of the "IO" state? Unless we can say what exactly
-it is there will be no end to adjustments, because I can easily argue that
-CQ waiting by itself is IO.
-Do we consider sleep(N) to be "IO"? I don't think the kernel uses io
-schedule around that, and so it'd be different from io_uring waiting for
-a timeout request. What about epoll waiting, etc.?
+> On 7/24/23 16:58, Jens Axboe wrote:
+>> Even though I don't think this is an actual problem, it is a bit
+>> confusing that you get 100% iowait while waiting without having IO
+>> pending. So I do think the suggested patch is probably worthwhile
+>> pursuing. I'll post it and hopefully have Andres test it too, if he's
+>> available.
+>
+> Emmm, what's the definition of the "IO" state? Unless we can say what exactly
+> it is there will be no end to adjustments, because I can easily argue that
+> CQ waiting by itself is IO.
+> Do we consider sleep(N) to be "IO"? I don't think the kernel uses io
+> schedule around that, and so it'd be different from io_uring waiting for
+> a timeout request. What about epoll waiting, etc.?
 
--- 
-Pavel Begunkov
+See Documentation/filesystems/proc.rst (and mainly commit 9c240d757658
+("Change the document about iowait")):
+
+- iowait: In a word, iowait stands for waiting for I/O to complete. But there
+  are several problems:
+
+  1. CPU will not wait for I/O to complete, iowait is the time that a task is
+     waiting for I/O to complete. When CPU goes into idle state for
+     outstanding task I/O, another task will be scheduled on this CPU.
+  2. In a multi-core CPU, the task waiting for I/O to complete is not running
+     on any CPU, so the iowait of each CPU is difficult to calculate.
+  3. The value of iowait field in /proc/stat will decrease in certain
+     conditions.
+
+  So, the iowait is not reliable by reading from /proc/stat.
+
+Also, vmstat(8):
+       wa: Time spent waiting for IO.  Prior to Linux 2.5.41, included in idle.
+
+iostat/mpstat man pages:
+              %iowait
+                     Show the percentage of time that the  CPU  or  CPUs  were
+                     idle  during which the system had an outstanding disk I/O
+                     request.
+
+sar(1):
+              %iowait
+                     Percentage of time that the CPU or CPUs were idle  during
+                     which the system had an outstanding disk I/O request.
+
+iowait was initially introduced in 2002 by Rik van Riel in historical
+git commit 7b88e5e0bdf25 ("[PATCH] "io wait" process accounting").  The
+changelog from akpm reads:
+
+    Patch from Rik adds "I/O wait" statistics to /proc/stat.
+    
+    This allows us to determine how much system time is being spent
+    awaiting IO completion.  This is an important statistic, as it tends to
+    directly subtract from job completion time.
+    
+    procps-2.0.9 is OK with this, but doesn't report it.
+
+I vaguely recall there was confusion from users about why the system was
+idle when running database workloads.  Maybe Rik can remember more
+clearly.
+
+Anyway, as you can see, the definition is murky, at best.  I don't think
+we should overthink it.  I agree with the principle of Jens'
+patch--let's just not surprise users with a change in behavior.
+
+Cheers,
+Jeff
+

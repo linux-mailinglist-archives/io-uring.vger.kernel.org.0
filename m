@@ -2,62 +2,55 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6655C75ECA1
-	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 09:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66EA75F9CF
+	for <lists+io-uring@lfdr.de>; Mon, 24 Jul 2023 16:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbjGXHjO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 24 Jul 2023 03:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33512 "EHLO
+        id S231821AbjGXOX6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 24 Jul 2023 10:23:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbjGXHjN (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 03:39:13 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647E9180;
-        Mon, 24 Jul 2023 00:39:10 -0700 (PDT)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3163eb69487so3145192f8f.1;
-        Mon, 24 Jul 2023 00:39:10 -0700 (PDT)
+        with ESMTP id S230166AbjGXOX6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 24 Jul 2023 10:23:58 -0400
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22C1E76;
+        Mon, 24 Jul 2023 07:23:51 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-991f956fb5aso661601966b.0;
+        Mon, 24 Jul 2023 07:23:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690184349; x=1690789149;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r3c21fZlC0KRnz3kLqOIBEGeprFwWXQT2AytBpy+S6I=;
-        b=MDiGT45Jia46d6K2KpnrPiUmazseorqGszvr7897suhMdjh717FcYZKoibKuEOwRSU
-         WvECIP+C+ogPc3ygH5VzZcO3LsNsnYWnFOSG3+vFfOtDjxqeFbAE15Bc1iclFK+q1HRf
-         TLquOVunDTav8mz1Rfupc2E0vb2+PzOf2Vp6JtZYLWm0l+Ba6wOCRRHMRc5GIaA4Up5i
-         UVAavWPEAVG1Ot2pXPb6xnkpeiYvlGCpXnXZIPREzqjEKvxZr4a52sLBsgFYYEbhfLSq
-         /NoTtKjoUcZRR9Wc6neK2M5yMhFSGPQt+RKO3Kr4uBXkOSalOi1xb3GK1sSCJJMTivSD
-         qz8g==
-X-Gm-Message-State: ABy/qLar+LZ6/55TWzc67qKdF8Zf2OrMHlEyWZMeb2gFDyx65/4gTql1
-        CvMG6+kabsUwNgZ9XG8BgGLNOv/zkALXpw==
-X-Google-Smtp-Source: APBJJlFc+I0Ove3B+q7CdMlUexJdLMe/NJNkJeHcnmrXtpPsJgnPW2/z3WAEKsY02B7RJKRdXQMhBg==
-X-Received: by 2002:adf:eec2:0:b0:317:417e:a467 with SMTP id a2-20020adfeec2000000b00317417ea467mr5085884wrp.6.1690184348831;
-        Mon, 24 Jul 2023 00:39:08 -0700 (PDT)
-Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id w2-20020a5d4b42000000b0030ae53550f5sm11918440wrs.51.2023.07.24.00.39.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jul 2023 00:39:08 -0700 (PDT)
-Message-ID: <047346f8-9ac4-4990-2885-8bfac47b83a3@kernel.org>
-Date:   Mon, 24 Jul 2023 09:39:07 +0200
+        d=1e100.net; s=20221208; t=1690208630; x=1690813430;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x34eE6rssNnP3AKTFSt9LRtCqJGRKZEC5FfRHT31dv0=;
+        b=KaHj/Pc3xgBNQq6L81rSrkes0Kp9gh5PiJ3Vf5N71oAhGKq7bIlbboWgIcEGg8CC41
+         SBQjbbmCK2kMwrYcD91L+TWhRGpcV5pluEJ+1CsOW/FuBwG3txVzHsyGXMYuIQ0ms9TC
+         nIupL5Bjc2U/E7iPArkic3JNJd4xh+Bl/buF2qFatfxrFOiSNOofY9W+1On+M8cVxaA+
+         OCvuXK50ul4Xv3N0vc8oAb0Ox003iBg4XA17Z77Mk7MKRpE3Y73Ifw9id4wdm0KImGY8
+         3ZIEpfgeaVcvpM3rzk8IpBSJWPLuvEonOAWc0M4J6GQtBqx4T+KDnggAjkNf9IPUQyAX
+         ReLg==
+X-Gm-Message-State: ABy/qLYYiRaxqCL5Nly74QiZUlDo5T37KGE72aextpfi/zaKsksK33eQ
+        6h3dkriPvnXuBXvYOBHGs9cr8EahJfw=
+X-Google-Smtp-Source: APBJJlECpMG0omCqFKhxt3meieCf6TsZ7tjLOEIdTnOWJ+HMO7Q6H2neBAUDGWlSN25k+t2wYxf9sA==
+X-Received: by 2002:a17:907:7819:b0:99b:4790:a4d4 with SMTP id la25-20020a170907781900b0099b4790a4d4mr10050814ejc.38.1690208629659;
+        Mon, 24 Jul 2023 07:23:49 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-007.fbsv.net. [2a03:2880:31ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id qx26-20020a170906fcda00b00982cfe1fe5dsm6835841ejb.65.2023.07.24.07.23.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jul 2023 07:23:49 -0700 (PDT)
+From:   Breno Leitao <leitao@debian.org>
+To:     asml.silence@gmail.com, axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, kuba@kernel.org, edumazet@google.com,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org, leit@meta.com
+Subject: [PATCH 0/3] io_uring: Initial support for {s,g}etsockopt commands
+Date:   Mon, 24 Jul 2023 07:22:33 -0700
+Message-Id: <20230724142237.358769-1-leitao@debian.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] io_uring: Fix io_uring mmap() by using
- architecture-provided get_unmapped_area()
-Content-Language: en-US
-To:     Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org
-Cc:     matoro <matoro_mailinglist_kernel@matoro.tk>
-References: <20230721152432.196382-1-deller@gmx.de>
- <20230721152432.196382-2-deller@gmx.de>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20230721152432.196382-2-deller@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -66,35 +59,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 21. 07. 23, 17:24, Helge Deller wrote:
-> The io_uring testcase is broken on IA-64 since commit d808459b2e31
-> ("io_uring: Adjust mapping wrt architecture aliasing requirements").
-> 
-> The reason is, that this commit introduced an own architecture
-> independend get_unmapped_area() search algorithm which finds on IA-64 a
-> memory region which is outside of the regular memory region used for
-> shared userspace mappings and which can't be used on that platform
-> due to aliasing.
-> 
-> To avoid similar problems on IA-64 and other platforms in the future,
-> it's better to switch back to the architecture-provided
-> get_unmapped_area() function and adjust the needed input parameters
-> before the call. Beside fixing the issue, the function now becomes
-> easier to understand and maintain.
-> 
-> This patch has been successfully tested with the io_uring testcase on
-> physical x86-64, ppc64le, IA-64 and PA-RISC machines. On PA-RISC the LTP
-> mmmap testcases did not report any regressions.
-> 
-> Signed-off-by: Helge Deller <deller@gmx.de>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Reported-by: matoro <matoro_mailinglist_kernel@matoro.tk>
-> Fixes: d808459b2e31 ("io_uring: Adjust mapping wrt architecture aliasing requirements")
+This patchset adds support for getsockopt (SOCKET_URING_OP_GETSOCKOPT)
+and setsockopt (SOCKET_URING_OP_SETSOCKOPT) in io_uring commands.
+SOCKET_URING_OP_SETSOCKOPT implements generic case, covering all levels
+and optnames. On the other hand, SOCKET_URING_OP_GETSOCKOPT just
+implements level SOL_SOCKET case, which seems to be the most common
+level parameter for get/setsockopt(2).
 
-Tested-by: Jiri Slaby <jirislaby@kernel.org>
+struct proto_ops->setsockopt() uses sockptr instead of userspace
+pointers, which makes it easy to bind to io_uring. Unfortunately
+proto_ops->getsockopt() callback uses userspace pointers, except for
+SOL_SOCKET, which is handled by sk_getsockopt(). Thus, this patchset
+leverages sk_getsockopt() to implement the SOCKET_URING_OP_GETSOCKOPT
+case.
 
-thanks,
+PS1: For getsockopt command, the optlen field is not a userspace
+pointers, but an absolute value, so this is slightly different from
+getsockopt(2) behaviour. The new optlen value is returned in cqe->res.
+
+PS2: The userspace pointers need to be alive until the operation is
+completed.
+
+This patch was tested with a new test[1] in liburing.
+This patch depends on "io_uring: Add io_uring command support for sockets"[2]
+
+[1] Link: https://github.com/leitao/liburing/blob/getsock/test/socket-getsetsock-cmd.c
+[2] Link: https://lore.kernel.org/all/20230627134424.2784797-1-leitao@debian.org/
+
+Changes from RFC:
+	* Copy user memory at io_uring subsystem, and call proto_ops
+	  callbacks using kernel memory
+	* Implement all the cases for SOCKET_URING_OP_SETSOCKOPT
+
+Breno Leitao (4):
+  net: expose sock_use_custom_sol_socket
+  io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+  io_uring/cmd: Introduce SOCKET_URING_OP_SETSOCKOPT
+  io_uring/cmd: Extend support beyond SOL_SOCKET
+
+ include/linux/net.h           |  5 +++
+ include/uapi/linux/io_uring.h |  8 ++++
+ io_uring/uring_cmd.c          | 81 +++++++++++++++++++++++++++++++++++
+ net/socket.c                  |  5 ---
+ 4 files changed, 94 insertions(+), 5 deletions(-)
+
 -- 
-js
-suse labs
+2.34.1
 

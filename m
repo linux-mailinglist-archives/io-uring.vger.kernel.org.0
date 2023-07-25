@@ -2,232 +2,132 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4330A760FBD
-	for <lists+io-uring@lfdr.de>; Tue, 25 Jul 2023 11:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5006E76152D
+	for <lists+io-uring@lfdr.de>; Tue, 25 Jul 2023 13:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233418AbjGYJwD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Jul 2023 05:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53228 "EHLO
+        id S233803AbjGYL0S (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Jul 2023 07:26:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233416AbjGYJvv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Jul 2023 05:51:51 -0400
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 787611B8;
-        Tue, 25 Jul 2023 02:51:46 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-9922d6f003cso910117866b.0;
-        Tue, 25 Jul 2023 02:51:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690278705; x=1690883505;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9iSEd/zlhQUpki7xyVHvNMs7mBkWGGLATKxWLhRRQxE=;
-        b=OVhAdKVwzkni8PcT6iIyfK0K5CP6RIhNj6AQ2udIpgDhZ75ZPz9RYfkGIC7hV5nHIO
-         qVsKeU9smVVcGE+rQA0QR3yof3F8dZXRfUdEmFl/niR44EiKfM5Si06peM8j25fzsaVj
-         4s+W9PzCZWfuY8CCsiD4aZqdmZzUdxEfRNgBdrFO+StD0+ngHqoEazrMX4n2h+fB0Set
-         5umiDAF+6Tz4hJU573Cc/IayONS/HcWCs3mgKGr31v0eT/UQYR/5a9cEi6qSG7ycs5IY
-         BtWOq6BGAidktbY9VPmQ0zqpT5UujtphDaCRnXMMC5UemCZpUWooP8OJ57ZKm2ynkBcc
-         QcnA==
-X-Gm-Message-State: ABy/qLa+75qKMCiTckHEHMbrgZYypzuTVKgZS4K4OjQhPSV51Fr4skHg
-        ubm6/2u++byM5746HvTFZ3U=
-X-Google-Smtp-Source: APBJJlHQf1kTga4kg6x0/K5B/uVhbsmb0HNitIU9KTi8Yt7DDaCg5T3fj+Q1haDLh8Lilguvx8s60A==
-X-Received: by 2002:a17:906:300e:b0:993:eef2:5d5f with SMTP id 14-20020a170906300e00b00993eef25d5fmr12739535ejz.27.1690278704489;
-        Tue, 25 Jul 2023 02:51:44 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-015.fbsv.net. [2a03:2880:31ff:f::face:b00c])
-        by smtp.gmail.com with ESMTPSA id k20-20020a1709065fd400b009934b1eb577sm8077781ejv.77.2023.07.25.02.51.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 02:51:43 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 02:51:42 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-        edumazet@google.com, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, leit@meta.com
-Subject: Re: [PATCH 2/4] io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
-Message-ID: <ZL+bLoZxIdqmh5m5@gmail.com>
-References: <20230724142237.358769-1-leitao@debian.org>
- <20230724142237.358769-3-leitao@debian.org>
- <64bf01fc80d67_3b637629452@willemb.c.googlers.com.notmuch>
+        with ESMTP id S234489AbjGYL0R (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Jul 2023 07:26:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598B5187;
+        Tue, 25 Jul 2023 04:26:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EC3376168F;
+        Tue, 25 Jul 2023 11:26:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078F8C433C7;
+        Tue, 25 Jul 2023 11:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1690284375;
+        bh=iO9QVdD47x8v4TjKLcrILY8ClzTFgslHn+QJsF9+AQE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ePRn+xDKpZ9LIOTspr3nd60dPfWx5T/qUVUge2AbTzUGguUtAtx7O6Un5oIx94TdK
+         TpvOMwQ4THMVm9fXCEBD+U6RLPo1R6lLyzfzWtyqcmP//ts8EjwDgdOnPG1fdjDRbJ
+         gpW0LfOmq0MwMgGXdcoewYK8ZL73itWbjPfEwA0s=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andres Freund <andres@anarazel.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.10 333/509] io_uring: Use io_schedule* in cqring wait
+Date:   Tue, 25 Jul 2023 12:44:32 +0200
+Message-ID: <20230725104608.950442148@linuxfoundation.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230725104553.588743331@linuxfoundation.org>
+References: <20230725104553.588743331@linuxfoundation.org>
+User-Agent: quilt/0.67
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64bf01fc80d67_3b637629452@willemb.c.googlers.com.notmuch>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 06:58:04PM -0400, Willem de Bruijn wrote:
-> Breno Leitao wrote:
-> > Add support for getsockopt command (SOCKET_URING_OP_GETSOCKOPT), where
-> > level is SOL_SOCKET. This is leveraging the sockptr_t infrastructure,
-> > where a sockptr_t is either userspace or kernel space, and handled as
-> > such.
-> > 
-> > Function io_uring_cmd_getsockopt() is inspired by __sys_getsockopt().
-> > 
-> > Differently from the getsockopt(2), the optlen field is not a userspace
-> > pointers. In getsockopt(2), userspace provides optlen pointer, which is
-> > overwritten by the kernel.  In this implementation, userspace passes a
-> > u32, and the new value is returned in cqe->res. I.e., optlen is not a
-> > pointer.
-> > 
-> > Important to say that userspace needs to keep the pointer alive until
-> > the CQE is completed.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  include/uapi/linux/io_uring.h |  7 ++++++
-> >  io_uring/uring_cmd.c          | 43 +++++++++++++++++++++++++++++++++++
-> >  2 files changed, 50 insertions(+)
-> > 
-> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > index 9fc7195f25df..8152151080db 100644
-> > --- a/include/uapi/linux/io_uring.h
-> > +++ b/include/uapi/linux/io_uring.h
-> > @@ -43,6 +43,10 @@ struct io_uring_sqe {
-> >  	union {
-> >  		__u64	addr;	/* pointer to buffer or iovecs */
-> >  		__u64	splice_off_in;
-> > +		struct {
-> > +			__u32	level;
-> > +			__u32	optname;
-> > +		};
-> >  	};
-> >  	__u32	len;		/* buffer size or number of iovecs */
-> >  	union {
-> > @@ -79,6 +83,7 @@ struct io_uring_sqe {
-> >  	union {
-> >  		__s32	splice_fd_in;
-> >  		__u32	file_index;
-> > +		__u32	optlen;
-> >  		struct {
-> >  			__u16	addr_len;
-> >  			__u16	__pad3[1];
-> > @@ -89,6 +94,7 @@ struct io_uring_sqe {
-> >  			__u64	addr3;
-> >  			__u64	__pad2[1];
-> >  		};
-> > +		__u64	optval;
-> >  		/*
-> >  		 * If the ring is initialized with IORING_SETUP_SQE128, then
-> >  		 * this field is used for 80 bytes of arbitrary command data
-> > @@ -729,6 +735,7 @@ struct io_uring_recvmsg_out {
-> >  enum {
-> >  	SOCKET_URING_OP_SIOCINQ		= 0,
-> >  	SOCKET_URING_OP_SIOCOUTQ,
-> > +	SOCKET_URING_OP_GETSOCKOPT,
-> >  };
-> >  
-> >  #ifdef __cplusplus
-> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > index 8e7a03c1b20e..16c857cbf3b0 100644
-> > --- a/io_uring/uring_cmd.c
-> > +++ b/io_uring/uring_cmd.c
-> > @@ -166,6 +166,47 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> >  }
-> >  EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
-> >  
-> > +static inline int io_uring_cmd_getsockopt(struct socket *sock,
-> > +					  struct io_uring_cmd *cmd)
-> > +{
-> > +	void __user *optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
-> > +	int optname = READ_ONCE(cmd->sqe->optname);
-> > +	int optlen = READ_ONCE(cmd->sqe->optlen);
-> > +	int level = READ_ONCE(cmd->sqe->level);
-> > +	void *koptval;
-> > +	int err;
-> > +
-> > +	err = security_socket_getsockopt(sock, level, optname);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	koptval = kmalloc(optlen, GFP_KERNEL);
-> > +	if (!koptval)
-> > +		return -ENOMEM;
-> 
-> This will try to kmalloc any length that userspace passes?
+From: Andres Freund <andres@anarazel.de>
 
-Yes, this value is coming directly from userspace.
+Commit 8a796565cec3601071cbbd27d6304e202019d014 upstream.
 
-> That is unnecessary ..
-> > +
-> > +	err = copy_from_user(koptval, optval, optlen);
-> > +	if (err)
-> > +		goto fail;
-> > +
-> > +	err = -EOPNOTSUPP;
-> > +	if (level == SOL_SOCKET) {
-> > +		err = sk_getsockopt(sock->sk, level, optname,
-> > +				    KERNEL_SOCKPTR(koptval),
-> > +				    KERNEL_SOCKPTR(&optlen));
-> 
-> .. sk_getsockopt defines a union of acceptable fields, which
-> are all fairly small.
+I observed poor performance of io_uring compared to synchronous IO. That
+turns out to be caused by deeper CPU idle states entered with io_uring,
+due to io_uring using plain schedule(), whereas synchronous IO uses
+io_schedule().
 
-Right, and they are all I need for SOL_SOCKET level for now.
+The losses due to this are substantial. On my cascade lake workstation,
+t/io_uring from the fio repository e.g. yields regressions between 20%
+and 40% with the following command:
+./t/io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S$use_sync -R 0 /mnt/t2/fio/write.0.0
 
-> I notice that BPF added BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN to
-> work around the issue of pre-allocating for the worst case.
+This is repeatable with different filesystems, using raw block devices
+and using different block devices.
 
-I am having a hard time how to understand how
-BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN gets the MAX_OPTLEN. Reading this
-function, it seems it is conditionally get_user().
+Use io_schedule_prepare() / io_schedule_finish() in
+io_cqring_wait_schedule() to address the difference.
+
+After that using io_uring is on par or surpassing synchronous IO (using
+registered files etc makes it reliably win, but arguably is a less fair
+comparison).
+
+There are other calls to schedule() in io_uring/, but none immediately
+jump out to be similarly situated, so I did not touch them. Similarly,
+it's possible that mutex_lock_io() should be used, but it's not clear if
+there are cases where that matters.
+
+Cc: stable@vger.kernel.org # 5.10+
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Andres Freund <andres@anarazel.de>
+Link: https://lore.kernel.org/r/20230707162007.194068-1-andres@anarazel.de
+[axboe: minor style fixup]
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ io_uring/io_uring.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -7625,7 +7625,7 @@ static inline int io_cqring_wait_schedul
+ 					  struct io_wait_queue *iowq,
+ 					  ktime_t *timeout)
+ {
+-	int ret;
++	int token, ret;
+ 
+ 	/* make sure we run task_work before checking for signals */
+ 	ret = io_run_task_work_sig();
+@@ -7635,9 +7635,17 @@ static inline int io_cqring_wait_schedul
+ 	if (test_bit(0, &ctx->check_cq_overflow))
+ 		return 1;
+ 
++	/*
++	 * Use io_schedule_prepare/finish, so cpufreq can take into account
++	 * that the task is waiting for IO - turns out to be important for low
++	 * QD IO.
++	 */
++	token = io_schedule_prepare();
++	ret = 1;
+ 	if (!schedule_hrtimeout(timeout, HRTIMER_MODE_ABS))
+-		return -ETIME;
+-	return 1;
++		ret = -ETIME;
++	io_schedule_finish(token);
++	return ret;
+ }
+ 
+ /*
 
 
-	#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)
-	({
-		int __ret = 0;
-		if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))
-			get_user(__ret, optlen);
-		__ret;
-	})
-
-That said, how is BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN being used to
-workaroundthe pre-allocating for the worst case?
-
-> But that also needs to deal woth other getsockopt levels.
-
-Right, and we also have a similar kmalloc() on the setsockopt path
-(SOCKET_URING_OP_SETSOCKOPT).
-
-What about if I pass the userspace sockptr (USER_SOCKPTR) to the
-{g,s}etsockopt callback directly, instead of kmalloc() in io_uring(), as
-I was doing int the RFC[1]? It avoids any extra kmalloc at all.
-
-Something as:
-
-	static inline int io_uring_cmd_getsockopt(struct socket *sock,
-						  struct io_uring_cmd *cmd)
-	{
-		void __user *optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
-		int optlen = READ_ONCE(cmd->sqe->optlen);
-		int optname = READ_ONCE(cmd->sqe->optname);
-		int level = READ_ONCE(cmd->sqe->level);
-		int err;
-
-		err = security_socket_getsockopt(sock, level, optname);
-		if (err)
-			return err;
-
-		if (level == SOL_SOCKET) {
-			err = sk_getsockopt(sock->sk, level, optname,
-					    USER_SOCKPTR(optval),
-					    KERNEL_SOCKPTR(&optlen));
-			if (err < 0)
-				return err;
-			return optlen;
-		}
-
-		return -EOPNOTSUPP;
-
-Thanks for the review!
-
-[1] Link: https://lore.kernel.org/all/20230719102737.2513246-3-leitao@debian.org/

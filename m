@@ -2,259 +2,272 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04C5E761AC7
-	for <lists+io-uring@lfdr.de>; Tue, 25 Jul 2023 15:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AB0761ACA
+	for <lists+io-uring@lfdr.de>; Tue, 25 Jul 2023 15:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231351AbjGYN5U (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 25 Jul 2023 09:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48890 "EHLO
+        id S231935AbjGYN5l (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 25 Jul 2023 09:57:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232135AbjGYN5K (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Jul 2023 09:57:10 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 639742696;
-        Tue, 25 Jul 2023 06:56:52 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id af79cd13be357-7653bd3ff2fso582610485a.3;
-        Tue, 25 Jul 2023 06:56:52 -0700 (PDT)
+        with ESMTP id S232111AbjGYN5c (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 25 Jul 2023 09:57:32 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45CA2106
+        for <io-uring@vger.kernel.org>; Tue, 25 Jul 2023 06:57:30 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b867f9198dso10978755ad.0
+        for <io-uring@vger.kernel.org>; Tue, 25 Jul 2023 06:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690293411; x=1690898211;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AmNtfQYSNUY5PFbmkX+kVDW4t5NGJnXPielLCrntHVQ=;
-        b=OI3w7y9IApvY/WBj5uFmnZ2NjL5mt+EwQeP9ZZqaDYtWbkWHBAOdsmtmP1xGTd5V8u
-         HJChrWUfyPiRHMnhYgGRxy+WDVAWs6lUKVSN7aMMDh75sdEZjSUSiBsIIm7+yImvMOpF
-         4QG5mN1BGWIiEQcIkgRlaOaOXT3CPmFnBY3RQwh/5XRRZff7cqQ7YlupyTqTBXSJWw04
-         R3YU2eYCY0SYI+oy19+3kROn52fOyLEAxlW/rQQ/R7J3KMTuuo/sfaBymCZESm6HoarE
-         fDB/x5PO1gyHqnlmkUtI00cjpi87agaOJBtsuWkzUAtxmotdGPPfW1NVhFDUSC/FvrFV
-         5aoQ==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1690293450; x=1690898250;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qvj5gOVjt2yR6l6DvqXEZUSm5kz7/R15spF7yjIfTdw=;
+        b=rrQU5bvPrC9qO6/XD3PjlCUmbJ+WByGqOA5v1lxHxoLDKIKEWPpmWaKdBfXWTzvlUY
+         pLVEmpBU3K7Ceq/yQ4xozdapGPazLbWVRh4NvaSKk4xL6zzNzIK+fkLQ0kWCAGbwrHJt
+         F7DZ01M1sj1sW2ui2BKyc61qBsNAAHrfvu14NgNrKQ5Bj7ALhqFfXZE9hEzLkatp602M
+         bG7lvFygFItXOeyXNSqb3wcN5PYSwb+NtLNzKNRbWp343zd1rvwE/sXeh3syjYNYrWIE
+         tFgj7Pb9mzuQWhAmjO7gUClVS+HXjanrU2lRu2ks5lisZgkhVCR1AoIc2hA/VNyGCcK6
+         KZ2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690293411; x=1690898211;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AmNtfQYSNUY5PFbmkX+kVDW4t5NGJnXPielLCrntHVQ=;
-        b=JSKzfsWGzIJHCExLLF+rjw+Bm6LXV/1M2j4ZBXlxmtpvfPQ7ssi16CscdihCUmApeV
-         oHxG6bKM9Rd/NH8wkXCMs9agb/s5uDGHO+ZtWPdTyY1DE6x2eV4VQXm7pYCQjljvrTK5
-         7l4psg+UKZBsvkOPskL52XxP22yJL26AKWuewT51Wk8xiYCwbel6lDpb5jGB/vwXz7tt
-         YrUbUBuBGvVv2Akfss0q2XywmJpy9Cdl2kGn3vpcflGzc8YlnSPEvtcXjRnAUdA1tqOW
-         W61zHzwtJdZtnaBLL1Go/14gx8g9WEW5Kl11ZqbpM/zuLUS/QYB1hHutzbjmfxL0sBfv
-         rffw==
-X-Gm-Message-State: ABy/qLZA33ALVeA+V7JPPSSo9WO1VNZx4x7CRdKokWn7rnvmsD7XkRND
-        tOQHdVWKVB6SPqJ0OPFwKDg=
-X-Google-Smtp-Source: APBJJlEAnlp7kYze3NRM4Bt8o0fP8ciBPgcuwhfbX/n+8A3lzNnL6G1J3ENAWA+LZTSrCIV4VqLbIw==
-X-Received: by 2002:ae9:e006:0:b0:75b:23a1:363d with SMTP id m6-20020ae9e006000000b0075b23a1363dmr2392536qkk.78.1690293411089;
-        Tue, 25 Jul 2023 06:56:51 -0700 (PDT)
-Received: from localhost (172.174.245.35.bc.googleusercontent.com. [35.245.174.172])
-        by smtp.gmail.com with ESMTPSA id b27-20020a05620a119b00b007678973eaa1sm3693995qkk.127.2023.07.25.06.56.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 06:56:50 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 09:56:50 -0400
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To:     Breno Leitao <leitao@debian.org>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-        edumazet@google.com, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, leit@meta.com
-Message-ID: <64bfd4a27a1fe_3dc9bb2944e@willemb.c.googlers.com.notmuch>
-In-Reply-To: <ZL+bLoZxIdqmh5m5@gmail.com>
-References: <20230724142237.358769-1-leitao@debian.org>
- <20230724142237.358769-3-leitao@debian.org>
- <64bf01fc80d67_3b637629452@willemb.c.googlers.com.notmuch>
- <ZL+bLoZxIdqmh5m5@gmail.com>
-Subject: Re: [PATCH 2/4] io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+        d=1e100.net; s=20221208; t=1690293450; x=1690898250;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qvj5gOVjt2yR6l6DvqXEZUSm5kz7/R15spF7yjIfTdw=;
+        b=I8OLHjjUfbEDIegdh1UJVhSSI0yEteMqAl4O8YuAPDyWxKK4MbB+04DIlfY3J+kbAV
+         eDDCDSQNjMUuRPI8Zq+VdRg0TIsIBxt+qpYeYwEsLqtukPLIl//a0uuZYKLsza+FeJlm
+         sYEu2PpBEmVKyRoDif/ry+9qgkyLcnzaNAOpVcyZ/Dnd8Fxr5rZ3MtjyX8nH/PR3ObFs
+         GPcPEplebJUzrE78Zb6MiAb+tVqAPGMjDf9ZCg/fv57Womhm0UOzyV2r0J3GaFE5igAN
+         mFqNACLud2ZEj2imK6jWzSyZdjyYLOy8wS0K2kD73pcURETfOwtpLVN5M/k3SYGI87RM
+         mnig==
+X-Gm-Message-State: ABy/qLZiVqMXEkteiYadDHnYtWUNJhQZTTFJBpkzyPpEq+ChPSSoPjBu
+        D9evmYYvU5PBX1wWEJNRjYemTL5Ws/RUIwWc0N8=
+X-Google-Smtp-Source: APBJJlFcmE47gcbUYzvlmdBFhNhJf6SowsYT94oUfjYOkmgBEi9+hb/k2cp1BjFd/18S68L3c66ppA==
+X-Received: by 2002:a17:902:ce92:b0:1b8:1591:9f81 with SMTP id f18-20020a170902ce9200b001b815919f81mr16614934plg.4.1690293449811;
+        Tue, 25 Jul 2023 06:57:29 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id y1-20020a170902b48100b001b86492d724sm11105189plr.223.2023.07.25.06.57.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jul 2023 06:57:29 -0700 (PDT)
+Message-ID: <9a197037-4732-c524-2eb9-250ef7175a82@kernel.dk>
+Date:   Tue, 25 Jul 2023 07:57:28 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 06/10] io_uring: add support for futex wake and wait
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andres@anarazel.de
+References: <20230720221858.135240-1-axboe@kernel.dk>
+ <20230720221858.135240-7-axboe@kernel.dk>
+ <20230721113031.GG3630545@hirez.programming.kicks-ass.net>
+ <20230721113718.GA3638458@hirez.programming.kicks-ass.net>
+ <d95bfb98-8d76-f0fd-6283-efc01d0cc015@kernel.dk>
+ <94b8fcc4-12b5-8d8c-3eb3-fe1e73a25456@kernel.dk>
+ <20230725130015.GI3765278@hirez.programming.kicks-ass.net>
+ <28a42d23-6d70-bc4c-5abc-0b3cc5d7338d@kernel.dk>
+In-Reply-To: <28a42d23-6d70-bc4c-5abc-0b3cc5d7338d@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Breno Leitao wrote:
-> On Mon, Jul 24, 2023 at 06:58:04PM -0400, Willem de Bruijn wrote:
-> > Breno Leitao wrote:
-> > > Add support for getsockopt command (SOCKET_URING_OP_GETSOCKOPT), where
-> > > level is SOL_SOCKET. This is leveraging the sockptr_t infrastructure,
-> > > where a sockptr_t is either userspace or kernel space, and handled as
-> > > such.
-> > > 
-> > > Function io_uring_cmd_getsockopt() is inspired by __sys_getsockopt().
-> > > 
-> > > Differently from the getsockopt(2), the optlen field is not a userspace
-> > > pointers. In getsockopt(2), userspace provides optlen pointer, which is
-> > > overwritten by the kernel.  In this implementation, userspace passes a
-> > > u32, and the new value is returned in cqe->res. I.e., optlen is not a
-> > > pointer.
-> > > 
-> > > Important to say that userspace needs to keep the pointer alive until
-> > > the CQE is completed.
-> > > 
-> > > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > > ---
-> > >  include/uapi/linux/io_uring.h |  7 ++++++
-> > >  io_uring/uring_cmd.c          | 43 +++++++++++++++++++++++++++++++++++
-> > >  2 files changed, 50 insertions(+)
-> > > 
-> > > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > > index 9fc7195f25df..8152151080db 100644
-> > > --- a/include/uapi/linux/io_uring.h
-> > > +++ b/include/uapi/linux/io_uring.h
-> > > @@ -43,6 +43,10 @@ struct io_uring_sqe {
-> > >  	union {
-> > >  		__u64	addr;	/* pointer to buffer or iovecs */
-> > >  		__u64	splice_off_in;
-> > > +		struct {
-> > > +			__u32	level;
-> > > +			__u32	optname;
-> > > +		};
-> > >  	};
-> > >  	__u32	len;		/* buffer size or number of iovecs */
-> > >  	union {
-> > > @@ -79,6 +83,7 @@ struct io_uring_sqe {
-> > >  	union {
-> > >  		__s32	splice_fd_in;
-> > >  		__u32	file_index;
-> > > +		__u32	optlen;
-> > >  		struct {
-> > >  			__u16	addr_len;
-> > >  			__u16	__pad3[1];
-> > > @@ -89,6 +94,7 @@ struct io_uring_sqe {
-> > >  			__u64	addr3;
-> > >  			__u64	__pad2[1];
-> > >  		};
-> > > +		__u64	optval;
-> > >  		/*
-> > >  		 * If the ring is initialized with IORING_SETUP_SQE128, then
-> > >  		 * this field is used for 80 bytes of arbitrary command data
-> > > @@ -729,6 +735,7 @@ struct io_uring_recvmsg_out {
-> > >  enum {
-> > >  	SOCKET_URING_OP_SIOCINQ		= 0,
-> > >  	SOCKET_URING_OP_SIOCOUTQ,
-> > > +	SOCKET_URING_OP_GETSOCKOPT,
-> > >  };
-> > >  
-> > >  #ifdef __cplusplus
-> > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > index 8e7a03c1b20e..16c857cbf3b0 100644
-> > > --- a/io_uring/uring_cmd.c
-> > > +++ b/io_uring/uring_cmd.c
-> > > @@ -166,6 +166,47 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
-> > >  
-> > > +static inline int io_uring_cmd_getsockopt(struct socket *sock,
-> > > +					  struct io_uring_cmd *cmd)
-> > > +{
-> > > +	void __user *optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
-> > > +	int optname = READ_ONCE(cmd->sqe->optname);
-> > > +	int optlen = READ_ONCE(cmd->sqe->optlen);
-> > > +	int level = READ_ONCE(cmd->sqe->level);
-> > > +	void *koptval;
-> > > +	int err;
-> > > +
-> > > +	err = security_socket_getsockopt(sock, level, optname);
-> > > +	if (err)
-> > > +		return err;
-> > > +
-> > > +	koptval = kmalloc(optlen, GFP_KERNEL);
-> > > +	if (!koptval)
-> > > +		return -ENOMEM;
-> > 
-> > This will try to kmalloc any length that userspace passes?
+On 7/25/23 7:48?AM, Jens Axboe wrote:
+> On 7/25/23 7:00?AM, Peter Zijlstra wrote:
+>> On Fri, Jul 21, 2023 at 09:29:14AM -0600, Jens Axboe wrote:
+>>
+>>> FWIW, here's the io_uring incremental after that rebase. Update the
+>>> liburing futex branch as well, updating the prep helpers to take 64 bit
+>>> values for mask/val and also add the flags argument that was missing as
+>>> well. Only other addition was adding those 4 new patches instead of the
+>>> old 3 ones, and adding single patch that just moves FUTEX2_MASK to
+>>> futex.h.
+>>>
+>>> All checks out fine, tests pass and it works.
+>>>
+>>>
+>>> diff --git a/io_uring/futex.c b/io_uring/futex.c
+>>> index 93df54dffaa0..4c9f2c841b98 100644
+>>> --- a/io_uring/futex.c
+>>> +++ b/io_uring/futex.c
+>>> @@ -18,11 +18,11 @@ struct io_futex {
+>>>  		u32 __user			*uaddr;
+>>>  		struct futex_waitv __user	*uwaitv;
+>>>  	};
+>>> +	unsigned long	futex_val;
+>>> +	unsigned long	futex_mask;
+>>>  	unsigned long	futexv_owned;
+>>> +	u32		futex_flags;
+>>> +	unsigned int	futex_nr;
+>>>  };
+>>>  
+>>>  struct io_futex_data {
+>>> @@ -171,15 +171,28 @@ bool io_futex_remove_all(struct io_ring_ctx *ctx, struct task_struct *task,
+>>>  int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>  {
+>>>  	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
+>>> +	u32 flags;
+>>>  
+>>> +	if (unlikely(sqe->fd || sqe->buf_index || sqe->file_index))
+>>>  		return -EINVAL;
+>>>  
+>>>  	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+>>> +	iof->futex_val = READ_ONCE(sqe->addr2);
+>>> +	iof->futex_mask = READ_ONCE(sqe->addr3);
+>>> +	iof->futex_nr = READ_ONCE(sqe->len);
+>>> +	if (iof->futex_nr && req->opcode != IORING_OP_FUTEX_WAITV)
+>>> +		return -EINVAL;
+>>> +
+>>
+>> Hmm, would something like:
+>>
+>> 	if (req->opcode == IORING_OP_FUTEX_WAITV) {
+>> 		if (iof->futex_val && iof->futex_mask)
+>> 			return -EINVAL;
+>>
+>> 		/* sys_futex_waitv() doesn't take @flags as of yet */
+>> 		if (iof->futex_flags)
+>> 			return -EINVAL;
+>>
+>> 		if (!iof->futex_nr)
+>> 			return -EINVAL;
+>>
+>> 	} else {
+>> 		/* sys_futex_{wake,wait}() don't take @nr */
+>> 		if (iof->futex_nr)
+>> 			return -EINVAL;
+>>
+>> 		/* both take @flags and @mask */
+>> 		flags = READ_ONCE(sqe->futex_flags);
+>> 		if (flags & ~FUTEX2_MASK)
+>> 			return -EINVAL;
+>>
+>> 		iof->futex_flags = futex2_to_flags(flags);
+>> 		if (!futex_flags_valid(iof->futex_flags))
+>> 			return -EINVAL;
+>>
+>> 		if (!futex_validate_input(iof->futex_flags, iof->futex_mask))
+>> 			return -EINVAL;
+>>
+>> 		/* sys_futex_wait() takes @val */
+>> 		if (req->iocode == IORING_OP_FUTEX_WAIT) {
+>> 			if (!futex_validate_input(iof->futex_flags, iof->futex_val))
+>> 				return -EINVAL;
+>> 		} else {
+>> 			if (iof->futex_val)
+>> 				return -EINVAL;
+>> 		}
+>> 	}
+>>
+>> work? The waitv thing is significantly different from the other two.
 > 
-> Yes, this value is coming directly from userspace.
-> 
-> > That is unnecessary ..
-> > > +
-> > > +	err = copy_from_user(koptval, optval, optlen);
-> > > +	if (err)
-> > > +		goto fail;
-> > > +
-> > > +	err = -EOPNOTSUPP;
-> > > +	if (level == SOL_SOCKET) {
-> > > +		err = sk_getsockopt(sock->sk, level, optname,
-> > > +				    KERNEL_SOCKPTR(koptval),
-> > > +				    KERNEL_SOCKPTR(&optlen));
-> > 
-> > .. sk_getsockopt defines a union of acceptable fields, which
-> > are all fairly small.
-> 
-> Right, and they are all I need for SOL_SOCKET level for now.
-> 
-> > I notice that BPF added BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN to
-> > work around the issue of pre-allocating for the worst case.
-> 
-> I am having a hard time how to understand how
-> BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN gets the MAX_OPTLEN. Reading this
-> function, it seems it is conditionally get_user().
-> 
-> 
-> 	#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)
-> 	({
-> 		int __ret = 0;
-> 		if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))
-> 			get_user(__ret, optlen);
-> 		__ret;
-> 	})
-> 
-> That said, how is BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN being used to
-> workaroundthe pre-allocating for the worst case?
-> 
-> > But that also needs to deal woth other getsockopt levels.
-> 
-> Right, and we also have a similar kmalloc() on the setsockopt path
-> (SOCKET_URING_OP_SETSOCKOPT).
-> 
-> What about if I pass the userspace sockptr (USER_SOCKPTR) to the
-> {g,s}etsockopt callback directly, instead of kmalloc() in io_uring(), as
-> I was doing int the RFC[1]? It avoids any extra kmalloc at all.
+> I think I'll just have prep and prepv totally separate. It only makes
+> sense to share parts of them if one is a subset of the other. That'll
+> get rid of the odd conditionals and sectioning of it.
 
-That looks like a great solution to me.
+Something like the below - totally untested, but just to show what I
+mean. Will need to get split and folded into the two separate patches.
+Will test and fold them later today.
 
-Avoids the whole problem of kmalloc based on untrusted user input.
 
-> Something as:
-> 
-> 	static inline int io_uring_cmd_getsockopt(struct socket *sock,
-> 						  struct io_uring_cmd *cmd)
-> 	{
-> 		void __user *optval = u64_to_user_ptr(READ_ONCE(cmd->sqe->optval));
-> 		int optlen = READ_ONCE(cmd->sqe->optlen);
-> 		int optname = READ_ONCE(cmd->sqe->optname);
-> 		int level = READ_ONCE(cmd->sqe->level);
-> 		int err;
-> 
-> 		err = security_socket_getsockopt(sock, level, optname);
-> 		if (err)
-> 			return err;
-> 
-> 		if (level == SOL_SOCKET) {
-> 			err = sk_getsockopt(sock->sk, level, optname,
-> 					    USER_SOCKPTR(optval),
-> 					    KERNEL_SOCKPTR(&optlen));
-> 			if (err < 0)
-> 				return err;
-> 			return optlen;
-> 		}
+diff --git a/io_uring/futex.c b/io_uring/futex.c
+index 4c9f2c841b98..b0f90154d974 100644
+--- a/io_uring/futex.c
++++ b/io_uring/futex.c
+@@ -168,7 +168,7 @@ bool io_futex_remove_all(struct io_ring_ctx *ctx, struct task_struct *task,
+ 	return found;
+ }
+ 
+-int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++static int __io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
+ 	u32 flags;
+@@ -179,9 +179,6 @@ int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	iof->futex_val = READ_ONCE(sqe->addr2);
+ 	iof->futex_mask = READ_ONCE(sqe->addr3);
+-	iof->futex_nr = READ_ONCE(sqe->len);
+-	if (iof->futex_nr && req->opcode != IORING_OP_FUTEX_WAITV)
+-		return -EINVAL;
+ 
+ 	flags = READ_ONCE(sqe->futex_flags);
+ 	if (flags & ~FUTEX2_MASK)
+@@ -191,14 +188,36 @@ int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (!futex_flags_valid(iof->futex_flags))
+ 		return -EINVAL;
+ 
+-	if (!futex_validate_input(iof->futex_flags, iof->futex_val) ||
+-	    !futex_validate_input(iof->futex_flags, iof->futex_mask))
++	if (!futex_validate_input(iof->futex_flags, iof->futex_mask))
+ 		return -EINVAL;
+ 
+-	iof->futexv_owned = 0;
+ 	return 0;
+ }
+ 
++int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
++	int ret;
++
++	if (unlikely(sqe->len))
++		return -EINVAL;
++
++	ret = __io_futex_prep(req, sqe);
++	if (ret)
++		return ret;
++
++	/* sys_futex_wait() takes @val */
++	if (req->opcode == IORING_OP_FUTEX_WAIT) {
++		if (!futex_validate_input(iof->futex_flags, iof->futex_val))
++			return -EINVAL;
++	} else {
++		if (iof->futex_val)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static void io_futex_wakev_fn(struct wake_q_head *wake_q, struct futex_q *q)
+ {
+ 	struct io_kiocb *req = q->wake_data;
+@@ -220,10 +239,15 @@ int io_futexv_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct futex_vector *futexv;
+ 	int ret;
+ 
+-	ret = io_futex_prep(req, sqe);
++	ret = __io_futex_prep(req, sqe);
+ 	if (ret)
+ 		return ret;
+ 
++	/* No flags supported for waitv */
++	if (iof->futex_flags)
++		return -EINVAL;
++
++	iof->futex_nr = READ_ONCE(sqe->len);
+ 	if (!iof->futex_nr || iof->futex_nr > FUTEX_WAITV_MAX)
+ 		return -EINVAL;
+ 
+@@ -238,6 +262,7 @@ int io_futexv_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return ret;
+ 	}
+ 
++	iof->futexv_owned = 0;
+ 	req->flags |= REQ_F_ASYNC_DATA;
+ 	req->async_data = futexv;
+ 	return 0;
 
-Do you have a plan to extend this to other levels?
 
-No need to implement immediately, but it would be good to know
-whether it is feasible to extend the current solution when the
-need (inevitably) shows up.
-
-> 
-> 		return -EOPNOTSUPP;
-> 
-> Thanks for the review!
-> 
-> [1] Link: https://lore.kernel.org/all/20230719102737.2513246-3-leitao@debian.org/
+-- 
+Jens Axboe
 

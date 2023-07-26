@@ -2,104 +2,145 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0556A763206
-	for <lists+io-uring@lfdr.de>; Wed, 26 Jul 2023 11:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1784F763375
+	for <lists+io-uring@lfdr.de>; Wed, 26 Jul 2023 12:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229798AbjGZJ3E (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Jul 2023 05:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47330 "EHLO
+        id S233626AbjGZK0Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Jul 2023 06:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232381AbjGZJ2e (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jul 2023 05:28:34 -0400
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C6130F4;
-        Wed, 26 Jul 2023 02:26:35 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-52256241c66so1675609a12.1;
-        Wed, 26 Jul 2023 02:26:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690363594; x=1690968394;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3i0QbOeDmajmhvzhQ0MHR/DHrb4f2crGlJ6oBy8fycY=;
-        b=aBC2GxV8krGiOmvnL7iCYCL42tUd1s8s73kdPl+WxGxI4hQxlhM6cDrKEQamxftXeM
-         rZudOi6ykrwDzAiFLyJLLlygCXwpxYpGVQH3Et+eDWcOXE8jreiiylK61Dq0g8WuOhWJ
-         xjQkkW72mk/pc+yAElo6EeUIB9hPUAskUqEKjvY0Y29Q0szZxWHeqGrI+UJKYQtBRD1O
-         TGW0hCHUmqiDXi9cdYcxFh6I/1lQeNumT+ub8BNx2VKih+shGFzKOQEtQICTkWmsFMpU
-         65ZuB/7qSlM+BOFgfwS8+x59TzDsugR3EKby71In9EymEryG340ZD02r2Wu6vybW7C+/
-         z35g==
-X-Gm-Message-State: ABy/qLYsRjRaHBOEzeZ4840OOZ3PMgkhsEOfYrb251bvVbgA2jeAyCWs
-        PWuWadoVcbXxmW0+7NFhJKkL8Nx4FYc=
-X-Google-Smtp-Source: APBJJlE6qT/NqcvaDVc5i63FlNpKEp8i80T0F5ej/emHMoykI5Ra0Sxw4Rw1wHel/mg8V4dGwOiT0w==
-X-Received: by 2002:a05:6402:1391:b0:522:3a1d:c233 with SMTP id b17-20020a056402139100b005223a1dc233mr1862501edv.11.1690363593529;
-        Wed, 26 Jul 2023 02:26:33 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-016.fbsv.net. [2a03:2880:31ff:10::face:b00c])
-        by smtp.gmail.com with ESMTPSA id l27-20020a056402345b00b0052279f773e3sm227327edc.32.2023.07.26.02.26.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 02:26:32 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 02:26:30 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Martin KaFai Lau <martin.lau@linux.dev>
-Cc:     Stanislav Fomichev <sdf@google.com>, asml.silence@gmail.com,
-        axboe@kernel.dk, io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, kuba@kernel.org, edumazet@google.com,
-        pabeni@redhat.com, linux-kernel@vger.kernel.org, leit@meta.com,
-        bpf@vger.kernel.org, ast@kernel.org
-Subject: Re: [PATCH 2/4] io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
-Message-ID: <ZMDmxkacOklM7Oi2@gmail.com>
-References: <20230724142237.358769-1-leitao@debian.org>
- <20230724142237.358769-3-leitao@debian.org>
- <ZL61cIrQuo92Xzbu@google.com>
- <ZL+VfRiJQqrrLe/9@gmail.com>
- <ZMAAMKTaKSIKi1RW@google.com>
- <87fa06c9-d8a9-fda4-d069-6812605aa10b@linux.dev>
+        with ESMTP id S231317AbjGZK0P (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jul 2023 06:26:15 -0400
+Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [IPv6:2001:41d0:203:375::7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AE4E7
+        for <io-uring@vger.kernel.org>; Wed, 26 Jul 2023 03:26:13 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690367171;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=WsCnoMov9KDBT3PhGLWO6x2CSRgl6EOcF1M0mVnuJoA=;
+        b=lcBUOokl1NEFQcA/qOXrUhWrnZOieB2pmdi7iWA+QZAlVRy5B4DaYBklnEkM1h0bSZ/LEB
+        /fuKqviwZ8q5o1NI4wS83FD7gDb+5D1xQ+tMvb73Q5vOByFgrhRp7dynXXPI+Z52HiInvL
+        h2XoljZyjo8CxsWNWMx1AtC+pAhjFCc=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: [RFC 0/7] io_uring lseek
+Date:   Wed, 26 Jul 2023 18:25:56 +0800
+Message-Id: <20230726102603.155522-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87fa06c9-d8a9-fda4-d069-6812605aa10b@linux.dev>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 10:56:23AM -0700, Martin KaFai Lau wrote:
-> On 7/25/23 10:02 AM, Stanislav Fomichev wrote:
-> > On 07/25, Breno Leitao wrote:
-> > > On Mon, Jul 24, 2023 at 10:31:28AM -0700, Stanislav Fomichev wrote:
-> > > > On 07/24, Breno Leitao wrote:
-> > > > > Add support for getsockopt command (SOCKET_URING_OP_GETSOCKOPT), where
-> > > > > level is SOL_SOCKET. This is leveraging the sockptr_t infrastructure,
-> > > > > where a sockptr_t is either userspace or kernel space, and handled as
-> > > > > such.
-> > > > > 
-> > > > > Function io_uring_cmd_getsockopt() is inspired by __sys_getsockopt().
-> > > > 
-> > > > We probably need to also have bpf bits in the new
-> > > > io_uring_cmd_getsockopt?
-> 
-> I also think this inconsistency behavior should be avoided.
-> 
-> > > 
-> > > It might be interesting to have the BPF hook for this function as
-> > > well, but I would like to do it in a following patch, so, I can
-> > > experiment with it better, if that is OK.
-> > 
-> > We are not using io_uring, so fine with me. However, having a way to bypass
-> > get/setsockopt bpf might be problematic for some other heavy io_uring
-> > users.
-> > 
-> > Lemme CC a bunch of Meta folks explicitly. I'm not sure what that state
-> > of bpf support in io_uring.
-> 
-> We have use cases on the "cgroup/{g,s}etsockopt". It will be a surprise when
-> the user moves from the syscall {g,s}etsockopt to SOCKET_URING_OP_*SOCKOPT
-> and figured that the bpf handling is skipped.
+From: Hao Xu <howeyxu@tencent.com>
 
-Ok, I will add the BPF bits in the next revision then. Thanks for
-clarifying it.
+This series adds lseek for io_uring, the motivation to import this
+syscall is in previous io_uring getdents patchset, we lack a way to
+rewind the file cursor when it goes to the end of file. Another reason
+is lseek is a common syscall, it's good for coding consistency when
+users use io_uring as their main loop.
+
+Patch 1 is code clean for iomap
+Patch 2 adds IOMAP_NOWAIT logic for iomap lseek
+Patch 3 adds a nowait parameter to for IOMAP_NOWAIT control
+Patch 4 adds llseek_nowait() for file_operations so that specific
+        filesystem can implement it for nowait lseek
+Patch 5 adds llseek_nowait() implementation for xfs
+Patch 6 adds a new vfs wrapper for io_uring use
+Patch 7 is the main io_uring lseek implementation
+
+Note, this series depends on the previous io_uring getdents series.
+
+This is marked RFC since there is (at least) an issue to be discussed:
+The work in this series is mainly to reslove a problem that the current
+llseek() in struct file_operations doesn't have a place to deliver
+nowait info, and adding an argument to it results in update for llseek
+implementation of all filesystems (35 functions), so here I introduce
+a new llseek_nowait() as a workaround.
+
+For performance, it has about 20%~30% improvement on iops.
+The test program is just like the one for io_uring getdents, here is the
+link to it: https://github.com/HowHsu/liburing/blob/llseek/test/lseek.c
+- Each test runs about 30000 async requests/sync syscalls
+- Each test runs 100 times and get the average value.
+- offset is randomly generated value
+- the file is a 1M all zero file
+
+[howeyxu@~]$ python3 run_lseek.py
+test args:  seek mode:SEEK_SET, offset: 334772
+Average of  sync :  0.012300650000000002
+Average of  iouring :  0.008528009999999999
+30.67%
+
+[howeyxu@~]$ python3 run_lseek.py
+test args:  seek mode:SEEK_CUR, offset: 389292
+Average of  sync :  0.012736129999999995
+Average of  iouring :  0.00928725
+27.08%
+
+[howeyxu@~]$ python3 run_lseek.py
+test args:  seek mode:SEEK_END, offset: 281141
+Average of  sync :  0.01221595
+Average of  iouring :  0.008442890000000003
+30.89%
+
+[howeyxu@~]$ python3 run_lseek.py
+test args:  seek mode:SEEK_DATA, offset: 931103
+Average of  sync :  0.015496230000000005
+Average of  iouring :  0.012341509999999998
+20.36%
+
+[howeyxu@~]$ python3 run_lseek.py
+test args:  seek mode:SEEK_HOLE, offset: 430194
+Average of  sync :  0.01555663000000001
+Average of  iouring :  0.012064940000000003
+22.45%
+ 
+
+Hao Xu (7):
+  iomap: merge iomap_seek_hole() and iomap_seek_data()
+  xfs: add nowait support for xfs_seek_iomap_begin()
+  add nowait parameter for iomap_seek()
+  add llseek_nowait() for struct file_operations
+  add llseek_nowait support for xfs
+  add vfs_lseek_nowait()
+  add lseek for io_uring
+
+ fs/ext4/file.c                |  9 ++---
+ fs/gfs2/inode.c               |  4 +--
+ fs/iomap/seek.c               | 42 ++++++-----------------
+ fs/read_write.c               | 18 ++++++++++
+ fs/xfs/xfs_file.c             | 34 ++++++++++++++++---
+ fs/xfs/xfs_iomap.c            |  4 ++-
+ include/linux/fs.h            |  4 +++
+ include/linux/iomap.h         |  6 ++--
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/fs.c                 | 63 +++++++++++++++++++++++++++++++++++
+ io_uring/fs.h                 |  3 ++
+ io_uring/opdef.c              |  8 +++++
+ 12 files changed, 145 insertions(+), 51 deletions(-)
+
+
+base-commit: 4a4b046082eca8ae90b654d772fccc30e9f23f4d
+-- 
+2.25.1
+

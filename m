@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A25376376A
-	for <lists+io-uring@lfdr.de>; Wed, 26 Jul 2023 15:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 539737638F5
+	for <lists+io-uring@lfdr.de>; Wed, 26 Jul 2023 16:23:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233883AbjGZNWN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Jul 2023 09:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
+        id S233991AbjGZOXf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Jul 2023 10:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233885AbjGZNWL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jul 2023 09:22:11 -0400
+        with ESMTP id S231769AbjGZOXf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jul 2023 10:23:35 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494BA1FEC;
-        Wed, 26 Jul 2023 06:22:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779EEE47;
+        Wed, 26 Jul 2023 07:23:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DC196613CA;
-        Wed, 26 Jul 2023 13:22:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1C7C433CB;
-        Wed, 26 Jul 2023 13:22:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1528661AF5;
+        Wed, 26 Jul 2023 14:23:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3F9C433C7;
+        Wed, 26 Jul 2023 14:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690377729;
-        bh=KWTeyV7DSPb2JSt6yu397zgUB2KJ1PVPqwI+zIQkUUU=;
+        s=k20201202; t=1690381413;
+        bh=FwuUFBpzZ4if38Feouggu7fJKF8cUg9igHPSfAAzvY8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hub6FWYEiLv7RETY8FZB+4ovR289Ky7YEJFew1gNoTwUJx5d0fvY/MaUcswq9cN55
-         eOLKkWA7zCbBr4qm18cto0btKTqHrXlOv4VtOZKpRWyitSLHwJeFLmkbUbGbvGXcmX
-         U2Lyci2qJsVnB9FYCPuJVvOHqelPiQ0OxTyM6IrQ2JiPIXdyA8glXCvFIEZiJI8hqd
-         z6Kkvn5IzqN7TCGoUmQUe/xfTS1ErAE1cy+njytugbaqPp+v1XOCiUUQjAZ1IQPs1i
-         F1MpOw056Uu94n9EOORfYx7WjPG/7iVX5nk9rT83vbpQ3BzEjsIxwOy6TRKvO2CN8J
-         3f+2mcb31nQVg==
-Date:   Wed, 26 Jul 2023 15:22:03 +0200
+        b=i9GETdJ7ifKQeiNzvhkVbd0OMXd8r1GrpwhfYOLHGAUjjJLWBlJBhURx/clgZVovK
+         PqWArtV6MGoQLwmRQbH4XdoUrwh8ifO8WLrox1E60r0JRdULrhz0k1ByjkfWvl2hpO
+         WrTbbncNoytzabn2/8JkQq+RigDDJop1CK4hLxF5J+avb0hseoiigOUO3RM9ewYlzf
+         A8qomx1BgGqSQML8zKYZIToZHgG5C7dgAS6uTz+YjX5ZSjSfkzlv+el5UWrfhe/T7L
+         2N+WcTjrmTEGCkZ2L13NL1j9CGWW6V6cdapvULa45WYIV7NUULCfr25Oe6vB+Y8cu0
+         xMqGJJoFtUfgA==
+Date:   Wed, 26 Jul 2023 16:23:28 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Hao Xu <hao.xu@linux.dev>
 Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
@@ -41,16 +41,15 @@ Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
         Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [RFC 0/7] io_uring lseek
-Message-ID: <20230726-reinreden-packten-e7ab9aff296a@brauner>
-References: <20230726102603.155522-1-hao.xu@linux.dev>
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH RFC 5/5] disable fixed file for io_uring getdents for now
+Message-ID: <20230726-inhaftiert-hinunter-714e140c957c@brauner>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-6-hao.xu@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230726102603.155522-1-hao.xu@linux.dev>
+In-Reply-To: <20230718132112.461218-6-hao.xu@linux.dev>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -61,40 +60,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 06:25:56PM +0800, Hao Xu wrote:
+On Tue, Jul 18, 2023 at 09:21:12PM +0800, Hao Xu wrote:
 > From: Hao Xu <howeyxu@tencent.com>
 > 
-> This series adds lseek for io_uring, the motivation to import this
-> syscall is in previous io_uring getdents patchset, we lack a way to
-> rewind the file cursor when it goes to the end of file. Another reason
-> is lseek is a common syscall, it's good for coding consistency when
-> users use io_uring as their main loop.
+> Fixed file for io_uring getdents can trigger race problem. Users can
+> register a file to be fixed file in io_uring and then remove other
+> reference so that there are only fixed file reference of that file.
+> And then they can issue concurrent async getdents requests or both
+> async and sync getdents requests without holding the f_pos_lock
+> since there is a f_count == 1 optimization.
 
-While I understand this it is a time consuming review to make sure
-things work correctly. So before we get this thing going we better get
-getdents correct first.
+Afaict, that limitation isn't necessary. This version ow works fine with
+fixed files.
 
-> 
-> Patch 1 is code clean for iomap
-> Patch 2 adds IOMAP_NOWAIT logic for iomap lseek
-> Patch 3 adds a nowait parameter to for IOMAP_NOWAIT control
-> Patch 4 adds llseek_nowait() for file_operations so that specific
->         filesystem can implement it for nowait lseek
-> Patch 5 adds llseek_nowait() implementation for xfs
-> Patch 6 adds a new vfs wrapper for io_uring use
-> Patch 7 is the main io_uring lseek implementation
-> 
-> Note, this series depends on the previous io_uring getdents series.
-> 
-> This is marked RFC since there is (at least) an issue to be discussed:
-> The work in this series is mainly to reslove a problem that the current
-> llseek() in struct file_operations doesn't have a place to deliver
-> nowait info, and adding an argument to it results in update for llseek
-> implementation of all filesystems (35 functions), so here I introduce
-> a new llseek_nowait() as a workaround.
+Based on the commit message there seems to be a misunderstanding.
+Your previous version of the patchset copied the f_count optimization
+into io_uring's locking which would've caused the race I described
+in the other thread.
 
-My intuition would be to update all filesystems. Adding new inode
-operations always starts as a temporary thing and then we live with two
-different methods for the next years or possibly forever.
+There regular system call interface was always safe because as long as
+the original fd is kept the file count will be greater than 1 and both
+the fixed file and regular system call interface will acquire the lock.
 
-But it'd be good to hear what others think.
+So fixed file's not being usable was entirely causes by copying the
+f_count optimization into io_uring. Since this patchset now doesn't use
+that optimization and unconditionally locks things are fine. (And even
+if, the point is now moot anyway since we dropped that optimization from
+the regular system call path anyway because of another issue.)

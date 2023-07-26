@@ -2,37 +2,37 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 539737638F5
-	for <lists+io-uring@lfdr.de>; Wed, 26 Jul 2023 16:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D4C47639C7
+	for <lists+io-uring@lfdr.de>; Wed, 26 Jul 2023 17:01:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233991AbjGZOXf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 26 Jul 2023 10:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49498 "EHLO
+        id S233075AbjGZPBB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 26 Jul 2023 11:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231769AbjGZOXf (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jul 2023 10:23:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779EEE47;
-        Wed, 26 Jul 2023 07:23:34 -0700 (PDT)
+        with ESMTP id S232569AbjGZPA7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 26 Jul 2023 11:00:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F11110F3;
+        Wed, 26 Jul 2023 08:00:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1528661AF5;
-        Wed, 26 Jul 2023 14:23:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3F9C433C7;
-        Wed, 26 Jul 2023 14:23:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9CC9E61B0C;
+        Wed, 26 Jul 2023 15:00:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D67C433C8;
+        Wed, 26 Jul 2023 15:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690381413;
-        bh=FwuUFBpzZ4if38Feouggu7fJKF8cUg9igHPSfAAzvY8=;
+        s=k20201202; t=1690383657;
+        bh=bsc9Ene8u8yk2Jp3wBSvByh1V64lsXruC8bKwMt/tBc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i9GETdJ7ifKQeiNzvhkVbd0OMXd8r1GrpwhfYOLHGAUjjJLWBlJBhURx/clgZVovK
-         PqWArtV6MGoQLwmRQbH4XdoUrwh8ifO8WLrox1E60r0JRdULrhz0k1ByjkfWvl2hpO
-         WrTbbncNoytzabn2/8JkQq+RigDDJop1CK4hLxF5J+avb0hseoiigOUO3RM9ewYlzf
-         A8qomx1BgGqSQML8zKYZIToZHgG5C7dgAS6uTz+YjX5ZSjSfkzlv+el5UWrfhe/T7L
-         2N+WcTjrmTEGCkZ2L13NL1j9CGWW6V6cdapvULa45WYIV7NUULCfr25Oe6vB+Y8cu0
-         xMqGJJoFtUfgA==
-Date:   Wed, 26 Jul 2023 16:23:28 +0200
+        b=ZCfVpkoI2PZJ3aR922ScxY9h/d0UFhXq906HtPJ7uEd6GIOvDYjJDI4SfDXHEaOVQ
+         vkhMFLRLJl8C0fN0zO32aGGoRlO9x2dHb99CmejIle3X6cGAn53NXjzDpqa/fcG8A1
+         Ptj2e9bqaOtNPHDNofo6scQW4tVw7ZlwlYUX/fHFHXH00w5AksadlJCu6kZmwMMlBy
+         JseWXKGLK9zlAQOLdzsKEGa/+HXgqK0Tr+v8QxMuLrqPKSUnR2Km1pZTXAhD1d4QED
+         3br+QdZ7YXzxPF8+S+ujRoOvRdfrC949dsL2PcD/nIJINEFSeCMxD04uDz7+ju8MXS
+         rUWqMwfctmlcw==
+Date:   Wed, 26 Jul 2023 17:00:51 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Hao Xu <hao.xu@linux.dev>
 Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
@@ -42,16 +42,16 @@ Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
         Dave Chinner <david@fromorbit.com>,
         linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH RFC 5/5] disable fixed file for io_uring getdents for now
-Message-ID: <20230726-inhaftiert-hinunter-714e140c957c@brauner>
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Message-ID: <20230726-leinen-basisarbeit-13ae322690ff@brauner>
 References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-6-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230718132112.461218-6-hao.xu@linux.dev>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+In-Reply-To: <20230718132112.461218-4-hao.xu@linux.dev>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -60,30 +60,144 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 09:21:12PM +0800, Hao Xu wrote:
+On Tue, Jul 18, 2023 at 09:21:10PM +0800, Hao Xu wrote:
 > From: Hao Xu <howeyxu@tencent.com>
 > 
-> Fixed file for io_uring getdents can trigger race problem. Users can
-> register a file to be fixed file in io_uring and then remove other
-> reference so that there are only fixed file reference of that file.
-> And then they can issue concurrent async getdents requests or both
-> async and sync getdents requests without holding the f_pos_lock
-> since there is a f_count == 1 optimization.
+> This add support for getdents64 to io_uring, acting exactly like the
+> syscall: the directory is iterated from it's current's position as
+> stored in the file struct, and the file's position is updated exactly as
+> if getdents64 had been called.
+> 
+> For filesystems that support NOWAIT in iterate_shared(), try to use it
+> first; if a user already knows the filesystem they use do not support
+> nowait they can force async through IOSQE_ASYNC in the sqe flags,
+> avoiding the need to bounce back through a useless EAGAIN return.
+> 
+> Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> ---
+>  include/uapi/linux/io_uring.h |  7 +++++
+>  io_uring/fs.c                 | 55 +++++++++++++++++++++++++++++++++++
+>  io_uring/fs.h                 |  3 ++
+>  io_uring/opdef.c              |  8 +++++
+>  4 files changed, 73 insertions(+)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 36f9c73082de..b200b2600622 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -65,6 +65,7 @@ struct io_uring_sqe {
+>  		__u32		xattr_flags;
+>  		__u32		msg_ring_flags;
+>  		__u32		uring_cmd_flags;
+> +		__u32		getdents_flags;
+>  	};
+>  	__u64	user_data;	/* data to be passed back at completion time */
+>  	/* pack this to avoid bogus arm OABI complaints */
+> @@ -235,6 +236,7 @@ enum io_uring_op {
+>  	IORING_OP_URING_CMD,
+>  	IORING_OP_SEND_ZC,
+>  	IORING_OP_SENDMSG_ZC,
+> +	IORING_OP_GETDENTS,
+>  
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
+> @@ -273,6 +275,11 @@ enum io_uring_op {
+>   */
+>  #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
+>  
+> +/*
+> + * sqe->getdents_flags
+> + */
+> +#define IORING_GETDENTS_REWIND	(1U << 0)
+> +
+>  /*
+>   * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
+>   * command flags for POLL_ADD are stored in sqe->len.
+> diff --git a/io_uring/fs.c b/io_uring/fs.c
+> index f6a69a549fd4..480f25677fed 100644
+> --- a/io_uring/fs.c
+> +++ b/io_uring/fs.c
+> @@ -47,6 +47,13 @@ struct io_link {
+>  	int				flags;
+>  };
+>  
+> +struct io_getdents {
+> +	struct file			*file;
+> +	struct linux_dirent64 __user	*dirent;
+> +	unsigned int			count;
+> +	int				flags;
+> +};
+> +
+>  int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  {
+>  	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
+> @@ -291,3 +298,51 @@ void io_link_cleanup(struct io_kiocb *req)
+>  	putname(sl->oldpath);
+>  	putname(sl->newpath);
+>  }
+> +
+> +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> +{
+> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+> +
+> +	if (READ_ONCE(sqe->off) != 0)
+> +		return -EINVAL;
+> +
+> +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> +	gd->count = READ_ONCE(sqe->len);
+> +
+> +	return 0;
+> +}
+> +
+> +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+> +{
+> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+> +	struct file *file = req->file;
+> +	unsigned long getdents_flags = 0;
+> +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
 
-Afaict, that limitation isn't necessary. This version ow works fine with
-fixed files.
+Hm, I'm not sure what exactly the rules are for IO_URING_F_NONBLOCK.
+But to point this out:
 
-Based on the commit message there seems to be a misunderstanding.
-Your previous version of the patchset copied the f_count optimization
-into io_uring's locking which would've caused the race I described
-in the other thread.
+vfs_getdents()
+-> iterate_dir()
+   {
+        if (shared)
+                res = down_read_killable(&inode->i_rwsem);
+        else
+                res = down_write_killable(&inode->i_rwsem);
+   }
 
-There regular system call interface was always safe because as long as
-the original fd is kept the file count will be greater than 1 and both
-the fixed file and regular system call interface will acquire the lock.
+which means you can still end up sleeping here before you go into a
+filesystem that does actually support non-waiting getdents. So if you
+have concurrent operations that grab inode lock (touch, mkdir etc) you
+can end up sleeping here.
 
-So fixed file's not being usable was entirely causes by copying the
-f_count optimization into io_uring. Since this patchset now doesn't use
-that optimization and unconditionally locks things are fine. (And even
-if, the point is now moot anyway since we dropped that optimization from
-the regular system call path anyway because of another issue.)
+Is that intentional or an oversight? If the former can someone please
+explain the rules and why it's fine in this case?
+
+> +	bool should_lock = file->f_mode & FMODE_ATOMIC_POS;
+> +	int ret;
+> +
+> +	if (force_nonblock) {
+> +		if (!(req->file->f_mode & FMODE_NOWAIT))
+> +			return -EAGAIN;
+> +
+> +		getdents_flags = DIR_CONTEXT_F_NOWAIT;
+> +	}
+> +
+> +	if (should_lock) {
+> +		if (!force_nonblock)
+> +			mutex_lock(&file->f_pos_lock);
+> +		else if (!mutex_trylock(&file->f_pos_lock))
+> +			return -EAGAIN;
+> +	}
+
+That now looks like it works.
+
+> +
+> +	ret = vfs_getdents(file, gd->dirent, gd->count, getdents_flags);
+> +	if (should_lock)
+> +		mutex_unlock(&file->f_pos_lock);

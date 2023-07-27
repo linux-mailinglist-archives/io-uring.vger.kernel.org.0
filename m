@@ -2,49 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D047653DC
-	for <lists+io-uring@lfdr.de>; Thu, 27 Jul 2023 14:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B99717653F1
+	for <lists+io-uring@lfdr.de>; Thu, 27 Jul 2023 14:30:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233713AbjG0M2c (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 27 Jul 2023 08:28:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59998 "EHLO
+        id S232517AbjG0Ma6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 27 Jul 2023 08:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234319AbjG0M16 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Jul 2023 08:27:58 -0400
-Received: from out-71.mta1.migadu.com (out-71.mta1.migadu.com [95.215.58.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5401030EB
-        for <io-uring@vger.kernel.org>; Thu, 27 Jul 2023 05:27:18 -0700 (PDT)
-Message-ID: <34f3b7ce-41f1-49c8-781d-a73b48481e0d@linux.dev>
+        with ESMTP id S232656AbjG0Map (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 27 Jul 2023 08:30:45 -0400
+Received: from out-74.mta0.migadu.com (out-74.mta0.migadu.com [IPv6:2001:41d0:1004:224b::4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 697E71AD
+        for <io-uring@vger.kernel.org>; Thu, 27 Jul 2023 05:30:36 -0700 (PDT)
+Message-ID: <09d2ab2b-1269-21f5-7b7d-410c0f311887@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690460815;
+        t=1690461034;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=exoCYtqs4lKqJRylVtrIZXW7kCXNeNEVdEMQ+pCJcHg=;
-        b=BaqiPSAGVUuwX0RzK5qjvyw4xGjFXILgA4tzmXVsCDqGuG2yDXTXng8OfXu70jiSpl2Mc1
-        l+UYs0hvUrCoAMLSZK0qtW1qy1hp+Y8fQwHrSCGAJ3Okgh3TApfTYgNiXHl959CtqR9FKw
-        dBf3wUP4UuwUyt1jj8JZqQYVznhkBBc=
-Date:   Thu, 27 Jul 2023 20:26:47 +0800
+        bh=3PYsZ8fztDLb8zB2LbfphLlVJcGazDoAn1755qEELm0=;
+        b=biv65rS16yG471XhUCuu9oete8E5kBm4b82GXvrRalQJTSD34AanuOZBGtnbSG3cskzWDQ
+        uvVFdCshOGn8Hc97zP4Awlr6XLLp3a0/jLxnkv556gFWy3W0bVcqrj8O4ICuxTAGhKugT1
+        +XbDMDfxi+u7P+jzDfj2cwrmVZQ4Gkc=
+Date:   Thu, 27 Jul 2023 20:30:27 +0800
 MIME-Version: 1.0
-Subject: Re: [PATCH 5/7] add llseek_nowait support for xfs
+Subject: Re: [RFC 0/7] io_uring lseek
 Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Christian Brauner <brauner@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
         "Darrick J . Wong" <djwong@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-ext4@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
 References: <20230726102603.155522-1-hao.xu@linux.dev>
- <20230726102603.155522-6-hao.xu@linux.dev>
- <ZMGaqsDTe4oDCdAZ@dread.disaster.area>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <ZMGaqsDTe4oDCdAZ@dread.disaster.area>
+In-Reply-To: <20230726102603.155522-1-hao.xu@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
@@ -58,101 +56,101 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 7/27/23 06:14, Dave Chinner wrote:
-> On Wed, Jul 26, 2023 at 06:26:01PM +0800, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> Add llseek_nowait() operation for xfs, it acts just like llseek(). The
->> thing different is it delivers nowait parameter to iomap layer.
->>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->> ---
->>   fs/xfs/xfs_file.c | 29 +++++++++++++++++++++++++++--
->>   1 file changed, 27 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
->> index 73adc0aee2ff..cba82264221d 100644
->> --- a/fs/xfs/xfs_file.c
->> +++ b/fs/xfs/xfs_file.c
->> @@ -1257,10 +1257,11 @@ xfs_file_readdir(
->>   }
->>   
->>   STATIC loff_t
->> -xfs_file_llseek(
->> +__xfs_file_llseek(
->>   	struct file	*file,
->>   	loff_t		offset,
->> -	int		whence)
->> +	int		whence,
->> +	bool		nowait)
->>   {
->>   	struct inode		*inode = file->f_mapping->host;
->>   
->> @@ -1282,6 +1283,28 @@ xfs_file_llseek(
->>   	return vfs_setpos(file, offset, inode->i_sb->s_maxbytes);
->>   }
->>   
->> +STATIC loff_t
->> +xfs_file_llseek(
->> +	struct file	*file,
->> +	loff_t		offset,
->> +	int		whence)
->> +{
->> +	return __xfs_file_llseek(file, offset, whence, false);
->> +}
->> +
->> +STATIC loff_t
->> +xfs_file_llseek_nowait(
->> +	struct file	*file,
->> +	loff_t		offset,
->> +	int		whence,
->> +	bool		nowait)
->> +{
->> +	if (file->f_op == &xfs_file_operations)
->> +		return __xfs_file_llseek(file, offset, whence, nowait);
->> +	else
->> +		return generic_file_llseek(file, offset, whence);
->> +}
->> +
->>   #ifdef CONFIG_FS_DAX
->>   static inline vm_fault_t
->>   xfs_dax_fault(
->> @@ -1442,6 +1465,7 @@ xfs_file_mmap(
->>   
->>   const struct file_operations xfs_file_operations = {
->>   	.llseek		= xfs_file_llseek,
->> +	.llseek_nowait	= xfs_file_llseek_nowait,
->>   	.read_iter	= xfs_file_read_iter,
->>   	.write_iter	= xfs_file_write_iter,
->>   	.splice_read	= xfs_file_splice_read,
->> @@ -1467,6 +1491,7 @@ const struct file_operations xfs_dir_file_operations = {
->>   	.read		= generic_read_dir,
->>   	.iterate_shared	= xfs_file_readdir,
->>   	.llseek		= generic_file_llseek,
->> +	.llseek_nowait	= xfs_file_llseek_nowait,
->>   	.unlocked_ioctl	= xfs_file_ioctl,
->>   #ifdef CONFIG_COMPAT
->>   	.compat_ioctl	= xfs_file_compat_ioctl,
+On 7/26/23 18:25, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
 > 
-> This is pretty nasty. It would be far better just to change the
-> .llseek method than to inflict this on every filesystem for the
-> forseeable future.
+> This series adds lseek for io_uring, the motivation to import this
+> syscall is in previous io_uring getdents patchset, we lack a way to
+> rewind the file cursor when it goes to the end of file. Another reason
+> is lseek is a common syscall, it's good for coding consistency when
+> users use io_uring as their main loop.
 > 
-> Not that I'm a fan of passing "nowait" booleans all through the file
-> operations methods - that way lies madness. We use a control
-> structure for the IO path operations (kiocb) to hold per-call
-> context information, perhaps we need something similar for these
-> other methods that people are wanting to hook up to io_uring (e.g.
-> readdir) so taht we don't have to play whack-a-mole with every new
-> io_uring method that people want and then end up with a different
-> nowait solution for every method.
+> Patch 1 is code clean for iomap
+> Patch 2 adds IOMAP_NOWAIT logic for iomap lseek
+> Patch 3 adds a nowait parameter to for IOMAP_NOWAIT control
+> Patch 4 adds llseek_nowait() for file_operations so that specific
+>          filesystem can implement it for nowait lseek
+> Patch 5 adds llseek_nowait() implementation for xfs
+> Patch 6 adds a new vfs wrapper for io_uring use
+> Patch 7 is the main io_uring lseek implementation
 > 
-> -Dave.
+> Note, this series depends on the previous io_uring getdents series.
+> 
+> This is marked RFC since there is (at least) an issue to be discussed:
+> The work in this series is mainly to reslove a problem that the current
+> llseek() in struct file_operations doesn't have a place to deliver
+> nowait info, and adding an argument to it results in update for llseek
+> implementation of all filesystems (35 functions), so here I introduce
+> a new llseek_nowait() as a workaround.
+> 
+> For performance, it has about 20%~30% improvement on iops.
+> The test program is just like the one for io_uring getdents, here is the
+> link to it: https://github.com/HowHsu/liburing/blob/llseek/test/lseek.c
+> - Each test runs about 30000 async requests/sync syscalls
+> - Each test runs 100 times and get the average value.
+> - offset is randomly generated value
+> - the file is a 1M all zero file
+> 
+> [howeyxu@~]$ python3 run_lseek.py
+> test args:  seek mode:SEEK_SET, offset: 334772
+> Average of  sync :  0.012300650000000002
+> Average of  iouring :  0.008528009999999999
+> 30.67%
+> 
+> [howeyxu@~]$ python3 run_lseek.py
+> test args:  seek mode:SEEK_CUR, offset: 389292
+> Average of  sync :  0.012736129999999995
+> Average of  iouring :  0.00928725
+> 27.08%
+> 
+> [howeyxu@~]$ python3 run_lseek.py
+> test args:  seek mode:SEEK_END, offset: 281141
+> Average of  sync :  0.01221595
+> Average of  iouring :  0.008442890000000003
+> 30.89%
+> 
+> [howeyxu@~]$ python3 run_lseek.py
+> test args:  seek mode:SEEK_DATA, offset: 931103
+> Average of  sync :  0.015496230000000005
+> Average of  iouring :  0.012341509999999998
+> 20.36%
+> 
+> [howeyxu@~]$ python3 run_lseek.py
+> test args:  seek mode:SEEK_HOLE, offset: 430194
+> Average of  sync :  0.01555663000000001
+> Average of  iouring :  0.012064940000000003
+> 22.45%
+>   
+> 
+> Hao Xu (7):
+>    iomap: merge iomap_seek_hole() and iomap_seek_data()
+>    xfs: add nowait support for xfs_seek_iomap_begin()
+>    add nowait parameter for iomap_seek()
+>    add llseek_nowait() for struct file_operations
+>    add llseek_nowait support for xfs
+>    add vfs_lseek_nowait()
+>    add lseek for io_uring
+> 
+>   fs/ext4/file.c                |  9 ++---
+>   fs/gfs2/inode.c               |  4 +--
+>   fs/iomap/seek.c               | 42 ++++++-----------------
+>   fs/read_write.c               | 18 ++++++++++
+>   fs/xfs/xfs_file.c             | 34 ++++++++++++++++---
+>   fs/xfs/xfs_iomap.c            |  4 ++-
+>   include/linux/fs.h            |  4 +++
+>   include/linux/iomap.h         |  6 ++--
+>   include/uapi/linux/io_uring.h |  1 +
+>   io_uring/fs.c                 | 63 +++++++++++++++++++++++++++++++++++
+>   io_uring/fs.h                 |  3 ++
+>   io_uring/opdef.c              |  8 +++++
+>   12 files changed, 145 insertions(+), 51 deletions(-)
+> 
+> 
+> base-commit: 4a4b046082eca8ae90b654d772fccc30e9f23f4d
 
-whack-a-mole is exactly what I thought when I tried to find a place to
-hold that...I'll think about it in next version, a generic structure for
-io_uring is good I believe. I'll update this patchset after the getdents
-stuff are merged.
+Hi folks,
+I'll leave this patchset here before the io_uring getdents is merged,
+then come back and update this one.
 
 Thanks,
 Hao

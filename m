@@ -2,118 +2,253 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 982E37677DA
-	for <lists+io-uring@lfdr.de>; Fri, 28 Jul 2023 23:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FFF37686F5
+	for <lists+io-uring@lfdr.de>; Sun, 30 Jul 2023 20:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232991AbjG1Vmi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 28 Jul 2023 17:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35154 "EHLO
+        id S229608AbjG3SCx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 30 Jul 2023 14:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbjG1Vmh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 28 Jul 2023 17:42:37 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13653C3C
-        for <io-uring@vger.kernel.org>; Fri, 28 Jul 2023 14:42:36 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-686efb9ee0cso2498813b3a.3
-        for <io-uring@vger.kernel.org>; Fri, 28 Jul 2023 14:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690580556; x=1691185356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ji2JmgANPkKCfNTtddmVRk0V5dVnD3AEkl+JScVn8bk=;
-        b=ZUjHAtOuLCvy5ZIYbMB1q0rc+WPTGeuLd8vfAwBCpGjp8RnybjYObyDgF3l/QzMuMX
-         PwXRtFPyMtXztiz5RaPQSKfXorMxTIILWxxHappI8VAxdWTcGTA9Lqzchx2Tq8iRYBTM
-         mYzDdKcIVr3ijjaI599w8cRveMdDD7T9A1+Q2UsvIXFvJk2u+a2MTn4LRWjmIjylnUZ8
-         SVoaEYMj0THEBYbuVpLuN1dK/qzDfy0MmAMX9GY30cpw+X9KlBcLjz9e5qDswuxO9X5i
-         8delmO6FnlQqWel5s4xo1W+a1DSKsKdDMfmvU54BeyhnVdJ0U/UrHLYMTjcfBe3lKriq
-         hLaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690580556; x=1691185356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ji2JmgANPkKCfNTtddmVRk0V5dVnD3AEkl+JScVn8bk=;
-        b=NlEcZKbeD+4GqQDT9h64SXxMU4eFnatGIWSqXqzIYYfjDruLyf9Wg7aOhFLDDMEMcg
-         kywOWTDyq/fh2Ipm3AU79XsmqLqtwDpcWfonoqmlZFy7D9sehS0OVeD647kuOcf/aFGG
-         Np5vYoPVzQSq2ctkazi25Dgmxz49khUaDGF+q3ibuuGtyFGxVlU8XWKMYxwI0RyTXvi7
-         g87pxxlyEAZKDj+fKX//I2k+jatPYwGt7ioAMUL4nfZIO7XKQEvc++YR4xRrSDt5U1FM
-         z7nS6xgbmBPSd5CF6f588nD+kDiCWZkSyt+Dui4VQZrK0e2TjVn5R8X8vqLP+0+RU8M+
-         /tCA==
-X-Gm-Message-State: ABy/qLYXJ971xrV3KapJHw1y887AE6C5AhizPf7mM2ImVzD05pcJ3hQK
-        W57pT+dxcaU5Sbip5NqoADwK3IyiNlofNAPGntQ=
-X-Google-Smtp-Source: APBJJlESyCkDw9MkfDpp+3EnmCnifsGfIbsP4QEz6/EWyfelUUTbfV0SKUMn9nJzgCo7LHQ5As3hlA==
-X-Received: by 2002:a05:6a20:7352:b0:122:c6c4:36b1 with SMTP id v18-20020a056a20735200b00122c6c436b1mr3777151pzc.4.1690580556381;
-        Fri, 28 Jul 2023 14:42:36 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
-        by smtp.gmail.com with ESMTPSA id p5-20020a63ab05000000b0054fa8539681sm3998584pgf.34.2023.07.28.14.42.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jul 2023 14:42:35 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qPVEG-00BhZJ-10;
-        Sat, 29 Jul 2023 07:42:32 +1000
-Date:   Sat, 29 Jul 2023 07:42:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
-        andres@anarazel.de, djwong@kernel.org
-Subject: Re: [PATCHSET v6 0/8] Improve async iomap DIO performance
-Message-ID: <ZMQ2SEVlqZ59NmSL@dread.disaster.area>
-References: <20230724225511.599870-1-axboe@kernel.dk>
- <786a1eda-4592-789b-aaea-e70efbabeaa5@kernel.dk>
+        with ESMTP id S229522AbjG3SCw (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 30 Jul 2023 14:02:52 -0400
+Received: from out-96.mta0.migadu.com (out-96.mta0.migadu.com [IPv6:2001:41d0:1004:224b::60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FE8FB
+        for <io-uring@vger.kernel.org>; Sun, 30 Jul 2023 11:02:50 -0700 (PDT)
+Message-ID: <7adaea37-f84f-9415-41fa-53d36833f8f2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690740167;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8HJc61IqdhGm/da/cQaPPQOiZNCxMs1+dj7U6lcQ7fI=;
+        b=FCtfYps2vJGPxKh/uVtEYz8f9TP14mQ/mEvUrx4LdWmiv9Obssmu3YpQSTgXXzD1y72p8n
+        oth7IJLtU7Nt3QIx5RkhEdQ2xmO5wZhyry3l4srXeUtF7/6lj+0YvRRtkMzgeooesE+fnq
+        ylUtZm/uYH0FO5crP/EfF4cZxH83GSQ=
+Date:   Mon, 31 Jul 2023 02:02:25 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <786a1eda-4592-789b-aaea-e70efbabeaa5@kernel.dk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+ <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 05:07:57PM -0600, Jens Axboe wrote:
-> On 7/24/23 4:55?PM, Jens Axboe wrote:
-> > Hi,
-> > 
-> > Hi,
-> > 
-> > This patchset improves async iomap DIO performance, for XFS and ext4.
-> > For full details on this patchset, see the v4 posting:
-> > 
-> > https://lore.kernel.org/io-uring/20230720181310.71589-1-axboe@kernel.dk/
-> > 
-> >  fs/iomap/direct-io.c | 163 ++++++++++++++++++++++++++++++++-----------
-> >  include/linux/fs.h   |  35 +++++++++-
-> >  io_uring/rw.c        |  26 ++++++-
-> >  3 files changed, 179 insertions(+), 45 deletions(-)
-> > 
-> > Can also be found here:
-> > 
-> > https://git.kernel.dk/cgit/linux/log/?h=xfs-async-dio.6
-> > 
-> > No change in performance since last time, and passes my testing without
-> > complaints.
-> > 
-> > Changes in v6:
-> > - Drop the polled patch, it's not needed anymore
-> > - Change the "inline is safe" logic based on Dave's suggestions
-> > - Gate HIPRI on INLINE_COMP|CALLER_COMP, so polled IO follows the
-> >   same rules as inline/deferred completions.
-> > - INLINE_COMP is purely for reads, writes can user CALLER_COMP to
-> >   avoid a workqueue punt. This is necessary as we need to invalidate
-> >   pages on write completions, and if we race with a buffered reader
-> >   or writer on the file.
+Hi Christian,
+
+On 7/27/23 22:27, Christian Brauner wrote:
+> On Thu, Jul 27, 2023 at 07:51:19PM +0800, Hao Xu wrote:
+>> On 7/26/23 23:00, Christian Brauner wrote:
+>>> On Tue, Jul 18, 2023 at 09:21:10PM +0800, Hao Xu wrote:
+>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>
+>>>> This add support for getdents64 to io_uring, acting exactly like the
+>>>> syscall: the directory is iterated from it's current's position as
+>>>> stored in the file struct, and the file's position is updated exactly as
+>>>> if getdents64 had been called.
+>>>>
+>>>> For filesystems that support NOWAIT in iterate_shared(), try to use it
+>>>> first; if a user already knows the filesystem they use do not support
+>>>> nowait they can force async through IOSQE_ASYNC in the sqe flags,
+>>>> avoiding the need to bounce back through a useless EAGAIN return.
+>>>>
+>>>> Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
+>>>> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>>> ---
+>>>>    include/uapi/linux/io_uring.h |  7 +++++
+>>>>    io_uring/fs.c                 | 55 +++++++++++++++++++++++++++++++++++
+>>>>    io_uring/fs.h                 |  3 ++
+>>>>    io_uring/opdef.c              |  8 +++++
+>>>>    4 files changed, 73 insertions(+)
+>>>>
+>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>>> index 36f9c73082de..b200b2600622 100644
+>>>> --- a/include/uapi/linux/io_uring.h
+>>>> +++ b/include/uapi/linux/io_uring.h
+>>>> @@ -65,6 +65,7 @@ struct io_uring_sqe {
+>>>>    		__u32		xattr_flags;
+>>>>    		__u32		msg_ring_flags;
+>>>>    		__u32		uring_cmd_flags;
+>>>> +		__u32		getdents_flags;
+>>>>    	};
+>>>>    	__u64	user_data;	/* data to be passed back at completion time */
+>>>>    	/* pack this to avoid bogus arm OABI complaints */
+>>>> @@ -235,6 +236,7 @@ enum io_uring_op {
+>>>>    	IORING_OP_URING_CMD,
+>>>>    	IORING_OP_SEND_ZC,
+>>>>    	IORING_OP_SENDMSG_ZC,
+>>>> +	IORING_OP_GETDENTS,
+>>>>    	/* this goes last, obviously */
+>>>>    	IORING_OP_LAST,
+>>>> @@ -273,6 +275,11 @@ enum io_uring_op {
+>>>>     */
+>>>>    #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
+>>>> +/*
+>>>> + * sqe->getdents_flags
+>>>> + */
+>>>> +#define IORING_GETDENTS_REWIND	(1U << 0)
+>>>> +
+>>>>    /*
+>>>>     * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
+>>>>     * command flags for POLL_ADD are stored in sqe->len.
+>>>> diff --git a/io_uring/fs.c b/io_uring/fs.c
+>>>> index f6a69a549fd4..480f25677fed 100644
+>>>> --- a/io_uring/fs.c
+>>>> +++ b/io_uring/fs.c
+>>>> @@ -47,6 +47,13 @@ struct io_link {
+>>>>    	int				flags;
+>>>>    };
+>>>> +struct io_getdents {
+>>>> +	struct file			*file;
+>>>> +	struct linux_dirent64 __user	*dirent;
+>>>> +	unsigned int			count;
+>>>> +	int				flags;
+>>>> +};
+>>>> +
+>>>>    int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>    {
+>>>>    	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
+>>>> @@ -291,3 +298,51 @@ void io_link_cleanup(struct io_kiocb *req)
+>>>>    	putname(sl->oldpath);
+>>>>    	putname(sl->newpath);
+>>>>    }
+>>>> +
+>>>> +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>> +{
+>>>> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+>>>> +
+>>>> +	if (READ_ONCE(sqe->off) != 0)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
+>>>> +	gd->count = READ_ONCE(sqe->len);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+>>>> +{
+>>>> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+>>>> +	struct file *file = req->file;
+>>>> +	unsigned long getdents_flags = 0;
+>>>> +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+>>>
+>>> Hm, I'm not sure what exactly the rules are for IO_URING_F_NONBLOCK.
+>>> But to point this out:
+>>>
+>>> vfs_getdents()
+>>> -> iterate_dir()
+>>>      {
+>>>           if (shared)
+>>>                   res = down_read_killable(&inode->i_rwsem);
+>>>           else
+>>>                   res = down_write_killable(&inode->i_rwsem);
+>>>      }
+>>>
+>>> which means you can still end up sleeping here before you go into a
+>>> filesystem that does actually support non-waiting getdents. So if you
+>>> have concurrent operations that grab inode lock (touch, mkdir etc) you
+>>> can end up sleeping here.
+>>>
+>>> Is that intentional or an oversight? If the former can someone please
+>>> explain the rules and why it's fine in this case?
+>>
+>> I actually saw this semaphore, and there is another xfs lock in
+>> file_accessed
+>>    --> touch_atime
+>>      --> inode_update_time
+>>        --> inode->i_op->update_time == xfs_vn_update_time
+>>
+>> Forgot to point them out in the cover-letter..., I didn't modify them
+>> since I'm not very sure about if we should do so, and I saw Stefan's
+>> patchset didn't modify them too.
+>>
+>> My personnal thinking is we should apply trylock logic for this
+>> inode->i_rwsem. For xfs lock in touch_atime, we should do that since it
+>> doesn't make sense to rollback all the stuff while we are almost at the
+>> end of getdents because of a lock.
 > 
-> Dave, are you happy with this one?
+> That manoeuvres around the problem. Which I'm slightly more sensitive
+> too as this review is a rather expensive one.
+> 
+> Plus, it seems fixable in at least two ways:
+> 
+> For both we need to be able to tell the filesystem that a nowait atime
+> update is requested. Simple thing seems to me to add a S_NOWAIT flag to
+> file_time_flags and passing that via i_op->update_time() which already
+> has a flag argument. That would likely also help kiocb_modified().
+> 
+> file_accessed()
+> -> touch_atime()
+>     -> inode_update_time()
+>        -> i_op->update_time == xfs_vn_update_time()
+> 
+> Then we have two options afaict:
+> 
+> (1) best-effort atime update
+> 
+> file_accessed() already has the builtin assumption that updating atime
+> might fail for other reasons - see the comment in there. So it is
+> somewhat best-effort already.
+> 
+> (2) move atime update before calling into filesystem
+> 
+> If we want to be sure that access time is updated when a readdir request
+> is issued through io_uring then we need to have file_accessed() give a
+> return value and expose a new helper for io_uring or modify
+> vfs_getdents() to do something like:
+> 
+> vfs_getdents()
+> {
+> 	if (nowait)
+> 		down_read_trylock()
+> 
+> 	if (!IS_DEADDIR(inode)) {
+> 		ret = file_accessed(file);
+> 		if (ret == -EAGAIN)
+> 			goto out_unlock;
+> 
+> 		f_op->iterate_shared()
+> 	}
+> }
+> 
+> It's not unprecedented to do update atime before the actual operation
+> has been done afaict. That's already the case in xfs_file_write_checks()
+> which is called before anything is written. So that seems ok.
 
-I haven't had a chance to look at it yet. Had my head in log hang
-bug reports these last few days...
+I'm not familiar with this part(the time update), I guess we should
+revert the updated time if we succeed to do file_accessed(file) but
+fail somewhere later in f_op->iterate_shared()? Or is it definitely
+counted as an "access" as long as we start to call getdents to a file?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Hao
+
+> 
+> Does any of these two options work for the xfs maintainers and Jens?
+

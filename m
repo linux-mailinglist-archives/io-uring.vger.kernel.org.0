@@ -2,95 +2,92 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8677E76A611
-	for <lists+io-uring@lfdr.de>; Tue,  1 Aug 2023 03:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C380276A998
+	for <lists+io-uring@lfdr.de>; Tue,  1 Aug 2023 08:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbjHABLY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 31 Jul 2023 21:11:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58560 "EHLO
+        id S231296AbjHAG76 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Aug 2023 02:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjHABLX (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 31 Jul 2023 21:11:23 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEDABE71
-        for <io-uring@vger.kernel.org>; Mon, 31 Jul 2023 18:11:22 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1bba9539a23so6799015ad.1
-        for <io-uring@vger.kernel.org>; Mon, 31 Jul 2023 18:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1690852282; x=1691457082;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iEDpUQYa1sYoZpIoyPnzMOH94o/93Z6XlJyNk88m9Dw=;
-        b=S4hYK/eSdBZ04vvgXn1rSU+1Z0mmrGFHPqq2+ElrnsJRWggw8Jte9SSLac083X7+b8
-         Z6mi6l/LsueAomjRGLLNzALEwrEUF8e/Wdnw38ZEk5V2O5BFdElGgr7fGA/hMw50Vcd9
-         waP7o4l7kfW0zBk33udzTjYvbQeWvKtgtxE6h2LgZuNNrLNOtyXRXlP1pvXldfsS1QNM
-         ot7OVDA0MflrqcG2+ApxkvbtHMl0oQ2IU68/FfgDiWHNXsvKIPE3nVEUlCBCC3yHDXPx
-         XAVfsvR0aZBIIEf/wxPH7LultbyYg9CNTsuqNvngjNTEgJHgT4i2j0C6vsxaPa2p2Pwz
-         Doyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690852282; x=1691457082;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iEDpUQYa1sYoZpIoyPnzMOH94o/93Z6XlJyNk88m9Dw=;
-        b=gOZ+ZYzD3MGl7Gpz/YOYSGJNZucAVWGj8zwsgDz11eZO/oZOUWyiOr2XK2Dkuu1TUe
-         fXu0h5cUTCxOstMB56fvWiEifJ+7upfz1rnexEyvvmDDZJJL39VFWdv18+u13c+QHv6I
-         qoezKgpcYENoqcaNttLaiZYuKa52ZmBYycvLIw2qSWfw/HFnAUfLYPNk1sYaTG4o6tv9
-         +79ATd58E8UB/en8iZfeWMQ5gO3PFG7U9Xmj/1hb1GiKGlki2mF2hvf47gqPA6nD0xhP
-         do1bqEyOHBpOyV+T33RF7u1+cvH4BCAQt56g9rYw2xCH19jP7uPpqQg6LCfB9HIzgIGw
-         QD3w==
-X-Gm-Message-State: ABy/qLaN27F5IZzYVaKXWbnAT7atmuD6LxKkJY7gk9WKGxx0DTP5pBji
-        Mla4i/4yXdsvnkctdH+RqTEGzA==
-X-Google-Smtp-Source: APBJJlGG2/+2f/wUdNe0NwNOe0XNaryQK6905qsBBZDsx/NkmWnGD32Vq8w3tM6bfUo/lhTZ4WzPuA==
-X-Received: by 2002:a17:902:ea04:b0:1b8:17e8:547e with SMTP id s4-20020a170902ea0400b001b817e8547emr10250653plg.1.1690852282175;
-        Mon, 31 Jul 2023 18:11:22 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q10-20020a170902edca00b001bbdf32f011sm9014136plk.269.2023.07.31.18.11.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 18:11:21 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Nicholas Rosenberg <inori@vnlx.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-In-Reply-To: <20230801010434.2697794-1-ammarfaizi2@gnuweeb.org>
-References: <20230801010434.2697794-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing] github: Fix LLVM packages conflict
-Message-Id: <169085228161.30140.1864539026063442003.b4-ty@kernel.dk>
-Date:   Mon, 31 Jul 2023 19:11:21 -0600
+        with ESMTP id S230264AbjHAG75 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 02:59:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B74E40;
+        Mon, 31 Jul 2023 23:59:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8946C6149D;
+        Tue,  1 Aug 2023 06:59:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC64C43395;
+        Tue,  1 Aug 2023 06:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690873194;
+        bh=/gQvjODYvLMqUy07t7y8PCmPc8B1DqCFqK3+xM+p1bI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RIUbWtDy4AuTnbjTy4OSkNJ2XS+5NTXtNgFxUb7YzKNQiOpwRNjMOEEfpGdnALNJs
+         bfXghMsCRLxllIEcz7Lq9FJHD/k2t3FpIxFlMjnmmax3B9RRLo8OGcdNAuUo3MqQOQ
+         2tKqnI3xp32Iw4E/7OsaD2wF8ZY4EpSS6FDN4c1LAO4eGqeqSZnB0N8bNzJatTqZjE
+         wid2Dr+EutAY4ZKsPhM/DA9fOsf8yVrS2LUN7LYA/+NHl5VTXYo2ylap8ZjeKMVVQV
+         kOQQ3Ffq21ymhkExgB0c9xl50X5wTFLk6JuSyAQoGVONI6bvulrLjfp3tAoTkmtakU
+         7wpQyXiDtuRag==
+Date:   Tue, 1 Aug 2023 08:59:49 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>, Hao Xu <hao.xu@linux.dev>,
+        io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Message-ID: <20230801-transpirieren-hallo-94682f16962f@brauner>
+References: <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+ <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+ <ZMcPUX0lYC2nscAm@dread.disaster.area>
+ <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
+ <20230731152623.GC11336@frogsfrogsfrogs>
+ <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+ <ZMhWI/2UIFAb3vR7@casper.infradead.org>
+ <e2d8e5f1-f794-38eb-cecf-ed30c571206b@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e2d8e5f1-f794-38eb-cecf-ed30c571206b@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-
-On Tue, 01 Aug 2023 08:04:34 +0700, Ammar Faizi wrote:
-> Recently, the CI hits the following error:
+On Mon, Jul 31, 2023 at 06:49:45PM -0600, Jens Axboe wrote:
+> On 7/31/23 6:47?PM, Matthew Wilcox wrote:
+> > On Mon, Jul 31, 2023 at 06:28:02PM -0600, Jens Axboe wrote:
+> >> It's also not an absolute thing, like memory allocations are. It's
+> >> perfectly fine to grab a mutex under NOWAIT issue. What you should not
+> >> do is grab a mutex that someone else can grab while waiting on IO. This
+> >> kind of extra context is only available in the code in question, not
+> >> generically for eg mutex locking.
+> > 
+> > Is that information documented somewhere?  I didn't know that was the
+> > rule, and I wouldn't be surprised if that's news to several of the other
+> > people on this thread.
 > 
->   The following packages have unmet dependencies:
->   python3-lldb-14 : Conflicts: python3-lldb-x.y
->   python3-lldb-17 : Conflicts: python3-lldb-x.y
->   E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.
-> 
-> [...]
+> I've mentioned it in various threads, but would probably be good to
+> write down somewhere if that actually makes more people see it. I'm
+> dubious, but since it applies to NOWAIT in general, would be a good
+> thing to do regardless. And then at least I could point to that rather
+> than have to write up a long description every time.
 
-Applied, thanks!
-
-[1/1] github: Fix LLVM packages conflict
-      commit: e1e758ae8360521334399c2a6eace05fa518e218
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+I've only been aware of this because we talked about it somewhere else.
+So adding it as documentation would be great.

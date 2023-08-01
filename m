@@ -2,65 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8633F76A9D3
-	for <lists+io-uring@lfdr.de>; Tue,  1 Aug 2023 09:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB99A76B707
+	for <lists+io-uring@lfdr.de>; Tue,  1 Aug 2023 16:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230480AbjHAHRQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Aug 2023 03:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39396 "EHLO
+        id S234503AbjHAOQn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Aug 2023 10:16:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbjHAHRP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 03:17:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E2D199D;
-        Tue,  1 Aug 2023 00:17:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AE652614A7;
-        Tue,  1 Aug 2023 07:17:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AAB5C433C8;
-        Tue,  1 Aug 2023 07:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690874233;
-        bh=GY83+sXoxaD1CbkDRl4cxxWBkLyEKKu4Cd1THggBg6E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sCEczpoi4W7YlBKGlO1qwtGJ6nifwTXZ9HWqrOQZvqLnWm9S63hTefI+FdT3xW/Oo
-         YS6EmnJuPMvE80HeUkz4l/CK5io460UkUZfdRFRif6w0L6flCZ13QZ4Gy5g48j1fDT
-         FLJiYIRSy5C4PZXNvHTzUhgYDvgTLSHGf0zcMD/JJ/o76e4sTR0VtN0/kDWVyM1A+D
-         ir30zhcejVcWsjLCjKoHgtO7EABUM3UEqsrK3wMGL9Npp8Uww0jvzy2yJzXFmkYY4K
-         Jd7MAKYE3Jh2Nn7i1tbaPyWTRgiVSMuc717As/aicOyLHmm/TSB+YJ4v5vys5mmJOC
-         OmoZdjrsV++JA==
-Date:   Tue, 1 Aug 2023 09:17:07 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Hao Xu <hao.xu@linux.dev>,
-        io-uring@vger.kernel.org,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
-Message-ID: <20230801-arterien-kurskorrektur-0c105c47765f@brauner>
-References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-4-hao.xu@linux.dev>
- <20230726-leinen-basisarbeit-13ae322690ff@brauner>
- <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
- <20230727-salbe-kurvigen-31b410c07bb9@brauner>
- <ZMcPUX0lYC2nscAm@dread.disaster.area>
- <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
- <20230731152623.GC11336@frogsfrogsfrogs>
- <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+        with ESMTP id S234458AbjHAOQk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 10:16:40 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E84193;
+        Tue,  1 Aug 2023 07:16:34 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9936b3d0286so888471266b.0;
+        Tue, 01 Aug 2023 07:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690899393; x=1691504193;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MS3FrAwxdHTx2tcLvzU7qgxEoR9kVyoORHvrr8ChlbE=;
+        b=owneU93TDsctA0Qv8w+LA+V3D/ITFrHuxDdfPlMKgjOXjZriegSV8nzS9XFicVicjF
+         B2OIHWXcrUmpUxd0izWle3vqvm2TaxBSXZ6QLINBaiSzJBMHJuwp2V9/dtIfm4Ai0MPY
+         K9ih4RozFCwQ+uEzfBmpkgdQhz9yfXn3rM0/M4Vhve4BI27obxT9P77gs4Qs29ct0PYq
+         UXn9k3HFGITMvNChEbIy88ML6jJT14TLQAe2EEnUlVR4quOp1wtSZjVe3BCKuqQF5ppi
+         PAAkyjA+FElRdrF00xjmBnILJ819N5zfs0mO/aSnwK6ysSkvL8ZtlI2TUI3mNiv8Tpi/
+         lJmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690899393; x=1691504193;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MS3FrAwxdHTx2tcLvzU7qgxEoR9kVyoORHvrr8ChlbE=;
+        b=i0zCJb7kgkkLB/3YO+V6Pnlf3Iy34FSswVxYeQfSHZLAKMKFRWNsopOS6uhGvStM9/
+         RjpASWuQvZzoBzFdy2shwoeLeZz4ILn7gjMJemcrirJEIkJnYCrMWjG8kd8P55NNThOm
+         1nEu3OlqQPwQDpbfS2S/vp1gkQPy+J1ADb6Nf1A+wHQIqswtzv8ujZjYG6O9b2/KsUpE
+         K5fbSh+9VOV4iWKoN4YltNHdJHV4jFp/D56LxnacsEk2TlzHB9u8EYpgC8VZSrtEyeND
+         153lhWokoUOgRfIi0Mf7gDlZd12kMVqJv2dfUWI5MC6Ce5SO31QlIHJPL4Dlpa6PgsNM
+         Qcrw==
+X-Gm-Message-State: ABy/qLa9Bc0KvoaFLZDtGn27wr5Y34Q9n3vIycVkXxiyNlpz9Com4ti5
+        2K0OxiS0MnYLk5jpSTyNXvs=
+X-Google-Smtp-Source: APBJJlEmnJXGn4pxS1gM9Dw+XGVCxrc3ga3hDlEOCqiOj9PNPWsITeS+eJcT5Hcmp4pcU/y8GObeXQ==
+X-Received: by 2002:a17:906:db:b0:99b:66eb:2162 with SMTP id 27-20020a17090600db00b0099b66eb2162mr2451109eji.5.1690899392876;
+        Tue, 01 Aug 2023 07:16:32 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:d658])
+        by smtp.gmail.com with ESMTPSA id pv24-20020a170907209800b009920e9a3a73sm7701306ejb.115.2023.08.01.07.16.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Aug 2023 07:16:32 -0700 (PDT)
+Message-ID: <ce3e1cf4-40a0-adde-e66b-487048b3871d@gmail.com>
+Date:   Tue, 1 Aug 2023 15:13:59 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] io_uring: split req init from submit
+To:     Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@meta.com>,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     Keith Busch <kbusch@kernel.org>
+References: <20230728201449.3350962-1-kbusch@meta.com>
+ <9a360c1f-dc9a-e8b4-dbb0-39c99509bb8d@gmail.com>
+ <22d99997-8626-024d-fae2-791bb0a094c3@kernel.dk>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <22d99997-8626-024d-fae2-791bb0a094c3@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,44 +75,47 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 06:28:02PM -0600, Jens Axboe wrote:
-> On 7/31/23 9:26?AM, Darrick J. Wong wrote:
-> > I've watched quite a bit of NOWAIT whackamole going on over the past few
-> > years (i_rwsem, the ILOCK, the IO layer, memory allocations...).  IIRC
-> > these filesystem ios all have to run in process context, right?  If so,
-> > why don't we capture the NOWAIT state in a PF flag?  We already do that
-> > for NOFS/NOIO memory allocations to make sure that /all/ reclaim
-> > attempts cannot recurse into the fs/io stacks.
+On 7/31/23 22:00, Jens Axboe wrote:
+> On 7/31/23 6:53?AM, Pavel Begunkov wrote:
+>> On 7/28/23 21:14, Keith Busch wrote:
+>>> From: Keith Busch <kbusch@kernel.org>
+>>>
+>>> Split the req initialization and link handling from the submit. This
+>>> simplifies the submit path since everything that can fail is separate
+>>> from it, and makes it easier to create batched submissions later.
+>>
+>> Keith, I don't think this prep patch does us any good, I'd rather
+>> shove the link assembling code further out of the common path. I like
+>> the first version more (see [1]). I'd suggest to merge it, and do
+>> cleaning up after.
+>>
+>> I'll also say that IMHO the overhead is well justified. It's not only
+>> about having multiple nvmes, the problem slows down cases mixing storage
+>> with net and the rest of IO in a single ring.
+>>
+>> [1] https://lore.kernel.org/io-uring/20230504162427.1099469-1-kbusch@meta.com/
 > 
-> I would greatly prefer passing down the context rather than capitulating
-> and adding a task_struct flag for this. I think it _kind of_ makes sense
-> for things like allocations, as you cannot easily track that all the way
-> down, but it's a really ugly solution. It certainly creates more churn
-> passing it down, but it also reveals the parts that need to check it.
-> WHen new code is added, it's much more likely you'll spot the fact that
-> there's passed in context. For allocation, you end up in the allocator
-> anyway, which can augment the gfp mask with whatever is set in the task.
-> The same is not true for locking and other bits, as they don't return a
-> value to begin with. When we know they are sane, we can flag the fs as
-> supporting it (like we've done for async buffered reads, for example).
-> 
-> It's also not an absolute thing, like memory allocations are. It's
-> perfectly fine to grab a mutex under NOWAIT issue. What you should not
-> do is grab a mutex that someone else can grab while waiting on IO. This
-> kind of extra context is only available in the code in question, not
-> generically for eg mutex locking.
-> 
-> I'm not a huge fan of the "let's add a bool nowait". Most/all use cases
-> pass down state anyway, putting it in a suitable type struct seems much
+> The downside of that one, to me, is that it just serializes all of it
+> and we end up looping over the submission list twice.
 
-We're only going to pass a struct if there really is a need for one
-though. Meaning, we're shouldn't end up passing a struct with a single
-element around in the hopes that we'll add more members at some point. 
+Right, and there is nothing can be done if we want to know about all
+requests in advance, at least without changing uapi and/or adding
+userspace hints.
 
-> cleaner to me than the out-of-band approach of just adding a
-> current->please_nowait.
+> With alloc+init
+> split, at least we get some locality wins by grouping the setup side of
+> the requests.
 
-I'm not convinced that abusing current/task_struct for this is sane. I
-not just very much doubt this will go down well with reviewers outside
-of fs/ we'd also rightly be told that we're punting on a design problem
-because it would be more churn.
+I don't think I follow, what grouping do you mean? As far as I see, v1
+and v2 are essentially same with the difference of whether you have a
+helper for setting up links or not, see io_setup_link() from v2. In both
+cases it's executed in the same sequence:
+
+1) init (generic init + opcode init + link setup) each request and put
+    into a temporary list.
+2) go go over the list and submit them one by one
+
+And after inlining they should look pretty close.
+
+-- 
+Pavel Begunkov

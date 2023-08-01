@@ -2,71 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F28BF76C0FD
-	for <lists+io-uring@lfdr.de>; Wed,  2 Aug 2023 01:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81B1176C0FF
+	for <lists+io-uring@lfdr.de>; Wed,  2 Aug 2023 01:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjHAXfL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Aug 2023 19:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34746 "EHLO
+        id S229997AbjHAXfP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Aug 2023 19:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjHAXfK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 19:35:10 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91C826B0
-        for <io-uring@vger.kernel.org>; Tue,  1 Aug 2023 16:34:47 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-5643140aa5fso561685a12.0
-        for <io-uring@vger.kernel.org>; Tue, 01 Aug 2023 16:34:47 -0700 (PDT)
+        with ESMTP id S230274AbjHAXfO (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 19:35:14 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 404531B1
+        for <io-uring@vger.kernel.org>; Tue,  1 Aug 2023 16:35:05 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-6862d4a1376so1561143b3a.0
+        for <io-uring@vger.kernel.org>; Tue, 01 Aug 2023 16:35:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1690932887; x=1691537687;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1690932905; x=1691537705;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=z9mtYLgCllS9ypoxJCYiXNtN9ZGOxcY6Mye5Q2NFML8=;
-        b=aHC1FYZGv7Yj9PHxYaRof/uMCWSjHHqGVpmVIilzQ5Ji+URG7g+uih1/vk8UvtMPkL
-         XdUHsb2GNsIn0gLvk+9dGvUV8KS4Udde3yGzGFn0W8YKugvuNusb8ja35rd/nMSGBUnZ
-         wtwLezLz3ObHy4XbLZ3IFa7Czdsk0B99t6Jeb06eHdS+61B6u+XMZHEQilIxZOMcL+9H
-         w3lM3hQICtYipbglkVDb7v7fSAKfUbKUz0ffw2wNsm5fU3dJ8Zs8X9ZHDYu5L8UH9E01
-         br1ETWCLQwnGj2TBmtwHc+dSgg2nR0WWTZK30ve8FqAa5N6geo4bcGPv3rRiD5X1f0CJ
-         sJGw==
+        bh=dkyQ5mGXv5tDN3VlFhqUQ/5LN/Jl3KXt1aFfp7FfZ/k=;
+        b=eDBOqb7c1SyBBspA+Na1La+wPcz8m8I0+8U9D4kSNIrM6VSqGxGVToziNzOqykz/g+
+         0S0UCOL1DnWNSUQuU9qcTYpaBVM7/S/0kEKUo7lnu2aznuF/vc6arKmEcIwuXm6C+xVz
+         RFeRgeI7CyyB6zdJwzh3yc2SzRj/JaF8/Rz0wvMlRr9OOWTaQZgSzJr8FGuoZIikRhVx
+         K9Gg53E/FglPMermFMTnqjaG99ohNJUBZ+v3Qe3wEOk85ezPzATiDjr6uFFVHzTXQ3Gq
+         /2hfgXuF0utw3b2lD5/4BfC9afF0of3Z+1i2OZEAIHotME7RGJCp4lLkM8xk02kThLg4
+         78Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690932887; x=1691537687;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20221208; t=1690932905; x=1691537705;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z9mtYLgCllS9ypoxJCYiXNtN9ZGOxcY6Mye5Q2NFML8=;
-        b=Wvk3xFoNT2wWGcPsauVEeEKd2qLtSbbicikslqsgbyYmzwo+ApSaeqxJPeSAJ6XPb8
-         d+P+WDuRMDXBcwbvj9dywHw1TtzupJYqhAIhc1sALxYLK9sZUTyD12782MtowRbs6pnm
-         iVK4h90mVYgvWwO1iXhAt2GXiyUTO6y8tD+bJqo6hBxZuRcXjWelM1ZUVQZHkGMVC5qa
-         xc2Teu3irzBZhsHXCXfRQzqsm/QLCaPRPa0UlhzTtMZMR4SCsPmyzE5TOMv8RThuHsjy
-         lly2+q9TIuFAfOFkrkMi7R2pg+mGDfAmyxmnFdx1Oz2l3CsGwfgH/TQxrqCkF58hkjy3
-         vjGQ==
-X-Gm-Message-State: ABy/qLZIOx+C/EdCoYxP9PP3+YUiVL8AEbGYAV5Kjfrik7FLvWMHnfEi
-        xOPlNRfWYcvFgA0BVnN6YvbJjrL5jifPLhx/a54=
-X-Google-Smtp-Source: APBJJlFLJPBysUZweYl0GUhiZTgNhdoBhVlEGOooQN8krHB2TmlewFi/fq6iSJMSWa2qs3Kg6pvydg==
-X-Received: by 2002:a17:902:ea04:b0:1b8:a27d:f591 with SMTP id s4-20020a170902ea0400b001b8a27df591mr14114636plg.5.1690932886948;
-        Tue, 01 Aug 2023 16:34:46 -0700 (PDT)
+        bh=dkyQ5mGXv5tDN3VlFhqUQ/5LN/Jl3KXt1aFfp7FfZ/k=;
+        b=E29VGrL4c9x4OCVAvTv0diWWdbtIZ6PQZ5/GhkYJlX+kQgEf9nuM3ZyKOjHSA+pg/q
+         GszUfsjblUhyD9ZNAxWWMLCKHPykMEuP1nUTIWYowDr5T9v1YZHQjL4MAay2Lv0AXWo+
+         PkKprfUsnqLTrlF7J6c7+UuUFCTJlwuva9n2OKXhkeSzGvw8fIzvPQ/btcqHX0MMmmi5
+         aZ+XM/H71KDMKRYRLfenb066BetnVBowdUGg5asfPMCZkiRlpp2jr2qhuMVrydgvhlWA
+         5vPM0NG+Q2SfCR2ldon3absyPbK+nj4o8hP33UMBYCaJJiFgx7dhiotf3RpLqQOyxcNy
+         2CmA==
+X-Gm-Message-State: ABy/qLbH9sBVI+0p4lJBfdKBRRUvLmxbhknAul4qxO1Jt92SqP54LRgo
+        9ZhKCgdLMg4foFB43km9Fop4Kw==
+X-Google-Smtp-Source: APBJJlEHpNrym5p4+nrbk4k+mBpBpDrGPiFO73CLnUpZ02yjUIRkEJi2h4JqCmMrwWpHyxqIpvrzLg==
+X-Received: by 2002:a05:6a00:1d98:b0:682:59aa:178d with SMTP id z24-20020a056a001d9800b0068259aa178dmr11952269pfw.1.1690932904585;
+        Tue, 01 Aug 2023 16:35:04 -0700 (PDT)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 14-20020a17090a194e00b00268385b0501sm66690pjh.27.2023.08.01.16.34.46
+        by smtp.gmail.com with ESMTPSA id x41-20020a056a000be900b0068703879d3esm8933102pfu.113.2023.08.01.16.35.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Aug 2023 16:34:46 -0700 (PDT)
-Message-ID: <edebb2ed-8226-096d-d33a-d078f30a1221@kernel.dk>
-Date:   Tue, 1 Aug 2023 17:34:45 -0600
+        Tue, 01 Aug 2023 16:35:04 -0700 (PDT)
+Message-ID: <c033ea82-43af-23f0-e8fb-acb8a6a9571c@kernel.dk>
+Date:   Tue, 1 Aug 2023 17:35:01 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCHSET v6 0/8] Improve async iomap DIO performance
+Subject: Re: [GIT PULL v2] Improve iomap async dio performance
 Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
-        andres@anarazel.de, djwong@kernel.org
-References: <20230724225511.599870-1-axboe@kernel.dk>
- <ZMmDdEfyxIzpfezy@dread.disaster.area>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZMmDdEfyxIzpfezy@dread.disaster.area>
+To:     "Darrick J . Wong" <djwong@kernel.org>
+Cc:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+References: <98cbe74e-91d8-9611-5ac0-b344b4365e79@kernel.dk>
+In-Reply-To: <98cbe74e-91d8-9611-5ac0-b344b4365e79@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -75,36 +75,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/1/23 4:13 PM, Dave Chinner wrote:
-> On Mon, Jul 24, 2023 at 04:55:03PM -0600, Jens Axboe wrote:
->> Hi,
->>
->> Hi,
->>
->> This patchset improves async iomap DIO performance, for XFS and ext4.
->> For full details on this patchset, see the v4 posting:
->>
->> https://lore.kernel.org/io-uring/20230720181310.71589-1-axboe@kernel.dk/
->>
->>  fs/iomap/direct-io.c | 163 ++++++++++++++++++++++++++++++++-----------
->>  include/linux/fs.h   |  35 +++++++++-
->>  io_uring/rw.c        |  26 ++++++-
->>  3 files changed, 179 insertions(+), 45 deletions(-)
->>
->> Can also be found here:
->>
->> https://git.kernel.dk/cgit/linux/log/?h=xfs-async-dio.6
->>
->> No change in performance since last time, and passes my testing without
->> complaints.
+On 7/28/23 7:47 AM, Jens Axboe wrote:
+> Hi,
 > 
-> All looks good now. You can add:
+> Here's the pull request for improving async dio performance with
+> iomap. Contains a few generic cleanups as well, but the meat of it
+> is described in the tagged commit message below.
 > 
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> Please pull for 6.6!
 > 
-> To all the patches in the series.
+> 
+> The following changes since commit ccff6d117d8dc8d8d86e8695a75e5f8b01e573bf:
+> 
+>   Merge tag 'perf-tools-fixes-for-v6.5-1-2023-07-18' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools (2023-07-18 14:51:29 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.dk/linux.git tags/xfs-async-dio.6-2023-07-28
 
-Great, thank you Dave!
+Darrick, I collected Dave's reviewed-by on all the patches. Same pull
+request as this one, only the commit meta data changed:
+
+   git://git.kernel.dk/linux.git tags/xfs-async-dio.6-2023-08-01
+
+Please pull!
 
 -- 
 Jens Axboe

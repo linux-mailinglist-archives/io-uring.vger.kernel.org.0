@@ -2,74 +2,58 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C1D76B96D
-	for <lists+io-uring@lfdr.de>; Tue,  1 Aug 2023 18:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C9376BCA3
+	for <lists+io-uring@lfdr.de>; Tue,  1 Aug 2023 20:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233780AbjHAQIV (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 1 Aug 2023 12:08:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
+        id S230086AbjHASkJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 1 Aug 2023 14:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233742AbjHAQIR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 12:08:17 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486F11727;
-        Tue,  1 Aug 2023 09:08:15 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977e0fbd742so814064966b.2;
-        Tue, 01 Aug 2023 09:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690906094; x=1691510894;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dm0S5N5nNRyhMSfQrHUdCAaT/Y7WRmsF/K23ENIMIFE=;
-        b=MV2ovpB5GUaqs1kinTdOTIYLpfVD5VHaHjAmVuWX+MrhM+bnOHh9TBvV9UM8TrNKyS
-         5e3ZPEOik80Dy0it6kgfhlbrkMlowbgXyY8IQWsAlkYEBwAfIsBrYpmbHdqb875j2S4X
-         BgfiKzpPeGm8Tk69RviVqFvOk644XSlpUGFQFmFl3zYXT/e3FgUy1p1wNrChWaEdFmj4
-         egSo8DJPSagEZVYtd/Ka3tRZ1h6ZRvpUUWjyob35GC/dpu/8Xi2bL6FjU18jtj0xQadL
-         r/c4q/3K01xtZ1VOcUcgHS2KhxfMYf3GrA7KV+0h7SfJQiqZW/+NN5/gOLX7R3gu2W4M
-         dKkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690906094; x=1691510894;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dm0S5N5nNRyhMSfQrHUdCAaT/Y7WRmsF/K23ENIMIFE=;
-        b=QnKOOAjvvFbvpbRRC50nkh/eiOzPMG5GpKFEqAPKA2iwb29/yFytCEosvEpAl1kWmA
-         xthL8FqWSXyWvsavTYehKeEDfz4DCjuwHM5ea9mTqWef75T25jB/g2xe3ZCSdRbUNPpz
-         QiU6F3VheihYCOgMLMfxsVKtwxAUm/nwziQHAO6ZuWyOU2g8RyIsNyya163KJQqlvCGW
-         fh4mCvbbvUENFSraLxkqxIPnb44PS2+Nlu62kCf6vQllsiurCaKDYeGl8Qp9rPcJnBgx
-         6r7ayjFPdCZ7ol3iRNJ9eTdr1MhagJsoPI8dFTO+RLOY24CFUHQGLDxCgU/JRJ7UVm7y
-         wSRw==
-X-Gm-Message-State: ABy/qLZ4+lm6N4Wo6xm9KeV3KjTNKpUbNnNK5oL43q0vaUlMgXKyWE7W
-        +/iDE2sArPSbcPmYwmQT5Sc=
-X-Google-Smtp-Source: APBJJlEhJLmDMeDuTpBA9ApKtdXMe4/obO/ZoSW7sy8z1dsaqvi6FloHPUL4+kNpAT4Ne4SMm04ftA==
-X-Received: by 2002:a17:906:64c5:b0:99b:e04d:307d with SMTP id p5-20020a17090664c500b0099be04d307dmr2795655ejn.57.1690906093445;
-        Tue, 01 Aug 2023 09:08:13 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:d658])
-        by smtp.gmail.com with ESMTPSA id g24-20020a1709064e5800b0099316c56db9sm7810903ejw.127.2023.08.01.09.08.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Aug 2023 09:08:13 -0700 (PDT)
-Message-ID: <dd4e7013-b4fc-4135-51a7-806127c2013b@gmail.com>
-Date:   Tue, 1 Aug 2023 17:05:28 +0100
+        with ESMTP id S230363AbjHASkG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 1 Aug 2023 14:40:06 -0400
+Received: from out-73.mta1.migadu.com (out-73.mta1.migadu.com [IPv6:2001:41d0:203:375::49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB162683
+        for <io-uring@vger.kernel.org>; Tue,  1 Aug 2023 11:39:37 -0700 (PDT)
+Message-ID: <04109fdf-2863-3fe0-308c-7f07d0e403ed@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690915175;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pLMTIcsv8M8W1pPaH5oU7HeVQKW+06uKa9tqYo1sBoo=;
+        b=WxLFLmrX395a+lKM0aOKT6z6yK3R/xCByFKFUovZNi/KO/IH3Q3mR5a1NdER16zmxXMtsE
+        AuQoXaHuhbzX7cUM83pb8W4tt61UtLC8Z/NgSSLK753BGOlnTlA1rezPTgaappTCVI7Jw2
+        wKKhT4nMpoqy1EezTsn5YOqgSYZhkBk=
+Date:   Wed, 2 Aug 2023 02:39:26 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] io_uring: split req init from submit
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
 Content-Language: en-US
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@meta.com>,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-References: <20230728201449.3350962-1-kbusch@meta.com>
- <9a360c1f-dc9a-e8b4-dbb0-39c99509bb8d@gmail.com>
- <22d99997-8626-024d-fae2-791bb0a094c3@kernel.dk>
- <ce3e1cf4-40a0-adde-e66b-487048b3871d@gmail.com>
- <ZMkiHoVbdBoUSxLy@kbusch-mbp.dhcp.thefacebook.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZMkiHoVbdBoUSxLy@kbusch-mbp.dhcp.thefacebook.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     djwong@kernel.org, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+ <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+ <ZMcPUX0lYC2nscAm@dread.disaster.area>
+ <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,61 +61,117 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/1/23 16:17, Keith Busch wrote:
-> On Tue, Aug 01, 2023 at 03:13:59PM +0100, Pavel Begunkov wrote:
->> On 7/31/23 22:00, Jens Axboe wrote:
->>> On 7/31/23 6:53?AM, Pavel Begunkov wrote:
->>>> On 7/28/23 21:14, Keith Busch wrote:
->>>>> From: Keith Busch <kbusch@kernel.org>
->>>>>
->>>>> Split the req initialization and link handling from the submit. This
->>>>> simplifies the submit path since everything that can fail is separate
->>>>> from it, and makes it easier to create batched submissions later.
+On 7/31/23 16:13, Christian Brauner wrote:
+> On Mon, Jul 31, 2023 at 11:33:05AM +1000, Dave Chinner wrote:
+>> On Thu, Jul 27, 2023 at 04:27:30PM +0200, Christian Brauner wrote:
+>>> On Thu, Jul 27, 2023 at 07:51:19PM +0800, Hao Xu wrote:
+>>>> I actually saw this semaphore, and there is another xfs lock in
+>>>> file_accessed
+>>>>    --> touch_atime
+>>>>      --> inode_update_time
+>>>>        --> inode->i_op->update_time == xfs_vn_update_time
 >>>>
->>>> Keith, I don't think this prep patch does us any good, I'd rather
->>>> shove the link assembling code further out of the common path. I like
->>>> the first version more (see [1]). I'd suggest to merge it, and do
->>>> cleaning up after.
+>>>> Forgot to point them out in the cover-letter..., I didn't modify them
+>>>> since I'm not very sure about if we should do so, and I saw Stefan's
+>>>> patchset didn't modify them too.
 >>>>
->>>> I'll also say that IMHO the overhead is well justified. It's not only
->>>> about having multiple nvmes, the problem slows down cases mixing storage
->>>> with net and the rest of IO in a single ring.
->>>>
->>>> [1] https://lore.kernel.org/io-uring/20230504162427.1099469-1-kbusch@meta.com/
+>>>> My personnal thinking is we should apply trylock logic for this
+>>>> inode->i_rwsem. For xfs lock in touch_atime, we should do that since it
+>>>> doesn't make sense to rollback all the stuff while we are almost at the
+>>>> end of getdents because of a lock.
 >>>
->>> The downside of that one, to me, is that it just serializes all of it
->>> and we end up looping over the submission list twice.
+>>> That manoeuvres around the problem. Which I'm slightly more sensitive
+>>> too as this review is a rather expensive one.
+>>>
+>>> Plus, it seems fixable in at least two ways:
+>>>
+>>> For both we need to be able to tell the filesystem that a nowait atime
+>>> update is requested. Simple thing seems to me to add a S_NOWAIT flag to
+>>> file_time_flags and passing that via i_op->update_time() which already
+>>> has a flag argument. That would likely also help kiocb_modified().
 >>
->> Right, and there is nothing can be done if we want to know about all
->> requests in advance, at least without changing uapi and/or adding
->> userspace hints.
+>> Wait - didn't we already fix this for mtime updates on IOCB_NOWAIT
+>> modification operations? Yeah, we did:
 >>
->>> With alloc+init
->>> split, at least we get some locality wins by grouping the setup side of
->>> the requests.
+>> kiocb_modified(iocb)
+>>    file_modified_flags(iocb->ki_file, iocb->ki_flags)
+>>      ....
+>>      ret = inode_needs_update_time()
+>>      if (ret <= 0)
+>> 	return ret;
+>>      if (flags & IOCB_NOWAIT)
+>> 	return -EAGAIN;
+>>      <does timestamp update>
 >>
->> I don't think I follow, what grouping do you mean? As far as I see, v1
->> and v2 are essentially same with the difference of whether you have a
->> helper for setting up links or not, see io_setup_link() from v2. In both
->> cases it's executed in the same sequence:
+>>> file_accessed()
+>>> -> touch_atime()
+>>>     -> inode_update_time()
+>>>        -> i_op->update_time == xfs_vn_update_time()
 >>
->> 1) init (generic init + opcode init + link setup) each request and put
->>     into a temporary list.
->> 2) go go over the list and submit them one by one
->>
->> And after inlining they should look pretty close.
+>> Yeah, so this needs the same treatment as file_modified_flags() -
+>> touch_atime() needs a flag variant that passes IOCB_NOWAIT, and
+>> after atime_needs_update() returns trues we should check IOCB_NOWAIT
+>> and return EAGAIN if it is set. That will punt the operation that
+>> needs to the update to a worker thread that can block....
 > 
-> The main difference in this one compared to the original version is that
-> everything in the 2nd loop is just for the final dispatch. Anything that
-> can fail, fallback, or defer to async happens in the first loop. I'm not
-> sure that makes a difference in runtime, but having the 2nd loop handle
-> only fast-path requests was what I set out to do for this version.
+> As I tried to explain, I would prefer if we could inform the filesystem
+> through i_op->update_time() itself that this is async and give the
+> filesystem the ability to try and acquire the locks it needs and return
+> EAGAIN from i_op->update_time() itself if it can't acquire them.
 
-For performance it doesn't matter, it's a very slow path and we should
-not be hitting it. And it only smears single req submission over multiple
-places, for instance it won't be legal to use io_submit_sqe() without
-those extra checks. Those are all minor points, but I don't think it's
-anyhow better than v1 in this aspect.
+I browse code in i_op->update_time = xfs_vn_update_time, it's mainly
+about xfs journal code. It creates a transaction and adds a item to
+it, not familiar with this part, from a quick look I found some
+locks and sleep point in it to modify. I think I need some time to sort
+out this part. Or maybe we can do it like what Dave said as a short term
+solution and change the block points in journal code later as a separate
+patchset, those journal code I believe are common code for xfs IO
+operations. I'm ok with both though.
 
--- 
-Pavel Begunkov
+> 
+>>
+>>> Then we have two options afaict:
+>>>
+>>> (1) best-effort atime update
+>>>
+>>> file_accessed() already has the builtin assumption that updating atime
+>>> might fail for other reasons - see the comment in there. So it is
+>>> somewhat best-effort already.
+>>>
+>>> (2) move atime update before calling into filesystem
+>>>
+>>> If we want to be sure that access time is updated when a readdir request
+>>> is issued through io_uring then we need to have file_accessed() give a
+>>> return value and expose a new helper for io_uring or modify
+>>> vfs_getdents() to do something like:
+>>>
+>>> vfs_getdents()
+>>> {
+>>> 	if (nowait)
+>>> 		down_read_trylock()
+>>>
+>>> 	if (!IS_DEADDIR(inode)) {
+>>> 		ret = file_accessed(file);
+>>> 		if (ret == -EAGAIN)
+>>> 			goto out_unlock;
+>>>
+>>> 		f_op->iterate_shared()
+>>> 	}
+>>> }
+>>
+>> Yup, that's the sort of thing that needs to be done.
+>>
+>> But as I said in the "llseek for io-uring" thread, we need to stop
+>> the game of whack-a-mole passing random nowait boolean flags to VFS
+>> operations before it starts in earnest.  We really need a common
+>> context structure (like we have a kiocb for IO operations) that
+>> holds per operation control state so we have consistency across all
+>> the operations that we need different behaviours for.
+> 
+> Yes, I tend to agree and thought about the same. But right now we don't
+> have a lot of context. So I would lean towards a flag argument at most.
+> 
+> But I also wouldn't consider it necessarily wrong to start with booleans
+> or a flag first and in a couple of months if the need for more context
+> arises we know what kind of struct we want or need.
+

@@ -2,90 +2,131 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC7F774501
-	for <lists+io-uring@lfdr.de>; Tue,  8 Aug 2023 20:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13951774A6A
+	for <lists+io-uring@lfdr.de>; Tue,  8 Aug 2023 22:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235666AbjHHSfF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Aug 2023 14:35:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
+        id S229720AbjHHU1y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Aug 2023 16:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233557AbjHHSer (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Aug 2023 14:34:47 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B129C1565
-        for <io-uring@vger.kernel.org>; Tue,  8 Aug 2023 10:58:26 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-7748ca56133so40893139f.0
-        for <io-uring@vger.kernel.org>; Tue, 08 Aug 2023 10:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691517505; x=1692122305;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/w2FPj8hkvrmGq+O6G7luRrBsz4G0SLRfxtnrA+OHNs=;
-        b=AasbcmtdOEfGbOfZ09mB201dvfBtriGDq4msxnGW4Mq1fROkFPNzIkrRZQA8tBTlF8
-         G7wzwkHVdyvWQJFlOOTqXpOaP2Iyg6/Nvz/eZ1k2ngk8a9lW4DmkxfunmcdkRZS/oexV
-         b/h1SBWfJiJiQ/NcIWsCDJdJXMYjCLL4I+86qRg2s7F+gx+sUKnn7AmvDKeM+L4MS9Rs
-         lLQktIGhjIPf1lsQoi0HKnx89jGAVFmT0I1HEOCoVm41FsTXPQ8bsza8q+jqbd+HtENI
-         ZZ1tbPQBe/fo8oXpT0+ZfVlBKEAhwc9sacclW8QisYlfNMjgkTBkpSsWRlY+BVmqVmNu
-         E6kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691517505; x=1692122305;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/w2FPj8hkvrmGq+O6G7luRrBsz4G0SLRfxtnrA+OHNs=;
-        b=OloT1XfBpM4dY9Oxuo3KX4zVBN9F9+t0NRfk+mogoV7GJCTPf41oVRAeNwRrK3JEip
-         J5edCXD+W44E4lR9GbEnW4gmVhPuWMonzK/DmzMqagMX6YVbnXh64h6rd6wCvYPmmYeR
-         1zc+3Qy4fSwQsuois295kdjsD7HTu/x8HIhl1AmQxgfrBGP+2soiPFGmvNcpyzIxE6wA
-         ZYPmG0PO6EFoshgeQCixucOJS4/bKf0t6dIq9oYxge8b6gaVjmBnmYApLQSR1Dek9n7q
-         p1mV/8nAMROWiWqv3+bsreDnJg5OKiQ+ql2qeyuGsnExNE9wBEzR7PxapbiFm05oXgQe
-         7Hmw==
-X-Gm-Message-State: AOJu0Yy3U8J+ti2RDn/5ckP5XZ09s12hJ0fD70Zt7pd2Yi8gNv0XE3py
-        hxiO43Ub8NE+FDST6QOzjmMVVnbqNV9zacnzRJY=
-X-Google-Smtp-Source: AGHT+IFaAMpm916Z8cinreZ3s5N71EYem8U+ytSE7rBXU7rhSbeUrVWkhgosQEUhHfvNMFk1jwE8rA==
-X-Received: by 2002:a92:d94b:0:b0:349:385e:287e with SMTP id l11-20020a92d94b000000b00349385e287emr500745ilq.1.1691517505329;
-        Tue, 08 Aug 2023 10:58:25 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id gc1-20020a056638670100b0042b16c005e9sm3359849jab.124.2023.08.08.10.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 10:58:24 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     asml.silence@gmail.com, Yue Haibing <yuehaibing@huawei.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230808151058.4572-1-yuehaibing@huawei.com>
-References: <20230808151058.4572-1-yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] io_uring/rsrc: Remove unused declaration
- io_rsrc_put_tw()
-Message-Id: <169151750416.133230.11031331146725665272.b4-ty@kernel.dk>
-Date:   Tue, 08 Aug 2023 11:58:24 -0600
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S233210AbjHHU1h (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Aug 2023 16:27:37 -0400
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E41ACB76;
+        Tue,  8 Aug 2023 10:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+        ; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+        :Date:subject:date:message-id:reply-to;
+        bh=8iItz4fAqc9eHWlkPTlOj5+qnfmys/TzLvwC/yA08jQ=; b=EMf5xQwVyzUnLtsBrpCxqvTU0F
+        5Cvjq4BE1nyD8fihHctOb9LNCkiIVbbjd08EoEK1TXKDdnFDKsn9oAz1HBEp4coKLnxcnYtJ+Wfp0
+        TXIAc6Va1L6Da8baMlf++ElczSmxomYyZDnTD64lVhCabao/gxZ50trd64IPE1ovX1GU=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:37588 helo=pettiford)
+        by mail.hugovil.com with esmtpa (Exim 4.92)
+        (envelope-from <hugo@hugovil.com>)
+        id 1qTQnA-0001gq-K0; Tue, 08 Aug 2023 13:46:49 -0400
+Date:   Tue, 8 Aug 2023 13:46:47 -0400
+From:   Hugo Villeneuve <hugo@hugovil.com>
+To:     Breno Leitao <leitao@debian.org>
+Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        io-uring@vger.kernel.org
+Message-Id: <20230808134647.3e0e702f54ef5e5b4378ff98@hugovil.com>
+In-Reply-To: <ZNJ5f1hR3cre0IPd@gmail.com>
+References: <20230808134049.1407498-1-leitao@debian.org>
+        <20230808134049.1407498-2-leitao@debian.org>
+        <20230808121323.bc144c719eba5979e161aac6@hugovil.com>
+        <ZNJ5f1hR3cre0IPd@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-034f2
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [PATCH v2 1/8] net: expose sock_use_custom_sol_socket
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
+On Tue, 8 Aug 2023 10:21:03 -0700
+Breno Leitao <leitao@debian.org> wrote:
 
-On Tue, 08 Aug 2023 23:10:58 +0800, Yue Haibing wrote:
-> Commit 36b9818a5a84 ("io_uring/rsrc: don't offload node free")
-> removed the implementation but leave declaration.
+> Hello  Hugo,
 > 
+> On Tue, Aug 08, 2023 at 12:13:23PM -0400, Hugo Villeneuve wrote:
+> > On Tue,  8 Aug 2023 06:40:41 -0700
+> > Breno Leitao <leitao@debian.org> wrote:
+> > 
+> > > Exposing function sock_use_custom_sol_socket(), so it could be used by
+> > > io_uring subsystem.
+> > > 
+> > > This function will be used in the function io_uring_cmd_setsockopt() in
+> > > the coming patch, so, let's move it to the socket.h header file.
+> > 
+> > Hi,
+> > this description doesn't seem to match the code change below...
 > 
+> I re-read the patch comment and it seems to match what the code does,
+> so, probably this description only makes sense to me (?).
+> 
+> That said, hat have you understood from reading the description above?
+> socket.h
+> Thanks for the review,
 
-Applied, thanks!
+Hi Breno,
+your comments says "move it to the socket.h header file" but it seems
+to be moved to the net.h header file?
 
-[1/1] io_uring/rsrc: Remove unused declaration io_rsrc_put_tw()
-      commit: 968c584cd8cc0da186befca5fc994988be61aab7
-
-Best regards,
--- 
-Jens Axboe
+Hugo Villeneuve
 
 
-
+> > > ---
+> > >  include/linux/net.h | 5 +++++
+> > >  net/socket.c        | 5 -----
+> > >  2 files changed, 5 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/include/linux/net.h b/include/linux/net.h
+> > > index 41c608c1b02c..14a956e4530e 100644
+> > > --- a/include/linux/net.h
+> > > +++ b/include/linux/net.h
+> > > @@ -355,4 +355,9 @@ u32 kernel_sock_ip_overhead(struct sock *sk);
+> > >  #define MODULE_ALIAS_NET_PF_PROTO_NAME(pf, proto, name) \
+> > >  	MODULE_ALIAS("net-pf-" __stringify(pf) "-proto-" __stringify(proto) \
+> > >  		     name)
+> > > +
+> > > +static inline bool sock_use_custom_sol_socket(const struct socket *sock)
+> > > +{
+> > > +	return test_bit(SOCK_CUSTOM_SOCKOPT, &sock->flags);
+> > > +}
+> > >  #endif	/* _LINUX_NET_H */
+> > > diff --git a/net/socket.c b/net/socket.c
+> > > index 1dc23f5298ba..8df54352af83 100644
+> > > --- a/net/socket.c
+> > > +++ b/net/socket.c
+> > > @@ -2216,11 +2216,6 @@ SYSCALL_DEFINE4(recv, int, fd, void __user *, ubuf, size_t, size,
+> > >  	return __sys_recvfrom(fd, ubuf, size, flags, NULL, NULL);
+> > >  }
+> > >  
+> > > -static bool sock_use_custom_sol_socket(const struct socket *sock)
+> > > -{
+> > > -	return test_bit(SOCK_CUSTOM_SOCKOPT, &sock->flags);
+> > > -}
+> > > -
+> > >  /*
+> > >   *	Set a socket option. Because we don't know the option lengths we have
+> > >   *	to pass the user mode parameter for the protocols to sort out.
+> > > -- 
+> > > 2.34.1
+> > > 

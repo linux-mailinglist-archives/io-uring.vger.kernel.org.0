@@ -2,115 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A150774497
-	for <lists+io-uring@lfdr.de>; Tue,  8 Aug 2023 20:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC7F774501
+	for <lists+io-uring@lfdr.de>; Tue,  8 Aug 2023 20:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235759AbjHHSYE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Aug 2023 14:24:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37074 "EHLO
+        id S235666AbjHHSfF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 8 Aug 2023 14:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235184AbjHHSXk (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Aug 2023 14:23:40 -0400
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470AE7EE4
-        for <io-uring@vger.kernel.org>; Tue,  8 Aug 2023 10:35:11 -0700 (PDT)
-Received: by mail-pg1-x549.google.com with SMTP id 41be03b00d2f7-55c7bb27977so6011867a12.0
-        for <io-uring@vger.kernel.org>; Tue, 08 Aug 2023 10:35:11 -0700 (PDT)
+        with ESMTP id S233557AbjHHSer (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Aug 2023 14:34:47 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B129C1565
+        for <io-uring@vger.kernel.org>; Tue,  8 Aug 2023 10:58:26 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-7748ca56133so40893139f.0
+        for <io-uring@vger.kernel.org>; Tue, 08 Aug 2023 10:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691516111; x=1692120911;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbNixERlHqS43p9WnetIfE1bwp3ZFaI202y6cxjDISk=;
-        b=BtYnibgAq7g0L/okVpcz1sm6OulXBZOLXW68YAi0kE94x5HCN7bWDWiYRWfi91svGo
-         Xc79qQ233j8gXgGltAV/J8/uXgNtnFjybeQZD1f/61BdCanNXGvF03sIBuo0PLfw2n8V
-         M74JpyhSFxtW15aRUBl8P3VcNB0wjFg/9n39VGQsWXzGFLdytSDGhhjl7u1Z6CtvJuZN
-         /eAqJk8ulH9QCYWJViD5t8z1c0a8y4LlJj9wtw/p4CWVORUdKTqp/wxHXBJvv2h+a/vL
-         8rWrgpPqCe+14Q5CE8cj3cirPO2rMueXgtfqCD0+VzHSYfmiNnwNXQhCV4TlIpQyV+Ie
-         Hl0w==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691517505; x=1692122305;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/w2FPj8hkvrmGq+O6G7luRrBsz4G0SLRfxtnrA+OHNs=;
+        b=AasbcmtdOEfGbOfZ09mB201dvfBtriGDq4msxnGW4Mq1fROkFPNzIkrRZQA8tBTlF8
+         G7wzwkHVdyvWQJFlOOTqXpOaP2Iyg6/Nvz/eZ1k2ngk8a9lW4DmkxfunmcdkRZS/oexV
+         b/h1SBWfJiJiQ/NcIWsCDJdJXMYjCLL4I+86qRg2s7F+gx+sUKnn7AmvDKeM+L4MS9Rs
+         lLQktIGhjIPf1lsQoi0HKnx89jGAVFmT0I1HEOCoVm41FsTXPQ8bsza8q+jqbd+HtENI
+         ZZ1tbPQBe/fo8oXpT0+ZfVlBKEAhwc9sacclW8QisYlfNMjgkTBkpSsWRlY+BVmqVmNu
+         E6kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691516111; x=1692120911;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbNixERlHqS43p9WnetIfE1bwp3ZFaI202y6cxjDISk=;
-        b=ADeuJBwQdgosH/rewzZPAwP17hjNDYtlG2MEzF9iO354otF4/4WGyztkKU1Ct6URMl
-         h+XD2nFd8R1P4O7zG0Z8P0fdnVnm771+RTk9IgyTf0M8CxxvtOTutNC9x27rRAFTMIVo
-         84LQGBps588AvH2KBV7JAnvtxhGs4eRXlyf1GnG5Bo96ZfM56R3NBQd1M4X8sMebyEZQ
-         hC1ej2XttIz+fX5+WNt4KudAtCtV5n2jTCPYp9DOcTxpMSMcv1+s5qy9wTzZxTwTh670
-         pwO9SV7+CY4yg/6dRLq8ztB8bajjJbdNVSAhvluZoVKc0Z0TWkYX7u9Ph6q6NfoSX6qz
-         YhmQ==
-X-Gm-Message-State: AOJu0Yys3yy8fCYycQeLUIZEmBOi6Ucbd5eAhIcz7+eH6GIKeTU3w2Yt
-        gTaC59Gx26JTNDnR8+Wk5On4NHw=
-X-Google-Smtp-Source: AGHT+IHneZnuNzdmec4p8IMznIadt3gvRYK8ETNwHwQuhWBeUw0E2l7zTwuivbDYUrt8/txQeEEsw9g=
-X-Received: from sdf.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5935])
- (user=sdf job=sendgmr) by 2002:a63:3443:0:b0:564:41a2:8d5a with SMTP id
- b64-20020a633443000000b0056441a28d5amr732pga.11.1691516110738; Tue, 08 Aug
- 2023 10:35:10 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 10:35:08 -0700
-In-Reply-To: <20230808134049.1407498-1-leitao@debian.org>
-Mime-Version: 1.0
-References: <20230808134049.1407498-1-leitao@debian.org>
-Message-ID: <ZNJ8zGcYClv/VCwG@google.com>
-Subject: Re: [PATCH v2 0/8] io_uring: Initial support for {s,g}etsockopt commands
-From:   Stanislav Fomichev <sdf@google.com>
-To:     Breno Leitao <leitao@debian.org>
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com
+        d=1e100.net; s=20221208; t=1691517505; x=1692122305;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/w2FPj8hkvrmGq+O6G7luRrBsz4G0SLRfxtnrA+OHNs=;
+        b=OloT1XfBpM4dY9Oxuo3KX4zVBN9F9+t0NRfk+mogoV7GJCTPf41oVRAeNwRrK3JEip
+         J5edCXD+W44E4lR9GbEnW4gmVhPuWMonzK/DmzMqagMX6YVbnXh64h6rd6wCvYPmmYeR
+         1zc+3Qy4fSwQsuois295kdjsD7HTu/x8HIhl1AmQxgfrBGP+2soiPFGmvNcpyzIxE6wA
+         ZYPmG0PO6EFoshgeQCixucOJS4/bKf0t6dIq9oYxge8b6gaVjmBnmYApLQSR1Dek9n7q
+         p1mV/8nAMROWiWqv3+bsreDnJg5OKiQ+ql2qeyuGsnExNE9wBEzR7PxapbiFm05oXgQe
+         7Hmw==
+X-Gm-Message-State: AOJu0Yy3U8J+ti2RDn/5ckP5XZ09s12hJ0fD70Zt7pd2Yi8gNv0XE3py
+        hxiO43Ub8NE+FDST6QOzjmMVVnbqNV9zacnzRJY=
+X-Google-Smtp-Source: AGHT+IFaAMpm916Z8cinreZ3s5N71EYem8U+ytSE7rBXU7rhSbeUrVWkhgosQEUhHfvNMFk1jwE8rA==
+X-Received: by 2002:a92:d94b:0:b0:349:385e:287e with SMTP id l11-20020a92d94b000000b00349385e287emr500745ilq.1.1691517505329;
+        Tue, 08 Aug 2023 10:58:25 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id gc1-20020a056638670100b0042b16c005e9sm3359849jab.124.2023.08.08.10.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 10:58:24 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     asml.silence@gmail.com, Yue Haibing <yuehaibing@huawei.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230808151058.4572-1-yuehaibing@huawei.com>
+References: <20230808151058.4572-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] io_uring/rsrc: Remove unused declaration
+ io_rsrc_put_tw()
+Message-Id: <169151750416.133230.11031331146725665272.b4-ty@kernel.dk>
+Date:   Tue, 08 Aug 2023 11:58:24 -0600
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-034f2
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 08/08, Breno Leitao wrote:
-> This patchset adds support for getsockopt (SOCKET_URING_OP_GETSOCKOPT)
-> and setsockopt (SOCKET_URING_OP_SETSOCKOPT) in io_uring commands.
-> SOCKET_URING_OP_SETSOCKOPT implements generic case, covering all levels
-> nad optnames. On the other hand, SOCKET_URING_OP_GETSOCKOPT just
-> implements level SOL_SOCKET case, which seems to be the
-> most common level parameter for get/setsockopt(2).
-> 
-> struct proto_ops->setsockopt() uses sockptr instead of userspace
-> pointers, which makes it easy to bind to io_uring. Unfortunately
-> proto_ops->getsockopt() callback uses userspace pointers, except for
-> SOL_SOCKET, which is handled by sk_getsockopt(). Thus, this patchset
-> leverages sk_getsockopt() to imlpement the SOCKET_URING_OP_GETSOCKOPT
-> case.
-> 
-> In order to support BPF hooks, I modified the hooks to use  sockptr, so,
-> it is flexible enough to accept user or kernel pointers for
-> optval/optlen.
-> 
-> PS1: For getsockopt command, the optlen field is not a userspace
-> pointers, but an absolute value, so this is slightly different from
-> getsockopt(2) behaviour. The new optlen value is returned in cqe->res.
-> 
-> PS2: The userspace pointers need to be alive until the operation is
-> completed.
-> 
-> These changes were tested with a new test[1] in liburing. On the BPF
-> side, I tested that no regression was introduced by running "test_progs"
-> self test using "sockopt" test case.
-> 
-> [1] Link: https://github.com/leitao/liburing/blob/getsock/test/socket-getsetsock-cmd.c
-> 
-> RFC -> V1:
-> 	* Copy user memory at io_uring subsystem, and call proto_ops
-> 	  callbacks using kernel memory
-> 	* Implement all the cases for SOCKET_URING_OP_SETSOCKOPT
 
-I did a quick pass, will take a close look later today. So far everything makes
-sense to me.
+On Tue, 08 Aug 2023 23:10:58 +0800, Yue Haibing wrote:
+> Commit 36b9818a5a84 ("io_uring/rsrc: don't offload node free")
+> removed the implementation but leave declaration.
+> 
+> 
 
-Should we properly test it as well?
-We have tools/testing/selftests/bpf/prog_tests/sockopt.c which does
-most of the sanity checks, but it uses regular socket/{g,s}etsockopt
-syscalls. Seems like it should be pretty easy to extend this with
-io_uring path? tools/testing/selftests/net/io_uring_zerocopy_tx.c
-already implements minimal wrappers which we can most likely borrow.
+Applied, thanks!
+
+[1/1] io_uring/rsrc: Remove unused declaration io_rsrc_put_tw()
+      commit: 968c584cd8cc0da186befca5fc994988be61aab7
+
+Best regards,
+-- 
+Jens Axboe
+
+
+

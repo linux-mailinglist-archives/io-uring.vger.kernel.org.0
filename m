@@ -2,178 +2,136 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48AEE77634E
-	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 17:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB8877636A
+	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 17:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbjHIPGi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Aug 2023 11:06:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41160 "EHLO
+        id S229498AbjHIPJ4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Aug 2023 11:09:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231205AbjHIPGh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 11:06:37 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A361A91
-        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 08:06:36 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9936b3d0286so1026033366b.0
-        for <io-uring@vger.kernel.org>; Wed, 09 Aug 2023 08:06:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691593595; x=1692198395;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QPp5/Mw5k8KhERZHTtBT/Wv5Cg7tHkjo4zClymTuFXY=;
-        b=dqeKuGOybTiQIOwlBhJ5khjOO8d2WPEt39VANBqUBUaXEcgbXbdhwpZynBCxeVzpwP
-         jKgsZjs0JOyb40umijhBy1eCR130lSdaI4z4kwTXVb4CSoseAYH3cp7u+PRBRZMvLXy4
-         ySr+chCkzynEqGnaicLzJPpXNAVgHBLTjMIswNULanFqE5j8lo7YRqX6pnjpLSZE6CGM
-         EL7YLJioHzqNKWRhDrLefGExcYob+m4xCmoLio1WyRqnwrDpjlxGGd4V5SRrVsuCJWfI
-         igA0mOcpDlLuEmAqDIJQCUMhIA/w+YyG+ZeEYvZjd7oW08YOzTnZjJEnpLGprOKblr1S
-         HomA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691593595; x=1692198395;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QPp5/Mw5k8KhERZHTtBT/Wv5Cg7tHkjo4zClymTuFXY=;
-        b=kUPR01Gqxm7JAK6aFIinw8piQiZkxa44rFZ6LlnhsvyItCeXxmoWcKODLkFNeY29Zq
-         /8WSNu63Ry6x88/tohhRISCUBc2yW2P3F6wbZgTTNlgBR7XFZUivMWrhFjkiOGlWXRhG
-         yxFNIw5suIxP/6niEd53jGq3hR8MZzhRK1sJit9noFULL06Gp1Rh0RDob2Cdc47Oboqk
-         CmICD6qmeFdqQfVBHWr8J7NybU417IVlPM6ndhtB5XrQoqPLwqvi+60A2mpc3yxapeDh
-         kDOXwFJSO0ERunDrPvFYyJbVMYAgXHkine/3wi/8RWTA5jIVmS0IGpFOMVz5AtOABWET
-         43yA==
-X-Gm-Message-State: AOJu0YzCizliIQOBWYqeGK/SZLA0EGTvxZbFvyLjQeZDtP4myo9O1BQc
-        dlibWRo6EuBmC3cJg7e3A6cjmEzpApg=
-X-Google-Smtp-Source: AGHT+IGiEl4oEkapCtN7Dcnj/skCZd+LfcXJBh7mmI+X3vYXwShVCQuFuT4jSDKr4gn5i3BBxmldXA==
-X-Received: by 2002:a17:907:784f:b0:993:d53b:9805 with SMTP id lb15-20020a170907784f00b00993d53b9805mr2137509ejc.11.1691593594726;
-        Wed, 09 Aug 2023 08:06:34 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::26ef? ([2620:10d:c092:600::2:c27f])
-        by smtp.gmail.com with ESMTPSA id v17-20020a170906489100b0099297c99314sm8108163ejq.113.2023.08.09.08.06.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 08:06:34 -0700 (PDT)
-Message-ID: <9fd8e0be-2f9d-eaae-d0bd-d0c7b6521e05@gmail.com>
-Date:   Wed, 9 Aug 2023 16:05:09 +0100
+        with ESMTP id S229914AbjHIPJ4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 11:09:56 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB3F1999;
+        Wed,  9 Aug 2023 08:09:51 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9E4DE5C00CC;
+        Wed,  9 Aug 2023 11:09:48 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 09 Aug 2023 11:09:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1691593788; x=1691680188; bh=m7
+        Yanb/vvsE/fqlIS6281qF7gWWLaghgUEnS3kHEVy0=; b=neG4KZuWdFoqjpt55G
+        C6BGZC3xc91iYe1axORYvayX3EjKpNORwPe96Hp2IJNRde99sVDwBklTgLnTtQZm
+        AwU5Xyc2SixBeufC5gQLYj7NIiPqrfmTBAPAYB/8vftniCos59B0MLMI5fVayp/B
+        EYYUVE0Zvu0pA7ANtUV8HaMwjEyQVz3WyJ6RNWbu7t0hEHEhQCHvOYlEy33QH7+s
+        eWs1PnsXlczGMXM3bQBYJEFSmU+kbM29yDUzYRQiduz/61ONTLAsXzXHfBfNPXIB
+        kZCWKqCdBOGaGDTUHSasGCtRsYFdC9L+ER2SFGdrt7DE0escJ8v+L8kuimvnri4G
+        mqgg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1691593788; x=1691680188; bh=m7Yanb/vvsE/f
+        qlIS6281qF7gWWLaghgUEnS3kHEVy0=; b=0wYJnG2jecIE88IDHNK4B3wtDn+tI
+        ZMIk3gtRQPlcr+yG0x8DLWJyCTubvrstivux2twxPOsirVL9fxyc+eyd/mVmMpMe
+        RqHcEUCk/17MLe/a3dQGe8hOVB9zDfZ1FZLMBrJ9B5C198T3LX7HQDS4c+/ZFBuj
+        EweSfjMsDr+FaDHpIywVLqhWpp1dGkzrLqH3m40tlavpXbOP33VCa7LVPItT6n06
+        +SUy7l56t1WQQvRMP9KeaIb0KUnB4Am5xW5t8SLXiNbGtmWcUxMV83R6hP3c7Syp
+        c2Uj3jTNMufW2nPHMOS9ken//385ThRZ2Z83w6MbHrdcL0lx7MgvAaUqQ==
+X-ME-Sender: <xms:O6zTZABPODP7SAzfEtWb8fvevVdAJzmxgjbADHkM6a6jA74R_hHwWQ>
+    <xme:O6zTZCi_6YHumSuxXikBRqLE7flX_KGmsLfL1U5UwpFg3OMLCnnjhFB6mnoZojKdW
+    aWA9g-iKAnmuQTEQw>
+X-ME-Received: <xmr:O6zTZDmshDLvhCyTpCC_LtXlTC3Bv1p-GNR3PL586crbN6kEtEfV-lcPtAJ-rJW_T5MRoCfkXXJqXzh3WROjfuojsuJpKWBp2ozXZORCMr9TvmhUrCWdvOUYjzCk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrleeggdekfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
+    htthgvrhhnpedvffefvefhteevffegieetfefhtddvffejvefhueetgeeludehteevudei
+    tedtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grnhgurhgvshesrghnrghrrgiivghlrdguvg
+X-ME-Proxy: <xmx:O6zTZGz2pyx1aZJXdPyjZU1sGSbBV33WvmJrdfF307Xo5cMEopOaCg>
+    <xmx:O6zTZFS4vPpX6S6IJfRLhsZLpHewPWgoaGIdxdDkxk1ycQP1vtkBZA>
+    <xmx:O6zTZBaQTJagVRrc0WK-erBsE6sSKlU3H-_vUtrFm0IFchzVAfFhQw>
+    <xmx:PKzTZGKL_39ndypR66zDr36gTnF3d3mHbE3L4hIzWKUnOIHySJGJ7A>
+Feedback-ID: id4a34324:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Aug 2023 11:09:47 -0400 (EDT)
+Date:   Wed, 9 Aug 2023 08:09:45 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     Matteo Rizzo <matteorizzo@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        axboe@kernel.dk, asml.silence@gmail.com, corbet@lwn.net,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        ribalda@chromium.org, rostedt@goodmis.org, jannh@google.com,
+        chenhuacai@kernel.org, gpiccoli@igalia.com, ldufour@linux.ibm.com,
+        evn@google.com, poprdi@google.com, jordyzomer@google.com,
+        krisman@suse.de
+Subject: Re: [PATCH v3 1/1] io_uring: add a sysctl to disable io_uring
+ system-wide
+Message-ID: <20230809150945.abp755qafjhxbmx6@awork3.anarazel.de>
+References: <20230630151003.3622786-1-matteorizzo@google.com>
+ <20230630151003.3622786-2-matteorizzo@google.com>
+ <20230726174549.cg4jgx2d33fom4rb@awork3.anarazel.de>
+ <x49fs5awiel.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] io_uring/rsrc: keep one global dummy_ubuf
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-References: <cover.1691546329.git.asml.silence@gmail.com>
- <95c9dea5180d066dc35a94d39f4ce5a3ecdfbf77.1691546329.git.asml.silence@gmail.com>
-Content-Language: en-US
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <95c9dea5180d066dc35a94d39f4ce5a3ecdfbf77.1691546329.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x49fs5awiel.fsf@segfault.boston.devel.redhat.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/9/23 13:25, Pavel Begunkov wrote:
-> We set empty registered buffers to dummy_ubuf as an optimisation.
-> Currently, we allocate the dummy entry for each ring, whenever we can
-> simply have one global instance.
+Hi,
 
-And only now it started complaining about const-ness, I'll
-resend it.
+Sorry for the delayed response, EINBOXOVERFLOW.
 
-
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   io_uring/io_uring.c |  9 ---------
->   io_uring/rsrc.c     | 14 ++++++++++----
->   2 files changed, 10 insertions(+), 13 deletions(-)
+On 2023-07-26 16:02:26 -0400, Jeff Moyer wrote:
+> Andres Freund <andres@anarazel.de> writes:
 > 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index fb70ae436db6..3c97401240c2 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -307,13 +307,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   		goto err;
->   	if (io_alloc_hash_table(&ctx->cancel_table_locked, hash_bits))
->   		goto err;
-> -
-> -	ctx->dummy_ubuf = kzalloc(sizeof(*ctx->dummy_ubuf), GFP_KERNEL);
-> -	if (!ctx->dummy_ubuf)
-> -		goto err;
-> -	/* set invalid range, so io_import_fixed() fails meeting it */
-> -	ctx->dummy_ubuf->ubuf = -1UL;
-> -
->   	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
->   			    0, GFP_KERNEL))
->   		goto err;
-> @@ -352,7 +345,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
->   	return ctx;
->   err:
-> -	kfree(ctx->dummy_ubuf);
->   	kfree(ctx->cancel_table.hbs);
->   	kfree(ctx->cancel_table_locked.hbs);
->   	kfree(ctx->io_bl);
-> @@ -2905,7 +2897,6 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
->   		io_wq_put_hash(ctx->hash_map);
->   	kfree(ctx->cancel_table.hbs);
->   	kfree(ctx->cancel_table_locked.hbs);
-> -	kfree(ctx->dummy_ubuf);
->   	kfree(ctx->io_bl);
->   	xa_destroy(&ctx->io_bl_xa);
->   	kfree(ctx);
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 5e8fdd9b8ca6..92e2471283ba 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -33,6 +33,12 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
->   #define IORING_MAX_FIXED_FILES	(1U << 20)
->   #define IORING_MAX_REG_BUFFERS	(1U << 14)
->   
-> +static const struct io_mapped_ubuf dummy_ubuf = {
-> +	/* set invalid range, so io_import_fixed() fails meeting it */
-> +	.ubuf = -1UL,
-> +	.ubuf_end = 0,
-> +};
-> +
->   int __io_account_mem(struct user_struct *user, unsigned long nr_pages)
->   {
->   	unsigned long page_limit, cur_pages, new_pages;
-> @@ -132,7 +138,7 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf **slo
->   	struct io_mapped_ubuf *imu = *slot;
->   	unsigned int i;
->   
-> -	if (imu != ctx->dummy_ubuf) {
-> +	if (imu != &dummy_ubuf) {
->   		for (i = 0; i < imu->nr_bvecs; i++)
->   			unpin_user_page(imu->bvec[i].bv_page);
->   		if (imu->acct_pages)
-> @@ -459,14 +465,14 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
->   			break;
->   
->   		i = array_index_nospec(up->offset + done, ctx->nr_user_bufs);
-> -		if (ctx->user_bufs[i] != ctx->dummy_ubuf) {
-> +		if (ctx->user_bufs[i] != &dummy_ubuf) {
->   			err = io_queue_rsrc_removal(ctx->buf_data, i,
->   						    ctx->user_bufs[i]);
->   			if (unlikely(err)) {
->   				io_buffer_unmap(ctx, &imu);
->   				break;
->   			}
-> -			ctx->user_bufs[i] = ctx->dummy_ubuf;
-> +			ctx->user_bufs[i] = &dummy_ubuf;
->   		}
->   
->   		ctx->user_bufs[i] = imu;
-> @@ -1077,7 +1083,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
->   	int ret, nr_pages, i;
->   	struct folio *folio = NULL;
->   
-> -	*pimu = ctx->dummy_ubuf;
-> +	*pimu = &dummy_ubuf;
->   	if (!iov->iov_base)
->   		return 0;
->   
+> > Hi,
+> >
+> > On 2023-06-30 15:10:03 +0000, Matteo Rizzo wrote:
+> >> Introduce a new sysctl (io_uring_disabled) which can be either 0, 1,
+> >> or 2. When 0 (the default), all processes are allowed to create io_uring
+> >> instances, which is the current behavior. When 1, all calls to
+> >> io_uring_setup fail with -EPERM unless the calling process has
+> >> CAP_SYS_ADMIN. When 2, calls to io_uring_setup fail with -EPERM
+> >> regardless of privilege.
+> >
+> > Hm, is there a chance that instead of requiring CAP_SYS_ADMIN, a certain group
+> > could be required (similar to hugetlb_shm_group)? Requiring CAP_SYS_ADMIN
+> > could have the unintended consequence of io_uring requiring tasks being run
+> > with more privileges than needed... Or some other more granular way of
+> > granting the right to use io_uring?
+> 
+> That's fine with me, so long as there is still an option to completely
+> disable io_uring.
 
--- 
-Pavel Begunkov
+Makes sense.
+
+
+> > ISTM that it'd be nice if e.g. a systemd service specification could allow
+> > some services to use io_uring, without allowing it for everyone, or requiring
+> > to run services effectively as root.
+> 
+> Do you have a proposal for how that would work?
+
+I think group based permissions would allow for it, even if perhaps not in the
+most beautiful manner. Systemd can configure additional groups for a service
+with SupplementaryGroups, so adding a "io_uring" group or such should work.
+
+Greetings,
+
+Andres Freund

@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 970CF776404
+	by mail.lfdr.de (Postfix) with ESMTP id E0E46776405
 	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 17:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234527AbjHIPhm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Aug 2023 11:37:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48234 "EHLO
+        id S231311AbjHIPhn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Aug 2023 11:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234533AbjHIPhZ (ORCPT
+        with ESMTP id S234534AbjHIPhZ (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 11:37:25 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6823B35A4
-        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 08:36:52 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1bb91c20602so36495ad.0
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0419B35AE
+        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 08:36:53 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1bbadf9ed37so19775ad.0
         for <io-uring@vger.kernel.org>; Wed, 09 Aug 2023 08:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691595411; x=1692200211;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691595412; x=1692200212;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xZmvLqSc1ZMqwRzEtiOyZYHzr51FwH1sV1e8XSQpWg4=;
-        b=dQM9QbRO+gu/f0S0uELWRWVR1GhNH5RzUAhHmnqb4dQr2h68BbeQbGNuKSO4pbYwa/
-         Cw5IWAGT652HfaPz3s/DlKnH7cD7i1uxvYqTMAlHqTV5HayE2Bb/qLCtgvuQpV3GsMpB
-         PlTI/k5N6tcU/MM8DYsofH2e/nlx8AvO9RUiLWZ1ifX2vz19CgJ5XyRwKER0V4UrUgAx
-         2VIcZZhiYJFRVT46j0UVtnO1dVfE1aUThDtDQm+TcMp/eD+dqO9micWin3hoS7Xva6zM
-         mtSZrYb+KYChgikg17YqaPZA3ZQ4osbhv4HbRvWkMwCksem1xN8ZErcOQuKgaP/WAjM+
-         Zm7Q==
+        bh=UceQ9ayfOb6JnYQUyjPbXC6LoDmUFmEEnehW1JnSFlQ=;
+        b=j4gwqJm/mDY9iKMLpKJnIfj2EOZ1wASfvR8pLcN9V1R+xsNSr9+KOQgCX1VqlrZ4n+
+         oxrj2doIGKIbyKqyIzwJLI94GGXsnkNmJah52NmRkjkJfcPirphgRYCkap2a10u4AeMQ
+         3akJwt/038Wk0PHKUCR+f0AQ5CyQDAZlS2P4L8Il8kua7FcARKNqcxMUMeFAzSru5f2B
+         Wzri6eErNZ/5EaqXheJb4Ecr2cbO8DF9dEV0vhcddZH09njAB3c40hGKPdaZOj78BYZf
+         f7Nrkef7olhv78StX42oEvBqU+W4VYsQSIz8gx3kB7zXSWVf52vem2Q8HFOxtD1DE3Xm
+         1vSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691595411; x=1692200211;
+        d=1e100.net; s=20221208; t=1691595412; x=1692200212;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xZmvLqSc1ZMqwRzEtiOyZYHzr51FwH1sV1e8XSQpWg4=;
-        b=LLTow9wBhUY0yrDM3TmNqWw1pWcwRhMjmOJhC88jnWWJm21NHN8lDuk/h1j5RporKr
-         TD3JrdiiCZXhSXQ7Fwb9vjHYs9FHCXh5TEwth6LNE18lpxHngoR5uSZdpgGIOniyFCyG
-         +BYBwxZYKAgbGUagZPnQ6UE/qpMlw+mIeWohhpCBPRaSXLp4mZGEHxzdWAKuQUEYoppo
-         tqO9WlXfv4D91xAPz9DMN6uEjIycPGAgnxSbJW4OBsuih+n2OWEBMtS+GRvdzkSB7BDO
-         LOyHLW6W/yDjuFTXA588rUrRGqqbrCaz4Axa/+Z2OcVqKtEnjBzf6wFSKnU9sfL/O+BB
-         NsJg==
-X-Gm-Message-State: AOJu0YyT+OlaSel8kRPC9w9VfLGaP7hLn4mgqru+70irsiYzmX+J7K3q
-        S0DgkhXyHSIqjKCOXdv99d+1HpKZux73lIIdSio=
-X-Google-Smtp-Source: AGHT+IE4qpX1WxiVWqvRGf6XVQ7QhVuw1vh+PGULHU2OjgAH4RLjdH1PyMVIv70WLuHGBf83u5Qmog==
-X-Received: by 2002:a17:902:c941:b0:1b8:9fc4:2733 with SMTP id i1-20020a170902c94100b001b89fc42733mr3823094pla.3.1691595411399;
-        Wed, 09 Aug 2023 08:36:51 -0700 (PDT)
+        bh=UceQ9ayfOb6JnYQUyjPbXC6LoDmUFmEEnehW1JnSFlQ=;
+        b=GBl0e5l3bPFrGcqbxVrxxT/XVumR0BQgekax2Yw+IClQrcr8MKznko74qWwRZLr1AX
+         CEm9lRIvmAyHxsEDgQBiymtFLS/xBbNrC41xbRfz2dRBmJ4fBbvQlCOiJbstOopB+tAR
+         9aR5ZwsezAsuNTbkOLlg7l1TMATIWc/LfEgyU40ygL5PrXKLH5ua8S9QeE3Flbc19EWv
+         deNHpQFK+Uwkj0e0Wqzh35Xft6EfXT3XvEW/piUXwGipNJYHh+kzHWDHVknrki8jYXD2
+         0sh/88wd+Tg7W1IO12YU8NaqUTSSFcFOJvR2d4g3bCe4EErdS/1UPUBmZLaVZ8TXYUQF
+         cBYA==
+X-Gm-Message-State: AOJu0YwlvWdgFtIuAlTRjmZ4kWPSGj02+hCtAyKWgYvOXxsG2jVjiJy5
+        C73cfAUDqzrp4Iwe/tMHwzG7sqrL8Wb3P/CKesQ=
+X-Google-Smtp-Source: AGHT+IFLV9V51SZursphvq7oNq59auw7PUqJq/R4PaCvUPUX7be6BBAXR7UI3CokonTiJG5oqFZOKA==
+X-Received: by 2002:a17:902:d503:b0:1b8:95fc:cfe with SMTP id b3-20020a170902d50300b001b895fc0cfemr3730494plg.3.1691595412209;
+        Wed, 09 Aug 2023 08:36:52 -0700 (PDT)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id m1-20020a170902d18100b001b9d7c8f44dsm11403977plb.182.2023.08.09.08.36.50
+        by smtp.gmail.com with ESMTPSA id m1-20020a170902d18100b001b9d7c8f44dsm11403977plb.182.2023.08.09.08.36.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Aug 2023 08:36:50 -0700 (PDT)
+        Wed, 09 Aug 2023 08:36:51 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <66096d54651b1a60534bb2023f2947f09f50ef73.1691538547.git.asml.silence@gmail.com>
-References: <66096d54651b1a60534bb2023f2947f09f50ef73.1691538547.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: fix drain stalls by invalid SQE
-Message-Id: <169159541042.37442.15459865071355763105.b4-ty@kernel.dk>
-Date:   Wed, 09 Aug 2023 09:36:50 -0600
+In-Reply-To: <c6fbf7a82a341e66a0007c76eefd9d57f2d3ba51.1691541473.git.asml.silence@gmail.com>
+References: <c6fbf7a82a341e66a0007c76eefd9d57f2d3ba51.1691541473.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: fix false positive KASAN warnings
+Message-Id: <169159541153.37442.8185245478193724357.b4-ty@kernel.dk>
+Date:   Wed, 09 Aug 2023 09:36:51 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -70,20 +70,21 @@ List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
 
-On Wed, 09 Aug 2023 13:21:41 +0100, Pavel Begunkov wrote:
-> cq_extra is protected by ->completion_lock, which io_get_sqe() misses.
-> The bug is harmless as it doesn't happen in real life, requires invalid
-> SQ index array and racing with submission, and only messes up the
-> userspace, i.e. stall requests execution but will be cleaned up on
-> ring destruction.
+On Wed, 09 Aug 2023 13:22:16 +0100, Pavel Begunkov wrote:
+> io_req_local_work_add() peeks into the work list, which can be executed
+> in the meanwhile. It's completely fine without KASAN as we're in an RCU
+> read section and it's SLAB_TYPESAFE_BY_RCU. With KASAN though it may
+> trigger a false positive warning because internal io_uring caches are
+> sanitised.
 > 
+> Remove sanitisation from the io_uring request cache for now.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] io_uring: fix drain stalls by invalid SQE
-      commit: 5e7d637400a25141e330c3c3b0a73440d58e194d
+[1/1] io_uring: fix false positive KASAN warnings
+      commit: e0b94f7b1ec218f73f9a1e3db4ff77a5fde27203
 
 Best regards,
 -- 

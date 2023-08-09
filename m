@@ -2,63 +2,57 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC45277568A
-	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 11:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E264775690
+	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 11:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbjHIJjI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Aug 2023 05:39:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
+        id S229489AbjHIJlI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Aug 2023 05:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjHIJjI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 05:39:08 -0400
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAF8E5F;
-        Wed,  9 Aug 2023 02:39:07 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-986d8332f50so912091466b.0;
-        Wed, 09 Aug 2023 02:39:07 -0700 (PDT)
+        with ESMTP id S231284AbjHIJlI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 05:41:08 -0400
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B788A1FDF;
+        Wed,  9 Aug 2023 02:41:03 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-99c10ba30afso149166266b.1;
+        Wed, 09 Aug 2023 02:41:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691573946; x=1692178746;
+        d=1e100.net; s=20221208; t=1691574062; x=1692178862;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DIkFfaj4OAeDDESwBeOen//2HaiO3PbzcC4EQH4IqvE=;
-        b=PMvoExvnS7OPAlVdXJwgRRlm9y/1LxODI0kBX+KtTQEd5LLG030nb6n4h4ArqSK3jf
-         WMsXnPwIpdK1tHoZxz07rek3i6XiEkSIJT6mVYl9S0KDNSmkTR+xuc10fsfBkGxTEfH/
-         KuV/qkVYVGgEDpIIiBgUN/QsUYPVhuJwsepX+7lDX1pKEtGFQ+2rfgnxe8nnK/j/0CHS
-         AdTcFL2BqUjlxLYBKtzXu6DNs2CSrmA1S3AKkkbDhFKNwyXuxO7ervdogxYpRi+M7xyL
-         u14/JY9sfmIdK9KvOa8uIGQToqrSJGoznSEszBi/ZR59NLKgen5cmNxNOgvcsudTC2he
-         6HMQ==
-X-Gm-Message-State: AOJu0Yyz1kwshfqdBw2C9qN+pnVGsb/oINg2Qp5vyrrrX9oeOS5QYZ2g
-        ZFih1jmy2rXfLh7eif81hZ4X0Z6js18=
-X-Google-Smtp-Source: AGHT+IGfAbsBfnp3P7bXGK6TzLo/SGeVnRggqirUCWXrKF05+SKTYowdguI3ePfHWhjuf/SwT9Zwlg==
-X-Received: by 2002:a17:906:5393:b0:99c:7915:b844 with SMTP id g19-20020a170906539300b0099c7915b844mr1676896ejo.57.1691573945734;
-        Wed, 09 Aug 2023 02:39:05 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-004.fbsv.net. [2a03:2880:31ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id y16-20020a170906071000b00992d122af63sm7779296ejb.89.2023.08.09.02.39.04
+        bh=POZx1Czjl+EpbVC1OkzexxsQSbMIz0qrEmbKh1sujrs=;
+        b=B4a39S9KTbq8bLxQqLKVJXrN+p/wwuQ66aRgmEm5JgM5w4yyrmKMaUsByr7pdjkmOC
+         M+L4ZWD9Sywag1fHuQanISDLGszoPoq/af39OPswTyG4a+jd233euOJrqK0LRmbqRSH4
+         UWvuurdobJ901n0WZX8TeRI7eyiQWC+8oFpV4HVUQY41KMivkfwd6WZ+1WFijnK/XDwO
+         L857iEvCGQkfYHfPWBi8Lo3jDEXCGB/1x4pBt5M0RObUOhL7KAlbRZK8T+O/eqc/JGYu
+         0ggUUexnEXVPAVKLhcBLht4nswiDMln1W18Pt6PoEN3fT3ahaHiezSpKVyztIXYnmyhE
+         3VLg==
+X-Gm-Message-State: AOJu0YxZ94hLwN0z8xPQVc/u/rYBDotxoR1W4HU3EZeD0RYQ9oInKNPb
+        UvAmv/g9zhQgIhrbnwv4o5Y=
+X-Google-Smtp-Source: AGHT+IEMjS663ej8XAL1oDFmpG+FblomrzyFQBwSCqa4M2JYBvIf84H9BGmB0T1n+xQB6I9ZJpVg+w==
+X-Received: by 2002:a17:906:3298:b0:99c:7300:94b8 with SMTP id 24-20020a170906329800b0099c730094b8mr2601281ejw.10.1691574061783;
+        Wed, 09 Aug 2023 02:41:01 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-118.fbsv.net. [2a03:2880:31ff:76::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a1-20020a1709063a4100b0099275c59bc9sm7788999ejf.33.2023.08.09.02.41.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Aug 2023 02:39:05 -0700 (PDT)
-Date:   Wed, 9 Aug 2023 02:39:03 -0700
+        Wed, 09 Aug 2023 02:41:01 -0700 (PDT)
+Date:   Wed, 9 Aug 2023 02:40:59 -0700
 From:   Breno Leitao <leitao@debian.org>
-To:     Hugo Villeneuve <hugo@hugovil.com>
-Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, bpf@vger.kernel.org,
+To:     Stanislav Fomichev <sdf@google.com>
+Cc:     axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, bpf@vger.kernel.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] net: expose sock_use_custom_sol_socket
-Message-ID: <ZNNet67Om0uGmpXj@gmail.com>
+        io-uring@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH v2 0/8] io_uring: Initial support for {s,g}etsockopt
+ commands
+Message-ID: <ZNNfK5e+lc0tsjj/@gmail.com>
 References: <20230808134049.1407498-1-leitao@debian.org>
- <20230808134049.1407498-2-leitao@debian.org>
- <20230808121323.bc144c719eba5979e161aac6@hugovil.com>
- <ZNJ5f1hR3cre0IPd@gmail.com>
- <20230808134647.3e0e702f54ef5e5b4378ff98@hugovil.com>
+ <ZNJ8zGcYClv/VCwG@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230808134647.3e0e702f54ef5e5b4378ff98@hugovil.com>
+In-Reply-To: <ZNJ8zGcYClv/VCwG@google.com>
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
@@ -70,34 +64,57 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 01:46:47PM -0400, Hugo Villeneuve wrote:
-> On Tue, 8 Aug 2023 10:21:03 -0700
-> Breno Leitao <leitao@debian.org> wrote:
+On Tue, Aug 08, 2023 at 10:35:08AM -0700, Stanislav Fomichev wrote:
+> On 08/08, Breno Leitao wrote:
+> > This patchset adds support for getsockopt (SOCKET_URING_OP_GETSOCKOPT)
+> > and setsockopt (SOCKET_URING_OP_SETSOCKOPT) in io_uring commands.
+> > SOCKET_URING_OP_SETSOCKOPT implements generic case, covering all levels
+> > nad optnames. On the other hand, SOCKET_URING_OP_GETSOCKOPT just
+> > implements level SOL_SOCKET case, which seems to be the
+> > most common level parameter for get/setsockopt(2).
+> > 
+> > struct proto_ops->setsockopt() uses sockptr instead of userspace
+> > pointers, which makes it easy to bind to io_uring. Unfortunately
+> > proto_ops->getsockopt() callback uses userspace pointers, except for
+> > SOL_SOCKET, which is handled by sk_getsockopt(). Thus, this patchset
+> > leverages sk_getsockopt() to imlpement the SOCKET_URING_OP_GETSOCKOPT
+> > case.
+> > 
+> > In order to support BPF hooks, I modified the hooks to use  sockptr, so,
+> > it is flexible enough to accept user or kernel pointers for
+> > optval/optlen.
+> > 
+> > PS1: For getsockopt command, the optlen field is not a userspace
+> > pointers, but an absolute value, so this is slightly different from
+> > getsockopt(2) behaviour. The new optlen value is returned in cqe->res.
+> > 
+> > PS2: The userspace pointers need to be alive until the operation is
+> > completed.
+> > 
+> > These changes were tested with a new test[1] in liburing. On the BPF
+> > side, I tested that no regression was introduced by running "test_progs"
+> > self test using "sockopt" test case.
+> > 
+> > [1] Link: https://github.com/leitao/liburing/blob/getsock/test/socket-getsetsock-cmd.c
+> > 
+> > RFC -> V1:
+> > 	* Copy user memory at io_uring subsystem, and call proto_ops
+> > 	  callbacks using kernel memory
+> > 	* Implement all the cases for SOCKET_URING_OP_SETSOCKOPT
 > 
-> > Hello  Hugo,
-> > 
-> > On Tue, Aug 08, 2023 at 12:13:23PM -0400, Hugo Villeneuve wrote:
-> > > On Tue,  8 Aug 2023 06:40:41 -0700
-> > > Breno Leitao <leitao@debian.org> wrote:
-> > > 
-> > > > Exposing function sock_use_custom_sol_socket(), so it could be used by
-> > > > io_uring subsystem.
-> > > > 
-> > > > This function will be used in the function io_uring_cmd_setsockopt() in
-> > > > the coming patch, so, let's move it to the socket.h header file.
-> > > 
-> > > Hi,
-> > > this description doesn't seem to match the code change below...
-> > 
-> > I re-read the patch comment and it seems to match what the code does,
-> > so, probably this description only makes sense to me (?).
-> > 
-> > That said, hat have you understood from reading the description above?
-> > socket.h
-> > Thanks for the review,
+> I did a quick pass, will take a close look later today. So far everything makes
+> sense to me.
 > 
-> Hi Breno,
-> your comments says "move it to the socket.h header file" but it seems
-> to be moved to the net.h header file?
+> Should we properly test it as well?
+> We have tools/testing/selftests/bpf/prog_tests/sockopt.c which does
+> most of the sanity checks, but it uses regular socket/{g,s}etsockopt
+> syscalls.
 
-Gotcha. Thanks. I will update.
+Right, that is what I've been using to test the changes.
+
+> Seems like it should be pretty easy to extend this with
+> io_uring path? tools/testing/selftests/net/io_uring_zerocopy_tx.c
+> already implements minimal wrappers which we can most likely borrow.
+
+Sure, I can definitely do it. Do you want to see the new tests in this
+patchset, or, in a following patches?

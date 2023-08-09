@@ -2,147 +2,102 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3550A775042
-	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 03:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BEF7751DB
+	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 06:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbjHIBRW (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 8 Aug 2023 21:17:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44068 "EHLO
+        id S229960AbjHIESE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Aug 2023 00:18:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjHIBRW (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 8 Aug 2023 21:17:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44A01BD4
-        for <io-uring@vger.kernel.org>; Tue,  8 Aug 2023 18:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1691543780;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z6WQGimvpw8I3eWQzkelPA3+R/lSG2mPQ4BbdsuaY/0=;
-        b=Vrlo9t8hAr87uu6KsYRgVPkNC3b4n3v6n5VmRJW+5Itx2qDrlKj2tghP7c/m4mUxIEq+mn
-        biPyU3XpjpuDSwmB1JdEpIiUIpKdDCQs+O062WJGR+D8R5FqC3UflCGrBA6A8YxuB24+ul
-        usUPN2bpVA2mqebzV8G1n0UKYXE/6no=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-614-otz98xfCMmO9ly3oHNFUnA-1; Tue, 08 Aug 2023 21:16:14 -0400
-X-MC-Unique: otz98xfCMmO9ly3oHNFUnA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4DA178007CE;
-        Wed,  9 Aug 2023 01:16:09 +0000 (UTC)
-Received: from ovpn-8-17.pek2.redhat.com (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1DA2C492C13;
-        Wed,  9 Aug 2023 01:16:02 +0000 (UTC)
-Date:   Wed, 9 Aug 2023 09:15:57 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        ming.lei@redhat.com
-Subject: Re: [PATCH for-next v3 4/4] nvme: wire up async polling for io
- passthrough commands
-Message-ID: <ZNLozRZNPJ6CVYLO@ovpn-8-17.pek2.redhat.com>
-References: <20220823161443.49436-1-joshi.k@samsung.com>
- <CGME20220823162517epcas5p2f1b808e60bae4bc1161b2d3a3a388534@epcas5p2.samsung.com>
- <20220823161443.49436-5-joshi.k@samsung.com>
+        with ESMTP id S229533AbjHIESD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 00:18:03 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A062419A1;
+        Tue,  8 Aug 2023 21:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691554683; x=1723090683;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BiBLxiXXW0roMyU9uVFtT4aTm3ZZI6IWHSqR6mmpuy8=;
+  b=UpEhekEqiTEcFezXjUXhZ37Jaqj7pIwnumnX6Wy7Ck7+iC6SPEMtJNRB
+   tMvTKi6Of9kWotp4A+cZmrVjdZIQAYYdQxauXqGCRjAihkOrK9BUfxblh
+   lTbKq6wEuNrOWt+R2L9azyQCB91pLfIbe29shsJ1+CGGCDhhqsHWHVGJE
+   En67uX8e15HQKcN51L3jX/hLNh73yTf2ZmdmLVQfeCRIn9NLHs8xmrtdx
+   bv3qTtF/xAHMHXB678yGDmuuPkJ6kt2gQUsMQJtCAMJE5HzZj4y/pUIMW
+   Qfbh32a0oshuYKjiN5shm8Tj71xOHSbuvVWK4FOIOEcjSImeQp8+Jhi3F
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="361140114"
+X-IronPort-AV: E=Sophos;i="6.01,158,1684825200"; 
+   d="scan'208";a="361140114"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 21:08:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="978220412"
+X-IronPort-AV: E=Sophos;i="6.01,158,1684825200"; 
+   d="scan'208";a="978220412"
+Received: from lkp-server01.sh.intel.com (HELO d1ccc7e87e8f) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Aug 2023 21:08:22 -0700
+Received: from kbuild by d1ccc7e87e8f with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qTaUf-0005na-0d;
+        Wed, 09 Aug 2023 04:08:21 +0000
+Date:   Wed, 9 Aug 2023 12:07:27 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Breno Leitao <leitao@debian.org>, sdf@google.com, axboe@kernel.dk,
+        asml.silence@gmail.com, willemdebruijn.kernel@gmail.com
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
+        pabeni@redhat.com
+Subject: Re: [PATCH v2 2/8] io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+Message-ID: <202308091103.ylvbuCww-lkp@intel.com>
+References: <20230808134049.1407498-3-leitao@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220823161443.49436-5-joshi.k@samsung.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230808134049.1407498-3-leitao@debian.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Kanchan,
+Hi Breno,
 
-On Tue, Aug 23, 2022 at 09:44:43PM +0530, Kanchan Joshi wrote:
-> Store a cookie during submission, and use that to implement
-> completion-polling inside the ->uring_cmd_iopoll handler.
-> This handler makes use of existing bio poll facility.
-> 
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> ---
+kernel test robot noticed the following build errors:
 
-...
+[auto build test ERROR on next-20230808]
+[cannot apply to bpf-next/master bpf/master net/main net-next/main linus/master horms-ipvs/master v6.5-rc5 v6.5-rc4 v6.5-rc3 v6.5-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->  
-> +int nvme_ns_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd)
-> +{
-> +	struct bio *bio;
-> +	int ret = 0;
-> +	struct nvme_ns *ns;
-> +	struct request_queue *q;
-> +
-> +	rcu_read_lock();
-> +	bio = READ_ONCE(ioucmd->cookie);
-> +	ns = container_of(file_inode(ioucmd->file)->i_cdev,
-> +			struct nvme_ns, cdev);
-> +	q = ns->queue;
-> +	if (test_bit(QUEUE_FLAG_POLL, &q->queue_flags) && bio && bio->bi_bdev)
-> +		ret = bio_poll(bio, NULL, 0);
-> +	rcu_read_unlock();
-> +	return ret;
-> +}
+url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/net-expose-sock_use_custom_sol_socket/20230809-011901
+base:   next-20230808
+patch link:    https://lore.kernel.org/r/20230808134049.1407498-3-leitao%40debian.org
+patch subject: [PATCH v2 2/8] io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+config: hexagon-randconfig-r041-20230808 (https://download.01.org/0day-ci/archive/20230809/202308091103.ylvbuCww-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce: (https://download.01.org/0day-ci/archive/20230809/202308091103.ylvbuCww-lkp@intel.com/reproduce)
 
-It looks not good to call bio_poll() with holding rcu read lock,
-since set_page_dirty_lock() may sleep from end_io code path.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308091103.ylvbuCww-lkp@intel.com/
 
-blk_rq_unmap_user
-	bio_release_pages
-		__bio_release_pages
-			set_page_dirty_lock
-				lock_page
+All errors (new ones prefixed by >>):
 
-Probably you need to move dirtying pages into wq context, such as
-bio_check_pages_dirty(), then I guess pt io poll perf may drop.
+>> ld.lld: error: undefined symbol: sk_getsockopt
+   >>> referenced by uring_cmd.c
+   >>>               io_uring/uring_cmd.o:(io_uring_cmd_sock) in archive vmlinux.a
+   >>> referenced by uring_cmd.c
+   >>>               io_uring/uring_cmd.o:(io_uring_cmd_sock) in archive vmlinux.a
 
-Maybe we need to investigate how to remove the rcu read lock here.
-
-
->  #ifdef CONFIG_NVME_MULTIPATH
->  static int nvme_ns_head_ctrl_ioctl(struct nvme_ns *ns, unsigned int cmd,
->  		void __user *argp, struct nvme_ns_head *head, int srcu_idx)
-> @@ -685,6 +721,29 @@ int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
->  	srcu_read_unlock(&head->srcu, srcu_idx);
->  	return ret;
->  }
-> +
-> +int nvme_ns_head_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd)
-> +{
-> +	struct cdev *cdev = file_inode(ioucmd->file)->i_cdev;
-> +	struct nvme_ns_head *head = container_of(cdev, struct nvme_ns_head, cdev);
-> +	int srcu_idx = srcu_read_lock(&head->srcu);
-> +	struct nvme_ns *ns = nvme_find_path(head);
-> +	struct bio *bio;
-> +	int ret = 0;
-> +	struct request_queue *q;
-> +
-> +	if (ns) {
-> +		rcu_read_lock();
-> +		bio = READ_ONCE(ioucmd->cookie);
-> +		q = ns->queue;
-> +		if (test_bit(QUEUE_FLAG_POLL, &q->queue_flags) && bio
-> +				&& bio->bi_bdev)
-> +			ret = bio_poll(bio, NULL, 0);
-> +		rcu_read_unlock();
-
-Same with above.
-
-
-thanks,
-Ming
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki

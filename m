@@ -2,71 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D9E776370
-	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 17:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A916677639C
+	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 17:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233235AbjHIPLM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Aug 2023 11:11:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37070 "EHLO
+        id S229722AbjHIPWF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Aug 2023 11:22:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231716AbjHIPLL (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 11:11:11 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A74F51BDA
-        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 08:11:10 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-686f6231bdeso1803699b3a.1
-        for <io-uring@vger.kernel.org>; Wed, 09 Aug 2023 08:11:10 -0700 (PDT)
+        with ESMTP id S229585AbjHIPWF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 11:22:05 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F575FE
+        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 08:22:02 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b9b50be31aso106093181fa.3
+        for <io-uring@vger.kernel.org>; Wed, 09 Aug 2023 08:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691593870; x=1692198670;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ujVnn+wclfDCoEdMFK52Z0Hg6LMOzkhQlsbYMDX7Zc=;
-        b=m98bJgTsUvdY0gdK8Ww0DZaadpiNKOS9cthH6HTVgjNHRjEmC/cPR3tpZWkIpHbb76
-         yBfTpOOvuxNCHjNkiRWAh6ymhQCJLD+B+XDX5uNJw8NkGZ6rDDQ8W6Hzrg+yk/mRPvXK
-         c0f6OA3PxxQ1vcWVMtoz1x1SGgMROg0yqw5D3J2lKLG9qrWtOnEElOkTD87LLCuqMw60
-         HMFg97/VJUtmrZLLtJTpXwgg4PBR6eCQzWI2prQbS/kxnyv0BlsJagBlF45hru+pkyyT
-         YjYtgCCTC61WiQ5bsAVv2upvLQuEwUPYe1PtE4ctflxGZ37iJlM6H+P/66y3ro3mBONT
-         9T8A==
+        d=gmail.com; s=20221208; t=1691594520; x=1692199320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ipj18veJPD4zqbsxwaRuS9MIxB5aywHPfKdsWtOA0ak=;
+        b=E6imtCNFYQYUEVMCg6cbFXIQad6wuDesofVu1KQ+S+JVBFdCrLzQJp+63xKtUaO7j+
+         Gj4R3iDVXhPnpNaE+NOotcwqha9WmkxCGbbiKG5Agrray1PJLCHBv+9VZ9ekBEj3i3fe
+         uYp62emmiCe3LM+X+amNebNogGP+4+bA05u/7uJEhyCphoUeC+YBQq2sjDAoByZhOR1u
+         kCgiAPeCY35BvEqXxPWin2Y4nWHkjhd1w9z2W+khcwPJ4i3eQ2wG1SkaK697aq76zynR
+         dQTQ6k8fPpYvWbdUzXg+3D6LsMjz2Sc7r+u826YtzBMX6qr6k72NTK9x2jBYd314xFPn
+         Inow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691593870; x=1692198670;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ujVnn+wclfDCoEdMFK52Z0Hg6LMOzkhQlsbYMDX7Zc=;
-        b=MT8EuygSe+C1gfb20XebKAN6e/CTe8KR+gC0pUZvtoJoMrB8b9+bWT7jYqz0x3rLYU
-         s7d007MiFNaPZtA/DF3N1Ge0w7vlkJz8UyZ1HbyQ97Bsec5B8TQkKvmkG+3Szs4DCofJ
-         z6aLoaK4ugB4L1RHNz2A7EFG/1j5PLUm+zdwrCQF79gSbby6Hrc7TolQUcN4skmFgs2d
-         3M2ZbmUn8ccMce8YYYnOcAYouM7GP/UPp3bHIyYRrRn6hVrqxmbHtoHpNtGceskFsxEi
-         qqpmOCC0ttXkgzT679gCSlwPHKLp0/LIJ1o+8L0rL20J8RCUNPF4XGpwNUnIzqvv8YTy
-         Jjkw==
-X-Gm-Message-State: AOJu0Yy4VHcfCE5c2XeeYZPzSJux8ulmkCwITDlNbYX71ZdmJu4eYi6U
-        eqRA3h/OajwpiDdP+8ZAVT7BqxG3EKLOLaGCt9g=
-X-Google-Smtp-Source: AGHT+IEnolU+PaPLfc3X68ZEQWVNLrFCP2l5eOMgcprs1MXtlRkSX9td0R6LnNvcEQ7WykbcKP1TuA==
-X-Received: by 2002:a05:6a00:d82:b0:677:3439:874a with SMTP id bf2-20020a056a000d8200b006773439874amr3196674pfb.3.1691593870154;
-        Wed, 09 Aug 2023 08:11:10 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n5-20020aa79045000000b00686ec858fb0sm10084064pfo.190.2023.08.09.08.11.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Aug 2023 08:11:09 -0700 (PDT)
-Message-ID: <0201ff9b-357f-4391-ae83-5920f39d68c0@kernel.dk>
-Date:   Wed, 9 Aug 2023 09:11:07 -0600
+        d=1e100.net; s=20221208; t=1691594520; x=1692199320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ipj18veJPD4zqbsxwaRuS9MIxB5aywHPfKdsWtOA0ak=;
+        b=Iv8TiBF1zsbTGGoR4M5pCCNcjij4HoBf4FiYL8qiCzWKkpDeFJen8ivvgA1BuoEQjl
+         M1if8AMKrrdksCgca66qBfN04i+z7QhhzSPsu3UtXP74IGqd21NNyxqbDqc2Lo3drYfj
+         U0+AI6XjPeC54OHLyApzAGgBqU2khs1FaSuFOCg9EcBUlQsMj8fPeroYephc0EV6Uk6A
+         feZGP67wy+i0XDNj3sJn1fx3iQ1rF+2+udgNbqeOGxagK0rJYuuRpvTPs9A+OHH+sbr6
+         SIboZabHj+TMYABE4friEvqbI//qqXpPHsdopCUNQKVeIAw9tKXJMNAmkR/X47ZSmPGo
+         znHw==
+X-Gm-Message-State: AOJu0Yyo4dXwXiSJNbhfRdut9p7xGu16MHKKrFhSsDBHdddqIZHn66iN
+        kVe2Afscou4OnasozGYlizK51zqUNnA=
+X-Google-Smtp-Source: AGHT+IEWCDmjXtwDhkBBNXXrUD3xw2T8YB1Ns2hzE0Hy1OlUGGH3rOiC7Hhlme5+4jC4hbmyyfZoCg==
+X-Received: by 2002:a2e:9b4c:0:b0:2b7:4078:13e0 with SMTP id o12-20020a2e9b4c000000b002b7407813e0mr2235820ljj.43.1691594520109;
+        Wed, 09 Aug 2023 08:22:00 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::2:c27f])
+        by smtp.gmail.com with ESMTPSA id bw4-20020a170906c1c400b009829d2e892csm8296067ejb.15.2023.08.09.08.21.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Aug 2023 08:21:59 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: break iopolling on signal
+Date:   Wed,  9 Aug 2023 16:20:21 +0100
+Message-ID: <eeba551e82cad12af30c3220125eb6cb244cc94c.1691594339.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] io_uring: add IORING_OP_WAITID support
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de
-References: <20230802231442.275558-1-axboe@kernel.dk>
- <20230802231442.275558-6-axboe@kernel.dk>
- <20230809-ballkontakt-schule-bc15814d31e4@brauner>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230809-ballkontakt-schule-bc15814d31e4@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,30 +67,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/9/23 5:27 AM, Christian Brauner wrote:
->> +int io_waitid(struct io_kiocb *req, unsigned int issue_flags)
->> +{
->> +	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
->> +	struct io_ring_ctx *ctx = req->ctx;
->> +	struct io_waitid_async *iwa;
->> +	unsigned int f_flags = 0;
->> +	int ret;
->> +
->> +	if (io_alloc_async_data(req))
->> +		return -ENOMEM;
->> +
->> +	iwa = req->async_data;
->> +	iwa->req = req;
->> +
->> +	ret = kernel_waitid_prepare(&iwa->wo, iw->which, iw->upid, &iw->info,
->> +					iw->options, NULL, &f_flags);
-> 
-> It seems you're not really using @f_flags at all so I'd just not bother
-> exposing it in kernel_waitid_prepare(). I think the following (untested)
-> will let you avoid all this:
+Don't keep spinning iopoll with a signal set. It'll eventually return
+back, e.g. by virtue of need_resched(), but it's not a nice user
+experience.
 
-That's a good idea, I'll update it to get rid of the f_flags. Thanks!
+Cc: stable@vger.kernel.org
+Fixes: def596e9557c9 ("io_uring: support for IO polling")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/io_uring.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f32092d90960..1810cf719a02 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1684,6 +1684,9 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, long min)
+ 			break;
+ 		nr_events += ret;
+ 		ret = 0;
++
++		if (task_sigpending(current))
++			return -EINTR;
+ 	} while (nr_events < min && !need_resched());
+ 
+ 	return ret;
 -- 
-Jens Axboe
+2.41.0
 

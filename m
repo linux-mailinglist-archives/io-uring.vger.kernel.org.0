@@ -2,111 +2,1607 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E927D775ED5
-	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 14:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FDD775ED8
+	for <lists+io-uring@lfdr.de>; Wed,  9 Aug 2023 14:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232248AbjHIMYY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 9 Aug 2023 08:24:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
+        id S231963AbjHIMZD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 9 Aug 2023 08:25:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231426AbjHIMYY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 08:24:24 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633D21FC2
-        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 05:24:23 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fe2d152f62so11214265e87.0
-        for <io-uring@vger.kernel.org>; Wed, 09 Aug 2023 05:24:23 -0700 (PDT)
+        with ESMTP id S231426AbjHIMZD (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 9 Aug 2023 08:25:03 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7864F1BDA
+        for <io-uring@vger.kernel.org>; Wed,  9 Aug 2023 05:25:00 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-317716a4622so5301942f8f.1
+        for <io-uring@vger.kernel.org>; Wed, 09 Aug 2023 05:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691583861; x=1692188661;
+        d=gmail.com; s=20221208; t=1691583899; x=1692188699;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKKY7S39yez1G4yc4hbJOFdF2MqGYBVdxjfyuQgipiM=;
-        b=AOSerd6xyCywFZoRp8K1idOmBnqkAutz8C1cz7ToAOyiCTOmWQHQlJLR9j5DJy5D0o
-         eCfkU8Mj1/S15yTRn4zpM5Mybb6UGcanAKkjnMENwgWe12Ikalyt8tg93hsKtrK+erOa
-         5vl7dVRINsZxPoz9ve6e+xuUlEkWko9RSUxEdwtj5NBJMMSSKV5wJuWZOf/lb2gOJcNk
-         TBexHeart8NjvTPsO8Oud+pMHBurJijtlaPt1vSjqv6q3jPGQy9r1JJn/CAh6b6mZwnW
-         /WrxFkpWVyEjPGk+knbSFOcvIR3cJtRj7eQRdQJuj7WDksMdY/6tdcxHoQzIO2dxhv9e
-         1qTA==
+        bh=lMK5icwAT6iNPkusYIxHVYJz+XbnwlEOz71A/T4GSHw=;
+        b=pKzja5oNgrVtbHHstNbbGmujl/+lCLUwRJnhtcDL/nDv2ZEShEYmrTbyCJFwC9Y0Oz
+         u1UphS9Xqs9wwV//y4DhnGkuexI0O2Fy5CfR+ci1kXNDCtzznLAwUtjiCd3pvtb3pVOV
+         pT5souX+GB1PdeUOhouawUvIbK3/zlrT7G1SopiEBcf/ZPiE6sOKrMW8B5s6Cs72/Xwa
+         NyEv1gGnhxqk6rDygN0yaDWMy6jbvAkCDJtI3pEqHEqnuNo9iA3BPRimFAYYNmXBrcja
+         Lox51wmCulrr/YzrWGmNFC72uXt+nLQ0BoLWmN46nmImQinchAeTaFH+i0m+wh2rFEZB
+         94tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691583861; x=1692188661;
+        d=1e100.net; s=20221208; t=1691583899; x=1692188699;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jKKY7S39yez1G4yc4hbJOFdF2MqGYBVdxjfyuQgipiM=;
-        b=UZcGop8pr/TevewX+aRMf9kYyX1fNWRBXHZ3ez0hovwVPZP3Uc7hxNv2dIQu6zg91V
-         /ctVo02XioHAi6ypSGaLP5j3mWbKOgIIAcGjQInqkbljlLIbBrK6wbNtc5prsX0hOFWi
-         +gzyefeGbamPV+Yql/DXHh2cetJqnF3wWzxkX7diXRfdbRibBx2vkqp7NgNCRvBAOXoy
-         dWMEWpr/iCA+Rv8knz3d0tjuA+Jqm5Rc312DTDhF7T4V/Bhnd/XKn2s/Or6JxmSDKlIa
-         IGYH0cgyW/u24JqCYTxIxmrLiopRIJzlu+YgbWY5/BP72alhZVVor+hpm3F4qNlvocx8
-         a+rg==
-X-Gm-Message-State: AOJu0Yzk9vq9dmkwFN5ctAoY8WxiNf+EgtZL7qYlkHkwFlTiV+THExeM
-        hSjRPJu5GSSHm7W1zfZrvibL8R42zdE=
-X-Google-Smtp-Source: AGHT+IH3NWyc53e5qiuuauh1s4H5APQPEaRqSyzzWNGHxkG+7G2YTYRJXtWyxXojwQcm/IIVAjRuZw==
-X-Received: by 2002:ac2:4158:0:b0:4f4:dbcc:54da with SMTP id c24-20020ac24158000000b004f4dbcc54damr1427834lfi.27.1691583861062;
-        Wed, 09 Aug 2023 05:24:21 -0700 (PDT)
+        bh=lMK5icwAT6iNPkusYIxHVYJz+XbnwlEOz71A/T4GSHw=;
+        b=etK3qGSY08YHFJKvc9lQ+r7l4y7U5IRHFlanQ+OoWuOjwD9Y4c+DG79BmROLMVBjAj
+         ZPsse9wmsObsIofwIGhUbu8b3thSUdNachHJxPrkbyEcCVFkC7u/0JpWJrhS5CLEHUTV
+         ix5leuaKx1IkDeONB+7edKEw8XL2LCSJ3AAjRhuUzhORFRN8lovX3/ZIWljGuHgHSuBj
+         RhtxEM0lSUoyRRPmbrfHAar4FPEo15kn6nFIAHsuwS2Ki7zf/Op5w4T5BjFoFZVvPtTY
+         vMs3CKYD4plT1pLwaQMtKZH6EWx2sFmj99SxYQbxkOS81HpzhOmkiahfWYvi7iZb7Mw3
+         hhlQ==
+X-Gm-Message-State: AOJu0YwCpOlgurdXtToczXXtqo95y+KaTEjt87NxsG7jcc7nwdR9Ngst
+        +L0gsiYrGT6Du0aFGfXAbSpUDwMePwQ=
+X-Google-Smtp-Source: AGHT+IH5KIie4IyLdyhdRb54N4aCx5vPxlr6k/HA6dQcjFQVXMLyQJDjC0vI3hi/SL7t2D12cecaOg==
+X-Received: by 2002:a5d:42c4:0:b0:314:1560:cc68 with SMTP id t4-20020a5d42c4000000b003141560cc68mr1682645wrr.56.1691583898262;
+        Wed, 09 Aug 2023 05:24:58 -0700 (PDT)
 Received: from 127.0.0.1localhost (82-132-230-78.dab.02.net. [82.132.230.78])
-        by smtp.gmail.com with ESMTPSA id b13-20020a05600c11cd00b003fe1a96845bsm1860058wmi.2.2023.08.09.05.24.20
+        by smtp.gmail.com with ESMTPSA id u10-20020a05600c210a00b003fc02e8ea68sm1883762wml.13.2023.08.09.05.24.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Aug 2023 05:24:20 -0700 (PDT)
+        Wed, 09 Aug 2023 05:24:57 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: fix false positive KASAN warnings
-Date:   Wed,  9 Aug 2023 13:22:16 +0100
-Message-ID: <c6fbf7a82a341e66a0007c76eefd9d57f2d3ba51.1691541473.git.asml.silence@gmail.com>
+Subject: [PATCH 1/1] io_uring: kill io_uring userspace examples
+Date:   Wed,  9 Aug 2023 13:22:52 +0100
+Message-ID: <7c740701d3b475dcad8c92602a551044f72176b4.1691543666.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_req_local_work_add() peeks into the work list, which can be executed
-in the meanwhile. It's completely fine without KASAN as we're in an RCU
-read section and it's SLAB_TYPESAFE_BY_RCU. With KASAN though it may
-trigger a false positive warning because internal io_uring caches are
-sanitised.
+There are tons of io_uring tests and examples in liburing and on the
+Internet. If you're looking for a benchmark, io_uring-bench.c is just an
+acutely outdated version of fio/io_uring. And for basic condensed init
+template for likes of selftests take a peek at io_uring_zerocopy_tx.c.
 
-Remove sanitisation from the io_uring request cache for now.
+Kill tools/io_uring/, it's a burden keeping it here.
 
-Cc: stable@vger.kernel.org
-Fixes: 8751d15426a31 ("io_uring: reduce scheduling due to tw")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 1 -
- io_uring/io_uring.h | 1 -
- 2 files changed, 2 deletions(-)
+ MAINTAINERS                     |   1 -
+ tools/io_uring/Makefile         |  18 -
+ tools/io_uring/README           |  29 --
+ tools/io_uring/barrier.h        |  16 -
+ tools/io_uring/io_uring-bench.c | 592 --------------------------------
+ tools/io_uring/io_uring-cp.c    | 283 ---------------
+ tools/io_uring/liburing.h       | 187 ----------
+ tools/io_uring/queue.c          | 156 ---------
+ tools/io_uring/setup.c          | 107 ------
+ tools/io_uring/syscall.c        |  52 ---
+ 10 files changed, 1441 deletions(-)
+ delete mode 100644 tools/io_uring/Makefile
+ delete mode 100644 tools/io_uring/README
+ delete mode 100644 tools/io_uring/barrier.h
+ delete mode 100644 tools/io_uring/io_uring-bench.c
+ delete mode 100644 tools/io_uring/io_uring-cp.c
+ delete mode 100644 tools/io_uring/liburing.h
+ delete mode 100644 tools/io_uring/queue.c
+ delete mode 100644 tools/io_uring/setup.c
+ delete mode 100644 tools/io_uring/syscall.c
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 0eed797ef270..fb70ae436db6 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -245,7 +245,6 @@ static inline void req_fail_link_node(struct io_kiocb *req, int res)
- static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx *ctx)
- {
- 	wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
--	kasan_poison_object_data(req_cachep, req);
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aee340630eca..2ce167bd0ab4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10920,7 +10920,6 @@ F:	include/linux/io_uring_types.h
+ F:	include/trace/events/io_uring.h
+ F:	include/uapi/linux/io_uring.h
+ F:	io_uring/
+-F:	tools/io_uring/
  
- static __cold void io_ring_ctx_ref_free(struct percpu_ref *ref)
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index d3606d30cf6f..12769bad5cee 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -354,7 +354,6 @@ static inline struct io_kiocb *io_extract_req(struct io_ring_ctx *ctx)
- 	struct io_kiocb *req;
- 
- 	req = container_of(ctx->submit_state.free_list.next, struct io_kiocb, comp_list);
--	kasan_unpoison_object_data(req_cachep, req);
- 	wq_stack_extract(&ctx->submit_state.free_list);
- 	return req;
- }
+ IPMI SUBSYSTEM
+ M:	Corey Minyard <minyard@acm.org>
+diff --git a/tools/io_uring/Makefile b/tools/io_uring/Makefile
+deleted file mode 100644
+index 00f146c54c53..000000000000
+--- a/tools/io_uring/Makefile
++++ /dev/null
+@@ -1,18 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-# Makefile for io_uring test tools
+-CFLAGS += -Wall -Wextra -g -D_GNU_SOURCE
+-LDLIBS += -lpthread
+-
+-all: io_uring-cp io_uring-bench
+-%: %.c
+-	$(CC) $(CFLAGS) -o $@ $^
+-
+-io_uring-bench: syscall.o io_uring-bench.o
+-	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
+-
+-io_uring-cp: setup.o syscall.o queue.o
+-
+-clean:
+-	$(RM) io_uring-cp io_uring-bench *.o
+-
+-.PHONY: all clean
+diff --git a/tools/io_uring/README b/tools/io_uring/README
+deleted file mode 100644
+index 67fd70115cff..000000000000
+--- a/tools/io_uring/README
++++ /dev/null
+@@ -1,29 +0,0 @@
+-This directory includes a few programs that demonstrate how to use io_uring
+-in an application. The examples are:
+-
+-io_uring-cp
+-	A very basic io_uring implementation of cp(1). It takes two
+-	arguments, copies the first argument to the second. This example
+-	is part of liburing, and hence uses the simplified liburing API
+-	for setting up an io_uring instance, submitting IO, completing IO,
+-	etc. The support functions in queue.c and setup.c are straight
+-	out of liburing.
+-
+-io_uring-bench
+-	Benchmark program that does random reads on a number of files. This
+-	app demonstrates the various features of io_uring, like fixed files,
+-	fixed buffers, and polled IO. There are options in the program to
+-	control which features to use. Arguments is the file (or files) that
+-	io_uring-bench should operate on. This uses the raw io_uring
+-	interface.
+-
+-liburing can be cloned with git here:
+-
+-	git://git.kernel.dk/liburing
+-
+-and contains a number of unit tests as well for testing io_uring. It also
+-comes with man pages for the three system calls.
+-
+-Fio includes an io_uring engine, you can clone fio here:
+-
+-	git://git.kernel.dk/fio
+diff --git a/tools/io_uring/barrier.h b/tools/io_uring/barrier.h
+deleted file mode 100644
+index ef00f6722ba9..000000000000
+--- a/tools/io_uring/barrier.h
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#ifndef LIBURING_BARRIER_H
+-#define LIBURING_BARRIER_H
+-
+-#if defined(__x86_64) || defined(__i386__)
+-#define read_barrier()	__asm__ __volatile__("":::"memory")
+-#define write_barrier()	__asm__ __volatile__("":::"memory")
+-#else
+-/*
+- * Add arch appropriate definitions. Be safe and use full barriers for
+- * archs we don't have support for.
+- */
+-#define read_barrier()	__sync_synchronize()
+-#define write_barrier()	__sync_synchronize()
+-#endif
+-
+-#endif
+diff --git a/tools/io_uring/io_uring-bench.c b/tools/io_uring/io_uring-bench.c
+deleted file mode 100644
+index 7703f0118385..000000000000
+--- a/tools/io_uring/io_uring-bench.c
++++ /dev/null
+@@ -1,592 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Simple benchmark program that uses the various features of io_uring
+- * to provide fast random access to a device/file. It has various
+- * options that are control how we use io_uring, see the OPTIONS section
+- * below. This uses the raw io_uring interface.
+- *
+- * Copyright (C) 2018-2019 Jens Axboe
+- */
+-#include <stdio.h>
+-#include <errno.h>
+-#include <assert.h>
+-#include <stdlib.h>
+-#include <stddef.h>
+-#include <signal.h>
+-#include <inttypes.h>
+-
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <sys/ioctl.h>
+-#include <sys/syscall.h>
+-#include <sys/resource.h>
+-#include <sys/mman.h>
+-#include <sys/uio.h>
+-#include <linux/fs.h>
+-#include <fcntl.h>
+-#include <unistd.h>
+-#include <string.h>
+-#include <pthread.h>
+-#include <sched.h>
+-
+-#include "liburing.h"
+-#include "barrier.h"
+-
+-#define min(a, b)		((a < b) ? (a) : (b))
+-
+-struct io_sq_ring {
+-	unsigned *head;
+-	unsigned *tail;
+-	unsigned *ring_mask;
+-	unsigned *ring_entries;
+-	unsigned *flags;
+-	unsigned *array;
+-};
+-
+-struct io_cq_ring {
+-	unsigned *head;
+-	unsigned *tail;
+-	unsigned *ring_mask;
+-	unsigned *ring_entries;
+-	struct io_uring_cqe *cqes;
+-};
+-
+-#define DEPTH			128
+-
+-#define BATCH_SUBMIT		32
+-#define BATCH_COMPLETE		32
+-
+-#define BS			4096
+-
+-#define MAX_FDS			16
+-
+-static unsigned sq_ring_mask, cq_ring_mask;
+-
+-struct file {
+-	unsigned long max_blocks;
+-	unsigned pending_ios;
+-	int real_fd;
+-	int fixed_fd;
+-};
+-
+-struct submitter {
+-	pthread_t thread;
+-	int ring_fd;
+-	struct drand48_data rand;
+-	struct io_sq_ring sq_ring;
+-	struct io_uring_sqe *sqes;
+-	struct iovec iovecs[DEPTH];
+-	struct io_cq_ring cq_ring;
+-	int inflight;
+-	unsigned long reaps;
+-	unsigned long done;
+-	unsigned long calls;
+-	volatile int finish;
+-
+-	__s32 *fds;
+-
+-	struct file files[MAX_FDS];
+-	unsigned nr_files;
+-	unsigned cur_file;
+-};
+-
+-static struct submitter submitters[1];
+-static volatile int finish;
+-
+-/*
+- * OPTIONS: Set these to test the various features of io_uring.
+- */
+-static int polled = 1;		/* use IO polling */
+-static int fixedbufs = 1;	/* use fixed user buffers */
+-static int register_files = 1;	/* use fixed files */
+-static int buffered = 0;	/* use buffered IO, not O_DIRECT */
+-static int sq_thread_poll = 0;	/* use kernel submission/poller thread */
+-static int sq_thread_cpu = -1;	/* pin above thread to this CPU */
+-static int do_nop = 0;		/* no-op SQ ring commands */
+-
+-static int io_uring_register_buffers(struct submitter *s)
+-{
+-	if (do_nop)
+-		return 0;
+-
+-	return io_uring_register(s->ring_fd, IORING_REGISTER_BUFFERS, s->iovecs,
+-					DEPTH);
+-}
+-
+-static int io_uring_register_files(struct submitter *s)
+-{
+-	unsigned i;
+-
+-	if (do_nop)
+-		return 0;
+-
+-	s->fds = calloc(s->nr_files, sizeof(__s32));
+-	for (i = 0; i < s->nr_files; i++) {
+-		s->fds[i] = s->files[i].real_fd;
+-		s->files[i].fixed_fd = i;
+-	}
+-
+-	return io_uring_register(s->ring_fd, IORING_REGISTER_FILES, s->fds,
+-					s->nr_files);
+-}
+-
+-static int lk_gettid(void)
+-{
+-	return syscall(__NR_gettid);
+-}
+-
+-static unsigned file_depth(struct submitter *s)
+-{
+-	return (DEPTH + s->nr_files - 1) / s->nr_files;
+-}
+-
+-static void init_io(struct submitter *s, unsigned index)
+-{
+-	struct io_uring_sqe *sqe = &s->sqes[index];
+-	unsigned long offset;
+-	struct file *f;
+-	long r;
+-
+-	if (do_nop) {
+-		sqe->opcode = IORING_OP_NOP;
+-		return;
+-	}
+-
+-	if (s->nr_files == 1) {
+-		f = &s->files[0];
+-	} else {
+-		f = &s->files[s->cur_file];
+-		if (f->pending_ios >= file_depth(s)) {
+-			s->cur_file++;
+-			if (s->cur_file == s->nr_files)
+-				s->cur_file = 0;
+-			f = &s->files[s->cur_file];
+-		}
+-	}
+-	f->pending_ios++;
+-
+-	lrand48_r(&s->rand, &r);
+-	offset = (r % (f->max_blocks - 1)) * BS;
+-
+-	if (register_files) {
+-		sqe->flags = IOSQE_FIXED_FILE;
+-		sqe->fd = f->fixed_fd;
+-	} else {
+-		sqe->flags = 0;
+-		sqe->fd = f->real_fd;
+-	}
+-	if (fixedbufs) {
+-		sqe->opcode = IORING_OP_READ_FIXED;
+-		sqe->addr = (unsigned long) s->iovecs[index].iov_base;
+-		sqe->len = BS;
+-		sqe->buf_index = index;
+-	} else {
+-		sqe->opcode = IORING_OP_READV;
+-		sqe->addr = (unsigned long) &s->iovecs[index];
+-		sqe->len = 1;
+-		sqe->buf_index = 0;
+-	}
+-	sqe->ioprio = 0;
+-	sqe->off = offset;
+-	sqe->user_data = (unsigned long) f;
+-}
+-
+-static int prep_more_ios(struct submitter *s, unsigned max_ios)
+-{
+-	struct io_sq_ring *ring = &s->sq_ring;
+-	unsigned index, tail, next_tail, prepped = 0;
+-
+-	next_tail = tail = *ring->tail;
+-	do {
+-		next_tail++;
+-		read_barrier();
+-		if (next_tail == *ring->head)
+-			break;
+-
+-		index = tail & sq_ring_mask;
+-		init_io(s, index);
+-		ring->array[index] = index;
+-		prepped++;
+-		tail = next_tail;
+-	} while (prepped < max_ios);
+-
+-	if (*ring->tail != tail) {
+-		/* order tail store with writes to sqes above */
+-		write_barrier();
+-		*ring->tail = tail;
+-		write_barrier();
+-	}
+-	return prepped;
+-}
+-
+-static int get_file_size(struct file *f)
+-{
+-	struct stat st;
+-
+-	if (fstat(f->real_fd, &st) < 0)
+-		return -1;
+-	if (S_ISBLK(st.st_mode)) {
+-		unsigned long long bytes;
+-
+-		if (ioctl(f->real_fd, BLKGETSIZE64, &bytes) != 0)
+-			return -1;
+-
+-		f->max_blocks = bytes / BS;
+-		return 0;
+-	} else if (S_ISREG(st.st_mode)) {
+-		f->max_blocks = st.st_size / BS;
+-		return 0;
+-	}
+-
+-	return -1;
+-}
+-
+-static int reap_events(struct submitter *s)
+-{
+-	struct io_cq_ring *ring = &s->cq_ring;
+-	struct io_uring_cqe *cqe;
+-	unsigned head, reaped = 0;
+-
+-	head = *ring->head;
+-	do {
+-		struct file *f;
+-
+-		read_barrier();
+-		if (head == *ring->tail)
+-			break;
+-		cqe = &ring->cqes[head & cq_ring_mask];
+-		if (!do_nop) {
+-			f = (struct file *) (uintptr_t) cqe->user_data;
+-			f->pending_ios--;
+-			if (cqe->res != BS) {
+-				printf("io: unexpected ret=%d\n", cqe->res);
+-				if (polled && cqe->res == -EOPNOTSUPP)
+-					printf("Your filesystem doesn't support poll\n");
+-				return -1;
+-			}
+-		}
+-		reaped++;
+-		head++;
+-	} while (1);
+-
+-	s->inflight -= reaped;
+-	*ring->head = head;
+-	write_barrier();
+-	return reaped;
+-}
+-
+-static void *submitter_fn(void *data)
+-{
+-	struct submitter *s = data;
+-	struct io_sq_ring *ring = &s->sq_ring;
+-	int ret, prepped;
+-
+-	printf("submitter=%d\n", lk_gettid());
+-
+-	srand48_r(pthread_self(), &s->rand);
+-
+-	prepped = 0;
+-	do {
+-		int to_wait, to_submit, this_reap, to_prep;
+-
+-		if (!prepped && s->inflight < DEPTH) {
+-			to_prep = min(DEPTH - s->inflight, BATCH_SUBMIT);
+-			prepped = prep_more_ios(s, to_prep);
+-		}
+-		s->inflight += prepped;
+-submit_more:
+-		to_submit = prepped;
+-submit:
+-		if (to_submit && (s->inflight + to_submit <= DEPTH))
+-			to_wait = 0;
+-		else
+-			to_wait = min(s->inflight + to_submit, BATCH_COMPLETE);
+-
+-		/*
+-		 * Only need to call io_uring_enter if we're not using SQ thread
+-		 * poll, or if IORING_SQ_NEED_WAKEUP is set.
+-		 */
+-		if (!sq_thread_poll || (*ring->flags & IORING_SQ_NEED_WAKEUP)) {
+-			unsigned flags = 0;
+-
+-			if (to_wait)
+-				flags = IORING_ENTER_GETEVENTS;
+-			if ((*ring->flags & IORING_SQ_NEED_WAKEUP))
+-				flags |= IORING_ENTER_SQ_WAKEUP;
+-			ret = io_uring_enter(s->ring_fd, to_submit, to_wait,
+-						flags, NULL);
+-			s->calls++;
+-		}
+-
+-		/*
+-		 * For non SQ thread poll, we already got the events we needed
+-		 * through the io_uring_enter() above. For SQ thread poll, we
+-		 * need to loop here until we find enough events.
+-		 */
+-		this_reap = 0;
+-		do {
+-			int r;
+-			r = reap_events(s);
+-			if (r == -1) {
+-				s->finish = 1;
+-				break;
+-			} else if (r > 0)
+-				this_reap += r;
+-		} while (sq_thread_poll && this_reap < to_wait);
+-		s->reaps += this_reap;
+-
+-		if (ret >= 0) {
+-			if (!ret) {
+-				to_submit = 0;
+-				if (s->inflight)
+-					goto submit;
+-				continue;
+-			} else if (ret < to_submit) {
+-				int diff = to_submit - ret;
+-
+-				s->done += ret;
+-				prepped -= diff;
+-				goto submit_more;
+-			}
+-			s->done += ret;
+-			prepped = 0;
+-			continue;
+-		} else if (ret < 0) {
+-			if (errno == EAGAIN) {
+-				if (s->finish)
+-					break;
+-				if (this_reap)
+-					goto submit;
+-				to_submit = 0;
+-				goto submit;
+-			}
+-			printf("io_submit: %s\n", strerror(errno));
+-			break;
+-		}
+-	} while (!s->finish);
+-
+-	finish = 1;
+-	return NULL;
+-}
+-
+-static void sig_int(int sig)
+-{
+-	printf("Exiting on signal %d\n", sig);
+-	submitters[0].finish = 1;
+-	finish = 1;
+-}
+-
+-static void arm_sig_int(void)
+-{
+-	struct sigaction act;
+-
+-	memset(&act, 0, sizeof(act));
+-	act.sa_handler = sig_int;
+-	act.sa_flags = SA_RESTART;
+-	sigaction(SIGINT, &act, NULL);
+-}
+-
+-static int setup_ring(struct submitter *s)
+-{
+-	struct io_sq_ring *sring = &s->sq_ring;
+-	struct io_cq_ring *cring = &s->cq_ring;
+-	struct io_uring_params p;
+-	int ret, fd;
+-	void *ptr;
+-
+-	memset(&p, 0, sizeof(p));
+-
+-	if (polled && !do_nop)
+-		p.flags |= IORING_SETUP_IOPOLL;
+-	if (sq_thread_poll) {
+-		p.flags |= IORING_SETUP_SQPOLL;
+-		if (sq_thread_cpu != -1) {
+-			p.flags |= IORING_SETUP_SQ_AFF;
+-			p.sq_thread_cpu = sq_thread_cpu;
+-		}
+-	}
+-
+-	fd = io_uring_setup(DEPTH, &p);
+-	if (fd < 0) {
+-		perror("io_uring_setup");
+-		return 1;
+-	}
+-	s->ring_fd = fd;
+-
+-	if (fixedbufs) {
+-		ret = io_uring_register_buffers(s);
+-		if (ret < 0) {
+-			perror("io_uring_register_buffers");
+-			return 1;
+-		}
+-	}
+-
+-	if (register_files) {
+-		ret = io_uring_register_files(s);
+-		if (ret < 0) {
+-			perror("io_uring_register_files");
+-			return 1;
+-		}
+-	}
+-
+-	ptr = mmap(0, p.sq_off.array + p.sq_entries * sizeof(__u32),
+-			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd,
+-			IORING_OFF_SQ_RING);
+-	printf("sq_ring ptr = 0x%p\n", ptr);
+-	sring->head = ptr + p.sq_off.head;
+-	sring->tail = ptr + p.sq_off.tail;
+-	sring->ring_mask = ptr + p.sq_off.ring_mask;
+-	sring->ring_entries = ptr + p.sq_off.ring_entries;
+-	sring->flags = ptr + p.sq_off.flags;
+-	sring->array = ptr + p.sq_off.array;
+-	sq_ring_mask = *sring->ring_mask;
+-
+-	s->sqes = mmap(0, p.sq_entries * sizeof(struct io_uring_sqe),
+-			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd,
+-			IORING_OFF_SQES);
+-	printf("sqes ptr    = 0x%p\n", s->sqes);
+-
+-	ptr = mmap(0, p.cq_off.cqes + p.cq_entries * sizeof(struct io_uring_cqe),
+-			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd,
+-			IORING_OFF_CQ_RING);
+-	printf("cq_ring ptr = 0x%p\n", ptr);
+-	cring->head = ptr + p.cq_off.head;
+-	cring->tail = ptr + p.cq_off.tail;
+-	cring->ring_mask = ptr + p.cq_off.ring_mask;
+-	cring->ring_entries = ptr + p.cq_off.ring_entries;
+-	cring->cqes = ptr + p.cq_off.cqes;
+-	cq_ring_mask = *cring->ring_mask;
+-	return 0;
+-}
+-
+-static void file_depths(char *buf)
+-{
+-	struct submitter *s = &submitters[0];
+-	unsigned i;
+-	char *p;
+-
+-	buf[0] = '\0';
+-	p = buf;
+-	for (i = 0; i < s->nr_files; i++) {
+-		struct file *f = &s->files[i];
+-
+-		if (i + 1 == s->nr_files)
+-			p += sprintf(p, "%d", f->pending_ios);
+-		else
+-			p += sprintf(p, "%d, ", f->pending_ios);
+-	}
+-}
+-
+-int main(int argc, char *argv[])
+-{
+-	struct submitter *s = &submitters[0];
+-	unsigned long done, calls, reap;
+-	int err, i, flags, fd;
+-	char *fdepths;
+-	void *ret;
+-
+-	if (!do_nop && argc < 2) {
+-		printf("%s: filename\n", argv[0]);
+-		return 1;
+-	}
+-
+-	flags = O_RDONLY | O_NOATIME;
+-	if (!buffered)
+-		flags |= O_DIRECT;
+-
+-	i = 1;
+-	while (!do_nop && i < argc) {
+-		struct file *f;
+-
+-		if (s->nr_files == MAX_FDS) {
+-			printf("Max number of files (%d) reached\n", MAX_FDS);
+-			break;
+-		}
+-		fd = open(argv[i], flags);
+-		if (fd < 0) {
+-			perror("open");
+-			return 1;
+-		}
+-
+-		f = &s->files[s->nr_files];
+-		f->real_fd = fd;
+-		if (get_file_size(f)) {
+-			printf("failed getting size of device/file\n");
+-			return 1;
+-		}
+-		if (f->max_blocks <= 1) {
+-			printf("Zero file/device size?\n");
+-			return 1;
+-		}
+-		f->max_blocks--;
+-
+-		printf("Added file %s\n", argv[i]);
+-		s->nr_files++;
+-		i++;
+-	}
+-
+-	if (fixedbufs) {
+-		struct rlimit rlim;
+-
+-		rlim.rlim_cur = RLIM_INFINITY;
+-		rlim.rlim_max = RLIM_INFINITY;
+-		if (setrlimit(RLIMIT_MEMLOCK, &rlim) < 0) {
+-			perror("setrlimit");
+-			return 1;
+-		}
+-	}
+-
+-	arm_sig_int();
+-
+-	for (i = 0; i < DEPTH; i++) {
+-		void *buf;
+-
+-		if (posix_memalign(&buf, BS, BS)) {
+-			printf("failed alloc\n");
+-			return 1;
+-		}
+-		s->iovecs[i].iov_base = buf;
+-		s->iovecs[i].iov_len = BS;
+-	}
+-
+-	err = setup_ring(s);
+-	if (err) {
+-		printf("ring setup failed: %s, %d\n", strerror(errno), err);
+-		return 1;
+-	}
+-	printf("polled=%d, fixedbufs=%d, buffered=%d", polled, fixedbufs, buffered);
+-	printf(" QD=%d, sq_ring=%d, cq_ring=%d\n", DEPTH, *s->sq_ring.ring_entries, *s->cq_ring.ring_entries);
+-
+-	pthread_create(&s->thread, NULL, submitter_fn, s);
+-
+-	fdepths = malloc(8 * s->nr_files);
+-	reap = calls = done = 0;
+-	do {
+-		unsigned long this_done = 0;
+-		unsigned long this_reap = 0;
+-		unsigned long this_call = 0;
+-		unsigned long rpc = 0, ipc = 0;
+-
+-		sleep(1);
+-		this_done += s->done;
+-		this_call += s->calls;
+-		this_reap += s->reaps;
+-		if (this_call - calls) {
+-			rpc = (this_done - done) / (this_call - calls);
+-			ipc = (this_reap - reap) / (this_call - calls);
+-		} else
+-			rpc = ipc = -1;
+-		file_depths(fdepths);
+-		printf("IOPS=%lu, IOS/call=%ld/%ld, inflight=%u (%s)\n",
+-				this_done - done, rpc, ipc, s->inflight,
+-				fdepths);
+-		done = this_done;
+-		calls = this_call;
+-		reap = this_reap;
+-	} while (!finish);
+-
+-	pthread_join(s->thread, &ret);
+-	close(s->ring_fd);
+-	free(fdepths);
+-	return 0;
+-}
+diff --git a/tools/io_uring/io_uring-cp.c b/tools/io_uring/io_uring-cp.c
+deleted file mode 100644
+index d9bd6f5f8f46..000000000000
+--- a/tools/io_uring/io_uring-cp.c
++++ /dev/null
+@@ -1,283 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Simple test program that demonstrates a file copy through io_uring. This
+- * uses the API exposed by liburing.
+- *
+- * Copyright (C) 2018-2019 Jens Axboe
+- */
+-#include <stdio.h>
+-#include <fcntl.h>
+-#include <string.h>
+-#include <stdlib.h>
+-#include <unistd.h>
+-#include <assert.h>
+-#include <errno.h>
+-#include <inttypes.h>
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <sys/ioctl.h>
+-
+-#include "liburing.h"
+-
+-#define QD	64
+-#define BS	(32*1024)
+-
+-static int infd, outfd;
+-
+-struct io_data {
+-	int read;
+-	off_t first_offset, offset;
+-	size_t first_len;
+-	struct iovec iov;
+-};
+-
+-static int setup_context(unsigned entries, struct io_uring *ring)
+-{
+-	int ret;
+-
+-	ret = io_uring_queue_init(entries, ring, 0);
+-	if (ret < 0) {
+-		fprintf(stderr, "queue_init: %s\n", strerror(-ret));
+-		return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-static int get_file_size(int fd, off_t *size)
+-{
+-	struct stat st;
+-
+-	if (fstat(fd, &st) < 0)
+-		return -1;
+-	if (S_ISREG(st.st_mode)) {
+-		*size = st.st_size;
+-		return 0;
+-	} else if (S_ISBLK(st.st_mode)) {
+-		unsigned long long bytes;
+-
+-		if (ioctl(fd, BLKGETSIZE64, &bytes) != 0)
+-			return -1;
+-
+-		*size = bytes;
+-		return 0;
+-	}
+-
+-	return -1;
+-}
+-
+-static void queue_prepped(struct io_uring *ring, struct io_data *data)
+-{
+-	struct io_uring_sqe *sqe;
+-
+-	sqe = io_uring_get_sqe(ring);
+-	assert(sqe);
+-
+-	if (data->read)
+-		io_uring_prep_readv(sqe, infd, &data->iov, 1, data->offset);
+-	else
+-		io_uring_prep_writev(sqe, outfd, &data->iov, 1, data->offset);
+-
+-	io_uring_sqe_set_data(sqe, data);
+-}
+-
+-static int queue_read(struct io_uring *ring, off_t size, off_t offset)
+-{
+-	struct io_uring_sqe *sqe;
+-	struct io_data *data;
+-
+-	data = malloc(size + sizeof(*data));
+-	if (!data)
+-		return 1;
+-
+-	sqe = io_uring_get_sqe(ring);
+-	if (!sqe) {
+-		free(data);
+-		return 1;
+-	}
+-
+-	data->read = 1;
+-	data->offset = data->first_offset = offset;
+-
+-	data->iov.iov_base = data + 1;
+-	data->iov.iov_len = size;
+-	data->first_len = size;
+-
+-	io_uring_prep_readv(sqe, infd, &data->iov, 1, offset);
+-	io_uring_sqe_set_data(sqe, data);
+-	return 0;
+-}
+-
+-static void queue_write(struct io_uring *ring, struct io_data *data)
+-{
+-	data->read = 0;
+-	data->offset = data->first_offset;
+-
+-	data->iov.iov_base = data + 1;
+-	data->iov.iov_len = data->first_len;
+-
+-	queue_prepped(ring, data);
+-	io_uring_submit(ring);
+-}
+-
+-static int copy_file(struct io_uring *ring, off_t insize)
+-{
+-	unsigned long reads, writes;
+-	struct io_uring_cqe *cqe;
+-	off_t write_left, offset;
+-	int ret;
+-
+-	write_left = insize;
+-	writes = reads = offset = 0;
+-
+-	while (insize || write_left) {
+-		int had_reads, got_comp;
+-
+-		/*
+-		 * Queue up as many reads as we can
+-		 */
+-		had_reads = reads;
+-		while (insize) {
+-			off_t this_size = insize;
+-
+-			if (reads + writes >= QD)
+-				break;
+-			if (this_size > BS)
+-				this_size = BS;
+-			else if (!this_size)
+-				break;
+-
+-			if (queue_read(ring, this_size, offset))
+-				break;
+-
+-			insize -= this_size;
+-			offset += this_size;
+-			reads++;
+-		}
+-
+-		if (had_reads != reads) {
+-			ret = io_uring_submit(ring);
+-			if (ret < 0) {
+-				fprintf(stderr, "io_uring_submit: %s\n", strerror(-ret));
+-				break;
+-			}
+-		}
+-
+-		/*
+-		 * Queue is full at this point. Find at least one completion.
+-		 */
+-		got_comp = 0;
+-		while (write_left) {
+-			struct io_data *data;
+-
+-			if (!got_comp) {
+-				ret = io_uring_wait_cqe(ring, &cqe);
+-				got_comp = 1;
+-			} else {
+-				ret = io_uring_peek_cqe(ring, &cqe);
+-				if (ret == -EAGAIN) {
+-					cqe = NULL;
+-					ret = 0;
+-				}
+-			}
+-			if (ret < 0) {
+-				fprintf(stderr, "io_uring_peek_cqe: %s\n",
+-							strerror(-ret));
+-				return 1;
+-			}
+-			if (!cqe)
+-				break;
+-
+-			data = io_uring_cqe_get_data(cqe);
+-			if (cqe->res < 0) {
+-				if (cqe->res == -EAGAIN) {
+-					queue_prepped(ring, data);
+-					io_uring_cqe_seen(ring, cqe);
+-					continue;
+-				}
+-				fprintf(stderr, "cqe failed: %s\n",
+-						strerror(-cqe->res));
+-				return 1;
+-			} else if (cqe->res != data->iov.iov_len) {
+-				/* Short read/write, adjust and requeue */
+-				data->iov.iov_base += cqe->res;
+-				data->iov.iov_len -= cqe->res;
+-				data->offset += cqe->res;
+-				queue_prepped(ring, data);
+-				io_uring_cqe_seen(ring, cqe);
+-				continue;
+-			}
+-
+-			/*
+-			 * All done. if write, nothing else to do. if read,
+-			 * queue up corresponding write.
+-			 */
+-			if (data->read) {
+-				queue_write(ring, data);
+-				write_left -= data->first_len;
+-				reads--;
+-				writes++;
+-			} else {
+-				free(data);
+-				writes--;
+-			}
+-			io_uring_cqe_seen(ring, cqe);
+-		}
+-	}
+-
+-	/* wait out pending writes */
+-	while (writes) {
+-		struct io_data *data;
+-
+-		ret = io_uring_wait_cqe(ring, &cqe);
+-		if (ret) {
+-			fprintf(stderr, "wait_cqe=%d\n", ret);
+-			return 1;
+-		}
+-		if (cqe->res < 0) {
+-			fprintf(stderr, "write res=%d\n", cqe->res);
+-			return 1;
+-		}
+-		data = io_uring_cqe_get_data(cqe);
+-		free(data);
+-		writes--;
+-		io_uring_cqe_seen(ring, cqe);
+-	}
+-
+-	return 0;
+-}
+-
+-int main(int argc, char *argv[])
+-{
+-	struct io_uring ring;
+-	off_t insize;
+-	int ret;
+-
+-	if (argc < 3) {
+-		printf("%s: infile outfile\n", argv[0]);
+-		return 1;
+-	}
+-
+-	infd = open(argv[1], O_RDONLY);
+-	if (infd < 0) {
+-		perror("open infile");
+-		return 1;
+-	}
+-	outfd = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+-	if (outfd < 0) {
+-		perror("open outfile");
+-		return 1;
+-	}
+-
+-	if (setup_context(QD, &ring))
+-		return 1;
+-	if (get_file_size(infd, &insize))
+-		return 1;
+-
+-	ret = copy_file(&ring, insize);
+-
+-	close(infd);
+-	close(outfd);
+-	io_uring_queue_exit(&ring);
+-	return ret;
+-}
+diff --git a/tools/io_uring/liburing.h b/tools/io_uring/liburing.h
+deleted file mode 100644
+index 28a837b6069d..000000000000
+--- a/tools/io_uring/liburing.h
++++ /dev/null
+@@ -1,187 +0,0 @@
+-#ifndef LIB_URING_H
+-#define LIB_URING_H
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-#include <sys/uio.h>
+-#include <signal.h>
+-#include <string.h>
+-#include "../../include/uapi/linux/io_uring.h"
+-#include <inttypes.h>
+-#include <linux/swab.h>
+-#include "barrier.h"
+-
+-/*
+- * Library interface to io_uring
+- */
+-struct io_uring_sq {
+-	unsigned *khead;
+-	unsigned *ktail;
+-	unsigned *kring_mask;
+-	unsigned *kring_entries;
+-	unsigned *kflags;
+-	unsigned *kdropped;
+-	unsigned *array;
+-	struct io_uring_sqe *sqes;
+-
+-	unsigned sqe_head;
+-	unsigned sqe_tail;
+-
+-	size_t ring_sz;
+-};
+-
+-struct io_uring_cq {
+-	unsigned *khead;
+-	unsigned *ktail;
+-	unsigned *kring_mask;
+-	unsigned *kring_entries;
+-	unsigned *koverflow;
+-	struct io_uring_cqe *cqes;
+-
+-	size_t ring_sz;
+-};
+-
+-struct io_uring {
+-	struct io_uring_sq sq;
+-	struct io_uring_cq cq;
+-	int ring_fd;
+-};
+-
+-/*
+- * System calls
+- */
+-extern int io_uring_setup(unsigned entries, struct io_uring_params *p);
+-extern int io_uring_enter(int fd, unsigned to_submit,
+-	unsigned min_complete, unsigned flags, sigset_t *sig);
+-extern int io_uring_register(int fd, unsigned int opcode, void *arg,
+-	unsigned int nr_args);
+-
+-/*
+- * Library interface
+- */
+-extern int io_uring_queue_init(unsigned entries, struct io_uring *ring,
+-	unsigned flags);
+-extern int io_uring_queue_mmap(int fd, struct io_uring_params *p,
+-	struct io_uring *ring);
+-extern void io_uring_queue_exit(struct io_uring *ring);
+-extern int io_uring_peek_cqe(struct io_uring *ring,
+-	struct io_uring_cqe **cqe_ptr);
+-extern int io_uring_wait_cqe(struct io_uring *ring,
+-	struct io_uring_cqe **cqe_ptr);
+-extern int io_uring_submit(struct io_uring *ring);
+-extern struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring);
+-
+-/*
+- * Must be called after io_uring_{peek,wait}_cqe() after the cqe has
+- * been processed by the application.
+- */
+-static inline void io_uring_cqe_seen(struct io_uring *ring,
+-				     struct io_uring_cqe *cqe)
+-{
+-	if (cqe) {
+-		struct io_uring_cq *cq = &ring->cq;
+-
+-		(*cq->khead)++;
+-		/*
+-		 * Ensure that the kernel sees our new head, the kernel has
+-		 * the matching read barrier.
+-		 */
+-		write_barrier();
+-	}
+-}
+-
+-/*
+- * Command prep helpers
+- */
+-static inline void io_uring_sqe_set_data(struct io_uring_sqe *sqe, void *data)
+-{
+-	sqe->user_data = (unsigned long) data;
+-}
+-
+-static inline void *io_uring_cqe_get_data(struct io_uring_cqe *cqe)
+-{
+-	return (void *) (uintptr_t) cqe->user_data;
+-}
+-
+-static inline void io_uring_prep_rw(int op, struct io_uring_sqe *sqe, int fd,
+-				    const void *addr, unsigned len,
+-				    off_t offset)
+-{
+-	memset(sqe, 0, sizeof(*sqe));
+-	sqe->opcode = op;
+-	sqe->fd = fd;
+-	sqe->off = offset;
+-	sqe->addr = (unsigned long) addr;
+-	sqe->len = len;
+-}
+-
+-static inline void io_uring_prep_readv(struct io_uring_sqe *sqe, int fd,
+-				       const struct iovec *iovecs,
+-				       unsigned nr_vecs, off_t offset)
+-{
+-	io_uring_prep_rw(IORING_OP_READV, sqe, fd, iovecs, nr_vecs, offset);
+-}
+-
+-static inline void io_uring_prep_read_fixed(struct io_uring_sqe *sqe, int fd,
+-					    void *buf, unsigned nbytes,
+-					    off_t offset)
+-{
+-	io_uring_prep_rw(IORING_OP_READ_FIXED, sqe, fd, buf, nbytes, offset);
+-}
+-
+-static inline void io_uring_prep_writev(struct io_uring_sqe *sqe, int fd,
+-					const struct iovec *iovecs,
+-					unsigned nr_vecs, off_t offset)
+-{
+-	io_uring_prep_rw(IORING_OP_WRITEV, sqe, fd, iovecs, nr_vecs, offset);
+-}
+-
+-static inline void io_uring_prep_write_fixed(struct io_uring_sqe *sqe, int fd,
+-					     const void *buf, unsigned nbytes,
+-					     off_t offset)
+-{
+-	io_uring_prep_rw(IORING_OP_WRITE_FIXED, sqe, fd, buf, nbytes, offset);
+-}
+-
+-static inline void io_uring_prep_poll_add(struct io_uring_sqe *sqe, int fd,
+-					  unsigned poll_mask)
+-{
+-	memset(sqe, 0, sizeof(*sqe));
+-	sqe->opcode = IORING_OP_POLL_ADD;
+-	sqe->fd = fd;
+-#if __BYTE_ORDER == __BIG_ENDIAN
+-	poll_mask = __swahw32(poll_mask);
+-#endif
+-	sqe->poll_events = poll_mask;
+-}
+-
+-static inline void io_uring_prep_poll_remove(struct io_uring_sqe *sqe,
+-					     void *user_data)
+-{
+-	memset(sqe, 0, sizeof(*sqe));
+-	sqe->opcode = IORING_OP_POLL_REMOVE;
+-	sqe->addr = (unsigned long) user_data;
+-}
+-
+-static inline void io_uring_prep_fsync(struct io_uring_sqe *sqe, int fd,
+-				       unsigned fsync_flags)
+-{
+-	memset(sqe, 0, sizeof(*sqe));
+-	sqe->opcode = IORING_OP_FSYNC;
+-	sqe->fd = fd;
+-	sqe->fsync_flags = fsync_flags;
+-}
+-
+-static inline void io_uring_prep_nop(struct io_uring_sqe *sqe)
+-{
+-	memset(sqe, 0, sizeof(*sqe));
+-	sqe->opcode = IORING_OP_NOP;
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/tools/io_uring/queue.c b/tools/io_uring/queue.c
+deleted file mode 100644
+index 321819c132c7..000000000000
+--- a/tools/io_uring/queue.c
++++ /dev/null
+@@ -1,156 +0,0 @@
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <sys/mman.h>
+-#include <unistd.h>
+-#include <errno.h>
+-#include <string.h>
+-
+-#include "liburing.h"
+-#include "barrier.h"
+-
+-static int __io_uring_get_cqe(struct io_uring *ring,
+-			      struct io_uring_cqe **cqe_ptr, int wait)
+-{
+-	struct io_uring_cq *cq = &ring->cq;
+-	const unsigned mask = *cq->kring_mask;
+-	unsigned head;
+-	int ret;
+-
+-	*cqe_ptr = NULL;
+-	head = *cq->khead;
+-	do {
+-		/*
+-		 * It's necessary to use a read_barrier() before reading
+-		 * the CQ tail, since the kernel updates it locklessly. The
+-		 * kernel has the matching store barrier for the update. The
+-		 * kernel also ensures that previous stores to CQEs are ordered
+-		 * with the tail update.
+-		 */
+-		read_barrier();
+-		if (head != *cq->ktail) {
+-			*cqe_ptr = &cq->cqes[head & mask];
+-			break;
+-		}
+-		if (!wait)
+-			break;
+-		ret = io_uring_enter(ring->ring_fd, 0, 1,
+-					IORING_ENTER_GETEVENTS, NULL);
+-		if (ret < 0)
+-			return -errno;
+-	} while (1);
+-
+-	return 0;
+-}
+-
+-/*
+- * Return an IO completion, if one is readily available. Returns 0 with
+- * cqe_ptr filled in on success, -errno on failure.
+- */
+-int io_uring_peek_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr)
+-{
+-	return __io_uring_get_cqe(ring, cqe_ptr, 0);
+-}
+-
+-/*
+- * Return an IO completion, waiting for it if necessary. Returns 0 with
+- * cqe_ptr filled in on success, -errno on failure.
+- */
+-int io_uring_wait_cqe(struct io_uring *ring, struct io_uring_cqe **cqe_ptr)
+-{
+-	return __io_uring_get_cqe(ring, cqe_ptr, 1);
+-}
+-
+-/*
+- * Submit sqes acquired from io_uring_get_sqe() to the kernel.
+- *
+- * Returns number of sqes submitted
+- */
+-int io_uring_submit(struct io_uring *ring)
+-{
+-	struct io_uring_sq *sq = &ring->sq;
+-	const unsigned mask = *sq->kring_mask;
+-	unsigned ktail, ktail_next, submitted, to_submit;
+-	int ret;
+-
+-	/*
+-	 * If we have pending IO in the kring, submit it first. We need a
+-	 * read barrier here to match the kernels store barrier when updating
+-	 * the SQ head.
+-	 */
+-	read_barrier();
+-	if (*sq->khead != *sq->ktail) {
+-		submitted = *sq->kring_entries;
+-		goto submit;
+-	}
+-
+-	if (sq->sqe_head == sq->sqe_tail)
+-		return 0;
+-
+-	/*
+-	 * Fill in sqes that we have queued up, adding them to the kernel ring
+-	 */
+-	submitted = 0;
+-	ktail = ktail_next = *sq->ktail;
+-	to_submit = sq->sqe_tail - sq->sqe_head;
+-	while (to_submit--) {
+-		ktail_next++;
+-		read_barrier();
+-
+-		sq->array[ktail & mask] = sq->sqe_head & mask;
+-		ktail = ktail_next;
+-
+-		sq->sqe_head++;
+-		submitted++;
+-	}
+-
+-	if (!submitted)
+-		return 0;
+-
+-	if (*sq->ktail != ktail) {
+-		/*
+-		 * First write barrier ensures that the SQE stores are updated
+-		 * with the tail update. This is needed so that the kernel
+-		 * will never see a tail update without the preceeding sQE
+-		 * stores being done.
+-		 */
+-		write_barrier();
+-		*sq->ktail = ktail;
+-		/*
+-		 * The kernel has the matching read barrier for reading the
+-		 * SQ tail.
+-		 */
+-		write_barrier();
+-	}
+-
+-submit:
+-	ret = io_uring_enter(ring->ring_fd, submitted, 0,
+-				IORING_ENTER_GETEVENTS, NULL);
+-	if (ret < 0)
+-		return -errno;
+-
+-	return ret;
+-}
+-
+-/*
+- * Return an sqe to fill. Application must later call io_uring_submit()
+- * when it's ready to tell the kernel about it. The caller may call this
+- * function multiple times before calling io_uring_submit().
+- *
+- * Returns a vacant sqe, or NULL if we're full.
+- */
+-struct io_uring_sqe *io_uring_get_sqe(struct io_uring *ring)
+-{
+-	struct io_uring_sq *sq = &ring->sq;
+-	unsigned next = sq->sqe_tail + 1;
+-	struct io_uring_sqe *sqe;
+-
+-	/*
+-	 * All sqes are used
+-	 */
+-	if (next - sq->sqe_head > *sq->kring_entries)
+-		return NULL;
+-
+-	sqe = &sq->sqes[sq->sqe_tail & *sq->kring_mask];
+-	sq->sqe_tail = next;
+-	return sqe;
+-}
+diff --git a/tools/io_uring/setup.c b/tools/io_uring/setup.c
+deleted file mode 100644
+index 0b50fcd78520..000000000000
+--- a/tools/io_uring/setup.c
++++ /dev/null
+@@ -1,107 +0,0 @@
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <sys/mman.h>
+-#include <unistd.h>
+-#include <errno.h>
+-#include <string.h>
+-
+-#include "liburing.h"
+-
+-static int io_uring_mmap(int fd, struct io_uring_params *p,
+-			 struct io_uring_sq *sq, struct io_uring_cq *cq)
+-{
+-	size_t size;
+-	void *ptr;
+-	int ret;
+-
+-	sq->ring_sz = p->sq_off.array + p->sq_entries * sizeof(unsigned);
+-	ptr = mmap(0, sq->ring_sz, PROT_READ | PROT_WRITE,
+-			MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_SQ_RING);
+-	if (ptr == MAP_FAILED)
+-		return -errno;
+-	sq->khead = ptr + p->sq_off.head;
+-	sq->ktail = ptr + p->sq_off.tail;
+-	sq->kring_mask = ptr + p->sq_off.ring_mask;
+-	sq->kring_entries = ptr + p->sq_off.ring_entries;
+-	sq->kflags = ptr + p->sq_off.flags;
+-	sq->kdropped = ptr + p->sq_off.dropped;
+-	sq->array = ptr + p->sq_off.array;
+-
+-	size = p->sq_entries * sizeof(struct io_uring_sqe);
+-	sq->sqes = mmap(0, size, PROT_READ | PROT_WRITE,
+-				MAP_SHARED | MAP_POPULATE, fd,
+-				IORING_OFF_SQES);
+-	if (sq->sqes == MAP_FAILED) {
+-		ret = -errno;
+-err:
+-		munmap(sq->khead, sq->ring_sz);
+-		return ret;
+-	}
+-
+-	cq->ring_sz = p->cq_off.cqes + p->cq_entries * sizeof(struct io_uring_cqe);
+-	ptr = mmap(0, cq->ring_sz, PROT_READ | PROT_WRITE,
+-			MAP_SHARED | MAP_POPULATE, fd, IORING_OFF_CQ_RING);
+-	if (ptr == MAP_FAILED) {
+-		ret = -errno;
+-		munmap(sq->sqes, p->sq_entries * sizeof(struct io_uring_sqe));
+-		goto err;
+-	}
+-	cq->khead = ptr + p->cq_off.head;
+-	cq->ktail = ptr + p->cq_off.tail;
+-	cq->kring_mask = ptr + p->cq_off.ring_mask;
+-	cq->kring_entries = ptr + p->cq_off.ring_entries;
+-	cq->koverflow = ptr + p->cq_off.overflow;
+-	cq->cqes = ptr + p->cq_off.cqes;
+-	return 0;
+-}
+-
+-/*
+- * For users that want to specify sq_thread_cpu or sq_thread_idle, this
+- * interface is a convenient helper for mmap()ing the rings.
+- * Returns -1 on error, or zero on success.  On success, 'ring'
+- * contains the necessary information to read/write to the rings.
+- */
+-int io_uring_queue_mmap(int fd, struct io_uring_params *p, struct io_uring *ring)
+-{
+-	int ret;
+-
+-	memset(ring, 0, sizeof(*ring));
+-	ret = io_uring_mmap(fd, p, &ring->sq, &ring->cq);
+-	if (!ret)
+-		ring->ring_fd = fd;
+-	return ret;
+-}
+-
+-/*
+- * Returns -1 on error, or zero on success. On success, 'ring'
+- * contains the necessary information to read/write to the rings.
+- */
+-int io_uring_queue_init(unsigned entries, struct io_uring *ring, unsigned flags)
+-{
+-	struct io_uring_params p;
+-	int fd, ret;
+-
+-	memset(&p, 0, sizeof(p));
+-	p.flags = flags;
+-
+-	fd = io_uring_setup(entries, &p);
+-	if (fd < 0)
+-		return fd;
+-
+-	ret = io_uring_queue_mmap(fd, &p, ring);
+-	if (ret)
+-		close(fd);
+-
+-	return ret;
+-}
+-
+-void io_uring_queue_exit(struct io_uring *ring)
+-{
+-	struct io_uring_sq *sq = &ring->sq;
+-	struct io_uring_cq *cq = &ring->cq;
+-
+-	munmap(sq->sqes, *sq->kring_entries * sizeof(struct io_uring_sqe));
+-	munmap(sq->khead, sq->ring_sz);
+-	munmap(cq->khead, cq->ring_sz);
+-	close(ring->ring_fd);
+-}
+diff --git a/tools/io_uring/syscall.c b/tools/io_uring/syscall.c
+deleted file mode 100644
+index b22e0aa54e9d..000000000000
+--- a/tools/io_uring/syscall.c
++++ /dev/null
+@@ -1,52 +0,0 @@
+-/*
+- * Will go away once libc support is there
+- */
+-#include <unistd.h>
+-#include <sys/syscall.h>
+-#include <sys/uio.h>
+-#include <signal.h>
+-#include "liburing.h"
+-
+-#ifdef __alpha__
+-/*
+- * alpha is the only exception, all other architectures
+- * have common numbers for new system calls.
+- */
+-# ifndef __NR_io_uring_setup
+-#  define __NR_io_uring_setup		535
+-# endif
+-# ifndef __NR_io_uring_enter
+-#  define __NR_io_uring_enter		536
+-# endif
+-# ifndef __NR_io_uring_register
+-#  define __NR_io_uring_register	537
+-# endif
+-#else /* !__alpha__ */
+-# ifndef __NR_io_uring_setup
+-#  define __NR_io_uring_setup		425
+-# endif
+-# ifndef __NR_io_uring_enter
+-#  define __NR_io_uring_enter		426
+-# endif
+-# ifndef __NR_io_uring_register
+-#  define __NR_io_uring_register	427
+-# endif
+-#endif
+-
+-int io_uring_register(int fd, unsigned int opcode, void *arg,
+-		      unsigned int nr_args)
+-{
+-	return syscall(__NR_io_uring_register, fd, opcode, arg, nr_args);
+-}
+-
+-int io_uring_setup(unsigned int entries, struct io_uring_params *p)
+-{
+-	return syscall(__NR_io_uring_setup, entries, p);
+-}
+-
+-int io_uring_enter(int fd, unsigned int to_submit, unsigned int min_complete,
+-		   unsigned int flags, sigset_t *sig)
+-{
+-	return syscall(__NR_io_uring_enter, fd, to_submit, min_complete,
+-			flags, sig, _NSIG / 8);
+-}
 -- 
 2.41.0
 

@@ -2,64 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0190777E22
-	for <lists+io-uring@lfdr.de>; Thu, 10 Aug 2023 18:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFAC7777E45
+	for <lists+io-uring@lfdr.de>; Thu, 10 Aug 2023 18:29:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234502AbjHJQX5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 10 Aug 2023 12:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60438 "EHLO
+        id S233265AbjHJQ3y (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 10 Aug 2023 12:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234588AbjHJQX4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Aug 2023 12:23:56 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FFD8270A
-        for <io-uring@vger.kernel.org>; Thu, 10 Aug 2023 09:23:54 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-7748ca56133so14341639f.0
-        for <io-uring@vger.kernel.org>; Thu, 10 Aug 2023 09:23:54 -0700 (PDT)
+        with ESMTP id S233637AbjHJQ3x (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 10 Aug 2023 12:29:53 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C333C5
+        for <io-uring@vger.kernel.org>; Thu, 10 Aug 2023 09:29:53 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-348d1c94fdaso1360615ab.1
+        for <io-uring@vger.kernel.org>; Thu, 10 Aug 2023 09:29:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691684633; x=1692289433;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/UoasOhdcT9+eZAvIQMPYP5p+87o/o7IGoeDljwITU4=;
-        b=Czq8TDFSJAswQGP12EU5ZmSCOfZ3asfmNyLm/AEpPuFq9NNcWlAxjr+W0XqajGVasD
-         WclhtZBicaia02qvrXvWEhjZCw8bglPncm1GymYZFlvruTVhSuHvz2kA3WUGZnFJnqFB
-         qvjB0JAEc9w1YNAlpoDhBVX5ikgJTNU2GS9ytXqQJfpDcFftOwrwLF13N8youzAuSvap
-         T44ef+hxnAEvKjCscVYzFyMHUbrwScQeWfwiwAohqs5ZF7K6Jn+r3t379X3la9FPM4uY
-         4JJsYgzK+C7uwfV7IKC11WjbMbaRMv4s7G4xYb44UvG9yh0ykqrcOnhpwXRnOr5RiveU
-         +FTA==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691684992; x=1692289792;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lVC6cdnksTa2WxKrHDm0l6Pd/A1ZWvvqdzTZT5Opwd4=;
+        b=iHxLQGtBeHF55qq0RUHSHwSfrl55tPVOJrBJWOrpPHH4z2wpVXiN79GdZbCNNmOQpr
+         klfYPJYqTkkOdjqEvOalQVcPBclUitW58gmPsD42JPYvcbXa3sYXO82bmBPqXGeKC6rJ
+         sjbaNyLp2XLHYjjkKWJKyiilIa4Ggp1J2boijYTNa9pl/kJ/XGtT6un31RWJjwFpXrQn
+         xlLdIpkY7jfGebfVG9/gdypaQptBnLbPZw09WTajws1aOZhg43zBT2Cx0Kw4bBttXr3a
+         P/xIBnqO5kGcAcmobYaodjjohFpdUHXZ4z13waQPwlGVZ7MaoZzeXE0DIgCK/IDWsSmg
+         O1Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691684633; x=1692289433;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/UoasOhdcT9+eZAvIQMPYP5p+87o/o7IGoeDljwITU4=;
-        b=eVewqvaQwAqfYaSxNA9X7Y6X4Fqw1cMJuoYhdeOS21nTwpY0NzOX6a5V3m7oji5ZGA
-         JK8jih5JZfUwfFjSzp5RP0euzpO2fl3iTN1vjJWbFgI5gf4sCkTbed/SWCeVJS6RqTSb
-         4M9W9spv212/ZTIQBI323TAMzsqdhFWC/i6V5mRuTGgHckYmTv8hPdBf1dq6Fya5okLE
-         cXLKzkRjvY6eFZJJaBssorep2VjYk1w6VMT1FtSKU3H6L3jcrzyZLEYHa1Q62Z1JaMwG
-         SBRrMjGwqPlII53sPE3Icfc2yidjNJZ6LS2KtQlqtLY3GpxczcRd3+gVwSXvC0nj0Q+i
-         OO+A==
-X-Gm-Message-State: AOJu0YxMLgxuOZXacL4KAfqSKs+0M2AvGaQhEQP4Ma1UR5f1ypBHohdd
-        CGrpyvLoBTJHh7bzkX3463n+FwZGMHHsggEocCU=
-X-Google-Smtp-Source: AGHT+IF4ZqppbNKboQ9OsTCD0Rq+MW16YT9XWotEA1Lxf0J7zATPippDPhaVw81r+7wnMEyQ4P7N+g==
-X-Received: by 2002:a6b:c8c5:0:b0:787:16ec:2699 with SMTP id y188-20020a6bc8c5000000b0078716ec2699mr4768199iof.2.1691684633718;
-        Thu, 10 Aug 2023 09:23:53 -0700 (PDT)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j5-20020a02cb05000000b0042ad887f705sm491941jap.143.2023.08.10.09.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 09:23:53 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring: have io_file_put() take an io_kiocb rather than the file
-Date:   Thu, 10 Aug 2023 10:23:46 -0600
-Message-Id: <20230810162346.54872-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230810162346.54872-1-axboe@kernel.dk>
-References: <20230810162346.54872-1-axboe@kernel.dk>
+        d=1e100.net; s=20221208; t=1691684992; x=1692289792;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVC6cdnksTa2WxKrHDm0l6Pd/A1ZWvvqdzTZT5Opwd4=;
+        b=h9y+ZfSX4L5q3Q+mmlAchpoP3vQEvlDW011pYQfg6fstPUWWYJIGRJ3epu7pkmfqjX
+         ekgFQqWkmdv0diI4a/1ZgkqJ991JSR0eeFPZQeXjfrlPMp7joMuctQGC7Leg4HWtmQZl
+         HNzbOKs8TvGY1ZVX8+ujX54LtiePuwGK44g22eWb4JcYaadwwSlySB9b4+wCyjO86gqw
+         JU82U0DSC+fiZag+zOftRTS7Mqi4iVe6y2Fhoktz/L8lRoikQiOPwhhZM+DYKleHeUMx
+         pFIg6c5lyzUvJLToM1VaL/nch8JI6y8IlqdvLtaGmtiU76Kom5nwc+2XUjlm3PEY08rA
+         K9cw==
+X-Gm-Message-State: AOJu0YzdjTYAOCJt7RZ92oRkFgsB8xv9EJE71gAtgCGn1BquBB7BAOTp
+        6GfEuss8st3pzGG1p1ouEga9pu07fEv+DrnfIx0=
+X-Google-Smtp-Source: AGHT+IF+g5HKmdk6qnwK0VP+P2v05fDNL8Dy5wvlK39kcuWEp5s7aF0SwX/pqVSC32ra0zOQLcxlAw==
+X-Received: by 2002:a92:dc04:0:b0:349:1d60:7250 with SMTP id t4-20020a92dc04000000b003491d607250mr4052404iln.0.1691684992538;
+        Thu, 10 Aug 2023 09:29:52 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t16-20020a92dc10000000b0034938167b1asm523800iln.73.2023.08.10.09.29.51
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Aug 2023 09:29:51 -0700 (PDT)
+Message-ID: <11b283b3-cfc5-40d4-933c-c1a0750dc1e2@kernel.dk>
+Date:   Thu, 10 Aug 2023 10:29:50 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] io_uring: have io_file_put() take an io_kiocb rather
+ than the file
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+References: <20230810162346.54872-1-axboe@kernel.dk>
+ <20230810162346.54872-4-axboe@kernel.dk>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230810162346.54872-4-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
@@ -69,39 +73,50 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-No functional changes in this patch, just a prep patch for needing the
-request in io_file_put().
+On 8/10/23 10:23 AM, Jens Axboe wrote:
+> No functional changes in this patch, just a prep patch for needing the
+> request in io_file_put().
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/io_uring.c | 4 ++--
- io_uring/io_uring.h | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Gah, that was an older version. Newer version checks the
+REQ_F_FIXED_FILE flag in the helper instead:
+
+commit 17bc28374cd06b7d2d3f1e88470ef89f9cd3a497
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Fri Jul 7 11:14:40 2023 -0600
+
+    io_uring: have io_file_put() take an io_kiocb rather than the file
+    
+    No functional changes in this patch, just a prep patch for needing the
+    request in io_file_put().
+    
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3da26171599b..138635e66d44 100644
+index dadd745d389e..15697d88930d 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1004,7 +1004,7 @@ static void __io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+@@ -998,8 +998,7 @@ static void __io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+ 		io_put_kbuf_comp(req);
  		if (unlikely(req->flags & IO_REQ_CLEAN_FLAGS))
  			io_clean_op(req);
- 		if (!(req->flags & REQ_F_FIXED_FILE))
+-		if (!(req->flags & REQ_F_FIXED_FILE))
 -			io_put_file(req->file);
-+			io_put_file(req);
++		io_put_file(req);
  
  		rsrc_node = req->rsrc_node;
  		/*
-@@ -1539,7 +1539,7 @@ void io_free_batch_list(struct io_ring_ctx *ctx, struct io_wq_work_node *node)
+@@ -1533,8 +1532,7 @@ void io_free_batch_list(struct io_ring_ctx *ctx, struct io_wq_work_node *node)
+ 			if (unlikely(req->flags & IO_REQ_CLEAN_FLAGS))
  				io_clean_op(req);
  		}
- 		if (!(req->flags & REQ_F_FIXED_FILE))
+-		if (!(req->flags & REQ_F_FIXED_FILE))
 -			io_put_file(req->file);
-+			io_put_file(req);
++		io_put_file(req);
  
  		io_req_put_rsrc_locked(req, ctx);
  
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 12769bad5cee..46643bc9f3c5 100644
+index 12769bad5cee..ff153af28236 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
 @@ -196,10 +196,10 @@ static inline bool req_has_async_data(struct io_kiocb *req)
@@ -113,11 +128,12 @@ index 12769bad5cee..46643bc9f3c5 100644
  {
 -	if (file)
 -		fput(file);
-+	if (req->file)
++	if (!(req->flags & REQ_F_FIXED_FILE) && req->file)
 +		fput(req->file);
  }
  
  static inline void io_ring_submit_unlock(struct io_ring_ctx *ctx,
+
 -- 
-2.40.1
+Jens Axboe
 

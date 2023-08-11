@@ -2,125 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 018A97794CA
-	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 18:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8CEC7794ED
+	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 18:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbjHKQgs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Aug 2023 12:36:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59636 "EHLO
+        id S235646AbjHKQng (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 11 Aug 2023 12:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235488AbjHKQgr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 12:36:47 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6352D79
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 09:36:46 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-686f6231bdeso493273b3a.1
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 09:36:46 -0700 (PDT)
+        with ESMTP id S234085AbjHKQnf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 12:43:35 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E3E62D78
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 09:43:35 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-5657ca46a56so110370a12.0
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 09:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691771806; x=1692376606;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KWqpWditKXOjx4vZ6ni48OG2BMbT39LwVrViRWFbTfA=;
-        b=dm/6Es/gvHFCMJdLAI/VUTOVcQzgtU+lJW2TTuDlbInswZR8ODJucVnEGbwCRIxIb+
-         C1XhgPg+6+i5JAvbCi2fXKwdl2lhC+tD9c2e5FqPiSSOvDmcDObcGCabsTnjbLIaoAj4
-         E8H8O3qHkTCAN8uMjYKGKkMByRvQOHTL8p5okPJWAK9tZfuICUAn+y2CVr6FFwvSQcne
-         FT8edkYZueLR7FBhukVlTZGvS6ci3vE3JLvgxPNQnQlpt1NGQADi/Li0chPORN5jnAIq
-         sR5dWNFLpW4jvuDlEPplZlQ4AJLkSiNhLDBNo68BCDUhRlfgRdPUGOSH0rg1EzQFnC20
-         sXDw==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691772215; x=1692377015;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kGz/8jNhy+Ti+uFBVDNJa8dwph1KbT+1Ax53QB7NRzk=;
+        b=yA3opShBJE33Ob54zMyQ5piSZEMv4orngW1mBsL9mw0S4d7JLj+cURRQIW6X5Iex0G
+         67/m5QJr65MQEgqTq1N4QYxGMzcdCCIKvuTWFKX1+fQeB5mTI95/41BGGSMOp9jtz0RM
+         bWgKs7g41B+ZI41dvnBwza9SUtclj1axq0wnQu/vd70chyosvzGC01z1jp9NAKWKbuV3
+         mfeJdQ6hfdPJLYhYae3C8+fW2wrZ3vlDt0GxTIlAXK5xEan4wFUQ+htXQgtzzD1Ef9pL
+         jhwqfRCT1iP0CzSxiGThPmWdo259+0GFPC294lGTN72v40+uTDfg6tVrfyk9uuSSmVDs
+         q7Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691771806; x=1692376606;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KWqpWditKXOjx4vZ6ni48OG2BMbT39LwVrViRWFbTfA=;
-        b=WhGT2tEPwG7LvlXqpYR97TafRUxhn6HYeDJPVHubyTW6FfOoZRGOOERbbSKzYTONpG
-         jfp3VieVmhm7Jd/A81UTkXI6tyAwr0cgGjUq7oBj2IUKyozxDfjqgAk/LRbVZ5FMU/i9
-         A6gE16wrBxcDfHEu+JVgqItM63u/vJjlX+RgR2BUzqqwTdrzFdxVqSKidF2iko7SpHNz
-         0PXoiN+5SJ0S2p2Rv0VQTG9bjVKBeLSUdbl6vvnVFcU30K7dhY3kwWmQPR8Dk6e76JAA
-         gT4N4LekXK3FfI6ffe1FBt2BgzG0KcUKCj9F944GcxNU3e4+cfKC0nDwf+DbO417TpO8
-         vh8g==
-X-Gm-Message-State: AOJu0YyMhsm2/oMqHaq2OFVze2gf8ZkfvJL3uKewOgi0W+NcBxv3JtAu
-        D9LqCBDZJPTrhYiylKFDvaQQR1Xw5dqr/AoAdkw=
-X-Google-Smtp-Source: AGHT+IHqaHUxNM9VW1jOIcFbgwEcDGkTok9bCLbsVS2nvJE2c2TVwdcTyCOGHtAzKUoaZZqHBvwEiw==
-X-Received: by 2002:a05:6a20:a11e:b0:13c:bda3:79c3 with SMTP id q30-20020a056a20a11e00b0013cbda379c3mr3474440pzk.4.1691771806125;
-        Fri, 11 Aug 2023 09:36:46 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id j7-20020a62e907000000b00686edf28c22sm3521511pfh.87.2023.08.11.09.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Aug 2023 09:36:45 -0700 (PDT)
-Message-ID: <2305efb9-36a7-4aee-9312-293b723aa0df@kernel.dk>
-Date:   Fri, 11 Aug 2023 10:36:44 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET 0/3] io-wq locking improvements
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
-References: <20230809194306.170979-1-axboe@kernel.dk>
- <0399dbf5-ada0-d528-b925-aa90fa42df49@linux.dev>
+        d=1e100.net; s=20221208; t=1691772215; x=1692377015;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kGz/8jNhy+Ti+uFBVDNJa8dwph1KbT+1Ax53QB7NRzk=;
+        b=e6ivNeFKxMVgQ71o7/pEqWPkMtUwNondeG64Pvj7wCL8TZnS1Tkv5PdIvUNxHxCH02
+         lSUFufH4BiY42je7B27A6Pao1xvZKgqJHR5uLsAHmXxI3v3NFbcu/zSbt3VwkSARXUbh
+         iCODSlAqcj9GyNffm5IdMKFMSqGlcOygfUO+5CFeO4HxAwpj9jSt3SdxPAQj2ijP/39Q
+         kcQ0397NC6oBRbIKl/Eu8u8uLOkF9/0Pk/yC+Ff6+zdXJqe5sd5PLOWzVUFNjShHOxkI
+         u4IHKkAge+JCw9LWcxNxXUW7mGbd/wzhv/h4SjsO2IqRu8VTUmlPZwnwBlkgtRBSMaUT
+         NjRA==
+X-Gm-Message-State: AOJu0YxHRjBJAEyEcbyvASddnxRbJgQ1d/sp5ZB691VONRSHq6dRCzP8
+        F9Wt35psN9WaBdtjQleiZ7z9Zw==
+X-Google-Smtp-Source: AGHT+IGiX0GB0rT/Y80+qMkPZ1S9+cLSiTAMiLXpn9McGjKFN2f/aW9XWIirXwNZJBIpDZs5MYwMng==
+X-Received: by 2002:a17:902:d511:b0:1b8:a27d:f591 with SMTP id b17-20020a170902d51100b001b8a27df591mr2878801plg.5.1691772214727;
+        Fri, 11 Aug 2023 09:43:34 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 13-20020a170902e9cd00b001ac40488620sm4152899plk.92.2023.08.11.09.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Aug 2023 09:43:33 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0399dbf5-ada0-d528-b925-aa90fa42df49@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To:     io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1691757663.git.asml.silence@gmail.com>
+References: <cover.1691757663.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 0/7] random fixes and cleanups
+Message-Id: <169177221349.198433.4957723637013521811.b4-ty@kernel.dk>
+Date:   Fri, 11 Aug 2023 10:43:33 -0600
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-034f2
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/10/23 10:00 PM, Hao Xu wrote:
-> On 8/10/23 03:43, Jens Axboe wrote:
->> Hi,
->>
->> In chatting with someone that was trying to use io_uring to read
->> mailddirs, they found that running a test case that does:
->>
->> open file, statx file, read file, close file
->>
->> The culprit here is statx, and argumentation aside on whether it makes
->> sense to statx in the first place, it does highlight that io-wq is
->> pretty locking intensive.
->>
->> This (very lightly tested [1]) patchset attempts to improve this
->> situation, but reducing the frequency of grabbing wq->lock and
->> acct->lock.
->>
->> The first patch gets rid of wq->lock on work insertion. io-wq grabs it
->> to iterate the free worker list, but that is not necessary.
->>
->> Second patch reduces the frequency of acct->lock grabs, when we need to
->> run the queue and process new work. We currently grab the lock and check
->> for work, then drop it, then grab it again to process the work. That is
->> unneccessary.
->>
->> Final patch just optimizes how we activate new workers. It's not related
->> to the locking itself, just reducing the overhead of activating a new
->> worker.
->>
->> Running the above test case on a directory with 50K files, each being
->> between 10 and 4096 bytes, before these patches we get spend 160-170ms
->> running the workload. With this patchset, we spend 90-100ms doing the
->> same work. A bit of profile information is included in the patch commit
->> messages.
->>
->> Can also be found here:
->>
->> https://git.kernel.dk/cgit/linux/log/?h=io_uring-wq-lock
->>
->> [1] Runs the test suite just fine, with PROVE_LOCKING enabled and raw
->>      lockdep as well.
->>
-> 
-> Haven't got time to test it, but looks good from the code itself.
-> 
-> Reviewed-by: Hao Xu <howeyxu@tencent.com>
 
-Thanks, added.
+On Fri, 11 Aug 2023 13:53:40 +0100, Pavel Begunkov wrote:
+> Patch 1 and 2 don't allow multishot recv and accept to overflow
+> cqes indefinitely, the concept we're always trying to stick to is
+> that the request should complete, then userspace have to empty
+> the CQ and reissue.
+> 
+> Note, it breaks test/recv-multishot, I consider the test being
+> in the wrong, it should not rely on the overflow behaviour, and
+> I'm going to fix it.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/7] io_uring/net: don't overflow multishot accept
+      commit: 1bfed23349716a7811645336a7ce42c4b8f250bc
+[2/7] io_uring/net: don't overflow multishot recv
+      commit: b2e74db55dd93d6db22a813c9a775b5dbf87c560
+[3/7] io_uring: open code io_fill_cqe_req()
+      commit: 00b0db562485fbb259cd4054346208ad0885d662
+[4/7] io_uring: remove return from io_req_cqe_overflow()
+      commit: 056695bffa4beed5668dd4aa11efb696eacb3ed9
+[5/7] io_uring: never overflow io_aux_cqe
+      commit: b6b2bb58a75407660f638a68e6e34a07036146d0
+[6/7] io_uring/rsrc: keep one global dummy_ubuf
+      commit: 19a63c4021702e389a559726b16fcbf07a8a05f9
+[7/7] io_uring: simplify io_run_task_work_sig return
+      commit: d246c759c47eafe4688613e89b337e48c39c5968
+
+Best regards,
 -- 
 Jens Axboe
+
 
 

@@ -2,49 +2,49 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9048B778FF7
+	by mail.lfdr.de (Postfix) with ESMTP id 46B24778FF6
 	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 14:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235048AbjHKMzS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        id S234954AbjHKMzS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
         Fri, 11 Aug 2023 08:55:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51842 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjHKMzR (ORCPT
+        with ESMTP id S235116AbjHKMzR (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 08:55:17 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6985B115
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8A8109
         for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 05:55:16 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99c47ef365cso281981266b.0
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-98377c5d53eso269360566b.0
         for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 05:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691758514; x=1692363314;
+        d=gmail.com; s=20221208; t=1691758515; x=1692363315;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WyPJ8ImW+Enn/JA4TnwWypJPSlU1aIeQGsKxhR8THfU=;
-        b=BkJJvuraa5dwDPTR1vx6NaFNRAzNH6hFEKrQIP9cd8o0QPH+UCqY/TXnyYe0ULdmW4
-         JJlCPM7eFLZtVVIxEPC2wMWsv07PA9HnM2xCtCv+urBW70ewPWxgmT/YLeJDyOLkg2fj
-         LMEUpmVS8Wxi7Nm92kd4dR2SV0Khb17RMirDxXCNyLNFSAxrSmCVn4dGUUyhsHKsoqHQ
-         xOKfvQp1uVy4HcBzkWF06ZwRjHkExSzfOYyjECY3InjhPsA/jAZMsIKyYe7tX6ic9vzi
-         otM4DJtQIUALBlkXz8M/jIxD0RU5nl/rZrPq3safipwLYYWVGZSHwWs+/zMVHkaQC6Xw
-         KBdw==
+        bh=b44YcyjPbFap3yV03J2dsu1qQ4z7LC8pimOtpsft2Qc=;
+        b=HbQ+nEF5gOkVhKlVEVlJq9A9JRZYcs2GtXA1jM1EXMiweB6aSVOO7WGqXqU/zkGNHY
+         y7dU2wpbbrs2Hs2LEKE39ZsTgrk3T7lnKU5wIZdhcx1Xfj0Cb5UN+RAgLcYuPF9062tZ
+         Y4LBmFPhdWGjzVZb8wRF1F3MxNjWCiDA5hx+P4PP6ZzD+c3CiV0dBuvgOzNPlQd1dA93
+         +auaX9AjlRO3UTCBymzaA7T5x49UR8x0gm/4U5HWfgwrg1v/5fM9LtAUg447SvrgVdHK
+         gRb9bEurIaRy/zxe+eTXuK5hN9c/C2e7k+IJu8qOsr/Qv250QGO+6y2BU8hGz6EIWT/J
+         s3sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691758514; x=1692363314;
+        d=1e100.net; s=20221208; t=1691758515; x=1692363315;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WyPJ8ImW+Enn/JA4TnwWypJPSlU1aIeQGsKxhR8THfU=;
-        b=Khb3RjfEokliYFdMWEFj3sNMG5WqzmtlPfOiT4GUd/dLBsOAtwUzUvCbhXe4r+i1yy
-         jHJ0fGDo1xkfRL1ykG6CRvXcDq+SI3SBmS6+pssuO4h4GAubCxDKiAF/1GfTDM5gB5zU
-         3GdG/NzDZPPF+ZzN6579qgIwikOaOm+4KPMM330tYHyUkXmbKabNlctQ/F6EN93EqQFc
-         z7Aw/vBeMw2386kMbUGcZAINlEDrin4kjrTLnyqkkB+Kh+zaISoz8IS7xkXRfRj1bw9h
-         +heFmimfJE8Aeu2FF0sya56nqc7WxNKVPL/9ixxL5PZXNEHRDpPa/JzN1NviY1O7sEVj
-         9GfQ==
-X-Gm-Message-State: AOJu0Yw14/N8MYaAjmLEcSxlqpAOxwA+gHtQQVs2BdTVvMFIPOMsSa0S
-        oFQrbUqc2jPaQKmmmQcuTQlmciGZnzE=
-X-Google-Smtp-Source: AGHT+IEn37CeDZpDg8BiQl0RikAPK4Yz6FJeure6kLQ6+0+wnhSmZQV3MRQRLEx6z0smTp6//BkDoA==
-X-Received: by 2002:a17:906:9bc1:b0:99c:ad52:b0a with SMTP id de1-20020a1709069bc100b0099cad520b0amr1773354ejc.38.1691758514563;
-        Fri, 11 Aug 2023 05:55:14 -0700 (PDT)
+        bh=b44YcyjPbFap3yV03J2dsu1qQ4z7LC8pimOtpsft2Qc=;
+        b=NG5EqKWHEe45A3vLWndfkwsmLwoanqD1aA8+xd9a6QAsBnahQWpqifgGSKdWORvmrr
+         UBf7Ic1YQATe7F5pbD2joEjXwGJCEfYs/eykyaOqPPlW6FvrqyXqS+R1V8WEBoVlyYYv
+         IP0TYqjp682/O6uiv/mRP96dSf5zxUzMxyMPB6OX5FP5ovfZN7jJgGc85sm7injqWGek
+         3RHMTstlH+PzFjxBphzRm3Lk4H4KM7T1DW3iNEscK8HVXmpFUruae+yH0DGEiJbM90zN
+         K/9dDtK4EsyleFaDhODNBM5jecbc5bgYxK3Sfs+tXJX090VMnZSwbes/BV6cffJ5s/9e
+         1Paw==
+X-Gm-Message-State: AOJu0YwvgST70j8bkJO0I4aZSXFQXfcSxHIy6N+FwjYP5/VVCzzZVl/b
+        EILsglrvDqwYJWGQVgCrLzZhptXlIiU=
+X-Google-Smtp-Source: AGHT+IFRoQL/vUAtm6YvdlGoo1WVdWemmsvHCeY2Cpdgp0VEB7e6gE9CcdZ8yXaXC1xSW4aOi+zQhw==
+X-Received: by 2002:a17:906:18aa:b0:99c:bb4d:f590 with SMTP id c10-20020a17090618aa00b0099cbb4df590mr1439525ejf.47.1691758515080;
+        Fri, 11 Aug 2023 05:55:15 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::2:a57e])
         by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm2206943ejc.157.2023.08.11.05.55.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -52,9 +52,9 @@ Received: from 127.com ([2620:10d:c092:600::2:a57e])
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 6/7] io_uring/rsrc: keep one global dummy_ubuf
-Date:   Fri, 11 Aug 2023 13:53:46 +0100
-Message-ID: <e4a96dda35ab755914bc43f6781bba0df97ac489.1691757663.git.asml.silence@gmail.com>
+Subject: [PATCH 7/7] io_uring: simplify io_run_task_work_sig return
+Date:   Fri, 11 Aug 2023 13:53:47 +0100
+Message-ID: <3aec8a532c003d6e50739b969a82989402696170.1691757663.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1691757663.git.asml.silence@gmail.com>
 References: <cover.1691757663.git.asml.silence@gmail.com>
@@ -70,106 +70,31 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We set empty registered buffers to dummy_ubuf as an optimisation.
-Currently, we allocate the dummy entry for each ring, whenever we can
-simply have one global instance.
-
-We're casting out const on assignment, it's fine as we're not going to
-change the content of the dummy, the constness gives us an extra layer
-of protection if sth ever goes wrong.
+Nobody cares about io_run_task_work_sig returning 1, we only check for
+negative errors. Simplify by keeping to 0/-error returns.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c |  9 ---------
- io_uring/rsrc.c     | 14 ++++++++++----
- 2 files changed, 10 insertions(+), 13 deletions(-)
+ io_uring/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index e57d00939ab9..a7a4d637aee0 100644
+index a7a4d637aee0..e189158ebbdd 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -290,13 +290,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 		goto err;
- 	if (io_alloc_hash_table(&ctx->cancel_table_locked, hash_bits))
- 		goto err;
--
--	ctx->dummy_ubuf = kzalloc(sizeof(*ctx->dummy_ubuf), GFP_KERNEL);
--	if (!ctx->dummy_ubuf)
--		goto err;
--	/* set invalid range, so io_import_fixed() fails meeting it */
--	ctx->dummy_ubuf->ubuf = -1UL;
--
- 	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
- 			    0, GFP_KERNEL))
- 		goto err;
-@@ -335,7 +328,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
- 	return ctx;
- err:
--	kfree(ctx->dummy_ubuf);
- 	kfree(ctx->cancel_table.hbs);
- 	kfree(ctx->cancel_table_locked.hbs);
- 	kfree(ctx->io_bl);
-@@ -2897,7 +2889,6 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 		io_wq_put_hash(ctx->hash_map);
- 	kfree(ctx->cancel_table.hbs);
- 	kfree(ctx->cancel_table_locked.hbs);
--	kfree(ctx->dummy_ubuf);
- 	kfree(ctx->io_bl);
- 	xa_destroy(&ctx->io_bl_xa);
- 	kfree(ctx);
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 5e8fdd9b8ca6..d9c853d10587 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -33,6 +33,12 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- #define IORING_MAX_FIXED_FILES	(1U << 20)
- #define IORING_MAX_REG_BUFFERS	(1U << 14)
- 
-+static const struct io_mapped_ubuf dummy_ubuf = {
-+	/* set invalid range, so io_import_fixed() fails meeting it */
-+	.ubuf = -1UL,
-+	.ubuf_end = 0,
-+};
-+
- int __io_account_mem(struct user_struct *user, unsigned long nr_pages)
- {
- 	unsigned long page_limit, cur_pages, new_pages;
-@@ -132,7 +138,7 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf **slo
- 	struct io_mapped_ubuf *imu = *slot;
- 	unsigned int i;
- 
--	if (imu != ctx->dummy_ubuf) {
-+	if (imu != &dummy_ubuf) {
- 		for (i = 0; i < imu->nr_bvecs; i++)
- 			unpin_user_page(imu->bvec[i].bv_page);
- 		if (imu->acct_pages)
-@@ -459,14 +465,14 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 			break;
- 
- 		i = array_index_nospec(up->offset + done, ctx->nr_user_bufs);
--		if (ctx->user_bufs[i] != ctx->dummy_ubuf) {
-+		if (ctx->user_bufs[i] != &dummy_ubuf) {
- 			err = io_queue_rsrc_removal(ctx->buf_data, i,
- 						    ctx->user_bufs[i]);
- 			if (unlikely(err)) {
- 				io_buffer_unmap(ctx, &imu);
- 				break;
- 			}
--			ctx->user_bufs[i] = ctx->dummy_ubuf;
-+			ctx->user_bufs[i] = (struct io_mapped_ubuf *)&dummy_ubuf;
- 		}
- 
- 		ctx->user_bufs[i] = imu;
-@@ -1077,7 +1083,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	int ret, nr_pages, i;
- 	struct folio *folio = NULL;
- 
--	*pimu = ctx->dummy_ubuf;
-+	*pimu = (struct io_mapped_ubuf *)&dummy_ubuf;
- 	if (!iov->iov_base)
- 		return 0;
- 
+@@ -2477,10 +2477,10 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx)
+ 	if (!llist_empty(&ctx->work_llist)) {
+ 		__set_current_state(TASK_RUNNING);
+ 		if (io_run_local_work(ctx) > 0)
+-			return 1;
++			return 0;
+ 	}
+ 	if (io_run_task_work() > 0)
+-		return 1;
++		return 0;
+ 	if (task_sigpending(current))
+ 		return -EINTR;
+ 	return 0;
 -- 
 2.41.0
 

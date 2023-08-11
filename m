@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF19778FF3
-	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 14:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C50A9778FF5
+	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 14:55:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233952AbjHKMzQ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Aug 2023 08:55:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
+        id S232875AbjHKMzR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 11 Aug 2023 08:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235248AbjHKMzP (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 08:55:15 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A1C115
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 05:55:15 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b962c226ceso31223191fa.3
+        with ESMTP id S235048AbjHKMzQ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 08:55:16 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A386114
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 05:55:16 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-99c47ef365cso281980266b.0
         for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 05:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691758513; x=1692363313;
+        d=gmail.com; s=20221208; t=1691758514; x=1692363314;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jEqAyf8Y7JpC7PfPYXoIYZ/kuhGCFcsqdd0va/xWKGo=;
-        b=HZMEQ+EKsFOUJNxzC+oivr0YjH219E1R9AIr8FKq8ofypyJCpdW28vGa9iO7vZA3gh
-         yq5OUSoR62Bt2UWuvtp5MtyPIYgY9rkVI4nuSy6KSKKuSBPk1gA5DN0xHsLBxlR6I190
-         xC0w4JRqhvknD1lcAODIN6ZE7Zy+dvITCRMq0wgeXsulSK/XGbKU7/kPOML5Cs4tLMG8
-         SBycxIOENu9MQT9s12ufjTw9cD7dlh6cfjgiJms5ZK3icJoBkeQYHimDxpgi5OIvXNCT
-         8cPNvaFKzuhiHuDaNF7MntCsaSYmNE+2LCU6zc0avkCiuRka7VNToJaeXU+3/8SXwMKE
-         ksOg==
+        bh=YJbLz9QdYPZV5kn6edsU70ey95VfZY7HvhquINjrY44=;
+        b=iAOOICYcaIDRQzRgQkZvD65NfcZ9h93G4bHmYfLj8txChX+vfjB3IDGy+M4hCtj0qr
+         3KAvvBRa6dJY8uqS8Kfh0GWlT+QrRQoYvjSyX+g5ibu8iNMux2QrzRiCnK4fn5Eb0GWT
+         8J8iHguoFRcukAalm0j9FY6tz04m7bGsiokKEepzRZ0sr1/NAEOlP/+Db3+/ZoWoKLot
+         zOX84L1UiaFMdqGfYIr73ZtHoNLLExb9O3lWqu7WDhqXufkiEhiEeUIuERMh5IvM3C6R
+         nb8e8HPDISay1isiqItZI7UdK4vSoNm59wqlJ+18hCGMQZvN24irSeLjwSrZ9atq9GbE
+         tTCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691758513; x=1692363313;
+        d=1e100.net; s=20221208; t=1691758514; x=1692363314;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jEqAyf8Y7JpC7PfPYXoIYZ/kuhGCFcsqdd0va/xWKGo=;
-        b=j0kGNxmlY7EC+hnIkikGuZz5bzYst6Ig3VqtNCkmvXGpG9IcafZKxW6Oszgub68qll
-         ePZ+Cm5WSjzHsY2Df21XuQgKqMcuLLucUXz0DjwqDF7M+xAgE+lgx6Z9QIwqU+S+huNy
-         vbSoMNMTW8iSTOk4s9xLNBjYvZGvuWfJ+HUpPD5W64mUzgrwfQhrZrzFXlXvkWDwq1qf
-         niqgZWUxo4hHpgMLyBX6mLSv9dVDV+gj/12cMLwFozw4a1yxQX/LlNLWTmByg3PjKJY1
-         8L5EdLIDEF3AWAYB2TaPL7YMeKvgdRDeCczmN4dY1BZ8GK7RtNk4d+JZUEurn//A6xa+
-         pJwA==
-X-Gm-Message-State: AOJu0Yy5ttLs8vcvPkp6rtn7l3HQ2oWeeZKG1Te4v/qHjiORQfXLSJ64
-        TincZGLMOU60P+MM1hmLh1M5T4EzUik=
-X-Google-Smtp-Source: AGHT+IE5iZj29cY2rtCzaDO1udS3/Ur9Af7ssVsNyJmQSD/heauKKoCS3AP+IKTa6O680bXoTqS+TQ==
-X-Received: by 2002:a05:651c:1028:b0:2b9:44c5:ac15 with SMTP id w8-20020a05651c102800b002b944c5ac15mr1599889ljm.41.1691758512959;
-        Fri, 11 Aug 2023 05:55:12 -0700 (PDT)
+        bh=YJbLz9QdYPZV5kn6edsU70ey95VfZY7HvhquINjrY44=;
+        b=FAnche3XZyrbNFd4pQzd6pUWfQpwRBgDrL8fQJ41OdTEs1sa4QPnCPIvFT69LaN3da
+         FLU6dqIUC2+kRwwMScphYqHntdkw35R53CdwRYhN83zTLzNGdpi2iDr31+PRokmHH72F
+         yhTTc0JFlf2DS8lS2jB47nWixAXFMD2OKrBB5Fl44MvP7ZIQRL1eCIiJT4AGOsGWshqI
+         pLwaKk0ZTPV+IZinwCC/m+0yRNmYQQDw6XmdTpaLQXvi92n3or8M2dzBuzvUb39Mu472
+         2KlRxabpJ5qDDrXc/eBai8OxBmBN/51p2OF/5I7P8ksuAJR2QfvVzB+fhv7gNxAmZyBz
+         c5Kg==
+X-Gm-Message-State: AOJu0Yyae9sniOsKcNf9XJAcFDa2klHwK+1UJ6VDJN9N9z9pxBho5GwR
+        CR8W/XWBPhOjnbJfkwyUWJ6xDOY6Esc=
+X-Google-Smtp-Source: AGHT+IGp26d3omOxY9UWuDjRWyX3296Xtvudj7s9cxmfD0/9NQKK43UPD39Bd6EMurMj3wAclJkMvw==
+X-Received: by 2002:a17:906:31cb:b0:99c:e38d:e47f with SMTP id f11-20020a17090631cb00b0099ce38de47fmr1561738ejf.33.1691758513983;
+        Fri, 11 Aug 2023 05:55:13 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::2:a57e])
-        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm2206943ejc.157.2023.08.11.05.55.12
+        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm2206943ejc.157.2023.08.11.05.55.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Aug 2023 05:55:12 -0700 (PDT)
+        Fri, 11 Aug 2023 05:55:13 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 4/7] io_uring: remove return from io_req_cqe_overflow()
-Date:   Fri, 11 Aug 2023 13:53:44 +0100
-Message-ID: <8f2029ad0c22f73451664172d834372608ee0a77.1691757663.git.asml.silence@gmail.com>
+Subject: [PATCH 5/7] io_uring: never overflow io_aux_cqe
+Date:   Fri, 11 Aug 2023 13:53:45 +0100
+Message-ID: <bb20d14d708ea174721e58bb53786b0521e4dd6d.1691757663.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1691757663.git.asml.silence@gmail.com>
 References: <cover.1691757663.git.asml.silence@gmail.com>
@@ -70,51 +70,132 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Nobody checks io_req_cqe_overflow()'s return, make it return void.
+Now all callers of io_aux_cqe() set allow_overflow to false, remove the
+parameter and not allow overflowing auxilary multishot cqes.
+
+When CQ is full the function callers and all multishot requests in
+general are expected to complete the request. That prevents indefinite
+in-background grows of the overflow list and let's the userspace to
+handle the backlog at its own pace.
+
+Resubmitting a request should also be faster than accounting a bunch of
+overflows, so it should be better for perf when it happens, but a well
+behaving userspace should be trying to avoid overflows in any case.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 8 ++++----
- io_uring/io_uring.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ io_uring/io_uring.c | 11 +++++++----
+ io_uring/io_uring.h |  3 +--
+ io_uring/net.c      |  8 ++++----
+ io_uring/poll.c     |  4 ++--
+ io_uring/timeout.c  |  4 ++--
+ 5 files changed, 16 insertions(+), 14 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index e969b4ca1c47..7595658a5073 100644
+index 7595658a5073..e57d00939ab9 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -813,15 +813,15 @@ static bool io_cqring_event_overflow(struct io_ring_ctx *ctx, u64 user_data,
- 	return true;
+@@ -939,15 +939,18 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
+ 	return __io_post_aux_cqe(ctx, user_data, res, cflags, true);
  }
  
--bool io_req_cqe_overflow(struct io_kiocb *req)
-+void io_req_cqe_overflow(struct io_kiocb *req)
+-bool io_aux_cqe(const struct io_kiocb *req, bool defer, s32 res, u32 cflags,
+-		bool allow_overflow)
++/*
++ * A helper for multishot requests posting additional CQEs.
++ * Should only be used from a task_work including IO_URING_F_MULTISHOT.
++ */
++bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
  {
- 	if (!(req->flags & REQ_F_CQE32_INIT)) {
- 		req->extra1 = 0;
- 		req->extra2 = 0;
- 	}
--	return io_cqring_event_overflow(req->ctx, req->cqe.user_data,
--					req->cqe.res, req->cqe.flags,
--					req->extra1, req->extra2);
-+	io_cqring_event_overflow(req->ctx, req->cqe.user_data,
-+				req->cqe.res, req->cqe.flags,
-+				req->extra1, req->extra2);
- }
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	u64 user_data = req->cqe.user_data;
+ 	struct io_uring_cqe *cqe;
  
- /*
+ 	if (!defer)
+-		return __io_post_aux_cqe(ctx, user_data, res, cflags, allow_overflow);
++		return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
+ 
+ 	lockdep_assert_held(&ctx->uring_lock);
+ 
+@@ -962,7 +965,7 @@ bool io_aux_cqe(const struct io_kiocb *req, bool defer, s32 res, u32 cflags,
+ 	 * however it's main job is to prevent unbounded posted completions,
+ 	 * and in that it works just as well.
+ 	 */
+-	if (!allow_overflow && test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq))
++	if (test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq))
+ 		return false;
+ 
+ 	cqe = &ctx->submit_state.cqes[ctx->submit_state.cqes_count++];
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 3aa208fbe905..3dc0b6fb0ef7 100644
+index 3dc0b6fb0ef7..3e6ff3cd9a24 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -39,7 +39,7 @@ enum {
- };
- 
- struct io_uring_cqe *__io_get_cqe(struct io_ring_ctx *ctx, bool overflow);
--bool io_req_cqe_overflow(struct io_kiocb *req);
-+void io_req_cqe_overflow(struct io_kiocb *req);
- int io_run_task_work_sig(struct io_ring_ctx *ctx);
+@@ -44,8 +44,7 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx);
  void io_req_defer_failed(struct io_kiocb *req, s32 res);
  void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags);
+ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
+-bool io_aux_cqe(const struct io_kiocb *req, bool defer, s32 res, u32 cflags,
+-		bool allow_overflow);
++bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags);
+ void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
+ 
+ struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 8c419c01a5db..3d07bf79c1e0 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -641,8 +641,8 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 	}
+ 
+ 	if (!mshot_finished) {
+-		if (io_aux_cqe(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
+-			       *ret, cflags | IORING_CQE_F_MORE, false)) {
++		if (io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
++					*ret, cflags | IORING_CQE_F_MORE)) {
+ 			io_recv_prep_retry(req);
+ 			/* Known not-empty or unknown state, retry */
+ 			if (cflags & IORING_CQE_F_SOCK_NONEMPTY ||
+@@ -1366,8 +1366,8 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (ret < 0)
+ 		return ret;
+-	if (io_aux_cqe(req, issue_flags & IO_URING_F_COMPLETE_DEFER, ret,
+-		       IORING_CQE_F_MORE, false))
++	if (io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
++				ret, IORING_CQE_F_MORE))
+ 		goto retry;
+ 
+ 	return -ECANCELED;
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 65ec363f6377..4c360ba8793a 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -300,8 +300,8 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
+ 			__poll_t mask = mangle_poll(req->cqe.res &
+ 						    req->apoll_events);
+ 
+-			if (!io_aux_cqe(req, ts->locked, mask,
+-					IORING_CQE_F_MORE, false)) {
++			if (!io_fill_cqe_req_aux(req, ts->locked, mask,
++						 IORING_CQE_F_MORE)) {
+ 				io_req_set_res(req, mask, 0);
+ 				return IOU_POLL_REMOVE_POLL_USE_RES;
+ 			}
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 6242130e73c6..7fd7dbb211d6 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -73,8 +73,8 @@ static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state *ts)
+ 
+ 	if (!io_timeout_finish(timeout, data)) {
+ 		bool filled;
+-		filled = io_aux_cqe(req, ts->locked, -ETIME, IORING_CQE_F_MORE,
+-				    false);
++		filled = io_fill_cqe_req_aux(req, ts->locked, -ETIME,
++					     IORING_CQE_F_MORE);
+ 		if (filled) {
+ 			/* re-arm timer */
+ 			spin_lock_irq(&ctx->timeout_lock);
 -- 
 2.41.0
 

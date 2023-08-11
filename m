@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFDF7795EA
-	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 19:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8AC47795EB
+	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 19:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236599AbjHKRMv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Aug 2023 13:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
+        id S236627AbjHKRMy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 11 Aug 2023 13:12:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234977AbjHKRMv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 13:12:51 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC6719F
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 10:12:51 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-6872c60b572so446618b3a.1
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 10:12:51 -0700 (PDT)
+        with ESMTP id S236600AbjHKRMx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 13:12:53 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E4C3E54
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 10:12:53 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-6872c60b572so446637b3a.1
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 10:12:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691773970; x=1692378770;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691773972; x=1692378772;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RdLNQTIaZyWtWZzwJYB3ZQDU89FLjKa1NS45V9BX53U=;
-        b=ShSU+YG0OxdtUT2tkbXYstIATC/NUFmG/7L+ZqL7pBYGitauI4GPZ/PQEJ0LfrJah7
-         IbIL2OQl2IHYY5aKj11GNj9pqh7uEKZ16pFrPWg4aTtB0bGBGjuEpYfP1ZFLdj2R8FY1
-         LCsbFZYKz734f8zc0d8+gnFxazHv297yaXlZKAZogMo7mpz4fQCzH/2bq1Wj2EutK6h/
-         h+oaQK37FpAPmaD+EIB71uJI5hX3tLBgYrAktp4fVf/cRbktCiWPCea+nlvyejsdWaoW
-         IU6RW0/DXFhPbj7+umCIdxv+b0fN2WB4yYseOOa1cM7Y71MGAQ1urphBOAp+ozJNcwYE
-         eh1g==
+        bh=oIVeZnOogR+pDqXW8mczJRQ+AF8mak/aVUoiJjKFlV8=;
+        b=YQb7C099suF8kAVB8HYMgRrnfZuo2q0NGrHX1LAks1XcV8Ww7gZ9rFEuiPHWDr9qwb
+         1Dl4XDdG4FMqGmpATFLk8FLCVeH+0nYiCRUA4JP6MZqh3zQmbkCodKCVUQ6lwkW+0b1B
+         0fCAdbJ/ylDnI0uscjVMRIzR5PEqWJ83GkBZaAAcmEa1c2/foUf3ywXblr2AiZ9MBayr
+         dYIR6/+IltBeygqpVzBAnli2exh5ry64ajv65swJ5vQ6P+pgou4EcAut7K9dv4tkflzv
+         TGRFIsiGCRVmqMuCc28xK3a2YZoATt8WWsTavZ6rig+ywYCOqooZ8LwOeXKGCQ9haIMu
+         ZlAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691773970; x=1692378770;
+        d=1e100.net; s=20221208; t=1691773972; x=1692378772;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RdLNQTIaZyWtWZzwJYB3ZQDU89FLjKa1NS45V9BX53U=;
-        b=EnQfOqyxwx49P3B+qSstjOQ7ck2NuIZ7VFe8C8IYmPyH1tR/WR38SwOxwEnaXTNpo6
-         /Z4wGEsiYgxoGKZ1CgSa1iQrMWxeH+oJpONyyDk2CGScHp5EZEkCdpLoSq7VMtRsocJo
-         xGxfXmpA37DsiqloaiTWskZhsvJ7z/x0FSEsN/b2LgJN42Q4lCBKisqO/nRVI6S2Wln+
-         27ar+M1k4miGQUg2tpmRpRmdZaT73jP2x5//uIfOpEEGM0+jfFg+jPJCDIQHpwK/+rKq
-         9kZiV1hF9+MNX0zM99w0GFiYi+AaGwLb80Aiyf+PKYVAklKM0tJ62a7PICkqOFTGCs4x
-         l6Jg==
-X-Gm-Message-State: AOJu0YydlkXoEk5dwxinBvEoo7ifJJ4VnZcLitl+aNt7Y+FW6u9gxzMs
-        QoFbrjw3slc3Io7c0Mv7X6JV0U9A2y5nxG559rs=
-X-Google-Smtp-Source: AGHT+IG1AUZYb/BIHgMBhmCdU7ClwT7fWC9xY05CHkBwsOcPZcOJOrC/R5cupu5U5i50Ck8A1O8rDQ==
-X-Received: by 2002:a05:6a20:1589:b0:123:149b:a34f with SMTP id h9-20020a056a20158900b00123149ba34fmr3456853pzj.1.1691773970141;
-        Fri, 11 Aug 2023 10:12:50 -0700 (PDT)
+        bh=oIVeZnOogR+pDqXW8mczJRQ+AF8mak/aVUoiJjKFlV8=;
+        b=iQ5r4Lhm0K/8zPAX7ABysRUFBBVZNd3T/sZUSOVmqTW2uPCxZaGoCce0imtxdChUGv
+         WJ4wXXT00ok+9WDxtu5h3w6s8CiEOrZzjaWcDxqOjR9MZFM/SzS4cCvYGUhU+R/2r4e/
+         RMN3uSxUVAnsG6TQMQJ8Wic0t3hpHsCFaKwwVI+XcBtRHiq+OnFm2mZmnDTQnuaUjYHJ
+         eETIJaTACbLR8QxvKsAjyfX4CTo84tBRgXIXR/hftaH9beiwx8EhWrMDVtt+Ynt4c31c
+         hZEC4ftIRiUTcFi4R7VA9Bi87wEclprC+bQO//wr47sgczXVcOkFtAAbRP2aMQ8Ao9mV
+         f9ww==
+X-Gm-Message-State: AOJu0YzDENn74LdNfegbo9NcgJpmVclEzfvxSrdFI0EZW65bWput1+2S
+        8oWQhWe2Ft2XY25x3V8B9yCXMYeCYAsWhrls/bo=
+X-Google-Smtp-Source: AGHT+IFmnJMJWDRudjaHKIcnM73TMLW7ug40pRIXsNUY/4lJK5SGtEY1/gC6KfbwgEmqNzzZHxj78w==
+X-Received: by 2002:a05:6a00:2d29:b0:686:b990:560f with SMTP id fa41-20020a056a002d2900b00686b990560fmr2974254pfb.2.1691773972027;
+        Fri, 11 Aug 2023 10:12:52 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u20-20020a62ed14000000b006870b923fb3sm3541250pfh.52.2023.08.11.10.12.48
+        by smtp.gmail.com with ESMTPSA id u20-20020a62ed14000000b006870b923fb3sm3541250pfh.52.2023.08.11.10.12.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Aug 2023 10:12:49 -0700 (PDT)
+        Fri, 11 Aug 2023 10:12:50 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/3] io_uring: consider ring dead once the ref is marked dying
-Date:   Fri, 11 Aug 2023 11:12:41 -0600
-Message-Id: <20230811171242.222550-3-axboe@kernel.dk>
+Subject: [PATCH 3/3] io_uring: wait for cancelations on final ring put
+Date:   Fri, 11 Aug 2023 11:12:42 -0600
+Message-Id: <20230811171242.222550-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230811171242.222550-1-axboe@kernel.dk>
 References: <20230811171242.222550-1-axboe@kernel.dk>
@@ -69,66 +69,78 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Don't gate this on the task exiting flag. It's generally not a good idea
-to gate it on the task PF_EXITING flag anyway. Once the ring is starting
-to go through ring teardown, the ref is marked as dying. Use that as
-our fallback/cancel mechanism.
+We still offload the cancelation to a workqueue, as not to introduce
+dependencies between the exiting task waiting on cleanup, and that
+task needing to run task_work to complete the process.
+
+This means that once the final ring put is done, any request that was
+inflight and needed cancelation will be done as well. Notably requests
+that hold references to files - once the ring fd close is done, we will
+have dropped any of those references too.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 10 +++++++---
- io_uring/io_uring.h |  3 ++-
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ include/linux/io_uring_types.h |  2 ++
+ io_uring/io_uring.c            | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index c30c267689bb..df6ee78b70aa 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -374,6 +374,8 @@ struct io_ring_ctx {
+ 	unsigned			sq_thread_idle;
+ 	/* protected by ->completion_lock */
+ 	unsigned			evfd_last_cq_tail;
++
++	struct completion		*exit_comp;
+ };
+ 
+ struct io_tw_state {
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index fa0d4c2fd458..68344fbfc055 100644
+index 68344fbfc055..c65575fb4643 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -489,7 +489,11 @@ void io_queue_iowq(struct io_kiocb *req, struct io_tw_state *ts_dont_use)
- 	 * procedure rather than attempt to run this request (or create a new
- 	 * worker for it).
- 	 */
--	if (WARN_ON_ONCE(!same_thread_group(req->task, current)))
-+	WARN_ON_ONCE(!io_ring_ref_is_dying(req->ctx) &&
-+		     !same_thread_group(req->task, current));
+@@ -3068,6 +3068,9 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 		 */
+ 	} while (!wait_for_completion_interruptible_timeout(&ctx->ref_comp, interval));
+ 
++	if (ctx->exit_comp)
++		complete(ctx->exit_comp);
 +
-+	if (!same_thread_group(req->task, current) ||
-+	    io_ring_ref_is_dying(req->ctx))
- 		req->work.flags |= IO_WQ_WORK_CANCEL;
+ 	init_completion(&exit.completion);
+ 	init_task_work(&exit.task_work, io_tctx_exit_cb);
+ 	exit.ctx = ctx;
+@@ -3116,6 +3119,8 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
  
- 	trace_io_uring_queue_async_work(req, io_wq_is_hashed(&req->work));
-@@ -1354,8 +1358,8 @@ static void io_req_normal_work_add(struct io_kiocb *req)
+ 	mutex_lock(&ctx->uring_lock);
+ 	io_ring_ref_kill(ctx);
++	if (current->io_uring)
++		io_fallback_tw(current->io_uring, false);
+ 	xa_for_each(&ctx->personalities, index, creds)
+ 		io_unregister_personality(ctx, index);
+ 	if (ctx->rings)
+@@ -3144,9 +3149,20 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+ static int io_uring_release(struct inode *inode, struct file *file)
+ {
+ 	struct io_ring_ctx *ctx = file->private_data;
++	DECLARE_COMPLETION_ONSTACK(exit_comp);
  
- 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
- 		atomic_or(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
--
--	if (likely(!task_work_add(req->task, &tctx->task_work, ctx->notify_method)))
-+	if (!io_ring_ref_is_dying(ctx) &&
-+	    !task_work_add(req->task, &tctx->task_work, ctx->notify_method))
- 		return;
+ 	file->private_data = NULL;
++	WRITE_ONCE(ctx->exit_comp, &exit_comp);
+ 	io_ring_ctx_wait_and_kill(ctx);
++
++	/*
++	 * Wait for cancel to run before exiting task
++	 */
++	do {
++		if (current->io_uring)
++			io_fallback_tw(current->io_uring, false);
++	} while (wait_for_completion_interruptible(&exit_comp));
++
+ 	return 0;
+ }
  
- 	io_fallback_tw(tctx, false);
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 3e6ff3cd9a24..e06d898406c7 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -10,6 +10,7 @@
- #include "io-wq.h"
- #include "slist.h"
- #include "filetable.h"
-+#include "refs.h"
- 
- #ifndef CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -94,7 +95,7 @@ bool io_match_task_safe(struct io_kiocb *head, struct task_struct *task,
- 			lockdep_assert_held(&ctx->uring_lock);		\
- 		} else if (!ctx->task_complete) {			\
- 			lockdep_assert_held(&ctx->completion_lock);	\
--		} else if (ctx->submitter_task->flags & PF_EXITING) {	\
-+		} else if (io_ring_ref_is_dying(ctx)) {		\
- 			lockdep_assert(current_work());			\
- 		} else {						\
- 			lockdep_assert(current == ctx->submitter_task);	\
 -- 
 2.40.1
 

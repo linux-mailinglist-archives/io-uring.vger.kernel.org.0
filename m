@@ -2,194 +2,577 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1305577919E
-	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 16:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BFF077919C
+	for <lists+io-uring@lfdr.de>; Fri, 11 Aug 2023 16:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235829AbjHKOQl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 11 Aug 2023 10:16:41 -0400
+        id S235601AbjHKOQm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 11 Aug 2023 10:16:42 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233485AbjHKOQj (ORCPT
+        with ESMTP id S235693AbjHKOQj (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Fri, 11 Aug 2023 10:16:39 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8242706
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 07:16:34 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1bda3d0f0f1so2272565ad.0
-        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 07:16:34 -0700 (PDT)
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D362D78
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 07:16:35 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-6879986a436so418579b3a.0
+        for <io-uring@vger.kernel.org>; Fri, 11 Aug 2023 07:16:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691763393; x=1692368193;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691763394; x=1692368194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V8yRFdlpefOfywdA2XDRJ2uYVWVe52WNVP5jsRYSyGo=;
-        b=ZDotbKvYQpcsRvEvVcLhD9yzgNFRHqGHIk/JGuRkq9Uz0HhmBUEb+HOJhsR25jxre+
-         FU2Hn0XtaQxsP9c08ZJuE2L51GhiD2m38JIowgriCNuZI3MX3IZo1F9OqF1rGp/s+QGp
-         Pwxs4cCSTf0fywZR3wgbgxvNdO/2D3h4Ua6t8YcBxG68VPzr6vLYHkBZMRY7GE7QnQKw
-         4RPcD3/lT6xvQLHagl9FqPvwa9P0r8gOC0N07CuZhWyo/po5NCzs+Q4pK0RWjIJi8GTt
-         pvlmAVmo1soP9YPkqgP2YXur88r9Ue613rtG2g7bTPl0Cxjo4K9vRpLJlyLG0qh6LAsI
-         Qgog==
+        bh=qPHV/tYxuc80KyQiAeK8qRpB7upCrh2nbslvvtFqoD8=;
+        b=gUK/MDUgHgtnPWtbIm1EWwkA8/BiJksh9TfxCLJ0+tqLn0ZdnEqvvHFHwgSGulYfVA
+         v7o9Jljxq4HN5JKznnajV3CNYaWivrbreJutEJ3E3zkBakCnPl0uuFuLRjBMQ3lsyF4f
+         6C4dK8eREDl1T8RW2AE2fTt0IQO+R0zQTTkmf+bADhKT0v/cFNEpZGDdgHjC/meSNB1d
+         y2yRQpVyb+yJ7ykM4s5gzwLfIKoKJ5Xe7rh5A2v//8hbGMfpGc0oQAyeqXAumfxHj7VF
+         Ap1qnXBlhmzbI0ZafHoSZC6poN/1ZAPFVFt1hKSgKIPrZtLzalHZeKtQLi5r+aXD8571
+         Ry4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691763393; x=1692368193;
+        d=1e100.net; s=20221208; t=1691763394; x=1692368194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V8yRFdlpefOfywdA2XDRJ2uYVWVe52WNVP5jsRYSyGo=;
-        b=I+/6Z/ClEoL/D87dnUayl+mL3vE9HQlXQFniNCTj7ugXtUsdMkso8DuzyICzLdjoY/
-         MOMjYlT9VZDCVpgpMvFsXrIX1wrCgzZHMkoL3cduQnHmjP/rnGjzJGJw8BLQNXYOUkpj
-         cn7IHIc+rfN6MLOqKyUQGk+hw/YVnhqlZUDckrh8BaKUzZAE5srtPk/vafirHh5FoIeP
-         ggVO5m8qlDSuSz+4R5ms/PRVFBelLqh/wfO+C29nlnssnymwGj4k8sr/n8hJx2Hm5G0V
-         ayqAcVsQhnf+oD6UIyzFtfPsBSMS/65bCOpXeNT/0DBCWO98S9xLtOBr+bevp/vJNQPV
-         Veig==
-X-Gm-Message-State: AOJu0YxeuCgDkss7e7D0KFN3QaHro9Z7yMtlXKYOx8dVbtDpED2y5xvO
-        rQUo4FJE5AKdU/tLz5ebhQwENstM32nZ5eWOzJw=
-X-Google-Smtp-Source: AGHT+IHXlyQj1e0b/jZO9z97NIXu6hkk5Z5Nu2mNmtlCclUPrG6Ooyww9j1gNnwmuyd6DvOAYVd5LA==
-X-Received: by 2002:a17:902:e745:b0:1bb:ac37:384b with SMTP id p5-20020a170902e74500b001bbac37384bmr2247979plf.6.1691763393370;
-        Fri, 11 Aug 2023 07:16:33 -0700 (PDT)
+        bh=qPHV/tYxuc80KyQiAeK8qRpB7upCrh2nbslvvtFqoD8=;
+        b=CIzzAGn6IkWaJ2R50G63BWF24PTiBomaj/GU6UPoDXxYDQVVbPXgCUNV80YMnd0WqG
+         qwkRkB3Z4bUN3NXyMXxaU6/V7BGWrGdI0DhO6tEKijgttSDBlT1p8E80Gi7vqVHGmL6i
+         M/xrVTCDQMy8tRoWr4xRCsKwI82DjQXp03uuzfoMN1u43e6BBYurhnQLHUPk1zoGhD5c
+         yiZo9Z4F9PCGgwpZE9eavi0Lq1MmVuHZQgwdlS+GnDPNvL8Zdg9ohfgiTg4bKkCmznBO
+         MiN7At/gPxbwh1xlYDDTIulqQ7xp2snWzHbp9RC7MRWiKw/Xh2Xl9uloXzfKtGHMI2GR
+         Q3kA==
+X-Gm-Message-State: AOJu0Yyp+frJRh0cN2Tuf8aDP7Q1A9BOCL8LkDfauVmHK8SjWdfY+S5b
+        jUrnB5GZ4Gwp4WoGQrNTAsNXDhGIf+eCKKwIgwU=
+X-Google-Smtp-Source: AGHT+IErWbUoclKCp+Pep1lA/BbJYfRgeZmBTqJPsVq+H/fFqCH/c05FVIrOKoO1JYXiXhnQ0VzPwg==
+X-Received: by 2002:a05:6a20:8e17:b0:13d:fff1:c672 with SMTP id y23-20020a056a208e1700b0013dfff1c672mr3324704pzj.4.1691763394530;
+        Fri, 11 Aug 2023 07:16:34 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s21-20020a639255000000b00564ca424f79sm3422311pgn.48.2023.08.11.07.16.32
+        by smtp.gmail.com with ESMTPSA id s21-20020a639255000000b00564ca424f79sm3422311pgn.48.2023.08.11.07.16.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 11 Aug 2023 07:16:33 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     brauner@kernel.org, arnd@arndb.de, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/5] exit: add internal include file with helpers
-Date:   Fri, 11 Aug 2023 08:16:25 -0600
-Message-Id: <20230811141626.161210-5-axboe@kernel.dk>
+Subject: [PATCH 5/5] io_uring: add IORING_OP_WAITID support
+Date:   Fri, 11 Aug 2023 08:16:26 -0600
+Message-Id: <20230811141626.161210-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230811141626.161210-1-axboe@kernel.dk>
 References: <20230811141626.161210-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move struct wait_opts and waitid_info into kernel/exit.h, and include
-function declarations for the recently added helpers. Make them
-non-static as well.
+This adds support for an async version of waitid(2), in a fully async
+version. If an event isn't immediately available, wait for a callback
+to trigger a retry.
 
-This is in preparation for adding a waitid operation through io_uring.
-With the abtracted helpers, this is now possible.
+The format of the sqe is as follows:
+
+sqe->len		The 'which', the idtype being queried/waited for.
+sqe->fd			The 'pid' (or id) being waited for.
+sqe->file_index		The 'options' being set.
+sqe->addr2		A pointer to siginfo_t, if any, being filled in.
+
+buf_index, add3, and waitid_flags are reserved/unused for now.
+waitid_flags will be used for options for this request type. One
+interesting use case may be to add multi-shot support, so that the
+request stays armed and posts a notification every time a monitored
+process state change occurs.
+
+Note that this does not support rusage, on Arnd's recommendation.
+
+See the waitid(2) man page for details on the arguments.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- kernel/exit.c | 32 +++++++-------------------------
- kernel/exit.h | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+), 25 deletions(-)
- create mode 100644 kernel/exit.h
+ include/linux/io_uring_types.h |   2 +
+ include/uapi/linux/io_uring.h  |   2 +
+ io_uring/Makefile              |   2 +-
+ io_uring/cancel.c              |   5 +
+ io_uring/io_uring.c            |   3 +
+ io_uring/opdef.c               |   9 +
+ io_uring/waitid.c              | 312 +++++++++++++++++++++++++++++++++
+ io_uring/waitid.h              |  15 ++
+ 8 files changed, 349 insertions(+), 1 deletion(-)
+ create mode 100644 io_uring/waitid.c
+ create mode 100644 io_uring/waitid.h
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 5c4cd1769641..2e39468823e7 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -74,6 +74,8 @@
- #include <asm/unistd.h>
- #include <asm/mmu_context.h>
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index a7f03d8d879f..598553877fc2 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -276,6 +276,8 @@ struct io_ring_ctx {
+ 	struct hlist_head	futex_list;
+ 	struct io_alloc_cache	futex_cache;
  
-+#include "exit.h"
++	struct hlist_head	waitid_list;
 +
- /*
-  * The default value should be high enough to not crash a system that randomly
-  * crashes its kernel from time to time, but low enough to at least not permit
-@@ -1037,26 +1039,6 @@ SYSCALL_DEFINE1(exit_group, int, error_code)
- 	return 0;
- }
+ 	const struct cred	*sq_creds;	/* cred used for __io_sq_thread() */
+ 	struct io_sq_data	*sq_data;	/* if using sq thread polling */
  
--struct waitid_info {
--	pid_t pid;
--	uid_t uid;
--	int status;
--	int cause;
--};
--
--struct wait_opts {
--	enum pid_type		wo_type;
--	int			wo_flags;
--	struct pid		*wo_pid;
--
--	struct waitid_info	*wo_info;
--	int			wo_stat;
--	struct rusage		*wo_rusage;
--
--	wait_queue_entry_t		child_wait;
--	int			notask_error;
--};
--
- static int eligible_pid(struct wait_opts *wo, struct task_struct *p)
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 3dd3d7557531..ef42a8203bdd 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -66,6 +66,7 @@ struct io_uring_sqe {
+ 		__u32		msg_ring_flags;
+ 		__u32		uring_cmd_flags;
+ 		__u32		futex_flags;
++		__u32		waitid_flags;
+ 	};
+ 	__u64	user_data;	/* data to be passed back at completion time */
+ 	/* pack this to avoid bogus arm OABI complaints */
+@@ -239,6 +240,7 @@ enum io_uring_op {
+ 	IORING_OP_FUTEX_WAIT,
+ 	IORING_OP_FUTEX_WAKE,
+ 	IORING_OP_FUTEX_WAITV,
++	IORING_OP_WAITID,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index 2e4779bc550c..e5be47e4fc3b 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -8,6 +8,6 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o xattr.o nop.o fs.o splice.o \
+ 					statx.o net.o msg_ring.o timeout.o \
+ 					sqpoll.o fdinfo.o tctx.o poll.o \
+ 					cancel.o kbuf.o rsrc.o rw.o opdef.o \
+-					notif.o
++					notif.o waitid.o
+ obj-$(CONFIG_IO_WQ)		+= io-wq.o
+ obj-$(CONFIG_FUTEX)		+= futex.o
+diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+index 3dba8ccb1cd8..a01f3f41012b 100644
+--- a/io_uring/cancel.c
++++ b/io_uring/cancel.c
+@@ -16,6 +16,7 @@
+ #include "poll.h"
+ #include "timeout.h"
+ #include "futex.h"
++#include "waitid.h"
+ #include "cancel.h"
+ 
+ struct io_cancel {
+@@ -124,6 +125,10 @@ int io_try_cancel(struct io_uring_task *tctx, struct io_cancel_data *cd,
+ 	if (ret != -ENOENT)
+ 		return ret;
+ 
++	ret = io_waitid_cancel(ctx, cd, issue_flags);
++	if (ret != -ENOENT)
++		return ret;
++
+ 	spin_lock(&ctx->completion_lock);
+ 	if (!(cd->flags & IORING_ASYNC_CANCEL_FD))
+ 		ret = io_timeout_cancel(ctx, cd);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f1dbbe51f867..d33d9d91f94c 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -93,6 +93,7 @@
+ #include "net.h"
+ #include "notif.h"
+ #include "futex.h"
++#include "waitid.h"
+ 
+ #include "timeout.h"
+ #include "poll.h"
+@@ -335,6 +336,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	ctx->submit_state.free_list.next = NULL;
+ 	INIT_WQ_LIST(&ctx->locked_free_list);
+ 	INIT_HLIST_HEAD(&ctx->futex_list);
++	INIT_HLIST_HEAD(&ctx->waitid_list);
+ 	INIT_DELAYED_WORK(&ctx->fallback_work, io_fallback_req_func);
+ 	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
+ 	return ctx;
+@@ -3277,6 +3279,7 @@ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 	mutex_lock(&ctx->uring_lock);
+ 	ret |= io_poll_remove_all(ctx, task, cancel_all);
+ 	ret |= io_futex_remove_all(ctx, task, cancel_all);
++	ret |= io_waitid_remove_all(ctx, task, cancel_all);
+ 	mutex_unlock(&ctx->uring_lock);
+ 	ret |= io_kill_timeouts(ctx, task, cancel_all);
+ 	if (task)
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index b9e1e12cac9c..1c5cfa9d7b31 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -34,6 +34,7 @@
+ #include "cancel.h"
+ #include "rw.h"
+ #include "futex.h"
++#include "waitid.h"
+ 
+ static int io_no_issue(struct io_kiocb *req, unsigned int issue_flags)
  {
- 	return	wo->wo_type == PIDTYPE_MAX ||
-@@ -1520,7 +1502,7 @@ static int ptrace_do_wait(struct wait_opts *wo, struct task_struct *tsk)
- 	return 0;
- }
+@@ -453,6 +454,10 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
+ 	},
++	[IORING_OP_WAITID] = {
++		.prep			= io_waitid_prep,
++		.issue			= io_waitid,
++	},
+ };
  
--static bool pid_child_should_wake(struct wait_opts *wo, struct task_struct *p)
-+bool pid_child_should_wake(struct wait_opts *wo, struct task_struct *p)
- {
- 	if (!eligible_pid(wo, p))
- 		return false;
-@@ -1590,7 +1572,7 @@ static int do_wait_pid(struct wait_opts *wo)
- 	return 0;
- }
+ const struct io_cold_def io_cold_defs[] = {
+@@ -681,6 +686,10 @@ const struct io_cold_def io_cold_defs[] = {
+ 	[IORING_OP_FUTEX_WAITV] = {
+ 		.name			= "FUTEX_WAITV",
+ 	},
++	[IORING_OP_WAITID] = {
++		.name			= "WAITID",
++		.async_size		= sizeof(struct io_waitid_async),
++	},
+ };
  
--static long __do_wait(struct wait_opts *wo)
-+long __do_wait(struct wait_opts *wo)
- {
- 	long retval;
- 
-@@ -1662,9 +1644,9 @@ static long do_wait(struct wait_opts *wo)
- 	return retval;
- }
- 
--static int kernel_waitid_prepare(struct wait_opts *wo, int which, pid_t upid,
--				 struct waitid_info *infop, int options,
--				 struct rusage *ru)
-+int kernel_waitid_prepare(struct wait_opts *wo, int which, pid_t upid,
-+			  struct waitid_info *infop, int options,
-+			  struct rusage *ru)
- {
- 	unsigned int f_flags = 0;
- 	struct pid *pid = NULL;
-diff --git a/kernel/exit.h b/kernel/exit.h
+ const char *io_uring_get_opcode(u8 opcode)
+diff --git a/io_uring/waitid.c b/io_uring/waitid.c
 new file mode 100644
-index 000000000000..278faa26a653
+index 000000000000..29c8467e3242
 --- /dev/null
-+++ b/kernel/exit.h
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#ifndef LINUX_WAITID_H
-+#define LINUX_WAITID_H
++++ b/io_uring/waitid.c
+@@ -0,0 +1,312 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Support for async notification of waitid
++ */
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/fs.h>
++#include <linux/file.h>
++#include <linux/compat.h>
++#include <linux/io_uring.h>
 +
-+struct waitid_info {
-+	pid_t pid;
-+	uid_t uid;
-+	int status;
-+	int cause;
++#include <uapi/linux/io_uring.h>
++
++#include "io_uring.h"
++#include "cancel.h"
++#include "waitid.h"
++#include "../kernel/exit.h"
++
++struct io_waitid {
++	struct file *file;
++	int which;
++	pid_t upid;
++	int options;
++	struct wait_queue_head *head;
++	struct siginfo __user *infop;
++	struct waitid_info info;
 +};
 +
-+struct wait_opts {
-+	enum pid_type		wo_type;
-+	int			wo_flags;
-+	struct pid		*wo_pid;
++static void io_waitid_free(struct io_kiocb *req)
++{
++	struct io_waitid_async *iwa = req->async_data;
 +
-+	struct waitid_info	*wo_info;
-+	int			wo_stat;
-+	struct rusage		*wo_rusage;
++	put_pid(iwa->wo.wo_pid);
++	kfree(req->async_data);
++	req->async_data = NULL;
++	req->flags &= ~REQ_F_ASYNC_DATA;
++}
 +
-+	wait_queue_entry_t		child_wait;
-+	int			notask_error;
-+};
++#ifdef CONFIG_COMPAT
++static bool io_waitid_compat_copy_si(struct io_waitid *iw, int signo)
++{
++	struct compat_siginfo __user *infop;
++	bool ret;
 +
-+bool pid_child_should_wake(struct wait_opts *wo, struct task_struct *p);
-+long __do_wait(struct wait_opts *wo);
-+int kernel_waitid_prepare(struct wait_opts *wo, int which, pid_t upid,
-+			  struct waitid_info *infop, int options,
-+			  struct rusage *ru);
++	infop = (struct compat_siginfo __user *) iw->infop;
++
++	if (!user_write_access_begin(infop, sizeof(*infop)))
++		return false;
++
++	unsafe_put_user(signo, &infop->si_signo, Efault);
++	unsafe_put_user(0, &infop->si_errno, Efault);
++	unsafe_put_user(iw->info.cause, &infop->si_code, Efault);
++	unsafe_put_user(iw->info.pid, &infop->si_pid, Efault);
++	unsafe_put_user(iw->info.uid, &infop->si_uid, Efault);
++	unsafe_put_user(iw->info.status, &infop->si_status, Efault);
++	ret = true;
++done:
++	user_write_access_end();
++	return ret;
++Efault:
++	ret = false;
++	goto done;
++}
 +#endif
++
++static bool io_waitid_copy_si(struct io_kiocb *req, int signo)
++{
++	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
++	bool ret;
++
++	if (!iw->infop)
++		return true;
++
++#ifdef CONFIG_COMPAT
++	if (req->ctx->compat)
++		return io_waitid_compat_copy_si(iw, signo);
++#endif
++
++	if (!user_write_access_begin(iw->infop, sizeof(*iw->infop)))
++		return false;
++
++	unsafe_put_user(signo, &iw->infop->si_signo, Efault);
++	unsafe_put_user(0, &iw->infop->si_errno, Efault);
++	unsafe_put_user(iw->info.cause, &iw->infop->si_code, Efault);
++	unsafe_put_user(iw->info.pid, &iw->infop->si_pid, Efault);
++	unsafe_put_user(iw->info.uid, &iw->infop->si_uid, Efault);
++	unsafe_put_user(iw->info.status, &iw->infop->si_status, Efault);
++	ret = true;
++done:
++	user_write_access_end();
++	return ret;
++Efault:
++	ret = false;
++	goto done;
++}
++
++static int io_waitid_finish(struct io_kiocb *req, int ret)
++{
++	int signo = 0;
++
++	if (ret > 0) {
++		signo = SIGCHLD;
++		ret = 0;
++	}
++
++	if (!io_waitid_copy_si(req, signo))
++		ret = -EFAULT;
++	io_waitid_free(req);
++	return ret;
++}
++
++static void io_waitid_complete(struct io_kiocb *req, int ret)
++{
++	struct io_tw_state ts = { .locked = true };
++
++	lockdep_assert_held(&req->ctx->uring_lock);
++
++	/*
++	 * Did cancel find it meanwhile?
++	 */
++	if (hlist_unhashed(&req->hash_node))
++		return;
++
++	hlist_del_init(&req->hash_node);
++
++	ret = io_waitid_finish(req, ret);
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_set_res(req, ret, 0);
++	io_req_task_complete(req, &ts);
++}
++
++static bool __io_waitid_cancel(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
++	struct wait_queue_head *head;
++
++	head = READ_ONCE(iw->head);
++	if (head) {
++		struct io_waitid_async *iwa = req->async_data;
++
++		spin_lock_irq(&head->lock);
++		list_del_init(&iwa->wo.child_wait.entry);
++		iw->head = NULL;
++		spin_unlock_irq(&head->lock);
++		io_waitid_complete(req, -ECANCELED);
++		return true;
++	}
++
++	return false;
++}
++
++int io_waitid_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
++		     unsigned int issue_flags)
++{
++	struct hlist_node *tmp;
++	struct io_kiocb *req;
++	int nr = 0;
++
++	if (cd->flags & (IORING_ASYNC_CANCEL_FD|IORING_ASYNC_CANCEL_FD_FIXED))
++		return -ENOENT;
++
++	io_ring_submit_lock(ctx, issue_flags);
++	hlist_for_each_entry_safe(req, tmp, &ctx->waitid_list, hash_node) {
++		if (req->cqe.user_data != cd->data &&
++		    !(cd->flags & IORING_ASYNC_CANCEL_ANY))
++			continue;
++		if (__io_waitid_cancel(ctx, req))
++			nr++;
++		if (!(cd->flags & IORING_ASYNC_CANCEL_ALL))
++			break;
++	}
++	io_ring_submit_unlock(ctx, issue_flags);
++
++	if (nr)
++		return nr;
++
++	return -ENOENT;
++}
++
++bool io_waitid_remove_all(struct io_ring_ctx *ctx, struct task_struct *task,
++			  bool cancel_all)
++{
++	struct hlist_node *tmp;
++	struct io_kiocb *req;
++	bool found = false;
++
++	lockdep_assert_held(&ctx->uring_lock);
++
++	hlist_for_each_entry_safe(req, tmp, &ctx->waitid_list, hash_node) {
++		if (!io_match_task_safe(req, task, cancel_all))
++			continue;
++		__io_waitid_cancel(ctx, req);
++		found = true;
++	}
++
++	return found;
++}
++
++static void io_waitid_cb(struct io_kiocb *req, struct io_tw_state *ts)
++{
++	struct io_waitid_async *iwa = req->async_data;
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret;
++
++	/*
++	 * If we get -ERESTARTSYS here, we need to re-arm and check again
++	 * to ensure we get another callback. If the retry works, then we can
++	 * just remove ourselves from the waitqueue again and finish the
++	 * request.
++	 */
++	ret = __do_wait(&iwa->wo);
++	if (unlikely(ret == -ERESTARTSYS)) {
++		struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
++
++		io_tw_lock(ctx, ts);
++		iw->head = &current->signal->wait_chldexit;
++		add_wait_queue(iw->head, &iwa->wo.child_wait);
++		ret = __do_wait(&iwa->wo);
++		if (ret == -ERESTARTSYS)
++			return;
++
++		remove_wait_queue(iw->head, &iwa->wo.child_wait);
++		iw->head = NULL;
++	}
++
++	io_tw_lock(ctx, ts);
++	io_waitid_complete(req, ret);
++}
++
++static int io_waitid_wait(struct wait_queue_entry *wait, unsigned mode,
++			  int sync, void *key)
++{
++	struct wait_opts *wo = container_of(wait, struct wait_opts, child_wait);
++	struct io_waitid_async *iwa = container_of(wo, struct io_waitid_async, wo);
++	struct io_kiocb *req = iwa->req;
++	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
++	struct task_struct *p = key;
++
++	if (!pid_child_should_wake(wo, p))
++		return 0;
++
++	req->io_task_work.func = io_waitid_cb;
++	io_req_task_work_add(req);
++	iw->head = NULL;
++	list_del_init(&wait->entry);
++	return 1;
++}
++
++int io_waitid_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
++
++	if (sqe->addr || sqe->buf_index || sqe->addr3 || sqe->waitid_flags)
++		return -EINVAL;
++
++	iw->which = READ_ONCE(sqe->len);
++	iw->options = READ_ONCE(sqe->file_index);
++	iw->upid = READ_ONCE(sqe->fd);
++	iw->infop = u64_to_user_ptr(READ_ONCE(sqe->addr2));
++	iw->head = NULL;
++	return 0;
++}
++
++int io_waitid(struct io_kiocb *req, unsigned int issue_flags)
++{
++	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_waitid_async *iwa;
++	int ret;
++
++	if (io_alloc_async_data(req))
++		return -ENOMEM;
++
++	iwa = req->async_data;
++	iwa->req = req;
++
++	ret = kernel_waitid_prepare(&iwa->wo, iw->which, iw->upid, &iw->info,
++					iw->options, NULL);
++	if (ret)
++		goto done;
++
++	/*
++	 * Arm our callback and add us to the waitqueue, in case no events
++	 * are available.
++	 */
++	init_waitqueue_func_entry(&iwa->wo.child_wait, io_waitid_wait);
++	iwa->wo.child_wait.private = req->task;
++	iw->head = &current->signal->wait_chldexit;
++	add_wait_queue(iw->head, &iwa->wo.child_wait);
++
++	io_ring_submit_lock(ctx, issue_flags);
++	hlist_add_head(&req->hash_node, &ctx->waitid_list);
++
++	ret = __do_wait(&iwa->wo);
++	if (ret == -ERESTARTSYS) {
++		io_ring_submit_unlock(ctx, issue_flags);
++		return IOU_ISSUE_SKIP_COMPLETE;
++	}
++
++	hlist_del_init(&req->hash_node);
++	remove_wait_queue(iw->head, &iwa->wo.child_wait);
++	iw->head = NULL;
++	ret = io_waitid_finish(req, ret);
++
++	io_ring_submit_unlock(ctx, issue_flags);
++done:
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_set_res(req, ret, 0);
++	return IOU_OK;
++}
+diff --git a/io_uring/waitid.h b/io_uring/waitid.h
+new file mode 100644
+index 000000000000..956a8adafe8c
+--- /dev/null
++++ b/io_uring/waitid.h
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "../kernel/exit.h"
++
++struct io_waitid_async {
++	struct io_kiocb *req;
++	struct wait_opts wo;
++};
++
++int io_waitid_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++int io_waitid(struct io_kiocb *req, unsigned int issue_flags);
++int io_waitid_cancel(struct io_ring_ctx *ctx, struct io_cancel_data *cd,
++		     unsigned int issue_flags);
++bool io_waitid_remove_all(struct io_ring_ctx *ctx, struct task_struct *task,
++			  bool cancel_all);
 -- 
 2.40.1
 

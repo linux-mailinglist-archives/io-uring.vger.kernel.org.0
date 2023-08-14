@@ -2,76 +2,129 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4B177BE5F
-	for <lists+io-uring@lfdr.de>; Mon, 14 Aug 2023 18:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B5B77BFB9
+	for <lists+io-uring@lfdr.de>; Mon, 14 Aug 2023 20:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbjHNQum (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Aug 2023 12:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
+        id S231616AbjHNSXz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Aug 2023 14:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbjHNQu3 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Aug 2023 12:50:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1CA2D2;
-        Mon, 14 Aug 2023 09:50:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S230186AbjHNSXY (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Aug 2023 14:23:24 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE92F10E3;
+        Mon, 14 Aug 2023 11:23:22 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 544D26327C;
-        Mon, 14 Aug 2023 16:50:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603F6C433C8;
-        Mon, 14 Aug 2023 16:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692031827;
-        bh=xejVDIFW4M3KqYcvfFvp6idaZ0x1SMTNjqiyN51qDiE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iZFnF+gQRBF3qE+MXsyv83rodax3KV8Jy1NHSqQZnav4FZLwOFe+zqT73zPi3oJAj
-         NLohBS7p4LMDVA1sO1KHk6fXjYlsqTZ3k2zvtK84Ctkx4VBX1EHWfwccWaczW7ei6d
-         k0kD/hgSEkppkQUxTRAlz+jAzGurQOAIJ4DZ+paJoovXgeJd8JPrcJ7vEH4xTsTr4j
-         txCMt1+M4y96rvS43Nuvt0QaFqcjUL1i2WT0pvTEaOCL4pTWcSD/aKrohUtAkQgVWw
-         1VjLJbWS3ACZ3XilwcbDJKLL2O+lwZeiqZphw4za5Ai+fgrnNaU9R6S0IO2ye9zAo4
-         NjQUnlq/QKClA==
-Date:   Mon, 14 Aug 2023 10:50:25 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Keith Busch <kbusch@meta.com>, asml.silence@gmail.com,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCHv3] io_uring: set plug tags for same file
-Message-ID: <ZNpbUeDDIMYgJSkt@kbusch-mbp.dhcp.thefacebook.com>
-References: <20230731203932.2083468-1-kbusch@meta.com>
- <cbf529c4-6fb7-40da-8b01-514a8e3e6f5c@kernel.dk>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6980F1F383;
+        Mon, 14 Aug 2023 18:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1692037401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vrw+g1DBe8ZPV78sHOiS1djXqV9DnzvZjLoD8+5Ub/8=;
+        b=tCmuTOXcY5U/WnmCUKer/o3hDR65mS9KZX9ZtaCZVD1M4PKlK6eSwMAyra3qbnEBIO81kf
+        5jqqmE+q9GTbonNz8LouAmJNOhHg0pkkN2P6FyrGwoCR0gid3rCn8r4WHz8aeSpJWLEVjW
+        kZevLYSXPMXWO472TSV5W2Rwr/0LVAw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1692037401;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vrw+g1DBe8ZPV78sHOiS1djXqV9DnzvZjLoD8+5Ub/8=;
+        b=MTnMi+ayDLoRGG2sMGg+W6/qTl3tDCttR5vKQUFAkMSGCc5RCQOvn8p3WdUOGKtM+cZfqB
+        L3cK/dc6qIRCIhBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 11D17138E2;
+        Mon, 14 Aug 2023 18:23:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id H561Nxhx2mTAZQAAMHmgww
+        (envelope-from <krisman@suse.de>); Mon, 14 Aug 2023 18:23:20 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+        Andreas Hindborg <nmi@metaspace.dk>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        German Maglione <gmaglione@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Joe Thornber <ethornbe@redhat.com>
+Subject: Re: Libublk-rs v0.1.0
+In-Reply-To: <ZNmX5UQev4qvFMaq@fedora> (Ming Lei's message of "Mon, 14 Aug
+        2023 10:56:37 +0800")
+References: <ZNmX5UQev4qvFMaq@fedora>
+Date:   Mon, 14 Aug 2023 14:23:14 -0400
+Message-ID: <87o7j95vql.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbf529c4-6fb7-40da-8b01-514a8e3e6f5c@kernel.dk>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 01:24:17PM -0600, Jens Axboe wrote:
-> 
->      3.51%     +2.84%  [kernel.vmlinux]  [k] io_issue_sqe
->      3.24%     +1.35%  [kernel.vmlinux]  [k] io_submit_sqes
-> 
-> With the kernel without your patch, I was looking for tag flush overhead
-> but didn't find much:
-> 
->      0.02%  io_uring  [kernel.vmlinux]  [k] blk_mq_free_plug_rqs
-> 
-> Outside of the peak worry with the patch, do you have a workload that we
-> should test this on?
+Ming Lei <ming.lei@redhat.com> writes:
 
-Thanks for the insights! I had tested simply 4 nvme drives with 1
-thread, default everything:
+> Hello,
+>
+> Libublk-rs(Rust)[1][2] 0.1.0 is released.
 
-   ./t/io_uring /dev/nvme1n1 /dev/nvme2n1 /dev/nvme3n1 /dev/nvme4n1
+Hi Ming,
 
-Which appeared to show a very small improvement with this patch on my
-test vm. I'll test more to see where the tipping point is, and also see
-if there's any other ways to reduce time spent in io_issue_sqe.
+Do you intend to effectively deprecate the code in ubdsrv in favor of
+libublk-rs or do you intend to keep the C library?  I'm asking because
+I'm looking into how to enable ublk in distributions.
+
+Thanks,
+
+>
+> The original idea is to use Rust to write ublk target for covering all
+> kinds of block queue limits/parameters combination easily when talking
+> with Andreas and Shinichiro about blktests in LSFMM/BPF 2023.
+>
+> Finally it is evolved into one generic library. Attributed to Rust's
+> some modern language features, libublk interfaces are pretty simple:
+>
+> - one closure(tgt_init) for user to customize device by providing all
+>   kind of parameter
+>
+> - the other closure(io handling) for user to handling IO which is
+>   completely io_uring CQE driven: a) IO command CQE from ublk driver,
+>   b) target IO CQE originated from target io handling code, c) eventfd
+>   CQE if IO is offloaded to other context
+>
+> With low level APIs, <50 LoC can build one ublk-null, and if high level
+> APIs are used, 30 LoC is enough.
+>
+> Performance is basically aligned with pure C ublk implementation[3].
+>
+> The library has been verified on null, ramdisk, loop and zoned target.
+> The plan is to support async/await in 0.2 or 0.3 so that libublk can
+> be used to build complicated target easily and efficiently.
+>
+> Thanks Andreas for reviewing and providing lots of good ideas for
+> improvement & cleanup. Thanks German Maglione for some suggestions, such
+> as eventfd support. Thanks Joe for providing excellent Rust programming
+> guide.
+>
+> Any feedback is welcome!
+>
+> [1] https://crates.io/crates/libublk 
+> [2] https://github.com/ming1/libublk-rs
+> [3] https://github.com/osandov/blktests/blob/master/src/miniublk.c
+>
+> Thanks,
+> Ming
+>
+
+-- 
+Gabriel Krisman Bertazi

@@ -2,217 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F6A77ADAB
-	for <lists+io-uring@lfdr.de>; Sun, 13 Aug 2023 23:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A7677AFC6
+	for <lists+io-uring@lfdr.de>; Mon, 14 Aug 2023 04:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232409AbjHMVuO (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 13 Aug 2023 17:50:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60508 "EHLO
+        id S232674AbjHNC56 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 13 Aug 2023 22:57:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232414AbjHMVtV (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Aug 2023 17:49:21 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B88D1BE4
-        for <io-uring@vger.kernel.org>; Sun, 13 Aug 2023 14:48:06 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1b89b0c73d7so5415035ad.1
-        for <io-uring@vger.kernel.org>; Sun, 13 Aug 2023 14:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691963285; x=1692568085;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+pSAcUAQukzbtXs4BtFKqDCQxu+IiOA/cERtavK/ZH0=;
-        b=FYSS1v6dhSAmmOcA884es4EjP5SHHox36FEKP7az/YJqhuUj9+Z20SM4RfdcX9MIYY
-         KqRdnIkfsU0DkntWWP8IDsOuSy+1bUwfbWCkn7VNuRq3109fTuI1pP6cgPMTuHF1MRkK
-         yQzePnKmGNiRuOnGJUq1huS/0NqnqZEgI7OLSzSy++m3Eb0Crk0FHJN/FDuN7xEjE1sM
-         Kvw5WalpJYWXkSnVSv9lp9dfA4Ie4KKfqLAOckbi/Nm0yAS3EuNdpzRdOReTaIZaPYWp
-         pFoVhfdmLJwchFMg53x6gq+Ortk/U0+EaaPN8OehhkjUIcOJfEjKjzfQzY6CjqZtQCj/
-         twyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691963285; x=1692568085;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+pSAcUAQukzbtXs4BtFKqDCQxu+IiOA/cERtavK/ZH0=;
-        b=JACntoIJ2HHT5zDY19xKbBI+F+0GGGJnN7/u0vYcLZxpLJh4u5Ges7xkHtCpqrXpYh
-         tvuj7dkXkeOOvfhxQIKPphrsqJBWFuhaTrIqzKQtLBBoHRY1Onc1X1Vb4r2oVZoeid+2
-         WNJbwmYU8FuV4WfAqdnoA8rOCVEv9qUYbRpbKXnCvUxuC822wJyx4oqva92Ch4XFvJ/5
-         5KkyTNis1ZDIfR4F+kgHL1ISQUxE8kJAmXty/zUx/sOb+lsy+V7JKrfGrQaCQUIu5+Vd
-         td9dYlrA9z+IEGCLAWZfMdZyTYADm533by4npC84mriNKOtavlhiSWSrPRhstgEKo+tn
-         xdRw==
-X-Gm-Message-State: AOJu0YwOoJkxloGp7VqP4uH2nG363YelLCG6yC0t7Pcn6gxKRsfpwJoj
-        H+Nz+3fbcESQlYh4d4ezGqO/BoCOvJj8Ie+ESXI=
-X-Google-Smtp-Source: AGHT+IGYtyR+LkHQCP4rTW9NBkmITLgzf8XHIt2pxpPDnetvBgA0DIqaQQIkfAnfUfoZ9+VIKF6qlQ==
-X-Received: by 2002:a17:903:190:b0:1b8:35fa:cdcc with SMTP id z16-20020a170903019000b001b835facdccmr9426794plg.5.1691963285246;
-        Sun, 13 Aug 2023 14:48:05 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ij13-20020a170902ab4d00b001bb04755212sm7971730plb.228.2023.08.13.14.48.04
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Aug 2023 14:48:04 -0700 (PDT)
-Message-ID: <9e9ab13d-5f23-48ee-b651-3d89c3da1691@kernel.dk>
-Date:   Sun, 13 Aug 2023 15:48:03 -0600
+        with ESMTP id S232651AbjHNC5n (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 13 Aug 2023 22:57:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F8CE6A
+        for <io-uring@vger.kernel.org>; Sun, 13 Aug 2023 19:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691981811;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=6Ouz6lpPfb5SvxjYTBP38rdfStyrfdgPblSJkeBMVTw=;
+        b=HDp0dXFhB+KZKpkRT+3RBNhpVEnIhI1RRxoUpClc/40/0ATuEiIIsUBYENsN3LCMmQ9dOM
+        YoVHPEcqS22rWpMGpQn0GkQPcKPuDQSGNh0bziAMRsnGPawHB/5z4E4euSLR03VGUCKBsM
+        q8nF5nMF4mjU9eMGLqEjMxEPkOOvFuo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-175-RroH1CaVOVSQ3y3dRh3tvA-1; Sun, 13 Aug 2023 22:56:47 -0400
+X-MC-Unique: RroH1CaVOVSQ3y3dRh3tvA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 608318DC671;
+        Mon, 14 Aug 2023 02:56:47 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 65C34C15BAD;
+        Mon, 14 Aug 2023 02:56:41 +0000 (UTC)
+Date:   Mon, 14 Aug 2023 10:56:37 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     linux-block@vger.kernel.org, io-uring <io-uring@vger.kernel.org>,
+        Andreas Hindborg <nmi@metaspace.dk>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        German Maglione <gmaglione@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Joe Thornber <ethornbe@redhat.com>
+Cc:     ming.lei@redhat.com
+Subject: Libublk-rs v0.1.0
+Message-ID: <ZNmX5UQev4qvFMaq@fedora>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] io_uring/sqpoll: fix io-wq affinity when
- IORING_SETUP_SQPOLL is used
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we setup the ring with SQPOLL, then that polling thread has its
-own io-wq setup. This means that if the application uses
-IORING_REGISTER_IOWQ_AFF to set the io-wq affinity, we should not be
-setting it for the invoking task, but rather the sqpoll task.
+Hello,
 
-Add an sqpoll helper that parks the thread and updates the affinity,
-and use that one if we're using SQPOLL.
+Libublk-rs(Rust)[1][2] 0.1.0 is released.
 
-Fixes: fe76421d1da1 ("io_uring: allow user configurable IO thread CPU affinity")
-Cc: stable@vger.kernel.org # 5.10+
-Link: https://github.com/axboe/liburing/discussions/884
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The original idea is to use Rust to write ublk target for covering all
+kinds of block queue limits/parameters combination easily when talking
+with Andreas and Shinichiro about blktests in LSFMM/BPF 2023.
 
----
+Finally it is evolved into one generic library. Attributed to Rust's
+some modern language features, libublk interfaces are pretty simple:
 
-v2:	- handle unregister too...
-	- move the tctx/tctx->io_wq sanity checking into common code
+- one closure(tgt_init) for user to customize device by providing all
+  kind of parameter
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 2da0b1ba6a56..62f345587df5 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -1306,13 +1306,16 @@ static int io_wq_cpu_offline(unsigned int cpu, struct hlist_node *node)
- 	return __io_wq_cpu_online(wq, cpu, false);
- }
- 
--int io_wq_cpu_affinity(struct io_wq *wq, cpumask_var_t mask)
-+int io_wq_cpu_affinity(struct io_uring_task *tctx, cpumask_var_t mask)
- {
-+	if (!tctx || !tctx->io_wq)
-+		return -EINVAL;
-+
- 	rcu_read_lock();
- 	if (mask)
--		cpumask_copy(wq->cpu_mask, mask);
-+		cpumask_copy(tctx->io_wq->cpu_mask, mask);
- 	else
--		cpumask_copy(wq->cpu_mask, cpu_possible_mask);
-+		cpumask_copy(tctx->io_wq->cpu_mask, cpu_possible_mask);
- 	rcu_read_unlock();
- 
- 	return 0;
-diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
-index 31228426d192..06d9ca90c577 100644
---- a/io_uring/io-wq.h
-+++ b/io_uring/io-wq.h
-@@ -50,7 +50,7 @@ void io_wq_put_and_exit(struct io_wq *wq);
- void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work);
- void io_wq_hash_work(struct io_wq_work *work, void *val);
- 
--int io_wq_cpu_affinity(struct io_wq *wq, cpumask_var_t mask);
-+int io_wq_cpu_affinity(struct io_uring_task *tctx, cpumask_var_t mask);
- int io_wq_max_workers(struct io_wq *wq, int *new_count);
- 
- static inline bool io_wq_is_hashed(struct io_wq_work *work)
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c65575fb4643..c2e29d00d20e 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -4198,13 +4198,9 @@ static int io_register_enable_rings(struct io_ring_ctx *ctx)
- static __cold int io_register_iowq_aff(struct io_ring_ctx *ctx,
- 				       void __user *arg, unsigned len)
- {
--	struct io_uring_task *tctx = current->io_uring;
- 	cpumask_var_t new_mask;
- 	int ret;
- 
--	if (!tctx || !tctx->io_wq)
--		return -EINVAL;
--
- 	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL))
- 		return -ENOMEM;
- 
-@@ -4225,19 +4221,31 @@ static __cold int io_register_iowq_aff(struct io_ring_ctx *ctx,
- 		return -EFAULT;
- 	}
- 
--	ret = io_wq_cpu_affinity(tctx->io_wq, new_mask);
-+	if (!(ctx->flags & IORING_SETUP_SQPOLL)) {
-+		ret = io_wq_cpu_affinity(current->io_uring, new_mask);
-+	} else {
-+		mutex_unlock(&ctx->uring_lock);
-+		ret = io_sqpoll_wq_cpu_affinity(ctx, new_mask);
-+		mutex_lock(&ctx->uring_lock);
-+	}
-+
- 	free_cpumask_var(new_mask);
- 	return ret;
- }
- 
- static __cold int io_unregister_iowq_aff(struct io_ring_ctx *ctx)
- {
--	struct io_uring_task *tctx = current->io_uring;
-+	int ret;
- 
--	if (!tctx || !tctx->io_wq)
--		return -EINVAL;
-+	if (!(ctx->flags & IORING_SETUP_SQPOLL)) {
-+		ret = io_wq_cpu_affinity(current->io_uring, NULL);
-+	} else {
-+		mutex_unlock(&ctx->uring_lock);
-+		ret = io_sqpoll_wq_cpu_affinity(ctx, NULL);
-+		mutex_lock(&ctx->uring_lock);
-+	}
- 
--	return io_wq_cpu_affinity(tctx->io_wq, NULL);
-+	return ret;
- }
- 
- static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 4b4bfb0d432c..9cfb4a78cead 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -422,3 +422,18 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 	io_sq_thread_finish(ctx);
- 	return ret;
- }
-+
-+__cold int io_sqpoll_wq_cpu_affinity(struct io_ring_ctx *ctx,
-+				     cpumask_var_t mask)
-+{
-+	struct io_sq_data *sqd = ctx->sq_data;
-+	int ret = -EINVAL;
-+
-+	if (sqd) {
-+		io_sq_thread_park(sqd);
-+		ret = io_wq_cpu_affinity(sqd->thread->io_uring, mask);
-+		io_sq_thread_unpark(sqd);
-+	}
-+
-+	return ret;
-+}
-diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
-index e1b8d508d22d..8df37e8c9149 100644
---- a/io_uring/sqpoll.h
-+++ b/io_uring/sqpoll.h
-@@ -27,3 +27,4 @@ void io_sq_thread_park(struct io_sq_data *sqd);
- void io_sq_thread_unpark(struct io_sq_data *sqd);
- void io_put_sq_data(struct io_sq_data *sqd);
- void io_sqpoll_wait_sq(struct io_ring_ctx *ctx);
-+int io_sqpoll_wq_cpu_affinity(struct io_ring_ctx *ctx, cpumask_var_t mask);
+- the other closure(io handling) for user to handling IO which is
+  completely io_uring CQE driven: a) IO command CQE from ublk driver,
+  b) target IO CQE originated from target io handling code, c) eventfd
+  CQE if IO is offloaded to other context
 
--- 
-Jens Axboe
+With low level APIs, <50 LoC can build one ublk-null, and if high level
+APIs are used, 30 LoC is enough.
+
+Performance is basically aligned with pure C ublk implementation[3].
+
+The library has been verified on null, ramdisk, loop and zoned target.
+The plan is to support async/await in 0.2 or 0.3 so that libublk can
+be used to build complicated target easily and efficiently.
+
+Thanks Andreas for reviewing and providing lots of good ideas for
+improvement & cleanup. Thanks German Maglione for some suggestions, such
+as eventfd support. Thanks Joe for providing excellent Rust programming
+guide.
+
+Any feedback is welcome!
+
+[1] https://crates.io/crates/libublk 
+[2] https://github.com/ming1/libublk-rs
+[3] https://github.com/osandov/blktests/blob/master/src/miniublk.c
+
+Thanks,
+Ming
 

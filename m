@@ -2,69 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7287077D558
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 23:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B816877D629
+	for <lists+io-uring@lfdr.de>; Wed, 16 Aug 2023 00:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234685AbjHOVpY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 17:45:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
+        id S239912AbjHOWdB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 18:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240397AbjHOVpI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 17:45:08 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 887F31FC3
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 14:45:07 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1bdb3ecd20dso7465425ad.0
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 14:45:07 -0700 (PDT)
+        with ESMTP id S240440AbjHOWcc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 18:32:32 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3791FFE
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 15:32:20 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3197f632449so1665070f8f.1
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 15:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692135907; x=1692740707;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=es2Q+G7yN/d3O8VlPzekGvPoaVmjZxuf6WsQpCWyVFY=;
-        b=gSJTHxRCYXNTQFTft7D5EX+GSdHMArigXTGCRUwdEzQUlOpOVG02gg1H0fk1jkcvIw
-         QlFYVEoHEA8rAdim7R7lEOdPjisc2uwzD1xW2pYnGo4BDXnwE5c/YJ8+51LfmY2NSWK+
-         NZ2LDYyMEWVi3avNQM2JI9zyO7MtrGJNTDBK54MUG7CBmPa+8vd5UkfSYEK97krn31Na
-         z6x8daasS4LmFFXP2MhSpDR0FbPAX7xE4aFOutO+TSjRyOG4aLb/dxHKF5gGjbiF70UO
-         W0R07E+SbHyMGbPZhqF9jZ+9b5EIlr/FH5Zup3wfYQUcXUhERD9UFC7Cpzj1u8rdivJh
-         IB2A==
+        d=google.com; s=20221208; t=1692138739; x=1692743539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=clD27qRrlZWSnkEP+mWZLIV4ZuO805zRtXZ8s1yCw9A=;
+        b=dCOCdw2qRsZHx0XuPr3uc7CNFSLrL5tSDrnLcrkUD8pX0SFxNswjtoiYf6MrWj02uK
+         s7kgyvhtsRVG6/AheVyq4oDbWvn68aiV3qqm2AeDazAICqnSQTIIG5dZHLRjeECUzmbA
+         qWOGOoKw5qSn207tf0wbfMQiYPJkqUgl2nL+fvaOSG+5i5RABUY92z7qYbhoXZ7pJXVL
+         EHXI2Z7QgZtLGupMPGx+dOX1OJMtKZhX1pDqfjlcQYsTA7jzam3HxYfqAygW7DFXdI2r
+         zc2bBqM8BXxrYNpI4k+RtE5mb1nsl5gmxH2F2RyruFJlLdTeqq2acrR0pwABlk/kfAKh
+         Tbhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692135907; x=1692740707;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=es2Q+G7yN/d3O8VlPzekGvPoaVmjZxuf6WsQpCWyVFY=;
-        b=M5H5SganSn3QQR7VFv9O36waYG28fEM0HPfHmM5e9p0k78Cu3vO5yhmtBqIBgPQ+yp
-         8EJlMBowESCZVJ3qQoTG07w6Te8+ARPOE9JfK6ZAR4x+v59Zrz1j2apq9L8TsVEVW0hb
-         1Qa3g9vN2uF8zhIeZ2MQt7FBbpwwb/CKZdrfIHp1SvAnEj+iERAxBsuXqGHXTnssDn86
-         /KzZTCeHCYQupHGqtAEvzlrReaPMU3qgHKOm48z2ZyJnJTN8glG3TGedv6ele7kA3s88
-         FCbdp5/NyEA2Sa87ELjsWg0Jp2PqK2SzZrgCfuR41YKaC/HhGiQq4eSWFTkcgQuwdRbA
-         k4Yg==
-X-Gm-Message-State: AOJu0YwQIPkd0TSKK9t7Z5cwvi7+6aEjUnPcOCMpOr0nD2QA3ch83xfN
-        mmr1lwzQcGplntTV/bg/yt6Tdg==
-X-Google-Smtp-Source: AGHT+IGi5A/esSisN7jtJ0WzOEmCTosKLnOIo0DqxOjeUyB4CrgBRwfROEQvxIk7+QBOgVrbMgn7eg==
-X-Received: by 2002:a17:902:e84f:b0:1bb:c2b1:9c19 with SMTP id t15-20020a170902e84f00b001bbc2b19c19mr85118plg.6.1692135906930;
-        Tue, 15 Aug 2023 14:45:06 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n12-20020a170903110c00b001bb97e51ad5sm11505549plh.99.2023.08.15.14.45.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Aug 2023 14:45:06 -0700 (PDT)
-Message-ID: <8077359c-cb59-4964-8bde-f673e882dc12@kernel.dk>
-Date:   Tue, 15 Aug 2023 15:45:04 -0600
+        d=1e100.net; s=20221208; t=1692138739; x=1692743539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=clD27qRrlZWSnkEP+mWZLIV4ZuO805zRtXZ8s1yCw9A=;
+        b=d8sG9CQn0dj9sBclrRns8/IvOCovRL0fILdCeYb1bZlskaqEEPqSAu6w1D6KISGqDy
+         jgNZeSEbuANl46AKnC67XvfOmxDpqbkSeZwbIL2ojM/o64iGaHTiLy6bXACDYkMI9Zmp
+         62XICG+RZ12NXcYvvT59lforHL1fHjAAkxZarMvVrkL8lX+HFevVYoBKEa7ZNNsLXYqt
+         44hQpuU195KsyEoGpOhdSVnOknqwxSIgQFcHxwnsDMZJj/YPNsnxwlPaWi+qPJJuwqSe
+         AbgahrHyCNOYvgFa2P1J6npA0fb6u3v3CVg4CboF+l8ku9Ymz6w6vUnGzUTwG8tC0Ut1
+         DkCA==
+X-Gm-Message-State: AOJu0YzhM2wdZE85xIGc9P68fRxcbMmPyLPvJs5jYPITZyskZopted92
+        iJEYDTnej+oazlwPa05el4CLPWgMDpXDXiXNdZNT7g==
+X-Google-Smtp-Source: AGHT+IERbkZ9QTV6CGaib/EXST6dWE91mvlzlFXtd3YT81j0REMWIZkRIsmCG7Ilhnwx+nacGVcNXTypUzsf+mBjjcI=
+X-Received: by 2002:a5d:664b:0:b0:317:597b:9f92 with SMTP id
+ f11-20020a5d664b000000b00317597b9f92mr52249wrw.57.1692138738877; Tue, 15 Aug
+ 2023 15:32:18 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] io_uring: move to using private ring references
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20230811171242.222550-1-axboe@kernel.dk>
- <20230811171242.222550-2-axboe@kernel.dk>
- <1b948d2e-c34f-6c12-cd9c-de9d42cb0fae@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <1b948d2e-c34f-6c12-cd9c-de9d42cb0fae@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <20230815032645.1393700-1-willy@infradead.org> <20230815032645.1393700-9-willy@infradead.org>
+ <ZNvQ4EbQh/aAwK8L@x1n> <ZNvbApJbLanU55Ze@casper.infradead.org>
+In-Reply-To: <ZNvbApJbLanU55Ze@casper.infradead.org>
+From:   Yosry Ahmed <yosryahmed@google.com>
+Date:   Tue, 15 Aug 2023 15:31:42 -0700
+Message-ID: <CAJD7tkY=-Mmrbe5_Z8rKA--zUMo83mTyY1frZEFy6C5NFP-y7A@mail.gmail.com>
+Subject: Re: [PATCH 8/9] mm: Rearrange page flags
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,39 +72,41 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/15/23 11:45 AM, Pavel Begunkov wrote:
-> On 8/11/23 18:12, Jens Axboe wrote:
->> io_uring currently uses percpu refcounts for the ring reference. This
->> works fine, but exiting a ring requires an RCU grace period to lapse
->> and this slows down ring exit quite a lot.
->>
->> Add a basic per-cpu counter for our references instead, and use that.
->> This is in preparation for doing a sync wait on on any request (notably
->> file) references on ring exit. As we're going to be waiting on ctx refs
->> going away as well with that, the RCU grace period wait becomes a
->> noticeable slowdown.
-> 
-> How does it work?
-> 
-> - What prevents io_ring_ref_maybe_done() from miscalculating and either
-> 1) firing while there are refs or
-> 2) not triggering when we put down all refs?
-> E.g. percpu_ref relies on atomic counting after switching from
-> percpu mode.
+On Tue, Aug 15, 2023 at 1:07=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Tue, Aug 15, 2023 at 03:24:16PM -0400, Peter Xu wrote:
+> > On Tue, Aug 15, 2023 at 04:26:44AM +0100, Matthew Wilcox (Oracle) wrote=
+:
+> > > +++ b/include/linux/page-flags.h
+> > > @@ -99,13 +99,15 @@
+> > >   */
+> > >  enum pageflags {
+> > >     PG_locked,              /* Page is locked. Don't touch. */
+> > > +   PG_writeback,           /* Page is under writeback */
+> > >     PG_referenced,
+> > >     PG_uptodate,
+> > >     PG_dirty,
+> > >     PG_lru,
+> > > +   PG_head,                /* Must be in bit 6 */
+> >
+> > Could there be some explanation on "must be in bit 6" here?
+>
+> Not on this line, no.  You get 40-50 characters to say something useful.
+> Happy to elaborate further in some other comment or in the commit log,
+> but not on this line.
+>
+> The idea behind all of this is that _folio_order moves into the bottom
+> byte of _flags_1.  Because the order can never be greater than 63 (and
+> in practice I think the largest we're going to see is about 30 -- a 16GB
+> hugetlb page on some architectures), we know that PG_head and PG_waiters
+> will be clear, so we can write (folio->_flags_1 & 0xff) and the compiler
+> will just load a byte; it won't actually load the word and mask it.
+>
+> We can't move PG_head any lower, or we'll risk having a tail page with
+> PG_head set (which can happen with the vmemmmap optimisation, but eugh).
+> And we don't want to move it any higher because then we'll have a flag
+> that cannot be reused in a tail page.  Bit 6 is the perfect spot for it.
 
-I'm open to critique of it, do you have any specific worries? The
-counters are per-cpu, and whenever the REF_DEAD_BIT is set, we sum on
-that drop. We should not be grabbing references post that, and any drop
-will just sum the counters. 
-
-> - What contexts it can be used from? Task context only? I'll argue we
-> want to use it in [soft]irq for likes of *task_work_add().
-
-We don't manipulate ctx refs from non-task context right now, or from
-hard/soft IRQ. On the task_work side, the request already has a
-reference to the ctx. Not sure why you'd want to add more. In any case,
-I prefer not to deal with hypotheticals, just the code we have now.
-
--- 
-Jens Axboe
-
+Is there some compile time assertion that the order cannot overflow into bi=
+t 6?

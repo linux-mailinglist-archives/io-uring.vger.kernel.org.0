@@ -2,126 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8043877C78F
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 08:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C7A77C89E
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 09:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235145AbjHOGPn (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 02:15:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55018 "EHLO
+        id S232629AbjHOHeS (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 03:34:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235042AbjHOGOp (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 02:14:45 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831B81FC2
-        for <io-uring@vger.kernel.org>; Mon, 14 Aug 2023 23:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692080078; x=1723616078;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QnWiRphtPU3i+LqH1qZ/nHmTkuB6LLGJJ2KyWyPY8YM=;
-  b=DKBqBIFVYdlSGRoXHVijayr/DO1o0EB3NB24EaaX2hLySJohiXDTkEKJ
-   dkeOeu89AcEZsukYkuRap/4QSn+ViUeAly+BuQZC/0YHMO7yzEwCpO1bl
-   MnVyYg0/c2mv0eJgY7ldiliTpvOpDGtdYOjWeCwJhW8dwtMhw1fBuYvI+
-   Z6ZB8VIJjgufaJiZnhm7RPTRkqFg5aSZLX8toGpALiG4a3G7ibs7Cp8BU
-   fGlRpEGP5ztRKhNdEz5NMID1T+xXSyUEZLU1cCwU6Nq91gG6M5zfBEMYZ
-   9FwDZhvoz35HvsKbFAdurqM587YZETdLjgVXhAdsXrnZMNx8AE9+SY6uj
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10802"; a="352535472"
-X-IronPort-AV: E=Sophos;i="6.01,174,1684825200"; 
-   d="scan'208";a="352535472"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2023 23:14:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10802"; a="980277564"
-X-IronPort-AV: E=Sophos;i="6.01,174,1684825200"; 
-   d="scan'208";a="980277564"
-Received: from lkp-server02.sh.intel.com (HELO b5fb8d9e1ffc) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Aug 2023 23:14:35 -0700
-Received: from kbuild by b5fb8d9e1ffc with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qVnK6-0000hv-2n;
-        Tue, 15 Aug 2023 06:14:34 +0000
-Date:   Tue, 15 Aug 2023 14:13:42 +0800
-From:   kernel test robot <lkp@intel.com>
+        with ESMTP id S235005AbjHOHdx (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 03:33:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D16310C
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 00:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692084785;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iwEGsjAYYmU/0NnOLMGjjwtkw3W4YTwviDDRA2jQ7dI=;
+        b=Y8qOITozj9Myql3TPeaclP0ur1Ak/+H1kSVKLtASASCSg5Jl4RTcgbheYnckgGncpwExOZ
+        VO2DzoTKEb2pv392DB8xdyqOvN3a7Axg/XSUIHEhEOtz4JUs9utvvT0la0AklKSMbx1wvW
+        3YhkWEFWN+f715nT81CsyitzzF6eCSM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-Zut4ZYbMN4-HSLgIS4Yadw-1; Tue, 15 Aug 2023 03:33:03 -0400
+X-MC-Unique: Zut4ZYbMN4-HSLgIS4Yadw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3fe603e8054so34092125e9.0
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 00:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692084782; x=1692689582;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iwEGsjAYYmU/0NnOLMGjjwtkw3W4YTwviDDRA2jQ7dI=;
+        b=kEQRhVQ4mNnjLVcdR0km7/eLoAvFriUBulFcDkWgrE5lUfv+u5bcDU1CMBfXxCoQ/0
+         kH6QYhqsScJivPwYpDPr9kXyBbHE1QW4Wzk1VWu7s7nQHBxqetzVEKrTHBfjtOY/RHkn
+         732wcELMN0dtzQYLL4hfgQHM2oQn+Lx5P5pGyfoDiC0wARHXcCMXWfAuccEMy6dqNytO
+         AbeYLeVDcrAOShl5TQba8Z9Oi9xK7wXegwRhfTn/QBr91MjVlD/qyfforxHwGL7sM5cW
+         7HPmVarnoP+0KbVcnKTAzMpekxE51Vi5tEH6UyMlq8iUuZdUX4nRRn+q40vj+jrC4/9i
+         nk2Q==
+X-Gm-Message-State: AOJu0YzoBCQK5vFUH/VewJzVIw3XDpmhTl2juSuigx+1AI9fg1T2VJfn
+        OKoq0CzFq77OToRbjVBi2g5JtgGFGiOqsljkoa6zfaCsUBNAIB58yb6iDd72KaL3Y0o9FeznnwF
+        J6icELiQ/4nBXkag/t4E=
+X-Received: by 2002:a7b:c3d3:0:b0:3fe:f45:774c with SMTP id t19-20020a7bc3d3000000b003fe0f45774cmr9938108wmj.41.1692084782763;
+        Tue, 15 Aug 2023 00:33:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaBBeG0wiCjx9Od4TsN9U8hE55XJB1UuXeO2ZEtO0OkvJZJPWfFKGmivq/oXPKey55VMWIlQ==
+X-Received: by 2002:a7b:c3d3:0:b0:3fe:f45:774c with SMTP id t19-20020a7bc3d3000000b003fe0f45774cmr9938098wmj.41.1692084782361;
+        Tue, 15 Aug 2023 00:33:02 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c701:3100:c642:ba83:8c37:b0e? (p200300cbc7013100c642ba838c370b0e.dip0.t-ipconnect.de. [2003:cb:c701:3100:c642:ba83:8c37:b0e])
+        by smtp.gmail.com with ESMTPSA id 14-20020a05600c22ce00b003fba2734f1esm19876731wmg.1.2023.08.15.00.33.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Aug 2023 00:33:01 -0700 (PDT)
+Message-ID: <5c36b8a5-4e10-1a20-e84b-b4f22573000e@redhat.com>
+Date:   Tue, 15 Aug 2023 09:33:00 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 1/9] io_uring: Stop calling free_compound_page()
+Content-Language: en-US
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: Re: [PATCH 3/9] mm: Call free_transhuge_folio() directly from
- destroy_large_folio()
-Message-ID: <202308151346.AP0ryW4Y-lkp@intel.com>
-References: <20230815032645.1393700-4-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230815032645.1393700-4-willy@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230815032645.1393700-1-willy@infradead.org>
+ <20230815032645.1393700-2-willy@infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230815032645.1393700-2-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Matthew,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.5-rc6 next-20230809]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/io_uring-Stop-calling-free_compound_page/20230815-112847
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230815032645.1393700-4-willy%40infradead.org
-patch subject: [PATCH 3/9] mm: Call free_transhuge_folio() directly from destroy_large_folio()
-config: m68k-randconfig-r006-20230815 (https://download.01.org/0day-ci/archive/20230815/202308151346.AP0ryW4Y-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230815/202308151346.AP0ryW4Y-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308151346.AP0ryW4Y-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/page_alloc.c: In function 'destroy_large_folio':
->> mm/page_alloc.c:615:17: error: implicit declaration of function 'free_transhuge_folio' [-Werror=implicit-function-declaration]
-     615 |                 free_transhuge_folio(folio);
-         |                 ^~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+On 15.08.23 05:26, Matthew Wilcox (Oracle) wrote:
+> folio_put() is the standard way to write this, and it's not
+> appreciably slower.  This is an enabling patch for removing
+> free_compound_page() entirely.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
 
 
-vim +/free_transhuge_folio +615 mm/page_alloc.c
-
-   604	
-   605	void destroy_large_folio(struct folio *folio)
-   606	{
-   607		enum compound_dtor_id dtor = folio->_folio_dtor;
-   608	
-   609		if (folio_test_hugetlb(folio)) {
-   610			free_huge_page(folio);
-   611			return;
-   612		}
-   613	
-   614		if (folio_test_transhuge(folio) && dtor == TRANSHUGE_PAGE_DTOR) {
- > 615			free_transhuge_folio(folio);
-   616			return;
-   617		}
-   618	
-   619		VM_BUG_ON_FOLIO(dtor >= NR_COMPOUND_DTORS, folio);
-   620		compound_page_dtors[dtor](&folio->page);
-   621	}
-   622	
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+
+David / dhildenb
+

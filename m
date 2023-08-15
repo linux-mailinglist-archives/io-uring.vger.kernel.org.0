@@ -2,175 +2,121 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 830F577D0FF
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC5377D12B
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238848AbjHOR3N (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 13:29:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39204 "EHLO
+        id S238920AbjHORdi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 13:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238713AbjHOR2z (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:28:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D48171BD1
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:27:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1692120450;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2uSl+ad9ZJrMAwLExJuewpBdrVGNDC/Z6BFlUzuDmqw=;
-        b=H6iO2qTZmCt9SdL1hnb2O/GutT0wtAWMoc6ZJ9WZN3nQO5BYn14EwUJPE2epXo3EjFLHTD
-        y/j46hBFJpd/1pv6ax/IH7PdkPJuEL39hHus6y3i0aND2WrMgTJN3IlHvMS3hyHS09Q2OM
-        kegJrx4bxMzcdEdhl97qAQW6MPC/JjA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-6jBvsdGrO0qshJFP-qLfOA-1; Tue, 15 Aug 2023 13:27:29 -0400
-X-MC-Unique: 6jBvsdGrO0qshJFP-qLfOA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3176c4de5bbso3169292f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:27:28 -0700 (PDT)
+        with ESMTP id S238919AbjHORdU (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:33:20 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FBE61BD1
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:17 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b962c226ceso88323291fa.3
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692120795; x=1692725595;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=noy52bh3FDivgKiW5yBYn0/WUIRwRNwDfIfXYg8g2Q0=;
+        b=M9wRg1MG693ydtkWWjMlFsPplp2Ti4jjlsQ0XXwPC8wS2XpRv14Id8y28RIK9eCUlN
+         hndvFoAEU2BWdLC22abQ5WnrAQa46SKjI86vwGjnJMPIm4ho1jBOSAXe7zv9IqYzX0oz
+         un+vdrcAjgJYn9Kz33QJHtetjYNR/iLUnlgIyHY9zLIIpJKBR+xd3//aUrAMccrpaHgf
+         ELLePHmrn0bcftsmGTNt0ueylDcFnRlGnpPkkCyQ0SwFlbmQUQfer8QUAGc95fa8MSNO
+         Q8Q0vMty8tqLijgvLMWc3g6/cJZQDWddNGNiCXBiPXlTjbUDPXMPYLQsTCPZyeiFciqc
+         jh1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692120448; x=1692725248;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1692120795; x=1692725595;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2uSl+ad9ZJrMAwLExJuewpBdrVGNDC/Z6BFlUzuDmqw=;
-        b=k7TqFUrrqef2JjgKV7YmcdwZFxADKM8m5UCXkKyV273BaMBEG5RNrUo/mCrJi+I5aX
-         IB68KMtEnrw5KbQcFlUUVVMeQZIE9CfafVSEZWCyS+UNJJ8+k9h8EhVWIcIIJMFLXQqL
-         OAqvyxcH29utztBURlVdYBEnRZoL2IpcJ25RZwJYDFmzfsJrEsENrVsG5rSLOCHCDZ0d
-         yxzMMnpNkElpasPEDTYIa4ISnavHP9QE1eUG2Dxiu33NPFV6IILZug+ObgXAf0c/hirU
-         COEiHHyuZBskNeY9CDMe29NEifjIFS61VZUZsMpPRxoLuTXIpbGUeP2s5opoZGbMJZIB
-         4O7A==
-X-Gm-Message-State: AOJu0YxI7VbQbFiDmAvGB3sb2+SlZaI61A9XTHGRaNTIP1vJbKInSbi5
-        KKpEAZnSqO7s1uHawohkgIvBHu3v7Yfz117haqRkjtsXJO02pPmuKQm9GtEais1OWYBE1fLGnBT
-        KkBmShS/VKSkgSNDbyOQ=
-X-Received: by 2002:adf:efc2:0:b0:314:370f:e92c with SMTP id i2-20020adfefc2000000b00314370fe92cmr10407119wrp.67.1692120447928;
-        Tue, 15 Aug 2023 10:27:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFHpJTpEtdHaORHl3IBepG/4Q1QmmaT6Ir71bM+CX9L0QpUJUTo+h1XxGn9yYs2bQkHm5Mvw==
-X-Received: by 2002:adf:efc2:0:b0:314:370f:e92c with SMTP id i2-20020adfefc2000000b00314370fe92cmr10407096wrp.67.1692120447566;
-        Tue, 15 Aug 2023 10:27:27 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c701:3100:c642:ba83:8c37:b0e? (p200300cbc7013100c642ba838c370b0e.dip0.t-ipconnect.de. [2003:cb:c701:3100:c642:ba83:8c37:b0e])
-        by smtp.gmail.com with ESMTPSA id i7-20020a5d5587000000b00314172ba213sm18569627wrv.108.2023.08.15.10.27.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Aug 2023 10:27:26 -0700 (PDT)
-Message-ID: <aac4404a-1012-fe7f-4337-cace30795176@redhat.com>
-Date:   Tue, 15 Aug 2023 19:27:26 +0200
+        bh=noy52bh3FDivgKiW5yBYn0/WUIRwRNwDfIfXYg8g2Q0=;
+        b=Df1yy7MVrAClvkuDZqscQ0llblOU80213aOFZXP29uYwMk/srHrAvPLbsjiPUUjZmn
+         JGV11BO/wA5xWMx5OHmG5WlE0O0hpHCQkhLRSzpcngM+dx8lo7pGsQKmldff7o1clQW+
+         Eos2RhicFYW3ZBExKy62mW7VsEHxObxpPZbrVFqJv9GXCvI88If86rO+nL8yX9W+Erh3
+         kqyu6hVb4pdN4hHvGcnQyvZMKJiek3NTyhpu2QV4CaHCroB5wPC8q0doKHstZ8TniNvY
+         OyZMYE+JdEn5JPdQKDRCtukm1913UYdw9W69Mm7MZcUfvNAgaCovrs9iC09K5N8FOis0
+         F8xQ==
+X-Gm-Message-State: AOJu0Yz7cJE5SCfpHwm8fwynjuiDOBCs7AiDmv0HQGGe/SqmMgMkTGRF
+        SluWsIgCSMjJKWzIE5Q81AS+ujy0vYg=
+X-Google-Smtp-Source: AGHT+IFS/NnhJ1S+EX9ApKQZBuX3ho1rVXMrq1PcyOeesiOcm877xUksgDBYUFiNouVGAdwhqGuHIA==
+X-Received: by 2002:a2e:80ce:0:b0:2b4:6bc2:a540 with SMTP id r14-20020a2e80ce000000b002b46bc2a540mr9171253ljg.15.1692120795222;
+        Tue, 15 Aug 2023 10:33:15 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::2:6d35])
+        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Aug 2023 10:33:14 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [RFC 00/16] caching and SQ/CQ optimisations
+Date:   Tue, 15 Aug 2023 18:31:29 +0100
+Message-ID: <cover.1692119257.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230815032645.1393700-1-willy@infradead.org>
- <20230815032645.1393700-8-willy@infradead.org>
- <7c1bb01d-620c-ca97-c4a2-2bb7c126c687@redhat.com>
- <ZNuaiY483XCq1K1/@casper.infradead.org>
- <88bdc3d2-56e4-4c09-77fe-74fb4c116893@redhat.com>
- <ZNuwm2kPzmeHo2bU@casper.infradead.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH 7/9] mm: Add deferred_list page flag
-In-Reply-To: <ZNuwm2kPzmeHo2bU@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 15.08.23 19:06, Matthew Wilcox wrote:
-> On Tue, Aug 15, 2023 at 06:40:55PM +0200, David Hildenbrand wrote:
->> On 15.08.23 17:32, Matthew Wilcox wrote:
->>> On Tue, Aug 15, 2023 at 09:54:36AM +0200, David Hildenbrand wrote:
->>>> On 15.08.23 05:26, Matthew Wilcox (Oracle) wrote:
->>>>> Stored in the first tail page's flags, this flag replaces the destructor.
->>>>> That removes the last of the destructors, so remove all references to
->>>>> folio_dtor and compound_dtor.
->>>>>
->>>>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->>>>> ---
->>>>
->>>> [...]
->>>>
->>>>> +	/* Has a deferred list (may be empty).  First tail page. */
->>>>> +	PG_deferred_list = PG_reclaim,
->>>>> +
->>>>
->>>> If PG_deferred_list implies thp (and replaces the thp dtor), should we
->>>> rather name this PG_thp or something along those lines?
->>>
->>> We're trying to use 'thp' to mean 'a folio which is pmd mappable',
->>> so I'd rather not call it that.
->>
->> There is no conclusion on that.
-> 
-> Theree are a lot of counters called THP and TransHuge and other variants
-> which are exposed to userspace, and the (user) assumption is that this counts
-> PMD-sized folios.  If you grep around for folio_test_pmd_mappable(),
-> you'll find them.  If we have folio_test_thp(), people will write:
-> 
-> 	if (folio_test_thp(folio))
-> 		__mod_lruvec_state(lruvec, NR_SHMEM_THPS, nr);
-> 
-> instead of using folio_test_pmd_mappable().
-> 
+Patch 1-5 optimise io_fill_cqe_req
 
+Patch 6-7 combine iopoll and normal completion paths
 
-So if we *really* don't want to use THP to express that we have a page, 
-then let's see what these pages are:
-* can be mapped to user space
-* are transparent to most MM-related systemcalls by (un) mapping
-   them in system page size (PTEs)
+Patch 8 should improve CPU caching of SQ/CQ pointers
 
-That we can split these pages (not PTE-map, but convert from large folio 
-to small folios) is one characteristic, but IMHO not the main one (and 
-maybe not even required at all!).
+Patch 9 removes conditionally SQ indirection (->sq_array). Assuming we'll
+make it a default in liburing, Patch 10 optimises it with static_key.
 
-Maybe we can come up with a better term for "THP, but not necessarily 
-PMD-sized".
+Patch 10-15 shuffle io_ring_ctx fields.
 
-"Large folio" is IMHO bad. A hugetlb page is a large folio and not all 
-large folios can be mapped to user space.
+Patch 16 inlines io_fill_cqe_req.
 
-"Transparent large folios" ? Better IMHO.
+Testing with t/io_uring nops only for now
 
+                QD2     QD4     QD8     QD16    QD32
+baseline:       17.3    26.6    36.4    43.7    49.4
+Patches 1-15:   17.8    27.4    37.9    45.8    51.2
+Patches 1-16:   17.9    28.2    39.3    47.8    54
 
->> After all, the deferred split queue is just an implementation detail, and it
->> happens to live in tailpage 2, no?
->>
->> Once we would end up initializing something else in prep_transhuge_page(),
->> it would turn out pretty confusing if that is called folio_remove_deferred()
->> ...
-> 
-> Perhaps the key difference between normal compound pages and file/anon
-> compound pages is that the latter are splittable?  So we can name all
-> of this:
-> 
-> 	folio_init_splittable()
-> 	folio_test_splittable()
-> 	folio_fini_splittable()
-> 
-> Maybe that's still too close to an implementation detail, but it's at
-> least talking about _a_ characteristic of the folio, even if it's not
-> the _only_ characteristic of the folio.
+L1 load misses decreased from 1.7% to 1.3%, I don't think it's
+significant and it will be more interesting to see how it looks
+when we do actual IO.
 
-Maybe folio_init_transparent() ... avoiding the "huge" part of it.
+Pavel Begunkov (16):
+  io_uring: improve cqe !tracing hot path
+  io_uring: cqe init hardening
+  io_uring: simplify big_cqe handling
+  io_uring: refactor __io_get_cqe()
+  io_uring: optimise extra io_get_cqe null check
+  io_uring: reorder cqring_flush and wakeups
+  io_uring: merge iopoll and normal completion paths
+  io_uring: compact SQ/CQ heads/tails
+  io_uring: add option to remove SQ indirection
+  io_uring: static_key for !IORING_SETUP_NO_SQARRAY
+  io_uring: move non aligned field to the end
+  io_uring: banish non-hot data to end of io_ring_ctx
+  io_uring: separate task_work/waiting cache line
+  io_uring: move multishot cqe cache in ctx
+  io_uring: move iopoll ctx fields around
+  io_uring: force inline io_fill_cqe_req
 
-Very open for alternatives. As expressed in other context, we really 
-should figure this out soon.
+ include/linux/io_uring_types.h | 129 ++++++++++++++++----------------
+ include/uapi/linux/io_uring.h  |   5 ++
+ io_uring/io_uring.c            | 130 ++++++++++++++++++---------------
+ io_uring/io_uring.h            |  58 +++++++--------
+ io_uring/rw.c                  |  24 ++----
+ io_uring/uring_cmd.c           |   5 +-
+ 6 files changed, 173 insertions(+), 178 deletions(-)
 
 -- 
-Cheers,
-
-David / dhildenb
+2.41.0
 

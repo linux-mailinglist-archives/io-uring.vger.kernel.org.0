@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C2CB77D122
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E65D77D128
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238876AbjHORdc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 13:33:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49742 "EHLO
+        id S238911AbjHORdh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 13:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238930AbjHORdY (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:33:24 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F3111A
+        with ESMTP id S238929AbjHORdX (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:33:23 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7A210EC
         for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:22 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99c3d3c3db9so762524266b.3
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99d6d5054bcso1075506366b.1
         for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20221208; t=1692120801; x=1692725601;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7fqoJ9wK3l0OutAHn1RjfCmGlPQMfmmuyh2e116EeUs=;
-        b=Ec20YhQrAhRGJS7/7cgefR9F8GK9b+n689fQazNHEbooyjq843yEY8w4H1CTYepNi+
-         bERPSgc6lC8igefEHavXREJnnYCTJzgzlLAKzWCQoFGHJpbZ+QE7ERcY0zNiVTmS2EQu
-         WT7F6+bTBod4FN/v0wd9bRU+KzNN9nPwc9tXh39ThvGNXWWMWQGUQLqDcTzIMPuM61Xl
-         7yn7+isezYzGMu1I6rMHU7jRDo+/o35/Mr1LeI6L9drDrrSv0bEyYHIDtXWf+Lz5kWlO
-         bPeNoFPvL0MB37BvDkkO54pC7LOlR1R+c+Mi24ECJBPbydyVEotkVTtXKdcirqobYO+e
-         22Pg==
+        bh=m7df/JEGcQenNIMU2iBP11PVrs8ARCZ4IRK79yJbYn8=;
+        b=OntxgMfOab9T8cCKnXI6DNZ+JS2nHJLrw8qdT6tomvOxWciklAmZMbvjkRxr9fzAFs
+         y+JX9E3bc2qagb74TGT2pnTOAuTuIIo7lz0Wfno96teyWrzz5cedm6XXFeW0l26tZUhY
+         M3j4FUYE1/B5OTVR0L8EmapMs5di7CCbJy9ihMlJg6akq9gq90jj6zz8PE/H+SIV7vVb
+         eQT9f0muhy8NA4QWAlGPZiniUB9JaTETZepcL7HScfXjlHM2lgf5hLDZ7tchCiNPpLwf
+         ywVZZaL7WtvI6N4PbS4/sFCNEjuIZKqYZSu+mZjGI5ByNxaAHX9rAWwHUlN8XPjMOPyh
+         G7Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20221208; t=1692120801; x=1692725601;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7fqoJ9wK3l0OutAHn1RjfCmGlPQMfmmuyh2e116EeUs=;
-        b=En8PHcy6aymDaSqqfjOm+6lpYLdJeydVvIPZxNdO0Twd7f5YRqJ9rMMKNyLpsE6IbU
-         Rh9TsZXyBu+ClT29/wInDFbpHjMWCFRjH5cnX8VRJcV9o2secyXgHxHONNRI078Z+ylb
-         Tr+CHXSkkU5sq5zl3HMA8b82Udi087ie9io3818LNZlljfqokTXYNkOa0Z357CcKcqYs
-         +NAI3VNjQOj5EGl7d2jpqh7WmSoCg8733sgNLoOj6/YP+PZLlDAIrZ8GPDc9ZglDsV1e
-         vC2uYEFg86KsUzkdCLgzEin9c/gd0iWp6el9RdTgxA0iQcDxx/scPB3v0JRUWQtG4Crp
-         Ftuw==
-X-Gm-Message-State: AOJu0YzQ+ysfCATBNHH10IdEAAOYDQt3RmBmBBvBw2m5zJDYXZL1rK7A
-        tvKgDpOfvO93dvxSIlvJSxUDsbOV+G8=
-X-Google-Smtp-Source: AGHT+IEyVpzkTgh1IlRRCQDze4BfGrhVmn2gIeyCj37LBTfB+TtUQIfqli5y51YsXbBPGgWUCt4sSw==
-X-Received: by 2002:a17:906:314c:b0:99b:64d0:f6c8 with SMTP id e12-20020a170906314c00b0099b64d0f6c8mr9946378eje.50.1692120800646;
-        Tue, 15 Aug 2023 10:33:20 -0700 (PDT)
+        bh=m7df/JEGcQenNIMU2iBP11PVrs8ARCZ4IRK79yJbYn8=;
+        b=A8BYoKJhX7q/QYykupsSWR8iTjfP0m+vuMCTlyOop8vwpKAM7zDZg6Lj7QcK/kFrqM
+         u8xZ57k52UGaIHcAsWXWR+2m2ZKUho0FpTgSbVkyZ867WDih9RKcBW30bcTXhtb9ZTdc
+         89R/bzKwzePyQt3dOjEKSG4/prZu8vxkW1pkGac2PPwfFJ2FoZEHvesbnfPV9DrpCzWU
+         IV8XZrPpc3S+K/M0ctRryi39ZivH/mzlk8HsAXgI1JEd+cATqsLePkzHhOyF1gkthEND
+         V7BsTTNnb2XlWkLgPFXF+KgWxoUa+H4ZUS/GmdWcF+RLfRkwAmk9EuaUX53XwUJVBeoO
+         1DOA==
+X-Gm-Message-State: AOJu0YwIVLOJzIN/M9kDNCxF1IR1eGdTRQvSSNN82Kt+HsH3FDVmZZio
+        aSqgjdKLHy7Snvlq5EVoD+kbst03qn4=
+X-Google-Smtp-Source: AGHT+IG+WjlTYocLVvigMd90N5ap6Qa6sJK3aTaWc6YGS+Z4ZCE5ZlTFAIKsrmCngV+mp2J9RTTF2g==
+X-Received: by 2002:a17:907:6e0d:b0:988:8efc:54fa with SMTP id sd13-20020a1709076e0d00b009888efc54famr2594795ejc.37.1692120801118;
+        Tue, 15 Aug 2023 10:33:21 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::2:6d35])
-        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.19
+        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Aug 2023 10:33:19 -0700 (PDT)
+        Tue, 15 Aug 2023 10:33:20 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 09/16] io_uring: add option to remove SQ indirection
-Date:   Tue, 15 Aug 2023 18:31:38 +0100
-Message-ID: <0672f81d64ffe9f91835e240d8fef7a72bd895ec.1692119257.git.asml.silence@gmail.com>
+Subject: [PATCH 10/16] io_uring: static_key for !IORING_SETUP_NO_SQARRAY
+Date:   Tue, 15 Aug 2023 18:31:39 +0100
+Message-ID: <9c166012c57091af1c23fdc33594e7197c43d66e.1692119257.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1692119257.git.asml.silence@gmail.com>
 References: <cover.1692119257.git.asml.silence@gmail.com>
@@ -70,137 +70,66 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Not many aware, but io_uring submission queue has two levels. The first
-level usually appears as sq_array and stores indexes into the actual SQ.
-To my knowledge, no one has ever seriously used it, nor liburing exposes
-it to users.
-
-Add IORING_SETUP_NO_SQARRAY, when set we don't bother creating and using
-the sq_array and SQ heads/tails will be pointing directly into the SQ.
-Improves memory footprint, in term of both allocations as well as cache
-usage, and also should make io_get_sqe() less branchy in the end.
+At some point IORING_SETUP_NO_SQARRAY should become the default, so add
+a static_key to optimise out the chunk of io_get_sqe() dealing with
+sq_arrays.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/uapi/linux/io_uring.h |  5 ++++
- io_uring/io_uring.c           | 52 +++++++++++++++++++++--------------
- 2 files changed, 37 insertions(+), 20 deletions(-)
+ io_uring/io_uring.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 9fc7195f25df..f669b1ed33be 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -185,6 +185,11 @@ enum {
-  */
- #define IORING_SETUP_REGISTERED_FD_ONLY	(1U << 15)
- 
-+/*
-+ * Disables the SQ index array.
-+ */
-+#define IORING_SETUP_NO_SQARRAY		(1U << 16)
-+
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 204c6a31c5d1..ac6d1687ba6c 100644
+index ac6d1687ba6c..c39606740c73 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2339,8 +2339,21 @@ static void io_commit_sqring(struct io_ring_ctx *ctx)
-  */
- static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
- {
--	unsigned head, mask = ctx->sq_entries - 1;
--	unsigned sq_idx = ctx->cached_sq_head++ & mask;
-+	unsigned mask = ctx->sq_entries - 1;
-+	unsigned head = ctx->cached_sq_head++ & mask;
+@@ -72,6 +72,7 @@
+ #include <linux/io_uring.h>
+ #include <linux/audit.h>
+ #include <linux/security.h>
++#include <linux/jump_label.h>
+ #include <asm/shmparam.h>
+ 
+ #define CREATE_TRACE_POINTS
+@@ -148,6 +149,8 @@ static bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 
+ static void io_queue_sqe(struct io_kiocb *req);
+ 
++static __read_mostly DEFINE_STATIC_KEY_FALSE(io_key_has_sqarray);
 +
-+	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY)) {
-+		head = READ_ONCE(ctx->sq_array[head]);
-+		if (unlikely(head >= ctx->sq_entries)) {
-+			/* drop invalid entries */
-+			spin_lock(&ctx->completion_lock);
-+			ctx->cq_extra--;
-+			spin_unlock(&ctx->completion_lock);
-+			WRITE_ONCE(ctx->rings->sq_dropped,
-+				   READ_ONCE(ctx->rings->sq_dropped) + 1);
-+			return false;
-+		}
-+	}
+ struct kmem_cache *req_cachep;
  
- 	/*
- 	 * The cached sq head (or cq tail) serves two purposes:
-@@ -2350,22 +2363,12 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
- 	 * 2) allows the kernel side to track the head on its own, even
- 	 *    though the application is the one updating it.
- 	 */
--	head = READ_ONCE(ctx->sq_array[sq_idx]);
--	if (likely(head < ctx->sq_entries)) {
--		/* double index for 128-byte SQEs, twice as long */
--		if (ctx->flags & IORING_SETUP_SQE128)
--			head <<= 1;
--		*sqe = &ctx->sq_sqes[head];
--		return true;
--	}
+ struct sock *io_uring_get_socket(struct file *file)
+@@ -2342,7 +2345,8 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
+ 	unsigned mask = ctx->sq_entries - 1;
+ 	unsigned head = ctx->cached_sq_head++ & mask;
  
--	/* drop invalid entries */
--	spin_lock(&ctx->completion_lock);
--	ctx->cq_extra--;
--	spin_unlock(&ctx->completion_lock);
--	WRITE_ONCE(ctx->rings->sq_dropped,
--		   READ_ONCE(ctx->rings->sq_dropped) + 1);
--	return false;
-+	/* double index for 128-byte SQEs, twice as long */
-+	if (ctx->flags & IORING_SETUP_SQE128)
-+		head <<= 1;
-+	*sqe = &ctx->sq_sqes[head];
-+	return true;
- }
- 
- int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
-@@ -2734,6 +2737,12 @@ static unsigned long rings_size(struct io_ring_ctx *ctx, unsigned int sq_entries
- 		return SIZE_MAX;
+-	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY)) {
++	if (static_branch_unlikely(&io_key_has_sqarray) &&
++	    (!(ctx->flags & IORING_SETUP_NO_SQARRAY))) {
+ 		head = READ_ONCE(ctx->sq_array[head]);
+ 		if (unlikely(head >= ctx->sq_entries)) {
+ 			/* drop invalid entries */
+@@ -2871,6 +2875,9 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
  #endif
+ 	WARN_ON_ONCE(!list_empty(&ctx->ltimeout_list));
  
-+	if (ctx->flags & IORING_SETUP_NO_SQARRAY) {
-+		if (sq_offset)
-+			*sq_offset = SIZE_MAX;
-+		return off;
-+	}
++	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
++		static_branch_dec(&io_key_has_sqarray);
 +
- 	if (sq_offset)
- 		*sq_offset = off;
+ 	io_alloc_cache_free(&ctx->rsrc_node_cache, io_rsrc_node_cache_free);
+ 	if (ctx->mm_account) {
+ 		mmdrop(ctx->mm_account);
+@@ -3844,6 +3851,9 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 	if (!ctx)
+ 		return -ENOMEM;
  
-@@ -3710,7 +3719,8 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 		return PTR_ERR(rings);
- 
- 	ctx->rings = rings;
--	ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
 +	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
-+		ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
- 	rings->sq_ring_mask = p->sq_entries - 1;
- 	rings->cq_ring_mask = p->cq_entries - 1;
- 	rings->sq_ring_entries = p->sq_entries;
-@@ -3921,7 +3931,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	p->sq_off.ring_entries = offsetof(struct io_rings, sq_ring_entries);
- 	p->sq_off.flags = offsetof(struct io_rings, sq_flags);
- 	p->sq_off.dropped = offsetof(struct io_rings, sq_dropped);
--	p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
-+	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
-+		p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
- 	p->sq_off.resv1 = 0;
- 	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
- 		p->sq_off.user_addr = 0;
-@@ -4010,7 +4021,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_COOP_TASKRUN | IORING_SETUP_TASKRUN_FLAG |
- 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
- 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
--			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY))
-+			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
-+			IORING_SETUP_NO_SQARRAY))
- 		return -EINVAL;
- 
- 	return io_uring_create(entries, &p, params);
++		static_branch_inc(&io_key_has_sqarray);
++
+ 	if ((ctx->flags & IORING_SETUP_DEFER_TASKRUN) &&
+ 	    !(ctx->flags & IORING_SETUP_IOPOLL) &&
+ 	    !(ctx->flags & IORING_SETUP_SQPOLL))
 -- 
 2.41.0
 

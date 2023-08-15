@@ -2,83 +2,109 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B118D77D3EB
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 22:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7287077D558
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 23:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233774AbjHOUHm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 16:07:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43798 "EHLO
+        id S234685AbjHOVpY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 17:45:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240175AbjHOUHh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 16:07:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4AD83
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 13:07:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eHSlXXQjPck8Fcx5Whhqhl8V7B9SR3BAERky3PV+PAQ=; b=inE408hAP8QYWNOne/4CmKKEva
-        r/OJh5QBPUD+Dan6Sxqk/toBvQQExFZPZAGQ5VnVzz8ED/Ht9CGiS1wBVXZIEckqx6hZRVmeXTo+F
-        z5Xe0u8C45iq+D/ydhEi5LUk6I7eDWOMP+DxaI29zUgU/JHv+e8BG8aCcrggqlDk7i8qc8/Svt/fR
-        LuO5AG50jE6sQ+5P1ahCElfazbKoIOApklFvb+lnMr24bwRoqV3lxNNz+SWkWS9l7e+3uphJg6TS4
-        6iW7GBIci6GNDCWQBDaJb2J4zSobX3HHXOOgtz1Dp6S5R3h1MMxGoyJitrhuMCsleVekUiLkDaa63
-        qMG3v8Lg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qW0KA-00AAXM-TM; Tue, 15 Aug 2023 20:07:30 +0000
-Date:   Tue, 15 Aug 2023 21:07:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 8/9] mm: Rearrange page flags
-Message-ID: <ZNvbApJbLanU55Ze@casper.infradead.org>
-References: <20230815032645.1393700-1-willy@infradead.org>
- <20230815032645.1393700-9-willy@infradead.org>
- <ZNvQ4EbQh/aAwK8L@x1n>
+        with ESMTP id S240397AbjHOVpI (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 17:45:08 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 887F31FC3
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 14:45:07 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1bdb3ecd20dso7465425ad.0
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 14:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692135907; x=1692740707;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=es2Q+G7yN/d3O8VlPzekGvPoaVmjZxuf6WsQpCWyVFY=;
+        b=gSJTHxRCYXNTQFTft7D5EX+GSdHMArigXTGCRUwdEzQUlOpOVG02gg1H0fk1jkcvIw
+         QlFYVEoHEA8rAdim7R7lEOdPjisc2uwzD1xW2pYnGo4BDXnwE5c/YJ8+51LfmY2NSWK+
+         NZ2LDYyMEWVi3avNQM2JI9zyO7MtrGJNTDBK54MUG7CBmPa+8vd5UkfSYEK97krn31Na
+         z6x8daasS4LmFFXP2MhSpDR0FbPAX7xE4aFOutO+TSjRyOG4aLb/dxHKF5gGjbiF70UO
+         W0R07E+SbHyMGbPZhqF9jZ+9b5EIlr/FH5Zup3wfYQUcXUhERD9UFC7Cpzj1u8rdivJh
+         IB2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692135907; x=1692740707;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=es2Q+G7yN/d3O8VlPzekGvPoaVmjZxuf6WsQpCWyVFY=;
+        b=M5H5SganSn3QQR7VFv9O36waYG28fEM0HPfHmM5e9p0k78Cu3vO5yhmtBqIBgPQ+yp
+         8EJlMBowESCZVJ3qQoTG07w6Te8+ARPOE9JfK6ZAR4x+v59Zrz1j2apq9L8TsVEVW0hb
+         1Qa3g9vN2uF8zhIeZ2MQt7FBbpwwb/CKZdrfIHp1SvAnEj+iERAxBsuXqGHXTnssDn86
+         /KzZTCeHCYQupHGqtAEvzlrReaPMU3qgHKOm48z2ZyJnJTN8glG3TGedv6ele7kA3s88
+         FCbdp5/NyEA2Sa87ELjsWg0Jp2PqK2SzZrgCfuR41YKaC/HhGiQq4eSWFTkcgQuwdRbA
+         k4Yg==
+X-Gm-Message-State: AOJu0YwQIPkd0TSKK9t7Z5cwvi7+6aEjUnPcOCMpOr0nD2QA3ch83xfN
+        mmr1lwzQcGplntTV/bg/yt6Tdg==
+X-Google-Smtp-Source: AGHT+IGi5A/esSisN7jtJ0WzOEmCTosKLnOIo0DqxOjeUyB4CrgBRwfROEQvxIk7+QBOgVrbMgn7eg==
+X-Received: by 2002:a17:902:e84f:b0:1bb:c2b1:9c19 with SMTP id t15-20020a170902e84f00b001bbc2b19c19mr85118plg.6.1692135906930;
+        Tue, 15 Aug 2023 14:45:06 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id n12-20020a170903110c00b001bb97e51ad5sm11505549plh.99.2023.08.15.14.45.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Aug 2023 14:45:06 -0700 (PDT)
+Message-ID: <8077359c-cb59-4964-8bde-f673e882dc12@kernel.dk>
+Date:   Tue, 15 Aug 2023 15:45:04 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZNvQ4EbQh/aAwK8L@x1n>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] io_uring: move to using private ring references
+Content-Language: en-US
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <20230811171242.222550-1-axboe@kernel.dk>
+ <20230811171242.222550-2-axboe@kernel.dk>
+ <1b948d2e-c34f-6c12-cd9c-de9d42cb0fae@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <1b948d2e-c34f-6c12-cd9c-de9d42cb0fae@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 15, 2023 at 03:24:16PM -0400, Peter Xu wrote:
-> On Tue, Aug 15, 2023 at 04:26:44AM +0100, Matthew Wilcox (Oracle) wrote:
-> > +++ b/include/linux/page-flags.h
-> > @@ -99,13 +99,15 @@
-> >   */
-> >  enum pageflags {
-> >  	PG_locked,		/* Page is locked. Don't touch. */
-> > +	PG_writeback,		/* Page is under writeback */
-> >  	PG_referenced,
-> >  	PG_uptodate,
-> >  	PG_dirty,
-> >  	PG_lru,
-> > +	PG_head,		/* Must be in bit 6 */
+On 8/15/23 11:45 AM, Pavel Begunkov wrote:
+> On 8/11/23 18:12, Jens Axboe wrote:
+>> io_uring currently uses percpu refcounts for the ring reference. This
+>> works fine, but exiting a ring requires an RCU grace period to lapse
+>> and this slows down ring exit quite a lot.
+>>
+>> Add a basic per-cpu counter for our references instead, and use that.
+>> This is in preparation for doing a sync wait on on any request (notably
+>> file) references on ring exit. As we're going to be waiting on ctx refs
+>> going away as well with that, the RCU grace period wait becomes a
+>> noticeable slowdown.
 > 
-> Could there be some explanation on "must be in bit 6" here?
+> How does it work?
+> 
+> - What prevents io_ring_ref_maybe_done() from miscalculating and either
+> 1) firing while there are refs or
+> 2) not triggering when we put down all refs?
+> E.g. percpu_ref relies on atomic counting after switching from
+> percpu mode.
 
-Not on this line, no.  You get 40-50 characters to say something useful.
-Happy to elaborate further in some other comment or in the commit log,
-but not on this line.
+I'm open to critique of it, do you have any specific worries? The
+counters are per-cpu, and whenever the REF_DEAD_BIT is set, we sum on
+that drop. We should not be grabbing references post that, and any drop
+will just sum the counters. 
 
-The idea behind all of this is that _folio_order moves into the bottom
-byte of _flags_1.  Because the order can never be greater than 63 (and
-in practice I think the largest we're going to see is about 30 -- a 16GB
-hugetlb page on some architectures), we know that PG_head and PG_waiters
-will be clear, so we can write (folio->_flags_1 & 0xff) and the compiler
-will just load a byte; it won't actually load the word and mask it.
+> - What contexts it can be used from? Task context only? I'll argue we
+> want to use it in [soft]irq for likes of *task_work_add().
 
-We can't move PG_head any lower, or we'll risk having a tail page with
-PG_head set (which can happen with the vmemmmap optimisation, but eugh).
-And we don't want to move it any higher because then we'll have a flag
-that cannot be reused in a tail page.  Bit 6 is the perfect spot for it.
+We don't manipulate ctx refs from non-task context right now, or from
+hard/soft IRQ. On the task_work side, the request already has a
+reference to the ctx. Not sure why you'd want to add more. In any case,
+I prefer not to deal with hypotheticals, just the code we have now.
+
+-- 
+Jens Axboe
+

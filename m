@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D0F77D126
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1950477D121
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238890AbjHORde (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 13:33:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49784 "EHLO
+        id S238879AbjHORdd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 13:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238934AbjHORd1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:33:27 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C2710EC
+        with ESMTP id S238938AbjHORd2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:33:28 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C671BDB
         for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:26 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99c353a395cso762350866b.2
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-997c4107d62so752360266b.0
         for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692120804; x=1692725604;
+        d=gmail.com; s=20221208; t=1692120805; x=1692725605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rJ//xnNby4d5jNgpCMvTnltm5MwCd4efW3wW1j315lY=;
-        b=gZIxvZlevMC19qRNOEmzIn6U8jdU3xzc36ajRqn9zY/4a1NJQWVNcgiVjPcDycV56Z
-         BGc2AwlHyU0dDjNqKnVyuymS0YkJWsxYQTRcWsdLaBFM4Tkt6aLsB7Zycu5ZYY85J2jf
-         su7MxjjlP1LJE4WRLkXnn3Ow6o+Jn4NUWyDC4zx5rkEsaq2xWI6ILEANnzmnRyGAQY1f
-         Uu8lYHYr0BdEutubYWiKUtSyTca0ppw/R+Mq1IB4a1goNo1H7oMfxtn3oihKR7qG09Rz
-         0DyS4c6zmEUyF5E9DzjGzD2LzGFU5c1QGwOfjjNVKTeuDvY35Vjq06eTCT56Gjgxv2uZ
-         fvyQ==
+        bh=f2DEBEI1Rhro87I5c331VMzG9L/kWUItjuQZp5E+Z+g=;
+        b=ejf2GKyEy/7WZjyKtAFJm/6sXYwHJQFvUghKceSKy4W3j0uEv+XRF+JQ0JWkLm7rzk
+         QNY3mrEi8x6SykC+30LxshTIz8kqsqhcgwQExZAFIk3VzadUfL51l88yakZXSLuLRcrh
+         BcZ8DeaVS7uwiR4rZ4y1tLGB4kD01WjZDYcOTh936FAaZfNrlvuk4mEdYZLRKaRH0zZb
+         HWXQ+T+7HJrLy+tQac3LbywJ+EmdsPZ5MH5tJHAUIHfSwwikUnSJV3jUIb1DpIF4cqD8
+         JH48Ssn4Pc1CF8Tixa8XrUAwLI0f6FFatOtrI9oxvL2u2R0yJy2Lnvuw7JrgaD2DjlXS
+         z95w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692120804; x=1692725604;
+        d=1e100.net; s=20221208; t=1692120805; x=1692725605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rJ//xnNby4d5jNgpCMvTnltm5MwCd4efW3wW1j315lY=;
-        b=KPqaHs0B73Oppk64hnLWPTRQSK9AgCD+GhTXRqPcYEMSvUyoMIl2X2221UeuPvLIaS
-         DasXTJm2QqZe9Ikw02F8dPjUwLuCljBx58THDYV5OhSgmFw3sAcshvWhLIUp4RryzVh1
-         KTaQRtMAo3HR9RxVSAiUZwuyW5SuSG8GjJ4wofuB2+wwR67swZj+ubjFzy3TSjUJenxj
-         tJCZfjEQCQP1Vb9NsuZhAzcKHCwu9SFWIN0/eLXO/FDkC8NXTrWoyQn0rdgUdTdC/DSa
-         KvQJTdru3RKXfWEMiZ31jYWwlSUqbTGEaAXMiWnP6V3hZFdeqWYkkNljzCK/nOw/B2ps
-         4p5w==
-X-Gm-Message-State: AOJu0YxwoVBQdEaYq2PP/Vx5J95h7iWP4oVHYffOU050TeEgEJe0qGX7
-        R2N8N0bjWUdR8wSN7piYfnLdq0EYMVU=
-X-Google-Smtp-Source: AGHT+IHI+R9lVtI4m64blK/1qoLBTtpM4x9PBeRjuLDSBd/kcPcA01TbXmzMbUmbDOaXnBTGRO4uBQ==
-X-Received: by 2002:a17:906:5a4b:b0:99c:6bc6:3520 with SMTP id my11-20020a1709065a4b00b0099c6bc63520mr9858015ejc.65.1692120804184;
-        Tue, 15 Aug 2023 10:33:24 -0700 (PDT)
+        bh=f2DEBEI1Rhro87I5c331VMzG9L/kWUItjuQZp5E+Z+g=;
+        b=lVbRjNh64UDgGz1dejesSEjqxP90NSvD3OeXUj1TYvktrUH2Abx91lIn8LSlHyjL4e
+         ONW+CF+LpGdAfWmkfavtjZKYcpaC46ECPNk29ApkAZROIX+Xd7Z7hm9eeCFjalNTeHfa
+         MpG64hBz5mw0JA/cydQxxMRHukKmjC7CKBotVebuh/vVZQMAQSEDvX1QnqvZGKCyjrcH
+         EnU3yOZdgD1DaFmNoEL93Xy5WWflbi19Nkw03uIHRG7rsphjtzbGlIWSCvoVVC1EyWuH
+         Ei0epo3zAPJ3f0vHf/8yJwKmurorFSX9aII7DtFe8PpGwhai1T8+8gxgADTq248ltkX9
+         38Gg==
+X-Gm-Message-State: AOJu0YzNkl4sHmbVsLI4sx7OGOyHJ3rJxVOoDNXiz7Eiydf+8tIjq5M+
+        NUg5wROWguvYbbA1WEDxHvTKVknokXQ=
+X-Google-Smtp-Source: AGHT+IFQvIo3cJEdYao0O7NxA+FzfLBXzmi4zuUDrNDtZ4odxA3PfR+U+VmLXP+mE6lzj6gHULvA3A==
+X-Received: by 2002:a17:906:3f12:b0:99d:dfd:a5ba with SMTP id c18-20020a1709063f1200b0099d0dfda5bamr11423291ejj.43.1692120805121;
+        Tue, 15 Aug 2023 10:33:25 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::2:6d35])
-        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.23
+        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Aug 2023 10:33:23 -0700 (PDT)
+        Tue, 15 Aug 2023 10:33:24 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 15/16] io_uring: move iopoll ctx fields around
-Date:   Tue, 15 Aug 2023 18:31:44 +0100
-Message-ID: <31634a99be3201292182ce2adde05dac1c664b53.1692119257.git.asml.silence@gmail.com>
+Subject: [PATCH 16/16] io_uring: force inline io_fill_cqe_req
+Date:   Tue, 15 Aug 2023 18:31:45 +0100
+Message-ID: <2365692588dc7410db42e68d92960ee7dc2bf2f9.1692119258.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1692119257.git.asml.silence@gmail.com>
 References: <cover.1692119257.git.asml.silence@gmail.com>
@@ -70,65 +70,28 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Move poll_multi_queue and iopoll_list to the submission cache line, it
-doesn't make much sense to keep them separately, and is better place
-for it in general.
+There are only 2 callers of io_fill_cqe_req left, and one of them is
+extremely hot. Force inline the function.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ io_uring/io_uring.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 01bdbc223edd..13d19b9be9f4 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -256,6 +256,15 @@ struct io_ring_ctx {
- 		struct io_hash_table	cancel_table_locked;
- 		struct io_alloc_cache	apoll_cache;
- 		struct io_alloc_cache	netmsg_cache;
-+
-+		/*
-+		 * ->iopoll_list is protected by the ctx->uring_lock for
-+		 * io_uring instances that don't use IORING_SETUP_SQPOLL.
-+		 * For SQPOLL, only the single threaded io_sq_thread() will
-+		 * manipulate the list, hence no extra locking is needed there.
-+		 */
-+		struct io_wq_work_list	iopoll_list;
-+		bool			poll_multi_queue;
- 	} ____cacheline_aligned_in_smp;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 07fd185064d2..547c30582fb8 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -132,7 +132,8 @@ static inline bool io_get_cqe(struct io_ring_ctx *ctx, struct io_uring_cqe **ret
+ 	return io_get_cqe_overflow(ctx, ret, false);
+ }
  
- 	struct {
-@@ -284,20 +293,6 @@ struct io_ring_ctx {
- 		struct wait_queue_head	cq_wait;
- 	} ____cacheline_aligned_in_smp;
+-static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx, struct io_kiocb *req)
++static __always_inline bool io_fill_cqe_req(struct io_ring_ctx *ctx,
++					    struct io_kiocb *req)
+ {
+ 	struct io_uring_cqe *cqe;
  
--	struct {
--		spinlock_t		completion_lock;
--
--		bool			poll_multi_queue;
--
--		/*
--		 * ->iopoll_list is protected by the ctx->uring_lock for
--		 * io_uring instances that don't use IORING_SETUP_SQPOLL.
--		 * For SQPOLL, only the single threaded io_sq_thread() will
--		 * manipulate the list, hence no extra locking is needed there.
--		 */
--		struct io_wq_work_list	iopoll_list;
--	} ____cacheline_aligned_in_smp;
--
- 	/* timeouts */
- 	struct {
- 		spinlock_t		timeout_lock;
-@@ -308,6 +303,8 @@ struct io_ring_ctx {
- 
- 	struct io_uring_cqe	completion_cqes[16];
- 
-+	spinlock_t		completion_lock;
-+
- 	/* IRQ completion list, under ->completion_lock */
- 	struct io_wq_work_list	locked_free_list;
- 	unsigned int		locked_free_nr;
 -- 
 2.41.0
 

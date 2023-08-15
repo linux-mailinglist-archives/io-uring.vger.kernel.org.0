@@ -2,76 +2,77 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F98277C8A5
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 09:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F1B77C8B3
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 09:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235232AbjHOHiF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 03:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46304 "EHLO
+        id S235258AbjHOHly (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 03:41:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235224AbjHOHhm (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 03:37:42 -0400
+        with ESMTP id S235312AbjHOHlt (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 03:41:49 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E1AE198C
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 00:36:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5CA31733
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 00:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1692085011;
+        s=mimecast20190719; t=1692085262;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5xYsmOFje5yTGttZ6v6G6PZw9DbgvJ1RnyLESMQbsig=;
-        b=DcyxvPottNhdPCoCPHNqTsgjfZT5qkc4kPTbapLgb9CVYBd6L1td4dbS0DZyOCVrjK6FUB
-        sXi0QfOskUOzRWpskLxB1fKXGMxocJ/YaxQ0w6NVNG+R1Camwke3C9NXE7PQzuIlDTxvD1
-        U3YGpTlv5fDna/m0dYKEI6THOW+ymMk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=VMWcbMD7dCDauI4c941mIOz5QiUyfMWfolSH1guXv34=;
+        b=Oq7kq5rzFbPC9RNg+YuYmSuo+N0bLYtWWedGPpl6B4QZYBZ7yS5dW8Mba8cFcPYwhnZUfI
+        smTx4JixUUGeuORDDMvxIogfnreTeqCEz3xjduwmsiy0XqGXUYj8hQdQxJrfjLG2/RUGmb
+        yAm090AJxrTWQAFd4CnyF1e/WYAp08g=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-EqKuMIZxOHOi1RLDGGqjXw-1; Tue, 15 Aug 2023 03:36:50 -0400
-X-MC-Unique: EqKuMIZxOHOi1RLDGGqjXw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-317a84a3ebeso2744008f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 00:36:49 -0700 (PDT)
+ us-mta-29--cy7_oveMoWob4Bd2dvOzQ-1; Tue, 15 Aug 2023 03:41:01 -0400
+X-MC-Unique: -cy7_oveMoWob4Bd2dvOzQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-4fe8a28a1aaso5061977e87.0
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 00:41:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692085009; x=1692689809;
+        d=1e100.net; s=20221208; t=1692085260; x=1692690060;
         h=content-transfer-encoding:in-reply-to:organization:from:references
          :cc:to:content-language:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5xYsmOFje5yTGttZ6v6G6PZw9DbgvJ1RnyLESMQbsig=;
-        b=Bo/xd/giCnjNA82ez+f7UOidZV1CYoKnfh0PjnHGY4MMD3p3P9kTw36uH/PhX4YuxA
-         dTuMxJlXnPEK5+V6L4a6HZ7m9hoLhPK53PtTeJYRf3a9K1sIMvrU0fNwycLIqqODJHp+
-         BTDsY9bBebDwzPBxoIIV6pivE+nxtQPYbc47jPEIlLNzp9hHEMsjYODbCzTezR0CVcmd
-         sulvrey6aVJiGUtXq7e9dz5WZ+ZpKrgHVN+N2YYu+mEImUzO99N8C14mm+BMDxXNtVVG
-         aaL0l8fRVumZ+G5xUFU4nuT/Z3Te1bS+gmQfvaeP5yEI6GEJutBMy1LDS+3jzJ10i7Ir
-         RkYg==
-X-Gm-Message-State: AOJu0YzC1GK+cLOoJ6NMST+dOK4iYM4H+amDNjv7BHVZExnE3bceIDd2
-        md5xaE4TnZ8qzR6lgVBZ1gBhz8e0zmzkdcAptbDecfFwqSdfTnsS8POtZLg7NKENmGMPvkqebSs
-        zWK/X5iublFTiirrr6D0=
-X-Received: by 2002:adf:e912:0:b0:317:417e:a467 with SMTP id f18-20020adfe912000000b00317417ea467mr910010wrm.6.1692085008886;
-        Tue, 15 Aug 2023 00:36:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4BLbc0ajsG2PUQkkYbOcqfYBJBCjFQA/1JcmpTjMqb2JosO9nATgJcn3uasJezff3hjVvyQ==
-X-Received: by 2002:adf:e912:0:b0:317:417e:a467 with SMTP id f18-20020adfe912000000b00317417ea467mr909991wrm.6.1692085008522;
-        Tue, 15 Aug 2023 00:36:48 -0700 (PDT)
+        bh=VMWcbMD7dCDauI4c941mIOz5QiUyfMWfolSH1guXv34=;
+        b=WGa+9WprHCJfVnrV0vGsFSz9bFBb+M0AY/VMwIqN2mXGj6PTPDv75es2YHuZtnlXev
+         guxQs70fmSBeJtJQG9V/mBF6yywCP86wKilN8IUVP/+huuAIzIrAp/Be0VIKdlDQGP8+
+         olLS5GnMF3rWJaObiO0ycwYMtvb6rXVYe3GSPljkKy2B7yhI9RoHPAGH7lJfXh/OKkeL
+         bELdPhFvDFBBQy/Z7tDJhcCyneJ2LcQVT+7Q13zohcx7igLELoVxJkBKY6sXiqRjGeSS
+         fC5+2jAuSe/Q97f2+2UgfXVGmR74EyNIj4hI16yoR3MzOdZ+4n6rRvTjDN90Y8IZ5loK
+         foPA==
+X-Gm-Message-State: AOJu0YznrUqVjE8OPdZoQoRBquvpZZzYjZX9Z+oXqVeuGshLRkznQ2o+
+        jjE1Iv8TromR56q14ip33577TKk0t/BuEWR+PDO0KNvgxVP06Rid0jAtR5oQWYQ9AgNjQ6FL4FA
+        zMFPXqH+0lXu7t6+kwRU=
+X-Received: by 2002:a05:6512:110d:b0:4f8:770f:1b01 with SMTP id l13-20020a056512110d00b004f8770f1b01mr9383121lfg.19.1692085259849;
+        Tue, 15 Aug 2023 00:40:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjheDo758qMjd4Sp+jKLUMoXw3IW6sNphJ76PGIWLOUqSx+5exN5WWHYW/K9+fIzg2UpuQpQ==
+X-Received: by 2002:a05:6512:110d:b0:4f8:770f:1b01 with SMTP id l13-20020a056512110d00b004f8770f1b01mr9383107lfg.19.1692085259456;
+        Tue, 15 Aug 2023 00:40:59 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c701:3100:c642:ba83:8c37:b0e? (p200300cbc7013100c642ba838c370b0e.dip0.t-ipconnect.de. [2003:cb:c701:3100:c642:ba83:8c37:b0e])
-        by smtp.gmail.com with ESMTPSA id v9-20020a5d6b09000000b0031759e6b43fsm16970637wrw.39.2023.08.15.00.36.47
+        by smtp.gmail.com with ESMTPSA id l10-20020a7bc44a000000b003fc06169ab3sm19546694wmi.20.2023.08.15.00.40.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Aug 2023 00:36:48 -0700 (PDT)
-Message-ID: <2fef37cc-1fd7-e8b1-28c4-becd131f82b7@redhat.com>
-Date:   Tue, 15 Aug 2023 09:36:47 +0200
+        Tue, 15 Aug 2023 00:40:58 -0700 (PDT)
+Message-ID: <075a00b7-1e92-1709-5ac6-371eec9b1459@redhat.com>
+Date:   Tue, 15 Aug 2023 09:40:58 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 2/9] mm: Call the hugetlb destructor directly
+Subject: Re: [PATCH 3/9] mm: Call free_transhuge_folio() directly from
+ destroy_large_folio()
 Content-Language: en-US
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-mm@kvack.org
 References: <20230815032645.1393700-1-willy@infradead.org>
- <20230815032645.1393700-3-willy@infradead.org>
+ <20230815032645.1393700-4-willy@infradead.org>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-In-Reply-To: <20230815032645.1393700-3-willy@infradead.org>
+In-Reply-To: <20230815032645.1393700-4-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -86,73 +87,77 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 On 15.08.23 05:26, Matthew Wilcox (Oracle) wrote:
 > Indirect calls are expensive, thanks to Spectre.  Convert this one to
-> a direct call, and pass a folio instead of the head page to save a few
-> more instructions.
+> a direct call, and pass a folio instead of the head page for type safety.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->   include/linux/hugetlb.h |  3 ++-
->   include/linux/mm.h      |  6 +-----
->   mm/hugetlb.c            | 26 ++++++++++++--------------
->   mm/page_alloc.c         |  8 +++++---
->   4 files changed, 20 insertions(+), 23 deletions(-)
+>   include/linux/huge_mm.h | 2 +-
+>   mm/huge_memory.c        | 5 ++---
+>   mm/page_alloc.c         | 8 +++++---
+>   3 files changed, 8 insertions(+), 7 deletions(-)
 > 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 0a393bc02f25..9555859537a3 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -26,6 +26,8 @@ typedef struct { unsigned long pd; } hugepd_t;
->   #define __hugepd(x) ((hugepd_t) { (x) })
->   #endif
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 20284387b841..24aee49a581a 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -144,7 +144,7 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>   		unsigned long len, unsigned long pgoff, unsigned long flags);
 >   
-> +void free_huge_page(struct folio *folio);
-> +
->   #ifdef CONFIG_HUGETLB_PAGE
+>   void prep_transhuge_page(struct page *page);
+> -void free_transhuge_page(struct page *page);
+> +void free_transhuge_folio(struct folio *folio);
 >   
->   #include <linux/mempolicy.h>
-> @@ -165,7 +167,6 @@ int get_huge_page_for_hwpoison(unsigned long pfn, int flags,
->   				bool *migratable_cleared);
->   void folio_putback_active_hugetlb(struct folio *folio);
->   void move_hugetlb_state(struct folio *old_folio, struct folio *new_folio, int reason);
-> -void free_huge_page(struct page *page);
->   void hugetlb_fix_reserve_counts(struct inode *inode);
->   extern struct mutex *hugetlb_fault_mutex_table;
->   u32 hugetlb_fault_mutex_hash(struct address_space *mapping, pgoff_t idx);
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 19493d6a2bb8..7fb529dbff31 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1278,13 +1278,9 @@ typedef void compound_page_dtor(struct page *);
->   enum compound_dtor_id {
->   	NULL_COMPOUND_DTOR,
->   	COMPOUND_PAGE_DTOR,
-> -#ifdef CONFIG_HUGETLB_PAGE
->   	HUGETLB_PAGE_DTOR,
-> -#endif
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->   	TRANSHUGE_PAGE_DTOR,
-> -#endif
-> -	NR_COMPOUND_DTORS,
-> +	NR_COMPOUND_DTORS
->   };
->   
->   static inline void folio_set_compound_dtor(struct folio *folio,
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index e327a5a7602c..bc340f5dbbd4 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1875,13 +1875,12 @@ struct hstate *size_to_hstate(unsigned long size)
->   	return NULL;
+>   bool can_split_folio(struct folio *folio, int *pextra_pins);
+>   int split_huge_page_to_list(struct page *page, struct list_head *list);
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 8480728fa220..516fe3c26ef3 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2779,9 +2779,8 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>   	return ret;
 >   }
 >   
-> -void free_huge_page(struct page *page)
-> +void free_huge_page(struct folio *folio)
+> -void free_transhuge_page(struct page *page)
+> +void free_transhuge_folio(struct folio *folio)
+>   {
+> -	struct folio *folio = (struct folio *)page;
+>   	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+>   	unsigned long flags;
+>   
+> @@ -2798,7 +2797,7 @@ void free_transhuge_page(struct page *page)
+>   		}
+>   		spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+>   	}
+> -	free_compound_page(page);
+> +	free_compound_page(&folio->page);
+>   }
+>   
+>   void deferred_split_folio(struct folio *folio)
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 1f67d4968590..feb2e95cf021 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -287,9 +287,6 @@ const char * const migratetype_names[MIGRATE_TYPES] = {
+>   static compound_page_dtor * const compound_page_dtors[NR_COMPOUND_DTORS] = {
+>   	[NULL_COMPOUND_DTOR] = NULL,
+>   	[COMPOUND_PAGE_DTOR] = free_compound_page,
+> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	[TRANSHUGE_PAGE_DTOR] = free_transhuge_page,
+> -#endif
+>   };
+>   
+>   int min_free_kbytes = 1024;
+> @@ -624,6 +621,11 @@ void destroy_large_folio(struct folio *folio)
+>   		return;
+>   	}
+>   
+> +	if (folio_test_transhuge(folio) && dtor == TRANSHUGE_PAGE_DTOR) {
+> +		free_transhuge_folio(folio);
 
-free_huge_page" but passing a folio, hm. Maybe something like 
-"free_hugetlb_folio" would be better.
+I really wonder if folio_test_transhuge() should be written similar to 
+folio_test_hugetlb() instead, such that the dtor check is implicit.
 
-
-Apart from that LGTM.
+Any good reasons not to do that?
 
 -- 
 Cheers,

@@ -2,38 +2,38 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B938A77C688
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 05:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2452B77C669
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 05:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234479AbjHODx6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 14 Aug 2023 23:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39728 "EHLO
+        id S234461AbjHODc3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 14 Aug 2023 23:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234661AbjHODxJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Aug 2023 23:53:09 -0400
+        with ESMTP id S234308AbjHOD3s (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 14 Aug 2023 23:29:48 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EEE31FEF
-        for <io-uring@vger.kernel.org>; Mon, 14 Aug 2023 20:27:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF961FF6
+        for <io-uring@vger.kernel.org>; Mon, 14 Aug 2023 20:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=AkiwaMX9J2EStw5aS/8SkpjxSTrjAeNOcY6xWBx7phM=; b=umf5Qjlr4TVGgREeM841PEBgao
-        U/OYkolNBqfy6XznAkCSwddr8yp9BZo/N9H1CdaqwxN06gvrn6jvEqEPblAuMZ/waLUZPVkZ5q7wx
-        OY71tWBf9TI6QkfLbu7dgqNXSXjR5cCPXH9ZMZrrX3Q83VTs2JfbkUELVZd2w5ggZLg/uOH7iCSh7
-        2YnG4iRVeFk3+o/A8i46rvMVdmIyfKMXspzjCxKR1/AKExDZARAfxbaXsajqLo8bw0bsZglLNg7re
-        Wx2OkHUSPmqEJE+LQBQ3M/ETqVLMRr+AXX3FtZWRR6GV/lEPaWXQBv+151JJoN3WDoLIzN8AfnjbB
-        6hPPGVtg==;
+        bh=9AFjGPtcNZvRdattiMeM+NhO363S0DBsMAr8j6pNUgk=; b=jaNFDNXx63oA6YktKdyny5R+FA
+        RVh5LmTlc1op/Sst8fvW70x9QNRDwuwJOHdIIjJZWUf6guT7CgC+x3iC4VTc0Z5C7ZeV8vywxhRn2
+        iQv7KMpfL46Nk/RHw5syw8gNRhvNS9JKOkvCC4s91EKuD+3TD2PM7Lck/sH50znrz4zhJ66K/6xqW
+        frQp6MmSz5oZtlGIHcjgVJoS3tN28ZkHgwNnW2HzRzSYdibignJU8xbNbAUpTqqzvPL/2uF4lwhl+
+        HhW8C6yHRX3CyVf75d3s/k2AEl+VW5wqASKAdQSwMdsKUrccMFJq47rXEAyQWAHYMWzz3V5pr2xvE
+        93mcRMSg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qVkhm-005qab-LN; Tue, 15 Aug 2023 03:26:50 +0000
+        id 1qVkhm-005qad-Or; Tue, 15 Aug 2023 03:26:50 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 6/9] mm: Remove HUGETLB_PAGE_DTOR
-Date:   Tue, 15 Aug 2023 04:26:42 +0100
-Message-Id: <20230815032645.1393700-7-willy@infradead.org>
+Subject: [PATCH 7/9] mm: Add deferred_list page flag
+Date:   Tue, 15 Aug 2023 04:26:43 +0100
+Message-Id: <20230815032645.1393700-8-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230815032645.1393700-1-willy@infradead.org>
 References: <20230815032645.1393700-1-willy@infradead.org>
@@ -49,205 +49,182 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We can use a bit in page[1].flags to indicate that this folio belongs
-to hugetlb instead of using a value in page[1].dtors.  That lets
-folio_test_hugetlb() become an inline function like it should be.
-We can also get rid of NULL_COMPOUND_DTOR.
+Stored in the first tail page's flags, this flag replaces the destructor.
+That removes the last of the destructors, so remove all references to
+folio_dtor and compound_dtor.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- .../admin-guide/kdump/vmcoreinfo.rst          | 10 +---
- include/linux/mm.h                            |  2 -
- include/linux/page-flags.h                    | 21 +++++++-
- kernel/crash_core.c                           |  2 +-
- mm/hugetlb.c                                  | 49 +++----------------
- 5 files changed, 29 insertions(+), 55 deletions(-)
+ Documentation/admin-guide/kdump/vmcoreinfo.rst |  4 ++--
+ include/linux/mm.h                             | 14 --------------
+ include/linux/mm_types.h                       |  2 --
+ include/linux/page-flags.h                     |  6 ++++++
+ kernel/crash_core.c                            |  1 -
+ mm/huge_memory.c                               |  4 ++--
+ mm/internal.h                                  |  1 -
+ mm/page_alloc.c                                |  7 +------
+ 8 files changed, 11 insertions(+), 28 deletions(-)
 
 diff --git a/Documentation/admin-guide/kdump/vmcoreinfo.rst b/Documentation/admin-guide/kdump/vmcoreinfo.rst
-index c18d94fa6470..baa1c355741d 100644
+index baa1c355741d..3bd38ac0e7de 100644
 --- a/Documentation/admin-guide/kdump/vmcoreinfo.rst
 +++ b/Documentation/admin-guide/kdump/vmcoreinfo.rst
-@@ -325,8 +325,8 @@ NR_FREE_PAGES
- On linux-2.6.21 or later, the number of free pages is in
- vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
+@@ -141,8 +141,8 @@ nodemask_t
+ The size of a nodemask_t type. Used to compute the number of online
+ nodes.
  
--PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask
--------------------------------------------------------------------------------
-+PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask|PG_hugetlb
-+-----------------------------------------------------------------------------------------
+-(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|compound_order|compound_head)
+--------------------------------------------------------------------------------------------------
++(page, flags|_refcount|mapping|lru|_mapcount|private|compound_order|compound_head)
++----------------------------------------------------------------------------------
  
- Page attributes. These flags are used to filter various unnecessary for
- dumping pages.
-@@ -338,12 +338,6 @@ More page attributes. These flags are used to filter various unnecessary for
- dumping pages.
- 
- 
--HUGETLB_PAGE_DTOR
-------------------
--
--The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
--excludes these pages.
--
- x86_64
- ======
- 
+ User-space tools compute their values based on the offset of these
+ variables. The variables are used when excluding unnecessary pages.
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index cf6707a7069e..c8c8b1fd64d3 100644
+index c8c8b1fd64d3..cf0ae8c51d7f 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -1269,9 +1269,7 @@ unsigned long nr_free_buffer_pages(void);
+@@ -1267,20 +1267,6 @@ void folio_copy(struct folio *dst, struct folio *src);
  
- /* Compound pages may have a special destructor */
- enum compound_dtor_id {
--	NULL_COMPOUND_DTOR,
- 	COMPOUND_PAGE_DTOR,
--	HUGETLB_PAGE_DTOR,
- 	TRANSHUGE_PAGE_DTOR,
- 	NR_COMPOUND_DTORS
- };
+ unsigned long nr_free_buffer_pages(void);
+ 
+-/* Compound pages may have a special destructor */
+-enum compound_dtor_id {
+-	COMPOUND_PAGE_DTOR,
+-	TRANSHUGE_PAGE_DTOR,
+-	NR_COMPOUND_DTORS
+-};
+-
+-static inline void folio_set_compound_dtor(struct folio *folio,
+-		enum compound_dtor_id compound_dtor)
+-{
+-	VM_BUG_ON_FOLIO(compound_dtor >= NR_COMPOUND_DTORS, folio);
+-	folio->_folio_dtor = compound_dtor;
+-}
+-
+ void destroy_large_folio(struct folio *folio);
+ 
+ /* Returns the number of bytes in this potentially compound page. */
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index da538ff68953..d45a2b8041e0 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -282,7 +282,6 @@ static inline struct page *encoded_page_ptr(struct encoded_page *page)
+  * @_refcount: Do not access this member directly.  Use folio_ref_count()
+  *    to find how many references there are to this folio.
+  * @memcg_data: Memory Control Group data.
+- * @_folio_dtor: Which destructor to use for this folio.
+  * @_folio_order: Do not use directly, call folio_order().
+  * @_entire_mapcount: Do not use directly, call folio_entire_mapcount().
+  * @_nr_pages_mapped: Do not use directly, call folio_mapcount().
+@@ -336,7 +335,6 @@ struct folio {
+ 			unsigned long _flags_1;
+ 			unsigned long _head_1;
+ 	/* public: */
+-			unsigned char _folio_dtor;
+ 			unsigned char _folio_order;
+ 			atomic_t _entire_mapcount;
+ 			atomic_t _nr_pages_mapped;
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 92a2063a0a23..01d98695e79f 100644
+index 01d98695e79f..aabf50dc71a3 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -180,6 +180,9 @@ enum pageflags {
- 	PG_has_hwpoisoned = PG_error,
- #endif
+@@ -183,6 +183,9 @@ enum pageflags {
+ 	/* Is a hugetlb page.  Stored in first tail page. */
+ 	PG_hugetlb = PG_writeback,
  
-+	/* Is a hugetlb page.  Stored in first tail page. */
-+	PG_hugetlb = PG_writeback,
++	/* Has a deferred list (may be empty).  First tail page. */
++	PG_deferred_list = PG_reclaim,
 +
  	/* non-lru isolated movable page */
  	PG_isolated = PG_reclaim,
  
-@@ -812,7 +815,23 @@ static inline void ClearPageCompound(struct page *page)
- 
- #ifdef CONFIG_HUGETLB_PAGE
- int PageHuge(struct page *page);
--bool folio_test_hugetlb(struct folio *folio);
-+SETPAGEFLAG(HugeTLB, hugetlb, PF_SECOND)
-+CLEARPAGEFLAG(HugeTLB, hugetlb, PF_SECOND)
-+
-+/**
-+ * folio_test_hugetlb - Determine if the folio belongs to hugetlbfs
-+ * @folio: The folio to test.
-+ *
-+ * Context: Any context.  Caller should have a reference on the folio to
-+ * prevent it from being turned into a tail page.
-+ * Return: True for hugetlbfs folios, false for anon folios or folios
-+ * belonging to other filesystems.
-+ */
-+static inline bool folio_test_hugetlb(struct folio *folio)
-+{
-+	return folio_test_large(folio) &&
-+		test_bit(PG_hugetlb, folio_flags(folio, 1));
-+}
- #else
- TESTPAGEFLAG_FALSE(Huge, hugetlb)
+@@ -809,6 +812,9 @@ static inline void ClearPageCompound(struct page *page)
+ 	BUG_ON(!PageHead(page));
+ 	ClearPageHead(page);
+ }
++PAGEFLAG(DeferredList, deferred_list, PF_SECOND)
++#else
++TESTPAGEFLAG_FALSE(DeferredList, deferred_list)
  #endif
+ 
+ #define PG_head_mask ((1UL << PG_head))
 diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 90ce1dfd591c..dd5f87047d06 100644
+index dd5f87047d06..934dd86e19f5 100644
 --- a/kernel/crash_core.c
 +++ b/kernel/crash_core.c
-@@ -490,7 +490,7 @@ static int __init crash_save_vmcoreinfo_init(void)
- #define PAGE_BUDDY_MAPCOUNT_VALUE	(~PG_buddy)
- 	VMCOREINFO_NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE);
- #ifdef CONFIG_HUGETLB_PAGE
--	VMCOREINFO_NUMBER(HUGETLB_PAGE_DTOR);
-+	VMCOREINFO_NUMBER(PG_hugetlb);
- #define PAGE_OFFLINE_MAPCOUNT_VALUE	(~PG_offline)
- 	VMCOREINFO_NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE);
- #endif
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index bc340f5dbbd4..a1cebcee6503 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1585,25 +1585,7 @@ static inline void __clear_hugetlb_destructor(struct hstate *h,
- {
- 	lockdep_assert_held(&hugetlb_lock);
+@@ -455,7 +455,6 @@ static int __init crash_save_vmcoreinfo_init(void)
+ 	VMCOREINFO_OFFSET(page, lru);
+ 	VMCOREINFO_OFFSET(page, _mapcount);
+ 	VMCOREINFO_OFFSET(page, private);
+-	VMCOREINFO_OFFSET(folio, _folio_dtor);
+ 	VMCOREINFO_OFFSET(folio, _folio_order);
+ 	VMCOREINFO_OFFSET(page, compound_head);
+ 	VMCOREINFO_OFFSET(pglist_data, node_zones);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 99e36ad540c4..3b5db99eb7ac 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -583,7 +583,7 @@ void prep_transhuge_page(struct page *page)
  
--	/*
--	 * Very subtle
--	 *
--	 * For non-gigantic pages set the destructor to the normal compound
--	 * page dtor.  This is needed in case someone takes an additional
--	 * temporary ref to the page, and freeing is delayed until they drop
--	 * their reference.
--	 *
--	 * For gigantic pages set the destructor to the null dtor.  This
--	 * destructor will never be called.  Before freeing the gigantic
--	 * page destroy_compound_gigantic_folio will turn the folio into a
--	 * simple group of pages.  After this the destructor does not
--	 * apply.
--	 *
--	 */
--	if (hstate_is_gigantic(h))
--		folio_set_compound_dtor(folio, NULL_COMPOUND_DTOR);
--	else
--		folio_set_compound_dtor(folio, COMPOUND_PAGE_DTOR);
-+	folio_clear_hugetlb(folio);
+ 	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
+ 	INIT_LIST_HEAD(&folio->_deferred_list);
+-	folio_set_compound_dtor(folio, TRANSHUGE_PAGE_DTOR);
++	folio_set_deferred_list(folio);
  }
  
- /*
-@@ -1690,7 +1672,7 @@ static void add_hugetlb_folio(struct hstate *h, struct folio *folio,
- 		h->surplus_huge_pages_node[nid]++;
+ static inline bool is_transparent_hugepage(struct page *page)
+@@ -595,7 +595,7 @@ static inline bool is_transparent_hugepage(struct page *page)
+ 
+ 	folio = page_folio(page);
+ 	return is_huge_zero_page(&folio->page) ||
+-	       folio->_folio_dtor == TRANSHUGE_PAGE_DTOR;
++		folio_test_deferred_list(folio);
+ }
+ 
+ static unsigned long __thp_get_unmapped_area(struct file *filp,
+diff --git a/mm/internal.h b/mm/internal.h
+index 5a03bc4782a2..e3d11119b04e 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -417,7 +417,6 @@ static inline void prep_compound_head(struct page *page, unsigned int order)
+ {
+ 	struct folio *folio = (struct folio *)page;
+ 
+-	folio_set_compound_dtor(folio, COMPOUND_PAGE_DTOR);
+ 	folio_set_order(folio, order);
+ 	atomic_set(&folio->_entire_mapcount, -1);
+ 	atomic_set(&folio->_nr_pages_mapped, 0);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 21af71aea6eb..9fe9209605a5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -582,9 +582,6 @@ static inline void free_the_page(struct page *page, unsigned int order)
+  * The remaining PAGE_SIZE pages are called "tail pages". PageTail() is encoded
+  * in bit 0 of page->compound_head. The rest of bits is pointer to head page.
+  *
+- * The first tail page's ->compound_dtor describes how to destroy the
+- * compound page.
+- *
+  * The first tail page's ->compound_order holds the order of allocation.
+  * This usage means that zero-order pages may not be compound.
+  */
+@@ -603,14 +600,12 @@ void prep_compound_page(struct page *page, unsigned int order)
+ 
+ void destroy_large_folio(struct folio *folio)
+ {
+-	enum compound_dtor_id dtor = folio->_folio_dtor;
+-
+ 	if (folio_test_hugetlb(folio)) {
+ 		free_huge_page(folio);
+ 		return;
  	}
  
--	folio_set_compound_dtor(folio, HUGETLB_PAGE_DTOR);
-+	folio_set_hugetlb(folio);
- 	folio_change_private(folio, NULL);
- 	/*
- 	 * We have to set hugetlb_vmemmap_optimized again as above
-@@ -1814,9 +1796,8 @@ static void free_hpage_workfn(struct work_struct *work)
- 		/*
- 		 * The VM_BUG_ON_FOLIO(!folio_test_hugetlb(folio), folio) in
- 		 * folio_hstate() is going to trigger because a previous call to
--		 * remove_hugetlb_folio() will call folio_set_compound_dtor
--		 * (folio, NULL_COMPOUND_DTOR), so do not use folio_hstate()
--		 * directly.
-+		 * remove_hugetlb_folio() will clear the hugetlb bit, so do
-+		 * not use folio_hstate() directly.
- 		 */
- 		h = size_to_hstate(page_size(page));
- 
-@@ -1955,7 +1936,7 @@ static void __prep_new_hugetlb_folio(struct hstate *h, struct folio *folio)
- {
- 	hugetlb_vmemmap_optimize(h, &folio->page);
- 	INIT_LIST_HEAD(&folio->lru);
--	folio_set_compound_dtor(folio, HUGETLB_PAGE_DTOR);
-+	folio_set_hugetlb(folio);
- 	hugetlb_set_folio_subpool(folio, NULL);
- 	set_hugetlb_cgroup(folio, NULL);
- 	set_hugetlb_cgroup_rsvd(folio, NULL);
-@@ -2070,28 +2051,10 @@ int PageHuge(struct page *page)
- 	if (!PageCompound(page))
- 		return 0;
- 	folio = page_folio(page);
--	return folio->_folio_dtor == HUGETLB_PAGE_DTOR;
-+	return folio_test_hugetlb(folio);
- }
- EXPORT_SYMBOL_GPL(PageHuge);
- 
--/**
-- * folio_test_hugetlb - Determine if the folio belongs to hugetlbfs
-- * @folio: The folio to test.
-- *
-- * Context: Any context.  Caller should have a reference on the folio to
-- * prevent it from being turned into a tail page.
-- * Return: True for hugetlbfs folios, false for anon folios or folios
-- * belonging to other filesystems.
-- */
--bool folio_test_hugetlb(struct folio *folio)
--{
--	if (!folio_test_large(folio))
--		return false;
--
--	return folio->_folio_dtor == HUGETLB_PAGE_DTOR;
--}
--EXPORT_SYMBOL_GPL(folio_test_hugetlb);
--
- /*
-  * Find and lock address space (mapping) in write mode.
-  *
+-	if (folio_test_transhuge(folio) && dtor == TRANSHUGE_PAGE_DTOR)
++	if (folio_test_deferred_list(folio))
+ 		free_transhuge_folio(folio);
+ 	mem_cgroup_uncharge(folio);
+ 	free_the_page(&folio->page, folio_order(folio));
 -- 
 2.40.1
 

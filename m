@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D14EA77D12D
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B51F477D123
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 19:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238912AbjHORdh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 13:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49688 "EHLO
+        id S238889AbjHORde (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 13:33:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238925AbjHORdW (ORCPT
+        with ESMTP id S238924AbjHORdW (ORCPT
         <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 13:33:22 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E791BD9
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A525F11A
         for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:20 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b9db1de50cso85722541fa.3
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-99cdb0fd093so768669466b.1
         for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 10:33:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692120798; x=1692725598;
+        d=gmail.com; s=20221208; t=1692120799; x=1692725599;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HnxxpondMX0aLczSzWm6JuyWlbpdwrNND3OM3Yt44kY=;
-        b=bt4h+8NXY/G4i9d+eX7RH9cNGMrWlMWbbwyXKC0SZcreepSmsxZo66oAIosSkC2Uah
-         zIaOxwDNUxLPk4RvfkfMMhvAhS33Qjh39RehSF61HJhG5Za4yXzki6TeElmrZTnFIuDJ
-         vRGDGu7SqNb8z6peIjpX7eXjcsSKMxYEBYatfREnul+Ama5QKfVJsaHYN/90pgrRT+/+
-         Ctx1IrfoDcSglOJMuX+y5u5mRlRyBr+NzC/OCOGWn1IZuvl4H9XZRmSuXUo/bCZe0l60
-         UUXoVWlKeMFIInb1Hjhd6XMAXYQAQ2O7SWIcXmobeH2wGmK5zvprwm5nNz5czIjey160
-         7vBw==
+        bh=gygTe6VeHXFhmmjNogX4unEtGJquuz2w9Xe1TMZyLMU=;
+        b=pW7+m4oIczI1BeE3NqdHnc48XY8fb5nb0pw7TcgU/6ACbYS1NhbXMp3Oq2/t9lzbDF
+         rJdSe53UE7KeEyQnWrT8QC8fMvSo3SUUCzL6qEnHmy3JqKbRxV2cuBsOrEzHZJifwPiH
+         tkkdxCZPERySS/6x6aHbIUvBqi+m0mIyuxlz33pMpnT9kQh7JzeBKz9cjl+jj9ugMuT5
+         xpcEeOloKLfeFznUdZVeVmTnUQGWmuqZqdyzI5XES6eVZ11OQ7b0zt1D1MECoyJTVmg9
+         gmIXAKPW+NSTSau2/h4jPrQB5hiEAQGBKqbHq7uzZLQyQbPGi65n/0r9O0dCu4MqdUQ8
+         fEGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692120798; x=1692725598;
+        d=1e100.net; s=20221208; t=1692120799; x=1692725599;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HnxxpondMX0aLczSzWm6JuyWlbpdwrNND3OM3Yt44kY=;
-        b=LJ+3Zh1uE1mqL/1rHLY2dhYsXER5DGWNPmSWjCxlrGrbfUnVWMwaic/pxYFQSbNrZj
-         zk9nYaKkFf7Gekg6Q+C4l9qZiAIfi7RdGXV/nLPiwvyb9u7XaX3FCu6AyQhMP4Z4AJG6
-         chnE2oNOMo9CO0M5xwG2KJ2qLqfHfcpkQfT+ZM1x+6TtIdh77g1hYFV6XbzMb6pIlU4V
-         mecbh6kkXpjE8aQZ/GJvrtIX9XVt2V/naBMSaTvXfGxmDAaqtrqCjaig7HnxEY2v4YXo
-         XPwjzqorvXF73sZ013QWCpMGAz0AKuCtgs3RcK/ZpNBHr7K5JqbuEQo7iCpfDi+nejBK
-         fbyQ==
-X-Gm-Message-State: AOJu0YwY0rZmuqGn6sECU6PsqVab2Eh3f1i19Hoi5gimiXVxv7loB1I2
-        fGZlQipsIZ/y4mXRDcxpsd4qNA0CA9w=
-X-Google-Smtp-Source: AGHT+IHHS8EoiYTjqNICdruoUOWF1Esbx++ib8DRNvKYQM9phZU8dwzYsYgfdiLwg4i5JNiYHGGb9w==
-X-Received: by 2002:a2e:9b98:0:b0:2b9:5b06:b73c with SMTP id z24-20020a2e9b98000000b002b95b06b73cmr9053738lji.17.1692120798131;
+        bh=gygTe6VeHXFhmmjNogX4unEtGJquuz2w9Xe1TMZyLMU=;
+        b=HVMxZuRLkI9Ac7pYEoGT68t3B0gU7THVV4iynHtLFejh75LLSvEYdZSGaZGw6nRtQ8
+         LUR9ZMLg4ZWGL+IpzSCmVqele+4Qfo4ltx10l2zwXzUMnmjP4HL3GW0phTc2Bi3AxuNy
+         IG1DDT+TVN2KgOWYKbzPU3sgrUV46wbIJA01L/sCGNv1Kr5CTPdqseW9jNs3K2+R4j48
+         ObpBI7tCU0Nrlh1HaXwyeV6X9kfJO1rp1ol+e5O63U6DT0ei/MPEoqjMNJGObZJuwTTd
+         NuGAc28Z9gz4eZtZ1BxrMJ7Cn2U7qJ5MfcEuq40vE6CpaJYMimFj3UaYpQfWo58zk3vS
+         347g==
+X-Gm-Message-State: AOJu0YxQGC5VMdZRqtf+p3Q7SIWTkXtenQQtv0n2yN6UoCfSCwVb593M
+        tt+2f1dhOizjT2IZJj5njCmcSEO1qWc=
+X-Google-Smtp-Source: AGHT+IH/+cQH/gA0Y7DGSxxQYgSheaH4+RJqtacyS3NnMVEUFED/K6pS2uBLRGy1okr5HokqK3xSGA==
+X-Received: by 2002:a17:906:9ca:b0:994:56d3:8a42 with SMTP id r10-20020a17090609ca00b0099456d38a42mr11083359eje.27.1692120798799;
         Tue, 15 Aug 2023 10:33:18 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::2:6d35])
-        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.17
+        by smtp.gmail.com with ESMTPSA id kk9-20020a170907766900b0099cc36c4681sm7269878ejc.157.2023.08.15.10.33.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Aug 2023 10:33:17 -0700 (PDT)
+        Tue, 15 Aug 2023 10:33:18 -0700 (PDT)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
-Subject: [PATCH 05/16] io_uring: optimise extra io_get_cqe null check
-Date:   Tue, 15 Aug 2023 18:31:34 +0100
-Message-ID: <c3816ff286b95714efa5fb8cdde2b01d28202cb1.1692119257.git.asml.silence@gmail.com>
+Subject: [PATCH 06/16] io_uring: reorder cqring_flush and wakeups
+Date:   Tue, 15 Aug 2023 18:31:35 +0100
+Message-ID: <c6e71a25b020c8dcf554d30ac556378e0d6e318b.1692119257.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1692119257.git.asml.silence@gmail.com>
 References: <cover.1692119257.git.asml.silence@gmail.com>
@@ -70,98 +70,68 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If the cached cqe check passes in io_get_cqe*() it already means that
-the cqe we return is valid and non-zero, however the compiler is unable
-to optimise null checks like in io_fill_cqe_req().
-
-Do a bit of trickery, return success/fail boolean from io_get_cqe*()
-and store cqe in the cqe parameter. That makes it do the right thing,
-erasing the check together with the introduced indirection.
+Unlike in the past, io_commit_cqring_flush() doesn't do anything that
+may need io_cqring_wake() to be issued after, all requests it completes
+will go via task_work. Do io_commit_cqring_flush() after
+io_cqring_wake() to clean up __io_cq_unlock_post().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c |  7 +++----
- io_uring/io_uring.h | 20 +++++++++-----------
- 2 files changed, 12 insertions(+), 15 deletions(-)
+ io_uring/io_uring.c | 14 +++-----------
+ io_uring/rw.c       |  2 +-
+ 2 files changed, 4 insertions(+), 12 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 623d41755714..e5378dc7aa19 100644
+index e5378dc7aa19..8d27d2a2e893 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -683,10 +683,10 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx)
- 
- 	io_cq_lock(ctx);
- 	while (!list_empty(&ctx->cq_overflow_list)) {
--		struct io_uring_cqe *cqe = io_get_cqe_overflow(ctx, true);
-+		struct io_uring_cqe *cqe;
- 		struct io_overflow_cqe *ocqe;
- 
--		if (!cqe)
-+		if (!io_get_cqe_overflow(ctx, &cqe, true))
- 			break;
- 		ocqe = list_first_entry(&ctx->cq_overflow_list,
- 					struct io_overflow_cqe, list);
-@@ -862,8 +862,7 @@ static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res,
- 	 * submission (by quite a lot). Increment the overflow count in
- 	 * the ring.
- 	 */
--	cqe = io_get_cqe(ctx);
--	if (likely(cqe)) {
-+	if (likely(io_get_cqe(ctx, &cqe))) {
- 		trace_io_uring_complete(ctx, NULL, user_data, res, cflags, 0, 0);
- 
- 		WRITE_ONCE(cqe->user_data, user_data);
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 9c80d20fe18f..2960e35b32a5 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -109,28 +109,27 @@ static inline void io_req_task_work_add(struct io_kiocb *req)
- #define io_for_each_link(pos, head) \
- 	for (pos = (head); pos; pos = pos->link)
- 
--static inline struct io_uring_cqe *io_get_cqe_overflow(struct io_ring_ctx *ctx,
--						       bool overflow)
-+static inline bool io_get_cqe_overflow(struct io_ring_ctx *ctx,
-+					struct io_uring_cqe **ret,
-+					bool overflow)
+@@ -629,19 +629,11 @@ static inline void io_cq_lock(struct io_ring_ctx *ctx)
+ static inline void __io_cq_unlock_post(struct io_ring_ctx *ctx)
  {
--	struct io_uring_cqe *cqe;
+ 	io_commit_cqring(ctx);
 -
- 	io_lockdep_assert_cq_locked(ctx);
- 
- 	if (unlikely(ctx->cqe_cached >= ctx->cqe_sentinel)) {
- 		if (unlikely(!io_cqe_cache_refill(ctx, overflow)))
--			return NULL;
-+			return false;
+-	if (ctx->task_complete) {
+-		/*
+-		 * ->task_complete implies that only current might be waiting
+-		 * for CQEs, and obviously, we currently don't. No one is
+-		 * waiting, wakeups are futile, skip them.
+-		 */
+-		io_commit_cqring_flush(ctx);
+-	} else {
++	if (!ctx->task_complete) {
+ 		spin_unlock(&ctx->completion_lock);
+-		io_commit_cqring_flush(ctx);
+ 		io_cqring_wake(ctx);
  	}
--	cqe = ctx->cqe_cached;
-+	*ret = ctx->cqe_cached;
- 	ctx->cached_cq_tail++;
- 	ctx->cqe_cached++;
- 	if (ctx->flags & IORING_SETUP_CQE32)
- 		ctx->cqe_cached++;
--	return cqe;
-+	return true;
++	io_commit_cqring_flush(ctx);
  }
  
--static inline struct io_uring_cqe *io_get_cqe(struct io_ring_ctx *ctx)
-+static inline bool io_get_cqe(struct io_ring_ctx *ctx, struct io_uring_cqe **ret)
+ static void io_cq_unlock_post(struct io_ring_ctx *ctx)
+@@ -649,8 +641,8 @@ static void io_cq_unlock_post(struct io_ring_ctx *ctx)
  {
--	return io_get_cqe_overflow(ctx, false);
-+	return io_get_cqe_overflow(ctx, ret, false);
+ 	io_commit_cqring(ctx);
+ 	spin_unlock(&ctx->completion_lock);
+-	io_commit_cqring_flush(ctx);
+ 	io_cqring_wake(ctx);
++	io_commit_cqring_flush(ctx);
  }
  
- static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx, struct io_kiocb *req)
-@@ -142,8 +141,7 @@ static inline bool io_fill_cqe_req(struct io_ring_ctx *ctx, struct io_kiocb *req
- 	 * submission (by quite a lot). Increment the overflow count in
- 	 * the ring.
- 	 */
--	cqe = io_get_cqe(ctx);
--	if (unlikely(!cqe))
-+	if (unlikely(!io_get_cqe(ctx, &cqe)))
- 		return false;
+ /* Returns true if there are no backlogged entries after the flush */
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 9b51afdae505..20140d3505f1 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -985,9 +985,9 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
  
- 	if (trace_io_uring_complete_enabled())
+ static void io_cqring_ev_posted_iopoll(struct io_ring_ctx *ctx)
+ {
+-	io_commit_cqring_flush(ctx);
+ 	if (ctx->flags & IORING_SETUP_SQPOLL)
+ 		io_cqring_wake(ctx);
++	io_commit_cqring_flush(ctx);
+ }
+ 
+ void io_rw_fail(struct io_kiocb *req)
 -- 
 2.41.0
 

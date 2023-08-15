@@ -2,49 +2,45 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 595C777D3B9
-	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 21:59:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B118D77D3EB
+	for <lists+io-uring@lfdr.de>; Tue, 15 Aug 2023 22:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233685AbjHOT6e (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 15 Aug 2023 15:58:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56434 "EHLO
+        id S233774AbjHOUHm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 15 Aug 2023 16:07:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234858AbjHOT63 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 15:58:29 -0400
+        with ESMTP id S240175AbjHOUHh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 15 Aug 2023 16:07:37 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B95E83
-        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 12:58:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4AD83
+        for <io-uring@vger.kernel.org>; Tue, 15 Aug 2023 13:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=REO/NuxNjKd1RI6P6mRiynN2pl2P7FWcjgXGh2Ezuqk=; b=r2OD9Rs4DfxSbofmquM9xQUsLU
-        5jLFZbX8XLKxE0n4Thj5T6NQYMoh1a+8ibUhXkb4IUyRIslrKvVtvGhwmK7ux230+vjQ07eiBlP0A
-        uJiSI6Grug9Ao7cWQnnTXHoFrNrQHMkP0HVOVEr7/ZK2NZqsCms/mcoq8J/awNrgHU1anSYhlvUNY
-        pcu1FAsgVWY9pP6txL0H1tSoddx0ndrg7+/84OS5STTCXRBUu5bL94inP2NQwc+m//aP5MGEWKhpM
-        6fCU3mC4+KkHumnXQo//dmLHFlZyjfMJrBd0JT7hdQDr7ORPrBSIn1YQkbcKF4IFci7b5sKoD++y7
-        UUXvhxew==;
+        bh=eHSlXXQjPck8Fcx5Whhqhl8V7B9SR3BAERky3PV+PAQ=; b=inE408hAP8QYWNOne/4CmKKEva
+        r/OJh5QBPUD+Dan6Sxqk/toBvQQExFZPZAGQ5VnVzz8ED/Ht9CGiS1wBVXZIEckqx6hZRVmeXTo+F
+        z5Xe0u8C45iq+D/ydhEi5LUk6I7eDWOMP+DxaI29zUgU/JHv+e8BG8aCcrggqlDk7i8qc8/Svt/fR
+        LuO5AG50jE6sQ+5P1ahCElfazbKoIOApklFvb+lnMr24bwRoqV3lxNNz+SWkWS9l7e+3uphJg6TS4
+        6iW7GBIci6GNDCWQBDaJb2J4zSobX3HHXOOgtz1Dp6S5R3h1MMxGoyJitrhuMCsleVekUiLkDaa63
+        qMG3v8Lg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qW0BM-00A7t8-9s; Tue, 15 Aug 2023 19:58:24 +0000
-Date:   Tue, 15 Aug 2023 20:58:24 +0100
+        id 1qW0KA-00AAXM-TM; Tue, 15 Aug 2023 20:07:30 +0000
+Date:   Tue, 15 Aug 2023 21:07:30 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     David Hildenbrand <david@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 7/9] mm: Add deferred_list page flag
-Message-ID: <ZNvY4AbRCwjwVY7f@casper.infradead.org>
+Subject: Re: [PATCH 8/9] mm: Rearrange page flags
+Message-ID: <ZNvbApJbLanU55Ze@casper.infradead.org>
 References: <20230815032645.1393700-1-willy@infradead.org>
- <20230815032645.1393700-8-willy@infradead.org>
- <7c1bb01d-620c-ca97-c4a2-2bb7c126c687@redhat.com>
- <ZNuaiY483XCq1K1/@casper.infradead.org>
- <88bdc3d2-56e4-4c09-77fe-74fb4c116893@redhat.com>
- <ZNuwm2kPzmeHo2bU@casper.infradead.org>
- <aac4404a-1012-fe7f-4337-cace30795176@redhat.com>
+ <20230815032645.1393700-9-willy@infradead.org>
+ <ZNvQ4EbQh/aAwK8L@x1n>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aac4404a-1012-fe7f-4337-cace30795176@redhat.com>
+In-Reply-To: <ZNvQ4EbQh/aAwK8L@x1n>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
@@ -55,68 +51,34 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 15, 2023 at 07:27:26PM +0200, David Hildenbrand wrote:
-> On 15.08.23 19:06, Matthew Wilcox wrote:
-> > Theree are a lot of counters called THP and TransHuge and other variants
-> > which are exposed to userspace, and the (user) assumption is that this counts
-> > PMD-sized folios.  If you grep around for folio_test_pmd_mappable(),
-> > you'll find them.  If we have folio_test_thp(), people will write:
-> > 
-> > 	if (folio_test_thp(folio))
-> > 		__mod_lruvec_state(lruvec, NR_SHMEM_THPS, nr);
-> > 
-> > instead of using folio_test_pmd_mappable().
+On Tue, Aug 15, 2023 at 03:24:16PM -0400, Peter Xu wrote:
+> On Tue, Aug 15, 2023 at 04:26:44AM +0100, Matthew Wilcox (Oracle) wrote:
+> > +++ b/include/linux/page-flags.h
+> > @@ -99,13 +99,15 @@
+> >   */
+> >  enum pageflags {
+> >  	PG_locked,		/* Page is locked. Don't touch. */
+> > +	PG_writeback,		/* Page is under writeback */
+> >  	PG_referenced,
+> >  	PG_uptodate,
+> >  	PG_dirty,
+> >  	PG_lru,
+> > +	PG_head,		/* Must be in bit 6 */
 > 
-> So if we *really* don't want to use THP to express that we have a page, then
-> let's see what these pages are:
-> * can be mapped to user space
-> * are transparent to most MM-related systemcalls by (un) mapping
->   them in system page size (PTEs)
+> Could there be some explanation on "must be in bit 6" here?
 
- * Are managed on the LRU
- * Can be dirtied, written back
+Not on this line, no.  You get 40-50 characters to say something useful.
+Happy to elaborate further in some other comment or in the commit log,
+but not on this line.
 
-> That we can split these pages (not PTE-map, but convert from large folio to
-> small folios) is one characteristic, but IMHO not the main one (and maybe
-> not even required at all!).
+The idea behind all of this is that _folio_order moves into the bottom
+byte of _flags_1.  Because the order can never be greater than 63 (and
+in practice I think the largest we're going to see is about 30 -- a 16GB
+hugetlb page on some architectures), we know that PG_head and PG_waiters
+will be clear, so we can write (folio->_flags_1 & 0xff) and the compiler
+will just load a byte; it won't actually load the word and mask it.
 
-It's the one which distinguishes them from, say, compound pages used for
-slab.  Or used by device drivers.  Or net pagepool, or vmalloc.  There's
-a lot of compound allocations out there, and the only ones which need
-special treatment here are the ones which are splittable.
-
-> Maybe we can come up with a better term for "THP, but not necessarily
-> PMD-sized".
-> 
-> "Large folio" is IMHO bad. A hugetlb page is a large folio and not all large
-> folios can be mapped to user space.
-> 
-> "Transparent large folios" ? Better IMHO.
-
-I think this goes back to Johannes' point many months ago that we need
-separate names for some things.  He wants to split anon & file memory
-apart (who gets to keep the name "folio" in the divorce?  what do we
-name the type that encompasses both folios and the other one?  or do
-they both get different names?)
-
-> > Perhaps the key difference between normal compound pages and file/anon
-> > compound pages is that the latter are splittable?  So we can name all
-> > of this:
-> > 
-> > 	folio_init_splittable()
-> > 	folio_test_splittable()
-> > 	folio_fini_splittable()
-> > 
-> > Maybe that's still too close to an implementation detail, but it's at
-> > least talking about _a_ characteristic of the folio, even if it's not
-> > the _only_ characteristic of the folio.
-> 
-> Maybe folio_init_transparent() ... avoiding the "huge" part of it.
-> 
-> Very open for alternatives. As expressed in other context, we really should
-> figure this out soon.
-
-Yeah, I'm open to better naming too.  At this point in the flow we're
-trying to distinguish between compound pages used for slab and compound
-pages used for anon/file, but that's not always going to be the case
-elsewhere.
+We can't move PG_head any lower, or we'll risk having a tail page with
+PG_head set (which can happen with the vmemmmap optimisation, but eugh).
+And we don't want to move it any higher because then we'll have a flag
+that cannot be reused in a tail page.  Bit 6 is the perfect spot for it.

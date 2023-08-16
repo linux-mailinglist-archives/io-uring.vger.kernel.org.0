@@ -2,141 +2,187 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C7B77DAB5
-	for <lists+io-uring@lfdr.de>; Wed, 16 Aug 2023 08:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B4977DDF4
+	for <lists+io-uring@lfdr.de>; Wed, 16 Aug 2023 11:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242189AbjHPGwo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Aug 2023 02:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
+        id S229738AbjHPJ4Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Aug 2023 05:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234258AbjHPGwO (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Aug 2023 02:52:14 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E82F1BCC;
-        Tue, 15 Aug 2023 23:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
- s=s31663417; t=1692168730; x=1692773530; i=quwenruo.btrfs@gmx.com;
- bh=kdfHFwX6W/1/pxRlOfMixchnxBbohs3pHE0RZfAcB3U=;
- h=X-UI-Sender-Class:Date:To:From:Subject;
- b=nS0cGIwcNgrT1cZJNwDQpM55s9oXwzd1a8uUHaick+XTcZ+BltCHEiAiyOyfWcyCYefsyOy
- wOfAGOUXQoALUteDNo+6AyRXMJTWpe37yCIiOVhHXwTYVHRpXsc/VG9Elnh38B6cOVpUbKDhk
- Jy7uV6wddLdwRq59roj87Va6ahUc7G1J0j11w8/Suf17/pJHnL/LxQtGigrOhtmCX4uoSM3YL
- gkB/mvEwUUOQ+iDm4LtQQPZVQLY1iNzkdsTvuONTKG2PUmn+UJmG5KEBLPTdFQIFuBRPnx5hW
- Z5K71kF+QdaZx5BM2pDgYpOcrc9jIo3c39GN9IcLg8Z6WUuRyiiQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mj8qj-1prs1H0EYX-00f76T; Wed, 16
- Aug 2023 08:52:10 +0200
-Message-ID: <95600f18-5fd1-41c8-b31b-14e7f851e8bc@gmx.com>
-Date:   Wed, 16 Aug 2023 14:52:20 +0800
+        with ESMTP id S243635AbjHPJ4D (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Aug 2023 05:56:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F442D1
+        for <io-uring@vger.kernel.org>; Wed, 16 Aug 2023 02:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692179718;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+l6CVYESkWNXZKOgwhwVdfDgv7To5sUrc78oVwNDueY=;
+        b=R9Mjh55QxPR81Mkw5rc+7+mj3V4Ljlv5BebVtHq7hU37+PYsuikzKwTYRJPoGwFu0uba2b
+        vkLKFymsn+dW+p33+ImACP53AtvPRhp2QkSpBZo54Iy/Y22VIQgQ2ke9/ge7JvR6FB/ko7
+        jjZMVrHvGFdwYs8Bcrus+XaHqdRDUBs=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-669-YUK0SNMlMUyt-YzD1pC6Uw-1; Wed, 16 Aug 2023 05:55:17 -0400
+X-MC-Unique: YUK0SNMlMUyt-YzD1pC6Uw-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2b8405aace3so61221251fa.3
+        for <io-uring@vger.kernel.org>; Wed, 16 Aug 2023 02:55:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692179713; x=1692784513;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+l6CVYESkWNXZKOgwhwVdfDgv7To5sUrc78oVwNDueY=;
+        b=RHVEjB/J02cp0OZAZlyoPC5fP+A/obs6DkGLDfgFxM2gTbw4cM3btOpCzkXHbDf07L
+         iOJvCVA4lW6q5+wIqWfS50K5GUCAiZUgGUU4rvO3lrxfOzEhtq7DHwQPxgI+oLXGRpZW
+         yEQSyDc/nTdOWW5w9pGQYMK4kFLpMJiYcXYlnuv2E/XDzqTXR5mQ+syp0bqq2IcqIeEw
+         2BgQtObneJoNLdtpP5KRbIGRpd25L0SEKmG62AuWv7JvxWRq52nmoRxtsiY6ky5pmMsF
+         U9GxLFtPanzRhxI6N8qGwroPAYUD4VSLJ+QuWIazjjrL0lg/BdfMdrsEJIX1t7v7e24S
+         g6yA==
+X-Gm-Message-State: AOJu0Yxas9x6/5k5TFgl6jYvdt/qaxE587n6TH7ih5aliL3CsHRUdV7f
+        vdgTYe/rO7ESQyQs5+l1qt24YXWKxolz7M80ttlDbOKfVf3nUgIn/BXXRM2wJxfS7iGMUHFJ4CH
+        rNrcur9UAww2SW8f9GKkLmQUOU6I=
+X-Received: by 2002:a2e:6f16:0:b0:2b9:c676:434a with SMTP id k22-20020a2e6f16000000b002b9c676434amr1108396ljc.15.1692179713715;
+        Wed, 16 Aug 2023 02:55:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJq2vzPFGwybgPTa4U1oMr8QMSVMGXmm9UusE5Tq36K9vQoxcrWDmAYbbzDL97NzJSypd23g==
+X-Received: by 2002:a2e:6f16:0:b0:2b9:c676:434a with SMTP id k22-20020a2e6f16000000b002b9c676434amr1108384ljc.15.1692179713324;
+        Wed, 16 Aug 2023 02:55:13 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74b:8b00:5520:fa3c:c527:592f? (p200300cbc74b8b005520fa3cc527592f.dip0.t-ipconnect.de. [2003:cb:c74b:8b00:5520:fa3c:c527:592f])
+        by smtp.gmail.com with ESMTPSA id l5-20020a7bc345000000b003feae747ff2sm4374556wmj.35.2023.08.16.02.55.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Aug 2023 02:55:12 -0700 (PDT)
+Message-ID: <f4e04f9d-082b-bd9b-28c6-bc28193d7d52@redhat.com>
+Date:   Wed, 16 Aug 2023 11:55:12 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 7/9] mm: Add deferred_list page flag
 Content-Language: en-US
-To:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        io-uring@vger.kernel.org
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: Possible io_uring related race leads to btrfs data csum mismatch
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230815032645.1393700-1-willy@infradead.org>
+ <20230815032645.1393700-8-willy@infradead.org>
+ <7c1bb01d-620c-ca97-c4a2-2bb7c126c687@redhat.com>
+ <ZNuaiY483XCq1K1/@casper.infradead.org>
+ <88bdc3d2-56e4-4c09-77fe-74fb4c116893@redhat.com>
+ <ZNuwm2kPzmeHo2bU@casper.infradead.org>
+ <aac4404a-1012-fe7f-4337-cace30795176@redhat.com>
+ <ZNvY4AbRCwjwVY7f@casper.infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <ZNvY4AbRCwjwVY7f@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9W+ZYEazh9DwQgMjukStFb1wErN29C4Vt1pBoEYSeXIe7pdYsXO
- 9apJzNFEJDOO8uq9KFPpy1utiBOi7vDkb5345+3x8hl9zlohPjIBk1KmuplWl+aolASNDrn
- NJK2hZmTWooAKYvamLk4bi562/GNxQrP+xbVvFILA4Z1yVkuwS01uBOi6xyy9i3RBjDdMhm
- Ym3U/m4EpUfFhmWOvO/oA==
-UI-OutboundReport: notjunk:1;M01:P0:MR1Iat2Jwvw=;IgSDXL3vuKjOsZV7b4RUWTadMxh
- dUM7z6y8pvft1YmOQU6A7HPiw6M2r9lBbeqc54Kk3PuJmWnCUzAQadGlJvZyDlOMFGWtTfRMe
- 07bBWRSG0S1XqvsDBRORrkQfzo6O7mG6OrO0xBOLSA/TJK7zko893vKTJSNf65UOagbJfDLy1
- 20JOWJorSv6BdBdelrTr/cKR3XujDsZkNTKH3YlZTjjQ2dzwGQn1unjAoDWyJOMs/OeFj2+n+
- tc4vGCmsK3eMXZAs/N1wy8Sot1+FvKx4nQwdpCtkcMCw1JQgBg1ty9HpdDFv+rkdmm66X/ruV
- 87UItsFwXknLp2uE4lmUl7zQudcF5wCh3tBW9mlvKnXPriWusS9GQ3YXCE81A2fQbeIBeIoKX
- 4aUIW9WhqzZyEXx683+j0U9p7yzr4KzNY0aFIQZa8ltTDN24wEXJcuxazxF5EPh6t8jiMLsNC
- NH+dOu+tEfYSkY5BWubNfzPNHwLkZskk9K/iRGNId+lM4g9QKISlRSK/kwoVsn2wGDKyJnxGW
- PO94qx/nKwcH4FaJSbxFdRkP9ZSnt1kvr7Fei8gG+gNYWE5F11ugiZQ1yRl527ILq81xDo17q
- 8EwtcHKgPv+eIvGbykLHtzJn8fpJ++gDUAoiHE0TAeHoR2lm2L757N4rJqgmUTZ8Xyt7Zvbkn
- v0GpCV+F3EEfXDN/mMX/gNgll4xkyPVX2qb+mPEMkbLmtptkL04NcjLEl4qG67avEZvKpJNGt
- KhKcINvZWlUr3C0Unan6K64zAs/O+Cer2H9j4CB9Mgk+1wu1qjmHW9g6SFr+HEziaPF/dkRu+
- Hh5j1BlSkoFlHko6CVIQMGE7tB97P+WNn7ADygkMqA8vyUK8fItDqiFHrR7GTidIUcLFlqHD1
- VOjDV0wckKb8xjEd1xPfVIHkT99v0ZsbZwzhRDkfY4uMTaiSpU98RJfycsc25c9lKJNDd9aXW
- NdQiwmmjsU83NahYT5phOSWTNvc=
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On 15.08.23 21:58, Matthew Wilcox wrote:
+> On Tue, Aug 15, 2023 at 07:27:26PM +0200, David Hildenbrand wrote:
+>> On 15.08.23 19:06, Matthew Wilcox wrote:
+>>> Theree are a lot of counters called THP and TransHuge and other variants
+>>> which are exposed to userspace, and the (user) assumption is that this counts
+>>> PMD-sized folios.  If you grep around for folio_test_pmd_mappable(),
+>>> you'll find them.  If we have folio_test_thp(), people will write:
+>>>
+>>> 	if (folio_test_thp(folio))
+>>> 		__mod_lruvec_state(lruvec, NR_SHMEM_THPS, nr);
+>>>
+>>> instead of using folio_test_pmd_mappable().
+>>
+>> So if we *really* don't want to use THP to express that we have a page, then
+>> let's see what these pages are:
+>> * can be mapped to user space
+>> * are transparent to most MM-related systemcalls by (un) mapping
+>>    them in system page size (PTEs)
+> 
+>   * Are managed on the LRU
+>   * Can be dirtied, written back
 
-Recently I'm digging into a very rare failure during btrfs/06[234567],
-where btrfs scrub detects unrepairable data corruption.
+Right, but at least hugetlb *could* be extended to do that as well (and 
+even implement swapping). I think the biggest difference is the 
+transparency/PTE-mapping/unmapping/ ....
 
-After days of digging, I have a much smaller reproducer:
+> 
+>> That we can split these pages (not PTE-map, but convert from large folio to
+>> small folios) is one characteristic, but IMHO not the main one (and maybe
+>> not even required at all!).
+> 
+> It's the one which distinguishes them from, say, compound pages used for
+> slab.  Or used by device drivers.  Or net pagepool, or vmalloc.  There's
+> a lot of compound allocations out there, and the only ones which need
+> special treatment here are the ones which are splittable.
 
-```
-fail()
-{
-         echo "!!! FAILED !!!"
-         exit 1
-}
+And my point is that that is an implementation detail I'm afraid. 
+Instead of splitting the folio into order-0 folios, you could also 
+migrate off all data to order-0 folios and just free the large folio.
 
-workload()
-{
-         mkfs.btrfs -f -m single -d single --csum sha256 $dev1
-         mount $dev1 $mnt
-	# There are around 10 more combinations with different
-         # seed and -p/-n parameters, but this is the smallest one
-	# I found so far.
-	$fsstress -p 7 -n 50 -s 1691396493 -w -d $mnt
-	umount $mnt
-	btrfs check --check-data-csum $dev1 || fail
-}
-runtime=3D1024
-for (( i =3D 0; i < $runtime; i++ )); do
-         echo "=3D=3D=3D $i / $runtime =3D=3D=3D"
-         workload
-done
-```
+Because splitting only succeeds if there are no other references on the 
+folio, just like migration.
 
-At least here, with a VM with 6 cores (host has 8C/16T), fast enough
-storage (PCIE4.0 NVME, with unsafe cache mode), it has the chance around
-1/100 to hit the error.
+But let's not get distracted :)
 
-Checking the fsstress verbose log against the failed file, it turns out
-to be an io_uring write.
+> 
+>> Maybe we can come up with a better term for "THP, but not necessarily
+>> PMD-sized".
+>>
+>> "Large folio" is IMHO bad. A hugetlb page is a large folio and not all large
+>> folios can be mapped to user space.
+>>
+>> "Transparent large folios" ? Better IMHO.
+> 
+> I think this goes back to Johannes' point many months ago that we need
+> separate names for some things.  He wants to split anon & file memory
+> apart (who gets to keep the name "folio" in the divorce?  what do we
+> name the type that encompasses both folios and the other one?  or do
+> they both get different names?)
 
-And with uring_write disabled in fsstress, I have no longer reproduced
-the csum mismatch, even with much larger -n and -p parameters.
+Good question. I remember discussing a type hierarchy back when you 
+upstreamed folios.
 
-However I didn't see any io_uring related callback inside btrfs code,
-any advice on the io_uring part would be appreciated.
+Maybe we would have "file folios" and "anon folios.
 
-Thanks,
-Qu
+> 
+>>> Perhaps the key difference between normal compound pages and file/anon
+>>> compound pages is that the latter are splittable?  So we can name all
+>>> of this:
+>>>
+>>> 	folio_init_splittable()
+>>> 	folio_test_splittable()
+>>> 	folio_fini_splittable()
+>>>
+>>> Maybe that's still too close to an implementation detail, but it's at
+>>> least talking about _a_ characteristic of the folio, even if it's not
+>>> the _only_ characteristic of the folio.
+>>
+>> Maybe folio_init_transparent() ... avoiding the "huge" part of it.
+>>
+>> Very open for alternatives. As expressed in other context, we really should
+>> figure this out soon.
+> 
+> Yeah, I'm open to better naming too.  At this point in the flow we're
+> trying to distinguish between compound pages used for slab and compound
+> pages used for anon/file, but that's not always going to be the case
+> elsewhere.
+
+
+Yes. Let me reply to your other mail.
+
+-- 
+Cheers,
+
+David / dhildenb
+

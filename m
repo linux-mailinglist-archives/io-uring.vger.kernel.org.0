@@ -2,119 +2,93 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD61077E41B
-	for <lists+io-uring@lfdr.de>; Wed, 16 Aug 2023 16:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D1877E4CB
+	for <lists+io-uring@lfdr.de>; Wed, 16 Aug 2023 17:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343558AbjHPOt0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 16 Aug 2023 10:49:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
+        id S1344048AbjHPPMe (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 16 Aug 2023 11:12:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245477AbjHPOtQ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Aug 2023 10:49:16 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3229C269F
-        for <io-uring@vger.kernel.org>; Wed, 16 Aug 2023 07:49:15 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-6874a386ec7so1277544b3a.1
-        for <io-uring@vger.kernel.org>; Wed, 16 Aug 2023 07:49:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692197354; x=1692802154;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bB7XWSnRRk5uRFy5Bhr/rMcZ+NwcVc4eZMs4l+L6BC4=;
-        b=YrSmXVUZyUbo5/DHpr/E/N6JKUMRNyWAlNcQKxpIO421IUV5dtRDUpmKeQEyjad3kl
-         LVoatROUhIqQtFSZstzi6qxwoQpM5aMp5sWMhkkeOekdSIuNh/JMKt74XvTB2eHAy2pw
-         ojrt9yVSwSO65vG3IWKMcQOetkmIyUKspirukH4yyFeflXEX/8mkBfOKORXncW5M0Oaw
-         FDeK9Q42/IJDJaSquU/1oO9ysT0cLRI1pglMJ6MpvaYFXXPU9TmfKngTk1plVyyKIgaS
-         qNmWw1ADfOsc24piOnyPh6inDUHCfDwbla+Jz2MYVpZpLRddzFRqQSPKguCyloQMwvB3
-         oPGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692197354; x=1692802154;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bB7XWSnRRk5uRFy5Bhr/rMcZ+NwcVc4eZMs4l+L6BC4=;
-        b=U3OS/udjxXfTtThWuibpbQzikHh4SWlDk0fS3/bkXy0IHE5V3WSY72yNZZ6+5v2iOr
-         XOXRuT1hRW8jKM8md8dPVZziyEjD2+LIqirmKlTRQIIJ/P6pKdHSW8NXLMLfr05+xai2
-         24XuFdsrL7uSIMeGaxp2N/rDP4r2F210DwVhfODahTSuYumoWfubAvW1MLgstdX1w6R9
-         aa7iuTRX+/pmPrSU5zQ3+pEizet0YtQyBJagjPk3DAur+Rb3L8mHaTTrq1mve3vB2fw4
-         9pNay3i5DK7O+l/ggMdmn08koy0ak23GKDT4UhISuPNy6MI+4Y+Gl0UueEv+WKJTXYRg
-         IAqQ==
-X-Gm-Message-State: AOJu0YwX9eU7nw1/u/eMXSJD3QzFkJJx2ayaSVBdYItZL8QHuICtdFy1
-        0QU8/acIDtBWXkWqj23E1q+9RKbjNBABp6nSIvE=
-X-Google-Smtp-Source: AGHT+IGt+WgkuYD3me2WG5lk5UQqztjdQYUhOqr4S22DrzYSklwqN63sdxu5wSD7u9F1rOSiaU4XFQ==
-X-Received: by 2002:a05:6a21:6d9e:b0:140:ca4c:740d with SMTP id wl30-20020a056a216d9e00b00140ca4c740dmr3232747pzb.4.1692197354559;
-        Wed, 16 Aug 2023 07:49:14 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n12-20020aa7904c000000b00688214cff65sm7617093pfo.44.2023.08.16.07.49.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Aug 2023 07:49:13 -0700 (PDT)
-Message-ID: <804a4c7b-f5ca-4f02-8dc7-893bbefd798b@kernel.dk>
-Date:   Wed, 16 Aug 2023 08:49:12 -0600
+        with ESMTP id S1344090AbjHPPMZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 16 Aug 2023 11:12:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D194D1BE8
+        for <io-uring@vger.kernel.org>; Wed, 16 Aug 2023 08:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=QJooS26uR2KUhhJJzszQM39UcDPRD5O6ibO340Z+plU=; b=oo33NpDmV1uyySnVX3EhQkC5gw
+        /zr9PrIt1kiO1DsX5I3hSTS17l+fNnONiu11xiIJdoT1pd3ThuUaTv4P/RGpMjFzxD+QuQXI7Vse0
+        Dq8w0UXI/EA0O8dTqmMzPpy1F180J2lnMOAuDaVMJY8NZfuTJtcX4N8hVO+/PqlCqf0K7yhsIrf1N
+        U5VxbQtZmHWxPDi21RKOTU9VWW5CKhe3KPbV2/bRUNhevnHfow1tIJXzw6dpqAExegFxGgZnE6SE6
+        lobx0qoXgmJs6xShKlFtP3PGc/O1ifdc0jsx4Uvfo7Bv1g+b2oYWWZS4uvrQ+J7BQBl745i/JWyIv
+        EQm3yd+Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qWIBt-00FL8N-Rr; Wed, 16 Aug 2023 15:12:09 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH v2 00/13] Remove _folio_dtor and _folio_order
+Date:   Wed, 16 Aug 2023 16:11:48 +0100
+Message-Id: <20230816151201.3655946-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Possible io_uring related race leads to btrfs data csum mismatch
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        io-uring@vger.kernel.org
-References: <95600f18-5fd1-41c8-b31b-14e7f851e8bc@gmx.com>
- <51945229-5b35-4191-a3f3-16cf4b3ffce6@kernel.dk>
-In-Reply-To: <51945229-5b35-4191-a3f3-16cf4b3ffce6@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/16/23 8:33 AM, Jens Axboe wrote:
->> However I didn't see any io_uring related callback inside btrfs code,
->> any advice on the io_uring part would be appreciated.
-> 
-> io_uring doesn't do anything special here, it uses the normal page cache
-> read/write parts for buffered IO. But you may get extra parallellism
-> with io_uring here. For example, with the buffered write that this most
-> likely is, libaio would be exactly the same as a pwrite(2) on the file.
-> If this would've blocked, io_uring would offload this to a helper
-> thread. Depending on the workload, you could have multiple of those in
-> progress at the same time.
+Well, this patch series has got completely out of hand.  What started
+out as "Let's try to optimise the freeing path a bit" turned into
+"Hey, I can free up an entire word in the first tail page", and
+grew "Oh, while we're here, let's rename a bunch of things".
 
-I poked a bit at fsstress, and it's a bit odd imho. For example, any aio
-read/write seems to hardcode O_DIRECT. The io_uring side will be
-buffered. Not sure why there are those differences and why buffered/dio
-isn't a variable. But this does mean that these are certainly buffered
-writes with io_uring.
+No detailed changelog from v1 because _so much_ changed.
 
-Are any of the writes overlapping? You could have a situation where
-writeA and writeB overlap, and writeA will get punted to io-wq for
-execution and writeB will complete inline. In other words, writeA is
-issued, writeB is issued. writeA goes to io-wq, writeB now completes
-inline, and now writeA is done and completed. It may be exposing issues
-in btrfs. You can try the below patch, which should serialize all the
-writes to a given file. If this makes a difference for you, then I'd
-strongly suspect that the issue is deeper than the delivery mechanism of
-the write.
+Matthew Wilcox (Oracle) (13):
+  io_uring: Stop calling free_compound_page()
+  mm: Call free_huge_page() directly
+  mm: Convert free_huge_page() to free_huge_folio()
+  mm: Convert free_transhuge_folio() to folio_undo_large_rmappable()
+  mm; Convert prep_transhuge_page() to folio_prep_large_rmappable()
+  mm: Remove free_compound_page() and the compound_page_dtors array
+  mm: Remove HUGETLB_PAGE_DTOR
+  mm: Add large_rmappable page flag
+  mm: Rearrange page flags
+  mm: Free up a word in the first tail page
+  mm: Remove folio_test_transhuge()
+  mm: Add tail private fields to struct folio
+  mm: Convert split_huge_pages_pid() to use a folio
 
-diff --git a/ltp/fsstress.c b/ltp/fsstress.c
-index 6641a525fe5d..034cbba27c6e 100644
---- a/ltp/fsstress.c
-+++ b/ltp/fsstress.c
-@@ -2317,6 +2317,7 @@ do_uring_rw(opnum_t opno, long r, int flags)
- 		off %= maxfsize;
- 		memset(buf, nameseq & 0xff, len);
- 		io_uring_prep_writev(sqe, fd, &iovec, 1, off);
-+		sqe->flags |= IOSQE_ASYNC;
- 	} else {
- 		off = (off64_t)(lr % stb.st_size);
- 		io_uring_prep_readv(sqe, fd, &iovec, 1, off);
+ .../admin-guide/kdump/vmcoreinfo.rst          | 14 +--
+ Documentation/mm/hugetlbfs_reserv.rst         | 14 +--
+ .../zh_CN/mm/hugetlbfs_reserv.rst             |  4 +-
+ include/linux/huge_mm.h                       |  6 +-
+ include/linux/hugetlb.h                       |  3 +-
+ include/linux/mm.h                            | 39 +-------
+ include/linux/mm_types.h                      | 19 +++-
+ include/linux/page-flags.h                    | 60 ++++++++----
+ io_uring/io_uring.c                           |  6 +-
+ io_uring/kbuf.c                               |  6 +-
+ kernel/crash_core.c                           |  4 +-
+ mm/huge_memory.c                              | 51 +++++-----
+ mm/hugetlb.c                                  | 97 ++++++-------------
+ mm/internal.h                                 |  5 +-
+ mm/khugepaged.c                               |  2 +-
+ mm/memcontrol.c                               |  2 +-
+ mm/mempolicy.c                                | 15 +--
+ mm/page_alloc.c                               | 41 +++-----
+ 18 files changed, 161 insertions(+), 227 deletions(-)
 
 -- 
-Jens Axboe
+2.40.1
 

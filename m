@@ -2,132 +2,119 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFFD77FE57
-	for <lists+io-uring@lfdr.de>; Thu, 17 Aug 2023 21:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8499677FFBB
+	for <lists+io-uring@lfdr.de>; Thu, 17 Aug 2023 23:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344617AbjHQTI7 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 17 Aug 2023 15:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41900 "EHLO
+        id S1355253AbjHQVWP (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 17 Aug 2023 17:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354657AbjHQTIv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Aug 2023 15:08:51 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63142D70;
-        Thu, 17 Aug 2023 12:08:50 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7C65321853;
-        Thu, 17 Aug 2023 19:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1692299329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jgox/zl3coqkVq6gQr6F0Rvr1rOTV3VTU1eRiO0bmmM=;
-        b=Ie5LkbT03bviX+r0VYA6eNsCtH+gX542hg35BAoMmvSYWDN7c6urBo9Ksh+kl5Tlm0Vs1K
-        e0jiuwpS6sVIRDyQD45eUISa2ArPazUbOYgBvAeVTpSvVJ4+GNgfLI83fq3OCqCcfYgBBp
-        BGoE4sDzwRWbOwCRTMYVxOi1xeN6gJ0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1692299329;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jgox/zl3coqkVq6gQr6F0Rvr1rOTV3VTU1eRiO0bmmM=;
-        b=PXDQfIJTELvrAl6u3MFsfMJulTmvpKVpZweG+FxayXne4SUDDExTV2Tvo6wBu3uBX9S2pC
-        17B4ixJs3Nvnt+CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 42A211358B;
-        Thu, 17 Aug 2023 19:08:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PMPsA0Fw3mRZPAAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 17 Aug 2023 19:08:49 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Breno Leitao <leitao@debian.org>
-Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
-        pabeni@redhat.com
-Subject: Re: [PATCH v3 8/9] io_uring/cmd: BPF hook for getsockopt cmd
-In-Reply-To: <20230817145554.892543-9-leitao@debian.org> (Breno Leitao's
-        message of "Thu, 17 Aug 2023 07:55:53 -0700")
-References: <20230817145554.892543-1-leitao@debian.org>
-        <20230817145554.892543-9-leitao@debian.org>
-Date:   Thu, 17 Aug 2023 15:08:47 -0400
-Message-ID: <87pm3l32rk.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        with ESMTP id S1355272AbjHQVVv (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 17 Aug 2023 17:21:51 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC445E55
+        for <io-uring@vger.kernel.org>; Thu, 17 Aug 2023 14:21:49 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id 41be03b00d2f7-565e54cb93aso204911a12.3
+        for <io-uring@vger.kernel.org>; Thu, 17 Aug 2023 14:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1692307309; x=1692912109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J3DqWaHfahBV9Rbr3yh7KAOpaU1Qrxqc6I4ImPzrlLc=;
+        b=UQ7uRX4vRNQm5Z1sJYuCD7CcUxrybgqiowuOcHYmTIa+UxxHl+7ZiRrKxaJsYHKXSl
+         tghA3LlYPIhxoRFOaBp0d8yN1G+lOTQ7cPNzwU0zy8KoWJJ8FeqBZVPOZ9GXVcu+DC+a
+         WJuLP8C7DeUOx2LPkDjxFTZoe1hdtJHUVj33s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692307309; x=1692912109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J3DqWaHfahBV9Rbr3yh7KAOpaU1Qrxqc6I4ImPzrlLc=;
+        b=CW7kmztD6CynR3GP8Y00wpTdnj/0Ig2DBAHjyQMO24qLvN31A9Pt1rjhxvTKOAPLBf
+         GkGLJ0tK18jaJnds4zsnYxKx+NYT8cSRDyeHbFY/LjHU15aSSiKzwYFFuDR2Xe3/5+0l
+         ewH0gZ63yg/wj8SO4oVeSl/6byKr+QEBz0p/beXNUIbpGuqZc0GbM33TbyZrwmDwdiiq
+         nrckyxlRW3FvivaKw7PiScwdUcEdU2SdnxvIEQAIOkB8BxrpG8LC7ZgP87ZXann2pvKb
+         /Nx2CjxBW0mtGbhkkofzPqP0MS6SlH4ScnrkeyHMAyyY05d1wtv3oZK8I7UJ3iaUrdRf
+         jcmA==
+X-Gm-Message-State: AOJu0Ywtzb/wVrQyGnm1HqlzspOIHpo2GaofMsmzgREWlIoXJDjT72qE
+        SQZdpMelzt1wBq6f2QmaztMUHQ==
+X-Google-Smtp-Source: AGHT+IGLTsZ7rAmRuWTP/8uOPKu4TBwkEbweRpAvs9I0Ep65lCmKl19f3lVNNKXui6CukdYTJl8/rA==
+X-Received: by 2002:a05:6a20:5493:b0:13e:43df:d043 with SMTP id i19-20020a056a20549300b0013e43dfd043mr1160826pzk.9.1692307309226;
+        Thu, 17 Aug 2023 14:21:49 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id h5-20020aa786c5000000b0064d57ecaa1dsm212143pfo.28.2023.08.17.14.21.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Aug 2023 14:21:48 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: [PATCH] io_uring/rsrc: Annotate struct io_mapped_ubuf with __counted_by
+Date:   Thu, 17 Aug 2023 14:21:47 -0700
+Message-Id: <20230817212146.never.853-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1124; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=gGwvg9zntWB1mDIg2ohTnF8pwVm/bQVoon3uykHOFBY=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBk3o9rT8q7sPkI7wrB2u8kChmsyKUfX13Pp+tuK
+ oLdx7grdI2JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZN6PawAKCRCJcvTf3G3A
+ JgYUEACXsvCYFPjTGIHR6p6P5j6Q+CqT4ShBQzC+FAh246rLYugxhD6lIIPpdrTaHK4l5M9CzwO
+ GaAhIq3GI++x8bV8cMf+54lzehI5pc7jWE7EkU+klUDyGudmNuaOFHdaQmPG4OlwK92DnJ94AH7
+ S+jsgIFmk0IY0AJZzTGHDKBH/PPPJEW0Ncw68YUD0n0sVkb3zR3AWhiswF3HD0Ve/j98jTpxsQz
+ cinCJ/a6kCl4LYa7Skni+3AL2Kmt6dSTAvv2fD1aVKerTNpWIfZCHb0c5pEzQIlvEnBQMTvGMO8
+ 7bPlPGOs7+27ogbkBtban+QdipHMzaGvkbbMWGKYuU6ThfuaG41UQPRVuapuqdjch7hWocfnkfM
+ Ry+OdHte2BNoXP7WZPZD7iYhJh0XcOWTj8WQLVbXmTNC1fHhv6wIQymrL45b4luR2W8aNTs1rV3
+ H4Zbfps1xF50ZU76LImcqObF1FgYJHa1/vKm3oX3q93wMRD2VHzFwZsaCjcQVZCSVNRU2KrEMS/
+ j23mDxvATtLGv8SG5NPAi2za7QlL3I1jUYrYmzL7RAPmgzoyM9fr9cNRQ28nUl+e3dULnWPQfUn
+ 0GiO7o7orv/pWyfyHzZrhmIEKANpH8EhOHyRccTApqCjNBNcG3guRn0YKOdQKy7vsDsJX/cX7CY
+ 70L6BhK j2bZt81g==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Breno Leitao <leitao@debian.org> writes:
+Prepare for the coming implementation by GCC and Clang of the __counted_by
+attribute. Flexible array members annotated with __counted_by can have
+their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+(for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+functions).
 
-> Add BPF hook support for getsockopts io_uring command. So, BPF cgroups
-> programs can run when SOCKET_URING_OP_GETSOCKOPT command is executed
-> through io_uring.
->
-> This implementation follows a similar approach to what
-> __sys_getsockopt() does, but, using USER_SOCKPTR() for optval instead of
-> kernel pointer.
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  io_uring/uring_cmd.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index a567dd32df00..9e08a14760c3 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -5,6 +5,8 @@
->  #include <linux/io_uring.h>
->  #include <linux/security.h>
->  #include <linux/nospec.h>
-> +#include <linux/compat.h>
-> +#include <linux/bpf-cgroup.h>
->  
->  #include <uapi/linux/io_uring.h>
->  #include <uapi/asm-generic/ioctls.h>
-> @@ -184,17 +186,23 @@ static inline int io_uring_cmd_getsockopt(struct socket *sock,
->  	if (err)
->  		return err;
->  
-> -	if (level == SOL_SOCKET) {
-> +	err = -EOPNOTSUPP;
-> +	if (level == SOL_SOCKET)
->  		err = sk_getsockopt(sock->sk, level, optname,
->  				    USER_SOCKPTR(optval),
->  				    KERNEL_SOCKPTR(&optlen));
-> -		if (err)
-> -			return err;
->  
-> +	if (!(issue_flags & IO_URING_F_COMPAT))
-> +		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level,
-> +						     optname,
-> +						     USER_SOCKPTR(optval),
-> +						     KERNEL_SOCKPTR(&optlen),
-> +						     optlen, err);
-> +
-> +	if (!err)
->  		return optlen;
-> -	}
+As found with Coccinelle[1], add __counted_by for struct io_mapped_ubuf.
 
-Shouldn't you call sock->ops->getsockopt for level!=SOL_SOCKET prior to
-running the hook?  Before this patch, it would bail out with EOPNOTSUPP,
-but now the bpf hook gets called even for level!=SOL_SOCKET, which
-doesn't fit __sys_getsockopt. Am I misreading the code?
+[1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
 
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ io_uring/rsrc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 8afa9ec66a55..8625181fb87a 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -54,7 +54,7 @@ struct io_mapped_ubuf {
+ 	u64		ubuf_end;
+ 	unsigned int	nr_bvecs;
+ 	unsigned long	acct_pages;
+-	struct bio_vec	bvec[];
++	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+ };
+ 
+ void io_rsrc_node_ref_zero(struct io_rsrc_node *node);
 -- 
-Gabriel Krisman Bertazi
+2.34.1
+

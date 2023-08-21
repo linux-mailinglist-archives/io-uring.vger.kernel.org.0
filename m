@@ -2,85 +2,107 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87333782157
-	for <lists+io-uring@lfdr.de>; Mon, 21 Aug 2023 04:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB8A78260C
+	for <lists+io-uring@lfdr.de>; Mon, 21 Aug 2023 11:09:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbjHUCVy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 20 Aug 2023 22:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
+        id S232684AbjHUJJf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 21 Aug 2023 05:09:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232501AbjHUCVy (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 20 Aug 2023 22:21:54 -0400
-Received: from smart3-pmg.ufmg.br (smart3-01-pmg.ufmg.br [150.164.64.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42014A1
-        for <io-uring@vger.kernel.org>; Sun, 20 Aug 2023 19:21:52 -0700 (PDT)
-Received: from smart3-pmg.ufmg.br (localhost.localdomain [127.0.0.1])
-        by smart3-pmg.ufmg.br (Proxmox) with ESMTP id 6EA8F5A73F0
-        for <io-uring@vger.kernel.org>; Sun, 20 Aug 2023 12:31:57 -0300 (-03)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ufmg.br; h=cc
-        :content-transfer-encoding:content-type:content-type:date:from
-        :from:message-id:mime-version:reply-to:reply-to:subject:subject
-        :to:to; s=mail; bh=aB6phz2CCV0fOdUx+FEpXbqcMS5qcYYIVmsV4Zzs0ug=; b=
-        L05hUVwhBrnlTRZLfVy5Y/dK0tbf9YIhvWreYhHIa0s577nxWAq+3mO5It7pWiJN
-        /oKdW+x18q0KefdpEwnFDUp6c0fSyP43mUVKgB1yg+DfZQY30nIQ3qAf2iY5dNtF
-        SJ3lkvCBmybd2/gDnKICZMJS5LeHmQU5eeaWO85orKSidccl1tbIo8XYToQyMVB5
-        vu7QAEvDsWcegJkMSzRTM1vAWwkIbAaKT0UYhxos7G3+whOpKbCFFhfqDYOixphr
-        wobaV4fjoGdN32HRNqGCFliCs/R5aSSDLrGMOaOUH7Ae+QLPWov2fIVuYWOFe+5f
-        GrG17xvtm8o5l3KX1azDaQ==
-Received: from bambu.grude.ufmg.br (bambu.grude.ufmg.br [150.164.64.35])
-        by smart3-pmg.ufmg.br (Proxmox) with ESMTP id A32F1548AC8
-        for <io-uring@vger.kernel.org>; Sun, 20 Aug 2023 12:31:49 -0300 (-03)
-Received: from ufmg.br ([98.159.234.166])
-          by bambu.grude.ufmg.br (IBM Domino Release 10.0.1FP3)
-          with ESMTP id 2023082012305520-946875 ;
-          Sun, 20 Aug 2023 12:30:55 -0300 
-Reply-To: "Kristine Wellenstein" <inform@calfd.org>
-From:   "Kristine Wellenstein" <luanacsg@ufmg.br>
-To:     io-uring@vger.kernel.org
-Subject: [RE]: RE:
-Date:   20 Aug 2023 11:30:54 -0400
-Message-ID: <20230820113054.FAC278D3ABAEA68F@ufmg.br>
+        with ESMTP id S232445AbjHUJJf (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 21 Aug 2023 05:09:35 -0400
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D6FC6;
+        Mon, 21 Aug 2023 02:09:32 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-99bcc0adab4so393699666b.2;
+        Mon, 21 Aug 2023 02:09:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692608971; x=1693213771;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G3IanIreuKKd6oid8gIK418X48snCHg9yrUKvAdOxbs=;
+        b=DGSA6iIKmEi0XFRKPjUlW15ZAdIzDaYKw00Kw5JCLXjH6n6/U9R+TBQ55sohWID3uE
+         I60//7k5i5/6nr64r5xBnS+M7NXAZ3fJ5D0Ctiwa1HsQBZb/p6mUwiHyIUur96jzY0un
+         uK+mi69O7Gtuj9T3UbwKj2m8Dmq6jCzbkOuRi8Wh6D1arsgHtbmekjmi32r+TDtHntRq
+         GbRw2tBYys7+3CbiT0I9UyssO/Ar8tCZ9969k67AtP55+UvhFg5JYWIMlJ00isharuP0
+         ANUpPNf4kc1DlR9pxfqndaOpFshlVIbaDihEQX7Mu+5YNVlp8HrqVNM3X5Dtg9IFtr0H
+         FTaQ==
+X-Gm-Message-State: AOJu0YzqT6UOUisyR/GQMYLbQ4jaPcXk+vxTwmpnIReW+89Q9oc2lLIn
+        tGs25vLHWI8G3qaIha4vn+s=
+X-Google-Smtp-Source: AGHT+IETWV8T6vtneT+4l5a1uiQOc2A3mGi8+jnIWL6WwJCuN7klY8X0PX9zHVVOsWlY5Px9lJnhCg==
+X-Received: by 2002:a17:906:224e:b0:9a1:68ff:a161 with SMTP id 14-20020a170906224e00b009a168ffa161mr5036529ejr.52.1692608970347;
+        Mon, 21 Aug 2023 02:09:30 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-009.fbsv.net. [2a03:2880:31ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id h2-20020a170906828200b00977cad140a8sm6161655ejx.218.2023.08.21.02.09.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Aug 2023 02:09:29 -0700 (PDT)
+Date:   Mon, 21 Aug 2023 02:09:26 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
+        pabeni@redhat.com
+Subject: Re: [PATCH v3 6/9] io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+Message-ID: <ZOMpxrTzvSGQRwYi@gmail.com>
+References: <20230817145554.892543-1-leitao@debian.org>
+ <20230817145554.892543-7-leitao@debian.org>
+ <87zg2p345l.fsf@suse.de>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on bambu/UFMG(Release 10.0.1FP3|August 09, 2019) at
- 20-08-2023 12:30:55,
-        Serialize by Router on bambu/UFMG(Release 10.0.1FP3|August 09, 2019) at 20-08-2023
- 12:31:49,
-        Serialize complete at 20-08-2023 12:31:49
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-        charset="utf-8"
-X-Spam-Status: No, score=4.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,LOTS_OF_MONEY,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_SBL,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zg2p345l.fsf@suse.de>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Sehr geehrter Beg=C3=BCnstigter,
+Hello Gabriel,
 
-Die EmilyWells Foundation ermutigt Menschen, sich ehrenamtlich f=C3=BCr soz=
-iale oder wohlt=C3=A4tige Zwecke zu engagieren und den weniger Gl=C3=BCckli=
-chen zu helfen. Lasst uns alle die wichtige Botschaft dieses gro=C3=9Fartig=
-en Tages verbreiten und uns f=C3=BCr das bedanken, was wir haben.
+On Thu, Aug 17, 2023 at 02:38:46PM -0400, Gabriel Krisman Bertazi wrote:
+> Breno Leitao <leitao@debian.org> writes:
+> 
+> > +#if defined(CONFIG_NET)
+> >  int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+> >  {
+> >  	struct socket *sock = cmd->file->private_data;
+> > @@ -189,8 +219,16 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+> >  		if (ret)
+> >  			return ret;
+> >  		return arg;
+> > +	case SOCKET_URING_OP_GETSOCKOPT:
+> > +		return io_uring_cmd_getsockopt(sock, cmd, issue_flags);
+> >  	default:
+> >  		return -EOPNOTSUPP;
+> >  	}
+> >  }
+> > +#else
+> > +int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +#endif
+> >  EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
+> 
+> The CONFIG_NET guards are unrelated and need to go in a separate commit.
+> Specially because it is not only gating getsockopt, but also the already
+> merged SOCKET_URING_OP_SIOCINQ/_OP_SIOCOUTQ.
 
-Ich bin Kristine Wellenstein, die Gewinnerin des Mega Millions-Jackpots in =
-H=C3=B6he von 426 Millionen US-Dollar am 28. Januar. Ich gebe offiziell bek=
-annt, dass Sie als einer von f=C3=BCnf Empf=C3=A4ngern einer Spende in H=C3=
-=B6he von 2.300.000 ausgew=C3=A4hlt wurden. Dollar von der Emily Wells Foun=
-dation.
+Well, so far, if CONFIG_NET is disable, and you call
+io_uring_cmd_getsockopt, the callbacks will be called and returned
+-EOPNOTSUPP.
 
-Diese Spende ist im Gedenken an meinen verstorbenen Enkel, der gerade einen=
- Tag gelebt hat.
-F=C3=BCr weitere Informationen antworten Sie bitte auf diese E-Mail.
+With this new patch, it will eventually call sk_getsockopt which does
+not exist in the CONFIG_NET=n world. That is why I have this
+protection now. I.e, this `#if defined(CONFIG_NET)` is only necessary now,
+since it is the first time this function (io_uring_cmd_sock) will call a
+function that does not exist if CONFIG_NET is disabled.
 
-Beste gr=C3=BC=C3=9Fe:
-
-Kristine Wellenstein
-Gr=C3=BCnderin/Vorsitzende: EmilyWells. Stiftung, Schenkung
-
-
+I can split it in a different patch, if you think it makes a difference.

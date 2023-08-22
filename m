@@ -2,72 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40C1F784BAA
-	for <lists+io-uring@lfdr.de>; Tue, 22 Aug 2023 22:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D8C784CCB
+	for <lists+io-uring@lfdr.de>; Wed, 23 Aug 2023 00:19:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbjHVUyb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 22 Aug 2023 16:54:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51508 "EHLO
+        id S230020AbjHVWTz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 22 Aug 2023 18:19:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbjHVUya (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Aug 2023 16:54:30 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41FBB1B0
-        for <io-uring@vger.kernel.org>; Tue, 22 Aug 2023 13:54:29 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-53ff4f39c0fso5489423a12.0
-        for <io-uring@vger.kernel.org>; Tue, 22 Aug 2023 13:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1692737668; x=1693342468;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lRgd1KNmRMx4zIlDV0n2Rv4fJsAox9YCLsfqlY6N7KE=;
-        b=X1efAPKURjcmJWZf/u4Cc3mIopom2QDLrm2ITCY8W1HZH0InGbch5WskxyMs7VL1Vj
-         8qKifDcxkiESCorRyj38cfQUioC72WiJ/hPqJNL+8nq+HuONgKQGX8bRJ+pprZ70MDjN
-         z3CUIYixkpzhxw3aC1al4Km/jqT9gAT3nmmdpgLwUFDe1Kgl+oaCVhjIuk5hgQg62qEB
-         Cmc1NB4iBCxM5S2zVDKvlCCsP2qo/MGwbA7h3lAzQdl4J4pv8jqyBdU+n8XQ3NCZ7KWg
-         eiSVl+4Om0HjDFSO0DgCATSfJFa+kEUz0NZ+yZJmdUR9ydj33t2WQ3HvzHo6awQRMUqk
-         oNlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692737668; x=1693342468;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lRgd1KNmRMx4zIlDV0n2Rv4fJsAox9YCLsfqlY6N7KE=;
-        b=lLNLi/xJmIycB4We4l+JwIjAxnqMbZuIzY8+gZtuSQIqewNG1UTV2CAEZG9Hw3d4+1
-         yusuwbuALWybAfqjPzaUw3JC8a/X/SDqs1nU+TVMGU4s/dt78fhT4+sfzAqC27CbnN7m
-         7xj5aSovRj8Tppk6PIvhbP6U3aQSchzKSFPowVpm2Sgw/NOW0I53E+CD49nPwEZhBmvq
-         zEB5rg2EANCXCtu5qi8cu7rMuiPs51lkuFA57aRHWYsHF7eDHIJs+d0zQFAVrl8fCty1
-         NVHokY2Cj03KgshrZqYSHelCTDYPayHbp7I/jn2ZDfmIZnUGBdQ/g0DlBeVCwGCgNE1X
-         hPbg==
-X-Gm-Message-State: AOJu0YxjPZFWxGGKhcjykMq/aoDtFnDR8Jo7or4yWvdFIwBYn1m3PQTg
-        UZo4eqoMKCEXOz+G27sVwxVkCww=
-X-Google-Smtp-Source: AGHT+IHxZxHtXPclq+Y4ek62oaizIsBbD7UKg4F6HU/umgCda9ze+LtHe5HYhP+MjwZpe/qY5j6HIIg=
-X-Received: from hmarynka.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:925])
- (user=ovt job=sendgmr) by 2002:a17:902:f353:b0:1bc:a3b:e902 with SMTP id
- q19-20020a170902f35300b001bc0a3be902mr3999399ple.3.1692737668562; Tue, 22 Aug
- 2023 13:54:28 -0700 (PDT)
-Date:   Tue, 22 Aug 2023 20:54:24 +0000
-In-Reply-To: <20230119180225.466835-1-axboe@kernel.dk>
-Mime-Version: 1.0
+        with ESMTP id S229916AbjHVWTy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 22 Aug 2023 18:19:54 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E4CCCB
+        for <io-uring@vger.kernel.org>; Tue, 22 Aug 2023 15:19:53 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7C0CE1F390;
+        Tue, 22 Aug 2023 22:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1692742790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nCWf/cVQYFf0Kfud4sPeTM25t3TpgG6NUVf7VT/C8qY=;
+        b=yATjf9XTVil0VfLJ2fKn8XtlpHwrbk7zAVlvJvi9wQ9VwDLWfLz4UBkZX6O6j0wm2WW3EK
+        loU2SJhg8bwJ8iy/gDVgZkzMX0YEp+kZjvmH0FdRB1bUQbf8Sr/qtZkGxCHHtwWoFtofj+
+        SQey/2N8vqZl68Got0rxq2v7RaBQyNs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1692742790;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nCWf/cVQYFf0Kfud4sPeTM25t3TpgG6NUVf7VT/C8qY=;
+        b=j80qML5X4a/sc4Qayuxve1HJ6Q6v5UZYIklr5GGjDYQd4urxNJfG36aMgez/EugNlZfvt9
+        ScC4WTIFNpTZJ0CA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2D373132B9;
+        Tue, 22 Aug 2023 22:19:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id cbmGOoU05WRkbQAAMHmgww
+        (envelope-from <krisman@suse.de>); Tue, 22 Aug 2023 22:19:49 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Oleksandr Tymoshenko <ovt@google.com>
+Cc:     axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
+Subject: Re: [PATCH 0/2] Fix locking for MSG_RING and IOPOLL targets
+In-Reply-To: <20230822205425.1385767-1-ovt@google.com> (Oleksandr Tymoshenko's
+        message of "Tue, 22 Aug 2023 20:54:24 +0000")
 References: <20230119180225.466835-1-axboe@kernel.dk>
-X-Mailer: git-send-email 2.42.0.rc1.204.g551eb34607-goog
-Message-ID: <20230822205425.1385767-1-ovt@google.com>
-Subject: [PATCH 0/2] Fix locking for MSG_RING and IOPOLL targets
-From:   Oleksandr Tymoshenko <ovt@google.com>
-To:     axboe@kernel.dk
-Cc:     asml.silence@gmail.com, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        <20230822205425.1385767-1-ovt@google.com>
+Date:   Tue, 22 Aug 2023 18:19:48 -0400
+Message-ID: <87o7iyn2ij.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+Oleksandr Tymoshenko <ovt@google.com> writes:
 
-Does this patchset need to be backported to 6.1?
+> Hello,
+>
+> Does this patchset need to be backported to 6.1?
 
-Thank you
+Yes. Seems to be missing in linux-6.1.y and it is a security fix.  Do you want to send
+a backport?
+
+-- 
+Gabriel Krisman Bertazi

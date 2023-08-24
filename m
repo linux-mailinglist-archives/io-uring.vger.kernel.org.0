@@ -2,70 +2,70 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7437578756B
-	for <lists+io-uring@lfdr.de>; Thu, 24 Aug 2023 18:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 831BC7875F8
+	for <lists+io-uring@lfdr.de>; Thu, 24 Aug 2023 18:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241198AbjHXQcm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Aug 2023 12:32:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35252 "EHLO
+        id S240733AbjHXQtw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Aug 2023 12:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242563AbjHXQc0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Aug 2023 12:32:26 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8CEAE6A
-        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:32:24 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-977e0fbd742so881670866b.2
-        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:32:24 -0700 (PDT)
+        with ESMTP id S233188AbjHXQt2 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Aug 2023 12:49:28 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2F7B1B9
+        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:49:25 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-34bae11c5a6so54205ab.0
+        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692894743; x=1693499543;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692895765; x=1693500565;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kkOY0ARJd8ovr14BjtJ9vmD7tVtvWhlfvv+H6+a+0CA=;
-        b=SlnM+dRoRW0SMsoF6qVcfJ1qPAx3+77OytXvdSSTenI3bHUQsB6VZiYEptBhEQ5CaR
-         h1WqWSmdSfqsx6icNF4JYKXyaMnVlwd/wT4VWF09CrHhtwihGTHoTfR42XKD0RslV0YQ
-         rA0sXkYPfE1PX7k+/6rjR/7uQ3jUKySiH2JrB+GBcqDrNDeBP0k2IRshcvPh0Ac4pfU3
-         mod4ryBTxH0c1TddQz9tkDc6ckHMT4crHH3BQv6WnjS15JKz2i7bvb2bR1n7ua1uW0v+
-         zTTaD/wU40C9L4XxiJLmw4q/RQMw0R2R6atf5MW+Up000Qz3804erlJ7s13KLI+aIFyD
-         c3+Q==
+        bh=+M9lz0OshXgyVaA5LzeRlAtcsm3Pfc8dKXHBpcHJcYA=;
+        b=n4jqysyneWgfj7530hqYpkRkxIpk5qDfFIaNe7OQ2bIaez0djeuhyOMm4WGuaZFc+2
+         C5HOLUuRmnVjxhO/W9gc2UGGSDklVOLuzM7DleFTnhpgxbbHmZY6VURPZ+D5DeUGOfSW
+         BCpfxz+OXlBErQBAr8gNiGeAwksINV4f/ppYGBmEWq6FAVhoP66zKfA7EEc/qdJS5vln
+         vTxiknw4LqNh9pACfUXu9lMnr13eiaEQU2nhKYobpTgu1abEJ7qAzNPJTi9uxT8PXKjb
+         Kp82yDOoZQwE5xnFw1AvDwBiZzQ2ugRoNpBPKRXRYs0a1d+QxlpgnLP8ezjWRw5SEA7w
+         XvgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692894743; x=1693499543;
+        d=1e100.net; s=20221208; t=1692895765; x=1693500565;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kkOY0ARJd8ovr14BjtJ9vmD7tVtvWhlfvv+H6+a+0CA=;
-        b=GQqYfn5hFriX3dAAkDZemj6EmtD+/hSJ8L2M4qkxkRZz3Xg0UjJ5cmeltF9Gr6GY2R
-         HJK1xzcj13W59hEgby4PA2XG+R3xd9mlop4LLObZIJEke3o+CK6f+7iY75NHwChZbjM2
-         kk4U/UeMntSLH4WtUfDo3ehTaEhAX539/0eMH+4vEVWKpiWZ09lUdLvvI98RC5fvXCI+
-         eyyzlV0uPTcOuaAkecvh7j9I/Ak1x1MuuubN2HX4EfTTmvKgAM5CVMpoET8DeGr2AXvc
-         CC+/xEVD4g/8+dfJEGJo4rDyCt/FU1/dGCSL3wSh+JT3gfbggeZTZUq1WF3OXmfdE68R
-         L9DA==
-X-Gm-Message-State: AOJu0Yz6UCd3bGnb1VTD9rWt/q3bBViceUbWPTggihXA437NZS1V7B9M
-        zKOEJUX+lsuOwNNQeiT2T0M=
-X-Google-Smtp-Source: AGHT+IG/RNHmNQat2NhJLn7CJT7n0+MCEGEpfzB/Mp0fMYNmyeYwNuLMOKOyJJa79TAVzofbnwNqjg==
-X-Received: by 2002:a17:907:b11:b0:99e:1e9:fea4 with SMTP id h17-20020a1709070b1100b0099e01e9fea4mr12661654ejl.51.1692894743003;
-        Thu, 24 Aug 2023 09:32:23 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.140.69])
-        by smtp.gmail.com with ESMTPSA id bs9-20020a170906d1c900b0099bcd1fa5b0sm11090447ejb.192.2023.08.24.09.32.22
+        bh=+M9lz0OshXgyVaA5LzeRlAtcsm3Pfc8dKXHBpcHJcYA=;
+        b=FUrI4TPuYrCvv95Td/bcun2jJJGmrOsBQD7SJfw1LxcYDUoDnmspXdbIRqkt3zZlJ5
+         Fao+zXKCSG7PfjLAB9GMFAnuLZxAJBlAwhbpD4/woaBT2N4jIh0MH0B+vomfsL6iqvCx
+         h6IHA5c5OERgOSTFJMkMnZWFSsdf5sjmSexFwC2gIuFPBFoTanBSItH3zpdSJ/SWHict
+         DIdfLpYQ/Tmm3QcCiEUsYtseSllbBehdVmck2644abg9PM59GI+JakyvOKLXcoX7D5j/
+         pNBhtDy8UmiztaSl/Sp1yDt9wwzhFExXyrShhRGtSh0zUoaZpWlgRst3BSA654aUd4c/
+         IKQg==
+X-Gm-Message-State: AOJu0YwY9XsBNTBUv8msC+yVmQ0BH3cpuWVZQ6hWDPcSnKWjkDchYm43
+        BXSuYPskYt8aZHb9HNGe5P9vow==
+X-Google-Smtp-Source: AGHT+IHedPTEKuHBu+gAn5920CrD6UNGMV/+A3pdZSihytgj8EAhDbipwmNTplgBeC6wEGS08Tfwdg==
+X-Received: by 2002:a05:6602:3706:b0:791:e6ca:363 with SMTP id bh6-20020a056602370600b00791e6ca0363mr20379714iob.1.1692895765182;
+        Thu, 24 Aug 2023 09:49:25 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id i2-20020a02cc42000000b0041e328a2084sm4542108jaq.79.2023.08.24.09.49.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Aug 2023 09:32:22 -0700 (PDT)
-Message-ID: <a47bdc68-10be-2e27-0f03-73a4b992b2a2@gmail.com>
-Date:   Thu, 24 Aug 2023 17:29:27 +0100
+        Thu, 24 Aug 2023 09:49:24 -0700 (PDT)
+Message-ID: <b305d893-98a2-4226-9ab3-1d2669743088@kernel.dk>
+Date:   Thu, 24 Aug 2023 10:49:23 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/16] io_uring: compact SQ/CQ heads/tails
+Subject: Re: [PATCH 02/16] io_uring: cqe init hardening
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <cover.1692119257.git.asml.silence@gmail.com>
- <5e3fade0f17f0357684536d77bc75e0028f2b62e.1692119257.git.asml.silence@gmail.com>
- <7032cd8d-86ec-4e26-8632-8c3f66ec4db5@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <7032cd8d-86ec-4e26-8632-8c3f66ec4db5@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <731ecc625e6e67900ebe8c821b3d3647850e0bea.1692119257.git.asml.silence@gmail.com>
+ <2ef18cd5-c8a6-4a5e-8b9c-139604d6d51a@kernel.dk>
+ <b36af67b-5160-c9c8-aa70-669da4f1d797@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <b36af67b-5160-c9c8-aa70-669da4f1d797@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,19 +73,43 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/19/23 16:05, Jens Axboe wrote:
-> On 8/15/23 11:31 AM, Pavel Begunkov wrote:
->> Queues heads and tails cache line aligned. That makes sq, cq taking 4
->> lines or 5 lines if we include the rest of struct io_rings (e.g.
->> sq_flags is frequently accessed).
+On 8/24/23 10:28 AM, Pavel Begunkov wrote:
+> On 8/19/23 16:03, Jens Axboe wrote:
+>> On 8/15/23 11:31 AM, Pavel Begunkov wrote:
+>>> io_kiocb::cqe stores the completion info which we'll memcpy to
+>>> userspace, and we rely on callbacks and other later steps to populate
+>>> it with right values. We have never had problems with that, but it would
+>>> still be safer to zero it on allocation.
+>>>
+>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>> ---
+>>>   io_uring/io_uring.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>> index e189158ebbdd..4d27655be3a6 100644
+>>> --- a/io_uring/io_uring.c
+>>> +++ b/io_uring/io_uring.c
+>>> @@ -1056,7 +1056,7 @@ static void io_preinit_req(struct io_kiocb *req, struct io_ring_ctx *ctx)
+>>>       req->link = NULL;
+>>>       req->async_data = NULL;
+>>>       /* not necessary, but safer to zero */
+>>> -    req->cqe.res = 0;
+>>> +    memset(&req->cqe, 0, sizeof(req->cqe));
+>>>   }
+>>>     static void io_flush_cached_locked_reqs(struct io_ring_ctx *ctx,
 >>
->> Since modern io_uring is mostly single threaded, it doesn't make much
->> send to sread them as such, it wastes space and puts additional pressure
+>> I think this is a good idea, but I wonder if we should open-clear it
+>> instead. I've had cases in the past where that's more efficient than
+>> calling memset.
 > 
-> "sense to spread". Can fix up while applying. Change itself looks good
-> to me.
+> I don't think it ever happens for 16 byte memcpy, and in either
+> case it's a cache refill, quite a slow path. I believe memcpy is
+> better here.
 
-I'll be resending as we agreed, will fix it up, thanks
+Yeah I think it's fine as-is - just checked here and either approach
+yields the same.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+

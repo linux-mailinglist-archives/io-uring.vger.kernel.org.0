@@ -2,152 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A077859B3
-	for <lists+io-uring@lfdr.de>; Wed, 23 Aug 2023 15:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5D9787567
+	for <lists+io-uring@lfdr.de>; Thu, 24 Aug 2023 18:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234548AbjHWNtJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 23 Aug 2023 09:49:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37862 "EHLO
+        id S242560AbjHXQbf (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Aug 2023 12:31:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjHWNtI (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 23 Aug 2023 09:49:08 -0400
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EB519A;
-        Wed, 23 Aug 2023 06:49:03 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-523b066d7ceso6980283a12.2;
-        Wed, 23 Aug 2023 06:49:03 -0700 (PDT)
+        with ESMTP id S242605AbjHXQbW (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Aug 2023 12:31:22 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4F519A4
+        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:31:17 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-99bfcf4c814so908293066b.0
+        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692894676; x=1693499476;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3oCtJCmTYpNYDwHB76WPExfg4gwTPGX7JtSkXIFuTWU=;
+        b=TBRU5mzJLchfE/2a4Q8rbvIOrIvzM8HLekaPcFV2HUMGfZsgob5QTZwyNHtJhFtIUj
+         Vz/sODTSFDnPJHUJkeS0FmV3JlXe1mLK+BbzFoLjtICNkhEsJWzZktUqvOjOYCJQWu2U
+         XTMgiL/FQhxotH5+4BogT4BdD0AioTnzcQofejjGMV4lM+63qQHAEFusaJglhnGhh/Y/
+         ExQNjGDy+SgOYydTtzfi5GAHmrGIIhfSCV9Eeum9dhD0s1DgGmMbB+XBT0rp6wfIz/tz
+         gu9JtrE2DYz/5sPscFuTmd9PfTpr6LaD4EeViIeNk5QE2gW1sUeM28xa3nRbyRZsmPEA
+         mMJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692798542; x=1693403342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8HVeMF2i6Eu6fNCP7qdp68KyRQC3Cd1eZ1vG5fM2PLY=;
-        b=Pebi1r6Wjo1oGUHsZ+sUedx/YCVC2nX3BDach1wOr1Nw/L220u2Bjuu60XPSQ5uAHE
-         lAiJReqfwztBwHhrcL9s2yufeNq4AxpbQzg6ZVwK25zOvNqV5huFiVwgbPe5kdrn2XHh
-         bWJF2f31RV2b4+LCFaxfMcchMXdA79uG3K2tUqMGS94VHF/MXYP4V2l61W+eh2cfjuDv
-         8cH0zGQ+Wq11euee3i8dZjMH/AykK1ysTZXtPXgWK+M3njS0mbAziWYAfvPGOFBZRQRa
-         0tG6wQBXJ2ouERGlzNuuU3kEfeRhCdVysBZEsYWlwU34bjkYoxrbEH/fMi9wFmMiYYFB
-         YasQ==
-X-Gm-Message-State: AOJu0YxytPYgK5En0HFYaTGWJdpiSTwwU3qGsYcddkXimxBkKJu0Mbw2
-        dcpneAWU/Sj03jlojKD250A=
-X-Google-Smtp-Source: AGHT+IGpOg7sJlI/rEq2t0qmOj+PEzxbPvOFJibDR6ujnw/tubbxpv33784EHtRDeE4uTjaM2562xg==
-X-Received: by 2002:a05:6402:1657:b0:529:fa63:ef80 with SMTP id s23-20020a056402165700b00529fa63ef80mr8682360edx.28.1692798541666;
-        Wed, 23 Aug 2023 06:49:01 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-000.fbsv.net. [2a03:2880:31ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id y2-20020aa7d502000000b00529fb5fd3b9sm7565236edq.80.2023.08.23.06.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 06:49:01 -0700 (PDT)
-Date:   Wed, 23 Aug 2023 06:48:59 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
-        pabeni@redhat.com
-Subject: Re: [PATCH v3 8/9] io_uring/cmd: BPF hook for getsockopt cmd
-Message-ID: <ZOYOS87mCmcYurkR@gmail.com>
-References: <20230817145554.892543-1-leitao@debian.org>
- <20230817145554.892543-9-leitao@debian.org>
- <87pm3l32rk.fsf@suse.de>
- <ZOMrD1DHeys0nFwt@gmail.com>
- <875y58nx9v.fsf@suse.de>
+        d=1e100.net; s=20221208; t=1692894676; x=1693499476;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3oCtJCmTYpNYDwHB76WPExfg4gwTPGX7JtSkXIFuTWU=;
+        b=ghDmznctvWc02QNVtoMm+Mj1auZN5J65sG3ohA9PIfZuNhQ3QaEw5OGwhKz1GyRKZC
+         BzokdHPC9bNlklVFt402xDT13fcV8CDoMovWHrEhedUJkAekgXo+VnWWMxwWzoIdqRu5
+         PPHnqnueRm5k4gXhkbfAmxq2FRTW2afN96kTMcVoXOY3DZHUpy4b0gstV2Sp1QhQIFze
+         EnzyknQCWbSGv70q5s9wBFNyrqrJ7Aycw3p70N2gyhTzJSKuO/jA0/yXELaTcE3v7thd
+         D+dmJWI0iwFhLe6hsAaf8uIsNyCryFIqHk2sS+CkFZH7BSenOL9MSXlvEL+ePFFhhVo+
+         MCIQ==
+X-Gm-Message-State: AOJu0Yw38HGJLUGAUVVuMXpVe293L3ZtxPAKFj8haMXSo6L7V8Av9Y9i
+        CyOFG9+dHt3VFG6iBehWOm0JNyITMas=
+X-Google-Smtp-Source: AGHT+IEKDNuLSJR+S4WnlmrBW85Hwwr4M/E9k9j0ep+2gJIHmWG4ZXpvGmWBtSE++6Xg8Xeu4oAsUQ==
+X-Received: by 2002:a17:906:1dd:b0:9a0:9558:82a3 with SMTP id 29-20020a17090601dd00b009a0955882a3mr14255690ejj.58.1692894675304;
+        Thu, 24 Aug 2023 09:31:15 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.140.69])
+        by smtp.gmail.com with ESMTPSA id bs9-20020a170906d1c900b0099bcd1fa5b0sm11090447ejb.192.2023.08.24.09.31.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Aug 2023 09:31:15 -0700 (PDT)
+Message-ID: <b36af67b-5160-c9c8-aa70-669da4f1d797@gmail.com>
+Date:   Thu, 24 Aug 2023 17:28:19 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875y58nx9v.fsf@suse.de>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/16] io_uring: cqe init hardening
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1692119257.git.asml.silence@gmail.com>
+ <731ecc625e6e67900ebe8c821b3d3647850e0bea.1692119257.git.asml.silence@gmail.com>
+ <2ef18cd5-c8a6-4a5e-8b9c-139604d6d51a@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <2ef18cd5-c8a6-4a5e-8b9c-139604d6d51a@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Aug 21, 2023 at 01:03:08PM -0400, Gabriel Krisman Bertazi wrote:
-> Breno Leitao <leitao@debian.org> writes:
+On 8/19/23 16:03, Jens Axboe wrote:
+> On 8/15/23 11:31 AM, Pavel Begunkov wrote:
+>> io_kiocb::cqe stores the completion info which we'll memcpy to
+>> userspace, and we rely on callbacks and other later steps to populate
+>> it with right values. We have never had problems with that, but it would
+>> still be safer to zero it on allocation.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>   io_uring/io_uring.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>> index e189158ebbdd..4d27655be3a6 100644
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+>> @@ -1056,7 +1056,7 @@ static void io_preinit_req(struct io_kiocb *req, struct io_ring_ctx *ctx)
+>>   	req->link = NULL;
+>>   	req->async_data = NULL;
+>>   	/* not necessary, but safer to zero */
+>> -	req->cqe.res = 0;
+>> +	memset(&req->cqe, 0, sizeof(req->cqe));
+>>   }
+>>   
+>>   static void io_flush_cached_locked_reqs(struct io_ring_ctx *ctx,
 > 
-> > On Thu, Aug 17, 2023 at 03:08:47PM -0400, Gabriel Krisman Bertazi wrote:
-> >> Breno Leitao <leitao@debian.org> writes:
-> >> 
-> >> > Add BPF hook support for getsockopts io_uring command. So, BPF cgroups
-> >> > programs can run when SOCKET_URING_OP_GETSOCKOPT command is executed
-> >> > through io_uring.
-> >> >
-> >> > This implementation follows a similar approach to what
-> >> > __sys_getsockopt() does, but, using USER_SOCKPTR() for optval instead of
-> >> > kernel pointer.
-> >> >
-> >> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> >> > ---
-> >> >  io_uring/uring_cmd.c | 18 +++++++++++++-----
-> >> >  1 file changed, 13 insertions(+), 5 deletions(-)
-> >> >
-> >> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> >> > index a567dd32df00..9e08a14760c3 100644
-> >> > --- a/io_uring/uring_cmd.c
-> >> > +++ b/io_uring/uring_cmd.c
-> >> > @@ -5,6 +5,8 @@
-> >> >  #include <linux/io_uring.h>
-> >> >  #include <linux/security.h>
-> >> >  #include <linux/nospec.h>
-> >> > +#include <linux/compat.h>
-> >> > +#include <linux/bpf-cgroup.h>
-> >> >  
-> >> >  #include <uapi/linux/io_uring.h>
-> >> >  #include <uapi/asm-generic/ioctls.h>
-> >> > @@ -184,17 +186,23 @@ static inline int io_uring_cmd_getsockopt(struct socket *sock,
-> >> >  	if (err)
-> >> >  		return err;
-> >> >  
-> >> > -	if (level == SOL_SOCKET) {
-> >> > +	err = -EOPNOTSUPP;
-> >> > +	if (level == SOL_SOCKET)
-> >> >  		err = sk_getsockopt(sock->sk, level, optname,
-> >> >  				    USER_SOCKPTR(optval),
-> >> >  				    KERNEL_SOCKPTR(&optlen));
-> >> > -		if (err)
-> >> > -			return err;
-> >> >  
-> >> > +	if (!(issue_flags & IO_URING_F_COMPAT))
-> >> > +		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level,
-> >> > +						     optname,
-> >> > +						     USER_SOCKPTR(optval),
-> >> > +						     KERNEL_SOCKPTR(&optlen),
-> >> > +						     optlen, err);
-> >> > +
-> >> > +	if (!err)
-> >> >  		return optlen;
-> >> > -	}
-> >> 
-> >> Shouldn't you call sock->ops->getsockopt for level!=SOL_SOCKET prior to
-> >> running the hook?
-> >> Before this patch, it would bail out with EOPNOTSUPP,
-> >> but now the bpf hook gets called even for level!=SOL_SOCKET, which
-> >> doesn't fit __sys_getsockopt. Am I misreading the code?
-> >
-> > Not really, sock->ops->getsockopt() does not suport sockptr_t, but
-> > __user addresses, differently from setsockopt()
-> >
-> >           int             (*setsockopt)(struct socket *sock, int level,
-> >                                         int optname, sockptr_t optval,
-> >                                         unsigned int optlen);
-> >           int             (*getsockopt)(struct socket *sock, int level,
-> >                                         int optname, char __user *optval, int __user *optlen);
-> >
-> > In order to be able to call sock->ops->getsockopt(), the callback
-> > function will need to accepted sockptr.
-> 
-> So, it seems you won't support !SOL_SOCKETs here.  Then, I think you
-> shouldn't call the hook for those sockets. My main concern is that we
-> remain compatible to __sys_getsockopt when invoking the hook.
-> 
-> I think you should just have the following as the very first thing in
-> the function (but after the security_ check).
-> 
-> if (level != SOL_SOCKET)
->    return -EOPNOTSUPP;
+> I think this is a good idea, but I wonder if we should open-clear it
+> instead. I've had cases in the past where that's more efficient than
+> calling memset.
 
-Gotcha. I will update. Thanks!
+I don't think it ever happens for 16 byte memcpy, and in either
+case it's a cache refill, quite a slow path. I believe memcpy is
+better here.
+
+-- 
+Pavel Begunkov

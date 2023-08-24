@@ -2,70 +2,64 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 831BC7875F8
-	for <lists+io-uring@lfdr.de>; Thu, 24 Aug 2023 18:50:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D3D0787BAF
+	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 00:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240733AbjHXQtw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 24 Aug 2023 12:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
+        id S240994AbjHXWzl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 24 Aug 2023 18:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233188AbjHXQt2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Aug 2023 12:49:28 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2F7B1B9
-        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:49:25 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id e9e14a558f8ab-34bae11c5a6so54205ab.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 09:49:25 -0700 (PDT)
+        with ESMTP id S244008AbjHXWz0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 24 Aug 2023 18:55:26 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6DA91FD3
+        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 15:55:19 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so86995066b.0
+        for <io-uring@vger.kernel.org>; Thu, 24 Aug 2023 15:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692895765; x=1693500565;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+M9lz0OshXgyVaA5LzeRlAtcsm3Pfc8dKXHBpcHJcYA=;
-        b=n4jqysyneWgfj7530hqYpkRkxIpk5qDfFIaNe7OQ2bIaez0djeuhyOMm4WGuaZFc+2
-         C5HOLUuRmnVjxhO/W9gc2UGGSDklVOLuzM7DleFTnhpgxbbHmZY6VURPZ+D5DeUGOfSW
-         BCpfxz+OXlBErQBAr8gNiGeAwksINV4f/ppYGBmEWq6FAVhoP66zKfA7EEc/qdJS5vln
-         vTxiknw4LqNh9pACfUXu9lMnr13eiaEQU2nhKYobpTgu1abEJ7qAzNPJTi9uxT8PXKjb
-         Kp82yDOoZQwE5xnFw1AvDwBiZzQ2ugRoNpBPKRXRYs0a1d+QxlpgnLP8ezjWRw5SEA7w
-         XvgQ==
+        d=gmail.com; s=20221208; t=1692917718; x=1693522518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzsDuSlR5DY0vdsNlGE1Yhv7A+WJadsQDhv7O7oletw=;
+        b=dHlOMwMj1l+P8mBxmbhCHIG7A9y5ezYwxv9VnOjPyBGjTNur/51Np23V2L3H2q0plS
+         bF7EZA35lA2Mc7cUVEvtCj5hWT4Is6cDCzPNcmErq4IJpBB8gbgExlg+VrI0QhVCHAzQ
+         Bf/tCy8VP0WjWfGS+IkYO7RRKtbRr69UJJuylWXSucFJlyllcwyN3/9HRtvsJN7INCMk
+         qpCmo81ELLduAlkR/B8FbRpM0B6woBRowiAMccUIvB2YDtXun2m8VatIVuNkMv9Mcu5f
+         y31DQkcI1EJOJN7eAs2upS/4DAdhv1juetXD2x43moDVlBp1Er/2kfz3GF3eyBdmBs2B
+         LGkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692895765; x=1693500565;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+M9lz0OshXgyVaA5LzeRlAtcsm3Pfc8dKXHBpcHJcYA=;
-        b=FUrI4TPuYrCvv95Td/bcun2jJJGmrOsBQD7SJfw1LxcYDUoDnmspXdbIRqkt3zZlJ5
-         Fao+zXKCSG7PfjLAB9GMFAnuLZxAJBlAwhbpD4/woaBT2N4jIh0MH0B+vomfsL6iqvCx
-         h6IHA5c5OERgOSTFJMkMnZWFSsdf5sjmSexFwC2gIuFPBFoTanBSItH3zpdSJ/SWHict
-         DIdfLpYQ/Tmm3QcCiEUsYtseSllbBehdVmck2644abg9PM59GI+JakyvOKLXcoX7D5j/
-         pNBhtDy8UmiztaSl/Sp1yDt9wwzhFExXyrShhRGtSh0zUoaZpWlgRst3BSA654aUd4c/
-         IKQg==
-X-Gm-Message-State: AOJu0YwY9XsBNTBUv8msC+yVmQ0BH3cpuWVZQ6hWDPcSnKWjkDchYm43
-        BXSuYPskYt8aZHb9HNGe5P9vow==
-X-Google-Smtp-Source: AGHT+IHedPTEKuHBu+gAn5920CrD6UNGMV/+A3pdZSihytgj8EAhDbipwmNTplgBeC6wEGS08Tfwdg==
-X-Received: by 2002:a05:6602:3706:b0:791:e6ca:363 with SMTP id bh6-20020a056602370600b00791e6ca0363mr20379714iob.1.1692895765182;
-        Thu, 24 Aug 2023 09:49:25 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id i2-20020a02cc42000000b0041e328a2084sm4542108jaq.79.2023.08.24.09.49.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Aug 2023 09:49:24 -0700 (PDT)
-Message-ID: <b305d893-98a2-4226-9ab3-1d2669743088@kernel.dk>
-Date:   Thu, 24 Aug 2023 10:49:23 -0600
+        d=1e100.net; s=20221208; t=1692917718; x=1693522518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JzsDuSlR5DY0vdsNlGE1Yhv7A+WJadsQDhv7O7oletw=;
+        b=FpH9NCQ43w/wc1dv4WABEAixNEOOH16HduWcZghH7s+kfwRKnjGrHMZ8IFZs0IWP3U
+         ziXrYTgCH+OUKsHZLsk5ts2FoNMNXydlF1vBXtaVjRyyrv7bATYdOgVE8ybZFdj3PKaA
+         xmabYVcfpXHPSMpZ8QUcdrJFwX7Xl8gfFdAyB94D4Nnc1/fcrJzOWUJkEtfysWkox4tF
+         hwAsTWqlcm7diOEr6PTqR/6QIx0nLBxxEbamyCP3qH9X1mVpfAsMcFm8vKj1aQ6fuHIG
+         HGQEF0VM3TMK5iDVZ12TmDl7kqQpiAqXz+4GdDexG+1H8q9W988MWkEJBZvN3FeBEWXA
+         Lmrg==
+X-Gm-Message-State: AOJu0YytuXXWY13ksjSF70M8tB5jaWCw+vrkeUydtmS15yDYKCYu2TuW
+        5jeoF5iuOwlHq1X49aLexd6/V88L71I=
+X-Google-Smtp-Source: AGHT+IF07Uc7LmgXfWn1SuIA2AMt5jYyO4sKzFokRT1AH8f+7X/mOnnb2KXQum/wSnJJ5GeZU3/GjA==
+X-Received: by 2002:a17:907:7e8c:b0:978:8979:c66c with SMTP id qb12-20020a1709077e8c00b009788979c66cmr19837238ejc.18.1692917717901;
+        Thu, 24 Aug 2023 15:55:17 -0700 (PDT)
+Received: from 127.0.0.1localhost ([148.252.140.69])
+        by smtp.gmail.com with ESMTPSA id q4-20020a170906144400b00992f81122e1sm173469ejc.21.2023.08.24.15.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 15:55:17 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com
+Subject: [PATCH v2 00/15] caching and SQ/CQ optimisations
+Date:   Thu, 24 Aug 2023 23:53:22 +0100
+Message-ID: <cover.1692916914.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] io_uring: cqe init hardening
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1692119257.git.asml.silence@gmail.com>
- <731ecc625e6e67900ebe8c821b3d3647850e0bea.1692119257.git.asml.silence@gmail.com>
- <2ef18cd5-c8a6-4a5e-8b9c-139604d6d51a@kernel.dk>
- <b36af67b-5160-c9c8-aa70-669da4f1d797@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b36af67b-5160-c9c8-aa70-669da4f1d797@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,43 +67,55 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/24/23 10:28 AM, Pavel Begunkov wrote:
-> On 8/19/23 16:03, Jens Axboe wrote:
->> On 8/15/23 11:31 AM, Pavel Begunkov wrote:
->>> io_kiocb::cqe stores the completion info which we'll memcpy to
->>> userspace, and we rely on callbacks and other later steps to populate
->>> it with right values. We have never had problems with that, but it would
->>> still be safer to zero it on allocation.
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>   io_uring/io_uring.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>> index e189158ebbdd..4d27655be3a6 100644
->>> --- a/io_uring/io_uring.c
->>> +++ b/io_uring/io_uring.c
->>> @@ -1056,7 +1056,7 @@ static void io_preinit_req(struct io_kiocb *req, struct io_ring_ctx *ctx)
->>>       req->link = NULL;
->>>       req->async_data = NULL;
->>>       /* not necessary, but safer to zero */
->>> -    req->cqe.res = 0;
->>> +    memset(&req->cqe, 0, sizeof(req->cqe));
->>>   }
->>>     static void io_flush_cached_locked_reqs(struct io_ring_ctx *ctx,
->>
->> I think this is a good idea, but I wonder if we should open-clear it
->> instead. I've had cases in the past where that's more efficient than
->> calling memset.
-> 
-> I don't think it ever happens for 16 byte memcpy, and in either
-> case it's a cache refill, quite a slow path. I believe memcpy is
-> better here.
+Patch 1-5 optimise io_fill_cqe_req
 
-Yeah I think it's fine as-is - just checked here and either approach
-yields the same.
+Patch 6-7 combine iopoll and normal completion paths
+
+Patch 8 inlines io_fill_cqe_req.
+
+Patch 9 should improve CPU caching of SQ/CQ pointers
+
+Patch 10 removes conditionally SQ indirection (->sq_array). Assuming we'll
+make it a default in liburing, Patch 10 optimises it with static_key.
+
+Patch 11-15 shuffle io_ring_ctx fields.
+
+Testing with t/io_uring nops only for now
+
+                QD2     QD4     QD8     QD16    QD32
+baseline:       17.3    26.6    36.4    43.7    49.4
+Patches 1-15:   17.8    27.4    37.9    45.8    51.2
+Patches 1-16:   17.9    28.2    39.3    47.8    54
+
+v2:
+  removed static_key, it'll be submitted later after it rolls out well
+  minor description changes
+
+Pavel Begunkov (15):
+  io_uring: improve cqe !tracing hot path
+  io_uring: cqe init hardening
+  io_uring: simplify big_cqe handling
+  io_uring: refactor __io_get_cqe()
+  io_uring: optimise extra io_get_cqe null check
+  io_uring: reorder cqring_flush and wakeups
+  io_uring: merge iopoll and normal completion paths
+  io_uring: force inline io_fill_cqe_req
+  io_uring: compact SQ/CQ heads/tails
+  io_uring: add option to remove SQ indirection
+  io_uring: move non aligned field to the end
+  io_uring: banish non-hot data to end of io_ring_ctx
+  io_uring: separate task_work/waiting cache line
+  io_uring: move multishot cqe cache in ctx
+  io_uring: move iopoll ctx fields around
+
+ include/linux/io_uring_types.h | 129 +++++++++++++++++----------------
+ include/uapi/linux/io_uring.h  |   5 ++
+ io_uring/io_uring.c            | 120 +++++++++++++++---------------
+ io_uring/io_uring.h            |  58 +++++++--------
+ io_uring/rw.c                  |  24 ++----
+ io_uring/uring_cmd.c           |   5 +-
+ 6 files changed, 163 insertions(+), 178 deletions(-)
 
 -- 
-Jens Axboe
+2.41.0
 

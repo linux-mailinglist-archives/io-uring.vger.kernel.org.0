@@ -2,29 +2,29 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 536CF78896A
-	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 15:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594A4788971
+	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 15:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245376AbjHYN5t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Aug 2023 09:57:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
+        id S245476AbjHYN6I (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Aug 2023 09:58:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245424AbjHYN5Q (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 09:57:16 -0400
-Received: from out-249.mta1.migadu.com (out-249.mta1.migadu.com [IPv6:2001:41d0:203:375::f9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34C22688;
-        Fri, 25 Aug 2023 06:56:49 -0700 (PDT)
+        with ESMTP id S245522AbjHYN5k (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 09:57:40 -0400
+Received: from out-242.mta1.migadu.com (out-242.mta1.migadu.com [IPv6:2001:41d0:203:375::f2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D83269F;
+        Fri, 25 Aug 2023 06:57:18 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1692971805;
+        t=1692971837;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=W04QOWrrBuMFm18D/+g+MI2uZNnKBIsbwxq2wO1dKKw=;
-        b=GYR7q+ed6aYuRljJYmvSX9IH2GLL+DVsCTCg/+y32Q33mqJCInZ91y+uQeCstRhUPnoP3N
-        ePQXgcigakNgh8HTbQeNs8AWnI9Lei+c8/zQ92SOW8UgAHTnrdNmJY44TCN57rW11W5x8C
-        QP3i32OeE0C7qn2HcY/8yIvkb/iSTUs=
+        bh=/w6lIGuCSX5M2SzS7SE+A2P7DaEhoFOZKnfxuRd6M0g=;
+        b=ZBBdmQmn/QswMnMhJaSAfXlf1oUY8DtSqPmmn75d8pDMERuOJJX6J86JCF/c0yd1RLwCFL
+        31gixh9w5LkzzEj2vO8LvkCfQ90DBKrPt5Zp4Wgls4dziWWNaF03qzW9wejmnudGoy1bT6
+        SZd55YvanxvHQ0hgcOptPehal51m0m0=
 From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
@@ -46,9 +46,9 @@ Cc:     Dominique Martinet <asmadeus@codewreck.org>,
         devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
         Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 05/29] vfs: add a vfs helper for io_uring file pos lock
-Date:   Fri, 25 Aug 2023 21:54:07 +0800
-Message-Id: <20230825135431.1317785-6-hao.xu@linux.dev>
+Subject: [PATCH 06/29] vfs: add file_pos_unlock() for io_uring usage
+Date:   Fri, 25 Aug 2023 21:54:08 +0800
+Message-Id: <20230825135431.1317785-7-hao.xu@linux.dev>
 In-Reply-To: <20230825135431.1317785-1-hao.xu@linux.dev>
 References: <20230825135431.1317785-1-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -65,53 +65,31 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Add a vfs helper file_pos_lock_nowait() for io_uring usage. The function
-have conditional nowait logic, i.e. if nowait is needed, return -EAGAIN
-when trylock fails.
+Add a helper to unlock f_pos_lock without any condition. Introduce this
+since io_uring handles f_pos_lock not with a fd struct, thus
+FDPUT_POS_UNLOCK isn't used.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/file.c            | 13 +++++++++++++
- include/linux/file.h |  2 ++
- 2 files changed, 15 insertions(+)
+ include/linux/file.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/file.c b/fs/file.c
-index 35c62b54c9d6..8e5c38f5db52 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1053,6 +1053,19 @@ void __f_unlock_pos(struct file *f)
- 	mutex_unlock(&f->f_pos_lock);
- }
- 
-+int file_pos_lock_nowait(struct file *file, bool nowait)
-+{
-+	if (!(file->f_mode & FMODE_ATOMIC_POS))
-+		return 0;
-+
-+	if (!nowait)
-+		mutex_lock(&file->f_pos_lock);
-+	else if (!mutex_trylock(&file->f_pos_lock))
-+		return -EAGAIN;
-+
-+	return 1;
-+}
-+
- /*
-  * We only lock f_pos if we have threads or if the file might be
-  * shared with another process. In both cases we'll have an elevated
 diff --git a/include/linux/file.h b/include/linux/file.h
-index 6e9099d29343..bcc6ba0aec50 100644
+index bcc6ba0aec50..a179f4794341 100644
 --- a/include/linux/file.h
 +++ b/include/linux/file.h
-@@ -81,6 +81,8 @@ static inline void fdput_pos(struct fd f)
+@@ -81,6 +81,11 @@ static inline void fdput_pos(struct fd f)
  	fdput(f);
  }
  
-+extern int file_pos_lock_nowait(struct file *file, bool nowait);
++static inline void file_pos_unlock(struct file *file)
++{
++	__f_unlock_pos(file);
++}
 +
- DEFINE_CLASS(fd, struct fd, fdput(_T), fdget(fd), int fd)
+ extern int file_pos_lock_nowait(struct file *file, bool nowait);
  
- extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
+ DEFINE_CLASS(fd, struct fd, fdput(_T), fdget(fd), int fd)
 -- 
 2.25.1
 

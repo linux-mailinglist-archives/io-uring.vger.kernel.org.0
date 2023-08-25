@@ -2,285 +2,219 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97B66788C34
-	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 17:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E85D788D78
+	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 18:54:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbjHYPL0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Aug 2023 11:11:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50034 "EHLO
+        id S232221AbjHYQyJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Aug 2023 12:54:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235346AbjHYPLT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 11:11:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD010212E;
-        Fri, 25 Aug 2023 08:11:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DC3962EC1;
-        Fri, 25 Aug 2023 15:11:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A51CFC433C7;
-        Fri, 25 Aug 2023 15:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692976275;
-        bh=Yk82zBo/CO5JhPqCebob30ONG4lnlvLUkORIUTY0ODE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NYYVRerqYqnGpLF8blJdmxVpMOEPQLv0528BjC5vvBFsZNAz6HSSGB0+0FSTqmw/7
-         Db7P0mmTsJO1oNY1/ZHWu8NyzK9JrsOCasrcwziq7v3vDEDceQvRopW668kANjqE5f
-         XtN676xYCoJvkIHN5kf251pR26YpJ9SQiBSWWbB3qvKX/kVrAeNfp0cfhulI06kGyS
-         rDA+euytpnrfPPjqUYcEaqjX12Vj0EdMyf1Oo7A6QZMfrIIcEUaHvGZ8srUTvsTFVz
-         en/rpIYHaZ7zIlQRk5TaAyXVnqxQP9imT2Z+zB9eRFWghRFbDct0Qujy/WQpJcsiaU
-         Wx3ea7l8r3I0w==
-Date:   Fri, 25 Aug 2023 08:11:15 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH RFC v5 00/29] io_uring getdents
-Message-ID: <20230825151115.GB17891@frogsfrogsfrogs>
-References: <20230825135431.1317785-1-hao.xu@linux.dev>
+        with ESMTP id S234271AbjHYQyF (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 12:54:05 -0400
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47539E77;
+        Fri, 25 Aug 2023 09:54:02 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-9a1de3417acso461118866b.0;
+        Fri, 25 Aug 2023 09:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692982441; x=1693587241;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lP7cZ2Rz5OnDrr8sQ04GNTnuORrvKWdUu3qvHzVHGws=;
+        b=R0nO/pLGP33FZhAWAdCUIb34pLwFWWMW3oo6kXRJF4ReZR+PjGbVOB5HFnkgKfJvF9
+         BYujvycMpO4bsshZTyK9FQ97fvgBrOYCVj/gRRE3mICWHBbLGcHS97Gl9Bit6ut1kveq
+         loOmJDL4Pnupla08sfGLtgUhwHKjpOXgBG9krfmLxPKVgnloiC75X0Fb5g7etfEdQu8Y
+         wQEAsWmNVjGldghsx7TTeMQItASa/9/g6shC1YitQpsi8+gnZrZ6jk+XQwCbRolVlJdB
+         SIBni7v+vA5aD69OR+sQG2uFNe1xaBZ4NqraIv4UWQCe1qc5iacphXnYWmT2FiGeAdQx
+         H1Ew==
+X-Gm-Message-State: AOJu0YwahpJJ/hqcor9XV2MVR33B33Fy1VN23e0C3mJDZ5tqxaDIHM0S
+        gM9jDww9MhCWvVBpYAU8FhI=
+X-Google-Smtp-Source: AGHT+IEuGVqHOFGyJFWQzjtY1yWk9pBKq0Vq4sKCayTDkfjAubGXdPAXCAi5P0CQCpGGZ9/kzOdKYw==
+X-Received: by 2002:a17:906:c116:b0:993:f664:ce25 with SMTP id do22-20020a170906c11600b00993f664ce25mr19345106ejc.19.1692982440507;
+        Fri, 25 Aug 2023 09:54:00 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-003.fbsv.net. [2a03:2880:31ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id dk24-20020a170906f0d800b0099ddc81903asm1125265ejb.221.2023.08.25.09.53.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Aug 2023 09:53:59 -0700 (PDT)
+Date:   Fri, 25 Aug 2023 09:53:58 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Martin KaFai Lau <martin.lau@linux.dev>
+Cc:     Gabriel Krisman Bertazi <krisman@suse.de>, sdf@google.com,
+        axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        io-uring@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH v3 8/9] io_uring/cmd: BPF hook for getsockopt cmd
+Message-ID: <ZOjcpmlukOuEmuZ9@gmail.com>
+References: <20230817145554.892543-1-leitao@debian.org>
+ <20230817145554.892543-9-leitao@debian.org>
+ <87pm3l32rk.fsf@suse.de>
+ <6ae89b3a-b53d-dd2c-ecc6-1094f9b95586@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230825135431.1317785-1-hao.xu@linux.dev>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <6ae89b3a-b53d-dd2c-ecc6-1094f9b95586@linux.dev>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Aug 25, 2023 at 09:54:02PM +0800, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
+On Mon, Aug 21, 2023 at 01:25:25PM -0700, Martin KaFai Lau wrote:
+> On 8/17/23 12:08 PM, Gabriel Krisman Bertazi wrote:
+> > Shouldn't you call sock->ops->getsockopt for level!=SOL_SOCKET prior to
+> > running the hook?  Before this patch, it would bail out with EOPNOTSUPP,
+> > but now the bpf hook gets called even for level!=SOL_SOCKET, which
+> > doesn't fit __sys_getsockopt. Am I misreading the code?
+> I agree it should not call into bpf if the io_uring cannot support non
+> SOL_SOCKET optnames. Otherwise, the bpf prog will get different optval and
+> optlen when running in _sys_getsockopt vs io_uring getsockopt (e.g. in
+> regular _sys_getsockopt(SOL_TCP), bpf expects the optval returned from
+> tcp_getsockopt).
 > 
-> This series introduce getdents64 to io_uring, the code logic is similar
-> with the snychronized version's. It first try nowait issue, and offload
-> it to io-wq threads if the first try fails.
+> I think __sys_getsockopt can also be refactored similar to __sys_setsockopt
+> in patch 3. Yes, for non SOL_SOCKET it only supports __user *optval and
+> __user *optlen but may be a WARN_ON_ONCE/BUG_ON(sockpt_is_kernel(optval))
+> can be added before calling ops->getsockopt()? Then this details can be
+> hidden away from the io_uring.
 
-NAK on the entire series until Jens actually writes down what NOWAIT
-does, so that we can check that the *existing* nowait code branches
-actually behave how he says it should.
 
-https://lore.kernel.org/all/e2d8e5f1-f794-38eb-cecf-ed30c571206b@kernel.dk/
+Right, I've spent some time thinking about it, and this could be done.
+This is a draft I have. Is it what you had in mind?
 
---D
+--
 
-> 
-> Patch1 and Patch2 are some preparation
-> Patch3 supports nowait for xfs getdents code
-> Patch4-11 are vfs change, include adding helpers and trylock for locks
-> Patch12-29 supports nowait for involved xfs journal stuff
-> note, Patch24 and 27 are actually two questions, might be removed later.
-> an xfs test may come later.
-> 
-> Tests I've done:
-> a liburing test case for functional test:
-> https://github.com/HowHsu/liburing/commit/39dc9a8e19c06a8cebf8c2301b85320eb45c061e?diff=unified
-> 
-> xfstests:
->     test/generic: 1 fails and 171 not run
->     test/xfs: 72 fails and 156 not run
-> run the code before without this patchset, same result.
-> I'll try to make the environment more right to run more tests here.
-> 
-> 
-> Tested it with a liburing performance test:
-> https://github.com/HowHsu/liburing/blob/getdents/test/getdents2.c
-> 
-> The test is controlled by the below script[2] which runs getdents2.t 100
-> times and calulate the avg.
-> The result show that io_uring version is about 2.6% faster:
-> 
-> note:
-> [1] the number of getdents call/request in io_uring and normal sync version
-> are made sure to be same beforehand.
-> 
-> [2] run_getdents.py
-> 
-> ```python3
-> 
-> import subprocess
-> 
-> N = 100
-> sum = 0.0
-> args = ["/data/home/howeyxu/tmpdir", "sync"]
-> 
-> for i in range(N):
->     output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
->     sum += float(output)
-> 
-> average = sum / N
-> print("Average of sync:", average)
-> 
-> sum = 0.0
-> args = ["/data/home/howeyxu/tmpdir", "iouring"]
-> 
-> for i in range(N):
->     output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
->     sum += float(output)
-> 
-> average = sum / N
-> print("Average of iouring:", average)
-> 
-> ```
-> 
-> v4->v5:
->  - move atime update to the beginning of getdents operation
->  - trylock for i_rwsem
->  - nowait semantics for involved xfs journal stuff
-> 
-> v3->v4:
->  - add Dave's xfs nowait code and fix a deadlock problem, with some code
->    style tweak.
->  - disable fixed file to avoid a race problem for now
->  - add a test program.
-> 
-> v2->v3:
->  - removed the kernfs patches
->  - add f_pos_lock logic
->  - remove the "reduce last EOF getdents try" optimization since
->    Dominique reports that doesn't make difference
->  - remove the rewind logic, I think the right way is to introduce lseek
->    to io_uring not to patch this logic to getdents.
->  - add Singed-off-by of Stefan Roesch for patch 1 since checkpatch
->    complained that Co-developed-by someone should be accompanied with
->    Signed-off-by same person, I can remove them if Stefan thinks that's
->    not proper.
-> 
-> 
-> Dominique Martinet (1):
->   fs: split off vfs_getdents function of getdents64 syscall
-> 
-> Hao Xu (28):
->   xfs: rename XBF_TRYLOCK to XBF_NOWAIT
->   xfs: add NOWAIT semantics for readdir
->   vfs: add nowait flag for struct dir_context
->   vfs: add a vfs helper for io_uring file pos lock
->   vfs: add file_pos_unlock() for io_uring usage
->   vfs: add a nowait parameter for touch_atime()
->   vfs: add nowait parameter for file_accessed()
->   vfs: move file_accessed() to the beginning of iterate_dir()
->   vfs: add S_NOWAIT for nowait time update
->   vfs: trylock inode->i_rwsem in iterate_dir() to support nowait
->   xfs: enforce GFP_NOIO implicitly during nowait time update
->   xfs: make xfs_trans_alloc() support nowait semantics
->   xfs: support nowait for xfs_log_reserve()
->   xfs: don't wait for free space in xlog_grant_head_check() in nowait
->     case
->   xfs: add nowait parameter for xfs_inode_item_init()
->   xfs: make xfs_trans_ijoin() error out -EAGAIN
->   xfs: set XBF_NOWAIT for xfs_buf_read_map if necessary
->   xfs: support nowait memory allocation in _xfs_buf_alloc()
->   xfs: distinguish error type of memory allocation failure for nowait
->     case
->   xfs: return -EAGAIN when bulk memory allocation fails in nowait case
->   xfs: comment page allocation for nowait case in xfs_buf_find_insert()
->   xfs: don't print warn info for -EAGAIN error in  xfs_buf_get_map()
->   xfs: support nowait for xfs_buf_read_map()
->   xfs: support nowait for xfs_buf_item_init()
->   xfs: return -EAGAIN when nowait meets sync in transaction commit
->   xfs: add a comment for xlog_kvmalloc()
->   xfs: support nowait semantics for xc_ctx_lock in xlog_cil_commit()
->   io_uring: add support for getdents
-> 
->  arch/s390/hypfs/inode.c         |  2 +-
->  block/fops.c                    |  2 +-
->  fs/btrfs/file.c                 |  2 +-
->  fs/btrfs/inode.c                |  2 +-
->  fs/cachefiles/namei.c           |  2 +-
->  fs/coda/dir.c                   |  4 +--
->  fs/ecryptfs/file.c              |  4 +--
->  fs/ext2/file.c                  |  4 +--
->  fs/ext4/file.c                  |  6 ++--
->  fs/f2fs/file.c                  |  4 +--
->  fs/file.c                       | 13 +++++++
->  fs/fuse/dax.c                   |  2 +-
->  fs/fuse/file.c                  |  4 +--
->  fs/gfs2/file.c                  |  2 +-
->  fs/hugetlbfs/inode.c            |  2 +-
->  fs/inode.c                      | 10 +++---
->  fs/internal.h                   |  8 +++++
->  fs/namei.c                      |  4 +--
->  fs/nfsd/vfs.c                   |  2 +-
->  fs/nilfs2/file.c                |  2 +-
->  fs/orangefs/file.c              |  2 +-
->  fs/orangefs/inode.c             |  2 +-
->  fs/overlayfs/file.c             |  2 +-
->  fs/overlayfs/inode.c            |  2 +-
->  fs/pipe.c                       |  2 +-
->  fs/ramfs/file-nommu.c           |  2 +-
->  fs/readdir.c                    | 61 +++++++++++++++++++++++++--------
->  fs/smb/client/cifsfs.c          |  2 +-
->  fs/splice.c                     |  2 +-
->  fs/stat.c                       |  2 +-
->  fs/ubifs/file.c                 |  2 +-
->  fs/udf/file.c                   |  2 +-
->  fs/xfs/libxfs/xfs_alloc.c       |  2 +-
->  fs/xfs/libxfs/xfs_attr_remote.c |  2 +-
->  fs/xfs/libxfs/xfs_btree.c       |  2 +-
->  fs/xfs/libxfs/xfs_da_btree.c    | 16 +++++++++
->  fs/xfs/libxfs/xfs_da_btree.h    |  1 +
->  fs/xfs/libxfs/xfs_dir2_block.c  |  7 ++--
->  fs/xfs/libxfs/xfs_dir2_priv.h   |  2 +-
->  fs/xfs/libxfs/xfs_shared.h      |  2 ++
->  fs/xfs/libxfs/xfs_trans_inode.c | 12 +++++--
->  fs/xfs/scrub/dir.c              |  2 +-
->  fs/xfs/scrub/readdir.c          |  2 +-
->  fs/xfs/scrub/repair.c           |  2 +-
->  fs/xfs/xfs_buf.c                | 43 +++++++++++++++++------
->  fs/xfs/xfs_buf.h                |  4 +--
->  fs/xfs/xfs_buf_item.c           |  9 +++--
->  fs/xfs/xfs_buf_item.h           |  2 +-
->  fs/xfs/xfs_buf_item_recover.c   |  2 +-
->  fs/xfs/xfs_dir2_readdir.c       | 49 ++++++++++++++++++++------
->  fs/xfs/xfs_dquot.c              |  2 +-
->  fs/xfs/xfs_file.c               |  6 ++--
->  fs/xfs/xfs_inode.c              | 27 +++++++++++++++
->  fs/xfs/xfs_inode.h              | 17 +++++----
->  fs/xfs/xfs_inode_item.c         | 12 ++++---
->  fs/xfs/xfs_inode_item.h         |  3 +-
->  fs/xfs/xfs_iops.c               | 31 ++++++++++++++---
->  fs/xfs/xfs_log.c                | 33 ++++++++++++------
->  fs/xfs/xfs_log.h                |  5 +--
->  fs/xfs/xfs_log_cil.c            | 17 +++++++--
->  fs/xfs/xfs_log_priv.h           |  4 +--
->  fs/xfs/xfs_trans.c              | 44 ++++++++++++++++++++----
->  fs/xfs/xfs_trans.h              |  2 +-
->  fs/xfs/xfs_trans_buf.c          | 18 ++++++++--
->  fs/zonefs/file.c                |  4 +--
->  include/linux/file.h            |  7 ++++
->  include/linux/fs.h              | 16 +++++++--
->  include/uapi/linux/io_uring.h   |  1 +
->  io_uring/fs.c                   | 53 ++++++++++++++++++++++++++++
->  io_uring/fs.h                   |  3 ++
->  io_uring/opdef.c                |  8 +++++
->  kernel/bpf/inode.c              |  4 +--
->  mm/filemap.c                    |  8 ++---
->  mm/shmem.c                      |  6 ++--
->  net/unix/af_unix.c              |  4 +--
->  75 files changed, 499 insertions(+), 161 deletions(-)
-> 
-> -- 
-> 2.25.1
-> 
+diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+index 5e3419eb267a..e39743f4ce5e 100644
+--- a/include/linux/bpf-cgroup.h
++++ b/include/linux/bpf-cgroup.h
+@@ -378,7 +378,7 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
+ ({									       \
+ 	int __ret = 0;							       \
+ 	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))			       \
+-		get_user(__ret, optlen);				       \
++		copy_from_sockptr(&__ret, optlen, sizeof(int));		       \
+ 	__ret;								       \
+ })
+ 
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 2a0324275347..24ea1719fd02 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1855,6 +1855,8 @@ int sock_setsockopt(struct socket *sock, int level, int op,
+ 		    sockptr_t optval, unsigned int optlen);
+ int do_sock_setsockopt(struct socket *sock, bool compat, int level,
+ 		       int optname, sockptr_t optval, int optlen);
++int do_sock_getsockopt(struct socket *sock, bool compat, int level,
++		       int optname, sockptr_t optval, sockptr_t optlen);
+ 
+ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		  sockptr_t optval, sockptr_t optlen);
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 9370fd50aa2c..2a5f30f14f5c 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1997,14 +1997,6 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 	return 0;
+ }
+ 
+-int sock_getsockopt(struct socket *sock, int level, int optname,
+-		    char __user *optval, int __user *optlen)
+-{
+-	return sk_getsockopt(sock->sk, level, optname,
+-			     USER_SOCKPTR(optval),
+-			     USER_SOCKPTR(optlen));
+-}
+-
+ /*
+  * Initialize an sk_lock.
+  *
+diff --git a/net/socket.c b/net/socket.c
+index b5e4398a6b4d..f0d6b6b1f75e 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2290,6 +2290,40 @@ SYSCALL_DEFINE5(setsockopt, int, fd, int, level, int, optname,
+ INDIRECT_CALLABLE_DECLARE(bool tcp_bpf_bypass_getsockopt(int level,
+ 							 int optname));
+ 
++int do_sock_getsockopt(struct socket *sock, bool compat, int level,
++		       int optname, sockptr_t optval, sockptr_t optlen)
++{
++	int max_optlen __maybe_unused;
++	int err;
++
++	err = security_socket_getsockopt(sock, level, optname);
++	if (err)
++		return err;
++
++	if (level == SOL_SOCKET) {
++		err = sk_getsockopt(sock->sk, level, optname, optval, optlen);
++	} else if (unlikely(!sock->ops->getsockopt)) {
++		err = -EOPNOTSUPP;
++	} else {
++		if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
++			      "Invalid argument type"))
++			return -EOPNOTSUPP;
++
++		err = sock->ops->getsockopt(sock, level, optname, optval.user,
++					    optlen.user);
++	}
++
++	if (!compat) {
++		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
++		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
++						     optval, optlen, max_optlen,
++						     err);
++	}
++
++	return err;
++}
++EXPORT_SYMBOL(do_sock_getsockopt);
++
+ /*
+  *	Get a socket option. Because we don't know the option lengths we have
+  *	to pass a user mode parameter for the protocols to sort out.
+@@ -2297,35 +2331,17 @@ INDIRECT_CALLABLE_DECLARE(bool tcp_bpf_bypass_getsockopt(int level,
+ int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
+ 		int __user *optlen)
+ {
+-	int max_optlen __maybe_unused;
+ 	int err, fput_needed;
++	bool compat = in_compat_syscall();
+ 	struct socket *sock;
+ 
+ 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+ 	if (!sock)
+ 		return err;
+ 
+-	err = security_socket_getsockopt(sock, level, optname);
+-	if (err)
+-		goto out_put;
+-
+-	if (!in_compat_syscall())
+-		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
+-
+-	if (level == SOL_SOCKET)
+-		err = sock_getsockopt(sock, level, optname, optval, optlen);
+-	else if (unlikely(!sock->ops->getsockopt))
+-		err = -EOPNOTSUPP;
+-	else
+-		err = sock->ops->getsockopt(sock, level, optname, optval,
+-					    optlen);
++	err = do_sock_getsockopt(sock, compat, level, optname,
++				 USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
+ 
+-	if (!in_compat_syscall())
+-		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
+-						     USER_SOCKPTR(optval),
+-						     USER_SOCKPTR(optlen),
+-						     max_optlen, err);
+-out_put:
+ 	fput_light(sock->file, fput_needed);
+ 	return err;
+ }

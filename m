@@ -2,219 +2,231 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E85D788D78
-	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 18:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA296789090
+	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 23:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232221AbjHYQyJ (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Aug 2023 12:54:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39810 "EHLO
+        id S231479AbjHYVj4 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Aug 2023 17:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234271AbjHYQyF (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 12:54:05 -0400
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47539E77;
-        Fri, 25 Aug 2023 09:54:02 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-9a1de3417acso461118866b.0;
-        Fri, 25 Aug 2023 09:54:02 -0700 (PDT)
+        with ESMTP id S231474AbjHYVjV (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 17:39:21 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2A626B1
+        for <io-uring@vger.kernel.org>; Fri, 25 Aug 2023 14:39:17 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-68c3b9f85b7so323710b3a.2
+        for <io-uring@vger.kernel.org>; Fri, 25 Aug 2023 14:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1692999556; x=1693604356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7dRQ9By/T99QWDW5xev9b8rVkM9NZXXwZrmSduoTKY=;
+        b=SlHW1FHh55Miyt5dC5YbHFzbz8/Ww6dpIRyxo6vWvL1BUT9wpnYc90O8W3sh6jbVDI
+         8VSN/Xe7i/NpqgfmZUfGif/OWVY4CvO1XNCApsJ0gTKpBFDUVISAdbUZIXX0AL7Ymm4P
+         GTcb7wyrBEoupwm2T77MgFldNvL555iN8Gi3uYCzgcocNv0xnFj+WWlwbcbOTqmgKZI+
+         MLGEhJoBOR8ij98DujYJDG8/ErJs1WTRaajOZxKdaJWii5ir39jpSlGIz75MH3BFujgn
+         75aCRb2KJIpxhwlYFJHEvUeGNqpylJdIJf8XyyAJR0UoHIDg5wblyZNVqnwV4VZyvNd5
+         jfAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692982441; x=1693587241;
+        d=1e100.net; s=20221208; t=1692999556; x=1693604356;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lP7cZ2Rz5OnDrr8sQ04GNTnuORrvKWdUu3qvHzVHGws=;
-        b=R0nO/pLGP33FZhAWAdCUIb34pLwFWWMW3oo6kXRJF4ReZR+PjGbVOB5HFnkgKfJvF9
-         BYujvycMpO4bsshZTyK9FQ97fvgBrOYCVj/gRRE3mICWHBbLGcHS97Gl9Bit6ut1kveq
-         loOmJDL4Pnupla08sfGLtgUhwHKjpOXgBG9krfmLxPKVgnloiC75X0Fb5g7etfEdQu8Y
-         wQEAsWmNVjGldghsx7TTeMQItASa/9/g6shC1YitQpsi8+gnZrZ6jk+XQwCbRolVlJdB
-         SIBni7v+vA5aD69OR+sQG2uFNe1xaBZ4NqraIv4UWQCe1qc5iacphXnYWmT2FiGeAdQx
-         H1Ew==
-X-Gm-Message-State: AOJu0YwahpJJ/hqcor9XV2MVR33B33Fy1VN23e0C3mJDZ5tqxaDIHM0S
-        gM9jDww9MhCWvVBpYAU8FhI=
-X-Google-Smtp-Source: AGHT+IEuGVqHOFGyJFWQzjtY1yWk9pBKq0Vq4sKCayTDkfjAubGXdPAXCAi5P0CQCpGGZ9/kzOdKYw==
-X-Received: by 2002:a17:906:c116:b0:993:f664:ce25 with SMTP id do22-20020a170906c11600b00993f664ce25mr19345106ejc.19.1692982440507;
-        Fri, 25 Aug 2023 09:54:00 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-003.fbsv.net. [2a03:2880:31ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id dk24-20020a170906f0d800b0099ddc81903asm1125265ejb.221.2023.08.25.09.53.59
+        bh=o7dRQ9By/T99QWDW5xev9b8rVkM9NZXXwZrmSduoTKY=;
+        b=IgkbyjJl+BdnaqSrTtKfdLudVZ0oYOOrwyyyoS/QDetj2UA9kJn3KRvUI01rnzF02r
+         fmL4LeCYrEo8GDUV9PRaKkO9t+q9dHRyAAvW+SB7/25C0FxS+X92w/rpk+xYXhBdd5+7
+         /9j3adzPQIqCH+cJr4ny9l0lNF+YnCBAJFNrV18Gz8SnYOSQIZ/6+3b3uwS85F4mGU/y
+         /C+xx6tHAr5bCYcADka9brxHn53uOwiyFwRwl4p5rdyfvm/N/ojnYTJvPdysRnv+zcFl
+         KZSEN754v+CFybUR5APHyYUht1/O7y7SpgSRGz18jHOvkbmiBkH68gYnF1XbDdxDb/AW
+         TnCg==
+X-Gm-Message-State: AOJu0Ywe0WGPjgwei1N8jUfe4Fqs8txzwLPej+laQ8qeAR6yqUrOityU
+        IKfKhfksVKjBmbel3ArklD6ihw==
+X-Google-Smtp-Source: AGHT+IFGwDu4J6IE5hfbjc7KSF4OfJEndquVBvBoV5vhWuIhyGy4zoBWcpcC8Lokr19GaOsT0RulfQ==
+X-Received: by 2002:a05:6a20:7fa0:b0:140:324c:124c with SMTP id d32-20020a056a207fa000b00140324c124cmr22387249pzj.62.1692999556447;
+        Fri, 25 Aug 2023 14:39:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id a14-20020a62bd0e000000b006875df4773fsm1997221pff.163.2023.08.25.14.39.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Aug 2023 09:53:59 -0700 (PDT)
-Date:   Fri, 25 Aug 2023 09:53:58 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Martin KaFai Lau <martin.lau@linux.dev>
-Cc:     Gabriel Krisman Bertazi <krisman@suse.de>, sdf@google.com,
-        axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH v3 8/9] io_uring/cmd: BPF hook for getsockopt cmd
-Message-ID: <ZOjcpmlukOuEmuZ9@gmail.com>
-References: <20230817145554.892543-1-leitao@debian.org>
- <20230817145554.892543-9-leitao@debian.org>
- <87pm3l32rk.fsf@suse.de>
- <6ae89b3a-b53d-dd2c-ecc6-1094f9b95586@linux.dev>
+        Fri, 25 Aug 2023 14:39:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qZeWO-006Uvd-0J;
+        Sat, 26 Aug 2023 07:39:12 +1000
+Date:   Sat, 26 Aug 2023 07:39:12 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hao Xu <hao.xu@linux.dev>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 02/29] xfs: rename XBF_TRYLOCK to XBF_NOWAIT
+Message-ID: <ZOkfgBlWKVmGN84i@dread.disaster.area>
+References: <20230825135431.1317785-1-hao.xu@linux.dev>
+ <20230825135431.1317785-3-hao.xu@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6ae89b3a-b53d-dd2c-ecc6-1094f9b95586@linux.dev>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20230825135431.1317785-3-hao.xu@linux.dev>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Aug 21, 2023 at 01:25:25PM -0700, Martin KaFai Lau wrote:
-> On 8/17/23 12:08 PM, Gabriel Krisman Bertazi wrote:
-> > Shouldn't you call sock->ops->getsockopt for level!=SOL_SOCKET prior to
-> > running the hook?  Before this patch, it would bail out with EOPNOTSUPP,
-> > but now the bpf hook gets called even for level!=SOL_SOCKET, which
-> > doesn't fit __sys_getsockopt. Am I misreading the code?
-> I agree it should not call into bpf if the io_uring cannot support non
-> SOL_SOCKET optnames. Otherwise, the bpf prog will get different optval and
-> optlen when running in _sys_getsockopt vs io_uring getsockopt (e.g. in
-> regular _sys_getsockopt(SOL_TCP), bpf expects the optval returned from
-> tcp_getsockopt).
+On Fri, Aug 25, 2023 at 09:54:04PM +0800, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
 > 
-> I think __sys_getsockopt can also be refactored similar to __sys_setsockopt
-> in patch 3. Yes, for non SOL_SOCKET it only supports __user *optval and
-> __user *optlen but may be a WARN_ON_ONCE/BUG_ON(sockpt_is_kernel(optval))
-> can be added before calling ops->getsockopt()? Then this details can be
-> hidden away from the io_uring.
+> XBF_TRYLOCK means we need lock but don't block on it,
+
+Yes.
 
 
-Right, I've spent some time thinking about it, and this could be done.
-This is a draft I have. Is it what you had in mind?
+> we can use it to
+> stand for not waiting for memory allcation. Rename XBF_TRYLOCK to
+> XBF_NOWAIT, which is more generic.
 
---
+No.
 
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index 5e3419eb267a..e39743f4ce5e 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -378,7 +378,7 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
- ({									       \
- 	int __ret = 0;							       \
- 	if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))			       \
--		get_user(__ret, optlen);				       \
-+		copy_from_sockptr(&__ret, optlen, sizeof(int));		       \
- 	__ret;								       \
- })
- 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 2a0324275347..24ea1719fd02 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -1855,6 +1855,8 @@ int sock_setsockopt(struct socket *sock, int level, int op,
- 		    sockptr_t optval, unsigned int optlen);
- int do_sock_setsockopt(struct socket *sock, bool compat, int level,
- 		       int optname, sockptr_t optval, int optlen);
-+int do_sock_getsockopt(struct socket *sock, bool compat, int level,
-+		       int optname, sockptr_t optval, sockptr_t optlen);
- 
- int sk_getsockopt(struct sock *sk, int level, int optname,
- 		  sockptr_t optval, sockptr_t optlen);
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 9370fd50aa2c..2a5f30f14f5c 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1997,14 +1997,6 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
- 	return 0;
- }
- 
--int sock_getsockopt(struct socket *sock, int level, int optname,
--		    char __user *optval, int __user *optlen)
--{
--	return sk_getsockopt(sock->sk, level, optname,
--			     USER_SOCKPTR(optval),
--			     USER_SOCKPTR(optlen));
--}
--
- /*
-  * Initialize an sk_lock.
-  *
-diff --git a/net/socket.c b/net/socket.c
-index b5e4398a6b4d..f0d6b6b1f75e 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2290,6 +2290,40 @@ SYSCALL_DEFINE5(setsockopt, int, fd, int, level, int, optname,
- INDIRECT_CALLABLE_DECLARE(bool tcp_bpf_bypass_getsockopt(int level,
- 							 int optname));
- 
-+int do_sock_getsockopt(struct socket *sock, bool compat, int level,
-+		       int optname, sockptr_t optval, sockptr_t optlen)
-+{
-+	int max_optlen __maybe_unused;
-+	int err;
-+
-+	err = security_socket_getsockopt(sock, level, optname);
-+	if (err)
-+		return err;
-+
-+	if (level == SOL_SOCKET) {
-+		err = sk_getsockopt(sock->sk, level, optname, optval, optlen);
-+	} else if (unlikely(!sock->ops->getsockopt)) {
-+		err = -EOPNOTSUPP;
-+	} else {
-+		if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
-+			      "Invalid argument type"))
-+			return -EOPNOTSUPP;
-+
-+		err = sock->ops->getsockopt(sock, level, optname, optval.user,
-+					    optlen.user);
-+	}
-+
-+	if (!compat) {
-+		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
-+		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
-+						     optval, optlen, max_optlen,
-+						     err);
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(do_sock_getsockopt);
-+
- /*
-  *	Get a socket option. Because we don't know the option lengths we have
-  *	to pass a user mode parameter for the protocols to sort out.
-@@ -2297,35 +2331,17 @@ INDIRECT_CALLABLE_DECLARE(bool tcp_bpf_bypass_getsockopt(int level,
- int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
- 		int __user *optlen)
- {
--	int max_optlen __maybe_unused;
- 	int err, fput_needed;
-+	bool compat = in_compat_syscall();
- 	struct socket *sock;
- 
- 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
- 	if (!sock)
- 		return err;
- 
--	err = security_socket_getsockopt(sock, level, optname);
--	if (err)
--		goto out_put;
--
--	if (!in_compat_syscall())
--		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
--
--	if (level == SOL_SOCKET)
--		err = sock_getsockopt(sock, level, optname, optval, optlen);
--	else if (unlikely(!sock->ops->getsockopt))
--		err = -EOPNOTSUPP;
--	else
--		err = sock->ops->getsockopt(sock, level, optname, optval,
--					    optlen);
-+	err = do_sock_getsockopt(sock, compat, level, optname,
-+				 USER_SOCKPTR(optval), USER_SOCKPTR(optlen));
- 
--	if (!in_compat_syscall())
--		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
--						     USER_SOCKPTR(optval),
--						     USER_SOCKPTR(optlen),
--						     max_optlen, err);
--out_put:
- 	fput_light(sock->file, fput_needed);
- 	return err;
- }
+Not only can XBF_TRYLOCK require memory allocation, it can require
+IO to be issued. We use TRYLOCK for -readahead- and so we *must* be
+able to allocate memory and issue IO under TRYLOCK caller
+conditions.
+
+[...]
+
+> diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+> index d440393b40eb..2ccb0867824c 100644
+> --- a/fs/xfs/libxfs/xfs_attr_remote.c
+> +++ b/fs/xfs/libxfs/xfs_attr_remote.c
+> @@ -661,7 +661,7 @@ xfs_attr_rmtval_invalidate(
+>  			return error;
+>  		if (XFS_IS_CORRUPT(args->dp->i_mount, nmap != 1))
+>  			return -EFSCORRUPTED;
+> -		error = xfs_attr_rmtval_stale(args->dp, &map, XBF_TRYLOCK);
+> +		error = xfs_attr_rmtval_stale(args->dp, &map, XBF_NOWAIT);
+>  		if (error)
+>  			return error;
+
+XBF_INCORE | XBF_NOWAIT makes no real sense. I mean, XBF_INCORE is
+exactly "find a cached buffer or fail" - it's not going to do any
+memory allocation or IO so NOWAIT smeantics don't make any sense
+here. It's the buffer lock that this lookup is explicitly
+avoiding, and so TRYLOCK describes exactly the semantics we want
+from this incore lookup.
+
+Indeed, this is a deadlock avoidance mechanism as the transaction
+may already have the buffer locked and so we don't want the
+xfs_buf_incore() lookup to try to lock the buffer again. TRYLOCK
+documents this pretty clearly - NOWAIT loses that context....
+
+> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+> index 6a6503ab0cd7..77c4f1d83475 100644
+> --- a/fs/xfs/libxfs/xfs_btree.c
+> +++ b/fs/xfs/libxfs/xfs_btree.c
+> @@ -1343,7 +1343,7 @@ xfs_btree_read_buf_block(
+>  	int			error;
+>  
+>  	/* need to sort out how callers deal with failures first */
+> -	ASSERT(!(flags & XBF_TRYLOCK));
+> +	ASSERT(!(flags & XBF_NOWAIT));
+>  
+>  	error = xfs_btree_ptr_to_daddr(cur, ptr, &d);
+>  	if (error)
+> diff --git a/fs/xfs/scrub/repair.c b/fs/xfs/scrub/repair.c
+> index ac6d8803e660..9312cf3b20e2 100644
+> --- a/fs/xfs/scrub/repair.c
+> +++ b/fs/xfs/scrub/repair.c
+> @@ -460,7 +460,7 @@ xrep_invalidate_block(
+>  
+>  	error = xfs_buf_incore(sc->mp->m_ddev_targp,
+>  			XFS_FSB_TO_DADDR(sc->mp, fsbno),
+> -			XFS_FSB_TO_BB(sc->mp, 1), XBF_TRYLOCK, &bp);
+> +			XFS_FSB_TO_BB(sc->mp, 1), XBF_NOWAIT, &bp);
+
+My point exactly.
+
+xfs_buf_incore() is simply a lookup with XBF_INCORE set. (XBF_INCORE
+| XBF_TRYLOCK) has the exactly semantics of "return the buffer only
+if it is cached and we can lock it without blocking.
+
+It will not instantiate a new buffer (i.e. do memory allocation) or
+do IO because the if it is under IO the buffer lock will be held.
+
+So, essentially, this "NOWAIT" semantic you want is already supplied
+by (XBF_INCORE | XBF_TRYLOCK) buffer lookups.
+
+>  	if (error)
+>  		return 0;
+>  
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index 15d1e5a7c2d3..9f84bc3b802c 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -228,7 +228,7 @@ _xfs_buf_alloc(
+>  	 * We don't want certain flags to appear in b_flags unless they are
+>  	 * specifically set by later operations on the buffer.
+>  	 */
+> -	flags &= ~(XBF_UNMAPPED | XBF_TRYLOCK | XBF_ASYNC | XBF_READ_AHEAD);
+> +	flags &= ~(XBF_UNMAPPED | XBF_NOWAIT | XBF_ASYNC | XBF_READ_AHEAD);
+>  
+>  	atomic_set(&bp->b_hold, 1);
+>  	atomic_set(&bp->b_lru_ref, 1);
+> @@ -543,7 +543,7 @@ xfs_buf_find_lock(
+>  	struct xfs_buf          *bp,
+>  	xfs_buf_flags_t		flags)
+>  {
+> -	if (flags & XBF_TRYLOCK) {
+> +	if (flags & XBF_NOWAIT) {
+>  		if (!xfs_buf_trylock(bp)) {
+>  			XFS_STATS_INC(bp->b_mount, xb_busy_locked);
+>  			return -EAGAIN;
+> @@ -886,7 +886,7 @@ xfs_buf_readahead_map(
+>  	struct xfs_buf		*bp;
+>  
+>  	xfs_buf_read_map(target, map, nmaps,
+> -		     XBF_TRYLOCK | XBF_ASYNC | XBF_READ_AHEAD, &bp, ops,
+> +		     XBF_NOWAIT | XBF_ASYNC | XBF_READ_AHEAD, &bp, ops,
+>  		     __this_address);
+
+That will break readahead (which we use extensively in getdents
+operations) if we can't allocate buffers and issue IO under NOWAIT
+conditions.
+
+>  }
+>  
+> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+> index 549c60942208..8cd307626939 100644
+> --- a/fs/xfs/xfs_buf.h
+> +++ b/fs/xfs/xfs_buf.h
+> @@ -45,7 +45,7 @@ struct xfs_buf;
+>  
+>  /* flags used only as arguments to access routines */
+>  #define XBF_INCORE	 (1u << 29)/* lookup only, return if found in cache */
+> -#define XBF_TRYLOCK	 (1u << 30)/* lock requested, but do not wait */
+> +#define XBF_NOWAIT	 (1u << 30)/* mem/lock requested, but do not wait */
+
+That's now a really poor comment. It doesn't describe the semantics
+or constraints that NOWAIT might imply.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com

@@ -2,198 +2,264 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84630788322
-	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 11:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8571278891D
+	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 15:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235349AbjHYJLx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Aug 2023 05:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56100 "EHLO
+        id S234168AbjHYNz2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Aug 2023 09:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244152AbjHYJLc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 05:11:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA53D1BF0
-        for <io-uring@vger.kernel.org>; Fri, 25 Aug 2023 02:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1692954646;
+        with ESMTP id S243716AbjHYNy5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 09:54:57 -0400
+Received: from out-246.mta1.migadu.com (out-246.mta1.migadu.com [IPv6:2001:41d0:203:375::f6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96FC2137
+        for <io-uring@vger.kernel.org>; Fri, 25 Aug 2023 06:54:53 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1692971691;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UtgAsF0Pt8uZv/RBVLuSugJDghoD4rbxrgGsATEZ6x0=;
-        b=UK0ofPd7TTGXfIIkB9hCYhfBsSflNZejcBQzjhUzgNqvNWzZcIn7xTohsnah9Ul0RRCN83
-        F0Zp+5b3/7bRpXC9cfZr1PFtegWDC47OGwW5Haw1nHyOyiu2K05/qu0F3QP2GMaYkJ/sXQ
-        9wmdtHmSZMXFq9fHePjVyfzulpCmLnE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-527-HusiOG7eOZm_s60xlNxCYA-1; Fri, 25 Aug 2023 05:10:39 -0400
-X-MC-Unique: HusiOG7eOZm_s60xlNxCYA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2BD29108BEF3;
-        Fri, 25 Aug 2023 09:10:38 +0000 (UTC)
-Received: from localhost (unknown [10.72.120.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 366AE2026D68;
-        Fri, 25 Aug 2023 09:10:36 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Chengming Zhou <zhouchengming@bytedance.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 2/2] io_uring: reap iopoll events before exiting io wq
-Date:   Fri, 25 Aug 2023 17:09:59 +0800
-Message-Id: <20230825090959.1866771-3-ming.lei@redhat.com>
-In-Reply-To: <20230825090959.1866771-1-ming.lei@redhat.com>
-References: <20230825090959.1866771-1-ming.lei@redhat.com>
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Tk2hf/ZsTIcu3ZelMcVU1L9gdHG1BIE6+k0PUkf3KOw=;
+        b=uBcPYj+KePQLzK49m3TJoZ63Y8UYXvuGXKh/n3l6WJhsswjd7fki+qH9rfO1d4Ug+ZVsQ9
+        lMMssXOvXKvFl3htZmbseqXbjusga8retQQQvlmfZ3u1SC4cy0Lfpdarfx6uPXt3VqFa7M
+        TnDSmLpV98dTb6gRRR2P2i+KA8l5+u4=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH RFC v5 00/29] io_uring getdents
+Date:   Fri, 25 Aug 2023 21:54:02 +0800
+Message-Id: <20230825135431.1317785-1-hao.xu@linux.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring delays reaping iopoll events into exit work, which is scheduled
-in io_uring_release(). But io wq is exited inside do_exit(), and wq code
-path may share resource with iopoll code path, such as request. If iopoll
-events aren't reaped, io wq exit can't be done, and cause IO hang.
+From: Hao Xu <howeyxu@tencent.com>
 
-The issue can be triggered when terminating 't/io_uring -n4 /dev/nullb0' with
-default null_blk parameters.
+This series introduce getdents64 to io_uring, the code logic is similar
+with the snychronized version's. It first try nowait issue, and offload
+it to io-wq threads if the first try fails.
 
-Fix it by reaping iopoll events in io_uring_clean_tctx() and moving io wq
-exit into workqueue context.
+Patch1 and Patch2 are some preparation
+Patch3 supports nowait for xfs getdents code
+Patch4-11 are vfs change, include adding helpers and trylock for locks
+Patch12-29 supports nowait for involved xfs journal stuff
+note, Patch24 and 27 are actually two questions, might be removed later.
+an xfs test may come later.
 
-Closes: https://lore.kernel.org/linux-block/3893581.1691785261@warthog.procyon.org.uk/
-Reported-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- io_uring/io_uring.c |  2 +-
- io_uring/io_uring.h |  1 +
- io_uring/tctx.c     | 60 +++++++++++++++++++++++++++++++++++++++------
- 3 files changed, 54 insertions(+), 9 deletions(-)
+Tests I've done:
+a liburing test case for functional test:
+https://github.com/HowHsu/liburing/commit/39dc9a8e19c06a8cebf8c2301b85320eb45c061e?diff=unified
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c4adb44f1aa4..ab7844c3380c 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3214,7 +3214,7 @@ static __cold bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
- 	return ret;
- }
- 
--static bool iopoll_reap_events(struct io_ring_ctx *ctx, bool reap_all)
-+bool iopoll_reap_events(struct io_ring_ctx *ctx, bool reap_all)
- {
- 	bool reapped = false;
- 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 547c30582fb8..f1556666a064 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -63,6 +63,7 @@ void io_req_task_queue_fail(struct io_kiocb *req, int ret);
- void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts);
- void tctx_task_work(struct callback_head *cb);
- __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
-+bool iopoll_reap_events(struct io_ring_ctx *ctx, bool reap_all);
- int io_uring_alloc_task_context(struct task_struct *task,
- 				struct io_ring_ctx *ctx);
- 
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index c043fe93a3f2..582b9149bab1 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -6,6 +6,7 @@
- #include <linux/slab.h>
- #include <linux/nospec.h>
- #include <linux/io_uring.h>
-+#include <linux/delay.h>
- 
- #include <uapi/linux/io_uring.h>
- 
-@@ -175,24 +176,67 @@ __cold void io_uring_del_tctx_node(unsigned long index)
- 	kfree(node);
- }
- 
-+struct wq_exit_work {
-+	struct work_struct work;
-+	struct io_wq *wq;
-+	bool done;
-+};
-+
-+static void io_uring_wq_exit_work(struct work_struct *work)
-+{
-+	struct wq_exit_work *wq_work =
-+                  container_of(work, struct wq_exit_work, work);
-+	struct io_wq *wq = wq_work->wq;
-+
-+	/*
-+	 * Must be after io_uring_del_tctx_node() (removes nodes under
-+	 * uring_lock) to avoid race with io_uring_try_cancel_iowq().
-+	 */
-+	io_wq_put_and_exit(wq);
-+	wq_work->done = true;
-+}
-+
- __cold void io_uring_clean_tctx(struct io_uring_task *tctx)
- {
- 	struct io_wq *wq = tctx->io_wq;
-+	struct wq_exit_work work = {
-+		.wq = wq,
-+		.done = true,
-+	};
- 	struct io_tctx_node *node;
- 	unsigned long index;
- 
--	xa_for_each(&tctx->xa, index, node) {
--		io_uring_del_tctx_node(index);
--		cond_resched();
--	}
-+	/*
-+	 * io_wq may depend on reaping iopoll events because pending
-+	 * requests in io_wq may share resource with polled requests,
-+	 * meantime new polled IO may be submitted from io_wq after
-+	 * getting resource.
-+	 *
-+	 * So io_wq has to be exited from workqueue context for avoiding
-+	 * IO hang.
-+	 */
- 	if (wq) {
-+		work.done = false;
-+		INIT_WORK(&work.work, io_uring_wq_exit_work);
-+		queue_work(system_unbound_wq, &work.work);
-+	}
-+
-+	while (!work.done) {
-+		xa_for_each(&tctx->xa, index, node)
-+			iopoll_reap_events(node->ctx, true);
-+
- 		/*
--		 * Must be after io_uring_del_tctx_node() (removes nodes under
--		 * uring_lock) to avoid race with io_uring_try_cancel_iowq().
-+		 * Wait a little while and reap again since new polled
-+		 * IO may get resource from io_wq and be submitted.
- 		 */
--		io_wq_put_and_exit(wq);
--		tctx->io_wq = NULL;
-+		msleep(10);
-+	}
-+
-+	xa_for_each(&tctx->xa, index, node) {
-+		io_uring_del_tctx_node(index);
-+		cond_resched();
- 	}
-+	tctx->io_wq = NULL;
- }
- 
- void io_uring_unreg_ringfd(void)
+xfstests:
+    test/generic: 1 fails and 171 not run
+    test/xfs: 72 fails and 156 not run
+run the code before without this patchset, same result.
+I'll try to make the environment more right to run more tests here.
+
+
+Tested it with a liburing performance test:
+https://github.com/HowHsu/liburing/blob/getdents/test/getdents2.c
+
+The test is controlled by the below script[2] which runs getdents2.t 100
+times and calulate the avg.
+The result show that io_uring version is about 2.6% faster:
+
+note:
+[1] the number of getdents call/request in io_uring and normal sync version
+are made sure to be same beforehand.
+
+[2] run_getdents.py
+
+```python3
+
+import subprocess
+
+N = 100
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "sync"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of sync:", average)
+
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "iouring"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of iouring:", average)
+
+```
+
+v4->v5:
+ - move atime update to the beginning of getdents operation
+ - trylock for i_rwsem
+ - nowait semantics for involved xfs journal stuff
+
+v3->v4:
+ - add Dave's xfs nowait code and fix a deadlock problem, with some code
+   style tweak.
+ - disable fixed file to avoid a race problem for now
+ - add a test program.
+
+v2->v3:
+ - removed the kernfs patches
+ - add f_pos_lock logic
+ - remove the "reduce last EOF getdents try" optimization since
+   Dominique reports that doesn't make difference
+ - remove the rewind logic, I think the right way is to introduce lseek
+   to io_uring not to patch this logic to getdents.
+ - add Singed-off-by of Stefan Roesch for patch 1 since checkpatch
+   complained that Co-developed-by someone should be accompanied with
+   Signed-off-by same person, I can remove them if Stefan thinks that's
+   not proper.
+
+
+Dominique Martinet (1):
+  fs: split off vfs_getdents function of getdents64 syscall
+
+Hao Xu (28):
+  xfs: rename XBF_TRYLOCK to XBF_NOWAIT
+  xfs: add NOWAIT semantics for readdir
+  vfs: add nowait flag for struct dir_context
+  vfs: add a vfs helper for io_uring file pos lock
+  vfs: add file_pos_unlock() for io_uring usage
+  vfs: add a nowait parameter for touch_atime()
+  vfs: add nowait parameter for file_accessed()
+  vfs: move file_accessed() to the beginning of iterate_dir()
+  vfs: add S_NOWAIT for nowait time update
+  vfs: trylock inode->i_rwsem in iterate_dir() to support nowait
+  xfs: enforce GFP_NOIO implicitly during nowait time update
+  xfs: make xfs_trans_alloc() support nowait semantics
+  xfs: support nowait for xfs_log_reserve()
+  xfs: don't wait for free space in xlog_grant_head_check() in nowait
+    case
+  xfs: add nowait parameter for xfs_inode_item_init()
+  xfs: make xfs_trans_ijoin() error out -EAGAIN
+  xfs: set XBF_NOWAIT for xfs_buf_read_map if necessary
+  xfs: support nowait memory allocation in _xfs_buf_alloc()
+  xfs: distinguish error type of memory allocation failure for nowait
+    case
+  xfs: return -EAGAIN when bulk memory allocation fails in nowait case
+  xfs: comment page allocation for nowait case in xfs_buf_find_insert()
+  xfs: don't print warn info for -EAGAIN error in  xfs_buf_get_map()
+  xfs: support nowait for xfs_buf_read_map()
+  xfs: support nowait for xfs_buf_item_init()
+  xfs: return -EAGAIN when nowait meets sync in transaction commit
+  xfs: add a comment for xlog_kvmalloc()
+  xfs: support nowait semantics for xc_ctx_lock in xlog_cil_commit()
+  io_uring: add support for getdents
+
+ arch/s390/hypfs/inode.c         |  2 +-
+ block/fops.c                    |  2 +-
+ fs/btrfs/file.c                 |  2 +-
+ fs/btrfs/inode.c                |  2 +-
+ fs/cachefiles/namei.c           |  2 +-
+ fs/coda/dir.c                   |  4 +--
+ fs/ecryptfs/file.c              |  4 +--
+ fs/ext2/file.c                  |  4 +--
+ fs/ext4/file.c                  |  6 ++--
+ fs/f2fs/file.c                  |  4 +--
+ fs/file.c                       | 13 +++++++
+ fs/fuse/dax.c                   |  2 +-
+ fs/fuse/file.c                  |  4 +--
+ fs/gfs2/file.c                  |  2 +-
+ fs/hugetlbfs/inode.c            |  2 +-
+ fs/inode.c                      | 10 +++---
+ fs/internal.h                   |  8 +++++
+ fs/namei.c                      |  4 +--
+ fs/nfsd/vfs.c                   |  2 +-
+ fs/nilfs2/file.c                |  2 +-
+ fs/orangefs/file.c              |  2 +-
+ fs/orangefs/inode.c             |  2 +-
+ fs/overlayfs/file.c             |  2 +-
+ fs/overlayfs/inode.c            |  2 +-
+ fs/pipe.c                       |  2 +-
+ fs/ramfs/file-nommu.c           |  2 +-
+ fs/readdir.c                    | 61 +++++++++++++++++++++++++--------
+ fs/smb/client/cifsfs.c          |  2 +-
+ fs/splice.c                     |  2 +-
+ fs/stat.c                       |  2 +-
+ fs/ubifs/file.c                 |  2 +-
+ fs/udf/file.c                   |  2 +-
+ fs/xfs/libxfs/xfs_alloc.c       |  2 +-
+ fs/xfs/libxfs/xfs_attr_remote.c |  2 +-
+ fs/xfs/libxfs/xfs_btree.c       |  2 +-
+ fs/xfs/libxfs/xfs_da_btree.c    | 16 +++++++++
+ fs/xfs/libxfs/xfs_da_btree.h    |  1 +
+ fs/xfs/libxfs/xfs_dir2_block.c  |  7 ++--
+ fs/xfs/libxfs/xfs_dir2_priv.h   |  2 +-
+ fs/xfs/libxfs/xfs_shared.h      |  2 ++
+ fs/xfs/libxfs/xfs_trans_inode.c | 12 +++++--
+ fs/xfs/scrub/dir.c              |  2 +-
+ fs/xfs/scrub/readdir.c          |  2 +-
+ fs/xfs/scrub/repair.c           |  2 +-
+ fs/xfs/xfs_buf.c                | 43 +++++++++++++++++------
+ fs/xfs/xfs_buf.h                |  4 +--
+ fs/xfs/xfs_buf_item.c           |  9 +++--
+ fs/xfs/xfs_buf_item.h           |  2 +-
+ fs/xfs/xfs_buf_item_recover.c   |  2 +-
+ fs/xfs/xfs_dir2_readdir.c       | 49 ++++++++++++++++++++------
+ fs/xfs/xfs_dquot.c              |  2 +-
+ fs/xfs/xfs_file.c               |  6 ++--
+ fs/xfs/xfs_inode.c              | 27 +++++++++++++++
+ fs/xfs/xfs_inode.h              | 17 +++++----
+ fs/xfs/xfs_inode_item.c         | 12 ++++---
+ fs/xfs/xfs_inode_item.h         |  3 +-
+ fs/xfs/xfs_iops.c               | 31 ++++++++++++++---
+ fs/xfs/xfs_log.c                | 33 ++++++++++++------
+ fs/xfs/xfs_log.h                |  5 +--
+ fs/xfs/xfs_log_cil.c            | 17 +++++++--
+ fs/xfs/xfs_log_priv.h           |  4 +--
+ fs/xfs/xfs_trans.c              | 44 ++++++++++++++++++++----
+ fs/xfs/xfs_trans.h              |  2 +-
+ fs/xfs/xfs_trans_buf.c          | 18 ++++++++--
+ fs/zonefs/file.c                |  4 +--
+ include/linux/file.h            |  7 ++++
+ include/linux/fs.h              | 16 +++++++--
+ include/uapi/linux/io_uring.h   |  1 +
+ io_uring/fs.c                   | 53 ++++++++++++++++++++++++++++
+ io_uring/fs.h                   |  3 ++
+ io_uring/opdef.c                |  8 +++++
+ kernel/bpf/inode.c              |  4 +--
+ mm/filemap.c                    |  8 ++---
+ mm/shmem.c                      |  6 ++--
+ net/unix/af_unix.c              |  4 +--
+ 75 files changed, 499 insertions(+), 161 deletions(-)
+
 -- 
-2.40.1
+2.25.1
 

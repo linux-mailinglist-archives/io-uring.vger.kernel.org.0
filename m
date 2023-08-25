@@ -2,29 +2,29 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD02788B44
-	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 16:12:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 036E3788B50
+	for <lists+io-uring@lfdr.de>; Fri, 25 Aug 2023 16:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243278AbjHYOLw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 25 Aug 2023 10:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60934 "EHLO
+        id S242599AbjHYOMX (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 25 Aug 2023 10:12:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343782AbjHYOLj (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 10:11:39 -0400
-Received: from out-247.mta1.migadu.com (out-247.mta1.migadu.com [IPv6:2001:41d0:203:375::f7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3172D57;
-        Fri, 25 Aug 2023 07:11:23 -0700 (PDT)
+        with ESMTP id S1343641AbjHYOL5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 25 Aug 2023 10:11:57 -0400
+Received: from out-245.mta1.migadu.com (out-245.mta1.migadu.com [IPv6:2001:41d0:203:375::f5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4A22D69;
+        Fri, 25 Aug 2023 07:11:31 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1692972321;
+        t=1692972337;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6/Nd9xxoGpB2Y5m9xwXDJRTcGKza/1aMnRr8dKaa6VQ=;
-        b=KEbezTf0obDqS0d0+ZY03Au9A3+XAlHMaifao/gSyVuoHlKJlTUkwmI81DvHZmrTrUQaLF
-        sGTDWP5rChj2LFxWYHnJBky5ZudbW2OzCc+00JgxX/lbJXlYqo7/5HQVTOk8DmfuG/wY54
-        UCC6hfeA7Mu6K3Y30dgBdV885aCoMfc=
+        bh=mjhC+caj2gJRQH+sSsUlDYCC/6KksdCJUKl454sdMkA=;
+        b=O2I4LuIVYgSn+nmzJUq/UHofHubEntakWSPFjqloiwwujETAFgWOGN3xteSPe9gSVMqAFq
+        d8hRn0Wa7uhhjg2GTvasuKf8CHjMi2bI9Lkmg+s4bspXsO5Xaxy412PPH/FB0SLGDG9CfT
+        9ayHr7HUCratE15Bg5Ihc+obof/8RuQ=
 From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
@@ -46,9 +46,9 @@ Cc:     Dominique Martinet <asmadeus@codewreck.org>,
         devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
         Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 25/29] xfs: support nowait for xfs_buf_item_init()
-Date:   Fri, 25 Aug 2023 21:54:27 +0800
-Message-Id: <20230825135431.1317785-26-hao.xu@linux.dev>
+Subject: [PATCH 26/29] xfs: return -EAGAIN when nowait meets sync in transaction commit
+Date:   Fri, 25 Aug 2023 21:54:28 +0800
+Message-Id: <20230825135431.1317785-27-hao.xu@linux.dev>
 In-Reply-To: <20230825135431.1317785-1-hao.xu@linux.dev>
 References: <20230825135431.1317785-1-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -65,124 +65,44 @@ X-Mailing-List: io-uring@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-support nowait for xfs_buf_item_init() and error out -EAGAIN to
-_xfs_trans_bjoin() when it would block.
+if the log transaction is a sync one, let's fail the nowait try and
+return -EAGAIN directly since sync transaction means blocked by IO.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/xfs/xfs_buf_item.c         |  9 +++++++--
- fs/xfs/xfs_buf_item.h         |  2 +-
- fs/xfs/xfs_buf_item_recover.c |  2 +-
- fs/xfs/xfs_trans_buf.c        | 16 +++++++++++++---
- 4 files changed, 22 insertions(+), 7 deletions(-)
+ fs/xfs/xfs_trans.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
-index 023d4e0385dd..b1e63137d65b 100644
---- a/fs/xfs/xfs_buf_item.c
-+++ b/fs/xfs/xfs_buf_item.c
-@@ -827,7 +827,8 @@ xfs_buf_item_free_format(
- int
- xfs_buf_item_init(
- 	struct xfs_buf	*bp,
--	struct xfs_mount *mp)
-+	struct xfs_mount *mp,
-+	bool   nowait)
- {
- 	struct xfs_buf_log_item	*bip = bp->b_log_item;
- 	int			chunks;
-@@ -847,7 +848,11 @@ xfs_buf_item_init(
- 		return 0;
+diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+index 7988b4c7f36e..f1f84a3dd456 100644
+--- a/fs/xfs/xfs_trans.c
++++ b/fs/xfs/xfs_trans.c
+@@ -968,12 +968,24 @@ __xfs_trans_commit(
+ 	xfs_csn_t		commit_seq = 0;
+ 	int			error = 0;
+ 	int			sync = tp->t_flags & XFS_TRANS_SYNC;
++	bool			nowait = tp->t_flags & XFS_TRANS_NOWAIT;
++	bool			perm_log = tp->t_flags & XFS_TRANS_PERM_LOG_RES;
+ 
+ 	trace_xfs_trans_commit(tp, _RET_IP_);
+ 
++	if (nowait && sync) {
++		/*
++		 * Currently nowait is only from xfs_vn_update_time()
++		 * so perm_log is always false here, but let's make
++		 * code general.
++		 */
++		if (perm_log)
++			xfs_defer_cancel(tp);
++		goto out_unreserve;
++	}
+ 	error = xfs_trans_run_precommits(tp);
+ 	if (error) {
+-		if (tp->t_flags & XFS_TRANS_PERM_LOG_RES)
++		if (perm_log)
+ 			xfs_defer_cancel(tp);
+ 		goto out_unreserve;
  	}
- 
--	bip = kmem_cache_zalloc(xfs_buf_item_cache, GFP_KERNEL | __GFP_NOFAIL);
-+	bip = kmem_cache_zalloc(xfs_buf_item_cache,
-+				GFP_KERNEL | (nowait ? 0 : __GFP_NOFAIL));
-+	if (!bip)
-+		return -EAGAIN;
-+
- 	xfs_log_item_init(mp, &bip->bli_item, XFS_LI_BUF, &xfs_buf_item_ops);
- 	bip->bli_buf = bp;
- 
-diff --git a/fs/xfs/xfs_buf_item.h b/fs/xfs/xfs_buf_item.h
-index 4d8a6aece995..b1daf8988280 100644
---- a/fs/xfs/xfs_buf_item.h
-+++ b/fs/xfs/xfs_buf_item.h
-@@ -47,7 +47,7 @@ struct xfs_buf_log_item {
- 	struct xfs_buf_log_format __bli_format;	/* embedded in-log header */
- };
- 
--int	xfs_buf_item_init(struct xfs_buf *, struct xfs_mount *);
-+int	xfs_buf_item_init(struct xfs_buf *bp, struct xfs_mount *mp, bool nowait);
- void	xfs_buf_item_done(struct xfs_buf *bp);
- void	xfs_buf_item_relse(struct xfs_buf *);
- bool	xfs_buf_item_put(struct xfs_buf_log_item *);
-diff --git a/fs/xfs/xfs_buf_item_recover.c b/fs/xfs/xfs_buf_item_recover.c
-index 43167f543afc..aa64d5a499d6 100644
---- a/fs/xfs/xfs_buf_item_recover.c
-+++ b/fs/xfs/xfs_buf_item_recover.c
-@@ -429,7 +429,7 @@ xlog_recover_validate_buf_type(
- 		struct xfs_buf_log_item	*bip;
- 
- 		bp->b_flags |= _XBF_LOGRECOVERY;
--		xfs_buf_item_init(bp, mp);
-+		xfs_buf_item_init(bp, mp, false);
- 		bip = bp->b_log_item;
- 		bip->bli_item.li_lsn = current_lsn;
- 	}
-diff --git a/fs/xfs/xfs_trans_buf.c b/fs/xfs/xfs_trans_buf.c
-index 016371f58f26..a1e4f2e8629a 100644
---- a/fs/xfs/xfs_trans_buf.c
-+++ b/fs/xfs/xfs_trans_buf.c
-@@ -57,13 +57,14 @@ xfs_trans_buf_item_match(
-  * If the buffer does not yet have a buf log item associated with it,
-  * then allocate one for it.  Then add the buf item to the transaction.
-  */
--STATIC void
-+STATIC int
- _xfs_trans_bjoin(
- 	struct xfs_trans	*tp,
- 	struct xfs_buf		*bp,
- 	int			reset_recur)
- {
- 	struct xfs_buf_log_item	*bip;
-+	int ret;
- 
- 	ASSERT(bp->b_transp == NULL);
- 
-@@ -72,7 +73,11 @@ _xfs_trans_bjoin(
- 	 * it doesn't have one yet, then allocate one and initialize it.
- 	 * The checks to see if one is there are in xfs_buf_item_init().
- 	 */
--	xfs_buf_item_init(bp, tp->t_mountp);
-+	ret = xfs_buf_item_init(bp, tp->t_mountp,
-+				tp->t_flags & XFS_TRANS_NOWAIT);
-+	if (ret < 0)
-+		return ret;
-+
- 	bip = bp->b_log_item;
- 	ASSERT(!(bip->bli_flags & XFS_BLI_STALE));
- 	ASSERT(!(bip->__bli_format.blf_flags & XFS_BLF_CANCEL));
-@@ -92,6 +97,7 @@ _xfs_trans_bjoin(
- 	xfs_trans_add_item(tp, &bip->bli_item);
- 	bp->b_transp = tp;
- 
-+	return 0;
- }
- 
- void
-@@ -309,7 +315,11 @@ xfs_trans_read_buf_map(
- 	}
- 
- 	if (tp) {
--		_xfs_trans_bjoin(tp, bp, 1);
-+		error = _xfs_trans_bjoin(tp, bp, 1);
-+		if (error) {
-+			xfs_buf_relse(bp);
-+			return error;
-+		}
- 		trace_xfs_trans_read_buf(bp->b_log_item);
- 	}
- 	ASSERT(bp->b_ops != NULL || ops == NULL);
 -- 
 2.25.1
 

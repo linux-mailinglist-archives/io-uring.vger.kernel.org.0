@@ -2,185 +2,217 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF9C7899A8
-	for <lists+io-uring@lfdr.de>; Sun, 27 Aug 2023 00:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC85789ECA
+	for <lists+io-uring@lfdr.de>; Sun, 27 Aug 2023 15:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229748AbjHZWBE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 26 Aug 2023 18:01:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
+        id S229845AbjH0NaY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 27 Aug 2023 09:30:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbjHZWA6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 26 Aug 2023 18:00:58 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF65E7F
-        for <io-uring@vger.kernel.org>; Sat, 26 Aug 2023 15:00:55 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-68a440a8a20so1824143b3a.3
-        for <io-uring@vger.kernel.org>; Sat, 26 Aug 2023 15:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20221208.gappssmtp.com; s=20221208; t=1693087255; x=1693692055;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7azz3BaWWu+Ou6snFanU3MwCuJ71hI8EHjpQM1cE4IE=;
-        b=GSeB/sW0UoYLUApkNCvvfK0cJRWinGTGqHVBKVZdcST3cMu3U1ZyVh3m0n0ZGsmoOp
-         LRQBDbtxxaWx4g0JsZnMLYnkUYt8pSw8Z1da7sUaCCu8vCGIzoHM+/kNpsYsgZOy/Dys
-         AUhH6WddMwh22kMyI2oUqWhbUwKoQOFkk4ujr4KQfRNhCnaJnPBvwCvEJLL6KiTSi3Z/
-         7uCLR51BI54rC8HJo1uvhSDl65fUITmmS6axX34Mn6QmqBS2bmgxmXfvQi1anZSGpbKa
-         zkfpwXXJqq6SGrjO8imCnleUnZA/Lt+cbe6iv/VliUzIwAb+iQWQb5VjSuZifec6U3Un
-         ViUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693087255; x=1693692055;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7azz3BaWWu+Ou6snFanU3MwCuJ71hI8EHjpQM1cE4IE=;
-        b=h1Z+ciEoFzyaj4WznDvq3VhBhJWQ9sYnzPyLrCpMJYXPGZrtfStz9W0vnp8asEebwG
-         hG2MOpqB7/QPmiP5/a0lGGsgFpo2nWsaQ786/eQA9ybqb5VmEMS3e1GlVpwYRhb5YLY0
-         UU4oWAyyvNcD4ct9B8sUWBvAB1kGAMUcuL54BEH5NckNJ4qDLaH9PaH5+whhFDvkcuYv
-         Rdmm6QcAhPtzURcU6+1oxDdb4qvE0BfR9NJ6SDISgRLKAUJ4ng+n10HoZ0xM37dWPsWD
-         1JrJj4nlRIcleqmaXgRgEyGtv/tD19DyGmCgiCTexnLRwbGXJRMzG4ZDnG2C8qoZyK4D
-         CMCw==
-X-Gm-Message-State: AOJu0YynXsorsBW+BJB0SmDFnfdm1PrG3kiKuUOchHWFmLUuX6SxUDM5
-        CNS/H39d1rvFaL5xGezS5YrxeA==
-X-Google-Smtp-Source: AGHT+IG/m5rR/TeDxkCRcB4UktHPQmER3sjvPuJ2GnXZQmT9g0N72yIOzYo5x5wCyoENyIkJu0ckbw==
-X-Received: by 2002:a05:6a00:84f:b0:68b:e801:e34d with SMTP id q15-20020a056a00084f00b0068be801e34dmr11354968pfk.29.1693087255036;
-        Sat, 26 Aug 2023 15:00:55 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c085:21c8::176d? ([2620:10d:c090:400::5:17f])
-        by smtp.gmail.com with ESMTPSA id m9-20020a637d49000000b0054fd46531a1sm4118630pgn.5.2023.08.26.15.00.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Aug 2023 15:00:54 -0700 (PDT)
-Message-ID: <32b0e155-ce85-609e-8b1f-108f4b1bf59e@davidwei.uk>
-Date:   Sat, 26 Aug 2023 15:00:52 -0700
+        with ESMTP id S230269AbjH0NaP (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 27 Aug 2023 09:30:15 -0400
+Received: from out-251.mta1.migadu.com (out-251.mta1.migadu.com [95.215.58.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD89CA
+        for <io-uring@vger.kernel.org>; Sun, 27 Aug 2023 06:30:10 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1693143008;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=hH9Z1s3VyDbNI+o0MhVSnq4vtAmGphAu/NP9Lh4Iqho=;
+        b=D4glas+PskglEfull56Ie/EaUGDVyzdgOX1ZIuTOt4hIdaNgYSKi8HuTaE82KbnTe8VrVg
+        RYQOGm2sDsmgjyTzfYWA88b8swvCAy1S+AvUnlRILYK1CLtNBRiYb+57DIqLl/tE9VNEa0
+        45zeea98vHJXfwWbVyE91LWfpk5toEg=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH v6 00/11] io_uring getdents
+Date:   Sun, 27 Aug 2023 21:28:24 +0800
+Message-Id: <20230827132835.1373581-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH 04/11] io_uring: setup ZC for an RX queue when registering
- an ifq
-To:     David Ahern <dsahern@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        Mina Almasry <almasrymina@google.com>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20230826011954.1801099-1-dw@davidwei.uk>
- <20230826011954.1801099-5-dw@davidwei.uk>
- <d307c2a5-3d30-3e86-c376-e1c5faf19683@kernel.org>
-From:   David Wei <dw@davidwei.uk>
-In-Reply-To: <d307c2a5-3d30-3e86-c376-e1c5faf19683@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 25/08/2023 19:26, David Ahern wrote:
-> On 8/25/23 6:19 PM, David Wei wrote:
->> diff --git a/io_uring/zc_rx.c b/io_uring/zc_rx.c
->> index 6c57c9b06e05..8cc66731af5b 100644
->> --- a/io_uring/zc_rx.c
->> +++ b/io_uring/zc_rx.c
->> @@ -10,6 +11,35 @@
->>  #include "kbuf.h"
->>  #include "zc_rx.h"
->>  
->> +typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
->> +
->> +static int __io_queue_mgmt(struct net_device *dev, struct io_zc_rx_ifq *ifq,
->> +			   u16 queue_id)
->> +{
->> +	struct netdev_bpf cmd;
->> +	bpf_op_t ndo_bpf;
->> +
->> +	ndo_bpf = dev->netdev_ops->ndo_bpf;
-> 
-> This is not bpf related, so it seems wrong to be overloading this ndo.
+From: Hao Xu <howeyxu@tencent.com>
 
-Agreed. I believe the original author (Jonathan) was inspired by
-XDP_SETUP_XSK_POOL. I would also prefer a better way of setting up an RX queue
-for ZC. Mina's proposal I think uses netlink for this.
+This series introduce getdents64 to io_uring, the code logic is similar
+with the snychronized version's. It first try nowait issue, and offload
+it to io-wq threads if the first try fails.
 
-Do you have any other suggestions? We want to keep resource registration
-inline, so we need to be able to call it from within io_uring.
+Patch1 and Patch2 are some preparation
+Patch3 supports nowait for xfs getdents code
+Patch4-11 are vfs change, include adding helpers and trylock for locks
 
-> 
-> 
->> +	if (!ndo_bpf)
->> +		return -EINVAL;
->> +
->> +	cmd.command = XDP_SETUP_ZC_RX;
->> +	cmd.zc_rx.ifq = ifq;
->> +	cmd.zc_rx.queue_id = queue_id;
->> +
->> +	return ndo_bpf(dev, &cmd);
->> +}
->> +
->> +static int io_open_zc_rxq(struct io_zc_rx_ifq *ifq)
->> +{
->> +	return __io_queue_mgmt(ifq->dev, ifq, ifq->if_rxq_id);
->> +}
->> +
->> +static int io_close_zc_rxq(struct io_zc_rx_ifq *ifq)
->> +{
->> +	return __io_queue_mgmt(ifq->dev, NULL, ifq->if_rxq_id);
->> +}
->> +
->>  static struct io_zc_rx_ifq *io_zc_rx_ifq_alloc(struct io_ring_ctx *ctx)
->>  {
->>  	struct io_zc_rx_ifq *ifq;
->> @@ -19,12 +49,17 @@ static struct io_zc_rx_ifq *io_zc_rx_ifq_alloc(struct io_ring_ctx *ctx)
->>  		return NULL;
->>  
->>  	ifq->ctx = ctx;
->> +	ifq->if_rxq_id = -1;
->>  
->>  	return ifq;
->>  }
->>  
->>  static void io_zc_rx_ifq_free(struct io_zc_rx_ifq *ifq)
->>  {
->> +	if (ifq->if_rxq_id != -1)
->> +		io_close_zc_rxq(ifq);
->> +	if (ifq->dev)
->> +		dev_put(ifq->dev);
->>  	io_free_rbuf_ring(ifq);
->>  	kfree(ifq);
->>  }
->> @@ -41,17 +76,22 @@ int io_register_zc_rx_ifq(struct io_ring_ctx *ctx,
->>  		return -EFAULT;
->>  	if (ctx->ifq)
->>  		return -EBUSY;
->> +	if (reg.if_rxq_id == -1)
->> +		return -EINVAL;
->>  
->>  	ifq = io_zc_rx_ifq_alloc(ctx);
->>  	if (!ifq)
->>  		return -ENOMEM;
->>  
->> -	/* TODO: initialise network interface */
->> -
->>  	ret = io_allocate_rbuf_ring(ifq, &reg);
->>  	if (ret)
->>  		goto err;
->>  
->> +	ret = -ENODEV;
->> +	ifq->dev = dev_get_by_index(&init_net, reg.if_idx);
-> 
-> What's the plan for other namespaces? Ideally the device bind comes from
-> a socket and that gives you the namespace.
+Tests I've done:
+A liburing test case for functional test:
+https://github.com/HowHsu/liburing/commit/39dc9a8e19c06a8cebf8c2301b85320eb45c061e?diff=unified
 
-Sorry, I did not consider namespaces yet. I'll look into how namespaces work
-and then get back to you.
+Tested it with a liburing performance test:
+https://github.com/HowHsu/liburing/blob/getdents/test/getdents2.c
 
-> 
->> +	if (!ifq->dev)
->> +		goto err;
->> +
->>  	/* TODO: map zc region and initialise zc pool */
->>  
->>  	ifq->rq_entries = reg.rq_entries;
-> 
-> 
+The test is controlled by the below script[2] which runs getdents2.t 100
+times and calulate the avg.
+The result show that io_uring version is about 2.6% faster:
+
+note:
+[1] the number of getdents call/request in io_uring and normal sync version
+are made sure to be same beforehand.
+
+[2] run_getdents.py
+
+```python3
+
+import subprocess
+
+N = 100
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "sync"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of sync:", average)
+
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "iouring"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of iouring:", average)
+
+```
+
+v5->v6:
+ - remove xfs journal stuff since there are fundamental issues in the
+   design.
+
+v4->v5:
+ - move atime update to the beginning of getdents operation
+ - trylock for i_rwsem
+ - nowait semantics for involved xfs journal stuff
+
+v3->v4:
+ - add Dave's xfs nowait code and fix a deadlock problem, with some code
+   style tweak.
+ - disable fixed file to avoid a race problem for now
+ - add a test program.
+
+v2->v3:
+ - removed the kernfs patches
+ - add f_pos_lock logic
+ - remove the "reduce last EOF getdents try" optimization since
+   Dominique reports that doesn't make difference
+ - remove the rewind logic, I think the right way is to introduce lseek
+   to io_uring not to patch this logic to getdents.
+ - add Singed-off-by of Stefan Roesch for patch 1 since checkpatch
+   complained that Co-developed-by someone should be accompanied with
+   Signed-off-by same person, I can remove them if Stefan thinks that's
+   not proper.
+
+
+Dominique Martinet (1):
+  fs: split off vfs_getdents function of getdents64 syscall
+
+Hao Xu (10):
+  xfs: add NOWAIT semantics for readdir
+  vfs: add nowait flag for struct dir_context
+  vfs: add a vfs helper for io_uring file pos lock
+  vfs: add file_pos_unlock() for io_uring usage
+  vfs: add a nowait parameter for touch_atime()
+  vfs: add nowait parameter for file_accessed()
+  vfs: move file_accessed() to the beginning of iterate_dir()
+  vfs: error out -EAGAIN if atime needs to be updated
+  vfs: trylock inode->i_rwsem in iterate_dir() to support nowait
+  io_uring: add support for getdents
+
+ arch/s390/hypfs/inode.c        |  2 +-
+ block/fops.c                   |  2 +-
+ fs/btrfs/file.c                |  2 +-
+ fs/btrfs/inode.c               |  2 +-
+ fs/cachefiles/namei.c          |  2 +-
+ fs/coda/dir.c                  |  4 +--
+ fs/ecryptfs/file.c             |  4 +--
+ fs/ext2/file.c                 |  4 +--
+ fs/ext4/file.c                 |  6 ++--
+ fs/f2fs/file.c                 |  4 +--
+ fs/file.c                      | 13 ++++++++
+ fs/fuse/dax.c                  |  2 +-
+ fs/fuse/file.c                 |  4 +--
+ fs/gfs2/file.c                 |  2 +-
+ fs/hugetlbfs/inode.c           |  2 +-
+ fs/inode.c                     | 10 ++++--
+ fs/internal.h                  |  8 +++++
+ fs/namei.c                     |  4 +--
+ fs/nfsd/vfs.c                  |  2 +-
+ fs/nilfs2/file.c               |  2 +-
+ fs/orangefs/file.c             |  2 +-
+ fs/orangefs/inode.c            |  2 +-
+ fs/overlayfs/file.c            |  2 +-
+ fs/overlayfs/inode.c           |  2 +-
+ fs/pipe.c                      |  2 +-
+ fs/ramfs/file-nommu.c          |  2 +-
+ fs/readdir.c                   | 61 ++++++++++++++++++++++++++--------
+ fs/smb/client/cifsfs.c         |  2 +-
+ fs/splice.c                    |  2 +-
+ fs/stat.c                      |  2 +-
+ fs/ubifs/file.c                |  2 +-
+ fs/udf/file.c                  |  2 +-
+ fs/xfs/libxfs/xfs_da_btree.c   | 16 +++++++++
+ fs/xfs/libxfs/xfs_da_btree.h   |  1 +
+ fs/xfs/libxfs/xfs_dir2_block.c |  7 ++--
+ fs/xfs/libxfs/xfs_dir2_priv.h  |  2 +-
+ fs/xfs/scrub/dir.c             |  2 +-
+ fs/xfs/scrub/readdir.c         |  2 +-
+ fs/xfs/xfs_dir2_readdir.c      | 49 +++++++++++++++++++++------
+ fs/xfs/xfs_file.c              |  6 ++--
+ fs/xfs/xfs_inode.c             | 27 +++++++++++++++
+ fs/xfs/xfs_inode.h             | 17 ++++++----
+ fs/zonefs/file.c               |  4 +--
+ include/linux/file.h           |  7 ++++
+ include/linux/fs.h             | 15 +++++++--
+ include/uapi/linux/io_uring.h  |  1 +
+ io_uring/fs.c                  | 53 +++++++++++++++++++++++++++++
+ io_uring/fs.h                  |  3 ++
+ io_uring/opdef.c               |  8 +++++
+ kernel/bpf/inode.c             |  4 +--
+ mm/filemap.c                   |  8 ++---
+ mm/shmem.c                     |  6 ++--
+ net/unix/af_unix.c             |  4 +--
+ 53 files changed, 310 insertions(+), 96 deletions(-)
+
+-- 
+2.25.1
+

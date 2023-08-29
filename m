@@ -2,31 +2,31 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7180F78C3AD
-	for <lists+io-uring@lfdr.de>; Tue, 29 Aug 2023 13:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 240D078C4D1
+	for <lists+io-uring@lfdr.de>; Tue, 29 Aug 2023 15:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232365AbjH2Lxw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 29 Aug 2023 07:53:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
+        id S233163AbjH2NGE (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 29 Aug 2023 09:06:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232475AbjH2Lxa (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Aug 2023 07:53:30 -0400
+        with ESMTP id S235541AbjH2NFb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Aug 2023 09:05:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF84194;
-        Tue, 29 Aug 2023 04:53:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FFCA184;
+        Tue, 29 Aug 2023 06:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YZxpYOTF14BVcouqFhbahruwZXBLTSy2TCKsEoryGgA=; b=kNMS0YeYJE43XRXxkVUmLf2G+X
-        0F+Ci8x/vmTvip6eYnQqjlZo85hPiq+1XBtqpwy24WfkqxJcN3oDroYdU0hmUGTZO8DmOvrKcLnsA
-        I7wiz/QgNWUfJcZJ1P+jwtCGJuvaBfIm6i+nYBm4G4q1TzqZrEd8vmeeXhUF+nfDcEVXWTUFH8hQX
-        gmgzKK6rDBAyLZFUyKz32+/IHnRsGl+xYuxNBS8JVzpCmXVMJxm/LAsn2AL2YmcWHqJedjjw347sz
-        rnlxqkUfOTw1wHOoS2VuCxy8fDxR1A9rikvDXoQ9fhtzraRL7eHJTnjVX6n6aHUnUp8GZkipnoXzv
-        988YMF3g==;
+        bh=RchKoATVAdQvPJfSjQ7igQ4w+5FVPwMefhSLf5vYpSI=; b=Q3QmRgXTehCOZCVueX+FS2Az5N
+        PVqmWnEC5SOyltZJNMDkbuPj3BuxIKobdTkUGJdkwt9An23qab7RWIeUTJvkRcM5ZQw7A9VajHpfv
+        K7r2l3ZZ2pGC+tetoYQU12TmTvlZI3sm3ayVKtCD8x7/yd2j9SuUz7gnHbMb8LXGAJC6qfT96aNHD
+        /+KAN9szQKpq1/b+zh8evtWeBszURne3cpQtIIZ5DUWss+rP/RkNTx5Y/tCCASZPZaSLUEyAkYJWx
+        0SrCGJoWwn5s3UmnWTZbObVE6DrneAPDreiurlPZ6M22SpYEkwQtVmJFqXgm29PIZAfXouLOFvP7I
+        44OUuuBQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qaxHQ-006P4x-1X; Tue, 29 Aug 2023 11:53:08 +0000
-Date:   Tue, 29 Aug 2023 12:53:07 +0100
+        id 1qayP8-006i8Z-JC; Tue, 29 Aug 2023 13:05:10 +0000
+Date:   Tue, 29 Aug 2023 14:05:10 +0100
 From:   Matthew Wilcox <willy@infradead.org>
 To:     Hao Xu <hao.xu@linux.dev>
 Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
@@ -49,16 +49,16 @@ Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
         Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
-Message-ID: <ZO3cI+DkotHQo3md@casper.infradead.org>
+Subject: Re: [PATCH 02/11] xfs: add NOWAIT semantics for readdir
+Message-ID: <ZO3tBqJLtRwSYrEr@casper.infradead.org>
 References: <20230827132835.1373581-1-hao.xu@linux.dev>
- <20230827132835.1373581-8-hao.xu@linux.dev>
- <ZOvA5DJDZN0FRymp@casper.infradead.org>
- <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
+ <20230827132835.1373581-3-hao.xu@linux.dev>
+ <ZOu1xYS6LRmPgEiV@casper.infradead.org>
+ <ca10040f-b7fa-7c43-1c89-6706d13b2747@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
+In-Reply-To: <ca10040f-b7fa-7c43-1c89-6706d13b2747@linux.dev>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -68,31 +68,58 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Tue, Aug 29, 2023 at 03:46:13PM +0800, Hao Xu wrote:
-> On 8/28/23 05:32, Matthew Wilcox wrote:
-> > On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
-> > > From: Hao Xu <howeyxu@tencent.com>
-> > > 
-> > > Add a boolean parameter for file_accessed() to support nowait semantics.
-> > > Currently it is true only with io_uring as its initial caller.
+On Tue, Aug 29, 2023 at 03:41:43PM +0800, Hao Xu wrote:
+> On 8/28/23 04:44, Matthew Wilcox wrote:
+> > > @@ -391,10 +401,17 @@ xfs_dir2_leaf_getdents(
+> > >   				bp = NULL;
+> > >   			}
+> > > -			if (*lock_mode == 0)
+> > > -				*lock_mode = xfs_ilock_data_map_shared(dp);
+> > > +			if (*lock_mode == 0) {
+> > > +				*lock_mode =
+> > > +					xfs_ilock_data_map_shared_generic(dp,
+> > > +					ctx->flags & DIR_CONTEXT_F_NOWAIT);
+> > > +				if (!*lock_mode) {
+> > > +					error = -EAGAIN;
+> > > +					break;
+> > > +				}
+> > > +			}
 > > 
-> > So why do we need to do this as part of this series?  Apparently it
-> > hasn't caused any problems for filemap_read().
+> > 'generic' doesn't seem like a great suffix to mean 'takes nowait flag'.
+> > And this is far too far indented.
 > > 
+> > 			xfs_dir2_lock(dp, ctx, lock_mode);
+> > 
+> > with:
+> > 
+> > STATIC void xfs_dir2_lock(struct xfs_inode *dp, struct dir_context *ctx,
+> > 		unsigned int lock_mode)
+> > {
+> > 	if (*lock_mode)
+> > 		return;
+> > 	if (ctx->flags & DIR_CONTEXT_F_NOWAIT)
+> > 		return xfs_ilock_data_map_shared_nowait(dp);
+> > 	return xfs_ilock_data_map_shared(dp);
+> > }
+> > 
+> > ... which I think you can use elsewhere in this patch (reformat it to
+> > XFS coding style, of course).  And then you don't need
+> > xfs_ilock_data_map_shared_generic().
 > 
-> We need this parameter to indicate if nowait semantics should be enforced in
-> touch_atime(), There are locks and maybe IOs in it.
+> How about rename xfs_ilock_data_map_shared() to xfs_ilock_data_map_block()
+> and rename xfs_ilock_data_map_shared_generic() to
+> xfs_ilock_data_map_shared()?
+> 
+> STATIC void xfs_ilock_data_map_shared(struct xfs_inode *dp, struct
+> dir_context *ctx, unsigned int lock_mode)
+> {
+>  	if (*lock_mode)
+>  		return;
+>  	if (ctx->flags & DIR_CONTEXT_F_NOWAIT)
+>  		return xfs_ilock_data_map_shared_nowait(dp);
+>  	return xfs_ilock_data_map_shared_block(dp);
+> }
 
-That's not my point.  We currently call file_accessed() and
-touch_atime() for nowait reads and nowait writes.  You haven't done
-anything to fix those.
-
-I suspect you can trim this patchset down significantly by avoiding
-fixing the file_accessed() problem.  And then come back with a later
-patchset that fixes it for all nowait i/o.  Or do a separate prep series
-first that fixes it for the existing nowait users, and then a second
-series to do all the directory stuff.
-
-I'd do the first thing.  Just ignore the problem.  Directory atime
-updates cause I/O so rarely that you can afford to ignore it.  Almost
-everyone uses relatime or nodiratime.
+xfs_ilock_data_map_shared() is used for a lot of things which are not
+directories.  I think a new function name is appropriate, and that
+function name should include the word 'dir' in it somewhere.

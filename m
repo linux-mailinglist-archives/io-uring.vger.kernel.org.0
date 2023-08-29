@@ -2,34 +2,33 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E1A378BF8F
-	for <lists+io-uring@lfdr.de>; Tue, 29 Aug 2023 09:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7180F78C3AD
+	for <lists+io-uring@lfdr.de>; Tue, 29 Aug 2023 13:54:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233858AbjH2Hqy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 29 Aug 2023 03:46:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42200 "EHLO
+        id S232365AbjH2Lxw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 29 Aug 2023 07:53:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233965AbjH2Hqh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Aug 2023 03:46:37 -0400
-Received: from out-251.mta1.migadu.com (out-251.mta1.migadu.com [IPv6:2001:41d0:203:375::fb])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B788194;
-        Tue, 29 Aug 2023 00:46:34 -0700 (PDT)
-Message-ID: <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1693295192;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WP3nN15JcnIGn7wEIePFcf6LVOuPCzTP32Hu73YPviw=;
-        b=ngCnTfY2JVdB7UbTvhBxaE99SXYf68v1UOzv1oD4Q4J5vfDrhRAI+RinhUow/HJ/SENsM3
-        ljkpELTTwPgx4fdS1Wsi0U6qZJzH3KEWBSpgNNnZhZo9Ah7qcNPQhnBWxHwyd9Ba5JlzW/
-        R7n89/DPeOOyD3xIKShExED+0gXsmv8=
-Date:   Tue, 29 Aug 2023 15:46:13 +0800
-MIME-Version: 1.0
-Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
+        with ESMTP id S232475AbjH2Lxa (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Aug 2023 07:53:30 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF84194;
+        Tue, 29 Aug 2023 04:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=YZxpYOTF14BVcouqFhbahruwZXBLTSy2TCKsEoryGgA=; b=kNMS0YeYJE43XRXxkVUmLf2G+X
+        0F+Ci8x/vmTvip6eYnQqjlZo85hPiq+1XBtqpwy24WfkqxJcN3oDroYdU0hmUGTZO8DmOvrKcLnsA
+        I7wiz/QgNWUfJcZJ1P+jwtCGJuvaBfIm6i+nYBm4G4q1TzqZrEd8vmeeXhUF+nfDcEVXWTUFH8hQX
+        gmgzKK6rDBAyLZFUyKz32+/IHnRsGl+xYuxNBS8JVzpCmXVMJxm/LAsn2AL2YmcWHqJedjjw347sz
+        rnlxqkUfOTw1wHOoS2VuCxy8fDxR1A9rikvDXoQ9fhtzraRL7eHJTnjVX6n6aHUnUp8GZkipnoXzv
+        988YMF3g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qaxHQ-006P4x-1X; Tue, 29 Aug 2023 11:53:08 +0000
+Date:   Tue, 29 Aug 2023 12:53:07 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hao Xu <hao.xu@linux.dev>
 Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
@@ -50,36 +49,50 @@ Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
         Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
+Message-ID: <ZO3cI+DkotHQo3md@casper.infradead.org>
 References: <20230827132835.1373581-1-hao.xu@linux.dev>
  <20230827132835.1373581-8-hao.xu@linux.dev>
  <ZOvA5DJDZN0FRymp@casper.infradead.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <ZOvA5DJDZN0FRymp@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+ <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 8/28/23 05:32, Matthew Wilcox wrote:
-> On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> Add a boolean parameter for file_accessed() to support nowait semantics.
->> Currently it is true only with io_uring as its initial caller.
+On Tue, Aug 29, 2023 at 03:46:13PM +0800, Hao Xu wrote:
+> On 8/28/23 05:32, Matthew Wilcox wrote:
+> > On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
+> > > From: Hao Xu <howeyxu@tencent.com>
+> > > 
+> > > Add a boolean parameter for file_accessed() to support nowait semantics.
+> > > Currently it is true only with io_uring as its initial caller.
+> > 
+> > So why do we need to do this as part of this series?  Apparently it
+> > hasn't caused any problems for filemap_read().
+> > 
 > 
-> So why do we need to do this as part of this series?  Apparently it
-> hasn't caused any problems for filemap_read().
-> 
+> We need this parameter to indicate if nowait semantics should be enforced in
+> touch_atime(), There are locks and maybe IOs in it.
 
-We need this parameter to indicate if nowait semantics should be 
-enforced in touch_atime(), There are locks and maybe IOs in it.
+That's not my point.  We currently call file_accessed() and
+touch_atime() for nowait reads and nowait writes.  You haven't done
+anything to fix those.
 
+I suspect you can trim this patchset down significantly by avoiding
+fixing the file_accessed() problem.  And then come back with a later
+patchset that fixes it for all nowait i/o.  Or do a separate prep series
+first that fixes it for the existing nowait users, and then a second
+series to do all the directory stuff.
+
+I'd do the first thing.  Just ignore the problem.  Directory atime
+updates cause I/O so rarely that you can afford to ignore it.  Almost
+everyone uses relatime or nodiratime.

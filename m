@@ -2,73 +2,112 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D722978D2A1
-	for <lists+io-uring@lfdr.de>; Wed, 30 Aug 2023 05:59:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E5278D32B
+	for <lists+io-uring@lfdr.de>; Wed, 30 Aug 2023 08:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241995AbjH3D7Q (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 29 Aug 2023 23:59:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58352 "EHLO
+        id S240106AbjH3GMh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 30 Aug 2023 02:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242024AbjH3D6s (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 29 Aug 2023 23:58:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35936DB
-        for <io-uring@vger.kernel.org>; Tue, 29 Aug 2023 20:58:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BEE196226F
-        for <io-uring@vger.kernel.org>; Wed, 30 Aug 2023 03:58:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 34463C433C7;
-        Wed, 30 Aug 2023 03:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693367925;
-        bh=b3UU1DkylcVxUB7oBROG85Ui8SqopmVxU1uqJ+31ZVA=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=QMQguPhWubb49bbDD3CxB+vHAnzOpYXglt21GW9gNXlMe5xDykZdba/XjGHg6Xar5
-         HQYYsteaNWQnBUtrVADxNxMZjjKIrUwjWv8CaWmGkRgsSYn2MTUDtwH3eWNhQO6i/1
-         PPBlN17BXHGI58G0S/V0IJWh56bmPixvxMV4tELvhVWt4j9OQM6DbxAHIaLGq9uYss
-         MUKjH8K7Mx+CYf/LMpyTtAL5wQsVPUyDJVYjKYlvg6lWrOa8NBcgm8ud4axAAG2bl2
-         zdJVeTJLgkd6DmVpPR2RrJ8bvn9RtkA9fLMxxbz4+wm5H2alOxnM0VviLmNhVW+88j
-         NGSNWSAVlAlDg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2469EE29F34;
-        Wed, 30 Aug 2023 03:58:45 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring updates for 6.6-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <70336a64-9541-418c-8c71-9c9ee4f4961b@kernel.dk>
-References: <70336a64-9541-418c-8c71-9c9ee4f4961b@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <70336a64-9541-418c-8c71-9c9ee4f4961b@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/for-6.6/io_uring-2023-08-28
-X-PR-Tracked-Commit-Id: 644c4a7a721fb90356cdd42219c9928a3c386230
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c1b7fcf3f6d94c2c3528bf77054bf174a5ef63d7
-Message-Id: <169336792514.6268.13083125627057170726.pr-tracker-bot@kernel.org>
-Date:   Wed, 30 Aug 2023 03:58:45 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S239829AbjH3GMM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 30 Aug 2023 02:12:12 -0400
+Received: from out-245.mta0.migadu.com (out-245.mta0.migadu.com [IPv6:2001:41d0:1004:224b::f5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE025CDC;
+        Tue, 29 Aug 2023 23:12:01 -0700 (PDT)
+Message-ID: <642de4e6-801d-fcad-a7ce-bfc6dec3b6e5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1693375918;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JMzOvVHk770qYz+7D4bRM3eiaC0WBb12Z/fuZleaQ2g=;
+        b=n8qZNKHDJ8ZkQN8s6YCFhUc5vlrIehXvAzssrfT4lOFAEgM70y7j9ccF+kTN544/il9mhv
+        /Qwyv0zoAHdwAPeCdmanHqcxV7A/7XcL4G5u9c/o5+tWUqR2xZIKUSlHotdEAwwwHhjWvg
+        KLK2CGyPGmGk32bcLUct3rbhOUMJhk8=
+Date:   Wed, 30 Aug 2023 14:11:31 +0800
+MIME-Version: 1.0
+Subject: Re: [PATCH 07/11] vfs: add nowait parameter for file_accessed()
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+References: <20230827132835.1373581-1-hao.xu@linux.dev>
+ <20230827132835.1373581-8-hao.xu@linux.dev>
+ <ZOvA5DJDZN0FRymp@casper.infradead.org>
+ <c728bf3f-d9db-4865-8473-058b26c11c06@linux.dev>
+ <ZO3cI+DkotHQo3md@casper.infradead.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <ZO3cI+DkotHQo3md@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-The pull request you sent on Mon, 28 Aug 2023 15:19:38 -0600:
+On 8/29/23 19:53, Matthew Wilcox wrote:
+> On Tue, Aug 29, 2023 at 03:46:13PM +0800, Hao Xu wrote:
+>> On 8/28/23 05:32, Matthew Wilcox wrote:
+>>> On Sun, Aug 27, 2023 at 09:28:31PM +0800, Hao Xu wrote:
+>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>
+>>>> Add a boolean parameter for file_accessed() to support nowait semantics.
+>>>> Currently it is true only with io_uring as its initial caller.
+>>>
+>>> So why do we need to do this as part of this series?  Apparently it
+>>> hasn't caused any problems for filemap_read().
+>>>
+>>
+>> We need this parameter to indicate if nowait semantics should be enforced in
+>> touch_atime(), There are locks and maybe IOs in it.
+> 
+> That's not my point.  We currently call file_accessed() and
+> touch_atime() for nowait reads and nowait writes.  You haven't done
+> anything to fix those.
+> 
+> I suspect you can trim this patchset down significantly by avoiding
+> fixing the file_accessed() problem.  And then come back with a later
+> patchset that fixes it for all nowait i/o.  Or do a separate prep series
 
-> git://git.kernel.dk/linux.git tags/for-6.6/io_uring-2023-08-28
+I'm ok to do that.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c1b7fcf3f6d94c2c3528bf77054bf174a5ef63d7
+> first that fixes it for the existing nowait users, and then a second
+> series to do all the directory stuff.
+> 
+> I'd do the first thing.  Just ignore the problem.  Directory atime
+> updates cause I/O so rarely that you can afford to ignore it.  Almost
+> everyone uses relatime or nodiratime.
 
-Thank you!
+Hi Matthew,
+The previous discussion shows this does cause issues in real
+producations: 
+https://lore.kernel.org/io-uring/2785f009-2ebb-028d-8250-d5f3a30510f0@gmail.com/#:~:text=fwiw%2C%20we%27ve%20just%20recently%20had%20similar%20problems%20with%20io_uring%20read/write
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
+
+

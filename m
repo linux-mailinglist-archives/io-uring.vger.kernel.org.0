@@ -2,140 +2,115 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C86778FE9A
-	for <lists+io-uring@lfdr.de>; Fri,  1 Sep 2023 15:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC3D78FF73
+	for <lists+io-uring@lfdr.de>; Fri,  1 Sep 2023 16:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239265AbjIANud (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 1 Sep 2023 09:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57732 "EHLO
+        id S242378AbjIAOrd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 1 Sep 2023 10:47:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238764AbjIANud (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Sep 2023 09:50:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC32FE77
-        for <io-uring@vger.kernel.org>; Fri,  1 Sep 2023 06:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693576184;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Z24PZDN6ru0TVORNHrW6hru4yPU6KUQBQaeDmzMdlL8=;
-        b=MNBx5PnCpvSFms2x7EQl4SS/5KPKTuARvCHCBm2lpznqfTtQmnMeNRFt2lai++GBGqpo//
-        08BKkHjl/sNysCGCalzcIGUut6bGtMbevxGGTSvPEtOeCPPXbvPdkBilOTP9X2ThHakVPR
-        kLmZ8I2zD7kVnFjEbOM7JQ0AzY7COcI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-455-6Qs2l5ZYPEeV0j2bHRMTmA-1; Fri, 01 Sep 2023 09:49:41 -0400
-X-MC-Unique: 6Qs2l5ZYPEeV0j2bHRMTmA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9F83E800193;
-        Fri,  1 Sep 2023 13:49:40 +0000 (UTC)
-Received: from localhost (unknown [10.72.120.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7AE95412F2CE;
-        Fri,  1 Sep 2023 13:49:38 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        with ESMTP id S237594AbjIAOrd (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 1 Sep 2023 10:47:33 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E3910CF
+        for <io-uring@vger.kernel.org>; Fri,  1 Sep 2023 07:47:30 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id e9e14a558f8ab-34df35f90d3so1793125ab.0
+        for <io-uring@vger.kernel.org>; Fri, 01 Sep 2023 07:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1693579649; x=1694184449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Dx0yV8zW+/BlU9KB3+aKirU26GMdiOGCQTQ3ofD2wVc=;
+        b=2iG94+M5s/gk9GeaTcC/rAogc0vTQZvyJkwECgqg1b5x1eAcV1hKHTByq4qNvPSk/s
+         jTn9A5BOeqn7zH88cJyDJufCFQD9xD+CjeVfLMDqxED4AOXOchjYB3BGBMT/2GbRnyfF
+         Jfy4RUtDcQV5fToG1tK8XZPleWgD6Hjsmn5i7pUV8UqIu3PVQCrfMDyXpUQBHR9C2Inl
+         aup+o3W0pY316cI4pJfUeUM81XmP1MgB9Dh7Zkf2y+ARSak0yRc7T3yOMYOE35Rs/OLo
+         r0jIkdpWFwQVpv2cQLj9bvuDTiEkUt0BjR7ZM47fxQSTe1238AlUfSD9gd2f9G1+dBOG
+         L+MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693579649; x=1694184449;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dx0yV8zW+/BlU9KB3+aKirU26GMdiOGCQTQ3ofD2wVc=;
+        b=hGx6vbzl9eH3qrWS1fN4Zr/y3m3ckvdRYWtKgaSotL8Uvu0Gck5lotfdCuVFcwlqXz
+         icppx8BV+sSKMMRsDIcZfsHu4/IikUS5CqtIl3vLe+zLevbzF8SyJ7oCi2cE/0VoAAGl
+         z2KRTjk/QgBlE59fmdh1wqmyUXCo4h/ue01zMCnyE0bG8hvxbuCnb/s+P7kD8KBf7PXH
+         UNg2wPVNWebJV/wxT/Ppl9Hu7J6qQFwa9LRfzCU8tp0bv+wKdBZgLwLbsDSOlCbfNM3c
+         whi4hm72efZn6i2Xs+dyfGcajQLJhqDPjRXTozsRcfZ7AVR19tuTo/LORzBp22ST3br0
+         0Nhg==
+X-Gm-Message-State: AOJu0Yynn2i+/Bj7QdnGWYhnhyXFh2YGd+bKGT2QZH/+y+FtlcqWi66R
+        deQtuwWX7vaPo4SqBBONInT6gQ==
+X-Google-Smtp-Source: AGHT+IFWG/0avtx2qKq67xiMt0buM2aBJcunio6lJ0GPdqpo+Xcy/uUmEHxcuJAZDkZ7wTqYo2kErw==
+X-Received: by 2002:a92:c809:0:b0:34c:d535:9f9d with SMTP id v9-20020a92c809000000b0034cd5359f9dmr2613189iln.1.1693579649710;
+        Fri, 01 Sep 2023 07:47:29 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id fq3-20020a056638650300b0042b6ae47f0esm1083414jab.108.2023.09.01.07.47.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Sep 2023 07:47:29 -0700 (PDT)
+Message-ID: <78ae000c-5704-4f59-bd2a-79e8cbeb9aaa@kernel.dk>
+Date:   Fri, 1 Sep 2023 08:47:28 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] io_uring: fix IO hang in io_wq_put_and_exit from
+ do_exit()
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
-        Chengming Zhou <zhouchengming@bytedance.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2] io_uring: fix IO hang in io_wq_put_and_exit from do_exit()
-Date:   Fri,  1 Sep 2023 21:49:16 +0800
-Message-Id: <20230901134916.2415386-1-ming.lei@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Chengming Zhou <zhouchengming@bytedance.com>
+References: <20230901134916.2415386-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230901134916.2415386-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_wq_put_and_exit() is called from do_exit(), but all FIXED_FILE requests
-in io_wq aren't canceled in io_uring_cancel_generic() called from do_exit().
-Meantime io_wq IO code path may share resource with normal iopoll code
-path.
+On 9/1/23 7:49 AM, Ming Lei wrote:
+> io_wq_put_and_exit() is called from do_exit(), but all FIXED_FILE requests
+> in io_wq aren't canceled in io_uring_cancel_generic() called from do_exit().
+> Meantime io_wq IO code path may share resource with normal iopoll code
+> path.
+> 
+> So if any HIPRI request is submittd via io_wq, this request may not get resouce
+> for moving on, given iopoll isn't possible in io_wq_put_and_exit().
+> 
+> The issue can be triggered when terminating 't/io_uring -n4 /dev/nullb0'
+> with default null_blk parameters.
+> 
+> Fix it by always cancelling all requests in io_wq by adding helper of
+> io_uring_cancel_wq(), and this way is reasonable because io_wq destroying
+> follows canceling requests immediately.
 
-So if any HIPRI request is submittd via io_wq, this request may not get resouce
-for moving on, given iopoll isn't possible in io_wq_put_and_exit().
+This does look much cleaner, but the unconditional cancel_all == true
+makes me a bit nervous in case the ring is being shared.
 
-The issue can be triggered when terminating 't/io_uring -n4 /dev/nullb0'
-with default null_blk parameters.
-
-Fix it by always cancelling all requests in io_wq by adding helper of
-io_uring_cancel_wq(), and this way is reasonable because io_wq destroying
-follows canceling requests immediately.
-
-Closes: https://lore.kernel.org/linux-block/3893581.1691785261@warthog.procyon.org.uk/
-Reported-by: David Howells <dhowells@redhat.com>
-Cc: Chengming Zhou <zhouchengming@bytedance.com>,
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
-V2:
-	- avoid to mess up io_uring_cancel_generic() by adding one new
-	  helper for canceling io_wq requests
-
- io_uring/io_uring.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Do we really need to cancel these bits? Can't we get by with something
+trivial like just stopping retrying if the original task is exiting?
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index f4591b912ea8..7b3518f96c3b 100644
+index c6d9e4677073..95316c0c3830 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -3298,6 +3298,37 @@ static s64 tctx_inflight(struct io_uring_task *tctx, bool tracked)
- 	return percpu_counter_sum(&tctx->inflight);
- }
+@@ -1939,7 +1939,7 @@ void io_wq_submit_work(struct io_wq_work *work)
+ 		 * If REQ_F_NOWAIT is set, then don't wait or retry with
+ 		 * poll. -EAGAIN is final for that case.
+ 		 */
+-		if (req->flags & REQ_F_NOWAIT)
++		if (req->flags & REQ_F_NOWAIT || req->task->flags & PF_EXITING)
+ 			break;
  
-+static void io_uring_cancel_wq(struct io_uring_task *tctx)
-+{
-+	int ret;
-+
-+	if (!tctx->io_wq)
-+		return;
-+
-+	/*
-+	 * FIXED_FILE request isn't tracked in do_exit(), and these
-+	 * requests may be submitted to our io_wq as iopoll, so have to
-+	 * cancel them before destroying io_wq for avoiding IO hang
-+	 */
-+	do {
-+		struct io_tctx_node *node;
-+		unsigned long index;
-+
-+		ret = 0;
-+		xa_for_each(&tctx->xa, index, node) {
-+			struct io_ring_ctx *ctx = node->ctx;
-+			struct io_task_cancel cancel = { .task = current, .all = true, };
-+			enum io_wq_cancel cret;
-+
-+			io_iopoll_try_reap_events(ctx);
-+			cret = io_wq_cancel_cb(tctx->io_wq, io_cancel_task_cb,
-+				       &cancel, true);
-+			ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
-+			cond_resched();
-+		}
-+	} while (ret);
-+}
-+
- /*
-  * Find any io_uring ctx that this task has registered or done IO on, and cancel
-  * requests. @sqd should be not-null IFF it's an SQPOLL thread cancellation.
-@@ -3369,6 +3400,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- 		finish_wait(&tctx->wait, &wait);
- 	} while (1);
- 
-+	io_uring_cancel_wq(tctx);
- 	io_uring_clean_tctx(tctx);
- 	if (cancel_all) {
  		/*
+
+
 -- 
-2.41.0
+Jens Axboe
 

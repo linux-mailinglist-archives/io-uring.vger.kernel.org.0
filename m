@@ -2,61 +2,54 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E1F791B6C
-	for <lists+io-uring@lfdr.de>; Mon,  4 Sep 2023 18:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84B0791B70
+	for <lists+io-uring@lfdr.de>; Mon,  4 Sep 2023 18:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238097AbjIDQZ2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Sep 2023 12:25:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55636 "EHLO
+        id S241348AbjIDQZ3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Sep 2023 12:25:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237311AbjIDQZ1 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Sep 2023 12:25:27 -0400
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5324A18B;
-        Mon,  4 Sep 2023 09:25:24 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-52a4737a08fso2149587a12.3;
-        Mon, 04 Sep 2023 09:25:24 -0700 (PDT)
+        with ESMTP id S240384AbjIDQZ3 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Sep 2023 12:25:29 -0400
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF2809D;
+        Mon,  4 Sep 2023 09:25:25 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-52713d2c606so2198624a12.2;
+        Mon, 04 Sep 2023 09:25:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693844723; x=1694449523;
+        d=1e100.net; s=20221208; t=1693844724; x=1694449524;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IUL6OhPSlmc9b0ojpccZ5UMJYWzfKfwD3kXIKD6Vw5c=;
-        b=Ip4ojanxIMbB1us7R3axNK4aY8r2jFrdH3KO1U2WrgTZEST0mBqE9/wL2fkE5VbEBc
-         U4X5dB1B/ErVtAPMeNWcXdRDiTFMVY7npxlVYHlW76zyGfofdtQqhdO94L1cxfBBoI/D
-         Hl5QXnNqg2ovQny1aJS8A1Ff0lJiOfM5/QOjCrAND42qWxjmRwGjDJrCK8THFaoWglvp
-         kbo9c/8vYPRWZOnqmVML/F4Z+kkCQsmB+5fFOTXbl6SMMNGF1m+wjgTtPPvNkaBzb1hu
-         YwXehJuhOGol70f50B16HWbYbo6Il+yXV15tyq/pThVsxeefqC9JptTm27lzbQ4F3Q1I
-         35mQ==
-X-Gm-Message-State: AOJu0YyN+m+J/AXwrxwUUn+BR7orhBwtirlX0aC8TTzJoyZL37bykg4p
-        0h6hTr9rUyTyrCHGjHTGtfo=
-X-Google-Smtp-Source: AGHT+IGbGNrDUERojvuHE3aYx8OauARPUDOpinBUn7+ySnAYjNNZQ1ONkGITStggwcvefZ2dq5hrcw==
-X-Received: by 2002:a05:6402:2047:b0:523:95e:c2c0 with SMTP id bc7-20020a056402204700b00523095ec2c0mr7062520edb.42.1693844722624;
-        Mon, 04 Sep 2023 09:25:22 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-006.fbsv.net. [2a03:2880:31ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id w11-20020aa7d28b000000b0052565298bedsm5987110edq.34.2023.09.04.09.25.22
+        bh=PBda6rT0pL/B59nG5AgliJCLsy8+kPWSe+s29wcarWY=;
+        b=BDajSyoHg1pnz7M7ag0XKpV0LkJPVrcUIIhZndCm2em5LDAQDiRJcB2jKZaBfpE7QK
+         F1RVMy4ifhzk6MIbQ2W6SaVpJEFXjobkcZqLSmJ8fv7CXBsvWSo2tPILzbBZttKTNGvA
+         1wjN95OZpMr72384lnisUvU+/USaM4fZa5RlqatcgLXrgm0j/wZzbvYmJzvR9niWy9tJ
+         8xPyinC5Esx/BdR9p8k/sAurdjn3ISAsltHN7G7AP/REU9k9DbYcU3Y8WSoFIzebGSBS
+         ViDraF3jTL/Y5A2gpHtLV5ZfmH2MnpGV6stDPB9H/EwUFkNiYV0huLaxpnuo38TBDGvz
+         Qj4Q==
+X-Gm-Message-State: AOJu0YwjB/92yKlZLI3K9TLz93uqG3TqQRHud/uI7JgKA2cVx5mrXmit
+        RLTWU4rJlcopBe1ksb54/ac=
+X-Google-Smtp-Source: AGHT+IHZKR+9DvETpBcmV6dj1OZh+YayfA1YpM9KTsLZ6mqWKVA1d3MF8/OaJ9OgfHCIheZcXhOCEQ==
+X-Received: by 2002:a17:907:78c1:b0:9a1:c991:a51c with SMTP id kv1-20020a17090778c100b009a1c991a51cmr7528046ejc.2.1693844724180;
+        Mon, 04 Sep 2023 09:25:24 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-118.fbsv.net. [2a03:2880:31ff:76::face:b00c])
+        by smtp.gmail.com with ESMTPSA id m26-20020a170906259a00b0099ca4f61a8bsm6406935ejb.92.2023.09.04.09.25.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Sep 2023 09:25:22 -0700 (PDT)
+        Mon, 04 Sep 2023 09:25:23 -0700 (PDT)
 From:   Breno Leitao <leitao@debian.org>
 To:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
         willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
-        krisman@suse.de, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        krisman@suse.de, "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
 Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH v4 02/10] bpf: Leverage sockptr_t in BPF setsockopt hook
-Date:   Mon,  4 Sep 2023 09:24:55 -0700
-Message-Id: <20230904162504.1356068-3-leitao@debian.org>
+        netdev@vger.kernel.org, io-uring@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+Subject: [PATCH v4 03/10] net/socket: Break down __sys_setsockopt
+Date:   Mon,  4 Sep 2023 09:24:56 -0700
+Message-Id: <20230904162504.1356068-4-leitao@debian.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230904162504.1356068-1-leitao@debian.org>
 References: <20230904162504.1356068-1-leitao@debian.org>
@@ -72,73 +65,102 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Change BPF setsockopt hook (__cgroup_bpf_run_filter_setsockopt()) to use
-sockptr instead of user pointers. This brings flexibility to the
-function, since it could be called with userspace or kernel pointers.
+Split __sys_setsockopt() into two functions by removing the core
+logic into a sub-function (do_sock_setsockopt()). This will avoid
+code duplication when doing the same operation in other callers, for
+instance.
 
-This change will allow the creation of a core sock_setsockopt, called
-do_sock_setsockopt(), which will be called from both the system call path
-and by io_uring command.
-
-This also aligns with the getsockopt() counterpart, which is now using
-sockptr_t universal pointer.
+do_sock_setsockopt() will be called by io_uring setsockopt() command
+operation in the following patch.
 
 Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 ---
- include/linux/bpf-cgroup.h | 2 +-
- kernel/bpf/cgroup.c        | 5 +++--
- net/socket.c               | 2 +-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ include/net/sock.h |  2 ++
+ net/socket.c       | 39 +++++++++++++++++++++++++--------------
+ 2 files changed, 27 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index f5b4fb6ed8c6..cecfe8c99f28 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -137,7 +137,7 @@ int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
- 				   enum cgroup_bpf_attach_type atype);
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 11d503417591..b059f9272303 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1861,6 +1861,8 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 		  sockptr_t optval, unsigned int optlen);
+ int sock_setsockopt(struct socket *sock, int level, int op,
+ 		    sockptr_t optval, unsigned int optlen);
++int do_sock_setsockopt(struct socket *sock, bool compat, int level,
++		       int optname, sockptr_t optval, int optlen);
  
- int __cgroup_bpf_run_filter_setsockopt(struct sock *sock, int *level,
--				       int *optname, char __user *optval,
-+				       int *optname, sockptr_t optval,
- 				       int *optlen, char **kernel_optval);
- 
- int __cgroup_bpf_run_filter_getsockopt(struct sock *sk, int level,
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index ebc8c58f7e46..f0dedd4f7f2e 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -1785,7 +1785,7 @@ static bool sockopt_buf_allocated(struct bpf_sockopt_kern *ctx,
- }
- 
- int __cgroup_bpf_run_filter_setsockopt(struct sock *sk, int *level,
--				       int *optname, char __user *optval,
-+				       int *optname, sockptr_t optval,
- 				       int *optlen, char **kernel_optval)
- {
- 	struct cgroup *cgrp = sock_cgroup_ptr(&sk->sk_cgrp_data);
-@@ -1808,7 +1808,8 @@ int __cgroup_bpf_run_filter_setsockopt(struct sock *sk, int *level,
- 
- 	ctx.optlen = *optlen;
- 
--	if (copy_from_user(ctx.optval, optval, min(*optlen, max_optlen)) != 0) {
-+	if (copy_from_sockptr(ctx.optval, optval,
-+			      min(*optlen, max_optlen))) {
- 		ret = -EFAULT;
- 		goto out;
- 	}
+ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		  sockptr_t optval, sockptr_t optlen);
 diff --git a/net/socket.c b/net/socket.c
-index 6fda5d011521..9ec9a8a07c0e 100644
+index 9ec9a8a07c0e..3bf29a27653f 100644
 --- a/net/socket.c
 +++ b/net/socket.c
-@@ -2287,7 +2287,7 @@ int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
+@@ -2261,31 +2261,21 @@ static bool sock_use_custom_sol_socket(const struct socket *sock)
+ 	return test_bit(SOCK_CUSTOM_SOCKOPT, &sock->flags);
+ }
  
- 	if (!in_compat_syscall())
- 		err = BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock->sk, &level, &optname,
--						     user_optval, &optlen,
-+						     optval, &optlen,
- 						     &kernel_optval);
- 	if (err < 0)
+-/*
+- *	Set a socket option. Because we don't know the option lengths we have
+- *	to pass the user mode parameter for the protocols to sort out.
+- */
+-int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
+-		int optlen)
++int do_sock_setsockopt(struct socket *sock, bool compat, int level,
++		       int optname, sockptr_t optval, int optlen)
+ {
+-	sockptr_t optval = USER_SOCKPTR(user_optval);
+ 	const struct proto_ops *ops;
+ 	char *kernel_optval = NULL;
+-	int err, fput_needed;
+-	struct socket *sock;
++	int err;
+ 
+ 	if (optlen < 0)
+ 		return -EINVAL;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		return err;
+-
+ 	err = security_socket_setsockopt(sock, level, optname);
+ 	if (err)
  		goto out_put;
+ 
+-	if (!in_compat_syscall())
++	if (!compat)
+ 		err = BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock->sk, &level, &optname,
+ 						     optval, &optlen,
+ 						     &kernel_optval);
+@@ -2308,6 +2298,27 @@ int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
+ 					    optlen);
+ 	kfree(kernel_optval);
+ out_put:
++	return err;
++}
++EXPORT_SYMBOL(do_sock_setsockopt);
++
++/* Set a socket option. Because we don't know the option lengths we have
++ * to pass the user mode parameter for the protocols to sort out.
++ */
++int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
++		     int optlen)
++{
++	sockptr_t optval = USER_SOCKPTR(user_optval);
++	bool compat = in_compat_syscall();
++	int err, fput_needed;
++	struct socket *sock;
++
++	sock = sockfd_lookup_light(fd, &err, &fput_needed);
++	if (!sock)
++		return err;
++
++	err = do_sock_setsockopt(sock, compat, level, optname, optval, optlen);
++
+ 	fput_light(sock->file, fput_needed);
+ 	return err;
+ }
 -- 
 2.34.1
 

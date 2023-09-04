@@ -2,80 +2,153 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 739A079155F
-	for <lists+io-uring@lfdr.de>; Mon,  4 Sep 2023 11:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E5A791B6B
+	for <lists+io-uring@lfdr.de>; Mon,  4 Sep 2023 18:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243958AbjIDJ56 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 4 Sep 2023 05:57:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60496 "EHLO
+        id S237318AbjIDQZ1 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 4 Sep 2023 12:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243886AbjIDJ54 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Sep 2023 05:57:56 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D0A10D4;
-        Mon,  4 Sep 2023 02:57:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B7612B80DE2;
-        Mon,  4 Sep 2023 09:57:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2861AC433CA;
-        Mon,  4 Sep 2023 09:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693821459;
-        bh=3nBALREBe4uYOQysxhL3FnVqTkdR7jMiX68zU5wvxQ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pEztgc4TUkd2yfcHxcboc+zDXAcA4KHCmIGSB/gsRgCo9DGA1rLyRBmfivPzAjnOB
-         KKw5j1sjO7veroFTPAfq4w/Dw21tYljOg8WM+sB6xZikYv2ILFdOD928dMMu6jaMTA
-         hsFmv7Cbjvf4C2EEf3kIjrkFy7uHmWrX1TbMwxUdVWRcMpkNca5fPpStkr+O9O9AVs
-         oGtWlPEvUt+phBNKXuy5CCjefBQ9+fHhCcNVb2HuJp7/pDdC8MPGp01mLBBiMVtugi
-         LQHGEf2o9T+0sCa9DBGt1latLMv6pIa/RLJn+fTPda2hnB4Yrxv5cYlj5KyxA/vFa0
-         BGrzmLYXagYqw==
-Date:   Mon, 4 Sep 2023 11:57:30 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH v6 00/11] io_uring getdents
-Message-ID: <20230904-butterbrot-aufraffen-db483c53eab5@brauner>
-References: <20230827132835.1373581-1-hao.xu@linux.dev>
+        with ESMTP id S231846AbjIDQZ1 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 4 Sep 2023 12:25:27 -0400
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642B79D;
+        Mon,  4 Sep 2023 09:25:22 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50078e52537so2714723e87.1;
+        Mon, 04 Sep 2023 09:25:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693844720; x=1694449520;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rab+89a7ppccDrPhsU3srYQ+2Bi0KqvP8hKK2Yo3mZY=;
+        b=Y12beX/HXkemzNtO4WMLeIdiWWMvWlz5Cojys+Oy7gAlC1oNbV9Xm1AMiDAxU/QF5a
+         jOls81AdjBoq+loNs0WjiIjO4iCSR09qBT+eyQtuBEhPn81yM2aRGfRtSH9e4LtW2tSu
+         SqdTv5/ME4vfxaelaFfv3w9TXFfxqMgbs4DKMkpj7WkUThE1se/SBQOI0fV9tRkIhxdJ
+         a6K/j8C+40z8mFTPHnGcexHtyMy7KwxY81gTaTQvkR2EsxV5BWsJS8yvhCzbC9IVzivh
+         n+WGjuC76BLeysYYXZsh7b64lBYMBIOPC8hGjltAl8B/yjNOYce2dv/Ri7sorolnOZC8
+         soJQ==
+X-Gm-Message-State: AOJu0YyeHKxC1zr6RzAosippql9Vtl5uVp0YGsy6X076eCAn1hY3JAtJ
+        VlwJfVj9/ucyIhZsA5hzvm4=
+X-Google-Smtp-Source: AGHT+IHb074QO5C12hx+sMgcR3kkjiZTT11rDD49xwqi4n8yKeVoo15uK8eTgDKgEdG9I+1j4x6byw==
+X-Received: by 2002:a05:6512:3148:b0:500:79a9:d714 with SMTP id s8-20020a056512314800b0050079a9d714mr5984203lfi.65.1693844719409;
+        Mon, 04 Sep 2023 09:25:19 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-116.fbsv.net. [2a03:2880:31ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id bm26-20020a0564020b1a00b005288f0e547esm6075885edb.55.2023.09.04.09.25.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Sep 2023 09:25:18 -0700 (PDT)
+From:   Breno Leitao <leitao@debian.org>
+To:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
+        krisman@suse.de
+Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
+        pabeni@redhat.com
+Subject: [PATCH v4 00/10] io_uring: Initial support for {s,g}etsockopt commands
+Date:   Mon,  4 Sep 2023 09:24:53 -0700
+Message-Id: <20230904162504.1356068-1-leitao@debian.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230827132835.1373581-1-hao.xu@linux.dev>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Sun, Aug 27, 2023 at 09:28:24PM +0800, Hao Xu wrote:
+This patchset adds support for getsockopt (SOCKET_URING_OP_GETSOCKOPT)
+and setsockopt (SOCKET_URING_OP_SETSOCKOPT) in io_uring commands.
+SOCKET_URING_OP_SETSOCKOPT implements generic case, covering all levels
+and optnames. SOCKET_URING_OP_GETSOCKOPT is limited, for now, to
+SOL_SOCKET level, which seems to be the most common level parameter for
+get/setsockopt(2).
 
-For the future it would be helpful to hold of on sending larger series
-that like this until a stable tag is out.
+In order to keep the implementation (and tests) simple, some refactors
+were done prior to the changes, as follows:
 
-Right now this series is generating a bunch of merge conflicts because
-of all the changes to relevant codepaths that got merged. So either we
-have to resolve them to see whether things still make sense within the
-context of all the changed code or risk that stuff we comment is outdated.
+Patches 1-2: Modify the BPF hooks to support sockptr_t, so, these functions
+become flexible enough to accept user or kernel pointers for optval/optlen.
+
+Patch 3-4:  Remove the core {s,g}etsockopt() core function from
+__sys_{g,s}etsockopt, so, the code could be reused by other callers,
+such as io_uring.
+
+Patch 5: Pass compat mode to the file/socket callbacks
+
+Patch 6: Move io_uring helpers from io_uring_zerocopy_tx to a generic
+io_uring headers. This simplify the test case (last patch)
+
+Patch 7: Protect io_uring_cmd_sock() to not be called if CONFIG_NET is
+disabled.
+
+PS1: For getsockopt command, the optlen field is not a userspace
+pointers, but an absolute value, so this is slightly different from
+getsockopt(2) behaviour. The new optlen value is returned in cqe->res.
+
+PS2: The userspace pointers need to be alive until the operation is
+completed.
+
+These changes were tested with a new test[1] in liburing, LTP sockopt*
+tests, as also with bpf/progs/sockopt test case, which is now adapted to
+run using both system calls and io_uring commands.
+
+[1] Link: https://github.com/leitao/liburing/blob/getsockopt/test/socket-getsetsock-cmd.c
+
+RFC -> V1:
+	* Copy user memory at io_uring subsystem, and call proto_ops
+	  callbacks using kernel memory
+	* Implement all the cases for SOCKET_URING_OP_SETSOCKOPT
+
+V1 -> V2
+	* Implemented the BPF part
+	* Using user pointers from optval to avoid kmalloc in io_uring part.
+
+V2 -> V3:
+	* Break down __sys_setsockopt and reuse the core code, avoiding
+	  duplicated code. This removed the requirement to expose
+	  sock_use_custom_sol_socket().
+	* Added io_uring test to selftests/bpf/sockopt.
+	* Fixed compat argument, by passing it to the issue_flags.
+
+V3 -> V4:
+	* Rebase on top of commit 1ded5e5a5931b ("net: annotate data-races around sock->ops")
+	* Also broke down __sys_setsockopt() to reuse the core function
+	  from io_uring.
+	* Create a new patch to return -EOPNOTSUPP if CONFIG_NET is
+	  disabled
+	* Added two SOL_SOCKET tests in bpf/prog_tests/sockopt.c
+
+Breno Leitao (10):
+  bpf: Leverage sockptr_t in BPF getsockopt hook
+  bpf: Leverage sockptr_t in BPF setsockopt hook
+  net/socket: Break down __sys_setsockopt
+  net/socket: Break down __sys_getsockopt
+  io_uring/cmd: Pass compat mode in issue_flags
+  selftests/net: Extract uring helpers to be reusable
+  io_uring/cmd: return -EOPNOTSUPP if net is disabled
+  io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+  io_uring/cmd: Introduce SOCKET_URING_OP_SETSOCKOPT
+  selftests/bpf/sockopt: Add io_uring support
+
+ include/linux/bpf-cgroup.h                    |   9 +-
+ include/linux/io_uring.h                      |   1 +
+ include/net/sock.h                            |   4 +
+ include/uapi/linux/io_uring.h                 |   8 +
+ io_uring/uring_cmd.c                          |  55 ++++
+ kernel/bpf/cgroup.c                           |  25 +-
+ net/core/sock.c                               |   8 -
+ net/socket.c                                  | 102 ++++---
+ tools/include/io_uring/mini_liburing.h        | 282 ++++++++++++++++++
+ .../selftests/bpf/prog_tests/sockopt.c        | 113 ++++++-
+ tools/testing/selftests/net/Makefile          |   1 +
+ .../selftests/net/io_uring_zerocopy_tx.c      | 268 +----------------
+ 12 files changed, 544 insertions(+), 332 deletions(-)
+ create mode 100644 tools/include/io_uring/mini_liburing.h
+
+-- 
+2.34.1
+

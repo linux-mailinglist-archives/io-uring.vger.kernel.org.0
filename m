@@ -2,146 +2,103 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA4A792A57
-	for <lists+io-uring@lfdr.de>; Tue,  5 Sep 2023 18:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36384792A53
+	for <lists+io-uring@lfdr.de>; Tue,  5 Sep 2023 18:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351623AbjIEQfB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 5 Sep 2023 12:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57518 "EHLO
+        id S1344822AbjIEQev (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 5 Sep 2023 12:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354269AbjIEK3h (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Sep 2023 06:29:37 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CF4DB;
-        Tue,  5 Sep 2023 03:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693909773; x=1725445773;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Bn7q6Tcu2HMXKbL23eq+DAUGqdWll8RQjB5RohTItbQ=;
-  b=DBwRdMJHpj03uJQj0+iTo1UjRzTehrF2TdXkkZwBgCmNPq7QQlAOwjnK
-   96+1HlG1roViquYLVDSl7anWSlvThXk2812zJuoaaDgE5rtk5GkAU7FV9
-   xZYPcGbG5xDc5kbOycAbDAp71dR+qE3Xk/q3bqMwnvYJly13Vj8wluko1
-   +feOadG4zR2ICWaYwiRmJd50fq/NE8F+p8IwVJvZACZWEO3ZetgrTSNHL
-   nXb7cU42Vy0njPI66ur5tlI1WJ/BJVsgC2szOP12amG6asV3SvBD5vKM+
-   rX7TYwgB/7KJKjt246fxo9ErtP9gVD81z7J2kNN1liSRVq+1mjNkHgvOr
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="356254681"
-X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="356254681"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 03:29:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="734605190"
-X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="734605190"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.54])
-  by orsmga007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 03:29:26 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qdTJC-006efP-1u;
-        Tue, 05 Sep 2023 13:29:22 +0300
-Date:   Tue, 5 Sep 2023 13:29:22 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        with ESMTP id S1354536AbjIEMYb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 5 Sep 2023 08:24:31 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA841A8;
+        Tue,  5 Sep 2023 05:24:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E70811FD8E;
+        Tue,  5 Sep 2023 12:24:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1693916666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+7M4X3ltwI/VM1laJUfqoL6rnCUoo+tPTHyGF9EcSb4=;
+        b=BSh4tK42t37/hjB81tIVJaoFbkEnB6TT/FK0HXE+uFX6Bw5xI1/G+94VWY4bjgEVS1GsLN
+        9CesqlourNuHjoPH/ZzJwE87JSVCVcWft8zO/5qxhY2n1FjhWR88pJW0EVVp2oB5TwVjuI
+        9J3ZjN23vadJmaQ7RXmH+8Uzr0YfeUk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1693916666;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+7M4X3ltwI/VM1laJUfqoL6rnCUoo+tPTHyGF9EcSb4=;
+        b=Pvu8ACuOSzN6VLftdOMZeeF6kb0rzpSRVD0zDfew662reQ86XWGhE0rRmAViHV6je5hvcE
+        7iBXBna3vnmbFNAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B027213911;
+        Tue,  5 Sep 2023 12:24:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id YS15Jfod92QpEwAAMHmgww
+        (envelope-from <krisman@suse.de>); Tue, 05 Sep 2023 12:24:26 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
 To:     Breno Leitao <leitao@debian.org>
 Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
         willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
-        krisman@suse.de, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>,
-        Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jason Xing <kernelxing@tencent.com>
-Subject: Re: [PATCH v4 04/10] net/socket: Break down __sys_getsockopt
-Message-ID: <ZPcDAk81DAqevy43@smile.fi.intel.com>
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, kuba@kernel.org,
+        pabeni@redhat.com
+Subject: Re: [PATCH v4 08/10] io_uring/cmd: Introduce
+ SOCKET_URING_OP_GETSOCKOPT
+In-Reply-To: <20230904162504.1356068-9-leitao@debian.org> (Breno Leitao's
+        message of "Mon, 4 Sep 2023 09:25:01 -0700")
+Organization: SUSE
 References: <20230904162504.1356068-1-leitao@debian.org>
- <20230904162504.1356068-5-leitao@debian.org>
+        <20230904162504.1356068-9-leitao@debian.org>
+Date:   Tue, 05 Sep 2023 08:24:25 -0400
+Message-ID: <87a5u0byfa.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230904162504.1356068-5-leitao@debian.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Sep 04, 2023 at 09:24:57AM -0700, Breno Leitao wrote:
-> Split __sys_getsockopt() into two functions by removing the core
-> logic into a sub-function (do_sock_getsockopt()). This will avoid
-> code duplication when doing the same operation in other callers, for
-> instance.
-> 
-> do_sock_getsockopt() will be called by io_uring getsockopt() command
-> operation in the following patch.
-> 
-> The same was done for the setsockopt pair.
+Breno Leitao <leitao@debian.org> writes:
 
-...
+> Add support for getsockopt command (SOCKET_URING_OP_GETSOCKOPT), where
+> level is SOL_SOCKET. This is leveraging the sockptr_t infrastructure,
+> where a sockptr_t is either userspace or kernel space, and handled as
+> such.
+>
+> Differently from the getsockopt(2), the optlen field is not a userspace
+> pointers. In getsockopt(2), userspace provides optlen pointer, which is
+> overwritten by the kernel.  In this implementation, userspace passes a
+> u32, and the new value is returned in cqe->res. I.e., optlen is not a
+> pointer.
+>
+> Important to say that userspace needs to keep the pointer alive until
+> the CQE is completed.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-> +	ops = READ_ONCE(sock->ops);
-> +	if (level == SOL_SOCKET) {
-> +		err = sk_getsockopt(sock->sk, level, optname, optval, optlen);
-> +	} else if (unlikely(!ops->getsockopt)) {
-> +		err = -EOPNOTSUPP;
-> +	} else {
-> +		if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
-> +			      "Invalid argument type"))
-> +			return -EOPNOTSUPP;
-> +
-> +		err = ops->getsockopt(sock, level, optname, optval.user,
-> +				      optlen.user);
-> +	}
+IMO, this looks much cleaner with most of the bpf and socket logic under
+net/.
 
-Can be written as
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 
-	} else if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
-			     "Invalid argument type"))
-		return -EOPNOTSUPP;
-	} else {
-		err = ops->getsockopt(sock, level, optname, optval.user,
-				      optlen.user);
-	}
+Thanks!
 
-With that done, the {} are not needed anymore.
-
-> +	if (!compat) {
-
-	if (compat)
-		return err;
-
-> +		max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
-
-> +		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
-> +						     optval, optlen, max_optlen,
-> +						     err);
-
-	return ... ?
-
-> +	}
-> +
-> +	return err;
-> +}
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Gabriel Krisman Bertazi

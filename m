@@ -2,98 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27037797C14
-	for <lists+io-uring@lfdr.de>; Thu,  7 Sep 2023 20:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1360D797C4A
+	for <lists+io-uring@lfdr.de>; Thu,  7 Sep 2023 20:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344211AbjIGSjU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 7 Sep 2023 14:39:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
+        id S244731AbjIGSvA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 7 Sep 2023 14:51:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbjIGSjR (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Sep 2023 14:39:17 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9087D90
-        for <io-uring@vger.kernel.org>; Thu,  7 Sep 2023 11:39:13 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 4B5691F461;
-        Thu,  7 Sep 2023 18:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1694111952; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S1344421AbjIGSur (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 7 Sep 2023 14:50:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00AF01BD1
+        for <io-uring@vger.kernel.org>; Thu,  7 Sep 2023 11:49:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694112584;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=H438xnbvcbk+6PRBQftcP2C9ONqpKcwrvOTCmHnCzw0=;
-        b=zUYnPJkpMHApXqycX+voaorRDb1BOyMkHHx64b47jsSeqBLoEqR2GU48lFHxl/XFYCf/qM
-        cCVQDOgnBLyTuu6LV/Z9UC+0nG6G1htU1/1kxOHknhansq1kQ2jX4O1K+PwkdVXvVs1hvj
-        1R/DUfc9dxg5mgYmIfNuovWUruv65m8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1694111952;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=H438xnbvcbk+6PRBQftcP2C9ONqpKcwrvOTCmHnCzw0=;
-        b=zm/MtEvfdJ68Orx8XM8730g04/FfMa4rBuk9eZAYPAkeANfUPjbSizh7MkXCJF0Li6Yor9
-        gIjnpHVfFpt9iwCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=MgF7bCMb4pj31paw0oQyBY/lYPsH+puq7BD0dtlG0ms=;
+        b=N7HwgVssMlMWnUwKgF1yAi7nR/8frJyi3eg2JdCRSgWOwalR6HNMFIUtTPbUYyztNBYmdF
+        qykbnKGdZGXfRPE/QOHK6GvXsq/zhbAlJJ5gOsitwZeqegXUWKRgXsXRp5AMwDAahWivUX
+        xdQc4WtUQHgr3Dg0pS53JwjXifhtBpk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-6-7LUNnwDiMxKs1VT-pUITlA-1; Thu, 07 Sep 2023 14:49:42 -0400
+X-MC-Unique: 7LUNnwDiMxKs1VT-pUITlA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 168B0138F9;
-        Thu,  7 Sep 2023 18:39:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id l5mLO88Y+mRKWgAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 07 Sep 2023 18:39:11 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C8229957841;
+        Thu,  7 Sep 2023 18:49:41 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A89567B62;
+        Thu,  7 Sep 2023 18:49:41 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org
 Subject: Re: [PATCH] io_uring: Use slab for struct io_buffer objects
+References: <20230830003634.31568-1-krisman@suse.de>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 07 Sep 2023 14:55:27 -0400
 In-Reply-To: <20230830003634.31568-1-krisman@suse.de> (Gabriel Krisman
         Bertazi's message of "Tue, 29 Aug 2023 20:36:34 -0400")
-References: <20230830003634.31568-1-krisman@suse.de>
-Date:   Thu, 07 Sep 2023 14:39:10 -0400
-Message-ID: <87sf7pakvl.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+Message-ID: <x49o7id3ja8.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Gabriel Krisman Bertazi <krisman@suse.de> writes:
+Hi, Gabriel,
 
-> The allocation of struct io_buffer for metadata of provided buffers is
-> done through a custom allocator that directly gets pages and
-> fragments them.  But, slab would do just fine, as this is not a hot path
-> (in fact, it is a deprecated feature) and, by keeping a custom allocator
-> implementation we lose benefits like tracking, poisoning,
-> sanitizers. Finally, the custom code is more complex and requires
-> keeping the list of pages in struct ctx for no good reason.  This patch
-> cleans this path up and just uses slab.
->
-> I microbenchmarked it by forcing the allocation of a large number of
-> objects with the least number of io_uring commands possible (keeping
-> nbufs=USHRT_MAX), with and without the patch.  There is a slight
-> increase in time spent in the allocation with slab, of course, but even
-> when allocating to system resources exhaustion, which is not very
-> realistic and happened around 1/2 billion provided buffers for me, it
-> wasn't a significant hit in system time.  Specially if we think of a
-> real-world scenario, an application doing register/unregister of
-> provided buffers will hit ctx->io_buffers_cache more often than actually
-> going to slab.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+I just have a couple of comments.  I don't have an opinion on whether it
+makes sense to replace the existing allocator.
 
-Hi Jens,
+-Jeff
 
-Any feedback on this?
+> @@ -362,11 +363,12 @@ int io_provide_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+>  	return 0;
+>  }
+>  
+> +#define IO_BUFFER_ALLOC_BATCH (PAGE_SIZE/sizeof(struct io_buffer))
+> +
+>  static int io_refill_buffer_cache(struct io_ring_ctx *ctx)
+>  {
+> -	struct io_buffer *buf;
+> -	struct page *page;
+> -	int bufs_in_page;
+> +	struct io_buffer *bufs[IO_BUFFER_ALLOC_BATCH];
 
--- 
-Gabriel Krisman Bertazi
+That's a pretty large on-stack allocation.
+
+> +	allocated = kmem_cache_alloc_bulk(io_buf_cachep, GFP_KERNEL_ACCOUNT,
+> +					  ARRAY_SIZE(bufs), (void **) bufs);
+> +	if (unlikely(allocated <= 0)) {
+
+Can't be less than 0.
+

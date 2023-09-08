@@ -2,30 +2,30 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D74798F82
-	for <lists+io-uring@lfdr.de>; Fri,  8 Sep 2023 21:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6FD0799086
+	for <lists+io-uring@lfdr.de>; Fri,  8 Sep 2023 21:48:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344881AbjIHTcw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Sep 2023 15:32:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
+        id S243089AbjIHTss (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Sep 2023 15:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344885AbjIHTcv (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Sep 2023 15:32:51 -0400
+        with ESMTP id S241047AbjIHTss (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Sep 2023 15:48:48 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4DE1FEA;
-        Fri,  8 Sep 2023 12:32:22 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE1DC43395;
-        Fri,  8 Sep 2023 19:31:30 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95440CC;
+        Fri,  8 Sep 2023 12:48:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56ED2C43397;
+        Fri,  8 Sep 2023 19:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694201491;
-        bh=yegpmFKqZADs6elVAH1kxXTwTX9xDIpofYJDh7KGPhk=;
+        s=k20201202; t=1694201618;
+        bh=F4faGuWQnASEi0inkuVom0wfJnle1bp2YiQ8dPBGAVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WUVwk8cGExllQlCjYaElwxp64xKMK3Kk1F3G3ndilWn2VLg0tvAFnoReSIdfSx7jD
-         oEENagaVKzoKWP9XvQQUEsZjag7gw+1KHhYBSgr5NzJsBE9dTS2cUXzJoTZuGBHMsL
-         5/jfVprQJ9+HzAqKlsHTRmYY57sHuHZJUALUwr0EyFjhmSBnPweHJU2SKSWupOlxsQ
-         qSKmqKRBAQCAsS8PlhQBCEnN2WPA9r28tiMWqv2KucQhrerTdlNwSWp2PvB/gyAGVS
-         VSkIYuIjC3OT850GeV0cSkBSai07KCKEq9OLf6Vjoa12PhmGhZl+ctoTQkd7H43ExY
-         c313dAKAEk3Kw==
+        b=gUbUiZfcaLmGGb/W9PRzNdeVrCHVo5aTYKqQWfc846Xo6mjkApb/zG/zzraKpiUBB
+         PMyR1h1X0Hgio8nDV5+y4+T7MInLPNNeeITRgewzPd0NkBepY9ZZr0YBGnbKmsQkdZ
+         w8BZL4inubxGtpfgcS6d9lJjbyZPngciO+FXbgORY5p42oQdG0MokWZ3vo5b9jjqmM
+         a0TP1gUxwqcEkkUsJPqbRJ6gvmbRNu7oHzAx0yc+PVBcnoKDOh+znQ4fhledv8C5kS
+         5LW8VAy2XiaJ3GO4mdsBE89e+ij0JhRh5WsnTHw2Za/c0O/mZ93KOCkCiV2R1T0MDD
+         o33Rr43EPSUFg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
@@ -33,16 +33,16 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
         nathan@kernel.org, ndesaulniers@google.com,
         io-uring@vger.kernel.org, linux-hardening@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.5 27/36] io_uring: annotate the struct io_kiocb slab for appropriate user copy
-Date:   Fri,  8 Sep 2023 15:28:38 -0400
-Message-Id: <20230908192848.3462476-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.4 22/31] io_uring: annotate the struct io_kiocb slab for appropriate user copy
+Date:   Fri,  8 Sep 2023 15:31:51 -0400
+Message-Id: <20230908193201.3462957-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230908192848.3462476-1-sashal@kernel.org>
-References: <20230908192848.3462476-1-sashal@kernel.org>
+In-Reply-To: <20230908193201.3462957-1-sashal@kernel.org>
+References: <20230908193201.3462957-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.5.2
+X-stable-base: Linux 6.4.15
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
@@ -128,10 +128,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 93db3e4e7b688..5006b14f97e1e 100644
+index a57bdf336ca8a..f1bda21fe934a 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -4615,8 +4615,20 @@ static int __init io_uring_init(void)
+@@ -4591,8 +4591,20 @@ static int __init io_uring_init(void)
  
  	io_uring_optable_init();
  

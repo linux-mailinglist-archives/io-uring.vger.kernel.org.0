@@ -2,174 +2,89 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D22C8798A48
-	for <lists+io-uring@lfdr.de>; Fri,  8 Sep 2023 18:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7590798B14
+	for <lists+io-uring@lfdr.de>; Fri,  8 Sep 2023 18:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232724AbjIHQC3 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Sep 2023 12:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43130 "EHLO
+        id S245274AbjIHQz6 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 8 Sep 2023 12:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232689AbjIHQC2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Sep 2023 12:02:28 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2009C1BF5;
-        Fri,  8 Sep 2023 09:02:23 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-500cfb168c6so3627033e87.2;
-        Fri, 08 Sep 2023 09:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694188941; x=1694793741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=geBBxFrVZjSD5j9baX2PDBGAlBkwwGDEHjJ1GhsjKlc=;
-        b=H51d8/rAsg0+tpc/Fb2CHcxU3122cHSXkalK4+7/ieOMGM2q7hwbHsf89Sr5ykIho4
-         qdhjge1xGzaykDoawaEk8NXQaRn2ceLIxF/8EljVWAweBuf+2Iv4ph6aFieaexXJD+fq
-         qu7JHlTO6LPelkGQm6BGh2YjXy7gxxwl1R2mi3FJ7ZprNFI9Ux+d/v63iopKm9Ws0P/4
-         5rI5+O9T6F0nGb7aG6/KidFX4jXv0gM2bUTF4gigNAZ+4/bHPxu981mewF+xo5ZZQ4FV
-         a8CaYkmN3nfKRCATRTXZm+QxyMhvezB4HqnLDo9f6odrZGyfXSPbYfDCdnUfqTxLJLJu
-         YKFA==
+        with ESMTP id S229713AbjIHQz6 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Sep 2023 12:55:58 -0400
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6514D2680;
+        Fri,  8 Sep 2023 09:55:22 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-501bd6f7d11so3717994e87.1;
+        Fri, 08 Sep 2023 09:55:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694188941; x=1694793741;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=geBBxFrVZjSD5j9baX2PDBGAlBkwwGDEHjJ1GhsjKlc=;
-        b=JyjFuddsk6A5KNaWqpX7L/63zsfI7hAfJJf5qMgrK0EijmAEZB2K4l2NeDPcjcvQ0n
-         wv4ICZVTxAwzZHtnrcK4gWCF8Bo2DyDdvqS86WZIDtA6h5QPli6RTzU9TD1Bm/X4RZv5
-         L4wPKLNy36lEEMvzuSiE2kW7sBSgHgZ9JnJvLPHphlLMrqbYp6qcR1qr5tDxqiv3J+2k
-         plBFhaXIRmQDxyWaEnp8neVZDiZItxBCdy4WKfalXTpEIfRYM3WYt8+q0mbKKfVLuhOK
-         w5AUaxQpq+f3cdrwmqpSOe7AVEmTF2+DYQF0Jv4ECrq5ipM40pBor2+5Gl5/lYBrvdEI
-         dxEA==
-X-Gm-Message-State: AOJu0Yz+PMVAJT0JYISFQrSDD10z5yY8jCEjyT01raW915ks9Xks1uJt
-        YozEA5DL9R94O/9WJwsjBG4=
-X-Google-Smtp-Source: AGHT+IH2ONotKwCoa0X+BN7+pTPt9/G8CsCTMoppmFX+g+2QVWAciecEswIBIDJ+X8O3f8I39DRp1g==
-X-Received: by 2002:a05:6512:1103:b0:500:77c4:108 with SMTP id l3-20020a056512110300b0050077c40108mr3171484lfg.9.1694188940912;
-        Fri, 08 Sep 2023 09:02:20 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.141.16])
-        by smtp.gmail.com with ESMTPSA id dy24-20020a05640231f800b00523a43f9b1dsm1184128edb.22.2023.09.08.09.02.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Sep 2023 09:02:20 -0700 (PDT)
-Message-ID: <53103749-21e0-2a3e-9c46-8befb2753aff@gmail.com>
-Date:   Fri, 8 Sep 2023 17:01:31 +0100
+        d=1e100.net; s=20230601; t=1694192117; x=1694796917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S7URpEOHyiyMnwkk7ulREI14OY8DCzbtRusyfBiWSJI=;
+        b=JX9O/7ttTg/xcwDACP4i8TiPwkW72lCHbJBUpidhcG3J0uhcHeQ3YXmfHKiF27E+6D
+         VgqenuePm878MxAAlnZOlzt7k1suf9K20AFk3mN9bpves/xorl7yCyMXUBmiWb8R28JW
+         AkGd9A2cXnPoGrFHoYL5EM4H+x3XfHjEjozu1su5C2+5/69os4mV0HSdA+2wcfLqp+7H
+         Su3aFYh0tAQ2h2cekOQRT/+MtDiVH8PQR4zKJodDq4xkkq9s4RQx+7mPOSChJOwc6Mhp
+         SlC+FDuCi0wpEY+pxCK7BbGfYHPKKd+Ys63nfCOvc/eBSu34vh24ErcY6DE3TnIUclNo
+         /hDg==
+X-Gm-Message-State: AOJu0YxxLaZk5f/7H/iYU2WgVWgBscNQZA8QUZuYAKn8qfFqb1Wu6aR/
+        S3VANbOEuIOcQSN7Dyw35QM=
+X-Google-Smtp-Source: AGHT+IGHljrhvnrA7HLF8GAewGPNt9+isjVnu7yHq1p/pbkFl2qUisWBb7baIwcEX4XP0OE7pSgnyA==
+X-Received: by 2002:a05:6512:3f15:b0:500:aa41:9d67 with SMTP id y21-20020a0565123f1500b00500aa419d67mr3016978lfa.8.1694192116925;
+        Fri, 08 Sep 2023 09:55:16 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-118.fbsv.net. [2a03:2880:31ff:76::face:b00c])
+        by smtp.gmail.com with ESMTPSA id z7-20020a1709060ac700b0099bc08862b6sm1276320ejf.171.2023.09.08.09.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Sep 2023 09:55:16 -0700 (PDT)
+Date:   Fri, 8 Sep 2023 09:55:11 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
+        krisman@suse.de, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH v4 00/10] io_uring: Initial support for {s,g}etsockopt
+ commands
+Message-ID: <ZPtR7+8YOWmtZHuD@gmail.com>
+References: <20230904162504.1356068-1-leitao@debian.org>
+ <20230905154951.0d0d3962@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] io_uring: fix IO hang in io_wq_put_and_exit from
- do_exit()
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengming Zhou <zhouchengming@bytedance.com>
-References: <20230901134916.2415386-1-ming.lei@redhat.com>
- <169358121201.335729.4270950770834703042.b4-ty@kernel.dk>
- <f6be40a3-38de-41ed-a545-d9063379f8e2@kernel.dk>
- <ffbe8a96-9f3e-9139-07c6-9bbf863185ed@gmail.com> <ZPq9mY51e7++cbpC@fedora>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZPq9mY51e7++cbpC@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230905154951.0d0d3962@kernel.org>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/8/23 07:22, Ming Lei wrote:
-> On Fri, Sep 08, 2023 at 02:03:11AM +0100, Pavel Begunkov wrote:
->> On 9/7/23 16:36, Jens Axboe wrote:
->>> On 9/1/23 9:13 AM, Jens Axboe wrote:
->>>>
->>>> On Fri, 01 Sep 2023 21:49:16 +0800, Ming Lei wrote:
->>>>> io_wq_put_and_exit() is called from do_exit(), but all FIXED_FILE requests
->>>>> in io_wq aren't canceled in io_uring_cancel_generic() called from do_exit().
->>>>> Meantime io_wq IO code path may share resource with normal iopoll code
->>>>> path.
->>>>>
->>>>> So if any HIPRI request is submittd via io_wq, this request may not get resouce
->>>>> for moving on, given iopoll isn't possible in io_wq_put_and_exit().
->>>>>>> [...]
->>>>
->>>> Applied, thanks!
->>>>
->>>> [1/1] io_uring: fix IO hang in io_wq_put_and_exit from do_exit()
->>>>         commit: b484a40dc1f16edb58e5430105a021e1916e6f27
->>>
->>> This causes a regression with the test/thread-exit.t test case, as it's
->>> canceling requests from other tasks as well. I will drop this patch for
->>> now.
->>
->> And this one has never hit my mailbox... Anyway, I'm confused with
->> the issue:
->>
-
-Thanks CC'ing while resending, I don't know what's up with lore
-
->> 1) request tracking is done only for io_uring polling io_uring, which
+On Tue, Sep 05, 2023 at 03:49:51PM -0700, Jakub Kicinski wrote:
+> On Mon,  4 Sep 2023 09:24:53 -0700 Breno Leitao wrote:
+> > Patches 1-2: Modify the BPF hooks to support sockptr_t, so, these functions
+> > become flexible enough to accept user or kernel pointers for optval/optlen.
 > 
-> request tracking isn't done on FIXED_FILE IO, which is used by t/io_uring.
+> Have you seen:
 > 
->> shouldn't be the case for t/io_uring, so it's probably unrelated?
-> 
-> So io_uring_try_cancel_requests() won't be called because
-> tctx_inflight() returns zero.
+> https://lore.kernel.org/all/CAHk-=wgGV61xrG=gO0=dXH64o2TDWWrXn1mx-CX885JZ7h84Og@mail.gmail.com/
 
-That's true for fixed files, but it also holds for non fixed files
-as well apart from a narrow case t/io_uring doesn't exercise
+I haven't but I think it will not affect *much* this patchset.
 
->> 2) In case of iopoll, io-wq only submits a request but doesn't wait/poll
->> for it. If io_issue_sqe() returned -EAGAIN or an error, the request is
->> considered not yet submitted to block and can be just cancelled normally
->> without any dancing like io_iopoll_try_reap_events().
-> 
-> io_issue_sqe() may never return since IO_URING_F_NONBLOCK isn't set
-> for iopoll, and recently polled IO doesn't imply nowait in commit
+> ? I wasn't aware that Linus felt this way, now I wonder if having
+> sockptr_t spread will raise any red flags as this code flows back
+> to him.
 
-missing nowait semantics should be fine, io_uring_clean_tctx()
-sends a signal to workers, which should break them out of waiting.
+I can change the io_uring API in a way that we can avoid these
+sockptr_t changes completely.
 
-...
->> We set the flag, interrupt workers (TIF_NOTIFY_SIGNAL + wake up), and
->> wait for them. Workers are woken up (or just return), see
->> the flag and return. At least that's how it was intended to work.
->>
->> What's missing? Racing for IO_WQ_BIT_EXIT? Not breaking on IO_WQ_BIT_EXIT
->> correctly? Not honouring / clearing TIF_NOTIFY_SIGNAL?
->>
->> I'll try to repro later
-> 
-> After applying your patch of 9256b9371204 ("io_uring: break out of iowq
-> iopoll on teardown") and the above patch, the issue still can be triggered,
+My plan is to mimic what getsockopt(2) is doing in io_uring cmd path, in
+regard to optlen being an userpointer, instead of a value - which is
+then translated to a KERNEL_SOCKPTR.
 
-Yeah, it doesn't appear that it'd help, it was rather something
-randomly spotted than targeting your issue.
+In this way, this change don't need to touch any sockptr field.
 
-> and the worker is keeping to call io_issue_sqe() for ever, and
-> io_wq_worker_stopped() returns false. So do_exit() isn't called on
-> t/io_uring pthread yet, meantime I guess either iopoll is terminated or not
-> get chance to run.
-
-That prior to task exit then, right? I wonder if we're missing
-signal checking in that loop like below or just need limit the
-number of re-submission attempts.
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 6cce8948bddf..c6f566200d04 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1944,6 +1944,8 @@ void io_wq_submit_work(struct io_wq_work *work)
-  				break;
-  			if (io_wq_worker_stopped())
-  				break;
-+			if (signal_pending(current))
-+				break;
-  			cond_resched();
-  			continue;
-  		}
-
-
--- 
-Pavel Begunkov
+Thanks for the heads-up

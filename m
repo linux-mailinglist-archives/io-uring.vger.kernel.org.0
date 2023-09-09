@@ -2,146 +2,68 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8237995D4
-	for <lists+io-uring@lfdr.de>; Sat,  9 Sep 2023 03:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC465799669
+	for <lists+io-uring@lfdr.de>; Sat,  9 Sep 2023 07:06:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234529AbjIIBoh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 8 Sep 2023 21:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59646 "EHLO
+        id S243609AbjIIFGD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sat, 9 Sep 2023 01:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232161AbjIIBog (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 8 Sep 2023 21:44:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DB91FE3
-        for <io-uring@vger.kernel.org>; Fri,  8 Sep 2023 18:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694223820;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=K/wt5PNgeS/XIFcFT75P+BpbsgjLzxZwOLL9FJKcgMs=;
-        b=abRf+sPsJXh5slHHMo4DpLT9us6cjM2yo5+c+d+ZbZTde3akyeiqmeP8BlX71nfVa2RBWm
-        MMlIul+x8hbg4z/12FhsWp7XxcUeypOTN7uaxid9q6T5FCE/8qp3Zy0q+uou2R1OdNBWBe
-        cbuhFeocKwNO30ItwR6AR3MPGQfIkKM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-656-Jg7gBfcNNJa3xxxC2xAzOQ-1; Fri, 08 Sep 2023 21:43:39 -0400
-X-MC-Unique: Jg7gBfcNNJa3xxxC2xAzOQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 084CE181A6E2;
-        Sat,  9 Sep 2023 01:43:39 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D476F4022FC;
-        Sat,  9 Sep 2023 01:43:34 +0000 (UTC)
-Date:   Sat, 9 Sep 2023 09:43:29 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengming Zhou <zhouchengming@bytedance.com>
-Subject: Re: [PATCH V3] io_uring: fix IO hang in io_wq_put_and_exit from
- do_exit()
-Message-ID: <ZPvNwczbDYaOinIC@fedora>
-References: <20230908093009.540763-1-ming.lei@redhat.com>
- <58227846-6b73-46ef-957f-d9b1e0451899@kernel.dk>
- <78577243-b7a6-6d7c-38e4-dfef1762f135@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78577243-b7a6-6d7c-38e4-dfef1762f135@gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+        with ESMTP id S241261AbjIIFGC (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sat, 9 Sep 2023 01:06:02 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799501FDB
+        for <io-uring@vger.kernel.org>; Fri,  8 Sep 2023 22:05:58 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AB14C433C8;
+        Sat,  9 Sep 2023 05:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694235958;
+        bh=CBe9MiMeJy4YR9pXRDP6usynnoswrvGH56MjLQJHzMs=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=fOB2d4qfeiSWShndUjt1KalkKl7JRTKsEggeOyk/7GwPX2GX6wrDpUNP3qmuZ9TVQ
+         6v1X/uZWQOpYx6OJFfbrhmtsTxdu8VG2Mt43f5UiBAX/d6kA7MaUXsr7IqFbVdBPso
+         ApopIxuoJaud9cbu84SlHPUL8+DeAt6VOu4RdE9wWp+Vledrsu1/SET01BW/dseDZZ
+         rtlVW9b6xl329olBhiv0u6RvrEN61BjUTnLwmXqnZgmUMvFa/MWQEHUXo7MJLbHrfY
+         3DsH5OOzh7UkkvSGm/FuHFh+wqvcpw7nB0m8Z+6m0xW7Qq6FbhEnX8LfY5TbJ3LNxd
+         WVv3hTh2+ohIg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0AD69E505B7;
+        Sat,  9 Sep 2023 05:05:58 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 6.6-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <7828a377-ed0c-4d22-8e36-8cf2eaa4f4b8@kernel.dk>
+References: <7828a377-ed0c-4d22-8e36-8cf2eaa4f4b8@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <7828a377-ed0c-4d22-8e36-8cf2eaa4f4b8@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.6-2023-09-08
+X-PR-Tracked-Commit-Id: 023464fe33a53d7e3fa0a1967a2adcb17e5e40e3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7ccc3ebf0c575728bff2d3cb4719ccd84aa186ab
+Message-Id: <169423595804.31372.10578451168264685190.pr-tracker-bot@kernel.org>
+Date:   Sat, 09 Sep 2023 05:05:58 +0000
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        io-uring <io-uring@vger.kernel.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 04:46:15PM +0100, Pavel Begunkov wrote:
-> On 9/8/23 14:49, Jens Axboe wrote:
-> > On 9/8/23 3:30 AM, Ming Lei wrote:
-> > > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > > index ad636954abae..95a3d31a1ef1 100644
-> > > --- a/io_uring/io_uring.c
-> > > +++ b/io_uring/io_uring.c
-> > > @@ -1930,6 +1930,10 @@ void io_wq_submit_work(struct io_wq_work *work)
-> > >   		}
-> > >   	}
-> > > +	/* It is fragile to block POLLED IO, so switch to NON_BLOCK */
-> > > +	if ((req->ctx->flags & IORING_SETUP_IOPOLL) && def->iopoll_queue)
-> > > +		issue_flags |= IO_URING_F_NONBLOCK;
-> > > +
-> > 
-> > I think this comment deserves to be more descriptive. Normally we
-> > absolutely cannot block for polled IO, it's only OK here because io-wq
-> > is the issuer and not necessarily the poller of it. That generally falls
-> > upon the original issuer to poll these requests.
-> > 
-> > I think this should be a separate commit, coming before the main fix
-> > which is below.
-> > 
-> > > @@ -3363,6 +3367,12 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
-> > >   		finish_wait(&tctx->wait, &wait);
-> > >   	} while (1);
-> > > +	/*
-> > > +	 * Reap events from each ctx, otherwise these requests may take
-> > > +	 * resources and prevent other contexts from being moved on.
-> > > +	 */
-> > > +	xa_for_each(&tctx->xa, index, node)
-> > > +		io_iopoll_try_reap_events(node->ctx);
-> > 
-> > The main issue here is that if someone isn't polling for them, then we
-> > get to wait for a timeout before they complete. This can delay exit, for
-> > example, as we're now just waiting 30 seconds (or whatever the timeout
-> > is on the underlying device) for them to get timed out before exit can
-> > finish.
-> 
-> Ok, our case is that userspace crashes and doesn't poll for its IO.
-> How would that block io-wq termination? We send a signal and workers
-> should exit, either by queueing up the request for iopoll (and then
+The pull request you sent on Fri, 8 Sep 2023 09:02:25 -0600:
 
-It depends on how userspace handles the signal, such as, t/io_uring,
-s->finish is set as true in INT signal handler, two cases may happen:
+> git://git.kernel.dk/linux.git tags/io_uring-6.6-2023-09-08
 
-1) s->finish is observed immediately, then this pthread exits, and leave
-polled requests in ctx->iopoll_list
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7ccc3ebf0c575728bff2d3cb4719ccd84aa186ab
 
-2) s->finish isn't observed immediately, and just submit & polling;
-if any IO can't be submitted because of no enough resource, there can
-be one busy spin because submitter_uring_fn() waits for inflight IO.
+Thank you!
 
-So if there are two pthreads(A, B), each setup its own io_uring context
-and submit & poll IO on same block device.  If 1) happens in A, all
-device tags can be held for nothing.  If 2) happens in B, the busy spin
-prevents exit() of this pthread B.
-
-Then the hang is caused, exit work can't be scheduled at all, because
-pthread B doesn't exit.
-
-> we queue it into the io_uring iopoll list and the worker immediately
-> returns back and presumably exits), or it fails because of the signal
-> and returns back.
-> 
-> That should kill all io-wq and make exit go forward. Then the io_uring
-> file will be destroyed and the ring exit work will be polling via
-> 
-> io_ring_exit_work();
-> -- io_uring_try_cancel_requests();
->   -- io_iopoll_try_reap_events();
-> 
-> What I'm missing? Does the blocking change make io-wq iopolling
-> completions inside the block? Was it by any chance with the recent
-> "do_exit() waiting for ring destruction" patches?
-
-In short, it is one resource dependency issue for polled IO.
-
-
-Thanks,
-Ming
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html

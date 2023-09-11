@@ -2,158 +2,188 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0193479C18B
-	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 03:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5688079C4B4
+	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 06:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233736AbjILBQz (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Sep 2023 21:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
+        id S231894AbjILEXM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Sep 2023 00:23:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233745AbjILBQn (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Sep 2023 21:16:43 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE806A6D
-        for <io-uring@vger.kernel.org>; Mon, 11 Sep 2023 17:54:49 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1c0efe0c4acso8939845ad.0
-        for <io-uring@vger.kernel.org>; Mon, 11 Sep 2023 17:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694480023; x=1695084823; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R/LjjFa9PYQ7y7hreBeXVB2P2KcHfQopmSu7JB/Y4xg=;
-        b=PKxWBAHEc3ZAO5gL8Eo5VmkghvKfvQIB5kkbOmh2pIuSWu+mvxEIV+LckADH1Oth8a
-         Snn0YOkZTxR6kSvh3cxhEVQ9Ml/qLpF1qZchieJeJo0Wq/tF73yOvoZa0eKSY63VXkI8
-         kCJk4hM7zObPaWYEuHwwjwCP9gOBtKTmZBUyluYLM1zp+xK38nyy/ImYPvGpLpA/xAUW
-         gZCu5TQXwwyG3+3MhaYO8NuSRRW9osmYzqKk2emGZLE1vWv5wGvmCZFFPH5nYSoNd6lM
-         w/4SE+cx6vooF92fdcTvZQj56jGn9UFqQm1+Hh7l3tklYevqHqRPUNkej3qYwB9zUMxL
-         vmWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694480023; x=1695084823;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/LjjFa9PYQ7y7hreBeXVB2P2KcHfQopmSu7JB/Y4xg=;
-        b=qaT0xxyW8dBv9W94VAbxiKfzNcC0gDpOqkM+pJqWrUcNh4NDuvnzZfgA6TAVfLu6/c
-         Jy8vZifTIPCVKBUZE/45hLgRn8rmSyugnxx1r+7DqGRlbxgauxljP4I+nZhwg2f/2kX4
-         M4V02AYaVcrx1EJzDdWzLMxkn8+Q3l8s9AA+GWcHVtk0jqZ1NcAtGYs4mio8hbSIKxel
-         lWfoDMhq/B0FDiYB0ODTXAxA6izu2el1OATRICUIeEhSoh+4nmRqoL5+ZEqTFkVHy7Oa
-         hRmpMK25RXsEESgweKsBRwmgNTbNXjx98cDPEPvh9s6Al6jyD4PxGtNeDs8z1jetGt16
-         G74w==
-X-Gm-Message-State: AOJu0Yzatw4cZW2xlqyW2OXoTZ2OUcmpxizWOKJpuDjHXT+Fxs40BVI2
-        Ube0DSl8E9UdomySGYnAygW0g1uucZ05wt5gtH/fIg==
-X-Google-Smtp-Source: AGHT+IGM9cgiNpMnqNfE7ieupWmsw4kOoKiHsU7qn6YDV+fCNqaO/eQ7CmuK1KTzn5nv7n4Z4QRiPg==
-X-Received: by 2002:a17:902:e84c:b0:1bf:349f:b85c with SMTP id t12-20020a170902e84c00b001bf349fb85cmr13649553plg.1.1694480023070;
-        Mon, 11 Sep 2023 17:53:43 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 17-20020a170902ee5100b001bde65894d5sm7073993plo.109.2023.09.11.17.53.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 17:53:42 -0700 (PDT)
-Message-ID: <57e19ee6-2a68-4ac7-98c7-03b3f526d3b3@kernel.dk>
-Date:   Mon, 11 Sep 2023 18:53:41 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] io_uring/rw: add support for IORING_OP_READ_MULTISHOT
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
+        with ESMTP id S234512AbjILEWy (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 00:22:54 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920556CDC
+        for <io-uring@vger.kernel.org>; Mon, 11 Sep 2023 18:54:35 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7E8741F88C;
+        Mon, 11 Sep 2023 23:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1694476651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jhU9HKQiPt7pZksHp6Ye7B0tGsjCWU2hWQTQE6oDWT4=;
+        b=Y7vvpNEwhLN/WqJB38M/omvNVo48X2GvbO92dTP1yWWc80ft2YAuk8n0yRHwziHXdg1aFs
+        /hgU1bu7Y9xjzT0RYAM1fCLObGTnOjirczYb1ARvzrqHOIdx0z1xqvR6SXKF1qpkhqRLyv
+        H6XBshCMCY/+AfPA1KOguU67zZ84jKI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1694476651;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jhU9HKQiPt7pZksHp6Ye7B0tGsjCWU2hWQTQE6oDWT4=;
+        b=A9ZfdEChPHcXEg7Hc8PwT+PbtUZ7iJ+uPfcZbE0N23Ddpgpvr7QGQRFbP4r/5bnOZSM3UM
+        01YgF2nQElCgSyDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 498B51353E;
+        Mon, 11 Sep 2023 23:57:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id WuhuDGup/2S/RwAAMHmgww
+        (envelope-from <krisman@suse.de>); Mon, 11 Sep 2023 23:57:31 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     io-uring@vger.kernel.org, asml.silence@gmail.com
+Subject: Re: [PATCH 3/3] io_uring/rw: add support for IORING_OP_READ_MULTISHOT
+In-Reply-To: <20230911204021.1479172-4-axboe@kernel.dk> (Jens Axboe's message
+        of "Mon, 11 Sep 2023 14:40:21 -0600")
 References: <20230911204021.1479172-1-axboe@kernel.dk>
- <20230911204021.1479172-4-axboe@kernel.dk> <87o7i85klx.fsf@suse.de>
- <56f52ace-0e6b-46c2-83c1-98b54cf5bd0b@kernel.dk>
-In-Reply-To: <56f52ace-0e6b-46c2-83c1-98b54cf5bd0b@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+        <20230911204021.1479172-4-axboe@kernel.dk>
+Date:   Mon, 11 Sep 2023 19:57:30 -0400
+Message-ID: <87o7i85klx.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/11/23 6:46 PM, Jens Axboe wrote:
->>> +	ret = __io_read(req, issue_flags);
->>> +
->>> +	/*
->>> +	 * If we get -EAGAIN, recycle our buffer and just let normal poll
->>> +	 * handling arm it.
->>> +	 */
->>> +	if (ret == -EAGAIN) {
->>> +		io_kbuf_recycle(req, issue_flags);
->>> +		return -EAGAIN;
->>> +	}
->>> +
->>> +	/*
->>> +	 * Any error will terminate a multishot request
->>> +	 */
->>> +	if (ret <= 0) {
->>> +finish:
->>> +		io_req_set_res(req, ret, cflags);
->>> +		if (issue_flags & IO_URING_F_MULTISHOT)
->>> +			return IOU_STOP_MULTISHOT;
->>> +		return IOU_OK;
->>
->> Just a style detail, but I'd prefer to unfold this on the end of the
->> function instead of jumping backwards here..
-> 
-> Sure, that might look better. I'll make the edit.
+Jens Axboe <axboe@kernel.dk> writes:
 
-Actually we can just indent the next case and get rid of the goto
-completely:
+> This behaves like IORING_OP_READ, except:
+>
+> 1) It only supports pollable files (eg pipes, sockets, etc). Note that
+>    for sockets, you probably want to use recv/recvmsg with multishot
+>    instead.
+>
+> 2) It supports multishot mode, meaning it will repeatedly trigger a
+>    read and fill a buffer when data is available. This allows similar
+>    use to recv/recvmsg but on non-sockets, where a single request will
+>    repeatedly post a CQE whenever data is read from it.
+>
+> 3) Because of #2, it must be used with provided buffers. This is
+>    uniformly true across any request type that supports multishot and
+>    transfers data, with the reason being that it's obviously not
+>    possible to pass in a single buffer for the data, as multiple reads
+>    may very well trigger before an application has a chance to process
+>    previous CQEs and the data passed from them.
+>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
-{
-	unsigned int cflags = 0;
-	int ret;
+This is a really cool feature.  Just two comments inline.
 
-	/*
-	 * Multishot MUST be used on a pollable file
-	 */
-	if (!file_can_poll(req->file))
-		return -EBADFD;
 
-	ret = __io_read(req, issue_flags);
+> +/*
+> + * Multishot read is prepared just like a normal read/write request, only
+> + * difference is that we set the MULTISHOT flag.
+> + */
+> +int io_read_mshot_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> +{
+> +	int ret;
+> +
+> +	ret = io_prep_rw(req, sqe);
+> +	if (unlikely(ret))
+> +		return ret;
+> +
+> +	req->flags |= REQ_F_APOLL_MULTISHOT;
+> +	return 0;
+> +}
+> +
+>  void io_readv_writev_cleanup(struct io_kiocb *req)
+>  {
+>  	struct io_async_rw *io = req->async_data;
+> @@ -869,6 +885,56 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
+>  	return kiocb_done(req, ret, issue_flags);
+>  }
+>  
+> +int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+> +{
+> +	unsigned int cflags = 0;
+> +	int ret;
+> +
+> +	/*
+> +	 * Multishot MUST be used on a pollable file
+> +	 */
+> +	if (!file_can_poll(req->file))
+> +		return -EBADFD;
 
-	/*
-	 * If we get -EAGAIN, recycle our buffer and just let normal poll
-	 * handling arm it.
-	 */
-	if (ret == -EAGAIN) {
-		io_kbuf_recycle(req, issue_flags);
-		return -EAGAIN;
-	}
+io_uring is pollable, so I think you want to also reject when
+req->file->f_ops == io_uring_fops to avoid the loop where a ring
+monitoring itself will cause a recursive completion? Maybe this can't
+happen here for some reason I miss?
 
-	/*
-	 * Any successful return value will keep the multishot read armed.
-	 */
-	if (ret > 0) {
-		/*
-		 * Put our buffer and post a CQE. If we fail to post a CQE, then
-		 * jump to the termination path. This request is then done.
-		 */
-		cflags = io_put_kbuf(req, issue_flags);
+> +
+> +	ret = __io_read(req, issue_flags);
+> +
+> +	/*
+> +	 * If we get -EAGAIN, recycle our buffer and just let normal poll
+> +	 * handling arm it.
+> +	 */
+> +	if (ret == -EAGAIN) {
+> +		io_kbuf_recycle(req, issue_flags);
+> +		return -EAGAIN;
+> +	}
+> +
+> +	/*
+> +	 * Any error will terminate a multishot request
+> +	 */
+> +	if (ret <= 0) {
+> +finish:
+> +		io_req_set_res(req, ret, cflags);
+> +		if (issue_flags & IO_URING_F_MULTISHOT)
+> +			return IOU_STOP_MULTISHOT;
+> +		return IOU_OK;
 
-		if (io_fill_cqe_req_aux(req,
-					issue_flags & IO_URING_F_COMPLETE_DEFER,
-					ret, cflags | IORING_CQE_F_MORE)) {
-			if (issue_flags & IO_URING_F_MULTISHOT)
-				return IOU_ISSUE_SKIP_COMPLETE;
-			return -EAGAIN;
-		}
-	}
+Just a style detail, but I'd prefer to unfold this on the end of the function
+instead of jumping backwards here..
 
-	/*
-	 * Either an error, or we've hit overflow posting the CQE. For any
-	 * multishot request, hitting overflow will terminate it.
-	 */
-	io_req_set_res(req, ret, cflags);
-	if (issue_flags & IO_URING_F_MULTISHOT)
-		return IOU_STOP_MULTISHOT;
-	return IOU_OK;
-}
+> +	}
+> +
+> +	/*
+> +	 * Put our buffer and post a CQE. If we fail to post a CQE, then
+> +	 * jump to the termination path. This request is then done.
+> +	 */
+> +	cflags = io_put_kbuf(req, issue_flags);
+> +
+> +	if (io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
+> +				ret, cflags | IORING_CQE_F_MORE)) {
+> +		if (issue_flags & IO_URING_F_MULTISHOT)
+> +			return IOU_ISSUE_SKIP_COMPLETE;
+> +		else
+> +			return -EAGAIN;
+> +	}
+> +
+> +	goto finish;
+> +}
+> +
+>  int io_write(struct io_kiocb *req, unsigned int issue_flags)
+>  {
+>  	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+> diff --git a/io_uring/rw.h b/io_uring/rw.h
+> index 4b89f9659366..c5aed03d42a4 100644
+> --- a/io_uring/rw.h
+> +++ b/io_uring/rw.h
+> @@ -23,3 +23,5 @@ int io_writev_prep_async(struct io_kiocb *req);
+>  void io_readv_writev_cleanup(struct io_kiocb *req);
+>  void io_rw_fail(struct io_kiocb *req);
+>  void io_req_rw_complete(struct io_kiocb *req, struct io_tw_state *ts);
+> +int io_read_mshot_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+> +int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags);
 
 -- 
-Jens Axboe
-
+Gabriel Krisman Bertazi

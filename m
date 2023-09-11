@@ -2,112 +2,85 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F7A79B830
-	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 02:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF9879BA66
+	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 02:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358416AbjIKWKp (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 11 Sep 2023 18:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
+        id S241669AbjIKWKF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 11 Sep 2023 18:10:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243064AbjIKQq7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Sep 2023 12:46:59 -0400
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315DEE3;
-        Mon, 11 Sep 2023 09:46:54 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-52e297c7c39so5868206a12.2;
-        Mon, 11 Sep 2023 09:46:54 -0700 (PDT)
+        with ESMTP id S244543AbjIKUkb (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 11 Sep 2023 16:40:31 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88F1F1A7
+        for <io-uring@vger.kernel.org>; Mon, 11 Sep 2023 13:40:26 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-68e3c6aa339so878563b3a.1
+        for <io-uring@vger.kernel.org>; Mon, 11 Sep 2023 13:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694464825; x=1695069625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NM/rYxfi60wOxmBRLrySZoZz5h9oz3/bbgbtBuEWIcE=;
+        b=WSYmwC2WzXh5ADXyQbL4DocdexUTOppr4kpasHmIrpCa26zArQTHR0/gBLY4yR8Zrv
+         Y10wfPTOv2c2LzQSb3VezzCgtSD27ewLQ2oTnQtLojg0ZOFoTZc1Rt2r2y4H+xIecUGB
+         aEt8A4dEbpJTlpMms0eoCnuXtn/+FgMsCwq8Ryce/rwP74FPGitD4ohIOhRhG2mnn2eZ
+         yUcrGL6DdIe+ZWJQDF86JYOXJzg5EgIU1LOcZ+My6GXC0s1GckQQO468Z7rGxt7Fit61
+         lljIlq4p3472A4R1qD49a0iFc4BDsHHFUyCIyVASgR4G6j+NnbJmMLGu0CAihpExa6SG
+         TsMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694450812; x=1695055612;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fz0qgG1xAQKjyAXZ1F3HGmELYa8PYKoGe3IryD6lsZo=;
-        b=s5RVSmQLJqz8+OiqDIN1LxVChoA5KOHTVWvtEZPg2RyF+bBuNP94pnUquLrSWAaDJk
-         fZvZ7jA7mYsaSAYDA/2tdV/xzrICaOJLlBGGCs0gamcpdPgZybrGYotZppsL7A/jpTlh
-         yMdm53+MeZBKx2Tk8KRKkLQyhm8lNPuKqI5HsmByi2RLXFnppWdF8nqhJkcNlQZaTpiD
-         U3PGWTZAl5fhzwebX9ycxBThtvkzAmwRbv5nvCEyeMDNfAnO+smSntP6y3q/RdNyuwgu
-         szpp+vMx2E2dPBxaMgctmL8LbgngyS23uYpxAA59nkave2vR7cvypaTpJbZLQxFQetHK
-         ZXgA==
-X-Gm-Message-State: AOJu0Yzlg7DgwwyP5whvYAqsZnowsF4Rp7C8hw3OmPk/hwgAM2l3wcWw
-        ylBp9qBby5JnmD2LcMB6iCk=
-X-Google-Smtp-Source: AGHT+IGbKXR5utsZSAcjo25hC+LWL6BmnRTWGZSSZF/5ZDH7OKutTBo9ihUXtpcWszGOcfOQii6Fxg==
-X-Received: by 2002:aa7:c1d5:0:b0:522:2f8c:8953 with SMTP id d21-20020aa7c1d5000000b005222f8c8953mr7573057edp.39.1694450812406;
-        Mon, 11 Sep 2023 09:46:52 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-017.fbsv.net. [2a03:2880:31ff:11::face:b00c])
-        by smtp.gmail.com with ESMTPSA id i23-20020a0564020f1700b0052f8c67a399sm538287eda.37.2023.09.11.09.46.51
+        d=1e100.net; s=20230601; t=1694464825; x=1695069625;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NM/rYxfi60wOxmBRLrySZoZz5h9oz3/bbgbtBuEWIcE=;
+        b=ORZ+8bY8BHZT8LY93VBic4BcS8Qfu6ogOEpsJ3BcZXCIpuVJHc2x/j/id5uA3NyAHW
+         7QIofUZYh/P7CAdxL4mLRqOBQWuTjJVRRZV53fJzWuoVhLVm/jh7IBUYNDhrEDtssr2g
+         Ie7mYr3pJpSVOmUIRFe/MRRtuo6vkFTdZW9xVaMrt4zeJ9J4E6t/5n8tQMWHuEtJ880T
+         eU5cpFCNIfPN8k0LxRzrL6YbnwW4PJkenyrttRaAd1gjB+NFtB+61aQ1Ubw5BC1LTzQM
+         JTNeLmmoQwCqPHs1DWIlHesPdC15V9NPHc4EQpV2blwPI2KgHtqHJyTWXxWt3Hx5CpBx
+         F+Iw==
+X-Gm-Message-State: AOJu0YxuGQGu8YsTPst40oOlwJXVLK1Bdm5SkAWvd30uSax+feGlYQCq
+        BTPR/DJj2tEV9pnI0pphac7RUaUr7d4YDPkHN3+/3g==
+X-Google-Smtp-Source: AGHT+IFseReyAc2r6ZU3E1AUp7ItA0e0fUU05APHq9UaNTTRVat0DYYHfTra+3kmwNDWJ+gJiktYXA==
+X-Received: by 2002:a05:6a00:2b86:b0:68c:7089:cb8 with SMTP id dv6-20020a056a002b8600b0068c70890cb8mr10648912pfb.2.1694464825445;
+        Mon, 11 Sep 2023 13:40:25 -0700 (PDT)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ef22-20020a056a002c9600b0068fe5a5a566sm100544pfb.142.2023.09.11.13.40.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 09:46:51 -0700 (PDT)
-Date:   Mon, 11 Sep 2023 09:46:50 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com, kuba@kernel.org,
-        martin.lau@linux.dev, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        io-uring@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH v5 5/8] io_uring/cmd: return -EOPNOTSUPP if net is
- disabled
-Message-ID: <ZP9EeunfcbWos80w@gmail.com>
-References: <20230911103407.1393149-1-leitao@debian.org>
- <20230911103407.1393149-6-leitao@debian.org>
- <87ledc904p.fsf@suse.de>
+        Mon, 11 Sep 2023 13:40:24 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com
+Subject: [PATCHSET 0/3] Add support for multishot reads
+Date:   Mon, 11 Sep 2023 14:40:18 -0600
+Message-Id: <20230911204021.1479172-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ledc904p.fsf@suse.de>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 11:53:58AM -0400, Gabriel Krisman Bertazi wrote:
-> Breno Leitao <leitao@debian.org> writes:
-> 
-> > Protect io_uring_cmd_sock() to be called if CONFIG_NET is not set. If
-> > network is not enabled, but io_uring is, then we want to return
-> > -EOPNOTSUPP for any possible socket operation.
-> >
-> > This is helpful because io_uring_cmd_sock() can now call functions that
-> > only exits if CONFIG_NET is enabled without having #ifdef CONFIG_NET
-> > inside the function itself.
-> >
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  io_uring/uring_cmd.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > index 60f843a357e0..a7d6a7d112b7 100644
-> > --- a/io_uring/uring_cmd.c
-> > +++ b/io_uring/uring_cmd.c
-> > @@ -167,6 +167,7 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> >  }
-> >  EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
-> >  
-> > +#if defined(CONFIG_NET)
-> >  int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> >  {
-> >  	struct socket *sock = cmd->file->private_data;
-> > @@ -193,3 +194,10 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> >  	}
-> >  }
-> >  EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
-> > +#else
-> > +int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> > +{
-> > +	return -EOPNOTSUPP;
-> > +}
-> > +#endif
-> > +
-> 
-> Is net/socket.c even built without CONFIG_NET? if not, you don't even need
-> the alternative EOPNOTSUPP implementation.
+Hi,
 
-It seems so. net/socket.o is part of obj-y:
+We support multishot for other request types, generally in the shape of
+a flag for the request. Doing a flag based approach with reads isn't
+straightforward, as the read/write flags are in the RWF_ space. Instead,
+add a separate opcode for this, IORING_OP_READ_MULTISHOT.
 
-https://github.com/torvalds/linux/blob/master/net/Makefile#L9
+This can only be used provided buffers, like other multishot request
+types that read/receive data.
+
+It can also only be used for pollable file types, like a tun device or
+pipes, for example. File types that are always readable (or seekable),
+like regular files, cannot be used with multishot reads.
+
+-- 
+Jens Axboe
+
+

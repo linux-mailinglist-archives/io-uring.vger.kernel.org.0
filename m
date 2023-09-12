@@ -2,104 +2,108 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC79579D77A
-	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 19:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A7C79D77B
+	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 19:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233439AbjILRZG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Sep 2023 13:25:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
+        id S233220AbjILRZI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Sep 2023 13:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230488AbjILRZG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 13:25:06 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80BD510D9
-        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:02 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-760dff4b701so70076339f.0
-        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:02 -0700 (PDT)
+        with ESMTP id S230488AbjILRZH (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 13:25:07 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F65610D9
+        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:04 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id e9e14a558f8ab-34f5357cca7so5830305ab.1
+        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694539501; x=1695144301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfd+d+m/3KvVMsdu3pCzTp+8VUzfP026lLxnLsu8SvM=;
-        b=Ek9XtnM16vKxArCmQzN5IxSUbrArP5JpBFshlSuuiN0BIiEIy68z60yJ4XpeMXkLxl
-         F8RL4rrbICYC9MMK3lB+CyuOA2FQ3zZecDt4kpxVt0wF7juP3K/ted85ACYkrp+/k2Cy
-         VVU74cr239wRbaRq7GDj9k8VNjm+FbO2rigOvSRleKZE/BV0keoQixBBtYIalGIAPYlF
-         Pkq5IJ5TlG1nnr27TphqJufA8JJXMVO1QDOKJr9QExvCZocJ+2BsKh69F6nc4E65lnvR
-         M7/bDV9hBPPjo1U36GxfE0/BXlxE321VtoACywSHSGxmkt+xLmKYlvZ/AU1VwjbrxDHt
-         rTtg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694539502; x=1695144302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9V9a5OK9Iy8QE1Mjd/+uWyQONY2gF9HS1th7ayJRu5A=;
+        b=uvr+UznBwD2SWhk4BOwGxR7ZYfBxywSJ4xGD7nWJRWITYdofbuazXEQmXOW2y28xyS
+         KihUecDqyWcrM+O+3QNJlUSAYLlRh2vyQMcnGM4t6TrzZQJhDYLtvxi1ggFQC6202zo9
+         H0L4ige+kWZUGFF0EszuZ6xWwon5YLqG9P6Fvi7jjVcJcaWxVg5CCZqhWK9XNjGpKh2y
+         hVntZeNWse6g564BuJc3PSIGY8+WzA8dxbwGdJUqgTi0MjXpdhiRm6cvgGU2VDyEh/In
+         GIaBq108KOTIg9SMrEhg+OGk8OEQfg8qXUIoPDqND0T0J/xyMX2Ozkd3SFqOso/aSVow
+         JhWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694539501; x=1695144301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wfd+d+m/3KvVMsdu3pCzTp+8VUzfP026lLxnLsu8SvM=;
-        b=UUwjb7m4HIbqcvNA/WEwLpTGwwkYxyIhUSQ3By9mxgvOpALbv+AyA67fJ9AwLdc6MY
-         rMsDCDLgdCvYzoMrv9VuBv3YtDwJGMbFtcTcXM+vDEo+WT+kKFpJvzwiYOwzr32hXTcq
-         WEUkZnQV1bfITK1cXwpmklqkbmhGtDSZHFUGeobAk7N8uqBJ0TVuk3sZfj31vqY1hY1y
-         C0r93phK0UUiwT2iWbSXBncCavICdrBkQsTx73jlV5kDZkLzmPlnLW/gtarJvOBakXuF
-         nWEFjIgsOtEEdrXfDKM/X+/AZw+Yi/W+kpny2JERRO4BLepfQcTLLw/0QGvfpxfZgWdw
-         3rTw==
-X-Gm-Message-State: AOJu0Yz6s/zBwFYTporD+Uza/m5FPoU2WxR4VTIJJGue6j/hgyHFr8KI
-        Vajjd+Jb7KNmhYuO7WADPTbWVWGXEYQsXFDeU7L+Zw==
-X-Google-Smtp-Source: AGHT+IHJmUK+LKYZwJjovZqklt0NzWeUjwrV8ceoqhQgIxxkCvNNPs6zPErT/ZBMnAo7cuN5WA7cvg==
-X-Received: by 2002:a92:cc05:0:b0:34f:6742:13b5 with SMTP id s5-20020a92cc05000000b0034f674213b5mr164441ilp.3.1694539501252;
-        Tue, 12 Sep 2023 10:25:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694539502; x=1695144302;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9V9a5OK9Iy8QE1Mjd/+uWyQONY2gF9HS1th7ayJRu5A=;
+        b=RHwwGN+JVyDv7DZXXm568LE4fSZxtU0PQ9wM5p177w8w2G0i/gWHH6uFl8+KEXTtHf
+         BJkswvp6I+Pp+TOJYR+xgxib1yLKWU7rJT5+/E7VGxuUMymwwgMZX2rTL9+GXjtdeIwK
+         CubPug5yXNcwoVURjPPXu8lomFO+aPcy19fARpa91GC1EKUVcxGUiSOqUamen4I39QU4
+         PcVycnZ9no8GEvALOWGOOT28GWXgywN5Y3JnniNcRsL5v0oJKVuR1XbKDNVYEBarzghG
+         ODA3Pv6LSyshocs8qgz8frY+daKSqSMi4EDAU/UknXCeNXP105jrICP6b3H3dXNXZTbx
+         t66g==
+X-Gm-Message-State: AOJu0YwVeGqqbr5i1NayOmXk0hWjw5tJnSNyV5+2uCrdgz3GGg5mhwTR
+        rDM6KajcQdXDJeHiLnsBdw0BHoJSpHKKrdc/LLZpGQ==
+X-Google-Smtp-Source: AGHT+IEMP1d/F7ZwNS42meo6Fs71Z6K0MFsEb8WfEqTyuo/oXhAnsjTZEaVICzf8J1RqiHlh2pmpSA==
+X-Received: by 2002:a92:c948:0:b0:34f:3b12:799e with SMTP id i8-20020a92c948000000b0034f3b12799emr271990ilq.0.1694539502664;
+        Tue, 12 Sep 2023 10:25:02 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id d4-20020a056e02214400b0034ac1a32fd9sm1777055ilv.44.2023.09.12.10.24.59
+        by smtp.gmail.com with ESMTPSA id d4-20020a056e02214400b0034ac1a32fd9sm1777055ilv.44.2023.09.12.10.25.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 10:24:59 -0700 (PDT)
+        Tue, 12 Sep 2023 10:25:01 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
-Cc:     asml.silence@gmail.com, krisman@suse.de
-Subject: [PATCHSET v2 0/3] Add support for multishot reads
-Date:   Tue, 12 Sep 2023 11:24:55 -0600
-Message-Id: <20230912172458.1646720-1-axboe@kernel.dk>
+Cc:     asml.silence@gmail.com, krisman@suse.de,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/3] io_uring/rw: split io_read() into a helper
+Date:   Tue, 12 Sep 2023 11:24:56 -0600
+Message-Id: <20230912172458.1646720-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230912172458.1646720-1-axboe@kernel.dk>
+References: <20230912172458.1646720-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+Add __io_read() which does the grunt of the work, leaving the completion
+side to the new io_read(). No functional changes in this patch.
 
-We support multishot for other request types, generally in the shape of
-a flag for the request. Doing a flag based approach with reads isn't
-straightforward, as the read/write flags are in the RWF_ space. Instead,
-add a separate opcode for this, IORING_OP_READ_MULTISHOT.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/rw.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-This can only be used provided buffers, like other multishot request
-types that read/receive data.
-
-It can also only be used for pollable file types, like a tun device or
-pipes, for example. File types that are always readable (or seekable),
-like regular files, cannot be used with multishot reads.
-
-This is based on the io_uring-futex branch (which, in turn, is based on
-the io_uring-waitid branch). No dependencies as such between them,
-except the opcode numbering.
-
-Can also be found here:
-
-https://git.kernel.dk/cgit/linux/log/?h=io_uring-mshot-read
-
-and there's a liburing branch with some basic support and some test
-cases here:
-
-https://git.kernel.dk/cgit/liburing/log/?h=read-mshot
-
- include/uapi/linux/io_uring.h |  1 +
- io_uring/opdef.c              | 14 ++++++
- io_uring/opdef.h              |  2 +
- io_uring/rw.c                 | 92 ++++++++++++++++++++++++++++++++---
- io_uring/rw.h                 |  2 +
- 5 files changed, 105 insertions(+), 6 deletions(-)
-
-Changes since v1:
-- Code reformatting
-- Add/expand a few comments
-
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index c8c822fa7980..402e8bf002d6 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -708,7 +708,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+ 	return 0;
+ }
+ 
+-int io_read(struct io_kiocb *req, unsigned int issue_flags)
++static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+ 	struct io_rw_state __s, *s = &__s;
+@@ -853,6 +853,17 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	/* it's faster to check here then delegate to kfree */
+ 	if (iovec)
+ 		kfree(iovec);
++	return ret;
++}
++
++int io_read(struct io_kiocb *req, unsigned int issue_flags)
++{
++	int ret;
++
++	ret = __io_read(req, issue_flags);
++	if (unlikely(ret < 0))
++		return ret;
++
+ 	return kiocb_done(req, ret, issue_flags);
+ }
+ 
 -- 
-Jens Axboe
-
+2.40.1
 

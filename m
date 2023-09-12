@@ -2,95 +2,104 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E481979D72D
-	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 19:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC79579D77A
+	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 19:25:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235087AbjILRGr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Sep 2023 13:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42306 "EHLO
+        id S233439AbjILRZG (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Sep 2023 13:25:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231857AbjILRGq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 13:06:46 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8316DE7A
-        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:06:42 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id e9e14a558f8ab-34e1757fe8fso7016705ab.0
-        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:06:42 -0700 (PDT)
+        with ESMTP id S230488AbjILRZG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 13:25:06 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80BD510D9
+        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:02 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-760dff4b701so70076339f.0
+        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694538401; x=1695143201; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U2j/Jw9eTuzQFJfXJuPtObQqtmWRSTu+BiB0SV3hnyg=;
-        b=TGXD7Xbq8XngKWyOsz1dunxsOEvY9L29IzEpkF8h+DggHGdd/NXFEODwW8fupLKiPm
-         KA2zFx17+SM5b3PDCbVYZvcznHDw9DVkCez500Qo6ErGAXN6fyOAm3te7/h7Jidwy9SL
-         2/zsLwZR6gZyhYWLjPsUknKDInPWBcTZ9f5PvSaWpYsPGhNuG5mIsJ7clEs+2TdifZwL
-         s5VkyHNgO4HCmOzL9YVXDQRZ/xWtUOOhvS9yItKH5hlDra/b+h7DOkUKObU/PuSd79DK
-         /phFVU2oIbOONJvmIWCH/kRilMbc502jWgZShGDb+orija2ivpbm+SAV9vhUlyWRl/8H
-         SWcQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694539501; x=1695144301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfd+d+m/3KvVMsdu3pCzTp+8VUzfP026lLxnLsu8SvM=;
+        b=Ek9XtnM16vKxArCmQzN5IxSUbrArP5JpBFshlSuuiN0BIiEIy68z60yJ4XpeMXkLxl
+         F8RL4rrbICYC9MMK3lB+CyuOA2FQ3zZecDt4kpxVt0wF7juP3K/ted85ACYkrp+/k2Cy
+         VVU74cr239wRbaRq7GDj9k8VNjm+FbO2rigOvSRleKZE/BV0keoQixBBtYIalGIAPYlF
+         Pkq5IJ5TlG1nnr27TphqJufA8JJXMVO1QDOKJr9QExvCZocJ+2BsKh69F6nc4E65lnvR
+         M7/bDV9hBPPjo1U36GxfE0/BXlxE321VtoACywSHSGxmkt+xLmKYlvZ/AU1VwjbrxDHt
+         rTtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694538401; x=1695143201;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U2j/Jw9eTuzQFJfXJuPtObQqtmWRSTu+BiB0SV3hnyg=;
-        b=W9nXFoaVAe6i0WlsqoBN95yOQZXQ0fx6jlAdpOhYzo71UneYkeTBQL9dGvkk9jI35t
-         k493iJr5EC89UzSXCLg3VlP8a2auoNaGql1OerwaMRgLcxAMmu/YEjzndTC/EJ4WuPoz
-         xwc+7NLLD6hLxrM+I2d2PMA07druDHK96wDfh2/2xsrG4S8aI0Eh+tWLrw9kfkSY6SSP
-         pFbCN5trjRXke82kR+AHqL6sUPc/oJFcTXnlqftgSkExjProNw8x5akxp8gojpDFAreN
-         iYee5RuzifotU/waGpLXdM0Wffj3huRgGVsYJsLD0pWNB5hO3BpIZG25u+SPDktLPueV
-         icgA==
-X-Gm-Message-State: AOJu0Yx7QLuCtJKyJhROXdTlV/FOdotNcMXeyS1lx2M9XFUq3peYB8k2
-        5tpUWJeqrqIlgOtrWneo/WW00WkA+KnvyeCsTb4tNw==
-X-Google-Smtp-Source: AGHT+IHdt6IRcs9hAsCNchWOsHxOoRUWUOQv41eVA5rDSet1Hyuvw3eD3NYkW2GiZ5lRJSISETXOzw==
-X-Received: by 2002:a05:6602:1489:b0:792:6be4:3dcb with SMTP id a9-20020a056602148900b007926be43dcbmr422572iow.2.1694538401048;
-        Tue, 12 Sep 2023 10:06:41 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id n7-20020a6b4107000000b007951e14b951sm3014493ioa.25.2023.09.12.10.06.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Sep 2023 10:06:40 -0700 (PDT)
-Message-ID: <26ddc629-e685-49b9-9786-73c0f89854d8@kernel.dk>
-Date:   Tue, 12 Sep 2023 11:06:39 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4 0/5] Add io_uring support for waitid
-Content-Language: en-US
+        d=1e100.net; s=20230601; t=1694539501; x=1695144301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wfd+d+m/3KvVMsdu3pCzTp+8VUzfP026lLxnLsu8SvM=;
+        b=UUwjb7m4HIbqcvNA/WEwLpTGwwkYxyIhUSQ3By9mxgvOpALbv+AyA67fJ9AwLdc6MY
+         rMsDCDLgdCvYzoMrv9VuBv3YtDwJGMbFtcTcXM+vDEo+WT+kKFpJvzwiYOwzr32hXTcq
+         WEUkZnQV1bfITK1cXwpmklqkbmhGtDSZHFUGeobAk7N8uqBJ0TVuk3sZfj31vqY1hY1y
+         C0r93phK0UUiwT2iWbSXBncCavICdrBkQsTx73jlV5kDZkLzmPlnLW/gtarJvOBakXuF
+         nWEFjIgsOtEEdrXfDKM/X+/AZw+Yi/W+kpny2JERRO4BLepfQcTLLw/0QGvfpxfZgWdw
+         3rTw==
+X-Gm-Message-State: AOJu0Yz6s/zBwFYTporD+Uza/m5FPoU2WxR4VTIJJGue6j/hgyHFr8KI
+        Vajjd+Jb7KNmhYuO7WADPTbWVWGXEYQsXFDeU7L+Zw==
+X-Google-Smtp-Source: AGHT+IHJmUK+LKYZwJjovZqklt0NzWeUjwrV8ceoqhQgIxxkCvNNPs6zPErT/ZBMnAo7cuN5WA7cvg==
+X-Received: by 2002:a92:cc05:0:b0:34f:6742:13b5 with SMTP id s5-20020a92cc05000000b0034f674213b5mr164441ilp.3.1694539501252;
+        Tue, 12 Sep 2023 10:25:01 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id d4-20020a056e02214400b0034ac1a32fd9sm1777055ilv.44.2023.09.12.10.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Sep 2023 10:24:59 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     brauner@kernel.org, arnd@arndb.de, asml.silence@gmail.com
-References: <20230909151124.1229695-1-axboe@kernel.dk>
-In-Reply-To: <20230909151124.1229695-1-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     io-uring@vger.kernel.org
+Cc:     asml.silence@gmail.com, krisman@suse.de
+Subject: [PATCHSET v2 0/3] Add support for multishot reads
+Date:   Tue, 12 Sep 2023 11:24:55 -0600
+Message-Id: <20230912172458.1646720-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/9/23 9:11 AM, Jens Axboe wrote:
-> Hi,
-> 
-> This adds support for IORING_OP_WAITID, which is an async variant of
-> the waitid(2) syscall. Rather than have a parent need to block waiting
-> on a child task state change, it can now simply get an async notication
-> when the requested state change has occured.
-> 
-> Patches 1..4 are purely prep patches, and should not have functional
-> changes. They split out parts of do_wait() into __do_wait(), so that
-> the prepare-to-wait and sleep parts are contained within do_wait().
-> 
-> Patch 5 adds io_uring support.
-> 
-> I wrote a few basic tests for this, which can be found in the
-> 'waitid' branch of liburing:
-> 
-> https://git.kernel.dk/cgit/liburing/log/?h=waitid
-> 
-> Also spun a custom kernel for someone to test it, and no issues reported
-> so far.
+Hi,
 
-Forget to mention that I also ran all the ltp testcases for any wait*
-syscall test, and everything still passes just fine.
+We support multishot for other request types, generally in the shape of
+a flag for the request. Doing a flag based approach with reads isn't
+straightforward, as the read/write flags are in the RWF_ space. Instead,
+add a separate opcode for this, IORING_OP_READ_MULTISHOT.
+
+This can only be used provided buffers, like other multishot request
+types that read/receive data.
+
+It can also only be used for pollable file types, like a tun device or
+pipes, for example. File types that are always readable (or seekable),
+like regular files, cannot be used with multishot reads.
+
+This is based on the io_uring-futex branch (which, in turn, is based on
+the io_uring-waitid branch). No dependencies as such between them,
+except the opcode numbering.
+
+Can also be found here:
+
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-mshot-read
+
+and there's a liburing branch with some basic support and some test
+cases here:
+
+https://git.kernel.dk/cgit/liburing/log/?h=read-mshot
+
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/opdef.c              | 14 ++++++
+ io_uring/opdef.h              |  2 +
+ io_uring/rw.c                 | 92 ++++++++++++++++++++++++++++++++---
+ io_uring/rw.h                 |  2 +
+ 5 files changed, 105 insertions(+), 6 deletions(-)
+
+Changes since v1:
+- Code reformatting
+- Add/expand a few comments
 
 -- 
 Jens Axboe
+
 

@@ -2,60 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4125E79D77C
+	by mail.lfdr.de (Postfix) with ESMTP id D65E879D77D
 	for <lists+io-uring@lfdr.de>; Tue, 12 Sep 2023 19:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233692AbjILRZL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 12 Sep 2023 13:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45662 "EHLO
+        id S236435AbjILRZM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 12 Sep 2023 13:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230488AbjILRZJ (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 13:25:09 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA5010E9
-        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:05 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-34f17290a9cso7001035ab.1
-        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:05 -0700 (PDT)
+        with ESMTP id S233691AbjILRZL (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 12 Sep 2023 13:25:11 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 251C910D9
+        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:07 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id e9e14a558f8ab-34f17290a9cso7001055ab.1
+        for <io-uring@vger.kernel.org>; Tue, 12 Sep 2023 10:25:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694539504; x=1695144304; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694539506; x=1695144306; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WnGBrfZZuySU2APTyOcddYlt8Geg3fQwoMh64sBxPCY=;
-        b=lB50xNnVTqb3mE5r7VLswro6ih9Ege5wUTw88ACKahAKf1YO0mIu+s/gKeSWS1rTij
-         6M04OSq/SwktsENlcP5dN0Ps4AU7vvxGJcjdl3bJ82vC2QgZlzq1/MzS4JncrwGp8F5r
-         reh6aEkNNMfNf8v6oU3uNZf8xevxoQM9m/c8leL0mCzuZZp/e50gUDUw996U53CI0sDe
-         xdBj2gqmZyBXuaOztG6b8oHEo/vqj+0kuz1150j736Pcp+cwibl58X0CDveI2wiZO4E8
-         YsD5WKC0nm1VIGDGPmgiygJQxbl6M0qwANhLf3MyG+Lhk5uLCvARn9zGa+QIOQyrVBiQ
-         yyAg==
+        bh=VhwDKUMlxs2yeRrM/DkIsCjwkJ4Tywn4ltEYD1AeANY=;
+        b=v5UATE+wJ6dZ597NpNWmBYnSHBupGEPYCtwFmgEbliql224hG62Ansh4JlEQru5K5x
+         cAGtNO3LOM9lV7JT9ILKH84uxVj790OibLhBvWel48msL1i3KtOOmC6LRCbSv527go3J
+         CCulb3+BraSkQswhlBYHyGdPp5iPOktzzLzM0cGPGFgeE2qN3xgbL3HM8FZb23kxycbe
+         TORMi68pyNOwW08v2yWf6L4efOBgpafZSD3m9tc+B9S2n8Bx9YqzSHOcEvHYAEYsnIE9
+         2xneZuyXQMDPn5tmevpZ9/KY7q1U8NIviktWhbjQtinqTdDw51Q8CVuxth6QLYSBVS2j
+         PbRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694539504; x=1695144304;
+        d=1e100.net; s=20230601; t=1694539506; x=1695144306;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WnGBrfZZuySU2APTyOcddYlt8Geg3fQwoMh64sBxPCY=;
-        b=P7ZtyL+DX9mv4klfDw6MBK3/mbnip1Y+We0K073J7WmsuMj61kQiJlpDTucOlkneGG
-         ewPFW6KaJcKKuKXH5Mdvhd3VFrhmiZN4q/uhCN7ubwVvGT40Tf4h8p0ZCUA1a4cUWGYM
-         3OqLJj9QTsKqZKWqfvHKvCc0U+dPWoYgLIcsVFty7k7MJYVEIOSm9urygS1F+sXe6pxz
-         UUWz/sB4nIlT5j0KBCb7VKiu0JnSv8mQshviwX+/odGPAS+vVsDZpQygdZqCnNTlKdHm
-         4hN+xdpvhRFIO8ctbBlPZq6kPTa1TqRctRxUzXgjvhKhbEBX68FL7++FgF4d05GKgMw/
-         eP9A==
-X-Gm-Message-State: AOJu0YwdF2OTOkb8CyWWhH4z7QmG5beMoPnp+t6qPkyMZU1aiWGjlQBu
-        lUJqPwq9a6x6bCS3vDpBMcqt91rmnhX+TZ94DLFK4g==
-X-Google-Smtp-Source: AGHT+IFH5gR4CVEtikAweBWnP2CIhuOHLx1EzeZNwYkQBxlI/B52vTlKR4c5P6ZZTANMtIljiqZUlQ==
-X-Received: by 2002:a92:c9c2:0:b0:34f:7ba2:50e8 with SMTP id k2-20020a92c9c2000000b0034f7ba250e8mr197472ilq.2.1694539504672;
-        Tue, 12 Sep 2023 10:25:04 -0700 (PDT)
+        bh=VhwDKUMlxs2yeRrM/DkIsCjwkJ4Tywn4ltEYD1AeANY=;
+        b=gKwlga/nwkkX8Wq2PfT/pi+GRti3f2pAq8+JGkrCIuPnclZYvekMbmzcicRZI1XRz3
+         LsjCkICfLv87Z4tRfFP0amvYtHGGZ0FMOHtMM3qTio/GFKm/3Y92B0HaSyhnVPihBPXr
+         Mu7oA/+9R9VjyinYfLQGJgdyKlfQTK7S5H0dL46htEuLQf2peqgdUCYnMYkVnvqh6Xa0
+         ZbP/DKgw+zIrOj9uvDlGMVvIAkTCLZPiOkEI6JFI3TpUczfGlDbp6Tm5UlQkTDHaZiJQ
+         fnpk00MQS5e3lCPSgqINy1GdnUglpqJgzmNCkBYpndQqRGiaulDlv4kiJ+7O/mC2xnF3
+         bN4g==
+X-Gm-Message-State: AOJu0YzhNeg7I9pIBYoSqqlk2GrzhIDIP/PdXJyi4/5ckxIzB3zw1Dth
+        fV3LhKE2Y20OeQzeJafIeOqTKNSqZT/8YhcyIhmv8Q==
+X-Google-Smtp-Source: AGHT+IF+Qk70YPsYWGyazplgbkRJ5jQ6wXIeTQaRHF0OwvY/gls20uRKsXXSTlraHE1deXarIcHPiw==
+X-Received: by 2002:a92:c9c2:0:b0:34f:7ba2:50e8 with SMTP id k2-20020a92c9c2000000b0034f7ba250e8mr197540ilq.2.1694539506088;
+        Tue, 12 Sep 2023 10:25:06 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id d4-20020a056e02214400b0034ac1a32fd9sm1777055ilv.44.2023.09.12.10.25.02
+        by smtp.gmail.com with ESMTPSA id d4-20020a056e02214400b0034ac1a32fd9sm1777055ilv.44.2023.09.12.10.25.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 10:25:03 -0700 (PDT)
+        Tue, 12 Sep 2023 10:25:05 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org
 Cc:     asml.silence@gmail.com, krisman@suse.de,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/3] io_uring/rw: mark readv/writev as vectored in the opcode definition
-Date:   Tue, 12 Sep 2023 11:24:57 -0600
-Message-Id: <20230912172458.1646720-3-axboe@kernel.dk>
+Subject: [PATCH 3/3] io_uring/rw: add support for IORING_OP_READ_MULTISHOT
+Date:   Tue, 12 Sep 2023 11:24:58 -0600
+Message-Id: <20230912172458.1646720-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230912172458.1646720-1-axboe@kernel.dk>
 References: <20230912172458.1646720-1-axboe@kernel.dk>
@@ -65,80 +65,176 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This is cleaner than gating on the opcode type, particularly as more
-read/write type opcodes may be added.
+This behaves like IORING_OP_READ, except:
 
-Then we can use that for the data import, and for __io_read() on
-whether or not we need to copy state.
+1) It only supports pollable files (eg pipes, sockets, etc). Note that
+   for sockets, you probably want to use recv/recvmsg with multishot
+   instead.
+
+2) It supports multishot mode, meaning it will repeatedly trigger a
+   read and fill a buffer when data is available. This allows similar
+   use to recv/recvmsg but on non-sockets, where a single request will
+   repeatedly post a CQE whenever data is read from it.
+
+3) Because of #2, it must be used with provided buffers. This is
+   uniformly true across any request type that supports multishot and
+   transfers data, with the reason being that it's obviously not
+   possible to pass in a single buffer for the data, as multiple reads
+   may very well trigger before an application has a chance to process
+   previous CQEs and the data passed from them.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/opdef.c |  2 ++
- io_uring/opdef.h |  2 ++
- io_uring/rw.c    | 10 ++++++----
- 3 files changed, 10 insertions(+), 4 deletions(-)
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/opdef.c              | 12 ++++++
+ io_uring/rw.c                 | 73 +++++++++++++++++++++++++++++++++--
+ io_uring/rw.h                 |  2 +
+ 4 files changed, 85 insertions(+), 3 deletions(-)
 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index daa363d1a502..c35438af679a 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -246,6 +246,7 @@ enum io_uring_op {
+ 	IORING_OP_FUTEX_WAIT,
+ 	IORING_OP_FUTEX_WAKE,
+ 	IORING_OP_FUTEX_WAITV,
++	IORING_OP_READ_MULTISHOT,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 1d26ef10fc16..bfb7c53389c0 100644
+index bfb7c53389c0..74b3c1ef22b0 100644
 --- a/io_uring/opdef.c
 +++ b/io_uring/opdef.c
-@@ -65,6 +65,7 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
-+		.vectored		= 1,
- 		.prep			= io_prep_rw,
- 		.issue			= io_read,
+@@ -460,6 +460,15 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
  	},
-@@ -78,6 +79,7 @@ const struct io_issue_def io_issue_defs[] = {
- 		.ioprio			= 1,
- 		.iopoll			= 1,
- 		.iopoll_queue		= 1,
-+		.vectored		= 1,
- 		.prep			= io_prep_rw,
- 		.issue			= io_write,
- 	},
-diff --git a/io_uring/opdef.h b/io_uring/opdef.h
-index c22c8696e749..9e5435ec27d0 100644
---- a/io_uring/opdef.h
-+++ b/io_uring/opdef.h
-@@ -29,6 +29,8 @@ struct io_issue_def {
- 	unsigned		iopoll_queue : 1;
- 	/* opcode specific path will handle ->async_data allocation if needed */
- 	unsigned		manual_alloc : 1;
-+	/* vectored opcode, set if 1) vectored, and 2) handler needs to know */
-+	unsigned		vectored : 1;
++	[IORING_OP_READ_MULTISHOT] = {
++		.needs_file		= 1,
++		.unbound_nonreg_file	= 1,
++		.pollin			= 1,
++		.buffer_select		= 1,
++		.audit_skip		= 1,
++		.prep			= io_read_mshot_prep,
++		.issue			= io_read_mshot,
++	},
+ };
  
- 	int (*issue)(struct io_kiocb *, unsigned int);
- 	int (*prep)(struct io_kiocb *, const struct io_uring_sqe *);
+ const struct io_cold_def io_cold_defs[] = {
+@@ -692,6 +701,9 @@ const struct io_cold_def io_cold_defs[] = {
+ 	[IORING_OP_FUTEX_WAITV] = {
+ 		.name			= "FUTEX_WAITV",
+ 	},
++	[IORING_OP_READ_MULTISHOT] = {
++		.name			= "READ_MULTISHOT",
++	},
+ };
+ 
+ const char *io_uring_get_opcode(u8 opcode)
 diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 402e8bf002d6..c3bf38419230 100644
+index c3bf38419230..ec0cc38ea682 100644
 --- a/io_uring/rw.c
 +++ b/io_uring/rw.c
-@@ -388,8 +388,7 @@ static struct iovec *__io_import_iovec(int ddir, struct io_kiocb *req,
- 	buf = u64_to_user_ptr(rw->addr);
- 	sqe_len = rw->len;
+@@ -123,6 +123,22 @@ int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return 0;
+ }
  
--	if (opcode == IORING_OP_READ || opcode == IORING_OP_WRITE ||
--	    (req->flags & REQ_F_BUFFER_SELECT)) {
-+	if (!io_issue_defs[opcode].vectored || req->flags & REQ_F_BUFFER_SELECT) {
- 		if (io_do_buffer_select(req)) {
- 			buf = io_buffer_select(req, &sqe_len, issue_flags);
- 			if (!buf)
-@@ -776,8 +775,11 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
++/*
++ * Multishot read is prepared just like a normal read/write request, only
++ * difference is that we set the MULTISHOT flag.
++ */
++int io_read_mshot_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	int ret;
++
++	ret = io_prep_rw(req, sqe);
++	if (unlikely(ret))
++		return ret;
++
++	req->flags |= REQ_F_APOLL_MULTISHOT;
++	return 0;
++}
++
+ void io_readv_writev_cleanup(struct io_kiocb *req)
+ {
+ 	struct io_async_rw *io = req->async_data;
+@@ -863,10 +879,61 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 	int ret;
  
- 	if (ret == -EAGAIN || (req->flags & REQ_F_REISSUE)) {
- 		req->flags &= ~REQ_F_REISSUE;
--		/* if we can poll, just do that */
--		if (req->opcode == IORING_OP_READ && file_can_poll(req->file))
+ 	ret = __io_read(req, issue_flags);
+-	if (unlikely(ret < 0))
+-		return ret;
++	if (ret >= 0)
++		return kiocb_done(req, ret, issue_flags);
++
++	return ret;
++}
++
++int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
++{
++	unsigned int cflags = 0;
++	int ret;
++
++	/*
++	 * Multishot MUST be used on a pollable file
++	 */
++	if (!file_can_poll(req->file))
++		return -EBADFD;
++
++	ret = __io_read(req, issue_flags);
++
++	/*
++	 * If we get -EAGAIN, recycle our buffer and just let normal poll
++	 * handling arm it.
++	 */
++	if (ret == -EAGAIN) {
++		io_kbuf_recycle(req, issue_flags);
++		return -EAGAIN;
++	}
++
++	/*
++	 * Any successful return value will keep the multishot read armed.
++	 */
++	if (ret > 0) {
 +		/*
-+		 * If we can poll, just do that. For a vectored read, we'll
-+		 * need to copy state first.
++		 * Put our buffer and post a CQE. If we fail to post a CQE, then
++		 * jump to the termination path. This request is then done.
 +		 */
-+		if (file_can_poll(req->file) && !io_issue_defs[req->opcode].vectored)
- 			return -EAGAIN;
- 		/* IOPOLL retry should happen for io-wq threads */
- 		if (!force_nonblock && !(req->ctx->flags & IORING_SETUP_IOPOLL))
++		cflags = io_put_kbuf(req, issue_flags);
++
++		if (io_fill_cqe_req_aux(req,
++					issue_flags & IO_URING_F_COMPLETE_DEFER,
++					ret, cflags | IORING_CQE_F_MORE)) {
++			if (issue_flags & IO_URING_F_MULTISHOT)
++				return IOU_ISSUE_SKIP_COMPLETE;
++			return -EAGAIN;
++		}
++	}
+ 
+-	return kiocb_done(req, ret, issue_flags);
++	/*
++	 * Either an error, or we've hit overflow posting the CQE. For any
++	 * multishot request, hitting overflow will terminate it.
++	 */
++	io_req_set_res(req, ret, cflags);
++	if (issue_flags & IO_URING_F_MULTISHOT)
++		return IOU_STOP_MULTISHOT;
++	return IOU_OK;
+ }
+ 
+ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+diff --git a/io_uring/rw.h b/io_uring/rw.h
+index 4b89f9659366..c5aed03d42a4 100644
+--- a/io_uring/rw.h
++++ b/io_uring/rw.h
+@@ -23,3 +23,5 @@ int io_writev_prep_async(struct io_kiocb *req);
+ void io_readv_writev_cleanup(struct io_kiocb *req);
+ void io_rw_fail(struct io_kiocb *req);
+ void io_req_rw_complete(struct io_kiocb *req, struct io_tw_state *ts);
++int io_read_mshot_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags);
 -- 
 2.40.1
 

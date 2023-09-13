@@ -2,141 +2,123 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5583E79E85F
-	for <lists+io-uring@lfdr.de>; Wed, 13 Sep 2023 14:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E1579E8AC
+	for <lists+io-uring@lfdr.de>; Wed, 13 Sep 2023 15:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238125AbjIMMx5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Sep 2023 08:53:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50070 "EHLO
+        id S240747AbjIMNIB (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Sep 2023 09:08:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239713AbjIMMx4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Sep 2023 08:53:56 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AADD19B1;
-        Wed, 13 Sep 2023 05:53:52 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50078eba7afso11781037e87.0;
-        Wed, 13 Sep 2023 05:53:52 -0700 (PDT)
+        with ESMTP id S240743AbjIMNIA (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Sep 2023 09:08:00 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C1819B6
+        for <io-uring@vger.kernel.org>; Wed, 13 Sep 2023 06:07:55 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-402d0eda361so79274035e9.0
+        for <io-uring@vger.kernel.org>; Wed, 13 Sep 2023 06:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694609630; x=1695214430; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CAdJP8w+BgU4Tkmg8XbWiCFHVF3sBYy4Av+m+ajHDTY=;
-        b=rsBbAhl3neJx35TjzSrMjqd9TLzOi7J+zvClENA9Q5rgrygmjifGBRibQw1sy8Zokx
-         rhQoKnR4uCYWhPY1dwS6uM8wdud2LBDlVR4Crz25wrNbgs+TX5mzS/dEM8lQ9WYeSohe
-         M27Ugmkkw87KZWr0Psi0DYudlvee8biyL3pgBmoAy3Ou45gMcD6jfRHdM5HGDP09/6Si
-         0AUAsZAr8Nkma77arwny8l6yfDW5LXX0Gd4VYMo1ImnFAmM9ABVvqQgmlFBYXTKbiOY6
-         n+xNl3lQ7mN5wxhoxfPMqI9dEzP7cVQT6G4Z/dlqH7612RzQl/5A32nh7weRcvDMUcTZ
-         RURQ==
+        d=google.com; s=20230601; t=1694610474; x=1695215274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nzBzuf6LZxvtpnAI8wecn9jFiyl9Zko7Y9Xwbf3eRWY=;
+        b=tfOIOL5JYGPzw5EGyEFk4IKpeFcycASB27c7NiyPgD30M5DgOvIvoy1lhe7cPbnv15
+         8WYqChwsdWQ3c5gEu9iD/9plnWJPdRXylZ4VLAlROdDGii/ZmmRHzmCILm5l08VvNHWC
+         hHWuXlELKV6WTaQKXb2QnVJItniLvVD5ZLxbW+B3ncESDlwhLboCtEkDoIqoq1NeHxPI
+         zXRoZL40++ntDrJtSZ7FC/LGOEF66iqwOsyb/nUSZC2JrUGGRRdbSxOgSSFaBXYaiOom
+         2smu9lQdMrpl50rYrqfp2uqiqmJAzYaGUPhoLUSJeamT3aOyMjlKbgeniPLARtbd/UL+
+         0bfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694609630; x=1695214430;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CAdJP8w+BgU4Tkmg8XbWiCFHVF3sBYy4Av+m+ajHDTY=;
-        b=LUoTapybf0woV6hEolB4Z4EQeqyurSYZBaTs5rFwcWUfYvjE9m89nufV9pJxrpe3Dh
-         VCxv0WA+1ntY4Zc+3i7zxk3kXzpvbJuA95/3hnETRhzIFeC1XPNzuk9QHNc2lQ9ALvB9
-         /NMxXMmU1hnFL9S8nDiueQMLEKu8QLa8aOLM6RVsVzsyioklVO1duxbH01gwBHDEIJus
-         Py/NbioP1gQ+y1NX5COiMmu46PDvifaUMY6ynOaBZAldeXO2RfWGJ+E/V/Tiu0TtWHEz
-         l3VeHxry8NTWIdm4l3Y2tvgxvSSSkpyaa6XmKVUw2NCOYiCo1BUp9q8L7zcyvJF0KPCL
-         ZoIw==
-X-Gm-Message-State: AOJu0Yy/ncrP0F5acXGA+t3S3HODEggQOSltNA0Q/p8IKlqPugxgE3AX
-        QF3vZNis3iBL3pBNVpXJRR8=
-X-Google-Smtp-Source: AGHT+IF1Toad8UGakpZqIjiNfBjNXXaD8dzBTyl4c/xQlP8yFQ/QS+ntfQIbrKaGTj9GSzyFbG1YkA==
-X-Received: by 2002:a05:6512:3984:b0:500:9a45:63b with SMTP id j4-20020a056512398400b005009a45063bmr2216151lfu.13.1694609630339;
-        Wed, 13 Sep 2023 05:53:50 -0700 (PDT)
-Received: from [192.168.43.77] (82-132-233-153.dab.02.net. [82.132.233.153])
-        by smtp.gmail.com with ESMTPSA id g14-20020a17090669ce00b0099b42c90830sm8444521ejs.36.2023.09.13.05.53.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 05:53:49 -0700 (PDT)
-Message-ID: <6501b559-6986-8e6b-55a5-b6b9a46208ce@gmail.com>
-Date:   Wed, 13 Sep 2023 13:53:22 +0100
+        d=1e100.net; s=20230601; t=1694610474; x=1695215274;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nzBzuf6LZxvtpnAI8wecn9jFiyl9Zko7Y9Xwbf3eRWY=;
+        b=xJk6YcYWViMuzGFSVCOMT/9vBhr0BrJc1+vkhatmmqgh1LwlHfxl1pGI1r83XxfSVa
+         vvVRejGgDvoTJXAkoyTjestsxVgof6Bge6j6OSCi/wa+bIdVCyuOBhVxrmFjCuwzpO5k
+         AYoQ4EUipJD4pdHzipQOcKAoTVZPKWihZ9kRHkairfm0+WAd9bfloXRCZxogqXxum0AG
+         Qus7y58tKAVh620rUrbqObc4v12UmkXGHtQeDUSpWe1EuBWHdrMcaVYWCdCmmzsQAHOh
+         L8koI0PlBndAu5jZmnQXD3EFhAJjtJoT9QekpbRXlx0LXTEEpR6FrTMzmLnig/6wcVpR
+         v83g==
+X-Gm-Message-State: AOJu0YwpmqxqKhPLnTe9YsRCmUaPGlXEYYOUrHxq9n8wvV32/VZRMMGV
+        qW7RdsL6UWaak0DpVPvP0FQqLz2JCUM27IGw2GF6rg==
+X-Google-Smtp-Source: AGHT+IEavyoLFycfTD/7cvjDsZ8SgcJkuLwQCv9ZCCzkk1PYhVhOzDZCKuVayZ/OAS4swCRCMMrJqfnYGSZw6eaIS3g=
+X-Received: by 2002:a05:600c:2205:b0:3fa:97ad:2ba5 with SMTP id
+ z5-20020a05600c220500b003fa97ad2ba5mr2078275wml.31.1694610474088; Wed, 13 Sep
+ 2023 06:07:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] io_uring: fix IO hang in io_wq_put_and_exit from
- do_exit()
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengming Zhou <zhouchengming@bytedance.com>
-References: <20230908093009.540763-1-ming.lei@redhat.com>
- <58227846-6b73-46ef-957f-d9b1e0451899@kernel.dk>
- <78577243-b7a6-6d7c-38e4-dfef1762f135@gmail.com> <ZPvNwczbDYaOinIC@fedora>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZPvNwczbDYaOinIC@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <000000000000fc6ba706053be013@google.com> <4e400095-7205-883b-c8fd-4aa95a1b6423@gmail.com>
+In-Reply-To: <4e400095-7205-883b-c8fd-4aa95a1b6423@gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Wed, 13 Sep 2023 15:07:15 +0200
+Message-ID: <CANpmjNPY7eD100LNcRJLocprTBuZrZ48hH6FPjMzhPSe6UMy0A@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring?] KCSAN: data-race in io_wq_activate_free_worker
+ / io_wq_worker_running
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     syzbot <syzbot+a36975231499dc24df44@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/9/23 02:43, Ming Lei wrote:
-> On Fri, Sep 08, 2023 at 04:46:15PM +0100, Pavel Begunkov wrote:
->> On 9/8/23 14:49, Jens Axboe wrote:
->>> On 9/8/23 3:30 AM, Ming Lei wrote:
->>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>>> index ad636954abae..95a3d31a1ef1 100644
->>>> --- a/io_uring/io_uring.c
->>>> +++ b/io_uring/io_uring.c
->>>> @@ -1930,6 +1930,10 @@ void io_wq_submit_work(struct io_wq_work *work)
->>>>    		}
->>>>    	}
->>>> +	/* It is fragile to block POLLED IO, so switch to NON_BLOCK */
->>>> +	if ((req->ctx->flags & IORING_SETUP_IOPOLL) && def->iopoll_queue)
->>>> +		issue_flags |= IO_URING_F_NONBLOCK;
->>>> +
->>>
->>> I think this comment deserves to be more descriptive. Normally we
->>> absolutely cannot block for polled IO, it's only OK here because io-wq
->>> is the issuer and not necessarily the poller of it. That generally falls
->>> upon the original issuer to poll these requests.
->>>
->>> I think this should be a separate commit, coming before the main fix
->>> which is below.
->>>
->>>> @@ -3363,6 +3367,12 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
->>>>    		finish_wait(&tctx->wait, &wait);
->>>>    	} while (1);
->>>> +	/*
->>>> +	 * Reap events from each ctx, otherwise these requests may take
->>>> +	 * resources and prevent other contexts from being moved on.
->>>> +	 */
->>>> +	xa_for_each(&tctx->xa, index, node)
->>>> +		io_iopoll_try_reap_events(node->ctx);
->>>
->>> The main issue here is that if someone isn't polling for them, then we
->>> get to wait for a timeout before they complete. This can delay exit, for
->>> example, as we're now just waiting 30 seconds (or whatever the timeout
->>> is on the underlying device) for them to get timed out before exit can
->>> finish.
->>
->> Ok, our case is that userspace crashes and doesn't poll for its IO.
->> How would that block io-wq termination? We send a signal and workers
->> should exit, either by queueing up the request for iopoll (and then
-> 
-> It depends on how userspace handles the signal, such as, t/io_uring,
-> s->finish is set as true in INT signal handler, two cases may happen:
-> 
-> 1) s->finish is observed immediately, then this pthread exits, and leave
-> polled requests in ctx->iopoll_list
+On Wed, 13 Sept 2023 at 14:13, Pavel Begunkov <asml.silence@gmail.com> wrote:
+>
+> On 9/13/23 12:29, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    f97e18a3f2fb Merge tag 'gpio-updates-for-v6.6' of git://gi..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12864667a80000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=fe440f256d065d3b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a36975231499dc24df44
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/b1781aaff038/disk-f97e18a3.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/5b915468fd6d/vmlinux-f97e18a3.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/abc8ece931f3/bzImage-f97e18a3.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+a36975231499dc24df44@syzkaller.appspotmail.com
+> >
+> > ==================================================================
+> > BUG: KCSAN: data-race in io_wq_activate_free_worker / io_wq_worker_running
+> >
+> > write to 0xffff888127f736c4 of 4 bytes by task 4731 on cpu 1:
+> >   io_wq_worker_running+0x64/0xa0 io_uring/io-wq.c:668
+> >   schedule_timeout+0xcc/0x230 kernel/time/timer.c:2167
+> >   io_wq_worker+0x4b2/0x840 io_uring/io-wq.c:633
+> >   ret_from_fork+0x2e/0x40 arch/x86/kernel/process.c:145
+> >   ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
+> >
+> > read to 0xffff888127f736c4 of 4 bytes by task 4719 on cpu 0:
+> >   io_wq_get_acct io_uring/io-wq.c:168 [inline]
+> >   io_wq_activate_free_worker+0xfa/0x280 io_uring/io-wq.c:267
+> >   io_wq_enqueue+0x262/0x450 io_uring/io-wq.c:914
+>
+> 1) the worst case scenario we'll choose a wrong type of
+> worker, which is inconsequential.
+>
+> 2) we're changing the IO_WORKER_F_RUNNING bit, but checking
+> for IO_WORKER_F_BOUND. The latter one is set at the very
+> beginning, it would require compiler to be super inventive
+> to actually hit the problem.
+>
+> I don't believe it's a problem, but it'll nice to attribute
+> it properly, READ_ONCE?, or split IO_WORKER_F_BOUND out into
+> a separate field.
 
-fwiw, I'm in favour of trying to iopoll there just because it's nicer
-this way, but I still want to get to the bottom of it.
+It's a simple bit flag set & read, I'd go for READ_ONCE() (and
+WRITE_ONCE() - but up to you, these bitflag sets & reads have been ok
+with just the READ_ONCE(), and KCSAN currently doesn't care if there's
+a WRITE_ONCE() or not).
 
-> 2) s->finish isn't observed immediately, and just submit & polling;
-> if any IO can't be submitted because of no enough resource, there can
-> be one busy spin because submitter_uring_fn() waits for inflight IO.
-> 
-> So if there are two pthreads(A, B), each setup its own io_uring context
-> and submit & poll IO on same block device.  If 1) happens in A, all
-> device tags can be held for nothing.  If 2) happens in B, the busy spin
-> prevents exit() of this pthread B.
+> value changed: 0x0000000d -> 0x0000000b
 
-Thanks, that sounds clear now. So, nobody closes the first ring, hence
-it's not destroyed even after pthread A exits and the 2nd ring cannot
-progress. I agree with the judgement about timeouts and that it looks
-like a user mismanagement.
-
--- 
-Pavel Begunkov
+This is interesting though - it says that it observed 2 bits being
+flipped. We don't see where IO_WORKER_F_FREE was unset though.

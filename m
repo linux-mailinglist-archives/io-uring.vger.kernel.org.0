@@ -2,94 +2,81 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A1E79F23D
-	for <lists+io-uring@lfdr.de>; Wed, 13 Sep 2023 21:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CBCB79F351
+	for <lists+io-uring@lfdr.de>; Wed, 13 Sep 2023 22:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232350AbjIMTkA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Sep 2023 15:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42890 "EHLO
+        id S231559AbjIMU5h (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Sep 2023 16:57:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231603AbjIMTj7 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Sep 2023 15:39:59 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3451999
-        for <io-uring@vger.kernel.org>; Wed, 13 Sep 2023 12:39:55 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id e9e14a558f8ab-34f5357cca7so250105ab.1
-        for <io-uring@vger.kernel.org>; Wed, 13 Sep 2023 12:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694633995; x=1695238795; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tft1HooN87hi/19RuephXAGarkXU4BD94o5nCoYckJ8=;
-        b=pNQ0oV1Wwn3LRIFz/Kn8b8xec3OuZPtPpz/wzOcOfDndpvgi6/oE8Y8qDS1W23RBl/
-         gsjsyUxgzV9SIXxLsBhEz80kFbNmjjpntZ2K+hIlCRuuIDc00ARCHjsP2qjsFFYtU+8d
-         adccqSp4pwsT+Mz+rfrjOUbXf5MZkx2ttYieZyLeznSDIVl7vxk/UVTDRNWzfEImsJa2
-         PYLUNpD6cKeZ9HGUhFlqIKpCKka8NMUE/rvZWMq+HUQfLMg3SlO+OdX865sPO7923rkw
-         ZPICN4yBO6BpIhqGWUztAfkHMugorYZALESivKg4DLoAmMinwMhcfYZGwuIXziPys7SH
-         SleQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694633995; x=1695238795;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tft1HooN87hi/19RuephXAGarkXU4BD94o5nCoYckJ8=;
-        b=O8h9N0IOW4js2MPz45tSwlBZ0ThyDMdMlNqENWw/UW1X2+nMhmfqu3hOF8rHxNFqu2
-         GsmsWZkSX7ZngL9dgF3HZtgCNPJhMQC6F04S6N53wkGLDhyffM62X+iU2agaYNG+fePU
-         qNu+LScfDbUPE3cQ16lHEMgD5UOAd46MwB0EIebP/OOAKZtw1yf6k552QfGQkimoP+Y6
-         +DEB1GL3Z6/xBBgnZmaLVaA1oomEmpfvWts3LEo1OyjKJJy0TDGqRE6OXciTQBdx2mQb
-         RUGHyshH0nyKHEnu8mX941OekFyywrox8SjHNbEHQWwBeUTSgchOOoyuRHK5A56Tf/4X
-         EIUg==
-X-Gm-Message-State: AOJu0YwY/Ynwz/gIr51Qc3RKoBf9w/uP6vwCxXGok+hFzLGkxiS5Mg5q
-        VSykZmQvIMOKfcYG1fjcDoGpSw==
-X-Google-Smtp-Source: AGHT+IGtBzcobfCWCkQ5HPj4+SqKK9ECxFRGlGCGQqDAtr3vPCIrAPClhL0Dsulx18cZsBLQCEwl2g==
-X-Received: by 2002:a92:d986:0:b0:349:4e1f:e9a0 with SMTP id r6-20020a92d986000000b003494e1fe9a0mr3254955iln.2.1694633994913;
-        Wed, 13 Sep 2023 12:39:54 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id d4-20020a056e02214400b0034ac1a32fd9sm2500863ilv.44.2023.09.13.12.39.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 12:39:54 -0700 (PDT)
-Message-ID: <efe602f1-8e72-466c-b796-0083fd1c6d82@kernel.dk>
-Date:   Wed, 13 Sep 2023 13:39:53 -0600
+        with ESMTP id S230413AbjIMU5g (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Sep 2023 16:57:36 -0400
+X-Greylist: delayed 550 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Sep 2023 13:57:32 PDT
+Received: from out-212.mta0.migadu.com (out-212.mta0.migadu.com [IPv6:2001:41d0:1004:224b::d4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8313F1BCC
+        for <io-uring@vger.kernel.org>; Wed, 13 Sep 2023 13:57:32 -0700 (PDT)
+Message-ID: <77405214-ae42-d58b-1d40-c639683a0cb1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1694638098;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AwREo+am6jJ9+Xq8BZFdvke2FcjINYzH66vqtX+PkMY=;
+        b=U6yP+KxVDbx6rtpw5f5CSR3ZoGvmldJXz0NCPIybsjJd+xyoTeZNMYs43/xZA2kbod2YuI
+        iZHsYCL/aT/cgd5cQeknemK5X80ETTnnt0pK2hpUt00drdgkbSY60/xpzcdzZey3HW48B+
+        pegXznmpHCLY9DTg87bF8nQnqSLSJc0=
+Date:   Wed, 13 Sep 2023 13:48:09 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/8] io_uring/cmd: Introduce SOCKET_URING_OP_SETSOCKOPT
+Subject: Re: [PATCH v6 8/8] selftests/bpf/sockopt: Add io_uring support
 Content-Language: en-US
-To:     Breno Leitao <leitao@debian.org>, sdf@google.com,
-        asml.silence@gmail.com, willemdebruijn.kernel@gmail.com,
-        kuba@kernel.org, pabeni@redhat.com, martin.lau@linux.dev,
-        krisman@suse.de
+To:     Breno Leitao <leitao@debian.org>
 Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org
+        netdev@vger.kernel.org, io-uring@vger.kernel.org,
+        =?UTF-8?Q?Daniel_M=c3=bcller?= <deso@posteo.net>,
+        Wang Yufen <wangyufen@huawei.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, sdf@google.com, axboe@kernel.dk,
+        asml.silence@gmail.com, willemdebruijn.kernel@gmail.com,
+        kuba@kernel.org, pabeni@redhat.com, krisman@suse.de,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Mykola Lysenko <mykolal@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
+        Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
 References: <20230913152744.2333228-1-leitao@debian.org>
- <20230913152744.2333228-8-leitao@debian.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230913152744.2333228-8-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
+ <20230913152744.2333228-9-leitao@debian.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20230913152744.2333228-9-leitao@debian.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/13/23 9:27 AM, Breno Leitao wrote:
-> Add support for SOCKET_URING_OP_SETSOCKOPT. This new command is similar
-> to setsockopt(2). This implementation leverages the function
-> do_sock_setsockopt(), which is shared with the setsockopt() system call
-> path.
+On 9/13/23 8:27 AM, Breno Leitao wrote:
+> Expand the BPF sockopt test to use also check for io_uring
+> {g,s}etsockopt commands operations.
 > 
-> Important to say that userspace needs to keep the pointer's memory alive
-> until the operation is completed. I.e, the memory could not be
-> deallocated before the CQE is returned to userspace.
+> Create infrastructure to run io_uring tests using the mini_liburing
+> helpers, so, the {g,s}etsockopt operation could either be called from
+> system calls, or, via io_uring.
+> 
+> Add a 'use_io_uring' parameter to run_test(), to specify if the test
+> should be run using io_uring if the parameter is set, or via the regular
+> system calls if false.
+> 
+> Call *all* tests twice, using the regular io_uring path, and the new
+> io_uring path.
 
-This is different than other commands that write data. Since
-IORING_FEAT_SUBMIT_STABLE was introduced, any command that writes data
-should ensure that this data is stable. Eg it follows the life time of
-the SQE, and doesn't need to be available until a CQE has been posted
-for it. This is _generally_ true, even if we do have a few exceptions.
+The bpf CI failed to compile because of missing some newer enum: 
+https://github.com/kernel-patches/bpf/actions/runs/6176703557/job/16766325932
 
-The problem is that then you cannot use user pointers, obviously, you'd
-need to be able to pass in the value directly to do_sock_setsockopt()...
-
--- 
-Jens Axboe
+An option is to copy the io_uring.h to tools/include/uapi/linux/.
 

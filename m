@@ -2,149 +2,158 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9041A79ECCE
-	for <lists+io-uring@lfdr.de>; Wed, 13 Sep 2023 17:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE9379ECD1
+	for <lists+io-uring@lfdr.de>; Wed, 13 Sep 2023 17:28:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbjIMP2H (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 13 Sep 2023 11:28:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49718 "EHLO
+        id S229490AbjIMP23 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 13 Sep 2023 11:28:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjIMP2F (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Sep 2023 11:28:05 -0400
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44E581BC6;
-        Wed, 13 Sep 2023 08:28:01 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-9ad810be221so288255566b.2;
-        Wed, 13 Sep 2023 08:28:01 -0700 (PDT)
+        with ESMTP id S229470AbjIMP2Y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 13 Sep 2023 11:28:24 -0400
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E47CCD;
+        Wed, 13 Sep 2023 08:28:20 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-99c1d03e124so867744766b.2;
+        Wed, 13 Sep 2023 08:28:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694618880; x=1695223680;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XbHM2NAzX89/YGfOI9fGVWUqll7zX9HRYixE0CiaEic=;
-        b=amrAmVchPnonggk2kwYDAGcR8vpCvpPC+oz9pw5YpwiTf82Apy7CnxBapFOPJdJIjy
-         6m792BQROjRUzYxhR6iYmsPQOKxkk+5HRpLFU6Gdh0wB712bzts9K4XFE1Ya6gPDhJqL
-         66wcLm+T+keajbK7pt1fhUrm1GsrZFjxrAeHME0FlD5elx9t2fk9NYrSbMjZMo/NiV2S
-         xHmfkd/+BG9CZ1RMtnT279diElrH4otrpczBLwf3U8hnxHotRICsenpUKcEa41C62Sl2
-         NRljxSfU9b9gTkYei7CQLgdOxDqS61qP9+20yu/4crqeNdY7q5KIbeZ9ltvob/Tse+Om
-         tNSQ==
-X-Gm-Message-State: AOJu0YzwyZXy5xcq9SnMEGlWa7NJpFaZG5k7zQmT+cqRKGpd90ILQIvk
-        LLsmqMJEv9HpbY/kMmI4EYY=
-X-Google-Smtp-Source: AGHT+IFW/YM3vbwQkx6qo2tVcSp414LxDhv6Kd3ehhhK5r6QzI47TnRjUxS/qD4Yz4lM08Q2AZpoOA==
-X-Received: by 2002:a17:906:18aa:b0:9a1:c42e:5e5e with SMTP id c10-20020a17090618aa00b009a1c42e5e5emr2354685ejf.42.1694618879486;
-        Wed, 13 Sep 2023 08:27:59 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-021.fbsv.net. [2a03:2880:31ff:15::face:b00c])
-        by smtp.gmail.com with ESMTPSA id dx22-20020a170906a85600b0099d959f9536sm8712216ejb.12.2023.09.13.08.27.58
+        d=1e100.net; s=20230601; t=1694618898; x=1695223698;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T63D+iseOM6feL2ViRPYbx+xbxxkgrRy6waBaJFXQkc=;
+        b=r0JDYjI2cbC89op4ypM56Lucvd/o0QrOrjFCoOnwuqf8paPw/YaaiOg8jA2FapF+if
+         fj3In3b+UnWOv8v7TV+aBpzoTp1fJpqV2QHyzlNlG2WKF7aH1d6VSkWVmemIQ8DacD9m
+         hTQu0q392R1rMW/9VdsjcHBz6sit7O3KiqZ/pnWWIbG8SNWB+lhKOjE67FXZlHaZhlQi
+         6YmM4ZJuz//WH3I5bi8TZU2BAnlfyZGOFSIYK8NlJUfVHnowMBoLUDXnJ1GfaoADrzzt
+         lVsLLRM9NhAbvamcKoRlgwSUo3j5vo2yfwIP/JJ0nKYPC4gTfog/rzNls1AhhpNw6K43
+         JVQw==
+X-Gm-Message-State: AOJu0YyFS9csFcf4pGBzrEtRzuU6y2SXU5qlpsw5Wub/vn5ZXULjkwgG
+        nzY0IURLNW4KzrtAhizhITGiTCHK0zM=
+X-Google-Smtp-Source: AGHT+IEMs9Boxfcw7qVlzVFEDeHVNXCAKXZD3Rz3ajV1O+cGsEythgRouzjpDE/rwGV0COfj4t+aeg==
+X-Received: by 2002:a17:906:18aa:b0:9a5:d83a:65be with SMTP id c10-20020a17090618aa00b009a5d83a65bemr2303502ejf.27.1694618898511;
+        Wed, 13 Sep 2023 08:28:18 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-005.fbsv.net. [2a03:2880:31ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id t14-20020a1709064f0e00b0099e05fb8f95sm8647352eju.137.2023.09.13.08.28.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 08:27:59 -0700 (PDT)
+        Wed, 13 Sep 2023 08:28:18 -0700 (PDT)
 From:   Breno Leitao <leitao@debian.org>
 To:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
         willemdebruijn.kernel@gmail.com, kuba@kernel.org,
-        pabeni@redhat.com, martin.lau@linux.dev, krisman@suse.de
+        pabeni@redhat.com, martin.lau@linux.dev, krisman@suse.de,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>
 Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH v6 0/8] io_uring: Initial support for {s,g}etsockopt commands
-Date:   Wed, 13 Sep 2023 08:27:36 -0700
-Message-Id: <20230913152744.2333228-1-leitao@debian.org>
+        netdev@vger.kernel.org, io-uring@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+Subject: [PATCH v6 1/8] net/socket: Break down __sys_setsockopt
+Date:   Wed, 13 Sep 2023 08:27:37 -0700
+Message-Id: <20230913152744.2333228-2-leitao@debian.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230913152744.2333228-1-leitao@debian.org>
+References: <20230913152744.2333228-1-leitao@debian.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-This patchset adds support for getsockopt (SOCKET_URING_OP_GETSOCKOPT)
-and setsockopt (SOCKET_URING_OP_SETSOCKOPT) in io_uring commands.
-SOCKET_URING_OP_SETSOCKOPT and SOCKET_URING_OP_GETSOCKOPT implement generic
-case, covering all levels and optnames.
+Split __sys_setsockopt() into two functions by removing the core
+logic into a sub-function (do_sock_setsockopt()). This will avoid
+code duplication when doing the same operation in other callers, for
+instance.
 
-In order to keep the implementation (and tests) simple, some refactors
-were done prior to the changes, as follows:
+do_sock_setsockopt() will be called by io_uring setsockopt() command
+operation in the following patch.
 
-Patch 1-2:  Remove the core {s,g}etsockopt() core function from
-__sys_{g,s}etsockopt, so, the code could be reused by other callers,
-such as io_uring.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+---
+ include/net/sock.h |  2 ++
+ net/socket.c       | 38 +++++++++++++++++++++++++-------------
+ 2 files changed, 27 insertions(+), 13 deletions(-)
 
-Patch 3: Pass compat mode to the file/socket callbacks
-
-Patch 4: Move io_uring helpers from io_uring_zerocopy_tx to a generic
-io_uring headers. This simplify the test case (last patch)
-
-Patch 5: Protect io_uring_cmd_sock() to not be called if CONFIG_NET is
-disabled.
-
-PS: The userspace pointers need to be alive until the operation is
-completed.
-
-These changes were tested with a new test[1] in liburing, LTP sockopt*
-tests, as also with bpf/progs/sockopt test case, which is now adapted to
-run using both system calls and io_uring commands.
-
-[1] Link: https://github.com/leitao/liburing/blob/getsock/test/socket-getsetsock-cmd.c
-
-RFC -> V1:
-	* Copy user memory at io_uring subsystem, and call proto_ops
-	  callbacks using kernel memory
-	* Implement all the cases for SOCKET_URING_OP_SETSOCKOPT
-
-V1 -> V2
-	* Implemented the BPF part
-	* Using user pointers from optval to avoid kmalloc in io_uring part.
-
-V2 -> V3:
-	* Break down __sys_setsockopt and reuse the core code, avoiding
-	  duplicated code. This removed the requirement to expose
-	  sock_use_custom_sol_socket().
-	* Added io_uring test to selftests/bpf/sockopt.
-	* Fixed compat argument, by passing it to the issue_flags.
-
-V3 -> V4:
-	* Rebase on top of commit 1ded5e5a5931b ("net: annotate data-races around sock->ops")
-	* Also broke down __sys_setsockopt() to reuse the core function
-	  from io_uring.
-	* Create a new patch to return -EOPNOTSUPP if CONFIG_NET is
-	  disabled.
-	* Added two SOL_SOCKET tests in bpf/prog_tests/sockopt.
-
-V4 -> V5:
-	* Do not use sockptr anymore, by changing the optlen getsock argument
-	  to be a user pointer (instead of a kernel pointer). This change also drop
-	  the limitation on getsockopt from previous versions, and now all
-	  levels are supported.
-	* Simplified the BPF sockopt test, since there is no more limitation on
-	  the io_uring commands.
-	* No more changes in the BPF subsystem.
-	* Moved the optlen field in the SQE struct. It is now a pointer instead
-	  of u32.
-
-V5 -> V6:
-	* Removed the need for #ifdef CONFIG_NET as suggested by Gabriel
-	  Krisman.
-	* Changed the variable declaration order to respect the reverse
-	  xmas declaration as suggested by Paolo Abeni.
-
-Breno Leitao (8):
-  net/socket: Break down __sys_setsockopt
-  net/socket: Break down __sys_getsockopt
-  io_uring/cmd: Pass compat mode in issue_flags
-  selftests/net: Extract uring helpers to be reusable
-  io_uring/cmd: return -EOPNOTSUPP if net is disabled
-  io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
-  io_uring/cmd: Introduce SOCKET_URING_OP_SETSOCKOPT
-  selftests/bpf/sockopt: Add io_uring support
-
- include/linux/io_uring.h                      |   1 +
- include/net/sock.h                            |   5 +
- include/uapi/linux/io_uring.h                 |  10 +
- io_uring/uring_cmd.c                          |  35 +++
- net/socket.c                                  |  86 ++++--
- tools/include/io_uring/mini_liburing.h        | 292 ++++++++++++++++++
- .../selftests/bpf/prog_tests/sockopt.c        |  95 +++++-
- tools/testing/selftests/net/Makefile          |   1 +
- .../selftests/net/io_uring_zerocopy_tx.c      | 268 +---------------
- 9 files changed, 490 insertions(+), 303 deletions(-)
- create mode 100644 tools/include/io_uring/mini_liburing.h
-
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 11d503417591..aa8fb54ad0af 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1861,6 +1861,8 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 		  sockptr_t optval, unsigned int optlen);
+ int sock_setsockopt(struct socket *sock, int level, int op,
+ 		    sockptr_t optval, unsigned int optlen);
++int do_sock_setsockopt(struct socket *sock, bool compat, int level,
++		       int optname, char __user *user_optval, int optlen);
+ 
+ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		  sockptr_t optval, sockptr_t optlen);
+diff --git a/net/socket.c b/net/socket.c
+index 77f28328e387..360332e098d4 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2261,31 +2261,22 @@ static bool sock_use_custom_sol_socket(const struct socket *sock)
+ 	return test_bit(SOCK_CUSTOM_SOCKOPT, &sock->flags);
+ }
+ 
+-/*
+- *	Set a socket option. Because we don't know the option lengths we have
+- *	to pass the user mode parameter for the protocols to sort out.
+- */
+-int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
+-		int optlen)
++int do_sock_setsockopt(struct socket *sock, bool compat, int level,
++		       int optname, char __user *user_optval, int optlen)
+ {
+ 	sockptr_t optval = USER_SOCKPTR(user_optval);
+ 	const struct proto_ops *ops;
+ 	char *kernel_optval = NULL;
+-	int err, fput_needed;
+-	struct socket *sock;
++	int err;
+ 
+ 	if (optlen < 0)
+ 		return -EINVAL;
+ 
+-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+-	if (!sock)
+-		return err;
+-
+ 	err = security_socket_setsockopt(sock, level, optname);
+ 	if (err)
+ 		goto out_put;
+ 
+-	if (!in_compat_syscall())
++	if (!compat)
+ 		err = BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock->sk, &level, &optname,
+ 						     user_optval, &optlen,
+ 						     &kernel_optval);
+@@ -2308,6 +2299,27 @@ int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
+ 					    optlen);
+ 	kfree(kernel_optval);
+ out_put:
++	return err;
++}
++EXPORT_SYMBOL(do_sock_setsockopt);
++
++/* Set a socket option. Because we don't know the option lengths we have
++ * to pass the user mode parameter for the protocols to sort out.
++ */
++int __sys_setsockopt(int fd, int level, int optname, char __user *user_optval,
++		     int optlen)
++{
++	bool compat = in_compat_syscall();
++	int err, fput_needed;
++	struct socket *sock;
++
++	sock = sockfd_lookup_light(fd, &err, &fput_needed);
++	if (!sock)
++		return err;
++
++	err = do_sock_setsockopt(sock, compat, level, optname, user_optval,
++				 optlen);
++
+ 	fput_light(sock->file, fput_needed);
+ 	return err;
+ }
 -- 
 2.34.1
 

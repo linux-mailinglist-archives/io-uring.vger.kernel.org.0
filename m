@@ -2,66 +2,106 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8F2B7A0995
-	for <lists+io-uring@lfdr.de>; Thu, 14 Sep 2023 17:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B23D7A09CD
+	for <lists+io-uring@lfdr.de>; Thu, 14 Sep 2023 17:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241185AbjINPqc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Sep 2023 11:46:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42598 "EHLO
+        id S241019AbjINPxs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 14 Sep 2023 11:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241180AbjINPqc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Sep 2023 11:46:32 -0400
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F280CDD
-        for <io-uring@vger.kernel.org>; Thu, 14 Sep 2023 08:46:27 -0700 (PDT)
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-1d148c50761so1579431fac.0
-        for <io-uring@vger.kernel.org>; Thu, 14 Sep 2023 08:46:27 -0700 (PDT)
+        with ESMTP id S241221AbjINPxr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Sep 2023 11:53:47 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326F81BEB
+        for <io-uring@vger.kernel.org>; Thu, 14 Sep 2023 08:53:43 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9ad8bba8125so157665166b.3
+        for <io-uring@vger.kernel.org>; Thu, 14 Sep 2023 08:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694706821; x=1695311621; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EUNTLwjP/RVSOZAk4NlZVbxTSIOLiem1kRXOaXqsgEo=;
+        b=YhcplI6vnU2LopDzYJnTQU4dYTxyPt3NUCGmUHKvn/PgW2ivBPLZAPjcl80Nou9Wbl
+         SYGWUhzvIIjLf0Kodt4heilo+4LsaTpUBS637IdxS7wLBSD9Bwfs5k4CnlWtQNm2qQr9
+         mrOUaaLfq57kQSx8SbyhmwHvpq33Bm/+c24BxAFKLMbZvAoBp7r/lkJceTb8nfSn7WZU
+         m+5o5WvSMsFiZFA2L9mGBJgzpM6CfiHY3fPcF7gSRLHM72d6tmwORKIkBbVzYkYJIf5n
+         BWeAliPISvTDxtwecTh+mUuU5GDCQ2XeWOWsq4wT0LrYC75+Nxj6dj526yuq1H+PnNMP
+         yOag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694706387; x=1695311187;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RArJlo5ye8urnOy2gyd9OsYoAqUo3/gdNcnqcjssqdU=;
-        b=jLcJQVziSWm4KU79Y+uDXiE1Qah4Yt1QGf6TL1ZMofDmSTyqN2fiT860Gd1Q8g2G5O
-         +hsjR3FuI2SLWFc/L8twSYQ9QE77IeXcqm4iykhqNa/YlpSgE8HLFqzXhwIirQ5SWtSf
-         y9Bpe4AG7PUGiAHjTkIUBAKizkthWI7wmcny9fNZ48HRizHRO2s4gbdaCUaC5kbCp4yH
-         OxhZEqDSjRPknG7FnRFe3mGs6HBD9niTD7XUGNRDRQA0XqZ25aHpzDrbAKHpBOblHH63
-         STtrfhHrAxlQHlISWP7JcsntOTPfMR1ghuJx447cU4GGiZrH2AJc4/f5XodYJjP08Fld
-         EwDw==
-X-Gm-Message-State: AOJu0Yzikpt7HWjamt6RNPBFWZa74KSyICgcd1yoBoyJO1vqu6ItEeYh
-        fFc5SLwT1sYm+ceeAK4YMXi7bytr/xFEMMLMjuVR8C83IDXc
-X-Google-Smtp-Source: AGHT+IF6uNb9IK2O+QDjpLsm23ly5Qk2+0NB1BGNDr1vVzmcpsj6r1rN9DM0+mzTY/GGTklQy/xV7wXLSI31ay1LERgmfbbhfBfA
+        d=1e100.net; s=20230601; t=1694706821; x=1695311621;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EUNTLwjP/RVSOZAk4NlZVbxTSIOLiem1kRXOaXqsgEo=;
+        b=e2nj0GLxi6j0CfdEAgj5VfpoTGcugiG1n79K1ZanssOzqCJsXzlBLM/ZYgQIVVFtKZ
+         I/8Wq/evGPV1EoG0JHh1WMp17YpB7luJGcANDy2lHx47NyNG/VrnXk6RZsjxAxzBHfyf
+         23kJuDI6KVQWfW/moq11pealcEzTUnPdZKaVm40Sj1DAW1HQTa2LvrGIhATdzjzV5c/3
+         Vkcbc+eEL0X5YX7NzevO/MZZDrquC+CS5VImFnAaMZbBtks4CeOR3sBqXEVHXR+ice8x
+         riU/eukmP6917N8mPctf6sKPimzaT+wTaqDSIFwqkTIgEoQpqXLG+VHyad+XHRdh3ffz
+         DYWQ==
+X-Gm-Message-State: AOJu0YynWrUizZ03vcWOY1jxAdg8oyCXTp3NcWy8tvnRTAd/eFp63KKm
+        AlfdL+e0Ft0rnOaEwQ3KTwIUqV9D/DY=
+X-Google-Smtp-Source: AGHT+IFQuJv6vGIEyjETwZTjvWXM3frcTPT2qk1BJr/vQdK+nxg4ykX0DJwkQVi/Q1yZZ41mD9ZWFw==
+X-Received: by 2002:a17:906:535d:b0:9a1:f10d:9751 with SMTP id j29-20020a170906535d00b009a1f10d9751mr5020263ejo.23.1694706821252;
+        Thu, 14 Sep 2023 08:53:41 -0700 (PDT)
+Received: from 127.0.0.1localhost ([148.252.128.120])
+        by smtp.gmail.com with ESMTPSA id lg13-20020a170906f88d00b009ad88839665sm1201140ejb.70.2023.09.14.08.53.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 08:53:40 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+        syzbot+a4c6e5ef999b68b26ed1@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring/net: fix iter retargeting for selected buf
+Date:   Thu, 14 Sep 2023 16:51:09 +0100
+Message-ID: <e092d4f68a35b7872b260afc55c47c7765a81ef9.1694706603.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:e6ce:b0:1c8:e107:4193 with SMTP id
- s14-20020a056870e6ce00b001c8e1074193mr2009281oak.3.1694706387368; Thu, 14 Sep
- 2023 08:46:27 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 08:46:27 -0700
-In-Reply-To: <6fd7f735-6262-73cc-c5d2-b508c25b360d@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037c27b060553949c@google.com>
-Subject: Re: [syzbot] [io-uring?] UBSAN: array-index-out-of-bounds in io_setup_async_msg
-From:   syzbot <syzbot+a4c6e5ef999b68b26ed1@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+When using selected buffer feature, io_uring delays data iter setup
+until later. If io_setup_async_msg() is called before that it might see
+not correctly setup iterator. Pre-init nr_segs and judge from its state
+whether we repointing.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+a4c6e5ef999b68b26ed1@syzkaller.appspotmail.com
+Fixes: 0455d4ccec548 ("io_uring: add POLL_FIRST support for send/sendmsg and recv/recvmsg")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
-Reported-and-tested-by: syzbot+a4c6e5ef999b68b26ed1@syzkaller.appspotmail.com
+Can be cleaned up if we rely on UBUF, but it's easier to backport
+this way
 
-Tested on:
+ io_uring/net.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-commit:         ff035989 select buf net iter init
-git tree:       https://github.com/isilence/linux.git syz-test/netmsg-init
-console output: https://syzkaller.appspot.com/x/log.txt?x=13421bbfa80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4894cf58531f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a4c6e5ef999b68b26ed1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 3d07bf79c1e0..7a8e298af81b 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -183,6 +183,10 @@ static int io_setup_async_msg(struct io_kiocb *req,
+ 	memcpy(async_msg, kmsg, sizeof(*kmsg));
+ 	if (async_msg->msg.msg_name)
+ 		async_msg->msg.msg_name = &async_msg->addr;
++
++	if ((req->flags & REQ_F_BUFFER_SELECT) && !async_msg->msg.msg_iter.nr_segs)
++		return -EAGAIN;
++
+ 	/* if were using fast_iov, set it to the new one */
+ 	if (iter_is_iovec(&kmsg->msg.msg_iter) && !kmsg->free_iov) {
+ 		size_t fast_idx = iter_iov(&kmsg->msg.msg_iter) - kmsg->fast_iov;
+@@ -542,6 +546,7 @@ static int io_recvmsg_copy_hdr(struct io_kiocb *req,
+ 			       struct io_async_msghdr *iomsg)
+ {
+ 	iomsg->msg.msg_name = &iomsg->addr;
++	iomsg->msg.msg_iter.nr_segs = 0;
+ 
+ #ifdef CONFIG_COMPAT
+ 	if (req->ctx->compat)
+-- 
+2.41.0
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.

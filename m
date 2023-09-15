@@ -2,284 +2,172 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE1E7A0DD5
-	for <lists+io-uring@lfdr.de>; Thu, 14 Sep 2023 21:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D557A16D8
+	for <lists+io-uring@lfdr.de>; Fri, 15 Sep 2023 09:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbjINTJD (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 14 Sep 2023 15:09:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44486 "EHLO
+        id S232524AbjIOHFL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Sep 2023 03:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbjINTJC (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 14 Sep 2023 15:09:02 -0400
+        with ESMTP id S229693AbjIOHFK (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Sep 2023 03:05:10 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 149711FC7
-        for <io-uring@vger.kernel.org>; Thu, 14 Sep 2023 12:08:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 778C9A1
+        for <io-uring@vger.kernel.org>; Fri, 15 Sep 2023 00:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694718493;
+        s=mimecast20190719; t=1694761459;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lUkBtpL09XaDl93SQFkhLqqXYE3XGI2pnQvdUgh6xTY=;
-        b=FZH+LnIfrQMJV2TJbqsoARlzEdl/U+eI3sju68sGWnjntX6cWbLA/oV1O2S6bMZ84we5u8
-        IDBJNM9GoRxy4XIBMOpUE4WujUhNdBcYDvKOiutabZoG7119gCMvk7+ERW7IY4JY6IMviQ
-        TuF/ZoeiUaS7GVGbl3MLo50qHL3O/4Y=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-520-eO4oN72AMvun9-4vsT8cpg-1; Thu, 14 Sep 2023 15:06:05 -0400
-X-MC-Unique: eO4oN72AMvun9-4vsT8cpg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8DBC1800D8E;
-        Thu, 14 Sep 2023 19:06:05 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D3A440F2D2C;
-        Thu, 14 Sep 2023 19:06:05 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Pierre Labat <plabat@micron.com>
-Cc:     'Jens Axboe' <axboe@kernel.dk>,
-        "'io-uring\@vger.kernel.org'" <io-uring@vger.kernel.org>
-Subject: Re: [EXT] Re: FYI, fsnotify contention with aio and io_uring.
-References: <SJ0PR08MB6494F5A32B7C60A5AD8B33C2AB09A@SJ0PR08MB6494.namprd08.prod.outlook.com>
-        <x49pm3y4nq5.fsf@segfault.boston.devel.redhat.com>
-        <65911cc1-5b3f-ff5f-fe07-2f5c7a9c3533@kernel.dk>
-        <SJ0PR08MB649422919BA3E86C48E83340AB12A@SJ0PR08MB6494.namprd08.prod.outlook.com>
-        <x49o7jg2l4c.fsf@segfault.boston.devel.redhat.com>
-        <SJ0PR08MB6494678810F31652FA65854CAB17A@SJ0PR08MB6494.namprd08.prod.outlook.com>
-        <SJ0PR08MB64949350D2580D27863FBFDFABE7A@SJ0PR08MB6494.namprd08.prod.outlook.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 14 Sep 2023 15:11:49 -0400
-In-Reply-To: <SJ0PR08MB64949350D2580D27863FBFDFABE7A@SJ0PR08MB6494.namprd08.prod.outlook.com>
-        (Pierre Labat's message of "Tue, 29 Aug 2023 21:54:42 +0000")
-Message-ID: <x49r0n04lje.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        bh=R0ZKX9+ZDfk8TG2B9BpARJtWjXCRBlMo1JDLbdvybKk=;
+        b=Qzf5fZVX+gVQ18fxWHy9bzwTEUHsz0JXk8zNAXaH336MUCntgCL/9aMwd6UVKx4MrF+He7
+        LSpr3AUQpK7xS16Nh8eYYpM/e3x0L2uhEk4LsAojnXD4tZAl0H9bxVHZSup2dSITE3EdSo
+        1NVYEGVQkxJXffFNTCRrNSAP/Nh9qDg=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-pG2-lcBrMa-5RZELNNQSKA-1; Fri, 15 Sep 2023 03:04:18 -0400
+X-MC-Unique: pG2-lcBrMa-5RZELNNQSKA-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-50081b0dba6so2159011e87.0
+        for <io-uring@vger.kernel.org>; Fri, 15 Sep 2023 00:04:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694761456; x=1695366256;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R0ZKX9+ZDfk8TG2B9BpARJtWjXCRBlMo1JDLbdvybKk=;
+        b=KT4hcRGcnfcy2tQ+eVEJ/u4nFB/l2IQ9VVlpMSpLHIEN6UJcsnHDJixR0JdLDsNlbR
+         YZS1Bt6dAgtnfBaQQ0dzlL8j9wXjKYcufN7EAM4sExB/d4tQDAdmhJU0xWwU3ox0mK5e
+         HpnFfhgkV6eauxCSeLrrY3q+ho2/OlEqknpeVHNfPj7p9U1/5Fhg7USYEk5K1cyFs/qa
+         EeeGzp+mWBcttYzN9NORMk80rGvB1qIz5PEeS0zqD4QMIqB9J7bFl6KI2dAkpmrNkDBK
+         8VOyFB/K60dih7dbqnMuMUirQSXFoy7dm4d3p1WEr+9kBX+CpPEKQkdadwhAC8FwaC8S
+         gorA==
+X-Gm-Message-State: AOJu0YzH7OEuCYqACt86xu6a9u94Wd7IaloMUwg2GpwSBcw3eZs0iZaE
+        zeI4a/tlXlpEjjslED1EA3PRxa1pKLbUMIVNF/oXG20+3rBL7zACK/aQ8C1EvIoi4QaXU3GusKb
+        NZ+7vmGOps3JsmvHFiVsV3LNLcQZ3OQQwzxlXAKanE0nffg==
+X-Received: by 2002:a05:6512:2149:b0:4fd:d002:ddad with SMTP id s9-20020a056512214900b004fdd002ddadmr643739lfr.12.1694761456390;
+        Fri, 15 Sep 2023 00:04:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHtta3SijY3RzwwYuYFpIpWRyB53UbRzdNZ6fENanosL+1QizYjo1V+WEDWxW8bolgTjIL8Pmv4Uv9BVbuxiSY=
+X-Received: by 2002:a05:6512:2149:b0:4fd:d002:ddad with SMTP id
+ s9-20020a056512214900b004fdd002ddadmr643715lfr.12.1694761456031; Fri, 15 Sep
+ 2023 00:04:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+References: <20230908093009.540763-1-ming.lei@redhat.com> <58227846-6b73-46ef-957f-d9b1e0451899@kernel.dk>
+ <ZPsxCYFgZjIIeaBk@fedora> <0f85a6b5-3ba6-4b77-bb7d-79f365dbb44c@kernel.dk> <ZPs81IAYfB8J78Pv@fedora>
+In-Reply-To: <ZPs81IAYfB8J78Pv@fedora>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Fri, 15 Sep 2023 15:04:05 +0800
+Message-ID: <CACGkMEvP=f1mB=01CDOhHaDLNL9espKPrUffgHEdBVkW4fo=pw@mail.gmail.com>
+Subject: Re: [PATCH V3] io_uring: fix IO hang in io_wq_put_and_exit from do_exit()
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Chengming Zhou <zhouchengming@bytedance.com>,
+        virtualization@lists.linux-foundation.org, mst@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-
-Pierre Labat <plabat@micron.com> writes:
-
-> Hi,
+On Fri, Sep 8, 2023 at 11:25=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
+e:
 >
-> Had some time to re-do some testing.
+> On Fri, Sep 08, 2023 at 08:44:45AM -0600, Jens Axboe wrote:
+> > On 9/8/23 8:34 AM, Ming Lei wrote:
+> > > On Fri, Sep 08, 2023 at 07:49:53AM -0600, Jens Axboe wrote:
+> > >> On 9/8/23 3:30 AM, Ming Lei wrote:
+> > >>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> > >>> index ad636954abae..95a3d31a1ef1 100644
+> > >>> --- a/io_uring/io_uring.c
+> > >>> +++ b/io_uring/io_uring.c
+> > >>> @@ -1930,6 +1930,10 @@ void io_wq_submit_work(struct io_wq_work *wo=
+rk)
+> > >>>           }
+> > >>>   }
+> > >>>
+> > >>> + /* It is fragile to block POLLED IO, so switch to NON_BLOCK */
+> > >>> + if ((req->ctx->flags & IORING_SETUP_IOPOLL) && def->iopoll_queue)
+> > >>> +         issue_flags |=3D IO_URING_F_NONBLOCK;
+> > >>> +
+> > >>
+> > >> I think this comment deserves to be more descriptive. Normally we
+> > >> absolutely cannot block for polled IO, it's only OK here because io-=
+wq
+> > >
+> > > Yeah, we don't do that until commit 2bc057692599 ("block: don't make =
+REQ_POLLED
+> > > imply REQ_NOWAIT") which actually push the responsibility/risk up to
+> > > io_uring.
+> > >
+> > >> is the issuer and not necessarily the poller of it. That generally f=
+alls
+> > >> upon the original issuer to poll these requests.
+> > >>
+> > >> I think this should be a separate commit, coming before the main fix
+> > >> which is below.
+> > >
+> > > Looks fine, actually IO_URING_F_NONBLOCK change isn't a must, and the
+> > > approach in V2 doesn't need this change.
+> > >
+> > >>
+> > >>> @@ -3363,6 +3367,12 @@ __cold void io_uring_cancel_generic(bool can=
+cel_all, struct io_sq_data *sqd)
+> > >>>           finish_wait(&tctx->wait, &wait);
+> > >>>   } while (1);
+> > >>>
+> > >>> + /*
+> > >>> +  * Reap events from each ctx, otherwise these requests may take
+> > >>> +  * resources and prevent other contexts from being moved on.
+> > >>> +  */
+> > >>> + xa_for_each(&tctx->xa, index, node)
+> > >>> +         io_iopoll_try_reap_events(node->ctx);
+> > >>
+> > >> The main issue here is that if someone isn't polling for them, then =
+we
+> > >
+> > > That is actually what this patch is addressing, :-)
+> >
+> > Right, that part is obvious :)
+> >
+> > >> get to wait for a timeout before they complete. This can delay exit,=
+ for
+> > >> example, as we're now just waiting 30 seconds (or whatever the timeo=
+ut
+> > >> is on the underlying device) for them to get timed out before exit c=
+an
+> > >> finish.
+> > >
+> > > For the issue on null_blk, device timeout handler provides
+> > > forward-progress, such as requests are released, so new IO can be
+> > > handled.
+> > >
+> > > However, not all devices support timeout, such as virtio device.
+> >
+> > That's a bug in the driver, you cannot sanely support polled IO and not
+> > be able to deal with timeouts. Someone HAS to reap the requests and
+> > there are only two things that can do that - the application doing the
+> > polled IO, or if that doesn't happen, a timeout.
 >
-> 1) Pipewire (its wireplumber deamon) set a watch on the children of the directory /dev via inotify.
-> I removed that (disabled pipewire), but still had the fsnotify
-> overhead when using aio/io_ring at high IOPS across several threads on
-> several cores.
+> OK, then device driver timeout handler has new responsibility of covering
+> userspace accident, :-)
 >
-> 2) I then noticed that udev set a watch (via inotify) on the files in /dev.
-> This is due to a rule in /usr/lib/udev/rules.d/60-block.rules
-> # watch metadata changes, caused by tools closing the device node which was opened for writing
-> ACTION!="remove", SUBSYSTEM=="block", \
->   KERNEL=="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|ubi*|scm*|pmem*|nbd*|zd*",
-> \
->   OPTIONS+="watch"
-> I removed "nvme*" from this rule (I am testing on /dev/nvme0n1), then finally the fsnotify overhead disappeared.
-
-Interesting.  I don't see that behavior.  I setup a null block device
-with the following parameters:
-
-modprobe null_blk submit_queues=96 queue_mode=2 gb=350 bs=4096 completion_nsec=0 hw_queue_depth=1024
-
-And I ran the following fio job:
-
----
-[global]
-ioengine=io_uring
-iodepth=8
-direct=1
-rw=read
-filename=/dev/nullb0
-cpus_allowed=0-95
-cpus_allowed_policy=split
-size=1g
-offset_increment=10g
-
-[32thread]
-numjobs=32
----
-
-If there are no watches on /dev or /dev/nullb0, then I see 70-79GiB/s
-throughput from this job.  If I add a watch on /dev/nullb0, there
-appears to be a small performance hit, but it is within the run-to-run
-variation.  If I instead add a watch to /dev, the throughput drops to
-~10GiB/s.  So, I think this matches your initial report (the perf top
-output closely matched yours).
-
-Can you run the attached script to verify that nothing is watching /dev
-when you have udev configured to watch the nvme device, and report back?
-Run it with the path as the argument, so "inotify-watchers.sh /dev".
-If there is no watch on /dev, and you still see a performance problem,
-then we'll need to start investigating that.  A good starting point
-would be details of how you are testing, along with new perf top output.
-
--Jeff
-
-> 3) I think there is nothing wrong with Pipewire and udev, they simply want to watch what is going on in /dev.
-> I don't think they are interested in (and it is not the goal/charter
-> of fsnotify) quantifying millions of read/write accesses/sec to a file
-> they watch. There are other tools for that, that are optimized for
-> that task.
+> We may document this requirement for driver.
 >
-> I think to avoid the overhead, the fsnotify subsystem should be
-> refined to factor high frequency read/write file access.
-> Or piece of code (like aio/io_uring) doing high frequency fsnotify should do the factoring themselves.
-> Or the user should be given a way to turn off fsnotify calls for read/write on specific file.
-> Now, the only way to work around the cpu overhead without hacking, is
-> to disable services watching /dev.  That means people can't use these
-> services anymore. Doesn't seem right.
+> So far the only one should be virtio-blk, and the two virtio storage
+> drivers never implement timeout handler.
 >
-> Regards,
->
-> Pierre
->
->
->> -----Original Message-----
->> From: Pierre Labat
->> Sent: Monday, August 14, 2023 9:31 AM
->> To: Jeff Moyer <jmoyer@redhat.com>
->> Cc: Jens Axboe <axboe@kernel.dk>; 'io-uring@vger.kernel.org' <io-
->> uring@vger.kernel.org>
->> Subject: RE: [EXT] Re: FYI, fsnotify contention with aio and io_uring.
->> 
->> Hi Jeff,
->> 
->> Indeed, by default, in my configuration, pipewire is running.
->> When I can re-test, I'll disabled it and see if that remove the problem.
->> Thanks for the hint!
->> 
->> Pierre
->> 
->> > -----Original Message-----
->> > From: Jeff Moyer <jmoyer@redhat.com>
->> > Sent: Wednesday, August 9, 2023 10:15 AM
->> > To: Pierre Labat <plabat@micron.com>
->> > Cc: Jens Axboe <axboe@kernel.dk>; 'io-uring@vger.kernel.org' <io-
->> > uring@vger.kernel.org>
->> > Subject: Re: [EXT] Re: FYI, fsnotify contention with aio and io_uring.
->> >
->> > CAUTION: EXTERNAL EMAIL. Do not click links or open attachments unless
->> > you recognize the sender and were expecting this message.
->> >
->> >
->> > Pierre Labat <plabat@micron.com> writes:
->> >
->> > > Micron Confidential
->> > >
->> > > Hi Jeff and Jens,
->> > >
->> > > About "FAN_MODIFY fsnotify watch set on /dev".
->> > >
->> > > Was using Fedora34 distro (with 6.3.9 kernel), and fio. Without any
->> > particular/specific setting.
->> > > I tried to see what could watch /dev but failed at that.
->> > > I used the inotify-info tool, but that display watchers using the
->> > > inotify interface. And nothing was watching /dev via inotify.
->> > > Need to figure out how to do the same but for the fanotify interface.
->> > > I'll look at it again and let you know.
->> >
->> > You wouldn't happen to be running pipewire, would you?
->> >
->> > https://urldefense.com/v3/__https://gitlab.freedesktop.org/pipewire/pi
->> > pewir
->> > e/-
->> > /commit/88f0dbd6fcd0a412fc4bece22afdc3ba0151e4cf__;!!KZTdOCjhgt4hgw!6E
->> > 063jj
->> > -_XK1NceWzms7DaYacILy4cKmeNVA3xalNwkd0zrYTX-IouUnvJ8bZs-RG3YSdk5XpFoo$
->> >
->> > -Jeff
->> >
->> > >
->> > > Regards,
->> > >
->> > > Pierre
->> > >
->> > >
->> > >
->> > > Micron Confidential
->> > >> -----Original Message-----
->> > >> From: Jens Axboe <axboe@kernel.dk>
->> > >> Sent: Tuesday, August 8, 2023 2:41 PM
->> > >> To: Jeff Moyer <jmoyer@redhat.com>; Pierre Labat
->> > >> <plabat@micron.com>
->> > >> Cc: 'io-uring@vger.kernel.org' <io-uring@vger.kernel.org>
->> > >> Subject: [EXT] Re: FYI, fsnotify contention with aio and io_uring.
->> > >>
->> > >> CAUTION: EXTERNAL EMAIL. Do not click links or open attachments
->> > >> unless you recognize the sender and were expecting this message.
->> > >>
->> > >>
->> > >> On 8/7/23 2:11?PM, Jeff Moyer wrote:
->> > >> > Hi, Pierre,
->> > >> >
->> > >> > Pierre Labat <plabat@micron.com> writes:
->> > >> >
->> > >> >> Hi,
->> > >> >>
->> > >> >> This is FYI, may be you already knows about that, but in case
->> > >> >> you
->> > >> don't....
->> > >> >>
->> > >> >> I was pushing the limit of the number of nvme read IOPS, the FIO
->> > >> >> + the Linux OS can handle. For that, I have something special
->> > >> >> under the Linux nvme driver. As a consequence I am not limited
->> > >> >> by whatever the NVME SSD max IOPS or IO latency would be.
->> > >> >>
->> > >> >> As I cranked the number of system cores and FIO jobs doing
->> > >> >> direct 4k random read on /dev/nvme0n1, I hit a wall. The IOPS
->> > >> >> scaling slows (less than linear) and around 15 FIO jobs on 15
->> > >> >> core threads, the overall IOPS, in fact, goes down as I add more
->> > >> >> FIO jobs. For example on a system with 24 cores/48 threads, when
->> > >> >> I goes beyond 15 FIO jobs, the overall IOPS starts to go down.
->> > >> >>
->> > >> >> This happens the same for io_uring and aio. Was using kernel
->> > >> >> version
->> > >> 6.3.9. Using one namespace (/dev/nvme0n1).
->> > >> >
->> > >> > [snip]
->> > >> >
->> > >> >> As you can see 76% of the cpu on the box is sucked up by
->> > >> >> lockref_get_not_zero() and lockref_put_return().  Looking at the
->> > >> >> code, there is contention when IO_uring call fsnotify_access().
->> > >> >
->> > >> > Is there a FAN_MODIFY fsnotify watch set on /dev?  If so, it
->> > >> > might be a good idea to find out what set it and why.
->> > >>
->> > >> This would be my guess too, some distros do seem to do that. The
->> > >> notification bits scale horribly, nobody should use it for anything
->> > >> high performance...
->> > >>
->> > >> --
->> > >> Jens Axboe
 
+Adding Stefan for more comments.
 
---=-=-=
-Content-Type: application/x-sh
-Content-Disposition: attachment; filename=inotify-watchers.sh
-Content-Transfer-Encoding: base64
-
-IyEvYmluL2Jhc2gKCmZpbGU9JDEKCnRhcmdldF9kZXY9JChzdGF0IC1jICIlRCIgJGZpbGUpCnRh
-cmdldF9pbm9kZT0kKHN0YXQgLWMgIiVpIiAkZmlsZSkKCmZ1bmN0aW9uIGRlY3RvaGV4KCkKewoJ
-aGV4PSQxCgoJZWNobyAiaWJhc2U9MTY7b2Jhc2U9QTske2hleF5efSIgfCBiYwp9Cgpmb3IgcHJv
-Y2RpciBpbiAkKGZpbmQgL3Byb2MgLW1heGRlcHRoIDEgLXJlZ2V4ICIvcHJvYy9bMC05XSsiIC1w
-cmludCk7IGRvCglmb3IgZmQgaW4gJChscyAkcHJvY2Rpci9mZC8gMj4vZGV2L251bGwpOyBkbwoJ
-CWlmIFsgIiQocmVhZGxpbmsgJHByb2NkaXIvZmQvJGZkKSIgIT0gImFub25faW5vZGU6aW5vdGlm
-eSIgXTsgdGhlbgoJCQljb250aW51ZTsKCQlmaQoJCWlub3RpZnk9JChncmVwICJpbm90aWZ5IiAk
-cHJvY2Rpci9mZGluZm8vJGZkKQoJCWRldj0kKGVjaG8gJGlub3RpZnkgfCBzZWQgLWUgJ3MvLipz
-ZGV2OlwoWzAtOUEtRmEtZl1cK1wpLiokL1wxL2cnKQoJCWlmIFsgIiRkZXYiICE9ICIkdGFyZ2V0
-X2RldiIgXTsgdGhlbgoJCQljb250aW51ZTsKCQlmaQoJCWlub2RlPSQoZWNobyAkaW5vdGlmeSB8
-IHNlZCAtZSAncy8uKmlubzpcKFswLTlBLUZhLWZdXCtcKS4qJC9cMS9nJykKCQlpbm9kZT0kKGRl
-Y3RvaGV4ICRpbm9kZSkKCQlpZiBbICIkaW5vZGUiICE9ICIkdGFyZ2V0X2lub2RlIiBdOyB0aGVu
-CgkJCWNvbnRpbnVlOwoJCWZpCgoJCSMgZm91bmQgb25lCgkJZWNobyAtbiAiYWN0aXZlIGlub3Rp
-Znkgd2F0Y2ggb24gJGZpbGUgYnkgIgoJCWNhdCAkcHJvY2Rpci9jb21tCglkb25lCmRvbmUK
---=-=-=--
+Thanks
 

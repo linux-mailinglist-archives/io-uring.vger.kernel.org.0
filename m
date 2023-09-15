@@ -2,172 +2,101 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D557A16D8
-	for <lists+io-uring@lfdr.de>; Fri, 15 Sep 2023 09:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A10717A22E1
+	for <lists+io-uring@lfdr.de>; Fri, 15 Sep 2023 17:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232524AbjIOHFL (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 15 Sep 2023 03:05:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
+        id S236441AbjIOPrY (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 15 Sep 2023 11:47:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbjIOHFK (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Sep 2023 03:05:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 778C9A1
-        for <io-uring@vger.kernel.org>; Fri, 15 Sep 2023 00:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694761459;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R0ZKX9+ZDfk8TG2B9BpARJtWjXCRBlMo1JDLbdvybKk=;
-        b=Qzf5fZVX+gVQ18fxWHy9bzwTEUHsz0JXk8zNAXaH336MUCntgCL/9aMwd6UVKx4MrF+He7
-        LSpr3AUQpK7xS16Nh8eYYpM/e3x0L2uhEk4LsAojnXD4tZAl0H9bxVHZSup2dSITE3EdSo
-        1NVYEGVQkxJXffFNTCRrNSAP/Nh9qDg=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-6-pG2-lcBrMa-5RZELNNQSKA-1; Fri, 15 Sep 2023 03:04:18 -0400
-X-MC-Unique: pG2-lcBrMa-5RZELNNQSKA-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-50081b0dba6so2159011e87.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Sep 2023 00:04:18 -0700 (PDT)
+        with ESMTP id S236251AbjIOPq5 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 15 Sep 2023 11:46:57 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972052126
+        for <io-uring@vger.kernel.org>; Fri, 15 Sep 2023 08:46:11 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id ca18e2360f4ac-7748ca56133so11228239f.0
+        for <io-uring@vger.kernel.org>; Fri, 15 Sep 2023 08:46:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1694792771; x=1695397571; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iwcgknpz61+feiaewZgxs1TindefcX43o6hE9PAUxNY=;
+        b=NtRwuUWjuQoO8+26/TXJ/CqWF3k1uZRcjViZ/wI8KYnKb+prX1Tt7UYC/ZuhiglMng
+         0OgmL6npfwqg6QbJC6SLCMJyMmC6KowwK2w/e3E0wML+WteiU0HIndEm8ezoKQoijw40
+         vMoxSUuOGQBSsKPf49wfv//5QmmD8Yo8Pka5noH4rj3TTLh2nOtoMI4iQDva5WljAJvO
+         y2eiaXKwlJna4OdmjPbWne/ENvKVz3wbR5wpVVwYbvvK5WXFTPV5lRBGIlyVA5ggxUsy
+         I+m20q82RvmlRlcAWxhB2gOxnHXcmm500Cemu+vDMEKV+2PROfM3G8Cjt0T7MiXEX4nB
+         rYxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694761456; x=1695366256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R0ZKX9+ZDfk8TG2B9BpARJtWjXCRBlMo1JDLbdvybKk=;
-        b=KT4hcRGcnfcy2tQ+eVEJ/u4nFB/l2IQ9VVlpMSpLHIEN6UJcsnHDJixR0JdLDsNlbR
-         YZS1Bt6dAgtnfBaQQ0dzlL8j9wXjKYcufN7EAM4sExB/d4tQDAdmhJU0xWwU3ox0mK5e
-         HpnFfhgkV6eauxCSeLrrY3q+ho2/OlEqknpeVHNfPj7p9U1/5Fhg7USYEk5K1cyFs/qa
-         EeeGzp+mWBcttYzN9NORMk80rGvB1qIz5PEeS0zqD4QMIqB9J7bFl6KI2dAkpmrNkDBK
-         8VOyFB/K60dih7dbqnMuMUirQSXFoy7dm4d3p1WEr+9kBX+CpPEKQkdadwhAC8FwaC8S
-         gorA==
-X-Gm-Message-State: AOJu0YzH7OEuCYqACt86xu6a9u94Wd7IaloMUwg2GpwSBcw3eZs0iZaE
-        zeI4a/tlXlpEjjslED1EA3PRxa1pKLbUMIVNF/oXG20+3rBL7zACK/aQ8C1EvIoi4QaXU3GusKb
-        NZ+7vmGOps3JsmvHFiVsV3LNLcQZ3OQQwzxlXAKanE0nffg==
-X-Received: by 2002:a05:6512:2149:b0:4fd:d002:ddad with SMTP id s9-20020a056512214900b004fdd002ddadmr643739lfr.12.1694761456390;
-        Fri, 15 Sep 2023 00:04:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtta3SijY3RzwwYuYFpIpWRyB53UbRzdNZ6fENanosL+1QizYjo1V+WEDWxW8bolgTjIL8Pmv4Uv9BVbuxiSY=
-X-Received: by 2002:a05:6512:2149:b0:4fd:d002:ddad with SMTP id
- s9-20020a056512214900b004fdd002ddadmr643715lfr.12.1694761456031; Fri, 15 Sep
- 2023 00:04:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694792771; x=1695397571;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Iwcgknpz61+feiaewZgxs1TindefcX43o6hE9PAUxNY=;
+        b=trQHbWqevde0ZSHD4N7FLp++vsNKBfTg7gc1vwLSGdNRXrbaWH/Auve1naaJPhNheC
+         5d+/3p137Ak4rPMoPDStWjURlpxjfuAT4i9P+R6FEgphP2PVV3KnAAqxghrnf0zH+ePE
+         FcPHIyYY3YNrb1r5S+fwzOk7AQCCL2vo/Lh8pC52ffbOUlkkhDg0Zbs6Ne9op5tN8LyJ
+         08YvL0J2nAvuXxL74tgUg5UBxn6mb/3l2R39KM5sf+Ui8ClqsGC1PMuA//utqTvkSC6p
+         uUoG/djnNRLVqSuKzgPNq1fGyZsVEfeQ5fDP6n08yZ4uwnkHEGLJcIXhbSp1jolmtBz/
+         XC+g==
+X-Gm-Message-State: AOJu0YxKvkVFMYwpdVwcsbKS+s87/F4CSczQ4pREq7hwwJeiFcwH/hR+
+        7tBMM8C+AdS6ptS7BPs/38qD04l0Ux7wRRHC/pVZtA==
+X-Google-Smtp-Source: AGHT+IFgMdlpmYfsEzjx/ygbDe2BwxPxiuILWz2gHqUWzdey+FxHs9bx2kbNm1mb70QlRUwlqueang==
+X-Received: by 2002:a05:6602:474e:b0:792:6be4:3dcb with SMTP id dy14-20020a056602474e00b007926be43dcbmr2189988iob.2.1694792770784;
+        Fri, 15 Sep 2023 08:46:10 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e24-20020a02a518000000b0042bae96eba7sm1119917jam.7.2023.09.15.08.46.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Sep 2023 08:46:10 -0700 (PDT)
+Message-ID: <736453bc-ad55-422d-87de-39e1439a12e0@kernel.dk>
+Date:   Fri, 15 Sep 2023 09:46:09 -0600
 MIME-Version: 1.0
-References: <20230908093009.540763-1-ming.lei@redhat.com> <58227846-6b73-46ef-957f-d9b1e0451899@kernel.dk>
- <ZPsxCYFgZjIIeaBk@fedora> <0f85a6b5-3ba6-4b77-bb7d-79f365dbb44c@kernel.dk> <ZPs81IAYfB8J78Pv@fedora>
-In-Reply-To: <ZPs81IAYfB8J78Pv@fedora>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Fri, 15 Sep 2023 15:04:05 +0800
-Message-ID: <CACGkMEvP=f1mB=01CDOhHaDLNL9espKPrUffgHEdBVkW4fo=pw@mail.gmail.com>
-Subject: Re: [PATCH V3] io_uring: fix IO hang in io_wq_put_and_exit from do_exit()
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Chengming Zhou <zhouchengming@bytedance.com>,
-        virtualization@lists.linux-foundation.org, mst@redhat.com,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 6.6-rc2
+Cc:     io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Sep 8, 2023 at 11:25=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> On Fri, Sep 08, 2023 at 08:44:45AM -0600, Jens Axboe wrote:
-> > On 9/8/23 8:34 AM, Ming Lei wrote:
-> > > On Fri, Sep 08, 2023 at 07:49:53AM -0600, Jens Axboe wrote:
-> > >> On 9/8/23 3:30 AM, Ming Lei wrote:
-> > >>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > >>> index ad636954abae..95a3d31a1ef1 100644
-> > >>> --- a/io_uring/io_uring.c
-> > >>> +++ b/io_uring/io_uring.c
-> > >>> @@ -1930,6 +1930,10 @@ void io_wq_submit_work(struct io_wq_work *wo=
-rk)
-> > >>>           }
-> > >>>   }
-> > >>>
-> > >>> + /* It is fragile to block POLLED IO, so switch to NON_BLOCK */
-> > >>> + if ((req->ctx->flags & IORING_SETUP_IOPOLL) && def->iopoll_queue)
-> > >>> +         issue_flags |=3D IO_URING_F_NONBLOCK;
-> > >>> +
-> > >>
-> > >> I think this comment deserves to be more descriptive. Normally we
-> > >> absolutely cannot block for polled IO, it's only OK here because io-=
-wq
-> > >
-> > > Yeah, we don't do that until commit 2bc057692599 ("block: don't make =
-REQ_POLLED
-> > > imply REQ_NOWAIT") which actually push the responsibility/risk up to
-> > > io_uring.
-> > >
-> > >> is the issuer and not necessarily the poller of it. That generally f=
-alls
-> > >> upon the original issuer to poll these requests.
-> > >>
-> > >> I think this should be a separate commit, coming before the main fix
-> > >> which is below.
-> > >
-> > > Looks fine, actually IO_URING_F_NONBLOCK change isn't a must, and the
-> > > approach in V2 doesn't need this change.
-> > >
-> > >>
-> > >>> @@ -3363,6 +3367,12 @@ __cold void io_uring_cancel_generic(bool can=
-cel_all, struct io_sq_data *sqd)
-> > >>>           finish_wait(&tctx->wait, &wait);
-> > >>>   } while (1);
-> > >>>
-> > >>> + /*
-> > >>> +  * Reap events from each ctx, otherwise these requests may take
-> > >>> +  * resources and prevent other contexts from being moved on.
-> > >>> +  */
-> > >>> + xa_for_each(&tctx->xa, index, node)
-> > >>> +         io_iopoll_try_reap_events(node->ctx);
-> > >>
-> > >> The main issue here is that if someone isn't polling for them, then =
-we
-> > >
-> > > That is actually what this patch is addressing, :-)
-> >
-> > Right, that part is obvious :)
-> >
-> > >> get to wait for a timeout before they complete. This can delay exit,=
- for
-> > >> example, as we're now just waiting 30 seconds (or whatever the timeo=
-ut
-> > >> is on the underlying device) for them to get timed out before exit c=
-an
-> > >> finish.
-> > >
-> > > For the issue on null_blk, device timeout handler provides
-> > > forward-progress, such as requests are released, so new IO can be
-> > > handled.
-> > >
-> > > However, not all devices support timeout, such as virtio device.
-> >
-> > That's a bug in the driver, you cannot sanely support polled IO and not
-> > be able to deal with timeouts. Someone HAS to reap the requests and
-> > there are only two things that can do that - the application doing the
-> > polled IO, or if that doesn't happen, a timeout.
->
-> OK, then device driver timeout handler has new responsibility of covering
-> userspace accident, :-)
->
-> We may document this requirement for driver.
->
-> So far the only one should be virtio-blk, and the two virtio storage
-> drivers never implement timeout handler.
->
+Hi Linus,
 
-Adding Stefan for more comments.
+Just a single fix, fixing a regression with poll first, recvmsg, and
+using a provided buffer. Please pull!
 
-Thanks
+
+The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
+
+  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.6-2023-09-15
+
+for you to fetch changes up to c21a8027ad8a68c340d0d58bf1cc61dcb0bc4d2f:
+
+  io_uring/net: fix iter retargeting for selected buf (2023-09-14 10:12:55 -0600)
+
+----------------------------------------------------------------
+io_uring-6.6-2023-09-15
+
+----------------------------------------------------------------
+Pavel Begunkov (1):
+      io_uring/net: fix iter retargeting for selected buf
+
+ io_uring/net.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+-- 
+Jens Axboe
 

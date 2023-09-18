@@ -2,98 +2,117 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A4C7A4EEF
-	for <lists+io-uring@lfdr.de>; Mon, 18 Sep 2023 18:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01EB87A4F8F
+	for <lists+io-uring@lfdr.de>; Mon, 18 Sep 2023 18:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbjIRQbK (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 18 Sep 2023 12:31:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52610 "EHLO
+        id S230423AbjIRQqF (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 18 Sep 2023 12:46:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbjIRQa6 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Sep 2023 12:30:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB8F2522F
-        for <io-uring@vger.kernel.org>; Mon, 18 Sep 2023 09:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695054444;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QQaMEbOn/KFTezm+zv5lfXwhkcUZOolA0VIHDm6tkW0=;
-        b=OBOSRKHbV0yPR2GpW4VVN7AO2+AP7kaSAi3cF/6TBh4OGe5pzO6UfikLuI8fxZ0OesWdJB
-        cXYpJgbZaCTBs7Vq+sPRylDCwJdtETYsax+ebtCfBI4JK1HSwUp8C4rNlU5f7fMR0Ud2jr
-        uIJ21xU4VXC+vUBOdYTfqYx5XCLfWFQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-679-Beo7iZaiMKql4xGZ1CfhOw-1; Mon, 18 Sep 2023 09:24:29 -0400
-X-MC-Unique: Beo7iZaiMKql4xGZ1CfhOw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C42E8185A79B;
-        Mon, 18 Sep 2023 13:24:28 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B50C1492C37;
-        Mon, 18 Sep 2023 13:24:25 +0000 (UTC)
-Date:   Mon, 18 Sep 2023 21:24:20 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        ming.lei@redhat.com
-Subject: Re: [PATCH 00/10] io_uring/ublk: exit notifier support
-Message-ID: <ZQhPhFwgSLvR/zDM@fedora>
-References: <20230918041106.2134250-1-ming.lei@redhat.com>
- <fae0bbc9-efdd-4b56-a5c8-53428facbe5b@kernel.dk>
+        with ESMTP id S230505AbjIRQpr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 18 Sep 2023 12:45:47 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D25E3A9A
+        for <io-uring@vger.kernel.org>; Mon, 18 Sep 2023 08:59:45 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-6905cccb9ceso1039547b3a.1
+        for <io-uring@vger.kernel.org>; Mon, 18 Sep 2023 08:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1695052534; x=1695657334; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1SvOcpVdAsc2Q4sYYr3R8yxC4JPBSNRq7YUUT3oDYb4=;
+        b=mLkL3T3NW9tNUXenw/npRJl1nJqo9m8G7YdcZ/oAeRZcHdoQiPiQWgFw+TOuOlMaom
+         v1dKQLK80o597AsnMg8+ECzVsAd3XM7Cxu/+AhU+swR6tgpUWcwz0zmQvpPA5qEuEt3N
+         nqMHOLECGk+p/oymyin7nYIhRsDMgrF7OvvnzByeBjvTbJiSLutud967vYxdR9cWl2wS
+         j8kW2OSyCjgCw+UywqlID5TUGQOeGELssONzG0z8E3DarSn6LrDNdodayhXhN3sVOlhU
+         Ezqgf/VSZXA5SzZolvVV1gG6xZuJDapQc9YO3IWPo5iAkboW4VoP7oXDxEuF5quxM2f1
+         fuGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695052534; x=1695657334;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1SvOcpVdAsc2Q4sYYr3R8yxC4JPBSNRq7YUUT3oDYb4=;
+        b=M/agbn7CiTFGvLViptKlm8Z1draAjuJk1pCKERFkZ4DCsJ59Axyb3gphuPfNBKxTQo
+         hRAmPMK2xw0D1URmZO1F8sekwmjPuHLJ08l6aNlr+dR6TOmdW0UvrdEke4CSN+b7EYIT
+         zHx7OQxF5XROMh6G01vUmIx2qy04J0r20CmPYFLIndiVldH9MIkSaEorr4WE5H/r7yGp
+         mmjsvY8hz7tvfNZe2hrb+E/1Lp7DMcri1FKQ4RIXagJln7VLB+7G7vMZFASQW2pQSc6F
+         IwItG91L1ZBuVQaHePGHUR9dnoeFKGqZNOZfXiAZFTbzoV3TMkimEvp++t1R+/Eoq7V/
+         iedA==
+X-Gm-Message-State: AOJu0YxPJrrgLFjJe1CanAqd4TE0Bs0kjIwoefwGyJlQZ9RGkqroyeKx
+        W0ITSKKvrwoNOQrqIAFiPytzGaUvxZ+HGbQiF3en9g==
+X-Google-Smtp-Source: AGHT+IEeNsH5iLqdPZDOtg64eKzIqKRtriPRwLcj0JBMtkee1d9rhsNJN57PvcJUKCLWuGM33pvJcw==
+X-Received: by 2002:a05:6602:1681:b0:792:6068:dcc8 with SMTP id s1-20020a056602168100b007926068dcc8mr12834859iow.2.1695046509302;
+        Mon, 18 Sep 2023 07:15:09 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id s21-20020a02ad15000000b0042b3bb542aesm2831645jan.168.2023.09.18.07.15.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Sep 2023 07:15:08 -0700 (PDT)
+Message-ID: <5706fa76-a071-4081-8bb0-b1089e86a77f@kernel.dk>
+Date:   Mon, 18 Sep 2023 08:15:07 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fae0bbc9-efdd-4b56-a5c8-53428facbe5b@kernel.dk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] io_uring/ublk: exit notifier support
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, io-uring@vger.kernel.org
+References: <20230918041106.2134250-1-ming.lei@redhat.com>
+ <fae0bbc9-efdd-4b56-a5c8-53428facbe5b@kernel.dk> <ZQhPhFwgSLvR/zDM@fedora>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZQhPhFwgSLvR/zDM@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 06:54:33AM -0600, Jens Axboe wrote:
-> On 9/17/23 10:10 PM, Ming Lei wrote:
-> > Hello,
-> > 
-> > In do_exit(), io_uring needs to wait pending requests.
-> > 
-> > ublk is one uring_cmd driver, and its usage is a bit special by submitting
-> > command for waiting incoming block IO request in advance, so if there
-> > isn't any IO request coming, the command can't be completed. So far ublk
-> > driver has to bind its queue with one ublk daemon server, meantime
-> > starts one monitor work to check if this daemon is live periodically.
-> > This way requires ublk queue to be bound one single daemon pthread, and
-> > not flexible, meantime the monitor work is run in 3rd context, and the
-> > implementation is a bit tricky.
-> > 
-> > The 1st 3 patches adds io_uring task exit notifier, and the other
-> > patches converts ublk into this exit notifier, and the implementation
-> > becomes more robust & readable, meantime it becomes easier to relax
-> > the ublk queue/daemon limit in future, such as not require to bind
-> > ublk queue with single daemon.
+On 9/18/23 7:24 AM, Ming Lei wrote:
+> On Mon, Sep 18, 2023 at 06:54:33AM -0600, Jens Axboe wrote:
+>> On 9/17/23 10:10 PM, Ming Lei wrote:
+>>> Hello,
+>>>
+>>> In do_exit(), io_uring needs to wait pending requests.
+>>>
+>>> ublk is one uring_cmd driver, and its usage is a bit special by submitting
+>>> command for waiting incoming block IO request in advance, so if there
+>>> isn't any IO request coming, the command can't be completed. So far ublk
+>>> driver has to bind its queue with one ublk daemon server, meantime
+>>> starts one monitor work to check if this daemon is live periodically.
+>>> This way requires ublk queue to be bound one single daemon pthread, and
+>>> not flexible, meantime the monitor work is run in 3rd context, and the
+>>> implementation is a bit tricky.
+>>>
+>>> The 1st 3 patches adds io_uring task exit notifier, and the other
+>>> patches converts ublk into this exit notifier, and the implementation
+>>> becomes more robust & readable, meantime it becomes easier to relax
+>>> the ublk queue/daemon limit in future, such as not require to bind
+>>> ublk queue with single daemon.
+>>
+>> The normal approach for this is to ensure that each request is
+>> cancelable, which we need for other things too (like actual cancel
+>> support) Why can't we just do the same for ublk?
 > 
-> The normal approach for this is to ensure that each request is
-> cancelable, which we need for other things too (like actual cancel
-> support) Why can't we just do the same for ublk?
+> I guess you meant IORING_OP_ASYNC_CANCEL, which needs userspace to
+> submit this command, but here the userspace(ublk server) may be just panic
+> or killed, and there isn't chance to send IORING_OP_ASYNC_CANCEL.
 
-I guess you meant IORING_OP_ASYNC_CANCEL, which needs userspace to
-submit this command, but here the userspace(ublk server) may be just panic
-or killed, and there isn't chance to send IORING_OP_ASYNC_CANCEL.
+Either that, or cancel done because of task exit.
 
-And driver doesn't have any knowledge if the io_uring ctx or io task
-is exiting, so can't complete issued commands, then hang in
-io_uring_cancel_generic() when the io task/ctx is exiting.
+> And driver doesn't have any knowledge if the io_uring ctx or io task
+> is exiting, so can't complete issued commands, then hang in
+> io_uring_cancel_generic() when the io task/ctx is exiting.
 
+If you hooked into the normal cancel paths, you very much would get
+notified when the task is exiting. That's how the other cancelations
+work, eg if a task has pending poll requests and exits, they get
+canceled and reaped.
 
-Thanks,
-Ming
+-- 
+Jens Axboe
 

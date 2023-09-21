@@ -2,135 +2,286 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F667A87AA
-	for <lists+io-uring@lfdr.de>; Wed, 20 Sep 2023 16:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FEBE7A97ED
+	for <lists+io-uring@lfdr.de>; Thu, 21 Sep 2023 19:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234974AbjITOyx (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 20 Sep 2023 10:54:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41506 "EHLO
+        id S229956AbjIUR2r (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 21 Sep 2023 13:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236662AbjITOyr (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 20 Sep 2023 10:54:47 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A0BAF
-        for <io-uring@vger.kernel.org>; Wed, 20 Sep 2023 07:54:37 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id ca18e2360f4ac-7748ca56133so55805439f.0
-        for <io-uring@vger.kernel.org>; Wed, 20 Sep 2023 07:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1695221676; x=1695826476; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4gSTAFCjAjz9EbkEdAVZmbLCM6zbrZ3KXGMs93zaaHA=;
-        b=pHw+0sFW2VgyotjYA3YMxX2dEzmfe4ZdqEFLEx5AAeysNIYBIEqvtnNEZ4h9arBcle
-         2X3axa7iMeyb2QPmUbug4pBG1ZEVBloXD07W/2kwDtD5HAxYVuwCEsDneoVY1+9YcjNA
-         FIe3NHyIp5Jt2gCf1S4q3WOU4zp2pX8+SzHaz2ReeaJssJVmK3hDfCLiQ60QJknRXciQ
-         7KxVqpdx3SeyPA6Mi4G0tbJeD39ve0v1YxW0eGr2usewwxSOmojw3PV57zJlAghJxYhh
-         TngsrNz9UsZWpGj75D+lO7XZz2y9wEYLpQ1Rw3gBwHON7W6tdKTga2hj684o4cuCFPH5
-         Pxlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695221676; x=1695826476;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4gSTAFCjAjz9EbkEdAVZmbLCM6zbrZ3KXGMs93zaaHA=;
-        b=A42TJaXPRS2XnTW5vuPlnaEZQfE5XSU9nB11K6eowynVj72cQPDj8umI8i5/Z83GDU
-         kBXmQmiAixDsJD13oqNtKO+Car89nv4KcyakJfKkhHZWm2nWyBlYI5s3IZHezKg1P2Wt
-         +P1Uti8XKTCtQwCon0MMk9dJr9bZPlif58nGujaxwm7ZShtraNnM5bHaD/6pjaw9xUUG
-         n86K/W066WC41KotMlz0JQQGO1PnILi/QgQgIthdqLaBpORTF6MK+v6QQPouFB98iYt3
-         l8Jjv8dZvQQTA8nr9V1NIGb+gDpeRTkmwGnIwENp8hXzbIiU6vQrRDPRtCk76CGUVkbt
-         FO3Q==
-X-Gm-Message-State: AOJu0YyqT10xq6vGIs7yF2oekIGWykTopeSfJLhsEsxjlxUVdCpTxhc2
-        JcdGX5Wx9aaasHjhYIrGL9lRPw==
-X-Google-Smtp-Source: AGHT+IGXmrDRzeD9focLY39nrOY1tY3KU5q6K/zPWh+OttDDNs9l75IOAgr+eNaPE0pqrFWNGFsT7Q==
-X-Received: by 2002:a05:6602:4996:b0:79a:c487:2711 with SMTP id eg22-20020a056602499600b0079ac4872711mr3550341iob.0.1695221676571;
-        Wed, 20 Sep 2023 07:54:36 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id g8-20020a02c548000000b004290f6c15bfsm4219015jaj.145.2023.09.20.07.54.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Sep 2023 07:54:35 -0700 (PDT)
-Message-ID: <81e0ef16-c780-478b-aeb0-5564aa010b13@kernel.dk>
-Date:   Wed, 20 Sep 2023 08:54:34 -0600
+        with ESMTP id S229628AbjIUR2K (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 21 Sep 2023 13:28:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6853A88
+        for <io-uring@vger.kernel.org>; Thu, 21 Sep 2023 10:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695315654;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=B44/DY4idhV9YozUHFVRS7PC4VcGBJd3WAwJfKfRDLA=;
+        b=fCbGolZGXp8BUeSGhmPy30vQAZj9IgIT7RXhuDlR5TzLxFUhSN4aa/tlJ7cPYtW65NUznV
+        U+dr/C17j00aKLwWEcg+7eRC8LivJrYHKhT/6hrAASRS5Ce0iZGakLIAwQTPVhKYweKreR
+        jbfcuftfOKxNOyDoDS97MrycA8T8yjU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-482-D5EHVdbAOCKvWiliZLY0wg-1; Thu, 21 Sep 2023 00:24:43 -0400
+X-MC-Unique: D5EHVdbAOCKvWiliZLY0wg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B090D811E7B;
+        Thu, 21 Sep 2023 04:24:42 +0000 (UTC)
+Received: from localhost (unknown [10.72.120.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B873F40C6EBF;
+        Thu, 21 Sep 2023 04:24:41 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH] io_uring: cancelable uring_cmd
+Date:   Thu, 21 Sep 2023 12:24:34 +0800
+Message-Id: <20230921042434.2500190-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4 0/5] Add io_uring support for waitid
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, asml.silence@gmail.com
-References: <20230909151124.1229695-1-axboe@kernel.dk>
- <26ddc629-e685-49b9-9786-73c0f89854d8@kernel.dk>
- <20230919-beinen-fernab-dbc587acb08d@brauner>
- <c20d61f4-0e4f-49a8-804f-d827ff705dcf@kernel.dk>
-In-Reply-To: <c20d61f4-0e4f-49a8-804f-d827ff705dcf@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/19/23 8:57 AM, Jens Axboe wrote:
-> On 9/19/23 8:45 AM, Christian Brauner wrote:
->> On Tue, Sep 12, 2023 at 11:06:39AM -0600, Jens Axboe wrote:
->>> On 9/9/23 9:11 AM, Jens Axboe wrote:
->>>> Hi,
->>>>
->>>> This adds support for IORING_OP_WAITID, which is an async variant of
->>>> the waitid(2) syscall. Rather than have a parent need to block waiting
->>>> on a child task state change, it can now simply get an async notication
->>>> when the requested state change has occured.
->>>>
->>>> Patches 1..4 are purely prep patches, and should not have functional
->>>> changes. They split out parts of do_wait() into __do_wait(), so that
->>>> the prepare-to-wait and sleep parts are contained within do_wait().
->>>>
->>>> Patch 5 adds io_uring support.
->>>>
->>>> I wrote a few basic tests for this, which can be found in the
->>>> 'waitid' branch of liburing:
->>>>
->>>> https://git.kernel.dk/cgit/liburing/log/?h=waitid
->>>>
->>>> Also spun a custom kernel for someone to test it, and no issues reported
->>>> so far.
->>>
->>> Forget to mention that I also ran all the ltp testcases for any wait*
->>> syscall test, and everything still passes just fine.
->>
->> I think the struct that this ends up exposing to io_uring is pretty ugly
->> and it would warrant a larger cleanup. I wouldn't be surprised if you
->> get some people complain about this.
->>
->> Other than that I don't have any complaints about the series.
-> 
-> io_uring only really needs child_wait and wo_pid on the wait_opts side,
-> for waitid_info it needs all of it. I'm assuming your worry is about the
-> former rather than the latter.
-> 
-> I think we could only make this smaller if we had a separate entry point
-> for io_uring, which would then make the code reuse a lot smaller. Right
-> now we just have __do_wait() abstracted out, and if we added a third
-> struct that has child_wait/wo_pid and exposed just that, we could not
-> share this infrastructure.
-> 
-> So as far as I can tell, there's no way to make the sharing less than it
-> is, at least not without adding cost of more code and less reuse.
-> 
-> Shrug?
+uring_cmd may never complete, such as ublk, in which uring cmd isn't
+completed until one new block request is coming from ublk block device.
 
-Took a closer look, and I don't think it's really possible to split much
-out of wait_opts. You may only need child_wait/wo_pid for setup, but on
-the wakeup side you type and flags as well. We could probably add that
-third struct and move wo_rusage and notask_error out, but seems very
-pointless at that point just to avoid those two. And if we do wire up
-rusage at some point, then we're left with just the one.
+Add cancelable uring_cmd to provide mechanism to driver to cancel
+pending commands in its own way.
 
+Add API of io_uring_cmd_mark_cancelable() for driver to mark one
+command as cancelable, then io_uring will cancel this command in
+io_uring_cancel_generic(). Driver callback is provided for canceling
+command in driver's way, meantime driver gets notified with exiting of
+io_uring task or context.
+
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+
+ublk patches:
+
+	https://github.com/ming1/linux/commits/uring_exit_and_ublk
+
+ include/linux/io_uring.h       | 22 +++++++++++++++++-
+ include/linux/io_uring_types.h |  6 +++++
+ include/uapi/linux/io_uring.h  |  7 ++++--
+ io_uring/io_uring.c            | 30 ++++++++++++++++++++++++
+ io_uring/uring_cmd.c           | 42 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 104 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 106cdc55ff3b..5b98308a154f 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -22,6 +22,9 @@ enum io_uring_cmd_flags {
+ 	IO_URING_F_IOPOLL		= (1 << 10),
+ };
+ 
++typedef void (uring_cmd_cancel_fn)(struct io_uring_cmd *,
++		unsigned int issue_flags, struct task_struct *task);
++
+ struct io_uring_cmd {
+ 	struct file	*file;
+ 	const struct io_uring_sqe *sqe;
+@@ -33,7 +36,17 @@ struct io_uring_cmd {
+ 	};
+ 	u32		cmd_op;
+ 	u32		flags;
+-	u8		pdu[32]; /* available inline for free use */
++
++	/* less than 32 is available for cancelable cmd */
++	union {
++		u8		pdu[32]; /* available inline for free use */
++
++		struct {
++			/* available inline for free use */
++			u8	__pdu[32 - sizeof(uring_cmd_cancel_fn  *)];
++			uring_cmd_cancel_fn  *cancel_fn;
++		};
++	};
+ };
+ 
+ static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
+@@ -82,6 +95,8 @@ static inline void io_uring_free(struct task_struct *tsk)
+ 		__io_uring_free(tsk);
+ }
+ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
++int io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
++		unsigned int issue_flags, uring_cmd_cancel_fn *fn);
+ #else
+ static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter, void *ioucmd)
+@@ -122,6 +137,11 @@ static inline int io_uring_cmd_sock(struct io_uring_cmd *cmd,
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline int io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
++		unsigned int issue_flags, uring_cmd_cancel_fn *fn)
++{
++	return -EOPNOTSUPP;
++}
+ #endif
+ 
+ #endif
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 13d19b9be9f4..1571db76bec1 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -265,6 +265,12 @@ struct io_ring_ctx {
+ 		 */
+ 		struct io_wq_work_list	iopoll_list;
+ 		bool			poll_multi_queue;
++
++		/*
++		 * Any cancelable uring_cmd is added to this list in
++		 * ->uring_cmd() by io_uring_cmd_insert_cancelable()
++		 */
++		struct hlist_head	cancelable_uring_cmd;
+ 	} ____cacheline_aligned_in_smp;
+ 
+ 	struct {
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 8e61f8b7c2ce..29a7a7e71f57 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -249,10 +249,13 @@ enum io_uring_op {
+  * sqe->uring_cmd_flags
+  * IORING_URING_CMD_FIXED	use registered buffer; pass this flag
+  *				along with setting sqe->buf_index.
++ * IORING_URING_CANCELABLE	not for userspace
+  * IORING_URING_CMD_POLLED	driver use only
+  */
+-#define IORING_URING_CMD_FIXED	(1U << 0)
+-#define IORING_URING_CMD_POLLED	(1U << 31)
++#define IORING_URING_CMD_FIXED		(1U << 0)
++/* set by driver, and handled by io_uring to cancel this cmd */
++#define IORING_URING_CMD_CANCELABLE	(1U << 30)
++#define IORING_URING_CMD_POLLED		(1U << 31)
+ 
+ 
+ /*
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 783ed0fff71b..428cffb1a7e1 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3256,6 +3256,35 @@ static __cold bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
+ 	return ret;
+ }
+ 
++static bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
++					  struct task_struct *task,
++					  bool cancel_all)
++{
++	struct hlist_node *tmp;
++	struct io_kiocb *req;
++	bool ret = false;
++
++	mutex_lock(&ctx->uring_lock);
++	hlist_for_each_entry_safe(req, tmp, &ctx->cancelable_uring_cmd,
++			hash_node) {
++		struct io_uring_cmd *cmd = io_kiocb_to_cmd(req,
++				struct io_uring_cmd);
++
++		if (!cancel_all && req->task != task)
++			continue;
++
++		/* safe to call ->cancel_fn() since cmd isn't done yet */
++		if (cmd->flags & IORING_URING_CMD_CANCELABLE) {
++			cmd->cancel_fn(cmd, 0, task);
++			ret = true;
++		}
++	}
++	io_submit_flush_completions(ctx);
++	mutex_unlock(&ctx->uring_lock);
++
++	return ret;
++}
++
+ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 						struct task_struct *task,
+ 						bool cancel_all)
+@@ -3307,6 +3336,7 @@ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 	ret |= io_kill_timeouts(ctx, task, cancel_all);
+ 	if (task)
+ 		ret |= io_run_task_work() > 0;
++	ret |= io_uring_try_cancel_uring_cmd(ctx, task, cancel_all);
+ 	return ret;
+ }
+ 
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 537795fddc87..47a6c84fd7f9 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -13,6 +13,46 @@
+ #include "rsrc.h"
+ #include "uring_cmd.h"
+ 
++static void io_uring_cmd_del_cancelable(struct io_uring_cmd *cmd,
++		unsigned int issue_flags)
++{
++	if (cmd->flags & IORING_URING_CMD_CANCELABLE) {
++		struct io_kiocb *req = cmd_to_io_kiocb(cmd);
++		struct io_ring_ctx *ctx = req->ctx;
++
++		io_ring_submit_lock(ctx, issue_flags);
++		cmd->flags &= ~IORING_URING_CMD_CANCELABLE;
++		hlist_del(&req->hash_node);
++		io_ring_submit_unlock(ctx, issue_flags);
++	}
++}
++
++/*
++ * cancel callback is called in io_uring_cancel_generic() for canceling
++ * this uring_cmd, and it is driver's responsibility to cover race between
++ * race between normal completion and canceling.
++ */
++int io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
++		unsigned int issue_flags, uring_cmd_cancel_fn *fn)
++{
++	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
++	struct io_ring_ctx *ctx = req->ctx;
++
++	if (!fn)
++		return -EINVAL;
++
++	io_ring_submit_lock(ctx, issue_flags);
++	if (!(cmd->flags & IORING_URING_CMD_CANCELABLE)) {
++		cmd->cancel_fn = fn;
++		cmd->flags |= IORING_URING_CMD_CANCELABLE;
++		hlist_add_head(&req->hash_node, &ctx->cancelable_uring_cmd);
++	}
++	io_ring_submit_unlock(ctx, issue_flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
++
+ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
+ {
+ 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+@@ -56,6 +96,8 @@ void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2,
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+ 
++	io_uring_cmd_del_cancelable(ioucmd, issue_flags);
++
+ 	if (ret < 0)
+ 		req_set_fail(req);
+ 
 -- 
-Jens Axboe
+2.40.1
 

@@ -2,183 +2,182 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 235467B037A
-	for <lists+io-uring@lfdr.de>; Wed, 27 Sep 2023 14:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D2A57B10C3
+	for <lists+io-uring@lfdr.de>; Thu, 28 Sep 2023 04:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231504AbjI0MFl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 27 Sep 2023 08:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40624 "EHLO
+        id S229987AbjI1Cay (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 27 Sep 2023 22:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231500AbjI0MFl (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Sep 2023 08:05:41 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB11F193
-        for <io-uring@vger.kernel.org>; Wed, 27 Sep 2023 05:05:39 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-98273ae42d0so289469966b.0
-        for <io-uring@vger.kernel.org>; Wed, 27 Sep 2023 05:05:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1695816338; x=1696421138; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bf8mzSZ8MQaiNt+VKeK0baxYZaBkpfm4kHq2s/2nbbw=;
-        b=cpwTRBxkYl9YjLWKYzGFO7GzuEBorWSUoXJWW1WQE4CVmaFqt1F1l0w4vwSzgp1VR0
-         HzvQPHP4xrs9zXHiEJ7Zhch1fuNT9N8g5DnqiRzzLvnf+8fszX0TCSvxwXnGAWJzeEns
-         0IjNNF7CpqRSJf8vAMv3I88RZNKI7ovBKxU5V27zY1eDOaAdHF4KW+X6CNI8pZkYwrQZ
-         jklOdlrO9O/103GubJh4NTPYbeazTZZvbjSWE+1CWQ962Cs7cbmcoyqvK4dEl95eY0wT
-         gq4XeLKTPMk70hSWGsOY/ANQ8dHGe9agvQJkCpR4NjXHQqI2r8MuT1yBcz0/2DLZ8w32
-         0pCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695816338; x=1696421138;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bf8mzSZ8MQaiNt+VKeK0baxYZaBkpfm4kHq2s/2nbbw=;
-        b=lvq9Y35CiqpTsDPklK4Z/wiWt6a1RWf1b28n7wPcU16+R6xJ0y606NOKbp2rXw5JMT
-         lJDMgG/jOBfHP+JxO4uQbxmFFIpOI883VHuNJL+sWrAcn1zPN9PVRkQQVZ3xLN6fYDJd
-         CAKV6M1uxDC/9jha25Nyp5d4YO6NH2rHquVnsThJpzbBtX2HAuaMEEApiYQladYM1af4
-         K9kd8WQ3LRCv0Bp3w0IorSuuQ89TF5ZKIdrTWu0bFgtFKutvY3N5FWmRSLaOv9vmQ3Hg
-         kp7ajxHhHMIm2TVswVLkWDFfduk67jL/aM8bsLPB+mh10l3f8EEwVskK4QIHcQRfXZAh
-         O8sw==
-X-Gm-Message-State: AOJu0Ywn46zBA8dHy6aPLGalfz0zR4iZr4X6fXsXT4rq6wo30iEleZUZ
-        iEHafvL3NV5Y8IFwBa5ToQGmyA==
-X-Google-Smtp-Source: AGHT+IHwrckRamzDNbotm+tHKTsseAGRsOc1DVs5MJfuf+aAU20AERmR7hVnP6n6xGGExHPMM3jtLA==
-X-Received: by 2002:a17:906:5356:b0:9ad:e1e2:3595 with SMTP id j22-20020a170906535600b009ade1e23595mr1576382ejo.7.1695816338084;
-        Wed, 27 Sep 2023 05:05:38 -0700 (PDT)
-Received: from [172.20.13.88] ([45.147.210.162])
-        by smtp.gmail.com with ESMTPSA id lz1-20020a170906fb0100b0099297782aa9sm9182234ejb.49.2023.09.27.05.05.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 05:05:37 -0700 (PDT)
-Message-ID: <3f195f5c-c989-4539-a4e5-62aff89576f5@kernel.dk>
-Date:   Wed, 27 Sep 2023 06:05:36 -0600
+        with ESMTP id S229984AbjI1Cax (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 27 Sep 2023 22:30:53 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9BC10A
+        for <io-uring@vger.kernel.org>; Wed, 27 Sep 2023 19:30:48 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230928023044epoutp023fdd187236dd754e40bc9efeaf030d79~I7y7f2Ces1143411434epoutp02g
+        for <io-uring@vger.kernel.org>; Thu, 28 Sep 2023 02:30:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230928023044epoutp023fdd187236dd754e40bc9efeaf030d79~I7y7f2Ces1143411434epoutp02g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1695868244;
+        bh=2XNiWv3EiXVqpow5w0n8GvnEXonI3MHQ19BqXIlj2yE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=EDzsy0keB3RP0Dv4bDtrpsBY5DoSB44E4M2sut3LgFy0x4PAh97eCescO+qBHWD3k
+         W7P5bBuVUVH5DyFTokBOE8ixHycYr1XQGYYa+1gNFKWZDiXMmb5Znsaa6FMojJzAGx
+         9ruzD0v57mHm6t8Mic315o0TFmP/eNwgMCiLAwlE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20230928023043epcas5p1179c293653e95b42026e84f545ed9987~I7y67QM0J0086800868epcas5p1i;
+        Thu, 28 Sep 2023 02:30:43 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4RwyBp1gg6z4x9Py; Thu, 28 Sep
+        2023 02:30:42 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        72.E8.09949.255E4156; Thu, 28 Sep 2023 11:30:42 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230928023004epcas5p4a6dac4cda9c867f3673690521a8c18b6~I7yWbRz1l0852208522epcas5p4F;
+        Thu, 28 Sep 2023 02:30:04 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230928023004epsmtrp1c5d3a89b362438f1a591a4a3d8704892~I7yWaLsEM1037210372epsmtrp1b;
+        Thu, 28 Sep 2023 02:30:04 +0000 (GMT)
+X-AuditID: b6c32a49-98bff700000026dd-a4-6514e552880b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        54.49.08788.C25E4156; Thu, 28 Sep 2023 11:30:04 +0900 (KST)
+Received: from AHRE124.. (unknown [109.105.118.124]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230928023002epsmtip1805a97e7ada65d3a99a24271b3d1dc5c~I7yUcJbvD1182111821epsmtip16;
+        Thu, 28 Sep 2023 02:30:02 +0000 (GMT)
+From:   Xiaobing Li <xiaobing.li@samsung.com>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, axboe@kernel.dk,
+        asml.silence@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org, kun.dou@samsung.com,
+        peiwei.li@samsung.com, joshi.k@samsung.com,
+        kundan.kumar@samsung.com, wenwen.chen@samsung.com,
+        ruyi.zhang@samsung.com, Xiaobing Li <xiaobing.li@samsung.com>
+Subject: [PATCH 0/3] Sq thread real utilization statistics.
+Date:   Thu, 28 Sep 2023 10:22:25 +0800
+Message-Id: <20230928022228.15770-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] io_uring: add support for futex wake and wait
-Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andres@anarazel.de, tglx@linutronix.de
-References: <20230921182908.160080-1-axboe@kernel.dk>
- <20230921182908.160080-5-axboe@kernel.dk>
- <20230927090501.GB21810@noisy.programming.kicks-ass.net>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230927090501.GB21810@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBJsWRmVeSWpSXmKPExsWy7bCmum7QU5FUg/4NnBZzVm1jtFh9t5/N
+        4tLjq2wW0182slg8nbCV2eJd6zkWi6P/37JZ3O2fymLxq/suo8XWL19ZLfbsPclicXnXHDaL
+        ye+eMVpcOrCAyeLZXk6L470HmCz2dTxgsvhy+Du7RceRb8wWW48CWVO37GCy6Gi5zOgg5rFm
+        3hpGj52z7rJ7tOy7xe6xYFOpx+YVWh6Xz5Z63Lm2h83j/b6rbB59W1Yxemw+Xe3xeZNcAHdU
+        tk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0KtKCmWJ
+        OaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM
+        vY17GQt+CVVsv9rF0sB4gq+LkZNDQsBE4u+SdvYuRi4OIYHdjBLTr05ghXA+MUocPPOcDaRK
+        SOAbo0TH+0iYjgl9vUwQ8b2MEs/nyEM0vGSUmHdwAgtIgk1AW+L6ui6wSSICnUwSuxbfB3OY
+        BSYxSazZch7I4eAQFrCWuLmhAqSBRUBV4s3ddWBTeQVsJGaf72WD2CYvsf/gWWaIuKDEyZlP
+        wBYwA8Wbt85mBpkpIfCEQ+J09ysmiAYXidMz9kM1C0u8Or6FHcKWknjZ3wZlF0sc6fnOCtHc
+        APT07atQCWuJf1f2sIAcxyygKbF+lz5EWFZi6imI45gF+CR6fz+B2sUrsWMejK0qsfrSQxYI
+        W1ridcNvqLiHxMm3PdBgjJW4+nQx8wRG+VlI/pmF5J9ZCJsXMDKvYpRMLSjOTU8tNi0wzEst
+        h8dscn7uJkZwktfy3MF498EHvUOMTByMhxglOJiVRHgf3hZKFeJNSaysSi3Kjy8qzUktPsRo
+        CgzkicxSosn5wDyTVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampBahFMHxMHp1QD
+        U/e8x906C5ym8HhPXr4orT1sn2rq7rMSvY/X24UKxK04xzfZMZc9aPbHr1/52uPNqjV/e64/
+        On8Tz8s1K10efGnesaVUlC3h85RZL7cnlW8qLLwpuELcW6F1nWnMg3gfS1mTe7e+rSxM3rT3
+        UTAzx8yq1b0uvh4C03PTjectnPfBkKMpbOKbqR9Fsk6Eyk0/c3uG3Rr/9ALdXu+TgasnvcuL
+        2iY2S1Swn/2MwYKzJ9IN70Uc6dJ5Hj53wdOnDmpOuR/ne+TF8c4KW7+ravKmypk/0u5nRjYs
+        fcLKwjsr+nbSj0OzrHenrO72q7h1btEJtt3f7hfwhfFFJladELujon7UNa/57XzfXz5aB/4q
+        MyixFGckGmoxFxUnAgAGN8szewQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnK7OU5FUg1P3JC3mrNrGaLH6bj+b
+        xaXHV9kspr9sZLF4OmErs8W71nMsFkf/v2WzuNs/lcXiV/ddRoutX76yWuzZe5LF4vKuOWwW
+        k989Y7S4dGABk8WzvZwWx3sPMFns63jAZPHl8Hd2i44j35gtth4FsqZu2cFk0dFymdFBzGPN
+        vDWMHjtn3WX3aNl3i91jwaZSj80rtDwuny31uHNtD5vH+31X2Tz6tqxi9Nh8utrj8ya5AO4o
+        LpuU1JzMstQifbsEroy9jXsZC34JVWy/2sXSwHiCr4uRk0NCwERiQl8vUxcjF4eQwG5GicXb
+        21i7GDmAEtISf/6UQ9QIS6z895wdouY5o8SdqdeYQRJsAtoS19d1sYLYIgIzmSQm/IgEKWIW
+        mMck0XvjLhvIIGEBa4mbGypAalgEVCXe3F3HBGLzCthIzD7fywaxQF5i/8GzzBBxQYmTM5+w
+        gNjMQPHmrbOZJzDyzUKSmoUktYCRaRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnC0
+        aWntYNyz6oPeIUYmDsZDjBIczEoivA9vC6UK8aYkVlalFuXHF5XmpBYfYpTmYFES5/32ujdF
+        SCA9sSQ1OzW1ILUIJsvEwSnVwLRTu6BmXdBLHZ3801eSv5j0FZVmFwgY3tU8tLzd3PmC2VHz
+        +pSJ3b9q/68U8bM4Z/S9ZnvSSRffr8uXPWtKt8/7y3SJ2UHB3MmLdXcQ+2nbsrTyj1OdUmaX
+        3z9xuOXBXS/9JwL73LYlO1y/IGotZLvaXmqm3Lb4Xd/2N+x9yn6JmZutbrNOTHFoj9RB6YXr
+        s84KRASvfB6ac9rHIbiaTXd91U/OtYV6b490zc6sN99nkhJ4LPxFkbbXpE0Hfv3sejTXO/tj
+        r7JMTlvx9b2TVu5Wqq2Pfr7zTIFZ4w+mBM/4JIX1U88f36m8da3Fsr2Z0ccbGLfIytXkTH/o
+        zG6UaupeOGH1lM97vBZsq9PfrsRSnJFoqMVcVJwIAHz6G+8lAwAA
+X-CMS-MailID: 20230928023004epcas5p4a6dac4cda9c867f3673690521a8c18b6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230928023004epcas5p4a6dac4cda9c867f3673690521a8c18b6
+References: <CGME20230928023004epcas5p4a6dac4cda9c867f3673690521a8c18b6@epcas5p4.samsung.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/27/23 3:05 AM, Peter Zijlstra wrote:
-> On Thu, Sep 21, 2023 at 12:29:04PM -0600, Jens Axboe wrote:
-> 
->> +int io_futex_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->> +{
->> +	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
->> +	u32 flags;
->> +
->> +	if (unlikely(sqe->fd || sqe->len || sqe->buf_index || sqe->file_index))
->> +		return -EINVAL;
->> +
->> +	iof->uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
->> +	iof->futex_val = READ_ONCE(sqe->addr2);
->> +	iof->futex_mask = READ_ONCE(sqe->addr3);
->> +	flags = READ_ONCE(sqe->futex_flags);
->> +
->> +	if (flags & ~FUTEX2_VALID_MASK)
->> +		return -EINVAL;
->> +
->> +	iof->futex_flags = futex2_to_flags(flags);
-> 
-> So prep does the flags conversion..
-> 
->> +	if (!futex_flags_valid(iof->futex_flags))
->> +		return -EINVAL;
->> +
->> +	if (!futex_validate_input(iof->futex_flags, iof->futex_val) ||
->> +	    !futex_validate_input(iof->futex_flags, iof->futex_mask))
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
-> 
->> +int io_futex_wait(struct io_kiocb *req, unsigned int issue_flags)
->> +{
->> +	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
->> +	struct io_ring_ctx *ctx = req->ctx;
->> +	struct io_futex_data *ifd = NULL;
->> +	struct futex_hash_bucket *hb;
->> +	int ret;
->> +
->> +	if (!iof->futex_mask) {
->> +		ret = -EINVAL;
->> +		goto done;
->> +	}
->> +
->> +	io_ring_submit_lock(ctx, issue_flags);
->> +	ifd = io_alloc_ifd(ctx);
->> +	if (!ifd) {
->> +		ret = -ENOMEM;
->> +		goto done_unlock;
->> +	}
->> +
->> +	req->async_data = ifd;
->> +	ifd->q = futex_q_init;
->> +	ifd->q.bitset = iof->futex_mask;
->> +	ifd->q.wake = io_futex_wake_fn;
->> +	ifd->req = req;
->> +
->> +	ret = futex_wait_setup(iof->uaddr, iof->futex_val,
->> +			       futex2_to_flags(iof->futex_flags), &ifd->q, &hb);
-> 
-> But then wait and..
-> 
->> +	if (!ret) {
->> +		hlist_add_head(&req->hash_node, &ctx->futex_list);
->> +		io_ring_submit_unlock(ctx, issue_flags);
->> +
->> +		futex_queue(&ifd->q, hb);
->> +		return IOU_ISSUE_SKIP_COMPLETE;
->> +	}
->> +
->> +done_unlock:
->> +	io_ring_submit_unlock(ctx, issue_flags);
->> +done:
->> +	if (ret < 0)
->> +		req_set_fail(req);
->> +	io_req_set_res(req, ret, 0);
->> +	kfree(ifd);
->> +	return IOU_OK;
->> +}
->> +
->> +int io_futex_wake(struct io_kiocb *req, unsigned int issue_flags)
->> +{
->> +	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
->> +	int ret;
->> +
->> +	ret = futex_wake(iof->uaddr, futex2_to_flags(iof->futex_flags),
-> 
-> ... wake do it both again?
+Summary:
 
-Oops good catch, yes just the prep side should do it of course. I'll fix
-that up.
+The current kernel's pelt scheduling algorithm is calculated based on
+the running time of the thread. However, this algorithm may cause a
+waste of CPU resources for some threads, such as the sq thread in
+io_uring.
+Since the sq thread has a while(1) structure, during this process, there
+may be a lot of time when IO is not processed but the timeout period is
+not exceeded, so the sqpoll thread will keep running, thus occupying the
+CPU. Obviously, the CPU is wasted at this time.
+our goal is to count the part of the time the sqpoll thread actually
+processes IO, thereby reflecting the part of its CPU used to process IO,
+which can be used to help improve the actual utilization of the CPU in
+the future.
+Modifications to the scheduling module are also applicable to other
+threads with the same needs.
 
-> Also, I think we want wake to have wake do: 
-> 
->   'FLAGS_STRICT | iof->futex_flags'
-> 
-> See 43adf8449510 ("futex: FLAGS_STRICT"), I'm thinking that waking 0
-> futexes should honour that request by waking 0, not 1 :-)
+We use fio (version 3.28) to test the performance. In the experiments,
+an fio process are viewed as an application, it starts job with sq_poll
+enabled. The tests are performed on a host with 256 CPUs and 64G memory,
+the IO tasks are performed on a PM1743 SSD, and the OS is Ubuntu 22.04
+with kernel version of 6.4.0.
 
-Thanks for the pointer, yeah agree that sounds sane. Most syscalls that
-take an number/size that is zero will indeed return zero. I'll add a
-test case for that too.
+Some parameters for sequential reading and writing are as follows:
+bs=128k, numjobs=1, iodepth=64.
+Some parameters for random reading and writing are as follows:
+bs=4k, numjobs=16, iodepth=64.
+
+The test results are as follows:
+Before modification
+         read   write   randread   randwrite
+IOPS(K)  53.7   46.1    849        293
+BW(MB/S) 7033   6037    3476       1199
+
+After modification
+         read   write   randread   randwrite
+IOPS(K)  53.7   46.1    847        293
+BW(MB/S) 7033   6042    3471       1199
+
+It can be seen from the test results that my modifications have almost
+no impact on performance.
+
+Xiaobing Li (3):
+  SCHEDULER: Add an interface for counting real utilization.
+  PROC FILESYSTEM: Add real utilization data of sq thread.
+  IO_URING: Statistics of the true utilization of sq threads.
+
+ fs/proc/stat.c              | 25 ++++++++++++++++++++++++-
+ include/linux/kernel.h      |  7 ++++++-
+ include/linux/kernel_stat.h |  3 +++
+ include/linux/sched.h       |  1 +
+ io_uring/sqpoll.c           | 26 +++++++++++++++++++++++++-
+ kernel/sched/cputime.c      | 36 +++++++++++++++++++++++++++++++++++-
+ kernel/sched/pelt.c         | 14 ++++++++++++++
+ 7 files changed, 108 insertions(+), 4 deletions(-)
 
 -- 
-Jens Axboe
+2.34.1
 

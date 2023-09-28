@@ -2,111 +2,135 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8515A7B1636
-	for <lists+io-uring@lfdr.de>; Thu, 28 Sep 2023 10:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1790E7B16B5
+	for <lists+io-uring@lfdr.de>; Thu, 28 Sep 2023 10:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbjI1Il2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 28 Sep 2023 04:41:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52518 "EHLO
+        id S231679AbjI1I5M (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 28 Sep 2023 04:57:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbjI1Il0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Sep 2023 04:41:26 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D2F194
-        for <io-uring@vger.kernel.org>; Thu, 28 Sep 2023 01:41:24 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52f1ece3a76so3132898a12.0
-        for <io-uring@vger.kernel.org>; Thu, 28 Sep 2023 01:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1695890482; x=1696495282; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=epK406pCE7G22GM7XcjJWrCLpMcnL+S7vFi36SuHG2w=;
-        b=JdnlsHjeM84fyU7LBVo1hrrEENLtQRb1iESeqysPZzyZDxIN8vqMxeEwK2QvI8Wwmf
-         9RMwTOsBCxUgrWGCgXIRcuCJCFwXZMnyTjL6SRwHRgRpbvOZd2V29OMyhqq8GMV8410B
-         YTGPfI6nmhAu6Fu8id9CZ4mNqJ02Am7GvlVCLLeXiuNWzEgTqRkFmzIdIEwJ+QmWD7fp
-         nX0PWB1Z7tslUCj1eri9ioY+s7k8awAfv7Blsr2Hl+rwlobRnwrsNoPIkDRQGbv/dvDR
-         vXey8Qo4a48rQq4j2RQjMnUpMrAtIRdtB7XEZiYY4dLN0UOrBsiodt4P/8wU59xc5/W9
-         eaPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695890482; x=1696495282;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=epK406pCE7G22GM7XcjJWrCLpMcnL+S7vFi36SuHG2w=;
-        b=M0s7H6A19OLaFwxQPJcIPdIJ1EUV8//y1Wib8kactctmJPdqJeJuiDzj4IU5MRBFxK
-         vKwXlmP4gasaWUZSsv/hpymIB2+CWh4kT8/d+ugestcJMTAzcSw9jZGrnam1RBF4j22z
-         T0jHw0AExSXr+KgUJV5kijVg2Ee+NyBFT/8WeNi5p1Z9SEZ36YOPZvFO5zQPIQtTdUjL
-         2caOmznka6tHc3tSeuOH9tGB0sxC6CoiTURqYWkvHrvv9s4O2GLshMS1ypjTYZrY/ASr
-         vaTkhlRTRlsVur0+yOY5PluEowV3p+O11/8/efJ/PIf3ag9dGpUsSOsVaUg42oxWbV7I
-         zkxA==
-X-Gm-Message-State: AOJu0YwEPcYGOiLJ3WC3mIsboHCl71pEWtNMlFnT9LHhhAXp0in3+Bmb
-        ofNRwn4pVlHxhNoRe2K9f+BFQA==
-X-Google-Smtp-Source: AGHT+IG2CPVzi/hevvWe+gav8pUakFxzkQgjT8vFSXc9eeUNFsBTMc4KEjzCpLfsY3OQwjCwiD1KfQ==
-X-Received: by 2002:a17:906:105d:b0:9ae:5868:c8c9 with SMTP id j29-20020a170906105d00b009ae5868c8c9mr543149ejj.0.1695890482606;
-        Thu, 28 Sep 2023 01:41:22 -0700 (PDT)
-Received: from [172.20.13.88] ([45.147.210.162])
-        by smtp.gmail.com with ESMTPSA id y16-20020a1709064b1000b0099b7276235esm10595662eju.93.2023.09.28.01.41.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Sep 2023 01:41:21 -0700 (PDT)
-Message-ID: <29553ecc-3e5e-4c03-8dd0-0ea6fe88c32f@kernel.dk>
-Date:   Thu, 28 Sep 2023 02:41:20 -0600
+        with ESMTP id S231493AbjI1I4y (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 28 Sep 2023 04:56:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C09F1B2
+        for <io-uring@vger.kernel.org>; Thu, 28 Sep 2023 01:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695891362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YXyf93SGNji8Nitj6XE+tI3+Pd3NN3XDXLxTEgunQ8A=;
+        b=OeqG9KbHtA6Ci1NMkL1fiF0u2narto7Z1e84nJF0vLm1X4UXkTzBZYxHvpuVUgvg8bOGvO
+        vJjpZS1phMgB5Q3vcxnkQIn2kEuUwGrIHrVC1vzBAOCTHN7Rp99+dW8YXkrAD4QQrbyAGs
+        e9GPK67xQ2vjnNR0uGH05HndnNKncns=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-360--waToYCTOSmmEpPy-SPqAw-1; Thu, 28 Sep 2023 04:55:59 -0400
+X-MC-Unique: -waToYCTOSmmEpPy-SPqAw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 18C453814599;
+        Thu, 28 Sep 2023 08:55:58 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 107CB10005D2;
+        Thu, 28 Sep 2023 08:55:54 +0000 (UTC)
+Date:   Thu, 28 Sep 2023 16:55:50 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: Re: [PATCH V4 2/2] io_uring: cancelable uring_cmd
+Message-ID: <ZRU/lkGwzxVeRes7@fedora>
+References: <20230923025006.2830689-1-ming.lei@redhat.com>
+ <20230923025006.2830689-3-ming.lei@redhat.com>
+ <c4598c93-fe5d-49d3-b737-e78b7abcea77@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] IO_URING: Statistics of the true utilization of sq
- threads.
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Xiaobing Li <xiaobing.li@samsung.com>, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-        asml.silence@gmail.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
-        kundan.kumar@samsung.com, wenwen.chen@samsung.com,
-        ruyi.zhang@samsung.com
-References: <20230928022228.15770-1-xiaobing.li@samsung.com>
- <CGME20230928023015epcas5p273b3eaebf3759790c278b03c7f0341c8@epcas5p2.samsung.com>
- <20230928022228.15770-4-xiaobing.li@samsung.com>
- <20230928080114.GC9829@noisy.programming.kicks-ass.net>
- <ZRU7UzMlx6lpuEHG@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZRU7UzMlx6lpuEHG@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4598c93-fe5d-49d3-b737-e78b7abcea77@kernel.dk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
+        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 9/28/23 2:37 AM, Matthew Wilcox wrote:
-> On Thu, Sep 28, 2023 at 10:01:14AM +0200, Peter Zijlstra wrote:
->> Now, I see what you're trying to do, but who actually uses this data?
+On Thu, Sep 28, 2023 at 02:38:32AM -0600, Jens Axboe wrote:
+> On 9/22/23 8:50 PM, Ming Lei wrote:
+> > diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+> > index ae08d6f66e62..a0307289bdc7 100644
+> > --- a/include/linux/io_uring.h
+> > +++ b/include/linux/io_uring.h
+> > @@ -20,9 +20,13 @@ enum io_uring_cmd_flags {
+> >  	IO_URING_F_SQE128		= (1 << 8),
+> >  	IO_URING_F_CQE32		= (1 << 9),
+> >  	IO_URING_F_IOPOLL		= (1 << 10),
+> > +
+> > +	/* set when uring wants to cancel one issued command */
+> > +	IO_URING_F_CANCEL		= (1 << 11),
+> >  };
 > 
-> I ... don't.  There seems to be the notion that since we're polling, that
-> shouldn't count against the runtime of the thread.  But the thread has
-> chosen to poll!  It is doing something!  For one thing, it's preventing
-> the CPU from entering an idle state.  It seems absolutely fair to
-> accuont this poll time to the runtime of the thread.  Clearly i'm
-> missing something.
+> I'd make that comment:
+> 
+> /* set when uring wants to cancel a previously issued command */
 
-For sure, it should be accounted as CPU time, as it is exactly that. You
-could argue that if we needed to preempt this task for something else we
-would do that (and the code does check that on every loop), but it's
-still using CPU.
+OK.
 
-I can see maybe wanting to know how much of the total time the thread
-spent doing ACTUAL work rather than just polling for new work, but
-that's not really something the scheduler should be involved in and
-should be purely an io_uring sqpoll stat of some sort if that is truly
-interesting for an application.
+> 
+> > @@ -125,6 +132,15 @@ static inline int io_uring_cmd_sock(struct io_uring_cmd *cmd,
+> >  {
+> >  	return -EOPNOTSUPP;
+> >  }
+> > +static inline int io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+> > +		unsigned int issue_flags)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> 
+> Do we need this to return an error? Presumably this will never get
+> called if IO_URING isn't defined, but if it does, it obviously doesn't
+> need to do anything anyway. Seems like it should just be a void, and
+> ditto for the enabled version which can't return an error anyway.
 
--- 
-Jens Axboe
+Indeed, 'void' is better.
+
+> 
+> >  	return ret;
+> >  }
+> >  
+> > +static bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
+> > +		struct task_struct *task, bool cancel_all)
+> > +{
+> > +	struct hlist_node *tmp;
+> > +	struct io_kiocb *req;
+> > +	bool ret = false;
+> > +
+> > +	lockdep_assert_held(&ctx->uring_lock);
+> > +
+> > +	hlist_for_each_entry_safe(req, tmp, &ctx->cancelable_uring_cmd,
+> > +			hash_node) {
+> > +		struct io_uring_cmd *cmd = io_kiocb_to_cmd(req,
+> > +				struct io_uring_cmd);
+> > +		struct file *file = req->file;
+> > +
+> > +		if (WARN_ON_ONCE(!file->f_op->uring_cmd))
+> > +			continue;
+> 
+> That check belongs in the function that marks it cancelable and adds it
+> to the list.
+
+io_uring_cmd_mark_cancelable() is actually called from ->uring_cmd(), so
+the check isn't necessary.
+
+
+
+thanks,
+Ming
 

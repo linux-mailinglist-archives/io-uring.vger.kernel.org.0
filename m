@@ -2,71 +2,120 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95BFA7B5F01
-	for <lists+io-uring@lfdr.de>; Tue,  3 Oct 2023 04:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FFAA7B6DE8
+	for <lists+io-uring@lfdr.de>; Tue,  3 Oct 2023 18:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbjJCCTh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 2 Oct 2023 22:19:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51048 "EHLO
+        id S240262AbjJCQCm (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 3 Oct 2023 12:02:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbjJCCTh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 2 Oct 2023 22:19:37 -0400
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B5AEAD
-        for <io-uring@vger.kernel.org>; Mon,  2 Oct 2023 19:19:34 -0700 (PDT)
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3af8b498d32so675051b6e.1
-        for <io-uring@vger.kernel.org>; Mon, 02 Oct 2023 19:19:34 -0700 (PDT)
+        with ESMTP id S239189AbjJCQCl (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 3 Oct 2023 12:02:41 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F95AA7
+        for <io-uring@vger.kernel.org>; Tue,  3 Oct 2023 09:02:38 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id e9e14a558f8ab-351265d0d67so1291405ab.0
+        for <io-uring@vger.kernel.org>; Tue, 03 Oct 2023 09:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1696348957; x=1696953757; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RGVHSWA8WBzexndhf7CtPYjmGQKCJH3W0EMnIrurk+k=;
+        b=0TfOoUgh9h3aV0tW/b7MUP4OciwkW8PLxe9s1sBkHjT/XwweWbY8L72+5vpCPFmD40
+         2jRh2Iq1OmQEdfJy7SFet3PebWMqc6tXXGT7SOuuRXTsiquS5ikdTQBEtfGS7cIJe5cP
+         68W5KlnWtYRj1MkGSV7Dps+Lmx7X3Al+RgiCCgbdZFTCiaQq270ZwFvagG/BaH7LrnB0
+         t8pysaus3JWkTOLK63ErMvgK7McIS0F/og5fMkIW7m8sRIBzcG51SBO/H3l9+oG6MZzI
+         cC0eD5JkJWYRUN8HRUi8CbVznBA61Kptmu2y7TDp+wZ45ZrEJkHbfED7JH5QHob48HKB
+         Zo9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696299574; x=1696904374;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NSCwa9O7C69qs9jC/KCMMATl1O+va+8ssXqOeOaOqj4=;
-        b=F0uGmiR9m1jVIaA+Bz0CLgowgKSMs/mtlolW1U58ygt6QpWejqJOUHqK++60+iLVrO
-         /RNOZDJAoJWEaIIwfnHmCbeB0U9JejlKJkgESyEzNePI7+CeGiPqD2JyqsKmnmK/so/v
-         zXdV1ilbvlnhCkWL2Dh9PaE6AL1UwF1nvwVty3SWWRvGRtTkDiA/9tkZ2/sz65YHpYSR
-         3IpGe/94SPqSOML1CH3EiHKHs8dZCw5IqWm1ajeOqAYusuy2qVVIjfYm54FGfojbm2VZ
-         Q7j1lt0EZ4QE2E/lmpoXiwQAdvPTIbSaU1bXZ8BO+YIQp4CpOA7egCJLJ4hza43V1zYV
-         gr5A==
-X-Gm-Message-State: AOJu0Yxt3E5nbpr4fY1FtOkU0xIpakWNwzK4e2qTYHcOTmP5GZRo1Wyd
-        TfnWo2Xzx3juIjxeBxrjcWBM4FvYdP8+9Q+qdOAg8OH9G/ye
-X-Google-Smtp-Source: AGHT+IGMcq0BbRra36NFLQk1oDnyK2gOJGsA4+4sjqfOoS0M9JJfbemrY9QQ3GdF9LeIiRZ6SvhkZBGVPW3U48fwAfkGB2erCNJS
+        d=1e100.net; s=20230601; t=1696348957; x=1696953757;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RGVHSWA8WBzexndhf7CtPYjmGQKCJH3W0EMnIrurk+k=;
+        b=trHrazL6S8nu6/NJkqDBOdUrTkp/SpRbm5d29i26MfjwLDTcnKwoccx07i3kA634mN
+         M0B1LvXu+jm4ay18bBu22a0z9LZOvdtwJZG1z/4euDX9FgcEkvChPZ4hl41Hd7TmkCPX
+         JTiklx8OhTV85V0F7VE9khEySXRa16GM7pNdG9cwtNA4yg1gUirOQfOWm7zwOyCVSXiw
+         tijwZFceJYsdcRhhGbE5Kp9gZahugFn/8opefvVROFO2hD1cd98HDRD5rV69A71sJeJH
+         4s2nWjvQf0sId8TCtgYr1E9GHJaGGE4GFoxLzkeYilyt1AvcLDZ3r+sAw/K01hGXP+d4
+         m0Qw==
+X-Gm-Message-State: AOJu0YzCclW6WKQCgahvzkIWZvuP8h3NWEnNV02imbzbNnc8+pWpzFQv
+        EUwp6Dl6gkK84WXHm5zbX9wY97edgJBztRm/3WU=
+X-Google-Smtp-Source: AGHT+IH0KpxqrLgQQXVFZBVKbtmzTSL2voT1jW+ajwp6udZllg8n++8m0ob2Gvj74QuFweVYYLtcCQ==
+X-Received: by 2002:a92:d44a:0:b0:34f:a4f0:4fc4 with SMTP id r10-20020a92d44a000000b0034fa4f04fc4mr13874518ilm.2.1696348956760;
+        Tue, 03 Oct 2023 09:02:36 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id fn12-20020a056638640c00b00439e3c9f958sm421928jab.129.2023.10.03.09.02.35
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Oct 2023 09:02:35 -0700 (PDT)
+Message-ID: <4c9eddf5-75d8-44cf-9365-a0dd3d0b4c05@kernel.dk>
+Date:   Tue, 3 Oct 2023 10:02:35 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:201c:b0:3ab:858e:2d6e with SMTP id
- q28-20020a056808201c00b003ab858e2d6emr6053572oiw.11.1696299573807; Mon, 02
- Oct 2023 19:19:33 -0700 (PDT)
-Date:   Mon, 02 Oct 2023 19:19:33 -0700
-In-Reply-To: <039d664c-b25e-4d68-80da-ba460ea7f269@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000878f0a0606c68568@google.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in io_get_cqe_overflow
-From:   syzbot <syzbot+efc45d4e7ba6ab4ef1eb@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: don't allow IORING_SETUP_NO_MMAP rings on highmem
+ pages
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello,
+On at least arm32, but presumably any arch with highmem, if the
+application passes in memory that resides in highmem for the rings,
+then we should fail that ring creation. We fail it with -EINVAL, which
+is what kernels that don't support IORING_SETUP_NO_MMAP will do as well.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Cc: stable@vger.kernel.org
+Fixes: 03d89a2de25b ("io_uring: support for user allocated memory for rings/sqes")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Reported-and-tested-by: syzbot+efc45d4e7ba6ab4ef1eb@syzkaller.appspotmail.com
+---
 
-Tested on:
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 783ed0fff71b..d839a80a6751 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2686,7 +2686,7 @@ static void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
+ {
+ 	struct page **page_array;
+ 	unsigned int nr_pages;
+-	int ret;
++	int ret, i;
+ 
+ 	*npages = 0;
+ 
+@@ -2716,6 +2716,20 @@ static void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
+ 	 */
+ 	if (page_array[0] != page_array[ret - 1])
+ 		goto err;
++
++	/*
++	 * Can't support mapping user allocated ring memory on 32-bit archs
++	 * where it could potentially reside in highmem. Just fail those with
++	 * -EINVAL, just like we did on kernels that didn't support this
++	 * feature.
++	 */
++	for (i = 0; i < nr_pages; i++) {
++		if (PageHighMem(page_array[i])) {
++			ret = -EINVAL;
++			goto err;
++		}
++	}
++
+ 	*pages = page_array;
+ 	*npages = nr_pages;
+ 	return page_to_virt(page_array[0]);
 
-commit:         163521f0 io_uring: ensure io_lockdep_assert_cq_locked(..
-git tree:       git://git.kernel.dk/linux.git io_uring-6.6
-console output: https://syzkaller.appspot.com/x/log.txt?x=1674879e680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
-dashboard link: https://syzkaller.appspot.com/bug?extid=efc45d4e7ba6ab4ef1eb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+-- 
+Jens Axboe
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.

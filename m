@@ -2,59 +2,59 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 993907B9913
-	for <lists+io-uring@lfdr.de>; Thu,  5 Oct 2023 02:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4BBE7B9914
+	for <lists+io-uring@lfdr.de>; Thu,  5 Oct 2023 02:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241171AbjJEAFr (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 4 Oct 2023 20:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
+        id S244177AbjJEAFs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 4 Oct 2023 20:05:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244177AbjJEAFq (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Oct 2023 20:05:46 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7879E
-        for <io-uring@vger.kernel.org>; Wed,  4 Oct 2023 17:05:43 -0700 (PDT)
+        with ESMTP id S244181AbjJEAFr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 4 Oct 2023 20:05:47 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B3E90
+        for <io-uring@vger.kernel.org>; Wed,  4 Oct 2023 17:05:44 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 4A2111F38A;
-        Thu,  5 Oct 2023 00:05:41 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BF5232184D;
+        Thu,  5 Oct 2023 00:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1696464341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1696464342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5B30aNuZqZAiEZ7O9e1YmL85qRMVmxV+iueEhBdsGDo=;
-        b=IpCtW36lgs0RvCAVqPb1uQTdzEfTXI8FuX7PK9bdsBBqn82bw+UfFMg7q3Uy4hjOk2bcWX
-        pJHdb95sjRapTVMdyJvPiSOGfkyS2qXTw6lLrNH7NFLMnNhhr9iJhm7ZjiJPlPwu7Z/5BN
-        DWPfodVTmzsg99sBoC7Q3QdzKvFu9yk=
+        bh=Ty502RkSJFPG3ucRyk91UT+7ZBN/d0lPIC6t0Cm+qwM=;
+        b=xlaQzam9CvcTAAEH7onIC7YL2551FwTGq+GlXeCi+FJmwHOOsKLz7PfqmxWq8JS2pARiPl
+        7iroLCw+nG11Qzc4cVFfGGaxNgDhAPhx6NYbtfGtyYRwAmt7UANkzCpJ4Jn6NGhOzs0huK
+        4DBtwD9lOun79+excv1/js5jocXLsQ4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1696464341;
+        s=susede2_ed25519; t=1696464342;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5B30aNuZqZAiEZ7O9e1YmL85qRMVmxV+iueEhBdsGDo=;
-        b=AcTps797O6hiw7AWoEa0JGILoMhgs3yDgdeVzS4EP7uus4Ud4ZTL2lBpnSr/a+ubeXlF9O
-        8UZhfsU2mDa/5ADw==
+        bh=Ty502RkSJFPG3ucRyk91UT+7ZBN/d0lPIC6t0Cm+qwM=;
+        b=jjhHPEhnVzcFNFN860+mlGTKwl7TGUgTQteQesreq79EZEkekw9TE631yd4wUDgHVvyKrS
+        kY5bNuZuaShcrwDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 138011331E;
-        Thu,  5 Oct 2023 00:05:40 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8AFAF1331E;
+        Thu,  5 Oct 2023 00:05:42 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id GbyzOtT9HWWDDQAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 05 Oct 2023 00:05:40 +0000
+        id k76OHNb9HWWFDQAAMHmgww
+        (envelope-from <krisman@suse.de>); Thu, 05 Oct 2023 00:05:42 +0000
 From:   Gabriel Krisman Bertazi <krisman@suse.de>
 To:     axboe@kernel.dk
 Cc:     io-uring@vger.kernel.org, jmoyer@redhat.com,
         Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH 1/3] io_uring: Fix check of BID wrapping in provided buffers
-Date:   Wed,  4 Oct 2023 20:05:29 -0400
-Message-ID: <20231005000531.30800-2-krisman@suse.de>
+Subject: [PATCH 2/3] io_uring: Allow the full buffer id space for provided buffers
+Date:   Wed,  4 Oct 2023 20:05:30 -0400
+Message-ID: <20231005000531.30800-3-krisman@suse.de>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20231005000531.30800-1-krisman@suse.de>
 References: <20231005000531.30800-1-krisman@suse.de>
@@ -70,31 +70,62 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Commit 3851d25c75ed0 ("io_uring: check for rollover of buffer ID when
-providing buffers") introduced a check to prevent wrapping the BID
-counter when sqe->off is provided, but it's off-by-one too
-restrictive, rejecting the last possible BID (65534).
+nbufs tracks the number of buffers and not the last bgid. In 16-bit, we
+have 2^16 valid buffers, but the check mistakenly rejects the last
+bid. Let's fix it to make the interface consistent with the
+documentation.
 
-i.e., the following fails with -EINVAL.
-
-     io_uring_prep_provide_buffers(sqe, addr, size, 0xFFFF, 0, 0);
-
-Fixes: 3851d25c75ed ("io_uring: check for rollover of buffer ID when providing buffers")
+Fixes: ddf0322db79c ("io_uring: add IORING_OP_PROVIDE_BUFFERS")
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- io_uring/kbuf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/kbuf.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 556f4df25b0f..52dba81c3f50 100644
+index 52dba81c3f50..12a357348733 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
-@@ -352,7 +352,7 @@ int io_provide_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+@@ -19,12 +19,15 @@
+ 
+ #define BGID_ARRAY	64
+ 
++/* BIDs are addressed by a 16-bit field in a CQE */
++#define MAX_BIDS_PER_BGID (1 << 16)
++
+ struct io_provide_buf {
+ 	struct file			*file;
+ 	__u64				addr;
+ 	__u32				len;
+ 	__u32				bgid;
+-	__u16				nbufs;
++	__u32				nbufs;
+ 	__u16				bid;
+ };
+ 
+@@ -289,7 +292,7 @@ int io_remove_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return -EINVAL;
+ 
+ 	tmp = READ_ONCE(sqe->fd);
+-	if (!tmp || tmp > USHRT_MAX)
++	if (!tmp || tmp > MAX_BIDS_PER_BGID)
+ 		return -EINVAL;
+ 
+ 	memset(p, 0, sizeof(*p));
+@@ -332,7 +335,7 @@ int io_provide_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 		return -EINVAL;
+ 
+ 	tmp = READ_ONCE(sqe->fd);
+-	if (!tmp || tmp > USHRT_MAX)
++	if (!tmp || tmp > MAX_BIDS_PER_BGID)
+ 		return -E2BIG;
+ 	p->nbufs = tmp;
+ 	p->addr = READ_ONCE(sqe->addr);
+@@ -352,7 +355,7 @@ int io_provide_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
  	tmp = READ_ONCE(sqe->off);
  	if (tmp > USHRT_MAX)
  		return -E2BIG;
--	if (tmp + p->nbufs >= USHRT_MAX)
-+	if (tmp + p->nbufs > USHRT_MAX)
+-	if (tmp + p->nbufs > USHRT_MAX)
++	if (tmp + p->nbufs > MAX_BIDS_PER_BGID)
  		return -EINVAL;
  	p->bid = tmp;
  	return 0;

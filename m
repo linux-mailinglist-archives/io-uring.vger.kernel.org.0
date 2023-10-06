@@ -2,119 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7A37BBC05
-	for <lists+io-uring@lfdr.de>; Fri,  6 Oct 2023 17:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3529F7BBCDB
+	for <lists+io-uring@lfdr.de>; Fri,  6 Oct 2023 18:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232446AbjJFPpH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 6 Oct 2023 11:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39928 "EHLO
+        id S232738AbjJFQgN (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 6 Oct 2023 12:36:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjJFPpG (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Oct 2023 11:45:06 -0400
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE7CAD;
-        Fri,  6 Oct 2023 08:45:05 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-9936b3d0286so420992966b.0;
-        Fri, 06 Oct 2023 08:45:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696607103; x=1697211903;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        with ESMTP id S230113AbjJFQgM (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 6 Oct 2023 12:36:12 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C738CAD
+        for <io-uring@vger.kernel.org>; Fri,  6 Oct 2023 09:36:07 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id e9e14a558f8ab-351265d0d67so2735465ab.0
+        for <io-uring@vger.kernel.org>; Fri, 06 Oct 2023 09:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1696610166; x=1697214966; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8aFYMnezX6QVt6CPqUMIG1km0ffIJ/7lCOUbibCVNYY=;
-        b=cr27A3mZjcwN/2wRLR+iWgqsHOq9hJfamtEh/LuSr5A/xOgRWm8TP6XNjksmYUYaPe
-         iSRDwHgcZNRezDU298WX/3B0TDH93SRW4Uag4RCAJSabwftxLSUdk8Dio4Dn+62XGjHi
-         X+FNQYCY7SyUCTM9OYiln8SJOT9TBV0HdKoGPZCfuLuWXSJgV9LNsYOZa617a6nV7CD3
-         fuuKHx5izEtDeyQfnlFXy0JUSojtQ/IH8AYGsh5hLp3wNtgmeOIzVhpyEmKWFdzsDm9P
-         wr0TIfmZr27gf/E5vSdNzwQ/OLk2khzk4kw672nYksamgKDzMeXpVWcslwd/DPVS1ldP
-         pYRg==
-X-Gm-Message-State: AOJu0Yzc2U4YqMa1COiPHr6dbW+smLkYeJRHrB0LYI0DH+dEJHa9X/Fv
-        drANEtfxm21zK8x/SrfvbJg=
-X-Google-Smtp-Source: AGHT+IE9DXNEm/MJhfpSSluc6f57Rm80AeOvy49rpEIS7UOG3ALQ+Sr77GzdCmsCicO59TMC1q98SQ==
-X-Received: by 2002:a17:906:9c1:b0:9ae:5aa4:9fa with SMTP id r1-20020a17090609c100b009ae5aa409famr7685330eje.42.1696607103107;
-        Fri, 06 Oct 2023 08:45:03 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-117.fbsv.net. [2a03:2880:31ff:75::face:b00c])
-        by smtp.gmail.com with ESMTPSA id jw26-20020a17090776ba00b009ae3d711fd9sm3040104ejc.69.2023.10.06.08.45.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Oct 2023 08:45:02 -0700 (PDT)
-Date:   Fri, 6 Oct 2023 08:45:00 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
-        willemdebruijn.kernel@gmail.com, martin.lau@linux.dev,
-        krisman@suse.de, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH v4 00/10] io_uring: Initial support for {s,g}etsockopt
- commands
-Message-ID: <ZSArfLaaGcfd8LH8@gmail.com>
-References: <20230904162504.1356068-1-leitao@debian.org>
- <20230905154951.0d0d3962@kernel.org>
+        bh=b3IRcCm3RIbdm1AhrCF3DHBV0rKOE3WGkvk5iGkU/QE=;
+        b=NJghJsi3aFD6A3u3nKGr1jBZj7/OEd5nxfqX1iJVwuOrdqFwsw5m0djOmmwZBMa72n
+         yoCj4BvOPYaxFQIgy5Wm4hIFQ2cC5X/GxW09oxmxMJNhcDvZk2nm252SNnINXMDSSoS5
+         EqYCFvCywjD0KJehHS3q4yXmkgmMJPYMvLbFpbPd1vAVMzj7sQi/ZKfjdjLqnOtjaq+I
+         I9XEUK2uvn2ae85b9JsQP+6AW3p+1Zkr2ji69q0xMmHCIKBAk5tP0m5c36+odgZ6GhM5
+         5wvc9jAJk6PiYMCMLFhg4fAyWelR5mrg6xAPyxzCJ8AIeisEc8gKDQ3WjKbKbT19dZnJ
+         Sotw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696610166; x=1697214966;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b3IRcCm3RIbdm1AhrCF3DHBV0rKOE3WGkvk5iGkU/QE=;
+        b=nyiEB52Z4nY0WzPF7grN/NqKPANYvqdlpRMSIgrLEp7h4C87EGpp7R9RI9FL+4Ga06
+         uNUyxwfhjEIlUED22+Z3wQsYMHvnckidtXtlLbGqbE9ip685nAAxsa1PRdFUggD+6zfF
+         flQ4FUlw5ckx+YAwO/rJPWa6Di1DzLdQRgLDYk3WLDsUt98qtHZ8p9Mee9n1u0AFOd1k
+         P3GJ8qeKB4+jmVokmY1KI0UXryhSCR0tguj5SDUDRz/+5aD1ViUuogt/RDS4sg0p9CiO
+         z3GgxS1iU2Qj1nPYwqIYWL1HjeQfQdjLBp/CIFaXJKeEsTIcAZ57ajcSsh0D5OO7tuLF
+         uVoQ==
+X-Gm-Message-State: AOJu0YxUvyuynX2rRc/ffAuzu6hbI4g7bjKAJAAAMwcAnC0AdzOZn9G2
+        ciOcJvLftsNQm3XifzvJA7bmVGxXgAw1CsNx0Z0=
+X-Google-Smtp-Source: AGHT+IEGol9hNSn0KhFvzqI5WtQLobp1xnlz3p2P3RnOuZ59UrG5Xt2qncRXCJUPNZhtABhDxuX6Eg==
+X-Received: by 2002:a05:6602:1a07:b0:79d:1c65:9bde with SMTP id bo7-20020a0566021a0700b0079d1c659bdemr9353191iob.1.1696610166365;
+        Fri, 06 Oct 2023 09:36:06 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id y24-20020a6bd818000000b0079fdbe2be51sm629272iob.2.2023.10.06.09.36.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Oct 2023 09:36:05 -0700 (PDT)
+Message-ID: <18e5bd5d-9d70-4880-ba26-a72b0e5b6a57@kernel.dk>
+Date:   Fri, 6 Oct 2023 10:36:02 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230905154951.0d0d3962@kernel.org>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.6-rc5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hello Jakub,
+Hi Linus,
 
-On Tue, Sep 05, 2023 at 03:49:51PM -0700, Jakub Kicinski wrote:
-> On Mon,  4 Sep 2023 09:24:53 -0700 Breno Leitao wrote:
-> > Patches 1-2: Modify the BPF hooks to support sockptr_t, so, these functions
-> > become flexible enough to accept user or kernel pointers for optval/optlen.
-> 
-> Have you seen:
-> 
-> https://lore.kernel.org/all/CAHk-=wgGV61xrG=gO0=dXH64o2TDWWrXn1mx-CX885JZ7h84Og@mail.gmail.com/
-> 
-> ? I wasn't aware that Linus felt this way, now I wonder if having
-> sockptr_t spread will raise any red flags as this code flows back
-> to him.
+A few fixes for the 6.6 kernel release:
 
-Thanks for the heads-up. I've been thinking about it for a while and I'd
-like to hear what are the next steps here.
+- syzbot report on a crash on 32-bit arm with highmem, and went digging
+  to check for potentially similar issues and found one more (me)
 
-Let me first back up and state where we are, and what is the current
-situation:
+- Fix a syzbot report with PROVE_LOCKING=y and setting up the ring in a
+  disabled state (me)
 
-1) __sys_getsockopt() uses __user pointers for both optval and optlen
-2) For io_uring command, Jens[1] suggested we get optlen from the io_uring
-sqe, which is a kernel pointer/value.
+- Fix for race with CPU hotplut and io-wq init (Jeff)
 
-Thus, we need to make the common code (callbacks) able to handle __user
-and kernel pointers (for optlen, at least).
-
-From a proto_ops callback perspective, ->setsockopt() uses sockptr.
-
-          int             (*setsockopt)(struct socket *sock, int level,
-                                        int optname, sockptr_t optval,
-                                        unsigned int optlen);
-
-Getsockopt() uses sockptr() for level=SOL_SOCKET:
-
-	int sk_getsockopt(struct sock *sk, int level, int optname,
-                    sockptr_t optval, sockptr_t optlen)
-
-But not for the other levels:
-
-	int             (*getsockopt)(struct socket *sock, int level,
-				      int optname, char __user *optval, int __user *optlen);
+Please pull!
 
 
-That said, if this patchset shouldn't use sockptr anymore, what is the
-recommendation?
+  io_uring/fs: remove sqe->rw_flags checking from LINKAT (2023-09-29 03:07:09 -0600)
 
-If we move this patchset to use iov_iter instead of sockptr, then I
-understand we want to move *all* these callbacks to use iov_vec. Is this
-the right direction?
+are available in the Git repository at:
 
-Thanks for the guidance!
+  git://git.kernel.dk/linux.git tags/io_uring-6.6-2023-10-06
 
-[1] https://lore.kernel.org/all/efe602f1-8e72-466c-b796-0083fd1c6d82@kernel.dk/
+for you to fetch changes up to 0f8baa3c9802fbfe313c901e1598397b61b91ada:
+
+  io-wq: fully initialize wqe before calling cpuhp_state_add_instance_nocalls() (2023-10-05 14:11:18 -0600)
+
+----------------------------------------------------------------
+io_uring-6.6-2023-10-06
+
+----------------------------------------------------------------
+Jeff Moyer (1):
+      io-wq: fully initialize wqe before calling cpuhp_state_add_instance_nocalls()
+
+Jens Axboe (3):
+      io_uring/kbuf: don't allow registered buffer rings on highmem pages
+      io_uring: ensure io_lockdep_assert_cq_locked() handles disabled rings
+      io_uring: don't allow IORING_SETUP_NO_MMAP rings on highmem pages
+
+ io_uring/io-wq.c    | 10 ++++------
+ io_uring/io_uring.c | 16 +++++++++++++++-
+ io_uring/io_uring.h | 41 +++++++++++++++++++++++++++--------------
+ io_uring/kbuf.c     | 27 +++++++++++++++++++--------
+ 4 files changed, 65 insertions(+), 29 deletions(-)
+
+-- 
+Jens Axboe
+

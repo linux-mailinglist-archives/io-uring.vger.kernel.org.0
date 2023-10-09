@@ -2,126 +2,116 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4787BDF43
-	for <lists+io-uring@lfdr.de>; Mon,  9 Oct 2023 15:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8347BE083
+	for <lists+io-uring@lfdr.de>; Mon,  9 Oct 2023 15:41:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376855AbjJIN2O (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Oct 2023 09:28:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55926 "EHLO
+        id S1377342AbjJINlA (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Oct 2023 09:41:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376859AbjJIN2N (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Oct 2023 09:28:13 -0400
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BCFE0;
-        Mon,  9 Oct 2023 06:28:11 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-99de884ad25so811721666b.3;
-        Mon, 09 Oct 2023 06:28:10 -0700 (PDT)
+        with ESMTP id S1377335AbjJINk7 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Oct 2023 09:40:59 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1564B94
+        for <io-uring@vger.kernel.org>; Mon,  9 Oct 2023 06:40:57 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-7a24c86aae3so57698739f.0
+        for <io-uring@vger.kernel.org>; Mon, 09 Oct 2023 06:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1696858856; x=1697463656; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SVNhOHjJzMqFCSf0hmUndpe+TpUprKUj40Dx+vmyZN8=;
+        b=wGYoje4Ji3bjbae59rWy1Ar6xkM1EkMC41bmX7oxT3lxXLq9YCe49ZVxj8TMmkrKW/
+         2PTCjsGXRXXcvkiz31zgV9bOyBMp6YN1hX7FuYMVzpVdt6ClolkWuEO4n/jgXPE2GKSi
+         M0P0/gzjyOUSUgbZG1K7Xqm5VWVOx7943fN2CqW8hc6NDGBTJuAnsKmsoK5M8Gu+jIXB
+         /17iJ5ZB6zLcCxn0cmaFHGIhCbDwTXTbeAAzsS66vvdQlDfvqnyYVB27zUTAnWiQ1iNN
+         9XyWpiUDUB4GNiECMW5bNXbeII435HSlehVtkAfLAyB3KzZJBfY6xlYPn8zGpledCWB/
+         cFtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696858083; x=1697462883;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1696858856; x=1697463656;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvOpy4MMRVXFozGEKzx2uKL7AJqMO6msRg8vYHCWpik=;
-        b=U3txsWeEP5cFMwMg7xnnIvD9FvSNjcYInn7xljNViaLy2Lhdxxy79ywOYsSvwpf7ZO
-         qZNqcNLlm9RB10tAWLKFXZ22l+oPUn8LNY/UV3fmsgMi4+Hy78PPKN9jusSDKP+LAGv7
-         6UUeVBdB0FusXKVFisPGWXoHMbsmWJG8ZvXmPFA8Bii2d7j+xGhv9EsD7UDRvtatpI9U
-         ol3OUZydt+k7KlrzGAnK0lYxL9yuYMeIHmI52lAMy8nlfB7Hyw50cA8qtDFt2Qp4fWrs
-         5ZNFGeejWe/Qi+dmqUu/jZdQ+lQyTIHIhyDRrP1/enTizww6Fvcx0SqVmPWyJurogXBm
-         EsCw==
-X-Gm-Message-State: AOJu0Yx8PXQwet65AL62PbR7aiQhWAPBz4Uk7tRAT7wNJM7CJOk2B44w
-        WnkfDCiHuV6yO3Z/jcifdX26ghghq4w=
-X-Google-Smtp-Source: AGHT+IHSl8Z0n50bbqSTqzgwk6CvvJJXLT64VDWnrIQthn51Xs+VGG7cTHvCJeni8WLsNTxhw728aQ==
-X-Received: by 2002:a17:907:c205:b0:9a5:c54f:da1c with SMTP id ti5-20020a170907c20500b009a5c54fda1cmr14068351ejc.47.1696858082831;
-        Mon, 09 Oct 2023 06:28:02 -0700 (PDT)
-Received: from gmail.com (fwdproxy-cln-015.fbsv.net. [2a03:2880:31ff:f::face:b00c])
-        by smtp.gmail.com with ESMTPSA id p6-20020a1709061b4600b0098e2969ed44sm6693523ejg.45.2023.10.09.06.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 06:28:02 -0700 (PDT)
-Date:   Mon, 9 Oct 2023 06:28:00 -0700
-From:   Breno Leitao <leitao@debian.org>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>, sdf@google.com, axboe@kernel.dk,
-        asml.silence@gmail.com, martin.lau@linux.dev, krisman@suse.de,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, io-uring@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH v4 00/10] io_uring: Initial support for {s,g}etsockopt
- commands
-Message-ID: <ZSP/4GVaQiFuDizz@gmail.com>
-References: <20230904162504.1356068-1-leitao@debian.org>
- <20230905154951.0d0d3962@kernel.org>
- <ZSArfLaaGcfd8LH8@gmail.com>
- <CAF=yD-Lr3238obe-_omnPBvgdv2NLvdK5be-5F7YyV3H7BkhSg@mail.gmail.com>
+        bh=SVNhOHjJzMqFCSf0hmUndpe+TpUprKUj40Dx+vmyZN8=;
+        b=A/acbdlzzBYnyGIOB1Enm4sRQFPTfAdrKp6O5CwjgerhDwOrzBffGhTMuL4MtYgFAs
+         oV9BF1MYln8qH5OPv6RuFneYGh/W+mO58g3Gk9kPggQ/n+ZXl7ScEG3Y8R8r3YpxXaSA
+         VJsfMqAcD46gDLKFIYXA++SEPnNWi+q1ZjsQDS5kPJ/Y94xf0eGcEBYobRefv3n8Rmgw
+         lTD34CD9OLHBc4P9uuQ5i6oMHESuae6IW584X2V5zJKzKicdW4lAxurHVndMlAPDX88e
+         gIv5eRbTl9fTUkbEAqBKlDU1eAXM8jcXv4Pq+T1BuR6t19L2tg887DDHoSp8eMLw36ZN
+         5vIg==
+X-Gm-Message-State: AOJu0Yyp7h96SoQW8/LvIZdpJ2snB77yNDQdFr8bqGgI2jomB+CYDxXf
+        QIIH9E2WEUDJ+Df1I4F4ccgEzA==
+X-Google-Smtp-Source: AGHT+IHIF8ihyfGeM12TK9GxoqQSUooPYEzTkojBBNrrrXPmAwxMXnP76Y+jbfND0qLTdvRNKjRovA==
+X-Received: by 2002:a05:6602:3a11:b0:79f:922b:3809 with SMTP id by17-20020a0566023a1100b0079f922b3809mr16439197iob.1.1696858856343;
+        Mon, 09 Oct 2023 06:40:56 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id c21-20020a056602335500b007870289f4fdsm2361947ioz.51.2023.10.09.06.40.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Oct 2023 06:40:55 -0700 (PDT)
+Message-ID: <23109a06-0f1e-4baf-973b-d0a3d208ea65@kernel.dk>
+Date:   Mon, 9 Oct 2023 07:40:54 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF=yD-Lr3238obe-_omnPBvgdv2NLvdK5be-5F7YyV3H7BkhSg@mail.gmail.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: audit: io_uring openat triggers audit reference
+ count underflow in worker thread
+Content-Language: en-US
+To:     Dan Clash <Dan.Clash@microsoft.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     "audit@vger.kernel.org" <audit@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>
+References: <MW2PR2101MB1033FFF044A258F84AEAA584F1C9A@MW2PR2101MB1033.namprd21.prod.outlook.com>
+ <ab758860-e51e-409c-8353-6205fbe515dc@kernel.dk>
+ <e0307260-c438-41d9-97ec-563e9932a60e@kernel.dk>
+ <CAHC9VhQ0z4wuH7R=KRcUTyZuRs7adYTiH5JjohJSz4d2-Jd9EQ@mail.gmail.com>
+ <MW2PR2101MB1033E52DD9307F9EF15F1E85F1CEA@MW2PR2101MB1033.namprd21.prod.outlook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <MW2PR2101MB1033E52DD9307F9EF15F1E85F1CEA@MW2PR2101MB1033.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Oct 09, 2023 at 03:11:05AM -0700, Willem de Bruijn wrote:
-> On Fri, Oct 6, 2023 at 10:45 AM Breno Leitao <leitao@debian.org> wrote:
-> > Let me first back up and state where we are, and what is the current
-> > situation:
-> >
-> > 1) __sys_getsockopt() uses __user pointers for both optval and optlen
-> > 2) For io_uring command, Jens[1] suggested we get optlen from the io_uring
-> > sqe, which is a kernel pointer/value.
-> >
-> > Thus, we need to make the common code (callbacks) able to handle __user
-> > and kernel pointers (for optlen, at least).
-> >
-> > From a proto_ops callback perspective, ->setsockopt() uses sockptr.
-> >
-> >           int             (*setsockopt)(struct socket *sock, int level,
-> >                                         int optname, sockptr_t optval,
-> >                                         unsigned int optlen);
-> >
-> > Getsockopt() uses sockptr() for level=SOL_SOCKET:
-> >
-> >         int sk_getsockopt(struct sock *sk, int level, int optname,
-> >                     sockptr_t optval, sockptr_t optlen)
-> >
-> > But not for the other levels:
-> >
-> >         int             (*getsockopt)(struct socket *sock, int level,
-> >                                       int optname, char __user *optval, int __user *optlen);
-> >
-> >
-> > That said, if this patchset shouldn't use sockptr anymore, what is the
-> > recommendation?
-> >
-> > If we move this patchset to use iov_iter instead of sockptr, then I
-> > understand we want to move *all* these callbacks to use iov_vec. Is this
-> > the right direction?
-> >
-> > Thanks for the guidance!
-> >
-> > [1] https://lore.kernel.org/all/efe602f1-8e72-466c-b796-0083fd1c6d82@kernel.dk/
+On 10/8/23 8:38 PM, Dan Clash wrote:
+> I retested with the following change as a sanity check:
 > 
-> Since sockptr_t is already used by __sys_setsockopt and
-> __sys_setsockopt, patches 1 and 2 don't introduce any new sockptr code
-> paths.
+> -       BUG_ON(name->refcnt <= 0);
+> +       BUG_ON(atomic_read(&name->refcnt) <= 0);
 > 
-> setsockopt callbacks also already use sockptr as of commit
-> a7b75c5a8c41 ("net: pass a sockptr_t into ->setsockopt").
+> checkpatch.pl suggests using WARN_ON_ONCE rather than BUG.
 > 
-> getsockopt callbacks do take user pointers, just not sockptr.
+> devvm ~ $ ~/linux/scripts/checkpatch.pl --patch ~/io_uring_audit_hang_atomic.patch 
+> WARNING: Do not crash the kernel unless it is absolutely unavoidable
+>   --use WARN_ON_ONCE() plus recovery code (if feasible) instead of BUG() or variants
+> #28: FILE: fs/namei.c:262:
+> +       BUG_ON(atomic_read(&name->refcnt) <= 0);
+> ...
 > 
-> Is the only issue right now the optlen kernel pointer?
+> refcount_t uses WARN_ON_ONCE.
+> 
+> I can think of three choices:
+> 
+> 1. Use atomic_t and remove the BUG line.
+> 2. Use refcount_t and remove the BUG line. 
+> 3. Use atomic_t and partially implement the warn behavior of refcount_t.
+> 
+> Choice 1 and 2 seem better than choice 3.
 
-Correct. The current discussion is only related to optlen in the
-getsockopt() callbacks (invoked when level != SOL_SOCKET). Everything
-else (getsockopt(level=SOL_SOCKET..) and setsockopt) is using sockptr.
+I'd probably just make it:
 
-Is it bad if we review/merge this code as is (using sockptr), and start
-the iov_iter/getsockopt() refactor in a follow-up thread?
+if (WARN_ON_ONCE(!atomic_read(name->refcnt)))
+	return;
 
-Thanks!
+to make it a straightforward conversion.
+
+-- 
+Jens Axboe
+

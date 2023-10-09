@@ -2,165 +2,147 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 713EE7BD730
-	for <lists+io-uring@lfdr.de>; Mon,  9 Oct 2023 11:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E76C17BD83A
+	for <lists+io-uring@lfdr.de>; Mon,  9 Oct 2023 12:11:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345819AbjJIJgI (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 9 Oct 2023 05:36:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
+        id S1346048AbjJIKLs (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 9 Oct 2023 06:11:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345800AbjJIJgH (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Oct 2023 05:36:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B66D8
-        for <io-uring@vger.kernel.org>; Mon,  9 Oct 2023 02:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696844096;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3kULn7XJW6r9/K5SsnJw6mRPX4XQ+SkNMJL3kPzdeUY=;
-        b=JHfvSsoV/Z0oLSFhfBSW4sHeRxqdw01K1sSWypZjA/5Y6V2s0RUQh4ja7Vkua/r22YtiTx
-        wc0aSoMc5awPGwUh51pp5S1WL6fKkze0wRAce8pxLMBfe949PExJcZ7zHZDgptpBR2KdOP
-        GxRgTCmXwEuURm/q7omBzFvgCZ/surM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-665-xRrnsAbvMmatImXt8H0UXg-1; Mon, 09 Oct 2023 05:34:51 -0400
-X-MC-Unique: xRrnsAbvMmatImXt8H0UXg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A802A80CDA1;
-        Mon,  9 Oct 2023 09:34:50 +0000 (UTC)
-Received: from localhost (unknown [10.72.120.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C484E63F50;
-        Mon,  9 Oct 2023 09:34:49 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH for-6.7/io_uring 7/7] ublk: simplify aborting request
-Date:   Mon,  9 Oct 2023 17:33:22 +0800
-Message-ID: <20231009093324.957829-8-ming.lei@redhat.com>
-In-Reply-To: <20231009093324.957829-1-ming.lei@redhat.com>
-References: <20231009093324.957829-1-ming.lei@redhat.com>
+        with ESMTP id S1346099AbjJIKLr (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 9 Oct 2023 06:11:47 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5103CF;
+        Mon,  9 Oct 2023 03:11:42 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-45260b91a29so1605374137.2;
+        Mon, 09 Oct 2023 03:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696846301; x=1697451101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JUzeNqXLaaK5niHZagSjVNk/fZkBVBIUEPMvh8M2SQE=;
+        b=ENZ7CXHnJiD1vn2bGsqxeExGcBuaXJ7ZLomisKu1HKbeXRYSK4BmkR6Mb0wK74pXu/
+         keikOpuVGjrc2yhRkApq+8ddtf9h7xKjDW2Rnq4H4b0Z9sDRPxu5TUhxiGMPAlxJ8mZl
+         L+Prj1emV4fiA74hQt/HIbv1ZnWpLr9c1ooVhfCz1ZFGgOo6b6GKIu3Xn8cG1fGT59iK
+         fuKD1GC+qRdpVNN7SqIKLCWutXg4oqOQ/CWAm7WMsiXnsLB/EhHl2+VK1ruZw7OVg1cU
+         cTk3itzgMSLtbXAt88VOupp51sM8RwnCM3/U9d2Smd43EKK2YMsYUbui3846RYJAm3Yb
+         oo6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696846301; x=1697451101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JUzeNqXLaaK5niHZagSjVNk/fZkBVBIUEPMvh8M2SQE=;
+        b=qyu1pvmpItGwiOMbBd654Q8ypTFjfwBvnSvCmpEqe8AIH+Ur1hrXUAwTfHTdk58VsA
+         eGcAzh03T8wvomEzDC2AbuU6AJnU1rvd1PzyqfZdqyD9mPfiXlf+JlEezjx/QJaAjOup
+         MS7WWz88BSi/LlYl8iYt1IvzZlT+LqgHxjxYzFrFJ0k1jAnFgx+BoglxZ1tVSUuaxSiY
+         pq8umDbR3Am6AZwJQwtN0XFyt01tFcX9t+OANnhYhpmNxkzim8stR/u/Sv96WFjUjl90
+         lYX0rHhnnDb4Hh0rkWoBoNcZsAzuRcDSayVV/zVbKjRo+8GYYfgT5VEnzyb+FrniagxI
+         eZFA==
+X-Gm-Message-State: AOJu0YwlJvA8ubkUzEPp3p1LT2tc18LfTUg02NsoaRgKuFb8NjQNdEY4
+        b4xmIvO1gt418xSbg7D9V89ToQCM+aHtVp4qmvM=
+X-Google-Smtp-Source: AGHT+IFfKt7rhAld5ba1A6Tt3iiSG6hva5HsfJYyiYTBqzOf6MFDYJ0x5tJ/nwBO3nl3NArAiioUQwhCR7BI9zV64Fo=
+X-Received: by 2002:a67:b142:0:b0:452:5b2d:7787 with SMTP id
+ z2-20020a67b142000000b004525b2d7787mr11446793vsl.0.1696846301611; Mon, 09 Oct
+ 2023 03:11:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20230904162504.1356068-1-leitao@debian.org> <20230905154951.0d0d3962@kernel.org>
+ <ZSArfLaaGcfd8LH8@gmail.com>
+In-Reply-To: <ZSArfLaaGcfd8LH8@gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 9 Oct 2023 03:11:05 -0700
+Message-ID: <CAF=yD-Lr3238obe-_omnPBvgdv2NLvdK5be-5F7YyV3H7BkhSg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] io_uring: Initial support for {s,g}etsockopt commands
+To:     Breno Leitao <leitao@debian.org>
+Cc:     Jakub Kicinski <kuba@kernel.org>, sdf@google.com, axboe@kernel.dk,
+        asml.silence@gmail.com, martin.lau@linux.dev, krisman@suse.de,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Now ublk_abort_queue() is run exclusively with ublk_queue_rq() and the
-ubq_daemon task, so simplify aborting request:
+On Fri, Oct 6, 2023 at 10:45=E2=80=AFAM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> Hello Jakub,
+>
+> On Tue, Sep 05, 2023 at 03:49:51PM -0700, Jakub Kicinski wrote:
+> > On Mon,  4 Sep 2023 09:24:53 -0700 Breno Leitao wrote:
+> > > Patches 1-2: Modify the BPF hooks to support sockptr_t, so, these fun=
+ctions
+> > > become flexible enough to accept user or kernel pointers for optval/o=
+ptlen.
+> >
+> > Have you seen:
+> >
+> > https://lore.kernel.org/all/CAHk-=3DwgGV61xrG=3DgO0=3DdXH64o2TDWWrXn1mx=
+-CX885JZ7h84Og@mail.gmail.com/
+> >
+> > ? I wasn't aware that Linus felt this way, now I wonder if having
+> > sockptr_t spread will raise any red flags as this code flows back
+> > to him.
+>
+> Thanks for the heads-up. I've been thinking about it for a while and I'd
+> like to hear what are the next steps here.
+>
+> Let me first back up and state where we are, and what is the current
+> situation:
+>
+> 1) __sys_getsockopt() uses __user pointers for both optval and optlen
+> 2) For io_uring command, Jens[1] suggested we get optlen from the io_urin=
+g
+> sqe, which is a kernel pointer/value.
+>
+> Thus, we need to make the common code (callbacks) able to handle __user
+> and kernel pointers (for optlen, at least).
+>
+> From a proto_ops callback perspective, ->setsockopt() uses sockptr.
+>
+>           int             (*setsockopt)(struct socket *sock, int level,
+>                                         int optname, sockptr_t optval,
+>                                         unsigned int optlen);
+>
+> Getsockopt() uses sockptr() for level=3DSOL_SOCKET:
+>
+>         int sk_getsockopt(struct sock *sk, int level, int optname,
+>                     sockptr_t optval, sockptr_t optlen)
+>
+> But not for the other levels:
+>
+>         int             (*getsockopt)(struct socket *sock, int level,
+>                                       int optname, char __user *optval, i=
+nt __user *optlen);
+>
+>
+> That said, if this patchset shouldn't use sockptr anymore, what is the
+> recommendation?
+>
+> If we move this patchset to use iov_iter instead of sockptr, then I
+> understand we want to move *all* these callbacks to use iov_vec. Is this
+> the right direction?
+>
+> Thanks for the guidance!
+>
+> [1] https://lore.kernel.org/all/efe602f1-8e72-466c-b796-0083fd1c6d82@kern=
+el.dk/
 
-- set UBLK_IO_FLAG_ABORTED in ublk_abort_queue() just for aborting
-this request
+Since sockptr_t is already used by __sys_setsockopt and
+__sys_setsockopt, patches 1 and 2 don't introduce any new sockptr code
+paths.
 
-- abort request in ublk_queue_rq() if ubq->canceling is set
+setsockopt callbacks also already use sockptr as of commit
+a7b75c5a8c41 ("net: pass a sockptr_t into ->setsockopt").
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/block/ublk_drv.c | 41 +++++++++++-----------------------------
- 1 file changed, 11 insertions(+), 30 deletions(-)
+getsockopt callbacks do take user pointers, just not sockptr.
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 75ed7b87a844..20237b8f318a 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1083,13 +1083,10 @@ static void __ublk_fail_req(struct ublk_queue *ubq, struct ublk_io *io,
- {
- 	WARN_ON_ONCE(io->flags & UBLK_IO_FLAG_ACTIVE);
- 
--	if (!(io->flags & UBLK_IO_FLAG_ABORTED)) {
--		io->flags |= UBLK_IO_FLAG_ABORTED;
--		if (ublk_queue_can_use_recovery_reissue(ubq))
--			blk_mq_requeue_request(req, false);
--		else
--			ublk_put_req_ref(ubq, req);
--	}
-+	if (ublk_queue_can_use_recovery_reissue(ubq))
-+		blk_mq_requeue_request(req, false);
-+	else
-+		ublk_put_req_ref(ubq, req);
- }
- 
- static void ubq_complete_io_cmd(struct ublk_io *io, int res,
-@@ -1230,27 +1227,10 @@ static void ublk_rq_task_work_cb(struct io_uring_cmd *cmd, unsigned issue_flags)
- static void ublk_queue_cmd(struct ublk_queue *ubq, struct request *rq)
- {
- 	struct ublk_rq_data *data = blk_mq_rq_to_pdu(rq);
--	struct ublk_io *io;
- 
--	if (!llist_add(&data->node, &ubq->io_cmds))
--		return;
-+	if (llist_add(&data->node, &ubq->io_cmds)) {
-+		struct ublk_io *io = &ubq->ios[rq->tag];
- 
--	io = &ubq->ios[rq->tag];
--	/*
--	 * If the check pass, we know that this is a re-issued request aborted
--	 * previously in cancel fn because the ubq_daemon(cmd's task) is
--	 * PF_EXITING. We cannot call io_uring_cmd_complete_in_task() anymore
--	 * because this ioucmd's io_uring context may be freed now if no inflight
--	 * ioucmd exists. Otherwise we may cause null-deref in ctx->fallback_work.
--	 *
--	 * Note: cancel fn sets UBLK_IO_FLAG_ABORTED and ends this request(releasing
--	 * the tag). Then the request is re-started(allocating the tag) and we are here.
--	 * Since releasing/allocating a tag implies smp_mb(), finding UBLK_IO_FLAG_ABORTED
--	 * guarantees that here is a re-issued request aborted previously.
--	 */
--	if (unlikely(io->flags & UBLK_IO_FLAG_ABORTED)) {
--		ublk_abort_io_cmds(ubq);
--	} else {
- 		io_uring_cmd_complete_in_task(io->cmd, ublk_rq_task_work_cb);
- 	}
- }
-@@ -1320,13 +1300,12 @@ static blk_status_t ublk_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	if (ublk_queue_can_use_recovery(ubq) && unlikely(ubq->force_abort))
- 		return BLK_STS_IOERR;
- 
--	blk_mq_start_request(bd->rq);
--
- 	if (unlikely(ubq->canceling)) {
- 		__ublk_abort_rq(ubq, rq);
- 		return BLK_STS_OK;
- 	}
- 
-+	blk_mq_start_request(bd->rq);
- 	ublk_queue_cmd(ubq, rq);
- 
- 	return BLK_STS_OK;
-@@ -1449,8 +1428,10 @@ static void ublk_abort_queue(struct ublk_device *ub, struct ublk_queue *ubq)
- 			 * will do it
- 			 */
- 			rq = blk_mq_tag_to_rq(ub->tag_set.tags[ubq->q_id], i);
--			if (rq)
-+			if (rq && blk_mq_request_started(rq)) {
-+				io->flags |= UBLK_IO_FLAG_ABORTED;
- 				__ublk_fail_req(ubq, io, rq);
-+			}
- 		}
- 	}
- }
-@@ -1534,7 +1515,7 @@ static void ublk_uring_cmd_cancel_fn(struct io_uring_cmd *cmd,
- 
- 	io = &ubq->ios[pdu->tag];
- 	WARN_ON_ONCE(io->cmd != cmd);
--	ublk_cancel_cmd(ubq, &ubq->ios[pdu->tag], issue_flags);
-+	ublk_cancel_cmd(ubq, io, issue_flags);
- 
- 	if (need_schedule) {
- 		if (ublk_can_use_recovery(ub))
--- 
-2.41.0
-
+Is the only issue right now the optlen kernel pointer?

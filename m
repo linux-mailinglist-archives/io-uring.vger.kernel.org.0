@@ -2,231 +2,126 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A4677BF26E
-	for <lists+io-uring@lfdr.de>; Tue, 10 Oct 2023 07:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAEC67BFEF9
+	for <lists+io-uring@lfdr.de>; Tue, 10 Oct 2023 16:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442153AbjJJFrv (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 10 Oct 2023 01:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
+        id S232932AbjJJOTl (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 10 Oct 2023 10:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379414AbjJJFrs (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Oct 2023 01:47:48 -0400
-Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74AF692;
-        Mon,  9 Oct 2023 22:47:40 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 983C5761605;
-        Tue, 10 Oct 2023 05:47:39 +0000 (UTC)
-Received: from pdx1-sub0-mail-a261.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 27DC77611AA;
-        Tue, 10 Oct 2023 05:47:39 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1696916859; a=rsa-sha256;
-        cv=none;
-        b=3Z1e2c5Gqc2xgCnjewSbdWiqgp5EWzzAh1cooBlA68uNeMxNfXF7LqyqsyYei3XzERgfHd
-        JU+anznxsGCAaXKF+WQVmpjMLp9A/ncivPLYuR3u2OS4PkcecbapXNfBtM28ho4LJhsSvU
-        4gdlPWV+LS8g/nqgLXSEO4MRqe+f5qzRmKcVEaAyz7cnh1Mv3ETxGWsu2mU5Vha3x/lIhi
-        tkA7GcRyLqIz21KOlmBVC6vZ1wOyArEwbPnz6ju5rpPQIQCxaQRvaKopZedQOp4brJkBrH
-        ELBPtm3g8YNvejCrDBWcS2Ng1pTbcJiUe/v5NOuTj8y33N9ggJS5o9WrfzwweQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1696916859;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=1zJT0VoGrkLAtBvhsAQ+j3jJoyvQlLyGd/QNJF4U6d8=;
-        b=JsGi1WTL7PegJ2AJ2gkBsup3Lk3lxOerUAaqdnDDs+h1tuLYtG9DdYwB3qfWN4lpXzxsu/
-        6qmnWOpec2X0SoqM5MYd0QOXFtEjx18de83mHe1D7xpUvTWIqnU5BGPBALm0n46t1thZZv
-        7t8WFCru1+9rtsq8kWYEEUm/JTyDoy8xFlJGuuJC7Qx4yUz5Om4aBDMQumJtrqZiXPXb9X
-        U/TYVLLX64drNYCEaVHfx6m37O5lkBLwQ8ziHAgGHyoBtSSgch4iTS8hmlynEG5MvNtqIX
-        siuJ1p/S0/SuggU07JWvyUeGjTLTJDN/0v0mnwLwVSiHAfNOidwk4oIOl0B5Eg==
-ARC-Authentication-Results: i=1;
-        rspamd-7c449d4847-9wgh4;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=bugs@claycon.org
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Scare-Tangy: 23e2acda17cb4c22_1696916859459_3115200803
-X-MC-Loop-Signature: 1696916859459:1200585657
-X-MC-Ingress-Time: 1696916859458
-Received: from pdx1-sub0-mail-a261.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.103.131.218 (trex/6.9.1);
-        Tue, 10 Oct 2023 05:47:39 +0000
-Received: from vps46052.dreamhostps.com (vps46052.dreamhostps.com [69.163.237.247])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a261.dreamhost.com (Postfix) with ESMTPSA id 4S4Q0V6Kd6z3H;
-        Mon,  9 Oct 2023 22:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=claycon.org;
-        s=dreamhost; t=1696916858;
-        bh=1zJT0VoGrkLAtBvhsAQ+j3jJoyvQlLyGd/QNJF4U6d8=;
-        h=Date:From:To:Cc:Subject:Content-Type:Content-Transfer-Encoding;
-        b=IHdXtsVEqd6iCHMau92UV943x3KhHWkAZtYK2DWLmbX8zDC9bVTEQhs6EH0tPXqNa
-         LkjQ1xd1VAJ90uF8XBvq5AN/S0+zQ7D8CVuoVU7AJjdzOcd0xijCq+VcRF5PadSfsx
-         OvCLW/kBnA+V+7yVExOpf3pIidagcKoh+AtNExjTRPGUwFHjUi4wmlff0AX0CEHt1y
-         Nu1fsWjgEj5yECIPeXmmCKKpkiio8OgPFEDCHHKxd3syH+bibtp0MphRGomXAxRybh
-         L7TEfDF0+UNU2XK+GFeJEZMgaTVqzEFZubRlZvxpHbygMm3tVjugnFmTOcihsIl6eI
-         qIDkI2G7dtYcw==
-Date:   Tue, 10 Oct 2023 00:47:37 -0500
-From:   Clay Harris <bugs@claycon.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: add AT_EMPTY_PATH support to unlinkat()
-Message-ID: <ZSTleVf6eNII3dg3@vps46052.dreamhostps.com>
-References: <20230929140456.23767-1-lhenriques@suse.de>
- <20231009020623.GB800259@ZenIV>
- <87lecbrfos.fsf@suse.de>
+        with ESMTP id S233020AbjJJOTk (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 10 Oct 2023 10:19:40 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5272E9E
+        for <io-uring@vger.kernel.org>; Tue, 10 Oct 2023 07:19:38 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1qqDa8-0005FO-NP; Tue, 10 Oct 2023 16:19:32 +0200
+Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <sha@pengutronix.de>)
+        id 1qqDa8-000gWG-7a; Tue, 10 Oct 2023 16:19:32 +0200
+Received: from sha by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1qqDa8-00Dktd-3i; Tue, 10 Oct 2023 16:19:32 +0200
+Date:   Tue, 10 Oct 2023 16:19:32 +0200
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Subject: Problem with io_uring splice and KTLS
+Message-ID: <20231010141932.GD3114228@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87lecbrfos.fsf@suse.de>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,T_SPF_TEMPERROR,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Sascha Hauer <sha@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: io-uring@vger.kernel.org
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Apologies, this message was intended as a reply to Al Viro, but I accidentally
-deleted that message so I'm replying to the reply instead.
+Hi,
 
-On Mon, Oct 09 2023 at 16:14:27 +0100, Luis Henriques quoth thus:
+I am working with a webserver using io_uring in conjunction with KTLS. The
+webserver basically splices static file data from a pipe to a socket which uses
+KTLS for encryption. When splice is done the socket is closed. This works fine
+when using software encryption in KTLS. Things go awry though when the software
+encryption is replaced with the CAAM driver which replaces the synchronous
+encryption with a asynchronous queue/interrupt/completion flow.
 
-> Al Viro <viro@zeniv.linux.org.uk> writes:
-> 
-> > On Fri, Sep 29, 2023 at 03:04:56PM +0100, Luis Henriques wrote:
-> >
-> >> -int do_unlinkat(int dfd, struct filename *name)
-> >> +int do_unlinkat(int dfd, struct filename *name, int flags)
-> >>  {
-> >>  	int error;
-> >> -	struct dentry *dentry;
-> >> +	struct dentry *dentry, *parent;
-> >>  	struct path path;
-> >>  	struct qstr last;
-> >>  	int type;
-> >>  	struct inode *inode = NULL;
-> >>  	struct inode *delegated_inode = NULL;
-> >>  	unsigned int lookup_flags = 0;
-> >> -retry:
-> >> -	error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
-> >> -	if (error)
-> >> -		goto exit1;
-> >> +	bool empty_path = (flags & AT_EMPTY_PATH);
-> >>  
-> >> -	error = -EISDIR;
-> >> -	if (type != LAST_NORM)
-> >> -		goto exit2;
-> >> +retry:
-> >> +	if (empty_path) {
-> >> +		error = filename_lookup(dfd, name, 0, &path, NULL);
-> >> +		if (error)
-> >> +			goto exit1;
-> >> +		parent = path.dentry->d_parent;
-> >> +		dentry = path.dentry;
-> >> +	} else {
-> >> +		error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
-> >> +		if (error)
-> >> +			goto exit1;
-> >> +		error = -EISDIR;
-> >> +		if (type != LAST_NORM)
-> >> +			goto exit2;
-> >> +		parent = path.dentry;
-> >> +	}
-> >>  
-> >>  	error = mnt_want_write(path.mnt);
-> >>  	if (error)
-> >>  		goto exit2;
-> >>  retry_deleg:
-> >> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-> >> -	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
-> >> +	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> >> +	if (!empty_path)
-> >> +		dentry = lookup_one_qstr_excl(&last, parent, lookup_flags);
-> >
-> > For starters, your 'parent' might have been freed under you, just as you'd
-> > been trying to lock its inode.  Or it could have become negative just as you'd
-> > been fetching its ->d_inode, while we are at it.
-> >
-> > Races aside, you are changing permissions required for removing files.  For
-> > unlink() you need to be able to get to the parent directory; if it's e.g.
-> > outside of your namespace, you can't do anything to it.  If file had been
-> > opened there by somebody who could reach it and passed to you (via SCM_RIGHTS,
-> > for example) you currently can't remove the sucker.  With this change that
-> > is no longer true.
-> >
-> > The same goes for the situation when file is bound into your namespace (or
-> > chroot jail, for that matter).  path.dentry might very well be equal to
-> > root of path.mnt; path.dentry->d_parent might be in part of tree that is
-> > no longer visible *anywhere*.  rmdir() should not be able to do anything
-> > with it...
-> >
-> > IMO it's fundamentally broken; not just implementation, but the concept
-> > itself.
-> >
-> > NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+So far I have traced it down to tls_push_sg() calling tcp_sendmsg_locked() to
+send the completed encrypted messages. tcp_sendmsg_locked() sometimes waits for
+more memory on the socket by calling sk_stream_wait_memory(). This in turn
+returns -ERESTARTSYS due to:
 
-Al, thank you for this information.  It does shine a little light on where
-dragons may be hiding.  I was wondering if you could comment on a related
-issue.
+        if (signal_pending(current))
+                goto do_interrupted;
 
-linkat does allow specifing AT_EMPTY_PATH.  However, it requires
-CAP_DAC_READ_SEARCH.  I saw that a patch went into the kernel to remove
-this restriction, but was shortly thereafter reverted with a comment
-to the effect of "We'll have to think about this a little more".  Then,
-radio silence.  Other than requiring /proc be mounted to bypass, what
-problem does this restriction solve?
+The current task has the TIF_NOTIFY_SIGNAL set due to:
 
-Also related, the thing I'm even more interested in is the ability to
-create an O_TMPFILE, populate it, set permissions, etc, and then make
-it appear in a directory.  The problem is I almost always don't want it
-to just appear, but rather atomically replace an older version of the
-file.
+io_req_normal_work_add()
+{
+        ...
+        /* This interrupts sk_stream_wait_memory() (notify_method == TWA_SIGNAL) */
+        task_work_add(req->task, &tctx->task_work, ctx->notify_method)))
+}
 
-dfd = openat(x, "y", O_RDONLY | O_CLOEXEC | O_DIRECTORY, 0)
-fd = openat(dfd, ".", O_RDWR | O_CLOEXEC | O_TMPFILE, 0600)
-do stuff with fd
-fsync(fd)
-linkat(fd, "", dfd, "z", AT_EMPTY_PATH | AT_REPLACE?)
-close(fd)
-fsync(dfd)
-close(dfd)
+The call stack when sk_stream_wait_memory() fails is as follows:
 
-The AT_REPLACE flag has been suggested before to work around the EEXIST
-behavior.  Alternatively, renameat2 could accept AT_EMPTY_PATH for
-olddirfd/oldpath, but fixing up linkat seems a little cleaner.  Without
-this, it hardly seems worthwhile to use O_TMPFILE at all, and instead
-just go through the hassle of creating the file with a random name
-(plus exposing that file and having to possibly rm it in case of an error).
+[ 1385.428816]  dump_backtrace+0xa0/0x128
+[ 1385.432568]  show_stack+0x20/0x38
+[ 1385.435878]  dump_stack_lvl+0x48/0x60
+[ 1385.439539]  dump_stack+0x18/0x28
+[ 1385.442850]  tls_push_sg+0x100/0x238
+[ 1385.446424]  tls_tx_records+0x118/0x1d8
+[ 1385.450257]  tls_sw_release_resources_tx+0x74/0x1a0
+[ 1385.455135]  tls_sk_proto_close+0x2f8/0x3f0
+[ 1385.459315]  inet_release+0x58/0xb8
+[ 1385.462802]  inet6_release+0x3c/0x60
+[ 1385.466374]  __sock_release+0x48/0xc8
+[ 1385.470035]  sock_close+0x20/0x38
+[ 1385.473347]  __fput+0xbc/0x280
+[ 1385.476399]  ____fput+0x18/0x30
+[ 1385.479537]  task_work_run+0x80/0xe0
+[ 1385.483108]  io_run_task_work+0x40/0x108
+[ 1385.487029]  __arm64_sys_io_uring_enter+0x164/0xad8
+[ 1385.491907]  invoke_syscall+0x50/0x128
+[ 1385.495655]  el0_svc_common.constprop.0+0x48/0xf0
+[ 1385.500359]  do_el0_svc_compat+0x24/0x40
+[ 1385.504279]  el0_svc_compat+0x38/0x108
+[ 1385.508026]  el0t_32_sync_handler+0x98/0x140
+[ 1385.512294]  el0t_32_sync+0x194/0x198
 
-I haven't been able to find any explanation for the AT_REPLACE idea not
-gaining traction.  Is there some security reason for this?
+So the socket is being closed and KTLS tries to send out the remaining
+completed messages.  From a splice point of view everything has been sent
+successfully, but not everything made it through KTLS to the socket and the
+remaining data is sent while closing the socket.
 
-Thanks
+I vaguely understand what's going on here, but I haven't got the slightest idea
+what to do about this. Any ideas?
 
+Sascha
 
-> Thank you for your review, which made me glad I sent out the patch early
-> as an RFC.  I (think I) understand the issues you pointed out and,
-> although some of them could be fixed (the races), I guess there's no point
-> pursuing this any further, since you consider the concept itself to be
-> broken.  Again, thank you for your time.
-> 
-> Cheers,
-> -- 
-> Luís
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |

@@ -2,32 +2,32 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 433667C51C4
-	for <lists+io-uring@lfdr.de>; Wed, 11 Oct 2023 13:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8347C6F4D
+	for <lists+io-uring@lfdr.de>; Thu, 12 Oct 2023 15:34:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234824AbjJKLWb (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 11 Oct 2023 07:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48826 "EHLO
+        id S1343875AbjJLNeR (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Thu, 12 Oct 2023 09:34:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234957AbjJKLWT (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 11 Oct 2023 07:22:19 -0400
+        with ESMTP id S1343724AbjJLNeR (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Oct 2023 09:34:17 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E902198
-        for <io-uring@vger.kernel.org>; Wed, 11 Oct 2023 04:21:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82C3C91
+        for <io-uring@vger.kernel.org>; Thu, 12 Oct 2023 06:34:12 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1qqXHP-0003tr-62; Wed, 11 Oct 2023 13:21:31 +0200
+        id 1qqvpI-0005HV-3X; Thu, 12 Oct 2023 15:34:08 +0200
 Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <sha@pengutronix.de>)
-        id 1qqXHO-000tKA-Hp; Wed, 11 Oct 2023 13:21:30 +0200
+        id 1qqvpH-001AAm-6a; Thu, 12 Oct 2023 15:34:07 +0200
 Received: from sha by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1qqXHO-00DuHH-FB; Wed, 11 Oct 2023 13:21:30 +0200
-Date:   Wed, 11 Oct 2023 13:21:30 +0200
+        id 1qqvpH-00E72q-3z; Thu, 12 Oct 2023 15:34:07 +0200
+Date:   Thu, 12 Oct 2023 15:34:07 +0200
 From:   Sascha Hauer <sha@pengutronix.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
@@ -36,7 +36,7 @@ Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         John Fastabend <john.fastabend@gmail.com>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Subject: Re: Problem with io_uring splice and KTLS
-Message-ID: <20231011112130.GH3114228@pengutronix.de>
+Message-ID: <20231012133407.GA3359458@pengutronix.de>
 References: <20231010141932.GD3114228@pengutronix.de>
  <d729781a-3d12-423b-973e-c16fdbcbb60b@kernel.dk>
 MIME-Version: 1.0
@@ -52,9 +52,8 @@ X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
 X-SA-Exim-Mail-From: sha@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: io-uring@vger.kernel.org
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -129,30 +128,62 @@ On Tue, Oct 10, 2023 at 08:28:13AM -0600, Jens Axboe wrote:
 > IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN. The latter will
 > avoid using signal based task_work notifications, which may be messing
 > you up here.
-
-These flags do not make a difference unfortunately.
-
 > 
 > 2) io_uring will hold a reference to the file/socket. I'm unsure if this
 > is a problem in the above case, but sometimes it'll prevent the final
 > flush.
-
-Not sure what you want me to test here.
-
-FWIW I tried to do the close() outside of io_uring and just did a
-regular close() in userspace. That didn't make a difference either.
-
 > 
 > Do you have a reproducer that could be run to test? Sometimes easier to
 > see what's going on when you can experiment, it'll save some time.
 
-I would love to provide a reproducer, but you'll need a device with an
-asynchronous encryption engine providing gcm(aes). I am using the CAAM
-engine on a Layerscape board, but some i.MX6/8 based board should do
-as well. I don't know what other hardware you might have which supports
-that.
+Okay, here is a reproducer:
+
+https://github.com/saschahauer/webserver-uring-test.git
+
+Execute ./prepare.sh in that repository, it will compile the webserver,
+generate cert.pem/key.pem and generate some testfile to download. If the
+meson build doesn't work for you then you can compile the program by
+hand with something like:
+
+gcc -O3 -Wall -o webserver webserver_liburing.c -lcrypto -lssl -luring
+
+When the webserver is started you can get a file from it with:
+
+curl -k https://<ipaddr>:8443/foo -o foo
+
+or:
+
+while true; do curl -k https://<ipaddr>:8443/foo -o foo; if [ $? != 0 ]; then break; fi; done
+
+This should run without problems as by default likely the encryption
+requests are running synchronously.
+
+In case you don't have encryption hardware you can create an
+asynchronous encryption module using cryptd. Compile a kernel with
+CONFIG_CRYPTO_USER_API_AEAD and CONFIG_CRYPTO_CRYPTD and start the
+webserver with the '-c' option. /proc/crypto should then contain an
+entry with:
+
+ name         : gcm(aes)
+ driver       : cryptd(gcm_base(ctr(aes-generic),ghash-generic))
+ module       : kernel
+ priority     : 150
+
+Make sure there is no other module providing gcm(aes) with a priority higher
+than 150 so that this one is actually used.
+
+With that the while true loop above should break out with a short read
+fairly fast. Passing IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN
+to io_uring_queue_init() makes it harder to reproduce for me. With that
+I need multiple shells in parallel running the above loop.
+
+The repository also contains a kernel patch which will provide you a
+stack dump when KTLS gets an error from tcp_sendmsg_locked().
+
+Now I hope I haven't done anything silly in the webserver ;)
 
 Sascha
+
 
 -- 
 Pengutronix e.K.                           |                             |

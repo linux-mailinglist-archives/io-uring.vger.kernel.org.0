@@ -2,74 +2,60 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4707C7B4F
-	for <lists+io-uring@lfdr.de>; Fri, 13 Oct 2023 03:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A527C7D2E
+	for <lists+io-uring@lfdr.de>; Fri, 13 Oct 2023 07:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbjJMBpM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Thu, 12 Oct 2023 21:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43696 "EHLO
+        id S229587AbjJMFr0 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Oct 2023 01:47:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjJMBpM (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Thu, 12 Oct 2023 21:45:12 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C773BB
-        for <io-uring@vger.kernel.org>; Thu, 12 Oct 2023 18:45:10 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-690fe1d9ba1so329645b3a.0
-        for <io-uring@vger.kernel.org>; Thu, 12 Oct 2023 18:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1697161510; x=1697766310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NkKDwESUMv6DmJniI4kRJ0Fze3BlCpWsKbtTeuEzRoQ=;
-        b=wctTAqWM+C+AavijPGVNcXf4bwP+E/t8KAOEKi+zZG4WomkiYnQOuVGojNwl+bo1Fy
-         kfVb9Y0l2NAq0k2sjYQSOnJdfEbR134ajyLXqORuY+Qph83AwRWE/6T3z7aTb1ubtMtQ
-         xKOQ2jc67GIJXMkuJliRocizaVmoAx2MyjAfUzU4XvUrgvEAaSHQ/2qOqXxJEJF+abvJ
-         sfERUcLnEhb6LnDv0ya5fLIlGmUwirNgqnIlxI7WdWz5s5xnwAmlnkvHmHGb4SqYVjul
-         y5u9bI9EGvU8QWeR6dqxsq6h04/a32jq64ZNoIeYqn9uj1ezriMuQoRbHEs3K8KIZNSE
-         pbUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697161510; x=1697766310;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NkKDwESUMv6DmJniI4kRJ0Fze3BlCpWsKbtTeuEzRoQ=;
-        b=BLc/uZEVs+rFl6B1e8rilk/1R0m/HHvEgoPGv8qk7ei7na+QKP6r9vxgggJo8F0DqS
-         TznakwAjrty0Pfkxkq/x1NM37F4vd1R9hFBsPyPxbl18davRr20K63tqsGSNBsPvuo0Y
-         g/VwRT/64CTKN4Z9JhRZom2toPdY8sf6NL6Bk5onU8x2IvUyAxYgATpjgK+N4fR9LX1P
-         TFRqq/yDXRnbo/jX59RpuL0Pdwi7ij6gxfKFPWPHwZjXrp7m1LzeHzmTVZs3W/ytI3Cy
-         d9ruV5aEXLdNxmcerxi2d3kloL08xpKPhkf5ZbFStupMaQ7D52MZ3zYstmO5r3fW9PYj
-         ttZg==
-X-Gm-Message-State: AOJu0YwZJSb35wyc8QeRlAsc0IwT2syjQf3huTWZ5CHW+guoAtGYofrH
-        pd5aUhQP0UNgmCZeawukV4y2pw==
-X-Google-Smtp-Source: AGHT+IFOeU/L1UU0SiBejqeHPkF2yLffG9fB6o7ii0U1VZbx4ZnCvJrB7MjXM1YaKAbTSIdFVKU0ZQ==
-X-Received: by 2002:a05:6a20:7da2:b0:15d:6fd3:8e74 with SMTP id v34-20020a056a207da200b0015d6fd38e74mr31715422pzj.3.1697161509881;
-        Thu, 12 Oct 2023 18:45:09 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id l21-20020a170902d35500b001c737950e4dsm2659672plk.2.2023.10.12.18.45.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 18:45:09 -0700 (PDT)
-Message-ID: <f39ef992-4789-4c30-92ef-e3114a31d5c7@kernel.dk>
-Date:   Thu, 12 Oct 2023 19:45:07 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Problem with io_uring splice and KTLS
-Content-Language: en-US
-To:     Sascha Hauer <sha@pengutronix.de>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Boris Pismenny <borisp@nvidia.com>,
+        with ESMTP id S229679AbjJMFrZ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Oct 2023 01:47:25 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D664B7
+        for <io-uring@vger.kernel.org>; Thu, 12 Oct 2023 22:47:24 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1qrB14-0006Nk-RV; Fri, 13 Oct 2023 07:47:18 +0200
+Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <sha@pengutronix.de>)
+        id 1qrB13-001KAR-0Y; Fri, 13 Oct 2023 07:47:17 +0200
+Received: from sha by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1qrB12-00EDtH-U8; Fri, 13 Oct 2023 07:47:16 +0200
+Date:   Fri, 13 Oct 2023 07:47:16 +0200
+From:   Sascha Hauer <sha@pengutronix.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Boris Pismenny <borisp@nvidia.com>, netdev@vger.kernel.org,
         John Fastabend <john.fastabend@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        kernel@pengutronix.de, Jakub Kicinski <kuba@kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: Problem with io_uring splice and KTLS
+Message-ID: <20231013054716.GG3359458@pengutronix.de>
 References: <20231010141932.GD3114228@pengutronix.de>
  <d729781a-3d12-423b-973e-c16fdbcbb60b@kernel.dk>
  <20231012133407.GA3359458@pengutronix.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231012133407.GA3359458@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+ <f39ef992-4789-4c30-92ef-e3114a31d5c7@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f39ef992-4789-4c30-92ef-e3114a31d5c7@kernel.dk>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: io-uring@vger.kernel.org
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,26 +63,36 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/12/23 7:34 AM, Sascha Hauer wrote:
-> In case you don't have encryption hardware you can create an
-> asynchronous encryption module using cryptd. Compile a kernel with
-> CONFIG_CRYPTO_USER_API_AEAD and CONFIG_CRYPTO_CRYPTD and start the
-> webserver with the '-c' option. /proc/crypto should then contain an
-> entry with:
+On Thu, Oct 12, 2023 at 07:45:07PM -0600, Jens Axboe wrote:
+> On 10/12/23 7:34 AM, Sascha Hauer wrote:
+> > In case you don't have encryption hardware you can create an
+> > asynchronous encryption module using cryptd. Compile a kernel with
+> > CONFIG_CRYPTO_USER_API_AEAD and CONFIG_CRYPTO_CRYPTD and start the
+> > webserver with the '-c' option. /proc/crypto should then contain an
+> > entry with:
+> > 
+> >  name         : gcm(aes)
+> >  driver       : cryptd(gcm_base(ctr(aes-generic),ghash-generic))
+> >  module       : kernel
+> >  priority     : 150
 > 
->  name         : gcm(aes)
->  driver       : cryptd(gcm_base(ctr(aes-generic),ghash-generic))
->  module       : kernel
->  priority     : 150
+> I did a bit of prep work to ensure I had everything working for when
+> there's time to dive into it, but starting it with -c doesn't register
+> this entry. Turns out the bind() in there returns -1/ENOENT.
 
-I did a bit of prep work to ensure I had everything working for when
-there's time to dive into it, but starting it with -c doesn't register
-this entry. Turns out the bind() in there returns -1/ENOENT. For the
-life of me I can't figure out what I'm missing. I tried this with both
-arm64 and x86-64. On the latter there's some native AES that is higher
-priority, but I added a small hack in cryptd to ensure it's the highest
-one. But I don't even get that far...
+Yes, that happens here as well, that's why I don't check for the error
+in the bind call. Nevertheless it has the desired effect that the new
+algorithm is registered and used from there on. BTW you only need to
+start the webserver once with -c. If you start it repeatedly with -c a
+new gcm(aes) instance is registered each time.
+
+I think what I am doing here is not the intended use case of cryptd and
+only works by accident.
+
+Sascha
 
 -- 
-Jens Axboe
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |

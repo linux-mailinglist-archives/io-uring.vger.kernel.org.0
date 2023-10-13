@@ -2,147 +2,241 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B2F7C8BB3
-	for <lists+io-uring@lfdr.de>; Fri, 13 Oct 2023 18:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F32207C8E20
+	for <lists+io-uring@lfdr.de>; Fri, 13 Oct 2023 22:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231359AbjJMQik (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 13 Oct 2023 12:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
+        id S231902AbjJMUGU (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 13 Oct 2023 16:06:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231293AbjJMQih (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Oct 2023 12:38:37 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0E5BB
-        for <io-uring@vger.kernel.org>; Fri, 13 Oct 2023 09:38:35 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d9ad90e1038so1940443276.3
-        for <io-uring@vger.kernel.org>; Fri, 13 Oct 2023 09:38:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1697215114; x=1697819914; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=85tz8MZnQIy0CUyHXD4OwO6hFEU+0OOkrrzLhDAPynw=;
-        b=Q90R7Tdrw7oRx2g7QAuiOQfZ0moqLRi0ko1qyZhnLu68DdroxUEZIZKnYfrcTlEKHZ
-         F2o9IHgWzk8aHLHfIF14T7v2rkjG2OaTJntJhFE020tmKlxjtdvweSw81h/GmEDVdT9A
-         obdHXgUydPNnob+3r8KdEv1ojDVBnCdthXzgdmq56O3rNndoRI6ecYVSF13Q5/GpIJAG
-         1PGe5u0iFbpoIMhdrS5/6EYJOBP4xVIj6gT6rMzbL535Bqnu3JiRuURSrChrMOZkF1HY
-         J7lJIBRJCJsY8ji8W3H64++Bt/h22HUxEe9ijrUNRiqs5KdQxqiKKlyVD4AUGDpkk5T7
-         c1Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697215114; x=1697819914;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=85tz8MZnQIy0CUyHXD4OwO6hFEU+0OOkrrzLhDAPynw=;
-        b=pOaBSCqYPujajwG2oyyJIz2ep9ayVdX3c85S/rp8tCnr0AhwOALFjB4UWaKI3MQthT
-         f+mPglUylZryuJIzJgjx8xFu8fIaCE7//6BahYStCLq6x2LFwiytprR2iSWnVfCpvexM
-         B+8kft5/KO/3cXI7G759wUyOnOBqdyr09kZBp4/Yvl2cEGm2RA6q8nlmzIvonbegdnGu
-         2vM7sy88ONi5KXdIG6lgTR8KrxBicZTByqihy+FY0gwSWKjZQp36+XmYFmzV/o69sdw7
-         9hPx0R6fwxdzgCT+dKkSzHe4FxDqWPHmOpOy+r5dgD5vJ/wrgEtuKw55HcCJGU9C92Ph
-         SX9Q==
-X-Gm-Message-State: AOJu0YzdtyhZOUksQtP1uKMJq/L//KsI5imvvmDqJlSi4I9roe13KnBT
-        08xLZ+dgGidtzdxKD1mtcOx57bUXWIQfhP0Bdzzx
-X-Google-Smtp-Source: AGHT+IEIaSBfASZ5Mn1dNgyH878ixt7Ja/xhQg8a+sIaxL+NLRUpQv75KfQ3z3OfydJhIWt+cgU+2xUOjDRn5uIOySM=
-X-Received: by 2002:a25:8f8c:0:b0:d89:f292:6e80 with SMTP id
- u12-20020a258f8c000000b00d89f2926e80mr26964031ybl.35.1697215114724; Fri, 13
- Oct 2023 09:38:34 -0700 (PDT)
+        with ESMTP id S231707AbjJMUGT (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 13 Oct 2023 16:06:19 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E7D60B7;
+        Fri, 13 Oct 2023 13:06:17 -0700 (PDT)
+Received: from [192.168.7.187] (pool-72-77-59-129.pitbpa.fios.verizon.net [72.77.59.129])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B2B8120B74C0;
+        Fri, 13 Oct 2023 13:06:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2B8120B74C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1697227577;
+        bh=xoKklGFnQggRTNMZpyLB1ZexVKJ4U9krNfxQ+3+ZUhI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=TS7ygbJ/cMYAAjVfnFfnImCzrYQ6bGVzRBm+P0Dsk6O3F3u9VTdbcvygJKNlUsTi+
+         ouyT+c6gfLKbOlD0JEkfNDGsaW6DRnQusYCBu5xJzzeLzmsN3xXSyp/jHJGXzl8DRP
+         0OGHC554QkXuyNxP6qsBvbJpHeGzcQMu5OK4Bdgw=
+Message-ID: <19d3cb0b-e5ec-4a35-9ec5-06522903a80c@linux.microsoft.com>
+Date:   Fri, 13 Oct 2023 16:06:15 -0400
 MIME-Version: 1.0
-References: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <20231013-karierte-mehrzahl-6a938035609e@brauner> <CAHC9VhTQFyyE59A3WG3Z0xkP6m31h1M0bvS=yihE7ukpUiDMug@mail.gmail.com>
- <20231013-hakte-sitzt-853957a5d8da@brauner>
-In-Reply-To: <20231013-hakte-sitzt-853957a5d8da@brauner>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 13 Oct 2023 12:38:24 -0400
-Message-ID: <CAHC9VhQ2hX8QvQagt+J7V2OBtiSXctufVcVj0fi1bQEsduWD4Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] audit,io_uring: io_uring openat triggers audit reference
  count underflow
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Dan Clash <daclash@linux.microsoft.com>,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        linux-fsdevel@vger.kernel.org, dan.clash@microsoft.com,
-        audit@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     Christian Brauner <brauner@kernel.org>, audit@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dan.clash@microsoft.com
+References: <20231012215518.GA4048@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <20231013-insofern-gegolten-75ca48b24cf5@brauner>
+ <672d257e-e28f-42bc-8ac7-253d20fe187c@kernel.dk>
+ <CAHC9VhQcSY9q=wVT7hOz9y=o3a67BVUnVGNotgAvE6vK7WAkBw@mail.gmail.com>
+From:   Dan Clash <daclash@linux.microsoft.com>
+In-Reply-To: <CAHC9VhQcSY9q=wVT7hOz9y=o3a67BVUnVGNotgAvE6vK7WAkBw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-17.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,ENV_AND_HDR_SPF_MATCH,SPF_HELO_PASS,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Fri, Oct 13, 2023 at 12:22=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Fri, Oct 13, 2023 at 11:56:08AM -0400, Paul Moore wrote:
-> > On Fri, Oct 13, 2023 at 11:44=E2=80=AFAM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > >
-> > > On Thu, 12 Oct 2023 14:55:18 -0700, Dan Clash wrote:
-> > > > An io_uring openat operation can update an audit reference count
-> > > > from multiple threads resulting in the call trace below.
-> > > >
-> > > > A call to io_uring_submit() with a single openat op with a flag of
-> > > > IOSQE_ASYNC results in the following reference count updates.
-> > > >
-> > > > These first part of the system call performs two increments that do=
- not race.
-> > > >
-> > > > [...]
-> > >
-> > > Picking this up as is. Let me know if this needs another tree.
-> >
-> > Whoa.  A couple of things:
-> >
-> > * Please don't merge patches into an upstream tree if all of the
-> > affected subsystems haven't ACK'd the patch.  I know you've got your
-> > boilerplate below about ACKs *after* the merge, which is fine, but I
-> > find it breaks decorum a bit to merge patches without an explicit ACK
-> > or even just a "looks good to me" from all of the relevant subsystems.
->
-> I simply read your mail:
->
-> X-Date: Fri, 13 Oct 2023 17:43:54 +0200
-> X-URI: https://lore.kernel.org/lkml/CAHC9VhQcSY9q=3DwVT7hOz9y=3Do3a67BVUn=
-VGNotgAvE6vK7WAkBw@mail.gmail.com
->
-> "I'm not too concerned, either approach works for me, the important bit
->  is moving to an atomic_t/refcount_t so we can protect ourselves
->  against the race.  The patch looks good to me and I'd like to get this
->  fix merged."
->
-> including that "The patch looks good to me [...]" part before I sent out
-> the application message:
 
-Some of this is likely due to email races, or far faster than normal
-responses.  When I was writing the email you reference above ("This
-patch looks good to me...") the last email I had from you was asking
-for changes to the patch; since you were suggesting a change I made
-the assumption (which arguably one shouldn't assume things) that you
-were not planning to merge the patch.
 
-> X-Date: Fri, 13 Oct 2023 17:44:36 +0200
-> X-URI: https://lore.kernel.org/lkml/20231013-karierte-mehrzahl-6a93803560=
-9e@brauner
->
-> > Regardless, as I mentioned in my last email (I think our last emails
-> > raced a bit), I'm okay with this change, please add my ACK.
->
-> It's before the weekend and we're about to release -rc6. This thing
-> needs to be in -next, you said it looks good to you in a prior mail. I'm
-> not sure why I'm receiving this mail apart from the justified
-> clarification about -stable although that was made explicit in your
-> prior mail as well.
+On 2023-10-13 11:43, Paul Moore wrote:
+> On Fri, Oct 13, 2023 at 10:21 AM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 10/13/23 2:24 AM, Christian Brauner wrote:
+>>> On Thu, Oct 12, 2023 at 02:55:18PM -0700, Dan Clash wrote:
+>>>> An io_uring openat operation can update an audit reference count
+>>>> from multiple threads resulting in the call trace below.
+>>>>
+>>>> A call to io_uring_submit() with a single openat op with a flag of
+>>>> IOSQE_ASYNC results in the following reference count updates.
+>>>>
+>>>> These first part of the system call performs two increments that do not race.
+>>>>
+>>>> do_syscall_64()
+>>>>    __do_sys_io_uring_enter()
+>>>>      io_submit_sqes()
+>>>>        io_openat_prep()
+>>>>          __io_openat_prep()
+>>>>            getname()
+>>>>              getname_flags()       /* update 1 (increment) */
+>>>>                __audit_getname()   /* update 2 (increment) */
+>>>>
+>>>> The openat op is queued to an io_uring worker thread which starts the
+>>>> opportunity for a race.  The system call exit performs one decrement.
+>>>>
+>>>> do_syscall_64()
+>>>>    syscall_exit_to_user_mode()
+>>>>      syscall_exit_to_user_mode_prepare()
+>>>>        __audit_syscall_exit()
+>>>>          audit_reset_context()
+>>>>             putname()              /* update 3 (decrement) */
+>>>>
+>>>> The io_uring worker thread performs one increment and two decrements.
+>>>> These updates can race with the system call decrement.
+>>>>
+>>>> io_wqe_worker()
+>>>>    io_worker_handle_work()
+>>>>      io_wq_submit_work()
+>>>>        io_issue_sqe()
+>>>>          io_openat()
+>>>>            io_openat2()
+>>>>              do_filp_open()
+>>>>                path_openat()
+>>>>                  __audit_inode()   /* update 4 (increment) */
+>>>>              putname()             /* update 5 (decrement) */
+>>>>          __audit_uring_exit()
+>>>>            audit_reset_context()
+>>>>              putname()             /* update 6 (decrement) */
+>>>>
+>>>> The fix is to change the refcnt member of struct audit_names
+>>>> from int to atomic_t.
+>>>>
+>>>> kernel BUG at fs/namei.c:262!
+>>>> Call Trace:
+>>>> ...
+>>>>   ? putname+0x68/0x70
+>>>>   audit_reset_context.part.0.constprop.0+0xe1/0x300
+>>>>   __audit_uring_exit+0xda/0x1c0
+>>>>   io_issue_sqe+0x1f3/0x450
+>>>>   ? lock_timer_base+0x3b/0xd0
+>>>>   io_wq_submit_work+0x8d/0x2b0
+>>>>   ? __try_to_del_timer_sync+0x67/0xa0
+>>>>   io_worker_handle_work+0x17c/0x2b0
+>>>>   io_wqe_worker+0x10a/0x350
+>>>>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Link: https://lore.kernel.org/lkml/MW2PR2101MB1033FFF044A258F84AEAA584F1C9A@MW2PR2101MB1033.namprd21.prod.outlook.com/
+>>>> Fixes: 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+>>>> Signed-off-by: Dan Clash <daclash@linux.microsoft.com>
+>>>> ---
+>>>>   fs/namei.c         | 9 +++++----
+>>>>   include/linux/fs.h | 2 +-
+>>>>   kernel/auditsc.c   | 8 ++++----
+>>>>   3 files changed, 10 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/fs/namei.c b/fs/namei.c
+>>>> index 567ee547492b..94565bd7e73f 100644
+>>>> --- a/fs/namei.c
+>>>> +++ b/fs/namei.c
+>>>> @@ -188,7 +188,7 @@ getname_flags(const char __user *filename, int flags, int *empty)
+>>>>               }
+>>>>       }
+>>>>
+>>>> -    result->refcnt = 1;
+>>>> +    atomic_set(&result->refcnt, 1);
+>>>>       /* The empty path is special. */
+>>>>       if (unlikely(!len)) {
+>>>>               if (empty)
+>>>> @@ -249,7 +249,7 @@ getname_kernel(const char * filename)
+>>>>       memcpy((char *)result->name, filename, len);
+>>>>       result->uptr = NULL;
+>>>>       result->aname = NULL;
+>>>> -    result->refcnt = 1;
+>>>> +    atomic_set(&result->refcnt, 1);
+>>>>       audit_getname(result);
+>>>>
+>>>>       return result;
+>>>> @@ -261,9 +261,10 @@ void putname(struct filename *name)
+>>>>       if (IS_ERR(name))
+>>>>               return;
+>>>>
+>>>> -    BUG_ON(name->refcnt <= 0);
+>>>> +    if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
+>>>> +            return;
+>>>>
+>>>> -    if (--name->refcnt > 0)
+>>>> +    if (!atomic_dec_and_test(&name->refcnt))
+>>>>               return;
+>>>
+>>> Fine by me. I'd write this as:
+>>>
+>>> count = atomic_dec_if_positive(&name->refcnt);
+>>> if (WARN_ON_ONCE(unlikely(count < 0))
+>>>        return;
+>>> if (count > 0)
+>>>        return;
+>>
+>> Would be fine too, my suspicion was that most archs don't implement a
+>> primitive for that, and hence it might be more expensive than
+>> atomic_read()/atomic_dec_and_test() which do. But I haven't looked at
+>> the code generation. The dec_if_positive degenerates to a atomic cmpxchg
+>> for most cases.
+> 
+> I'm not too concerned, either approach works for me, the important bit
+> is moving to an atomic_t/refcount_t so we can protect ourselves
+> against the race.  The patch looks good to me and I'd like to get this
+> fix merged.
+> 
+> Dan, barring any further back-and-forth on the putname() change, I
+> would say to go ahead and make the change Christian suggested and
+> repost the patch.  Based on Jens comment above it seems safe to
+> preserve his 'Reviewed-by:' tag on the next revision.  Assuming there
+> are no objections posted in the meantime, I'll plan to merge the next
+> revision into the audit/stable-6.6 branch and get that up to Linus
+> (likely next week since it's Friday).
 
-I hope I explained the intent in my last email a bit more clearly with
-the explanation above.  Regardless, I think the lessons to be learned
-is that I won't assume that your suggestion of changes and merging a
-patch are mutually exclusive, and just to be on the safe side I would
-ask that you not merge audit, LSM, or SELinux related patches without
-an explicit ACK from those subsystems.  Hopefully that should prevent
-things like this from happening again.
+I did not see many arch implementations of atomic_dec_if_positive.
+The x86_64 generated code looks like arch_atomic_dec_unless_positive()
+in atomic-arch-fallback.h with a loop around lock cmpxchg.
 
---=20
-paul-moore.com
+I did not want to compound the email race so I did not send patch v2 but 
+I can if desired.
+
+
+devvm2 ~/linux $ sysctl kernel.arch
+kernel.arch = x86_64
+
+devvm2 ~/linux $ cat -n ./fs/namei.c | grep -B 7 -A 4 atomic_dec_if_positive
+    259  void putname(struct filename *name)
+    260  {
+    261          int count;
+    262
+    263          if (IS_ERR(name))
+    264                  return;
+    265
+    266          count = atomic_dec_if_positive(&name->refcnt);
+    267          if (WARN_ON_ONCE(unlikely(count < 0)))
+    268                  return;
+    269          if (count > 0)
+    270                  return;
+
+devvm2 ~/linux $ objdump --disassemble --line-numbers ./fs/namei.o | \
+grep -B 8 -A 12 atomic_dec_if_positive
+/home/daclash/linux/fs/namei.c:260
+      22e:       55                      push   %rbp
+      22f:       48 89 e5                mov    %rsp,%rbp
+      232:       41 54                   push   %r12
+arch_atomic_read():
+/home/daclash/linux/./arch/x86/include/asm/atomic.h:23
+      234:       8b 47 10                mov    0x10(%rdi),%eax
+      237:       49 89 fc                mov    %rdi,%r12
+raw_atomic_dec_if_positive():
+/home/daclash/linux/./include/linux/atomic/atomic-arch-fallback.h:2535
+      23a:       89 c2                   mov    %eax,%edx
+      23c:       83 ea 01                sub    $0x1,%edx
+      23f:       78 50                   js     291 <putname+0x71>
+arch_atomic_try_cmpxchg():
+/home/daclash/linux/./arch/x86/include/asm/atomic.h:115
+      241:       f0 41 0f b1 54 24 10    lock cmpxchg %edx,0x10(%r12)
+      248:       75 f0                   jne    23a <putname+0x1a>
+putname():
+/home/daclash/linux/fs/namei.c:269
+      24a:       85 d2                   test   %edx,%edx
+      24c:       75 22                   jne    270 <putname+0x50>
+

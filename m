@@ -2,144 +2,185 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B6347CA935
-	for <lists+io-uring@lfdr.de>; Mon, 16 Oct 2023 15:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC8E7CAABB
+	for <lists+io-uring@lfdr.de>; Mon, 16 Oct 2023 16:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbjJPNRa (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 16 Oct 2023 09:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
+        id S233501AbjJPOBq (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 16 Oct 2023 10:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233450AbjJPNR2 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Oct 2023 09:17:28 -0400
-Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B367B103
-        for <io-uring@vger.kernel.org>; Mon, 16 Oct 2023 06:17:26 -0700 (PDT)
-Received: by mail-oo1-xc33.google.com with SMTP id 006d021491bc7-57ddba5ba84so352695eaf.0
-        for <io-uring@vger.kernel.org>; Mon, 16 Oct 2023 06:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1697462246; x=1698067046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bh3+AgzPel++Li3i4cnaSQ7/7AOtdWQs4MXrIboRuuI=;
-        b=FIDM8/5kZdjdRNyaOYo7ZqsYXQM9Fb0Iq85/g5ZEU5EeiPOiPFR3JoMQ1x5rIQ+0of
-         4r2m7qV+OUjEeiSjv/gtJKuLeyVxu9bU4dFMjguIKRVsednR3BiQh3RuVqSfhcwRARu/
-         lGYIJcROM+KTMzRsrDfNA4zFVOXUHG0OTbnmiNCmwf9u/lgC2f/yFUeSk62m3nNNclte
-         gIJFOUeszgFhf0KUnT4DJGf6IyZPy5b5MURYg0QMhmJrd+SxXLvk6yfZiT/F3p9zHS/x
-         IK19USNGJK5Kt9+nSH0ODthKiK0blcz2oRvFGergFqXxsdCDgCNEUpX/MT9Eg1WYTqJO
-         TB+Q==
+        with ESMTP id S232209AbjJPOBh (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 16 Oct 2023 10:01:37 -0400
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9658CAC;
+        Mon, 16 Oct 2023 07:01:34 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5384975e34cso8162188a12.0;
+        Mon, 16 Oct 2023 07:01:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697462246; x=1698067046;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bh3+AgzPel++Li3i4cnaSQ7/7AOtdWQs4MXrIboRuuI=;
-        b=FDgUtQhH59KSmx8ouWia07m/h8y6vllaOIf/eN8xby6cdnzBgRaGHH7sI+YIX4aIUA
-         xyz1QRaC0iO1/z2SIfKx5hEgGJ5nvg7XT18FAL2hYzP5feIga4pY8IS7ejKhFdz1vhU2
-         4pwZhrD2NvV+IC01kRYu+GuBt80dnnJsQPEFl9ZrInlv3EEis4hxA5WPdAmHlFh/daLd
-         voAQd/I9KPV/htqH4dJ6o5oMdlz74+7aqRaVNdnGeN8Zd/Khjy1KApgzIz+9xgaXOivJ
-         m+9AvSrZCOlFpiMN/N+vTntmyqyWSVcURjksae7NrCr2Z9vDfNXteXrKJQrW3YRXeOsS
-         ZMvQ==
-X-Gm-Message-State: AOJu0YwxDZzkJJRmjtZBCf4e5BX7Uaah5wgZ6Sc8ROaoy10UzAc2b1MY
-        PeNtxtbEII3o9PASY1HP+DRkSg==
-X-Google-Smtp-Source: AGHT+IGrbEqS8GB9c2OLyOHVDopIm4PpEGTpzwlL5dIZqSUY0IIG2s6mgrgGOmiIWAxRmhO0G6UG0Q==
-X-Received: by 2002:a05:6358:e908:b0:147:47f2:2d54 with SMTP id gk8-20020a056358e90800b0014747f22d54mr28008523rwb.0.1697462245823;
-        Mon, 16 Oct 2023 06:17:25 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id x24-20020aa79ad8000000b006b341144ad0sm5760746pfp.102.2023.10.16.06.17.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Oct 2023 06:17:24 -0700 (PDT)
-Message-ID: <50310b5e-7642-4ca1-a9e1-6d817d472131@kernel.dk>
-Date:   Mon, 16 Oct 2023 07:17:23 -0600
+        d=1e100.net; s=20230601; t=1697464893; x=1698069693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+vz+RhpX8IapoVrGDcBGs5+y+fGXCtRk6K6ExAlVio=;
+        b=pI+H6gOSgQ6beOgPoCSQwzzzHIFWa7zz3b5q4it26ZET9NIIMZV42gKlGYVnZe/4w3
+         +ctPsDUieuW8usxO0MBUZmepABppV+fh6wEFqWUuEi++vj7iSFxwe8GVGdH6CXEl9DJN
+         YARiIBeKx+ExrDzliSElrlmrc04HpuNJ+yYJz9weDiF4yRyb6QQUopsx0g9/hlaayyVk
+         VddHzWyS7RRRZGKnfkhJAkd7E9LECVRpG4NQBeanEJzlXtdeZcObtZws04hMH0nKDMpB
+         CY4QiidOt80AxEjDqTBhPOrjvJfSU7YVmK1ejDQAOgslFTOwjXhuev1C1JzI3qhFgrVc
+         5G0w==
+X-Gm-Message-State: AOJu0YwQKWzGJBUxZOM0VnKrW/hHIHCZWmDgAuv4b+UPTT5hbkGp96Rx
+        REWIiCJZz5rb7R26WrYY8Ek=
+X-Google-Smtp-Source: AGHT+IGxhTzT8TXN4hkrB/CggwoI9BfAgVK6NaXYMJoWmUypn51PMTBTCXHP1YpiFMAXS8xJGiDJ2Q==
+X-Received: by 2002:a50:c058:0:b0:53e:455c:6273 with SMTP id u24-20020a50c058000000b0053e455c6273mr7409252edd.2.1697464892721;
+        Mon, 16 Oct 2023 07:01:32 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-116.fbsv.net. [2a03:2880:31ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a23-20020a50ff17000000b005342fa19070sm15672646edu.89.2023.10.16.07.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Oct 2023 07:01:32 -0700 (PDT)
+From:   Breno Leitao <leitao@debian.org>
+To:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, kuba@kernel.org,
+        pabeni@redhat.com, martin.lau@linux.dev, krisman@suse.de
+Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH v7 00/11] io_uring: Initial support for {s,g}etsockopt commands
+Date:   Mon, 16 Oct 2023 06:47:38 -0700
+Message-Id: <20231016134750.1381153-1-leitao@debian.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Problem with io_uring splice and KTLS
-Content-Language: en-US
-To:     Sascha Hauer <sha@pengutronix.de>
-Cc:     Boris Pismenny <borisp@nvidia.com>, netdev@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        kernel@pengutronix.de, Jakub Kicinski <kuba@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <20231010141932.GD3114228@pengutronix.de>
- <d729781a-3d12-423b-973e-c16fdbcbb60b@kernel.dk>
- <20231012133407.GA3359458@pengutronix.de>
- <f39ef992-4789-4c30-92ef-e3114a31d5c7@kernel.dk>
- <20231013054716.GG3359458@pengutronix.de>
- <a9dd11d9-b5b8-456d-b8b6-12257e2924ab@kernel.dk>
- <20231016072646.GV3359458@pengutronix.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231016072646.GV3359458@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/16/23 1:26 AM, Sascha Hauer wrote:
-> On Fri, Oct 13, 2023 at 07:45:55AM -0600, Jens Axboe wrote:
->> On 10/12/23 11:47 PM, Sascha Hauer wrote:
->>> On Thu, Oct 12, 2023 at 07:45:07PM -0600, Jens Axboe wrote:
->>>> On 10/12/23 7:34 AM, Sascha Hauer wrote:
->>>>> In case you don't have encryption hardware you can create an
->>>>> asynchronous encryption module using cryptd. Compile a kernel with
->>>>> CONFIG_CRYPTO_USER_API_AEAD and CONFIG_CRYPTO_CRYPTD and start the
->>>>> webserver with the '-c' option. /proc/crypto should then contain an
->>>>> entry with:
->>>>>
->>>>>  name         : gcm(aes)
->>>>>  driver       : cryptd(gcm_base(ctr(aes-generic),ghash-generic))
->>>>>  module       : kernel
->>>>>  priority     : 150
->>>>
->>>> I did a bit of prep work to ensure I had everything working for when
->>>> there's time to dive into it, but starting it with -c doesn't register
->>>> this entry. Turns out the bind() in there returns -1/ENOENT.
->>>
->>> Yes, that happens here as well, that's why I don't check for the error
->>> in the bind call. Nevertheless it has the desired effect that the new
->>> algorithm is registered and used from there on. BTW you only need to
->>> start the webserver once with -c. If you start it repeatedly with -c a
->>> new gcm(aes) instance is registered each time.
->>
->> Gotcha - I wasn't able to trigger the condition, which is why I thought
->> perhaps I was missing something.
->>
->> Can you try the below patch and see if that makes a difference? I'm not
->> quite sure why it would since you said it triggers with DEFER_TASKRUN as
->> well, and for that kind of notification, you should never hit the paths
->> you have detailed in the debug patch.
-> 
-> I can confirm that this patch makes it work for me. I tested with both
-> software cryptd and also with my original CAAM encryption workload.
-> IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN is not needed.
-> Both my simple webserver and the original C++ Webserver from our
-> customer are now working without problems.
+This patchset adds support for getsockopt (SOCKET_URING_OP_GETSOCKOPT)
+and setsockopt (SOCKET_URING_OP_SETSOCKOPT) in io_uring commands.
+SOCKET_URING_OP_SETSOCKOPT implements generic case, covering all levels
+and optnames. SOCKET_URING_OP_GETSOCKOPT is limited, for now, to
+SOL_SOCKET level, which seems to be the most common level parameter for
+get/setsockopt(2).
 
-OK, good to hear. I'm assuming you only change for
-sk_stream_wait_memory()? If you can reproduce, would be good to test.
-But i general none of them should hurt.
+In order to keep the implementation (and tests) simple, some refactors
+were done prior to the changes, as follows:
 
-FWIW, the reason why DEFER_TASKRUN wasn't fully solving it is because
-we'd also use TIF_NOTIFY_SIGNAL for creating new io-wq workers. So while
-task_work would not be the trigger for setting that condition, we'd
-still end up doing it via io-wq worker creation.
+Patches 1-2: Make BPF cgroup filters sockptr aware
 
-> Do you think there is a chance getting this change upstream? I'm a bit
-> afraid the code originally uses signal_pending() instead of
-> task_sigpending() for a good reason.
+Patches 3-4: Remove the core {s,g}etsockopt() core function from
+__sys_{g,s}etsockopt, so, the code could be reused by other callers, such as
+io_uring.
 
-The distinction between signal_pending() and task_sigpending() was
-introduced with TIF_NOTIFY_SIGNAL. This isn't a case of networking
-needing to use signal_pending(), just that this is was originally the
-only aborting condition and now it's a bit too broad for some cases
-(like this one).
+Patch 5: Pass compat mode to the file/socket callbacks
+
+Patch 6-7: Move io_uring helpers from io_uring_zerocopy_tx to a generic
+io_uring headers. This simplify the test case (last patch). Also copy the
+io_uring UAPI to the tests directory.
+
+Patch 8: Protect io_uring_cmd_sock() to not be called if CONFIG_NET is
+disabled.
+
+These changes were tested with a new test[1] in liburing, LTP sockopt*
+tests, as also with bpf/progs/sockopt test case, which is now adapted to
+run using both system calls and io_uring commands.
+
+[1] Link: https://github.com/leitao/liburing/blob/getsock/test/socket-getsetsock-cmd.c
+
+RFC -> V1:
+	* Copy user memory at io_uring subsystem, and call proto_ops
+	  callbacks using kernel memory
+	* Implement all the cases for SOCKET_URING_OP_SETSOCKOPT
+
+V1 -> V2
+	* Implemented the BPF part
+	* Using user pointers from optval to avoid kmalloc in io_uring part.
+
+V2 -> V3:
+	* Break down __sys_setsockopt and reuse the core code, avoiding
+	  duplicated code. This removed the requirement to expose
+	  sock_use_custom_sol_socket().
+	* Added io_uring test to selftests/bpf/sockopt.
+	* Fixed compat argument, by passing it to the issue_flags.
+
+V3 -> V4:
+	* Rebase on top of commit 1ded5e5a5931b ("net: annotate data-races around sock->ops")
+	* Also broke down __sys_setsockopt() to reuse the core function
+	  from io_uring.
+	* Create a new patch to return -EOPNOTSUPP if CONFIG_NET is
+	  disabled.
+	* Added two SOL_SOCKET tests in bpf/prog_tests/sockopt.
+
+V4 -> V5:
+	* Do not use sockptr anymore, by changing the optlen getsock argument
+	  to be a user pointer (instead of a kernel pointer). This change also drop
+	  the limitation on getsockopt from previous versions, and now all
+	  levels are supported.
+	* Simplified the BPF sockopt test, since there is no more limitation on
+	  the io_uring commands.
+	* No more changes in the BPF subsystem.
+	* Moved the optlen field in the SQE struct. It is now a pointer instead
+	  of u32.
+
+V5 -> V6:
+	* Removed the need for #ifdef CONFIG_NET as suggested by Gabriel
+	  Krisman.
+	* Changed the variable declaration order to respect the reverse
+	  xmas declaration as suggested by Paolo Abeni.
+
+V6 -> V7:
+	* Changed the optlen back to a value in the SQE instead of
+	  user-pointer. This is similar to version 4.
+	  [https://lore.kernel.org/all/20231009095518.288a5573@kernel.org/]
+	* Imported the io_uring.h into tools/include/uapi/linux to be able to
+	  run the tests in machines without liburing.
+	  [https://lore.kernel.org/all/77405214-ae42-d58b-1d40-c639683a0cb1@linux.dev/]
+
+Breno Leitao (11):
+  bpf: Leverage sockptr_t in BPF getsockopt hook
+  bpf: Leverage sockptr_t in BPF setsockopt hook
+  net/socket: Break down __sys_setsockopt
+  net/socket: Break down __sys_getsockopt
+  io_uring/cmd: Pass compat mode in issue_flags
+  tools headers: Grab copy of io_uring.h
+  selftests/net: Extract uring helpers to be reusable
+  io_uring/cmd: return -EOPNOTSUPP if net is disabled
+  io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+  io_uring/cmd: Introduce SOCKET_URING_OP_SETSOCKOPT
+  selftests/bpf/sockopt: Add io_uring support
+Breno Leitao (11):
+  bpf: Add sockptr support for getsockopt
+  bpf: Add sockptr support for setsockopt
+  net/socket: Break down __sys_setsockopt
+  net/socket: Break down __sys_getsockopt
+  io_uring/cmd: Pass compat mode in issue_flags
+  tools headers: Grab copy of io_uring.h
+  selftests/net: Extract uring helpers to be reusable
+  io_uring/cmd: return -EOPNOTSUPP if net is disabled
+  io_uring/cmd: Introduce SOCKET_URING_OP_GETSOCKOPT
+  io_uring/cmd: Introduce SOCKET_URING_OP_SETSOCKOPT
+  selftests/bpf/sockopt: Add io_uring support
+
+ include/linux/bpf-cgroup.h                    |   9 +-
+ include/linux/io_uring.h                      |   1 +
+ include/net/sock.h                            |   6 +-
+ include/uapi/linux/io_uring.h                 |   8 +
+ io_uring/uring_cmd.c                          |  53 ++
+ kernel/bpf/cgroup.c                           |  25 +-
+ net/core/sock.c                               |   8 -
+ net/socket.c                                  | 103 ++-
+ tools/include/io_uring/mini_liburing.h        | 282 +++++++
+ tools/include/uapi/linux/io_uring.h           | 757 ++++++++++++++++++
+ .../selftests/bpf/prog_tests/sockopt.c        | 113 ++-
+ tools/testing/selftests/net/Makefile          |   1 +
+ .../selftests/net/io_uring_zerocopy_tx.c      | 268 +------
+ 13 files changed, 1300 insertions(+), 334 deletions(-)
+ create mode 100644 tools/include/io_uring/mini_liburing.h
+ create mode 100644 tools/include/uapi/linux/io_uring.h
 
 -- 
-Jens Axboe
+2.34.1
 

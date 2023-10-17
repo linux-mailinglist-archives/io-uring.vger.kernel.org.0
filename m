@@ -2,141 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4177CC206
-	for <lists+io-uring@lfdr.de>; Tue, 17 Oct 2023 13:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C41957CC33F
+	for <lists+io-uring@lfdr.de>; Tue, 17 Oct 2023 14:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234686AbjJQLvo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Tue, 17 Oct 2023 07:51:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56010 "EHLO
+        id S232228AbjJQMe5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Tue, 17 Oct 2023 08:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233670AbjJQLvo (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Oct 2023 07:51:44 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ECE6EA
-        for <io-uring@vger.kernel.org>; Tue, 17 Oct 2023 04:51:42 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qsibo-0000fP-Tr; Tue, 17 Oct 2023 13:51:36 +0200
-Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qsibo-002J5f-7i; Tue, 17 Oct 2023 13:51:36 +0200
-Received: from sha by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qsibo-00Eukn-5G; Tue, 17 Oct 2023 13:51:36 +0200
-Date:   Tue, 17 Oct 2023 13:51:36 +0200
-From:   Sascha Hauer <sha@pengutronix.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Boris Pismenny <borisp@nvidia.com>, netdev@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        kernel@pengutronix.de, Jakub Kicinski <kuba@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: Problem with io_uring splice and KTLS
-Message-ID: <20231017115136.GF3359458@pengutronix.de>
-References: <20231010141932.GD3114228@pengutronix.de>
- <d729781a-3d12-423b-973e-c16fdbcbb60b@kernel.dk>
- <20231012133407.GA3359458@pengutronix.de>
- <f39ef992-4789-4c30-92ef-e3114a31d5c7@kernel.dk>
- <20231013054716.GG3359458@pengutronix.de>
- <a9dd11d9-b5b8-456d-b8b6-12257e2924ab@kernel.dk>
- <20231016072646.GV3359458@pengutronix.de>
- <50310b5e-7642-4ca1-a9e1-6d817d472131@kernel.dk>
+        with ESMTP id S234866AbjJQMe4 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Tue, 17 Oct 2023 08:34:56 -0400
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D5E4101;
+        Tue, 17 Oct 2023 05:34:52 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-99357737980so926820066b.2;
+        Tue, 17 Oct 2023 05:34:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697546089; x=1698150889;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/XqDc9sG/4KnSxtdeA1TCIkGdrj0dQn8EvOZY/N0NE=;
+        b=tDVLsyUofWLxdmC5N3KM3Z6sxO9IU39AlYDSGFTiofWLljmGKtZReGywRoAPttVYUK
+         6SRblw7zxeTDbKWn0OnpbKYWEaKa74gugTlXL8YQgYCaQrCH2Mat6L0KoOrIdcsEcVL2
+         RXOVxfovNzrDFPQT031zQZqXdUJdHCFALZHdMCGKcQ4hT1fYyd/agN8PPsQpfktqeHca
+         sGdfQSqURVSZbvXh0AFfc3eicrNZRr7pjtxErUEZ6PovKbIwjFYq2wWhe70YACMqnIUu
+         CF8fRbFKz5SD3AqSBXU3CfjCuM8lP4I/HcYKDVCl4dfZrhtBswchZu7tzQYr+dchM8N4
+         kqRw==
+X-Gm-Message-State: AOJu0YxhZF5lN90Ml82rfefm4FdqUqcJ2/eQIqdWawRnkT2eDDJpSY2o
+        izN6JXsftt1f5yu3i+8baC0=
+X-Google-Smtp-Source: AGHT+IHAumeXbSxFFz9KsI+FT2kivwPXTkExyh5Y2KSA5CDXQBaYmK2h/R/lnaD9sCEe/4CInrj5qA==
+X-Received: by 2002:a17:907:3182:b0:9b9:fce8:e073 with SMTP id xe2-20020a170907318200b009b9fce8e073mr1526408ejb.26.1697546089188;
+        Tue, 17 Oct 2023 05:34:49 -0700 (PDT)
+Received: from gmail.com (fwdproxy-cln-119.fbsv.net. [2a03:2880:31ff:77::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 29-20020a170906001d00b0099bd5d28dc4sm1181919eja.195.2023.10.17.05.34.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Oct 2023 05:34:48 -0700 (PDT)
+Date:   Tue, 17 Oct 2023 05:34:46 -0700
+From:   Breno Leitao <leitao@debian.org>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>, martin.lau@linux.dev,
+        sdf@google.com
+Cc:     sdf@google.com, axboe@kernel.dk, asml.silence@gmail.com,
+        willemdebruijn.kernel@gmail.com, kuba@kernel.org,
+        pabeni@redhat.com, martin.lau@linux.dev, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        io-uring@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH v7 06/11] tools headers: Grab copy of io_uring.h
+Message-ID: <ZS5/Zk60X0+ZX+hf@gmail.com>
+References: <20231016134750.1381153-1-leitao@debian.org>
+ <20231016134750.1381153-7-leitao@debian.org>
+ <652d877c.250a0220.b0af2.3a66SMTPIN_ADDED_BROKEN@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50310b5e-7642-4ca1-a9e1-6d817d472131@kernel.dk>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: io-uring@vger.kernel.org
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <652d877c.250a0220.b0af2.3a66SMTPIN_ADDED_BROKEN@mx.google.com>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Mon, Oct 16, 2023 at 07:17:23AM -0600, Jens Axboe wrote:
-> On 10/16/23 1:26 AM, Sascha Hauer wrote:
-> > On Fri, Oct 13, 2023 at 07:45:55AM -0600, Jens Axboe wrote:
-> >> On 10/12/23 11:47 PM, Sascha Hauer wrote:
-> >>> On Thu, Oct 12, 2023 at 07:45:07PM -0600, Jens Axboe wrote:
-> >>>> On 10/12/23 7:34 AM, Sascha Hauer wrote:
-> >>>>> In case you don't have encryption hardware you can create an
-> >>>>> asynchronous encryption module using cryptd. Compile a kernel with
-> >>>>> CONFIG_CRYPTO_USER_API_AEAD and CONFIG_CRYPTO_CRYPTD and start the
-> >>>>> webserver with the '-c' option. /proc/crypto should then contain an
-> >>>>> entry with:
-> >>>>>
-> >>>>>  name         : gcm(aes)
-> >>>>>  driver       : cryptd(gcm_base(ctr(aes-generic),ghash-generic))
-> >>>>>  module       : kernel
-> >>>>>  priority     : 150
-> >>>>
-> >>>> I did a bit of prep work to ensure I had everything working for when
-> >>>> there's time to dive into it, but starting it with -c doesn't register
-> >>>> this entry. Turns out the bind() in there returns -1/ENOENT.
-> >>>
-> >>> Yes, that happens here as well, that's why I don't check for the error
-> >>> in the bind call. Nevertheless it has the desired effect that the new
-> >>> algorithm is registered and used from there on. BTW you only need to
-> >>> start the webserver once with -c. If you start it repeatedly with -c a
-> >>> new gcm(aes) instance is registered each time.
-> >>
-> >> Gotcha - I wasn't able to trigger the condition, which is why I thought
-> >> perhaps I was missing something.
-> >>
-> >> Can you try the below patch and see if that makes a difference? I'm not
-> >> quite sure why it would since you said it triggers with DEFER_TASKRUN as
-> >> well, and for that kind of notification, you should never hit the paths
-> >> you have detailed in the debug patch.
-> > 
-> > I can confirm that this patch makes it work for me. I tested with both
-> > software cryptd and also with my original CAAM encryption workload.
-> > IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN is not needed.
-> > Both my simple webserver and the original C++ Webserver from our
-> > customer are now working without problems.
+Hello Gabriel,
+
+On Mon, Oct 16, 2023 at 02:56:55PM -0400, Gabriel Krisman Bertazi wrote:
+> Breno Leitao <leitao@debian.org> writes:
 > 
-> OK, good to hear. I'm assuming you only change for
-> sk_stream_wait_memory()? If you can reproduce, would be good to test.
-> But i general none of them should hurt.
-
-Yes, only the change in sk_stream_wait_memory() is needed for me. The
-other two hunks do not change anything for me.
-
+> > This file will be used by mini_uring.h and allow tests to run without
+> > the need of installing liburing to run the tests.
+> >
+> > This is needed to run io_uring tests in BPF, such as
+> > (tools/testing/selftests/bpf/prog_tests/sockopt.c).
+> >
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
 > 
-> FWIW, the reason why DEFER_TASKRUN wasn't fully solving it is because
-> we'd also use TIF_NOTIFY_SIGNAL for creating new io-wq workers. So while
-> task_work would not be the trigger for setting that condition, we'd
-> still end up doing it via io-wq worker creation.
-> 
-> > Do you think there is a chance getting this change upstream? I'm a bit
-> > afraid the code originally uses signal_pending() instead of
-> > task_sigpending() for a good reason.
-> 
-> The distinction between signal_pending() and task_sigpending() was
-> introduced with TIF_NOTIFY_SIGNAL. This isn't a case of networking
-> needing to use signal_pending(), just that this is was originally the
-> only aborting condition and now it's a bit too broad for some cases
-> (like this one).
+> Can't mini_uring rely on the kernel header like
+> selftests/net/io_uring_zerocopy_tx.c does?
 
-Ok. I didn't realize so far that it was you who TIF_NOTIFY_SIGNAL.
+Before this patch, io_uring_zerocopy_tx was not relying on "make
+headers" headers, as far as I know. I think it was not a problem because
+there was no CI running the test, and whoever was running the test was
+relying on local io_uring headers.
 
-Sascha
+My patch is, in fact,  adding the following flag, which relies on the
+headers now on:
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+	+$(OUTPUT)/io_uring_zerocopy_tx: CFLAGS += -I../../../include/
+
+> I ask because this will be the third copy of these
+> definitions that we're gonna need to keep in sync (kernel, liburing and
+> here). Given this is only used for selftests, we better avoid the
+> duplication.
+
+Right, I don't know why this was the suggested way, but, that is how
+people are using it.
+
+I can definitely get rid of the copy and do the same mechanism as
+io_uring_zerocopy_tx. This is what I've tested, and it worked fine.
+
+---
+
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 4225f975fce3..9f79a392acc1 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -383,6 +383,8 @@ BPF_CFLAGS = -g -Wall -Werror -D__TARGET_ARCH_$(SRCARCH) $(MENDIAN) \
+ CLANG_CFLAGS = $(CLANG_SYS_INCLUDES) \
+               -Wno-compare-distinct-pointer-types
+
++HEADER_CFLAGS = -I$(abspath $(OUTPUT)/../../../../usr/include)
++
+ $(OUTPUT)/test_l4lb_noinline.o: BPF_CFLAGS += -fno-inline
+ $(OUTPUT)/test_xdp_noinline.o: BPF_CFLAGS += -fno-inline
+
+@@ -551,7 +553,7 @@ $(TRUNNER_TEST_OBJS): $(TRUNNER_OUTPUT)/%.test.o:                   \
+                      $(TRUNNER_BPF_SKELS_LINKED)                       \
+                      $$(BPFOBJ) | $(TRUNNER_OUTPUT)
+        $$(call msg,TEST-OBJ,$(TRUNNER_BINARY),$$@)
+-       $(Q)cd $$(@D) && $$(CC) -I. $$(CFLAGS) -c $(CURDIR)/$$< $$(LDLIBS) -o $$(@F)
++       $(Q)cd $$(@D) && $$(CC) -I. $$(CFLAGS) $$(HEADER_CFLAGS) -c $(CURDIR)/$$< $$(LDLIBS) -o $$(@F)
+

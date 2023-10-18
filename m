@@ -2,135 +2,88 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F597CDFBF
-	for <lists+io-uring@lfdr.de>; Wed, 18 Oct 2023 16:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 767EA7CE115
+	for <lists+io-uring@lfdr.de>; Wed, 18 Oct 2023 17:24:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345473AbjJRO2t (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 18 Oct 2023 10:28:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
+        id S230444AbjJRPYC (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 18 Oct 2023 11:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345438AbjJRO2s (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Oct 2023 10:28:48 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F8E1BDA
-        for <io-uring@vger.kernel.org>; Wed, 18 Oct 2023 07:18:09 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-79fab2caf70so54875139f.1
-        for <io-uring@vger.kernel.org>; Wed, 18 Oct 2023 07:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1697638687; x=1698243487; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E+Z8/O9mn4j3QDAJqTUQTfmMcmy4Ie6GtmpgNil5ar0=;
-        b=yfiaquiqwoMVJuOc4FwAGm+bb1lYT2pC5GGVD4KcrEOgV2Cld/GnWLMK+4bOjF/403
-         hEHMXBAHgoUkOEYdCDXAK99KRqIAW3agIpaJ/prTQXY7V5ViBCu4hLRI0T96OmaK/sDk
-         AK8NvTUui2vIdY/e+ehEU/QMF6BTbYDBgavVOOp/oJjM86i0B3uLOda2NzM/UxCNJwPu
-         TLogDvGLJFzKmg60u6EwSCMWG0eGZzW9M1WWKQRQPYbLdK+I8Ljv+pOhyx/4YnV5/sh+
-         E3iM6GlR4zyfcwUE/90jcfXf22Zcs5r5lTjEnHlj2Yi2PP5fBxcoOLQjROm/Yw4nLXbC
-         IeGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697638687; x=1698243487;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=E+Z8/O9mn4j3QDAJqTUQTfmMcmy4Ie6GtmpgNil5ar0=;
-        b=T+bwEunOaLEC1wL0ORGVTuFtmQ+ehJFVSaBGRsbW1yKlx0QJw+K32zyuvKdKRoqzSV
-         sQq8KJyHN8CymfhCHUfTWZGhRy5F/C+1Gkth3/cv7L6ZZOAts4Lo5VuPl6GrJ4rzdNix
-         2o74Tbwna1FECJipwSBFDkrYCSIdjVE7oYVSA9U6Hbc7aS+AymUZpJ4TfUzATRuOAAEO
-         xu/LSVnj8tFmuOPp42c+2mq1sh1W7ZoloFynLewYA7l6xvxO9I8hyJ0Aen7olbLkRRUb
-         7sCEVQyra1XbecWBKnCOyFLpYNUBQHUQJ0XPHYVG2zCSvOJmgZB7pF92MOlHvT0/4jmZ
-         zkWw==
-X-Gm-Message-State: AOJu0YxOQOCqtib2W0LqpErsC+5sqmFxAgj9oEfrMm9Vran7YXP9uape
-        9KiAc6a5P0TBv9b+b2/55Z2VJurJHCgO6ntRYpGV/A==
-X-Google-Smtp-Source: AGHT+IGQ7WNDETLvmp+NauGD9s1IJW5q2WUsFJkqN6DVfvrDT9e3ONeWn2SidhVp0StujhN8gf4h6w==
-X-Received: by 2002:a05:6602:340a:b0:7a5:cd6b:7581 with SMTP id n10-20020a056602340a00b007a5cd6b7581mr6889503ioz.2.1697638687545;
-        Wed, 18 Oct 2023 07:18:07 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id f12-20020a02cacc000000b004551b5bfaafsm1235204jap.48.2023.10.18.07.18.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Oct 2023 07:18:07 -0700 (PDT)
-Message-ID: <51bace4f-a976-48d5-8752-1fef2350c0e3@kernel.dk>
-Date:   Wed, 18 Oct 2023 08:18:06 -0600
+        with ESMTP id S230391AbjJRPYB (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 18 Oct 2023 11:24:01 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B335194
+        for <io-uring@vger.kernel.org>; Wed, 18 Oct 2023 08:23:59 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39IB8i9E027339
+        for <io-uring@vger.kernel.org>; Wed, 18 Oct 2023 08:23:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=p0WjUc4vLfEtzfqeD61Mot1OdvMxukOfxmo5qKfqmk8=;
+ b=BDz+6X7qzfjvMbwTgF7VvLEHY6IuoJwlk3jUVBR6lK7lN9LrPXX/oIQvFbhIuJMop9v6
+ QocOhwUF7tZ0bst+Y8YaJEDj998xjy03czkXpR0sdCLZsEvoMTHrru/5sU6jBZdWh1LP
+ cGUkZbwzH64gnG2sEt2KcHV9JDThPD5JbH1eIA4RK/gaUXQhNy+VYwXS+2Qhe1f+rMZ7
+ UolJXcGSzNAua9v3DBnrW/+cG5HdioSf97XEN/iC7WxijQ39OmP8LBXi1k1uR7BVT3ti
+ g4TREMmiw/PEw7sI7Hx8r8EezuD3I448zF0M6eSyhYHruu7aDEDpINtmPDk1za19vuDI nw== 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3tte7n9hy9-11
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <io-uring@vger.kernel.org>; Wed, 18 Oct 2023 08:23:58 -0700
+Received: from twshared34392.14.frc2.facebook.com (2620:10d:c0a8:1c::1b) by
+ mail.thefacebook.com (2620:10d:c0a8:83::8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Wed, 18 Oct 2023 08:23:56 -0700
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id C28C3205F3CE0; Wed, 18 Oct 2023 08:18:43 -0700 (PDT)
+From:   Keith Busch <kbusch@meta.com>
+To:     <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <io-uring@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <hch@lst.de>, <joshi.k@samsung.com>,
+        <martin.petersen@oracle.com>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 0/4] block integrity: direclty map user space addresses
+Date:   Wed, 18 Oct 2023 08:18:39 -0700
+Message-ID: <20231018151843.3542335-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-Cc:     rtm@csail.mit.edu
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: fix crash with IORING_SETUP_NO_MMAP and invalid SQ
- ring address
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: bjZO_lC68Sa-jIr-nM1A5Es3avQxpKyl
+X-Proofpoint-ORIG-GUID: bjZO_lC68Sa-jIr-nM1A5Es3avQxpKyl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-18_13,2023-10-18_01,2023-05-22_02
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-If we specify a valid CQ ring address but an invalid SQ ring address,
-we'll correctly spot this and free the allocated pages and clear them
-to NULL. However, we don't clear the ring page count, and hence will
-attempt to free the pages again. We've already cleared the address of
-the page array when freeing them, but we don't check for that. This
-causes the following crash:
+From: Keith Busch <kbusch@kernel.org>
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-Oops [#1]
-Modules linked in:
-CPU: 0 PID: 20 Comm: kworker/u2:1 Not tainted 6.6.0-rc5-dirty #56
-Hardware name: ucbbar,riscvemu-bare (DT)
-Workqueue: events_unbound io_ring_exit_work
-epc : io_pages_free+0x2a/0x58
- ra : io_rings_free+0x3a/0x50
- epc : ffffffff808811a2 ra : ffffffff80881406 sp : ffff8f80000c3cd0
- status: 0000000200000121 badaddr: 0000000000000000 cause: 000000000000000d
- [<ffffffff808811a2>] io_pages_free+0x2a/0x58
- [<ffffffff80881406>] io_rings_free+0x3a/0x50
- [<ffffffff80882176>] io_ring_exit_work+0x37e/0x424
- [<ffffffff80027234>] process_one_work+0x10c/0x1f4
- [<ffffffff8002756e>] worker_thread+0x252/0x31c
- [<ffffffff8002f5e4>] kthread+0xc4/0xe0
- [<ffffffff8000332a>] ret_from_fork+0xa/0x1c
+Handling passthrough metadata ("integrity") today introduces overhead
+and complications that we can avoid if we just map user space addresses
+directly. This patch series implements that.
 
-Check for a NULL array in io_pages_free(), but also clear the page counts
-when we free them to be on the safer side.
+Keith Busch (4):
+  block: bio-integrity: add support for user buffers
+  nvme: use bio_integrity_map_user
+  iouring: remove IORING_URING_CMD_POLLED
+  io_uring: remove uring_cmd cookie
 
-Reported-by: rtm@csail.mit.edu
-Fixes: 03d89a2de25b ("io_uring: support for user allocated memory for rings/sqes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+ block/bio-integrity.c         |  67 +++++++++++++
+ drivers/nvme/host/ioctl.c     | 174 ++++++----------------------------
+ include/linux/bio.h           |   8 ++
+ include/linux/io_uring.h      |   8 +-
+ include/uapi/linux/io_uring.h |   2 -
+ io_uring/uring_cmd.c          |   1 -
+ 6 files changed, 104 insertions(+), 156 deletions(-)
 
----
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index d839a80a6751..8d1bc6cdfe71 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2674,7 +2674,11 @@ static void io_pages_free(struct page ***pages, int npages)
- 
- 	if (!pages)
- 		return;
-+
- 	page_array = *pages;
-+	if (!page_array)
-+		return;
-+
- 	for (i = 0; i < npages; i++)
- 		unpin_user_page(page_array[i]);
- 	kvfree(page_array);
-@@ -2758,7 +2762,9 @@ static void io_rings_free(struct io_ring_ctx *ctx)
- 		ctx->sq_sqes = NULL;
- 	} else {
- 		io_pages_free(&ctx->ring_pages, ctx->n_ring_pages);
-+		ctx->n_ring_pages = 0;
- 		io_pages_free(&ctx->sqe_pages, ctx->n_sqe_pages);
-+		ctx->n_sqe_pages = 0;
- 	}
- }
- 
--- 
-Jens Axboe
+--=20
+2.34.1
 

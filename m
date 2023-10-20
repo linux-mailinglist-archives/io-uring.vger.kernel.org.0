@@ -2,47 +2,47 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7257D109D
-	for <lists+io-uring@lfdr.de>; Fri, 20 Oct 2023 15:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C0C7D109E
+	for <lists+io-uring@lfdr.de>; Fri, 20 Oct 2023 15:39:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377372AbjJTNjd (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Oct 2023 09:39:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53574 "EHLO
+        id S1377360AbjJTNje (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Oct 2023 09:39:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377074AbjJTNjc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Oct 2023 09:39:32 -0400
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B93F11A8
-        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 06:39:30 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-9b95622c620so130188366b.0
-        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 06:39:30 -0700 (PDT)
+        with ESMTP id S1377074AbjJTNje (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Oct 2023 09:39:34 -0400
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2509DD4C
+        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 06:39:32 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-9a58dbd5daeso129873766b.2
+        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 06:39:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697809169; x=1698413969;
+        d=1e100.net; s=20230601; t=1697809170; x=1698413970;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1EjyJ4uhP/CxBADjUG+qEfppqNSusPrKMcrU9qiJ+8I=;
-        b=Acde6q/VFlEF3TC5vWgl+nIvLKfRExTYr763RmdqCH8E8KxjG+gK4HzFsxacaM1qt1
-         Q046bYUq95/Z0BFnAFqfo4/0lJXgqKK6InZa7LX3DSLhbof60Bq6J0w1t5MrSk8oM36R
-         DJIXJ8We05Uec0VvwvsXmk3GMieVjeBnPVwFDNZEbqlDBJfLdr/NWsjIs1Y9AaR/IiIH
-         V/qirLC8H6ymCJpILLVisKOOc2bRjRZiZgJMeYGHKMNzQmMdLMJ15NKFVxSkpqW6cWgD
-         VcupR+C8GTJ4zNuNMQaKxg5SIwQGTrrtfoJvYSQqW3Q2xqRaRL5EhwX69KfeuR8nZTeL
-         UKfg==
-X-Gm-Message-State: AOJu0YzZCDFEvPyFxjb+hZbzk8+4c1QLwWsHU717grOW3GwObBxlMoQN
-        j5spFTr4rAs93kUmOUdVW/AzT65Yhp3tQA==
-X-Google-Smtp-Source: AGHT+IHsT3EZ9LFHtBBrOM6VyzzTRUCQZKJBcELJ+7FDE58c1Ips5sghV7tFhKl2Vc7p+mwVWwaiAg==
-X-Received: by 2002:a17:907:9306:b0:9b9:4509:d575 with SMTP id bu6-20020a170907930600b009b94509d575mr1653882ejc.2.1697809168775;
-        Fri, 20 Oct 2023 06:39:28 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-004.fbsv.net. [2a03:2880:31ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id ca9-20020a170906a3c900b009b8a4f9f20esm1512582ejb.102.2023.10.20.06.39.27
+        bh=dPvWh+kMxMBw+crBdqTX68BCRqpRuCu5+S8tdbJ+E7k=;
+        b=D5JfTCa9hAnkyn2fq5wiJowtypyfDLVsIpcBi1QkRWMz5AgSkZcvYmWymGSP28+yGd
+         2h1jGLdTf7HWyUST/dypXC3igxaVKWKQkHcuoKRG2Vcd1Kqzd0oeAM/BclqE/fXpGfA4
+         fxOql/FiqC7kQeprhLjvYP1wr5EspfBPU2FEHtpuF/VoI/UxVbEa+V/qLYx4OCC1gPrA
+         eyI0vGcTiVBEGabdFpvg4nBz9L8pot9s7PqNpxTjpQI+fikhhJ3V9HP+dbog+yI2AIe+
+         /vItC0BH8nbOk0EKpjhaZOw0tv2CWZ5vWnQ44H72HuSxO7hEFmYce1vNL2/b8b7KsbJZ
+         E6rw==
+X-Gm-Message-State: AOJu0Yyvxu4+p/N3lopDDoMKXZMnnoRzEhMfEv7OnFTL5foi6kCgEeGm
+        9QYnIkti9g36W77sDiupglQ=
+X-Google-Smtp-Source: AGHT+IHoEegdAPZwCSmjvl8uMk4AnbxESzhe35wzC+mgr6chX67iONUumG/LtGIM1Y+DTTK9YOBVdQ==
+X-Received: by 2002:a17:907:3fa2:b0:9ae:56da:6068 with SMTP id hr34-20020a1709073fa200b009ae56da6068mr1349387ejc.57.1697809170045;
+        Fri, 20 Oct 2023 06:39:30 -0700 (PDT)
+Received: from localhost (fwdproxy-cln-011.fbsv.net. [2a03:2880:31ff:b::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 29-20020a170906001d00b009875a6d28b0sm1512427eja.51.2023.10.20.06.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 06:39:28 -0700 (PDT)
+        Fri, 20 Oct 2023 06:39:29 -0700 (PDT)
 From:   Breno Leitao <leitao@debian.org>
 To:     asml.silence@gmail.com, axboe@kernel.dk
 Cc:     io-uring@vger.kernel.org
-Subject: [PATCH 1/5] io_uring: uapi: Sync the {g,s}etsockopt fields
-Date:   Fri, 20 Oct 2023 06:39:13 -0700
-Message-Id: <20231020133917.953642-2-leitao@debian.org>
+Subject: [PATCH 2/5] liburing.h: Populate SQE for {s,g} etsockopt
+Date:   Fri, 20 Oct 2023 06:39:14 -0700
+Message-Id: <20231020133917.953642-3-leitao@debian.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231020133917.953642-1-leitao@debian.org>
 References: <20231020133917.953642-1-leitao@debian.org>
@@ -58,59 +58,65 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Copy the UAPI fields necessary to support the new
-SOCKET_URING_OP_GETSOCKOPT and SOCKET_URING_OP_SETSOCKOPT socket
-commands.
+The current io_uring_prep_cmd_sock() liburing function is not populating
+the SQE will all the fields because the kernel implementation was not
+ready.
 
-Sync the necessary bits for io_uring_sqe struct from the kernel, and
-also adds the SOCKET_URING_OP_GETSOCKOPT and SOCKET_URING_OP_SETSOCKOPT
-to the enum that defines the commands.
+With the integration of the kernel part[1], populate the SQE with the
+missing fields (optlen, optval, level and optname). This enables
+the usage of this function to prepare commands that executes setsockopt
+and getsockopt operations.
 
+[1] Link:  https://lore.kernel.org/all/20231016134750.1381153-1-leitao@debian.org/
 Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- src/include/liburing/io_uring.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ CHANGELOG              |  4 ++++
+ src/include/liburing.h | 11 ++++-------
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 10a6ef0..a7a95a3 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -43,6 +43,10 @@ struct io_uring_sqe {
- 	union {
- 		__u64	addr;	/* pointer to buffer or iovecs */
- 		__u64	splice_off_in;
-+		struct {
-+			__u32	level;
-+			__u32	optname;
-+		};
- 	};
- 	__u32	len;		/* buffer size or number of iovecs */
- 	union {
-@@ -79,6 +83,7 @@ struct io_uring_sqe {
- 	union {
- 		__s32	splice_fd_in;
- 		__u32	file_index;
-+		__u32	optlen;
- 		struct {
- 			__u16	addr_len;
- 			__u16	__pad3[1];
-@@ -89,6 +94,7 @@ struct io_uring_sqe {
- 			__u64	addr3;
- 			__u64	__pad2[1];
- 		};
-+		__u64	optval;
- 		/*
- 		 * If the ring is initialized with IORING_SETUP_SQE128, then
- 		 * this field is used for 80 bytes of arbitrary command data
-@@ -721,6 +727,8 @@ struct io_uring_recvmsg_out {
- enum {
- 	SOCKET_URING_OP_SIOCINQ		= 0,
- 	SOCKET_URING_OP_SIOCOUTQ,
-+	SOCKET_URING_OP_GETSOCKOPT,
-+	SOCKET_URING_OP_SETSOCKOPT,
- };
+diff --git a/CHANGELOG b/CHANGELOG
+index 42a7fc1..61199e2 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,3 +1,7 @@
++liburing-2.5 release
++
++- Add getsockopt and setsockopt socket commands
++
+ liburing-2.4 release
  
- #ifdef __cplusplus
+ - Add io_uring_{major,minor,check}_version() functions.
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 1008544..84400ea 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -1129,8 +1129,6 @@ IOURINGINLINE void io_uring_prep_socket_direct_alloc(struct io_uring_sqe *sqe,
+ }
+ 
+ 
+-#define UNUSED(x) (void)(x)
+-
+ /*
+  * Prepare commands for sockets
+  */
+@@ -1142,13 +1140,12 @@ IOURINGINLINE void io_uring_prep_cmd_sock(struct io_uring_sqe *sqe,
+ 					  void *optval,
+ 					  int optlen)
+ {
+-	/* This will be removed once the get/setsockopt() patches land */
+-	UNUSED(optlen);
+-	UNUSED(optval);
+-	UNUSED(level);
+-	UNUSED(optname);
+ 	io_uring_prep_rw(IORING_OP_URING_CMD, sqe, fd, NULL, 0, 0);
++	sqe->optval = (long long unsigned int)optval;
++	sqe->optname = optname;
++	sqe->optlen = optlen;
+ 	sqe->cmd_op = cmd_op;
++	sqe->level = level;
+ }
+ 
+ /*
 -- 
 2.34.1
 

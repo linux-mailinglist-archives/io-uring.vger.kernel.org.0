@@ -2,113 +2,90 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F52A7D10A1
-	for <lists+io-uring@lfdr.de>; Fri, 20 Oct 2023 15:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D55B47D122F
+	for <lists+io-uring@lfdr.de>; Fri, 20 Oct 2023 17:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377376AbjJTNjh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Fri, 20 Oct 2023 09:39:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34018 "EHLO
+        id S1377626AbjJTPGi (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 20 Oct 2023 11:06:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377401AbjJTNjh (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Oct 2023 09:39:37 -0400
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAFB1BF
-        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 06:39:35 -0700 (PDT)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-9b6559cbd74so128083566b.1
-        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 06:39:35 -0700 (PDT)
+        with ESMTP id S1377634AbjJTPGg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 20 Oct 2023 11:06:36 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68558D52
+        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 08:06:34 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id 41be03b00d2f7-578bb70ad89so26251a12.0
+        for <io-uring@vger.kernel.org>; Fri, 20 Oct 2023 08:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1697814394; x=1698419194; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MJ+NTvwdtW3FTxf6IDZc9EfFbtlXlURfoCur41wmHy4=;
+        b=VBUetzg4Z9HGW0Cav88NbIIx76cTDVb2L3a4qsVKlFdIyuuG7RHVtQ4WDN0NySKobA
+         5UAzI1h6RXGxhedYTxSAZQVBfpuxaQXl29fHdbNGUCWDCNFkISLVtoyNNku/YlZo92wG
+         Qxq+FagyYaRo2gOzU9MmXxYsOCKTnNkQDz+QATCfjUsvEn06FySFfnOaY2V9JIA6AWOw
+         k68drZ64wL2gSFAvzSWwuhq1IbYYpoP0uUIgB881fvmAWaORZk1UOtKC1dPq3JsuGehx
+         M2ph11Lf8qpXSynpxvWKEsNh3Kd7MDYJT7SFBhAn7fqa8UFzjy9CzeCpxxZ+tyGLNJM/
+         RkqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697809173; x=1698413973;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KZmIgf8orud72D6ZziTFbUOmUuDgSQtB73Fv85A+5OI=;
-        b=GAWIejMEZtXKVILn8QjswOTblP6aKvcTxI3SzTndbb2HAAvu0dWy0TLoGCvJMwZDoB
-         lD4ugPH3CwpRryBh7+YKkE9mWR2T8xjq4Xz3vSkDIrMp1jq4lLom4RyjXZEY9+WmTq2p
-         kUcsvbWF2G89o/TqPV94DWWNFtRLv/JS1MNpEJXSXKwsKuXJi/ZtwKRarykTXuqfmmqy
-         mFVtAR7LPdV8qG0/zYVoph7RUax/4c9Y6xw+FkvuYOKXLbXxVRYEOi39yaZCLmrbRuqf
-         YRBy/AIfNftzn7yhhYSqEv3TkDr/ya+oEfgxrecOhwC8/K98+YVjuo9er4blHFpeptPO
-         1czA==
-X-Gm-Message-State: AOJu0YwxHkYkHAFjAv+oLzs6J9UC2tfKgyEZARtl/hOVfGCPH9ALzWSu
-        gaGv+Pef46FsS0ZuNbAcuUk=
-X-Google-Smtp-Source: AGHT+IHPiF3+57Qs5OJ5jbUiz7tWTOvwgz4t6dQqcFsuKroYbp0ZwngQFE4COj51iNIKa12RMvWO9Q==
-X-Received: by 2002:a17:907:25c3:b0:9bf:32c8:30ff with SMTP id ae3-20020a17090725c300b009bf32c830ffmr1418843ejc.25.1697809173413;
-        Fri, 20 Oct 2023 06:39:33 -0700 (PDT)
-Received: from localhost (fwdproxy-cln-010.fbsv.net. [2a03:2880:31ff:a::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 26-20020a170906011a00b009ae587ce128sm1498970eje.216.2023.10.20.06.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Oct 2023 06:39:32 -0700 (PDT)
-From:   Breno Leitao <leitao@debian.org>
-To:     asml.silence@gmail.com, axboe@kernel.dk
-Cc:     io-uring@vger.kernel.org
-Subject: [PATCH 5/5] man/io_uring_prep_cmd: Add the new sockopt commands
-Date:   Fri, 20 Oct 2023 06:39:17 -0700
-Message-Id: <20231020133917.953642-6-leitao@debian.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231020133917.953642-1-leitao@debian.org>
-References: <20231020133917.953642-1-leitao@debian.org>
+        d=1e100.net; s=20230601; t=1697814394; x=1698419194;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJ+NTvwdtW3FTxf6IDZc9EfFbtlXlURfoCur41wmHy4=;
+        b=YkbuXGXviOwZ2vXjnfhBSjksUjyowYyXSjF0iZ+7kk5nuaWSnb5Z2TYLvzPSh9/Th/
+         5DJa+viY53KIqiRW7uSMO/QqEMW8faC8K79vp5e/nPObw5HbLMndFd4Y1IZ37OqyUDpl
+         3RwdvvlmBUPyZteXeDw9wmh0q4l25LDsB3t5TJ+9eK3KqMEp/STezvs56XotwRPA3u2e
+         GD6yfs2NQZX/lMuM1qpAuIoMsakkimsO3fuhQGjSEWg3YjhJdjAjPcUZLtmYJFIGT5vz
+         z46SQAsHCd3Qh0epjpkflGExBhGkdUpnV9nDY63C4VZGlAjtRAR6bA8M7wJjt3vDP4Ef
+         jTjg==
+X-Gm-Message-State: AOJu0Yyfk+lYGwP1VWqaNAXP6t6CrMwwDdZGnSO1DyYuFpbNh4hhlkMY
+        neF50wRhEmv89Nx3WY/w0YCojYhAXdhdxFssF8h/qQ==
+X-Google-Smtp-Source: AGHT+IHq7TYyaX3SJ6o88GoXkY9VLW6HtlnCExM0ZmrU9e9jiiFFbiSDeFWowAFEs7hGYTRdvzRc8g==
+X-Received: by 2002:a05:6a21:3286:b0:163:ab09:196d with SMTP id yt6-20020a056a21328600b00163ab09196dmr2204858pzb.1.1697814393835;
+        Fri, 20 Oct 2023 08:06:33 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id i14-20020a056a00004e00b006a77343b0ccsm1637719pfk.89.2023.10.20.08.06.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Oct 2023 08:06:33 -0700 (PDT)
+Message-ID: <b62f87f1-ecb8-4fd3-99b7-f53d67909d70@kernel.dk>
+Date:   Fri, 20 Oct 2023 09:06:31 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] liburing: Add {g,s}etsockopt command support
+Content-Language: en-US
+To:     Breno Leitao <leitao@debian.org>, asml.silence@gmail.com
+Cc:     io-uring@vger.kernel.org
+References: <20231020133917.953642-1-leitao@debian.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231020133917.953642-1-leitao@debian.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-io_uring now supports getsockopt and setsockopt socket commands.
-Document these two new commands in the io_uring_prep_cmd man page.
+On 10/20/23 7:39 AM, Breno Leitao wrote:
+> These are liburing patches that add support for the new
+> SOCKET_URING_OP_GETSOCKOPT and SOCKET_URING_OP_SETSOCKOPT socket
+> commands.
+> 
+> This patchset basically synchronize the UAPI bits, teach
+> io_uring_prep_cmd(3) how to use the new fields, create a unit test and
+> add the proper man page documentation.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- man/io_uring_prep_cmd.3 | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Applied to the 'next' branch. Had to hand apply patch 2, but the rest
+applied just fine.
 
-diff --git a/man/io_uring_prep_cmd.3 b/man/io_uring_prep_cmd.3
-index d6ec909..12f607e 100644
---- a/man/io_uring_prep_cmd.3
-+++ b/man/io_uring_prep_cmd.3
-@@ -72,6 +72,38 @@ Negative return value means an error.
- For more information about this command, please check
- .BR unix(7).
- 
-+.TP
-+.B SOCKET_URING_OP_GETSOCKOPT
-+Command to get options for the socket referred to by the socket file descriptor
-+.I fd.
-+The arguments are similar to the
-+.BR getsockopt(2)
-+system call.
-+
-+The
-+.BR SOCKET_URING_OP_GETSOCKOPT
-+command is limited to
-+.BR SOL_SOCKET
-+.I level.
-+
-+Differently from the
-+.BR getsockopt(2)
-+system call, the updated
-+.I optlen
-+value is returned in the CQE
-+.I res
-+field, on success. On failure, the CQE
-+.I res
-+contains a negative error number.
-+
-+.TP
-+.B SOCKET_URING_OP_SETSOCKOPT
-+Command to set options for the socket referred to by the socket file descriptor
-+.I fd.
-+The arguments are similar to the
-+.BR setsockopt(2)
-+system call.
-+
- .SH NOTES
- The memory block pointed by
- .I optval
+Thanks!
+
 -- 
-2.34.1
+Jens Axboe
+
 

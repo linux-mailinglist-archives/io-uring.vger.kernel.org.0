@@ -2,277 +2,184 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38EDC7D1AB7
-	for <lists+io-uring@lfdr.de>; Sat, 21 Oct 2023 06:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC2E7D2591
+	for <lists+io-uring@lfdr.de>; Sun, 22 Oct 2023 21:06:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjJUEO5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sat, 21 Oct 2023 00:14:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
+        id S232025AbjJVTGh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Oct 2023 15:06:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjJUEO4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sat, 21 Oct 2023 00:14:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699D2C1;
-        Fri, 20 Oct 2023 21:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697861691; x=1729397691;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yGJG+6qAzzVRzGGWJgcbiHpYkynrB6R5ZiQ88Hw8RPc=;
-  b=G9N20z3S5qbFgUMmDlo3BBfDLDOu4oqV+gNnUP2dnvIoFieCNR8XozSb
-   EBpRxo9LbnRPx4VmWxnqIwTgLNoUn2ft9Ojye3m7hVPxMmRIWAb+ANY9f
-   fhShuA+Rvi6X2doHqtj5kh2NNxTrVulEg7vZkztlaIDNyRJzDlzJle3Mj
-   3JQuvfBfFEFqermz0Ch+Tf8otH0ucq87XB4suXFA0HTyt0QrgFQu6u7g0
-   jWckpdtqObWLyVRHmyZn69LqSiACTgWTu7rFpJQTJRPR5DygQ1ZD6dXhq
-   YcaBUdVCiRWA67Ar3HUqFxq9wTWGcWzGFD9ot+dM9Bio9emHEz8dkUTYS
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10869"; a="385499906"
-X-IronPort-AV: E=Sophos;i="6.03,239,1694761200"; 
-   d="scan'208";a="385499906"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2023 21:14:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10869"; a="823453372"
-X-IronPort-AV: E=Sophos;i="6.03,239,1694761200"; 
-   d="scan'208";a="823453372"
-Received: from lkp-server01.sh.intel.com (HELO 8917679a5d3e) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 20 Oct 2023 21:14:48 -0700
-Received: from kbuild by 8917679a5d3e with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qu3Nt-0004Ov-2D;
-        Sat, 21 Oct 2023 04:14:45 +0000
-Date:   Sat, 21 Oct 2023 12:13:50 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        axboe@kernel.dk, hch@lst.de, joshi.k@samsung.com,
-        martin.petersen@oracle.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH 1/4] block: bio-integrity: add support for user buffers
-Message-ID: <202310211209.gA0mAZaz-lkp@intel.com>
-References: <20231018151843.3542335-2-kbusch@meta.com>
+        with ESMTP id S229500AbjJVTGg (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Oct 2023 15:06:36 -0400
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2072.outbound.protection.outlook.com [40.107.212.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B69FF2;
+        Sun, 22 Oct 2023 12:06:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lqWnu9V41NSi0nySSYTXzuKSMK3yi8RARJL0O4IeBeWrXN3U7GCVtt3pyg0LX4xvrhgTBsBTf2cmcxAsu+Jpj+NVtd50R39XOh+DKk8/Q0s4UxgFPy0Mn9xRt+MsdvxeAsaPvihNuzcXOv6mBZCVp22EJo8eMYID+2R7wQEHM0Wb9gYGy+9VnOmjOwu8ooWdBtC/GJkvaeRwLain/W9Xa8YLBYzifEJZ7VrlgKaDAZ1ZqMigR6gplj9eC2K95H7UOiqDfhuDnyRbVak5fWNtxwf8U+SkgONtTAIZdH3E23TuviCpTftE6kR8lbeVp0KJZghEgzsuPSL+iV/cVOJ0wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dcpvUX1wvVxXxiQyFny6niGKeJaTGBoYpamCTQeIJbI=;
+ b=dvM+D5v7lVoKnUC/WBnzf9CEWUF2PzU0O9o4jFbU3ywEBVMGxE8KOIsuyNT+fJ0yWyGJS3mm63oKGYsq52pb13O26n8wx/jcbbPvlh2D09zjfFKvwRLYzXGyosYjO7KKZ3bxcYUfNNMNxHVBbt118bxadUmWlboqMhp8R4gizq2uvmqLSKdGdm9APT7VcNujCGbX4Elhjd3ksPwsIDnwjatq29Df/orCpMIWyefbSbRGDOCQscR5SECv56zAQUOeipQDqNAkkzgG9wOoskrWXlFgKeFkv+KtOpjHvTJVlEkhdZ2o/vxys4oreGMsNCcW0r0jZ2UAZBldtjNASF95Pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dcpvUX1wvVxXxiQyFny6niGKeJaTGBoYpamCTQeIJbI=;
+ b=Bb825LN704l7ibTvVAmFVzikAP56RhF7gA1GvSIK26W/I6VBJvehJHWPw9u50bPp6zL99Iwd/+nYOwqfOv6EV7OkdLo7933ssvMzWFQMBL5TI59K9yy3kgbiznugtfnjBEG/pKaCyPGRrgtKRyDKWxJwaVIftD+ycKQwBxyiIuwkWP/atJsFTSTkvxdWEKQ5d3+7CZmydmbd7CGTq+FRc0JmQBb9L7sb4PaQoGDTgaE/rBx1FA091uTW9kpeo6PWtP6BEdRnDH+o8RfBHGNgKB8D/JeiN8gB9bfgVQ8Z7Y7Jn8oahFtcgMuFz8l4YnmkcKUV/XZDltqITrSniCXiFw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB6288.namprd12.prod.outlook.com (2603:10b6:8:93::7) by
+ PH0PR12MB5417.namprd12.prod.outlook.com (2603:10b6:510:e1::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6907.31; Sun, 22 Oct 2023 19:06:31 +0000
+Received: from DS7PR12MB6288.namprd12.prod.outlook.com
+ ([fe80::2f76:f9ae:3051:7a44]) by DS7PR12MB6288.namprd12.prod.outlook.com
+ ([fe80::2f76:f9ae:3051:7a44%5]) with mapi id 15.20.6907.025; Sun, 22 Oct 2023
+ 19:06:31 +0000
+Message-ID: <1673427d-b449-4f9e-b344-027c0dc2ec9f@nvidia.com>
+Date:   Sun, 22 Oct 2023 22:06:24 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC RESEND 00/11] Zero copy network RX using io_uring
+To:     David Wei <dw@davidwei.uk>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        Mina Almasry <almasrymina@google.com>,
+        Jakub Kicinski <kuba@kernel.org>
+References: <20230826011954.1801099-1-dw@davidwei.uk>
+Content-Language: en-US
+From:   Gal Pressman <gal@nvidia.com>
+In-Reply-To: <20230826011954.1801099-1-dw@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO0P265CA0007.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:355::18) To DS7PR12MB6288.namprd12.prod.outlook.com
+ (2603:10b6:8:93::7)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231018151843.3542335-2-kbusch@meta.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6288:EE_|PH0PR12MB5417:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c919382-f52a-4c5d-a77f-08dbd3320039
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pHJ3kt5hkggcnDYjNX6XeVJTMPlO6jh4hNL4Yi2Z/cudzD+w9EY4pQ8tZPto+tcABkTE+s2Wx3ma13PiGXSoFO2sJ4uu9OoxNe6dZ0Og2hs7o3EApkLbzgRwVn4jYrUWSnKURb2SYWHyusZktXqXMQD3FvKtAmR2IDxWr80/yHOkuGGwi1ZZB4dWK5JY+5KzikEdOjnUOdoUUJyb3C8LTUycXu9+PK2nKCMitahsdUXGaQxXX42P8GDfVwsham9DxZI0UC4usjLxt95I7vPDPRbFfHKE4QH+O4sQj439XbIaEjmwsxUrSbyU9o5Gp4hz+rhldTrJ2F8T9s6XtdRIBLkfH2q2WSX0TcgudkUmXCrsXvAFzVey38PnvPP/d1vfkFLGmytQAY3dQCIaQ5clvUCnmpRPAgSEr0g21MNVvE+s841BD++SCBEhB6PFXhAk6ES9GYG6eV2uow4xbrZ3X7P0OfREoZjXJ+FZNOs7i2PEYueuxtFy+Z2aEi7tKORmYEpBUpNn5FHKxGiCa7AlvTq29RUVtYarpdlDZLx1Jb9MC10Bqq+TUyH1PWbbO3xtA6qi1qx1cYIhNXaCdmZFb/TrpZelHpKbg8rjUjZJMDpu4wSMWfi4PECrSl5MgP4eTnt9NUtcn5UdePRv+48hpnuxfESUd9TVweGlAQ+IHiyhHKg3W6llIxoOqbeCydJfc8zaGjemhdP0FB6lYFGASKiD2MPmPk5ZCYTrJh59onY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6288.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(366004)(136003)(346002)(39860400002)(230922051799003)(64100799003)(1800799009)(186009)(451199024)(83380400001)(31686004)(2906002)(36756003)(8936002)(4326008)(8676002)(53546011)(26005)(2616005)(38100700002)(6666004)(316002)(5660300002)(31696002)(6506007)(478600001)(6512007)(966005)(6486002)(86362001)(110136005)(41300700001)(66946007)(66476007)(66556008)(54906003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WWt6aG5tVDFiYlVtOHdRcHp3Z0s0TTF1QlJ6N3VFN2pBQ3lvV0dBbGswNzMr?=
+ =?utf-8?B?RE9tSVZYUVFxRkZ3L1lLSmdDMXdSUjhMSXdLWTV5RTZ3UGVML2srMzRLUDdW?=
+ =?utf-8?B?bHB4U25Fam9aOGVldXRSRVBiekRSYmZMU0ROblV3aWZXMVg3S3YwbTlsaHBk?=
+ =?utf-8?B?eHppcG9DYkJXbHEyQXhtUytLdzJpVXdBV3NLNGNaRERpZjI2REV6RzBUczVO?=
+ =?utf-8?B?OUZaYjNkdUxTSE5PWFd3NGZwWVpRcjZTN0lkY1Bia1ZZR3NlQmt0VTE4dzgw?=
+ =?utf-8?B?Q2gwcWtmNTdac04wOHZBSG5ETGR1MTlqTVRKWGtXMHFFNXRjUUpXaGlZb05O?=
+ =?utf-8?B?RHYza1Z3UXN2cmpBaFpJQjN4aWNvbThXY0JnTkszQUovOE5ad2IrUGhFOXRj?=
+ =?utf-8?B?RzQ5azlPQjM5VWhRaGtmZVkzNnlLOE51VnV1Vk9hT3p2YURpUS9zYzF2R3Ar?=
+ =?utf-8?B?YTBnTWdhckl2U0h5L0U4L2VBM2ZkNnBuUFRSWGpSc2huYjBsK2NjemZGaDly?=
+ =?utf-8?B?RFhFTkpJaWhOc3VvR29KaUphdnFISEJTNkp2N0JTL2t2SmsrVHp3YVpxaUNx?=
+ =?utf-8?B?REJhUGtjbnh1S05id1RpaHhVcit0U25lSnRBeWt3Ky9JK1lqK3ZYYVZVMGZz?=
+ =?utf-8?B?MHRKZ2JzWXFEZkJNNHlieFJsaFVhRktuQWxJbjF5Z1VGbitLUlp0Qk9nd0Q1?=
+ =?utf-8?B?ejZTK3pEdGFIRXJPQ1A0Ni8yV1FTek94NEp1TFZCWDc3Nzh6Nms0dmJDSUZ5?=
+ =?utf-8?B?bi96aW5KMXdCcm9TbHRjWVpMZUxnQlBUME5zalhxVnJMeVRZTE0xbDIxL3hj?=
+ =?utf-8?B?RHk1TXdVMUtoRzlRL0FwYm1tMldvODM1a25vemVERHlKVUgxK0szbkFHVE5I?=
+ =?utf-8?B?ZXBmVEo5bldEcVR2QkZsYkN2aFQzalRxbUtDblJoSEtlN2Jacy9HR1J6NmhN?=
+ =?utf-8?B?N0FOVDdPOFRrcWpNbFQ2NXRoSWxKZm9qQnQ3ZXQvZjU0UW1FWWFpVk0xcURI?=
+ =?utf-8?B?aHVnMU92YTM4V0N0WGVRYkNQU1o2TnBncXJHQlFVMzM1a05OMHdPK0R2UWts?=
+ =?utf-8?B?NFRwcW9WUmcweTFVd2cxWGs2T0ZJRzB0cWpoN0d4bUVsRFJ2WVlWR0lQRWlR?=
+ =?utf-8?B?NmRrZmwyTVgrZXhmRGRleUd5Q0xMWVkzM2Y5YlVsQ00zUWlDc0RTSkJ4Ris5?=
+ =?utf-8?B?eGdCS2kvV2xmTDA5eWU1SExKazJpMzMwZUQrbUdFYWNUREQ2T0tadjNCb3JO?=
+ =?utf-8?B?MHlGM3pUUGZkOG9STVcreEVESmRHNFI4aUxvT09tbW1YU1hhRXl0OWRwakJG?=
+ =?utf-8?B?Z2Z0NWN0K1FUa0RTTk9aMWt5Wm9nbG0wWkU0T1VlZ0ZBSHpITlNaeE9Rbk5P?=
+ =?utf-8?B?MnJFRm9OeU1CN01EbTlLdEVoYWhzY2NNSVRvSnN2VUVmM2g5L2hiZGxwQmJO?=
+ =?utf-8?B?YStqRjRxRm80UmhSUnZZaW04N2tCT1BWdGtOUjJLMURERUNiOENES1BweDE3?=
+ =?utf-8?B?bTFZNWxhTS9mZmFDLy94cExjaVlGMzdMSStFRmx6UGhJbEMvWXBqQzJvend2?=
+ =?utf-8?B?Z0pTSFRWVHppQWdlWmhmeUxWMDYxZVBUSUVJQldjZWp1RVhRWkdDQUxGdVl2?=
+ =?utf-8?B?V1ZJRG00RGVKU0oySXJZQ05LeXcxVU1QeHFFa1ByMElZdXk4bDdHK2lmWUVl?=
+ =?utf-8?B?S1JEQkt3QjlIcTlNMXF5OXZnRFNwUm5ETUhrMVlZOVZLSDI1aDkySDdINlIx?=
+ =?utf-8?B?di9XQ1UrT2xxdlVvUWVPZlNuTGF4UDVMR0tXYzZMVTlPS0VEMjNKVTlTeVUv?=
+ =?utf-8?B?UGhaOGd2RGZzS2FDaUwwTXByaFhvVHRlUHFGSzNSSlhMWWFiTGpJbElPeEVy?=
+ =?utf-8?B?c1R1WjFXS1gvMm5ES3ZuKzUzcUwvWkZIaGczdVVQbzE2ai9icHpHd0hDaURW?=
+ =?utf-8?B?WGowVmI0SVVLVFpiUHc3N1dBN3paVVgvWlRPRU42emFCTTd6OHR0ZDArMk9B?=
+ =?utf-8?B?aDN6K1UxWDM0MnQzL1UzRHZndkt4aHFIUnp3WGdxK09mUGthQlZKQ05Ed2JL?=
+ =?utf-8?B?eEx5c280a1AzUEVxdEk2MVdXVitCLzBuUXJ1N2wxMkZQUXBxNUNlQ3VIMU05?=
+ =?utf-8?Q?NcoCnTVJH4XIwTt6u0h0b7vkv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c919382-f52a-4c5d-a77f-08dbd3320039
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6288.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2023 19:06:31.5074
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5zsxyHmXQnCP4Bcaa4MkEABhYlEp2k0UMOSNwxm+TyiCY+rezbJ+7AXJUzMHGzt1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5417
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi Keith,
+On 26/08/2023 4:19, David Wei wrote:
+> From: David Wei <davidhwei@meta.com>
+> 
+> This patchset is a proposal that adds zero copy network RX to io_uring.
+> With it, userspace can register a region of host memory for receiving
+> data directly from a NIC using DMA, without needing a kernel to user
+> copy.
+> 
+> Software support is added to the Broadcom BNXT driver. Hardware support
+> for receive flow steering and header splitting is required.
+> 
+> On the userspace side, a sample server is added in this branch of
+> liburing:
+> https://github.com/spikeh/liburing/tree/zcrx2
+> 
+> Build liburing as normal, and run examples/zcrx. Then, set flow steering
+> rules using ethtool. A sample shell script is included in
+> examples/zcrx_flow.sh, but you need to change the source IP. Finally,
+> connect a client using e.g. netcat and send data.
+> 
+> This patchset + userspace code was tested on an Intel Xeon Platinum
+> 8321HC CPU and Broadcom BCM57504 NIC.
+> 
+> Early benchmarks using this prototype, with iperf3 as a load generator,
+> showed a ~50% reduction in overall system memory bandwidth as measured
+> using perf counters. Note that DDIO must be disabled on Intel systems.
+> 
+> Mina et al. from Google and Kuba are collaborating on a similar proposal
+> to ZC from NIC to devmem. There are many shared functionality in netdev
+> that we can collaborate on e.g.:
+> * Page pool memory provider backend and resource registration
+> * Page pool refcounted iov/buf representation and lifecycle
+> * Setting receive flow steering
+> 
+> As mentioned earlier, this is an early prototype. It is brittle, some
+> functionality is missing and there's little optimisation. We're looking
+> for feedback on the overall approach and points of collaboration in
+> netdev.
+> * No copy fallback, if payload ends up in linear part of skb then the
+>   code will not work
+> * No way to pin an RX queue to a specific CPU
+> * Only one ifq, one pool region, on RX queue...
+> 
+> This patchset is based on the work by Jonathan Lemon
+> <jonathan.lemon@gmail.com>:
+> https://lore.kernel.org/io-uring/20221108050521.3198458-1-jonathan.lemon@gmail.com/
 
-kernel test robot noticed the following build errors:
+Hello David,
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.6-rc6 next-20231020]
-[cannot apply to axboe-block/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This work looks interesting, is there anywhere I can read about it some
+more? Maybe it was presented (and hopefully recorded) in a recent
+conference?
+Maybe something geared towards adding more drivers support?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Keith-Busch/block-bio-integrity-add-support-for-user-buffers/20231018-232704
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20231018151843.3542335-2-kbusch%40meta.com
-patch subject: [PATCH 1/4] block: bio-integrity: add support for user buffers
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20231021/202310211209.gA0mAZaz-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231021/202310211209.gA0mAZaz-lkp@intel.com/reproduce)
+I took a brief look at the bnxt patch and saw you converted the page
+pool allocation to data pool allocation, I assume this is done for data
+pages only, right? Headers are still allocated on page pool pages?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310211209.gA0mAZaz-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from init/main.c:21:
-   In file included from include/linux/syscalls.h:90:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:9:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from init/main.c:21:
-   In file included from include/linux/syscalls.h:90:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:9:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from init/main.c:21:
-   In file included from include/linux/syscalls.h:90:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:9:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from init/main.c:85:
-   In file included from include/linux/blkdev.h:17:
->> include/linux/bio.h:797:16: error: expected ';' after return statement
-     797 |         return -EINVAL
-         |                       ^
-         |                       ;
-   12 warnings and 1 error generated.
---
-   In file included from mm/swapfile.c:9:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from mm/swapfile.c:9:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from mm/swapfile.c:9:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from mm/swapfile.c:9:
-   In file included from include/linux/blkdev.h:17:
->> include/linux/bio.h:797:16: error: expected ';' after return statement
-     797 |         return -EINVAL
-         |                       ^
-         |                       ;
-   In file included from mm/swapfile.c:14:
-   include/linux/mman.h:158:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     158 |                _calc_vm_trans(flags, MAP_SYNC,       VM_SYNC      ) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
-     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   13 warnings and 1 error generated.
-
-
-vim +797 include/linux/bio.h
-
-   793	
-   794	static inline int bio_integrity_map_user(struct bio *bio, void __user *ubuf,
-   795						 unsigned int len, u32 seed, u32 maxvecs)
-   796	{
- > 797		return -EINVAL
-   798	}
-   799	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks

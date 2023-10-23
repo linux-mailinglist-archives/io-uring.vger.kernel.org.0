@@ -2,66 +2,72 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 905E27D27B7
-	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 02:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08EDF7D2921
+	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 05:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjJWAyc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Oct 2023 20:54:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34656 "EHLO
+        id S229512AbjJWDfw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Oct 2023 23:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjJWAyc (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Oct 2023 20:54:32 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F4AB7
-        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 17:54:29 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id a1e0cc1a2514c-7b5f1a6267bso181921241.1
-        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 17:54:29 -0700 (PDT)
+        with ESMTP id S229511AbjJWDfu (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Oct 2023 23:35:50 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C98FEE8
+        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 20:35:47 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-27e4e41a4fcso250131a91.3
+        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 20:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1698022468; x=1698627268; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hsslYOka4dg7q6DuaUTenw8f3cz+l7QP9kA0WS8X1SI=;
-        b=KsUxTieznI8l79434ReN8QxZyfakC6tGDElKkfDzTC40ho5knqDNLrkMY2V/XkwhAv
-         cUC2JleJ5Pq6oJuptty0giNtjcSbB2vl/BKa7vv5paYJrxHW2XK/Ve0HCtI27XWn7rnY
-         i9CfVS63/l1q/BbiqdhTn9yVlecsbmq1O1YTC8eXLkkn7OUel1+xHJeaD3IBXSzcsXIj
-         rrk9OkHieh+wPmpRFfozuwwdPf59krhpdb6mQZhxCoop+gua26cv+AAiR10nyAegFL/g
-         Cm6j5X9f6SmWRro2DLeY9tQ5dZSHYxHo6wKEAHvDn5yVFUDGXv5FJ5OR4R5xLXIvLYXH
-         8SYg==
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1698032147; x=1698636947; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SWCegtYp8nwfQoYjg8i2/ArRcZBT2vDQSf62c++I3vQ=;
+        b=C4JHesz0fbK86A5M9SivEMJH/odsJYZFxXVKw01SMXeIBMp3lCX8c5voio8WESN2Ue
+         +1Flt3Kzt9SqNmTDIQSWa42Dugc8Aooi4pmigaVMDbUfdTYmS2pJbApyhyry921+NVpW
+         YttytDQLVNcXVzDzrx9El+LeEmM3BEeqdYMczqH4g+3/TYnCgXX6A7iT1xDIIz/TVkxw
+         DWC9LE39dYIjDOsoVp7ecHa4bplFPk/rw5YQH6f7WJ2W0v/09QoknsanEvh3OzMhJlNn
+         6JgQUALru2jeIPBcp+mkubz7rXiOl+wHBPN2/ov8nq+QdILPRzB1R7OTmb/KouVADPTZ
+         nKjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698022468; x=1698627268;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hsslYOka4dg7q6DuaUTenw8f3cz+l7QP9kA0WS8X1SI=;
-        b=chW4unFGu0qd+FDRDdCfYDsqZfWwDVsVYWbnqyC8BtnddVg19Q5c1zCyj2ihrudOGj
-         U+JMYZPlMxshX8M8+BEW5tVpS/XwzT23gUaGT3rqZBShjByP6EpTD++5VdTPO1VJIs1R
-         oPvBn9L2FQ4Ege9AC1SqFf5Op6QV9aFZOIoR3Dch7sYfeATKETr8PHCOUqqTP+PqKMiV
-         cg3eqDvTixmtdRIS8vkkIidE0zRmGRWHEMbmpvCNehrNO/3XCrpqTE6U5rxatMBcLLJj
-         ATdKeMnnZaW1gk0qDmD7hK+X/q5GVwviyaaHQAijjfnnfjw1rbKVO/F3eC1MaXLhRbuA
-         gsaQ==
-X-Gm-Message-State: AOJu0Yzd2K/6EIz3jV619b7jtxXQhjUBUJgNIqnVTTKzwnpOcxAEsR7w
-        hVtB91gy9oX2pkIbFUULSTiAryHS6kXe2pjuXdcjDQ==
-X-Google-Smtp-Source: AGHT+IGU2yV+iIKftPRG5fqLQ1aMnF6IkquA7w7U5zCL5YTOhqnCY2U4JTPqda4XptBUvC/NRdS3wA==
-X-Received: by 2002:a67:fe89:0:b0:457:c159:9675 with SMTP id b9-20020a67fe89000000b00457c1599675mr3168547vsr.1.1698022467953;
-        Sun, 22 Oct 2023 17:54:27 -0700 (PDT)
-Received: from [172.19.131.149] ([164.86.4.149])
-        by smtp.gmail.com with ESMTPSA id b4-20020a67f844000000b0045272462f7dsm728449vsp.26.2023.10.22.17.54.25
-        for <io-uring@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1698032147; x=1698636947;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SWCegtYp8nwfQoYjg8i2/ArRcZBT2vDQSf62c++I3vQ=;
+        b=PatY98OIX6fLtUWQYeIV5LR9tKepb2lL0d9LJLcWkUljI2i+wLRvTumS1CogoDxkBy
+         p2dwssw/hh/KARJfXNTOZkmpIb2cA3BO7pCkXlr4YSzbXWSAT89r4brycD/UVms2GFmY
+         OPsqDsMRwyyBl6HTHc+f8IkVp7p2fq1Uqi5aIMs80jDB18mzTqszPia81cJEqqCdPtxG
+         ffXnzAhIU+kD/69XBFZ49Oh2ZL2wI4Pe+jsj/Om9mmhHwas2Cm4ypj4QHDLtxwlONH6K
+         S3s3tcsP92BtLSXjuMUvPqrOAYSvUIVpuoEwUuyNrN4ghx0ACE2GHOK/sKdI4mMwhW+U
+         VTdQ==
+X-Gm-Message-State: AOJu0Yygs10YQPwl4x/GgYDft2mPdfbwuJbuebeG6bIB3LtXpG9Gs62G
+        5aDby2/K6wsbnoAyA+VFNGCrGg==
+X-Google-Smtp-Source: AGHT+IGj30MoOaVHQFRMT35CFQ5h4aVbtCV+b2A8ofQa/0Atnc2ZnTJtoqCHbtoFEmZO4yaIxgx42Q==
+X-Received: by 2002:a17:90a:202:b0:273:ec96:b6f9 with SMTP id c2-20020a17090a020200b00273ec96b6f9mr5688112pjc.25.1698032147161;
+        Sun, 22 Oct 2023 20:35:47 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21c8::1237? ([2620:10d:c090:400::4:c4c8])
+        by smtp.gmail.com with ESMTPSA id ip1-20020a17090b314100b00262e485156esm6415514pjb.57.2023.10.22.20.35.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Oct 2023 17:54:27 -0700 (PDT)
-Message-ID: <64f28d0f-b2b9-4ff4-8e2f-efdf1c63d3d4@kernel.dk>
-Date:   Sun, 22 Oct 2023 18:54:08 -0600
+        Sun, 22 Oct 2023 20:35:46 -0700 (PDT)
+Message-ID: <afcb3c40-0148-46ef-b2be-fa4adc57b88a@davidwei.uk>
+Date:   Sun, 22 Oct 2023 20:35:44 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To:     io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/fdinfo: park SQ thread while retrieving cpu/pid
+Subject: Re: [RFC RESEND 00/11] Zero copy network RX using io_uring
+Content-Language: en-GB
+To:     Gal Pressman <gal@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
+        Mina Almasry <almasrymina@google.com>,
+        Jakub Kicinski <kuba@kernel.org>
+References: <20230826011954.1801099-1-dw@davidwei.uk>
+ <1673427d-b449-4f9e-b344-027c0dc2ec9f@nvidia.com>
+From:   David Wei <dw@davidwei.uk>
+In-Reply-To: <1673427d-b449-4f9e-b344-027c0dc2ec9f@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,61 +75,80 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-We could race with SQ thread exit, and if we do, we'll hit a NULL pointer
-dereference. Park the SQPOLL thread while getting the task cpu and pid for
-fdinfo, this ensures we have a stable view of it.
+On 2023-10-22 12:06, Gal Pressman wrote:
+> On 26/08/2023 4:19, David Wei wrote:
+>> From: David Wei <davidhwei@meta.com>
+>>
+>> This patchset is a proposal that adds zero copy network RX to io_uring.
+>> With it, userspace can register a region of host memory for receiving
+>> data directly from a NIC using DMA, without needing a kernel to user
+>> copy.
+>>
+>> Software support is added to the Broadcom BNXT driver. Hardware support
+>> for receive flow steering and header splitting is required.
+>>
+>> On the userspace side, a sample server is added in this branch of
+>> liburing:
+>> https://github.com/spikeh/liburing/tree/zcrx2
+>>
+>> Build liburing as normal, and run examples/zcrx. Then, set flow steering
+>> rules using ethtool. A sample shell script is included in
+>> examples/zcrx_flow.sh, but you need to change the source IP. Finally,
+>> connect a client using e.g. netcat and send data.
+>>
+>> This patchset + userspace code was tested on an Intel Xeon Platinum
+>> 8321HC CPU and Broadcom BCM57504 NIC.
+>>
+>> Early benchmarks using this prototype, with iperf3 as a load generator,
+>> showed a ~50% reduction in overall system memory bandwidth as measured
+>> using perf counters. Note that DDIO must be disabled on Intel systems.
+>>
+>> Mina et al. from Google and Kuba are collaborating on a similar proposal
+>> to ZC from NIC to devmem. There are many shared functionality in netdev
+>> that we can collaborate on e.g.:
+>> * Page pool memory provider backend and resource registration
+>> * Page pool refcounted iov/buf representation and lifecycle
+>> * Setting receive flow steering
+>>
+>> As mentioned earlier, this is an early prototype. It is brittle, some
+>> functionality is missing and there's little optimisation. We're looking
+>> for feedback on the overall approach and points of collaboration in
+>> netdev.
+>> * No copy fallback, if payload ends up in linear part of skb then the
+>>   code will not work
+>> * No way to pin an RX queue to a specific CPU
+>> * Only one ifq, one pool region, on RX queue...
+>>
+>> This patchset is based on the work by Jonathan Lemon
+>> <jonathan.lemon@gmail.com>:
+>> https://lore.kernel.org/io-uring/20221108050521.3198458-1-jonathan.lemon@gmail.com/
+> 
+> Hello David,
+> 
+> This work looks interesting, is there anywhere I can read about it some
+> more? Maybe it was presented (and hopefully recorded) in a recent
+> conference?
+> Maybe something geared towards adding more drivers support?
+> 
 
-Cc: stable@vger.kernel.org
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=218032
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Hi Gal,
 
----
+Thank you for your interest in our work! We will be publishing a paper
+and presenting this work at NetDev conference on 1 Nov.
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index c53678875416..cd2a0c6b97c4 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -53,7 +53,6 @@ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
- __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
- {
- 	struct io_ring_ctx *ctx = f->private_data;
--	struct io_sq_data *sq = NULL;
- 	struct io_overflow_cqe *ocqe;
- 	struct io_rings *r = ctx->rings;
- 	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
-@@ -64,6 +63,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
- 	unsigned int cq_shift = 0;
- 	unsigned int sq_shift = 0;
- 	unsigned int sq_entries, cq_entries;
-+	int sq_pid = -1, sq_cpu = -1;
- 	bool has_lock;
- 	unsigned int i;
- 
-@@ -143,13 +143,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
- 	has_lock = mutex_trylock(&ctx->uring_lock);
- 
- 	if (has_lock && (ctx->flags & IORING_SETUP_SQPOLL)) {
--		sq = ctx->sq_data;
--		if (!sq->thread)
--			sq = NULL;
-+		struct io_sq_data *sq = ctx->sq_data;
-+
-+		io_sq_thread_park(sq);
-+		if (sq->thread) {
-+			sq_pid = task_pid_nr(sq->thread);
-+			sq_cpu = task_cpu(sq->thread);
-+		}
-+		io_sq_thread_unpark(sq);
- 	}
- 
--	seq_printf(m, "SqThread:\t%d\n", sq ? task_pid_nr(sq->thread) : -1);
--	seq_printf(m, "SqThreadCpu:\t%d\n", sq ? task_cpu(sq->thread) : -1);
-+	seq_printf(m, "SqThread:\t%d\n", sq_pid);
-+	seq_printf(m, "SqThreadCpu:\t%d\n", sq_cpu);
- 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
- 	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
- 		struct file *f = io_file_from_index(&ctx->file_table, i);
+Support for more drivers (e.g. mlx5) is definitely on our radar. We are
+collaborating with Mina and others from Google who are working on a
+similar proposal but targetting NIC -> ZC RX into GPU memory. We both
+require shared bits of infra e.g. page pool memory providers that will
+replace the use of a one-off data_pool in this patchset. This would
+minimise driver changes needed to support this feature.
 
--- 
-Jens Axboe
+> I took a brief look at the bnxt patch and saw you converted the page
+> pool allocation to data pool allocation, I assume this is done for data
+> pages only, right? Headers are still allocated on page pool pages?
+> 
+> Thanks
 
+Yes, that's right.
+
+David

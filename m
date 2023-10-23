@@ -2,72 +2,114 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08EDF7D2921
-	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 05:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A469F7D2A31
+	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 08:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbjJWDfw (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Oct 2023 23:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54238 "EHLO
+        id S233336AbjJWGS2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Oct 2023 02:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjJWDfu (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Oct 2023 23:35:50 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C98FEE8
-        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 20:35:47 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-27e4e41a4fcso250131a91.3
-        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 20:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1698032147; x=1698636947; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SWCegtYp8nwfQoYjg8i2/ArRcZBT2vDQSf62c++I3vQ=;
-        b=C4JHesz0fbK86A5M9SivEMJH/odsJYZFxXVKw01SMXeIBMp3lCX8c5voio8WESN2Ue
-         +1Flt3Kzt9SqNmTDIQSWa42Dugc8Aooi4pmigaVMDbUfdTYmS2pJbApyhyry921+NVpW
-         YttytDQLVNcXVzDzrx9El+LeEmM3BEeqdYMczqH4g+3/TYnCgXX6A7iT1xDIIz/TVkxw
-         DWC9LE39dYIjDOsoVp7ecHa4bplFPk/rw5YQH6f7WJ2W0v/09QoknsanEvh3OzMhJlNn
-         6JgQUALru2jeIPBcp+mkubz7rXiOl+wHBPN2/ov8nq+QdILPRzB1R7OTmb/KouVADPTZ
-         nKjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698032147; x=1698636947;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SWCegtYp8nwfQoYjg8i2/ArRcZBT2vDQSf62c++I3vQ=;
-        b=PatY98OIX6fLtUWQYeIV5LR9tKepb2lL0d9LJLcWkUljI2i+wLRvTumS1CogoDxkBy
-         p2dwssw/hh/KARJfXNTOZkmpIb2cA3BO7pCkXlr4YSzbXWSAT89r4brycD/UVms2GFmY
-         OPsqDsMRwyyBl6HTHc+f8IkVp7p2fq1Uqi5aIMs80jDB18mzTqszPia81cJEqqCdPtxG
-         ffXnzAhIU+kD/69XBFZ49Oh2ZL2wI4Pe+jsj/Om9mmhHwas2Cm4ypj4QHDLtxwlONH6K
-         S3s3tcsP92BtLSXjuMUvPqrOAYSvUIVpuoEwUuyNrN4ghx0ACE2GHOK/sKdI4mMwhW+U
-         VTdQ==
-X-Gm-Message-State: AOJu0Yygs10YQPwl4x/GgYDft2mPdfbwuJbuebeG6bIB3LtXpG9Gs62G
-        5aDby2/K6wsbnoAyA+VFNGCrGg==
-X-Google-Smtp-Source: AGHT+IGj30MoOaVHQFRMT35CFQ5h4aVbtCV+b2A8ofQa/0Atnc2ZnTJtoqCHbtoFEmZO4yaIxgx42Q==
-X-Received: by 2002:a17:90a:202:b0:273:ec96:b6f9 with SMTP id c2-20020a17090a020200b00273ec96b6f9mr5688112pjc.25.1698032147161;
-        Sun, 22 Oct 2023 20:35:47 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c085:21c8::1237? ([2620:10d:c090:400::4:c4c8])
-        by smtp.gmail.com with ESMTPSA id ip1-20020a17090b314100b00262e485156esm6415514pjb.57.2023.10.22.20.35.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Oct 2023 20:35:46 -0700 (PDT)
-Message-ID: <afcb3c40-0148-46ef-b2be-fa4adc57b88a@davidwei.uk>
-Date:   Sun, 22 Oct 2023 20:35:44 -0700
+        with ESMTP id S233337AbjJWGS0 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Oct 2023 02:18:26 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EECD6E
+        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 23:18:23 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231023061819epoutp02d87f474367040c5d75d49fffeb5b4749~QqBxQEEDU1543115431epoutp02F
+        for <io-uring@vger.kernel.org>; Mon, 23 Oct 2023 06:18:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231023061819epoutp02d87f474367040c5d75d49fffeb5b4749~QqBxQEEDU1543115431epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1698041899;
+        bh=aQ2O1uOtyo1JkIU277HDw5ahVIEYtuKwjIlvUsXKgRI=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=gsmeCRIgZxxmCfj1BuFa+OLkIviTcwyKFzbPv0bYxPm4Rp/1X5hac/8j8zPCyJyAv
+         +1JKsFGNnIhEt6Agvsl7HEGQXdvgHseR5qby9EdjnfJFv97a9hsb6XcB29csYsixkq
+         3hgzp3p4bz/1JIbYYohELTAAq1o3dLUaAIt5/v0k=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20231023061818epcas5p10c14d4e1d84610002f836bec83c330ac~QqBw2Ni472543525435epcas5p1R;
+        Mon, 23 Oct 2023 06:18:18 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4SDQ3s1gkfz4x9Q6; Mon, 23 Oct
+        2023 06:18:17 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B2.6F.08567.92016356; Mon, 23 Oct 2023 15:18:17 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20231023061816epcas5p2240c0537747ac96007f17715adedcf09~QqBvHnlxI0206302063epcas5p2V;
+        Mon, 23 Oct 2023 06:18:16 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231023061816epsmtrp1274b08bf956f3e4423b22e712eb71547~QqBvG8I1N0348003480epsmtrp14;
+        Mon, 23 Oct 2023 06:18:16 +0000 (GMT)
+X-AuditID: b6c32a44-617fd70000002177-a8-653610293e7a
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        17.48.07368.82016356; Mon, 23 Oct 2023 15:18:16 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20231023061815epsmtip1e7a9de290f1094c0fe7dfaf9dd4b565e~QqBty5DHS2963929639epsmtip1d;
+        Mon, 23 Oct 2023 06:18:15 +0000 (GMT)
+Message-ID: <5cb1908c-781d-e769-67f3-00d76cfb7bd3@samsung.com>
+Date:   Mon, 23 Oct 2023 11:48:13 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC RESEND 00/11] Zero copy network RX using io_uring
-Content-Language: en-GB
-To:     Gal Pressman <gal@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        Mina Almasry <almasrymina@google.com>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20230826011954.1801099-1-dw@davidwei.uk>
- <1673427d-b449-4f9e-b344-027c0dc2ec9f@nvidia.com>
-From:   David Wei <dw@davidwei.uk>
-In-Reply-To: <1673427d-b449-4f9e-b344-027c0dc2ec9f@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH 3/4] iouring: remove IORING_URING_CMD_POLLED
+Content-Language: en-US
+To:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
+        Keith Busch <kbusch@kernel.org>
+From:   Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20231018151843.3542335-4-kbusch@meta.com>
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmuq6mgFmqwZkn3Bar7/azWaxcfZTJ
+        4l3rORaLSYeuMVqcubqQxWLvLW2L+cueslssP/6PyYHD4/LZUo9NqzrZPDYvqffYfbOBzePc
+        xQqPj09vsXh83iQXwB6VbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtq
+        q+TiE6DrlpkDdJGSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9d
+        Ly+1xMrQwMDIFKgwITvjc89apoKT7BU9uy+wNTDOYuti5OSQEDCRWP+njxnEFhLYzSixbEpq
+        FyMXkP2JUeL459/sEM43Rol/928wwXRMe7+GCSKxl1Fixb8WqKq3jBK3N/QydjFycPAK2Em8
+        WycH0sAioCrR/6EDrJlXQFDi5MwnLCC2qECSxK+rcxhBbGEBB4lVd86A1TALiEvcejIfzBYR
+        qJLom/aTDSIeJ7H0yAxmkPFsApoSFyaXgpicAuYSj25HQFTIS2x/O4cZ5BoJgakcEvcnPWGG
+        uNlF4tH0I1AfC0u8Or6FHcKWknjZ3wZlJ0tcmnkO6scSicd7DkLZ9hKtp/rB1jIDrV2/Sx9i
+        F59E7+8nTCBhCQFeiY42IYhqRYl7k56yQtjiEg9nLIGyPSRWTb8BDajtjBJ/Jl1jnMCoMAsp
+        UGYheX4WkndmIWxewMiyilEytaA4Nz012bTAMC+1HB7byfm5mxjBqVXLZQfjjfn/9A4xMnEw
+        HmKU4GBWEuGdHW6SKsSbklhZlVqUH19UmpNafIjRFBg7E5mlRJPzgck9ryTe0MTSwMTMzMzE
+        0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGpj1hBVUJD6eWMUyev+eB87l9V5i3xS59
+        WDWn84lAd1vw9EP88z/kf/D/2FbhlLnvWP1ZkzuMigEdaVUi3AtlI6TXGchVTI7WLosum3oj
+        roonL3jxTuF5Kyr2M9XuutQVOf+T6R7njX8zX2stytu3Nfws37sfJvMzzx5+bri27nPn7L7j
+        QtsO16ReK1u50iZK6XV5oOcG/ms/tm951v3q3JJjDW1xDxl79Or1+zIfvqy5eFozbVbql+u5
+        aytLppXd3+H1Zfq+LxGv5W9H71x8PfIVu9f7A68q1Q6mfDWT7Wbd+ePdOe26vnP1BTHuD4P+
+        Xl75vrxP7jNDXEfEqnVWqn/tJnxR/6HD8n/xxzd8c/SUWIozEg21mIuKEwF6moIHNgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJTldDwCzV4OlFbYvVd/vZLFauPspk
+        8a71HIvFpEPXGC3OXF3IYrH3lrbF/GVP2S2WH//H5MDhcflsqcemVZ1sHpuX1HvsvtnA5nHu
+        YoXHx6e3WDw+b5ILYI/isklJzcksSy3St0vgyvjcs5ap4CR7Rc/uC2wNjLPYuhg5OSQETCSm
+        vV/D1MXIxSEksJtRYv6dJUwQCXGJ5ms/2CFsYYmV/56zQxS9ZpSYeHIlkMPBwStgJ/FunRxI
+        DYuAqkT/hw6wXl4BQYmTM5+wgNiiAkkSe+43gsWFBRwkVt05A2YzA82/9WQ+mC0iUCWx/8dZ
+        qHicxP9LjVAHbWeUWLrqHxPILjYBTYkLk0tBTE4Bc4lHtyMgys0kurZ2MULY8hLb385hnsAo
+        NAvJFbOQbJuFpGUWkpYFjCyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGCI0lLYwfj
+        vfn/9A4xMnEwHmKU4GBWEuGdHW6SKsSbklhZlVqUH19UmpNafIhRmoNFSZzXcMbsFCGB9MSS
+        1OzU1ILUIpgsEwenVAOT6os9CvzfNKwWJ/yRYY/rYDp+1D9u/kbjPXGz30/WlSrPObnvX+VS
+        kWernEMaki5saP/TO+PaWY5jW9Ru8zR+Kdh7d9/9n/yvxf5dSv3Ft/vVNGnn2Z90WpOWph46
+        Wbe8I3fpYSGBt47LN3Jk/H3lffWHbcGxSeV2PyUaZzME6dabm60qEOx8vV2R1ygica2P8dbL
+        fr7z3jrxbvVfVhBvMHVJ65F/n0LN7n7PeTr/35zWbrGgjb84P7iU8gecfr116cX5BiuEHqk/
+        EvjkPitZbMb5pJwThzW+Wai95hJ6ckX5laH+9Y2du1sKAsufhpx6zDF7leHTJxWl4v9yamXu
+        c4W13nA8dvatqXUsT/2yX0osxRmJhlrMRcWJAISnd0UTAwAA
+X-CMS-MailID: 20231023061816epcas5p2240c0537747ac96007f17715adedcf09
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231018152441epcas5p38a06f590cbe59c76ee43465de3e0be4f
+References: <20231018151843.3542335-1-kbusch@meta.com>
+        <CGME20231018152441epcas5p38a06f590cbe59c76ee43465de3e0be4f@epcas5p3.samsung.com>
+        <20231018151843.3542335-4-kbusch@meta.com>
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,80 +117,30 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 2023-10-22 12:06, Gal Pressman wrote:
-> On 26/08/2023 4:19, David Wei wrote:
->> From: David Wei <davidhwei@meta.com>
->>
->> This patchset is a proposal that adds zero copy network RX to io_uring.
->> With it, userspace can register a region of host memory for receiving
->> data directly from a NIC using DMA, without needing a kernel to user
->> copy.
->>
->> Software support is added to the Broadcom BNXT driver. Hardware support
->> for receive flow steering and header splitting is required.
->>
->> On the userspace side, a sample server is added in this branch of
->> liburing:
->> https://github.com/spikeh/liburing/tree/zcrx2
->>
->> Build liburing as normal, and run examples/zcrx. Then, set flow steering
->> rules using ethtool. A sample shell script is included in
->> examples/zcrx_flow.sh, but you need to change the source IP. Finally,
->> connect a client using e.g. netcat and send data.
->>
->> This patchset + userspace code was tested on an Intel Xeon Platinum
->> 8321HC CPU and Broadcom BCM57504 NIC.
->>
->> Early benchmarks using this prototype, with iperf3 as a load generator,
->> showed a ~50% reduction in overall system memory bandwidth as measured
->> using perf counters. Note that DDIO must be disabled on Intel systems.
->>
->> Mina et al. from Google and Kuba are collaborating on a similar proposal
->> to ZC from NIC to devmem. There are many shared functionality in netdev
->> that we can collaborate on e.g.:
->> * Page pool memory provider backend and resource registration
->> * Page pool refcounted iov/buf representation and lifecycle
->> * Setting receive flow steering
->>
->> As mentioned earlier, this is an early prototype. It is brittle, some
->> functionality is missing and there's little optimisation. We're looking
->> for feedback on the overall approach and points of collaboration in
->> netdev.
->> * No copy fallback, if payload ends up in linear part of skb then the
->>   code will not work
->> * No way to pin an RX queue to a specific CPU
->> * Only one ifq, one pool region, on RX queue...
->>
->> This patchset is based on the work by Jonathan Lemon
->> <jonathan.lemon@gmail.com>:
->> https://lore.kernel.org/io-uring/20221108050521.3198458-1-jonathan.lemon@gmail.com/
+On 10/18/2023 8:48 PM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> Hello David,
+> No more users of this flag.
 > 
-> This work looks interesting, is there anywhere I can read about it some
-> more? Maybe it was presented (and hopefully recorded) in a recent
-> conference?
-> Maybe something geared towards adding more drivers support?
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>   include/uapi/linux/io_uring.h | 2 --
+>   1 file changed, 2 deletions(-)
 > 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 8e61f8b7c2ced..10e724370b612 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -249,10 +249,8 @@ enum io_uring_op {
+>    * sqe->uring_cmd_flags
+>    * IORING_URING_CMD_FIXED	use registered buffer; pass this flag
+>    *				along with setting sqe->buf_index.
+> - * IORING_URING_CMD_POLLED	driver use only
+>    */
+>   #define IORING_URING_CMD_FIXED	(1U << 0)
+> -#define IORING_URING_CMD_POLLED	(1U << 31)
+>   
 
-Hi Gal,
-
-Thank you for your interest in our work! We will be publishing a paper
-and presenting this work at NetDev conference on 1 Nov.
-
-Support for more drivers (e.g. mlx5) is definitely on our radar. We are
-collaborating with Mina and others from Google who are working on a
-similar proposal but targetting NIC -> ZC RX into GPU memory. We both
-require shared bits of infra e.g. page pool memory providers that will
-replace the use of a one-off data_pool in this patchset. This would
-minimise driver changes needed to support this feature.
-
-> I took a brief look at the bnxt patch and saw you converted the page
-> pool allocation to data pool allocation, I assume this is done for data
-> pages only, right? Headers are still allocated on page pool pages?
-> 
-> Thanks
-
-Yes, that's right.
-
-David
+This is bit outdated. This flag got moved to a different file since this 
+patch.
+https://lore.kernel.org/io-uring/20230928124327.135679-2-ming.lei@redhat.com/

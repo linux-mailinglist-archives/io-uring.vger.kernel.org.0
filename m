@@ -2,114 +2,69 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A469F7D2A31
-	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 08:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D00DF7D3AB5
+	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 17:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233336AbjJWGS2 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Mon, 23 Oct 2023 02:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
+        id S229807AbjJWP12 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Mon, 23 Oct 2023 11:27:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233337AbjJWGS0 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Oct 2023 02:18:26 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EECD6E
-        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 23:18:23 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231023061819epoutp02d87f474367040c5d75d49fffeb5b4749~QqBxQEEDU1543115431epoutp02F
-        for <io-uring@vger.kernel.org>; Mon, 23 Oct 2023 06:18:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231023061819epoutp02d87f474367040c5d75d49fffeb5b4749~QqBxQEEDU1543115431epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1698041899;
-        bh=aQ2O1uOtyo1JkIU277HDw5ahVIEYtuKwjIlvUsXKgRI=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=gsmeCRIgZxxmCfj1BuFa+OLkIviTcwyKFzbPv0bYxPm4Rp/1X5hac/8j8zPCyJyAv
-         +1JKsFGNnIhEt6Agvsl7HEGQXdvgHseR5qby9EdjnfJFv97a9hsb6XcB29csYsixkq
-         3hgzp3p4bz/1JIbYYohELTAAq1o3dLUaAIt5/v0k=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20231023061818epcas5p10c14d4e1d84610002f836bec83c330ac~QqBw2Ni472543525435epcas5p1R;
-        Mon, 23 Oct 2023 06:18:18 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4SDQ3s1gkfz4x9Q6; Mon, 23 Oct
-        2023 06:18:17 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B2.6F.08567.92016356; Mon, 23 Oct 2023 15:18:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20231023061816epcas5p2240c0537747ac96007f17715adedcf09~QqBvHnlxI0206302063epcas5p2V;
-        Mon, 23 Oct 2023 06:18:16 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20231023061816epsmtrp1274b08bf956f3e4423b22e712eb71547~QqBvG8I1N0348003480epsmtrp14;
-        Mon, 23 Oct 2023 06:18:16 +0000 (GMT)
-X-AuditID: b6c32a44-617fd70000002177-a8-653610293e7a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        17.48.07368.82016356; Mon, 23 Oct 2023 15:18:16 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20231023061815epsmtip1e7a9de290f1094c0fe7dfaf9dd4b565e~QqBty5DHS2963929639epsmtip1d;
-        Mon, 23 Oct 2023 06:18:15 +0000 (GMT)
-Message-ID: <5cb1908c-781d-e769-67f3-00d76cfb7bd3@samsung.com>
-Date:   Mon, 23 Oct 2023 11:48:13 +0530
+        with ESMTP id S229498AbjJWP12 (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Mon, 23 Oct 2023 11:27:28 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B652F93
+        for <io-uring@vger.kernel.org>; Mon, 23 Oct 2023 08:27:25 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id e9e14a558f8ab-357ac7cd08aso1661205ab.1
+        for <io-uring@vger.kernel.org>; Mon, 23 Oct 2023 08:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1698074844; x=1698679644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lnIQRUL3dGnj78SSGpA9SkpL9VRUsEUy0PKD+EZ4u14=;
+        b=fRPLw784klrgNo+yJm0F79vW0+K12b3ak+jR+u6MUyUwUJ4dIE3al37qao/uRpoaLb
+         YoWRQsNBSMeq0dOokfTva8ntc9guUFWCbHC+oerNUy8Ssq+ykDH8IUXCl1si+2inih3k
+         LFsKFqwMpo7Ar/5Xz3mF1GXA2HtGgVQPCgcdWmSJxlwqkRGazYtaFmHuhEbB2P9yBpY2
+         BjQ4YpoO7HPAYbaie2rb5mMnem8IlSP9bY0AxfX/S2pcGHUm48bgvfut4FExPyo+2TwP
+         7ZHZbGryqwlGBNQa9S4UgzmpXlg+9KRXHTgDEJ3wwQRCxFMepb2xVzpsC0erkNjPObic
+         qNlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698074844; x=1698679644;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lnIQRUL3dGnj78SSGpA9SkpL9VRUsEUy0PKD+EZ4u14=;
+        b=EJ0bU5Xy25uizT9kGDud4s2sGZSeROos1l+Gg/dVK6rVR8G2E+3mrCvTDoPFUtiFZy
+         BtEmm4ggI4orEtyGzeSJuEqjhcZsz5W9jTJlBg1N0RG6iVOsg6nKj+1dYtvvLSvWeM8c
+         6A1L3sD7wRj6K4WeL5qIuzzr+V/Q8DAoHwc+gzCyN6l3Kgb3uP3fCtWCSk2usWdgr9Pc
+         oRGScmDMG+X48u/zIhcCpBftKkEyaCT4iTNie/+Sgpc4BVF8jxBZASv5s3MkiWrfWZXZ
+         /VQHu0UPX5xzUhaPVngJ5j8Mj90HalaYwML50ozOzwX+iSNuwOHJzH6VQetM6GSmGuXV
+         SLVA==
+X-Gm-Message-State: AOJu0YysIPXWzAeGQDUatRF1LVSivxvDg6LDYjmncGq8u0bNHG/8opBq
+        Cfuw/On6ZM4vWcZgJb28QsvaRuf5d848r2htX4WmRQ==
+X-Google-Smtp-Source: AGHT+IHvr2iAoVJtdU092UjQ74GYONc3W8v56fp+AHyZeSGUTguky9jWJzG4wufO8gUtKku+fXVhxg==
+X-Received: by 2002:a5e:a502:0:b0:79f:8cd3:fd0e with SMTP id 2-20020a5ea502000000b0079f8cd3fd0emr9015388iog.1.1698074844161;
+        Mon, 23 Oct 2023 08:27:24 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id do38-20020a0566384ca600b0044d10eda3a8sm2272545jab.158.2023.10.23.08.27.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Oct 2023 08:27:23 -0700 (PDT)
+Message-ID: <23557993-424d-42a8-b832-2e59f164a577@kernel.dk>
+Date:   Mon, 23 Oct 2023 09:27:22 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH 3/4] iouring: remove IORING_URING_CMD_POLLED
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/fdinfo: park SQ thread while retrieving cpu/pid
 Content-Language: en-US
-To:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-        Keith Busch <kbusch@kernel.org>
-From:   Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20231018151843.3542335-4-kbusch@meta.com>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     io-uring <io-uring@vger.kernel.org>
+References: <64f28d0f-b2b9-4ff4-8e2f-efdf1c63d3d4@kernel.dk>
+ <65368e95.170a0220.4fb79.0929SMTPIN_ADDED_BROKEN@mx.google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <65368e95.170a0220.4fb79.0929SMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmuq6mgFmqwZkn3Bar7/azWaxcfZTJ
-        4l3rORaLSYeuMVqcubqQxWLvLW2L+cueslssP/6PyYHD4/LZUo9NqzrZPDYvqffYfbOBzePc
-        xQqPj09vsXh83iQXwB6VbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtq
-        q+TiE6DrlpkDdJGSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9d
-        Ly+1xMrQwMDIFKgwITvjc89apoKT7BU9uy+wNTDOYuti5OSQEDCRWP+njxnEFhLYzSixbEpq
-        FyMXkP2JUeL459/sEM43Rol/928wwXRMe7+GCSKxl1Fixb8WqKq3jBK3N/QydjFycPAK2Em8
-        WycH0sAioCrR/6EDrJlXQFDi5MwnLCC2qECSxK+rcxhBbGEBB4lVd86A1TALiEvcejIfzBYR
-        qJLom/aTDSIeJ7H0yAxmkPFsApoSFyaXgpicAuYSj25HQFTIS2x/O4cZ5BoJgakcEvcnPWGG
-        uNlF4tH0I1AfC0u8Or6FHcKWknjZ3wZlJ0tcmnkO6scSicd7DkLZ9hKtp/rB1jIDrV2/Sx9i
-        F59E7+8nTCBhCQFeiY42IYhqRYl7k56yQtjiEg9nLIGyPSRWTb8BDajtjBJ/Jl1jnMCoMAsp
-        UGYheX4WkndmIWxewMiyilEytaA4Nz012bTAMC+1HB7byfm5mxjBqVXLZQfjjfn/9A4xMnEw
-        HmKU4GBWEuGdHW6SKsSbklhZlVqUH19UmpNafIjRFBg7E5mlRJPzgck9ryTe0MTSwMTMzMzE
-        0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGpj1hBVUJD6eWMUyev+eB87l9V5i3xS59
-        WDWn84lAd1vw9EP88z/kf/D/2FbhlLnvWP1ZkzuMigEdaVUi3AtlI6TXGchVTI7WLosum3oj
-        roonL3jxTuF5Kyr2M9XuutQVOf+T6R7njX8zX2stytu3Nfws37sfJvMzzx5+bri27nPn7L7j
-        QtsO16ReK1u50iZK6XV5oOcG/ms/tm951v3q3JJjDW1xDxl79Or1+zIfvqy5eFozbVbql+u5
-        aytLppXd3+H1Zfq+LxGv5W9H71x8PfIVu9f7A68q1Q6mfDWT7Wbd+ePdOe26vnP1BTHuD4P+
-        Xl75vrxP7jNDXEfEqnVWqn/tJnxR/6HD8n/xxzd8c/SUWIozEg21mIuKEwF6moIHNgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJTldDwCzV4OlFbYvVd/vZLFauPspk
-        8a71HIvFpEPXGC3OXF3IYrH3lrbF/GVP2S2WH//H5MDhcflsqcemVZ1sHpuX1HvsvtnA5nHu
-        YoXHx6e3WDw+b5ILYI/isklJzcksSy3St0vgyvjcs5ap4CR7Rc/uC2wNjLPYuhg5OSQETCSm
-        vV/D1MXIxSEksJtRYv6dJUwQCXGJ5ms/2CFsYYmV/56zQxS9ZpSYeHIlkMPBwStgJ/FunRxI
-        DYuAqkT/hw6wXl4BQYmTM5+wgNiiAkkSe+43gsWFBRwkVt05A2YzA82/9WQ+mC0iUCWx/8dZ
-        qHicxP9LjVAHbWeUWLrqHxPILjYBTYkLk0tBTE4Bc4lHtyMgys0kurZ2MULY8hLb385hnsAo
-        NAvJFbOQbJuFpGUWkpYFjCyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGCI0lLYwfj
-        vfn/9A4xMnEwHmKU4GBWEuGdHW6SKsSbklhZlVqUH19UmpNafIhRmoNFSZzXcMbsFCGB9MSS
-        1OzU1ILUIpgsEwenVAOT6os9CvzfNKwWJ/yRYY/rYDp+1D9u/kbjPXGz30/WlSrPObnvX+VS
-        kWernEMaki5saP/TO+PaWY5jW9Ru8zR+Kdh7d9/9n/yvxf5dSv3Ft/vVNGnn2Z90WpOWph46
-        Wbe8I3fpYSGBt47LN3Jk/H3lffWHbcGxSeV2PyUaZzME6dabm60qEOx8vV2R1ygica2P8dbL
-        fr7z3jrxbvVfVhBvMHVJ65F/n0LN7n7PeTr/35zWbrGgjb84P7iU8gecfr116cX5BiuEHqk/
-        EvjkPitZbMb5pJwThzW+Wai95hJ6ckX5laH+9Y2du1sKAsufhpx6zDF7leHTJxWl4v9yamXu
-        c4W13nA8dvatqXUsT/2yX0osxRmJhlrMRcWJAISnd0UTAwAA
-X-CMS-MailID: 20231023061816epcas5p2240c0537747ac96007f17715adedcf09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231018152441epcas5p38a06f590cbe59c76ee43465de3e0be4f
-References: <20231018151843.3542335-1-kbusch@meta.com>
-        <CGME20231018152441epcas5p38a06f590cbe59c76ee43465de3e0be4f@epcas5p3.samsung.com>
-        <20231018151843.3542335-4-kbusch@meta.com>
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -117,30 +72,73 @@ Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/18/2023 8:48 PM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+On 10/23/23 9:17 AM, Gabriel Krisman Bertazi wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
 > 
-> No more users of this flag.
+>> We could race with SQ thread exit, and if we do, we'll hit a NULL pointer
+>> dereference. Park the SQPOLL thread while getting the task cpu and pid for
+>> fdinfo, this ensures we have a stable view of it.
+>>
+>> Cc: stable@vger.kernel.org
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218032
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>
+>> ---
+>>
+>> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+>> index c53678875416..cd2a0c6b97c4 100644
+>> --- a/io_uring/fdinfo.c
+>> +++ b/io_uring/fdinfo.c
+>> @@ -53,7 +53,6 @@ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
+>>  __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+>>  {
+>>  	struct io_ring_ctx *ctx = f->private_data;
+>> -	struct io_sq_data *sq = NULL;
+>>  	struct io_overflow_cqe *ocqe;
+>>  	struct io_rings *r = ctx->rings;
+>>  	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
+>> @@ -64,6 +63,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+>>  	unsigned int cq_shift = 0;
+>>  	unsigned int sq_shift = 0;
+>>  	unsigned int sq_entries, cq_entries;
+>> +	int sq_pid = -1, sq_cpu = -1;
+>>  	bool has_lock;
+>>  	unsigned int i;
+>>  
+>> @@ -143,13 +143,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+>>  	has_lock = mutex_trylock(&ctx->uring_lock);
+>>  
+>>  	if (has_lock && (ctx->flags & IORING_SETUP_SQPOLL)) {
+>> -		sq = ctx->sq_data;
+>> -		if (!sq->thread)
+>> -			sq = NULL;
+>> +		struct io_sq_data *sq = ctx->sq_data;
+>> +
+>> +		io_sq_thread_park(sq);
+>> +		if (sq->thread) {
+>> +			sq_pid = task_pid_nr(sq->thread);
+>> +			sq_cpu = task_cpu(sq->thread);
+>> +		}
+>> +		io_sq_thread_unpark(sq);
 > 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->   include/uapi/linux/io_uring.h | 2 --
->   1 file changed, 2 deletions(-)
+> Jens,
 > 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 8e61f8b7c2ced..10e724370b612 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -249,10 +249,8 @@ enum io_uring_op {
->    * sqe->uring_cmd_flags
->    * IORING_URING_CMD_FIXED	use registered buffer; pass this flag
->    *				along with setting sqe->buf_index.
-> - * IORING_URING_CMD_POLLED	driver use only
->    */
->   #define IORING_URING_CMD_FIXED	(1U << 0)
-> -#define IORING_URING_CMD_POLLED	(1U << 31)
->   
+> io_sq_thread_park will try to wake the sqpoll, which is, at least,
+> unnecessary. But I'm thinking we don't want to expose the ability to
+> schedule the sqpoll from procfs, which can be done by any unrelated
+> process.
+> 
+> To solve the bug, it should be enough to synchronize directly on
+> sqd->lock, preventing sq->thread from going away inside the if leg.
+> Granted, it is might take longer if the sqpoll is busy, but reading
+> fdinfo is not supposed to be fast.  Alternatively, don't call
+> wake_process in this case?
 
-This is bit outdated. This flag got moved to a different file since this 
-patch.
-https://lore.kernel.org/io-uring/20230928124327.135679-2-ming.lei@redhat.com/
+I did think about that but just went with the exported API. But you are
+right, it's a bit annoying that it'd also wake the thread, in case it
+was idle. Probably mostly cosmetic, but we may as well just stick with
+grabbing the sqd mutex. I'll send a v2.
+
+-- 
+Jens Axboe
+

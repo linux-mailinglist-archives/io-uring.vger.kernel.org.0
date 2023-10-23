@@ -2,184 +2,128 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC2E7D2591
-	for <lists+io-uring@lfdr.de>; Sun, 22 Oct 2023 21:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 905E27D27B7
+	for <lists+io-uring@lfdr.de>; Mon, 23 Oct 2023 02:54:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232025AbjJVTGh (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Sun, 22 Oct 2023 15:06:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45048 "EHLO
+        id S229574AbjJWAyc (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Sun, 22 Oct 2023 20:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjJVTGg (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Oct 2023 15:06:36 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2072.outbound.protection.outlook.com [40.107.212.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B69FF2;
-        Sun, 22 Oct 2023 12:06:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lqWnu9V41NSi0nySSYTXzuKSMK3yi8RARJL0O4IeBeWrXN3U7GCVtt3pyg0LX4xvrhgTBsBTf2cmcxAsu+Jpj+NVtd50R39XOh+DKk8/Q0s4UxgFPy0Mn9xRt+MsdvxeAsaPvihNuzcXOv6mBZCVp22EJo8eMYID+2R7wQEHM0Wb9gYGy+9VnOmjOwu8ooWdBtC/GJkvaeRwLain/W9Xa8YLBYzifEJZ7VrlgKaDAZ1ZqMigR6gplj9eC2K95H7UOiqDfhuDnyRbVak5fWNtxwf8U+SkgONtTAIZdH3E23TuviCpTftE6kR8lbeVp0KJZghEgzsuPSL+iV/cVOJ0wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dcpvUX1wvVxXxiQyFny6niGKeJaTGBoYpamCTQeIJbI=;
- b=dvM+D5v7lVoKnUC/WBnzf9CEWUF2PzU0O9o4jFbU3ywEBVMGxE8KOIsuyNT+fJ0yWyGJS3mm63oKGYsq52pb13O26n8wx/jcbbPvlh2D09zjfFKvwRLYzXGyosYjO7KKZ3bxcYUfNNMNxHVBbt118bxadUmWlboqMhp8R4gizq2uvmqLSKdGdm9APT7VcNujCGbX4Elhjd3ksPwsIDnwjatq29Df/orCpMIWyefbSbRGDOCQscR5SECv56zAQUOeipQDqNAkkzgG9wOoskrWXlFgKeFkv+KtOpjHvTJVlEkhdZ2o/vxys4oreGMsNCcW0r0jZ2UAZBldtjNASF95Pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dcpvUX1wvVxXxiQyFny6niGKeJaTGBoYpamCTQeIJbI=;
- b=Bb825LN704l7ibTvVAmFVzikAP56RhF7gA1GvSIK26W/I6VBJvehJHWPw9u50bPp6zL99Iwd/+nYOwqfOv6EV7OkdLo7933ssvMzWFQMBL5TI59K9yy3kgbiznugtfnjBEG/pKaCyPGRrgtKRyDKWxJwaVIftD+ycKQwBxyiIuwkWP/atJsFTSTkvxdWEKQ5d3+7CZmydmbd7CGTq+FRc0JmQBb9L7sb4PaQoGDTgaE/rBx1FA091uTW9kpeo6PWtP6BEdRnDH+o8RfBHGNgKB8D/JeiN8gB9bfgVQ8Z7Y7Jn8oahFtcgMuFz8l4YnmkcKUV/XZDltqITrSniCXiFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB6288.namprd12.prod.outlook.com (2603:10b6:8:93::7) by
- PH0PR12MB5417.namprd12.prod.outlook.com (2603:10b6:510:e1::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6907.31; Sun, 22 Oct 2023 19:06:31 +0000
-Received: from DS7PR12MB6288.namprd12.prod.outlook.com
- ([fe80::2f76:f9ae:3051:7a44]) by DS7PR12MB6288.namprd12.prod.outlook.com
- ([fe80::2f76:f9ae:3051:7a44%5]) with mapi id 15.20.6907.025; Sun, 22 Oct 2023
- 19:06:31 +0000
-Message-ID: <1673427d-b449-4f9e-b344-027c0dc2ec9f@nvidia.com>
-Date:   Sun, 22 Oct 2023 22:06:24 +0300
+        with ESMTP id S229446AbjJWAyc (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Sun, 22 Oct 2023 20:54:32 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F4AB7
+        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 17:54:29 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id a1e0cc1a2514c-7b5f1a6267bso181921241.1
+        for <io-uring@vger.kernel.org>; Sun, 22 Oct 2023 17:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1698022468; x=1698627268; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hsslYOka4dg7q6DuaUTenw8f3cz+l7QP9kA0WS8X1SI=;
+        b=KsUxTieznI8l79434ReN8QxZyfakC6tGDElKkfDzTC40ho5knqDNLrkMY2V/XkwhAv
+         cUC2JleJ5Pq6oJuptty0giNtjcSbB2vl/BKa7vv5paYJrxHW2XK/Ve0HCtI27XWn7rnY
+         i9CfVS63/l1q/BbiqdhTn9yVlecsbmq1O1YTC8eXLkkn7OUel1+xHJeaD3IBXSzcsXIj
+         rrk9OkHieh+wPmpRFfozuwwdPf59krhpdb6mQZhxCoop+gua26cv+AAiR10nyAegFL/g
+         Cm6j5X9f6SmWRro2DLeY9tQ5dZSHYxHo6wKEAHvDn5yVFUDGXv5FJ5OR4R5xLXIvLYXH
+         8SYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698022468; x=1698627268;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hsslYOka4dg7q6DuaUTenw8f3cz+l7QP9kA0WS8X1SI=;
+        b=chW4unFGu0qd+FDRDdCfYDsqZfWwDVsVYWbnqyC8BtnddVg19Q5c1zCyj2ihrudOGj
+         U+JMYZPlMxshX8M8+BEW5tVpS/XwzT23gUaGT3rqZBShjByP6EpTD++5VdTPO1VJIs1R
+         oPvBn9L2FQ4Ege9AC1SqFf5Op6QV9aFZOIoR3Dch7sYfeATKETr8PHCOUqqTP+PqKMiV
+         cg3eqDvTixmtdRIS8vkkIidE0zRmGRWHEMbmpvCNehrNO/3XCrpqTE6U5rxatMBcLLJj
+         ATdKeMnnZaW1gk0qDmD7hK+X/q5GVwviyaaHQAijjfnnfjw1rbKVO/F3eC1MaXLhRbuA
+         gsaQ==
+X-Gm-Message-State: AOJu0Yzd2K/6EIz3jV619b7jtxXQhjUBUJgNIqnVTTKzwnpOcxAEsR7w
+        hVtB91gy9oX2pkIbFUULSTiAryHS6kXe2pjuXdcjDQ==
+X-Google-Smtp-Source: AGHT+IGU2yV+iIKftPRG5fqLQ1aMnF6IkquA7w7U5zCL5YTOhqnCY2U4JTPqda4XptBUvC/NRdS3wA==
+X-Received: by 2002:a67:fe89:0:b0:457:c159:9675 with SMTP id b9-20020a67fe89000000b00457c1599675mr3168547vsr.1.1698022467953;
+        Sun, 22 Oct 2023 17:54:27 -0700 (PDT)
+Received: from [172.19.131.149] ([164.86.4.149])
+        by smtp.gmail.com with ESMTPSA id b4-20020a67f844000000b0045272462f7dsm728449vsp.26.2023.10.22.17.54.25
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Oct 2023 17:54:27 -0700 (PDT)
+Message-ID: <64f28d0f-b2b9-4ff4-8e2f-efdf1c63d3d4@kernel.dk>
+Date:   Sun, 22 Oct 2023 18:54:08 -0600
+MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC RESEND 00/11] Zero copy network RX using io_uring
-To:     David Wei <dw@davidwei.uk>, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     io-uring@vger.kernel.org, netdev@vger.kernel.org,
-        Mina Almasry <almasrymina@google.com>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20230826011954.1801099-1-dw@davidwei.uk>
 Content-Language: en-US
-From:   Gal Pressman <gal@nvidia.com>
-In-Reply-To: <20230826011954.1801099-1-dw@davidwei.uk>
+To:     io-uring <io-uring@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/fdinfo: park SQ thread while retrieving cpu/pid
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO0P265CA0007.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::18) To DS7PR12MB6288.namprd12.prod.outlook.com
- (2603:10b6:8:93::7)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6288:EE_|PH0PR12MB5417:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c919382-f52a-4c5d-a77f-08dbd3320039
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pHJ3kt5hkggcnDYjNX6XeVJTMPlO6jh4hNL4Yi2Z/cudzD+w9EY4pQ8tZPto+tcABkTE+s2Wx3ma13PiGXSoFO2sJ4uu9OoxNe6dZ0Og2hs7o3EApkLbzgRwVn4jYrUWSnKURb2SYWHyusZktXqXMQD3FvKtAmR2IDxWr80/yHOkuGGwi1ZZB4dWK5JY+5KzikEdOjnUOdoUUJyb3C8LTUycXu9+PK2nKCMitahsdUXGaQxXX42P8GDfVwsham9DxZI0UC4usjLxt95I7vPDPRbFfHKE4QH+O4sQj439XbIaEjmwsxUrSbyU9o5Gp4hz+rhldTrJ2F8T9s6XtdRIBLkfH2q2WSX0TcgudkUmXCrsXvAFzVey38PnvPP/d1vfkFLGmytQAY3dQCIaQ5clvUCnmpRPAgSEr0g21MNVvE+s841BD++SCBEhB6PFXhAk6ES9GYG6eV2uow4xbrZ3X7P0OfREoZjXJ+FZNOs7i2PEYueuxtFy+Z2aEi7tKORmYEpBUpNn5FHKxGiCa7AlvTq29RUVtYarpdlDZLx1Jb9MC10Bqq+TUyH1PWbbO3xtA6qi1qx1cYIhNXaCdmZFb/TrpZelHpKbg8rjUjZJMDpu4wSMWfi4PECrSl5MgP4eTnt9NUtcn5UdePRv+48hpnuxfESUd9TVweGlAQ+IHiyhHKg3W6llIxoOqbeCydJfc8zaGjemhdP0FB6lYFGASKiD2MPmPk5ZCYTrJh59onY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6288.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(366004)(136003)(346002)(39860400002)(230922051799003)(64100799003)(1800799009)(186009)(451199024)(83380400001)(31686004)(2906002)(36756003)(8936002)(4326008)(8676002)(53546011)(26005)(2616005)(38100700002)(6666004)(316002)(5660300002)(31696002)(6506007)(478600001)(6512007)(966005)(6486002)(86362001)(110136005)(41300700001)(66946007)(66476007)(66556008)(54906003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WWt6aG5tVDFiYlVtOHdRcHp3Z0s0TTF1QlJ6N3VFN2pBQ3lvV0dBbGswNzMr?=
- =?utf-8?B?RE9tSVZYUVFxRkZ3L1lLSmdDMXdSUjhMSXdLWTV5RTZ3UGVML2srMzRLUDdW?=
- =?utf-8?B?bHB4U25Fam9aOGVldXRSRVBiekRSYmZMU0ROblV3aWZXMVg3S3YwbTlsaHBk?=
- =?utf-8?B?eHppcG9DYkJXbHEyQXhtUytLdzJpVXdBV3NLNGNaRERpZjI2REV6RzBUczVO?=
- =?utf-8?B?OUZaYjNkdUxTSE5PWFd3NGZwWVpRcjZTN0lkY1Bia1ZZR3NlQmt0VTE4dzgw?=
- =?utf-8?B?Q2gwcWtmNTdac04wOHZBSG5ETGR1MTlqTVRKWGtXMHFFNXRjUUpXaGlZb05O?=
- =?utf-8?B?RHYza1Z3UXN2cmpBaFpJQjN4aWNvbThXY0JnTkszQUovOE5ad2IrUGhFOXRj?=
- =?utf-8?B?RzQ5azlPQjM5VWhRaGtmZVkzNnlLOE51VnV1Vk9hT3p2YURpUS9zYzF2R3Ar?=
- =?utf-8?B?YTBnTWdhckl2U0h5L0U4L2VBM2ZkNnBuUFRSWGpSc2huYjBsK2NjemZGaDly?=
- =?utf-8?B?RFhFTkpJaWhOc3VvR29KaUphdnFISEJTNkp2N0JTL2t2SmsrVHp3YVpxaUNx?=
- =?utf-8?B?REJhUGtjbnh1S05id1RpaHhVcit0U25lSnRBeWt3Ky9JK1lqK3ZYYVZVMGZz?=
- =?utf-8?B?MHRKZ2JzWXFEZkJNNHlieFJsaFVhRktuQWxJbjF5Z1VGbitLUlp0Qk9nd0Q1?=
- =?utf-8?B?ejZTK3pEdGFIRXJPQ1A0Ni8yV1FTek94NEp1TFZCWDc3Nzh6Nms0dmJDSUZ5?=
- =?utf-8?B?bi96aW5KMXdCcm9TbHRjWVpMZUxnQlBUME5zalhxVnJMeVRZTE0xbDIxL3hj?=
- =?utf-8?B?RHk1TXdVMUtoRzlRL0FwYm1tMldvODM1a25vemVERHlKVUgxK0szbkFHVE5I?=
- =?utf-8?B?ZXBmVEo5bldEcVR2QkZsYkN2aFQzalRxbUtDblJoSEtlN2Jacy9HR1J6NmhN?=
- =?utf-8?B?N0FOVDdPOFRrcWpNbFQ2NXRoSWxKZm9qQnQ3ZXQvZjU0UW1FWWFpVk0xcURI?=
- =?utf-8?B?aHVnMU92YTM4V0N0WGVRYkNQU1o2TnBncXJHQlFVMzM1a05OMHdPK0R2UWts?=
- =?utf-8?B?NFRwcW9WUmcweTFVd2cxWGs2T0ZJRzB0cWpoN0d4bUVsRFJ2WVlWR0lQRWlR?=
- =?utf-8?B?NmRrZmwyTVgrZXhmRGRleUd5Q0xMWVkzM2Y5YlVsQ00zUWlDc0RTSkJ4Ris5?=
- =?utf-8?B?eGdCS2kvV2xmTDA5eWU1SExKazJpMzMwZUQrbUdFYWNUREQ2T0tadjNCb3JO?=
- =?utf-8?B?MHlGM3pUUGZkOG9STVcreEVESmRHNFI4aUxvT09tbW1YU1hhRXl0OWRwakJG?=
- =?utf-8?B?Z2Z0NWN0K1FUa0RTTk9aMWt5Wm9nbG0wWkU0T1VlZ0ZBSHpITlNaeE9Rbk5P?=
- =?utf-8?B?MnJFRm9OeU1CN01EbTlLdEVoYWhzY2NNSVRvSnN2VUVmM2g5L2hiZGxwQmJO?=
- =?utf-8?B?YStqRjRxRm80UmhSUnZZaW04N2tCT1BWdGtOUjJLMURERUNiOENES1BweDE3?=
- =?utf-8?B?bTFZNWxhTS9mZmFDLy94cExjaVlGMzdMSStFRmx6UGhJbEMvWXBqQzJvend2?=
- =?utf-8?B?Z0pTSFRWVHppQWdlWmhmeUxWMDYxZVBUSUVJQldjZWp1RVhRWkdDQUxGdVl2?=
- =?utf-8?B?V1ZJRG00RGVKU0oySXJZQ05LeXcxVU1QeHFFa1ByMElZdXk4bDdHK2lmWUVl?=
- =?utf-8?B?S1JEQkt3QjlIcTlNMXF5OXZnRFNwUm5ETUhrMVlZOVZLSDI1aDkySDdINlIx?=
- =?utf-8?B?di9XQ1UrT2xxdlVvUWVPZlNuTGF4UDVMR0tXYzZMVTlPS0VEMjNKVTlTeVUv?=
- =?utf-8?B?UGhaOGd2RGZzS2FDaUwwTXByaFhvVHRlUHFGSzNSSlhMWWFiTGpJbElPeEVy?=
- =?utf-8?B?c1R1WjFXS1gvMm5ES3ZuKzUzcUwvWkZIaGczdVVQbzE2ai9icHpHd0hDaURW?=
- =?utf-8?B?WGowVmI0SVVLVFpiUHc3N1dBN3paVVgvWlRPRU42emFCTTd6OHR0ZDArMk9B?=
- =?utf-8?B?aDN6K1UxWDM0MnQzL1UzRHZndkt4aHFIUnp3WGdxK09mUGthQlZKQ05Ed2JL?=
- =?utf-8?B?eEx5c280a1AzUEVxdEk2MVdXVitCLzBuUXJ1N2wxMkZQUXBxNUNlQ3VIMU05?=
- =?utf-8?Q?NcoCnTVJH4XIwTt6u0h0b7vkv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c919382-f52a-4c5d-a77f-08dbd3320039
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6288.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2023 19:06:31.5074
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5zsxyHmXQnCP4Bcaa4MkEABhYlEp2k0UMOSNwxm+TyiCY+rezbJ+7AXJUzMHGzt1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5417
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 26/08/2023 4:19, David Wei wrote:
-> From: David Wei <davidhwei@meta.com>
-> 
-> This patchset is a proposal that adds zero copy network RX to io_uring.
-> With it, userspace can register a region of host memory for receiving
-> data directly from a NIC using DMA, without needing a kernel to user
-> copy.
-> 
-> Software support is added to the Broadcom BNXT driver. Hardware support
-> for receive flow steering and header splitting is required.
-> 
-> On the userspace side, a sample server is added in this branch of
-> liburing:
-> https://github.com/spikeh/liburing/tree/zcrx2
-> 
-> Build liburing as normal, and run examples/zcrx. Then, set flow steering
-> rules using ethtool. A sample shell script is included in
-> examples/zcrx_flow.sh, but you need to change the source IP. Finally,
-> connect a client using e.g. netcat and send data.
-> 
-> This patchset + userspace code was tested on an Intel Xeon Platinum
-> 8321HC CPU and Broadcom BCM57504 NIC.
-> 
-> Early benchmarks using this prototype, with iperf3 as a load generator,
-> showed a ~50% reduction in overall system memory bandwidth as measured
-> using perf counters. Note that DDIO must be disabled on Intel systems.
-> 
-> Mina et al. from Google and Kuba are collaborating on a similar proposal
-> to ZC from NIC to devmem. There are many shared functionality in netdev
-> that we can collaborate on e.g.:
-> * Page pool memory provider backend and resource registration
-> * Page pool refcounted iov/buf representation and lifecycle
-> * Setting receive flow steering
-> 
-> As mentioned earlier, this is an early prototype. It is brittle, some
-> functionality is missing and there's little optimisation. We're looking
-> for feedback on the overall approach and points of collaboration in
-> netdev.
-> * No copy fallback, if payload ends up in linear part of skb then the
->   code will not work
-> * No way to pin an RX queue to a specific CPU
-> * Only one ifq, one pool region, on RX queue...
-> 
-> This patchset is based on the work by Jonathan Lemon
-> <jonathan.lemon@gmail.com>:
-> https://lore.kernel.org/io-uring/20221108050521.3198458-1-jonathan.lemon@gmail.com/
+We could race with SQ thread exit, and if we do, we'll hit a NULL pointer
+dereference. Park the SQPOLL thread while getting the task cpu and pid for
+fdinfo, this ensures we have a stable view of it.
 
-Hello David,
+Cc: stable@vger.kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=218032
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-This work looks interesting, is there anywhere I can read about it some
-more? Maybe it was presented (and hopefully recorded) in a recent
-conference?
-Maybe something geared towards adding more drivers support?
+---
 
-I took a brief look at the bnxt patch and saw you converted the page
-pool allocation to data pool allocation, I assume this is done for data
-pages only, right? Headers are still allocated on page pool pages?
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index c53678875416..cd2a0c6b97c4 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -53,7 +53,6 @@ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
+ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+ 	struct io_ring_ctx *ctx = f->private_data;
+-	struct io_sq_data *sq = NULL;
+ 	struct io_overflow_cqe *ocqe;
+ 	struct io_rings *r = ctx->rings;
+ 	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
+@@ -64,6 +63,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+ 	unsigned int cq_shift = 0;
+ 	unsigned int sq_shift = 0;
+ 	unsigned int sq_entries, cq_entries;
++	int sq_pid = -1, sq_cpu = -1;
+ 	bool has_lock;
+ 	unsigned int i;
+ 
+@@ -143,13 +143,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+ 	has_lock = mutex_trylock(&ctx->uring_lock);
+ 
+ 	if (has_lock && (ctx->flags & IORING_SETUP_SQPOLL)) {
+-		sq = ctx->sq_data;
+-		if (!sq->thread)
+-			sq = NULL;
++		struct io_sq_data *sq = ctx->sq_data;
++
++		io_sq_thread_park(sq);
++		if (sq->thread) {
++			sq_pid = task_pid_nr(sq->thread);
++			sq_cpu = task_cpu(sq->thread);
++		}
++		io_sq_thread_unpark(sq);
+ 	}
+ 
+-	seq_printf(m, "SqThread:\t%d\n", sq ? task_pid_nr(sq->thread) : -1);
+-	seq_printf(m, "SqThreadCpu:\t%d\n", sq ? task_cpu(sq->thread) : -1);
++	seq_printf(m, "SqThread:\t%d\n", sq_pid);
++	seq_printf(m, "SqThreadCpu:\t%d\n", sq_cpu);
+ 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
+ 	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
+ 		struct file *f = io_file_from_index(&ctx->file_table, i);
 
-Thanks
+-- 
+Jens Axboe
+

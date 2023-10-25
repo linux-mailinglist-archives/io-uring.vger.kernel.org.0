@@ -2,164 +2,220 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A7977D6AE1
-	for <lists+io-uring@lfdr.de>; Wed, 25 Oct 2023 14:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 385957D6C64
+	for <lists+io-uring@lfdr.de>; Wed, 25 Oct 2023 14:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232666AbjJYMK5 (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Oct 2023 08:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54824 "EHLO
+        id S1344203AbjJYMwH (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 Oct 2023 08:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234787AbjJYMK4 (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Oct 2023 08:10:56 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 657E912A
-        for <io-uring@vger.kernel.org>; Wed, 25 Oct 2023 05:10:53 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9c41e95efcbso809595466b.3
-        for <io-uring@vger.kernel.org>; Wed, 25 Oct 2023 05:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698235852; x=1698840652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qI297aZslGadPYQ87OYdgubY0cTujXsqylI3DFo6uzY=;
-        b=iPbm++9pJxRfQVDQo19rDszJ4+D67WWIaPM4mGsKwqrZ+2ws+kyfR6PzmVh6sdJ3DJ
-         SJJNzAexHFMesl/C4FLspV8IGHSU7DjTQthL6ps0Qz6Kawo3fRrHzWMsW/JDXE/rTm3j
-         MHWu7qnPLrbeF7w//hzh/F28yFvB8ukq88T8w5TsoC6oG7U2OHIOv0l66StlEC4D2V72
-         boc2dTwbJT6gQ1yQztknRbOEBNMvtBMjU5vXT9J/8E1y2wl+5FXW68DoaxecaVlWMiYr
-         E58ta7I7v4ZGyogXtt4WeODg5rtnUegVbBJEzc3K0faqGXXK2MBAN1HPRgJkRaK/HGv+
-         VN0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698235852; x=1698840652;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qI297aZslGadPYQ87OYdgubY0cTujXsqylI3DFo6uzY=;
-        b=ByR3Gs8FinIjBzvblhoG/UWJjcIiw7XGnRZzAnWGhVvOt0E86xx1R2hG5tUIb8aQiK
-         +cxL4NhSR4dPC68tW/FCILJz2KrqvGICFgdLLVCDiOirvm2UxkGk+DC8yqXjgT1YTr/h
-         iG+A5u6L8BZr+b/5WEba/xKan+VkdUyRDwHBXw14KH5lKlV6pQRBoRag/oSyYOQUbTqz
-         KO8BJTO/QaOzFZQGRbqqTwKoskAusJ5Pjv/K6B/2TZF8U+h2deHNYrCb/yNWmCdjEqMT
-         wcJz/wrO1qUjP7INLemzWu6U//rQMq99X+onhC+A8JRlI3ts2xMbBScRd4DVKx94iaRJ
-         wybA==
-X-Gm-Message-State: AOJu0YwTEwXfwWVHd7/r5UzzbOA2R05q0bdM0PLZUIYcbyMeY38tcdL5
-        TSTCF63u0a9iN/Gr42uvBJfoP40jo6c=
-X-Google-Smtp-Source: AGHT+IEbMk8chJ1J8kRe/GKLxnUgnX026fVZghJEPfHru2MAS5xlkslljao+archjuOGBQoNK9UdBg==
-X-Received: by 2002:a17:907:9808:b0:9bd:f4b8:b0bd with SMTP id ji8-20020a170907980800b009bdf4b8b0bdmr11281018ejc.6.1698235851568;
-        Wed, 25 Oct 2023 05:10:51 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:cff2])
-        by smtp.gmail.com with ESMTPSA id t6-20020a1709067c0600b009b97521b58bsm9936541ejo.39.2023.10.25.05.10.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Oct 2023 05:10:51 -0700 (PDT)
-Message-ID: <103b6f05-831c-e875-478a-7e9f8187575e@gmail.com>
-Date:   Wed, 25 Oct 2023 13:09:50 +0100
+        with ESMTP id S1344194AbjJYMwG (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Oct 2023 08:52:06 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59CEF186
+        for <io-uring@vger.kernel.org>; Wed, 25 Oct 2023 05:52:03 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231025125200epoutp04f60bb26abce378daa0f1e4e1412b6d9b~RWsFLjdY43270132701epoutp04u
+        for <io-uring@vger.kernel.org>; Wed, 25 Oct 2023 12:52:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231025125200epoutp04f60bb26abce378daa0f1e4e1412b6d9b~RWsFLjdY43270132701epoutp04u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1698238320;
+        bh=dTub3oTWudDlzEoogyV2V94bEWlOxJf5IsqYrHW8P8k=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=cuL41rWOQUBq0fyIryHwUzT7F9XiIXNPaIr9XYeQE7bdghxw45RVehDvW5Cwkzw1W
+         pKoZsfsvfQh0QuEz2tBA4kYbcRLNOMgMic7cclsrcOsS7Na975YlaWNzBRMc8QBdjo
+         +vK0Y5MGjIT+RSVg1zZ1Hz4RT556w9PPLyDk0i0M=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20231025125200epcas5p1407966a3e16db5924edb4fddd88501a6~RWsE2DKTx2164521645epcas5p1g;
+        Wed, 25 Oct 2023 12:52:00 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4SFpjB3yNfz4x9Pt; Wed, 25 Oct
+        2023 12:51:58 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0A.25.09672.E6F09356; Wed, 25 Oct 2023 21:51:58 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20231025125158epcas5p43e825130214ee03c4b05a6c8338919ab~RWsCyGcFc0535205352epcas5p4m;
+        Wed, 25 Oct 2023 12:51:58 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20231025125158epsmtrp12b837ebea62430fa8ada3b3ba8468b42~RWsCxeSaA0709307093epsmtrp1h;
+        Wed, 25 Oct 2023 12:51:58 +0000 (GMT)
+X-AuditID: b6c32a4b-39fff700000025c8-66-65390f6e0482
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6D.A5.08817.D6F09356; Wed, 25 Oct 2023 21:51:58 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20231025125156epsmtip2734438c92e7b0c790825500ee7c11429~RWsBjO-SN2361023610epsmtip25;
+        Wed, 25 Oct 2023 12:51:56 +0000 (GMT)
+Message-ID: <1ca15dc4-6192-c557-2871-d2afbf19dd97@samsung.com>
+Date:   Wed, 25 Oct 2023 18:21:55 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/fdinfo: park SQ thread while retrieving cpu/pid
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH 1/4] block: bio-integrity: add support for user buffers
 Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     io-uring <io-uring@vger.kernel.org>
-References: <64f28d0f-b2b9-4ff4-8e2f-efdf1c63d3d4@kernel.dk>
- <65368e95.170a0220.4fb79.0929SMTPIN_ADDED_BROKEN@mx.google.com>
- <23557993-424d-42a8-b832-2e59f164a577@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <23557993-424d-42a8-b832-2e59f164a577@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
+        Keith Busch <kbusch@kernel.org>
+From:   Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20231018151843.3542335-2-kbusch@meta.com>
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmlm4ev2WqwYKPshar7/azWaxcfZTJ
+        4l3rORaLSYeuMVqcubqQxWLvLW2L+cueslssP/6PyYHD4/LZUo9NqzrZPDYvqffYfbOBzePc
+        xQqPj09vsXh83iQXwB6VbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtq
+        q+TiE6DrlpkDdJGSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9d
+        Ly+1xMrQwMDIFKgwITujbc9P9oIn0hUbby1kb2BcKNbFyMkhIWAi0b/tFnMXIxeHkMBuRonW
+        noVsEM4nRomnex5DZb4xSlw/+pARpmXKrTlMEIm9jBKrDp5lhHDeMkrc7VnMClLFK2AncX7e
+        LDYQm0VAVeL86SUsEHFBiZMzn4DZogJJEr+uzgGbKizgLXHixXuwemYBcYlbT+YzgdgiAlUS
+        fdN+QsXjJJYemQF0EgcHm4CmxIXJpSBhTgFzic6m18wQJfIS29/OAbtaQmAmh8T5S/+YIK52
+        kdgzvYUdwhaWeHV8C5QtJfGyvw3KTpa4NPMcVH2JxOM9B6Fse4nWU/1ge5mB9q7fpQ+xi0+i
+        9/cTJpCwhACvREebEES1osS9SU9ZIWxxiYczlkDZHhJfF66Dhtt2Rom2DXcYJzAqzEIKlVlI
+        vp+F5J1ZCJsXMLKsYpRMLSjOTU8tNi0wzksth0d4cn7uJkZwgtXy3sH46MEHvUOMTByMhxgl
+        OJiVRHgjfSxShXhTEiurUovy44tKc1KLDzGaAqNnIrOUaHI+MMXnlcQbmlgamJiZmZlYGpsZ
+        Konzvm6dmyIkkJ5YkpqdmlqQWgTTx8TBKdXAVHs3pmt+XHWDfpPNHrWPu22n3FaYUuqifDPk
+        4R2NBV8ND51uvlF4/unpRe1G1SxHOrbtYPaT22djLqx0dUf50oIffVffup/2FGi+HrLl/+JP
+        02Y+lZ+5Zonq7alFDQkPWnfoTbi25fV3lkMrpXcrz7N1fcl0aR2/Z4WG3UmPL2/WReQwL9m6
+        8+/S9cs/qilnGYQfFDvLYXSLT15X4nzP9te7ujs+33WMOL7U85LonE/dzovqhXnKlQ9mP4jP
+        aQgrPXB8A0eP7MFjjhLh14v+qX1Z9v/oT/NH2VHtYh9nF4ZEF51gZPyx+71lJYOG5zrPLwIC
+        l18I37mjuFiqzXPTFZtOvp0WB9tYbyZcna37baISS3FGoqEWc1FxIgBVpw85OQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJXjeP3zLV4GEDk8Xqu/1sFitXH2Wy
+        eNd6jsVi0qFrjBZnri5ksdh7S9ti/rKn7BbLj/9jcuDwuHy21GPTqk42j81L6j1232xg8zh3
+        scLj49NbLB6fN8kFsEdx2aSk5mSWpRbp2yVwZbTt+cle8ES6YuOthewNjAvFuhg5OSQETCSm
+        3JrD1MXIxSEksJtRYtfS/4wQCXGJ5ms/2CFsYYmV/56zQxS9ZpQ49rWBDSTBK2AncX7eLDCb
+        RUBV4vzpJSwQcUGJkzOfgNmiAkkSe+43MoHYwgLeEidevAerZwZacOvJfLC4iECVxP4fZ5kg
+        4nES/y81Ql20nVHi6ZUjzF2MHBxsApoSFyaXgtRwCphLdDa9ZoaoN5Po2trFCGHLS2x/O4d5
+        AqPQLCRnzEKybhaSlllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOJi2t
+        HYx7Vn3QO8TIxMF4iFGCg1lJhDfSxyJViDclsbIqtSg/vqg0J7X4EKM0B4uSOO+3170pQgLp
+        iSWp2ampBalFMFkmDk6pBiY1+/BDayYy3jFZPkHSWKIvUvfT1UtPcpNWr9T5umCt3N1vJ37u
+        NTK7sEGZYWfs7P6uVYuuKta5fi9uc50vealks23IYwv+5Tvztv7/unX1xLv8ni7zQ4teS0ep
+        /hfJ7n87ie2R44S+0D0yu07errO2YH+5XPLA3kq96Zx31ne+ZMvwnJPF+PjMAQ2Lq9cneDLl
+        JehavL4n/znZctkUldU+3lINAk5Te37+Y9+r1TU9Q3X6rwUnfxZ+LeZ4u5lr9orsryFNPYUP
+        ZmxZbPH8VfBityUJhytvsc47Z+NxZl2XRkHSrIc/2pZVcuwWTfCRknH3+7/Q+/v+5es3/l5y
+        dYLs30npa6/euqPA5jAx7qbhaiWW4oxEQy3mouJEANPv4hMVAwAA
+X-CMS-MailID: 20231025125158epcas5p43e825130214ee03c4b05a6c8338919ab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231018152817epcas5p454a337b03087ccaf8935a022884b7cd2
+References: <20231018151843.3542335-1-kbusch@meta.com>
+        <CGME20231018152817epcas5p454a337b03087ccaf8935a022884b7cd2@epcas5p4.samsung.com>
+        <20231018151843.3542335-2-kbusch@meta.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On 10/23/23 16:27, Jens Axboe wrote:
-> On 10/23/23 9:17 AM, Gabriel Krisman Bertazi wrote:
->> Jens Axboe <axboe@kernel.dk> writes:
->>
->>> We could race with SQ thread exit, and if we do, we'll hit a NULL pointer
->>> dereference. Park the SQPOLL thread while getting the task cpu and pid for
->>> fdinfo, this ensures we have a stable view of it.
->>>
->>> Cc: stable@vger.kernel.org
->>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218032
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->>> ---
->>>
->>> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
->>> index c53678875416..cd2a0c6b97c4 100644
->>> --- a/io_uring/fdinfo.c
->>> +++ b/io_uring/fdinfo.c
->>> @@ -53,7 +53,6 @@ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
->>>   __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
->>>   {
->>>   	struct io_ring_ctx *ctx = f->private_data;
->>> -	struct io_sq_data *sq = NULL;
->>>   	struct io_overflow_cqe *ocqe;
->>>   	struct io_rings *r = ctx->rings;
->>>   	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
->>> @@ -64,6 +63,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
->>>   	unsigned int cq_shift = 0;
->>>   	unsigned int sq_shift = 0;
->>>   	unsigned int sq_entries, cq_entries;
->>> +	int sq_pid = -1, sq_cpu = -1;
->>>   	bool has_lock;
->>>   	unsigned int i;
->>>   
->>> @@ -143,13 +143,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
->>>   	has_lock = mutex_trylock(&ctx->uring_lock);
->>>   
->>>   	if (has_lock && (ctx->flags & IORING_SETUP_SQPOLL)) {
->>> -		sq = ctx->sq_data;
->>> -		if (!sq->thread)
->>> -			sq = NULL;
->>> +		struct io_sq_data *sq = ctx->sq_data;
->>> +
->>> +		io_sq_thread_park(sq);
->>> +		if (sq->thread) {
->>> +			sq_pid = task_pid_nr(sq->thread);
->>> +			sq_cpu = task_cpu(sq->thread);
->>> +		}
->>> +		io_sq_thread_unpark(sq);
->>
->> Jens,
->>
->> io_sq_thread_park will try to wake the sqpoll, which is, at least,
->> unnecessary. But I'm thinking we don't want to expose the ability to
->> schedule the sqpoll from procfs, which can be done by any unrelated
->> process.
->>
->> To solve the bug, it should be enough to synchronize directly on
->> sqd->lock, preventing sq->thread from going away inside the if leg.
->> Granted, it is might take longer if the sqpoll is busy, but reading
->> fdinfo is not supposed to be fast.  Alternatively, don't call
->> wake_process in this case?
+On 10/18/2023 8:48 PM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> I did think about that but just went with the exported API. But you are
-> right, it's a bit annoying that it'd also wake the thread, in case it
+> User space passthrough commands that utilize metadata currently need to
+> bounce the "integrity" buffer through the kernel. This adds unnecessary
+> overhead and memory pressure.
+> 
+> Add support for mapping user space directly so that we can avoid this
+> costly copy. This is similiar to how the bio payload utilizes user
+> addresses with bio_map_user_iov().
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>   block/bio-integrity.c | 67 +++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/bio.h   |  8 ++++++
+>   2 files changed, 75 insertions(+)
+> 
+> diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+> index ec8ac8cf6e1b9..08f70b837a29b 100644
+> --- a/block/bio-integrity.c
+> +++ b/block/bio-integrity.c
+> @@ -91,6 +91,19 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+>   }
+>   EXPORT_SYMBOL(bio_integrity_alloc);
+>   
+> +static void bio_integrity_unmap_user(struct bio_integrity_payload *bip)
+> +{
+> +	bool dirty = bio_data_dir(bip->bip_bio) == READ;
+> +	struct bvec_iter iter;
+> +	struct bio_vec bv;
+> +
+> +	bip_for_each_vec(bv, bip, iter) {
+> +		if (dirty && !PageCompound(bv.bv_page))
+> +			set_page_dirty_lock(bv.bv_page);
+> +		unpin_user_page(bv.bv_page);
+> +	}
+> +}
+> +
+>   /**
+>    * bio_integrity_free - Free bio integrity payload
+>    * @bio:	bio containing bip to be freed
+> @@ -105,6 +118,8 @@ void bio_integrity_free(struct bio *bio)
+>   
+>   	if (bip->bip_flags & BIP_BLOCK_INTEGRITY)
+>   		kfree(bvec_virt(bip->bip_vec));
+> +	else if (bip->bip_flags & BIP_INTEGRITY_USER)
+> +		bio_integrity_unmap_user(bip);;
+>   
+>   	__bio_integrity_free(bs, bip);
+>   	bio->bi_integrity = NULL;
+> @@ -160,6 +175,58 @@ int bio_integrity_add_page(struct bio *bio, struct page *page,
+>   }
+>   EXPORT_SYMBOL(bio_integrity_add_page);
+>   
+> +int bio_integrity_map_user(struct bio *bio, void __user *ubuf, unsigned int len,
+> +			   u32 seed, u32 maxvecs)
+> +{
+> +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+> +	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
+> +	struct page *stack_pages[UIO_FASTIOV];
+> +	size_t offset = offset_in_page(ubuf);
+> +	unsigned long ptr = (uintptr_t)ubuf;
+> +	struct page **pages = stack_pages;
+> +	struct bio_integrity_payload *bip;
+> +	int npages, ret, i;
+> +
+> +	if (bio_integrity(bio) || ptr & align || maxvecs > UIO_FASTIOV)
+> +		return -EINVAL;
+> +
+> +	bip = bio_integrity_alloc(bio, GFP_KERNEL, maxvecs);
+> +	if (IS_ERR(bip))
+> +		return PTR_ERR(bip);
+> +
+> +	ret = pin_user_pages_fast(ptr, UIO_FASTIOV, FOLL_WRITE, pages);
 
-Waking it up is not a problem but without parking sq thread won't drop
-the lock until it's time to sleep, which might be pretty long leaving
-the /proc read stuck on the lock uninterruptibly.
+Why not pass maxvecs here? If you pass UIO_FASTIOV, it will map those 
+many pages here. And will result into a leak (missed unpin) eventually 
+(see below).
 
-Aside from parking vs lock, there is a lock inversion now:
+> +	if (unlikely(ret < 0))
+> +		goto free_bip;
+> +
+> +	npages = ret;
+> +	for (i = 0; i < npages; i++) {
+> +		u32 bytes = min_t(u32, len, PAGE_SIZE - offset);
 
-proc read                   | SQPOLL
-                             |
-try_lock(ring) // success   |
-                             | woken up
-                             | lock(sqd); // success
-lock(sqd); // stuck         |
-                             | try to submit requests
-                             | -- lock(ring); // stuck
+Nit: bytes can be declared outside.
 
+> +		ret = bio_integrity_add_page(bio, pages[i], bytes, offset);
+> +		if (ret != bytes) {
+> +			ret = -EINVAL;
+> +			goto release_pages;
+> +		}
+> +		len -= ret;
 
-> was idle. Probably mostly cosmetic, but we may as well just stick with
-> grabbing the sqd mutex. I'll send a v2.
+Take the case of single '4KB + 8b' io.
+This len will become 0 in the first iteration.
+But the loop continues for UIO_FASTIOV iterations. It will add only one 
+page into bio_integrity_add_page.
 
-
--- 
-Pavel Begunkov
+And that is what it will unpin during bio_integrity_unmap_user(). 
+Remaining pages will continue to remain pinned.

@@ -2,90 +2,110 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B64F57D6F99
-	for <lists+io-uring@lfdr.de>; Wed, 25 Oct 2023 16:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8D47D7103
+	for <lists+io-uring@lfdr.de>; Wed, 25 Oct 2023 17:34:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234367AbjJYOmy (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Oct 2023 10:42:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42304 "EHLO
+        id S232469AbjJYPbo (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Wed, 25 Oct 2023 11:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234466AbjJYOmx (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Oct 2023 10:42:53 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26364B0;
-        Wed, 25 Oct 2023 07:42:52 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFB5C433C7;
-        Wed, 25 Oct 2023 14:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698244971;
-        bh=mLkOdv4b8i2eFv8X9BAoS+Y8GxKrlJPAVyrio6dKXsM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WNCl4OydQlz7ER2rwKCubLGIZ3l6bw4RfTfDTHRwG8h8gTk5uAEHNCOW8nJkh8/tm
-         v5IfrECbzJ87hTFtOria90MP+xZ4DZbIsQ5XcbF26nSne5s5gsICe9I6JXeuoS1rfW
-         CsYzCE84HAr/8BSLezYABVL1m12erLdFWL1gzO5alf2Jd7bkzGlMewwilXEWFuNsgu
-         ttJFQI5GaWOUmjfDPOCvkxO/hlR1MWe3F3gJPM/HStqJimqpQRj7dvjC3TF0qnADq2
-         b37MkX7iKEpEA3T7MGAnMy0g9kprK4eUquTYUPpkHxbfcYwPlm3+/uYujolQMiMXOQ
-         9U3YEHdaoWIqA==
-Date:   Wed, 25 Oct 2023 08:42:48 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-        axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com
-Subject: Re: [PATCH 1/4] block: bio-integrity: add support for user buffers
-Message-ID: <ZTkpaHa8fM4xhLz4@kbusch-mbp.dhcp.thefacebook.com>
-References: <20231018151843.3542335-1-kbusch@meta.com>
- <CGME20231018152817epcas5p454a337b03087ccaf8935a022884b7cd2@epcas5p4.samsung.com>
- <20231018151843.3542335-2-kbusch@meta.com>
- <1ca15dc4-6192-c557-2871-d2afbf19dd97@samsung.com>
+        with ESMTP id S233509AbjJYPbn (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Oct 2023 11:31:43 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA80E12A;
+        Wed, 25 Oct 2023 08:31:40 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 485AD5C0256;
+        Wed, 25 Oct 2023 11:31:38 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 25 Oct 2023 11:31:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1698247898; x=1698334298; bh=ai
+        Kn5n1MmCFRtwo5nv9MUY6v3o4pix8zhxOK0UebHoU=; b=qlZiRKS1hTasqNg1V3
+        6EMQ8eFcjguQKiyx51dthiJWn7PeWXjptt4ZasZPeaAfXtd+4AjNiqBz30JkSe+m
+        wcfV9E8sb/udijqwx5QXCsTwzB/JpLeYFG8tHyUC6XIm6gXr+JlyZMl8EYJ/v11S
+        4IbbZQN6P3qqP4+ksKOEPTT7ukFoXc22TiMXG2FLtv0uAsAKp+M0Iv0wzJWSkFrQ
+        cXM2xmoYnMWrpFw+ul+phHv0BCh2XetJM0tbfLWK9f42ljNZF+LWvVquGOIJX3uT
+        /G7wT6PDIol/jbH3jW6QhTbpPaejIYZnGQyFIjhwxOO8dSjSFQ6MJTewiaKbjpsz
+        hfgg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1698247898; x=1698334298; bh=aiKn5n1MmCFRt
+        wo5nv9MUY6v3o4pix8zhxOK0UebHoU=; b=aG9JQ6VcOe1TF/z3wY+6b2jsplXNQ
+        dvyUMjp8wxRK6ywjTxpq1Fje6P4fcB0nQnMMee5wHdZB+a4ucUng9pMOeABOxxml
+        m+Nm391FtIFjLuZ+iIzeU2nTLpQeJV6DovlZ+iTE9ia0WZtay9sC2hgBOnnOMeUj
+        bZ7dq/YSybDz4p/ZpNivfjUDAi4kKRiTMy/Du8zIcsvNs8Mwo7yhLOtC8efeDlv8
+        jSvpxcr33uNq8UEXIBw/FQ0SLwU+xw8OJAIRsWLGbpZwYZvLfPPWRfctjavcjfjh
+        Nsnz9NzJaSVFC2EUpkmHRkwjXOQ9fwrBcbg1h6+Y4DO6Tyik7GSf4M0Ag==
+X-ME-Sender: <xms:2TQ5ZZNkE7jiyLA5sxO2KBcCBVjxDOG-6cx4NWSYf7qgUzIXhYfgKg>
+    <xme:2TQ5Zb8AGEbtUuW00kjcw56S5UR9PUKppskZ8dr0q5lqTfLpcV1bX0fbSzg7MaKIY
+    _rOhdKPFyX-MM0lDw>
+X-ME-Received: <xmr:2TQ5ZYRDWLJnMACKezkyJtr7feL_zaHfk29WQYAYUxKkGK9TWfgQaStAg2GrpVf8jrquInXyxwCfyahw3l6l57Mlp6z4gww59p8-tkxjtt-SvI0P7bNRNe_1gVa5>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrledtgdekhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
+    htthgvrhhnpedvffefvefhteevffegieetfefhtddvffejvefhueetgeeludehteevudei
+    tedtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grnhgurhgvshesrghnrghrrgiivghlrdguvg
+X-ME-Proxy: <xmx:2TQ5ZVvD0DZDpRu3VBcgin-3OVd5hv0URQYfmEEvNuiHX1-gfAELtw>
+    <xmx:2TQ5ZRe0jiSIvdqTRlRm2ObbkelgGlivqFcfYgPihiaXuT7ax2IODQ>
+    <xmx:2TQ5ZR30qT7waBTZvxtt_dx9vwkqKyAaa-J200x2C2ExSWrqXAOoRg>
+    <xmx:2jQ5ZSV6djBNyKGJ1S8TXj4qcTlm6tPOEeaSJJ-Potq7Nezc1pSEnQ>
+Feedback-ID: id4a34324:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Oct 2023 11:31:37 -0400 (EDT)
+Date:   Wed, 25 Oct 2023 08:31:35 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Shreeya Patel <shreeya.patel@collabora.com>,
+        linux-ext4@vger.kernel.org,
+        Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>,
+        gustavo.padovan@collabora.com, zsm@google.com, garrick@google.com,
+        Linux regressions mailing list <regressions@lists.linux.dev>,
+        io-uring@vger.kernel.org
+Subject: Re: task hung in ext4_fallocate #2
+Message-ID: <20231025153135.kfnldzle3rglmfvp@awork3.anarazel.de>
+References: <20231017033725.r6pfo5a4ayqisct7@awork3.anarazel.de>
+ <20231018004335.GA593012@mit.edu>
+ <20231018025009.ulkykpefwdgpfvzf@awork3.anarazel.de>
+ <ZTcZ9+n+jX6UDrgd@dread.disaster.area>
+ <74921cba-6237-4303-bb4c-baa22aaf497b@kernel.dk>
+ <ab4f311b-9700-4d3d-8f2e-09ccbcfb3df5@kernel.dk>
+ <ZThcATP9zOoxb4Ec@dread.disaster.area>
+ <4ace2109-3d05-4ca0-b582-f7b8db88a0ca@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ca15dc4-6192-c557-2871-d2afbf19dd97@samsung.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <4ace2109-3d05-4ca0-b582-f7b8db88a0ca@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 06:21:55PM +0530, Kanchan Joshi wrote:
-> On 10/18/2023 8:48 PM, Keith Busch wrote:
-> >   }
-> >   EXPORT_SYMBOL(bio_integrity_add_page);
-> >   
-> > +int bio_integrity_map_user(struct bio *bio, void __user *ubuf, unsigned int len,
-> > +			   u32 seed, u32 maxvecs)
-> > +{
-> > +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
-> > +	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
-> > +	struct page *stack_pages[UIO_FASTIOV];
-> > +	size_t offset = offset_in_page(ubuf);
-> > +	unsigned long ptr = (uintptr_t)ubuf;
-> > +	struct page **pages = stack_pages;
-> > +	struct bio_integrity_payload *bip;
-> > +	int npages, ret, i;
-> > +
-> > +	if (bio_integrity(bio) || ptr & align || maxvecs > UIO_FASTIOV)
-> > +		return -EINVAL;
-> > +
-> > +	bip = bio_integrity_alloc(bio, GFP_KERNEL, maxvecs);
-> > +	if (IS_ERR(bip))
-> > +		return PTR_ERR(bip);
-> > +
-> > +	ret = pin_user_pages_fast(ptr, UIO_FASTIOV, FOLL_WRITE, pages);
-> 
-> Why not pass maxvecs here? If you pass UIO_FASTIOV, it will map those 
-> many pages here. And will result into a leak (missed unpin) eventually 
-> (see below).
+Hi,
 
-The 'maxvecs' is for the number of bvecs, and UIO_FASTIOV is for the
-number of pages. A single bvec can contain multiple pages, so the idea
-was to attempt merging if multiple pages were required.
+On 2023-10-24 18:34:05 -0600, Jens Axboe wrote:
+> Yeah I'm going to do a revert of the io_uring side, which effectively
+> disables it. Then a revised series can be done, and when done, we could
+> bring it back.
 
-This patch though didn't calculate the pages right. Next version I'm
-working on uses iov_iter instead. V2 also retains a kernel copy
-fallback.
+I'm queueing a test to confirm that the revert actually fixes things. Is there
+still benefit in testing your other patch in addition upstream?
+
+Greetings,
+
+Andres Freund

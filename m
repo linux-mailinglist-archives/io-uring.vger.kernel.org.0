@@ -2,79 +2,71 @@ Return-Path: <io-uring-owner@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 135437D7B09
-	for <lists+io-uring@lfdr.de>; Thu, 26 Oct 2023 04:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FF37D9BF2
+	for <lists+io-uring@lfdr.de>; Fri, 27 Oct 2023 16:46:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjJZCsj (ORCPT <rfc822;lists+io-uring@lfdr.de>);
-        Wed, 25 Oct 2023 22:48:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41020 "EHLO
+        id S1345911AbjJ0OqM (ORCPT <rfc822;lists+io-uring@lfdr.de>);
+        Fri, 27 Oct 2023 10:46:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjJZCsi (ORCPT
-        <rfc822;io-uring@vger.kernel.org>); Wed, 25 Oct 2023 22:48:38 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60AB7A4;
-        Wed, 25 Oct 2023 19:48:35 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 165815C025C;
-        Wed, 25 Oct 2023 22:48:32 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 25 Oct 2023 22:48:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1698288512; x=1698374912; bh=p4
-        mm4cDQKu961WJfXf5ZKxas8+Y9WvFVFAtM+Ijwt/o=; b=k4S+qME+vDCFI/L+OE
-        XhNh0TqTdiBzriTPN5QsC9VvK6NV7nRTgPgoflUo/Y15/p+SOYJChzCnnvvmUd8I
-        Do6TnS/l2w1DNQaC1iOX9X8HTIlUta5vP7HmYBwLJSCAyQr+1VBpMN9eSDi+6/8L
-        JQl2cfx+sQgmzrCPVBdJlCylt+iDrEgThoMNL3aVmpXtym84z87A2m/YSJ4HwRJ2
-        LbXnBcuvlbkAw7wz1IMdPq51p0hlKNQkBSuyGp1vRvhu5RXI+tDtXJzXo1LqPX9R
-        DA8BX+MzBEn+95d0qWPlS6QGorvS6X6G4WaetdVSWe7Kcq9ORkxmp47o8Ze9LaJm
-        cdPA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1698288512; x=1698374912; bh=p4mm4cDQKu961
-        WJfXf5ZKxas8+Y9WvFVFAtM+Ijwt/o=; b=m37B8FGmXPiLCc/wixUuL3tx5MeWN
-        WEV60oXL8y0gVVM6KpZp5O6HuLZSV0rjWdQqW8EyyFds3CHZ3FbJxXbgOpmv4fif
-        9t7bFiqNtfu6+UYovL/Z7wtCNAXOIjpAPiaKpcmS6CVZ+XFrFJq4e9fHwrTMMUbs
-        ViqWd0t4nd5ERoVmkgQCvl/nQouQwRrvhkphcaeeA7IZoGQOBLIE9xNaQgM+DHqy
-        0+M6o3X0Izp66zzVTXcoJA3mEfEGBCEnlZJP74bJ9gXYG0jA1/QiZSSLktlxKV+S
-        0eG856i7RlL8AoCCq8kMZX9zkhBjF6iu2UgpgrN8A1VwEOFm1tJM2rE8g==
-X-ME-Sender: <xms:f9M5ZeU1dIt9cfQJ7qS3wBOpMIQGjnlwQESweSSCRl7kZg90RsB1kg>
-    <xme:f9M5ZanM-FUf5OmTE2tJj68dUdw6ulCKBBDQkYNeVUCOuhieHn1gwYR3VWcPv8QFC
-    ug2EGuusn1xnGS2fA>
-X-ME-Received: <xmr:f9M5ZSZS-1MWjXlshEB1KHVR4G3ge99u8NPsxT6c2V1HGI3N-rkzhF7ry-1obz9O1W9OedCYI6UJEKhNrskS485jvq3ZOELYlOMvrqmqcy0V5RNdirYpxNIyasjB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrledugdeivdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
-    htthgvrhhnpedvffefvefhteevffegieetfefhtddvffejvefhueetgeeludehteevudei
-    tedtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grnhgurhgvshesrghnrghrrgiivghlrdguvg
-X-ME-Proxy: <xmx:f9M5ZVWKu4F5X-DEJrWOUPifnOs31R0_UQbFRqLMaVqXVq8QpKEYIQ>
-    <xmx:f9M5ZYkIwjOWSJdlvQK6OTpGPmHv3W1VbW_UKaP_SDHxfQAWCaUWQg>
-    <xmx:f9M5ZadUe4qrbz4oamXvJv7LqT7MyNns6TimcIUCzqxeyTaUdyf78w>
-    <xmx:gNM5ZRfPz3Z-EL5qoeIfU84DQ-FTiFEcdK-pab72Trhe8Slka9CEgQ>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Oct 2023 22:48:31 -0400 (EDT)
-Date:   Wed, 25 Oct 2023 19:48:29 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        with ESMTP id S1345991AbjJ0OqJ (ORCPT
+        <rfc822;io-uring@vger.kernel.org>); Fri, 27 Oct 2023 10:46:09 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E7CC4
+        for <io-uring@vger.kernel.org>; Fri, 27 Oct 2023 07:46:03 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id ca18e2360f4ac-7a9447c828aso826939f.1
+        for <io-uring@vger.kernel.org>; Fri, 27 Oct 2023 07:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1698417963; x=1699022763; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w3WKPOInrEdvQkvpwxwv5Fja/uHzd3UARsSrjsxhvxA=;
+        b=fnSQgawiwrFLxVRv9Qf/SuSoivMqsIsFZLGIPLxGVjKXUdjzKWsGUENpuXOsYw1xhw
+         ODnMbfX1PJ8cA2Dc9fK6vaU3u0cdluF3LNdIIdeF4MPeukFvQv/OoHb3+5zY2HhVuYyk
+         5lNEioCKlWkyrhXzD1i3W8nWzc3tIuzls1rJBXAyIvsLjw/zGhB/kzFlxYHkbYcu/Cbx
+         y1+XhwA/tDr4EbSWPBIzGUgH+R27GvB56qgNDCt4MTVsQTvH+niGRZttxRUvcillztgg
+         3qb03ePf06aiZ60+OtikUGJ9qciS/hPq6djq5V34JdHn3B54B/0t/98RrPCZg3jCXGs+
+         bKiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698417963; x=1699022763;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w3WKPOInrEdvQkvpwxwv5Fja/uHzd3UARsSrjsxhvxA=;
+        b=aQw0atomFcCpSn5JEnpDBCPjEwMt1+/UFi41Uv3mF8xB4rtKxYjtVsPyr/2XIVyTy6
+         dBqIafiTgevLNOUFDLmtoJzDn/U5n3cCmkL2iLGqDRR9wPzp3hNszLPpSuHXJ/OgAfxI
+         vNeH+ePkfLa4AhL5Nk2tsA7jgXRWjatwWceATOLvNjwKNRGIyJvi3zgYqqkERwOvj7Ln
+         0unGHHBf8p7eljnpUs3bFGtuBm6ekNBkHj2CtbzcHL7Ay51PUTC2m4yuzTXQkGRqupu0
+         LNgmMWv1w8Cw8DfnfqbDEsOkxKn4ZbgUi000PFrvEYiIDD/ZZ9lD4kf8Ps4tUtvWIpl1
+         FfmA==
+X-Gm-Message-State: AOJu0YzLeWcytIjpEpguqBMBtuhWqYcjp9c3p0TF4Cpyc3EMuSOuMTUc
+        TDKe3XXuf7AR7NAIUkh1/FOKug==
+X-Google-Smtp-Source: AGHT+IHmCzlqOlY3EomSO6T6RBCPoJ56NrwN0Ratf4Xmk5f2jtUUYWADjfWiLvNvMD7NWy9RJpRVLw==
+X-Received: by 2002:a6b:500a:0:b0:792:6068:dcc8 with SMTP id e10-20020a6b500a000000b007926068dcc8mr3504618iob.2.1698417962713;
+        Fri, 27 Oct 2023 07:46:02 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id h5-20020a0566380f0500b00452a3ffe215sm439470jas.87.2023.10.27.07.46.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Oct 2023 07:46:01 -0700 (PDT)
+Message-ID: <84a42959-e15f-4128-ae2f-df9650879556@kernel.dk>
+Date:   Fri, 27 Oct 2023 08:46:00 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: task hung in ext4_fallocate #2
+Content-Language: en-US
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Andres Freund <andres@anarazel.de>,
+        Dave Chinner <david@fromorbit.com>,
         Thorsten Leemhuis <regressions@leemhuis.info>,
         Shreeya Patel <shreeya.patel@collabora.com>,
         linux-ext4@vger.kernel.org,
-        Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>,
+        =?UTF-8?Q?Ricardo_Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>,
         gustavo.padovan@collabora.com, zsm@google.com, garrick@google.com,
         Linux regressions mailing list <regressions@lists.linux.dev>,
         io-uring@vger.kernel.org
-Subject: Re: task hung in ext4_fallocate #2
-Message-ID: <20231026024829.vcnlmdmwi5hjjquz@awork3.anarazel.de>
-References: <20231018004335.GA593012@mit.edu>
+References: <20231017033725.r6pfo5a4ayqisct7@awork3.anarazel.de>
+ <20231018004335.GA593012@mit.edu>
  <20231018025009.ulkykpefwdgpfvzf@awork3.anarazel.de>
  <ZTcZ9+n+jX6UDrgd@dread.disaster.area>
  <74921cba-6237-4303-bb4c-baa22aaf497b@kernel.dk>
@@ -83,45 +75,34 @@ References: <20231018004335.GA593012@mit.edu>
  <4ace2109-3d05-4ca0-b582-f7b8db88a0ca@kernel.dk>
  <20231025153135.kfnldzle3rglmfvp@awork3.anarazel.de>
  <b5578447-81f6-4207-b83d-812da7c981a5@kernel.dk>
- <20231025161405.eroaskwdauj57wz6@awork3.anarazel.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231025161405.eroaskwdauj57wz6@awork3.anarazel.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+ <20231025195539.GA2897448@mit.edu>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231025195539.GA2897448@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <io-uring.vger.kernel.org>
 X-Mailing-List: io-uring@vger.kernel.org
 
-Hi,
+On 10/25/23 1:55 PM, Theodore Ts'o wrote:
+> On Wed, Oct 25, 2023 at 09:36:01AM -0600, Jens Axboe wrote:
+>>
+>> FWIW, I wrote a small test case which does seem to trigger it very fast,
+>> as expected:
+> 
+> Great!  I was about to ask if we had an easy reproducer.  Any chance
+> you can package this up as an test in xfstests?  Or would you like
+> some help with that?
 
-On 2023-10-25 09:14:05 -0700, Andres Freund wrote:
-> On 2023-10-25 09:36:01 -0600, Jens Axboe wrote:
-> > On 10/25/23 9:31 AM, Andres Freund wrote:
-> > > Hi,
-> > >
-> > > On 2023-10-24 18:34:05 -0600, Jens Axboe wrote:
-> > >> Yeah I'm going to do a revert of the io_uring side, which effectively
-> > >> disables it. Then a revised series can be done, and when done, we could
-> > >> bring it back.
-> > >
-> > > I'm queueing a test to confirm that the revert actually fixes things.
-> > > Is there still benefit in testing your other patch in addition
-> > > upstream?
-> >
-> > Don't think there's much point to testing the quick hack, I believe it
-> > should work. So testing the most recent revert is useful, though I also
-> > fully expect that to work.
->
-> I'll leave it running for a few hours, just to be sure.
+I think it's good to convert to a test case as-is, would just need to
+loop X iterations or something rather than go forever. If you want to
+run with it, please do!
 
-Quite a few hours and > 15TBW written later, no hang....
+-- 
+Jens Axboe
 
-Greetings,
-
-Andres Freund

@@ -1,182 +1,192 @@
-Return-Path: <io-uring+bounces-27-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-28-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709F77E19B6
-	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 06:48:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C550D7E1B8F
+	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 08:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34980B20CD5
-	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 05:48:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B20DB20CA7
+	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 07:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65156946B;
-	Mon,  6 Nov 2023 05:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EF1E56A;
+	Mon,  6 Nov 2023 07:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lGU/Jfru"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RkiLi7xB"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227D29463
-	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 05:48:15 +0000 (UTC)
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F456CC
-	for <io-uring@vger.kernel.org>; Sun,  5 Nov 2023 21:48:13 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231106054808epoutp03e2794f975d41439da983851d9c54b668~U8pa9VVsr0686406864epoutp03o
-	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 05:48:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231106054808epoutp03e2794f975d41439da983851d9c54b668~U8pa9VVsr0686406864epoutp03o
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD60DF66
+	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 07:55:45 +0000 (UTC)
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0FBDC0
+	for <io-uring@vger.kernel.org>; Sun,  5 Nov 2023 23:55:41 -0800 (PST)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231106075539epoutp0135176a7f1b9aef6918dd56fbf3b37101~U_Ywyhdo92716727167epoutp01S
+	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 07:55:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231106075539epoutp0135176a7f1b9aef6918dd56fbf3b37101~U_Ywyhdo92716727167epoutp01S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1699249688;
-	bh=G1I5/h3as3Zgjflvnpl7j5kSS4UnoRuSL1e3zT94Rxg=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=lGU/JfruwXZWr0czeO3cIW1o8LajTzFGJfjn4BtYaJeylHgGEqvAcSaQFMijo5qg3
-	 uNCmARdCpWxXv5n+Gqb+V9dRjz65oIfPeJYNDf/nihfcZt7R9Uwm53B7RZCRnSYaFQ
-	 ivKluNEyoZEmE19t5yXgMSN/gEmvfqRegRur3SdY=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	s=mail20170921; t=1699257340;
+	bh=6NYx99oCWyMXAuJQC3OusH2vT6lJSfTjX8zw5hfAzvE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=RkiLi7xB6zo9N59+xDVnUYmDs/jmrv43VHQ5is2cshmjymwgNPZMkTjDGwrtesrfF
+	 3b54bOggM8c8MuknK9YdOWsCvLYWrj8TBsgztKwMlh8wpxWvNz8Gz0lgklILT9o7hr
+	 k4llRwM2qWzKY0Q5ohaKBeZltJXkeRa3rmrzDsaE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
 	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20231106054808epcas5p361f1803c6f6460da849c5b02cc9391fb~U8pawaNtr2040220402epcas5p39;
-	Mon,  6 Nov 2023 05:48:08 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4SP0kZ4SyVz4x9Q1; Mon,  6 Nov
-	2023 05:48:06 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	27.C9.08567.61E78456; Mon,  6 Nov 2023 14:48:06 +0900 (KST)
+	20231106075539epcas5p3b7b48b19d7968bacebe62918775115b4~U_YwY_dFe2090520905epcas5p3h;
+	Mon,  6 Nov 2023 07:55:39 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4SP3Yk1zLXz4x9Q9; Mon,  6 Nov
+	2023 07:55:38 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.CB.19369.AFB98456; Mon,  6 Nov 2023 16:55:38 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
 	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231106054805epcas5p23a2d645e7da22902172c9bb03c614d7c~U8pYUh1Ap3040530405epcas5p2u;
-	Mon,  6 Nov 2023 05:48:05 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	20231106074844epcas5p252beb2aa7925de34aea33d5c64d1d72e~U_StddITd2058820588epcas5p2n;
+	Mon,  6 Nov 2023 07:48:44 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231106054805epsmtrp2c5aa10fe72b5c2a3b8b94de1cda4f926~U8pYTED221488914889epsmtrp2g;
-	Mon,  6 Nov 2023 05:48:05 +0000 (GMT)
-X-AuditID: b6c32a44-3abff70000002177-f2-65487e162391
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E5.67.08755.51E78456; Mon,  6 Nov 2023 14:48:05 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231106054804epsmtip1b3c3f71a9af090653eea195ad91e6d49~U8pXEHGQ_1185011850epsmtip1U;
-	Mon,  6 Nov 2023 05:48:04 +0000 (GMT)
-Message-ID: <40ac82f5-ce1b-6f49-3609-1aff496ae241@samsung.com>
-Date: Mon, 6 Nov 2023 11:18:03 +0530
+	20231106074844epsmtrp20f47fa419814ea03c209a3b9c4d9dc19~U_StctKF91829318293epsmtrp2c;
+	Mon,  6 Nov 2023 07:48:44 +0000 (GMT)
+X-AuditID: b6c32a50-9e1ff70000004ba9-ea-65489bfaa706
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7E.6E.07368.B5A98456; Mon,  6 Nov 2023 16:48:43 +0900 (KST)
+Received: from AHRE124.. (unknown [109.105.118.124]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231106074842epsmtip29fbba4a4dd6ccb175ec68b965e03fa4b~U_SsQtdsB1909319093epsmtip2Z;
+	Mon,  6 Nov 2023 07:48:42 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+	kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
+	kundan.kumar@samsung.com, wenwen.chen@samsung.com, ruyi.zhang@samsung.com,
+	Xiaobing Li <xiaobing.li@samsung.com>
+Subject: [PATCH] IO_URING: Statistics of the true utilization of sq threads.
+Date: Mon,  6 Nov 2023 15:40:55 +0800
+Message-Id: <20231106074055.1248629-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCHv2 1/4] block: bio-integrity: directly map user buffers
-Content-Language: en-US
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com, Keith Busch
-	<kbusch@kernel.org>
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20231027181929.2589937-2-kbusch@meta.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmhq5YnUeqwcdfihar7/azWaxcfZTJ
-	4l3rORaLSYeuMVqcubqQxWLvLW2L+cueslssP/6PyYHD4/LZUo9NqzrZPDYvqffYfbOBzePc
-	xQqPj09vsXh83iQXwB6VbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtq
-	q+TiE6DrlpkDdJGSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9d
-	Ly+1xMrQwMDIFKgwITtj3jHDgna+ivktvxgbGN9ydTFyckgImEhMmbmODcQWEtjNKHHjdkQX
-	IxeQ/YlRYtrNE6wQzjdGiYdzzjLCdJxavgUqsZdR4tHrD0wQzltGia/7ljKDVPEK2EmsvL6Y
-	BcRmEVCRuP9pJitEXFDi5MwnYHFRgSSJX1fngE0VFvCSuN34HayGWUBc4taT+UwgtohAlUTf
-	tJ9sEPE4iaVHZgDN5+BgE9CUuDC5FCTMKWAu8eP0DqgSeYntb+cwQxw6lUNi+tkKCNtF4sXU
-	Y2wQtrDEq+Nb2CFsKYnP7/ZCxZMlLs08xwRhl0g83nMQyraXaD3VD7aWGWjt+l36EKv4JHp/
-	P2ECCUsI8Ep0tAlBVCtK3Jv0lBXCFpd4OGMJlO0h8fjhVTZISG1nlOg4PY15AqPCLKRAmYXk
-	+VlIvpmFsHkBI8sqRsnUguLc9NRk0wLDvNRyeGwn5+duYgSnVi2XHYw35v/TO8TIxMF4iFGC
-	g1lJhPevvUeqEG9KYmVValF+fFFpTmrxIUZTYOxMZJYSTc4HJve8knhDE0sDEzMzMxNLYzND
-	JXHe161zU4QE0hNLUrNTUwtSi2D6mDg4pRqYinqfJW7P3xCu0az6KKVdRCZA6SfX+Sni7Rea
-	gt1tfrEt3mI5Zc/9ny4ma4vCL4ZUt7CYhWty627uf1A2T01qb8ZPce6fS7RT7mnJCEnqvHXV
-	6uHcbDIncfVij7zf4tcOCyd+/Pao/9DLGMOdbCtf3BBNktX/K1O7pfOAzCvlHO0jcuUX81tX
-	28yp0BITiH/zb981pUSNnQbazRFrem0+e01/qHXW0EYgjlv8kOvFv9FSNrk6if+O1PYq3GOZ
-	y5Jwb+vaP44fHPaw7dzOtoA9kWGx0sZQ32VO7+cYMBbcj/+ZkOFWfzX0SUb1r/Zlm4Trj4k+
-	M9rcdGWi0voX72zD/dRO773/RKJOPeRk8EYlluKMREMt5qLiRABkHF+lNgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJTle0ziPV4O4qXYvVd/vZLFauPspk
-	8a71HIvFpEPXGC3OXF3IYrH3lrbF/GVP2S2WH//H5MDhcflsqcemVZ1sHpuX1HvsvtnA5nHu
-	YoXHx6e3WDw+b5ILYI/isklJzcksSy3St0vgyph3zLCgna9ifssvxgbGt1xdjJwcEgImEqeW
-	b2EFsYUEdjNKzP1WBhEXl2i+9oMdwhaWWPnvOZDNBVTzmlHi8N5DjCAJXgE7iZXXF7OA2CwC
-	KhL3P81khYgLSpyc+QQsLiqQJLHnfiMTiC0s4CVxu/E7WA0z0IJbT+aDxUUEqiT2/zjLBBGP
-	k/h/CaQeZNl2RollF04AORwcbAKaEhcml4LUcAqYS/w4vYMNot5MomtrFyOELS+x/e0c5gmM
-	QrOQnDELybpZSFpmIWlZwMiyilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOJK0NHcw
-	bl/1Qe8QIxMH4yFGCQ5mJRHev/YeqUK8KYmVValF+fFFpTmpxYcYpTlYlMR5xV/0pggJpCeW
-	pGanphakFsFkmTg4pRqYFNbeO/hJ+PY7FSd+VmfLxkOLUxqXrbj6Of6XUfe806fbPLw9SxQO
-	l6SpPDn16GZoxgez3242m6f2fzn+4WqgF6/Dgan3ji9262xouhfjFJE8QyMgINjUU2lG5K6N
-	W7p8DNreR+fFys52D9j77ttyE/NtKpclOQw/yfV3GIg9ZVSZvGK5vufFu6lbHdW21xkVBtzq
-	bl46zbpq+975pe2mZ39MXrmlPHehyrG+t18eq03yMGBRfqQgH9FkI7g2dGeO++NrBncvMBqw
-	vnl+LdLyX8DFm+auOTeY5XboGL7IP3Czea3kyo03uDezujVmhR10mLkj2OyC14a55yI2l4c8
-	9QwPeJweEaFyK3657GMhJZbijERDLeai4kQA+bf61xMDAAA=
-X-CMS-MailID: 20231106054805epcas5p23a2d645e7da22902172c9bb03c614d7c
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmlu6v2R6pBt0dXBZzVm1jtFh9t5/N
+	4l3rORaLo//fsln86r7LaLH1y1dWi8u75rBZPNvLafHl8Hd2i6lbdjBZdLRcZnTg9tg56y67
+	x+WzpR59W1YxenzeJBfAEpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeY
+	m2qr5OIToOuWmQN0k5JCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0
+	L10vL7XEytDAwMgUqDAhO2PN2mOsBS2CFR+7VzM2MB7l7WLk5JAQMJGYf30eSxcjF4eQwB5G
+	iTMHN7FDOJ8YJdZ0r2GCcL4xSqz+38sK0/L9UgNU1V5GiW9HXjFDOC8ZJXYsO8oCUsUmoC1x
+	fV0XWIcIkP368VSwJcwCn4Hm3v4GViQs4CNxb/k3dhCbRUBVYv2PfWwgNq+AnUT/lBmMEOvk
+	JfYfPMsMEReUODnzCVgvM1C8eetsZoial+wSz3/JQtguEj+btjJB2MISr45vYYewpSQ+v9vL
+	BmEXSxzp+c4KcpCEQAOjxPTbV6GKrCX+XdkDtIADaIGmxPpd+hBhWYmpp9YxQezlk+j9/QRq
+	Pq/EjnkwtqrE6ksPWSBsaYnXDb+h4h4S5y7sYAYZKSQQK7Hibf0ERvlZSL6ZheSbWQiLFzAy
+	r2KUSi0ozk1PTTYtMNTNSy2HR21yfu4mRnDi1ArYwbh6w1+9Q4xMHIyHGCU4mJVEeP/ae6QK
+	8aYkVlalFuXHF5XmpBYfYjQFhvFEZinR5Hxg6s4riTc0sTQwMTMzM7E0NjNUEud93To3RUgg
+	PbEkNTs1tSC1CKaPiYNTqoFJtvdu/6XbRgHZd5XEXp52v3LQffefleKc9wsydq2VmXB7xZZD
+	ot9fGv75slXX2qluvb/vhx8cMnOV/irs0NM9LVPRN9E6de9399lC/+JW2Ol3l5U/cG76W3jO
+	eceNiVwLJvwxF/DOfNbB1y5R2iZ03XOS2YvDwupHHmiZvZFkir3j+F3JaPWROQqrDkb8efXc
+	/cmswI5ZHG66P6q4zpx6fHFmu0RWXNOqqr13z5nxnY5Uuf3h1tv1K4qOf1jpNJsp91NfA38G
+	x6mwvT13L35xL1jD2zFF9E20nOOqedfvTu8xqGJpeyEowr1nuQVH0nLelP/yzG77nBp6OTiv
+	GK7d+bPU1OQFe2hg57EOJoGlSizFGYmGWsxFxYkA61MqQCUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSvG70LI9UgyMdFhZzVm1jtFh9t5/N
+	4l3rORaLo//fsln86r7LaLH1y1dWi8u75rBZPNvLafHl8Hd2i6lbdjBZdLRcZnTg9tg56y67
+	x+WzpR59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CVsWbtMdaCFsGKj92rGRsYj/J2MXJySAiY
+	SHy/1MDexcjFISSwm1Hi3aGrLF2MHEAJaYk/f8ohaoQlVv57DlXznFHi8OHpjCAJNgFtievr
+	ulhB6kUEdCUa7yqA1DAL/GWU+Lp6DhtIjbCAj8S95d/YQWwWAVWJ9T/2gcV5Bewk+qfMYIRY
+	IC+x/+BZZoi4oMTJmU9YQGxmoHjz1tnMExj5ZiFJzUKSWsDItIpRMrWgODc9N9mwwDAvtVyv
+	ODG3uDQvXS85P3cTIzh8tTR2MN6b/0/vECMTB+MhRgkOZiUR3r/2HqlCvCmJlVWpRfnxRaU5
+	qcWHGKU5WJTEeQ1nzE4REkhPLEnNTk0tSC2CyTJxcEo1MM279DT8qsGF65WTdzr3ZwtOvNmi
+	dHvXv3DdyckGL75fzj6gyB9/es6f2UXsLSrKwcaMQWUHnksomZ636Dl2KE3h7605dz9cfRPy
+	26Ms3m7xWivOA1Kxv+VfsCgXf8/s+6J4fO2zxze2Z9d+m1STfVPYSy5hWewr+/6OFL6YiL2W
+	B9lVbm/kDrmX+eTci+9/H364K/faLq9+9j9N/1X67zqXvv6+xl555rmdN+zr4zMXxPns/2q6
+	dO+qZ7FLSxVnsqoxp/MxnPn1cFaJyBzVSzcmleoLJN7JuJtbyMYVpCmacfNl/ZOlgdZnP1ww
+	nvtqa6pgtOfWascEZ2XGCK+ZpidMjs8KLVr9xOXAlhLt6+uUWIozEg21mIuKEwGi1af/zgIA
+	AA==
+X-CMS-MailID: 20231106074844epcas5p252beb2aa7925de34aea33d5c64d1d72e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231027182010epcas5p36bcf271f93f821055206b2e04b3019a6
-References: <20231027181929.2589937-1-kbusch@meta.com>
-	<CGME20231027182010epcas5p36bcf271f93f821055206b2e04b3019a6@epcas5p3.samsung.com>
-	<20231027181929.2589937-2-kbusch@meta.com>
+X-CMS-RootMailID: 20231106074844epcas5p252beb2aa7925de34aea33d5c64d1d72e
+References: <CGME20231106074844epcas5p252beb2aa7925de34aea33d5c64d1d72e@epcas5p2.samsung.com>
 
-On 10/27/2023 11:49 PM, Keith Busch wrote:
-> +int bio_integrity_map_user(struct bio *bio, void __user *ubuf, unsigned int len,
-> +			   u32 seed)
-> +{
-> +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
-> +	unsigned long offs, align = q->dma_pad_mask | queue_dma_alignment(q);
-> +	int ret, direction, nr_vecs, i, j, folios = 0;
-> +	struct bio_vec stack_vec[UIO_FASTIOV];
-> +	struct bio_vec bv, *bvec = stack_vec;
-> +	struct page *stack_pages[UIO_FASTIOV];
-> +	struct page **pages = stack_pages;
-> +	struct bio_integrity_payload *bip;
-> +	struct iov_iter iter;
-> +	struct bvec_iter bi;
-> +	u32 bytes;
-> +
-> +	if (bio_integrity(bio))
-> +		return -EINVAL;
-> +	if (len >> SECTOR_SHIFT > queue_max_hw_sectors(q))
-> +		return -E2BIG;
-> +
-> +	if (bio_data_dir(bio) == READ)
-> +		direction = ITER_DEST;
-> +	else
-> +		direction = ITER_SOURCE;
-> +
-> +	iov_iter_ubuf(&iter, direction, ubuf, len);
-> +	nr_vecs = iov_iter_npages(&iter, BIO_MAX_VECS + 1);
-> +	if (nr_vecs > BIO_MAX_VECS)
-> +		return -E2BIG;
-> +	if (nr_vecs > UIO_FASTIOV) {
-> +		bvec = kcalloc(sizeof(*bvec), nr_vecs, GFP_KERNEL);
-> +		if (!bvec)
-> +			return -ENOMEM;
-> +		pages = NULL;
-> +	}
-> +
-> +	bytes = iov_iter_extract_pages(&iter, &pages, len, nr_vecs, 0, &offs);
-> +	if (unlikely(bytes < 0)) {
-> +		ret =  bytes;
-> +		goto free_bvec;
-> +	}
-> +
-> +	for (i = 0; i < nr_vecs; i = j) {
-> +		size_t size = min_t(size_t, bytes, PAGE_SIZE - offs);
-> +		struct folio *folio = page_folio(pages[i]);
-> +
-> +		bytes -= size;
-> +		for (j = i + 1; j < nr_vecs; j++) {
-> +			size_t next = min_t(size_t, PAGE_SIZE, bytes);
-> +
-> +			if (page_folio(pages[j]) != folio ||
-> +			    pages[j] != pages[j - 1] + 1)
-> +				break;
-> +			unpin_user_page(pages[j]);
+Since the sq thread has a while(1) structure, during this process, there
+may be a lot of time that is not processing IO but does not exceed the
+timeout period, therefore, the sqpoll thread will keep running and will
+keep occupying the CPU. Obviously, the CPU is wasted at this time;Our
+goal is to count the part of the time that the sqpoll thread actually
+processes IO, so as to reflect the part of the CPU it uses to process
+IO, which can be used to help improve the actual utilization of the CPU
+in the future.
 
-Is this unpin correct here?
+Signed-off-by: Xiaobing Li <xiaobing.li@samsung.com>
+---
+ io_uring/sqpoll.c | 8 ++++++++
+ io_uring/sqpoll.h | 2 ++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index bd6c2c7959a5..27b01ad42678 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -224,6 +224,7 @@ static int io_sq_thread(void *data)
+ 	struct io_ring_ctx *ctx;
+ 	unsigned long timeout = 0;
+ 	char buf[TASK_COMM_LEN];
++	unsigned long long start, begin, end;
+ 	DEFINE_WAIT(wait);
+ 
+ 	snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
+@@ -235,6 +236,7 @@ static int io_sq_thread(void *data)
+ 		set_cpus_allowed_ptr(current, cpu_online_mask);
+ 
+ 	mutex_lock(&sqd->lock);
++	start = jiffies;
+ 	while (1) {
+ 		bool cap_entries, sqt_spin = false;
+ 
+@@ -245,12 +247,18 @@ static int io_sq_thread(void *data)
+ 		}
+ 
+ 		cap_entries = !list_is_singular(&sqd->ctx_list);
++		begin = jiffies;
+ 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+ 			int ret = __io_sq_thread(ctx, cap_entries);
+ 
+ 			if (!sqt_spin && (ret > 0 || !wq_list_empty(&ctx->iopoll_list)))
+ 				sqt_spin = true;
+ 		}
++		end = jiffies;
++		sqd->total = end - start;
++		if (sqt_spin == true)
++			sqd->work += end - begin;
++
+ 		if (io_run_task_work())
+ 			sqt_spin = true;
+ 
+diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
+index 8df37e8c9149..c6b2ecb654fd 100644
+--- a/io_uring/sqpoll.h
++++ b/io_uring/sqpoll.h
+@@ -16,6 +16,8 @@ struct io_sq_data {
+ 	pid_t			task_pid;
+ 	pid_t			task_tgid;
+ 
++	unsigned long long work;
++	unsigned long long total;
+ 	unsigned long		state;
+ 	struct completion	exited;
+ };
+-- 
+2.34.1
+
 

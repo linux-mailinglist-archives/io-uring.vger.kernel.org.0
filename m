@@ -1,134 +1,109 @@
-Return-Path: <io-uring+bounces-45-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-46-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB54E7E2E4A
-	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 21:39:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A3C7E2E5B
+	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 21:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34411C20850
-	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 20:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F451280D11
+	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 20:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E7928DC6;
-	Mon,  6 Nov 2023 20:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB7929CF6;
+	Mon,  6 Nov 2023 20:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pyn6QsqO"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MFuHcnUa"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B705529D11
-	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 20:39:25 +0000 (UTC)
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC065D51
-	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 12:39:22 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4083f613275so36526045e9.2
-        for <io-uring@vger.kernel.org>; Mon, 06 Nov 2023 12:39:22 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCDF29D11
+	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 20:42:51 +0000 (UTC)
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE5ED7E
+	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 12:42:50 -0800 (PST)
+Received: by mail-il1-x12f.google.com with SMTP id e9e14a558f8ab-3574c225c14so6746325ab.0
+        for <io-uring@vger.kernel.org>; Mon, 06 Nov 2023 12:42:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699303160; x=1699907960; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1699303370; x=1699908170; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=shEMrHKv3bMNF4Fl2Y8B64E5+9a0oPf8G8ISdUBcYxk=;
-        b=Pyn6QsqOVa2tCxtcZ5TCKkg8ohNY19RrHoq2oQINE45P1F5EPp12rmwMRPLHcV6EZK
-         JDmrLjr06y5xXEE94QdT6zTgfpUc7C1Rd6H7bFVIPE2LitWfN83HSYKViRH8nP/gwaL3
-         hq0t1krOv8LfQzxBOWEiMauqPMwU53umAhJtTfNPpSn6Ku9zCPbqI+0S/BoRoVsr4quB
-         MQ3EOOlqAf7q6tNOeNxPEE6c/556ngS1ez+9qdbGPqdVV5FifW36MwODjwZHJl6Cdjb3
-         vaTczz44lcABQ1f3hu4uDqQ0zawFyE/Pc5+kRpdJmIt3y9Qjlo3QnoJRj4Lja5fYfBzX
-         +ATw==
+        bh=OIOeXxH5y7Jhns+ofOR+0TAbN+EY/lHQvzVJXsDlVu0=;
+        b=MFuHcnUaTzVzY4nUh1gdTGqk9p1SR9n4f4DWiR0MGTC632tV5jTbzvFecXcs4wM3au
+         DYj9pXThx4Ywo39VAPpyWSonhZLWgCM1yR1OFTD0h2+YDQoYnj6sjzhhX8I8uWfZ/Gdh
+         hcG98TQYDn2aMNvZuHoAieV8V/u1ofYiMvqwbpLV49Mwni14kl8nQ7m+VbuKO68OkEGW
+         72YZyGaPkYwavBNHrLRXXl7Zrkg/JSROVY0Li3aMgFwC8VQSAGe0+F3L1D3O8g/fQGYr
+         fdUeO++lNB0g0vvkLKfvQu+Q/p281kgz9BlgrwZdedmLixUe9XuxbAgNLBE99BJlFUHY
+         fGNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699303160; x=1699907960;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1699303370; x=1699908170;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=shEMrHKv3bMNF4Fl2Y8B64E5+9a0oPf8G8ISdUBcYxk=;
-        b=E5dD4U9J3K/qjzcgUmkjj+QK3xSdSGvyXTpT8+SRQAuBR7XAngnqqM5GmQqJV85Eiw
-         SqYDmmvgZ2n5cFRlgfuq/Y0ZxLQ3BLyv61huJonkDGD6pHrdy5c7lfdrU23dN0a/2ZYG
-         pZmJDwD5kijfsovafghBJ9Nug1jg1rZWdk0hgpclmMLlDqT3dbluLOqCrXoAerJb4mG3
-         kyYQ+//w4vE6stF0vqUK8ZjFCQUF1ZMfi2ZLcsvRyWP/4kv87TzjGtMNDsS81O3Q8UTQ
-         RXnNpRlYsD0+AYgl7lC+uVRDDi4NN+Ata9bvlK+pwLLcXahsRiWYovz8kBgeFIEpIAhE
-         jZdw==
-X-Gm-Message-State: AOJu0Yw+GjsRYnsLLKdxqzJPMqkKNYSDWEin8qZmyAn2+Cq6Go5KfeKm
-	mwCo0laDgounF810y7biSucyzXFgbys=
-X-Google-Smtp-Source: AGHT+IHZUJFwekKXdSoqdAQMj+BGEnQ5yFxQCaBim1iIqMKgCfD1YNzD4OOKIj7znyp/jU/LK/bLSg==
-X-Received: by 2002:a05:600c:9:b0:408:cd96:7164 with SMTP id g9-20020a05600c000900b00408cd967164mr737490wmc.9.1699303160080;
-        Mon, 06 Nov 2023 12:39:20 -0800 (PST)
-Received: from puck.. (finc-22-b2-v4wan-160991-cust114.vm7.cable.virginm.net. [82.17.76.115])
-        by smtp.gmail.com with ESMTPSA id s7-20020a05600c45c700b003fc16ee2864sm13349062wmo.48.2023.11.06.12.39.18
+        bh=OIOeXxH5y7Jhns+ofOR+0TAbN+EY/lHQvzVJXsDlVu0=;
+        b=dGCIbuq6RE4ZV92qsTwUaIlXZsAHfrO5pKRBqT+vaRJjy/iaTQPyapNE5itzjczLQW
+         NERGpL3O1G4XPCTeuV7w49qRj9cMswTgcbMagLoQ0J0xd/9CQl+ZkuA9JhleVvc9uS/V
+         1VeinFaaIg7noQj7gWernHOcBZSyAa5OyR3j8Ofp6ezxERzZyj/jkIqDuec5IuTj2nRH
+         T6tymE200p1Ai3KTD5PEzRPeTnP+C+19y0PoZOXlisBtOpJE2sRdkp0vwL5vZFu9nSKl
+         ts9ZlhVLxM+BQR68AZNPSN9chlWqSBzYM29kiIFb9EDXjZSt1x/iACx0NIAX/0BOSlZv
+         tAUQ==
+X-Gm-Message-State: AOJu0YxdoDMCDwE3OT1hPf3LPMIeNt2d2Njspr553iHYDc4yOkNnNFxt
+	FYDFUcDO9oRcN1igoIvtdMUFFA==
+X-Google-Smtp-Source: AGHT+IHQhbEEGIHp3U8wbxeg1NPMCrgS9kyctYR6XEIrFdFYbPiGHRZijOYmBBUiDg/ZRMZKvW947g==
+X-Received: by 2002:a6b:500a:0:b0:792:6068:dcc8 with SMTP id e10-20020a6b500a000000b007926068dcc8mr32837431iob.2.1699303369751;
+        Mon, 06 Nov 2023 12:42:49 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id z26-20020a029f1a000000b004564b193674sm2346564jal.160.2023.11.06.12.42.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 12:39:18 -0800 (PST)
-From: Dylan Yudaken <dyudaken@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk,
-	asml.silence@gmail.com,
-	Dylan Yudaken <dyudaken@gmail.com>
-Subject: [PATCH v2 3/3] io_uring: do not clamp read length for multishot read
-Date: Mon,  6 Nov 2023 20:39:09 +0000
-Message-ID: <20231106203909.197089-4-dyudaken@gmail.com>
-X-Mailer: git-send-email 2.41.0
+        Mon, 06 Nov 2023 12:42:49 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Dylan Yudaken <dyudaken@gmail.com>
+Cc: asml.silence@gmail.com
 In-Reply-To: <20231106203909.197089-1-dyudaken@gmail.com>
 References: <20231106203909.197089-1-dyudaken@gmail.com>
+Subject: Re: [PATCH v2 0/3] io_uring: mshot read fix for buffer size
+ changes
+Message-Id: <169930336907.203554.16139866523353846821.b4-ty@kernel.dk>
+Date: Mon, 06 Nov 2023 13:42:49 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-26615
 
-When doing a multishot read, the code path reuses the old read
-paths. However this breaks an assumption built into those paths,
-namely that struct io_rw::len is available for reuse by __io_import_iovec.
 
-For multishot this results in len being set for the first receive
-call, and then subsequent calls are clamped to that buffer length
-incorrectly.
+On Mon, 06 Nov 2023 20:39:06 +0000, Dylan Yudaken wrote:
+> This series fixes a bug (see [1] for liburing patch)
+> where the used buffer size is clamped to the minimum of all the
+> previous buffers selected.
+> 
+> It also as part of this forces the multishot read API to set addr &
+> len to 0.
+> len should probably have some accounting post-processing if it has
+> meaning to set it to non-zero, but I think for a new API it is simpler
+> to overly-constrain it upfront?
+> 
+> [...]
 
-Instead keep len as zero after recycling buffers, to reuse the full
-buffer size of the next selected buffer.
+Applied, thanks!
 
-Fixes: fc68fcda0491 ("io_uring/rw: add support for IORING_OP_READ_MULTISHOT")
-Signed-off-by: Dylan Yudaken <dyudaken@gmail.com>
----
- io_uring/rw.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+[1/3] io_uring: indicate if io_kbuf_recycle did recycle anything
+      commit: 89d528ba2f8281de61163c6b62e598b64d832175
+[2/3] io_uring: do not allow multishot read to set addr or len
+      commit: 49fbe99486786661994a55ced855c31d966bbdf0
+[3/3] io_uring: do not clamp read length for multishot read
+      commit: e53759298a7d7e98c3e5c2440d395d19cea7d6bf
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 8321e004ab13..64390d4e20c1 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -912,6 +912,7 @@ int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 
- int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- {
-+	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
- 	unsigned int cflags = 0;
- 	int ret;
- 
-@@ -928,7 +929,12 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 	 * handling arm it.
- 	 */
- 	if (ret == -EAGAIN) {
--		io_kbuf_recycle(req, issue_flags);
-+		/*
-+		 * Reset rw->len to 0 again to avoid clamping future mshot
-+		 * reads, in case the buffer size varies.
-+		 */
-+		if (io_kbuf_recycle(req, issue_flags))
-+			rw->len = 0;
- 		return -EAGAIN;
- 	}
- 
-@@ -941,6 +947,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 		 * jump to the termination path. This request is then done.
- 		 */
- 		cflags = io_put_kbuf(req, issue_flags);
-+		rw->len = 0; /* similarly to above, reset len to 0 */
- 
- 		if (io_fill_cqe_req_aux(req,
- 					issue_flags & IO_URING_F_COMPLETE_DEFER,
+Best regards,
 -- 
-2.41.0
+Jens Axboe
+
+
 
 

@@ -1,71 +1,74 @@
-Return-Path: <io-uring+bounces-42-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-44-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86537E2E48
-	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 21:39:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245107E2E49
+	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 21:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6671F21029
-	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 20:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C890E280D34
+	for <lists+io-uring@lfdr.de>; Mon,  6 Nov 2023 20:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C6428DC6;
-	Mon,  6 Nov 2023 20:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B492C842;
+	Mon,  6 Nov 2023 20:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPMrB31p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKOnzuI+"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06978FBEC
-	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 20:39:20 +0000 (UTC)
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CDDD47
-	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 12:39:18 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-507b96095abso6253035e87.3
-        for <io-uring@vger.kernel.org>; Mon, 06 Nov 2023 12:39:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8E029D09
+	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 20:39:24 +0000 (UTC)
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35086D76
+	for <io-uring@vger.kernel.org>; Mon,  6 Nov 2023 12:39:20 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40806e40fccso30859745e9.2
+        for <io-uring@vger.kernel.org>; Mon, 06 Nov 2023 12:39:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699303155; x=1699907955; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8HkGA5AXefipYbrTeJ2JFYbv8bsxPAJpnK/SE+yscFk=;
-        b=HPMrB31ps0FAADdND+sd5MWql0ul1ZWgAukj1urTL48zEz8ZDUzEBSdCF0uB3GoDuD
-         iNKdWMx6+l3sYP52QG4jY/VV721Rot5coqZLBakqmcOdyEKIFKmRDCEs0iTrnxxcUhMq
-         HylG2qQjC9U8IJBODhmEtumuzndXrMMDRIO9l2SaQBNbYFmru8Y02ciz2CXxJgmvSamF
-         VVVMUGyvxUsUwfb5pIrx+b0iKDLTbrJGnntGUtwH0pKfxQryC1mH/NnaehChGomguOhx
-         JqnCLbqpMzHsrq37uBU/KNY8IzCEbf7xOfavse35BPSD/0Ossd+voBkL2HwEXStHwkVg
-         Heng==
+        d=gmail.com; s=20230601; t=1699303158; x=1699907958; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CBqu+kBWQyi7JQ96NT52vJFaXu5bMWwsvdgWWdxySaE=;
+        b=bKOnzuI+17gMkL4D531q2JYEbs3+iMKSrOHNIcJaRH4SIeeTH/4hc/QXaupIeJLy8k
+         0UXhhznPCKVw6rQKWl/CmVE5sYjZTrAfDigJk7eB8iEAcjNX1eO5G5iurxK6X+p9NBYj
+         M+zNi8vimXypnAtqQaOqWjiw5oI6D5QwOA4rGmGbbn2kkMNoxR+mNXjSDHvex6814mZa
+         3MlvNBLXzMKfe741Q6MIP9VpN2wzBZ0QLOR3gKNY2vBhMcNZED4W0oqJ0szaUO5BNV6v
+         6POT6kB7xTv9HFbe/fmAKqU9nd7iyfVG2Y6w2KI6QHt9bPEePGzdfwG/fraSNiJSF+Jv
+         Fkwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699303155; x=1699907955;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8HkGA5AXefipYbrTeJ2JFYbv8bsxPAJpnK/SE+yscFk=;
-        b=N68Wge420/AhatJfgJJLc3og8WJl6VeLjSrY1gsoO7tL6g+ymsxNnA6S7SfklbXh86
-         w2bOB3jRyZf+sG5q7fgoEoLAdPuSgyz3aM0FIFEsTpzvma1r7IYN56Bg06RhEEQ6uZG9
-         83x7RGPS3b0P+nE1X67BZENb+BxEAnlnhvl7Y3DQYOnEFP4BSgIi4BbdPFtHFXzWlKFD
-         KF0MtmV5icvNLaMHkg5u25ewLUDlJks9zEiK99yfkkW4xxCr/Wi52nCgchISWGcgFa/a
-         x1xCtpxLpfYpSzRHoOTNr0cbr+DEgpaMZpl+C12SFme1btisabqrwgJNhYD6Xz9btx5N
-         vqIg==
-X-Gm-Message-State: AOJu0YwKEmkGrdWVNlp/sD2MhccGCCxsUPtFeYdZ7KvxW7FdsWU41LDT
-	KbMAdl+RjwPKBq1tra71OQ/UD7y2xW0=
-X-Google-Smtp-Source: AGHT+IH+QIAQlPR9H9S+O0PeEbWaoJUjwkCbpg/zG1i9UJWS2WeBYM8LMgn0xLhJ4/oBNn8akJb4eQ==
-X-Received: by 2002:a05:6512:33cf:b0:509:4c8a:525d with SMTP id d15-20020a05651233cf00b005094c8a525dmr11971337lfg.35.1699303155350;
-        Mon, 06 Nov 2023 12:39:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699303158; x=1699907958;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CBqu+kBWQyi7JQ96NT52vJFaXu5bMWwsvdgWWdxySaE=;
+        b=BfCoOif8N3SnwwjSucJ2hPAko50es//N1DNMszJd8/tYAAbZpkbx9mhmNohPkM9jms
+         GR+LKKHU8/5aur1sRNN8OPmfcm1sJjzTY3jv/M9EPoFyN+2kAC1lq8FQXSeZcHvFzHrS
+         5pj02wu4Oylf+nTP4JeW9pD/8gQZa9tuAupocR5Mc5emNeE3CrPV2wHY/LAUEnIcrFSz
+         uPboW42sdvBVLOvI80tx1sGSWbuPTm5ZW5JUMANcp/v+E315S48++u3y+CRh1rk6IKoe
+         WO/rv+Zhx6DXePv5TTvTPmF8tpUSSBQI+OKy1qv5YcuuLQ4yXcBWWsU13jFiTObRgEyz
+         Pcmg==
+X-Gm-Message-State: AOJu0YwCagZeB4xYHQnVSerCNSxlSNI+6DB51Z3Tp5ECeFOLRZhbs9dh
+	U3fsd6PB4Z1TCZ6FuKQzLUR1vry3hAs=
+X-Google-Smtp-Source: AGHT+IGiZHHDFwtg72NugPAdRuuLZ6kZXfGUPJpWm9r0q83dYK6g3hc/ya+h/bJ3KtqS1JijcTMitw==
+X-Received: by 2002:a05:600c:1c9d:b0:401:73b2:f043 with SMTP id k29-20020a05600c1c9d00b0040173b2f043mr787265wms.1.1699303157575;
+        Mon, 06 Nov 2023 12:39:17 -0800 (PST)
 Received: from puck.. (finc-22-b2-v4wan-160991-cust114.vm7.cable.virginm.net. [82.17.76.115])
-        by smtp.gmail.com with ESMTPSA id s7-20020a05600c45c700b003fc16ee2864sm13349062wmo.48.2023.11.06.12.39.14
+        by smtp.gmail.com with ESMTPSA id s7-20020a05600c45c700b003fc16ee2864sm13349062wmo.48.2023.11.06.12.39.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 12:39:15 -0800 (PST)
+        Mon, 06 Nov 2023 12:39:17 -0800 (PST)
 From: Dylan Yudaken <dyudaken@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: axboe@kernel.dk,
 	asml.silence@gmail.com,
 	Dylan Yudaken <dyudaken@gmail.com>
-Subject: [PATCH v2 0/3] io_uring: mshot read fix for buffer size changes
-Date: Mon,  6 Nov 2023 20:39:06 +0000
-Message-ID: <20231106203909.197089-1-dyudaken@gmail.com>
+Subject: [PATCH v2 1/3] io_uring: indicate if io_kbuf_recycle did recycle anything
+Date: Mon,  6 Nov 2023 20:39:07 +0000
+Message-ID: <20231106203909.197089-2-dyudaken@gmail.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20231106203909.197089-1-dyudaken@gmail.com>
+References: <20231106203909.197089-1-dyudaken@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -74,39 +77,92 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+It can be useful to know if io_kbuf_recycle did actually recycle the
+buffer on the request, or if it left the request alone.
 
-This series fixes a bug (see [1] for liburing patch)
-where the used buffer size is clamped to the minimum of all the
-previous buffers selected.
-
-It also as part of this forces the multishot read API to set addr &
-len to 0.
-len should probably have some accounting post-processing if it has
-meaning to set it to non-zero, but I think for a new API it is simpler
-to overly-constrain it upfront?
-
-addr is useful to force to zero as it will allow some more bits to be
-used in `struct io_rw`, which is otherwise full.
-
-v2:
- - apply comments
- - add a patch for io_kbuf_recycle to show if it did anything
-
-[1]: https://github.com/axboe/liburing/pull/981
-
-Dylan Yudaken (3):
-  io_uring: indicate if io_kbuf_recycle did recycle anything
-  io_uring: do not allow multishot read to set addr or len
-  io_uring: do not clamp read length for multishot read
-
+Signed-off-by: Dylan Yudaken <dyudaken@gmail.com>
+---
  io_uring/kbuf.c |  6 +++---
  io_uring/kbuf.h | 13 ++++++++-----
- io_uring/rw.c   | 13 ++++++++++++-
- 3 files changed, 23 insertions(+), 9 deletions(-)
+ 2 files changed, 11 insertions(+), 8 deletions(-)
 
-
-base-commit: f688944cfb810986c626cb13d95bc666e5c8a36c
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index fea06810b43d..a1e4239c7d75 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -52,7 +52,7 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
+ 	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
+ }
+ 
+-void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
++bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_buffer_list *bl;
+@@ -65,7 +65,7 @@ void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ 	 * multiple use.
+ 	 */
+ 	if (req->flags & REQ_F_PARTIAL_IO)
+-		return;
++		return false;
+ 
+ 	io_ring_submit_lock(ctx, issue_flags);
+ 
+@@ -76,7 +76,7 @@ void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ 	req->buf_index = buf->bgid;
+ 
+ 	io_ring_submit_unlock(ctx, issue_flags);
+-	return;
++	return true;
+ }
+ 
+ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags)
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index d14345ef61fc..f2d615236b2c 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -53,11 +53,11 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg);
+ 
+ unsigned int __io_put_kbuf(struct io_kiocb *req, unsigned issue_flags);
+ 
+-void io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
++bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
+ 
+ void *io_pbuf_get_address(struct io_ring_ctx *ctx, unsigned long bgid);
+ 
+-static inline void io_kbuf_recycle_ring(struct io_kiocb *req)
++static inline bool io_kbuf_recycle_ring(struct io_kiocb *req)
+ {
+ 	/*
+ 	 * We don't need to recycle for REQ_F_BUFFER_RING, we can just clear
+@@ -80,8 +80,10 @@ static inline void io_kbuf_recycle_ring(struct io_kiocb *req)
+ 		} else {
+ 			req->buf_index = req->buf_list->bgid;
+ 			req->flags &= ~REQ_F_BUFFER_RING;
++			return true;
+ 		}
+ 	}
++	return false;
+ }
+ 
+ static inline bool io_do_buffer_select(struct io_kiocb *req)
+@@ -91,12 +93,13 @@ static inline bool io_do_buffer_select(struct io_kiocb *req)
+ 	return !(req->flags & (REQ_F_BUFFER_SELECTED|REQ_F_BUFFER_RING));
+ }
+ 
+-static inline void io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
++static inline bool io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	if (req->flags & REQ_F_BUFFER_SELECTED)
+-		io_kbuf_recycle_legacy(req, issue_flags);
++		return io_kbuf_recycle_legacy(req, issue_flags);
+ 	if (req->flags & REQ_F_BUFFER_RING)
+-		io_kbuf_recycle_ring(req);
++		return io_kbuf_recycle_ring(req);
++	return false;
+ }
+ 
+ static inline unsigned int __io_put_kbuf_list(struct io_kiocb *req,
 -- 
 2.41.0
 

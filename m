@@ -1,63 +1,63 @@
-Return-Path: <io-uring+bounces-61-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-62-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B497E4AEF
-	for <lists+io-uring@lfdr.de>; Tue,  7 Nov 2023 22:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E691B7E4AF3
+	for <lists+io-uring@lfdr.de>; Tue,  7 Nov 2023 22:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF732281494
-	for <lists+io-uring@lfdr.de>; Tue,  7 Nov 2023 21:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEAA28143E
+	for <lists+io-uring@lfdr.de>; Tue,  7 Nov 2023 21:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E523A450CF;
-	Tue,  7 Nov 2023 21:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16392BCF0;
+	Tue,  7 Nov 2023 21:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="WCF6h/UL"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="T9ioqKuM"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8515F2B2D3
-	for <io-uring@vger.kernel.org>; Tue,  7 Nov 2023 21:41:06 +0000 (UTC)
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2691C10E9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E552B2EE
+	for <io-uring@vger.kernel.org>; Tue,  7 Nov 2023 21:41:07 +0000 (UTC)
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E176B10E4
 	for <io-uring@vger.kernel.org>; Tue,  7 Nov 2023 13:41:06 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1cc1ee2d8dfso55984255ad.3
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1c9b7c234a7so56356395ad.3
         for <io-uring@vger.kernel.org>; Tue, 07 Nov 2023 13:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1699393265; x=1699998065; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1699393266; x=1699998066; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CEGEZSeHFsNXXDjUe7hxxYXsucH5o3pVw1oTNiKf1kY=;
-        b=WCF6h/UL4Sl04sCFRepXbhFMm9+IC+OEifYNyXrap4HiP9asilQIBgb1tTzuEYOjd1
-         eaTh1XcCOlCWTn35sPj+wA4jRNZrwj6RQuXEcJgLLnZckuLINceRJdhXya7kHo4v8oUK
-         X1VLiAtJZegyM8cAaaR4SHn/EqQ9Rpq7a3pz8rs6mOI+4C6BBq3l3Sua+8uOoNYGaTFe
-         coaCt+lfiUuhtHLlhz8b36EYEXVsTbIBRndZY3VQ1weTowlmAo7FU5tkCYAEPywP0K1O
-         sa1NWcyd36e121818PaGCcqWnOAvwTVKBD7XfN3TRyFwIqpy0T4AN2Ai4zd0wYpD93id
-         r5pA==
+        bh=d9J1FEFzhrhikaZNta65SrTLG6ucsKYhta+WP1qgq5Y=;
+        b=T9ioqKuM6X4kUSmM0Jbhyh9n+f7Qn7Gu7a2GeBpjhQT0JAIFiM+lSBoyTzJitWekfF
+         4GnG4lPGVA2+9Jg7XFrkJB7Nc5qk2NZ5aQGeyZyVPUTwYrmmMIvVRV/96Uprpuc+kI9o
+         9yqVOJt29jVI//CNlTQxysdadMA5UxqGt5Gsnd7AAHVPuik1HpV5nsCsl0Iqbc3caFYf
+         B5yumalZuahX7oWinRiE7hq41Cw83sNTTy57wotCtd1Gn7CExVh14Su3BZCQVJDY7ogK
+         Y/aKSvEauBVBhS8vIrQXipBTs1LxgSoNX3DL7TTryFXR+V3IqxvZqqoKz1aBnN0/QTI1
+         gVoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699393265; x=1699998065;
+        d=1e100.net; s=20230601; t=1699393266; x=1699998066;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CEGEZSeHFsNXXDjUe7hxxYXsucH5o3pVw1oTNiKf1kY=;
-        b=fhE65SYW1dGxtypCUb31OwbxqQMMwIOgSjyeoE+Ajb4xeju4vWFBJKv3YyE0PyVc4Z
-         xSyAK26yRGMyk32OBfeWM2cvjI5VxCBojQ3DZeoX36ZzjpM6k19aaTIOHeyhY0n0K8j+
-         ydK+yjPgJs8ubFmEX1+btzPMsE+VXu7nUoIS7ajKhIAQSB2+g9CQ70ijAPoz7hRBaqTl
-         MjR9B4hE7RORC/ruRFMWlRO9RyvrBkgC4Gmi8CLyq8v2kAhO/kc9t0Ktol9TmXIwWm0V
-         IEIUxA6Wx5+uJOybgtxSMV6X+oufSCiw8b6io8hr2k/v3rt4Or+NvYN0d47PS//y5S8P
-         z04g==
-X-Gm-Message-State: AOJu0YyXFrqCZARZ81wbEdxgpI9i/FzIr/U1XdVe7SoPZrYYfv9l0Uh8
-	xX+V+F8AgNqwkGhUJk0ApIiZ+1ZaNEB7TolF9PnBbg==
-X-Google-Smtp-Source: AGHT+IHSl06XpdqPfoK/SHJali+kSRHZLDIfMQko+YfURseQXsqMuGdK6iNbBkPuUdvA0ZQOM6VlNA==
-X-Received: by 2002:a17:902:9b90:b0:1c3:3b5c:1fbf with SMTP id y16-20020a1709029b9000b001c33b5c1fbfmr283461plp.10.1699393265443;
-        Tue, 07 Nov 2023 13:41:05 -0800 (PST)
-Received: from localhost (fwdproxy-prn-018.fbsv.net. [2a03:2880:ff:12::face:b00c])
-        by smtp.gmail.com with ESMTPSA id o7-20020a1709026b0700b001c739768214sm280417plk.92.2023.11.07.13.41.05
+        bh=d9J1FEFzhrhikaZNta65SrTLG6ucsKYhta+WP1qgq5Y=;
+        b=axsQ47Axc3twr0Kby+OYgAdHFRsKk/Vv7rvi+jWj9I3DlefWNCxTpvYjAzlVHUWTv2
+         qoRYg2c6nJkCmIGk+B2C+xVB+4wnohGKpZMwrggjMYOb1lWNF6MUb10wPswe63DKbhjQ
+         aGv5eiBfD7h5POrBss9vKsW6HjvELqNO56le0Gu6JLoOeftjnxiDZvMU3G8zmhblzWEJ
+         kar9eMBKErp+oHoLo2sY112jWYQE1a16fppeXvISFf8upwCKd2wC6yBXBYZKtLwN8df8
+         aozJzVEgygiZJf6cXWCyPBwUDGso12auB1a6Z4yUOzhpF6cI5/fjMGUxuKDgoa0y9L0A
+         DvhA==
+X-Gm-Message-State: AOJu0YzIfeZEZMDWEQ6bm16ZSML3MaX+fdLnc8Ne6LeSfiudGuFTUYb/
+	/M6sIKrJhD/jxgNTIN1JvrMkKLycYo81YUQoPNfW/g==
+X-Google-Smtp-Source: AGHT+IEOXch3zKD+qAyCHDnaLeYtThJTFT4ZKIiazXb5IXi2lINxPtMnVCw9yz/JkYptgvDn6gPBaA==
+X-Received: by 2002:a17:903:1252:b0:1cc:6597:f40b with SMTP id u18-20020a170903125200b001cc6597f40bmr232616plh.36.1699393266238;
+        Tue, 07 Nov 2023 13:41:06 -0800 (PST)
+Received: from localhost (fwdproxy-prn-120.fbsv.net. [2a03:2880:ff:78::face:b00c])
+        by smtp.gmail.com with ESMTPSA id q13-20020a17090311cd00b001b016313b1dsm276284plh.86.2023.11.07.13.41.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 13:41:05 -0800 (PST)
+        Tue, 07 Nov 2023 13:41:06 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -72,9 +72,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Mina Almasry <almasrymina@google.com>,
 	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
 	Dragos Tatulea <dtatulea@nvidia.com>
-Subject: [PATCH 10/20] io_uring: delay ZC pool destruction
-Date: Tue,  7 Nov 2023 13:40:35 -0800
-Message-Id: <20231107214045.2172393-11-dw@davidwei.uk>
+Subject: [PATCH 11/20] net: add data pool
+Date: Tue,  7 Nov 2023 13:40:36 -0800
+Message-Id: <20231107214045.2172393-12-dw@davidwei.uk>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231107214045.2172393-1-dw@davidwei.uk>
 References: <20231107214045.2172393-1-dw@davidwei.uk>
@@ -86,115 +86,102 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-At a point in time, a ZC buf may be in:
+Add a struct data_pool that holds both a page_pool and an ifq (by
+extension, a ZC pool).
 
-* Rx queue
-* Socket
-* One of the ifq ringbufs
-* Userspace
-
-The ZC pool region and the pool itself cannot be destroyed until all
-bufs have been returned.
-
-This patch changes the ZC pool destruction to be delayed work, waiting
-for up to 10 seconds for bufs to be returned before unconditionally
-destroying the pool.
+Each hardware Rx queue configured for ZC will have one data_pool, set in
+its struct netdev_rx_queue. Payload hardware Rx queues are filled from
+the ZC pool, while header Rx queues are filled from the page_pool as
+normal.
 
 Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- io_uring/zc_rx.c | 51 ++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 45 insertions(+), 6 deletions(-)
+ include/net/data_pool.h | 74 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 include/net/data_pool.h
 
-diff --git a/io_uring/zc_rx.c b/io_uring/zc_rx.c
-index 59f279486e9a..bebcd637c893 100644
---- a/io_uring/zc_rx.c
-+++ b/io_uring/zc_rx.c
-@@ -30,6 +30,10 @@ struct io_zc_rx_pool {
- 	u32			cache_count;
- 	u32			cache[POOL_CACHE_SIZE];
- 
-+	/* delayed destruction */
-+	unsigned long		delay_end;
-+	struct delayed_work	destroy_work;
+diff --git a/include/net/data_pool.h b/include/net/data_pool.h
+new file mode 100644
+index 000000000000..bf2dff23724a
+--- /dev/null
++++ b/include/net/data_pool.h
+@@ -0,0 +1,74 @@
++#ifndef _DATA_POOL_H
++#define _DATA_POOL_H
 +
- 	/* freelist */
- 	spinlock_t		freelist_lock;
- 	u32			free_count;
-@@ -224,20 +228,57 @@ static int io_zc_rx_create_pool(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
--static void io_zc_rx_destroy_pool(struct io_zc_rx_pool *pool)
-+static void io_zc_rx_destroy_ifq(struct io_zc_rx_ifq *ifq)
++#include <linux/io_uring.h>
++#include <linux/io_uring_types.h>
++#include <linux/mm_types.h>
++#include <linux/netdevice.h>
++#include <net/page_pool/helpers.h>
++
++struct data_pool {
++	struct page_pool	*page_pool;
++	struct io_zc_rx_ifq	*zc_ifq;
++	struct ubuf_info	*zc_uarg;
++};
++
++static inline struct page *data_pool_alloc_page(struct data_pool *dp)
 +{
-+	if (ifq->dev)
-+		dev_put(ifq->dev);
-+	io_free_rbuf_ring(ifq);
-+	kfree(ifq);
++	if (dp->zc_ifq) {
++		struct io_zc_rx_buf *buf;
++
++		buf = io_zc_rx_get_buf(dp->zc_ifq);
++		if (!buf)
++			return NULL;
++		return buf->page;
++	} else {
++		return page_pool_dev_alloc_pages(dp->page_pool);
++	}
 +}
 +
-+static void io_zc_rx_destroy_pool_work(struct work_struct *work)
- {
-+	struct io_zc_rx_pool *pool = container_of(
-+			to_delayed_work(work), struct io_zc_rx_pool, destroy_work);
- 	struct device *dev = netdev2dev(pool->ifq->dev);
- 	struct io_zc_rx_buf *buf;
-+	int i, refc, count;
- 
--	for (int i = 0; i < pool->nr_pages; i++) {
-+	for (i = 0; i < pool->nr_pages; i++) {
- 		buf = &pool->bufs[i];
-+		refc = atomic_read(&buf->refcount) & IO_ZC_RX_KREF_MASK;
-+		if (refc) {
-+			if (time_before(jiffies, pool->delay_end)) {
-+				schedule_delayed_work(&pool->destroy_work, HZ);
-+				return;
-+			}
-+			count++;
-+		}
-+	}
-+
-+	if (count) {
-+		pr_debug("freeing pool with %d/%d outstanding pages\n",
-+			 count, pool->nr_pages);
-+		return;
-+	}
- 
-+	for (i = 0; i < pool->nr_pages; i++) {
-+		buf = &pool->bufs[i];
- 		io_zc_rx_unmap_buf(dev, buf);
- 	}
-+
-+	io_zc_rx_destroy_ifq(pool->ifq);
- 	kvfree(pool->bufs);
- 	kvfree(pool);
- }
- 
-+static void io_zc_rx_destroy_pool(struct io_zc_rx_pool *pool)
++static inline void data_pool_fragment_page(struct data_pool *dp,
++					   struct page *page,
++					   unsigned long bias)
 +{
-+	pool->delay_end = jiffies + HZ * 10;
-+	INIT_DELAYED_WORK(&pool->destroy_work, io_zc_rx_destroy_pool_work);
-+	schedule_delayed_work(&pool->destroy_work, 0);
++	if (dp->zc_ifq) {
++		struct io_zc_rx_buf *buf;
++
++		buf = io_zc_rx_buf_from_page(dp->zc_ifq, page);
++		atomic_set(&buf->refcount, bias);
++	} else {
++		page_pool_fragment_page(page, bias);
++	}
 +}
 +
- static struct io_zc_rx_ifq *io_zc_rx_ifq_alloc(struct io_ring_ctx *ctx)
- {
- 	struct io_zc_rx_ifq *ifq;
-@@ -258,10 +299,8 @@ static void io_zc_rx_ifq_free(struct io_zc_rx_ifq *ifq)
- 		io_close_zc_rxq(ifq);
- 	if (ifq->pool)
- 		io_zc_rx_destroy_pool(ifq->pool);
--	if (ifq->dev)
--		dev_put(ifq->dev);
--	io_free_rbuf_ring(ifq);
--	kfree(ifq);
-+	else
-+		io_zc_rx_destroy_ifq(ifq);
- }
- 
- int io_register_zc_rx_ifq(struct io_ring_ctx *ctx,
++static inline void data_pool_put_page(struct data_pool *dp, struct page *page)
++{
++	if (dp->zc_ifq) {
++		struct io_zc_rx_buf *buf;
++
++		buf = io_zc_rx_buf_from_page(dp->zc_ifq, page);
++		if (!buf)
++			page_pool_recycle_direct(dp->page_pool, page);
++		else
++			io_zc_rx_put_buf(dp->zc_ifq, buf);
++	} else {
++		WARN_ON_ONCE(page->pp_magic != PP_SIGNATURE);
++
++		page_pool_recycle_direct(dp->page_pool, page);
++	}
++}
++
++static inline dma_addr_t data_pool_get_dma_addr(struct data_pool *dp,
++						struct page *page)
++{
++	if (dp->zc_ifq) {
++		struct io_zc_rx_buf *buf;
++
++		buf = io_zc_rx_buf_from_page(dp->zc_ifq, page);
++		return io_zc_rx_buf_dma(buf);
++	} else {
++		return page_pool_get_dma_addr(page);
++	}
++}
++
++#endif
 -- 
 2.39.3
 

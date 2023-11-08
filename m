@@ -1,240 +1,323 @@
-Return-Path: <io-uring+bounces-72-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-73-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2620B7E51C0
-	for <lists+io-uring@lfdr.de>; Wed,  8 Nov 2023 09:15:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FC57E5604
+	for <lists+io-uring@lfdr.de>; Wed,  8 Nov 2023 13:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573581C209B0
-	for <lists+io-uring@lfdr.de>; Wed,  8 Nov 2023 08:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B777B20B62
+	for <lists+io-uring@lfdr.de>; Wed,  8 Nov 2023 12:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF43DDDA2;
-	Wed,  8 Nov 2023 08:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF47E16404;
+	Wed,  8 Nov 2023 12:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ou7rEsyn"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b6Erl/ry"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C358EDDA1
-	for <io-uring@vger.kernel.org>; Wed,  8 Nov 2023 08:15:34 +0000 (UTC)
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54B61712
-	for <io-uring@vger.kernel.org>; Wed,  8 Nov 2023 00:15:33 -0800 (PST)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231108081531epoutp03dfec866116bfea10612f754b774e0452~Vl8q6_ZIh0673506735epoutp03J
-	for <io-uring@vger.kernel.org>; Wed,  8 Nov 2023 08:15:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231108081531epoutp03dfec866116bfea10612f754b774e0452~Vl8q6_ZIh0673506735epoutp03J
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B6317986
+	for <io-uring@vger.kernel.org>; Wed,  8 Nov 2023 12:15:27 +0000 (UTC)
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2BA1BDA
+	for <io-uring@vger.kernel.org>; Wed,  8 Nov 2023 04:15:26 -0800 (PST)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231108121524epoutp0479c3c20738ad250828f6660f85716693~VpOHlLC3j3264032640epoutp04d
+	for <io-uring@vger.kernel.org>; Wed,  8 Nov 2023 12:15:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231108121524epoutp0479c3c20738ad250828f6660f85716693~VpOHlLC3j3264032640epoutp04d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1699431331;
-	bh=31PFSdRimMsZZ+BxKdUm1cVTn6llistXyY95FoxysL4=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Ou7rEsyn0+uDuu4v4BmuM0ZFYXTwtP1mh2BUuJNGvVDgwK1kkEeEVItSADAjKCMVC
-	 RcjEwmlgi3d7T00J5NMMX2lFzFiWkGADSVY9OV1Q4HmA32Cu57GVSKbLxMDpPg9qfS
-	 xPpefi03DCuCayAiobcMsHm9qAo64oV5u4gen5sc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20231108081530epcas5p161ba1bafe3a28ad4dc222dbe4142ceb8~Vl8qjzpMf2147621476epcas5p1j;
-	Wed,  8 Nov 2023 08:15:30 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SQHvj03Xwz4x9Pw; Wed,  8 Nov
-	2023 08:15:29 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4C.4E.10009.0A34B456; Wed,  8 Nov 2023 17:15:28 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	s=mail20170921; t=1699445724;
+	bh=gP0fgGTrxMWp/6TO61Wk1e7pHUD7PcvF5LNiKUYGv/Y=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=b6Erl/ryH6Fa7vmNkFGMKTQXhxjcv22zxXgqEfdRbuXAQdAyhclNYfbqWg+ZMuJoo
+	 2NDkjis2VyEqC+RYjb/UO7/Bj2eFB0O0BUp/Ti0m6ujWGND5pY6fYvs58ZLVUQ6yZG
+	 lpdDvMl/HiES9vypF2GfqlB5Ou7cJ+raDn6m0BLM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20231108121524epcas5p35a7760cfb03aa5880fb5330a226e31fb~VpOHH9WlU2851028510epcas5p3t;
+	Wed,  8 Nov 2023 12:15:24 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4SQPDV3VdLz4x9Pp; Wed,  8 Nov
+	2023 12:15:22 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	76.69.19369.ADB7B456; Wed,  8 Nov 2023 21:15:22 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
 	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20231108081516epcas5p442a11004e3b4e6339972fd6da4c6692b~Vl8dS5wdb0759407594epcas5p4d;
-	Wed,  8 Nov 2023 08:15:16 +0000 (GMT)
+	20231108121521epcas5p4998e20480cc82505cd013302f4a81ab5~VpOEj-q1W0944709447epcas5p4E;
+	Wed,  8 Nov 2023 12:15:21 +0000 (GMT)
 Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231108081516epsmtrp21a7cb88f4b4e77a34cc7afdb4b96d17b~Vl8dRnGKr1082410824epsmtrp2q;
-	Wed,  8 Nov 2023 08:15:16 +0000 (GMT)
-X-AuditID: b6c32a4a-ff1ff70000002719-a1-654b43a0538e
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231108121521epsmtrp1270c39d130cd87dd311b62bbf7d6d3c0~VpOEjX7NP3096130961epsmtrp1y;
+	Wed,  8 Nov 2023 12:15:21 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-0f-654b7bdacac2
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
 	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.6A.08817.4934B456; Wed,  8 Nov 2023 17:15:16 +0900 (KST)
-Received: from AHRE124.. (unknown [109.105.118.124]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231108081515epsmtip1178fa5bdd393301f0f9846a23c069a8a~Vl8cKIeKR2730027300epsmtip1S;
-	Wed,  8 Nov 2023 08:15:15 +0000 (GMT)
-From: Xiaobing Li <xiaobing.li@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
-	kundan.kumar@samsung.com, wenwen.chen@samsung.com, ruyi.zhang@samsung.com,
-	Xiaobing Li <xiaobing.li@samsung.com>
-Subject: [PATCH v2] io_uring: Statistics of the true utilization of sq
- threads.
-Date: Wed,  8 Nov 2023 16:07:32 +0800
-Message-Id: <20231108080732.15587-1-xiaobing.li@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	C1.16.08817.9DB7B456; Wed,  8 Nov 2023 21:15:21 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20231108121519epsmtip1fd7c1454f43b8d2b7707ac8ed7ab7e7b~VpODPoR_P2912329123epsmtip1o;
+	Wed,  8 Nov 2023 12:15:19 +0000 (GMT)
+Message-ID: <3e14f4c8-482d-df2c-f802-ebc74bd12664@samsung.com>
+Date: Wed, 8 Nov 2023 17:45:19 +0530
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIJsWRmVeSWpSXmKPExsWy7bCmpu4CZ+9Ug/8bLC3mrNrGaLH6bj+b
-	xbvWcywWR/+/ZbP41X2X0WLrl6+sFpd3zWGzeLaX0+LL4e/sFlO37GCy6Gi5zOjA7bFz1l12
-	j8tnSz36tqxi9Pi8SS6AJSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8x
-	N9VWycUnQNctMwfoJiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgUmBXnFibnFp
-	XrpeXmqJlaGBgZEpUGFCdsaMY7PZCn5JVLx9v4atgfG2cBcjJ4eEgIlE+9R5bF2MXBxCArsZ
-	Jd4/a2WCcD4xSkyYO5kRwvnGKHHk7EEmmJa9d06zQCT2Mkq8fnUYquUlo8S+hevYQarYBLQl
-	rq/rYgWxRYDs14+ngnUwC3xmlFhz+xsLSEJYIFDiTWMnkM3BwSKgKnF7ThqIyStgI9HYKACx
-	TF5i/8GzzCA2r4CgxMmZT8A6mYHizVtnM4OMlBB4yS5x4OcDdogGF4m32/8yQtjCEq+Ob4GK
-	S0l8freXDcIuljjS850VormBUWL67atQRdYS/67sAbuHWUBTYv0ufYiwrMTUU+uYIBbzSfT+
-	fgINCV6JHfNgbFWJ1ZceskDY0hKvG35DxT0kHnfcBLOFBGIlji/uZpnAKD8LyT+zkPwzC2Hz
-	AkbmVYySqQXFuempxaYFRnmp5fCYTc7P3cQITptaXjsYHz74oHeIkYmD8RCjBAezkgjvX3uP
-	VCHelMTKqtSi/Pii0pzU4kOMpsAgnsgsJZqcD0zceSXxhiaWBiZmZmYmlsZmhkrivK9b56YI
-	CaQnlqRmp6YWpBbB9DFxcEo1MJnw33+wqnPiry3P/1w5X1bDZCb2d9lNC7M5O51KdNfuU/5w
-	82HZarvkZ2uOTRHZd/zd2lajXza5n1L283qmm9+953xoi+1VhYU3jmnHbLzTtvCAkNbaoPrf
-	ny9PeC7bKz9/wvojq/1tjeyYt7E1tDq5WnJ0lu3jkLL5ruIUoON7cNUB/ZdVQRbHrnod+3be
-	QGzd1sjjy6IfLM6bzPi0SOzbrderjl6aWXltm+A9y6qzKoUv7VZVKvpV86d9vf4uac+zczpG
-	0wLf/n14xinj7U7pteKTuhIXrdzTmOzBqnfyu1fedhUOE5OOHNu0kMNxWe8EhOxMNgdLlm49
-	nFKhKS+/ds9TDzNuTZ+Xxp0Pjs5UYinOSDTUYi4qTgQAum++kiQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWy7bCSnO4UZ+9Ug3Nb1CzmrNrGaLH6bj+b
-	xbvWcywWR/+/ZbP41X2X0WLrl6+sFpd3zWGzeLaX0+LL4e/sFlO37GCy6Gi5zOjA7bFz1l12
-	j8tnSz36tqxi9Pi8SS6AJYrLJiU1J7MstUjfLoErY8ax2WwFvyQq3r5fw9bAeFu4i5GTQ0LA
-	RGLvndMsXYxcHEICuxkl5nZ/Zupi5ABKSEv8+VMOUSMssfLfc3aImueMEj+6bjGCJNgEtCWu
-	r+tiBakXEdCVaLyrAFLDLPCXUeLr6jlsIDXCAv4S8y7OAqthEVCVuD0nDcTkFbCRaGwUgBgv
-	L7H/4FlmEJtXQFDi5MwnLCA2M1C8eets5gmMfLOQpGYhSS1gZFrFKJlaUJybnltsWGCUl1qu
-	V5yYW1yal66XnJ+7iREculpaOxj3rPqgd4iRiYPxEKMEB7OSCO9fe49UId6UxMqq1KL8+KLS
-	nNTiQ4zSHCxK4rzfXvemCAmkJ5akZqemFqQWwWSZODilGpgmsCzVX5QZaemrdvviZhEx0YWM
-	sxJjT1Zr+vqFik4+5hySKi299EZhCgPzS86N/Ea29p8OeXc27JBXfrx0M+svTsG+lTG7ZhbZ
-	LMxKUVFVOr/qrKNY2kqGX0V3w9UM0nNX1/Ft3HpeMWiK88rG7n3Mmw2/Mn/SLGW1/u77qP3F
-	dz6drWWPDzNmvdmx/Ojxr433950xKQ24Hqa9c+LCSv07kZNXvtpSMtv/zrrkbT6Zb1p3Cr+/
-	9ZvX4uHTW0eXH358yzro0NFVdTvjDVZcnvNktcoWp+fHzlmWtNfP/vdtjU/M2/Bl07zevIuQ
-	jp14IiVxxunCM/67YtzncXMJhxmycfDKce4+v+jn7lNb1L9pKrEUZyQaajEXFScCAKupgDTM
-	AgAA
-X-CMS-MailID: 20231108081516epcas5p442a11004e3b4e6339972fd6da4c6692b
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCHv2 1/4] block: bio-integrity: directly map user buffers
+Content-Language: en-US
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org, axboe@kernel.dk,
+	hch@lst.de, martin.petersen@oracle.com
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <ZUpS150ojGIJ-bkP@kbusch-mbp.dhcp.thefacebook.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmuu6tau9Ug08rJC1W3+1ns1i5+iiT
+	xbvWcywWkw5dY7Q4c3Uhi8XeW9oW85c9ZbdYfvwfkwOHx+WzpR6bVnWyeWxeUu+x+2YDm8e5
+	ixUeH5/eYvH4vEkugD0q2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfV
+	VsnFJ0DXLTMH6CIlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66
+	Xl5qiZWhgYGRKVBhQnbGpMUvGAte6FdcuL2AsYHxinwXIyeHhICJxIlZp5m7GLk4hAT2MEpc
+	uPOVBcL5xCgxa94SRgjnG6PEljNdbDAt07/PhUrsZZTY+vkBVMtbRondp6ewglTxCthJfJnx
+	jBnEZhFQkbi7fTJUXFDi5MwnLCC2qECSxK+rcxhBbGEBL4nbjd/BapgFxCVuPZnPBGKLCChL
+	3J0/kxVkAbPAVkaJDa/mAjVzcLAJaEpcmFwKUsMpYC9xvvkSE0SvvMT2t3PAHpIQmMsh8enZ
+	WXaIs10k+k68Z4GwhSVeHd8CFZeSeNnfBmUnS1yaeY4Jwi6ReLznIJRtL9F6qp8ZZC8z0N71
+	u/QhdvFJ9P5+wgQSlhDglehoE4KoVpS4N+kpK4QtLvFwxhIo20Pi8cOrbJCw6maW+HXkDdME
+	RoVZSMEyC8n7s5C8Mwth8wJGllWMUqkFxbnpqcmmBYa6eanl8ChPzs/dxAhOsloBOxhXb/ir
+	d4iRiYPxEKMEB7OSCO9fe49UId6UxMqq1KL8+KLSnNTiQ4ymwAiayCwlmpwPTPN5JfGGJpYG
+	JmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwyTx4W3qb3+W5+BWjKS6nurXW
+	mF2zafrS/sE+NLyQ0Xj68c96K3fMvJk9debBNQ/Pb73qq3re4cAPTq9rJaVHLgmu+T5xzlw/
+	kadFB/lWlCx72xSY8Ytpa4HcURMbprP+JqZJb+V/OL6qYWuU/crocMns/+Evqi82VyT7JzCH
+	Fma8kZ0vN/dgziGDaSabb7w3jBGf1/XAZuKMmqzj32zsLN4e2Kww7f3bhQaLA0OWL2079N10
+	jqWCPgv/3DSlRLVX06WuHBVfw+X9hXdCqMl8zic3eX+3fX79Nbcn49zFib2hXg90Zj/grvu2
+	pmedymOWnTaP3GR1UhRiXQXFDsf/2RJxqyVSiZdTfoPkxjAPIyWW4oxEQy3mouJEAEDgmeA7
+	BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJTvdmtXeqwZxT7Bar7/azWaxcfZTJ
+	4l3rORaLSYeuMVqcubqQxWLvLW2L+cueslssP/6PyYHD4/LZUo9NqzrZPDYvqffYfbOBzePc
+	xQqPj09vsXh83iQXwB7FZZOSmpNZllqkb5fAlTFp8QvGghf6FRduL2BsYLwi38XIySEhYCIx
+	/ftcxi5GLg4hgd2MEtPPv2OBSIhLNF/7wQ5hC0us/PecHaLoNaPEu+4JrCAJXgE7iS8znjGD
+	2CwCKhJ3t0+GigtKnJz5BGyQqECSxJ77jUwgtrCAl8Ttxu9gNcxAC249mQ8WFxFQlrg7fyYr
+	yAJmga2MEstP7WWB2NbNLDH94COgDAcHm4CmxIXJpSANnAL2EuebLzFBDDKT6NraxQhhy0ts
+	fzuHeQKj0Cwkd8xCsm8WkpZZSFoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQI
+	jictrR2Me1Z90DvEyMTBeIhRgoNZSYT3r71HqhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeb697
+	U4QE0hNLUrNTUwtSi2CyTBycUg1MG619c9/9nHDx6wPFyIS7u410wio+l+dtu27Vn3cg9rfr
+	Q8fAqYs1L+9qf83xumJntj+vZdVyLu7dQe8emQf7nZ0rNeE9+3wmpWBGwZ/lTcHnwy8r/jdN
+	mfyI2dcn9b2ImGD3K8XwmQV1ZZO2BUWY3Jt2aoLGT7kT+kzKIaJ3jQ1vshWHTF3+/twah/Rr
+	DKcdfmXFb5skY+wqU5abefK3ExPPrUnXEvo1C39oikcfWvjB4f9z37io8MDXS47Nu7WYdSkv
+	g8tCL48dPM5vXwaurFos3F39VVuvef63M3s2Wu+5ebH7nktKXYzuV7sFm4M3ZD6LWsSjcm1B
+	4czI21161YlX/XeWBd5jnh76ZtMVJZbijERDLeai4kQAVWF3YxYDAAA=
+X-CMS-MailID: 20231108121521epcas5p4998e20480cc82505cd013302f4a81ab5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231108081516epcas5p442a11004e3b4e6339972fd6da4c6692b
-References: <CGME20231108081516epcas5p442a11004e3b4e6339972fd6da4c6692b@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20231027182010epcas5p36bcf271f93f821055206b2e04b3019a6
+References: <20231027181929.2589937-1-kbusch@meta.com>
+	<CGME20231027182010epcas5p36bcf271f93f821055206b2e04b3019a6@epcas5p3.samsung.com>
+	<20231027181929.2589937-2-kbusch@meta.com>
+	<40ac82f5-ce1b-6f49-3609-1aff496ae241@samsung.com>
+	<ZUkAH258Ts0caQ5W@kbusch-mbp.dhcp.thefacebook.com>
+	<1067f03f-e89b-4fc8-58bb-0b83b6c5c91d@samsung.com>
+	<ZUpS150ojGIJ-bkP@kbusch-mbp.dhcp.thefacebook.com>
 
-Since the sq thread has a while(1) structure, during this process, there
-may be a lot of time that is not processing IO but does not exceed the
-timeout period, therefore, the sqpoll thread will keep running and will
-keep occupying the CPU. Obviously, the CPU is wasted at this time;Our
-goal is to count the part of the time that the sqpoll thread actually
-processes IO, so as to reflect the part of the CPU it uses to process
-IO, which can be used to help improve the actual utilization of the CPU
-in the future.
+On 11/7/2023 8:38 PM, Keith Busch wrote:
+> On Tue, Nov 07, 2023 at 03:55:14PM +0530, Kanchan Joshi wrote:
+>> On 11/6/2023 8:32 PM, Keith Busch wrote:
+>>> On Mon, Nov 06, 2023 at 11:18:03AM +0530, Kanchan Joshi wrote:
+>>>> On 10/27/2023 11:49 PM, Keith Busch wrote:
+>>>>> +	for (i = 0; i < nr_vecs; i = j) {
+>>>>> +		size_t size = min_t(size_t, bytes, PAGE_SIZE - offs);
+>>>>> +		struct folio *folio = page_folio(pages[i]);
+>>>>> +
+>>>>> +		bytes -= size;
+>>>>> +		for (j = i + 1; j < nr_vecs; j++) {
+>>>>> +			size_t next = min_t(size_t, PAGE_SIZE, bytes);
+>>>>> +
+>>>>> +			if (page_folio(pages[j]) != folio ||
+>>>>> +			    pages[j] != pages[j - 1] + 1)
+>>>>> +				break;
+>>>>> +			unpin_user_page(pages[j]);
+>>>>
+>>>> Is this unpin correct here?
+>>>
+>>> Should be. The pages are bound to the folio, so this doesn't really
+>>> unpin the user page. It just drops a reference, and the folio holds the
+>>> final reference to the contiguous pages, which is released on
+>>> completion.
+>>
+>> But the completion is still going to see multiple pages and not one
+>> (folio). The bip_for_each_vec loop is going to drop the reference again.
+>> I suspect it is not folio-aware.
+> 
+> The completion unpins once per bvec, not individual pages. The setup
+> creates multipage bvecs with only one pin remaining per bvec for all of
+> the bvec's pages. If a page can't be merged into the current bvec, then
+> that page is not unpinned and becomes the first page of to the next
+> bvec.
+> 
 
-Signed-off-by: Xiaobing Li <xiaobing.li@samsung.com>
+Here is a test program [2] that creates this scenario.
+Single 8KB+16b read on a 4KB+8b formatted namespace. It prepares 
+meta-buffer out of a huge-page in a way that it spans two regular 4K pages.
+With this, I see more unpins than expected.
 
-v1 -> v2: Added method to query data.
+And I had added this [1] also on top of your patch.
 
-The test results are as follows:
-cat /proc/11440/fdinfo/6
-pos:    0
-flags:  02000002
-mnt_id: 16
-ino:    94449
-SqMask: 0xf
-SqHead: 1845170
-SqTail: 1845170
-CachedSqHead:   1845170
-CqMask: 0xf
-CqHead: 1845154
-CqTail: 1845154
-CachedCqTail:   1845154
-SQEs:   0
-CQEs:   0
-SqThread:       -1
-SqThreadCpu:    -1
-UserFiles:      1
-UserBufs:       0
-PollList:
-CqOverflowList:
-PID:    11440
-work:   18794
-total:  19123
+[1]
+@@ -339,7 +367,22 @@ int bio_integrity_map_user(struct bio *bio, void 
+__user *ubuf, unsigned int len,
+         memcpy(bip->bip_vec, bvec, folios * sizeof(*bvec));
+         if (bvec != stack_vec)
+                 kfree(bvec);
++       // quick fix for completion
++       bip->bip_vcnt = folios;
++       bip->bip_iter.bi_size = len;
 
----
- io_uring/fdinfo.c | 6 ++++++
- io_uring/sqpoll.c | 8 ++++++++
- io_uring/sqpoll.h | 2 ++
- 3 files changed, 16 insertions(+)
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index f04a43044d91..f0b79c533062 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -213,6 +213,12 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
- 
- 	}
- 
-+	if (ctx->sq_data) {
-+		seq_printf(m, "PID:\t%d\n", task_pid_nr(ctx->sq_data->thread));
-+		seq_printf(m, "work:\t%lu\n", ctx->sq_data->work);
-+		seq_printf(m, "total:\t%lu\n", ctx->sq_data->total);
-+	}
-+
- 	spin_unlock(&ctx->completion_lock);
- }
- #endif
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index bd6c2c7959a5..c821273406bd 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -224,6 +224,7 @@ static int io_sq_thread(void *data)
- 	struct io_ring_ctx *ctx;
- 	unsigned long timeout = 0;
- 	char buf[TASK_COMM_LEN];
-+	unsigned long start, begin, end;
- 	DEFINE_WAIT(wait);
- 
- 	snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
-@@ -235,6 +236,7 @@ static int io_sq_thread(void *data)
- 		set_cpus_allowed_ptr(current, cpu_online_mask);
- 
- 	mutex_lock(&sqd->lock);
-+	start = jiffies;
- 	while (1) {
- 		bool cap_entries, sqt_spin = false;
- 
-@@ -245,12 +247,18 @@ static int io_sq_thread(void *data)
- 		}
- 
- 		cap_entries = !list_is_singular(&sqd->ctx_list);
-+		begin = jiffies;
- 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
- 			int ret = __io_sq_thread(ctx, cap_entries);
- 
- 			if (!sqt_spin && (ret > 0 || !wq_list_empty(&ctx->iopoll_list)))
- 				sqt_spin = true;
- 		}
-+		end = jiffies;
-+		sqd->total = end - start;
-+		if (sqt_spin == true)
-+			sqd->work += end - begin;
-+
- 		if (io_run_task_work())
- 			sqt_spin = true;
- 
-diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
-index 8df37e8c9149..0aa4e2efa4db 100644
---- a/io_uring/sqpoll.h
-+++ b/io_uring/sqpoll.h
-@@ -16,6 +16,8 @@ struct io_sq_data {
- 	pid_t			task_pid;
- 	pid_t			task_tgid;
- 
-+	unsigned long       work;
-+	unsigned long       total;
- 	unsigned long		state;
- 	struct completion	exited;
- };
--- 
-2.34.1
+[2]
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <liburing.h>
+#include <libnvme.h>
+
+#define DEV             "/dev/ng0n1"
+#define NSID            1
+#define DBCNT           2
+#define DATA_BUFLEN     (4096 * DBCNT)
+#define OFFSET          0
+#define LBA_SHIFT       12
+
+/* This assumes 4K + 8b lba format */
+#define MD_BUFLEN       (8 * DBCNT)
+#define MD_OFFSET       (4096 - 8)
+#define HP_SIZE         (2*2*1024*1024) /*Two 2M pages*/
+
+#define APPTAG_MASK     (0xFFFF)
+#define APPTAG          (0x8888)
+
+void *alloc_meta_buf_hp()
+{
+         void *ptr;
+
+         ptr = mmap(NULL, HP_SIZE, PROT_READ | PROT_WRITE,
+                         MAP_PRIVATE|MAP_ANONYMOUS|MAP_HUGETLB,
+                         -1, 0);
+         if (ptr == MAP_FAILED)
+                 return NULL;
+         return ptr;
+}
+
+void free_meta_buf(void *ptr)
+{
+         munmap(ptr, HP_SIZE);
+}
+
+int main()
+{
+         struct io_uring ring;
+         struct io_uring_cqe *cqe;
+         struct io_uring_sqe *sqe;
+         struct io_uring_params p = { };
+         int fd, ret;
+         struct nvme_uring_cmd *cmd;
+         void *buffer, *md_buf;
+         __u64 slba;
+         __u16 nlb;
+
+         ret = posix_memalign(&buffer, DATA_BUFLEN, DATA_BUFLEN);
+         if (ret) {
+                 fprintf(stderr, "data buffer allocation failed: %d\n", 
+ret);
+                 return 1;
+         }
+         memset(buffer, 'x', DATA_BUFLEN);
+
+         md_buf = alloc_meta_buf_hp();
+         if (!md_buf) {
+                 fprintf(stderr, "meta buffer allocation failed: %d\n", 
+ret);
+                 return 1;
+         }
+
+         p.flags = IORING_SETUP_CQE32 | IORING_SETUP_SQE128;
+         ret = io_uring_queue_init_params(4, &ring, &p);
+         if (ret) {
+                 fprintf(stderr, "ring create failed: %d\n", ret);
+                 return 1;
+         }
+
+         fd = open(DEV, O_RDWR);
+         if (fd < 0) {
+                 perror("file open");
+                 exit(1);
+         }
+
+         sqe = io_uring_get_sqe(&ring);
+         io_uring_prep_read(sqe, fd, buffer, DATA_BUFLEN, OFFSET);
+         sqe->cmd_op = NVME_URING_CMD_IO;
+         sqe->opcode = IORING_OP_URING_CMD;
+         sqe->user_data = 1234;
+
+         cmd = (struct nvme_uring_cmd *)sqe->cmd;
+         memset(cmd, 0, sizeof(struct nvme_uring_cmd));
+         cmd->opcode = nvme_cmd_read;
+         cmd->addr = (__u64)(uintptr_t)buffer;
+         cmd->data_len = DATA_BUFLEN;
+         cmd->nsid = NSID;
+
+         slba = OFFSET >> LBA_SHIFT;
+         nlb = (DATA_BUFLEN >> LBA_SHIFT) - 1;
+         cmd->cdw10 = slba & 0xffffffff;
+         cmd->cdw11 = slba >> 32;
+         cmd->cdw12 = nlb;
+         /* set the pract and prchk (Guard, App, RefTag) bits in cdw12 */
+         //cmd->cdw12 |= 15 << 26;
+         cmd->cdw12 |= 7 << 26;
+
+         cmd->metadata = ((__u64)(uintptr_t)md_buf) + MD_OFFSET;
+         cmd->metadata_len = MD_BUFLEN;
+
+         /* reftag */
+         cmd->cdw14 = (__u32)slba;
+         /* apptag mask and apptag */
+         cmd->cdw15 = APPTAG_MASK << 16 | APPTAG;
+
+         ret = io_uring_submit(&ring);
+         if (ret != 1) {
+                 fprintf(stderr, "submit got %d, wanted %d\n", ret, 1);
+                 goto err;
+         }
+         ret = io_uring_wait_cqe(&ring, &cqe);
+         if (ret) {
+                 fprintf(stderr, "wait_cqe=%d\n", ret);
+                 goto err;
+         }
+         if (cqe->res != 0) {
+                 fprintf(stderr, "cqe res %d, wanted success\n", cqe->res);
+                 goto err;
+         }
+
+         io_uring_cqe_seen(&ring, cqe);
+         free_meta_buf(md_buf);
+         close(fd);
+         io_uring_queue_exit(&ring);
+         return 0;
+err:
+         if (fd != -1)
+                 close(fd);
+         io_uring_queue_exit(&ring);
+         return 1;
+}
+
 
 

@@ -1,65 +1,65 @@
-Return-Path: <io-uring+bounces-79-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-80-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347F57E6E6B
-	for <lists+io-uring@lfdr.de>; Thu,  9 Nov 2023 17:16:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105B97E7E29
+	for <lists+io-uring@lfdr.de>; Fri, 10 Nov 2023 18:33:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1348280E0C
-	for <lists+io-uring@lfdr.de>; Thu,  9 Nov 2023 16:16:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3CC7B20C54
+	for <lists+io-uring@lfdr.de>; Fri, 10 Nov 2023 17:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D39021113;
-	Thu,  9 Nov 2023 16:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D796520338;
+	Fri, 10 Nov 2023 17:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxwqna/T"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gRrZ5n8G"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07F8210F1
-	for <io-uring@vger.kernel.org>; Thu,  9 Nov 2023 16:16:03 +0000 (UTC)
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A796E324A;
-	Thu,  9 Nov 2023 08:16:02 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-543923af573so1730893a12.0;
-        Thu, 09 Nov 2023 08:16:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638B9219EB
+	for <io-uring@vger.kernel.org>; Fri, 10 Nov 2023 17:32:54 +0000 (UTC)
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771ED446F6
+	for <io-uring@vger.kernel.org>; Fri, 10 Nov 2023 09:32:53 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id ca18e2360f4ac-7a950f1451fso1110039f.1
+        for <io-uring@vger.kernel.org>; Fri, 10 Nov 2023 09:32:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699546561; x=1700151361; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ojbd27m0T961ggTmsfiY2MgFwOruhn6ME5MhCcBpoFU=;
-        b=gxwqna/T+9U8cACJwllvl8T78Vy0UnQlhyIws36EuH6lhSxhwjLOe4B2+E82PFQXSD
-         VXzgnzn59aWQN7cffbwsCPWk31LCJz8OmC7huf3DF2TfjdiZLmFUD0mVavwwE6Mpk/6Q
-         EVupMunlcu9hGfZT71/nHNH4pyIHmvHuPVVPNqrOGKld8rrD8IsIyOj+Bw9VYUnxeYYV
-         z0tX90H7HXNY6RxuMyBfzQE7k+vzJDRtDdqxUuhhQ8s/8bRKdqK3nsmoRX6cIcnrPrJx
-         rIHYaA81VgtPsAWEGVEipWNnF4PESAXTMnksylrtqED4y/QOT5Ak5KqZNjAj2oMcB29w
-         ybbQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1699637573; x=1700242373; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5bDmiLaGVm60HLMeKwi9hDr5D1dGHNrTG0OEtlRHSHo=;
+        b=gRrZ5n8GKJsiQkloaYP6hcSuoEn7ChD3lKECwaXW8F9C3aINVU88Mfo1+m3BYMRbW+
+         S3s4yy61xzlMuhinlzbgpq2p0QKO4BO27Oa+wc9nSYai1jJ66CxnHJ48vEANxKnfHGc7
+         R83Mfc3JLUSJ9Ra1P93jOVdszaSxDMyN/MCYPtAPdB+n6QIddDuq1CzSozrFjln1/nJJ
+         1nkxlRUxmu4QRlYVWUSYJwa/0pBhj7EI1b3VAf4KMZCFsEQFdRbi8NtqmbCDIbo5N/hb
+         81q2yn/IjLG/5mE5htF2r8S6AHQMTri6+YdBwVH3HBwmIZCV8ZIs61tTWu76sb8XF9uQ
+         VhHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699546561; x=1700151361;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ojbd27m0T961ggTmsfiY2MgFwOruhn6ME5MhCcBpoFU=;
-        b=YHm30hFKTHVkXACOF9uH9D1iolyMxktUtsKpXWTChH65/LIsPYPu17EidV6zHFeTU/
-         vbRkCFKpbIwlpUiszlb/2asicm3srZrboPKB7aZTPqr9r2ZpR+7wbsTKupvqnVJMjvRV
-         YIf3u0HucOMb/UnB1QTf/DdFFb358kdxFwZu0RPrBcWTweK+WmBytzVdVo+GN83xhSPM
-         y1k0iTAruY0d3c+g3xhPZIgH50yr1H5BpX2W+6oRIJsouu+Ix7Oslirii0OUlvlYKz2W
-         /YnszeNsFsKzA2rjwejb7MiK52XwUSxy1usWzZg3Oal7KVadl354vINqbEmDtgJzod7J
-         ITDg==
-X-Gm-Message-State: AOJu0YxF+v4dKOdUQojOiYoJZUGooVqqkO51aPj4cBk5aBaN2oqmeW+Y
-	va88rr3e4XD0lRSU/B4kTlo=
-X-Google-Smtp-Source: AGHT+IEXLyGYLwtSPwEo4bwk26WrAvEDObL2F8q5SlY3vWf+C1AzynH+BS4w0PhgQu6SX9/POqvUew==
-X-Received: by 2002:a50:9b0a:0:b0:53d:b751:ece1 with SMTP id o10-20020a509b0a000000b0053db751ece1mr3882915edi.41.1699546560575;
-        Thu, 09 Nov 2023 08:16:00 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:310::22ef? ([2620:10d:c092:600::2:7ea6])
-        by smtp.gmail.com with ESMTPSA id u18-20020a50c2d2000000b0052ffc2e82f1sm2360edf.4.2023.11.09.08.16.00
+        d=1e100.net; s=20230601; t=1699637573; x=1700242373;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5bDmiLaGVm60HLMeKwi9hDr5D1dGHNrTG0OEtlRHSHo=;
+        b=NNFoJ1c+9o7jS0SHrKziXXh90GTgNsJLQSRNxpb4AMX+UQiripSUy295gXnMSYjEoN
+         0mTaAVS3nyFOwx5yLlMMj2nS56O1xjPblNQTHfsy5FLhJAtb7uCwh940xfK/qpF9t2Ms
+         OTwCURVyi8K4nEIKsp6Xxnw6C8tY1/ZsTtMey6cRA4/1S2+2o53G8FQ/c4PWKBkPKKWb
+         JcUdtxGqkYkMgO23ZeCBBbwIiBN7S7WpEN4Hs2DYMnnEZOAPs0bURoLM3HG6Y3AjJo06
+         yy08TzNZ9CHEgCHvtPrT0lpvJPjGeE+f2YFcgqxUKuI0UF0ttn9DnLbKs9HVq8jET2hD
+         STlg==
+X-Gm-Message-State: AOJu0YygtM2M0+LOoBzQcVZhsoZvo/SWvzgE3qZK5pKbyNBt4BhdFZ6O
+	obbArBktKKPa3EWpDrF5EfDlK0ZanhpdeuyI4uH4cQ==
+X-Google-Smtp-Source: AGHT+IGLkDfyANKJVpTJju8IcVIHcbcym0m2N/svx0rnnaQtqFNuF15xzd3WaTltWRX85+fFxUZ4FA==
+X-Received: by 2002:a05:6602:b8c:b0:792:7c78:55be with SMTP id fm12-20020a0566020b8c00b007927c7855bemr10994177iob.0.1699637572865;
+        Fri, 10 Nov 2023 09:32:52 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id k19-20020a6b6f13000000b007a67b8e9e34sm4721814ioc.32.2023.11.10.09.32.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Nov 2023 08:16:00 -0800 (PST)
-Message-ID: <9e2b679c-fc1e-3d83-2303-e053f330a21a@gmail.com>
-Date: Thu, 9 Nov 2023 16:14:50 +0000
+        Fri, 10 Nov 2023 09:32:52 -0800 (PST)
+Message-ID: <d0e69261-4d09-422c-a5f9-8a1015da0466@kernel.dk>
+Date: Fri, 10 Nov 2023 10:32:51 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -67,126 +67,58 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring: Statistics of the true utilization of sq
- threads.
 Content-Language: en-US
-To: Xiaobing Li <xiaobing.li@samsung.com>, axboe@kernel.dk
-Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
- kundan.kumar@samsung.com, wenwen.chen@samsung.com, ruyi.zhang@samsung.com
-References: <CGME20231108081516epcas5p442a11004e3b4e6339972fd6da4c6692b@epcas5p4.samsung.com>
- <20231108080732.15587-1-xiaobing.li@samsung.com>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20231108080732.15587-1-xiaobing.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.7-rc1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/8/23 08:07, Xiaobing Li wrote:
-> Since the sq thread has a while(1) structure, during this process, there
-> may be a lot of time that is not processing IO but does not exceed the
-> timeout period, therefore, the sqpoll thread will keep running and will
-> keep occupying the CPU. Obviously, the CPU is wasted at this time;Our
-> goal is to count the part of the time that the sqpoll thread actually
-> processes IO, so as to reflect the part of the CPU it uses to process
-> IO, which can be used to help improve the actual utilization of the CPU
-> in the future.
+Hi Linus,
 
-Let's pull the elephant out of the room, what's the use case? "Improve
-in the future" doesn't sound too convincing. If it's a future kernel
-change you have in mind, it has to go together with this patch. If it's
-a userspace application, it'd be interesting to hear what that is,
-especially if you have numbers ready.
+Mostly just a few fixes and cleanups caused by the read multishot
+support. Outside of that, a stable fix for how a connect retry is done.
 
-And another classic question, why can't it be done with bpf?
+Please pull!
 
 
-> Signed-off-by: Xiaobing Li <xiaobing.li@samsung.com>
-> 
-> v1 -> v2: Added method to query data.
-> 
-...
-> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-> index bd6c2c7959a5..c821273406bd 100644
-> --- a/io_uring/sqpoll.c
-> +++ b/io_uring/sqpoll.c
-> @@ -224,6 +224,7 @@ static int io_sq_thread(void *data)
->   	struct io_ring_ctx *ctx;
->   	unsigned long timeout = 0;
->   	char buf[TASK_COMM_LEN];
-> +	unsigned long start, begin, end;
+The following changes since commit 8f6f76a6a29f36d2f3e4510d0bde5046672f6924:
 
-start and begin used for just slightly different accounting,
-it'll get confused anyone.
+  Merge tag 'mm-nonmm-stable-2023-11-02-14-08' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2023-11-02 20:53:31 -1000)
 
->   	DEFINE_WAIT(wait);
->   
->   	snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
-> @@ -235,6 +236,7 @@ static int io_sq_thread(void *data)
->   		set_cpus_allowed_ptr(current, cpu_online_mask);
->   
->   	mutex_lock(&sqd->lock);
-> +	start = jiffies;
->   	while (1) {
->   		bool cap_entries, sqt_spin = false;
->   
-> @@ -245,12 +247,18 @@ static int io_sq_thread(void *data)
->   		}
->   
->   		cap_entries = !list_is_singular(&sqd->ctx_list);
-> +		begin = jiffies;
+are available in the Git repository at:
 
-There can be {hard,soft}irq in between jiffies reads, and it can even
-be scheduled out in favour of another process, so it'd collect a lot
-of garbage. There should be a per-task stat for system time you can
-use:
+  git://git.kernel.dk/linux.git tags/io_uring-6.7-2023-11-10
 
-start = get_system_time(current);
-do_io_part();
-sq->total_time += get_system_time(current) - start;
-wait();
+for you to fetch changes up to e53759298a7d7e98c3e5c2440d395d19cea7d6bf:
 
-...
+  io_uring: do not clamp read length for multishot read (2023-11-06 13:41:58 -0700)
 
->   		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
->   			int ret = __io_sq_thread(ctx, cap_entries);
->   
->   			if (!sqt_spin && (ret > 0 || !wq_list_empty(&ctx->iopoll_list)))
->   				sqt_spin = true;
->   		}
-> +		end = jiffies;
-> +		sqd->total = end - start;
+----------------------------------------------------------------
+io_uring-6.7-2023-11-10
 
-...and then you don't need to track total at all, it'd be your
+----------------------------------------------------------------
+Dylan Yudaken (3):
+      io_uring: indicate if io_kbuf_recycle did recycle anything
+      io_uring: do not allow multishot read to set addr or len
+      io_uring: do not clamp read length for multishot read
 
-total = get_system_time(sq_thread /* current */);
+Jens Axboe (4):
+      io_uring/rw: don't attempt to allocate async data if opcode doesn't need it
+      io_uring/net: ensure socket is marked connected on connect retry
+      io_uring/rw: add separate prep handler for readv/writev
+      io_uring/rw: add separate prep handler for fixed read/write
 
-at any given point it time.
-
-
-> +		if (sqt_spin == true)
-> +			sqd->work += end - begin;
-
-It should go after the io_run_task_work() below, task_work is a major
-part of request execution.
-
-> +
->   		if (io_run_task_work())
->   			sqt_spin = true;
->   
-> diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
-> index 8df37e8c9149..0aa4e2efa4db 100644
-> --- a/io_uring/sqpoll.h
-> +++ b/io_uring/sqpoll.h
-> @@ -16,6 +16,8 @@ struct io_sq_data {
->   	pid_t			task_pid;
->   	pid_t			task_tgid;
->   
-> +	unsigned long       work;
-> +	unsigned long       total;
->   	unsigned long		state;
->   	struct completion	exited;
->   };
+ io_uring/kbuf.c  |  6 ++---
+ io_uring/kbuf.h  | 13 ++++++----
+ io_uring/net.c   | 24 +++++++++----------
+ io_uring/opdef.c |  8 +++----
+ io_uring/rw.c    | 72 ++++++++++++++++++++++++++++++++++++++++----------------
+ io_uring/rw.h    |  2 ++
+ 6 files changed, 80 insertions(+), 45 deletions(-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

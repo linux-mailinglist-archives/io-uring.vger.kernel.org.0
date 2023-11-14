@@ -1,107 +1,82 @@
-Return-Path: <io-uring+bounces-83-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-84-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083EF7EA15B
-	for <lists+io-uring@lfdr.de>; Mon, 13 Nov 2023 17:38:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06957EB2C2
+	for <lists+io-uring@lfdr.de>; Tue, 14 Nov 2023 15:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9E5280DF7
-	for <lists+io-uring@lfdr.de>; Mon, 13 Nov 2023 16:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5278D1F24F33
+	for <lists+io-uring@lfdr.de>; Tue, 14 Nov 2023 14:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39F52134A;
-	Mon, 13 Nov 2023 16:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6963FB21;
+	Tue, 14 Nov 2023 14:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kbGQ8jXq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BejncdfI"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F2121119
-	for <io-uring@vger.kernel.org>; Mon, 13 Nov 2023 16:38:23 +0000 (UTC)
-Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A324D69
-	for <io-uring@vger.kernel.org>; Mon, 13 Nov 2023 08:38:22 -0800 (PST)
-Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1e9e4636ce6so602808fac.0
-        for <io-uring@vger.kernel.org>; Mon, 13 Nov 2023 08:38:22 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368133FE52
+	for <io-uring@vger.kernel.org>; Tue, 14 Nov 2023 14:49:56 +0000 (UTC)
+Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F84F10D
+	for <io-uring@vger.kernel.org>; Tue, 14 Nov 2023 06:49:55 -0800 (PST)
+Received: by mail-qv1-xf36.google.com with SMTP id 6a1803df08f44-6708d2df1a3so7746036d6.1
+        for <io-uring@vger.kernel.org>; Tue, 14 Nov 2023 06:49:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1699893501; x=1700498301; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2zeHTCEwkJWMtUTahIH4QC2kkGN1U6NwIG//5rchOt8=;
-        b=kbGQ8jXqhaDzhUYskWopFc7duqIwZKmx7qY+CxunqVvb8ysz6aJvtB2xk+5BDhYeOG
-         kaYLKF0ULdjiDEwZwsPq3PVstVIaHvET3f39E4NgLEEc4R6p9VSW5ph2b+PhiS9TqDLw
-         fYpuU4tXCoKRaTs+bYCDtJnxgBhXzMyqnxHfaNbUx/83vcOSVeLQlV/Lt5bej1EmTFDH
-         eLj6zG1Kj6HFP16EHmxMb6gj4nDWhiK+3sCU5BFKtCB+pCF7Mjw3Od1FpL0uo3fIz1sL
-         cyscRa4C6AAO9wNQcKsiOgJQ0ptf1TzH65C2iZ8qDIB/lOM37l+5qAtxtbaEPQi/uJHS
-         MYoQ==
+        d=gmail.com; s=20230601; t=1699973393; x=1700578193; darn=vger.kernel.org;
+        h=mime-version:date:subject:to:reply-to:message-id:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uaaj5U5FDCPnJY0nv3sAqKFlwxAF3K4ULtNGwKCMahQ=;
+        b=BejncdfI32sSBaL6vazjZfZ0mL31s9EoxXG2+aG4TZ1HK1S0hJt3qS3o+L8Olwj/UI
+         bW+luC8DZpvwAr0sLmCcndKmo4y1iB+8cPD2mBWquywYlAeLV492hj3PI3omHbu1aJ5z
+         tVI3sslhN+SA3r24zU/7hI6VLeZ6tRZkEojzWckAOFfXSRWL9In53HFeQAH9/1ZYzSZP
+         dh6GK9/Aoy93EV7UDCPlm8WkWEcrQrPvNMhJ++uHYYTYI0gKJx5Wo6rJ3yyj6oi/YvHb
+         OOGYVNnUEZaLBmWIfEQVwbUzSMNpcaockrdBduwboho7ibvy/SdFMdjWSUIRvDPirlkx
+         hRJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699893501; x=1700498301;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1699973393; x=1700578193;
+        h=mime-version:date:subject:to:reply-to:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2zeHTCEwkJWMtUTahIH4QC2kkGN1U6NwIG//5rchOt8=;
-        b=o7iyXvYvSvhkgqyUYXgwSn9jhrFqEgXuzix00hjy5nY7yDdU0pHpWE56Op7A0W2Rvz
-         uoFDWtTDwe1qy0qeZxtn8ABeCg8cq8Tzc6wNolfqIekB+zz3cecW6HJUXFsCssm2mVX9
-         wQLFlm1gWIUJ3BQuOWYzfSj/Xu28tYxhx0I82NTdrXAHokZrwwr2Pfl7RROi/N+NS9f/
-         f1zRIMf+SPwaG4Nx7/hXEoOmr80V2Hej05Bg8F6n4D/lmCgBg2MrecCBDFd+ldpLEqcx
-         vp4hSWlspyxPMOPD7iRiy/hSJT1FceAwyC88bvEVdDUv1jEgrZV/GqhGpynQJEqorUrS
-         jTjA==
-X-Gm-Message-State: AOJu0YxhKmsY9wHqaQdO+MfsYCYd6x2Fc2sYk7sKIzLdkjl5JacOenBr
-	whHp1eoBRSjKtza8Rg45QJZZ+g==
-X-Google-Smtp-Source: AGHT+IE36sQjOPU+pSjqqYtv8a+WCA+IwmYMnfjSfw7wGxRsEjnOuaJR0ZLShmybuhzhLjMsSYwiGg==
-X-Received: by 2002:a05:6870:7e0e:b0:1e9:e8fd:bb77 with SMTP id wx14-20020a0568707e0e00b001e9e8fdbb77mr8799627oab.0.1699893501349;
-        Mon, 13 Nov 2023 08:38:21 -0800 (PST)
-Received: from [172.20.4.17] ([12.191.197.195])
-        by smtp.gmail.com with ESMTPSA id t19-20020ac865d3000000b0041ce9ebaad2sm2054046qto.43.2023.11.13.08.38.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Nov 2023 08:38:20 -0800 (PST)
-Message-ID: <93c6f293-7aa5-4e12-b238-f369d53ab28e@kernel.dk>
-Date: Mon, 13 Nov 2023 09:38:19 -0700
+        bh=uaaj5U5FDCPnJY0nv3sAqKFlwxAF3K4ULtNGwKCMahQ=;
+        b=IZgD8nfzpQhdmQTKc5/uoWsdn1R1KTfmCm4UvmnDIms8Ur6oq27Mizi4sHsbfBp5Wu
+         UPN8GSdRZGLgqBwRtDb7c9c+GswlxzhyJdjGRozo0XT98tQ0MmrBJ0WsCv6lpmMvneyr
+         W6jb97mN6CllTJY7CmbMcDeoZnxLj6Ag8qv0OoCwIxYMdAFrxm1Pr7hLxevt0cXhacxu
+         Et4xF5mULhpq61251HSsuFJANvK9ntN1ItGKyhbk01rth5GgVzE04lbZaVylYgybeiAR
+         vO974qCtGoxem0/29kz8WyzNA2izhODwIEISSWHd5ecpnLCqhsQOfwAih+ooZjBHTlfu
+         ktbw==
+X-Gm-Message-State: AOJu0YyfsqAJd5f/O+8j1PXhrospA2s5wneo6P/PdoUoYyFUg/8CJNTO
+	FXyFqgNbv7mdzHyv8aEDvtsuuvpxBAo=
+X-Google-Smtp-Source: AGHT+IFf6tUOJnjvwS9jGPO9i/uQ15qe5d/iL3Q7MPeY35w8xwivgHmUrvE4fQjkdVunTr+TA6l81A==
+X-Received: by 2002:a0c:efd0:0:b0:66d:1bbb:e9f8 with SMTP id a16-20020a0cefd0000000b0066d1bbbe9f8mr2383099qvt.6.1699973393357;
+        Tue, 14 Nov 2023 06:49:53 -0800 (PST)
+Received: from [198.135.52.44] ([198.135.52.44])
+        by smtp.gmail.com with ESMTPSA id qj12-20020a05620a880c00b0076ef3e6e6a4sm2702831qkn.42.2023.11.14.06.49.52
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Nov 2023 06:49:52 -0800 (PST)
+From: Peter Wilson <muthusachika@gmail.com>
+X-Google-Original-From: Peter Wilson <info@alrigga.com>
+Message-ID: <a1e5f3351add0689e0a5e5b1bd7fecd10d3b4f8bd75c41d16cba04c5f06112d3@mx.google.com>
+Reply-To: mrmo754abc@gmail.com
+To: io-uring@vger.kernel.org
+Subject: :once again
+Date: Tue, 14 Nov 2023 06:49:52 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring: Statistics of the true utilization of sq
- threads.
-Content-Language: en-US
-To: Xiaobing Li <xiaobing.li@samsung.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
- joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
- ruyi.zhang@samsung.com
-References: <60464608-a9b7-4cf8-bd6d-c982210c6f83@kernel.dk>
- <CGME20231113031827epcas5p2e6e858292a3cd4b9e03b4615d972b22d@epcas5p2.samsung.com>
- <20231113031040.1391334-1-xiaobing.li@samsung.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231113031040.1391334-1-xiaobing.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+X-Spam-Level: *
 
-On 11/12/23 8:10 PM, Xiaobing Li wrote:
-> After careful consideration and testing, I don't think getting the
-> uring_lock is possible here, for the following reasons:
-> Due to lock competition, ctx->uring_lock and sq->lock are usually not
-> available here. The best proof is that the values of SqThread and
-> SqThreadCpu always output -1. In this case, it is impossible to obtain
-> the required work_time and total_time values.
-> In fact, it should be feasible to obtain work_time and total_time by
-> judging that ctx->sq_data is not NULL, because if the sq thread exits,
-> the action of reading data will also stop, and the possibility of a null
-> pointer reference is very low.
+Hello io-uring,
 
-We have that problem right now, in the current tree. And agree it's not
-the best. sq_data should be fine under the (ctx) lock, it's just the
-thread that may go away. Maybe we just cache the cpu/pid of it when we
-create it, seems better than needing to query it. And for the other
-stats, should be fine in ctx->sq_data.
+Are you Thinking of starting a new project or expanding your business? We can fund it. Terms and Conditions Apply.
 
--- 
-Jens Axboe
-
+Regards,
+Peter Wilson
 

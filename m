@@ -1,65 +1,66 @@
-Return-Path: <io-uring+bounces-94-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-95-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2A87EC418
-	for <lists+io-uring@lfdr.de>; Wed, 15 Nov 2023 14:51:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2890D7EC897
+	for <lists+io-uring@lfdr.de>; Wed, 15 Nov 2023 17:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FBA1C2074A
-	for <lists+io-uring@lfdr.de>; Wed, 15 Nov 2023 13:51:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC145B20A83
+	for <lists+io-uring@lfdr.de>; Wed, 15 Nov 2023 16:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8DF18646;
-	Wed, 15 Nov 2023 13:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C35433BF;
+	Wed, 15 Nov 2023 16:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d44Y42Ns"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0VWvJmhb"
 X-Original-To: io-uring@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF359179A6
-	for <io-uring@vger.kernel.org>; Wed, 15 Nov 2023 13:51:20 +0000 (UTC)
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8ECBAC
-	for <io-uring@vger.kernel.org>; Wed, 15 Nov 2023 05:51:19 -0800 (PST)
-Received: by mail-qk1-x72a.google.com with SMTP id af79cd13be357-77bccdea0ffso11228285a.0
-        for <io-uring@vger.kernel.org>; Wed, 15 Nov 2023 05:51:19 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5369B3BB57
+	for <io-uring@vger.kernel.org>; Wed, 15 Nov 2023 16:30:59 +0000 (UTC)
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A5BD6A
+	for <io-uring@vger.kernel.org>; Wed, 15 Nov 2023 08:30:56 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id d75a77b69052e-420d2f40c69so1827651cf.1
+        for <io-uring@vger.kernel.org>; Wed, 15 Nov 2023 08:30:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1700056279; x=1700661079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WYEMkbRs5f6FQHbQGdDrqvN21x+DPqoXcf4uI4/Hi3A=;
-        b=d44Y42Ns+Ep6JW+TMjbKPDHJzX64ECRGhZT/t7+ac39ONy8ewOlVQzwnPS8d0E/FY3
-         as1YrZULZnR8c+11UAz6010jByqAPEPnFBNUh1VXxDXesJ64HhD/DbAviF4j4DB8UDJI
-         pFRsO9I7hwJzsnArHK6/J8WnkjIYx5GjmxAANz7q0jyozQLIU33AZVZxdjwlp+xK6Paw
-         OYeWJcLOjiBoCHirnF7EG5ATlLT/w627a7v51CQiLX4NgvEl4J05OaBet8Wk5C/GoABH
-         WvCuPXdz2P358JR10TVhTEu4ZvqK+KCaNy0TJgvcOhZLSrrZB85Zxoccc0sbAlIJquKK
-         C/qw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1700065855; x=1700670655; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OTezdbWkhfxCTLToejri+dX9aI7/Y/VQc6haWVH+GC0=;
+        b=0VWvJmhbZ+CNw/gXaxgFq1GRGpEyanqO7hkEs9pGRMc0nibu4SJQS5AbR4IBxjl6qs
+         QScugutHZqAUejlBlwhuXmDgLf70qll+I2wR+TC86DJe4XlFv0MFhkvc2TaE/UD2i0an
+         Zpoc7TcPAyi7jK4oHP6SmpmU5C1ikIvf92c0ZxfiXufkLoUBfAQYbh3xeV0lbXkT9qSn
+         9mqNrK9i/FCs3t6dNsxKaRxKyBgzwbij/RoSq1m5pmjJavEELYbeDEXw2JEFSJFH+9Im
+         fT1IABT0nQ3WwZAIXJhjzjIIj7rPl9vVHvBfEofD8yTATfHXVYx7oNflf38VmOJZ4LeU
+         snvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700056279; x=1700661079;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WYEMkbRs5f6FQHbQGdDrqvN21x+DPqoXcf4uI4/Hi3A=;
-        b=c51ZT12RVaweJZUFH0Z0H7dEspSOMhtCM/aQ5P0uYTSUnvth2zWOZUESbpfMOhuEfo
-         s+dvLeiQc8USnOVrnjvYWo8MvPsOhQPNGSInMnOpe7ju2yboU3IAUpmF6Wi/UsLeXker
-         6h9fFb4C+VcwGP+tBPTNvtCDZ3cqeB29gJdqqo2DqyDU0dRRLOpDCGUAOLUb1arB+OPL
-         bDoFA90fHlM3tQ3ujYkDrqKh1czFOThHAJYBXp0tC+bYStyaZnJkk4yDCb6pwLg0Q+vf
-         gAGLdgYXVZIlGGZ9fbhItvYtPrwZu2aJa7965sfUnCtkGYT196ikMcFSGCIFCxetkYLf
-         CwAw==
-X-Gm-Message-State: AOJu0YxKp6oy2QbU8tXd6Jq0j/XMouHW5KkhonA/NzSVrc+n2uBmojBH
-	IrgGJ2Wl8aShFPwuQSjI4L1kOw==
-X-Google-Smtp-Source: AGHT+IGaj1Qpq+RNmSVt5V0/DdAN36kVvgi9dfEsGco2RNPoc4Fw6kPcMdc1FeDZbo3ALaKmjZSsgQ==
-X-Received: by 2002:a05:620a:1a0f:b0:767:e04f:48c8 with SMTP id bk15-20020a05620a1a0f00b00767e04f48c8mr5993087qkb.7.1700056279043;
-        Wed, 15 Nov 2023 05:51:19 -0800 (PST)
-Received: from ?IPV6:2600:380:9175:75f:e6af:c913:71c3:9f81? ([2600:380:9175:75f:e6af:c913:71c3:9f81])
-        by smtp.gmail.com with ESMTPSA id b22-20020a05620a127600b0076c8fd39407sm3470731qkl.113.2023.11.15.05.51.17
+        d=1e100.net; s=20230601; t=1700065855; x=1700670655;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OTezdbWkhfxCTLToejri+dX9aI7/Y/VQc6haWVH+GC0=;
+        b=PFCClGO+8iwpw2UJUZjUmV89sJukStjmR10VLQGsdmAXMnvPlGdl7i6hWN4Zq1buYy
+         Mrrgzeb/31Erc4ZZnIGck7+/UZb03SrFddjiiaJFcri8qpDIQysZumyfXFCRMz5rVSh/
+         2SRdbiONamR9GK+2p4rDEEJLqETVgSIsXmqyvnTI26jCoVXXxzK7i9TW+HXZLOun2G4T
+         g6NP0EBLauIAw66JAJK6XawvGkEOzoQm0BO2JJPxe21/B78DFO+b/aDpB+bmqkx+1rjn
+         l4px1gPq8EiiJRwSHxdftU8QuJOvyvF8LBGnfTcvyQuSjm0F7if1prPr48lXJxwCuz+p
+         axAQ==
+X-Gm-Message-State: AOJu0YwFignY9Vejjla9U9epg/uTTmc3wMxnFr7VzSNbeAyhRzMA18Rp
+	gDRhwK+w74nd0THKx9N3azKsaoRJS3c2GU1ioojv9EbP
+X-Google-Smtp-Source: AGHT+IHl8NA2G4eX1NUWXP5IJ5RVq5HMfxtV3pypfleIOBwngHf88GOCo55KOLvXY0eTNidN0YnGdg==
+X-Received: by 2002:a0c:ed41:0:b0:65d:486:25c6 with SMTP id v1-20020a0ced41000000b0065d048625c6mr6105260qvq.3.1700065854839;
+        Wed, 15 Nov 2023 08:30:54 -0800 (PST)
+Received: from [172.25.84.204] ([12.186.190.1])
+        by smtp.gmail.com with ESMTPSA id w3-20020a05620a444300b007788bb0ab8esm3577107qkp.19.2023.11.15.08.30.53
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 05:51:18 -0800 (PST)
-Message-ID: <b4a58cf5-3bc6-4279-8a33-d7209a60164f@kernel.dk>
-Date: Wed, 15 Nov 2023 06:51:16 -0700
+        Wed, 15 Nov 2023 08:30:54 -0800 (PST)
+Message-ID: <b71be7dc-70e4-423e-983c-6c1abaab2801@kernel.dk>
+Date: Wed, 15 Nov 2023 09:30:52 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -67,53 +68,105 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] io_uring: Statistics of the true utilization of sq
- threads.
 Content-Language: en-US
-To: Xiaobing Li <xiaobing.li@samsung.com>, asml.silence@gmail.com
-Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
- kundan.kumar@samsung.com, wenwen.chen@samsung.com, ruyi.zhang@samsung.com,
- cliang01.li@samsung.com, xue01.he@samsung.com
-References: <CGME20231115122627epcas5p37263cadafd5af20043fbb74e57fe5a4c@epcas5p3.samsung.com>
- <20231115121839.12556-1-xiaobing.li@samsung.com>
+To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231115121839.12556-1-xiaobing.li@samsung.com>
+Subject: [PATCH v4] io_uring/fdinfo: remove need for sqpoll lock for
+ thread/pid retrieval
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/15/23 5:18 AM, Xiaobing Li wrote:
-> v3:
-> 1.Since the sq thread has a while(1) structure, during this process,
->   there may be a lot of time that is not processing IO but does not
-> exceed the timeout period, therefore, the sqpoll thread will keep
-> running and will keep occupying the CPU. Obviously, the CPU is wasted at
-> this time;Our goal is to count the part of the time that the sqpoll
-> thread actually processes IO, so as to reflect the part of the CPU it
-> uses to process IO, which can be used to help improve the actual
-> utilization of the CPU in the future.
-> 
-> 2."work_time" in the code represents the sum of the jiffies count of the
->   sq thread actually processing IO, that is, how many milliseconds it
-> actually takes to process IO. "total_time" represents the total time
-> that the sq thread has elapsed from the beginning of the loop to the
-> current time point, that is, how many milliseconds it has spent in
-> total.
-> The output "SqBusy" represents the percentage of time utilization that
-> the sq thread actually uses to process IO.
-> 
-> 3.The task_pid value in the io_sq_data structure should be assigned
->   after the sq thread is created, otherwise the pid of its parent
-> process will be recorded.
-> 
-> 4.After many tests, we do not need to obtain ctx->uring_lock in advance
->   when obtaining ctx->sq_data. We can avoid null pointer references by
-> judging that ctx is not null.
+A previous commit added a trylock for getting the SQPOLL thread info via
+fdinfo, but this introduced a regression where we often fail to get it if
+the thread is busy. For that case, we end up not printing the current CPU
+and PID info.
 
-This is mixed in with my patch, please just base it on top of the v4
-I'll send out now rather than integrate it. And then you'd need that rcu
-free patch as well on top of that, then your changes as a separate
-patch.
+Rather than rely on this lock, just print the pid we already stored in
+the io_sq_data struct, and ensure we update the current CPU every time
+we've slept or potentially rescheduled. The latter won't potentially be
+100% accurate, but that wasn't the case before either as the task can
+get migrated at any time unless it has been pinned at creation time.
+
+We retain keeping the io_sq_data dereference inside the ctx->uring_lock,
+as it has always been, as destruction of the thread and data happen below
+that. We could make this RCU safe, but there's little point in doing that.
+
+With this, we always print the last valid information we had, rather than
+have spurious outputs with missing information.
+
+Fixes: 7644b1a1c9a7 ("io_uring/fdinfo: lock SQ thread while retrieving thread cpu/pid")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+v4: ensure task_pid is set appropriately at startup time
+
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index f04a43044d91..976e9500f651 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -145,13 +145,8 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+ 	if (has_lock && (ctx->flags & IORING_SETUP_SQPOLL)) {
+ 		struct io_sq_data *sq = ctx->sq_data;
+ 
+-		if (mutex_trylock(&sq->lock)) {
+-			if (sq->thread) {
+-				sq_pid = task_pid_nr(sq->thread);
+-				sq_cpu = task_cpu(sq->thread);
+-			}
+-			mutex_unlock(&sq->lock);
+-		}
++		sq_pid = sq->task_pid;
++		sq_cpu = sq->sq_cpu;
+ 	}
+ 
+ 	seq_printf(m, "SqThread:\t%d\n", sq_pid);
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index bd6c2c7959a5..65b5dbe3c850 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -214,6 +214,7 @@ static bool io_sqd_handle_event(struct io_sq_data *sqd)
+ 			did_sig = get_signal(&ksig);
+ 		cond_resched();
+ 		mutex_lock(&sqd->lock);
++		sqd->sq_cpu = raw_smp_processor_id();
+ 	}
+ 	return did_sig || test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+ }
+@@ -229,10 +230,15 @@ static int io_sq_thread(void *data)
+ 	snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
+ 	set_task_comm(current, buf);
+ 
+-	if (sqd->sq_cpu != -1)
++	/* reset to our pid after we've set task_comm, for fdinfo */
++	sqd->task_pid = current->pid;
++
++	if (sqd->sq_cpu != -1) {
+ 		set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
+-	else
++	} else {
+ 		set_cpus_allowed_ptr(current, cpu_online_mask);
++		sqd->sq_cpu = raw_smp_processor_id();
++	}
+ 
+ 	mutex_lock(&sqd->lock);
+ 	while (1) {
+@@ -261,6 +267,7 @@ static int io_sq_thread(void *data)
+ 				mutex_unlock(&sqd->lock);
+ 				cond_resched();
+ 				mutex_lock(&sqd->lock);
++				sqd->sq_cpu = raw_smp_processor_id();
+ 			}
+ 			continue;
+ 		}
+@@ -294,6 +301,7 @@ static int io_sq_thread(void *data)
+ 				mutex_unlock(&sqd->lock);
+ 				schedule();
+ 				mutex_lock(&sqd->lock);
++				sqd->sq_cpu = raw_smp_processor_id();
+ 			}
+ 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+ 				atomic_andnot(IORING_SQ_NEED_WAKEUP,
 
 -- 
 Jens Axboe

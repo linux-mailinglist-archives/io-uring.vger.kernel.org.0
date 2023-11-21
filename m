@@ -1,103 +1,95 @@
-Return-Path: <io-uring+bounces-120-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-121-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41EF7F279C
-	for <lists+io-uring@lfdr.de>; Tue, 21 Nov 2023 09:37:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD9F7F314E
+	for <lists+io-uring@lfdr.de>; Tue, 21 Nov 2023 15:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8921C218A4
-	for <lists+io-uring@lfdr.de>; Tue, 21 Nov 2023 08:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F931B20FBF
+	for <lists+io-uring@lfdr.de>; Tue, 21 Nov 2023 14:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCEE1DFED;
-	Tue, 21 Nov 2023 08:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB283495DC;
+	Tue, 21 Nov 2023 14:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J1eNeAXh"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MhZmgjvR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C2910E
-	for <io-uring@vger.kernel.org>; Tue, 21 Nov 2023 00:37:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700555837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wSnMEYxpnW5oiEx9Wxa+pu1+pouT4rSIR9cZCOvF7D0=;
-	b=J1eNeAXhnNGCyVK38bdofRwNen0s+liacKCgkTJb8hxNSmUsS8HTEe4SrxwiCzxMuKO/Yl
-	kCUX9F4G/5HqfJLv7xZP4+NXQTDO61NYBWSjHJG7ggC6CDVdYR0EsgiO/t6D7Wc8aowZl/
-	IwyqThvTQWd476lUUUmveaAUmQs66jc=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-bNWAcLLAM92l4peDpphzPA-1; Tue,
- 21 Nov 2023 03:37:13 -0500
-X-MC-Unique: bNWAcLLAM92l4peDpphzPA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D00FE3816B46;
-	Tue, 21 Nov 2023 08:37:11 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.14])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 524BD492BFA;
-	Tue, 21 Nov 2023 08:37:05 +0000 (UTC)
-Date: Tue, 21 Nov 2023 16:37:01 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Keith Busch <kbusch@meta.com>
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-	joshi.k@samsung.com, martin.petersen@oracle.com,
-	Keith Busch <kbusch@kernel.org>, ming.lei@redhat.com
-Subject: Re: [PATCHv3 1/5] bvec: introduce multi-page bvec iterating
-Message-ID: <ZVxsLYj9oH+j3RQ8@fedora>
-References: <20231120224058.2750705-1-kbusch@meta.com>
- <20231120224058.2750705-2-kbusch@meta.com>
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B4790
+	for <io-uring@vger.kernel.org>; Tue, 21 Nov 2023 06:42:36 -0800 (PST)
+Received: by mail-il1-x131.google.com with SMTP id e9e14a558f8ab-35904093540so7088565ab.1
+        for <io-uring@vger.kernel.org>; Tue, 21 Nov 2023 06:42:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1700577755; x=1701182555; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6Y0NLYl6pXHLUmq7iy8AFWeOvkVdKAEVFAjAp7dFvQ=;
+        b=MhZmgjvRxK2khctP/i+JzH5E4ThQLwQNrH3DknTXDsw32Yu3wkAu+pNS1vxYD/5DfZ
+         K6TqHaKAFsq71CmmpMVvu9Uo59Wr3YaO43q7glB88MWn1LUCu9a7ZlK7A8fCl1JL3KnG
+         8Pjh7UkbbAnrwFpfnIgdIij6h57oBlOfHYuuhWx0U4v+olKkkZgxBzt1Cc3Hw1HEW0pt
+         sO33ZNb4plBY8KwttY/wOdKQEKXRo7irMYqek5tAfrBaQGaDu30a6SCX8qZzHNBkgC7f
+         YVA5fJoPoAS/9EnZ1PXAE6iJ+8nNlnoh4WOOsyTIWiHo9YjUA0bzrBer8Ysj97g4sfRL
+         8MZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700577755; x=1701182555;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X6Y0NLYl6pXHLUmq7iy8AFWeOvkVdKAEVFAjAp7dFvQ=;
+        b=R8XHQ77ViLlvC4/U3jBbgzQRZHJzjFEcYxV/PBYzF/GkMWtf0x5SG0P1HKp1zXSi70
+         fpep6b+E3C+V8dvKZFZshiHbOjES0FMcitXke8w7FaQy7Hu7E+IchotamnHaPs2SJltB
+         W11N+1+oSuhNBmZz5o82TJWBb2ps4oVHx7Lx4lsFoHEM2OEsKv65FRfzwTvbVIevo1fn
+         fLF6D8cb8ykrzE2wVmiwixP3cMfqR8h3LY754/AmuHB0YwgTZ+aroo3Ajc99n9Gs2jkc
+         6uTynh63rFXouvKM1cOkYEqa0wwhTCgeFu1rtVnkyGQEBfxXXfEwfDQg9M9qqZjhwwNN
+         /UFQ==
+X-Gm-Message-State: AOJu0YzuJt6OsKLEjpVn+kwHH1GxDFB/XxCFjbYKrbJW5A3JmbmFOu6A
+	1l8qJOGHHZYcFMFdkV+I3pnUzw==
+X-Google-Smtp-Source: AGHT+IHibxlJU0xr1NF6DlHxQoyxZzL2rXJQtYM33/a1BLlvN58w3+tOzyouNynOxVYzKMxGnFjM9g==
+X-Received: by 2002:a6b:6c10:0:b0:792:6068:dcc8 with SMTP id a16-20020a6b6c10000000b007926068dcc8mr10307276ioh.2.1700577755445;
+        Tue, 21 Nov 2023 06:42:35 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id j14-20020a02cb0e000000b004665ad49d39sm1187305jap.74.2023.11.21.06.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 06:42:34 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, asml.silence@gmail.com, 
+ Keith Busch <kbusch@meta.com>
+Cc: Keith Busch <kbusch@kernel.org>
+In-Reply-To: <20231120221831.2646460-1-kbusch@meta.com>
+References: <20231120221831.2646460-1-kbusch@meta.com>
+Subject: Re: [PATCH] io_uring: fix off-by one bvec index
+Message-Id: <170057775460.269185.18412729294401034144.b4-ty@kernel.dk>
+Date: Tue, 21 Nov 2023 07:42:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120224058.2750705-2-kbusch@meta.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-26615
 
-On Mon, Nov 20, 2023 at 02:40:54PM -0800, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+
+On Mon, 20 Nov 2023 14:18:31 -0800, Keith Busch wrote:
+> If the offset equals the bv_len of the first registered bvec, then the
+> request does not include any of that first bvec. Skip it so that drivers
+> don't have to deal with a zero length bvec, which was observed to break
+> NVMe's PRP list creation.
 > 
-> Some bio_vec iterators can handle physically contiguous memory and have
-> no need to split bvec consideration on page boundaries.
-
-Then I am wondering why this helper is needed, and you can use each bvec
-directly, which is supposed to be physically contiguous.
-
 > 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->  include/linux/bvec.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-> index 555aae5448ae4..9364c258513e0 100644
-> --- a/include/linux/bvec.h
-> +++ b/include/linux/bvec.h
-> @@ -184,6 +184,12 @@ static inline void bvec_iter_advance_single(const struct bio_vec *bv,
->  		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
->  	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
->  
-> +#define for_each_mp_bvec(bvl, bio_vec, iter, start)			\
-> +	for (iter = (start);						\
-> +	     (iter).bi_size &&						\
-> +		((bvl = mp_bvec_iter_bvec((bio_vec), (iter))), 1);	\
-> +	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
-> +
 
-We already have bio_for_each_bvec() to iterate over (multipage)bvecs
-from bio.
+Applied, thanks!
+
+[1/1] io_uring: fix off-by one bvec index
+      commit: d6fef34ee4d102be448146f24caf96d7b4a05401
+
+Best regards,
+-- 
+Jens Axboe
 
 
-Thanks,
-Ming
 
 

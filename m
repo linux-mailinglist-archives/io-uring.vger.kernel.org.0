@@ -1,48 +1,60 @@
-Return-Path: <io-uring+bounces-131-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-132-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA727F495E
-	for <lists+io-uring@lfdr.de>; Wed, 22 Nov 2023 15:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9796E7F49A2
+	for <lists+io-uring@lfdr.de>; Wed, 22 Nov 2023 16:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1E84B2118E
-	for <lists+io-uring@lfdr.de>; Wed, 22 Nov 2023 14:51:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E31C6B20C37
+	for <lists+io-uring@lfdr.de>; Wed, 22 Nov 2023 15:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05CF4C3D8;
-	Wed, 22 Nov 2023 14:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4224E1C0;
+	Wed, 22 Nov 2023 15:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFZTJARF"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gghhkSG4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ylDzK1dN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26EBE19E;
-	Wed, 22 Nov 2023 06:51:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700664701; x=1732200701;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Lp3IDM3ar4jYOzHbknAigUjAPfa74EA/HlhJuCNIfU=;
-  b=RFZTJARF7G0F4/0tmBnfccuZRtbRAgC9sUNRAVYBjn5Gy0GYQbXTH7Fl
-   AU4IGs1YEAxciute8I3PlHvJMcZs2hgTNMSNKrkAFc0LxImmN1OmVtm+X
-   qV7wVscQSNX3PSaqk5jF6KYb/mluYTiVh6aOW9rlx0CwH4JwmO7BOFMEP
-   9m55363ih+vtjNxuYg3dprwR3LRvG6K8VRnA/T9nUSt8AZ/Pb9gG25z22
-   re2zR5E3zUT3WDbCaDcYXg0IV0pwo3vtYzdkxtD7WdvUmfLWqYgAVvPcd
-   BwYJ+8vBN5/YwDNswBFnUYes4TJB1tqMMmb44i+UDAkp9SFRJZw8/dd8c
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="10729190"
-X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="10729190"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 06:51:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="14944713"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa001.jf.intel.com with ESMTP; 22 Nov 2023 06:51:20 -0800
-Date: Wed, 22 Nov 2023 22:49:27 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B951F19E;
+	Wed, 22 Nov 2023 07:05:11 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 962401F8D7;
+	Wed, 22 Nov 2023 15:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1700665509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kiNIjoy22VhgtIuHBArgiaoyvsvGoNJHeARkzxhMWGY=;
+	b=gghhkSG43KQIBBJGVUaWHWPez5aSJU2oWxN0I2xdIkHy4nT299HGHkEPzB5ju783UEdGub
+	quQGKg0KLRMPxc924bp7I28UpnSbuczFPYoBfNJEla47Q0VzoDIda1+kyxPGX1KLh3kS2P
+	Jr9MMfR+boGxUZF/uwCU5ZOK4WMlf80=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1700665509;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kiNIjoy22VhgtIuHBArgiaoyvsvGoNJHeARkzxhMWGY=;
+	b=ylDzK1dNfUswNgsV2CMCxU1vr72Y1bh7nO7MfzJ/ZCx/IAxOmdSUWmUdkcoayATrj7nzRj
+	dFlzvSaj+6lPeYAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 84B63139FD;
+	Wed, 22 Nov 2023 15:05:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id 4pvmH6UYXmUmGgAAMHmgww
+	(envelope-from <jack@suse.cz>); Wed, 22 Nov 2023 15:05:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E6C71A07DC; Wed, 22 Nov 2023 16:05:08 +0100 (CET)
+Date: Wed, 22 Nov 2023 16:05:08 +0100
+From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
 	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
@@ -101,10 +113,10 @@ Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
 	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
 	Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
-Message-ID: <ZV4U96z12KSi4GGw@yilunxu-OptiPlex-7050>
+Subject: Re: [PATCH v2 1/4] i915: make inject_virtual_interrupt() void
+Message-ID: <20231122150508.bdkhrdrhlyva7biz@quack3>
 References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
- <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+ <20231122-vfs-eventfd-signal-v2-1-bd549b14ce0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -113,63 +125,97 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+In-Reply-To: <20231122-vfs-eventfd-signal-v2-1-bd549b14ce0c@kernel.org>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -6.30
+X-Spamd-Result: default: False [-6.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 REPLY(-4.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_GT_50(0.00)[78];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,lst.de,suse.cz,redhat.com,google.com,linutronix.de,alien8.de,linux.intel.com,kernel.org,infradead.org,xen.org,intel.com,gmail.com,ffwll.ch,ziepe.ca,linux.ibm.com,arndb.de,linuxfoundation.org,linux.alibaba.com,oss.nxp.com,kvack.org,cmpxchg.org,linux.dev,nvidia.com,lists.freedesktop.org,lists.ozlabs.org,lists.linux-foundation.org,kernel.dk];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 SUSPICIOUS_RECIPS(1.50)[]
 
-On Wed, Nov 22, 2023 at 01:48:23PM +0100, Christian Brauner wrote:
-> Ever since the evenfd type was introduced back in 2007 in commit
-> e1ad7468c77d ("signal/timer/event: eventfd core") the eventfd_signal()
-> function only ever passed 1 as a value for @n. There's no point in
-> keeping that additional argument.
+On Wed 22-11-23 13:48:22, Christian Brauner wrote:
+> The single caller of inject_virtual_interrupt() ignores the return value
+> anyway. This allows us to simplify eventfd_signal() in follow-up
+> patches.
 > 
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  arch/x86/kvm/hyperv.c                     |  2 +-
->  arch/x86/kvm/xen.c                        |  2 +-
->  drivers/accel/habanalabs/common/device.c  |  2 +-
->  drivers/fpga/dfl.c                        |  2 +-
->  drivers/gpu/drm/drm_syncobj.c             |  6 +++---
->  drivers/gpu/drm/i915/gvt/interrupt.c      |  2 +-
->  drivers/infiniband/hw/mlx5/devx.c         |  2 +-
->  drivers/misc/ocxl/file.c                  |  2 +-
->  drivers/s390/cio/vfio_ccw_chp.c           |  2 +-
->  drivers/s390/cio/vfio_ccw_drv.c           |  4 ++--
->  drivers/s390/cio/vfio_ccw_ops.c           |  6 +++---
->  drivers/s390/crypto/vfio_ap_ops.c         |  2 +-
->  drivers/usb/gadget/function/f_fs.c        |  4 ++--
->  drivers/vdpa/vdpa_user/vduse_dev.c        |  6 +++---
->  drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c    |  2 +-
->  drivers/vfio/pci/vfio_pci_core.c          |  6 +++---
->  drivers/vfio/pci/vfio_pci_intrs.c         | 12 ++++++------
->  drivers/vfio/platform/vfio_platform_irq.c |  4 ++--
->  drivers/vhost/vdpa.c                      |  4 ++--
->  drivers/vhost/vhost.c                     | 10 +++++-----
->  drivers/vhost/vhost.h                     |  2 +-
->  drivers/virt/acrn/ioeventfd.c             |  2 +-
->  drivers/xen/privcmd.c                     |  2 +-
->  fs/aio.c                                  |  2 +-
->  fs/eventfd.c                              |  9 +++------
->  include/linux/eventfd.h                   |  4 ++--
->  mm/memcontrol.c                           | 10 +++++-----
->  mm/vmpressure.c                           |  2 +-
->  samples/vfio-mdev/mtty.c                  |  4 ++--
->  virt/kvm/eventfd.c                        |  4 ++--
->  30 files changed, 60 insertions(+), 63 deletions(-)
+>  drivers/gpu/drm/i915/gvt/interrupt.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index dd7a783d53b5..e73f88050f08 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -1872,7 +1872,7 @@ static irqreturn_t dfl_irq_handler(int irq, void *arg)
->  {
->  	struct eventfd_ctx *trigger = arg;
+> diff --git a/drivers/gpu/drm/i915/gvt/interrupt.c b/drivers/gpu/drm/i915/gvt/interrupt.c
+> index de3f5903d1a7..9665876b4b13 100644
+> --- a/drivers/gpu/drm/i915/gvt/interrupt.c
+> +++ b/drivers/gpu/drm/i915/gvt/interrupt.c
+> @@ -422,7 +422,7 @@ static void init_irq_map(struct intel_gvt_irq *irq)
+>  #define MSI_CAP_DATA(offset) (offset + 8)
+>  #define MSI_CAP_EN 0x1
 >  
-> -	eventfd_signal(trigger, 1);
-> +	eventfd_signal(trigger);
-
-For FPGA part,
-
-Acked-by: Xu Yilun <yilun.xu@intel.com>
-
->  	return IRQ_HANDLED;
+> -static int inject_virtual_interrupt(struct intel_vgpu *vgpu)
+> +static void inject_virtual_interrupt(struct intel_vgpu *vgpu)
+>  {
+>  	unsigned long offset = vgpu->gvt->device_info.msi_cap_offset;
+>  	u16 control, data;
+> @@ -434,10 +434,10 @@ static int inject_virtual_interrupt(struct intel_vgpu *vgpu)
+>  
+>  	/* Do not generate MSI if MSIEN is disabled */
+>  	if (!(control & MSI_CAP_EN))
+> -		return 0;
+> +		return;
+>  
+>  	if (WARN(control & GENMASK(15, 1), "only support one MSI format\n"))
+> -		return -EINVAL;
+> +		return;
+>  
+>  	trace_inject_msi(vgpu->id, addr, data);
+>  
+> @@ -451,10 +451,10 @@ static int inject_virtual_interrupt(struct intel_vgpu *vgpu)
+>  	 * returned and don't inject interrupt into guest.
+>  	 */
+>  	if (!test_bit(INTEL_VGPU_STATUS_ATTACHED, vgpu->status))
+> -		return -ESRCH;
+> -	if (vgpu->msi_trigger && eventfd_signal(vgpu->msi_trigger, 1) != 1)
+> -		return -EFAULT;
+> -	return 0;
+> +		return;
+> +	if (!vgpu->msi_trigger)
+> +		return;
+> +	eventfd_signal(vgpu->msi_trigger, 1);
 >  }
+>  
+>  static void propagate_event(struct intel_gvt_irq *irq,
+> 
+> -- 
+> 2.42.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 

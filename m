@@ -1,40 +1,40 @@
-Return-Path: <io-uring+bounces-144-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-145-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554ED7F5FBE
-	for <lists+io-uring@lfdr.de>; Thu, 23 Nov 2023 14:12:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D9F7F6004
+	for <lists+io-uring@lfdr.de>; Thu, 23 Nov 2023 14:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102F4281DEA
-	for <lists+io-uring@lfdr.de>; Thu, 23 Nov 2023 13:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0C5281DC2
+	for <lists+io-uring@lfdr.de>; Thu, 23 Nov 2023 13:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9573624A08;
-	Thu, 23 Nov 2023 13:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CA124B5C;
+	Thu, 23 Nov 2023 13:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSfg5H2P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r42g7gVE"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454CB24A05;
-	Thu, 23 Nov 2023 13:12:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B246C433C7;
-	Thu, 23 Nov 2023 13:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A51C24B3F;
+	Thu, 23 Nov 2023 13:18:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFAAC433C9;
+	Thu, 23 Nov 2023 13:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700745135;
-	bh=VBAn7FZcvw1drif9KzTmaabLPVAYO4zX2eeQPqBTwFw=;
+	s=k20201202; t=1700745532;
+	bh=BJOuctG/jOXVT0hO6qxyVXBeYyH4TG/ylT0dyLa92yI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSfg5H2PW95uhmCyWswaCk18HBzNnUr8lrZC9/jswVOaVEk9Necoc/3PSsg/eWI+c
-	 nUSNVQiBVNuTkdJG4ZroseK0fKTuKodiCnTfp5VBFncFM3thhaeXbqdq7/1OyUlFkh
-	 hvhoTdxdxKP2qiIgsXRrtgQ8aW/glFRtrG5pk0o8niH7Far3mtrppzle/A5KWCQFN1
-	 0J9D7XnhqZQWKtQ8+7lAsz1DeizPazr+k6Se4xCbJkyOxPi+pXbCyvcnpPCySfoTu/
-	 nxY4zeQuXLH9O0FYHNYyhAuFpYV+0VZCYLV3awl8R2o5zjol3Qy1blkTCXoR/k3lKT
-	 V10Lsp2N5sNOQ==
-Date: Thu, 23 Nov 2023 14:11:56 +0100
+	b=r42g7gVEtjBJ5WfLPAfCypJTdeIZa9tza+98XErRLkZuJq42IHSNqt9TjDoS1u/dO
+	 mqRTO6hyOgRcqG5Vqi98sspSbfx6Ne64w0KZSaAUUdSmCRm0SeW9B8r2AffO7bhDq0
+	 voQrIzDl2Rys7kYNdpWCPkldE19sNixdWiKMUoa9j34EYG62L/DgZtbbaspmEPmu14
+	 PuPzBMdYXfPSBprGxxIV2rleVHq+xRFaQ7/X8REU4C8BYG2H4sP4+OADV7Tg2Ri8NY
+	 w8CXZUWWNJUaMlJH5PPc15vZ4ox/kvWZIeet2zBszz9qi15zBW/WlVu+mFthIg8ovM
+	 qoF7yc2VytIMg==
+Date: Thu, 23 Nov 2023 14:18:33 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
 Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
 	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
 	Sean Christopherson <seanjc@google.com>,
@@ -45,8 +45,9 @@ Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
 	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
 	Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
 	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.a.wang@intel.com>,
 	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
 	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
@@ -90,11 +91,11 @@ Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
 	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
 	Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] i915: make inject_virtual_interrupt() void
-Message-ID: <20231123-randlage-instinkt-e458628d2d7c@brauner>
+Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
+Message-ID: <20231123-portwein-geeignet-787b940c7d2d@brauner>
 References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
- <20231122-vfs-eventfd-signal-v2-1-bd549b14ce0c@kernel.org>
- <ZV6buHrQy2+CJ7xX@debian-scheme>
+ <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+ <877cm9n7dh.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -103,16 +104,11 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZV6buHrQy2+CJ7xX@debian-scheme>
+In-Reply-To: <877cm9n7dh.fsf@intel.com>
 
-> > +	if (!vgpu->msi_trigger)
-> > +		return;
-> > +	eventfd_signal(vgpu->msi_trigger, 1);
-> >  }
+> >   * eventfd_signal - Adds @n to the eventfd counter.
 > 
-> I think it's a little simpler to write as
->     if (vgpu->msi_trigger)
->             eventfd_signal(vgpu->msi_trigger, 1);
+> This still refers to @n here, and in patch 4.
 
-Good point. I folded that suggestion into the patch.
+Fixed and folded. Thanks!
 

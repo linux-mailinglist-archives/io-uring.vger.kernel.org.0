@@ -1,373 +1,165 @@
-Return-Path: <io-uring+bounces-150-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-151-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BAA7F6A87
-	for <lists+io-uring@lfdr.de>; Fri, 24 Nov 2023 03:06:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB47A7F6D1C
+	for <lists+io-uring@lfdr.de>; Fri, 24 Nov 2023 08:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3C91C20A10
-	for <lists+io-uring@lfdr.de>; Fri, 24 Nov 2023 02:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F69281B09
+	for <lists+io-uring@lfdr.de>; Fri, 24 Nov 2023 07:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99708646;
-	Fri, 24 Nov 2023 02:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BBD79E0;
+	Fri, 24 Nov 2023 07:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HYzp84Iz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgJMC0Yj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB80E1A5
-	for <io-uring@vger.kernel.org>; Thu, 23 Nov 2023 18:06:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700791565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rQnzBTj/z5aPPqyxUu82KqapSq/NYxk1EmzIkkjx9o8=;
-	b=HYzp84IzRbtaHbA6Jpx65vThgkiJTol0I/3JZcubExERwxAwutvgGS/h220IeHvDJb2MFh
-	aY6u40CmBhISBSDpcorBoY67gOxLOdhFcMRX79adFQ5+1hhnSgtOIBOPFdAOaX5y6Nar2Y
-	8GQKIXlgu8wYBH0fUNbdUQpveD7RxYo=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-JXD-KZH4P42NL2KHtynaEw-1; Thu,
- 23 Nov 2023 21:06:02 -0500
-X-MC-Unique: JXD-KZH4P42NL2KHtynaEw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E71731C060C6;
-	Fri, 24 Nov 2023 02:06:01 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id D229B1C060B0;
-	Fri, 24 Nov 2023 02:05:57 +0000 (UTC)
-Date: Fri, 24 Nov 2023 10:05:53 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, joshi.k@samsung.com
-Subject: Re: [PATCH 1/3] io_uring: split out cmd api into a separate header
-Message-ID: <ZWAFAex/QRx8ODZe@fedora>
-References: <cover.1700668641.git.asml.silence@gmail.com>
- <547e56560b97cd66f00bfc5b53db24f2fa1a8852.1700668641.git.asml.silence@gmail.com>
- <ZV67ozp4yizgWYYg@fedora>
- <c204c03a-785d-4872-a8c8-58d0cdc708d6@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A108C18;
+	Fri, 24 Nov 2023 07:48:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C4BC433C7;
+	Fri, 24 Nov 2023 07:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700812116;
+	bh=wuXwn6H3IYOQTJYurH/LAKoS23w/GwU7ryzU1+Vs8b4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cgJMC0Yj3JRcUDF8O8XpdEdYA/5STjclZLwUWXfVMJwJnFCmcyrJDVup7Rscs2p84
+	 1lIevByzmjhiYL9n/DPGwW0r1qVsQ45xdWW1cCKjcoubJ/Np/IRSX/dXnPPAZi1lyB
+	 ETOprEE5xY+akdxk7DWnyVkIziLf3Nu7PWCfTmFB985JDwr0PPgc9yJ4BLOQhlh8Nx
+	 7J3VH6h2rRYlPJhbqQ9tIol8mM/LtKts+YBDNQd03tji9lqn5ZFKRzSp7zz5eJxPSA
+	 m4YJmobEWMvUVEr6S2NJRsz4v9jSzMIYOHwn/4yZmgFOE0FpvuIzzDTt4O8YISu59u
+	 jwN2CAG1O1gvw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	David Woodhouse <dwmw2@infradead.org>,
+	Paul Durrant <paul@xen.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.a.wang@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Farman <farman@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Tony Krowiak <akrowiak@linux.ibm.com>,
+	Jason Herne <jjherne@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Diana Craciun <diana.craciun@oss.nxp.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Fei Li <fei1.li@intel.com>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeelb@google.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fpga@vger.kernel.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-rdma@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org,
+	linux-aio@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] eventfd: simplify signal helpers
+Date: Fri, 24 Nov 2023 08:47:57 +0100
+Message-ID: <20231124-traurig-halunken-6defdd66e8f2@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c204c03a-785d-4872-a8c8-58d0cdc708d6@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1378; i=brauner@kernel.org; h=from:subject:message-id; bh=wuXwn6H3IYOQTJYurH/LAKoS23w/GwU7ryzU1+Vs8b4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQmhOr8Nb88ObVn73mvUyobyi/8m/y5yi2fL80o6/sb9 3cTN/yd21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR7iBGhq1L7YSDDTVSee+x X1xccNDei/91c9MuqdqsiYtj7lg17WdkWCP3faH/qkmK79OnL3ut4/Vo+e0nB564XJ5mY6ruNdX 4JgMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 23, 2023 at 11:16:33AM +0000, Pavel Begunkov wrote:
-> On 11/23/23 02:40, Ming Lei wrote:
-> > On Wed, Nov 22, 2023 at 04:01:09PM +0000, Pavel Begunkov wrote:
-> > > linux/io_uring.h is slowly becoming a rubbish bin where we put
-> > > anything exposed to other subsystems. For instance, the task exit
-> > > hooks and io_uring cmd infra are completely orthogonal and don't need
-> > > each other's definitions. Start cleaning it up by splitting out all
-> > > command bits into a new header file.
-> > > 
-> > > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > ---
-> > >   drivers/block/ublk_drv.c       |  2 +-
-> > >   drivers/nvme/host/ioctl.c      |  2 +-
-> > >   include/linux/io_uring.h       | 89 +---------------------------------
-> > >   include/linux/io_uring/cmd.h   | 81 +++++++++++++++++++++++++++++++
-> > >   include/linux/io_uring_types.h | 20 ++++++++
-> > >   io_uring/io_uring.c            |  1 +
-> > >   io_uring/rw.c                  |  2 +-
-> > >   io_uring/uring_cmd.c           |  2 +-
-> > >   8 files changed, 107 insertions(+), 92 deletions(-)
-> > >   create mode 100644 include/linux/io_uring/cmd.h
-> > > 
-> > > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> > > index 83600b45e12a..909377068a87 100644
-> > > --- a/drivers/block/ublk_drv.c
-> > > +++ b/drivers/block/ublk_drv.c
-> > > @@ -36,7 +36,7 @@
-> > >   #include <linux/sched/mm.h>
-> > >   #include <linux/uaccess.h>
-> > >   #include <linux/cdev.h>
-> > > -#include <linux/io_uring.h>
-> > > +#include <linux/io_uring/cmd.h>
-> > >   #include <linux/blk-mq.h>
-> > >   #include <linux/delay.h>
-> > >   #include <linux/mm.h>
-> > > diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-> > > index 529b9954d2b8..6864a6eeee93 100644
-> > > --- a/drivers/nvme/host/ioctl.c
-> > > +++ b/drivers/nvme/host/ioctl.c
-> > > @@ -5,7 +5,7 @@
-> > >    */
-> > >   #include <linux/ptrace.h>	/* for force_successful_syscall_return */
-> > >   #include <linux/nvme_ioctl.h>
-> > > -#include <linux/io_uring.h>
-> > > +#include <linux/io_uring/cmd.h>
-> > >   #include "nvme.h"
-> > >   enum {
-> > > diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-> > > index aefb73eeeebf..d8fc93492dc5 100644
-> > > --- a/include/linux/io_uring.h
-> > > +++ b/include/linux/io_uring.h
-> > > @@ -6,71 +6,13 @@
-> > >   #include <linux/xarray.h>
-> > >   #include <uapi/linux/io_uring.h>
-> > > -enum io_uring_cmd_flags {
-> > > -	IO_URING_F_COMPLETE_DEFER	= 1,
-> > > -	IO_URING_F_UNLOCKED		= 2,
-> > > -	/* the request is executed from poll, it should not be freed */
-> > > -	IO_URING_F_MULTISHOT		= 4,
-> > > -	/* executed by io-wq */
-> > > -	IO_URING_F_IOWQ			= 8,
-> > > -	/* int's last bit, sign checks are usually faster than a bit test */
-> > > -	IO_URING_F_NONBLOCK		= INT_MIN,
-> > > -
-> > > -	/* ctx state flags, for URING_CMD */
-> > > -	IO_URING_F_SQE128		= (1 << 8),
-> > > -	IO_URING_F_CQE32		= (1 << 9),
-> > > -	IO_URING_F_IOPOLL		= (1 << 10),
-> > > -
-> > > -	/* set when uring wants to cancel a previously issued command */
-> > > -	IO_URING_F_CANCEL		= (1 << 11),
-> > > -	IO_URING_F_COMPAT		= (1 << 12),
-> > > -};
-> > > -
-> > > -/* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
-> > > -#define IORING_URING_CMD_CANCELABLE	(1U << 30)
-> > > -#define IORING_URING_CMD_POLLED		(1U << 31)
-> > > -
-> > > -struct io_uring_cmd {
-> > > -	struct file	*file;
-> > > -	const struct io_uring_sqe *sqe;
-> > > -	union {
-> > > -		/* callback to defer completions to task context */
-> > > -		void (*task_work_cb)(struct io_uring_cmd *cmd, unsigned);
-> > > -		/* used for polled completion */
-> > > -		void *cookie;
-> > > -	};
-> > > -	u32		cmd_op;
-> > > -	u32		flags;
-> > > -	u8		pdu[32]; /* available inline for free use */
-> > > -};
-> > > -
-> > > -static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
-> > > -{
-> > > -	return sqe->cmd;
-> > > -}
-> > > -
-> > >   #if defined(CONFIG_IO_URING)
-> > > -int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> > > -			      struct iov_iter *iter, void *ioucmd);
-> > > -void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2,
-> > > -			unsigned issue_flags);
-> > >   struct sock *io_uring_get_socket(struct file *file);
-> > >   void __io_uring_cancel(bool cancel_all);
-> > >   void __io_uring_free(struct task_struct *tsk);
-> > >   void io_uring_unreg_ringfd(void);
-> > >   const char *io_uring_get_opcode(u8 opcode);
-> > > -void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-> > > -			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
-> > > -			    unsigned flags);
-> > > -/* users should follow semantics of IOU_F_TWQ_LAZY_WAKE */
-> > > -void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
-> > > -			void (*task_work_cb)(struct io_uring_cmd *, unsigned));
-> > > -
-> > > -static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-> > > -			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-> > > -{
-> > > -	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
-> > > -}
-> > > +int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
-> > >   static inline void io_uring_files_cancel(void)
-> > >   {
-> > > @@ -89,28 +31,7 @@ static inline void io_uring_free(struct task_struct *tsk)
-> > >   	if (tsk->io_uring)
-> > >   		__io_uring_free(tsk);
-> > >   }
-> > > -int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
-> > > -void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > -		unsigned int issue_flags);
-> > > -struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd);
-> > >   #else
-> > > -static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> > > -			      struct iov_iter *iter, void *ioucmd)
-> > > -{
-> > > -	return -EOPNOTSUPP;
-> > > -}
-> > > -static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
-> > > -		ssize_t ret2, unsigned issue_flags)
-> > > -{
-> > > -}
-> > > -static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-> > > -			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-> > > -{
-> > > -}
-> > > -static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
-> > > -			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-> > > -{
-> > > -}
-> > >   static inline struct sock *io_uring_get_socket(struct file *file)
-> > >   {
-> > >   	return NULL;
-> > > @@ -133,14 +54,6 @@ static inline int io_uring_cmd_sock(struct io_uring_cmd *cmd,
-> > >   {
-> > >   	return -EOPNOTSUPP;
-> > >   }
-> > > -static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > -		unsigned int issue_flags)
-> > > -{
-> > > -}
-> > > -static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
-> > > -{
-> > > -	return NULL;
-> > > -}
-> > >   #endif
-> > >   #endif
-> > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> > > new file mode 100644
-> > > index 000000000000..62fcfaf6fcc9
-> > > --- /dev/null
-> > > +++ b/include/linux/io_uring/cmd.h
-> > > @@ -0,0 +1,81 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > > +#ifndef _LINUX_IO_URING_CMD_H
-> > > +#define _LINUX_IO_URING_CMD_H
-> > > +
-> > > +#include <uapi/linux/io_uring.h>
-> > > +#include <linux/io_uring_types.h>
-> > > +
-> > > +/* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
-> > > +#define IORING_URING_CMD_CANCELABLE	(1U << 30)
-> > > +#define IORING_URING_CMD_POLLED		(1U << 31)
-> > > +
-> > > +struct io_uring_cmd {
-> > > +	struct file	*file;
-> > > +	const struct io_uring_sqe *sqe;
-> > > +	union {
-> > > +		/* callback to defer completions to task context */
-> > > +		void (*task_work_cb)(struct io_uring_cmd *cmd, unsigned);
-> > > +		/* used for polled completion */
-> > > +		void *cookie;
-> > > +	};
-> > > +	u32		cmd_op;
-> > > +	u32		flags;
-> > > +	u8		pdu[32]; /* available inline for free use */
-> > > +};
-> > > +
-> > > +static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
-> > > +{
-> > > +	return sqe->cmd;
-> > > +}
-> > > +
-> > > +#if defined(CONFIG_IO_URING)
-> > > +int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> > > +			      struct iov_iter *iter, void *ioucmd);
-> > > +void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2,
-> > > +			unsigned issue_flags);
-> > > +void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-> > > +			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
-> > > +			    unsigned flags);
-> > > +/* users should follow semantics of IOU_F_TWQ_LAZY_WAKE */
-> > > +void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
-> > > +			void (*task_work_cb)(struct io_uring_cmd *, unsigned));
-> > > +
-> > > +static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-> > > +			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-> > > +{
-> > > +	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
-> > > +}
-> > > +
-> > > +void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > +		unsigned int issue_flags);
-> > > +struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd);
-> > > +
-> > > +#else
-> > > +static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> > > +			      struct iov_iter *iter, void *ioucmd)
-> > > +{
-> > > +	return -EOPNOTSUPP;
-> > > +}
-> > > +static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
-> > > +		ssize_t ret2, unsigned issue_flags)
-> > > +{
-> > > +}
-> > > +static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-> > > +			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-> > > +{
-> > > +}
-> > > +static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
-> > > +			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-> > > +{
-> > > +}
-> > > +static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > +		unsigned int issue_flags)
-> > > +{
-> > > +}
-> > > +static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
-> > > +{
-> > > +	return NULL;
-> > > +}
-> > > +#endif
-> > > +
-> > > +#endif /* _LINUX_IO_URING_CMD_H */
-> > > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> > > index d3009d56af0b..0bcecb734af3 100644
-> > > --- a/include/linux/io_uring_types.h
-> > > +++ b/include/linux/io_uring_types.h
-> > > @@ -7,6 +7,26 @@
-> > >   #include <linux/llist.h>
-> > >   #include <uapi/linux/io_uring.h>
-> > > +enum io_uring_cmd_flags {
-> > > +	IO_URING_F_COMPLETE_DEFER	= 1,
-> > > +	IO_URING_F_UNLOCKED		= 2,
-> > > +	/* the request is executed from poll, it should not be freed */
-> > > +	IO_URING_F_MULTISHOT		= 4,
-> > > +	/* executed by io-wq */
-> > > +	IO_URING_F_IOWQ			= 8,
-> > > +	/* int's last bit, sign checks are usually faster than a bit test */
-> > > +	IO_URING_F_NONBLOCK		= INT_MIN,
-> > > +
-> > > +	/* ctx state flags, for URING_CMD */
-> > > +	IO_URING_F_SQE128		= (1 << 8),
-> > > +	IO_URING_F_CQE32		= (1 << 9),
-> > > +	IO_URING_F_IOPOLL		= (1 << 10),
-> > > +
-> > > +	/* set when uring wants to cancel a previously issued command */
-> > > +	IO_URING_F_CANCEL		= (1 << 11),
-> > > +	IO_URING_F_COMPAT		= (1 << 12),
-> > > +};
-> > 
-> > I am wondering why you don't move io_uring_cmd_flags into
-> > io_uring/cmd.h? And many above flags are used by driver now.
-> > 
-> > But most definitions in io_uring_types.h are actually io_uring
-> > internal stuff.
+On Wed, 22 Nov 2023 13:48:21 +0100, Christian Brauner wrote:
+> Hey everyone,
 > 
-> That's because these are io_uring internal execution state flags,
-> on top of which someone started to pile up cmd flags, not the
-> other way around. No clue why it was named io_uring_cmd_flags.
-> iow, the first 5 flags are widely used internally, moving them
-> would force us to add cmd.h includes into all io_uring internals.
+> This simplifies the eventfd_signal() and eventfd_signal_mask() helpers
+> significantly. They can be made void and not take any unnecessary
+> arguments.
 > 
-> We could split the enum in half, but that would be more ugly
-> as there are still packed into a single unsigned. And we can
-> also get rid of IO_URING_F_SQE128 and others by checking
-> ctx flags directly (with a helper), it'd be way better than
-> having a cmd copy of specific flags.
+> I've added a few more simplifications based on Sean's suggestion.
+> 
+> [...]
 
-OK, thanks for the explanation.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-My only concern is about io_uring_types.h, which is used by io_uring
-internal except for trace. If you think it is OK to expose it to driver
-via io_uring/cmd.h now, this patch looks fine for me.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-thanks,
-Ming
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/4] i915: make inject_virtual_interrupt() void
+      https://git.kernel.org/vfs/vfs/c/858848719210
+[2/4] eventfd: simplify eventfd_signal()
+      https://git.kernel.org/vfs/vfs/c/ded0f31f825f
+[3/4] eventfd: simplify eventfd_signal_mask()
+      https://git.kernel.org/vfs/vfs/c/45ee1c990e88
+[4/4] eventfd: make eventfd_signal{_mask}() void
+      https://git.kernel.org/vfs/vfs/c/37d5d473e749
 

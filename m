@@ -1,262 +1,190 @@
-Return-Path: <io-uring+bounces-155-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-156-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6337F9FC5
-	for <lists+io-uring@lfdr.de>; Mon, 27 Nov 2023 13:40:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3C47FA60D
+	for <lists+io-uring@lfdr.de>; Mon, 27 Nov 2023 17:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C9B280F42
-	for <lists+io-uring@lfdr.de>; Mon, 27 Nov 2023 12:40:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493EAB211DE
+	for <lists+io-uring@lfdr.de>; Mon, 27 Nov 2023 16:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF0B18C3A;
-	Mon, 27 Nov 2023 12:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3407435F16;
+	Mon, 27 Nov 2023 16:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn1Ib4dQ"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RDetjsoN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3111E18A;
-	Mon, 27 Nov 2023 04:40:36 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40b473cccfbso5150875e9.0;
-        Mon, 27 Nov 2023 04:40:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701088834; x=1701693634; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rlkG+ORnNzrHAbs39K++cguO3aQRZiNviG0OFgw1R+w=;
-        b=nn1Ib4dQkV56Hr5vINPhnHRZ6h84klWfMZZtlQOWu//BlcZ/5WmbpvV1v/dPrM+WXi
-         QLR8WzE+AAwzJKrFAeAmBmOLnyuRzjjRuR/gH36amMkyKiPG9rtiYiUTXztrHrq8df9t
-         UPjBjNv6uZfvcQbrObl+e8egoeNfUgDK6EgeI6oV3fk+evdQ/3LIE3Y4uG0NiXk8DDuu
-         t19cdkfgW7noWzAKccMTAE0ETGaYnseQ9FHppEG+i/IPluuOBeseWk5j5A9bsKKvstd5
-         oWHkVvoRaRhUKdzW09KXx8hzLM42YSg2Ab8rztfdbaGs8W2/8ku7KoZSHLajw0mpyGq5
-         ZKKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701088834; x=1701693634;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rlkG+ORnNzrHAbs39K++cguO3aQRZiNviG0OFgw1R+w=;
-        b=sEa9w9HUEpk3/Xeb9+ugdA3TA5azEvFRB6O3NcheW72XpmRkRYhxbpX3zGlNjxiGAn
-         uBNDV1DfzEDAcQAEYAkKGUAYhjaoaO0q8oPagMLzE+zVUshmDIw5RF5QvvW+fPA0Fd6O
-         d5EzBlFpZFj+dpgiDHJP1H8gBQfuCYq1TPq5JOh+n0Hxon2wyy9DLUUufBQV1sUX8IgG
-         FYxVWOW4e44QeIbBOtVdpI8KXk4SGEKNUA4EvwhAGZoxKlDpiNzeSuIvQsWuoO0y/Gfe
-         eXBDG54/O7ux0m18v5tOvSAsbeKDuNk3JgD6Z+CQhFqnv5Jwk4cIg+qoau/jw6ygC5tf
-         /sBg==
-X-Gm-Message-State: AOJu0YxSGCh7poyfJwlBfUpcDbhrOlInWo83p3ZM1wuL4xUdTAwVsk15
-	1JohUojCtpo022vZgqHaDxM=
-X-Google-Smtp-Source: AGHT+IH8vGwwkQ3464c5zeo6fTTxe1SuxrfuBUm/Bv2Sb0taSA3dGc0pWFedLf1KbekZbK/RSfkI7Q==
-X-Received: by 2002:a05:600c:1f8c:b0:40b:2baa:6a0d with SMTP id je12-20020a05600c1f8c00b0040b2baa6a0dmr4100969wmb.1.1701088834100;
-        Mon, 27 Nov 2023 04:40:34 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:8abd])
-        by smtp.gmail.com with ESMTPSA id v12-20020a05600c470c00b0040b397787d3sm11287878wmo.24.2023.11.27.04.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Nov 2023 04:40:33 -0800 (PST)
-Message-ID: <0672bf8f-92e2-4984-9d69-852b47481013@gmail.com>
-Date: Mon, 27 Nov 2023 12:33:16 +0000
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CF4CE;
+	Mon, 27 Nov 2023 08:18:14 -0800 (PST)
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ARGAmYN028142;
+	Mon, 27 Nov 2023 16:17:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=Nuqo+n/8UjwMTVEGeTCKZXosXYxmJFELkiNy1EQyEtU=;
+ b=RDetjsoNSqPUBKvTXa+yBZv9cgM4/tRINJ+ZyFlcz1qb0NPkwaJ9GrMBibq2hn3f/5CW
+ ND1Z7IaAgMUmx8uAabK1Nl5ilpXMpDVf5OETx+5lnUl5qjNiC64q4PtX+8SqtYwOBCmV
+ cCdB5Av3LEQ8B9AclxR0DdyVukfpIFH1S5BSEVkhag7d6PmJLZ/11f75vPfjUtjUQPYI
+ jOo6tGPT4DyW3BR3TU2aC4jIDdJImhwHQ23EQAgB/MazLxGxSnFqR3kagn1nPRlsiNCG
+ WCPnPGg83TnSm3tABpWGa1/oTgd04gU/8Zbwm9/NU76VRx9DKmCqXe7D4H0BVmUgqgtH kg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3umxd509yt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Nov 2023 16:17:19 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3ARGCcKr005148;
+	Mon, 27 Nov 2023 16:17:18 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3umxd509xr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Nov 2023 16:17:18 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AREJqSO025580;
+	Mon, 27 Nov 2023 16:17:17 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ukvrk9n1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Nov 2023 16:17:17 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3ARGHGcJ22413978
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Nov 2023 16:17:16 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 15FA45805A;
+	Mon, 27 Nov 2023 16:17:16 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A9CF5803F;
+	Mon, 27 Nov 2023 16:17:11 +0000 (GMT)
+Received: from li-479af74c-31f9-11b2-a85c-e4ddee11713b.ibm.com (unknown [9.61.23.212])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 27 Nov 2023 16:17:11 +0000 (GMT)
+Message-ID: <403a25d73a752da129affe0092e5b85a179f827b.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
+From: Eric Farman <farman@linux.ibm.com>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Vitaly
+ Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org,
+        David Woodhouse
+ <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
+        Oded Gabbay
+ <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
+        Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+        Xu Yilun <yilun.xu@intel.com>, Zhenyu
+ Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Jani
+ Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Leon Romanovsky
+ <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Frederic Barrat
+ <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>, Arnd
+ Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter
+ <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian
+ Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Jason Herne
+ <jjherne@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Diana Craciun
+ <diana.craciun@oss.nxp.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
+        Benjamin
+ LaHaise <bcrl@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal
+ Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-usb@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-aio@kvack.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov
+ <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Date: Mon, 27 Nov 2023 11:17:10 -0500
+In-Reply-To: <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+	 <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 net-next 2/4] af_unix: Return struct unix_sock from
- unix_get_socket().
-To: Paolo Abeni <pabeni@redhat.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: Ivan Babrou <ivan@cloudflare.com>, Kuniyuki Iwashima
- <kuni1840@gmail.com>, netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org
-References: <20231123014747.66063-1-kuniyu@amazon.com>
- <20231123014747.66063-3-kuniyu@amazon.com>
- <df0620741383dd4506d478a5a7adcb8b8f63fd67.camel@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <df0620741383dd4506d478a5a7adcb8b8f63fd67.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: XoaaD6-mJ7FXgBebGO5fJDYPNfCOc-S6
+X-Proofpoint-GUID: dFRt_wiBkITiSbtkagN5iZ6G9Z4ZE_Ku
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-27_14,2023-11-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ mlxlogscore=786 impostorscore=0 spamscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2311060000 definitions=main-2311270111
 
-On 11/27/23 09:08, Paolo Abeni wrote:
-> On Wed, 2023-11-22 at 17:47 -0800, Kuniyuki Iwashima wrote:
->> Currently, unix_get_socket() returns struct sock, but after calling
->> it, we always cast it to unix_sk().
->>
->> Let's return struct unix_sock from unix_get_socket().
->>
->> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
->> ---
->>   include/linux/io_uring.h |  4 ++--
->>   include/net/af_unix.h    |  2 +-
->>   io_uring/io_uring.c      |  5 +++--
->>   net/unix/garbage.c       | 19 +++++++------------
->>   net/unix/scm.c           | 26 +++++++++++---------------
->>   5 files changed, 24 insertions(+), 32 deletions(-)
->>
->> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
->> index aefb73eeeebf..be16677f0e4c 100644
->> --- a/include/linux/io_uring.h
->> +++ b/include/linux/io_uring.h
->> @@ -54,7 +54,7 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
->>   			      struct iov_iter *iter, void *ioucmd);
->>   void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2,
->>   			unsigned issue_flags);
->> -struct sock *io_uring_get_socket(struct file *file);
->> +struct unix_sock *io_uring_get_socket(struct file *file);
->>   void __io_uring_cancel(bool cancel_all);
->>   void __io_uring_free(struct task_struct *tsk);
->>   void io_uring_unreg_ringfd(void);
->> @@ -111,7 +111,7 @@ static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
->>   			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
->>   {
->>   }
->> -static inline struct sock *io_uring_get_socket(struct file *file)
->> +static inline struct unix_sock *io_uring_get_socket(struct file *file)
->>   {
->>   	return NULL;
->>   }
->> diff --git a/include/net/af_unix.h b/include/net/af_unix.h
->> index 5a8a670b1920..c628d30ceb19 100644
->> --- a/include/net/af_unix.h
->> +++ b/include/net/af_unix.h
->> @@ -14,7 +14,7 @@ void unix_destruct_scm(struct sk_buff *skb);
->>   void io_uring_destruct_scm(struct sk_buff *skb);
->>   void unix_gc(void);
->>   void wait_for_unix_gc(void);
->> -struct sock *unix_get_socket(struct file *filp);
->> +struct unix_sock *unix_get_socket(struct file *filp);
->>   struct sock *unix_peer_get(struct sock *sk);
->>   
->>   #define UNIX_HASH_MOD	(256 - 1)
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index ed254076c723..daed897f5975 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -177,13 +177,14 @@ static struct ctl_table kernel_io_uring_disabled_table[] = {
->>   };
->>   #endif
->>   
->> -struct sock *io_uring_get_socket(struct file *file)
->> +struct unix_sock *io_uring_get_socket(struct file *file)
->>   {
->>   #if defined(CONFIG_UNIX)
->>   	if (io_is_uring_fops(file)) {
->>   		struct io_ring_ctx *ctx = file->private_data;
->>   
->> -		return ctx->ring_sock->sk;
->> +		if (ctx->ring_sock->sk)
->> +			return unix_sk(ctx->ring_sock->sk);
->>   	}
->>   #endif
->>   	return NULL;
->> diff --git a/net/unix/garbage.c b/net/unix/garbage.c
->> index db1bb99bb793..4d634f5f6a55 100644
->> --- a/net/unix/garbage.c
->> +++ b/net/unix/garbage.c
->> @@ -105,20 +105,15 @@ static void scan_inflight(struct sock *x, void (*func)(struct unix_sock *),
->>   
->>   			while (nfd--) {
->>   				/* Get the socket the fd matches if it indeed does so */
->> -				struct sock *sk = unix_get_socket(*fp++);
->> +				struct unix_sock *u = unix_get_socket(*fp++);
->>   
->> -				if (sk) {
->> -					struct unix_sock *u = unix_sk(sk);
->> +				/* Ignore non-candidates, they could have been added
->> +				 * to the queues after starting the garbage collection
->> +				 */
->> +				if (u && test_bit(UNIX_GC_CANDIDATE, &u->gc_flags)) {
->> +					hit = true;
->>   
->> -					/* Ignore non-candidates, they could
->> -					 * have been added to the queues after
->> -					 * starting the garbage collection
->> -					 */
->> -					if (test_bit(UNIX_GC_CANDIDATE, &u->gc_flags)) {
->> -						hit = true;
->> -
->> -						func(u);
->> -					}
->> +					func(u);
->>   				}
->>   			}
->>   			if (hit && hitlist != NULL) {
->> diff --git a/net/unix/scm.c b/net/unix/scm.c
->> index 4b3979272a81..36ce8fed9acc 100644
->> --- a/net/unix/scm.c
->> +++ b/net/unix/scm.c
->> @@ -21,9 +21,8 @@ EXPORT_SYMBOL(gc_inflight_list);
->>   DEFINE_SPINLOCK(unix_gc_lock);
->>   EXPORT_SYMBOL(unix_gc_lock);
->>   
->> -struct sock *unix_get_socket(struct file *filp)
->> +struct unix_sock *unix_get_socket(struct file *filp)
->>   {
->> -	struct sock *u_sock = NULL;
->>   	struct inode *inode = file_inode(filp);
->>   
->>   	/* Socket ? */
->> @@ -34,12 +33,13 @@ struct sock *unix_get_socket(struct file *filp)
->>   
->>   		/* PF_UNIX ? */
->>   		if (s && ops && ops->family == PF_UNIX)
->> -			u_sock = s;
->> -	} else {
->> -		/* Could be an io_uring instance */
->> -		u_sock = io_uring_get_socket(filp);
->> +			return unix_sk(s);
->> +
->> +		return NULL;
->>   	}
->> -	return u_sock;
->> +
->> +	/* Could be an io_uring instance */
->> +	return io_uring_get_socket(filp);
->>   }
->>   EXPORT_SYMBOL(unix_get_socket);
->>   
->> @@ -48,13 +48,11 @@ EXPORT_SYMBOL(unix_get_socket);
->>    */
->>   void unix_inflight(struct user_struct *user, struct file *fp)
->>   {
->> -	struct sock *s = unix_get_socket(fp);
->> +	struct unix_sock *u = unix_get_socket(fp);
->>   
->>   	spin_lock(&unix_gc_lock);
->>   
->> -	if (s) {
->> -		struct unix_sock *u = unix_sk(s);
->> -
->> +	if (u) {
->>   		if (!u->inflight) {
->>   			BUG_ON(!list_empty(&u->link));
->>   			list_add_tail(&u->link, &gc_inflight_list);
->> @@ -71,13 +69,11 @@ void unix_inflight(struct user_struct *user, struct file *fp)
->>   
->>   void unix_notinflight(struct user_struct *user, struct file *fp)
->>   {
->> -	struct sock *s = unix_get_socket(fp);
->> +	struct unix_sock *u = unix_get_socket(fp);
->>   
->>   	spin_lock(&unix_gc_lock);
->>   
->> -	if (s) {
->> -		struct unix_sock *u = unix_sk(s);
->> -
->> +	if (u) {
->>   		BUG_ON(!u->inflight);
->>   		BUG_ON(list_empty(&u->link));
->>   
-> 
-> Adding the io_uring peoples to the recipient list for awareness. I
-> guess this deserves an explicit ack from them.
+T24gV2VkLCAyMDIzLTExLTIyIGF0IDEzOjQ4ICswMTAwLCBDaHJpc3RpYW4gQnJhdW5lciB3cm90
+ZToKPiBFdmVyIHNpbmNlIHRoZSBldmVuZmQgdHlwZSB3YXMgaW50cm9kdWNlZCBiYWNrIGluIDIw
+MDcgaW4gY29tbWl0CgpzL2V2ZW5mZC9ldmVudGZkLwoKPiBlMWFkNzQ2OGM3N2QgKCJzaWduYWwv
+dGltZXIvZXZlbnQ6IGV2ZW50ZmQgY29yZSIpIHRoZQo+IGV2ZW50ZmRfc2lnbmFsKCkKPiBmdW5j
+dGlvbiBvbmx5IGV2ZXIgcGFzc2VkIDEgYXMgYSB2YWx1ZSBmb3IgQG4uIFRoZXJlJ3Mgbm8gcG9p
+bnQgaW4KPiBrZWVwaW5nIHRoYXQgYWRkaXRpb25hbCBhcmd1bWVudC4KPiAKPiBTaWduZWQtb2Zm
+LWJ5OiBDaHJpc3RpYW4gQnJhdW5lciA8YnJhdW5lckBrZXJuZWwub3JnPgo+IC0tLQo+IMKgYXJj
+aC94ODYva3ZtL2h5cGVydi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqAgMiArLQo+IMKgYXJjaC94ODYva3ZtL3hlbi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMiArLQo+IMKgZHJpdmVycy9hY2NlbC9oYWJhbmFs
+YWJzL2NvbW1vbi9kZXZpY2UuY8KgIHzCoCAyICstCj4gwqBkcml2ZXJzL2ZwZ2EvZGZsLmPCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyICstCj4gwqBk
+cml2ZXJzL2dwdS9kcm0vZHJtX3N5bmNvYmouY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAg
+NiArKystLS0KPiDCoGRyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9pbnRlcnJ1cHQuY8KgwqDCoMKg
+wqAgfMKgIDIgKy0KPiDCoGRyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg1L2RldnguY8KgwqDCoMKg
+wqDCoMKgwqAgfMKgIDIgKy0KPiDCoGRyaXZlcnMvbWlzYy9vY3hsL2ZpbGUuY8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDIgKy0KPiDCoGRyaXZlcnMvczM5MC9jaW8vdmZp
+b19jY3dfY2hwLmPCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMiArLQo+IMKgZHJpdmVycy9zMzkw
+L2Npby92ZmlvX2Njd19kcnYuY8KgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCA0ICsrLS0KPiDCoGRy
+aXZlcnMvczM5MC9jaW8vdmZpb19jY3dfb3BzLmPCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgNiAr
+KystLS0KPiDCoGRyaXZlcnMvczM5MC9jcnlwdG8vdmZpb19hcF9vcHMuY8KgwqDCoMKgwqDCoMKg
+wqAgfMKgIDIgKy0KCkFja2VkLWJ5OiBFcmljIEZhcm1hbiA8ZmFybWFuQGxpbnV4LmlibS5jb20+
+ICAjIHMzOTAKCg==
 
-Thanks Paolo, lgtm
-
-Acked-by: Pavel Begunkov <asml.silence@gmail.com>
-
--- 
-Pavel Begunkov
 

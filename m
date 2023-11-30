@@ -1,70 +1,77 @@
-Return-Path: <io-uring+bounces-170-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-171-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88207FDD26
-	for <lists+io-uring@lfdr.de>; Wed, 29 Nov 2023 17:35:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183F17FFBB6
+	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 20:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59CCFB20ED4
-	for <lists+io-uring@lfdr.de>; Wed, 29 Nov 2023 16:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E1E282672
+	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 19:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338C83AC25;
-	Wed, 29 Nov 2023 16:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEB852F98;
+	Thu, 30 Nov 2023 19:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNKHpEYx"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Yt/0j+7j"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A4539862;
-	Wed, 29 Nov 2023 16:35:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E37C433C9;
-	Wed, 29 Nov 2023 16:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701275727;
-	bh=eOjkRPVgX0VcHNh7RX+k1LOyqo1PtzlUuZb0jt0NekI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bNKHpEYxm2MblF/x9ck6IR8M74a3B/2DUKLTdYCZvJSvH069KjVLP52RxPFKLBH94
-	 BvmXPN3Jh/xayNb7sh0GfQ0CqzhA5VetVG1cHAFpnsR9phLheWfNCdrYy/e1JlpQWj
-	 s5MfMaunxJ6GYGlP1mp+eoIpLPwQCOIBMqL0oeCErCBuEOPzAFvnh1Yd7VI6BJ3ci/
-	 /9CZsUD8olOADonP1zLnBZmV2muokDFyNNqtHGX2SVfTL0gyUXyoxsVxscR+m4f6XZ
-	 ad9hY6n/othTAHB6CnoYUo/ToXwCU1d8MRFmJjP7y6V1MgNO/Eu0HP0RRNzTPkIo4q
-	 xGLy50AN2EpCA==
-Date: Wed, 29 Nov 2023 09:35:24 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-	axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-	ming.lei@redhat.com
-Subject: Re: [PATCHv4 1/4] block: bio-integrity: directly map user buffers
-Message-ID: <ZWdoTOtNbomVQFd3@kbusch-mbp.dhcp.thefacebook.com>
-References: <20231128222752.1767344-1-kbusch@meta.com>
- <CGME20231128222827epcas5p19beb5067fa55290aef73f96dee91c4ec@epcas5p1.samsung.com>
- <20231128222752.1767344-2-kbusch@meta.com>
- <249c59bb-794b-f8ec-c4e7-17308ecf7f2a@samsung.com>
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1D493
+	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:40 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id ca18e2360f4ac-7b37846373eso16353639f.0
+        for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701373599; x=1701978399; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gSjrdmYeud8jkRInCLywv3RIxMiq9wQoWdwhXzJowIk=;
+        b=Yt/0j+7j9J3Ct5J73qYsN83D700GwAbiQCMIwVpVKIxITCFWp4bs5xTdfvyiUIEKgV
+         Ywyqh+Wuwc/Zz+uY+4cOOz2ITnqLAnEMnSSRy0FkgZwCcJCu/l2lhW4pzx9B21jg0ZhA
+         eWZnnYcjhDqBUnVozTTxP23xYCfiK6jDE506/DUiR7xNq4z1dkia5RatvQrQwZaYAnRE
+         5oVtm2rI7TRMNvfYX5zrwosIIfHWVDIIYKiGqZplTZi+aSEkebQCQSIiKA+2pfsxx5SE
+         i+fjhgXOAGUZMYWhjHKMHeXI6XnAzk6iQnijIWR1Nwz1ppFgRO9RC+0PJ3v5Z7Y92z4z
+         uVrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701373599; x=1701978399;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gSjrdmYeud8jkRInCLywv3RIxMiq9wQoWdwhXzJowIk=;
+        b=BE7MWHncOWGkLmaG64dceed6Wic4se3l5gKZHpzwFeDd0yb6Tt3b/quArHahVGbSk+
+         oZlv6cNqugl/53DUTO4c1hv0zrPgzdIAzJxW2yHje16A3H/HcHlZ5/AuF9m6T8vWQO0O
+         Ub8cY4r/EvaOwyvakiuCfEr4qVEDVJ1CDY69tgvF2tIxN5v5z2GSqeFrGlHwequbMEQq
+         Kyb7Iiyd6KdYNcn62R/d0+T+ojG9ZUQXf2NxZi9lBXzFmXDTTVpSBDhv4OOSCKvKEzNk
+         F+HHLDNQ7+JlEMQOMRB2MygGHDf5YrqpanttywpCuN8irfSGsLzOVxF98/DogyEIOggy
+         B7Mg==
+X-Gm-Message-State: AOJu0YyzBuW/s9J8T/vQ5J7Di78qhexvWYf161qVIEMZNL+8vplRa++j
+	Zs5NwflXjpeygJMZcTj7qunjzYXU1Ghd+RmhsdJwLw==
+X-Google-Smtp-Source: AGHT+IHWpGpRnMZQnu7kjv5zcSATh9JrclfrjboaYDKBQjp2KN1pVHZeMGcCqxyO2s0KdIkvkmLlng==
+X-Received: by 2002:a5e:cb02:0:b0:7b0:acce:5535 with SMTP id p2-20020a5ecb02000000b007b0acce5535mr24376309iom.1.1701373599415;
+        Thu, 30 Nov 2023 11:46:39 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id a18-20020a029f92000000b004667167d8cdsm461179jam.116.2023.11.30.11.46.38
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Nov 2023 11:46:38 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/8] Various io_uring fixes
+Date: Thu, 30 Nov 2023 12:45:46 -0700
+Message-ID: <20231130194633.649319-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <249c59bb-794b-f8ec-c4e7-17308ecf7f2a@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 29, 2023 at 08:48:41PM +0530, Kanchan Joshi wrote:
-> On 11/29/2023 3:57 AM, Keith Busch wrote:
-> > If the user address can't directly be used for reason, like too many
-> > segments or address unalignement, fallback to a copy of the user vec
-> > while keeping the user address pinned for the IO duration so that it
-> > can safely be copied on completion in any process context.
-> 
-> The pinning requirement is only for read. But code keeps user-memory 
-> pinned for write too. Is there any reason?
+Hi,
 
-It just makes the completion simpler. I'll split the cases so we unpin
-on writes after the copy during setup.
+Random assortment of fixes, most of them marked for stable.
+
+-- 
+Jens Axboe
+
+
 

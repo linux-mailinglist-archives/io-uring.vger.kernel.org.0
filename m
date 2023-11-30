@@ -1,230 +1,98 @@
-Return-Path: <io-uring+bounces-179-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-182-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13ADB7FFBC4
-	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 20:47:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A6D7FFE04
+	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 22:53:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35FDC1C20F5D
-	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 19:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3D231C20F54
+	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 21:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CF953E02;
-	Thu, 30 Nov 2023 19:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594305E0C8;
+	Thu, 30 Nov 2023 21:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Rgv5DEgE"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="FxVFm3E7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD0910D9
-	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:51 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-7b37846373eso16356439f.0
-        for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701373611; x=1701978411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WUfGQN4wOIiBxZTOLoqEzFe4YZPkK5hvpNxoZoJGul0=;
-        b=Rgv5DEgE4cirFBIq2I8ngokFEAUA8IRoOmXMc+QODkzBdLEY7gXw8oQ19zHmm1XiQr
-         Q8+Vj0bA/zrrdm4V8rZpddKck36SlUlT0VOH1i3Mz1ACOJOSzaGb9fj9pJcSn6Jazfb5
-         SFMVV9c+vef+jrd4QbgOyyiwUTi5omPofmXMGRP/Fpkgxu6oGRXy8UdF6X5r1DsjF6zG
-         Z3+pav+Omszr9OoU56Jh12qK8dE5UJqaAGqAiCvq+B+Am1GVjLaHyuHtyLtEd0ubJ0rD
-         fsjjI7pTZWsjOpACarCP+8prPkPJvp2HS15FrkV0Hrry3n6gk26WRNmRFS0IjrEDZs9p
-         DPJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701373611; x=1701978411;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WUfGQN4wOIiBxZTOLoqEzFe4YZPkK5hvpNxoZoJGul0=;
-        b=tiRnV4biAie5U4twEzsoUX3qNECwB1rL1G4S0UTdpfHXt9HXYCdekrLD4lgrCpZmxd
-         IwDMpNS9266NBfZjdBJfRZaWA0qOyqoIJgZXJP3XgHWTZslK6HqkW7kWzBOUsaAj9Xxt
-         KiLvtBS5FNMCQvuRn/G/malGawGb7f2te0ozmIKiO4OVWy2atvKsbc+KaSf1s63aGWMO
-         4C56vxo86cxwL9mKZ4dxe5WEDl1bChorZDRkJooSyL/2mQZ3Dw4WQ6OqL73lRVpx8uxr
-         ngfDa+tsCSY10TnoBwO45aSPskWg6CmmSCOzq38JPmAevFVyPmOWLQr6rC7HQat9LXGM
-         KXQA==
-X-Gm-Message-State: AOJu0YzOHNAdzXjEpHsH1oHm5MwACcpsDtAC+vUhcpFIwBLTow0cOJwo
-	lRT3yL7t762OFBrdFV5aIrTxrg+PVQ+5ltVp/4mqcg==
-X-Google-Smtp-Source: AGHT+IFC9t1Qs639FdrLngne+Z4zbSeGX/021HZv7mHEsiD1J7zH3phrbfqqUCvu4+JGXA9vCB0gsw==
-X-Received: by 2002:a5e:cb02:0:b0:7b0:acce:5535 with SMTP id p2-20020a5ecb02000000b007b0acce5535mr24376797iom.1.1701373610914;
-        Thu, 30 Nov 2023 11:46:50 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a18-20020a029f92000000b004667167d8cdsm461179jam.116.2023.11.30.11.46.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Nov 2023 11:46:49 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>
-Subject: [PATCH 8/8] io_uring: use fget/fput consistently
-Date: Thu, 30 Nov 2023 12:45:54 -0700
-Message-ID: <20231130194633.649319-9-axboe@kernel.dk>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231130194633.649319-1-axboe@kernel.dk>
-References: <20231130194633.649319-1-axboe@kernel.dk>
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62C310DE
+	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 13:53:22 -0800 (PST)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AULJ2C5014893
+	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 13:53:22 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=11exKg3ZnsRTT5ybj72lSgW6CmpKbELb2RISVcksvgs=;
+ b=FxVFm3E7BkmGUUwVm9sfd1CnEnnZx5VfaHjbcQxmNcd/9jakFluJ54lk6eIumwckSCeW
+ xy7K9WwMHr+jwdCAdqXjNsS1N1kqXbs20dGqHjdmZ8ei223YCsBIrp1nEQR0ZvcSxLH8
+ am2p73xMgPyt9JgE5rlDVelBHyLmRRWAdK7ujoyQIzJmXZr1Q0jO94Atpeq1/ccvEMoE
+ WVXU0YZb96YblLCGTmHCOKj79vpfmO92woaQ8UfCZOIaeIZGZ+Qw756+Gz3hOTdk6P6q
+ MgPPzK5nQq80uGO6p75YJfrbagJkUY4N1LUbj15f+Z3VAQ6b0p/e9z1iEU+YgQtq/aKw 6A== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3upeus7w67-8
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 13:53:22 -0800
+Received: from twshared19681.14.frc2.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Thu, 30 Nov 2023 13:53:21 -0800
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+	id 2C089226BF681; Thu, 30 Nov 2023 13:53:10 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <io-uring@vger.kernel.org>
+CC: <axboe@kernel.dk>, <hch@lst.de>, <joshi.k@samsung.com>,
+        <martin.petersen@oracle.com>, <ming.lei@redhat.com>,
+        Keith Busch
+	<kbusch@kernel.org>
+Subject: [PATCHv5 0/4] block integrity: directly map user space addresses
+Date: Thu, 30 Nov 2023 13:53:05 -0800
+Message-ID: <20231130215309.2923568-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: vvORouXJWJq5GgVNkmFHamM0mIdKqVNb
+X-Proofpoint-ORIG-GUID: vvORouXJWJq5GgVNkmFHamM0mIdKqVNb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-30_22,2023-11-30_01,2023-05-22_02
 
-Normally within a syscall it's fine to use fdget/fdput for grabbing a
-file from the file table, and it's fine within io_uring as well. We do
-that via io_uring_enter(2), io_uring_register(2), and then also for
-cancel which is invoked from the latter. io_uring cannot close its own
-file descriptors as that is explicitly rejected, and for the cancel
-side of things, the file itself is just used as a lookup cookie.
+From: Keith Busch <kbusch@kernel.org>
 
-However, it is more prudent to ensure that full references are always
-grabbed. For anything threaded, either explicitly in the application
-itself or through use of the io-wq worker threads, this is what happens
-anyway. Generalize it and use fget/fput throughout.
+Handling passthrough metadata ("integrity") today introduces overhead
+and complications that we can avoid if we just map user space addresses
+directly. This patch series implements that, falling back to a kernel
+bounce buffer if necessary.
 
-Also see the below link for more details.
+v4->v5:
 
-Link: https://lore.kernel.org/io-uring/CAG48ez1htVSO3TqmrF8QcX2WFuYTRM-VZ_N10i-VZgbtg=NNqw@mail.gmail.com/
-Suggested-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/cancel.c   | 11 ++++++-----
- io_uring/io_uring.c | 36 ++++++++++++++++++------------------
- 2 files changed, 24 insertions(+), 23 deletions(-)
+  Unpin user pages after setup for write commands (Kanchan)
 
-diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index 3c19cccb1aec..8a8b07dfc444 100644
---- a/io_uring/cancel.c
-+++ b/io_uring/cancel.c
-@@ -273,7 +273,7 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
- 	};
- 	ktime_t timeout = KTIME_MAX;
- 	struct io_uring_sync_cancel_reg sc;
--	struct fd f = { };
-+	struct file *file = NULL;
- 	DEFINE_WAIT(wait);
- 	int ret, i;
- 
-@@ -295,10 +295,10 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
- 	/* we can grab a normal file descriptor upfront */
- 	if ((cd.flags & IORING_ASYNC_CANCEL_FD) &&
- 	   !(cd.flags & IORING_ASYNC_CANCEL_FD_FIXED)) {
--		f = fdget(sc.fd);
--		if (!f.file)
-+		file = fget(sc.fd);
-+		if (!file)
- 			return -EBADF;
--		cd.file = f.file;
-+		cd.file = file;
- 	}
- 
- 	ret = __io_sync_cancel(current->io_uring, &cd, sc.fd);
-@@ -348,6 +348,7 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
- 	if (ret == -ENOENT || ret > 0)
- 		ret = 0;
- out:
--	fdput(f);
-+	if (file)
-+		fput(file);
- 	return ret;
- }
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 05f933dddfde..aba5657d287e 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3652,7 +3652,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		size_t, argsz)
- {
- 	struct io_ring_ctx *ctx;
--	struct fd f;
-+	struct file *file;
- 	long ret;
- 
- 	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
-@@ -3670,20 +3670,19 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
- 			return -EINVAL;
- 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
--		f.file = tctx->registered_rings[fd];
--		f.flags = 0;
--		if (unlikely(!f.file))
-+		file = tctx->registered_rings[fd];
-+		if (unlikely(!file))
- 			return -EBADF;
- 	} else {
--		f = fdget(fd);
--		if (unlikely(!f.file))
-+		file = fget(fd);
-+		if (unlikely(!file))
- 			return -EBADF;
- 		ret = -EOPNOTSUPP;
--		if (unlikely(!io_is_uring_fops(f.file)))
-+		if (unlikely(!io_is_uring_fops(file)))
- 			goto out;
- 	}
- 
--	ctx = f.file->private_data;
-+	ctx = file->private_data;
- 	ret = -EBADFD;
- 	if (unlikely(ctx->flags & IORING_SETUP_R_DISABLED))
- 		goto out;
-@@ -3777,7 +3776,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		}
- 	}
- out:
--	fdput(f);
-+	if (!(flags & IORING_ENTER_REGISTERED_RING))
-+		fput(file);
- 	return ret;
- }
- 
-@@ -4618,7 +4618,7 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- {
- 	struct io_ring_ctx *ctx;
- 	long ret = -EBADF;
--	struct fd f;
-+	struct file *file;
- 	bool use_registered_ring;
- 
- 	use_registered_ring = !!(opcode & IORING_REGISTER_USE_REGISTERED_RING);
-@@ -4637,27 +4637,27 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
- 			return -EINVAL;
- 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
--		f.file = tctx->registered_rings[fd];
--		f.flags = 0;
--		if (unlikely(!f.file))
-+		file = tctx->registered_rings[fd];
-+		if (unlikely(!file))
- 			return -EBADF;
- 	} else {
--		f = fdget(fd);
--		if (unlikely(!f.file))
-+		file = fget(fd);
-+		if (unlikely(!file))
- 			return -EBADF;
- 		ret = -EOPNOTSUPP;
--		if (!io_is_uring_fops(f.file))
-+		if (!io_is_uring_fops(file))
- 			goto out_fput;
- 	}
- 
--	ctx = f.file->private_data;
-+	ctx = file->private_data;
- 
- 	mutex_lock(&ctx->uring_lock);
- 	ret = __io_uring_register(ctx, opcode, arg, nr_args);
- 	mutex_unlock(&ctx->uring_lock);
- 	trace_io_uring_register(ctx, opcode, ctx->nr_user_files, ctx->nr_user_bufs, ret);
- out_fput:
--	fdput(f);
-+	if (!use_registered_ring)
-+		fput(file);
- 	return ret;
- }
- 
--- 
-2.42.0
+  Added reviews to the unchanged patches (Christoph, Martin)
+
+Keith Busch (4):
+  block: bio-integrity: directly map user buffers
+  nvme: use bio_integrity_map_user
+  iouring: remove IORING_URING_CMD_POLLED
+  io_uring: remove uring_cmd cookie
+
+ block/bio-integrity.c     | 214 ++++++++++++++++++++++++++++++++++++++
+ drivers/nvme/host/ioctl.c | 197 ++++++-----------------------------
+ include/linux/bio.h       |   9 ++
+ include/linux/io_uring.h  |   9 +-
+ io_uring/uring_cmd.c      |   1 -
+ 5 files changed, 254 insertions(+), 176 deletions(-)
+
+--=20
+2.34.1
 
 

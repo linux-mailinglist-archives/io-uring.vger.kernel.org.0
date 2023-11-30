@@ -1,65 +1,65 @@
-Return-Path: <io-uring+bounces-178-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-179-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DF67FFBC3
-	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 20:47:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13ADB7FFBC4
+	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 20:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2289282785
-	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 19:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35FDC1C20F5D
+	for <lists+io-uring@lfdr.de>; Thu, 30 Nov 2023 19:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35EB52F96;
-	Thu, 30 Nov 2023 19:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CF953E02;
+	Thu, 30 Nov 2023 19:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vAMIYsl8"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Rgv5DEgE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0780D67
-	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:50 -0800 (PST)
-Received: by mail-il1-x135.google.com with SMTP id e9e14a558f8ab-35cfd975a53so1082485ab.1
-        for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:50 -0800 (PST)
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD0910D9
+	for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:51 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-7b37846373eso16356439f.0
+        for <io-uring@vger.kernel.org>; Thu, 30 Nov 2023 11:46:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701373609; x=1701978409; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701373611; x=1701978411; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h2HWi279rh64gXCrH8f0I7iMcUE2uT/adU0g3wTQ5Ao=;
-        b=vAMIYsl8PY1UMjiDH2QCgnklTbIZDsI5fINv7UrbS+66CUCjEIjHRrbx274E4JzURZ
-         1KTjBZ/Wtwigb80WSyms8NvChNatDoWF/X+k7C92UO9TlaTO8xe/+e87LpISSUvwBofv
-         TAfQffBN9yne/sdbO8Kj9I5FwaECDb5w1LugWGqb63qpvdMoBMMRJzHSlHXEoV/TH8YI
-         +BXc9JGyupte/lGrrBlL1Q1fkAaspQ5HZUFuDFGu2IZc+nSrLH0nHdVTQPJUH5QS+PRm
-         fKX+GJIA0BXSd70UjMnzDiA++/gaVM+lvfqhyB1M3jZ7HQ9FhlBM4gl/UdZ4qfcsFF5J
-         G9dw==
+        bh=WUfGQN4wOIiBxZTOLoqEzFe4YZPkK5hvpNxoZoJGul0=;
+        b=Rgv5DEgE4cirFBIq2I8ngokFEAUA8IRoOmXMc+QODkzBdLEY7gXw8oQ19zHmm1XiQr
+         Q8+Vj0bA/zrrdm4V8rZpddKck36SlUlT0VOH1i3Mz1ACOJOSzaGb9fj9pJcSn6Jazfb5
+         SFMVV9c+vef+jrd4QbgOyyiwUTi5omPofmXMGRP/Fpkgxu6oGRXy8UdF6X5r1DsjF6zG
+         Z3+pav+Omszr9OoU56Jh12qK8dE5UJqaAGqAiCvq+B+Am1GVjLaHyuHtyLtEd0ubJ0rD
+         fsjjI7pTZWsjOpACarCP+8prPkPJvp2HS15FrkV0Hrry3n6gk26WRNmRFS0IjrEDZs9p
+         DPJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701373609; x=1701978409;
+        d=1e100.net; s=20230601; t=1701373611; x=1701978411;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h2HWi279rh64gXCrH8f0I7iMcUE2uT/adU0g3wTQ5Ao=;
-        b=nleAfnFZWKs5pHO9rQ3H4j7VGRF9vOQNam4WdhLaFskrQAxfGYCGJZx8HPMZDpj76c
-         eo9i+jxJqWWPKRRuKlbS9+MG54tjlwXEeUoeSOHHcILsCnt3udptDA9Lze3nHxnuN6k+
-         pTkxnzbpX0ESJSXSLkjxCsfHUlEzOwF4rUF/grs2uEeRlXHrByHEL6CwiYt/3EU4UTCO
-         3m9KEufDoHPXBv2Pl3jtM9N9FjPsZuJDrGKz7abrY+f7MV2uThkCh/I6L2JHrqocOd5r
-         P+A281fnV/92i7y0QKBSOlfrbdp5mKkLoQC+w67BC9oUHAqExGbAsDORkpTzxc2LiZju
-         kxQg==
-X-Gm-Message-State: AOJu0Yx7c54maywQkZsciY74ygvXWBgSMXtw+UFhaxLj7MpSN8aIiNJs
-	2syuq8gP+VSxrk4/gNPtnJqi0ALgXYDH2NE6+dU0DA==
-X-Google-Smtp-Source: AGHT+IFt1rr2No8HuHyy980pqzaVmvIIQ1typwkiS5GFSscUFuIxnKkRNCW4o7sR79g/HFhnu22t2Q==
-X-Received: by 2002:a5d:9c18:0:b0:79f:a8c2:290d with SMTP id 24-20020a5d9c18000000b0079fa8c2290dmr23173995ioe.0.1701373609558;
-        Thu, 30 Nov 2023 11:46:49 -0800 (PST)
+        bh=WUfGQN4wOIiBxZTOLoqEzFe4YZPkK5hvpNxoZoJGul0=;
+        b=tiRnV4biAie5U4twEzsoUX3qNECwB1rL1G4S0UTdpfHXt9HXYCdekrLD4lgrCpZmxd
+         IwDMpNS9266NBfZjdBJfRZaWA0qOyqoIJgZXJP3XgHWTZslK6HqkW7kWzBOUsaAj9Xxt
+         KiLvtBS5FNMCQvuRn/G/malGawGb7f2te0ozmIKiO4OVWy2atvKsbc+KaSf1s63aGWMO
+         4C56vxo86cxwL9mKZ4dxe5WEDl1bChorZDRkJooSyL/2mQZ3Dw4WQ6OqL73lRVpx8uxr
+         ngfDa+tsCSY10TnoBwO45aSPskWg6CmmSCOzq38JPmAevFVyPmOWLQr6rC7HQat9LXGM
+         KXQA==
+X-Gm-Message-State: AOJu0YzOHNAdzXjEpHsH1oHm5MwACcpsDtAC+vUhcpFIwBLTow0cOJwo
+	lRT3yL7t762OFBrdFV5aIrTxrg+PVQ+5ltVp/4mqcg==
+X-Google-Smtp-Source: AGHT+IFC9t1Qs639FdrLngne+Z4zbSeGX/021HZv7mHEsiD1J7zH3phrbfqqUCvu4+JGXA9vCB0gsw==
+X-Received: by 2002:a5e:cb02:0:b0:7b0:acce:5535 with SMTP id p2-20020a5ecb02000000b007b0acce5535mr24376797iom.1.1701373610914;
+        Thu, 30 Nov 2023 11:46:50 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a18-20020a029f92000000b004667167d8cdsm461179jam.116.2023.11.30.11.46.48
+        by smtp.gmail.com with ESMTPSA id a18-20020a029f92000000b004667167d8cdsm461179jam.116.2023.11.30.11.46.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Nov 2023 11:46:48 -0800 (PST)
+        Thu, 30 Nov 2023 11:46:49 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
-	stable@vger.kernel.org
-Subject: [PATCH 7/8] io_uring: free io_buffer_list entries via RCU
-Date: Thu, 30 Nov 2023 12:45:53 -0700
-Message-ID: <20231130194633.649319-8-axboe@kernel.dk>
+	Jann Horn <jannh@google.com>
+Subject: [PATCH 8/8] io_uring: use fget/fput consistently
+Date: Thu, 30 Nov 2023 12:45:54 -0700
+Message-ID: <20231130194633.649319-9-axboe@kernel.dk>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20231130194633.649319-1-axboe@kernel.dk>
 References: <20231130194633.649319-1-axboe@kernel.dk>
@@ -71,269 +71,159 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-mmap_lock nests under uring_lock out of necessity, as we may be doing
-user copies with uring_lock held. However, for mmap of provided buffer
-rings, we attempt to grab uring_lock with mmap_lock already held from
-do_mmap(). This makes lockdep, rightfully, complain:
+Normally within a syscall it's fine to use fdget/fdput for grabbing a
+file from the file table, and it's fine within io_uring as well. We do
+that via io_uring_enter(2), io_uring_register(2), and then also for
+cancel which is invoked from the latter. io_uring cannot close its own
+file descriptors as that is explicitly rejected, and for the cancel
+side of things, the file itself is just used as a lookup cookie.
 
-WARNING: possible circular locking dependency detected
-6.7.0-rc1-00009-gff3337ebaf94-dirty #4438 Not tainted
-------------------------------------------------------
-buf-ring.t/442 is trying to acquire lock:
-ffff00020e1480a8 (&ctx->uring_lock){+.+.}-{3:3}, at: io_uring_validate_mmap_request.isra.0+0x4c/0x140
+However, it is more prudent to ensure that full references are always
+grabbed. For anything threaded, either explicitly in the application
+itself or through use of the io-wq worker threads, this is what happens
+anyway. Generalize it and use fget/fput throughout.
 
-but task is already holding lock:
-ffff0000dc226190 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x124/0x264
+Also see the below link for more details.
 
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&mm->mmap_lock){++++}-{3:3}:
-       __might_fault+0x90/0xbc
-       io_register_pbuf_ring+0x94/0x488
-       __arm64_sys_io_uring_register+0x8dc/0x1318
-       invoke_syscall+0x5c/0x17c
-       el0_svc_common.constprop.0+0x108/0x130
-       do_el0_svc+0x2c/0x38
-       el0_svc+0x4c/0x94
-       el0t_64_sync_handler+0x118/0x124
-       el0t_64_sync+0x168/0x16c
-
--> #0 (&ctx->uring_lock){+.+.}-{3:3}:
-       __lock_acquire+0x19a0/0x2d14
-       lock_acquire+0x2e0/0x44c
-       __mutex_lock+0x118/0x564
-       mutex_lock_nested+0x20/0x28
-       io_uring_validate_mmap_request.isra.0+0x4c/0x140
-       io_uring_mmu_get_unmapped_area+0x3c/0x98
-       get_unmapped_area+0xa4/0x158
-       do_mmap+0xec/0x5b4
-       vm_mmap_pgoff+0x158/0x264
-       ksys_mmap_pgoff+0x1d4/0x254
-       __arm64_sys_mmap+0x80/0x9c
-       invoke_syscall+0x5c/0x17c
-       el0_svc_common.constprop.0+0x108/0x130
-       do_el0_svc+0x2c/0x38
-       el0_svc+0x4c/0x94
-       el0t_64_sync_handler+0x118/0x124
-       el0t_64_sync+0x168/0x16c
-
-From that mmap(2) path, we really just need to ensure that the buffer
-list doesn't go away from underneath us. For the lower indexed entries,
-they never go away until the ring is freed and we can always sanely
-reference those as long as the caller has a file reference. For the
-higher indexed ones in our xarray, we just need to ensure that the
-buffer list remains valid while we return the address of it.
-
-Free the higher indexed io_buffer_list entries via RCU. With that we can
-avoid needing ->uring_lock inside mmap(2), and simply hold the RCU read
-lock around the buffer list lookup and address check.
-
-To ensure that the arrayed lookup either returns a valid fully formulated
-entry via RCU lookup, add an 'is_ready' flag that we access with store
-and release memory ordering. This isn't needed for the xarray lookups,
-but doesn't hurt either. Since this isn't a fast path, retain it across
-both types. Similarly, for the allocated array inside the ctx, ensure
-we use the proper load/acquire as setup could in theory be running in
-parallel with mmap.
-
-While in there, add a few lockdep checks for documentation purposes.
-
-Cc: stable@vger.kernel.org
-Fixes: c56e022c0a27 ("io_uring: add support for user mapped provided buffer ring")
+Link: https://lore.kernel.org/io-uring/CAG48ez1htVSO3TqmrF8QcX2WFuYTRM-VZ_N10i-VZgbtg=NNqw@mail.gmail.com/
+Suggested-by: Jann Horn <jannh@google.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c |  4 +--
- io_uring/kbuf.c     | 64 ++++++++++++++++++++++++++++++++++++---------
- io_uring/kbuf.h     |  3 +++
- 3 files changed, 56 insertions(+), 15 deletions(-)
+ io_uring/cancel.c   | 11 ++++++-----
+ io_uring/io_uring.c | 36 ++++++++++++++++++------------------
+ 2 files changed, 24 insertions(+), 23 deletions(-)
 
+diff --git a/io_uring/cancel.c b/io_uring/cancel.c
+index 3c19cccb1aec..8a8b07dfc444 100644
+--- a/io_uring/cancel.c
++++ b/io_uring/cancel.c
+@@ -273,7 +273,7 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
+ 	};
+ 	ktime_t timeout = KTIME_MAX;
+ 	struct io_uring_sync_cancel_reg sc;
+-	struct fd f = { };
++	struct file *file = NULL;
+ 	DEFINE_WAIT(wait);
+ 	int ret, i;
+ 
+@@ -295,10 +295,10 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
+ 	/* we can grab a normal file descriptor upfront */
+ 	if ((cd.flags & IORING_ASYNC_CANCEL_FD) &&
+ 	   !(cd.flags & IORING_ASYNC_CANCEL_FD_FIXED)) {
+-		f = fdget(sc.fd);
+-		if (!f.file)
++		file = fget(sc.fd);
++		if (!file)
+ 			return -EBADF;
+-		cd.file = f.file;
++		cd.file = file;
+ 	}
+ 
+ 	ret = __io_sync_cancel(current->io_uring, &cd, sc.fd);
+@@ -348,6 +348,7 @@ int io_sync_cancel(struct io_ring_ctx *ctx, void __user *arg)
+ 	if (ret == -ENOENT || ret > 0)
+ 		ret = 0;
+ out:
+-	fdput(f);
++	if (file)
++		fput(file);
+ 	return ret;
+ }
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3a216f0744dd..05f933dddfde 100644
+index 05f933dddfde..aba5657d287e 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -3498,9 +3498,9 @@ static void *io_uring_validate_mmap_request(struct file *file,
- 		unsigned int bgid;
- 
- 		bgid = (offset & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_PBUF_SHIFT;
--		mutex_lock(&ctx->uring_lock);
-+		rcu_read_lock();
- 		ptr = io_pbuf_get_address(ctx, bgid);
--		mutex_unlock(&ctx->uring_lock);
-+		rcu_read_unlock();
- 		if (!ptr)
- 			return ERR_PTR(-EINVAL);
- 		break;
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 39d15a27eb92..268788305b61 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -40,19 +40,35 @@ struct io_buf_free {
- 	int				inuse;
- };
- 
-+static struct io_buffer_list *__io_buffer_get_list(struct io_ring_ctx *ctx,
-+						   struct io_buffer_list *bl,
-+						   unsigned int bgid)
-+{
-+	if (bl && bgid < BGID_ARRAY)
-+		return &bl[bgid];
-+
-+	return xa_load(&ctx->io_bl_xa, bgid);
-+}
-+
- static inline struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
- 							unsigned int bgid)
+@@ -3652,7 +3652,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		size_t, argsz)
  {
--	if (ctx->io_bl && bgid < BGID_ARRAY)
--		return &ctx->io_bl[bgid];
-+	lockdep_assert_held(&ctx->uring_lock);
+ 	struct io_ring_ctx *ctx;
+-	struct fd f;
++	struct file *file;
+ 	long ret;
  
--	return xa_load(&ctx->io_bl_xa, bgid);
-+	return __io_buffer_get_list(ctx, ctx->io_bl, bgid);
- }
- 
- static int io_buffer_add_list(struct io_ring_ctx *ctx,
- 			      struct io_buffer_list *bl, unsigned int bgid)
- {
-+	/*
-+	 * Store buffer group ID and finally mark the list as visible.
-+	 * The normal lookup doesn't care about the visibility as we're
-+	 * always under the ->uring_lock, but the RCU lookup from mmap does.
-+	 */
- 	bl->bgid = bgid;
-+	smp_store_release(&bl->is_ready, 1);
-+
- 	if (bgid < BGID_ARRAY)
- 		return 0;
- 
-@@ -203,18 +219,19 @@ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
- 
- static __cold int io_init_bl_list(struct io_ring_ctx *ctx)
- {
-+	struct io_buffer_list *bl;
- 	int i;
- 
--	ctx->io_bl = kcalloc(BGID_ARRAY, sizeof(struct io_buffer_list),
--				GFP_KERNEL);
--	if (!ctx->io_bl)
-+	bl = kcalloc(BGID_ARRAY, sizeof(struct io_buffer_list), GFP_KERNEL);
-+	if (!bl)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < BGID_ARRAY; i++) {
--		INIT_LIST_HEAD(&ctx->io_bl[i].buf_list);
--		ctx->io_bl[i].bgid = i;
-+		INIT_LIST_HEAD(&bl[i].buf_list);
-+		bl[i].bgid = i;
+ 	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
+@@ -3670,20 +3670,19 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
+ 			return -EINVAL;
+ 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
+-		f.file = tctx->registered_rings[fd];
+-		f.flags = 0;
+-		if (unlikely(!f.file))
++		file = tctx->registered_rings[fd];
++		if (unlikely(!file))
+ 			return -EBADF;
+ 	} else {
+-		f = fdget(fd);
+-		if (unlikely(!f.file))
++		file = fget(fd);
++		if (unlikely(!file))
+ 			return -EBADF;
+ 		ret = -EOPNOTSUPP;
+-		if (unlikely(!io_is_uring_fops(f.file)))
++		if (unlikely(!io_is_uring_fops(file)))
+ 			goto out;
  	}
  
-+	smp_store_release(&ctx->io_bl, bl);
- 	return 0;
- }
- 
-@@ -303,7 +320,7 @@ void io_destroy_buffers(struct io_ring_ctx *ctx)
- 	xa_for_each(&ctx->io_bl_xa, index, bl) {
- 		xa_erase(&ctx->io_bl_xa, bl->bgid);
- 		__io_remove_buffers(ctx, bl, -1U);
--		kfree(bl);
-+		kfree_rcu(bl, rcu);
- 	}
- 
- 	/*
-@@ -497,7 +514,16 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags)
- 		INIT_LIST_HEAD(&bl->buf_list);
- 		ret = io_buffer_add_list(ctx, bl, p->bgid);
- 		if (ret) {
--			kfree(bl);
-+			/*
-+			 * Doesn't need rcu free as it was never visible, but
-+			 * let's keep it consistent throughout. Also can't
-+			 * be a lower indexed array group, as adding one
-+			 * where lookup failed cannot happen.
-+			 */
-+			if (p->bgid >= BGID_ARRAY)
-+				kfree_rcu(bl, rcu);
-+			else
-+				WARN_ON_ONCE(1);
- 			goto err;
+-	ctx = f.file->private_data;
++	ctx = file->private_data;
+ 	ret = -EBADFD;
+ 	if (unlikely(ctx->flags & IORING_SETUP_R_DISABLED))
+ 		goto out;
+@@ -3777,7 +3776,8 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  		}
  	}
-@@ -636,6 +662,8 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	struct io_buffer_list *bl, *free_bl = NULL;
- 	int ret;
- 
-+	lockdep_assert_held(&ctx->uring_lock);
-+
- 	if (copy_from_user(&reg, arg, sizeof(reg)))
- 		return -EFAULT;
- 
-@@ -690,7 +718,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 		return 0;
- 	}
- 
--	kfree(free_bl);
-+	kfree_rcu(free_bl, rcu);
+ out:
+-	fdput(f);
++	if (!(flags & IORING_ENTER_REGISTERED_RING))
++		fput(file);
  	return ret;
  }
  
-@@ -699,6 +727,8 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	struct io_uring_buf_reg reg;
- 	struct io_buffer_list *bl;
- 
-+	lockdep_assert_held(&ctx->uring_lock);
-+
- 	if (copy_from_user(&reg, arg, sizeof(reg)))
- 		return -EFAULT;
- 	if (reg.resv[0] || reg.resv[1] || reg.resv[2])
-@@ -715,7 +745,7 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	__io_remove_buffers(ctx, bl, -1U);
- 	if (bl->bgid >= BGID_ARRAY) {
- 		xa_erase(&ctx->io_bl_xa, bl->bgid);
--		kfree(bl);
-+		kfree_rcu(bl, rcu);
- 	}
- 	return 0;
- }
-@@ -724,7 +754,15 @@ void *io_pbuf_get_address(struct io_ring_ctx *ctx, unsigned long bgid)
+@@ -4618,7 +4618,7 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
  {
- 	struct io_buffer_list *bl;
+ 	struct io_ring_ctx *ctx;
+ 	long ret = -EBADF;
+-	struct fd f;
++	struct file *file;
+ 	bool use_registered_ring;
  
--	bl = io_buffer_get_list(ctx, bgid);
-+	bl = __io_buffer_get_list(ctx, smp_load_acquire(&ctx->io_bl), bgid);
-+
-+	/*
-+	 * Ensure the list is fully setup. Only strictly needed for RCU lookup
-+	 * via mmap, and in that case only for the array indexed groups. For
-+	 * the xarray lookups, it's either visible and ready, or not at all.
-+	 */
-+	if (!smp_load_acquire(&bl->is_ready))
-+		return NULL;
- 	if (!bl || !bl->is_mmap)
- 		return NULL;
+ 	use_registered_ring = !!(opcode & IORING_REGISTER_USE_REGISTERED_RING);
+@@ -4637,27 +4637,27 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+ 		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
+ 			return -EINVAL;
+ 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
+-		f.file = tctx->registered_rings[fd];
+-		f.flags = 0;
+-		if (unlikely(!f.file))
++		file = tctx->registered_rings[fd];
++		if (unlikely(!file))
+ 			return -EBADF;
+ 	} else {
+-		f = fdget(fd);
+-		if (unlikely(!f.file))
++		file = fget(fd);
++		if (unlikely(!file))
+ 			return -EBADF;
+ 		ret = -EOPNOTSUPP;
+-		if (!io_is_uring_fops(f.file))
++		if (!io_is_uring_fops(file))
+ 			goto out_fput;
+ 	}
  
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 6c7646e6057c..9be5960817ea 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -15,6 +15,7 @@ struct io_buffer_list {
- 			struct page **buf_pages;
- 			struct io_uring_buf_ring *buf_ring;
- 		};
-+		struct rcu_head rcu;
- 	};
- 	__u16 bgid;
+-	ctx = f.file->private_data;
++	ctx = file->private_data;
  
-@@ -28,6 +29,8 @@ struct io_buffer_list {
- 	__u8 is_mapped;
- 	/* ring mapped provided buffers, but mmap'ed by application */
- 	__u8 is_mmap;
-+	/* bl is visible from an RCU point of view for lookup */
-+	__u8 is_ready;
- };
+ 	mutex_lock(&ctx->uring_lock);
+ 	ret = __io_uring_register(ctx, opcode, arg, nr_args);
+ 	mutex_unlock(&ctx->uring_lock);
+ 	trace_io_uring_register(ctx, opcode, ctx->nr_user_files, ctx->nr_user_bufs, ret);
+ out_fput:
+-	fdput(f);
++	if (!use_registered_ring)
++		fput(file);
+ 	return ret;
+ }
  
- struct io_buffer {
 -- 
 2.42.0
 

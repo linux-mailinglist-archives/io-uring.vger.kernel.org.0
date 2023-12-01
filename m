@@ -1,60 +1,60 @@
-Return-Path: <io-uring+bounces-198-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-199-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983B080132C
-	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 19:54:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE02B801336
+	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 19:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CD51C20A26
-	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 18:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DE27B20C59
+	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 18:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7A62D639;
-	Fri,  1 Dec 2023 18:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4904B3D980;
+	Fri,  1 Dec 2023 18:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtV0henW"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m4cHoOJQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2549410DA;
-	Fri,  1 Dec 2023 10:54:06 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-54ba86ae133so2830485a12.2;
-        Fri, 01 Dec 2023 10:54:06 -0800 (PST)
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD23F3
+	for <io-uring@vger.kernel.org>; Fri,  1 Dec 2023 10:56:40 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id ca18e2360f4ac-7b359dad0e7so30072439f.0
+        for <io-uring@vger.kernel.org>; Fri, 01 Dec 2023 10:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701456844; x=1702061644; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pxC6FvaCwqbKWFKkmrGd/+ggGHthPXEgXLr+pvJmw3g=;
-        b=KtV0henWgarPXsqR7K5sjYvGsx57KfHBi8itTYCkGNHSp4471VY46vQcR/YdVRRyJe
-         JJy7jksLG0mhZgZLGP35b/WKD2cbOsveRBwPH/6TlZ1g6sXdBBIh1jrl+WCyPlKDfIz5
-         fXkb27bicU1rg/+SIg5FtZ6tf6IHpSKM1iuSSbLvM5EhkF8I7OVVoYoYNgVS6mVtdjBk
-         ZBIa6w9Mke4vq8G5GzDiuXorqCwBmrMk/rnpGrzC7HztmSxvfHnvmDDZjES0dAfG/74c
-         mvjT5dDkJxH5XesJOMdaAtnX54cr5pObumL49Z68QnMFbeWlzqPDlWues80FaAH86s3H
-         Mg8Q==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701457000; x=1702061800; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IgnuHKh5LC+z0FjdbZ0jiY9f26wDR+NHd95CZDdHMIo=;
+        b=m4cHoOJQGFi40XLcYx+UVnMMpUVys5aXugUm6cMW6XJioNA+2LbmGpl8hIhBu7W9J9
+         8HZEDVJ3B82FzJ7ab9GNmYKuY9+8HsAEp/VpMh7J6+Obzoar2H3HaV7r9jIi3Uxvn6Va
+         /utwt+G3Rgl3BIViKgC3qma9AFl2qEBkqzaEeO6KqSBcWnhbhpZ0wo/wrV2+4ibbqCPg
+         aEZjG3K3f3/jmJkivbEpD+wS7bnh9OCO4XtNnYhILMrII/RNhiIux+rh/F0IYV8OBnsu
+         ZL/7xvT8Z7P+F/AM0G67ZAEHhW9r0JNPOCV6rmfDQEoQgIB8mMM8D+zJxyquZBPWC/HN
+         fk1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701456844; x=1702061644;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pxC6FvaCwqbKWFKkmrGd/+ggGHthPXEgXLr+pvJmw3g=;
-        b=mFo+49JFWBJz8nQKiuu/9VpAKE34CjggjPEHdywDD761mSGyUPfk+8N6+exVEsUJBs
-         NEOFku62j0OBPMowOOSXvaSY5u+9xwHIjmINmslSpZL3Zl1vIXsyWK8hi0LcE0f/rstV
-         wJ0/vDxHAsLHr4+Q019HDIR0ufVTvQw0QY/0TC+A1lJIwVHaBogSXGx6Pz2jQTf5dYCT
-         8gR81UorIUECd/LumfDcsyHScszIZidUscLk3M0yJ13+p+ouHAvz4Zjq0yS454UDxiK0
-         Lws/x9gYA1rkeiZwBbLkBTuQTMm2J0SJYx9m3uC8qWttWSiHxiX317AE0YJzGBjTxBZl
-         2cpg==
-X-Gm-Message-State: AOJu0Yz/+zJwKfZJxUmwWTDL7AAg5o5HjVjTU4uuyo4J+pc1uHVez5ia
-	fLn+xAUZtt110HZMxXM/K0KzBzO75ew=
-X-Google-Smtp-Source: AGHT+IEbxsBUhuXYvFLq4S++XHBSv/HO34+0JLe6U83mvNd5vKQgX1AbPy8aPiWMpgPtnD3nq3g5eA==
-X-Received: by 2002:a17:907:9047:b0:a10:f9a8:bfe1 with SMTP id az7-20020a170907904700b00a10f9a8bfe1mr1797143ejc.16.1701456844374;
-        Fri, 01 Dec 2023 10:54:04 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.140.112])
-        by smtp.gmail.com with ESMTPSA id q19-20020a1709060e5300b009a19701e7b5sm2185813eji.96.2023.12.01.10.54.03
+        d=1e100.net; s=20230601; t=1701457000; x=1702061800;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IgnuHKh5LC+z0FjdbZ0jiY9f26wDR+NHd95CZDdHMIo=;
+        b=GX+wvgimsN6Y8so1QzvitmomGE9wJsGbbMi7fDVoeEDNQU9LlobOMoj897n6tYnidp
+         Ifna49lSOtabtyjy0f3WNcmrdv2ADnkOjR3iilZO4diCj5S4utB9xwdFqyL/xWNob8mu
+         PuDgLzAt9dBmDqTp3Jqvbbd69QC1uBOI8p0gJxSQ4sJD0c+O4gn4ClKyQRILy/xP+WV6
+         2ri19mTn1QFzP3zN9JIrI2W2fdUgETTNAlioQrx3nOSQM/F3p0td5DiS11H8mdnmIJzG
+         JsFNWqdicxAhIL5be/KJJtpXEqrVsAIzOtqVdTpSqnVLa2p9Tii3/lky+Smyx0OsQNy0
+         FKAw==
+X-Gm-Message-State: AOJu0YxN9JGU3n+o1mR7md1uNFrdvukSnEt2NR9dmVIfQVhzOkF63k1Z
+	tM7W7KnFPYDiEez9X8eeDViQN7YxXQfYJXs/Zq1ytQ==
+X-Google-Smtp-Source: AGHT+IHS84qzaSd1+0MBGwsnRamqF0uEixv9GH7Q5QK4VKEhLdAHyctMOT6UvU0Qi9lx3z9sTYVnow==
+X-Received: by 2002:a6b:6915:0:b0:7b0:aea8:2643 with SMTP id e21-20020a6b6915000000b007b0aea82643mr6859610ioc.1.1701456999926;
+        Fri, 01 Dec 2023 10:56:39 -0800 (PST)
+Received: from [172.19.0.197] ([99.196.131.174])
+        by smtp.gmail.com with ESMTPSA id gs26-20020a0566382d9a00b0042b37dda71asm1015204jab.136.2023.12.01.10.56.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 10:54:04 -0800 (PST)
-Message-ID: <42ef8260-7f92-4312-9291-19301aea3c30@gmail.com>
-Date: Fri, 1 Dec 2023 18:52:43 +0000
+        Fri, 01 Dec 2023 10:56:38 -0800 (PST)
+Message-ID: <a9499ad7-e4b4-4af4-8165-336aad7913a3@kernel.dk>
+Date: Fri, 1 Dec 2023 11:56:29 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -62,80 +62,72 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: io_uring: incorrect assumption about mutex behavior on unlock?
-To: Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
- io-uring <io-uring@vger.kernel.org>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>
-References: <CAG48ez3xSoYb+45f1RLtktROJrpiDQ1otNvdR+YLQf7m+Krj5Q@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.7-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAG48ez3xSoYb+45f1RLtktROJrpiDQ1otNvdR+YLQf7m+Krj5Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/1/23 16:41, Jann Horn wrote:
-> mutex_unlock() has a different API contract compared to spin_unlock().
-> spin_unlock() can be used to release ownership of an object, so that
-> as soon as the spinlock is unlocked, another task is allowed to free
-> the object containing the spinlock.
-> mutex_unlock() does not support this kind of usage: The caller of
-> mutex_unlock() must ensure that the mutex stays alive until
-> mutex_unlock() has returned.
-> (See the thread
-> <https://lore.kernel.org/all/20231130204817.2031407-1-jannh@google.com/>
-> which discusses adding documentation about this.)
-> (POSIX userspace mutexes are different from kernel mutexes, in
-> userspace this pattern is allowed.)
-> 
-> io_ring_exit_work() has a comment that seems to assume that the
-> uring_lock (which is a mutex) can be used as if the spinlock-style API
-> contract applied:
-> 
->      /*
->      * Some may use context even when all refs and requests have been put,
->      * and they are free to do so while still holding uring_lock or
->      * completion_lock, see io_req_task_submit(). Apart from other work,
->      * this lock/unlock section also waits them to finish.
->      */
->      mutex_lock(&ctx->uring_lock);
-> 
+Hi Linus,
 
-Oh crap. I'll check if there more suspects and patch it up, thanks
+Random assortment of fixes, either heading to stable or fixing an issue
+introduced in this series.
 
-> I couldn't find any way in which io_req_task_submit() actually still
-> relies on this. I think io_fallback_req_func() now relies on it,
-> though I'm not sure whether that's intentional. ctx->fallback_work is
-> flushed in io_ring_ctx_wait_and_kill(), but I think it can probably be
-> restarted later on via:
+- Fix an issue with discontig page checking for IORING_SETUP_NO_MMAP
 
-Yes, io_fallback_req_func() relies on it, and it can be spinned up
-asynchronously from different places, e.g. in-IRQ block request
-completion.
+- Fix an issue with not allowing IORING_SETUP_NO_MMAP also disallowing
+  mmap'ed buffer rings
 
-> io_ring_exit_work -> io_move_task_work_from_local ->
-> io_req_normal_work_add -> io_fallback_tw(sync=false) ->
-> schedule_delayed_work
-> 
-> I think it is probably guaranteed that ctx->refs is non-zero when we
-> enter io_fallback_req_func, since I think we can't enter
-> io_fallback_req_func with an empty ctx->fallback_llist, and the
-> requests queued up on ctx->fallback_llist have to hold refcounted
-> references to the ctx. But by the time we reach the mutex_unlock(), I
-> think we're not guaranteed to hold any references on the ctx anymore,
-> and so the ctx could theoretically be freed in the middle of the
-> mutex_unlock() call?
+- Fix an issue with deferred release of memory mapped pages
 
-Right, it comes with refs but loses them in between lock()/unlock().
+- Fix a lockdep issue with IORING_SETUP_NO_MMAP
 
-> I think that to make this code properly correct, it might be necessary
-> to either add another flush_delayed_work() call after ctx->refs has
-> dropped to zero and we know that the fallback work can't be restarted
-> anymore, or create an extra ctx->refs reference that is dropped in
-> io_fallback_req_func() after the mutex_unlock(). (Though I guess it's
-> probably unlikely that this goes wrong in practice.)
+- Use fget/fput consistently, even from our sync system calls. No real
+  issue here, but if we were ever to allow closing io_uring descriptors
+  it would be required. Let's play it safe and just use the full ref
+  counted versions upfront. Most uses of io_uring are threaded anyway,
+  and hence already doing the full version underneath.
+
+Please pull!
+
+
+The following changes since commit d6fef34ee4d102be448146f24caf96d7b4a05401:
+
+  io_uring: fix off-by one bvec index (2023-11-20 15:21:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.7-2023-11-30
+
+for you to fetch changes up to 73363c262d6a7d26063da96610f61baf69a70f7c:
+
+  io_uring: use fget/fput consistently (2023-11-28 11:56:29 -0700)
+
+----------------------------------------------------------------
+io_uring-6.7-2023-11-30
+
+----------------------------------------------------------------
+Jens Axboe (8):
+      io_uring: don't allow discontig pages for IORING_SETUP_NO_MMAP
+      io_uring: don't guard IORING_OFF_PBUF_RING with SETUP_NO_MMAP
+      io_uring: enable io_mem_alloc/free to be used in other parts
+      io_uring/kbuf: defer release of mapped buffer rings
+      io_uring/kbuf: recycle freed mapped buffer ring entries
+      io_uring/kbuf: prune deferred locked cache when tearing down
+      io_uring: free io_buffer_list entries via RCU
+      io_uring: use fget/fput consistently
+
+ include/linux/io_uring_types.h |   3 +
+ io_uring/cancel.c              |  11 +--
+ io_uring/io_uring.c            |  95 ++++++++++++----------
+ io_uring/io_uring.h            |   3 +
+ io_uring/kbuf.c                | 177 ++++++++++++++++++++++++++++++++++++-----
+ io_uring/kbuf.h                |   5 ++
+ 6 files changed, 224 insertions(+), 70 deletions(-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

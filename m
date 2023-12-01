@@ -1,161 +1,117 @@
-Return-Path: <io-uring+bounces-193-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-194-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAE98008BB
-	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 11:44:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF47880106F
+	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 17:41:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9E6B212DC
-	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 10:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C1A01C20C11
+	for <lists+io-uring@lfdr.de>; Fri,  1 Dec 2023 16:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6B71F934;
-	Fri,  1 Dec 2023 10:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD7925747;
+	Fri,  1 Dec 2023 16:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QQgcLILF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="znacTWRI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4513F10F1
-	for <io-uring@vger.kernel.org>; Fri,  1 Dec 2023 02:43:55 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231201104352epoutp04df28081956ecf555de52846e043df8f8~crzwjC82G2508225082epoutp048
-	for <io-uring@vger.kernel.org>; Fri,  1 Dec 2023 10:43:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231201104352epoutp04df28081956ecf555de52846e043df8f8~crzwjC82G2508225082epoutp048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701427432;
-	bh=egIVlxYXEj5QnAKhPNSwlLp6xcM1kV8clB570m+Tw8g=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=QQgcLILFjMpQ1A/XSI1WBXDIw5ATsrgmoSM0DS6AKQ54o6SycIY8nSOXDVI6+u9O7
-	 kQd1EZoISOC/AaaPBFB9xF3xAGKurLpYOuj0UOqF5XF3kytWsOaJv9tJ3zIoOzxRJv
-	 Dt6dXflTUgLLniHt47SwswgPu+nADBL2/gQRE0wk=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20231201104351epcas5p114a813d9e6702b1162567bb4320c5e0a~crzwDLIXQ2725827258epcas5p17;
-	Fri,  1 Dec 2023 10:43:51 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4ShV6D1WNVz4x9Px; Fri,  1 Dec
-	2023 10:43:48 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EE.46.09634.4E8B9656; Fri,  1 Dec 2023 19:43:48 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20231201104347epcas5p440b836f5c8c55ea7a21b51a14e27064a~crzsljt4e1349813498epcas5p4n;
-	Fri,  1 Dec 2023 10:43:47 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231201104347epsmtrp12963b5d4f454e9b4bf8e9f0f862bbc04~crzsk7RPT1441014410epsmtrp1P;
-	Fri,  1 Dec 2023 10:43:47 +0000 (GMT)
-X-AuditID: b6c32a49-159fd700000025a2-68-6569b8e4d305
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	72.28.18939.3E8B9656; Fri,  1 Dec 2023 19:43:47 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231201104346epsmtip2e2197d5ca067bf0872757e9181cd068d~crzrTU1ee0888808888epsmtip2W;
-	Fri,  1 Dec 2023 10:43:46 +0000 (GMT)
-Message-ID: <e3c2d527-3927-7efe-a61f-ff7e5af95d83@samsung.com>
-Date: Fri, 1 Dec 2023 16:13:45 +0530
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEAEE196
+	for <io-uring@vger.kernel.org>; Fri,  1 Dec 2023 08:41:52 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-548ae9a5eeaso12012a12.1
+        for <io-uring@vger.kernel.org>; Fri, 01 Dec 2023 08:41:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1701448911; x=1702053711; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wJ6qDwmyRvhNqpylX9f8LuOmYLWmceoEf5k8FTfkzPU=;
+        b=znacTWRINH7bjtkr56UNC1pMzBG1MLZZtyC3HCMP9cD00i5ttvvAjA8JXDV9KPTBrR
+         5qa/JAljXjWikCWHzhvSQ04Sjw5xpx9NNC5ghPD9YxPG9QeQmWFXY0Vh7+USxBu7jQvX
+         NS4cp9Vau1PE4dKvSOv1f0Xm+RpBWpJ5V2w3xQVKo3X35Mq5bA7J3KNF1RLZWA0s4lqD
+         05niG2hrDQFHeLj1T5bbQAFIWNTxN4xP3dbfe6A6scvIUXE0VsBIX02ntC+OHA46EAbu
+         ZBeHwB+QSie0WqcXfuX3BxkbjLSyTpevAILf4mWH/HZnnVbHUy3sk4qW5gCUZYckEAn+
+         eoeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701448911; x=1702053711;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wJ6qDwmyRvhNqpylX9f8LuOmYLWmceoEf5k8FTfkzPU=;
+        b=wxJSVXRIUqdRp9cTp2RNzHl7vonIy4QzpUOiD/1OWdOTbcq9ZZ/DMP5nAUs8WrxHei
+         v7ePH9D+6A02aavtDpql6z2XI3a/caCKd1RvfTCr7rPhiWoVk3J2BOkmI6J/NayxpZbI
+         azbzZj2OtX2ZOY8wlME4liImV4pXp8zTG84LTDg/Tacr0Ui0XoVzWklkCAwlSA9fve9G
+         retZ81I631XQeP9w8lqPf1U3i829OT759dfKAYYNPlfaISC+XdvQ/1Uv7/gDYG4p3BNU
+         Fx3w2+rN3tI0iawLUPYgBKhQEYijU8ATmjYF9/4ehHh9xsRBD/a9O9ZWcMobMHjD5xyc
+         lwGg==
+X-Gm-Message-State: AOJu0YzU7ME6kSxjRIkJaYApoexEPmp2hfHP4rY1TCZR941WGTfKm8GT
+	W0ae40WPDg8Ao9R+bhP+5JVDywc7xBkeNo7jBdbDug==
+X-Google-Smtp-Source: AGHT+IEBCEUy8WWjrEzQFzI0bb+4iHE3xDO/M7JSFQnRwhSwXTDZWgI6uFpXx2LfPxgJyDBAytWfBT1XfxCuFPcOOzo=
+X-Received: by 2002:a50:aade:0:b0:54a:ee8b:7a8c with SMTP id
+ r30-20020a50aade000000b0054aee8b7a8cmr168518edc.0.1701448911052; Fri, 01 Dec
+ 2023 08:41:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCHv5 0/4] block integrity: directly map user space
- addresses
-Content-Language: en-US
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-	ming.lei@redhat.com, Keith Busch <kbusch@kernel.org>
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20231130215309.2923568-1-kbusch@meta.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmlu6THZmpBm9aOC1W3+1ns1i5+iiT
-	xbvWcywWkw5dY7Q4c3Uhi8XeW9oW85c9ZbdYfvwfk8Whyc1MDpwel8+Wemxa1cnmsXlJvcfu
-	mw1sHucuVnh8fHqLxeP9vqtsHp83yQVwRGXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjq
-	GlpamCsp5CXmptoqufgE6Lpl5gDdpqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkp
-	MCnQK07MLS7NS9fLSy2xMjQwMDIFKkzIzmh6eoOl4Bd3xfdHd9kbGG9zdDFyckgImEi8fdDO
-	2sXIxSEksJtR4urnw8wQzidGiUnndzKCVIE5x9awwXRcuniPDaJoJ6PE/80zoDreMkp0nZ/M
-	DlLFK2AnsenqKzCbRUBFYuHrg1BxQYmTM5+wgNiiAkkSv67OAdsgLOAvcf3pBTCbWUBc4taT
-	+UwgtohAlUTftJ9sEPFiifsdu4Fu5eBgE9CUuDC5FCTMKWAu8eLZOnaIEnmJ7W/ngN0jIbCU
-	Q2LR5PeMIPUSAi4SN3ZpQDwgLPHq+BZ2CFtK4mV/G5SdLHFp5jkmCLtE4vGeg1C2vUTrqX5m
-	kDHMQGvX79KHWMUn0fv7CRPEdF6JjjYhiGpFiXuTnrJC2OISD2csgbI9JC78+w4NqS5GidmP
-	u9knMCrMQgqUWUien4Xkm1kImxcwsqxilEwtKM5NTy02LTDMSy2HR3dyfu4mRnDC1fLcwXj3
-	wQe9Q4xMHIyHGCU4mJVEeK8/TU8V4k1JrKxKLcqPLyrNSS0+xGgKjJ2JzFKiyfnAlJ9XEm9o
-	YmlgYmZmZmJpbGaoJM77unVuipBAemJJanZqakFqEUwfEwenVAPTbsvFX66df/z7A8dOG0+B
-	pKJ7LZZ/595s27h94S2ja5/aS4QVt3xZd4D3vv8enq0JM6LLel/re0RulVh0zPzAURsLxoNB
-	PnkZTIwlMk+ObvN2efvYLmZCWxf3X3mtTwyLlaJqC47O6crhZVVs++bK85QvVKqMa8V3hZsT
-	W8QWWdUzbRL/ILfq9EPD7U2SyT919dZ+a1HdWRT9wPq9sImUt7ZYwgPhLxMezExrW3hPOL1n
-	xappL1r/HVvydWqPLOOcsi67yEu/znd/nKhwcYeATOb82yVswf/2yVfkmL8ze7I8Qer7wtd7
-	FXzttN4WTLjZ6xfJ8bDmopDnqzOqacvWbd788lFLFW+giLti1dLjSizFGYmGWsxFxYkAgWV7
-	CEEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJXvfxjsxUg9nndSxW3+1ns1i5+iiT
-	xbvWcywWkw5dY7Q4c3Uhi8XeW9oW85c9ZbdYfvwfk8Whyc1MDpwel8+Wemxa1cnmsXlJvcfu
-	mw1sHucuVnh8fHqLxeP9vqtsHp83yQVwRHHZpKTmZJalFunbJXBlND29wVLwi7vi+6O77A2M
-	tzm6GDk5JARMJC5dvMfWxcjFISSwnVFi54u1rBAJcYnmaz/YIWxhiZX/nrNDFL1mlJhweCUz
-	SIJXwE5i09VXYEUsAioSC18fZIeIC0qcnPmEBcQWFUiS2HO/kamLkYNDWMBX4sTWRJAwM9D8
-	W0/mM4HYIgJVEvt/nAUrYRYolri52BJiVRejxNZvl1lA4mwCmhIXJpeClHMKmEu8eLaOHWKM
-	mUTX1i5GCFteYvvbOcwTGIVmITliFpJts5C0zELSsoCRZRWjaGpBcW56bnKBoV5xYm5xaV66
-	XnJ+7iZGcFRpBe1gXLb+r94hRiYOxkOMEhzMSiK815+mpwrxpiRWVqUW5ccXleakFh9ilOZg
-	URLnVc7pTBESSE8sSc1OTS1ILYLJMnFwSjUwRYlMr9vyXkPk4LcFF3c0haa+zF6fcXZiXsY+
-	jQ1qmssa5B4aC81zFLwtWPlwZobCVGZtpe25K7tubjvRW9j1Z9+0lsDvC+5+P6ijqCbCqv9i
-	/4m+7eVtwmdSDp5pYQ+1+PFLiL+JJcg5b933rVHbop7XRQpt1fh99a97+xeugFmzG/fZrZCJ
-	/cn3a3VR6WoHWc3P8uUPAy3OFJ1WMW3Jf/NmA3vxGwW9hcU/a/ZyvPqj03W/uyDN/5T87KDz
-	Rk+MDz24avVbM+fwim1i2nHV678KbayfNzcwyGfxNc8y4UXLz5R//P53laxg5H3VZbPm72uM
-	P7rcRoXbVKb9xlnRa+/vsbPNe5fx58AZrQ1XVZVYijMSDbWYi4oTATvayTkZAwAA
-X-CMS-MailID: 20231201104347epcas5p440b836f5c8c55ea7a21b51a14e27064a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231130215715epcas5p33208ca14e69a68402c04e5c743135e6c
-References: <CGME20231130215715epcas5p33208ca14e69a68402c04e5c743135e6c@epcas5p3.samsung.com>
-	<20231130215309.2923568-1-kbusch@meta.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 1 Dec 2023 17:41:13 +0100
+Message-ID: <CAG48ez3xSoYb+45f1RLtktROJrpiDQ1otNvdR+YLQf7m+Krj5Q@mail.gmail.com>
+Subject: io_uring: incorrect assumption about mutex behavior on unlock?
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	io-uring <io-uring@vger.kernel.org>
+Cc: kernel list <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/1/2023 3:23 AM, Keith Busch wrote:
-> From: Keith Busch<kbusch@kernel.org>
+mutex_unlock() has a different API contract compared to spin_unlock().
+spin_unlock() can be used to release ownership of an object, so that
+as soon as the spinlock is unlocked, another task is allowed to free
+the object containing the spinlock.
+mutex_unlock() does not support this kind of usage: The caller of
+mutex_unlock() must ensure that the mutex stays alive until
+mutex_unlock() has returned.
+(See the thread
+<https://lore.kernel.org/all/20231130204817.2031407-1-jannh@google.com/>
+which discusses adding documentation about this.)
+(POSIX userspace mutexes are different from kernel mutexes, in
+userspace this pattern is allowed.)
 
-This causes a regression (existed in previous version too).
-System freeze on issuing single read/write io that used to work fine 
-earlier:
-fio -iodepth=1 -rw=randread -ioengine=io_uring_cmd -cmd_type=nvme 
--bs=4096 -numjobs=1 -size=4096 -filename=/dev/ng0n1 -md_per_io_size=8 
--name=pt
+io_ring_exit_work() has a comment that seems to assume that the
+uring_lock (which is a mutex) can be used as if the spinlock-style API
+contract applied:
 
-This is because we pin one bvec during submission, but unpin 4 on 
-completion. bio_integrity_unpin_bvec() uses bip->bip_max_vcnt, which is 
-set to 4 (equal to BIO_INLINE_VECS) in this case.
+    /*
+    * Some may use context even when all refs and requests have been put,
+    * and they are free to do so while still holding uring_lock or
+    * completion_lock, see io_req_task_submit(). Apart from other work,
+    * this lock/unlock section also waits them to finish.
+    */
+    mutex_lock(&ctx->uring_lock);
 
-To use bip_max_vcnt the way this series uses, we need below patch/fix:
+I couldn't find any way in which io_req_task_submit() actually still
+relies on this. I think io_fallback_req_func() now relies on it,
+though I'm not sure whether that's intentional. ctx->fallback_work is
+flushed in io_ring_ctx_wait_and_kill(), but I think it can probably be
+restarted later on via:
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 674a2c80454b..feef615e2c9c 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -69,15 +69,15 @@ struct bio_integrity_payload 
-*bio_integrity_alloc(struct bio *bio,
+io_ring_exit_work -> io_move_task_work_from_local ->
+io_req_normal_work_add -> io_fallback_tw(sync=false) ->
+schedule_delayed_work
 
-         memset(bip, 0, sizeof(*bip));
+I think it is probably guaranteed that ctx->refs is non-zero when we
+enter io_fallback_req_func, since I think we can't enter
+io_fallback_req_func with an empty ctx->fallback_llist, and the
+requests queued up on ctx->fallback_llist have to hold refcounted
+references to the ctx. But by the time we reach the mutex_unlock(), I
+think we're not guaranteed to hold any references on the ctx anymore,
+and so the ctx could theoretically be freed in the middle of the
+mutex_unlock() call?
 
-+       /* always report as many vecs as asked explicitly, not inline 
-vecs */
-+       bip->bip_max_vcnt = nr_vecs;
-         if (nr_vecs > inline_vecs) {
--               bip->bip_max_vcnt = nr_vecs;
-                 bip->bip_vec = bvec_alloc(&bs->bvec_integrity_pool,
-                                           &bip->bip_max_vcnt, gfp_mask);
-                 if (!bip->bip_vec)
-                         goto err;
-         } else {
-                 bip->bip_vec = bip->bip_inline_vecs;
--               bip->bip_max_vcnt = inline_vecs;
-         }
-
-         bip->bip_bio = bio;
+I think that to make this code properly correct, it might be necessary
+to either add another flush_delayed_work() call after ctx->refs has
+dropped to zero and we know that the fallback work can't be restarted
+anymore, or create an extra ctx->refs reference that is dropped in
+io_fallback_req_func() after the mutex_unlock(). (Though I guess it's
+probably unlikely that this goes wrong in practice.)
 

@@ -1,95 +1,94 @@
-Return-Path: <io-uring+bounces-219-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-220-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804C1803DD1
-	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 19:58:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59924803DF9
+	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 20:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28FA1C20A77
-	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 18:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8241C20B0E
+	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 19:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2732FC31;
-	Mon,  4 Dec 2023 18:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821562E854;
+	Mon,  4 Dec 2023 19:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Br4L24tP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fEn/gNwB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A592FC20;
-	Mon,  4 Dec 2023 18:57:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC67C433C7;
-	Mon,  4 Dec 2023 18:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701716278;
-	bh=aPVj9XXl+eRYnePRnmQ+vWxwVHPDe57ND1UdEZVfc00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Br4L24tPwBBeQzb7SaBAjh5gs52tLThxz5a9xZZf3Ih+92YiX6JVVf2u55xvtfDt5
-	 CtOWxn08iOEd2/lIMP5A5NEf5bn0S5YMqmmLN0P90rOkkeZITdqRINxGI4vAYnW4Zq
-	 7A2CVx0syvQH8uuc6wBJFMzPc2KI6udtjMiRqb8Wp0LWorMlx53vfAzD5M7PRXiFkJ
-	 /d0NEHAD+ZANV+j3CUwESxkzhAa6YxibLNUA9PZLPThYBV4v9iWeVLQguYZWNrGnOR
-	 88Nk+4GtrS2cBbqr2zRl/fCaWLOJv/f3ZbtWrLfU7GhlTtyfqtfZgyTfeJSDLQ4fmT
-	 QObQoZRZMZweg==
-Date: Mon, 4 Dec 2023 11:57:55 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Jeff Moyer <jmoyer@redhat.com>
-Cc: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, asml.silence@gmail.com,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
-Message-ID: <ZW4hM0H6pjbCpIg9@kbusch-mbp>
-References: <20231204175342.3418422-1-kbusch@meta.com>
- <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A68183
+	for <io-uring@vger.kernel.org>; Mon,  4 Dec 2023 11:01:41 -0800 (PST)
+Received: by mail-il1-x136.google.com with SMTP id e9e14a558f8ab-35d374bebe3so3562345ab.1
+        for <io-uring@vger.kernel.org>; Mon, 04 Dec 2023 11:01:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701716501; x=1702321301; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KModFUjISk9lPDaAIevH39bme1IjL/Al+Yhj9dt8OqE=;
+        b=fEn/gNwBzsj9hPZyeuCHK4lnDL2SsAnAFWwQdtpww8QUS/aCdJ3mu+JAzcfZ5JajQN
+         BECuAlkfOdpOeDq7Q8e0eCs/whnYjz+KwnefATNfj7R9JwEyi6QiaGWX61fxgLygRL+R
+         6NE7ehHB6/RvojDU6/8lgc0w6gSGmejRcwYkBpQYFiceO6E4O5JlCeFxb2sx+z5V8kE9
+         iQXseohEzgvm5vj+lkC70Ztq1frj9hitpVMpH1rdbP0LHrABSvjFbcU7vrKmf/2H9sVz
+         zmxB8nbZRMnM0YR/DKG/A0jZPCeA9L8vAJsr25cM5dfXl4AI1qZW3X0GAoO/lxmyIrPT
+         Pf4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701716501; x=1702321301;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KModFUjISk9lPDaAIevH39bme1IjL/Al+Yhj9dt8OqE=;
+        b=Y2qWZ8w9oQZe1Km3h8gGUFEWTUJXZYldJmgprd2idHuictDmqP6FW3ATi177AVBlgK
+         zSSiOrx3+RYjh6fE9ezxZvXxa5xpItxQO1tZmrOO1Uzvd8BONdEUrXbodb4hYNCa6ynM
+         OEUkaZm0vsrkfzvm8OGM+QXorJo+vwG3NEi6K+v8zGFZeB4gM0Xdpc8uU6Yy8WZ3sGiq
+         ldhZhzB+8gD9L7ihTS9/Yt1HAllwvjgvRGVOXExisCXvAeCrxqdZBw2VQlqOg9sKRMRp
+         OTZUw107JRlXedlXiXoG4xkq+ioWdOr2EIOJVmgm1nyt40zZqykiZ8h8jjseKXy/oP2Z
+         R9jw==
+X-Gm-Message-State: AOJu0YyIOVIq+gd7koG5pl+jv8muAK/XK86FLbVdlDytjaLy2mKRkc1L
+	EWFeQUzsBOEUaFMF6pQZcRQuOQ==
+X-Google-Smtp-Source: AGHT+IEt2MMR+yxdjujJW2KLoxn/yZExW+eo2d1nv1y7A48SjFpuY0W3NiElWjAJPk/nnbhIfFVFZg==
+X-Received: by 2002:a92:cdae:0:b0:35d:607a:d943 with SMTP id g14-20020a92cdae000000b0035d607ad943mr6603235ild.2.1701716500958;
+        Mon, 04 Dec 2023 11:01:40 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id h4-20020a056e02052400b0035cb655bafesm70728ils.45.2023.12.04.11.01.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Dec 2023 11:01:40 -0800 (PST)
+Message-ID: <9c1ee0ee-ccae-4013-83f4-92a2af7bdf42@kernel.dk>
+Date: Mon, 4 Dec 2023 12:01:38 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
+Content-Language: en-US
+To: Jeff Moyer <jmoyer@redhat.com>, Keith Busch <kbusch@meta.com>
+Cc: linux-nvme@lists.infradead.org, io-uring@vger.kernel.org, hch@lst.de,
+ sagi@grimberg.me, asml.silence@gmail.com, Keith Busch <kbusch@kernel.org>,
+ linux-security-module@vger.kernel.org
+References: <20231204175342.3418422-1-kbusch@meta.com>
+ <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+From: Jens Axboe <axboe@kernel.dk>
 In-Reply-To: <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 04, 2023 at 01:40:58PM -0500, Jeff Moyer wrote:
-> I added a CC: linux-security-module@vger
-> Keith Busch <kbusch@meta.com> writes:
-> > From: Keith Busch <kbusch@kernel.org>
-> >
-> > The uring_cmd operation is often used for privileged actions, so drivers
-> > subscribing to this interface check capable() for each command. The
-> > capable() function is not fast path friendly for many kernel configs,
-> > and this can really harm performance. Stash the capable sys admin
-> > attribute in the io_uring context and set a new issue_flag for the
-> > uring_cmd interface.
-> 
-> I have a few questions.  What privileged actions are performance
-> sensitive? I would hope that anything requiring privileges would not
-> be in a fast path (but clearly that's not the case).
-
-Protocol specifics that don't have a generic equivalent. For example,
-NVMe FDP is reachable only through the uring_cmd and ioctl interfaces,
-but you use it like normal reads and writes so has to be as fast as the
-generic interfaces.
-
-The same interfaces can be abused, so access needs to be restricted.
-
-> What performance benefits did you measure with this patch set in place
-> (and on what workloads)? 
-
-Quite a bit. Here's a random read high-depth workload on a single
-device test:
-
-Before: 970k IOPs
-After: 1750k IOPs
-
-> What happens when a ring fd is passed to another process?
-> 
+On 12/4/23 11:40 AM, Jeff Moyer wrote:
 > Finally, as Jens mentioned, I would expect dropping priviliges to, you
 > know, drop privileges.  I don't think a commit message is going to be
 > enough documentation for a change like this.
 
-Yeah, point taken.
+Only thing I can think of here is to cache the state in
+task->io_uring->something, and then ensure those are invalidated
+whenever caps change. It's one of those cases where that's probably only
+done once, but we do need to be able to catch it. Not convinced that
+caching it at ring creation is sane enough, even if it is kind of like
+opening devices before privs are dropped where you could not otherwise
+re-open them later on.
+
+-- 
+Jens Axboe
+
 

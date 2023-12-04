@@ -1,94 +1,103 @@
-Return-Path: <io-uring+bounces-221-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-222-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CD5803E44
-	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 20:22:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDA0803E6A
+	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 20:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAEFBB20A09
-	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 19:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8083328112B
+	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 19:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1586F2EB0E;
-	Mon,  4 Dec 2023 19:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1D531745;
+	Mon,  4 Dec 2023 19:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQwS3QTp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HWdaDdQP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A0AE6
-	for <io-uring@vger.kernel.org>; Mon,  4 Dec 2023 11:22:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701717749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CuE3wvKVXZ5LaoLyCftMFlpvjjYLnjdW2HQklzJBS80=;
-	b=PQwS3QTpMRWLdUPK2hWMarIWh+zQTmNBTGVy5WIAw6ktRzXf+XaqLZ+Vz1j6K+xym6UOBr
-	LVig1kdeeyF+2Bby55QbPHOPkpAkoqdciavEniJiWuBMSDB/lTlu0MR9pJxDEUFrSB9XUm
-	5TzTVU4u5i9xaUrbuhybKSVPsoBNrr4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-567-fjyfe8TTMMa5a8OWjU-AOQ-1; Mon, 04 Dec 2023 14:22:24 -0500
-X-MC-Unique: fjyfe8TTMMa5a8OWjU-AOQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A1D41811E7D;
-	Mon,  4 Dec 2023 19:22:23 +0000 (UTC)
-Received: from segfault.usersys.redhat.com (unknown [10.22.10.39])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id BF464492BFC;
-	Mon,  4 Dec 2023 19:22:22 +0000 (UTC)
-From: Jeff Moyer <jmoyer@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Keith Busch <kbusch@meta.com>,  linux-nvme@lists.infradead.org,
-  io-uring@vger.kernel.org,  hch@lst.de,  sagi@grimberg.me,
-  asml.silence@gmail.com,  Keith Busch <kbusch@kernel.org>,
-  linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
-References: <20231204175342.3418422-1-kbusch@meta.com>
-	<x49zfypstdx.fsf@segfault.usersys.redhat.com>
-	<9c1ee0ee-ccae-4013-83f4-92a2af7bdf42@kernel.dk>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date: Mon, 04 Dec 2023 14:22:22 -0500
-In-Reply-To: <9c1ee0ee-ccae-4013-83f4-92a2af7bdf42@kernel.dk> (Jens Axboe's
-	message of "Mon, 4 Dec 2023 12:01:38 -0700")
-Message-ID: <x49sf4hsrgx.fsf@segfault.usersys.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123D6B6
+	for <io-uring@vger.kernel.org>; Mon,  4 Dec 2023 11:33:16 -0800 (PST)
+Received: by mail-il1-x132.google.com with SMTP id e9e14a558f8ab-35d374bebe3so3614265ab.1
+        for <io-uring@vger.kernel.org>; Mon, 04 Dec 2023 11:33:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701718395; x=1702323195; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VPLyZ99seCPicBCXDZB9lqIEFSMnRlWV8gcxMk/enRM=;
+        b=HWdaDdQP3ltISdSCmnLELXLyDYbmEIkSPNq7+iRhMRohQne+toMA26NV7TIZAaWfCz
+         Gl9qadg2vNgjXVLYMhucmflzexcjjRwCNweq3jtJN2muO5voL92QWhSj4A17+nV/zNtw
+         El4LYiFkpLhWypQnGyIxKZd3VooMXdnSACkXa84LkmYbADNJ9RU0rqN36+lM6LP49kEI
+         JbsOMJOxkuWC8GGSl6X4BID25YsyV5IzthOqLP5uDNxG2R4YGQaV+s6eoZLVEi5OBaBN
+         +9k/Go8PYwgvOIzTSROglpJLtoCRdaN2+B0mDFwKYMDwEuraJXLryt0egI90zz5fox3+
+         xp8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701718395; x=1702323195;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPLyZ99seCPicBCXDZB9lqIEFSMnRlWV8gcxMk/enRM=;
+        b=uMb4eDYCTP2kCGHF28D1xZo30aieqm9aulk6rLPDTAIIUwQ3LEMNXPdfdhdsVW9HvS
+         ihjm6YK7bMOtpX8BhR+IAIMD6LZUZhosDhkCJKWJMdIVEOXZ9W6k5+zM9CHWMVFqhjqA
+         ctWhLa5YWe+dWRISJ7uWSnuSdXH7+taLF6FbmAk28hnMDmS0Uu5cTWIPOE0pmpuqWevd
+         jQdVrTR2aCon+0ZLx74AUZyexRL6afEDqy9iUcjBnhfvxiQCAV51vyPDyWBeBdkakwV4
+         /25KQWvyZTk+vAlXxBP+PPFazL/56LOU37a7qYxqfB8eOhr4r9XHQXvun0KxsqUpRh+Z
+         /fbQ==
+X-Gm-Message-State: AOJu0Yw270iYj/s7wL+xtHvILac3zpGDW9fINrMWtzaYFxpGaE5ZrWgX
+	Xe/9E5b4I55yPA2+ceFxNS3L2Nhkf9oRn7JIoxwfTw==
+X-Google-Smtp-Source: AGHT+IGkrKaGiFhAp7oK0f4BIQy2oFELmC3jxP+vwpzj8s/Gl4T3A6gIJhi/I7plWsz2YyH/VgUi4A==
+X-Received: by 2002:a05:6602:2245:b0:7b3:5be5:fa55 with SMTP id o5-20020a056602224500b007b35be5fa55mr33072956ioo.2.1701718395387;
+        Mon, 04 Dec 2023 11:33:15 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id y14-20020a6be50e000000b007b35a715c92sm2857601ioc.24.2023.12.04.11.33.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Dec 2023 11:33:14 -0800 (PST)
+Message-ID: <aac915ff-6726-4463-985e-9401228404ca@kernel.dk>
+Date: Mon, 4 Dec 2023 12:33:13 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
+Content-Language: en-US
+To: Jeff Moyer <jmoyer@redhat.com>
+Cc: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
+ io-uring@vger.kernel.org, hch@lst.de, sagi@grimberg.me,
+ asml.silence@gmail.com, Keith Busch <kbusch@kernel.org>,
+ linux-security-module@vger.kernel.org
+References: <20231204175342.3418422-1-kbusch@meta.com>
+ <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+ <9c1ee0ee-ccae-4013-83f4-92a2af7bdf42@kernel.dk>
+ <x49sf4hsrgx.fsf@segfault.usersys.redhat.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <x49sf4hsrgx.fsf@segfault.usersys.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Jens Axboe <axboe@kernel.dk> writes:
+On 12/4/23 12:22 PM, Jeff Moyer wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
+>> On 12/4/23 11:40 AM, Jeff Moyer wrote:
+>>> Finally, as Jens mentioned, I would expect dropping priviliges to, you
+>>> know, drop privileges.  I don't think a commit message is going to be
+>>> enough documentation for a change like this.
+>>
+>> Only thing I can think of here is to cache the state in
+>> task->io_uring->something, and then ensure those are invalidated
+>> whenever caps change.
+> 
+> I looked through the capable() code, and there is no way that I could
+> find to be notified of changes.
 
-> On 12/4/23 11:40 AM, Jeff Moyer wrote:
->> Finally, as Jens mentioned, I would expect dropping priviliges to, you
->> know, drop privileges.  I don't think a commit message is going to be
->> enough documentation for a change like this.
->
-> Only thing I can think of here is to cache the state in
-> task->io_uring->something, and then ensure those are invalidated
-> whenever caps change.
+Right, what I meant is that you'd need to add an io_uring_cap_change()
+or something that gets called, and that iterates the rings associated
+with that task and clears the flag. Ugly...
 
-I looked through the capable() code, and there is no way that I could
-find to be notified of changes.
-
-> It's one of those cases where that's probably only done once, but we
-> do need to be able to catch it. Not convinced that caching it at ring
-> creation is sane enough, even if it is kind of like opening devices
-> before privs are dropped where you could not otherwise re-open them
-> later on.
-
-Agreed.
-
--Jeff
+-- 
+Jens Axboe
 
 

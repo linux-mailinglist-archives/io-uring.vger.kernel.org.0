@@ -1,80 +1,128 @@
-Return-Path: <io-uring+bounces-216-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-217-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66774803C8C
-	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 19:15:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFAD803D56
+	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 19:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE767B20586
-	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 18:15:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EB3281165
+	for <lists+io-uring@lfdr.de>; Mon,  4 Dec 2023 18:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9514E2EAEC;
-	Mon,  4 Dec 2023 18:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693432F86D;
+	Mon,  4 Dec 2023 18:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AurXVlax"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WrFPJTWu"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D87AAA
-	for <io-uring@vger.kernel.org>; Mon,  4 Dec 2023 10:15:10 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id e9e14a558f8ab-35d7341be5cso1138395ab.1
-        for <io-uring@vger.kernel.org>; Mon, 04 Dec 2023 10:15:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701713709; x=1702318509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hNAeyzY5pc7VMUm+A7dLwdlpqS3anz6F45PtdHvureU=;
-        b=AurXVlaxJCGU+WWIS37u43+UksYQFaNDSo30KIfbYrXuhWATrw0ShT/4OTj+ZM/9WB
-         UOjvStX/LxO7lXiWmtLHANytyR0oXqiKIz4J2tp9sd0maVMCdGvKys94IIir3r/lkm35
-         Eky/0V/bEW92pWO53rcsS/qptignr01DH9MPH6RRO3qCyBLLOkO6We/PoNSDyUB8AsJK
-         QUjUDB0TDER0zTXDPiN3ee8IAFgGDhREsZJSDef9iAsrv2eo6Xm0FMUKy8BrC7zd1rrr
-         wIyRcjAtld35RrjgJeCMoY0WaLI+WvJShQHByUmSTQ4OP5YAnK8foum2tIA7D2qDcmeA
-         W42w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701713709; x=1702318509;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hNAeyzY5pc7VMUm+A7dLwdlpqS3anz6F45PtdHvureU=;
-        b=f0t5NldyNXqbz+JcZcwiaNaFNDR/iOwkLtmLeMJ63lZemrx3CR5umeh5MszFIZDFUa
-         MvOly1YaER4HTqqpryg6i0RG4sWDFDdGxY3cINBs8SoTiExQRdphKbQyys3jWTUOtGRt
-         XhXGZi/gW/wPre/VM7qiPSw3C1kjp/Ol6R9LTFqMjmaycDoWGcC8xoVivc6R/urvxFIw
-         MYUxBDKMNlHrHyzZf0QbHuqSxZu8tUWHN5k8vM2/Tc/xa3Z3AMMoH/9G1QqcfnhG5o7f
-         8K8Cu/iwCLhdI3Edx/OgkIQDPlX5Rp0K+9NsfB8pc3iVLES6TZnWPKm7+Ts1GweGrzqN
-         xynw==
-X-Gm-Message-State: AOJu0Yye3TQ1eQNaNqYrzEgyk3JVKiYScvke822mujSdBESxrXLK0vgr
-	vWlB0TuV/v2h5IcABAVjvk8R3g==
-X-Google-Smtp-Source: AGHT+IHpRAm6dzCfsDsfv5H9dsyqYlB3DU0GyLqs0l9tJFjoO/C/Yio27CPRFQOcl8QHSiSxkYQ/Gw==
-X-Received: by 2002:a92:dcc8:0:b0:35c:ac42:f9a4 with SMTP id b8-20020a92dcc8000000b0035cac42f9a4mr24092773ilr.1.1701713709521;
-        Mon, 04 Dec 2023 10:15:09 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id t16-20020a92c910000000b0035d714a68fbsm40151ilp.78.2023.12.04.10.15.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Dec 2023 10:15:08 -0800 (PST)
-Message-ID: <3fbd675b-78a8-4182-8afd-10f2bd15c7b5@kernel.dk>
-Date: Mon, 4 Dec 2023 11:15:08 -0700
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B0C7113
+	for <io-uring@vger.kernel.org>; Mon,  4 Dec 2023 10:41:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701715266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RJWDbiPu4qvL/JC0PNIHJ3Asj8egnHDhDvdQ4O4EMiE=;
+	b=WrFPJTWuSTCQbez7h0/kkrOLX5axB04M6lCb8BkMQ9mqkDvADRh5tNt6UJHdCe3s5R4kDC
+	fUiTumhq6atVWptvSZoKIqVgBvssQDBjY0n3xOnjU9t3h86PxrTBgSpsrx6eXYyFIMPayd
+	Mexai5D+Y5Vow4DREEjGWERNWGVc7SE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-79-CG4HhxtwPnq28LHp2Gv-Ew-1; Mon, 04 Dec 2023 13:41:00 -0500
+X-MC-Unique: CG4HhxtwPnq28LHp2Gv-Ew-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8931C85A59D;
+	Mon,  4 Dec 2023 18:40:59 +0000 (UTC)
+Received: from segfault.usersys.redhat.com (unknown [10.22.10.39])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 12E2A2026D4C;
+	Mon,  4 Dec 2023 18:40:59 +0000 (UTC)
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Keith Busch <kbusch@meta.com>
+Cc: <linux-nvme@lists.infradead.org>,  <io-uring@vger.kernel.org>,
+  <axboe@kernel.dk>,  <hch@lst.de>,  <sagi@grimberg.me>,
+  <asml.silence@gmail.com>,  Keith Busch <kbusch@kernel.org>,
+ linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
+References: <20231204175342.3418422-1-kbusch@meta.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date: Mon, 04 Dec 2023 13:40:58 -0500
+In-Reply-To: <20231204175342.3418422-1-kbusch@meta.com> (Keith Busch's message
+	of "Mon, 4 Dec 2023 09:53:41 -0800")
+Message-ID: <x49zfypstdx.fsf@segfault.usersys.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
-Content-Language: en-US
-To: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
- io-uring@vger.kernel.org
-Cc: hch@lst.de, sagi@grimberg.me, asml.silence@gmail.com,
- Keith Busch <kbusch@kernel.org>
-References: <20231204175342.3418422-1-kbusch@meta.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231204175342.3418422-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On 12/4/23 10:53 AM, Keith Busch wrote:
+I added a CC: linux-security-module@vger
+
+Hi, Keith,
+
+Keith Busch <kbusch@meta.com> writes:
+
+> From: Keith Busch <kbusch@kernel.org>
+>
+> The uring_cmd operation is often used for privileged actions, so drivers
+> subscribing to this interface check capable() for each command. The
+> capable() function is not fast path friendly for many kernel configs,
+> and this can really harm performance. Stash the capable sys admin
+> attribute in the io_uring context and set a new issue_flag for the
+> uring_cmd interface.
+
+I have a few questions.  What privileged actions are performance
+sensitive?  I would hope that anything requiring privileges would not be
+in a fast path (but clearly that's not the case).  What performance
+benefits did you measure with this patch set in place (and on what
+workloads)?  What happens when a ring fd is passed to another process?
+
+Finally, as Jens mentioned, I would expect dropping priviliges to, you
+know, drop privileges.  I don't think a commit message is going to be
+enough documentation for a change like this.
+
+Cheers,
+Jeff
+
+>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>  include/linux/io_uring_types.h | 4 ++++
+>  io_uring/io_uring.c            | 1 +
+>  io_uring/uring_cmd.c           | 2 ++
+>  3 files changed, 7 insertions(+)
+>
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index bebab36abce89..d64d6916753f0 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -36,6 +36,9 @@ enum io_uring_cmd_flags {
+>  	/* set when uring wants to cancel a previously issued command */
+>  	IO_URING_F_CANCEL		= (1 << 11),
+>  	IO_URING_F_COMPAT		= (1 << 12),
+> +
+> +	/* ring validated as CAP_SYS_ADMIN capable */
+> +	IO_URING_F_SYS_ADMIN		= (1 << 13),
+>  };
+>  
+>  struct io_wq_work_node {
+> @@ -240,6 +243,7 @@ struct io_ring_ctx {
+>  		unsigned int		poll_activated: 1;
+>  		unsigned int		drain_disabled: 1;
+>  		unsigned int		compat: 1;
+> +		unsigned int		sys_admin: 1;
+>  
+>  		struct task_struct	*submitter_task;
+>  		struct io_rings		*rings;
 > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
 > index 1d254f2c997de..4aa10b64f539e 100644
 > --- a/io_uring/io_uring.c
@@ -100,31 +148,5 @@ On 12/4/23 10:53 AM, Keith Busch wrote:
 >  	if (ctx->flags & IORING_SETUP_IOPOLL) {
 >  		if (!file->f_op->uring_cmd_iopoll)
 >  			return -EOPNOTSUPP;
-
-Since we know have two flags that would be cached from init time, rather
-than add a second branch for this, why not have:
-
-io_uring_create()
-{
-	[...]
-	if (in_compat_syscall())
-		ctx->issue_flags |= IO_URING_F_COMPAT;
-	if (capable(CAP_SYS_ADMIN))
-		ctx->issue_flags |= IO_URING_F_SYS_ADMIN;
-	[...]
-}
-
-and get rid of ->compat and ->sys_admin, and then have:
-
-io_uring_cmd()
-{
-	issue_flags |= ctx->issue_flags;
-}
-
-Then we can also drop checking for IORING_SETUP_SQE128/CQE32 as well,
-dropping two more fast path branches.
-
--- 
-Jens Axboe
 
 
